@@ -1,3 +1,23 @@
+2017-06-14  Dean Jackson  <dino@apple.com>
+
+        Restrict filtered painting across cross-origin boundaries with transforms
+        https://bugs.webkit.org/show_bug.cgi?id=173388
+        <rdar://problem/27362159>
+
+        Reviewed by Simon Fraser.
+
+        New test that checks painting across a origin boundary when in
+        a transformed container. Also clean up the existing test
+        to make it smfr-compliant (green is good, red is bad).
+
+        * http/tests/css/filters-on-iframes-expected.html:
+        * http/tests/css/filters-on-iframes-transform-expected.html: Added.
+        * http/tests/css/filters-on-iframes-transform.html: Added.
+        * http/tests/css/filters-on-iframes.html:
+        * http/tests/css/resources/references-external-green.html: Copied from LayoutTests/http/tests/css/resources/references-external.html.
+        * http/tests/css/resources/references-external-red.html: Renamed from LayoutTests/http/tests/css/resources/references-external.html.
+        * http/tests/css/resources/solid-green.html: Added.
+
 2017-06-14  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218161.
