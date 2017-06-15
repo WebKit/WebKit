@@ -200,8 +200,6 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
         return nullptr;
 
     COMPtr<IAccessible> titleElement(Query, value.punkVal);
-    if (value.punkVal)
-        value.punkVal->Release();
 
     return titleElement;
 }

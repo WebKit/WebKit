@@ -1,3 +1,18 @@
+2017-06-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Crash in accessibility layout test.
+        https://bugs.webkit.org/show_bug.cgi?id=173401
+
+        Reviewed by Brent Fulgham.
+
+        We should not manually release the punkVal IUnknown member in a _variant_t object, since the punkVal
+        member will be automatically released when the _variant_t object goes out of scope if the vt member
+        does not equal VT_UNKNOWN | VT_BYREF.
+        See https://msdn.microsoft.com/en-us/library/windows/desktop/ms221165(v=vs.85).aspx. 
+
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::titleUIElement):
+
 2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add API to allow overriding popup menus
