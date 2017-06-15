@@ -97,13 +97,49 @@ static ActiveMachineThreadsManager& activeMachineThreadsManager()
     });
     return *manager;
 }
-    
+
+#if CPU(X86_64) && OS(DARWIN)
+#define FILL_CALLEE_SAVES_FOR_CRASH_INFO(number)     \
+    asm volatile(                                    \
+        "movq $0xc0defefe000000" number ", %%rbx;" \
+        "movq $0xc0defefe000000" number ", %%r12;" \
+        "movq $0xc0defefe000000" number ", %%r13;" \
+        "movq $0xc0defefe000000" number ", %%r14;" \
+        "movq $0xc0defefe000000" number ", %%r15;" \
+        :                                            \
+        :                                            \
+        : "%rbx", "%r12", "%r13", "%r14", "%r15"     \
+    );
+
+#define FILL_CALLER_SAVES_FOR_CRASH_INFO(number)     \
+    asm volatile(                                    \
+        "movq $0xc0defefe000000" number ", %%rax;" \
+        "movq $0xc0defefe000000" number ", %%rdi;" \
+        "movq $0xc0defefe000000" number ", %%rsi;" \
+        "movq $0xc0defefe000000" number ", %%rdx;" \
+        "movq $0xc0defefe000000" number ", %%rcx;" \
+        "movq $0xc0defefe000000" number ", %%r8;"  \
+        "movq $0xc0defefe000000" number ", %%r9;"  \
+        "movq $0xc0defefe000000" number ", %%r10;" \
+        "movq $0xc0defefe000000" number ", %%r11;" \
+        :                                            \
+        :                                            \
+        : "%rax", "%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9", "%r10", "%r11" \
+    );
+#else
+#define FILL_CALLEE_SAVES_FOR_CRASH_INFO(number)
+#define FILL_CALLER_SAVES_FOR_CRASH_INFO(number)
+#endif
+
 MachineThreads::MachineThreads()
     : m_registeredThreads()
     , m_threadSpecificForMachineThreads(0)
 {
+    FILL_CALLEE_SAVES_FOR_CRASH_INFO("01");
     threadSpecificKeyCreate(&m_threadSpecificForMachineThreads, removeThread);
+    FILL_CALLEE_SAVES_FOR_CRASH_INFO("02");
     activeMachineThreadsManager().add(this);
+    FILL_CALLER_SAVES_FOR_CRASH_INFO("03");
 }
 
 MachineThreads::~MachineThreads()
