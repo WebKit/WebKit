@@ -7558,6 +7558,10 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         FPRReg searchElementFPR = searchElement.fpr();
         FPRReg tempFPR = tempDouble.fpr();
 
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+        m_jit.clearRegisterAllocationOffsets();
+#endif
+
         m_jit.zeroExtend32ToPtr(lengthGPR, lengthGPR);
         m_jit.zeroExtend32ToPtr(indexGPR, indexGPR);
 
