@@ -40,7 +40,7 @@
 #endif
 
 #include <CoreFoundation/CoreFoundation.h>
-#include <WebKit/WebKit.h>
+#include <WebKit.h>
 #include "config.h"
 
 // WebKit.dll is expected to export the symbols in WebCore that have been marked
