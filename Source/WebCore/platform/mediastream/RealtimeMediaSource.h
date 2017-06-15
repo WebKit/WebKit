@@ -70,6 +70,7 @@ public:
         virtual ~Observer() { }
         
         // Source state changes.
+        virtual void sourceStarted() { }
         virtual void sourceStopped() { }
         virtual void sourceMutedChanged() { }
         virtual void sourceEnabledChanged() { }

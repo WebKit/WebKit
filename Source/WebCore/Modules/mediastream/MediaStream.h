@@ -54,7 +54,6 @@ class MediaStream final
     , public ActiveDOMObject
     , public MediaStreamTrack::Observer
     , public MediaStreamPrivate::Observer
-    , private MediaProducer
     , private MediaCanStartListener
     , private PlatformMediaSessionClient
     , public RefCounted<MediaStream> {
@@ -136,9 +135,7 @@ private:
     void didRemoveTrack(MediaStreamTrackPrivate&) final;
     void characteristicsChanged() final;
 
-    // MediaProducer
-    void pageMutedStateDidChange() final;
-    MediaProducer::MediaStateFlags mediaState() const final;
+    MediaProducer::MediaStateFlags mediaState() const;
 
     // MediaCanStartListener
     void mediaCanStart(Document&) final;
@@ -180,7 +177,7 @@ private:
     Vector<Observer*> m_observers;
     std::unique_ptr<PlatformMediaSession> m_mediaSession;
 
-    MediaStateFlags m_state { IsNotPlaying };
+    MediaProducer::MediaStateFlags m_state { MediaProducer::IsNotPlaying };
 
     bool m_isActive { false };
     bool m_isProducingData { false };

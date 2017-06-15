@@ -1,3 +1,59 @@
+2017-06-15  Jer Noble  <jer.noble@apple.com>
+
+        [WebRTC] Removing a MediaStreamTrack from a MediaStream reports no recording to WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=173398
+        <rdar://problem/32592961>
+
+        Reviewed by Eric Carlson.
+
+        API Test: Tests/WebKit2/MediaStreamTrackDetached.mm
+
+        Move the definition of a MediaStream as a MediaProducer from the stream itself to its constituent
+        MediaStreamTracks. This ensures that, even if a MediaStreamTrack is removed from its stream, the
+        document (and thus the clients) are notified that media capture is still occurring.
+
+        Though MediaStream is no longer a MediaProducer, it still uses the MediaProducer's state concept
+        to determine when to fire events. However it's mediaState() implementation will be moved into
+        MediaStreamTrack, and will instead simply bitwise-or together each of it's track's mediaState().
+
+        The MediaStream notifies the document that its state has changed asynchronously, so do the same
+        for MediaStreamTrack (which reduces the number of calls to the client when changes all occur
+        during a single run loop).
+
+        Because the MediaStreamTrackPrivate may be started externally (not by the MediaStreamTrack directly),
+        add a new client method that notifies observers when the track has been started, and the
+        MediaStreamTrack will use this notification to update the document with it's new mediaState().
+
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::MediaStream):
+        (WebCore::MediaStream::~MediaStream):
+        (WebCore::MediaStream::mediaState):
+        (WebCore::MediaStream::statusDidChange):
+        (WebCore::MediaStream::characteristicsChanged):
+        (WebCore::MediaStream::pageMutedStateDidChange): Deleted.
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        (WebCore::MediaStreamTrack::~MediaStreamTrack):
+        (WebCore::MediaStreamTrack::pageMutedStateDidChange):
+        (WebCore::MediaStreamTrack::mediaState):
+        (WebCore::MediaStreamTrack::trackStarted):
+        (WebCore::MediaStreamTrack::configureTrackRendering):
+        (WebCore::MediaStreamTrack::stop):
+        (WebCore::MediaStreamTrack::document):
+        * Modules/mediastream/MediaStreamTrack.h:
+        (WebCore::MediaStreamTrack::source):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::trackStarted):
+        * platform/mediastream/MediaStreamPrivate.h:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::sourceStarted):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::start):
+        * platform/mediastream/RealtimeMediaSource.h:
+
 2017-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed build fix after r218336

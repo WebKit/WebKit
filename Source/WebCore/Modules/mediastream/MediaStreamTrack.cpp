@@ -30,6 +30,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "JSOverconstrainedError.h"
@@ -38,6 +39,7 @@
 #include "MediaStreamPrivate.h"
 #include "NotImplemented.h"
 #include "OverconstrainedError.h"
+#include "Page.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -52,15 +54,22 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     : ActiveDOMObject(&context)
     , m_private(WTFMove(privateTrack))
     , m_weakPtrFactory(this)
+    , m_taskQueue(context)
 {
     suspendIfNeeded();
 
     m_private->addObserver(*this);
+
+    if (auto document = this->document())
+        document->addAudioProducer(this);
 }
 
 MediaStreamTrack::~MediaStreamTrack()
 {
     m_private->removeObserver(*this);
+
+    if (auto document = this->document())
+        document->removeAudioProducer(this);
 }
 
 const AtomicString& MediaStreamTrack::kind() const
@@ -285,6 +294,53 @@ void MediaStreamTrack::removeObserver(Observer& observer)
     m_observers.removeFirst(&observer);
 }
 
+void MediaStreamTrack::pageMutedStateDidChange()
+{
+    if (m_ended || !isCaptureTrack())
+        return;
+
+    Document* document = this->document();
+    if (!document || !document->page())
+        return;
+
+    m_private->setMuted(document->page()->isMediaCaptureMuted());
+}
+
+MediaProducer::MediaStateFlags MediaStreamTrack::mediaState() const
+{
+    if (m_ended || !isCaptureTrack())
+        return IsNotPlaying;
+
+    Document* document = this->document();
+    if (!document || !document->page())
+        return IsNotPlaying;
+
+    bool pageCaptureMuted = document->page()->isMediaCaptureMuted();
+
+    if (source().type() == RealtimeMediaSource::Type::Audio) {
+        if (source().interrupted() && !pageCaptureMuted)
+            return HasInterruptedAudioCaptureDevice;
+        if (muted())
+            return HasMutedAudioCaptureDevice;
+        if (m_private->isProducingData())
+            return HasActiveAudioCaptureDevice;
+    } else {
+        if (source().interrupted() && !pageCaptureMuted)
+            return HasInterruptedVideoCaptureDevice;
+        if (muted())
+            return HasMutedVideoCaptureDevice;
+        if (m_private->isProducingData())
+            return HasActiveVideoCaptureDevice;
+    }
+
+    return IsNotPlaying;
+}
+
+void MediaStreamTrack::trackStarted(MediaStreamTrackPrivate&)
+{
+    configureTrackRendering();
+}
+
 void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
 {
     // http://w3c.github.io/mediacapture-main/#life-cycle
@@ -332,6 +388,11 @@ void MediaStreamTrack::trackEnabledChanged(MediaStreamTrackPrivate&)
 
 void MediaStreamTrack::configureTrackRendering()
 {
+    m_taskQueue.enqueueTask([this] {
+        if (auto document = this->document())
+            document->updateIsPlayingMedia();
+    });
+
     // 4.3.1
     // ... media from the source only flows when a MediaStreamTrack object is both unmuted and enabled
 }
@@ -339,6 +400,7 @@ void MediaStreamTrack::configureTrackRendering()
 void MediaStreamTrack::stop()
 {
     stopTrack();
+    m_taskQueue.close();
 }
 
 const char* MediaStreamTrack::activeDOMObjectName() const
@@ -359,6 +421,11 @@ bool MediaStreamTrack::hasPendingActivity() const
 AudioSourceProvider* MediaStreamTrack::audioSourceProvider()
 {
     return m_private->audioSourceProvider();
+}
+
+Document* MediaStreamTrack::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
 }
 
 } // namespace WebCore
