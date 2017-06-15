@@ -19,8 +19,8 @@ PASS audioTransceiver.mid is null
 
 PASS firstOffer set as local description
 FAIL pc.signalingState should be have-local-offer. Was stable.
-FAIL pc.localDescription should be [object RTCSessionDescription]. Was null.
-FAIL pc.pendingLocalDescription should be [object RTCSessionDescription]. Was null.
+FAIL pc.localDescription should be [object Object]. Was null.
+FAIL pc.pendingLocalDescription should be [object Object]. Was null.
 PASS pc.currentLocalDescription is null
 FAIL Error caught in promise chain: TypeError: null is not an object (evaluating 'pc.localDescription.type')
 PASS successfullyParsed is true

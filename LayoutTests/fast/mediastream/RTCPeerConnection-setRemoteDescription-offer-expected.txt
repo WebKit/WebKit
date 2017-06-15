@@ -12,8 +12,8 @@ PASS pc.currentRemoteDescription is null
 
 PASS remoteOffer1 set as remote description
 FAIL pc.signalingState should be have-remote-offer. Was stable.
-FAIL pc.remoteDescription should be [object RTCSessionDescription]. Was null.
-FAIL pc.pendingRemoteDescription should be [object RTCSessionDescription]. Was null.
+FAIL pc.remoteDescription should be [object Object]. Was null.
+FAIL pc.pendingRemoteDescription should be [object Object]. Was null.
 PASS pc.currentRemoteDescription is null
 
 PASS remoteOffer1 set as remote description (again)
@@ -29,8 +29,8 @@ FAIL pc.signalingState should be have-remote-offer. Was stable.
 
 PASS remoteOffer2 set as remote description
 FAIL pc.signalingState should be have-remote-offer. Was stable.
-FAIL pc.remoteDescription should be [object RTCSessionDescription]. Was null.
-FAIL pc.pendingRemoteDescription should be [object RTCSessionDescription]. Was null.
+FAIL pc.remoteDescription should be [object Object]. Was null.
+FAIL pc.pendingRemoteDescription should be [object Object]. Was null.
 PASS pc.currentRemoteDescription is null
 
 PASS successfullyParsed is true

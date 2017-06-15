@@ -35,6 +35,7 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "RTCRtpParameters.h"
+#include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"
 
 namespace WebCore {
@@ -56,7 +57,7 @@ struct RTCDataChannelInit;
 struct RTCOfferOptions;
 
 namespace PeerConnection {
-using SessionDescriptionPromise = DOMPromiseDeferred<IDLInterface<RTCSessionDescription>>;
+using SessionDescriptionPromise = DOMPromiseDeferred<IDLDictionary<RTCSessionDescription::Init>>;
 using StatsPromise = DOMPromiseDeferred<IDLInterface<RTCStatsReport>>;
 }
 

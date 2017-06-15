@@ -48,13 +48,16 @@
     PrivateIdentifier,
     PublicIdentifier,
 ] interface RTCSessionDescription {
-    [SetterMayThrowException] readonly attribute RTCSdpType type;
+    readonly attribute RTCSdpType type;
     readonly attribute DOMString sdp;
 
     serializer = {type, sdp};
 };
 
-dictionary RTCSessionDescriptionInit {
+[
+    Conditional=WEB_RTC,
+    JSGenerateToJSObject
+] dictionary RTCSessionDescriptionInit {
     required RTCSdpType type;
     DOMString sdp = "";
 };

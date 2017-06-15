@@ -62,7 +62,7 @@ void PeerConnectionBackend::createOfferSucceeded(String&& sdp)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSdpType::Offer, filterSDP(WTFMove(sdp))));
+    m_offerAnswerPromise->resolve(RTCSessionDescription::Init { RTCSdpType::Offer, filterSDP(WTFMove(sdp)) });
     m_offerAnswerPromise = std::nullopt;
 }
 
@@ -97,7 +97,7 @@ void PeerConnectionBackend::createAnswerSucceeded(String&& sdp)
         return;
 
     ASSERT(m_offerAnswerPromise);
-    m_offerAnswerPromise->resolve(RTCSessionDescription::create(RTCSdpType::Answer, WTFMove(sdp)));
+    m_offerAnswerPromise->resolve(RTCSessionDescription::Init { RTCSdpType::Answer, WTFMove(sdp) });
     m_offerAnswerPromise = std::nullopt;
 }
 

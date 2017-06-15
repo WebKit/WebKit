@@ -1,3 +1,16 @@
+2017-06-15  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection returns RTCSessionDescription where RTCSessionDescriptionInit would be appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=173118
+        <rdar://problem/32746761>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/RTCPeerConnection-setLocalDescription-offer-expected.txt:
+        * fast/mediastream/RTCPeerConnection-setRemoteDescription-offer-expected.txt:
+        * webrtc/createOfferAnswer-expected.txt: Added.
+        * webrtc/createOfferAnswer.html: Added.
+
 2017-06-15  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg as skip.

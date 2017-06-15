@@ -1,5 +1,5 @@
 
-FAIL createOffer() with no argument from newly created RTCPeerConnection should succeed assert_false: Expect offer to not be instance of RTCSessionDescription expected false got true
+PASS createOffer() with no argument from newly created RTCPeerConnection should succeed 
 FAIL createOffer() and then setLocalDescription() should succeed assert_not_equals: Expect session description to be defined, but got undefined got disallowed value undefined
 PASS createOffer() after connection is closed should reject with InvalidStateError 
 PASS createOffer() when connection is closed halfway should never resolve 

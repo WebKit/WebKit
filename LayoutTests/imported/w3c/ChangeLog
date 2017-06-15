@@ -1,3 +1,13 @@
+2017-06-15  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection returns RTCSessionDescription where RTCSessionDescriptionInit would be appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=173118
+        <rdar://problem/32746761>
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/RTCPeerConnection-createOffer-expected.txt:
+
 2017-06-14  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         MediaSource duration attribute should not be equal to Infinity when set to a value greater than 2^64

@@ -1,3 +1,22 @@
+2017-06-15  Youenn Fablet  <youenn@apple.com>
+
+        RTCPeerConnection returns RTCSessionDescription where RTCSessionDescriptionInit would be appropriate
+        https://bugs.webkit.org/show_bug.cgi?id=173118
+        <rdar://problem/32746761>
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/createOfferAnswer.html
+
+        Making the promise return a RTCSessionDescription::Init instead of a RTCSessionDescription.
+        This aligns with the spec and is more optimal.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::createAnswerSucceeded):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCSessionDescription.idl:
+
 2017-06-15 Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Don't always recalc the style of display: contents elements.
