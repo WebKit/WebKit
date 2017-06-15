@@ -48,7 +48,37 @@ WKStringRef WKErrorCopyDomain(WKErrorRef errorRef)
 
 int WKErrorGetErrorCode(WKErrorRef errorRef)
 {
-    return toImpl(errorRef)->errorCode();
+    auto errorCode = toImpl(errorRef)->errorCode();
+    switch (errorCode) {
+    case API::Error::Policy::CannotShowMIMEType:
+        return kWKErrorCodeCannotShowMIMEType;
+    case API::Error::Policy::CannotShowURL:
+        return kWKErrorCodeCannotShowURL;
+    case API::Error::Policy::FrameLoadInterruptedByPolicyChange:
+        return kWKErrorCodeFrameLoadInterruptedByPolicyChange;
+    case API::Error::Policy::CannotUseRestrictedPort:
+        return kWKErrorCodeCannotUseRestrictedPort;
+    case API::Error::Policy::FrameLoadBlockedByContentBlocker:
+        return kWKErrorCodeFrameLoadBlockedByContentBlocker;
+    case API::Error::Policy::FrameLoadBlockedByContentFilter:
+        return kWKErrorCodeFrameLoadBlockedByContentFilter;
+    case API::Error::Plugin::CannotFindPlugIn:
+        return kWKErrorCodeCannotFindPlugIn;
+    case API::Error::Plugin::CannotLoadPlugIn:
+        return kWKErrorCodeCannotLoadPlugIn;
+    case API::Error::Plugin::JavaUnavailable:
+        return kWKErrorCodeJavaUnavailable;
+    case API::Error::Plugin::PlugInCancelledConnection:
+        return kWKErrorCodePlugInCancelledConnection;
+    case API::Error::Plugin::PlugInWillHandleLoad:
+        return kWKErrorCodePlugInWillHandleLoad;
+    case API::Error::Plugin::InsecurePlugInVersion:
+        return kWKErrorCodeInsecurePlugInVersion;
+    case API::Error::General::Internal:
+        return kWKErrorInternal;
+    }
+
+    return errorCode;
 }
 
 WKURLRef WKErrorCopyFailingURL(WKErrorRef errorRef)
