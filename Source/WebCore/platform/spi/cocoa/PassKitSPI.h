@@ -260,7 +260,7 @@ typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
 };
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -299,8 +299,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
 @property (nonatomic, strong) NSString *CTDataConnectionServiceType;
 
+#if !USE(APPLE_INTERNAL_SDK)
 - (void)setRequiredShippingContactFields:(nonnull NSSet *)contactInformation;
 - (void)setRequiredBillingContactFields:(nonnull NSSet *)contactInformation;
+#endif
+
 @end
 
 NS_ASSUME_NONNULL_END

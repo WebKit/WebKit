@@ -1,3 +1,9 @@
+2017-06-15  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed build fix after r218336
+
+        * platform/spi/cocoa/PassKitSPI.h: Add missing #ifdefs for Internal builds.
+
 2017-06-15  Antoine Quint  <graouts@apple.com>
 
         Ensure we only log changes to the ScriptedAnimationController suspended state in debug builds
