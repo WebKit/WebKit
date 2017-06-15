@@ -1,5 +1,48 @@
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Add API::InjectedBundle::Client
+        https://bugs.webkit.org/show_bug.cgi?id=173357
+
+        Reviewed by Alex Christensen.
+
+        It will be used by the GTK+ port instead of the C API.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/APIInjectedBundleBundleClient.h: Copied from Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleClient.h.
+        (API::InjectedBundle::Client::didCreatePage):
+        (API::InjectedBundle::Client::willDestroyPage):
+        (API::InjectedBundle::Client::didInitializePageGroup):
+        (API::InjectedBundle::Client::didReceiveMessage):
+        (API::InjectedBundle::Client::didReceiveMessageToPage):
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetClient):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp:
+        (webkitWebExtensionPageCreated): Deleted.
+        (webkitWebExtensionPageDestroy): Deleted.
+        (webkitWebExtensionDidReceiveMessage): Deleted.
+        (didCreatePage): Deleted.
+        (willDestroyPage): Deleted.
+        (didReceiveMessage): Deleted.
+        (didReceiveMessageToPage): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setClient):
+        (WebKit::InjectedBundle::didCreatePage):
+        (WebKit::InjectedBundle::willDestroyPage):
+        (WebKit::InjectedBundle::didInitializePageGroup):
+        (WebKit::InjectedBundle::didReceiveMessage):
+        (WebKit::InjectedBundle::didReceiveMessageToPage):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.cpp:
+        (WebKit::InjectedBundleClient::InjectedBundleClient):
+        (WebKit::InjectedBundleClient::didCreatePage):
+        (WebKit::InjectedBundleClient::willDestroyPage):
+        (WebKit::InjectedBundleClient::didInitializePageGroup):
+        (WebKit::InjectedBundleClient::didReceiveMessage):
+        (WebKit::InjectedBundleClient::didReceiveMessageToPage):
+        * WebProcess/InjectedBundle/InjectedBundleClient.h:
+
+2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WKErrorGetErrorCode should not return the API::Error enum values directly
         https://bugs.webkit.org/show_bug.cgi?id=173367
 

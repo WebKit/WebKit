@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleClient_h
-#define InjectedBundleClient_h
+#pragma once
 
-#include "APIClient.h"
-#include "APIInjectedBundleBundleClient.h"
-#include "WKBundle.h"
 #include <wtf/Forward.h>
+
+namespace WebKit {
+class InjectedBundle;
+class WebPage;
+class WebPageGroupProxy;
+}
 
 namespace API {
 class Object;
 
-template<> struct ClientTraits<WKBundleClientBase> {
-    typedef std::tuple<WKBundleClientV0, WKBundleClientV1> Versions;
-};
-}
+namespace InjectedBundle {
 
-namespace WebKit {
-
-class InjectedBundle;
-class WebPage;
-class WebPageGroupProxy;
-
-class InjectedBundleClient : public API::InjectedBundle::Client, public API::Client<WKBundleClientBase> {
+class Client {
 public:
-    explicit InjectedBundleClient(const WKBundleClientBase*);
+    virtual ~Client() = default;
 
-    void didCreatePage(InjectedBundle&, WebPage&) override;
-    void willDestroyPage(InjectedBundle&, WebPage&) override;
-    void didInitializePageGroup(InjectedBundle&, WebPageGroupProxy&) override;
-    void didReceiveMessage(InjectedBundle&, const WTF::String&, API::Object*) override;
-    void didReceiveMessageToPage(InjectedBundle&, WebPage&, const WTF::String&, API::Object*) override;
+    virtual void didCreatePage(WebKit::InjectedBundle&, WebKit::WebPage&) { }
+    virtual void willDestroyPage(WebKit::InjectedBundle&, WebKit::WebPage&) { }
+    virtual void didInitializePageGroup(WebKit::InjectedBundle&, WebKit::WebPageGroupProxy&) { }
+    virtual void didReceiveMessage(WebKit::InjectedBundle&, const WTF::String&, API::Object*) { }
+    virtual void didReceiveMessageToPage(WebKit::InjectedBundle&, WebKit::WebPage&, const WTF::String&, API::Object*) { }
 };
 
-} // namespace WebKit
+} // namespace InjectedBundle
 
-#endif // InjectedBundleClient_h
+} // namespace API

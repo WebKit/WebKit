@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include "APIInjectedBundleBundleClient.h"
 #include "APIObject.h"
-#include "InjectedBundleClient.h"
 #include "SandboxExtension.h"
-#include "WKBundle.h"
+#include <JavaScriptCore/JavaScript.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>
 #include <wtf/RefPtr.h>
@@ -84,7 +84,7 @@ public:
     void setBundleParameters(const IPC::DataReference&);
 
     // API
-    void initializeClient(const WKBundleClientBase*);
+    void setClient(std::unique_ptr<API::InjectedBundle::Client>&&);
     void postMessage(const String&, API::Object*);
     void postSynchronousMessage(const String&, API::Object*, RefPtr<API::Object>& returnData);
 
@@ -161,7 +161,7 @@ private:
 
     RefPtr<SandboxExtension> m_sandboxExtension;
 
-    InjectedBundleClient m_client;
+    std::unique_ptr<API::InjectedBundle::Client> m_client;
 
 #if PLATFORM(COCOA) && WK_API_ENABLED
     RetainPtr<WKWebProcessBundleParameters> m_bundleParameters;
