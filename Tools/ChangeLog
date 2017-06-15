@@ -1,3 +1,21 @@
+2017-06-15  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] The run-minibrowser script should allow to execute also a WPE launcher
+        https://bugs.webkit.org/show_bug.cgi?id=173061
+
+        Reviewed by Žan Doberšek.
+
+        Launch dyz <https://github.com/Igalia/dyz> with the script
+        run-minibrowser for the wpe port. It is now built as part of the
+        WPE dependencies with JHBuild.
+
+        * Scripts/run-minibrowser:
+        * Scripts/webkitdirs.pm:
+        (launcherPath):
+        (launcherName):
+        * wpe/install-dependencies: Luajit is needed for building dyz.
+        * wpe/jhbuild.modules: Add dyz and update the revision for WPEBackend-mesa.
+
 2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Using -[WebItemProviderPasteboard setItemProviders:] to swap out item providers before a drop breaks item provider loading

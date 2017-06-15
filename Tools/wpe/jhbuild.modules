@@ -24,6 +24,7 @@
       <dep package="wpe-mesa"/>
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
+      <dep package="dyz"/>
     </dependencies>
   </metamodule>
 
@@ -246,7 +247,7 @@
       <dep package="xkbcommon" />
     </dependencies>
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend-mesa.git"
-            tag="daaee710314404cc84fcfd17cb963961d64abfba" />
+            tag="de843e2536f3a445737ce39ab643516a23531d5e" />
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">
@@ -268,4 +269,9 @@
       <dep package="libgpg-error"/>
     </dependencies>
   </autotools>
+
+  <autotools id="dyz" supports-non-srcdir-builds="no">
+    <branch repo="github.com" module="Igalia/dyz" tag="0880252bac243add39ea54c0797ceb167d775ce9"/>
+  </autotools>
+
 </moduleset>

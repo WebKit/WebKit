@@ -105,6 +105,7 @@ function installDependenciesWithApt {
         libexpat1-dev \
         libgbm-dev \
         libgles2-mesa-dev \
+        libluajit-5.1-dev \
         libopus-dev \
         liborc-0.4-dev \
         libproxy-dev \
@@ -114,7 +115,8 @@ function installDependenciesWithApt {
         libtool-bin \
         libvorbis-dev \
         libvpx-dev \
-        libxcb-xkb-dev"
+        libxcb-xkb-dev \
+        luajit"
 
     # These are dependencies necessary for using webkit-patch
     packages="$packages \
@@ -192,6 +194,7 @@ function installDependenciesWithPacman {
         libvorbis \
         libvpx \
         libxcb \
+        luajit \
         mesa \
         mesa-libgl \
         opus \
@@ -263,6 +266,8 @@ function installDependenciesWithDnf {
         libvorbis-devel \
         libvpx-devel \
         libxcb-devel \
+        luajit \
+        luajit-devel \
         mesa-libgbm-devel \
         mesa-libGLES-devel \
         opus-devel \

@@ -1529,12 +1529,10 @@ sub relativeScriptsDir()
 sub launcherPath()
 {
     my $relativeScriptsPath = relativeScriptsDir();
-    if (isGtk()) {
+    if (isGtk() || isWPE()) {
         return "$relativeScriptsPath/run-minibrowser";
     } elsif (isAppleWebKit()) {
         return "$relativeScriptsPath/run-safari";
-    } elsif (isWPE()) {
-        return "$relativeScriptsPath/run-wpe";
     }
 }
 
@@ -1547,7 +1545,7 @@ sub launcherName()
     } elsif (isAppleWinWebKit()) {
         return "MiniBrowser";
     } elsif (isWPE()) {
-        return "WPELauncher";
+        return "dyz";
     }
 }
 
