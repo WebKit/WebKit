@@ -212,6 +212,12 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitNotificationPrivate.h
     UIProcess/API/gtk/WebKitNotificationProvider.cpp
     UIProcess/API/gtk/WebKitNotificationProvider.h
+    UIProcess/API/gtk/WebKitOptionMenu.cpp
+    UIProcess/API/gtk/WebKitOptionMenu.h
+    UIProcess/API/gtk/WebKitOptionMenuPrivate.h
+    UIProcess/API/gtk/WebKitOptionMenuItem.cpp
+    UIProcess/API/gtk/WebKitOptionMenuItem.h
+    UIProcess/API/gtk/WebKitOptionMenuItemPrivate.h
     UIProcess/API/gtk/WebKitPermissionRequest.cpp
     UIProcess/API/gtk/WebKitPermissionRequest.h
     UIProcess/API/gtk/WebKitPlugin.cpp
@@ -222,6 +228,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitPolicyDecision.cpp
     UIProcess/API/gtk/WebKitPolicyDecision.h
     UIProcess/API/gtk/WebKitPolicyDecisionPrivate.h
+    UIProcess/API/gtk/WebKitPopupMenu.cpp
     UIProcess/API/gtk/WebKitPrintCustomWidget.cpp
     UIProcess/API/gtk/WebKitPrintCustomWidget.h
     UIProcess/API/gtk/WebKitPrintCustomWidgetPrivate.h
@@ -560,6 +567,8 @@ set(WebKit2GTK_INSTALLED_HEADERS
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNetworkProxySettings.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNotificationPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitNotification.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitOptionMenu.h
+    ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitOptionMenuItem.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPermissionRequest.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPlugin.h
     ${WEBKIT2_DIR}/UIProcess/API/gtk/WebKitPolicyDecision.h

@@ -1,3 +1,65 @@
+2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add API to allow overriding popup menus
+        https://bugs.webkit.org/show_bug.cgi?id=172905
+
+        Reviewed by Michael Catanzaro.
+
+        The GTK+ API uses GTK+ for the default implementation of several UI elements like the file chooser, print dialog,
+        color picker, context menu, etc. but in all those cases it allows to override the default implementation. It's
+        not possible to override the popup menu used for select elements. This patch adds WebKitOptionMenu to represent
+        a select dropdown menu. It's passed as an argument of the new signal WebKitWebView::show-option-menu, and
+        contains WebKitOptionMenuItem elements representing the items to be displayed.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createPopupMenuProxy): Create a WebKitPopupMenu.
+        * UIProcess/API/gtk/WebKitOptionMenu.cpp: Added.
+        (webkitOptionMenuCreate):
+        (webkit_option_menu_get_n_items):
+        (webkit_option_menu_get_item):
+        (webkit_option_menu_select_item):
+        (webkit_option_menu_activate_item):
+        (webkit_option_menu_close):
+        * UIProcess/API/gtk/WebKitOptionMenu.h: Added.
+        * UIProcess/API/gtk/WebKitOptionMenuItem.cpp: Added.
+        (webkit_option_menu_item_copy):
+        (webkit_option_menu_item_free):
+        (webkit_option_menu_item_get_label):
+        (webkit_option_menu_item_get_tooltip):
+        (webkit_option_menu_item_is_group_label):
+        (webkit_option_menu_item_is_group_child):
+        (webkit_option_menu_item_is_enabled):
+        (webkit_option_menu_item_is_selected):
+        * UIProcess/API/gtk/WebKitOptionMenuItem.h: Added.
+        * UIProcess/API/gtk/WebKitOptionMenuItemPrivate.h: Added.
+        (_WebKitOptionMenuItem::_WebKitOptionMenuItem):
+        * UIProcess/API/gtk/WebKitOptionMenuPrivate.h: Added.
+        * UIProcess/API/gtk/WebKitPopupMenu.cpp: Added.
+        (WebKit::WebKitPopupMenu::WebKitPopupMenu):
+        (WebKit::menuCloseCallback):
+        (WebKit::WebKitPopupMenu::showPopupMenu): Call webkitWebViewShowOptionMenu() falling back to default
+        implementation if the user didn't handle the signal.
+        (WebKit::WebKitPopupMenu::hidePopupMenu):
+        (WebKit::WebKitPopupMenu::cancelTracking):
+        (WebKit::WebKitPopupMenu::selectItem):
+        (WebKit::WebKitPopupMenu::activateItem):
+        * UIProcess/API/gtk/WebKitPopupMenu.h: Added.
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        (webkitWebViewShowOptionMenu): Emit WebKitWebView::show-option-menu.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0.types: Add new get_type functions.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add new sections.
+        * UIProcess/API/gtk/webkit2.h: Add new public headers.
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::WebPopupMenuProxyGtk): Do not create the GtkMenu in constructor.
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu): Create the GtkMenu and connect to the signals here.
+        (WebKit::WebPopupMenuProxyGtk::hidePopupMenu): Return early if the Gtk hasn't been shown.
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h: Make constructor and webview protected.
+
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use API::InjectedBundle::ResourceLoadClient in WebKitWebPage

@@ -37,10 +37,10 @@
 #include "WebContextMenuProxyGtk.h"
 #include "WebEventFactory.h"
 #include "WebKitColorChooser.h"
+#include "WebKitPopupMenu.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebPageProxy.h"
-#include "WebPopupMenuProxyGtk.h"
 #include "WebProcessPool.h"
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/Cursor.h>
@@ -206,7 +206,7 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
 {
-    return WebPopupMenuProxyGtk::create(m_viewWidget, page);
+    return WebKitPopupMenu::create(m_viewWidget, page);
 }
 
 RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)

@@ -41,11 +41,8 @@ namespace WebKit {
 WebPopupMenuProxyGtk::WebPopupMenuProxyGtk(GtkWidget* webView, WebPopupMenuProxy::Client& client)
     : WebPopupMenuProxy(client)
     , m_webView(webView)
-    , m_popup(gtk_menu_new())
     , m_dismissMenuTimer(RunLoop::main(), this, &WebPopupMenuProxyGtk::dismissMenuTimerFired)
 {
-    g_signal_connect(m_popup, "key-press-event", G_CALLBACK(keyPressEventCallback), this);
-    g_signal_connect(m_popup, "unmap", G_CALLBACK(menuUnmappedCallback), this);
 }
 
 WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk()
@@ -88,7 +85,10 @@ void WebPopupMenuProxyGtk::populatePopupMenu(const Vector<WebPopupItem>& items)
 
 void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, double /* pageScaleFactor */, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
 {
-    m_dismissMenuTimer.stop();
+    ASSERT(!m_popup);
+    m_popup = gtk_menu_new();
+    g_signal_connect(m_popup, "key-press-event", G_CALLBACK(keyPressEventCallback), this);
+    g_signal_connect(m_popup, "unmap", G_CALLBACK(menuUnmappedCallback), this);
 
     populatePopupMenu(items);
     gtk_menu_set_active(GTK_MENU(m_popup), selectedIndex);
@@ -178,6 +178,9 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
 
 void WebPopupMenuProxyGtk::hidePopupMenu()
 {
+    if (!m_popup)
+        return;
+
     gtk_menu_popdown(GTK_MENU(m_popup));
     resetTypeAheadFindState();
 }

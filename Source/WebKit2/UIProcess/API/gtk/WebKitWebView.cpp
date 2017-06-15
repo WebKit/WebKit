@@ -137,6 +137,8 @@ enum {
 
     RUN_COLOR_CHOOSER,
 
+    SHOW_OPTION_MENU,
+
     LAST_SIGNAL
 };
 
@@ -1883,6 +1885,40 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 1,
         WEBKIT_TYPE_COLOR_CHOOSER_REQUEST);
+
+    /**
+     * WebKitWebView::show-option-menu:
+     * @web_view: the #WebKitWebView on which the signal is emitted
+     * @menu: the #WebKitOptionMenu
+     * @event: the #GdkEvent that triggered the menu, or %NULL
+     * @rectangle: the option element area
+     *
+     * This signal is emitted when a select element in @web_view needs to display a
+     * dropdown menu. This signal can be used to show a custom menu, using @menu to get
+     * the details of all items that should be displayed. The area of the element in the
+     * #WebKitWebView is given as @rectangle parameter, it can be used to position the
+     * menu. If this was triggered by a user interaction, like a mouse click,
+     * @event parameter provides the #GdkEvent.
+     * To handle this signal asynchronously you should keep a ref of the @menu.
+     *
+     * The default signal handler will pop up a #GtkMenu.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *   %FALSE to propagate the event further.
+     *
+     * Since: 2.18.
+     */
+    signals[SHOW_OPTION_MENU] = g_signal_new(
+        "show-option-menu",
+        G_TYPE_FROM_CLASS(webViewClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitWebViewClass, show_option_menu),
+        g_signal_accumulator_true_handled, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_BOOLEAN, 3,
+        WEBKIT_TYPE_OPTION_MENU,
+        GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
+        GDK_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
 }
 
 static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
@@ -2210,6 +2246,14 @@ void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView* webView, Inst
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView* webView)
 {
     return webView->priv->websiteDataManager.get();
+}
+
+bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, WebKitOptionMenu* menu, const GdkEvent* event)
+{
+    GdkRectangle menuRect = rect;
+    gboolean handled;
+    g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu, event, &menuRect, &handled);
+    return handled;
 }
 
 /**

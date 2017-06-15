@@ -36,3 +36,5 @@ webkit_console_message_get_type
 webkit_web_view_session_state_get_type
 webkit_print_custom_widget_get_type
 webkit_automation_session_get_type
+webkit_option_menu_get_type
+webkit_option_menu_item_get_type

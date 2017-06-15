@@ -34,6 +34,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
+#include <WebCore/IntRect.h>
 #include <wtf/text/CString.h>
 
 void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
@@ -72,3 +73,4 @@ void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 void webkitWebViewSelectionDidChange(WebKitWebView*);
 void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView*, WebKit::InstallMissingMediaPluginsPermissionRequest&);
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
+bool webkitWebViewShowOptionMenu(WebKitWebView*, const WebCore::IntRect&, WebKitOptionMenu*, const GdkEvent*);

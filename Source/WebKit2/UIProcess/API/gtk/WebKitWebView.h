@@ -42,6 +42,7 @@
 #include <webkit2/WebKitJavascriptResult.h>
 #include <webkit2/WebKitNavigationAction.h>
 #include <webkit2/WebKitNotification.h>
+#include <webkit2/WebKitOptionMenu.h>
 #include <webkit2/WebKitPermissionRequest.h>
 #include <webkit2/WebKitPolicyDecision.h>
 #include <webkit2/WebKitScriptDialog.h>
@@ -249,11 +250,13 @@ struct _WebKitWebViewClass {
                                                 WebKitNotification          *notification);
     gboolean   (* run_color_chooser)           (WebKitWebView               *web_view,
                                                 WebKitColorChooserRequest   *request);
+    gboolean   (* show_option_menu)            (WebKitWebView               *web_view,
+                                                GdkRectangle                *rectangle,
+                                                WebKitOptionMenu            *menu);
 
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
 };
 
 WEBKIT_API GType

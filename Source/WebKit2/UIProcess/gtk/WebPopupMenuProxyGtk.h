@@ -48,9 +48,12 @@ public:
     void hidePopupMenu() override;
     void cancelTracking() override;
 
-private:
+protected:
     WebPopupMenuProxyGtk(GtkWidget*, WebPopupMenuProxy::Client&);
 
+    GtkWidget* m_webView { nullptr };
+
+private:
     void setCurrentlySelectedMenuItem(GtkWidget* item) { m_currentlySelectedMenuItem = item; }
     GtkAction* createGtkActionForMenuItem(const WebPopupItem&, int itemIndex);
     void populatePopupMenu(const Vector<WebPopupItem>&);
@@ -64,7 +67,6 @@ private:
     static gboolean keyPressEventCallback(GtkWidget*, GdkEventKey*, WebPopupMenuProxyGtk*);
     static void menuUnmappedCallback(GtkWidget*, WebPopupMenuProxyGtk*);
 
-    GtkWidget* m_webView { nullptr };
     GtkWidget* m_popup { nullptr };
 
     RunLoop::Timer<WebPopupMenuProxyGtk> m_dismissMenuTimer;
