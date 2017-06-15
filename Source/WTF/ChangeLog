@@ -1,3 +1,15 @@
+2017-06-15  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Implement FALLTHROUGH macro for compilers other than Clang
+        https://bugs.webkit.org/show_bug.cgi?id=173385
+
+        Reviewed by Alex Christensen.
+
+        FALLTHROUGH should be able to use [[gnu::fallthrough]] attribute of
+        GCC, and [[fallthrough]] from C++17, whichever is available.
+
+        * wtf/Compiler.h:
+
 2017-06-14  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         MediaSource duration attribute should not be equal to Infinity when set to a value greater than 2^64
