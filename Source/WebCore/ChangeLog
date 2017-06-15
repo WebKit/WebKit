@@ -1,3 +1,27 @@
+2017-06-14  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline media/modern-media-controls/media-documents
+        https://bugs.webkit.org/show_bug.cgi?id=173394
+
+        Reviewed by Dean Jackson.
+
+        We found two issues related to media documents while rebaselining the dedicated tests.
+
+        First, we needed to expose the --inline-controls-bar-height CSS variable to <video>
+        elements in media documents that are actually showing an audio UI. Previously we would
+        only expose the variable to <audio> elements.
+
+        Also, due to webkit.org/b/173387, we would fail to identify certain media documents as
+        video because the videoTracks weren't set yet when the "loadedmetadata" event would be
+        triggered. So now we also look at the videoWidth and videoHeight properties, which should
+        provide accurate information in the "loadedmetadata" event handler.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (:host(audio), :host(video.media-document.audio), *):
+        (:host(audio), *): Deleted.
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.get isAudio):
+
 2017-06-14  Zalan Bujtas  <zalan@apple.com>
 
         animations-paused-in-background-page.html and animated-svg-image-removed-from-document-paused.html fail after r218284

@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS video.paused is false
 
 Clicking on video controls
-PASS video.paused is false
+PASS video.paused became false
 
 PASS successfullyParsed is true
 

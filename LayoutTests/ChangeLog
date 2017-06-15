@@ -1,3 +1,17 @@
+2017-06-14  Antoine Quint  <graouts@apple.com>
+
+        Rebaseline media/modern-media-controls/media-documents
+        https://bugs.webkit.org/show_bug.cgi?id=173394
+
+        Reviewed by Dean Jackson.
+
+        * media/modern-media-controls/media-documents/click-on-video-should-not-pause-expected.txt:
+        * media/modern-media-controls/media-documents/click-on-video-should-not-pause.html:
+        * media/modern-media-controls/media-documents/media-document-audio-mac-sizing-expected.txt:
+        * media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-06-14  Dean Jackson  <dino@apple.com>
 
         Restrict filtered painting across cross-origin boundaries with transforms

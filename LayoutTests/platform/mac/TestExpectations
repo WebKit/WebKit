@@ -1562,6 +1562,7 @@ media/modern-media-controls/layout-item [ Pass ]
 media/modern-media-controls/layout-node [ Pass ]
 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html [ Pass ]
 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass ]
+media/modern-media-controls/media-documents [ Pass ]
 media/modern-media-controls/mute-button [ Pass ]
 media/modern-media-controls/mute-support [ Pass ]
 media/modern-media-controls/pip-button [ Pass ]
@@ -1584,6 +1585,9 @@ media/modern-media-controls/volume-up-support [ Pass ]
 # These tests are iOS-specific
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
+media/modern-media-controls/media-documents/ipad [ Skip ]
+media/modern-media-controls/media-documents/media-document-audio-ios-sizing.html [ Skip ]
+media/modern-media-controls/media-documents/media-document-video-ios-sizing.html [ Skip ]
 
 # These tests use Picture-in-Picture which isn't supported on El Capitan.
 [ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]

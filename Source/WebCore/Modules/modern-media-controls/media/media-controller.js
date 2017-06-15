@@ -71,6 +71,9 @@ class MediaController
         if (this.media.readyState < HTMLMediaElement.HAVE_METADATA)
             return false;
 
+        if (this.media.videoWidth || this.media.videoHeight)
+            return false;
+
         return !this.media.videoTracks.length;
     }
 

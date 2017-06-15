@@ -44,7 +44,7 @@
     --secondary-glyph-color: rgba(255, 255, 255, 0.55);
 }
 
-:host(audio), * {
+:host(audio), :host(video.media-document.audio), * {
     /* This constant needs to stay in sync with the BottomControlsBarHeight JS constant. */
     --inline-controls-bar-height: 31px;
 }

@@ -30,15 +30,15 @@ let video;
         const bounds = video.getBoundingClientRect();
         debug("");
         debug("Clicking on video controls");
-        window.eventSender.mouseMoveTo(bounds.left + 5, bounds.bottom - 5);
+        window.eventSender.mouseMoveTo(bounds.left + 1, bounds.bottom - 1);
         window.eventSender.mouseDown();
         window.eventSender.mouseUp();
 
-        shouldBeFalse("video.paused");
-
-        debug("");
-        iframe.remove();
-        finishJSTest();
+        shouldBecomeEqual("video.paused", "false", () => {
+            debug("");
+            iframe.remove();
+            finishJSTest();
+        });
     }
 
 })();
