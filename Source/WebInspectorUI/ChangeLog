@@ -1,3 +1,29 @@
+2017-06-14  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Pretty print / type info / code coverage buttons disappear after switching tabs
+        https://bugs.webkit.org/show_bug.cgi?id=162515
+        <rdar://problem/28455322>
+
+        Reviewed by Joseph Pecoraro.
+
+        Each ContentView owns a list of NavigationItems. When the ContentView moves across
+        Tabs (ContentBrowsers) it removes its NavigationItems from the old Tab's NavigationBar
+        and adds them to the new Tab's NavigationBar. When switching back to the original tab
+        the ContentView is restored, but its NavigationItems are not carried back.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WebInspector.ContentBrowser.prototype._updateContentViewNavigationItems):
+        Add a forceUpdate parameter that is needed when navigationItems are unchanged but navigationBar is
+        different.
+
+        (WebInspector.ContentBrowser.prototype._removeAllNavigationItems):
+        Remove navigation items even when their navigationBar is no longer a current navigationBar,
+        e.g. a navigationBar of the previous tab.
+
+        (WebInspector.ContentBrowser.prototype._contentViewNavigationItemsDidChange):
+        * UserInterface/Views/ContentViewContainer.js:
+        (WebInspector.ContentViewContainer.prototype._takeOwnershipOfContentView):
+
 2017-06-14  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: REGRESSION: SVG files and favicon don't display properly

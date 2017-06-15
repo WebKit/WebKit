@@ -349,6 +349,9 @@ WebInspector.ContentViewContainer = class ContentViewContainer extends WebInspec
         contentView._parentContainer = this;
 
         this._clearTombstonesForContentView(contentView);
+
+        // These contentView navigation items need to move to the new content browser.
+        contentView.dispatchEventToListeners(WebInspector.ContentView.Event.NavigationItemsDidChange);
     }
 
     _placeTombstonesForContentView(contentView)

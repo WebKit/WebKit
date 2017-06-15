@@ -367,20 +367,27 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         this._forwardNavigationItem.enabled = this.canGoForward();
     }
 
-    _updateContentViewNavigationItems()
+    _updateContentViewNavigationItems(forceUpdate)
     {
-        var currentContentView = this.currentContentView;
+        let currentContentView = this.currentContentView;
         if (!currentContentView) {
             this._removeAllNavigationItems();
             this._currentContentViewNavigationItems = [];
             return;
         }
 
-        let previousItems = this._currentContentViewNavigationItems.filter((item) => !(item instanceof WebInspector.DividerNavigationItem));
-        let isUnchanged = Array.shallowEqual(previousItems, currentContentView.navigationItems);
-
-        if (isUnchanged)
+        // If the ContentView is a tombstone within our ContentViewContainer, don't steal its navigationItems.
+        // Only the owning ContentBrowser should have the navigationItems.
+        if (currentContentView.parentContainer !== this._contentViewContainer)
             return;
+
+        if (!forceUpdate) {
+            let previousItems = this._currentContentViewNavigationItems.filter((item) => !(item instanceof WebInspector.DividerNavigationItem));
+            let isUnchanged = Array.shallowEqual(previousItems, currentContentView.navigationItems);
+
+            if (isUnchanged)
+                return;
+        }
 
         this._removeAllNavigationItems();
 
@@ -410,8 +417,10 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
 
     _removeAllNavigationItems()
     {
-        for (let navigationItem of this._currentContentViewNavigationItems)
-            this.navigationBar.removeNavigationItem(navigationItem);
+        for (let navigationItem of this._currentContentViewNavigationItems) {
+            if (navigationItem.parentNavigationBar)
+                navigationItem.parentNavigationBar.removeNavigationItem(navigationItem);
+        }
     }
 
     _updateFindBanner(currentContentView)
@@ -487,7 +496,8 @@ WebInspector.ContentBrowser = class ContentBrowser extends WebInspector.View
         if (event.target !== this.currentContentView)
             return;
 
-        this._updateContentViewNavigationItems();
+        const forceUpdate = true;
+        this._updateContentViewNavigationItems(forceUpdate);
         this._navigationBar.needsLayout();
     }
 
