@@ -24,6 +24,8 @@
 #include "APIDictionary.h"
 #include "ImageOptions.h"
 #include "InjectedBundle.h"
+#include "WKBundleAPICast.h"
+#include "WKBundleFrame.h"
 #include "WebContextMenuItem.h"
 #include "WebImage.h"
 #include "WebKitConsoleMessagePrivate.h"
@@ -205,108 +207,101 @@ private:
     WebKitWebPage* m_webPage;
 };
 
+static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool /* pageLoadIsProvisional */, const void*)
+{
+    API::Dictionary::MapType message;
+    message.set(String::fromUTF8("Page"), toImpl(page));
+    message.set(String::fromUTF8("Frame"), toImpl(frame));
+    message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
+    message.set(String::fromUTF8("Request"), toImpl(request));
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidInitiateLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
+}
 
-class PageResourceLoadClient final : public API::InjectedBundle::ResourceLoadClient {
-public:
-    explicit PageResourceLoadClient(WebKitWebPage* webPage)
-        : m_webPage(webPage)
-    {
+static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
+{
+    GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(wkRequest)->resourceRequest()));
+    const ResourceResponse& redirectResourceResponse = toImpl(wkRedirectResponse)->resourceResponse();
+    GRefPtr<WebKitURIResponse> redirectResponse = !redirectResourceResponse.isNull() ? adoptGRef(webkitURIResponseCreateForResourceResponse(redirectResourceResponse)) : nullptr;
+
+    gboolean returnValue;
+    g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[SEND_REQUEST], 0, request.get(), redirectResponse.get(), &returnValue);
+    if (returnValue)
+        return 0;
+
+    ResourceRequest resourceRequest;
+    webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
+    resourceRequest.setInitiatingPageID(toImpl(page)->pageID());
+    Ref<API::URLRequest> newRequest = API::URLRequest::create(resourceRequest);
+
+    API::Dictionary::MapType message;
+    message.set(String::fromUTF8("Page"), toImpl(page));
+    message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
+    message.set(String::fromUTF8("Request"), newRequest.ptr());
+    if (!redirectResourceResponse.isNull())
+        message.set(String::fromUTF8("RedirectResponse"), toImpl(wkRedirectResponse));
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), API::Dictionary::create(WTFMove(message)).ptr());
+
+    return toAPI(&newRequest.leakRef());
+}
+
+static void didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response, const void* clientInfo)
+{
+    API::Dictionary::MapType message;
+    message.set(String::fromUTF8("Page"), toImpl(page));
+    message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
+    message.set(String::fromUTF8("Response"), toImpl(response));
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveResponseForResource"), API::Dictionary::create(WTFMove(message)).ptr());
+
+    // Post on the console as well to be consistent with the inspector.
+    const ResourceResponse& resourceResponse = toImpl(response)->resourceResponse();
+    if (resourceResponse.httpStatusCode() >= 400) {
+        StringBuilder errorMessage;
+        errorMessage.appendLiteral("Failed to load resource: the server responded with a status of ");
+        errorMessage.appendNumber(resourceResponse.httpStatusCode());
+        errorMessage.appendLiteral(" (");
+        errorMessage.append(resourceResponse.httpStatusText());
+        errorMessage.append(')');
+        webkitWebPageDidSendConsoleMessage(WEBKIT_WEB_PAGE(clientInfo), MessageSource::Network, MessageLevel::Error, errorMessage.toString(), 0, resourceResponse.url().string());
     }
+}
 
-private:
-    void didInitiateLoadForResource(WebPage& page, WebFrame& frame, uint64_t identifier, const ResourceRequest& request, bool) override
-    {
-        API::Dictionary::MapType message;
-        message.set(String::fromUTF8("Page"), &page);
-        message.set(String::fromUTF8("Frame"), &frame);
-        message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-        message.set(String::fromUTF8("Request"), API::URLRequest::create(request));
-        WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidInitiateLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
-    }
+static void didReceiveContentLengthForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, uint64_t length, const void*)
+{
+    API::Dictionary::MapType message;
+    message.set(String::fromUTF8("Page"), toImpl(page));
+    message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
+    message.set(String::fromUTF8("ContentLength"), API::UInt64::create(length));
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveContentLengthForResource"), API::Dictionary::create(WTFMove(message)).ptr());
+}
 
-    void willSendRequestForFrame(WebPage& page, WebFrame&, uint64_t identifier, ResourceRequest& resourceRequest, const ResourceResponse& redirectResourceResponse) override
-    {
-        GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(resourceRequest));
-        GRefPtr<WebKitURIResponse> redirectResponse = !redirectResourceResponse.isNull() ? adoptGRef(webkitURIResponseCreateForResourceResponse(redirectResourceResponse)) : nullptr;
+static void didFinishLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, const void*)
+{
+    API::Dictionary::MapType message;
+    message.set(String::fromUTF8("Page"), toImpl(page));
+    message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFinishLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
+}
 
-        gboolean returnValue;
-        g_signal_emit(m_webPage, signals[SEND_REQUEST], 0, request.get(), redirectResponse.get(), &returnValue);
-        if (returnValue) {
-            resourceRequest = { };
-            return;
+static void didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKErrorRef error, const void* clientInfo)
+{
+    API::Dictionary::MapType message;
+    message.set(String::fromUTF8("Page"), toImpl(page));
+    message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
+    message.set(String::fromUTF8("Error"), toImpl(error));
+    WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
+
+    // Post on the console as well to be consistent with the inspector.
+    const ResourceError& resourceError = toImpl(error)->platformError();
+    if (!resourceError.isCancellation()) {
+        StringBuilder errorMessage;
+        errorMessage.appendLiteral("Failed to load resource");
+        if (!resourceError.localizedDescription().isEmpty()) {
+            errorMessage.appendLiteral(": ");
+            errorMessage.append(resourceError.localizedDescription());
         }
-
-        webkitURIRequestGetResourceRequest(request.get(), resourceRequest);
-        resourceRequest.setInitiatingPageID(page.pageID());
-
-        API::Dictionary::MapType message;
-        message.set(String::fromUTF8("Page"), &page);
-        message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-        message.set(String::fromUTF8("Request"), API::URLRequest::create(resourceRequest));
-        if (!redirectResourceResponse.isNull())
-            message.set(String::fromUTF8("RedirectResponse"), API::URLResponse::create(redirectResourceResponse));
-        WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), API::Dictionary::create(WTFMove(message)).ptr());
+        webkitWebPageDidSendConsoleMessage(WEBKIT_WEB_PAGE(clientInfo), MessageSource::Network, MessageLevel::Error, errorMessage.toString(), 0, resourceError.failingURL());
     }
-
-    void didReceiveResponseForResource(WebPage& page, WebFrame&, uint64_t identifier, const ResourceResponse& response) override
-    {
-        API::Dictionary::MapType message;
-        message.set(String::fromUTF8("Page"), &page);
-        message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-        message.set(String::fromUTF8("Response"), API::URLResponse::create(response));
-        WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveResponseForResource"), API::Dictionary::create(WTFMove(message)).ptr());
-
-        // Post on the console as well to be consistent with the inspector.
-        if (response.httpStatusCode() >= 400) {
-            StringBuilder errorMessage;
-            errorMessage.appendLiteral("Failed to load resource: the server responded with a status of ");
-            errorMessage.appendNumber(response.httpStatusCode());
-            errorMessage.appendLiteral(" (");
-            errorMessage.append(response.httpStatusText());
-            errorMessage.append(')');
-            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage.toString(), 0, response.url().string());
-        }
-    }
-
-    void didReceiveContentLengthForResource(WebPage& page, WebFrame&, uint64_t identifier, uint64_t contentLength) override
-    {
-        API::Dictionary::MapType message;
-        message.set(String::fromUTF8("Page"), &page);
-        message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-        message.set(String::fromUTF8("ContentLength"), API::UInt64::create(contentLength));
-        WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidReceiveContentLengthForResource"), API::Dictionary::create(WTFMove(message)).ptr());
-    }
-
-    void didFinishLoadForResource(WebPage& page, WebFrame&, uint64_t identifier) override
-    {
-        API::Dictionary::MapType message;
-        message.set(String::fromUTF8("Page"), &page);
-        message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-        WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFinishLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
-    }
-
-    void didFailLoadForResource(WebPage& page, WebFrame&, uint64_t identifier, const ResourceError& error) override
-    {
-        API::Dictionary::MapType message;
-        message.set(String::fromUTF8("Page"), &page);
-        message.set(String::fromUTF8("Identifier"), API::UInt64::create(identifier));
-        message.set(String::fromUTF8("Error"), API::Error::create(error));
-        WebProcess::singleton().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidFailLoadForResource"), API::Dictionary::create(WTFMove(message)).ptr());
-
-        // Post on the console as well to be consistent with the inspector.
-        if (!error.isCancellation()) {
-            StringBuilder errorMessage;
-            errorMessage.appendLiteral("Failed to load resource");
-            if (!error.localizedDescription().isEmpty()) {
-                errorMessage.appendLiteral(": ");
-                errorMessage.append(error.localizedDescription());
-            }
-            webkitWebPageDidSendConsoleMessage(m_webPage, MessageSource::Network, MessageLevel::Error, errorMessage.toString(), 0, error.failingURL());
-        }
-    }
-
-    WebKitWebPage* m_webPage;
-};
+}
 
 class PageContextMenuClient final : public API::InjectedBundle::PageContextMenuClient {
 public:
@@ -547,7 +542,22 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     WebKitWebPage* page = WEBKIT_WEB_PAGE(g_object_new(WEBKIT_TYPE_WEB_PAGE, NULL));
     page->priv->webPage = webPage;
 
-    webPage->setInjectedBundleResourceLoadClient(std::make_unique<PageResourceLoadClient>(page));
+    WKBundlePageResourceLoadClientV1 resourceLoadClient = {
+        {
+            1, // version
+            page, // clientInfo
+        },
+        didInitiateLoadForResource,
+        willSendRequestForFrame,
+        didReceiveResponseForResource,
+        didReceiveContentLengthForResource,
+        didFinishLoadForResource,
+        didFailLoadForResource,
+        0, // shouldCacheResponse
+        0 // shouldUseCredentialStorage
+    };
+    WKBundlePageSetResourceLoadClient(toAPI(webPage), &resourceLoadClient.base);
+
     webPage->setInjectedBundlePageLoaderClient(std::make_unique<PageLoaderClient>(page));
     webPage->setInjectedBundleContextMenuClient(std::make_unique<PageContextMenuClient>(page));
     webPage->setInjectedBundleUIClient(std::make_unique<PageUIClient>(page));
