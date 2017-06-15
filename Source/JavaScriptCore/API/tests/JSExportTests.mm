@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -80,6 +80,28 @@ extern "C" void checkResult(NSString *description, bool passed);
 }
 @end
 
+@interface NoUnderscorePrefix : NSObject
+@end
+
+@implementation NoUnderscorePrefix
+@end
+
+@interface _UnderscorePrefixNoExport : NoUnderscorePrefix
+@end
+
+@implementation _UnderscorePrefixNoExport
+@end
+
+@protocol Initializing <JSExport>
+- (instancetype)init;
+@end
+
+@interface _UnderscorePrefixWithExport : NoUnderscorePrefix <Initializing>
+@end
+
+@implementation _UnderscorePrefixWithExport
+@end
+
 @implementation JSExportTests
 + (void) exportInstanceMethodWithIdProtocolTest
 {
@@ -123,6 +145,21 @@ extern "C" void checkResult(NSString *description, bool passed);
     JSValue *value = [context evaluateScript:@"myString.boolValue()"];
     checkResult(@"Dynamically generated JSExport-ed protocols are ignored", [value isUndefined] && !!context.exception);
 }
+
++ (void)classNamePrefixedWithUnderscoreTest
+{
+    JSContext *context = [[JSContext alloc] init];
+
+    context[@"_UnderscorePrefixNoExport"] = [_UnderscorePrefixNoExport class];
+    context[@"_UnderscorePrefixWithExport"] = [_UnderscorePrefixWithExport class];
+
+    checkResult(@"Non-underscore-prefixed ancestor class used when there are no exports", [context[@"_UnderscorePrefixNoExport"] toObject] == [NoUnderscorePrefix class]);
+    checkResult(@"Underscore-prefixed class used when there are exports", [context[@"_UnderscorePrefixWithExport"] toObject] == [_UnderscorePrefixWithExport class]);
+
+    JSValue *withExportInstance = [context evaluateScript:@"new _UnderscorePrefixWithExport()"];
+    checkResult(@"Exports present on underscore-prefixed class", !context.exception && !withExportInstance.isUndefined);
+}
+
 @end
 
 @protocol AJSExport <JSExport>
@@ -171,6 +208,7 @@ void runJSExportTests()
         [JSExportTests exportInstanceMethodWithIdProtocolTest];
         [JSExportTests exportInstanceMethodWithClassProtocolTest];
         [JSExportTests exportDynamicallyGeneratedProtocolTest];
+        [JSExportTests classNamePrefixedWithUnderscoreTest];
     }
     wrapperLifetimeIsTiedToGlobalObject();
     wrapperForNSObjectisObject();

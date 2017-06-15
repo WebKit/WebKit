@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2015, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -412,7 +412,7 @@ static JSC::JSObject* allocateConstructorForCustomClass(JSContext *context, cons
     __block HashMap<String, Protocol *> initTable;
     Protocol *exportProtocol = getJSExportProtocol();
     for (Class currentClass = cls; currentClass; currentClass = class_getSuperclass(currentClass)) {
-        forEachProtocolImplementingProtocol(currentClass, exportProtocol, ^(Protocol *protocol) {
+        forEachProtocolImplementingProtocol(currentClass, exportProtocol, ^(Protocol *protocol, bool&) {
             forEachMethodInProtocol(protocol, YES, YES, ^(SEL selector, const char*) {
                 const char* name = sel_getName(selector);
                 if (!isInitFamilyMethod(@(name)))
@@ -490,7 +490,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         putNonEnumerable(constructor, @"prototype", prototype);
 
         Protocol *exportProtocol = getJSExportProtocol();
-        forEachProtocolImplementingProtocol(m_class, exportProtocol, ^(Protocol *protocol){
+        forEachProtocolImplementingProtocol(m_class, exportProtocol, ^(Protocol *protocol, bool&){
             copyPrototypeProperties(context, m_class, protocol, prototype);
             copyMethodsToObject(context, m_class, protocol, NO, constructor);
         });
@@ -587,8 +587,16 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
         return classInfo;
 
     // Skip internal classes beginning with '_' - just copy link to the parent class's info.
-    if ('_' == *class_getName(cls))
-        return m_classMap[cls] = [self classInfoForClass:class_getSuperclass(cls)];
+    if ('_' == *class_getName(cls)) {
+        bool conformsToExportProtocol = false;
+        forEachProtocolImplementingProtocol(cls, getJSExportProtocol(), [&conformsToExportProtocol](Protocol *, bool& stop) {
+            conformsToExportProtocol = true;
+            stop = true;
+        });
+
+        if (!conformsToExportProtocol)
+            return m_classMap[cls] = [self classInfoForClass:class_getSuperclass(cls)];
+    }
 
     return m_classMap[cls] = [[[JSObjCClassInfo alloc] initForClass:cls] autorelease];
 }

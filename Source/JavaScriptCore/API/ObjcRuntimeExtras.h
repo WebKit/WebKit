@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ inline bool protocolImplementsProtocol(Protocol *candidate, Protocol *target)
     return false;
 }
 
-inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, void (^callback)(Protocol *))
+inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, void (^callback)(Protocol *, bool& stop))
 {
     ASSERT(cls);
     ASSERT(target);
@@ -56,6 +56,7 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
     worklist.append(protocols, protocolsCount);
     free(protocols);
 
+    bool stop = false;
     while (!worklist.isEmpty()) {
         Protocol *protocol = worklist.last();
         worklist.removeLast();
@@ -65,8 +66,11 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
             continue;
 
         // If it implements the protocol, make the callback.
-        if (protocolImplementsProtocol(protocol, target))
-            callback(protocol);
+        if (protocolImplementsProtocol(protocol, target)) {
+            callback(protocol, stop);
+            if (stop)
+                break;
+        }
 
         // Add incorporated protocols to the worklist.
         protocols = protocol_copyProtocolList(protocol, &protocolsCount);

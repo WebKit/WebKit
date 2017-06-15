@@ -1,3 +1,25 @@
+2017-06-14  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Objective-C class whose name begins with an underscore can’t be exported to JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=168578
+
+        Reviewed by Geoff Garen.
+
+        * API/JSWrapperMap.mm:
+        (allocateConstructorForCustomClass): Updated for change to forEachProtocolImplementingProtocol.
+        (-[JSObjCClassInfo allocateConstructorAndPrototype]): Ditto.
+        (-[JSWrapperMap classInfoForClass:]): If the class name begins with an underscore, check if
+          it defines conformance to a JSExport-derived protocol and if so, avoid using the
+          superclass as a substitute as we’d normally do.
+
+        * API/ObjcRuntimeExtras.h:
+        (forEachProtocolImplementingProtocol): Added a "stop" argument to the block to let callers
+          bail out.
+
+        * API/tests/JSExportTests.mm:
+        (+[JSExportTests classNamePrefixedWithUnderscoreTest]): New test for this.
+        (runJSExportTests): Run new test.
+
 2017-06-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, suppress invalid register alloation validation assertion in 32 bit part 2
