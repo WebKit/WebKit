@@ -648,18 +648,20 @@ webrtc/video-addTrack.html [ Crash ]
 webrtc/closing-peerconnection.html [ Timeout ]
 webrtc/peer-connection-audio-unmute.html [ Failure ]
 webrtc/video-unmute.html [ Failure ]
-webrtc/video-rotation.html [ Timeout ]
+webrtc/video-rotation.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createDataChannel.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setRemoteDescription.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createAnswer.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Failure ]
 http/tests/media/media-stream/getusermedia-with-canvas.html [ Timeout ]
-webkit.org/b/169110 webrtc/audio-peer-connection-webaudio.html [ Timeout ]
+webkit.org/b/169110 webrtc/audio-peer-connection-webaudio.html [ Failure Timeout ]
 # The MediaStream implementation is also still not completed
 webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/getUserMedia-webaudio.html [ Failure ]
@@ -1772,8 +1774,6 @@ webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure Pass ]
 
 webkit.org/b/131545 media/media-event-listeners.html [ Failure Pass ]
 
-webkit.org/b/143702 media/progress-events-generated-correctly.html [ Timeout Crash ]
-
 webkit.org/b/139364 inspector/debugger/setBreakpoint-dfg.html [ Failure Pass Timeout ]
 webkit.org/b/143876 css3/viewport-percentage-lengths/vh-resize.html [ ImageOnlyFailure Pass ]
 
@@ -1927,6 +1927,11 @@ webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Time
 webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/164833 inspector/worker/debugger-pause.html [ Pass Failure Timeout ]
+
+webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Pass Failure ]
+
+webkit.org/b/168373 media/video-multiple-concurrent-playback.html [ Failure Crash ]
+webkit.org/b/168373 media/video-seek-past-end-paused.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2205,7 +2210,7 @@ webkit.org/b/153944 plugins/get-url-notify-with-url-that-fails-to-load.html [ Ti
 
 webkit.org/b/153946 imported/w3c/web-platform-tests/dom/ranges/Range-mutations.html [ Timeout Pass ]
 
-webkit.org/b/153949 media/media-volume-slider-rendered-normal.html [ Timeout Pass ]
+webkit.org/b/153949 media/media-volume-slider-rendered-normal.html [ Timeout Failure ]
 
 webkit.org/b/156109 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout ]
 webkit.org/b/156109 http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Timeout ]
@@ -2244,7 +2249,6 @@ webkit.org/b/168373 http/tests/media/track-in-band-hls-metadata-crash.html [ Tim
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]
 webkit.org/b/168373 media/media-source/media-source-error-crash.html [ Timeout ]
 webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
-webkit.org/b/168373 media/video-multiple-concurrent-playback.html [ Timeout ]
 
 # Need ~60 seconds to complete.
 webkit.org/b/168568 http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Timeout ]
@@ -3442,6 +3446,17 @@ webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Fail
 webkit.org/b/172813 fast/events/touch/document-create-touch.html [ Failure ]
 
 webkit.org/b/172814 media/restricted-audio-playback-with-multiple-settimeouts.html [ Failure ]
+
+webkit.org/b/173410 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
+
+webkit.org/b/173411 fast/events/touch/frame-hover-update.html [ Failure ]
+
+webkit.org/b/173413 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
+webkit.org/b/173413 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-after-content-change.html [ Failure ]
+
+webkit.org/b/143702 media/progress-events-generated-correctly.html [ Failure ]
+
+webkit.org/b/173413 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
