@@ -1,3 +1,13 @@
+2017-06-15  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] dom storage gardening
+
+        Unreviewed gardening.
+
+        Two dom storage tests marked as failing have been passing always,
+        so remove them.
+        * platform/wpe/TestExpectations:
+
 2017-06-14  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION: trac.webkit.org/export returns Content-Type application/xhtml+xml for .html files
