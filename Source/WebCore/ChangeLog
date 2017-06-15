@@ -1,3 +1,27 @@
+2017-06-14  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Generate a simulated crash when the WebThread starts in MobileSafari
+        <https://webkit.org/b/173386>
+        <rdar://problem/32776426>
+
+        Reviewed by Andy Estes.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files to project.
+        * platform/ios/CrashReporterSupportSoftLink.h: Add.  The using
+        statement is so that we don't have to write
+        WebCore::SimulateCrash() in WebCoreThread.mm since it's
+        functions are not defined inside a WebCore namespace.  I also
+        kept the 'pid' argument despite the style checker warning
+        because it matches the internal method definition.
+        * platform/ios/CrashReporterSupportSoftLink.mm: Add.
+        * platform/ios/wak/WebCoreThread.mm: Sort headers.  Soft link to
+        CrashReporterSupport.framework.
+        (WebThreadEnable): Generate a simulated crash log if the
+        WebThread ever starts in MobileSafari.
+        * platform/spi/ios/CrashReporterSupportSPI.h: Add.  The header
+        isn't safe to include in C++ source, so wrap the import in
+        extern "C" macros.
+
 2017-06-15  Jonathan Bedard  <jbedard@apple.com>
 
         Build WebKit with High Sierra (Seed 1)

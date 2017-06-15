@@ -1912,6 +1912,9 @@
 		44C991860F3D1EBE00586670 /* ScrollbarThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C991850F3D1EBE00586670 /* ScrollbarThemeIOS.h */; };
 		44C9919F0F3D210E00586670 /* ThemeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 44C9919D0F3D210E00586670 /* ThemeIOS.h */; };
 		44C991A00F3D210E00586670 /* ThemeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44C9919E0F3D210E00586670 /* ThemeIOS.mm */; };
+		44CA12961EF23A4F00E4B3AD /* CrashReporterSupportSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 44CA12941EF23A2000E4B3AD /* CrashReporterSupportSoftLink.h */; };
+		44CA12981EF23A6900E4B3AD /* CrashReporterSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44CA12971EF23A6500E4B3AD /* CrashReporterSupportSPI.h */; };
+		44CA129B1EF2D9E800E4B3AD /* CrashReporterSupportSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44CA12951EF23A2000E4B3AD /* CrashReporterSupportSoftLink.mm */; };
 		44DAB5B115A623580097C1E4 /* Extensions3DOpenGLCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */; };
 		44DAB5B215A623580097C1E4 /* Extensions3DOpenGLCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DAB5B015A623580097C1E4 /* Extensions3DOpenGLCommon.h */; };
 		44DEF6431A6FF92700D45EEC /* IOReturnSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 44DEF6421A6FF92700D45EEC /* IOReturnSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9636,6 +9639,9 @@
 		44C991850F3D1EBE00586670 /* ScrollbarThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarThemeIOS.h; sourceTree = "<group>"; };
 		44C9919D0F3D210E00586670 /* ThemeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeIOS.h; sourceTree = "<group>"; };
 		44C9919E0F3D210E00586670 /* ThemeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ThemeIOS.mm; sourceTree = "<group>"; };
+		44CA12941EF23A2000E4B3AD /* CrashReporterSupportSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrashReporterSupportSoftLink.h; sourceTree = "<group>"; };
+		44CA12951EF23A2000E4B3AD /* CrashReporterSupportSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CrashReporterSupportSoftLink.mm; sourceTree = "<group>"; };
+		44CA12971EF23A6500E4B3AD /* CrashReporterSupportSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrashReporterSupportSPI.h; sourceTree = "<group>"; };
 		44D8DA98139545BE00337B75 /* SVGMPathElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGMPathElement.idl; sourceTree = "<group>"; };
 		44D8DA9A139545CD00337B75 /* SVGAnimateMotionElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGAnimateMotionElement.idl; sourceTree = "<group>"; };
 		44DAB5AF15A623580097C1E4 /* Extensions3DOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Extensions3DOpenGLCommon.cpp; sourceTree = "<group>"; };
@@ -21087,6 +21093,7 @@
 			isa = PBXGroup;
 			children = (
 				CE1252421A16C01A00864480 /* CoreUISPI.h */,
+				44CA12971EF23A6500E4B3AD /* CrashReporterSupportSPI.h */,
 				2DC4CF781D2DD98900ECCC94 /* DataDetectorsUISPI.h */,
 				CEC337AE1A46086D009B8523 /* GraphicsServicesSPI.h */,
 				7C4C96E21AD44ABF00365A50 /* LaunchServicesSPI.h */,
@@ -21122,6 +21129,8 @@
 			children = (
 				A148328B187F506800DA63A6 /* wak */,
 				F48223121E386E240066FC79 /* AbstractPasteboard.h */,
+				44CA12941EF23A2000E4B3AD /* CrashReporterSupportSoftLink.h */,
+				44CA12951EF23A2000E4B3AD /* CrashReporterSupportSoftLink.mm */,
 				2655414B1489AA2B000DFC5D /* CursorIOS.cpp */,
 				A1ED778A1BE3293F00DC1791 /* Device.cpp */,
 				A1ED778B1BE3294000DC1791 /* Device.h */,
@@ -26856,6 +26865,8 @@
 				BC5EB9510E82056B00B25965 /* CounterDirectives.h in Headers */,
 				9392F14C0AD1861B00691BD4 /* CounterNode.h in Headers */,
 				46C696CB1E7205F700597937 /* CPUMonitor.h in Headers */,
+				44CA12961EF23A4F00E4B3AD /* CrashReporterSupportSoftLink.h in Headers */,
+				44CA12981EF23A6900E4B3AD /* CrashReporterSupportSPI.h in Headers */,
 				D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */,
 				514C766E0CE923A1007EF3CD /* Credential.h in Headers */,
 				3792917A1985EF3900F4B661 /* CredentialBase.h in Headers */,
@@ -30940,6 +30951,7 @@
 				BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */,
 				9392F1500AD1862300691BD4 /* CounterNode.cpp in Sources */,
 				46C696CC1E7205FC00597937 /* CPUMonitor.cpp in Sources */,
+				44CA129B1EF2D9E800E4B3AD /* CrashReporterSupportSoftLink.mm in Sources */,
 				D0B0556909C6700100307E43 /* CreateLinkCommand.cpp in Sources */,
 				514C766D0CE923A1007EF3CD /* CredentialBase.cpp in Sources */,
 				3792917D1987678F00F4B661 /* CredentialCocoa.mm in Sources */,
