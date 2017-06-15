@@ -38,7 +38,7 @@ fast/css/variables/constants/ios [ Skip ]
 http/tests/preload/viewport [ Skip ]
 
 # window.showModalDialog is only tested in DumpRenderTree on Mac.
-[ Debug ] editing/execCommand/show-modal-dialog-during-execCommand.html [ Skip ]
+editing/execCommand/show-modal-dialog-during-execCommand.html [ Skip ]
 
 fast/shadow-dom/touch-event-on-text-assigned-to-slot.html [ Skip ]
 

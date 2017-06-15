@@ -1,3 +1,16 @@
+2017-06-15  Matt Lewis  <jlewis3@apple.com>
+
+        REGRESSION (r218228): Layout Test editing/execCommand/strikethrough-uses-strike-tag.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=173375
+
+        Unreviewed test gardening.
+
+        Reverted an incorrect baseline and skipped a test causing test failures.
+
+        * TestExpectations:
+        * platform/mac-wk1/editing/execCommand/strikethrough-uses-strike-tag-expected.txt: Removed.
+        * platform/win/editing/execCommand/strikethrough-uses-strike-tag-expected.txt: Removed.
+
 2017-06-15  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection returns RTCSessionDescription where RTCSessionDescriptionInit would be appropriate
