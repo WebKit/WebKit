@@ -38,7 +38,6 @@
 }
 
 .content-view.resource.image img {
-    min-width: 0;
     max-width: 100%;
 
     -webkit-user-select: text;

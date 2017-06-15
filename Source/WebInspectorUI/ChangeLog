@@ -1,3 +1,15 @@
+2017-06-14  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION: SVG files and favicon don't display properly
+        https://bugs.webkit.org/show_bug.cgi?id=173389
+        <rdar://problem/32774281>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ImageResourceContentView.css:
+        (.content-view.resource.image img):
+        Don't set a `min-width` as it has odd interactions with flexbox.
+
 2017-06-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Console: Message icons overlay source location
