@@ -91,10 +91,7 @@ void ScriptedAnimationController::resume()
 
 void ScriptedAnimationController::logSuspendCount()
 {
-#if defined NDEBUG
-    if (!m_document || !m_document->frame() || !m_document->frame()->settings().shouldLogScritedAnimationControllerSuspensionChange())
-        return;
-
+#if !defined(NDEBUG)
     WTFLogAlways("ScriptedAnimationController::m_suspendCount = %d", m_suspendCount);
     WTFReportBacktrace();
 #endif

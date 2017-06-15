@@ -96,9 +96,6 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     [MayThrowException] boolean deferredCSSParserEnabled();
     [MayThrowException] void setDeferredCSSParserEnabled(boolean enabled);
 
-    boolean shouldLogScritedAnimationControllerSuspensionChange();
-    void setShouldLogScritedAnimationControllerSuspensionChange(boolean shouldLogScritedAnimationControllerSuspensionChange);
-
     [MayThrowException] void setShouldMockBoldSystemFontForAccessibility(boolean shouldMock);
 
     attribute ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue;

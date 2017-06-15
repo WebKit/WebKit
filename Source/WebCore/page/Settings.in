@@ -277,8 +277,6 @@ visualViewportEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 
 inputEventsEnabled initial=true
 
-shouldLogScritedAnimationControllerSuspensionChange initial=true
-
 quickTimePluginReplacementEnabled initial=defaultQuickTimePluginReplacementEnabled
 youTubeFlashPluginReplacementEnabled initial=defaultYouTubeFlashPluginReplacementEnabled
 
