@@ -17,11 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebGtkExtensionManager_h
-#define WebGtkExtensionManager_h
+#pragma once
 
 #include "Module.h"
-#include "WKBundle.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -29,19 +27,21 @@
 
 typedef struct _WebKitWebExtension WebKitWebExtension;
 
-namespace WTF {
-class String;
+namespace API {
+class Object;
 }
 
 namespace WebKit {
+
+class InjectedBundle;
 
 class WebGtkExtensionManager {
     WTF_MAKE_NONCOPYABLE(WebGtkExtensionManager);
 
 public:
-    WK_EXPORT static WebGtkExtensionManager& singleton();
+    static WebGtkExtensionManager& singleton();
 
-    WK_EXPORT void initialize(WKBundleRef, WKTypeRef);
+    void initialize(InjectedBundle*, API::Object*);
 
 private:
     WebGtkExtensionManager();
@@ -56,5 +56,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebGtkExtensionManager_h

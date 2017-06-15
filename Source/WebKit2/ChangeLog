@@ -1,3 +1,19 @@
+2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Do not use the C API in WebGtkExtensionManager
+        https://bugs.webkit.org/show_bug.cgi?id=173408
+
+        Reviewed by Michael Catanzaro.
+
+        Use the C++ API instead.
+
+        * WebProcess/gtk/WebGtkExtensionManager.cpp:
+        (WebKit::parseUserData):
+        (WebKit::WebGtkExtensionManager::initialize):
+        * WebProcess/gtk/WebGtkExtensionManager.h:
+        * WebProcess/gtk/WebGtkInjectedBundleMain.cpp:
+        (WKBundleInitialize):
+
 2017-06-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Stop using GtkAction in WebPopupMenuProxyGtk

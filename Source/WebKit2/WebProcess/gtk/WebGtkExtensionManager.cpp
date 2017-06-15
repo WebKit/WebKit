@@ -20,11 +20,8 @@
 #include "config.h"
 #include "WebGtkExtensionManager.h"
 
+#include "APIString.h"
 #include "InjectedBundle.h"
-#include "WKBundleAPICast.h"
-#include "WKDictionary.h"
-#include "WKString.h"
-#include "WKType.h"
 #include "WebKitWebExtensionPrivate.h"
 #include <WebCore/FileSystem.h>
 #include <memory>
@@ -51,12 +48,11 @@ void WebGtkExtensionManager::scanModules(const String& webExtensionsDirectory, V
     }
 }
 
-static void parseUserData(WKTypeRef userData, String& webExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
+static void parseUserData(API::Object* userData, String& webExtensionsDirectory, GRefPtr<GVariant>& initializationUserData)
 {
-    ASSERT(userData);
-    ASSERT(WKGetTypeID(userData) == WKStringGetTypeID());
+    ASSERT(userData->type() == API::Object::Type::String);
 
-    CString userDataString = toImpl(static_cast<WKStringRef>(userData))->string().utf8();
+    CString userDataString = static_cast<API::String*>(userData)->string().utf8();
     GRefPtr<GVariant> variant = g_variant_parse(nullptr, userDataString.data(),
         userDataString.data() + userDataString.length(), nullptr, nullptr);
 
@@ -90,13 +86,15 @@ bool WebGtkExtensionManager::initializeWebExtension(Module* extensionModule, GVa
     return false;
 }
 
-void WebGtkExtensionManager::initialize(WKBundleRef bundle, WKTypeRef userDataString)
+void WebGtkExtensionManager::initialize(InjectedBundle* bundle, API::Object* userDataObject)
 {
-    m_extension = adoptGRef(webkitWebExtensionCreate(toImpl(bundle)));
+    ASSERT(bundle);
+    ASSERT(userDataObject);
+    m_extension = adoptGRef(webkitWebExtensionCreate(bundle));
 
     String webExtensionsDirectory;
     GRefPtr<GVariant> userData;
-    parseUserData(userDataString, webExtensionsDirectory, userData);
+    parseUserData(userDataObject, webExtensionsDirectory, userData);
 
     if (webExtensionsDirectory.isNull())
         return;

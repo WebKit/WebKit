@@ -19,7 +19,9 @@
 
 #include "config.h"
 
+#include "InjectedBundle.h"
 #include "WebGtkExtensionManager.h"
+#include <WebKit/WKBundleAPICast.h>
 #include <WebKit/WKBundleInitialize.h>
 
 using namespace WebKit;
@@ -31,5 +33,5 @@ extern "C"
 #endif
 void WKBundleInitialize(WKBundleRef bundle, WKTypeRef userData)
 {
-    WebGtkExtensionManager::singleton().initialize(bundle, userData);
+    WebGtkExtensionManager::singleton().initialize(toImpl(bundle), toImpl(userData));
 }
