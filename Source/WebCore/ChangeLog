@@ -1,3 +1,17 @@
+2017-06-15  David Kilzer  <ddkilzer@apple.com>
+
+        Build fix: [iOS] Generate a simulated crash when the WebThread starts in MobileSafari
+        <https://webkit.org/b/173386>
+        <rdar://problem/32776426>
+
+        * platform/ios/CrashReporterSupportSoftLink.h:
+        * platform/ios/CrashReporterSupportSoftLink.mm:
+        * platform/ios/wak/WebCoreThread.mm:
+        (WebThreadEnable): Log to the console on iOS Simulator.
+        * platform/spi/ios/CrashReporterSupportSPI.h:
+        - CrashReporterSupport.h is not available on iOS Simulator, so
+          restrict to iOS hardware only.
+
 2017-06-15  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r218318.

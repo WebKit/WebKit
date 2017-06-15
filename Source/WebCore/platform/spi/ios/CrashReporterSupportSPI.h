@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 #import <mach/exception_types.h>
 
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+
 #if USE(APPLE_INTERNAL_SDK)
 
 WTF_EXTERN_C_BEGIN
@@ -37,3 +39,5 @@ WTF_EXTERN_C_END
 WTF_EXTERN_C_BEGIN
 BOOL SimulateCrash(pid_t pid, mach_exception_data_type_t exceptionCode, NSString *description);
 WTF_EXTERN_C_END
+
+#endif // PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)

@@ -24,7 +24,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 
 #import "CrashReporterSupportSPI.h"
 #import "SoftLinking.h"
@@ -33,4 +33,4 @@ SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebCore, CrashReporterSupport)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, CrashReporterSupport, SimulateCrash, BOOL, (pid_t pid, mach_exception_data_type_t exceptionCode, NSString *description), (pid, exceptionCode, description));
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)

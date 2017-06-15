@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 
 #import "CrashReporterSupportSPI.h"
 #import "SoftLinking.h"
@@ -34,4 +34,4 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CrashReporterSupport, SimulateCrash, BOOL
 
 using WebCore::softLink_CrashReporterSupport_SimulateCrash;
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)

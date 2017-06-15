@@ -1003,8 +1003,13 @@ void WebThreadSetDelegateSourceRunLoopMode(CFStringRef mode)
 void WebThreadEnable(void)
 {
     if (WebCore::IOSApplication::isMobileSafari()) {
+        NSString *message = @"MobileSafari should never run a WebThread";
+#if !PLATFORM(IOS_SIMULATOR)
         const mach_exception_data_type_t kExceptionCode = 0xbbadd0b1; // "Bad Dub 1" or Bad WK1.
-        SimulateCrash(getpid(), kExceptionCode, @"MobileSafari should never run a WebThread");
+        SimulateCrash(getpid(), kExceptionCode, message);
+#else
+        NSLog(@"ERROR: %@\n%@", message, [NSThread callStackSymbols]);
+#endif
     }
     RELEASE_ASSERT_WITH_MESSAGE(!WebCore::IOSApplication::isWebProcess(), "The WebProcess should never run a WebThread");
 
