@@ -1,5 +1,15 @@
 2017-06-15  Matt Lewis  <jlewis3@apple.com>
 
+        Marked webrtc/datachannel/basic.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=172922
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/wk2/TestExpectations:
+
+2017-06-15  Matt Lewis  <jlewis3@apple.com>
+
         REGRESSION (r218228): Layout Test editing/execCommand/strikethrough-uses-strike-tag.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=173375
 

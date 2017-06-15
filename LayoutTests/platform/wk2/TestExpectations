@@ -717,3 +717,7 @@ webkit.org/b/172452 http/tests/loading/resourceLoadStatistics/grandfathering.htm
 ### (3) Unclassified failures
 ### (4) Features that are not supported in WebKit2 and likely never will be
 ### (5) Progressions, expected successes that are expected failures in WebKit1.
+
+
+webkit.org/b/172922 webrtc/datachannel/basic.html [ Pass Timeout ]
+
