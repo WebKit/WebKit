@@ -519,7 +519,7 @@ WebInspector.TextEditor = class TextEditor extends WebInspector.View
                 return;
 
             // Avoid highlighting the execution line while debugging.
-            if (WebInspector.debuggerManager.paused && (!this._executionLineNumber || line === this._executionLineNumber))
+            if (WebInspector.debuggerManager.paused && line === this._executionLineNumber)
                 return;
 
             this._codeMirror.addLineClass(lineHandle, "wrap", WebInspector.TextEditor.HighlightedStyleClassName);

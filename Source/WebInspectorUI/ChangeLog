@@ -1,5 +1,20 @@
 2017-06-15  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Search highlight doesn't show up in resources when paused
+        https://bugs.webkit.org/show_bug.cgi?id=173438
+        <rdar://problem/32800114>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/TextEditor.js:
+        (WebInspector.TextEditor.prototype.revealPosition.revealAndHighlightLine):
+        Previously we were bailing if executionLineNumber was NaN, which means that when
+        we were paused we were incorrectly disabling highlights in any resource that does
+        not have the active callframe. Relax this and make it match the intended behavior
+        of only disabling highlights if the highlight line matches the execution line.
+
+2017-06-15  Joseph Pecoraro  <pecoraro@apple.com>
+
         Uncaught Exception: TypeError: null is not an object (evaluating 'this.contentBrowser.contentViewForRepresentedObject')
         https://bugs.webkit.org/show_bug.cgi?id=173425
         <rdar://problem/32744172>
