@@ -148,11 +148,12 @@ class Button extends LayoutItem
             this._notifyDelegateOfActivation();
     }
 
-    commit()
+    commitProperty(propertyName)
     {
-        super.commit();
-
-        this.image.element.style.webkitMaskImage = `url(${this._imageSource.src})`;
+        if (propertyName === "maskImage")
+            this.image.element.style.webkitMaskImage = `url(${this._imageSource.src})`;
+        else
+            super.commitProperty(propertyName);
     }
 
     // Private
@@ -188,7 +189,7 @@ class Button extends LayoutItem
 
     _updateImage()
     {
-        this.needsLayout = true;
+        this.markDirtyProperty("maskImage");
 
         this._updateImageMetrics();
     }

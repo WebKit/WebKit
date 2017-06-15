@@ -1,3 +1,21 @@
+2017-06-15  Antoine Quint  <graouts@apple.com>
+
+        Modern media controls tests error in Button.js
+        https://bugs.webkit.org/show_bug.cgi?id=173439
+
+        Reviewed by Dean Jackson.
+
+        Tests would sometime yield an error when commit() would be called and the _imageSource
+        ivar hadn't been set. To more safely commit the mask image when it's loaded, we now use
+        a markDirtyProperty() call and a commitProperty() override to ensure that we cover the
+        case where we want to commit the mask image, and for other commits not to have to worry
+        about the mask image being defined.
+
+        * Modules/modern-media-controls/controls/button.js:
+        (Button.prototype.commitProperty):
+        (Button.prototype._updateImage):
+        (Button.prototype.commit): Deleted.
+
 2017-06-15  Jer Noble  <jer.noble@apple.com>
 
         [WebRTC] Removing a MediaStreamTrack from a MediaStream reports no recording to WebKit clients
