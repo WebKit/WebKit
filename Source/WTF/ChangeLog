@@ -1,3 +1,15 @@
+2017-06-15  Chris Dumez  <cdumez@apple.com>
+
+        Fix typo in XPCSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=173426
+
+        Reviewed by Alex Christensen.
+
+        We should check if xpc_release is defined before defining it,
+        not xpc_retain.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2017-06-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         Implement FALLTHROUGH macro for compilers other than Clang

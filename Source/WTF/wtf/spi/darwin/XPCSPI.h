@@ -152,7 +152,7 @@ xpc_object_t xpc_retain(xpc_object_t);
 #endif
 
 #if OS_OBJECT_USE_OBJC_RETAIN_RELEASE
-#if !defined(xpc_retain)
+#if !defined(xpc_release)
 #define xpc_release(object) ({ xpc_object_t _o = (object); _xpc_object_validate(_o); [_o release]; })
 #endif
 #else
