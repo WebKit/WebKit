@@ -1,3 +1,27 @@
+2017-06-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: TypeError: null is not an object (evaluating 'this.contentBrowser.contentViewForRepresentedObject')
+        https://bugs.webkit.org/show_bug.cgi?id=173425
+        <rdar://problem/32744172>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ContentBrowserTabContentView.js:
+        (WebInspector.ContentBrowserTabContentView.prototype.shown):
+        Reorder slightly so the NavigationSidebar has its ContentBrowser set
+        before anyone tries to restore views in the sidebar.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WebInspector.DebuggerSidebarPanel.prototype.showDefaultContentView):
+        Try to select a script/resource content view instead of nothing.
+
+        (WebInspector.DebuggerSidebarPanel.prototype.saveStateToCookie):
+        When a resource is selected, save it using the normal path.
+
+        * UserInterface/Views/NetworkSidebarPanel.js:
+        (WebInspector.NetworkSidebarPanel.prototype.canShowDifferentContentView):
+        Remove a reference to an unused / stale member variable.
+
 2017-06-14  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Pretty print / type info / code coverage buttons disappear after switching tabs

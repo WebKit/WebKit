@@ -92,14 +92,16 @@ WebInspector.ContentBrowserTabContentView = class ContentBrowserTabContentView e
 
     shown()
     {
+        if (this.navigationSidebarPanel) {
+            if (!this.navigationSidebarPanel.contentBrowser)
+                this.navigationSidebarPanel.contentBrowser = this._contentBrowser;
+        }
+
         super.shown();
 
         this._contentBrowser.shown();
 
         if (this.navigationSidebarPanel) {
-            if (!this.navigationSidebarPanel.contentBrowser)
-                this.navigationSidebarPanel.contentBrowser = this._contentBrowser;
-
             if (!this._contentBrowser.currentContentView)
                 this.navigationSidebarPanel.showDefaultContentView();
         }

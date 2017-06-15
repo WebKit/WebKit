@@ -62,7 +62,7 @@ WebInspector.NetworkSidebarPanel = class NetworkSidebarPanel extends WebInspecto
         if (this.contentBrowser.currentContentView instanceof WebInspector.NetworkGridContentView)
             return false;
 
-        return !this.restoringState || !this._restoredShowingNetworkGridContentView;
+        return !this.restoringState;
     }
 
     // Protected

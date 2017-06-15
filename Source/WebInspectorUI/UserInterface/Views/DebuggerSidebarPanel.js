@@ -280,7 +280,13 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
 
     showDefaultContentView()
     {
-        var currentTreeElement = this._contentTreeOutline.children[0];
+        if (WebInspector.frameResourceManager.mainFrame) {
+            let mainTreeElement = this._scriptsContentTreeOutline.findTreeElement(WebInspector.frameResourceManager.mainFrame.mainResource);
+            if (mainTreeElement && this.showDefaultContentViewForTreeElement(mainTreeElement))
+                return;
+        }
+
+        let currentTreeElement = this._scriptsContentTreeOutline.children[0];
         while (currentTreeElement && !currentTreeElement.root) {
             if (currentTreeElement instanceof WebInspector.ResourceTreeElement || currentTreeElement instanceof WebInspector.ScriptTreeElement) {
                 if (this.showDefaultContentViewForTreeElement(currentTreeElement))
@@ -330,8 +336,10 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         console.assert(cookie);
 
         var selectedTreeElement = this._breakpointsContentTreeOutline.selectedTreeElement;
-        if (!selectedTreeElement)
+        if (!selectedTreeElement) {
+            super.saveStateToCookie(cookie);
             return;
+        }
 
         var representedObject = selectedTreeElement.representedObject;
 
