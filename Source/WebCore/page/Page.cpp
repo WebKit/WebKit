@@ -150,7 +150,7 @@ static inline bool isUtilityPageChromeClient(ChromeClient& chromeClient)
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
-void Page::forEachPage(Function<void(Page&)>&& function)
+void Page::forEachPage(std::function<void(Page&)> function)
 {
     if (!allPages)
         return;

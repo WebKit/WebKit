@@ -30,7 +30,6 @@
 
 #import "APISerializedScriptValue.h"
 #import "APIUserContentWorld.h"
-#import "AddUserScriptImmediately.h"
 #import "WKContentRuleListInternal.h"
 #import "WKFrameInfoInternal.h"
 #import "WKNSArray.h"
@@ -85,7 +84,7 @@
 
 - (void)addUserScript:(WKUserScript *)userScript
 {
-    _userContentControllerProxy->addUserScript(*userScript->_userScript, WebKit::AddUserScriptImmediately::No);
+    _userContentControllerProxy->addUserScript(*userScript->_userScript);
 }
 
 - (void)removeAllUserScripts
@@ -171,11 +170,6 @@ private:
 - (void)_removeAllUserScriptsAssociatedWithUserContentWorld:(_WKUserContentWorld *)userContentWorld
 {
     _userContentControllerProxy->removeAllUserScripts(*userContentWorld->_userContentWorld);
-}
-
-- (void)_addUserScriptImmediately:(WKUserScript *)userScript
-{
-    _userContentControllerProxy->addUserScript(*userScript->_userScript, WebKit::AddUserScriptImmediately::Yes);
 }
 
 - (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter

@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WebUserContentControllerDataTypes_h
+#define WebUserContentControllerDataTypes_h
 
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
@@ -63,3 +64,5 @@ struct WebScriptMessageHandlerData {
 };
 
 } // namespace WebKit
+
+#endif // WebUserContentControllerDataTypes_h

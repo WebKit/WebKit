@@ -193,7 +193,7 @@ public:
 
     PageGroup& group();
 
-    WEBCORE_EXPORT static void forEachPage(WTF::Function<void(Page&)>&&);
+    static void forEachPage(std::function<void(Page&)>);
 
     void incrementSubframeCount() { ++m_subframeCount; }
     void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }
@@ -515,7 +515,7 @@ public:
 
     PluginInfoProvider& pluginInfoProvider();
 
-    WEBCORE_EXPORT UserContentProvider& userContentProvider();
+    UserContentProvider& userContentProvider();
     WEBCORE_EXPORT void setUserContentProvider(Ref<UserContentProvider>&&);
 
     VisitedLinkStore& visitedLinkStore();
