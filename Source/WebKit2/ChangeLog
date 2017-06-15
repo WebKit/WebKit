@@ -1,5 +1,55 @@
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Add API::InjectedBundle::ResourceLoadClient
+        https://bugs.webkit.org/show_bug.cgi?id=173362
+
+        Reviewed by Alex Christensen.
+
+        It will be used by the GTK+ port instead of the C API.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageResourceLoadClient.h: Copied from Source/WebKit2/WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h.
+        (API::InjectedBundle::ResourceLoadClient::didInitiateLoadForResource):
+        (API::InjectedBundle::ResourceLoadClient::willSendRequestForFrame):
+        (API::InjectedBundle::ResourceLoadClient::didReceiveResponseForResource):
+        (API::InjectedBundle::ResourceLoadClient::didReceiveContentLengthForResource):
+        (API::InjectedBundle::ResourceLoadClient::didFinishLoadForResource):
+        (API::InjectedBundle::ResourceLoadClient::didFailLoadForResource):
+        (API::InjectedBundle::ResourceLoadClient::shouldCacheResponse):
+        (API::InjectedBundle::ResourceLoadClient::shouldUseCredentialStorage):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetResourceLoadClient):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (setUpResourceLoadClient):
+        (-[WKWebProcessPlugInBrowserContextController setLoadDelegate:]):
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::InjectedBundlePageResourceLoadClient):
+        (WebKit::InjectedBundlePageResourceLoadClient::didInitiateLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::willSendRequestForFrame):
+        (WebKit::InjectedBundlePageResourceLoadClient::didReceiveResponseForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didReceiveContentLengthForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didFinishLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::didFailLoadForResource):
+        (WebKit::InjectedBundlePageResourceLoadClient::shouldCacheResponse):
+        (WebKit::InjectedBundlePageResourceLoadClient::shouldUseCredentialStorage):
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::assignIdentifierToInitialRequest):
+        (WebKit::WebFrameLoaderClient::dispatchWillSendRequest):
+        (WebKit::WebFrameLoaderClient::shouldUseCredentialStorage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveContentLength):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoading):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoading):
+        (WebKit::WebFrameLoaderClient::willCacheResponse):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setInjectedBundleResourceLoadClient):
+        (WebKit::WebPage::close):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::injectedBundleResourceLoadClient):
+
+2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add API::InjectedBundle::Client
         https://bugs.webkit.org/show_bug.cgi?id=173357
 

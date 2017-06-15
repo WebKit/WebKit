@@ -332,6 +332,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_editorClient { std::make_unique<API::InjectedBundle::EditorClient>() }
     , m_formClient(std::make_unique<API::InjectedBundle::FormClient>())
     , m_loaderClient(std::make_unique<API::InjectedBundle::PageLoaderClient>())
+    , m_resourceLoadClient(std::make_unique<API::InjectedBundle::ResourceLoadClient>())
     , m_uiClient(std::make_unique<API::InjectedBundle::PageUIClient>())
     , m_findController(makeUniqueRef<FindController>(this))
     , m_userContentController(WebUserContentController::getOrCreate(parameters.userContentControllerID))
@@ -739,9 +740,12 @@ void WebPage::initializeInjectedBundlePolicyClient(WKBundlePagePolicyClientBase*
     m_policyClient.initialize(client);
 }
 
-void WebPage::initializeInjectedBundleResourceLoadClient(WKBundlePageResourceLoadClientBase* client)
+void WebPage::setInjectedBundleResourceLoadClient(std::unique_ptr<API::InjectedBundle::ResourceLoadClient>&& client)
 {
-    m_resourceLoadClient.initialize(client);
+    if (!m_resourceLoadClient)
+        m_resourceLoadClient = std::make_unique<API::InjectedBundle::ResourceLoadClient>();
+    else
+        m_resourceLoadClient = WTFMove(client);
 }
 
 void WebPage::setInjectedBundleUIClient(std::unique_ptr<API::InjectedBundle::PageUIClient>&& uiClient)
@@ -1142,7 +1146,7 @@ void WebPage::close()
     m_formClient = std::make_unique<API::InjectedBundle::FormClient>();
     m_loaderClient = std::make_unique<API::InjectedBundle::PageLoaderClient>();
     m_policyClient.initialize(0);
-    m_resourceLoadClient.initialize(0);
+    m_resourceLoadClient = std::make_unique<API::InjectedBundle::ResourceLoadClient>();
     m_uiClient = std::make_unique<API::InjectedBundle::PageUIClient>();
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenClient.initialize(0);
