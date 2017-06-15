@@ -1,3 +1,25 @@
+2017-06-15 Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Don't always recalc the style of display: contents elements.
+        https://bugs.webkit.org/show_bug.cgi?id=172753
+
+        Reviewed by Antti Koivisto.
+
+        No new tests (no functionality change). This only removes an
+        inefficiency.
+
+        * dom/Element.cpp:
+        (WebCore::Element::existingComputedStyle):
+        * dom/Element.h:
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateRenderTree):
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        (WebCore::Style::shouldResolveElement):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
 2017-06-14  Antoine Quint  <graouts@apple.com>
 
         Rebaseline media/modern-media-controls/media-documents

@@ -2663,7 +2663,7 @@ static PseudoElement* beforeOrAfterPseudoElement(Element& host, PseudoId pseudoE
     }
 }
 
-const RenderStyle* Element::existingComputedStyle()
+const RenderStyle* Element::existingComputedStyle() const
 {
     if (auto* renderTreeStyle = renderStyle())
         return renderTreeStyle;
