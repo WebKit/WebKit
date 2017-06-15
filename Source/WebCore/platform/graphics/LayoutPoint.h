@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayoutPoint_h
-#define LayoutPoint_h
+#pragma once
 
 #include "FloatPoint.h"
 #include "LayoutSize.h"
@@ -221,8 +220,7 @@ inline FloatSize snapSizeToDevicePixel(const LayoutSize& size, const LayoutPoint
     return FloatSize(snap(size.width(), location.x()), snap(size.height(), location.y()));
 }
 
-TextStream& operator<<(TextStream&, const LayoutPoint&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const LayoutPoint&);
 
 } // namespace WebCore
 
-#endif // LayoutPoint_h

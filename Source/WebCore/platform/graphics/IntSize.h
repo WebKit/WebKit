@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IntSize_h
-#define IntSize_h
+#pragma once
 
 #include "PlatformExportMacros.h"
 #include <algorithm>
@@ -218,4 +217,3 @@ WEBCORE_EXPORT TextStream& operator<<(TextStream&, const IntSize&);
 
 } // namespace WebCore
 
-#endif // IntSize_h

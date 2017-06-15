@@ -25,8 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FloatSize_h
-#define FloatSize_h
+#pragma once
 
 #include "IntPoint.h"
 #include <wtf/MathExtras.h>
@@ -239,4 +238,3 @@ WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatSize&);
 
 } // namespace WebCore
 
-#endif // FloatSize_h

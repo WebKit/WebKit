@@ -1,3 +1,25 @@
+2017-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow use of Layout* TextStream operators in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=173440
+
+        Reviewed by Zalan Bujtas.
+
+        Export TextStream& operator<< for LayoutPoint, LayoutSize and LayoutRect so that
+        WebKit2 can log them.
+
+        Use #pragma once in these geometry headers.
+
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/LayoutPoint.h:
+        * platform/graphics/LayoutRect.h:
+        * platform/graphics/LayoutSize.h:
+
 2017-06-15  Antoine Quint  <graouts@apple.com>
 
         Modern media controls tests error in Button.js

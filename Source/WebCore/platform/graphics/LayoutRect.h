@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayoutRect_h
-#define LayoutRect_h
+#pragma once
 
 #include "FloatRect.h"
 #include "IntRect.h"
@@ -247,8 +246,7 @@ inline FloatRect snapRectToDevicePixelsWithWritingDirection(const LayoutRect& re
 
 FloatRect encloseRectToDevicePixels(const LayoutRect&, float pixelSnappingFactor);
 
-TextStream& operator<<(TextStream&, const LayoutRect&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const LayoutRect&);
 
 } // namespace WebCore
 
-#endif // LayoutRect_h

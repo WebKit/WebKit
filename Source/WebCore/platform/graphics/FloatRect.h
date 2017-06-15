@@ -24,8 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FloatRect_h
-#define FloatRect_h
+#pragma once
 
 #include "FloatPoint.h"
 
@@ -265,4 +264,3 @@ WEBCORE_EXPORT TextStream& operator<<(TextStream&, const FloatRect&);
 
 }
 
-#endif
