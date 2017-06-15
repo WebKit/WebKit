@@ -44,10 +44,21 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+
 @class PKPaymentAuthorizationResult;
+@class PKPaymentRequestUpdate;
 @class PKPaymentRequestPaymentMethodUpdate;
 @class PKPaymentRequestShippingMethodUpdate;
 @class PKPaymentRequestShippingContactUpdate;
+
+extern NSString * const PKPaymentErrorDomain;
+typedef NS_ERROR_ENUM(PKPaymentErrorDomain, PKPaymentErrorCode) {
+    PKPaymentUnknownError = -1,
+    PKPaymentShippingContactInvalidError = 1,
+    PKPaymentBillingContactInvalidError,
+    PKPaymentShippingAddressUnserviceableError,
+};
+
 #endif
 
 typedef NS_OPTIONS(NSUInteger, PKAddressField) {
@@ -188,7 +199,13 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 
 @protocol PKPaymentAuthorizationViewControllerDelegate <NSObject>
 @required
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+- (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment handler:(void (^)(PKPaymentAuthorizationResult *result))completion;
+#else
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didAuthorizePayment:(PKPayment *)payment completion:(void (^)(PKPaymentAuthorizationStatus status))completion;
+#endif
+
 - (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller;
 
 @optional
@@ -243,6 +260,31 @@ typedef NS_ENUM(NSInteger, PKPaymentButtonType) {
 };
 #endif
 
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface PKPaymentAuthorizationResult : NSObject
+- (instancetype)initWithStatus:(PKPaymentAuthorizationStatus)status errors:(nullable NSArray<NSError *> *)errors;
+@property (nonatomic, assign) PKPaymentAuthorizationStatus status;
+@end
+
+@interface PKPaymentRequestPaymentMethodUpdate : NSObject
+- (instancetype)initWithPaymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)paymentSummaryItems;
+@end
+
+@interface PKPaymentRequestUpdate : NSObject
+@end
+
+@interface PKPaymentRequestShippingContactUpdate : PKPaymentRequestUpdate
+- (instancetype)initWithPaymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)summaryItems shippingMethods:(nonnull NSArray<PKShippingMethod *> *)shippingMethods;
+- (instancetype)initWithErrors:(nullable NSArray<NSError *> *)errors paymentSummaryItems:(nonnull NSArray<PKPaymentSummaryItem *> *)summaryItems shippingMethods:(nonnull NSArray<PKShippingMethod *> *)shippingMethods;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif
+
 extern "C"
 void PKDrawApplePayButton(_Nonnull CGContextRef, CGRect drawRect, CGFloat scale, PKPaymentButtonType, PKPaymentButtonStyle, NSString * _Nullable languageCode);
 
@@ -256,6 +298,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *sourceApplicationBundleIdentifier;
 @property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
 @property (nonatomic, strong) NSString *CTDataConnectionServiceType;
+
+- (void)setRequiredShippingContactFields:(nonnull NSSet *)contactInformation;
+- (void)setRequiredBillingContactFields:(nonnull NSSet *)contactInformation;
 @end
 
 NS_ASSUME_NONNULL_END

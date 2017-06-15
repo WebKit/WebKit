@@ -59,7 +59,8 @@ typedef uint32_t CCRSAKeyType;
 
 enum {
     ccPKCS1Padding = 1001,
-    ccOAEPPadding = 1002
+    ccOAEPPadding = 1002,
+    ccRSAPSSPadding = 1005
 };
 typedef uint32_t CCAsymmetricPadding;
 

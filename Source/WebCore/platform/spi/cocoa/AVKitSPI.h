@@ -218,6 +218,13 @@ __attribute__((availability(macosx,obsoleted=10.13))) @interface AVFunctionBarSc
 @property (readonly, getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property (readonly) BOOL canTogglePictureInPicture;
 - (void)togglePictureInPicture;
+
+typedef NS_ENUM(NSInteger, AVTouchBarMediaSelectionOptionType) {
+    AVTouchBarMediaSelectionOptionTypeRegular,
+    AVTouchBarMediaSelectionOptionTypeLegibleOff,
+    AVTouchBarMediaSelectionOptionTypeLegibleAuto,
+};
+
 @end
 
 @interface AVTouchBarPlaybackControlsProvider : NSResponder
@@ -228,6 +235,10 @@ __attribute__((availability(macosx,obsoleted=10.13))) @interface AVFunctionBarSc
 @interface AVTouchBarScrubber : NSView
 @property (assign, nullable) id<AVTouchBarPlaybackControlsControlling> playbackControlsController;
 @property BOOL canShowMediaSelectionButton;
+@end
+
+@interface AVTouchBarMediaSelectionOption : NSObject
+- (instancetype)initWithTitle:(nonnull NSString *)title type:(AVTouchBarMediaSelectionOptionType)type;
 @end
 
 @class AVThumbnail;
