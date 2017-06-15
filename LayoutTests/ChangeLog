@@ -1,3 +1,17 @@
+2017-06-15  Saam Barati  <sbarati@apple.com>
+
+        [iOS wk2] Layout Test perf/object-keys.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=171617
+        <rdar://problem/31977874>
+
+        Reviewed by Mark Lam.
+
+        Increase the starting magnitude of the object-keys test to
+        remove variance from having objects with a very few number of keys.
+
+        * perf/object-keys.html:
+        * platform/ios-wk2/TestExpectations:
+
 2017-06-15  Matt Lewis  <jlewis3@apple.com>
 
         Marked webrtc/datachannel/basic.html as flaky.

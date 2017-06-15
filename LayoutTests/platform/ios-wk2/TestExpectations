@@ -1929,8 +1929,6 @@ webkit.org/b/171564 http/tests/local/blob/send-sliced-data-blob.html [ Pass Fail
 
 webkit.org/b/171613 http/tests/xmlhttprequest/supported-xml-content-types.html [ Pass Timeout ]
 
-webkit.org/b/171617 [ Release ] perf/object-keys.html [ Pass Failure ]
-
 webkit.org/b/171331 http/tests/preload/single_download_preload.html [ Pass Failure ]
 
 webkit.org/b/170699 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Pass Failure ]
