@@ -28,8 +28,7 @@
 #include "WebKitNotificationProvider.h"
 
 #include "APIArray.h"
-#include "APIDictionary.h"
-#include "WKNotificationManager.h"
+#include "APINotificationProvider.h"
 #include "WebKitNotificationPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
@@ -39,61 +38,49 @@
 
 using namespace WebKit;
 
-static inline WebKitNotificationProvider* toNotificationProvider(const void* clientInfo)
-{
-    return static_cast<WebKitNotificationProvider*>(const_cast<void*>(clientInfo));
-}
 
-static void showCallback(WKPageRef page, WKNotificationRef notification, const void* clientInfo)
-{
-    toNotificationProvider(clientInfo)->show(toImpl(page), *toImpl(notification));
-}
+class NotificationProvider final : public API::NotificationProvider {
+public:
+    explicit NotificationProvider(WebKitNotificationProvider& provider)
+        : m_provider(provider)
+    {
+    }
 
-static void cancelCallback(WKNotificationRef notification, const void* clientInfo)
-{
-    toNotificationProvider(clientInfo)->cancel(*toImpl(notification));
-}
+private:
+    void show(WebPageProxy& page, WebNotification& notification) override
+    {
+        m_provider.show(page, notification);
+    }
 
-static WKDictionaryRef notificationPermissionsCallback(const void* clientInfo)
-{
-    return toAPI(toNotificationProvider(clientInfo)->notificationPermissions().leakRef());
-}
+    void cancel(WebNotification& notification) override
+    {
+        m_provider.cancel(notification);
+    }
 
-static void clearNotificationsCallback(WKArrayRef notificationIDs, const void* clientInfo)
-{
-    toNotificationProvider(clientInfo)->clearNotifications(toImpl(notificationIDs));
-}
+    void clearNotifications(const Vector<uint64_t>& notificationIDs) override
+    {
+        m_provider.clearNotifications(notificationIDs);
+    }
 
-WebKitNotificationProvider::~WebKitNotificationProvider()
-{
-}
+    HashMap<String, bool> notificationPermissions() override
+    {
+        return m_provider.notificationPermissions();
+    }
 
-Ref<WebKitNotificationProvider> WebKitNotificationProvider::create(WebNotificationManagerProxy* notificationManager, WebKitWebContext* webContext)
-{
-    return adoptRef(*new WebKitNotificationProvider(notificationManager, webContext));
-}
+    WebKitNotificationProvider& m_provider;
+};
 
 WebKitNotificationProvider::WebKitNotificationProvider(WebNotificationManagerProxy* notificationManager, WebKitWebContext* webContext)
     : m_webContext(webContext)
     , m_notificationManager(notificationManager)
 {
-    ASSERT(notificationManager);
+    ASSERT(m_notificationManager);
+    m_notificationManager->setProvider(std::make_unique<NotificationProvider>(*this));
+}
 
-    WKNotificationProviderV0 wkNotificationProvider = {
-        {
-            0, // version
-            this, // clientInfo
-        },
-        showCallback,
-        cancelCallback,
-        0, // didDestroyNotificationCallback,
-        0, // addNotificationManagerCallback,
-        0, // removeNotificationManagerCallback,
-        notificationPermissionsCallback,
-        clearNotificationsCallback,
-    };
-
-    WKNotificationManagerSetProvider(toAPI(notificationManager), reinterpret_cast<WKNotificationProviderBase*>(&wkNotificationProvider));
+WebKitNotificationProvider::~WebKitNotificationProvider()
+{
+    m_notificationManager->setProvider(nullptr);
 }
 
 void WebKitNotificationProvider::notificationCloseCallback(WebKitNotification* notification, WebKitNotificationProvider* provider)
@@ -128,19 +115,19 @@ void WebKitNotificationProvider::withdrawAnyPreviousNotificationMatchingTag(cons
 #endif
 }
 
-void WebKitNotificationProvider::show(WebPageProxy* page, const WebNotification& webNotification)
+void WebKitNotificationProvider::show(WebPageProxy& page, const WebNotification& webNotification)
 {
     GRefPtr<WebKitNotification> notification = m_notifications.get(webNotification.notificationID());
 
     if (!notification) {
         withdrawAnyPreviousNotificationMatchingTag(webNotification.tag().utf8());
-        notification = adoptGRef(webkitNotificationCreate(WEBKIT_WEB_VIEW(page->viewWidget()), webNotification));
+        notification = adoptGRef(webkitNotificationCreate(WEBKIT_WEB_VIEW(page.viewWidget()), webNotification));
         g_signal_connect(notification.get(), "closed", G_CALLBACK(notificationCloseCallback), this);
         g_signal_connect(notification.get(), "clicked", G_CALLBACK(notificationClickedCallback), this);
         m_notifications.set(webNotification.notificationID(), notification);
     }
 
-    if (webkitWebViewEmitShowNotification(WEBKIT_WEB_VIEW(page->viewWidget()), notification.get()))
+    if (webkitWebViewEmitShowNotification(WEBKIT_WEB_VIEW(page.viewWidget()), notification.get()))
         m_notificationManager->providerDidShowNotification(webNotification.notificationID());
 }
 
@@ -155,19 +142,19 @@ void WebKitNotificationProvider::cancel(const WebNotification& webNotification)
     cancelNotificationByID(webNotification.notificationID());
 }
 
-void WebKitNotificationProvider::clearNotifications(const API::Array* notificationIDs)
+void WebKitNotificationProvider::clearNotifications(const Vector<uint64_t>& notificationIDs)
 {
-    for (const auto& item : notificationIDs->elementsOfType<API::UInt64>())
-        cancelNotificationByID(item->value());
+    for (const auto& item : notificationIDs)
+        cancelNotificationByID(item);
 }
 
-RefPtr<API::Dictionary> WebKitNotificationProvider::notificationPermissions()
+HashMap<WTF::String, bool> WebKitNotificationProvider::notificationPermissions()
 {
     webkitWebContextInitializeNotificationPermissions(m_webContext);
     return m_notificationPermissions;
 }
 
-void WebKitNotificationProvider::setNotificationPermissions(HashMap<String, RefPtr<API::Object>>&& permissionsMap)
+void WebKitNotificationProvider::setNotificationPermissions(HashMap<String, bool>&& permissionsMap)
 {
-    m_notificationPermissions = API::Dictionary::create(WTFMove(permissionsMap));
+    m_notificationPermissions = WTFMove(permissionsMap);
 }

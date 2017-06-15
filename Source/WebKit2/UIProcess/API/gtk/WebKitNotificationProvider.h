@@ -17,37 +17,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitNotificationProvider_h
-#define WebKitNotificationProvider_h
+#pragma once
 
-#include "WebKitPrivate.h"
 #include "WebKitNotification.h"
 #include "WebKitWebContext.h"
 #include <wtf/HashMap.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-
-namespace API {
-class Array;
-}
+#include <wtf/Vector.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebKit {
+class WebNotificationManagerProxy;
+class WebNotification;
+class WebPageProxy;
 
-class WebKitNotificationProvider : public RefCounted<WebKitNotificationProvider> {
+class WebKitNotificationProvider {
 public:
-    virtual ~WebKitNotificationProvider();
-    static Ref<WebKitNotificationProvider> create(WebNotificationManagerProxy*, WebKitWebContext*);
+    WebKitNotificationProvider(WebNotificationManagerProxy*, WebKitWebContext*);
+    ~WebKitNotificationProvider();
 
-    void show(WebPageProxy*, const WebNotification&);
+    void show(WebPageProxy&, const WebNotification&);
     void cancel(const WebNotification&);
-    void clearNotifications(const API::Array*);
+    void clearNotifications(const Vector<uint64_t>&);
 
-    RefPtr<API::Dictionary> notificationPermissions();
-    void setNotificationPermissions(HashMap<String, RefPtr<API::Object>>&&);
+    HashMap<WTF::String, bool> notificationPermissions();
+    void setNotificationPermissions(HashMap<String, bool>&&);
 
 private:
-    WebKitNotificationProvider(WebNotificationManagerProxy*, WebKitWebContext*);
-
     void cancelNotificationByID(uint64_t);
     static void notificationCloseCallback(WebKitNotification*, WebKitNotificationProvider*);
     static void notificationClickedCallback(WebKitNotification*, WebKitNotificationProvider*);
@@ -55,11 +51,9 @@ private:
     void withdrawAnyPreviousNotificationMatchingTag(const CString&);
 
     WebKitWebContext* m_webContext;
-    RefPtr<API::Dictionary> m_notificationPermissions;
+    HashMap<WTF::String, bool> m_notificationPermissions;
     RefPtr<WebNotificationManagerProxy> m_notificationManager;
     HashMap<uint64_t, GRefPtr<WebKitNotification>> m_notifications;
 };
 
 } // namespace WebKit
-
-#endif

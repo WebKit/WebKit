@@ -168,7 +168,7 @@ struct _WebKitWebContextPrivate {
 #if ENABLE(GEOLOCATION)
     std::unique_ptr<WebKitGeolocationProvider> geolocationProvider;
 #endif
-    RefPtr<WebKitNotificationProvider> notificationProvider;
+    std::unique_ptr<WebKitNotificationProvider> notificationProvider;
     GRefPtr<WebKitWebsiteDataManager> websiteDataManager;
 
     CString faviconDatabaseDirectory;
@@ -325,7 +325,7 @@ static void webkitWebContextConstructed(GObject* object)
 #if ENABLE(GEOLOCATION)
     priv->geolocationProvider = std::make_unique<WebKitGeolocationProvider>(priv->processPool->supplement<WebGeolocationManagerProxy>());
 #endif
-    priv->notificationProvider = WebKitNotificationProvider::create(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
+    priv->notificationProvider = std::make_unique<WebKitNotificationProvider>(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
 #if ENABLE(REMOTE_INSPECTOR)
     priv->remoteInspectorProtocolHandler = std::make_unique<RemoteInspectorProtocolHandler>(webContext);
 #endif
@@ -1468,11 +1468,11 @@ guint webkit_web_context_get_web_process_count_limit(WebKitWebContext* context)
     return context->priv->processCountLimit;
 }
 
-static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, RefPtr<API::Object>>* map, bool allowed)
+static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, bool>* map, bool allowed)
 {
     String string = webkitSecurityOriginGetSecurityOrigin(origin).toString();
     if (string != "null")
-        map->set(string, API::Boolean::create(allowed));
+        map->set(string, allowed);
 }
 
 /**
@@ -1501,12 +1501,12 @@ static void addOriginToMap(WebKitSecurityOrigin* origin, HashMap<String, RefPtr<
  */
 void webkit_web_context_initialize_notification_permissions(WebKitWebContext* context, GList* allowedOrigins, GList* disallowedOrigins)
 {
-    HashMap<String, RefPtr<API::Object>> map;
+    HashMap<String, bool> map;
     g_list_foreach(allowedOrigins, [](gpointer data, gpointer userData) {
-        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, RefPtr<API::Object>>*>(userData), true);
+        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, bool>*>(userData), true);
     }, &map);
     g_list_foreach(disallowedOrigins, [](gpointer data, gpointer userData) {
-        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, RefPtr<API::Object>>*>(userData), false);
+        addOriginToMap(static_cast<WebKitSecurityOrigin*>(data), static_cast<HashMap<String, bool>*>(userData), false);
     }, &map);
     context->priv->notificationProvider->setNotificationPermissions(WTFMove(map));
 }

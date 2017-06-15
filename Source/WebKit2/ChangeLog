@@ -1,3 +1,25 @@
+2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use API::NotificationProvider
+        https://bugs.webkit.org/show_bug.cgi?id=173312
+
+        Reviewed by Žan Doberšek.
+
+        Also cleanup a bit the WebKitNotificationProvider implementation, it doesn't need to be refcounted.
+
+        * UIProcess/API/gtk/WebKitNotificationProvider.cpp:
+        (WebKitNotificationProvider::WebKitNotificationProvider):
+        (WebKitNotificationProvider::~WebKitNotificationProvider):
+        (WebKitNotificationProvider::show):
+        (WebKitNotificationProvider::clearNotifications):
+        (WebKitNotificationProvider::notificationPermissions):
+        (WebKitNotificationProvider::setNotificationPermissions):
+        * UIProcess/API/gtk/WebKitNotificationProvider.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        (addOriginToMap):
+        (webkit_web_context_initialize_notification_permissions):
+
 2017-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add API::InjectedBundle::ResourceLoadClient
