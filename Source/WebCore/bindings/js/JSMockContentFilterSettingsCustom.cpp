@@ -29,7 +29,7 @@
 #if ENABLE(CONTENT_FILTERING)
 
 #include "JSDOMBinding.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertNumbers.h"
 #include "MockContentFilterSettings.h"
 
 using namespace JSC;

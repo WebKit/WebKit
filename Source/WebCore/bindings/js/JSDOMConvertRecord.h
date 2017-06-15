@@ -140,7 +140,7 @@ template<typename K, typename V> struct JSConverter<IDLRecord<K, V>> {
         auto& vm = state.vm();
     
         // 1. Let result be ! ObjectCreate(%ObjectPrototype%).
-        auto result = constructEmptyObject(&state);
+        auto result = constructEmptyObject(&state, globalObject.objectPrototype());
         
         // 2. Repeat, for each mapping (key, value) in D:
         for (const auto& keyValuePair : map) {

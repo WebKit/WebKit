@@ -24,8 +24,17 @@
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertCallbacks.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNullable.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertSequences.h"
+#include "JSDOMConvertSerializedScriptValue.h"
+#include "JSDOMConvertStrings.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSSVGPoint.h"
@@ -34,9 +43,9 @@
 #include "JSTestEventTarget.h"
 #include "JSTestSubObj.h"
 #include "SerializedScriptValue.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSArray.h>
+#include <runtime/JSCInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/Variant.h>
 

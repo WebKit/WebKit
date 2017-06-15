@@ -29,6 +29,7 @@
 #include "JSDOMWrapperCache.h"
 #include <builtins/BuiltinNames.h>
 #include <runtime/FunctionPrototype.h>
+#include <runtime/JSCInlines.h>
 #include <wtf/GetPtr.h>
 
 using namespace JSC;

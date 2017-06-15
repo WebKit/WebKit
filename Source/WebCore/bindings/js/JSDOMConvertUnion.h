@@ -28,6 +28,7 @@
 #include "IDLTypes.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvertBase.h"
+#include "JSDOMConvertNull.h"
 #include <runtime/IteratorOperations.h>
 
 namespace WebCore {

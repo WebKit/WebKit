@@ -49,7 +49,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSC::JSObject* serialize(JSC::ExecState*, JSTestSerialization* thisObject, JSC::ThrowScope&);
+    static JSC::JSObject* serialize(JSC::ExecState&, JSTestSerialization& thisObject, JSDOMGlobalObject&, JSC::ThrowScope&);
 protected:
     JSTestSerialization(JSC::Structure*, JSDOMGlobalObject&, Ref<TestSerialization>&&);
 

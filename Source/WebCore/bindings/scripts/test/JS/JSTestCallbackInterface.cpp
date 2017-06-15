@@ -25,12 +25,20 @@
 #include "JSTestCallbackInterface.h"
 
 #include "JSDOMConstructorNotConstructable.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertSerializedScriptValue.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMStringList.h"
 #include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include <runtime/FunctionPrototype.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
 #include <runtime/JSString.h>
 #include <wtf/NeverDestroyed.h>

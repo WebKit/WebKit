@@ -25,7 +25,8 @@
 #include "ActiveDOMCallback.h"
 #include "IDLTypes.h"
 #include "JSCallbackData.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertEnumeration.h"
 #include "TestCallbackInterface.h"
 #include <wtf/Forward.h>
 

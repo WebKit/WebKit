@@ -23,7 +23,8 @@
 #if ENABLE(Condition1)
 
 #include "DictionaryImplName.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertEnumeration.h"
 
 namespace WebCore {
 

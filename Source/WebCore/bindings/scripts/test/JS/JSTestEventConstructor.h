@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "JSDOMConvert.h"
+#include "JSDOMConvertDictionary.h"
 #include "JSEvent.h"
 #include "TestEventConstructor.h"
 

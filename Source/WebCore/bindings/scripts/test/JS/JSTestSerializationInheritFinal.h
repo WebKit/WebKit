@@ -47,7 +47,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSC::JSObject* serialize(JSC::ExecState*, JSTestSerializationInheritFinal* thisObject, JSC::ThrowScope&);
+    static JSC::JSObject* serialize(JSC::ExecState&, JSTestSerializationInheritFinal& thisObject, JSDOMGlobalObject&, JSC::ThrowScope&);
     TestSerializationInheritFinal& wrapped() const
     {
         return static_cast<TestSerializationInheritFinal&>(Base::wrapped());

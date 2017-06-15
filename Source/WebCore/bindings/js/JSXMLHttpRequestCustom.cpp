@@ -29,28 +29,14 @@
 #include "config.h"
 #include "JSXMLHttpRequest.h"
 
-#include "Blob.h"
-#include "DOMFormData.h"
-#include "DOMWindow.h"
-#include "Document.h"
-#include "Event.h"
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "HTMLDocument.h"
-#include "InspectorInstrumentation.h"
 #include "JSBlob.h"
-#include "JSDOMConvert.h"
-#include "JSDOMFormData.h"
-#include "JSDOMWindowCustom.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertJSON.h"
 #include "JSDocument.h"
-#include "JSEvent.h"
-#include "JSEventListener.h"
-#include "XMLHttpRequest.h"
 #include <runtime/ArrayBuffer.h>
-#include <runtime/Error.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/JSArrayBufferView.h>
-#include <runtime/JSONObject.h>
 
 using namespace JSC;
 
@@ -108,7 +94,7 @@ JSValue JSXMLHttpRequest::retrieveResponse(ExecState& state)
         return jsUndefined();
 
     case XMLHttpRequest::ResponseType::Json:
-        value = JSONParse(&state, wrapped().responseTextIgnoringResponseType());
+        value = toJS<IDLJSON>(state, wrapped().responseTextIgnoringResponseType());
         if (!value)
             value = jsNull();
         break;

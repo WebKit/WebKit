@@ -27,6 +27,8 @@
 #include "JSHTMLDocument.h"
 
 #include "JSDOMAbstractOperations.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLCollection.h"
 #include "SegmentedString.h"

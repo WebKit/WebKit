@@ -22,7 +22,7 @@
 
 #if ENABLE(CONDITION)
 
-#include "JSDOMConvert.h"
+#include "JSDOMConvertEnumeration.h"
 #include "TestStandaloneEnumeration.h"
 
 namespace WebCore {

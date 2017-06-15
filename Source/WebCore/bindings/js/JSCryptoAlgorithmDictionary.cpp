@@ -41,7 +41,9 @@
 #include "ExceptionCode.h"
 #include "JSCryptoOperationData.h"
 #include "JSDOMBinding.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertStrings.h"
 
 using namespace JSC;
 

@@ -24,12 +24,17 @@
 
 #include "JSTestStandaloneDictionary.h"
 
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertStrings.h"
+#include <runtime/JSCInlines.h>
 #include <runtime/JSString.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+#if ENABLE(Condition1)
 
 template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& state, JSValue value)
 {
@@ -63,6 +68,8 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
     }
     return result;
 }
+
+#endif
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
 {

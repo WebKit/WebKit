@@ -27,6 +27,8 @@
 #include "config.h"
 #include "JSMutationCallback.h"
 
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertSequences.h"
 #include "JSDOMGlobalObject.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"

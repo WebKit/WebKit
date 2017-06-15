@@ -24,7 +24,9 @@
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertBoolean.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMIterator.h"
 #include "JSDOMOperation.h"
@@ -33,7 +35,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include <builtins/BuiltinNames.h>
-#include <runtime/Error.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 
@@ -386,12 +388,12 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionForEach(JSC::ExecSt
     return IDLOperation<JSTestNode>::call<jsTestNodePrototypeFunctionForEachCaller>(*state, "forEach");
 }
 
-JSC::JSObject* JSTestNode::serialize(ExecState* state, JSTestNode* thisObject, ThrowScope& throwScope)
+JSC::JSObject* JSTestNode::serialize(ExecState& state, JSTestNode& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
 {
-    auto& vm = state->vm();
-    auto* result = constructEmptyObject(state);
+    auto& vm = state.vm();
+    auto* result = constructEmptyObject(&state, globalObject.objectPrototype());
 
-    auto nameValue = jsTestNodeNameGetter(*state, *thisObject, throwScope);
+    auto nameValue = jsTestNodeNameGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "name"), nameValue);
 
@@ -400,7 +402,7 @@ JSC::JSObject* JSTestNode::serialize(ExecState* state, JSTestNode* thisObject, T
 
 static inline EncodedJSValue jsTestNodePrototypeFunctionToJSONBody(ExecState* state, JSTestNode* thisObject, JSC::ThrowScope& throwScope)
 {
-    return JSValue::encode(JSTestNode::serialize(state, thisObject, throwScope));
+    return JSValue::encode(JSTestNode::serialize(*state, *thisObject, *thisObject->globalObject(), throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestNodePrototypeFunctionToJSON(ExecState* state)

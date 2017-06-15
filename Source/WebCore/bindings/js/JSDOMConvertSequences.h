@@ -27,9 +27,12 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMGlobalObject.h"
 #include <runtime/IteratorOperations.h>
 #include <runtime/JSArray.h>
 #include <runtime/JSGlobalObjectInlines.h>
+#include <runtime/ObjectConstructor.h>
 
 namespace WebCore {
 
@@ -412,3 +415,4 @@ template<typename T> struct JSConverter<IDLFrozenArray<T>> {
 };
 
 } // namespace WebCore
+

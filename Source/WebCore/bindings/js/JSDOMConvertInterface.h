@@ -49,15 +49,6 @@ template<typename T> struct Converter<IDLInterface<T>> : DefaultConverter<IDLInt
     }
 };
 
-namespace Detail {
-
-template <typename T> inline T* getPtrOrRef(const T* p) { return const_cast<T*>(p); }
-template <typename T> inline T& getPtrOrRef(const T& p) { return const_cast<T&>(p); }
-template <typename T> inline T* getPtrOrRef(const RefPtr<T>& p) { return p.get(); }
-template <typename T> inline T& getPtrOrRef(const Ref<T>& p) { return p.get(); }
-
-}
-
 template<typename T> struct JSConverter<IDLInterface<T>> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = true;

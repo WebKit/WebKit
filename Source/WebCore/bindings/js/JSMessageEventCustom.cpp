@@ -33,11 +33,12 @@
 
 #include "JSBlob.h"
 #include "JSDOMBinding.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertBufferSource.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMWindow.h"
 #include "JSEventTarget.h"
 #include "JSMessagePort.h"
-#include "MessageEvent.h"
 #include <runtime/JSArray.h>
 #include <runtime/JSArrayBuffer.h>
 
@@ -86,15 +87,15 @@ JSValue JSMessageEvent::data(ExecState& state) const
         break;
 
     case MessageEvent::DataTypeString:
-        result = jsStringWithCache(&state, event.dataAsString());
+        result = toJS<IDLDOMString>(state, event.dataAsString());
         break;
 
     case MessageEvent::DataTypeBlob:
-        result = toJS(&state, globalObject(), event.dataAsBlob());
+        result = toJS<IDLInterface<Blob>>(state, *globalObject(), event.dataAsBlob());
         break;
 
     case MessageEvent::DataTypeArrayBuffer:
-        result = toJS(&state, globalObject(), event.dataAsArrayBuffer());
+        result = toJS<IDLInterface<ArrayBuffer>>(state, *globalObject(), event.dataAsArrayBuffer());
         break;
     }
 

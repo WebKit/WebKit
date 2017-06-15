@@ -21,8 +21,11 @@
 #include "config.h"
 #include "JSTestCallbackFunctionRethrow.h"
 
-#include "JSDOMConvert.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertSequences.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>

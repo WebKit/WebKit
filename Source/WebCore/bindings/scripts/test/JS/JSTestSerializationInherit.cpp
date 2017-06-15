@@ -24,10 +24,11 @@
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertNumbers.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
+#include <runtime/JSCInlines.h>
 #include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 
@@ -196,12 +197,12 @@ bool setJSTestSerializationInheritInheritLongAttribute(ExecState* state, Encoded
     return IDLAttribute<JSTestSerializationInherit>::set<setJSTestSerializationInheritInheritLongAttributeSetter>(*state, thisValue, encodedValue, "inheritLongAttribute");
 }
 
-JSC::JSObject* JSTestSerializationInherit::serialize(ExecState* state, JSTestSerializationInherit* thisObject, ThrowScope& throwScope)
+JSC::JSObject* JSTestSerializationInherit::serialize(ExecState& state, JSTestSerializationInherit& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
 {
-    auto& vm = state->vm();
-    auto* result = JSTestSerialization::serialize(state, thisObject, throwScope);
+    auto& vm = state.vm();
+    auto* result = JSTestSerialization::serialize(state, thisObject, globalObject, throwScope);
 
-    auto inheritLongAttributeValue = jsTestSerializationInheritInheritLongAttributeGetter(*state, *thisObject, throwScope);
+    auto inheritLongAttributeValue = jsTestSerializationInheritInheritLongAttributeGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "inheritLongAttribute"), inheritLongAttributeValue);
 
@@ -210,7 +211,7 @@ JSC::JSObject* JSTestSerializationInherit::serialize(ExecState* state, JSTestSer
 
 static inline EncodedJSValue jsTestSerializationInheritPrototypeFunctionToJSONBody(ExecState* state, JSTestSerializationInherit* thisObject, JSC::ThrowScope& throwScope)
 {
-    return JSValue::encode(JSTestSerializationInherit::serialize(state, thisObject, throwScope));
+    return JSValue::encode(JSTestSerializationInherit::serialize(*state, *thisObject, *thisObject->globalObject(), throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritPrototypeFunctionToJSON(ExecState* state)

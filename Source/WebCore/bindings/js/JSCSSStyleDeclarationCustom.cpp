@@ -35,6 +35,8 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "HashTools.h"
 #include "JSCSSStyleDeclaration.h"
+#include "JSDOMConvertNullable.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDeprecatedCSSOMValue.h"
 #include "JSNode.h"
 #include "JSStyleSheetCustom.h"

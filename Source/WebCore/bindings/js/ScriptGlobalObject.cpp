@@ -31,8 +31,7 @@
 #include "config.h"
 #include "ScriptGlobalObject.h"
 
-#include "JSDOMConvert.h"
-#include "JSDOMExceptionHandling.h"
+#include "JSDOMConvertInterface.h"
 #include "JSInspectorFrontendHost.h"
 #include <runtime/IdentifierInlines.h>
 

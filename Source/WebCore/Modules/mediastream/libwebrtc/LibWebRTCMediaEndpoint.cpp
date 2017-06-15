@@ -28,7 +28,6 @@
 #if USE(LIBWEBRTC)
 
 #include "EventNames.h"
-#include "JSDOMConvert.h"
 #include "JSRTCStatsReport.h"
 #include "LibWebRTCDataChannelHandler.h"
 #include "LibWebRTCPeerConnectionBackend.h"

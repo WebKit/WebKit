@@ -21,7 +21,8 @@
 #include "config.h"
 #include "JSTestCallbackFunction.h"
 
-#include "JSDOMConvert.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>

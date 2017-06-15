@@ -24,10 +24,11 @@
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertNumbers.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
+#include <runtime/JSCInlines.h>
 #include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 
@@ -229,12 +230,12 @@ bool setJSTestSerializationInheritFinalFinalLongAttributeBar(ExecState* state, E
     return IDLAttribute<JSTestSerializationInheritFinal>::set<setJSTestSerializationInheritFinalFinalLongAttributeBarSetter>(*state, thisValue, encodedValue, "finalLongAttributeBar");
 }
 
-JSC::JSObject* JSTestSerializationInheritFinal::serialize(ExecState* state, JSTestSerializationInheritFinal* thisObject, ThrowScope& throwScope)
+JSC::JSObject* JSTestSerializationInheritFinal::serialize(ExecState& state, JSTestSerializationInheritFinal& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
 {
-    auto& vm = state->vm();
-    auto* result = JSTestSerializationInherit::serialize(state, thisObject, throwScope);
+    auto& vm = state.vm();
+    auto* result = JSTestSerializationInherit::serialize(state, thisObject, globalObject, throwScope);
 
-    auto finalLongAttributeBarValue = jsTestSerializationInheritFinalFinalLongAttributeBarGetter(*state, *thisObject, throwScope);
+    auto finalLongAttributeBarValue = jsTestSerializationInheritFinalFinalLongAttributeBarGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "finalLongAttributeBar"), finalLongAttributeBarValue);
 
@@ -243,7 +244,7 @@ JSC::JSObject* JSTestSerializationInheritFinal::serialize(ExecState* state, JSTe
 
 static inline EncodedJSValue jsTestSerializationInheritFinalPrototypeFunctionToJSONBody(ExecState* state, JSTestSerializationInheritFinal* thisObject, JSC::ThrowScope& throwScope)
 {
-    return JSValue::encode(JSTestSerializationInheritFinal::serialize(state, thisObject, throwScope));
+    return JSValue::encode(JSTestSerializationInheritFinal::serialize(*state, *thisObject, *thisObject->globalObject(), throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationInheritFinalPrototypeFunctionToJSON(ExecState* state)

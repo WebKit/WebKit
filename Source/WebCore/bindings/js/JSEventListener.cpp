@@ -22,10 +22,10 @@
 
 #include "BeforeUnloadEvent.h"
 #include "ContentSecurityPolicy.h"
-#include "Event.h"
 #include "Frame.h"
 #include "HTMLElement.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertNullable.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDocument.h"
 #include "JSEvent.h"
 #include "JSEventTarget.h"

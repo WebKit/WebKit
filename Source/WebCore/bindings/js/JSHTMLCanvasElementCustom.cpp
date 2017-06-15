@@ -29,8 +29,9 @@
 
 #include "HTMLCanvasElement.h"
 #include "JSCanvasRenderingContext2D.h"
-#include <bindings/ScriptObject.h>
-#include <wtf/GetPtr.h>
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertNullable.h"
+#include "JSDOMConvertStrings.h"
 
 #if ENABLE(WEBGL)
 #include "JSWebGLContextAttributes.h"

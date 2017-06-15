@@ -24,12 +24,16 @@
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSTestException.h"
 #include <runtime/FunctionPrototype.h>
+#include <runtime/JSCInlines.h>
 #include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 
@@ -370,28 +374,28 @@ bool setJSTestSerializationSixthTypedefAttribute(ExecState* state, EncodedJSValu
     return IDLAttribute<JSTestSerialization>::set<setJSTestSerializationSixthTypedefAttributeSetter>(*state, thisValue, encodedValue, "sixthTypedefAttribute");
 }
 
-JSC::JSObject* JSTestSerialization::serialize(ExecState* state, JSTestSerialization* thisObject, ThrowScope& throwScope)
+JSC::JSObject* JSTestSerialization::serialize(ExecState& state, JSTestSerialization& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)
 {
-    auto& vm = state->vm();
-    auto* result = constructEmptyObject(state);
+    auto& vm = state.vm();
+    auto* result = constructEmptyObject(&state, globalObject.objectPrototype());
 
-    auto firstStringAttributeValue = jsTestSerializationFirstStringAttributeGetter(*state, *thisObject, throwScope);
+    auto firstStringAttributeValue = jsTestSerializationFirstStringAttributeGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "firstStringAttribute"), firstStringAttributeValue);
 
-    auto secondLongAttributeValue = jsTestSerializationSecondLongAttributeGetter(*state, *thisObject, throwScope);
+    auto secondLongAttributeValue = jsTestSerializationSecondLongAttributeGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "secondLongAttribute"), secondLongAttributeValue);
 
-    auto fourthUnrestrictedDoubleAttributeValue = jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(*state, *thisObject, throwScope);
+    auto fourthUnrestrictedDoubleAttributeValue = jsTestSerializationFourthUnrestrictedDoubleAttributeGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "fourthUnrestrictedDoubleAttribute"), fourthUnrestrictedDoubleAttributeValue);
 
-    auto fifthLongAttributeValue = jsTestSerializationFifthLongAttributeGetter(*state, *thisObject, throwScope);
+    auto fifthLongAttributeValue = jsTestSerializationFifthLongAttributeGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "fifthLongAttribute"), fifthLongAttributeValue);
 
-    auto sixthTypedefAttributeValue = jsTestSerializationSixthTypedefAttributeGetter(*state, *thisObject, throwScope);
+    auto sixthTypedefAttributeValue = jsTestSerializationSixthTypedefAttributeGetter(state, thisObject, throwScope);
     throwScope.assertNoException();
     result->putDirect(vm, Identifier::fromString(&vm, "sixthTypedefAttribute"), sixthTypedefAttributeValue);
 
@@ -400,7 +404,7 @@ JSC::JSObject* JSTestSerialization::serialize(ExecState* state, JSTestSerializat
 
 static inline EncodedJSValue jsTestSerializationPrototypeFunctionToJSONBody(ExecState* state, JSTestSerialization* thisObject, JSC::ThrowScope& throwScope)
 {
-    return JSValue::encode(JSTestSerialization::serialize(state, thisObject, throwScope));
+    return JSValue::encode(JSTestSerialization::serialize(*state, *thisObject, *thisObject->globalObject(), throwScope));
 }
 
 EncodedJSValue JSC_HOST_CALL jsTestSerializationPrototypeFunctionToJSON(ExecState* state)

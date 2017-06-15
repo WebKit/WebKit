@@ -1,3 +1,132 @@
+2017-06-15  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Replace general inclusion of JSDOMConvert.h with inclusion of individual converter files to reduce unnecessary inclusion
+        https://bugs.webkit.org/show_bug.cgi?id=173392
+
+        Reviewed by Tim Horton.
+
+        Stop including the umbrella header JSDOMConvert.h in every generated bindings and 
+        instead only include the specific converter needed. Then, go around and add all the
+        now missing includes that used to be obtained transitively.
+
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        * bindings/js/IDBBindingUtilities.cpp:
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        * bindings/js/JSCryptoAlgorithmDictionary.cpp:
+        * bindings/js/JSCustomElementInterface.cpp:
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        * bindings/js/JSDOMConvertBase.h:
+        * bindings/js/JSDOMConvertInterface.h:
+        * bindings/js/JSDOMConvertRecord.h:
+        * bindings/js/JSDOMConvertSequences.h:
+        * bindings/js/JSDOMConvertUnion.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowProperties.cpp:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSErrorHandler.cpp:
+        * bindings/js/JSEventListener.cpp:
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/js/JSHistoryCustom.cpp:
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data):
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp:
+        * bindings/js/JSMutationCallback.cpp:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::retrieveResponse):
+        * bindings/js/ScriptGlobalObject.cpp:
+        * bindings/js/SerializedScriptValue.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (GetJSCAttributesForAttribute):
+        (GenerateEnumerationHeader):
+        (GenerateEnumerationImplementation):
+        (GenerateEnumerationImplementationContent):
+        (GenerateEnumerationsImplementationContent):
+        (GenerateEnumerationHeaderContent):
+        (GenerateEnumerationsHeaderContent):
+        (GenerateDictionaryHeaderContent):
+        (GenerateDictionariesHeaderContent):
+        (GenerateDictionaryImplementationContent):
+        (GenerateDictionariesImplementationContent):
+        (GenerateHeader):
+        (GeneratePropertiesHashTable):
+        (GenerateOverloadDispatcher):
+        (GenerateImplementation):
+        (GenerateAttributeGetterDefinition):
+        (GenerateSerializerDefinition):
+        (GenerateDictionaryHeader):
+        (JSValueToNative):
+        (NativeToJSValueUsingReferences):
+        (NativeToJSValueUsingPointers):
+        (IsValidContextForNativeToJSValue):
+        (NativeToJSValue):
+        (GenerateConstructorDefinition):
+        (ComputeFunctionSpecial):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionRethrow.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestNode.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.h:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.h:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.h:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.h:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.cpp:
+        * dom/MouseEvent.cpp:
+        * html/HTMLPlugInImageElement.cpp:
+
 2017-06-14  David Kilzer  <ddkilzer@apple.com>
 
         [iOS] Generate a simulated crash when the WebThread starts in MobileSafari

@@ -31,6 +31,8 @@
 #include "DOMWrapperWorld.h"
 #include "HTMLUnknownElement.h"
 #include "JSDOMBinding.h"
+#include "JSDOMConvertNullable.h"
+#include "JSDOMConvertStrings.h"
 #include "JSDOMGlobalObject.h"
 #include "JSElement.h"
 #include "JSHTMLElement.h"

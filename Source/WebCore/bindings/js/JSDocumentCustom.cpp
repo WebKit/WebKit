@@ -25,16 +25,14 @@
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "JSCanvasRenderingContext2D.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertNumbers.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
 #include "JSXMLDocument.h"
-#include "Location.h"
 #include "NodeTraversal.h"
 #include "SVGDocument.h"
 #include "ScriptController.h"
-#include "TouchList.h"
 #include "XMLDocument.h"
 #include <wtf/GetPtr.h>
 

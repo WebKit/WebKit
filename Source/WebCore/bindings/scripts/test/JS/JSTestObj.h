@@ -20,7 +20,8 @@
 
 #pragma once
 
-#include "JSDOMConvert.h"
+#include "JSDOMConvertDictionary.h"
+#include "JSDOMConvertEnumeration.h"
 #include "JSDOMWrapper.h"
 #include "TestObj.h"
 #include <runtime/CallData.h>
@@ -56,7 +57,7 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-    static JSC::JSObject* serialize(JSC::ExecState*, JSTestObj* thisObject, JSC::ThrowScope&);
+    static JSC::JSObject* serialize(JSC::ExecState&, JSTestObj& thisObject, JSDOMGlobalObject&, JSC::ThrowScope&);
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute1;
     mutable JSC::WriteBarrier<JSC::Unknown> m_cachedAttribute2;
     static void visitChildren(JSCell*, JSC::SlotVisitor&);

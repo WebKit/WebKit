@@ -24,6 +24,7 @@
 
 #include "JSTestStandaloneEnumeration.h"
 
+#include <runtime/JSCInlines.h>
 #include <runtime/JSString.h>
 #include <wtf/NeverDestroyed.h>
 

@@ -27,20 +27,26 @@
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
-#include "JSDOMConvert.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "TestSupplemental.h"
-#include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
+#include <runtime/JSCInlines.h>
 #include <wtf/GetPtr.h>
+
+#if ENABLE(Condition1) || ENABLE(Condition11) || ENABLE(Condition12) || ENABLE(Condition2) || ENABLE(Condition22) || ENABLE(Condition23)
+#include "JSDOMConvertStrings.h"
+#endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 #include "TestSupplementalBuiltins.h"
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12) || ENABLE(Condition22) || ENABLE(Condition23)
+#include "JSDOMConvertNumbers.h"
+#include "JSDOMGlobalObject.h"
 #include "JSNode.h"
 #include "JSTestObj.h"
 #endif

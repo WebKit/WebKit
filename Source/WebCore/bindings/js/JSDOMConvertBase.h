@@ -32,6 +32,14 @@ namespace WebCore {
 // Conversion from JSValue -> Implementation
 template<typename T> struct Converter;
 
+namespace Detail {
+
+template <typename T> inline T* getPtrOrRef(const T* p) { return const_cast<T*>(p); }
+template <typename T> inline T& getPtrOrRef(const T& p) { return const_cast<T&>(p); }
+template <typename T> inline T* getPtrOrRef(const RefPtr<T>& p) { return p.get(); }
+template <typename T> inline T& getPtrOrRef(const Ref<T>& p) { return p.get(); }
+
+}
 
 struct DefaultExceptionThrower {
     void operator()(JSC::ExecState& state, JSC::ThrowScope& scope)
