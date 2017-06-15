@@ -156,7 +156,7 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     RetainPtr<NSArray> _itemProviders;
     RetainPtr<NSArray> _cachedTypeIdentifiers;
     RetainPtr<NSArray> _typeToFileURLMaps;
-    RetainPtr<NSArray> _preferredTypeIdentifiers;
+    RetainPtr<NSArray> _supportedTypeIdentifiers;
     RetainPtr<NSArray> _registrationInfoLists;
 }
 
@@ -177,16 +177,15 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
         _changeCount = 0;
         _pendingOperationCount = 0;
         _typeToFileURLMaps = adoptNS([[NSArray alloc] init]);
-        _preferredTypeIdentifiers = nil;
+        _supportedTypeIdentifiers = nil;
         _registrationInfoLists = nil;
     }
     return self;
 }
 
-- (void)updatePreferredTypeIdentifiers:(NSArray<NSString *> *)types
+- (void)updateSupportedTypeIdentifiers:(NSArray<NSString *> *)types
 {
-    if ([_itemProviders count] == types.count)
-        _preferredTypeIdentifiers = types;
+    _supportedTypeIdentifiers = types;
 }
 
 - (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index
@@ -224,9 +223,6 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     itemProviders = itemProviders ?: [NSArray array];
     if (_itemProviders == itemProviders || [_itemProviders isEqualToArray:itemProviders])
         return;
-
-    if (itemProviders.count != [_itemProviders count])
-        _preferredTypeIdentifiers = nil;
 
     _itemProviders = itemProviders;
     _changeCount++;
@@ -409,6 +405,29 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     return [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:suggestedName ?: url.lastPathComponent]];
 }
 
+- (BOOL)typeIsAppropriateForSupportedTypes:(NSString *)type
+{
+    // A type is considered appropriate to load if it conforms to one or more supported types.
+    for (NSString *supportedTypeIdentifier in _supportedTypeIdentifiers.get()) {
+        if (UTTypeConformsTo((CFStringRef)type, (CFStringRef)supportedTypeIdentifier))
+            return YES;
+    }
+    return NO;
+}
+
+- (NSString *)typeIdentifierToLoadForRegisteredTypeIdentfiers:(NSArray<NSString *> *)registeredTypeIdentifiers
+{
+    NSString *highestFidelityContentType = nil;
+    for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
+        if ([self typeIsAppropriateForSupportedTypes:registeredTypeIdentifier])
+            return registeredTypeIdentifier;
+
+        if (!highestFidelityContentType && UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeContent))
+            highestFidelityContentType = registeredTypeIdentifier;
+    }
+    return highestFidelityContentType;
+}
+
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action
 {
     [self doAfterLoadingProvidedContentIntoFileURLs:action synchronousTimeout:0];
@@ -419,41 +438,22 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     auto changeCountBeforeLoading = _changeCount;
     auto typeToFileURLMaps = adoptNS([[NSMutableArray alloc] initWithCapacity:[_itemProviders count]]);
 
-    RetainPtr<NSArray> preferredTypeIdentifiers;
-    if ([_preferredTypeIdentifiers count] == [_itemProviders count])
-        preferredTypeIdentifiers = _preferredTypeIdentifiers;
-
     // First, figure out which item providers we want to try and load files from.
-    auto itemProvidersWithFiles = adoptNS([[NSMutableArray alloc] init]);
-    auto contentTypeIdentifiersToLoad = adoptNS([[NSMutableArray alloc] init]);
-    auto indicesOfItemProvidersWithFiles = adoptNS([[NSMutableArray alloc] init]);
-    [_itemProviders enumerateObjectsUsingBlock:[preferredTypeIdentifiers, itemProvidersWithFiles, contentTypeIdentifiersToLoad, indicesOfItemProvidersWithFiles, typeToFileURLMaps] (UIItemProvider *itemProvider, NSUInteger index, BOOL *) {
-        NSString *typeIdentifierOfContentToSave = nil;
-
-        if (preferredTypeIdentifiers && [itemProvider.registeredTypeIdentifiers containsObject:[preferredTypeIdentifiers objectAtIndex:index]])
-            typeIdentifierOfContentToSave = [preferredTypeIdentifiers objectAtIndex:index];
-
-        if (!typeIdentifierOfContentToSave) {
-            // Fall back to the first "public.content"-conformant type identifier.
-            for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
-                if (!UTTypeConformsTo((CFStringRef)identifier, kUTTypeContent))
-                    continue;
-
-                typeIdentifierOfContentToSave = identifier;
-                break;
-            }
+    auto itemProvidersToLoad = adoptNS([[NSMutableArray alloc] init]);
+    auto typeIdentifiersToLoad = adoptNS([[NSMutableArray alloc] init]);
+    auto indicesOfitemProvidersToLoad = adoptNS([[NSMutableArray alloc] init]);
+    RetainPtr<WebItemProviderPasteboard> protectedSelf = self;
+    [_itemProviders enumerateObjectsUsingBlock:[protectedSelf, itemProvidersToLoad, typeIdentifiersToLoad, indicesOfitemProvidersToLoad, typeToFileURLMaps] (UIItemProvider *itemProvider, NSUInteger index, BOOL *) {
+        NSString *typeIdentifierToLoad = [protectedSelf typeIdentifierToLoadForRegisteredTypeIdentfiers:itemProvider.registeredTypeIdentifiers];
+        if (typeIdentifierToLoad) {
+            [itemProvidersToLoad addObject:itemProvider];
+            [typeIdentifiersToLoad addObject:typeIdentifierToLoad];
+            [indicesOfitemProvidersToLoad addObject:@(index)];
         }
-
-        if (typeIdentifierOfContentToSave) {
-            [itemProvidersWithFiles addObject:itemProvider];
-            [contentTypeIdentifiersToLoad addObject:typeIdentifierOfContentToSave];
-            [indicesOfItemProvidersWithFiles addObject:@(index)];
-        }
-
         [typeToFileURLMaps addObject:@{ }];
     }];
 
-    if (![itemProvidersWithFiles count]) {
+    if (![itemProvidersToLoad count]) {
         action(@[ ]);
         return;
     }
@@ -461,10 +461,10 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     auto setFileURLsLock = adoptNS([[NSLock alloc] init]);
     auto synchronousFileLoadingGroup = adoptOSObject(dispatch_group_create());
     auto fileLoadingGroup = adoptOSObject(dispatch_group_create());
-    for (NSUInteger index = 0; index < [itemProvidersWithFiles count]; ++index) {
-        RetainPtr<UIItemProvider> itemProvider = [itemProvidersWithFiles objectAtIndex:index];
-        RetainPtr<NSString> typeIdentifier = [contentTypeIdentifiersToLoad objectAtIndex:index];
-        NSUInteger indexInItemProviderArray = [[indicesOfItemProvidersWithFiles objectAtIndex:index] unsignedIntegerValue];
+    for (NSUInteger index = 0; index < [itemProvidersToLoad count]; ++index) {
+        RetainPtr<UIItemProvider> itemProvider = [itemProvidersToLoad objectAtIndex:index];
+        RetainPtr<NSString> typeIdentifier = [typeIdentifiersToLoad objectAtIndex:index];
+        NSUInteger indexInItemProviderArray = [[indicesOfitemProvidersToLoad objectAtIndex:index] unsignedIntegerValue];
         RetainPtr<NSString> suggestedName = [itemProvider suggestedName];
         dispatch_group_enter(fileLoadingGroup.get());
         dispatch_group_enter(synchronousFileLoadingGroup.get());

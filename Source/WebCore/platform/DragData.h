@@ -114,9 +114,6 @@ public:
     bool containsURLTypeIdentifier() const;
     bool containsPromise() const;
 #endif
-#if ENABLE(DATA_INTERACTION)
-    void updatePreferredTypeIdentifiers(const Vector<String>& supportedTypes) const;
-#endif
 
 #if PLATFORM(GTK)
 

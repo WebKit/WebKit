@@ -1,3 +1,64 @@
+2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Using -[WebItemProviderPasteboard setItemProviders:] to swap out item providers before a drop breaks item provider loading
+        https://bugs.webkit.org/show_bug.cgi?id=173338
+        <rdar://problem/32777720>
+
+        Reviewed by Tim Horton.
+
+        Currently, replacing the list of UIItemProviders right before a drop is handled results in
+        WebItemProviderPasteboard failing to load non-"public.content"-conformant items. This is because DragController
+        computes and sends to the UI process a list of UTIs to load (preferredTypeIdentifiers: one type identifier for
+        each item provider in WebItemProviderPasteboard). However, if the list of item providers changes immediately
+        before a drop is performed, WebItemProviderPasteboard will get into an inconsistent state where it has a
+        different number of preferred type identifiers to load than available item providers. This causes
+        WebItemProviderPasteboard to fail when choosing what type identifiers to load from each item provider.
+
+        To fix this, we instead have the web process propagate a list of supported type identifiers to the UI process,
+        which is a property of only the drop destination rather than both the destination and item providers. When
+        performing a drop, we then use the current item providers on WebItemProviderPasteboard to consult this list of
+        supported type identifiers to resolve our list of preferred type identifiers to load.
+
+        Globally renames updatePreferredTypeIdentifiers to updateSupportedTypeIdentifiers.
+
+        Tests:
+        DataInteractionTests.ExternalSourceOverrideDropFileUpload
+        DataInteractionTests.ExternalSourceOverrideDropInsertURL
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragEnteredOrUpdated):
+        (WebCore::DragController::updateSupportedTypeIdentifiersForDragHandlingMethod):
+        (WebCore::DragController::updatePreferredTypeIdentifiersForDragHandlingMethod): Deleted.
+        * page/DragController.h:
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::updateSupportedTypeIdentifiersForDragHandlingMethod):
+        (WebCore::DragController::updatePreferredTypeIdentifiersForDragHandlingMethod): Deleted.
+        * platform/DragData.h:
+        * platform/PasteboardStrategy.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::updateSupportedTypeIdentifiers):
+        (WebCore::PlatformPasteboard::updatePreferredTypeIdentifiers): Deleted.
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard updateSupportedTypeIdentifiers:]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard typeIsAppropriateForSupportedTypes:]):
+        (-[WebItemProviderPasteboard typeIdentifierToLoadForRegisteredTypeIdentfiers:]):
+
+        Add logic to resolve preferred type identifiers from an item providers list of registered type identifiers.
+        This formerly existed on DragData.
+
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout:]):
+        (-[WebItemProviderPasteboard updatePreferredTypeIdentifiers:]): Deleted.
+        * platform/mac/DragDataMac.mm:
+
+        Remove preferred type identifier resolution logic from DragData.
+
+        (WebCore::typeIsAppropriateForSupportedTypes): Deleted.
+        (WebCore::DragData::updatePreferredTypeIdentifiers): Deleted.
+
 2017-06-15  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Replace general inclusion of JSDOMConvert.h with inclusion of individual converter files to reduce unnecessary inclusion

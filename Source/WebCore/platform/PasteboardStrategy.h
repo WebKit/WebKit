@@ -52,7 +52,7 @@ public:
     virtual RefPtr<SharedBuffer> readBufferFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual URL readURLFromPasteboard(int index, const String& pasteboardType, const String& pasteboardName, String& title) = 0;
     virtual void getFilenamesForDataInteraction(Vector<String>& filenames, const String& pasteboardName) = 0;
-    virtual void updatePreferredTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName) = 0;
+    virtual void updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName) = 0;
     virtual void getTypesByFidelityForItemAtIndex(Vector<String>& types, uint64_t index, const String& pasteboardName) = 0;
 #endif // PLATFORM(IOS)
 #if PLATFORM(COCOA)

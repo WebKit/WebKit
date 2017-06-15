@@ -309,7 +309,6 @@ DragOperation DragController::dragEnteredOrUpdated(const DragData& dragData)
 {
     mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(dragData.clientPosition()));
 
-    m_preferredTypeIdentifiersToLoad = { };
     m_dragDestinationAction = dragData.dragDestinationAction();
     if (m_dragDestinationAction == DragDestinationActionNone) {
         clearDragCaret(); // FIXME: Why not call mouseMovedIntoDocument(nullptr)?
@@ -324,7 +323,7 @@ DragOperation DragController::dragEnteredOrUpdated(const DragData& dragData)
             m_dragHandlingMethod = DragHandlingMethod::PageLoad;
     }
 
-    updatePreferredTypeIdentifiersForDragHandlingMethod(m_dragHandlingMethod, dragData);
+    updateSupportedTypeIdentifiersForDragHandlingMethod(m_dragHandlingMethod, dragData);
     return dragOperation;
 }
 
@@ -365,7 +364,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
 
 #if !ENABLE(DATA_INTERACTION)
 
-void DragController::updatePreferredTypeIdentifiersForDragHandlingMethod(DragHandlingMethod, const DragData&) const
+void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod, const DragData&) const
 {
 }
 

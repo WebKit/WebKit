@@ -326,6 +326,11 @@ static NSArray *dataInteractionEventNames()
     return self.showCustomActionSheetBlock(element);
 }
 
+- (NSArray<UIDragItem *> *)_webView:(WKWebView *)webView willPerformDropWithSession:(id <UIDropSession>)session
+{
+    return self.overridePerformDropBlock ? self.overridePerformDropBlock(session) : session.items;
+}
+
 #pragma mark - _WKInputDelegate
 
 - (BOOL)_webView:(WKWebView *)webView focusShouldStartInputSession:(id <_WKFocusedElementInfo>)info

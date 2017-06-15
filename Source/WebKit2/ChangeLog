@@ -1,3 +1,25 @@
+2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Using -[WebItemProviderPasteboard setItemProviders:] to swap out item providers before a drop breaks item provider loading
+        https://bugs.webkit.org/show_bug.cgi?id=173338
+        <rdar://problem/32777720>
+
+        Reviewed by Tim Horton.
+
+        Rename updatePreferredTypeIdentifiers to updateSupportedTypeIdentifiers. Also, introduce
+        _webView:willPerformDropWithSession: as SPI on WKUIDelegate.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::updateSupportedTypeIdentifiers):
+        (WebKit::WebPasteboardProxy::updatePreferredTypeIdentifiers): Deleted.
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::updateSupportedTypeIdentifiers):
+        (WebKit::WebPlatformStrategies::updatePreferredTypeIdentifiers): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Cleanup headers includes in GTK+ API files

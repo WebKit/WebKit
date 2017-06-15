@@ -1,3 +1,24 @@
+2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Using -[WebItemProviderPasteboard setItemProviders:] to swap out item providers before a drop breaks item provider loading
+        https://bugs.webkit.org/show_bug.cgi?id=173338
+        <rdar://problem/32777720>
+
+        Reviewed by Tim Horton.
+
+        Adds new unit tests to ensure that -_webView:willPerformDropWithSession: can be used to filter out drag items
+        used by WebKit when handling a drop. These tests ensure that WebItemProviderPasteboard is still able to handle
+        these remaining items on drop.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+
+        Add -overridePerformDropBlock, which can be set to provide custom handling of dropped items.
+
+        (-[DataInteractionSimulator _webView:willPerformDropWithSession:]):
+
 2017-06-15  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Crash in accessibility layout test.

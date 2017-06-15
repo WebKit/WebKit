@@ -79,7 +79,7 @@ private:
     void readBufferFromPasteboard(uint64_t index, const String& pasteboardType, const String& pasteboardName, SharedMemory::Handle&, uint64_t& size);
     void getPasteboardItemsCount(const String& pasteboardName, uint64_t& itemsCount);
     void getFilenamesForDataInteraction(const String& pasteboardName, Vector<String>& filenames);
-    void updatePreferredTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName);
+    void updateSupportedTypeIdentifiers(const Vector<String>& identifiers, const String& pasteboardName);
 #endif
 #if PLATFORM(COCOA)
     void getNumberOfFiles(const String& pasteboardName, uint64_t& numberOfFiles);

@@ -456,16 +456,16 @@ URL PlatformPasteboard::readURL(int index, const String& type, String& title)
     return (NSURL *)value;
 }
 
-void PlatformPasteboard::updatePreferredTypeIdentifiers(const Vector<String>& types)
+void PlatformPasteboard::updateSupportedTypeIdentifiers(const Vector<String>& types)
 {
-    if (![m_pasteboard respondsToSelector:@selector(updatePreferredTypeIdentifiers:)])
+    if (![m_pasteboard respondsToSelector:@selector(updateSupportedTypeIdentifiers:)])
         return;
 
     NSMutableArray *typesArray = [NSMutableArray arrayWithCapacity:types.size()];
     for (auto type : types)
         [typesArray addObject:(NSString *)type];
 
-    [m_pasteboard updatePreferredTypeIdentifiers:typesArray];
+    [m_pasteboard updateSupportedTypeIdentifiers:typesArray];
 }
 
 }

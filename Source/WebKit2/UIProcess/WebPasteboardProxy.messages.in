@@ -31,7 +31,7 @@ messages -> WebPasteboardProxy {
     ReadBufferFromPasteboard(uint64_t index, String pasteboardType, String pasteboardName) -> (WebKit::SharedMemory::Handle handle, uint64_t size)
     GetPasteboardItemsCount(String pasteboardName) -> (uint64_t itemsCount)
     GetFilenamesForDataInteraction(String pasteboardName) -> (Vector<String> filenames)
-    UpdatePreferredTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
+    UpdateSupportedTypeIdentifiers(Vector<String> identifiers, String pasteboardName)
     GetPasteboardTypesByFidelityForItemAtIndex(uint64_t index, String pasteboardName) -> (Vector<String> types)
 #endif
 

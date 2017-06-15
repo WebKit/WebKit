@@ -292,43 +292,6 @@ String DragData::asURL(FilenameConversionPolicy, String* title) const
     return String();        
 }
 
-#if ENABLE(DATA_INTERACTION)
-
-static bool typeIsAppropriateForSupportedTypes(const String& type, const Vector<String>& supportedTypes)
-{
-    CFStringRef cfType = type.createCFString().autorelease();
-    for (auto supportedType : supportedTypes) {
-        if (UTTypeConformsTo(cfType, supportedType.createCFString().get()))
-            return true;
-    }
-    return false;
-}
-
-void DragData::updatePreferredTypeIdentifiers(const Vector<String>& supportedTypes) const
-{
-    Vector<String> bestTypeIdentifiers;
-    auto& strategy = *platformStrategies()->pasteboardStrategy();
-    uint64_t itemCount = strategy.getPasteboardItemsCount(m_pasteboardName);
-    for (uint64_t itemIndex = 0; itemIndex < itemCount; ++itemIndex) {
-        Vector<String> typeIdentifiers;
-        strategy.getTypesByFidelityForItemAtIndex(typeIdentifiers, itemIndex, m_pasteboardName);
-
-        String bestTypeIdentifier = emptyString();
-        for (auto& type : typeIdentifiers) {
-            if (!typeIsAppropriateForSupportedTypes(type, supportedTypes))
-                continue;
-
-            bestTypeIdentifier = type;
-            break;
-        }
-        bestTypeIdentifiers.append(bestTypeIdentifier);
-    }
-
-    strategy.updatePreferredTypeIdentifiers(bestTypeIdentifiers, m_pasteboardName);
-}
-
-#endif
-
 } // namespace WebCore
 
 #endif // ENABLE(DRAG_SUPPORT)

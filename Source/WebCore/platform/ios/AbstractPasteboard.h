@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<NSString *> *)pasteboardTypesByFidelityForItemAtIndex:(NSUInteger)index;
 @property (readonly, nonatomic) NSInteger numberOfFiles;
 @property (readonly, nonatomic) NSArray<NSURL *> *fileURLsForDataInteraction;
-- (void)updatePreferredTypeIdentifiers:(NSArray<NSString *> *)types;
+- (void)updateSupportedTypeIdentifiers:(NSArray<NSString *> *)types;
 
 @end
 

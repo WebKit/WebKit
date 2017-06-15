@@ -42,6 +42,8 @@
 #import "MainFrame.h"
 #import "Page.h"
 #import "Pasteboard.h"
+#import "PasteboardStrategy.h"
+#import "PlatformStrategies.h"
 #import "Range.h"
 
 #if ENABLE(DATA_INTERACTION)
@@ -104,7 +106,7 @@ void DragController::cleanupAfterSystemDrag()
 
 #if ENABLE(DATA_INTERACTION)
 
-void DragController::updatePreferredTypeIdentifiersForDragHandlingMethod(DragHandlingMethod dragHandlingMethod, const DragData& dragData) const
+void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod dragHandlingMethod, const DragData& dragData) const
 {
     Vector<String> supportedTypes;
     switch (dragHandlingMethod) {
@@ -123,7 +125,7 @@ void DragController::updatePreferredTypeIdentifiersForDragHandlingMethod(DragHan
         supportedTypes.append(kUTTypeContent);
         break;
     }
-    dragData.updatePreferredTypeIdentifiers(supportedTypes);
+    platformStrategies()->pasteboardStrategy()->updateSupportedTypeIdentifiers(supportedTypes, dragData.pasteboardName());
 }
 
 #endif
