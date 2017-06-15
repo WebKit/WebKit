@@ -1,3 +1,16 @@
+2017-06-15  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r218318.
+
+        Seems to have caused an 11% PLT regression. Rolling out to
+        confirm.
+
+        Reverted changeset:
+
+        "Don't always recalc the style of display: contents elements."
+        https://bugs.webkit.org/show_bug.cgi?id=172753
+        http://trac.webkit.org/changeset/218318
+
 2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Using -[WebItemProviderPasteboard setItemProviders:] to swap out item providers before a drop breaks item provider loading

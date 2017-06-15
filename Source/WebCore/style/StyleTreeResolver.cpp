@@ -179,7 +179,7 @@ ElementUpdate TreeResolver::resolveElement(Element& element)
     if (!affectsRenderedSubtree(element, *newStyle))
         return { };
 
-    auto* existingStyle = element.existingComputedStyle();
+    auto* existingStyle = element.renderStyle();
 
     if (m_didSeePendingStylesheet && (!existingStyle || existingStyle->isNotFinal())) {
         newStyle->setIsNotFinal();
@@ -248,10 +248,9 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         return makeUpdate(WTFMove(newStyle), Detach);
 
     if (!renderer) {
-        auto change = Detach;
-        if (auto* oldStyle = element.existingComputedStyle())
-            change = determineChange(*oldStyle, *newStyle);
-        return makeUpdate(WTFMove(newStyle), change);
+        auto keepsDisplayContents = newStyle->display() == CONTENTS && element.hasDisplayContents();
+        // Some inherited property might have changed.
+        return makeUpdate(WTFMove(newStyle), keepsDisplayContents ? Inherit : Detach);
     }
 
     std::unique_ptr<RenderStyle> animatedStyle;
@@ -332,11 +331,13 @@ static bool shouldResolveElement(const Element& element, Style::Change parentCha
     if (parentChange >= Inherit)
         return true;
     if (parentChange == NoInherit) {
-        auto* existingStyle = element.existingComputedStyle();
+        auto* existingStyle = element.renderStyle();
         if (existingStyle && existingStyle->hasExplicitlyInheritedProperties())
             return true;
     }
     if (element.needsStyleRecalc())
+        return true;
+    if (element.hasDisplayContents())
         return true;
     if (shouldResolvePseudoElement(element.beforePseudoElement()))
         return true;
@@ -416,7 +417,7 @@ void TreeResolver::resolveComposedTree()
         if (element.needsStyleRecalc() || parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle)
             parent.elementNeedingStyleRecalcAffectsNextSiblingElementStyle = element.affectsNextSiblingElementStyle();
 
-        auto* style = element.existingComputedStyle();
+        auto* style = element.renderStyle();
         auto change = NoChange;
 
         bool shouldResolve = shouldResolveElement(element, parent.change) || affectedByPreviousSibling;
