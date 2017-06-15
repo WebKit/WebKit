@@ -34,7 +34,7 @@ G_BEGIN_DECLS
 #define WEBKIT_PLUGIN_ERROR     webkit_plugin_error_quark ()
 #define WEBKIT_DOWNLOAD_ERROR   webkit_download_error_quark ()
 #define WEBKIT_PRINT_ERROR      webkit_print_error_quark ()
-#define WEBKIT_JAVASCRIPT_ERROR webkit_print_error_quark ()
+#define WEBKIT_JAVASCRIPT_ERROR webkit_javascript_error_quark ()
 #define WEBKIT_SNAPSHOT_ERROR   webkit_snapshot_error_quark ()
 
 /**

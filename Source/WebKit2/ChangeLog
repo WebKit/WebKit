@@ -1,5 +1,13 @@
 2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix copy-paste error in GTK+ WEBKIT_JAVASCRIPT_ERROR definition.
+
+        The print one was copied there.
+
+        * UIProcess/API/gtk/WebKitError.h:
+
+2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Add API to allow overriding popup menus
         https://bugs.webkit.org/show_bug.cgi?id=172905
 
