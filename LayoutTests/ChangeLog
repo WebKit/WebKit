@@ -1,3 +1,12 @@
+2017-06-14  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION: trac.webkit.org/export returns Content-Type application/xhtml+xml for .html files
+        https://bugs.webkit.org/show_bug.cgi?id=173191
+
+        Add a MIME type to one test to check if this changes the behavior.
+
+        * http/tests/security/contentSecurityPolicy/allow-favicon.html: Added property svn:mime-type.
+
 2017-06-14  Antoine Quint  <graouts@apple.com>
 
         Rebaseline media/modern-media-controls/media-documents
