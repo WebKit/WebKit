@@ -43,7 +43,6 @@
 #include "WebInspectorProxy.h"
 #include "WebKit2Initialize.h"
 #include "WebKitAuthenticationDialog.h"
-#include "WebKitPrivate.h"
 #include "WebKitWebViewBaseAccessible.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageGroup.h"
@@ -66,6 +65,7 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(FULLSCREEN_API)

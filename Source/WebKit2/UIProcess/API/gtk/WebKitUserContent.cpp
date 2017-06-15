@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitUserContent.h"
 
-#include "WebKitPrivate.h"
 #include "WebKitUserContentPrivate.h"
 #include <wtf/text/CString.h>
 

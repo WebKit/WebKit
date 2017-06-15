@@ -17,13 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitMimeInfoPrivate_h
-#define WebKitMimeInfoPrivate_h
+#pragma once
 
 #include "WebKitMimeInfo.h"
-#include "WebKitPrivate.h"
 #include <WebCore/PluginData.h>
 
 WebKitMimeInfo* webkitMimeInfoCreate(const WebCore::MimeClassInfo&);
-
-#endif // WebKitMimeInfoPrivate_h

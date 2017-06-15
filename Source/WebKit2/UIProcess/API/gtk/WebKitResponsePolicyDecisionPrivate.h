@@ -17,12 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitResponsePolicyDecisionPrivate_h
-#define WebKitResponsePolicyDecisionPrivate_h
+#pragma once
 
-#include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecision.h"
 
 WebKitPolicyDecision* webkitResponsePolicyDecisionCreate(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, bool canShowMIMEType, WebKit::WebFramePolicyListenerProxy*);
-
-#endif // WebKitResponsePolicyDecisionPrivate_h

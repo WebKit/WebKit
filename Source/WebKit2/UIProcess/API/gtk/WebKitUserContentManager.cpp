@@ -22,12 +22,12 @@
 
 #include "APISerializedScriptValue.h"
 #include "WebKitJavascriptResultPrivate.h"
-#include "WebKitPrivate.h"
 #include "WebKitUserContentManagerPrivate.h"
 #include "WebKitUserContentPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebScriptMessageHandler.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebCore;
 using namespace WebKit;

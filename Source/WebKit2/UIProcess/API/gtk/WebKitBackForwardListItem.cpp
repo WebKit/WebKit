@@ -21,10 +21,10 @@
 #include "WebKitBackForwardListItem.h"
 
 #include "WebKitBackForwardListPrivate.h"
-#include "WebKitPrivate.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;

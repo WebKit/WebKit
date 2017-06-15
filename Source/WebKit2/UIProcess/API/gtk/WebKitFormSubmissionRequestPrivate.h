@@ -20,6 +20,5 @@
 #pragma once
 
 #include "WebKitFormSubmissionRequest.h"
-#include "WebKitPrivate.h"
 
 WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std::pair<String, String>>&, Ref<WebKit::WebFormSubmissionListenerProxy>&&);

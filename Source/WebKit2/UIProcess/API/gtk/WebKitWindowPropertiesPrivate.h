@@ -24,11 +24,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWindowPropertiesPrivate_h
-#define WebKitWindowPropertiesPrivate_h
+#pragma once
 
-#include "WebKitPrivate.h"
 #include "WebKitWindowProperties.h"
+#include <WebCore/WindowFeatures.h>
 
 WebKitWindowProperties* webkitWindowPropertiesCreate();
 void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties*, const WebCore::WindowFeatures&);
@@ -39,5 +38,3 @@ void webkitWindowPropertiesSetStatusbarVisible(WebKitWindowProperties*, bool sta
 void webkitWindowPropertiesSetScrollbarsVisible(WebKitWindowProperties*, bool scrollBarsVisible);
 void webkitWindowPropertiesSetResizable(WebKitWindowProperties*, bool resizable);
 void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties*, bool fullscreen);
-
-#endif // WebKitWindowPropertiesPrivate_h

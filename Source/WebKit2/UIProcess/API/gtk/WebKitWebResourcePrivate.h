@@ -17,10 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitWebResourcePrivate_h
-#define WebKitWebResourcePrivate_h
+#pragma once
 
-#include "WebKitPrivate.h"
 #include "WebKitWebResource.h"
 
 WebKitWebResource* webkitWebResourceCreate(WebKit::WebFrameProxy*, WebKitURIRequest*, bool isMainResource);
@@ -31,6 +29,3 @@ void webkitWebResourceFinished(WebKitWebResource*);
 void webkitWebResourceFailed(WebKitWebResource*, GError*);
 void webkitWebResourceFailedWithTLSErrors(WebKitWebResource*, GTlsCertificateFlags, GTlsCertificate*);
 WebKit::WebFrameProxy* webkitWebResourceGetFrame(WebKitWebResource*);
-
-
-#endif // WebKitWebResourcePrivate_h

@@ -32,6 +32,7 @@
 #include <memory>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 using namespace WebCore;

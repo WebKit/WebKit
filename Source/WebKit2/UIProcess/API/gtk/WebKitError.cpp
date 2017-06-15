@@ -21,6 +21,7 @@
 #include "config.h"
 #include "WebKitError.h"
 
+#include "APIError.h"
 #include "WebKitPrivate.h"
 
 using namespace WebCore;

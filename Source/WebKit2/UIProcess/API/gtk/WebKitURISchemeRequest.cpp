@@ -31,6 +31,7 @@
 #include <libsoup/soup.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;

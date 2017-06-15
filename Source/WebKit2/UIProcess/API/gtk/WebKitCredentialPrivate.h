@@ -17,14 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitCredentialPrivate_h
-#define WebKitCredentialPrivate_h
+#pragma once
 
 #include "WebKitCredential.h"
-#include "WebKitPrivate.h"
 #include <WebCore/Credential.h>
 
 WebKitCredential* webkitCredentialCreate(const WebCore::Credential&);
 const WebCore::Credential& webkitCredentialGetCredential(WebKitCredential*);
-
-#endif // WebKitCredentialPrivate_h

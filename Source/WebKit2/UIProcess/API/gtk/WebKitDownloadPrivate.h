@@ -17,11 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitDownloadPrivate_h
-#define WebKitDownloadPrivate_h
+#pragma once
 
 #include "WebKitDownload.h"
-#include "WebKitPrivate.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 
@@ -35,5 +33,3 @@ void webkitDownloadCancelled(WebKitDownload*);
 void webkitDownloadFinished(WebKitDownload*);
 String webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload*, const CString& suggestedFilename, bool& allowOverwrite);
 void webkitDownloadDestinationCreated(WebKitDownload*, const String& destinationPath);
-
-#endif // WebKitDownloadPrivate_h

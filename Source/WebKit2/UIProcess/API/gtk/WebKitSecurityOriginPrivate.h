@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "WebKitPrivate.h"
 #include "WebKitSecurityOrigin.h"
 #include <WebCore/SecurityOrigin.h>
 

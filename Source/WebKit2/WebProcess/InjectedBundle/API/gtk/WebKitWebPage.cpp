@@ -22,6 +22,11 @@
 
 #include "APIArray.h"
 #include "APIDictionary.h"
+#include "APIError.h"
+#include "APINumber.h"
+#include "APIString.h"
+#include "APIURLRequest.h"
+#include "APIURLResponse.h"
 #include "ImageOptions.h"
 #include "InjectedBundle.h"
 #include "WebContextMenuItem.h"
@@ -47,6 +52,7 @@
 #include <WebCore/MainFrame.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

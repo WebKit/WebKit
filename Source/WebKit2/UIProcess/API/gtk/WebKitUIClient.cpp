@@ -25,7 +25,6 @@
 #include "WebKitGeolocationPermissionRequestPrivate.h"
 #include "WebKitNavigationActionPrivate.h"
 #include "WebKitNotificationPermissionRequestPrivate.h"
-#include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitUserMediaPermissionRequestPrivate.h"
 #include "WebKitWebViewPrivate.h"

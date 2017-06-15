@@ -22,6 +22,7 @@
 
 #include "WebKitMimeInfoPrivate.h"
 #include "WebKitPluginPrivate.h"
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;

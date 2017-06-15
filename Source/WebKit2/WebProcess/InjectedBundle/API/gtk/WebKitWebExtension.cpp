@@ -23,12 +23,12 @@
 #include "APIDictionary.h"
 #include "APIInjectedBundleBundleClient.h"
 #include "APIString.h"
-#include "WebKitPrivate.h"
 #include "WebKitWebExtensionPrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 

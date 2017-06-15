@@ -20,10 +20,10 @@
 #include "config.h"
 #include "WebKitScriptWorld.h"
 
-#include "WebKitPrivate.h"
 #include "WebKitScriptWorldPrivate.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 using namespace WebCore;

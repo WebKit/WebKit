@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "WebKitPrivate.h"
 #include "WebKitWebsiteData.h"
 #include "WebsiteDataRecord.h"
 

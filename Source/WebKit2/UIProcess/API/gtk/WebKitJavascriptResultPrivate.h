@@ -17,14 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitJavascriptResultPrivate_h
-#define WebKitJavascriptResultPrivate_h
+#pragma once
 
 #include <WebCore/SerializedScriptValue.h>
 #include "WebKitJavascriptResult.h"
-#include "WebKitPrivate.h"
 #include "WebKitWebView.h"
 
 WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView*, WebCore::SerializedScriptValue&);
-
-#endif // WebKitJavascriptResultPrivate_h

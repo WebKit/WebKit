@@ -17,14 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitAuthenticationRequestPrivate_h
-#define WebKitAuthenticationRequestPrivate_h
+#pragma once
 
 #include "AuthenticationChallengeProxy.h"
 #include "WebKitAuthenticationRequest.h"
-#include "WebKitPrivate.h"
 
 WebKitAuthenticationRequest* webkitAuthenticationRequestCreate(WebKit::AuthenticationChallengeProxy*, bool privateBrowsingEnabled);
 WebKit::AuthenticationChallengeProxy* webkitAuthenticationRequestGetAuthenticationChallenge(WebKitAuthenticationRequest*);
-
-#endif // WebKitAuthenticationRequestPrivate_h

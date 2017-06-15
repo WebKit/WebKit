@@ -29,6 +29,7 @@
 
 #include "WebKitColorChooserRequestPrivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 using namespace WebCore;

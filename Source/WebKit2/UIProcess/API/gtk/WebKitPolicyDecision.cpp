@@ -23,6 +23,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebKitPolicyDecisionPrivate.h"
 #include "WebsitePolicies.h"
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 

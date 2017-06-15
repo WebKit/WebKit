@@ -16,14 +16,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WebKitUserMediaPermissionRequestPrivate_h
-#define WebKitUserMediaPermissionRequestPrivate_h
+#pragma once
 
-#include "WebKitPrivate.h"
+#include "APISecurityOrigin.h"
 #include "WebKitUserMediaPermissionRequest.h"
 
-class SecurityOrigin;
-
 WebKitUserMediaPermissionRequest* webkitUserMediaPermissionRequestCreate(WebKit::UserMediaPermissionRequestProxy&, API::SecurityOrigin&, API::SecurityOrigin&);
-
-#endif // WebKitUserMediaPermissionRequestPrivate_h

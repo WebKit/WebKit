@@ -23,9 +23,9 @@
 #include "APIFormClient.h"
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
-#include "WebKitPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 

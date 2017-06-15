@@ -17,12 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitWebInspectorPrivate_h
-#define WebKitWebInspectorPrivate_h
+#pragma once
 
-#include "WebKitPrivate.h"
 #include "WebKitWebInspector.h"
 
 WebKitWebInspector* webkitWebInspectorCreate(WebKit::WebInspectorProxy*);
-
-#endif // WebKitWebInspectorPrivate_h

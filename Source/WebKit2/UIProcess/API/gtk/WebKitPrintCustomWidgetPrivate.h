@@ -20,7 +20,6 @@
 #pragma once
 
 #include "WebKitPrintCustomWidget.h"
-#include "WebKitPrivate.h"
 #include <gtk/gtk.h>
 
 void webkitPrintCustomWidgetEmitCustomWidgetApplySignal(WebKitPrintCustomWidget*);

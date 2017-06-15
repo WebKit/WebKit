@@ -31,7 +31,6 @@
 #include "WebContextMenuItemData.h"
 #include "WebHitTestResultData.h"
 #include "WebImage.h"
-#include "WebKitPrivate.h"
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
 #include <WebCore/IntRect.h>

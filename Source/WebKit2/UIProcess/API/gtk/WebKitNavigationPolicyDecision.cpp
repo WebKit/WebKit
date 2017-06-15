@@ -27,6 +27,7 @@
 #include "WebKitURIRequestPrivate.h"
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;

@@ -20,9 +20,9 @@
 #include "config.h"
 #include "WebKitWebEditor.h"
 
-#include "WebKitPrivate.h"
 #include "WebKitWebEditorPrivate.h"
 #include "WebKitWebPagePrivate.h"
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 using namespace WebCore;

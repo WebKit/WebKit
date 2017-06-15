@@ -21,9 +21,9 @@
 #include "WebKitNotification.h"
 
 #include "WebKitNotificationPrivate.h"
-#include "WebKitPrivate.h"
 #include "WebNotification.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 /**

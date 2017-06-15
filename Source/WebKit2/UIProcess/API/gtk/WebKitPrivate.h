@@ -25,23 +25,9 @@
 
 #pragma once
 
+#include "WebEvent.h"
 #include "WebKitNavigationAction.h"
-#include <WebKit/WKAPICast.h>
-#include <WebKit/WKDownload.h>
-#include <WebKit/WKFindOptions.h>
-#include <WebKit/WKGeolocationManager.h>
-#include <WebKit/WKGeolocationPermissionRequest.h>
-#include <WebKit/WKGeolocationPosition.h>
-#include <WebKit/WKIconDatabase.h>
-#include <WebKit/WKInspector.h>
-#include <WebKit/WKRetainPtr.h>
-#include <WebKit/WKSerializedScriptValue.h>
-#include <WebKit/WKString.h>
-#include <WebKit/WKUserMediaPermissionRequest.h>
-#include <WebKit/WebKit2_C.h>
-#include <glib.h>
-#include <wtf/Assertions.h>
-#include <wtf/glib/WTFGType.h>
+#include <WebCore/FrameLoaderTypes.h>
 
 unsigned toGdkModifiers(WebKit::WebEvent::Modifiers);
 WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType);

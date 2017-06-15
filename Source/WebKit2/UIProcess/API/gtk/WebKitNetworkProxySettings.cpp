@@ -22,9 +22,8 @@
 
 #include "WebKitNetworkProxySettingsPrivate.h"
 #include <WebCore/SoupNetworkProxySettings.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/glib/WTFGType.h>
 
-using namespace WebKit;
 using namespace WebCore;
 
 /**

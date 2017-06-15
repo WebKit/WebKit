@@ -21,8 +21,8 @@
 #include "WebKitFrame.h"
 
 #include "WebKitFramePrivate.h"
-#include "WebKitPrivate.h"
 #include "WebKitScriptWorldPrivate.h"
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 using namespace WebKit;

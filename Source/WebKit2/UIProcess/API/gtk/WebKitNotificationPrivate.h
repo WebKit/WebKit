@@ -17,15 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitNotificationPrivate_h
-#define WebKitNotificationPrivate_h
+#pragma once
 
 #include "WebKitNotification.h"
-#include "WebKitPrivate.h"
 #include "WebNotification.h"
 #include <wtf/text/CString.h>
 
 WebKitNotification* webkitNotificationCreate(WebKitWebView*, const WebKit::WebNotification&);
 WebKitWebView* webkitNotificationGetWebView(WebKitNotification*);
-
-#endif // WebKitNotificationPrivate_h

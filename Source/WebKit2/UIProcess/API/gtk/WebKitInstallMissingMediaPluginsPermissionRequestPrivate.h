@@ -17,15 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitInstallMissingMediaPluginsPermissionRequestPrivate_h
-#define WebKitInstallMissingMediaPluginsPermissionRequestPrivate_h
+#pragma once
 
 #include "InstallMissingMediaPluginsPermissionRequest.h"
 #include "WebKitInstallMissingMediaPluginsPermissionRequest.h"
-#include "WebKitPrivate.h"
 
 #if ENABLE(VIDEO)
 WebKitInstallMissingMediaPluginsPermissionRequest* webkitInstallMissingMediaPluginsPermissionRequestCreate(WebKit::InstallMissingMediaPluginsPermissionRequest&);
 #endif
-
-#endif // WebKitInstallMissingMediaPluginsPermissionRequestPrivate_h

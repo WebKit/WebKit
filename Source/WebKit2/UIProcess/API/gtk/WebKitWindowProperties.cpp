@@ -23,13 +23,12 @@
 #include "APIDictionary.h"
 #include "APINumber.h"
 #include "APIURLRequest.h"
-#include "WebKitPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <WebCore/IntRect.h>
 #include <WebCore/WindowFeatures.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/WTFGType.h>
 
-using namespace WebKit;
 using namespace WebCore;
 
 /**

@@ -24,8 +24,6 @@
 #include <WebCore/URL.h>
 #include <wtf/text/CString.h>
 
-using namespace WebKit;
-
 /**
  * SECTION: WebKitSecurityOrigin
  * @Short_description: A security boundary for websites

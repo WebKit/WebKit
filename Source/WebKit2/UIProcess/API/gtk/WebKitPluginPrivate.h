@@ -17,13 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitPluginPrivate_h
-#define WebKitPluginPrivate_h
+#pragma once
 
 #include "PluginModuleInfo.h"
 #include "WebKitPlugin.h"
-#include "WebKitPrivate.h"
 
 WebKitPlugin* webkitPluginCreate(const WebKit::PluginModuleInfo&);
-
-#endif // WebKitPluginPrivate_h

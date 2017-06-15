@@ -23,6 +23,7 @@
 #include "WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h"
 #include "WebKitPermissionRequest.h"
 #include "WebPageProxy.h"
+#include <wtf/glib/WTFGType.h>
 
 #if ENABLE(VIDEO)
 #include <WebCore/PlatformDisplay.h>

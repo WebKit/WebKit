@@ -23,6 +23,7 @@
 #include "NotificationPermissionRequest.h"
 #include "WebKitNotificationPermissionRequestPrivate.h"
 #include "WebKitPermissionRequest.h"
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 

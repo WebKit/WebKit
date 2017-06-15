@@ -17,15 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitContextMenuItemPrivate_h
-#define WebKitContextMenuItemPrivate_h
+#pragma once
 
 #include "WebContextMenuItemGtk.h"
 #include "WebKitContextMenuItem.h"
-#include "WebKitPrivate.h"
 
 WebKitContextMenuItem* webkitContextMenuItemCreate(const WebKit::WebContextMenuItemData&);
 WebKit::WebContextMenuItemGtk webkitContextMenuItemToWebContextMenuItemGtk(WebKitContextMenuItem*);
 WebKit::WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitContextMenuItem*);
-
-#endif // WebKitContextMenuItemPrivate_h

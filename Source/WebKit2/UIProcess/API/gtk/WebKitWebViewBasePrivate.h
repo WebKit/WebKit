@@ -25,15 +25,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewBasePrivate_h
-#define WebKitWebViewBasePrivate_h
+#pragma once
 
 #include "APIPageConfiguration.h"
 #include "DragAndDropHandler.h"
 #include "GestureController.h"
 #include "WebContextMenuProxyGtk.h"
 #include "WebInspectorProxy.h"
-#include "WebKitPrivate.h"
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
 
@@ -80,5 +78,3 @@ WebKit::DragAndDropHandler& webkitWebViewBaseDragAndDropHandler(WebKitWebViewBas
 #if HAVE(GTK_GESTURES)
 WebKit::GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase*);
 #endif
-
-#endif // WebKitWebViewBasePrivate_h

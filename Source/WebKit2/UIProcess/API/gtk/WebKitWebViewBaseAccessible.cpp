@@ -20,8 +20,8 @@
 #include "config.h"
 #include "WebKitWebViewBaseAccessible.h"
 
-#include "WebKitPrivate.h"
 #include <gtk/gtk.h>
+#include <wtf/glib/WTFGType.h>
 
 struct _WebKitWebViewBaseAccessiblePrivate {
     GtkWidget* widget;

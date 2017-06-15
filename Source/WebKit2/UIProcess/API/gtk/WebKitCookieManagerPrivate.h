@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "WebKitPrivate.h"
+#include "WebKitCookieManager.h"
 #include "WebKitWebsiteDataManager.h"
 
 WebKitCookieManager* webkitCookieManagerCreate(WebKitWebsiteDataManager*);

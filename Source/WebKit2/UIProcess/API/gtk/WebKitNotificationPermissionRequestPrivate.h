@@ -17,12 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitNotificationPermissionRequestPrivate_h
-#define WebKitNotificationPermissionRequestPrivate_h
+#pragma once
 
 #include "WebKitNotificationPermissionRequest.h"
-#include "WebKitPrivate.h"
 
 WebKitNotificationPermissionRequest* webkitNotificationPermissionRequestCreate(WebKit::NotificationPermissionRequest*);
-
-#endif // WebKitNotificationPermissionRequestPrivate_h

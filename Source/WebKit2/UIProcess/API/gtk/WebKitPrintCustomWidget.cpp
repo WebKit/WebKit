@@ -24,8 +24,8 @@
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
 #include <wtf/glib/GRefPtr.h>
-
-using namespace WebKit;
+#include <wtf/glib/WTFGType.h>
+#include <wtf/text/CString.h>
 
 /**
  * SECTION: WebKitPrintCustomWidget

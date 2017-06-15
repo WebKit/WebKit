@@ -17,13 +17,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitEditorStatePrivate_h
-#define WebKitEditorStatePrivate_h
+#pragma once
 
+#include "EditorState.h"
 #include "WebKitEditorState.h"
-#include "WebKitPrivate.h"
 
 WebKitEditorState* webkitEditorStateCreate(const WebKit::EditorState&);
 void webkitEditorStateChanged(WebKitEditorState*, const WebKit::EditorState&);
-
-#endif // WebKitEditorStatePrivate_h

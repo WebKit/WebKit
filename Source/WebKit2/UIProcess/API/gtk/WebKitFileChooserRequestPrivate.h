@@ -17,12 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitFileChooserRequestPrivate_h
-#define WebKitFileChooserRequestPrivate_h
+#pragma once
 
 #include "WebKitFileChooserRequest.h"
-#include "WebKitPrivate.h"
+#include "WebOpenPanelResultListenerProxy.h"
 
 WebKitFileChooserRequest* webkitFileChooserRequestCreate(API::OpenPanelParameters*, WebKit::WebOpenPanelResultListenerProxy*);
-
-#endif // WebKitFileChooserRequestPrivate_h

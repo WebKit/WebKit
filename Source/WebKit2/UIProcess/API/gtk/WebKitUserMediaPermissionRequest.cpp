@@ -23,6 +23,7 @@
 #include "WebKitPermissionRequest.h"
 #include "WebKitUserMediaPermissionRequestPrivate.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 

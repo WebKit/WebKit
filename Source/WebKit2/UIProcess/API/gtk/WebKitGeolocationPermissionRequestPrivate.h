@@ -17,12 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitGeolocationPermissionRequestPrivate_h
-#define WebKitGeolocationPermissionRequestPrivate_h
+#pragma once
 
 #include "WebKitGeolocationPermissionRequest.h"
-#include "WebKitPrivate.h"
 
 WebKitGeolocationPermissionRequest* webkitGeolocationPermissionRequestCreate(WebKit::GeolocationPermissionRequestProxy*);
-
-#endif // WebKitGeolocationPermissionRequestPrivate_h

@@ -22,7 +22,7 @@
 
 #include "WebKitOptionMenuItemPrivate.h"
 #include "WebKitOptionMenuPrivate.h"
-#include "WebKitPrivate.h"
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 

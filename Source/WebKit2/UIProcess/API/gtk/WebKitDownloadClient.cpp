@@ -26,7 +26,6 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebProcessPool.h"
-#include <WebKit/WKString.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
 

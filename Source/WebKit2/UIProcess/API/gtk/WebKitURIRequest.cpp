@@ -20,10 +20,10 @@
 #include "config.h"
 #include "WebKitURIRequest.h"
 
-#include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
 #include <WebCore/GUniquePtrSoup.h>
 #include <glib/gi18n-lib.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
 enum {

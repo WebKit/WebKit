@@ -17,12 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitNavigationActionPrivate_h
-#define WebKitNavigationActionPrivate_h
+#pragma once
 
 #include "NavigationActionData.h"
 #include "WebKitNavigationAction.h"
 #include "WebKitPrivate.h"
+#include <wtf/glib/GRefPtr.h>
 
 struct _WebKitNavigationAction {
     _WebKitNavigationAction(WebKitURIRequest* uriRequest, const WebKit::NavigationActionData& navigationActionData)
@@ -51,5 +51,3 @@ struct _WebKitNavigationAction {
 };
 
 WebKitNavigationAction* webkitNavigationActionCreate(WebKitURIRequest*, const WebKit::NavigationActionData&);
-
-#endif // WebKitNavigationActionPrivate_h

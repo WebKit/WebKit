@@ -22,8 +22,8 @@
 
 #include "APIArray.h"
 #include "WebKitBackForwardListPrivate.h"
-#include "WebKitPrivate.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/WTFGType.h>
 
 /**
  * SECTION: WebKitBackForwardList

@@ -24,6 +24,7 @@
 #include "WebKitWebContextPrivate.h"
 #include "WebProcessPool.h"
 #include <WebCore/SchemeRegistry.h>
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 

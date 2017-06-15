@@ -17,14 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitNavigationPolicyDecisionPrivate_h
-#define WebKitNavigationPolicyDecisionPrivate_h
+#pragma once
 
 #include "NavigationActionData.h"
+#include "WebFramePolicyListenerProxy.h"
 #include "WebKitNavigationPolicyDecision.h"
-#include "WebKitPrivate.h"
+#include <WebCore/ResourceRequest.h>
 
 WebKitPolicyDecision* webkitNavigationPolicyDecisionCreate(const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, WebKit::WebFramePolicyListenerProxy*);
 WebKitPolicyDecision* webkitNewWindowPolicyDecisionCreate(const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, const String& frameName, WebKit::WebFramePolicyListenerProxy*);
-
-#endif // WebKitNavigationPolicyDecisionPrivate_h

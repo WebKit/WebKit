@@ -21,7 +21,6 @@
 #include "WebKitFaviconDatabase.h"
 
 #include "WebKitFaviconDatabasePrivate.h"
-#include "WebKitPrivate.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/Image.h>
 #include <WebCore/IntSize.h>
@@ -30,7 +29,9 @@
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringHash.h>
 
 using namespace WebKit;
 using namespace WebCore;

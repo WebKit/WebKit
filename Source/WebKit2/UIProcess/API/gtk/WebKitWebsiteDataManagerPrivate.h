@@ -20,7 +20,6 @@
 #pragma once
 
 #include "APIWebsiteDataStore.h"
-#include "WebKitPrivate.h"
 #include "WebProcessPool.h"
 #include "WebsiteDataStore.h"
 

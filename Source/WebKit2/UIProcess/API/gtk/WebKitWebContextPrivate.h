@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebContextPrivate_h
-#define WebKitWebContextPrivate_h
+#pragma once
 
 #include "DownloadProxy.h"
 #include "LegacyCustomProtocolManagerProxy.h"
-#include "WebKitPrivate.h"
 #include "WebKitUserContentManager.h"
 #include "WebKitWebContext.h"
 #include "WebProcessPool.h"
@@ -49,5 +47,3 @@ void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
 GVariant* webkitWebContextInitializeWebExtensions(WebKitWebContext*);
 void webkitWebContextInitializeNotificationPermissions(WebKitWebContext*);
-
-#endif // WebKitWebContextPrivate_h

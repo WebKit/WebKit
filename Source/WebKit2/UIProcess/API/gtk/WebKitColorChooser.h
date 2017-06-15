@@ -17,18 +17,16 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitColorChooser_h
-#define WebKitColorChooser_h
+#pragma once
 
 #include "WebColorPickerGtk.h"
-#include "WebKitPrivate.h"
+#include <WebCore/IntRect.h>
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _WebKitColorChooserRequest WebKitColorChooserRequest;
 
 namespace WebCore {
 class Color;
-class IntRect;
 }
 
 namespace WebKit {
@@ -54,5 +52,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebKitColorChooser_h

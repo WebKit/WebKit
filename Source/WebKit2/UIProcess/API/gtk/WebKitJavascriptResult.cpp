@@ -24,8 +24,6 @@
 #include "WebKitJavascriptResultPrivate.h"
 #include <wtf/glib/GRefPtr.h>
 
-using namespace WebKit;
-
 struct _WebKitJavascriptResult {
     _WebKitJavascriptResult(WebKitWebView* view, WebCore::SerializedScriptValue& serializedScriptValue)
         : webView(view)

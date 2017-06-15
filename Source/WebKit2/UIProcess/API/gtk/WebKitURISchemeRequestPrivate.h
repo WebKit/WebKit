@@ -17,11 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitURISchemeRequestPrivate_h
-#define WebKitURISchemeRequestPrivate_h
+#pragma once
 
 #include "LegacyCustomProtocolManagerProxy.h"
-#include "WebKitPrivate.h"
 #include "WebKitURISchemeRequest.h"
 #include "WebKitWebContext.h"
 #include <WebCore/ResourceRequest.h>
@@ -30,5 +28,3 @@ WebKitURISchemeRequest* webkitURISchemeRequestCreate(uint64_t requestID, WebKitW
 void webkitURISchemeRequestCancel(WebKitURISchemeRequest*);
 WebKit::LegacyCustomProtocolManagerProxy* webkitURISchemeRequestGetManager(WebKitURISchemeRequest*);
 void webkitURISchemeRequestInvalidate(WebKitURISchemeRequest*);
-
-#endif // WebKitURISchemeRequestPrivate_h

@@ -17,13 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitHitTestResultPrivate_h
-#define WebKitHitTestResultPrivate_h
+#pragma once
 
 #include "WebKitHitTestResult.h"
-#include "WebKitPrivate.h"
 
 WebKitHitTestResult* webkitHitTestResultCreate(const WebKit::WebHitTestResultData&);
 bool webkitHitTestResultCompare(WebKitHitTestResult*, const WebKit::WebHitTestResultData&);
-
-#endif // WebKitHitTestResultPrivate_h

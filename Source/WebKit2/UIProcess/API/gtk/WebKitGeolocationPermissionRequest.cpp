@@ -23,6 +23,7 @@
 #include "GeolocationPermissionRequestProxy.h"
 #include "WebKitGeolocationPermissionRequestPrivate.h"
 #include "WebKitPermissionRequest.h"
+#include <wtf/glib/WTFGType.h>
 
 using namespace WebKit;
 
