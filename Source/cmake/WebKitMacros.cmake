@@ -38,8 +38,12 @@ macro(ADD_PRECOMPILED_HEADER _header _cpp _source)
             PROPERTIES COMPILE_FLAGS "/Yc\"${_header}\" /Fp\"${PrecompiledBinary}\""
             OBJECT_OUTPUTS "${PrecompiledBinary}")
         set_source_files_properties(${_sources}
-            PROPERTIES COMPILE_FLAGS "/Yu\"${_header}\" /FI\"${_header}\" /Fp\"${PrecompiledBinary}\""
-            OBJECT_DEPENDS "${PrecompiledBinary}")
+            PROPERTIES COMPILE_FLAGS "/Yu\"${_header}\" /FI\"${_header}\" /Fp\"${PrecompiledBinary}\"")
+
+        foreach (_src ${_sources})
+            ADD_SOURCE_DEPENDENCIES(${_src} ${PrecompiledBinary})
+        endforeach ()
+
         list(APPEND ${_source} ${_cpp})
     endif ()
     #FIXME: Add support for Xcode.
