@@ -1,3 +1,17 @@
+2017-06-15  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] DumpRenderTree.cpp: error C3861: 'CFURLCacheCreate': identifier not found
+        https://bugs.webkit.org/show_bug.cgi?id=173399
+
+        Reviewed by Per Arne Vollan.
+
+        OpenCFLite doesn't have CFURLCacheCreate and CFURLCacheSetSharedURLCache.
+        Curl port needs to do nothing because libcurl doesn't have disk cache.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (prepareConsistentTestingEnvironment): Call CFURLCacheCreate() and
+        CFURLCacheSetSharedURLCache() only if USE(CFURLCONNECTION).
+
 2017-06-14  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] integer expression expected if running Tools/gtk/install-dependencies

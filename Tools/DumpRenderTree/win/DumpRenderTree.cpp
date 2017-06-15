@@ -1466,8 +1466,10 @@ static void prepareConsistentTestingEnvironment(IWebPreferences* standardPrefere
     ASSERT(standardPreferencesPrivate);
     standardPreferences->setAutosaves(FALSE);
 
+#if USE(CFURLCONNECTION)
     auto newCache = adoptCF(CFURLCacheCreate(kCFAllocatorDefault, 1024 * 1024, 0, nullptr));
     CFURLCacheSetSharedURLCache(newCache.get());
+#endif
 
     COMPtr<IWebPreferencesPrivate4> prefsPrivate4(Query, standardPreferences);
     prefsPrivate4->switchNetworkLoaderToNewTestingSession();
