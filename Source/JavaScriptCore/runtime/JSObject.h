@@ -190,7 +190,7 @@ public:
         return m_butterfly.get()->vectorLength();
     }
     
-    static bool putInline(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
+    static bool putInlineForJSObject(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     
     JS_EXPORT_PRIVATE static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     // putByIndex assumes that the receiver is this JSCell object.

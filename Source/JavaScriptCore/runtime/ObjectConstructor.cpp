@@ -39,6 +39,7 @@
 
 namespace JSC {
 
+EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState*);
 EncodedJSValue JSC_HOST_CALL objectConstructorGetPrototypeOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL objectConstructorSetPrototypeOf(ExecState*);
 EncodedJSValue JSC_HOST_CALL objectConstructorGetOwnPropertyNames(ExecState*);
@@ -82,7 +83,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
   isFrozen                  objectConstructorIsFrozen                   DontEnum|Function 1
   isExtensible              objectConstructorIsExtensible               DontEnum|Function 1
   is                        objectConstructorIs                         DontEnum|Function 2
-  assign                    JSBuiltin                                   DontEnum|Function 2
+  assign                    objectConstructorAssign                     DontEnum|Function 2
   values                    JSBuiltin                                   DontEnum|Function 1
   entries                   JSBuiltin                                   DontEnum|Function 1
 @end
@@ -303,6 +304,73 @@ EncodedJSValue JSC_HOST_CALL ownEnumerablePropertyKeys(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     scope.release();
     return JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Exclude));
+}
+
+EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue targetValue = exec->argument(0);
+    if (targetValue.isUndefinedOrNull())
+        return throwVMTypeError(exec, scope, ASCIILiteral("Object.assign requires that input parameter not be null or undefined"));
+    JSObject* target = targetValue.toObject(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    unsigned argsCount = exec->argumentCount();
+    for (unsigned i = 1; i < argsCount; ++i) {
+        JSValue sourceValue = exec->uncheckedArgument(i);
+        if (sourceValue.isUndefinedOrNull())
+            continue;
+        JSObject* source = sourceValue.toObject(exec);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        PropertyNameArray properties(exec, PropertyNameMode::StringsAndSymbols);
+        source->methodTable(vm)->getOwnPropertyNames(source, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
+        RETURN_IF_EXCEPTION(scope, { });
+
+        auto assign = [&] (PropertyName propertyName) {
+            // FIXME: We can avoid this enumerable look up by checking Structure's status.
+            // https://bugs.webkit.org/show_bug.cgi?id=173416
+            PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
+            if (!source->methodTable(vm)->getOwnPropertySlot(source, exec, propertyName, slot))
+                return;
+            if (slot.attributes() & DontEnum)
+                return;
+
+            JSValue value = source->get(exec, propertyName);
+            RETURN_IF_EXCEPTION(scope, void());
+
+            PutPropertySlot putPropertySlot(target, true);
+            target->putInline(exec, propertyName, value, putPropertySlot);
+        };
+
+        // First loop is for strings. Second loop is for symbols to keep standardized order requirement in the spec.
+        // https://tc39.github.io/ecma262/#sec-ordinaryownpropertykeys
+        bool foundSymbol = false;
+        unsigned numProperties = properties.size();
+        for (unsigned j = 0; j < numProperties; j++) {
+            const auto& propertyName = properties[j];
+            if (propertyName.isSymbol()) {
+                foundSymbol = true;
+                continue;
+            }
+
+            assign(propertyName);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        if (foundSymbol) {
+            for (unsigned j = 0; j < numProperties; j++) {
+                const auto& propertyName = properties[j];
+                if (propertyName.isSymbol() && !vm.propertyNames->isPrivateName(propertyName)) {
+                    assign(propertyName);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+            }
+        }
+    }
+    return JSValue::encode(target);
 }
 
 // ES6 6.2.4.5 ToPropertyDescriptor

@@ -66,26 +66,3 @@ function entries(object)
     
     return @enumerableOwnProperties(object, @iterationKindKeyValue);
 }
-
-function assign(target/*[*/, /*...*/sources/*] */)
-{
-    "use strict";
-
-    if (target == null)
-        @throwTypeError("Object.assign requires that input parameter not be null or undefined");
-
-    let objTarget = @Object(target);
-    for (let s = 1, argumentsLength = arguments.length; s < argumentsLength; ++s) {
-        let nextSource = arguments[s];
-        if (nextSource != null) {
-            let from = @Object(nextSource);
-            let keys = @Reflect.@ownKeys(from);
-            for (let i = 0, keysLength = keys.length; i < keysLength; ++i) {
-                let nextKey = keys[i];
-                if (@propertyIsEnumerable(from, nextKey))
-                    objTarget[nextKey] = from[nextKey];
-            }
-        }
-    }
-    return objTarget;
-}

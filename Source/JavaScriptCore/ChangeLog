@@ -1,3 +1,47 @@
+2017-06-15  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement Object.assign in C++
+        https://bugs.webkit.org/show_bug.cgi?id=173414
+
+        Reviewed by Saam Barati.
+
+        Implementing Object.assign in JS is not so good compared to C++ version because,
+
+        1. JS version allocates JS array for object own keys. And we allocate JSString / Symbol for each key.
+        But basically, they can be handled as UniquedStringImpl in C++. Allocating these cells are wasteful.
+
+        2. While implementing builtins in JS offers some good type speculation chances, Object.assign is inherently super polymorphic.
+        So JS's type profile doesn't help well.
+
+        3. We have a chance to introduce various fast path for Object.assign in C++.
+
+        This patch moves implementation from JS to C++. It achieves the above (1) and (2). (3) is filed in [1].
+
+        We can see 1.65x improvement in SixSpeed object-assign.es6.
+
+                                    baseline                  patched
+
+        object-assign.es6      643.3253+-8.0521     ^    389.1075+-8.8840        ^ definitely 1.6533x faster
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=173416
+
+        * builtins/ObjectConstructor.js:
+        (entries):
+        (assign): Deleted.
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::putInline):
+        * runtime/JSCell.h:
+        * runtime/JSCellInlines.h:
+        (JSC::JSCell::putInline):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        * runtime/JSObject.h:
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putInlineForJSObject):
+        (JSC::JSObject::putInline): Deleted.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorAssign):
+
 2017-06-14  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Objective-C class whose name begins with an underscore can’t be exported to JavaScript

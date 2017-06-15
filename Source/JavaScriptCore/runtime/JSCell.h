@@ -176,6 +176,7 @@ public:
     const MethodTable* methodTable(VM&) const;
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
     static bool putByIndex(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    bool putInline(ExecState*, PropertyName, JSValue, PutPropertySlot&);
         
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
     static bool deletePropertyByIndex(JSCell*, ExecState*, unsigned propertyName);
