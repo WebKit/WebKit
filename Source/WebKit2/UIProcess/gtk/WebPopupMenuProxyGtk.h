@@ -55,14 +55,13 @@ protected:
 
 private:
     void setCurrentlySelectedMenuItem(GtkWidget* item) { m_currentlySelectedMenuItem = item; }
-    GtkAction* createGtkActionForMenuItem(const WebPopupItem&, int itemIndex);
     void populatePopupMenu(const Vector<WebPopupItem>&);
     void dismissMenuTimerFired();
 
     bool typeAheadFind(GdkEventKey*);
     void resetTypeAheadFindState();
 
-    static void menuItemActivated(GtkAction*, WebPopupMenuProxyGtk*);
+    static void menuItemActivated(GtkMenuItem*, WebPopupMenuProxyGtk*);
     static void selectItemCallback(GtkWidget*, WebPopupMenuProxyGtk*);
     static gboolean keyPressEventCallback(GtkWidget*, GdkEventKey*, WebPopupMenuProxyGtk*);
     static void menuUnmappedCallback(GtkWidget*, WebPopupMenuProxyGtk*);

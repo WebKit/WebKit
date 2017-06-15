@@ -50,17 +50,6 @@ WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk()
     cancelTracking();
 }
 
-GtkAction* WebPopupMenuProxyGtk::createGtkActionForMenuItem(const WebPopupItem& item, int itemIndex)
-{
-    GUniquePtr<char> actionName(g_strdup_printf("popup-menu-action-%d", itemIndex));
-    GtkAction* action = gtk_action_new(actionName.get(), item.m_text.utf8().data(), item.m_toolTip.utf8().data(), 0);
-    g_object_set_data(G_OBJECT(action), "popup-menu-action-index", GINT_TO_POINTER(itemIndex));
-    g_signal_connect(action, "activate", G_CALLBACK(menuItemActivated), this);
-    gtk_action_set_sensitive(action, item.m_isEnabled);
-
-    return action;
-}
-
 void WebPopupMenuProxyGtk::populatePopupMenu(const Vector<WebPopupItem>& items)
 {
     int itemIndex = 0;
@@ -70,14 +59,14 @@ void WebPopupMenuProxyGtk::populatePopupMenu(const Vector<WebPopupItem>& items)
             gtk_menu_shell_append(GTK_MENU_SHELL(m_popup), menuItem);
             gtk_widget_show(menuItem);
         } else {
-            GRefPtr<GtkAction> action = adoptGRef(createGtkActionForMenuItem(item, itemIndex));
-            GtkWidget* menuItem = gtk_action_create_menu_item(action.get());
-            gtk_widget_set_tooltip_text(menuItem, gtk_action_get_tooltip(action.get()));
+            GtkWidget* menuItem = gtk_menu_item_new_with_label(item.m_text.utf8().data());
+            gtk_widget_set_tooltip_text(menuItem, item.m_toolTip.utf8().data());
+            gtk_widget_set_sensitive(menuItem, item.m_isEnabled);
+            g_object_set_data(G_OBJECT(menuItem), "popup-menu-item-index", GINT_TO_POINTER(itemIndex));
+            g_signal_connect(menuItem, "activate", G_CALLBACK(menuItemActivated), this);
             g_signal_connect(menuItem, "select", G_CALLBACK(selectItemCallback), this);
             gtk_menu_shell_append(GTK_MENU_SHELL(m_popup), menuItem);
-
-            if (gtk_action_is_visible(action.get()))
-                gtk_widget_show(menuItem);
+            gtk_widget_show(menuItem);
         }
         itemIndex++;
     }
@@ -275,11 +264,11 @@ void WebPopupMenuProxyGtk::resetTypeAheadFindState()
     m_currentSearchString = emptyString();
 }
 
-void WebPopupMenuProxyGtk::menuItemActivated(GtkAction* action, WebPopupMenuProxyGtk* popupMenu)
+void WebPopupMenuProxyGtk::menuItemActivated(GtkMenuItem* menuItem, WebPopupMenuProxyGtk* popupMenu)
 {
     popupMenu->m_dismissMenuTimer.stop();
     if (popupMenu->m_client)
-        popupMenu->m_client->valueChangedForPopupMenu(popupMenu, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(action), "popup-menu-action-index")));
+        popupMenu->m_client->valueChangedForPopupMenu(popupMenu, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(menuItem), "popup-menu-item-index")));
 }
 
 void WebPopupMenuProxyGtk::dismissMenuTimerFired()
