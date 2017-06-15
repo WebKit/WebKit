@@ -135,6 +135,7 @@ public:
     virtual void resetAnimation() {}
     virtual void imageFrameAvailableAtIndex(size_t) { }
     virtual bool isAnimating() const { return false; }
+    bool animationPending() const { return m_animationStartTimer.isActive(); }
     
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }

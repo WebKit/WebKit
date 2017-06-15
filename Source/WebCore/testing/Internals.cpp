@@ -801,7 +801,7 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
     if (!image)
         return false;
 
-    return image->isAnimating();
+    return image->isAnimating() || image->animationPending();
 }
 
 void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement& element, bool value)

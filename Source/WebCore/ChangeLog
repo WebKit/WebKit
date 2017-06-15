@@ -1,3 +1,17 @@
+2017-06-14  Zalan Bujtas  <zalan@apple.com>
+
+        animations-paused-in-background-page.html and animated-svg-image-removed-from-document-paused.html fail after r218284
+        https://bugs.webkit.org/show_bug.cgi?id=173393
+
+        Reviewed by Simon Fraser.
+
+        Testing cares really about whether the animation has initiated.  
+
+        * platform/graphics/Image.h:
+        (WebCore::Image::animationPending):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isImageAnimating):
+
 2017-06-14  Dean Jackson  <dino@apple.com>
 
         Restrict filtered painting across cross-origin boundaries with transforms
