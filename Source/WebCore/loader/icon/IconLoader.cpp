@@ -88,7 +88,7 @@ void IconLoader::startLoading()
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
     auto* frame = m_frame ? m_frame : m_documentLoader->frame();
-    m_resource = frame->document()->cachedResourceLoader().requestFavicon(WTFMove(request));
+    m_resource = frame->document()->cachedResourceLoader().requestIcon(WTFMove(request));
     if (m_resource)
         m_resource->addClient(*this);
     else

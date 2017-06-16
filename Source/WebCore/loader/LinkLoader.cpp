@@ -153,7 +153,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
     case CachedResource::RawResource:
         return LinkPreloadRawResourceClient::create(loader, static_cast<CachedRawResource&>(resource));
     case CachedResource::MainResource:
-    case CachedResource::Favicon:
+    case CachedResource::Icon:
 #if ENABLE(SVG_FONTS)
     case CachedResource::SVGFontResource:
 #endif

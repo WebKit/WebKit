@@ -1,3 +1,41 @@
+2017-06-16  Daniel Bates  <dabates@apple.com>
+
+        Use the term icon instead of favicon
+        https://bugs.webkit.org/show_bug.cgi?id=173400
+
+        Reviewed by Alex Christensen.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::cachedResourceContent):
+        (WebCore::InspectorPageAgent::cachedResourceType):
+        * loader/LinkLoader.cpp:
+        (WebCore::createLinkPreloadResourceClient):
+        * loader/ResourceLoadInfo.cpp:
+        (WebCore::toResourceType):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::logResourceLoaded):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::CachedRawResource):
+        * loader/cache/CachedRawResource.h:
+        (isType):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::defaultPriorityForResourceType):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isMainOrMediaOrIconOrRawResource):
+        (WebCore::CachedResource::ignoreForRequestCount):
+        (WebCore::CachedResource::isMainOrMediaOrFaviconOrRawResource): Deleted.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestIcon):
+        (WebCore::contentTypeFromResourceType):
+        (WebCore::CachedResourceLoader::checkInsecureContent):
+        (WebCore::CachedResourceLoader::allowedByContentSecurityPolicy):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        (WebCore::CachedResourceLoader::requestFavicon): Deleted.
+        * loader/cache/CachedResourceLoader.h:
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+
 2017-06-16  Per Arne Vollan  <pvollan@apple.com>
 
         WebKit does not honor closed caption stroke width.

@@ -1,3 +1,13 @@
+2017-06-16  Daniel Bates  <dabates@apple.com>
+
+        Use the term icon instead of favicon
+        https://bugs.webkit.org/show_bug.cgi?id=173400
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::maximumBufferingTime):
+
 2017-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Remove WKCookieManagerSoup

@@ -56,7 +56,7 @@ ResourceType toResourceType(CachedResource::Type type)
         return ResourceType::Font;
 
     case CachedResource::MediaResource:
-    case CachedResource::Favicon:
+    case CachedResource::Icon:
     case CachedResource::RawResource:
         return ResourceType::Raw;
 

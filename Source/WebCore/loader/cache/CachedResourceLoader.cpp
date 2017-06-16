@@ -105,7 +105,7 @@ static CachedResource* createResource(CachedResource::Type type, CachedResourceR
         return new CachedFont(WTFMove(request), sessionID);
     case CachedResource::MediaResource:
     case CachedResource::RawResource:
-    case CachedResource::Favicon:
+    case CachedResource::Icon:
     case CachedResource::MainResource:
         return new CachedRawResource(WTFMove(request), type, sessionID);
 #if ENABLE(XSLT)
@@ -277,9 +277,9 @@ CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestMedia(Cache
     return downcast<CachedRawResource>(requestResource(CachedResource::MediaResource, WTFMove(request)).get());
 }
 
-CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestFavicon(CachedResourceRequest&& request)
+CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestIcon(CachedResourceRequest&& request)
 {
-    return downcast<CachedRawResource>(requestResource(CachedResource::Favicon, WTFMove(request)).get());
+    return downcast<CachedRawResource>(requestResource(CachedResource::Icon, WTFMove(request)).get());
 }
 
 CachedResourceHandle<CachedRawResource> CachedResourceLoader::requestRawResource(CachedResourceRequest&& request)
@@ -313,7 +313,7 @@ static MixedContentChecker::ContentType contentTypeFromResourceType(CachedResour
 #endif
 
     case CachedResource::RawResource:
-    case CachedResource::Favicon:
+    case CachedResource::Icon:
     case CachedResource::SVGDocumentResource:
         return MixedContentChecker::ContentType::Active;
 #if ENABLE(XSLT)
@@ -364,7 +364,7 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
 #endif
     case CachedResource::MediaResource:
     case CachedResource::RawResource:
-    case CachedResource::Favicon:
+    case CachedResource::Icon:
     case CachedResource::ImageResource:
 #if ENABLE(SVG_FONTS)
     case CachedResource::SVGFontResource:
@@ -412,7 +412,7 @@ bool CachedResourceLoader::allowedByContentSecurityPolicy(CachedResource::Type t
             return false;
         break;
     case CachedResource::SVGDocumentResource:
-    case CachedResource::Favicon:
+    case CachedResource::Icon:
     case CachedResource::ImageResource:
         if (!m_document->contentSecurityPolicy()->allowImageFromSource(url, redirectResponseReceived))
             return false;
@@ -953,7 +953,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
     // FIXME: We should use the same cache policy for all resource types. The raw resource policy is overly strict
     //        while the normal subresource policy is too loose.
-    if (existingResource->isMainOrMediaOrFaviconOrRawResource() && frame()) {
+    if (existingResource->isMainOrMediaOrIconOrRawResource() && frame()) {
         bool strictPolicyDisabled = frame()->loader().isStrictRawResourceValidationPolicyDisabledForTesting();
         bool canReuseRawResource = strictPolicyDisabled || downcast<CachedRawResource>(*existingResource).canReuse(request);
         if (!canReuseRawResource)

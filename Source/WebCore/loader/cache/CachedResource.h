@@ -71,7 +71,7 @@ public:
 #endif
         MediaResource,
         RawResource,
-        Favicon,
+        Icon,
         SVGDocumentResource
 #if ENABLE(XSLT)
         , XSLStyleSheet
@@ -162,7 +162,7 @@ public:
 
     bool isImage() const { return type() == ImageResource; }
     // FIXME: CachedRawResource could be a main resource, an audio/video resource, or a raw XHR/icon resource.
-    bool isMainOrMediaOrFaviconOrRawResource() const { return type() == MainResource || type() == MediaResource || type() == Favicon || type() == RawResource; }
+    bool isMainOrMediaOrIconOrRawResource() const { return type() == MainResource || type() == MediaResource || type() == Icon || type() == RawResource; }
     bool ignoreForRequestCount() const
     {
         return m_resourceRequest.ignoreForRequestCount()
@@ -171,7 +171,7 @@ public:
             || type() == LinkPrefetch
             || type() == LinkSubresource
 #endif
-            || type() == Favicon
+            || type() == Icon
             || type() == RawResource;
     }
 
