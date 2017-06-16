@@ -40,7 +40,6 @@
 #include "EventDispatcher.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
-#include "InspectorCanvasAgent.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
@@ -62,7 +61,6 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "WebConsoleAgent.h"
-#include "WebGLRenderingContextBase.h"
 #include "WebSocketFrame.h"
 #include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptArguments.h>
@@ -750,9 +748,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
             pageHeapAgent->mainFrameNavigated();
     }
 
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents.inspectorCanvasAgent())
-        canvasAgent->frameNavigated(loader);
-
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())
         domAgent->didCommitLoad(frame.document());
 
@@ -992,18 +987,6 @@ void InspectorInstrumentation::didSendWebSocketFrameImpl(InstrumentingAgents& in
         networkAgent->didSendWebSocketFrame(identifier, frame);
 }
 #endif
-
-void InspectorInstrumentation::didCreateCSSCanvasImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement, const String& name)
-{
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didCreateCSSCanvas(canvasElement, name);
-}
-
-void InspectorInstrumentation::didCreateCanvasRenderingContextImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement)
-{
-    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
-        canvasAgent->didCreateCanvasRenderingContext(canvasElement);
-}
 
 #if ENABLE(WEB_REPLAY)
 void InspectorInstrumentation::sessionCreatedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)

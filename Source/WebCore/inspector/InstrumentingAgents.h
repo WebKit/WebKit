@@ -44,7 +44,6 @@ class InspectorDebuggerAgent;
 namespace WebCore {
 
 class InspectorApplicationCacheAgent;
-class InspectorCanvasAgent;
 class InspectorCSSAgent;
 class InspectorDOMAgent;
 class InspectorDOMDebuggerAgent;
@@ -83,9 +82,6 @@ public:
 
     InspectorPageAgent* inspectorPageAgent() const { return m_inspectorPageAgent; }
     void setInspectorPageAgent(InspectorPageAgent* agent) { m_inspectorPageAgent = agent; }
-
-    InspectorCanvasAgent* inspectorCanvasAgent() const { return m_inspectorCanvasAgent; }
-    void setInspectorCanvasAgent(InspectorCanvasAgent* agent) { m_inspectorCanvasAgent = agent; }
 
     InspectorCSSAgent* inspectorCSSAgent() const { return m_inspectorCSSAgent; }
     void setInspectorCSSAgent(InspectorCSSAgent* agent) { m_inspectorCSSAgent = agent; }
@@ -174,7 +170,6 @@ private:
     PageDebuggerAgent* m_pageDebuggerAgent { nullptr };
     PageHeapAgent* m_pageHeapAgent { nullptr };
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent { nullptr };
-    InspectorCanvasAgent* m_inspectorCanvasAgent { nullptr };
 };
 
 } // namespace WebCore

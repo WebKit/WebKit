@@ -38,12 +38,8 @@ log = logging.getLogger('global')
 def ucfirst(str):
     return str[:1].upper() + str[1:]
 
-_ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS = set(['2D', 'API', 'CSS', 'DOM', 'HTML', 'JIT', 'XHR', 'XML', 'IOS', 'MacOS'])
+_ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS = set(['API', 'CSS', 'DOM', 'HTML', 'JIT', 'XHR', 'XML', 'IOS', 'MacOS'])
 _ALWAYS_SPECIALCASED_ENUM_VALUE_LOOKUP_TABLE = dict([(s.upper(), s) for s in _ALWAYS_SPECIALCASED_ENUM_VALUE_SUBSTRINGS])
-
-_ENUM_IDENTIFIER_RENAME_MAP = {
-    'webgl': 'WebGL',  # Canvas.ContextType.webgl
-}
 
 # These objects are built manually by creating and setting InspectorValues.
 # Before sending these over the protocol, their shapes are checked against the specification.
@@ -255,7 +251,7 @@ class Generator:
             return _ALWAYS_SPECIALCASED_ENUM_VALUE_LOOKUP_TABLE[match.group(1).upper()]
 
         # Split on hyphen, introduce camelcase, and force uppercasing of acronyms.
-        subwords = map(ucfirst, _ENUM_IDENTIFIER_RENAME_MAP.get(enum_value, enum_value).split('-'))
+        subwords = map(ucfirst, enum_value.split('-'))
         return re.sub(re.compile(regex, re.IGNORECASE), replaceCallback, "".join(subwords))
 
     @staticmethod

@@ -31,7 +31,6 @@
 #include "DOMPatchSupport.cpp"
 #include "InspectorApplicationCacheAgent.cpp"
 #include "InspectorCSSAgent.cpp"
-#include "InspectorCanvasAgent.cpp"
 #include "InspectorClient.cpp"
 #include "InspectorController.cpp"
 #include "InspectorDOMAgent.cpp"

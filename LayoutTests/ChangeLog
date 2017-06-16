@@ -1,3 +1,16 @@
+2017-06-16  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r218376.
+
+        The patch cause multiple Layout Test Crashes.
+
+        Reverted changeset:
+
+        "Web Inspector: Instrument 2D/WebGL canvas contexts in the
+        backend"
+        https://bugs.webkit.org/show_bug.cgi?id=172623
+        http://trac.webkit.org/changeset/218376
+
 2017-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Layout Test fast/events/tabindex-focus-blur-all.html is flaky
