@@ -1,3 +1,13 @@
+2017-06-16  Matt Lewis  <jlewis3@apple.com>
+
+        Adjusted test expectations for media/track/track-in-band-cues-added-once.html.
+        https://bugs.webkit.org/show_bug.cgi?id=142152
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
         Make some WebRTC tests easier to debug when failing
