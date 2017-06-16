@@ -1,3 +1,43 @@
+2017-06-16  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add WKProcessPool SPI to efficiently reset all plugin load client policies
+        https://bugs.webkit.org/show_bug.cgi?id=173472
+        <rdar://problem/28858817>
+
+        Reviewed by Brady Eidson.
+
+        Add WKProcessPool SPI to efficiently reset all plugin load client policies:
+        [WKProcessPool _resetPluginLoadClientPolicies]. This new SPI clears all
+        existing policies and then sets all of them with new values, with a
+        minimal amount of IPC.
+
+        To achieve this, clients would previously have to call
+        1. WKContextClearPluginClientPolicies() which would cause a broadcast IPC to
+           every WebContent process.
+        2. WKContextSetPluginLoadClientPolicy() repeatedly to add each policy one by
+           one. Each call to WKContextSetPluginLoadClientPolicy() would cause a broadcast
+           IPC to every WebContent process.
+
+        The new SPI does the same job with a single broadcast IPC to every WebContent
+        process.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (isPluginLoadClientPolicyAcceptable):
+        (toPluginLoadClientPoliciesHashMap):
+        (policiesHashMapToDictionary):
+        (-[WKProcessPool _resetPluginLoadClientPolicies:]):
+        (-[WKProcessPool _pluginLoadClientPolicies]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setPluginLoadClientPolicy):
+        (WebKit::WebProcessPool::resetPluginLoadClientPolicies):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::resetPluginLoadClientPolicies):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2017-06-16  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Expand sandbox to better support video playback on mac mini

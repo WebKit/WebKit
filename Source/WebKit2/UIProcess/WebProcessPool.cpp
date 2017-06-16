@@ -1588,19 +1588,26 @@ void WebProcessPool::unregisterSchemeForCustomProtocol(const String& scheme)
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy policy, const String& host, const String& bundleIdentifier, const String& versionString)
 {
-    HashMap<String, HashMap<String, uint8_t>> policiesByIdentifier;
-    if (m_pluginLoadClientPolicies.contains(host))
-        policiesByIdentifier = m_pluginLoadClientPolicies.get(host);
-
-    HashMap<String, uint8_t> versionsToPolicies;
-    if (policiesByIdentifier.contains(bundleIdentifier))
-        versionsToPolicies = policiesByIdentifier.get(bundleIdentifier);
-
+    auto& policiesForHost = m_pluginLoadClientPolicies.ensure(host, [] { return HashMap<String, HashMap<String, uint8_t>>(); }).iterator->value;
+    auto& versionsToPolicies = policiesForHost.ensure(bundleIdentifier, [] { return HashMap<String, uint8_t>(); }).iterator->value;
     versionsToPolicies.set(versionString, policy);
-    policiesByIdentifier.set(bundleIdentifier, versionsToPolicies);
-    m_pluginLoadClientPolicies.set(host, policiesByIdentifier);
 
     sendToAllProcesses(Messages::WebProcess::SetPluginLoadClientPolicy(policy, host, bundleIdentifier, versionString));
+}
+
+void WebProcessPool::resetPluginLoadClientPolicies(const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& pluginLoadClientPolicies)
+{
+    m_pluginLoadClientPolicies.clear();
+
+    for (auto& hostPair : pluginLoadClientPolicies) {
+        auto& policiesForHost = m_pluginLoadClientPolicies.ensure(hostPair.key, [] { return HashMap<String, HashMap<String, uint8_t>>(); }).iterator->value;
+        for (auto& bundleIdentifierPair : hostPair.value) {
+            auto& versionsToPolicies = policiesForHost.ensure(bundleIdentifierPair.key, [] { return HashMap<String, uint8_t>(); }).iterator->value;
+            for (auto& versionPair : bundleIdentifierPair.value)
+                versionsToPolicies.set(versionPair.key, versionPair.value);
+        }
+    }
+    sendToAllProcesses(Messages::WebProcess::ResetPluginLoadClientPolicies(m_pluginLoadClientPolicies));
 }
 
 void WebProcessPool::clearPluginClientPolicies()

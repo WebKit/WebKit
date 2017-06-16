@@ -45,6 +45,8 @@ enum PluginLoadClientPolicy : uint8_t {
 
     // The plug-in module should be loaded irrespective of whether WebKit has asked it to be blocked.
     PluginLoadClientPolicyAllowAlways,
+
+    PluginLoadClientPolicyMaximum = PluginLoadClientPolicyAllowAlways
 };
 
 struct MimeClassInfo {

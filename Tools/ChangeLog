@@ -1,3 +1,17 @@
+2017-06-16  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add WKProcessPool SPI to efficiently reset all plugin load client policies
+        https://bugs.webkit.org/show_bug.cgi?id=173472
+        <rdar://problem/28858817>
+
+        Reviewed by Brady Eidson.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/PluginLoadClientPolicies.mm: Added.
+        (TEST):
+
 2017-06-16  Brady Eidson  <beidson@apple.com>
 
         REGRESSION (r218015) IconLoaders for already-cached resources expect to be asynchronous, no longer are.

@@ -1,3 +1,16 @@
+2017-06-16  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add WKProcessPool SPI to efficiently reset all plugin load client policies
+        https://bugs.webkit.org/show_bug.cgi?id=173472
+        <rdar://problem/28858817>
+
+        Reviewed by Brady Eidson.
+
+        Add PluginLoadClientPolicyMaximum value to PluginLoadClientPolicy enumeration
+        to facilitate input value validation on API side.
+
+        * plugins/PluginData.h:
+
 2017-06-16  Jer Noble  <jer.noble@apple.com>
 
         [iOS] Do not pause playing video when application resigns active state.
