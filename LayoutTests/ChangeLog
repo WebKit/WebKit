@@ -1,3 +1,13 @@
+2017-06-16  Matt Lewis  <jlewis3@apple.com>
+
+        Marked imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173487
+
+        Unreviewed test gardening.
+
+
+        * platform/mac/TestExpectations:
+
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
         Remove replaceTrack restriction about video resolution
