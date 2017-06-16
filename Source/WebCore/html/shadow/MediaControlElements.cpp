@@ -1280,8 +1280,13 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentation()
     if (!mediaElement)
         return;
 
-    if (!mediaElement->requiresTextTrackRepresentation())
+    if (!mediaElement->requiresTextTrackRepresentation()) {
+        if (m_textTrackRepresentation) {
+            clearTextTrackRepresentation();
+            updateSizes(true);
+        }
         return;
+    }
 
     if (!m_textTrackRepresentation) {
         m_textTrackRepresentation = TextTrackRepresentation::create(*this);
@@ -1289,6 +1294,7 @@ void MediaControlTextTrackContainerElement::updateTextTrackRepresentation()
         mediaElement->setTextTrackRepresentation(m_textTrackRepresentation.get());
     }
 
+    hide();
     m_textTrackRepresentation->update();
     updateStyleForTextTrackRepresentation();
 }

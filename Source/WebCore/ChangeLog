@@ -1,3 +1,17 @@
+2017-06-16  Jeremy Jones  <jeremyj@apple.com>
+
+        Hide inline captions in fullscreen. Remove fullscreen captions when no longer needed.
+        https://bugs.webkit.org/show_bug.cgi?id=173482
+
+        Reviewed by Eric Carlson.
+
+        Hide the inline captions while they are presenting to fullscreen.
+        Remove the text track representation as soon as it is no longer needed.
+        This allows the text track to render properly when returning to inline.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateTextTrackRepresentation):
+
 2017-06-16  Tim Horton  <timothy_horton@apple.com>
 
         Include a few widespread WTF headers in WebCorePrefix.h
