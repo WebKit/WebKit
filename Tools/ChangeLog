@@ -1,3 +1,23 @@
+2017-06-16  Chris Dumez  <cdumez@apple.com>
+
+        DRT fails to reset page visibility between tests
+        https://bugs.webkit.org/show_bug.cgi?id=173485
+
+        Reviewed by Alexey Proskuryakov.
+
+        DRT fails to reset page visibility between tests and relies on tests calling testRunner.resetPageVisibility().
+        Fix this to address flakiness.
+
+        I confirmed this by commenting out the call to testRunner.resetPageVisibility() in
+        fast/events/page-visibility-onvisibilitychange.html and running the test in a loop.
+        The test became flaky without the DRT change and was no longer flaky with the DRT
+        change.
+
+        WebKitTestRunner already does this.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+
 2017-06-16  Alex Christensen  <achristensen@webkit.org>
 
         Implement basic authentication in MiniBrowser

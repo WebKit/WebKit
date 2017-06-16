@@ -1825,6 +1825,7 @@ static void resetWebViewToConsistentStateBeforeTesting(const TestOptions& option
     setlocale(LC_ALL, "");
 
     if (gTestRunner) {
+        gTestRunner->resetPageVisibility();
         WebCoreTestSupport::resetInternalsObject([mainFrame globalContext]);
         // in the case that a test using the chrome input field failed, be sure to clean up for the next test
         gTestRunner->removeChromeInputField();
