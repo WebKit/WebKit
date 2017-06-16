@@ -165,7 +165,7 @@ void ConsoleClient::printConsoleMessageWithArguments(MessageSource source, Messa
     for (size_t i = 0; i < arguments->argumentCount(); ++i) {
         String argAsString = arguments->argumentAt(i).toString(arguments->globalState());
         builder.append(' ');
-        builder.append(argAsString.utf8().data());
+        builder.append(argAsString);
     }
 
     WTFLogAlways("%s", builder.toString().utf8().data());

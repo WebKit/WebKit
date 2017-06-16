@@ -1,3 +1,17 @@
+2017-06-16  Konstantin Tokarev  <annulen@yandex.ru>
+
+        REGRESSION(r166799): LogsPageMessagesToSystemConsoleEnabled corrupts non-ASCII characters
+        https://bugs.webkit.org/show_bug.cgi?id=173470
+
+        Reviewed by Joseph Pecoraro.
+
+        ConsoleClient::printConsoleMessageWithArguments() incorrectly uses
+        const char* overload of StringBuilder::append() that assummes Latin1
+        encoding, not UTF8.
+
+        * runtime/ConsoleClient.cpp:
+        (JSC::ConsoleClient::printConsoleMessageWithArguments):
+
 2017-06-15  Mark Lam  <mark.lam@apple.com>
 
         Add a JSRunLoopTimer registry in VM.
