@@ -1,3 +1,16 @@
+2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r218325): [GTK] Runtime critical warnings running layout tests that show a popup menu
+        https://bugs.webkit.org/show_bug.cgi?id=173421
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        In r218325 I forgot to create a WebKitPopupMenu or WebPopupMenuProxyGtk depending on whether the view is a
+        WebKitWebView or not.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+
 2017-06-15  Tim Horton  <timothy_horton@apple.com>
 
         Null deref under ViewGestureController::endSwipeGesture (navigationGestureDidEnd)
