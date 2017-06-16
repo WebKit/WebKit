@@ -62,6 +62,7 @@ static const char* interruptionName(PlatformMediaSession::InterruptionType type)
     INTERRUPTION_CASE(SystemInterruption);
     INTERRUPTION_CASE(SuspendedUnderLock);
     INTERRUPTION_CASE(InvisibleAutoplay);
+    INTERRUPTION_CASE(ProcessInactive);
     }
     
     ASSERT_NOT_REACHED();

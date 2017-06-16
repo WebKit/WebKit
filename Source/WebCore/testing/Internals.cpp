@@ -3237,14 +3237,24 @@ void Internals::endMediaSessionInterruption(const String& flagsString)
     PlatformMediaSessionManager::sharedManager().endInterruption(flags);
 }
 
-void Internals::applicationDidEnterForeground() const
+void Internals::applicationWillBecomeInactive()
 {
-    PlatformMediaSessionManager::sharedManager().applicationDidEnterForeground();
+    PlatformMediaSessionManager::sharedManager().applicationWillBecomeInactive();
 }
 
-void Internals::applicationWillEnterBackground() const
+void Internals::applicationDidBecomeActive()
 {
-    PlatformMediaSessionManager::sharedManager().applicationWillEnterBackground();
+    PlatformMediaSessionManager::sharedManager().applicationDidBecomeActive();
+}
+
+void Internals::applicationWillEnterForeground(bool suspendedUnderLock) const
+{
+    PlatformMediaSessionManager::sharedManager().applicationWillEnterForeground(suspendedUnderLock);
+}
+
+void Internals::applicationDidEnterBackground(bool suspendedUnderLock) const
+{
+    PlatformMediaSessionManager::sharedManager().applicationDidEnterBackground(suspendedUnderLock);
 }
 
 static PlatformMediaSession::MediaType mediaTypeFromString(const String& mediaTypeString)
@@ -3283,6 +3293,10 @@ ExceptionOr<void> Internals::setMediaSessionRestrictions(const String& mediaType
             restrictions |= PlatformMediaSessionManager::BackgroundTabPlaybackRestricted;
         if (equalLettersIgnoringASCIICase(restrictionString, "interruptedplaybacknotpermitted"))
             restrictions |= PlatformMediaSessionManager::InterruptedPlaybackNotPermitted;
+        if (equalLettersIgnoringASCIICase(restrictionString, "inactiveprocessplaybackrestricted"))
+            restrictions |= PlatformMediaSessionManager::InactiveProcessPlaybackRestricted;
+        if (equalLettersIgnoringASCIICase(restrictionString, "suspendedunderlockplaybackrestricted"))
+            restrictions |= PlatformMediaSessionManager::SuspendedUnderLockPlaybackRestricted;
     }
     PlatformMediaSessionManager::sharedManager().addRestriction(mediaType, restrictions);
     return { };

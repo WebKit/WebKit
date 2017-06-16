@@ -80,6 +80,7 @@ public:
         SystemInterruption,
         SuspendedUnderLock,
         InvisibleAutoplay,
+        ProcessInactive,
     };
     InterruptionType interruptionType() const { return m_interruptionType; }
 

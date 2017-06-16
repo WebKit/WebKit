@@ -23,7 +23,7 @@
                     testExpected("audio.paused", false);
                     state = "foreground";
                     consoleWrite("<br>** Simulate switch back to foreground, video should resume.");
-                    run("internals.applicationDidEnterForeground()");
+                    run("internals.applicationWillEnterForeground()");
                     setTimeout(checkState, 100);
                     consoleWrite("");
                     break;
@@ -43,7 +43,7 @@
                     return;
 
                 consoleWrite("<br>** Simulate switch to background, video should pause.");
-                run("internals.applicationWillEnterBackground()");
+                run("internals.applicationDidEnterBackground()");
                 setTimeout(checkState, 100);
                 state = "background";
                 consoleWrite("");

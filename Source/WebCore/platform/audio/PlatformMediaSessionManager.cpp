@@ -294,9 +294,31 @@ bool PlatformMediaSessionManager::sessionCanLoadMedia(const PlatformMediaSession
     return session.state() == PlatformMediaSession::Playing || !session.isHidden() || session.shouldOverrideBackgroundLoadingRestriction();
 }
 
-void PlatformMediaSessionManager::applicationWillEnterBackground() const
+void PlatformMediaSessionManager::applicationWillBecomeInactive() const
 {
-    LOG(Media, "PlatformMediaSessionManager::applicationWillEnterBackground");
+    LOG(Media, "PlatformMediaSessionManager::applicationWillBecomeInactive");
+
+    Vector<PlatformMediaSession*> sessions = m_sessions;
+    forEachSession([&] (PlatformMediaSession& session, size_t) {
+        if (m_restrictions[session.mediaType()] & InactiveProcessPlaybackRestricted)
+            session.beginInterruption(PlatformMediaSession::ProcessInactive);
+    });
+}
+
+void PlatformMediaSessionManager::applicationDidBecomeActive() const
+{
+    LOG(Media, "PlatformMediaSessionManager::applicationDidBecomeInactive");
+
+    Vector<PlatformMediaSession*> sessions = m_sessions;
+    forEachSession([&] (PlatformMediaSession& session, size_t) {
+        if (m_restrictions[session.mediaType()] & InactiveProcessPlaybackRestricted)
+            session.endInterruption(PlatformMediaSession::MayResumePlaying);
+    });
+}
+
+void PlatformMediaSessionManager::applicationDidEnterBackground(bool suspendedUnderLock) const
+{
+    LOG(Media, "PlatformMediaSessionManager::applicationDidEnterBackground - suspendedUnderLock(%d)", suspendedUnderLock);
 
     if (m_isApplicationInBackground)
         return;
@@ -305,14 +327,16 @@ void PlatformMediaSessionManager::applicationWillEnterBackground() const
     
     Vector<PlatformMediaSession*> sessions = m_sessions;
     forEachSession([&] (PlatformMediaSession& session, size_t) {
-        if (m_restrictions[session.mediaType()] & BackgroundProcessPlaybackRestricted)
+        if (suspendedUnderLock && m_restrictions[session.mediaType()] & SuspendedUnderLockPlaybackRestricted)
+            session.beginInterruption(PlatformMediaSession::SuspendedUnderLock);
+        else if (m_restrictions[session.mediaType()] & BackgroundProcessPlaybackRestricted)
             session.beginInterruption(PlatformMediaSession::EnteringBackground);
     });
 }
 
-void PlatformMediaSessionManager::applicationDidEnterForeground() const
+void PlatformMediaSessionManager::applicationWillEnterForeground(bool suspendedUnderLock) const
 {
-    LOG(Media, "PlatformMediaSessionManager::applicationDidEnterForeground");
+    LOG(Media, "PlatformMediaSessionManager::applicationWillEnterForeground - suspendedUnderLock(%d)", suspendedUnderLock);
 
     if (!m_isApplicationInBackground)
         return;
@@ -321,7 +345,7 @@ void PlatformMediaSessionManager::applicationDidEnterForeground() const
 
     Vector<PlatformMediaSession*> sessions = m_sessions;
     forEachSession([&] (PlatformMediaSession& session, size_t) {
-        if (m_restrictions[session.mediaType()] & BackgroundProcessPlaybackRestricted)
+        if ((suspendedUnderLock && m_restrictions[session.mediaType()] & SuspendedUnderLockPlaybackRestricted) || m_restrictions[session.mediaType()] & BackgroundProcessPlaybackRestricted)
             session.endInterruption(PlatformMediaSession::MayResumePlaying);
     });
 }

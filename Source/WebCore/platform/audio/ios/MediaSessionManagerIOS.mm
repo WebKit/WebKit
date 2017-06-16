@@ -153,17 +153,8 @@ void MediaSessionManageriOS::resetRestrictions()
         addRestriction(PlatformMediaSession::Video, BackgroundTabPlaybackRestricted);
     }
 
-    removeRestriction(PlatformMediaSession::Video, ConcurrentPlaybackNotPermitted);
     addRestriction(PlatformMediaSession::Video, BackgroundProcessPlaybackRestricted);
-
-    addRestriction(PlatformMediaSession::VideoAudio, ConcurrentPlaybackNotPermitted);
-    addRestriction(PlatformMediaSession::VideoAudio, BackgroundProcessPlaybackRestricted);
-
-    removeRestriction(PlatformMediaSession::Audio, ConcurrentPlaybackNotPermitted);
-    removeRestriction(PlatformMediaSession::Audio, BackgroundProcessPlaybackRestricted);
-
-    removeRestriction(PlatformMediaSession::WebAudio, ConcurrentPlaybackNotPermitted);
-    removeRestriction(PlatformMediaSession::WebAudio, BackgroundProcessPlaybackRestricted);
+    addRestriction(PlatformMediaSession::VideoAudio, ConcurrentPlaybackNotPermitted | BackgroundProcessPlaybackRestricted | SuspendedUnderLockPlaybackRestricted);
 }
 
 bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
@@ -289,40 +280,6 @@ void MediaSessionManageriOS::externalOutputDeviceAvailableDidChange()
 {
     forEachSession([haveTargets = [m_objcObserver hasWirelessTargetsAvailable]] (PlatformMediaSession& session, size_t) {
         session.externalOutputDeviceAvailableDidChange(haveTargets);
-    });
-}
-
-void MediaSessionManageriOS::applicationDidEnterBackground(bool isSuspendedUnderLock)
-{
-    LOG(Media, "MediaSessionManageriOS::applicationDidEnterBackground");
-
-    if (m_isInBackground)
-        return;
-    m_isInBackground = true;
-
-    if (!isSuspendedUnderLock)
-        return;
-
-    forEachSession([this] (PlatformMediaSession& session, size_t) {
-        if (restrictions(session.mediaType()) & BackgroundProcessPlaybackRestricted)
-            session.beginInterruption(PlatformMediaSession::SuspendedUnderLock);
-    });
-}
-
-void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnderLock)
-{
-    LOG(Media, "MediaSessionManageriOS::applicationWillEnterForeground");
-
-    if (!m_isInBackground)
-        return;
-    m_isInBackground = false;
-
-    if (!isSuspendedUnderLock)
-        return;
-
-    forEachSession([this] (PlatformMediaSession& session, size_t) {
-        if (restrictions(session.mediaType()) & BackgroundProcessPlaybackRestricted)
-            session.endInterruption(PlatformMediaSession::MayResumePlaying);
     });
 }
 
@@ -513,7 +470,7 @@ void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnde
         if (!_callback)
             return;
 
-        _callback->applicationDidEnterForeground();
+        _callback->applicationDidBecomeActive();
     });
 }
 
@@ -530,7 +487,7 @@ void MediaSessionManageriOS::applicationWillEnterForeground(bool isSuspendedUnde
         if (!_callback)
             return;
 
-        _callback->applicationWillEnterBackground();
+        _callback->applicationWillBecomeInactive();
     });
 }
 

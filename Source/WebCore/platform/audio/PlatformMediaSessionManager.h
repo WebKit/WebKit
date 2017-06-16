@@ -67,8 +67,10 @@ public:
     WEBCORE_EXPORT void beginInterruption(PlatformMediaSession::InterruptionType);
     WEBCORE_EXPORT void endInterruption(PlatformMediaSession::EndInterruptionFlags);
 
-    WEBCORE_EXPORT void applicationDidEnterForeground() const;
-    WEBCORE_EXPORT void applicationWillEnterBackground() const;
+    WEBCORE_EXPORT void applicationWillBecomeInactive() const;
+    WEBCORE_EXPORT void applicationDidBecomeActive() const;
+    WEBCORE_EXPORT void applicationWillEnterForeground(bool suspendedUnderLock) const;
+    WEBCORE_EXPORT void applicationDidEnterBackground(bool suspendedUnderLock) const;
 
     void stopAllMediaPlaybackForDocument(const Document*);
     WEBCORE_EXPORT void stopAllMediaPlaybackForProcess();
@@ -79,6 +81,8 @@ public:
         BackgroundProcessPlaybackRestricted = 1 << 1,
         BackgroundTabPlaybackRestricted = 1 << 2,
         InterruptedPlaybackNotPermitted = 1 << 3,
+        InactiveProcessPlaybackRestricted = 1 << 4,
+        SuspendedUnderLockPlaybackRestricted = 1 << 5,
     };
     typedef unsigned SessionRestrictions;
 

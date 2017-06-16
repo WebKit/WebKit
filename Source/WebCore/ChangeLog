@@ -1,3 +1,49 @@
+2017-06-16  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Do not pause playing video when application resigns active state.
+        https://bugs.webkit.org/show_bug.cgi?id=173474
+
+        Reviewed by Tim Horton.
+
+        Test: media/video-inactive-playback.html
+
+        Separate out the concept of "inactive" playback from "process background" playback.
+        Move the implementation of applicationDidEnterBackground() from MediaSessionManagerIOS
+        into it's superclass, PlatformMediaSessionManager, and add a new set of restrictions
+        for "InactiveProcessPlaybackRestricted" and "SuspendedUnderLockPlaybackRestricted".
+        Leave the default restriction set for iOS as "BackgroundProcessPlaybackRestricted" and
+        "SuspendedUnderLockPlaybackRestricted", to preserve the existing behavior of suspending
+        playback when switching apps or when locking the device.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::interruptionName):
+        * platform/audio/PlatformMediaSession.h:
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::applicationWillBecomeInactive):
+        (WebCore::PlatformMediaSessionManager::applicationDidBecomeActive):
+        (WebCore::PlatformMediaSessionManager::applicationDidEnterBackground):
+        (WebCore::PlatformMediaSessionManager::applicationWillEnterForeground):
+        (WebCore::PlatformMediaSessionManager::applicationWillEnterBackground): Deleted.
+        (WebCore::PlatformMediaSessionManager::applicationDidEnterForeground): Deleted.
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::resetRestrictions):
+        (-[WebMediaSessionHelper applicationDidBecomeActive:]):
+        (-[WebMediaSessionHelper applicationWillResignActive:]):
+        (WebCore::MediaSessionManageriOS::applicationDidEnterBackground): Deleted.
+        (WebCore::MediaSessionManageriOS::applicationWillEnterForeground): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::applicationWillBecomeInactive):
+        (WebCore::Internals::applicationDidBecomeActive):
+        (WebCore::Internals::applicationWillEnterForeground):
+        (WebCore::Internals::applicationDidEnterBackground):
+        (WebCore::Internals::setMediaSessionRestrictions):
+        (WebCore::Internals::applicationDidEnterForeground): Deleted.
+        (WebCore::Internals::applicationWillEnterBackground): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-06-16  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r213126): Sync XHR needs partition for cache and credentials

@@ -1,3 +1,17 @@
+2017-06-16  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Do not pause playing video when application resigns active state.
+        https://bugs.webkit.org/show_bug.cgi?id=173474
+
+        Reviewed by Tim Horton.
+
+        * media/video-background-playback-expected.txt:
+        * media/video-background-playback.html:
+        * media/video-background-tab-playback-expected.txt:
+        * media/video-background-tab-playback.html:
+        * media/video-inactive-playback-expected.txt: Added.
+        * media/video-inactive-playback.html: Added.
+
 2017-06-16  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r213126): Sync XHR needs partition for cache and credentials

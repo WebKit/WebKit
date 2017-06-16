@@ -48,8 +48,6 @@ public:
 
     void externalOutputDeviceAvailableDidChange();
     bool hasWirelessTargetsAvailable() override;
-    void applicationDidEnterBackground(bool isSuspendedUnderLock);
-    void applicationWillEnterForeground(bool isSuspendedUnderLock);
 
 private:
     friend class PlatformMediaSessionManager;
@@ -83,7 +81,6 @@ private:
     double m_reportedCurrentTime { 0 };
     String m_reportedTitle;
     bool m_nowPlayingActive { false };
-    bool m_isInBackground { false };
 };
 
 } // namespace WebCore

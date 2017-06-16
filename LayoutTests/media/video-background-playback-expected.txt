@@ -12,7 +12,7 @@ EVENT(playing)
 EVENT(playing)
 
 ** Simulate switch to background, video should pause.
-RUN(internals.applicationWillEnterBackground())
+RUN(internals.applicationDidEnterBackground())
 
 EVENT(pause)
 
@@ -21,7 +21,7 @@ EXPECTED (video.paused == 'true') OK
 EXPECTED (audio.paused == 'false') OK
 
 ** Simulate switch back to foreground, video should resume.
-RUN(internals.applicationDidEnterForeground())
+RUN(internals.applicationWillEnterForeground())
 
 EVENT(playing)
 
