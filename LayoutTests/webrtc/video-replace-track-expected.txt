@@ -7,4 +7,5 @@ PASS testBackCameraImage test1
 PASS testFrontCameraImage test2 
 PASS testBackCameraImage test2 
 PASS testFrontCameraImage test3 
- 
+PASS testBackCameraImage test4 
+

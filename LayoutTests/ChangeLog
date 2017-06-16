@@ -1,3 +1,13 @@
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
+        Remove replaceTrack restriction about video resolution
+        https://bugs.webkit.org/show_bug.cgi?id=173490
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-replace-track-expected.txt:
+        * webrtc/video-replace-track.html:
+
 2017-06-16  Matt Lewis  <jlewis3@apple.com>
 
         Marked multiple imported/w3c/web-platform-tests/IndexedDB as flaky.

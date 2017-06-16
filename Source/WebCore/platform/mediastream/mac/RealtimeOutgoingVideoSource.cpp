@@ -56,11 +56,6 @@ bool RealtimeOutgoingVideoSource::setSource(Ref<RealtimeMediaSource>&& newSource
     if (!m_initialSettings)
         m_initialSettings = m_videoSource->settings();
 
-    auto newSettings = newSource->settings();
-
-    if (m_initialSettings->width() < newSettings.width() || m_initialSettings->height() < newSettings.height())
-        return false;
-
     m_videoSource->removeObserver(*this);
     m_videoSource = WTFMove(newSource);
     m_videoSource->addObserver(*this);

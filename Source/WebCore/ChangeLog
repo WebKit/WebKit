@@ -1,3 +1,15 @@
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
+        Remove replaceTrack restriction about video resolution
+        https://bugs.webkit.org/show_bug.cgi?id=173490
+
+        Reviewed by Eric Carlson.
+
+        Covered by updated tests.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::setSource):
+
 2017-06-16  Jeremy Jones  <jeremyj@apple.com>
 
         Handle timeout of prepareForPictureInPictureStopWithCompletionHandler.

@@ -159,8 +159,13 @@ promise_test((test) => {
     }).then((stream) => {
         backStream = stream;
         assert_true(backStream.getVideoTracks()[0].getSettings().height === 480, "back stream should be big");
-        return promise_rejects(test, "InvalidModificationError", sender.replaceTrack(backStream.getVideoTracks()[0]));
+        return sender.replaceTrack(backStream.getVideoTracks()[0]);
+    }).then(() => {
+        return waitFor(500);
+    }).then(() => {
+        testBackCameraImage("test4");
     });
+
 }, "Switching from front to back camera, with higher resolution");
         </script>
     </body>
