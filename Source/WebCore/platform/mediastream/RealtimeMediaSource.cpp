@@ -162,9 +162,6 @@ void RealtimeMediaSource::start()
 
     m_isProducingData = true;
     startProducingData();
-
-    for (Observer& observer : m_observers)
-        observer.sourceStarted();
 }
 
 void RealtimeMediaSource::stop()
