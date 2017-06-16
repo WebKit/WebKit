@@ -1,3 +1,28 @@
+2017-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] YouTube videos flash at the wrong place at the end of rotation
+        https://bugs.webkit.org/show_bug.cgi?id=173445
+        rdar://problem/31584852
+
+        Reviewed by Tim Horton.
+
+        In MobileSafari where WKWebView rotation uses _dynamicViewportUpdateModes, we could do a
+        visibleContentRect update at the end of rotation which computed a bad layoutViewportRect,
+        because it used a m_baseLayoutViewportSize from the old orientation.
+
+        We have actually sent a new m_baseLayoutViewportSize to the UI process by this point in 
+        a layer tree commit, but _didCommitLayerTree: ignored it because we had a _dynamicViewportUpdateMode.
+
+        Fix is to always update the layout viewport data from the web process, since during dynamic
+        viewport updates, we still need these data to compute rectangles sent back to the web process via
+        visible content rect updates.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didCommitLayerTree:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::computeCustomFixedPositionRect):
+        (WebKit::WebPageProxy::updateLayoutViewportParameters): Cleanup.
+
 2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Using -[WebItemProviderPasteboard setItemProviders:] to swap out item providers before a drop breaks item provider loading

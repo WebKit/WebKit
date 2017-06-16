@@ -1478,6 +1478,8 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView _didCommitLayerTree:] transactionID " <<  layerTreeTransaction.transactionID() << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
 
+    BOOL needUpdateVisbleContentRects = _page->updateLayoutViewportParameters(layerTreeTransaction);
+
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
         if (_resizeAnimationTransformTransactionID && layerTreeTransaction.transactionID() >= _resizeAnimationTransformTransactionID.value()) {
             _resizeAnimationTransformTransactionID = std::nullopt;
@@ -1513,8 +1515,6 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         [_stableStatePresentationUpdateCallbacks removeAllObjects];
         _stableStatePresentationUpdateCallbacks = nil;
     }
-
-    BOOL needUpdateVisbleContentRects = _page->updateLayoutViewportParameters(layerTreeTransaction);
 
     if (![_contentView _mayDisableDoubleTapGesturesDuringSingleTap])
         [_contentView _setDoubleTapGesturesEnabled:self._allowsDoubleTapGestures];

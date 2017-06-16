@@ -259,7 +259,7 @@ WebCore::FloatRect WebPageProxy::computeCustomFixedPositionRect(const FloatRect&
         
     FloatSize constainedSize = isBelowMinimumScale ? constrainedUnobscuredRect.size() : unobscuredContentRect.size();
     FloatRect unobscuredContentRectForViewport = isBelowMinimumScale ? constrainedUnobscuredRect : unobscuredContentRectRespectingInputViewBounds;
-    
+
     FloatRect layoutViewportRect = FrameView::computeUpdatedLayoutViewportRect(LayoutRect(currentCustomFixedPositionRect), LayoutRect(documentRect), LayoutSize(constainedSize), LayoutRect(unobscuredContentRectForViewport), m_baseLayoutViewportSize, m_minStableLayoutViewportOrigin, m_maxStableLayoutViewportOrigin, constraint);
     
     if (layoutViewportRect != currentCustomFixedPositionRect)
@@ -404,15 +404,18 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
 
 bool WebPageProxy::updateLayoutViewportParameters(const WebKit::RemoteLayerTreeTransaction& layerTreeTransaction)
 {
-    bool changed = m_baseLayoutViewportSize != layerTreeTransaction.baseLayoutViewportSize()
-        || m_minStableLayoutViewportOrigin != layerTreeTransaction.minStableLayoutViewportOrigin()
-        || m_maxStableLayoutViewportOrigin != layerTreeTransaction.maxStableLayoutViewportOrigin();
+    if (m_baseLayoutViewportSize == layerTreeTransaction.baseLayoutViewportSize()
+        && m_minStableLayoutViewportOrigin == layerTreeTransaction.minStableLayoutViewportOrigin()
+        && m_maxStableLayoutViewportOrigin == layerTreeTransaction.maxStableLayoutViewportOrigin())
+        return false;
 
     m_baseLayoutViewportSize = layerTreeTransaction.baseLayoutViewportSize();
     m_minStableLayoutViewportOrigin = layerTreeTransaction.minStableLayoutViewportOrigin();
     m_maxStableLayoutViewportOrigin = layerTreeTransaction.maxStableLayoutViewportOrigin();
-    
-    return changed;
+
+    LOG_WITH_STREAM(VisibleRects, stream << "WebPageProxy::updateLayoutViewportParameters: baseLayoutViewportSize: " << m_baseLayoutViewportSize << " minStableLayoutViewportOrigin: " << m_minStableLayoutViewportOrigin << " maxStableLayoutViewportOrigin: " << m_maxStableLayoutViewportOrigin);
+
+    return true;
 }
 
 void WebPageProxy::layerTreeCommitComplete()
