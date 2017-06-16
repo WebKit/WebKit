@@ -1,3 +1,11 @@
+2017-06-16  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the Windows build after r218402
+
+        * WebCorePrefix.h:
+        I typed #import instead of #include on auto-pilot, and ... it mostly worked!
+        Except Windows.
+
 2017-06-16  Jeremy Jones  <jeremyj@apple.com>
 
         Hide inline captions in fullscreen. Remove fullscreen captions when no longer needed.
