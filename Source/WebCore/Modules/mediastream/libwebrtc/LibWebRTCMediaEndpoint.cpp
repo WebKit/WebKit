@@ -990,7 +990,9 @@ RTCRtpParameters LibWebRTCMediaEndpoint::getRTCRtpSenderParameters(RTCRtpSender&
 
 void LibWebRTCMediaEndpoint::gatherStatsForLogging()
 {
-    m_backend->GetStats(this);
+    ASSERT(m_backend);
+    if (m_backend)
+        m_backend->GetStats(this);
 }
 
 void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)

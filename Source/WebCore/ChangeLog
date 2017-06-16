@@ -1,3 +1,15 @@
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
+        WebCore::LibWebRTCMediaEndpoint::gatherStatsForLogging is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=173493
+
+        Reviewed by Eric Carlson.
+
+        Speculative preventive fix.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::gatherStatsForLogging):
+
 2017-06-16  Alex Christensen  <achristensen@webkit.org>
 
         Show punycode to user if a URL has dotless i or j followed by diacritic dot
