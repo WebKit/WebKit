@@ -9,6 +9,10 @@
   <body>
     <script src ="../routines.js"></script>
     <script>
+window.addEventListener("unhandledrejection", event => {
+    event.preventDefault();
+});
+
 var localChannel;
 var remoteChannel;
 
@@ -113,8 +117,6 @@ promise_test((test) => {
             };
         });
         setTimeout(resolve, 50);
-    }).then (() => {
-        closeDataChannels();
     });
 }, "Medium buffer threshold not reached");
     </script>

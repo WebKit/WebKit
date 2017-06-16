@@ -57,11 +57,20 @@ function getOutboundRTPStats(connection)
     });
 }
 
+function testTimestampDifference(timeStampDifference, numberOfFrames)
+{
+    // Let's ensure timestamp is not in microseconds but milliseconds.
+    return timeStampDifference > 100000 * (numberOfFrames / 30.0);
+}
+
 function checkInboundFramesNumberIncreased(secondConnection, statsSecondConnection, count)
 {
     return getInboundRTPStats(secondConnection).then((stats) => {
-        if (stats.timestamp > statsSecondConnection.timestamp && stats.framesDecoded > statsSecondConnection.framesDecoded)
+        if (stats.framesDecoded > statsSecondConnection.framesDecoded) {
+            if (testTimestampDifference(stats.timestamp - statsSecondConnection.timestamp, stats.framesDecoded - statsSecondConnection.framesDecoded))
+                return Promise.reject("timestamp and frames increment do not match");
             return;
+        }
         if (++count === 20)
             return Promise.reject("checking inbound stats frame number increasing timed out");
         return waitFor(50).then(() => {
@@ -73,8 +82,11 @@ function checkInboundFramesNumberIncreased(secondConnection, statsSecondConnecti
 function checkOutboundFramesNumberIncreased(firstConnection, statsFirstConnection, count)
 {
     return getOutboundRTPStats(firstConnection).then((stats) => {
-        if (stats.timestamp > statsFirstConnection.timestamp && stats.framesEncoded > statsFirstConnection.framesEncoded)
+        if (stats.framesEncoded > statsFirstConnection.framesEncoded) {
+            if (testTimestampDifference(stats.timestamp - statsFirstConnection.timestamp, stats.framesEncoded - statsFirstConnection.framesEncoded))
+                return Promise.reject("timestamp and frames increment do not match");
             return;
+        }
         if (++count === 20)
             return Promise.reject("checking outbound stats frame number increasing timed out");
         return waitFor(50).then(() => {
@@ -110,7 +122,6 @@ promise_test((test) => {
         assert_true(!!stats, "outbound-rtp stats should not be null");
         assert_true(Number.isInteger(stats.framesEncoded), "framesEncoded should be an integer");
         assert_true(Number.isInteger(stats.qpSum), "outbound qpSum should be an integer");
-        assert_false(Number.isInteger(stats.timestamp), "timestamp should be a double");
         assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
         statsFirstConnection = stats;
         return getInboundRTPStats(secondConnection);
@@ -118,7 +129,6 @@ promise_test((test) => {
         assert_true(!!stats, "inbound-rtp stats should not be null");
         assert_true(Number.isInteger(stats.framesDecoded), "framesDecoded should be an integer");
         assert_true(Number.isInteger(stats.qpSum), "inbound qpSum should be an integer");
-        assert_false(Number.isInteger(stats.timestamp), "timestamp should be a double");
         assert_true(typeof stats.timestamp === "number", "timestamp should be a double");
         statsSecondConnection = stats;
     }).then(() => {

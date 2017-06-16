@@ -2,16 +2,5 @@
 PASS Basic data channel exchange from offerer to receiver 
 PASS Basic data channel exchange from receiver to offerer 
 PASS Basic data channel exchange from offerer to receiver using UDP only 
-PASS Basic data channel exchange from offerer to receiver using TCP only 
 PASS Basic data channel exchange from offerer to receiver 
-PASS Creating data channel with very long label 
-PASS Creating data channel after closing the connection 
-PASS Wrong data channel init: long protocol 
-PASS Wrong data channel init: long id 
-PASS Wrong data channel init: maxPacketLifeTime and maxRetransmits 
-PASS Right data channel init: ordered init 
-PASS Right data channel init: unordered init 
-PASS Right data channel init: default ordered init with id 
-PASS Right data channel init: no init 
-PASS Right data channel init: null 
 

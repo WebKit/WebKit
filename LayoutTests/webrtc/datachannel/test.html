@@ -18,23 +18,24 @@ function closeDataChannels() {
     closeConnections();
 }
 
-function receiveMessages(event) {
-try {
-    if (++counter === 1)
-        assert_equals(event.data, "one");
-    else if (counter === 2)
-        assert_equals(event.data, "two");
-    else if (counter === 3)
-        assert_equals(event.data, "three");
-    else if (counter === 4) {
-        assert_equals(event.data, "four");
-        closeDataChannels();
-        finishTest();
-    } else
-        assert_unreached();
-} catch(e) {
-    console.log(e);
-}
+function receiveMessages(event)
+{
+    try {
+        if (++counter === 1)
+            assert_equals(event.data, "one");
+        else if (counter === 2)
+            assert_equals(event.data, "two");
+        else if (counter === 3)
+            assert_equals(event.data, "three");
+        else if (counter === 4) {
+            assert_equals(event.data, "four");
+            closeDataChannels();
+            finishTest();
+        } else
+            assert_unreached();
+    } catch(e) {
+        console.log(e);
+    }
 }
 
 function sendMessages(channel)
@@ -115,6 +116,7 @@ promise_test((test) => {
         createConnections((localConnection) => {
             var init = { ordered: true, maxPacketLifeTime: 10, maxRetransmitTime: 11, protocol: "whatever", negotiated: false, id: 1 };
             localChannel = localConnection.createDataChannel('sendDataChannel', init);
+            checkDataChannelOptions(localChannel, init)
             localChannel.onopen = () => { sendMessages(localChannel) };
         }, (remoteConnection) => {
             remoteConnection.ondatachannel = (event) => {

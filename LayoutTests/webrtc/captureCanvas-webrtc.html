@@ -41,25 +41,32 @@ promise_test((test) => {
     }).then((stream) => {
         video.srcObject = stream;
         return video.play();
-    }).then(() => {
-         return waitFor(100);
-    }).then(() => {
-        canvas2.getContext("2d").drawImage(video, 0 ,0);
-        assert_array_equals(canvas2.getContext("2d").getImageData(20 ,20, 60, 60), canvas1.getContext("2d").getImageData(20, 20, 60, 60));
-    }).then(() => {
-        color = "red";
-         return waitFor(300);
-    }).then(() => {
-        canvas2.getContext("2d").drawImage(video, 0 ,0);
-        assert_array_equals(canvas2.getContext("2d").getImageData(20 ,20, 60, 60), canvas1.getContext("2d").getImageData(20, 20, 60, 60));
-    }).then(() => {
-        color = "green";
-        return waitFor(300);
-    }).then(() => {
+    });
+}, "Setting up the connection");
+
+promise_test((test) => {
+    return waitFor(100).then(() => {
         canvas2.getContext("2d").drawImage(video, 0 ,0);
         assert_array_equals(canvas2.getContext("2d").getImageData(20 ,20, 60, 60), canvas1.getContext("2d").getImageData(20, 20, 60, 60));
     });
-}, "captureStream with webrtc");
+}, "Checking canvas is green");
+
+promise_test((test) => {
+    color = "red";
+    return waitFor(300).then(() => {
+        canvas2.getContext("2d").drawImage(video, 0 ,0);
+        assert_array_equals(canvas2.getContext("2d").getImageData(20 ,20, 60, 60), canvas1.getContext("2d").getImageData(20, 20, 60, 60));
+    });
+}, "Checking canvas is red");
+
+
+promise_test((test) => {
+    color = "green";
+    return waitFor(300).then(() => {
+        canvas2.getContext("2d").drawImage(video, 0 ,0);
+        assert_array_equals(canvas2.getContext("2d").getImageData(20 ,20, 60, 60), canvas1.getContext("2d").getImageData(20, 20, 60, 60));
+    });
+}, "Checking canvas is green again");
         </script>
     </head>
 </html>

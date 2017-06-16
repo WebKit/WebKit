@@ -1,3 +1,23 @@
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
+        Make some WebRTC tests easier to debug when failing
+        https://bugs.webkit.org/show_bug.cgi?id=173480
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/captureCanvas-webrtc-expected.txt:
+        * webrtc/captureCanvas-webrtc.html: Splitting test in smaller tests.
+        * webrtc/datachannel/basic-expected.txt:
+        * webrtc/datachannel/basic-tcp-expected.txt: Added.
+        * webrtc/datachannel/basic-tcp.html: Test from basic.html
+        * webrtc/datachannel/basic.html: Moving TCP specifict test and other creation tests to their own files.
+        * webrtc/datachannel/bufferedAmountLowThreshold.html: Removing console log message in case of unhandled promise.
+        * webrtc/datachannel/creation-expected.txt:
+        * webrtc/datachannel/creation.html: Test from basic.html
+        * webrtc/datachannel/filter-ice-candidate-expected.txt:
+        * webrtc/datachannel/filter-ice-candidate.html: Exchanging the tests.
+        * webrtc/video-stats.html: Improving test that timestamp is milliseconds and not microseconds.
+
 2017-06-16  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: AirPlay placard is not shown when in fullscreen
