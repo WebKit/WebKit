@@ -32,7 +32,7 @@ namespace WebCore {
 class FontFamilySpecificationNull {
 public:
     FontFamilySpecificationNull() = delete;
-    
+
     FontRanges fontRanges(const FontDescription&) const
     {
         ASSERT_NOT_REACHED();

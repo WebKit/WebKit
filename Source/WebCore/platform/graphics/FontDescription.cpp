@@ -101,7 +101,7 @@ FontCascadeDescription::FontCascadeDescription()
 void FontDescription::invalidateCaches()
 {
 }
-    
+
 unsigned FontCascadeDescription::effectiveFamilyCount() const
 {
     return familyCount();

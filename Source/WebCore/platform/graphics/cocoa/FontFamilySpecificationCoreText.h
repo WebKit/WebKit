@@ -37,7 +37,7 @@ public:
         : m_fontDescriptor(fontDescriptor)
     {
     }
-    
+
     FontRanges fontRanges(const FontDescription&) const;
 
 private:

@@ -43,17 +43,17 @@ public:
         CoreTextCascadeListParameters()
         {
         }
-        
+
         CoreTextCascadeListParameters(WTF::HashTableDeletedValueType)
             : locale(WTF::HashTableDeletedValue)
         {
         }
-        
+
         bool isHashTableDeletedValue() const
         {
             return locale.isHashTableDeletedValue();
         }
-        
+
         bool operator==(const CoreTextCascadeListParameters& other) const
         {
             return locale == other.locale
@@ -61,7 +61,7 @@ public:
                 && size == other.size
                 && italic == other.italic;
         }
-        
+
         unsigned hash() const
         {
             IntegerHasher hasher;
@@ -71,33 +71,33 @@ public:
             hasher.add(italic);
             return hasher.hash();
         }
-    
+
         AtomicString locale;
         CGFloat weight { 0 };
         float size { 0 };
         bool italic { false };
     };
-    
+
     static SystemFontDatabase& singleton()
     {
         static NeverDestroyed<SystemFontDatabase> database = SystemFontDatabase();
         return database.get();
     }
-    
+
     Vector<RetainPtr<CTFontDescriptorRef>> systemFontCascadeList(const CoreTextCascadeListParameters& parameters)
     {
         auto createSystemFont = [&] {
             auto localeString = parameters.locale.string().createCFString();
             return std::make_pair(localeString, adoptCF(CTFontCreateUIFontForLanguage(kCTFontUIFontSystem, parameters.size, localeString.get())));
         };
-        
+
         // Avoid adding an empty value to the hash map
         if (!parameters.size) {
             auto systemFont = createSystemFont().second;
             auto descriptor = adoptCF(CTFontCopyFontDescriptor(systemFont.get()));
             return { removeCascadeList(descriptor.get()) };
         }
-        
+
         return m_systemFontCache.ensure(parameters, [&] {
             RetainPtr<CFStringRef> localeString;
             RetainPtr<CTFontRef> systemFont;
@@ -106,12 +106,12 @@ public:
             return computeCascadeList(systemFont.get(), localeString.get());
         }).iterator->value;
     }
-    
+
     void clear()
     {
         m_systemFontCache.clear();
     }
-    
+
 private:
     SystemFontDatabase()
     {
@@ -132,7 +132,7 @@ private:
         auto modification = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
         return adoptCF(CTFontCreateCopyWithAttributes(font, size, nullptr, modification.get()));
     }
-    
+
     static RetainPtr<CTFontDescriptorRef> removeCascadeList(CTFontDescriptorRef fontDescriptor)
     {
         auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
@@ -142,7 +142,7 @@ private:
         auto modifiedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, fallbackDictionary.get()));
         return modifiedFontDescriptor;
     }
-    
+
     static Vector<RetainPtr<CTFontDescriptorRef>> computeCascadeList(CTFontRef font, CFStringRef locale)
     {
         CFTypeRef arrayValues[] = { locale };
@@ -156,7 +156,7 @@ private:
             result.append(static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(cascadeList.get(), i)));
         return result;
     }
-    
+
     struct CoreTextCascadeListParametersHash : WTF::PairHash<AtomicString, float> {
         static unsigned hash(const CoreTextCascadeListParameters& parameters)
         {
@@ -168,7 +168,7 @@ private:
         }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
-    
+
     HashMap<CoreTextCascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CoreTextCascadeListParametersHash, SimpleClassHashTraits<CoreTextCascadeListParameters>> m_systemFontCache;
 };
 
@@ -186,7 +186,7 @@ static inline SystemFontDatabase::CoreTextCascadeListParameters systemFontParame
     result.locale = description.locale();
     result.size = description.computedSize();
     result.italic = isItalic(description.italic());
-    
+
     auto weight = description.weight();
     if (weight < FontSelectionValue(150))
         result.weight = kCTFontWeightUltraLight;
@@ -206,7 +206,7 @@ static inline SystemFontDatabase::CoreTextCascadeListParameters systemFontParame
         result.weight = kCTFontWeightHeavy;
     else
         result.weight = kCTFontWeightBlack;
-        
+
     return result;
 }
 
