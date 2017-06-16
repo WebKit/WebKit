@@ -101,8 +101,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 
-    UIProcess/API/C/soup/WKCookieManagerSoup.cpp
-
     UIProcess/API/C/wpe/WKView.cpp
 
     UIProcess/API/wpe/CompositingManagerProxy.cpp
@@ -231,7 +229,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/Shared/unix"
     "${WEBKIT2_DIR}/Shared/wpe"
     "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
-    "${WEBKIT2_DIR}/UIProcess/API/C/soup"
     "${WEBKIT2_DIR}/UIProcess/API/C/wpe"
     "${WEBKIT2_DIR}/UIProcess/API/wpe"
     "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols/soup"
@@ -436,8 +433,6 @@ if (EXPORT_DEPRECATED_WEBKIT2_C_API)
         ${WEBKIT2_DIR}/UIProcess/API/C/WKWindowFeaturesRef.h
 
         ${WEBKIT2_DIR}/UIProcess/API/C/wpe/WKView.h
-
-        ${WEBKIT2_DIR}/UIProcess/API/C/soup/WKCookieManagerSoup.h
     )
 
     install(FILES ${WPE_INSTALLED_WEBKIT_HEADERS}

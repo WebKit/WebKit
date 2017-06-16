@@ -1,5 +1,19 @@
 2017-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Remove WKCookieManagerSoup
+        https://bugs.webkit.org/show_bug.cgi?id=173467
+
+        Reviewed by Michael Catanzaro.
+
+        It's unused.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * UIProcess/API/C/soup/WKCookieManagerSoup.cpp: Removed.
+        * UIProcess/API/C/soup/WKCookieManagerSoup.h: Removed.
+
+2017-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Remove wrong headers check from some GTK+ API files.
 
         Remove the __WEBKIT_WEB_EXTENSION_H_INSIDE__ check since these are not actually shared.
