@@ -1252,13 +1252,13 @@ void MediaControlTextTrackContainerElement::updateTextStrokeStyle()
             break;
         }
     }
-    
+
     float strokeWidth;
     bool important;
-    
+
     // FIXME: find a way to set this property in the stylesheet like the other user style preferences, see <https://bugs.webkit.org/show_bug.cgi?id=169874>.
     if (document().page()->group().captionPreferences().captionStrokeWidthForFont(m_fontSize, language, strokeWidth, important))
-        setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSPrimitiveValue::CSS_PT, important);
+        setInlineStyleProperty(CSSPropertyStrokeWidth, strokeWidth, CSSPrimitiveValue::CSS_PX, important);
 }
 
 void MediaControlTextTrackContainerElement::updateTimerFired()

@@ -1,5 +1,22 @@
 2017-06-16  Per Arne Vollan  <pvollan@apple.com>
 
+        WebKit does not honor closed caption stroke width.
+        https://bugs.webkit.org/show_bug.cgi?id=173402
+
+        Reviewed by Eric Carlson.
+
+        WebKit currently has an upper limit on the stroke width returned from MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle.
+        Since only half the stroke is visible because the stroke is drawn before the fill, double the stroke width from
+        MediaAccessibility to get the correct visual stroke width. Also, the stroke width returned from this function should not be
+        interpreted as CSS points, but as CSS pixels.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateTextStrokeStyle):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::CaptionUserPreferencesMediaAF::captionStrokeWidthForFont):
+
+2017-06-16  Per Arne Vollan  <pvollan@apple.com>
+
         [Win] WebKit renders scrollbar wrong at 125% scale.
         https://bugs.webkit.org/show_bug.cgi?id=173363
 

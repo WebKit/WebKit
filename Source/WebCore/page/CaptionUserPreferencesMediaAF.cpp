@@ -367,12 +367,9 @@ bool CaptionUserPreferencesMediaAF::captionStrokeWidthForFont(float fontSize, co
     if (!fontDescriptor)
         return false;
 
-    strokeWidth = strokeWidthPt;
+    // Since only half of the stroke is visible because the stroke is drawn before the fill, we double the stroke width here.
+    strokeWidth = strokeWidthPt * 2;
     important = behavior == kMACaptionAppearanceBehaviorUseValue;
-    
-    // Currently, MACaptionAppearanceCopyFontDescriptorWithStrokeForStyle is returning very large stroke widths, see <rdar://problem/31126629>.
-    // To avoid stroke widths that are too large, we set a maximum value of 10% of the font size.
-    strokeWidth = std::min(strokeWidth, fontSize / 10.0f);
     
     return true;
 }
