@@ -371,7 +371,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     JSC::Weak<JSC::JSObject> m_constructor;
 }
 
-- (id)initForClass:(Class)cls;
+- (instancetype)initForClass:(Class)cls;
 - (JSC::JSObject *)wrapperForObject:(id)object inContext:(JSContext *)context;
 - (JSC::JSObject *)constructorInContext:(JSContext *)context;
 - (JSC::JSObject *)prototypeInContext:(JSContext *)context;
@@ -380,7 +380,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 
 @implementation JSObjCClassInfo
 
-- (id)initForClass:(Class)cls
+- (instancetype)initForClass:(Class)cls
 {
     self = [super init];
     if (!self)
@@ -552,7 +552,7 @@ typedef std::pair<JSC::JSObject*, JSC::JSObject*> ConstructorPrototypePair;
     NSMapTable *m_cachedObjCWrappers;
 }
 
-- (id)initWithGlobalContextRef:(JSGlobalContextRef)context
+- (instancetype)initWithGlobalContextRef:(JSGlobalContextRef)context
 {
     self = [super init];
     if (!self)

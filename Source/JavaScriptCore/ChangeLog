@@ -1,3 +1,16 @@
+2017-06-15  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Cocoa] Modernize some internal initializers to use instancetype instead of id
+        https://bugs.webkit.org/show_bug.cgi?id=173112
+
+        Reviewed by Wenson Hsieh.
+
+        * API/JSContextInternal.h:
+        * API/JSWrapperMap.h:
+        * API/JSWrapperMap.mm:
+        (-[JSObjCClassInfo initForClass:]):
+        (-[JSWrapperMap initWithGlobalContextRef:]):
+
 2017-06-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument 2D/WebGL canvas contexts in the backend

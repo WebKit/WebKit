@@ -59,7 +59,7 @@ private:
 
 @interface JSContext(Internal)
 
-- (id)initWithGlobalContextRef:(JSGlobalContextRef)context;
+- (instancetype)initWithGlobalContextRef:(JSGlobalContextRef)context;
 
 - (void)notifyException:(JSValueRef)exception;
 - (JSValue *)valueFromNotifyException:(JSValueRef)exception;
