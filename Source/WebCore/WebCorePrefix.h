@@ -163,6 +163,11 @@
 #endif
 
 #ifdef __cplusplus
+#import <wtf/Optional.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/text/AtomicString.h>
+#import <wtf/text/WTFString.h>
+
 #define new ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #define delete ("if you use new/delete make sure to include config.h at the top of the file"()) 
 #endif

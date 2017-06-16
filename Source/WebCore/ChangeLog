@@ -1,3 +1,17 @@
+2017-06-16  Tim Horton  <timothy_horton@apple.com>
+
+        Include a few widespread WTF headers in WebCorePrefix.h
+        https://bugs.webkit.org/show_bug.cgi?id=173481
+
+        Reviewed by Alex Christensen.
+
+        * WebCorePrefix.h:
+        These are four of the headers that contribute the most pre-processed
+        source to the WebCore build. They (and their dependents) change infrequently
+        enough that a world rebuild of WebCore when they change seems like an
+        acceptable tradeoff for the ~9% reduction in WebCore build time that I
+        measure from this change.
+
 2017-06-16  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: AirPlay placard is not shown when in fullscreen
