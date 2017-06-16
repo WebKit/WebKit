@@ -151,6 +151,12 @@ AudioSourceProvider* MediaStreamTrackPrivate::audioSourceProvider()
     return m_source->audioSourceProvider();
 }
 
+void MediaStreamTrackPrivate::sourceStarted()
+{
+    for (auto& observer : m_observers)
+        observer->trackStarted(*this);
+}
+
 void MediaStreamTrackPrivate::sourceStopped()
 {
     if (m_isEnded)

@@ -1,3 +1,19 @@
+2017-06-16  Jer Noble  <jer.noble@apple.com>
+
+        [WebRTC] Removing a MediaStreamTrack from a MediaStream reports no recording to WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=173398
+        <rdar://problem/32592961>
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/MediaStreamTrackDetached.mm: Added.
+        (-[MediaStreamTrackDetachedUIDelegate _webView:requestUserMediaAuthorizationForDevices:url:mainFrameURL:decisionHandler:]):
+        (-[MediaStreamTrackDetachedUIDelegate _webView:checkUserMediaPermissionForURL:mainFrameURL:frameIdentifier:decisionHandler:]):
+        (-[MediaStreamTrackDetachedUIDelegate _webView:mediaCaptureStateDidChange:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/mediastreamtrack-detached.html: Added.
+
 2017-06-16  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218375.
