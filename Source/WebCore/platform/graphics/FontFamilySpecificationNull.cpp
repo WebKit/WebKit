@@ -23,26 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "FontFamilySpecificationNull.h"
 
-#include <wtf/RetainPtr.h>
-
-typedef const struct __CTFontDescriptor* CTFontDescriptorRef;
+#include "FontSelector.h"
 
 namespace WebCore {
 
-class FontDescription;
-class FontRanges;
-
-class FontFamilySpecificationCoreText {
-public:
-    FontFamilySpecificationCoreText(CTFontDescriptorRef);
-    ~FontFamilySpecificationCoreText();
-
-    FontRanges fontRanges(const FontDescription&) const;
-
-private:
-    RetainPtr<CTFontDescriptorRef> m_fontDescriptor;
-};
+FontRanges FontFamilySpecificationNull::fontRanges(const FontDescription&) const
+{
+    ASSERT_NOT_REACHED();
+    return FontRanges();
+}
 
 }

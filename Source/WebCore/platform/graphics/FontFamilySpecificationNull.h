@@ -25,19 +25,16 @@
 
 #pragma once
 
-#include "FontSelector.h"
-
 namespace WebCore {
+
+class FontDescription;
+class FontRanges;
 
 class FontFamilySpecificationNull {
 public:
     FontFamilySpecificationNull() = delete;
 
-    FontRanges fontRanges(const FontDescription&) const
-    {
-        ASSERT_NOT_REACHED();
-        return FontRanges();
-    }
+    FontRanges fontRanges(const FontDescription&) const;
 };
 
 }

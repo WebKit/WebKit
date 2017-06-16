@@ -27,8 +27,19 @@
 #include "FontFamilySpecificationCoreText.h"
 
 #include "FontCache.h"
+#include "FontSelector.h"
+#include <CoreText/CoreText.h>
 
 namespace WebCore {
+
+FontFamilySpecificationCoreText::FontFamilySpecificationCoreText(CTFontDescriptorRef fontDescriptor)
+    : m_fontDescriptor(fontDescriptor)
+{
+}
+
+FontFamilySpecificationCoreText::~FontFamilySpecificationCoreText()
+{
+}
 
 FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fontDescription) const
 {
