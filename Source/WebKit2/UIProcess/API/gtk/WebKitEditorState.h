@@ -17,7 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__)
+#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
 #error "Only <webkit2/webkit2.h> can be included directly."
 #endif
 

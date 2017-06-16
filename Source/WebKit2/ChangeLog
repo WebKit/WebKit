@@ -1,3 +1,13 @@
+2017-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove wrong headers check from some GTK+ API files.
+
+        Remove the __WEBKIT_WEB_EXTENSION_H_INSIDE__ check since these are not actually shared.
+
+        * UIProcess/API/gtk/WebKitEditorState.h:
+        * UIProcess/API/gtk/WebKitOptionMenu.h:
+        * UIProcess/API/gtk/WebKitPrintCustomWidget.h:
+
 2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r218325): [GTK] Runtime critical warnings running layout tests that show a popup menu
