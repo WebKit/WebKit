@@ -369,11 +369,6 @@ public:
     
     size_t numOpaqueRoots() const { return m_opaqueRoots.size(); }
 
-#if USE(CF)
-    CFRunLoopRef runLoop() const { return m_runLoop.get(); }
-    JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
-#endif // USE(CF)
-
     HeapVerifier* verifier() const { return m_verifier.get(); }
     
     void addHeapFinalizerCallback(const HeapFinalizerCallback&);
@@ -623,9 +618,6 @@ private:
     Vector<WeakBlock*> m_logicallyEmptyWeakBlocks;
     size_t m_indexOfNextLogicallyEmptyWeakBlockToSweep { WTF::notFound };
     
-#if USE(CF)
-    RetainPtr<CFRunLoopRef> m_runLoop;
-#endif // USE(CF)
     RefPtr<FullGCActivityCallback> m_fullActivityCallback;
     RefPtr<GCActivityCallback> m_edenActivityCallback;
     RefPtr<IncrementalSweeper> m_sweeper;

@@ -289,9 +289,6 @@ Heap::Heap(VM* vm, HeapType heapType)
     // schedule the timer if we've never done a collection.
     , m_lastFullGCLength(0.01)
     , m_lastEdenGCLength(0.01)
-#if USE(CF)
-    , m_runLoop(CFRunLoopGetCurrent())
-#endif // USE(CF)
     , m_fullActivityCallback(GCActivityCallback::createFullTimer(this))
     , m_edenActivityCallback(GCActivityCallback::createEdenTimer(this))
     , m_sweeper(adoptRef(new IncrementalSweeper(this)))
@@ -2588,16 +2585,6 @@ void Heap::didFreeBlock(size_t capacity)
     UNUSED_PARAM(capacity);
 #endif
 }
-
-#if USE(CF)
-void Heap::setRunLoop(CFRunLoopRef runLoop)
-{
-    m_runLoop = runLoop;
-    m_fullActivityCallback->setRunLoop(runLoop);
-    m_edenActivityCallback->setRunLoop(runLoop);
-    m_sweeper->setRunLoop(runLoop);
-}
-#endif // USE(CF)
 
 void Heap::addCoreConstraints()
 {

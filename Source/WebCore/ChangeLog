@@ -1,3 +1,21 @@
+2017-06-15  Mark Lam  <mark.lam@apple.com>
+
+        Add a JSRunLoopTimer registry in VM.
+        https://bugs.webkit.org/show_bug.cgi?id=173429
+        <rdar://problem/31287961>
+
+        Reviewed by Filip Pizlo.
+
+        No new tests needed because:
+        1. it's already covered: it was also originally discovered by our API tests while
+           running on the iOS simulator. The test was intermittently failing on a debug
+           build.
+        2. the issue is racy (it depends on a JSRunLoopTimer firing at the right time).
+           Hence, it's non trivial to write a better test than the one we already have.
+
+        * bindings/js/CommonVM.cpp:
+        (WebCore::commonVMSlow):
+
 2017-06-15  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: AirPlay button is incorrectly highlighted in inline and fullscreen

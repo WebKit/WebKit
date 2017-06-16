@@ -1,3 +1,31 @@
+2017-06-15  Mark Lam  <mark.lam@apple.com>
+
+        Add a JSRunLoopTimer registry in VM.
+        https://bugs.webkit.org/show_bug.cgi?id=173429
+        <rdar://problem/31287961>
+
+        Reviewed by Filip Pizlo.
+
+        This way, we can be sure we've got every JSRunLoopTimer instance covered if we
+        need to change their run loop (e.g. when setting to the WebThread's run loop).
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::setRunLoop): Deleted.
+        * heap/Heap.h:
+        (JSC::Heap::runLoop): Deleted.
+        * runtime/JSRunLoopTimer.cpp:
+        (JSC::JSRunLoopTimer::JSRunLoopTimer):
+        (JSC::JSRunLoopTimer::setRunLoop):
+        (JSC::JSRunLoopTimer::~JSRunLoopTimer):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::registerRunLoopTimer):
+        (JSC::VM::unregisterRunLoopTimer):
+        (JSC::VM::setRunLoop):
+        * runtime/VM.h:
+        (JSC::VM::runLoop):
+
 2017-06-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] Modernize some internal initializers to use instancetype instead of id

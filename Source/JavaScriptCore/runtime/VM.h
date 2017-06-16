@@ -109,6 +109,7 @@ class Interpreter;
 class JSCustomGetterSetterFunction;
 class JSGlobalObject;
 class JSObject;
+class JSRunLoopTimer;
 class JSWebAssemblyInstance;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
@@ -279,6 +280,11 @@ public:
 
 private:
     RefPtr<JSLock> m_apiLock;
+#if USE(CF)
+    // These need to be initialized before heap below.
+    HashSet<JSRunLoopTimer*> m_runLoopTimers;
+    RetainPtr<CFRunLoopRef> m_runLoop;
+#endif
 
 public:
     Heap heap;
@@ -668,6 +674,13 @@ public:
     StackTrace* nativeStackTraceOfLastThrow() const { return m_nativeStackTraceOfLastThrow.get(); }
     ThreadIdentifier throwingThread() const { return m_throwingThread; }
 #endif
+
+#if USE(CF)
+    CFRunLoopRef runLoop() const { return m_runLoop.get(); }
+    void registerRunLoopTimer(JSRunLoopTimer*);
+    void unregisterRunLoopTimer(JSRunLoopTimer*);
+    JS_EXPORT_PRIVATE void setRunLoop(CFRunLoopRef);
+#endif // USE(CF)
 
 private:
     friend class LLIntOffsetsExtractor;

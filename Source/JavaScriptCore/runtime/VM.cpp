@@ -156,6 +156,9 @@ static bool enableAssembler(ExecutableAllocator& executableAllocator)
 
 VM::VM(VMType vmType, HeapType heapType)
     : m_apiLock(adoptRef(new JSLock(this)))
+#if USE(CF)
+    , m_runLoop(CFRunLoopGetCurrent())
+#endif // USE(CF)
     , heap(this, heapType)
     , auxiliarySpace("Auxiliary", heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::Auxiliary))
     , cellSpace("JSCell", heap, AllocatorAttributes(DoesNotNeedDestruction, HeapCell::JSCell))
@@ -930,5 +933,30 @@ RegisterAtOffsetList* VM::getAllCalleeSaveRegisterOffsets()
     return result;
 }
 #endif // ENABLE(JIT)
+
+#if USE(CF)
+void VM::registerRunLoopTimer(JSRunLoopTimer* timer)
+{
+    ASSERT(runLoop());
+    ASSERT(!m_runLoopTimers.contains(timer));
+    m_runLoopTimers.add(timer);
+    timer->setRunLoop(runLoop());
+}
+
+void VM::unregisterRunLoopTimer(JSRunLoopTimer* timer)
+{
+    ASSERT(m_runLoopTimers.contains(timer));
+    m_runLoopTimers.remove(timer);
+    timer->setRunLoop(nullptr);
+}
+
+void VM::setRunLoop(CFRunLoopRef runLoop)
+{
+    ASSERT(runLoop);
+    m_runLoop = runLoop;
+    for (auto timer : m_runLoopTimers)
+        timer->setRunLoop(runLoop);
+}
+#endif // USE(CF)
 
 } // namespace JSC

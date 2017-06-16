@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,7 +69,7 @@ JSRunLoopTimer::JSRunLoopTimer(VM* vm)
     : m_vm(vm)
     , m_apiLock(&vm->apiLock())
 {
-    setRunLoop(vm->heap.runLoop());
+    m_vm->registerRunLoopTimer(this);
 }
 
 void JSRunLoopTimer::setRunLoop(CFRunLoopRef runLoop)
@@ -81,8 +81,8 @@ void JSRunLoopTimer::setRunLoop(CFRunLoopRef runLoop)
         m_timer.clear();
     }
 
+    m_runLoop = runLoop;
     if (runLoop) {
-        m_runLoop = runLoop;
         memset(&m_context, 0, sizeof(CFRunLoopTimerContext));
         m_context.info = this;
         m_timer = adoptCF(CFRunLoopTimerCreate(kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + s_decade.seconds(), s_decade.seconds(), 0, 0, JSRunLoopTimer::timerDidFireCallback, &m_context));
@@ -92,7 +92,7 @@ void JSRunLoopTimer::setRunLoop(CFRunLoopRef runLoop)
 
 JSRunLoopTimer::~JSRunLoopTimer()
 {
-    setRunLoop(0);
+    m_vm->unregisterRunLoopTimer(this);
 }
 
 void JSRunLoopTimer::timerDidFireCallback(CFRunLoopTimerRef, void* contextPtr)
