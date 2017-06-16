@@ -1,3 +1,27 @@
+2017-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION: Media control glyphs appear to invert colors when video is dragged
+        https://bugs.webkit.org/show_bug.cgi?id=173455
+        rdar://problem/32726887
+
+        Reviewed by Tim Horton.
+
+        Masks on composited layers were not correctly painted in drag images, because RenderLayer::paintLayerContents()
+        failed to pass the PaintBehaviorFlattenCompositingLayers flag down through the mask drawing code, causing
+        RenderBox::paintMaskImages() to fall into the composited mask code path.
+
+        Fix by making a local copy of PaintBehavior, and setting the PaintBehaviorFlattenCompositingLayers and PaintBehaviorSnapshotting
+        bits on it as appropriate, and passing it into paintMaskForFragments() and paintChildClippingMaskForFragments(). This is similar
+        to code above.
+
+        Can't test drag images.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintMaskForFragments):
+        (WebCore::RenderLayer::paintChildClippingMaskForFragments):
+        * rendering/RenderLayer.h:
+
 2017-06-16  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218376.
