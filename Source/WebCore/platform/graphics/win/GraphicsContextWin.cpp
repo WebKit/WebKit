@@ -165,7 +165,8 @@ void GraphicsContextPlatformPrivate::clip(const FloatRect& clipRect)
 {
     if (!m_hdc)
         return;
-    IntersectClipRect(m_hdc, clipRect.x(), clipRect.y(), clipRect.maxX(), clipRect.maxY());
+    auto clip = enclosingIntRect(clipRect);
+    IntersectClipRect(m_hdc, clip.x(), clip.y(), clip.maxX(), clip.maxY());
 }
 
 void GraphicsContextPlatformPrivate::clip(const Path&)

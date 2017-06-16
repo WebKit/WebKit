@@ -1,3 +1,17 @@
+2017-06-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] WebKit renders scrollbar wrong at 125% scale.
+        https://bugs.webkit.org/show_bug.cgi?id=173363
+
+        Reviewed by Darin Adler.
+
+        Scrollbars are drawn with the GDI function DrawThemeBackground. Sometimes, the GDI clip
+        rectangle will be too small since we clamp a FloatRect to integer values when setting the
+        GDI clip rectangle.
+
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::clip):
+
 2017-06-15  Mark Lam  <mark.lam@apple.com>
 
         Add a JSRunLoopTimer registry in VM.
