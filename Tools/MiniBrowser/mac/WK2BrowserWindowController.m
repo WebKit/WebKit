@@ -654,6 +654,31 @@ static NSSet *dataTypes()
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *__nullable credential))completionHandler
 {
     LOG(@"didReceiveAuthenticationChallenge: %@", challenge);
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodHTTPBasic]) {
+        NSAlert *alert = [[NSAlert alloc] init];
+        NSView *container = [[[NSView alloc] initWithFrame:NSMakeRect(0, 0, 200, 48)] autorelease];
+        NSTextField *userInput = [[[NSTextField alloc] initWithFrame:NSMakeRect(0, 24, 200, 24)] autorelease];
+        NSTextField *passwordInput = [[[NSSecureTextField alloc] initWithFrame:NSMakeRect(0, 0, 200, 24)] autorelease];
+        
+        [alert setMessageText:[NSString stringWithFormat:@"Log in to %@:%lu.", challenge.protectionSpace.host, challenge.protectionSpace.port]];
+        [alert addButtonWithTitle:@"Log in"];
+        [alert addButtonWithTitle:@"Cancel"];
+        [container addSubview:userInput];
+        [container addSubview:passwordInput];
+        [alert setAccessoryView:container];
+        [userInput setNextKeyView:passwordInput];
+        [alert.window setInitialFirstResponder:userInput];
+        
+        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse response) {
+            [userInput validateEditing];
+            if (response == NSAlertFirstButtonReturn)
+                completionHandler(NSURLSessionAuthChallengeUseCredential, [[[NSURLCredential alloc] initWithUser:[userInput stringValue] password:[passwordInput stringValue] persistence:NSURLCredentialPersistenceForSession] autorelease]);
+            else
+                completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
+            [alert release];
+        }];
+        return;
+    }
     completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
 }
 
