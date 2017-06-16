@@ -1,3 +1,17 @@
+2017-06-15  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: AirPlay button is incorrectly highlighted in inline and fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=173446
+
+        Reviewed by Dean Jackson.
+
+        Update the test to explicitly check the color on the <picture>. We also make the test check
+        the color with a value depending on the platform, so we can use a single expectation file.
+
+        * media/modern-media-controls/airplay-button/airplay-button-on-expected.txt:
+        * media/modern-media-controls/airplay-button/airplay-button-on.html:
+        * platform/ios/media/modern-media-controls/airplay-button/airplay-button-on-expected.txt: Removed.
+
 2017-06-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument 2D/WebGL canvas contexts in the backend

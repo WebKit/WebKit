@@ -13,12 +13,21 @@ airplayButton.on = true;
 
 document.body.appendChild(airplayButton.element);
 
-shouldBecomeEqual('airplayButton.element.classList.contains("on")', "true", () => {
-    debug(`window.getComputedStyle(airplayButton.element).backgroundColor = ${window.getComputedStyle(airplayButton.element).backgroundColor}`);
+const airplayColor = window.navigator.platform === "MacIntel" ? "rgb(27, 173, 248)" : "rgb(0, 122, 255)";
 
-    airplayButton.element.remove();
-    finishMediaControlsTest();
+shouldBecomeEqual('airplayButton.element.classList.contains("on")', "true", () => {
+    shouldBecomeEqualToString("window.getComputedStyle(airplayButton.element).backgroundColor", "rgba(0, 0, 0, 0)", () => {
+        shouldBecomeEqual("window.getComputedStyle(airplayButton.image.element).backgroundColor", "airplayColor", () => {
+            airplayButton.element.remove();
+            finishMediaControlsTest();
+        });
+    });
 });
+
+setTimeout(() => {
+    debug(window.getComputedStyle(airplayButton.image.element).backgroundColor);
+    finishMediaControlsTest();
+}, 4000);
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

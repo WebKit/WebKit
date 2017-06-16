@@ -1,3 +1,17 @@
+2017-06-15  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: AirPlay button is incorrectly highlighted in inline and fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=173446
+
+        Reviewed by Dean Jackson.
+
+        A button's color should be applied to its <picture> element, not the containing
+        <button> element.
+
+        * Modules/modern-media-controls/controls/airplay-button.css:
+        (button.airplay.on > picture):
+        (button.airplay.on): Deleted.
+
 2017-06-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument 2D/WebGL canvas contexts in the backend
