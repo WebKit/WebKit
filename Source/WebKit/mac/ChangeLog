@@ -1,5 +1,22 @@
 2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS DnD] [WK1] Dropping links onto UIWebViews should not trigger navigation by default
+        https://bugs.webkit.org/show_bug.cgi?id=173454
+        <rdar://problem/31720671>
+
+        Reviewed by Tim Horton.
+
+        Adds -webView:dragDestinationActionMaskForSession: as SPI to WebUIDelegate.
+        If unimplemented, the default UI delegate allows all actions except for URL loading.
+
+        * DefaultDelegates/WebDefaultUIDelegate.mm:
+        (-[WebDefaultUIDelegate webView:dragDestinationActionMaskForSession:]):
+        * WebView/WebUIDelegatePrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView dragDestinationActionMaskForSession:]):
+
+2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Using -[WebItemProviderPasteboard setItemProviders:] to swap out item providers before a drop breaks item provider loading
         https://bugs.webkit.org/show_bug.cgi?id=173338
         <rdar://problem/32777720>

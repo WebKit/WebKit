@@ -1898,6 +1898,11 @@ static Vector<FloatRect> floatRectsForCGRectArray(NSArray<NSValue *> *rectValues
     return [previewImage retain];
 }
 
+- (WebDragDestinationAction)dragDestinationActionMaskForSession:(id <UIDropSession>)session
+{
+    return [self._UIDelegateForwarder webView:self dragDestinationActionMaskForSession:session];
+}
+
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebViewAdditions.mm>)
 #include <WebKitAdditions/WebViewAdditions.mm>
 #endif

@@ -45,6 +45,10 @@
 #endif
 #endif
 
+#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+@protocol UIDropSession;
+#endif
+
 #define WEBMENUITEMTAG_WEBKIT_3_0_SPI_START 2000
 enum { 
     // FIXME: These should move to WebUIDelegate.h as part of the WebMenuItemTag enum there, when we're not in API freeze
@@ -290,6 +294,16 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
 - (void)webViewSupportedOrientationsUpdated:(WebView *)sender;
 
 - (BOOL)webViewCanCheckGeolocationAuthorizationStatus:(WebView *)sender;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+/*!
+ @method webView:dragDestinationActionMaskForSession:
+ @param sender The WebView sending the delegate method
+ @param session The drop session which this destination action mask will affect
+ @abstract May be implemented to adjust which destination actions are allowed upon dropping the given session.
+ */
+- (WebDragDestinationAction)webView:(WebView *)sender dragDestinationActionMaskForSession:(id <UIDropSession>)session;
+#endif
 #endif
 
 - (NSData *)webCryptoMasterKeyForWebView:(WebView *)sender;

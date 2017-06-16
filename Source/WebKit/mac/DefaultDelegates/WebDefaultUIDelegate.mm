@@ -270,6 +270,13 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (void)webViewSupportedOrientationsUpdated:(WebView *)sender
 {
 }
+
+#if ENABLE(DRAG_SUPPORT)
+- (WebDragDestinationAction)webView:(WebView *)sender dragDestinationActionMaskForSession:(id <UIDropSession>)session
+{
+    return WebDragDestinationActionAny & ~WebDragDestinationActionLoad;
+}
+#endif
 #endif
 
 @end
