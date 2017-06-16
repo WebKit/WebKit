@@ -1,3 +1,28 @@
+2017-06-16  Jeremy Jones  <jeremyj@apple.com>
+
+        Handle timeout of prepareForPictureInPictureStopWithCompletionHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=173462
+        rdar://problem/32128170
+
+        Reviewed by Jer Noble.
+
+        No new tests because no effect on the DOM.
+
+        If WebVideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler doesn't respond fast enough,
+        the caller will timeout and call will/didStopPictureInPicture.
+
+        This is getting fullscreen state confused.
+
+        This change keeps state consistent by handling will/didStopPictureInPicture possibly being called before
+        prepareForPictureInPictureStopWithCompletionHandler calls its callback.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::willStopPictureInPicture):
+        (WebVideoFullscreenInterfaceAVKit::didStopPictureInPicture):
+        (WebVideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler):
+        (WebVideoFullscreenInterfaceAVKit::watchdogTimerFired):
+
 2017-06-16  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make builds faster after r218371

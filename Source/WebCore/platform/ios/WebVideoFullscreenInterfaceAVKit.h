@@ -147,6 +147,7 @@ protected:
     bool m_wirelessVideoPlaybackDisabled { true };
     bool m_shouldReturnToFullscreenWhenStoppingPiP { false };
     bool m_shouldReturnToFullscreenAfterEnteringForeground { false };
+    bool m_restoringFullscreenForPictureInPictureStop { false };
 
     void doEnterFullscreen();
 };
