@@ -26,4 +26,5 @@
 .controls-bar {
     position: absolute;
     direction: ltr;
+    will-change: z-index;
 }
