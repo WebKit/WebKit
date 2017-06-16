@@ -275,6 +275,7 @@
         "com.apple.ServicesMenu.Services" ;; Needed for NSAttributedString <rdar://problem/10844321>
         "com.apple.WebFoundation"
         "com.apple.avfoundation"
+        "com.apple.avfoundation.videoperformancehud" ;; <rdar://problem/31594568>
         "com.apple.coremedia"
         "com.apple.crypto"
         "com.apple.driver.AppleBluetoothMultitouch.mouse"

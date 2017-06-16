@@ -49,6 +49,7 @@
     "com.apple.LaunchServices"
     "com.apple.WebFoundation"
     "com.apple.mobileipod"
+    "com.apple.avfoundation.videoperformancehud" ;; <rdar://problem/31594568>
     "com.apple.voiceservices.logging")
 
 ;; Sandbox extensions

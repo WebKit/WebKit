@@ -1,3 +1,16 @@
+2017-06-16  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS][macOS] Extend the sandbox to allow reading of AVFoundation's VideoPerformanceHUD preference
+        https://bugs.webkit.org/show_bug.cgi?id=173476
+        <rdar://problem/31594568>
+
+        Reviewed by Alex Christensen.
+
+        Update the sandbox to permit WebContent process to read the AVFoundation preferences for the performance HUD.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-06-16  Daniel Bates  <dabates@apple.com>
 
         Use the term icon instead of favicon
