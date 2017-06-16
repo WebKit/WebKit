@@ -39,6 +39,9 @@
 #if WK_API_ENABLED
 
 static bool doneWithIcons;
+static bool receivedFaviconDataCallback;
+static bool alreadyProvidedIconData;
+static RetainPtr<NSData> receivedFaviconData;
 
 @interface IconLoadingDelegate : NSObject <_WKIconLoadingDelegate>
 @end
@@ -66,37 +69,60 @@ static bool doneWithIcons;
     if (favicon && touch && touchPrecomposed)
         doneWithIcons = true;
 
-    completionHandler(nil);
+    if (parameters.iconType == WKLinkIconTypeFavicon) {
+        completionHandler([](NSData *iconData) {
+            receivedFaviconData = iconData;
+            receivedFaviconDataCallback = true;
+        });
+    } else
+        completionHandler(nil);
 }
 
 @end
 
 @interface IconLoadingSchemeHandler : NSObject <WKURLSchemeHandler>
-- (instancetype)initWithData:(NSData *)data mimeType:(NSString *)inMIMEType;
+- (instancetype)initWithData:(NSData *)data;
+- (void)setFaviconData:(NSData *)data;
 @end
 
 @implementation IconLoadingSchemeHandler {
-    RetainPtr<NSData> resourceData;
-    RetainPtr<NSString> mimeType;
+    RetainPtr<NSData> mainResourceData;
+    RetainPtr<NSData> faviconData;
 }
 
-- (instancetype)initWithData:(NSData *)data mimeType:(NSString *)inMIMEType
+- (instancetype)initWithData:(NSData *)data
 {
     self = [super init];
     if (!self)
         return nil;
 
-    resourceData = data;
-    mimeType = inMIMEType;
+    mainResourceData = data;
 
     return self;
 }
 
+- (void)setFaviconData:(NSData *)data
+{
+    faviconData = data;
+}
+
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
-    RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:mimeType.get() expectedContentLength:1 textEncodingName:nil]);
+    RetainPtr<NSURLResponse> response;
+    NSData *data = nil;
+
+    if ([[task.request.URL absoluteString] isEqual:@"testing:///favicon.ico"]) {
+        EXPECT_FALSE(alreadyProvidedIconData);
+        response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"image/png" expectedContentLength:1 textEncodingName:nil]);
+        data = faviconData.get();
+        alreadyProvidedIconData = true;
+    } else {
+        response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:1 textEncodingName:nil]);
+        data = mainResourceData.get();
+    }
+
     [task didReceiveResponse:response.get()];
-    [task didReceiveData:resourceData.get()];
+    [task didReceiveData:data];
     [task didFinish];
 }
 
@@ -116,7 +142,7 @@ TEST(IconLoading, DefaultFavicon)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
-    RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:[NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes)] mimeType:@"text/html"]);
+    RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:[NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes)]]);
     [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
 
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -128,6 +154,46 @@ TEST(IconLoading, DefaultFavicon)
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&doneWithIcons);
+}
+
+static const char mainBytes2[] =
+"Oh, hello there!";
+
+TEST(IconLoading, AlreadyCachedIcon)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    NSData *mainData = [NSData dataWithBytesNoCopy:(void*)mainBytes2 length:sizeof(mainBytes2)];
+    RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:mainData]);
+
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"large-red-square-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr<NSData *> iconDataFromDisk = [NSData dataWithContentsOfURL:url];
+    [handler.get() setFaviconData:iconDataFromDisk.get()];
+
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<IconLoadingDelegate> iconDelegate = adoptNS([[IconLoadingDelegate alloc] init]);
+
+    webView.get()._iconLoadingDelegate = iconDelegate.get();
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:///main"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedFaviconDataCallback);
+
+    EXPECT_TRUE([iconDataFromDisk.get() isEqual:receivedFaviconData.get()]);
+
+    receivedFaviconDataCallback = false;
+    receivedFaviconData = nil;
+
+    // Load another main resource that results in the same icon being loaded (which should come from the memory cache).
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:///main2"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedFaviconDataCallback);
+
+    EXPECT_TRUE([iconDataFromDisk.get() isEqual:receivedFaviconData.get()]);
 }
 
 #endif

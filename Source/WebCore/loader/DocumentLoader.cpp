@@ -1681,8 +1681,10 @@ void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdent
         return;
 
     auto iconLoader = std::make_unique<IconLoader>(*this, icon.url);
-    iconLoader->startLoading();
+    auto* rawIconLoader = iconLoader.get();
     m_iconLoaders.set(WTFMove(iconLoader), newCallbackID);
+
+    rawIconLoader->startLoading();
 }
 
 void DocumentLoader::finishedLoadingIcon(IconLoader& loader, SharedBuffer* buffer)
