@@ -1,3 +1,12 @@
+2017-06-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Update expectations for layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=172437
+
+        Unreviewed test gardening, update test expectations for failing tests.
+
+        * platform/win/TestExpectations:
+
 2017-06-15  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: AirPlay button is incorrectly highlighted in inline and fullscreen
