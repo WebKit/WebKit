@@ -45,29 +45,29 @@ float SVGTextLayoutAttributes::emptyValue()
 static inline void dumpSVGCharacterDataMapValue(const char* identifier, float value, bool appendSpace = true)
 {
     if (value == SVGTextLayoutAttributes::emptyValue()) {
-        fprintf(stderr, "%s=x", identifier);
+        WTFLogAlways("%s=x", identifier);
         if (appendSpace)
-            fprintf(stderr, " ");
+            WTFLogAlways(" ");
         return;
     }
-    fprintf(stderr, "%s=%lf", identifier, value);
+    WTFLogAlways("%s=%lf", identifier, value);
     if (appendSpace)
-        fprintf(stderr, " ");
+        WTFLogAlways(" ");
 }
 
 void SVGTextLayoutAttributes::dump() const
 {
-    fprintf(stderr, "context: %p\n", &m_context);
+    WTFLogAlways("context: %p\n", &m_context);
     const SVGCharacterDataMap::const_iterator end = m_characterDataMap.end();
     for (SVGCharacterDataMap::const_iterator it = m_characterDataMap.begin(); it != end; ++it) {
         const SVGCharacterData& data = it->value;
-        fprintf(stderr, " ---> pos=%i, data={", it->key);
+        WTFLogAlways(" ---> pos=%i, data={", it->key);
         dumpSVGCharacterDataMapValue("x", data.x);
         dumpSVGCharacterDataMapValue("y", data.y);
         dumpSVGCharacterDataMapValue("dx", data.dx);
         dumpSVGCharacterDataMapValue("dy", data.dy);
         dumpSVGCharacterDataMapValue("rotate", data.rotate, false);
-        fprintf(stderr, "}\n");
+        WTFLogAlways("}\n");
     }
 }
 

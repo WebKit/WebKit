@@ -263,7 +263,7 @@ const RenderObject& rendererForPosition(const FlowContents& flowContents, unsign
 #if ENABLE(TREE_DEBUGGING)
 static void printPrefix(int& printedCharacters, int depth)
 {
-    fprintf(stderr, "-------- --");
+    WTFLogAlways("-------- --");
     printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
         fputc(' ', stderr);
@@ -274,18 +274,18 @@ void showLineLayoutForFlow(const RenderBlockFlow& flow, const Layout& layout, in
     int printedCharacters = 0;
     printPrefix(printedCharacters, depth);
 
-    fprintf(stderr, "SimpleLineLayout (%u lines, %u runs) (%p)\n", layout.lineCount(), layout.runCount(), &layout);
+    WTFLogAlways("SimpleLineLayout (%u lines, %u runs) (%p)\n", layout.lineCount(), layout.runCount(), &layout);
     ++depth;
 
     for (auto run : runResolver(flow, layout)) {
         FloatRect rect = run.rect();
         printPrefix(printedCharacters, depth);
         if (run.start() < run.end()) {
-            fprintf(stderr, "line %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f) \"%s\"\n", run.lineIndex(), run.start(), run.end(),
+            WTFLogAlways("line %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f) \"%s\"\n", run.lineIndex(), run.start(), run.end(),
                 rect.x(), rect.y(), rect.width(), rect.height(), run.text().toStringWithoutCopying().utf8().data());
         } else {
             ASSERT(run.start() == run.end());
-            fprintf(stderr, "line break %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f)\n", run.lineIndex(), run.start(), run.end(), rect.x(), rect.y(), rect.width(), rect.height());
+            WTFLogAlways("line break %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f)\n", run.lineIndex(), run.start(), run.end(), rect.x(), rect.y(), rect.width(), rect.height());
         }
     }
 }

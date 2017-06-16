@@ -44,7 +44,7 @@ WTF::CString DisplayList::description() const
 
 void DisplayList::dump() const
 {
-    fprintf(stderr, "%s", description().data());
+    WTFLogAlways("%s", description().data());
 }
 #endif
 

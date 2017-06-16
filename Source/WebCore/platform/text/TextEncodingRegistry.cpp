@@ -391,14 +391,14 @@ String defaultTextEncodingNameForSystemLanguage()
 void dumpTextEncodingNameMap()
 {
     unsigned size = textEncodingNameMap->size();
-    fprintf(stderr, "Dumping %u entries in WebCore::textEncodingNameMap...\n", size);
+    WTFLogAlways("Dumping %u entries in WebCore::textEncodingNameMap...\n", size);
 
     std::lock_guard<StaticLock> lock(encodingRegistryMutex);
 
     TextEncodingNameMap::const_iterator it = textEncodingNameMap->begin();
     TextEncodingNameMap::const_iterator end = textEncodingNameMap->end();
     for (; it != end; ++it)
-        fprintf(stderr, "'%s' => '%s'\n", it->key, it->value);
+        WTFLogAlways("'%s' => '%s'\n", it->key, it->value);
 }
 #endif
 

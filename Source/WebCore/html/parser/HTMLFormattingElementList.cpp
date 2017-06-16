@@ -202,7 +202,7 @@ void HTMLFormattingElementList::show()
     for (unsigned i = 1; i <= m_entries.size(); ++i) {
         const Entry& entry = m_entries[m_entries.size() - i];
         if (entry.isMarker())
-            fprintf(stderr, "marker\n");
+            WTFLogAlways("marker\n");
         else
             entry.element().showNode();
     }

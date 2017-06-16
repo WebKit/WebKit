@@ -336,10 +336,10 @@ static void showTreeAndMark(const CounterNode* node)
         root = root->parent();
 
     for (const CounterNode* current = root; current; current = current->nextInPreOrder()) {
-        fprintf(stderr, "%c", (current == node) ? '*' : ' ');
+        WTFLogAlways("%c", (current == node) ? '*' : ' ');
         for (const CounterNode* parent = current; parent && parent != root; parent = parent->parent())
-            fprintf(stderr, "    ");
-        fprintf(stderr, "%p %s: %d %d P:%p PS:%p NS:%p R:%p\n",
+            WTFLogAlways("    ");
+        WTFLogAlways("%p %s: %d %d P:%p PS:%p NS:%p R:%p\n",
             current, current->actsAsReset() ? "reset____" : "increment", current->value(),
             current->countInParent(), current->parent(), current->previousSibling(),
             current->nextSibling(), &current->owner());

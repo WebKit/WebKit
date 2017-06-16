@@ -656,38 +656,38 @@ void SVGResources::dump(const RenderObject* object)
     ASSERT(object);
     ASSERT(object->node());
 
-    fprintf(stderr, "-> this=%p, SVGResources(renderer=%p, node=%p)\n", this, object, object->node());
-    fprintf(stderr, " | DOM Tree:\n");
+    WTFLogAlways("-> this=%p, SVGResources(renderer=%p, node=%p)\n", this, object, object->node());
+    WTFLogAlways(" | DOM Tree:\n");
     object->node()->showTreeForThis();
 
-    fprintf(stderr, "\n | List of resources:\n");
+    WTFLogAlways("\n | List of resources:\n");
     if (m_clipperFilterMaskerData) {
         if (RenderSVGResourceClipper* clipper = m_clipperFilterMaskerData->clipper)
-            fprintf(stderr, " |-> Clipper    : %p (node=%p)\n", clipper, &clipper->clipPathElement());
+            WTFLogAlways(" |-> Clipper    : %p (node=%p)\n", clipper, &clipper->clipPathElement());
         if (RenderSVGResourceFilter* filter = m_clipperFilterMaskerData->filter)
-            fprintf(stderr, " |-> Filter     : %p (node=%p)\n", filter, &filter->filterElement());
+            WTFLogAlways(" |-> Filter     : %p (node=%p)\n", filter, &filter->filterElement());
         if (RenderSVGResourceMasker* masker = m_clipperFilterMaskerData->masker)
-            fprintf(stderr, " |-> Masker     : %p (node=%p)\n", masker, &masker->maskElement());
+            WTFLogAlways(" |-> Masker     : %p (node=%p)\n", masker, &masker->maskElement());
     }
 
     if (m_markerData) {
         if (RenderSVGResourceMarker* markerStart = m_markerData->markerStart)
-            fprintf(stderr, " |-> MarkerStart: %p (node=%p)\n", markerStart, &markerStart->markerElement());
+            WTFLogAlways(" |-> MarkerStart: %p (node=%p)\n", markerStart, &markerStart->markerElement());
         if (RenderSVGResourceMarker* markerMid = m_markerData->markerMid)
-            fprintf(stderr, " |-> MarkerMid  : %p (node=%p)\n", markerMid, &markerMid->markerElement());
+            WTFLogAlways(" |-> MarkerMid  : %p (node=%p)\n", markerMid, &markerMid->markerElement());
         if (RenderSVGResourceMarker* markerEnd = m_markerData->markerEnd)
-            fprintf(stderr, " |-> MarkerEnd  : %p (node=%p)\n", markerEnd, &markerEnd->markerElement());
+            WTFLogAlways(" |-> MarkerEnd  : %p (node=%p)\n", markerEnd, &markerEnd->markerElement());
     }
 
     if (m_fillStrokeData) {
         if (RenderSVGResourceContainer* fill = m_fillStrokeData->fill)
-            fprintf(stderr, " |-> Fill       : %p (node=%p)\n", fill, &fill->element());
+            WTFLogAlways(" |-> Fill       : %p (node=%p)\n", fill, &fill->element());
         if (RenderSVGResourceContainer* stroke = m_fillStrokeData->stroke)
-            fprintf(stderr, " |-> Stroke     : %p (node=%p)\n", stroke, &stroke->element());
+            WTFLogAlways(" |-> Stroke     : %p (node=%p)\n", stroke, &stroke->element());
     }
 
     if (m_linkedResource)
-        fprintf(stderr, " |-> xlink:href : %p (node=%p)\n", m_linkedResource, &m_linkedResource->element());
+        WTFLogAlways(" |-> xlink:href : %p (node=%p)\n", m_linkedResource, &m_linkedResource->element());
 }
 #endif
 

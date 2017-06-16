@@ -1125,11 +1125,11 @@ const char* InlineTextBox::boxName() const
 
 void InlineTextBox::showLineBox(bool mark, int depth) const
 {
-    fprintf(stderr, "-------- %c-", isDirty() ? 'D' : '-');
+    WTFLogAlways("-------- %c-", isDirty() ? 'D' : '-');
 
     int printedCharacters = 0;
     if (mark) {
-        fprintf(stderr, "*");
+        WTFLogAlways("*");
         ++printedCharacters;
     }
     while (++printedCharacters <= depth * 2)
@@ -1139,7 +1139,7 @@ void InlineTextBox::showLineBox(bool mark, int depth) const
     value = value.substring(start(), len());
     value.replaceWithLiteral('\\', "\\\\");
     value.replaceWithLiteral('\n', "\\n");
-    fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p) renderer->(%p) run(%d, %d) \"%s\"\n", boxName(), x(), y(), width(), height(), this, &renderer(), start(), start() + len(), value.utf8().data());
+    WTFLogAlways("%s  (%.2f, %.2f) (%.2f, %.2f) (%p) renderer->(%p) run(%d, %d) \"%s\"\n", boxName(), x(), y(), width(), height(), this, &renderer(), start(), start() + len(), value.utf8().data());
 }
 
 #endif

@@ -818,14 +818,14 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range&
 #if ENABLE(TREE_DEBUGGING)
 void DocumentMarkerController::showMarkers() const
 {
-    fprintf(stderr, "%d nodes have markers:\n", m_markers.size());
+    WTFLogAlways("%d nodes have markers:\n", m_markers.size());
     for (auto& marker : m_markers) {
         Node* node = marker.key.get();
-        fprintf(stderr, "%p", node);
+        WTFLogAlways("%p", node);
         for (auto& documentMarker : *marker.value)
-            fprintf(stderr, " %d:[%d:%d](%d)", documentMarker.type(), documentMarker.startOffset(), documentMarker.endOffset(), documentMarker.isActiveMatch());
+            WTFLogAlways(" %d:[%d:%d](%d)", documentMarker.type(), documentMarker.startOffset(), documentMarker.endOffset(), documentMarker.isActiveMatch());
 
-        fprintf(stderr, "\n");
+        WTFLogAlways("\n");
     }
 }
 #endif

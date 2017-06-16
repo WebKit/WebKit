@@ -1,3 +1,123 @@
+2017-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Use WTFLogAlways for debug logging so that it shows up in device system logs
+        https://bugs.webkit.org/show_bug.cgi?id=173450
+
+        Reviewed by Tim Horton.
+
+        If you want to showRenderTree() on-device, the result doesn't show in system log so you can't see it
+        Switch to WTFLogAlways to fix this, for all the debug logging in WebCore.
+        
+        Also WKError () -> WKError() in the old WAK code, to allow for easier searching pending cleanup.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::~AudioContext):
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::~AudioNode):
+        (WebCore::AudioNode::ref):
+        (WebCore::AudioNode::finishDeref):
+        (WebCore::AudioNode::printNodeCounts):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::invokeObjcMethod):
+        * bridge/objc/objc_utility.mm:
+        (JSC::Bindings::convertObjcValueToValue):
+        * css/StyleProperties.cpp:
+        (WebCore::StyleProperties::showStyle):
+        * dom/DocumentMarkerController.cpp:
+        (DocumentMarkerController::showMarkers):
+        * dom/Node.cpp:
+        (WebCore::Node::showNode):
+        (WebCore::Node::showNodePathForThis):
+        (WebCore::traverseTreeAndMark):
+        * dom/Position.cpp:
+        (WebCore::Position::debugPosition):
+        (WebCore::Position::showAnchorTypeAndOffset):
+        * dom/Range.cpp:
+        (showTree):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::debugRenderer):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::debugPosition):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::debugPosition):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::showTreeWithIndent):
+        * html/parser/HTMLFormattingElementList.cpp:
+        (WebCore::HTMLFormattingElementList::show):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::DOMPatchSupport::dumpMap):
+        * page/scrolling/ScrollingStateTree.cpp:
+        (showScrollingStateTree):
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        (WebCore::AudioDestinationIOS::frameSizeChangedProc):
+        * platform/graphics/GraphicsLayer.cpp:
+        (showGraphicsLayerTree):
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::dump):
+        * platform/ios/wak/WAKView.mm:
+        (+[WAKView _wrapperForViewRef:]):
+        (-[WAKView displayRect:]):
+        (-[WAKView displayRectIgnoringOpacity:inContext:]):
+        * platform/ios/wak/WKUtilities.c:
+        (WKRelease):
+        * platform/ios/wak/WKView.mm:
+        (_WKViewSetViewContext):
+        (WKViewGetBounds):
+        (WKViewGetFrame):
+        (_WKViewRecursivelyInvalidateGState):
+        (WKViewSetFrameOrigin):
+        (WKViewSetFrameSize):
+        (WKViewGetWindow):
+        (WKViewGetSubviews):
+        (WKViewAddSubview):
+        (WKViewRemoveFromSuperview):
+        (WKViewFirstChild):
+        (WKViewNextSibling):
+        (WKViewTraverseNext):
+        (WKViewGetVisibleRect):
+        (WKViewConvertRectToSuperview):
+        (WKViewConvertRectToBase):
+        (WKViewConvertPointToSuperview):
+        (WKViewConvertPointFromSuperview):
+        (WKViewConvertPointToBase):
+        (_WKViewGetAncestorViewsIncludingView):
+        (WKViewConvertPointFromBase):
+        (WKViewConvertRectFromSuperview):
+        (WKViewConvertRectFromBase):
+        (WKViewGetAutoresizingMask):
+        (WKViewSetAutoresizingMask):
+        * platform/text/TextEncodingRegistry.cpp:
+        (WebCore::dumpTextEncodingNameMap):
+        * rendering/CounterNode.cpp:
+        (WebCore::showTreeAndMark):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::showLineBox):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::showLineBox):
+        * rendering/RenderCounter.cpp:
+        (showCounterRendererTree):
+        * rendering/RenderLayer.cpp:
+        (WebCore::showLayerTree):
+        * rendering/RenderObject.cpp:
+        (WebCore::showRenderTreeLegend):
+        (WebCore::RenderObject::showRegionsInformation):
+        (WebCore::RenderObject::showRenderObject):
+        (WebCore::printRenderTreeForLiveDocuments):
+        (WebCore::printLayerTreeForLiveDocuments):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::printPrefix):
+        (WebCore::SimpleLineLayout::showLineLayoutForFlow):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::dump):
+        * rendering/svg/SVGResourcesCycleSolver.cpp:
+        (WebCore::SVGResourcesCycleSolver::resolveCycles):
+        * rendering/svg/SVGTextLayoutAttributes.cpp:
+        (WebCore::dumpSVGCharacterDataMapValue):
+        (WebCore::SVGTextLayoutAttributes::dump):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::dumpTextBoxes):
+        (WebCore::SVGTextLayoutEngine::finishLayout):
+
 2017-06-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Removing stray whitespace after r218371

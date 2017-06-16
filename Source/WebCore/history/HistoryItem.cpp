@@ -494,7 +494,7 @@ int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
         prefix.append("  ", 2);
     prefix.append("\0", 1);
 
-    fprintf(stderr, "%s+-%s (%p)\n", prefix.data(), m_urlString.utf8().data(), this);
+    WTFLogAlways("%s+-%s (%p)\n", prefix.data(), m_urlString.utf8().data(), this);
     
     int totalSubItems = 0;
     for (unsigned i = 0; i < m_children.size(); ++i)

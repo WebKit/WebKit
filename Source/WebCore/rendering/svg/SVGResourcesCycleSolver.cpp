@@ -142,7 +142,7 @@ void SVGResourcesCycleSolver::resolveCycles()
         for (RenderObject* resource : localResources)
             LOG_DEBUG_CYCLE("|> %s : %p (node %p)\n", resource->renderName(), resource, resource->node());
 
-        fprintf(stderr, "Parent resources:\n");
+        WTFLogAlways("Parent resources:\n");
         for (RenderObject* resource : ancestorResources)
             LOG_DEBUG_CYCLE("|> %s : %p (node %p)\n", resource->renderName(), resource, resource->node());
     }

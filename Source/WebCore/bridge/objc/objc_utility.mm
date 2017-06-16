@@ -229,7 +229,7 @@ JSValue convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType typ
             return jsNumber(*(double*)buffer);
         default:
             // Should never get here. Argument types are filtered.
-            fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);
+            WTFLogAlways("%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);
             ASSERT_NOT_REACHED();
     }
     

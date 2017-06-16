@@ -268,7 +268,7 @@ void AudioDestinationIOS::frameSizeChangedProc(void *inRefCon, AudioUnit, AudioU
     UInt32 bufferSize = 0;
     UInt32 dataSize = sizeof(bufferSize);
     AudioUnitGetProperty(audioOutput->m_outputUnit, kAudioUnitProperty_MaximumFramesPerSlice, kAudioUnitScope_Global, 0, (void*)&bufferSize, &dataSize);
-    fprintf(stderr, ">>>> frameSizeChanged = %lu\n", static_cast<unsigned long>(bufferSize));
+    WTFLogAlways(">>>> frameSizeChanged = %lu\n", static_cast<unsigned long>(bufferSize));
 }
 
 } // namespace WebCore

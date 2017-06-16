@@ -41,15 +41,6 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/ThreadSpecific.h>
 
-#ifdef NDEBUG
-#define OBJC_LOG(formatAndArgs...) ((void)0)
-#else
-#define OBJC_LOG(formatAndArgs...) { \
-    fprintf (stderr, "%s:%d -- %s:  ", __FILE__, __LINE__, __FUNCTION__); \
-    fprintf(stderr, formatAndArgs); \
-}
-#endif
-
 using namespace JSC::Bindings;
 using namespace JSC;
 
@@ -302,7 +293,7 @@ JSC::JSValue ObjcInstance::invokeObjcMethod(ExecState* exec, ObjcMethod* method)
                     // Should never get here.  Argument types are filtered (and
                     // the assert above should have fired in the impossible case
                     // of an invalid type anyway).
-                    fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)objcValueType);
+                    WTFLogAlways("%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)objcValueType);
                     ASSERT_NOT_REACHED();
             }
         }
