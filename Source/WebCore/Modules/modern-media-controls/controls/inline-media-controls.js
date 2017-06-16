@@ -37,12 +37,6 @@ class InlineMediaControls extends MediaControls
 
         this.element.classList.add("inline");
 
-        this._placard = null;
-
-        this.airplayPlacard = new AirplayPlacard(this);
-        this.invalidPlacard = new InvalidPlacard(this);
-        this.pipPlacard = new PiPPlacard(this);
-
         this.skipBackButton = new SkipBackButton(this);
         this.skipForwardButton = new SkipForwardButton(this);
 
@@ -94,20 +88,6 @@ class InlineMediaControls extends MediaControls
         this.layout();
     }
 
-    get placard()
-    {
-        return this._placard;
-    }
-
-    set placard(placard)
-    {
-        if (this._placard === placard)
-            return;
-
-        this._placard = placard;
-        this.layout();
-    }
-
     // Protected
 
     layout()
@@ -116,12 +96,9 @@ class InlineMediaControls extends MediaControls
 
         const children = [];
 
-        if (this._placard) {
-            this._placard.width = this.width;
-            this._placard.height = this.height;
-            children.push(this._placard);
-            // The AirPlay placard is the only one allowing controls to show as well.
-            if (this._placard !== this.airplayPlacard) {
+        if (this.placard) {
+            children.push(this.placard);
+            if (this.placardPreventsControlsBarDisplay()) {
                 this.children = children;
                 return;
             }

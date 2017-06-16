@@ -55,6 +55,11 @@ class MediaControls extends LayoutNode
         this.autoHideController.fadesWhileIdle = false;
         this.autoHideController.hasSecondaryUIAttached = false;
 
+        this._placard = null;
+        this.airplayPlacard = new AirplayPlacard(this);
+        this.invalidPlacard = new InvalidPlacard(this);
+        this.pipPlacard = new PiPPlacard(this);
+
         this.element.addEventListener("focusin", this);
         window.addEventListener("dragstart", this, true);
     }
@@ -139,6 +144,25 @@ class MediaControls extends LayoutNode
         this.markDirtyProperty("scaleFactor");
     }
 
+    get placard()
+    {
+        return this._placard;
+    }
+
+    set placard(placard)
+    {
+        if (this._placard === placard)
+            return;
+
+        this._placard = placard;
+        this.layout();
+    }
+
+    placardPreventsControlsBarDisplay()
+    {
+        return this._placard && this._placard !== this.airplayPlacard;
+    }
+
     showTracksPanel()
     {
         this.element.classList.add("shows-tracks-panel");
@@ -198,6 +222,16 @@ class MediaControls extends LayoutNode
             this.faded = false;
         else if (event.type === "dragstart" && this.isPointInControls(new DOMPoint(event.clientX, event.clientY)))
             event.preventDefault();
+    }
+
+    layout()
+    {
+        super.layout();
+
+        if (this._placard) {
+            this._placard.width = this.width;
+            this._placard.height = this.height;
+        }
     }
 
     commitProperty(propertyName)

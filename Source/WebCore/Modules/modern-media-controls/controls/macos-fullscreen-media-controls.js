@@ -75,8 +75,6 @@ class MacOSFullscreenMediaControls extends MediaControls
 
         this.bottomControlsBar.children = [this._leftContainer, this._centerContainer, this._rightContainer];
 
-        this.children = [this.bottomControlsBar];
-
         this.bottomControlsBar.element.addEventListener("mousedown", this);
 
         this._backgroundClickDelegateNotifier = new BackgroundClickDelegateNotifier(this);
@@ -99,6 +97,18 @@ class MacOSFullscreenMediaControls extends MediaControls
     layout()
     {
         super.layout();
+
+        const children = [];
+
+        if (this.placard) {
+            children.push(this.placard);
+            if (this.placardPreventsControlsBarDisplay()) {
+                this.children = children;
+                return;
+            }
+        }
+
+        children.push(this.bottomControlsBar);
 
         if (!this._rightContainer)
             return;
@@ -125,6 +135,8 @@ class MacOSFullscreenMediaControls extends MediaControls
             this.bottomControlsBar.addChild(this.timeControl);
             this.timeControl.width = FullscreenTimeControlWidth;
         }
+
+        this.children = children;
     }
 
     // Private

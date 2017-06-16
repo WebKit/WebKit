@@ -1,5 +1,19 @@
 2017-06-16  Antoine Quint  <graouts@apple.com>
 
+        REGRESSION: AirPlay placard is not shown when in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=173447
+        <rdar://problem/32803773>
+
+        Reviewed by Jon Lee.
+
+        Add a new test to check that we display the AirPlay placard on macOS in fullscreen.
+
+        * media/modern-media-controls/placard-support/placard-support-airplay-fullscreen-expected.txt: Added.
+        * media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html: Added.
+        * platform/ios-simulator/TestExpectations:
+
+2017-06-16  Antoine Quint  <graouts@apple.com>
+
         Backdrop blur missing in media controls bar on Sierra
         https://bugs.webkit.org/show_bug.cgi?id=173451
 

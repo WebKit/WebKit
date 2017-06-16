@@ -48,9 +48,6 @@ class PlacardSupport extends MediaControllerSupport
 
     _updatePlacard()
     {
-        if (this.mediaController.layoutTraits & LayoutTraits.Fullscreen)
-            return;
-
         const controls = this.mediaController.controls;
         const media = this.mediaController.media;
 

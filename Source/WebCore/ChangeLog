@@ -1,3 +1,34 @@
+2017-06-16  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: AirPlay placard is not shown when in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=173447
+        <rdar://problem/32803773>
+
+        Reviewed by Jon Lee.
+
+        We only allowed a placard to be set on inline controls, but that was an oversight: placards
+        should be displayed in fullscreen as well. As such, we move the "placard" property up from
+        InlineMediaControls to MediaControls, and update the layout() logic in MacOSFullscreenMediaControls
+        to display a placard.
+
+        Test: media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html
+
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls):
+        (InlineMediaControls.prototype.layout):
+        (InlineMediaControls.prototype.get placard): Deleted.
+        (InlineMediaControls.prototype.set placard): Deleted.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls.prototype.layout):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.get placard):
+        (MediaControls.prototype.set placard):
+        (MediaControls.prototype.placardPreventsControlsBarDisplay):
+        (MediaControls.prototype.layout):
+        * Modules/modern-media-controls/media/placard-support.js:
+        (PlacardSupport.prototype._updatePlacard):
+        (PlacardSupport):
+
 2017-06-16  Jer Noble  <jer.noble@apple.com>
 
         [WebRTC] Removing a MediaStreamTrack from a MediaStream reports no recording to WebKit clients
