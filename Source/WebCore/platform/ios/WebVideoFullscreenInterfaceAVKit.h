@@ -32,7 +32,6 @@
 #include "EventListener.h"
 #include "HTMLMediaElementEnums.h"
 #include "PlatformLayer.h"
-#include "Timer.h"
 #include "WebPlaybackSessionInterfaceAVKit.h"
 #include "WebVideoFullscreenModel.h"
 #include <functional>
@@ -40,6 +39,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/RunLoop.h>
 
 OBJC_CLASS AVPlayerViewController;
 OBJC_CLASS UIViewController;
@@ -139,7 +139,7 @@ protected:
     RetainPtr<WebAVPlayerLayerView> m_playerLayerView;
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
     std::function<void(bool)> m_prepareToInlineCallback;
-    Timer m_watchdogTimer;
+    RunLoop::Timer<WebVideoFullscreenInterfaceAVKit> m_watchdogTimer;
     bool m_allowsPictureInPicturePlayback { false };
     bool m_exitRequested { false };
     bool m_exitCompleted { false };

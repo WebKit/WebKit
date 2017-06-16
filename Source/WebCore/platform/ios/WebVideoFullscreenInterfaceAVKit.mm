@@ -501,7 +501,7 @@ Ref<WebVideoFullscreenInterfaceAVKit> WebVideoFullscreenInterfaceAVKit::create(W
 WebVideoFullscreenInterfaceAVKit::WebVideoFullscreenInterfaceAVKit(WebPlaybackSessionInterfaceAVKit& playbackSessionInterface)
     : m_playbackSessionInterface(playbackSessionInterface)
     , m_playerViewControllerDelegate(adoptNS([[WebAVPlayerViewControllerDelegate alloc] init]))
-    , m_watchdogTimer(*this, &WebVideoFullscreenInterfaceAVKit::watchdogTimerFired)
+    , m_watchdogTimer(RunLoop::main(), this, &WebVideoFullscreenInterfaceAVKit::watchdogTimerFired)
 {
 }
 
