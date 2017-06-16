@@ -1,3 +1,16 @@
+2017-06-16  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] fast/animation gardening
+
+        Unreviewed gardening.
+
+        fast/animation tests are flaky, report and mark.
+        fast/animation/height-auto-transition-computed-value.html is not really failing, unmark.
+        storage/domstorage/sessionstorage/set-item-synchronous-keydown.html
+        depends on event injection in WTR that is not implemented in WPE
+        yet, reported and marked as failing.
+        * platform/wpe/TestExpectations:
+
 2017-06-15  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.
