@@ -1,3 +1,12 @@
+2017-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Layout Test fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html makes the subsequent test case flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=173459
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Marked it Skip.
+
 2017-06-16  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] fast/animation gardening
