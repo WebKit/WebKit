@@ -77,12 +77,32 @@ ViewGestureController::~ViewGestureController()
     m_webPageProxy.process().removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), m_webPageProxy.pageID());
 }
 
-ViewGestureController* ViewGestureController::gestureControllerForPage(uint64_t pageID)
+ViewGestureController* ViewGestureController::controllerForGesture(uint64_t pageID, ViewGestureController::GestureID gestureID)
 {
     auto gestureControllerIter = viewGestureControllersForAllPages().find(pageID);
     if (gestureControllerIter == viewGestureControllersForAllPages().end())
         return nullptr;
+    if (gestureControllerIter->value->m_currentGestureID != gestureID)
+        return nullptr;
     return gestureControllerIter->value;
+}
+
+ViewGestureController::GestureID ViewGestureController::takeNextGestureID()
+{
+    static GestureID nextGestureID;
+    return ++nextGestureID;
+}
+
+void ViewGestureController::willBeginGesture(ViewGestureType type)
+{
+    m_activeGestureType = type;
+    m_currentGestureID = takeNextGestureID();
+}
+
+void ViewGestureController::didEndGesture()
+{
+    m_activeGestureType = ViewGestureType::None;
+    m_currentGestureID = 0;
 }
     
 void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* page)

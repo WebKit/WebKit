@@ -124,7 +124,7 @@ FloatPoint ViewGestureController::scaledMagnificationOrigin(FloatPoint origin, d
 
 void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect visibleContentRect, bool frameHandlesMagnificationGesture)
 {
-    m_activeGestureType = ViewGestureType::Magnification;
+    willBeginGesture(ViewGestureType::Magnification);
     m_visibleContentRect = visibleContentRect;
     m_visibleContentRectIsValid = true;
     m_frameHandlesMagnificationGesture = frameHandlesMagnificationGesture;
@@ -156,7 +156,7 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
     if (!m_visibleContentRectIsValid)
         return;
 
-    m_activeGestureType = ViewGestureType::Magnification;
+    willBeginGesture(ViewGestureType::Magnification);
 
     double scale = event.magnification;
     double scaleWithResistance = resistanceForDelta(scale, m_magnification) * scale;
@@ -189,7 +189,7 @@ void ViewGestureController::endMagnificationGesture()
             drawingArea->commitTransientZoom(newMagnification, scaledMagnificationOrigin(m_magnificationOrigin, newMagnification));
     }
 
-    m_activeGestureType = ViewGestureType::None;
+    didEndGesture();
     m_visibleContentRectIsValid = false;
 }
 
@@ -531,7 +531,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     m_webPageProxy.navigationGestureDidBegin();
 
-    m_activeGestureType = ViewGestureType::Swipe;
+    willBeginGesture(ViewGestureType::Swipe);
 
     CALayer *rootContentLayer = m_webPageProxy.acceleratedCompositingRootLayer();
 
@@ -768,8 +768,9 @@ void ViewGestureController::forceRepaintIfNeeded()
     m_hasOutstandingRepaintRequest = true;
 
     uint64_t pageID = m_webPageProxy.pageID();
-    m_webPageProxy.forceRepaint(VoidCallback::create([pageID] (CallbackBase::Error error) {
-        if (auto gestureController = gestureControllerForPage(pageID))
+    GestureID gestureID = m_currentGestureID;
+    m_webPageProxy.forceRepaint(VoidCallback::create([pageID, gestureID] (CallbackBase::Error error) {
+        if (auto gestureController = controllerForGesture(pageID, gestureID))
             gestureController->removeSwipeSnapshot();
     }));
 }
@@ -804,11 +805,11 @@ void ViewGestureController::removeSwipeSnapshot()
 
     m_currentSwipeLiveLayers.clear();
 
-    m_activeGestureType = ViewGestureType::None;
-
     m_webPageProxy.navigationGestureSnapshotWasRemoved();
 
     m_backgroundColorForCurrentSnapshot = Color();
+
+    didEndGesture();
 }
 
 double ViewGestureController::magnification() const

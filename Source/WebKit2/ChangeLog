@@ -1,3 +1,50 @@
+2017-06-15  Tim Horton  <timothy_horton@apple.com>
+
+        Null deref under ViewGestureController::endSwipeGesture (navigationGestureDidEnd)
+        https://bugs.webkit.org/show_bug.cgi?id=173441
+        <rdar://problem/25876512>
+
+        Reviewed by Simon Fraser.
+
+        This is a speculative fix for a crash that we don't have repro steps for.
+
+        In a few places, ViewGestureController looks itself up by pageID (in cases
+        where we're in an asynchronous callback), and then calls some
+        function on it (endSwipeGesture, or something that will get there).
+        However, if in the meantime an API client has turned the swipe gesture
+        on and off, the page's ViewGestureController will be a different one
+        than the one that originally started this process, with fresh state,
+        and nullptrs in all sorts of places, ripe for dereferencing.
+
+        To fix this, instead of just looking ViewGestureController up by 
+        pageID, also keep track of the current gestureID, process-wide (previously
+        the gestureID was per-ViewGestureController), and only return the
+        ViewGestureController if it's currently processing the same gesture
+        that started the asynchronous task.
+
+        * UIProcess/Cocoa/ViewGestureController.cpp:
+        (WebKit::ViewGestureController::controllerForGesture):
+        (WebKit::ViewGestureController::takeNextGestureID):
+        (WebKit::ViewGestureController::willBeginGesture):
+        (WebKit::ViewGestureController::didEndGesture):
+        (WebKit::ViewGestureController::gestureControllerForPage): Deleted.
+        * UIProcess/Cocoa/ViewGestureController.h:
+        Add helpers that set and reset activeGestureType and currentGestureID together.
+        Make gesture IDs process global, to avoid two ViewGestureControllers using the same IDs.
+
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::endSwipeGesture):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::didCollectGeometryForMagnificationGesture):
+        (WebKit::ViewGestureController::handleMagnificationGestureEvent):
+        (WebKit::ViewGestureController::endMagnificationGesture):
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::forceRepaintIfNeeded):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        Adopt willBeginGesture/didEndGesture and controllerForGesture.
+
 2017-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] YouTube videos flash at the wrong place at the end of rotation
