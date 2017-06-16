@@ -80,6 +80,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     return *fontForFamily(fontDescription, AtomicString(".PhoneFallback", AtomicString::ConstructFromLiteral));
 }
 
+#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST
 static RetainPtr<CTFontDescriptorRef> baseSystemFontDescriptor(FontSelectionValue weight, bool bold, float size)
 {
     CTFontUIFontType fontType = kCTFontUIFontSystem;
@@ -142,6 +143,7 @@ static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontSelectionValue we
     return fontDescriptor;
 #endif
 }
+#endif
 
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size)
 {
@@ -156,7 +158,11 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
     }
 
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
+#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST
         return adoptCF(CTFontCreateWithFontDescriptor(systemFontDescriptor(request.weight, isFontWeightBold(request.weight), isItalic(request.slope), size).get(), size, nullptr));
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {

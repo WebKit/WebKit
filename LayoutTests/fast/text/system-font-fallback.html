@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+This test makes sure that "system-ui" is expanded to every item in the platform fallback list. The test passes if all the lines below are rendered in the same font and identical.
+<div style="font-size: 100px;">
+<div style="font-family: 'system-ui'            ;">&#xE01;&#xE02;&#xE03;&#xE04;&#xE05;&#xE06;&#xE07;</div>
+<div style="font-family: 'system-ui', 'Thonburi';">&#xE01;&#xE02;&#xE03;&#xE04;&#xE05;&#xE06;&#xE07;</div>
+<div style="font-family: 'system-ui', 'Ayuthaya';">&#xE01;&#xE02;&#xE03;&#xE04;&#xE05;&#xE06;&#xE07;</div>
+</div>
+</body>
+</html>

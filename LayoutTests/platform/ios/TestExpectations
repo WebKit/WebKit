@@ -2837,3 +2837,6 @@ webkit.org/b/172610 media/ios/autoplay-only-in-main-document.html [ Skip ]
 webkit.org/b/172672 fast/events/before-unload-returnValue.html [ Skip ]
 
 webkit.org/b/168239 [ Release ] fast/css/target-fragment-match.html [ Pass Failure ]
+
+webkit.org/b/173328 fast/text/system-font-fallback-emoji.html [ Failure ]
+webkit.org/b/173328 fast/text/system-font-fallback.html [ ImageOnlyFailure ]

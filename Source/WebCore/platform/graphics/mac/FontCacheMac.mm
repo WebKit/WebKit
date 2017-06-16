@@ -54,6 +54,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC)
 
+#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST
 static CGFloat toNSFontWeight(FontSelectionValue fontWeight)
 {
     if (fontWeight < FontSelectionValue(150))
@@ -74,10 +75,12 @@ static CGFloat toNSFontWeight(FontSelectionValue fontWeight)
         return NSFontWeightHeavy;
     return NSFontWeightBlack;
 }
+#endif
 
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size)
 {
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
+#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST
         RetainPtr<CTFontRef> result = toCTFont([NSFont systemFontOfSize:size weight:toNSFontWeight(request.weight)]);
         if (isItalic(request.slope)) {
             CTFontSymbolicTraits desiredTraits = kCTFontItalicTrait;
@@ -87,6 +90,10 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
                 result = italicizedFont;
         }
         return result;
+#else
+        UNUSED_PARAM(request);
+        ASSERT_NOT_REACHED();
+#endif
     }
 
     if (equalLettersIgnoringASCIICase(family, "-apple-system-monospaced-numbers")) {

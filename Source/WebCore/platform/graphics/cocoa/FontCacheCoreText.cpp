@@ -710,17 +710,25 @@ static float stretchFromCoreTextTraits(CFDictionaryRef traits)
 
 static void invalidateFontCache();
 
-static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)
+static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
     ASSERT_UNUSED(observer, observer == &FontCache::singleton());
-    ASSERT_UNUSED(name, CFEqual(name, kCTFontManagerRegisteredFontsChangedNotification));
 
     invalidateFontCache();
 }
 
 void FontCache::platformInit()
 {
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, 0, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, &fontCacheRegisteredFontsChangedNotificationCallback, kCTFontManagerRegisteredFontsChangedNotification, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
+
+#if PLATFORM(MAC)
+    CFNotificationCenterRef center = CFNotificationCenterGetLocalCenter();
+    const CFStringRef notificationName = kCFLocaleCurrentLocaleDidChangeNotification;
+#else
+    CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter();
+    const CFStringRef notificationName = CFSTR("com.apple.language.changed");
+#endif
+    CFNotificationCenterAddObserver(center, this, &fontCacheRegisteredFontsChangedNotificationCallback, notificationName, nullptr, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 Vector<String> FontCache::systemFontFamilies()
@@ -1166,6 +1174,8 @@ static void invalidateFontCache()
         });
         return;
     }
+
+    FontDescription::invalidateCaches();
 
     FontDatabase::singleton().clear();
 
