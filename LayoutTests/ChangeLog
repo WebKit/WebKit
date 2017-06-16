@@ -1,3 +1,13 @@
+2017-06-16  Jonathan Bedard  <jbedard@apple.com>
+
+        Clean-up lint-test-expectation errors
+
+        Unreviewed test gardening
+
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
         [iOS] Switching cameras in a WebRTC call makes black frames being sent

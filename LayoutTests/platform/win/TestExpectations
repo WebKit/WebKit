@@ -241,7 +241,6 @@ storage/indexeddb/clone-exception.html [ Timeout ]
 storage/indexeddb/database-odd-names.html [ Timeout Failure ]
 storage/indexeddb/primary-key-unique-to-objectstore.html [ Timeout ]
 storage/indexeddb/version-change-event-basic.html [ Timeout ]
-storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 storage/indexeddb/modern/date-basic-private.html [ Failure ]
 storage/indexeddb/modern/date-basic.html [ Failure ]
 storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
@@ -876,8 +875,6 @@ webkit.org/b/64731 fast/history/page-cache-removed-source-buffer.html [ Skip ]
 webkit.org/b/161906 imported/w3c/web-platform-tests/media-source [ Skip ]
 
 # These tests are for an obsolete version of the EME spec.
-fast/events/constructors/media-key-event-constructor.html [ Skip ] # [ WontFix ]
-media/encrypted-media/encrypted-media-can-play-type-webm.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-events.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-not-loaded.html [ Skip ] # [ WontFix ]
 media/encrypted-media/encrypted-media-syntax.html [ Skip ] # [ WontFix ]
@@ -1364,7 +1361,6 @@ webkit.org/b/140798 [ Debug ] accessibility/input-type-hidden-in-aria-hidden-fal
 webkit.org/b/140798 [ Release ] accessibility/legend-children-are-visible.html [ Failure ]
 webkit.org/b/140798 [ Debug ] accessibility/legend-children-are-visible.html [ Skip ] # Debug assertion
 webkit.org/b/140798 [ Debug ] accessibility/link-inside-button-accessible-text.html [ Skip ] # Debug assertion
-webkit.org/b/145271 [ Debug ] accessibility/list-detection.html [ Skip ] # Debug assertion
 webkit.org/b/145271 [ Release ] accessibility/list-detection2.html [ Failure ]
 webkit.org/b/145271 [ Debug ] accessibility/list-detection2.html [ Failure ]
 webkit.org/b/140798 [ Release ] accessibility/listitem-title.html [ Failure ]
@@ -1522,11 +1518,9 @@ webkit.org/b/140867 [ Debug ] accessibility/canvas-fallback-content-2.html [ Ski
 [ Debug ] accessibility/crash-with-noelement-selectbox.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/crashing-a-tag-in-map.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/css-content-attribute.html [ Skip ] # Crash (Debug Assertion)
-[ Debug ] accessibility/deleting-iframe-destroys-axcache.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/dimensions-include-descendants.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/disabled-controls-not-focusable.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/display-table-cell-causes-crash.html [ Skip ] # Crash (Debug Assertion)
-[ Debug ] accessibility/div-within-anchors-causes-crash.html [ Skip ] # Crash (Debug Assertion)
 [ Release ] accessibility/document-attributes.html [ Failure ]
 [ Debug ] accessibility/document-attributes.html [ Skip ] # Crash (Debug Assertion)
 [ Debug ] accessibility/duplicate-axrenderobject-crash.html [ Skip ] # Crash (Debug Assertion)
@@ -1614,7 +1608,6 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/accessibility-object-detached.html [ Skip ] # Crashing
 [ Debug ] accessibility/accessibility-node-memory-management.html [ Skip ] # Crashing
 [ Debug ] accessibility/accessibility-node-reparent.html [ Skip ] # Crashing
-[ Debug ] accessibility/adjacent-continuations-cause-assertion-failure.html [ Skip ] # Crashing
 [ Debug ] accessibility/anchor-linked-anonymous-block-crash.html [ Skip ] # Crashing
 [ Debug ] accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-activedescendant-crash.html [ Skip ] # Crashing
@@ -1627,14 +1620,12 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/aria-hidden-crash.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden-update.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-hidden-updates-alldescendants.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-inherits-presentational.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-label.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-labelledby-on-input.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-labelledby-stay-within.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-link-supports-press.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-list-and-listitem.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-mappings.html [ Skip ] # Crashing
-[ Debug ] accessibility/aria-menubar-menuitems.html [ Skip ] # Crashing
 [ Debug ] accessibility/aria-none-role.html [ Skip ] # Crashing
 [ Debug ] accessibility/paragraph-with-linebreaks.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/aria-presentational-role.html [ Skip ] # Crashing
@@ -1646,11 +1637,8 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/image-map-update-parent-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/image-map-with-indirect-area-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/image-map1.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/image-with-alt-and-map.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/img-alt-tag-only-whitespace.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/img-aria-button-alt-tag.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/img-fallsback-to-title.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/inline-continuations.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/input-file-causes-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/input-image-alt.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/insert-selected-option-into-select-causes-crash.html [ Skip ] # Debug assertion
@@ -1671,14 +1659,12 @@ webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 [ Debug ] accessibility/selection-states.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/svg-image.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-destroyed-crash.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/table-hierarchy.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-modification-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-notbody.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-nofirstbody.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-remove-cell-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/table-with-empty-thead-causes-crash.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/textbox-role-on-contenteditable-crash.html [ Skip ] # Debug assertion
-[ Debug ] accessibility/textbox-role-reports-selection.html [ Skip ] # Debug assertion
 [ Debug ] accessibility/updating-attribute-in-table-causes-crash.html [ Skip ] # Debug assertion
 
 webkit.org/b/146903 accessibility/aria-table-hierarchy.html [ Skip ]
@@ -1705,8 +1691,6 @@ webkit.org/b/49182 [ Debug ] animations/stop-animation-on-suspend.html [ Failure
 webkit.org/b/48997 [ Release ] animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
 webkit.org/b/48997 [ Debug ] animations/animation-iteration-event-destroy-renderer.html [ Skip ] # Debug assertion
 
-webkit.org/b/117323 [ Release ] animations/animation-delay-changed.html [ Pass Failure Timeout ]
-webkit.org/b/117323 [ Debug ] animations/animation-delay-changed.html [ Skip ] # Debug assertion
 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
 animations/resume-after-page-cache.html [ Pass Failure ]
 animations/cross-fade-webkit-mask-box-image.html [ Pass Failure ImageOnlyFailure ]
@@ -1723,7 +1707,6 @@ webkit.org/b/48451 animations/3d/transform-origin-vs-functions.html [ Pass Failu
 [ Debug ] animations/animation-direction-reverse-hardware.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-hit-test-transform.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-hit-test.html [ Skip ] # Debug assertion
-[ Debug ] animations/animation-direction-normal.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-internals-api.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-direction-reverse-fill-mode-hardware.html [ Skip ] # Debug assertion
 [ Debug ] animations/animation-internals-api-multiple-keyframes.html [ Skip ] # Debug assertion
@@ -2260,8 +2243,6 @@ http/tests/navigation/anchor-frames.html
 webkit.org/b/63806 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Skip ] # Timeout
 webkit.org/b/25189 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 webkit.org/b/25483 http/tests/navigation/redirect-cycle.html [ Pass Timeout ]
-webkit.org/b/28467 [ Release ] http/tests/loading/preload-img-test.html [ Pass Timeout ]
-webkit.org/b/28467 [ Debug ] http/tests/loading/preload-img-test.html [ Skip ] # Crashing
 
 # Times out <rdar://problem/9304941>
 http/tests/multipart/invalid-image-data-standalone.html [ Skip ] # Timeout
@@ -2347,15 +2328,12 @@ http/tests/xmlhttprequest/web-apps/012.html
 http/tests/xmlhttprequest/web-apps/013.html
 
 # Assertion failures: Not investigated
-[ Debug ] http/tests/loading/preload-append-scan.php [ Skip ]
-[ Debug ] http/tests/misc/isindex-with-no-form.html [ Skip ]
 [ Debug ] http/tests/security/isolatedWorld/storage-properties.html [ Skip ]
 [ Debug ] http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom.html [ Skip ]
 [ Debug ] http/tests/security/listener/xss-window-onclick-shortcut.html [ Skip ]
 [ Debug ] http/tests/local/file-url-sent-as-referer.html [ Skip ]
 
 # Flaky
-http/tests/cache/network-error-during-revalidation.html [ Pass Crash ]
 http/tests/xmlhttprequest/workers/methods.html [ Pass Crash ]
 
 ################################################################################
@@ -2415,7 +2393,6 @@ inspector/memory [ Skip ]
 ################################################################################
 
 # Skip tests that fail only in Debug mode 
-webkit.org/b/128789 [ Debug ] js/regress [ Skip ]
 webkit.org/b/140947 [ Debug ] js/slow-stress [ Skip ]
 
 webkit.org/b/140945 js/date-constructor.html [ Failure ]
@@ -2460,7 +2437,7 @@ fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 fast/html/keygen.html [ Failure ]
 
 # Sometimes times out
-[ Debug ] fast/frames/flattening/scrolling-in-object.html [ Skip ] # Crashing
+fast/frames/flattening/scrolling-in-object.html [ Skip ] # Crashing
 fast/dom/location-new-window-no-crash.html [ Pass Timeout ]
 fast/loader/user-style-sheet-resource-load-callbacks.html [ Pass Timeout ]
 fast/block/positioning/percent-top-left-on-relative-position.html [ Pass Timeout ]
@@ -2654,7 +2631,6 @@ webkit.org/b/162668 fast/text/woff2-totalsfntsize.html [ Skip ]
 [ Debug ] http/tests/incremental/frame-focus-before-load.html [ Skip ] # Causes later tests to fail
 [ Debug ] http/tests/loading/post-in-iframe-with-back-navigation.html [ Skip ] # Causes later tests to fail
 [ Debug ] http/tests/local/drag-over-remote-content.html [ Skip ] # Causes later tests to fail
-[ Debug ] http/tests/misc/isindex-with-no-form-base-href.html [ Skip ] # Causes later tests to fail
 [ Debug ] http/tests/navigation/javascriptlink-subframeload.html [ Skip ] # Causes later tests to fail
 [ Debug ] http/tests/security/isolatedWorld/sandboxed-iframe.html [ Skip ] # Causes later tests to fail
 [ Debug ] http/tests/security/isolatedWorld/world-reuse.html [ Skip ] # Causes later tests to fail
@@ -2792,7 +2768,6 @@ fast/masking/clip-path-selection.html [ Failure ]
 
 fast/multicol/newmulticol/direct-child-column-span-all.html [ Pass Timeout ]
 fast/multicol/newmulticol/break-before.html [ Pass ImageOnlyFailure ]
-[ Debug ] fast/multicol/pagination/RightToLeft-rl-hittest.html [ Failure ]
 fast/multicol/negativeColumnWidth.html [ Pass Timeout ]
 fast/multicol/vertical-rl/float-multicol.html [ ImageOnlyFailure ]
 fast/multicol/vertical-rl/nested-columns.html [ ImageOnlyFailure ]
@@ -3246,7 +3221,6 @@ imported/blink/svg/custom/focus-ring-2.svg [ ImageOnlyFailure ]
 imported/blink/svg/custom/focus-ring-text.svg [ ImageOnlyFailure ]
 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 imported/blink/fast/block/float/float-mark-descendants-for-layout-crash.html [ Failure ]
-imported/blink/http/tests/security/script-crossorigin-loads-correctly-credentials.html [ Failure ]
 imported/blink/printing/print-document-without-documentElement-crash.html [ Failure ]
 
 # Failure introduced by JavaScriptCore change:
@@ -3271,7 +3245,6 @@ webkit.org/b/150594 imported/w3c/web-platform-tests/XMLHttpRequest/send-timeout-
 # [Win] Newly imported W3C html/semantics/forms tests failing on Win7
 webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate.html [ Pass Failure ]
 webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/textfieldselection-setSelectionRange.html [ Pass Failure ]
-webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-textselection-01.html [ Pass Failure ]
 webkit.org/b/150596 imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/type-change-state.html [ Pass Failure ]
 
 webkit.org/b/150684 editing/input/reveal-caret-of-multiline-contenteditable.html [ Pass Failure ]
@@ -3303,7 +3276,6 @@ webkit.org/b/149592 fast/shadow-dom/touch-event-ios.html [ Failure ]
 # The SVG -> OTF Font converter outputs 'kern' tables instead of 'GPOS' tables.
 webkit.org/b/137204 fast/text/svg-font-face-with-kerning.html [ Failure ]
 webkit.org/b/137204 svg/W3C-SVG-1.1/fonts-kern-01-t.svg [ Failure ]
-webkit.org/b/137204 svg/W3C-SVG-1.1/fonts-kern-01-t.svg [ Failure ]
 webkit.org/b/137204 svg/text/kerning.svg [ Failure ]
 webkit.org/b/137204 svg/text/text-hkern.svg [ Failure ]
 webkit.org/b/137204 svg/text/text-vkern.svg [ Failure ]
@@ -3316,7 +3288,6 @@ webkit.org/b/154690 svg/W3C-SVG-1.1/text-align-08-b.svg [ Failure ]
 webkit.org/b/154690 svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
 webkit.org/b/154690 svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
 webkit.org/b/154690 svg/text/multichar-glyph.svg [ Failure ]
-webkit.org/b/154690 svg/W3C-SVG-1.1/text-align-08-b.svg [ Failure ]
 
 # The SVG -> OTF Font Converter does not work with SVG's "altglyph" facility.
 webkit.org/b/137096 svg/W3C-SVG-1.1/text-altglyph-01-b.svg [ Failure ]
@@ -3338,7 +3309,6 @@ webkit.org/b/158649 fast/text/chinese-font-name-aliases-2.html [ ImageOnlyFailur
 
 # Update test expectations for test failures tracked in webkit.org/b/160447.
 # Flaky tests tracked in webkit.org/b/160447.
-accessibility/heading-crash-after-hidden.html [ Crash Timeout ]
 fast/dom/Window/open-window-min-size.html [ Failure Pass ]
 fast/dom/attr-style-too-lazy.html [ Failure Pass ]
 fast/events/menu-keydown-on-hidden-element.html [ Failure Pass ]
@@ -3372,7 +3342,7 @@ security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-wit
 http/tests/loading/preload-picture-nested.html [ Timeout Pass ]
 http/tests/security/contentSecurityPolicy/blob-url-does-not-match-source-self.html [ Timeout Pass ]
 # Failures tracked in webkit.org/b/160447.
-accessibility/adjacent-continuations-cause-assertion-failure.html [ Failure ]
+accessibility/adjacent-continuations-cause-assertion-failure.html [ Skip ]
 accessibility/aria-busy.html [ Failure ]
 accessibility/aria-role-on-label.html [ Failure ]
 accessibility/aria-selected-menu-items.html [ Failure ]
@@ -3380,16 +3350,16 @@ accessibility/aria-selected.html [ Failure ]
 accessibility/attachment-element.html [ Failure ]
 accessibility/auto-fill-types.html [ Failure ]
 accessibility/checkbox-mixed-value.html [ Failure ]
-accessibility/div-within-anchors-causes-crash.html [ Failure ]
+accessibility/div-within-anchors-causes-crash.html [ Skip ]
 accessibility/form-control-value-settable.html [ Failure ]
 accessibility/hidden-th-still-column-header.html [ Failure ]
-accessibility/img-fallsback-to-title.html [ Failure ]
+accessibility/img-fallsback-to-title.html [ Skip ]
 accessibility/math-fenced.html [ Failure ]
 accessibility/math-foreign-content.html [ Failure ]
 accessibility/math-mo-fences-and-separators.html [ Failure ]
 accessibility/spinbutton-crash.html [ Failure ]
 accessibility/spinbutton-implicit-values.html [ Failure ]
-accessibility/textbox-role-reports-selection.html [ Failure ]
+accessibility/textbox-role-reports-selection.html [ Skip ]
 accessibility/w3c-svg-content-language-attribute.html [ Failure ]
 accessibility/w3c-svg-description-calculation.html [ Failure ]
 accessibility/w3c-svg-name-calculation.html [ Failure ]
@@ -3402,7 +3372,6 @@ editing/execCommand/indent-pre.html [ Failure ]
 fast/block/float/016.html [ Failure ]
 fast/block/float/026.html [ Failure ]
 fast/block/float/028.html [ Failure ]
-fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 fast/canvas/canvas-overloads-strokeText.html [ Failure ]
 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
@@ -3431,7 +3400,6 @@ fast/events/key-events-in-input-button.html [ Failure ]
 fast/events/key-events-in-input-text.html [ Failure ]
 fast/events/keyboardevent-code.html [ Failure ]
 fast/events/keyboardevent-key.html [ Failure ]
-fast/events/media-focus-in-standalone-media-document.html [ Failure ]
 fast/events/updateLayoutForHitTest.html [ Failure ]
 fast/events/wheelevent-basic.html [ Failure ]
 fast/forms/listbox-respects-padding-bottom.html [ Failure ]
@@ -3505,7 +3473,6 @@ http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.h
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-affects-child.html [ Failure ]
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-invalid.html [ Failure ]
 http/tests/security/contentSecurityPolicy/1.1/plugintypes-url-01.html [ Failure ]
-http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Failure ]
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-iframe.html [ Failure ]
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-iframe-in-main-frame.html [ Failure ]
 http/tests/security/contentSecurityPolicy/block-all-mixed-content/insecure-image-in-iframe-with-inherited-policy.html [ Failure ]
@@ -3558,19 +3525,8 @@ imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-ove
 imported/w3c/web-platform-tests/dom/events/Event-init-while-dispatching.html [ Failure ]
 imported/w3c/web-platform-tests/dom/events/Event-subclasses-constructors.html [ Failure ]
 imported/w3c/web-platform-tests/encoding/textdecoder-utf16-surrogates.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/basic/scheme-about.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors-worker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/basic/mode-no-cors.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-basic-worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight-worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-origin-worker.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/credentials/cookies.html [ Failure ]
-imported/w3c/web-platform-tests/fetch/api/credentials/cookies-worker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-method-worker.html [ Failure ]
 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Failure ]
@@ -3656,7 +3612,6 @@ css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 editing/pasteboard/paste-image-using-image-data.html [ ImageOnlyFailure ]
 fast/borders/hidpi-outline-hairline-painting.html [ ImageOnlyFailure ]
-fast/frames/flattening/scrolling-in-object.html [ ImageOnlyFailure ]
 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]
 fast/images/image-map-outline-with-paint-root-offset.html [ ImageOnlyFailure ]
 fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]
@@ -3688,8 +3643,7 @@ svg/css/mix-blend-mode-with-inline-svg.html [ ImageOnlyFailure ]
 svg/filters/feCompositeOpaque.html [ ImageOnlyFailure ]
 svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 # Crashes tracked in webkit.org/b/160447.
-animations/animation-delay-changed.html [ Crash ]
-animations/animation-direction-normal.html [ Crash ]
+animations/animation-delay-changed.html [ Skip ]
 js/dom/create-lots-of-workers.html [ Crash ]
 # Timeouts tracked in webkit.org/b/160447.
 accessibility/set-selected-text-range-contenteditable.html [ Skip ]
@@ -3774,21 +3728,21 @@ mathml/presentation/bug159513.html [ Missing ]
 # Unexpected text-only failures tracked in webkit.org/b/172437.
 accessibility/aria-cellspans-with-native-cellspans.html [ Failure ]
 accessibility/aria-grid-column-span.html [ Failure ]
-accessibility/aria-inherits-presentational.html [ Failure ]
-accessibility/aria-menubar-menuitems.html [ Failure ]
+accessibility/aria-inherits-presentational.html [ Skip ]
+accessibility/aria-menubar-menuitems.html [ Skip ]
 accessibility/aria-orientation.html [ Failure ]
 accessibility/aria-owns.html [ Failure ]
 accessibility/button-with-aria-haspopup-role.html [ Failure ]
 accessibility/datetime-attribute.html [ Failure ]
-accessibility/deleting-iframe-destroys-axcache.html [ Failure ]
+accessibility/deleting-iframe-destroys-axcache.html [ Skip ]
 accessibility/double-nested-inline-element-missing-from-tree.html [ Failure ]
 accessibility/generated-content-with-display-table-crash.html [ Failure ]
-accessibility/image-with-alt-and-map.html [ Failure ]
-accessibility/inline-continuations.html [ Failure ]
-accessibility/list-detection.html [ Failure ]
+accessibility/image-with-alt-and-map.html [ Skip ]
+accessibility/inline-continuations.html [ Skip ]
+accessibility/list-detection.html [ Skip ]
 accessibility/minimal-table-with-aria-is-data-table.html [ Failure ]
 accessibility/separator-values.html [ Failure ]
-accessibility/table-hierarchy.html [ Failure ]
+accessibility/table-hierarchy.html [ Skip ]
 accessibility/win/bstr-elements-role.html [ Failure ]
 accessibility/win/detached-object-notification-crash.html [ Failure ]
 accessibility/win/heading-elements.html [ Failure ]
@@ -4013,7 +3967,6 @@ http/tests/websocket/tests/hybi/inspector/server-close.html [ Skip ]
 # Unexpected flakiness tracked in webkit.org/b/172437.
 fast/events/media-focus-in-standalone-media-document.html [ Crash Pass ]
 fast/events/message-port-postMessage-recursive.html [ Timeout Pass ]
-fast/events/tabindex-focus-chain.html [ Timeout Pass ]
 imported/w3c/web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-010.html [ Failure Pass ]
 imported/w3c/web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-011.html [ Failure Pass ]
 imported/w3c/web-platform-tests/css/css-shapes-1/spec-examples/shape-outside-012.html [ Failure Pass ]
@@ -4029,7 +3982,6 @@ http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Failure P
 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Timeout Pass ]
 http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout Failure ]
 http/tests/security/contentSecurityPolicy/block-favicon.html [ Failure Pass ]
-http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Timeout Pass ]
 
 
 # html/syntax web platform tests are failing on Windows.
@@ -4046,11 +3998,7 @@ webrtc [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failure ]
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 
-# Request Header information only available in WebKit2
-http/tests/inspector/network/resource-request-headers.html [ Failure ]
-
 # WebCrypto tests are failing.
-webkit.org/b/165090 imported/w3c/WebCryptoAPI [ Skip ]
 webkit.org/b/165090 imported/w3c/web-platform-tests/WebCryptoAPI [ Skip ]
 
 # webglcontextchanged event not supported

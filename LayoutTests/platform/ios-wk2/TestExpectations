@@ -740,7 +740,6 @@ fast/events/popup-blocking-click-in-iframe.html
 fast/events/popup-blocking-timers1.html
 fast/events/popup-blocking-timers2.html
 fast/events/popup-blocking-timers3.html
-fast/events/popup-blocking-timers4.html
 fast/events/popup-blocking-timers5.html
 fast/events/popup-blocking-timers6.html
 fast/events/popup-when-select-change.html
@@ -1872,7 +1871,6 @@ webkit.org/b/165814 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 webkit.org/b/161359 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html [ Pass Failure ]
 webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Pass Failure ]
 
-webkit.org/b/169523 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/NavigatorID.worker.html [ Failure ]
 webkit.org/b/169523 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Failure ]
 webkit.org/b/169760 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Pass Failure ]
 
