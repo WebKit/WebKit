@@ -1,3 +1,82 @@
+2017-06-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Instrument 2D/WebGL canvas contexts in the backend
+        https://bugs.webkit.org/show_bug.cgi?id=172623
+        <rdar://problem/32415986>
+
+        Reviewed by Devin Rousso.
+
+        Test: inspector/canvas/create-canvas-contexts.html
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasElement):
+        Instrument creation of CSS canvases. This merely registers the canvas
+        element with InspectorCanvasAgent and stores the name (identifier passed
+        to getCSSCanvasContext) for later use. It isn't until the context is
+        actually created that the frontend receives a notification.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext2d):
+        (WebCore::HTMLCanvasElement::getContextWebGL):
+        Instrument creation of 2D and WebGL canvas contexts.
+
+        * inspector/InspectorAllInOne.cpp:
+
+        * inspector/InspectorCanvasAgent.cpp: Added.
+        New backend agent for canvas inspection. Canvas creation and destruction
+        are continuously monitored by the agent, regardless of the presence of
+        a frontend. This is necessary since there is no way to retrieve the
+        rendering contexts for with a given frame once they've been created.
+
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::didCreateFrontendAndBackend):
+        (WebCore::InspectorCanvasAgent::willDestroyFrontendAndBackend):
+        (WebCore::InspectorCanvasAgent::discardAgent):
+        Unregister canvas observers to prevent dangling agent pointer.
+        (WebCore::InspectorCanvasAgent::enable):
+        Dispatch events for existing canvases, now that the frontend exists.
+        (WebCore::InspectorCanvasAgent::disable):
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::didCreateCSSCanvas):
+        Register the name/identifier associated with the CSS canvas, so that it
+        can be retrieved and associated with the rendering context later.
+
+        (WebCore::InspectorCanvasAgent::didCreateCanvasRenderingContext):
+        (WebCore::InspectorCanvasAgent::canvasDestroyed):
+        Removes the canvas from the agent, and queues it for notifying the
+        frontend during the next event loop.
+
+        (WebCore::InspectorCanvasAgent::canvasDestroyedTimerFired):
+        (WebCore::InspectorCanvasAgent::clearCanvasData):
+        (WebCore::InspectorCanvasAgent::getCanvasEntry):
+        (WebCore::InspectorCanvasAgent::buildObjectForCanvas):
+        * inspector/InspectorCanvasAgent.h: Added.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::didCreateCSSCanvasImpl):
+        (WebCore::InspectorInstrumentation::didCreateCanvasRenderingContextImpl):
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didCreateCSSCanvas):
+        (WebCore::InspectorInstrumentation::didCreateCanvasRenderingContext):
+        These instrumentation points should not fast return when no frontend
+        is attached.
+
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorCanvasAgent):
+        (WebCore::InstrumentingAgents::setInspectorCanvasAgent):
+        Plumbing for the new agent.
+
 2017-06-15  Jer Noble  <jer.noble@apple.com>
 
         [WebRTC] Removing a MediaStreamTrack from a MediaStream reports no recording to WebKit clients

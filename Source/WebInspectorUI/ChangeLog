@@ -1,3 +1,55 @@
+2017-06-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Instrument 2D/WebGL canvas contexts in the backend
+        https://bugs.webkit.org/show_bug.cgi?id=172623
+        <rdar://problem/32415986>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+
+        * UserInterface/Controllers/CanvasManager.js: Added.
+        New frontend manager for the Canvas domain.
+        (WebInspector.CanvasManager):
+        (WebInspector.CanvasManager.prototype.get canvases):
+        (WebInspector.CanvasManager.prototype.canvasAdded):
+        (WebInspector.CanvasManager.prototype.canvasRemoved):
+        (WebInspector.CanvasManager.prototype._mainResourceDidChange):
+
+        * UserInterface/Main.html:
+        New files.
+
+        * UserInterface/Models/Canvas.js: Added.
+        (WebInspector.Canvas):
+        (WebInspector.Canvas.fromPayload):
+        (WebInspector.Canvas.displayNameForContextType):
+        Get displayable text "2D" or "WebGL" based on context type.
+        (WebInspector.Canvas.resetUniqueDisplayNameNumbers):
+        Called by CanvasManager when canvases are cleared.
+        (WebInspector.Canvas.prototype.get identifier):
+        (WebInspector.Canvas.prototype.get contextType):
+        (WebInspector.Canvas.prototype.get frame):
+        (WebInspector.Canvas.prototype.get cssCanvasName):
+        For CSS canvases, the identifier passed to getCSSCanvasContext.
+        (WebInspector.Canvas.prototype.get displayName):
+        Get displayable canvas name. The name depends on how the canvas was
+        created, and the information available:
+          - getCSSCanvasContext: "CSS Canvas <identifier>"
+          - getContext: "Canvas #<DOM id attribute value>"
+          - Otherwise: "Canvas 1", "Canvas 2", ...
+
+        (WebInspector.Canvas.saveIdentityToCookie):
+
+        * UserInterface/Protocol/CanvasObserver.js: Added.
+        (WebInspector.CanvasObserver.prototype.canvasAdded):
+        (WebInspector.CanvasObserver.prototype.canvasRemoved):
+        (WebInspector.CanvasObserver):
+
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WebInspector.loaded):
+
 2017-06-15  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Search highlight doesn't show up in resources when paused

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+let contexts = [];
+
+function createCanvas(contextType) {
+    let canvas = document.body.appendChild(document.createElement("canvas"));
+    contexts.push(canvas.getContext(contextType));
+}
+
+function createCSSCanvas(contextType, canvasName) {
+    contexts.push(document.getCSSCanvasContext(contextType, canvasName, 10, 10));
+}
+
+function createOffscreenCanvas(contextType) {
+    contexts.push(document.createElement("canvas").getContext(contextType));
+}
+
+function destroyCanvases() {
+    for (let context of contexts) {
+        let canvasElement = context.canvas;
+        if (canvasElement && canvasElement.parentNode)
+            canvasElement.remove();
+    }
+
+    contexts = [];
+
+    // Force GC to make sure the canvas element is destroyed, otherwise the frontend
+    // does not receive WebInspector.CanvasManager.Event.CanvasWasRemoved events.
+    setTimeout(() => { GCController.collect(); }, 0);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.canvasContexts");
+
+    function awaitCanvasAdded(contextType) {
+        return WebInspector.canvasManager.awaitEvent(WebInspector.CanvasManager.Event.CanvasWasAdded)
+        .then((event) => {
+            let canvas = event.data.canvas;
+            InspectorTest.log("Added canvas.");
+
+            let contextDisplayName = WebInspector.Canvas.displayNameForContextType(contextType);
+            InspectorTest.expectEqual(canvas.contextType, contextType, `Canvas context should be ${contextDisplayName}.`);
+
+            return canvas;
+        });
+    }
+
+    function awaitCanvasRemoved(canvasIdentifier) {
+        return WebInspector.canvasManager.awaitEvent(WebInspector.CanvasManager.Event.CanvasWasRemoved)
+        .then((event) => {
+            let canvas = event.data.canvas;
+            InspectorTest.log("Removed canvas.");
+            InspectorTest.expectEqual(canvas.identifier, canvasIdentifier, "Removed canvas has expected ID.");
+        });
+    }
+
+    suite.addTestCase({
+        name: "CheckNoCanvases",
+        description: "Check that the CanvasManager has no canvases initially.",
+        test(resolve, reject) {
+            InspectorTest.expectEqual(WebInspector.canvasManager.canvases.length, 0, "CanvasManager should have no canvases.");
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "CheckCanvasesCleared",
+        description: "Check that canvases are cleared on reload.",
+        test(resolve, reject) {
+            WebInspector.canvasManager.awaitEvent(WebInspector.CanvasManager.Event.Cleared)
+            .then((event) => {
+                InspectorTest.log("Cleared canvases after reloading page.");
+                InspectorTest.expectEqual(WebInspector.canvasManager.canvases.length, 0, "CanvasManager should have no canvases.");
+            })
+            .then(resolve, reject);
+
+            WebInspector.canvasManager.awaitEvent(WebInspector.CanvasManager.Event.CanvasWasAdded)
+            .then((event) => {
+                InspectorTest.log("Added canvas.");
+                InspectorTest.reloadPage();
+            });
+
+            InspectorTest.evaluateInPage(`createCanvas('2d')`);
+        }
+    });
+
+    function addSimpleTestCase({name, description, expression, contextType}) {
+        suite.addTestCase({
+            name,
+            description,
+            test(resolve, reject) {
+                awaitCanvasAdded(contextType)
+                .then((canvas) => {
+                    if (canvas.cssCanvasName) {
+                        InspectorTest.log("CSS canvas will not be destroyed");
+                        resolve();
+                        return;
+                    }
+
+                    let promise = awaitCanvasRemoved(canvas.identifier);
+                    InspectorTest.evaluateInPage(`destroyCanvases()`);
+                    return promise;
+                })
+                .then(resolve, reject);
+
+                InspectorTest.evaluateInPage(expression);
+            }
+        });
+    }
+
+    let simpleTestCases = [
+        {
+            name: "Create2DCanvasContext",
+            expression: `createCanvas("2d")`,
+            contextType: WebInspector.Canvas.ContextType.Canvas2D,
+        },
+        {
+            name: "CreateWebGLCanvasContext",
+            expression: `createCanvas("webgl")`,
+            contextType: WebInspector.Canvas.ContextType.WebGL,
+        },
+        {
+            name: "Create2DCanvasContextOffscreen",
+            expression: `createOffscreenCanvas("2d")`,
+            contextType: WebInspector.Canvas.ContextType.Canvas2D,
+        },
+        {
+            name: "CreateWebGLCanvasContextOffscreen",
+            expression: `createOffscreenCanvas("webgl")`,
+            contextType: WebInspector.Canvas.ContextType.WebGL,
+        }
+    ];
+
+    simpleTestCases.forEach(addSimpleTestCase);
+
+    function addCSSCanvasTest(contextType, cssCanvasIdentifier) {
+        let displayContextType = WebInspector.Canvas.displayNameForContextType(contextType);
+
+        suite.addTestCase({
+            name: `CreateCSSCanvas${displayContextType}`,
+            description: "Check that CSS canvases have the correct name and type.",
+            test(resolve, reject) {
+                awaitCanvasAdded(contextType, !!cssCanvasIdentifier)
+                .then((canvas) => { InspectorTest.expectEqual(canvas.cssCanvasName, cssCanvasIdentifier, "Canvas name should equal the identifier passed to -webkit-canvas."); })
+                .then(resolve, reject);
+
+                let contextId = contextType === WebInspector.Canvas.ContextType.Canvas2D ? "2d" : "webgl";
+                InspectorTest.log(`Create CSS canvas from -webkit-canvas(${cssCanvasIdentifier}).`);
+                InspectorTest.evaluateInPage(`createCSSCanvas("${contextId}", "${cssCanvasIdentifier}")`);
+            }
+        });
+    }
+
+    addCSSCanvasTest(WebInspector.Canvas.ContextType.Canvas2D, "css-canvas-2d");
+    addCSSCanvasTest(WebInspector.Canvas.ContextType.WebGL, "css-canvas-webgl");
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    .canvas1 { background-image: -webkit-canvas(css-canvas-2d); }
+    .canvas2 { background-image: -webkit-canvas(css-canvas-webgl); }
+</style>
+</head>
+<body onload="runTest()">
+    <p>Test that CanvasManager tracks creation and destruction of 2D and WebGL canvases.</p>
+</body>
+</html>

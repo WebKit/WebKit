@@ -1,3 +1,16 @@
+2017-06-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Instrument 2D/WebGL canvas contexts in the backend
+        https://bugs.webkit.org/show_bug.cgi?id=172623
+        <rdar://problem/32415986>
+
+        Reviewed by Devin Rousso.
+
+        Test that CanvasAgent dispatches events for canvas lifecycle events.
+
+        * inspector/canvas/create-canvas-contexts-expected.txt: Added.
+        * inspector/canvas/create-canvas-contexts.html: Added.
+
 2017-06-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Expand system-ui to include every item in the Core Text cascade list

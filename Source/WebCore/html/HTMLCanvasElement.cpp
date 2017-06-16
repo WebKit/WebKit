@@ -43,6 +43,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "ImageData.h"
+#include "InspectorInstrumentation.h"
 #include "MIMETypeRegistry.h"
 #include "RenderHTMLCanvas.h"
 #include "RuntimeEnabledFeatures.h"
@@ -247,6 +248,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContext2d(const String& type)
         downcast<CanvasRenderingContext2D>(*m_context).setUsesDisplayListDrawing(m_usesDisplayListDrawing);
         downcast<CanvasRenderingContext2D>(*m_context).setTracksDisplayListReplay(m_tracksDisplayListReplay);
 
+        InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
+
 #if USE(IOSURFACE_CANVAS_BACKING_STORE) || ENABLE(ACCELERATED_2D_CANVAS)
         // Need to make sure a RenderLayer and compositing layer get created for the Canvas
         invalidateStyleAndLayerComposition();
@@ -302,6 +305,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContextWebGL(const String& type, W
         if (m_context) {
             // Need to make sure a RenderLayer and compositing layer get created for the Canvas
             invalidateStyleAndLayerComposition();
+
+            InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
         }
     }
 
