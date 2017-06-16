@@ -44,6 +44,7 @@
 #include "Exception.h"
 #include "ExceptionHelpers.h"
 #include "FunctionCodeBlock.h"
+#include "InterpreterInlines.h"
 #include "JSArrayInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
@@ -53,7 +54,6 @@
 #include "JSString.h"
 #include "JSWithScope.h"
 #include "LLIntCLoop.h"
-#include "LLIntData.h"
 #include "LLIntThunks.h"
 #include "LiteralParser.h"
 #include "ModuleProgramCodeBlock.h"
@@ -317,18 +317,14 @@ Interpreter::Interpreter(VM& vm)
 #if !ENABLE(JIT)
     , m_cloopStack(vm)
 #endif
-#if ENABLE(COMPUTED_GOTO_OPCODES)
-    , m_opcodeTable { LLInt::opcodeMap() }
-#if !USE(LLINT_EMBEDDED_OPCODE_ID) || !ASSERT_DISABLED
-    , m_opcodeIDTable { opcodeIDTable() }
-#endif
-#endif
 {
 #if !ASSERT_DISABLED
     static std::once_flag assertOnceKey;
     std::call_once(assertOnceKey, [this] {
-        for (unsigned i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i)
-            RELEASE_ASSERT(getOpcodeID(m_opcodeTable[i]) == static_cast<OpcodeID>(i));
+        for (unsigned i = 0; i < NUMBER_OF_BYTECODE_IDS; ++i) {
+            OpcodeID opcodeID = static_cast<OpcodeID>(i);
+            RELEASE_ASSERT(getOpcodeID(getOpcode(opcodeID)) == opcodeID);
+        }
     });
 #endif // USE(LLINT_EMBEDDED_OPCODE_ID)
 }
@@ -472,7 +468,7 @@ bool Interpreter::isOpcode(Opcode opcode)
 #if ENABLE(COMPUTED_GOTO_OPCODES)
     return opcode != HashTraits<Opcode>::emptyValue()
         && !HashTraits<Opcode>::isDeletedValue(opcode)
-        && m_opcodeIDTable.contains(opcode);
+        && opcodeIDTable().contains(opcode);
 #else
     return opcode >= 0 && opcode <= op_end;
 #endif

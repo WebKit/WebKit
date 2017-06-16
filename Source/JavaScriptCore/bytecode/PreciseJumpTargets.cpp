@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,10 +33,10 @@
 namespace JSC {
 
 template <size_t vectorSize, typename Block, typename Instruction>
-static void getJumpTargetsForBytecodeOffset(Block* codeBlock, Interpreter* interpreter, Instruction* instructionsBegin, unsigned bytecodeOffset, Vector<unsigned, vectorSize>& out)
+static void getJumpTargetsForBytecodeOffset(Block* codeBlock, Instruction* instructionsBegin, unsigned bytecodeOffset, Vector<unsigned, vectorSize>& out)
 {
-    OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset]);
-    extractStoredJumpTargetsForBytecodeOffset(codeBlock, interpreter, instructionsBegin, bytecodeOffset, [&](int32_t& relativeOffset) {
+    OpcodeID opcodeID = Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset]);
+    extractStoredJumpTargetsForBytecodeOffset(codeBlock, instructionsBegin, bytecodeOffset, [&](int32_t& relativeOffset) {
         out.append(bytecodeOffset + relativeOffset);
     });
     // op_loop_hint does not have jump target stored in bytecode instructions.
@@ -65,10 +65,9 @@ void computePreciseJumpTargetsInternal(Block* codeBlock, Instruction* instructio
         out.append(codeBlock->exceptionHandler(i).end);
     }
 
-    Interpreter* interpreter = codeBlock->vm()->interpreter;
     for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount;) {
-        OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset]);
-        getJumpTargetsForBytecodeOffset(codeBlock, interpreter, instructionsBegin, bytecodeOffset, out);
+        OpcodeID opcodeID = Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset]);
+        getJumpTargetsForBytecodeOffset(codeBlock, instructionsBegin, bytecodeOffset, out);
         bytecodeOffset += opcodeLengths[opcodeID];
     }
     
@@ -111,12 +110,12 @@ void recomputePreciseJumpTargets(UnlinkedCodeBlock* codeBlock, UnlinkedInstructi
 
 void findJumpTargetsForBytecodeOffset(CodeBlock* codeBlock, Instruction* instructionsBegin, unsigned bytecodeOffset, Vector<unsigned, 1>& out)
 {
-    getJumpTargetsForBytecodeOffset(codeBlock, codeBlock->vm()->interpreter, instructionsBegin, bytecodeOffset, out);
+    getJumpTargetsForBytecodeOffset(codeBlock, instructionsBegin, bytecodeOffset, out);
 }
 
 void findJumpTargetsForBytecodeOffset(UnlinkedCodeBlock* codeBlock, UnlinkedInstruction* instructionsBegin, unsigned bytecodeOffset, Vector<unsigned, 1>& out)
 {
-    getJumpTargetsForBytecodeOffset(codeBlock, codeBlock->vm()->interpreter, instructionsBegin, bytecodeOffset, out);
+    getJumpTargetsForBytecodeOffset(codeBlock, instructionsBegin, bytecodeOffset, out);
 }
 
 } // namespace JSC

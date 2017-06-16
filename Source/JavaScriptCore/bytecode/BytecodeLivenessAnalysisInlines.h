@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #include "BytecodeGraph.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "CodeBlock.h"
-#include "Interpreter.h"
+#include "InterpreterInlines.h"
 #include "Operations.h"
 
 namespace JSC {
@@ -81,10 +81,9 @@ inline void BytecodeLivenessPropagation<DerivedAnalysis>::stepOverInstruction(Gr
     // first add it to the out set (the use), and then we'd remove it (the def).
 
     auto* codeBlock = graph.codeBlock();
-    Interpreter* interpreter = codeBlock->vm()->interpreter;
     auto* instructionsBegin = graph.instructions().begin();
     auto* instruction = &instructionsBegin[bytecodeOffset];
-    OpcodeID opcodeID = interpreter->getOpcodeID(*instruction);
+    OpcodeID opcodeID = Interpreter::getOpcodeID(*instruction);
 
     static_cast<DerivedAnalysis*>(this)->computeDefsForBytecodeOffset(
         codeBlock, opcodeID, instruction, out,

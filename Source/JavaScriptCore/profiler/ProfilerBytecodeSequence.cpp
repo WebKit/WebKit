@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #include "ProfilerBytecodeSequence.h"
 
 #include "CodeBlock.h"
-#include "Interpreter.h"
+#include "InterpreterInlines.h"
 #include "JSCInlines.h"
 #include "JSGlobalObject.h"
 #include "Operands.h"
@@ -55,10 +55,9 @@ BytecodeSequence::BytecodeSequence(CodeBlock* codeBlock)
     for (unsigned bytecodeIndex = 0; bytecodeIndex < codeBlock->instructions().size();) {
         out.reset();
         codeBlock->dumpBytecode(out, bytecodeIndex, stubInfos);
-        m_sequence.append(Bytecode(bytecodeIndex, codeBlock->vm()->interpreter->getOpcodeID(codeBlock->instructions()[bytecodeIndex].u.opcode), out.toCString()));
-        bytecodeIndex += opcodeLength(
-            codeBlock->vm()->interpreter->getOpcodeID(
-                codeBlock->instructions()[bytecodeIndex].u.opcode));
+        OpcodeID opcodeID = Interpreter::getOpcodeID(codeBlock->instructions()[bytecodeIndex].u.opcode);
+        m_sequence.append(Bytecode(bytecodeIndex, opcodeID, out.toCString()));
+        bytecodeIndex += opcodeLength(opcodeID);
     }
 }
 

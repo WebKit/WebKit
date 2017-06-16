@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ void BytecodeRewriter::adjustJumpTargetsInFragment(unsigned finalOffset, Inserti
         if (isBranch(opcodeID)) {
             unsigned bytecodeOffset = finalOffset + fragmentOffset;
             UnlinkedCodeBlock* codeBlock = m_graph.codeBlock();
-            extractStoredJumpTargetsForBytecodeOffset(codeBlock, codeBlock->vm()->interpreter, instructionsBegin, fragmentOffset, [&](int32_t& label) {
+            extractStoredJumpTargetsForBytecodeOffset(codeBlock, instructionsBegin, fragmentOffset, [&](int32_t& label) {
                 int absoluteOffset = adjustAbsoluteOffset(label);
                 label = absoluteOffset - static_cast<int>(bytecodeOffset);
             });

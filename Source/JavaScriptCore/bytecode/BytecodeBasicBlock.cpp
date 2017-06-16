@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,9 +77,8 @@ void BytecodeBasicBlock::computeImpl(Block* codeBlock, Instruction* instructions
 
     bool nextInstructionIsLeader = false;
 
-    Interpreter* interpreter = codeBlock->vm()->interpreter;
     for (unsigned bytecodeOffset = 0; bytecodeOffset < instructionCount;) {
-        OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset]);
+        OpcodeID opcodeID = Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset]);
         unsigned opcodeLength = opcodeLengths[opcodeID];
 
         bool createdBlock = false;
@@ -114,7 +113,7 @@ void BytecodeBasicBlock::computeImpl(Block* codeBlock, Instruction* instructions
 
         bool fallsThrough = true; 
         for (unsigned bytecodeOffset = block->leaderOffset(); bytecodeOffset < block->leaderOffset() + block->totalLength();) {
-            OpcodeID opcodeID = interpreter->getOpcodeID(instructionsBegin[bytecodeOffset]);
+            OpcodeID opcodeID = Interpreter::getOpcodeID(instructionsBegin[bytecodeOffset]);
             unsigned opcodeLength = opcodeLengths[opcodeID];
             // If we found a terminal bytecode, link to the exit block.
             if (isTerminal(opcodeID)) {

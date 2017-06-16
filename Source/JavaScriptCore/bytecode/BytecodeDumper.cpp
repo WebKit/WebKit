@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -360,7 +361,7 @@ template<class Block>
 void BytecodeDumper<Block>::printGetByIdOp(PrintStream& out, int location, const typename Block::Instruction*& it)
 {
     const char* op;
-    switch (vm()->interpreter->getOpcodeID(*it)) {
+    switch (Interpreter::getOpcodeID(*it)) {
     case op_get_by_id:
         op = "get_by_id";
         break;
@@ -422,14 +423,14 @@ void BytecodeDumper<Block>::printGetByIdCacheStatus(PrintStream& out, int locati
 
     UNUSED_PARAM(ident); // tell the compiler to shut up in certain platform configurations.
 
-    if (vm()->interpreter->getOpcodeID(instruction[0]) == op_get_array_length)
+    if (Interpreter::getOpcodeID(instruction[0]) == op_get_array_length)
         out.printf(" llint(array_length)");
     else if (StructureID structureID = getStructureID(instruction[4])) {
         Structure* structure = vm()->heap.structureIDTable().get(structureID);
         out.printf(" llint(");
         dumpStructure(out, "struct", structure, ident);
         out.printf(")");
-        if (vm()->interpreter->getOpcodeID(instruction[0]) == op_get_by_id_proto_load)
+        if (Interpreter::getOpcodeID(instruction[0]) == op_get_by_id_proto_load)
             out.printf(" proto(%p)", getPointer(instruction[6]));
     }
 
@@ -611,7 +612,7 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
 {
     int location = it - begin;
     bool hasPrintedProfiling = false;
-    OpcodeID opcode = vm()->interpreter->getOpcodeID(*it);
+    OpcodeID opcode = Interpreter::getOpcodeID(*it);
     switch (opcode) {
     case op_enter: {
         printLocationAndOp(out, location, it, "enter");
@@ -1776,10 +1777,9 @@ void BytecodeDumper<Block>::dumpStringSwitchJumpTables(PrintStream& out)
 template<class Block>
 void BytecodeDumper<Block>::dumpBlock(Block* block, const typename Block::UnpackedInstructions& instructions, PrintStream& out, const StubInfoMap& stubInfos, const CallLinkInfoMap& callLinkInfos)
 {
-    VM& vm = *block->vm();
     size_t instructionCount = 0;
 
-    for (size_t i = 0; i < instructions.size(); i += opcodeLengths[vm.interpreter->getOpcodeID(instructions[i])])
+    for (size_t i = 0; i < instructions.size(); i += opcodeLengths[Interpreter::getOpcodeID(instructions[i])])
         ++instructionCount;
 
     out.print(*block);

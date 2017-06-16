@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 #include "InlineCallFrame.h"
-#include "Interpreter.h"
+#include "InterpreterInlines.h"
 #include "LLIntCallLinkInfo.h"
 #include "JSCInlines.h"
 #include <wtf/CommaPrinter.h>
@@ -66,10 +66,8 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker& locker
     UNUSED_PARAM(locker);
 #endif
 
-    VM& vm = *profiledBlock->vm();
-    
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
-    OpcodeID op = vm.interpreter->getOpcodeID(instruction[0].u.opcode);
+    OpcodeID op = Interpreter::getOpcodeID(instruction[0].u.opcode);
     if (op != op_call && op != op_construct && op != op_tail_call)
         return CallLinkStatus();
     
