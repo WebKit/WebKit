@@ -1,3 +1,13 @@
+2017-06-16  Adrian Perez de Castro  <aperez@igalia.com>
+
+        REGRESSION(r215188?): Test platform/gtk/fast/forms/menulist-typeahead-find.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=171492
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: The fixes needed for the test to pass
+        have landed, so the test can be unskipped.
+
 2017-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Layout Test fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html makes the subsequent test case flaky crash.
