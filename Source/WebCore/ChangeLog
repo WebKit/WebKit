@@ -1,3 +1,19 @@
+2017-06-15  David Kilzer  <ddkilzer@apple.com>
+
+        Revert: [iOS] Generate a simulated crash when the WebThread starts in MobileSafari
+        <https://webkit.org/b/173386>
+        <rdar://problem/32776426>
+
+        Revert r218347 and r218339 since we're going to take a different
+        approach to investigating a crash on the WebThread.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/CrashReporterSupportSoftLink.h: Remove.
+        * platform/ios/CrashReporterSupportSoftLink.mm: Remove.
+        * platform/ios/wak/WebCoreThread.mm:
+        (WebThreadEnable):
+        * platform/spi/ios/CrashReporterSupportSPI.h: Remove.
+
 2017-06-15  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218365.

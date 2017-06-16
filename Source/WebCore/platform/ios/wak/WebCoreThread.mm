@@ -38,19 +38,17 @@
 #import "WebCoreThreadRun.h"
 #import "WKUtilities.h"
 
-#import <Foundation/NSInvocation.h>
-#import <libkern/OSAtomic.h>
-#import <objc/runtime.h>
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>
-#import <unistd.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Threading.h>
 #import <wtf/text/AtomicString.h>
 
-#import "CrashReporterSupportSoftLink.h"
+#import <Foundation/NSInvocation.h>
+#import <libkern/OSAtomic.h>
+#import <objc/runtime.h>
 
 #define LOG_MESSAGES 0
 #define LOG_WEB_LOCK 0
@@ -1002,16 +1000,7 @@ void WebThreadSetDelegateSourceRunLoopMode(CFStringRef mode)
 
 void WebThreadEnable(void)
 {
-    if (WebCore::IOSApplication::isMobileSafari()) {
-        NSString *message = @"MobileSafari should never run a WebThread";
-#if !PLATFORM(IOS_SIMULATOR)
-        const mach_exception_data_type_t kExceptionCode = 0xbbadd0b1; // "Bad Dub 1" or Bad WK1.
-        SimulateCrash(getpid(), kExceptionCode, message);
-#else
-        NSLog(@"ERROR: %@\n%@", message, [NSThread callStackSymbols]);
-#endif
-    }
-    RELEASE_ASSERT_WITH_MESSAGE(!WebCore::IOSApplication::isWebProcess(), "The WebProcess should never run a WebThread");
+    RELEASE_ASSERT_WITH_MESSAGE(!WebCore::IOSApplication::isWebProcess(), "The WebProcess should never run a Web Thread");
 
     static pthread_once_t initControl = PTHREAD_ONCE_INIT;
     pthread_once(&initControl, StartWebThread);
