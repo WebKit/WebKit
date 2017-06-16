@@ -1,3 +1,13 @@
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
+        [iOS] Switching cameras in a WebRTC call makes black frames being sent
+        https://bugs.webkit.org/show_bug.cgi?id=173486
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/video-replace-muted-track-expected.txt: Added.
+        * webrtc/video-replace-muted-track.html: Added.
+
 2017-06-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove a test that was accidentally checked in with r218408.

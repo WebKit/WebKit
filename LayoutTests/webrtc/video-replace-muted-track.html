@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<div id="log"></div>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+function isVideoBlack()
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+    data = imageData.data;
+    for (var cptr = 0; cptr < canvas.width * canvas.height; ++cptr) {
+        // Approximatively black pixels.
+        if (data[4 * cptr] > 10 || data[4 * cptr + 1] > 10 || data[4 * cptr + 2] > 10)
+            return false;
+    }
+    return true;
+}
+
+var stopPolling = false;
+function pollVideoBlackCheck(expected, resolve, delay)
+{
+    if (isVideoBlack() === expected || stopPolling) {
+        resolve();
+        return;
+    }
+
+    setTimeout(() => pollVideoBlackCheck(expected, resolve), delay);
+}
+
+function checkVideoBlack(expected, duration, id, delay)
+{
+    stopPolling = false;
+    return new Promise((resolve, reject) => {
+        pollVideoBlackCheck(expected, resolve, delay);
+        setTimeout(() => {
+            reject("checkVideoBlack timed out for " + id + ", expected " + expected);
+            stopPolling = true;
+        }, duration);
+    });
+}
+
+function grabImagePixels()
+{
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    imageData = canvas.getContext('2d').getImageData(20, 20, 2, 2);
+    return imageData.data;
+}
+
+promise_test((test) => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    var sender;
+    var firstTrack;
+    return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["user"] } } }).then((stream) => {
+        frontStream = stream;
+        return new Promise((resolve, reject) => {
+            createConnections((firstConnection) => {
+                firstTrack = frontStream.getVideoTracks()[0];
+                sender = firstConnection.addTrack(firstTrack, frontStream);
+           }, (secondConnection) => {
+                secondConnection.ontrack = (trackEvent) => {
+                    resolve(trackEvent.streams[0]);
+                };
+            });
+            setTimeout(() => reject("Test timed out"), 5000);
+        });
+    }).then((remoteStream) => {
+        video.srcObject = remoteStream;
+        return video.play();
+    }).then(() => {
+        firstTrack.enabled = false;
+        return waitFor(200);
+    }).then(() => {
+        return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["environment"] } } });
+    }).then((stream) => {
+        return sender.replaceTrack(stream.getVideoTracks()[0]);
+    }).then(() => {
+        return waitFor(200);
+    }).then(() => {
+        // Let's ensure we have some non black frames sent.
+        return checkVideoBlack(false, 5000, "test2", 200);
+    }).then(() => {
+        // Let's ensure there are no black frames sent.
+        return checkVideoBlack(true, 2000, "test3", 50).then(assert_unreached, () => { });
+    });
+}, "Switching from disabled to enabled track");
+        </script>
+    </body>
+</html>

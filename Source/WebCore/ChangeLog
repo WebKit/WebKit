@@ -1,5 +1,20 @@
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
+        [iOS] Switching cameras in a WebRTC call makes black frames being sent
+        https://bugs.webkit.org/show_bug.cgi?id=173486
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/video-replace-muted-track.html
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::updateBlackFramesSending):
+        Ensuring the timer is stopped if needed.
+        (WebCore::RealtimeOutgoingVideoSource::initializeFromSource):
+        Calling updateBlackFramesSending to stop sending frame if needed.
+
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
         Remove replaceTrack restriction about video resolution
         https://bugs.webkit.org/show_bug.cgi?id=173490
 

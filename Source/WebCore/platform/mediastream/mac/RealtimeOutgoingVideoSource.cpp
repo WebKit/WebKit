@@ -74,8 +74,9 @@ void RealtimeOutgoingVideoSource::stop()
 
 void RealtimeOutgoingVideoSource::updateBlackFramesSending()
 {
-    if (!m_muted && m_enabled && m_blackFrameTimer.isActive()) {
-        m_blackFrameTimer.stop();
+    if (!m_muted && m_enabled) {
+        if (m_blackFrameTimer.isActive())
+            m_blackFrameTimer.stop();
         return;
     }
 
@@ -109,7 +110,7 @@ void RealtimeOutgoingVideoSource::initializeFromSource()
     m_muted = m_videoSource->muted();
     m_enabled = m_videoSource->enabled();
 
-    sendBlackFramesIfNeeded();
+    updateBlackFramesSending();
 }
 
 bool RealtimeOutgoingVideoSource::GetStats(Stats*)
