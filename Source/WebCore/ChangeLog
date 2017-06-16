@@ -1,3 +1,17 @@
+2017-06-16  Alex Christensen  <achristensen@webkit.org>
+
+        Show punycode to user if a URL has dotless i or j followed by diacritic dot
+        https://bugs.webkit.org/show_bug.cgi?id=173431
+
+        Reviewed by Darin Adler.
+
+        Covered by new API tests.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::isLookalikeCharacter):
+        (WebCore::allCharactersInIDNScriptWhiteList):
+        (WebCore::createStringWithEscapedUnsafeCharacters):
+
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
         [iOS] Switching cameras in a WebRTC call makes black frames being sent
