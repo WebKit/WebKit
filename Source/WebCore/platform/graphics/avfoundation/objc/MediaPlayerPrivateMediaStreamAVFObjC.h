@@ -201,6 +201,7 @@ private:
     void didRemoveTrack(MediaStreamTrackPrivate&) override;
 
     // MediaStreamPrivateTrack::Observer
+    void trackStarted(MediaStreamTrackPrivate&) override { };
     void trackEnded(MediaStreamTrackPrivate&) override { };
     void trackMutedChanged(MediaStreamTrackPrivate&) override { };
     void trackSettingsChanged(MediaStreamTrackPrivate&) override { };

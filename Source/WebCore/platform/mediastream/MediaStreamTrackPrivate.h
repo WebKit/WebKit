@@ -43,6 +43,7 @@ public:
     public:
         virtual ~Observer() { }
 
+        virtual void trackStarted(MediaStreamTrackPrivate&) { };
         virtual void trackEnded(MediaStreamTrackPrivate&) = 0;
         virtual void trackMutedChanged(MediaStreamTrackPrivate&) = 0;
         virtual void trackSettingsChanged(MediaStreamTrackPrivate&) = 0;
@@ -102,6 +103,7 @@ private:
     MediaStreamTrackPrivate(Ref<RealtimeMediaSource>&&, String&& id);
 
     // RealtimeMediaSourceObserver
+    void sourceStarted() final;
     void sourceStopped() final;
     void sourceMutedChanged() final;
     void sourceEnabledChanged() final;
