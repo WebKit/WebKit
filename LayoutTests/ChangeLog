@@ -1,3 +1,14 @@
+2017-06-16  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Layout Test fast/events/tabindex-focus-blur-all.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=145171
+
+        Unreviewed gardening.
+
+        Recently, this test case results in flaky crash, no flaky timeout.
+
+        * platform/gtk/TestExpectations: Marked it Crash Pass.
+
 2017-06-16  Adrian Perez de Castro  <aperez@igalia.com>
 
         REGRESSION(r215188?): Test platform/gtk/fast/forms/menulist-typeahead-find.html is failing

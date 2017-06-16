@@ -2183,7 +2183,7 @@ webkit.org/b/145053 http/tests/xmlhttprequest/origin-exact-matching.html [ Timeo
 
 webkit.org/b/145168 media/track/track-cue-inline-assertion-crash.html [ Timeout Pass ]
 webkit.org/b/145169 media/track/track-css-user-override.html [ Timeout Pass ]
-webkit.org/b/145171 fast/events/tabindex-focus-blur-all.html [ Timeout Pass ]
+webkit.org/b/145171 fast/events/tabindex-focus-blur-all.html [ Crash Pass ]
 
 # This tests timeout since the upgrade of GTK to 3.16 and Cairo to 1.14 on the JHBuild
 webkit.org/b/146731 fast/events/touch/tap-highlight-color.html [ Timeout ]
