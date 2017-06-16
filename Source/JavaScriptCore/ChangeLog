@@ -1,3 +1,28 @@
+2017-06-16  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add fast path for Object.assign
+        https://bugs.webkit.org/show_bug.cgi?id=173416
+
+        Reviewed by Mark Lam.
+
+        In Object.assign implementation, we need to ensure that given key is still enumerable own key.
+        This seems duplicate look up. And we want to avoid this. However, we still need to perform this
+        check in the face of Proxy. Proxy can observe that this check is done correctly.
+
+        In almost all the cases, the above check is duplicate to the subsequent [[Get]] operation.
+        In this patch, we perform this check. But at that time, we investigate `isTaintedByOpaqueObject()`.
+        If it is false, we can say that getOwnPropertySlot is pure. In that case, we can just retrieve the
+        value by calling `slot.getValue()`.
+
+        This further improves performance of Object.assign.
+
+                                        baseline                  patched
+
+            object-assign.es6      363.6706+-6.4381     ^    324.1769+-6.9624        ^ definitely 1.1218x faster
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorAssign):
+
 2017-06-16  Michael Saboff  <msaboff@apple.com>
 
         Intermittent crash running Internal/Tests/InternalJSTests/Regress/radar-24300617.js

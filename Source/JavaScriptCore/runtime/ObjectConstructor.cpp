@@ -330,15 +330,17 @@ EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, { });
 
         auto assign = [&] (PropertyName propertyName) {
-            // FIXME: We can avoid this enumerable look up by checking Structure's status.
-            // https://bugs.webkit.org/show_bug.cgi?id=173416
             PropertySlot slot(source, PropertySlot::InternalMethodType::GetOwnProperty);
             if (!source->methodTable(vm)->getOwnPropertySlot(source, exec, propertyName, slot))
                 return;
             if (slot.attributes() & DontEnum)
                 return;
 
-            JSValue value = source->get(exec, propertyName);
+            JSValue value;
+            if (LIKELY(!slot.isTaintedByOpaqueObject()))
+                value = slot.getValue(exec, propertyName);
+            else
+                value = source->get(exec, propertyName);
             RETURN_IF_EXCEPTION(scope, void());
 
             PutPropertySlot putPropertySlot(target, true);
