@@ -281,13 +281,6 @@ void MediaStreamPrivate::trackEnabledChanged(MediaStreamTrackPrivate&)
     });
 }
 
-void MediaStreamPrivate::trackStarted(MediaStreamTrackPrivate&)
-{
-    scheduleDeferredTask([this] {
-        characteristicsChanged();
-    });
-}
-
 void MediaStreamPrivate::trackEnded(MediaStreamTrackPrivate&)
 {
     scheduleDeferredTask([this] {

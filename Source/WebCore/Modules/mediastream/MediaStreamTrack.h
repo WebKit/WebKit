@@ -32,26 +32,18 @@
 #include "ActiveDOMObject.h"
 #include "DoubleRange.h"
 #include "EventTarget.h"
-#include "GenericTaskQueue.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LongRange.h"
-#include "MediaProducer.h"
 #include "MediaStreamTrackPrivate.h"
 #include "MediaTrackConstraints.h"
 
 namespace WebCore {
 
 class AudioSourceProvider;
-class Document;
 
 struct MediaTrackConstraints;
 
-class MediaStreamTrack :
-    public RefCounted<MediaStreamTrack>,
-    public ActiveDOMObject,
-    public EventTargetWithInlineData,
-    private MediaProducer,
-    private MediaStreamTrackPrivate::Observer {
+class MediaStreamTrack : public RefCounted<MediaStreamTrack>, public ActiveDOMObject, public EventTargetWithInlineData, private MediaStreamTrackPrivate::Observer {
 public:
     class Observer {
     public:
@@ -118,14 +110,10 @@ public:
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
     void applyConstraints(const std::optional<MediaTrackConstraints>&, DOMPromiseDeferred<void>&&);
 
-    RealtimeMediaSource& source() const { return m_private->source(); }
+    RealtimeMediaSource& source() { return m_private->source(); }
     MediaStreamTrackPrivate& privateTrack() { return m_private.get(); }
 
     AudioSourceProvider* audioSourceProvider();
-
-    // MediaProducer
-    void pageMutedStateDidChange() final;
-    MediaProducer::MediaStateFlags mediaState() const final;
 
     void addObserver(Observer&);
     void removeObserver(Observer&);
@@ -144,8 +132,6 @@ private:
 
     void configureTrackRendering();
 
-    Document* document() const;
-
     // ActiveDOMObject API.
     void stop() final;
     const char* activeDOMObjectName() const final;
@@ -158,7 +144,6 @@ private:
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
     // MediaStreamTrackPrivate::Observer
-    void trackStarted(MediaStreamTrackPrivate&) final;
     void trackEnded(MediaStreamTrackPrivate&) final;
     void trackMutedChanged(MediaStreamTrackPrivate&) final;
     void trackSettingsChanged(MediaStreamTrackPrivate&) final;
@@ -172,7 +157,6 @@ private:
     MediaTrackConstraints m_constraints;
     std::optional<DOMPromiseDeferred<void>> m_promise;
     WeakPtrFactory<MediaStreamTrack> m_weakPtrFactory;
-    GenericTaskQueue<ScriptExecutionContext> m_taskQueue;
 
     bool m_ended { false };
 };

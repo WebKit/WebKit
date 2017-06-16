@@ -90,6 +90,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, const MediaStreamTrack
     setIsActive(m_private->active());
     m_private->addObserver(*this);
     MediaStreamRegistry::shared().registerStream(*this);
+    document()->addAudioProducer(this);
     suspendIfNeeded();
 }
 
@@ -110,6 +111,7 @@ MediaStream::MediaStream(ScriptExecutionContext& context, Ref<MediaStreamPrivate
         track->addObserver(*this);
         m_trackSet.add(track->id(), WTFMove(track));
     }
+    document()->addAudioProducer(this);
     suspendIfNeeded();
 }
 
@@ -123,6 +125,7 @@ MediaStream::~MediaStream()
     for (auto& track : m_trackSet.values())
         track->removeObserver(*this);
     if (Document* document = this->document()) {
+        document->removeAudioProducer(this);
         if (m_isWaitingUntilMediaCanStart)
             document->removeMediaCanStartListener(this);
     }
@@ -319,15 +322,52 @@ void MediaStream::endCaptureTracks()
     }
 }
 
+void MediaStream::pageMutedStateDidChange()
+{
+    if (!m_isActive)
+        return;
+
+    Document* document = this->document();
+    if (!document)
+        return;
+
+    m_private->setCaptureTracksMuted(document->page()->isMediaCaptureMuted());
+}
+
 MediaProducer::MediaStateFlags MediaStream::mediaState() const
 {
-    MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
+    MediaStateFlags state = IsNotPlaying;
 
     if (!m_isActive || !document() || !document()->page())
         return state;
 
-    for (const auto& track : m_trackSet.values())
-        state |= track->mediaState();
+    bool pageCaptureMuted = document()->page()->isMediaCaptureMuted();
+    for (const auto& track : m_trackSet.values()) {
+        if (!track->isCaptureTrack() || track->ended())
+            continue;
+
+        if (track->source().type() == RealtimeMediaSource::Type::Audio) {
+            if (track->source().interrupted() && !pageCaptureMuted)
+                state |= HasInterruptedAudioCaptureDevice;
+            else if (track->muted())
+                state |= HasMutedAudioCaptureDevice;
+            else if (m_isProducingData && m_private->isProducingData()) {
+                state |= HasActiveAudioCaptureDevice;
+                ASSERT(!track->source().interrupted());
+                ASSERT(!track->muted());
+            }
+        } else {
+            if (track->source().interrupted() && !pageCaptureMuted)
+                state |= HasInterruptedVideoCaptureDevice;
+            else if (track->muted())
+                state |= HasMutedVideoCaptureDevice;
+            else if (m_isProducingData && m_private->isProducingData()) {
+                state |= HasActiveVideoCaptureDevice;
+                ASSERT(!track->source().interrupted());
+                ASSERT(!track->muted());
+            }
+        }
+    }
 
     return state;
 }
@@ -339,12 +379,13 @@ void MediaStream::statusDidChange()
     if (Document* document = this->document()) {
         if (m_isActive)
             document->setHasActiveMediaStreamTrack();
+        document->updateIsPlayingMedia();
     }
 }
 
 void MediaStream::characteristicsChanged()
 {
-    auto state = mediaState();
+    MediaStateFlags state = mediaState();
     if (m_state != state) {
         m_state = state;
         statusDidChange();
