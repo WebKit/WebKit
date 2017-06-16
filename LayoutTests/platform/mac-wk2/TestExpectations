@@ -694,3 +694,8 @@ webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
 webkit.org/b/172666 [ Debug ] fast/images/slower-decoding-than-animation-image.html [ Pass Failure ]
 
 webkit.org/b/173188 fast/mediastream/getUserMedia-grant-persistency3.html [ Pass Failure ]
+
+webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbindex_getAll.html [ Pass Failure ]
+
+webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAllKeys.html [ Pass Failure ]
+
