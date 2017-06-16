@@ -1,5 +1,14 @@
 2017-06-16  Matt Lewis  <jlewis3@apple.com>
 
+        Marked imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173432
+        
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2017-06-16  Matt Lewis  <jlewis3@apple.com>
+
         Adjusted test expectations for media/track/track-in-band-cues-added-once.html.
         https://bugs.webkit.org/show_bug.cgi?id=142152
 

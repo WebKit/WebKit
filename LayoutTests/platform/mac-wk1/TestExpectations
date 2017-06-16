@@ -373,3 +373,5 @@ webkit.org/b/168409 media/modern-media-controls/airplay-button/airplay-button.ht
 
 webkit.org/b/172922 [ Debug ] webrtc/datachannel/basic.html [ Pass Timeout ]
 
+webkit.org/b/173432 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
+
