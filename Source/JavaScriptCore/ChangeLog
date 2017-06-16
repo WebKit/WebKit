@@ -1,3 +1,18 @@
+2017-06-16  Michael Saboff  <msaboff@apple.com>
+
+        Intermittent crash running Internal/Tests/InternalJSTests/Regress/radar-24300617.js
+        https://bugs.webkit.org/show_bug.cgi?id=173488
+
+        Reviewed by Filip Pizlo.
+
+        ClonedArguments lazily sets its callee and interator properties and it used its own inline
+        code to initialize its butterfly.  This means that these lazily set properties can have
+        bogus values in those slots.  Instead, let's use the standard BUtterfly:tryCreate() method
+        to create the butterfly as it clears out of line properties.
+
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createEmpty):
+
 2017-06-16  Mark Lam  <mark.lam@apple.com>
 
         Interpreter methods for mapping between Opcode and OpcodeID need not be instance methods.

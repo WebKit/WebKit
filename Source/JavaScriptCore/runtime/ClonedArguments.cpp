@@ -54,13 +54,13 @@ ClonedArguments* ClonedArguments::createEmpty(
         butterfly->arrayStorage()->m_numValuesInVector = vectorLength;
 
     } else {
-        void* temp = vm.auxiliarySpace.tryAllocate(Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)));
-        if (!temp)
+        IndexingHeader indexingHeader;
+        indexingHeader.setVectorLength(vectorLength);
+        indexingHeader.setPublicLength(length);
+        butterfly = Butterfly::tryCreate(vm, 0, 0, structure->outOfLineCapacity(), true, indexingHeader, vectorLength * sizeof(EncodedJSValue));
+        if (!butterfly)
             return 0;
-        butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());
-        butterfly->setVectorLength(vectorLength);
-        butterfly->setPublicLength(length);
-        
+
         for (unsigned i = length; i < vectorLength; ++i)
             butterfly->contiguous()[i].clear();
     }
