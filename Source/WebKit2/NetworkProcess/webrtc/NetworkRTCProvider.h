@@ -82,6 +82,8 @@ private:
 
     void addSocket(uint64_t, std::unique_ptr<LibWebRTCSocketClient>&&);
 
+    void createSocket(uint64_t identifier, std::unique_ptr<rtc::AsyncPacketSocket>&&, LibWebRTCSocketClient::Type);
+
     void OnMessage(rtc::Message*);
 
     static void resolvedName(CFHostRef, CFHostInfoType, const CFStreamError*, void*);

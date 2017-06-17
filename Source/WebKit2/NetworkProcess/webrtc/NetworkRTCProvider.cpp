@@ -88,11 +88,22 @@ void NetworkRTCProvider::close()
     });
 }
 
+void NetworkRTCProvider::createSocket(uint64_t identifier, std::unique_ptr<rtc::AsyncPacketSocket>&& socket, LibWebRTCSocketClient::Type type)
+{
+    if (!socket) {
+        sendFromMainThread([identifier](IPC::Connection& connection) {
+            connection.send(Messages::WebRTCSocket::SignalClose(1), identifier);
+        });
+        return;
+    }
+    addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), type));
+}
+
 void NetworkRTCProvider::createUDPSocket(uint64_t identifier, const RTCNetwork::SocketAddress& address, uint16_t minPort, uint16_t maxPort)
 {
     callOnRTCNetworkThread([this, identifier, address = RTCNetwork::isolatedCopy(address.value), minPort, maxPort]() {
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateUdpSocket(address, minPort, maxPort));
-        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), LibWebRTCSocketClient::Type::UDP));
+        createSocket(identifier, WTFMove(socket), LibWebRTCSocketClient::Type::UDP);
     });
 }
 
@@ -100,7 +111,7 @@ void NetworkRTCProvider::createServerTCPSocket(uint64_t identifier, const RTCNet
 {
     callOnRTCNetworkThread([this, identifier, address = RTCNetwork::isolatedCopy(address.value), minPort, maxPort, options]() {
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateServerTcpSocket(address, minPort, maxPort, options));
-        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), LibWebRTCSocketClient::Type::ServerTCP));
+        createSocket(identifier, WTFMove(socket), LibWebRTCSocketClient::Type::ServerTCP);
     });
 }
 
@@ -108,7 +119,7 @@ void NetworkRTCProvider::createClientTCPSocket(uint64_t identifier, const RTCNet
 {
     callOnRTCNetworkThread([this, identifier, localAddress = RTCNetwork::isolatedCopy(localAddress.value), remoteAddress = RTCNetwork::isolatedCopy(remoteAddress.value), options]() {
         std::unique_ptr<rtc::AsyncPacketSocket> socket(m_packetSocketFactory->CreateClientTcpSocket(localAddress, remoteAddress, { }, { }, options));
-        addSocket(identifier, std::make_unique<LibWebRTCSocketClient>(identifier, *this, WTFMove(socket), LibWebRTCSocketClient::Type::ClientTCP));
+        createSocket(identifier, WTFMove(socket), LibWebRTCSocketClient::Type::ClientTCP);
     });
 }
 

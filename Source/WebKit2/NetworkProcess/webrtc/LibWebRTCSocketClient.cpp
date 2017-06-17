@@ -42,12 +42,7 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProv
     , m_rtcProvider(rtcProvider)
     , m_socket(WTFMove(socket))
 {
-    if (!m_socket) {
-        rtcProvider.sendFromMainThread([identifier](IPC::Connection& connection) {
-            connection.send(Messages::WebRTCSocket::SignalClose(1), identifier);
-        });
-        return;
-    }
+    ASSERT(m_socket);
 
     m_socket->SignalReadPacket.connect(this, &LibWebRTCSocketClient::signalReadPacket);
     m_socket->SignalSentPacket.connect(this, &LibWebRTCSocketClient::signalSentPacket);

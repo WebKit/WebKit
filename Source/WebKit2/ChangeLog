@@ -1,3 +1,25 @@
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] CrashTracer: Regression : com.apple.WebKit.Networking at WebKit: WebKit::LibWebRTCSocketClient::sendTo
+        https://bugs.webkit.org/show_bug.cgi?id=173501
+
+        Reviewed by Eric Carlson.
+
+        When a libwebrtc socket fails to be created in the network process,
+        the network process sends back a close message, but it keeps it in a map.
+        If the web process sends a message dedicated to this socket, we will try
+        processing it and calling the socket which is null, hence the cache.
+        This patch makes it so that if the socket is null, it is not added to the map.
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::LibWebRTCSocketClient):
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::createSocket):
+        (WebKit::NetworkRTCProvider::createUDPSocket):
+        (WebKit::NetworkRTCProvider::createServerTCPSocket):
+        (WebKit::NetworkRTCProvider::createClientTCPSocket):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+
 2017-06-16  Antoine Quint  <graouts@apple.com>
 
         Add a WebKit2 setting to control whether media documents should automatically enter fullscreen
