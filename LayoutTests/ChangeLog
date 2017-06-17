@@ -1,3 +1,12 @@
+2017-06-17  Keith Miller  <keith_miller@apple.com>
+
+        ArrayPrototype methods should use JSValue::toLength for non-Arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=173506
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2017-06-17  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed test gardening. Remove duplicate entries for tests.

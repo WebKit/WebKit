@@ -725,6 +725,30 @@ webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-1.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-2.html [ Failure ]
 webkit.org/b/142937 ietestcenter/Javascript/15.2.3.14-1-3.html [ Failure ]
 
+# In ES6, Array.prototype methods use toLength rather than toUint32 when computing the length.
+ietestcenter/Javascript/15.4.4.14-3-12.html [ Failure ]
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.14-3-14.html [ Failure ]
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.14-3-25.html [ Failure ]
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.14-3-7.html [ Failure ]
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.14-3-8.html [ Failure ]
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-12.html [ Failure ]
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-25.html [ Failure ]
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-7.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.10_Array_prototype_slice/S15.4.4.10_A3_T3.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A3_T3.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.13_Array_prototype_unshift/S15.4.4.13_A2_T2.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.13_Array_prototype_unshift/S15.4.4.13_A3_T2.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.6_Array_prototype_pop/S15.4.4.6_A2_T2.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.6_Array_prototype_pop/S15.4.4.6_A3_T3.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.7_Array_prototype_push/S15.4.4.7_A2_T2.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.7_Array_prototype_push/S15.4.4.7_A4_T3.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.8_Array_prototype_reverse/S15.4.4.8_A3_T3.html [ Failure ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.9_Array_prototype_shift/S15.4.4.9_A3_T3.html [ Failure ]
+
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-14.html [ Skip ]
+webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-8.html [ Skip ]
+webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.9_Array_prototype_shift/S15.4.4.9_A2_T2.html [ Skip ]
+
 [ Debug ] js/regress-141098.html [ Slow ]
 
 # IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,

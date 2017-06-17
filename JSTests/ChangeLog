@@ -1,3 +1,15 @@
+2017-06-17  Keith Miller  <keith_miller@apple.com>
+
+        ArrayPrototype methods should use JSValue::toLength for non-Arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=173506
+
+        Reviewed by Ryosuke Niwa.
+
+        Re-baseline tests.
+
+        * ChakraCore/test/Function/apply3.baseline-jsc:
+        * test262.yaml:
+
 2017-06-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add fast path for Object.assign

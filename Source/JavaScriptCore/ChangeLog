@@ -1,3 +1,37 @@
+2017-06-17  Keith Miller  <keith_miller@apple.com>
+
+        ArrayPrototype methods should use JSValue::toLength for non-Arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=173506
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch changes the result of unshift if old length +
+        unshift.arguments.length > (2 ** 53) - 1 to be a type error. Also,
+        the getLength function, which was always incorrect to use, has
+        been removed. Additionally, some cases where we were using a
+        constant for (2 ** 53) - 1 have been replaced with
+        maxSafeInteger()
+
+        * interpreter/Interpreter.cpp:
+        (JSC::sizeOfVarargs):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/JSArrayInlines.h:
+        (JSC::getLength): Deleted.
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toLength):
+        * runtime/NumberConstructor.cpp:
+        (JSC::numberConstructorFuncIsSafeInteger):
+
 2017-06-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument 2D/WebGL canvas contexts in the backend

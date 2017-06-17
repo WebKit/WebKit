@@ -139,7 +139,7 @@ static EncodedJSValue JSC_HOST_CALL numberConstructorFuncIsSafeInteger(ExecState
         isInteger = false;
     else {
         double number = argument.asDouble();
-        isInteger = trunc(number) == number && std::abs(number) <= 9007199254740991.0;
+        isInteger = trunc(number) == number && std::abs(number) <= maxSafeInteger();
     }
     return JSValue::encode(jsBoolean(isInteger));
 }

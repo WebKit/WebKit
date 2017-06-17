@@ -62,8 +62,8 @@ double JSValue::toLength(ExecState* exec) const
     if (d <= 0)
         return 0.0;
     if (std::isinf(d))
-        return 9007199254740991.0; // 2 ** 53 - 1
-    return std::min(d, 9007199254740991.0);
+        return maxSafeInteger();
+    return std::min(d, maxSafeInteger());
 }
 
 double JSValue::toNumberSlowCase(ExecState* exec) const

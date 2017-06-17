@@ -204,7 +204,7 @@ unsigned sizeOfVarargs(CallFrame* callFrame, JSValue arguments, uint32_t firstVa
         
     default:
         RELEASE_ASSERT(arguments.isObject());
-        length = getLength(callFrame, jsCast<JSObject*>(cell));
+        length = toLength(callFrame, jsCast<JSObject*>(cell));
         break;
     }
     RETURN_IF_EXCEPTION(scope, 0);

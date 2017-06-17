@@ -448,8 +448,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
 
     JSObject* thisObject = thisValue.toObject(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    unsigned length = getLength(exec, thisObject);
+    unsigned length = toLength(exec, thisObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     StringRecursionChecker checker(exec, thisObject);
@@ -736,7 +735,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    unsigned length = getLength(exec, thisObj);
+    unsigned length = toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (length == 0) {
@@ -775,7 +774,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    unsigned length = getLength(exec, thisObj);
+    unsigned length = toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     for (unsigned n = 0; n < exec->argumentCount(); n++) {
@@ -806,7 +805,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
     if (UNLIKELY(!thisObject))
         return encodedJSValue();
 
-    unsigned length = getLength(exec, thisObject);
+    unsigned length = toLength(exec, thisObject);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     switch (thisObject->indexingType()) {
@@ -897,7 +896,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    unsigned length = getLength(exec, thisObj);
+    unsigned length = toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (length == 0) {
@@ -924,7 +923,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return { };
-    unsigned length = getLength(exec, thisObj);
+    unsigned length = toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned begin = argumentClampedIndexFromStartOrEnd(exec, 0, length);
@@ -940,7 +939,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
         return { };
 
-    bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj);
+    bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, { });
     if (LIKELY(okToDoFastPath)) {
         if (JSArray* result = asArray(thisObj)->fastSlice(*exec, begin, end - begin))
@@ -980,7 +979,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    unsigned length = getLength(exec, thisObj);
+    unsigned length = toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     if (!exec->argumentCount()) {
@@ -1025,7 +1024,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
         return JSValue::encode(jsUndefined());
 
     JSObject* result = nullptr;
-    bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == getLength(exec, thisObj);
+    bool okToDoFastPath = speciesResult.first == SpeciesConstructResult::FastPath && isJSArray(thisObj) && length == toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (LIKELY(okToDoFastPath))
         result = asArray(thisObj)->fastSlice(*exec, actualStart, actualDeleteCount);
@@ -1078,11 +1077,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    unsigned length = getLength(exec, thisObj);
+    double doubleLength = toLength(exec, thisObj);
+    unsigned length = doubleLength;
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned nrArgs = exec->argumentCount();
     if (nrArgs) {
+        if (UNLIKELY(doubleLength + static_cast<double>(nrArgs) > maxSafeInteger()))
+            return throwVMTypeError(exec, scope, ASCIILiteral("Cannot shift to offset greater than (2 ** 53) - 1"));
         unshift<JSArray::ShiftCountForShift>(exec, thisObj, 0, 0, nrArgs, length);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
     }
@@ -1106,7 +1108,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    unsigned length = getLength(exec, thisObj);
+    unsigned length = toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned index = argumentClampedIndexFromStartOrEnd(exec, 1, length);
@@ -1134,7 +1136,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
     ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
-    unsigned length = getLength(exec, thisObj);
+    unsigned length = toLength(exec, thisObj);
     if (UNLIKELY(scope.exception()) || !length)
         return JSValue::encode(jsNumber(-1));
 
