@@ -254,6 +254,7 @@ list(APPEND WebKit_SOURCES_WebCoreSupport
 )
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+    enable_language(ASM_MASM)
     if (MSVC)
         set(MASM_EXECUTABLE ml64)
         set(MASM_FLAGS /c /Fo)
@@ -268,7 +269,6 @@ if (CMAKE_SIZEOF_VOID_P EQUAL 8)
             ${DERIVED_SOURCES_WEBKIT_DIR}/PaintHooks.obj
         )
     else ()
-        enable_language(ASM_MASM)
         list(APPEND WebKit_SOURCES
             win/plugins/PaintHooks.asm
         )

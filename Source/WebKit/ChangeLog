@@ -1,3 +1,12 @@
+2017-06-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Visual Studio 2017 64-bit build after r218258
+        https://bugs.webkit.org/show_bug.cgi?id=173308
+
+        * PlatformWin.cmake:
+        We still need the enable_language(ASM_MASM) even if we explicitly call ml64 with VS2017.
+        Otherwise CMake complains about a missing variable CMAKE_ASM_MASM_COMPILE_OBJECT.
+
 2017-06-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win64] Fails to build Asm.lib (PaintHooks.asm) since Bug 173132
