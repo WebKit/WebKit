@@ -38,6 +38,7 @@
 #include "GraphicsContext.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorCSSAgent.h"
+#include "InspectorCanvasAgent.h"
 #include "InspectorClient.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMDebuggerAgent.h"
@@ -182,6 +183,10 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
     m_agents.append(std::make_unique<InspectorApplicationCacheAgent>(pageContext, pageAgent));
     m_agents.append(std::make_unique<InspectorLayerTreeAgent>(pageContext));
     m_agents.append(std::make_unique<InspectorWorkerAgent>(pageContext));
+
+    auto canvasAgentPtr = std::make_unique<InspectorCanvasAgent>(pageContext, pageAgent);
+    m_instrumentingAgents->setInspectorCanvasAgent(canvasAgentPtr.get());
+    m_agents.append(WTFMove(canvasAgentPtr));
 
     ASSERT(m_injectedScriptManager->commandLineAPIHost());
     if (CommandLineAPIHost* commandLineAPIHost = m_injectedScriptManager->commandLineAPIHost()) {

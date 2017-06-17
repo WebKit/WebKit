@@ -1,3 +1,16 @@
+2017-06-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Instrument 2D/WebGL canvas contexts in the backend
+        https://bugs.webkit.org/show_bug.cgi?id=172623
+        <rdar://problem/32415986>
+
+        Reviewed by Devin Rousso and Joseph Pecoraro.
+
+        Test that CanvasAgent dispatches events for canvas lifecycle events.
+
+        * inspector/canvas/create-canvas-contexts-expected.txt: Added.
+        * inspector/canvas/create-canvas-contexts.html: Added.
+
 2017-06-16  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for HTMLDocument

@@ -36,6 +36,7 @@
 #include "Element.h"
 #include "FormData.h"
 #include "Frame.h"
+#include "HTMLCanvasElement.h"
 #include "HitTestResult.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentationCookie.h"
@@ -81,6 +82,7 @@ class ResourceResponse;
 class SecurityOrigin;
 class ShadowRoot;
 class URL;
+class WebGLRenderingContextBase;
 class WebKitNamedFlow;
 class WorkerInspectorProxy;
 
@@ -242,6 +244,9 @@ public:
 #if ENABLE(RESOURCE_USAGE)
     static void didHandleMemoryPressure(Page&, Critical);
 #endif
+
+    static void didCreateCSSCanvas(HTMLCanvasElement&, const String&);
+    static void didCreateCanvasRenderingContext(HTMLCanvasElement&);
 
     static void networkStateChanged(Page&);
     static void updateApplicationCacheStatus(Frame*);
@@ -414,6 +419,9 @@ private:
 
     static void networkStateChangedImpl(InstrumentingAgents&);
     static void updateApplicationCacheStatusImpl(InstrumentingAgents&, Frame&);
+
+    static void didCreateCSSCanvasImpl(InstrumentingAgents*, HTMLCanvasElement&, const String&);
+    static void didCreateCanvasRenderingContextImpl(InstrumentingAgents*, HTMLCanvasElement&);
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
@@ -1172,6 +1180,18 @@ inline void InspectorInstrumentation::didHandleMemoryPressure(Page& page, Critic
     didHandleMemoryPressureImpl(instrumentingAgentsForPage(page), critical);
 }
 #endif
+
+inline void InspectorInstrumentation::didCreateCSSCanvas(HTMLCanvasElement& canvasElement, const String& name)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didCreateCSSCanvasImpl(instrumentingAgents, canvasElement, name);
+}
+    
+inline void InspectorInstrumentation::didCreateCanvasRenderingContext(HTMLCanvasElement& canvasElement)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didCreateCanvasRenderingContextImpl(instrumentingAgents, canvasElement);
+}
 
 inline void InspectorInstrumentation::networkStateChanged(Page& page)
 {

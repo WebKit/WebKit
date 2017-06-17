@@ -95,6 +95,8 @@ WebInspector.loaded = function()
         InspectorBackend.registerWorkerDispatcher(new WebInspector.WorkerObserver);
     if (InspectorBackend.registerReplayDispatcher)
         InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
+    if (InspectorBackend.registerCanvasDispatcher)
+        InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
 
     // Main backend target.
     WebInspector.mainTarget = new WebInspector.MainTarget;
@@ -136,6 +138,7 @@ WebInspector.loaded = function()
     this.workerManager = new WebInspector.WorkerManager;
     this.replayManager = new WebInspector.ReplayManager;
     this.domDebuggerManager = new WebInspector.DOMDebuggerManager;
+    this.canvasManager = new WebInspector.CanvasManager;
 
     // Enable the Console Agent after creating the singleton managers.
     ConsoleAgent.enable();

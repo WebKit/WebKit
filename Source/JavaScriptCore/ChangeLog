@@ -1,3 +1,23 @@
+2017-06-16  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Instrument 2D/WebGL canvas contexts in the backend
+        https://bugs.webkit.org/show_bug.cgi?id=172623
+        <rdar://problem/32415986>
+
+        Reviewed by Devin Rousso and Joseph Pecoraro.
+
+        This patch adds a basic Canvas protocol. It includes Canvas and related
+        types and events for monitoring the lifetime of canvases in the page.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * inspector/protocol/Canvas.json: Added.
+
+        * inspector/scripts/codegen/generator.py:
+        (Generator.stylized_name_for_enum_value):
+        Add special handling for Canvas.ContextType protocol enumeration,
+        so that "canvas-2d" and "webgl" map to `Canvas2D` and `WebGL`.
+
 2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit
