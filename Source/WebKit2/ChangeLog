@@ -1,3 +1,14 @@
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC sockets should be closed at destruction time if not closed explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=173479
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/Network/webrtc/LibWebRTCSocket.cpp:
+        (WebKit::LibWebRTCSocket::~LibWebRTCSocket):
+        (WebKit::LibWebRTCSocket::Close):
+
 2017-06-16  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add WKProcessPool SPI to efficiently reset all plugin load client policies

@@ -1,5 +1,15 @@
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
+        WebRTC sockets should be closed at destruction time if not closed explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=173479
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/multiple-connections-expected.txt: Added.
+        * webrtc/datachannel/multiple-connections.html: Added.
+
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
         addTransceiver should trigger mid generation in the SDP
         https://bugs.webkit.org/show_bug.cgi?id=173452
 

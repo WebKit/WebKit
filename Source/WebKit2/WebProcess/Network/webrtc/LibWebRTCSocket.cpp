@@ -58,6 +58,7 @@ LibWebRTCSocket::LibWebRTCSocket(LibWebRTCSocketFactory& factory, uint64_t ident
 
 LibWebRTCSocket::~LibWebRTCSocket()
 {
+    Close();
     m_factory.detach(*this);
 }
 
@@ -151,6 +152,10 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
 
 int LibWebRTCSocket::Close()
 {
+    if (m_state == STATE_CLOSED)
+        return 0;
+
+    m_state = STATE_CLOSED;
     auto identifier = this->identifier();
     sendOnMainThread([identifier](IPC::Connection& connection) {
         connection.send(Messages::NetworkRTCSocket::Close(), identifier);
