@@ -372,6 +372,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm
     platform/graphics/avfoundation/MediaTimeAVFoundation.cpp
 
+    platform/graphics/avfoundation/objc/AVAssetTrackUtilities.mm
     platform/graphics/avfoundation/objc/AVFoundationMIMETypeCache.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm
     platform/graphics/avfoundation/objc/AudioTrackPrivateMediaSourceAVFObjC.cpp
@@ -455,6 +456,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/FontCacheCoreText.cpp
     platform/graphics/cocoa/FontCascadeCocoa.mm
     platform/graphics/cocoa/FontCocoa.mm
+    platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
     platform/graphics/cocoa/FontPlatformDataCocoa.mm
     platform/graphics/cocoa/IOSurface.mm
     platform/graphics/cocoa/IOSurfacePoolCocoa.mm
