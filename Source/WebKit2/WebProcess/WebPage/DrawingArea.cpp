@@ -82,7 +82,7 @@ DrawingArea::~DrawingArea()
     WebProcess::singleton().removeMessageReceiver(Messages::DrawingArea::messageReceiverName(), m_webPage.pageID());
 }
 
-void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()> function)
+void DrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&& function)
 {
     // Scroll position updates are synchronous by default so we can just call the function right away here.
     function();

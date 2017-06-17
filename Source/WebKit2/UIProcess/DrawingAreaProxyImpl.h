@@ -60,7 +60,7 @@ private:
     void discardBackingStoreSoon();
     void discardBackingStore();
 
-    void dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)>) override;
+    void dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&&) override;
 
     class DrawingMonitor {
         WTF_MAKE_NONCOPYABLE(DrawingMonitor); WTF_MAKE_FAST_ALLOCATED;
@@ -68,7 +68,7 @@ private:
         DrawingMonitor(WebPageProxy&);
         ~DrawingMonitor();
 
-        void start(std::function<void (CallbackBase::Error)>);
+        void start(WTF::Function<void (CallbackBase::Error)>&&);
 
     private:
         static int webViewDrawCallback(DrawingMonitor*);
@@ -78,7 +78,7 @@ private:
 
         WebPageProxy& m_webPage;
         double m_startTime { 0 };
-        std::function<void (CallbackBase::Error)> m_callback;
+        WTF::Function<void (CallbackBase::Error)> m_callback;
         RunLoop::Timer<DrawingMonitor> m_timer;
     };
 

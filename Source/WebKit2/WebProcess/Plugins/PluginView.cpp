@@ -133,7 +133,7 @@ private:
     }
 
     // NetscapePluginStreamLoaderClient
-    void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void (ResourceRequest&&)>&&) override;
+    void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, WTF::Function<void (ResourceRequest&&)>&&) override;
     void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) override;
     void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) override;
     void didFail(NetscapePlugInStreamLoader*, const ResourceError&) override;
@@ -142,7 +142,7 @@ private:
     PluginView* m_pluginView;
     uint64_t m_streamID;
     ResourceRequest m_request;
-    std::function<void (ResourceRequest)> m_loadCallback;
+    WTF::Function<void (ResourceRequest)> m_loadCallback;
 
     // True if the stream was explicitly cancelled by calling cancel().
     // (As opposed to being cancelled by the user hitting the stop button for example.
@@ -221,12 +221,12 @@ static uint32_t lastModifiedDateMS(const ResourceResponse& response)
     return std::chrono::duration_cast<std::chrono::milliseconds>(lastModified.value().time_since_epoch()).count();
 }
 
-void PluginView::Stream::willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&& request, const ResourceResponse& redirectResponse, std::function<void (ResourceRequest&&)>&& decisionHandler)
+void PluginView::Stream::willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&& request, const ResourceResponse& redirectResponse, WTF::Function<void (ResourceRequest&&)>&& decisionHandler)
 {
     const URL& requestURL = request.url();
     const URL& redirectResponseURL = redirectResponse.url();
 
-    m_loadCallback = decisionHandler;
+    m_loadCallback = WTFMove(decisionHandler);
     m_request = request;
     m_pluginView->m_plugin->streamWillSendRequest(m_streamID, requestURL, redirectResponseURL, redirectResponse.httpStatusCode());
 }

@@ -296,7 +296,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     
     int _activeAnimatedResizeCount;
 
-    Vector<std::function<void ()>> _snapshotsDeferredDuringResize;
+    Vector<WTF::Function<void ()>> _snapshotsDeferredDuringResize;
     RetainPtr<NSMutableArray> _stableStatePresentationUpdateCallbacks;
 
     RetainPtr<WKPasswordView> _passwordView;

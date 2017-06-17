@@ -358,7 +358,7 @@ void TiledCoreAnimationDrawingArea::scaleViewToFitDocumentIfNeeded()
     m_webPage.scaleView(viewScale);
 }
 
-void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()> function)
+void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&& function)
 {
 #if ENABLE(ASYNC_SCROLLING)
     if (!m_webPage.corePage()->scrollingCoordinator()) {
@@ -377,7 +377,7 @@ void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(s
     // (The web page is already kept alive by dispatchAfterEnsuringUpdatedScrollPosition).
     WebPage* webPage = &m_webPage;
 
-    ScrollingThread::dispatchBarrier([this, webPage, function] {
+    ScrollingThread::dispatchBarrier([this, webPage, function = WTFMove(function)] {
         DrawingArea* drawingArea = webPage->drawingArea();
         if (!drawingArea)
             return;

@@ -41,7 +41,7 @@ SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationViewController);
 
 namespace WebKit {
 
-void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLStrings, const WebCore::PaymentRequest& request, std::function<void (bool)> completionHandler)
+void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLStrings, const WebCore::PaymentRequest& request, WTF::Function<void (bool)>&& completionHandler)
 {
     UIViewController *presentingViewController = m_webPageProxy.uiClient().presentingViewController();
 

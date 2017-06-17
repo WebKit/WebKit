@@ -142,8 +142,8 @@ private:
 @implementation WKTextFinderClient {
     WebPageProxy *_page;
     NSView *_view;
-    Deque<std::function<void(NSArray *, bool didWrap)>> _findReplyCallbacks;
-    Deque<std::function<void(NSImage *)>> _imageReplyCallbacks;
+    Deque<WTF::Function<void(NSArray *, bool didWrap)>> _findReplyCallbacks;
+    Deque<WTF::Function<void(NSImage *)>> _imageReplyCallbacks;
 }
 
 - (instancetype)initWithPage:(WebPageProxy&)page view:(NSView *)view

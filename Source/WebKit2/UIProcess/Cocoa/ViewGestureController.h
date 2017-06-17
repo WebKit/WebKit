@@ -159,7 +159,7 @@ private:
 
         SnapshotRemovalTracker();
 
-        void start(Events, std::function<void()>);
+        void start(Events, WTF::Function<void()>&&);
         void reset();
 
         bool eventOccurred(Events);
@@ -178,7 +178,7 @@ private:
         bool stopWaitingForEvent(Events, const String& logReason);
 
         Events m_outstandingEvents { 0 };
-        std::function<void()> m_removalCallback;
+        WTF::Function<void()> m_removalCallback;
         std::chrono::steady_clock::time_point m_startTime;
 
         RunLoop::Timer<SnapshotRemovalTracker> m_watchdogTimer;

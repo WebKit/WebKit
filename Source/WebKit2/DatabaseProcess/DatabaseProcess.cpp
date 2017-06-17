@@ -293,12 +293,12 @@ Vector<WebCore::SecurityOriginData> DatabaseProcess::indexedDatabaseOrigins(cons
 #endif
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-void DatabaseProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, std::function<void (SandboxExtension::HandleArray&&)> completionHandler)
+void DatabaseProcess::getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void (SandboxExtension::HandleArray&&)>&& completionHandler)
 {
     static uint64_t lastRequestID;
 
     uint64_t requestID = ++lastRequestID;
-    m_sandboxExtensionForBlobsCompletionHandlers.set(requestID, completionHandler);
+    m_sandboxExtensionForBlobsCompletionHandlers.set(requestID, WTFMove(completionHandler));
     parentProcessConnection()->send(Messages::DatabaseProcessProxy::GetSandboxExtensionsForBlobFiles(requestID, filenames), 0);
 }
 

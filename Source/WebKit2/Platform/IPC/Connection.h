@@ -198,7 +198,7 @@ public:
     void setShouldBoostMainThreadOnSyncMessage(bool b) { m_shouldBoostMainThreadOnSyncMessage = b; }
 #endif
 
-    uint64_t installIncomingSyncMessageCallback(std::function<void ()>);
+    uint64_t installIncomingSyncMessageCallback(WTF::Function<void ()>&&);
     void uninstallIncomingSyncMessageCallback(uint64_t);
     bool hasIncomingSyncMessage();
 
@@ -296,7 +296,7 @@ private:
     Vector<PendingSyncReply> m_pendingSyncReplies;
 
     Lock m_incomingSyncMessageCallbackMutex;
-    HashMap<uint64_t, std::function<void ()>> m_incomingSyncMessageCallbacks;
+    HashMap<uint64_t, WTF::Function<void ()>> m_incomingSyncMessageCallbacks;
     RefPtr<WorkQueue> m_incomingSyncMessageCallbackQueue;
     uint64_t m_nextIncomingSyncMessageCallbackID { 0 };
 

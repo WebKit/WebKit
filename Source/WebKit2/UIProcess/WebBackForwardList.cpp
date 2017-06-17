@@ -395,7 +395,7 @@ void WebBackForwardList::clear()
     m_page->didChangeBackForwardList(nullptr, WTFMove(removedItems));
 }
 
-BackForwardListState WebBackForwardList::backForwardListState(const std::function<bool (WebBackForwardListItem&)>& filter) const
+BackForwardListState WebBackForwardList::backForwardListState(WTF::Function<bool (WebBackForwardListItem&)>&& filter) const
 {
     ASSERT(!m_hasCurrentIndex || m_currentIndex < m_entries.size());
 

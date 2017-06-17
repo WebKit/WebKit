@@ -34,7 +34,6 @@
 #include <WebCore/LayerFlushThrottleState.h>
 #include <WebCore/LayoutMilestones.h>
 #include <WebCore/PlatformScreen.h>
-#include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
@@ -115,7 +114,7 @@ public:
     virtual RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID);
 #endif
 
-    virtual void dispatchAfterEnsuringUpdatedScrollPosition(std::function<void ()>);
+    virtual void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&);
 
     virtual void activityStateDidChange(WebCore::ActivityState::Flags, bool /* wantsDidUpdateActivityState */, const Vector<uint64_t>& /* callbackIDs */) { }
     virtual void setLayerHostingMode(LayerHostingMode) { }

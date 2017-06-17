@@ -36,7 +36,6 @@
 #include <WebCore/AVKitSPI.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
-#include <functional>
 #include <wtf/BlockPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -247,7 +246,7 @@ public:
     void setWindowOcclusionDetectionEnabled(bool enabled) { m_windowOcclusionDetectionEnabled = enabled; }
     bool windowOcclusionDetectionEnabled() const { return m_windowOcclusionDetectionEnabled; }
 
-    void prepareForMoveToWindow(NSWindow *targetWindow, std::function<void()> completionHandler);
+    void prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<void()>&& completionHandler);
     NSWindow *targetWindowForMovePreparation() const { return m_targetWindowForMovePreparation; }
 
     void updateSecureInputState();

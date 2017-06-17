@@ -84,7 +84,7 @@ public:
     void startObservingCookieChanges(WebCore::SessionID);
     void stopObservingCookieChanges(WebCore::SessionID);
 
-    void setCookieObserverCallback(WebCore::SessionID, std::function<void ()>&&);
+    void setCookieObserverCallback(WebCore::SessionID, WTF::Function<void ()>&&);
 
     class Observer {
     public:
@@ -136,7 +136,7 @@ private:
     HashMap<uint64_t, RefPtr<VoidCallback>> m_voidCallbacks;
     HashMap<uint64_t, RefPtr<GetCookiesCallback>> m_getCookiesCallbacks;
 
-    HashMap<WebCore::SessionID, std::function<void ()>> m_legacyCookieObservers;
+    HashMap<WebCore::SessionID, WTF::Function<void ()>> m_legacyCookieObservers;
     HashMap<WebCore::SessionID, HashSet<Observer*>> m_cookieObservers;
 
     WebCookieManagerProxyClient m_client;

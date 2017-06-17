@@ -202,7 +202,7 @@ private:
     void didChangeAvoidsUnsafeArea(bool avoidsUnsafeArea) override;
 
 #if USE(QUICK_LOOK)
-    void requestPasswordForQuickLookDocument(const String& fileName, std::function<void(const String&)>&&) override;
+    void requestPasswordForQuickLookDocument(const String& fileName, WTF::Function<void(const String&)>&&) override;
 #endif
 
 #if ENABLE(DATA_INTERACTION)

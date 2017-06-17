@@ -1396,7 +1396,7 @@ void WebProcess::cancelPrepareToSuspend()
     parentProcessConnection()->send(Messages::WebProcessProxy::DidCancelProcessSuspension(), 0);
 }
 
-void WebProcess::markAllLayersVolatile(std::function<void()> completionHandler)
+void WebProcess::markAllLayersVolatile(WTF::Function<void()>&& completionHandler)
 {
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::markAllLayersVolatile()", this);
     m_pagesMarkingLayersAsVolatile = m_pageMap.size();
@@ -1405,7 +1405,7 @@ void WebProcess::markAllLayersVolatile(std::function<void()> completionHandler)
         return;
     }
     for (auto& page : m_pageMap.values()) {
-        page->markLayersVolatile([this, completionHandler] {
+        page->markLayersVolatile([this, completionHandler = WTFMove(completionHandler)] {
             ASSERT(m_pagesMarkingLayersAsVolatile);
             if (!--m_pagesMarkingLayersAsVolatile)
                 completionHandler();

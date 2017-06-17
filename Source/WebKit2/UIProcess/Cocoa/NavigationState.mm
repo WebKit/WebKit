@@ -67,6 +67,7 @@
 #import <WebCore/SecurityOriginData.h>
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/URL.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/NeverDestroyed.h>
 
 #if HAVE(APP_LINKS)
@@ -282,7 +283,7 @@ NavigationState::NavigationClient::~NavigationClient()
 {
 }
 
-static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const String& currentMainFrameURL, std::function<void(bool)> completionHandler)
+static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const String& currentMainFrameURL, WTF::Function<void(bool)>&& completionHandler)
 {
 #if HAVE(APP_LINKS)
     if (!navigationAction->shouldOpenAppLinks()) {
@@ -290,13 +291,11 @@ static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const S
         return;
     }
 
-    auto* localCompletionHandler = new std::function<void (bool)>(WTFMove(completionHandler));
-    [LSAppLink openWithURL:navigationAction->request().url() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
-        dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
-            (*localCompletionHandler)(success);
-            delete localCompletionHandler;
-        });
-    }];
+    [LSAppLink openWithURL:navigationAction->request().url() completionHandler:BlockPtr<void (BOOL success, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL success, NSError *) mutable {
+        dispatch_async(dispatch_get_main_queue(), BlockPtr<void ()>::fromCallable([completionHandler = WTFMove(completionHandler), success] {
+            completionHandler(success);
+        }).get());
+    }).get()];
 #else
     completionHandler(false);
 #endif

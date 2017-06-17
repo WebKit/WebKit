@@ -27,7 +27,6 @@
 #ifndef AsyncRequest_h
 #define AsyncRequest_h
 
-#include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -40,16 +39,16 @@ public:
 
     uint64_t requestID() { return m_requestID; }
 
-    void setAbortHandler(std::function<void ()>);
+    void setAbortHandler(WTF::Function<void ()>&&);
     void requestAborted();
     template<typename... Arguments> void completeRequest(Arguments&&... arguments);
 
 protected:
-    explicit AsyncRequest(std::function<void ()> abortHandler);
+    explicit AsyncRequest(WTF::Function<void ()>&& abortHandler);
 
     virtual void clearCompletionHandler() = 0;
 
-    std::function<void ()> m_abortHandler;
+    WTF::Function<void ()> m_abortHandler;
 
 private:
     uint64_t m_requestID;
@@ -60,12 +59,12 @@ class AsyncRequestImpl final : public AsyncRequest {
 public:
     template<typename T> using ArgumentType = typename std::conditional<std::is_integral<T>::value, T, const T&>::type;
 
-    static Ref<AsyncRequest> create(std::function<void(ArgumentType<Arguments>...)> completionHandler)
+    static Ref<AsyncRequest> create(WTF::Function<void(ArgumentType<Arguments>...)>&& completionHandler)
     {
         return adoptRef(*new AsyncRequestImpl<Arguments...>(WTFMove(completionHandler), nullptr));
     }
 
-    static Ref<AsyncRequest> create(std::function<void(ArgumentType<Arguments>...)> completionHandler, std::function<void()> abortHandler)
+    static Ref<AsyncRequest> create(WTF::Function<void(ArgumentType<Arguments>...)>&& completionHandler, WTF::Function<void()>&& abortHandler)
     {
         return adoptRef(*new AsyncRequestImpl<Arguments...>(WTFMove(completionHandler), WTFMove(abortHandler)));
     }
@@ -83,7 +82,7 @@ public:
     }
 
 private:
-    AsyncRequestImpl(std::function<void (ArgumentType<Arguments>...)> completionHandler, std::function<void ()> abortHandler)
+    AsyncRequestImpl(WTF::Function<void (ArgumentType<Arguments>...)>&& completionHandler, WTF::Function<void ()>&& abortHandler)
         : AsyncRequest(WTFMove(abortHandler))
         , m_completionHandler(WTFMove(completionHandler))
     {
@@ -95,7 +94,7 @@ private:
         m_completionHandler = nullptr;
     }
 
-    std::function<void (ArgumentType<Arguments>...)> m_completionHandler;
+    WTF::Function<void (ArgumentType<Arguments>...)> m_completionHandler;
 };
 
 template<typename... Arguments> void AsyncRequest::completeRequest(Arguments&&... arguments)

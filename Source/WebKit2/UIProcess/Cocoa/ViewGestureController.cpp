@@ -241,7 +241,7 @@ void ViewGestureController::SnapshotRemovalTracker::log(const String& log) const
     LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", millisecondsSinceStart, log.utf8().data());
 }
 
-void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, std::function<void()> removalCallback)
+void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, WTF::Function<void()>&& removalCallback)
 {
     m_outstandingEvents = desiredEvents;
     m_removalCallback = WTFMove(removalCallback);

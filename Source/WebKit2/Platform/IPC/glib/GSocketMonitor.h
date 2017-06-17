@@ -26,7 +26,6 @@
 #ifndef GSocketMonitor_h
 #define GSocketMonitor_h
 
-#include <functional>
 #include <glib.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

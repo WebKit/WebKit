@@ -30,7 +30,6 @@
 #include "ProcessThrottler.h"
 #include "ShareableBitmap.h"
 #include "WKAPICast.h"
-#include <functional>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -188,13 +187,6 @@ public:
     struct GenericCallbackType<1, CallbackBase::Error, U...> {
         typedef GenericCallback<U...> type;
     };
-
-    template<typename... T>
-    uint64_t put(std::function<void(T...)>&& function, const ProcessThrottler::BackgroundActivityToken& activityToken)
-    {
-        auto callback = GenericCallbackType<sizeof...(T), T...>::type::create(WTFMove(function), activityToken);
-        return put(WTFMove(callback));
-    }
 
     template<typename... T>
     uint64_t put(Function<void(T...)>&& function, const ProcessThrottler::BackgroundActivityToken& activityToken)

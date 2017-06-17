@@ -240,7 +240,7 @@ private:
     void registerWithStateDumper();
 #endif
 
-    void markAllLayersVolatile(std::function<void()> completionHandler);
+    void markAllLayersVolatile(WTF::Function<void()>&& completionHandler);
     void cancelMarkAllLayersVolatile();
     void setAllLayerTreeStatesFrozen(bool);
     void processSuspensionCleanupTimerFired();

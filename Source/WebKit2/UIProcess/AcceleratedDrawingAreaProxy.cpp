@@ -63,14 +63,14 @@ bool AcceleratedDrawingAreaProxy::alwaysUseCompositing() const
     return m_webPageProxy.preferences().acceleratedCompositingEnabled() && m_webPageProxy.preferences().forceCompositingMode();
 }
 
-void AcceleratedDrawingAreaProxy::dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)> callbackFunction)
+void AcceleratedDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
     if (!m_webPageProxy.isValid()) {
         callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
 
-    RunLoop::main().dispatch([callbackFunction] {
+    RunLoop::main().dispatch([callbackFunction = WTFMove(callbackFunction)] {
         callbackFunction(CallbackBase::Error::None);
     });
 }

@@ -34,6 +34,7 @@
 #include <WebCore/SessionID.h>
 #include <WebCore/UniqueIDBDatabase.h>
 #include <wtf/CrossThreadTask.h>
+#include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -72,7 +73,7 @@ public:
 #endif
 
 #if ENABLE(SANDBOX_EXTENSIONS)
-    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, std::function<void (SandboxExtension::HandleArray&&)> completionHandler);
+    void getSandboxExtensionsForBlobFiles(const Vector<String>& filenames, WTF::Function<void (SandboxExtension::HandleArray&&)>&& completionHandler);
 #endif
 
 private:
@@ -119,7 +120,7 @@ private:
     HashMap<WebCore::SessionID, RefPtr<WebCore::IDBServer::IDBServer>> m_idbServers;
 #endif
     HashMap<String, RefPtr<SandboxExtension>> m_blobTemporaryFileSandboxExtensions;
-    HashMap<uint64_t, std::function<void (SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlers;
+    HashMap<uint64_t, WTF::Function<void (SandboxExtension::HandleArray&&)>> m_sandboxExtensionForBlobsCompletionHandlers;
 
     Deque<CrossThreadTask> m_databaseTasks;
     Lock m_databaseTaskMutex;

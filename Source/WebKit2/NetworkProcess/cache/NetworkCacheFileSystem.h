@@ -29,7 +29,6 @@
 
 #include <WebCore/FileSystem.h>
 #include <chrono>
-#include <functional>
 
 namespace WebKit {
 namespace NetworkCache {

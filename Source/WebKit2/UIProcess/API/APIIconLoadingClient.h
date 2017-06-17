@@ -39,7 +39,7 @@ class IconLoadingClient {
 public:
     virtual ~IconLoadingClient() { }
 
-    virtual void getLoadDecisionForIcon(const WebCore::LinkIcon&, std::function<void (std::function<void (API::Data*, WebKit::CallbackBase::Error)>)> completionHandler) {
+    virtual void getLoadDecisionForIcon(const WebCore::LinkIcon&, WTF::Function<void (WTF::Function<void (API::Data*, WebKit::CallbackBase::Error)>&&)>&& completionHandler) {
         completionHandler(nullptr);
     }
 };

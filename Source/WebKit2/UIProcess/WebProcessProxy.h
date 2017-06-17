@@ -172,7 +172,7 @@ public:
 
     void reinstateNetworkProcessAssertionState(NetworkProcessProxy&);
 
-    void isResponsive(std::function<void(bool isWebProcessResponsive)>);
+    void isResponsive(WTF::Function<void(bool isWebProcessResponsive)>&&);
     void didReceiveMainThreadPing();
     void didReceiveBackgroundResponsivenessPing();
 
@@ -287,7 +287,7 @@ private:
     HashMap<String, uint64_t> m_pageURLRetainCountMap;
 
     enum class NoOrMaybe { No, Maybe } m_isResponsive;
-    Vector<std::function<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
+    Vector<WTF::Function<void(bool webProcessIsResponsive)>> m_isResponsiveCallbacks;
 
     VisibleWebPageCounter m_visiblePageCounter;
 

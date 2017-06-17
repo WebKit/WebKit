@@ -36,6 +36,7 @@
 #import "WebProcessProxy.h"
 #import <WebCore/MachSendRight.h>
 #import <WebCore/QuartzCoreSPI.h>
+#import <wtf/BlockPtr.h>
 
 using namespace IPC;
 using namespace WebCore;
@@ -211,12 +212,12 @@ void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, Float
     m_webPageProxy.process().send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_webPageProxy.pageID());
 }
 
-void TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)> callback)
+void TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&& callback)
 {
     // This callback is primarily used for testing in RemoteLayerTreeDrawingArea. We could in theory wait for a CA commit here.
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), BlockPtr<void ()>::fromCallable([callback = WTFMove(callback)] {
         callback(CallbackBase::Error::None);
-    });
+    }).get());
 }
 
 } // namespace WebKit

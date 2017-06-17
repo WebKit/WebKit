@@ -78,9 +78,9 @@ public:
     // encoded in the given argument encoder and sent back to the connection of the given web process.
     void getPluginProcessConnection(Ref<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>&&);
 
-    void fetchWebsiteData(std::function<void (Vector<String>)> completionHandler);
-    void deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler);
-    void deleteWebsiteDataForHostNames(const Vector<String>& hostNames, std::function<void ()> completionHandler);
+    void fetchWebsiteData(WTF::Function<void (Vector<String>)>&& completionHandler);
+    void deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler);
+    void deleteWebsiteDataForHostNames(const Vector<String>& hostNames, WTF::Function<void ()>&& completionHandler);
 
     bool isValid() const { return m_connection; }
 
@@ -157,21 +157,21 @@ private:
     Deque<RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>> m_pendingConnectionReplies;
 
     Vector<uint64_t> m_pendingFetchWebsiteDataRequests;
-    HashMap<uint64_t, std::function<void (Vector<String>)>> m_pendingFetchWebsiteDataCallbacks;
+    HashMap<uint64_t, WTF::Function<void (Vector<String>)>> m_pendingFetchWebsiteDataCallbacks;
 
     struct DeleteWebsiteDataRequest {
         std::chrono::system_clock::time_point modifiedSince;
         uint64_t callbackID;
     };
     Vector<DeleteWebsiteDataRequest> m_pendingDeleteWebsiteDataRequests;
-    HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataCallbacks;
+    HashMap<uint64_t, WTF::Function<void ()>> m_pendingDeleteWebsiteDataCallbacks;
 
     struct DeleteWebsiteDataForHostNamesRequest {
         Vector<String> hostNames;
         uint64_t callbackID;
     };
     Vector<DeleteWebsiteDataForHostNamesRequest> m_pendingDeleteWebsiteDataForHostNamesRequests;
-    HashMap<uint64_t, std::function<void ()>> m_pendingDeleteWebsiteDataForHostNamesCallbacks;
+    HashMap<uint64_t, WTF::Function<void ()>> m_pendingDeleteWebsiteDataForHostNamesCallbacks;
 
     // If createPluginConnection is called while the process is still launching we'll keep count of it and send a bunch of requests
     // when the process finishes launching.

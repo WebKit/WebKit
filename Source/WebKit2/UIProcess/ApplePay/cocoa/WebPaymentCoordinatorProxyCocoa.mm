@@ -35,6 +35,7 @@
 #import <WebCore/PaymentHeaders.h>
 #import <WebCore/SoftLinking.h>
 #import <WebCore/URL.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 
 #if PLATFORM(MAC)
@@ -300,51 +301,51 @@ bool WebPaymentCoordinatorProxy::platformCanMakePayments()
     return [getPKPaymentAuthorizationViewControllerClass() canMakePayments];
 }
 
-void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
+void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!canLoad_PassKit_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication()) {
-        RunLoop::main().dispatch([completionHandler] {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
             completionHandler(false);
         });
         return;
     }
 
-    softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_webPageProxy.process().processPool().configuration().sourceApplicationSecondaryIdentifier(), [completionHandler](BOOL canMakePayments, NSError *error) {
+    softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication(merchantIdentifier, domainName, m_webPageProxy.process().processPool().configuration().sourceApplicationSecondaryIdentifier(), BlockPtr<void (BOOL, NSError *)>::fromCallback([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
-        RunLoop::main().dispatch([completionHandler, canMakePayments] {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), canMakePayments] {
             completionHandler(canMakePayments);
         });
-    });
+    }).get());
 #else
     if (!canLoad_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomain()) {
-        RunLoop::main().dispatch([completionHandler] {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
             completionHandler(false);
         });
         return;
     }
 
-    softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomain(merchantIdentifier, domainName, [completionHandler](BOOL canMakePayments, NSError *error) {
+    softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomain(merchantIdentifier, domainName, BlockPtr<void (BOOL, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL canMakePayments, NSError *error) mutable {
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
-        RunLoop::main().dispatch([completionHandler, canMakePayments] {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), canMakePayments] {
             completionHandler(canMakePayments);
         });
-    });
+    }).get());
 #endif
 }
 
-void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
+void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
     auto passLibrary = adoptNS([allocPKPassLibraryInstance() init]);
-    [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier domain:domainName completion:[completionHandler](BOOL result) {
-        RunLoop::main().dispatch([completionHandler, result] {
+    [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier domain:domainName completion:BlockPtr<void (BOOL)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL result) mutable {
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result] {
             completionHandler(result);
         });
-    }];
+    }).get()];
 }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)

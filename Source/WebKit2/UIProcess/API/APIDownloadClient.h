@@ -26,7 +26,7 @@
 #ifndef APIDownloadClient_h
 #define APIDownloadClient_h
 
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -60,7 +60,7 @@ public:
     virtual void didCancel(WebKit::WebProcessPool*, WebKit::DownloadProxy*) { }
     virtual void processDidCrash(WebKit::WebProcessPool*, WebKit::DownloadProxy*) { }
     virtual bool canAuthenticateAgainstProtectionSpace(WebKit::WebProtectionSpace*) { return true; }
-    virtual void willSendRequest(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&, std::function<void(const WebCore::ResourceRequest&)> callback) { callback(request); }
+    virtual void willSendRequest(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&, WTF::Function<void(const WebCore::ResourceRequest&)>&& callback) { callback(request); }
 };
 
 } // namespace API

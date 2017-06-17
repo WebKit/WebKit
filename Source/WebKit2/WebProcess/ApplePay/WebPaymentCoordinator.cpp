@@ -80,7 +80,7 @@ static uint64_t generateCanMakePaymentsWithActiveCardReplyID()
     return ++canMakePaymentsWithActiveCardReplyID;
 }
 
-void WebPaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
+void WebPaymentCoordinator::canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
     auto replyID = generateCanMakePaymentsWithActiveCardReplyID();
 
@@ -95,7 +95,7 @@ static uint64_t generateOpenPaymentSetupReplyID()
     return ++openPaymentSetupReplyID;
 }
 
-void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler)
+void WebPaymentCoordinator::openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
     auto replyID = generateOpenPaymentSetupReplyID();
 

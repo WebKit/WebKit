@@ -225,7 +225,7 @@ void WebCookieManagerProxy::stopObservingCookieChanges(SessionID sessionID)
 }
 
 
-void WebCookieManagerProxy::setCookieObserverCallback(WebCore::SessionID sessionID, std::function<void ()>&& callback)
+void WebCookieManagerProxy::setCookieObserverCallback(WebCore::SessionID sessionID, WTF::Function<void ()>&& callback)
 {
     if (callback)
         m_legacyCookieObservers.set(sessionID, WTFMove(callback));
@@ -259,8 +259,9 @@ void WebCookieManagerProxy::unregisterObserver(WebCore::SessionID sessionID, Obs
 void WebCookieManagerProxy::cookiesDidChange(SessionID sessionID)
 {
     m_client.cookiesDidChange(this);
-    if (auto callback = m_legacyCookieObservers.get(sessionID))
-        callback();
+    auto legacyIterator = m_legacyCookieObservers.find(sessionID);
+    if (legacyIterator != m_legacyCookieObservers.end())
+        ((*legacyIterator).value)();
 
     auto iterator = m_cookieObservers.find(sessionID);
     if (iterator == m_cookieObservers.end())

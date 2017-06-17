@@ -48,16 +48,16 @@ bool WebPaymentCoordinatorClient::canMakePayments()
     return false;
 }
 
-void WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard(const String&, const String&, std::function<void (bool)> completionHandler)
+void WebPaymentCoordinatorClient::canMakePaymentsWithActiveCard(const String&, const String&, WTF::Function<void (bool)>&& completionHandler)
 {
-    callOnMainThread([completionHandler] {
+    callOnMainThread([completionHandler = WTFMove(completionHandler)] {
         completionHandler(false);
     });
 }
 
-void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&, std::function<void (bool)> completionHandler)
+void WebPaymentCoordinatorClient::openPaymentSetup(const String&, const String&, WTF::Function<void (bool)>&& completionHandler)
 {
-    callOnMainThread([completionHandler] {
+    callOnMainThread([completionHandler = WTFMove(completionHandler)] {
         completionHandler(false);
     });
 }

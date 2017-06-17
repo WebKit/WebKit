@@ -52,7 +52,7 @@ private:
     void commitTransientZoom(double scale, WebCore::FloatPoint origin) override;
 
     void waitForDidUpdateActivityState() override;
-    void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
+    void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) override;
 
     void willSendUpdateGeometry() override;
 

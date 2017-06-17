@@ -72,7 +72,7 @@ public:
     Ref<API::Array> backListAsAPIArrayWithLimit(unsigned limit) const;
     Ref<API::Array> forwardListAsAPIArrayWithLimit(unsigned limit) const;
 
-    BackForwardListState backForwardListState(const std::function<bool (WebBackForwardListItem&)>&) const;
+    BackForwardListState backForwardListState(WTF::Function<bool (WebBackForwardListItem&)>&&) const;
     void restoreFromState(BackForwardListState);
 
     Vector<BackForwardListItemState> itemStates() const;

@@ -82,7 +82,7 @@ namespace WebCore {
         void destroyStream();
 
         // NetscapePlugInStreamLoaderClient
-        void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, std::function<void (ResourceRequest&&)>&&) override;
+        void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, WTF::Function<void (ResourceRequest&&)>&&) override;
         void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) override;
         void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) override;
         void didFail(NetscapePlugInStreamLoader*, const ResourceError&) override;

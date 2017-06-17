@@ -27,7 +27,6 @@
 #define PlugInAutoStartProvider_h
 
 #include <WebCore/SessionID.h>
-#include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -67,7 +66,7 @@ public:
 private:
     WebProcessPool* m_processPool;
 
-    void setAutoStartOriginsTableWithItemsPassingTest(API::Dictionary&, std::function<bool(double expirationTimestamp)>);
+    void setAutoStartOriginsTableWithItemsPassingTest(API::Dictionary&, WTF::Function<bool(double expirationTimestamp)>&&);
 
     typedef HashMap<String, PlugInAutoStartOriginMap, ASCIICaseInsensitiveHash> AutoStartTable;
     typedef HashMap<WebCore::SessionID, AutoStartTable> SessionAutoStartTable;

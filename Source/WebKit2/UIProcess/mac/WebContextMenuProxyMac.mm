@@ -78,20 +78,20 @@ using namespace WebCore;
 @end
 
 @interface WKSelectionHandlerWrapper : NSObject {
-    std::function<void ()> _selectionHandler;
+    WTF::Function<void ()> _selectionHandler;
 }
-- (id)initWithSelectionHandler:(std::function<void ()>)selectionHandler;
+- (id)initWithSelectionHandler:(WTF::Function<void ()>&&)selectionHandler;
 - (void)executeSelectionHandler;
 @end
 
 @implementation WKSelectionHandlerWrapper
-- (id)initWithSelectionHandler:(std::function<void ()>)selectionHandler
+- (id)initWithSelectionHandler:(WTF::Function<void ()>&&)selectionHandler
 {
     self = [super init];
     if (!self)
         return nil;
     
-    _selectionHandler = selectionHandler;
+    _selectionHandler = WTFMove(selectionHandler);
     return self;
 }
 

@@ -59,7 +59,7 @@ public:
         return notifier;
     }
 
-    void add(Damage damage, std::function<void()>&& notifyFunction)
+    void add(Damage damage, WTF::Function<void()>&& notifyFunction)
     {
         if (m_notifyFunctions.isEmpty())
             gdk_window_add_filter(nullptr, reinterpret_cast<GdkFilterFunc>(&filterXDamageEvent), this);
@@ -93,14 +93,15 @@ private:
 
     bool notify(Damage damage) const
     {
-        if (const auto& notifyFunction = m_notifyFunctions.get(damage)) {
-            notifyFunction();
+        auto it = m_notifyFunctions.find(damage);
+        if (it != m_notifyFunctions.end()) {
+            ((*it).value)();
             return true;
         }
         return false;
     }
 
-    HashMap<Damage, std::function<void()>> m_notifyFunctions;
+    HashMap<Damage, WTF::Function<void()>> m_notifyFunctions;
 };
 
 std::unique_ptr<AcceleratedBackingStoreX11> AcceleratedBackingStoreX11::create(WebPageProxy& webPage)

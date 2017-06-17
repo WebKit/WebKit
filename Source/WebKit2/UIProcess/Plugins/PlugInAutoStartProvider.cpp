@@ -120,7 +120,7 @@ void PlugInAutoStartProvider::setAutoStartOriginsFilteringOutEntriesAddedAfterTi
     });
 }
 
-void PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest(API::Dictionary& table, std::function<bool(double expirationTimestamp)> isExpirationTimeAcceptable)
+void PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest(API::Dictionary& table, WTF::Function<bool(double expirationTimestamp)>&& isExpirationTimeAcceptable)
 {
     ASSERT(isExpirationTimeAcceptable);
 

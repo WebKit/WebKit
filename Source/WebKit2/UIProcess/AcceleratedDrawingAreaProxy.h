@@ -45,7 +45,7 @@ public:
     void destroyNativeSurfaceHandleForCompositing();
 #endif
 
-    void dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)>) override;
+    void dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&&) override;
 
 protected:
     // DrawingAreaProxy

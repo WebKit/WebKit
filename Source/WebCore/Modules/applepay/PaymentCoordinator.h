@@ -28,7 +28,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "PaymentRequest.h"
-#include <functional>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -52,8 +52,8 @@ public:
 
     bool supportsVersion(unsigned version);
     bool canMakePayments();
-    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler);
-    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler);
+    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
+    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
 
     bool hasActiveSession() const { return m_activeSession; }
 

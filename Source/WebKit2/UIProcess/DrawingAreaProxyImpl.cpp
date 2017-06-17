@@ -222,10 +222,10 @@ int DrawingAreaProxyImpl::DrawingMonitor::webViewDrawCallback(DrawingAreaProxyIm
     return FALSE;
 }
 
-void DrawingAreaProxyImpl::DrawingMonitor::start(std::function<void (CallbackBase::Error)> callback)
+void DrawingAreaProxyImpl::DrawingMonitor::start(WTF::Function<void (CallbackBase::Error)>&& callback)
 {
     m_startTime = monotonicallyIncreasingTimeMS();
-    m_callback = callback;
+    m_callback = WTFMove(callback);
 #if PLATFORM(GTK)
     g_signal_connect_swapped(m_webPage.viewWidget(), "draw", reinterpret_cast<GCallback>(webViewDrawCallback), this);
     m_timer.startOneShot(1_s);
@@ -258,7 +258,7 @@ void DrawingAreaProxyImpl::DrawingMonitor::didDraw()
         m_timer.startOneShot(100_ms);
 }
 
-void DrawingAreaProxyImpl::dispatchAfterEnsuringDrawing(std::function<void(CallbackBase::Error)> callbackFunction)
+void DrawingAreaProxyImpl::dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&& callbackFunction)
 {
     if (!m_webPageProxy.isValid()) {
         callbackFunction(CallbackBase::Error::OwnerWasInvalidated);
@@ -267,7 +267,7 @@ void DrawingAreaProxyImpl::dispatchAfterEnsuringDrawing(std::function<void(Callb
 
     if (!m_drawingMonitor)
         m_drawingMonitor = std::make_unique<DrawingAreaProxyImpl::DrawingMonitor>(m_webPageProxy);
-    m_drawingMonitor->start(callbackFunction);
+    m_drawingMonitor->start(WTFMove(callbackFunction));
 }
 
 } // namespace WebKit

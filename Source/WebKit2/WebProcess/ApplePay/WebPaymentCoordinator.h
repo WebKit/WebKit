@@ -55,8 +55,8 @@ private:
     // WebCore::PaymentCoordinatorClient.
     bool supportsVersion(unsigned version) override;
     bool canMakePayments() override;
-    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler) override;
-    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, std::function<void (bool)> completionHandler) override;
+    void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) override;
+    void openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) override;
     bool showPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::PaymentRequest&) override;
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&) override;
     void completeShippingMethodSelection(std::optional<WebCore::ShippingMethodUpdate>&&) override;
@@ -86,8 +86,8 @@ private:
 
     WebPage& m_webPage;
 
-    HashMap<uint64_t, std::function<void (bool)>> m_pendingCanMakePaymentsWithActiveCardCallbacks;
-    HashMap<uint64_t, std::function<void (bool)>> m_pendingOpenPaymentSetupCallbacks;
+    HashMap<uint64_t, WTF::Function<void (bool)>> m_pendingCanMakePaymentsWithActiveCardCallbacks;
+    HashMap<uint64_t, WTF::Function<void (bool)>> m_pendingOpenPaymentSetupCallbacks;
 };
 
 }

@@ -32,6 +32,7 @@
 #import "WebPaymentCoordinatorProxyCocoa.h"
 #import <WebCore/PassKitSPI.h>
 #import <WebCore/SoftLinking.h>
+#import <wtf/BlockPtr.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(PassKit)
 
@@ -40,13 +41,13 @@ SOFT_LINK_CONSTANT(PassKit, PKExtensionPaymentAuthorizationUIExtensionPointName,
 
 namespace WebKit {
 
-void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLStrings, const WebCore::PaymentRequest& request, std::function<void (bool)> completionHandler)
+void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLStrings, const WebCore::PaymentRequest& request, WTF::Function<void (bool)>&& completionHandler)
 {
     auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;
     auto weakThis = m_weakPtrFactory.createWeakPtr();
-    [getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:[paymentRequest, showPaymentUIRequestSeed, weakThis, completionHandler](PKPaymentAuthorizationViewController *viewController, NSError *error) {
+    [getPKPaymentAuthorizationViewControllerClass() requestViewControllerWithPaymentRequest:paymentRequest.get() completion:BlockPtr<void (PKPaymentAuthorizationViewController *, NSError *)>::fromCallable([paymentRequest, showPaymentUIRequestSeed, weakThis, completionHandler = WTFMove(completionHandler)](PKPaymentAuthorizationViewController *viewController, NSError *error) {
         auto paymentCoordinatorProxy = weakThis.get();
         if (!paymentCoordinatorProxy)
             return;
@@ -83,7 +84,7 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& origi
         [paymentCoordinatorProxy->m_webPageProxy.platformWindow() beginSheet:paymentCoordinatorProxy->m_sheetWindow.get() completionHandler:nullptr];
 
         completionHandler(true);
-    }];
+    }).get()];
 }
 
 void WebPaymentCoordinatorProxy::hidePaymentUI()

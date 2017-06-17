@@ -28,7 +28,6 @@
 
 #if ENABLE(NETWORK_CACHE)
 
-#include <functional>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/SHA1.h>
 #include <wtf/ThreadSafeRefCounted.h>

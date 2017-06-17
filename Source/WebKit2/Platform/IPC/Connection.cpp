@@ -717,7 +717,7 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
     enqueueIncomingMessage(WTFMove(message));
 }
 
-uint64_t Connection::installIncomingSyncMessageCallback(std::function<void ()> callback)
+uint64_t Connection::installIncomingSyncMessageCallback(WTF::Function<void ()>&& callback)
 {
     std::lock_guard<Lock> lock(m_incomingSyncMessageCallbackMutex);
 
@@ -726,7 +726,7 @@ uint64_t Connection::installIncomingSyncMessageCallback(std::function<void ()> c
     if (!m_incomingSyncMessageCallbackQueue)
         m_incomingSyncMessageCallbackQueue = WorkQueue::create("com.apple.WebKit.IPC.IncomingSyncMessageCallbackQueue");
 
-    m_incomingSyncMessageCallbacks.add(m_nextIncomingSyncMessageCallbackID, callback);
+    m_incomingSyncMessageCallbacks.add(m_nextIncomingSyncMessageCallbackID, WTFMove(callback));
 
     return m_nextIncomingSyncMessageCallbackID;
 }

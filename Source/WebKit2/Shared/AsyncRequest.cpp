@@ -38,7 +38,7 @@ static uint64_t generateRequestID()
     return ++requestID;
 }
 
-AsyncRequest::AsyncRequest(std::function<void ()> abortHandler)
+AsyncRequest::AsyncRequest(WTF::Function<void ()>&& abortHandler)
     : m_abortHandler(WTFMove(abortHandler))
     , m_requestID(generateRequestID())
 {
@@ -49,7 +49,7 @@ AsyncRequest::~AsyncRequest()
     ASSERT(!m_abortHandler);
 }
 
-void AsyncRequest::setAbortHandler(std::function<void ()> handler)
+void AsyncRequest::setAbortHandler(WTF::Function<void ()>&& handler)
 {
     m_abortHandler = WTFMove(handler);
 }

@@ -105,7 +105,7 @@ private:
     unsigned m_threadCountLimit;
 };
 
-CompositingRunLoop::CompositingRunLoop(std::function<void ()>&& updateFunction)
+CompositingRunLoop::CompositingRunLoop(Function<void ()>&& updateFunction)
     : m_updateTimer(WorkQueuePool::singleton().runLoop(this), this, &CompositingRunLoop::updateTimerFired)
     , m_updateFunction(WTFMove(updateFunction))
 {

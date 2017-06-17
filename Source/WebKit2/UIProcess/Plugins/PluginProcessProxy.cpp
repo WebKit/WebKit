@@ -113,7 +113,7 @@ void PluginProcessProxy::getPluginProcessConnection(Ref<Messages::WebProcessProx
     m_connection->send(Messages::PluginProcess::CreateWebProcessConnection(), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void PluginProcessProxy::fetchWebsiteData(std::function<void (Vector<String>)> completionHandler)
+void PluginProcessProxy::fetchWebsiteData(WTF::Function<void (Vector<String>)>&& completionHandler)
 {
     uint64_t callbackID = generateCallbackID();
     m_pendingFetchWebsiteDataCallbacks.set(callbackID, WTFMove(completionHandler));
@@ -126,7 +126,7 @@ void PluginProcessProxy::fetchWebsiteData(std::function<void (Vector<String>)> c
     m_connection->send(Messages::PluginProcess::GetSitesWithData(callbackID), 0);
 }
 
-void PluginProcessProxy::deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, std::function<void ()> completionHandler)
+void PluginProcessProxy::deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler)
 {
     uint64_t callbackID = generateCallbackID();
     m_pendingDeleteWebsiteDataCallbacks.set(callbackID, WTFMove(completionHandler));
@@ -139,7 +139,7 @@ void PluginProcessProxy::deleteWebsiteData(std::chrono::system_clock::time_point
     m_connection->send(Messages::PluginProcess::DeleteWebsiteData(modifiedSince, callbackID), 0);
 }
 
-void PluginProcessProxy::deleteWebsiteDataForHostNames(const Vector<String>& hostNames, std::function<void ()> completionHandler)
+void PluginProcessProxy::deleteWebsiteDataForHostNames(const Vector<String>& hostNames, WTF::Function<void ()>&& completionHandler)
 {
     uint64_t callbackID = generateCallbackID();
     m_pendingDeleteWebsiteDataForHostNamesCallbacks.set(callbackID, WTFMove(completionHandler));

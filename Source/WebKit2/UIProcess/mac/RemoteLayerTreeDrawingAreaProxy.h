@@ -66,7 +66,7 @@ private:
     
     // For now, all callbacks are called before committing changes, because that's what the only client requires.
     // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
-    void dispatchAfterEnsuringDrawing(std::function<void (CallbackBase::Error)>) override;
+    void dispatchAfterEnsuringDrawing(WTF::Function<void (CallbackBase::Error)>&&) override;
 
 #if PLATFORM(MAC)
     void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
