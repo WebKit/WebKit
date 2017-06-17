@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include "WebContextMenuItemGtk.h"
+#include "WebContextMenuItemGlib.h"
 #include "WebKitContextMenuItem.h"
 
 WebKitContextMenuItem* webkitContextMenuItemCreate(const WebKit::WebContextMenuItemData&);
-WebKit::WebContextMenuItemGtk webkitContextMenuItemToWebContextMenuItemGtk(WebKitContextMenuItem*);
+WebKit::WebContextMenuItemGlib webkitContextMenuItemToWebContextMenuItemGlib(WebKitContextMenuItem*);
 WebKit::WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitContextMenuItem*);

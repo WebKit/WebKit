@@ -62,7 +62,7 @@ static void contextMenuItemActivatedCallback(GAction* action, GVariant*, WebPage
     page->contextMenuItemSelected(item);
 }
 
-void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGtk& menuItem)
+void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGlib& menuItem)
 {
     unsigned long signalHandlerId;
     GRefPtr<GMenuItem> gMenuItem;
@@ -102,7 +102,7 @@ void WebContextMenuProxyGtk::append(GMenu* menu, const WebContextMenuItemGtk& me
     g_menu_append_item(menu, gMenuItem.get());
 }
 
-GRefPtr<GMenu> WebContextMenuProxyGtk::buildMenu(const Vector<WebContextMenuItemGtk>& items)
+GRefPtr<GMenu> WebContextMenuProxyGtk::buildMenu(const Vector<WebContextMenuItemGlib>& items)
 {
     GRefPtr<GMenu> menu = adoptGRef(g_menu_new());
     GMenu* sectionMenu = menu.get();
@@ -118,7 +118,7 @@ GRefPtr<GMenu> WebContextMenuProxyGtk::buildMenu(const Vector<WebContextMenuItem
     return menu;
 }
 
-void WebContextMenuProxyGtk::populate(const Vector<WebContextMenuItemGtk>& items)
+void WebContextMenuProxyGtk::populate(const Vector<WebContextMenuItemGlib>& items)
 {
     GRefPtr<GMenu> menu = buildMenu(items);
     gtk_menu_shell_bind_model(GTK_MENU_SHELL(m_menu), G_MENU_MODEL(menu.get()), nullptr, TRUE);
@@ -134,7 +134,7 @@ void WebContextMenuProxyGtk::populate(const Vector<RefPtr<WebContextMenuItem>>& 
             g_menu_append_section(menu.get(), nullptr, G_MENU_MODEL(section.get()));
             sectionMenu = section.get();
         } else {
-            WebContextMenuItemGtk menuitem(item->data());
+            WebContextMenuItemGlib menuitem(item->data());
             append(sectionMenu, menuitem);
         }
     }

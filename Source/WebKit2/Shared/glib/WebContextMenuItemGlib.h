@@ -23,44 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextMenuItemGtk_h
-#define WebContextMenuItemGtk_h
+#pragma once
 
-#include "APIObject.h"
 #include "WebContextMenuItemData.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 typedef struct _GtkAction GtkAction;
 typedef struct _GAction GAction;
 
 namespace WebKit {
 
-class WebContextMenuItemGtk : public WebContextMenuItemData {
+class WebContextMenuItemGlib final : public WebContextMenuItemData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebContextMenuItemGtk(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, const String& title, bool enabled = true, bool checked = false);
-    WebContextMenuItemGtk(const WebContextMenuItemData&);
-    WebContextMenuItemGtk(const WebContextMenuItemGtk&, Vector<WebContextMenuItemGtk>&& submenu);
-    WebContextMenuItemGtk(GtkAction*);
-    WebContextMenuItemGtk(GAction*, const String& title, GVariant* target = nullptr);
-    ~WebContextMenuItemGtk();
+    WebContextMenuItemGlib(WebCore::ContextMenuItemType, WebCore::ContextMenuAction, const String& title, bool enabled = true, bool checked = false);
+    WebContextMenuItemGlib(const WebContextMenuItemData&);
+    WebContextMenuItemGlib(const WebContextMenuItemGlib&, Vector<WebContextMenuItemGlib>&& submenu);
+    WebContextMenuItemGlib(GAction*, const String& title, GVariant* target = nullptr);
+#if PLATFORM(GTK)
+    WebContextMenuItemGlib(GtkAction*);
+#endif
+    ~WebContextMenuItemGlib();
 
     // We don't use the SubmenuType internally, so check if we have submenu items.
     WebCore::ContextMenuItemType type() const { return m_submenuItems.isEmpty() ? WebContextMenuItemData::type() : WebCore::SubmenuType; }
-    GtkAction* gtkAction() const { return m_gtkAction; }
     GAction* gAction() const { return m_gAction.get(); }
     GVariant* gActionTarget() const { return m_gActionTarget.get(); }
-    const Vector<WebContextMenuItemGtk>& submenuItems() const { return m_submenuItems; }
+    const Vector<WebContextMenuItemGlib>& submenuItems() const { return m_submenuItems; }
+
+#if PLATFORM(GTK)
+    GtkAction* gtkAction() const { return m_gtkAction; }
+#endif
 
 private:
+    GUniquePtr<char> buildActionName() const;
     void createActionIfNeeded();
 
     GRefPtr<GAction> m_gAction;
     GRefPtr<GVariant> m_gActionTarget;
+    Vector<WebContextMenuItemGlib> m_submenuItems;
+#if PLATFORM(GTK)
     GtkAction* m_gtkAction { nullptr };
-    Vector<WebContextMenuItemGtk> m_submenuItems;
+#endif
 };
 
 } // namespace WebKit
-
-#endif // WebContextMenuItemGtk_h

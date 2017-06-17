@@ -2182,7 +2182,7 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     if (returnValue)
         return;
 
-    Vector<WebContextMenuItemGtk> contextMenuItems;
+    Vector<WebContextMenuItemGlib> contextMenuItems;
     webkitContextMenuPopulate(contextMenu.get(), contextMenuItems);
     contextMenuProxy->populate(contextMenuItems);
 

@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include "WebContextMenuItemGtk.h"
+#include "WebContextMenuItemGlib.h"
 #include "WebKitContextMenu.h"
 
 WebKitContextMenu* webkitContextMenuCreate(const Vector<WebKit::WebContextMenuItemData>&);
-void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemGtk>&);
+void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemGlib>&);
 void webkitContextMenuPopulate(WebKitContextMenu*, Vector<WebKit::WebContextMenuItemData>&);
 void webkitContextMenuSetParentItem(WebKitContextMenu*, WebKitContextMenuItem*);
 WebKitContextMenuItem* webkitContextMenuGetParentItem(WebKitContextMenu*);

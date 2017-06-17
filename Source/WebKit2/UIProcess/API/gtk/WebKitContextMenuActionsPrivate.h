@@ -17,15 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitContextMenuActionsPrivate_h
-#define WebKitContextMenuActionsPrivate_h
+#pragma once
 
-#include "WebContextMenuItemGtk.h"
+#include "WebContextMenuItemGlib.h"
 #include "WebKitContextMenuActions.h"
 
 bool webkitContextMenuActionIsCheckable(WebKitContextMenuAction);
 WebCore::ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction);
-WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKit::WebContextMenuItemGtk&);
+WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKit::WebContextMenuItemGlib&);
 String webkitContextMenuActionGetLabel(WebKitContextMenuAction);
-
-#endif // WebKitPrintOperationPrivate_h

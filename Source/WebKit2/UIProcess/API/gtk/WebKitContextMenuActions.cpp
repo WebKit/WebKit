@@ -135,7 +135,7 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
     return ContextMenuItemBaseApplicationTag;
 }
 
-WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKit::WebContextMenuItemGtk& menuItem)
+WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKit::WebContextMenuItemGlib& menuItem)
 {
     switch (menuItem.action()) {
     case ContextMenuItemTagNoAction:

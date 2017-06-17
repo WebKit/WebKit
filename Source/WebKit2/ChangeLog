@@ -1,3 +1,45 @@
+2017-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Rename WebContextMenuItemGtk as WebContextMenuItemGlib
+        https://bugs.webkit.org/show_bug.cgi?id=173469
+
+        Reviewed by Michael Catanzaro.
+
+        Now that we switched to GAction this is actually a glib implementation, we keep the GtkAction support only for
+        backwards compatibility. We could rename the file and make the GtkAction action conditional to the GTK+ port.
+
+        * PlatformGTK.cmake:
+        * Shared/glib/WebContextMenuItemGlib.cpp: Renamed from Source/WebKit2/Shared/gtk/WebContextMenuItemGtk.cpp.
+        (WebKit::gtkStockIDFromContextMenuAction):
+        (WebKit::WebContextMenuItemGlib::WebContextMenuItemGlib):
+        (WebKit::WebContextMenuItemGlib::~WebContextMenuItemGlib):
+        (WebKit::WebContextMenuItemGlib::buildActionName):
+        (WebKit::WebContextMenuItemGlib::createActionIfNeeded):
+        * Shared/glib/WebContextMenuItemGlib.h: Renamed from Source/WebKit2/Shared/gtk/WebContextMenuItemGtk.h.
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        (webkitContextMenuPopulate):
+        * UIProcess/API/gtk/WebKitContextMenuActions.cpp:
+        (webkitContextMenuActionGetForContextMenuItem):
+        * UIProcess/API/gtk/WebKitContextMenuActionsPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (webkitContextMenuItemCreate):
+        (webkitContextMenuItemToWebContextMenuItemGlib):
+        (webkit_context_menu_item_new):
+        (webkit_context_menu_item_new_from_gaction):
+        (webkit_context_menu_item_new_from_stock_action):
+        (webkit_context_menu_item_new_from_stock_action_with_label):
+        (webkit_context_menu_item_new_with_submenu):
+        (webkit_context_menu_item_new_separator):
+        * UIProcess/API/gtk/WebKitContextMenuItemPrivate.h:
+        * UIProcess/API/gtk/WebKitContextMenuPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewPopulateContextMenu):
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::append):
+        (WebKit::WebContextMenuProxyGtk::buildMenu):
+        (WebKit::WebContextMenuProxyGtk::populate):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+
 2017-06-16  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Some declarations have missing or incorrect availability attributes
