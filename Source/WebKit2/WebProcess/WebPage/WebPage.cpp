@@ -3384,6 +3384,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setAnimatedImageAsyncDecodingEnabled(store.getBoolValueForKey(WebPreferencesKey::animatedImageAsyncDecodingEnabledKey()));
     settings.setShouldSuppressKeyboardInputDuringProvisionalNavigation(store.getBoolValueForKey(WebPreferencesKey::shouldSuppressKeyboardInputDuringProvisionalNavigationKey()));
     settings.setMediaContentTypesRequiringHardwareSupport(store.getStringValueForKey(WebPreferencesKey::mediaContentTypesRequiringHardwareSupportKey()));
+
+    settings.setMediaDocumentEntersFullscreenAutomatically(store.getBoolValueForKey(WebPreferencesKey::mediaDocumentEntersFullscreenAutomaticallyKey()));
 }
 
 #if ENABLE(DATA_DETECTION)

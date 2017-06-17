@@ -108,6 +108,8 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 
 @property (nonatomic, setter=_setJavaScriptCanAccessClipboard:) BOOL _javaScriptCanAccessClipboard WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+@property (nonatomic, setter=_setMediaDocumentEntersFullscreenAutomatically:) BOOL _mediaDocumentEntersFullscreenAutomatically WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 + (NSArray<_WKExperimentalFeature *> *)_experimentalFeatures WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 - (BOOL)_isEnabledForFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 - (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macosx(10.12), ios(10.0));

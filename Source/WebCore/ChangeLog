@@ -1,3 +1,14 @@
+2017-06-16  Antoine Quint  <graouts@apple.com>
+
+        Add a WebKit2 setting to control whether media documents should automatically enter fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=173503
+
+        Reviewed by Tim Horton.
+
+        New WebCore setting to specify whether a media document should automatically enter fullscreen.
+
+        * page/Settings.in:
+
 2017-06-16  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Seeking or entering fullscreen can cause extreme CPU usage

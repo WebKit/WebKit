@@ -627,6 +627,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     return _preferences->javaScriptCanAccessClipboard();
 }
 
+- (void)_setMediaDocumentEntersFullscreenAutomatically:(BOOL)mediaDocumentEntersFullscreenAutomatically
+{
+    _preferences->setMediaDocumentEntersFullscreenAutomatically(mediaDocumentEntersFullscreenAutomatically);
+}
+
+- (BOOL)_mediaDocumentEntersFullscreenAutomatically
+{
+    return _preferences->mediaDocumentEntersFullscreenAutomatically();
+}
+
 @end
 
 #endif // WK_API_ENABLED

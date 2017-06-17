@@ -188,6 +188,7 @@
     macro(AllowsPictureInPictureMediaPlayback, allowsPictureInPictureMediaPlayback, Bool, bool, DEFAULT_ALLOWS_PICTURE_IN_PICTURE_MEDIA_PLAYBACK, "", "") \
     macro(AllowsAirPlayForMediaPlayback, allowsAirPlayForMediaPlayback, Bool, bool, true, "", "") \
     macro(MediaControlsScaleWithPageZoom, mediaControlsScaleWithPageZoom, Bool, bool, DEFAULT_MEDIA_CONTROLS_SCALE_WITH_PAGE_ZOOM, "", "") \
+    macro(MediaDocumentEntersFullscreenAutomatically, mediaDocumentEntersFullscreenAutomatically, Bool, bool, false, "", "") \
     macro(InspectorStartsAttached, inspectorStartsAttached, Bool, bool, true, "", "") \
     macro(ShowsToolTipOverTruncatedText, showsToolTipOverTruncatedText, Bool, bool, false, "", "") \
     macro(MockScrollbarsEnabled, mockScrollbarsEnabled, Bool, bool, false, "", "") \
