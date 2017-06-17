@@ -1,3 +1,75 @@
+2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=173366
+        <rdar://problem/32767014>
+
+        Reviewed by Tim Horton.
+
+        Move pieces of iOS WebKit2 drag and drop implementation into OpenSource. No change in behavior.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setDragImage):
+        (WebKit::WebPageProxy::setPromisedDataForImage):
+        (WebKit::WebPageProxy::setPromisedDataForAttachment):
+        (WebKit::WebPageProxy::setDragCaretRect):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (longPressActionDelayAfterLift):
+        (-[WKContentView webViewUIDelegate]):
+        (-[WKContentView setupDataInteractionDelegates]):
+        (-[WKContentView teardownDataInteractionDelegates]):
+        (-[WKContentView _startDataInteractionWithImage:withIndicatorData:atClientPosition:anchorPoint:action:]):
+        (-[WKContentView _didHandleStartDataInteractionRequest:]):
+        (uiImageForImage):
+        (shouldUseTextIndicatorToCreatePreviewForDragAction):
+        (-[WKContentView dragPreviewForImage:frameInRootViewCoordinates:clippingRectsInFrameCoordinates:backgroundColor:]):
+        (-[WKContentView dragPreviewForCurrentDataInteractionState]):
+        (-[WKContentView performDeferredActionAtDragOrigin]):
+        (-[WKContentView cancelDeferredActionAtDragOrigin]):
+        (-[WKContentView computeClientAndGlobalPointsForDropSession:outClientPoint:outGlobalPoint:]):
+        (dropOperationForWebCoreDragOperation):
+        (-[WKContentView dragDataForDropSession:dragDestinationAction:]):
+        (-[WKContentView cleanUpDragSourceSessionState]):
+        (extractItemProvidersFromDragItems):
+        (extractItemProvidersFromDropSession):
+        (-[WKContentView _didConcludeEditDataInteraction:]):
+        (-[WKContentView _didPerformDataInteractionControllerOperation:]):
+        (-[WKContentView _transitionDragPreviewToImageIfNecessary:]):
+        (-[WKContentView _didChangeDataInteractionCaretRect:currentRect:]):
+        (-[WKContentView _dragDestinationActionForDropSession:]):
+        (positionInformationMayStartDataInteraction):
+        (-[WKContentView currentDragOrDropSession]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+        (-[WKContentView _api_dragInteraction:previewForLiftingItem:session:]):
+        (-[WKContentView dragInteraction:sessionWillBegin:]):
+        (-[WKContentView _api_dragInteraction:session:didEndWithOperation:]):
+        (-[WKContentView dragInteraction:previewForCancellingItem:withDefault:]):
+        (-[WKContentView _api_dragInteraction:item:willAnimateCancelWithAnimator:]):
+        (-[WKContentView dropInteraction:canHandleSession:]):
+        (-[WKContentView _api_dropInteraction:sessionDidEnter:]):
+        (-[WKContentView _api_dropInteraction:sessionDidUpdate:]):
+        (-[WKContentView dropInteraction:sessionDidExit:]):
+        (-[WKContentView dropInteraction:performDrop:]):
+        (-[WKContentView dropInteraction:previewForDroppingItem:withDefault:]):
+        (-[WKContentView dropInteraction:sessionDidEnd:]):
+        (-[WKContentView _simulateDataInteractionEntered:]):
+        (-[WKContentView _simulateDataInteractionUpdated:]):
+        (-[WKContentView _simulateDataInteractionEnded:]):
+        (-[WKContentView _simulateDataInteractionPerformOperation:]):
+        (-[WKContentView _simulateDataInteractionSessionDidEnd:]):
+        (-[WKContentView _simulateWillBeginDataInteractionWithSession:]):
+        (-[WKContentView _simulatedItemsForSession:]):
+        (-[WKContentView _simulatePrepareForDataInteractionSession:completion:]):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertCGImageToBitmap):
+        (WebKit::WebDragClient::startDrag):
+        (WebKit::WebDragClient::declareAndWriteDragImage):
+        (WebKit::WebDragClient::didConcludeEditDrag):
+        (WebKit::WebDragClient::declareAndWriteAttachment):
+
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
         WebRTC sockets should be closed at destruction time if not closed explicitly

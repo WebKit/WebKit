@@ -1,3 +1,61 @@
+2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=173366
+        <rdar://problem/32767014>
+
+        Reviewed by Tim Horton.
+
+        Moves all drag and drop logic previously hidden behind WebKitAdditions into the open source repository, along
+        with unit test pages in TestWebKitAPI. Also removes all #includes and #imports of dragging-related files in
+        WebKitAdditions from the open source repository.
+
+        This initial upstreaming phase is only concerned with moving code out of WebKitAdditions, and attempts to
+        preserve the code as-is, with the exception of trivial style changes so that the open source linter passes.
+        Future patches will remove the DATA_INTERACTION feature flag altogether and unobscure all variable and function
+        names referencing "data interaction".
+
+        No change in behavior from the internal build.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::createDraggingDataTransfer):
+        (WebCore::EventHandler::eventLoopHandleMouseDragged):
+        (WebCore::EventHandler::tryToBeginDataInteractionAtPoint):
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::dragImageSize):
+        (WebCore::scaleDragImage):
+        (WebCore::createDragImageFromImage):
+        (WebCore::deleteDragImage):
+        (WebCore::createDragImageForLink):
+        (WebCore::createDragImageIconForCachedImageFilename):
+        (WebCore::platformAdjustDragImageForDeviceScaleFactor):
+        (WebCore::createDragImageForSelection):
+        (WebCore::dissolveDragImageToFraction):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::Pasteboard):
+        (WebCore::Pasteboard::setDragImage):
+        (WebCore::Pasteboard::createForDragAndDrop):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::rtfPasteboardType):
+        (WebCore::rtfdPasteboardType):
+        (WebCore::stringPasteboardType):
+        (WebCore::urlPasteboardType):
+        (WebCore::htmlPasteboardType):
+        (WebCore::colorPasteboardType):
+        (WebCore::pdfPasteboardType):
+        (WebCore::tiffPasteboardType):
+        (WebCore::DragData::asFilenames):
+        (WebCore::DragData::containsURL):
+        (rtfPasteboardType): Deleted.
+        (rtfdPasteboardType): Deleted.
+        (stringPasteboardType): Deleted.
+        (urlPasteboardType): Deleted.
+        (htmlPasteboardType): Deleted.
+        (colorPasteboardType): Deleted.
+        (pdfPasteboardType): Deleted.
+        (tiffPasteboardType): Deleted.
+
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
         addTransceiver should trigger mid generation in the SDP

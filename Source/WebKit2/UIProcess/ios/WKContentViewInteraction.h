@@ -39,15 +39,12 @@
 #import "WKSyntheticClickTapGestureRecognizer.h"
 #import <UIKit/UIView.h>
 #import <WebCore/Color.h>
+#import <WebCore/DragActions.h>
 #import <WebCore/FloatQuad.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 #import <wtf/text/WTFString.h>
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WKContentViewInteractionAdditions.h>)
-#import <WebKitAdditions/WKContentViewInteractionAdditions.h>
-#endif
 
 namespace API {
 class OpenPanelParameters;
@@ -76,7 +73,7 @@ class WebPageProxy;
 @class _UIWebHighlightLongPressGestureRecognizer;
 
 #if ENABLE(DATA_INTERACTION)
-@class WKDataInteractionCaretView;
+@class _UITextDragCaretView;
 #endif
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
@@ -110,6 +107,32 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(toggleUnderline)
 
 namespace WebKit {
+
+#if ENABLE(DRAG_SUPPORT)
+
+struct WKDataInteractionState {
+    RetainPtr<UIImage> image;
+    std::optional<WebCore::TextIndicatorData> indicatorData;
+    CGPoint gestureOrigin { CGPointZero };
+    CGPoint adjustedOrigin { CGPointZero };
+    CGPoint lastGlobalPosition { CGPointZero };
+    CGRect elementBounds { CGRectZero };
+    BOOL didBeginDragging { NO };
+    BOOL isPerformingOperation { NO };
+    BOOL isAnimatingConcludeEditDrag { NO };
+    RetainPtr<id <UIDragSession>> dragSession;
+    RetainPtr<id <UIDropSession>> dropSession;
+    BlockPtr<void()> dragStartCompletionBlock;
+    WebCore::DragSourceAction sourceAction { WebCore::DragSourceActionNone };
+
+    String linkTitle;
+    WebCore::URL linkURL;
+
+    RetainPtr<UIView> visibleContentViewSnapshot;
+    RetainPtr<_UITextDragCaretView> caretView;
+};
+
+#endif // ENABLE(DRAG_SUPPORT)
 
 struct WKSelectionDrawingInfo {
     enum class SelectionType { None, Plugin, Range };
@@ -223,8 +246,8 @@ struct WKAutoCorrectionData {
 
 #if ENABLE(DATA_INTERACTION)
     WebKit::WKDataInteractionState _dataInteractionState;
-    RetainPtr<WKDataInteraction> _dataInteraction;
-    RetainPtr<WKDataOperation> _dataOperation;
+    RetainPtr<UIDragInteraction> _dataInteraction;
+    RetainPtr<UIDropInteraction> _dataOperation;
     CGPoint _deferredActionSheetRequestLocation;
 #endif
 }
@@ -233,7 +256,7 @@ struct WKAutoCorrectionData {
 
 @interface WKContentView (WKInteraction) <UIGestureRecognizerDelegate, UIWebTouchEventsGestureRecognizerDelegate, UITextInputPrivate, UIWebFormAccessoryDelegate, UIWKInteractionViewProtocol, WKFileUploadPanelDelegate, WKActionSheetAssistantDelegate
 #if ENABLE(DATA_INTERACTION)
-    , WKDataInteractionDelegate, WKDataOperationDelegate
+    , UIDragInteractionDelegate, UIDropInteractionDelegate
 #endif
 >
 

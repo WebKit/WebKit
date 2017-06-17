@@ -298,7 +298,7 @@ private:
 #endif
     
 #if ENABLE(DATA_INTERACTION)
-    WebUITextIndicatorData *textIndicatorData;
+    RetainPtr<WebUITextIndicatorData> textIndicatorData;
     RetainPtr<WebUITextIndicatorData> dataOperationTextIndicator;
 #endif
 

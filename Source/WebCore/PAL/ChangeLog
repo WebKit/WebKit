@@ -1,3 +1,15 @@
+2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=173366
+        <rdar://problem/32767014>
+
+        Reviewed by Tim Horton.
+
+        Introduce ENABLE_DATA_INTERACTION and ENABLE_DRAG_SUPPORT to FeatureDefines.xcconfig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.

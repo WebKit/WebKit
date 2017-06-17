@@ -1,0 +1,35 @@
+<head>
+    <meta name="viewport" content="width=device-width">
+        <style>
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        #source, #editor {
+            width: 200px;
+            height: 200px;
+        }
+
+        #editor {
+            border: black 1px solid;
+        }
+        </style>
+</head>
+
+<body>
+    <div><img id="source" src="icon.png"></img></div>
+    <div contenteditable id="editor"></div>
+    <script>
+    function postEventType(event) {
+        webkit.messageHandlers.testHandler.postMessage(event.type);
+    }
+
+    editor.addEventListener("drop", postEventType);
+    editor.addEventListener("dragenter", postEventType);
+    editor.addEventListener("dragover", postEventType);
+    editor.addEventListener("dragleave", postEventType);
+    editor.addEventListener("dragstart", postEventType);
+    </script>
+</body>

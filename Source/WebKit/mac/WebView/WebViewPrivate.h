@@ -118,6 +118,10 @@ extern NSString *WebQuickLookFileNameKey;
 extern NSString *WebQuickLookUTIKey;
 #endif
 
+#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+@protocol UIDropSession;
+#endif
+
 extern NSString * const WebViewWillCloseNotification;
 
 #if ENABLE_DASHBOARD_SUPPORT
@@ -464,21 +468,21 @@ Could be worth adding to the API.
 + (void)_releaseMemoryNow;
 
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item;
-#endif // TARGET_OS_IPHONE
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition;
 - (WebUITextIndicatorData *)_getDataInteractionData;
 @property (nonatomic, readonly, strong, getter=_dataOperationTextIndicator) WebUITextIndicatorData *dataOperationTextIndicator;
-- (uint64_t)_enteredDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
-- (uint64_t)_updatedDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
-- (void)_exitedDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
-- (void)_performDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
-- (BOOL)_tryToPerformDataInteraction:(id)dataInteraction client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
+- (uint64_t)_enteredDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
+- (uint64_t)_updatedDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
+- (void)_exitedDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
+- (void)_performDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
+- (BOOL)_tryToPerformDataInteraction:(id <UIDropSession>)session client:(CGPoint)clientPosition global:(CGPoint)globalPosition operation:(uint64_t)operation;
 - (void)_endedDataInteraction:(CGPoint)clientPosition global:(CGPoint)clientPosition;
 
-#if TARGET_OS_IPHONE
 @property (nonatomic, readonly, getter=_dataInteractionCaretRect) CGRect dataInteractionCaretRect;
-- (UIImage *)_createImageWithPlatterForImage:(UIImage *)image boundingRect:(CGRect)boundingRect contentScaleFactor:(CGFloat)contentScaleFactor clippingRects:(NSArray<NSValue *> *)clippingRects;
+#endif
+
 // Deprecated. Use -[WebDataSource _quickLookContent] instead.
 - (NSDictionary *)quickLookContentForURL:(NSURL *)url;
 #endif

@@ -29,12 +29,15 @@
 #import "AXObjectCache.h"
 #import "Chrome.h"
 #import "ChromeClient.h"
+#import "DataTransfer.h"
+#import "DragState.h"
 #import "FocusController.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "KeyboardEvent.h"
 #import "MouseEventWithHitTestResults.h"
 #import "Page.h"
+#import "Pasteboard.h"
 #import "PlatformEventFactoryIOS.h"
 #import "PlatformKeyboardEvent.h"
 #import "RenderWidget.h"
@@ -44,13 +47,10 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Noncopyable.h>
+#import <wtf/SetForScope.h>
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #import <WebKitAdditions/EventHandlerIOSTouch.cpp>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/EventHandlerAdditions.mm>
 #endif
 
 namespace WebCore {
@@ -558,5 +558,50 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 {
     return PlatformEventFactory::createPlatformMouseEvent(currentEvent());
 }
+
+#if ENABLE(DRAG_SUPPORT)
+
+Ref<DataTransfer> EventHandler::createDraggingDataTransfer() const
+{
+    Pasteboard("data interaction pasteboard").clear();
+    return DataTransfer::createForDrag();
+}
+
+bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&)
+{
+    return false;
+}
+
+bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition)
+{
+    Ref<Frame> protectedFrame(m_frame);
+
+    PlatformMouseEvent syntheticMousePressEvent(clientPosition, globalPosition, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime(), 0, NoTap);
+    PlatformMouseEvent syntheticMouseMoveEvent(clientPosition, globalPosition, LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime(), 0, NoTap);
+
+    HitTestRequest request(HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent);
+    auto documentPoint = protectedFrame->view() ? protectedFrame->view()->windowToContents(syntheticMouseMoveEvent.position()) : syntheticMouseMoveEvent.position();
+    auto hitTestedMouseEvent = m_frame.document()->prepareMouseEvent(request, documentPoint, syntheticMouseMoveEvent);
+
+    RefPtr<Frame> subframe = subframeForHitTestResult(hitTestedMouseEvent);
+    if (subframe && subframe->eventHandler().tryToBeginDataInteractionAtPoint(clientPosition, globalPosition))
+        return true;
+
+    // FIXME: This needs to be refactored, along with handleMousePressEvent and handleMouseMoveEvent, so that state associated only with dragging
+    // lives solely in the DragController, and so that we don't need to pretend that a mouse press and mouse move have already occurred here.
+    m_mouseDownMayStartDrag = eventMayStartDrag(syntheticMousePressEvent);
+    if (!m_mouseDownMayStartDrag)
+        return false;
+
+    SetForScope<bool> mousePressed(m_mousePressed, true);
+    dragState().source = nullptr;
+    dragState().draggedContentRange = nullptr;
+    m_mouseDownPos = protectedFrame->view()->windowToContents(syntheticMouseMoveEvent.position());
+    protectedFrame->document()->updateStyleIfNeeded();
+
+    return handleMouseDraggedEvent(hitTestedMouseEvent, DontCheckDragHysteresis);
+}
+
+#endif
 
 }

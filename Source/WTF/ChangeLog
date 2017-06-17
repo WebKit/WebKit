@@ -1,3 +1,16 @@
+2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=173366
+        <rdar://problem/32767014>
+
+        Reviewed by Tim Horton.
+
+        Define ENABLE_DRAG_SUPPORT as 1 by default and 0 for iOS, and define ENABLE_DATA_INTERACTION as 0 by default.
+        These are overridden to both be 1 for iOS 11+ in the FeatureDefines.xcconfig within each individual project.
+
+        * wtf/Platform.h:
+
 2017-06-15  Chris Dumez  <cdumez@apple.com>
 
         Fix typo in XPCSPI.h

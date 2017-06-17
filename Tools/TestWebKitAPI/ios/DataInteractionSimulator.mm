@@ -30,6 +30,10 @@
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import <UIKit/UIDragInteraction.h>
+#import <UIKit/UIDragItem.h>
+#import <UIKit/UIDragSession.h>
+#import <UIKit/UIDragging.h>
 #import <UIKit/UIItemProvider_Private.h>
 #import <WebCore/SoftLinking.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -42,9 +46,191 @@ SOFT_LINK(UIKit, UIApplicationInstantiateSingleton, void, (Class singletonClass)
 
 using namespace TestWebKitAPI;
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/DataInteractionSimulatorAdditions.mm>)
-#include <WebKitAdditions/DataInteractionSimulatorAdditions.mm>
-#endif
+@interface MockDragDropSession : NSObject <UIDragDropSession> {
+@private
+    RetainPtr<NSArray> _mockItems;
+    RetainPtr<UIWindow> _window;
+}
+@property (nonatomic) CGPoint mockLocationInWindow;
+@end
+
+@implementation MockDragDropSession
+
+- (instancetype)initWithItems:(NSArray <UIDragItem *>*)items location:(CGPoint)locationInWindow window:(UIWindow *)window
+{
+    if (self = [super init]) {
+        _mockItems = items;
+        _mockLocationInWindow = locationInWindow;
+        _window = window;
+    }
+    return self;
+}
+
+- (BOOL)allowsMoveOperation
+{
+    return YES;
+}
+
+- (BOOL)isRestrictedToDraggingApplication
+{
+    return NO;
+}
+
+- (BOOL)hasItemsConformingToTypeIdentifiers:(NSArray<NSString *> *)typeIdentifiers
+{
+    for (NSString *typeIdentifier in typeIdentifiers) {
+        BOOL hasItemConformingToType = NO;
+        for (UIDragItem *item in self.items)
+            hasItemConformingToType |= [[item.itemProvider registeredTypeIdentifiers] containsObject:typeIdentifier];
+        if (!hasItemConformingToType)
+            return NO;
+    }
+    return YES;
+}
+
+- (BOOL)canLoadObjectsOfClass:(Class<UIItemProviderReading>)aClass
+{
+    for (UIDragItem *item in self.items) {
+        if ([item.itemProvider canLoadObjectOfClass:aClass])
+            return YES;
+    }
+    return NO;
+}
+
+- (BOOL)canLoadObjectsOfClasses:(NSArray<Class<UIItemProviderReading>> *)classes
+{
+    for (Class<UIItemProviderReading> aClass in classes) {
+        BOOL canLoad = NO;
+        for (UIDragItem *item in self.items)
+            canLoad |= [item.itemProvider canLoadObjectOfClass:aClass];
+        if (!canLoad)
+            return NO;
+    }
+    return YES;
+}
+
+- (NSArray<UIDragItem *> *)items
+{
+    return _mockItems.get();
+}
+
+- (void)setItems:(NSArray<UIDragItem *> *)items
+{
+    _mockItems = items;
+}
+
+- (CGPoint)locationInView:(UIView *)view
+{
+    return [_window convertPoint:_mockLocationInWindow toView:view];
+}
+
+@end
+
+NSString * const DataInteractionEnterEventName = @"dragenter";
+NSString * const DataInteractionOverEventName = @"dragover";
+NSString * const DataInteractionPerformOperationEventName = @"drop";
+NSString * const DataInteractionLeaveEventName = @"dragleave";
+NSString * const DataInteractionStartEventName = @"dragstart";
+
+@interface MockDataOperationSession : MockDragDropSession <UIDropSession>
+@property (nonatomic, strong) id localContext;
+@end
+
+@implementation MockDataOperationSession
+
+- (instancetype)initWithProviders:(NSArray<UIItemProvider *> *)providers location:(CGPoint)locationInWindow window:(UIWindow *)window
+{
+    auto items = adoptNS([[NSMutableArray alloc] init]);
+    for (UIItemProvider *itemProvider in providers)
+        [items addObject:[[[UIDragItem alloc] initWithItemProvider:itemProvider] autorelease]];
+
+    return [super initWithItems:items.get() location:locationInWindow window:window];
+}
+
+- (UIDraggingSession *)session
+{
+    return nil;
+}
+
+- (BOOL)isLocal
+{
+    return YES;
+}
+
+- (NSProgress *)progress
+{
+    return [NSProgress discreteProgressWithTotalUnitCount:100];
+}
+
+- (void)setProgressIndicatorStyle:(UIDropSessionProgressIndicatorStyle)progressIndicatorStyle
+{
+}
+
+- (UIDropSessionProgressIndicatorStyle)progressIndicatorStyle
+{
+    return UIDropSessionProgressIndicatorStyleNone;
+}
+
+- (NSUInteger)operationMask
+{
+    return 0;
+}
+
+- (id <UIDragSession>)localDragSession
+{
+    return nil;
+}
+
+- (BOOL)hasItemsConformingToTypeIdentifier:(NSString *)typeIdentifier
+{
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
+- (BOOL)canCreateItemsOfClass:(Class<UIItemProviderReading>)aClass
+{
+    ASSERT_NOT_REACHED();
+    return NO;
+}
+
+- (NSProgress *)loadObjectsOfClass:(Class<NSItemProviderReading>)aClass completion:(void(^)(NSArray<__kindof id <NSItemProviderReading>> *objects))completion
+{
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+@end
+
+@interface MockDataInteractionSession : MockDragDropSession <UIDragSession>
+@property (nonatomic, strong) id localContext;
+@property (nonatomic, strong) id context;
+@end
+
+@implementation MockDataInteractionSession
+
+- (instancetype)initWithWindow:(UIWindow *)window
+{
+    return [super initWithItems:@[ ] location:CGPointZero window:window];
+}
+
+- (NSUInteger)localOperationMask
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+- (NSUInteger)externalOperationMask
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+- (id)session
+{
+    return nil;
+}
+
+@end
 
 static double progressIncrementStep = 0.033;
 static double progressTimeStep = 0.016;
@@ -212,7 +398,7 @@ static NSArray *dataInteractionEventNames()
             return;
         }
 
-        for (WKDataInteractionItem *item in items)
+        for (UIDragItem *item in items)
             [itemProviders addObject:item.itemProvider];
 
         _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:itemProviders location:self._currentLocation window:[_webView window]]);

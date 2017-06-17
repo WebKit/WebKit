@@ -1,3 +1,42 @@
+2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=173366
+        <rdar://problem/32767014>
+
+        Reviewed by Tim Horton.
+
+        Move pieces of iOS WebKit1 drag and drop implementation into OpenSource. No change in behavior.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebCoreSupport/WebDragClient.mm:
+        (WebDragClient::useLegacyDragClient):
+        (WebDragClient::willPerformDragDestinationAction):
+        (WebDragClient::dragSourceActionMaskForPoint):
+        (WebDragClient::willPerformDragSourceAction):
+        (WebDragClient::startDrag):
+        (WebDragClient::beginDrag):
+        (WebDragClient::declareAndWriteDragImage):
+        (WebDragClient::declareAndWriteAttachment):
+        (WebDragClient::didConcludeEditDrag):
+        * WebView/WebView.mm:
+        (-[WebView _setDataInteractionData:textIndicator:atClientPosition:anchorPoint:action:]):
+        (-[WebView _getDataInteractionData]):
+        (-[WebView dragDataForSession:client:global:operation:]):
+        (-[WebView _enteredDataInteraction:client:global:operation:]):
+        (-[WebView _updatedDataInteraction:client:global:operation:]):
+        (-[WebView _exitedDataInteraction:client:global:operation:]):
+        (-[WebView _performDataInteraction:client:global:operation:]):
+        (-[WebView _tryToPerformDataInteraction:client:global:operation:]):
+        (-[WebView _endedDataInteraction:global:]):
+        (-[WebView _didConcludeEditDataInteraction]):
+        (floatRectsForCGRectArray): Deleted.
+        (-[WebView _createImageWithPlatterForImage:boundingRect:contentScaleFactor:clippingRects:]): Deleted.
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate dealloc]):
+        * WebView/WebViewPrivate.h:
+
 2017-06-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK1] Dropping links onto UIWebViews should not trigger navigation by default

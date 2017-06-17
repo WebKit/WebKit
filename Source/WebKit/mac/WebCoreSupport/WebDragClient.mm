@@ -59,10 +59,6 @@
 
 using namespace WebCore;
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebDragClientAdditionsWebKit1.mm>)
-#import <WebKitAdditions/WebDragClientAdditionsWebKit1.mm>
-#endif
-
 WebDragClient::WebDragClient(WebView* webView)
     : m_webView(webView) 
 {
@@ -221,6 +217,55 @@ void WebDragClient::declareAndWriteAttachment(const String&, Element&, const URL
 #endif
 
 #endif
+
+#if PLATFORM(IOS)
+
+bool WebDragClient::useLegacyDragClient()
+{
+    // FIXME: Move the iOS drag and drop implementation for WebKit1 off of the legacy drag client.
+    return true;
+}
+
+void WebDragClient::willPerformDragDestinationAction(DragDestinationAction, const DragData&)
+{
+}
+
+WebCore::DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
+{
+    return DragSourceActionAny;
+}
+
+void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const IntPoint&, DataTransfer&)
+{
+}
+
+void WebDragClient::startDrag(DragImage dragImage, const IntPoint& point, const IntPoint& eventLocation, const FloatPoint& dragImageAnchor, DataTransfer& dataTransfer, Frame& frame, DragSourceAction dragSourceAction)
+{
+    [m_webView _setDataInteractionData:dragImage.get().get() textIndicator:dragImage.indicatorData() atClientPosition:eventLocation anchorPoint:dragImageAnchor action:dragSourceAction];
+}
+
+void WebDragClient::beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction)
+{
+}
+
+void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
+{
+    if (auto* frame = element.document().frame())
+        frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(), element, url, label);
+}
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+void WebDragClient::declareAndWriteAttachment(const String&, Element&, const URL&, const String&, Frame*)
+{
+}
+#endif
+
+void WebDragClient::didConcludeEditDrag()
+{
+    [m_webView _didConcludeEditDataInteraction];
+}
+
+#endif // PLATFORM(IOS)
 
 void WebDragClient::dragControllerDestroyed() 
 {

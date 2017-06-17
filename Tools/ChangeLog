@@ -1,3 +1,55 @@
+2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=173366
+        <rdar://problem/32767014>
+
+        Reviewed by Tim Horton.
+
+        Move test pages and pieces of DataInteractionSimulator hidden behind WebKitAdditions into TestWebKitAPI. No
+        change in behavior.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/autofocus-contenteditable.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/background-image-link-and-input.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/contenteditable-and-textarea.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/div-and-large-image.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/file-uploading.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/image-and-contenteditable.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/image-and-textarea.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/link-and-input.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/link-and-target-div.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/prevent-operation.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/prevent-start.html: Added.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/textarea-to-input.html: Added.
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[MockDragDropSession initWithItems:location:window:]):
+        (-[MockDragDropSession allowsMoveOperation]):
+        (-[MockDragDropSession isRestrictedToDraggingApplication]):
+        (-[MockDragDropSession hasItemsConformingToTypeIdentifiers:]):
+        (-[MockDragDropSession canLoadObjectsOfClass:]):
+        (-[MockDragDropSession canLoadObjectsOfClasses:]):
+        (-[MockDragDropSession items]):
+        (-[MockDragDropSession setItems:]):
+        (-[MockDragDropSession locationInView:]):
+        (-[MockDataOperationSession initWithProviders:location:window:]):
+        (-[MockDataOperationSession session]):
+        (-[MockDataOperationSession isLocal]):
+        (-[MockDataOperationSession progress]):
+        (-[MockDataOperationSession setProgressIndicatorStyle:]):
+        (-[MockDataOperationSession progressIndicatorStyle]):
+        (-[MockDataOperationSession operationMask]):
+        (-[MockDataOperationSession localDragSession]):
+        (-[MockDataOperationSession hasItemsConformingToTypeIdentifier:]):
+        (-[MockDataOperationSession canCreateItemsOfClass:]):
+        (-[MockDataOperationSession loadObjectsOfClass:completion:]):
+        (-[MockDataInteractionSession initWithWindow:]):
+        (-[MockDataInteractionSession localOperationMask]):
+        (-[MockDataInteractionSession externalOperationMask]):
+        (-[MockDataInteractionSession session]):
+        (-[DataInteractionSimulator _advanceProgress]):
+
 2017-06-16  Alex Christensen  <achristensen@webkit.org>
 
         Show punycode to user if a URL has dotless i or j followed by diacritic dot
