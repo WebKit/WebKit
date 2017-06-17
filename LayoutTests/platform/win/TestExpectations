@@ -3891,6 +3891,7 @@ svg/css/getComputedStyle-basic.xhtml [ Failure ]
 svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
 svg/custom/second-inline-text.xhtml [ Failure ]
 tables/mozilla/bugs/bug4427.html [ Failure ]
+transitions/clip-path-path-transitions.html [ Failure ]
 # Unexpected image-only failures tracked in webkit.org/b/172437.
 fast/borders/border-painting-correctness-dashed.html [ ImageOnlyFailure ]
 fast/borders/border-painting-correctness-dotted.html [ ImageOnlyFailure ]
@@ -3962,6 +3963,7 @@ http/tests/websocket/tests/hybi/inspector/resolveWebSocket.html [ Skip ]
 http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Skip ]
 http/tests/websocket/tests/hybi/inspector/server-close.html [ Skip ]
 # Unexpected flakiness tracked in webkit.org/b/172437.
+css3/filters/blur-clipped-by-ancestor.html [ ImageOnlyFailure Pass ]
 fast/events/media-focus-in-standalone-media-document.html [ Crash Pass ]
 fast/events/message-port-postMessage-recursive.html [ Timeout Pass ]
 imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Timeout Failure ]
@@ -3979,7 +3981,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element
 imported/w3c/web-platform-tests/resource-timing/rt-resource-errors.html [ Failure Pass ]
 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Failure Pass ]
 http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Timeout Pass ]
-http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout Failure ]
+http/tests/security/contentSecurityPolicy/audio-redirect-blocked.html [ Timeout Failure Crash ]
 http/tests/security/contentSecurityPolicy/block-favicon.html [ Failure Pass ]
 
 
