@@ -49,6 +49,9 @@ public:
     explicit LibWebRTCPeerConnectionBackend(RTCPeerConnection&);
     ~LibWebRTCPeerConnectionBackend();
 
+    bool hasAudioSources() const { return m_audioSources.size(); }
+    bool hasVideoSources() const { return m_videoSources.size(); }
+
 private:
     void doCreateOffer(RTCOfferOptions&&) final;
     void doCreateAnswer(RTCAnswerOptions&&) final;

@@ -1,5 +1,28 @@
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
+        addTransceiver should trigger mid generation in the SDP
+        https://bugs.webkit.org/show_bug.cgi?id=173452
+
+        Reviewed by Alex Christensen.
+
+        Test: webrtc/video-addTransceiver.html
+
+        Adding support for recvonly SDP based on call to addTransceiver.
+        Using offer_to_receive options of libwebrtc for that purpose.
+
+        Making sure that addTransceiver and using a real track afterwards is working too.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::enqueueReplaceTrackTask): notify the backend that a track is added in case the sender has no track.
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveAudio): Detect whether some audio mid should be recvonly.
+        (WebCore::LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveVideo): Detect whether some video mid should be recvonly.
+        (WebCore::LibWebRTCMediaEndpoint::doCreateOffer):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+
+2017-06-16  Youenn Fablet  <youenn@apple.com>
+
         WebCore::LibWebRTCMediaEndpoint::gatherStatsForLogging is crashing
         https://bugs.webkit.org/show_bug.cgi?id=173493
 

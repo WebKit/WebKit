@@ -121,6 +121,9 @@ private:
     int AddRef() const { ref(); return static_cast<int>(refCount()); }
     int Release() const { deref(); return static_cast<int>(refCount()); }
 
+    bool shouldOfferAllowToReceiveAudio() const;
+    bool shouldOfferAllowToReceiveVideo() const;
+
     class CreateSessionDescriptionObserver final : public webrtc::CreateSessionDescriptionObserver {
     public:
         explicit CreateSessionDescriptionObserver(LibWebRTCMediaEndpoint &endpoint) : m_endpoint(endpoint) { }

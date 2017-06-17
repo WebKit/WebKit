@@ -205,12 +205,47 @@ void LibWebRTCMediaEndpoint::removeTrack(RTCRtpSender& sender)
     m_backend->RemoveTrack(rtcSender.get());
 }
 
+bool LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveAudio() const
+{
+    for (const auto& transceiver : m_peerConnectionBackend.connection().getTransceivers()) {
+        if (transceiver->sender().trackKind() != "audio")
+            continue;
+
+        if (transceiver->direction() == RTCRtpTransceiverDirection::Recvonly)
+            return true;
+
+        if (transceiver->direction() == RTCRtpTransceiverDirection::Sendrecv && !m_senders.contains(&transceiver->sender()))
+            return true;
+    }
+    return false;
+}
+
+bool LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveVideo() const
+{
+    for (const auto& transceiver : m_peerConnectionBackend.connection().getTransceivers()) {
+        if (transceiver->sender().trackKind() != "video")
+            continue;
+
+        if (transceiver->direction() == RTCRtpTransceiverDirection::Recvonly)
+            return true;
+
+        if (transceiver->direction() == RTCRtpTransceiverDirection::Sendrecv && !m_senders.contains(&transceiver->sender()))
+            return true;
+    }
+    return false;
+}
+
 void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)
 {
     m_isInitiator = true;
     webrtc::PeerConnectionInterface::RTCOfferAnswerOptions rtcOptions;
     rtcOptions.ice_restart = options.iceRestart;
     rtcOptions.voice_activity_detection = options.voiceActivityDetection;
+    // FIXME: offer_to_receive_audio and offer_to_receive_video are used as libwebrtc does not support transceivers yet.
+    if (shouldOfferAllowToReceiveAudio())
+        rtcOptions.offer_to_receive_audio = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
+    if (shouldOfferAllowToReceiveVideo())
+        rtcOptions.offer_to_receive_video = webrtc::PeerConnectionInterface::RTCOfferAnswerOptions::kOfferToReceiveMediaTrue;
     m_backend->CreateOffer(&m_createSessionDescriptionObserver, rtcOptions);
 }
 

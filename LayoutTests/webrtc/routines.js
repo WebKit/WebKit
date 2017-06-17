@@ -4,14 +4,16 @@ var remoteConnection;
 
 function createConnections(setupLocalConnection, setupRemoteConnection, options = { }) {
     localConnection = new RTCPeerConnection();
-    localConnection.onicecandidate = (event) => { iceCallback1(event, options.filterOutICECandidate) };
-    setupLocalConnection(localConnection);
-
     remoteConnection = new RTCPeerConnection();
     remoteConnection.onicecandidate = (event) => { iceCallback2(event, options.filterOutICECandidate) };
-    setupRemoteConnection(remoteConnection);
 
-    localConnection.createOffer().then((desc) => gotDescription1(desc, options), onCreateSessionDescriptionError);
+    localConnection.onicecandidate = (event) => { iceCallback1(event, options.filterOutICECandidate) };
+
+    Promise.resolve(setupLocalConnection(localConnection)).then(() => {
+        return Promise.resolve(setupRemoteConnection(remoteConnection));
+    }).then(() => {
+        localConnection.createOffer().then((desc) => gotDescription1(desc, options), onCreateSessionDescriptionError);
+    });
 
     return [localConnection, remoteConnection]
 }
