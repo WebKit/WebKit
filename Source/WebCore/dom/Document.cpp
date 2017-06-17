@@ -1847,8 +1847,9 @@ void Document::resolveStyle(ResolveStyleType type)
     if (updatedCompositingLayers && !frameView.needsLayout())
         frameView.viewportContentsChanged();
 
+    // Usually this is handled by post-layout.
     if (!frameView.needsLayout())
-        frameView.frame().selection().updateAppearanceAfterLayout();
+        frameView.frame().selection().scheduleAppearanceUpdateAfterStyleChange();
 
     // As a result of the style recalculation, the currently hovered element might have been
     // detached (for example, by setting display:none in the :hover style), schedule another mouseMove event
@@ -1858,6 +1859,8 @@ void Document::resolveStyle(ResolveStyleType type)
 
     if (m_gotoAnchorNeededAfterStylesheetsLoad && !styleScope().hasPendingSheets())
         frameView.scrollToFragment(m_url);
+
+    // FIXME: Ideally we would ASSERT(!needsStyleRecalc()) here but we have some cases where it is not true.
 }
 
 bool Document::needsStyleRecalc() const

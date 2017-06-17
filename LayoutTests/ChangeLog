@@ -1,3 +1,13 @@
+2017-06-17  Antti Koivisto  <antti@apple.com>
+
+        Crash due to infinite recursion via FrameSelection::updateAppearanceAfterLayout
+        https://bugs.webkit.org/show_bug.cgi?id=173468
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/updateAppearanceAfterLayout-recursion-expected.txt: Added.
+        * editing/selection/updateAppearanceAfterLayout-recursion.html: Added.
+
 2017-06-17  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.

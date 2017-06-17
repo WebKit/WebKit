@@ -1,3 +1,34 @@
+2017-06-17  Antti Koivisto  <antti@apple.com>
+
+        Crash due to infinite recursion via FrameSelection::updateAppearanceAfterLayout
+        https://bugs.webkit.org/show_bug.cgi?id=173468
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: editing/selection/updateAppearanceAfterLayout-recursion.html
+
+        Calling FrameSelection::updateAppearanceAfterLayout() from Document::resolveStyle is unsafe
+        because it may cause another call to resolveStyle. We have some cases where the style
+        is still unclean when updateAppearanceAfterLayout() is called. This can lead to infinite
+        recursion.
+
+        The test case is not the common stack seen in CrashTracer (couldn't quit replicate it) but
+        the updateAppearanceAfterLayout/resolveStyle recursion is the same.
+
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+
+            Normally selection appearance update is done in post-layout but not all style resolutions schedule a layout.
+            Invoke it asynchronously in that case instead of the previous synchronous call.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::updateAppearanceAfterLayout):
+        (WebCore::FrameSelection::scheduleAppearanceUpdateAfterStyleChange):
+        (WebCore::FrameSelection::appearanceUpdateTimerFired):
+        (WebCore::FrameSelection::updateAppearanceAfterLayoutOrStyleChange):
+        * editing/FrameSelection.h:
+
 2017-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build.
