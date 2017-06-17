@@ -1,3 +1,24 @@
+2017-06-16  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Seeking or entering fullscreen can cause extreme CPU usage
+        https://bugs.webkit.org/show_bug.cgi?id=173505
+
+        Reviewed by Tim Horton.
+
+        When support for painting MSE to WebGL was added in r217185, the implementation of
+        SourceBufferPrivateAVFObjC::isReadyForMoreSamples() was modified to support asking
+        the decompression session if it was ready. That change, however, caused an extreme
+        performance regression in the normal playback path, where WebKit will effectively
+        append samples endlessly to the AVSampleBufferDisplayLayer, which admirably enqueued
+        each of them for decoding. Eventually, the cost of iterating over the CMBufferQueue
+        overwhelmed the cost of decoding, and caused the extreme lag seen when seeking.
+
+        Make sure to property query the AVSampleBufferDisplayLayer for isReadyForMoreMediaData
+        before enqueuing.
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples):
+
 2017-06-16  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for HTMLDocument
