@@ -248,6 +248,7 @@ storage/indexeddb/modern/get-keyrange.html [ Failure ]
 storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
 storage/indexeddb/modern/workers-enable.html [ Failure ]
+storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 
 imported/w3c/IndexedDB-private-browsing [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB [ Skip ]
@@ -3342,6 +3343,7 @@ security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-wit
 http/tests/loading/preload-picture-nested.html [ Timeout Pass ]
 http/tests/security/contentSecurityPolicy/blob-url-does-not-match-source-self.html [ Timeout Pass ]
 # Failures tracked in webkit.org/b/160447.
+accessibility/heading-crash-after-hidden.html [ Crash Failure ]
 accessibility/adjacent-continuations-cause-assertion-failure.html [ Skip ]
 accessibility/aria-busy.html [ Failure ]
 accessibility/aria-role-on-label.html [ Failure ]

@@ -1,3 +1,9 @@
+2017-06-16  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed test gardening. Update test expectations for failing tests.
+
+        * platform/win/TestExpectations:
+
 2017-06-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument 2D/WebGL canvas contexts in the backend
