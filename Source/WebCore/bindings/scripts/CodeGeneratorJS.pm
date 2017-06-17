@@ -5332,7 +5332,7 @@ sub GenerateCallWith
         push(@callWithArgs, "*context");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "Document")) {
-        $implIncludes{"Document.h"} = 1;
+        AddToImplIncludes("Document.h");
         push(@$outputArray, "    auto* context = ${scriptExecutionContextAccessor}->scriptExecutionContext();\n");
         push(@$outputArray, "    if (UNLIKELY(!context))\n");
         push(@$outputArray, "        return" . ($contextMissing ? " " . $contextMissing : "") . ";\n");
@@ -5341,30 +5341,33 @@ sub GenerateCallWith
         push(@callWithArgs, "document");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "IncumbentDocument")) {
-        $implIncludes{"Document.h"} = 1;
-        $implIncludes{"JSDOMWindowBase.h"} = 1;
-        push(@$outputArray, "    auto* document = incumbentDOMWindow($statePointer).document();\n");
-        push(@$outputArray, "    if (!document)\n");
+        AddToImplIncludes("JSDOMWindowBase.h");
+        push(@$outputArray, "    auto* incumbentDocument = incumbentDOMWindow($stateReference).document();\n");
+        push(@$outputArray, "    if (!incumbentDocument)\n");
         push(@$outputArray, "        return" . ($returnValue ? " " . $returnValue : "") . ";\n");
-        push(@callWithArgs, "*document");
+        push(@callWithArgs, "*incumbentDocument");
+    }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "ResponsibleDocument")) {
+        AddToImplIncludes("JSDOMWindowBase.h");
+        push(@callWithArgs, "responsibleDocument($stateReference)");
     }
     if ($operation and $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments")) {
+        AddToImplIncludes("<inspector/ScriptArguments.h>");
+        AddToImplIncludes("<inspector/ScriptCallStackFactory.h>");
         push(@$outputArray, "    Ref<Inspector::ScriptArguments> scriptArguments(Inspector::createScriptArguments($statePointer, " . @{$operation->arguments} . "));\n");
-        $implIncludes{"<inspector/ScriptArguments.h>"} = 1;
-        $implIncludes{"<inspector/ScriptCallStackFactory.h>"} = 1;
         push(@callWithArgs, "WTFMove(scriptArguments)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ActiveWindow")) {
-        $implIncludes{"JSDOMWindowBase.h"} = 1;
-        push(@callWithArgs, "activeDOMWindow($statePointer)");
+        AddToImplIncludes("JSDOMWindowBase.h");
+        push(@callWithArgs, "activeDOMWindow($stateReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "FirstWindow")) {
-        $implIncludes{"JSDOMWindowBase.h"} = 1;
-        push(@callWithArgs, "firstDOMWindow($statePointer)");
+        AddToImplIncludes("JSDOMWindowBase.h");
+        push(@callWithArgs, "firstDOMWindow($stateReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "IncumbentWindow")) {
-        $implIncludes{"JSDOMWindowBase.h"} = 1;
-        push(@callWithArgs, "incumbentDOMWindow($statePointer)");
+        AddToImplIncludes("JSDOMWindowBase.h");
+        push(@callWithArgs, "incumbentDOMWindow($stateReference)");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "RuntimeFlags")) {
         push(@callWithArgs, "${globalObject}->runtimeFlags()");

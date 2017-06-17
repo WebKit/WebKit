@@ -284,7 +284,7 @@ JSDOMWindow* toJSDOMWindow(JSC::VM& vm, JSValue value)
     return nullptr;
 }
 
-DOMWindow& incumbentDOMWindow(ExecState* exec)
+DOMWindow& incumbentDOMWindow(ExecState& state)
 {
     class GetCallerGlobalObjectFunctor {
     public:
@@ -318,18 +318,28 @@ DOMWindow& incumbentDOMWindow(ExecState* exec)
     };
 
     GetCallerGlobalObjectFunctor iter;
-    exec->iterate(iter);
-    return iter.globalObject() ? asJSDOMWindow(iter.globalObject())->wrapped() : firstDOMWindow(exec);
+    state.iterate(iter);
+    return iter.globalObject() ? asJSDOMWindow(iter.globalObject())->wrapped() : firstDOMWindow(state);
 }
 
-DOMWindow& activeDOMWindow(ExecState* exec)
+DOMWindow& activeDOMWindow(ExecState& state)
 {
-    return asJSDOMWindow(exec->lexicalGlobalObject())->wrapped();
+    return asJSDOMWindow(state.lexicalGlobalObject())->wrapped();
 }
 
-DOMWindow& firstDOMWindow(ExecState* exec)
+DOMWindow& firstDOMWindow(ExecState& state)
 {
-    return asJSDOMWindow(exec->vmEntryGlobalObject())->wrapped();
+    return asJSDOMWindow(state.vmEntryGlobalObject())->wrapped();
+}
+
+Document* responsibleDocument(ExecState& state)
+{
+    CallerFunctor functor;
+    state.iterate(functor);
+    auto* callerFrame = functor.callerFrame();
+    if (!callerFrame)
+        return nullptr;
+    return asJSDOMWindow(callerFrame->lexicalGlobalObject())->wrapped().document();
 }
 
 void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)

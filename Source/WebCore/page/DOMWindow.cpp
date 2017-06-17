@@ -936,12 +936,12 @@ ExceptionOr<Storage*> DOMWindow::localStorage() const
     return m_localStorage.get();
 }
 
-ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& callerWindow, JSC::JSValue messageValue, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
+ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& incumbentWindow, JSC::JSValue messageValue, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
     if (!isCurrentlyDisplayedInFrame())
         return { };
 
-    Document* sourceDocument = callerWindow.document();
+    Document* sourceDocument = incumbentWindow.document();
 
     // Compute the target origin.  We need to do this synchronously in order
     // to generate the SYNTAX_ERR exception correctly.
@@ -979,7 +979,7 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::ExecState& state, DOMWindow& calle
         stackTrace = createScriptCallStack(JSMainThreadExecState::currentState(), ScriptCallStack::maxCallStackSizeToCapture);
 
     // Schedule the message.
-    auto* timer = new PostMessageTimer(*this, message.releaseReturnValue(), sourceOrigin, callerWindow, channels.releaseReturnValue(), WTFMove(target), WTFMove(stackTrace));
+    auto* timer = new PostMessageTimer(*this, message.releaseReturnValue(), sourceOrigin, incumbentWindow, channels.releaseReturnValue(), WTFMove(target), WTFMove(stackTrace));
     timer->startOneShot(0_s);
 
     return { };
@@ -1024,9 +1024,9 @@ Element* DOMWindow::frameElement() const
     return m_frame->ownerElement();
 }
 
-void DOMWindow::focus(DOMWindow& callerWindow)
+void DOMWindow::focus(DOMWindow& incumbentWindow)
 {
-    focus(opener() && opener() != this && &callerWindow == opener());
+    focus(opener() && opener() != this && &incumbentWindow == opener());
 }
 
 void DOMWindow::focus(bool allowFocus)

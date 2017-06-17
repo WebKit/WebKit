@@ -393,7 +393,7 @@ gchar* webkit_dom_html_document_get_link_color(WebKitDOMHTMLDocument* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_HTML_DOCUMENT(self), 0);
     WebCore::HTMLDocument* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->linkColor());
+    gchar* result = convertToUTF8String(item->linkColorForBindings());
     return result;
 }
 
@@ -404,7 +404,7 @@ void webkit_dom_html_document_set_link_color(WebKitDOMHTMLDocument* self, const 
     g_return_if_fail(value);
     WebCore::HTMLDocument* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
-    item->setLinkColor(convertedValue);
+    item->setLinkColorForBindings(convertedValue);
 }
 
 gchar* webkit_dom_html_document_get_vlink_color(WebKitDOMHTMLDocument* self)

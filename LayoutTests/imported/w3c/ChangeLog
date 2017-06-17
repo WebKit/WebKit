@@ -1,3 +1,17 @@
+2017-06-16  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for HTMLDocument
+        https://bugs.webkit.org/show_bug.cgi?id=173444
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/dom/dynamic-markup-insertion/closing-the-input-stream/document.close-01-expected.txt:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-write/document.write-01-expected.txt:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/document-writeln/document.writeln-01-expected.txt:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/document.open-01-expected.txt:
+        * web-platform-tests/html/dom/dynamic-markup-insertion/opening-the-input-stream/document.open-02-expected.txt:
+        Update now passing results.
+
 2017-06-15  Youenn Fablet  <youenn@apple.com>
 
         RTCPeerConnection returns RTCSessionDescription where RTCSessionDescriptionInit would be appropriate

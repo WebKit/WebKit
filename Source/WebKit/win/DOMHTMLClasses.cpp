@@ -372,8 +372,7 @@ HRESULT DOMHTMLDocument::write(_In_ BSTR text)
     if (!m_document)
         return E_FAIL;
 
-    String string(text);
-    m_document->write(string);
+    m_document->write(nullptr, { String { text } });
     return S_OK;
 }
     
@@ -382,8 +381,7 @@ HRESULT DOMHTMLDocument::writeln(_In_ BSTR text)
     if (!m_document)
         return E_FAIL;
 
-    String string(text);
-    m_document->writeln(string);
+    m_document->writeln(nullptr, { String { text } });
     return S_OK;
 }
     

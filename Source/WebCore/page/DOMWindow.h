@@ -142,7 +142,7 @@ public:
     Element* frameElement() const;
 
     WEBCORE_EXPORT void focus(bool allowFocus = false);
-    void focus(DOMWindow& callerWindow);
+    void focus(DOMWindow& incumbentWindow);
     void blur();
     WEBCORE_EXPORT void close();
     void close(Document&);
@@ -221,7 +221,7 @@ public:
     void printErrorMessage(const String&);
     String crossDomainAccessErrorMessage(const DOMWindow& activeWindow);
 
-    ExceptionOr<void> postMessage(JSC::ExecState&, DOMWindow& callerWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
+    ExceptionOr<void> postMessage(JSC::ExecState&, DOMWindow& incumbentWindow, JSC::JSValue message, const String& targetOrigin, Vector<JSC::Strong<JSC::JSObject>>&&);
     void postMessageTimerFired(PostMessageTimer&);
 
     void languagesChanged();

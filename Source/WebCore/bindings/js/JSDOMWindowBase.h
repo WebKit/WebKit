@@ -104,9 +104,16 @@ WEBCORE_EXPORT JSDOMWindow* toJSDOMWindow(JSC::VM&, JSC::JSValue);
 // (<https://html.spec.whatwg.org/multipage/webappapis.html#concept-incumbent-everything>, 27 April 2017)
 // FIXME: Make this work for an "author function or script that originally scheduled the currently-running callback."
 // See <https://bugs.webkit.org/show_bug.cgi?id=163412>.
-DOMWindow& incumbentDOMWindow(JSC::ExecState*);
+DOMWindow& incumbentDOMWindow(JSC::ExecState&);
 
-DOMWindow& activeDOMWindow(JSC::ExecState*);
-DOMWindow& firstDOMWindow(JSC::ExecState*);
+DOMWindow& activeDOMWindow(JSC::ExecState&);
+DOMWindow& firstDOMWindow(JSC::ExecState&);
+
+// FIXME: This should probably be removed in favor of one of the other DOMWindow accessors. It is intended
+//        to provide the document specfied as the 'responsible document' in the algorithm for document.open()
+//        (https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#document-open-steps steps 4
+//        and 23 and https://html.spec.whatwg.org/multipage/webappapis.html#responsible-document). It is only
+//        used by JSDocument.
+Document* responsibleDocument(JSC::ExecState&);
 
 } // namespace WebCore

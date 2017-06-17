@@ -2497,15 +2497,35 @@ ScriptableDocumentParser* Document::scriptableDocumentParser() const
     return parser() ? parser()->asScriptableDocumentParser() : nullptr;
 }
 
-void Document::open(Document* ownerDocument)
+ExceptionOr<RefPtr<DOMWindow>> Document::openForBindings(DOMWindow& activeWindow, DOMWindow& firstWindow, const String& url, const AtomicString& name, const String& features)
+{
+    if (!m_domWindow)
+        return Exception { INVALID_ACCESS_ERR };
+
+    return m_domWindow->open(activeWindow, firstWindow, url, name, features);
+}
+
+// FIXME: Add support for the 'type' and 'replace' parameters.
+ExceptionOr<Document&> Document::openForBindings(Document* responsibleDocument, const String&, const String&)
+{
+    if (!isHTMLDocument())
+        return Exception { INVALID_STATE_ERR };
+
+    // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
+
+    open(responsibleDocument);
+    return *this;
+}
+
+void Document::open(Document* responsibleDocument)
 {
     if (m_ignoreOpensDuringUnloadCount)
         return;
 
-    if (ownerDocument) {
-        setURL(ownerDocument->url());
-        setCookieURL(ownerDocument->cookieURL());
-        setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
+    if (responsibleDocument) {
+        setURL(responsibleDocument->url());
+        setCookieURL(responsibleDocument->cookieURL());
+        setSecurityOriginPolicy(responsibleDocument->securityOriginPolicy());
     }
 
     if (m_frame) {
@@ -2620,11 +2640,22 @@ HTMLHeadElement* Document::head()
     return nullptr;
 }
 
-void Document::close()
+ExceptionOr<void> Document::closeForBindings()
 {
     // FIXME: We should follow the specification more closely:
     //        http://www.whatwg.org/specs/web-apps/current-work/#dom-document-close
 
+    if (!isHTMLDocument())
+        return Exception { INVALID_STATE_ERR };
+
+    // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
+
+    close();
+    return { };
+}
+
+void Document::close()
+{
     if (!scriptableDocumentParser() || !scriptableDocumentParser()->wasCreatedByScript() || !scriptableDocumentParser()->isParsing())
         return;
 
@@ -2819,7 +2850,7 @@ Seconds Document::timeSinceDocumentCreation() const
     return MonotonicTime::now() - m_documentCreationTime;
 }
 
-void Document::write(SegmentedString&& text, Document* ownerDocument)
+void Document::write(Document* responsibleDocument, SegmentedString&& text)
 {
     NestingLevelIncrementer nestingLevelIncrementer(m_writeRecursionDepth);
 
@@ -2834,22 +2865,43 @@ void Document::write(SegmentedString&& text, Document* ownerDocument)
         return;
 
     if (!hasInsertionPoint)
-        open(ownerDocument);
+        open(responsibleDocument);
 
     ASSERT(m_parser);
     m_parser->insert(WTFMove(text));
 }
 
-void Document::write(const String& text, Document* ownerDocument)
+ExceptionOr<void> Document::write(Document* responsibleDocument, Vector<String>&& strings)
 {
-    write(SegmentedString { text }, ownerDocument);
+    if (!isHTMLDocument())
+        return Exception { INVALID_STATE_ERR };
+
+    // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
+
+    SegmentedString text;
+    for (auto& string : strings)
+        text.append(WTFMove(string));
+
+    write(responsibleDocument, WTFMove(text));
+
+    return { };
 }
 
-void Document::writeln(const String& text, Document* ownerDocument)
+ExceptionOr<void> Document::writeln(Document* responsibleDocument, Vector<String>&& strings)
 {
-    SegmentedString textWithNewline { text };
-    textWithNewline.append(String { "\n" });
-    write(WTFMove(textWithNewline), ownerDocument);
+    if (!isHTMLDocument())
+        return Exception { INVALID_STATE_ERR };
+
+    // FIXME: This should also throw if "document's throw-on-dynamic-markup-insertion counter is greater than 0".
+
+    SegmentedString text;
+    for (auto& string : strings)
+        text.append(WTFMove(string));
+
+    text.append(ASCIILiteral { "\n" });
+    write(responsibleDocument, WTFMove(text));
+
+    return { };
 }
 
 Seconds Document::minimumDOMTimerInterval() const
@@ -7117,5 +7169,75 @@ void Document::mediaStreamCaptureStateChanged()
         mediaElement->mediaStreamCaptureStarted();
 }
 #endif
+
+const AtomicString& Document::bgColor() const
+{
+    auto* bodyElement = body();
+    if (!bodyElement)
+        return emptyAtom;
+    return bodyElement->attributeWithoutSynchronization(bgcolorAttr);
+}
+
+void Document::setBgColor(const String& value)
+{
+    if (auto* bodyElement = body())
+        bodyElement->setAttributeWithoutSynchronization(bgcolorAttr, value);
+}
+
+const AtomicString& Document::fgColor() const
+{
+    auto* bodyElement = body();
+    if (!bodyElement)
+        return emptyAtom;
+    return bodyElement->attributeWithoutSynchronization(textAttr);
+}
+
+void Document::setFgColor(const String& value)
+{
+    if (auto* bodyElement = body())
+        bodyElement->setAttributeWithoutSynchronization(textAttr, value);
+}
+
+const AtomicString& Document::alinkColor() const
+{
+    auto* bodyElement = body();
+    if (!bodyElement)
+        return emptyAtom;
+    return bodyElement->attributeWithoutSynchronization(alinkAttr);
+}
+
+void Document::setAlinkColor(const String& value)
+{
+    if (auto* bodyElement = body())
+        bodyElement->setAttributeWithoutSynchronization(alinkAttr, value);
+}
+
+const AtomicString& Document::linkColorForBindings() const
+{
+    auto* bodyElement = body();
+    if (!bodyElement)
+        return emptyAtom;
+    return bodyElement->attributeWithoutSynchronization(linkAttr);
+}
+
+void Document::setLinkColorForBindings(const String& value)
+{
+    if (auto* bodyElement = body())
+        bodyElement->setAttributeWithoutSynchronization(linkAttr, value);
+}
+
+const AtomicString& Document::vlinkColor() const
+{
+    auto* bodyElement = body();
+    if (!bodyElement)
+        return emptyAtom;
+    return bodyElement->attributeWithoutSynchronization(vlinkAttr);
+}
+
+void Document::setVlinkColor(const String& value)
+{
+    if (auto* bodyElement = body())
+        bodyElement->setAttributeWithoutSynchronization(vlinkAttr, value);
+}
 
 } // namespace WebCore

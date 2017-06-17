@@ -49,7 +49,7 @@ static inline bool canAccessDocument(JSC::ExecState* state, Document* targetDocu
     if (!targetDocument)
         return false;
 
-    DOMWindow& active = activeDOMWindow(state);
+    DOMWindow& active = activeDOMWindow(*state);
 
     if (active.document()->securityOrigin().canAccess(targetDocument->securityOrigin()))
         return true;
@@ -72,7 +72,7 @@ bool BindingSecurity::shouldAllowAccessToFrame(ExecState& state, Frame& frame, S
 {
     if (BindingSecurity::shouldAllowAccessToFrame(&state, &frame, DoNotReportSecurityError))
         return true;
-    message = frame.document()->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(&state));
+    message = frame.document()->domWindow()->crossDomainAccessErrorMessage(activeDOMWindow(state));
     return false;
 }
 
@@ -80,7 +80,7 @@ bool BindingSecurity::shouldAllowAccessToDOMWindow(ExecState& state, DOMWindow& 
 {
     if (BindingSecurity::shouldAllowAccessToDOMWindow(&state, globalObject, DoNotReportSecurityError))
         return true;
-    message = globalObject.crossDomainAccessErrorMessage(activeDOMWindow(&state));
+    message = globalObject.crossDomainAccessErrorMessage(activeDOMWindow(state));
     return false;
 }
 

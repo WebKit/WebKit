@@ -36,7 +36,7 @@
         },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],
-            "values": ["Document", "ScriptExecutionContext", "ScriptState", "ScriptArguments", "CallStack", "GlobalObject", "ActiveWindow", "FirstWindow", "CallerDocument", "CallerWindow"]
+            "values": ["Document", "ScriptExecutionContext", "ScriptState", "ScriptArguments", "CallStack", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument"]
         },
         "CheckSecurity": {
             "contextsAllowed": ["interface"]

@@ -1,3 +1,15 @@
+2017-06-16  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for HTMLDocument
+        https://bugs.webkit.org/show_bug.cgi?id=173444
+
+        Reviewed by Darin Adler.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLDocument::write):
+        (DOMHTMLDocument::writeln):
+        Update for new signature of write/writeln.
+
 2017-06-16  Daniel Bates  <dabates@apple.com>
 
         Cleanup: WebContextMenuClient::searchWithGoogle() should parse URL using URL { URL { }, ... }

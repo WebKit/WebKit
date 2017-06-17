@@ -19,28 +19,9 @@
  */
 
 [
-    CustomGetOwnPropertySlot,
     CustomToJSObject,
     NewImpurePropertyFiresWatchpoints,
     OverrideBuiltins,
-] interface HTMLDocument : Document {
-    [CEReactions, Custom, ForwardDeclareInHeader] void open();
-    void close();
-    [CEReactions, Custom] void write(optional DOMString text);
-    [CEReactions, Custom] void writeln(optional DOMString text);
-    
+] interface HTMLDocument : Document {    
     getter (DOMWindow or Element or HTMLCollection) (DOMString name);
-    
-    [Custom, Replaceable] readonly attribute HTMLAllCollection all;
-
-    void clear();
-    void captureEvents();
-    void releaseEvents();
-
-    // Deprecated attributes.
-    attribute [TreatNullAs=EmptyString] DOMString bgColor;
-    attribute [TreatNullAs=EmptyString] DOMString fgColor;
-    attribute [TreatNullAs=EmptyString] DOMString alinkColor;
-    attribute [TreatNullAs=EmptyString] DOMString linkColor;
-    attribute [TreatNullAs=EmptyString] DOMString vlinkColor;
 };

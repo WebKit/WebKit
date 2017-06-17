@@ -1,3 +1,25 @@
+2017-06-16  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for HTMLDocument
+        https://bugs.webkit.org/show_bug.cgi?id=173444
+
+        Reviewed by Darin Adler.
+
+        * dom/xhtml/level2/html/HTMLDocument17-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument18-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument19-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument20-expected.txt:
+        * dom/xhtml/level2/html/HTMLDocument21-expected.txt:
+        Update test results for correct exception being thrown.
+
+        * fast/dom/frame-deleted-in-document-open-expected.txt: Removed.
+        * fast/dom/frame-deleted-in-document-open.html: Removed.
+        * http/tests/security/isolatedWorld/document-open-expected.txt: Removed.
+        * http/tests/security/isolatedWorld/document-open.html: Removed.
+        Remove two tests that were testing the behavior of document.open using javascript
+        to call the window.open operation. This is not how it is specified and no
+        longer how it is implemented.
+
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
         WebRTC sockets should be closed at destruction time if not closed explicitly

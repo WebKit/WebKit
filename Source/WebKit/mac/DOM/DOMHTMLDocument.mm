@@ -139,13 +139,13 @@
 - (NSString *)linkColor
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->linkColor();
+    return IMPL->linkColorForBindings();
 }
 
 - (void)setLinkColor:(NSString *)newLinkColor
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->setLinkColor(newLinkColor);
+    IMPL->setLinkColorForBindings(newLinkColor);
 }
 
 - (NSString *)vlinkColor
@@ -175,13 +175,13 @@
 - (void)write:(NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->write(text);
+    IMPL->write(nullptr, { String { text } });
 }
 
 - (void)writeln:(NSString *)text
 {
     WebCore::JSMainThreadNullState state;
-    IMPL->writeln(text);
+    IMPL->writeln(nullptr, { String { text} });
 }
 
 - (void)clear

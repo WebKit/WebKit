@@ -3840,7 +3840,7 @@ static inline bool setJSTestObjWithCallWithAndSetterCallWithAttributeSetter(Exec
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setWithCallWithAndSetterCallWithAttribute(state, activeDOMWindow(&state), firstDOMWindow(&state), WTFMove(nativeValue));
+    impl.setWithCallWithAndSetterCallWithAttribute(state, activeDOMWindow(state), firstDOMWindow(state), WTFMove(nativeValue));
     return true;
 }
 
@@ -5852,10 +5852,10 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerDocumentAr
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto* document = incumbentDOMWindow(state).document();
-    if (!document)
+    auto* incumbentDocument = incumbentDOMWindow(*state).document();
+    if (!incumbentDocument)
         return JSValue::encode(jsUndefined());
-    impl.withCallerDocumentArgument(*document);
+    impl.withCallerDocumentArgument(*incumbentDocument);
     return JSValue::encode(jsUndefined());
 }
 
@@ -5869,7 +5869,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionWithCallerWindowArgu
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    impl.withCallerWindowArgument(incumbentDOMWindow(state));
+    impl.withCallerWindowArgument(incumbentDOMWindow(*state));
     return JSValue::encode(jsUndefined());
 }
 

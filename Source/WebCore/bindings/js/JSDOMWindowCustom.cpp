@@ -518,7 +518,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState& state)
 
     DialogHandler handler(state);
 
-    wrapped().showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(&state), firstDOMWindow(&state), [&handler](DOMWindow& dialog) {
+    wrapped().showModalDialog(urlString, dialogFeaturesString, activeDOMWindow(state), firstDOMWindow(state), [&handler](DOMWindow& dialog) {
         handler.dialogCreated(dialog);
     });
 

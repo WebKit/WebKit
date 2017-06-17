@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,9 @@
 #include "config.h"
 #include "JSHTMLDocument.h"
 
-#include "JSDOMAbstractOperations.h"
-#include "JSDOMConvertInterface.h"
-#include "JSDOMConvertUnion.h"
-#include "JSDOMWindowCustom.h"
-#include "JSHTMLCollection.h"
-#include "SegmentedString.h"
-#include <runtime/Lookup.h>
-
 using namespace JSC;
 
 namespace WebCore {
-
-using namespace HTMLNames;
 
 JSValue toJSNewlyCreated(ExecState* state, JSDOMGlobalObject* globalObject, Ref<HTMLDocument>&& passedDocument)
 {
@@ -53,118 +43,6 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, HTMLDocument& do
     if (auto* wrapper = cachedDocumentWrapper(*state, *globalObject, document))
         return wrapper;
     return toJSNewlyCreated(state, globalObject, Ref<HTMLDocument>(document));
-}
-
-bool JSHTMLDocument::getOwnPropertySlot(JSObject* object, ExecState* state, PropertyName propertyName, PropertySlot& slot)
-{
-    auto* thisObject = jsCast<JSHTMLDocument*>(object);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
-    
-    if (propertyName == "open") {
-        if (Base::getOwnPropertySlot(thisObject, state, propertyName, slot))
-            return true;
-        slot.setCustom(thisObject, ReadOnly | DontDelete | DontEnum, nonCachingStaticFunctionGetter<jsHTMLDocumentPrototypeFunctionOpen, 2>);
-        return true;
-    }
-
-    using GetterIDLType = IDLUnion<IDLInterface<DOMWindow>, IDLInterface<Element>, IDLInterface<HTMLCollection>>;
-    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> std::optional<typename GetterIDLType::ImplementationType> {
-        auto result = thisObject.wrapped().namedItem(propertyNameToAtomicString(propertyName));
-        if (!GetterIDLType::isNullValue(result))
-            return typename GetterIDLType::ImplementationType { GetterIDLType::extractValueFromNullable(result) };
-        return std::nullopt;
-    };
-    if (auto namedProperty = accessVisibleNamedProperty<OverrideBuiltins::Yes>(*state, *thisObject, propertyName, getterFunctor)) {
-        slot.setValue(thisObject, ReadOnly, toJS<GetterIDLType>(*state, *thisObject->globalObject(), WTFMove(namedProperty.value())));
-        return true;
-    }
-    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);
-}
-
-// Custom attributes
-
-JSValue JSHTMLDocument::all(ExecState& state) const
-{
-    // If "all" has been overwritten, return the overwritten value
-    if (auto overwrittenValue = getDirect(state.vm(), Identifier::fromString(&state, "all")))
-        return overwrittenValue;
-
-    return toJS(&state, globalObject(), wrapped().all());
-}
-
-void JSHTMLDocument::setAll(ExecState& state, JSValue value)
-{
-    // Add "all" to the property map.
-    putDirect(state.vm(), Identifier::fromString(&state, "all"), value);
-}
-
-static inline Document* findCallingDocument(ExecState& state)
-{
-    CallerFunctor functor;
-    state.iterate(functor);
-    auto* callerFrame = functor.callerFrame();
-    if (!callerFrame)
-        return nullptr;
-    return asJSDOMWindow(callerFrame->lexicalGlobalObject())->wrapped().document();
-}
-
-// Custom functions
-
-JSValue JSHTMLDocument::open(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
-    if (state.argumentCount() > 2) {
-        if (auto* frame = wrapped().frame()) {
-            if (auto* wrapper = toJSDOMWindowProxy(frame, currentWorld(&state))) {
-                auto function = wrapper->get(&state, Identifier::fromString(&state, "open"));
-                CallData callData;
-                auto callType = ::getCallData(function, callData);
-                if (callType == CallType::None)
-                    return throwTypeError(&state, scope);
-                return JSC::call(&state, function, callType, callData, wrapper, ArgList(&state));
-            }
-        }
-        return jsUndefined();
-    }
-
-    // Calling document.open clobbers the security context of the document and aliases it with the active security context.
-    // FIXME: Is it correct that this does not use findCallingDocument as the write function below does?
-    wrapped().open(asJSDOMWindow(state.lexicalGlobalObject())->wrapped().document());
-    // FIXME: Why do we return the document instead of returning undefined?
-    return this;
-}
-
-enum NewlineRequirement { DoNotAddNewline, DoAddNewline };
-
-static inline JSValue documentWrite(ExecState& state, JSHTMLDocument& document, NewlineRequirement addNewline)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    SegmentedString segmentedString;
-    size_t argumentCount = state.argumentCount();
-    for (size_t i = 0; i < argumentCount; ++i) {
-        segmentedString.append(state.uncheckedArgument(i).toWTFString(&state));
-        RETURN_IF_EXCEPTION(scope, { });
-    }
-    if (addNewline)
-        segmentedString.append(String { "\n" });
-
-    document.wrapped().write(WTFMove(segmentedString), findCallingDocument(state));
-    return jsUndefined();
-}
-
-JSValue JSHTMLDocument::write(ExecState& state)
-{
-    return documentWrite(state, *this, DoNotAddNewline);
-}
-
-JSValue JSHTMLDocument::writeln(ExecState& state)
-{
-    return documentWrite(state, *this, DoAddNewline);
 }
 
 } // namespace WebCore
