@@ -61,15 +61,13 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
     String searchString = frame->editor().selectedText();
     searchString.stripWhiteSpace();
     String encoded = encodeWithURLEscapeSequences(searchString);
-    encoded.replace("%20", "+");
-    
-    String url("http://www.google.com/search?q=");
-    url.append(encoded);
-    url.append("&ie=UTF-8&oe=UTF-8");
+    encoded.replace(ASCIILiteral { "%20" }, ASCIILiteral { "+" });
+
+    String url = "http://www.google.com/search?q=" + encoded + "&ie=UTF-8&oe=UTF-8";
 
     if (Page* page = frame->page()) {
         UserGestureIndicator indicator(ProcessingUserGesture);
-        page->mainFrame().loader().urlSelected(URL(ParsedURLString, url), String(), 0, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
+        page->mainFrame().loader().urlSelected(URL { URL { }, url }, { }, nullptr, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
     }
 }
 

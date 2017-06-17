@@ -1,3 +1,23 @@
+2017-06-16  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: WebContextMenuClient::searchWithGoogle() should parse URL using URL { URL { }, ... }
+        instead of URL { ParsedURLString, ... }
+        https://bugs.webkit.org/show_bug.cgi?id=173495
+        <rdar://problem/32827445>
+
+        Reviewed by Alex Christensen.
+
+        URL(ParsedURLString, ...) should only be used with a string that was the result of URL::string().
+        Otherwise, it will cause an assertion failure if the canonicalized URL differs from the string.
+        Although it is unlikely that the hardcoded string in WebContextMenuClient::searchWithGoogle()
+        would differ from the canonicalized URL it is best practice to use URL(URL(), ...) to
+        parse an arbitrary string that looks like a URL.
+
+        Also modernize the code using C++14 idioms.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+
 2017-06-15  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] WebKit shouldn't include the forwarding header of WebKit itself
