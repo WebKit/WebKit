@@ -1,3 +1,10 @@
+2017-06-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build.
+
+        * Source/cmake/WebKitFS.cmake:
+        Add new DerivedSources/WTF directory.
+
 2017-06-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] ADD_PRECOMPILED_HEADER should append OBJECT_DEPENDS, not overwrite it

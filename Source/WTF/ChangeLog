@@ -1,3 +1,10 @@
+2017-06-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build.
+
+        * wtf/PlatformMac.cmake:
+        Generate MachExceptionsServer.h
+
 2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit
