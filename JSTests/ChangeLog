@@ -1,5 +1,14 @@
 2017-06-17  Keith Miller  <keith_miller@apple.com>
 
+        ArrayBuffer constructor needs to create subclass structures before its buffer
+        https://bugs.webkit.org/show_bug.cgi?id=173510
+
+        Reviewed by Yusuke Suzuki.
+
+        * test262.yaml:
+
+2017-06-17  Keith Miller  <keith_miller@apple.com>
+
         ArrayPrototype methods should use JSValue::toLength for non-Arrays.
         https://bugs.webkit.org/show_bug.cgi?id=173506
 
