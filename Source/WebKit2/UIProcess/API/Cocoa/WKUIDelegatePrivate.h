@@ -40,7 +40,7 @@
 @class _WKElementAction;
 @class _WKFrameHandle;
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
 @class UIDragItem;
 @class UITargetedDragPreview;
 @protocol UIDragSession;
@@ -110,7 +110,7 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView dataInteraction:(id)interaction session:(id)session didEndWithOperation:(NSUInteger)operation WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray *)itemProviders WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSUInteger)_webView:(WKWebView *)webView willUpdateDataInteractionOperationToOperation:(NSUInteger)operation forSession:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
 - (UITargetedDragPreview *)_webView:(WKWebView *)webView previewForLiftingItem:(UIDragItem *)item session:(id <UIDragSession>)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (UITargetedDragPreview *)_webView:(WKWebView *)webView previewForCancellingItem:(UIDragItem *)item withDefault:(UITargetedDragPreview *)defaultPreview WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSArray<UIDragItem *> *)_webView:(WKWebView *)webView willPerformDropWithSession:(id <UIDropSession>)session WK_API_AVAILABLE(ios(WK_IOS_TBA));

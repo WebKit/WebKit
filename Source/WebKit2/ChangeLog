@@ -1,3 +1,9 @@
+2017-06-17  Dan Bernstein  <mitz@apple.com>
+
+        Tried to fix non-iOS builds.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+
 2017-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Rename WebContextMenuItemGtk as WebContextMenuItemGlib
