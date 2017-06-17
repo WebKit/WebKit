@@ -34,6 +34,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSInspectorFrontendHost.h"
 #include <runtime/IdentifierInlines.h>
+#include <runtime/JSObjectInlines.h>
 
 using namespace JSC;
 

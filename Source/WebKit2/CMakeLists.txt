@@ -367,7 +367,6 @@ set(WebKit2_SOURCES
     UIProcess/API/C/WKGeolocationManager.cpp
     UIProcess/API/C/WKGeolocationPermissionRequest.cpp
     UIProcess/API/C/WKGeolocationPosition.cpp
-    UIProcess/API/C/WKGrammarDetail.cpp
     UIProcess/API/C/WKHitTestResult.cpp
     UIProcess/API/C/WKIconDatabase.cpp
     UIProcess/API/C/WKInspector.cpp

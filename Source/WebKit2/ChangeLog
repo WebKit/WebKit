@@ -1,3 +1,12 @@
+2017-06-17  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build
+
+        * CMakeLists.txt:
+        * NetworkProcess/capture/NetworkCaptureEvent.cpp:
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+
 2017-06-17  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix non-iOS builds.

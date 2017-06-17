@@ -105,6 +105,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/WebTextChecker.cpp
     UIProcess/WebTextCheckerClient.cpp
 
+    UIProcess/API/C/WKGrammarDetail.cpp
     UIProcess/API/C/WKResourceLoadStatisticsManager.cpp
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp

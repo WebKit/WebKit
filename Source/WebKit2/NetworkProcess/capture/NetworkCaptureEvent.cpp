@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_CAPTURE)
 
 #define JSON_NOEXCEPTION 1
+#undef __EXCEPTIONS
 
 #include "NetworkCaptureLogging.h"
 #include "json.hpp"
