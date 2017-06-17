@@ -28,8 +28,6 @@
 
 #pragma once
 
-#include <wtf/OptionSet.h>
-
 namespace WebCore {
 
 enum FrameState {

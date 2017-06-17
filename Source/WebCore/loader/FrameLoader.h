@@ -44,6 +44,7 @@
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {

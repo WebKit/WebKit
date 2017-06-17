@@ -1,3 +1,20 @@
+2017-06-16  Daniel Bates  <dabates@apple.com>
+
+        Remove header OptionSet.h from FrameLoaderTypes.h
+        https://bugs.webkit.org/show_bug.cgi?id=173489
+
+        Reviewed by Joseph Pecoraro.
+
+        Although the header FrameLoaderTypes.h defines exactly one enum class, ReloadOption, whose
+        enumerators conform the power of two prerequisite for parameterizing an OptionSet for it
+        FrameLoaderTypes.h does not actually make use of the functionality provided by header
+        OptionSet.h. And not all source files that include FrameLoaderTypes.h need to use an OptionSet.
+
+        * loader/DocumentLoader.h: Include <wtf/OptionSet.h>.
+        * loader/FrameLoader.h: Ditto.
+        * loader/FrameLoaderTypes.h: Remove header <wtf/OptionSet.h>.
+        * replay/UserInputBridge.h: Include <wtf/Forward.h>.
+
 2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit

@@ -29,6 +29,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "ScrollTypes.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

@@ -45,6 +45,7 @@
 #include "SubstituteData.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
