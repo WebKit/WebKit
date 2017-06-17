@@ -248,7 +248,6 @@ storage/indexeddb/modern/get-keyrange.html [ Failure ]
 storage/indexeddb/modern/idbobjectstore-delete-1-private.html [ Failure ]
 storage/indexeddb/modern/idbobjectstore-delete-1.html [ Failure ]
 storage/indexeddb/modern/workers-enable.html [ Failure ]
-storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 
 imported/w3c/IndexedDB-private-browsing [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB [ Skip ]
@@ -264,9 +263,6 @@ crypto/webkitSubtle/rsa-indexeddb-private.html [ Skip ]
 crypto/webkitSubtle/rsa-indexeddb.html [ Skip ]
 fast/history/page-cache-indexed-closed-db.html [ Skip ]
 fast/history/page-cache-indexed-opened-db.html [ Skip ]
-
-# But since it is disabled at runtime, we should make sure it is correctly disabled
-storage/indexeddb/properties-disabled-at-runtime.html [ Pass ]
 
 fast/history/page-cache-webdatabase-no-transaction-db.html [ Skip ]
 fast/history/page-cache-webdatabase-pending-transaction.html [ Skip ]
@@ -3098,7 +3094,6 @@ http/tests/contentfiltering [ Skip ]
 [ Release ] animations/trigger-container-scroll-empty.html [ Pass Failure ]
 [ Release ] css3/filters/filtered-compositing-descendant.html [ Pass Failure ]
 [ Release ] fast/images/animated-gif-iframe-webkit-transform.html [ Skip ] # Timeout
-[ Release ] fast/images/animated-gif-restored-from-bfcache.html [ Skip ] # Timeout
 [ Release ] fast/images/animated-gif-webkit-transform.html [ Skip ] # Timeout
 [ Release ] fast/regions/inline-block-inside-anonymous-overflow.html [ Pass ImageOnlyFailure ]
 [ Release ] fast/regions/repaint/fixed-in-named-flow-cb-changed.html [ Pass ImageOnlyFailure ]
