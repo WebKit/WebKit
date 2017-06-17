@@ -51,7 +51,7 @@ TEST(PositionInformationTests, FindDraggableLinkAtPosition)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
 
-    _WKDraggableElementInfo *information = [webView draggableElementAtPosition:CGPointMake(100, 50)];
+    _WKDraggableElementInfo *information = [webView _draggableElementAtPosition:CGPointMake(100, 50)];
     [information expectToBeLink:YES image:NO atPoint:CGPointMake(100, 50)];
 }
 
@@ -61,7 +61,7 @@ TEST(PositionInformationTests, RequestDraggableLinkAtPosition)
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
 
     __block bool isDone = false;
-    [webView requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *information) {
+    [webView _requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *information) {
         [information expectToBeLink:YES image:NO atPoint:CGPointMake(100, 50)];
         isDone = true;
     }];
@@ -75,8 +75,8 @@ TEST(PositionInformationTests, FindDraggableLinkAtDifferentPositionWithinRequest
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
 
     __block bool isDone = false;
-    [webView requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *information) {
-        _WKDraggableElementInfo *synchronousInformation = [webView draggableElementAtPosition:CGPointMake(100, 300)];
+    [webView _requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *information) {
+        _WKDraggableElementInfo *synchronousInformation = [webView _draggableElementAtPosition:CGPointMake(100, 300)];
         [synchronousInformation expectToBeLink:NO image:NO atPoint:CGPointMake(100, 300)];
         [information expectToBeLink:YES image:NO atPoint:CGPointMake(100, 50)];
         isDone = true;
@@ -91,8 +91,8 @@ TEST(PositionInformationTests, FindDraggableLinkAtSamePositionWithinRequestBlock
     [webView synchronouslyLoadTestPageNamed:@"link-and-input"];
 
     __block bool isDone = false;
-    [webView requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *information) {
-        _WKDraggableElementInfo *synchronousInformation = [webView draggableElementAtPosition:CGPointMake(100, 50)];
+    [webView _requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *information) {
+        _WKDraggableElementInfo *synchronousInformation = [webView _draggableElementAtPosition:CGPointMake(100, 50)];
         [synchronousInformation expectToBeLink:YES image:NO atPoint:CGPointMake(100, 50)];
         [information expectToBeLink:YES image:NO atPoint:CGPointMake(100, 50)];
         isDone = true;
@@ -109,8 +109,8 @@ TEST(PositionInformationTests, RequestDraggableLinkAtSamePositionWithinRequestBl
     __block bool isDoneWithInner = false;
     __block bool isDoneWithOuter = false;
 
-    [webView requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *outerInformation) {
-        [webView requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *innerInformation) {
+    [webView _requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *outerInformation) {
+        [webView _requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *innerInformation) {
             [innerInformation expectToBeLink:NO image:YES atPoint:CGPointMake(100, 50)];
             isDoneWithInner = true;
         }];
@@ -130,8 +130,8 @@ TEST(PositionInformationTests, RequestDraggableLinkAtDifferentPositionWithinRequ
     __block bool isDoneWithInner = false;
     __block bool isDoneWithOuter = false;
 
-    [webView requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *outerInformation) {
-        [webView requestDraggableElementAtPosition:CGPointMake(100, 300) completionBlock:^(_WKDraggableElementInfo *innerInformation) {
+    [webView _requestDraggableElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKDraggableElementInfo *outerInformation) {
+        [webView _requestDraggableElementAtPosition:CGPointMake(100, 300) completionBlock:^(_WKDraggableElementInfo *innerInformation) {
             [innerInformation expectToBeLink:NO image:NO atPoint:CGPointMake(100, 300)];
             isDoneWithInner = true;
         }];

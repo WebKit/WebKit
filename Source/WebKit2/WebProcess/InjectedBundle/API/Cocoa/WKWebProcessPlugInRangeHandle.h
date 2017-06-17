@@ -33,7 +33,7 @@
 
 @class WKWebProcessPlugInFrame;
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
 @interface WKWebProcessPlugInRangeHandle : NSObject
 
 + (WKWebProcessPlugInRangeHandle *)rangeHandleWithJSValue:(JSValue *)value inContext:(JSContext *)context;

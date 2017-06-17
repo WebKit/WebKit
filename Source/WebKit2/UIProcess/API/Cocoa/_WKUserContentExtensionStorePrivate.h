@@ -35,7 +35,7 @@
 - (void)_removeAllContentExtensions;
 - (void)_invalidateContentExtensionVersionForIdentifier:(NSString *)identifier;
 
-- (id)_initWithWKContentRuleListStore:(WKContentRuleListStore*)contentRuleListStore;
+- (id)_initWithWKContentRuleListStore:(WKContentRuleListStore*)contentRuleListStore WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

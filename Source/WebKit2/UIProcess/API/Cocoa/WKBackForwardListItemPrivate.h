@@ -30,7 +30,7 @@
 @interface WKBackForwardListItem (WKPrivate)
 
 // For testing only.
-- (CGImageRef)_copySnapshotForTesting WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (CGImageRef)_copySnapshotForTesting WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 
 @end
 

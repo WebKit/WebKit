@@ -37,9 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, WKRemoteWebInspectorDebuggableType) {
     WKRemoteWebInspectorDebuggableTypeJavaScript,
     WKRemoteWebInspectorDebuggableTypeWeb,
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macosx(10.12.3), ios(10.3))
 @interface _WKRemoteWebInspectorViewController : NSObject
 
 @property (nonatomic, assign) id <_WKRemoteWebInspectorViewControllerDelegate> delegate;

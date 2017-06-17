@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class WKHTTPCookieStore;
 
+WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @protocol WKHTTPCookieStoreObserver <NSObject>
 @optional
 - (void)cookiesDidChangeInCookieStore:(WKHTTPCookieStore *)cookieStore;

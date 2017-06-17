@@ -31,7 +31,7 @@
 
 @interface _WKUserContentFilter (WKPrivate)
 
-- (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList;
+- (id)_initWithWKContentRuleList:(WKContentRuleList*)contentRuleList WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

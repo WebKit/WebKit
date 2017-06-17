@@ -1,3 +1,13 @@
+2017-06-16  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Some declarations have missing or incorrect availability attributes
+        https://bugs.webkit.org/show_bug.cgi?id=173508
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/ios/PositionInformationTests.mm:
+        (TestWebKitAPI::TEST): Updated for renames.
+
 2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit

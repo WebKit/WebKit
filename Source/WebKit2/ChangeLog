@@ -1,3 +1,43 @@
+2017-06-16  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Some declarations have missing or incorrect availability attributes
+        https://bugs.webkit.org/show_bug.cgi?id=173508
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h: Removed a redundant attribute.
+
+        In all of the below files, added missing availability attributes for declarations that have
+        not appeared yet in any GM SDK, and fixed availability attributes for declarations that
+        have already appeared in the macOS 10.12.3 and iOS 10.3 SDKs.
+
+        * UIProcess/API/Cocoa/WKBackForwardListItemPrivate.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.h: Also fixed capitalization in a comment.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Also removed unnecessary conditionals.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _draggableElementAtPosition:]): Prepended an underscore to this private method’s name.
+        (-[WKWebView _requestDraggableElementAtPosition:completionBlock:]): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Also updated for renames.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        * UIProcess/API/Cocoa/_WKGeolocationCoreLocationProvider.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilterPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/_WKWebViewPrintFormatter.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h:
+
 2017-06-16  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] CrashTracer: Regression : com.apple.WebKit.Networking at WebKit: WebKit::LibWebRTCSocketClient::sendTo
