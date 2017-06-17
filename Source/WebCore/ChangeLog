@@ -1,3 +1,16 @@
+2017-06-17  Zalan Bujtas  <zalan@apple.com>
+
+        Demote the "we have navigated away" check to an assertion.
+        https://bugs.webkit.org/show_bug.cgi?id=173509
+
+        Reviewed by Simon Fraser.
+
+        Now that the expected behavior is that the render tree can't get to the page cache, it's ok to assert.
+        TODO: We should also have view() check removed at some point.
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+
 2017-06-17  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build
