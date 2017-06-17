@@ -21,5 +21,5 @@ font-weight: normal (original property was font and property was implicitly set.
 font-stretch: normal (original property was font and property was implicitly set.)
 font-size: 24px (original property was font)
 line-height: normal (original property was font and property was implicitly set.)
-font-family: 'Lucida Grande' (original property was font)
+font-family: "Lucida Grande" (original property was font)
 

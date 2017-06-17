@@ -1,3 +1,51 @@
+2017-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r209495): materiauxlaverdure.com fails to load
+        https://bugs.webkit.org/show_bug.cgi?id=173301
+        <rdar://problem/32624850>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined the existing tests and added a new regression test for serializing CSS properties and values.
+
+        * accessibility/mac/alt-for-css-content-expected.txt:
+        * accessibility/mac/webkit-alt-for-css-content-expected.txt:
+        * editing/pasteboard/cjk-line-height-expected.txt:
+        * fast/css/alt-inherit-initial-expected.txt:
+        * fast/css/alt-inherit-initial.html:
+        * fast/css/content-language-comma-separated-list-expected.txt:
+        * fast/css/content-language-empty-expected.txt:
+        * fast/css/content-language-only-whitespace-expected.txt:
+        * fast/css/content-language-with-whitespace-expected.txt:
+        * fast/css/counters/counter-cssText-expected.txt:
+        * fast/css/counters/counter-cssText.html:
+        * fast/css/font-family-trailing-bracket-gunk-expected.txt:
+        * fast/css/font-family-trailing-bracket-gunk.html:
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/computed-style-properties-expected.txt:
+        * fast/css/getComputedStyle/computed-style-properties.html:
+        * fast/css/getComputedStyle/font-family-fallback-reset-expected.txt:
+        * fast/css/getComputedStyle/font-family-fallback-reset.html:
+        * fast/css/lang-mapped-to-webkit-locale-expected.txt:
+        * fast/css/lang-mapped-to-webkit-locale.xhtml:
+        * fast/css/serialization-with-double-quotes-expected.txt: Added.
+        * fast/css/serialization-with-double-quotes.html: Added.
+        * fast/css/uri-token-parsing-expected.txt:
+        * fast/css/uri-token-parsing.html:
+        * fast/inspector-support/cssURLQuotes-expected.txt:
+        * fast/inspector-support/style-expected.txt:
+        * fast/text/font-stretch-parse-expected.txt:
+        * fast/text/font-stretch-parse.html:
+        * fast/text/font-style-parse-expected.txt:
+        * fast/text/font-style-parse.html:
+        * fast/text/font-weight-parse-expected.txt:
+        * fast/text/font-weight-parse.html:
+        * media/controls/track-menu.html:
+        * platform/mac-elcapitan/fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * platform/mac-elcapitan/fast/text/font-stretch-parse-expected.txt:
+        * platform/mac-elcapitan/fast/text/font-style-parse-expected.txt:
+        * platform/mac-elcapitan/fast/text/font-weight-parse-expected.txt:
+
 2017-06-16  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.

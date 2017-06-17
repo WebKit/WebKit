@@ -39,7 +39,7 @@ AXDescription:
 AXTitle: 
 AXValue: ALTERNATIVE CONTENT TEST6
 
-WebKitAlt accessed through Javascript: 'ALTERNATIVE CONTENT TEST2'
+WebKitAlt accessed through Javascript: "ALTERNATIVE CONTENT TEST2"
 Test7 - webkit-alt does not apply to DOM nodes.
 AXRole: AXImage
 AXDescription: This is the right text

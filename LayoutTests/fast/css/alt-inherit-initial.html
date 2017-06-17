@@ -30,7 +30,7 @@ shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('alt')"
 // Initial.
 evalAndLog("testDiv.style['alt'] = 'initial'");
 shouldBeEqualToString("testDiv.style['alt']", "initial");
-shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('alt')", "''");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('alt')", `""`);
 
 </script>
 <script src="../../resources/js-test-post.js"></script>

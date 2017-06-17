@@ -369,7 +369,7 @@ PASS float: right
 PASS float: none 
 PASS float: inherit 
 PASS font-family: Arial 
-FAIL font-family: 'Lucida Grande' assert_equals: font-family raw inline style declaration expected "\"Lucida Grande\"" but got "'Lucida Grande'"
+PASS font-family: 'Lucida Grande' 
 PASS font-family: serif 
 PASS font-family: sans-serif 
 PASS font-family: inherit 

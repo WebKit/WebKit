@@ -1,3 +1,16 @@
+2017-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r209495): materiauxlaverdure.com fails to load
+        https://bugs.webkit.org/show_bug.cgi?id=173301
+        <rdar://problem/32624850>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined the tests that are now passing.
+
+        * web-platform-tests/cssom/CSSNamespaceRule-expected.txt:
+        * web-platform-tests/cssom/serialize-values-expected.txt:
+
 2017-06-16  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for HTMLDocument

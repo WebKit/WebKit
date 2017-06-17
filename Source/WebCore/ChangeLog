@@ -1,3 +1,61 @@
+2017-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r209495): materiauxlaverdure.com fails to load
+        https://bugs.webkit.org/show_bug.cgi?id=173301
+        <rdar://problem/32624850>
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by WebKit wrapping CSS string values with single quotation marks instead of
+        double quotation marks as spec'ed in https://drafts.csswg.org/cssom/#serialize-a-string and
+        implemented in Firefox and Chrome.
+
+        The website eval's the computed value of the `content` CSS property with the value `'{name: "flat"}'`
+        after stripping single quotation marks from both ends. Prior to r209495, WebKit serialized this CSS value
+        in single quotations without escaping double quotations. After r209495, double quotations are escaped
+        with backslashes as `'{name: \"flat\"}'`. As a result, `eval` is invoked with `{name: \"flat\"}`
+        after stripping single quotations from both ends, which resulted in an exception.
+
+        Chrome and Firefox don't encounter this exception despite of the fact they escape double quotations
+        as well because serialize with double quotations as `"{name: \"flat\"}"`. Because there is no code
+        to strip double quotations, eval is invoked with the same string, resulting in the entire value as
+        being parsed as string, instead of an object with a single key "name" with the value of "flat" as
+        was the case in WebKit prior to r209495. While this behavior was most certainly not the intent of
+        the website author, Chrome and Firefox don't encounter an exception and the website continues to work.
+
+        This patch aligns WebKit's behavior to that of the CSS OM specification, Firefox, and Chrome by
+        serializing CSS string values using double quotation marks instead of single quotation marks.
+
+        Note: inline change log comments are added below for every call site of serializeString for clarity.
+
+        Test: fast/css/getPropertyValue-serialization-with-double-quotes.html
+
+        * css/CSSBasicShapes.cpp:
+        (WebCore::buildPathString): Use double quotation marks in path(~) of shapes.
+        * css/CSSMarkup.cpp:
+        (WebCore::serializeString):
+        (WebCore::serializeURL): Use double quotation marks to serialize URLs.
+        (WebCore::serializeAsStringOrCustomIdent): Use double quotation marks to serialize strings. We still avoid
+        using wrapping the value with double quotations when the value can be an identifier. See r209495.
+        (WebCore::serializeFontFamily): Ditto for font-family names such as "San Francisco".
+        * css/CSSMarkup.h:
+        * css/CSSNamespaceRule.cpp:
+        (WebCore::CSSNamespaceRule::cssText): Use double quotation marks to serialize namespace URIs.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText): Use double quotation marks to serialize
+        the separators; e.g. counter(sectionNumber, ".") to produce "1.".
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText): Use double quotation marks to serialize attribute values.
+        * css/parser/CSSParserToken.cpp:
+        (WebCore::CSSParserToken::serialize): Use double quotation marks to serialize strings in @support.
+        * editing/EditingStyle.cpp:
+        (WebCore::StyleChange::extractTextStyles): Updated to strip double quotation marks in font family names to
+        maintain the compatibility with old versions of Microsoft Outlook.
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::mapLanguageAttributeToLocale): Use double quotations marks to serialize the value
+        of the lang content attribute. It doesn't matter which one is used here because it's only a temporary value
+        only fed into the CSS parser to set the equivalent CSS value from the content attribute.
+
 2017-06-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument 2D/WebGL canvas contexts in the backend
