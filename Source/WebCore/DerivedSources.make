@@ -364,6 +364,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/DOMPoint.idl \
     $(WebCore)/dom/DOMPointInit.idl \
     $(WebCore)/dom/DOMPointReadOnly.idl \
+    $(WebCore)/dom/DOMQuad.idl \
+    $(WebCore)/dom/DOMQuadInit.idl \
     $(WebCore)/dom/DOMRect.idl \
     $(WebCore)/dom/DOMRectInit.idl \
     $(WebCore)/dom/DOMRectList.idl \

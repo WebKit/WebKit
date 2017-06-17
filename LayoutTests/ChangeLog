@@ -1,3 +1,15 @@
+2017-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMQuad
+        https://bugs.webkit.org/show_bug.cgi?id=163534
+
+        Reviewed by Sam Weinig.
+        
+        Implement DOMQuad per https://drafts.fxtf.org/geometry/#DOMQuad.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2017-06-17  Antti Koivisto  <antti@apple.com>
 
         Crash due to infinite recursion via FrameSelection::updateAppearanceAfterLayout

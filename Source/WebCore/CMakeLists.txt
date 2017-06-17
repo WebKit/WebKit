@@ -424,6 +424,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DOMPoint.idl
     dom/DOMPointInit.idl
     dom/DOMPointReadOnly.idl
+    dom/DOMQuad.idl
+    dom/DOMQuadInit.idl
     dom/DOMRect.idl
     dom/DOMRectInit.idl
     dom/DOMRectList.idl
@@ -1160,6 +1162,7 @@ set(WebCore_SOURCES
     bindings/js/JSDOMBuiltinConstructorBase.cpp
     bindings/js/JSDOMConstructorBase.cpp
     bindings/js/JSDOMConstructorWithDocument.cpp
+    bindings/js/JSDOMQuadCustom.cpp
     bindings/js/JSDOMExceptionHandling.cpp
     bindings/js/JSDOMGlobalObject.cpp
     bindings/js/JSDOMGlobalObjectTask.cpp
@@ -1455,6 +1458,7 @@ set(WebCore_SOURCES
     dom/DOMImplementation.cpp
     dom/DOMNamedFlowCollection.cpp
     dom/DOMPointReadOnly.cpp
+    dom/DOMQuad.cpp
     dom/DOMRectList.cpp
     dom/DOMStringList.cpp
     dom/DataTransfer.cpp

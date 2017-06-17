@@ -353,6 +353,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').hasOwnProperty(
 PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMPointReadOnly').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'DOMQuad').value is DOMQuad
+PASS Object.getOwnPropertyDescriptor(global, 'DOMQuad').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMQuad').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMQuad').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'DOMQuad').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'DOMRect').value is DOMRect
 PASS Object.getOwnPropertyDescriptor(global, 'DOMRect').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'DOMRect').hasOwnProperty('set') is false

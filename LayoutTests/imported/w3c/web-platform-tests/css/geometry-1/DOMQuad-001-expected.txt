@@ -1,41 +1,41 @@
 Test DOMQuad interface
 
 
-FAIL testConstructor0: points Can't find variable: DOMQuad
-FAIL testConstructor0: bounds Can't find variable: DOMQuad
-FAIL testConstructor1 assert_throws: function "function () { new DOMQuad(1); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL testConstructor2 assert_throws: function "function () { new DOMQuad(1, 2); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL testConstructor3 assert_throws: function "function () { new DOMQuad(1, 2, 3); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL testConstructor4 assert_throws: function "function () { new DOMQuad(1, 2, 3, 4); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL testConstructor5: points Can't find variable: DOMQuad
-FAIL testConstructor5: bounds Can't find variable: DOMQuad
-FAIL testConstructor6: points Can't find variable: DOMQuad
-FAIL testConstructor6: bounds Can't find variable: DOMQuad
-FAIL testConstructor7: points Can't find variable: DOMQuad
-FAIL testConstructor7: bounds Can't find variable: DOMQuad
-FAIL testConstructor8: points Can't find variable: DOMQuad
-FAIL testConstructor8: bounds Can't find variable: DOMQuad
-FAIL testConstructor9: points Can't find variable: DOMQuad
-FAIL testConstructor9: bounds Can't find variable: DOMQuad
-FAIL testConstructor10: points Can't find variable: DOMQuad
-FAIL testConstructor10: bounds Can't find variable: DOMQuad
-FAIL testConstructor11: points Can't find variable: DOMQuad
-FAIL testConstructor11: bounds Can't find variable: DOMQuad
-FAIL testConstructor12: points Can't find variable: DOMQuad
-FAIL testConstructor12: bounds Can't find variable: DOMQuad
-FAIL testConstructor13: points Can't find variable: DOMQuad
-FAIL testConstructor13: bounds Can't find variable: DOMQuad
-FAIL testConstructor14: points Can't find variable: DOMQuad
-FAIL testConstructor14: bounds Can't find variable: DOMQuad
-FAIL testConstructor15 assert_throws: function "function () { new DOMQuad({}, {}, {}, NaN); }" threw object "ReferenceError: Can't find variable: DOMQuad" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL testConstructor16: points Can't find variable: DOMQuad
-FAIL testConstructor16: bounds Can't find variable: DOMQuad
-FAIL p1Top4Attributes0: points Can't find variable: DOMQuad
-FAIL p1Top4Attributes0: bounds Can't find variable: DOMQuad
-FAIL p1Top4Attributes1: points Can't find variable: DOMQuad
-FAIL p1Top4Attributes1: bounds Can't find variable: DOMQuad
-FAIL boundsAttribute0: points Can't find variable: DOMQuad
-FAIL boundsAttribute0: bounds Can't find variable: DOMQuad
-FAIL boundsAttribute1: points Can't find variable: DOMQuad
-FAIL boundsAttribute1: bounds Can't find variable: DOMQuad
+PASS testConstructor0: points 
+FAIL testConstructor0: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor1 
+PASS testConstructor2 
+PASS testConstructor3 
+PASS testConstructor4 
+FAIL testConstructor5: points assert_equals: Expected value for p2.x is 110 expected 110 but got 0
+FAIL testConstructor5: bounds undefined is not an object (evaluating 'q.bounds.x')
+FAIL testConstructor6: points assert_equals: Expected value for p2.x is -90 expected -90 but got 0
+FAIL testConstructor6: bounds undefined is not an object (evaluating 'q.bounds.x')
+FAIL testConstructor7: points assert_equals: Expected value for p2.x is NaN expected NaN but got 0
+FAIL testConstructor7: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor8: points 
+FAIL testConstructor8: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor9: points 
+FAIL testConstructor9: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor10: points 
+FAIL testConstructor10: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor11: points 
+FAIL testConstructor11: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor12: points 
+FAIL testConstructor12: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor13: points 
+FAIL testConstructor13: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor14: points 
+FAIL testConstructor14: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS testConstructor15 
+PASS testConstructor16: points 
+FAIL testConstructor16: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS p1Top4Attributes0: points 
+FAIL p1Top4Attributes0: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS p1Top4Attributes1: points 
+FAIL p1Top4Attributes1: bounds undefined is not an object (evaluating 'q.bounds.x')
+PASS boundsAttribute0: points 
+FAIL boundsAttribute0: bounds assert_equals: Expected value for bounds.x is 0 expected 0 but got 10
+FAIL boundsAttribute1: points undefined is not an object (evaluating 'q.bounds.x = 10')
+FAIL boundsAttribute1: bounds undefined is not an object (evaluating 'q.bounds.x = 10')
 

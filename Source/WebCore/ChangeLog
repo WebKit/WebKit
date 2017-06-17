@@ -1,3 +1,41 @@
+2017-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMQuad
+        https://bugs.webkit.org/show_bug.cgi?id=163534
+
+        Reviewed by Sam Weinig.
+
+        Implement DOMQuad per https://drafts.fxtf.org/geometry/#DOMQuad, other than serialization
+        which requires some bindings changes.
+
+        web-platform-tests/css/geometry-1/DOMRect-001.html tests against an older version of the spec,
+        so has some failures. DOMQuad-002.html passes, other than a NaN propagation issue that requires
+        spec clarification.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMQuadCustom.cpp: Added.
+        (WebCore::JSDOMQuad::getBounds):
+        * bindings/scripts/CodeGenerator.pm:
+        (IsSerializableDOMType):
+        (IsSerializableAttribute):
+        * dom/DOMPoint.h:
+        * dom/DOMQuad.cpp: Added.
+        (WebCore::DOMQuad::DOMQuad):
+        (WebCore::DOMQuad::getBounds):
+        * dom/DOMQuad.h: Added.
+        (WebCore::DOMQuad::create):
+        (WebCore::DOMQuad::fromRect):
+        (WebCore::DOMQuad::fromQuad):
+        (WebCore::DOMQuad::p1):
+        (WebCore::DOMQuad::p2):
+        (WebCore::DOMQuad::p3):
+        (WebCore::DOMQuad::p4):
+        * dom/DOMQuad.idl: Added.
+        * dom/DOMQuadInit.h: Added.
+        * dom/DOMQuadInit.idl: Added.
+
 2017-06-17  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Function instead of std::function in WebKit2/

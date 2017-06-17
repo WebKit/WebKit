@@ -1,3 +1,18 @@
+2017-06-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Implement DOMQuad
+        https://bugs.webkit.org/show_bug.cgi?id=163534
+
+        Reviewed by Sam Weinig.
+
+        Implement DOMQuad per https://drafts.fxtf.org/geometry/#DOMQuad.
+
+        * web-platform-tests/css/geometry-1/DOMQuad-001-expected.txt: Tests against an older version
+        of the spec, so some failures.
+        * web-platform-tests/css/geometry-1/DOMQuad-002-expected.txt: All tests pass other than a NaN
+        propagation issue which needs spec clarification.
+        * web-platform-tests/css/geometry-1/structured-serialization-expected.txt:
+
 2017-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r209495): materiauxlaverdure.com fails to load

@@ -15,10 +15,10 @@ FAIL DOMRect clone: basic promise_test: Unhandled rejection with value: object "
 FAIL DOMRect clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
 FAIL DOMRect clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
 FAIL DOMRect clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMQuad clone: basic undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMQuad clone: custom property undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMQuad clone: throwing getters undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMQuad clone: non-initial values undefined is not a constructor (evaluating 'new self[constr]')
+FAIL DOMQuad clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMQuad clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMQuad clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+FAIL DOMQuad clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
 FAIL DOMMatrixReadOnly clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
 FAIL DOMMatrixReadOnly clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
 FAIL DOMMatrixReadOnly clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
