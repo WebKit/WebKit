@@ -29,7 +29,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ActiveDOMObject.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,7 +40,7 @@ class SecurityOrigin;
 
 class MediaDevicesEnumerationRequest final : public ContextDestructionObserver, public RefCounted<MediaDevicesEnumerationRequest> {
 public:
-    using CompletionHandler = std::function<void(const Vector<CaptureDevice>&, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)>;
+    using CompletionHandler = WTF::Function<void(const Vector<CaptureDevice>&, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)>;
 
     static Ref<MediaDevicesEnumerationRequest> create(Document&, CompletionHandler&&);
 
@@ -48,6 +48,8 @@ public:
 
     void start();
     void cancel();
+
+    bool wasCanceled() const { return !m_completionHandler; }
 
     WEBCORE_EXPORT void setDeviceInfo(const Vector<CaptureDevice>&, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
 

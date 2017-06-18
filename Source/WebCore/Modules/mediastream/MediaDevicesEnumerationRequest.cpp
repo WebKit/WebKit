@@ -70,6 +70,9 @@ SecurityOrigin* MediaDevicesEnumerationRequest::topLevelDocumentOrigin() const
 
 void MediaDevicesEnumerationRequest::contextDestroyed()
 {
+    // Calling cancel() may destroy ourselves.
+    Ref<MediaDevicesEnumerationRequest> protectedThis(*this);
+
     cancel();
     ContextDestructionObserver::contextDestroyed();
 }

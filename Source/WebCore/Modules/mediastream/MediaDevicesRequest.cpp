@@ -55,8 +55,8 @@ Ref<MediaDevicesRequest> MediaDevicesRequest::create(Document& document, MediaDe
 
 MediaDevicesRequest::~MediaDevicesRequest()
 {
-    if (m_enumerationRequest)
-        m_enumerationRequest->cancel();
+    // This should only get destroyed after the enumeration request has completed or has been canceled.
+    ASSERT(!m_enumerationRequest || m_enumerationRequest->wasCanceled());
 }
 
 SecurityOrigin* MediaDevicesRequest::securityOrigin() const
@@ -109,8 +109,8 @@ void MediaDevicesRequest::filterDeviceList(Vector<RefPtr<MediaDeviceInfo>>& devi
 
 void MediaDevicesRequest::start()
 {
-    RefPtr<MediaDevicesRequest> protectedThis = this;
-    auto completion = [this, protectedThis = WTFMove(protectedThis)] (const Vector<CaptureDevice>& captureDevices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
+    // This lambda keeps |this| alive until the request completes or is canceled.
+    auto completion = [this, protectedThis = makeRef(*this)] (const Vector<CaptureDevice>& captureDevices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess) mutable {
 
         m_enumerationRequest = nullptr;
 

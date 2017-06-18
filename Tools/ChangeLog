@@ -1,3 +1,20 @@
+2017-06-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash when re-entering MediaDevicesEnumerationRequest::cancel()
+        https://bugs.webkit.org/show_bug.cgi?id=173522
+        <rdar://problem/31185739>
+
+        Reviewed by Darin Adler.
+
+        Add API test for re-entering Function's assignment operators.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Function.cpp: Added.
+        (TestWebKitAPI::TestObject::TestObject):
+        (TestWebKitAPI::TestObject::~TestObject):
+        (TestWebKitAPI::TestObject::operator()):
+        (TestWebKitAPI::TEST):
+
 2017-06-16  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Some declarations have missing or incorrect availability attributes

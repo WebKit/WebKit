@@ -1,3 +1,19 @@
+2017-06-18  Chris Dumez  <cdumez@apple.com>
+
+        Crash when re-entering MediaDevicesEnumerationRequest::cancel()
+        https://bugs.webkit.org/show_bug.cgi?id=173522
+        <rdar://problem/31185739>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage. This test would flakily crash before the fix because it
+        relies on the order in which contextDestroyed() is called for MediaDevicesRequest
+        and MediaDevicesEnumerationRequest.
+
+        * fast/mediastream/destroy-document-while-enumerating-devices-expected.txt: Added.
+        * fast/mediastream/destroy-document-while-enumerating-devices.html: Added.
+        * fast/mediastream/resources/enumerate-devices-frame.html: Added.
+
 2017-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         Implement DOMQuad

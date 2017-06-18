@@ -1,5 +1,62 @@
 2017-06-18  Chris Dumez  <cdumez@apple.com>
 
+        Crash when re-entering MediaDevicesEnumerationRequest::cancel()
+        https://bugs.webkit.org/show_bug.cgi?id=173522
+        <rdar://problem/31185739>
+
+        Reviewed by Darin Adler.
+
+        When a MediaDevicesRequest is started, it creates a MediaDevicesEnumerationRequest
+        object and passes a completion handler to that MediaDevicesEnumerationRequest
+        object. The completion handler holds a reference to the MediaDevicesRequest object
+        so that its stays alive until the MediaDevicesEnumerationRequest either completes
+        or is canceled. MediaDevicesRequest also holds a reference to the
+        MediaDevicesEnumerationRequest object via its m_enumerationRequest data member.
+
+        When the document is destroyed, both MediaDevicesRequest::contextDestroyed() and
+        MediaDevicesEnumerationRequest::contextDestroyed() gets called and the other is not
+        pre-determined. If MediaDevicesEnumerationRequest::contextDestroyed() gets called
+        first then it calls MediaDevicesEnumerationRequest::cancel(). Calling cancel() ends
+        up destroying the completion handler. Destroying the completion handler ends up
+        dereferencing and destroying the MediaDevicesRequest object. The MediaDevicesRequest
+        destructor would call MediaDevicesEnumerationRequest::cancel() again, causing us to
+        re-enter it and assign nullptr to the completion callback again. Re-entering
+        std::function's operator=(nullptr_t) is not safe because of the way it is implemented
+        as we end up trying to destroy the lambda twice and crashing. Using a WTF::Function
+        instead fixes this particular issue because re-entering WTF::Function's operator=(nullptr_t)
+        is safe.
+
+        However, this fix is not sufficient. Calling the MediaDevicesRequest destructor also
+        dereferencing and destroys the MediaDevicesEnumerationRequest object. As a result,
+        when MediaDevicesEnumerationRequest::contextDestroyed() returns from its call to cancel
+        |this| is already dead when we call ContextDestructionObserver::contextDestroyed().
+        To address this issue, we now protect |this| in MediaDevicesEnumerationRequest::contextDestroyed().
+
+        Test: fast/mediastream/destroy-document-while-enumerating-devices.html
+
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp:
+        (WebCore::MediaDevicesEnumerationRequest::contextDestroyed):
+        Protect |this| as the call to cancel() may destroy |this| before calling
+        ContextDestructionObserver::contextDestroyed() otherwise.
+
+        * Modules/mediastream/MediaDevicesEnumerationRequest.h:
+        Use WTF::Function instead of std::function for the completion handler as
+        it is safer (in terms of re-entrency) and avoids unnecessary copying.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::~MediaDevicesRequest):
+        Stop calling MediaDevicesEnumerationRequest::cancel(). When the destructor
+        is called, the MediaDevicesEnumerationRequest has either completed or been
+        canceled so there is no need to cancel again. I added an assertion to
+        make sure it is the case. This avoids re-entering
+        MediaDevicesEnumerationRequest::cancel() is some cases, which was risky.
+
+        (WebCore::MediaDevicesRequest::start):
+        Add comment for clarity and capture a Ref<> instead of a RefPtr<> now that
+        we can since we use WTF::Function.
+
+2017-06-18  Chris Dumez  <cdumez@apple.com>
+
         Use WTF::Function instead of std::function in WTF/
         https://bugs.webkit.org/show_bug.cgi?id=173519
 
