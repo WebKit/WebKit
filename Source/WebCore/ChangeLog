@@ -1,3 +1,42 @@
+2017-06-18  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Seeking or entering fullscreen can cause extreme CPU usage
+        https://bugs.webkit.org/show_bug.cgi?id=173505
+
+        Reviewed by Tim Horton.
+
+        When support for painting MSE to WebGL was added in r217185, the implementation of
+        SourceBufferPrivateAVFObjC::isReadyForMoreSamples() was modified to support asking
+        the decompression session if it was ready. That change, however, caused an extreme
+        performance regression in the normal playback path, where WebKit will effectively
+        append samples endlessly to the AVSampleBufferDisplayLayer, which admirably enqueued
+        each of them for decoding. Eventually, the cost of iterating over the CMBufferQueue
+        overwhelmed the cost of decoding, and caused the extreme lag seen when seeking.
+
+        Make sure to property query the AVSampleBufferDisplayLayer for isReadyForMoreMediaData
+        before enqueuing.
+
+        A previous version of this patch exposed some errors which caused failing tests:
+
+        In sourceBufferPrivateDidReceiveSample(), we were using local versions of
+        presentationTimestamp and decodeTimestamp as keys to the decodeQueue; those local versions
+        were floating point values (because MediaTime + float = float), but the sample itself uses
+        non-floating point MediaTimes. This causes samples to be left in the queue when they should
+        be removed.
+
+        In didBecomeReadyForMoreSamples(), we were getting spurious assertions when a
+        AVSampleBufferDisplayLayer or a AVSampleBufferAudioRenderer would fire a callback from
+        -requestMediaDataWhenReadyOnQueue:usingBlock: even after it had been told to
+        -stopRequestingMediaData. Apparently it's expected behavior and so an ASSERT_NOT_REACHED is
+        inappropriate here.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples):
+
+
 2017-06-17  Zalan Bujtas  <zalan@apple.com>
 
         Addressing post-review comment after r218456.

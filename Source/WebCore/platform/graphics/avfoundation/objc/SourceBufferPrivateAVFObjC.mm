@@ -1002,8 +1002,12 @@ void SourceBufferPrivateAVFObjC::bufferWasConsumed()
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomicString& trackIDString)
 {
     int trackID = trackIDString.toInt();
-    if (trackID == m_enabledVideoTrackID)
-        return !m_decompressionSession || m_decompressionSession->isReadyForMoreMediaData();
+    if (trackID == m_enabledVideoTrackID) {
+        if (m_decompressionSession)
+            return m_decompressionSession->isReadyForMoreMediaData();
+
+        return [m_displayLayer isReadyForMoreMediaData];
+    }
 
     if (m_audioRenderers.contains(trackID))
         return [m_audioRenderers.get(trackID) isReadyForMoreMediaData];
@@ -1049,10 +1053,8 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(int trackID)
         [m_displayLayer stopRequestingMediaData];
     } else if (m_audioRenderers.contains(trackID))
         [m_audioRenderers.get(trackID) stopRequestingMediaData];
-    else {
-        ASSERT_NOT_REACHED();
+    else
         return;
-    }
 
     if (m_client)
         m_client->sourceBufferPrivateDidBecomeReadyForMoreSamples(AtomicString::number(trackID));
