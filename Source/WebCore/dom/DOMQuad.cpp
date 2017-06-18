@@ -54,7 +54,7 @@ DOMQuad::DOMQuad(const DOMRectInit& r)
 {
 }
 
-RefPtr<DOMRect> DOMQuad::getBounds() const
+Ref<DOMRect> DOMQuad::getBounds() const
 {
     double left = nanPropagatingMin(nanPropagatingMin(nanPropagatingMin(m_p1->x(), m_p2->x()), m_p3->x()), m_p4->x());
     double top = nanPropagatingMin(nanPropagatingMin(nanPropagatingMin(m_p1->y(), m_p2->y()), m_p3->y()), m_p4->y());

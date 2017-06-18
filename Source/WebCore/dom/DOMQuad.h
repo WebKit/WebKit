@@ -48,7 +48,7 @@ public:
     const DOMPoint& p3() const { return m_p3; }
     const DOMPoint& p4() const { return m_p4; }
 
-    RefPtr<DOMRect> getBounds() const;
+    Ref<DOMRect> getBounds() const;
 
 private:
     DOMQuad(const DOMPointInit&, const DOMPointInit&, const DOMPointInit&, const DOMPointInit&);
