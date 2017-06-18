@@ -26,6 +26,7 @@
 #pragma once
 
 #include "TextFlags.h"
+#include <wtf/Function.h>
 #include <wtf/GetPtr.h>
 #include <wtf/Hasher.h>
 #include <wtf/NeverDestroyed.h>
@@ -513,10 +514,10 @@ public:
 
 private:
     template <typename T>
-    using IterateActiveCapabilitiesWithReturnCallback = std::function<std::optional<T>(FontSelectionCapabilities, size_t)>;
+    using IterateActiveCapabilitiesWithReturnCallback = WTF::Function<std::optional<T>(FontSelectionCapabilities, size_t)>;
 
     template <typename T>
-    inline std::optional<T> iterateActiveCapabilitiesWithReturn(IterateActiveCapabilitiesWithReturnCallback<T> callback)
+    inline std::optional<T> iterateActiveCapabilitiesWithReturn(const IterateActiveCapabilitiesWithReturnCallback<T>& callback)
     {
         for (size_t i = 0; i < m_capabilities.size(); ++i) {
             if (!m_filter[i])

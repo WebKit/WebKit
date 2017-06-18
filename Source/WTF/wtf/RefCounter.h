@@ -26,7 +26,7 @@
 #ifndef RefCounter_h
 #define RefCounter_h
 
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 
@@ -59,9 +59,9 @@ class RefCounter {
 
 public:
     using Token = RefPtr<Count>;
-    using ValueChangeFunction = std::function<void (RefCounterEvent)>;
+    using ValueChangeFunction = WTF::Function<void (RefCounterEvent)>;
 
-    RefCounter(ValueChangeFunction = nullptr);
+    RefCounter(ValueChangeFunction&& = nullptr);
     ~RefCounter();
 
     Token count() const
@@ -105,8 +105,8 @@ inline void RefCounter<T>::Count::deref()
 }
 
 template<typename T>
-inline RefCounter<T>::RefCounter(ValueChangeFunction valueDidChange)
-    : m_valueDidChange(valueDidChange)
+inline RefCounter<T>::RefCounter(ValueChangeFunction&& valueDidChange)
+    : m_valueDidChange(WTFMove(valueDidChange))
     , m_count(new Count(*this))
 {
 }

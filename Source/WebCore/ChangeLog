@@ -1,3 +1,26 @@
+2017-06-18  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Function instead of std::function in WTF/
+        https://bugs.webkit.org/show_bug.cgi?id=173519
+
+        Reviewed by Sam Weinig.
+
+        Replace a few uses of std::function with WTF::Function in WebCore/
+        as well. It was either this or including <functional> and I decided
+        it made more sense to port the code.
+
+        * platform/graphics/FontSelectionAlgorithm.h:
+        (WebCore::FontSelectionAlgorithm::iterateActiveCapabilitiesWithReturn):
+        * platform/mediastream/MediaConstraints.cpp:
+        (WebCore::StringConstraint::find):
+        (WebCore::MediaTrackConstraintSetMap::forEach):
+        (WebCore::MediaTrackConstraintSetMap::filter):
+        (WebCore::MediaConstraints::isConstraintSet):
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::NumericConstraint::find):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::applyConstraint):
+
 2017-06-18  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Seeking or entering fullscreen can cause extreme CPU usage

@@ -25,8 +25,7 @@
 // This file would be called String.h, but that conflicts with <string.h>
 // on systems without case-sensitive file systems.
 
-#include <functional>
-
+#include <wtf/Function.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringImpl.h>
@@ -367,8 +366,8 @@ public:
         split(separator, false, result);
     }
 
-    using SplitFunctor = std::function<void(const StringView&)>;
-    WTF_EXPORT_STRING_API void split(UChar separator, bool allowEmptyEntries, SplitFunctor&&) const;
+    using SplitFunctor = WTF::Function<void(const StringView&)>;
+    WTF_EXPORT_STRING_API void split(UChar separator, bool allowEmptyEntries, const SplitFunctor&) const;
     WTF_EXPORT_STRING_API void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
     void split(UChar separator, Vector<String>& result) const
     {

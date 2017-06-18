@@ -26,7 +26,6 @@
 #ifndef FunctionDispatcher_h
 #define FunctionDispatcher_h
 
-#include <functional>
 #include <wtf/Function.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

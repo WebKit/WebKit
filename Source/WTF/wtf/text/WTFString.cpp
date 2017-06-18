@@ -743,7 +743,7 @@ void String::split(const String& separator, bool allowEmptyEntries, Vector<Strin
         result.append(substring(startPos));
 }
 
-void String::split(UChar separator, bool allowEmptyEntries, SplitFunctor&& functor) const
+void String::split(UChar separator, bool allowEmptyEntries, const SplitFunctor& functor) const
 {
     StringView view(*this);
 

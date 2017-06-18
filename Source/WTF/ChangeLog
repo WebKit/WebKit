@@ -1,3 +1,33 @@
+2017-06-18  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Function instead of std::function in WTF/
+        https://bugs.webkit.org/show_bug.cgi?id=173519
+
+        Reviewed by Sam Weinig.
+
+        Use WTF::Function instead of std::function in WTF/ to avoid
+        copying.
+
+        * wtf/Brigand.h:
+        * wtf/Condition.h:
+        * wtf/Expected.h:
+        * wtf/FunctionDispatcher.h:
+        * wtf/MainThread.h:
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::setMemoryKillCallback):
+        (WTF::MemoryPressureHandler::setMemoryPressureStatusChangedCallback):
+        (WTF::MemoryPressureHandler::setDidExceedInactiveLimitWhileActiveCallback):
+        * wtf/Optional.h:
+        * wtf/ParkingLot.h:
+        * wtf/RefCounter.h:
+        (WTF::RefCounter<T>::RefCounter):
+        * wtf/WorkQueue.h:
+        * wtf/linux/MemoryPressureHandlerLinux.cpp:
+        (WTF::MemoryPressureHandler::EventFDPoller::EventFDPoller):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::split):
+        * wtf/text/WTFString.h:
+
 2017-06-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix Mac CMake build.

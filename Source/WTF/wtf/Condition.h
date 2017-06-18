@@ -26,7 +26,6 @@
 #ifndef WTF_Condition_h
 #define WTF_Condition_h
 
-#include <functional>
 #include <wtf/CurrentTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ParkingLot.h>

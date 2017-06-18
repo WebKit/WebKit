@@ -99,7 +99,7 @@ static GSourceFuncs eventFDSourceFunctions = {
 };
 #endif
 
-MemoryPressureHandler::EventFDPoller::EventFDPoller(int fd, std::function<void ()>&& notifyHandler)
+MemoryPressureHandler::EventFDPoller::EventFDPoller(int fd, WTF::Function<void ()>&& notifyHandler)
     : m_fd(fd)
     , m_notifyHandler(WTFMove(notifyHandler))
 {

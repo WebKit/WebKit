@@ -27,7 +27,6 @@
 #ifndef WorkQueue_h
 #define WorkQueue_h
 
-#include <functional>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/RefCounted.h>

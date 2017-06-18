@@ -502,7 +502,7 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
             return false;
         };
 
-        auto modeString = downcast<StringConstraint>(constraint).find(filter);
+        auto modeString = downcast<StringConstraint>(constraint).find(WTFMove(filter));
         if (!modeString.isEmpty())
             setFacingMode(RealtimeMediaSourceSettings::videoFacingModeEnum(modeString));
         break;

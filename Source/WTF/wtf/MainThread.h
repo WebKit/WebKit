@@ -30,7 +30,6 @@
 #ifndef MainThread_h
 #define MainThread_h
 
-#include <functional>
 #include <stdint.h>
 #include <wtf/Function.h>
 #include <wtf/Optional.h>
