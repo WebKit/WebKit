@@ -2215,7 +2215,8 @@ void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
 void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
-    ASSERT(frame() && frame()->document() == this);
+    ASSERT(frame());
+    ASSERT(frame()->document() == this);
     ASSERT(page());
 
     // Prevent Widget tree changes from committing until the RenderView is dead and gone.
