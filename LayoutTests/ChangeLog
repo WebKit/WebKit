@@ -1,3 +1,17 @@
+2017-06-19  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Prevent capturing at unconventional resolutions when using the SW encoder on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=172602
+        <rdar://problem/32407693>
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk1/TestExpectations: Mark captureCanvas as flaky due to AVDCreateGPUAccelerator: Error loading GPU renderer" appearing on some bots.
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder-expected.txt: Copied from LayoutTests/webrtc/captureCanvas-webrtc-expected.txt.
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html: Added.
+        * webrtc/captureCanvas-webrtc-expected.txt:
+        * webrtc/captureCanvas-webrtc.html:
+
 2017-06-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html.

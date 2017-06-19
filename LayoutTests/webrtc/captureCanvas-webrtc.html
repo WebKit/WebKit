@@ -1,25 +1,48 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
     <head>
-        <canvas id="canvas1" width=100px height=100px></canvas>
-        <video id="video" autoplay width=100px height=100px></video>
-        <canvas id="canvas2" width=100px height=100px></canvas>
+        <canvas id="canvas1" width=320px height=240px></canvas>
+        <video id="video" autoplay></video>
+        <canvas id="canvas2" width=320px height=240px></canvas>
         <script src="../resources/testharness.js"></script>
         <script src="../resources/testharnessreport.js"></script>
         <script src ="routines.js"></script>
         <script>
-
-var canvas1 = document.getElementById("canvas1");
-var canvas2 = document.getElementById("canvas2");
-var video = document.getElementById("video");
 
 var color = "green";
 function printRectangle()
 {
     var context = canvas1.getContext("2d");
     context.fillStyle = color;
-    context.fillRect(0, 0, 100, 100);
+    context.fillRect(0, 0, 320, 240);
     setTimeout(printRectangle, 50);
+}
+
+function testCanvas(testName, array1, isSame, count)
+{
+    if (count === undefined)
+        count = 0;
+    canvas2.getContext("2d").drawImage(video, 0 ,0);
+    array2 = canvas2.getContext("2d").getImageData(20, 20, 60, 60).data;
+    var isEqual = true;
+    var index = 0;
+    for (index = 0; index < array1.length; ++index) {
+        // Rough comparison since we are compressing data.
+        // This test still catches errors since we are going from green to blue to red.
+        if (Math.abs(array1[index] - array2[index]) > 40) {
+            isEqual = false;
+            continue;
+        }
+    }
+    if (isEqual === isSame)
+        return;
+
+    if (count === 20)
+        return Promise.reject(testName + " failed, expected " + JSON.stringify(array1) + " but got " + JSON.stringify(array2));
+
+    return waitFor(50).then(() => {
+        return testCanvas(testName, array1, isSame, ++count);
+    });
 }
 
 promise_test((test) => {
@@ -46,16 +69,14 @@ promise_test((test) => {
 
 promise_test((test) => {
     return waitFor(100).then(() => {
-        canvas2.getContext("2d").drawImage(video, 0 ,0);
-        assert_array_equals(canvas2.getContext("2d").getImageData(20 ,20, 60, 60), canvas1.getContext("2d").getImageData(20, 20, 60, 60));
+        return testCanvas("test 1", canvas1.getContext("2d").getImageData(20, 20, 60, 60).data, true);
     });
 }, "Checking canvas is green");
 
 promise_test((test) => {
     color = "red";
     return waitFor(300).then(() => {
-        canvas2.getContext("2d").drawImage(video, 0 ,0);
-        assert_array_equals(canvas2.getContext("2d").getImageData(20 ,20, 60, 60), canvas1.getContext("2d").getImageData(20, 20, 60, 60));
+        return testCanvas("test 2", canvas1.getContext("2d").getImageData(20, 20, 60, 60).data, true);
     });
 }, "Checking canvas is red");
 
@@ -63,10 +84,15 @@ promise_test((test) => {
 promise_test((test) => {
     color = "green";
     return waitFor(300).then(() => {
-        canvas2.getContext("2d").drawImage(video, 0 ,0);
-        assert_array_equals(canvas2.getContext("2d").getImageData(20 ,20, 60, 60), canvas1.getContext("2d").getImageData(20, 20, 60, 60));
+        return testCanvas("test 3", canvas1.getContext("2d").getImageData(20, 20, 60, 60).data, true);
     });
 }, "Checking canvas is green again");
+
+promise_test((test) => {
+        canvas1.width = 640;
+        canvas1.height = 480;
+        return waitForVideoSize(video, 640, 480);
+}, "Checking canvas size change");
         </script>
     </head>
 </html>

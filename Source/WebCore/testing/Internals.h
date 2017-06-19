@@ -579,6 +579,10 @@ public:
 
     void setPageVisibility(bool isVisible);
 
+#if ENABLE(WEB_RTC)
+    void setH264HardwareEncoderAllowed(bool allowed);
+#endif
+
 #if ENABLE(MEDIA_STREAM)
     void setCameraMediaStreamTrackOrientation(MediaStreamTrack&, int orientation);
     ExceptionOr<void> setMediaDeviceState(const String& id, const String& property, bool value);

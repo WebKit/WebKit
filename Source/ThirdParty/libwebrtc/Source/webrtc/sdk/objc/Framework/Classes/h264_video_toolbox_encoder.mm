@@ -533,7 +533,7 @@ int H264VideoToolboxEncoder::ResetCompressionSession() {
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
-int H264VideoToolboxEncoder::CreateCompressionSession(VTCompressionSessionRef& compressionSession, VTCompressionOutputCallback outputCallback, int32_t width, int32_t height) {
+int H264VideoToolboxEncoder::CreateCompressionSession(VTCompressionSessionRef& compressionSession, VTCompressionOutputCallback outputCallback, int32_t width, int32_t height, bool useHardwareAcceleratedVideoEncoder) {
   // Set source image buffer attributes. These attributes will be present on
   // buffers retrieved from the encoder's pixel buffer pool.
   const size_t attributes_size = 3;
@@ -566,7 +566,7 @@ int H264VideoToolboxEncoder::CreateCompressionSession(VTCompressionSessionRef& c
 
 #if defined(WEBRTC_USE_VTB_HARDWARE_ENCODER)
   CFTypeRef sessionKeys[] = {kVTVideoEncoderSpecification_EnableHardwareAcceleratedVideoEncoder};
-  CFTypeRef sessionValues[] = {kCFBooleanTrue};
+  CFTypeRef sessionValues[] = {useHardwareAcceleratedVideoEncoder ? kCFBooleanTrue : kCFBooleanFalse};
   CFDictionaryRef encoderSpecification = internal::CreateCFDictionary(sessionKeys, sessionValues, 1);
 #else
   CFDictionaryRef encoderSpecification = nullptr;
