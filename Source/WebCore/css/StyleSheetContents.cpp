@@ -435,7 +435,7 @@ URL StyleSheetContents::completeURL(const String& url) const
     return m_parserContext.completeURL(url);
 }
 
-static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rules, const std::function<bool (const CachedResource&)>& handler)
+static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rules, const WTF::Function<bool (const CachedResource&)>& handler)
 {
     for (auto& rule : rules) {
         switch (rule->type()) {
@@ -480,7 +480,7 @@ static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rul
     return false;
 }
 
-bool StyleSheetContents::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
+bool StyleSheetContents::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
 {
     for (auto& importRule : m_importRules) {
         if (auto* cachedResource = importRule->cachedCSSStyleSheet()) {

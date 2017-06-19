@@ -38,6 +38,7 @@
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -1113,7 +1114,7 @@ public:
     AccessibilityObject* editableAncestor();
     AccessibilityObject* highestEditableAncestor();
     
-    static const AccessibilityObject* matchedParent(const AccessibilityObject&, bool includeSelf, const std::function<bool(const AccessibilityObject&)>&);
+    static const AccessibilityObject* matchedParent(const AccessibilityObject&, bool includeSelf, const WTF::Function<bool(const AccessibilityObject&)>&);
     
     void clearIsIgnoredFromParentData() { m_isIgnoredFromParentData = AccessibilityIsIgnoredFromParentData(); }
     void setIsIgnoredFromParentDataForChild(AccessibilityObject*);

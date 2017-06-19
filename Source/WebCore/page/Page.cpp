@@ -150,7 +150,7 @@ static inline bool isUtilityPageChromeClient(ChromeClient& chromeClient)
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
-void Page::forEachPage(std::function<void(Page&)> function)
+void Page::forEachPage(const WTF::Function<void(Page&)>& function)
 {
     if (!allPages)
         return;
@@ -1783,19 +1783,18 @@ void Page::decrementNestedRunLoopCount()
 
             // This callback may destruct the Page.
             if (m_unnestCallback) {
-                auto callback = m_unnestCallback;
-                m_unnestCallback = nullptr;
+                auto callback = WTFMove(m_unnestCallback);
                 callback();
             }
         });
     }
 }
 
-void Page::whenUnnested(std::function<void()> callback)
+void Page::whenUnnested(WTF::Function<void()>&& callback)
 {
     ASSERT(!m_unnestCallback);
 
-    m_unnestCallback = callback;
+    m_unnestCallback = WTFMove(callback);
 }
 
 #if ENABLE(REMOTE_INSPECTOR)

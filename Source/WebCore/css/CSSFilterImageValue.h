@@ -33,6 +33,7 @@
 #include "FilterOperations.h"
 #include "Image.h"
 #include "ImageObserver.h"
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -63,7 +64,7 @@ public:
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&);
 
-    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 
     bool equals(const CSSFilterImageValue&) const;
 

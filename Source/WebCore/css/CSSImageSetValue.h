@@ -28,6 +28,7 @@
 #include "CSSValueList.h"
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ public:
         float scaleFactor;
     };
 
-    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 
     void updateDeviceScaleFactor(const Document&);
 

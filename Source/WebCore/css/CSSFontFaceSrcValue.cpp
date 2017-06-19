@@ -85,7 +85,7 @@ String CSSFontFaceSrcValue::customCSSText() const
     return result.toString();
 }
 
-bool CSSFontFaceSrcValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
+bool CSSFontFaceSrcValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
 {
     if (!m_cachedFont)
         return false;

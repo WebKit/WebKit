@@ -30,6 +30,7 @@
 #include "CombinedFiltersAlphabet.h"
 #include "ContentExtensionsDebugging.h"
 #include "NFA.h"
+#include <wtf/Function.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -47,7 +48,7 @@ public:
     void addPattern(uint64_t actionId, const Vector<Term>& pattern);
     void addDomain(uint64_t actionId, const String& domain);
 
-    void processNFAs(size_t maxNFASize, std::function<void(NFA&&)> handler);
+    void processNFAs(size_t maxNFASize, const WTF::Function<void(NFA&&)>& handler);
     bool isEmpty() const;
 
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING

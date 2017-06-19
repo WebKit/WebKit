@@ -1461,7 +1461,7 @@ WebAnimationVector Element::getAnimations()
 
     auto* document = DocumentAnimation::from(&this->document());
     if (document)
-        return document->getAnimations(checkTarget);
+        return document->getAnimations(WTFMove(checkTarget));
     return WebAnimationVector();
 }
 #endif

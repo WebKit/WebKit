@@ -1830,7 +1830,7 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
     }));
 }
 
-const AccessibilityObject* AccessibilityObject::matchedParent(const AccessibilityObject& object, bool includeSelf, const std::function<bool(const AccessibilityObject&)>& matches)
+const AccessibilityObject* AccessibilityObject::matchedParent(const AccessibilityObject& object, bool includeSelf, const WTF::Function<bool(const AccessibilityObject&)>& matches)
 {
     const AccessibilityObject* parent = includeSelf ? &object : object.parentObject();
     for (; parent; parent = parent->parentObject()) {

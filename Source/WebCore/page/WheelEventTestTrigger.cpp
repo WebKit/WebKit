@@ -47,12 +47,12 @@ void WheelEventTestTrigger::clearAllTestDeferrals()
 {
     std::lock_guard<Lock> lock(m_testTriggerMutex);
     m_deferTestTriggerReasons.clear();
-    m_testNotificationCallback = std::function<void()>();
+    m_testNotificationCallback = nullptr;
     m_testTriggerTimer.stop();
     LOG(WheelEventTestTriggers, "      (=) WheelEventTestTrigger::clearAllTestDeferrals: cleared all test state.");
 }
 
-void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(std::function<void()> functionCallback)
+void WheelEventTestTrigger::setTestCallbackAndStartNotificationTimer(WTF::Function<void()>&& functionCallback)
 {
     {
         std::lock_guard<Lock> lock(m_testTriggerMutex);
@@ -107,7 +107,7 @@ static void dumpState(WTF::HashMap<WheelEventTestTrigger::ScrollableAreaIdentifi
     
 void WheelEventTestTrigger::triggerTestTimerFired()
 {
-    std::function<void()> functionCallback;
+    WTF::Function<void()> functionCallback;
 
     {
         std::lock_guard<Lock> lock(m_testTriggerMutex);
@@ -120,7 +120,6 @@ void WheelEventTestTrigger::triggerTestTimerFired()
         }
 
         functionCallback = WTFMove(m_testNotificationCallback);
-        m_testNotificationCallback = std::function<void()>();
     }
 
     m_testTriggerTimer.stop();

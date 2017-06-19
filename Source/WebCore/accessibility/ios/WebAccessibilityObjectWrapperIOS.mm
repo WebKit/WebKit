@@ -539,7 +539,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return role == TreeRole;
     };
     
-    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, matchFunc))
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, WTFMove(matchFunc)))
         return parent->wrapper();
     return nil;
 }
@@ -551,7 +551,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return role == ListRole || role == ListBoxRole;
     };
     
-    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, matchFunc))
+    if (const AccessibilityObject* parent = AccessibilityObject::matchedParent(*m_object, false, WTFMove(matchFunc)))
         return parent->wrapper();
     return nil;
 }

@@ -79,7 +79,7 @@ public:
     FrameInfoData info() const;
     uint64_t frameID() const { return m_frameID; }
 
-    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction);
+    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&);
     void invalidatePolicyListener();
     void didReceivePolicyDecision(uint64_t listenerID, WebCore::PolicyAction, uint64_t navigationID, DownloadID);
 
@@ -170,7 +170,7 @@ private:
     WebCore::Frame* m_coreFrame { nullptr };
 
     uint64_t m_policyListenerID { 0 };
-    WebCore::FramePolicyFunction m_policyFunction { nullptr };
+    WebCore::FramePolicyFunction m_policyFunction;
     DownloadID m_policyDownloadID { 0 };
 
     std::unique_ptr<WebFrameLoaderClient> m_frameLoaderClient;

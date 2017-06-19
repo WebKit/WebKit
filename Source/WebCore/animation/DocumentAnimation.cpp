@@ -68,7 +68,7 @@ DocumentAnimation* DocumentAnimation::from(Document* document)
     return supplement;
 }
 
-WebAnimationVector DocumentAnimation::getAnimations(std::function<bool(const AnimationEffect&)> effect_test) const
+WebAnimationVector DocumentAnimation::getAnimations(const WTF::Function<bool(const AnimationEffect&)>& effectMatches) const
 {
     WebAnimationVector animations;
 
@@ -83,7 +83,7 @@ WebAnimationVector DocumentAnimation::getAnimations(std::function<bool(const Ani
     for (auto& animation : m_animations.values()) {
         if (animation && animation->effect()) {
             const AnimationEffect& effect = *animation->effect();
-            if ((effect.isCurrent() || effect.isInEffect()) && effect_test(effect))
+            if ((effect.isCurrent() || effect.isInEffect()) && effectMatches(effect))
                 animations.append(animation.get());
         }
     }

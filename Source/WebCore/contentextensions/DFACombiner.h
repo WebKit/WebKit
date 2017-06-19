@@ -28,6 +28,7 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "DFA.h"
+#include <wtf/Function.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,7 +38,7 @@ namespace ContentExtensions {
 class WEBCORE_EXPORT DFACombiner {
 public:
     void addDFA(DFA&&);
-    void combineDFAs(unsigned minimumSize, std::function<void(DFA&&)> handler);
+    void combineDFAs(unsigned minimumSize, const WTF::Function<void(DFA&&)>& handler);
 
 private:
     Vector<DFA> m_dfas;

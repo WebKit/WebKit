@@ -55,12 +55,13 @@
 #include "SimpleLineLayout.h"
 #include "SimpleLineLayoutResolver.h"
 #include "TextBoundaries.h"
-#include <wtf/text/TextBreakIterator.h>
 #include "TextControlInnerElements.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
+#include <wtf/Function.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if !UCONFIG_NO_COLLATION
@@ -2680,7 +2681,7 @@ static TextIteratorBehavior findIteratorOptions(FindOptions options)
     return iteratorOptions;
 }
 
-static void findPlainTextMatches(const Range& range, const String& target, FindOptions options, const std::function<bool(size_t, size_t)>& match)
+static void findPlainTextMatches(const Range& range, const String& target, FindOptions options, const WTF::Function<bool(size_t, size_t)>& match)
 {
     SearchBuffer buffer(target, options);
     if (buffer.needsMoreContext()) {
@@ -2737,7 +2738,7 @@ Ref<Range> findClosestPlainText(const Range& range, const String& target, FindOp
         return false;
     };
 
-    findPlainTextMatches(range, target, options, match);
+    findPlainTextMatches(range, target, options, WTFMove(match));
     return rangeForMatch(range, options, matchStart, matchLength, !(options & Backwards));
 }
 
@@ -2753,7 +2754,7 @@ Ref<Range> findPlainText(const Range& range, const String& target, FindOptions o
         return searchForward;
     };
 
-    findPlainTextMatches(range, target, options, match);
+    findPlainTextMatches(range, target, options, WTFMove(match));
     return rangeForMatch(range, options, matchStart, matchLength, searchForward);
 }
 

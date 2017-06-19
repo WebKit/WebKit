@@ -33,7 +33,7 @@
 #include "AnimationEffect.h"
 #include "Supplementable.h"
 #include "WebAnimation.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
@@ -51,7 +51,7 @@ public:
     static DocumentTimeline* timeline(Document&);
     static WebAnimationVector getAnimations(Document&);
 
-    WebAnimationVector getAnimations(std::function<bool(const AnimationEffect&)> = [](const AnimationEffect&) { return true; }) const;
+    WebAnimationVector getAnimations(const WTF::Function<bool(const AnimationEffect&)>& = [](const AnimationEffect&) { return true; }) const;
 
     void addAnimation(WebAnimation&);
     void removeAnimation(WebAnimation&);

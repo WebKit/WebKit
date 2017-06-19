@@ -30,6 +30,7 @@
 
 #include "MediaPlayerPrivate.h"
 #include "SourceBufferPrivateClient.h"
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
@@ -100,7 +101,7 @@ public:
     WebCoreDecompressionSession* decompressionSession() const { return m_decompressionSession.get(); }
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
-    void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) override;
+    void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
 #endif
 

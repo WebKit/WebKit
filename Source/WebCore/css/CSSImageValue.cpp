@@ -81,7 +81,7 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
     return m_cachedImage.get();
 }
 
-bool CSSImageValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
+bool CSSImageValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
 {
     if (!m_cachedImage)
         return false;

@@ -152,7 +152,7 @@ String CSSImageSetValue::customCSSText() const
     return result.toString();
 }
 
-bool CSSImageSetValue::traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const
+bool CSSImageSetValue::traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const
 {
     if (!m_cachedImage)
         return false;

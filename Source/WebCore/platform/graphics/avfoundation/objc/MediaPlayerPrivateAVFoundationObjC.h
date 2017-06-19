@@ -30,6 +30,7 @@
 
 #include "MediaPlaybackTarget.h"
 #include "MediaPlayerPrivateAVFoundation.h"
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 
 OBJC_CLASS AVAssetImageGenerator;
@@ -185,7 +186,7 @@ private:
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     PlatformLayer* platformLayer() const override;
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) override;
+    void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) override;
     void setVideoFullscreenFrame(FloatRect) override;
     void setVideoFullscreenGravity(MediaPlayer::VideoGravity) override;
     void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) override;

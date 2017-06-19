@@ -209,14 +209,14 @@ void WebFrame::invalidate()
     m_coreFrame = 0;
 }
 
-uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction policyFunction)
+uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction)
 {
     // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
 
     invalidatePolicyListener();
 
     m_policyListenerID = generateListenerID();
-    m_policyFunction = policyFunction;
+    m_policyFunction = WTFMove(policyFunction);
     return m_policyListenerID;
 }
 
@@ -227,7 +227,7 @@ void WebFrame::invalidatePolicyListener()
 
     m_policyDownloadID = { };
     m_policyListenerID = 0;
-    m_policyFunction = 0;
+    m_policyFunction = nullptr;
 }
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID)

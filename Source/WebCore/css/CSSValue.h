@@ -22,7 +22,7 @@
 
 #include "ExceptionOr.h"
 #include "URLHash.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
@@ -122,7 +122,7 @@ public:
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper() const;
 
-    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 
     bool equals(const CSSValue&) const;
     bool operator==(const CSSValue& other) const { return equals(other); }

@@ -34,7 +34,7 @@
 #include "HTMLMediaElementEnums.h"
 #include "PlatformLayer.h"
 #include "WebVideoFullscreenModel.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -55,8 +55,8 @@ public:
     WEBCORE_EXPORT virtual ~WebVideoFullscreenModelVideoElement();
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
-    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler = [] { });
-    WEBCORE_EXPORT void waitForPreparedForInlineThen(std::function<void()> completionHandler = [] { });
+    WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
+    WEBCORE_EXPORT void waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler = [] { });
     
     WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
     void updateForEventName(const WTF::AtomicString&);

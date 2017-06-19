@@ -33,6 +33,7 @@
 #import "WebCoreCALayerExtras.h"
 #import <mach/mach_init.h>
 #import <mach/mach_port.h>
+#import <wtf/BlockPtr.h>
 
 @interface WebVideoContainerLayer : CALayer
 @end
@@ -86,7 +87,7 @@ void VideoFullscreenLayerManager::setVideoLayer(PlatformLayer *videoLayer, IntSi
     }
 }
 
-void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, std::function<void()> completionHandler)
+void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     if (m_videoFullscreenLayer == videoFullscreenLayer) {
         completionHandler();
@@ -121,13 +122,13 @@ void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFu
             mach_port_deallocate(mach_task_self(), fencePort);
         }
 
-        [CATransaction setCompletionBlock:[completionHandler] {
+        [CATransaction setCompletionBlock:BlockPtr<void ()>::fromCallable([completionHandler = WTFMove(completionHandler)] {
             completionHandler();
-        }];
+        }).get()];
     } else {
-        [CATransaction setCompletionBlock:[completionHandler] {
+        [CATransaction setCompletionBlock:BlockPtr<void ()>::fromCallable([completionHandler = WTFMove(completionHandler)] {
             completionHandler();
-        }];
+        }).get()];
     }
 
     [CATransaction commit];

@@ -41,6 +41,7 @@
 #include "WheelEventTestTrigger.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -193,7 +194,7 @@ public:
 
     PageGroup& group();
 
-    static void forEachPage(std::function<void(Page&)>);
+    static void forEachPage(const WTF::Function<void(Page&)>&);
 
     void incrementSubframeCount() { ++m_subframeCount; }
     void decrementSubframeCount() { ASSERT(m_subframeCount); --m_subframeCount; }
@@ -202,7 +203,7 @@ public:
     void incrementNestedRunLoopCount();
     void decrementNestedRunLoopCount();
     bool insideNestedRunLoop() const { return m_nestedRunLoopCount > 0; }
-    WEBCORE_EXPORT void whenUnnested(std::function<void()>);
+    WEBCORE_EXPORT void whenUnnested(WTF::Function<void()>&&);
 
 #if ENABLE(REMOTE_INSPECTOR)
     WEBCORE_EXPORT bool remoteInspectionAllowed() const;
@@ -680,7 +681,7 @@ private:
     RTCController m_rtcController;
 
     int m_nestedRunLoopCount { 0 };
-    std::function<void()> m_unnestCallback;
+    WTF::Function<void()> m_unnestCallback;
 
     int m_subframeCount { 0 };
     String m_groupName;

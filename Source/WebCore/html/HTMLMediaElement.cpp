@@ -5698,7 +5698,7 @@ void HTMLMediaElement::setPreparedToReturnVideoLayerToInline(bool value)
     }
 }
 
-void HTMLMediaElement::waitForPreparedForInlineThen(std::function<void()> completionHandler)
+void HTMLMediaElement::waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler)
 {
     ASSERT(!m_preparedForInlineCompletionHandler);
     if (m_preparedForInline)  {
@@ -5706,7 +5706,7 @@ void HTMLMediaElement::waitForPreparedForInlineThen(std::function<void()> comple
         return;
     }
     
-    m_preparedForInlineCompletionHandler = completionHandler;
+    m_preparedForInlineCompletionHandler = WTFMove(completionHandler);
 }
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
@@ -5716,7 +5716,7 @@ bool HTMLMediaElement::isVideoLayerInline()
     return !m_videoFullscreenLayer;
 };
     
-void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer, std::function<void()> completionHandler)
+void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer, WTF::Function<void()>&& completionHandler)
 {
     m_videoFullscreenLayer = platformLayer;
     if (!m_player) {
@@ -5724,7 +5724,7 @@ void HTMLMediaElement::setVideoFullscreenLayer(PlatformLayer* platformLayer, std
         return;
     }
     
-    m_player->setVideoFullscreenLayer(platformLayer, completionHandler);
+    m_player->setVideoFullscreenLayer(platformLayer, WTFMove(completionHandler));
     invalidateStyleAndLayerComposition();
 #if ENABLE(VIDEO_TRACK)
     updateTextTrackDisplay();

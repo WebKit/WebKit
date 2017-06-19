@@ -89,11 +89,11 @@ public:
         return m_data[index];
     }
 
-    void forEach(std::function<void(T)> func) const
+    void forEach(const WTF::Function<void(T)>& apply) const
     {
         unsigned i = m_current;
         for (unsigned visited = 0; visited < size; ++visited) {
-            func(m_data[i]);
+            apply(m_data[i]);
             incrementIndex(i);
         }
     }

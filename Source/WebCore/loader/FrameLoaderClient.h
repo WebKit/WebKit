@@ -99,7 +99,7 @@ class Widget;
 
 struct StringWithDirection;
 
-typedef std::function<void (PolicyAction)> FramePolicyFunction;
+typedef WTF::Function<void (PolicyAction)> FramePolicyFunction;
 
 class WEBCORE_EXPORT FrameLoaderClient {
 public:
@@ -177,15 +177,15 @@ public:
     virtual Frame* dispatchCreatePage(const NavigationAction&) = 0;
     virtual void dispatchShow() = 0;
 
-    virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, FramePolicyFunction) = 0;
-    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, FramePolicyFunction) = 0;
-    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, FormState*, FramePolicyFunction) = 0;
+    virtual void dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNewWindowAction(const NavigationAction&, const ResourceRequest&, FormState*, const String& frameName, FramePolicyFunction&&) = 0;
+    virtual void dispatchDecidePolicyForNavigationAction(const NavigationAction&, const ResourceRequest&, FormState*, FramePolicyFunction&&) = 0;
     virtual void cancelPolicyCheck() = 0;
 
     virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
 
     virtual void dispatchWillSendSubmitEvent(Ref<FormState>&&) = 0;
-    virtual void dispatchWillSubmitForm(FormState&, FramePolicyFunction) = 0;
+    virtual void dispatchWillSubmitForm(FormState&, FramePolicyFunction&&) = 0;
 
     virtual void revertToProvisionalState(DocumentLoader*) = 0;
     virtual void setMainDocumentError(DocumentLoader*, const ResourceError&) = 0;

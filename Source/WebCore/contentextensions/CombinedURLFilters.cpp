@@ -446,7 +446,7 @@ static void generateNFAForSubtree(NFA& nfa, ImmutableCharNFANodeBuilder&& subtre
     clearReverseSuffixTree(reverseSuffixTreeRoots);
 }
 
-void CombinedURLFilters::processNFAs(size_t maxNFASize, std::function<void(NFA&&)> handler)
+void CombinedURLFilters::processNFAs(size_t maxNFASize, const WTF::Function<void(NFA&&)>& handler)
 {
 #if CONTENT_EXTENSIONS_STATE_MACHINE_DEBUGGING
     print();

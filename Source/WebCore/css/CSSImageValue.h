@@ -22,6 +22,7 @@
 
 #include "CSSValue.h"
 #include "CachedResourceHandle.h"
+#include <wtf/Function.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -48,7 +49,7 @@ public:
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper() const;
 
-    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 
     bool equals(const CSSImageValue&) const;
 

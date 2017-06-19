@@ -26,6 +26,7 @@
 #include "CSSProperty.h"
 #include "CSSValueKeywords.h"
 #include <memory>
+#include <wtf/Function.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
@@ -132,7 +133,7 @@ public:
     bool hasCSSOMWrapper() const;
     bool isMutable() const { return type() == MutablePropertiesType; }
 
-    bool traverseSubresources(const std::function<bool (const CachedResource&)>& handler) const;
+    bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 
     static unsigned averageSizeInBytes();
 

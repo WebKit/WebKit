@@ -30,6 +30,7 @@
 
 #include "MediaPlayer.h"
 #include "PlatformTimeRanges.h"
+#include <wtf/Function.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -59,7 +60,7 @@ public:
     virtual PlatformLayer* platformLayer() const { return 0; }
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    virtual void setVideoFullscreenLayer(PlatformLayer*, std::function<void()> completionHandler) { completionHandler(); }
+    virtual void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler) { completionHandler(); }
     virtual void setVideoFullscreenFrame(FloatRect) { }
     virtual void setVideoFullscreenGravity(MediaPlayer::VideoGravity) { }
     virtual void setVideoFullscreenMode(MediaPlayer::VideoFullscreenMode) { }

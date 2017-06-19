@@ -30,6 +30,7 @@
 
 #include <functional>
 #include <set>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
@@ -42,7 +43,7 @@ class WheelEventTestTrigger : public ThreadSafeRefCounted<WheelEventTestTrigger>
 public:
     WheelEventTestTrigger();
 
-    WEBCORE_EXPORT void setTestCallbackAndStartNotificationTimer(std::function<void()>);
+    WEBCORE_EXPORT void setTestCallbackAndStartNotificationTimer(WTF::Function<void()>&&);
     WEBCORE_EXPORT void clearAllTestDeferrals();
     
     enum DeferTestTriggerReason {
@@ -57,7 +58,7 @@ public:
     void triggerTestTimerFired();
 
 private:
-    std::function<void()> m_testNotificationCallback;
+    WTF::Function<void()> m_testNotificationCallback;
     RunLoop::Timer<WheelEventTestTrigger> m_testTriggerTimer;
     mutable Lock m_testTriggerMutex;
     WTF::HashMap<ScrollableAreaIdentifier, std::set<DeferTestTriggerReason>> m_deferTestTriggerReasons;

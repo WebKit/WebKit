@@ -406,7 +406,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, std::function<bool (Frame&)> frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, WTF::Function<bool (Frame&)>&& frameFilter)
 {
     Frame* frame = node.document().frame();
     if (!frame)
@@ -465,7 +465,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Range* range)
     return create(markupString, *frame, nodeList, nullptr);
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame& frame, const Vector<Node*>& nodes, std::function<bool (Frame&)> frameFilter)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Frame& frame, const Vector<Node*>& nodes, WTF::Function<bool (Frame&)>&& frameFilter)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -490,7 +490,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Fr
             && (childFrame = downcast<HTMLFrameOwnerElement>(node).contentFrame())) {
             if (frameFilter && !frameFilter(*childFrame))
                 continue;
-            if (auto subframeArchive = create(*childFrame->document(), frameFilter))
+            if (auto subframeArchive = create(*childFrame->document(), WTFMove(frameFilter)))
                 subframeArchives.append(subframeArchive.releaseNonNull());
             else
                 LOG_ERROR("Unabled to archive subframe %s", childFrame->tree().uniqueName().string().utf8().data());

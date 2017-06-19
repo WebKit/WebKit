@@ -31,7 +31,6 @@
 
 #pragma once
 
-#include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 
@@ -53,7 +52,7 @@ public:
 
 private:
     void start();
-    void perform(Function<std::function<void(FileStreamClient&)>(FileStream&)>&&);
+    void perform(WTF::Function<WTF::Function<void(FileStreamClient&)>(FileStream&)>&&);
 
     struct Internals;
     std::unique_ptr<Internals> m_internals;

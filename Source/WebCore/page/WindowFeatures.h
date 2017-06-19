@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -61,6 +61,6 @@ WindowFeatures parseWindowFeatures(StringView windowFeaturesString);
 WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect);
 
 enum class FeatureMode { Window, Viewport };
-void processFeaturesString(StringView features, FeatureMode, std::function<void(StringView type, StringView value)> callback);
+void processFeaturesString(StringView features, FeatureMode, const WTF::Function<void(StringView type, StringView value)>& callback);
 
 } // namespace WebCore
