@@ -1,3 +1,18 @@
+2017-06-18  Chris Dumez  <cdumez@apple.com>
+
+        Drop unused UserMediaPermissionRequestManager::cancelPendingRequests()
+        https://bugs.webkit.org/show_bug.cgi?id=173529
+        <rdar://problem/32836986>
+
+        Reviewed by Sam Weinig.
+
+        Drop UserMediaPermissionRequestManager::cancelPendingRequests() as it is unused
+        and its implementation is wrong (modifies the hash maps it is iterating on).
+
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::cancelPendingRequests): Deleted.
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+
 2017-06-17  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, follow-up build fix after r218457.

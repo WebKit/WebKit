@@ -57,15 +57,6 @@ UserMediaPermissionRequestManager::~UserMediaPermissionRequestManager()
         sandboxExtension.value->revoke();
 }
 
-void UserMediaPermissionRequestManager::cancelPendingRequests()
-{
-    for (auto& request : m_idToUserMediaRequestMap.values())
-        cancelUserMediaRequest(*request);
-
-    for (auto& request : m_idToMediaDevicesEnumerationRequestMap.values())
-        cancelMediaDevicesEnumeration(*request);
-}
-
 void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& request)
 {
     Document* document = request.document();
