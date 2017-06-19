@@ -97,6 +97,9 @@ public:
     ExceptionOr<void> setSystemLayoutDirection(const String&);
     ExceptionOr<void> setShouldMockBoldSystemFontForAccessibility(bool);
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
+
+    enum class FrameFlatteningValue { Disabled, EnabledForNonFullScreenIFrames, FullyEnabled };
+    ExceptionOr<void> setFrameFlattening(const FrameFlatteningValue&);
     
     static void setAllowsAnySSLCertificate(bool);
 
@@ -187,6 +190,7 @@ private:
         Settings::ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;
         Settings::ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
         Settings::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
+        FrameFlattening m_frameFlattening;
 
         // Runtime enabled settings.
         bool m_indexedDBWorkersEnabled;

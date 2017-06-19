@@ -38,7 +38,7 @@
     function runTest()
     {
       if (window.internals)
-        internals.settings.setFrameFlatteningEnabled(true);
+        internals.settings.setFrameFlattening("FullyEnabled")
 
       // starting the test itself: get to a known place.
       document.getElementById("start").focus();

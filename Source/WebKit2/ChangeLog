@@ -1,3 +1,29 @@
+2017-05-14 Frederic Wang  <fwang@igalia.com>
+
+        Add heuristic to avoid flattening "fullscreen" iframes
+        https://bugs.webkit.org/show_bug.cgi?id=171914
+
+        Reviewed by Simon Fraser.
+
+        This commit ajusts the preference API to internally treat frame flattening as an enum.
+        However, the "partial frame flattening" value is not exposed to GTK, C or InjectedBundle APIs yet.
+
+        * Shared/WebPreferencesDefinitions.h: Define frame flattening as an enum.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetFrameFlatteningEnabled): Treat frame flattening as an enum.
+        (WKPreferencesGetFrameFlatteningEnabled): Ditto.
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkit_settings_get_enable_frame_flattening): Ditto.
+        (webkit_settings_set_enable_frame_flattening): Ditto.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Do not handle frame flattening since it is an enum.
+        For now, this breaks one test checking preference overriding because of bug 128594.
+        (WebKit::InjectedBundle::setFrameFlatteningEnabled): Treat frame flattening as an enum.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged): Use enum value.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Ditto.
+
 2017-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.17.4 release.

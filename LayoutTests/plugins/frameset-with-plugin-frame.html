@@ -3,7 +3,7 @@
     if (window.testRunner && window.internals) {
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
-        internals.settings.setFrameFlatteningEnabled(true);
+        internals.settings.setFrameFlattening("FullyEnabled")
         testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
         testRunner.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
     }

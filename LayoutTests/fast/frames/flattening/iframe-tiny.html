@@ -6,7 +6,7 @@
 description("Test that frame flattening is not used for tiny frames. This test requires DRT or user agent with flattening enabled.");
 
 if (window.internals)
-    internals.settings.setFrameFlatteningEnabled(true);
+    internals.settings.setFrameFlattening("FullyEnabled")
 
 function checkResult(frameName, expectedWidth, expectedHeight)
 {

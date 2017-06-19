@@ -1,3 +1,45 @@
+2017-05-14 Frederic Wang  <fwang@igalia.com>
+
+        Add heuristic to avoid flattening "fullscreen" iframes
+        https://bugs.webkit.org/show_bug.cgi?id=171914
+
+        Reviewed by Simon Fraser.
+
+        Some authors implement fullscreen popups as out-of-flow iframes with size set to full viewport (using vw/vh CSS units).
+        When iframe flattening is enabled, such iframes may unexpectedly become larger than the viewport.
+        This commit adds a simple heuristic to avoid frame flattening in that case.
+        It is experimented by introducing a "enable for non-fullscreen iframes" state for the frame
+        flattening setting.
+        The default frame flattening is still either disabled or (fully) enabled on all platforms.
+        InternalSettings is also adjusted so that the tests can still set the frame flattening setting.
+
+        Test: fast/frames/flattening/iframe-flattening-fullscreen.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::frameFlatteningEnabled): Use the frame flattening enum setting.
+        * page/Settings.h: Define a frame flattening enum that includes a "enable for non-fullscreen
+        iframes" state.
+        * page/Settings.in: Redefine frame flattening using that enum.
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::flattenFrameSet): Use the frame flattening enum setting.
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::isFullScreenIFrame): Add a heuristic when partial frame flattening
+        is enabled setting is enabled.
+        There is not a strict comparison against the viewport size since authors may not exactly use
+        100vw/100vh.
+        Anyway, it is hard to do such comparison using the resolved width & height on RenderStyle.
+        (WebCore::RenderIFrame::flattenFrame): Add a comment for the existing "zero size" heuristic.
+        Use isFullScreenIFrame heuristic.
+        * rendering/RenderView.cpp:
+        (WebCore::FrameFlatteningLayoutDisallower::FrameFlatteningLayoutDisallower): Use the frame flattening enum setting.
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup): Add backup for frame flattening.
+        (WebCore::InternalSettings::Backup::restoreTo): Ditto.
+        (WebCore::internalSettingsToWebCoreValue): Helper function to cast the frame flattening values.
+        (WebCore::InternalSettings::setFrameFlattening): Redefine setFrameFlattening to accept an enum.
+        * testing/InternalSettings.h: Define new enum & setter for frame flattening as well as a backup value.
+        * testing/InternalSettings.idl: Define new enum & setter for frame flattening.
+
 2017-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r218253): Infinite animated gifs no longer loop

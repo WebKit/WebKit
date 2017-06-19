@@ -100,6 +100,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_forcedColorsAreInvertedAccessibilityValue(settings.forcedColorsAreInvertedAccessibilityValue())
     , m_forcedDisplayIsMonochromeAccessibilityValue(settings.forcedDisplayIsMonochromeAccessibilityValue())
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
+    , m_frameFlattening(settings.frameFlattening())
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     , m_indexedDBWorkersEnabled(RuntimeEnabledFeatures::sharedFeatures().indexedDBWorkersEnabled())
 #endif
@@ -193,6 +194,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     Settings::setAllowsAnySSLCertificate(false);
     RenderTheme::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
     FontCache::singleton().setShouldMockBoldSystemFontForAccessibility(m_shouldMockBoldSystemFontForAccessibility);
+    settings.setFrameFlattening(m_frameFlattening);
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     RuntimeEnabledFeatures::sharedFeatures().setIndexedDBWorkersEnabled(m_indexedDBWorkersEnabled);
@@ -786,6 +788,29 @@ ExceptionOr<void> InternalSettings::setSystemLayoutDirection(const String& direc
         return { };
     }
     return Exception { INVALID_ACCESS_ERR };
+}
+
+static FrameFlattening internalSettingsToWebCoreValue(InternalSettings::FrameFlatteningValue value)
+{
+    switch (value) {
+    case InternalSettings::FrameFlatteningValue::Disabled:
+        return FrameFlatteningDisabled;
+    case InternalSettings::FrameFlatteningValue::EnabledForNonFullScreenIFrames:
+        return FrameFlatteningEnabledForNonFullScreenIFrames;
+    case InternalSettings::FrameFlatteningValue::FullyEnabled:
+        return FrameFlatteningFullyEnabled;
+    }
+
+    ASSERT_NOT_REACHED();
+    return FrameFlatteningDisabled;
+}
+
+ExceptionOr<void> InternalSettings::setFrameFlattening(const FrameFlatteningValue& frameFlattening)
+{
+    if (!m_page)
+        return Exception { INVALID_ACCESS_ERR };
+    settings().setFrameFlattening(internalSettingsToWebCoreValue(frameFlattening));
+    return { };
 }
 
 void InternalSettings::setAllowsAnySSLCertificate(bool allowsAnyCertificate)

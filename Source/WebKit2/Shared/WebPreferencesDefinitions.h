@@ -60,7 +60,7 @@
 #if PLATFORM(IOS)
 #define DEFAULT_ALLOWS_PICTURE_IN_PICTURE_MEDIA_PLAYBACK true
 #define DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED false
-#define DEFAULT_FRAME_FLATTENING_ENABLED true
+#define DEFAULT_FRAME_FLATTENING FrameFlatteningFullyEnabled
 #define DEFAULT_SHOULD_PRINT_BACKGROUNDS true
 #define DEFAULT_TEXT_AREAS_ARE_RESIZABLE false
 #define DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY false
@@ -77,7 +77,7 @@
 #else
 #define DEFAULT_ALLOWS_PICTURE_IN_PICTURE_MEDIA_PLAYBACK false
 #define DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED true
-#define DEFAULT_FRAME_FLATTENING_ENABLED false
+#define DEFAULT_FRAME_FLATTENING FrameFlatteningDisabled
 #define DEFAULT_SHOULD_PRINT_BACKGROUNDS false
 #define DEFAULT_TEXT_AREAS_ARE_RESIZABLE true
 #define DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY true
@@ -140,7 +140,6 @@
     macro(LocalStorageEnabled, localStorageEnabled, Bool, bool, true, "", "") \
     macro(DatabasesEnabled, databasesEnabled, Bool, bool, true, "", "") \
     macro(XSSAuditorEnabled, xssAuditorEnabled, Bool, bool, true, "", "") \
-    macro(FrameFlatteningEnabled, frameFlatteningEnabled, Bool, bool, DEFAULT_FRAME_FLATTENING_ENABLED, "", "") \
     macro(PrivateBrowsingEnabled, privateBrowsingEnabled, Bool, bool, false, "", "") \
     macro(TextAreasAreResizable, textAreasAreResizable, Bool, bool, DEFAULT_TEXT_AREAS_ARE_RESIZABLE, "", "") \
     macro(JavaScriptCanOpenWindowsAutomatically, javaScriptCanOpenWindowsAutomatically, Bool, bool, DEFAULT_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY, "", "") \
@@ -315,6 +314,7 @@
     macro(DataDetectorTypes, dataDetectorTypes, UInt32, uint32_t, 0, "", "") \
     macro(UserInterfaceDirectionPolicy, userInterfaceDirectionPolicy, UInt32, uint32_t, 0, "", "") \
     macro(SystemLayoutDirection, systemLayoutDirection, UInt32, uint32_t, 0, "", "") \
+    macro(FrameFlattening, frameFlattening, UInt32, uint32_t, DEFAULT_FRAME_FLATTENING, "", "") \
     \
 
 #define FOR_EACH_WEBKIT_DEBUG_BOOL_PREFERENCE(macro) \

@@ -520,9 +520,9 @@ public:
         [NSNumber numberWithBool:YES],  WebKitLargeImageAsyncDecodingEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAnimatedImageAsyncDecodingEnabledPreferenceKey,
 #if PLATFORM(IOS)
-        [NSNumber numberWithBool:YES],  WebKitFrameFlatteningEnabledPreferenceKey,
+        [NSNumber numberWithUnsignedInt:FrameFlatteningFullyEnabled], WebKitFrameFlatteningPreferenceKey,
 #else
-        [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
+        [NSNumber numberWithUnsignedInt:FrameFlatteningDisabled], WebKitFrameFlatteningPreferenceKey,
 #endif
         [NSNumber numberWithBool:NO],   WebKitSpatialNavigationEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitDNSPrefetchingEnabledPreferenceKey,
@@ -2108,12 +2108,23 @@ static NSString *classIBCreatorID = nil;
 
 - (BOOL)isFrameFlatteningEnabled
 {
-    return [self _boolValueForKey:WebKitFrameFlatteningEnabledPreferenceKey];
+    return [self _unsignedIntValueForKey:WebKitFrameFlatteningPreferenceKey] != WebKitFrameFlatteningDisabled;
 }
 
-- (void)setFrameFlatteningEnabled:(BOOL)flag
+- (void)setFrameFlatteningEnabled:(BOOL)flattening
 {
-    [self _setBoolValue:flag forKey:WebKitFrameFlatteningEnabledPreferenceKey];
+    WebKitFrameFlattening value = flattening ? WebKitFrameFlatteningFullyEnabled : WebKitFrameFlatteningDisabled;
+    [self _setUnsignedIntValue:value forKey:WebKitFrameFlatteningPreferenceKey];
+}
+
+- (WebKitFrameFlattening)frameFlattening
+{
+    return static_cast<WebKitFrameFlattening>([self _unsignedIntValueForKey:WebKitFrameFlatteningPreferenceKey]);
+}
+
+- (void)setFrameFlattening:(WebKitFrameFlattening)flattening
+{
+    [self _setUnsignedIntValue:flattening forKey:WebKitFrameFlatteningPreferenceKey];
 }
 
 - (BOOL)isSpatialNavigationEnabled

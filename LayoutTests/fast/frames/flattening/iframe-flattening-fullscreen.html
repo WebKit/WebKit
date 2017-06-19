@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>This tests that "fullscreen" iframes are not flatten</title>
+    <meta charset="utf-8"/>
+    <script src="../../../resources/testharness.js"></script>
+    <script src="../../../resources/testharnessreport.js"></script>
+    <script>
+      if (window.internals)
+        window.internals.settings.setFrameFlattening("EnabledForNonFullScreenIFrames");
+
+      setup({explicit_done: true});
+      function isUnflatten(id) {
+        var iframe = document.getElementById(id);
+        var iframeBox = iframe.getBoundingClientRect();
+        var innerDivBox = iframe.contentDocument.body.firstElementChild.getBoundingClientRect();
+        return iframeBox.width < innerDivBox.width && iframeBox.height < innerDivBox.height;
+      }
+      function start() {
+        test(function() { assert_false(isUnflatten("iframe0")); }, "simple iframe");
+        test(function() { assert_false(isUnflatten("iframe1")); }, "out-of-flow iframe");
+        test(function() { assert_false(isUnflatten("iframe2")); }, "iframe with vw/vh units");
+        test(function() {
+          assert_true(isUnflatten("iframe3"), "position: absolute");
+          assert_true(isUnflatten("iframe4"), "position: fixed");
+        }, "fullscreen iframe");
+        done();
+      }
+    </script>
+  </head>
+  <body onload="start()">
+    <iframe id="iframe0" style="background: blue; width: 50px; height: 50px;" scrolling="yes" srcdoc="&lt;div style='width: 1000px; height: 1000px;'&gt;&lt;/div&gt;"></iframe>
+    <iframe id="iframe1" style="background: purple; position: absolute;" scrolling="yes" srcdoc="&lt;div style='width: 1000px; height: 1000px;'&gt;&lt;/div&gt;"></iframe>
+    <iframe id="iframe2" style="background: brown; width: 100vw; height: 100vh;" scrolling="yes" srcdoc="&lt;div style='width: 1000px; height: 1000px;'&gt;&lt;/div&gt;"></iframe>
+    <iframe id="iframe3" style="background: cyan; position: absolute; width: 100vw; height: 100vh;" scrolling="yes" srcdoc="&lt;div style='width: 1000px; height: 1000px;'&gt;&lt;/div&gt;"></iframe>
+    <iframe id="iframe4" style="background: yellow; position: fixed; width: 100vw; height: 100vh;" scrolling="yes" srcdoc="&lt;div style='width: 1000px; height: 1000px;'&gt;&lt;/div&gt;"></iframe>
+  </body>
+</html>

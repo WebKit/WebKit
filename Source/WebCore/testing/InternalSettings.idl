@@ -25,6 +25,7 @@
  */
 
 enum ForcedAccessibilityValue { "system", "on", "off" };
+enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "FullyEnabled" };
 
 [
     NoInterfaceObject,
@@ -81,6 +82,7 @@ enum ForcedAccessibilityValue { "system", "on", "off" };
     [MayThrowException] void setAllowsInlineMediaPlayback(boolean allows);
     [MayThrowException] void setAllowsInlineMediaPlaybackAfterFullscreen(boolean allows);
     [MayThrowException] void setInlineMediaPlaybackRequiresPlaysInlineAttribute(boolean requires);
+    [MayThrowException] void setFrameFlattening(FrameFlatteningValue frameFlattening);
 
     // RuntimeEnabledFeatures.
     void setIndexedDBWorkersEnabled(boolean enabled);

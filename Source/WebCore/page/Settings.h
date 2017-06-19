@@ -88,6 +88,12 @@ enum PDFImageCachingPolicy {
 #endif
 };
 
+enum FrameFlattening {
+    FrameFlatteningDisabled,
+    FrameFlatteningEnabledForNonFullScreenIFrames,
+    FrameFlatteningFullyEnabled
+};
+
 typedef unsigned DebugOverlayRegions;
 
 class Settings : public RefCounted<Settings> {

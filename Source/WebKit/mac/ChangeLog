@@ -1,3 +1,24 @@
+2017-05-14 Frederic Wang  <fwang@igalia.com>
+
+        Add heuristic to avoid flattening "fullscreen" iframes
+        https://bugs.webkit.org/show_bug.cgi?id=171914
+
+        Reviewed by Simon Fraser.
+
+        This commit adjusts the mac/ios preference interface to treat frame flattening as an enum.
+
+        * WebView/WebPreferenceKeysPrivate.h: Rename the key.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Handle frame flattening as an enum.
+        (-[WebPreferences isFrameFlatteningEnabled]): Ditto.
+        (-[WebPreferences setFrameFlatteningEnabled:]): Ditto.
+        (-[WebPreferences frameFlattening]): New function to get frame flattening as an enum.
+        (-[WebPreferences setFrameFlattening:]): New function to set frame flattening as an enum.
+        * WebView/WebPreferencesPrivate.h: Ditto.
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Ditto.
+        * WebView/WebPreferencesPrivate.h: Add new enum definition.
+
 2017-06-17  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Function instead of std::function in WebKit2/

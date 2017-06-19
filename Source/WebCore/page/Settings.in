@@ -175,7 +175,7 @@ snapshotAllPlugIns initial=false
 autostartOriginPlugInSnapshottingEnabled initial=true
 primaryPlugInSnapshotDetectionEnabled initial=true
 maximumPlugInSnapshotAttempts type=unsigned, initial=20
-frameFlatteningEnabled initial=false
+frameFlattening type=FrameFlattening, initial=FrameFlatteningDisabled
 
 webSecurityEnabled initial=true
 spatialNavigationEnabled initial=false

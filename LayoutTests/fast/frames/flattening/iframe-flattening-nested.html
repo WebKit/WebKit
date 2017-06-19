@@ -10,7 +10,7 @@
         function test()
         {
             if (window.internals)
-                internals.settings.setFrameFlatteningEnabled(true);
+                internals.settings.setFrameFlattening("FullyEnabled")
             // Force synchronous layout.
             document.body.offsetHeight;
         }
