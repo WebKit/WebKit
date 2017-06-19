@@ -1,3 +1,14 @@
+2017-06-18  Darin Adler  <darin@apple.com>
+
+        Fix Ref to deref before assignment, add tests for this to RefPtr, Ref, Function
+        https://bugs.webkit.org/show_bug.cgi?id=173526
+
+        Reviewed by Sam Weinig.
+
+        * wtf/Ref.h: Changed operator= to not be defined inside the class definition.
+        Added swap functions. Changed operator= implementations to use swap in the
+        conventional manner, the same way that RefPtr does.
+
 2017-06-18  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Function instead of std::function in WTF/

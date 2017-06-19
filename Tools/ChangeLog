@@ -1,3 +1,30 @@
+2017-06-18  Darin Adler  <darin@apple.com>
+
+        Fix Ref to deref before assignment, add tests for this to RefPtr, Ref, Function
+        https://bugs.webkit.org/show_bug.cgi?id=173526
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/CMakeLists.txt: Added Function.cpp.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Ditto.
+
+        * TestWebKitAPI/Tests/WTF/Function.cpp: Added. Contains basic tests and some
+        tests for assignment before destruction ones.
+
+        * TestWebKitAPI/Tests/WTF/MoveOnly.h: Added a () operator so this can be used
+        as a function, so it can be used in WTF::Function tests.
+
+        * TestWebKitAPI/Tests/WTF/Ref.cpp: Use EXPECT macros insead of ASSERT.
+        Added tests for swap and for assignment before deref.
+
+        * TestWebKitAPI/Tests/WTF/RefLogger.cpp: Stopped using inlining; no good reason
+        to inline everything. Also removed the unnecessary clearing of the log every time
+        the DerivedRefLogger constructor is called.
+        * TestWebKitAPI/Tests/WTF/RefLogger.h: Ditto.
+
+        * TestWebKitAPI/Tests/WTF/RefPtr.cpp: Use EXPECT macros instead of ASSERT.
+        Added tests for assignment before deref and similar for releaseNonNull.
+
 2017-06-19  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Properly model buffer source / typed arrays as their own IDL types

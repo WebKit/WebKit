@@ -46,6 +46,11 @@ public:
         return m_value;
     }
 
+    unsigned operator()() const
+    {
+        return m_value;
+    }
+
     MoveOnly(MoveOnly&& other)
         : m_value(other.m_value)
     {

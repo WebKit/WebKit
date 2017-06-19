@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include "Test.h"
+#include "MoveOnly.h"
 #include <wtf/Function.h>
 
 namespace TestWebKitAPI {
@@ -137,4 +137,107 @@ TEST(WTF_Function, assignNullReEntersAssignLamda)
     EXPECT_EQ(-1, function_for_reentrancy_test());
 }
 
+TEST(WTF_Function, Basics)
+{
+    Function<unsigned()> a;
+    EXPECT_FALSE(static_cast<bool>(a));
+    EXPECT_EQ(0U, a());
+
+    a = [] {
+        return 1U;
+    };
+    EXPECT_TRUE(static_cast<bool>(a));
+    EXPECT_EQ(1U, a());
+
+    a = nullptr;
+    EXPECT_FALSE(static_cast<bool>(a));
+    EXPECT_EQ(0U, a());
+
+    a = MoveOnly { 2 };
+    EXPECT_TRUE(static_cast<bool>(a));
+    EXPECT_EQ(2U, a());
+
+    Function<unsigned()> b = WTFMove(a);
+    EXPECT_TRUE(static_cast<bool>(b));
+    EXPECT_EQ(2U, b());
+    EXPECT_FALSE(static_cast<bool>(a));
+    EXPECT_EQ(0U, a());
+
+    a = MoveOnly { 3 };
+    Function<unsigned()> c = WTFMove(a);
+    EXPECT_TRUE(static_cast<bool>(c));
+    EXPECT_EQ(3U, c());
+    EXPECT_FALSE(static_cast<bool>(a));
+    EXPECT_EQ(0U, a());
+
+    b = WTFMove(c);
+    EXPECT_TRUE(static_cast<bool>(b));
+    EXPECT_EQ(3U, b());
+    EXPECT_FALSE(static_cast<bool>(c));
+    EXPECT_EQ(0U, c());
+
+    Function<unsigned()> d = nullptr;
+    EXPECT_FALSE(static_cast<bool>(d));
+    EXPECT_EQ(0U, d());
 }
+
+struct FunctionDestructionChecker {
+    FunctionDestructionChecker(Function<unsigned()>& function)
+        : function { function }
+    {
+    }
+
+    ~FunctionDestructionChecker()
+    {
+        functionAsBool = static_cast<bool>(function);
+        functionResult = function();
+    }
+
+    unsigned operator()() const
+    {
+        return 10;
+    }
+
+    Function<unsigned()>& function;
+    static std::optional<bool> functionAsBool;
+    static std::optional<unsigned> functionResult;
+};
+
+std::optional<bool> FunctionDestructionChecker::functionAsBool;
+std::optional<unsigned> FunctionDestructionChecker::functionResult;
+
+TEST(WTF_Function, AssignBeforeDestroy)
+{
+    Function<unsigned()> a;
+
+    a = FunctionDestructionChecker(a);
+    a = [] {
+        return 1U;
+    };
+    EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionAsBool));
+    EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
+    EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
+    EXPECT_EQ(1U, FunctionDestructionChecker::functionResult.value());
+    FunctionDestructionChecker::functionAsBool = std::nullopt;
+    FunctionDestructionChecker::functionResult = std::nullopt;
+
+    a = FunctionDestructionChecker(a);
+    a = nullptr;
+    EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionAsBool));
+    EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
+    EXPECT_FALSE(FunctionDestructionChecker::functionAsBool.value());
+    EXPECT_EQ(0U, FunctionDestructionChecker::functionResult.value());
+    FunctionDestructionChecker::functionAsBool = std::nullopt;
+    FunctionDestructionChecker::functionResult = std::nullopt;
+
+    a = FunctionDestructionChecker(a);
+    a = MoveOnly { 2 };
+    EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionAsBool));
+    EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
+    EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
+    EXPECT_EQ(2U, FunctionDestructionChecker::functionResult.value());
+    FunctionDestructionChecker::functionAsBool = std::nullopt;
+    FunctionDestructionChecker::functionResult = std::nullopt;
+}
+
+} // namespace TestWebKitAPI
