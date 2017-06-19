@@ -88,6 +88,19 @@ private:
     T m_value;
 };
 
+#if PLATFORM(IOS)
+
+static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
+{
+    if (value == _WKDragLiftDelayMedium)
+        return _WKDragLiftDelayMedium;
+    if (value == _WKDragLiftDelayLong)
+        return _WKDragLiftDelayLong;
+    return _WKDragLiftDelayShort;
+}
+
+#endif
+
 @implementation WKWebViewConfiguration {
     LazyInitialized<RetainPtr<WKProcessPool>> _processPool;
     LazyInitialized<RetainPtr<WKPreferences>> _preferences;
@@ -115,6 +128,7 @@ private:
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
     BOOL _allowsBlockSelection;
+    _WKDragLiftDelay _dragLiftDelay;
 #endif
 
     BOOL _invisibleAutoplayNotPermitted;
@@ -199,6 +213,7 @@ private:
 #if PLATFORM(IOS)
     _selectionGranularity = WKSelectionGranularityDynamic;
     _allowsBlockSelection = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDebugAllowBlockSelection"];
+    _dragLiftDelay = toDragLiftDelay([[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDebugDragLiftDelay"]);
 #endif
 
     _mediaContentTypesRequiringHardwareSupport = Settings::defaultMediaContentTypesRequiringHardwareSupport();
@@ -232,6 +247,7 @@ private:
     [coder encodeInteger:self.selectionGranularity forKey:@"selectionGranularity"];
     [coder encodeBool:self.allowsPictureInPictureMediaPlayback forKey:@"allowsPictureInPictureMediaPlayback"];
     [coder encodeBool:self.ignoresViewportScaleLimits forKey:@"ignoresViewportScaleLimits"];
+    [coder encodeInteger:self._dragLiftDelay forKey:@"dragLiftDelay"];
 #else
     [coder encodeInteger:self.userInterfaceDirectionPolicy forKey:@"userInterfaceDirectionPolicy"];
 #endif
@@ -259,6 +275,7 @@ private:
     self.selectionGranularity = static_cast<WKSelectionGranularity>([coder decodeIntegerForKey:@"selectionGranularity"]);
     self.allowsPictureInPictureMediaPlayback = [coder decodeBoolForKey:@"allowsPictureInPictureMediaPlayback"];
     self.ignoresViewportScaleLimits = [coder decodeBoolForKey:@"ignoresViewportScaleLimits"];
+    self._dragLiftDelay = toDragLiftDelay([coder decodeIntegerForKey:@"dragLiftDelay"]);
 #else
     auto userInterfaceDirectionPolicyCandidate = static_cast<WKUserInterfaceDirectionPolicy>([coder decodeIntegerForKey:@"userInterfaceDirectionPolicy"]);
     if (userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicyContent || userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicySystem)
@@ -313,6 +330,7 @@ private:
     configuration->_selectionGranularity = self->_selectionGranularity;
     configuration->_allowsBlockSelection = self->_allowsBlockSelection;
     configuration->_ignoresViewportScaleLimits = self->_ignoresViewportScaleLimits;
+    configuration->_dragLiftDelay = self->_dragLiftDelay;
 #endif
 #if PLATFORM(MAC)
     configuration->_userInterfaceDirectionPolicy = self->_userInterfaceDirectionPolicy;
@@ -643,6 +661,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setAllowsBlockSelection:(BOOL)allowsBlockSelection
 {
     _allowsBlockSelection = allowsBlockSelection;
+}
+
+- (_WKDragLiftDelay)_dragLiftDelay
+{
+    return _dragLiftDelay;
+}
+
+- (void)_setDragLiftDelay:(_WKDragLiftDelay)dragLiftDelay
+{
+    _dragLiftDelay = dragLiftDelay;
 }
 #endif // PLATFORM(IOS)
 

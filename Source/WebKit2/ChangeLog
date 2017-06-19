@@ -1,3 +1,43 @@
+2017-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Add an internal hook to change the drag lift delay
+        https://bugs.webkit.org/show_bug.cgi?id=173523
+        <rdar://problem/32224510>
+
+        Reviewed by Tim Horton.
+
+        Add a new private property on WKWebViewConfiguration, _dragLiftDelay, for changing the UIDragInteraction's lift
+        delay to one of three values: short, medium or long. The short setting simply uses UIKit's default drag lift
+        delay (at the time of writing, this is 325ms); medium and long are 500ms and 650ms, respectively.
+
+        In combination with an internal switch to toggle between lift delays, the purpose of this change is to make it
+        easier to choose a drag lift delay for web content that doesn't easily cause unintended dragging while panning.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (toDragLiftDelay):
+
+        Converts an integer (e.g. retrieved from user defaults) to a drag lift delay type.
+
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _dragLiftDelay]):
+
+        Add boilerplate plumbing for the _dragLiftDelay setting.
+
+        (-[WKWebViewConfiguration _setDragLiftDelay:]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
+        Add _dragLiftDelay to as a private property of WKWebViewConiguration.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dragLiftDelay]):
+
+        Convert the web view configuration's _WKDragLiftDelay to an actual time interval.
+
+        (-[WKContentView setupDataInteractionDelegates]):
+
 2017-06-19  Konstantin Tokarev  <annulen@yandex.ru>
 
         Removed unused lambda captures from WebKit2

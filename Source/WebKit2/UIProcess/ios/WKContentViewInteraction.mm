@@ -50,6 +50,7 @@
 #import "WKPreviewElementInfoInternal.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
+#import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WebEvent.h"
@@ -4168,6 +4169,18 @@ static bool isAssistableInputType(InputType type)
 
 #if ENABLE(DRAG_SUPPORT)
 
+- (NSTimeInterval)dragLiftDelay
+{
+    static const NSTimeInterval mediumDragLiftDelay = 0.5;
+    static const NSTimeInterval longDragLiftDelay = 0.65;
+    auto dragLiftDelay = _webView.configuration._dragLiftDelay;
+    if (dragLiftDelay == _WKDragLiftDelayMedium)
+        return mediumDragLiftDelay;
+    if (dragLiftDelay == _WKDragLiftDelayLong)
+        return longDragLiftDelay;
+    return _UIDragInteractionDefaultLiftDelay();
+}
+
 static NSTimeInterval longPressActionDelayAfterLift()
 {
     return _UIDragInteractionDefaultCompetingLongPressDelay() - _UIDragInteractionDefaultLiftDelay();
@@ -4182,6 +4195,7 @@ static NSTimeInterval longPressActionDelayAfterLift()
 {
     _dataInteraction = adoptNS([[UIDragInteraction alloc] initWithDelegate:self]);
     _dataOperation = adoptNS([[UIDropInteraction alloc] initWithDelegate:self]);
+    [_dataInteraction _setLiftDelay:self.dragLiftDelay];
     [self addInteraction:_dataInteraction.get()];
     [self addInteraction:_dataOperation.get()];
 }

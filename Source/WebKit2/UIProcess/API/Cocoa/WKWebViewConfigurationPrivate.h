@@ -27,6 +27,14 @@
 
 #if WK_API_ENABLED
 
+#if TARGET_OS_IPHONE
+typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
+    _WKDragLiftDelayShort = 0,
+    _WKDragLiftDelayMedium,
+    _WKDragLiftDelayLong
+} WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#endif
+
 @class WKWebView;
 @class _WKVisitedLinkStore;
 @class _WKWebsiteDataStore;
@@ -64,6 +72,7 @@
 @property (nonatomic, setter=_setInlineMediaPlaybackRequiresPlaysInlineAttribute:) BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic, setter=_setAllowsInlineMediaPlaybackAfterFullscreen:) BOOL _allowsInlineMediaPlaybackAfterFullscreen  WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic, setter=_setAllowsBlockSelection:) BOOL _allowsBlockSelection WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setDragLiftDelay:) _WKDragLiftDelay _dragLiftDelay WK_API_AVAILABLE(ios(WK_IOS_TBA));
 #else
 @property (nonatomic, setter=_setShowsURLsInToolTips:) BOOL _showsURLsInToolTips WK_API_AVAILABLE(macosx(10.12));
 @property (nonatomic, setter=_setServiceControlsEnabled:) BOOL _serviceControlsEnabled WK_API_AVAILABLE(macosx(10.12));
