@@ -1,3 +1,13 @@
+2017-06-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Completion values for control flow do not match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=171265
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc-stress-tests:
+        Include a :failDueToOutdatedOrBadTest to mark failures with justification.
+
 2017-06-19  Zalan Bujtas  <zalan@apple.com>
 
         Opening certain mails brings up a mail that grows indefinitely.

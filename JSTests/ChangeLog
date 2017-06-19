@@ -1,3 +1,26 @@
+2017-06-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Completion values for control flow do not match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=171265
+
+        Reviewed by Saam Barati.
+
+        * stress/completion-value.js:
+        Condensed test for completion values in top level statements.
+
+        * stress/super-get-by-id.js:
+        ClassDeclaration when evaled no longer produce values. Convert
+        these to ClassExpressions so they produce the class value.
+        
+        * ChakraCore/test/GlobalFunctions/evalreturns3.baseline-jsc:
+        This is a progression for currect spec behavior.
+
+        * mozilla/mozilla-tests.yaml:
+        This test is now outdated, so mark it as failing for that reason.
+
+        * test262.yaml:
+        Passing all "cptn" completion value tests.
+
 2017-06-17  Keith Miller  <keith_miller@apple.com>
 
         ArrayBuffer constructor needs to create subclass structures before its buffer

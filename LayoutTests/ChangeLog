@@ -1,3 +1,23 @@
+2017-06-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Completion values for control flow do not match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=171265
+
+        Reviewed by Saam Barati.
+
+        * js/eval-throw-return-expected.txt:
+        * js/kde/completion-expected.txt:
+        * js/kde/script-tests/completion.js:
+        * js/script-tests/eval-throw-return.js:
+        * sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.3_The_for_Statement/S12.6.3_A9-expected.txt:
+        * sputnik/Conformance/12_Statement/12.6_Iteration_Statements/12.6.3_The_for_Statement/S12.6.3_A9.1-expected.txt:
+        Rebaseline expectations. These are all outdated. In fact the sputnik
+        tests were imported into test262 and modified for ES2015.
+        
+        * js/script-tests/function-toString-vs-name.js:
+        ClassDeclarations on their own don't produce a value. So output
+        the class value so the test behaves as expected.
+
 2017-06-19  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for serializers that have members that are themselves serializers (or inherit being a serializer from a parent)

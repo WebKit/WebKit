@@ -1445,6 +1445,8 @@ def runMozillaTest(kind, mode, extraFiles, *options)
         errorHandler = mozillaExit3ErrorHandler
     when :fail
         errorHandler = mozillaFailErrorHandler
+    when :failDueToOutdatedOrBadTest
+        errorHandler = mozillaFailErrorHandler
     when :skip
         return
     else
