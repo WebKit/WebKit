@@ -161,7 +161,7 @@ void CDM::doSupportedConfigurationStep(MediaKeySystemConfiguration&& candidateCo
         // 23. Return accumulated configuration.
         callback(WTFMove(configuration));
     };
-    getConsentStatus(WTFMove(optionalConfiguration.value()), WTFMove(restrictions), consentCallback);
+    getConsentStatus(WTFMove(optionalConfiguration.value()), WTFMove(restrictions), WTFMove(consentCallback));
 }
 
 bool CDM::isPersistentType(MediaKeySessionType sessionType)

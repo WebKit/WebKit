@@ -632,8 +632,9 @@ void MediaKeySession::updateKeyStatuses(CDMInstance::KeyStatusVector&& inputStat
         case CDMInstance::KeyStatus::StatusPending:
             return MediaKeyStatus::StatusPending;
         case CDMInstance::KeyStatus::InternalError:
-            return MediaKeyStatus::InternalError;
+            break;
         };
+        return MediaKeyStatus::InternalError;
     };
 
     m_statuses.clear();

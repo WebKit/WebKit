@@ -28,8 +28,8 @@
 #if ENABLE(APPLE_PAY)
 
 #include "PaymentRequest.h"
-#include <functional>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 
 namespace WebCore {
 

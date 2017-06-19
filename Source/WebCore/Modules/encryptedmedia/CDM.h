@@ -30,7 +30,7 @@
 #include "ContextDestructionObserver.h"
 #include "MediaKeySystemConfiguration.h"
 #include "SharedBuffer.h"
-#include <functional>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -66,7 +66,7 @@ public:
     static Ref<CDM> create(Document&, const String& keySystem);
     ~CDM();
 
-    using SupportedConfigurationCallback = std::function<void(std::optional<MediaKeySystemConfiguration>)>;
+    using SupportedConfigurationCallback = WTF::Function<void(std::optional<MediaKeySystemConfiguration>)>;
     void getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfiguration, SupportedConfigurationCallback&&);
 
     const String& keySystem() const { return m_keySystem; }
@@ -110,7 +110,7 @@ private:
 
     WeakPtr<CDM> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
-    using ConsentStatusCallback = std::function<void(ConsentStatus, MediaKeySystemConfiguration&&, MediaKeysRestrictions&&)>;
+    using ConsentStatusCallback = WTF::Function<void(ConsentStatus, MediaKeySystemConfiguration&&, MediaKeysRestrictions&&)>;
     void getConsentStatus(MediaKeySystemConfiguration&& accumulatedConfiguration, MediaKeysRestrictions&&, ConsentStatusCallback&&);
     String m_keySystem;
     std::unique_ptr<CDMPrivate> m_private;

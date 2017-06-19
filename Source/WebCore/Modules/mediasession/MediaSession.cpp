@@ -83,7 +83,7 @@ void MediaSession::removeMediaElement(HTMLMediaElement& element)
         m_iteratedActiveParticipatingElements->remove(&element);
 }
 
-void MediaSession::changeActiveMediaElements(std::function<void(void)> worker)
+void MediaSession::changeActiveMediaElements(const WTF::Function<void(void)>& worker)
 {
     if (Page *page = m_document.page()) {
         bool hadActiveMediaElements = MediaSessionManager::singleton().hasActiveMediaElements();
@@ -237,7 +237,7 @@ void MediaSession::togglePlayback()
     });
 }
 
-void MediaSession::safelyIterateActiveMediaElements(std::function<void(HTMLMediaElement*)> handler)
+void MediaSession::safelyIterateActiveMediaElements(const WTF::Function<void(HTMLMediaElement*)>& handler)
 {
     ASSERT(!m_iteratedActiveParticipatingElements);
 

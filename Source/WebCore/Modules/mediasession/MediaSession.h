@@ -29,6 +29,7 @@
 
 #include "MediaRemoteControls.h"
 #include "MediaSessionMetadata.h"
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {
@@ -88,8 +89,8 @@ private:
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
 
-    void safelyIterateActiveMediaElements(std::function<void(HTMLMediaElement*)>);
-    void changeActiveMediaElements(std::function<void(void)>);
+    void safelyIterateActiveMediaElements(const WTF::Function<void(HTMLMediaElement*)>&);
+    void changeActiveMediaElements(const WTF::Function<void(void)>&);
     void addActiveMediaElement(HTMLMediaElement&);
     bool isMediaElementActive(HTMLMediaElement&);
 

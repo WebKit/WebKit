@@ -46,8 +46,8 @@ namespace WebCore {
 struct CDMFactory {
     WTF_MAKE_NONCOPYABLE(CDMFactory); WTF_MAKE_FAST_ALLOCATED;
 public:
-    CDMFactory(CreateCDM constructor, CDMSupportsKeySystem supportsKeySystem, CDMSupportsKeySystemAndMimeType supportsKeySystemAndMimeType)
-        : constructor(constructor)
+    CDMFactory(CreateCDM&& constructor, CDMSupportsKeySystem supportsKeySystem, CDMSupportsKeySystemAndMimeType supportsKeySystemAndMimeType)
+        : constructor(WTFMove(constructor))
         , supportsKeySystem(supportsKeySystem)
         , supportsKeySystemAndMimeType(supportsKeySystemAndMimeType)
     {
@@ -81,9 +81,9 @@ static Vector<CDMFactory*>& installedCDMFactories()
     return cdms;
 }
 
-void CDM::registerCDMFactory(CreateCDM constructor, CDMSupportsKeySystem supportsKeySystem, CDMSupportsKeySystemAndMimeType supportsKeySystemAndMimeType)
+void CDM::registerCDMFactory(CreateCDM&& constructor, CDMSupportsKeySystem supportsKeySystem, CDMSupportsKeySystemAndMimeType supportsKeySystemAndMimeType)
 {
-    installedCDMFactories().append(new CDMFactory(constructor, supportsKeySystem, supportsKeySystemAndMimeType));
+    installedCDMFactories().append(new CDMFactory(WTFMove(constructor), supportsKeySystem, supportsKeySystemAndMimeType));
 }
 
 static CDMFactory* CDMFactoryForKeySystem(const String& keySystem)

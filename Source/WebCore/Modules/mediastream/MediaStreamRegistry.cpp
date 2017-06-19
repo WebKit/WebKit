@@ -86,7 +86,7 @@ void MediaStreamRegistry::unregisterStream(MediaStream& stream)
         allStreams.remove(pos);
 }
 
-void MediaStreamRegistry::forEach(std::function<void(MediaStream&)> callback) const
+void MediaStreamRegistry::forEach(const WTF::Function<void(MediaStream&)>& callback) const
 {
     for (auto& stream : mediaStreams())
         callback(*stream);
