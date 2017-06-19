@@ -39,15 +39,16 @@ _log = logging.getLogger(__name__)
 class XorgDriver(Driver):
     @staticmethod
     def check_driver(port):
-        if "DISPLAY" not in os.environ:
-                _log.error("DISPLAY not found in the environment. Cannot run tests.")
+        if 'DISPLAY' not in os.environ:
+                _log.error('DISPLAY not found in the environment. Cannot run tests.')
                 return False
         return True
 
     def _setup_environ_for_test(self):
-        # setup_environ_for_server() already takes care of copying the
-        # XAUTHORITY environment variable
         server_environment = self._port.setup_environ_for_server(self._server_name)
+        self._port._copy_value_from_environ_if_set(server_environment, 'DISPLAY')
+        self._port._copy_value_from_environ_if_set(server_environment, 'XAUTHORITY')
+        server_environment['GDK_BACKEND'] = 'x11'
         server_environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         server_environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         # Currently on WebKit2, there is no API for setting the application

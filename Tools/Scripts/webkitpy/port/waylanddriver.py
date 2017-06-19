@@ -39,17 +39,16 @@ _log = logging.getLogger(__name__)
 class WaylandDriver(Driver):
     @staticmethod
     def check_driver(port):
-        if "WAYLAND_DISPLAY" not in os.environ:
-                _log.error("WAYLAND_DISPLAY not found in the environment. Cannot run tests.")
-                return False
+        if not any(wayland_env_var in os.environ for wayland_env_var in ['WAYLAND_DISPLAY', 'WAYLAND_SOCKET']):
+            _log.error('WAYLAND_DISPLAY or WAYLAND_SOCKET not found in the environment. Cannot run tests.')
+            return False
         return True
 
     def _setup_environ_for_test(self):
         driver_environment = self._port.setup_environ_for_server(self._server_name)
-        driver_environment['WAYLAND_DISPLAY'] = os.environ.get('WAYLAND_DISPLAY')
+        self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_DISPLAY')
+        self._port._copy_value_from_environ_if_set(driver_environment, 'WAYLAND_SOCKET')
         driver_environment['GDK_BACKEND'] = 'wayland'
-        if driver_environment.get('DISPLAY'):
-            del driver_environment['DISPLAY']
         driver_environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         driver_environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         driver_environment['XDG_CACHE_HOME'] = self._port.host.filesystem.join(str(self._driver_tempdir), 'appcache')

@@ -98,6 +98,7 @@ class XvfbDriver(Driver):
 
         # We must do this here because the DISPLAY number depends on _worker_number
         environment['DISPLAY'] = ":%d" % display_id
+        environment['GDK_BACKEND'] = 'x11'
         self._driver_tempdir = self._port.host.filesystem.mkdtemp(prefix='%s-' % self._server_name)
         environment['DUMPRENDERTREE_TEMP'] = str(self._driver_tempdir)
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()

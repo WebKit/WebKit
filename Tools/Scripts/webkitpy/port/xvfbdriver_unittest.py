@@ -67,7 +67,8 @@ class XvfbDriverTest(unittest.TestCase):
     def assertDriverStartSuccessful(self, driver, expected_logs, expected_display, pixel_tests=False):
         OutputCapture().assert_outputs(self, driver.start, [pixel_tests, []], expected_logs=expected_logs)
         self.assertTrue(driver._server_process.started)
-        self.assertEqual(driver._server_process.env["DISPLAY"], expected_display)
+        self.assertEqual(driver._server_process.env['DISPLAY'], expected_display)
+        self.assertEqual(driver._server_process.env['GDK_BACKEND'], 'x11')
 
     def test_start(self):
         driver = self.make_driver()

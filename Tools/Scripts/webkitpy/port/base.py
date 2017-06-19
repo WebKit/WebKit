@@ -867,21 +867,20 @@ class Port(object):
         # We intentionally copy only a subset of os.environ when
         # launching subprocesses to ensure consistent test results.
         clean_env = {}
+        # Note: don't set here driver specific variables (related to X11, Wayland, etc.)
+        # Use the driver _setup_environ_for_test() method for that.
         variables_to_copy = [
             # For Linux:
             'ALSA_CARD',
             'DBUS_SESSION_BUS_ADDRESS',
-            'HOME',
             'LANG',
             'LD_LIBRARY_PATH',
-            'XAUTHORITY',
             'XDG_DATA_DIRS',
             'XDG_RUNTIME_DIR',
 
             # Darwin:
             'DYLD_FRAMEWORK_PATH',
             'DYLD_LIBRARY_PATH',
-            'HOME',
             '__XPC_DYLD_FRAMEWORK_PATH',
             '__XPC_DYLD_LIBRARY_PATH',
 
@@ -892,21 +891,19 @@ class Port(object):
 
             # Windows:
             'COMSPEC',
-            'PATH',
             'SYSTEMDRIVE',
             'SYSTEMROOT',
             'WEBKIT_LIBRARIES',
 
             # Most ports (?):
+            'HOME',
+            'PATH',
             'WEBKIT_TESTFONTS',
             'WEBKIT_OUTPUTDIR',
 
         ]
         for variable in variables_to_copy:
             self._copy_value_from_environ_if_set(clean_env, variable)
-
-        # For Linux:
-        clean_env['DISPLAY'] = self._value_or_default_from_environ('DISPLAY', ':1')
 
         for string_variable in self.get_option('additional_env_var', []):
             [name, value] = string_variable.split('=', 1)

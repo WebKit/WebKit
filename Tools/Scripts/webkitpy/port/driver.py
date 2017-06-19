@@ -353,8 +353,6 @@ class Driver(object):
         environment['LOCAL_RESOURCE_ROOT'] = str(self._port.layout_tests_dir())
         environment['ASAN_OPTIONS'] = "allocator_may_return_null=1"
         environment['__XPC_ASAN_OPTIONS'] = environment['ASAN_OPTIONS']
-        if 'WEBKIT_OUTPUTDIR' in os.environ:
-            environment['WEBKIT_OUTPUTDIR'] = os.environ['WEBKIT_OUTPUTDIR']
         if self._profiler:
             environment = self._profiler.adjusted_environment(environment)
         return environment

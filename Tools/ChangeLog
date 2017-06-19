@@ -1,3 +1,56 @@
+2017-06-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Port setup_environ_for_server should not set environment variables related with the driver.
+        https://bugs.webkit.org/show_bug.cgi?id=173483
+
+        Reviewed by Carlos Garcia Campos.
+
+        The port setup_environ_for_server() should not set environment variables
+        that depend on the type of driver (like DISPLAY or GDK_BACKEND).
+        This varibles should be only set on the driver setup_environ_for_test().
+
+        This causes that (for example) the variable DISPLAY or XAUTHORITY leaks
+        into the test environment even when running the tests with a driver
+        that is not the Xorg or Xvfb one.
+
+        * Scripts/webkitpy/port/base.py: Stop setting XAUTHORITY and DISPLAY here.
+        (Port.to.setup_environ_for_server):
+        * Scripts/webkitpy/port/driver.py: Remove unneded WEBKIT_OUTPUTDIR that is already set on base.py
+        (Driver._setup_environ_for_driver):
+        * Scripts/webkitpy/port/driver_unittest.py:
+        (DriverTest.test_setup_environ_for_test):
+        (DriverTest):
+        (DriverTest.test_setup_environ_base_vars):
+        * Scripts/webkitpy/port/gtk.py: Stop setting GDK_BACKEND here and do that on the driver (Xvfb).
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/wayland_unittest.py: Added.
+        (WaylandDriverTest):
+        (WaylandDriverTest.make_driver):
+        (WaylandDriverTest.make_environment):
+        (WaylandDriverTest.test_checkdriver):
+        (WaylandDriverTest.test_environment_needed_variables):
+        (WaylandDriverTest.test_environment_forbidden_variables):
+        (WaylandDriverTest.test_environment_optional_variables):
+        * Scripts/webkitpy/port/waylanddriver.py: Allow the driver to run also with WAYLAND_SOCKET.
+        (WaylandDriver.check_driver):
+        (WaylandDriver._setup_environ_for_test):
+        * Scripts/webkitpy/port/xorgdriver.py:
+        (XorgDriver.check_driver):
+        (XorgDriver._setup_environ_for_test):
+        * Scripts/webkitpy/port/xorgdriver_unittest.py: Added.
+        (XorgDriverTest):
+        (XorgDriverTest.make_driver):
+        (XorgDriverTest.make_environment):
+        (XorgDriverTest.test_checkdriver):
+        (XorgDriverTest.test_environment_needed_variables):
+        (XorgDriverTest.test_environment_forbidden_variables):
+        (XorgDriverTest.test_environment_optional_variables):
+        * Scripts/webkitpy/port/xvfbdriver.py:
+        (XvfbDriver._setup_environ_for_test):
+        * Scripts/webkitpy/port/xvfbdriver_unittest.py:
+        (XvfbDriverTest.assertDriverStartSuccessful):
+
+
 2017-05-14 Frederic Wang  <fwang@igalia.com>
 
         Add heuristic to avoid flattening "fullscreen" iframes

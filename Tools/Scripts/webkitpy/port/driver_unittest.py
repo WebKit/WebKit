@@ -346,3 +346,29 @@ class DriverTest(unittest.TestCase):
             self.assertNotIn('FOO', environment_driver_test)
             self.assertIn('WEBKIT_OUTPUTDIR', environment_driver_test)
             self.assertEqual(environment_user['WEBKIT_OUTPUTDIR'], environment_driver_test['WEBKIT_OUTPUTDIR'])
+
+    def test_setup_environ_base_vars(self):
+        # This are essential environment variables that should be copied
+        # as part of base:setup_environ_for_server for all drivers
+        environ_keep_yes = {'HOME': '/home/igalia',
+                           'PATH': '/bin:/usr/sbin:/usr/bin',
+                           'WEBKIT_TESTFONTS': '/opt/webkit/WebKitBuild/WKTestFonts',
+                           'WEBKIT_OUTPUTDIR': '/opt/webkit/WebKitBuild/Release',
+                           'LANG': 'en_US.utf8'}
+        # This are environment variables that should be copied
+        # on the driver (wayland, x11). But not in the base driver.
+        environ_keep_no = {'DISPLAY': ':0.0',
+                          'XAUTHORITY': '/home/igalia/.Xauthority',
+                          'WAYLAND_DISPLAY': 'wayland-0',
+                          'WAYLAND_SOCKET': 'wayland-socket-0',
+                          'GDK_BACKEND': 'x11'}
+        environment_user = dict(environ_keep_yes.items() + environ_keep_no.items())
+        with patch('os.environ', environment_user):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment_driver_test = driver._setup_environ_for_test()
+            for var in environ_keep_no.keys():
+                    self.assertNotIn(var, environment_driver_test)
+            for var in environ_keep_yes.keys():
+                    self.assertIn(var, environment_driver_test)
+                    self.assertEqual(environment_driver_test[var], environ_keep_yes[var])
