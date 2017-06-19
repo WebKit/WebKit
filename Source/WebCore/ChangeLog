@@ -1,3 +1,18 @@
+2017-06-19  Zalan Bujtas  <zalan@apple.com>
+
+        Opening certain mails brings up a mail that grows indefinitely.
+        https://bugs.webkit.org/show_bug.cgi?id=173562
+        <rdar://problem/32766579>
+
+        Reviewed by Tim Horton.
+
+        This reverts the logic where m_autoSizeContentSize always reflects the final layout's.
+        When the ICB's height is 100%, it causes infinite recursion.
+        See also webkit.org/b/173561.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::autoSizeIfEnabled):
+
 2017-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Support .zip archives for file uploads via drag and drop

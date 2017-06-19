@@ -3740,16 +3740,16 @@ void FrameView::autoSizeIfEnabled()
         setHorizontalScrollbarLock(false);
         setScrollbarModes(horizonalScrollbarMode, verticalScrollbarMode, true, true);
     }
+    // All the resizing above may have invalidated style (for example if viewport units are being used).
+    document->updateStyleIfNeeded();
+    // FIXME: Use the final layout's result as the content size (webkit.org/b/173561).
+    m_autoSizeContentSize = contentsSize();
     if (m_autoSizeFixedMinimumHeight) {
         auto contentsSize = this->contentsSize();
         resize(contentsSize.width(), std::max(m_autoSizeFixedMinimumHeight, contentsSize.height()));
+        document->updateLayoutIgnorePendingStylesheets();
     }
-    // All the resizing above may have invalidated style (for example if viewport units are being used).
-    document->updateLayoutIgnorePendingStylesheets();
-    m_autoSizeContentSize = contentsSize();
     m_didRunAutosize = true;
-    ASSERT(!needsLayout());
-    // FIXME: Now that autoSizeIfEnabled() actually returns clean, we don't need to call it from layout() anymore (see webkit.org/b/172890).
 }
 
 void FrameView::setAutoSizeFixedMinimumHeight(int fixedMinimumHeight)
