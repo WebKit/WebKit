@@ -56,7 +56,6 @@ public:
     virtual bool isInsertTextCommand() const { return false; }    
     virtual bool isSimpleEditCommand() const { return false; }
     virtual bool isCompositeEditCommand() const { return false; }
-    virtual bool isEditCommandComposition() const { return false; }
     bool isTopLevelCommand() const { return !m_parent; }
 
     virtual void doApply() = 0;
