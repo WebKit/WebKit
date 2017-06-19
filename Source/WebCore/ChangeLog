@@ -1,3 +1,51 @@
+2017-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] MainThreadNotifier ASSERTION FAILED: m_boundThread == currentThread() in _WebKitWebSrcPrivate::~_WebKitWebSrcPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=152043
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Stop using a WeakPtr in MainThreadNotifier, because it's not thread safe, which causes a crash in debug builds when
+        the notifier is destroyed in a different thread. Make MainThreadNotifier thread safe refcounted instead, and add
+        an invalidate() method to mark it as invalid.
+
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::handleSample):
+        (WebCore::InbandTextTrackPrivateGStreamer::streamChanged):
+        * platform/graphics/gstreamer/MainThreadNotifier.h:
+        (WebCore::MainThreadNotifier::MainThreadNotifier): Deleted.
+        (WebCore::MainThreadNotifier::notify): Deleted.
+        (WebCore::MainThreadNotifier::cancelPendingNotifications): Deleted.
+        (WebCore::MainThreadNotifier::addPendingNotification): Deleted.
+        (WebCore::MainThreadNotifier::removePendingNotification): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::videoChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::audioChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::textChangedCallback):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::volumeChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamerBase::muteChangedCallback):
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer):
+        (WebCore::TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer):
+        (WebCore::TrackPrivateBaseGStreamer::disconnect):
+        (WebCore::TrackPrivateBaseGStreamer::activeChangedCallback):
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+        (webKitWebSrcDispose):
+        (webKitWebSrcStop):
+        (webKitWebSrcStart):
+        (webKitWebSrcNeedData):
+        (webKitWebSrcEnoughData):
+        (webKitWebSrcSeek):
+
 2017-06-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Meter element doesn't respect the writing direction

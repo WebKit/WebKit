@@ -44,7 +44,8 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 namespace WebCore {
 
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad> pad)
-    : m_index(index)
+    : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
+    , m_index(index)
     , m_pad(pad)
     , m_owner(owner)
 {
@@ -61,6 +62,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
 TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
 {
     disconnect();
+    m_notifier->invalidate();
 }
 
 void TrackPrivateBaseGStreamer::disconnect()
@@ -68,7 +70,7 @@ void TrackPrivateBaseGStreamer::disconnect()
     if (!m_pad)
         return;
 
-    m_notifier.cancelPendingNotifications();
+    m_notifier->cancelPendingNotifications();
     g_signal_handlers_disconnect_matched(m_pad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
     m_pad.clear();
@@ -77,7 +79,7 @@ void TrackPrivateBaseGStreamer::disconnect()
 
 void TrackPrivateBaseGStreamer::activeChangedCallback(TrackPrivateBaseGStreamer* track)
 {
-    track->m_notifier.notify(MainThreadNotification::ActiveChanged, [track] { track->notifyTrackOfActiveChanged(); });
+    track->m_notifier->notify(MainThreadNotification::ActiveChanged, [track] { track->notifyTrackOfActiveChanged(); });
 }
 
 void TrackPrivateBaseGStreamer::tagsChangedCallback(TrackPrivateBaseGStreamer* track)
@@ -98,7 +100,7 @@ void TrackPrivateBaseGStreamer::tagsChanged()
         m_tags.swap(tags);
     }
 
-    m_notifier.notify(MainThreadNotification::TagsChanged, [this] { notifyTrackOfTagsChanged(); });
+    m_notifier->notify(MainThreadNotification::TagsChanged, [this] { notifyTrackOfTagsChanged(); });
 }
 
 void TrackPrivateBaseGStreamer::notifyTrackOfActiveChanged()

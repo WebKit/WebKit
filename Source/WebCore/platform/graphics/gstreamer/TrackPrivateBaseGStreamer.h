@@ -63,7 +63,7 @@ protected:
         StreamChanged = 1 << 3
     };
 
-    MainThreadNotifier<MainThreadNotification> m_notifier;
+    Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     gint m_index;
     AtomicString m_label;
     AtomicString m_language;

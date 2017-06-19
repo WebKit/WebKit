@@ -217,7 +217,8 @@ private:
 #endif // USE(GSTREAMER_GL)
 
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
-    : m_player(player)
+    : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
+    , m_player(player)
     , m_fpsSink(nullptr)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_networkState(MediaPlayer::Empty)
@@ -231,7 +232,7 @@ MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* pl
 
 MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
-    m_notifier.cancelPendingNotifications();
+    m_notifier->invalidate();
 
     cancelRepaint();
 
@@ -467,7 +468,7 @@ void MediaPlayerPrivateGStreamerBase::volumeChangedCallback(MediaPlayerPrivateGS
     // This is called when m_volumeElement receives the notify::volume signal.
     GST_DEBUG("Volume changed to: %f", player->volume());
 
-    player->m_notifier.notify(MainThreadNotification::VolumeChanged, [player] { player->notifyPlayerOfVolumeChange(); });
+    player->m_notifier->notify(MainThreadNotification::VolumeChanged, [player] { player->notifyPlayerOfVolumeChange(); });
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateGStreamerBase::networkState() const
@@ -516,7 +517,7 @@ void MediaPlayerPrivateGStreamerBase::notifyPlayerOfMute()
 void MediaPlayerPrivateGStreamerBase::muteChangedCallback(MediaPlayerPrivateGStreamerBase* player)
 {
     // This is called when m_volumeElement receives the notify::mute signal.
-    player->m_notifier.notify(MainThreadNotification::MuteChanged, [player] { player->notifyPlayerOfMute(); });
+    player->m_notifier->notify(MainThreadNotification::MuteChanged, [player] { player->notifyPlayerOfMute(); });
 }
 
 void MediaPlayerPrivateGStreamerBase::acceleratedRenderingStateChanged()
@@ -642,7 +643,7 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 
     if (triggerResize) {
         GST_DEBUG("First sample reached the sink, triggering video dimensions update");
-        m_notifier.notify(MainThreadNotification::SizeChanged, [this] { m_player->sizeChanged(); });
+        m_notifier->notify(MainThreadNotification::SizeChanged, [this] { m_player->sizeChanged(); });
     }
 
     if (!m_renderingCanBeAccelerated) {
