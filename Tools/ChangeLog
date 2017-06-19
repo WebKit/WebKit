@@ -1,3 +1,17 @@
+2017-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move GTK+ API files that could be shared to glib dirs
+        https://bugs.webkit.org/show_bug.cgi?id=173545
+
+        Reviewed by Žan Doberšek.
+
+        Update paths of GTK+ API in watchlist and style checker.
+
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+
 2017-06-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Port setup_environ_for_server should not set environment variables related with the driver.

@@ -148,7 +148,10 @@ _PATH_RULES_SPECIFIER = [
 
     ([# The GTK+ API use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
+      os.path.join('Source', 'WebKit2', 'Shared', 'API', 'glib'),
+      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'glib'),
       os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk'),
+      os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'glib'),
       os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk')],
      ["-readability/enum_casing"]),
 

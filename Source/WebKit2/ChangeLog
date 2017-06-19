@@ -1,3 +1,143 @@
+2017-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move GTK+ API files that could be shared to glib dirs
+        https://bugs.webkit.org/show_bug.cgi?id=173545
+
+        Reviewed by Žan Doberšek.
+
+        Most of the files don't use GTK+ at all, or only for a few things that could be ifdefed. Public headers can
+        never be shared, so move only private headers and cpp files. This patch moves the files without any
+        modification to make everything easier, in follow up commits we will add the required ifdefs and refactorings to
+        ensure the code can actually be shared.
+
+        * PlatformGTK.cmake:
+        * Shared/API/glib/WebKitContextMenu.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitContextMenu.cpp.
+        * Shared/API/glib/WebKitContextMenuActions.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuActions.cpp.
+        * Shared/API/glib/WebKitContextMenuActionsPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuActionsPrivate.h.
+        * Shared/API/glib/WebKitContextMenuItem.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuItem.cpp.
+        * Shared/API/glib/WebKitContextMenuItemPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuItemPrivate.h.
+        * Shared/API/glib/WebKitContextMenuPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuPrivate.h.
+        * Shared/API/glib/WebKitHitTestResult.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp.
+        * Shared/API/glib/WebKitHitTestResultPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitHitTestResultPrivate.h.
+        * Shared/API/glib/WebKitURIRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitURIRequest.cpp.
+        * Shared/API/glib/WebKitURIRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitURIRequestPrivate.h.
+        * Shared/API/glib/WebKitURIResponse.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp.
+        * Shared/API/glib/WebKitURIResponsePrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitURIResponsePrivate.h.
+        * UIProcess/API/glib/WebKitAuthenticationRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationRequest.cpp.
+        * UIProcess/API/glib/WebKitAuthenticationRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitAuthenticationRequestPrivate.h.
+        * UIProcess/API/glib/WebKitAutomationSession.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitAutomationSession.cpp.
+        * UIProcess/API/glib/WebKitAutomationSessionPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitAutomationSessionPrivate.h.
+        * UIProcess/API/glib/WebKitBackForwardList.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.cpp.
+        * UIProcess/API/glib/WebKitBackForwardListItem.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.cpp.
+        * UIProcess/API/glib/WebKitBackForwardListPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListPrivate.h.
+        * UIProcess/API/glib/WebKitContextMenuClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuClient.cpp.
+        * UIProcess/API/glib/WebKitContextMenuClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitContextMenuClient.h.
+        * UIProcess/API/glib/WebKitCookieManager.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitCookieManager.cpp.
+        * UIProcess/API/glib/WebKitCookieManagerPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitCookieManagerPrivate.h.
+        * UIProcess/API/glib/WebKitCredential.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitCredential.cpp.
+        * UIProcess/API/glib/WebKitCredentialPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitCredentialPrivate.h.
+        * UIProcess/API/glib/WebKitCustomProtocolManagerClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitCustomProtocolManagerClient.cpp.
+        * UIProcess/API/glib/WebKitCustomProtocolManagerClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitCustomProtocolManagerClient.h.
+        * UIProcess/API/glib/WebKitDownload.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitDownload.cpp.
+        * UIProcess/API/glib/WebKitDownloadClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitDownloadClient.cpp.
+        * UIProcess/API/glib/WebKitDownloadClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitDownloadClient.h.
+        * UIProcess/API/glib/WebKitDownloadPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitDownloadPrivate.h.
+        * UIProcess/API/glib/WebKitEditorState.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitEditorState.cpp.
+        * UIProcess/API/glib/WebKitEditorStatePrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitEditorStatePrivate.h.
+        * UIProcess/API/glib/WebKitError.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitError.cpp.
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp.
+        * UIProcess/API/glib/WebKitFaviconDatabasePrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFaviconDatabasePrivate.h.
+        * UIProcess/API/glib/WebKitFileChooserRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequest.cpp.
+        * UIProcess/API/glib/WebKitFileChooserRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFileChooserRequestPrivate.h.
+        * UIProcess/API/glib/WebKitFindController.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFindController.cpp.
+        * UIProcess/API/glib/WebKitFormClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFormClient.cpp.
+        * UIProcess/API/glib/WebKitFormClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFormClient.h.
+        * UIProcess/API/glib/WebKitFormSubmissionRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp.
+        * UIProcess/API/glib/WebKitFormSubmissionRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h.
+        * UIProcess/API/glib/WebKitGeolocationPermissionRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp.
+        * UIProcess/API/glib/WebKitGeolocationPermissionRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitGeolocationPermissionRequestPrivate.h.
+        * UIProcess/API/glib/WebKitGeolocationProvider.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitGeolocationProvider.cpp.
+        * UIProcess/API/glib/WebKitGeolocationProvider.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitGeolocationProvider.h.
+        * UIProcess/API/glib/WebKitInjectedBundleClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitInjectedBundleClient.cpp.
+        * UIProcess/API/glib/WebKitInjectedBundleClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitInjectedBundleClient.h.
+        * UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequest.cpp.
+        * UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h.
+        * UIProcess/API/glib/WebKitJavascriptResult.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitJavascriptResult.cpp.
+        * UIProcess/API/glib/WebKitJavascriptResultPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitJavascriptResultPrivate.h.
+        * UIProcess/API/glib/WebKitLoaderClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitLoaderClient.cpp.
+        * UIProcess/API/glib/WebKitLoaderClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitLoaderClient.h.
+        * UIProcess/API/glib/WebKitMimeInfo.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitMimeInfo.cpp.
+        * UIProcess/API/glib/WebKitMimeInfoPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitMimeInfoPrivate.h.
+        * UIProcess/API/glib/WebKitNavigationAction.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNavigationAction.cpp.
+        * UIProcess/API/glib/WebKitNavigationActionPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNavigationActionPrivate.h.
+        * UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp.
+        * UIProcess/API/glib/WebKitNavigationPolicyDecisionPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecisionPrivate.h.
+        * UIProcess/API/glib/WebKitNetworkProxySettings.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNetworkProxySettings.cpp.
+        * UIProcess/API/glib/WebKitNetworkProxySettingsPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNetworkProxySettingsPrivate.h.
+        * UIProcess/API/glib/WebKitNotification.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNotification.cpp.
+        * UIProcess/API/glib/WebKitNotificationPermissionRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNotificationPermissionRequest.cpp.
+        * UIProcess/API/glib/WebKitNotificationPermissionRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNotificationPermissionRequestPrivate.h.
+        * UIProcess/API/glib/WebKitNotificationPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNotificationPrivate.h.
+        * UIProcess/API/glib/WebKitNotificationProvider.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNotificationProvider.cpp.
+        * UIProcess/API/glib/WebKitNotificationProvider.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitNotificationProvider.h.
+        * UIProcess/API/glib/WebKitPermissionRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPermissionRequest.cpp.
+        * UIProcess/API/glib/WebKitPlugin.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPlugin.cpp.
+        * UIProcess/API/glib/WebKitPluginPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPluginPrivate.h.
+        * UIProcess/API/glib/WebKitPolicyClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPolicyClient.cpp.
+        * UIProcess/API/glib/WebKitPolicyClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPolicyClient.h.
+        * UIProcess/API/glib/WebKitPolicyDecision.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPolicyDecision.cpp.
+        * UIProcess/API/glib/WebKitPolicyDecisionPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPolicyDecisionPrivate.h.
+        * UIProcess/API/glib/WebKitPrivate.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.cpp.
+        * UIProcess/API/glib/WebKitPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitPrivate.h.
+        * UIProcess/API/glib/WebKitResponsePolicyDecision.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp.
+        * UIProcess/API/glib/WebKitResponsePolicyDecisionPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecisionPrivate.h.
+        * UIProcess/API/glib/WebKitScriptDialog.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitScriptDialog.cpp.
+        * UIProcess/API/glib/WebKitScriptDialogPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitScriptDialogPrivate.h.
+        * UIProcess/API/glib/WebKitSecurityManager.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitSecurityManager.cpp.
+        * UIProcess/API/glib/WebKitSecurityManagerPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitSecurityManagerPrivate.h.
+        * UIProcess/API/glib/WebKitSecurityOrigin.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitSecurityOrigin.cpp.
+        * UIProcess/API/glib/WebKitSecurityOriginPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitSecurityOriginPrivate.h.
+        * UIProcess/API/glib/WebKitSettings.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitSettings.cpp.
+        * UIProcess/API/glib/WebKitSettingsPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitSettingsPrivate.h.
+        * UIProcess/API/glib/WebKitUIClient.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitUIClient.cpp.
+        * UIProcess/API/glib/WebKitUIClient.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitUIClient.h.
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitURISchemeRequest.cpp.
+        * UIProcess/API/glib/WebKitURISchemeRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitURISchemeRequestPrivate.h.
+        * UIProcess/API/glib/WebKitUserContent.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitUserContent.cpp.
+        * UIProcess/API/glib/WebKitUserContentManager.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitUserContentManager.cpp.
+        * UIProcess/API/glib/WebKitUserContentManagerPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitUserContentManagerPrivate.h.
+        * UIProcess/API/glib/WebKitUserContentPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitUserContentPrivate.h.
+        * UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitUserMediaPermissionRequest.cpp.
+        * UIProcess/API/glib/WebKitUserMediaPermissionRequestPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitUserMediaPermissionRequestPrivate.h.
+        * UIProcess/API/glib/WebKitWebContext.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebContext.cpp.
+        * UIProcess/API/glib/WebKitWebContextPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebContextPrivate.h.
+        * UIProcess/API/glib/WebKitWebResource.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp.
+        * UIProcess/API/glib/WebKitWebResourcePrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebResourcePrivate.h.
+        * UIProcess/API/glib/WebKitWebView.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebView.cpp.
+        * UIProcess/API/glib/WebKitWebViewPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebViewPrivate.h.
+        * UIProcess/API/glib/WebKitWebViewSessionState.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebViewSessionState.cpp.
+        * UIProcess/API/glib/WebKitWebViewSessionStatePrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebViewSessionStatePrivate.h.
+        * UIProcess/API/glib/WebKitWebsiteData.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebsiteData.cpp.
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebsiteDataManager.cpp.
+        * UIProcess/API/glib/WebKitWebsiteDataManagerPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebsiteDataManagerPrivate.h.
+        * UIProcess/API/glib/WebKitWebsiteDataPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWebsiteDataPrivate.h.
+        * UIProcess/API/glib/WebKitWindowProperties.cpp: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp.
+        * UIProcess/API/glib/WebKitWindowPropertiesPrivate.h: Renamed from Source/WebKit2/UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h.
+        * WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitConsoleMessage.cpp.
+        * WebProcess/InjectedBundle/API/glib/WebKitConsoleMessagePrivate.h: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitConsoleMessagePrivate.h.
+        * WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitFrame.cpp.
+        * WebProcess/InjectedBundle/API/glib/WebKitFramePrivate.h: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitFramePrivate.h.
+        * WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitScriptWorld.cpp.
+        * WebProcess/InjectedBundle/API/glib/WebKitScriptWorldPrivate.h: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitScriptWorldPrivate.h.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebEditor.cpp.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebEditorPrivate.h: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebEditorPrivate.h.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebExtensionPrivate.h: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionPrivate.h.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResult.cpp.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResultPrivate.h: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebHitTestResultPrivate.h.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp.
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPagePrivate.h: Renamed from Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h.
+
 2017-05-14 Frederic Wang  <fwang@igalia.com>
 
         Add heuristic to avoid flattening "fullscreen" iframes
