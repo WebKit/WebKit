@@ -1,3 +1,12 @@
+2017-06-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Rename unit test file after r218482
+        https://bugs.webkit.org/show_bug.cgi?id=173483
+
+        Unreviewed.
+
+        * Scripts/webkitpy/port/waylanddriver_unittest.py: Renamed from Tools/Scripts/webkitpy/port/wayland_unittest.py.
+
 2017-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix wrong style checker condition added in r218487.
