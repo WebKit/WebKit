@@ -31,21 +31,26 @@ function isVideoBlack(id)
     return true;
 }
 
-function pollVideoBlackCheck(expected, id, resolve)
+function pollVideoBlackCheck(expected, id, resolve, reject, counter)
 {
     if (isVideoBlack(id) === expected) {
         resolve();
         return;
     }
 
-    setTimeout(() => pollVideoBlackCheck(expected, id, resolve), 50);
+    if (!counter)
+        counter = 0;
+    else if (++counter > 20) {
+        reject("test for " + id + " timed out");
+        return;
+    }
+    setTimeout(() => pollVideoBlackCheck(expected, id, resolve, reject, counter), 100);
 }
 
 function checkVideoBlack(expected, id)
 {
     return new Promise((resolve, reject) => {
         pollVideoBlackCheck(expected, id, resolve);
-        setTimeout(() => reject("checkVideoBlack timed out for " + id + " expected " + expected), 5000);
     });
 }
 

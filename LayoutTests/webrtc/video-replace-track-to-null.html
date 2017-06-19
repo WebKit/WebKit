@@ -32,7 +32,7 @@ function storeFrame()
     firstFrameData = grabImagePixels();
 }
 
-function testCameraImage()
+function checkCameraImageIsDifferent()
 {
     data = grabImagePixels();
 
@@ -47,7 +47,23 @@ function testCameraImage()
             break;
         }
     }
-    assert_false(same);
+    return !same;
+}
+
+function testCameraImage(resolve, reject, counter)
+{
+    if (!counter)
+        counter = 0;
+
+    if (checkCameraImageIsDifferent()) {
+        resolve();
+        return;
+    }
+    if (++counter === 20) {
+        reject("testCameraImage timed out");
+        return;
+    }
+    setTimeout(() => testCameraImage(resolve, reject, counter));
 }
 
 function testStoppedImage()
@@ -83,7 +99,9 @@ promise_test((test) => {
         storeFrame();
         return waitFor(100);
     }).then(() => {
-        testCameraImage();
+        return new Promise((resolve, reject) => {
+            testCameraImage(resolve, reject);
+        });
     }).then(() => {
         promise = sender.replaceTrack(null);
         assert_true(!!sender.track);

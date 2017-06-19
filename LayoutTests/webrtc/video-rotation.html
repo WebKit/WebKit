@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Testing basic video exchange from offerer to receiver</title>
+        <title>Testing video rotation in basic video exchange </title>
         <script src="../resources/testharness.js"></script>
         <script src="../resources/testharnessreport.js"></script>
     </head>
@@ -37,7 +37,7 @@ function pollVideoBlackCheck(expected, id, resolve)
         return;
     }
 
-    setTimeout(() => pollVideoBlackCheck(expected, id, resolve), 50);
+    setTimeout(() => pollVideoBlackCheck(expected, id, resolve), 100);
 }
 
 function checkVideoBlack(expected, id)
@@ -49,7 +49,6 @@ function checkVideoBlack(expected, id)
 }
 
 var track;
-var remoteTrack;
 promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
@@ -64,8 +63,7 @@ promise_test((test) => {
                     internals.applyRotationForOutgoingVideoSources(firstConnection);
             }, (secondConnection) => {
                 secondConnection.ontrack = (trackEvent) => {
-                    remoteTrack = trackEvent.track;
-                    resolve(trackEvent.streams[0]); 
+                    resolve(trackEvent.streams[0]);
                 };
             });
             setTimeout(() => reject("Test timed out"), 5000);
@@ -91,7 +89,9 @@ promise_test((test) => {
 
 promise_test((test) => {
     track.enabled = false;
-    return checkVideoBlack(true, "canvas2");
+    return waitFor(500).then(() => {
+        return checkVideoBlack(true, "canvas2");
+    })
 }, "Track is disabled, video should be black");
 
         </script>
