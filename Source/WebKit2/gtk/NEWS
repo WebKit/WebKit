@@ -1,4 +1,23 @@
 =================
+WebKitGTK+ 2.17.4
+=================
+
+What's new in WebKitGTK+ 2.17.4?
+
+  - Add API to allow overriding popup menus.
+  - Add kinetic scrolling support.
+  - Improve theme rendering performance when using GTK+ >= 3.20.
+  - Improve error message when webkit_web_view_run_javascript() fails due to a JavaScript exception.
+  - Fix artifacts when rendering large images.
+  - Fix blob downloads.
+  - Fix web process deadlock when seeking youtube videos.
+  - Fix alpha premultiplying when using cairo to draw the video frames.
+  - Fix web process deadlock when closing the remote inspector frontend.
+  - Update several web inspector icons.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Spanish.
+
+=================
 WebKitGTK+ 2.17.3
 =================
 
