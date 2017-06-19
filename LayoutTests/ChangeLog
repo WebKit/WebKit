@@ -1,3 +1,12 @@
+2017-06-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline js/dom/global-constructors-attributes.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+
 2017-06-19  Youenn Fablet  <youenn@apple.com>
 
         A cloned MediaStreamTrack should mute independently other tracks using the same source
