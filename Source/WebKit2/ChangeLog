@@ -1,5 +1,19 @@
 2017-06-18  Chris Dumez  <cdumez@apple.com>
 
+        Drop redundant IPC in WebPage::tryClose()
+        https://bugs.webkit.org/show_bug.cgi?id=173533
+
+        Reviewed by Sam Weinig.
+
+        Drop redundant IPC to stop the responsiveness timer in WebPage::tryClose(). The
+        destructor for the SendStopResponsivenessTimer already takes care of sending the
+        IPC.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::tryClose):
+
+2017-06-18  Chris Dumez  <cdumez@apple.com>
+
         Drop unused UserMediaPermissionRequestManager::cancelPendingRequests()
         https://bugs.webkit.org/show_bug.cgi?id=173529
         <rdar://problem/32836986>

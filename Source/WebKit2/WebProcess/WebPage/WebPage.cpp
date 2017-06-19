@@ -1174,10 +1174,8 @@ void WebPage::tryClose()
 {
     SendStopResponsivenessTimer stopper;
 
-    if (!corePage()->userInputBridge().tryClosePage()) {
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopResponsivenessTimer(), 0);
+    if (!corePage()->userInputBridge().tryClosePage())
         return;
-    }
 
     send(Messages::WebPageProxy::ClosePage(true));
 }
