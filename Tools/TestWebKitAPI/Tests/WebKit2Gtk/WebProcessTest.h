@@ -17,6 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include <functional>
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>

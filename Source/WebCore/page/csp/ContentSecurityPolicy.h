@@ -30,6 +30,7 @@
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
+#include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>

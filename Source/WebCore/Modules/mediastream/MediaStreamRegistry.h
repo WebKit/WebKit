@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "URLRegistry.h"
+#include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 

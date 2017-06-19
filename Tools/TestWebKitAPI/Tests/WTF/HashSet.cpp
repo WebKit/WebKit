@@ -29,6 +29,7 @@
 #include "DeletedAddressOfOperator.h"
 #include "MoveOnly.h"
 #include "RefLogger.h"
+#include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 

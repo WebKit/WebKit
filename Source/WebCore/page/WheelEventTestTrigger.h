@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <functional>
 #include <set>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>

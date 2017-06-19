@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <functional>
 #include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>

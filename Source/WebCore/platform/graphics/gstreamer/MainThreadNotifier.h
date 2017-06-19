@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include <functional>
 #include <wtf/Atomics.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>

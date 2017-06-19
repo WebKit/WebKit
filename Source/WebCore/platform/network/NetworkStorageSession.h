@@ -27,6 +27,7 @@
 
 #include "CredentialStorage.h"
 #include "SessionID.h"
+#include <functional>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 

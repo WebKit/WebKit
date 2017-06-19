@@ -1,3 +1,15 @@
+2017-06-19  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Missing <functional> includes make builds fail with GCC 7.x
+        https://bugs.webkit.org/show_bug.cgi?id=173544
+
+        Unreviewed gardening.
+
+        Fix compilation with GCC 7.
+
+        * API/tests/CompareAndSwapTest.cpp:
+        * runtime/VMEntryScope.h:
+
 2017-06-17  Keith Miller  <keith_miller@apple.com>
 
         ArrayBuffer constructor needs to create subclass structures before its buffer

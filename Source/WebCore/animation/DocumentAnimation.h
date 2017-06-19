@@ -33,6 +33,7 @@
 #include "AnimationEffect.h"
 #include "Supplementable.h"
 #include "WebAnimation.h"
+#include <functional>
 #include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
