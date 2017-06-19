@@ -1,3 +1,10 @@
+2017-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix wrong style checker condition added in r218487.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_identifier_name_in_declaration):
+
 2017-06-19  Adrian Perez de Castro  <aperez@igalia.com>
 
         Missing <functional> includes make builds fail with GCC 7.x
