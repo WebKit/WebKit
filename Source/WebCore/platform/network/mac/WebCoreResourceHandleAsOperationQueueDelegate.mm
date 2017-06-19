@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
 
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
+#import "CFNetworkSPI.h"
 #import "Logging.h"
-#import "NSURLRequestSPI.h"
 #import "ResourceHandle.h"
 #import "ResourceHandleClient.h"
 #import "ResourceRequest.h"
@@ -58,7 +58,7 @@ using namespace WebCore;
 
 - (void)detachHandle
 {
-    m_handle = 0;
+    m_handle = nullptr;
 
     m_requestResult = nullptr;
     m_cachedResponseResult = nullptr;

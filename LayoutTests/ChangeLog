@@ -1,3 +1,15 @@
+2017-06-19  Alex Christensen  <achristensen@webkit.org>
+
+        [Cocoa] implement URLSession:task:needNewBodyStream: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=173551
+        rdar://problem/32250512
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/misc/form-blob-challenge-expected.txt: Added.
+        * http/tests/misc/form-blob-challenge.html: Added.
+        * http/tests/misc/resources/basic-echo-post.php: Added.
+
 2017-06-19  Matt Lewis  <jlewis3@apple.com>
 
         Adjusted test ecpectaions for webrtc/libwebrtc/descriptionGetters.html.

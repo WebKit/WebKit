@@ -28,26 +28,15 @@
 
 #if PLATFORM(COCOA)
 
+#import "CFNetworkSPI.h"
 #import "FileSystem.h"
 #import "FormDataStreamMac.h"
 #import "HTTPHeaderNames.h"
 #import "ResourceRequestCFNet.h"
 #import "RuntimeApplicationChecks.h"
 #import "WebCoreSystemInterface.h"
-
 #import <Foundation/Foundation.h>
 #import <wtf/text/CString.h>
-
-@interface NSURLRequest (WebNSURLRequestDetails)
-- (NSArray *)contentDispositionEncodingFallbackArray;
-+ (void)setDefaultTimeoutInterval:(NSTimeInterval)seconds;
-- (CFURLRequestRef)_CFURLRequest;
-- (id)_initWithCFURLRequest:(CFURLRequestRef)request;
-@end
-
-@interface NSMutableURLRequest (WebMutableNSURLRequestDetails)
-- (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
-@end
 
 namespace WebCore {
 

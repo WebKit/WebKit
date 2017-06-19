@@ -28,20 +28,12 @@
 
 #include "CFNetworkSPI.h"
 
+namespace WebCore {
+
 #ifdef __OBJC__
-@interface NSURLResponse (Details)
-- (void)_setMIMEType:(NSString *)type;
-@end
-
-@class NSURLConnection;
-@class NSURLRequest;
-@class NSURLResponse;
-
-namespace WebCore {
 WEBCORE_EXPORT NSURLResponse *synthesizeRedirectResponseIfNecessary(NSURLRequest *currentRequest, NSURLRequest *newRequest, NSURLResponse *redirectResponse);
-}
-#endif // __OBJC__
+#endif
 
-namespace WebCore {
 WEBCORE_EXPORT void adjustMIMETypeIfNecessary(CFURLResponseRef, bool isMainResourceLoad);
+
 }

@@ -28,12 +28,8 @@
 
 #if PLATFORM(MAC)
 
+#import "CFNetworkSPI.h"
 #import <Foundation/Foundation.h>
-
-@interface NSURLRequest (WebNSURLRequestDetails)
-- (CFURLRequestRef)_CFURLRequest;
-- (id)_initWithCFURLRequest:(CFURLRequestRef)request;
-@end
 
 namespace WebCore {
 

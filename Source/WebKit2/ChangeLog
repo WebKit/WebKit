@@ -1,3 +1,33 @@
+2017-06-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] implement URLSession:task:needNewBodyStream: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=173551
+        rdar://problem/32250512
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate existingTask:]): Added helper method.
+        (-[WKNetworkSessionDelegate URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:]):
+        Updated to use existingTask: method.
+        (-[WKNetworkSessionDelegate URLSession:task:needNewBodyStream:]): Added.
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        Updated to use existingTask: method.
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]): Ditto.
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]): Ditto.
+        (-[WKNetworkSessionDelegate URLSession:task:didCompleteWithError:]): Ditto.
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]): Ditto.
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]): Ditto.
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveData:]): Ditto.
+        (-[WKNetworkSessionDelegate URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:]): Ditto.
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didBecomeDownloadTask:]): Ditto.
+        (WebKit::globalAllowsCellularAccess): Deleted. Just use a normal global.
+        (WebKit::globalLegacyCustomProtocolManager): Deleted. Just use a normal global.
+        (WebKit::NetworkSessionCocoa::setLegacyCustomProtocolManager): Updated for normal global.
+        (WebKit::NetworkSessionCocoa::setAllowsCellularAccess): Ditto.
+        (WebKit::NetworkSessionCocoa::defaultSession): Ditto.
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa): Ditto.
+
 2017-06-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r218503.

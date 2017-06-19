@@ -25,8 +25,7 @@
 
 #pragma clang system_header
 
-#ifndef CFNetworkSPI_h
-#define CFNetworkSPI_h
+#pragma once
 
 #include "CFNetworkConnectionCacheSPI.h"
 #include <CFNetwork/CFNetwork.h>
@@ -46,7 +45,7 @@
 // FIXME: Remove the defined(__OBJC__)-guard once we fix <rdar://problem/19033610>.
 #if defined(__OBJC__) && PLATFORM(COCOA)
 #import <CFNetwork/CFNSURLConnection.h>
-#endif // defined(__OBJC__) && PLATFORM(COCOA)
+#endif
 
 #else // !PLATFORM(WIN) && !USE(APPLE_INTERNAL_SDK)
 
@@ -83,6 +82,7 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 #endif
 
 #if defined(__OBJC__)
+
 @interface NSURLCache ()
 -(instancetype)_initWithMemoryCapacity:(NSUInteger)memoryCapacity diskCapacity:(NSUInteger)diskCapacity relativePath:(NSString *)path;
 - (CFURLCacheRef)_CFURLCache;
@@ -91,7 +91,16 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @interface NSURLRequest ()
 + (NSArray *)allowsSpecificHTTPSCertificateForHost:(NSString *)host;
 + (void)setAllowsSpecificHTTPSCertificate:(NSArray *)allow forHost:(NSString *)host;
++ (void)setDefaultTimeoutInterval:(NSTimeInterval)seconds;
+- (NSArray *)contentDispositionEncodingFallbackArray;
+- (CFURLRequestRef)_CFURLRequest;
+- (id)_initWithCFURLRequest:(CFURLRequestRef)request;
+- (id)_propertyForKey:(NSString *)key;
 - (void)_setProperty:(id)value forKey:(NSString *)key;
+@end
+
+@interface NSMutableURLRequest ()
+- (void)setContentDispositionEncodingFallbackArray:(NSArray *)theEncodingFallbackArray;
 @end
 
 @interface NSURLResponse ()
@@ -154,6 +163,7 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 WTF_EXTERN_C_BEGIN
 
 #if !PLATFORM(WIN)
+
 CFURLStorageSessionRef _CFURLStorageSessionCreate(CFAllocatorRef, CFStringRef, CFDictionaryRef);
 CFURLCacheRef _CFURLStorageSessionCopyCache(CFAllocatorRef, CFURLStorageSessionRef);
 
@@ -174,10 +184,11 @@ void _CFHTTPCookieStorageFlushCookieStores();
 
 #if PLATFORM(COCOA)
 CFDataRef _CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef);
-#ifdef __BLOCKS__
+#endif
+
+#if PLATFORM(COCOA) && defined(__BLOCKS__)
 void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
 #endif
-#endif // PLATFORM(COCOA)
 
 extern CFStringRef const kCFHTTPCookieLocalFileDomain;
 extern const CFStringRef kCFHTTPVersion1_1;
@@ -218,6 +229,7 @@ CFURLResponseRef CFURLResponseCreateWithHTTPResponse(CFAllocatorRef, CFURLRef, C
 WTF_EXTERN_C_END
 
 #if defined(__OBJC__) && !USE(APPLE_INTERNAL_SDK)
+
 enum : NSUInteger {
     NSHTTPCookieAcceptPolicyExclusivelyFromMainDocumentDomain = 3,
 };
@@ -226,6 +238,7 @@ enum : NSUInteger {
 -(id)_initWithCFCachedURLResponse:(CFCachedURLResponseRef)cachedResponse;
 -(CFCachedURLResponseRef)_CFCachedURLResponse;
 @end
+
 #endif
 
 WTF_EXTERN_C_BEGIN
@@ -271,6 +284,9 @@ WTF_EXTERN_C_END
 + (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
 @end
 #endif
-#endif // defined(__OBJC__)
 
-#endif // CFNetworkSPI_h
+@interface NSURLResponse ()
+- (void)_setMIMEType:(NSString *)type;
+@end
+
+#endif // defined(__OBJC__)

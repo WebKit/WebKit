@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #import <Foundation/NSURLSession.h>
 #import <WebCore/CFNetworkSPI.h>
 #import <WebCore/Credential.h>
+#import <WebCore/FormDataStreamMac.h>
 #import <WebCore/FrameLoaderTypes.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
@@ -118,6 +119,18 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     _session = nullptr;
 }
 
+- (NetworkDataTaskCocoa*)existingTask:(NSURLSessionTask *)task
+{
+    if (!_session)
+        return nullptr;
+
+    if (!task)
+        return nullptr;
+
+    auto allowStoredCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
+    return _session->dataTaskForIdentifier(task.taskIdentifier, allowStoredCredentials);
+}
+
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error
 {
     ASSERT(!_session);
@@ -125,26 +138,33 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
-    if (!_session)
-        return;
-
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials))
+    if (auto* networkDataTask = [self existingTask:task])
         networkDataTask->didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task needNewBodyStream:(void (^)(NSInputStream *bodyStream))completionHandler
 {
-    if (!_session) {
+    auto* networkDataTask = [self existingTask:task];
+    if (!networkDataTask) {
         completionHandler(nil);
         return;
     }
 
+    auto* body = networkDataTask->firstRequest().httpBody();
+    if (!body) {
+        completionHandler(nil);
+        return;
+    }
+
+    completionHandler(WebCore::createHTTPBodyNSInputStream(*body).get());
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
+{
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu willPerformHTTPRedirection from %s to %s", taskIdentifier, response.URL.absoluteString.UTF8String, request.URL.absoluteString.UTF8String);
-    
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
+
+    if (auto* networkDataTask = [self existingTask:task]) {
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->willPerformHTTPRedirection(response, request, [completionHandlerCopy, taskIdentifier](auto& request) {
 #if !LOG_DISABLED
@@ -163,16 +183,10 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask*)task _schemeUpgraded:(NSURLRequest*)request completionHandler:(void (^)(NSURLRequest*))completionHandler
 {
-    if (!_session) {
-        completionHandler(nil);
-        return;
-    }
-
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu _schemeUpgraded %s", taskIdentifier, request.URL.absoluteString.UTF8String);
     
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(taskIdentifier, storedCredentials)) {
+    if (auto* networkDataTask = [self existingTask:task]) {
         auto completionHandlerCopy = Block_copy(completionHandler);
         networkDataTask->willPerformHTTPRedirection(WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil), request, [completionHandlerCopy, taskIdentifier](auto& request) {
 #if !LOG_DISABLED
@@ -206,16 +220,10 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition disposition, NSURLCredential *credential))completionHandler
 {
-    if (!_session) {
-        completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
-        return;
-    }
-
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu didReceiveChallenge", taskIdentifier);
     
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
+    if (auto* networkDataTask = [self existingTask:task]) {
         WebCore::AuthenticationChallenge authenticationChallenge(challenge);
         auto completionHandlerCopy = Block_copy(completionHandler);
         auto sessionID = _session->sessionID();
@@ -260,8 +268,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
         return;
 
     LOG(NetworkSession, "%llu didCompleteWithError %@", task.taskIdentifier, error);
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials))
+    if (auto* networkDataTask = [self existingTask:task])
         networkDataTask->didCompleteWithError(error, networkDataTask->networkLoadMetrics());
     else if (error) {
         auto downloadID = _session->takeDownloadID(task.taskIdentifier);
@@ -284,12 +291,8 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)metrics
 {
-    if (!_session)
-        return;
-
     LOG(NetworkSession, "%llu didFinishCollectingMetrics", task.taskIdentifier);
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(task.taskIdentifier, storedCredentials)) {
+    if (auto* networkDataTask = [self existingTask:task]) {
         NSURLSessionTaskTransactionMetrics *m = metrics.transactionMetrics.lastObject;
         NSDate *fetchStartDate = m.fetchStartDate;
         NSTimeInterval domainLookupStartInterval = m.domainLookupStartDate ? [m.domainLookupStartDate timeIntervalSinceDate:fetchStartDate] : -1;
@@ -352,15 +355,9 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
-    if (!_session) {
-        completionHandler(NSURLSessionResponseCancel);
-        return;
-    }
-
     auto taskIdentifier = dataTask.taskIdentifier;
     LOG(NetworkSession, "%llu didReceiveResponse", taskIdentifier);
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(taskIdentifier, storedCredentials)) {
+    if (auto* networkDataTask = [self existingTask:dataTask]) {
         ASSERT(isMainThread());
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
@@ -397,11 +394,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-    if (!_session)
-        return;
-
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier(dataTask.taskIdentifier, storedCredentials))
+    if (auto* networkDataTask = [self existingTask:dataTask])
         networkDataTask->didReceiveData(WebCore::SharedBuffer::create(data));
 }
 
@@ -420,8 +413,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     if (!_session)
         return;
 
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    ASSERT_WITH_MESSAGE_UNUSED(storedCredentials, !_session->dataTaskForIdentifier([downloadTask taskIdentifier], storedCredentials), "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
+    ASSERT_WITH_MESSAGE(![self existingTask:downloadTask], "The NetworkDataTask should be destroyed immediately after didBecomeDownloadTask returns");
 
     auto downloadID = _session->downloadID([downloadTask taskIdentifier]);
     if (auto* download = WebKit::NetworkProcess::singleton().downloadManager().download(downloadID))
@@ -438,11 +430,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
 {
-    if (!_session)
-        return;
-
-    auto storedCredentials = _withCredentials ? WebCore::StoredCredentials::AllowStoredCredentials : WebCore::StoredCredentials::DoNotAllowStoredCredentials;
-    if (auto* networkDataTask = _session->dataTaskForIdentifier([dataTask taskIdentifier], storedCredentials)) {
+    if (auto* networkDataTask = [self existingTask:dataTask]) {
         Ref<NetworkDataTaskCocoa> protectedNetworkDataTask(*networkDataTask);
         auto downloadID = networkDataTask->pendingDownloadID();
         auto& downloadManager = WebKit::NetworkProcess::singleton().downloadManager();
@@ -460,6 +448,13 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
 
 namespace WebKit {
     
+static bool allowsCellularAccess { true };
+static LegacyCustomProtocolManager* legacyCustomProtocolManager;
+
+#if !ASSERT_DISABLED
+static bool sessionsCreated = false;
+#endif
+
 static NSURLSessionConfiguration *configurationForSessionID(const WebCore::SessionID& session)
 {
     if (session.isEphemeral()) {
@@ -468,18 +463,6 @@ static NSURLSessionConfiguration *configurationForSessionID(const WebCore::Sessi
         return configuration;
     }
     return [NSURLSessionConfiguration defaultSessionConfiguration];
-}
-
-static bool& globalAllowsCellularAccess()
-{
-    static bool allowsCellularAccess { true };
-    return allowsCellularAccess;
-}
-
-static LegacyCustomProtocolManager*& globalLegacyCustomProtocolManager()
-{
-    static LegacyCustomProtocolManager* customProtocolManager { nullptr };
-    return customProtocolManager;
 }
 
 static RetainPtr<CFDataRef>& globalSourceApplicationAuditTokenData()
@@ -508,14 +491,10 @@ static String& globalCTDataConnectionServiceType()
 }
 #endif
 
-#if !ASSERT_DISABLED
-static bool sessionsCreated = false;
-#endif
-
 void NetworkSessionCocoa::setLegacyCustomProtocolManager(LegacyCustomProtocolManager* customProtocolManager)
 {
     ASSERT(!sessionsCreated);
-    globalLegacyCustomProtocolManager() = customProtocolManager;
+    legacyCustomProtocolManager = customProtocolManager;
 }
     
 void NetworkSessionCocoa::setSourceApplicationAuditTokenData(RetainPtr<CFDataRef>&& data)
@@ -538,7 +517,7 @@ void NetworkSessionCocoa::setSourceApplicationSecondaryIdentifier(const String& 
     
 void NetworkSessionCocoa::setAllowsCellularAccess(bool value)
 {
-    globalAllowsCellularAccess() = value;
+    allowsCellularAccess = value;
 }
 
 #if PLATFORM(IOS)
@@ -557,7 +536,7 @@ Ref<NetworkSession> NetworkSessionCocoa::create(WebCore::SessionID sessionID, Le
 NetworkSession& NetworkSessionCocoa::defaultSession()
 {
     ASSERT(isMainThread());
-    static NetworkSession* session = &NetworkSessionCocoa::create(WebCore::SessionID::defaultSessionID(), globalLegacyCustomProtocolManager()).leakRef();
+    static NetworkSession* session = &NetworkSessionCocoa::create(WebCore::SessionID::defaultSessionID(), legacyCustomProtocolManager).leakRef();
     return *session;
 }
 
@@ -572,7 +551,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(WebCore::SessionID sessionID, LegacyCus
 
     NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
 
-    if (!globalAllowsCellularAccess())
+    if (!allowsCellularAccess)
         configuration.allowsCellularAccess = NO;
     
     if (NetworkCache::singleton().isEnabled())

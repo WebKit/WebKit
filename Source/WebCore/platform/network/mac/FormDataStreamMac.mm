@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,18 +31,19 @@
 
 #if !USE(CFURLCONNECTION)
 
-#import "FormData.h"
+#import "CFNetworkSPI.h"
 #import "FormDataStreamCFNet.h"
-
-@interface NSURLRequest (WebNSURLRequestDetails)
-- (CFURLRequestRef)_CFURLRequest;
-@end
 
 namespace WebCore {
 
 void setHTTPBody(NSMutableURLRequest *request, FormData* formData)
 {
     setHTTPBody(const_cast<CFMutableURLRequestRef>([request _CFURLRequest]), formData);
+}
+
+RetainPtr<NSInputStream> createHTTPBodyNSInputStream(FormData& formData)
+{
+    return reinterpret_cast<NSInputStream *>(createHTTPBodyCFReadStream(formData).get());
 }
 
 FormData* httpBodyFromStream(NSInputStream *stream)

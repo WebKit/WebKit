@@ -1,3 +1,40 @@
+2017-06-19  Darin Adler  <darin@apple.com>
+
+        [Cocoa] implement URLSession:task:needNewBodyStream: delegate method
+        https://bugs.webkit.org/show_bug.cgi?id=173551
+        rdar://problem/32250512
+
+        Reviewed by Alex Christensen.
+
+        Covered by http/tests/misc/form-blob-challenge.html
+
+        * WebCore.xcodeproj/project.pbxproj: Removed NSURLRequestSPI.h.
+
+        * platform/network/cf/FormDataStreamCFNet.cpp:
+        (WebCore::createHTTPBodyCFReadStream): Factored this out from setHTTPBody.
+        (WebCore::setHTTPBody): Factored out the function above.
+        * platform/network/cf/FormDataStreamCFNet.h: Added createHTTPBodyCFReadStream.
+
+        * platform/network/cocoa/ResourceRequestCocoa.mm: Use CFNetworkSPI.h.
+        * platform/network/ios/ResourceRequestIOS.mm: Ditto.
+
+        * platform/network/mac/FormDataStreamMac.h: Added createHTTPBodyNSInputStream.
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::createHTTPBodyNSInputStream): Added/
+
+        * platform/network/mac/ResourceHandleMac.mm: Use CFNetworkSPI.h.
+        * platform/network/mac/ResourceRequestMac.mm: Ditto.
+        * platform/network/mac/WebCoreResourceHandleAsDelegate.mm: Ditto.
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm: Ditto.
+
+        * platform/network/mac/WebCoreURLResponse.h: Moved SPI declarations from
+        here into CFNetworkSPI.h.
+
+        * platform/spi/cf/CFNetworkSPI.h: Use #pragma once, consolidated SPI that was
+        defined in scattered locations.
+
+        * platform/spi/cocoa/NSURLRequestSPI.h: Removed. Superceded by CFNetworkSPI.h.
+
 2017-06-19  Brady Eidson  <beidson@apple.com>
 
         Various IndexedDB crashes as an after effect of previous test.

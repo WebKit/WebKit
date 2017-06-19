@@ -30,8 +30,8 @@
 
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
+#import "CFNetworkSPI.h"
 #import "Logging.h"
-#import "NSURLRequestSPI.h"
 #import "ResourceHandle.h"
 #import "ResourceHandleClient.h"
 #import "ResourceRequest.h"
