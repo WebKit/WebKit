@@ -1,3 +1,14 @@
+2017-06-19  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=173456
+
+        Unreviewed gardening.
+
+        * platform/gtk/TestExpectations: Marked
+        imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer.html,
+        webrtc/createOfferAnswer.html and webrtc/video-addTransceiver.html Crash.
+
 2017-06-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WPE] Rebaseline after r218458
