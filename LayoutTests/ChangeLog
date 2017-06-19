@@ -1,3 +1,12 @@
+2017-06-19  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Unreviewed GTK+ gardening
+
+        Unmarked a bunch of http multimedia tests that were failing with gst 1.6.3.
+        We're now depending on 1.10.4 and these are passing. Also marked as slow
+        a couple more.
+        * platform/gtk/TestExpectations:
+
 2017-06-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening.
