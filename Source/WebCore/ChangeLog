@@ -1,3 +1,50 @@
+2017-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Support .zip archives for file uploads via drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=173511
+        <rdar://problem/32521025>
+
+        Reviewed by Tim Horton.
+
+        Allows dropped .zip archives to be uploaded as files by accepting types conforming to either
+        "public.zip-archive" or "public.content" as potential file types. Initially, I opted to accept the more general
+        "public.data" type; however, this includes UTIs such as "public.url" that should not be represented as files, so
+        this is a more targeted fix that allows us to very easily add additional content types in the future by adding
+        more types to supportedFileUploadPasteboardTypes.
+
+        Tests:
+        DataInteractionTests.ExternalSourceZIPArchiveToUploadArea
+        DataInteractionTests.ExternalSourceZIPArchiveAndURLToSingleFileInput
+
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::updateSupportedTypeIdentifiersForDragHandlingMethod):
+        * platform/Pasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::supportedWebContentPasteboardTypes):
+        (WebCore::Pasteboard::supportedFileUploadPasteboardTypes):
+
+        Rename supportedPasteboardTypes to supportedWebContentPasteboardTypes, and also introduce
+        supportedFileUploadPasteboardTypes which returns an list of types, such that if a type conforms to any type in
+        this array, that type may be represented as a file. So far, this list contains "public.content" and
+        "public.zip-archive".
+
+        (WebCore::Pasteboard::types):
+        (WebCore::Pasteboard::supportedPasteboardTypes): Deleted.
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (typeConformsToTypes):
+
+        Remove -typeIsAppropriateForSupportedTypes: and replace it with typeConformsToTypes. Use this both when
+        determining the number of files on the pasteboard, and when determining preferred UTIs to load when dropping.
+
+        (-[WebItemProviderPasteboard numberOfFiles]):
+        (-[WebItemProviderPasteboard typeIdentifierToLoadForRegisteredTypeIdentfiers:]):
+        (-[WebItemProviderPasteboard typeIsAppropriateForSupportedTypes:]): Deleted.
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsFiles):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::supportedFileUploadPasteboardTypes):
+
 2017-06-19  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom binding for Document.getCSSCanvasContext()

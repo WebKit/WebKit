@@ -263,7 +263,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
     if (!numberOfItems)
         return;
 
-    NSArray *types = supportedPasteboardTypes();
+    NSArray *types = supportedWebContentPasteboardTypes();
     int numberOfTypes = [types count];
 
     for (int i = 0; i < numberOfItems; i++) {
@@ -298,9 +298,14 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader)
     }
 }
 
-NSArray* Pasteboard::supportedPasteboardTypes()
+NSArray *Pasteboard::supportedWebContentPasteboardTypes()
 {
     return @[(id)WebArchivePboardType, (id)kUTTypeFlatRTFD, (id)kUTTypeRTF, (id)kUTTypeHTML, (id)kUTTypePNG, (id)kUTTypeTIFF, (id)kUTTypeJPEG, (id)kUTTypeGIF, (id)kUTTypeURL, (id)kUTTypeText];
+}
+
+NSArray *Pasteboard::supportedFileUploadPasteboardTypes()
+{
+    return @[ (NSString *)kUTTypeContent, (NSString *)kUTTypeZipArchive ];
 }
 
 bool Pasteboard::hasData()
@@ -424,7 +429,7 @@ void Pasteboard::writeString(const String& type, const String& data)
 
 Vector<String> Pasteboard::types()
 {
-    NSArray* types = supportedPasteboardTypes();
+    NSArray *types = supportedWebContentPasteboardTypes();
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.

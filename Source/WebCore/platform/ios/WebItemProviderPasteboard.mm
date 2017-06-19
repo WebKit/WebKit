@@ -39,6 +39,7 @@
 #import <UIKit/UIItemProviderReading.h>
 #import <UIKit/UIItemProviderWriting.h>
 #import <WebCore/FileSystemIOS.h>
+#import <WebCore/Pasteboard.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
@@ -47,6 +48,8 @@ SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIColor)
 SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIItemProvider)
+
+using namespace WebCore;
 
 typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
 typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
@@ -373,12 +376,23 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
     return fileURLs;
 }
 
+static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
+{
+    // A type is considered appropriate to load if it conforms to one or more supported types.
+    for (NSString *conformsToType in conformsToTypes) {
+        if (UTTypeConformsTo((CFStringRef)type, (CFStringRef)conformsToType))
+            return YES;
+    }
+    return NO;
+}
+
 - (NSInteger)numberOfFiles
 {
+    NSArray *supportedFileTypes = Pasteboard::supportedFileUploadPasteboardTypes();
     NSInteger numberOfFiles = 0;
     for (UIItemProvider *itemProvider in _itemProviders.get()) {
         for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
-            if (!UTTypeConformsTo((__bridge CFStringRef)identifier, kUTTypeContent))
+            if (!typeConformsToTypes(identifier, supportedFileTypes))
                 continue;
             ++numberOfFiles;
             break;
@@ -405,21 +419,11 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     return [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:suggestedName ?: url.lastPathComponent]];
 }
 
-- (BOOL)typeIsAppropriateForSupportedTypes:(NSString *)type
-{
-    // A type is considered appropriate to load if it conforms to one or more supported types.
-    for (NSString *supportedTypeIdentifier in _supportedTypeIdentifiers.get()) {
-        if (UTTypeConformsTo((CFStringRef)type, (CFStringRef)supportedTypeIdentifier))
-            return YES;
-    }
-    return NO;
-}
-
 - (NSString *)typeIdentifierToLoadForRegisteredTypeIdentfiers:(NSArray<NSString *> *)registeredTypeIdentifiers
 {
     NSString *highestFidelityContentType = nil;
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
-        if ([self typeIsAppropriateForSupportedTypes:registeredTypeIdentifier])
+        if (typeConformsToTypes(registeredTypeIdentifier, _supportedTypeIdentifiers.get()))
             return registeredTypeIdentifier;
 
         if (!highestFidelityContentType && UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, kUTTypeContent))

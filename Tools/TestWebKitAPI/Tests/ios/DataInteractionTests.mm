@@ -52,6 +52,12 @@ static UIImage *testIconImage()
     return [UIImage imageNamed:@"TestWebKitAPI.resources/icon.png"];
 }
 
+static NSData *testZIPArchive()
+{
+    NSURL *zipFileURL = [[NSBundle mainBundle] URLForResource:@"compressed-files" withExtension:@"zip" subdirectory:@"TestWebKitAPI.resources"];
+    return [NSData dataWithContentsOfURL:zipFileURL];
+}
+
 @implementation UIItemProvider (DataInteractionTests)
 
 - (void)registerDataRepresentationForTypeIdentifier:(NSString *)typeIdentifier withData:(NSData *)data
@@ -453,6 +459,41 @@ TEST(DataInteractionTests, ExternalSourceHTMLToUploadArea)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
+}
+
+TEST(DataInteractionTests, ExternalSourceZIPArchiveAndURLToSingleFileInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    auto archiveProvider = adoptNS([[UIItemProvider alloc] init]);
+    [archiveProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeZipArchive withData:testZIPArchive()];
+
+    auto urlProvider = adoptNS([[UIItemProvider alloc] init]);
+    [urlProvider registerObject:[NSURL URLWithString:@"https://webkit.org"] visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ archiveProvider.get(), urlProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+
+    NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
+    EXPECT_WK_STREQ("application/zip", outputValue.UTF8String);
+}
+
+TEST(DataInteractionTests, ExternalSourceZIPArchiveToUploadArea)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
+    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeZipArchive withData:testZIPArchive()];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+
+    NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
+    EXPECT_WK_STREQ("application/zip", outputValue.UTF8String);
 }
 
 TEST(DataInteractionTests, ExternalSourceImageAndHTMLToSingleFileInput)

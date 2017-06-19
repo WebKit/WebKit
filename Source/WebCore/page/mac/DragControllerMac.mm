@@ -118,11 +118,12 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
         supportedTypes.append(kUTTypePlainText);
         break;
     case DragHandlingMethod::EditRichText:
-        for (NSString *type in Pasteboard::supportedPasteboardTypes())
+        for (NSString *type in Pasteboard::supportedWebContentPasteboardTypes())
             supportedTypes.append(type);
         break;
     default:
-        supportedTypes.append(kUTTypeContent);
+        for (NSString *type in Pasteboard::supportedFileUploadPasteboardTypes())
+            supportedTypes.append(type);
         break;
     }
     platformStrategies()->pasteboardStrategy()->updateSupportedTypeIdentifiers(supportedTypes, dragData.pasteboardName());

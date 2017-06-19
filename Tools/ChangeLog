@@ -1,3 +1,20 @@
+2017-06-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Support .zip archives for file uploads via drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=173511
+        <rdar://problem/32521025>
+
+        Reviewed by Tim Horton.
+
+        Adds tests for dropping .zip archives into a JavaScript-based file upload area, as well as into a file input.
+        Also verifies that URLs are not handled as file drops. See WebCore ChangeLog for more details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/compressed-files.zip: Added.
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (testZIPArchive):
+        (TestWebKitAPI::TEST):
+
 2017-06-18  Darin Adler  <darin@apple.com>
 
         Fix Ref to deref before assignment, add tests for this to RefPtr, Ref, Function
