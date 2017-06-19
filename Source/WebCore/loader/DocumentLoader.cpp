@@ -282,6 +282,9 @@ void DocumentLoader::stopLoading()
             m_frame->loader().stopLoading(UnloadEventPolicyNone);
     }
 
+    m_iconsPendingLoadDecision.clear();
+    m_iconLoaders.clear();
+
     // Always cancel multipart loaders
     cancelAll(m_multipartSubresourceLoaders);
 
@@ -1689,6 +1692,9 @@ void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdent
 
 void DocumentLoader::finishedLoadingIcon(IconLoader& loader, SharedBuffer* buffer)
 {
+    // If the DocumentLoader has detached from its frame, all icon loads should have already been cancelled.
+    ASSERT(m_frame);
+
     auto loadIdentifier = m_iconLoaders.take(&loader);
     ASSERT(loadIdentifier);
 
