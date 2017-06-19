@@ -39,7 +39,7 @@ namespace GCrypt {
             gcry_cipher_ctl ((a), GCRYCTL_FINALIZE, NULL, 0)
 #endif
 
-using GCryptCipherOperation = gcry_error_t(gcry_cipher_hd_t, void*, size_t, const void*, size_t);
+using CipherOperation = gcry_error_t(gcry_cipher_hd_t, void*, size_t, const void*, size_t);
 
 static inline void logError(gcry_error_t error)
 {

@@ -41,7 +41,7 @@ namespace WebCore {
 
 // This is a helper function that resets the cipher object, sets the provided counter data,
 // and executes the encrypt or decrypt operation, retrieving and returning the output data.
-static std::optional<Vector<uint8_t>> callOperation(GCryptCipherOperation operation, gcry_cipher_hd_t handle, const Vector<uint8_t>& counter, const uint8_t* data, const size_t size)
+static std::optional<Vector<uint8_t>> callOperation(PAL::GCrypt::CipherOperation operation, gcry_cipher_hd_t handle, const Vector<uint8_t>& counter, const uint8_t* data, const size_t size)
 {
     gcry_error_t error = gcry_cipher_reset(handle);
     if (error != GPG_ERR_NO_ERROR) {
@@ -71,7 +71,7 @@ static std::optional<Vector<uint8_t>> callOperation(GCryptCipherOperation operat
     return output;
 }
 
-static std::optional<Vector<uint8_t>> gcryptAES_CTR(GCryptCipherOperation operation, const Vector<uint8_t>& key, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& inputText)
+static std::optional<Vector<uint8_t>> gcryptAES_CTR(PAL::GCrypt::CipherOperation operation, const Vector<uint8_t>& key, const Vector<uint8_t>& counter, size_t counterLength, const Vector<uint8_t>& inputText)
 {
     constexpr size_t blockSize = 16;
     auto algorithm = PAL::GCrypt::aesAlgorithmForKeySize(key.size() * 8);
