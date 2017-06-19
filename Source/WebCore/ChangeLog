@@ -1,5 +1,20 @@
 2017-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r218253): Infinite animated gifs no longer loop
+        https://bugs.webkit.org/show_bug.cgi?id=173464
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        After the first loop iteration we keep rendering the same frame all the time, so it looks like if the animation
+        stopped. This is because in r218253 we changed to use SharedBuffer instead of a Vector in ImageBackingStore, but
+        we are not correctly copying the data in the copy constructor. We are using SharedBuffer::copy() that doesn't
+        actually copy the data of the segments.
+
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::ImageBackingStore): Copy the data of the other SharedBuffer.
+
+2017-06-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GStreamer] MainThreadNotifier ASSERTION FAILED: m_boundThread == currentThread() in _WebKitWebSrcPrivate::~_WebKitWebSrcPrivate
         https://bugs.webkit.org/show_bug.cgi?id=152043
 

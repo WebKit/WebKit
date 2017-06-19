@@ -189,7 +189,7 @@ private:
         , m_premultiplyAlpha(other.m_premultiplyAlpha)
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
-        m_pixels = other.m_pixels->copy();
+        m_pixels = SharedBuffer::create(other.m_pixels->data(), other.m_pixels->size());
         m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
     }
 
