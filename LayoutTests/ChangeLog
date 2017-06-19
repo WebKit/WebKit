@@ -1,3 +1,17 @@
+2017-06-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening.
+
+        Enable RSA-PSS tests on the GTK+ port. Tests covering this Web Crypto
+        algorithm are skipped on all platforms, but since the libgcrypt-based
+        implementation is operating properly, we can enable the majority of
+        these tests for GTK+. The tests that remain skipped cover SPKI and
+        PKCS#8 import and export capabilities that still have to be landed.
+
+        WPE will enable these tests in a separate patch.
+
+        * platform/gtk/TestExpectations:
+
 2017-06-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Rebaseline js/dom/dom-static-property-for-in-iteration.html
