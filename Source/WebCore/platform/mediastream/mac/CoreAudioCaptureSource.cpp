@@ -706,17 +706,11 @@ void CoreAudioCaptureSource::startProducingData()
 #endif
 
     CoreAudioSharedUnit::singleton().startProducingData();
-
-    if (m_audioSourceProvider)
-        m_audioSourceProvider->prepare(&CoreAudioSharedUnit::singleton().microphoneFormat().streamDescription());
 }
 
 void CoreAudioCaptureSource::stopProducingData()
 {
     CoreAudioSharedUnit::singleton().stopProducingData();
-
-    if (m_audioSourceProvider)
-        m_audioSourceProvider->unprepare();
 }
 
 const RealtimeMediaSourceCapabilities& CoreAudioCaptureSource::capabilities() const
@@ -757,17 +751,6 @@ void CoreAudioCaptureSource::settingsDidChange()
 {
     m_currentSettings = std::nullopt;
     RealtimeMediaSource::settingsDidChange();
-}
-
-AudioSourceProvider* CoreAudioCaptureSource::audioSourceProvider()
-{
-    if (!m_audioSourceProvider) {
-        m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
-        if (isProducingData())
-            m_audioSourceProvider->prepare(&CoreAudioSharedUnit::singleton().microphoneFormat().streamDescription());
-    }
-
-    return m_audioSourceProvider.get();
 }
 
 bool CoreAudioCaptureSource::applySampleRate(int sampleRate)

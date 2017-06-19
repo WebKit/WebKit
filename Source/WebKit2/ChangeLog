@@ -1,3 +1,14 @@
+2017-06-19  Youenn Fablet  <youenn@apple.com>
+
+        A cloned MediaStreamTrack should mute independently other tracks using the same source
+        https://bugs.webkit.org/show_bug.cgi?id=172831
+        <rdar://problem/32518527>
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::Source::setStorage):
+
 2017-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GTK+ API files that could be shared to glib dirs

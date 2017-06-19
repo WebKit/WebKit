@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource>&& videoSource)
+RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<MediaStreamTrackPrivate>&& videoSource)
     : m_videoSource(WTFMove(videoSource))
     , m_blackFrameTimer(*this, &RealtimeOutgoingVideoSource::sendOneBlackFrame)
 {
@@ -51,10 +51,10 @@ RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource(Ref<RealtimeMediaSource
     initializeFromSource();
 }
 
-bool RealtimeOutgoingVideoSource::setSource(Ref<RealtimeMediaSource>&& newSource)
+bool RealtimeOutgoingVideoSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
     if (!m_initialSettings)
-        m_initialSettings = m_videoSource->settings();
+        m_initialSettings = m_videoSource->source().settings();
 
     m_videoSource->removeObserver(*this);
     m_videoSource = WTFMove(newSource);
@@ -103,7 +103,7 @@ void RealtimeOutgoingVideoSource::sourceEnabledChanged()
 
 void RealtimeOutgoingVideoSource::initializeFromSource()
 {
-    const auto& settings = m_videoSource->settings();
+    const auto& settings = m_videoSource->source().settings();
     m_width = settings.width();
     m_height = settings.height();
 

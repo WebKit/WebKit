@@ -29,16 +29,21 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioSourceProvider.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include <wtf/UUID.h>
+
+#if PLATFORM(COCOA)
+#include "WebAudioSourceProviderAVFObjC.h"
+#else
+#include "WebAudioSourceProvider.h"
+#endif
 
 namespace WebCore {
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<RealtimeMediaSource>&& source)
 {
-    return adoptRef(*new MediaStreamTrackPrivate(WTFMove(source), createCanonicalUUIDString()));
+    return create(WTFMove(source), createCanonicalUUIDString());
 }
 
 Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::create(Ref<RealtimeMediaSource>&& source, String&& id)
@@ -93,8 +98,6 @@ void MediaStreamTrackPrivate::setEnabled(bool enabled)
     // Always update the enabled state regardless of the track being ended.
     m_isEnabled = enabled;
 
-    m_source->setEnabled(enabled);
-
     for (auto& observer : m_observers)
         observer->trackEnabledChanged(*this);
 }
@@ -148,7 +151,11 @@ void MediaStreamTrackPrivate::applyConstraints(const MediaConstraints& constrain
 
 AudioSourceProvider* MediaStreamTrackPrivate::audioSourceProvider()
 {
-    return m_source->audioSourceProvider();
+#if PLATFORM(COCOA)
+    if (!m_audioSourceProvider)
+        m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
+#endif
+    return m_audioSourceProvider.get();
 }
 
 void MediaStreamTrackPrivate::sourceStarted()
@@ -175,12 +182,6 @@ void MediaStreamTrackPrivate::sourceMutedChanged()
         observer->trackMutedChanged(*this);
 }
 
-void MediaStreamTrackPrivate::sourceEnabledChanged()
-{
-    for (auto& observer : m_observers)
-        observer->trackEnabledChanged(*this);
-}
-
 void MediaStreamTrackPrivate::sourceSettingsChanged()
 {
     for (auto& observer : m_observers)
@@ -200,20 +201,26 @@ void MediaStreamTrackPrivate::videoSampleAvailable(MediaSample& mediaSample)
         updateReadyState();
     }
 
+    if (!enabled())
+        return;
+
     mediaSample.setTrackID(id());
     for (auto& observer : m_observers)
         observer->sampleBufferUpdated(*this, mediaSample);
 }
 
-void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
+void MediaStreamTrackPrivate::audioSamplesAvailable(const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
     if (!m_haveProducedData) {
         m_haveProducedData = true;
         updateReadyState();
     }
 
+    if (!enabled())
+        return;
+
     for (auto& observer : m_observers)
-        observer->audioSamplesAvailable(*this);
+        observer->audioSamplesAvailable(*this, mediaTime, data, description, sampleCount);
 }
 
 

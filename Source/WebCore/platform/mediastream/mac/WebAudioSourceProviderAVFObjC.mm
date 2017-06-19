@@ -48,12 +48,12 @@ namespace WebCore {
 
 static const double kRingBufferDuration = 1;
 
-Ref<WebAudioSourceProviderAVFObjC> WebAudioSourceProviderAVFObjC::create(RealtimeMediaSource& source)
+Ref<WebAudioSourceProviderAVFObjC> WebAudioSourceProviderAVFObjC::create(MediaStreamTrackPrivate& source)
 {
     return adoptRef(*new WebAudioSourceProviderAVFObjC(source));
 }
 
-WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC(RealtimeMediaSource& source)
+WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC(MediaStreamTrackPrivate& source)
     : m_captureSource(&source)
 {
 }
@@ -109,7 +109,6 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
     if (m_client && !m_connected) {
         m_connected = true;
         m_captureSource->addObserver(*this);
-        m_captureSource->start();
     } else if (!m_client && m_connected) {
         m_captureSource->removeObserver(*this);
         m_connected = false;
@@ -161,8 +160,14 @@ void WebAudioSourceProviderAVFObjC::unprepare()
     }
 }
 
-void WebAudioSourceProviderAVFObjC::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription&, size_t frameCount)
+void WebAudioSourceProviderAVFObjC::audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
 {
+    // FIXME: We should try to call prepare based on trackSettingsChanged callback.
+    ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
+    auto& basicDescription = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
+    if (m_streamFormat != basicDescription)
+        prepare(&basicDescription);
+
     if (!m_dataSource)
         return;
 

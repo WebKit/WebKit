@@ -46,7 +46,7 @@ static inline AudioStreamBasicDescription libwebrtcAudioFormat(Float64 sampleRat
     return streamFormat;
 }
 
-RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&& audioSource)
+RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&& audioSource)
     : m_audioSource(WTFMove(audioSource))
     , m_sampleConverter(AudioSampleDataSource::create(LibWebRTCAudioFormat::sampleRate * 2))
 {
@@ -54,7 +54,7 @@ RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource
     initializeConverter();
 }
 
-bool RealtimeOutgoingAudioSource::setSource(Ref<RealtimeMediaSource>&& newSource)
+bool RealtimeOutgoingAudioSource::setSource(Ref<MediaStreamTrackPrivate>&& newSource)
 {
     m_audioSource->removeObserver(*this);
     m_audioSource = WTFMove(newSource);

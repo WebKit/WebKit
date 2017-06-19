@@ -361,8 +361,8 @@ void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<Medi
         break;
     case RealtimeMediaSource::Type::Audio: {
         for (auto& audioSource : m_audioSources) {
-            if (&audioSource->source() == &currentTrack->source()) {
-                if (!audioSource->setSource(track->source())) {
+            if (&audioSource->source() == &currentTrack->privateTrack()) {
+                if (!audioSource->setSource(track->privateTrack())) {
                     promise.reject(INVALID_MODIFICATION_ERR);
                     return;
                 }
@@ -375,8 +375,8 @@ void LibWebRTCPeerConnectionBackend::replaceTrack(RTCRtpSender& sender, Ref<Medi
     }
     case RealtimeMediaSource::Type::Video: {
         for (auto& videoSource : m_videoSources) {
-            if (&videoSource->source() == &currentTrack->source()) {
-                if (!videoSource->setSource(track->source())) {
+            if (&videoSource->source() == &currentTrack->privateTrack()) {
+                if (!videoSource->setSource(track->privateTrack())) {
                     promise.reject(INVALID_MODIFICATION_ERR);
                     return;
                 }

@@ -24,7 +24,6 @@
 messages -> UserMediaCaptureManager {
     SourceStopped(uint64_t id)
     SourceMutedChanged(uint64_t id, bool muted)
-    SourceEnabledChanged(uint64_t id, bool enabled)
     SourceSettingsChanged(uint64_t id, WebCore::RealtimeMediaSourceSettings settings)
     StorageChanged(uint64_t id, WebKit::SharedMemory::Handle storageHandle, WebCore::CAAudioStreamDescription description, uint64_t numberOfFrames)
     AudioSamplesAvailable(uint64_t id, MediaTime time, uint64_t numberOfFrames, uint64_t startFrame, uint64_t endFrame)

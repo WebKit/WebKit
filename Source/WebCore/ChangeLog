@@ -1,3 +1,76 @@
+2017-06-19  Youenn Fablet  <youenn@apple.com>
+
+        A cloned MediaStreamTrack should mute independently other tracks using the same source
+        https://bugs.webkit.org/show_bug.cgi?id=172831
+        <rdar://problem/32518527>
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/clone-audio-track.html
+
+        Move enabled handling in MediaStreamTrackPrivate instead of RealtimeMediaSource.
+        Move WebRTC and WebAudio customers of RealtimeMediaSource to MediaStreamTrackPrivate.
+        Move creation of WebAudio provider to MediaStreamTrackPrivate.
+
+        This allows changing some parameters of tracks having the same source independently.
+        Using this for enabled track attribute.
+
+        We no longer stop generating frames in case track is disabled.
+        This should be added back as an optimization in a follow-up.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::addTrack):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::LibWebRTCPeerConnectionBackend::replaceTrack):
+        * Modules/webaudio/MediaStreamAudioSource.cpp:
+        * Modules/webaudio/MediaStreamAudioSource.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mediastream/MediaStreamTrackPrivate.cpp:
+        (WebCore::MediaStreamTrackPrivate::create):
+        (WebCore::MediaStreamTrackPrivate::~MediaStreamTrackPrivate):
+        (WebCore::MediaStreamTrackPrivate::setEnabled):
+        (WebCore::MediaStreamTrackPrivate::audioSourceProvider):
+        (WebCore::MediaStreamTrackPrivate::videoSampleAvailable):
+        (WebCore::MediaStreamTrackPrivate::audioSamplesAvailable):
+        * platform/mediastream/MediaStreamTrackPrivate.h:
+        (WebCore::MediaStreamTrackPrivate::Observer::audioSamplesAvailable):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::removeObserver):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.h:
+        * platform/mediastream/mac/AVMediaCaptureSource.mm:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        (WebCore::CoreAudioCaptureSource::stopProducingData):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.h:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::render):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::~RealtimeIncomingAudioSource):
+        (WebCore::RealtimeIncomingAudioSource::OnData):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::pixelBufferFromVideoFrame):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource):
+        (WebCore::RealtimeOutgoingAudioSource::setSource):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::RealtimeOutgoingVideoSource):
+        (WebCore::RealtimeOutgoingVideoSource::setSource):
+        (WebCore::RealtimeOutgoingVideoSource::initializeFromSource):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::create):
+        (WebCore::WebAudioSourceProviderAVFObjC::WebAudioSourceProviderAVFObjC):
+        (WebCore::WebAudioSourceProviderAVFObjC::setClient):
+        (WebCore::WebAudioSourceProviderAVFObjC::audioSamplesAvailable):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::generateFrame):
+        * platform/spi/cocoa/PassKitSPI.h:
+
 2017-06-19  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Properly model buffer source / typed arrays as their own IDL types

@@ -64,13 +64,9 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;
 
-    AudioSourceProvider* audioSourceProvider() final;
-
     RealtimeMediaSourceSettings m_currentSettings;
     rtc::scoped_refptr<webrtc::AudioTrackInterface> m_audioTrack;
 
-    RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
-    AudioStreamBasicDescription m_streamFormat { };
     uint64_t m_numberOfFrames { 0 };
 };
 

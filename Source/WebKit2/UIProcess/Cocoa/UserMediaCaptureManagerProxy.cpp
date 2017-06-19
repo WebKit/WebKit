@@ -72,10 +72,6 @@ public:
         m_manager.process().send(Messages::UserMediaCaptureManager::SourceMutedChanged(m_id, m_source->muted()), 0);
     }
 
-    void sourceEnabledChanged() final {
-        m_manager.process().send(Messages::UserMediaCaptureManager::SourceEnabledChanged(m_id, m_source->enabled()), 0);
-    }
-
     void sourceSettingsChanged() final {
         m_manager.process().send(Messages::UserMediaCaptureManager::SourceSettingsChanged(m_id, m_source->settings()), 0);
     }
@@ -175,13 +171,6 @@ void UserMediaCaptureManagerProxy::setMuted(uint64_t id, bool muted)
     auto iter = m_proxies.find(id);
     if (iter != m_proxies.end())
         iter->value->source().setMuted(muted);
-}
-
-void UserMediaCaptureManagerProxy::setEnabled(uint64_t id, bool enabled)
-{
-    auto iter = m_proxies.find(id);
-    if (iter != m_proxies.end())
-        iter->value->source().setEnabled(enabled);
 }
 
 void UserMediaCaptureManagerProxy::applyConstraints(uint64_t id, const WebCore::MediaConstraints& constraints)

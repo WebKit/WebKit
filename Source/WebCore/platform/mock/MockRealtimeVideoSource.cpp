@@ -391,7 +391,7 @@ void MockRealtimeVideoSource::generateFrame()
     FloatRect frameRect(FloatPoint(), size);
     context.fillRect(FloatRect(FloatPoint(), size), !deviceIndex() ? Color::black : Color::darkGray);
 
-    if (!muted() && enabled()) {
+    if (!muted()) {
         drawText(context);
         drawAnimation(context);
         drawBoxes(context);

@@ -27,7 +27,7 @@ function testImage()
 
         imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
         assert_true(imageData.data.every( (pixel, index) => {
-            return pixel === 0;
+            return pixel === 0 || (index % 4) === 3;
         }));
 
         finishTest();
@@ -39,11 +39,12 @@ function testImage()
 function testStream(stream)
 {
     video.srcObject = stream;
-    stream.getTracks()[0].enabled = false;
-    // Video may play with black frames
     video.onplay = setTimeout(() => {
-        testImage();
-    }, 1000);
+        stream.getTracks()[0].enabled = false;
+        setTimeout(() => {
+            testImage();
+        }, 0);
+    }, 500);
 }
 
 var finishTest, errorTest;

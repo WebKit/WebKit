@@ -83,8 +83,6 @@ public:
     void setStorage(const SharedMemory::Handle& handle, const WebCore::CAAudioStreamDescription& description, uint64_t numberOfFrames)
     {
         m_description = description;
-        if (m_audioSourceProvider)
-            m_audioSourceProvider->prepare(&m_description.streamDescription());
 
         if (handle.isNull()) {
             m_ringBuffer.deallocate();
@@ -131,15 +129,6 @@ private:
     void stopProducingData() final { m_manager.stopProducingData(m_id); }
     bool isCaptureSource() const final { return true; }
 
-    AudioSourceProvider* audioSourceProvider() final {
-        if (!m_audioSourceProvider) {
-            m_audioSourceProvider = WebAudioSourceProviderAVFObjC::create(*this);
-            if (m_description.format() != AudioStreamDescription::None)
-                m_audioSourceProvider->prepare(&m_description.streamDescription());
-        }
-        return m_audioSourceProvider.get();
-    }
-
     // RealtimeMediaSource
     void beginConfiguration() final { }
     void commitConfiguration() final { }
@@ -155,7 +144,6 @@ private:
     RealtimeMediaSourceSettings m_settings;
     CAAudioStreamDescription m_description;
     CARingBuffer m_ringBuffer;
-    RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
 
     struct ApplyConstraintsCallback {
         SuccessHandler successHandler;
@@ -218,12 +206,6 @@ void UserMediaCaptureManager::sourceMutedChanged(uint64_t id, bool muted)
     m_sources.get(id)->setMuted(muted);
 }
 
-void UserMediaCaptureManager::sourceEnabledChanged(uint64_t id, bool enabled)
-{
-    ASSERT(m_sources.contains(id));
-    m_sources.get(id)->setEnabled(enabled);
-}
-
 void UserMediaCaptureManager::sourceSettingsChanged(uint64_t id, const RealtimeMediaSourceSettings& settings)
 {
     ASSERT(m_sources.contains(id));
@@ -270,11 +252,6 @@ WebCore::RealtimeMediaSourceCapabilities UserMediaCaptureManager::capabilities(u
 void UserMediaCaptureManager::setMuted(uint64_t id, bool muted)
 {
     m_process.send(Messages::UserMediaCaptureManagerProxy::SetMuted(id, muted), 0);
-}
-
-void UserMediaCaptureManager::setEnabled(uint64_t id, bool enabled)
-{
-    m_process.send(Messages::UserMediaCaptureManagerProxy::SetEnabled(id, enabled), 0);
 }
 
 void UserMediaCaptureManager::applyConstraints(uint64_t id, const WebCore::MediaConstraints& constraints)

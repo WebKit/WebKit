@@ -88,7 +88,6 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() const final;
     const RealtimeMediaSourceSettings& settings() const final;
     void settingsDidChange() final;
-    AudioSourceProvider* audioSourceProvider() final;
 
     uint32_t m_captureDeviceID { 0 };
 
@@ -97,7 +96,6 @@ private:
     mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
-    RefPtr<WebAudioSourceProviderAVFObjC> m_audioSourceProvider;
     bool m_reconfigurationOngoing { false };
 };
 

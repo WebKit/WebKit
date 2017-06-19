@@ -35,7 +35,6 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "AudioSourceProvider.h"
 #include "CaptureDevice.h"
 #include "Image.h"
 #include "MediaConstraints.h"
@@ -68,12 +67,11 @@ public:
     class Observer {
     public:
         virtual ~Observer() { }
-        
+
         // Source state changes.
         virtual void sourceStarted() { }
         virtual void sourceStopped() { }
         virtual void sourceMutedChanged() { }
-        virtual void sourceEnabledChanged() { }
         virtual void sourceSettingsChanged() { }
 
         // Observer state queries.
@@ -112,7 +110,7 @@ public:
     public:
         virtual ~AudioCaptureFactory() = default;
         virtual CaptureSourceOrError createAudioCaptureSource(const String& audioDeviceID, const MediaConstraints*) = 0;
-        
+
     protected:
         AudioCaptureFactory() = default;
     };
@@ -147,13 +145,10 @@ public:
 
     virtual bool interrupted() const { return m_interrupted; }
     virtual void setInterrupted(bool, bool);
-    
-    bool enabled() const { return m_enabled; }
-    void setEnabled(bool);
 
     const String& name() const { return m_name; }
     void setName(const String& name) { m_name = name; }
-    
+
     unsigned fitnessScore() const { return m_fitnessScore; }
 
     WEBCORE_EXPORT void addObserver(Observer&);
@@ -211,8 +206,6 @@ public:
 
     virtual void monitorOrientation(OrientationNotifier&) { }
 
-    virtual AudioSourceProvider* audioSourceProvider() { return nullptr; }
-
     // Testing only
     virtual void delaySamples(float) { };
 
@@ -250,7 +243,6 @@ private:
     virtual void stopProducingData() { }
 
     bool m_muted { false };
-    bool m_enabled { true };
 
     WeakPtrFactory<RealtimeMediaSource> m_weakPtrFactory;
     String m_id;

@@ -98,7 +98,7 @@ void RealtimeIncomingVideoSource::stopProducingData()
 
 CVPixelBufferRef RealtimeIncomingVideoSource::pixelBufferFromVideoFrame(const webrtc::VideoFrame& frame)
 {
-    if (muted() || !enabled()) {
+    if (muted()) {
         if (!m_blackFrame || m_blackFrameWidth != frame.width() || m_blackFrameHeight != frame.height()) {
             CVPixelBufferRef pixelBuffer = nullptr;
             auto status = CVPixelBufferCreate(kCFAllocatorDefault, frame.width(), frame.height(), kCVPixelFormatType_420YpCbCr8Planar, nullptr, &pixelBuffer);

@@ -72,8 +72,6 @@ public:
 protected:
     AVMediaCaptureSource(AVCaptureDevice*, const AtomicString&, RealtimeMediaSource::Type);
 
-    AudioSourceProvider* audioSourceProvider() override;
-
     virtual void setupCaptureSession() = 0;
     virtual void shutdownCaptureSession() = 0;
     virtual void updateSettings(RealtimeMediaSourceSettings&) = 0;

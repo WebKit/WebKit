@@ -312,12 +312,6 @@ void AVMediaCaptureSource::setAudioSampleBufferDelegate(AVCaptureAudioDataOutput
     [audioOutput setSampleBufferDelegate:m_objcObserver.get() queue:globaAudioCaptureSerialQueue()];
 }
 
-AudioSourceProvider* AVMediaCaptureSource::audioSourceProvider()
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 bool AVMediaCaptureSource::interrupted() const
 {
     if (m_interruption != InterruptionReason::None)

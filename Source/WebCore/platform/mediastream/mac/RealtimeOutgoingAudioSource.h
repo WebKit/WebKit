@@ -32,7 +32,7 @@
 
 #include "AudioSampleDataSource.h"
 #include "LibWebRTCMacros.h"
-#include "RealtimeMediaSource.h"
+#include "MediaStreamTrackPrivate.h"
 #include <webrtc/api/mediastreaminterface.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -43,18 +43,18 @@ class AudioTrackSinkInterface;
 
 namespace WebCore {
 
-class RealtimeOutgoingAudioSource final : public ThreadSafeRefCounted<RealtimeOutgoingAudioSource>, public webrtc::AudioSourceInterface, private RealtimeMediaSource::Observer {
+class RealtimeOutgoingAudioSource final : public ThreadSafeRefCounted<RealtimeOutgoingAudioSource>, public webrtc::AudioSourceInterface, private MediaStreamTrackPrivate::Observer {
 public:
-    static Ref<RealtimeOutgoingAudioSource> create(Ref<RealtimeMediaSource>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSource(WTFMove(audioSource))); }
+    static Ref<RealtimeOutgoingAudioSource> create(Ref<MediaStreamTrackPrivate>&& audioSource) { return adoptRef(*new RealtimeOutgoingAudioSource(WTFMove(audioSource))); }
     ~RealtimeOutgoingAudioSource() { stop(); }
 
     void stop();
 
-    bool setSource(Ref<RealtimeMediaSource>&&);
-    RealtimeMediaSource& source() const { return m_audioSource.get(); }
+    bool setSource(Ref<MediaStreamTrackPrivate>&&);
+    MediaStreamTrackPrivate& source() const { return m_audioSource.get(); }
 
 private:
-    explicit RealtimeOutgoingAudioSource(Ref<RealtimeMediaSource>&&);
+    explicit RealtimeOutgoingAudioSource(Ref<MediaStreamTrackPrivate>&&);
 
     virtual void AddSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.append(sink); }
     virtual void RemoveSink(webrtc::AudioTrackSinkInterface* sink) { m_sinks.removeFirst(sink); }
@@ -66,17 +66,23 @@ private:
     void RegisterObserver(webrtc::ObserverInterface*) final { }
     void UnregisterObserver(webrtc::ObserverInterface*) final { }
 
-    // RealtimeMediaSource::Observer API
-    void sourceMutedChanged() final;
-    void sourceEnabledChanged() final;
-    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
+    void sourceMutedChanged();
+    void sourceEnabledChanged();
+    void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
+
+    // MediaStreamTrackPrivate::Observer API
+    void trackMutedChanged(MediaStreamTrackPrivate&) final { sourceMutedChanged(); }
+    void trackEnabledChanged(MediaStreamTrackPrivate&) final { sourceEnabledChanged(); }
+    void audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime& mediaTime, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount) final { audioSamplesAvailable(mediaTime, data, description, sampleCount); }
+    void trackEnded(MediaStreamTrackPrivate&) final { }
+    void trackSettingsChanged(MediaStreamTrackPrivate&) final { }
 
     void pullAudioData();
 
     void initializeConverter();
 
     Vector<webrtc::AudioTrackSinkInterface*> m_sinks;
-    Ref<RealtimeMediaSource> m_audioSource;
+    Ref<MediaStreamTrackPrivate> m_audioSource;
     Ref<AudioSampleDataSource> m_sampleConverter;
     CAAudioStreamDescription m_inputStreamDescription;
     CAAudioStreamDescription m_outputStreamDescription;

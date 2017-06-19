@@ -60,13 +60,6 @@ const RealtimeMediaSourceSettings& MediaStreamAudioSource::settings() const
     return m_currentSettings;
 }
 
-AudioSourceProvider* MediaStreamAudioSource::audioSourceProvider()
-{
-    // FIXME: implement this.
-    notImplemented();
-    return nullptr;
-}
-
 void MediaStreamAudioSource::addAudioConsumer(AudioDestinationConsumer* consumer)
 {
     LockHolder locker(m_audioConsumersLock);
