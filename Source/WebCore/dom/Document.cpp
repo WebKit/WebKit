@@ -38,6 +38,7 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedFrame.h"
 #include "CachedResourceLoader.h"
+#include "CanvasRenderingContext2D.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Comment.h"
@@ -276,6 +277,17 @@
 #include "MediaStream.h"
 #include "MediaStreamRegistry.h"
 #endif
+
+#if ENABLE(WEBGL)
+#include "WebGLRenderingContext.h"
+#endif
+#if ENABLE(WEBGL2)
+#include "WebGL2RenderingContext.h"
+#endif
+#if ENABLE(WEBGPU)
+#include "WebGPURenderingContext.h"
+#endif
+
 
 using namespace WTF;
 using namespace Unicode;
@@ -5450,13 +5462,30 @@ void Document::detachRange(Range* range)
     m_ranges.remove(range);
 }
 
-CanvasRenderingContext* Document::getCSSCanvasContext(const String& type, const String& name, int width, int height)
+std::optional<RenderingContext> Document::getCSSCanvasContext(const String& type, const String& name, int width, int height)
 {
     HTMLCanvasElement* element = getCSSCanvasElement(name);
     if (!element)
-        return nullptr;
-    element->setSize(IntSize(width, height));
-    return element->getContext(type);
+        return std::nullopt;
+    element->setSize({ width, height });
+    auto context = element->getContext(type);
+    if (!context)
+        return std::nullopt;
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContext>(*context))
+        return RenderingContext { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*context) } };
+#endif
+#if ENABLE(WEBGL2)
+    if (is<WebGL2RenderingContext>(*context))
+        return RenderingContext { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*context) } };
+#endif
+#if ENABLE(WEBGPU)
+    if (is<WebGPURenderingContext>(*context))
+        return RenderingContext { RefPtr<WebGPURenderingContext> { &downcast<WebGPURenderingContext>(*context) } };
+#endif
+
+    return RenderingContext { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*context) } };
 }
 
 HTMLCanvasElement* Document::getCSSCanvasElement(const String& name)

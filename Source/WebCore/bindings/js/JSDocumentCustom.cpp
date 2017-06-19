@@ -20,32 +20,14 @@
 #include "config.h"
 #include "JSDocument.h"
 
-#include "ExceptionCode.h"
 #include "Frame.h"
-#include "FrameLoader.h"
-#include "HTMLDocument.h"
-#include "JSCanvasRenderingContext2D.h"
-#include "JSDOMConvertNumbers.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
-#include "JSLocation.h"
 #include "JSXMLDocument.h"
 #include "NodeTraversal.h"
 #include "SVGDocument.h"
 #include "ScriptController.h"
 #include "XMLDocument.h"
-#include <wtf/GetPtr.h>
-
-#if ENABLE(WEBGL)
-#include "JSWebGLRenderingContext.h"
-#if ENABLE(WEBGL2)
-#include "JSWebGL2RenderingContext.h"
-#endif
-#endif
-
-#if ENABLE(WEBGPU)
-#include "JSWebGPURenderingContext.h"
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
 #include "JSTouch.h"
@@ -112,6 +94,11 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, Document& docume
     return toJSNewlyCreated(state, globalObject, Ref<Document>(document));
 }
 
+void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)
+{
+    visitor.addOpaqueRoot(static_cast<ScriptExecutionContext*>(&wrapped()));
+}
+
 #if ENABLE(TOUCH_EVENTS)
 JSValue JSDocument::createTouchList(ExecState& state)
 {
@@ -131,45 +118,5 @@ JSValue JSDocument::createTouchList(ExecState& state)
 }
 #endif
 
-JSValue JSDocument::getCSSCanvasContext(JSC::ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 4))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-    auto contextId = state.uncheckedArgument(0).toWTFString(&state);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    auto name = state.uncheckedArgument(1).toWTFString(&state);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    auto width = convert<IDLLong>(state, state.uncheckedArgument(2));
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    auto height = convert<IDLLong>(state, state.uncheckedArgument(3));
-    RETURN_IF_EXCEPTION(scope, JSValue());
-
-    auto* context = wrapped().getCSSCanvasContext(WTFMove(contextId), WTFMove(name), WTFMove(width), WTFMove(height));
-    if (!context)
-        return jsNull();
-
-#if ENABLE(WEBGL)
-    if (is<WebGLRenderingContext>(*context))
-        return toJS(&state, globalObject(), downcast<WebGLRenderingContext>(*context));
-#if ENABLE(WEBGL2)
-    if (is<WebGL2RenderingContext>(*context))
-        return toJS(&state, globalObject(), downcast<WebGL2RenderingContext>(*context));
-#endif
-#endif
-#if ENABLE(WEBGPU)
-    if (is<WebGPURenderingContext>(*context))
-        return toJS(&state, globalObject(), downcast<WebGPURenderingContext>(*context));
-#endif
-
-    return toJS(&state, globalObject(), downcast<CanvasRenderingContext2D>(*context));
-}
-
-void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)
-{
-    visitor.addOpaqueRoot(static_cast<ScriptExecutionContext*>(&wrapped()));
-}
 
 } // namespace WebCore

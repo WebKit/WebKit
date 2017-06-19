@@ -56,6 +56,8 @@
 #include <wtf/Deque.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/Optional.h>
+#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -81,7 +83,7 @@ class CachedCSSStyleSheet;
 class CachedFrameBase;
 class CachedResourceLoader;
 class CachedScript;
-class CanvasRenderingContext;
+class CanvasRenderingContext2D;
 class CharacterData;
 class Comment;
 class ConstantPropertyMap;
@@ -167,6 +169,9 @@ class TextResourceDecoder;
 class TreeWalker;
 class VisibilityChangeClient;
 class VisitedLinkState;
+class WebGL2RenderingContext;
+class WebGLRenderingContext;
+class WebGPURenderingContext;
 class XPathEvaluator;
 class XPathExpression;
 class XPathNSResolver;
@@ -283,6 +288,18 @@ enum class CustomElementNameValidationStatus {
     ContainsDisallowedCharacter,
     ConflictsWithStandardElementName
 };
+
+using RenderingContext = Variant<
+#if ENABLE(WEBGL)
+    RefPtr<WebGLRenderingContext>,
+#endif
+#if ENABLE(WEBGL2)
+    RefPtr<WebGL2RenderingContext>,
+#endif
+#if ENABLE(WEBGPU)
+    RefPtr<WebGPURenderingContext>,
+#endif
+    RefPtr<CanvasRenderingContext2D>>;
 
 class Document
     : public ContainerNode
@@ -965,7 +982,7 @@ public:
     void cancelFocusAppearanceUpdate();
 
     // Extension for manipulating canvas drawing contexts for use in CSS
-    CanvasRenderingContext* getCSSCanvasContext(const String& type, const String& name, int width, int height);
+    std::optional<RenderingContext> getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
 
     bool isDNSPrefetchEnabled() const { return m_isDNSPrefetchEnabled; }

@@ -18,6 +18,18 @@
  * Boston, MA 02110-1301, USA.
  */
 
+typedef (
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+    WebGLRenderingContext or
+#endif
+#if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
+    WebGL2RenderingContext or
+#endif
+#if defined(ENABLE_WEBGPU) && ENABLE_WEBGPU
+    WebGPURenderingContext or
+#endif
+    CanvasRenderingContext2D) RenderingContext;
+
 [
     Constructor,
     ConstructorCallWith=Document,
@@ -175,7 +187,7 @@
     Range caretRangeFromPoint(optional long x = 0, optional long y = 0);
 
     // FIXME: This is not standard and has been dropped from Blink already.
-    [Custom] (CanvasRenderingContext2D or WebGLRenderingContextBase) getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
+    RenderingContext? getCSSCanvasContext(DOMString contextId, DOMString name, long width, long height);
 
     // Non standard (https://developer.apple.com/reference/webkitjs/document/1633863-webkitgetnamedflows).
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
