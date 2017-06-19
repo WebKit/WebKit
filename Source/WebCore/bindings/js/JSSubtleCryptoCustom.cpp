@@ -447,7 +447,7 @@ static KeyData toKeyData(ExecState& state, SubtleCrypto::KeyFormat format, JSVal
     case SubtleCrypto::KeyFormat::Spki:
     case SubtleCrypto::KeyFormat::Pkcs8:
     case SubtleCrypto::KeyFormat::Raw: {
-        BufferSource bufferSource = convert<IDLBufferSource>(state, value);
+        BufferSource bufferSource = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, value);
         RETURN_IF_EXCEPTION(scope, result);
         Vector<uint8_t> vector;
         vector.append(bufferSource.data(), bufferSource.length());
@@ -489,7 +489,7 @@ static Vector<uint8_t> toVector(ExecState& state, JSValue value)
     VM& vm = state.vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    BufferSource data = convert<IDLBufferSource>(state, value);
+    BufferSource data = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, value);
     RETURN_IF_EXCEPTION(scope, { });
     Vector<uint8_t> dataVector;
     dataVector.append(data.data(), data.length());

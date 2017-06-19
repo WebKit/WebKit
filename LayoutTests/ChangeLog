@@ -1,3 +1,15 @@
+2017-06-19  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Properly model buffer source / typed arrays as their own IDL types
+        https://bugs.webkit.org/show_bug.cgi?id=173513
+
+        Reviewed by Alex Christensen.
+
+        * crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt:
+        * crypto/subtle/hkdf-derive-bits-malformed-parametrs-expected.txt:
+        * crypto/subtle/pbkdf2-derive-bits-malformed-parametrs-expected.txt:
+        Update results for changed exception language.
+
 2017-06-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         Unreviewed GTK+ gardening

@@ -314,6 +314,8 @@ sub Parse
     $self->{DocumentContent} = join(' ', @lines);
     $self->{ExtendedAttributeMap} = $idlAttributes;
 
+    addBuiltinTypedefs();
+
     $self->getToken();
     eval {
         my $result = $self->parseDefinitions();
@@ -504,13 +506,6 @@ sub typeDescription
     return $type->name . ($type->isNullable ? "?" : "");
 }
 
-sub makeSimpleType
-{
-    my $typeName = shift;
-
-    return IDLType->new(name => $typeName);
-}
-
 sub cloneType
 {
     my $type = shift;
@@ -565,6 +560,32 @@ sub cloneOperation
     copyExtendedAttributes($clonedOperation->extendedAttributes, $operation->extendedAttributes);
 
     return $clonedOperation;
+}
+
+sub makeSimpleType
+{
+    my $typeName = shift;
+
+    return IDLType->new(name => $typeName);
+}
+
+sub addBuiltinTypedefs()
+{
+    # NOTE: This leaves out the ArrayBufferView definition as it is
+    # treated as its own type, and not a union, to allow us to utilize
+    # the shared base class all the members of the union have.
+
+    # typedef (ArrayBufferView or ArrayBuffer) BufferSource;
+
+    my $bufferSourceType = IDLType->new(name => "UNION", isUnion => 1);
+    push(@{$bufferSourceType->subtypes}, makeSimpleType("ArrayBufferView"));
+    push(@{$bufferSourceType->subtypes}, makeSimpleType("ArrayBuffer"));
+    $typedefs{"BufferSource"} = IDLTypedef->new(type => $bufferSourceType);
+
+    # typedef unsigned long long DOMTimeStamp;
+
+    my $DOMTimeStampType = IDLType->new(name => "unsigned long long");
+    $typedefs{"DOMTimeStamp"} = IDLTypedef->new(type => $DOMTimeStampType);
 }
 
 my $nextAttribute_1 = '^(attribute|inherit)$';
@@ -625,7 +646,6 @@ sub applyTypedefs
         return;
     }
     
-    # FIXME: Add support for applying typedefs to IDLIterable.
     foreach my $definition (@$definitions) {
         if (ref($definition) eq "IDLInterface") {
             foreach my $constant (@{$definition->constants}) {
@@ -636,6 +656,31 @@ sub applyTypedefs
             }
             foreach my $operation (@{$definition->operations}, @{$definition->anonymousOperations}, @{$definition->constructors}, @{$definition->customConstructors}) {
                 $self->applyTypedefsToOperation($operation);
+            }
+            if ($definition->iterable) {
+                if ($definition->iterable->keyType) {
+                    $definition->iterable->keyType($self->typeByApplyingTypedefs($definition->iterable->keyType));
+                }
+                if ($definition->iterable->valueType) {
+                    $definition->iterable->valueType($self->typeByApplyingTypedefs($definition->iterable->valueType));
+                }
+                foreach my $operation (@{$definition->iterable->operations}) {
+                    $self->applyTypedefsToOperation($operation);
+                }
+            }
+            if ($definition->mapLike) {
+                if ($definition->mapLike->keyType) {
+                    $definition->mapLike->keyType($self->typeByApplyingTypedefs($definition->mapLike->keyType));
+                }
+                if ($definition->mapLike->valueType) {
+                    $definition->mapLike->valueType($self->typeByApplyingTypedefs($definition->mapLike->valueType));
+                }
+                foreach my $attribute (@{$definition->mapLike->attributes}) {
+                    $attribute->type($self->typeByApplyingTypedefs($attribute->type));
+                }
+                foreach my $operation (@{$definition->mapLike->operations}) {
+                    $self->applyTypedefsToOperation($operation);
+                }
             }
         } elsif (ref($definition) eq "IDLDictionary") {
             foreach my $member (@{$definition->members}) {

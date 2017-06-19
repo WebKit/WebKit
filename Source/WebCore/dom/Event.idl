@@ -18,10 +18,6 @@
  * Boston, MA 02110-1301, USA.
  */
 
-// FIXME: This should be an implementation provided typedef
-// https://heycam.github.io/webidl/#DOMTimeStamp
-typedef unsigned long long DOMTimeStamp;
-
 [
     Constructor(DOMString type, optional EventInit eventInitDict),
     CustomToJSObject,

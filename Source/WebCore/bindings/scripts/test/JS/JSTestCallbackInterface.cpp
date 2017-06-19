@@ -184,7 +184,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     return { };
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::callbackWithArrayParam(typename IDLInterface<Float32Array>::ParameterType arrayParam)
+CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::callbackWithArrayParam(typename IDLFloat32Array::ParameterType arrayParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -197,7 +197,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackInterface::ca
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS<IDLInterface<Float32Array>>(state, globalObject, arrayParam));
+    args.append(toJS<IDLFloat32Array>(state, globalObject, arrayParam));
 
     NakedPtr<JSC::Exception> returnedException;
     m_data->invokeCallback(args, JSCallbackData::CallbackType::Object, Identifier::fromString(&vm, "callbackWithArrayParam"), returnedException);

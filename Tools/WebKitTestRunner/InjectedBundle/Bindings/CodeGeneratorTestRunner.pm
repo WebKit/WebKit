@@ -392,7 +392,7 @@ sub _includeHeaders
     return unless defined $type;
     return if $type->name eq "boolean";
     return if $type->name eq "object";
-    return if $$self{codeGenerator}->IsNonPointerType($type);
+    return if $$self{codeGenerator}->IsPrimitiveType($type);
     return if $$self{codeGenerator}->IsStringType($type);
 
     $$headers{_className($type) . ".h"} = 1;
@@ -437,7 +437,7 @@ sub _platformType
     return "bool" if $type->name eq "boolean";
     return "JSValueRef" if $type->name eq "object";
     return "JSRetainPtr<JSStringRef>" if $$self{codeGenerator}->IsStringType($type);
-    return "double" if $$self{codeGenerator}->IsNonPointerType($type);
+    return "double" if $$self{codeGenerator}->IsPrimitiveType($type);
     return _implementationClassName($type);
 }
 
@@ -449,7 +449,7 @@ sub _platformTypeConstructor
     return "JSValueToBoolean(context, $argumentName)" if $type->name eq "boolean";
     return "$argumentName" if $type->name eq "object";
     return "JSRetainPtr<JSStringRef>(Adopt, JSValueToStringCopy(context, $argumentName, 0))" if $$self{codeGenerator}->IsStringType($type);
-    return "JSValueToNumber(context, $argumentName, 0)" if $$self{codeGenerator}->IsNonPointerType($type);
+    return "JSValueToNumber(context, $argumentName, 0)" if $$self{codeGenerator}->IsPrimitiveType($type);
     return "to" . _implementationClassName($type) . "(context, $argumentName)";
 }
 
@@ -489,7 +489,7 @@ sub _returnExpression
     return "JSValueMakeBooleanOrNull(context, ${expression})" if $returnType->name eq "boolean" && $returnType->isNullable;
     return "JSValueMakeBoolean(context, ${expression})" if $returnType->name eq "boolean";
     return "${expression}" if $returnType->name eq "object";
-    return "JSValueMakeNumber(context, ${expression})" if $$self{codeGenerator}->IsNonPointerType($returnType);
+    return "JSValueMakeNumber(context, ${expression})" if $$self{codeGenerator}->IsPrimitiveType($returnType);
     return "JSValueMakeStringOrNull(context, ${expression}.get())" if $$self{codeGenerator}->IsStringType($returnType);
     return "toJS(context, WTF::getPtr(${expression}))";
 }

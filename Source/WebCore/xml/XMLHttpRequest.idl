@@ -26,7 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef (ArrayBufferView or ArrayBuffer) BufferSource;
 // FIXME: Add URLSearchParams and ReadableStream to the union when supported.
 typedef (Blob or BufferSource or DOMFormData or USVString) BodyInit;
 

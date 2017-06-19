@@ -318,14 +318,8 @@ sub AddToIncludesForIDLType
         return;
     }
 
-    if ($codeGenerator->IsTypedArrayType($type)) {
+    if ($codeGenerator->IsBufferSourceType($type)) {
         AddToIncludes("JSDOMConvertBufferSource.h", $includesRef, $conditional);
-        return;
-    }
-
-    if ($type->name eq "BufferSource") {
-        AddToIncludes("JSDOMConvertBufferSource.h", $includesRef, $conditional);
-        AddToIncludes("JSDOMConvertUnion.h", $includesRef, $conditional);
         return;
     }
 
@@ -466,8 +460,7 @@ sub AddClassForwardIfNeeded
 
     # SVGAnimatedLength/Number/etc. are not classes so they can't be forward declared as classes.
     return if $codeGenerator->IsSVGAnimatedType($type);
-    return if $codeGenerator->IsTypedArrayType($type);
-    return if $type->name eq "BufferSource";
+    return if $codeGenerator->IsBufferSourceType($type);
 
     push(@headerContent, "class " . $type->name . ";\n\n");
 }
@@ -1428,20 +1421,29 @@ sub ShouldGenerateToJSImplementation
     return 0;
 }
 
+sub GetTypeNameForDisplayInException
+{
+    my ($type) = @_;
+
+    # FIXME: Add more type specializations.
+    return "(" . join(" or ", map { $_->name } GetFlattenedMemberTypes($type)) . ")" if $type->isUnion;
+    return $type->name;
+}
+
 sub GetArgumentExceptionFunction
 {
     my ($interface, $argument, $argumentIndex, $quotedFunctionName) = @_;
 
     my $name = $argument->name;
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
-    my $typeName = $argument->type->name;
+    my $typeName = GetTypeNameForDisplayInException($argument->type);
 
     if ($codeGenerator->IsCallbackInterface($argument->type) || $codeGenerator->IsCallbackFunction($argument->type)) {
         # FIXME: We should have specialized messages for callback interfaces vs. callback functions.
         return "throwArgumentMustBeFunctionError(state, scope, ${argumentIndex}, \"${name}\", \"${visibleInterfaceName}\", ${quotedFunctionName});";
     }
 
-    if ($codeGenerator->IsWrapperType($argument->type) || $codeGenerator->IsTypedArrayType($argument->type)) {
+    if ($codeGenerator->IsWrapperType($argument->type) || $codeGenerator->IsBufferSourceType($argument->type)) {
         return "throwArgumentTypeError(state, scope, ${argumentIndex}, \"${name}\", \"${visibleInterfaceName}\", ${quotedFunctionName}, \"${typeName}\");";
     }
 
@@ -1467,9 +1469,9 @@ sub GetAttributeExceptionFunction
     
     my $name = $attribute->name;
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
-    my $typeName = $attribute->type->name;
+    my $typeName = GetTypeNameForDisplayInException($attribute->type);
 
-    if ($codeGenerator->IsWrapperType($attribute->type) || $codeGenerator->IsTypedArrayType($attribute->type)) {
+    if ($codeGenerator->IsWrapperType($attribute->type) || $codeGenerator->IsBufferSourceType($attribute->type)) {
         return "throwAttributeTypeError(state, scope, \"${visibleInterfaceName}\", \"${name}\", \"${typeName}\");";
     }
 }
@@ -1491,7 +1493,7 @@ sub PassArgumentExpression
 
     return "WTFMove(${name})" if $type->isNullable;
     
-    if ($codeGenerator->IsTypedArrayType($type)) {
+    if ($codeGenerator->IsBufferSourceType($type)) {
         return "*${name}" if $type->name eq "ArrayBuffer";
         return "${name}.releaseNonNull()";
     }
@@ -2114,7 +2116,7 @@ sub GenerateDefaultValue
         }
 
         return "jsNull()" if $type->name eq "any";
-        return "nullptr" if $codeGenerator->IsWrapperType($type) || $codeGenerator->IsTypedArrayType($type);
+        return "nullptr" if $codeGenerator->IsWrapperType($type) || $codeGenerator->IsBufferSourceType($type);
         return "String()" if $codeGenerator->IsStringType($type);
         return "std::nullopt";
     }
@@ -2256,7 +2258,7 @@ sub GenerateDictionaryImplementationContent
             } elsif ($member->isRequired) {
                 # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
                 $result .= "    } else {\n";
-                $result .= "        throwRequiredMemberTypeError(state, throwScope, \"". $member->name ."\", \"$name\", \"". $type->name ."\");\n";
+                $result .= "        throwRequiredMemberTypeError(state, throwScope, \"". $member->name ."\", \"$name\", \"". GetTypeNameForDisplayInException($type) ."\");\n";
                 $result .= "        return { };\n";
                 $result .= "    }\n";
             } else {
@@ -3339,7 +3341,7 @@ sub GenerateOverloadDispatcher
 
                 my @subtypes = $type->isUnion ? GetFlattenedMemberTypes($type) : ( $type );
                 for my $subtype (@subtypes) {
-                    if ($codeGenerator->IsWrapperType($subtype) || $codeGenerator->IsTypedArrayType($subtype)) {
+                    if ($codeGenerator->IsWrapperType($subtype) || $codeGenerator->IsBufferSourceType($subtype)) {
                         if ($subtype->name eq "DOMWindow") {
                             AddToImplIncludes("JSDOMWindowProxy.h");
                             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && (asObject(distinguishingArg)->inherits(vm, JSDOMWindowProxy::info()) || asObject(distinguishingArg)->inherits(vm, JSDOMWindow::info()))");
@@ -6177,16 +6179,25 @@ sub GetBaseIDLType
         "ByteString" => "IDLByteString",
         "USVString" => "IDLUSVString",
         "object" => "IDLObject",
-        
+        "ArrayBuffer" => "IDLArrayBuffer",
+        "ArrayBufferView" => "IDLArrayBufferView",
+        "DataView" => "IDLDataView",
+        "Int8Array" => "IDLInt8Array",
+        "Int16Array" => "IDLInt16Array",
+        "Int32Array" => "IDLInt32Array",
+        "Uint8Array" => "IDLUint8Array",
+        "Uint16Array" => "IDLUint16Array",
+        "Uint32Array" => "IDLUint32Array",
+        "Uint8ClampedArray" => "IDLUint8ClampedArray",
+        "Float32Array" => "IDLFloat32Array",
+        "Float64Array" => "IDLFloat64Array",
+
         # Non-WebIDL extensions
         "Date" => "IDLDate",
         "EventListener" => "IDLEventListener<JSEventListener>",
         "JSON" => "IDLJSON",
         "SerializedScriptValue" => "IDLSerializedScriptValue<SerializedScriptValue>",
         "XPathNSResolver" => "IDLXPathNSResolver<XPathNSResolver>",
-
-        # Convenience type aliases
-        "BufferSource" => "IDLBufferSource",
     );
 
     return $IDLTypes{$type->name} if exists $IDLTypes{$type->name};
@@ -6200,7 +6211,7 @@ sub GetBaseIDLType
     return "IDLCallbackFunction<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackFunction($type);
     return "IDLCallbackInterface<" . GetCallbackClassName($type->name) . ">" if $codeGenerator->IsCallbackInterface($type);
 
-    assert("Unknown type '" . $type->name . "'.\n") unless $codeGenerator->IsInterfaceType($type) || $codeGenerator->IsTypedArrayType($type);
+    assert("Unknown type '" . $type->name . "'.\n") unless $codeGenerator->IsInterfaceType($type);
     return "IDLInterface<" . $type->name . ">";
 }
 
@@ -6231,7 +6242,7 @@ sub ShouldPassArgumentByReference
     return 0 if $type->isNullable;
     return 0 if $codeGenerator->IsCallbackInterface($type);
     return 0 if $codeGenerator->IsCallbackFunction($type);
-    return 0 if !$codeGenerator->IsWrapperType($type) && !$codeGenerator->IsTypedArrayType($type);
+    return 0 if !$codeGenerator->IsWrapperType($type) && !$codeGenerator->IsBufferSourceType($type);
 
     return 1;
 }
@@ -6338,7 +6349,7 @@ sub NativeToJSValueDOMConvertNeedsState
     return 1 if $codeGenerator->IsEnumType($type);
     return 1 if $codeGenerator->IsDictionaryType($type);
     return 1 if $codeGenerator->IsInterfaceType($type);
-    return 1 if $codeGenerator->IsTypedArrayType($type);
+    return 1 if $codeGenerator->IsBufferSourceType($type);
     return 1 if $type->name eq "Date";
     return 1 if $type->name eq "JSON";
     return 1 if $type->name eq "SerializedScriptValue";
@@ -6368,7 +6379,7 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
     return 1 if $codeGenerator->IsRecordType($type);
     return 1 if $codeGenerator->IsDictionaryType($type);
     return 1 if $codeGenerator->IsInterfaceType($type);
-    return 1 if $codeGenerator->IsTypedArrayType($type);
+    return 1 if $codeGenerator->IsBufferSourceType($type);
     return 1 if $type->name eq "SerializedScriptValue";
     return 1 if $type->name eq "XPathNSResolver";
 

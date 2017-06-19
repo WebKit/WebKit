@@ -62,7 +62,7 @@ JSTestVoidCallbackFunction::~JSTestVoidCallbackFunction()
 #endif
 }
 
-CallbackResult<typename IDLVoid::ImplementationType> JSTestVoidCallbackFunction::handleEvent(typename IDLInterface<Float32Array>::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
+CallbackResult<typename IDLVoid::ImplementationType> JSTestVoidCallbackFunction::handleEvent(typename IDLFloat32Array::ParameterType arrayParam, typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strArg, typename IDLBoolean::ParameterType boolParam, typename IDLLong::ParameterType longParam, typename IDLInterface<TestNode>::ParameterType testNodeParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
@@ -75,7 +75,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestVoidCallbackFunction:
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS<IDLInterface<Float32Array>>(state, globalObject, arrayParam));
+    args.append(toJS<IDLFloat32Array>(state, globalObject, arrayParam));
     args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, globalObject, srzParam));
     args.append(toJS<IDLDOMString>(state, strArg));
     args.append(toJS<IDLBoolean>(boolParam));

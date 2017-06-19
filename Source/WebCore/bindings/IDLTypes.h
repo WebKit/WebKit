@@ -38,6 +38,7 @@
 namespace JSC {
 class ArrayBuffer;
 class ArrayBufferView;
+class DataView;
 class JSValue;
 class JSObject;
 template<typename> class Strong;
@@ -214,6 +215,20 @@ struct IDLUnion : IDLType<Variant<typename Ts::ImplementationType...>> {
     using NullableParameterType = const std::optional<Variant<typename Ts::ImplementationType...>>&;
 };
 
+template<typename T> struct IDLBufferSource : IDLWrapper<T> { };
+
+struct IDLArrayBuffer : IDLBufferSource<JSC::ArrayBuffer> { };
+// NOTE: WebIDL defines ArrayBufferView as an IDL union of all the TypedArray types.
+//       and DataView. For convience in our implementation, we give it a distinct
+//       type that maps to the shared based class of all those classes.
+struct IDLArrayBufferView : IDLBufferSource<JSC::ArrayBufferView> { };
+struct IDLDataView : IDLBufferSource<JSC::DataView> { };
+
+template<typename T> struct IDLTypedArray : IDLBufferSource<T> { };
+// NOTE: The specific typed array types are IDLTypedArray specialized on the typed array
+//       implementation type, e.g. IDLFloat64Array is IDLTypedArray<JSC::Float64Array>
+
+
 // Non-WebIDL extensions
 
 struct IDLDate : IDLType<double> { 
@@ -244,11 +259,6 @@ struct IDLIDBValue : IDLWrapper<IDBValue> { };
 #if ENABLE(WEBGL)
 struct IDLWebGLAny : IDLType<WebGLAny> { };
 #endif
-
-// Non-WebIDL convenience type aliases
-
-using IDLBufferSource = IDLUnion<IDLInterface<JSC::ArrayBufferView>, IDLInterface<JSC::ArrayBuffer>>;
-
 
 // Helper predicates
 
@@ -284,5 +294,8 @@ struct IsIDLInteger : public std::integral_constant<bool, WTF::IsBaseOfTemplate<
 
 template<typename T>
 struct IsIDLFloatingPoint : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLFloatingPoint, T>::value> { };
+
+template<typename T>
+struct IsIDLTypedArray : public std::integral_constant<bool, WTF::IsBaseOfTemplate<IDLTypedArray, T>::value> { };
 
 } // namespace WebCore

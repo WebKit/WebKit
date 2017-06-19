@@ -7,13 +7,13 @@ PASS crypto.subtle.deriveBits("HKDF", baseKey, null) rejected promise  with Type
 PASS crypto.subtle.deriveBits({name: "HKDF"}, baseKey, null) rejected promise  with TypeError: Member HkdfParams.hash is required and must be an instance of any.
 PASS crypto.subtle.deriveBits({name: "HKDF", salt: true, info: info, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "HKDF", salt: null, info: info, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
-PASS crypto.subtle.deriveBits({name: "HKDF", salt: undefined, info: info, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Member HkdfParams.salt is required and must be an instance of BufferSource.
+PASS crypto.subtle.deriveBits({name: "HKDF", salt: undefined, info: info, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Member HkdfParams.salt is required and must be an instance of (ArrayBufferView or ArrayBuffer).
 PASS crypto.subtle.deriveBits({name: "HKDF", salt: Symbol(), info: info, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "HKDF", salt: { }, info: info, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "HKDF", salt: 1, info: info, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "HKDF", info: true, salt: salt, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "HKDF", info: null, salt: salt, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
-PASS crypto.subtle.deriveBits({name: "HKDF", info: undefined, salt: salt, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Member HkdfParams.info is required and must be an instance of BufferSource.
+PASS crypto.subtle.deriveBits({name: "HKDF", info: undefined, salt: salt, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Member HkdfParams.info is required and must be an instance of (ArrayBufferView or ArrayBuffer).
 PASS crypto.subtle.deriveBits({name: "HKDF", info: Symbol(), salt: salt, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "HKDF", info: { }, salt: salt, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "HKDF", info: 1, salt: salt, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.

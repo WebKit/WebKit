@@ -1,3 +1,14 @@
+2017-06-19  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Properly model buffer source / typed arrays as their own IDL types
+        https://bugs.webkit.org/show_bug.cgi?id=173513
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt:
+        Update results for changed exception language.
+
 2017-06-17  Simon Fraser  <simon.fraser@apple.com>
 
         Implement DOMQuad

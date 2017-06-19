@@ -47,7 +47,7 @@ public:
 
     // Functions
     virtual CallbackResult<typename IDLVoid::ImplementationType> callbackWithNoParam() override;
-    virtual CallbackResult<typename IDLVoid::ImplementationType> callbackWithArrayParam(typename IDLInterface<Float32Array>::ParameterType arrayParam) override;
+    virtual CallbackResult<typename IDLVoid::ImplementationType> callbackWithArrayParam(typename IDLFloat32Array::ParameterType arrayParam) override;
     virtual CallbackResult<typename IDLVoid::ImplementationType> callbackWithSerializedScriptValueParam(typename IDLSerializedScriptValue<SerializedScriptValue>::ParameterType srzParam, typename IDLDOMString::ParameterType strParam) override;
     virtual CallbackResult<typename IDLLong::ImplementationType> customCallback(typename IDLInterface<TestObj>::ParameterType testObjParam, typename IDLInterface<TestNode>::ParameterType testNodeParam) override;
     virtual CallbackResult<typename IDLVoid::ImplementationType> callbackWithStringList(typename IDLInterface<DOMStringList>::ParameterType listParam) override;

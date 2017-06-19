@@ -72,6 +72,10 @@
     [SetterMayThrowException] attribute long attrWithSetterException;
     [GetterMayThrowException] attribute DOMString stringAttrWithGetterException;
     [SetterMayThrowException] attribute DOMString stringAttrWithSetterException;
+
+    // Builtin Typedefs
+    attribute BufferSource bufferSourceAttr;
+    attribute DOMTimeStamp domTimeStampAttr;
 };
 
 typedef unrestricted float         DOUBLE;

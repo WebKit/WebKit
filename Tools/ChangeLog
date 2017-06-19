@@ -1,3 +1,14 @@
+2017-06-19  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Properly model buffer source / typed arrays as their own IDL types
+        https://bugs.webkit.org/show_bug.cgi?id=173513
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/Bindings/CodeGeneratorDumpRenderTree.pm:
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        Replace IsNonPointerType subroutine with IsPrimitiveType so we can remove IsNonPointerType.
+
 2017-06-19  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] fast/dom/assign-to-window-status.html is flaky.

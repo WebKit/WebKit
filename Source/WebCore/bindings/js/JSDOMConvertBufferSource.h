@@ -26,34 +26,24 @@
 #pragma once
 
 #include "BufferSource.h"
-#include "JSDOMConvertInterface.h"
+#include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
+#include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
 #include "JSDynamicDowncast.h"
 #include <runtime/JSTypedArrays.h>
 
 namespace WebCore {
 
-// FIXME: It is wrong that we treat buffer related types as interfaces, they should be their own IDL type. 
-
-// Add adaptors to make ArrayBuffer / ArrayBufferView / typed arrays act like normal interfaces.
-
-template<typename ImplementationClass> struct JSDOMWrapperConverterTraits;
-
-template<> struct JSDOMWrapperConverterTraits<JSC::ArrayBuffer> {
-    using WrapperClass = JSC::JSArrayBuffer;
-    using ToWrappedReturnType = JSC::ArrayBuffer*;
-};
-
-template<> struct JSDOMWrapperConverterTraits<JSC::ArrayBufferView> {
-    using WrapperClass = JSC::JSArrayBufferView;
-    using ToWrappedReturnType = RefPtr<ArrayBufferView>;
-};
-
-template<typename Adaptor> struct JSDOMWrapperConverterTraits<JSC::GenericTypedArrayView<Adaptor>> {
-    using WrapperClass = JSC::JSGenericTypedArrayView<Adaptor>;
-    using ToWrappedReturnType = RefPtr<JSC::GenericTypedArrayView<Adaptor>>;
-};
-
+struct IDLInt8Array : IDLTypedArray<JSC::Int8Array> { };
+struct IDLInt16Array : IDLTypedArray<JSC::Int16Array> { };
+struct IDLInt32Array : IDLTypedArray<JSC::Int32Array> { };
+struct IDLUint8Array : IDLTypedArray<JSC::Uint8Array> { };
+struct IDLUint16Array : IDLTypedArray<JSC::Uint16Array> { };
+struct IDLUint32Array : IDLTypedArray<JSC::Uint32Array> { };
+struct IDLUint8ClampedArray : IDLTypedArray<JSC::Uint8ClampedArray> { };
+struct IDLFloat32Array : IDLTypedArray<JSC::Float32Array> { };
+struct IDLFloat64Array : IDLTypedArray<JSC::Float64Array> { };
 
 inline RefPtr<JSC::Int8Array> toPossiblySharedInt8Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Int8Adaptor>(vm, value); }
 inline RefPtr<JSC::Int16Array> toPossiblySharedInt16Array(JSC::VM& vm, JSC::JSValue value) { return JSC::toPossiblySharedNativeTypedView<JSC::Int16Adaptor>(vm, value); }
@@ -118,5 +108,290 @@ inline RefPtr<JSC::ArrayBufferView> toUnsharedArrayBufferView(JSC::VM& vm, JSC::
         return nullptr;
     return result;
 }
+
+namespace Detail {
+
+template<typename BufferSourceType>
+struct BufferSourceConverter {
+    using WrapperType = typename Converter<BufferSourceType>::WrapperType;
+    using ReturnType = typename Converter<BufferSourceType>::ReturnType;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        auto& vm = state.vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+        ReturnType object = WrapperType::toWrapped(vm, value);
+        if (UNLIKELY(!object))
+            exceptionThrower(state, scope);
+        return object;
+    }
+};
+
+}
+
+template<> struct Converter<IDLArrayBuffer> : DefaultConverter<IDLArrayBuffer> {
+    using WrapperType = JSC::JSArrayBuffer;
+    using ReturnType = JSC::ArrayBuffer*;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLArrayBuffer>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLArrayBuffer> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLDataView> : DefaultConverter<IDLDataView> {
+    using WrapperType = JSC::JSDataView;
+    using ReturnType = RefPtr<JSC::DataView>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLDataView>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLDataView> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLInt8Array> : DefaultConverter<IDLInt8Array> {
+    using WrapperType = JSC::JSInt8Array;
+    using ReturnType = RefPtr<JSC::Int8Array>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLInt8Array>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLInt8Array> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLInt16Array> : DefaultConverter<IDLInt16Array> {
+    using WrapperType = JSC::JSInt16Array;
+    using ReturnType = RefPtr<JSC::Int16Array>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLInt16Array>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLInt16Array> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLInt32Array> : DefaultConverter<IDLInt32Array> {
+    using WrapperType = JSC::JSInt32Array;
+    using ReturnType = RefPtr<JSC::Int32Array>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLInt32Array>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLInt32Array> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLUint8Array> : DefaultConverter<IDLUint8Array> {
+    using WrapperType = JSC::JSUint8Array;
+    using ReturnType = RefPtr<JSC::Uint8Array>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLUint8Array>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLUint8Array> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLUint16Array> : DefaultConverter<IDLUint16Array> {
+    using WrapperType = JSC::JSUint16Array;
+    using ReturnType = RefPtr<JSC::Uint16Array>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLUint16Array>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLUint16Array> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLUint32Array> : DefaultConverter<IDLUint32Array> {
+    using WrapperType = JSC::JSUint32Array;
+    using ReturnType = RefPtr<JSC::Uint32Array>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLUint32Array>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLUint32Array> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLUint8ClampedArray> : DefaultConverter<IDLUint8ClampedArray> {
+    using WrapperType = JSC::JSUint8ClampedArray;
+    using ReturnType = RefPtr<JSC::Uint8ClampedArray>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLUint8ClampedArray>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLUint8ClampedArray> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLFloat32Array> : DefaultConverter<IDLFloat32Array> {
+    using WrapperType = JSC::JSFloat32Array;
+    using ReturnType = RefPtr<JSC::Float32Array>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLFloat32Array>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLFloat32Array> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLFloat64Array> : DefaultConverter<IDLFloat64Array> {
+    using WrapperType = JSC::JSFloat64Array;
+    using ReturnType = RefPtr<JSC::Float64Array>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLFloat64Array>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLFloat64Array> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
+
+template<> struct Converter<IDLArrayBufferView> : DefaultConverter<IDLArrayBufferView> {
+    using WrapperType = JSC::JSArrayBufferView;
+    using ReturnType = RefPtr<JSC::ArrayBufferView>;
+
+    template<typename ExceptionThrower = DefaultExceptionThrower>
+    static ReturnType convert(JSC::ExecState& state, JSC::JSValue value, ExceptionThrower&& exceptionThrower = ExceptionThrower())
+    {
+        return Detail::BufferSourceConverter<IDLArrayBufferView>::convert(state, value, std::forward<ExceptionThrower>(exceptionThrower));
+    }
+};
+
+template<> struct JSConverter<IDLArrayBufferView> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename U>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const U& value)
+    {
+        return toJS(&state, &globalObject, Detail::getPtrOrRef(value));
+    }
+};
 
 } // namespace WebCore

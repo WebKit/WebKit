@@ -148,7 +148,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
         return jsUndefined();
     }
 
-    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(2)));
+    BufferSource data = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, state.uncheckedArgument(2));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -193,7 +193,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
         return jsUndefined();
     }
 
-    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(2)));
+    BufferSource data = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, state.uncheckedArgument(2));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -238,7 +238,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
         return jsUndefined();
     }
 
-    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(2)));
+    BufferSource data = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, state.uncheckedArgument(2));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -283,10 +283,10 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
         return jsUndefined();
     }
 
-    auto signature = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(2)));
+    BufferSource signature = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, state.uncheckedArgument(2));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(3)));
+    BufferSource data = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, state.uncheckedArgument(3));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -321,7 +321,7 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
     auto parameters = JSCryptoAlgorithmDictionary::createParametersForDigest(state, scope, algorithm->identifier(), state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(1)));
+    BufferSource data = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -456,7 +456,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
     auto keyFormat = cryptoKeyFormatFromJSValue(state, scope, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(1)));
+    BufferSource data = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<CryptoAlgorithm> algorithm;
@@ -625,7 +625,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
     auto keyFormat = cryptoKeyFormatFromJSValue(state, scope, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto wrappedKeyData = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(1)));
+    BufferSource wrappedKeyData = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, state.uncheckedArgument(1));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<CryptoKey> unwrappingKey = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(2));

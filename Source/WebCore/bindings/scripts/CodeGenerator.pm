@@ -72,7 +72,7 @@ my %stringTypeHash = (
     "USVString" => 1,
 );
 
-my %typedArrayTypes = (
+my %bufferSourceTypes = (
     "ArrayBuffer" => 1,
     "ArrayBufferView" => 1,
     "DataView" => 1,
@@ -588,45 +588,6 @@ sub GetDictionaryImplementationNameOverride
     return $dictionaryTypeImplementationNameOverrides{$type->name};
 }
 
-sub IsNonPointerType
-{
-    my ($object, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    return 1 if $object->IsPrimitiveType($type);
-    return 0;
-}
-
-sub IsTypedArrayType
-{
-    my ($object, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    return 1 if $typedArrayTypes{$type->name};
-    return 0;
-}
-
-sub IsRefPtrType
-{
-    my ($object, $type) = @_;
-
-    assert("Not a type") if ref($type) ne "IDLType";
-
-    return 0 if $object->IsPrimitiveType($type);
-    return 0 if $object->IsDictionaryType($type);
-    return 0 if $object->IsEnumType($type);
-    return 0 if $object->IsSequenceOrFrozenArrayType($type);
-    return 0 if $object->IsRecordType($type);
-    return 0 if $object->IsStringType($type);
-    return 0 if $type->isUnion;
-    return 0 if $type->name eq "any";
-    return 0 if $type->name eq "object";
-
-    return 1;
-}
-
 sub IsSVGAnimatedTypeName
 {
     my ($object, $typeName) = @_;
@@ -686,6 +647,16 @@ sub IsRecordType
     assert("Not a type") if ref($type) ne "IDLType";
 
     return $type->name eq "record";
+}
+
+sub IsBufferSourceType
+{
+    my ($object, $type) = @_;
+
+    assert("Not a type") if ref($type) ne "IDLType";
+
+    return 1 if $bufferSourceTypes{$type->name};
+    return 0;
 }
 
 sub IsPromiseType
@@ -894,9 +865,8 @@ sub IsBuiltinType
     return 1 if $object->IsSequenceOrFrozenArrayType($type);
     return 1 if $object->IsRecordType($type);
     return 1 if $object->IsStringType($type);
-    return 1 if $object->IsTypedArrayType($type);
+    return 1 if $object->IsBufferSourceType($type);
     return 1 if $type->isUnion;
-    return 1 if $type->name eq "BufferSource";
     return 1 if $type->name eq "EventListener";
     return 1 if $type->name eq "JSON";
     return 1 if $type->name eq "Promise";

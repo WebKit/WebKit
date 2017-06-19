@@ -1,3 +1,124 @@
+2017-06-19  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Properly model buffer source / typed arrays as their own IDL types
+        https://bugs.webkit.org/show_bug.cgi?id=173513
+
+        Reviewed by Alex Christensen.
+
+        - Adds IDL type hierarchy for buffer source types.
+        - Includes a special type, IDLArrayBufferView, which WebIDL defines as the union
+          of DataView and all the typed array types, but we model as shared base class.
+          This should not be observable, and allows us to avoid using a Variant for ArrayBufferView
+          and instead use the existing base class.
+        - Add builtin typedefs for BufferSource and DOMTimeStamp as defined in WebIDL. As noted
+          above, rather than define a typedef of ArrayBufferView that maps to a union, we treat
+          it as a special type.
+
+        * bindings/IDLTypes.h:
+        Add type hierarchy for buffer source types.
+        - IDLBufferSource is the root
+        - IDLArrayBuffer, IDLArrayBufferView, IDLDataView, IDLTypedArray derive from it.
+        - And then the specific typed array types derive from IDLTypedArray, and are defined
+          in JSDOMConvertBufferSource so we don't have to include a ton of typed array includes
+          in this file, as they cannot be forward declared.
+
+        * bindings/js/JSDOMConvertBufferSource.h:
+        (WebCore::Detail::BufferSourceConverter::convert):
+        (WebCore::Converter<IDLArrayBuffer>::convert):
+        (WebCore::JSConverter<IDLArrayBuffer>::convert):
+        (WebCore::Converter<IDLDataView>::convert):
+        (WebCore::JSConverter<IDLDataView>::convert):
+        (WebCore::Converter<IDLInt8Array>::convert):
+        (WebCore::JSConverter<IDLInt8Array>::convert):
+        (WebCore::Converter<IDLInt16Array>::convert):
+        (WebCore::JSConverter<IDLInt16Array>::convert):
+        (WebCore::Converter<IDLInt32Array>::convert):
+        (WebCore::JSConverter<IDLInt32Array>::convert):
+        (WebCore::Converter<IDLUint8Array>::convert):
+        (WebCore::JSConverter<IDLUint8Array>::convert):
+        (WebCore::Converter<IDLUint16Array>::convert):
+        (WebCore::JSConverter<IDLUint16Array>::convert):
+        (WebCore::Converter<IDLUint32Array>::convert):
+        (WebCore::JSConverter<IDLUint32Array>::convert):
+        (WebCore::Converter<IDLUint8ClampedArray>::convert):
+        (WebCore::JSConverter<IDLUint8ClampedArray>::convert):
+        (WebCore::Converter<IDLFloat32Array>::convert):
+        (WebCore::JSConverter<IDLFloat32Array>::convert):
+        (WebCore::Converter<IDLFloat64Array>::convert):
+        (WebCore::JSConverter<IDLFloat64Array>::convert):
+        (WebCore::Converter<IDLArrayBufferView>::convert):
+        (WebCore::JSConverter<IDLArrayBufferView>::convert):
+        Add native and javascript conversion for all the new types.
+
+        * bindings/js/JSDOMConvertUnion.h:
+        Add support for steps 7, 8, and 9 of the union conversion algorithm now that
+        buffer source types are properly modeled.
+
+        * bindings/js/JSSubtleCryptoCustom.cpp:
+        * bindings/js/JSWebKitSubtleCryptoCustom.cpp:
+        Replace use of now repurposed IDLBufferSource, with its definition, IDLUnion<IDLArrayBufferView, IDLArrayBuffer>.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsBufferSourceType):
+        Renamed from IsTypedArrayType.
+
+        (IsNonPointerType): Deleted.
+        Was only used by DumpRenderTree and WebKitTestRunner generators. They have 
+        been switched to the equivalent IsPrimitiveType.
+
+        (IsTypedArrayType): Deleted.
+        Renamed to IsBufferSourceType.
+
+        (IsRefPtrType): Deleted. Unused.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (AddClassForwardIfNeeded):
+        (GetArgumentExceptionFunction):
+        (GetAttributeExceptionFunction):
+        (PassArgumentExpression):
+        (GenerateDefaultValue):
+        (GenerateOverloadDispatcher):
+        (ShouldPassArgumentByReference):
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        Update for rename of IsTypedArrayType -> IsBufferSourceType and remove specialized BufferSource
+        condition.
+
+        (GetBaseIDLType):
+        Add mappings for new buffer source types.
+
+        * bindings/scripts/IDLParser.pm:
+        (Parse):
+        Insert builtin typedefs to the typedef map before parsing.
+
+        (addBuiltinTypedefs):
+        Generate typedefs for BufferSource and DOMTimeStamp as specified by WebIDL.
+
+        (applyTypedefs):
+        Add support for applying typedefs to iterable and maplike, necessary now because BufferSource
+        is used as the key to iterable in MediaKeyStatusMap.idl
+
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.h:
+        Update test results.
+
+        * bindings/scripts/test/TestTypedefs.idl:
+        Add tests for builtin typedefs.
+
+        * Modules/geolocation/Geoposition.idl:
+        * dom/Event.idl:
+        * fileapi/Blob.idl:
+        * fileapi/File.idl:
+        * page/FrameView.h:
+        * xml/XMLHttpRequest.idl:
+        Remove typedef for DOMTimeStamp and BufferSource which are now automatically included.
+
 2017-06-19  Adrian Perez de Castro  <aperez@igalia.com>
 
         Missing <functional> includes make builds fail with GCC 7.x

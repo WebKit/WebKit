@@ -500,6 +500,7 @@ typedef any AnyTypedef;
     (long or Node) unionMember;
     (long or Node)? nullableUnionMember = null;
     BufferSource bufferSourceValue;
+    required BufferSource requiredBufferSourceValue;
     (DOMString or [Clamp] long) annotatedTypeInUnionMember;
     sequence<[Clamp] long> annotatedTypeInSequenceMember;
 };

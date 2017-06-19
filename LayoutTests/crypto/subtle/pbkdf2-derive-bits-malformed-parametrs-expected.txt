@@ -7,7 +7,7 @@ PASS crypto.subtle.deriveBits("PBKDF2", baseKey, null) rejected promise  with Ty
 PASS crypto.subtle.deriveBits({name: "PBKDF2"}, baseKey, null) rejected promise  with TypeError: Member Pbkdf2Params.hash is required and must be an instance of any.
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: true, iterations: 100000, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: null, iterations: 100000, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
-PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: undefined, iterations: 100000, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Member Pbkdf2Params.salt is required and must be an instance of BufferSource.
+PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: undefined, iterations: 100000, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Member Pbkdf2Params.salt is required and must be an instance of (ArrayBufferView or ArrayBuffer).
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: Symbol(), iterations: 100000, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: { }, iterations: 100000, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: 1, iterations: 100000, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Type error.
