@@ -5192,11 +5192,21 @@ sub GenerateSerializerDefinition
     push(@implContent, "\n");
 
     foreach my $attribute (@serializedAttributes) {
+        assert("Attributes that throw exceptions are not supported with serializers yet.") if $attribute->extendedAttributes->{GetterMayThrowException} || $attribute->extendedAttributes->{MayThrowException};
+
         my $name = $attribute->name;
         my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
         push(@implContent, "    auto ${name}Value = ${getFunctionName}Getter(state, thisObject, throwScope);\n");
         push(@implContent, "    throwScope.assertNoException();\n");
-        push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
+
+        if ($codeGenerator->IsInterfaceType($attribute->type)) {
+            my $attributeInterfaceName = $attribute->type->name;
+            push(@implContent, "    auto* ${name}SerializedValue = JS${attributeInterfaceName}::serialize(state, *jsCast<JS${attributeInterfaceName}*>(${name}Value), globalObject, throwScope);\n");
+            push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}SerializedValue);\n");
+        } else {
+            push(@implContent, "    result->putDirect(vm, Identifier::fromString(&vm, \"${name}\"), ${name}Value);\n");
+        }
+
         push(@implContent, "\n");
     }
 

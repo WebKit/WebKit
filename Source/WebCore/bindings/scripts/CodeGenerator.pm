@@ -903,9 +903,22 @@ sub IsWrapperType
     return 0;
 }
 
+sub InheritsSerializable
+{
+    my ($object, $interface) = @_;
+
+    my $anyParentIsSerializable = 0;
+    $object->ForAllParents($interface, sub {
+        my $parentInterface = shift;
+        $anyParentIsSerializable = 1 if $parentInterface->serializable;
+    }, 0);
+
+    return $anyParentIsSerializable;
+}
+
 sub IsSerializableAttribute
 {
-    my ($object, $currentInterface, $attribute) = @_;
+    my ($object, $interface, $attribute) = @_;
 
     # https://heycam.github.io/webidl/#dfn-serializable-type
 
@@ -920,9 +933,12 @@ sub IsSerializableAttribute
         die "Serializer for non-primitive types is not currently supported\n";
     }
 
-    my $interface = GetInterfaceForAttribute($object, $currentInterface, $attribute);
-    if ($interface && $interface->serializable) {
-        die "Serializer for non-primitive types is not currently supported\n";
+    return 0 if !$object->IsInterfaceType($type);
+
+    my $interfaceForAttribute = $object->GetInterfaceForAttribute($interface, $attribute);
+    if ($interfaceForAttribute) {
+        return 1 if $interfaceForAttribute->serializable;
+        return $object->InheritsSerializable($interfaceForAttribute);
     }
 
     return 0;

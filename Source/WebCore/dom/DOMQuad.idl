@@ -30,8 +30,7 @@
     Exposed=(Window,Worker),
     ImplementationLacksVTable,
     JSCustomMarkFunction
-]
-interface DOMQuad {
+] interface DOMQuad {
     [NewObject] static DOMQuad fromRect(optional DOMRectInit other);
     [NewObject] static DOMQuad fromQuad(optional DOMQuadInit other);
 
@@ -41,5 +40,5 @@ interface DOMQuad {
     readonly attribute DOMPoint p4; // FIXME: Should be [SameObject].
     [NewObject] DOMRect getBounds();
 
-    // serializer = { attribute }; FIXME: implement.
+    serializer = { attribute };
 };
