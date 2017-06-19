@@ -1,3 +1,27 @@
+2017-06-19  Brady Eidson  <beidson@apple.com>
+
+        Various IndexedDB crashes as an after effect of previous test.
+        <rdar://problem/31418761> and https://bugs.webkit.org/show_bug.cgi?id=170436
+
+        Reviewed by Chris Dumez.
+
+        No new test (No consistent test possible, in practice covered by all existing IDB tests)
+
+        This is timing related, where a UniqueIDBDatabase can be destroyed on the main thread while
+        it still has one task left to try to execute on the IDBServer thread.
+        
+        The background thread tasks don't Ref<> the UniqueIDBDatabase, so even though task execution
+        took a Ref<> protector, there was still a small window for a race.
+        
+        Should be closed up by making the background thread tasks themselves protect this.
+        
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTaskReply):
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+
 2017-06-19  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for serializers that have members that are themselves serializers (or inherit being a serializer from a parent)
