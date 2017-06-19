@@ -1,3 +1,14 @@
+2017-06-19  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][WPE] Rebaseline after r218458
+
+        Unreviewed gardening.
+
+        Add new DOMQuad attribute to the test expectations.
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/wpe/js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
 2017-05-14 Frederic Wang  <fwang@igalia.com>
 
         Add heuristic to avoid flattening "fullscreen" iframes
