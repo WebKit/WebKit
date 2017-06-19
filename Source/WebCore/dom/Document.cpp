@@ -2237,6 +2237,7 @@ void Document::frameDestroyed()
 void Document::destroyRenderTree()
 {
     ASSERT(hasLivingRenderTree());
+    ASSERT(m_pageCacheState != InPageCache);
 
     FrameView* frameView = frame()->document() == this ? frame()->view() : nullptr;
 
