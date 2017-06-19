@@ -1,3 +1,15 @@
+2017-06-19  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Rebaseline js/dom/dom-static-property-for-in-iteration.html
+        https://bugs.webkit.org/show_bug.cgi?id=133868
+
+        Unreviewed gardening
+
+        This test needs expectations to be updated after changes to DOM
+        static properties. Update and unskip.
+        * platform/gtk/TestExpectations: Unskip.
+        * platform/gtk/js/dom/dom-static-property-for-in-iteration-expected.txt:
+
 2017-06-19  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] AES_CTR support
