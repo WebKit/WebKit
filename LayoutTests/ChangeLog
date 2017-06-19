@@ -1,3 +1,16 @@
+2017-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Meter element doesn't respect the writing direction
+        https://bugs.webkit.org/show_bug.cgi?id=173507
+
+        Reviewed by Sam Weinig.
+
+        A regression ref test since existing tests were pixel tests and did not catch this regression.
+        Note that black border was added to workaround the anti-aliasing differences in macOS High Sierra.
+
+        * fast/dom/HTMLMeterElement/meter-rtl-expected.html: Added.
+        * fast/dom/HTMLMeterElement/meter-rtl.html: Added.
+
 2017-06-18  Chris Dumez  <cdumez@apple.com>
 
         Crash when re-entering MediaDevicesEnumerationRequest::cancel()

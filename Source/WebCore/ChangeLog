@@ -1,3 +1,22 @@
+2017-06-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Meter element doesn't respect the writing direction
+        https://bugs.webkit.org/show_bug.cgi?id=173507
+
+        Reviewed by Sam Weinig.
+
+        The bug was caused by NSLevelIndicatorCell no longer using the value of baseWritingDirection
+        to determine the direction of rendering in macOS Sierra and later. It instead relies on
+        the value of userInterfaceLayoutDirection.
+
+        Fixed the bug by setting both values. Once we dropped the support for macOS El Capitan
+        and earlier, we can remove the code to set baseWritingDirection.
+
+        Test: fast/dom/HTMLMeterElement/meter-rtl.html
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+
 2017-06-18  Dewei Zhu  <dewei_zhu@apple.com>
 
         Remove 'EditCommand::isEditCommandComposition'.
