@@ -193,6 +193,19 @@ static bool canCachePage(Page& page)
 
     DiagnosticLoggingClient& diagnosticLoggingClient = page.diagnosticLoggingClient();
     bool isCacheable = canCacheFrame(page.mainFrame(), diagnosticLoggingClient, indentLevel + 1);
+
+    if (page.openedByWindowOpen() && !page.settings().allowsPageCacheWithWindowOpener()) {
+        PCLOG("   -Page has been opened via window.open()");
+        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::hasOpenerKey());
+        isCacheable = false;
+    }
+
+    auto* topDocument = page.mainFrame().document();
+    if (topDocument && topDocument->hasEverCalledWindowOpen()) {
+        PCLOG("   -Page has called window.open()");
+        logPageCacheFailureDiagnosticMessage(diagnosticLoggingClient, DiagnosticLoggingKeys::hasCalledWindowOpenKey());
+        isCacheable = false;
+    }
     
     if (!page.settings().usesPageCache() || page.isResourceCachingDisabled()) {
         PCLOG("   -Page settings says b/f cache disabled");

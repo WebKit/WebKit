@@ -673,6 +673,16 @@ String DiagnosticLoggingKeys::fontKey()
     return ASCIILiteral("font");
 }
 
+String DiagnosticLoggingKeys::hasCalledWindowOpenKey()
+{
+    return ASCIILiteral("hasCalledWindowOpen");
+}
+
+String DiagnosticLoggingKeys::hasOpenerKey()
+{
+    return ASCIILiteral("hasOpener");
+}
+
 String DiagnosticLoggingKeys::prunedDueToMemoryPressureKey()
 {
     return ASCIILiteral("pruned.memoryPressure");

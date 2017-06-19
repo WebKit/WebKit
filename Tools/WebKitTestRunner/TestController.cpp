@@ -655,6 +655,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetFullScreenEnabled(preferences, true);
 #endif
     WKPreferencesSetPageCacheEnabled(preferences, false);
+    WKPreferencesSetAllowsPageCacheWithWindowOpener(preferences, false);
     WKPreferencesSetAsynchronousPluginInitializationEnabled(preferences, false);
     WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins(preferences, false);
     WKPreferencesSetArtificialPluginInitializationDelayEnabled(preferences, false);

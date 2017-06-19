@@ -151,7 +151,7 @@ void HTMLFrameElementBase::finishedInsertingSubtree()
     if (!inDocument())
         return;
 
-    // DocumentFragments don't kick off any loads.
+    // DocumentFragments don't kick of any loads.
     if (!document().frame())
         return;
 
