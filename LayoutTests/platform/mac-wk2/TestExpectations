@@ -657,7 +657,7 @@ webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/datachannel-emptystri
 
 webkit.org/b/171553 [ Release ] http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
 
-webkit.org/b/172703 [ Sierra Debug ] webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
+webkit.org/b/172703  webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
 
 webkit.org/b/171763 [ Debug ] compositing/tiling/non-active-window-tiles-size.html [ Pass Failure ]
 
