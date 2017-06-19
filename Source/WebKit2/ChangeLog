@@ -1,3 +1,21 @@
+2017-06-19  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed unused lambda captures from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=173555
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData):
+
 2017-06-19  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Function instead of std::function in more places in WebCore/
