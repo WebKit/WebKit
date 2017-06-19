@@ -1,3 +1,13 @@
+2017-06-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] AES_CTR support
+        https://bugs.webkit.org/show_bug.cgi?id=171420
+
+        Reviewed by Michael Catanzaro.
+
+        * pal/crypto/gcrypt/Utilities.h: Add a GCryptCipherOperation type alias that can be used
+        for the gcry_cipher_decrypt or gcry_cipher_encrypt function pointers.
+
 2017-06-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Upstream iOS drag and drop implementation into OpenSource WebKit

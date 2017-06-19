@@ -1,3 +1,12 @@
+2017-06-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] AES_CTR support
+        https://bugs.webkit.org/show_bug.cgi?id=171420
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations: Unskip the relevant AES_CTR tests.
+
 2017-06-19  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Layout Test imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer.html crashes

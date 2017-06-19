@@ -1,3 +1,56 @@
+2017-06-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] AES_CTR support
+        https://bugs.webkit.org/show_bug.cgi?id=171420
+
+        Reviewed by Michael Catanzaro.
+
+        Implement AES_CTR support for build configurations that use libgcrypt.
+
+        Both encryption and decryption operations are handled in a single gcryptAES_CTR() function,
+        with the specific operation being passed as the first argument. The appropriate AES
+        algorithm is picked, and a gcry_cipher_hd_t object is created and has the given key set.
+        This key will remain the same throughout the gcry_cipher_hd_t lifetime, even after
+        gcry_cipher_reset() calls.
+
+        The encrypt/decrypt operation is wrapped into a helper lambda functor that accepts the
+        given counter and input data. It resets the cipher object, sets the counter data, and
+        performs the specified operation, returning the output data.
+
+        libgcrypt doesn't support setting counter data on a gcry_cipher_hd_t object with only
+        part of that data being used as the actual counter, with the rest acting as a nonce, like
+        the Web Crypto specification allows. We have to implement the support for that on our own.
+
+        We compute the number of blocks we'll be processing and the upper exclusive limit for the
+        given counter length. We immediately bail if the counter limit is less than the computed
+        block count, since that would mean that the counter values would be repeated.
+
+        We short-cut to a direct operation call if the counter length matches size of the counter
+        data -- we don't have to adjust the counter data in any way if that's the case.
+
+        Otherwise we move counter data into the MPI format. The nonce and the actual counter MPIs
+        can split out of the counter data MPI with the modulus operation and the counter limit MPI.
+
+        We take another shortcut straight to the operation call if we're able to determine that the
+        'counter leeway' value, i.e. the difference between the initial counter MPI and the counter
+        limit MPI, is larger or equal to the predicted block size -- if that's the case, the counter
+        won't wrap around and change the nonce data.
+
+        In worst-case scenario the counter data will wrap around and we have to address that. The
+        current implementation takes the slowest possible path for the moment, encrypting/decrypting
+        each block separately. For each step the counter is combined with the nonce, the resulting
+        MPI data retrieved and passed to the operation function, and the returned block output
+        appended to the final output vector. The counter MPI is then incremented and ran through the
+        modulus operation, limiting the MPI value to the previously-computed counter limit.
+
+        No new tests -- relevant tests are passing and are unskipped.
+
+        * crypto/gcrypt/CryptoAlgorithmAES_CTRGCrypt.cpp:
+        (WebCore::callOperation):
+        (WebCore::gcryptAES_CTR):
+        (WebCore::CryptoAlgorithmAES_CTR::platformEncrypt):
+        (WebCore::CryptoAlgorithmAES_CTR::platformDecrypt):
+
 2017-05-14 Frederic Wang  <fwang@igalia.com>
 
         Add heuristic to avoid flattening "fullscreen" iframes
