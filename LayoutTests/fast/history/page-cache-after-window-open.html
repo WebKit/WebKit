@@ -3,7 +3,7 @@
 <body>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-description("Tests that a page that has called window.open() goes into the page cache.");
+description('Tests that a page that has called window.open() does not go into the page cache.');
 window.jsTestIsAsync = true;
 
 if (window.testRunner) {
@@ -12,38 +12,36 @@ if (window.testRunner) {
 }
 
 window.addEventListener("pageshow", function(event) {
-    if (!window.sessionStorage.didStartPageCacheAfterWindowOpenTest) {
-        if (event.persisted)
-            testFailed("page was restored from the page cache.");
-        else
-            testPassed("page was not restored from the page cache.");
-        return;
-    }
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
 
-    delete window.sessionStorage.didStartPageCacheAfterWindowOpenTest;
+    if (!window.sessionStorage.page_cache_after_window_open_test_started)
+        return;
+
+    delete window.sessionStorage.page_cache_after_window_open_test_started;
 
     if (event.persisted)
-        testPassed("page was restored from the page cache.");
+        testFailed("Page did enter and was restored from the page cache");
     else
-        testFailed("page was not restored from the page cache.");
+        testPassed("Page was not restored from page cache");
 
     finishJSTest();
 }, false);
 
 window.addEventListener("pagehide", function(event) {
-    if (event.persisted)
-        testPassed("page was saved to the page cache.");
-    else
-        testFailed("page was not saved to the page cache.");
+    debug("pagehide - " + (event.persisted ? "" : "not ") + "entering cache");
+    if (event.persisted) {
+        testFailed("Page entered the page cache.");
+        finishJSTest();
+    }
 }, false);
 
-window.addEventListener("load", function() {
-    newWindow = open("about:blank");
+window.addEventListener('load', function() {
+    newWindow = open("about:blank", "one");
     otherWindowDocument = newWindow.document;
 
     setTimeout(function() {
         // Force a back navigation back to this page.
-        window.sessionStorage.didStartPageCacheAfterWindowOpenTest = true;
+        window.sessionStorage.page_cache_after_window_open_test_started = true;
         window.location.href = "resources/page-cache-helper.html";
     }, 0);
 }, false);
