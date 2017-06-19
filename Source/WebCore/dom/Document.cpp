@@ -2284,8 +2284,6 @@ void Document::prepareForDestruction()
     if (m_hasPreparedForDestruction)
         return;
 
-    m_frame->animation().detachFromDocument(this);
-
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
 #endif
