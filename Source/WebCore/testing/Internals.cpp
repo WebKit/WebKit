@@ -209,10 +209,6 @@
 #include "MockMediaPlayerMediaSource.h"
 #endif
 
-#if USE(LIBWEBRTC) && PLATFORM(COCOA)
-#include "H264VideoToolboxEncoder.h"
-#endif
-
 #if PLATFORM(MAC)
 #include "DictionaryLookup.h"
 #endif
@@ -4041,17 +4037,6 @@ void Internals::setPageVisibility(bool isVisible)
 
     page.setActivityState(state);
 }
-
-#if ENABLE(WEB_RTC)
-void Internals::setH264HardwareEncoderAllowed(bool allowed)
-{
-#if PLATFORM(MAC)
-    H264VideoToolboxEncoder::setHardwareEncoderForWebRTCAllowed(allowed);
-#else
-    UNUSED_PARAM(allowed);
-#endif
-}
-#endif
 
 #if ENABLE(MEDIA_STREAM)
 

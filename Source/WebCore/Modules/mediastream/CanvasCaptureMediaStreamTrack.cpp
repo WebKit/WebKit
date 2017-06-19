@@ -115,8 +115,6 @@ void CanvasCaptureMediaStreamTrack::Source::canvasResized(HTMLCanvasElement& can
 
     m_settings.setWidth(m_canvas->width());
     m_settings.setHeight(m_canvas->height());
-
-    settingsDidChange();
 }
 
 void CanvasCaptureMediaStreamTrack::Source::canvasChanged(HTMLCanvasElement& canvas, const FloatRect&)

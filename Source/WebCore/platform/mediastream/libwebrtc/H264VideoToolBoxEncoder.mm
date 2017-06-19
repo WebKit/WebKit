@@ -26,53 +26,7 @@
 #include "config.h"
 #include "H264VideoToolBoxEncoder.h"
 
-#include "Logging.h"
-
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
-
-namespace WebCore {
-
-static bool isHardwareEncoderForWebRTCAllowed = true;
-
-void H264VideoToolboxEncoder::setHardwareEncoderForWebRTCAllowed(bool allowed)
-{
-    isHardwareEncoderForWebRTCAllowed = allowed;
-}
-
-bool H264VideoToolboxEncoder::hardwareEncoderForWebRTCAllowed()
-{
-    return isHardwareEncoderForWebRTCAllowed;
-}
-
-#if PLATFORM(MAC) && ENABLE(MAC_VIDEO_TOOLBOX)
-static inline bool isStandardFrameSize(int32_t width, int32_t height)
-{
-    // FIXME: Envision relaxing this rule, something like width and height dividable by 4 or 8 should be good enough.
-    if (width == 1280)
-        return height == 720;
-    if (width == 720)
-        return height == 1280;
-    if (width == 960)
-        return height == 540;
-    if (width == 540)
-        return height == 960;
-    if (width == 640)
-        return height == 480;
-    if (width == 480)
-        return height == 640;
-    if (width == 288)
-        return height == 352;
-    if (width == 352)
-        return height == 288;
-    if (width == 320)
-        return height == 240;
-    if (width == 240)
-        return height == 320;
-    return false;
-}
-#endif
-
-}
 
 #if ENABLE(MAC_VIDEO_TOOLBOX) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/VideoToolBoxEncoderMac.mm>)
 #import <WebKitAdditions/VideoToolBoxEncoderMac.mm>
@@ -80,40 +34,9 @@ static inline bool isStandardFrameSize(int32_t width, int32_t height)
 
 namespace WebCore {
 
-#if PLATFORM(MAC) && ENABLE(MAC_VIDEO_TOOLBOX)
-static inline bool isUsingSoftwareEncoder(VTCompressionSessionRef& compressionSession)
+int H264VideoToolboxEncoder::CreateCompressionSession(VTCompressionSessionRef& compressionSession, VTCompressionOutputCallback outputCallback, int32_t width, int32_t height)
 {
-    CFNumberRef useHardwareEncoderValue = nullptr;
-    OSStatus statusGetter = VTSessionCopyProperty(compressionSession, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, nullptr, &useHardwareEncoderValue);
-    if (statusGetter || !useHardwareEncoderValue)
-        return true;
-
-    int useHardwareEncoder = 0;
-    CFNumberGetValue(useHardwareEncoderValue, kCFNumberIntType, &useHardwareEncoder);
-    CFRelease(useHardwareEncoderValue);
-
-    return useHardwareEncoder;
-}
-#endif
-
-int H264VideoToolboxEncoder::CreateCompressionSession(VTCompressionSessionRef& compressionSession, VTCompressionOutputCallback outputCallback, int32_t width, int32_t height, bool useHardwareAcceleratedVideoEncoder)
-{
-    int result = webrtc::H264VideoToolboxEncoder::CreateCompressionSession(compressionSession, outputCallback, width, height, hardwareEncoderForWebRTCAllowed() ? useHardwareAcceleratedVideoEncoder : false);
-    if (result)
-        return result;
-
-#if PLATFORM(MAC) && ENABLE(MAC_VIDEO_TOOLBOX)
-    if (!isUsingSoftwareEncoder(compressionSession))
-        return 0;
-
-    if (!isStandardFrameSize(width, height)) {
-        RELEASE_LOG(WebRTC, "Using H264 software encoder with non standard size is not supported");
-        DestroyCompressionSession();
-        return -1;
-    }
-    RELEASE_LOG(WebRTC, "Using H264 software encoder");
-#endif
-    return 0;
+    return webrtc::H264VideoToolboxEncoder::CreateCompressionSession(compressionSession, outputCallback, width, height);
 }
     
 }

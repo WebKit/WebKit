@@ -141,7 +141,7 @@ function waitForVideoSize(video, width, height, count)
     if (count === undefined)
         count = 0;
     if (++count > 20)
-        return Promise.reject("waitForVideoSize timed out, expected " + width + "x"+ height + " but got " + video.videoWidth + "x" + video.videoHeight);
+        return Promise.reject("waitForVideoSize timed out");
 
     return waitFor(50).then(() => {
         return waitForVideoSize(video, width, height, count);

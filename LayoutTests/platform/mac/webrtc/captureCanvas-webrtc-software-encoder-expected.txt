@@ -1,4 +1,0 @@
-   
-
-PASS captureStream with webrtc 
-

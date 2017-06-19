@@ -1,3 +1,18 @@
+2017-06-19  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r218505.
+        https://bugs.webkit.org/show_bug.cgi?id=173563
+
+        "It would break internal builds" (Requested by youenn on
+        #webkit).
+
+        Reverted changeset:
+
+        "[WebRTC] Prevent capturing at unconventional resolutions when
+        using the SW encoder on Mac"
+        https://bugs.webkit.org/show_bug.cgi?id=172602
+        http://trac.webkit.org/changeset/218505
+
 2017-06-19  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Prevent capturing at unconventional resolutions when using the SW encoder on Mac
