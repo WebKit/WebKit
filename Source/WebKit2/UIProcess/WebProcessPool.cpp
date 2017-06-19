@@ -1595,18 +1595,9 @@ void WebProcessPool::setPluginLoadClientPolicy(WebCore::PluginLoadClientPolicy p
     sendToAllProcesses(Messages::WebProcess::SetPluginLoadClientPolicy(policy, host, bundleIdentifier, versionString));
 }
 
-void WebProcessPool::resetPluginLoadClientPolicies(const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& pluginLoadClientPolicies)
+void WebProcessPool::resetPluginLoadClientPolicies(HashMap<String, HashMap<String, HashMap<String, uint8_t>>>&& pluginLoadClientPolicies)
 {
-    m_pluginLoadClientPolicies.clear();
-
-    for (auto& hostPair : pluginLoadClientPolicies) {
-        auto& policiesForHost = m_pluginLoadClientPolicies.ensure(hostPair.key, [] { return HashMap<String, HashMap<String, uint8_t>>(); }).iterator->value;
-        for (auto& bundleIdentifierPair : hostPair.value) {
-            auto& versionsToPolicies = policiesForHost.ensure(bundleIdentifierPair.key, [] { return HashMap<String, uint8_t>(); }).iterator->value;
-            for (auto& versionPair : bundleIdentifierPair.value)
-                versionsToPolicies.set(versionPair.key, versionPair.value);
-        }
-    }
+    m_pluginLoadClientPolicies = WTFMove(pluginLoadClientPolicies);
     sendToAllProcesses(Messages::WebProcess::ResetPluginLoadClientPolicies(m_pluginLoadClientPolicies));
 }
 
