@@ -1,3 +1,15 @@
+2017-06-19  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] fast/dom/assign-to-window-status.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173512
+
+        Reviewed by Alex Christensen.
+
+        We should not dump status callbacks when test is done.
+
+        * DumpRenderTree/win/UIDelegate.cpp:
+        (UIDelegate::setStatusText):
+
 2017-06-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE][JHBuild] Update WPEBackend-mesa

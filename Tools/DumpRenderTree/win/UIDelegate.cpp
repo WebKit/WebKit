@@ -658,8 +658,8 @@ HRESULT UIDelegate::webViewDidInvalidate(_In_opt_ IWebView* /*sender*/)
 }
 
 HRESULT UIDelegate::setStatusText(_In_opt_ IWebView*, _In_ BSTR text)
-{ 
-    if (gTestRunner->dumpStatusCallbacks())
+{
+    if (!done && gTestRunner->dumpStatusCallbacks())
         fprintf(testResult, "UI DELEGATE STATUS CALLBACK: setStatusText:%S\n", text ? text : L"");
     return S_OK;
 }
