@@ -1,3 +1,17 @@
+2017-06-20  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r218530.
+
+        This revision caused multiple media stream test crashes on
+        Debug builds.
+
+        Reverted changeset:
+
+        "Merge MediaDevicesRequest and MediaDevicesEnumerationRequest
+        to tighten up code and object lifetime"
+        https://bugs.webkit.org/show_bug.cgi?id=173527
+        http://trac.webkit.org/changeset/218530
+
 2017-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] Remove custom logic for disambiguating long press action sheet gestures and drag lift

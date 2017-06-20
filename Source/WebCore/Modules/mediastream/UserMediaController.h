@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,10 @@ class UserMediaRequest;
 
 class UserMediaController : public Supplement<Page> {
 public:
-    explicit UserMediaController(UserMediaClient&);
+    explicit UserMediaController(UserMediaClient*);
     ~UserMediaController();
+
+    UserMediaClient* client() const { return m_client; }
 
     void requestUserMediaAccess(UserMediaRequest&);
     void cancelUserMediaAccessRequest(UserMediaRequest&);
@@ -46,30 +48,30 @@ public:
     void cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest&);
 
     WEBCORE_EXPORT static const char* supplementName();
-    static UserMediaController& from(Page& page) { return *static_cast<UserMediaController*>(Supplement<Page>::from(&page, supplementName())); }
+    static UserMediaController* from(Page* page) { return static_cast<UserMediaController*>(Supplement<Page>::from(page, supplementName())); }
 
 private:
-    UserMediaClient& m_client;
+    UserMediaClient* m_client;
 };
 
 inline void UserMediaController::requestUserMediaAccess(UserMediaRequest& request)
 {
-    m_client.requestUserMediaAccess(request);
+    m_client->requestUserMediaAccess(request);
 }
 
 inline void UserMediaController::cancelUserMediaAccessRequest(UserMediaRequest& request)
 {
-    m_client.cancelUserMediaAccessRequest(request);
+    m_client->cancelUserMediaAccessRequest(request);
 }
 
 inline void UserMediaController::enumerateMediaDevices(MediaDevicesEnumerationRequest& request)
 {
-    m_client.enumerateMediaDevices(request);
+    m_client->enumerateMediaDevices(request);
 }
 
 inline void UserMediaController::cancelMediaDevicesEnumerationRequest(MediaDevicesEnumerationRequest& request)
 {
-    m_client.cancelMediaDevicesEnumerationRequest(request);
+    m_client->cancelMediaDevicesEnumerationRequest(request);
 }
 
 } // namespace WebCore

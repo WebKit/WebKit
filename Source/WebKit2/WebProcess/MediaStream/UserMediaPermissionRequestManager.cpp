@@ -168,7 +168,9 @@ void UserMediaPermissionRequestManager::userMediaAccessWasDenied(uint64_t reques
 
 void UserMediaPermissionRequestManager::enumerateMediaDevices(MediaDevicesEnumerationRequest& request)
 {
-    auto* frame = request.frame();
+    auto* document = downcast<Document>(request.scriptExecutionContext());
+    auto* frame = document ? document->frame() : nullptr;
+
     if (!frame) {
         request.setDeviceInfo(Vector<CaptureDevice>(), emptyString(), false);
         return;

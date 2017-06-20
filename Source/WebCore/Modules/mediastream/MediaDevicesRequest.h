@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,41 +28,34 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ActiveDOMObject.h"
-#include <wtf/Function.h>
-#include <wtf/text/WTFString.h>
+#include "MediaDevices.h"
 
 namespace WebCore {
 
-class CaptureDevice;
 class Document;
+class MediaDevicesEnumerationRequest;
 class SecurityOrigin;
 
-class MediaDevicesEnumerationRequest final : public ContextDestructionObserver, public RefCounted<MediaDevicesEnumerationRequest> {
+class MediaDevicesRequest : public RefCounted<MediaDevicesRequest>, private ContextDestructionObserver {
 public:
-    using CompletionHandler = WTF::Function<void(const Vector<CaptureDevice>&, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)>;
+    static Ref<MediaDevicesRequest> create(Document&, MediaDevices::EnumerateDevicesPromise&&);
 
-    static Ref<MediaDevicesEnumerationRequest> create(Document&, CompletionHandler&&);
-
-    virtual ~MediaDevicesEnumerationRequest();
+    virtual ~MediaDevicesRequest();
 
     void start();
-    void cancel();
 
-    bool wasCanceled() const { return !m_completionHandler; }
-
-    WEBCORE_EXPORT void setDeviceInfo(const Vector<CaptureDevice>&, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess);
-
-    WEBCORE_EXPORT SecurityOrigin* userMediaDocumentOrigin() const;
-    WEBCORE_EXPORT SecurityOrigin* topLevelDocumentOrigin() const;
+    SecurityOrigin* securityOrigin() const;
 
 private:
-    MediaDevicesEnumerationRequest(ScriptExecutionContext&, CompletionHandler&&);
+    MediaDevicesRequest(Document&, MediaDevices::EnumerateDevicesPromise&&);
 
-    // ContextDestructionObserver
     void contextDestroyed() final;
 
-    CompletionHandler m_completionHandler;
+    void filterDeviceList(Vector<RefPtr<MediaDeviceInfo>>&);
+
+    MediaDevices::EnumerateDevicesPromise m_promise;
+    RefPtr<MediaDevicesRequest> m_protector;
+    RefPtr<MediaDevicesEnumerationRequest> m_enumerationRequest;
 };
 
 } // namespace WebCore

@@ -964,6 +964,7 @@ set(WebCore_SOURCES
     Modules/mediastream/MediaDeviceInfo.cpp
     Modules/mediastream/MediaDevices.cpp
     Modules/mediastream/MediaDevicesEnumerationRequest.cpp
+    Modules/mediastream/MediaDevicesRequest.cpp
     Modules/mediastream/MediaEndpointPeerConnection.cpp
     Modules/mediastream/MediaEndpointSessionDescription.cpp
     Modules/mediastream/MediaStream.cpp

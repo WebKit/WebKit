@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,143 +29,77 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "CaptureDevice.h"
 #include "Document.h"
-#include "JSMediaDeviceInfo.h"
-#include "RealtimeMediaSourceCenter.h"
+#include "MainFrame.h"
+#include "SecurityOrigin.h"
 #include "UserMediaController.h"
-
-#if PLATFORM(COCOA)
-#define REMOVE_ATYPICAL_DEVICES 1
-#else
-#define REMOVE_ATYPICAL_DEVICES 0
-#endif
-
-#if PLATFORM(COCOA)
-const int typicalMicrophoneCount = 1;
-#endif
-
-#if PLATFORM(IOS)
-const int typicalCameraCount = 2;
-#endif
-
-#if PLATFORM(MAC)
-const int typicalCameraCount = 1;
-#endif
 
 namespace WebCore {
 
-inline MediaDevicesEnumerationRequest::MediaDevicesEnumerationRequest(Document& document, Promise&& promise)
-    : ContextDestructionObserver(&document)
-    , m_promise(WTFMove(promise))
+Ref<MediaDevicesEnumerationRequest> MediaDevicesEnumerationRequest::create(Document& document, CompletionHandler&& completionHandler)
 {
+    return adoptRef(*new MediaDevicesEnumerationRequest(document, WTFMove(completionHandler)));
 }
 
-void MediaDevicesEnumerationRequest::start(Document& document, Promise&& promise)
+MediaDevicesEnumerationRequest::MediaDevicesEnumerationRequest(ScriptExecutionContext& context, CompletionHandler&& completionHandler)
+    : ContextDestructionObserver(&context)
+    , m_completionHandler(WTFMove(completionHandler))
 {
-    auto* page = document.page();
-    if (!page) {
-        // FIXME: Should we resolve or reject the promise here instead of leaving the website waiting?
-        return;
-    }
-
-    UserMediaController::from(*page).enumerateMediaDevices(adoptRef(*new MediaDevicesEnumerationRequest(document, WTFMove(promise))));
 }
 
 MediaDevicesEnumerationRequest::~MediaDevicesEnumerationRequest()
 {
-    // We will get here with m_isActive true if the client drops the request without ever calling setDeviceInfo.
-    // FIXME: Should we resolve or reject the promise in that case instead of leaving the website waiting?
 }
 
-Document* MediaDevicesEnumerationRequest::document()
+SecurityOrigin* MediaDevicesEnumerationRequest::userMediaDocumentOrigin() const
 {
-    return m_promise ? downcast<Document>(scriptExecutionContext()) : nullptr;
+    if (!scriptExecutionContext())
+        return nullptr;
+
+    return scriptExecutionContext()->securityOrigin();
 }
 
-Frame* MediaDevicesEnumerationRequest::frame()
+SecurityOrigin* MediaDevicesEnumerationRequest::topLevelDocumentOrigin() const
 {
-    auto* document = this->document();
-    return document ? document->frame() : nullptr;
-}
+    if (!scriptExecutionContext())
+        return nullptr;
 
-SecurityOrigin* MediaDevicesEnumerationRequest::userMediaDocumentOrigin()
-{
-    auto* document = this->document();
-    return document ? &document->securityOrigin() : nullptr;
-}
-
-SecurityOrigin* MediaDevicesEnumerationRequest::topLevelDocumentOrigin()
-{
-    auto* document = this->document();
-    return document ? &document->topOrigin() : nullptr;
+    return &scriptExecutionContext()->topOrigin();
 }
 
 void MediaDevicesEnumerationRequest::contextDestroyed()
 {
-    // FIXME: Should we be calling UserMediaController::cancelMediaDevicesEnumerationRequest here?
-    // If not, then why does that function exist? If we decide that we want to call that cancel
-    // function here, then there may be a problem, because it's hard to get from the document to
-    // the page to the user media controller while the document is being destroyed.
+    // Calling cancel() may destroy ourselves.
+    Ref<MediaDevicesEnumerationRequest> protectedThis(*this);
 
-    m_promise = std::nullopt;
+    cancel();
     ContextDestructionObserver::contextDestroyed();
 }
 
-#if REMOVE_ATYPICAL_DEVICES
-
-// To reduce the value of media devices for fingerprinting, filter devices that go beyond the typical number.
-static inline void removeAtypicalDevices(Vector<RefPtr<MediaDeviceInfo>>& devices)
+void MediaDevicesEnumerationRequest::start()
 {
-    int cameraCount = 0;
-    int microphoneCount = 0;
-    devices.removeAllMatching([&cameraCount, &microphoneCount] (const RefPtr<MediaDeviceInfo>& device) {
-        if (device->kind() == MediaDeviceInfo::Kind::Videoinput && ++cameraCount > typicalCameraCount)
-            return true;
-        if (device->kind() == MediaDeviceInfo::Kind::Audioinput && ++microphoneCount > typicalMicrophoneCount)
-            return true;
-        return false;
-    });
-}
-
-#endif
-
-void MediaDevicesEnumerationRequest::setDeviceInfo(const Vector<CaptureDevice>& captureDevices, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)
-{
-    if (!m_promise)
-        return;
-    auto promise = WTFMove(m_promise.value());
-    ASSERT(!m_promise);
+    ASSERT(scriptExecutionContext());
 
     auto& document = downcast<Document>(*scriptExecutionContext());
+    auto* controller = UserMediaController::from(document.page());
+    if (!controller)
+        return;
 
-    // Policy about including some of the more sensitive information about capture devices.
-    bool includeLabels = originHasPersistentAccess || document.hasHadActiveMediaStreamTrack();
-#if REMOVE_ATYPICAL_DEVICES
-    bool includeAtypicalDevices = includeLabels;
-#endif
+    Ref<MediaDevicesEnumerationRequest> protectedThis(*this);
+    controller->enumerateMediaDevices(*this);
+}
 
-    Vector<RefPtr<MediaDeviceInfo>> devices;
+void MediaDevicesEnumerationRequest::cancel()
+{
+    m_completionHandler = nullptr;
+}
 
-    document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
-
-    for (auto& captureDevice : captureDevices) {
-        auto id = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(captureDevice.persistentId(), deviceIdentifierHashSalt);
-        if (id.isEmpty())
-            continue;
-
-        auto label = includeLabels ? captureDevice.label() : emptyString();
-        auto groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(captureDevice.groupId(), deviceIdentifierHashSalt);
-        auto deviceType = captureDevice.type() == CaptureDevice::DeviceType::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
-
-        devices.append(MediaDeviceInfo::create(label, id, groupId, deviceType));
-    }
-
-#if REMOVE_ATYPICAL_DEVICES
-    if (!includeAtypicalDevices)
-        removeAtypicalDevices(devices);
-#endif
-
-    promise.resolve(devices);
+void MediaDevicesEnumerationRequest::setDeviceInfo(const Vector<CaptureDevice>& deviceList, const String& deviceIdentifierHashSalt, bool originHasPersistentAccess)
+{
+    if (m_completionHandler)
+        m_completionHandler(deviceList, deviceIdentifierHashSalt, originHasPersistentAccess);
+    m_completionHandler = nullptr;
 }
 
 } // namespace WebCore

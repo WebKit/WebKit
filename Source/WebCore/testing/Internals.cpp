@@ -138,8 +138,12 @@
 #include "TreeScope.h"
 #include "TypeConversions.h"
 #include "UserGestureIndicator.h"
+#include "UserMediaController.h"
 #include "ViewportArguments.h"
 #include "WebCoreJSClientData.h"
+#if ENABLE(WEBGL)
+#include "WebGLRenderingContext.h"
+#endif
 #include "WorkerThread.h"
 #include "WritingDirection.h"
 #include "XMLHttpRequest.h"
@@ -184,10 +188,6 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 #include "TimeRanges.h"
-#endif
-
-#if ENABLE(WEBGL)
-#include "WebGLRenderingContext.h"
 #endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
