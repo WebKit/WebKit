@@ -33,6 +33,7 @@
 
 #if PLATFORM(COCOA)
 #include <notify.h>
+#include <wtf/BlockPtr.h>
 #endif
 
 namespace WebCore {
@@ -79,13 +80,13 @@ void initializeLogChannelsIfNecessary()
 }
 
 #ifndef NDEBUG
-void registerNotifyCallback(const String& notifyID, std::function<void()> callback)
+void registerNotifyCallback(const String& notifyID, WTF::Function<void()>&& callback)
 {
 #if PLATFORM(COCOA)
     int token;
-    notify_register_dispatch(notifyID.utf8().data(), &token, dispatch_get_main_queue(), ^(int) {
+    notify_register_dispatch(notifyID.utf8().data(), &token, dispatch_get_main_queue(), BlockPtr<void (int)>::fromCallable([callback = WTFMove(callback)] (int) {
         callback();
-    });
+    }).get());
 #else
     UNUSED_PARAM(notifyID);
     UNUSED_PARAM(callback);

@@ -26,8 +26,8 @@
 #ifndef SharedTimer_h
 #define SharedTimer_h
 
-#include <functional>
 #include <wtf/FastMalloc.h>
+#include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
 
@@ -41,7 +41,7 @@ class SharedTimer {
 public:
     SharedTimer() = default;
     virtual ~SharedTimer() { }
-    virtual void setFiredFunction(std::function<void()>&&) = 0;
+    virtual void setFiredFunction(WTF::Function<void()>&&) = 0;
 
     // The fire interval is in seconds relative to the current monotonic clock time.
     virtual void setFireInterval(Seconds) = 0;

@@ -30,8 +30,8 @@
 
 #include "FloatRect.h"
 #include "WindRule.h"
-#include <functional>
 #include <wtf/FastMalloc.h>
+#include <wtf/Function.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -101,7 +101,7 @@ namespace WebCore {
         FloatPoint* points;
     };
 
-    typedef std::function<void (const PathElement&)> PathApplierFunction;
+    using PathApplierFunction = WTF::Function<void (const PathElement&)>;
 
     class Path {
         WTF_MAKE_FAST_ALLOCATED;

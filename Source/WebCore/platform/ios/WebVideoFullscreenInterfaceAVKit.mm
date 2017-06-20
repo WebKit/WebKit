@@ -844,7 +844,7 @@ void WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline(bool visible, co
         
         [m_playerViewController view].frame = [m_parentView convertRect:inlineRect toView:[m_playerViewController view].superview];
 
-        std::function<void(bool)> callback = WTFMove(m_prepareToInlineCallback);
+        WTF::Function<void(bool)> callback = WTFMove(m_prepareToInlineCallback);
         callback(visible);
     }
 }
@@ -854,9 +854,9 @@ bool WebVideoFullscreenInterfaceAVKit::mayAutomaticallyShowVideoPictureInPicture
     return [playerController() isPlaying] && m_mode == HTMLMediaElementEnums::VideoFullscreenModeStandard && supportsPictureInPicture();
 }
 
-void WebVideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline(std::function<void(bool)> callback)
+void WebVideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline(WTF::Function<void(bool)>&& callback)
 {
-    m_prepareToInlineCallback = callback;
+    m_prepareToInlineCallback = WTFMove(callback);
     if (m_fullscreenChangeObserver)
         m_fullscreenChangeObserver->fullscreenMayReturnToInline();
 }

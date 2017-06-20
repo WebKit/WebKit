@@ -25,7 +25,7 @@
 #ifndef ScopeGuard_h
 #define ScopeGuard_h
 
-#include <functional>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ public:
     {
     }
 
-    ScopeGuard(std::function<void()> function)
+    ScopeGuard(WTF::Function<void()>&& function)
         : m_function(WTFMove(function))
     {
     }
@@ -46,7 +46,7 @@ public:
             m_function();
     }
 
-    void enable(std::function<void()> function)
+    void enable(WTF::Function<void()>&& function)
     {
         m_function = WTFMove(function);
     }
@@ -57,7 +57,7 @@ public:
     }
 
 private:
-    std::function<void()> m_function { nullptr };
+    WTF::Function<void()> m_function;
 };
 
 } // namespace WebCore

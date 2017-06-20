@@ -34,9 +34,9 @@ namespace WebCore {
 
 class CaptureDeviceManager {
 public:
-    using CaptureDeviceChangedCallback = std::function<void()>;
+    using CaptureDeviceChangedCallback = WTF::Function<void()>;
     using ObserverToken = uint32_t;
-    virtual ObserverToken addCaptureDeviceChangedObserver(CaptureDeviceChangedCallback);
+    virtual ObserverToken addCaptureDeviceChangedObserver(CaptureDeviceChangedCallback&&);
     virtual void removeCaptureDeviceChangedObserver(ObserverToken);
 
     virtual Vector<CaptureDevice>& captureDevices() = 0;

@@ -48,7 +48,7 @@ NetworkStateNotifier& networkStateNotifier()
     return networkStateNotifier;
 }
 
-void NetworkStateNotifier::addNetworkStateChangeListener(std::function<void (bool)> listener)
+void NetworkStateNotifier::addNetworkStateChangeListener(WTF::Function<void (bool)>&& listener)
 {
     ASSERT(listener);
 #if PLATFORM(IOS)

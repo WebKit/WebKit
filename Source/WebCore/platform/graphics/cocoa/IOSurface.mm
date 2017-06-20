@@ -380,7 +380,7 @@ bool WebCore::IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, 
     return true;
 }
 
-void WebCore::IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format format, std::function<void(std::unique_ptr<WebCore::IOSurface>)> callback)
+void WebCore::IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format format, WTF::Function<void(std::unique_ptr<WebCore::IOSurface>)>&& callback)
 {
     static IOSurfaceAcceleratorRef accelerator;
     if (!accelerator) {
@@ -403,10 +403,10 @@ void WebCore::IOSurface::convertToFormat(std::unique_ptr<WebCore::IOSurface>&& i
 
     IOSurfaceRef destinationIOSurfaceRef = destinationSurface->surface();
     IOSurfaceAcceleratorCompletion completion;
-    completion.completionRefCon = new std::function<void(std::unique_ptr<WebCore::IOSurface>)> (WTFMove(callback));
+    completion.completionRefCon = new WTF::Function<void(std::unique_ptr<WebCore::IOSurface>)> (WTFMove(callback));
     completion.completionRefCon2 = destinationSurface.release();
     completion.completionCallback = [](void *completionRefCon, IOReturn, void * completionRefCon2) {
-        auto* callback = static_cast<std::function<void(std::unique_ptr<WebCore::IOSurface>)>*>(completionRefCon);
+        auto* callback = static_cast<WTF::Function<void(std::unique_ptr<WebCore::IOSurface>)>*>(completionRefCon);
         auto destinationSurface = std::unique_ptr<WebCore::IOSurface>(static_cast<WebCore::IOSurface*>(completionRefCon2));
         
         (*callback)(WTFMove(destinationSurface));

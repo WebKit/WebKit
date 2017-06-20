@@ -40,18 +40,18 @@ SOFT_LINK_CLASS(AVFoundation, AVAudioSession)
 void* AvailableInputsContext = &AvailableInputsContext;
 
 @interface WebAVAudioSessionAvailableInputsListener : NSObject {
-    std::function<void()> _callback;
+    WTF::Function<void()> _callback;
 }
 @end
 
 @implementation WebAVAudioSessionAvailableInputsListener
-- (id)initWithCallback:(std::function<void()>)callback
+- (id)initWithCallback:(WTF::Function<void()>&&)callback
 {
     self = [super init];
     if (!self)
         return nil;
 
-    _callback = callback;
+    _callback = WTFMove(callback);
     return self;
 }
 

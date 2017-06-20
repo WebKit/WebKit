@@ -32,7 +32,8 @@
 #include "InbandTextTrackPrivateAVF.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
-#include <functional>
+#include <wtf/Deque.h>
+#include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
@@ -113,10 +114,10 @@ public:
         {
         }
 
-        Notification(std::function<void ()> function)
+        Notification(WTF::Function<void ()>&& function)
             : m_type(FunctionType)
             , m_finished(false)
-            , m_function(function)
+            , m_function(WTFMove(function))
         {
         }
         
@@ -124,16 +125,16 @@ public:
         bool isValid() { return m_type != None; }
         MediaTime time() { return m_time; }
         bool finished() { return m_finished; }
-        std::function<void ()>& function() { return m_function; }
+        WTF::Function<void ()>& function() { return m_function; }
         
     private:
         Type m_type;
         MediaTime m_time;
         bool m_finished;
-        std::function<void ()> m_function;
+        WTF::Function<void ()> m_function;
     };
 
-    void scheduleMainThreadNotification(Notification);
+    void scheduleMainThreadNotification(Notification&&);
     void scheduleMainThreadNotification(Notification::Type, const MediaTime& = MediaTime::zeroTime());
     void scheduleMainThreadNotification(Notification::Type, bool completed);
     void dispatchNotification();
@@ -317,9 +318,9 @@ private:
 
     WeakPtrFactory<MediaPlayerPrivateAVFoundation> m_weakPtrFactory;
 
-    std::function<void()> m_pendingSeek;
+    WTF::Function<void()> m_pendingSeek;
 
-    Vector<Notification> m_queuedNotifications;
+    Deque<Notification> m_queuedNotifications;
     mutable Lock m_queueMutex;
 
     mutable std::unique_ptr<PlatformTimeRanges> m_cachedLoadedTimeRanges;

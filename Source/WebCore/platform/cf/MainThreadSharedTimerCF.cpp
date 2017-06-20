@@ -57,7 +57,7 @@ static void setupPowerObserver()
 #if PLATFORM(MAC)
     static PowerObserver* powerObserver;
     if (!powerObserver)
-        powerObserver = std::make_unique<PowerObserver>(restartSharedTimer).release();
+        powerObserver = std::make_unique<PowerObserver>([] { restartSharedTimer(); }).release();
 #elif PLATFORM(IOS)
     static bool registeredForApplicationNotification = false;
     if (!registeredForApplicationNotification) {

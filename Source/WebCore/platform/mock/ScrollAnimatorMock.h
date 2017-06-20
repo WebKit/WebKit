@@ -40,7 +40,7 @@ namespace WebCore {
 // the internal setting enableMockScrollAnimator.
 class ScrollAnimatorMock final : public ScrollAnimator {
 public:
-    ScrollAnimatorMock(ScrollableArea&, std::function<void(const String&)>&&);
+    ScrollAnimatorMock(ScrollableArea&, WTF::Function<void(const String&)>&&);
     virtual ~ScrollAnimatorMock();
 
 #if ENABLE(RUBBER_BANDING)
@@ -68,7 +68,7 @@ private:
     void mouseExitedScrollbar(Scrollbar*) const override;
     void mouseIsDownInScrollbar(Scrollbar*, bool) const override;
 
-    std::function<void(const String&)> m_logger;
+    WTF::Function<void(const String&)> m_logger;
     Scrollbar* m_verticalScrollbar { nullptr };
     Scrollbar* m_horizontalScrollbar { nullptr };
 };

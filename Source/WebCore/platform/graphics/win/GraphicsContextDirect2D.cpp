@@ -935,7 +935,7 @@ void GraphicsContext::drawPath(const Path& path)
     flush();
 }
 
-void GraphicsContext::drawWithoutShadow(const FloatRect& /*boundingRect*/, const std::function<void(ID2D1RenderTarget*)>& drawCommands)
+void GraphicsContext::drawWithoutShadow(const FloatRect& /*boundingRect*/, const WTF::Function<void(ID2D1RenderTarget*)>& drawCommands)
 {
     drawCommands(platformContext());
 }
@@ -981,7 +981,7 @@ static void drawWithShadowHelper(ID2D1RenderTarget* context, ID2D1Bitmap* bitmap
     deviceContext->DrawImage(compositor.get(), D2D1_INTERPOLATION_MODE_LINEAR);
 }
 
-void GraphicsContext::drawWithShadow(const FloatRect& boundingRect, const std::function<void(ID2D1RenderTarget*)>& drawCommands)
+void GraphicsContext::drawWithShadow(const FloatRect& boundingRect, const WTF::Function<void(ID2D1RenderTarget*)>& drawCommands)
 {
     auto context = platformContext();
 

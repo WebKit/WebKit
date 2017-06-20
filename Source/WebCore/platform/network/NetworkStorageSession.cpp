@@ -50,7 +50,7 @@ void NetworkStorageSession::destroySession(SessionID sessionID)
     globalSessionMap().remove(sessionID);
 }
 
-void NetworkStorageSession::forEach(std::function<void(const WebCore::NetworkStorageSession&)> functor)
+void NetworkStorageSession::forEach(const WTF::Function<void(const WebCore::NetworkStorageSession&)>& functor)
 {
     functor(defaultStorageSession());
     for (auto& storageSession : globalSessionMap().values())

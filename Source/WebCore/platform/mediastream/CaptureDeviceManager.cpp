@@ -113,7 +113,7 @@ static CaptureDeviceManager::ObserverToken nextObserverToken()
     return ++nextToken;
 }
 
-CaptureDeviceManager::ObserverToken CaptureDeviceManager::addCaptureDeviceChangedObserver(CaptureDeviceChangedCallback observer)
+CaptureDeviceManager::ObserverToken CaptureDeviceManager::addCaptureDeviceChangedObserver(CaptureDeviceChangedCallback&& observer)
 {
     auto token = nextObserverToken();
     m_observers.set(token, WTFMove(observer));

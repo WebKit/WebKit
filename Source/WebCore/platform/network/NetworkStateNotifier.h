@@ -26,8 +26,8 @@
 #ifndef NetworkStateNotifier_h
 #define NetworkStateNotifier_h
 
-#include <functional>
 #include <wtf/FastMalloc.h>
+#include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
@@ -59,7 +59,7 @@ public:
 #if PLATFORM(IOS)
     ~NetworkStateNotifier();
 #endif
-    void addNetworkStateChangeListener(std::function<void (bool isOnLine)>);
+    void addNetworkStateChangeListener(WTF::Function<void (bool isOnLine)>&&);
 
     bool onLine() const;
 
@@ -67,7 +67,7 @@ private:
 #if !PLATFORM(IOS)
     bool m_isOnLine;
 #endif
-    Vector<std::function<void (bool)>> m_listeners;
+    Vector<WTF::Function<void (bool)>> m_listeners;
 
     void notifyNetworkStateChange() const;
     void updateState();

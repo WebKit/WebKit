@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-PowerObserver::PowerObserver(const std::function<void()>& powerOnHander)
-    : m_powerOnHander(powerOnHander)
+PowerObserver::PowerObserver(WTF::Function<void()>&& powerOnHander)
+    : m_powerOnHander(WTFMove(powerOnHander))
     , m_powerConnection(0)
     , m_notificationPort(nullptr)
     , m_notifierReference(0)

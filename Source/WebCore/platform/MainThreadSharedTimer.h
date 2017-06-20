@@ -41,7 +41,7 @@ class MainThreadSharedTimer final : public SharedTimer {
 public:
     static MainThreadSharedTimer& singleton();
 
-    void setFiredFunction(std::function<void()>&&) override;
+    void setFiredFunction(WTF::Function<void()>&&) override;
     void setFireInterval(Seconds) override;
     void stop() override;
     void invalidate() override;
@@ -53,7 +53,7 @@ public:
 private:
     MainThreadSharedTimer();
 
-    std::function<void()> m_firedFunction;
+    WTF::Function<void()> m_firedFunction;
 #if PLATFORM(GTK) || PLATFORM(WPE)
     RunLoop::Timer<MainThreadSharedTimer> m_timer;
 #endif

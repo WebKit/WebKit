@@ -21,6 +21,7 @@
 #define MediaPlayerRequestInstallMissingPluginsCallback_h
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -28,7 +29,7 @@ namespace WebCore {
 class MediaPlayerRequestInstallMissingPluginsCallback : public RefCounted<MediaPlayerRequestInstallMissingPluginsCallback> {
     WTF_MAKE_FAST_ALLOCATED();
 public:
-    static Ref<MediaPlayerRequestInstallMissingPluginsCallback> create(std::function<void (uint32_t)>&& function)
+    static Ref<MediaPlayerRequestInstallMissingPluginsCallback> create(WTF::Function<void (uint32_t)>&& function)
     {
         return adoptRef(*new MediaPlayerRequestInstallMissingPluginsCallback(WTFMove(function)));
     }
@@ -47,12 +48,12 @@ public:
     }
 
 private:
-    MediaPlayerRequestInstallMissingPluginsCallback(std::function<void (uint32_t)>&& function)
+    MediaPlayerRequestInstallMissingPluginsCallback(WTF::Function<void (uint32_t)>&& function)
         : m_function(WTFMove(function))
     {
     }
 
-    std::function<void (uint32_t)> m_function;
+    WTF::Function<void (uint32_t)> m_function;
 };
 
 } // namespace WebCore

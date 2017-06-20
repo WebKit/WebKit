@@ -41,6 +41,7 @@
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <objc_runtime.h>
+#import <wtf/Function.h>
 #import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
@@ -325,7 +326,7 @@ CGAffineTransform MediaPlayerPrivateMediaStreamAVFObjC::videoTransformationMatri
     return m_videoTransform;
 }
 
-static void runWithoutAnimations(std::function<void()> function)
+static void runWithoutAnimations(const WTF::Function<void()>& function)
 {
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];

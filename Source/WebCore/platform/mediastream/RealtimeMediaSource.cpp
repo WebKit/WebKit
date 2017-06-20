@@ -882,7 +882,7 @@ void RealtimeMediaSource::setEchoCancellation(bool echoCancellation)
     settingsDidChange();
 }
 
-void RealtimeMediaSource::scheduleDeferredTask(std::function<void()>&& function)
+void RealtimeMediaSource::scheduleDeferredTask(WTF::Function<void()>&& function)
 {
     ASSERT(function);
     callOnMainThread([weakThis = createWeakPtr(), function = WTFMove(function)] {

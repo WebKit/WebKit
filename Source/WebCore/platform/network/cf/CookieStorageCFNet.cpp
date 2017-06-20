@@ -27,6 +27,7 @@
 #include "CookieStorage.h"
 
 #include "NetworkStorageSession.h"
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
@@ -43,17 +44,18 @@ namespace WebCore {
 
 #if PLATFORM(WIN)
 
-static HashMap<CFHTTPCookieStorageRef, std::function<void ()>>& cookieChangeCallbackMap()
+static HashMap<CFHTTPCookieStorageRef, WTF::Function<void ()>>& cookieChangeCallbackMap()
 {
-    static NeverDestroyed<HashMap<CFHTTPCookieStorageRef, std::function<void ()>>> map;
+    static NeverDestroyed<HashMap<CFHTTPCookieStorageRef, WTF::Function<void ()>>> map;
     return map;
 }
 
 static void notifyCookiesChanged(CFHTTPCookieStorageRef cookieStorage, void *)
 {
     callOnMainThread([cookieStorage] {
-        if (auto callback = cookieChangeCallbackMap().get(cookieStorage))
-            callback();
+        auto it = cookieChangeCallbackMap().find(cookieStorage);
+        if (it != cookieChangeCallbackMap().end())
+            it->value();
     });
 }
 
@@ -68,7 +70,7 @@ static inline CFRunLoopRef cookieStorageObserverRunLoop()
     return loaderRunLoop();
 }
 
-void startObservingCookieChanges(const NetworkStorageSession& storageSession, std::function<void ()>&& callback)
+void startObservingCookieChanges(const NetworkStorageSession& storageSession, WTF::Function<void ()>&& callback)
 {
     ASSERT(isMainThread());
 

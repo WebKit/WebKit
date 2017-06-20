@@ -39,8 +39,8 @@ enum class HysteresisState {
 
 class HysteresisActivity {
 public:
-    explicit HysteresisActivity(std::function<void(HysteresisState)> callback = [](HysteresisState) { }, double hysteresisSeconds = DefaultHysteresisSeconds)
-        : m_callback(callback)
+    explicit HysteresisActivity(WTF::Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, double hysteresisSeconds = DefaultHysteresisSeconds)
+        : m_callback(WTFMove(callback))
         , m_hysteresisSeconds(hysteresisSeconds)
         , m_active(false)
         , m_timer(*this, &HysteresisActivity::hysteresisTimerFired)
@@ -88,7 +88,7 @@ private:
         m_callback(HysteresisState::Stopped);
     }
 
-    std::function<void(HysteresisState)> m_callback;
+    WTF::Function<void(HysteresisState)> m_callback;
     double m_hysteresisSeconds; // FIXME: Should use Seconds.
     bool m_active;
     Timer m_timer;

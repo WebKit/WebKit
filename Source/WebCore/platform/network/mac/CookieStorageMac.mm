@@ -23,19 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "CookieStorage.h"
+#import "config.h"
+#import "CookieStorage.h"
 
 #import "WebCoreSystemInterface.h"
+#import <wtf/Function.h>
 
 using namespace WebCore;
 
 @interface WebCookieStorageObjCAdapter : NSObject {
-    std::function<void ()> m_cookieChangeCallback;
+    WTF::Function<void ()> m_cookieChangeCallback;
 }
 -(void)notifyCookiesChangedOnMainThread;
 -(void)cookiesChangedNotificationHandler:(NSNotification *)notification;
--(void)startListeningForCookieChangeNotificationsWithCallback:(std::function<void ()>&&)callback;
+-(void)startListeningForCookieChangeNotificationsWithCallback:(WTF::Function<void ()>&&)callback;
 -(void)stopListeningForCookieChangeNotifications;
 @end
 
@@ -53,7 +54,7 @@ using namespace WebCore;
     [self performSelectorOnMainThread:@selector(notifyCookiesChangedOnMainThread) withObject:nil waitUntilDone:FALSE];
 }
 
--(void)startListeningForCookieChangeNotificationsWithCallback:(std::function<void ()>&&)callback
+-(void)startListeningForCookieChangeNotificationsWithCallback:(WTF::Function<void ()>&&)callback
 {
     ASSERT(!m_cookieChangeCallback);
     m_cookieChangeCallback = WTFMove(callback);
@@ -72,7 +73,7 @@ namespace WebCore {
 
 static WebCookieStorageObjCAdapter *cookieStorageAdapter;
 
-void startObservingCookieChanges(const NetworkStorageSession&, std::function<void ()>&& callback)
+void startObservingCookieChanges(const NetworkStorageSession&, WTF::Function<void ()>&& callback)
 {
     if (!cookieStorageAdapter)
         cookieStorageAdapter = [[WebCookieStorageObjCAdapter alloc] init];

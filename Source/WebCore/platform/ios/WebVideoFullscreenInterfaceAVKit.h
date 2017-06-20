@@ -34,8 +34,8 @@
 #include "PlatformLayer.h"
 #include "WebPlaybackSessionInterfaceAVKit.h"
 #include "WebVideoFullscreenModel.h"
-#include <functional>
 #include <objc/objc.h>
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
@@ -101,7 +101,7 @@ public:
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_mode; }
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
-    void fullscreenMayReturnToInline(std::function<void(bool)> callback);
+    void fullscreenMayReturnToInline(WTF::Function<void(bool)>&& callback);
     bool wirelessVideoPlaybackDisabled() const;
     void applicationDidBecomeActive();
 
@@ -138,7 +138,7 @@ protected:
     RetainPtr<UIWindow> m_parentWindow;
     RetainPtr<WebAVPlayerLayerView> m_playerLayerView;
     HTMLMediaElementEnums::VideoFullscreenMode m_mode { HTMLMediaElementEnums::VideoFullscreenModeNone };
-    std::function<void(bool)> m_prepareToInlineCallback;
+    WTF::Function<void(bool)> m_prepareToInlineCallback;
     RunLoop::Timer<WebVideoFullscreenInterfaceAVKit> m_watchdogTimer;
     bool m_allowsPictureInPicturePlayback { false };
     bool m_exitRequested { false };

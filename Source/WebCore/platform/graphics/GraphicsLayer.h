@@ -37,6 +37,7 @@
 #include "PlatformLayer.h"
 #include "TransformOperations.h"
 #include "WindRule.h"
+#include <wtf/Function.h>
 #include <wtf/TypeCasts.h>
 
 #if ENABLE(CSS_COMPOSITING)
@@ -570,7 +571,7 @@ public:
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
     virtual bool isCoordinatedGraphicsLayer() const { return false; }
 
-    static void traverse(GraphicsLayer&, std::function<void (GraphicsLayer&)>);
+    static void traverse(GraphicsLayer&, const WTF::Function<void (GraphicsLayer&)>&);
 
 protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);

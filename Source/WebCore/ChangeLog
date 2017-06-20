@@ -1,3 +1,130 @@
+2017-06-20  Chris Dumez  <cdumez@apple.com>
+
+        Use WTF::Function instead of std::function in more places in WebCore/
+        https://bugs.webkit.org/show_bug.cgi?id=173583
+
+        Reviewed by Darin Adler.
+
+        Use WTF::Function instead of std::function in more places in WebCore/ to
+        reduce copying.
+
+        * page/Page.cpp:
+        * platform/HysteresisActivity.h:
+        (WebCore::HysteresisActivity::HysteresisActivity):
+        * platform/Logging.cpp:
+        (WebCore::registerNotifyCallback):
+        * platform/Logging.h:
+        * platform/MainThreadSharedTimer.cpp:
+        (WebCore::MainThreadSharedTimer::setFiredFunction):
+        * platform/MainThreadSharedTimer.h:
+        * platform/PlatformPasteboard.h:
+        * platform/ScopeGuard.h:
+        (WebCore::ScopeGuard::ScopeGuard):
+        (WebCore::ScopeGuard::enable):
+        * platform/ScrollAnimationSmooth.cpp:
+        (WebCore::ScrollAnimationSmooth::ScrollAnimationSmooth):
+        * platform/ScrollAnimationSmooth.h:
+        * platform/SharedTimer.h:
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::currentSessionsMatching):
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/cf/MainThreadSharedTimerCF.cpp:
+        (WebCore::setupPowerObserver):
+        * platform/cf/RunLoopObserver.h:
+        (WebCore::RunLoopObserver::RunLoopObserver):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::traverse):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::addMediaEngine):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted):
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::Notification::Notification):
+        (WebCore::MediaPlayerPrivateAVFoundation::Notification::function):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::runWithoutAnimations):
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::convertToFormat):
+        * platform/graphics/gstreamer/MainThreadNotifier.h:
+        * platform/graphics/gstreamer/MediaPlayerRequestInstallMissingPluginsCallback.h:
+        (WebCore::MediaPlayerRequestInstallMissingPluginsCallback::create):
+        (WebCore::MediaPlayerRequestInstallMissingPluginsCallback::MediaPlayerRequestInstallMissingPluginsCallback):
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::drawWithoutShadow):
+        (WebCore::GraphicsContext::drawWithShadow):
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::ClipboardSetData::ClipboardSetData):
+        (WebCore::PasteboardHelper::writeClipboardContents):
+        * platform/gtk/PasteboardHelper.h:
+        * platform/gtk/PlatformPasteboardGtk.cpp:
+        (WebCore::PlatformPasteboard::writeToClipboard):
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.h:
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (WebVideoFullscreenInterfaceAVKit::preparedToReturnToInline):
+        (WebVideoFullscreenInterfaceAVKit::fullscreenMayReturnToInline):
+        * platform/mac/PowerObserverMac.cpp:
+        (WebCore::PowerObserver::PowerObserver):
+        * platform/mac/PowerObserverMac.h:
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::isSecondLevelDomainNameAllowedByTLDRules):
+        * platform/mediastream/CaptureDeviceManager.cpp:
+        (CaptureDeviceManager::addCaptureDeviceChangedObserver):
+        * platform/mediastream/CaptureDeviceManager.h:
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::scheduleDeferredTask):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        (-[WebAVAudioSessionAvailableInputsListener initWithCallback:]):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        * platform/mock/ScrollAnimatorMock.cpp:
+        (WebCore::ScrollAnimatorMock::ScrollAnimatorMock):
+        * platform/mock/ScrollAnimatorMock.h:
+        * platform/network/CookieStorage.h:
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::NetworkStateNotifier::addNetworkStateChangeListener):
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/NetworkStorageSession.cpp:
+        (WebCore::NetworkStorageSession::forEach):
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::cookieChangeCallbackMap):
+        (WebCore::startObservingCookieChanges):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::callOnMainThreadAndWait):
+        * platform/network/mac/CookieStorageMac.mm:
+        (-[WebCookieStorageObjCAdapter startListeningForCookieChangeNotificationsWithCallback:]):
+        (WebCore::startObservingCookieChanges):
+        * platform/network/soup/CookieStorageSoup.cpp:
+        (WebCore::startObservingCookieChanges):
+        * platform/network/soup/SoupNetworkSession.cpp:
+        (WebCore::SoupNetworkSession::checkTLSErrors):
+        * platform/network/soup/SoupNetworkSession.h:
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::destroyCollationFunction):
+        (WebCore::callCollationFunction):
+        (WebCore::SQLiteDatabase::setCollationFunction):
+        * platform/sql/SQLiteDatabase.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::traverseVisibleNonCompositedDescendantLayers):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItem):
+        * rendering/RenderListBox.h:
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::InlineIteratorHistory::push):
+        (WebCore::BreakingContext::InlineIteratorHistory::update):
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+        * workers/WorkerRunLoop.cpp:
+
 2017-06-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r218524.

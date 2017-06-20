@@ -26,8 +26,8 @@
 #ifndef PlatformPasteboard_h
 #define PlatformPasteboard_h
 
-#include <functional>
 #include <wtf/Forward.h>
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
@@ -93,7 +93,7 @@ public:
     WEBCORE_EXPORT int numberOfFiles();
 
 #if PLATFORM(GTK)
-    WEBCORE_EXPORT void writeToClipboard(const SelectionData&, std::function<void()>&& primarySelectionCleared);
+    WEBCORE_EXPORT void writeToClipboard(const SelectionData&, WTF::Function<void()>&& primarySelectionCleared);
     WEBCORE_EXPORT Ref<SelectionData> readFromClipboard();
 #endif
 

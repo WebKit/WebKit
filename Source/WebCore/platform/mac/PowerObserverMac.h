@@ -28,7 +28,7 @@
 
 #import <IOKit/IOMessage.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
-#import <functional>
+#import <wtf/Function.h>
 #import <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -37,13 +37,13 @@ class PowerObserver {
     WTF_MAKE_NONCOPYABLE(PowerObserver); WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    PowerObserver(const std::function<void()>& powerOnHander);
+    PowerObserver(WTF::Function<void()>&& powerOnHander);
     ~PowerObserver();
 
 private:
     void didReceiveSystemPowerNotification(io_service_t, uint32_t messageType, void* messageArgument);
 
-    std::function<void()> m_powerOnHander;
+    WTF::Function<void()> m_powerOnHander;
     io_connect_t m_powerConnection;
     IONotificationPortRef m_notificationPort;
     io_object_t m_notifierReference;

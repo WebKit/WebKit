@@ -659,7 +659,7 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
 
     m_seeking = false;
 
-    std::function<void()> pendingSeek;
+    WTF::Function<void()> pendingSeek;
     std::swap(pendingSeek, m_pendingSeek);
 
     if (pendingSeek) {
@@ -790,16 +790,17 @@ static const char* notificationName(MediaPlayerPrivateAVFoundation::Notification
 #endif // !LOG_DISABLED
     
 
-void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification notification)
+void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification&& notification)
 {
-    if (notification.type() != Notification::FunctionType)
+    auto notificationType = notification.type();
+    if (notificationType != Notification::FunctionType)
         LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - notification %s", this, notificationName(notification));
 
     m_queueMutex.lock();
 
     // It is important to always process the properties in the order that we are notified,
     // so always go through the queue because notifications happen on different threads.
-    m_queuedNotifications.append(notification);
+    m_queuedNotifications.append(WTFMove(notification));
 
 #if OS(WINDOWS)
     bool delayDispatch = true;
@@ -820,7 +821,7 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
     m_queueMutex.unlock();
 
     if (delayDispatch) {
-        if (notification.type() != Notification::FunctionType)
+        if (notificationType != Notification::FunctionType)
             LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - early return", this);
         return;
     }
@@ -832,7 +833,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
 {
     ASSERT(isMainThread());
 
-    Notification notification = Notification();
+    Notification notification;
     {
         LockHolder lock(m_queueMutex);
         
@@ -841,8 +842,7 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         
         if (!m_delayCallbacks) {
             // Only dispatch one notification callback per invocation because they can cause recursion.
-            notification = m_queuedNotifications.first();
-            m_queuedNotifications.remove(0);
+            notification = m_queuedNotifications.takeFirst();
         }
         
         if (!m_queuedNotifications.isEmpty() && !m_mainThreadCallPending) {

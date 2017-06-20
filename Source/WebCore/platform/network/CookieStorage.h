@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include <functional>
+#include <wtf/Function.h>
 
 namespace WebCore {
 
 class NetworkStorageSession;
 
-WEBCORE_EXPORT void startObservingCookieChanges(const NetworkStorageSession&, std::function<void ()>&&);
+WEBCORE_EXPORT void startObservingCookieChanges(const NetworkStorageSession&, WTF::Function<void ()>&&);
 WEBCORE_EXPORT void stopObservingCookieChanges(const NetworkStorageSession&);
 
 }

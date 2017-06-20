@@ -40,7 +40,7 @@ static const double frameRate = 60;
 static const Seconds tickTime = 1_s / frameRate;
 static const Seconds minimumTimerInterval { 1_ms };
 
-ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollableArea& scrollableArea, const FloatPoint& position, std::function<void (FloatPoint&&)>&& notifyPositionChangedFunction)
+ScrollAnimationSmooth::ScrollAnimationSmooth(ScrollableArea& scrollableArea, const FloatPoint& position, WTF::Function<void (FloatPoint&&)>&& notifyPositionChangedFunction)
     : ScrollAnimation(scrollableArea)
     , m_notifyPositionChangedFunction(WTFMove(notifyPositionChangedFunction))
     , m_horizontalData(position.x(), scrollableArea.visibleWidth())

@@ -61,7 +61,7 @@ public:
     void addEchoCancellationSource(AudioSampleDataSource&);
     void removeEchoCancellationSource(AudioSampleDataSource&);
 
-    using MicrophoneDataCallback = std::function<void(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)>;
+    using MicrophoneDataCallback = WTF::Function<void(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)>;
 
     uint64_t addMicrophoneDataConsumer(MicrophoneDataCallback&&);
     void removeMicrophoneDataConsumer(uint64_t);

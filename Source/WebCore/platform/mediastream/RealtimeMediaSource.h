@@ -190,8 +190,8 @@ public:
     virtual const RealtimeMediaSourceCapabilities& capabilities() const = 0;
     virtual const RealtimeMediaSourceSettings& settings() const = 0;
 
-    using SuccessHandler = std::function<void()>;
-    using FailureHandler = std::function<void(const String& badConstraint, const String& errorString)>;
+    using SuccessHandler = WTF::Function<void()>;
+    using FailureHandler = WTF::Function<void(const String& badConstraint, const String& errorString)>;
     virtual void applyConstraints(const MediaConstraints&, SuccessHandler&&, FailureHandler&&);
     std::optional<std::pair<String, String>> applyConstraints(const MediaConstraints&);
 
@@ -212,7 +212,7 @@ public:
 protected:
     RealtimeMediaSource(const String& id, Type, const String& name);
 
-    void scheduleDeferredTask(std::function<void()>&&);
+    void scheduleDeferredTask(WTF::Function<void()>&&);
 
     virtual void beginConfiguration() { }
     virtual void commitConfiguration() { }

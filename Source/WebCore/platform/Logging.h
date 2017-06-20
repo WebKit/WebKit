@@ -103,7 +103,7 @@ String logLevelString();
 bool isLogChannelEnabled(const String& name);
 WEBCORE_EXPORT void setLogChannelToAccumulate(const String& name);
 #ifndef NDEBUG
-void registerNotifyCallback(const String& notifyID, std::function<void()> callback);
+void registerNotifyCallback(const String& notifyID, WTF::Function<void()>&& callback);
 #endif
 
 #endif // !LOG_DISABLED || !RELEASE_LOG_DISABLED

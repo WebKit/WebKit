@@ -36,7 +36,7 @@ public:
     }
 
     template<typename F>
-    void notify(T notificationType, const F& callbackFunctor)
+    void notify(T notificationType, F&& callbackFunctor)
     {
         ASSERT(m_isValid.load());
         if (isMainThread()) {
@@ -48,7 +48,7 @@ public:
         if (!addPendingNotification(notificationType))
             return;
 
-        RunLoop::main().dispatch([this, protectedThis = makeRef(*this), notificationType, callback = std::function<void()>(callbackFunctor)] {
+        RunLoop::main().dispatch([this, protectedThis = makeRef(*this), notificationType, callback = WTF::Function<void()>(WTFMove(callbackFunctor))] {
             if (!m_isValid.load())
                 return;
             if (removePendingNotification(notificationType))
