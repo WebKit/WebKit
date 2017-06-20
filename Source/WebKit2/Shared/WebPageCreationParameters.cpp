@@ -97,12 +97,8 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << overrideContentSecurityPolicy;
     encoder << cpuLimit;
     encoder << urlSchemeHandlers;
-#if ENABLE(WEB_RTC)
     encoder << iceCandidateFilteringEnabled;
-#if USE(LIBWEBRTC)
     encoder << enumeratingAllNetworkInterfacesEnabled;
-#endif
-#endif
     encoder << userContentWorlds;
     encoder << userScripts;
     encoder << userStyleSheets;
@@ -243,14 +239,12 @@ bool WebPageCreationParameters::decode(IPC::Decoder& decoder, WebPageCreationPar
     if (!decoder.decode(parameters.urlSchemeHandlers))
         return false;
 
-#if ENABLE(WEB_RTC)
     if (!decoder.decode(parameters.iceCandidateFilteringEnabled))
         return false;
-#if USE(LIBWEBRTC)
+
     if (!decoder.decode(parameters.enumeratingAllNetworkInterfacesEnabled))
         return false;
-#endif
-#endif
+
     if (!decoder.decode(parameters.userContentWorlds))
         return false;
     if (!decoder.decode(parameters.userScripts))

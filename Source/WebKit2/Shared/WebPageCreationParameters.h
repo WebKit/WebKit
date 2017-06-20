@@ -153,12 +153,9 @@ struct WebPageCreationParameters {
 
     HashMap<String, uint64_t> urlSchemeHandlers;
 
-#if ENABLE(WEB_RTC)
+    // WebRTC members.
     bool iceCandidateFilteringEnabled { true };
-#if USE(LIBWEBRTC)
     bool enumeratingAllNetworkInterfacesEnabled { false };
-#endif
-#endif
 
     // UserContentController members
     Vector<std::pair<uint64_t, String>> userContentWorlds;

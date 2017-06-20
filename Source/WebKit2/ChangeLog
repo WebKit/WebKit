@@ -1,5 +1,22 @@
 2017-06-19  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r217570): com.apple.WebKit.Networking crash at com.apple.WebKit: WebKit::ChildProcess::didReceiveInvalidMessage (Breaks 32-bit apps)
+        https://bugs.webkit.org/show_bug.cgi?id=173576
+        <rdar://problem/32416291>
+
+        Reviewed by Tim Horton.
+
+        The IPC encoding / decoding code cannot be architecture-specific because a 32bit UIProcess
+        talks to a 64bit NetworkProcess. The WEB_RTC build time flag is enabled on 64bit only.
+        Therefore, we should not use #if ENABLE(WEB_RTC) in IPC encoding / decoding code.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+
+2017-06-19  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, partial rollout of r218501 to address crashes on iOS.
 
         * UIProcess/Cocoa/NavigationState.mm:
