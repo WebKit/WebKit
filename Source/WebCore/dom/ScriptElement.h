@@ -21,12 +21,8 @@
 
 #pragma once
 
-#include "CachedResourceClient.h"
-#include "CachedResourceHandle.h"
 #include "ContainerNode.h"
 #include "LoadableScript.h"
-#include "LoadableScriptClient.h"
-#include "Timer.h"
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ScriptedAnimationController.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMWindow.h"
 #include "DisplayRefreshMonitor.h"
 #include "DisplayRefreshMonitorManager.h"

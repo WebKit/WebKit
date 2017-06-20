@@ -34,6 +34,7 @@
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMPromiseDeferred.h"
+#include <wtf/SetForScope.h>
 
 using namespace JSC;
 

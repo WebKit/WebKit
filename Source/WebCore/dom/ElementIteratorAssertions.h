@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Element.h"
 #include "NoEventDispatchAssertion.h"
 
 namespace WebCore {

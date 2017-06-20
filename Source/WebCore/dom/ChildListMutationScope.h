@@ -30,9 +30,9 @@
 
 #pragma once
 
+#include "ContainerNode.h"
 #include "Document.h"
 #include "MutationObserver.h"
-#include "Node.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>

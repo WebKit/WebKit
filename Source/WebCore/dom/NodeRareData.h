@@ -22,12 +22,9 @@
 #pragma once
 
 #include "ChildNodeList.h"
-#include "ClassCollection.h"
-#include "DOMTokenList.h"
 #include "HTMLCollection.h"
 #include "HTMLNames.h"
 #include "LiveNodeList.h"
-#include "MutationObserver.h"
 #include "MutationObserverRegistration.h"
 #include "Page.h"
 #include "QualifiedName.h"

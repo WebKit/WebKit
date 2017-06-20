@@ -27,7 +27,6 @@
 #pragma once
 
 #include "Node.h"
-#include "TreeScope.h"
 
 namespace WebCore {
 

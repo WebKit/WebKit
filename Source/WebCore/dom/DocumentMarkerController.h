@@ -27,7 +27,6 @@
 #pragma once
 
 #include "DocumentMarker.h"
-#include "IntRect.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>

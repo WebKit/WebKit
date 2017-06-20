@@ -27,7 +27,6 @@
 #pragma once
 
 #include "Element.h"
-#include "Event.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

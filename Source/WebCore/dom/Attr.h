@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "ContainerNode.h"
+#include "Node.h"
 #include "QualifiedName.h"
 
 namespace WebCore {

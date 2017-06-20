@@ -30,6 +30,7 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMPromise.h"
 #include "PromiseRejectionEvent.h"
 #include "ScriptExecutionContext.h"
 #include <heap/HeapInlines.h>

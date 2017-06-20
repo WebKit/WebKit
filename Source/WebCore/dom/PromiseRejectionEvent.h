@@ -26,8 +26,8 @@
 #pragma once
 
 #include "Event.h"
-#include "JSDOMPromise.h"
 #include <heap/Strong.h>
+#include <runtime/JSPromise.h>
 
 namespace WebCore {
 

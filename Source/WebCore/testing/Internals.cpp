@@ -41,6 +41,7 @@
 #include "CSSSupportsRule.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "Chrome.h"
 #include "ComposedTreeIterator.h"
 #include "Cursor.h"
 #include "DOMPath.h"

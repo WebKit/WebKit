@@ -25,7 +25,6 @@
 #pragma once
 
 #include "FloatRect.h"
-#include "FragmentScriptingPermission.h"
 #include "IntRect.h"
 #include "RangeBoundaryPoint.h"
 #include <wtf/Forward.h>

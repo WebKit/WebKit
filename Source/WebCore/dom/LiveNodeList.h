@@ -25,7 +25,6 @@
 
 #include "CollectionIndexCache.h"
 #include "CollectionTraversal.h"
-#include "CollectionType.h"
 #include "Document.h"
 #include "ElementDescendantIterator.h"
 #include "HTMLNames.h"

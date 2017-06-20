@@ -27,7 +27,7 @@
 
 #include "NodeFilter.h"
 #include "NodeFilterCondition.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

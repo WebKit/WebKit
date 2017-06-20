@@ -32,7 +32,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

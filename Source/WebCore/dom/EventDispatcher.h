@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "SimulatedClickOptions.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

@@ -28,7 +28,6 @@
 #include "JSDOMPromiseDeferred.h"
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
-#include <wtf/SetForScope.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 

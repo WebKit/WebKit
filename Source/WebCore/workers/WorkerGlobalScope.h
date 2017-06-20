@@ -29,6 +29,7 @@
 #include "Base64Utilities.h"
 #include "EventTarget.h"
 #include "ScriptExecutionContext.h"
+#include "Supplementable.h"
 #include "URL.h"
 #include "WorkerEventQueue.h"
 #include "WorkerScriptController.h"

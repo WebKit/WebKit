@@ -29,7 +29,6 @@
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
 #include "LoadableScript.h"
-#include "LoadableScriptClient.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {

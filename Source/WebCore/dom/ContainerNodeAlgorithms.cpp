@@ -31,6 +31,7 @@
 #include "InspectorInstrumentation.h"
 #include "NoEventDispatchAssertion.h"
 #include "ShadowRoot.h"
+#include "TypedElementDescendantIterator.h"
 
 namespace WebCore {
 

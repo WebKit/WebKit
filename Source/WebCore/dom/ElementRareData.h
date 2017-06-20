@@ -24,13 +24,11 @@
 #include "CustomElementReactionQueue.h"
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
-#include "JSCustomElementInterface.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "PseudoElement.h"
 #include "RenderElement.h"
 #include "ShadowRoot.h"
-#include "StyleInheritedData.h"
 
 namespace WebCore {
 

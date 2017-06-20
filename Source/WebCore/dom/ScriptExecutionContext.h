@@ -30,12 +30,11 @@
 #include "ActiveDOMObject.h"
 #include "DOMTimer.h"
 #include "SecurityContext.h"
-#include "Supplementable.h"
 #include <heap/HandleTypes.h>
 #include <runtime/ConsoleTypes.h>
-#include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 class Exception;

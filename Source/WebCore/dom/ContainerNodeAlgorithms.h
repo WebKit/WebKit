@@ -21,12 +21,9 @@
 
 #pragma once
 
-#include "Document.h"
-#include "ElementIterator.h"
+#include "ContainerNode.h"
 #include "Frame.h"
-#include "NodeTraversal.h"
 #include <wtf/Assertions.h>
-#include <wtf/Ref.h>
 
 namespace WebCore {
 

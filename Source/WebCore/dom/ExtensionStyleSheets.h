@@ -27,7 +27,6 @@
 
 #pragma once
 
-#include "Timer.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
