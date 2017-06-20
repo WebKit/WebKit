@@ -1,3 +1,12 @@
+2017-06-20  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Skip geolocation tests
+
+        Geolocation was disabled since r218553 and thus far tests were
+        only using the mock provider. Skip until we add geoclue
+        support.
+        * platform/wpe/TestExpectations:
+
 2017-06-20  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Revert changes in bug#160417 about extending `null` not being a derived class
