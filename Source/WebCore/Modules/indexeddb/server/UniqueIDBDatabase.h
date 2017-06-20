@@ -265,8 +265,8 @@ private:
 
     bool m_deleteBackingStoreInProgress { false };
 
-    CrossThreadQueue<CrossThreadTask> m_databaseQueue;
-    CrossThreadQueue<CrossThreadTask> m_databaseReplyQueue;
+    CrossThreadQueue<Function<void ()>> m_databaseQueue;
+    CrossThreadQueue<Function<void ()>> m_databaseReplyQueue;
     std::atomic<uint64_t> m_queuedTaskCount { 0 };
 
     bool m_hardClosedForUserDelete { false };

@@ -1706,7 +1706,9 @@ void UniqueIDBDatabase::transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction
 
 void UniqueIDBDatabase::postDatabaseTask(CrossThreadTask&& task)
 {
-    m_databaseQueue.append(WTFMove(task));
+    m_databaseQueue.append([protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
+        task.performTask();
+    });
     ++m_queuedTaskCount;
 
     m_server.postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::executeNextDatabaseTask));
@@ -1715,7 +1717,10 @@ void UniqueIDBDatabase::postDatabaseTask(CrossThreadTask&& task)
 void UniqueIDBDatabase::postDatabaseTaskReply(CrossThreadTask&& task)
 {
     ASSERT(!isMainThread());
-    m_databaseReplyQueue.append(WTFMove(task));
+
+    m_databaseReplyQueue.append([protectedThis = makeRef(*this), task = WTFMove(task)]() mutable {
+        task.performTask();
+    });
     ++m_queuedTaskCount;
 
     m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::executeNextDatabaseTaskReply));
@@ -1729,14 +1734,12 @@ void UniqueIDBDatabase::executeNextDatabaseTask()
     auto task = m_databaseQueue.tryGetMessage();
     ASSERT(task);
 
-    // Performing the task might end up removing the last reference to this.
-    Ref<UniqueIDBDatabase> protectedThis(*this);
-
-    task->performTask();
+    (*task)();
     --m_queuedTaskCount;
 
-    // Release the ref in the main thread to ensure it's deleted there as expected in case of being the last reference.
-    callOnMainThread([protectedThis = WTFMove(protectedThis)] {
+    // Release the task on the main thread in case it holds the last reference to this,
+    // as UniqueIDBDatabase objects must be deleted on the main thread.
+    callOnMainThread([task = WTFMove(task)] {
     });
 }
 
@@ -1748,10 +1751,7 @@ void UniqueIDBDatabase::executeNextDatabaseTaskReply()
     auto task = m_databaseReplyQueue.tryGetMessage();
     ASSERT(task);
 
-    // Performing the task might end up removing the last reference to this.
-    Ref<UniqueIDBDatabase> protectedThis(*this);
-
-    task->performTask();
+    (*task)();
     --m_queuedTaskCount;
 
     // If this database was force closed (e.g. for a user delete) and there are no more
