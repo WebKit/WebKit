@@ -105,6 +105,18 @@ static void getParserLocationForConsoleMessage(Document* document, String& url, 
     column = position.m_column.oneBasedInt();
 }
 
+void PageConsoleClient::addMessage(std::unique_ptr<Inspector::ConsoleMessage>&& consoleMessage)
+{
+    if (consoleMessage->source() != MessageSource::CSS && !m_page.usesEphemeralSession()) {
+        m_page.chrome().client().addMessageToConsole(consoleMessage->source(), consoleMessage->level(), consoleMessage->message(), consoleMessage->line(), consoleMessage->column(), consoleMessage->url());
+
+        if (m_page.settings().logsPageMessagesToSystemConsoleEnabled() || shouldPrintExceptions())
+            ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, consoleMessage->level(), consoleMessage->message(), consoleMessage->url(), consoleMessage->line(), consoleMessage->column());
+    }
+
+    InspectorInstrumentation::addMessageToConsole(m_page, WTFMove(consoleMessage));
+}
+
 void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
 {
     String url;
@@ -132,24 +144,7 @@ void PageConsoleClient::addMessage(MessageSource source, MessageLevel level, con
     else
         message = std::make_unique<Inspector::ConsoleMessage>(source, MessageType::Log, level, messageText, suggestedURL, suggestedLineNumber, suggestedColumnNumber, state, requestIdentifier);
 
-    String url = message->url();
-    unsigned lineNumber = message->line();
-    unsigned columnNumber = message->column();
-
-    InspectorInstrumentation::addMessageToConsole(m_page, WTFMove(message));
-
-    if (source == MessageSource::CSS)
-        return;
-
-    if (m_page.usesEphemeralSession())
-        return;
-
-    m_page.chrome().client().addMessageToConsole(source, level, messageText, lineNumber, columnNumber, url);
-
-    if (!m_page.settings().logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
-        return;
-
-    ConsoleClient::printConsoleMessage(MessageSource::ConsoleAPI, MessageType::Log, level, messageText, url, lineNumber, columnNumber);
+    addMessage(WTFMove(message));
 }
 
 

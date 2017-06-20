@@ -4,6 +4,9 @@
 if (window.testRunner)
 	testRunner.dumpAsText();
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 function runTest() {
     var canvas = document.getElementById("myCanvas");
     var gl = canvas.getContext("webgl");

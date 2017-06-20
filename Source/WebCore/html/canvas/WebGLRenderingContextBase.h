@@ -743,13 +743,8 @@ protected:
     // Helper function for texParameterf and texParameteri.
     void texParameter(GC3Denum target, GC3Denum pname, GC3Dfloat parami, GC3Dint paramf, bool isFloat);
 
-    // Helper function to print GL errors to console.
-    void printGLErrorToConsole(const String&);
-    void printGLWarningToConsole(const char* function, const char* reason);
-
-    // Helper function to print warnings to console. Currently
-    // used only to warn about use of obsolete functions.
-    void printWarningToConsole(const String&);
+    // Helper function to print errors and warnings to console.
+    void printToConsole(MessageLevel, const String&);
 
     // Helper function to validate input parameters for framebuffer functions.
     // Generate GL error if parameters are illegal.

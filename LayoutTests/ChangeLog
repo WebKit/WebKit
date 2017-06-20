@@ -1,3 +1,15 @@
+2017-06-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add console messages for WebGL shader compile and program link errors/warnings
+        https://bugs.webkit.org/show_bug.cgi?id=143236
+        <rdar://problem/20352149>
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/fragment-shader-assertion.html:
+        * fast/canvas/webgl/shader-compile-logging-expected.txt: Added.
+        * fast/canvas/webgl/shader-compile-logging.html: Added.
+
 2017-06-19  Antoine Quint  <graouts@apple.com>
 
         Media document experience with long-loading files is poor

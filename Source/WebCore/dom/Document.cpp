@@ -197,6 +197,7 @@
 #include "XPathNSResolver.h"
 #include "XPathResult.h"
 #include <ctime>
+#include <inspector/ConsoleMessage.h>
 #include <inspector/ScriptCallStack.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
@@ -5543,6 +5544,17 @@ void Document::parseDNSPrefetchControlHeader(const String& dnsPrefetchControl)
 
     m_isDNSPrefetchEnabled = false;
     m_haveExplicitlyDisabledDNSPrefetch = true;
+}
+
+void Document::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& consoleMessage)
+{
+    if (!isContextThread()) {
+        postTask(AddConsoleMessageTask(WTFMove(consoleMessage)));
+        return;
+    }
+
+    if (Page* page = this->page())
+        page->console().addMessage(WTFMove(consoleMessage));
 }
 
 void Document::addConsoleMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier)

@@ -1259,6 +1259,10 @@ public:
     void addDisabledFieldsetElement() { m_disabledFieldsetElementsCount++; }
     void removeDisabledFieldsetElement() { ASSERT(m_disabledFieldsetElementsCount); m_disabledFieldsetElementsCount--; }
 
+    WEBCORE_EXPORT void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
+
+    // The following addConsoleMessage function is deprecated.
+    // Callers should try to create the ConsoleMessage themselves.
     WEBCORE_EXPORT void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0) final;
 
     SecurityOrigin& securityOrigin() const { return *SecurityContext::securityOrigin(); }
@@ -1406,6 +1410,8 @@ private:
     void refScriptExecutionContext() final { ref(); }
     void derefScriptExecutionContext() final { deref(); }
 
+    // The following addMessage function is deprecated.
+    // Callers should try to create the ConsoleMessage themselves.
     void addMessage(MessageSource, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&&, JSC::ExecState* = nullptr, unsigned long requestIdentifier = 0) final;
 
     Seconds minimumDOMTimerInterval() const final;

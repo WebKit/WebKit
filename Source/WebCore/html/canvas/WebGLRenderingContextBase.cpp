@@ -52,7 +52,9 @@
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "InspectorInstrumentation.h"
 #include "IntSize.h"
+#include "JSMainThreadExecState.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "NotImplemented.h"
@@ -89,7 +91,9 @@
 #include "WebGLShaderPrecisionFormat.h"
 #include "WebGLTexture.h"
 #include "WebGLUniformLocation.h"
-
+#include <inspector/ConsoleMessage.h>
+#include <inspector/ScriptCallStack.h>
+#include <inspector/ScriptCallStackFactory.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint32Array.h>
@@ -344,7 +348,7 @@ public:
     void onErrorMessage(const String& message, GC3Dint) override
     {
         if (m_context->m_synthesizedErrorsToConsole)
-            m_context->printGLErrorToConsole(message);
+            m_context->printToConsole(MessageLevel::Error, message);
     }
     virtual ~WebGLRenderingContextErrorMessageCallback() { }
 private:
@@ -1242,7 +1246,8 @@ GC3Denum WebGLRenderingContextBase::checkFramebufferStatus(GC3Denum target)
     const char* reason = "framebuffer incomplete";
     GC3Denum result = m_framebufferBinding->checkStatus(&reason);
     if (result != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
-        printGLWarningToConsole("checkFramebufferStatus", reason);
+        String str = "WebGL: checkFramebufferStatus:" + String(reason);
+        printToConsole(MessageLevel::Warning, str);
         return result;
     }
     result = m_context->checkFramebufferStatus(target);
@@ -1303,6 +1308,15 @@ void WebGLRenderingContextBase::compileShader(WebGLShader* shader)
     GC3Dint value;
     m_context->getShaderiv(objectOrZero(shader), GraphicsContext3D::COMPILE_STATUS, &value);
     shader->setValid(value);
+
+    if (m_synthesizedErrorsToConsole && !value) {
+        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+
+        Vector<String> errors;
+        getShaderInfoLog(shader).split("\n", errors);
+        for (String& error : errors)
+            canvas().document().addConsoleMessage(std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, MessageLevel::Error, "WebGL: " + error, stackTrace.copyRef()));
+    }
 }
 
 void WebGLRenderingContextBase::compressedTexImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, ArrayBufferView& data)
@@ -4572,7 +4586,7 @@ void WebGLRenderingContextBase::forceLostContext(WebGLRenderingContextBase::Lost
 
 void WebGLRenderingContextBase::recycleContext()
 {
-    printWarningToConsole("There are too many active WebGL contexts on this page, the oldest context will be lost.");
+    printToConsole(MessageLevel::Error, "There are too many active WebGL contexts on this page, the oldest context will be lost.");
     // Using SyntheticLostContext means the developer won't be able to force the restoration
     // of the context by calling preventDefault() in a "webglcontextlost" event handler.
     forceLostContext(SyntheticLostContext);
@@ -4829,7 +4843,7 @@ bool WebGLRenderingContextBase::checkTextureCompleteness(const char* functionNam
             String msg(String("texture bound to texture unit ") + String::number(badTexture)
                 + " is not renderable. It maybe non-power-of-2 and have incompatible texture filtering or is not 'texture complete',"
                 + " or it is a float/half-float type with linear filtering and without the relevant float/half-float linear extension enabled.");
-            printGLWarningToConsole(functionName, msg.utf8().data());
+            printToConsole(MessageLevel::Error, "WebGL: " + String(functionName) + ": " + msg);
             tex2D = m_blackTexture2D.get();
             texCubeMap = m_blackTextureCubeMap.get();
         } else {
@@ -5200,21 +5214,25 @@ bool WebGLRenderingContextBase::validateStencilFunc(const char* functionName, GC
     }
 }
 
-void WebGLRenderingContextBase::printGLErrorToConsole(const String& message)
+void WebGLRenderingContextBase::printToConsole(MessageLevel level, const String& message)
 {
-    if (!m_numGLErrorsToConsoleAllowed)
+    if (!m_synthesizedErrorsToConsole || !m_numGLErrorsToConsoleAllowed)
         return;
 
+    std::unique_ptr<Inspector::ConsoleMessage> consoleMessage;
+
+    // Error messages can occur during function calls, so show stack traces for them.
+    if (level == MessageLevel::Error) {
+        Ref<Inspector::ScriptCallStack> stackTrace = Inspector::createScriptCallStack(JSMainThreadExecState::currentState(), Inspector::ScriptCallStack::maxCallStackSizeToCapture);
+        consoleMessage = std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message, WTFMove(stackTrace));
+    } else
+        consoleMessage = std::make_unique<Inspector::ConsoleMessage>(MessageSource::Rendering, MessageType::Log, level, message);
+
+    canvas().document().addConsoleMessage(WTFMove(consoleMessage));
+
     --m_numGLErrorsToConsoleAllowed;
-    printWarningToConsole(message);
-
     if (!m_numGLErrorsToConsoleAllowed)
-        printWarningToConsole("WebGL: too many errors, no more errors will be reported to the console for this context.");
-}
-
-void WebGLRenderingContextBase::printWarningToConsole(const String& message)
-{
-    canvas().document().addConsoleMessage(MessageSource::Rendering, MessageLevel::Warning, message);
+        printToConsole(MessageLevel::Warning, "WebGL: too many errors, no more errors will be reported to the console for this context.");
 }
 
 bool WebGLRenderingContextBase::validateBlendFuncFactors(const char* functionName, GC3Denum src, GC3Denum dst)
@@ -5595,7 +5613,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     case Extensions3D::GUILTY_CONTEXT_RESET_ARB:
         // The rendering context is not restored if this context was
         // guilty of causing the graphics reset.
-        printWarningToConsole("WARNING: WebGL content on the page caused the graphics card to reset; not restoring the context");
+        printToConsole(MessageLevel::Warning, "WARNING: WebGL content on the page caused the graphics card to reset; not restoring the context");
         return;
     case Extensions3D::INNOCENT_CONTEXT_RESET_ARB:
         // Always allow the context to be restored.
@@ -5606,7 +5624,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
         // reset and ask them whether they want to continue running
         // the content. Only if they say "yes" should we start
         // attempting to restore the context.
-        printWarningToConsole("WARNING: WebGL content on the page might have caused the graphics card to reset");
+        printToConsole(MessageLevel::Warning, "WARNING: WebGL content on the page might have caused the graphics card to reset");
         break;
     }
 
@@ -5728,19 +5746,10 @@ namespace {
 void WebGLRenderingContextBase::synthesizeGLError(GC3Denum error, const char* functionName, const char* description, ConsoleDisplayPreference display)
 {
     if (m_synthesizedErrorsToConsole && display == DisplayInConsole) {
-      String str = String("WebGL: ") + GetErrorString(error) +  ": " + String(functionName) + ": " + String(description);
-      printGLErrorToConsole(str);
+        String str = "WebGL: " + GetErrorString(error) +  ": " + String(functionName) + ": " + String(description);
+        printToConsole(MessageLevel::Error, str);
     }
     m_context->synthesizeGLError(error);
-}
-
-
-void WebGLRenderingContextBase::printGLWarningToConsole(const char* functionName, const char* description)
-{
-    if (m_synthesizedErrorsToConsole) {
-        String str = String("WebGL: ") + String(functionName) + ": " + String(description);
-        printGLErrorToConsole(str);
-    }
 }
 
 void WebGLRenderingContextBase::applyStencilTest()

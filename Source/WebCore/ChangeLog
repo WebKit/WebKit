@@ -1,3 +1,39 @@
+2017-06-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add console messages for WebGL shader compile and program link errors/warnings
+        https://bugs.webkit.org/show_bug.cgi?id=143236
+        <rdar://problem/20352149>
+
+        Reviewed by Dean Jackson.
+
+        Test: fast/canvas/webgl/shader-compile-logging.html
+
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::checkFramebufferStatus):
+        (WebCore::WebGLRenderingContextBase::compileShader):
+        (WebCore::WebGLRenderingContextBase::recycleContext):
+        (WebCore::WebGLRenderingContextBase::checkTextureCompleteness):
+        (WebCore::WebGLRenderingContextBase::printToConsole):
+        (WebCore::WebGLRenderingContextBase::maybeRestoreContext):
+        (WebCore::WebGLRenderingContextBase::synthesizeGLError):
+        (WebCore::WebGLRenderingContextBase::printGLErrorToConsole): Deleted.
+        (WebCore::WebGLRenderingContextBase::printWarningToConsole): Deleted.
+        (WebCore::WebGLRenderingContextBase::printGLWarningToConsole): Deleted.
+        Unify console logging helper functions to all follow the same path. Additionally, errors
+        now generate stack traces. Shader compilation errors are now logged as well.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::addConsoleMessage):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::AddConsoleMessageTask::AddConsoleMessageTask):
+        * page/PageConsoleClient.h:
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::addMessage):
+        * workers/WorkerGlobalScope.h:
+        Add new path for logging to the console that accepts a ConsoleMessage.
+
 2017-06-20  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. Try to fix the build after r218594.
