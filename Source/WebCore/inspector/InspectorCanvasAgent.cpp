@@ -27,8 +27,8 @@
 #include "InspectorCanvasAgent.h"
 
 #include "CanvasRenderingContext.h"
+#include "CanvasRenderingContext2D.h"
 #include "Document.h"
-#include "DocumentLoader.h"
 #include "Frame.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorPageAgent.h"
@@ -92,6 +92,45 @@ void InspectorCanvasAgent::disable(ErrorString&)
     m_enabled = false;
 }
 
+void InspectorCanvasAgent::requestNode(ErrorString& errorString, const String& canvasId, int* nodeId)
+{
+    const CanvasEntry* canvasEntry = getCanvasEntry(canvasId);
+    if (!canvasEntry) {
+        errorString = ASCIILiteral("Invalid canvas identifier");
+        return;
+    }
+
+    int documentNodeId = m_instrumentingAgents.inspectorDOMAgent()->boundNodeId(&canvasEntry->element->document());
+    if (!documentNodeId) {
+        errorString = ASCIILiteral("Document has not been requested");
+        return;
+    }
+
+    *nodeId = m_instrumentingAgents.inspectorDOMAgent()->pushNodeToFrontend(errorString, documentNodeId, canvasEntry->element);
+}
+
+void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String& canvasId, String* content)
+{
+    const CanvasEntry* canvasEntry = getCanvasEntry(canvasId);
+    if (!canvasEntry) {
+        errorString = ASCIILiteral("Invalid canvas identifier");
+        return;
+    }
+
+    CanvasRenderingContext* context = canvasEntry->element->renderingContext();
+    if (is<CanvasRenderingContext2D>(context)) {
+        ExceptionOr<String> result = canvasEntry->element->toDataURL(ASCIILiteral("image/png"));
+        if (result.hasException()) {
+            errorString = result.releaseException().releaseMessage();
+            return;
+        }
+        *content = result.releaseReturnValue();
+    } else {
+        // FIXME: <https://webkit.org/b/173569> Web Inspector: Support getting the content of WebGL/WebGL2/WebGPU contexts
+        errorString = ASCIILiteral("Unsupported canvas context type");
+    }
+}
+
 void InspectorCanvasAgent::frameNavigated(Frame& frame)
 {
     if (frame.isMainFrame()) {
@@ -105,14 +144,10 @@ void InspectorCanvasAgent::frameNavigated(Frame& frame)
             canvasesForFrame.append(canvasElement);
     }
 
-    if (!m_enabled) {
-        m_canvasEntries.clear();
-        return;
-    }
-
     for (auto* canvasElement : canvasesForFrame) {
         auto canvasEntry = m_canvasEntries.take(canvasElement);
-        m_frontendDispatcher->canvasRemoved(canvasEntry.identifier);
+        if (m_enabled)
+            m_frontendDispatcher->canvasRemoved(canvasEntry.identifier);
     }
 }
 
@@ -132,8 +167,7 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(HTMLCanvasElement& ca
     }
 
     CanvasEntry newCanvasEntry("canvas:" + IdentifiersFactory::createIdentifier(), &canvasElement);
-    if (m_canvasToCSSCanvasId.contains(&canvasElement))
-        newCanvasEntry.cssCanvasName = m_canvasToCSSCanvasId.take(&canvasElement);
+    newCanvasEntry.cssCanvasName = m_canvasToCSSCanvasId.take(&canvasElement);
 
     m_canvasEntries.set(&canvasElement, newCanvasEntry);
     canvasElement.addObserver(*this);
@@ -229,6 +263,19 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvasAgent::buildObjectForCan
 
     if (!canvasEntry.cssCanvasName.isEmpty())
         canvas->setCssCanvasName(canvasEntry.cssCanvasName);
+    else {
+        InspectorDOMAgent* domAgent = m_instrumentingAgents.inspectorDOMAgent();
+        int nodeId = domAgent->boundNodeId(&canvasElement);
+        if (!nodeId) {
+            if (int documentNodeId = domAgent->boundNodeId(&canvasElement.document())) {
+                ErrorString ignored;
+                nodeId = domAgent->pushNodeToFrontend(ignored, documentNodeId, &canvasElement);
+            }
+        }
+
+        if (nodeId)
+            canvas->setNodeId(nodeId);
+    }
 
     return canvas;
 }

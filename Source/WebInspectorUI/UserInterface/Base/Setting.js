@@ -121,4 +121,7 @@ WebInspector.settings = {
     stylesSelectOnFirstClick: new WebInspector.Setting("styles-select-on-first-click", true),
     showScopeChainOnPause: new WebInspector.Setting("show-scope-chain-sidebar", true),
     showImageGrid: new WebInspector.Setting("show-image-grid", false),
+
+    // Experimental
+    experimentalShowCanvasContextsInResources: new WebInspector.Setting("experimental-show-canvas-contexts-in-resources", false),
 };

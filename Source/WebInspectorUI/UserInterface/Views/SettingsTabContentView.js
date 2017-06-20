@@ -164,6 +164,8 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
 
         WebInspector.notifications.addEventListener(WebInspector.Notification.DebugUIEnabledDidChange, this._updateDebugSettingsViewVisibility, this);
         this._updateDebugSettingsViewVisibility();
+
+        this.selectedSettingsView = this._settingsViews[0];
     }
 
     // Private
@@ -222,7 +224,6 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         WebInspector.settings.zoomFactor.addEventListener(WebInspector.Setting.Event.Changed, () => { zoomEditor.value = WebInspector.getZoomFactor().maxDecimals(2); });
 
         this.addSettingsView(generalSettingsView);
-        this.selectedSettingsView = generalSettingsView;
     }
 
     _createDebugSettingsView()
@@ -258,6 +259,12 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
         let layoutDirectionEditor = this._debugSettingsView.addGroupWithCustomSetting(WebInspector.unlocalizedString("Layout Direction:"), WebInspector.SettingEditor.Type.Select, {values: layoutDirectionValues});
         layoutDirectionEditor.value = WebInspector.settings.layoutDirection.value;
         layoutDirectionEditor.addEventListener(WebInspector.SettingEditor.Event.ValueDidChange, () => { WebInspector.setLayoutDirection(layoutDirectionEditor.value); });
+
+        if (window.CanvasAgent) {
+            this._debugSettingsView.addSeparator();
+
+            this._debugSettingsView.addSetting(WebInspector.UIString("Canvas:"), WebInspector.settings.experimentalShowCanvasContextsInResources, WebInspector.UIString("Show Contexts in Resources Tab"));
+        }
 
         this.addSettingsView(this._debugSettingsView);
     }

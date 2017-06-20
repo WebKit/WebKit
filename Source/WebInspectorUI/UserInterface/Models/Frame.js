@@ -39,6 +39,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
         this._resourceCollection = new WebInspector.ResourceCollection;
         this._provisionalResourceCollection = new WebInspector.ResourceCollection;
         this._extraScriptCollection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Script);
+        this._canvasCollection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Canvas);
 
         this._childFrameCollection = new WebInspector.Collection(WebInspector.Collection.TypeVerifier.Frame);
         this._childFrameIdentifierMap = new Map;
@@ -58,6 +59,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
 
     get resourceCollection() { return this._resourceCollection; }
     get extraScriptCollection() { return this._extraScriptCollection; }
+    get canvasCollection() { return this._canvasCollection; }
     get childFrameCollection() { return this._childFrameCollection; }
 
     initialize(name, securityOrigin, loaderIdentifier, mainResource)
@@ -133,6 +135,7 @@ WebInspector.Frame = class Frame extends WebInspector.Object
         this._resourceCollection = this._provisionalResourceCollection;
         this._provisionalResourceCollection = new WebInspector.ResourceCollection;
         this._extraScriptCollection.clear();
+        this._canvasCollection.clear();
 
         this.clearExecutionContexts(true);
         this.clearProvisionalLoad(true);

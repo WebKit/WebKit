@@ -1,3 +1,16 @@
+2017-06-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create canvas content view and details sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=138941
+        <rdar://problem/19051672>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/requestContent-expected.txt: Added.
+        * inspector/canvas/requestContent.html: Added.
+        * inspector/canvas/requestNode-expected.txt: Added.
+        * inspector/canvas/requestNode.html: Added.
+
 2017-06-19  Frederic Wang  <fwang@igalia.com>
 
         [iOS] Always include frames in the scrolling tree when async frame scrolling is enabled

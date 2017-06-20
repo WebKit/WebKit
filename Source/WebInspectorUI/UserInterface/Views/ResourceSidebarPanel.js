@@ -50,6 +50,10 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             scopeBarItems.push(scopeBarItem);
         }
 
+        let canvasesScopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + WebInspector.Canvas.ResourceSidebarType, WebInspector.UIString("Canvases"));
+        canvasesScopeBarItem[WebInspector.ResourceSidebarPanel.ResourceTypeSymbol] = WebInspector.Canvas.ResourceSidebarType;
+        scopeBarItems.insertAtIndex(canvasesScopeBarItem, scopeBarItems.length - 1);
+
         this._scopeBar = new WebInspector.ScopeBar("resource-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
         this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);
 
@@ -224,6 +228,9 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
 
             if (treeElement instanceof WebInspector.ScriptTreeElement)
                 return selectedScopeBarItem[WebInspector.ResourceSidebarPanel.ResourceTypeSymbol] === WebInspector.Resource.Type.Script;
+
+            if (treeElement instanceof WebInspector.CanvasTreeElement)
+                return selectedScopeBarItem[WebInspector.ResourceSidebarPanel.ResourceTypeSymbol] === WebInspector.Canvas.ResourceSidebarType;
 
             console.assert(treeElement instanceof WebInspector.ResourceTreeElement, "Unknown treeElement", treeElement);
             if (!(treeElement instanceof WebInspector.ResourceTreeElement))
@@ -445,7 +452,8 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             || treeElement instanceof WebInspector.ResourceTreeElement
             || treeElement instanceof WebInspector.ScriptTreeElement
             || treeElement instanceof WebInspector.CSSStyleSheetTreeElement
-            || treeElement instanceof WebInspector.ContentFlowTreeElement) {
+            || treeElement instanceof WebInspector.ContentFlowTreeElement
+            || treeElement instanceof WebInspector.CanvasTreeElement) {
             const cookie = null;
             const options = {
                 ignoreNetworkTab: true,

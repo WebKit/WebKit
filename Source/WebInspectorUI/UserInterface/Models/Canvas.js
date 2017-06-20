@@ -25,7 +25,7 @@
 
 WebInspector.Canvas = class Canvas extends WebInspector.Object
 {
-    constructor(identifier, contextType, frame, cssCanvasName)
+    constructor(identifier, contextType, frame, {domNode, cssCanvasName} = {})
     {
         super();
 
@@ -36,6 +36,7 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         this._identifier = identifier;
         this._contextType = contextType;
         this._frame = frame;
+        this._domNode = domNode || null;
         this._cssCanvasName = cssCanvasName || "";
     }
 
@@ -56,7 +57,10 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         }
 
         let frame = WebInspector.frameResourceManager.frameForIdentifier(payload.frameId);
-        return new WebInspector.Canvas(payload.canvasId, contextType, frame, payload.cssCanvasName);
+        return new WebInspector.Canvas(payload.canvasId, contextType, frame, {
+            domNode: payload.nodeId ? WebInspector.domTreeManager.nodeForId(payload.nodeId) : null,
+            cssCanvasName: payload.cssCanvasName,
+        });
     }
 
     static displayNameForContextType(contextType)
@@ -65,7 +69,7 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         case WebInspector.Canvas.ContextType.Canvas2D:
             return WebInspector.UIString("2D");
         case WebInspector.Canvas.ContextType.WebGL:
-            return WebInspector.UIString("WebGL");
+            return WebInspector.unlocalizedString("WebGL");
         default:
             console.error("Invalid canvas context type", contextType);
         }
@@ -85,26 +89,61 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
 
     get displayName()
     {
-        if (this.cssCanvasName) {
-            console.assert(!this._node, "Unexpected DOM node for CSS canvas.");
+        if (this._cssCanvasName)
             return WebInspector.UIString("CSS canvas “%s”").format(this._cssCanvasName);
-        }
 
-        // TODO:if the DOM node for the canvas is known and an id attribute value
-        // exists, return the following: WebInspector.UIString("Canvas #%s").format(id);
+        if (this._domNode) {
+            let idSelector = this._domNode.escapedIdSelector;
+            if (idSelector)
+                return WebInspector.UIString("Canvas %s").format(idSelector);
+        }
 
         if (!this._uniqueDisplayNameNumber)
             this._uniqueDisplayNameNumber = this.constructor._nextUniqueDisplayNameNumber++;
         return WebInspector.UIString("Canvas %d").format(this._uniqueDisplayNameNumber);
     }
 
+    requestNode(callback)
+    {
+        if (this._domNode) {
+            callback(this._domNode);
+            return;
+        }
+
+        WebInspector.domTreeManager.requestDocument((document) => {
+            CanvasAgent.requestNode(this._identifier, (error, nodeId) => {
+                if (error) {
+                    callback(null);
+                    return;
+                }
+
+                this._domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+                callback(this._domNode);
+            });
+        });
+    }
+
+    requestContent(callback)
+    {
+        CanvasAgent.requestContent(this._identifier, (error, content) => {
+            if (error) {
+                callback(null);
+                return;
+            }
+
+            callback(content);
+        });
+    }
+
     saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.Canvas.FrameURLCookieKey] = this._frame.url.hash;
+
         if (this._cssCanvasName)
             cookie[WebInspector.Canvas.CSSCanvasNameCookieKey] = this._cssCanvasName;
+        else if (this._domNode)
+            cookie[WebInspector.Canvas.NodePathCookieKey] = this._domNode.path;
 
-        // TODO: if the canvas has an associated DOM node, and the node path to the cookie.
     }
 };
 
@@ -114,6 +153,8 @@ WebInspector.Canvas.FrameURLCookieKey = "canvas-frame-url";
 WebInspector.Canvas.CSSCanvasNameCookieKey = "canvas-css-canvas-name";
 
 WebInspector.Canvas.ContextType = {
-    Canvas2D: Symbol("canvas-2d"),
-    WebGL: Symbol("webgl"),
+    Canvas2D: "canvas-2d",
+    WebGL: "webgl",
 };
+
+WebInspector.Canvas.ResourceSidebarType = "resource-type-canvas";

@@ -1131,7 +1131,8 @@ WebInspector.tabContentViewClassForRepresentedObject = function(representedObjec
     if (representedObject instanceof WebInspector.Frame
         || representedObject instanceof WebInspector.Resource
         || representedObject instanceof WebInspector.Script
-        || representedObject instanceof WebInspector.CSSStyleSheet)
+        || representedObject instanceof WebInspector.CSSStyleSheet
+        || representedObject instanceof WebInspector.Canvas)
         return WebInspector.ResourcesTabContentView;
 
     // FIXME: Move Content Flows to the Elements tab?

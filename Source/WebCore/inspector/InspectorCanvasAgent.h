@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-class DocumentLoader;
 class InspectorPageAgent;
 class WebGLRenderingContextBase;
 
@@ -58,6 +57,8 @@ public:
     // CanvasBackendDispatcherHandler
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
+    void requestNode(ErrorString&, const String& canvasId, int* nodeId) override;
+    void requestContent(ErrorString&, const String& canvasId, String* content) override;
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);

@@ -1,3 +1,32 @@
+2017-06-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: create canvas content view and details sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=138941
+        <rdar://problem/19051672>
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests: inspector/canvas/requestContent.html
+               inspector/canvas/requestNode.html
+
+        * inspector/InspectorCanvasAgent.h:
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::requestNode):
+        Gets the node id of the backing canvas element.
+
+        (WebCore::InspectorCanvasAgent::requestContent):
+        Gets the current image content of the canvas.
+
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::didCreateCanvasRenderingContext):
+        Minor fixes from r218376 <https://webkit.org/b/172623>.
+
+        (WebCore::InspectorCanvasAgent::buildObjectForCanvas):
+        Optionally send the `nodeId` of the backing canvas element if it is available.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+
 2017-06-19  Frederic Wang  <fwang@igalia.com>
 
         [iOS] Always include frames in the scrolling tree when async frame scrolling is enabled

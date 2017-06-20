@@ -29,6 +29,12 @@
     overflow-y: auto;
 }
 
+.content-view.settings .navigation-bar {
+    position: -webkit-sticky;
+    top: 0;
+    background-color: white;
+}
+
 .content-view.settings .navigation-bar.invisible {
     visibility: hidden;
 }

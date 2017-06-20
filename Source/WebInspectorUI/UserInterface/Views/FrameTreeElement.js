@@ -53,6 +53,9 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         this.registerFolderizeSettings("flows", WebInspector.UIString("Flows"), this._frame.domTree.contentFlowCollection, WebInspector.ContentFlowTreeElement);
         this.registerFolderizeSettings("extra-scripts", WebInspector.UIString("Extra Scripts"), this._frame.extraScriptCollection, WebInspector.ScriptTreeElement);
 
+        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value)
+            this.registerFolderizeSettings("canvases", WebInspector.UIString("Canvases"), this._frame.canvasCollection, WebInspector.CanvasTreeElement);
+
         function forwardingConstructor(representedObject, ...extraArguments) {
             if (representedObject instanceof WebInspector.CSSStyleSheet)
                 return new WebInspector.CSSStyleSheetTreeElement(representedObject, ...extraArguments);
@@ -121,11 +124,21 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         WebInspector.GeneralTreeElement.prototype.onattach.call(this);
 
         WebInspector.cssStyleManager.addEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+
+        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value) {
+            this._frame.canvasCollection.addEventListener(WebInspector.Collection.Event.ItemAdded, this._canvasWasAdded, this);
+            this._frame.canvasCollection.addEventListener(WebInspector.Collection.Event.ItemRemoved, this._canvasWasRemoved, this);
+        }
     }
 
     ondetach()
     {
         WebInspector.cssStyleManager.removeEventListener(WebInspector.CSSStyleManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+
+        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value) {
+            this._frame.canvasCollection.removeEventListener(WebInspector.Collection.Event.ItemAdded, this._canvasWasAdded, this);
+            this._frame.canvasCollection.removeEventListener(WebInspector.Collection.Event.ItemRemoved, this._canvasWasRemoved, this);
+        }
 
         super.ondetach();
     }
@@ -184,6 +197,11 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
         for (let extraScript of this._frame.extraScriptCollection.items) {
             if (extraScript.sourceURL || extraScript.sourceMappingURL)
                 this.addChildForRepresentedObject(extraScript);
+        }
+
+        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value) {
+            for (let canvas of this._frame.canvasCollection.items)
+                this.addChildForRepresentedObject(canvas);
         }
 
         const doNotCreateIfMissing = true;
@@ -278,5 +296,15 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
             return;
 
         this.addRepresentedObjectToNewChildQueue(event.data.styleSheet);
+    }
+
+    _canvasWasAdded(event)
+    {
+        this.addRepresentedObjectToNewChildQueue(event.data.item);
+    }
+
+    _canvasWasRemoved(event)
+    {
+        this.removeChildForRepresentedObject(event.data.item);
     }
 };

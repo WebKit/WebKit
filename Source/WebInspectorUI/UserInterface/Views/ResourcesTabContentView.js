@@ -31,6 +31,9 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
         let tabBarItem = new WebInspector.GeneralTabBarItem(image, title);
         let detailsSidebarPanelConstructors = [WebInspector.ResourceDetailsSidebarPanel, WebInspector.ProbeDetailsSidebarPanel];
 
+        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value)
+            detailsSidebarPanelConstructors.push(WebInspector.CanvasDetailsSidebarPanel);
+
         // FIXME: Until ContentFlows are moved to the Elements tab, these details sidebar panels need to be included.
         detailsSidebarPanelConstructors = detailsSidebarPanelConstructors.concat([WebInspector.DOMNodeDetailsSidebarPanel, WebInspector.CSSStyleDetailsSidebarPanel]);
         if (window.LayerTreeAgent)
@@ -66,6 +69,7 @@ WebInspector.ResourcesTabContentView = class ResourcesTabContentView extends Web
             || representedObject instanceof WebInspector.Script
             || representedObject instanceof WebInspector.CSSStyleSheet
             || representedObject instanceof WebInspector.ContentFlow
+            || representedObject instanceof WebInspector.Canvas
             || representedObject instanceof WebInspector.Collection;
     }
 };

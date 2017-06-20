@@ -1,5 +1,105 @@
 2017-06-19  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: create canvas content view and details sidebar panel
+        https://bugs.webkit.org/show_bug.cgi?id=138941
+        <rdar://problem/19051672>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Canvas.js:
+        (WebInspector.Canvas):
+        (WebInspector.Canvas.fromPayload):
+        (WebInspector.Canvas.prototype.get displayName):
+        (WebInspector.Canvas.requestNode): Added.
+        (WebInspector.Canvas.prototype.requestContent): Added.
+        (WebInspector.Canvas.prototype.saveIdentityToCookie):
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WebInspector.CanvasManager.prototype.canvasAdded):
+        (WebInspector.CanvasManager.prototype.canvasRemoved):
+        * UserInterface/Models/Collection.js:
+        * UserInterface/Models/Frame.js:
+        (WebInspector.Frame):
+        (WebInspector.Frame.prototype.get canvasCollection):
+        (WebInspector.Frame.prototype.commitProvisionalLoad):
+        Create a Collection for Canvas in each Frame, and modify it when canvas events are fired.
+
+        * UserInterface/Views/CanvasContentView.css: Added.
+        (.content-view.canvas > .preview):
+        (.content-view.canvas > .preview > img):
+        * UserInterface/Views/CanvasContentView.js: Added.
+        (WebInspector.CanvasContentView):
+        (WebInspector.CanvasContentView.prototype.get navigationItems):
+        (WebInspector.CanvasContentView.prototype.shown):
+        (WebInspector.CanvasContentView.prototype.hidden):
+        (WebInspector.CanvasContentView.prototype._showPreview):
+        (WebInspector.CanvasContentView.prototype._updateImageGrid):
+        (WebInspector.CanvasContentView.prototype._showGridButtonClicked):
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js: Added.
+        (WebInspector.CanvasDetailsSidebarPanel):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.inspect):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.get canvas):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.set canvas):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.layout):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshIdentitySection):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshSourceSection.this._canvas.requestNode.):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshSourceSection):
+        * UserInterface/Views/CanvasTreeElement.js: Added.
+        (WebInspector.CanvasTreeElement):
+
+        * UserInterface/Views/FrameTreeElement.js:
+        (WebInspector.FrameTreeElement.prototype.onattach):
+        (WebInspector.FrameTreeElement.prototype.ondetach):
+        (WebInspector.FrameTreeElement.prototype.onpopulate):
+        (WebInspector.FrameTreeElement.prototype._canvasWasAdded):
+        (WebInspector.FrameTreeElement.prototype._canvasWasRemoved):
+        (WebInspector.FrameTreeElement):
+        * UserInterface/Base/Main.js:
+        * UserInterface/Views/ContentView.js:
+        (WebInspector.ContentView.createFromRepresentedObject):
+        (WebInspector.ContentView.isViewable):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+        (WebInspector.ResourceSidebarPanel.prototype.matchTreeElementAgainstCustomFilters.match):
+        (WebInspector.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WebInspector.ResourcesTabContentView):
+        (WebInspector.ResourcesTabContentView.prototype.canShowRepresentedObject):
+        Show Canvas objects and tie them to the correct ContentView and TreeElement subclasses.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Images/Canvas.svg: Added.
+        * UserInterface/Views/ResourceIcons.css:
+        (.canvas .icon):
+        Added new files/rules/strings related to Canvas UI.
+
+        * UserInterface/Views/SettingsTabContentView.css:
+        (.content-view.settings .navigation-bar):
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.prototype.initialLayout):
+        (WebInspector.SettingsTabContentView.prototype._createGeneralSettingsView):
+        (WebInspector.SettingsTabContentView.prototype._createDebugSettingsView):
+        Add an experimental settings toggle in the Debug view for showing canvas contexts.
+
+        * UserInterface/Views/FolderizedTreeElement.js:
+        (WebInspector.FolderizedTreeElement.prototype._compareTreeElementsByMainTitle):
+        Drive-by fix: ensure that sorting also includes numbers, so that 1 < 2 < 10.
+
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WebInspector.ImageResourceContentView.prototype.shown):
+        (WebInspector.ImageResourceContentView.prototype.hidden):
+        (WebInspector.ImageResourceContentView.prototype._updateImageGrid):
+        (WebInspector.ImageResourceContentView.prototype._showGridButtonClicked):
+        (WebInspector.ImageResourceContentView):
+        Drive-by fix: change the activated state of the Show Grid navigation item if it changes
+        in another view.
+
+2017-06-19  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Unify contextmenu items for all node links/previews
         https://bugs.webkit.org/show_bug.cgi?id=173187
 
