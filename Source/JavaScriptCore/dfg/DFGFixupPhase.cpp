@@ -1023,44 +1023,9 @@ private:
             break;
         }
 
-        case ArrayIndexOf: {
-            Edge& array = m_graph.varArgChild(node, 0);
-            Edge& storage = m_graph.varArgChild(node, node->numChildren() == 3 ? 2 : 3);
-            blessArrayOperation(array, Edge(), storage);
-            ASSERT_WITH_MESSAGE(storage.node(), "blessArrayOperation for ArrayIndexOf must set Butterfly for storage edge.");
-
-            fixEdge<KnownCellUse>(array);
-            if (node->numChildren() == 4)
-                fixEdge<Int32Use>(m_graph.varArgChild(node, 2));
-
-            Edge& searchElement = m_graph.varArgChild(node, 1);
-            // FIXME: We have a chance to constant-fold this node to -1 by
-            // emitting non number edge filters.
-            // https://bugs.webkit.org/show_bug.cgi?id=173176
-            switch (node->arrayMode().type()) {
-            case Array::Double: {
-                if (searchElement->shouldSpeculateNumber())
-                    fixEdge<DoubleRepUse>(searchElement);
-                break;
-            }
-            case Array::Int32: {
-                if (searchElement->shouldSpeculateInt32())
-                    fixEdge<Int32Use>(searchElement);
-                break;
-            }
-            case Array::Contiguous: {
-                if (searchElement->shouldSpeculateString())
-                    fixEdge<StringUse>(searchElement);
-                else if (searchElement->shouldSpeculateObject())
-                    fixEdge<ObjectUse>(searchElement);
-                break;
-            }
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-                break;
-            }
+        case ArrayIndexOf:
+            fixupArrayIndexOf(node);
             break;
-        }
             
         case RegExpExec:
         case RegExpTest: {
@@ -3049,6 +3014,77 @@ private:
         fixEdge<CellUse>(node->child1()); // DOM.
         fixup(node->child2(), 0);
         fixup(node->child3(), 1);
+    }
+
+    void fixupArrayIndexOf(Node* node)
+    {
+        Edge& array = m_graph.varArgChild(node, 0);
+        Edge& storage = m_graph.varArgChild(node, node->numChildren() == 3 ? 2 : 3);
+        blessArrayOperation(array, Edge(), storage);
+        ASSERT_WITH_MESSAGE(storage.node(), "blessArrayOperation for ArrayIndexOf must set Butterfly for storage edge.");
+
+        Edge& searchElement = m_graph.varArgChild(node, 1);
+
+        // Constant folding.
+        switch (node->arrayMode().type()) {
+        case Array::Double:
+        case Array::Int32: {
+            if (searchElement->shouldSpeculateCell()) {
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin, Edge(searchElement.node(), CellUse));
+                m_graph.convertToConstant(node, jsNumber(-1));
+                observeUseKindOnNode<CellUse>(searchElement.node());
+                return;
+            }
+
+            if (searchElement->shouldSpeculateOther()) {
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin, Edge(searchElement.node(), OtherUse));
+                m_graph.convertToConstant(node, jsNumber(-1));
+                observeUseKindOnNode<OtherUse>(searchElement.node());
+                return;
+            }
+
+            if (searchElement->shouldSpeculateBoolean()) {
+                m_insertionSet.insertNode(m_indexInBlock, SpecNone, Check, node->origin, Edge(searchElement.node(), BooleanUse));
+                m_graph.convertToConstant(node, jsNumber(-1));
+                observeUseKindOnNode<BooleanUse>(searchElement.node());
+                return;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+
+        fixEdge<KnownCellUse>(array);
+        if (node->numChildren() == 4)
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 2));
+
+        switch (node->arrayMode().type()) {
+        case Array::Double: {
+            if (searchElement->shouldSpeculateNumber())
+                fixEdge<DoubleRepUse>(searchElement);
+            return;
+        }
+        case Array::Int32: {
+            if (searchElement->shouldSpeculateInt32())
+                fixEdge<Int32Use>(searchElement);
+            return;
+        }
+        case Array::Contiguous: {
+            if (searchElement->shouldSpeculateString())
+                fixEdge<StringUse>(searchElement);
+            else if (searchElement->shouldSpeculateSymbol())
+                fixEdge<SymbolUse>(searchElement);
+            else if (searchElement->shouldSpeculateOther())
+                fixEdge<OtherUse>(searchElement);
+            else if (searchElement->shouldSpeculateObject())
+                fixEdge<ObjectUse>(searchElement);
+            return;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            return;
+        }
     }
 
     void fixupChecksInBlock(BasicBlock* block)

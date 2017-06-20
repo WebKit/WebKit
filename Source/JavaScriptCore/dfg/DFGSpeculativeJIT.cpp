@@ -7479,7 +7479,9 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
     Edge& searchElementEdge = m_jit.graph().varArgChild(node, 1);
     switch (searchElementEdge.useKind()) {
     case Int32Use:
-    case ObjectUse: {
+    case ObjectUse:
+    case SymbolUse:
+    case OtherUse: {
         auto emitLoop = [&] (auto emitCompare) {
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
             m_jit.clearRegisterAllocationOffsets();
@@ -7502,11 +7504,6 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
             int32Result(indexGPR, node);
         };
 
-#if USE(JSVALUE32_64)
-        GPRTemporary temp(this);
-        GPRReg tempGPR = temp.gpr();
-#endif
-
         if (searchElementEdge.useKind() == Int32Use) {
             ASSERT(node->arrayMode().type() == Array::Int32);
 #if USE(JSVALUE64)
@@ -7517,6 +7514,9 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
 #else
             SpeculateInt32Operand searchElement(this, searchElementEdge);
             GPRReg searchElementGPR = searchElement.gpr();
+
+            GPRTemporary temp(this);
+            GPRReg tempGPR = temp.gpr();
 #endif
             emitLoop([&] () {
 #if USE(JSVALUE64)
@@ -7529,25 +7529,58 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
 #endif
                 return found;
             });
-        } else {
+            return;
+        }
+
+        if (searchElementEdge.useKind() == OtherUse) {
             ASSERT(node->arrayMode().type() == Array::Contiguous);
-            SpeculateCellOperand searchElement(this, searchElementEdge);
-            GPRReg searchElementGPR = searchElement.gpr();
-            speculateObject(searchElementEdge, searchElementGPR);
+            JSValueOperand searchElement(this, searchElementEdge, ManualOperandSpeculation);
+            GPRTemporary temp(this);
+
+            JSValueRegs searchElementRegs = searchElement.jsValueRegs();
+            GPRReg tempGPR = temp.gpr();
+            speculateOther(searchElementEdge, searchElementRegs, tempGPR);
 
             emitLoop([&] () {
 #if USE(JSVALUE64)
-                auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementGPR);
+                auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementRegs.payloadGPR());
 #else
-                auto skip = m_jit.branch32(CCallHelpers::NotEqual, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset), TrustedImm32(JSValue::CellTag));
-                m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, PayloadOffset), tempGPR);
-                auto found = m_jit.branch32(CCallHelpers::Equal, tempGPR, searchElementGPR);
-                skip.link(&m_jit);
+                m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset), tempGPR);
+                auto found = m_jit.branch32(CCallHelpers::Equal, tempGPR, searchElementRegs.tagGPR());
 #endif
                 return found;
             });
+            return;
         }
-        break;
+
+        ASSERT(node->arrayMode().type() == Array::Contiguous);
+        SpeculateCellOperand searchElement(this, searchElementEdge);
+        GPRReg searchElementGPR = searchElement.gpr();
+
+        if (searchElementEdge.useKind() == ObjectUse)
+            speculateObject(searchElementEdge, searchElementGPR);
+        else {
+            ASSERT(searchElementEdge.useKind() == SymbolUse);
+            speculateSymbol(searchElementEdge, searchElementGPR);
+        }
+
+#if USE(JSVALUE32_64)
+        GPRTemporary temp(this);
+        GPRReg tempGPR = temp.gpr();
+#endif
+
+        emitLoop([&] () {
+#if USE(JSVALUE64)
+            auto found = m_jit.branch64(CCallHelpers::Equal, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight), searchElementGPR);
+#else
+            auto skip = m_jit.branch32(CCallHelpers::NotEqual, MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, TagOffset), TrustedImm32(JSValue::CellTag));
+            m_jit.load32(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, PayloadOffset), tempGPR);
+            auto found = m_jit.branch32(CCallHelpers::Equal, tempGPR, searchElementGPR);
+            skip.link(&m_jit);
+#endif
+            return found;
+        });
+        return;
     }
 
     case DoubleRepUse: {
@@ -7576,7 +7609,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         m_jit.move(TrustedImm32(-1), indexGPR);
         found.link(&m_jit);
         int32Result(indexGPR, node);
-        break;
+        return;
     }
 
     case StringUse: {
@@ -7593,7 +7626,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         m_jit.exceptionCheck();
 
         int32Result(lengthGPR, node);
-        break;
+        return;
     }
 
     case UntypedUse: {
@@ -7617,12 +7650,12 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         m_jit.exceptionCheck();
 
         int32Result(lengthGPR, node);
-        break;
+        return;
     }
 
     default:
         RELEASE_ASSERT_NOT_REACHED();
-        break;
+        return;
     }
 }
 
@@ -8915,17 +8948,28 @@ void SpeculativeJIT::speculateNotCell(Edge edge)
     speculateNotCell(edge, operand.jsValueRegs());
 }
 
+void SpeculativeJIT::speculateOther(Edge edge, JSValueRegs regs, GPRReg tempGPR)
+{
+    DFG_TYPE_CHECK(regs, edge, SpecOther, m_jit.branchIfNotOther(regs, tempGPR));
+}
+
+void SpeculativeJIT::speculateOther(Edge edge, JSValueRegs regs)
+{
+    if (!needsTypeCheck(edge, SpecOther))
+        return;
+
+    GPRTemporary temp(this);
+    GPRReg tempGPR = temp.gpr();
+    speculateOther(edge, regs, tempGPR);
+}
+
 void SpeculativeJIT::speculateOther(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecOther))
         return;
     
     JSValueOperand operand(this, edge, ManualOperandSpeculation);
-    GPRTemporary temp(this);
-    GPRReg tempGPR = temp.gpr();
-    typeCheck(
-        operand.jsValueRegs(), edge, SpecOther,
-        m_jit.branchIfNotOther(operand.jsValueRegs(), tempGPR));
+    speculateOther(edge, operand.jsValueRegs());
 }
 
 void SpeculativeJIT::speculateMisc(Edge edge, JSValueRegs regs)

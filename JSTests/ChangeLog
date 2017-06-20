@@ -1,3 +1,44 @@
+2017-06-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] More ArrayIndexOf fixups for various types
+        https://bugs.webkit.org/show_bug.cgi?id=173176
+
+        Reviewed by Saam Barati.
+
+        * stress/array-indexof-arraystorage.js: Added.
+        (shouldBe):
+        (indexOfInt32Other):
+        (indexOfInt32Cell):
+        (indexOfInt32Boolean):
+        (indexOfDoubleOther):
+        (indexOfDoubleCell):
+        (indexOfDoubleBoolean):
+        (indexOfInt32):
+        (indexOfDouble):
+        * stress/array-indexof-constant-folding.js: Added.
+        (shouldBe):
+        (indexOfInt32Other):
+        (indexOfInt32Cell):
+        (indexOfInt32Boolean):
+        (indexOfDoubleOther):
+        (indexOfDoubleCell):
+        (indexOfDoubleBoolean):
+        * stress/array-indexof-hole-and-other.js: Added.
+        (shouldBe):
+        (indexOf):
+        * stress/array-indexof-other.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        (indexOfDouble):
+        (indexOfString):
+        (indexOfObject):
+        * stress/array-indexof-symbol.js: Added.
+        (shouldBe):
+        (indexOfInt32):
+        (indexOfDouble):
+        (indexOfString):
+        (indexOfObject):
+
 2017-06-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Completion values for control flow do not match the spec

@@ -1,3 +1,36 @@
+2017-06-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] More ArrayIndexOf fixups for various types
+        https://bugs.webkit.org/show_bug.cgi?id=173176
+
+        Reviewed by Saam Barati.
+
+        This patch further expands coverage of ArrayIndexOf optimization in DFG and FTL.
+
+        1. We attempt to fold ArrayIndexOf to constant (-1) if we know that its array
+        never contains the given search value.
+
+        2. We support Symbol and Other specialization additionally. Especially, Other is
+        useful because null/undefined can be used as a sentinel value.
+
+        One interesting thing is that Array.prototype.indexOf does not consider holes as
+        undefineds. Thus,
+
+            var array = [,,,,,,,];
+            array.indexOf(undefined); // => -1
+
+        This can be trivially achieved in JSC because Empty and Undefined are different values.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupArrayIndexOf):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArrayIndexOf):
+        (JSC::DFG::SpeculativeJIT::speculateOther):
+        * dfg/DFGSpeculativeJIT.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayIndexOf):
+
 2017-06-19  Caio Lima  <ticaiolima@gmail.com>
 
         [ARMv6][DFG] ARM MacroAssembler is always emitting cmn when immediate is 0
