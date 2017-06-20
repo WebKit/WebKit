@@ -1,3 +1,9 @@
+2017-06-20  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Try to fix the build after r218594.
+
+        * dom/Document.h:
+
 2017-06-20  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218530.

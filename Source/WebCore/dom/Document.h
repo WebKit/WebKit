@@ -65,6 +65,10 @@
 #include "EventTrackingRegions.h"
 #endif
 
+#if ENABLE(IOS_TOUCH_EVENTS)
+#include <wtf/ThreadingPrimitives.h>
+#endif
+
 namespace JSC {
 class ExecState;
 class InputCursor;
