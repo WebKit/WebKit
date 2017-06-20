@@ -34,7 +34,7 @@
 
 #include "FontCascade.h"
 #include "MockRealtimeVideoSource.h"
-#include "OrientationNotifer.h"
+#include "OrientationNotifier.h"
 
 typedef struct __CVBuffer *CVBufferRef;
 typedef CVBufferRef CVImageBufferRef;

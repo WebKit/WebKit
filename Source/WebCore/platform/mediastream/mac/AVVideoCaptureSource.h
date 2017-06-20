@@ -28,7 +28,7 @@
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
 #include "AVMediaCaptureSource.h"
-#include "OrientationNotifer.h"
+#include "OrientationNotifier.h"
 
 OBJC_CLASS CALayer;
 OBJC_CLASS AVFrameRateRange;

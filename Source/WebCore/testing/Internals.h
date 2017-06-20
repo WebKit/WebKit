@@ -30,7 +30,7 @@
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
-#include "OrientationNotifer.h"
+#include "OrientationNotifier.h"
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
 #include <runtime/Float32Array.h>

@@ -38,7 +38,7 @@
 #include "FrameDestructionObserver.h"
 #include "MediaProducer.h"
 #include "MutationObserver.h"
-#include "OrientationNotifer.h"
+#include "OrientationNotifier.h"
 #include "PageVisibilityState.h"
 #include "PlatformEvent.h"
 #include "ReferrerPolicy.h"
