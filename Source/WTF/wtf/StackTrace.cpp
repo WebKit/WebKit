@@ -30,10 +30,13 @@
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
 
-#if HAVE(BACKTRACE_SYMBOLS) || HAVE(DLADDR)
+#if HAVE(BACKTRACE_SYMBOLS)
+#include <execinfo.h>
+#endif
+
+#if HAVE(DLADDR)
 #include <cxxabi.h>
 #include <dlfcn.h>
-#include <execinfo.h>
 #endif
 
 namespace WTF {
