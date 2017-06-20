@@ -5635,6 +5635,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #endif
 }
 
+- (void)_simulateLongPressActionAtLocation:(CGPoint)location
+{
+    [_contentView _simulateLongPressActionAtLocation:location];
+}
+
 #endif // PLATFORM(IOS)
 
 @end

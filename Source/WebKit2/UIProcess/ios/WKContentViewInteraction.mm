@@ -4181,11 +4181,6 @@ static bool isAssistableInputType(InputType type)
     return _UIDragInteractionDefaultLiftDelay();
 }
 
-static NSTimeInterval longPressActionDelayAfterLift()
-{
-    return _UIDragInteractionDefaultCompetingLongPressDelay() - _UIDragInteractionDefaultLiftDelay();
-}
-
 - (id <WKUIDelegatePrivate>)webViewUIDelegate
 {
     return (id <WKUIDelegatePrivate>)[_webView UIDelegate];
@@ -4220,14 +4215,6 @@ static NSTimeInterval longPressActionDelayAfterLift()
     _dataInteractionState.image = adoptNS([[UIImage alloc] initWithCGImage:image.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
     _dataInteractionState.indicatorData = indicatorData;
     _dataInteractionState.sourceAction = static_cast<DragSourceAction>(action);
-
-    // As the drag is being recognized, schedule the action sheet to show in 500 ms, if there is an action sheet to be shown.
-    // We will handle showing the action sheet here, instead of going through the long press gesture recognizer.
-    [_longPressGestureRecognizer setEnabled:NO];
-    [_longPressGestureRecognizer setEnabled:YES];
-    [self cancelDeferredActionAtDragOrigin];
-    [self performSelector:@selector(performDeferredActionAtDragOrigin) withObject:nil afterDelay:longPressActionDelayAfterLift()];
-    _deferredActionSheetRequestLocation = _dataInteractionState.gestureOrigin;
 }
 
 - (void)_didHandleStartDataInteractionRequest:(BOOL)started
@@ -4236,10 +4223,7 @@ static NSTimeInterval longPressActionDelayAfterLift()
     _dataInteractionState.dragStartCompletionBlock = nil;
     ASSERT(savedCompletionBlock);
 
-    if (started) {
-        // Since we're going through with the drag, don't allow the highlight long press gesture recognizer to fire a synthetic click.
-        [self _cancelLongPressGestureRecognizer];
-    } else {
+    if (!started) {
         // The web process rejected the drag start request, so don't go through with the drag.
         // By clearing out the source session state, we force -itemsForDragInteraction:session: to return an empty array, which
         // causes UIKit to bail before beginning the lift animation.
@@ -4327,25 +4311,6 @@ static BOOL shouldUseTextIndicatorToCreatePreviewForDragAction(DragSourceAction 
     }
 
     return nil;
-}
-
-- (void)performDeferredActionAtDragOrigin
-{
-    auto deferredActionPosition = roundedIntPoint(_deferredActionSheetRequestLocation);
-    [self cancelDeferredActionAtDragOrigin];
-    [self _cancelLongPressGestureRecognizer];
-
-    RetainPtr<WKContentView> retainedSelf(self);
-    [self doAfterPositionInformationUpdate:[retainedSelf] (InteractionInformationAtPosition positionInformation) {
-        if (auto action = [retainedSelf _actionForLongPressFromPositionInformation:positionInformation])
-            [retainedSelf performSelector:action];
-    } forRequest:InteractionInformationRequest(deferredActionPosition)];
-}
-
-- (void)cancelDeferredActionAtDragOrigin
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(performDeferredActionAtDragOrigin) object:nil];
-    _deferredActionSheetRequestLocation = CGPointZero;
 }
 
 - (void)computeClientAndGlobalPointsForDropSession:(id <UIDropSession>)session outClientPoint:(CGPoint *)outClientPoint outGlobalPoint:(CGPoint *)outGlobalPoint
@@ -4551,7 +4516,6 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
         auto& state = retainedSelf->_dataInteractionState;
         state.dragStartCompletionBlock = capturedBlock;
-        state.gestureOrigin = dragOrigin;
         state.adjustedOrigin = retainedSelf->_positionInformation.adjustedPointForNodeRespondingToClickEvents;
         state.elementBounds = retainedSelf->_positionInformation.bounds;
         state.linkTitle = retainedSelf->_positionInformation.title;
@@ -4625,7 +4589,6 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
     if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:sessionWillBegin:)])
         [uiDelegate _webView:_webView dataInteraction:interaction sessionWillBegin:session];
 
-    [self cancelDeferredActionAtDragOrigin];
     [_actionSheetAssistant cleanupSheet];
 
     _dataInteractionState.didBeginDragging = YES;
@@ -4643,9 +4606,7 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
     if (_dataInteractionState.isPerformingOperation)
         return;
 
-    [self cancelDeferredActionAtDragOrigin];
     [self cleanUpDragSourceSessionState];
-
     _page->dragEnded(roundedIntPoint(_dataInteractionState.adjustedOrigin), roundedIntPoint([self convertPoint:_dataInteractionState.adjustedOrigin toView:self.window]), operation);
 }
 
@@ -4827,6 +4788,15 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 }
 
 #endif
+
+- (void)_simulateLongPressActionAtLocation:(CGPoint)location
+{
+    RetainPtr<WKContentView> protectedSelf = self;
+    [self doAfterPositionInformationUpdate:[location, protectedSelf] (InteractionInformationAtPosition) {
+        if (SEL action = [protectedSelf _actionForLongPress])
+            [protectedSelf performSelector:action];
+    } forRequest:InteractionInformationRequest(roundedIntPoint(location))];
+}
 
 @end
 

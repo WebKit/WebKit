@@ -1,3 +1,34 @@
+2017-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Remove custom logic for disambiguating long press action sheet gestures and drag lift
+        https://bugs.webkit.org/show_bug.cgi?id=173578
+        <rdar://problem/32825028>
+
+        Reviewed by Tim Horton.
+
+        Custom logic to cancel the long press action gesture recognizer in WebKit2 was added months ago to achieve
+        spec'ed behavior when initiating a drag on an element with an action sheet to show on long press. Now that UIKit
+        defers firing long-press gesture recognizers while a drag lift is recognizing, no extra work in WebKit is needed
+        to achieve expected behavior.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _simulateLongPressActionAtLocation:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Add testing SPI for showing an action sheet popover at a given location in content view coordinates.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startDataInteractionWithImage:withIndicatorData:atClientPosition:anchorPoint:action:]):
+        (-[WKContentView _didHandleStartDataInteractionRequest:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView dragInteraction:sessionWillBegin:]):
+        (-[WKContentView _api_dragInteraction:session:didEndWithOperation:]):
+        (-[WKContentView _simulateLongPressActionAtLocation:]):
+        (longPressActionDelayAfterLift): Deleted.
+        (-[WKContentView performDeferredActionAtDragOrigin]): Deleted.
+        (-[WKContentView cancelDeferredActionAtDragOrigin]): Deleted.
+
 2017-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add initial implementation of glib API

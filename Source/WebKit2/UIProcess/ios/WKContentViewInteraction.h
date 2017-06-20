@@ -113,7 +113,6 @@ namespace WebKit {
 struct WKDataInteractionState {
     RetainPtr<UIImage> image;
     std::optional<WebCore::TextIndicatorData> indicatorData;
-    CGPoint gestureOrigin { CGPointZero };
     CGPoint adjustedOrigin { CGPointZero };
     CGPoint lastGlobalPosition { CGPointZero };
     CGRect elementBounds { CGRectZero };
@@ -248,7 +247,6 @@ struct WKAutoCorrectionData {
     WebKit::WKDataInteractionState _dataInteractionState;
     RetainPtr<UIDragInteraction> _dataInteraction;
     RetainPtr<UIDropInteraction> _dataOperation;
-    CGPoint _deferredActionSheetRequestLocation;
 #endif
 }
 
@@ -344,6 +342,8 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (NSArray *)_simulatedItemsForSession:(id)session;
 - (void)_simulatePrepareForDataInteractionSession:(id)session completion:(dispatch_block_t)completion;
 #endif
+
+- (void)_simulateLongPressActionAtLocation:(CGPoint)location;
 
 @end
 

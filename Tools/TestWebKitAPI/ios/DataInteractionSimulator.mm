@@ -406,6 +406,8 @@ static NSArray *dataInteractionEventNames()
         _sourceItemProviders = itemProviders;
         if (self.showCustomActionSheetBlock) {
             // Defer progress until the custom action sheet is dismissed.
+            auto startLocationInView = [[_webView window] convertPoint:_startLocation toView:_webView.get()];
+            [_webView _simulateLongPressActionAtLocation:startLocationInView];
             return;
         }
 
