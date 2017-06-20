@@ -57,7 +57,6 @@ VideoTextureCopierGStreamer::VideoTextureCopierGStreamer(ColorConversion colorCo
 VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer()
 {
     GLContext* previousContext = GLContext::current();
-    ASSERT(previousContext);
     PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->makeContextCurrent();
 
     m_context3D->deleteFramebuffer(m_framebuffer);
@@ -66,7 +65,8 @@ VideoTextureCopierGStreamer::~VideoTextureCopierGStreamer()
     m_shaderProgram = nullptr;
     m_context3D = nullptr;
 
-    previousContext->makeContextCurrent();
+    if (previousContext)
+        previousContext->makeContextCurrent();
 }
 
 void VideoTextureCopierGStreamer::updateColorConversionMatrix(ColorConversion colorConversion)
@@ -88,6 +88,8 @@ void VideoTextureCopierGStreamer::updateTextureSpaceMatrix()
     m_textureSpaceMatrix.makeIdentity();
 
     switch (m_orientation) {
+    case DefaultImageOrientation:
+        break;
     case OriginRightTop:
         m_textureSpaceMatrix.rotate(-90);
         m_textureSpaceMatrix.translate(-1, 0);

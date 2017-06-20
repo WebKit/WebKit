@@ -1,3 +1,14 @@
+2017-06-20  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] Layout Test fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html makes the subsequent test case flaky crash.
+        https://bugs.webkit.org/show_bug.cgi?id=173459
+
+        Reviewed by Carlos Garcia Campos.
+
+        Unskip fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html.
+
+        * platform/gtk/TestExpectations:
+
 2017-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create canvas content view and details sidebar panel

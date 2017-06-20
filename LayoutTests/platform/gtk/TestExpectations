@@ -584,7 +584,6 @@ webkit.org/b/169917 webgl/max-active-contexts-webglcontextlost-prevent-default.h
 # WebGL crashes
 webkit.org/b/169917 fast/canvas/webgl/webgl-draw-buffers.html [ Failure Crash ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [ Crash ]
-webkit.org/b/173459 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Skip ]
 
 # WebGL 2.0 still not enabled
 webkit.org/b/166536 webgl/webgl2-rendering-context-defined.html [ Skip ]
