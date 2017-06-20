@@ -158,13 +158,13 @@ static bool isCSSTokenizerURL(const String& string)
     return isCSSTokenizerURL(string.characters16(), length);
 }
 
-void serializeString(const String& string, StringBuilder& appendTo, bool useDoubleQuotes)
+void serializeString(const String& string, StringBuilder& appendTo)
 {
     // FIXME: From the CSS OM draft:
     // To serialize a string means to create a string represented by '"' (U+0022).
     // We need to switch to using " instead of ', but this involves patching a large
     // number of tests and changing editing code to not get confused by double quotes.
-    appendTo.append(useDoubleQuotes ? '\"' : '\'');
+    appendTo.append('"');
 
     unsigned index = 0;
     while (index < string.length()) {
@@ -179,13 +179,13 @@ void serializeString(const String& string, StringBuilder& appendTo, bool useDoub
             appendTo.append(c);
     }
 
-    appendTo.append(useDoubleQuotes ? '\"' : '\'');
+    appendTo.append('"');
 }
 
-String serializeString(const String& string, bool useDoubleQuotes)
+String serializeString(const String& string)
 {
     StringBuilder builder;
-    serializeString(string, builder, useDoubleQuotes);
+    serializeString(string, builder);
     return builder.toString();
 }
 

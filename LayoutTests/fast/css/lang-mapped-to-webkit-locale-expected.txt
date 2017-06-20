@@ -19,10 +19,10 @@ PASS languageOfNode('q2') is "auto"
 PASS languageOfNode('q3') is "auto"
 PASS languageOfNode('q4') is "ar"
 PASS languageOfNode('q5') is "auto"
-PASS languageOfNode('q6') is "'  '"
+PASS languageOfNode('q6') is "\"  \""
 PASS languageOfNode('q7') is "auto"
 PASS languageOfNode('q8') is "xyzzy"
-PASS languageOfNode('q9') is "'][;][['"
+PASS languageOfNode('q9') is "\"][;][[\""
 PASS successfullyParsed is true
 
 TEST COMPLETE

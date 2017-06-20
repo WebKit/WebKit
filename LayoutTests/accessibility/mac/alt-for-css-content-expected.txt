@@ -39,7 +39,7 @@ AXDescription:
 AXTitle: 
 AXValue: ALTERNATIVE CONTENT TEST6
 
-alt accessed through Javascript: 'ALTERNATIVE CONTENT TEST2'
+alt accessed through Javascript: "ALTERNATIVE CONTENT TEST2"
 Test7 - alt does not apply to DOM nodes.
 AXRole: AXImage
 AXDescription: This is the right text

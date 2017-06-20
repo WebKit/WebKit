@@ -13,8 +13,8 @@ description("This test checks that we don't strip trailing gunk in brackets from
 var spanElement = document.getElementById('testspan');
 
 var computedStyle = window.getComputedStyle(spanElement);
-shouldBe("spanElement.innerHTML", "'foo'");
-shouldBe("computedStyle.getPropertyValue('font-family')", "\"'Arial [ding dong]', 'Helvetica [Xft]', Courier\"");
+shouldBeEqualToString("spanElement.innerHTML", "foo");
+shouldBeEqualToString("computedStyle.getPropertyValue('font-family')", `"Arial [ding dong]", "Helvetica [Xft]", Courier`);
 
 document.body.removeChild(spanElement);
 

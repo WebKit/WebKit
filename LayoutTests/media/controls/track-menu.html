@@ -77,7 +77,7 @@
 
                 tester.test("First menu item checkmark image is visible")
                     .value(getComputedStyle(checkImage).content)
-                    .contains("url('data:image/svg+xml,<svg xmlns=");
+                    .contains('url("data:image/svg+xml,<svg xmlns=');
 
                 var menuItem = menuList.children[1];
                 tester.test("Second menu item is not selected")
