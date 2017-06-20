@@ -706,7 +706,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 
 #pragma mark WKActionSheetAssistantDelegate
 
-- (const WebKit::InteractionInformationAtPosition&)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+- (std::optional<WebKit::InteractionInformationAtPosition>)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
     return _positionInformation;
 }

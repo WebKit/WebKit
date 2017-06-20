@@ -1318,21 +1318,25 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         [self requestAsynchronousPositionInformationUpdate:request];
 }
 
-- (void)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request
+- (BOOL)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request
 {
     if ([self _currentPositionInformationIsValidForRequest:request])
-        return;
+        return YES;
+
+    auto* connection = _page->process().connection();
+    if (!connection)
+        return NO;
 
     if ([self _hasValidOutstandingPositionInformationRequest:request]) {
-        if (auto* connection = _page->process().connection()) {
-            connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->pageID(), Seconds::infinity());
-            return;
-        }
+        return connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidReceivePositionInformation>(_page->pageID(), Seconds::infinity(), IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
     }
 
-    _page->getPositionInformation(request, _positionInformation);
+    _page->process().sendSync(Messages::WebPage::GetPositionInformation(request), Messages::WebPage::GetPositionInformation::Reply(_positionInformation), _page->pageID());
+
     _hasValidPositionInformation = YES;
     [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
+
+    return YES;
 }
 
 - (void)requestAsynchronousPositionInformationUpdate:(WebKit::InteractionInformationRequest)request
@@ -1420,7 +1424,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (_textSelectionAssistant) {
             // Request information about the position with sync message.
             // If the assisted node is the same, prevent the gesture.
-            [self ensurePositionInformationIsUpToDate:InteractionInformationRequest(roundedIntPoint(point))];
+            if (![self ensurePositionInformationIsUpToDate:InteractionInformationRequest(roundedIntPoint(point))])
+                return NO;
             if (_positionInformation.nodeAtPositionIsAssistedNode)
                 return NO;
         }
@@ -1458,7 +1463,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         // to gestureRecognizerShouldBegin.
         // Force a sync call if not ready yet.
         InteractionInformationRequest request(roundedIntPoint(point));
-        [self ensurePositionInformationIsUpToDate:request];
+        if (![self ensurePositionInformationIsUpToDate:request])
+            return NO;
 
         if (_textSelectionAssistant) {
             // Prevent the gesture if it is the same node.
@@ -1499,7 +1505,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 
     InteractionInformationRequest request(roundedIntPoint(point));
-    [self ensurePositionInformationIsUpToDate:request];
+    if (![self ensurePositionInformationIsUpToDate:request])
+        return NO;
 
 #if ENABLE(DATA_INTERACTION)
     if (_positionInformation.hasSelectionAtPosition) {
@@ -1515,7 +1522,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (BOOL)pointIsNearMarkedText:(CGPoint)point
 {
     InteractionInformationRequest request(roundedIntPoint(point));
-    [self ensurePositionInformationIsUpToDate:request];
+    if (![self ensurePositionInformationIsUpToDate:request])
+        return NO;
     return _positionInformation.isNearMarkedText;
 }
 
@@ -1528,7 +1536,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (BOOL)textInteractionGesture:(UIWKGestureType)gesture shouldBeginAtPoint:(CGPoint)point
 {
     InteractionInformationRequest request(roundedIntPoint(point));
-    [self ensurePositionInformationIsUpToDate:request];
+    if (![self ensurePositionInformationIsUpToDate:request])
+        return NO;
 
 #if ENABLE(DATA_INTERACTION)
     if (_positionInformation.hasSelectionAtPosition && gesture == UIWKGestureLoupe) {
@@ -4059,13 +4068,13 @@ static bool isAssistableInputType(InputType type)
 
 #pragma mark - Implementation of WKActionSheetAssistantDelegate.
 
-- (const WebKit::InteractionInformationAtPosition&)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
+- (std::optional<WebKit::InteractionInformationAtPosition>)positionInformationForActionSheetAssistant:(WKActionSheetAssistant *)assistant
 {
-    // FIXME: This should be more asynchronous, since we control the presentation of the action sheet.
     InteractionInformationRequest request(_positionInformation.request.point);
     request.includeSnapshot = true;
     request.includeLinkIndicator = assistant.needsLinkIndicator;
-    [self ensurePositionInformationIsUpToDate:request];
+    if (![self ensurePositionInformationIsUpToDate:request])
+        return std::nullopt;
 
     return _positionInformation;
 }
@@ -4857,7 +4866,8 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
     InteractionInformationRequest request(roundedIntPoint(position));
     request.includeSnapshot = true;
     request.includeLinkIndicator = true;
-    [self ensurePositionInformationIsUpToDate:request];
+    if (![self ensurePositionInformationIsUpToDate:request])
+        return NO;
     if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment)
         return NO;
 

@@ -1,3 +1,57 @@
+2017-06-20  Tim Horton  <timothy_horton@apple.com>
+
+        Occasional deadlocks under ensurePositionInformationIsUpToDate (incoming sync message with waitForAndDispatchImmediately)
+        https://bugs.webkit.org/show_bug.cgi?id=173570
+        <rdar://problem/32720928>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::getPositionInformation): Deleted.
+        Get rid of getPositionInformation; it only has one caller, and it's easier
+        to reason about the code if it's all in one place. Also, we shouldn't
+        add more callers...
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView ensurePositionInformationIsUpToDate:]):
+        Add a return value to ensurePositionInformationIsUpToDate that indicates
+        whether we succeeded in that effort.
+
+        Add the flag to our waitForAndDispatchImmediately that causes the wait
+        to be interrupted if a sync message arrives.
+
+        (-[WKContentView gestureRecognizerShouldBegin:]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsNearMarkedText:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView positionInformationForActionSheetAssistant:]):
+        (-[WKContentView _interactionShouldBeginFromPreviewItemController:forPosition:]):
+        If anything happens to interrupt our position information update, fail
+        in the most graceful possible way at each callsite (generally by bailing
+        from doing whatever action required position information).
+
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView positionInformationForActionSheetAssistant:]):
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant synchronouslyRetrievePositionInformation]):
+        (-[WKActionSheetAssistant presentationRectForElementUsingClosestIndicatedRect]):
+        (-[WKActionSheetAssistant presentationRectForIndicatedElement]):
+        (-[WKActionSheetAssistant initialPresentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant presentationRectInHostViewForSheet]):
+        (-[WKActionSheetAssistant _createSheetWithElementActions:showLinkTitle:]):
+        (-[WKActionSheetAssistant showImageSheet]):
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant showDataDetectorsSheet]):
+        (-[WKActionSheetAssistant cleanupSheet]):
+        Instead of constantly re-querying the position information, save it aside
+        when presenting an action sheet, and use it to respond to all of the
+        subsequent questions. Also, bail from presenting the action sheet if we fail
+        to retrieve correct position information.
+
 2017-06-20  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218530.

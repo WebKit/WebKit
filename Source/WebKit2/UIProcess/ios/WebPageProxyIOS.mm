@@ -638,11 +638,6 @@ void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtP
     m_pageClient.positionInformationDidChange(info);
 }
 
-void WebPageProxy::getPositionInformation(const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
-{
-    m_process->sendSync(Messages::WebPage::GetPositionInformation(request), Messages::WebPage::GetPositionInformation::Reply(info), m_pageID);
-}
-
 void WebPageProxy::requestPositionInformation(const InteractionInformationRequest& request)
 {
     m_process->send(Messages::WebPage::RequestPositionInformation(request), m_pageID);

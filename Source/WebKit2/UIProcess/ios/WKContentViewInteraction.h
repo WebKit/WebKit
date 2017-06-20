@@ -324,7 +324,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 
 @property (nonatomic, readonly) WebKit::InteractionInformationAtPosition currentPositionInformation;
 - (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request;
-- (void)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
+- (BOOL)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
 
 #if ENABLE(DATA_INTERACTION)
 - (void)_didPerformDataInteractionControllerOperation:(BOOL)handled;
