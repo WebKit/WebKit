@@ -1,3 +1,16 @@
+2017-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Blob download doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=172442
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add a unit test to check blob downloads.
+
+        * TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp:
+        (testBlobDownload):
+        (beforeAll):
+
 2017-06-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Stop dismissing menus attached to the web view for every injected event

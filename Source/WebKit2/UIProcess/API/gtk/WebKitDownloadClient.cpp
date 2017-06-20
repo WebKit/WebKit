@@ -77,13 +77,13 @@ private:
     String decideDestinationWithSuggestedFilename(WebProcessPool*, DownloadProxy* downloadProxy, const String& filename, bool& allowOverwrite) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(downloadProxy);
-        return String::fromUTF8(webkitDownloadDecideDestinationWithSuggestedFilename(download.get(), filename.utf8(), allowOverwrite));
+        return webkitDownloadDecideDestinationWithSuggestedFilename(download.get(), filename.utf8(), allowOverwrite);
     }
 
     void didCreateDestination(WebProcessPool*, DownloadProxy* downloadProxy, const String& path) override
     {
         GRefPtr<WebKitDownload> download = webkitWebContextGetOrCreateDownload(downloadProxy);
-        webkitDownloadDestinationCreated(download.get(), path.utf8());
+        webkitDownloadDestinationCreated(download.get(), path);
     }
 
     void didFail(WebProcessPool*, DownloadProxy* downloadProxy, const ResourceError& error) override

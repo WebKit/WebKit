@@ -31,6 +31,7 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -402,21 +403,26 @@ void webkitDownloadFinished(WebKitDownload* download)
     g_signal_emit(download, signals[FINISHED], 0, NULL);
 }
 
-CString webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, const CString& suggestedFilename, bool& allowOverwrite)
+String webkitDownloadDecideDestinationWithSuggestedFilename(WebKitDownload* download, const CString& suggestedFilename, bool& allowOverwrite)
 {
     if (download->priv->isCancelled)
-        return "";
+        return emptyString();
     gboolean returnValue;
     g_signal_emit(download, signals[DECIDE_DESTINATION], 0, suggestedFilename.data(), &returnValue);
     allowOverwrite = download->priv->allowOverwrite;
-    return download->priv->destinationURI;
+    GUniquePtr<char> destinationPath(g_filename_from_uri(download->priv->destinationURI.data(), nullptr, nullptr));
+    if (!destinationPath)
+        return emptyString();
+    return String::fromUTF8(destinationPath.get());
 }
 
-void webkitDownloadDestinationCreated(WebKitDownload* download, const CString& destinationURI)
+void webkitDownloadDestinationCreated(WebKitDownload* download, const String& destinationPath)
 {
     if (download->priv->isCancelled)
         return;
-    g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationURI.data(), nullptr);
+    GUniquePtr<char> destinationURI(g_filename_to_uri(destinationPath.utf8().data(), nullptr, nullptr));
+    ASSERT(destinationURI);
+    g_signal_emit(download, signals[CREATED_DESTINATION], 0, destinationURI.get());
 }
 
 /**
