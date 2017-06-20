@@ -58,6 +58,7 @@ GST_DEBUG_CATEGORY_STATIC(webkitVideoSinkDebug);
 
 enum {
     REPAINT_REQUESTED,
+    REPAINT_CANCELLED,
     LAST_SIGNAL
 };
 
@@ -192,6 +193,11 @@ static void webkitVideoSinkRepaintRequested(WebKitVideoSink* sink, GstSample* sa
     g_signal_emit(sink, webkitVideoSinkSignals[REPAINT_REQUESTED], 0, sample);
 }
 
+static void webkitVideoSinkRepaintCancelled(WebKitVideoSink* sink)
+{
+    g_signal_emit(sink, webkitVideoSinkSignals[REPAINT_CANCELLED], 0);
+}
+
 static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink* sink, GstBuffer* buffer)
 {
     WebKitVideoSinkPrivate* priv = sink->priv;
@@ -284,6 +290,7 @@ static gboolean webkitVideoSinkUnlock(GstBaseSink* baseSink)
     WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
 
     priv->scheduler.stop();
+    webkitVideoSinkRepaintCancelled(WEBKIT_VIDEO_SINK(baseSink));
 
     return GST_CALL_PARENT_WITH_DEFAULT(GST_BASE_SINK_CLASS, unlock, (baseSink), TRUE);
 }
@@ -302,6 +309,7 @@ static gboolean webkitVideoSinkStop(GstBaseSink* baseSink)
     WebKitVideoSinkPrivate* priv = WEBKIT_VIDEO_SINK(baseSink)->priv;
 
     priv->scheduler.stop();
+    webkitVideoSinkRepaintCancelled(WEBKIT_VIDEO_SINK(baseSink));
     if (priv->currentCaps) {
         gst_caps_unref(priv->currentCaps);
         priv->currentCaps = nullptr;
@@ -403,6 +411,16 @@ static void webkit_video_sink_class_init(WebKitVideoSinkClass* klass)
             G_TYPE_NONE, // Return type
             1, // Only one parameter
             GST_TYPE_SAMPLE);
+    webkitVideoSinkSignals[REPAINT_CANCELLED] = g_signal_new("repaint-cancelled",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0, // Class offset
+        nullptr, // Accumulator
+        nullptr, // Accumulator data
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, // Return type
+        0, // No parameters
+        G_TYPE_NONE);
 }
 
 
