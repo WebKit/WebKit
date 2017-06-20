@@ -1,3 +1,16 @@
+2017-05-25  Chris Dumez  <cdumez@apple.com>
+
+        DocumentThreadableLoader::redirectReceived() should not rely on the resource's loader
+        https://bugs.webkit.org/show_bug.cgi?id=172578
+        <rdar://problem/30754582>
+
+        Reviewed by Youenn Fablet.
+
+        Add layout test coverage.
+
+        * http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash-expected.txt: Added.
+        * http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash.html: Added.
+
 2017-05-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Crash on WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance + 1195
