@@ -57,24 +57,21 @@ WebInspector.linkifyAccessibilityNodeReference = function(node)
     return link;
 };
 
-WebInspector.linkifyNodeReference = function(node, maxLength)
+WebInspector.linkifyNodeReference = function(node, options = {})
 {
     let displayName = node.displayName;
-    if (!isNaN(maxLength))
-        displayName = displayName.truncate(maxLength);
+    if (!isNaN(options.maxLength))
+        displayName = displayName.truncate(options.maxLength);
 
     let link = document.createElement("span");
     link.append(displayName);
-    return WebInspector.linkifyNodeReferenceElement(node, link, displayName);
+    return WebInspector.linkifyNodeReferenceElement(node, link, Object.shallowMerge(options, {displayName}));
 };
 
-WebInspector.linkifyNodeReferenceElement = function(node, element, displayName)
+WebInspector.linkifyNodeReferenceElement = function(node, element, options = {})
 {
-    if (!displayName)
-        displayName = node.displayName;
-
     element.setAttribute("role", "link");
-    element.title = displayName;
+    element.title = options.displayName || node.displayName;
 
     let nodeType = node.nodeType();
     if ((nodeType !== Node.DOCUMENT_NODE || node.parentNode) && nodeType !== Node.TEXT_NODE)
@@ -83,6 +80,10 @@ WebInspector.linkifyNodeReferenceElement = function(node, element, displayName)
     element.addEventListener("click", WebInspector.domTreeManager.inspectElement.bind(WebInspector.domTreeManager, node.id));
     element.addEventListener("mouseover", WebInspector.domTreeManager.highlightDOMNode.bind(WebInspector.domTreeManager, node.id, "all"));
     element.addEventListener("mouseout", WebInspector.domTreeManager.hideDOMNodeHighlight.bind(WebInspector.domTreeManager));
+    element.addEventListener("contextmenu", (event) => {
+        let contextMenu = WebInspector.ContextMenu.createFromEvent(event);
+        WebInspector.appendContextMenuItemsForDOMNode(contextMenu, node, options);
+    });
 
     return element;
 };

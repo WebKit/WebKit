@@ -1,3 +1,34 @@
+2017-06-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Unify contextmenu items for all node links/previews
+        https://bugs.webkit.org/show_bug.cgi?id=173187
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WebInspector.appendContextMenuItemsForDOMNode.didGetFunctionDetails): Added.
+        (WebInspector.appendContextMenuItemsForDOMNode.didGetProperty): Added.
+        (WebInspector.appendContextMenuItemsForDOMNode.didResolveNode): Added.
+        (WebInspector.appendContextMenuItemsForDOMNode): Added.
+        * UserInterface/Views/DOMTreeElement.js:
+        (WebInspector.DOMTreeElement.prototype._populateTagContextMenu):
+        (WebInspector.DOMTreeElement.prototype._populateNodeContextMenu):
+        (WebInspector.DOMTreeElement.prototype._showCustomElementDefinition): Deleted.
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WebInspector.DOMTreeOutline.prototype.populateContextMenu):
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu.revealElement): Deleted.
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu.logElement): Deleted.
+        (WebInspector.DOMTreeOutline.prototype._populateContextMenu): Deleted.
+        * UserInterface/Views/RulesStyleDetailsPanel.js:
+        (WebInspector.RulesStyleDetailsPanel.prototype.refresh.insertMediaOrInheritanceLabel):
+        Unify common DOM node context menu actions into a single helper function.
+
+        * UserInterface/Base/DOMUtilities.js:
+        (WebInspector.linkifyNodeReference):
+        (WebInspector.linkifyNodeReferenceElement):
+        Rework parameters to use options dictionary.
+
 2017-06-16  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Instrument 2D/WebGL canvas contexts in the backend

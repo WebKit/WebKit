@@ -752,7 +752,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
         }
 
         this._populateNodeContextMenu(contextMenu);
-        this.treeOutline._populateContextMenu(contextMenu, this.representedObject);
     }
 
     _populateForcedPseudoStateItems(subMenu)
@@ -790,34 +789,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
             contextMenu.appendItem(WebInspector.UIString("Delete Node"), this.remove.bind(this));
         if (node.nodeType() === Node.ELEMENT_NODE)
             contextMenu.appendItem(WebInspector.UIString("Scroll Into View"), this._scrollIntoView.bind(this));
-
-        contextMenu.appendSeparator();
-
-        if (node.nodeType() === Node.ELEMENT_NODE) {
-            contextMenu.appendItem(WebInspector.UIString("Copy Selector Path"), () => {
-                let cssPath = WebInspector.cssPath(this.representedObject);
-                InspectorFrontendHost.copyText(cssPath);
-            });
-        }
-
-        if (!node.isPseudoElement()) {
-            contextMenu.appendItem(WebInspector.UIString("Copy XPath"), () => {
-                let xpath = WebInspector.xpath(this.representedObject);
-                InspectorFrontendHost.copyText(xpath);
-            });
-        }
-
-        if (node.isCustomElement()) {
-            contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString("Jump to Definition"), this._showCustomElementDefinition.bind(this));
-        }
-
-        if (WebInspector.domDebuggerManager.supported && node.nodeType() === Node.ELEMENT_NODE) {
-            contextMenu.appendSeparator();
-
-            const allowEditing = false;
-            WebInspector.DOMBreakpointTreeController.appendBreakpointContextMenuItems(contextMenu, node, allowEditing);
-        }
     }
 
     _startEditing()
@@ -1568,40 +1539,6 @@ WebInspector.DOMTreeElement = class DOMTreeElement extends WebInspector.TreeElem
 
         let node = this.representedObject;
         WebInspector.RemoteObject.resolveNode(node, "", resolvedNode);
-    }
-
-    _showCustomElementDefinition()
-    {
-        const node = this.representedObject;
-        WebInspector.RemoteObject.resolveNode(node, "", (remoteObject) => {
-            if (!remoteObject)
-                return;
-
-            remoteObject.getProperty("constructor", (error, result, wasThrown) => {
-                if (error || result.type !== "function")
-                    return;
-
-                DebuggerAgent.getFunctionDetails(result.objectId, (error, response) => {
-                    if (error)
-                        return;
-
-                    let location = response.location;
-                    let sourceCode = WebInspector.debuggerManager.scriptForIdentifier(location.scriptId, WebInspector.mainTarget);
-                    if (!sourceCode)
-                        return;
-
-                    let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber || 0);
-
-                    const options = {
-                        ignoreNetworkTab: true,
-                        ignoreSearchTab: true,
-                    };
-                    WebInspector.showSourceCodeLocation(sourceCodeLocation, options);
-                });
-                result.release();
-            });
-            remoteObject.release();
-        });
     }
 
     _editAsHTML()

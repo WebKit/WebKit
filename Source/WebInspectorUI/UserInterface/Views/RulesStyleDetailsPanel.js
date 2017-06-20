@@ -177,11 +177,15 @@ WebInspector.RulesStyleDetailsPanel = class RulesStyleDetailsPanel extends WebIn
                 var prefixElement = document.createElement("strong");
                 prefixElement.textContent = WebInspector.UIString("Inherited From: ");
 
-                var inheritedLabel = document.createElement("div");
+                let inheritedLabel = newDOMFragment.appendChild(document.createElement("div"));
                 inheritedLabel.className = "label";
+
                 inheritedLabel.appendChild(prefixElement);
-                inheritedLabel.appendChild(WebInspector.linkifyNodeReference(style.node, 100));
-                newDOMFragment.appendChild(inheritedLabel);
+
+                inheritedLabel.appendChild(WebInspector.linkifyNodeReference(style.node, {
+                    maxLength: 100,
+                    excludeRevealElement: true,
+                }));
 
                 hasMediaOrInherited.push(inheritedLabel);
             }
