@@ -76,8 +76,8 @@ RefPtr<PlatformMediaResource> MediaResourceLoader::requestResource(ResourceReque
         request.makeUnconditional();
 #endif
 
-    // FIXME: Skip Content Security Policy check if the element that initiated this request is in a user-agent shadow tree. See <https://bugs.webkit.org/show_bug.cgi?id=155505>.
-    CachedResourceRequest cacheRequest(WTFMove(request), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, AllowStoredCredentials, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
+    ContentSecurityPolicyImposition contentSecurityPolicyImposition = m_mediaElement && m_mediaElement->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    CachedResourceRequest cacheRequest(WTFMove(request), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, bufferingPolicy, AllowStoredCredentials, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, contentSecurityPolicyImposition, DefersLoadingPolicy::AllowDefersLoading, cachingPolicy));
     cacheRequest.setAsPotentiallyCrossOrigin(m_crossOriginMode, *m_document);
     if (m_mediaElement)
         cacheRequest.setInitiator(*m_mediaElement.get());
