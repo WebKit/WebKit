@@ -568,6 +568,7 @@ HTMLMediaElement::~HTMLMediaElement()
     m_pauseAfterDetachedTaskQueue.close();
     m_updatePlaybackControlsManagerQueue.close();
     m_playbackControlsManagerBehaviorRestrictionsQueue.close();
+    m_resourceSelectionTaskQueue.close();
 
     m_completelyLoaded = true;
 
@@ -5114,6 +5115,8 @@ void HTMLMediaElement::clearMediaPlayer(DelayedActionType flags)
 
     m_mediaSession->clientCharacteristicsChanged();
     m_mediaSession->canProduceAudioChanged();
+
+    m_resourceSelectionTaskQueue.cancelAllTasks();
 
     updateSleepDisabling();
 }
