@@ -1,3 +1,23 @@
+2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] The system Japanese font cannot be italicized
+        https://bugs.webkit.org/show_bug.cgi?id=173300
+        <rdar://problem/31805407>
+
+        Reviewed by Ryosuke Niwa.
+
+        Items in the system font cascade list may lie about whether or not they support italics.
+        In order to get the truth, we need to use the physical font underlying the font in question,
+        because this one won't lie. Then, we can interrogate this physical font about its traits
+        in order to synthesize italics correctly.
+
+        Test: fast/text/system-font-japanese-synthetic-italic.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::lookupFallbackFont):
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        (WebCore::FontFamilySpecificationCoreText::fontRanges):
+
 2017-06-20  Chris Dumez  <cdumez@apple.com>
 
         Use WTF::Function instead of std::function in more places in WebCore/
