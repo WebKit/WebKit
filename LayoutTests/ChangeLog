@@ -1,3 +1,19 @@
+2017-05-25  Chris Dumez  <cdumez@apple.com>
+
+        imported/w3c/web-platform-tests/html/semantics/forms/form-control-infrastructure/form_owner_and_table_2.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=172628
+        <rdar://problem/32418707>
+
+        Reviewed by Sam Weinig.
+
+        Add reduced test case.
+
+        * TestExpectations:
+        Unskip test that is no longer crashing in debug builds.
+
+        * fast/dom/HTMLFormElement/form-removed-during-parsing-crash-expected.txt: Added.
+        * fast/dom/HTMLFormElement/form-removed-during-parsing-crash.html: Added.
+
 2017-05-25  Zalan Bujtas  <zalan@apple.com>
 
         Frame's composited content is visible when the frame has visibility: hidden.
