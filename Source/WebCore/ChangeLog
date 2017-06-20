@@ -1,3 +1,40 @@
+2017-06-20  Daniel Bates  <dabates@apple.com>
+
+        NavigationAction has too many constructors
+        https://bugs.webkit.org/show_bug.cgi?id=173484
+
+        Reviewed by Brady Eidson.
+
+        A NavigationAction object is an immutable object that represents the details of a
+        navigation, including the type of a navigation (e.g. link click), what triggered
+        the navigation, and the external URL policy to use for the navigation. Over time
+        the number of NavigationAction constructor overloads (not including copy/move
+        constructors) has grown to 12 to support different combinations of details.
+        We can use default values to reduce the number of constructors to 2 (not including
+        copy/move constructors).
+
+        No behavior changed. So, no new tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy): Pass NavigationType::Other when
+        instantiating NavigationAction.
+        (WebCore::FrameLoader::loadDifferentDocumentItem): Fix order of arguments now that
+        the constructor overload that takes a NavigationType takes the Event* as the fourth argument,
+        not the third. Also, use C++11 brace initialization syntax when instantiating a NavigationAction.
+        (WebCore::createWindow):
+        * loader/NavigationAction.cpp: Remove unnecessary #include of header ScriptController.h.
+        Include header Event.h.
+        (WebCore::NavigationAction::NavigationAction):
+        * loader/NavigationAction.h: Forward declare class Event and remove #include of header Event.h.
+        Make copy constructor, copy assignment operator, move constructor, and move assignment operator
+        out-of-line to avoid the need to include header Event.h. Export the copy constructor so that it
+        can be used from WebKit on the Apple Windows port. Move ShouldOpenExternalURLsPolicy to be after
+        NavigationType to reduce the size of the class by 8 bytes.
+        (WebCore::NavigationAction::NavigationAction):
+        * loader/PolicyChecker.cpp: Include header Event.h.
+        * page/Performance.cpp: Ditto.
+        * replay/ReplayController.cpp: Ditto.
+
 2017-06-20  Konstantin Tokarev  <annulen@yandex.ru>
 
         Rename OrientationNotifer.h to OrientationNotifier.h

@@ -3174,7 +3174,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
         mainFrame->document()->setReferrerPolicy(frame->document()->referrerPolicy());
     }
 
-    NavigationAction newAction(request, action.shouldOpenExternalURLsPolicy());
+    NavigationAction newAction { request, NavigationType::Other, action.shouldOpenExternalURLsPolicy() };
     mainFrame->loader().loadWithNavigationAction(request, newAction, LockHistory::No, FrameLoadType::Standard, formState, allowNavigationToInvalidURL);
 }
 
@@ -3411,7 +3411,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
             action = NavigationAction(request, loadType, isFormSubmission, event, shouldOpenExternalURLsPolicy);
         } else {
             request.setCachePolicy(ReturnCacheDataElseLoad);
-            action = NavigationAction(request, NavigationType::FormResubmitted, event, shouldOpenExternalURLsPolicy);
+            action = NavigationAction(request, NavigationType::FormResubmitted, shouldOpenExternalURLsPolicy, event);
         }
     } else {
         switch (loadType) {
@@ -3700,7 +3700,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, const FrameLo
         return nullptr;
 
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(openerFrame, request.shouldOpenExternalURLsPolicy());
-    Page* page = oldPage->chrome().createWindow(openerFrame, requestWithReferrer, features, NavigationAction(requestWithReferrer.resourceRequest(), shouldOpenExternalURLsPolicy));
+    Page* page = oldPage->chrome().createWindow(openerFrame, requestWithReferrer, features, NavigationAction(requestWithReferrer.resourceRequest(), NavigationType::Other, shouldOpenExternalURLsPolicy));
     if (!page)
         return nullptr;
 

@@ -34,6 +34,7 @@
 #include "CapturingInputCursor.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
+#include "Event.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "InspectorInstrumentation.h"
