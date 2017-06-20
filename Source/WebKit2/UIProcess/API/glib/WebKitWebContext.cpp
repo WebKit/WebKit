@@ -43,7 +43,6 @@
 #include "WebKitNotificationProvider.h"
 #include "WebKitPluginPrivate.h"
 #include "WebKitPrivate.h"
-#include "WebKitRemoteInspectorProtocolHandler.h"
 #include "WebKitSecurityManagerPrivate.h"
 #include "WebKitSecurityOriginPrivate.h"
 #include "WebKitSettingsPrivate.h"
@@ -69,6 +68,10 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(GTK)
+#include "WebKitRemoteInspectorProtocolHandler.h"
+#endif
 
 using namespace WebKit;
 
@@ -185,7 +188,9 @@ struct _WebKitWebContextPrivate {
 
     CString localStorageDirectory;
 #if ENABLE(REMOTE_INSPECTOR)
+#if PLATFORM(GTK)
     std::unique_ptr<RemoteInspectorProtocolHandler> remoteInspectorProtocolHandler;
+#endif
     std::unique_ptr<WebKitAutomationClient> automationClient;
     GRefPtr<WebKitAutomationSession> automationSession;
 #endif
@@ -232,9 +237,14 @@ static const char* injectedBundleDirectory()
         return bundleDirectory;
 #endif
 
+#if PLATFORM(GTK)
     static const char* injectedBundlePath = LIBDIR G_DIR_SEPARATOR_S "webkit2gtk-" WEBKITGTK_API_VERSION_STRING
         G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
     return injectedBundlePath;
+#elif PLATFORM(WPE)
+    // FIXME: Add web extensions API support to WPE.
+    return nullptr;
+#endif
 }
 
 static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* value, GParamSpec* paramSpec)
@@ -327,7 +337,7 @@ static void webkitWebContextConstructed(GObject* object)
     priv->geolocationProvider = std::make_unique<WebKitGeolocationProvider>(priv->processPool->supplement<WebGeolocationManagerProxy>());
 #endif
     priv->notificationProvider = std::make_unique<WebKitNotificationProvider>(priv->processPool->supplement<WebNotificationManagerProxy>(), webContext);
-#if ENABLE(REMOTE_INSPECTOR)
+#if PLATFORM(GTK) && ENABLE(REMOTE_INSPECTOR)
     priv->remoteInspectorProtocolHandler = std::make_unique<RemoteInspectorProtocolHandler>(webContext);
 #endif
 }

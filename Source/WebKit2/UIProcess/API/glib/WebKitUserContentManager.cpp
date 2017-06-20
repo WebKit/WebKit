@@ -186,9 +186,13 @@ public:
 
     void didPostMessage(WebPageProxy& page, const FrameInfoData&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
+#if PLATFORM(GTK)
         WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(WEBKIT_WEB_VIEW(page.viewWidget()), serializedScriptValue);
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
+#else
+        // FIXME: We need a way to get the WebKitWebView here in WPE.
+#endif
     }
 
     virtual ~ScriptMessageClientGtk() { }

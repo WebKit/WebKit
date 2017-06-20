@@ -20,6 +20,7 @@
 #pragma once
 
 #include "WebKitNotification.h"
+#include "WebKitWebView.h"
 #include "WebNotification.h"
 #include <wtf/text/CString.h>
 

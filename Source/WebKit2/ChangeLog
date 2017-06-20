@@ -1,3 +1,143 @@
+2017-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add initial implementation of glib API
+        https://bugs.webkit.org/show_bug.cgi?id=173546
+
+        Reviewed by Žan Doberšek.
+
+        Make current API files under glib directories build in WPE, and add the minimum implementation to make it
+        work. For now it doesn't have web extensions API, and there are a few FIXMEs that will be fixed in follow up
+        commits. It doesn't include install rules yet, since it's still not ready to be installed.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * Shared/API/glib/WebKitContextMenuActions.cpp:
+        (webkitContextMenuActionGetActionTag):
+        (webkitContextMenuActionGetForContextMenuItem):
+        (webkitContextMenuActionGetLabel):
+        * Shared/API/glib/WebKitContextMenuItem.cpp:
+        * UIProcess/API/glib/WebKitEditorState.cpp:
+        (webkitEditorStateChanged):
+        * UIProcess/API/glib/WebKitError.cpp:
+        * UIProcess/API/glib/WebKitFileChooserRequest.cpp:
+        (webkitFileChooserRequestGetProperty):
+        (webkit_file_chooser_request_class_init):
+        * UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp:
+        (createGstInstallPluginsContext):
+        (webkitInstallMissingMediaPluginsPermissionRequestAllow):
+        * UIProcess/API/glib/WebKitNavigationAction.cpp:
+        * UIProcess/API/glib/WebKitNavigationActionPrivate.h:
+        (_WebKitNavigationAction::_WebKitNavigationAction):
+        * UIProcess/API/glib/WebKitNotificationPrivate.h:
+        * UIProcess/API/glib/WebKitNotificationProvider.cpp:
+        (WebKitNotificationProvider::show):
+        * UIProcess/API/glib/WebKitPrivate.cpp:
+        (toPlatformModifiers):
+        (toWebKitError):
+        (toWebCoreError):
+        * UIProcess/API/glib/WebKitPrivate.h:
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_set_user_agent):
+        (webkit_settings_set_user_agent_with_application_details):
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+        (webkit_uri_scheme_request_get_web_view):
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextConstructed):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewCreate):
+        (webkit_web_view_class_init):
+        (webkitWebViewCreatePage):
+        (webkitWebViewRunAsModal):
+        (webkitWebViewMouseTargetChanged):
+        (webkitWebViewEnterFullScreen):
+        (webkitWebViewExitFullScreen):
+        (webkitWebViewPopulateContextMenu):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/glib/WebKitWindowProperties.cpp:
+        (webkitWindowPropertiesGetProperty):
+        (webkitWindowPropertiesSetProperty):
+        (webkit_window_properties_class_init):
+        (webkitWindowPropertiesUpdateFromWebWindowFeatures):
+        * UIProcess/API/glib/WebKitWindowPropertiesPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp: Added.
+        (webkitWebViewAuthenticate):
+        (webkitWebViewCreateJavaScriptDialog):
+        (webkitWebViewScriptDialog):
+        (fileChooserDialogResponseCallback):
+        (webkitWebViewRunFileChooser):
+        (webkit_web_view_new):
+        (webkit_web_view_new_with_context):
+        (webkit_web_view_new_with_related_view):
+        (webkit_web_view_new_with_settings):
+        (webkit_web_view_new_with_user_content_manager):
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/API/wpe/WebKitAuthenticationRequest.h: Added.
+        * UIProcess/API/wpe/WebKitAutomationSession.h: Added.
+        * UIProcess/API/wpe/WebKitBackForwardList.h: Added.
+        * UIProcess/API/wpe/WebKitBackForwardListItem.h: Added.
+        * UIProcess/API/wpe/WebKitContextMenu.h: Added.
+        * UIProcess/API/wpe/WebKitContextMenuActions.h: Added.
+        * UIProcess/API/wpe/WebKitContextMenuItem.h: Added.
+        * UIProcess/API/wpe/WebKitCookieManager.h: Added.
+        * UIProcess/API/wpe/WebKitCredential.h: Added.
+        * UIProcess/API/wpe/WebKitDefines.h: Copied from Source/WebKit2/UIProcess/API/glib/WebKitPrivate.h.
+        * UIProcess/API/wpe/WebKitDownload.h: Added.
+        * UIProcess/API/wpe/WebKitEditingCommands.h: Added.
+        * UIProcess/API/wpe/WebKitEditorState.h: Added.
+        * UIProcess/API/wpe/WebKitEnumTypes.cpp.template: Added.
+        * UIProcess/API/wpe/WebKitEnumTypes.h.template: Copied from Source/WebKit2/UIProcess/API/glib/WebKitNotificationPrivate.h.
+        * UIProcess/API/wpe/WebKitError.h: Added.
+        * UIProcess/API/wpe/WebKitFaviconDatabase.h: Added.
+        * UIProcess/API/wpe/WebKitFileChooserRequest.h: Added.
+        * UIProcess/API/wpe/WebKitFindController.h: Added.
+        * UIProcess/API/wpe/WebKitFormSubmissionRequest.h: Added.
+        * UIProcess/API/wpe/WebKitGeolocationPermissionRequest.h: Added.
+        * UIProcess/API/wpe/WebKitHitTestResult.h: Added.
+        * UIProcess/API/wpe/WebKitInstallMissingMediaPluginsPermissionRequest.h: Added.
+        * UIProcess/API/wpe/WebKitJavascriptResult.h: Added.
+        * UIProcess/API/wpe/WebKitMimeInfo.h: Added.
+        * UIProcess/API/wpe/WebKitNavigationAction.h: Added.
+        * UIProcess/API/wpe/WebKitNavigationPolicyDecision.h: Added.
+        * UIProcess/API/wpe/WebKitNetworkProxySettings.h: Added.
+        * UIProcess/API/wpe/WebKitNotification.h: Added.
+        * UIProcess/API/wpe/WebKitNotificationPermissionRequest.h: Added.
+        * UIProcess/API/wpe/WebKitPermissionRequest.h: Added.
+        * UIProcess/API/wpe/WebKitPlugin.h: Added.
+        * UIProcess/API/wpe/WebKitPolicyDecision.h: Added.
+        * UIProcess/API/wpe/WebKitResponsePolicyDecision.h: Added.
+        * UIProcess/API/wpe/WebKitScriptDialog.h: Added.
+        * UIProcess/API/wpe/WebKitSecurityManager.h: Added.
+        * UIProcess/API/wpe/WebKitSecurityOrigin.h: Added.
+        * UIProcess/API/wpe/WebKitSettings.h: Added.
+        * UIProcess/API/wpe/WebKitURIRequest.h: Added.
+        * UIProcess/API/wpe/WebKitURIResponse.h: Added.
+        * UIProcess/API/wpe/WebKitURISchemeRequest.h: Added.
+        * UIProcess/API/wpe/WebKitUserContent.h: Added.
+        * UIProcess/API/wpe/WebKitUserContentManager.h: Added.
+        * UIProcess/API/wpe/WebKitUserMediaPermissionRequest.h: Added.
+        * UIProcess/API/wpe/WebKitWebContext.h: Added.
+        * UIProcess/API/wpe/WebKitWebResource.h: Added.
+        * UIProcess/API/wpe/WebKitWebView.h: Added.
+        * UIProcess/API/wpe/WebKitWebViewSessionState.h: Added.
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp: Added.
+        (webkitWebViewAuthenticate):
+        (webkitWebViewScriptDialog):
+        (webkitWebViewRunFileChooser):
+        (webkit_web_view_new):
+        (webkit_web_view_new_with_context):
+        (webkit_web_view_new_with_related_view):
+        (webkit_web_view_new_with_settings):
+        (webkit_web_view_new_with_user_content_manager):
+        * UIProcess/API/wpe/WebKitWebsiteData.h: Added.
+        * UIProcess/API/wpe/WebKitWebsiteDataManager.h: Added.
+        * UIProcess/API/wpe/WebKitWindowProperties.h: Added.
+        * UIProcess/API/wpe/webkit.h: Added.
+
 2017-06-19  Frederic Wang  <fwang@igalia.com>
 
         [iOS] Always include frames in the scrolling tree when async frame scrolling is enabled

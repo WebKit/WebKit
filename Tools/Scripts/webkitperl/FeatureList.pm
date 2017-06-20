@@ -237,7 +237,7 @@ my @features = (
       define => "ENABLE_GAMEPAD", default => 0, value => \$gamepadSupport },
 
     { option => "geolocation", desc => "Toggle Geolocation support",
-      define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isIOSWebKit() || isGtk() || isWPE()), value => \$geolocationSupport },
+      define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isIOSWebKit() || isGtk()), value => \$geolocationSupport },
 
     { option => "gstreamer-gl", desc => "Toggle GStreamer GL support",
       define => "USE_GSTREAMER_GL", default => (isGtk() || isWPE()), value => \$gstreamerGLSupport },

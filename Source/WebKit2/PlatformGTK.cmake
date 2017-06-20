@@ -189,6 +189,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/gtk/WebKitWebInspector.cpp
     UIProcess/API/gtk/WebKitWebViewBase.cpp
     UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp
+    UIProcess/API/gtk/WebKitWebViewGtk.cpp
 
     UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp
 

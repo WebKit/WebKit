@@ -96,7 +96,9 @@ using namespace WebCore;
 enum {
     PROP_0,
 
+#if PLATFORM(GTK)
     PROP_GEOMETRY,
+#endif
     PROP_TOOLBAR_VISIBLE,
     PROP_STATUSBAR_VISIBLE,
     PROP_SCROLLBARS_VISIBLE,
@@ -107,7 +109,9 @@ enum {
 };
 
 struct _WebKitWindowPropertiesPrivate {
+#if PLATFORM(GTK)
     GdkRectangle geometry;
+#endif
 
     bool toolbarVisible : 1;
     bool statusbarVisible : 1;
@@ -126,9 +130,11 @@ static void webkitWindowPropertiesGetProperty(GObject* object, guint propId, GVa
     WebKitWindowProperties* windowProperties = WEBKIT_WINDOW_PROPERTIES(object);
 
     switch (propId) {
+#if PLATFORM(GTK)
     case PROP_GEOMETRY:
         g_value_set_boxed(value, &windowProperties->priv->geometry);
         break;
+#endif
     case PROP_TOOLBAR_VISIBLE:
         g_value_set_boolean(value, webkit_window_properties_get_toolbar_visible(windowProperties));
         break;
@@ -160,10 +166,12 @@ static void webkitWindowPropertiesSetProperty(GObject* object, guint propId, con
     WebKitWindowProperties* windowProperties = WEBKIT_WINDOW_PROPERTIES(object);
 
     switch (propId) {
+#if PLATFORM(GTK)
     case PROP_GEOMETRY:
         if (GdkRectangle* geometry = static_cast<GdkRectangle*>(g_value_get_boxed(value)))
             windowProperties->priv->geometry = *geometry;
         break;
+#endif
     case PROP_TOOLBAR_VISIBLE:
         windowProperties->priv->toolbarVisible = g_value_get_boolean(value);
         break;
@@ -198,6 +206,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
 
     GParamFlags paramFlags = static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 
+#if PLATFORM(GTK)
     /**
      * WebKitWebWindowProperties:geometry:
      *
@@ -210,6 +219,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
                                                        _("The size and position of the window on the screen."),
                                                        GDK_TYPE_RECTANGLE,
                                                        paramFlags));
+#endif
 
     /**
      * WebKitWebWindowProperties:toolbar-visible:
@@ -307,6 +317,7 @@ WebKitWindowProperties* webkitWindowPropertiesCreate()
     return WEBKIT_WINDOW_PROPERTIES(g_object_new(WEBKIT_TYPE_WINDOW_PROPERTIES, NULL));
 }
 
+#if PLATFORM(GTK)
 void webkitWindowPropertiesSetGeometry(WebKitWindowProperties* windowProperties, GdkRectangle* geometry)
 {
     if (windowProperties->priv->geometry.x == geometry->x
@@ -317,6 +328,7 @@ void webkitWindowPropertiesSetGeometry(WebKitWindowProperties* windowProperties,
     windowProperties->priv->geometry = *geometry;
     g_object_notify(G_OBJECT(windowProperties), "geometry");
 }
+#endif
 
 void webkitWindowPropertiesSetToolbarVisible(WebKitWindowProperties* windowProperties, bool toolbarsVisible)
 {
@@ -376,6 +388,7 @@ void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties* windowPropertie
 
 void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* windowProperties, const WindowFeatures& windowFeatures)
 {
+#if PLATFORM(GTK)
     GdkRectangle geometry = windowProperties->priv->geometry;
     if (windowFeatures.x)
         geometry.x = *windowFeatures.x;
@@ -386,6 +399,7 @@ void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* w
     if (windowFeatures.height)
         geometry.height = *windowFeatures.height;
     webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
+#endif
 
     webkitWindowPropertiesSetMenubarVisible(windowProperties, windowFeatures.menuBarVisible);
     webkitWindowPropertiesSetStatusbarVisible(windowProperties, windowFeatures.statusBarVisible);
@@ -396,6 +410,7 @@ void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* w
     webkitWindowPropertiesSetFullscreen(windowProperties, windowFeatures.fullscreen);
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_window_properties_get_geometry:
  * @window_properties: a #WebKitWindowProperties
@@ -410,6 +425,7 @@ void webkit_window_properties_get_geometry(WebKitWindowProperties* windowPropert
 
     *geometry = windowProperties->priv->geometry;
 }
+#endif
 
 /**
  * webkit_window_properties_get_toolbar_visible:

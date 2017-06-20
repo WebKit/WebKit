@@ -21,7 +21,6 @@
 #include "WebKitNavigationAction.h"
 
 #include "WebKitNavigationActionPrivate.h"
-#include <gdk/gdk.h>
 #include <wtf/glib/GRefPtr.h>
 
 using namespace WebKit;

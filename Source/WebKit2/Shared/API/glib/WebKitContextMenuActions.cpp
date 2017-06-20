@@ -58,8 +58,10 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
         return ContextMenuItemTagDownloadImageToDisk;
     case WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_TO_CLIPBOARD:
         return ContextMenuItemTagCopyImageToClipboard;
+#if PLATFORM(GTK)
     case WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD:
         return ContextMenuItemTagCopyImageUrlToClipboard;
+#endif
     case WEBKIT_CONTEXT_MENU_ACTION_OPEN_FRAME_IN_NEW_WINDOW:
         return ContextMenuItemTagOpenFrameInNewWindow;
     case WEBKIT_CONTEXT_MENU_ACTION_GO_BACK:
@@ -76,6 +78,7 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
         return ContextMenuItemTagCut;
     case WEBKIT_CONTEXT_MENU_ACTION_PASTE:
         return ContextMenuItemTagPaste;
+#if PLATFORM(GTK)
     case WEBKIT_CONTEXT_MENU_ACTION_DELETE:
         return ContextMenuItemTagDelete;
     case WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL:
@@ -84,6 +87,7 @@ ContextMenuAction webkitContextMenuActionGetActionTag(WebKitContextMenuAction ac
         return ContextMenuItemTagInputMethods;
     case WEBKIT_CONTEXT_MENU_ACTION_UNICODE:
         return ContextMenuItemTagUnicode;
+#endif
     case WEBKIT_CONTEXT_MENU_ACTION_SPELLING_GUESS:
         return ContextMenuItemTagSpellingGuess;
     case WEBKIT_CONTEXT_MENU_ACTION_NO_GUESSES_FOUND:
@@ -154,8 +158,10 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
         return WEBKIT_CONTEXT_MENU_ACTION_DOWNLOAD_IMAGE_TO_DISK;
     case ContextMenuItemTagCopyImageToClipboard:
         return WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_TO_CLIPBOARD;
+#if PLATFORM(GTK)
     case ContextMenuItemTagCopyImageUrlToClipboard:
         return WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD;
+#endif
     case ContextMenuItemTagOpenFrameInNewWindow:
         return WEBKIT_CONTEXT_MENU_ACTION_OPEN_FRAME_IN_NEW_WINDOW;
     case ContextMenuItemTagGoBack:
@@ -172,6 +178,7 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
         return WEBKIT_CONTEXT_MENU_ACTION_CUT;
     case ContextMenuItemTagPaste:
         return WEBKIT_CONTEXT_MENU_ACTION_PASTE;
+#if PLATFORM(GTK)
     case ContextMenuItemTagDelete:
         return WEBKIT_CONTEXT_MENU_ACTION_DELETE;
     case ContextMenuItemTagSelectAll:
@@ -180,6 +187,7 @@ WebKitContextMenuAction webkitContextMenuActionGetForContextMenuItem(const WebKi
         return WEBKIT_CONTEXT_MENU_ACTION_INPUT_METHODS;
     case ContextMenuItemTagUnicode:
         return WEBKIT_CONTEXT_MENU_ACTION_UNICODE;
+#endif
     case ContextMenuItemTagSpellingGuess:
         return WEBKIT_CONTEXT_MENU_ACTION_SPELLING_GUESS;
     case ContextMenuItemTagNoGuessesFound:
@@ -248,8 +256,10 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
         return contextMenuItemTagDownloadImageToDisk();
     case WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_TO_CLIPBOARD:
         return contextMenuItemTagCopyImageToClipboard();
+#if PLATFORM(GTK)
     case WEBKIT_CONTEXT_MENU_ACTION_COPY_IMAGE_URL_TO_CLIPBOARD:
         return contextMenuItemTagCopyImageUrlToClipboard();
+#endif
     case WEBKIT_CONTEXT_MENU_ACTION_OPEN_FRAME_IN_NEW_WINDOW:
         return contextMenuItemTagOpenFrameInNewWindow();
     case WEBKIT_CONTEXT_MENU_ACTION_GO_BACK:
@@ -266,6 +276,7 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
         return contextMenuItemTagCut();
     case WEBKIT_CONTEXT_MENU_ACTION_PASTE:
         return contextMenuItemTagPaste();
+#if PLATFORM(GTK)
     case WEBKIT_CONTEXT_MENU_ACTION_DELETE:
         return contextMenuItemTagDelete();
     case WEBKIT_CONTEXT_MENU_ACTION_SELECT_ALL:
@@ -274,6 +285,7 @@ String webkitContextMenuActionGetLabel(WebKitContextMenuAction action)
         return contextMenuItemTagInputMethods();
     case WEBKIT_CONTEXT_MENU_ACTION_UNICODE:
         return contextMenuItemTagUnicode();
+#endif
     case WEBKIT_CONTEXT_MENU_ACTION_NO_GUESSES_FOUND:
         return contextMenuItemTagNoGuessesFound();
     case WEBKIT_CONTEXT_MENU_ACTION_IGNORE_SPELLING:

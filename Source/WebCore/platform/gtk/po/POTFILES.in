@@ -32,6 +32,7 @@ LocalizedStringsGtk.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp
 ../../../WebKit2/UIProcess/API/gtk/WebKitWebViewBase.cpp
+../../../WebKit2/UIProcess/API/gtk/WebKitWebViewGtk.cpp
 ../../../WebKit2/UIProcess/gtk/WebColorPickerGtk.cpp
 ../../../WebKit2/UIProcess/gtk/WebKitInspectorWindow.cpp
 ../../../WebKit2/UIProcess/WebEditCommandProxy.cpp

@@ -126,6 +126,7 @@ if (ENABLE_SUBTLE_CRYPTO)
 endif ()
 
 add_definitions(-DBUILDING_WPE__=1)
+add_definitions(-DGETTEXT_PACKAGE="WPE")
 add_definitions(-DDATA_DIR="${CMAKE_INSTALL_DATADIR}")
 
 set(USE_UDIS86 1)
@@ -142,6 +143,8 @@ SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS_THREADED TRUE)
 
 set(FORWARDING_HEADERS_DIR ${DERIVED_SOURCES_DIR}/ForwardingHeaders)
+set(FORWARDING_HEADERS_WPE_DIR ${FORWARDING_HEADERS_DIR}/wpe)
+set(DERIVED_SOURCES_WPE_API_DIR ${DERIVED_SOURCES_WEBKIT2_DIR}/wpe)
 
 # Build with -fvisibility=hidden to reduce the size of the shared library.
 # Not to be used when building the WebKitTestRunner library.

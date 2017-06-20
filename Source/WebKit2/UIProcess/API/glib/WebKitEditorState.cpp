@@ -111,6 +111,7 @@ void webkitEditorStateChanged(WebKitEditorState* editorState, const EditorState&
         return;
 
     unsigned typingAttributes = WEBKIT_EDITOR_TYPING_ATTRIBUTE_NONE;
+#if PLATFORM(GTK)
     const auto& postLayoutData = newState.postLayoutData();
     if (postLayoutData.typingAttributes & AttributeBold)
         typingAttributes |= WEBKIT_EDITOR_TYPING_ATTRIBUTE_BOLD;
@@ -120,6 +121,7 @@ void webkitEditorStateChanged(WebKitEditorState* editorState, const EditorState&
         typingAttributes |= WEBKIT_EDITOR_TYPING_ATTRIBUTE_UNDERLINE;
     if (postLayoutData.typingAttributes & AttributeStrikeThrough)
         typingAttributes |= WEBKIT_EDITOR_TYPING_ATTRIBUTE_STRIKETHROUGH;
+#endif
     webkitEditorStateSetTypingAttributes(editorState, typingAttributes);
 }
 

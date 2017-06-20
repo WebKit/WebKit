@@ -63,7 +63,9 @@ using namespace WebCore;
 struct _WebKitFileChooserRequestPrivate {
     RefPtr<API::OpenPanelParameters> parameters;
     RefPtr<WebOpenPanelResultListenerProxy> listener;
+#if PLATFORM(GTK)
     GRefPtr<GtkFileFilter> filter;
+#endif
     GRefPtr<GPtrArray> mimeTypes;
     GRefPtr<GPtrArray> selectedFiles;
     bool handledRequest;
@@ -73,7 +75,9 @@ WEBKIT_DEFINE_TYPE(WebKitFileChooserRequest, webkit_file_chooser_request, G_TYPE
 
 enum {
     PROP_0,
+#if PLATFORM(GTK)
     PROP_FILTER,
+#endif
     PROP_MIME_TYPES,
     PROP_SELECT_MULTIPLE,
     PROP_SELECTED_FILES,
@@ -94,9 +98,11 @@ static void webkitFileChooserRequestGetProperty(GObject* object, guint propId, G
 {
     WebKitFileChooserRequest* request = WEBKIT_FILE_CHOOSER_REQUEST(object);
     switch (propId) {
+#if PLATFORM(GTK)
     case PROP_FILTER:
         g_value_set_object(value, webkit_file_chooser_request_get_mime_types_filter(request));
         break;
+#endif
     case PROP_MIME_TYPES:
         g_value_set_boxed(value, webkit_file_chooser_request_get_mime_types(request));
         break;
@@ -118,6 +124,7 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
     objectClass->dispose = webkitFileChooserRequestDispose;
     objectClass->get_property = webkitFileChooserRequestGetProperty;
 
+#if PLATFORM(GTK)
     /**
      * WebKitFileChooserRequest:filter:
      *
@@ -132,6 +139,8 @@ static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass
                                                       _("The filter currently associated with the request"),
                                                       GTK_TYPE_FILE_FILTER,
                                                       WEBKIT_PARAM_READABLE));
+#endif
+
     /**
      * WebKitFileChooserRequest:mime-types:
      *
@@ -226,6 +235,7 @@ const gchar* const* webkit_file_chooser_request_get_mime_types(WebKitFileChooser
     return reinterpret_cast<gchar**>(request->priv->mimeTypes->pdata);
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_file_chooser_request_get_mime_types_filter:
  * @request: a #WebKitFileChooserRequest
@@ -268,6 +278,7 @@ GtkFileFilter* webkit_file_chooser_request_get_mime_types_filter(WebKitFileChoos
 
     return request->priv->filter.get();
 }
+#endif // PLATFORM(GTK)
 
 /**
  * webkit_file_chooser_request_get_select_multiple:

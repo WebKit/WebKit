@@ -146,11 +146,12 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Tools', 'TestWebKitAPI')],
      ["-readability/naming"]),
 
-    ([# The GTK+ API use upper case, underscore separated, words in
+    ([# The GTK+ and WPE APIs use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
       os.path.join('Source', 'WebKit2', 'Shared', 'API', 'glib'),
       os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'glib'),
       os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk'),
+      os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'wpe'),
       os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'glib'),
       os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk')],
      ["-readability/enum_casing"]),
@@ -308,14 +309,16 @@ _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
 _SKIPPED_FILES_WITH_WARNING = [
     os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKitGtk'),
 
-    # WebKit*.h files in Source/WebKit2/UIProcess/API/gtk, except those ending in Private.h are GTK+ API headers, which do not follow WebKit coding style.
+    # WebKit*.h files in Source/WebKit2/UIProcess/API/[gtk|wpe], except those ending in Private.h are API headers, which do not follow WebKit coding style.
     re.compile(re.escape(os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
+    re.compile(re.escape(os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'wpe') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
     re.compile(re.escape(os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk') + os.path.sep) + r'WebKit(?!.*Private\.h).*\.h$'),
 
     # GObject DOM bindings copied from generated code using different coding style.
     os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'DOM'),
 
     os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'webkit2.h'),
+    os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'wpe', 'webkit.h'),
     os.path.join('Source', 'WebKit2', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'webkit-web-extension.h')]
 
 # Files to skip that are more common or obvious.

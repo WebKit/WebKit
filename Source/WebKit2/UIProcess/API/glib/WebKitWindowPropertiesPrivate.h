@@ -31,7 +31,9 @@
 
 WebKitWindowProperties* webkitWindowPropertiesCreate();
 void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties*, const WebCore::WindowFeatures&);
+#if PLATFORM(GTK)
 void webkitWindowPropertiesSetGeometry(WebKitWindowProperties*, GdkRectangle*);
+#endif
 void webkitWindowPropertiesSetToolbarVisible(WebKitWindowProperties*, bool toolbarsVisible);
 void webkitWindowPropertiesSetMenubarVisible(WebKitWindowProperties*, bool menuBarVisible);
 void webkitWindowPropertiesSetStatusbarVisible(WebKitWindowProperties*, bool statusBarVisible);

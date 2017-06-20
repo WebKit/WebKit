@@ -30,8 +30,11 @@
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include "WebPageProxy.h"
-#include <WebCore/GtkUtilities.h>
 #include <wtf/glib/GRefPtr.h>
+
+#if PLATFORM(GTK)
+#include <WebCore/GtkUtilities.h>
+#endif
 
 using namespace WebKit;
 
@@ -91,7 +94,7 @@ private:
 
     void mouseDidMoveOverElement(WebPageProxy*, const WebHitTestResultData& data, WebEvent::Modifiers modifiers, API::Object*) override
     {
-        webkitWebViewMouseTargetChanged(m_webView, data, toGdkModifiers(modifiers));
+        webkitWebViewMouseTargetChanged(m_webView, data, modifiers);
     }
 
     bool toolbarsAreVisible(WebPageProxy*) override
@@ -136,6 +139,7 @@ private:
 
     void setWindowFrame(WebPageProxy*, const WebCore::FloatRect& frame) override
     {
+#if PLATFORM(GTK)
         GdkRectangle geometry = WebCore::IntRect(frame);
         GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
         if (webkit_web_view_is_controlled_by_automation(m_webView) && WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
@@ -145,10 +149,12 @@ private:
                 gtk_window_resize(GTK_WINDOW(window), geometry.width, geometry.height);
         } else
             webkitWindowPropertiesSetGeometry(webkit_web_view_get_window_properties(m_webView), &geometry);
+#endif
     }
 
     WebCore::FloatRect windowFrame(WebPageProxy*) override
     {
+#if PLATFORM(GTK)
         GdkRectangle geometry = { 0, 0, 0, 0 };
         GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
         if (WebCore::widgetIsOnscreenToplevelWindow(window) && gtk_widget_get_visible(window)) {
@@ -156,6 +162,10 @@ private:
             gtk_window_get_size(GTK_WINDOW(window), &geometry.width, &geometry.height);
         }
         return WebCore::FloatRect(geometry);
+#elif PLATFORM(WPE)
+        // FIXME: I guess this is actually the view size in WPE. We need more refactoring here.
+        return { };
+#endif
     }
 
     void exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, API::SecurityOrigin*, const String&, const String&, unsigned long long /*currentQuota*/, unsigned long long /*currentOriginUsage*/, unsigned long long /*currentDatabaseUsage*/, unsigned long long /*expectedUsage*/, Function<void (unsigned long long)>&& completionHandler) override
@@ -193,10 +203,12 @@ private:
         return true;
     }
 
+#if PLATFORM(GTK)
     void printFrame(WebPageProxy*, WebFrameProxy* frame) override
     {
         webkitWebViewPrintFrame(m_webView, frame);
     }
+#endif
 
     bool canRunModal() const override { return true; }
 

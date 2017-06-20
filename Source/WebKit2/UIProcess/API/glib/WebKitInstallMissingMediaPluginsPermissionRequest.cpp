@@ -27,9 +27,9 @@
 
 #if ENABLE(VIDEO)
 #include <WebCore/PlatformDisplay.h>
-#include <gtk/gtk.h>
 #if PLATFORM(X11)
 #include <gdk/gdkx.h>
+#include <gtk/gtk.h>
 #endif
 #endif
 
@@ -68,12 +68,12 @@ WEBKIT_DEFINE_TYPE_WITH_CODE(
     G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_PERMISSION_REQUEST, webkit_permission_request_interface_init))
 
 #if ENABLE(VIDEO)
-static GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext(GtkWidget* widget)
+static GUniquePtr<GstInstallPluginsContext> createGstInstallPluginsContext(WebPageProxy& page)
 {
 #if PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11) {
         GUniquePtr<GstInstallPluginsContext> context(gst_install_plugins_context_new());
-        gst_install_plugins_context_set_xid(context.get(), GDK_WINDOW_XID(gtk_widget_get_window(widget)));
+        gst_install_plugins_context_set_xid(context.get(), GDK_WINDOW_XID(gtk_widget_get_window(page.viewWidget())));
         return context;
     }
 #endif
@@ -92,7 +92,7 @@ static void webkitInstallMissingMediaPluginsPermissionRequestAllow(WebKitPermiss
     if (priv->madeDecision)
         return;
 #if ENABLE(VIDEO)
-    priv->request->allow(createGstInstallPluginsContext(priv->request->page().viewWidget()));
+    priv->request->allow(createGstInstallPluginsContext(priv->request->page()));
 #endif
     priv->madeDecision = true;
 }

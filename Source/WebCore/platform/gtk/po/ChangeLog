@@ -1,3 +1,14 @@
+2017-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Add initial implementation of glib API
+        https://bugs.webkit.org/show_bug.cgi?id=173546
+
+        Reviewed by Žan Doberšek.
+
+        Add WebKitWebViewGtk.cpp to the list of files with translatable strings.
+
+        * POTFILES.in:
+
 2017-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move GTK+ API files that could be shared to glib dirs

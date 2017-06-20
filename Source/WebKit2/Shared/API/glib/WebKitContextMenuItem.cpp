@@ -28,7 +28,6 @@
 #include "WebKitContextMenuPrivate.h"
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuItem.h>
-#include <gtk/gtk.h>
 #include <memory>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -125,6 +124,7 @@ WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitConte
     return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), item->priv->menuItem->title(), item->priv->menuItem->enabled(), item->priv->menuItem->checked());
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_context_menu_item_new:
  * @action: a #GtkAction
@@ -144,6 +144,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new(GtkAction* action)
 
     return item;
 }
+#endif
 
 /**
  * webkit_context_menu_item_new_from_gaction:
@@ -260,6 +261,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_separator(void)
     return item;
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_context_menu_item_get_action:
  * @item: a #WebKitContextMenuItem
@@ -277,6 +279,7 @@ GtkAction* webkit_context_menu_item_get_action(WebKitContextMenuItem* item)
 
     return item->priv->menuItem->gtkAction();
 }
+#endif
 
 /**
  * webkit_context_menu_item_get_gaction:

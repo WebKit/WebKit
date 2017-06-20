@@ -23,9 +23,15 @@
 #include "APIError.h"
 #include "WebEvent.h"
 #include "WebKitError.h"
-#include <gdk/gdk.h>
 
-unsigned toGdkModifiers(WebKit::WebEvent::Modifiers wkModifiers)
+#if PLATFORM(GTK)
+#include <gdk/gdk.h>
+#elif PLATFORM(WPE)
+#include <wpe/input.h>
+#endif
+
+#if PLATFORM(GTK)
+unsigned toPlatformModifiers(WebKit::WebEvent::Modifiers wkModifiers)
 {
     unsigned modifiers = 0;
     if (wkModifiers & WebKit::WebEvent::Modifiers::ShiftKey)
@@ -40,6 +46,21 @@ unsigned toGdkModifiers(WebKit::WebEvent::Modifiers wkModifiers)
         modifiers |= GDK_LOCK_MASK;
     return modifiers;
 }
+#elif PLATFORM(WPE)
+unsigned toPlatformModifiers(WebKit::WebEvent::Modifiers wkModifiers)
+{
+    unsigned modifiers = 0;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::ShiftKey)
+        modifiers |= wpe_input_keyboard_modifier_shift;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::ControlKey)
+        modifiers |= wpe_input_keyboard_modifier_control;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::AltKey)
+        modifiers |= wpe_input_keyboard_modifier_alt;
+    if (wkModifiers & WebKit::WebEvent::Modifiers::MetaKey)
+        modifiers |= wpe_input_keyboard_modifier_meta;
+    return modifiers;
+}
+#endif
 
 WebKitNavigationType toWebKitNavigationType(WebCore::NavigationType type)
 {
@@ -109,12 +130,14 @@ unsigned toWebKitError(unsigned webCoreError)
         return WEBKIT_DOWNLOAD_ERROR_CANCELLED_BY_USER;
     case API::Error::Download::Destination:
         return WEBKIT_DOWNLOAD_ERROR_DESTINATION;
+#if PLATFORM(GTK)
     case API::Error::Print::Generic:
         return WEBKIT_PRINT_ERROR_GENERAL;
     case API::Error::Print::PrinterNotFound:
         return WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND;
     case API::Error::Print::InvalidPageRange:
         return WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE;
+#endif
     default:
         // This may be a user app defined error, which needs to be passed as-is.
         return webCoreError;
@@ -152,12 +175,14 @@ unsigned toWebCoreError(unsigned webKitError)
         return API::Error::Download::CancelledByUser;
     case WEBKIT_DOWNLOAD_ERROR_DESTINATION:
         return API::Error::Download::Destination;
+#if PLATFORM(GTK)
     case WEBKIT_PRINT_ERROR_GENERAL:
         return API::Error::Print::Generic;
     case WEBKIT_PRINT_ERROR_PRINTER_NOT_FOUND:
         return API::Error::Print::PrinterNotFound;
     case WEBKIT_PRINT_ERROR_INVALID_PAGE_RANGE:
         return API::Error::Print::InvalidPageRange;
+#endif
     default:
         // This may be a user app defined error, which needs to be passed as-is.
         return webKitError;

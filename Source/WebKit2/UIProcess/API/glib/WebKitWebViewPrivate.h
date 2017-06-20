@@ -29,6 +29,7 @@
 #include "APIPageConfiguration.h"
 #include "InstallMissingMediaPluginsPermissionRequest.h"
 #include "WebContextMenuItemData.h"
+#include "WebEvent.h"
 #include "WebHitTestResultData.h"
 #include "WebImage.h"
 #include "WebKitWebView.h"
@@ -51,7 +52,7 @@ CString webkitWebViewRunJavaScriptPrompt(WebKitWebView*, const CString& message,
 bool webkitWebViewRunJavaScriptBeforeUnloadConfirm(WebKitWebView*, const CString& message);
 void webkitWebViewMakePermissionRequest(WebKitWebView*, WebKitPermissionRequest*);
 void webkitWebViewMakePolicyDecision(WebKitWebView*, WebKitPolicyDecisionType, WebKitPolicyDecision*);
-void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResultData&, unsigned modifiers);
+void webkitWebViewMouseTargetChanged(WebKitWebView*, const WebKit::WebHitTestResultData&, WebKit::WebEvent::Modifiers);
 void webkitWebViewHandleDownloadRequest(WebKitWebView*, WebKit::DownloadProxy*);
 void webkitWebViewPrintFrame(WebKitWebView*, WebKit::WebFrameProxy*);
 void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy*, uint64_t resourceIdentifier, WebKitURIRequest*);
@@ -66,10 +67,17 @@ void webkitWebViewSubmitFormRequest(WebKitWebView*, WebKitFormSubmissionRequest*
 void webkitWebViewHandleAuthenticationChallenge(WebKitWebView*, WebKit::AuthenticationChallengeProxy*);
 void webkitWebViewInsecureContentDetected(WebKitWebView*, WebKitInsecureContentEvent);
 bool webkitWebViewEmitShowNotification(WebKitWebView*, WebKitNotification*);
-bool webkitWebViewEmitRunColorChooser(WebKitWebView*, WebKitColorChooserRequest*);
 void webkitWebViewWebProcessCrashed(WebKitWebView*);
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView*);
 void webkitWebViewSelectionDidChange(WebKitWebView*);
 void webkitWebViewRequestInstallMissingMediaPlugins(WebKitWebView*, WebKit::InstallMissingMediaPluginsPermissionRequest&);
 WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView*);
+
+#if PLATFORM(GTK)
+bool webkitWebViewEmitRunColorChooser(WebKitWebView*, WebKitColorChooserRequest*);
 bool webkitWebViewShowOptionMenu(WebKitWebView*, const WebCore::IntRect&, WebKitOptionMenu*, const GdkEvent*);
+#endif
+
+gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*);
+gboolean webkitWebViewScriptDialog(WebKitWebView*, WebKitScriptDialog*);
+gboolean webkitWebViewRunFileChooser(WebKitWebView*, WebKitFileChooserRequest*);

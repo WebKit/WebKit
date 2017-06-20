@@ -28,7 +28,6 @@
 #include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
-#include "WebKitAuthenticationDialog.h"
 #include "WebKitAuthenticationRequestPrivate.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitContextMenuClient.h"
@@ -46,7 +45,6 @@
 #include "WebKitLoaderClient.h"
 #include "WebKitNotificationPrivate.h"
 #include "WebKitPolicyClient.h"
-#include "WebKitPrintOperationPrivate.h"
 #include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecision.h"
 #include "WebKitScriptDialogPrivate.h"
@@ -55,18 +53,14 @@
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebContextPrivate.h"
-#include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebResourcePrivate.h"
-#include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWebViewSessionStatePrivate.h"
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/CertificateInfo.h>
-#include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GUniquePtrSoup.h>
-#include <WebCore/GtkUtilities.h>
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/RefPtrCairo.h>
 #include <glib/gi18n-lib.h>
@@ -74,6 +68,17 @@
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+
+#if PLATFORM(GTK)
+#include "WebKitPrintOperationPrivate.h"
+#include "WebKitWebInspectorPrivate.h"
+#include "WebKitWebViewBasePrivate.h"
+#include <WebCore/GUniquePtrGtk.h>
+#endif
+
+#if PLATFORM(WPE)
+#include "WPEView.h"
+#endif
 
 #if USE(LIBNOTIFY)
 #include <libnotify/notify.h>
@@ -114,7 +119,9 @@ enum {
 
     MOUSE_TARGET_CHANGED,
 
+#if PLATFORM(GTK)
     PRINT,
+#endif
 
     RESOURCE_LOAD_STARTED,
 
@@ -136,9 +143,11 @@ enum {
 
     SHOW_NOTIFICATION,
 
+#if PLATFORM(GTK)
     RUN_COLOR_CHOOSER,
 
     SHOW_OPTION_MENU,
+#endif
 
     LAST_SIGNAL
 };
@@ -178,6 +187,10 @@ struct _WebKitWebViewPrivate {
             g_main_loop_quit(modalLoop.get());
     }
 
+#if PLATFORM(WPE)
+    std::unique_ptr<WKWPE::View> view;
+#endif
+
     WebKitWebView* relatedView;
     CString title;
     CString customTextEncoding;
@@ -198,7 +211,7 @@ struct _WebKitWebViewPrivate {
     GRefPtr<GMainLoop> modalLoop;
 
     GRefPtr<WebKitHitTestResult> mouseTargetHitTestResult;
-    unsigned mouseTargetModifiers;
+    WebEvent::Modifiers mouseTargetModifiers;
 
     GRefPtr<WebKitFindController> findController;
     JSGlobalContextRef javascriptGlobalContext;
@@ -206,7 +219,9 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitWebResource> mainResource;
     LoadingResourcesMap loadingResourcesMap;
 
+#if PLATFORM(GTK)
     GRefPtr<WebKitWebInspector> inspector;
+#endif
 
     RefPtr<cairo_surface_t> favicon;
     GRefPtr<GCancellable> faviconCancellable;
@@ -221,13 +236,22 @@ struct _WebKitWebViewPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
+#if PLATFORM(GTK)
 WEBKIT_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
+#elif PLATFORM(WPE)
+WEBKIT_DEFINE_TYPE(WebKitWebView, webkit_web_view, G_TYPE_OBJECT)
+#endif
 
 static inline WebPageProxy& getPage(WebKitWebView* webView)
 {
+#if PLATFORM(GTK)
     auto* page = webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(webView));
     ASSERT(page);
     return *page;
+#elif PLATFORM(WPE)
+    ASSERT(webView->priv->view);
+    return webView->priv->view->page();
+#endif
 }
 
 static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
@@ -324,63 +348,17 @@ static gboolean webkitWebViewLoadFail(WebKitWebView* webView, WebKitLoadEvent, c
     return TRUE;
 }
 
+#if PLATFORM(GTK)
 static GtkWidget* webkitWebViewCreate(WebKitWebView*, WebKitNavigationAction*)
 {
     return nullptr;
 }
-
-static GtkWidget* webkitWebViewCreateJavaScriptDialog(WebKitWebView* webView, GtkMessageType type, GtkButtonsType buttons, int defaultResponse, const char* primaryText, const char* secondaryText = nullptr)
+#else
+static WebKitWebView* webkitWebViewCreate(WebKitWebView*, WebKitNavigationAction*)
 {
-    GtkWidget* parent = gtk_widget_get_toplevel(GTK_WIDGET(webView));
-    GtkWidget* dialog = gtk_message_dialog_new(widgetIsOnscreenToplevelWindow(parent) ? GTK_WINDOW(parent) : nullptr,
-        GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", primaryText);
-    if (secondaryText)
-        gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "%s", secondaryText);
-    GUniquePtr<char> title(g_strdup_printf("JavaScript - %s", getPage(webView).pageLoadState().url().utf8().data()));
-    gtk_window_set_title(GTK_WINDOW(dialog), title.get());
-    if (buttons != GTK_BUTTONS_NONE)
-        gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
-
-    return dialog;
+    return nullptr;
 }
-
-static gboolean webkitWebViewScriptDialog(WebKitWebView* webView, WebKitScriptDialog* scriptDialog)
-{
-    GtkWidget* dialog = 0;
-
-    switch (scriptDialog->type) {
-    case WEBKIT_SCRIPT_DIALOG_ALERT:
-        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_WARNING, GTK_BUTTONS_CLOSE, GTK_RESPONSE_CLOSE, scriptDialog->message.data());
-        gtk_dialog_run(GTK_DIALOG(dialog));
-        break;
-    case WEBKIT_SCRIPT_DIALOG_CONFIRM:
-        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, scriptDialog->message.data());
-        scriptDialog->confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
-        break;
-    case WEBKIT_SCRIPT_DIALOG_PROMPT: {
-        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, scriptDialog->message.data());
-        GtkWidget* entry = gtk_entry_new();
-        gtk_entry_set_text(GTK_ENTRY(entry), scriptDialog->defaultText.data());
-        gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), entry);
-        gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
-        gtk_widget_show(entry);
-        if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK)
-            scriptDialog->text = gtk_entry_get_text(GTK_ENTRY(entry));
-        break;
-    }
-    case WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM:
-        dialog = webkitWebViewCreateJavaScriptDialog(webView, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, GTK_RESPONSE_OK,
-            _("Are you sure you want to leave this page?"), scriptDialog->message.data());
-        gtk_dialog_add_buttons(GTK_DIALOG(dialog), _("Stay on Page"), GTK_RESPONSE_CLOSE, _("Leave Page"), GTK_RESPONSE_OK, nullptr);
-        gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
-        scriptDialog->confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
-        break;
-    }
-
-    gtk_widget_destroy(dialog);
-
-    return TRUE;
-}
+#endif
 
 static gboolean webkitWebViewDecidePolicy(WebKitWebView*, WebKitPolicyDecision* decision, WebKitPolicyDecisionType decisionType)
 {
@@ -541,76 +519,6 @@ static void webkitWebViewDisconnectFaviconDatabaseSignalHandlers(WebKitWebView* 
     if (priv->faviconChangedHandlerID)
         g_signal_handler_disconnect(webkit_web_context_get_favicon_database(priv->context.get()), priv->faviconChangedHandlerID);
     priv->faviconChangedHandlerID = 0;
-}
-
-static gboolean webkitWebViewAuthenticate(WebKitWebView* webView, WebKitAuthenticationRequest* request)
-{
-    CredentialStorageMode credentialStorageMode = webkit_authentication_request_can_save_credentials(request) ? AllowPersistentStorage : DisallowPersistentStorage;
-    webkitWebViewBaseAddAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView), webkitAuthenticationDialogNew(request, credentialStorageMode));
-
-    return TRUE;
-}
-
-static void fileChooserDialogResponseCallback(GtkFileChooser* dialog, gint responseID, WebKitFileChooserRequest* request)
-{
-    GRefPtr<WebKitFileChooserRequest> adoptedRequest = adoptGRef(request);
-    if (responseID == GTK_RESPONSE_ACCEPT) {
-        GUniquePtr<GSList> filesList(gtk_file_chooser_get_filenames(dialog));
-        GRefPtr<GPtrArray> filesArray = adoptGRef(g_ptr_array_new());
-        for (GSList* file = filesList.get(); file; file = g_slist_next(file))
-            g_ptr_array_add(filesArray.get(), file->data);
-        g_ptr_array_add(filesArray.get(), 0);
-        webkit_file_chooser_request_select_files(adoptedRequest.get(), reinterpret_cast<const gchar* const*>(filesArray->pdata));
-    } else
-        webkit_file_chooser_request_cancel(adoptedRequest.get());
-
-#if GTK_CHECK_VERSION(3, 20, 0)
-    g_object_unref(dialog);
-#else
-    gtk_widget_destroy(GTK_WIDGET(dialog));
-#endif
-}
-
-static gboolean webkitWebViewRunFileChooser(WebKitWebView* webView, WebKitFileChooserRequest* request)
-{
-    GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(webView));
-    if (!widgetIsOnscreenToplevelWindow(toplevel))
-        toplevel = 0;
-
-    gboolean allowsMultipleSelection = webkit_file_chooser_request_get_select_multiple(request);
-
-#if GTK_CHECK_VERSION(3, 20, 0)
-    GtkFileChooserNative* dialog = gtk_file_chooser_native_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
-        toplevel ? GTK_WINDOW(toplevel) : nullptr, GTK_FILE_CHOOSER_ACTION_OPEN, nullptr, nullptr);
-    if (toplevel)
-        gtk_native_dialog_set_modal(GTK_NATIVE_DIALOG(dialog), TRUE);
-#else
-    GtkWidget* dialog = gtk_file_chooser_dialog_new(allowsMultipleSelection ? _("Select Files") : _("Select File"),
-                                                    toplevel ? GTK_WINDOW(toplevel) : 0,
-                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
-                                                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                                    GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-                                                    NULL);
-    if (toplevel)
-        gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
-#endif
-
-    if (GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(request))
-        gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), filter);
-    gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog), allowsMultipleSelection);
-
-    if (const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(request))
-        gtk_file_chooser_select_filename(GTK_FILE_CHOOSER(dialog), selectedFiles[0]);
-
-    g_signal_connect(dialog, "response", G_CALLBACK(fileChooserDialogResponseCallback), g_object_ref(request));
-
-#if GTK_CHECK_VERSION(3, 20, 0)
-    gtk_native_dialog_show(GTK_NATIVE_DIALOG(dialog));
-#else
-    gtk_widget_show(dialog);
-#endif
-
-    return TRUE;
 }
 
 #if USE(LIBNOTIFY)
@@ -1255,7 +1163,12 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         G_STRUCT_OFFSET(WebKitWebViewClass, create),
         webkitWebViewAccumulatorObjectHandled, 0,
         g_cclosure_marshal_generic,
-        GTK_TYPE_WIDGET, 1,
+#if PLATFORM(GTK)
+        GTK_TYPE_WIDGET,
+#else
+        WEBKIT_TYPE_WEB_VIEW,
+#endif
+        1,
         WEBKIT_TYPE_NAVIGATION_ACTION | G_SIGNAL_TYPE_STATIC_SCOPE);
 
     /**
@@ -1510,6 +1423,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_HIT_TEST_RESULT,
         G_TYPE_UINT);
 
+#if PLATFORM(GTK)
     /**
      * WebKitWebView::print:
      * @web_view: the #WebKitWebView on which the signal is emitted
@@ -1537,6 +1451,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 1,
         WEBKIT_TYPE_PRINT_OPERATION);
+#endif // PLATFORM(GTK)
 
     /**
      * WebKitWebView::resource-load-started:
@@ -1706,7 +1621,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_cclosure_marshal_generic,
         G_TYPE_BOOLEAN, 3,
         WEBKIT_TYPE_CONTEXT_MENU,
+#if PLATFORM(GTK)
         GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
+#elif PLATFORM(WPE)
+        G_TYPE_POINTER, // FIXME: use a wpe thing here. I'm not sure we want to expose libwpe in the API.
+#endif
         WEBKIT_TYPE_HIT_TEST_RESULT);
 
     /**
@@ -1853,6 +1772,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         G_TYPE_BOOLEAN, 1,
         WEBKIT_TYPE_NOTIFICATION);
 
+#if PLATFORM(GTK)
      /**
       * WebKitWebView::run-color-chooser:
       * @web_view: the #WebKitWebView on which the signal is emitted
@@ -1920,6 +1840,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         WEBKIT_TYPE_OPTION_MENU,
         GDK_TYPE_EVENT | G_SIGNAL_TYPE_STATIC_SCOPE,
         GDK_TYPE_RECTANGLE | G_SIGNAL_TYPE_STATIC_SCOPE);
+#endif // PLATFORM(GTK)
 }
 
 static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
@@ -1933,7 +1854,11 @@ static void webkitWebViewCancelAuthenticationRequest(WebKitWebView* webView)
 
 void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration)
 {
+#if PLATFORM(GTK)
     webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
+#elif PLATFORM(WPE)
+    webView->priv->view.reset(WKWPE::View::create(nullptr, configuration.get()));
+#endif
 }
 
 WebPageProxy& webkitWebViewGetPage(WebKitWebView* webView)
@@ -2016,13 +1941,19 @@ void webkitWebViewRunAsModal(WebKitWebView* webView)
 
     webView->priv->modalLoop = adoptGRef(g_main_loop_new(0, FALSE));
 
+#if PLATFORM(GTK)
 // This is to suppress warnings about gdk_threads_leave and gdk_threads_enter.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     gdk_threads_leave();
+#endif
+
     g_main_loop_run(webView->priv->modalLoop.get());
+
+#if PLATFORM(GTK)
     gdk_threads_enter();
 #pragma GCC diagnostic pop
+#endif
 }
 
 void webkitWebViewClosePage(WebKitWebView* webView)
@@ -2073,9 +2004,11 @@ void webkitWebViewMakePermissionRequest(WebKitWebView* webView, WebKitPermission
     g_signal_emit(webView, signals[PERMISSION_REQUEST], 0, request, &returnValue);
 }
 
-void webkitWebViewMouseTargetChanged(WebKitWebView* webView, const WebHitTestResultData& hitTestResult, unsigned modifiers)
+void webkitWebViewMouseTargetChanged(WebKitWebView* webView, const WebHitTestResultData& hitTestResult, WebEvent::Modifiers modifiers)
 {
+#if PLATFORM(GTK)
     webkitWebViewBaseSetTooltipArea(WEBKIT_WEB_VIEW_BASE(webView), hitTestResult.elementBoundingBox);
+#endif
 
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->mouseTargetHitTestResult
@@ -2085,7 +2018,7 @@ void webkitWebViewMouseTargetChanged(WebKitWebView* webView, const WebHitTestRes
 
     priv->mouseTargetModifiers = modifiers;
     priv->mouseTargetHitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResult));
-    g_signal_emit(webView, signals[MOUSE_TARGET_CHANGED], 0, priv->mouseTargetHitTestResult.get(), modifiers);
+    g_signal_emit(webView, signals[MOUSE_TARGET_CHANGED], 0, priv->mouseTargetHitTestResult.get(), toPlatformModifiers(modifiers));
 }
 
 void webkitWebViewHandleDownloadRequest(WebKitWebView* webView, DownloadProxy* downloadProxy)
@@ -2095,6 +2028,7 @@ void webkitWebViewHandleDownloadRequest(WebKitWebView* webView, DownloadProxy* d
     webkitDownloadSetWebView(download.get(), webView);
 }
 
+#if PLATFORM(GTK)
 void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 {
     auto printOperation = adoptGRef(webkit_print_operation_new(webView));
@@ -2109,6 +2043,7 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
         return;
     g_signal_connect(printOperation.leakRef(), "finished", G_CALLBACK(g_object_unref), 0);
 }
+#endif
 
 void webkitWebViewResourceLoadStarted(WebKitWebView* webView, WebFrameProxy* frame, uint64_t resourceIdentifier, WebKitURIRequest* request)
 {
@@ -2139,8 +2074,10 @@ void webkitWebViewEnterFullScreen(WebKitWebView* webView)
 #if ENABLE(FULLSCREEN_API)
     gboolean returnValue;
     g_signal_emit(webView, signals[ENTER_FULLSCREEN], 0, &returnValue);
+#if PLATFORM(GTK)
     if (!returnValue)
         webkitWebViewBaseEnterFullScreen(WEBKIT_WEB_VIEW_BASE(webView));
+#endif
 #endif
 }
 
@@ -2149,8 +2086,10 @@ void webkitWebViewExitFullScreen(WebKitWebView* webView)
 #if ENABLE(FULLSCREEN_API)
     gboolean returnValue;
     g_signal_emit(webView, signals[LEAVE_FULLSCREEN], 0, &returnValue);
+#if PLATFORM(GTK)
     if (!returnValue)
         webkitWebViewBaseExitFullScreen(WEBKIT_WEB_VIEW_BASE(webView));
+#endif
 #endif
 }
 
@@ -2160,6 +2099,7 @@ void webkitWebViewRunFileChooserRequest(WebKitWebView* webView, WebKitFileChoose
     g_signal_emit(webView, signals[RUN_FILE_CHOOSER], 0, request, &returnValue);
 }
 
+#if PLATFORM(GTK)
 static void contextMenuDismissed(GtkMenuShell*, WebKitWebView* webView)
 {
     g_signal_emit(webView, signals[CONTEXT_MENU_DISMISSED], 0, NULL);
@@ -2191,6 +2131,17 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebCo
     // Clear the menu to make sure it's useless after signal emission.
     webkit_context_menu_remove_all(contextMenu.get());
 }
+#elif PLATFORM(WPE)
+void webkitWebViewPopulateContextMenu(WebKitWebView* webView, const Vector<WebContextMenuItemData>& proposedMenu, const WebHitTestResultData& hitTestResultData, GVariant* userData)
+{
+    GRefPtr<WebKitContextMenu> contextMenu = adoptGRef(webkitContextMenuCreate(proposedMenu));
+    if (userData)
+        webkit_context_menu_set_user_data(WEBKIT_CONTEXT_MENU(contextMenu.get()), userData);
+    GRefPtr<WebKitHitTestResult> hitTestResult = adoptGRef(webkitHitTestResultCreate(hitTestResultData));
+    gboolean returnValue;
+    g_signal_emit(webView, signals[CONTEXT_MENU], 0, contextMenu.get(), nullptr, hitTestResult.get(), &returnValue);
+}
+#endif
 
 void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmissionRequest* request)
 {
@@ -2219,12 +2170,14 @@ bool webkitWebViewEmitShowNotification(WebKitWebView* webView, WebKitNotificatio
     return handled;
 }
 
+#if PLATFORM(GTK)
 bool webkitWebViewEmitRunColorChooser(WebKitWebView* webView, WebKitColorChooserRequest* request)
 {
     gboolean handled;
     g_signal_emit(webView, signals[RUN_COLOR_CHOOSER], 0, request, &handled);
     return handled;
 }
+#endif
 
 void webkitWebViewSelectionDidChange(WebKitWebView* webView)
 {
@@ -2249,6 +2202,7 @@ WebKitWebsiteDataManager* webkitWebViewGetWebsiteDataManager(WebKitWebView* webV
     return webView->priv->websiteDataManager.get();
 }
 
+#if PLATFORM(GTK)
 bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, WebKitOptionMenu* menu, const GdkEvent* event)
 {
     GdkRectangle menuRect = rect;
@@ -2256,110 +2210,7 @@ bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, We
     g_signal_emit(webView, signals[SHOW_OPTION_MENU], 0, menu, event, &menuRect, &handled);
     return handled;
 }
-
-/**
- * webkit_web_view_new:
- *
- * Creates a new #WebKitWebView with the default #WebKitWebContext and
- * no #WebKitUserContentManager associated with it.
- * See also webkit_web_view_new_with_context(),
- * webkit_web_view_new_with_user_content_manager(), and
- * webkit_web_view_new_with_settings().
- *
- * Returns: The newly created #WebKitWebView widget
- */
-GtkWidget* webkit_web_view_new()
-{
-    return webkit_web_view_new_with_context(webkit_web_context_get_default());
-}
-
-/**
- * webkit_web_view_new_with_context:
- * @context: the #WebKitWebContext to be used by the #WebKitWebView
- *
- * Creates a new #WebKitWebView with the given #WebKitWebContext and
- * no #WebKitUserContentManager associated with it.
- * See also webkit_web_view_new_with_user_content_manager() and
- * webkit_web_view_new_with_settings().
- *
- * Returns: The newly created #WebKitWebView widget
- */
-GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
-
-    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW,
-        "is-ephemeral", webkit_web_context_is_ephemeral(context),
-        "web-context", context,
-        nullptr));
-}
-
-/**
- * webkit_web_view_new_with_related_view:
- * @web_view: the related #WebKitWebView
- *
- * Creates a new #WebKitWebView sharing the same web process with @web_view.
- * This method doesn't have any effect when %WEBKIT_PROCESS_MODEL_SHARED_SECONDARY_PROCESS
- * process model is used, because a single web process is shared for all the web views in the
- * same #WebKitWebContext. When using %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES process model,
- * this method should always be used when creating the #WebKitWebView in the #WebKitWebView::create signal.
- * You can also use this method to implement other process models based on %WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES,
- * like for example, sharing the same web process for all the views in the same security domain.
- *
- * The newly created #WebKitWebView will also have the same #WebKitUserContentManager
- * and #WebKitSettings as @web_view.
- *
- * Returns: (transfer full): The newly created #WebKitWebView widget
- *
- * Since: 2.4
- */
-GtkWidget* webkit_web_view_new_with_related_view(WebKitWebView* webView)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
-
-    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW,
-        "user-content-manager", webView->priv->userContentManager.get(),
-        "settings", webView->priv->settings.get(),
-        "related-view", webView,
-        nullptr));
-}
-
-/**
- * webkit_web_view_new_with_settings:
- * @settings: a #WebKitSettings
- *
- * Creates a new #WebKitWebView with the given #WebKitSettings.
- * See also webkit_web_view_new_with_context(), and
- * webkit_web_view_new_with_user_content_manager().
- *
- * Returns: The newly created #WebKitWebView widget
- *
- * Since: 2.6
- */
-GtkWidget* webkit_web_view_new_with_settings(WebKitSettings* settings)
-{
-    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), nullptr);
-    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "settings", settings, nullptr));
-}
-
-/**
- * webkit_web_view_new_with_user_content_manager:
- * @user_content_manager: a #WebKitUserContentManager.
- *
- * Creates a new #WebKitWebView with the given #WebKitUserContentManager.
- * The content loaded in the view may be affected by the content injected
- * in the view by the user content manager.
- *
- * Returns: The newly created #WebKitWebView widget
- *
- * Since: 2.6
- */
-GtkWidget* webkit_web_view_new_with_user_content_manager(WebKitUserContentManager* userContentManager)
-{
-    g_return_val_if_fail(WEBKIT_IS_USER_CONTENT_MANAGER(userContentManager), nullptr);
-
-    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "user-content-manager", userContentManager, nullptr));
-}
+#endif
 
 /**
  * webkit_web_view_get_context:
@@ -3416,6 +3267,7 @@ WebKitWebResource* webkit_web_view_get_main_resource(WebKitWebView* webView)
     return webView->priv->mainResource.get();
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_web_view_get_inspector:
  * @web_view: a #WebKitWebView
@@ -3433,6 +3285,7 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
 
     return webView->priv->inspector.get();
 }
+#endif
 
 /**
  * webkit_web_view_can_show_mime_type:
@@ -3768,6 +3621,7 @@ void webkitWebViewWebProcessCrashed(WebKitWebView* webView)
     g_signal_emit(webView, signals[WEB_PROCESS_CRASHED], 0, &returnValue);
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_web_view_set_background_color:
  * @web_view: a #WebKitWebView
@@ -3833,6 +3687,7 @@ void webkit_web_view_get_background_color(WebKitWebView* webView, GdkRGBA* rgba)
 
     *rgba = getPage(webView).backgroundColor();
 }
+#endif // PLATFORM(GTK)
 
 /*
  * webkit_web_view_is_editable:

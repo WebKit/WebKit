@@ -49,6 +49,7 @@ public:
     {
         return new View(backend, configuration);
     }
+    virtual ~View();
 
     // Client methods
     void initializeClient(const WKViewClientBase*);
@@ -65,7 +66,6 @@ public:
 
 private:
     View(struct wpe_view_backend*, const API::PageConfiguration&);
-    virtual ~View();
 
     void setSize(const WebCore::IntSize&);
 

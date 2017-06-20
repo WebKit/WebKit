@@ -118,16 +118,18 @@ void WebKitNotificationProvider::withdrawAnyPreviousNotificationMatchingTag(cons
 void WebKitNotificationProvider::show(WebPageProxy& page, const WebNotification& webNotification)
 {
     GRefPtr<WebKitNotification> notification = m_notifications.get(webNotification.notificationID());
+    auto* webView = webkitWebContextGetWebViewForPage(m_webContext, &page);
+    ASSERT(webView);
 
     if (!notification) {
         withdrawAnyPreviousNotificationMatchingTag(webNotification.tag().utf8());
-        notification = adoptGRef(webkitNotificationCreate(WEBKIT_WEB_VIEW(page.viewWidget()), webNotification));
+        notification = adoptGRef(webkitNotificationCreate(webView, webNotification));
         g_signal_connect(notification.get(), "closed", G_CALLBACK(notificationCloseCallback), this);
         g_signal_connect(notification.get(), "clicked", G_CALLBACK(notificationClickedCallback), this);
         m_notifications.set(webNotification.notificationID(), notification);
     }
 
-    if (webkitWebViewEmitShowNotification(WEBKIT_WEB_VIEW(page.viewWidget()), notification.get()))
+    if (webkitWebViewEmitShowNotification(webView, notification.get()))
         m_notificationManager->providerDidShowNotification(webNotification.notificationID());
 }
 

@@ -55,10 +55,12 @@ GQuark webkit_download_error_quark()
     return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitDownloadErrorDomain().characters8()));
 }
 
+#if PLATFORM(GTK)
 GQuark webkit_print_error_quark()
 {
     return g_quark_from_static_string(reinterpret_cast<const char*>(API::Error::webKitPrintErrorDomain().characters8()));
 }
+#endif
 
 GQuark webkit_javascript_error_quark()
 {

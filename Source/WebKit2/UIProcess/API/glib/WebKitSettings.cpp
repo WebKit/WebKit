@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebKitSettings.h"
 
-#include "HardwareAccelerationManager.h"
 #include "WebKitEnumTypes.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebPageProxy.h"
@@ -40,6 +39,10 @@
 #include <glib/gi18n-lib.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(GTK)
+#include "HardwareAccelerationManager.h"
+#endif
 
 #if PLATFORM(WAYLAND)
 #include <WebCore/PlatformDisplay.h>
@@ -147,7 +150,9 @@ enum {
     PROP_ENABLE_MEDIASOURCE,
     PROP_ALLOW_FILE_ACCESS_FROM_FILE_URLS,
     PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS,
+#if PLATFORM(GTK)
     PROP_HARDWARE_ACCELERATION_POLICY,
+#endif
 };
 
 static void webKitSettingsConstructed(GObject* object)
@@ -321,9 +326,11 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
     case PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS:
         webkit_settings_set_allow_universal_access_from_file_urls(settings, g_value_get_boolean(value));
         break;
+#if PLATFORM(GTK)
     case PROP_HARDWARE_ACCELERATION_POLICY:
         webkit_settings_set_hardware_acceleration_policy(settings, static_cast<WebKitHardwareAccelerationPolicy>(g_value_get_enum(value)));
         break;
+#endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -487,9 +494,11 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
     case PROP_ALLOW_UNIVERSAL_ACCESS_FROM_FILE_URLS:
         g_value_set_boolean(value, webkit_settings_get_allow_universal_access_from_file_urls(settings));
         break;
+#if PLATFORM(GTK)
     case PROP_HARDWARE_ACCELERATION_POLICY:
         g_value_set_enum(value, webkit_settings_get_hardware_acceleration_policy(settings));
         break;
+#endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -1284,6 +1293,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             FALSE,
             readWriteConstructParamFlags));
 
+#if PLATFORM(GTK)
     /**
      * WebKitSettings:hardware-acceleration-policy:
      *
@@ -1309,6 +1319,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             WEBKIT_TYPE_HARDWARE_ACCELERATION_POLICY,
             WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND,
             readWriteConstructParamFlags));
+#endif // PLATFOTM(GTK)
 }
 
 WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
@@ -2839,6 +2850,7 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
+#if PLATFORM(GTK)
     WebKitSettingsPrivate* priv = settings->priv;
     CString newUserAgent = (!userAgent || !strlen(userAgent)) ? WebCore::standardUserAgent("").utf8() : userAgent;
     if (newUserAgent == priv->userAgent)
@@ -2846,6 +2858,9 @@ void webkit_settings_set_user_agent(WebKitSettings* settings, const char* userAg
 
     priv->userAgent = newUserAgent;
     g_object_notify(G_OBJECT(settings), "user-agent");
+#elif PLATFORM(WPE)
+    // FIXME: WPE should implement WebCore::standardUserAgent.
+#endif
 }
 
 /**
@@ -2862,8 +2877,12 @@ void webkit_settings_set_user_agent_with_application_details(WebKitSettings* set
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
+#if PLATFORM(GTK)
     CString newUserAgent = WebCore::standardUserAgent(String::fromUTF8(applicationName), String::fromUTF8(applicationVersion)).utf8();
     webkit_settings_set_user_agent(settings, newUserAgent.data());
+#elif PLATFORM(WPE)
+    // FIXME: WPE should implement WebCore::standardUserAgent.
+#endif
 }
 
 /**
@@ -3176,6 +3195,7 @@ void webkit_settings_set_allow_universal_access_from_file_urls(WebKitSettings* s
     g_object_notify(G_OBJECT(settings), "allow-universal-access-from-file-urls");
 }
 
+#if PLATFORM(GTK)
 /**
  * webkit_settings_get_hardware_acceleration_policy:
  * @settings: a #WebKitSettings
@@ -3257,3 +3277,4 @@ void webkit_settings_set_hardware_acceleration_policy(WebKitSettings* settings, 
     if (changed)
         g_object_notify(G_OBJECT(settings), "hardware-acceleration-policy");
 }
+#endif // PLATFORM(GTK)
