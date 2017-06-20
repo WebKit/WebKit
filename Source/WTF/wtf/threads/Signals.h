@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(PTHREADS)
+#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
 
 #include <signal.h>
 #include <wtf/Function.h>
@@ -116,4 +116,4 @@ using WTF::fromSystemSignal;
 using WTF::SignalAction;
 using WTF::installSignalHandler;
 
-#endif // USE(PTHREADS)
+#endif // USE(PTHREADS) && HAVE(MACHINE_CONTEXT)

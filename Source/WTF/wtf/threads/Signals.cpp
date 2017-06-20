@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Signals.h"
 
-#if USE(PTHREADS)
+#if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
 
 #if HAVE(MACH_EXCEPTIONS)
 extern "C" {
@@ -361,4 +361,4 @@ void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
 
 } // namespace WTF
 
-#endif // USE(PTHREADS)
+#endif // USE(PTHREADS) && HAVE(MACHINE_CONTEXT)

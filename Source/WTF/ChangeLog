@@ -1,5 +1,19 @@
 2017-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Enable WTF::Signals only when HAVE(MACHINE_CONTEXT) is true
+        https://bugs.webkit.org/show_bug.cgi?id=173590
+
+        Reviewed by Carlos Garcia Campos.
+
+        WTF::Signals require a feature rewriting a value of a machine context.
+        This is only available under HAVE(MACHINE_CONTEXT).
+        This patch disables WTF::Signals on !HAVE(MACHINE_CONTEXT) environments.
+
+        * wtf/threads/Signals.cpp:
+        * wtf/threads/Signals.h:
+
+2017-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Rebaseline std::optional
         https://bugs.webkit.org/show_bug.cgi?id=173582
 
