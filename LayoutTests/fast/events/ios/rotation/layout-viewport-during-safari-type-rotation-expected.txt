@@ -15,7 +15,7 @@ visualViewport: 0, 0 - 568 x 320
 client rect of fixed object:0, 0 - 568 x 320
 
 After rotation
-layoutViewport: 0, 0 - 568 x 548
+layoutViewport: 0, 0 - 568 x 320
 visualViewport: 0, 0 - 568 x 320
-client rect of fixed object:0, 0 - 568 x 548
+client rect of fixed object:0, 0 - 568 x 320
 

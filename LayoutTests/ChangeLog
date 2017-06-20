@@ -1,3 +1,11 @@
+2017-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        <rdar://problem/32862652> [REGRESSION] r218374: fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html
+        
+        Rebaseline.
+
+        * fast/events/ios/rotation/layout-viewport-during-safari-type-rotation-expected.txt:
+
 2017-06-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline fast/events/touch/document-create-touch-list tests.
