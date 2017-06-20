@@ -1,3 +1,15 @@
+2017-06-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r218524.
+
+        This change broke internal builds.
+
+        Reverted changeset:
+
+        "[Cocoa] The system Japanese font cannot be italicized"
+        https://bugs.webkit.org/show_bug.cgi?id=173300
+        http://trac.webkit.org/changeset/218524
+
 2017-06-20  Daniel Bates  <dabates@apple.com>
 
         Have FrameLoadRequest takes a Frame& instead of a Frame*
