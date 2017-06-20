@@ -1,3 +1,14 @@
+2017-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove unneeded modules from the jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=170540
+
+        Reviewed by Michael Catanzaro.
+
+        We are building libxslt and libffi that we don't really need to build from sources.
+
+        * gtk/jhbuild.modules:
+
 2017-06-19  Frederic Wang  <fwang@igalia.com>
 
         [Mac] Add an experimental feature setting for async frame scrolling

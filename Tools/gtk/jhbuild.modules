@@ -12,7 +12,6 @@
       <dep package="freetype6"/>
       <dep package="harfbuzz"/>
       <dep package="libxml2"/>
-      <dep package="libxslt"/>
       <dep package="gdk-pixbuf"/>
       <dep package="gtk+"/>
       <dep package="glib"/>
@@ -149,13 +148,6 @@
             hash="sha256:2620987115a4122b47321610dccbcc18f7f121115fd7b88dc8a695c8b66cb3c9"
             md5sum="97ae15a72a93f1f27324a2b8d9bd3b1d">
     </branch>
-  </autotools>
-
-  <autotools id="libffi" autogen-sh="configure">
-    <branch module="libffi/libffi-3.1.tar.gz" version="3.1"
-             repo="sourceware.org-mirror"
-             hash="sha256:97feeeadca5e21870fa4433bc953d1b3af3f698d5df8a428f68b73cd60aef6eb"
-             md5sum="f5898b29bbfd70502831a212d9249d10"/>
   </autotools>
 
   <autotools id="gdk-pixbuf" autogen-sh="configure"
@@ -325,15 +317,6 @@
             md5sum="9c0cfef285d5c4a5c80d00904ddab380"/>
   </autotools>
 
-  <autotools id="libxslt">
-    <branch module="/sources/libxslt-${version}.tar.gz" version="1.1.29"
-            repo="xmlsoft.org"
-            hash="sha256:b5976e3857837e7617b29f2249ebb5eeac34e249208d31f1fbf7a6ba7a4090ce"/>
-    <dependencies>
-      <dep package="libxml2"/>
-    </dependencies>
-  </autotools>
-
   <autotools id="gstreamer" autogen-sh="configure" autogenargs="--disable-gtk-doc">
     <if condition-set="macos">
       <autogenargs value="--disable-introspection"/>
@@ -416,9 +399,6 @@
 
   <autotools id="wayland" autogenargs="--disable-documentation">
     <pkg-config>wayland-server.pc</pkg-config>
-    <dependencies>
-      <dep package="libffi"/>
-    </dependencies>
     <branch module="releases/wayland-1.12.0.tar.xz"
             version="1.12.0"
             repo="wayland.freedesktop.org"
