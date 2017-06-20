@@ -4428,18 +4428,16 @@ void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect
         context.fillRect(dirtyRect, Color(0xFF, 0, 0));
 #endif
 
-    if (m_layoutPhase == InViewSizeAdjust)
-        return;
-
-    TraceScope tracingScope(PaintViewStart, PaintViewEnd);
-
-    ASSERT(m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout);
-    
     RenderView* renderView = this->renderView();
     if (!renderView) {
         LOG_ERROR("called FrameView::paint with nil renderer");
         return;
     }
+
+    if (!inPaintableState())
+        return;
+
+    TraceScope tracingScope(PaintViewStart, PaintViewEnd);
 
     ASSERT(!needsLayout());
     if (needsLayout())
