@@ -67,7 +67,6 @@ static void initializeSQLiteIfNecessary()
 #endif
             CRASH();
         }
-        registerSQLiteMemoryPressureHandler();
     });
 }
 

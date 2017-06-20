@@ -1,3 +1,23 @@
+2017-06-20  Andreas Kling  <akling@apple.com>
+
+        Remove no-op calls to purge SQLite caches on memory pressure.
+        <https://webkit.org/b/173604>
+
+        Reviewed by Chris Dumez.
+
+        The implementation of _sqlite3_purgeEligiblePagerCacheMemory() is empty
+        since a few releases ago, so there's no point in calling it.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::registerMemoryReleaseNotifyCallbacks):
+        (WebCore::registerSQLiteMemoryPressureHandler): Deleted.
+        * page/MemoryRelease.h:
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        (WebCore::registerSQLiteMemoryPressureHandler): Deleted.
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::initializeSQLiteIfNecessary):
+
 2017-06-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: add console messages for WebGL shader compile and program link errors/warnings
