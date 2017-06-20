@@ -1199,10 +1199,10 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     Frame* targetFrame = frame->loader().findFrameForNavigation(request->target());
     if (!targetFrame) {
         // We did not find a target frame. Ask our frame to load the page. This may or may not create a popup window.
-        FrameLoadRequest frameRequest(frame, request->request(), ShouldOpenExternalURLsPolicy::ShouldNotAllow);
-        frameRequest.setFrameName(request->target());
-        frameRequest.setShouldCheckNewWindowPolicy(true);
-        frame->loader().load(frameRequest);
+        FrameLoadRequest frameLoadRequest { *frame, request->request(), ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+        frameLoadRequest.setFrameName(request->target());
+        frameLoadRequest.setShouldCheckNewWindowPolicy(true);
+        frame->loader().load(frameLoadRequest);
 
         // FIXME: We don't know whether the window was successfully created here so we just assume that it worked.
         // It's better than not telling the plug-in anything.
@@ -1211,7 +1211,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
     }
 
     // Now ask the frame to load the request.
-    targetFrame->loader().load(FrameLoadRequest(targetFrame, request->request(), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
+    targetFrame->loader().load(FrameLoadRequest(*targetFrame, request->request(), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
 
     auto* targetWebFrame = WebFrame::fromCoreFrame(*targetFrame);
     ASSERT(targetWebFrame);

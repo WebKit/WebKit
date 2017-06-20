@@ -290,7 +290,7 @@ bool DragController::performDragOperation(const DragData& dragData)
         return false;
 
     m_client.willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
-    m_page.mainFrame().loader().load(FrameLoadRequest(&m_page.mainFrame(), { urlString }, shouldOpenExternalURLsPolicy));
+    m_page.mainFrame().loader().load(FrameLoadRequest(m_page.mainFrame(), { urlString }, shouldOpenExternalURLsPolicy));
     return true;
 }
 

@@ -498,10 +498,10 @@ static void cancelOutstandingCheck(const void *item, void *context)
             LOG_ERROR("could not load URL %@", [request URL]);
             return;
         }
-        FrameLoadRequest frameRequest(core(frame), request, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
-        frameRequest.setFrameName(target);
-        frameRequest.setShouldCheckNewWindowPolicy(true);
-        core(frame)->loader().load(frameRequest);
+        FrameLoadRequest frameLoadRequest { *core(frame), request, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+        frameLoadRequest.setFrameName(target);
+        frameLoadRequest.setShouldCheckNewWindowPolicy(true);
+        core(frame)->loader().load(frameLoadRequest);
     }
 }
 

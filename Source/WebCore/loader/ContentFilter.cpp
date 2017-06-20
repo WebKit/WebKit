@@ -293,7 +293,7 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
     ResourceResponse response { URL(), ASCIILiteral("text/html"), replacementData->size(), ASCIILiteral("UTF-8") };
     SubstituteData substituteData { WTFMove(replacementData), error.failingURL(), response, SubstituteData::SessionHistoryVisibility::Hidden };
     SetForScope<bool> loadingBlockedPage { m_isLoadingBlockedPage, true };
-    m_documentLoader.frameLoader()->load(FrameLoadRequest(m_documentLoader.frame(), blockedPageURL(), ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
+    m_documentLoader.frameLoader()->load(FrameLoadRequest(*m_documentLoader.frame(), blockedPageURL(), ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
 }
 
 } // namespace WebCore

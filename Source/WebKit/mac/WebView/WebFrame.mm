@@ -2472,7 +2472,7 @@ static bool needsMicrosoftMessengerDOMDocumentWorkaround()
     if (!resourceRequest.url().isValid() && !resourceRequest.url().isEmpty())
         resourceRequest.setURL([NSURL URLWithString:[@"file:" stringByAppendingString:[[request URL] absoluteString]]]);
 
-    coreFrame->loader().load(FrameLoadRequest(coreFrame, resourceRequest, ShouldOpenExternalURLsPolicy::ShouldNotAllow));
+    coreFrame->loader().load(FrameLoadRequest(*coreFrame, resourceRequest, ShouldOpenExternalURLsPolicy::ShouldNotAllow));
 }
 
 static NSURL *createUniqueWebDataURL()
@@ -2504,7 +2504,7 @@ static NSURL *createUniqueWebDataURL()
     if (shouldUseQuickLookForMIMEType(MIMEType)) {
         NSURL *quickLookURL = responseURL ? responseURL : baseURL;
         if (auto request = registerQLPreviewConverterIfNeeded(quickLookURL, MIMEType, data)) {
-            _private->coreFrame->loader().load(FrameLoadRequest(_private->coreFrame, request.get(), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
+            _private->coreFrame->loader().load(FrameLoadRequest(*_private->coreFrame, request.get(), ShouldOpenExternalURLsPolicy::ShouldNotAllow));
             return;
         }
     }
@@ -2515,7 +2515,7 @@ static NSURL *createUniqueWebDataURL()
     ResourceResponse response(responseURL, MIMEType, [data length], encodingName);
     SubstituteData substituteData(WebCore::SharedBuffer::create(data), [unreachableURL absoluteURL], response, SubstituteData::SessionHistoryVisibility::Hidden);
 
-    _private->coreFrame->loader().load(FrameLoadRequest(_private->coreFrame, request, ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
+    _private->coreFrame->loader().load(FrameLoadRequest(*_private->coreFrame, request, ShouldOpenExternalURLsPolicy::ShouldNotAllow, substituteData));
 }
 
 - (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)baseURL

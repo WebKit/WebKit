@@ -1,5 +1,21 @@
 2017-06-20  Daniel Bates  <dabates@apple.com>
 
+        Have FrameLoadRequest takes a Frame& instead of a Frame*
+        https://bugs.webkit.org/show_bug.cgi?id=173614
+        <rdar://problem/32884890>
+
+        Reviewed by Brent Fulgham.
+
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::handleProvisionalLoadFailure):
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoadRequest.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+
+2017-06-20  Daniel Bates  <dabates@apple.com>
+
         Skip Content Security Policy check for a media request using standard schemes initiated from
         an element in user agent shadow tree
         https://bugs.webkit.org/show_bug.cgi?id=155505

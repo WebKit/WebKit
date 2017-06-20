@@ -103,7 +103,7 @@ public:
     {
     }
 
-    WEBCORE_EXPORT FrameLoadRequest(Frame*, const ResourceRequest&, ShouldOpenExternalURLsPolicy, const SubstituteData& = SubstituteData());
+    WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, ShouldOpenExternalURLsPolicy, const SubstituteData& = SubstituteData());
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 

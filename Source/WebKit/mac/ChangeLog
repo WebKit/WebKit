@@ -1,3 +1,17 @@
+2017-06-20  Daniel Bates  <dabates@apple.com>
+
+        Have FrameLoadRequest takes a Frame& instead of a Frame*
+        https://bugs.webkit.org/show_bug.cgi?id=173614
+        <rdar://problem/32884890>
+
+        Reviewed by Brent Fulgham.
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController webPlugInContainerLoadRequest:inFrame:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+
 2017-06-19  Frederic Wang  <fwang@igalia.com>
 
         [Mac] Add an experimental feature setting for async frame scrolling
