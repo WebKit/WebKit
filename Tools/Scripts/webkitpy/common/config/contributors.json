@@ -2214,6 +2214,16 @@
       ],
       "status" : "committer"
    },
+   "Guillaume Emont" : {
+      "emails" : [
+         "guijemont@igalia.com"
+      ],
+      "expertise" : "JavaScriptCore",
+      "nicks" : [
+         "guijemont"
+      ],
+      "status" : "committer"
+   },
    "Gurpreet Kaur" : {
       "emails" : [
          "gur.trio@gmail.com",
