@@ -1,3 +1,12 @@
+2017-06-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline fast/events/touch/document-create-touch-list tests.
+
+        Unreviewed test gardening.
+
+        * fast/events/touch/document-create-touch-list-crash-expected.txt:
+        * fast/events/touch/document-create-touch-list-ios-expected.txt:
+
 2017-06-20  Matt Baker  <mattbaker@apple.com>
 
         LayoutTest inspector/canvas/create-canvas-contexts.html is a flaky timeout
