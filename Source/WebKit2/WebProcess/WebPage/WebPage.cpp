@@ -2058,14 +2058,16 @@ WebContextMenu* WebPage::contextMenu()
 WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
 {
     corePage()->contextMenuController().clearContextMenu();
-    
-    // Simulate a mouse click to generate the correct menu.
-    PlatformMouseEvent mouseEvent(point, point, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime(), WebCore::ForceAtClick, WebCore::NoTap);
-    bool handled = corePage()->userInputBridge().handleContextMenuEvent(mouseEvent, &corePage()->mainFrame());
-    if (!handled)
-        return 0;
 
-    return contextMenu();
+    // Simulate a mouse click to generate the correct menu.
+    PlatformMouseEvent mousePressEvent(point, point, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime(), WebCore::ForceAtClick, WebCore::NoTap);
+    corePage()->userInputBridge().handleMousePressEvent(mousePressEvent);
+    bool handled = corePage()->userInputBridge().handleContextMenuEvent(mousePressEvent, &corePage()->mainFrame());
+    auto* menu = handled ? contextMenu() : nullptr;
+    PlatformMouseEvent mouseReleaseEvent(point, point, RightButton, PlatformEvent::MouseReleased, 1, false, false, false, false, currentTime(), WebCore::ForceAtClick, WebCore::NoTap);
+    corePage()->userInputBridge().handleMouseReleaseEvent(mouseReleaseEvent);
+
+    return menu;
 }
 #endif
 

@@ -13,6 +13,13 @@ function log(text) {
   document.getElementById('result').appendChild(document.createElement("br"));
 }
 
+function dismissContextMenu() {
+  if (window.eventSender) {
+    // esc key to kill the context menu.
+    eventSender.keyDown(String.fromCharCode(0x001B), null);
+  }
+}
+
 function onWindowContextMenu(event) {
   log('PASS WINDOW');
   event.stopPropagation();
@@ -35,6 +42,7 @@ document.getElementById('link').addEventListener('contextmenu', onFocusedElement
 
 if (window.testRunner) {
   eventSender.keyDown('menu');
+  dismissContextMenu();
 
   var rect = document.getElementById('contenteditable').getBoundingClientRect();
   var x = rect.left + rect.width / 2;
@@ -43,12 +51,15 @@ if (window.testRunner) {
   eventSender.mouseDown();
   eventSender.mouseUp();
   eventSender.keyDown('menu');
+  dismissContextMenu();
 
   document.getElementById('link').focus();
   eventSender.keyDown('menu');
+  dismissContextMenu();
 
   window.getSelection().selectAllChildren(document.getElementById('contenteditable'));
   eventSender.keyDown('menu');
+  dismissContextMenu();
 
   testRunner.dumpAsText();
 }

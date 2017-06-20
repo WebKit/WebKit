@@ -16,14 +16,9 @@ function test(platform, result) {
     x = paragraph.offsetParent.offsetLeft + paragraph.offsetLeft + paragraph.offsetWidth + 10;
     y = paragraph.offsetParent.offsetTop + paragraph.offsetTop + paragraph.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
-    // Give the editable region focus.
-    eventSender.mouseDown();
-    eventSender.mouseUp();
     // Right click on the paragraph break to select it.
     eventSender.contextClick();
-    // esc key to kill the context menu.
-    eventSender.keyDown(String.fromCharCode(0x001B), null);
-    
+
     document.getElementById(result).innerHTML = window.getSelection().type;
 }
 

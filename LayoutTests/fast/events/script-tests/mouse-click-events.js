@@ -19,6 +19,13 @@ function clearEventLog() {
     eventLog = "";
 }
 
+function dismissContextMenu() {
+    if (window.eventSender) {
+        // esc key to kill the context menu.
+        eventSender.keyDown(String.fromCharCode(0x001B), null);
+    }
+}
+
 div.addEventListener("click", appendEventLog, false);
 div.addEventListener("dblclick", appendEventLog, false);
 div.addEventListener("mousedown", appendEventLog, false);
@@ -34,8 +41,12 @@ function sendEvents(button) {
         return;
     }
     eventSender.mouseDown(button);
+    if (button == 2)
+        dismissContextMenu();
     eventSender.mouseUp(button);
     eventSender.mouseDown(button);
+    if (button == 2)
+        dismissContextMenu();
     eventSender.mouseUp(button);
     // could test dragging here too
 }
