@@ -2536,6 +2536,9 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderLayerModelObject&
     m_reevaluateCompositingAfterLayout = true;
     
     RenderWidget& pluginRenderer = downcast<RenderWidget>(renderer);
+    if (pluginRenderer.style().visibility() != VISIBLE)
+        return false;
+
     // If we can't reliably know the size of the plugin yet, don't change compositing state.
     if (pluginRenderer.needsLayout())
         return pluginRenderer.isComposited();
@@ -2551,6 +2554,9 @@ bool RenderLayerCompositor::requiresCompositingForFrame(RenderLayerModelObject& 
         return false;
 
     auto& frameRenderer = downcast<RenderWidget>(renderer);
+    if (frameRenderer.style().visibility() != VISIBLE)
+        return false;
+
     if (!frameRenderer.requiresAcceleratedCompositing())
         return false;
 
