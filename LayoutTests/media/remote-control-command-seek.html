@@ -13,14 +13,14 @@
 
                 findMediaElement();
 
-                waitForEvent('loadedmetadata', loadedmetadata, false, true, document)
+                waitForEvent('canplaythrough', canplaythrough, false, true, document)
                 waitForEvent('timeupdate', seeked)
 
                 consoleWrite('* set video.src');
                 video.src = findMediaFile('video', 'content/test');
             }
 
-            function loadedmetadata()
+            function canplaythrough()
             {
                 consoleWrite('<br>* Send a seek command.');
                 run("internals.postRemoteControlCommand('seekToPlaybackPosition', 1.6)");

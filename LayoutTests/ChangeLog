@@ -1,3 +1,18 @@
+2017-06-20  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: media/remote-control-command-seek.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=173615
+        <rdar://problem/32626498>
+
+        Reviewed by Eric Carlson.
+
+        This test assumes that we load metadata and video data that can be seeked through
+        at the same time, but this is incorrect. Using the "canplaythrough" event guarantees
+        that the video is seekable, so we switch to this event to make the test more robust.
+
+        * media/remote-control-command-seek-expected.txt:
+        * media/remote-control-command-seek.html:
+
 2017-06-20  Matt Lewis  <jlewis3@apple.com>
 
         Added additional test expectations for media/video-buffered.html.
