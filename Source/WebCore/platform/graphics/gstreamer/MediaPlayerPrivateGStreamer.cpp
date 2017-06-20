@@ -620,7 +620,7 @@ bool MediaPlayerPrivateGStreamer::seeking() const
 
 void MediaPlayerPrivateGStreamer::videoChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    player->m_notifier.notify(MainThreadNotification::VideoChanged, [player] { player->notifyPlayerOfVideo(); });
+    player->m_notifier->notify(MainThreadNotification::VideoChanged, [player] { player->notifyPlayerOfVideo(); });
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
@@ -674,7 +674,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 
 void MediaPlayerPrivateGStreamer::videoSinkCapsChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    player->m_notifier.notify(MainThreadNotification::VideoCapsChanged, [player] { player->notifyPlayerOfVideoCaps(); });
+    player->m_notifier->notify(MainThreadNotification::VideoCapsChanged, [player] { player->notifyPlayerOfVideoCaps(); });
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
@@ -685,7 +685,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoCaps()
 
 void MediaPlayerPrivateGStreamer::audioChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    player->m_notifier.notify(MainThreadNotification::AudioChanged, [player] { player->notifyPlayerOfAudio(); });
+    player->m_notifier->notify(MainThreadNotification::AudioChanged, [player] { player->notifyPlayerOfAudio(); });
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
@@ -738,7 +738,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 #if ENABLE(VIDEO_TRACK)
 void MediaPlayerPrivateGStreamer::textChangedCallback(MediaPlayerPrivateGStreamer* player)
 {
-    player->m_notifier.notify(MainThreadNotification::TextChanged, [player] { player->notifyPlayerOfText(); });
+    player->m_notifier->notify(MainThreadNotification::TextChanged, [player] { player->notifyPlayerOfText(); });
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfText()
