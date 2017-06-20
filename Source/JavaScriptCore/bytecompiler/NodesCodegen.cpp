@@ -3757,35 +3757,9 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
         metadata->setEcmaName(ecmaName());
         metadata->setClassSource(m_classSource);
         constructor = generator.emitNode(dst, m_constructorExpression);
-        if (m_classHeritage) {
-            needsHomeObject = true;
-            RefPtr<RegisterID> isDerivedConstructor = generator.newTemporary();
-            generator.emitUnaryOp(op_not, isDerivedConstructor.get(),
-                generator.emitUnaryOp(op_eq_null, isDerivedConstructor.get(), superclass.get()));
-            generator.emitDirectPutById(constructor.get(), generator.propertyNames().builtinNames().isDerivedConstructorPrivateName(), isDerivedConstructor.get(), PropertyNode::Unknown);
-        } else if (metadata->superBinding() == SuperBinding::Needed)
-            needsHomeObject = true;
-    } else {
-        if (m_classHeritage) {
-            constructor = generator.finalDestination(dst);
-            RefPtr<RegisterID> tempRegister = generator.newTemporary();
-            Ref<Label> superclassIsNullLabel = generator.newLabel();
-            Ref<Label> done = generator.newLabel();
-
-            generator.emitJumpIfTrue(generator.emitUnaryOp(op_eq_null, tempRegister.get(), superclass.get()), superclassIsNullLabel.get());
-            generator.emitNewDefaultConstructor(constructor.get(), ConstructorKind::Extends, m_name, ecmaName(), m_classSource);
-            generator.emitLoad(tempRegister.get(), jsBoolean(true));
-            generator.emitJump(done.get());
-            generator.emitLabel(superclassIsNullLabel.get());
-            generator.emitNewDefaultConstructor(constructor.get(), ConstructorKind::Base, m_name, ecmaName(), m_classSource);
-            generator.emitLoad(tempRegister.get(), jsBoolean(false));
-            generator.emitLabel(done.get());
-            generator.emitDirectPutById(constructor.get(), generator.propertyNames().builtinNames().isDerivedConstructorPrivateName(), tempRegister.get(), PropertyNode::Unknown);
-        } else {
-            constructor = generator.emitNewDefaultConstructor(generator.finalDestination(dst),
-                ConstructorKind::Base, m_name, ecmaName(), m_classSource);
-        }
-    }
+        needsHomeObject = m_classHeritage || metadata->superBinding() == SuperBinding::Needed;
+    } else
+        constructor = generator.emitNewDefaultConstructor(generator.finalDestination(dst), m_classHeritage ? ConstructorKind::Extends : ConstructorKind::Base, m_name, ecmaName(), m_classSource);
 
     const auto& propertyNames = generator.propertyNames();
     RefPtr<RegisterID> prototype = generator.emitNewObject(generator.newTemporary());

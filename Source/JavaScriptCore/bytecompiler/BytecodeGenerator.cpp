@@ -631,16 +631,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             if (isConstructor()) {
                 emitMove(m_newTargetRegister, &m_thisRegister);
                 if (constructorKind() == ConstructorKind::Extends) {
-                    Ref<Label> isDerived = newLabel();
-                    Ref<Label> done = newLabel();
-                    m_isDerivedConstuctor = addVar();
-                    emitGetById(m_isDerivedConstuctor, &m_calleeRegister, propertyNames().builtinNames().isDerivedConstructorPrivateName());
-                    emitJumpIfTrue(m_isDerivedConstuctor, isDerived.get());
-                    emitCreateThis(&m_thisRegister);
-                    emitJump(done.get());
-                    emitLabel(isDerived.get());
                     emitMoveEmptyValue(&m_thisRegister);
-                    emitLabel(done.get());
                 } else
                     emitCreateThis(&m_thisRegister);
             } else if (constructorKind() != ConstructorKind::None)
@@ -3618,27 +3609,22 @@ void BytecodeGenerator::emitCallDefineProperty(RegisterID* newObj, RegisterID* p
 RegisterID* BytecodeGenerator::emitReturn(RegisterID* src, ReturnFrom from)
 {
     if (isConstructor()) {
-        bool mightBeDerived = constructorKind() == ConstructorKind::Extends;
+        bool isDerived = constructorKind() == ConstructorKind::Extends;
         bool srcIsThis = src->index() == m_thisRegister.index();
 
-        if (mightBeDerived && (srcIsThis || from == ReturnFrom::Finally))
+        if (isDerived && (srcIsThis || from == ReturnFrom::Finally))
             emitTDZCheck(src);
 
         if (!srcIsThis || from == ReturnFrom::Finally) {
             Ref<Label> isObjectLabel = newLabel();
             emitJumpIfTrue(emitIsObject(newTemporary(), src), isObjectLabel.get());
 
-            if (mightBeDerived) {
-                ASSERT(m_isDerivedConstuctor);
-                Ref<Label> returnThis = newLabel();
-                emitJumpIfFalse(m_isDerivedConstuctor, returnThis.get());
-                // Else, we're a derived constructor here.
+            if (isDerived) {
                 Ref<Label> isUndefinedLabel = newLabel();
                 emitJumpIfTrue(emitIsUndefined(newTemporary(), src), isUndefinedLabel.get());
                 emitThrowTypeError("Cannot return a non-object type in the constructor of a derived class.");
                 emitLabel(isUndefinedLabel.get());
                 emitTDZCheck(&m_thisRegister);
-                emitLabel(returnThis.get());
             }
             emitUnaryNoDstOp(op_ret, &m_thisRegister);
             emitLabel(isObjectLabel.get());

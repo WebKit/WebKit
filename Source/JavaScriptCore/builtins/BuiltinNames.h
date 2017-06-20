@@ -130,7 +130,6 @@ namespace JSC {
     macro(isArraySlow) \
     macro(isArrayConstructor) \
     macro(isConstructor) \
-    macro(isDerivedConstructor) \
     macro(concatMemcpy) \
     macro(appendMemcpy) \
     macro(predictFinalLengthFromArgumunts) \
