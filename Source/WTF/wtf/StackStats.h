@@ -28,7 +28,6 @@
 
 #include "ExportMacros.h"
 #include <mutex>
-#include <wtf/Lock.h>
 
 
 // Define this flag to enable Stack stats collection. This feature is useful

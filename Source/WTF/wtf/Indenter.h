@@ -26,7 +26,7 @@
 #ifndef Indenter_h
 #define Indenter_h
 
-#include <wtf/FilePrintStream.h>
+#include <wtf/PrintStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

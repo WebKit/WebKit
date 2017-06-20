@@ -36,7 +36,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PageBlock.h>
 #include <wtf/RedBlackTree.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WTF {

@@ -26,7 +26,6 @@
 #ifndef WTF_RandomNumberSeed_h
 #define WTF_RandomNumberSeed_h
 
-#include "RandomNumber.h"
 #include <stdlib.h>
 #include <time.h>
 

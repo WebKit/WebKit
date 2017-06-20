@@ -42,6 +42,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadFunctionInvocation.h>
 #include <wtf/ThreadHolder.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/WordLock.h>
 
 #if OS(LINUX)

@@ -35,7 +35,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

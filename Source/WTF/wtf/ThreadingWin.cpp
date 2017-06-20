@@ -96,6 +96,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ThreadFunctionInvocation.h>
 #include <wtf/ThreadHolder.h>
+#include <wtf/ThreadingPrimitives.h>
 
 #if HAVE(ERRNO_H)
 #include <errno.h>

@@ -1,5 +1,17 @@
 2017-06-20  Konstantin Tokarev  <annulen@yandex.ru>
 
+        Remove excessive include directives from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=173553
+
+        Reviewed by Saam Barati.
+
+        No new tests needed.
+
+        * platform/graphics/avfoundation/objc/VideoFullscreenLayerManager.h:
+        Added missing include directive.
+
+2017-06-20  Konstantin Tokarev  <annulen@yandex.ru>
+
         Remove excessive include directives from WebCore/dom
         https://bugs.webkit.org/show_bug.cgi?id=173591
 

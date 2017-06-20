@@ -27,9 +27,7 @@
 
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
-#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
-#include <wtf/Locker.h>
 
 namespace WTF {
 

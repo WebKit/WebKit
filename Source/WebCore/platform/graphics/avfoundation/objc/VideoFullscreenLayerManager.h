@@ -32,6 +32,7 @@
 #include "IntSize.h"
 #include "PlatformLayer.h"
 #include <wtf/Function.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {

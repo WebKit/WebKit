@@ -32,9 +32,11 @@
 #include <cmath>
 #include <cstring>
 #include <wtf/DateMath.h>
+#include <wtf/PrintStream.h>
 #include <wtf/RandomNumberSeed.h>
 #include <wtf/ThreadHolder.h>
 #include <wtf/ThreadMessage.h>
+#include <wtf/ThreadingPrimitives.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/StringView.h>
 

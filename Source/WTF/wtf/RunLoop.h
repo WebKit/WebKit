@@ -35,7 +35,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
-#include <wtf/Threading.h>
+#include <wtf/ThreadingPrimitives.h>
 
 #if USE(GLIB_EVENT_LOOP)
 #include <wtf/glib/GRefPtr.h>

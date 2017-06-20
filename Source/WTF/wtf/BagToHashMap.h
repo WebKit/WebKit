@@ -27,7 +27,6 @@
 #define BagToHashMap_h
 
 #include <wtf/Bag.h>
-#include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 
 namespace WTF {

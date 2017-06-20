@@ -48,7 +48,6 @@
 #include <string.h>
 #include <time.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

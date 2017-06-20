@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "TextBreakIterator.h"
 #include <unicode/uloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>

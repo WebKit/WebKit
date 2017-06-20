@@ -39,7 +39,6 @@
 #include <wtf/PlatformRegisters.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/ThreadingPrimitives.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
 #include <semaphore.h>

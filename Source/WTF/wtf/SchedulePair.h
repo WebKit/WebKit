@@ -32,7 +32,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA) && !USE(CFURLCONNECTION)

@@ -25,6 +25,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/WTFThreadData.h>
+#include <wtf/text/StringImpl.h>
 
 namespace WTF {
 

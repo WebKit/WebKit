@@ -36,7 +36,6 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Threading.h>
 #include <wtf/WallTime.h>
 
 namespace WTF {

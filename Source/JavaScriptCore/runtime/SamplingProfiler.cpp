@@ -46,6 +46,7 @@
 #include "SlotVisitor.h"
 #include "StrongInlines.h"
 #include "VM.h"
+#include <wtf/FilePrintStream.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StackTrace.h>

@@ -26,7 +26,6 @@
 #include <algorithm>
 #include <utility>
 #include <wtf/FastMalloc.h>
-#include <wtf/GetPtr.h>
 #include <wtf/Ref.h>
 
 namespace WTF {

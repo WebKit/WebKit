@@ -33,7 +33,6 @@
 #include <type_traits>
 #include <utility>
 #include <wtf/Assertions.h>
-#include <wtf/Compiler.h>
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 

@@ -32,7 +32,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/RedBlackTree.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WTF {
 

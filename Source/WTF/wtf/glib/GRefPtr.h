@@ -25,9 +25,7 @@
 
 #if USE(GLIB)
 
-#include <wtf/GetPtr.h>
 #include <wtf/HashTraits.h>
-#include <wtf/RefPtr.h>
 #include <algorithm>
 
 extern "C" void g_object_unref(gpointer);

@@ -28,14 +28,10 @@
 #define WTFThreadData_h
 
 #include <wtf/FastTLS.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
 #include <wtf/ThreadSpecific.h>
-#include <wtf/Threading.h>
-#include <wtf/text/StringHash.h>
 
 namespace WTF {
 
