@@ -1,3 +1,11 @@
+2017-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix copy-paste error in GTK+ WEBKIT_JAVASCRIPT_ERROR definition.
+
+        The print one was copied there.
+
+        * UIProcess/API/gtk/WebKitError.h:
+
 2017-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Remove wrong headers check from some GTK+ API files.
