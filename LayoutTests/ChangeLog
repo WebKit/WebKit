@@ -1,3 +1,21 @@
+2017-06-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebCrypto] Add test for ECDH SPKI imports using the ecDH algorithm identifier
+        https://bugs.webkit.org/show_bug.cgi?id=173543
+
+        Reviewed by Jiewen Tan.
+
+        Add the ecdh-import-spki-key-ecdh-identifier.html layout test which
+        tests for successful import of EC keys through the SPKI format when
+        using the ecDH algorithm identifier (OID 1.3.132.1.12) and following
+        the ECDH algorithm import steps.
+
+        No implementation supports this yet, so the test is skipped on all ports.
+
+        * TestExpectations:
+        * crypto/subtle/ecdh-import-spki-key-ecdh-identifier-expected.txt: Added.
+        * crypto/subtle/ecdh-import-spki-key-ecdh-identifier.html: Added.
+
 2017-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] The system Japanese font cannot be italicized
