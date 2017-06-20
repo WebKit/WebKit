@@ -221,7 +221,7 @@ private:
             VideoTrigger |
             PluginTrigger|
             CanvasTrigger |
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
             ScrollableNonMainFrameTrigger |
 #endif
 #if PLATFORM(IOS)

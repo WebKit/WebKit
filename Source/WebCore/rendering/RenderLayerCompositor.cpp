@@ -2468,7 +2468,7 @@ bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
     if (isMainFrameCompositor())
         return false;
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(IOS)
     if (!m_renderView.settings().asyncFrameScrollingEnabled())
         return false;
 #endif
