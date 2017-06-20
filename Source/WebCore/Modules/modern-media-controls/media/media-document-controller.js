@@ -30,13 +30,38 @@ class MediaDocumentController
     {
         this.mediaController = mediaController;
 
+        // Force the controls to look like we're loading an audio file by default.
+        mediaController.controls.shouldUseAudioLayout = true;
+        mediaController.controls.timeControl.loading = true;
+
+        this._hasDeterminedMediaType = false;
+
         const media = mediaController.media;
         media.classList.add("media-document");
+        media.classList.add("audio");
+        media.classList.add(window.navigator.platform === "MacIntel" ? "mac" : window.navigator.platform);
 
-        if (media.readyState >= HTMLMediaElement.HAVE_METADATA)
-            this._mediaDocumentHasMetadata();
-        else
-            media.addEventListener("loadedmetadata", this);
+        media.addEventListener("error", this);
+        media.addEventListener("play", this);
+    }
+
+    // Public
+
+    layout()
+    {
+        if (!this._hasDeterminedMediaType)
+            return;
+
+        scheduler.scheduleLayout(() => {
+            const media = this.mediaController.media;
+            const isInvalid = media.error !== null && media.played.length === 0;
+            const useVideoLayout = isInvalid || (media.readyState >= HTMLMediaElement.HAVE_METADATA && !this.mediaController.isAudio);
+
+            const classList = media.classList;
+            classList.toggle("invalid", isInvalid);
+            classList.toggle("video", useVideoLayout);
+            classList.toggle("audio", !useVideoLayout);
+        });
     }
 
     // Protected
@@ -45,31 +70,10 @@ class MediaDocumentController
     {
         event.currentTarget.removeEventListener(event.type, this);
 
-        if (event.type === "loadedmetadata")
-            this._mediaDocumentHasMetadata();
-        else if (event.type === "resize")
-            this._mediaDocumentHasSize();
-    }
-
-    // Private
-
-    _mediaDocumentHasMetadata()
-    {
-        window.requestAnimationFrame(() => {
-            const media = this.mediaController.media;
-            media.classList.add(this.mediaController.isAudio ? "audio" : "video");
-            media.classList.add(window.navigator.platform === "MacIntel" ? "mac" : window.navigator.platform);
-
-            if (this.mediaController.isAudio || (media.videoWidth && media.videoHeight))
-                this._mediaDocumentHasSize();
-            else
-                this.mediaController.shadowRoot.addEventListener("resize", this);
-        });
-    }
-
-    _mediaDocumentHasSize()
-    {
-        window.requestAnimationFrame(() => this.mediaController.media.classList.add("ready"));
+        if (event.type === "play" || event.type === "error") {
+            this._hasDeterminedMediaType = true;
+            this.layout();
+        }
     }
 
 }

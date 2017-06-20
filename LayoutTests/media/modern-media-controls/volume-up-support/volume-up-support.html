@@ -17,22 +17,20 @@ media.volume = 0.5;
 
 media.addEventListener("webkitfullscreenchange", function() {
     if (media.webkitDisplayingFullscreen) {
-        window.requestAnimationFrame(() => {
-            window.requestAnimationFrame(() => {
-                shouldBe("media.volume", "0.5");
+        shouldBecomeEqual("!!window.internals.shadowRoot(media).querySelector('button.volume-up')", "true", () => {
+            shouldBe("media.volume", "0.5");
 
-                media.addEventListener("volumechange", () => {
-                    shouldBe("media.volume", "1");
-                    debug("");
-                    media.remove();
-                    button.remove();
-                    finishJSTest();
-                });
-
+            media.addEventListener("volumechange", () => {
+                shouldBe("media.volume", "1");
                 debug("");
-                debug("Pressing on the volume up button");
-                pressOnElement(window.internals.shadowRoot(media).lastElementChild.lastElementChild.querySelector("button.volume-up"));
+                media.remove();
+                button.remove();
+                finishJSTest();
             });
+
+            debug("");
+            debug("Pressing on the volume up button");
+            pressOnElement(window.internals.shadowRoot(media).querySelector("button.volume-up"));
         });
     }
 });

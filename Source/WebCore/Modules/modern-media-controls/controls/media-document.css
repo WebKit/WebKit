@@ -24,17 +24,18 @@
  */
 
 :host(.media-document) {
-    visibility: hidden !important;
     max-width: 100% !important;
     max-height: 100% !important;
     min-height: 50px !important;
 }
 
-:host(.media-document.ready) {
-    visibility: visible !important;
-}
-
 /* Audio */
+
+:host(.media-document.audio) {
+    padding: 0 10px;
+    box-sizing: border-box;
+    height: var(--inline-controls-bar-height) !important;
+}
 
 :host(.media-document.audio.mac) {
     width: 650px !important;
@@ -46,9 +47,7 @@
 }
 
 :host(.media-document.audio.iphone) {
-    padding: 0 10px;
     width: 100% !important;
-    box-sizing: border-box;
 }
 
 /* Video */
@@ -63,4 +62,10 @@
 
 :host(.media-document.video.iphone) {
     width: 100% !important;
+}
+
+/* Invalid state */
+
+:host(.media-document.video.invalid) .placard {
+    background-color: transparent;
 }

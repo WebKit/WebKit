@@ -1,3 +1,54 @@
+2017-06-19  Antoine Quint  <graouts@apple.com>
+
+        Media document experience with long-loading files is poor
+        https://bugs.webkit.org/show_bug.cgi?id=173575
+        <rdar://problem/32178119>
+
+        Reviewed by Dean Jackson.
+
+        In order to avoid showing media controls at a different size than that of the video when we've
+        received enough information to determine whether it's audio or video and what the video frame size
+        is, we do not show any UI until we have enough information to show the controls in their correct
+        initial state. This works well with local files and fast-loading files, but does not work well with
+        invalid files, which never load and fail to ever show any UI, and files that load slowly where there
+        is no visible feedback that content will be visible.
+
+        Instead, we now default to showing audio controls in their loading state, which provides a seamless
+        transition if we will be loading an audio file since the controls are initially in the correct state,
+        and at least provide feedback that data is loading even if we eventually transition to a video layout.
+
+        Additionally, we remove the invalid placard background in case the media is invalid, showing only the
+        crossed-out play icon in the center of the page in that state.
+
+        Tests: media/modern-media-controls/media-documents/media-document-invalid.html
+               media/modern-media-controls/media-documents/media-document-video-with-initial-audio-layout.html
+
+        * Modules/modern-media-controls/controls/media-document.css:
+        (:host(.media-document)): Remove "visibility: hidden" since we want the media controls to be visible
+        at all times.
+        (:host(.media-document.audio)): Add a little padding on the x-axis to ensure audio controls never snap
+        directly to the edges of the window.
+        (:host(.media-document.audio.iphone)): Remove the iPhone-specific styling since we moved it to the
+        general case.
+        (:host(.media-document.video.invalid) .placard): Remove the background from the invalid placard when
+        showing invalid media.
+        (:host(.media-document.ready)): Deleted.
+        * Modules/modern-media-controls/media/audio-support.js:
+        (AudioSupport.prototype.syncControl): Make sure we invalidate the media document layout when a media
+        document's media type changes.
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController): Instantiate the controls prior to creating the MediaDocumentController since the
+        MediaDocumentController will need to access the controls.
+        * Modules/modern-media-controls/media/media-document-controller.js:
+        (MediaDocumentController): Set the default layout for media controls for a media document to be audio
+        and in the waiting state.
+        (MediaDocumentController.prototype.layout): Toggle the "invalid", "audio" and "video" CSS classes for
+        the next possible commit to the DOM, provided we have established the media document's media type.
+        (MediaDocumentController.prototype.handleEvent): Deal with the "play" and "error" events to trigger
+        a layout.
+        (MediaDocumentController.prototype._mediaDocumentHasMetadata): Deleted.
+        (MediaDocumentController.prototype._mediaDocumentHasSize): Deleted.
+
 2017-06-20  Daniel Bates  <dabates@apple.com>
 
         NavigationAction has too many constructors
