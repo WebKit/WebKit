@@ -12,6 +12,8 @@
         function from MediaDevicesEnumerationRequest rather than finding the frame with our
         own code.
 
+        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp: Removed unneeded include of UserMediaController.h.
+
 2017-06-19  Chris Dumez  <cdumez@apple.com>
 
         Regression(r217570): com.apple.WebKit.Networking crash at com.apple.WebKit: WebKit::ChildProcess::didReceiveInvalidMessage (Breaks 32-bit apps)
@@ -180,8 +182,6 @@
 
         * WebProcess/cocoa/UserMediaCaptureManager.cpp:
         (WebKit::UserMediaCaptureManager::Source::setStorage):
-
-        * WebProcess/WebCoreSupport/WebUserMediaClient.cpp: Removed unneeded include of UserMediaController.h.
 
 2017-06-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
