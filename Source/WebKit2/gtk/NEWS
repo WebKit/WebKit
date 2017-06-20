@@ -1,4 +1,15 @@
 ==================
+WebKitGTK+  2.16.4
+==================
+
+  - Fix web process deadlock when seeking youtube videos.
+  - Fix blob downloads.
+  - Improve theme rendering performance when using GTK+ >= 3.20.
+  - Fix positioning of popup menus in Wayland.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2017-2538.
+
+==================
 WebKitGTK+  2.16.3
 ==================
 
