@@ -5,11 +5,6 @@ Test that CanvasManager tracks creation and destruction of 2D and WebGL canvases
 -- Running test case: CheckNoCanvases
 PASS: CanvasManager should have no canvases.
 
--- Running test case: CheckCanvasesCleared
-Added canvas.
-Cleared canvases after reloading page.
-PASS: CanvasManager should have no canvases.
-
 -- Running test case: Create2DCanvasContext
 Added canvas.
 PASS: Canvas context should be 2D.

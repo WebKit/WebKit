@@ -1,3 +1,16 @@
+2017-06-20  Matt Baker  <mattbaker@apple.com>
+
+        LayoutTest inspector/canvas/create-canvas-contexts.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=173603
+
+        Reviewed by Joseph Pecoraro.
+
+        Removed test case `CheckCanvasesCleared`, which involved a page reload
+        and would intermittently timeout.
+
+        * inspector/canvas/create-canvas-contexts-expected.txt:
+        * inspector/canvas/create-canvas-contexts.html:
+
 2017-06-20  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: media/remote-control-command-seek.html is timing out

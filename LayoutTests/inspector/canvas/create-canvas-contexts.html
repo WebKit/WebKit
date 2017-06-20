@@ -66,27 +66,6 @@ function test() {
         }
     });
 
-    suite.addTestCase({
-        name: "CheckCanvasesCleared",
-        description: "Check that canvases are cleared on reload.",
-        test(resolve, reject) {
-            WebInspector.canvasManager.awaitEvent(WebInspector.CanvasManager.Event.Cleared)
-            .then((event) => {
-                InspectorTest.log("Cleared canvases after reloading page.");
-                InspectorTest.expectEqual(WebInspector.canvasManager.canvases.length, 0, "CanvasManager should have no canvases.");
-            })
-            .then(resolve, reject);
-
-            WebInspector.canvasManager.awaitEvent(WebInspector.CanvasManager.Event.CanvasWasAdded)
-            .then((event) => {
-                InspectorTest.log("Added canvas.");
-                InspectorTest.reloadPage();
-            });
-
-            InspectorTest.evaluateInPage(`createCanvas('2d')`);
-        }
-    });
-
     function addSimpleTestCase({name, description, expression, contextType}) {
         suite.addTestCase({
             name,
