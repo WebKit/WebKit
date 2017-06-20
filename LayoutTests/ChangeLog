@@ -1,5 +1,16 @@
 2017-06-20  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Enable appcache tests
+
+        Unreviewed gardening.
+
+        Most of these tests are passing, so enable them. For known GTK+
+        failures, copy the expectations. Mark as failing deferred events
+        tests that have slight differences that need to be investigated.
+        * platform/wpe/TestExpectations:
+
+2017-06-20  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Skip geolocation tests
 
         Geolocation was disabled since r218553 and thus far tests were

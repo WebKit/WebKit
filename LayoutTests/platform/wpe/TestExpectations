@@ -22,6 +22,18 @@ Bug(WPE) webarchive/ [ Skip ]
 Bug(WPE) webaudio/ [ Skip ]
 Bug(WPE) webrtc [ Skip ]
 
+Bug(WPE) http/tests/appcache [ Pass ]
+# Appcache manifest is still downloaded in the WebProcess
+webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
+# These tests pass except that there is a missing console message that is expected. Investigation needed.
+http/tests/appcache/deferred-events-delete-while-raising-timer.html [ Failure ]
+http/tests/appcache/deferred-events-delete-while-raising.html [ Failure ]
+http/tests/appcache/deferred-events.html [ Failure ]
+webkit.org/b/145253 http/tests/appcache/different-https-origin-resource-main.html  [ Failure ]
+# Implement testRunner.setUseDeferredFrameLoading
+webkit.org/b/93980 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Failure ]
+webkit.org/b/168569 http/tests/appcache/main-resource-fallback-for-network-error-crash.html [ Timeout ]
+
 # Require ENABLE_CSS_ANIMATIONS_LEVEL_2
 Bug(WPE) animations/trigger-computed-style.html [ Failure ]
 Bug(WPE) animations/trigger-container-scroll-boundaries.html [ Failure ]
