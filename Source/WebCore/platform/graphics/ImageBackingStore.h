@@ -29,8 +29,7 @@
 #include "IntRect.h"
 #include "IntSize.h"
 #include "NativeImage.h"
-
-#include <wtf/Vector.h>
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -54,12 +53,15 @@ public:
         if (size.isEmpty())
             return false;
 
-        unsigned area = size.area().unsafeGet();
-        if (!m_pixels.tryReserveCapacity(area))
+        Vector<char> buffer;
+        size_t bufferSize = size.area().unsafeGet() * sizeof(RGBA32);
+
+        if (!buffer.tryReserveCapacity(bufferSize))
             return false;
 
-        m_pixels.resize(area);
-        m_pixelsPtr = m_pixels.data();
+        buffer.resize(bufferSize);
+        m_pixels = SharedBuffer::adoptVector(buffer);
+        m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
         m_size = size;
         m_frameRect = IntRect(IntPoint(), m_size);
         clear();
@@ -183,12 +185,12 @@ private:
     }
 
     ImageBackingStore(const ImageBackingStore& other)
-        : m_pixels(other.m_pixels)
-        , m_size(other.m_size)
+        : m_size(other.m_size)
         , m_premultiplyAlpha(other.m_premultiplyAlpha)
     {
         ASSERT(!m_size.isEmpty() && !isOverSize(m_size));
-        m_pixelsPtr = m_pixels.data();
+        m_pixels = other.m_pixels->copy();
+        m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
     }
 
     bool inBounds(const IntPoint& point) const
@@ -212,7 +214,7 @@ private:
         return makeRGBA(r, g, b, a);
     }
 
-    Vector<RGBA32> m_pixels;
+    RefPtr<SharedBuffer> m_pixels;
     RGBA32* m_pixelsPtr { nullptr };
     IntSize m_size;
     IntRect m_frameRect; // This will always just be the entire buffer except for GIF and PNG frames
