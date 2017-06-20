@@ -28,7 +28,13 @@
 
 #include "FontCache.h"
 #include "FontSelector.h"
+#include "SoftLinking.h"
 #include <CoreText/CoreText.h>
+
+#if USE_PLATFORM_SYSTEM_FALLBACK_LIST
+SOFT_LINK_FRAMEWORK(CoreText);
+SOFT_LINK_MAY_FAIL(CoreText, CTFontCopyPhysicalFont, CTFontRef, (CTFontRef font), (font));
+#endif
 
 namespace WebCore {
 
@@ -47,10 +53,18 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
 
     auto font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
 
+    auto fontForSynthesisComputation = font;
+#if USE_PLATFORM_SYSTEM_FALLBACK_LIST
+    if (canLoadCTFontCopyPhysicalFont()) {
+        if (auto physicalFont = adoptCF(CTFontCopyPhysicalFont(font.get())))
+            fontForSynthesisComputation = physicalFont;
+    }
+#endif
+
     font = preparePlatformFont(font.get(), fontDescription, nullptr, nullptr, { }, fontDescription.computedSize());
 
     bool syntheticBold, syntheticOblique;
-    std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(font.get(), fontDescription).boldObliquePair();
+    std::tie(syntheticBold, syntheticOblique) = computeNecessarySynthesis(fontForSynthesisComputation.get(), fontDescription).boldObliquePair();
 
     FontPlatformData fontPlatformData(font.get(), size, syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant(), fontDescription.textRenderingMode());
 

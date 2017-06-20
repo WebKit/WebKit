@@ -1,3 +1,15 @@
+2017-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] The system Japanese font cannot be italicized
+        https://bugs.webkit.org/show_bug.cgi?id=173300
+        <rdar://problem/31805407>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/text/system-font-japanese-synthetic-italic-expected-mismatch.html: Added.
+        * fast/text/system-font-japanese-synthetic-italic.html: Added.
+        * platform/mac/TestExpectations: This codepath doesn't work in El Capitan.
+
 2017-06-19  Youenn Fablet  <youenn@apple.com>
 
         Improve debugging ability of some webrtc tests
