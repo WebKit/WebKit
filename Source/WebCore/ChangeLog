@@ -1,3 +1,18 @@
+2017-05-25  Zalan Bujtas  <zalan@apple.com>
+
+        ASSERTION FAILED: !needsStyleRecalc() || !document().childNeedsStyleRecalc()
+        https://bugs.webkit.org/show_bug.cgi?id=172576
+        <rdar://problem/32181979>
+
+        Reviewed by Brent Fulgham.
+
+        Ensure that we clean the subframe's document before start searching for a focusable element.
+
+        Covered by existing test.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::findFocusableElementDescendingDownIntoFrameDocument):
+
 2017-05-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         Crash on WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance + 1195
