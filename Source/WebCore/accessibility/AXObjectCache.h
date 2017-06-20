@@ -169,7 +169,6 @@ public:
     void selectedChildrenChanged(RenderObject*);
     // Called by a node when text or a text equivalent (e.g. alt) attribute is changed.
     void textChanged(Node*);
-    void textChanged(RenderObject*);
     // Called when a node has just been attached, so we can make sure we have the right subclass of AccessibilityObject.
     void updateCacheAfterNodeIsAttached(Node*);
 
@@ -463,7 +462,6 @@ inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return nullptr; 
 inline AccessibilityObject* AXObjectCache::get(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Widget*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole) { return nullptr; }
-inline AccessibilityObject* AXObjectCache::getOrCreate(RenderObject*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::rootObject() { return nullptr; }

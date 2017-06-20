@@ -1,3 +1,17 @@
+2017-06-19  Zalan Bujtas  <zalan@apple.com>
+
+        AX: Remove redundant AXObjectCache::textChanged(RenderObject*).
+        https://bugs.webkit.org/show_bug.cgi?id=173579
+        <rdar://problem/32865367>
+
+        Reviewed by Antti Koivisto.
+
+        All calls go through textChanged(Node*) method.
+
+        * accessibility/AXObjectCache.cpp:
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::getOrCreate):
+
 2017-06-19  Darin Adler  <darin@apple.com>
 
         Merge MediaDevicesRequest and MediaDevicesEnumerationRequest to tighten up code and object lifetime

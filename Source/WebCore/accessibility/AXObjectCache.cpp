@@ -804,11 +804,6 @@ void AXObjectCache::textChanged(Node* node)
     textChanged(getOrCreate(node));
 }
 
-void AXObjectCache::textChanged(RenderObject* renderer)
-{
-    textChanged(getOrCreate(renderer));
-}
-
 void AXObjectCache::textChanged(AccessibilityObject* obj)
 {
     if (!obj)
