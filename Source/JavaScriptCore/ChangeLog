@@ -1,3 +1,20 @@
+2017-06-20  Saam Barati  <sbarati@apple.com>
+
+        repatchIn needs to lock the CodeBlock's lock
+        https://bugs.webkit.org/show_bug.cgi?id=173573
+
+        Reviewed by Yusuke Suzuki.
+
+        CodeBlock::propagateTransitions and CodeBlock::visitWeakly grab the CodeBlock's
+        lock before modifying the StructureStubInfo/PolymorphicAccess. When regenerating
+        an IC, we must hold the CodeBlock's to prevent the executing thread from racing
+        with the marking thread. repatchIn was not grabbing the lock. I haven't been
+        able to get it to crash, but this is needed for the same reasons that get and put IC
+        regeneration grab the lock.
+
+        * jit/Repatch.cpp:
+        (JSC::repatchIn):
+
 2017-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create canvas content view and details sidebar panel

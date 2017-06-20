@@ -555,6 +555,7 @@ void repatchIn(
     const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
     SuperSamplerScope superSamplerScope(false);
+    GCSafeConcurrentJSLocker locker(exec->codeBlock()->m_lock, exec->vm().heap);
     if (tryRepatchIn(exec, base, ident, wasFound, slot, stubInfo) == GiveUpOnCache)
         ftlThunkAwareRepatchCall(exec->codeBlock(), stubInfo.slowPathCallLocation(), operationIn);
 }
