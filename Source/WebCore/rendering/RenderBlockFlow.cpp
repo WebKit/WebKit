@@ -3666,8 +3666,11 @@ void RenderBlockFlow::invalidateLineLayoutPath()
     case SimpleLinesPath:
         // The simple line layout may have become invalid.
         m_simpleLineLayout = nullptr;
-        setNeedsLayout();
         setLineLayoutPath(UndeterminedPath);
+        if (needsLayout())
+            return;
+        // FIXME: We should just kick off a subtree layout here (if needed at all) see webkit.org/b/172947.
+        setNeedsLayout();
         return;
     }
     ASSERT_NOT_REACHED();
