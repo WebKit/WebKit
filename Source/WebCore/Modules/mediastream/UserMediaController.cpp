@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,19 +37,19 @@ const char* UserMediaController::supplementName()
     return "UserMediaController";
 }
 
-UserMediaController::UserMediaController(UserMediaClient* client)
+inline UserMediaController::UserMediaController(UserMediaClient& client)
     : m_client(client)
 {
 }
 
 UserMediaController::~UserMediaController()
 {
-    m_client->pageDestroyed();
+    m_client.pageDestroyed();
 }
 
 void provideUserMediaTo(Page* page, UserMediaClient* client)
 {
-    UserMediaController::provideTo(page, UserMediaController::supplementName(), std::make_unique<UserMediaController>(client));
+    UserMediaController::provideTo(page, UserMediaController::supplementName(), std::make_unique<UserMediaController>(*client));
 }
 
 } // namespace WebCore

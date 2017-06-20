@@ -140,8 +140,6 @@
 		073794FA19F5864E00E5A045 /* RTCDataChannelHandlerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */; };
 		073794FD19F5864E00E5A045 /* RTCNotifiersMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */; };
 		073794FE19F5864E00E5A045 /* RTCNotifiersMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 073794F819F5864E00E5A045 /* RTCNotifiersMock.h */; };
-		07394EC81BAB2CCD00BE99CD /* MediaDevicesRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */; };
-		07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073B87661E4385AC0071C0EC /* AudioSampleBufferList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073B87621E43859D0071C0EC /* AudioSampleBufferList.cpp */; };
 		073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87631E43859D0071C0EC /* AudioSampleBufferList.h */; };
 		073B87681E4385AC0071C0EC /* AudioSampleDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073B87641E43859D0071C0EC /* AudioSampleDataSource.mm */; };
@@ -7599,8 +7597,6 @@
 		073794F419F5864E00E5A045 /* RTCDataChannelHandlerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDataChannelHandlerMock.h; sourceTree = "<group>"; };
 		073794F719F5864E00E5A045 /* RTCNotifiersMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTCNotifiersMock.cpp; sourceTree = "<group>"; };
 		073794F819F5864E00E5A045 /* RTCNotifiersMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCNotifiersMock.h; sourceTree = "<group>"; };
-		07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaDevicesRequest.cpp; sourceTree = "<group>"; };
-		07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevicesRequest.h; sourceTree = "<group>"; };
 		073B87561E40DCE50071C0EC /* AudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioStreamDescription.h; sourceTree = "<group>"; };
 		073B87571E40DCFD0071C0EC /* CAAudioStreamDescription.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAAudioStreamDescription.cpp; sourceTree = "<group>"; };
 		073B87581E40DCFD0071C0EC /* CAAudioStreamDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioStreamDescription.h; sourceTree = "<group>"; };
@@ -16132,8 +16128,6 @@
 				5EA725CF1ACABCD900EAD17B /* MediaDevices.idl */,
 				07ABEF6B1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp */,
 				07ABEF6D1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h */,
-				07394EC71BAB2CCD00BE99CD /* MediaDevicesRequest.cpp */,
-				07394EC91BAB2CD700BE99CD /* MediaDevicesRequest.h */,
 				5E16A2E21BFA64FB0029A21E /* MediaEndpointPeerConnection.cpp */,
 				5E16A2E31BFA64FB0029A21E /* MediaEndpointPeerConnection.h */,
 				5E4EAB021D07164C0006A184 /* MediaEndpointSessionDescription.cpp */,
@@ -28709,7 +28703,6 @@
 				15145B901B3A1CE000662BF7 /* MediaDeviceInfo.h in Headers */,
 				5EA725D31ACABD4700EAD17B /* MediaDevices.h in Headers */,
 				07ABEF6E1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h in Headers */,
-				07394ECA1BAB2CD700BE99CD /* MediaDevicesRequest.h in Headers */,
 				97205AB81239291000B17380 /* MediaDocument.h in Headers */,
 				FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */,
 				07FE99DD18807A7D00256648 /* MediaElementSession.h in Headers */,
@@ -32748,7 +32741,6 @@
 				159AE82B1B3A402F0037478B /* MediaDeviceInfo.cpp in Sources */,
 				5EA725D21ACABD4700EAD17B /* MediaDevices.cpp in Sources */,
 				07ABEF6C1D8A1C5800F21972 /* MediaDevicesEnumerationRequest.cpp in Sources */,
-				07394EC81BAB2CCD00BE99CD /* MediaDevicesRequest.cpp in Sources */,
 				97205AB71239291000B17380 /* MediaDocument.cpp in Sources */,
 				FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */,
 				07FE99DC18807A7D00256648 /* MediaElementSession.cpp in Sources */,

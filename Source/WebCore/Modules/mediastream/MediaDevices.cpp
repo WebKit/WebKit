@@ -37,7 +37,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "MediaDevicesRequest.h"
+#include "MediaDevicesEnumerationRequest.h"
 #include "MediaTrackSupportedConstraints.h"
 #include "UserMediaRequest.h"
 #include <wtf/RandomNumber.h>
@@ -109,7 +109,7 @@ void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const
     auto* document = this->document();
     if (!document)
         return;
-    MediaDevicesRequest::create(*document, WTFMove(promise))->start();
+    MediaDevicesEnumerationRequest::start(*document, WTFMove(promise));
 }
 
 MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()

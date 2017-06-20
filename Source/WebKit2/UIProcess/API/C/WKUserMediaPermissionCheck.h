@@ -41,4 +41,4 @@ WK_EXPORT void WKUserMediaPermissionCheckSetUserMediaAccessInfo(WKUserMediaPermi
 }
 #endif
 
-#endif /* WKMediaDevicesRequest_h */
+#endif /* WKUserMediaPermissionCheck_h */

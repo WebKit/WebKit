@@ -52,8 +52,8 @@ namespace WebCore {
 
 ExceptionOr<void> UserMediaRequest::start(Document& document, MediaConstraints&& audioConstraints, MediaConstraints&& videoConstraints, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
 {
-    auto* userMedia = UserMediaController::from(document.page());
-    if (!userMedia)
+    auto* page = document.page();
+    if (!page)
         return Exception { NOT_SUPPORTED_ERR }; // FIXME: Why is it better to return an exception here instead of rejecting the promise as we do just below?
 
     if (!audioConstraints.isValid && !videoConstraints.isValid) {
@@ -61,7 +61,7 @@ ExceptionOr<void> UserMediaRequest::start(Document& document, MediaConstraints&&
         return { };
     }
 
-    adoptRef(*new UserMediaRequest(document, *userMedia, WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise)))->start();
+    adoptRef(*new UserMediaRequest(document, UserMediaController::from(*page), WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise)))->start();
     return { };
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,17 +27,16 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "ContextDestructionObserver.h"
 #include "ScriptWrappable.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable, private ContextDestructionObserver {
+class MediaDeviceInfo : public RefCounted<MediaDeviceInfo>, public ScriptWrappable {
 public:
     enum class Kind { Audioinput, Audiooutput, Videoinput };
 
-    static Ref<MediaDeviceInfo> create(ScriptExecutionContext*, const String&, const String&, const String&, Kind);
+    static Ref<MediaDeviceInfo> create(const String& label, const String& deviceId, const String& groupId, Kind);
 
     const String& label() const { return m_label; }
     const String& deviceId() const { return m_deviceId; }
@@ -45,15 +44,13 @@ public:
     Kind kind() const { return m_kind; }
 
 private:
-    MediaDeviceInfo(ScriptExecutionContext*, const String&, const String&, const String&, Kind);
+    MediaDeviceInfo(const String& label, const String& deviceId, const String& groupId, Kind);
 
     const String m_label;
     const String m_deviceId;
     const String m_groupId;
     const Kind m_kind;
 };
-
-typedef Vector<RefPtr<MediaDeviceInfo>> MediaDeviceInfoVector;
 
 }
 

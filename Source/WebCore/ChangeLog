@@ -1,3 +1,83 @@
+2017-06-19  Darin Adler  <darin@apple.com>
+
+        Merge MediaDevicesRequest and MediaDevicesEnumerationRequest to tighten up code and object lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=173527
+
+        Reviewed by Sam Weinig.
+
+        * CMakeLists.txt: Removed MediaDevicesRequest.cpp.
+
+        * Modules/mediastream/MediaDeviceInfo.cpp:
+        (WebCore::MediaDeviceInfo::MediaDeviceInfo): Removed unneeded ScriptExecutionContext.
+        (WebCore::MediaDeviceInfo::create): Ditto.
+        * Modules/mediastream/MediaDeviceInfo.h: Removed unnecessary derivation from
+        ContextDestructionObserver and ScriptExecutionContext arguments. Also removed
+        unused MediaDeviceInfoVector typedef.
+        * Modules/mediastream/MediaDeviceInfo.idl: Added ImplementationLacksVTable.
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::enumerateDevices): Call MediaDevicesEnumerationRequest
+        directly here instead of going through MediaDevicesRequest.
+
+        * Modules/mediastream/MediaDevicesEnumerationRequest.cpp: Moved code from
+        MediaDevicesRequest in here. Put the typical counts at the top of the file.
+        (WebCore::MediaDevicesEnumerationRequest::MediaDevicesEnumerationRequest):
+        Marked inline and changed to take a DOM promise directly rather than having
+        a separate class do the mapping to DOM promises.
+        (WebCore::MediaDevicesEnumerationRequest::start): Replaced the create function
+        with this. The caller doesn't actually keep a reference to the object.
+        Added a FIXME about the behavior, not new, where we neither resolve nor reject
+        the promise if there is no page object present. Updated to use the new version
+        of UserMediaController::from.
+        (WebCore::MediaDevicesEnumerationRequest::~MediaDevicesEnumerationRequest):
+        Added a FIXME about the issue that we don't resolve or reject the promise if
+        the client drops the last reference to the request without calling setDeviceInfo.
+        (WebCore::MediaDevicesEnumerationRequest::document): Added. Private helper.
+        Returns nullptr if the request is no longer active.
+        (WebCore::MediaDevicesEnumerationRequest::frame): Added. For use by a caller
+        that was getting to the frame. Uses the document function so it will return
+        nullptr if the request is no longer active.
+        (WebCore::MediaDevicesEnumerationRequest::userMediaDocumentOrigin): Changed
+        to do the work using the document function.
+        (WebCore::MediaDevicesEnumerationRequest::topLevelDocumentOrigin): Ditto.
+        (WebCore::MediaDevicesEnumerationRequest::contextDestroyed): Simplified. We
+        now can simply set a boolean when the context is destroyed, so there are no
+        side effects and the code is simpler.
+        (WebCore::removeAtypicalDevices): Renamed and tightened up the code a bit.
+        (WebCore::MediaDevicesEnumerationRequest::setDeviceInfo): Moved the code
+        here from MediaDevicesEnumerationRequest to pass the devices along.
+
+        * Modules/mediastream/MediaDevicesEnumerationRequest.h: Made the
+        ContextDestructionObserver use private inheritance. Cut down the includes
+        and removed various unneeded functions.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp: Removed.
+        * Modules/mediastream/MediaDevicesRequest.h: Removed.
+
+        * Modules/mediastream/UserMediaController.cpp:
+        (WebCore::UserMediaController::UserMediaController): Use reference rather
+        than pointer for the client.
+        (WebCore::UserMediaController::~UserMediaController): Ditto.
+        (WebCore::provideUserMediaTo): Ditto.
+
+        * Modules/mediastream/UserMediaController.h:
+        Changed constructor to take a refeference, removed client function, and
+        changed data member to be a reference rather than a pointer.
+        (WebCore::UserMediaController::from): Take and return a reference rather
+        than taking a pointer that is checked for null.
+        (WebCore::UserMediaController::requestUserMediaAccess): Use reference.
+        (WebCore::UserMediaController::cancelUserMediaAccessRequest): Ditto.
+        (WebCore::UserMediaController::enumerateMediaDevices): Ditto.
+        (WebCore::UserMediaController::cancelMediaDevicesEnumerationRequest): Ditto.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::start): Updated to use the new version
+        of UserMediaController::from.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for file removals.
+
+        * testing/Internals.cpp: Removed unneeded include of UserMediaController.h.
+
 2017-06-19  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Move Touch related bindings in Document to their own IDL file
