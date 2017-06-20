@@ -291,11 +291,13 @@ static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const S
         return;
     }
 
-    [LSAppLink openWithURL:navigationAction->request().url() completionHandler:BlockPtr<void (BOOL success, NSError *)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL success, NSError *) mutable {
-        dispatch_async(dispatch_get_main_queue(), BlockPtr<void ()>::fromCallable([completionHandler = WTFMove(completionHandler), success] {
-            completionHandler(success);
-        }).get());
-    }).get()];
+    auto* localCompletionHandler = new WTF::Function<void (bool)>(WTFMove(completionHandler));
+    [LSAppLink openWithURL:navigationAction->request().url() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
+        dispatch_async(dispatch_get_main_queue(), [localCompletionHandler, success] {
+            (*localCompletionHandler)(success);
+            delete localCompletionHandler;
+        });
+    }];
 #else
     completionHandler(false);
 #endif

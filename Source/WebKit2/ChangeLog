@@ -1,3 +1,10 @@
+2017-06-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, partial rollout of r218501 to address crashes on iOS.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::tryAppLink):
+
 2017-06-19  Darin Adler  <darin@apple.com>
 
         [Cocoa] implement URLSession:task:needNewBodyStream: delegate method
