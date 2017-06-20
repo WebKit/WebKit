@@ -1,3 +1,11 @@
+2017-06-20  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update test262 test expectations after r218581.
+
+        Unreviewed test gardening.
+
+        * test262.yaml:
+
 2017-06-20  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         Revert changes in bug#160417 about extending `null` not being a derived class
