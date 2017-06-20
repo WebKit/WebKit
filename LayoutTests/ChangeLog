@@ -1,3 +1,15 @@
+2017-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash inside InsertNodeBeforeCommand via InsertParagraphSeparatorCommand
+        https://bugs.webkit.org/show_bug.cgi?id=173085
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regresion test.
+
+        * editing/inserting/insert-horizontal-rule-in-empty-document-crash-expected.txt: Added.
+        * editing/inserting/insert-horizontal-rule-in-empty-document-crash.html: Added.
+
 2017-06-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         MediaTime class has rounding issues in different platforms

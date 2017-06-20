@@ -1,3 +1,21 @@
+2017-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash inside InsertNodeBeforeCommand via InsertParagraphSeparatorCommand
+        https://bugs.webkit.org/show_bug.cgi?id=173085
+        <rdar://problem/32575059>
+
+        Reviewed by Wenson Hsieh.
+
+        The crash was caused by the condition to check for special cases failing when visiblePos is null.
+        Exit early in these extreme cases.
+
+        Also replaced the use of deprecatedNode and deprecatedEditingOffset to modern idioms.
+
+        Test: editing/inserting/insert-horizontal-rule-in-empty-document-crash.html
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2017-06-06  Zalan Bujtas  <zalan@apple.com>
 
         Safari doesn't load newest The Order of the Stick comic.

@@ -185,6 +185,9 @@ void InsertParagraphSeparatorCommand::doApply()
     // Adjust the insertion position after the delete
     insertionPosition = positionAvoidingSpecialElementBoundary(insertionPosition);
     VisiblePosition visiblePos(insertionPosition, affinity);
+    if (visiblePos.isNull())
+        return;
+
     calculateStyleBeforeInsertion(insertionPosition);
 
     //---------------------------------------------------------------------
@@ -265,9 +268,8 @@ void InsertParagraphSeparatorCommand::doApply()
             // startBlock should always have children, otherwise isLastInBlock would be true and it's handled above.
             ASSERT(startBlock->firstChild());
             refNode = startBlock->firstChild();
-        }
-        else if (insertionPosition.deprecatedNode() == startBlock && nestNewBlock) {
-            refNode = startBlock->traverseToChildAt(insertionPosition.deprecatedEditingOffset());
+        } else if (insertionPosition.containerNode() == startBlock && nestNewBlock) {
+            refNode = startBlock->traverseToChildAt(insertionPosition.computeOffsetInContainerNode());
             ASSERT(refNode); // must be true or we'd be in the end of block case
         } else
             refNode = insertionPosition.deprecatedNode();
