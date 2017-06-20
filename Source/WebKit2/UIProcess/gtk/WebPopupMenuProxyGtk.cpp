@@ -139,6 +139,8 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
         menuPosition.setY(menuPosition.y() - rect.height() / 2);
     }
 
+    gtk_menu_attach_to_widget(GTK_MENU(m_popup), GTK_WIDGET(m_webView), nullptr);
+
     const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
 #if GTK_CHECK_VERSION(3, 22, 0)
     // Set the same properties that GTK+ uses itself for combo box popups.
