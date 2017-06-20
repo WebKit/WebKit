@@ -1,3 +1,33 @@
+2017-06-19  Caio Lima  <ticaiolima@gmail.com>
+
+        [ARMv6][DFG] ARM MacroAssembler is always emitting cmn when immediate is 0
+        https://bugs.webkit.org/show_bug.cgi?id=172972
+
+        Reviewed by Mark Lam.
+
+        We are changing internalCompare32 implementation in ARM
+        MacroAssembler to emit "cmp" when the "right.value" is 0.
+        It is generating wrong comparison cases, since the
+        semantics of cmn is opposite of cmp[1]. One case that it's breaking is
+        "branch32(MacroAssembler::Above, gpr, TrustedImm32(0))", where ends
+        resulting in following assembly code:
+
+        ```
+        cmn $r0, #0
+        bhi <address>
+        ```
+
+        However, as cmn is similar to "adds", it will never take the branch
+        when $r0 > 0. In that case, the correct opcode is "cmp". With this
+        patch we will fix current broken tests that uses
+        "branch32(MacroAssembler::Above, gpr, TrustedImm32(0))",
+        such as ForwardVarargs, Spread and GetRestLength.
+
+        [1] - http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0204j/Cihiddid.html
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::internalCompare32):
+
 2017-06-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Completion values for control flow do not match the spec
