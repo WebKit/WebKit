@@ -332,6 +332,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
 void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectionOptions options, AXTextStateChangeIntent intent, CursorAlignOnScroll align, TextGranularity granularity)
 {
+    RefPtr<Frame> protectedFrame(m_frame);
     if (!setSelectionWithoutUpdatingAppearance(selection, options, align, granularity))
         return;
 

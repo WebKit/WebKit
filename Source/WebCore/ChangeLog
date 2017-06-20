@@ -1,3 +1,20 @@
+2017-05-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Crash on WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance + 1195
+        https://bugs.webkit.org/show_bug.cgi?id=172555
+        <rdar://problem/32004724>
+
+        Reviewed by Ryosuke Niwa.
+
+        setSelectionWithoutUpdatingAppearance could dispatch a synchronous focusin event,
+        which could invoke an event handler that deteles the frame. Therefore, add a
+        protector before the call.
+
+        Test: editing/selection/select-iframe-focusin-document-crash.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+
 2017-05-23  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: !renderer().view().needsLayout() while running media/video-main-content-autoplay.html
