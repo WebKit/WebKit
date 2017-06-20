@@ -29,7 +29,7 @@
 
 namespace JSC {
 
-enum PutByIdFlags : intptr_t {
+enum PutByIdFlags : int32_t {
     PutByIdNone = 0,
 
     // This flag indicates that the put_by_id is direct. That means that we store the property without
