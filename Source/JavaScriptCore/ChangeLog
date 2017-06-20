@@ -1,3 +1,10 @@
+2017-06-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, build fix for ARM
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::internalCompare32):
+
 2017-06-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] More ArrayIndexOf fixups for various types
