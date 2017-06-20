@@ -1,3 +1,18 @@
+2017-06-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        Unskipping AES-CTR and RSA-PSS layout tests that already pass.
+
+        Adding layout test baselines for two imported W3C tests that cover AES-CBC.
+        The subtests there pass, but the generic baseline expects failures, so we
+        work around that by adding baselines that expect passing tests.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/aes_cbc.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_aes_cbc.https-expected.txt: Added.
+
 2017-06-20  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] Layout Test fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html makes the subsequent test case flaky crash.
