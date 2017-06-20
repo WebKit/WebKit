@@ -1,3 +1,9 @@
+2017-05-30  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build after r217588.
+
+        * page/FrameView.h: Stopped exporting a function defined inline.
+
 2017-05-30  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: m_layoutPhase == InPostLayerPositionsUpdatedAfterLayout || m_layoutPhase == OutsideLayout
