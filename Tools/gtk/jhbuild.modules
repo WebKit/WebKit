@@ -548,9 +548,9 @@
   <autotools id="icu"
              autogen-sh="./source/configure"
              autogenargs="--disable-samples --enable-weak-threads">
-    <branch module="icu4c-55_1-src.tgz" version="55.1" checkoutdir="icu"
+    <branch module="icu4c-57_1-src.tgz" version="57.1" checkoutdir="icu"
             repo="webkitgtk-jhbuild-mirror"
-            hash="sha256:e16b22cbefdd354bec114541f7849a12f8fc2015320ca5282ee4fd787571457b">
+            hash="sha256:ff8c67cb65949b1e7808f2359f2b80f722697048e90e7cfc382ec1fe229e9581">
       <patch file="icudata-stdlibs.patch" strip="1"/>
     </branch>
   </autotools>

@@ -1,5 +1,14 @@
 2017-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Upgrade to ICU to version 57.1
+        https://bugs.webkit.org/show_bug.cgi?id=173538
+
+        Reviewed by Žan Doberšek.
+
+        * gtk/jhbuild.modules:
+
+2017-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Remove unneeded modules from the jhbuild
         https://bugs.webkit.org/show_bug.cgi?id=170540
 
