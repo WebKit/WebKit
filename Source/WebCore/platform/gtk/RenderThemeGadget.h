@@ -56,7 +56,6 @@ public:
     struct Info {
         Type type;
         const char* name;
-        GtkStateFlags state;
         Vector<const char*> classList;
     };
 
@@ -76,6 +75,9 @@ public:
     double opacity() const;
 
     GtkStyleContext* context() const { return m_context.get(); }
+
+    GtkStateFlags state() const;
+    void setState(GtkStateFlags);
 
 protected:
     GtkBorder marginBox() const;
