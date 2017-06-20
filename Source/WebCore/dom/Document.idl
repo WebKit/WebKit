@@ -192,18 +192,6 @@ typedef (
     // Non standard (https://developer.apple.com/reference/webkitjs/document/1633863-webkitgetnamedflows).
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 
-    // FIXME: This has been dropped from the standard now that Touch has a constructor.
-#if defined(ENABLE_IOS_TOUCH_EVENTS) && ENABLE_IOS_TOUCH_EVENTS
-#include <WebKitAdditions/DocumentIOS.idl>
-#elif defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-    [NewObject] Touch createTouch(optional DOMWindow? window = null, optional EventTarget? target = null,
-        optional long identifier = 0,
-        optional long pageX = 0, optional long pageY = 0, optional long screenX = 0, optional long screenY = 0,
-        optional long webkitRadiusX = 0, optional long webkitRadiusY = 0,
-        optional unrestricted float webkitRotationAngle = NaN, optional unrestricted float webkitForce = NaN);
-    [NewObject, Custom] TouchList createTouchList(Touch... touches);
-#endif
-
 
     // Obsolete features from https://html.spec.whatwg.org/multipage/obsolete.html
 

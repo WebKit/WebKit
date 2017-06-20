@@ -189,10 +189,6 @@ class TransformSource;
 struct AnnotatedRegionValue;
 #endif
 
-#if ENABLE(IOS_TOUCH_EVENTS)
-#include <WebKitAdditions/DocumentIOSForward.h>
-#endif
-
 #if ENABLE(TOUCH_EVENTS) || ENABLE(IOS_TOUCH_EVENTS)
 class Touch;
 class TouchList;
@@ -1147,8 +1143,6 @@ public:
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 #include <WebKitAdditions/DocumentIOS.h>
-#elif ENABLE(TOUCH_EVENTS)
-    Ref<Touch> createTouch(DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force) const;
 #endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)

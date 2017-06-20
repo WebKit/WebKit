@@ -252,7 +252,6 @@
 
 #if ENABLE(TOUCH_EVENTS)
 #include "TouchEvent.h"
-#include "TouchList.h"
 #endif
 
 #if ENABLE(VIDEO_TRACK)
@@ -6330,20 +6329,6 @@ void Document::sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, con
     UNUSED_PARAM(target);
 #endif
 }
-
-#if ENABLE(TOUCH_EVENTS) && !PLATFORM(IOS)
-
-Ref<Touch> Document::createTouch(DOMWindow* window, EventTarget* target, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force) const
-{
-    // FIXME: It's not clear from the documentation at
-    // http://developer.apple.com/library/safari/#documentation/UserExperience/Reference/DocumentAdditionsReference/DocumentAdditions/DocumentAdditions.html
-    // when this method should throw and nor is it by inspection of iOS behavior. It would be nice to verify any cases where it throws under iOS
-    // and implement them here. See https://bugs.webkit.org/show_bug.cgi?id=47819
-    Frame* frame = window ? window->frame() : this->frame();
-    return Touch::create(frame, target, identifier, screenX, screenY, pageX, pageY, radiusX, radiusY, rotationAngle, force);
-}
-
-#endif
 
 void Document::wheelEventHandlersChanged()
 {

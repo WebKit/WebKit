@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
 #if ENABLE(IOS_TOUCH_EVENTS)
+#include <WebKitAdditions/DocumentTouchIOS.h>
+#elif ENABLE(TOUCH_EVENTS)
 
-#include <WebKitAdditions/DocumentIOS.cpp>
-#include <WebKitAdditions/DocumentTouchIOS.cpp>
-#include <WebKitAdditions/GestureEvent.cpp>
-#include <WebKitAdditions/TouchEventIOS.cpp>
-#include <WebKitAdditions/TouchIOS.cpp>
-#include <WebKitAdditions/TouchListIOS.cpp>
+#include <functional>
+#include <wtf/Vector.h>
+
+namespace WebCore {
+
+class DOMWindow;
+class Document;
+class EventTarget;
+class Touch;
+class TouchList;
+
+class DocumentTouch {
+public:
+    static Ref<Touch> createTouch(Document&, DOMWindow*, EventTarget*, int identifier, int pageX, int pageY, int screenX, int screenY, int radiusX, int radiusY, float rotationAngle, float force);
+    static Ref<TouchList> createTouchList(Document&, Vector<std::reference_wrapper<Touch>>&&);
+};
+
+}
 
 #endif

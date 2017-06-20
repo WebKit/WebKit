@@ -26,13 +26,6 @@
 #include "JSXMLDocument.h"
 #include "NodeTraversal.h"
 #include "SVGDocument.h"
-#include "ScriptController.h"
-#include "XMLDocument.h"
-
-#if ENABLE(TOUCH_EVENTS)
-#include "JSTouch.h"
-#include "JSTouchList.h"
-#endif
 
 using namespace JSC;
 
@@ -98,25 +91,5 @@ void JSDocument::visitAdditionalChildren(SlotVisitor& visitor)
 {
     visitor.addOpaqueRoot(static_cast<ScriptExecutionContext*>(&wrapped()));
 }
-
-#if ENABLE(TOUCH_EVENTS)
-JSValue JSDocument::createTouchList(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto touchList = TouchList::create();
-
-    for (size_t i = 0; i < state.argumentCount(); ++i) {
-        auto* item = JSTouch::toWrapped(vm, state.uncheckedArgument(i));
-        if (!item)
-            return JSValue::decode(throwArgumentTypeError(state, scope, i, "touches", "Document", "createTouchList", "Touch"));
-
-        touchList->append(*item);
-    }
-    return toJSNewlyCreated(&state, globalObject(), WTFMove(touchList));
-}
-#endif
-
 
 } // namespace WebCore

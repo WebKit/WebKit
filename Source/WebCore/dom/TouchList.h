@@ -29,6 +29,7 @@
 #elif ENABLE(TOUCH_EVENTS)
 
 #include "Touch.h"
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -40,6 +41,10 @@ public:
     {
         return adoptRef(*new TouchList);
     }
+    static Ref<TouchList> create(Vector<std::reference_wrapper<Touch>>&& touches)
+    {
+        return adoptRef(*new TouchList(WTFMove(touches)));
+    }
 
     unsigned length() const { return m_values.size(); }
 
@@ -49,7 +54,14 @@ public:
     void append(Ref<Touch>&& touch) { m_values.append(WTFMove(touch)); }
 
 private:
-    TouchList() {}
+    TouchList() = default;
+
+    explicit TouchList(Vector<std::reference_wrapper<Touch>>&& touches)
+    {
+        m_values.reserveInitialCapacity(touches.size());
+        for (auto& touch : touches)
+            m_values.uncheckedAppend(touch.get());
+    }
 
     Vector<Ref<Touch>> m_values;
 };

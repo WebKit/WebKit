@@ -1,3 +1,51 @@
+2017-06-19  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Move Touch related bindings in Document to their own IDL file
+        https://bugs.webkit.org/show_bug.cgi?id=173521
+
+        Reviewed by Alex Christensen.
+
+        Rather than #including in the middle of an IDL file, this moves the touch related
+        bindings in Document.idl to a new partial interface for Document in DocumentTouch.idl.
+        While here, remove the custom binding for createTouchList.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::createTouchList): Deleted.
+        Remove createTouchList. It can be generated now.
+
+        * dom/Document.cpp:
+        (WebCore::Document::createTouch): Deleted.
+        * dom/Document.h:
+        Move touch related bindings code to DocumentTouch.h/cpp.
+        Remove DocumentIOSForward as it is no longer needed.
+
+        * dom/Document.idl:
+        Move touch related bindings to DocumentTouch.idl
+        
+        * dom/DocumentTouch.h: Added.
+        * dom/DocumentTouch.cpp: Added.
+        (WebCore::DocumentTouch::createTouch):
+        Moved from Document.
+
+        (WebCore::DocumentTouch::createTouchList):
+        Added to aid generated binding.
+
+        * dom/DocumentTouch.idl: Added.
+        Moved operations from Document.h
+
+        * dom/TouchList.h:
+        (WebCore::TouchList::create):
+        (WebCore::TouchList::TouchList):
+        Added create that works with the bindings.
+
+        * dom/ios/TouchEvents.cpp:
+        Add DocumentTouchIOS.h and sort.
+
 2017-06-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] The system Japanese font cannot be italicized
