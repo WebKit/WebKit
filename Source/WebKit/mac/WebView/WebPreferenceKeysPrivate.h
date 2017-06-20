@@ -117,6 +117,7 @@
 #define WebKitForceWebGLUsesLowPowerPreferenceKey @"WebKitForceWebGLUsesLowPower"
 #define WebKitAccelerated2dCanvasEnabledPreferenceKey @"WebKitAccelerated2dCanvasEnabled"
 #define WebKitFrameFlatteningPreferenceKey @"WebKitFrameFlattening"
+#define WebKitAsyncFrameScrollingEnabledPreferenceKey @"WebKitAsyncFrameScrollingEnabled"
 #define WebKitSpatialNavigationEnabledPreferenceKey @"WebKitSpatialNavigationEnabled"
 #define WebKitPaginateDuringLayoutEnabledPreferenceKey @"WebKitPaginateDuringLayoutEnabled"
 #define WebKitDNSPrefetchingEnabledPreferenceKey @"WebKitDNSPrefetchingEnabled"

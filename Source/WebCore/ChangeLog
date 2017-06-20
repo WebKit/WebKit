@@ -1,3 +1,30 @@
+2017-06-19  Frederic Wang  <fwang@igalia.com>
+
+        [Mac] Add an experimental feature setting for async frame scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=173359
+
+        Reviewed by Simon Fraser.
+
+        The necessary work to use compositing for frames and include them in the scrolling tree on
+        macOS was performed in r217726 and r217730. ScrollingTreeIncludesFrames was used to
+        determine when this behavior should be enabled. However, this does not work well on iOS where
+        ScrollingTreeIncludesFrames defaults to true and really means "include the frames in the
+        scrolling tree when necessary". Hence we instead introduce a new "async frame scrolling"
+        switch to enable the behavior on macOS, which will also be used in a follow-up commit on iOS.
+        This new setting is also made an "experimental feature", so that it will be more convenient
+        for developer to try it.
+
+        Test: compositing/iframes/compositing-for-scrollable-iframe.html
+              fast/scrolling/scrolling-tree-includes-frame.html
+
+        * page/Settings.in: Declare new setting for async frame scrolling.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::coordinatesScrollingForFrameView): Also include frames in
+        scrolling tree when async frame scrolling is enabled.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame): Rely on async frame
+        scrolling to decide when compositing is needed.
+
 2017-06-19  Zalan Bujtas  <zalan@apple.com>
 
         AX: Remove redundant AXObjectCache::textChanged(RenderObject*).

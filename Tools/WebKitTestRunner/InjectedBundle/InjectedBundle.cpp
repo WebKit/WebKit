@@ -318,6 +318,7 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetUseDashboardCompatibilityMode(m_bundle, m_pageGroup, false);
     WKBundleSetAuthorAndUserStylesEnabled(m_bundle, m_pageGroup, true);
     WKBundleSetFrameFlatteningEnabled(m_bundle, m_pageGroup, false);
+    WKBundleSetAsyncFrameScrollingEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetMinimumLogicalFontSize(m_bundle, m_pageGroup, 9);
     WKBundleSetSpatialNavigationEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetAllowFileAccessFromFileURLs(m_bundle, m_pageGroup, true);

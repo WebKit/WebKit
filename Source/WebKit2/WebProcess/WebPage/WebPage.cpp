@@ -3055,6 +3055,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setLocalStorageEnabled(store.getBoolValueForKey(WebPreferencesKey::localStorageEnabledKey()));
     settings.setXSSAuditorEnabled(store.getBoolValueForKey(WebPreferencesKey::xssAuditorEnabledKey()));
     settings.setFrameFlattening(static_cast<WebCore::FrameFlattening>(store.getUInt32ValueForKey(WebPreferencesKey::frameFlatteningKey())));
+    settings.setAsyncFrameScrollingEnabled(store.getBoolValueForKey(WebPreferencesKey::asyncFrameScrollingEnabledKey()));
     if (store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()) && !usesEphemeralSession())
         setSessionID(SessionID::legacyPrivateSessionID());
     else if (!store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()) && sessionID() == SessionID::legacyPrivateSessionID())

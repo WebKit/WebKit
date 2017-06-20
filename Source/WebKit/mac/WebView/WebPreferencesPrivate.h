@@ -165,6 +165,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (WebKitFrameFlattening)frameFlattening;
 - (void)setFrameFlattening:(WebKitFrameFlattening)flag;
 
+- (BOOL)asyncFrameScrollingEnabled;
+- (void)setAsyncFrameScrollingEnabled:(BOOL)enabled;
+
 - (BOOL)isSpatialNavigationEnabled;
 - (void)setSpatialNavigationEnabled:(BOOL)flag;
 

@@ -1,3 +1,14 @@
+2017-06-19  Frederic Wang  <fwang@igalia.com>
+
+        [Mac] Add an experimental feature setting for async frame scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=173359
+
+        Reviewed by Simon Fraser.
+
+        * compositing/iframes/compositing-for-scrollable-iframe.html: Use "async frame scrolling" for
+        this test.
+        * fast/scrolling/scrolling-tree-includes-frame.html: Ditto.
+
 2017-06-19  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebCrypto] Add test for ECDH SPKI imports using the ecDH algorithm identifier

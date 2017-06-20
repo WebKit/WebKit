@@ -849,6 +849,7 @@ static void enableExperimentalFeatures(WebPreferences* preferences)
     [preferences setWebAnimationsEnabled:YES];
     [preferences setWebGL2Enabled:YES];
     [preferences setWebGPUEnabled:YES];
+    // FIXME: AsyncFrameScrollingEnabled
     [preferences setWebRTCLegacyAPIEnabled:YES];
     [preferences setCredentialManagementEnabled:YES];
     [preferences setReadableByteStreamAPIEnabled:YES];
@@ -904,6 +905,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setLoadsImagesAutomatically:YES];
     [preferences setLoadsSiteIconsIgnoringImageLoadingPreference:NO];
     [preferences setFrameFlattening:WebKitFrameFlatteningDisabled];
+    [preferences setAsyncFrameScrollingEnabled:NO];
     [preferences setSpatialNavigationEnabled:NO];
     [preferences setMetaRefreshEnabled:YES];
 

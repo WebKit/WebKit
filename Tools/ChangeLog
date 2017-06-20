@@ -1,3 +1,16 @@
+2017-06-19  Frederic Wang  <fwang@igalia.com>
+
+        [Mac] Add an experimental feature setting for async frame scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=173359
+
+        Reviewed by Simon Fraser.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (enableExperimentalFeatures): Do not enable async frame scrolling for now.
+        (resetWebPreferencesToConsistentValues): Disable async frame scrolling by default.
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting): Initalize to async frame scrolling to false.
+
 2017-06-19  Guillaume Emont  <guijemont@igalia.com>
 
         Unreviewed, adding myself to contributors.json

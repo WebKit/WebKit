@@ -151,6 +151,11 @@ void WKBundleSetFrameFlatteningEnabled(WKBundleRef bundleRef, WKBundlePageGroupR
     toImpl(bundleRef)->setFrameFlatteningEnabled(toImpl(pageGroupRef), enabled);
 }
 
+void WKBundleSetAsyncFrameScrollingEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
+{
+    toImpl(bundleRef)->setAsyncFrameScrollingEnabled(toImpl(pageGroupRef), enabled);
+}
+
 void WKBundleSetJavaScriptCanAccessClipboard(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
 {
     toImpl(bundleRef)->setJavaScriptCanAccessClipboard(toImpl(pageGroupRef), enabled);

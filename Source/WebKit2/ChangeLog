@@ -1,3 +1,21 @@
+2017-06-19  Frederic Wang  <fred.wang@free.fr>
+
+        [Mac] Add an experimental feature setting for async frame scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=173359
+
+        Reviewed by Simon Fraser.
+
+        * Shared/WebPreferencesDefinitions.h: Add experimental feature "async frame scrolling".
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetAsyncFrameScrollingEnabled): Add setter for async frame scrolling.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Declare setter.
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAsyncFrameScrollingEnabled): Add setter for async frame scrolling.
+        * WebProcess/InjectedBundle/InjectedBundle.h: Declare setter.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Take into account preference update for async frame
+        scrolling.
+
 2017-06-19  Darin Adler  <darin@apple.com>
 
         Merge MediaDevicesRequest and MediaDevicesEnumerationRequest to tighten up code and object lifetime

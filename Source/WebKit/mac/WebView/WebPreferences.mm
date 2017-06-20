@@ -524,6 +524,7 @@ public:
 #else
         [NSNumber numberWithUnsignedInt:FrameFlatteningDisabled], WebKitFrameFlatteningPreferenceKey,
 #endif
+        [NSNumber numberWithBool:NO], WebKitAsyncFrameScrollingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSpatialNavigationEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitDNSPrefetchingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFullScreenEnabledPreferenceKey,
@@ -2125,6 +2126,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setFrameFlattening:(WebKitFrameFlattening)flattening
 {
     [self _setUnsignedIntValue:flattening forKey:WebKitFrameFlatteningPreferenceKey];
+}
+
+- (BOOL)asyncFrameScrollingEnabled
+{
+    return [self _boolValueForKey:WebKitAsyncFrameScrollingEnabledPreferenceKey];
+}
+
+- (void)setAsyncFrameScrollingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitAsyncFrameScrollingEnabledPreferenceKey];
 }
 
 - (BOOL)isSpatialNavigationEnabled

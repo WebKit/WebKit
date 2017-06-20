@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Check whether scrollable iframes require compositing when they are included in the scrolling tree</title>
+    <title>Check whether scrollable iframes require compositing when async frame scrolling is enabled</title>
     <script>
       if (window.internals)
-          window.internals.settings.setScrollingTreeIncludesFrames(true);
+          window.internals.settings.setAsyncFrameScrollingEnabled(true);
     </script>
   </head>
   <body>

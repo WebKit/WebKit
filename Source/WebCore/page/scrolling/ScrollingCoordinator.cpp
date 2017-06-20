@@ -88,7 +88,11 @@ bool ScrollingCoordinator::coordinatesScrollingForFrameView(const FrameView& fra
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (!frameView.frame().isMainFrame() && !m_page->settings().scrollingTreeIncludesFrames())
+    if (!frameView.frame().isMainFrame() && !m_page->settings().scrollingTreeIncludesFrames()
+#if PLATFORM(MAC)
+        && !m_page->settings().asyncFrameScrollingEnabled()
+#endif
+    )
         return false;
 
     RenderView* renderView = frameView.frame().contentRenderer();

@@ -2802,6 +2802,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setLoadDeferringEnabled(shouldEnableLoadDeferring());
     settings.setWindowFocusRestricted(shouldRestrictWindowFocus());
     settings.setFrameFlattening((const WebCore::FrameFlattening)[preferences frameFlattening]);
+    settings.setAsyncFrameScrollingEnabled([preferences asyncFrameScrollingEnabled]);
     settings.setSpatialNavigationEnabled([preferences isSpatialNavigationEnabled]);
     settings.setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
 

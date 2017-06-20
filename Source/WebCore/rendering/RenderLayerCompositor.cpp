@@ -2469,7 +2469,7 @@ bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
         return false;
 
 #if PLATFORM(MAC)
-    if (!m_renderView.settings().scrollingTreeIncludesFrames())
+    if (!m_renderView.settings().asyncFrameScrollingEnabled())
         return false;
 #endif
 

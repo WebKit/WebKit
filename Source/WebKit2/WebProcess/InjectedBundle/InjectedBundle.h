@@ -97,6 +97,7 @@ public:
     void setNeedsStorageAccessFromFileURLsQuirk(WebPageGroupProxy*, bool);
     void setMinimumLogicalFontSize(WebPageGroupProxy*, int size);
     void setFrameFlatteningEnabled(WebPageGroupProxy*, bool);
+    void setAsyncFrameScrollingEnabled(WebPageGroupProxy*, bool);
     void setPluginsEnabled(WebPageGroupProxy*, bool);
     void setJavaScriptCanAccessClipboard(WebPageGroupProxy*, bool);
     void setPrivateBrowsingEnabled(WebPageGroupProxy*, bool);
