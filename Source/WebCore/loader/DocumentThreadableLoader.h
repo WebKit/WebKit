@@ -132,7 +132,6 @@ namespace WebCore {
         std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
         std::optional<CrossOriginPreflightChecker> m_preflightChecker;
         std::optional<HTTPHeaderMap> m_originalHeaders;
-        unsigned m_redirectCount { 0 };
 
         ShouldLogError m_shouldLogError;
     };
