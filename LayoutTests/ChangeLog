@@ -6,6 +6,18 @@
 
         Reviewed by Alexey Proskuryakov.
 
+        Make test clean a little bit more robust.
+
+        * storage/domstorage/sessionstorage/set-item-synchronous-keydown.html:
+
+2017-06-05  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: RunLoop::isMain() in com.apple.WebKit: IPC::Connection::sendSyncMessage + 128
+        https://bugs.webkit.org/show_bug.cgi?id=172943
+        <rdar://problem/31288058>
+
+        Reviewed by Alexey Proskuryakov.
+
         Add better test coverage.
 
         * storage/domstorage/sessionstorage/set-item-synchronous-keydown-expected.txt: Added.
