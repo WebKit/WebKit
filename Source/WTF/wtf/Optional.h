@@ -31,7 +31,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-// Copied from https://github.com/akrzemi1/Optional (727c729dd1d9f06f225868280e50154594d7e59d)
+// Copied from https://github.com/akrzemi1/Optional (8456c3923776b33b4ae852734273fe934c3e4e61)
 
 // Modified to make it compile with exceptions disabled.
 
@@ -536,6 +536,7 @@ public:
   // 20.5.4.5, Observers
 
   explicit constexpr operator bool() const __NOEXCEPT { return initialized(); }
+  constexpr bool has_value() const __NOEXCEPT { return initialized(); }
 
   constexpr T const* operator ->() const {
     return TR2_OPTIONAL_ASSERTED_EXPRESSION(initialized(), dataptr());
@@ -649,6 +650,8 @@ public:
 
 # endif
 
+  // 20.6.3.6, modifiers
+  void reset() __NOEXCEPT { clear(); }
 };
 
 
@@ -746,11 +749,18 @@ public:
     return ref != nullptr;
   }
 
+  constexpr bool has_value() const __NOEXCEPT {
+    return ref != nullptr;
+  }
+
   template <class V>
   constexpr typename std::decay<T>::type value_or(V&& v) const
   {
     return *this ? **this : detail_::convert<typename std::decay<T>::type>(detail_::constexpr_forward<V>(v));
   }
+
+  // x.x.x.x, modifiers
+  void reset() __NOEXCEPT { ref = nullptr; }
 };
 
 

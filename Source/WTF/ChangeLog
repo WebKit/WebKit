@@ -1,3 +1,15 @@
+2017-06-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Rebaseline std::optional
+        https://bugs.webkit.org/show_bug.cgi?id=173582
+
+        Reviewed by JF Bastien.
+
+        Update the copy of our std::optional to the latest version.
+        It adds std::optional::has_value() and std::optional::reset().
+
+        * wtf/Optional.h:
+
 2017-06-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Include execinfo.h and dlfcn.h based on platform defines
