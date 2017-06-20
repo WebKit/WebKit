@@ -37,6 +37,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

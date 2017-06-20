@@ -25,10 +25,9 @@
 
 #pragma once
 
-#include "CSSFontFaceRule.h"
-#include "FontSelectionAlgorithm.h"
 #include "FontSelectionValueInlines.h"
 #include "FontTaggedSettings.h"
+#include "StyleRule.h"
 #include "TextFlags.h"
 #include "Timer.h"
 #include <memory>

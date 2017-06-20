@@ -33,7 +33,6 @@
 
 #include "CSSParserMode.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/text/StringView.h>
 
 namespace WebCore {
 

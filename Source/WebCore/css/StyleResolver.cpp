@@ -43,6 +43,7 @@
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
 #include "CSSImageSetValue.h"
+#include "CSSImageValue.h"
 #include "CSSInheritedValue.h"
 #include "CSSInitialValue.h"
 #include "CSSKeyframeRule.h"

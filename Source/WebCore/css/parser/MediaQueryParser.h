@@ -31,7 +31,6 @@
 
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
-#include "MediaList.h"
 #include "MediaQuery.h"
 #include "MediaQueryBlockWatcher.h"
 #include "MediaQueryExpression.h"

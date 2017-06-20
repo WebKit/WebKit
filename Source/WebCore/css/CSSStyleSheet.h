@@ -24,7 +24,6 @@
 #include "ExceptionOr.h"
 #include "StyleSheet.h"
 #include <memory>
-#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicStringHash.h>

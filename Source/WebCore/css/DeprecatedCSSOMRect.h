@@ -28,7 +28,6 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "Rect.h"
 #include <wtf/RefPtr.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

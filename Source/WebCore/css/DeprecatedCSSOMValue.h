@@ -27,10 +27,8 @@
 
 #include "CSSValue.h"
 #include "ExceptionOr.h"
-#include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 

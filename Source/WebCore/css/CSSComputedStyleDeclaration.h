@@ -21,9 +21,9 @@
 #pragma once
 
 #include "CSSStyleDeclaration.h"
-#include "FontDescription.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
+#include "TextFlags.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 

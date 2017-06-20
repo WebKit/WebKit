@@ -29,7 +29,6 @@
 
 #include "CSSSelector.h"
 #include "Element.h"
-#include "SpaceSplitString.h"
 #include "StyleRelations.h"
 
 namespace WebCore {

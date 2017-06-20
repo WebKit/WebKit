@@ -31,6 +31,7 @@
 #include "CSSFontFamily.h"
 #include "CSSFontValue.h"
 #include "CSSGradientValue.h"
+#include "CSSGridTemplateAreasValue.h"
 #include "CSSShadowValue.h"
 #include "Counter.h"
 #include "CounterContent.h"

@@ -36,6 +36,7 @@
 
 #include "HTMLMediaElement.h"
 #include "VideoTrackList.h"
+#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(MEDIA_SOURCE)
 #include "SourceBuffer.h"

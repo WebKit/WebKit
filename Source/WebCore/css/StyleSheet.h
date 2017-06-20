@@ -30,6 +30,7 @@ class CSSImportRule;
 class MediaList;
 class Node;
 class StyleSheet;
+class URL;
 
 class StyleSheet : public RefCounted<StyleSheet> {
 public:

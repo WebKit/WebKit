@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CSSValue.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

@@ -27,7 +27,7 @@
 
 #include "CSSValue.h"
 #include "CSSValuePool.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

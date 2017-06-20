@@ -26,12 +26,12 @@
 #pragma once
 
 #include "CSSValueList.h"
-#include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include <wtf/Function.h>
 
 namespace WebCore {
 
+class CachedImage;
 class CachedResourceLoader;
 class Document;
 struct ResourceLoaderOptions;

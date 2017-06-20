@@ -38,7 +38,6 @@
 #include "GraphicsTypes.h"
 #include "Length.h"
 #include "LineClampValue.h"
-#include "Path.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
 #include "TextFlags.h"

@@ -46,6 +46,7 @@
 #include "CSSVariableParser.h"
 #include "Document.h"
 #include "Element.h"
+#include "MediaList.h"
 #include "MediaQueryParser.h"
 #include "StyleProperties.h"
 #include "StyleRuleImport.h"

@@ -21,7 +21,6 @@
 #pragma once
 
 #include "CSSValue.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

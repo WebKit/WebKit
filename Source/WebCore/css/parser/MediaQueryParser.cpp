@@ -32,6 +32,7 @@
 
 #include "CSSParserIdioms.h"
 #include "CSSTokenizer.h"
+#include "MediaList.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

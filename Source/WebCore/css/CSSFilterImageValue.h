@@ -27,12 +27,10 @@
 #pragma once
 
 #include "CSSImageGeneratorValue.h"
-#include "CSSPrimitiveValue.h"
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "FilterOperations.h"
 #include "Image.h"
-#include "ImageObserver.h"
 #include <wtf/Function.h>
 
 namespace WebCore {

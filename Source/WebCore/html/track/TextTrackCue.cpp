@@ -45,6 +45,7 @@
 #include "VTTCue.h"
 #include "VTTRegionList.h"
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

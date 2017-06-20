@@ -27,8 +27,7 @@
 
 #include "Counter.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
-#include <wtf/RefPtr.h>
-#include <wtf/text/StringBuilder.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

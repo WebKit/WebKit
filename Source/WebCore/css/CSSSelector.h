@@ -23,7 +23,6 @@
 
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
     class CSSSelectorList;

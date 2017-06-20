@@ -28,15 +28,11 @@
 #include "InspectorCSSOMWrappers.h"
 #include "MediaQueryEvaluator.h"
 #include "RenderStyle.h"
-#include "RuleFeature.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
-#include "StylePendingResources.h"
-#include "StyleScope.h"
 #include <bitset>
 #include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>

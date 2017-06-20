@@ -26,15 +26,16 @@
 #pragma once
 
 #include "CSSParserMode.h"
-#include "CSSTokenizer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
+class CSSParserTokenRange;
 class ImmutableStyleProperties;
 class StyleRuleKeyframes;
 class StyleRuleBase;
+class StyleSheetContents;
 
 class CSSDeferredParser : public RefCounted<CSSDeferredParser> {
 public:

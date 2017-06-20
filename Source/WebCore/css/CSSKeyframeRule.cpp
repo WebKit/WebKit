@@ -27,6 +27,7 @@
 #include "CSSKeyframeRule.h"
 
 #include "CSSKeyframesRule.h"
+#include "CSSParser.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
 #include <wtf/text/StringBuilder.h>

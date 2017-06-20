@@ -29,7 +29,6 @@
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

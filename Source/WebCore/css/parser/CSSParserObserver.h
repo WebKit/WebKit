@@ -22,9 +22,7 @@
 
 #pragma once
 
-#include "CSSPropertySourceData.h"
 #include "StyleRule.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

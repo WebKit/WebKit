@@ -28,7 +28,6 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValue.h"
 #include "CSSValueList.h"
-#include "FontSelectionAlgorithm.h"
 
 namespace WebCore {
 

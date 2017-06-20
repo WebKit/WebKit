@@ -25,12 +25,10 @@
 #include "URL.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomicStringHash.h>
-#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 

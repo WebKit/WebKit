@@ -39,6 +39,7 @@
 #include "SharedBuffer.h"
 #include "VTTCue.h"
 #include "WebVTTParser.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
     

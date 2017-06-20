@@ -23,7 +23,6 @@
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "RGBColor.h"
 #include <wtf/RefPtr.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

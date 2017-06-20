@@ -33,9 +33,7 @@
 #include "CSSParser.h"
 #include "CSSParserMode.h"
 #include "CSSParserTokenRange.h"
-#include "CSSProperty.h"
 #include "CSSPropertyNames.h"
-#include "CSSPropertySourceData.h"
 #include "StyleRule.h"
 
 #include <memory>

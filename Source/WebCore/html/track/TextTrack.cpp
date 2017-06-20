@@ -42,6 +42,7 @@
 #include "TextTrackList.h"
 #include "VTTRegion.h"
 #include "VTTRegionList.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

@@ -27,7 +27,6 @@
 
 #include "CSSValue.h"
 #include "FloatSizeHash.h"
-#include "Timer.h"
 #include <wtf/HashCountedSet.h>
 
 namespace WebCore {

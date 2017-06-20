@@ -22,7 +22,6 @@
 
 #include "CSSSelector.h"
 #include "CSSValueKeywords.h"
-#include "CSSValueList.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/WTFString.h>

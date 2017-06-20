@@ -31,7 +31,6 @@
 #pragma once
 
 #include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

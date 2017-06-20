@@ -31,6 +31,7 @@
 
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

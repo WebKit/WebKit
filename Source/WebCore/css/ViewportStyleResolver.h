@@ -32,7 +32,6 @@
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 
 #include "CSSPropertyNames.h"
-#include "FloatSize.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
