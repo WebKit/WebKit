@@ -92,7 +92,7 @@ WEBKIT_OPTION_DEFINE(USE_LIBSECRET "Whether to enable the persistent credential 
 
 # Private options specific to the GTK+ port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
-WEBKIT_OPTION_DEFINE(USE_GSTREAMER_GL "Whether to enable support for GStreamer GL" PRIVATE OFF)
+WEBKIT_OPTION_DEFINE(USE_GSTREAMER_GL "Whether to enable support for GStreamer GL" PRIVATE ON)
 WEBKIT_OPTION_DEFINE(USE_GSTREAMER_MPEGTS "Whether to enable support for MPEG-TS" PRIVATE OFF)
 WEBKIT_OPTION_DEFINE(USE_REDIRECTED_XCOMPOSITE_WINDOW "Whether to use a Redirected XComposite Window for accelerated compositing in X11." PRIVATE ON)
 
@@ -366,6 +366,10 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     if (USE_GSTREAMER_GL)
         if (NOT PC_GSTREAMER_GL_FOUND)
             message(FATAL_ERROR "GStreamerGL is needed for USE_GSTREAMER_GL.")
+        endif ()
+        if (PC_GSTREAMER_VERSION VERSION_LESS "1.10")
+            set(USE_GSTREAMER_GL OFF)
+            message(STATUS "Disabling GSTREAMER_GL as the GStreamer version is older than 1.10.")
         endif ()
     endif ()
 
