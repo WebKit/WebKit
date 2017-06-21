@@ -26,6 +26,9 @@ add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NA
 # Turn off certain link features
 add_compile_options(/Gy- /openmp- /GF-)
 
+# Specify the source code encoding
+add_compile_options(/utf-8 /validate-charset)
+
 if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /OPT:NOREF /OPT:NOICF")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /OPT:NOREF /OPT:NOICF")
