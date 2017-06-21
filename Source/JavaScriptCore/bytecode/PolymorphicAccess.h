@@ -125,12 +125,12 @@ public:
     // When this fails (returns GaveUp), this will leave the old stub intact but you should not try
     // to call this method again for that PolymorphicAccess instance.
     AccessGenerationResult addCases(
-        VM&, CodeBlock*, StructureStubInfo&, const Identifier&, Vector<std::unique_ptr<AccessCase>, 2>);
+        const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, const Identifier&, Vector<std::unique_ptr<AccessCase>, 2>);
 
     AccessGenerationResult addCase(
-        VM&, CodeBlock*, StructureStubInfo&, const Identifier&, std::unique_ptr<AccessCase>);
+        const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, const Identifier&, std::unique_ptr<AccessCase>);
     
-    AccessGenerationResult regenerate(VM&, CodeBlock*, StructureStubInfo&, const Identifier&);
+    AccessGenerationResult regenerate(const GCSafeConcurrentJSLocker&, VM&, CodeBlock*, StructureStubInfo&, const Identifier&);
     
     bool isEmpty() const { return m_list.isEmpty(); }
     unsigned size() const { return m_list.size(); }
@@ -164,11 +164,8 @@ private:
     typedef Vector<std::unique_ptr<AccessCase>, 2> ListType;
     
     void commit(
-        VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>&, CodeBlock*, StructureStubInfo&,
+        const GCSafeConcurrentJSLocker&, VM&, std::unique_ptr<WatchpointsOnStructureStubInfo>&, CodeBlock*, StructureStubInfo&,
         const Identifier&, AccessCase&);
-
-    MacroAssemblerCodePtr regenerate(
-        VM&, CodeBlock*, StructureStubInfo&, const Identifier&, ListType& cases);
 
     ListType m_list;
     RefPtr<JITStubRoutine> m_stubRoutine;

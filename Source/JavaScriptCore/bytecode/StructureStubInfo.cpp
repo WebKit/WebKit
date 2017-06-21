@@ -78,12 +78,6 @@ void StructureStubInfo::initPutByIdReplace(CodeBlock* codeBlock, Structure* base
     u.byIdSelf.offset = offset;
 }
 
-void StructureStubInfo::initStub(CodeBlock*, std::unique_ptr<PolymorphicAccess> stub)
-{
-    cacheType = CacheType::Stub;
-    u.stub = stub.release();
-}
-
 void StructureStubInfo::deref()
 {
     switch (cacheType) {
@@ -117,7 +111,7 @@ void StructureStubInfo::aboutToDie()
 }
 
 AccessGenerationResult StructureStubInfo::addAccessCase(
-    CodeBlock* codeBlock, const Identifier& ident, std::unique_ptr<AccessCase> accessCase)
+    const GCSafeConcurrentJSLocker& locker, CodeBlock* codeBlock, const Identifier& ident, std::unique_ptr<AccessCase> accessCase)
 {
     VM& vm = *codeBlock->vm();
     
@@ -130,7 +124,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     AccessGenerationResult result;
     
     if (cacheType == CacheType::Stub) {
-        result = u.stub->addCase(vm, codeBlock, *this, ident, WTFMove(accessCase));
+        result = u.stub->addCase(locker, vm, codeBlock, *this, ident, WTFMove(accessCase));
         
         if (verbose)
             dataLog("Had stub, result: ", result, "\n");
@@ -151,7 +145,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         
         accessCases.append(WTFMove(accessCase));
         
-        result = access->addCases(vm, codeBlock, *this, ident, WTFMove(accessCases));
+        result = access->addCases(locker, vm, codeBlock, *this, ident, WTFMove(accessCases));
         
         if (verbose)
             dataLog("Created stub, result: ", result, "\n");
@@ -161,7 +155,8 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
             return result;
         }
         
-        initStub(codeBlock, WTFMove(access));
+        cacheType = CacheType::Stub;
+        u.stub = access.release();
     }
     
     RELEASE_ASSERT(!result.generatedSomeCode());
@@ -186,7 +181,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     // PolymorphicAccess.
     bufferedStructures.clear();
     
-    result = u.stub->regenerate(vm, codeBlock, *this, ident);
+    result = u.stub->regenerate(locker, vm, codeBlock, *this, ident);
     
     if (verbose)
         dataLog("Regeneration result: ", result, "\n");

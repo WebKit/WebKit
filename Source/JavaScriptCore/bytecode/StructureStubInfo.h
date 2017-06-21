@@ -71,9 +71,8 @@ public:
     void initGetByIdSelf(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
     void initArrayLength();
     void initPutByIdReplace(CodeBlock*, Structure* baseObjectStructure, PropertyOffset);
-    void initStub(CodeBlock*, std::unique_ptr<PolymorphicAccess>);
 
-    AccessGenerationResult addAccessCase(CodeBlock*, const Identifier&, std::unique_ptr<AccessCase>);
+    AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, CodeBlock*, const Identifier&, std::unique_ptr<AccessCase>);
 
     void reset(CodeBlock*);
 

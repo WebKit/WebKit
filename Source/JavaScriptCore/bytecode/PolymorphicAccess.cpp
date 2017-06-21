@@ -210,8 +210,8 @@ PolymorphicAccess::PolymorphicAccess() { }
 PolymorphicAccess::~PolymorphicAccess() { }
 
 AccessGenerationResult PolymorphicAccess::addCases(
-    VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
-    Vector<std::unique_ptr<AccessCase>, 2> originalCasesToAdd)
+    const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
+    const Identifier& ident, Vector<std::unique_ptr<AccessCase>, 2> originalCasesToAdd)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -258,7 +258,7 @@ AccessGenerationResult PolymorphicAccess::addCases(
     // Now add things to the new list. Note that at this point, we will still have old cases that
     // may be replaced by the new ones. That's fine. We will sort that out when we regenerate.
     for (auto& caseToAdd : casesToAdd) {
-        commit(vm, m_watchpoints, codeBlock, stubInfo, ident, *caseToAdd);
+        commit(locker, vm, m_watchpoints, codeBlock, stubInfo, ident, *caseToAdd);
         m_list.append(WTFMove(caseToAdd));
     }
     
@@ -269,12 +269,12 @@ AccessGenerationResult PolymorphicAccess::addCases(
 }
 
 AccessGenerationResult PolymorphicAccess::addCase(
-    VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident,
-    std::unique_ptr<AccessCase> newAccess)
+    const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
+    const Identifier& ident, std::unique_ptr<AccessCase> newAccess)
 {
     Vector<std::unique_ptr<AccessCase>, 2> newAccesses;
     newAccesses.append(WTFMove(newAccess));
-    return addCases(vm, codeBlock, stubInfo, ident, WTFMove(newAccesses));
+    return addCases(locker, vm, codeBlock, stubInfo, ident, WTFMove(newAccesses));
 }
 
 bool PolymorphicAccess::visitWeak(VM& vm) const
@@ -310,7 +310,7 @@ void PolymorphicAccess::dump(PrintStream& out) const
 }
 
 void PolymorphicAccess::commit(
-    VM& vm, std::unique_ptr<WatchpointsOnStructureStubInfo>& watchpoints, CodeBlock* codeBlock,
+    const GCSafeConcurrentJSLocker&, VM& vm, std::unique_ptr<WatchpointsOnStructureStubInfo>& watchpoints, CodeBlock* codeBlock,
     StructureStubInfo& stubInfo, const Identifier& ident, AccessCase& accessCase)
 {
     // NOTE: We currently assume that this is relatively rare. It mainly arises for accesses to
@@ -329,7 +329,7 @@ void PolymorphicAccess::commit(
 }
 
 AccessGenerationResult PolymorphicAccess::regenerate(
-    VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident)
+    const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, const Identifier& ident)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -410,7 +410,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     bool allGuardedByStructureCheck = true;
     bool hasJSGetterSetterCall = false;
     for (auto& newCase : cases) {
-        commit(vm, state.watchpoints, codeBlock, stubInfo, ident, *newCase);
+        commit(locker, vm, state.watchpoints, codeBlock, stubInfo, ident, *newCase);
         allGuardedByStructureCheck &= newCase->guardedByStructureCheck();
         if (newCase->type() == AccessCase::Getter || newCase->type() == AccessCase::Setter)
             hasJSGetterSetterCall = true;
