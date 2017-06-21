@@ -154,9 +154,9 @@ void RemoteLayerTreeDrawingArea::updateGeometry(const IntSize& viewSize, const I
     m_webPage.send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 }
 
-bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameView* frameView)
+bool RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView(const FrameView& frameView)
 {
-    return frameView && frameView->frame().isMainFrame();
+    return frameView.frame().isMainFrame();
 }
 
 void RemoteLayerTreeDrawingArea::updatePreferences(const WebPreferencesStore&)

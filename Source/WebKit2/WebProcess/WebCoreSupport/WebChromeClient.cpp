@@ -1071,7 +1071,7 @@ void WebChromeClient::didAddFooterLayer(GraphicsLayer& footerParent)
 
 bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameView) const
 {
-    return m_page.drawingArea()->shouldUseTiledBackingForFrameView(&frameView);
+    return m_page.drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
 void WebChromeClient::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state, uint64_t sourceElementID)

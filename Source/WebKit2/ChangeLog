@@ -1,3 +1,27 @@
+2017-06-20  Frederic Wang  <fwang@igalia.com>
+
+        Pass the argument of DrawingArea::shouldUseTiledBackingForFrameView by reference
+        https://bugs.webkit.org/show_bug.cgi?id=173605
+
+        DrawingArea::shouldUseTiledBackingForFrameView is only called from
+        WebChromeClient::shouldUseTiledBackingForFrameView where the frame view is already available
+        as a reference. This patch makes the argument of
+        DrawingArea::shouldUseTiledBackingForFrameView a reference, so it does not need to be
+        converted to a pointer or to perform nullchecks.
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldUseTiledBackingForFrameView): Just pass the reference.
+        * WebProcess/WebPage/DrawingArea.h: Make the parameter a reference.
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h: Ditto.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h: Ditto.
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::shouldUseTiledBackingForFrameView): Use the reference
+        to frame view and remove the nullcheck.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::shouldUseTiledBackingForFrameView): Ditto.
+
 2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Disable font variations on macOS Sierra and iOS 10
