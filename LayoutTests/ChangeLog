@@ -1,3 +1,11 @@
+2017-06-21  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Unreviewed gardening
+
+        Update expectations to known flaky http/appcache tests and also a
+        couple of flaky crashing tests.
+        * platform/wpe/TestExpectations:
+
 2017-06-21  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Cannot call setValue() on contenteditable or ARIA text controls
