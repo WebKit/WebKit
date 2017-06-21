@@ -1,3 +1,14 @@
+2017-06-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move WebGtkExtensionManager and WebGtkInjectedBundleMain to glib API dir
+        https://bugs.webkit.org/show_bug.cgi?id=173606
+
+        Reviewed by Žan Doberšek.
+
+        Update public symbols that were renamed.
+
+        * Source/cmake/gtksymbols.filter:
+
 2017-06-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Implement CryptoKeyEC SPKI imports

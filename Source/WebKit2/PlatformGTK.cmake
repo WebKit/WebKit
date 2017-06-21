@@ -241,6 +241,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
 
     WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp
+    WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp
     WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp
     WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp
     WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp
@@ -396,8 +397,6 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebPage/gtk/WebPageGtk.cpp
     WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
 
-    WebProcess/gtk/WebGtkExtensionManager.cpp
-    WebProcess/gtk/WebGtkInjectedBundleMain.cpp
     WebProcess/gtk/WebProcessMainGtk.cpp
 
     WebProcess/soup/WebKitSoupRequestInputStream.cpp
@@ -796,7 +795,6 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/gtk/DOM"
     "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape/unix"
     "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape/x11"
-    "${WEBKIT2_DIR}/WebProcess/gtk"
     "${WEBKIT2_DIR}/WebProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/unix"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/gtk"
@@ -1095,7 +1093,7 @@ include_directories(
     "${FORWARDING_HEADERS_WEBKIT2GTK_DIR}"
 )
 
-add_library(webkit2gtkinjectedbundle MODULE "${WEBKIT2_DIR}/WebProcess/gtk/WebGtkInjectedBundleMain.cpp")
+add_library(webkit2gtkinjectedbundle MODULE "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")
 add_webkit2_prefix_header(webkit2gtkinjectedbundle)
 target_link_libraries(webkit2gtkinjectedbundle WebKit2)
 

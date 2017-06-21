@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "WebGtkExtensionManager.h"
+#include "WebKitExtensionManager.h"
 
 #include "APIString.h"
 #include "InjectedBundle.h"
@@ -29,17 +29,17 @@
 
 namespace WebKit {
 
-WebGtkExtensionManager& WebGtkExtensionManager::singleton()
+WebKitExtensionManager& WebKitExtensionManager::singleton()
 {
-    static NeverDestroyed<WebGtkExtensionManager> extensionManager;
+    static NeverDestroyed<WebKitExtensionManager> extensionManager;
     return extensionManager;
 }
 
-WebGtkExtensionManager::WebGtkExtensionManager()
+WebKitExtensionManager::WebKitExtensionManager()
 {
 }
 
-void WebGtkExtensionManager::scanModules(const String& webExtensionsDirectory, Vector<String>& modules)
+void WebKitExtensionManager::scanModules(const String& webExtensionsDirectory, Vector<String>& modules)
 {
     Vector<String> modulePaths = WebCore::listDirectory(webExtensionsDirectory, String("*.so"));
     for (size_t i = 0; i < modulePaths.size(); ++i) {
@@ -67,7 +67,7 @@ static void parseUserData(API::Object* userData, String& webExtensionsDirectory,
     initializationUserData = adoptGRef(data);
 }
 
-bool WebGtkExtensionManager::initializeWebExtension(Module* extensionModule, GVariant* userData)
+bool WebKitExtensionManager::initializeWebExtension(Module* extensionModule, GVariant* userData)
 {
     WebKitWebExtensionInitializeWithUserDataFunction initializeWithUserDataFunction =
         extensionModule->functionPointer<WebKitWebExtensionInitializeWithUserDataFunction>("webkit_web_extension_initialize_with_user_data");
@@ -86,7 +86,7 @@ bool WebGtkExtensionManager::initializeWebExtension(Module* extensionModule, GVa
     return false;
 }
 
-void WebGtkExtensionManager::initialize(InjectedBundle* bundle, API::Object* userDataObject)
+void WebKitExtensionManager::initialize(InjectedBundle* bundle, API::Object* userDataObject)
 {
     ASSERT(bundle);
     ASSERT(userDataObject);

@@ -35,16 +35,15 @@ namespace WebKit {
 
 class InjectedBundle;
 
-class WebGtkExtensionManager {
-    WTF_MAKE_NONCOPYABLE(WebGtkExtensionManager);
-
+class WebKitExtensionManager {
+    WTF_MAKE_NONCOPYABLE(WebKitExtensionManager);
 public:
-    static WebGtkExtensionManager& singleton();
+    static WebKitExtensionManager& singleton();
 
     void initialize(InjectedBundle*, API::Object*);
 
 private:
-    WebGtkExtensionManager();
+    WebKitExtensionManager();
 
     void scanModules(const String&, Vector<String>&);
     bool initializeWebExtension(Module* extensionModule, GVariant* userData);
@@ -52,7 +51,7 @@ private:
     Vector<Module*> m_extensionModules;
     GRefPtr<WebKitWebExtension> m_extension;
 
-    friend class NeverDestroyed<WebGtkExtensionManager>;
+    friend class NeverDestroyed<WebKitExtensionManager>;
 };
 
 } // namespace WebKit

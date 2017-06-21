@@ -5,8 +5,8 @@ global:
   NetworkProcessMainUnix;
   PluginProcessMainUnix;
   DatabaseProcessMainUnix;
-  _ZN6WebKit22WebGtkExtensionManager10initializeEPNS_14InjectedBundleEPN3API6ObjectE;
-  _ZN6WebKit22WebGtkExtensionManager9singletonEv;
+  _ZN6WebKit22WebKitExtensionManager10initializeEPNS_14InjectedBundleEPN3API6ObjectE;
+  _ZN6WebKit22WebKitExtensionManager9singletonEv;
 local:
   webkit_media_player_debug;
   *;
