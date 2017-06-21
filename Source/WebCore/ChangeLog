@@ -1,3 +1,24 @@
+2017-06-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Include audio/vnd.wave as a valid mime-type for wav files.
+        https://bugs.webkit.org/show_bug.cgi?id=173635
+        rdar://problem/32656568
+
+        Reviewed by Eric Carlson.
+
+        audio/vnd.wave is a valid mime-type for wav files per https://tools.ietf.org/html/rfc2361
+
+        Updated test and test results:
+        LayoutTests/media/media-can-play-wav-audio.html
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes):
+        (WebCore::mimeTypeAssociationMap):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::staticMIMETypeList):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeSet):
+
 2017-06-21  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Cannot call setValue() on contenteditable or ARIA text controls

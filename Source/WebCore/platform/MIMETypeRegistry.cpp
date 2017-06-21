@@ -139,7 +139,8 @@ static const TypeExtensionPair commonMediaTypes[] = {
     { "audio/x-gsm", "gsm" },
 
     // ADPCM
-    { "audio/x-wav", "wav" }
+    { "audio/x-wav", "wav" },
+    { "audio/vnd.wave", "wav" }
 };
 
 static HashSet<String, ASCIICaseInsensitiveHash>* supportedImageResourceMIMETypes;
@@ -771,6 +772,7 @@ static const MIMETypeAssociationMap& mimeTypeAssociationMap()
     mimeTypeMap->add(ASCIILiteral("audio/qcp"), ASCIILiteral("audio/qcelp"));
     mimeTypeMap->add(ASCIILiteral("audio/vnd.qcp"), ASCIILiteral("audio/qcelp"));
     mimeTypeMap->add(ASCIILiteral("audio/wav"), ASCIILiteral("audio/x-wav"));
+    mimeTypeMap->add(ASCIILiteral("audio/vnd.wave"), ASCIILiteral("audio/x-wav"));
     mimeTypeMap->add(ASCIILiteral("audio/mid"), ASCIILiteral("audio/midi"));
     mimeTypeMap->add(ASCIILiteral("audio/sp-midi"), ASCIILiteral("audio/midi"));
     mimeTypeMap->add(ASCIILiteral("audio/x-mid"), ASCIILiteral("audio/midi"));

@@ -1141,6 +1141,7 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation:
             "audio/mpeg3",
             "audio/mpegurl",
             "audio/mpg",
+            "audio/vnd.wave",
             "audio/wav",
             "audio/wave",
             "audio/x-aac",

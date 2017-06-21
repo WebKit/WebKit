@@ -9,10 +9,12 @@
 
                 testExpected("audio.canPlayType('audio/wav')", "maybe");
                 testExpected("audio.canPlayType('audio/x-wav')", "maybe");
+                testExpected("audio.canPlayType('audio/vnd.wave')", "maybe");
 
                 // WAV codec 1 is basic PCM, refer to http://tools.ietf.org/html/rfc2361
                 testExpected("audio.canPlayType('audio/wav; codecs=1')", "probably");
                 testExpected("audio.canPlayType('audio/x-wav; codecs=1')", "probably");
+                testExpected("audio.canPlayType('audio/vnd.wave; codecs=1')", "probably");
 
                 endTest();
             }
