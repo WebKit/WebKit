@@ -1,3 +1,34 @@
+2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Disable font variations on macOS Sierra and iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=173618
+        <rdar://problem/32879164>
+
+        Reviewed by Jon Lee.
+
+        Update expected test results. The old test results are now High Sierra- and iOS 11-expected.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-font-family-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/text/font-selection-font-face-parse-expected.txt:
+        * fast/text/font-selection-font-loading-api-parse-expected.txt:
+        * fast/text/font-stretch-parse-expected.txt:
+        * fast/text/font-style-parse-expected.txt:
+        * fast/text/font-weight-parse-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/mac-elcapitan/fast/css/getComputedStyle/computed-style-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/css/getComputedStyle/computed-style-font-family-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/text/font-selection-font-face-parse-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/text/font-selection-font-loading-api-parse-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/text/font-stretch-parse-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/text/font-style-parse-expected.txt: Removed.
+        * platform/mac-elcapitan/fast/text/font-weight-parse-expected.txt: Removed.
+        * platform/mac-elcapitan/svg/css/getComputedStyle-basic-expected.txt: Removed
+        * platform/mac/TestExpectations:
+        * platform/mac/svg/css/getComputedStyle-basic-expected.txt: Removed
+
 2017-06-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Send context attributes for tracked canvases

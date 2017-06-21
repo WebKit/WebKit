@@ -398,15 +398,6 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
         CFNumberGetValue(minimumValue, kCFNumberFloatType, &rawMinimumValue);
         CFNumberGetValue(maximumValue, kCFNumberFloatType, &rawMaximumValue);
 
-        // FIXME: Remove when <rdar://problem/28893836> is fixed
-#define WORKAROUND_CORETEXT_VARIATIONS_EXTENTS_BUG ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
-#if WORKAROUND_CORETEXT_VARIATIONS_EXTENTS_BUG
-        float epsilon = 0.001;
-        rawMinimumValue += epsilon;
-        rawMaximumValue -= epsilon;
-#endif
-#undef WORKAROUND_CORETEXT_VARIATIONS_EXTENTS_BUG
-
         if (rawMinimumValue > rawMaximumValue)
             std::swap(rawMinimumValue, rawMaximumValue);
 
@@ -559,26 +550,13 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     VariationsMap variationsToBeApplied;
 
     bool needsConversion = isGXVariableFont(originalFont);
-    auto applyVariationValue = [&](const FontTag& tag, float value, bool isDefaultValue) {
-        // FIXME: Remove when <rdar://problem/28707822> is fixed
-#define WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
-#if WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG
-        if (isDefaultValue)
-            value += 0.0001;
-#else
-        UNUSED_PARAM(isDefaultValue);
-#endif
-#undef WORKAROUND_CORETEXT_VARIATIONS_DEFAULT_VALUE_BUG
-        variationsToBeApplied.set(tag, value);
-    };
 
     auto applyVariation = [&](const FontTag& tag, float value) {
         auto iterator = defaultValues.find(tag);
         if (iterator == defaultValues.end())
             return;
         float valueToApply = clampTo(value, iterator->value.minimumValue, iterator->value.maximumValue);
-        bool isDefaultValue = valueToApply == iterator->value.defaultValue;
-        applyVariationValue(tag, valueToApply, isDefaultValue);
+        variationsToBeApplied.set(tag, valueToApply);
     };
 
     // The system font is somewhat magical. Don't mess with its variations.
@@ -612,17 +590,6 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 
     for (auto& newVariation : variations)
         applyVariation(newVariation.tag(), newVariation.value());
-
-#define WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000))
-#if WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
-    if (!fontIsSystemFont(originalFont)) {
-        for (auto& defaultValue : defaultValues) {
-            if (!variationsToBeApplied.contains(defaultValue.key))
-                applyVariationValue(defaultValue.key, defaultValue.value.defaultValue, true);
-        }
-    }
-#endif
-#undef WORKAROUND_CORETEXT_VARIATIONS_UNSPECIFIED_VALUE_BUG
 
 #endif // ENABLE(VARIATION_FONTS)
 

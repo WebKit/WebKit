@@ -1,3 +1,13 @@
+2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Disable font variations on macOS Sierra and iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=173618
+        <rdar://problem/32879164>
+
+        Reviewed by Jon Lee.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-06-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] Remove custom logic for disambiguating long press action sheet gestures and drag lift

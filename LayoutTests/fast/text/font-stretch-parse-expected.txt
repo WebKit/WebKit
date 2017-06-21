@@ -1,5 +1,5 @@
 PASS window.getComputedStyle(document.getElementById('test1')).fontStretch is "normal"
-PASS window.getComputedStyle(document.getElementById('test2')).fontStretch is "1%"
+FAIL window.getComputedStyle(document.getElementById('test2')).fontStretch should be 1%. Was normal.
 PASS window.getComputedStyle(document.getElementById('test3')).fontStretch is "normal"
 PASS window.getComputedStyle(document.getElementById('test4')).fontStretch is "ultra-condensed"
 PASS window.getComputedStyle(document.getElementById('test5')).fontStretch is "extra-condensed"
@@ -18,9 +18,9 @@ PASS window.getComputedStyle(document.getElementById('test17')).fontStretch is "
 PASS window.getComputedStyle(document.getElementById('test18')).fontStretch is "normal"
 PASS window.getComputedStyle(document.getElementById('test19')).fontStretch is "normal"
 PASS window.getComputedStyle(document.getElementById('test20')).fontStretch is "extra-expanded"
-PASS window.getComputedStyle(document.getElementById('test21')).fontStretch is "7%"
+FAIL window.getComputedStyle(document.getElementById('test21')).fontStretch should be 7%. Was normal.
 PASS window.getComputedStyle(document.getElementById('test1')).font is "normal normal normal normal 16px/18px Times"
-PASS window.getComputedStyle(document.getElementById('test2')).font is "16px/18px Times"
+FAIL window.getComputedStyle(document.getElementById('test2')).font should be 16px/18px Times. Was normal normal normal normal 16px/18px Times.
 PASS window.getComputedStyle(document.getElementById('test3')).font is "normal normal normal normal 16px/18px Times"
 PASS window.getComputedStyle(document.getElementById('test4')).font is "normal normal normal ultra-condensed 16px/18px Times"
 PASS window.getComputedStyle(document.getElementById('test5')).font is "normal normal normal extra-condensed 16px/18px Times"
@@ -39,7 +39,7 @@ PASS window.getComputedStyle(document.getElementById('test17')).font is "normal 
 PASS window.getComputedStyle(document.getElementById('test18')).font is "normal normal 100 normal 48px/49px \"Helvetica Neue\""
 PASS window.getComputedStyle(document.getElementById('test19')).font is "normal normal 100 normal 48px/49px \"Helvetica Neue\""
 PASS window.getComputedStyle(document.getElementById('test20')).font is "italic small-caps 100 extra-expanded 48px/49px \"Helvetica Neue\""
-PASS window.getComputedStyle(document.getElementById('test21')).font is "16px/18px Times"
+FAIL window.getComputedStyle(document.getElementById('test21')).font should be 16px/18px Times. Was normal normal normal normal 16px/18px Times.
 PASS document.getElementById('test1').style.font is ""
 PASS document.getElementById('test16').style.font is "100 extra-condensed 48px/49px \"Helvetica Neue\""
 PASS document.getElementById('test17').style.font is "100 extra-condensed 48px/49px \"Helvetica Neue\""

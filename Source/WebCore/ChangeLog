@@ -1,3 +1,21 @@
+2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Disable font variations on macOS Sierra and iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=173618
+        <rdar://problem/32879164>
+
+        Reviewed by Jon Lee.
+
+        On macOS Sierra and iOS 10, there are some platform problems involved with font variations. They
+        were previously enabled on those OSes just as a preview development tool. These platform bugs have
+        been fixed in macOS High Sierra and iOS 11, so we should align our feature flags with the eventual
+        configurations.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::defaultVariationValues):
+        (WebCore::preparePlatformFont):
+
 2017-06-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Send context attributes for tracked canvases
