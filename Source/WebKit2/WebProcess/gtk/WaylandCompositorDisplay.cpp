@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,49 +24,51 @@
  */
 
 #include "config.h"
-#include "AcceleratedSurfaceWayland.h"
+#include "WaylandCompositorDisplay.h"
 
 #if PLATFORM(WAYLAND)
 
-#include "WaylandCompositorDisplay.h"
-#include "WebProcess.h"
-#include <wayland-egl.h>
+#include "WebKit2WaylandClientProtocol.h"
+#include "WebPage.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-std::unique_ptr<AcceleratedSurfaceWayland> AcceleratedSurfaceWayland::create(WebPage& webPage, Client& client)
+std::unique_ptr<WaylandCompositorDisplay> WaylandCompositorDisplay::create(const String& displayName)
 {
-    return WebProcess::singleton().waylandCompositorDisplay() ? std::unique_ptr<AcceleratedSurfaceWayland>(new AcceleratedSurfaceWayland(webPage, client)) : nullptr;
+    if (displayName.isNull())
+        return nullptr;
+
+    struct wl_display* display = wl_display_connect(displayName.utf8().data());
+    if (!display) {
+        WTFLogAlways("PlatformDisplayWayland initialization: failed to connect to the Wayland display: %s", displayName.utf8().data());
+        return nullptr;
+    }
+
+    return std::unique_ptr<WaylandCompositorDisplay>(new WaylandCompositorDisplay(display));
 }
 
-AcceleratedSurfaceWayland::AcceleratedSurfaceWayland(WebPage& webPage, Client& client)
-    : AcceleratedSurface(webPage, client)
-    , m_surface(WebProcess::singleton().waylandCompositorDisplay()->createSurface())
-    , m_window(wl_egl_window_create(m_surface.get(), std::max(1, m_size.width()), std::max(1, m_size.height())))
+void WaylandCompositorDisplay::bindSurfaceToPage(struct wl_surface* surface, WebPage& page)
 {
-    WebProcess::singleton().waylandCompositorDisplay()->bindSurfaceToPage(m_surface.get(), m_webPage);
+    if (!m_webkitgtk)
+        return;
+
+    wl_webkitgtk_bind_surface_to_page(reinterpret_cast<struct wl_webkitgtk*>(m_webkitgtk.get()), surface, page.pageID());
+    wl_display_roundtrip(m_display);
 }
 
-AcceleratedSurfaceWayland::~AcceleratedSurfaceWayland()
+WaylandCompositorDisplay::WaylandCompositorDisplay(struct wl_display* display)
 {
-    wl_egl_window_destroy(m_window);
+    initialize(display);
+    PlatformDisplay::setSharedDisplayForCompositing(*this);
 }
 
-bool AcceleratedSurfaceWayland::resize(const IntSize& size)
+void WaylandCompositorDisplay::registryGlobal(const char* interface, uint32_t name)
 {
-    if (!AcceleratedSurface::resize(size))
-        return false;
-
-    wl_egl_window_resize(m_window, m_size.width(), m_size.height(), 0, 0);
-    return true;
-}
-
-void AcceleratedSurfaceWayland::didRenderFrame()
-{
-    // FIXME: frameComplete() should be called when the frame was actually rendered in the screen.
-    m_client.frameComplete();
+    PlatformDisplayWayland::registryGlobal(interface, name);
+    if (!std::strcmp(interface, "wl_webkitgtk"))
+        m_webkitgtk.reset(static_cast<struct wl_proxy*>(wl_registry_bind(m_registry.get(), name, &wl_webkitgtk_interface, 1)));
 }
 
 } // namespace WebKit

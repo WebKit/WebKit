@@ -115,6 +115,10 @@
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
 
+#if PLATFORM(WAYLAND)
+#include "WaylandCompositorDisplay.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "CookieStorageShim.h"
 #include "ObjCObjectGraph.h"
@@ -311,10 +315,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);
 #if PLATFORM(IOS)
     m_applicationCacheStorage->setDefaultOriginQuota(25ULL * 1024 * 1024);
-#endif
-
-#if PLATFORM(WAYLAND)
-    m_waylandCompositorDisplayName = parameters.waylandCompositorDisplayName;
 #endif
 
 #if ENABLE(VIDEO)

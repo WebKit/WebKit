@@ -1,3 +1,32 @@
+2017-06-21  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WAYLAND] Create WaylandCompositorDisplay unconditionally when initializing the WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=173598
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move WaylandCompositorDisplay code to its own files so it can be used from other classes. Then, instead of
+        storing the waylandCompositorDisplayName in the WebProcess, keep a WaylandCompositorDisplay instance that
+        is created during the initialization. This way the appropriate sharedDisplayForCompositing will be set
+        since the creation of the WebProcess.
+
+        * PlatformGTK.cmake:
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.cpp:
+        (WebKit::AcceleratedSurfaceWayland::create):
+        (WebKit::AcceleratedSurfaceWayland::AcceleratedSurfaceWayland):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::waylandCompositorDisplay):
+        * WebProcess/gtk/WaylandCompositorDisplay.cpp: Added.
+        (WebKit::WaylandCompositorDisplay::create):
+        (WebKit::WaylandCompositorDisplay::bindSurfaceToPage):
+        (WebKit::WaylandCompositorDisplay::WaylandCompositorDisplay):
+        (WebKit::WaylandCompositorDisplay::registryGlobal):
+        * WebProcess/gtk/WaylandCompositorDisplay.h: Added.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2017-06-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Move WebGtkExtensionManager and WebGtkInjectedBundleMain to glib API dir

@@ -79,6 +79,7 @@ class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
 class UserData;
+class WaylandCompositorDisplay;
 class WebAutomationSessionProxy;
 class WebConnectionToUIProcess;
 class WebFrame;
@@ -206,7 +207,7 @@ public:
 #endif
 
 #if PLATFORM(WAYLAND)
-    String waylandCompositorDisplayName() const { return m_waylandCompositorDisplayName; }
+    WaylandCompositorDisplay* waylandCompositorDisplay() const { return m_waylandCompositorDisplay.get(); }
 #endif
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
@@ -430,7 +431,7 @@ private:
     HashMap<WebCore::UserGestureToken *, uint64_t> m_userGestureTokens;
 
 #if PLATFORM(WAYLAND)
-    String m_waylandCompositorDisplayName;
+    std::unique_ptr<WaylandCompositorDisplay> m_waylandCompositorDisplay;
 #endif
 };
 
