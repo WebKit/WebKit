@@ -441,14 +441,7 @@ static const CGFloat presentationElementRectPadding = 15;
 
 - (RetainPtr<NSArray>)defaultActionsForLinkSheet:(_WKActivatedElementInfo *)elementInfo
 {
-    auto delegate = _delegate.get();
-    if (!delegate)
-        return nil;
-
-    if (!_positionInformation)
-        return nil;
-
-    NSURL *targetURL = [NSURL URLWithString:_positionInformation->url];
+    NSURL *targetURL = [elementInfo URL];
     if (!targetURL)
         return nil;
 
@@ -469,10 +462,6 @@ static const CGFloat presentationElementRectPadding = 15;
 
 - (RetainPtr<NSArray>)defaultActionsForImageSheet:(_WKActivatedElementInfo *)elementInfo
 {
-    auto delegate = _delegate.get();
-    if (!delegate)
-        return nil;
-
     NSURL *targetURL = [elementInfo URL];
 
     auto defaultActions = adoptNS([[NSMutableArray alloc] init]);

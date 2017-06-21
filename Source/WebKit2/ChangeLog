@@ -1,3 +1,21 @@
+2017-06-21  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r218606): 3D Touch action menu for links is missing items
+        https://bugs.webkit.org/show_bug.cgi?id=173669
+        <rdar://problem/32905541>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        defaultActionsForLinkSheet is used outside the usual action sheet flow,
+        by 3D Touch code. Therefore, we're not guaranteed to have a _positionInformation.
+        We don't need one, though -- we can get the URL from the passed-in
+        _WKActivatedElementInfo, exactly like defaultActionsForImageSheet already did.
+
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+        Remove the delegate null check, which isn't used after r218606.
+
 2017-06-21  Daniel Bates  <dabates@apple.com>
 
         Cleanup FrameLoadRequest
