@@ -1,3 +1,22 @@
+2017-06-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Don't clear audio mute when muting capture.
+        https://bugs.webkit.org/show_bug.cgi?id=173639
+        rdar://problem/32749737
+
+        Reviewed by Eric Carlson.
+
+        Setting capture mute was clearing audio mute.
+        Added setMediaStreamCaptureMuted to set just the capture mute bit.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _muteMediaCapture]):
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::muteCaptureMediaStreamsExceptIn):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMediaStreamCaptureMuted):
+        * UIProcess/WebPageProxy.h:
+
 2017-06-21  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WAYLAND] Create WaylandCompositorDisplay unconditionally when initializing the WebProcess

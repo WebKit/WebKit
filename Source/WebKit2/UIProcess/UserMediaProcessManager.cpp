@@ -116,7 +116,7 @@ void UserMediaProcessManager::muteCaptureMediaStreamsExceptIn(WebPageProxy& page
         for (auto& manager : state.value->managers()) {
             if (&manager->page() == &pageStartingCapture)
                 continue;
-            manager->page().setMuted(WebCore::MediaProducer::CaptureDevicesAreMuted);
+            manager->page().setMediaStreamCaptureMuted(true);
         }
     }
 #else

@@ -472,7 +472,8 @@ public:
 
     void activateMediaStreamCaptureInPage() { setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted); }
     bool isMediaStreamCaptureMuted() const { return m_mutedState & WebCore::MediaProducer::CaptureDevicesAreMuted; }
-
+    void setMediaStreamCaptureMuted(bool);
+        
 #if PLATFORM(IOS)
     void executeEditCommand(const String& commandName, WTF::Function<void (CallbackBase::Error)>&&);
     double displayedContentScale() const { return m_lastVisibleContentRectUpdate.scale(); }

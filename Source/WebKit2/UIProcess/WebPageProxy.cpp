@@ -1660,7 +1660,15 @@ void WebPageProxy::setEditable(bool editable)
     m_isEditable = editable;
     m_process->send(Messages::WebPage::SetEditable(editable), m_pageID);
 }
-
+    
+void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
+{
+    if (muted)
+        setMuted(m_mutedState | WebCore::MediaProducer::CaptureDevicesAreMuted);
+    else
+        setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted);
+}
+    
 #if !PLATFORM(IOS)
 void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
 {
