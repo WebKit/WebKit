@@ -1,5 +1,48 @@
 2017-06-21  Youenn Fablet  <youenn@apple.com>
 
+        Remove expat source code from Source/ThirdParty/libwebrtc
+        https://bugs.webkit.org/show_bug.cgi?id=173656
+
+        Reviewed by Brent Fulgham.
+
+        * Source/third_party/expat/BUILD.gn: Removed.
+        * Source/third_party/expat/OWNERS: Removed.
+        * Source/third_party/expat/README.chromium: Removed.
+        * Source/third_party/expat/files/COPYING: Removed.
+        * Source/third_party/expat/files/Changes: Removed.
+        * Source/third_party/expat/files/MANIFEST: Removed.
+        * Source/third_party/expat/files/README: Removed.
+        * Source/third_party/expat/files/lib/amigaconfig.h: Removed.
+        * Source/third_party/expat/files/lib/ascii.h: Removed.
+        * Source/third_party/expat/files/lib/asciitab.h: Removed.
+        * Source/third_party/expat/files/lib/expat.h: Removed.
+        * Source/third_party/expat/files/lib/expat_config.h: Removed.
+        * Source/third_party/expat/files/lib/expat_external.h: Removed.
+        * Source/third_party/expat/files/lib/iasciitab.h: Removed.
+        * Source/third_party/expat/files/lib/internal.h: Removed.
+        * Source/third_party/expat/files/lib/latin1tab.h: Removed.
+        * Source/third_party/expat/files/lib/libexpat.def: Removed.
+        * Source/third_party/expat/files/lib/libexpatw.def: Removed.
+        * Source/third_party/expat/files/lib/macconfig.h: Removed.
+        * Source/third_party/expat/files/lib/nametab.h: Removed.
+        * Source/third_party/expat/files/lib/utf8tab.h: Removed.
+        * Source/third_party/expat/files/lib/winconfig.h: Removed.
+        * Source/third_party/expat/files/lib/winconfig.h.original: Removed.
+        * Source/third_party/expat/files/lib/xmlparse.c: Removed.
+        * Source/third_party/expat/files/lib/xmlparse.c.original: Removed.
+        * Source/third_party/expat/files/lib/xmlrole.c: Removed.
+        * Source/third_party/expat/files/lib/xmlrole.h: Removed.
+        * Source/third_party/expat/files/lib/xmltok.c: Removed.
+        * Source/third_party/expat/files/lib/xmltok.h: Removed.
+        * Source/third_party/expat/files/lib/xmltok_impl.c: Removed.
+        * Source/third_party/expat/files/lib/xmltok_impl.c.original: Removed.
+        * Source/third_party/expat/files/lib/xmltok_impl.h: Removed.
+        * Source/third_party/expat/files/lib/xmltok_ns.c: Removed.
+        * Source/third_party/expat/fuzz/OWNERS: Removed.
+        * Source/third_party/expat/fuzz/expat_xml_parse_fuzzer.cc: Removed.
+
+2017-06-21  Youenn Fablet  <youenn@apple.com>
+
         Refresh libwebrtc code up to a87675d4a160e2c49c3e754cd9ca291d6c8f36ae
         https://bugs.webkit.org/show_bug.cgi?id=173602
 
