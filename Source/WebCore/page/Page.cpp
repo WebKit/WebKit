@@ -1145,6 +1145,11 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::suspendScriptedAnimations()
 {
+    if (settings().shouldLogScriptedAnimationControllerSuspensionChange()) {
+        WTFLogAlways("\nPage::suspendScriptedAnimations()");
+        WTFReportBacktrace();
+    }
+
     m_scriptedAnimationsSuspended = true;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
@@ -1154,6 +1159,11 @@ void Page::suspendScriptedAnimations()
 
 void Page::resumeScriptedAnimations()
 {
+    if (settings().shouldLogScriptedAnimationControllerSuspensionChange()) {
+        WTFLogAlways("\nPage::resumeScriptedAnimations()");
+        WTFReportBacktrace();
+    }
+
     m_scriptedAnimationsSuspended = false;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())

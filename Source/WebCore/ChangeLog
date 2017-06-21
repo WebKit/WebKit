@@ -1,3 +1,26 @@
+2017-06-21  Antoine Quint  <graouts@apple.com>
+
+        Add logging to identify when the Page suspends scripted animations
+        https://bugs.webkit.org/show_bug.cgi?id=173626
+
+        Reviewed by Tim Horton.
+
+        We have a longstanding issue that some media/modern-media-controls tests time out due to
+        requestAnimationFrame callbacks not being serviced, which is tracked by webkit.org/b/173628.
+        We added some logging to identify when ScriptedAnimationController would get suspended in
+        webkit.org/b/173326. This logging points to the fact that the reason rAF callbacks aren't
+        serviced is because Document::requestAnimationFrame() suspends rAF when the page reports
+        that scripted animations ought to be suspended, which is true when m_scriptedAnimationsSuspended
+        is true. This patch adds logging that tracks when this flag is set, provided a new setting
+        shouldLogScriptedAnimationControllerSuspensionChange is true.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::logSuspendCount):
+        * page/Page.cpp:
+        (WebCore::Page::suspendScriptedAnimations):
+        (WebCore::Page::resumeScriptedAnimations):
+        * page/Settings.in:
+
 2017-06-21  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Extract CurlDownloadManager as shared background task handler

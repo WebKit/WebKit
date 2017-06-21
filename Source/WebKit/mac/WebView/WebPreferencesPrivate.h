@@ -584,4 +584,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 
 @property (nonatomic) NSString *mediaContentTypesRequiringHardwareSupport;
 
+- (void)setShouldLogScriptedAnimationControllerSuspensionChange:(BOOL)flag;
+- (BOOL)shouldLogScriptedAnimationControllerSuspensionChange;
+
 @end

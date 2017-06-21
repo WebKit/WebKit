@@ -1,3 +1,22 @@
+2017-06-21  Antoine Quint  <graouts@apple.com>
+
+        Add logging to identify when the Page suspends scripted animations
+        https://bugs.webkit.org/show_bug.cgi?id=173626
+
+        Reviewed by Tim Horton.
+
+        Add a new preference to control the new shouldLogScriptedAnimationControllerSuspensionChange settings
+        through WebKit. This is specific to WK1 since the issue we're trying to pinpoint only occurs on WK1 bots.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences shouldLogScriptedAnimationControllerSuspensionChange]):
+        (-[WebPreferences setShouldLogScriptedAnimationControllerSuspensionChange:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Disable font variations on macOS Sierra and iOS 10

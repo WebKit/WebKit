@@ -1,3 +1,15 @@
+2017-06-21  Antoine Quint  <graouts@apple.com>
+
+        Add logging to identify when the Page suspends scripted animations
+        https://bugs.webkit.org/show_bug.cgi?id=173626
+
+        Reviewed by Tim Horton.
+
+        Turn the new logging on for WK1/DRT since the issue we're trying to pinpoint only occurs on WK1 bots.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+
 2017-06-21  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Cannot call setValue() on contenteditable or ARIA text controls
