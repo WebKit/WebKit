@@ -1164,8 +1164,6 @@ public:
     void cancelAnimationFrame(int id);
     void serviceScriptedAnimations(double timestamp);
 
-    void sendWillRevealEdgeEventsIfNeeded(const IntPoint& oldPosition, const IntPoint& newPosition, const IntRect& visibleRect, const IntSize& contentsSize, Element* target = nullptr);
-
     EventTarget* errorEventTarget() final;
     void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
 

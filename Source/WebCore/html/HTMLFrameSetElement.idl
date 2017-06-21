@@ -31,11 +31,6 @@ interface HTMLFrameSetElement : HTMLElement {
     [NotEnumerable, WindowEventHandler] attribute EventHandler onresize;
     [NotEnumerable, WindowEventHandler] attribute EventHandler onscroll;
 
-    [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
-    [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
-    [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
-    [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
-    
     // Non-standard named getter
     // FIXME: This is not in the standard, can we remove this?
     getter DOMWindow (DOMString name);

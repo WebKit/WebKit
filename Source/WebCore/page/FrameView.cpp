@@ -2540,6 +2540,9 @@ void FrameView::scrollOffsetChangedViaPlatformWidgetImpl(const ScrollOffset& old
 // These scroll positions are affected by zooming.
 void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition)
 {
+    UNUSED_PARAM(oldPosition);
+    UNUSED_PARAM(newPosition);
+
     Page* page = frame().page();
     Seconds throttlingDelay = page ? page->chrome().client().eventThrottlingDelay() : 0_s;
 
@@ -2548,9 +2551,6 @@ void FrameView::scrollPositionChanged(const ScrollPosition& oldPosition, const S
         sendScrollEvent();
     } else if (!m_delayedScrollEventTimer.isActive())
         m_delayedScrollEventTimer.startOneShot(throttlingDelay);
-
-    if (Document* document = frame().document())
-        document->sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition, visibleContentRect(), contentsSize());
 
     if (RenderView* renderView = this->renderView()) {
         if (renderView->usesCompositing())

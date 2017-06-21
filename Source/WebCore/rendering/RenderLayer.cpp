@@ -2406,7 +2406,6 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
         return;
     }
     
-    ScrollPosition oldPosition = IntPoint(m_scrollPosition);
     m_scrollPosition = newPosition;
 
     RenderView& view = renderer().view();
@@ -2457,10 +2456,8 @@ void RenderLayer::scrollTo(const ScrollPosition& position)
         renderer().repaintUsingContainer(repaintContainer, rectForRepaint);
 
     // Schedule the scroll and scroll-related DOM events.
-    if (Element* element = renderer().element()) {
+    if (Element* element = renderer().element())
         element->document().eventQueue().enqueueOrDispatchScrollEvent(*element);
-        element->document().sendWillRevealEdgeEventsIfNeeded(oldPosition, newPosition, visibleContentRect(), contentsSize(), element);
-    }
 
     if (scrollsOverflow())
         view.frameView().didChangeScrollOffset();

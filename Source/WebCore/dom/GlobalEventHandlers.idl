@@ -122,8 +122,4 @@
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
     [NotEnumerable, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
-    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
-    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
-    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
-    [NotEnumerable, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
 };

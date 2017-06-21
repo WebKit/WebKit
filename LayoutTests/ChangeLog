@@ -1,3 +1,21 @@
+2017-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove WILL_REVEAL_EDGE_EVENTS code
+        https://bugs.webkit.org/show_bug.cgi?id=173632
+
+        Reviewed by Sam Weinig, Beth Dakin.
+
+        Remove will-reveal-edge events, which never took off.
+
+        * fast/events/will-reveal-edge-on-div-expected.txt: Removed.
+        * fast/events/will-reveal-edge-on-div.html: Removed.
+        * fast/events/will-reveal-edges-body-attributes-expected.txt: Removed.
+        * fast/events/will-reveal-edges-body-attributes.html: Removed.
+        * fast/events/will-reveal-edges-event-listeners-expected.txt: Removed.
+        * fast/events/will-reveal-edges-event-listeners.html: Removed.
+        * fast/events/will-reveal-edges-window-attributes-expected.txt: Removed.
+        * fast/events/will-reveal-edges-window-attributes.html: Removed.
+
 2017-06-21  Simon Fraser  <simon.fraser@apple.com>
 
         svgPath.getTotalLength() freezes webkit

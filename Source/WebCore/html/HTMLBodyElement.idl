@@ -39,10 +39,6 @@ interface HTMLBodyElement : HTMLElement {
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcedown;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforcewillbegin;
     [NotEnumerable, WindowEventHandler, Conditional=MOUSE_FORCE_EVENTS] attribute EventHandler onwebkitmouseforceup;
-    [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealbottom;
-    [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealleft;
-    [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealright;
-    [NotEnumerable, WindowEventHandler, Conditional=WILL_REVEAL_EDGE_EVENTS] attribute EventHandler onwebkitwillrevealtop;
 
     // Unique to Document and HTMLBodyElement
     [NotEnumerable, DocumentEventHandler] attribute EventHandler onselectionchange;
