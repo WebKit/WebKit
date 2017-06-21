@@ -294,7 +294,7 @@ static bool isSecondLevelDomainNameAllowedByTLDRules(const UChar* buffer, int32_
     { \
         static const int32_t suffixLength = sizeof(suffix) / sizeof(suffix[0]); \
         if (length > suffixLength && 0 == memcmp(buffer + length - suffixLength, suffix, sizeof(suffix))) \
-            return isSecondLevelDomainNameAllowedByTLDRules(buffer, length - suffixLength, [](UChar c) { return function(c); }); \
+            return isSecondLevelDomainNameAllowedByTLDRules(buffer, length - suffixLength, function); \
     }
 
 static bool isRussianDomainNameCharacter(UChar ch)

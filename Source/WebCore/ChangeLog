@@ -1,3 +1,26 @@
+2017-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Allow constructing a WTF:Function from a function pointer
+        https://bugs.webkit.org/show_bug.cgi?id=173660
+
+        Reviewed by Alex Christensen.
+
+        Construct WTF:Function directly from a function pointer when possible
+        instead of constructing a lambda to do so.
+
+        * Modules/encryptedmedia/InitDataRegistry.cpp:
+        (WebCore::InitDataRegistry::InitDataRegistry):
+        * page/Page.cpp:
+        * page/mac/PageMac.mm:
+        (WebCore::Page::platformInitialize):
+        * platform/cf/MainThreadSharedTimerCF.cpp:
+        (WebCore::setupPowerObserver):
+        * platform/mac/WebCoreNSURLExtras.mm:
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        * workers/Worker.cpp:
+        (WebCore::Worker::Worker):
+
 2017-06-21  Antoine Quint  <graouts@apple.com>
 
         CSS text properties affect <video> shadow root

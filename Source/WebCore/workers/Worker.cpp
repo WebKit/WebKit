@@ -59,7 +59,7 @@ inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtime
 {
     if (!allWorkers) {
         allWorkers = new HashSet<Worker*>;
-        networkStateNotifier().addNetworkStateChangeListener([] (bool isOnLine) { networkStateChanged(isOnLine); });
+        networkStateNotifier().addNetworkStateChangeListener(WTF::Function<void (bool)> { networkStateChanged });
     }
 
     auto addResult = allWorkers->add(this);

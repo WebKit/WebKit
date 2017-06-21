@@ -1,3 +1,15 @@
+2017-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Allow constructing a WTF:Function from a function pointer
+        https://bugs.webkit.org/show_bug.cgi?id=173660
+
+        Reviewed by Alex Christensen.
+
+        Allow constructing a WTF:Function from a function pointer and
+        assigning a function pointer to a WTF:Function.
+
+        * wtf/Function.h:
+
 2017-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Remove WILL_REVEAL_EDGE_EVENTS code

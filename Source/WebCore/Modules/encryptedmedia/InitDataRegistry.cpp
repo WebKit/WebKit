@@ -131,9 +131,9 @@ InitDataRegistry& InitDataRegistry::shared()
 
 InitDataRegistry::InitDataRegistry()
 {
-    registerInitDataType("keyids", { &sanitizeKeyids, &extractKeyIDsKeyids });
-    registerInitDataType("cenc", { &sanitizeCenc, &extractKeyIDsCenc });
-    registerInitDataType("webm", { &sanitizeWebM, &extractKeyIDsWebM });
+    registerInitDataType("keyids", { sanitizeKeyids, extractKeyIDsKeyids });
+    registerInitDataType("cenc", { sanitizeCenc, extractKeyIDsCenc });
+    registerInitDataType("webm", { sanitizeWebM, extractKeyIDsWebM });
 }
 
 InitDataRegistry::~InitDataRegistry() = default;

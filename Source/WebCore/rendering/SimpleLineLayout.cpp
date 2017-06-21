@@ -254,9 +254,9 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
 #ifndef NDEBUG
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutCoverage", [] { printSimpleLineLayoutCoverage(); });
-        registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutReasons", [] { printSimpleLineLayoutBlockList(); });
-        registerNotifyCallback("com.apple.WebKit.toggleSimpleLineLayout", [] { toggleSimpleLineLayout(); });
+        registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutCoverage", printSimpleLineLayoutCoverage);
+        registerNotifyCallback("com.apple.WebKit.showSimpleLineLayoutReasons", printSimpleLineLayoutBlockList);
+        registerNotifyCallback("com.apple.WebKit.toggleSimpleLineLayout", toggleSimpleLineLayout);
     });
 #endif
     AvoidanceReasonFlags reasons = { };

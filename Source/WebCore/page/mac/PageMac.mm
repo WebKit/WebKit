@@ -61,8 +61,8 @@ void Page::platformInitialize()
 #if ENABLE(TREE_DEBUGGING)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        registerNotifyCallback("com.apple.WebKit.showRenderTree", [] { printRenderTreeForLiveDocuments(); });
-        registerNotifyCallback("com.apple.WebKit.showLayerTree", [] { printLayerTreeForLiveDocuments(); });
+        registerNotifyCallback("com.apple.WebKit.showRenderTree", printRenderTreeForLiveDocuments);
+        registerNotifyCallback("com.apple.WebKit.showLayerTree", printLayerTreeForLiveDocuments);
     });
 #endif
 }

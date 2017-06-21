@@ -44,6 +44,12 @@ public:
     {
     }
 
+    template<typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
+    Function(FunctionType f)
+        : m_callableWrapper(std::make_unique<CallableWrapper<FunctionType>>(WTFMove(f)))
+    {
+    }
+
     Out operator()(In... in) const
     {
         if (m_callableWrapper)
@@ -57,6 +63,13 @@ public:
     Function& operator=(CallableType&& callable)
     {
         m_callableWrapper = std::make_unique<CallableWrapper<CallableType>>(WTFMove(callable));
+        return *this;
+    }
+
+    template<typename FunctionType, class = typename std::enable_if<std::is_pointer<FunctionType>::value && std::is_function<typename std::remove_pointer<FunctionType>::type>::value>::type>
+    Function& operator=(FunctionType f)
+    {
+        m_callableWrapper = std::make_unique<CallableWrapper<FunctionType>>(WTFMove(f));
         return *this;
     }
 

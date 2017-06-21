@@ -281,7 +281,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     if (!allPages) {
         allPages = new HashSet<Page*>;
         
-        networkStateNotifier().addNetworkStateChangeListener([] (bool isOnLine) { networkStateChanged(isOnLine); });
+        networkStateNotifier().addNetworkStateChangeListener(WTF::Function<void (bool)> { networkStateChanged });
     }
 
     ASSERT(!allPages->contains(this));

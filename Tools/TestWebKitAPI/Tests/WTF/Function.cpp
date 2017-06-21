@@ -240,4 +240,41 @@ TEST(WTF_Function, AssignBeforeDestroy)
     FunctionDestructionChecker::functionResult = std::nullopt;
 }
 
+static int returnThree()
+{
+    return 3;
+}
+
+static int returnFour()
+{
+    return 4;
+}
+
+static int returnPassedValue(int value)
+{
+    return value;
+}
+
+TEST(WTF_Function, AssignFunctionPointer)
+{
+    Function<int()> f1 = returnThree;
+    EXPECT_TRUE(static_cast<bool>(f1));
+    EXPECT_EQ(3, f1());
+
+    f1 = returnFour;
+    EXPECT_TRUE(static_cast<bool>(f1));
+    EXPECT_EQ(4, f1());
+
+    f1 = nullptr;
+    EXPECT_FALSE(static_cast<bool>(f1));
+
+    Function<int(int)> f2 = returnPassedValue;
+    EXPECT_TRUE(static_cast<bool>(f2));
+    EXPECT_EQ(3, f2(3));
+    EXPECT_EQ(-3, f2(-3));
+
+    f2 = nullptr;
+    EXPECT_FALSE(static_cast<bool>(f2));
+}
+
 } // namespace TestWebKitAPI
