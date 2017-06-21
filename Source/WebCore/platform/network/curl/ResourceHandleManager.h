@@ -57,8 +57,6 @@ public:
     void add(ResourceHandle*);
     void cancel(ResourceHandle*);
 
-    CURLSH* getCurlShareHandle() const;
-
     void setCookieJarFileName(const char* cookieJarFileName);
     const char* getCookieJarFileName() const;
 
@@ -99,8 +97,6 @@ private:
     FILE* m_logFile;
 #endif
 };
-
-URL getCurlEffectiveURL(CURL*);
 
 }
 

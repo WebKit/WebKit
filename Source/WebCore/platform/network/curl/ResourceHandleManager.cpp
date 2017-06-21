@@ -42,6 +42,7 @@
 
 #include "CredentialStorage.h"
 #include "CurlCacheManager.h"
+#include "CurlManager.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -86,15 +87,6 @@ const int selectTimeoutMS = 5;
 static const Seconds pollTime { 50_ms };
 const int maxRunningJobs = 128;
 const char* const errorDomainCurl = "CurlErrorDomain";
-
-URL getCurlEffectiveURL(CURL* handle)
-{
-    const char* url;
-    CURLcode err = curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &url);
-    if (CURLE_OK != err)
-        return URL();
-    return URL(URL(), url);
-}
 
 static const bool ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
 
@@ -151,25 +143,6 @@ static char* cookieJarPath()
 #endif
 }
 
-static Lock* sharedResourceMutex(curl_lock_data data)
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, cookieMutex, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, dnsMutex, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, shareMutex, ());
-
-    switch (data) {
-        case CURL_LOCK_DATA_COOKIE:
-            return &cookieMutex;
-        case CURL_LOCK_DATA_DNS:
-            return &dnsMutex;
-        case CURL_LOCK_DATA_SHARE:
-            return &shareMutex;
-        default:
-            ASSERT_NOT_REACHED();
-            return NULL;
-    }
-}
-
 #if ENABLE(WEB_TIMING)
 static void calculateWebTimingInformations(ResourceHandleInternal* d)
 {
@@ -197,21 +170,6 @@ static void calculateWebTimingInformations(ResourceHandleInternal* d)
 }
 #endif
 
-// libcurl does not implement its own thread synchronization primitives.
-// these two functions provide mutexes for cookies, and for the global DNS
-// cache.
-static void curl_lock_callback(CURL* /* handle */, curl_lock_data data, curl_lock_access /* access */, void* /* userPtr */)
-{
-    if (Lock* mutex = sharedResourceMutex(data))
-        mutex->lock();
-}
-
-static void curl_unlock_callback(CURL* /* handle */, curl_lock_data data, void* /* userPtr */)
-{
-    if (Lock* mutex = sharedResourceMutex(data))
-        mutex->unlock();
-}
-
 inline static bool isHttpInfo(int statusCode)
 {
     return 100 <= statusCode && statusCode < 200;
@@ -235,19 +193,16 @@ inline static bool isHttpNotModified(int statusCode)
 ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(*this, &ResourceHandleManager::downloadTimerCallback)
     , m_cookieJarFileName(cookieJarPath())
-    , m_certificatePath (certificatePath())
+    , m_certificatePath(certificatePath())
     , m_runningJobs(0)
 #ifndef NDEBUG
     , m_logFile(nullptr)
 #endif
 {
-    curl_global_init(CURL_GLOBAL_ALL);
+    CURLSH* h = CurlManager::singleton().getCurlShareHandle();
+    m_curlShareHandle = h;
     m_curlMultiHandle = curl_multi_init();
-    m_curlShareHandle = curl_share_init();
-    curl_share_setopt(m_curlShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
-    curl_share_setopt(m_curlShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
-    curl_share_setopt(m_curlShareHandle, CURLSHOPT_LOCKFUNC, curl_lock_callback);
-    curl_share_setopt(m_curlShareHandle, CURLSHOPT_UNLOCKFUNC, curl_unlock_callback);
+
 
     initCookieSession();
 
@@ -261,20 +216,13 @@ ResourceHandleManager::ResourceHandleManager()
 ResourceHandleManager::~ResourceHandleManager()
 {
     curl_multi_cleanup(m_curlMultiHandle);
-    curl_share_cleanup(m_curlShareHandle);
     if (m_cookieJarFileName)
         fastFree(m_cookieJarFileName);
-    curl_global_cleanup();
 
 #ifndef NDEBUG
     if (m_logFile)
         fclose(m_logFile);
 #endif
-}
-
-CURLSH* ResourceHandleManager::getCurlShareHandle() const
-{
-    return m_curlShareHandle;
 }
 
 void ResourceHandleManager::setCookieJarFileName(const char* cookieJarFileName)
@@ -302,7 +250,7 @@ static void handleLocalReceiveResponse (CURL* handle, ResourceHandle* job, Resou
     // which means the ResourceLoader's response does not contain the URL.
     // Run the code here for local files to resolve the issue.
     // TODO: See if there is a better approach for handling this.
-    URL url = getCurlEffectiveURL(handle);
+    URL url = CurlUtils::getEffectiveURL(handle);
     ASSERT(url.isValid());
     d->m_response.setURL(url);
      if (d->client())
@@ -413,7 +361,7 @@ static bool getProtectionSpace(CURL* h, const ResourceResponse& response, Protec
     if (err != CURLE_OK)
         return false;
 
-    URL url = getCurlEffectiveURL(h);
+    URL url = CurlUtils::getEffectiveURL(h);
     if (!url.isValid())
         return false;
 
@@ -502,7 +450,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         curl_easy_getinfo(h, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
         d->m_response.setExpectedContentLength(static_cast<long long int>(contentLength));
 
-        d->m_response.setURL(getCurlEffectiveURL(h));
+        d->m_response.setURL(CurlUtils::getEffectiveURL(h));
 
         d->m_response.setHTTPStatusCode(httpCode);
         d->m_response.setMimeType(extractMIMETypeFromMediaType(d->m_response.httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
@@ -709,7 +657,7 @@ void ResourceHandleManager::downloadTimerCallback()
                 CurlCacheManager::getInstance().didFinishLoading(*job);
             }
         } else {
-            URL url = getCurlEffectiveURL(d->m_handle);
+            URL url = CurlUtils::getEffectiveURL(d->m_handle);
 #ifndef NDEBUG
             fprintf(stderr, "Curl ERROR for url='%s', error: '%s'\n", url.string().utf8().data(), curl_easy_strerror(msg->data.result));
 #endif

@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
  *  License as published by the Free Software Foundation; either
@@ -20,9 +22,10 @@
 #if USE(CURL)
 
 #include "Cookie.h"
+#include "CurlManager.h"
 #include "NotImplemented.h"
-#include "URL.h"
 #include "ResourceHandleManager.h"
+#include "URL.h"
 
 #include <wtf/DateMath.h>
 #include <wtf/HashMap.h>
@@ -246,7 +249,7 @@ void setCookiesFromDOM(const NetworkStorageSession&, const URL&, const URL& url,
         return;
 
     const char* cookieJarFileName = ResourceHandleManager::sharedInstance()->getCookieJarFileName();
-    CURLSH* curlsh = ResourceHandleManager::sharedInstance()->getCurlShareHandle();
+    CURLSH* curlsh = CurlManager::singleton().getCurlShareHandle();
 
     curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookieJarFileName);
     curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
@@ -275,7 +278,7 @@ static String cookiesForSession(const NetworkStorageSession&, const URL&, const 
     if (!curl)
         return cookies;
 
-    CURLSH* curlsh = ResourceHandleManager::sharedInstance()->getCurlShareHandle();
+    CURLSH* curlsh = CurlManager::singleton().getCurlShareHandle();
 
     curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
 

@@ -36,46 +36,9 @@
 #include <winsock2.h>
 #endif
 
-#include <curl/curl.h>
+#include "CurlManager.h"
 
 namespace WebCore {
-
-class CurlDownloadManager {
-public:
-    CurlDownloadManager();
-    ~CurlDownloadManager();
-
-    bool add(CURL* curlHandle);
-    bool remove(CURL* curlHandle);
-
-    int getActiveDownloadCount() const;
-    int getPendingDownloadCount() const;
-
-private:
-    void startThreadIfNeeded();
-    void stopThread();
-    void stopThreadIfIdle();
-
-    void updateHandleList();
-
-    CURLM* getMultiHandle() const { return m_curlMultiHandle; }
-
-    bool runThread() const { LockHolder locker(m_mutex); return m_runThread; }
-    void setRunThread(bool runThread) { LockHolder locker(m_mutex); m_runThread = runThread; }
-
-    bool addToCurl(CURL* curlHandle);
-    bool removeFromCurl(CURL* curlHandle);
-
-    static void downloadThread(void* data);
-
-    RefPtr<Thread> m_thread;
-    CURLM* m_curlMultiHandle { nullptr };
-    Vector<CURL*> m_pendingHandleList;
-    Vector<CURL*> m_activeHandleList;
-    Vector<CURL*> m_removedHandleList;
-    mutable Lock m_mutex;
-    bool m_runThread { false };
-};
 
 class CurlDownloadListener {
 public:
@@ -85,7 +48,7 @@ public:
     virtual void didFail() { }
 };
 
-class CurlDownload : public ThreadSafeRefCounted<CurlDownload> {
+class CurlDownload : public ThreadSafeRefCounted<CurlDownload>, public CurlJob {
 public:
     CurlDownload();
     ~CurlDownload();
@@ -106,6 +69,8 @@ public:
     void setDeletesFileUponFailure(bool deletesFileUponFailure) { m_deletesFileUponFailure = deletesFileUponFailure; }
 
     void setDestination(const String& destination) { m_destination = destination; }
+
+    virtual CurlJobAction handleCurlMsg(CURLMsg*);
 
 private:
     void closeFile();
@@ -142,10 +107,6 @@ private:
     bool m_deletesFileUponFailure { false };
     mutable Lock m_mutex;
     CurlDownloadListener* m_listener { nullptr };
-
-    static CurlDownloadManager m_downloadManager;
-
-    friend class CurlDownloadManager;
 };
 
 }

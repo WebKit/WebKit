@@ -1,3 +1,80 @@
+2017-06-21  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Extract CurlDownloadManager as shared background task handler
+        https://bugs.webkit.org/show_bug.cgi?id=173557
+
+        Curl resource handling should be shared by other part of Curl
+        network stack. CurlDownloadManager is extracted as stand alone
+        CurlManager singleton class to be ready for others
+        (i.e. ResourceHandle).
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWinCairo.cmake:
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForSession):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::init):
+        (WebCore::CurlDownload::start):
+        (WebCore::CurlDownload::cancel):
+        (WebCore::CurlDownload::didReceiveHeader):
+        (WebCore::CurlDownload::handleCurlMsg):
+        (WebCore::CurlDownloadManager::CurlDownloadManager): Deleted.
+        (WebCore::CurlDownloadManager::~CurlDownloadManager): Deleted.
+        (WebCore::CurlDownloadManager::add): Deleted.
+        (WebCore::CurlDownloadManager::remove): Deleted.
+        (WebCore::CurlDownloadManager::getActiveDownloadCount): Deleted.
+        (WebCore::CurlDownloadManager::getPendingDownloadCount): Deleted.
+        (WebCore::CurlDownloadManager::startThreadIfNeeded): Deleted.
+        (WebCore::CurlDownloadManager::stopThread): Deleted.
+        (WebCore::CurlDownloadManager::stopThreadIfIdle): Deleted.
+        (WebCore::CurlDownloadManager::updateHandleList): Deleted.
+        (WebCore::CurlDownloadManager::addToCurl): Deleted.
+        (WebCore::CurlDownloadManager::removeFromCurl): Deleted.
+        (WebCore::CurlDownloadManager::downloadThread): Deleted.
+        * platform/network/curl/CurlDownload.h:
+        (WebCore::CurlDownloadManager::getMultiHandle): Deleted.
+        (WebCore::CurlDownloadManager::runThread): Deleted.
+        (WebCore::CurlDownloadManager::setRunThread): Deleted.
+        * platform/network/curl/CurlManager.cpp: Added.
+        (WebCore::CurlManager::CurlManager):
+        (WebCore::CurlManager::~CurlManager):
+        (WebCore::CurlManager::add):
+        (WebCore::CurlManager::remove):
+        (WebCore::CurlManager::getActiveCount):
+        (WebCore::CurlManager::getPendingCount):
+        (WebCore::CurlManager::startThreadIfNeeded):
+        (WebCore::CurlManager::stopThread):
+        (WebCore::CurlManager::stopThreadIfIdle):
+        (WebCore::CurlManager::updateHandleList):
+        (WebCore::CurlManager::addToCurl):
+        (WebCore::CurlManager::removeFromCurl):
+        (WebCore::CurlManager::workerThread):
+        (WebCore::CurlUtils::getEffectiveURL):
+        (WebCore::CurlSharedResources::mutexFor):
+        (WebCore::CurlSharedResources::lock):
+        (WebCore::CurlSharedResources::unlock):
+        * platform/network/curl/CurlManager.h: Added.
+        (WebCore::CurlManager::singleton):
+        (WebCore::CurlManager::getCurlShareHandle):
+        (WebCore::CurlManager::getMultiHandle):
+        (WebCore::CurlManager::runThread):
+        (WebCore::CurlManager::setRunThread):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::~ResourceHandleManager):
+        (WebCore::handleLocalReceiveResponse):
+        (WebCore::getProtectionSpace):
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::getCurlEffectiveURL): Deleted.
+        (WebCore::sharedResourceMutex): Deleted.
+        (WebCore::curl_lock_callback): Deleted.
+        (WebCore::curl_unlock_callback): Deleted.
+        (WebCore::ResourceHandleManager::getCurlShareHandle): Deleted.
+        * platform/network/curl/ResourceHandleManager.h:
+
 2017-06-21  Jeremy Jones  <jeremyj@apple.com>
 
         Include audio/vnd.wave as a valid mime-type for wav files.

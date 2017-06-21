@@ -31,7 +31,6 @@
 
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
-#include "ResourceHandleManager.h"
 #include "ResourceRequest.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -40,196 +39,7 @@ using namespace WebCore;
 
 namespace WebCore {
 
-// CurlDownloadManager -------------------------------------------------------------------
-
-CurlDownloadManager::CurlDownloadManager()
-{
-    curl_global_init(CURL_GLOBAL_ALL);
-    m_curlMultiHandle = curl_multi_init();
-}
-
-CurlDownloadManager::~CurlDownloadManager()
-{
-    stopThread();
-    curl_multi_cleanup(m_curlMultiHandle);
-    curl_global_cleanup();
-}
-
-bool CurlDownloadManager::add(CURL* curlHandle)
-{
-    {
-        LockHolder locker(m_mutex);
-        m_pendingHandleList.append(curlHandle);
-    }
-
-    startThreadIfNeeded();
-
-    return true;
-}
-
-bool CurlDownloadManager::remove(CURL* curlHandle)
-{
-    LockHolder locker(m_mutex);
-
-    m_removedHandleList.append(curlHandle);
-
-    return true;
-}
-
-int CurlDownloadManager::getActiveDownloadCount() const
-{
-    LockHolder locker(m_mutex);
-    return m_activeHandleList.size();
-}
-
-int CurlDownloadManager::getPendingDownloadCount() const
-{
-    LockHolder locker(m_mutex);
-    return m_pendingHandleList.size();
-}
-
-void CurlDownloadManager::startThreadIfNeeded()
-{
-    if (!runThread()) {
-        if (m_thread)
-            m_thread->waitForCompletion();
-        setRunThread(true);
-        m_thread = Thread::create(downloadThread, this, "downloadThread");
-    }
-}
-
-void CurlDownloadManager::stopThread()
-{
-    setRunThread(false);
-
-    if (m_thread) {
-        m_thread->waitForCompletion();
-        m_thread = nullptr;
-    }
-}
-
-void CurlDownloadManager::stopThreadIfIdle()
-{
-    if (!getActiveDownloadCount() && !getPendingDownloadCount())
-        setRunThread(false);
-}
-
-void CurlDownloadManager::updateHandleList()
-{
-    LockHolder locker(m_mutex);
-
-    // Remove curl easy handles from multi list 
-    int size = m_removedHandleList.size();
-    for (int i = 0; i < size; i++) {
-        removeFromCurl(m_removedHandleList[0]);
-        m_removedHandleList.remove(0);
-    }
-
-    // Add pending curl easy handles to multi list 
-    size = m_pendingHandleList.size();
-    for (int i = 0; i < size; i++) {
-        addToCurl(m_pendingHandleList[0]);
-        m_pendingHandleList.remove(0);
-    }
-}
-
-bool CurlDownloadManager::addToCurl(CURL* curlHandle)
-{
-    CURLMcode retval = curl_multi_add_handle(m_curlMultiHandle, curlHandle);
-    if (retval == CURLM_OK) {
-        m_activeHandleList.append(curlHandle);
-        return true;
-    }
-    return false;
-}
-
-bool CurlDownloadManager::removeFromCurl(CURL* curlHandle)
-{
-    int handlePos = m_activeHandleList.find(curlHandle);
-
-    if (handlePos < 0)
-        return true;
-    
-    CURLMcode retval = curl_multi_remove_handle(m_curlMultiHandle, curlHandle);
-    if (retval == CURLM_OK) {
-        m_activeHandleList.remove(handlePos);
-        curl_easy_cleanup(curlHandle);
-        return true;
-    }
-    return false;
-}
-
-void CurlDownloadManager::downloadThread(void* data)
-{
-    CurlDownloadManager* downloadManager = reinterpret_cast<CurlDownloadManager*>(data);
-
-    while (downloadManager->runThread()) {
-
-        downloadManager->updateHandleList();
-
-        // Retry 'select' if it was interrupted by a process signal.
-        int rc = 0;
-        do {
-            fd_set fdread;
-            fd_set fdwrite;
-            fd_set fdexcep;
-
-            int maxfd = 0;
-
-            const int selectTimeoutMS = 5;
-
-            struct timeval timeout;
-            timeout.tv_sec = 0;
-            timeout.tv_usec = selectTimeoutMS * 1000; // select waits microseconds
-
-            FD_ZERO(&fdread);
-            FD_ZERO(&fdwrite);
-            FD_ZERO(&fdexcep);
-            curl_multi_fdset(downloadManager->getMultiHandle(), &fdread, &fdwrite, &fdexcep, &maxfd);
-            // When the 3 file descriptors are empty, winsock will return -1
-            // and bail out, stopping the file download. So make sure we
-            // have valid file descriptors before calling select.
-            if (maxfd >= 0)
-                rc = ::select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
-        } while (rc == -1 && errno == EINTR);
-
-        int activeDownloadCount = 0;
-        while (curl_multi_perform(downloadManager->getMultiHandle(), &activeDownloadCount) == CURLM_CALL_MULTI_PERFORM) { }
-
-        int messagesInQueue = 0;
-        CURLMsg* msg = curl_multi_info_read(downloadManager->getMultiHandle(), &messagesInQueue);
-
-        if (!msg)
-            continue;
-
-        CurlDownload* download = 0;
-        CURLcode err = curl_easy_getinfo(msg->easy_handle, CURLINFO_PRIVATE, &download);
-        UNUSED_PARAM(err);
-
-        if (msg->msg == CURLMSG_DONE) {
-            if (download) {
-                if (msg->data.result == CURLE_OK) {
-                    callOnMainThread([download] {
-                        download->didFinish();
-                        download->deref(); // This matches the ref() in CurlDownload::start().
-                    });
-                } else {
-                    callOnMainThread([download] {
-                        download->didFail();
-                        download->deref(); // This matches the ref() in CurlDownload::start().
-                    });
-                }
-            }
-            downloadManager->removeFromCurl(msg->easy_handle);
-        }
-
-        downloadManager->stopThreadIfIdle();
-    }
-}
-
 // CurlDownload --------------------------------------------------------------------------
-
-CurlDownloadManager CurlDownload::m_downloadManager;
 
 CurlDownload::CurlDownload() = default;
 
@@ -275,7 +85,7 @@ void CurlDownload::init(CurlDownloadListener* listener, const URL& url)
     if (certPath)
         curl_easy_setopt(m_curlHandle, CURLOPT_CAINFO, certPath);
 
-    CURLSH* curlsh = ResourceHandleManager::sharedInstance()->getCurlShareHandle();
+    CURLSH* curlsh = CurlManager::singleton().getCurlShareHandle();
     if (curlsh)
         curl_easy_setopt(m_curlHandle, CURLOPT_SHARE, curlsh);
 
@@ -297,12 +107,12 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
 bool CurlDownload::start()
 {
     ref(); // CurlDownloadManager::downloadThread will call deref when the download has finished.
-    return m_downloadManager.add(m_curlHandle);
+    return CurlManager::singleton().add(m_curlHandle);
 }
 
 bool CurlDownload::cancel()
 {
-    return m_downloadManager.remove(m_curlHandle);
+    return CurlManager::singleton().remove(m_curlHandle);
 }
 
 String CurlDownload::getTempPath() const
@@ -393,7 +203,7 @@ void CurlDownload::didReceiveHeader(const String& header)
         UNUSED_PARAM(err);
 
         if (httpCode >= 200 && httpCode < 300) {
-            URL url = getCurlEffectiveURL(m_curlHandle);
+            URL url = CurlUtils::getEffectiveURL(m_curlHandle);
             callOnMainThread([this, url = url.isolatedCopy(), protectedThis = makeRef(*this)] {
                 m_response.setURL(url);
                 m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
@@ -504,6 +314,29 @@ void CurlDownload::receivedResponseCallback(CurlDownload* download)
 {
     if (download)
         download->didReceiveResponse();
+}
+
+CurlJobAction CurlDownload::handleCurlMsg(CURLMsg* msg)
+{
+    switch (msg->msg) {
+    case CURLMSG_DONE: {
+        if (msg->data.result == CURLE_OK) {
+            callOnMainThread([this] {
+                didFinish();
+                deref(); // This matches the ref() in CurlDownload::start().
+            });
+        } else {
+            callOnMainThread([this] {
+                didFail();
+                deref(); // This matches the ref() in CurlDownload::start().
+            });
+        }
+        return CurlJobAction::Finished;
+    }
+    default: {
+        return CurlJobAction::None;
+    }
+    }
 }
 
 }
