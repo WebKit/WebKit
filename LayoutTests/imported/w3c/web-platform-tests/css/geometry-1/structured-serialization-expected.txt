@@ -1,32 +1,32 @@
 
-FAIL DOMPointReadOnly clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMPointReadOnly clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMPointReadOnly clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMPointReadOnly clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMPoint clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMPoint clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMPoint clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMPoint clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMRectReadOnly clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMRectReadOnly clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMRectReadOnly clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMRectReadOnly clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMRect clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMRect clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMRect clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMRect clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMQuad clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMQuad clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMQuad clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMQuad clone: non-initial values promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrixReadOnly clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrixReadOnly clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrixReadOnly clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrixReadOnly clone: non-initial values (2d) promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrixReadOnly clone: non-initial values (3d) promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrix clone: basic promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrix clone: custom property promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrix clone: throwing getters promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrix clone: non-initial values (2d) promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
-FAIL DOMMatrix clone: non-initial values (3d) promise_test: Unhandled rejection with value: object "DataCloneError (DOM Exception 25): The object can not be cloned."
+PASS DOMPointReadOnly clone: basic 
+PASS DOMPointReadOnly clone: custom property 
+PASS DOMPointReadOnly clone: throwing getters 
+PASS DOMPointReadOnly clone: non-initial values 
+PASS DOMPoint clone: basic 
+PASS DOMPoint clone: custom property 
+PASS DOMPoint clone: throwing getters 
+PASS DOMPoint clone: non-initial values 
+PASS DOMRectReadOnly clone: basic 
+PASS DOMRectReadOnly clone: custom property 
+PASS DOMRectReadOnly clone: throwing getters 
+PASS DOMRectReadOnly clone: non-initial values 
+PASS DOMRect clone: basic 
+PASS DOMRect clone: custom property 
+PASS DOMRect clone: throwing getters 
+PASS DOMRect clone: non-initial values 
+PASS DOMQuad clone: basic 
+PASS DOMQuad clone: custom property 
+PASS DOMQuad clone: throwing getters 
+PASS DOMQuad clone: non-initial values 
+PASS DOMMatrixReadOnly clone: basic 
+PASS DOMMatrixReadOnly clone: custom property 
+PASS DOMMatrixReadOnly clone: throwing getters 
+PASS DOMMatrixReadOnly clone: non-initial values (2d) 
+PASS DOMMatrixReadOnly clone: non-initial values (3d) 
+PASS DOMMatrix clone: basic 
+PASS DOMMatrix clone: custom property 
+PASS DOMMatrix clone: throwing getters 
+PASS DOMMatrix clone: non-initial values (2d) 
+PASS DOMMatrix clone: non-initial values (3d) 
 

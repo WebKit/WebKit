@@ -1,3 +1,13 @@
+2017-06-21  Sam Weinig  <sam@webkit.org>
+
+        Add support for structured serialization of CSS Geometry types
+        https://bugs.webkit.org/show_bug.cgi?id=173631
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/geometry-1/structured-serialization-expected.txt:
+        Update test results now that they pass.
+
 2017-06-21  Frederic Wang  <fwang@igalia.com>
 
         Import W3C tests regarding navigation inside sandboxed iframes

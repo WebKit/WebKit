@@ -50,6 +50,11 @@ public:
         return adoptRef(*new DOMMatrix(matrix, is2D));
     }
 
+    static Ref<DOMMatrix> create(TransformationMatrix&& matrix, Is2D is2D)
+    {
+        return adoptRef(*new DOMMatrix(WTFMove(matrix), is2D));
+    }
+
     static ExceptionOr<Ref<DOMMatrix>> fromMatrix(DOMMatrixInit&&);
 
     static ExceptionOr<Ref<DOMMatrix>> fromFloat32Array(Ref<Float32Array>&&);
@@ -95,6 +100,7 @@ public:
 private:
     DOMMatrix() = default;
     DOMMatrix(const TransformationMatrix&, Is2D);
+    DOMMatrix(TransformationMatrix&&, Is2D);
 };
 
 inline void DOMMatrix::setM13(double f)

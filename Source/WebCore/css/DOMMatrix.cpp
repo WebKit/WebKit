@@ -37,6 +37,11 @@ DOMMatrix::DOMMatrix(const TransformationMatrix& matrix, Is2D is2D)
 {
 }
 
+DOMMatrix::DOMMatrix(TransformationMatrix&& matrix, Is2D is2D)
+    : DOMMatrixReadOnly(WTFMove(matrix), is2D)
+{
+}
+
 // https://drafts.fxtf.org/geometry/#create-a-dommatrix-from-the-dictionary
 ExceptionOr<Ref<DOMMatrix>> DOMMatrix::fromMatrix(DOMMatrixInit&& init)
 {

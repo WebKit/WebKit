@@ -1,3 +1,44 @@
+2017-06-21  Sam Weinig  <sam@webkit.org>
+
+        Add support for structured serialization of CSS Geometry types
+        https://bugs.webkit.org/show_bug.cgi?id=173631
+
+        Reviewed by Simon Fraser.
+
+        Tests: imported/w3c/web-platform-tests/css/geometry-1/structured-serialization.html
+
+        Adds support for serializing the new geometry types as specified by:
+        https://drafts.fxtf.org/geometry-1/#structured-serialization
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Move a few custom bindings into the "GC / Wrapping Only" since they have no more custom operations or attributes.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpDOMPoint):
+        (WebCore::CloneSerializer::dumpDOMRect):
+        (WebCore::CloneSerializer::dumpDOMMatrix):
+        (WebCore::CloneSerializer::dumpDOMQuad):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::getJSValue):
+        (WebCore::CloneDeserializer::readDOMPoint):
+        (WebCore::CloneDeserializer::readDOMMatrix):
+        (WebCore::CloneDeserializer::readDOMRect):
+        (WebCore::CloneDeserializer::readDOMPointInit):
+        (WebCore::CloneDeserializer::readDOMQuad):
+        (WebCore::CloneDeserializer::readTerminal):
+        Add serialization/deserialization of the geometry types.
+
+        * css/DOMMatrix.cpp:
+        (WebCore::DOMMatrix::DOMMatrix):
+        * css/DOMMatrix.h:
+        (WebCore::DOMMatrix::create):
+        * css/DOMMatrixReadOnly.cpp:
+        (WebCore::DOMMatrixReadOnly::DOMMatrixReadOnly):
+        * css/DOMMatrixReadOnly.h:
+        (WebCore::DOMMatrixReadOnly::create):
+        Add create functions and constructors that take a TransformationMatrix by r-value reference
+        so they can be moved into the DOM type.
+
 2017-06-21  Andreas Kling  <akling@apple.com>
 
         [iOS] Ensure that GraphicsServices is initialized before calling GSFontPurgeFontCache().
