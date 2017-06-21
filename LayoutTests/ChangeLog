@@ -1,3 +1,12 @@
+2017-06-20  Matt Lewis  <jlewis3@apple.com>
+
+        Marked webrtc/video-replace-muted-track.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=173486
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] The system Japanese font cannot be italicized
