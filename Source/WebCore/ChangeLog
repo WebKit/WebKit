@@ -1,3 +1,25 @@
+2017-06-20  Simon Fraser  <simon.fraser@apple.com>
+
+        svgPath.getTotalLength() freezes webkit
+        https://bugs.webkit.org/show_bug.cgi?id=173566
+        <rdar://problem/32866731>
+
+        Reviewed by Dean Jackson.
+
+        Ensure that curveLength() progresses by making split() return a bool indicating
+        whether either of the resulting curves are the same as the original. This can happen
+        when midPoint() on two close points returns a point that is the same as one of the
+        arguments because of floating-point precision limitations.
+
+        Test: svg/custom/path-getTotalLength-hang.html
+
+        * platform/graphics/PathTraversalState.cpp:
+        (WebCore::QuadraticBezier::operator ==):
+        (WebCore::QuadraticBezier::split):
+        (WebCore::CubicBezier::operator ==):
+        (WebCore::CubicBezier::split):
+        (WebCore::curveLength):
+
 2017-06-21  Youenn Fablet  <youenn@apple.com>
 
         Fix AVVideoCaptureSource frameRate setter and getter

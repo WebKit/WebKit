@@ -1,3 +1,13 @@
+2017-06-21  Simon Fraser  <simon.fraser@apple.com>
+
+        svgPath.getTotalLength() freezes webkit
+        https://bugs.webkit.org/show_bug.cgi?id=173566
+        <rdar://problem/32866731>
+
+        Reviewed by Dean Jackson.
+
+        * svg/custom/path-getTotalLength-hang.html: Added.
+
 2017-06-21  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Unreviewed gardening

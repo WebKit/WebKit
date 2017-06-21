@@ -48,13 +48,20 @@ struct QuadraticBezier {
         , end(e)
     {
     }
+
+    bool operator==(const QuadraticBezier& rhs) const
+    {
+        return start == rhs.start
+            && control == rhs.control
+            && end == rhs.end;
+    }
     
     float approximateDistance() const
     {
         return distanceLine(start, control) + distanceLine(control, end);
     }
     
-    void split(QuadraticBezier& left, QuadraticBezier& right) const
+    bool split(QuadraticBezier& left, QuadraticBezier& right) const
     {
         left.control = midPoint(start, control);
         right.control = midPoint(control, end);
@@ -65,6 +72,8 @@ struct QuadraticBezier {
 
         left.start = start;
         right.end = end;
+
+        return !(left == *this) && !(right == *this);
     }
     
     FloatPoint start;
@@ -81,13 +90,21 @@ struct CubicBezier {
         , end(e)
     {
     }
-    
+
+    bool operator==(const CubicBezier& rhs) const
+    {
+        return start == rhs.start
+            && control1 == rhs.control1
+            && control2 == rhs.control2
+            && end == rhs.end;
+    }
+
     float approximateDistance() const
     {
         return distanceLine(start, control1) + distanceLine(control1, control2) + distanceLine(control2, end);
     }
         
-    void split(CubicBezier& left, CubicBezier& right) const
+    bool split(CubicBezier& left, CubicBezier& right) const
     {    
         FloatPoint startToControl1 = midPoint(control1, control2);
         
@@ -102,6 +119,8 @@ struct CubicBezier {
         FloatPoint leftControl2ToRightControl1 = midPoint(left.control2, right.control1);
         left.end = leftControl2ToRightControl1;
         right.start = leftControl2ToRightControl1;
+
+        return !(left == *this) && !(right == *this);
     }
     
     FloatPoint start;
@@ -127,10 +146,10 @@ static float curveLength(const PathTraversalState& traversalState, const CurveTy
     while (true) {
         float length = curve.approximateDistance();
 
-        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() < curveStackDepthLimit) {
-            CurveType leftCurve;
-            CurveType rightCurve;
-            curve.split(leftCurve, rightCurve);
+        CurveType leftCurve;
+        CurveType rightCurve;
+
+        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() < curveStackDepthLimit && curve.split(leftCurve, rightCurve)) {
             curve = leftCurve;
             curveStack.append(rightCurve);
             continue;
