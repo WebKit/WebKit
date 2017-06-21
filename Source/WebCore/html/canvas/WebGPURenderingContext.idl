@@ -30,6 +30,8 @@
     JSCustomMarkFunction,
     DoNotCheckConstants
 ] interface WebGPURenderingContext {
+    // back-reference to the canvas
+    readonly attribute HTMLCanvasElement canvas;
 
     // Pixel formats
 
