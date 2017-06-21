@@ -1,5 +1,17 @@
 2017-06-21  Youenn Fablet  <youenn@apple.com>
 
+        Fix build after r218645
+        https://bugs.webkit.org/show_bug.cgi?id=173668
+
+        Unreviewed.
+
+        * Source/webrtc/base/sigslottester.h: Removing executable right.
+        * Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers.h:
+        (webrtc::TemporalLayersFactory::Create): Inline a default implementation.
+        * Source/webrtc/modules/video_processing/util/skin_detection.h: Removing executable right.
+
+2017-06-21  Youenn Fablet  <youenn@apple.com>
+
         Remove expat source code from Source/ThirdParty/libwebrtc
         https://bugs.webkit.org/show_bug.cgi?id=173656
 

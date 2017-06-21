@@ -100,9 +100,9 @@ class TemporalLayersFactory {
  public:
   TemporalLayersFactory() : listener_(nullptr) {}
   virtual ~TemporalLayersFactory() {}
-  virtual TemporalLayers* Create(int simulcast_id,
-                                 int temporal_layers,
-                                 uint8_t initial_tl0_pic_idx) const;
+  virtual TemporalLayers* Create(int /* simulcast_id */,
+                                 int /* temporal_layers */,
+                                 uint8_t /* initial_tl0_pic_idx */) const { return nullptr; }
   void SetListener(TemporalLayersListener* listener);
 
  protected:
