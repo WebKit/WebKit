@@ -1,3 +1,19 @@
+2017-06-21  Andreas Kling  <akling@apple.com>
+
+        [iOS] Ensure that GraphicsServices is initialized before calling GSFontPurgeFontCache().
+        https://bugs.webkit.org/show_bug.cgi?id=173616
+        <rdar://problem/30780050>
+
+        Reviewed by Chris Dumez.
+
+        Fix for crash in GSFontPurgeFontCache() seen in apps embedding WebKit.
+        Ensure GSFontInitialize() has been called first, since the former depends on state
+        set up by this function.
+
+        * page/cocoa/MemoryReleaseCocoa.mm:
+        (WebCore::platformReleaseMemory):
+        * platform/spi/ios/GraphicsServicesSPI.h:
+
 2017-06-21  Antoine Quint  <graouts@apple.com>
 
         Add logging to identify when the Page suspends scripted animations

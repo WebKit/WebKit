@@ -11,6 +11,7 @@ exports:
       - arm64
     symbols:
       - _GSCurrentEventTimestamp
+      - _GSFontInitialize
       - _GSFontPurgeFontCache
       - _GSInitialize
       - _GSSystemRootDirectory

@@ -1,3 +1,13 @@
+2017-06-21  Andreas Kling  <akling@apple.com>
+
+        [iOS] Ensure that GraphicsServices is initialized before calling GSFontPurgeFontCache().
+        https://bugs.webkit.org/show_bug.cgi?id=173616
+        <rdar://problem/30780050>
+
+        Reviewed by Chris Dumez.
+
+        * WebKitPrivateFrameworkStubs/iOS/10/GraphicsServices.framework/GraphicsServices.tbd:
+
 2017-06-09  Lucas Forschler  <lforschler@apple.com>
 
         <rdar://problem/32683422>

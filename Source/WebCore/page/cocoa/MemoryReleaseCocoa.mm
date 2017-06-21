@@ -43,6 +43,8 @@ namespace WebCore {
 void platformReleaseMemory(Critical)
 {
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
+    // FIXME: Remove this call to GSFontInitialize() once <rdar://problem/32886715> is fixed.
+    GSFontInitialize();
     GSFontPurgeFontCache();
 #endif
 
