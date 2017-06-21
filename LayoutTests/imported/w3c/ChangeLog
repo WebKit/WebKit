@@ -1,3 +1,11 @@
+2017-06-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/html/dom/reflection-metadata-expected.txt:
+        * web-platform-tests/html/dom/reflection-misc-expected.txt:
+        * web-platform-tests/html/dom/self-origin.sub-expected.txt:
+
 2017-06-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Enable ENCRYPTED_MEDIA for build-webkit builds
