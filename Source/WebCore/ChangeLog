@@ -1,3 +1,14 @@
+2017-06-20  Youenn Fablet  <youenn@apple.com>
+
+        WebAudioSourceProvider should be thread safe ref counted
+        https://bugs.webkit.org/show_bug.cgi?id=173623
+
+        Reviewed by Eric Carlson.
+
+        No observable change of behavior.
+
+        * platform/mediastream/WebAudioSourceProvider.h:
+
 2017-06-20  Yoav Weiss  <yoav@yoav.ws>
 
         [preload] Turn on preload's feature flag by default.
