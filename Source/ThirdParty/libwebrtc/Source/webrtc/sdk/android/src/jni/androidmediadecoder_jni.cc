@@ -34,7 +34,6 @@
 #include "webrtc/sdk/android/src/jni/classreferenceholder.h"
 #include "webrtc/sdk/android/src/jni/native_handle_impl.h"
 #include "webrtc/sdk/android/src/jni/surfacetexturehelper_jni.h"
-#include "webrtc/system_wrappers/include/logcat_trace_context.h"
 
 using rtc::Bind;
 using rtc::Thread;
@@ -199,7 +198,6 @@ MediaCodecVideoDecoder::MediaCodecVideoDecoder(
                               *j_media_codec_video_decoder_class_,
                               "<init>",
                               "()V"))) {
-  ScopedLocalRefFrame local_ref_frame(jni);
   codec_thread_->SetName("MediaCodecVideoDecoder", NULL);
   RTC_CHECK(codec_thread_->Start()) << "Failed to start MediaCodecVideoDecoder";
 
@@ -726,10 +724,6 @@ bool MediaCodecVideoDecoder::DeliverPendingOutputs(
       j_color_format_field_);
   int width = GetIntField(jni, *j_media_codec_video_decoder_, j_width_field_);
   int height = GetIntField(jni, *j_media_codec_video_decoder_, j_height_field_);
-  int stride = GetIntField(jni, *j_media_codec_video_decoder_, j_stride_field_);
-  int slice_height = GetIntField(jni, *j_media_codec_video_decoder_,
-      j_slice_height_field_);
-  RTC_CHECK_GE(slice_height, height);
 
   rtc::scoped_refptr<webrtc::VideoFrameBuffer> frame_buffer;
   int64_t presentation_timestamps_ms = 0;
@@ -767,6 +761,10 @@ bool MediaCodecVideoDecoder::DeliverPendingOutputs(
   } else {
     // Extract data from Java ByteBuffer and create output yuv420 frame -
     // for non surface decoding only.
+    int stride =
+        GetIntField(jni, *j_media_codec_video_decoder_, j_stride_field_);
+    const int slice_height =
+        GetIntField(jni, *j_media_codec_video_decoder_, j_slice_height_field_);
     const int output_buffer_index = GetIntField(
         jni, j_decoder_output_buffer, j_info_index_field_);
     const int output_buffer_offset = GetIntField(
@@ -782,6 +780,7 @@ bool MediaCodecVideoDecoder::DeliverPendingOutputs(
 
     decode_time_ms = GetLongField(jni, j_decoder_output_buffer,
                                   j_byte_buffer_decode_time_ms_field_);
+    RTC_CHECK_GE(slice_height, height);
 
     if (output_buffer_size < width * height * 3 / 2) {
       ALOGE << "Insufficient output buffer size: " << output_buffer_size;
@@ -870,7 +869,6 @@ bool MediaCodecVideoDecoder::DeliverPendingOutputs(
   if (frames_decoded_ < frames_decoded_logged_) {
     ALOGD << "Decoder frame out # " << frames_decoded_ <<
         ". " << width << " x " << height <<
-        ". " << stride << " x " <<  slice_height <<
         ". Color: " << color_format <<
         ". TS: " << presentation_timestamps_ms <<
         ". DecTime: " << (int)decode_time_ms <<
@@ -1014,8 +1012,9 @@ webrtc::VideoDecoder* MediaCodecVideoDecoderFactory::CreateVideoDecoder(
   for (VideoCodecType codec_type : supported_codec_types_) {
     if (codec_type == type) {
       ALOGD << "Create HW video decoder for type " << (int)type;
-      return new MediaCodecVideoDecoder(AttachCurrentThreadIfNeeded(), type,
-                                        egl_context_);
+      JNIEnv* jni = AttachCurrentThreadIfNeeded();
+      ScopedLocalRefFrame local_ref_frame(jni);
+      return new MediaCodecVideoDecoder(jni, type, egl_context_);
     }
   }
   ALOGW << "Can not find HW video decoder for type " << (int)type;

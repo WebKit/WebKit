@@ -26,6 +26,7 @@ rtc_static_library("video_capture_module") {
   ]
 
   deps = [
+    "..:module_api",
     "../..:webrtc_common",
     "../../base:rtc_base_approved",
     "../../common_video",
@@ -134,15 +135,6 @@ if (!build_with_chromium) {
         "objc/rtc_video_capture_objc.mm",
         "objc/video_capture.h",
         "objc/video_capture.mm",
-      ]
-
-      cflags = [
-        "-fobjc-arc",  # CLANG_ENABLE_OBJC_ARC = YES.
-
-        # To avoid warnings for deprecated videoMinFrameDuration and
-        # videoMaxFrameDuration properties in iOS 7.0.
-        # See webrtc:3705 for more details.
-        "-Wno-deprecated-declarations",
       ]
     }
 

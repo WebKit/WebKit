@@ -26,18 +26,18 @@ DecimatorBy4::DecimatorBy4()
     : low_pass_filter_(kLowPassFilterCoefficients, 3) {}
 
 void DecimatorBy4::Decimate(rtc::ArrayView<const float> in,
-                            std::array<float, kSubBlockSize>* out) {
+                            rtc::ArrayView<float> out) {
   RTC_DCHECK_EQ(kBlockSize, in.size());
-  RTC_DCHECK(out);
+  RTC_DCHECK_EQ(kSubBlockSize, out.size());
   std::array<float, kBlockSize> x;
 
   // Limit the frequency content of the signal to avoid aliasing.
   low_pass_filter_.Process(in, x);
 
   // Downsample the signal.
-  for (size_t j = 0, k = 0; j < out->size(); ++j, k += 4) {
+  for (size_t j = 0, k = 0; j < out.size(); ++j, k += 4) {
     RTC_DCHECK_GT(kBlockSize, k);
-    (*out)[j] = x[k];
+    out[j] = x[k];
   }
 }
 

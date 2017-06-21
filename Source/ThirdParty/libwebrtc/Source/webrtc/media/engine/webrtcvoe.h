@@ -20,7 +20,6 @@
 #include "webrtc/voice_engine/include/voe_base.h"
 #include "webrtc/voice_engine/include/voe_codec.h"
 #include "webrtc/voice_engine/include/voe_errors.h"
-#include "webrtc/voice_engine/include/voe_hardware.h"
 
 namespace cricket {
 // automatically handles lifetime of WebRtc VoiceEngine
@@ -76,29 +75,19 @@ class scoped_voe_ptr {
 class VoEWrapper {
  public:
   VoEWrapper()
-      : engine_(webrtc::VoiceEngine::Create()),
-        base_(engine_), codec_(engine_), hw_(engine_) {
+      : engine_(webrtc::VoiceEngine::Create()), base_(engine_) {
   }
-  VoEWrapper(webrtc::VoEBase* base,
-             webrtc::VoECodec* codec,
-             webrtc::VoEHardware* hw)
-      : engine_(NULL),
-        base_(base),
-        codec_(codec),
-        hw_(hw) {
+  VoEWrapper(webrtc::VoEBase* base)
+      : engine_(NULL), base_(base) {
   }
   ~VoEWrapper() {}
   webrtc::VoiceEngine* engine() const { return engine_.get(); }
   webrtc::VoEBase* base() const { return base_.get(); }
-  webrtc::VoECodec* codec() const { return codec_.get(); }
-  webrtc::VoEHardware* hw() const { return hw_.get(); }
   int error() { return base_->LastError(); }
 
  private:
   scoped_voe_engine engine_;
   scoped_voe_ptr<webrtc::VoEBase> base_;
-  scoped_voe_ptr<webrtc::VoECodec> codec_;
-  scoped_voe_ptr<webrtc::VoEHardware> hw_;
 };
 }  // namespace cricket
 

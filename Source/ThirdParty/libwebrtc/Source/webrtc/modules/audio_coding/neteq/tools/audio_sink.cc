@@ -17,5 +17,10 @@ bool AudioSinkFork::WriteArray(const int16_t* audio, size_t num_samples) {
   return left_sink_->WriteArray(audio, num_samples) &&
          right_sink_->WriteArray(audio, num_samples);
 }
+
+bool VoidAudioSink::WriteArray(const int16_t* audio, size_t num_samples) {
+  return true;
+}
+
 }  // namespace test
 }  // namespace webrtc

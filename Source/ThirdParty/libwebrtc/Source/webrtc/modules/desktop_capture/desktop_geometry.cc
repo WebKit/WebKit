@@ -37,6 +37,22 @@ void DesktopRect::IntersectWith(const DesktopRect& rect) {
   }
 }
 
+void DesktopRect::UnionWith(const DesktopRect& rect) {
+  if (is_empty()) {
+    *this = rect;
+    return;
+  }
+
+  if (rect.is_empty()) {
+    return;
+  }
+
+  left_ = std::min(left(), rect.left());
+  top_ = std::min(top(), rect.top());
+  right_ = std::max(right(), rect.right());
+  bottom_ = std::max(bottom(), rect.bottom());
+}
+
 void DesktopRect::Translate(int32_t dx, int32_t dy) {
   left_ += dx;
   top_ += dy;

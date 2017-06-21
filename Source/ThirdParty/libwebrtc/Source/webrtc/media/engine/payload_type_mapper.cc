@@ -59,8 +59,6 @@ PayloadTypeMapper::PayloadTypeMapper()
 
           // Payload type assignments currently used by WebRTC.
           // Includes data to reduce collisions (and thus reassignments)
-          // RTX codecs mapping to specific video payload types
-          // Other codecs
           {{kGoogleRtpDataCodecName, 0, 0}, kGoogleRtpDataCodecPlType},
           {{kIlbcCodecName,    8000, 1}, 102},
           {{kIsacCodecName,   16000, 1}, 103},

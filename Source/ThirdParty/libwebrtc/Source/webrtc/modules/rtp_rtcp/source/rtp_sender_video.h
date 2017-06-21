@@ -43,11 +43,6 @@ class RTPSenderVideo {
 
   virtual RtpVideoCodecTypes VideoCodecType() const;
 
-  size_t FecPacketOverhead() const {
-    rtc::CritScope cs(&crit_);
-    return CalculateFecPacketOverhead();
-  }
-
   static RtpUtility::Payload* CreateVideoPayload(
       const char payload_name[RTP_PAYLOAD_NAME_SIZE],
       int8_t payload_type);

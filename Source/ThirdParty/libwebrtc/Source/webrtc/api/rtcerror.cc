@@ -63,11 +63,6 @@ RTCError::~RTCError() {
   }
 }
 
-// static
-RTCError RTCError::OK() {
-  return RTCError();
-}
-
 const char* RTCError::message() const {
   if (have_string_message_) {
     return string_message_.c_str();

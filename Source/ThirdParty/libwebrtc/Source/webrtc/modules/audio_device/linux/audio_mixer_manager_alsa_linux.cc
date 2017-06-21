@@ -13,19 +13,18 @@
 #include "webrtc/modules/audio_device/linux/audio_mixer_manager_alsa_linux.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
-extern webrtc_adm_linux_alsa::AlsaSymbolTable AlsaSymbolTable;
+extern webrtc::adm_linux_alsa::AlsaSymbolTable AlsaSymbolTable;
 
 // Accesses ALSA functions through our late-binding symbol table instead of
 // directly. This way we don't have to link to libalsa, which means our binary
 // will work on systems that don't have it.
 #define LATE(sym) \
-  LATESYM_GET(webrtc_adm_linux_alsa::AlsaSymbolTable, &AlsaSymbolTable, sym)
+  LATESYM_GET(webrtc::adm_linux_alsa::AlsaSymbolTable, &AlsaSymbolTable, sym)
 
 namespace webrtc
 {
 
 AudioMixerManagerLinuxALSA::AudioMixerManagerLinuxALSA(const int32_t id) :
-    _critSect(*CriticalSectionWrapper::CreateCriticalSection()),
     _id(id),
     _outputMixerHandle(NULL),
     _inputMixerHandle(NULL),
@@ -43,10 +42,7 @@ AudioMixerManagerLinuxALSA::~AudioMixerManagerLinuxALSA()
 {
     WEBRTC_TRACE(kTraceMemory, kTraceAudioDevice, _id,
                  "%s destructed", __FUNCTION__);
-
     Close();
-
-    delete &_critSect;
 }
 
 // ============================================================================
@@ -58,7 +54,7 @@ int32_t AudioMixerManagerLinuxALSA::Close()
     WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "%s",
                  __FUNCTION__);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     CloseSpeaker();
     CloseMicrophone();
@@ -72,7 +68,7 @@ int32_t AudioMixerManagerLinuxALSA::CloseSpeaker()
     WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "%s",
                  __FUNCTION__);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     int errVal = 0;
 
@@ -113,7 +109,7 @@ int32_t AudioMixerManagerLinuxALSA::CloseMicrophone()
 {
     WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "%s", __FUNCTION__);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     int errVal = 0;
 
@@ -165,7 +161,7 @@ int32_t AudioMixerManagerLinuxALSA::OpenSpeaker(char* deviceName)
     WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id,
                  "AudioMixerManagerLinuxALSA::OpenSpeaker(name=%s)", deviceName);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     int errVal = 0;
 
@@ -259,7 +255,7 @@ int32_t AudioMixerManagerLinuxALSA::OpenMicrophone(char *deviceName)
                  "AudioMixerManagerLinuxALSA::OpenMicrophone(name=%s)",
                  deviceName);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     int errVal = 0;
 
@@ -378,7 +374,7 @@ int32_t AudioMixerManagerLinuxALSA::SetSpeakerVolume(
                  "AudioMixerManagerLinuxALSA::SetSpeakerVolume(volume=%u)",
                  volume);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     if (_outputMixerElement == NULL)
     {
@@ -642,7 +638,7 @@ int32_t AudioMixerManagerLinuxALSA::SetSpeakerMute(bool enable)
                  "AudioMixerManagerLinuxALSA::SetSpeakerMute(enable=%u)",
                  enable);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     if (_outputMixerElement == NULL)
     {
@@ -739,7 +735,7 @@ int32_t AudioMixerManagerLinuxALSA::SetMicrophoneMute(bool enable)
                  "AudioMixerManagerLinuxALSA::SetMicrophoneMute(enable=%u)",
                  enable);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     if (_inputMixerElement == NULL)
     {
@@ -838,7 +834,7 @@ int32_t AudioMixerManagerLinuxALSA::SetMicrophoneBoost(bool enable)
                  "AudioMixerManagerLinuxALSA::SetMicrophoneBoost(enable=%u)",
                  enable);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     if (_inputMixerHandle == NULL)
     {
@@ -900,7 +896,7 @@ int32_t AudioMixerManagerLinuxALSA::SetMicrophoneVolume(
                  "AudioMixerManagerLinuxALSA::SetMicrophoneVolume(volume=%u)",
                  volume);
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     if (_inputMixerElement == NULL)
     {
@@ -1296,19 +1292,16 @@ void AudioMixerManagerLinuxALSA::GetControlName(char* controlName,
     // controlName: "hw:CARD=Intel"
     char* pos1 = strchr(deviceName, ':');
     char* pos2 = strchr(deviceName, ',');
-    if (!pos2)
-    {
+    if (!pos2) {
         // Can also be default:CARD=Intel
         pos2 = &deviceName[strlen(deviceName)];
     }
-    if (pos1 && pos2)
-    {
+    if (pos1 && pos2) {
         strcpy(controlName, "hw");
         int nChar = (int) (pos2 - pos1);
         strncpy(&controlName[2], pos1, nChar);
         controlName[2 + nChar] = '\0';
-    } else
-    {
+    } else {
         strcpy(controlName, deviceName);
     }
 

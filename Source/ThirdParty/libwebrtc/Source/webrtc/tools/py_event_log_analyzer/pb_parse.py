@@ -10,7 +10,7 @@
 
 from __future__ import division
 import struct
-import pyproto.webrtc.call.rtc_event_log_pb2 as rtc_pb
+import pyproto.webrtc.logging.rtc_event_log.rtc_event_log_pb2 as rtc_pb
 
 
 class DataPoint(object):
@@ -32,7 +32,7 @@ class DataPoint(object):
     self.marker_bit = (first2header_bytes & 0b10000000) >> 7
 
 
-def parse_protobuf(file_path):
+def ParseProtobuf(file_path):
   """Parses RTC event log from protobuf file.
 
   Args:

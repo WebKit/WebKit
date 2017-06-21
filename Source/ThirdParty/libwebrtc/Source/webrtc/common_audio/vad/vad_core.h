@@ -24,9 +24,7 @@ enum { kNumGaussians = 2 };  // Number of Gaussians per channel in the GMM.
 enum { kTableSize = kNumChannels * kNumGaussians };
 enum { kMinEnergy = 10 };  // Minimum energy required to trigger audio signal.
 
-typedef struct VadInstT_
-{
-
+typedef struct VadInstT_ {
     int vad;
     int32_t downsampling_filter_states[4];
     WebRtcSpl_State48khzTo8khz state_48_to_8;
@@ -36,7 +34,7 @@ typedef struct VadInstT_
     int16_t speech_stds[kTableSize];
     // TODO(bjornv): Change to |frame_count|.
     int32_t frame_counter;
-    int16_t over_hang; // Over Hang
+    int16_t over_hang;  // Over Hang
     int16_t num_of_speech;
     // TODO(bjornv): Change to |age_vector|.
     int16_t index_vector[16 * kNumChannels];
@@ -52,7 +50,6 @@ typedef struct VadInstT_
     int16_t total[3];
 
     int init_flag;
-
 } VadInstT;
 
 // Initializes the core VAD component. The default aggressiveness mode is

@@ -47,9 +47,9 @@ class TargetBitrate {
 
   bool Parse(const uint8_t* block, uint16_t block_length);
 
-  void Create(uint8_t* buffer) const;
-
   size_t BlockLength() const;
+
+  void Create(uint8_t* buffer) const;
 
  private:
   std::vector<BitrateItem> bitrates_;

@@ -18,21 +18,9 @@
 // settings in voice_engine_configurations.h.
 #define _TEST_BASE_
 #define _TEST_RTP_RTCP_
-#define _TEST_HARDWARE_
 #define _TEST_CODEC_
-#define _TEST_VOLUME_
-#define _TEST_AUDIO_PROCESSING_
 #define _TEST_FILE_
 #define _TEST_NETWORK_
-#define _TEST_NETEQ_STATS_
-
-#define TESTED_AUDIO_LAYER kAudioPlatformDefault
-//#define TESTED_AUDIO_LAYER kAudioLinuxPulse
-
-// #define _ENABLE_VISUAL_LEAK_DETECTOR_ // Enables VLD to find memory leaks
-// #define _ENABLE_IPV6_TESTS_      // Enables IPv6 tests in network xtest
-// #define _USE_EXTENDED_TRACE_     // Adds unique trace files for extended test
-// #define _MEMORY_TEST_
 
 // Enable this when running instrumentation of some kind to exclude tests
 // that will not pass due to slowed down execution.

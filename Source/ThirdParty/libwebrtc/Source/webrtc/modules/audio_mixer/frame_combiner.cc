@@ -16,6 +16,8 @@
 #include <memory>
 
 #include "webrtc/audio/utility/audio_frame_operations.h"
+#include "webrtc/base/array_view.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/modules/audio_mixer/audio_frame_manipulator.h"
 #include "webrtc/modules/audio_mixer/audio_mixer_impl.h"
@@ -26,26 +28,122 @@ namespace {
 // Stereo, 48 kHz, 10 ms.
 constexpr int kMaximalFrameSize = 2 * 48 * 10;
 
-void CombineZeroFrames(AudioFrame* audio_frame_for_mixing) {
+void CombineZeroFrames(bool use_limiter,
+                       AudioProcessing* limiter,
+                       AudioFrame* audio_frame_for_mixing) {
   audio_frame_for_mixing->elapsed_time_ms_ = -1;
   AudioFrameOperations::Mute(audio_frame_for_mixing);
+  // The limiter should still process a zero frame to avoid jumps in
+  // its gain curve.
+  if (use_limiter) {
+    RTC_DCHECK(limiter);
+    // The limiter smoothly increases frames with half gain to full
+    // volume.  Here there's no need to apply half gain, since the frame
+    // is zero anyway.
+    limiter->ProcessStream(audio_frame_for_mixing);
+  }
 }
 
 void CombineOneFrame(const AudioFrame* input_frame,
+                     bool use_limiter,
+                     AudioProcessing* limiter,
                      AudioFrame* audio_frame_for_mixing) {
   audio_frame_for_mixing->timestamp_ = input_frame->timestamp_;
   audio_frame_for_mixing->elapsed_time_ms_ = input_frame->elapsed_time_ms_;
-  std::copy(input_frame->data_,
-            input_frame->data_ +
+  // TODO(yujo): can we optimize muted frames?
+  std::copy(input_frame->data(),
+            input_frame->data() +
                 input_frame->num_channels_ * input_frame->samples_per_channel_,
-            audio_frame_for_mixing->data_);
+            audio_frame_for_mixing->mutable_data());
+  if (use_limiter) {
+    AudioFrameOperations::ApplyHalfGain(audio_frame_for_mixing);
+    RTC_DCHECK(limiter);
+    limiter->ProcessStream(audio_frame_for_mixing);
+    AudioFrameOperations::Add(*audio_frame_for_mixing, audio_frame_for_mixing);
+  }
+}
+
+// Lower-level helper function called from Combine(...) when there
+// are several input frames.
+//
+// TODO(aleloi): change interface to ArrayView<int16_t> output_frame
+// once we have gotten rid of the APM limiter.
+//
+// Only the 'data' field of output_frame should be modified. The
+// rest are used for potentially sending the output to the APM
+// limiter.
+void CombineMultipleFrames(
+    const std::vector<rtc::ArrayView<const int16_t>>& input_frames,
+    bool use_limiter,
+    AudioProcessing* limiter,
+    AudioFrame* audio_frame_for_mixing) {
+  RTC_DCHECK(!input_frames.empty());
+  RTC_DCHECK(audio_frame_for_mixing);
+
+  const size_t frame_length = input_frames.front().size();
+  for (const auto& frame : input_frames) {
+    RTC_DCHECK_EQ(frame_length, frame.size());
+  }
+
+  // Algorithm: int16 frames are added to a sufficiently large
+  // statically allocated int32 buffer. For > 2 participants this is
+  // more efficient than addition in place in the int16 audio
+  // frame. The audio quality loss due to halving the samples is
+  // smaller than 16-bit addition in place.
+  RTC_DCHECK_GE(kMaximalFrameSize, frame_length);
+  std::array<int32_t, kMaximalFrameSize> add_buffer;
+
+  add_buffer.fill(0);
+
+  for (const auto& frame : input_frames) {
+    // TODO(yujo): skip this for muted frames.
+    std::transform(frame.begin(), frame.end(), add_buffer.begin(),
+                   add_buffer.begin(), std::plus<int32_t>());
+  }
+
+  if (use_limiter) {
+    // Halve all samples to avoid saturation before limiting.
+    std::transform(add_buffer.begin(), add_buffer.begin() + frame_length,
+                   audio_frame_for_mixing->mutable_data(), [](int32_t a) {
+                     return rtc::saturated_cast<int16_t>(a / 2);
+                   });
+
+    // Smoothly limit the audio.
+    RTC_DCHECK(limiter);
+    const int error = limiter->ProcessStream(audio_frame_for_mixing);
+    if (error != limiter->kNoError) {
+      LOG_F(LS_ERROR) << "Error from AudioProcessing: " << error;
+      RTC_NOTREACHED();
+    }
+
+    // And now we can safely restore the level. This procedure results in
+    // some loss of resolution, deemed acceptable.
+    //
+    // It's possible to apply the gain in the AGC (with a target level of 0 dbFS
+    // and compression gain of 6 dB). However, in the transition frame when this
+    // is enabled (moving from one to two audio sources) it has the potential to
+    // create discontinuities in the mixed frame.
+    //
+    // Instead we double the frame (with addition since left-shifting a
+    // negative value is undefined).
+    AudioFrameOperations::Add(*audio_frame_for_mixing, audio_frame_for_mixing);
+  } else {
+    std::transform(add_buffer.begin(), add_buffer.begin() + frame_length,
+                   audio_frame_for_mixing->mutable_data(),
+                   [](int32_t a) { return rtc::saturated_cast<int16_t>(a); });
+  }
 }
 
 std::unique_ptr<AudioProcessing> CreateLimiter() {
   Config config;
   config.Set<ExperimentalAgc>(new ExperimentalAgc(false));
+
   std::unique_ptr<AudioProcessing> limiter(AudioProcessing::Create(config));
   RTC_DCHECK(limiter);
+
+  webrtc::AudioProcessing::Config apm_config;
+  apm_config.residual_echo_detector.enabled = false;
+  limiter->ApplyConfig(apm_config);
 
   const auto check_no_error = [](int x) {
     RTC_DCHECK_EQ(x, AudioProcessing::kNoError);
@@ -74,6 +172,7 @@ FrameCombiner::~FrameCombiner() = default;
 void FrameCombiner::Combine(const std::vector<AudioFrame*>& mix_list,
                             size_t number_of_channels,
                             int sample_rate,
+                            size_t number_of_streams,
                             AudioFrame* audio_frame_for_mixing) const {
   RTC_DCHECK(audio_frame_for_mixing);
   const size_t samples_per_channel = static_cast<size_t>(
@@ -97,76 +196,23 @@ void FrameCombiner::Combine(const std::vector<AudioFrame*>& mix_list,
       -1, 0, nullptr, samples_per_channel, sample_rate, AudioFrame::kUndefined,
       AudioFrame::kVadUnknown, number_of_channels);
 
+  const bool use_limiter_this_round = use_apm_limiter_ && number_of_streams > 1;
+
   if (mix_list.empty()) {
-    CombineZeroFrames(audio_frame_for_mixing);
+    CombineZeroFrames(use_limiter_this_round, limiter_.get(),
+                      audio_frame_for_mixing);
   } else if (mix_list.size() == 1) {
-    CombineOneFrame(mix_list.front(), audio_frame_for_mixing);
+    CombineOneFrame(mix_list.front(), use_limiter_this_round, limiter_.get(),
+                    audio_frame_for_mixing);
   } else {
     std::vector<rtc::ArrayView<const int16_t>> input_frames;
     for (size_t i = 0; i < mix_list.size(); ++i) {
       input_frames.push_back(rtc::ArrayView<const int16_t>(
-          mix_list[i]->data_, samples_per_channel * number_of_channels));
+          mix_list[i]->data(), samples_per_channel * number_of_channels));
     }
-    CombineMultipleFrames(input_frames, audio_frame_for_mixing);
+    CombineMultipleFrames(input_frames, use_limiter_this_round, limiter_.get(),
+                          audio_frame_for_mixing);
   }
 }
 
-void FrameCombiner::CombineMultipleFrames(
-    const std::vector<rtc::ArrayView<const int16_t>>& input_frames,
-    AudioFrame* audio_frame_for_mixing) const {
-  RTC_DCHECK(!input_frames.empty());
-  RTC_DCHECK(audio_frame_for_mixing);
-
-  const size_t frame_length = input_frames.front().size();
-  for (const auto& frame : input_frames) {
-    RTC_DCHECK_EQ(frame_length, frame.size());
-  }
-
-  // Algorithm: int16 frames are added to a sufficiently large
-  // statically allocated int32 buffer. For > 2 participants this is
-  // more efficient than addition in place in the int16 audio
-  // frame. The audio quality loss due to halving the samples is
-  // smaller than 16-bit addition in place.
-  RTC_DCHECK_GE(kMaximalFrameSize, frame_length);
-  std::array<int32_t, kMaximalFrameSize> add_buffer;
-
-  add_buffer.fill(0);
-
-  for (const auto& frame : input_frames) {
-    std::transform(frame.begin(), frame.end(), add_buffer.begin(),
-                   add_buffer.begin(), std::plus<int32_t>());
-  }
-
-  if (use_apm_limiter_) {
-    // Halve all samples to avoid saturation before limiting.
-    std::transform(add_buffer.begin(), add_buffer.begin() + frame_length,
-                   audio_frame_for_mixing->data_, [](int32_t a) {
-                     return rtc::saturated_cast<int16_t>(a / 2);
-                   });
-
-    // Smoothly limit the audio.
-    RTC_DCHECK(limiter_);
-    const int error = limiter_->ProcessStream(audio_frame_for_mixing);
-    if (error != limiter_->kNoError) {
-      LOG_F(LS_ERROR) << "Error from AudioProcessing: " << error;
-      RTC_NOTREACHED();
-    }
-
-    // And now we can safely restore the level. This procedure results in
-    // some loss of resolution, deemed acceptable.
-    //
-    // It's possible to apply the gain in the AGC (with a target level of 0 dbFS
-    // and compression gain of 6 dB). However, in the transition frame when this
-    // is enabled (moving from one to two audio sources) it has the potential to
-    // create discontinuities in the mixed frame.
-    //
-    // Instead we double the frame (with addition since left-shifting a
-    // negative value is undefined).
-    AudioFrameOperations::Add(*audio_frame_for_mixing, audio_frame_for_mixing);
-  } else {
-    std::transform(add_buffer.begin(), add_buffer.begin() + frame_length,
-                   audio_frame_for_mixing->data_,
-                   [](int32_t a) { return rtc::saturated_cast<int16_t>(a); });
-  }
-}
 }  // namespace webrtc

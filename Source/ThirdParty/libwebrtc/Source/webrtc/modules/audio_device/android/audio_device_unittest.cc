@@ -29,7 +29,6 @@
 #include "webrtc/modules/audio_device/include/audio_device.h"
 #include "webrtc/modules/audio_device/include/mock_audio_transport.h"
 #include "webrtc/system_wrappers/include/event_wrapper.h"
-#include "webrtc/system_wrappers/include/sleep.h"
 #include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"

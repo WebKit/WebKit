@@ -18,6 +18,7 @@
 #include <algorithm>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/base/scoped_ref_ptr.h"
 #include "webrtc/modules/desktop_capture/desktop_capturer.h"
 #include "webrtc/modules/desktop_capture/desktop_capture_options.h"
@@ -25,7 +26,6 @@
 #include "webrtc/modules/desktop_capture/x11/shared_x_display.h"
 #include "webrtc/modules/desktop_capture/x11/x_error_trap.h"
 #include "webrtc/modules/desktop_capture/x11/x_server_pixel_buffer.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 

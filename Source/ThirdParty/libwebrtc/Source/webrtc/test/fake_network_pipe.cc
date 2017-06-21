@@ -19,6 +19,7 @@
 
 #include "webrtc/base/logging.h"
 #include "webrtc/call/call.h"
+#include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
 #include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -27,15 +28,46 @@ namespace {
 constexpr int64_t kDefaultProcessIntervalMs = 5;
 }
 
-FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
-                                 const FakeNetworkPipe::Config& config)
-    : FakeNetworkPipe(clock, config, 1) {}
+DemuxerImpl::DemuxerImpl(const std::map<uint8_t, MediaType>& payload_type_map)
+    : packet_receiver_(nullptr), payload_type_map_(payload_type_map) {}
+
+void DemuxerImpl::SetReceiver(PacketReceiver* receiver) {
+  packet_receiver_ = receiver;
+}
+
+void DemuxerImpl::DeliverPacket(const NetworkPacket* packet,
+                                const PacketTime& packet_time) {
+  // No packet receiver means that this demuxer will terminate the flow of
+  // packets.
+  if (!packet_receiver_)
+    return;
+  const uint8_t* const packet_data = packet->data();
+  const size_t packet_length = packet->data_length();
+  MediaType media_type = MediaType::ANY;
+  if (!RtpHeaderParser::IsRtcp(packet_data, packet_length)) {
+    RTC_CHECK_GE(packet_length, 2);
+    const uint8_t payload_type = packet_data[1] & 0x7f;
+    std::map<uint8_t, MediaType>::const_iterator it =
+        payload_type_map_.find(payload_type);
+    RTC_CHECK(it != payload_type_map_.end())
+        << "payload type " << static_cast<int>(payload_type) << " unknown.";
+    media_type = it->second;
+  }
+  packet_receiver_->DeliverPacket(media_type, packet_data, packet_length,
+                                  packet_time);
+}
 
 FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
                                  const FakeNetworkPipe::Config& config,
+                                 std::unique_ptr<Demuxer> demuxer)
+    : FakeNetworkPipe(clock, config, std::move(demuxer), 1) {}
+
+FakeNetworkPipe::FakeNetworkPipe(Clock* clock,
+                                 const FakeNetworkPipe::Config& config,
+                                 std::unique_ptr<Demuxer> demuxer,
                                  uint64_t seed)
     : clock_(clock),
-      packet_receiver_(NULL),
+      demuxer_(std::move(demuxer)),
       random_(seed),
       config_(),
       dropped_packets_(0),
@@ -59,7 +91,8 @@ FakeNetworkPipe::~FakeNetworkPipe() {
 }
 
 void FakeNetworkPipe::SetReceiver(PacketReceiver* receiver) {
-  packet_receiver_ = receiver;
+  RTC_CHECK(demuxer_);
+  demuxer_->SetReceiver(receiver);
 }
 
 void FakeNetworkPipe::SetConfig(const FakeNetworkPipe::Config& config) {
@@ -86,10 +119,7 @@ void FakeNetworkPipe::SetConfig(const FakeNetworkPipe::Config& config) {
 }
 
 void FakeNetworkPipe::SendPacket(const uint8_t* data, size_t data_length) {
-  // A NULL packet_receiver_ means that this pipe will terminate the flow of
-  // packets.
-  if (packet_receiver_ == NULL)
-    return;
+  RTC_CHECK(demuxer_);
   rtc::CritScope crit(&lock_);
   if (config_.queue_length_packets > 0 &&
       capacity_link_.size() >= config_.queue_length_packets) {
@@ -199,8 +229,7 @@ void FakeNetworkPipe::Process() {
   while (!packets_to_deliver.empty()) {
     NetworkPacket* packet = packets_to_deliver.front();
     packets_to_deliver.pop();
-    packet_receiver_->DeliverPacket(MediaType::ANY, packet->data(),
-                                    packet->data_length(), PacketTime());
+    demuxer_->DeliverPacket(packet, PacketTime());
     delete packet;
   }
 

@@ -12,11 +12,11 @@
 
 namespace webrtc {
 
-AudioNetworkAdaptor::EncoderRuntimeConfig::EncoderRuntimeConfig() = default;
+AudioEncoderRuntimeConfig::AudioEncoderRuntimeConfig() = default;
 
-AudioNetworkAdaptor::EncoderRuntimeConfig::~EncoderRuntimeConfig() = default;
+AudioEncoderRuntimeConfig::~AudioEncoderRuntimeConfig() = default;
 
-AudioNetworkAdaptor::EncoderRuntimeConfig::EncoderRuntimeConfig(
-    const EncoderRuntimeConfig& other) = default;
+AudioEncoderRuntimeConfig::AudioEncoderRuntimeConfig(
+    const AudioEncoderRuntimeConfig& other) = default;
 
 }  // namespace webrtc

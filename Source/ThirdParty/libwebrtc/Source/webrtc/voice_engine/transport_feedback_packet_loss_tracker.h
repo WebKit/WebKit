@@ -22,21 +22,24 @@ namespace rtcp {
 class TransportFeedback;
 }
 
+struct PacketFeedback;
+
 class TransportFeedbackPacketLossTracker final {
  public:
-  // * Up to |max_acked_packets| latest packet statuses will be used for
-  //   calculating the packet loss metrics.
+  // * We count up to |max_window_size_ms| from the sent
+  //   time of the latest acked packet for the calculation of the metrics.
   // * PLR (packet-loss-rate) is reliably computable once the statuses of
   //   |plr_min_num_acked_packets| packets are known.
   // * RPLR (recoverable-packet-loss-rate) is reliably computable once the
   //   statuses of |rplr_min_num_acked_pairs| pairs are known.
-  TransportFeedbackPacketLossTracker(size_t max_acked_packets,
+  TransportFeedbackPacketLossTracker(int64_t max_window_size_ms,
                                      size_t plr_min_num_acked_packets,
                                      size_t rplr_min_num_acked_pairs);
 
-  void OnPacketAdded(uint16_t seq_num);
+  void OnPacketAdded(uint16_t seq_num, int64_t send_time_ms);
 
-  void OnReceivedTransportFeedback(const rtcp::TransportFeedback& feedback);
+  void OnPacketFeedbackVector(
+      const std::vector<PacketFeedback>& packet_feedbacks_vector);
 
   // Returns the packet loss rate, if the window has enough packet statuses to
   // reliably compute it. Otherwise, returns empty.
@@ -56,8 +59,14 @@ class TransportFeedbackPacketLossTracker final {
   // metrics accordingly.
 
   enum class PacketStatus { Unacked = 0, Received = 1, Lost = 2 };
-  typedef std::map<uint16_t, PacketStatus> PacketStatusMap;
-  typedef PacketStatusMap::const_iterator ConstPacketStatusIterator;
+  struct SentPacket {
+    SentPacket(int64_t send_time_ms, PacketStatus status)
+        : send_time_ms(send_time_ms), status(status) {}
+    int64_t send_time_ms;
+    PacketStatus status;
+  };
+  typedef std::map<uint16_t, SentPacket> SentPacketStatusMap;
+  typedef SentPacketStatusMap::const_iterator ConstPacketStatusIterator;
 
   void Reset();
 
@@ -68,7 +77,8 @@ class TransportFeedbackPacketLossTracker final {
   // |packet_status_window_|.
   uint16_t ReferenceSequenceNumber() const;
   uint16_t NewestSequenceNumber() const;
-  void RecordFeedback(PacketStatusMap::iterator it, bool received);
+  void UpdatePacketStatus(SentPacketStatusMap::iterator it,
+                          PacketStatus new_status);
   void RemoveOldestPacketStatus();
 
   void UpdateMetrics(ConstPacketStatusIterator it,
@@ -81,10 +91,10 @@ class TransportFeedbackPacketLossTracker final {
   ConstPacketStatusIterator NextPacketStatus(
       ConstPacketStatusIterator it) const;
 
-  const size_t max_acked_packets_;
+  const int64_t max_window_size_ms_;
   size_t acked_packets_;
 
-  PacketStatusMap packet_status_window_;
+  SentPacketStatusMap packet_status_window_;
   // |ref_packet_status_| points to the oldest item in |packet_status_window_|.
   ConstPacketStatusIterator ref_packet_status_;
 

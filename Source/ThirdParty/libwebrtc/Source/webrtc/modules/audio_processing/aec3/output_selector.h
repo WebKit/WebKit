@@ -24,7 +24,8 @@ class OutputSelector {
   ~OutputSelector();
 
   // Forms the most appropriate output signal.
-  void FormLinearOutput(rtc::ArrayView<const float> subtractor_output,
+  void FormLinearOutput(bool use_subtractor_output,
+                        rtc::ArrayView<const float> subtractor_output,
                         rtc::ArrayView<float> capture);
 
   // Returns true if the linear aec output is the one used.
@@ -32,7 +33,6 @@ class OutputSelector {
 
  private:
   bool use_subtractor_output_ = false;
-  int output_change_counter_ = 0;
   RTC_DISALLOW_COPY_AND_ASSIGN(OutputSelector);
 };
 

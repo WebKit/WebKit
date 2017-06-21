@@ -46,6 +46,13 @@ rtc_static_library("bitrate_controller") {
 if (rtc_include_tests) {
   rtc_source_set("bitrate_controller_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
       "bitrate_controller_unittest.cc",
       "send_side_bandwidth_estimation_unittest.cc",

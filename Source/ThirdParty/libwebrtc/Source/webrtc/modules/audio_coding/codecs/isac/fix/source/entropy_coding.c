@@ -26,7 +26,7 @@
 #include "lpc_tables.h"
 #include "settings.h"
 #include "signal_processing_library.h"
-#include "webrtc/base/checks.h"
+#include "webrtc/base/sanitizer.h"
 
 /*
  * Eenumerations for arguments to functions WebRtcIsacfix_MatrixProduct1()
@@ -189,6 +189,22 @@ static void CalcCorrelation(int32_t *PSpecQ12, int32_t *CorrQ7)
   }
 }
 
+// Some arithmetic operations that are allowed to overflow. (It's still
+// undefined behavior, so not a good idea; this just makes UBSan ignore the
+// violations, so that our old code can continue to do what it's always been
+// doing.)
+static inline int32_t OverflowingMulS16S32ToS32(int16_t a, int32_t b)
+    RTC_NO_SANITIZE("signed-integer-overflow") {
+  return a * b;
+}
+static inline int32_t OverflowingAddS32S32ToS32(int32_t a, int32_t b)
+    RTC_NO_SANITIZE("signed-integer-overflow") {
+  return a + b;
+}
+static inline int32_t OverflowingSubS32S32ToS32(int32_t a, int32_t b)
+    RTC_NO_SANITIZE("signed-integer-overflow") {
+  return a - b;
+}
 
 /* compute inverse AR power spectrum */
 static void CalcInvArSpec(const int16_t *ARCoefQ12,
@@ -231,12 +247,11 @@ static void CalcInvArSpec(const int16_t *ARCoefQ12,
     CurveQ16[n] = sum;
 
   for (k = 1; k < AR_ORDER; k += 2) {
-    for (n = 0; n < FRAMESAMPLES/8; n++) {
-      const int64_t p =
-          (WebRtcIsacfix_kCos[k][n] * (int64_t)CorrQ11[k + 1] + 2) >> 2;
-      RTC_DCHECK_EQ(p, (int32_t)p);  // p fits in 32 bits
-      CurveQ16[n] += (int32_t)p;
-    }
+    for (n = 0; n < FRAMESAMPLES/8; n++)
+      CurveQ16[n] +=
+          (OverflowingMulS16S32ToS32(WebRtcIsacfix_kCos[k][n], CorrQ11[k + 1]) +
+           2) >>
+          2;
   }
 
   CS_ptrQ9 = WebRtcIsacfix_kCos[0];
@@ -262,8 +277,8 @@ static void CalcInvArSpec(const int16_t *ARCoefQ12,
   for (k=0; k<FRAMESAMPLES/8; k++) {
     int32_t diff_q16 = diffQ16[k] * (1 << shftVal);
     CurveQ16[FRAMESAMPLES / 4 - 1 - k] =
-        WebRtcSpl_SubSatW32(CurveQ16[k], diff_q16);
-    CurveQ16[k] = WebRtcSpl_AddSatW32(CurveQ16[k], diff_q16);
+        OverflowingSubS32S32ToS32(CurveQ16[k], diff_q16);
+    CurveQ16[k] = OverflowingAddS32S32ToS32(CurveQ16[k], diff_q16);
   }
 }
 
@@ -498,10 +513,8 @@ int WebRtcIsacfix_DecodeSpec(Bitstr_dec *streamdata,
   {
     for (k = 0; k < FRAMESAMPLES; k += 4)
     {
-      gainQ10 = WebRtcSpl_DivW32W16ResW16(
-          30 << 10, (int16_t)((uint32_t)(WebRtcSpl_AddSatW32(
-                                  invARSpec2_Q16[k >> 2], 2195456)) >>
-                              16));
+      gainQ10 = WebRtcSpl_DivW32W16ResW16(30 << 10,
+          (int16_t)((uint32_t)(invARSpec2_Q16[k >> 2] + 2195456) >> 16));
       *frQ7++ = (int16_t)((data[k] * gainQ10 + 512) >> 10);
       *fiQ7++ = (int16_t)((data[k + 1] * gainQ10 + 512) >> 10);
       *frQ7++ = (int16_t)((data[k + 2] * gainQ10 + 512) >> 10);
@@ -512,10 +525,8 @@ int WebRtcIsacfix_DecodeSpec(Bitstr_dec *streamdata,
   {
     for (k = 0; k < FRAMESAMPLES; k += 4)
     {
-      gainQ10 = WebRtcSpl_DivW32W16ResW16(
-          36 << 10, (int16_t)((uint32_t)(WebRtcSpl_AddSatW32(
-                                  invARSpec2_Q16[k >> 2], 2654208)) >>
-                              16));
+      gainQ10 = WebRtcSpl_DivW32W16ResW16(36 << 10,
+          (int16_t)((uint32_t)(invARSpec2_Q16[k >> 2] + 2654208) >> 16));
       *frQ7++ = (int16_t)((data[k] * gainQ10 + 512) >> 10);
       *fiQ7++ = (int16_t)((data[k + 1] * gainQ10 + 512) >> 10);
       *frQ7++ = (int16_t)((data[k + 2] * gainQ10 + 512) >> 10);

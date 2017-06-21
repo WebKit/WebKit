@@ -11,13 +11,12 @@
 #ifndef WEBRTC_MODULES_VIDEO_CODING_CODECS_TEST_MOCK_MOCK_PACKET_MANIPULATOR_H_
 #define WEBRTC_MODULES_VIDEO_CODING_CODECS_TEST_MOCK_MOCK_PACKET_MANIPULATOR_H_
 
-#include "webrtc/modules/video_coding/codecs/test/packet_manipulator.h"
-
 #include <string>
 
+#include "webrtc/modules/video_coding/codecs/test/packet_manipulator.h"
 #include "webrtc/test/gmock.h"
 #include "webrtc/typedefs.h"
-#include "webrtc/video_frame.h"
+#include "webrtc/common_video/include/video_frame.h"
 
 namespace webrtc {
 namespace test {

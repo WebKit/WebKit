@@ -76,7 +76,7 @@ NaluType ParseNaluType(uint8_t data);
 // the 03 emulation byte.
 
 // Parse the given data and remove any emulation byte escaping.
-std::unique_ptr<rtc::Buffer> ParseRbsp(const uint8_t* data, size_t length);
+std::vector<uint8_t> ParseRbsp(const uint8_t* data, size_t length);
 
 // Write the given data to the destination buffer, inserting and emulation
 // bytes in order to escape any data the could be interpreted as a start

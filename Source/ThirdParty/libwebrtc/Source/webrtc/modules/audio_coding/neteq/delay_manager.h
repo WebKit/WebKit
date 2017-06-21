@@ -95,6 +95,11 @@ class DelayManager {
   // speech.
   virtual void LastDecodedWasCngOrDtmf(bool it_was);
 
+  // Notify the delay manager that empty packets have been received. These are
+  // packets that are part of the sequence number series, so that an empty
+  // packet will shift the sequence numbers for the following packets.
+  virtual void RegisterEmptyPacket();
+
   // Accessors and mutators.
   // Assuming |delay| is in valid range.
   virtual bool SetMinimumDelay(int delay_ms);

@@ -113,9 +113,9 @@ class AudioFrameOperations {
   // Halve samples in |frame|.
   static void ApplyHalfGain(AudioFrame* frame);
 
-  static int Scale(float left, float right, AudioFrame& frame);
+  static int Scale(float left, float right, AudioFrame* frame);
 
-  static int ScaleWithSat(float scale, AudioFrame& frame);
+  static int ScaleWithSat(float scale, AudioFrame* frame);
 };
 
 }  // namespace webrtc

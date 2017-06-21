@@ -79,6 +79,9 @@ class AcmReceiver {
   //
   int GetAudio(int desired_freq_hz, AudioFrame* audio_frame, bool* muted);
 
+  // Replace the current set of decoders with the specified set.
+  void SetCodecs(const std::map<int, SdpAudioFormat>& codecs);
+
   //
   // Adds a new codec to the NetEq codec database.
   //
@@ -278,8 +281,8 @@ class AcmReceiver {
   ACMResampler resampler_ GUARDED_BY(crit_sect_);
   std::unique_ptr<int16_t[]> last_audio_buffer_ GUARDED_BY(crit_sect_);
   CallStatistics call_stats_ GUARDED_BY(crit_sect_);
-  NetEq* neteq_;
-  Clock* clock_;  // TODO(henrik.lundin) Make const if possible.
+  const std::unique_ptr<NetEq> neteq_;  // NetEq is thread-safe; no lock needed.
+  const Clock* const clock_;
   bool resampled_last_output_frame_ GUARDED_BY(crit_sect_);
   rtc::Optional<int> last_packet_sample_rate_hz_ GUARDED_BY(crit_sect_);
 };

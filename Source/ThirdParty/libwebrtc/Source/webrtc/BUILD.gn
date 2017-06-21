@@ -33,7 +33,6 @@ config("common_inherited_config") {
       "FEATURE_ENABLE_VOICEMAIL",
       "EXPAT_RELATIVE_PATH",
       "GTEST_RELATIVE_PATH",
-      "NO_MAIN_THREAD_WRAPPING",
       "NO_SOUND_SYSTEM",
       "WEBRTC_CHROMIUM_BUILD",
     ]
@@ -101,6 +100,12 @@ config("common_config") {
   cflags_cc = []
   defines = []
 
+  if (rtc_enable_protobuf) {
+    defines += [ "WEBRTC_ENABLE_PROTOBUF=1" ]
+  } else {
+    defines += [ "WEBRTC_ENABLE_PROTOBUF=0" ]
+  }
+
   if (rtc_restrict_logging) {
     defines += [ "WEBRTC_RESTRICT_LOGGING" ]
   }
@@ -131,7 +136,6 @@ config("common_config") {
       # targets, there's no point including the defines in that config here.
       # TODO(kjellander): Cleanup unused ones and move defines closer to the
       # source when webrtc:4256 is completed.
-      "HAVE_SRTP",
       "HAVE_WEBRTC_VIDEO",
       "HAVE_WEBRTC_VOICE",
       "LOGGING_INSIDE_WEBRTC",
@@ -220,29 +224,27 @@ config("common_objc") {
   libs = [ "Foundation.framework" ]
 }
 
+rtc_source_set("video_stream_api") {
+  sources = [
+    "video_receive_stream.h",
+    "video_send_stream.h",
+  ]
+  deps = [
+    ":webrtc_common",
+    "api:transport_api",
+    "base:rtc_base_approved",
+    "common_video:common_video",
+  ]
+}
+
 if (!build_with_chromium) {
   # Target to build all the WebRTC production code.
   rtc_static_library("webrtc") {
     # Only the root target should depend on this.
     visibility = [ "//:default" ]
 
-    sources = [
-      # TODO(ossu): Keep this here until donwstream projects have updated.
-      # http://bugs.webrtc.org/6716
-      "call.h",
-      "config.h",
-    ]
-
-    # complete_static_lib doesn't work on Mac since libtool cannot support
-    # multiple objects with the same filenames (https://bugs.webrtc.org/6418).
-    if (is_win || is_linux || is_android) {
-      complete_static_lib = true
-    } else {
-      # TODO(kjellander): Remove this whenever possible. GN's static_library
-      # target type requires at least one object to avoid errors linking.
-      sources += [ "no_op_function.cc" ]
-    }
-
+    sources = []
+    complete_static_lib = true
     defines = []
 
     deps = [
@@ -263,7 +265,7 @@ if (!build_with_chromium) {
       "pc",
       "sdk",
       "stats",
-      "system_wrappers",
+      "system_wrappers:system_wrappers_default",
       "video",
       "voice_engine",
     ]
@@ -288,7 +290,6 @@ if (!build_with_chromium) {
         ":video_engine_tests",
         ":webrtc_nonparallel_tests",
         ":webrtc_perf_tests",
-        "api:rtc_api_unittests",
         "base:rtc_base_tests_utils",
         "common_audio:common_audio_unittests",
         "common_video:common_video_unittests",
@@ -297,6 +298,7 @@ if (!build_with_chromium) {
         "modules:modules_unittests",
         "modules/audio_coding:audio_coding_tests",
         "modules/audio_processing:audio_processing_tests",
+        "modules/remote_bitrate_estimator:bwe_simulations_tests",
         "modules/rtp_rtcp:test_packet_masks_metrics",
         "modules/video_capture:video_capture_internal_impl",
         "modules/video_coding:plot_videoprocessor_integrationtest",
@@ -308,8 +310,6 @@ if (!build_with_chromium) {
         "test",
         "video:screenshare_loopback",
         "video:video_loopback",
-        "video:video_tests",
-        "voice_engine:voe_cmd_test",
         "voice_engine:voice_engine_unittests",
       ]
       if (is_android) {
@@ -327,13 +327,23 @@ if (!build_with_chromium) {
         ]
       }
       if (rtc_enable_protobuf) {
-        deps += [ "logging:rtc_event_log2rtp_dump" ]
+        deps += [
+          "audio:low_bandwidth_audio_test",
+          "logging:rtc_event_log2rtp_dump",
+        ]
       }
     }
   }
 }
 
 rtc_static_library("webrtc_common") {
+  # TODO(mbonadei): Remove (bugs.webrtc.org/7745)
+  # Enabling GN check triggers cyclic dependency error:
+  # //webrtc:webrtc_common ->
+  # //webrtc/api:video_frame_api ->
+  # //webrtc/system_wrappers:system_wrappers ->
+  # //webrtc:webrtc_common
+  check_includes = false
   sources = [
     "common_types.cc",
     "common_types.h",
@@ -376,10 +386,13 @@ if (rtc_include_tests) {
     testonly = true
     deps = [
       "api:rtc_api_unittests",
+      "api/audio_codecs/test:audio_codecs_api_unittests",
       "base:rtc_base_approved_unittests",
       "base:rtc_base_unittests",
       "base:rtc_numerics_unittests",
       "base:rtc_task_queue_unittests",
+      "base:sequenced_task_checker_unittests",
+      "base:weak_ptr_unittests",
       "p2p:libstunprober_unittests",
       "p2p:rtc_p2p_unittests",
       "system_wrappers:metrics_default",
@@ -395,7 +408,7 @@ if (rtc_include_tests) {
     }
 
     if (is_ios || is_mac) {
-      deps += [ "sdk:rtc_sdk_peerconnection_objc_unittests" ]
+      deps += [ "sdk:objc_sdk_unittests" ]
     }
   }
 
@@ -420,6 +433,9 @@ if (rtc_include_tests) {
     deps = [
       "audio:audio_tests",
       "base:rtc_base_tests_utils",
+
+      # TODO(eladalon): call_tests aren't actually video-specific, so we
+      # should move them to a more appropriate test suite.
       "call:call_tests",
       "modules/video_capture",
       "test:test_common",
@@ -478,7 +494,6 @@ if (rtc_include_tests) {
       "modules/remote_bitrate_estimator:remote_bitrate_estimator_perf_tests",
       "test:test_main",
       "video:video_full_stack_tests",
-      "video:video_quality_test",
     ]
 
     data = webrtc_perf_tests_resources

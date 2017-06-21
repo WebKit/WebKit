@@ -16,6 +16,7 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/base/stringutils.h"
 #include "webrtc/common_types.h"
+#include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
 #include "webrtc/modules/rtp_rtcp/source/byte_io.h"
 
 namespace webrtc {
@@ -119,13 +120,43 @@ RTPPayloadRegistry::RTPPayloadRegistry()
 
 RTPPayloadRegistry::~RTPPayloadRegistry() = default;
 
+void RTPPayloadRegistry::SetAudioReceivePayloads(
+    std::map<int, SdpAudioFormat> codecs) {
+  rtc::CritScope cs(&crit_sect_);
+
+#if RTC_DCHECK_IS_ON
+  RTC_DCHECK(!used_for_video_);
+  used_for_audio_ = true;
+#endif
+
+  payload_type_map_.clear();
+  for (const auto& kv : codecs) {
+    const int& rtp_payload_type = kv.first;
+    const SdpAudioFormat& audio_format = kv.second;
+    const CodecInst ci = SdpToCodecInst(rtp_payload_type, audio_format);
+    RTC_DCHECK(IsPayloadTypeValid(rtp_payload_type));
+    payload_type_map_.insert(
+        std::make_pair(rtp_payload_type, CreatePayloadType(ci)));
+  }
+
+  // Clear the value of last received payload type since it might mean
+  // something else now.
+  last_received_payload_type_ = -1;
+  last_received_media_payload_type_ = -1;
+}
+
 int32_t RTPPayloadRegistry::RegisterReceivePayload(const CodecInst& audio_codec,
                                                    bool* created_new_payload) {
+  rtc::CritScope cs(&crit_sect_);
+
+#if RTC_DCHECK_IS_ON
+  RTC_DCHECK(!used_for_video_);
+  used_for_audio_ = true;
+#endif
+
   *created_new_payload = false;
   if (!IsPayloadTypeValid(audio_codec.pltype))
     return -1;
-
-  rtc::CritScope cs(&crit_sect_);
 
   auto it = payload_type_map_.find(audio_codec.pltype);
   if (it != payload_type_map_.end()) {
@@ -154,10 +185,15 @@ int32_t RTPPayloadRegistry::RegisterReceivePayload(const CodecInst& audio_codec,
 
 int32_t RTPPayloadRegistry::RegisterReceivePayload(
     const VideoCodec& video_codec) {
+  rtc::CritScope cs(&crit_sect_);
+
+#if RTC_DCHECK_IS_ON
+  RTC_DCHECK(!used_for_audio_);
+  used_for_video_ = true;
+#endif
+
   if (!IsPayloadTypeValid(video_codec.plType))
     return -1;
-
-  rtc::CritScope cs(&crit_sect_);
 
   auto it = payload_type_map_.find(video_codec.plType);
   if (it != payload_type_map_.end()) {

@@ -31,7 +31,7 @@ struct FecPacketCounter {
 
 class UlpfecReceiver {
  public:
-  static UlpfecReceiver* Create(RtpData* callback);
+  static UlpfecReceiver* Create(RecoveredPacketReceiver* callback);
 
   virtual ~UlpfecReceiver() {}
 

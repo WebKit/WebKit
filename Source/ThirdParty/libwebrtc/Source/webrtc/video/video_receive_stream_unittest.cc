@@ -13,6 +13,7 @@
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/gmock.h"
 
+#include "webrtc/api/video_codecs/video_decoder.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/event.h"
 #include "webrtc/media/base/fakevideorenderer.h"
@@ -22,9 +23,7 @@
 #include "webrtc/video/call_stats.h"
 #include "webrtc/video/video_receive_stream.h"
 #include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/sleep.h"
 #include "webrtc/test/field_trial.h"
-#include "webrtc/video_decoder.h"
 
 using testing::_;
 using testing::Invoke;
@@ -93,9 +92,7 @@ class VideoReceiveStreamTest : public testing::Test {
 
     video_receive_stream_.reset(new webrtc::internal::VideoReceiveStream(
         kDefaultNumCpuCores,
-        false,  // flex_fec
-        &packet_router_, config_.Copy(), process_thread_.get(), &call_stats_,
-        nullptr));  // remb
+        &packet_router_, config_.Copy(), process_thread_.get(), &call_stats_));
   }
 
  protected:
@@ -131,9 +128,9 @@ TEST_F(VideoReceiveStreamTest, CreateFrameFromH264FmtpSpropAndIdr) {
   EXPECT_CALL(mock_h264_video_decoder_, RegisterDecodeCompleteCallback(_));
   video_receive_stream_->Start();
   EXPECT_CALL(mock_h264_video_decoder_, Decode(_, false, _, _, _));
-  EXPECT_EQ(true,
-            video_receive_stream_->OnRecoveredPacket(rtppacket.data(),
-                                                     rtppacket.size()));
+  RtpPacketReceived parsed_packet;
+  ASSERT_TRUE(parsed_packet.Parse(rtppacket.data(), rtppacket.size()));
+  video_receive_stream_->OnRtpPacket(parsed_packet);
   EXPECT_CALL(mock_h264_video_decoder_, Release());
   // Make sure the decoder thread had a chance to run.
   init_decode_event_.Wait(kDefaultTimeOutMs);

@@ -53,7 +53,8 @@ class AndroidNetworkMonitor : public rtc::NetworkMonitorBase,
  public:
   AndroidNetworkMonitor();
 
-  static void SetAndroidContext(JNIEnv* jni, jobject context);
+  // TODO(sakal): Remove once down stream dependencies have been updated.
+  static void SetAndroidContext(JNIEnv* jni, jobject context) {}
 
   void Start() override;
   void Stop() override;

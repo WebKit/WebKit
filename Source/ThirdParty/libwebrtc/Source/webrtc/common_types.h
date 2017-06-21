@@ -18,7 +18,10 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/api/video/video_content_type.h"
 #include "webrtc/api/video/video_rotation.h"
+#include "webrtc/api/video/video_timing.h"
+#include "webrtc/base/array_view.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/optional.h"
 #include "webrtc/typedefs.h"
@@ -410,93 +413,32 @@ struct AudioDecodingCallStats {
   int decoded_muted_output;  // Number of calls returning a muted state output.
 };
 
-// Type of Noise Suppression.
-enum NsModes {
-  kNsUnchanged = 0,   // previously set mode
-  kNsDefault,         // platform default
-  kNsConference,      // conferencing default
-  kNsLowSuppression,  // lowest suppression
-  kNsModerateSuppression,
-  kNsHighSuppression,
-  kNsVeryHighSuppression,  // highest suppression
-};
-
-// Type of Automatic Gain Control.
-enum AgcModes {
-  kAgcUnchanged = 0,  // previously set mode
-  kAgcDefault,        // platform default
-  // adaptive mode for use when analog volume control exists (e.g. for
-  // PC softphone)
-  kAgcAdaptiveAnalog,
-  // scaling takes place in the digital domain (e.g. for conference servers
-  // and embedded devices)
-  kAgcAdaptiveDigital,
-  // can be used on embedded devices where the capture signal level
-  // is predictable
-  kAgcFixedDigital
-};
-
-// Type of Echo Control.
-enum EcModes {
-  kEcUnchanged = 0,  // previously set mode
-  kEcDefault,        // platform default
-  kEcConference,     // conferencing default (aggressive AEC)
-  kEcAec,            // Acoustic Echo Cancellation
-  kEcAecm,           // AEC mobile
-};
-
-// Mode of AECM.
-enum AecmModes {
-  kAecmQuietEarpieceOrHeadset = 0,
-  // Quiet earpiece or headset use
-  kAecmEarpiece,         // most earpiece use
-  kAecmLoudEarpiece,     // Loud earpiece or quiet speakerphone use
-  kAecmSpeakerphone,     // most speakerphone use (default)
-  kAecmLoudSpeakerphone  // Loud speakerphone
-};
-
-// AGC configuration parameters
-struct AgcConfig {
-  unsigned short targetLeveldBOv;
-  unsigned short digitalCompressionGaindB;
-  bool limiterEnable;
-};
-
-enum StereoChannel { kStereoLeft = 0, kStereoRight, kStereoBoth };
-
-// Audio device layers
-enum AudioLayers {
-  kAudioPlatformDefault = 0,
-  kAudioWindowsCore = 2,
-  kAudioLinuxAlsa = 3,
-  kAudioLinuxPulse = 4
-};
-
 // ==================================================================
 // Video specific types
 // ==================================================================
 
-// Raw video types
-enum RawVideoType {
-  kVideoI420 = 0,
-  kVideoYV12 = 1,
-  kVideoYUY2 = 2,
-  kVideoUYVY = 3,
-  kVideoIYUV = 4,
-  kVideoARGB = 5,
-  kVideoRGB24 = 6,
-  kVideoRGB565 = 7,
-  kVideoARGB4444 = 8,
-  kVideoARGB1555 = 9,
-  kVideoMJPEG = 10,
-  kVideoNV12 = 11,
-  kVideoNV21 = 12,
-  kVideoBGRA = 13,
-  kVideoUnknown = 99
+// TODO(nisse): Delete, and switch to fourcc values everywhere?
+// Supported video types.
+enum class VideoType {
+  kUnknown,
+  kI420,
+  kIYUV,
+  kRGB24,
+  kABGR,
+  kARGB,
+  kARGB4444,
+  kRGB565,
+  kARGB1555,
+  kYUY2,
+  kYV12,
+  kUYVY,
+  kMJPEG,
+  kNV21,
+  kNV12,
+  kBGRA,
 };
 
 // Video codec
-enum { kConfigParameterSize = 128 };
 enum { kPayloadNameSize = 32 };
 enum { kMaxSimulcastStreams = 4 };
 enum { kMaxSpatialLayers = 5 };
@@ -523,8 +465,8 @@ enum VP8ResilienceMode {
 class TemporalLayersFactory;
 // VP8 specific
 struct VideoCodecVP8 {
+  // TODO(nisse): Unused, delete?
   bool pictureLossIndicationOn;
-  bool feedbackModeOn;
   VideoCodecComplexity complexity;
   VP8ResilienceMode resilience;
   unsigned char numberOfTemporalLayers;
@@ -539,7 +481,7 @@ struct VideoCodecVP8 {
 // VP9 specific.
 struct VideoCodecVP9 {
   VideoCodecComplexity complexity;
-  int resilience;
+  bool resilienceOn;
   unsigned char numberOfTemporalLayers;
   bool denoisingOn;
   bool frameDroppingOn;
@@ -637,7 +579,7 @@ class VideoCodec {
   unsigned int minBitrate;     // kilobits/sec.
   unsigned int targetBitrate;  // kilobits/sec.
 
-  unsigned char maxFramerate;
+  uint32_t maxFramerate;
 
   unsigned int qpMax;
   unsigned char numberOfSimulcastStreams;
@@ -646,6 +588,19 @@ class VideoCodec {
 
   VideoCodecMode mode;
   bool expect_encode_from_texture;
+
+  // Timing frames configuration. There is delay of delay_ms between two
+  // consequent timing frames, excluding outliers. Frame is always made a
+  // timing frame if it's at least outlier_ratio in percent of "ideal" average
+  // frame given bitrate and framerate, i.e. if it's bigger than
+  // |outlier_ratio / 100.0 * bitrate_bps / fps| in bits. This way, timing
+  // frames will not be sent too often usually. Yet large frames will always
+  // have timing information for debug purposes because they are more likely to
+  // cause extra delays.
+  struct TimingFrameTriggerThresholds {
+    int64_t delay_ms;
+    uint16_t outlier_ratio_percent;
+  } timing_frame_thresholds;
 
   bool operator==(const VideoCodec& other) const = delete;
   bool operator!=(const VideoCodec& other) const = delete;
@@ -757,6 +712,44 @@ struct PlayoutDelay {
   int max_ms;
 };
 
+// Class to represent RtpStreamId which is a string.
+// Unlike std::string, it can be copied with memcpy and cleared with memset.
+// Empty value represent unset RtpStreamId.
+class StreamId {
+ public:
+  // Stream id is limited to 16 bytes because it is the maximum length
+  // that can be encoded with one-byte header extensions.
+  static constexpr size_t kMaxSize = 16;
+
+  static bool IsLegalName(rtc::ArrayView<const char> name);
+
+  StreamId() { value_[0] = 0; }
+  explicit StreamId(rtc::ArrayView<const char> value) {
+    Set(value.data(), value.size());
+  }
+  StreamId(const StreamId&) = default;
+  StreamId& operator=(const StreamId&) = default;
+
+  bool empty() const { return value_[0] == 0; }
+  const char* data() const { return value_; }
+  size_t size() const { return strnlen(value_, kMaxSize); }
+
+  void Set(rtc::ArrayView<const uint8_t> value) {
+    Set(reinterpret_cast<const char*>(value.data()), value.size());
+  }
+  void Set(const char* data, size_t size);
+
+  friend bool operator==(const StreamId& lhs, const StreamId& rhs) {
+    return strncmp(lhs.value_, rhs.value_, kMaxSize) == 0;
+  }
+  friend bool operator!=(const StreamId& lhs, const StreamId& rhs) {
+    return !(lhs == rhs);
+  }
+
+ private:
+  char value_[kMaxSize];
+};
+
 struct RTPHeaderExtension {
   RTPHeaderExtension();
 
@@ -779,7 +772,21 @@ struct RTPHeaderExtension {
   bool hasVideoRotation;
   VideoRotation videoRotation;
 
+  // TODO(ilnik): Refactor this and one above to be rtc::Optional() and remove
+  // a corresponding bool flag.
+  bool hasVideoContentType;
+  VideoContentType videoContentType;
+
+  bool has_video_timing;
+  VideoTiming video_timing;
+
   PlayoutDelay playout_delay = {-1, -1};
+
+  // For identification of a stream when ssrc is not signaled. See
+  // https://tools.ietf.org/html/draft-ietf-avtext-rid-09
+  // TODO(danilchap): Update url from draft to release version.
+  StreamId stream_id;
+  StreamId repaired_stream_id;
 };
 
 struct RTPHeader {

@@ -37,4 +37,9 @@ RTC_EXPORT
 + (void)dispatchAsyncOnType:(RTCDispatcherQueueType)dispatchType
                       block:(dispatch_block_t)block;
 
+/** Returns YES if run on queue for the dispatchType otherwise NO.
+ *  Useful for asserting that a method is run on a correct queue.
+ */
++ (BOOL)isOnQueueForType:(RTCDispatcherQueueType)dispatchType;
+
 @end

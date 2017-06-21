@@ -10,10 +10,12 @@
 #ifndef WEBRTC_VIDEO_VIDEO_QUALITY_TEST_H_
 #define WEBRTC_VIDEO_VIDEO_QUALITY_TEST_H_
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "webrtc/modules/video_coding/codecs/vp8/simulcast_encoder_adapter.h"
 #include "webrtc/test/call_test.h"
 #include "webrtc/test/frame_generator.h"
 #include "webrtc/test/testsupport/trace_to_stderr.h"
@@ -29,11 +31,11 @@ class VideoQualityTest : public test::CallTest {
   struct Params {
     Params();
     ~Params();
-    struct {
+    struct CallConfig {
       bool send_side_bwe;
       Call::Config::BitrateConfig call_bitrate_config;
     } call;
-    struct {
+    struct Video {
       bool enabled;
       size_t width;
       size_t height;
@@ -49,18 +51,21 @@ class VideoQualityTest : public test::CallTest {
       bool ulpfec;
       bool flexfec;
       std::string encoded_frame_base_path;
-      std::string clip_name;
+      std::string clip_name;  // "Generator" to generate frames instead.
+      size_t capture_device_index;
     } video;
-    struct {
+    struct Audio {
       bool enabled;
       bool sync_video;
+      bool dtx;
     } audio;
-    struct {
+    struct Screenshare {
       bool enabled;
       int32_t slide_change_interval;
       int32_t scroll_duration;
+      std::vector<std::string> slides;
     } screenshare;
-    struct {
+    struct Analyzer {
       std::string test_label;
       double avg_psnr_threshold;  // (*)
       double avg_ssim_threshold;  // (*)
@@ -70,18 +75,18 @@ class VideoQualityTest : public test::CallTest {
     } analyzer;
     FakeNetworkPipe::Config pipe;
     bool logs;
-    struct {  // Spatial scalability.
+    struct SS {                          // Spatial scalability.
       std::vector<VideoStream> streams;  // If empty, one stream is assumed.
       size_t selected_stream;
       int num_spatial_layers;
       int selected_sl;
       // If empty, bitrates are generated in VP9Impl automatically.
       std::vector<SpatialLayer> spatial_layers;
+      // If set, default parameters will be used instead of |streams|.
+      bool infer_streams;
     } ss;
+    int num_thumbnails;
   };
-  // (*) Set to -1.1 if generating graph data for simulcast or SVC and the
-  // selected stream/layer doesn't have the same resolution as the largest
-  // stream/layer (to ignore the PSNR and SSIM calculation errors).
 
   VideoQualityTest();
   void RunWithAnalyzer(const Params& params);
@@ -96,6 +101,8 @@ class VideoQualityTest : public test::CallTest {
       const std::vector<std::string>& sl_descriptors);
 
  protected:
+  std::map<uint8_t, webrtc::MediaType> payload_type_map_;
+
   // No-op implementation to be able to instantiate this class from non-TEST_F
   // locations.
   void TestBody() override;
@@ -106,11 +113,15 @@ class VideoQualityTest : public test::CallTest {
 
   // Helper static methods.
   static VideoStream DefaultVideoStream(const Params& params);
+  static VideoStream DefaultThumbnailStream();
   static std::vector<int> ParseCSV(const std::string& str);
 
   // Helper methods for setting up the call.
   void CreateCapturer();
+  void SetupThumbnailCapturers(size_t num_thumbnail_streams);
   void SetupVideo(Transport* send_transport, Transport* recv_transport);
+  void SetupThumbnails(Transport* send_transport, Transport* recv_transport);
+  void DestroyThumbnailStreams();
   void SetupScreenshareOrSVC();
   void SetupAudio(int send_channel_id,
                   int receive_channel_id,
@@ -123,16 +134,26 @@ class VideoQualityTest : public test::CallTest {
 
   // We need a more general capturer than the FrameGeneratorCapturer.
   std::unique_ptr<test::VideoCapturer> video_capturer_;
+  std::vector<std::unique_ptr<test::VideoCapturer>> thumbnail_capturers_;
   std::unique_ptr<test::TraceToStderr> trace_to_stderr_;
   std::unique_ptr<test::FrameGenerator> frame_generator_;
   std::unique_ptr<VideoEncoder> video_encoder_;
+  std::unique_ptr<VideoEncoderFactory> vp8_encoder_factory_;
+
+  std::vector<std::unique_ptr<VideoEncoder>> thumbnail_encoders_;
+  std::vector<VideoSendStream::Config> thumbnail_send_configs_;
+  std::vector<VideoEncoderConfig> thumbnail_encoder_configs_;
+  std::vector<VideoSendStream*> thumbnail_send_streams_;
+  std::vector<VideoReceiveStream::Config> thumbnail_receive_configs_;
+  std::vector<VideoReceiveStream*> thumbnail_receive_streams_;
+
   Clock* const clock_;
 
   int receive_logs_;
   int send_logs_;
 
   VideoSendStream::DegradationPreference degradation_preference_ =
-      VideoSendStream::DegradationPreference::kBalanced;
+      VideoSendStream::DegradationPreference::kMaintainFramerate;
   Params params_;
 };
 

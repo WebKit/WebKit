@@ -33,6 +33,15 @@ MedianSlopeEstimator::MedianSlopeEstimator(size_t window_size,
 
 MedianSlopeEstimator::~MedianSlopeEstimator() {}
 
+MedianSlopeEstimator::DelayInfo::DelayInfo(int64_t time,
+                                           double delay,
+                                           size_t slope_count)
+    : time(time), delay(delay) {
+  slopes.reserve(slope_count);
+}
+
+MedianSlopeEstimator::DelayInfo::~DelayInfo() = default;
+
 void MedianSlopeEstimator::Update(double recv_delta_ms,
                                   double send_delta_ms,
                                   int64_t arrival_time_ms) {

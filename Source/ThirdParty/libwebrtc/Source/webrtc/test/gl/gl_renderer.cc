@@ -78,7 +78,7 @@ void GlRenderer::OnFrame(const webrtc::VideoFrame& frame) {
     ResizeVideo(frame.width(), frame.height());
   }
 
-  webrtc::ConvertFromI420(frame, kBGRA, 0, buffer_);
+  webrtc::ConvertFromI420(frame, VideoType::kBGRA, 0, buffer_);
 
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, texture_);

@@ -22,6 +22,7 @@ namespace webrtc {
 namespace {
 
 constexpr float kHErrorInitial = 10000.f;
+constexpr int kPoorExcitationCounterInitial = 1000;
 
 }  // namespace
 
@@ -30,7 +31,7 @@ int MainFilterUpdateGain::instance_count_ = 0;
 MainFilterUpdateGain::MainFilterUpdateGain()
     : data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
-      poor_excitation_counter_(1000) {
+      poor_excitation_counter_(kPoorExcitationCounterInitial) {
   H_error_.fill(kHErrorInitial);
 }
 
@@ -38,10 +39,12 @@ MainFilterUpdateGain::~MainFilterUpdateGain() {}
 
 void MainFilterUpdateGain::HandleEchoPathChange() {
   H_error_.fill(kHErrorInitial);
+  poor_excitation_counter_ = kPoorExcitationCounterInitial;
+  call_counter_ = 0;
 }
 
 void MainFilterUpdateGain::Compute(
-    const FftBuffer& render_buffer,
+    const RenderBuffer& render_buffer,
     const RenderSignalAnalyzer& render_signal_analyzer,
     const SubtractorOutput& subtractor_output,
     const AdaptiveFirFilter& filter,
@@ -49,13 +52,12 @@ void MainFilterUpdateGain::Compute(
     FftData* gain_fft) {
   RTC_DCHECK(gain_fft);
   // Introducing shorter notation to improve readability.
-  const FftBuffer& X_buffer = render_buffer;
   const FftData& E_main = subtractor_output.E_main;
   const auto& E2_main = subtractor_output.E2_main;
   const auto& E2_shadow = subtractor_output.E2_shadow;
   FftData* G = gain_fft;
   const size_t size_partitions = filter.SizePartitions();
-  const auto& X2 = X_buffer.SpectralSum(size_partitions);
+  const auto& X2 = render_buffer.SpectralSum(size_partitions);
   const auto& erl = filter.Erl();
 
   ++call_counter_;
@@ -70,16 +72,15 @@ void MainFilterUpdateGain::Compute(
     G->re.fill(0.f);
     G->im.fill(0.f);
   } else {
-    // Corresponds of WGN of power -46 dBFS.
-    constexpr float kX2Min = 44015068.0f;
+    // Corresponds to WGN of power -39 dBFS.
+    constexpr float kNoiseGatePower = 220075344.f;
     std::array<float, kFftLengthBy2Plus1> mu;
     // mu = H_error / (0.5* H_error* X2 + n * E2).
     for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
-      mu[k] =
-          X2[k] > kX2Min
-              ? H_error_[k] /
-                    (0.5f * H_error_[k] * X2[k] + size_partitions * E2_main[k])
-              : 0.f;
+      mu[k] = X2[k] > kNoiseGatePower
+                  ? H_error_[k] / (0.5f * H_error_[k] * X2[k] +
+                                   size_partitions * E2_main[k])
+                  : 0.f;
     }
 
     // Avoid updating the filter close to narrow bands in the render signals.

@@ -30,9 +30,10 @@
 #include "webrtc/voice_engine/include/voe_rtp_rtcp.h"
 #include "webrtc/voice_engine/test/auto_test/fakes/loudest_filter.h"
 
-static const size_t kMaxPacketSizeByte = 1500;
-
+namespace webrtc {
 namespace voetest {
+
+static const size_t kMaxPacketSizeByte = 1500;
 
 // This class is to simulate a conference call. There are two Voice Engines, one
 // for local channels and the other for remote channels. There is a simulated
@@ -158,6 +159,8 @@ class ConferenceTransport: public webrtc::Transport {
 
   const std::unique_ptr<webrtc::RtpHeaderParser> rtp_header_parser_;
 };
+
 }  // namespace voetest
+}  // namespace webrtc
 
 #endif  // WEBRTC_VOICE_ENGINE_TEST_AUTO_TEST_FAKES_CONFERENCE_TRANSPORT_H_

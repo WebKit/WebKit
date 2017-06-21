@@ -44,6 +44,10 @@ bool RapidResyncRequest::Parse(const CommonHeader& packet) {
   return true;
 }
 
+size_t RapidResyncRequest::BlockLength() const {
+  return kHeaderLength + kCommonFeedbackLength;
+}
+
 bool RapidResyncRequest::Create(
     uint8_t* packet,
     size_t* index,

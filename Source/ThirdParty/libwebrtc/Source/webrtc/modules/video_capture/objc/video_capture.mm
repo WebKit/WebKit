@@ -16,7 +16,6 @@
 #include "webrtc/base/scoped_ref_ptr.h"
 #include "webrtc/modules/video_capture/objc/device_info_objc.h"
 #include "webrtc/modules/video_capture/objc/rtc_video_capture_objc.h"
-#include "webrtc/system_wrappers/include/trace.h"
 
 using namespace webrtc;
 using namespace videocapturemodule;
@@ -101,6 +100,6 @@ bool VideoCaptureIos::CaptureStarted() {
 
 int32_t VideoCaptureIos::CaptureSettings(VideoCaptureCapability& settings) {
   settings = capability_;
-  settings.rawType = kVideoNV12;
+  settings.videoType = VideoType::kNV12;
   return 0;
 }

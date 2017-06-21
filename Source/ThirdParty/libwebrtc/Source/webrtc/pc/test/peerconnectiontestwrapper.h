@@ -24,13 +24,6 @@ class PeerConnectionTestWrapper
       public webrtc::CreateSessionDescriptionObserver,
       public sigslot::has_slots<> {
  public:
-  // We need these using declarations because there are two versions of each of
-  // the below methods and we only override one of them.
-  // TODO(deadbeef): Remove once there's only one version of the methods.
-  using PeerConnectionObserver::OnAddStream;
-  using PeerConnectionObserver::OnRemoveStream;
-  using PeerConnectionObserver::OnDataChannel;
-
   static void Connect(PeerConnectionTestWrapper* caller,
                       PeerConnectionTestWrapper* callee);
 
@@ -41,7 +34,9 @@ class PeerConnectionTestWrapper
 
   bool CreatePc(
       const webrtc::MediaConstraintsInterface* constraints,
-      const webrtc::PeerConnectionInterface::RTCConfiguration& config);
+      const webrtc::PeerConnectionInterface::RTCConfiguration& config,
+      rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
+      rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory);
 
   webrtc::PeerConnectionInterface* pc() { return peer_connection_.get(); }
 

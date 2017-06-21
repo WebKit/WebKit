@@ -11,9 +11,9 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/video_capture/device_info_impl.h"
 #include "webrtc/modules/video_capture/video_capture_config.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 #ifndef abs
 #define abs(a) (a>=0?a:-a)
@@ -153,7 +153,7 @@ int32_t DeviceInfoImpl::GetBestMatchedCapability(
     int32_t bestWidth = 0;
     int32_t bestHeight = 0;
     int32_t bestFrameRate = 0;
-    RawVideoType bestRawType = kVideoUnknown;
+    VideoType bestVideoType = VideoType::kUnknown;
 
     const int32_t numberOfCapabilies =
         static_cast<int32_t>(_captureCapabilities.size());
@@ -193,15 +193,15 @@ int32_t DeviceInfoImpl::GetBestMatchedCapability(
                             if ((currentbestDiffFrameRate == diffFrameRate) // Same frame rate as previous  or frame rate allready good enough
                                 || (currentbestDiffFrameRate >= 0))
                             {
-                                if (bestRawType != requested.rawType
-                                    && requested.rawType != kVideoUnknown
-                                    && (capability.rawType == requested.rawType
-                                        || capability.rawType == kVideoI420
-                                        || capability.rawType == kVideoYUY2
-                                        || capability.rawType == kVideoYV12))
-                                {
-                                    bestRawType = capability.rawType;
-                                    bestformatIndex = tmp;
+                              if (bestVideoType != requested.videoType &&
+                                  requested.videoType != VideoType::kUnknown &&
+                                  (capability.videoType ==
+                                       requested.videoType ||
+                                   capability.videoType == VideoType::kI420 ||
+                                   capability.videoType == VideoType::kYUY2 ||
+                                   capability.videoType == VideoType::kYV12)) {
+                                bestVideoType = capability.videoType;
+                                bestformatIndex = tmp;
                                 }
                                 // If width height and frame rate is full filled we can use the camera for encoding if it is supported.
                                 if (capability.height == requested.height
@@ -216,7 +216,7 @@ int32_t DeviceInfoImpl::GetBestMatchedCapability(
                                 bestWidth = capability.width;
                                 bestHeight = capability.height;
                                 bestFrameRate = capability.maxFPS;
-                                bestRawType = capability.rawType;
+                                bestVideoType = capability.videoType;
                                 bestformatIndex = tmp;
                             }
                         }
@@ -226,7 +226,7 @@ int32_t DeviceInfoImpl::GetBestMatchedCapability(
                         bestWidth = capability.width;
                         bestHeight = capability.height;
                         bestFrameRate = capability.maxFPS;
-                        bestRawType = capability.rawType;
+                        bestVideoType = capability.videoType;
                         bestformatIndex = tmp;
                     }
                 }// else width no good
@@ -236,7 +236,7 @@ int32_t DeviceInfoImpl::GetBestMatchedCapability(
                 bestWidth = capability.width;
                 bestHeight = capability.height;
                 bestFrameRate = capability.maxFPS;
-                bestRawType = capability.rawType;
+                bestVideoType = capability.videoType;
                 bestformatIndex = tmp;
             }
         }// else height not good
@@ -244,7 +244,7 @@ int32_t DeviceInfoImpl::GetBestMatchedCapability(
 
     LOG(LS_VERBOSE) << "Best camera format: " << bestWidth << "x" << bestHeight
                     << "@" << bestFrameRate
-                    << "fps, color format: " << bestRawType;
+                    << "fps, color format: " << static_cast<int>(bestVideoType);
 
     // Copy the capability
     if (bestformatIndex < 0)

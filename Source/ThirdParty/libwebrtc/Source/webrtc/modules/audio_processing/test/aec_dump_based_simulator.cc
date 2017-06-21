@@ -29,9 +29,10 @@ bool VerifyFixedBitExactness(const webrtc::audioproc::Stream& msg,
       msg.output_data().size()) {
     return false;
   } else {
+    const int16_t* frame_data = frame.data();
     for (size_t k = 0; k < frame.num_channels_ * frame.samples_per_channel_;
          ++k) {
-      if (msg.output_data().data()[k] != frame.data_[k]) {
+      if (msg.output_data().data()[k] != frame_data[k]) {
         return false;
       }
     }
@@ -78,10 +79,11 @@ void AecDumpBasedSimulator::PrepareProcessStreamCall(
     interface_used_ = InterfaceType::kFixedInterface;
 
     // Populate input buffer.
-    RTC_CHECK_EQ(sizeof(fwd_frame_.data_[0]) * fwd_frame_.samples_per_channel_ *
+    RTC_CHECK_EQ(sizeof(*fwd_frame_.data()) * fwd_frame_.samples_per_channel_ *
                      fwd_frame_.num_channels_,
                  msg.input_data().size());
-    memcpy(fwd_frame_.data_, msg.input_data().data(), msg.input_data().size());
+    memcpy(fwd_frame_.mutable_data(), msg.input_data().data(),
+           msg.input_data().size());
   } else {
     // Float interface processing.
     // Verify interface invariance.
@@ -93,7 +95,7 @@ void AecDumpBasedSimulator::PrepareProcessStreamCall(
                  static_cast<size_t>(msg.input_channel_size()));
 
     // Populate input buffer.
-    for (int i = 0; i < msg.input_channel_size(); ++i) {
+    for (size_t i = 0; i < in_buf_->num_channels(); ++i) {
       RTC_CHECK_EQ(in_buf_->num_frames() * sizeof(*in_buf_->channels()[i]),
                    msg.input_channel(i).size());
       std::memcpy(in_buf_->channels()[i], msg.input_channel(i).data(),
@@ -105,9 +107,10 @@ void AecDumpBasedSimulator::PrepareProcessStreamCall(
     if (artificial_nearend_buffer_reader_->Read(
             artificial_nearend_buf_.get())) {
       if (msg.has_input_data()) {
+        int16_t* fwd_frame_data = fwd_frame_.mutable_data();
         for (size_t k = 0; k < in_buf_->num_frames(); ++k) {
-          fwd_frame_.data_[k] = rtc::saturated_cast<int16_t>(
-              fwd_frame_.data_[k] +
+          fwd_frame_data[k] = rtc::saturated_cast<int16_t>(
+              fwd_frame_data[k] +
               static_cast<int16_t>(32767 *
                                    artificial_nearend_buf_->channels()[0][k]));
         }
@@ -191,7 +194,7 @@ void AecDumpBasedSimulator::PrepareReverseProcessStreamCall(
     RTC_CHECK_EQ(sizeof(int16_t) * rev_frame_.samples_per_channel_ *
                      rev_frame_.num_channels_,
                  msg.data().size());
-    memcpy(rev_frame_.data_, msg.data().data(), msg.data().size());
+    memcpy(rev_frame_.mutable_data(), msg.data().data(), msg.data().size());
   } else {
     // Float interface processing.
     // Verify interface invariance.

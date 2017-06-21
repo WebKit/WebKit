@@ -22,7 +22,7 @@ class MockDebugDumpWriter : public DebugDumpWriter {
   MOCK_METHOD0(Die, void());
 
   MOCK_METHOD2(DumpEncoderRuntimeConfig,
-               void(const AudioNetworkAdaptor::EncoderRuntimeConfig& config,
+               void(const AudioEncoderRuntimeConfig& config,
                     int64_t timestamp));
   MOCK_METHOD2(DumpNetworkMetrics,
                void(const Controller::NetworkMetrics& metrics,

@@ -32,13 +32,12 @@ class Nack : public Rtpfb {
   void SetPacketIds(const uint16_t* nack_list, size_t length);
   const std::vector<uint16_t>& packet_ids() const { return packet_ids_; }
 
- protected:
+  size_t BlockLength() const override;
+
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
               RtcpPacket::PacketReadyCallback* callback) const override;
-
-  size_t BlockLength() const override;
 
  private:
   static constexpr size_t kNackItemLength = 4;

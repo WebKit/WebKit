@@ -126,19 +126,16 @@ void Packet::DeleteRedHeaders(std::list<RTPHeader*>* headers) {
   }
 }
 
-void Packet::ConvertHeader(WebRtcRTPHeader* copy_to) const {
-  memcpy(&copy_to->header, &header_, sizeof(header_));
-  copy_to->frameType = kAudioFrameSpeech;
-  copy_to->type.Audio.numEnergy = 0;
-  copy_to->type.Audio.channel = 1;
-  copy_to->type.Audio.isCNG = false;
-}
-
 bool Packet::ParseHeader(const RtpHeaderParser& parser) {
   bool valid_header = parser.Parse(
       payload_memory_.get(), static_cast<int>(packet_length_bytes_), &header_);
-  assert(valid_header);
-  if (!valid_header) {
+  // Special case for dummy packets that have padding marked in the RTP header.
+  // This causes the RTP header parser to report failure, but is fine in this
+  // context.
+  const bool header_only_with_padding =
+      (header_.headerLength == packet_length_bytes_ &&
+       header_.paddingLength > 0);
+  if (!valid_header && !header_only_with_padding) {
     return false;
   }
   assert(header_.headerLength <= packet_length_bytes_);

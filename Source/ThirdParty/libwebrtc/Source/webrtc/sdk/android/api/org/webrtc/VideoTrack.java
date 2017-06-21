@@ -40,8 +40,6 @@ public class VideoTrack extends MediaStreamTrack {
     super.dispose();
   }
 
-  private static native void free(long nativeTrack);
-
   private static native void nativeAddRenderer(long nativeTrack, long nativeRenderer);
 
   private static native void nativeRemoveRenderer(long nativeTrack, long nativeRenderer);

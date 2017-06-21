@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright 2017 The WebRTC project authors. All Rights Reserved.
+
+Use of this source code is governed by a BSD-style license
+that can be found in the LICENSE file in the root of the source
+tree. An additional intellectual property rights grant can be found
+in the file PATENTS.  All contributing project authors may
+be found in the AUTHORS file in the root of the source tree.
+-->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.webrtc.native_test"
+      android:versionCode="1"
+      android:versionName="1.0">
+
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="23" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application android:label="NativeTests"
+            android:name="org.chromium.base.BaseChromiumApplication">
+        <uses-library android:name="android.test.runner"/>
+        <activity android:name=".RTCNativeUnitTestActivity"
+                android:label="NativeTest"
+                android:configChanges="orientation|keyboardHidden"
+                android:process=":test_process">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+    <instrumentation android:name="org.chromium.native_test.NativeTestInstrumentationTestRunner"
+            android:targetPackage="org.webrtc.native_test"
+            android:label="Instrumentation entry point for org.webrtc.native_test"/>
+
+</manifest>

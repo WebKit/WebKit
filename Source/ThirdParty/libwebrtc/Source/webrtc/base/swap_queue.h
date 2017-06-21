@@ -118,7 +118,7 @@ class SwapQueue {
   // When specified, the T given in *input must pass the ItemVerifier() test.
   // The contents of *input after the call are then also guaranteed to pass the
   // ItemVerifier() test.
-  bool Insert(T* input) WARN_UNUSED_RESULT {
+  bool Insert(T* input) RTC_WARN_UNUSED_RESULT {
     RTC_DCHECK(input);
 
     rtc::CritScope cs(&crit_queue_);
@@ -151,7 +151,7 @@ class SwapQueue {
   // empty). When specified, The T given in *output must pass the ItemVerifier()
   // test and the contents of *output after the call are then also guaranteed to
   // pass the ItemVerifier() test.
-  bool Remove(T* output) WARN_UNUSED_RESULT {
+  bool Remove(T* output) RTC_WARN_UNUSED_RESULT {
     RTC_DCHECK(output);
 
     rtc::CritScope cs(&crit_queue_);

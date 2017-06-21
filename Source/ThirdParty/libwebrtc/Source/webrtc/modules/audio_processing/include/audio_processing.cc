@@ -10,6 +10,8 @@
 
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
 
+#include "webrtc/base/checks.h"
+
 namespace webrtc {
 
 Beamforming::Beamforming()
@@ -30,6 +32,4 @@ Beamforming::Beamforming(bool enabled,
       target_direction(target_direction) {}
 
 Beamforming::~Beamforming() {}
-
-
 }  // namespace webrtc

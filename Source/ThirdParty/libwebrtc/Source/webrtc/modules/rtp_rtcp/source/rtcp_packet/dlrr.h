@@ -33,9 +33,9 @@ class Dlrr {
  public:
   static const uint8_t kBlockType = 5;
 
-  Dlrr() {}
-  Dlrr(const Dlrr& other) = default;
-  ~Dlrr() {}
+  Dlrr();
+  Dlrr(const Dlrr& other);
+  ~Dlrr();
 
   Dlrr& operator=(const Dlrr& other) = default;
 

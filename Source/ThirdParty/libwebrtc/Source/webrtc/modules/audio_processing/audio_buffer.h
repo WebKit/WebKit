@@ -110,7 +110,7 @@ class AudioBuffer {
   void DeinterleaveFrom(AudioFrame* audioFrame);
   // If |data_changed| is false, only the non-audio data members will be copied
   // to |frame|.
-  void InterleaveTo(AudioFrame* frame, bool data_changed);
+  void InterleaveTo(AudioFrame* frame, bool data_changed) const;
 
   // Use for float deinterleaved data.
   void CopyFrom(const float* const* data, const StreamConfig& stream_config);

@@ -39,6 +39,12 @@ static const int kHighH264QpThreshold = 37;
 // bitstream range of [0, 127] and not the user-level range of [0,63].
 static const int kLowVp8QpThreshold = 29;
 static const int kHighVp8QpThreshold = 95;
+// QP is obtained from VP9-bitstream for HW, so the QP corresponds to the
+// bitstream range of [0, 255] and not the user-level range of [0,63].
+// Current VP9 settings are mapped from VP8 thresholds above.
+static const int kLowVp9QpThreshold = 96;
+static const int kHighVp9QpThreshold = 185;
+static const int kMinFramesNeededToScale = 2 * 30;
 
 static VideoEncoder::QpThresholds CodecTypeToDefaultThresholds(
     VideoCodecType codec_type) {
@@ -52,6 +58,10 @@ static VideoEncoder::QpThresholds CodecTypeToDefaultThresholds(
     case kVideoCodecVP8:
       low = kLowVp8QpThreshold;
       high = kHighVp8QpThreshold;
+      break;
+    case kVideoCodecVP9:
+      low = kLowVp9QpThreshold;
+      high = kHighVp9QpThreshold;
       break;
     default:
       RTC_NOTREACHED() << "Invalid codec type for QualityScaler.";
@@ -112,6 +122,8 @@ QualityScaler::QualityScaler(AdaptationObserverInterface* observer,
   RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
   RTC_DCHECK(observer_ != nullptr);
   check_qp_task_ = new CheckQPTask(this);
+  LOG(LS_INFO) << "QP thresholds: low: " << thresholds_.low
+               << ", high: " << thresholds_.high;
 }
 
 QualityScaler::~QualityScaler() {
@@ -140,7 +152,12 @@ void QualityScaler::CheckQP() {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
   // Should be set through InitEncode -> Should be set by now.
   RTC_DCHECK_GE(thresholds_.low, 0);
-  LOG(LS_INFO) << "Checking if average QP exceeds threshold";
+
+  // If we have not observed at least this many frames we can't
+  // make a good scaling decision.
+  if (framedrop_percent_.size() < kMinFramesNeededToScale)
+    return;
+
   // Check if we should scale down due to high frame drop.
   const rtc::Optional<int> drop_rate = framedrop_percent_.GetAverage();
   if (drop_rate && *drop_rate >= kFramedropPercentThreshold) {
@@ -150,27 +167,28 @@ void QualityScaler::CheckQP() {
 
   // Check if we should scale up or down based on QP.
   const rtc::Optional<int> avg_qp = average_qp_.GetAverage();
-  if (avg_qp && *avg_qp > thresholds_.high) {
-    ReportQPHigh();
-    return;
-  }
-  if (avg_qp && *avg_qp <= thresholds_.low) {
-    // QP has been low. We want to try a higher resolution.
-    ReportQPLow();
-    return;
+  if (avg_qp) {
+    LOG(LS_INFO) << "Checking average QP " << *avg_qp;
+    if (*avg_qp > thresholds_.high) {
+      ReportQPHigh();
+      return;
+    }
+    if (*avg_qp <= thresholds_.low) {
+      // QP has been low. We want to try a higher resolution.
+      ReportQPLow();
+      return;
+    }
   }
 }
 
 void QualityScaler::ReportQPLow() {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
-  LOG(LS_INFO) << "QP has been low, asking for higher resolution.";
   ClearSamples();
   observer_->AdaptUp(AdaptationObserverInterface::AdaptReason::kQuality);
 }
 
 void QualityScaler::ReportQPHigh() {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
-  LOG(LS_INFO) << "QP has been high , asking for lower resolution.";
   ClearSamples();
   observer_->AdaptDown(AdaptationObserverInterface::AdaptReason::kQuality);
   // If we've scaled down, wait longer before scaling up again.

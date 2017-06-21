@@ -32,6 +32,7 @@ import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.chromium.base.test.BaseJUnit4ClassRunner;
+import org.chromium.base.test.util.DisabledTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,13 +49,12 @@ public class PeerConnectionTest {
 
   @Before
   public void setUp() {
-    assertTrue(PeerConnectionFactory.initializeAndroidGlobals(
-        InstrumentationRegistry.getContext(), true, true, true));
+    PeerConnectionFactory.initializeAndroidGlobals(InstrumentationRegistry.getContext(), true);
   }
 
   private static class ObserverExpectations
       implements PeerConnection.Observer, VideoRenderer.Callbacks, DataChannel.Observer,
-                 StatsObserver, RtpReceiver.Observer {
+                 StatsObserver, RTCStatsCollectorCallback, RtpReceiver.Observer {
     private final String name;
     private int expectedIceCandidates = 0;
     private int expectedErrors = 0;
@@ -78,7 +78,8 @@ public class PeerConnectionTest {
     private LinkedList<DataChannel.State> expectedStateChanges =
         new LinkedList<DataChannel.State>();
     private LinkedList<String> expectedRemoteDataChannelLabels = new LinkedList<String>();
-    private int expectedStatsCallbacks = 0;
+    private int expectedOldStatsCallbacks = 0;
+    private int expectedNewStatsCallbacks = 0;
     private LinkedList<StatsReport[]> gotStatsReports = new LinkedList<StatsReport[]>();
     private final HashSet<MediaStream> gotRemoteStreams = new HashSet<MediaStream>();
     private int expectedFirstAudioPacket = 0;
@@ -271,12 +272,21 @@ public class PeerConnectionTest {
       expectedStateChanges.add(state);
     }
 
+    // Old getStats callback.
     @Override
     public synchronized void onComplete(StatsReport[] reports) {
-      if (--expectedStatsCallbacks < 0) {
+      if (--expectedOldStatsCallbacks < 0) {
         throw new RuntimeException("Unexpected stats report: " + reports);
       }
       gotStatsReports.add(reports);
+    }
+
+    // New getStats callback.
+    @Override
+    public synchronized void onStatsDelivered(RTCStatsReport report) {
+      if (--expectedNewStatsCallbacks < 0) {
+        throw new RuntimeException("Unexpected stats report: " + report);
+      }
     }
 
     @Override
@@ -296,8 +306,12 @@ public class PeerConnectionTest {
       expectedFirstVideoPacket = 1;
     }
 
-    public synchronized void expectStatsCallback() {
-      ++expectedStatsCallbacks;
+    public synchronized void expectOldStatsCallback() {
+      ++expectedOldStatsCallbacks;
+    }
+
+    public synchronized void expectNewStatsCallback() {
+      ++expectedNewStatsCallbacks;
     }
 
     public synchronized LinkedList<StatsReport[]> takeStatsReports() {
@@ -349,8 +363,11 @@ public class PeerConnectionTest {
         stillWaitingForExpectations.add(
             "expectedRemoteDataChannelLabels: " + expectedRemoteDataChannelLabels.size());
       }
-      if (expectedStatsCallbacks != 0) {
-        stillWaitingForExpectations.add("expectedStatsCallbacks: " + expectedStatsCallbacks);
+      if (expectedOldStatsCallbacks != 0) {
+        stillWaitingForExpectations.add("expectedOldStatsCallbacks: " + expectedOldStatsCallbacks);
+      }
+      if (expectedNewStatsCallbacks != 0) {
+        stillWaitingForExpectations.add("expectedNewStatsCallbacks: " + expectedNewStatsCallbacks);
       }
       if (expectedFirstAudioPacket > 0) {
         stillWaitingForExpectations.add("expectedFirstAudioPacket: " + expectedFirstAudioPacket);
@@ -790,6 +807,158 @@ public class PeerConnectionTest {
 
   @Test
   @MediumTest
+  public void testDataChannelOnlySession() throws Exception {
+    // Allow loopback interfaces too since our Android devices often don't
+    // have those.
+    PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
+    options.networkIgnoreMask = 0;
+    PeerConnectionFactory factory = new PeerConnectionFactory(options);
+
+    MediaConstraints pcConstraints = new MediaConstraints();
+    pcConstraints.mandatory.add(new MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true"));
+
+    LinkedList<PeerConnection.IceServer> iceServers = new LinkedList<PeerConnection.IceServer>();
+    iceServers.add(new PeerConnection.IceServer("stun:stun.l.google.com:19302"));
+    iceServers.add(
+        new PeerConnection.IceServer("turn:fake.example.com", "fakeUsername", "fakePassword"));
+    ObserverExpectations offeringExpectations = new ObserverExpectations("PCTest:offerer");
+    PeerConnection offeringPC =
+        factory.createPeerConnection(iceServers, pcConstraints, offeringExpectations);
+    assertNotNull(offeringPC);
+
+    ObserverExpectations answeringExpectations = new ObserverExpectations("PCTest:answerer");
+    PeerConnection answeringPC =
+        factory.createPeerConnection(iceServers, pcConstraints, answeringExpectations);
+    assertNotNull(answeringPC);
+
+    offeringExpectations.expectRenegotiationNeeded();
+    DataChannel offeringDC = offeringPC.createDataChannel("offeringDC", new DataChannel.Init());
+    assertEquals("offeringDC", offeringDC.label());
+
+    offeringExpectations.setDataChannel(offeringDC);
+    SdpObserverLatch sdpLatch = new SdpObserverLatch();
+    offeringPC.createOffer(sdpLatch, new MediaConstraints());
+    assertTrue(sdpLatch.await());
+    SessionDescription offerSdp = sdpLatch.getSdp();
+    assertEquals(offerSdp.type, SessionDescription.Type.OFFER);
+    assertFalse(offerSdp.description.isEmpty());
+
+    sdpLatch = new SdpObserverLatch();
+    answeringExpectations.expectSignalingChange(SignalingState.HAVE_REMOTE_OFFER);
+    // SCTP DataChannels are announced via OPEN messages over the established
+    // connection (not via SDP), so answeringExpectations can only register
+    // expecting the channel during ICE, below.
+    answeringPC.setRemoteDescription(sdpLatch, offerSdp);
+    assertEquals(PeerConnection.SignalingState.STABLE, offeringPC.signalingState());
+    assertTrue(sdpLatch.await());
+    assertNull(sdpLatch.getSdp());
+
+    sdpLatch = new SdpObserverLatch();
+    answeringPC.createAnswer(sdpLatch, new MediaConstraints());
+    assertTrue(sdpLatch.await());
+    SessionDescription answerSdp = sdpLatch.getSdp();
+    assertEquals(answerSdp.type, SessionDescription.Type.ANSWER);
+    assertFalse(answerSdp.description.isEmpty());
+
+    offeringExpectations.expectIceCandidates(2);
+    answeringExpectations.expectIceCandidates(2);
+
+    offeringExpectations.expectIceGatheringChange(IceGatheringState.COMPLETE);
+    answeringExpectations.expectIceGatheringChange(IceGatheringState.COMPLETE);
+
+    sdpLatch = new SdpObserverLatch();
+    answeringExpectations.expectSignalingChange(SignalingState.STABLE);
+    answeringPC.setLocalDescription(sdpLatch, answerSdp);
+    assertTrue(sdpLatch.await());
+    assertNull(sdpLatch.getSdp());
+
+    sdpLatch = new SdpObserverLatch();
+    offeringExpectations.expectSignalingChange(SignalingState.HAVE_LOCAL_OFFER);
+    offeringPC.setLocalDescription(sdpLatch, offerSdp);
+    assertTrue(sdpLatch.await());
+    assertNull(sdpLatch.getSdp());
+    sdpLatch = new SdpObserverLatch();
+    offeringExpectations.expectSignalingChange(SignalingState.STABLE);
+
+    offeringExpectations.expectIceConnectionChange(IceConnectionState.CHECKING);
+    offeringExpectations.expectIceConnectionChange(IceConnectionState.CONNECTED);
+    // TODO(bemasc): uncomment once delivery of ICECompleted is reliable
+    // (https://code.google.com/p/webrtc/issues/detail?id=3021).
+    answeringExpectations.expectIceConnectionChange(IceConnectionState.CHECKING);
+    answeringExpectations.expectIceConnectionChange(IceConnectionState.CONNECTED);
+
+    offeringPC.setRemoteDescription(sdpLatch, answerSdp);
+    assertTrue(sdpLatch.await());
+    assertNull(sdpLatch.getSdp());
+
+    assertEquals(offeringPC.getLocalDescription().type, offerSdp.type);
+    assertEquals(offeringPC.getRemoteDescription().type, answerSdp.type);
+    assertEquals(answeringPC.getLocalDescription().type, answerSdp.type);
+    assertEquals(answeringPC.getRemoteDescription().type, offerSdp.type);
+
+    offeringExpectations.expectStateChange(DataChannel.State.OPEN);
+    // See commentary about SCTP DataChannels above for why this is here.
+    answeringExpectations.expectDataChannel("offeringDC");
+    answeringExpectations.expectStateChange(DataChannel.State.OPEN);
+
+    // Wait for at least one ice candidate from the offering PC and forward them to the answering
+    // PC.
+    for (IceCandidate candidate : offeringExpectations.getAtLeastOneIceCandidate()) {
+      answeringPC.addIceCandidate(candidate);
+    }
+
+    // Wait for at least one ice candidate from the answering PC and forward them to the offering
+    // PC.
+    for (IceCandidate candidate : answeringExpectations.getAtLeastOneIceCandidate()) {
+      offeringPC.addIceCandidate(candidate);
+    }
+
+    assertTrue(offeringExpectations.waitForAllExpectationsToBeSatisfied(TIMEOUT_SECONDS));
+    assertTrue(answeringExpectations.waitForAllExpectationsToBeSatisfied(TIMEOUT_SECONDS));
+
+    assertEquals(PeerConnection.SignalingState.STABLE, offeringPC.signalingState());
+    assertEquals(PeerConnection.SignalingState.STABLE, answeringPC.signalingState());
+
+    // Test send & receive UTF-8 text.
+    answeringExpectations.expectMessage(
+        ByteBuffer.wrap("hello!".getBytes(Charset.forName("UTF-8"))), false);
+    DataChannel.Buffer buffer =
+        new DataChannel.Buffer(ByteBuffer.wrap("hello!".getBytes(Charset.forName("UTF-8"))), false);
+    assertTrue(offeringExpectations.dataChannel.send(buffer));
+    assertTrue(answeringExpectations.waitForAllExpectationsToBeSatisfied(TIMEOUT_SECONDS));
+
+    // Construct this binary message two different ways to ensure no
+    // shortcuts are taken.
+    ByteBuffer expectedBinaryMessage = ByteBuffer.allocateDirect(5);
+    for (byte i = 1; i < 6; ++i) {
+      expectedBinaryMessage.put(i);
+    }
+    expectedBinaryMessage.flip();
+    offeringExpectations.expectMessage(expectedBinaryMessage, true);
+    assertTrue(answeringExpectations.dataChannel.send(
+        new DataChannel.Buffer(ByteBuffer.wrap(new byte[] {1, 2, 3, 4, 5}), true)));
+    assertTrue(offeringExpectations.waitForAllExpectationsToBeSatisfied(TIMEOUT_SECONDS));
+
+    offeringExpectations.expectStateChange(DataChannel.State.CLOSING);
+    answeringExpectations.expectStateChange(DataChannel.State.CLOSING);
+    offeringExpectations.expectStateChange(DataChannel.State.CLOSED);
+    answeringExpectations.expectStateChange(DataChannel.State.CLOSED);
+    answeringExpectations.dataChannel.close();
+    offeringExpectations.dataChannel.close();
+
+    // Free the Java-land objects and collect them.
+    shutdownPC(offeringPC, offeringExpectations);
+    offeringPC = null;
+    shutdownPC(answeringPC, answeringExpectations);
+    answeringPC = null;
+    factory.dispose();
+    System.gc();
+  }
+
+  // Flaky on Android. See webrtc:7761
+  @DisabledTest
+  @Test
+  @MediumTest
   public void testTrackRemovalAndAddition() throws Exception {
     // Allow loopback interfaces too since our Android devices often don't
     // have those.
@@ -1036,14 +1205,25 @@ public class PeerConnectionTest {
       expectations.dataChannel.unregisterObserver();
       expectations.dataChannel.dispose();
     }
-    expectations.expectStatsCallback();
+
+    // Call getStats (old implementation) before shutting down PC.
+    expectations.expectOldStatsCallback();
     assertTrue(pc.getStats(expectations, null));
     assertTrue(expectations.waitForAllExpectationsToBeSatisfied(TIMEOUT_SECONDS));
+
+    // Call the new getStats implementation as well.
+    expectations.expectNewStatsCallback();
+    pc.getStats(expectations);
+    assertTrue(expectations.waitForAllExpectationsToBeSatisfied(TIMEOUT_SECONDS));
+
     expectations.expectIceConnectionChange(IceConnectionState.CLOSED);
     expectations.expectSignalingChange(SignalingState.CLOSED);
     pc.close();
     assertTrue(expectations.waitForAllExpectationsToBeSatisfied(TIMEOUT_SECONDS));
-    expectations.expectStatsCallback();
+
+    // Call getStats (old implementation) after calling close(). Should still
+    // work.
+    expectations.expectOldStatsCallback();
     assertTrue(pc.getStats(expectations, null));
     assertTrue(expectations.waitForAllExpectationsToBeSatisfied(TIMEOUT_SECONDS));
 

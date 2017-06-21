@@ -27,7 +27,7 @@ namespace webrtc {
 //
 // Calling SetRemoteAddress sets the destination of outgoing packets; without a
 // destination, packets can't be sent, but they can be received.
-class UdpTransportInterface : virtual public PacketTransportInterface {
+class UdpTransportInterface : public virtual PacketTransportInterface {
  public:
   // Get the address of the socket allocated for this transport.
   virtual rtc::SocketAddress GetLocalAddress() const = 0;

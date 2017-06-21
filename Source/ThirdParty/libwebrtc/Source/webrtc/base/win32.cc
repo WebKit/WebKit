@@ -276,6 +276,11 @@ int inet_pton_v6(const char* src, void* dst) {
             ++coloncounter;
           }
           // (coloncount + 1) is the number of shorts left in the address.
+          // If this number is greater than the number of available shorts, the
+          // address is malformed.
+          if (coloncount + 1 > addr_end - addr_cursor) {
+            return 0;
+          }
           addr_cursor = addr_end - (coloncount + 1);
           seencompressed = true;
         }
@@ -285,7 +290,7 @@ int inet_pton_v6(const char* src, void* dst) {
     } else {
       uint16_t word;
       int bytesread = 0;
-      if (sscanf(readcursor, "%hx%n", &word, &bytesread) != 1) {
+      if (sscanf(readcursor, "%4hx%n", &word, &bytesread) != 1) {
         return 0;
       } else {
         *addr_cursor = HostToNetwork16(word);

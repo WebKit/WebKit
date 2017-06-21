@@ -38,6 +38,7 @@ rtc_static_library("audio_mixer_impl") {
 
   deps = [
     ":audio_frame_manipulator",
+    "..:module_api",
     "../..:webrtc_common",
     "../../audio/utility:audio_frame_operations",
     "../../base:rtc_base_approved",
@@ -58,6 +59,7 @@ rtc_static_library("audio_frame_manipulator") {
   ]
 
   deps = [
+    "..:module_api",
     "../../audio/utility",
     "../../base:rtc_base_approved",
   ]
@@ -66,15 +68,28 @@ rtc_static_library("audio_frame_manipulator") {
 if (rtc_include_tests) {
   rtc_source_set("audio_mixer_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
       "audio_frame_manipulator_unittest.cc",
       "audio_mixer_impl_unittest.cc",
       "frame_combiner_unittest.cc",
+      "gain_change_calculator.cc",
+      "gain_change_calculator.h",
+      "sine_wave_generator.cc",
+      "sine_wave_generator.h",
     ]
     deps = [
       ":audio_frame_manipulator",
       ":audio_mixer_impl",
+      "..:module_api",
       "../../api:audio_mixer_api",
+      "../../audio/utility:audio_frame_operations",
       "../../base:rtc_base",
       "../../base:rtc_base_approved",
       "../../test:test_support",

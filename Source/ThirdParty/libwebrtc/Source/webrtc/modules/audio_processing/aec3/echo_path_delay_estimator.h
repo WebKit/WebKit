@@ -15,9 +15,10 @@
 
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/optional.h"
+#include "webrtc/modules/audio_processing/aec3/decimator_by_4.h"
+#include "webrtc/modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "webrtc/modules/audio_processing/aec3/matched_filter.h"
 #include "webrtc/modules/audio_processing/aec3/matched_filter_lag_aggregator.h"
-#include "webrtc/modules/audio_processing/aec3/decimator_by_4.h"
 
 namespace webrtc {
 
@@ -29,13 +30,16 @@ class EchoPathDelayEstimator {
   explicit EchoPathDelayEstimator(ApmDataDumper* data_dumper);
   ~EchoPathDelayEstimator();
 
+  // Resets the estimation.
+  void Reset();
+
   // Produce a delay estimate if such is avaliable.
-  rtc::Optional<size_t> EstimateDelay(rtc::ArrayView<const float> render,
-                                      rtc::ArrayView<const float> capture);
+  rtc::Optional<size_t> EstimateDelay(
+      const DownsampledRenderBuffer& render_buffer,
+      rtc::ArrayView<const float> capture);
 
  private:
   ApmDataDumper* const data_dumper_;
-  DecimatorBy4 render_decimator_;
   DecimatorBy4 capture_decimator_;
   MatchedFilter matched_filter_;
   MatchedFilterLagAggregator matched_filter_lag_aggregator_;

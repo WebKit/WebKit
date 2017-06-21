@@ -11,11 +11,13 @@
 #ifndef WEBRTC_VIDEO_VIE_ENCODER_H_
 #define WEBRTC_VIDEO_VIE_ENCODER_H_
 
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "webrtc/api/video/video_rotation.h"
+#include "webrtc/api/video_codecs/video_encoder.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/event.h"
 #include "webrtc/base/sequenced_task_checker.h"
@@ -30,7 +32,6 @@
 #include "webrtc/system_wrappers/include/atomic32.h"
 #include "webrtc/typedefs.h"
 #include "webrtc/video/overuse_frame_detector.h"
-#include "webrtc/video_encoder.h"
 #include "webrtc/video_send_stream.h"
 
 namespace webrtc {
@@ -61,14 +62,23 @@ class ViEEncoder : public rtc::VideoSinkInterface<VideoFrame>,
         int min_transmit_bitrate_bps) = 0;
   };
 
+  // Number of resolution and framerate reductions (-1: disabled).
+  struct AdaptCounts {
+    int resolution = 0;
+    int fps = 0;
+  };
+
   // Downscale resolution at most 2 times for CPU reasons.
-  static const int kMaxCpuDowngrades = 2;
+  static const int kMaxCpuResolutionDowngrades = 2;
+  // Downscale framerate at most 4 times.
+  static const int kMaxCpuFramerateDowngrades = 4;
 
   ViEEncoder(uint32_t number_of_cores,
              SendStatisticsProxy* stats_proxy,
              const VideoSendStream::Config::EncoderSettings& settings,
              rtc::VideoSinkInterface<VideoFrame>* pre_encode_callback,
-             EncodedFrameObserver* encoder_timing);
+             EncodedFrameObserver* encoder_timing,
+             std::unique_ptr<OveruseFrameDetector> overuse_detector);
   ~ViEEncoder();
   // RegisterProcessThread register |module_process_thread| with those objects
   // that use it. Registration has to happen on the thread where
@@ -106,8 +116,6 @@ class ViEEncoder : public rtc::VideoSinkInterface<VideoFrame>,
 
   // virtual to test EncoderStateFeedback with mocks.
   virtual void OnReceivedIntraFrameRequest(size_t stream_index);
-  virtual void OnReceivedSLI(uint8_t picture_id);
-  virtual void OnReceivedRPSI(uint64_t picture_id);
 
   void OnBitrateUpdated(uint32_t bitrate_bps,
                         uint8_t fraction_lost,
@@ -122,6 +130,7 @@ class ViEEncoder : public rtc::VideoSinkInterface<VideoFrame>,
   // These methods are protected for easier testing.
   void AdaptUp(AdaptReason reason) override;
   void AdaptDown(AdaptReason reason) override;
+  static CpuOveruseOptions GetCpuOveruseOptions(bool full_overuse_time);
 
  private:
   class ConfigureEncoderTask;
@@ -132,15 +141,12 @@ class ViEEncoder : public rtc::VideoSinkInterface<VideoFrame>,
    public:
     VideoFrameInfo(int width,
                    int height,
-                   VideoRotation rotation,
                    bool is_texture)
         : width(width),
           height(height),
-          rotation(rotation),
           is_texture(is_texture) {}
     int width;
     int height;
-    VideoRotation rotation;
     bool is_texture;
     int pixel_count() const { return width * height; }
   };
@@ -174,6 +180,48 @@ class ViEEncoder : public rtc::VideoSinkInterface<VideoFrame>,
   void TraceFrameDropStart();
   void TraceFrameDropEnd();
 
+  // Class holding adaptation information.
+  class AdaptCounter final {
+   public:
+    AdaptCounter();
+    ~AdaptCounter();
+
+    // Get number of adaptation downscales for |reason|.
+    AdaptCounts Counts(int reason) const;
+
+    std::string ToString() const;
+
+    void IncrementFramerate(int reason);
+    void IncrementResolution(int reason);
+    void DecrementFramerate(int reason);
+    void DecrementResolution(int reason);
+    void DecrementFramerate(int reason, int cur_fps);
+
+    // Gets the total number of downgrades (for all adapt reasons).
+    int FramerateCount() const;
+    int ResolutionCount() const;
+
+    // Gets the total number of downgrades for |reason|.
+    int FramerateCount(int reason) const;
+    int ResolutionCount(int reason) const;
+    int TotalCount(int reason) const;
+
+   private:
+    std::string ToString(const std::vector<int>& counters) const;
+    int Count(const std::vector<int>& counters) const;
+    void MoveCount(std::vector<int>* counters, int from_reason);
+
+    // Degradation counters holding number of framerate/resolution reductions
+    // per adapt reason.
+    std::vector<int> fps_counters_;
+    std::vector<int> resolution_counters_;
+  };
+
+  AdaptCounter& GetAdaptCounter() RUN_ON(&encoder_queue_);
+  const AdaptCounter& GetConstAdaptCounter() RUN_ON(&encoder_queue_);
+  void UpdateAdaptationStats(AdaptReason reason) RUN_ON(&encoder_queue_);
+  AdaptCounts GetActiveCounts(AdaptReason reason) RUN_ON(&encoder_queue_);
+
   rtc::Event shutdown_event_;
 
   const uint32_t number_of_cores_;
@@ -186,7 +234,8 @@ class ViEEncoder : public rtc::VideoSinkInterface<VideoFrame>,
   const VideoCodecType codec_type_;
 
   vcm::VideoSender video_sender_ ACCESS_ON(&encoder_queue_);
-  OveruseFrameDetector overuse_detector_ ACCESS_ON(&encoder_queue_);
+  std::unique_ptr<OveruseFrameDetector> overuse_detector_
+      ACCESS_ON(&encoder_queue_);
   std::unique_ptr<QualityScaler> quality_scaler_ ACCESS_ON(&encoder_queue_);
 
   SendStatisticsProxy* const stats_proxy_;
@@ -200,31 +249,38 @@ class ViEEncoder : public rtc::VideoSinkInterface<VideoFrame>,
   VideoEncoderConfig encoder_config_ ACCESS_ON(&encoder_queue_);
   std::unique_ptr<VideoBitrateAllocator> rate_allocator_
       ACCESS_ON(&encoder_queue_);
+  // The maximum frame rate of the current codec configuration, as determined
+  // at the last ReconfigureEncoder() call.
+  int max_framerate_ ACCESS_ON(&encoder_queue_);
 
   // Set when ConfigureEncoder has been called in order to lazy reconfigure the
   // encoder on the next frame.
   bool pending_encoder_reconfiguration_ ACCESS_ON(&encoder_queue_);
   rtc::Optional<VideoFrameInfo> last_frame_info_ ACCESS_ON(&encoder_queue_);
+  int crop_width_ ACCESS_ON(&encoder_queue_);
+  int crop_height_ ACCESS_ON(&encoder_queue_);
   uint32_t encoder_start_bitrate_bps_ ACCESS_ON(&encoder_queue_);
   size_t max_data_payload_length_ ACCESS_ON(&encoder_queue_);
   bool nack_enabled_ ACCESS_ON(&encoder_queue_);
   uint32_t last_observed_bitrate_bps_ ACCESS_ON(&encoder_queue_);
   bool encoder_paused_and_dropped_frame_ ACCESS_ON(&encoder_queue_);
-  bool has_received_sli_ ACCESS_ON(&encoder_queue_);
-  uint8_t picture_id_sli_ ACCESS_ON(&encoder_queue_);
-  bool has_received_rpsi_ ACCESS_ON(&encoder_queue_);
-  uint64_t picture_id_rpsi_ ACCESS_ON(&encoder_queue_);
   Clock* const clock_;
-  // Counters used for deciding if the video resolution is currently
-  // restricted, and if so, why.
-  std::vector<int> scale_counter_ ACCESS_ON(&encoder_queue_);
-  // Set depending on degradation preferences
+  // Counters used for deciding if the video resolution or framerate is
+  // currently restricted, and if so, why, on a per degradation preference
+  // basis.
+  // TODO(sprang): Replace this with a state holding a relative overuse measure
+  // instead, that can be translated into suitable down-scale or fps limit.
+  std::map<const VideoSendStream::DegradationPreference, AdaptCounter>
+      adapt_counters_ ACCESS_ON(&encoder_queue_);
+  // Set depending on degradation preferences.
   VideoSendStream::DegradationPreference degradation_preference_
       ACCESS_ON(&encoder_queue_);
 
   struct AdaptationRequest {
     // The pixel count produced by the source at the time of the adaptation.
     int input_pixel_count_;
+    // Framerate received from the source at the time of the adaptation.
+    int framerate_fps_;
     // Indicates if request was to adapt up or down.
     enum class Mode { kAdaptUp, kAdaptDown } mode_;
   };

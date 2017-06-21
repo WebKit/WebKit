@@ -22,6 +22,7 @@
 #import "ARDJoinResponse+Internal.h"
 #import "ARDMessageResponse+Internal.h"
 #import "ARDSDPUtils.h"
+#import "ARDSettingsModel.h"
 
 @interface ARDAppClientTest : XCTestCase
 @end
@@ -113,6 +114,15 @@
     completionHandler([NSArray array], nil);
   }] requestServersWithCompletionHandler:[OCMArg any]];
   return mockTURNClient;
+}
+
+- (id)mockSettingsModel {
+  ARDSettingsModel *model = [[ARDSettingsModel alloc] init];
+  id partialMock = [OCMockObject partialMockForObject:model];
+  [[[partialMock stub] andReturn:@[ @"640x480", @"960x540", @"1280x720" ]]
+      availableVideoResolutions];
+
+  return model;
 }
 
 - (ARDAppClient *)createAppClientForRoomId:(NSString *)roomId
@@ -208,16 +218,8 @@
   weakAnswerer = answerer;
 
   // Kick off connection.
-  [caller connectToRoomWithId:roomId
-                   isLoopback:NO
-                  isAudioOnly:NO
-            shouldMakeAecDump:NO
-        shouldUseLevelControl:NO];
-  [answerer connectToRoomWithId:roomId
-                     isLoopback:NO
-                    isAudioOnly:NO
-              shouldMakeAecDump:NO
-          shouldUseLevelControl:NO];
+  [caller connectToRoomWithId:roomId settings:[self mockSettingsModel] isLoopback:NO];
+  [answerer connectToRoomWithId:roomId settings:[self mockSettingsModel] isLoopback:NO];
   [self waitForExpectationsWithTimeout:20 handler:^(NSError *error) {
     if (error) {
       XCTFail(@"Expectation failed with error %@.", error);
@@ -250,10 +252,8 @@
 
   // Kick off connection.
   [caller connectToRoomWithId:roomId
-                   isLoopback:NO
-                  isAudioOnly:NO
-            shouldMakeAecDump:NO
-        shouldUseLevelControl:NO];
+                     settings:[self mockSettingsModel]
+                   isLoopback:NO];
   [self waitForExpectationsWithTimeout:20 handler:^(NSError *error) {
     if (error) {
       XCTFail("Expectation timed out with error: %@.", error);

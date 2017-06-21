@@ -20,7 +20,6 @@
 #include "webrtc/base/thread.h"
 #include "webrtc/base/rtccertificategenerator.h"
 #include "webrtc/pc/channelmanager.h"
-#include "webrtc/pc/mediacontroller.h"
 
 namespace rtc {
 class BasicNetworkManager;
@@ -96,21 +95,16 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
   // TODO(ivoc) Remove after Chrome is updated.
   void StopRtcEventLog() override {}
 
-  virtual webrtc::MediaControllerInterface* CreateMediaController(
-      const cricket::MediaConfig& config,
-      RtcEventLog* event_log) const;
   virtual cricket::TransportController* CreateTransportController(
       cricket::PortAllocator* port_allocator,
       bool redetermine_role_on_ice_restart);
+  virtual cricket::ChannelManager* channel_manager();
   virtual rtc::Thread* signaling_thread();
   virtual rtc::Thread* worker_thread();
   virtual rtc::Thread* network_thread();
   const Options& options() const { return options_; }
 
  protected:
-  PeerConnectionFactory(
-      rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
-      rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory);
   PeerConnectionFactory(
       rtc::Thread* network_thread,
       rtc::Thread* worker_thread,
@@ -120,20 +114,25 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
       rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory,
       cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
       cricket::WebRtcVideoDecoderFactory* video_decoder_factory,
-      rtc::scoped_refptr<AudioMixer> audio_mixer);
+      rtc::scoped_refptr<AudioMixer> audio_mixer,
+      std::unique_ptr<cricket::MediaEngineInterface> media_engine,
+      std::unique_ptr<webrtc::CallFactoryInterface> call_factory,
+      std::unique_ptr<RtcEventLogFactoryInterface> event_log_factory);
   virtual ~PeerConnectionFactory();
 
  private:
-  std::unique_ptr<cricket::MediaEngineInterface> CreateMediaEngine_w();
+  std::unique_ptr<Call> CreateCall_w(RtcEventLog* event_log);
 
-  bool owns_ptrs_;
   bool wraps_current_thread_;
   rtc::Thread* network_thread_;
   rtc::Thread* worker_thread_;
   rtc::Thread* signaling_thread_;
+  std::unique_ptr<rtc::Thread> owned_network_thread_;
+  std::unique_ptr<rtc::Thread> owned_worker_thread_;
   Options options_;
   // External Audio device used for audio playback.
   rtc::scoped_refptr<AudioDeviceModule> default_adm_;
+  rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
   rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
   std::unique_ptr<cricket::ChannelManager> channel_manager_;
   // External Video encoder factory. This can be NULL if the client has not
@@ -147,6 +146,9 @@ class PeerConnectionFactory : public PeerConnectionFactoryInterface {
   // External audio mixer. This can be NULL. In that case, internal audio mixer
   // will be created and used.
   rtc::scoped_refptr<AudioMixer> external_audio_mixer_;
+  std::unique_ptr<cricket::MediaEngineInterface> media_engine_;
+  std::unique_ptr<webrtc::CallFactoryInterface> call_factory_;
+  std::unique_ptr<RtcEventLogFactoryInterface> event_log_factory_;
 };
 
 }  // namespace webrtc

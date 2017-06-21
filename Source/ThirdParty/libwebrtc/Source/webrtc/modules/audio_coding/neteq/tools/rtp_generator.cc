@@ -17,19 +17,18 @@ namespace test {
 
 uint32_t RtpGenerator::GetRtpHeader(uint8_t payload_type,
                                     size_t payload_length_samples,
-                                    WebRtcRTPHeader* rtp_header) {
+                                    RTPHeader* rtp_header) {
   assert(rtp_header);
   if (!rtp_header) {
     return 0;
   }
-  rtp_header->header.sequenceNumber = seq_number_++;
-  rtp_header->header.timestamp = timestamp_;
+  rtp_header->sequenceNumber = seq_number_++;
+  rtp_header->timestamp = timestamp_;
   timestamp_ += static_cast<uint32_t>(payload_length_samples);
-  rtp_header->header.payloadType = payload_type;
-  rtp_header->header.markerBit = false;
-  rtp_header->header.ssrc = ssrc_;
-  rtp_header->header.numCSRCs = 0;
-  rtp_header->frameType = kAudioFrameSpeech;
+  rtp_header->payloadType = payload_type;
+  rtp_header->markerBit = false;
+  rtp_header->ssrc = ssrc_;
+  rtp_header->numCSRCs = 0;
 
   uint32_t this_send_time = next_send_time_ms_;
   assert(samples_per_ms_ > 0);
@@ -46,7 +45,7 @@ void RtpGenerator::set_drift_factor(double factor) {
 
 uint32_t TimestampJumpRtpGenerator::GetRtpHeader(uint8_t payload_type,
                                                  size_t payload_length_samples,
-                                                 WebRtcRTPHeader* rtp_header) {
+                                                 RTPHeader* rtp_header) {
   uint32_t ret = RtpGenerator::GetRtpHeader(
       payload_type, payload_length_samples, rtp_header);
   if (timestamp_ - static_cast<uint32_t>(payload_length_samples) <=

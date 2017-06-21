@@ -11,6 +11,7 @@
 package org.webrtc;
 
 import android.content.Context;
+import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Looper;
 import java.util.Arrays;
@@ -21,6 +22,13 @@ abstract class CameraCapturer implements CameraVideoCapturer {
     IDLE, // No switch requested.
     PENDING, // Waiting for previous capture session to open.
     IN_PROGRESS, // Waiting for new switched capture session to start.
+  }
+
+  enum MediaRecorderState {
+    IDLE, // No media recording update (add or remove) requested.
+    IDLE_TO_ACTIVE, // Waiting for new capture session with added MediaRecorder surface to start.
+    ACTIVE_TO_IDLE, // Waiting for new capture session with removed MediaRecorder surface to start.
+    ACTIVE, // MediaRecorder was successfully added to camera pipeline.
   }
 
   private static final String TAG = "CameraCapturer";
@@ -37,7 +45,9 @@ abstract class CameraCapturer implements CameraVideoCapturer {
         @Override
         public void onDone(CameraSession session) {
           checkIsOnCameraThread();
-          Logging.d(TAG, "Create session done");
+          Logging.d(TAG,
+              "Create session done. Switch state: " + switchState
+                  + ". MediaRecorder state: " + mediaRecorderState);
           uiThreadHandler.removeCallbacks(openCameraTimeoutRunnable);
           synchronized (stateLock) {
             capturerObserver.onCapturerStarted(true /* success */);
@@ -56,6 +66,19 @@ abstract class CameraCapturer implements CameraVideoCapturer {
             } else if (switchState == SwitchState.PENDING) {
               switchState = SwitchState.IDLE;
               switchCameraInternal(switchEventsHandler);
+            }
+
+            if (mediaRecorderState == MediaRecorderState.IDLE_TO_ACTIVE
+                || mediaRecorderState == MediaRecorderState.ACTIVE_TO_IDLE) {
+              if (mediaRecorderEventsHandler != null) {
+                mediaRecorderEventsHandler.onMediaRecorderSuccess();
+                mediaRecorderEventsHandler = null;
+              }
+              if (mediaRecorderState == MediaRecorderState.IDLE_TO_ACTIVE) {
+                mediaRecorderState = MediaRecorderState.ACTIVE;
+              } else {
+                mediaRecorderState = MediaRecorderState.IDLE;
+              }
             }
           }
         }
@@ -81,6 +104,14 @@ abstract class CameraCapturer implements CameraVideoCapturer {
                 switchState = SwitchState.IDLE;
               }
 
+              if (mediaRecorderState != MediaRecorderState.IDLE) {
+                if (mediaRecorderEventsHandler != null) {
+                  mediaRecorderEventsHandler.onMediaRecorderError(error);
+                  mediaRecorderEventsHandler = null;
+                }
+                mediaRecorderState = MediaRecorderState.IDLE;
+              }
+
               if (failureType == CameraSession.FailureType.DISCONNECTED) {
                 eventsHandler.onCameraDisconnected();
               } else {
@@ -88,8 +119,7 @@ abstract class CameraCapturer implements CameraVideoCapturer {
               }
             } else {
               Logging.w(TAG, "Opening camera failed, retry: " + error);
-
-              createSessionInternal(OPEN_CAMERA_DELAY_MS);
+              createSessionInternal(OPEN_CAMERA_DELAY_MS, null /* mediaRecorder */);
             }
           }
         }
@@ -213,6 +243,10 @@ abstract class CameraCapturer implements CameraVideoCapturer {
   private CameraStatistics cameraStatistics; /* guarded by stateLock */
   private boolean firstFrameObserved; /* guarded by stateLock */
 
+  // Variables used on camera thread - do not require stateLock synchronization.
+  private MediaRecorderState mediaRecorderState = MediaRecorderState.IDLE;
+  private MediaRecorderHandler mediaRecorderEventsHandler;
+
   public CameraCapturer(
       String cameraName, CameraEventsHandler eventsHandler, CameraEnumerator cameraEnumerator) {
     if (eventsHandler == null) {
@@ -277,17 +311,17 @@ abstract class CameraCapturer implements CameraVideoCapturer {
 
       sessionOpening = true;
       openAttemptsRemaining = MAX_OPEN_CAMERA_ATTEMPTS;
-      createSessionInternal(0);
+      createSessionInternal(0, null /* mediaRecorder */);
     }
   }
 
-  private void createSessionInternal(int delayMs) {
+  private void createSessionInternal(int delayMs, final MediaRecorder mediaRecorder) {
     uiThreadHandler.postDelayed(openCameraTimeoutRunnable, delayMs + OPEN_CAMERA_TIMEOUT);
     cameraThreadHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
         createCameraSession(createSessionCallback, cameraSessionEventsHandler, applicationContext,
-            surfaceHelper, cameraName, width, height, framerate);
+            surfaceHelper, mediaRecorder, cameraName, width, height, framerate);
       }
     }, delayMs);
   }
@@ -350,6 +384,29 @@ abstract class CameraCapturer implements CameraVideoCapturer {
   }
 
   @Override
+  public void addMediaRecorderToCamera(
+      final MediaRecorder mediaRecorder, final MediaRecorderHandler mediaRecoderEventsHandler) {
+    Logging.d(TAG, "addMediaRecorderToCamera");
+    cameraThreadHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        updateMediaRecorderInternal(mediaRecorder, mediaRecoderEventsHandler);
+      }
+    });
+  }
+
+  @Override
+  public void removeMediaRecorderFromCamera(final MediaRecorderHandler mediaRecoderEventsHandler) {
+    Logging.d(TAG, "removeMediaRecorderFromCamera");
+    cameraThreadHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        updateMediaRecorderInternal(null /* mediaRecorder */, mediaRecoderEventsHandler);
+      }
+    });
+  }
+
+  @Override
   public boolean isScreencast() {
     return false;
   }
@@ -370,6 +427,13 @@ abstract class CameraCapturer implements CameraVideoCapturer {
     }
   }
 
+  private void reportCameraSwitchError(String error, CameraSwitchHandler switchEventsHandler) {
+    Logging.e(TAG, error);
+    if (switchEventsHandler != null) {
+      switchEventsHandler.onCameraSwitchError(error);
+    }
+  }
+
   private void switchCameraInternal(final CameraSwitchHandler switchEventsHandler) {
     Logging.d(TAG, "switchCamera internal");
 
@@ -384,18 +448,15 @@ abstract class CameraCapturer implements CameraVideoCapturer {
 
     synchronized (stateLock) {
       if (switchState != SwitchState.IDLE) {
-        Logging.d(TAG, "switchCamera switchInProgress");
-        if (switchEventsHandler != null) {
-          switchEventsHandler.onCameraSwitchError("Camera switch already in progress.");
-        }
+        reportCameraSwitchError("Camera switch already in progress.", switchEventsHandler);
         return;
       }
-
+      if (mediaRecorderState != MediaRecorderState.IDLE) {
+        reportCameraSwitchError("switchCamera: media recording is active", switchEventsHandler);
+        return;
+      }
       if (!sessionOpening && currentSession == null) {
-        Logging.d(TAG, "switchCamera: No session open");
-        if (switchEventsHandler != null) {
-          switchEventsHandler.onCameraSwitchError("Camera is not running.");
-        }
+        reportCameraSwitchError("switchCamera: camera is not running.", switchEventsHandler);
         return;
       }
 
@@ -424,9 +485,72 @@ abstract class CameraCapturer implements CameraVideoCapturer {
 
       sessionOpening = true;
       openAttemptsRemaining = 1;
-      createSessionInternal(0);
+      createSessionInternal(0, null /* mediaRecorder */);
     }
     Logging.d(TAG, "switchCamera done");
+  }
+
+  private void reportUpdateMediaRecorderError(
+      String error, MediaRecorderHandler mediaRecoderEventsHandler) {
+    checkIsOnCameraThread();
+    Logging.e(TAG, error);
+    if (mediaRecoderEventsHandler != null) {
+      mediaRecoderEventsHandler.onMediaRecorderError(error);
+    }
+  }
+
+  private void updateMediaRecorderInternal(
+      MediaRecorder mediaRecorder, MediaRecorderHandler mediaRecoderEventsHandler) {
+    checkIsOnCameraThread();
+    boolean addMediaRecorder = (mediaRecorder != null);
+    Logging.d(TAG,
+        "updateMediaRecoderInternal internal. State: " + mediaRecorderState
+            + ". Switch state: " + switchState + ". Add MediaRecorder: " + addMediaRecorder);
+
+    synchronized (stateLock) {
+      if ((addMediaRecorder && mediaRecorderState != MediaRecorderState.IDLE)
+          || (!addMediaRecorder && mediaRecorderState != MediaRecorderState.ACTIVE)) {
+        reportUpdateMediaRecorderError(
+            "Incorrect state for MediaRecorder update.", mediaRecoderEventsHandler);
+        return;
+      }
+      if (switchState != SwitchState.IDLE) {
+        reportUpdateMediaRecorderError(
+            "MediaRecorder update while camera is switching.", mediaRecoderEventsHandler);
+        return;
+      }
+      if (currentSession == null) {
+        reportUpdateMediaRecorderError(
+            "MediaRecorder update while camera is closed.", mediaRecoderEventsHandler);
+        return;
+      }
+      if (sessionOpening) {
+        reportUpdateMediaRecorderError(
+            "MediaRecorder update while camera is still opening.", mediaRecoderEventsHandler);
+        return;
+      }
+
+      this.mediaRecorderEventsHandler = mediaRecoderEventsHandler;
+      mediaRecorderState =
+          addMediaRecorder ? MediaRecorderState.IDLE_TO_ACTIVE : MediaRecorderState.ACTIVE_TO_IDLE;
+
+      Logging.d(TAG, "updateMediaRecoder: Stopping session");
+      cameraStatistics.release();
+      cameraStatistics = null;
+      final CameraSession oldSession = currentSession;
+      cameraThreadHandler.post(new Runnable() {
+        @Override
+        public void run() {
+          oldSession.stop();
+        }
+      });
+      currentSession = null;
+
+      sessionOpening = true;
+      openAttemptsRemaining = 1;
+      createSessionInternal(0, mediaRecorder);
+    }
+    Logging.d(TAG, "updateMediaRecoderInternal done");
   }
 
   private void checkIsOnCameraThread() {
@@ -444,6 +568,6 @@ abstract class CameraCapturer implements CameraVideoCapturer {
 
   abstract protected void createCameraSession(
       CameraSession.CreateSessionCallback createSessionCallback, CameraSession.Events events,
-      Context applicationContext, SurfaceTextureHelper surfaceTextureHelper, String cameraName,
-      int width, int height, int framerate);
+      Context applicationContext, SurfaceTextureHelper surfaceTextureHelper,
+      MediaRecorder mediaRecoder, String cameraName, int width, int height, int framerate);
 }

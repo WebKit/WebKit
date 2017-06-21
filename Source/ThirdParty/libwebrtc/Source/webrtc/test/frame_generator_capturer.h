@@ -15,13 +15,12 @@
 
 #include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/criticalsection.h"
-#include "webrtc/base/platform_thread.h"
+#include "webrtc/base/task_queue.h"
 #include "webrtc/test/video_capturer.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
 
-class CriticalSectionWrapper;
 class EventTimerWrapper;
 
 namespace test {
@@ -74,25 +73,30 @@ class FrameGeneratorCapturer : public VideoCapturer {
   bool Init();
 
  private:
+  class InsertFrameTask;
+
   void InsertFrame();
   static bool Run(void* obj);
+  int GetCurrentConfiguredFramerate();
 
   Clock* const clock_;
   bool sending_;
   rtc::VideoSinkInterface<VideoFrame>* sink_ GUARDED_BY(&lock_);
   SinkWantsObserver* sink_wants_observer_ GUARDED_BY(&lock_);
 
-  std::unique_ptr<EventTimerWrapper> tick_;
   rtc::CriticalSection lock_;
-  rtc::PlatformThread thread_;
   std::unique_ptr<FrameGenerator> frame_generator_;
 
-  int target_fps_;
+  int target_fps_ GUARDED_BY(&lock_);
+  rtc::Optional<int> wanted_fps_ GUARDED_BY(&lock_);
   VideoRotation fake_rotation_ = kVideoRotation_0;
 
   int64_t first_frame_capture_time_;
+  // Must be the last field, so it will be deconstructed first as tasks
+  // in the TaskQueue access other fields of the instance of this class.
+  rtc::TaskQueue task_queue_;
 };
-}  // test
-}  // webrtc
+}  // namespace test
+}  // namespace webrtc
 
 #endif  // WEBRTC_TEST_FRAME_GENERATOR_CAPTURER_H_

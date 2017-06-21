@@ -29,6 +29,11 @@ constexpr uint8_t ReceiverReport::kPacketType;
 //  +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 //  |                         report block(s)                       |
 //  |                            ....                               |
+
+ReceiverReport::ReceiverReport() : sender_ssrc_(0) {}
+
+ReceiverReport::~ReceiverReport() = default;
+
 bool ReceiverReport::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);
 
@@ -53,6 +58,11 @@ bool ReceiverReport::Parse(const CommonHeader& packet) {
   RTC_DCHECK_LE(next_report_block - packet.payload(),
                 static_cast<ptrdiff_t>(packet.payload_size_bytes()));
   return true;
+}
+
+size_t ReceiverReport::BlockLength() const {
+  return kHeaderLength + kRrBaseLength +
+         report_blocks_.size() * ReportBlock::kLength;
 }
 
 bool ReceiverReport::Create(uint8_t* packet,

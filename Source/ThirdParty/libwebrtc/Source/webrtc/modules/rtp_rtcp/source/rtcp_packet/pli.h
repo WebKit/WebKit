@@ -26,16 +26,12 @@ class Pli : public Psfb {
 
   bool Parse(const CommonHeader& packet);
 
- protected:
+  size_t BlockLength() const override;
+
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
               RtcpPacket::PacketReadyCallback* callback) const override;
-
- private:
-  size_t BlockLength() const override {
-    return kHeaderLength + kCommonFeedbackLength;
-  }
 };
 
 }  // namespace rtcp

@@ -36,6 +36,7 @@ group("tools") {
       public_deps += [
         ":event_log_visualizer",
         ":rtp_analyzer",
+        "network_tester",
       ]
     }
   }
@@ -48,6 +49,7 @@ rtc_static_library("command_line_parser") {
   ]
   deps = [
     "../base:gtest_prod",
+    "../base:rtc_base_approved",
   ]
 }
 
@@ -141,6 +143,7 @@ rtc_static_library("frame_editing_lib") {
   }
 
   deps = [
+    "..:webrtc_common",
     "../common_video",
   ]
 }
@@ -202,17 +205,21 @@ if (rtc_enable_protobuf) {
     }
     defines = [ "ENABLE_RTC_EVENT_LOG" ]
     deps = [
+      "..:video_stream_api",
+      "../base:rtc_base_approved",
       "../call:call_interfaces",
       "../logging:rtc_event_log_impl",
       "../logging:rtc_event_log_parser",
+      "../modules:module_api",
       "../modules/audio_coding:ana_debug_dump_proto",
+      "../modules/audio_coding:neteq_tools",
 
       # TODO(kwiberg): Remove this dependency.
       "../api/audio_codecs:audio_codecs_api",
       "../modules/congestion_controller",
       "../modules/rtp_rtcp",
       "../system_wrappers:system_wrappers_default",
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
     ]
     public_deps = [
       ":chart_proto",
@@ -238,8 +245,9 @@ if (rtc_include_tests) {
       defines = [ "ENABLE_RTC_EVENT_LOG" ]
       deps = [
         ":event_log_visualizer_utils",
+        "../base:rtc_base_approved",
         "../test:field_trial",
-        "//third_party/gflags",
+        "../test:test_support",
       ]
     }
   }
@@ -256,11 +264,13 @@ if (rtc_include_tests) {
     }
 
     deps = [
+      "../base:rtc_base_approved",
+      "../modules:module_api",
       "../modules/audio_processing",
       "../system_wrappers:metrics_default",
+      "../test:test_support",
       "//build/win:default_exe_manifest",
       "//testing/gtest",
-      "//third_party/gflags",
     ]
   }
 
@@ -306,6 +316,10 @@ if (rtc_include_tests) {
       "../test:test_main",
       "//testing/gtest",
     ]
+
+    if (rtc_enable_protobuf) {
+      deps += [ "network_tester:network_tester_unittests" ]
+    }
 
     data = tools_unittests_resources
     if (is_android) {

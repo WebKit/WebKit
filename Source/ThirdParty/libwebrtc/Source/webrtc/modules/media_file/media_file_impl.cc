@@ -12,7 +12,6 @@
 
 #include "webrtc/base/format_macros.h"
 #include "webrtc/modules/media_file/media_file_impl.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/file_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
@@ -29,8 +28,6 @@ void MediaFile::DestroyMediaFile(MediaFile* module)
 
 MediaFileImpl::MediaFileImpl(const int32_t id)
     : _id(id),
-      _crit(CriticalSectionWrapper::CreateCriticalSection()),
-      _callbackCrit(CriticalSectionWrapper::CreateCriticalSection()),
       _ptrFileUtilityObj(NULL),
       codec_info_(),
       _ptrInStream(NULL),
@@ -57,7 +54,7 @@ MediaFileImpl::~MediaFileImpl()
 {
     WEBRTC_TRACE(kTraceMemory, kTraceFile, _id, "~MediaFileImpl()");
     {
-        CriticalSectionScoped lock(_crit);
+        rtc::CritScope lock(&_crit);
 
         if(_playingActive)
         {
@@ -79,9 +76,6 @@ MediaFileImpl::~MediaFileImpl()
             _ptrOutStream = NULL;
         }
     }
-
-    delete _crit;
-    delete _callbackCrit;
 }
 
 int64_t MediaFileImpl::TimeUntilNextProcess()
@@ -119,7 +113,7 @@ int32_t MediaFileImpl::PlayoutAudioData(int8_t* buffer,
 
     int32_t bytesRead = 0;
     {
-        CriticalSectionScoped lock(_crit);
+        rtc::CritScope lock(&_crit);
 
         if(!_playingActive)
         {
@@ -213,7 +207,7 @@ void MediaFileImpl::HandlePlayCallbacks(int32_t bytesRead)
     }
 
     // Only _callbackCrit may and should be taken when making callbacks.
-    CriticalSectionScoped lock(_callbackCrit);
+    rtc::CritScope lock(&_callbackCrit);
     if(_ptrCallback)
     {
         if(callbackNotifyMs)
@@ -252,7 +246,7 @@ int32_t MediaFileImpl::PlayoutStereoData(
     bool playEnded = false;
     uint32_t callbackNotifyMs = 0;
     {
-        CriticalSectionScoped lock(_crit);
+        rtc::CritScope lock(&_crit);
 
         if(!_playingActive || !_isStereo)
         {
@@ -313,7 +307,7 @@ int32_t MediaFileImpl::PlayoutStereoData(
         }
     }
 
-    CriticalSectionScoped lock(_callbackCrit);
+    rtc::CritScope lock(&_callbackCrit);
     if(_ptrCallback)
     {
         if(callbackNotifyMs)
@@ -386,7 +380,7 @@ int32_t MediaFileImpl::StartPlayingAudioFile(
         return -1;
     }
 
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     _openFile = true;
     strncpy(_fileName, fileName, sizeof(_fileName));
     _fileName[sizeof(_fileName) - 1] = '\0';
@@ -424,7 +418,7 @@ int32_t MediaFileImpl::StartPlayingStream(
         return -1;
     }
 
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     if(_playingActive || _recordingActive)
     {
         WEBRTC_TRACE(
@@ -555,7 +549,7 @@ int32_t MediaFileImpl::StartPlayingStream(
 int32_t MediaFileImpl::StopPlaying()
 {
 
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     _isStereo = false;
     if(_ptrFileUtilityObj)
     {
@@ -590,7 +584,7 @@ int32_t MediaFileImpl::StopPlaying()
 bool MediaFileImpl::IsPlaying()
 {
     WEBRTC_TRACE(kTraceStream, kTraceFile, _id, "MediaFileImpl::IsPlaying()");
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     return _playingActive;
 }
 
@@ -612,7 +606,7 @@ int32_t MediaFileImpl::IncomingAudioData(
     bool recordingEnded = false;
     uint32_t callbackNotifyMs = 0;
     {
-        CriticalSectionScoped lock(_crit);
+        rtc::CritScope lock(&_crit);
 
         if(!_recordingActive)
         {
@@ -707,7 +701,7 @@ int32_t MediaFileImpl::IncomingAudioData(
     }
 
     // Only _callbackCrit may and should be taken when making callbacks.
-    CriticalSectionScoped lock(_callbackCrit);
+    rtc::CritScope lock(&_callbackCrit);
     if(_ptrCallback)
     {
         if(callbackNotifyMs)
@@ -767,7 +761,7 @@ int32_t MediaFileImpl::StartRecordingAudioFile(
         return -1;
     }
 
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     _openFile = true;
     strncpy(_fileName, fileName, sizeof(_fileName));
     _fileName[sizeof(_fileName) - 1] = '\0';
@@ -786,7 +780,7 @@ int32_t MediaFileImpl::StartRecordingAudioStream(
         return -1;
     }
 
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     if(_recordingActive || _playingActive)
     {
         WEBRTC_TRACE(
@@ -923,7 +917,7 @@ int32_t MediaFileImpl::StartRecordingAudioStream(
 int32_t MediaFileImpl::StopRecording()
 {
 
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     if(!_recordingActive)
     {
         WEBRTC_TRACE(kTraceWarning, kTraceFile, _id,
@@ -967,14 +961,14 @@ int32_t MediaFileImpl::StopRecording()
 bool MediaFileImpl::IsRecording()
 {
     WEBRTC_TRACE(kTraceStream, kTraceFile, _id, "MediaFileImpl::IsRecording()");
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     return _recordingActive;
 }
 
 int32_t MediaFileImpl::RecordDurationMs(uint32_t& durationMs)
 {
 
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     if(!_recordingActive)
     {
         durationMs = 0;
@@ -987,14 +981,14 @@ int32_t MediaFileImpl::RecordDurationMs(uint32_t& durationMs)
 bool MediaFileImpl::IsStereo()
 {
     WEBRTC_TRACE(kTraceStream, kTraceFile, _id, "MediaFileImpl::IsStereo()");
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     return _isStereo;
 }
 
 int32_t MediaFileImpl::SetModuleFileCallback(FileCallback* callback)
 {
 
-    CriticalSectionScoped lock(_callbackCrit);
+    rtc::CritScope lock(&_callbackCrit);
 
     _ptrCallback = callback;
     return 0;
@@ -1038,7 +1032,7 @@ int32_t MediaFileImpl::FileDurationMs(const char* fileName,
 
 int32_t MediaFileImpl::PlayoutPositionMs(uint32_t& positionMs) const
 {
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     if(!_playingActive)
     {
         positionMs = 0;
@@ -1050,7 +1044,7 @@ int32_t MediaFileImpl::PlayoutPositionMs(uint32_t& positionMs) const
 
 int32_t MediaFileImpl::codec_info(CodecInst& codecInst) const
 {
-    CriticalSectionScoped lock(_crit);
+    rtc::CritScope lock(&_crit);
     if(!_playingActive && !_recordingActive)
     {
         WEBRTC_TRACE(kTraceError, kTraceFile, _id,

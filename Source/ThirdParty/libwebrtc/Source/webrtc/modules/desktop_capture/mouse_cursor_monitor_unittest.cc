@@ -15,7 +15,6 @@
 #include "webrtc/modules/desktop_capture/desktop_capture_options.h"
 #include "webrtc/modules/desktop_capture/desktop_frame.h"
 #include "webrtc/modules/desktop_capture/mouse_cursor.h"
-#include "webrtc/system_wrappers/include/logging.h"
 #include "webrtc/test/gtest.h"
 
 namespace webrtc {

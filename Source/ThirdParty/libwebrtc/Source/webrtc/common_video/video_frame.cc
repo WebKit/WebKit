@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/video_frame.h"
+#include "webrtc/common_video/include/video_frame.h"
 
 #include <string.h>
 

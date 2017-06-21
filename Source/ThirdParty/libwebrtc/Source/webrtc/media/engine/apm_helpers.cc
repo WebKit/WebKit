@@ -45,15 +45,12 @@ void SetAgcConfig(AudioProcessing* apm,
 
 void SetAgcStatus(AudioProcessing* apm,
                   AudioDeviceModule* adm,
-                  bool enable,
-                  AgcModes mode) {
+                  bool enable) {
   RTC_DCHECK(apm);
   RTC_DCHECK(adm);
 #if defined(WEBRTC_IOS) || defined(WEBRTC_ANDROID)
-  RTC_DCHECK_EQ(kAgcFixedDigital, mode);
   GainControl::Mode agc_mode = GainControl::kFixedDigital;
 #else
-  RTC_DCHECK_EQ(kAgcAdaptiveAnalog, mode);
   GainControl::Mode agc_mode = GainControl::kAdaptiveAnalog;
 #endif
   GainControl* gc = apm->gain_control();
@@ -70,7 +67,7 @@ void SetAgcStatus(AudioProcessing* apm,
     LOG(LS_ERROR) << "Failed to set AGC mode in ADM: " << enable;
     return;
   }
-  LOG(LS_INFO) << "AGC set to " << enable << " with mode " << mode;
+  LOG(LS_INFO) << "AGC set to " << enable << " with mode " << agc_mode;
 }
 
 void SetEcStatus(AudioProcessing* apm,

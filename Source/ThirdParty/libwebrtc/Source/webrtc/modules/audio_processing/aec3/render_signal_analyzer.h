@@ -17,7 +17,7 @@
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/optional.h"
 #include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/fft_buffer.h"
+#include "webrtc/modules/audio_processing/aec3/render_buffer.h"
 
 namespace webrtc {
 
@@ -28,7 +28,7 @@ class RenderSignalAnalyzer {
   ~RenderSignalAnalyzer();
 
   // Updates the render signal analysis with the most recent render signal.
-  void Update(const FftBuffer& X_buffer,
+  void Update(const RenderBuffer& render_buffer,
               const rtc::Optional<size_t>& delay_partitions);
 
   // Returns true if the render signal is poorly exciting.

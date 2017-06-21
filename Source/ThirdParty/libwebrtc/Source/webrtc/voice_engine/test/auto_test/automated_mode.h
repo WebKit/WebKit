@@ -11,7 +11,13 @@
 #ifndef SRC_VOICE_ENGINE_MAIN_TEST_AUTO_TEST_AUTOMATED_MODE_H_
 #define SRC_VOICE_ENGINE_MAIN_TEST_AUTO_TEST_AUTOMATED_MODE_H_
 
+namespace webrtc {
+namespace voetest {
+
 void InitializeGoogleTest(int* argc, char** argv);
 int RunInAutomatedMode();
+
+}  // namespace voetest
+}  // namespace webrtc
 
 #endif  // SRC_VOICE_ENGINE_MAIN_TEST_AUTO_TEST_AUTOMATED_MODE_H_

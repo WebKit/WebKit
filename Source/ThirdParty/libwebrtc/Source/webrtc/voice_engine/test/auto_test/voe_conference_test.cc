@@ -17,7 +17,9 @@
 #include "webrtc/test/testsupport/fileutils.h"
 #include "webrtc/voice_engine/test/auto_test/fakes/conference_transport.h"
 
+namespace webrtc {
 namespace {
+
 const int kRttMs = 25;
 
 bool IsNear(int ref, int comp, int error) {
@@ -174,3 +176,4 @@ TEST(VoeConferenceTest, ReceivedPackets) {
 }
 
 }  // namespace voetest
+}  // namespace webrtc

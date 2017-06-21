@@ -12,23 +12,42 @@
 
 #include <stddef.h>
 
+#include <memory>
+
+#include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/api/video/video_frame.h"
+#include "webrtc/base/criticalsection.h"
+#include "webrtc/base/optional.h"
+#include "webrtc/media/base/videoadapter.h"
 #include "webrtc/media/base/videosourceinterface.h"
 
+namespace cricket {
+class VideoAdapter;
+}  // namespace cricket
+
 namespace webrtc {
-
 class Clock;
-
 namespace test {
 
 class VideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
  public:
-  virtual ~VideoCapturer() {}
+  VideoCapturer();
+  virtual ~VideoCapturer();
 
   virtual void Start() = 0;
   virtual void Stop() = 0;
+
+  void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
+                       const rtc::VideoSinkWants& wants) override;
+
+ protected:
+  rtc::Optional<VideoFrame> AdaptFrame(const VideoFrame& frame);
+  rtc::VideoSinkWants GetSinkWants();
+
+ private:
+  const std::unique_ptr<cricket::VideoAdapter> video_adapter_;
 };
-}  // test
-}  // webrtc
+}  // namespace test
+}  // namespace webrtc
 
 #endif  // WEBRTC_TEST_VIDEO_CAPTURER_H_

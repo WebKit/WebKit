@@ -30,11 +30,7 @@
 
 #include <stdint.h>
 
-#ifdef HAVE_SRTP
 #include "third_party/libsrtp/crypto/include/auth.h"
-#endif  // HAVE_SRTP
-
-#if defined(HAVE_SRTP) && defined(ENABLE_EXTERNAL_AUTH)
 
 #define EXTERNAL_HMAC_SHA1 SRTP_HMAC_SHA1 + 1
 #define HMAC_KEY_LENGTH 20
@@ -71,5 +67,4 @@ srtp_err_status_t external_hmac_compute(ExternalHmacContext* state,
 
 srtp_err_status_t external_crypto_init();
 
-#endif  // defined(HAVE_SRTP) && defined(ENABLE_EXTERNAL_AUTH)
 #endif  // WEBRTC_PC_EXTERNALHMAC_H_

@@ -18,8 +18,8 @@
 #include "webrtc/base/random.h"
 #include "webrtc/modules/audio_processing/aec3/aec3_common.h"
 #include "webrtc/modules/audio_processing/aec3/aec3_fft.h"
-#include "webrtc/modules/audio_processing/aec3/fft_buffer.h"
 #include "webrtc/modules/audio_processing/aec3/fft_data.h"
+#include "webrtc/modules/audio_processing/aec3/render_buffer.h"
 #include "webrtc/modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "webrtc/test/gtest.h"
 
@@ -56,19 +56,20 @@ TEST(RenderSignalAnalyzer, NullMaskOutput) {
 TEST(RenderSignalAnalyzer, NoFalseDetectionOfNarrowBands) {
   RenderSignalAnalyzer analyzer;
   Random random_generator(42U);
-  std::vector<float> x(kBlockSize, 0.f);
+  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::array<float, kBlockSize> x_old;
   FftData X;
   Aec3Fft fft;
-  FftBuffer X_buffer(Aec3Optimization::kNone, 1, std::vector<size_t>(1, 1));
+  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, 1,
+                             std::vector<size_t>(1, 1));
   std::array<float, kFftLengthBy2Plus1> mask;
   x_old.fill(0.f);
 
   for (size_t k = 0; k < 100; ++k) {
-    RandomizeSampleVector(&random_generator, x);
-    fft.PaddedFft(x, x_old, &X);
-    X_buffer.Insert(X);
-    analyzer.Update(X_buffer, rtc::Optional<size_t>(0));
+    RandomizeSampleVector(&random_generator, x[0]);
+    fft.PaddedFft(x[0], x_old, &X);
+    render_buffer.Insert(x);
+    analyzer.Update(render_buffer, rtc::Optional<size_t>(0));
   }
 
   mask.fill(1.f);
@@ -82,11 +83,11 @@ TEST(RenderSignalAnalyzer, NoFalseDetectionOfNarrowBands) {
 TEST(RenderSignalAnalyzer, NarrowBandDetection) {
   RenderSignalAnalyzer analyzer;
   Random random_generator(42U);
-  std::vector<float> x(kBlockSize, 0.f);
+  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::array<float, kBlockSize> x_old;
-  FftData X;
   Aec3Fft fft;
-  FftBuffer X_buffer(Aec3Optimization::kNone, 1, std::vector<size_t>(1, 1));
+  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, 1,
+                             std::vector<size_t>(1, 1));
   std::array<float, kFftLengthBy2Plus1> mask;
   x_old.fill(0.f);
   constexpr int kSinusFrequencyBin = 32;
@@ -95,12 +96,10 @@ TEST(RenderSignalAnalyzer, NarrowBandDetection) {
     size_t sample_counter = 0;
     for (size_t k = 0; k < 100; ++k) {
       ProduceSinusoid(16000, 16000 / 2 * kSinusFrequencyBin / kFftLengthBy2,
-                      &sample_counter, x);
-      fft.PaddedFft(x, x_old, &X);
-      X_buffer.Insert(X);
-      analyzer.Update(
-          X_buffer,
-          known_delay ? rtc::Optional<size_t>(0) : rtc::Optional<size_t>());
+                      &sample_counter, x[0]);
+      render_buffer.Insert(x);
+      analyzer.Update(render_buffer, known_delay ? rtc::Optional<size_t>(0)
+                                                 : rtc::Optional<size_t>());
     }
   };
 

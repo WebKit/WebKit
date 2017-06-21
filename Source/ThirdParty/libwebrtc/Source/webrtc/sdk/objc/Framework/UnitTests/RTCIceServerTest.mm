@@ -62,11 +62,26 @@
   EXPECT_EQ("credential", iceStruct.password);
 }
 
+- (void)testHostname {
+  RTCIceServer *server = [[RTCIceServer alloc] initWithURLStrings:@[ @"turn1:turn1.example.net" ]
+                                                         username:@"username"
+                                                       credential:@"credential"
+                                                    tlsCertPolicy:RTCTlsCertPolicySecure
+                                                         hostname:@"hostname"];
+  webrtc::PeerConnectionInterface::IceServer iceStruct = server.nativeServer;
+  EXPECT_EQ(1u, iceStruct.urls.size());
+  EXPECT_EQ("turn1:turn1.example.net", iceStruct.urls.front());
+  EXPECT_EQ("username", iceStruct.username);
+  EXPECT_EQ("credential", iceStruct.password);
+  EXPECT_EQ("hostname", iceStruct.hostname);
+}
+
 - (void)testInitFromNativeServer {
   webrtc::PeerConnectionInterface::IceServer nativeServer;
   nativeServer.username = "username";
   nativeServer.password = "password";
   nativeServer.urls.push_back("stun:stun.example.net");
+  nativeServer.hostname = "hostname";
 
   RTCIceServer *iceServer =
       [[RTCIceServer alloc] initWithNativeServer:nativeServer];
@@ -75,6 +90,7 @@
       [NSString stdStringForString:iceServer.urlStrings.firstObject]);
   EXPECT_EQ("username", [NSString stdStringForString:iceServer.username]);
   EXPECT_EQ("password", [NSString stdStringForString:iceServer.credential]);
+  EXPECT_EQ("hostname", [NSString stdStringForString:iceServer.hostname]);
 }
 
 @end
@@ -97,6 +113,13 @@ TEST(RTCIceServerTest, PasswordCredentialTest) {
   @autoreleasepool {
     RTCIceServerTest *test = [[RTCIceServerTest alloc] init];
     [test testPasswordCredential];
+  }
+}
+
+TEST(RTCIceServerTest, HostnameTest) {
+  @autoreleasepool {
+    RTCIceServerTest *test = [[RTCIceServerTest alloc] init];
+    [test testHostname];
   }
 }
 

@@ -62,16 +62,16 @@ class VoEBaseImpl : public VoEBase,
   int AssociateSendChannel(int channel, int accociate_send_channel) override;
 
   // AudioTransport
-  int32_t RecordedDataIsAvailable(const void* audioSamples,
-                                  const size_t nSamples,
-                                  const size_t nBytesPerSample,
-                                  const size_t nChannels,
-                                  const uint32_t samplesPerSec,
-                                  const uint32_t totalDelayMS,
-                                  const int32_t clockDrift,
-                                  const uint32_t currentMicLevel,
-                                  const bool keyPressed,
-                                  uint32_t& newMicLevel) override;
+  int32_t RecordedDataIsAvailable(const void* audio_data,
+                                  const size_t number_of_frames,
+                                  const size_t bytes_per_sample,
+                                  const size_t number_of_channels,
+                                  const uint32_t sample_rate,
+                                  const uint32_t audio_delay_milliseconds,
+                                  const int32_t clock_drift,
+                                  const uint32_t volume,
+                                  const bool key_pressed,
+                                  uint32_t& new_mic_volume) override;
   int32_t NeedMorePlayData(const size_t nSamples,
                            const size_t nBytesPerSample,
                            const size_t nChannels,
@@ -108,18 +108,6 @@ class VoEBaseImpl : public VoEBase,
   int32_t StartSend();
   int32_t StopSend();
   int32_t TerminateInternal();
-
-  // Helper function to process the recorded data with AudioProcessing Module,
-  // demultiplex the data to specific voe channels, encode and send to the
-  // network. When |number_of_VoE_channels| is 0, it will demultiplex the
-  // data to all the existing VoE channels.
-  // It returns new AGC microphone volume or 0 if no volume changes
-  // should be done.
-  int ProcessRecordedDataWithAPM(
-      const int voe_channels[], size_t number_of_voe_channels,
-      const void* audio_data, uint32_t sample_rate, size_t number_of_channels,
-      size_t number_of_frames, uint32_t audio_delay_milliseconds,
-      int32_t clock_drift, uint32_t volume, bool key_pressed);
 
   void GetPlayoutData(int sample_rate, size_t number_of_channels,
                       size_t number_of_frames, bool feed_data_to_apm,

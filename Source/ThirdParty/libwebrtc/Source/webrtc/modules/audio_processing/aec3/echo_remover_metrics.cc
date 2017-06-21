@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <numeric>
 
+#include "webrtc/base/safe_minmax.h"
 #include "webrtc/system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -222,9 +223,6 @@ void EchoRemoverMetrics::Update(
             "WebRTC.Audio.EchoCanceller.UsableLinearEstimate",
             static_cast<int>(aec_state.UsableLinearEstimate() ? 1 : 0));
         RTC_HISTOGRAM_BOOLEAN(
-            "WebRTC.Audio.EchoCanceller.ModelBasedAecFeasible",
-            static_cast<int>(aec_state.ModelBasedAecFeasible() ? 1 : 0));
-        RTC_HISTOGRAM_BOOLEAN(
             "WebRTC.Audio.EchoCanceller.ActiveRender",
             static_cast<int>(
                 active_render_count_ > kMetricsCollectionBlocksBy2 ? 1 : 0));
@@ -276,7 +274,7 @@ int TransformDbMetricForReporting(bool negate,
   if (negate) {
     new_value = -new_value;
   }
-  return static_cast<int>(std::max(min_value, std::min(max_value, new_value)));
+  return static_cast<int>(rtc::SafeClamp(new_value, min_value, max_value));
 }
 
 }  // namespace aec3

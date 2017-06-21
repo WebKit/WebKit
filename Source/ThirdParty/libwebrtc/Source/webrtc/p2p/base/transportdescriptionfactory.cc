@@ -37,8 +37,9 @@ TransportDescription* TransportDescriptionFactory::CreateOffer(
     desc->ice_ufrag = current_description->ice_ufrag;
     desc->ice_pwd = current_description->ice_pwd;
   }
+  desc->AddOption(ICE_OPTION_TRICKLE);
   if (options.enable_ice_renomination) {
-    desc->AddOption(ICE_RENOMINATION_STR);
+    desc->AddOption(ICE_OPTION_RENOMINATION);
   }
 
   // If we are trying to establish a secure transport, add a fingerprint.
@@ -75,8 +76,9 @@ TransportDescription* TransportDescriptionFactory::CreateAnswer(
     desc->ice_ufrag = current_description->ice_ufrag;
     desc->ice_pwd = current_description->ice_pwd;
   }
+  desc->AddOption(ICE_OPTION_TRICKLE);
   if (options.enable_ice_renomination) {
-    desc->AddOption(ICE_RENOMINATION_STR);
+    desc->AddOption(ICE_OPTION_RENOMINATION);
   }
 
   // Negotiate security params.

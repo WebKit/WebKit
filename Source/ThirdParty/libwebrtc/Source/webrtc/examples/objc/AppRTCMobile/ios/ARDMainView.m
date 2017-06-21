@@ -74,16 +74,8 @@ static CGFloat const kCallControlMargin = 8;
 @implementation ARDMainView {
   ARDRoomTextField *_roomText;
   UILabel *_callOptionsLabel;
-  UISwitch *_audioOnlySwitch;
-  UILabel *_audioOnlyLabel;
-  UISwitch *_aecdumpSwitch;
-  UILabel *_aecdumpLabel;
-  UISwitch *_levelControlSwitch;
-  UILabel *_levelControlLabel;
   UISwitch *_loopbackSwitch;
   UILabel *_loopbackLabel;
-  UISwitch *_useManualAudioSwitch;
-  UILabel *_useManualAudioLabel;
   UIButton *_startCallButton;
   UIButton *_audioLoopButton;
 }
@@ -106,17 +98,6 @@ static CGFloat const kCallControlMargin = 8;
     [_callOptionsLabel sizeToFit];
     [self addSubview:_callOptionsLabel];
 
-    _audioOnlySwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-    [_audioOnlySwitch sizeToFit];
-    [self addSubview:_audioOnlySwitch];
-
-    _audioOnlyLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _audioOnlyLabel.text = @"Audio only";
-    _audioOnlyLabel.font = controlFont;
-    _audioOnlyLabel.textColor = controlFontColor;
-    [_audioOnlyLabel sizeToFit];
-    [self addSubview:_audioOnlyLabel];
-
     _loopbackSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
     [_loopbackSwitch sizeToFit];
     [self addSubview:_loopbackSwitch];
@@ -127,40 +108,6 @@ static CGFloat const kCallControlMargin = 8;
     _loopbackLabel.textColor = controlFontColor;
     [_loopbackLabel sizeToFit];
     [self addSubview:_loopbackLabel];
-
-    _aecdumpSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-    [_aecdumpSwitch sizeToFit];
-    [self addSubview:_aecdumpSwitch];
-
-    _aecdumpLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _aecdumpLabel.text = @"Create AecDump";
-    _aecdumpLabel.font = controlFont;
-    _aecdumpLabel.textColor = controlFontColor;
-    [_aecdumpLabel sizeToFit];
-    [self addSubview:_aecdumpLabel];
-
-    _levelControlSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-    [_levelControlSwitch sizeToFit];
-    [self addSubview:_levelControlSwitch];
-
-    _levelControlLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _levelControlLabel.text = @"Use level controller";
-    _levelControlLabel.font = controlFont;
-    _levelControlLabel.textColor = controlFontColor;
-    [_levelControlLabel sizeToFit];
-    [self addSubview:_levelControlLabel];
-
-    _useManualAudioSwitch = [[UISwitch alloc] initWithFrame:CGRectZero];
-    [_useManualAudioSwitch sizeToFit];
-    _useManualAudioSwitch.on = YES;
-    [self addSubview:_useManualAudioSwitch];
-
-    _useManualAudioLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _useManualAudioLabel.text = @"Use manual audio config";
-    _useManualAudioLabel.font = controlFont;
-    _useManualAudioLabel.textColor = controlFontColor;
-    [_useManualAudioLabel sizeToFit];
-    [self addSubview:_useManualAudioLabel];
 
     _startCallButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [_startCallButton setTitle:@"Start call"
@@ -208,20 +155,7 @@ static CGFloat const kCallControlMargin = 8;
                                        _callOptionsLabel.frame.size.width,
                                        _callOptionsLabel.frame.size.height);
 
-  CGFloat audioOnlyTop =
-      CGRectGetMaxY(_callOptionsLabel.frame) + kCallControlMargin * 2;
-  CGRect audioOnlyRect = CGRectMake(kCallControlMargin * 3,
-                                    audioOnlyTop,
-                                    _audioOnlySwitch.frame.size.width,
-                                    _audioOnlySwitch.frame.size.height);
-  _audioOnlySwitch.frame = audioOnlyRect;
-  CGFloat audioOnlyLabelCenterX = CGRectGetMaxX(audioOnlyRect) +
-      kCallControlMargin + _audioOnlyLabel.frame.size.width / 2;
-  _audioOnlyLabel.center = CGPointMake(audioOnlyLabelCenterX,
-                                       CGRectGetMidY(audioOnlyRect));
-
-  CGFloat loopbackModeTop =
-      CGRectGetMaxY(_audioOnlySwitch.frame) + kCallControlMargin;
+  CGFloat loopbackModeTop = CGRectGetMaxY(_callOptionsLabel.frame) + kCallControlMargin * 2;
   CGRect loopbackModeRect = CGRectMake(kCallControlMargin * 3,
                                        loopbackModeTop,
                                        _loopbackSwitch.frame.size.width,
@@ -232,46 +166,7 @@ static CGFloat const kCallControlMargin = 8;
   _loopbackLabel.center = CGPointMake(loopbackModeLabelCenterX,
                                       CGRectGetMidY(loopbackModeRect));
 
-  CGFloat aecdumpModeTop =
-      CGRectGetMaxY(_loopbackSwitch.frame) + kCallControlMargin;
-  CGRect aecdumpModeRect = CGRectMake(kCallControlMargin * 3,
-                                      aecdumpModeTop,
-                                      _aecdumpSwitch.frame.size.width,
-                                      _aecdumpSwitch.frame.size.height);
-  _aecdumpSwitch.frame = aecdumpModeRect;
-  CGFloat aecdumpModeLabelCenterX = CGRectGetMaxX(aecdumpModeRect) +
-      kCallControlMargin + _aecdumpLabel.frame.size.width / 2;
-  _aecdumpLabel.center = CGPointMake(aecdumpModeLabelCenterX,
-                                     CGRectGetMidY(aecdumpModeRect));
-
-  CGFloat levelControlModeTop =
-       CGRectGetMaxY(_aecdumpSwitch.frame) + kCallControlMargin;
-  CGRect levelControlModeRect = CGRectMake(kCallControlMargin * 3,
-                                           levelControlModeTop,
-                                           _levelControlSwitch.frame.size.width,
-                                           _levelControlSwitch.frame.size.height);
-  _levelControlSwitch.frame = levelControlModeRect;
-  CGFloat levelControlModeLabelCenterX = CGRectGetMaxX(levelControlModeRect) +
-      kCallControlMargin + _levelControlLabel.frame.size.width / 2;
-  _levelControlLabel.center = CGPointMake(levelControlModeLabelCenterX,
-                                         CGRectGetMidY(levelControlModeRect));
-
-  CGFloat useManualAudioTop =
-      CGRectGetMaxY(_levelControlSwitch.frame) + kCallControlMargin;
-  CGRect useManualAudioRect =
-      CGRectMake(kCallControlMargin * 3,
-                 useManualAudioTop,
-                 _useManualAudioSwitch.frame.size.width,
-                 _useManualAudioSwitch.frame.size.height);
-  _useManualAudioSwitch.frame = useManualAudioRect;
-  CGFloat useManualAudioLabelCenterX = CGRectGetMaxX(useManualAudioRect) +
-      kCallControlMargin + _useManualAudioLabel.frame.size.width / 2;
-  _useManualAudioLabel.center =
-      CGPointMake(useManualAudioLabelCenterX,
-                  CGRectGetMidY(useManualAudioRect));
-
-  CGFloat audioLoopTop =
-     CGRectGetMaxY(useManualAudioRect) + kCallControlMargin * 3;
+  CGFloat audioLoopTop = CGRectGetMaxY(loopbackModeRect) + kCallControlMargin * 3;
   _audioLoopButton.frame = CGRectMake(kCallControlMargin,
                                       audioLoopTop,
                                       _audioLoopButton.frame.size.width,
@@ -304,19 +199,7 @@ static CGFloat const kCallControlMargin = 8;
 }
 
 - (void)onStartCall:(id)sender {
-  NSString *room = _roomText.roomText;
-  // If this is a loopback call, allow a generated room name.
-  if (!room.length && _loopbackSwitch.isOn) {
-    room = [[NSUUID UUID] UUIDString];
-  }
-  room = [room stringByReplacingOccurrencesOfString:@"-" withString:@""];
-  [_delegate mainView:self
-                didInputRoom:room
-                  isLoopback:_loopbackSwitch.isOn
-                 isAudioOnly:_audioOnlySwitch.isOn
-           shouldMakeAecDump:_aecdumpSwitch.isOn
-       shouldUseLevelControl:_levelControlSwitch.isOn
-              useManualAudio:_useManualAudioSwitch.isOn];
+  [_delegate mainView:self didInputRoom:_roomText.roomText isLoopback:_loopbackSwitch.isOn];
 }
 
 @end

@@ -28,6 +28,8 @@ class Packet {
   using ExtensionType = RTPExtensionType;
   using ExtensionManager = RtpHeaderExtensionMap;
   static constexpr size_t kMaxExtensionHeaders = 14;
+  static constexpr int kMinExtensionId = 1;
+  static constexpr int kMaxExtensionId = 14;
 
   // Parse and copy given buffer into Packet.
   bool Parse(const uint8_t* buffer, size_t size);
@@ -95,9 +97,25 @@ class Packet {
   template <typename Extension>
   bool ReserveExtension();
 
+  // Following 4 helpers identify rtp header extension by |id| negotiated with
+  // remote peer and written in an rtp packet.
+  bool HasRawExtension(int id) const;
+
+  // Returns place where extension with |id| is stored.
+  // Returns empty arrayview if extension is not present.
+  rtc::ArrayView<const uint8_t> GetRawExtension(int id) const;
+
+  // Allocates and store header extension. Returns true on success.
+  bool SetRawExtension(int id, rtc::ArrayView<const uint8_t> data);
+
+  // Allocates and returns place to store rtp header extension.
+  // Returns empty arrayview on failure.
+  rtc::ArrayView<uint8_t> AllocateRawExtension(int id, size_t length);
+
   // Reserve size_bytes for payload. Returns nullptr on failure.
+  uint8_t* SetPayloadSize(size_t size_bytes);
+  // Same as SetPayloadSize but doesn't guarantee to keep current payload.
   uint8_t* AllocatePayload(size_t size_bytes);
-  void SetPayloadSize(size_t size_bytes);
   bool SetPadding(uint8_t size_bytes, Random* random);
 
  protected:
@@ -107,7 +125,7 @@ class Packet {
   // provided via constructor or IdentifyExtensions function.
   Packet();
   explicit Packet(const ExtensionManager* extensions);
-  Packet(const Packet&) = default;
+  Packet(const Packet&);
   Packet(const ExtensionManager* extensions, size_t capacity);
   virtual ~Packet();
 
@@ -124,22 +142,13 @@ class Packet {
   // but does not touch packet own buffer, leaving packet in invalid state.
   bool ParseBuffer(const uint8_t* buffer, size_t size);
 
-  // Find an extension based on the type field of the parameter.
-  // If found, length field would be validated, the offset field will be set
-  // and true returned,
-  // otherwise the parameter will be unchanged and false is returned.
-  bool FindExtension(ExtensionType type,
-                     uint8_t length,
-                     uint16_t* offset) const;
+  // Find an extension |type|.
+  // Returns view of the raw extension or empty view on failure.
+  rtc::ArrayView<const uint8_t> FindExtension(ExtensionType type) const;
 
-  // Find or allocate an extension, based on the type field of the parameter.
-  // If found, the length field be checked against what is already registered
-  // and the offset field will be set, then true is returned. If allocated, the
-  // length field will be used for allocation and the offset update to indicate
-  // position, the true is returned.
-  // If not found and allocations fails, false is returned and parameter remains
-  // unchanged.
-  bool AllocateExtension(ExtensionType type, uint8_t length, uint16_t* offset);
+  // Find or allocate an extension |type|. Returns view of size |length|
+  // to write raw extension to or an empty view on failure.
+  rtc::ArrayView<uint8_t> AllocateExtension(ExtensionType type, size_t length);
 
   uint8_t* WriteAt(size_t offset);
   void WriteAt(size_t offset, uint8_t byte);
@@ -161,32 +170,34 @@ class Packet {
 
 template <typename Extension>
 bool Packet::HasExtension() const {
-  uint16_t offset = 0;
-  return FindExtension(Extension::kId, Extension::kValueSizeBytes, &offset);
+  return !FindExtension(Extension::kId).empty();
 }
 
 template <typename Extension, typename... Values>
 bool Packet::GetExtension(Values... values) const {
-  uint16_t offset = 0;
-  if (!FindExtension(Extension::kId, Extension::kValueSizeBytes, &offset))
+  auto raw = FindExtension(Extension::kId);
+  if (raw.empty())
     return false;
-  return Extension::Parse(data() + offset, values...);
+  return Extension::Parse(raw, values...);
 }
 
 template <typename Extension, typename... Values>
 bool Packet::SetExtension(Values... values) {
-  uint16_t offset = 0;
-  if (!AllocateExtension(Extension::kId, Extension::kValueSizeBytes, &offset))
+  const size_t value_size = Extension::ValueSize(values...);
+  if (value_size == 0 || value_size > 16)
     return false;
-  return Extension::Write(WriteAt(offset), values...);
+  auto buffer = AllocateExtension(Extension::kId, value_size);
+  if (buffer.empty())
+    return false;
+  return Extension::Write(buffer.data(), values...);
 }
 
 template <typename Extension>
 bool Packet::ReserveExtension() {
-  uint16_t offset = 0;
-  if (!AllocateExtension(Extension::kId, Extension::kValueSizeBytes, &offset))
+  auto buffer = AllocateExtension(Extension::kId, Extension::kValueSizeBytes);
+  if (buffer.empty())
     return false;
-  memset(WriteAt(offset), 0, Extension::kValueSizeBytes);
+  memset(buffer.data(), 0, Extension::kValueSizeBytes);
   return true;
 }
 }  // namespace rtp

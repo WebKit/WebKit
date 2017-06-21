@@ -12,7 +12,6 @@
 
 #include <utility>
 
-#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/api/mediaconstraintsinterface.h"
 #include "webrtc/api/mediastreamproxy.h"
 #include "webrtc/api/mediastreamtrackproxy.h"
@@ -21,10 +20,15 @@
 #include "webrtc/api/videosourceproxy.h"
 #include "webrtc/base/bind.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/media/engine/webrtcmediaengine.h"
-#include "webrtc/media/engine/webrtcvideodecoderfactory.h"
-#include "webrtc/media/engine/webrtcvideoencoderfactory.h"
-#include "webrtc/modules/audio_device/include/audio_device.h"
+#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
+// Adding 'nogncheck' to disable the gn include headers check to support modular
+// WebRTC build targets.
+// TODO(zhihuang): This wouldn't be necessary if the interface and
+// implementation of the media engine were in separate build targets.
+#include "webrtc/media/engine/webrtcmediaengine.h"             // nogncheck
+#include "webrtc/media/engine/webrtcvideodecoderfactory.h"     // nogncheck
+#include "webrtc/media/engine/webrtcvideoencoderfactory.h"     // nogncheck
+#include "webrtc/modules/audio_device/include/audio_device.h"  // nogncheck
 #include "webrtc/p2p/base/basicpacketsocketfactory.h"
 #include "webrtc/p2p/client/basicportallocator.h"
 #include "webrtc/pc/audiotrack.h"
@@ -36,58 +40,8 @@
 
 namespace webrtc {
 
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory) {
-  rtc::scoped_refptr<PeerConnectionFactory> pc_factory(
-      new rtc::RefCountedObject<PeerConnectionFactory>(audio_encoder_factory,
-                                                       audio_decoder_factory));
-
-  RTC_CHECK(rtc::Thread::Current() == pc_factory->signaling_thread());
-  // The signaling thread is the current thread so we can
-  // safely call Initialize directly.
-  if (!pc_factory->Initialize()) {
-    return nullptr;
-  }
-  return PeerConnectionFactoryProxy::Create(pc_factory->signaling_thread(),
-                                            pc_factory);
-}
-
 rtc::scoped_refptr<PeerConnectionFactoryInterface>
-CreatePeerConnectionFactory() {
-  return CreatePeerConnectionFactory(CreateBuiltinAudioEncoderFactory(),
-                                     CreateBuiltinAudioDecoderFactory());
-}
-
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    AudioDeviceModule* default_adm,
-    rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
-    cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* video_decoder_factory) {
-  return CreatePeerConnectionFactoryWithAudioMixer(
-      network_thread, worker_thread, signaling_thread, default_adm,
-      audio_encoder_factory, audio_decoder_factory, video_encoder_factory,
-      video_decoder_factory, nullptr);
-}
-
-rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    AudioDeviceModule* default_adm,
-    cricket::WebRtcVideoEncoderFactory* encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* decoder_factory) {
-  return CreatePeerConnectionFactoryWithAudioMixer(
-      network_thread, worker_thread, signaling_thread, default_adm,
-      encoder_factory, decoder_factory, nullptr);
-}
-
-rtc::scoped_refptr<PeerConnectionFactoryInterface>
-CreatePeerConnectionFactoryWithAudioMixer(
+CreateModularPeerConnectionFactory(
     rtc::Thread* network_thread,
     rtc::Thread* worker_thread,
     rtc::Thread* signaling_thread,
@@ -96,56 +50,28 @@ CreatePeerConnectionFactoryWithAudioMixer(
     rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory,
     cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
     cricket::WebRtcVideoDecoderFactory* video_decoder_factory,
-    rtc::scoped_refptr<AudioMixer> audio_mixer) {
+    rtc::scoped_refptr<AudioMixer> audio_mixer,
+    std::unique_ptr<cricket::MediaEngineInterface> media_engine,
+    std::unique_ptr<CallFactoryInterface> call_factory,
+    std::unique_ptr<RtcEventLogFactoryInterface> event_log_factory) {
   rtc::scoped_refptr<PeerConnectionFactory> pc_factory(
       new rtc::RefCountedObject<PeerConnectionFactory>(
           network_thread, worker_thread, signaling_thread, default_adm,
           audio_encoder_factory, audio_decoder_factory, video_encoder_factory,
-          video_decoder_factory, audio_mixer));
+          video_decoder_factory, audio_mixer, std::move(media_engine),
+          std::move(call_factory), std::move(event_log_factory)));
 
   // Call Initialize synchronously but make sure it is executed on
   // |signaling_thread|.
   MethodCall0<PeerConnectionFactory, bool> call(
       pc_factory.get(), &PeerConnectionFactory::Initialize);
-  bool result = call.Marshal(RTC_FROM_HERE, signaling_thread);
+  bool result = call.Marshal(RTC_FROM_HERE, pc_factory->signaling_thread());
 
   if (!result) {
     return nullptr;
   }
-  return PeerConnectionFactoryProxy::Create(signaling_thread, pc_factory);
-}
-
-rtc::scoped_refptr<PeerConnectionFactoryInterface>
-CreatePeerConnectionFactoryWithAudioMixer(
-    rtc::Thread* network_thread,
-    rtc::Thread* worker_thread,
-    rtc::Thread* signaling_thread,
-    AudioDeviceModule* default_adm,
-    cricket::WebRtcVideoEncoderFactory* encoder_factory,
-    cricket::WebRtcVideoDecoderFactory* decoder_factory,
-    rtc::scoped_refptr<AudioMixer> audio_mixer) {
-  return CreatePeerConnectionFactoryWithAudioMixer(
-      network_thread, worker_thread, signaling_thread, default_adm,
-      CreateBuiltinAudioEncoderFactory(), CreateBuiltinAudioDecoderFactory(),
-      encoder_factory, decoder_factory, audio_mixer);
-}
-
-PeerConnectionFactory::PeerConnectionFactory(
-    rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
-    rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory)
-    : owns_ptrs_(true),
-      wraps_current_thread_(false),
-      network_thread_(rtc::Thread::CreateWithSocketServer().release()),
-      worker_thread_(rtc::Thread::Create().release()),
-      signaling_thread_(rtc::Thread::Current()),
-      // TODO(ossu): Take care of audio_encoder_factory (see bug 5806).
-      audio_decoder_factory_(audio_decoder_factory) {
-  if (!signaling_thread_) {
-    signaling_thread_ = rtc::ThreadManager::Instance()->WrapCurrentThread();
-    wraps_current_thread_ = true;
-  }
-  network_thread_->Start();
-  worker_thread_->Start();
+  return PeerConnectionFactoryProxy::Create(pc_factory->signaling_thread(),
+                                            pc_factory);
 }
 
 PeerConnectionFactory::PeerConnectionFactory(
@@ -157,21 +83,45 @@ PeerConnectionFactory::PeerConnectionFactory(
     rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory,
     cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
     cricket::WebRtcVideoDecoderFactory* video_decoder_factory,
-    rtc::scoped_refptr<AudioMixer> audio_mixer)
-    : owns_ptrs_(false),
-      wraps_current_thread_(false),
+    rtc::scoped_refptr<AudioMixer> audio_mixer,
+    std::unique_ptr<cricket::MediaEngineInterface> media_engine,
+    std::unique_ptr<webrtc::CallFactoryInterface> call_factory,
+    std::unique_ptr<RtcEventLogFactoryInterface> event_log_factory)
+    : wraps_current_thread_(false),
       network_thread_(network_thread),
       worker_thread_(worker_thread),
       signaling_thread_(signaling_thread),
       default_adm_(default_adm),
-      // TODO(ossu): Take care of audio_encoder_factory (see bug 5806).
+      audio_encoder_factory_(audio_encoder_factory),
       audio_decoder_factory_(audio_decoder_factory),
       video_encoder_factory_(video_encoder_factory),
       video_decoder_factory_(video_decoder_factory),
-      external_audio_mixer_(audio_mixer) {
-  RTC_DCHECK(network_thread);
-  RTC_DCHECK(worker_thread);
-  RTC_DCHECK(signaling_thread);
+      external_audio_mixer_(audio_mixer),
+      media_engine_(std::move(media_engine)),
+      call_factory_(std::move(call_factory)),
+      event_log_factory_(std::move(event_log_factory)) {
+  if (!network_thread_) {
+    owned_network_thread_ = rtc::Thread::CreateWithSocketServer();
+    owned_network_thread_->Start();
+    network_thread_ = owned_network_thread_.get();
+  }
+
+  if (!worker_thread_) {
+    owned_worker_thread_ = rtc::Thread::Create();
+    owned_worker_thread_->Start();
+    worker_thread_ = owned_worker_thread_.get();
+  }
+
+  if (!signaling_thread_) {
+    signaling_thread_ = rtc::Thread::Current();
+    if (!signaling_thread_) {
+      // If this thread isn't already wrapped by an rtc::Thread, create a
+      // wrapper and own it in this class.
+      signaling_thread_ = rtc::ThreadManager::Instance()->WrapCurrentThread();
+      wraps_current_thread_ = true;
+    }
+  }
+
   // TODO: Currently there is no way creating an external adm in
   // libjingle source tree. So we can 't currently assert if this is NULL.
   // RTC_DCHECK(default_adm != NULL);
@@ -186,12 +136,8 @@ PeerConnectionFactory::~PeerConnectionFactory() {
   default_socket_factory_ = nullptr;
   default_network_manager_ = nullptr;
 
-  if (owns_ptrs_) {
-    if (wraps_current_thread_)
-      rtc::ThreadManager::Instance()->UnwrapCurrentThread();
-    delete worker_thread_;
-    delete network_thread_;
-  }
+  if (wraps_current_thread_)
+    rtc::ThreadManager::Instance()->UnwrapCurrentThread();
 }
 
 bool PeerConnectionFactory::Initialize() {
@@ -209,16 +155,10 @@ bool PeerConnectionFactory::Initialize() {
     return false;
   }
 
-  std::unique_ptr<cricket::MediaEngineInterface> media_engine =
-      worker_thread_->Invoke<std::unique_ptr<cricket::MediaEngineInterface>>(
-          RTC_FROM_HERE,
-          rtc::Bind(&PeerConnectionFactory::CreateMediaEngine_w, this));
-
   channel_manager_.reset(new cricket::ChannelManager(
-      std::move(media_engine), worker_thread_, network_thread_));
+      std::move(media_engine_), worker_thread_, network_thread_));
 
   channel_manager_->SetVideoRtxEnabled(true);
-  channel_manager_->SetCryptoOptions(options_.crypto_options);
   if (!channel_manager_->Init()) {
     return false;
   }
@@ -228,9 +168,6 @@ bool PeerConnectionFactory::Initialize() {
 
 void PeerConnectionFactory::SetOptions(const Options& options) {
   options_ = options;
-  if (channel_manager_) {
-    channel_manager_->SetCryptoOptions(options.crypto_options);
-  }
 }
 
 rtc::scoped_refptr<AudioSourceInterface>
@@ -323,8 +260,18 @@ PeerConnectionFactory::CreatePeerConnection(
       RTC_FROM_HERE, rtc::Bind(&cricket::PortAllocator::SetNetworkIgnoreMask,
                                allocator.get(), options_.network_ignore_mask));
 
+  std::unique_ptr<RtcEventLog> event_log(new RtcEventLogNullImpl());
+  if (event_log_factory_) {
+    event_log = event_log_factory_->CreateRtcEventLog();
+  }
+
+  std::unique_ptr<Call> call = worker_thread_->Invoke<std::unique_ptr<Call>>(
+      RTC_FROM_HERE,
+      rtc::Bind(&PeerConnectionFactory::CreateCall_w, this, event_log.get()));
+
   rtc::scoped_refptr<PeerConnection> pc(
-      new rtc::RefCountedObject<PeerConnection>(this));
+      new rtc::RefCountedObject<PeerConnection>(this, std::move(event_log),
+                                                std::move(call)));
 
   if (!pc->Initialize(configuration, std::move(allocator),
                       std::move(cert_generator), observer)) {
@@ -357,21 +304,17 @@ PeerConnectionFactory::CreateAudioTrack(const std::string& id,
   return AudioTrackProxy::Create(signaling_thread_, track);
 }
 
-webrtc::MediaControllerInterface* PeerConnectionFactory::CreateMediaController(
-    const cricket::MediaConfig& config,
-    webrtc::RtcEventLog* event_log) const {
-  RTC_DCHECK(signaling_thread_->IsCurrent());
-  return MediaControllerInterface::Create(config, worker_thread_,
-                                          channel_manager_.get(), event_log);
-}
-
 cricket::TransportController* PeerConnectionFactory::CreateTransportController(
     cricket::PortAllocator* port_allocator,
     bool redetermine_role_on_ice_restart) {
   RTC_DCHECK(signaling_thread_->IsCurrent());
-  return new cricket::TransportController(signaling_thread_, network_thread_,
-                                          port_allocator,
-                                          redetermine_role_on_ice_restart);
+  return new cricket::TransportController(
+      signaling_thread_, network_thread_, port_allocator,
+      redetermine_role_on_ice_restart, options_.crypto_options);
+}
+
+cricket::ChannelManager* PeerConnectionFactory::channel_manager() {
+  return channel_manager_.get();
 }
 
 rtc::Thread* PeerConnectionFactory::signaling_thread() {
@@ -381,7 +324,6 @@ rtc::Thread* PeerConnectionFactory::signaling_thread() {
 }
 
 rtc::Thread* PeerConnectionFactory::worker_thread() {
-  RTC_DCHECK(signaling_thread_->IsCurrent());
   return worker_thread_;
 }
 
@@ -389,14 +331,22 @@ rtc::Thread* PeerConnectionFactory::network_thread() {
   return network_thread_;
 }
 
-std::unique_ptr<cricket::MediaEngineInterface>
-PeerConnectionFactory::CreateMediaEngine_w() {
-  RTC_DCHECK(worker_thread_ == rtc::Thread::Current());
-  return std::unique_ptr<cricket::MediaEngineInterface>(
-      cricket::WebRtcMediaEngineFactory::Create(
-          default_adm_.get(), audio_decoder_factory_,
-          video_encoder_factory_.get(), video_decoder_factory_.get(),
-          external_audio_mixer_));
+std::unique_ptr<Call> PeerConnectionFactory::CreateCall_w(
+    RtcEventLog* event_log) {
+  const int kMinBandwidthBps = 30000;
+  const int kStartBandwidthBps = 300000;
+  const int kMaxBandwidthBps = 2000000;
+
+  webrtc::Call::Config call_config(event_log);
+  if (!channel_manager_->media_engine() || !call_factory_) {
+    return nullptr;
+  }
+  call_config.audio_state = channel_manager_->media_engine()->GetAudioState();
+  call_config.bitrate_config.min_bitrate_bps = kMinBandwidthBps;
+  call_config.bitrate_config.start_bitrate_bps = kStartBandwidthBps;
+  call_config.bitrate_config.max_bitrate_bps = kMaxBandwidthBps;
+
+  return std::unique_ptr<Call>(call_factory_->CreateCall(call_config));
 }
 
 }  // namespace webrtc

@@ -16,7 +16,6 @@
 #include "webrtc/base/atomicops.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/common_types.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 // Macros for allowing WebRTC clients (e.g. Chrome) to gather and aggregate
 // statistics.

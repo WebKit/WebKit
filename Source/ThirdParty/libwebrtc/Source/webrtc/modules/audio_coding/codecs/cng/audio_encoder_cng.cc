@@ -190,6 +190,12 @@ void AudioEncoderCng::OnReceivedUplinkPacketLossFraction(
       uplink_packet_loss_fraction);
 }
 
+void AudioEncoderCng::OnReceivedUplinkRecoverablePacketLossFraction(
+    float uplink_recoverable_packet_loss_fraction) {
+  speech_encoder_->OnReceivedUplinkRecoverablePacketLossFraction(
+      uplink_recoverable_packet_loss_fraction);
+}
+
 void AudioEncoderCng::OnReceivedUplinkBandwidth(
     int target_audio_bitrate_bps,
     rtc::Optional<int64_t> probing_interval_ms) {

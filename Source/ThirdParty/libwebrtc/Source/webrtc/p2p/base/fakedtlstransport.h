@@ -86,7 +86,6 @@ class FakeDtlsTransport : public DtlsTransportInternal {
       dest_ = dest;
       if (local_cert_ && dest_->local_cert_) {
         do_dtls_ = true;
-        NegotiateSrtpCiphers();
       }
       SetWritable(true);
       if (!asymmetric) {
@@ -132,16 +131,12 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     remote_cert_ = cert;
   }
   bool IsDtlsActive() const override { return do_dtls_; }
-  bool SetSrtpCryptoSuites(const std::vector<int>& ciphers) override {
-    srtp_ciphers_ = ciphers;
-    return true;
-  }
   bool GetSrtpCryptoSuite(int* crypto_suite) override {
-    if (chosen_crypto_suite_ != rtc::SRTP_INVALID_CRYPTO_SUITE) {
-      *crypto_suite = chosen_crypto_suite_;
-      return true;
+    if (!do_dtls_) {
+      return false;
     }
-    return false;
+    *crypto_suite = rtc::SRTP_AES128_CM_SHA1_80;
+    return true;
   }
   bool GetSslCipherSuite(int* cipher_suite) override { return false; }
   rtc::scoped_refptr<rtc::RTCCertificate> GetLocalCertificate() const override {
@@ -159,25 +154,17 @@ class FakeDtlsTransport : public DtlsTransportInternal {
                             bool use_context,
                             uint8_t* result,
                             size_t result_len) override {
-    if (chosen_crypto_suite_ != rtc::SRTP_INVALID_CRYPTO_SUITE) {
-      memset(result, 0xff, result_len);
-      return true;
+    if (!do_dtls_) {
+      return false;
     }
-
-    return false;
+    memset(result, 0xff, result_len);
+    return true;
   }
   void set_ssl_max_protocol_version(rtc::SSLProtocolVersion version) {
     ssl_max_version_ = version;
   }
   rtc::SSLProtocolVersion ssl_max_protocol_version() const {
     return ssl_max_version_;
-  }
-  bool SetSrtpCiphers(const std::vector<std::string>& ciphers) override {
-    std::vector<int> crypto_suites;
-    for (const auto cipher : ciphers) {
-      crypto_suites.push_back(rtc::SrtpCryptoSuiteFromName(cipher));
-    }
-    return SetSrtpCryptoSuites(crypto_suites);
   }
 
   IceTransportInternal* ice_transport() override { return ice_transport_; }
@@ -213,19 +200,6 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     SignalReadPacket(this, data, len, time, flags);
   }
 
-  void NegotiateSrtpCiphers() {
-    for (std::vector<int>::const_iterator it1 = srtp_ciphers_.begin();
-         it1 != srtp_ciphers_.end(); ++it1) {
-      for (std::vector<int>::const_iterator it2 = dest_->srtp_ciphers_.begin();
-           it2 != dest_->srtp_ciphers_.end(); ++it2) {
-        if (*it1 == *it2) {
-          chosen_crypto_suite_ = *it1;
-          return;
-        }
-      }
-    }
-  }
-
   void set_receiving(bool receiving) {
     if (receiving_ == receiving) {
       return;
@@ -253,8 +227,6 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   rtc::scoped_refptr<rtc::RTCCertificate> local_cert_;
   rtc::FakeSSLCertificate* remote_cert_ = nullptr;
   bool do_dtls_ = false;
-  std::vector<int> srtp_ciphers_;
-  int chosen_crypto_suite_ = rtc::SRTP_INVALID_CRYPTO_SUITE;
   rtc::SSLProtocolVersion ssl_max_version_ = rtc::SSL_PROTOCOL_DTLS_12;
   rtc::SSLFingerprint dtls_fingerprint_;
   rtc::SSLRole ssl_role_ = rtc::SSL_CLIENT;

@@ -9,12 +9,13 @@
  */
 
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
+#include <utility>  // pair
 
 #include "gflags/gflags.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/call/call.h"
 #include "webrtc/common_types.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log_parser.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/bye.h"
@@ -26,10 +27,8 @@
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rapid_resync_request.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/remb.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rpsi.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sli.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
@@ -37,7 +36,7 @@
 
 namespace {
 
-DEFINE_bool(noconfig, true, "Excludes stream configurations.");
+DEFINE_bool(noconfig, false, "Excludes stream configurations.");
 DEFINE_bool(noincoming, false, "Excludes incoming packets.");
 DEFINE_bool(nooutgoing, false, "Excludes outgoing packets.");
 // TODO(terelius): Note that the media type doesn't work with outgoing packets.
@@ -53,6 +52,8 @@ DEFINE_string(ssrc,
               "",
               "Print only packets with this SSRC (decimal or hex, the latter "
               "starting with 0x).");
+
+using MediaType = webrtc::ParsedRtcEventLog::MediaType;
 
 static uint32_t filtered_ssrc = 0;
 
@@ -76,17 +77,17 @@ bool ParseSsrc(std::string str) {
 }
 
 bool ExcludePacket(webrtc::PacketDirection direction,
-                   webrtc::MediaType media_type,
+                   MediaType media_type,
                    uint32_t packet_ssrc) {
   if (FLAGS_nooutgoing && direction == webrtc::kOutgoingPacket)
     return true;
   if (FLAGS_noincoming && direction == webrtc::kIncomingPacket)
     return true;
-  if (FLAGS_noaudio && media_type == webrtc::MediaType::AUDIO)
+  if (FLAGS_noaudio && media_type == MediaType::AUDIO)
     return true;
-  if (FLAGS_novideo && media_type == webrtc::MediaType::VIDEO)
+  if (FLAGS_novideo && media_type == MediaType::VIDEO)
     return true;
-  if (FLAGS_nodata && media_type == webrtc::MediaType::DATA)
+  if (FLAGS_nodata && media_type == MediaType::DATA)
     return true;
   if (!FLAGS_ssrc.empty() && packet_ssrc != filtered_ssrc)
     return true;
@@ -94,23 +95,23 @@ bool ExcludePacket(webrtc::PacketDirection direction,
 }
 
 const char* StreamInfo(webrtc::PacketDirection direction,
-                       webrtc::MediaType media_type) {
+                       MediaType media_type) {
   if (direction == webrtc::kOutgoingPacket) {
-    if (media_type == webrtc::MediaType::AUDIO)
+    if (media_type == MediaType::AUDIO)
       return "(out,audio)";
-    else if (media_type == webrtc::MediaType::VIDEO)
+    else if (media_type == MediaType::VIDEO)
       return "(out,video)";
-    else if (media_type == webrtc::MediaType::DATA)
+    else if (media_type == MediaType::DATA)
       return "(out,data)";
     else
       return "(out)";
   }
   if (direction == webrtc::kIncomingPacket) {
-    if (media_type == webrtc::MediaType::AUDIO)
+    if (media_type == MediaType::AUDIO)
       return "(in,audio)";
-    else if (media_type == webrtc::MediaType::VIDEO)
+    else if (media_type == MediaType::VIDEO)
       return "(in,video)";
-    else if (media_type == webrtc::MediaType::DATA)
+    else if (media_type == MediaType::DATA)
       return "(in,data)";
     else
       return "(in)";
@@ -118,13 +119,15 @@ const char* StreamInfo(webrtc::PacketDirection direction,
   return "(unknown)";
 }
 
-void PrintSenderReport(const webrtc::rtcp::CommonHeader& rtcp_block,
+void PrintSenderReport(const webrtc::ParsedRtcEventLog& parsed_stream,
+                       const webrtc::rtcp::CommonHeader& rtcp_block,
                        uint64_t log_timestamp,
-                       webrtc::PacketDirection direction,
-                       webrtc::MediaType media_type) {
+                       webrtc::PacketDirection direction) {
   webrtc::rtcp::SenderReport sr;
   if (!sr.Parse(rtcp_block))
     return;
+  MediaType media_type =
+      parsed_stream.GetMediaType(sr.sender_ssrc(), direction);
   if (ExcludePacket(direction, media_type, sr.sender_ssrc()))
     return;
   std::cout << log_timestamp << "\t"
@@ -133,13 +136,15 @@ void PrintSenderReport(const webrtc::rtcp::CommonHeader& rtcp_block,
             << "\ttimestamp=" << sr.rtp_timestamp() << std::endl;
 }
 
-void PrintReceiverReport(const webrtc::rtcp::CommonHeader& rtcp_block,
+void PrintReceiverReport(const webrtc::ParsedRtcEventLog& parsed_stream,
+                         const webrtc::rtcp::CommonHeader& rtcp_block,
                          uint64_t log_timestamp,
-                         webrtc::PacketDirection direction,
-                         webrtc::MediaType media_type) {
+                         webrtc::PacketDirection direction) {
   webrtc::rtcp::ReceiverReport rr;
   if (!rr.Parse(rtcp_block))
     return;
+  MediaType media_type =
+      parsed_stream.GetMediaType(rr.sender_ssrc(), direction);
   if (ExcludePacket(direction, media_type, rr.sender_ssrc()))
     return;
   std::cout << log_timestamp << "\t"
@@ -147,13 +152,15 @@ void PrintReceiverReport(const webrtc::rtcp::CommonHeader& rtcp_block,
             << "\tssrc=" << rr.sender_ssrc() << std::endl;
 }
 
-void PrintXr(const webrtc::rtcp::CommonHeader& rtcp_block,
+void PrintXr(const webrtc::ParsedRtcEventLog& parsed_stream,
+             const webrtc::rtcp::CommonHeader& rtcp_block,
              uint64_t log_timestamp,
-             webrtc::PacketDirection direction,
-             webrtc::MediaType media_type) {
+             webrtc::PacketDirection direction) {
   webrtc::rtcp::ExtendedReports xr;
   if (!xr.Parse(rtcp_block))
     return;
+  MediaType media_type =
+      parsed_stream.GetMediaType(xr.sender_ssrc(), direction);
   if (ExcludePacket(direction, media_type, xr.sender_ssrc()))
     return;
   std::cout << log_timestamp << "\t"
@@ -163,20 +170,22 @@ void PrintXr(const webrtc::rtcp::CommonHeader& rtcp_block,
 
 void PrintSdes(const webrtc::rtcp::CommonHeader& rtcp_block,
                uint64_t log_timestamp,
-               webrtc::PacketDirection direction,
-               webrtc::MediaType media_type) {
+               webrtc::PacketDirection direction) {
   std::cout << log_timestamp << "\t"
-            << "RTCP_SDES" << StreamInfo(direction, media_type) << std::endl;
+            << "RTCP_SDES" << StreamInfo(direction, MediaType::ANY)
+            << std::endl;
   RTC_NOTREACHED() << "SDES should have been redacted when writing the log";
 }
 
-void PrintBye(const webrtc::rtcp::CommonHeader& rtcp_block,
+void PrintBye(const webrtc::ParsedRtcEventLog& parsed_stream,
+              const webrtc::rtcp::CommonHeader& rtcp_block,
               uint64_t log_timestamp,
-              webrtc::PacketDirection direction,
-              webrtc::MediaType media_type) {
+              webrtc::PacketDirection direction) {
   webrtc::rtcp::Bye bye;
   if (!bye.Parse(rtcp_block))
     return;
+  MediaType media_type =
+      parsed_stream.GetMediaType(bye.sender_ssrc(), direction);
   if (ExcludePacket(direction, media_type, bye.sender_ssrc()))
     return;
   std::cout << log_timestamp << "\t"
@@ -184,15 +193,17 @@ void PrintBye(const webrtc::rtcp::CommonHeader& rtcp_block,
             << "\tssrc=" << bye.sender_ssrc() << std::endl;
 }
 
-void PrintRtpFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
+void PrintRtpFeedback(const webrtc::ParsedRtcEventLog& parsed_stream,
+                      const webrtc::rtcp::CommonHeader& rtcp_block,
                       uint64_t log_timestamp,
-                      webrtc::PacketDirection direction,
-                      webrtc::MediaType media_type) {
+                      webrtc::PacketDirection direction) {
   switch (rtcp_block.fmt()) {
     case webrtc::rtcp::Nack::kFeedbackMessageType: {
       webrtc::rtcp::Nack nack;
       if (!nack.Parse(rtcp_block))
         return;
+      MediaType media_type =
+          parsed_stream.GetMediaType(nack.sender_ssrc(), direction);
       if (ExcludePacket(direction, media_type, nack.sender_ssrc()))
         return;
       std::cout << log_timestamp << "\t"
@@ -204,6 +215,8 @@ void PrintRtpFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
       webrtc::rtcp::Tmmbr tmmbr;
       if (!tmmbr.Parse(rtcp_block))
         return;
+      MediaType media_type =
+          parsed_stream.GetMediaType(tmmbr.sender_ssrc(), direction);
       if (ExcludePacket(direction, media_type, tmmbr.sender_ssrc()))
         return;
       std::cout << log_timestamp << "\t"
@@ -215,6 +228,8 @@ void PrintRtpFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
       webrtc::rtcp::Tmmbn tmmbn;
       if (!tmmbn.Parse(rtcp_block))
         return;
+      MediaType media_type =
+          parsed_stream.GetMediaType(tmmbn.sender_ssrc(), direction);
       if (ExcludePacket(direction, media_type, tmmbn.sender_ssrc()))
         return;
       std::cout << log_timestamp << "\t"
@@ -226,6 +241,8 @@ void PrintRtpFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
       webrtc::rtcp::RapidResyncRequest sr_req;
       if (!sr_req.Parse(rtcp_block))
         return;
+      MediaType media_type =
+          parsed_stream.GetMediaType(sr_req.sender_ssrc(), direction);
       if (ExcludePacket(direction, media_type, sr_req.sender_ssrc()))
         return;
       std::cout << log_timestamp << "\t"
@@ -237,6 +254,8 @@ void PrintRtpFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
       webrtc::rtcp::TransportFeedback transport_feedback;
       if (!transport_feedback.Parse(rtcp_block))
         return;
+      MediaType media_type = parsed_stream.GetMediaType(
+          transport_feedback.sender_ssrc(), direction);
       if (ExcludePacket(direction, media_type,
                         transport_feedback.sender_ssrc()))
         return;
@@ -250,15 +269,17 @@ void PrintRtpFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
   }
 }
 
-void PrintPsFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
+void PrintPsFeedback(const webrtc::ParsedRtcEventLog& parsed_stream,
+                     const webrtc::rtcp::CommonHeader& rtcp_block,
                      uint64_t log_timestamp,
-                     webrtc::PacketDirection direction,
-                     webrtc::MediaType media_type) {
+                     webrtc::PacketDirection direction) {
   switch (rtcp_block.fmt()) {
     case webrtc::rtcp::Pli::kFeedbackMessageType: {
       webrtc::rtcp::Pli pli;
       if (!pli.Parse(rtcp_block))
         return;
+      MediaType media_type =
+          parsed_stream.GetMediaType(pli.sender_ssrc(), direction);
       if (ExcludePacket(direction, media_type, pli.sender_ssrc()))
         return;
       std::cout << log_timestamp << "\t"
@@ -266,32 +287,12 @@ void PrintPsFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
                 << "\tssrc=" << pli.sender_ssrc() << std::endl;
       break;
     }
-    case webrtc::rtcp::Sli::kFeedbackMessageType: {
-      webrtc::rtcp::Sli sli;
-      if (!sli.Parse(rtcp_block))
-        return;
-      if (ExcludePacket(direction, media_type, sli.sender_ssrc()))
-        return;
-      std::cout << log_timestamp << "\t"
-                << "RTCP_SLI" << StreamInfo(direction, media_type)
-                << "\tssrc=" << sli.sender_ssrc() << std::endl;
-      break;
-    }
-    case webrtc::rtcp::Rpsi::kFeedbackMessageType: {
-      webrtc::rtcp::Rpsi rpsi;
-      if (!rpsi.Parse(rtcp_block))
-        return;
-      if (ExcludePacket(direction, media_type, rpsi.sender_ssrc()))
-        return;
-      std::cout << log_timestamp << "\t"
-                << "RTCP_RPSI" << StreamInfo(direction, media_type)
-                << "\tssrc=" << rpsi.sender_ssrc() << std::endl;
-      break;
-    }
     case webrtc::rtcp::Fir::kFeedbackMessageType: {
       webrtc::rtcp::Fir fir;
       if (!fir.Parse(rtcp_block))
         return;
+      MediaType media_type =
+          parsed_stream.GetMediaType(fir.sender_ssrc(), direction);
       if (ExcludePacket(direction, media_type, fir.sender_ssrc()))
         return;
       std::cout << log_timestamp << "\t"
@@ -303,6 +304,8 @@ void PrintPsFeedback(const webrtc::rtcp::CommonHeader& rtcp_block,
       webrtc::rtcp::Remb remb;
       if (!remb.Parse(rtcp_block))
         return;
+      MediaType media_type =
+          parsed_stream.GetMediaType(remb.sender_ssrc(), direction);
       if (ExcludePacket(direction, media_type, remb.sender_ssrc()))
         return;
       std::cout << log_timestamp << "\t"
@@ -351,42 +354,86 @@ int main(int argc, char* argv[]) {
     if (!FLAGS_noconfig && !FLAGS_novideo && !FLAGS_noincoming &&
         parsed_stream.GetEventType(i) ==
             webrtc::ParsedRtcEventLog::VIDEO_RECEIVER_CONFIG_EVENT) {
-      webrtc::VideoReceiveStream::Config config(nullptr);
-      parsed_stream.GetVideoReceiveConfig(i, &config);
+      webrtc::rtclog::StreamConfig config =
+          parsed_stream.GetVideoReceiveConfig(i);
       std::cout << parsed_stream.GetTimestamp(i) << "\tVIDEO_RECV_CONFIG"
-                << "\tssrc=" << config.rtp.remote_ssrc
-                << "\tfeedback_ssrc=" << config.rtp.local_ssrc << std::endl;
+                << "\tssrc=" << config.remote_ssrc
+                << "\tfeedback_ssrc=" << config.local_ssrc;
+      std::cout << "\textensions={";
+      for (const auto& extension : config.rtp_extensions) {
+        std::cout << extension.ToString() << ",";
+      }
+      std::cout << "}";
+      std::cout << "\tcodecs={";
+      for (const auto& codec : config.codecs) {
+        std::cout << "{name: " << codec.payload_name
+                  << ", payload_type: " << codec.payload_type
+                  << ", rtx_payload_type: " << codec.rtx_payload_type << "}";
+      }
+      std::cout << "}" << std::endl;
     }
     if (!FLAGS_noconfig && !FLAGS_novideo && !FLAGS_nooutgoing &&
         parsed_stream.GetEventType(i) ==
             webrtc::ParsedRtcEventLog::VIDEO_SENDER_CONFIG_EVENT) {
-      webrtc::VideoSendStream::Config config(nullptr);
-      parsed_stream.GetVideoSendConfig(i, &config);
-      std::cout << parsed_stream.GetTimestamp(i) << "\tVIDEO_SEND_CONFIG";
-      std::cout << "\tssrcs=";
-      for (const auto& ssrc : config.rtp.ssrcs)
-        std::cout << ssrc << ',';
-      std::cout << "\trtx_ssrcs=";
-      for (const auto& ssrc : config.rtp.rtx.ssrcs)
-        std::cout << ssrc << ',';
-      std::cout << std::endl;
+      std::vector<webrtc::rtclog::StreamConfig> configs =
+          parsed_stream.GetVideoSendConfig(i);
+      for (const auto& config : configs) {
+        std::cout << parsed_stream.GetTimestamp(i) << "\tVIDEO_SEND_CONFIG";
+        std::cout << "\tssrcs=" << config.local_ssrc;
+        std::cout << "\trtx_ssrcs=" << config.rtx_ssrc;
+        std::cout << "\textensions={";
+        for (const auto& extension : config.rtp_extensions) {
+          std::cout << extension.ToString() << ",";
+        }
+        std::cout << "}";
+        std::cout << "\tcodecs={";
+        for (const auto& codec : config.codecs) {
+          std::cout << "{name: " << codec.payload_name
+                    << ", payload_type: " << codec.payload_type
+                    << ", rtx_payload_type: " << codec.rtx_payload_type << "}";
+        }
+        std::cout << "}" << std::endl;
+      }
     }
     if (!FLAGS_noconfig && !FLAGS_noaudio && !FLAGS_noincoming &&
         parsed_stream.GetEventType(i) ==
             webrtc::ParsedRtcEventLog::AUDIO_RECEIVER_CONFIG_EVENT) {
-      webrtc::AudioReceiveStream::Config config;
-      parsed_stream.GetAudioReceiveConfig(i, &config);
+      webrtc::rtclog::StreamConfig config =
+          parsed_stream.GetAudioReceiveConfig(i);
       std::cout << parsed_stream.GetTimestamp(i) << "\tAUDIO_RECV_CONFIG"
-                << "\tssrc=" << config.rtp.remote_ssrc
-                << "\tfeedback_ssrc=" << config.rtp.local_ssrc << std::endl;
+                << "\tssrc=" << config.remote_ssrc
+                << "\tfeedback_ssrc=" << config.local_ssrc;
+      std::cout << "\textensions={";
+      for (const auto& extension : config.rtp_extensions) {
+        std::cout << extension.ToString() << ",";
+      }
+      std::cout << "}";
+      std::cout << "\tcodecs={";
+      for (const auto& codec : config.codecs) {
+        std::cout << "{name: " << codec.payload_name
+                  << ", payload_type: " << codec.payload_type
+                  << ", rtx_payload_type: " << codec.rtx_payload_type << "}";
+      }
+      std::cout << "}" << std::endl;
     }
     if (!FLAGS_noconfig && !FLAGS_noaudio && !FLAGS_nooutgoing &&
         parsed_stream.GetEventType(i) ==
             webrtc::ParsedRtcEventLog::AUDIO_SENDER_CONFIG_EVENT) {
-      webrtc::AudioSendStream::Config config(nullptr);
-      parsed_stream.GetAudioSendConfig(i, &config);
+      webrtc::rtclog::StreamConfig config = parsed_stream.GetAudioSendConfig(i);
       std::cout << parsed_stream.GetTimestamp(i) << "\tAUDIO_SEND_CONFIG"
-                << "\tssrc=" << config.rtp.ssrc << std::endl;
+                << "\tssrc=" << config.local_ssrc;
+      std::cout << "\textensions={";
+      for (const auto& extension : config.rtp_extensions) {
+        std::cout << extension.ToString() << ",";
+      }
+      std::cout << "}";
+      std::cout << "\tcodecs={";
+      for (const auto& codec : config.codecs) {
+        std::cout << "{name: " << codec.payload_name
+                  << ", payload_type: " << codec.payload_type
+                  << ", rtx_payload_type: " << codec.rtx_payload_type << "}";
+      }
+      std::cout << "}" << std::endl;
     }
     if (!FLAGS_nortp &&
         parsed_stream.GetEventType(i) == webrtc::ParsedRtcEventLog::RTP_EVENT) {
@@ -394,14 +441,15 @@ int main(int argc, char* argv[]) {
       size_t total_length;
       uint8_t header[IP_PACKET_SIZE];
       webrtc::PacketDirection direction;
-      webrtc::MediaType media_type;
-      parsed_stream.GetRtpHeader(i, &direction, &media_type, header,
-                                 &header_length, &total_length);
+      webrtc::RtpHeaderExtensionMap* extension_map = parsed_stream.GetRtpHeader(
+          i, &direction, header, &header_length, &total_length);
 
       // Parse header to get SSRC and RTP time.
       webrtc::RtpUtility::RtpHeaderParser rtp_parser(header, header_length);
       webrtc::RTPHeader parsed_header;
-      rtp_parser.Parse(&parsed_header);
+      rtp_parser.Parse(&parsed_header, extension_map);
+      MediaType media_type =
+          parsed_stream.GetMediaType(parsed_header.ssrc, direction);
 
       if (ExcludePacket(direction, media_type, parsed_header.ssrc))
         continue;
@@ -409,7 +457,31 @@ int main(int argc, char* argv[]) {
       std::cout << parsed_stream.GetTimestamp(i) << "\tRTP"
                 << StreamInfo(direction, media_type)
                 << "\tssrc=" << parsed_header.ssrc
-                << "\ttimestamp=" << parsed_header.timestamp << std::endl;
+                << "\ttimestamp=" << parsed_header.timestamp;
+      if (parsed_header.extension.hasAbsoluteSendTime) {
+        std::cout << "\tAbsSendTime="
+                  << parsed_header.extension.absoluteSendTime;
+      }
+      if (parsed_header.extension.hasVideoContentType) {
+        std::cout << "\tContentType="
+                  << static_cast<int>(parsed_header.extension.videoContentType);
+      }
+      if (parsed_header.extension.hasVideoRotation) {
+        std::cout << "\tRotation="
+                  << static_cast<int>(parsed_header.extension.videoRotation);
+      }
+      if (parsed_header.extension.hasTransportSequenceNumber) {
+        std::cout << "\tTransportSeq="
+                  << parsed_header.extension.transportSequenceNumber;
+      }
+      if (parsed_header.extension.hasTransmissionTimeOffset) {
+        std::cout << "\tTransmTimeOffset="
+                  << parsed_header.extension.transmissionTimeOffset;
+      }
+      if (parsed_header.extension.hasAudioLevel) {
+        std::cout << "\tAudioLevel=" << parsed_header.extension.audioLevel;
+      }
+      std::cout << std::endl;
     }
     if (!FLAGS_nortcp &&
         parsed_stream.GetEventType(i) ==
@@ -417,8 +489,7 @@ int main(int argc, char* argv[]) {
       size_t length;
       uint8_t packet[IP_PACKET_SIZE];
       webrtc::PacketDirection direction;
-      webrtc::MediaType media_type;
-      parsed_stream.GetRtcpPacket(i, &direction, &media_type, packet, &length);
+      parsed_stream.GetRtcpPacket(i, &direction, packet, &length);
 
       webrtc::rtcp::CommonHeader rtcp_block;
       const uint8_t* packet_end = packet + length;
@@ -433,26 +504,29 @@ int main(int argc, char* argv[]) {
         uint64_t log_timestamp = parsed_stream.GetTimestamp(i);
         switch (rtcp_block.type()) {
           case webrtc::rtcp::SenderReport::kPacketType:
-            PrintSenderReport(rtcp_block, log_timestamp, direction, media_type);
+            PrintSenderReport(parsed_stream, rtcp_block, log_timestamp,
+                              direction);
             break;
           case webrtc::rtcp::ReceiverReport::kPacketType:
-            PrintReceiverReport(rtcp_block, log_timestamp, direction,
-                                media_type);
+            PrintReceiverReport(parsed_stream, rtcp_block, log_timestamp,
+                                direction);
             break;
           case webrtc::rtcp::Sdes::kPacketType:
-            PrintSdes(rtcp_block, log_timestamp, direction, media_type);
+            PrintSdes(rtcp_block, log_timestamp, direction);
             break;
           case webrtc::rtcp::ExtendedReports::kPacketType:
-            PrintXr(rtcp_block, log_timestamp, direction, media_type);
+            PrintXr(parsed_stream, rtcp_block, log_timestamp, direction);
             break;
           case webrtc::rtcp::Bye::kPacketType:
-            PrintBye(rtcp_block, log_timestamp, direction, media_type);
+            PrintBye(parsed_stream, rtcp_block, log_timestamp, direction);
             break;
           case webrtc::rtcp::Rtpfb::kPacketType:
-            PrintRtpFeedback(rtcp_block, log_timestamp, direction, media_type);
+            PrintRtpFeedback(parsed_stream, rtcp_block, log_timestamp,
+                             direction);
             break;
           case webrtc::rtcp::Psfb::kPacketType:
-            PrintPsFeedback(rtcp_block, log_timestamp, direction, media_type);
+            PrintPsFeedback(parsed_stream, rtcp_block, log_timestamp,
+                            direction);
             break;
           default:
             break;

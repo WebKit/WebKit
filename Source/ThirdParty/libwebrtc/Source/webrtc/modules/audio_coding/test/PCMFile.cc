@@ -125,11 +125,13 @@ int32_t PCMFile::Read10MsData(AudioFrame& audio_frame) {
     channels = 2;
   }
 
-  int32_t payload_size = (int32_t) fread(audio_frame.data_, sizeof(uint16_t),
+  int32_t payload_size = (int32_t) fread(audio_frame.mutable_data(),
+                                         sizeof(uint16_t),
                                          samples_10ms_ * channels, pcm_file_);
   if (payload_size < samples_10ms_ * channels) {
+    int16_t* frame_data = audio_frame.mutable_data();
     for (int k = payload_size; k < samples_10ms_ * channels; k++) {
-      audio_frame.data_[k] = 0;
+      frame_data[k] = 0;
     }
     if (auto_rewind_) {
       rewind(pcm_file_);
@@ -149,19 +151,20 @@ int32_t PCMFile::Read10MsData(AudioFrame& audio_frame) {
   return samples_10ms_;
 }
 
-void PCMFile::Write10MsData(AudioFrame& audio_frame) {
+void PCMFile::Write10MsData(const AudioFrame& audio_frame) {
   if (audio_frame.num_channels_ == 1) {
     if (!save_stereo_) {
-      if (fwrite(audio_frame.data_, sizeof(uint16_t),
+      if (fwrite(audio_frame.data(), sizeof(uint16_t),
                  audio_frame.samples_per_channel_, pcm_file_) !=
           static_cast<size_t>(audio_frame.samples_per_channel_)) {
         return;
       }
     } else {
+      const int16_t* frame_data = audio_frame.data();
       int16_t* stereo_audio = new int16_t[2 * audio_frame.samples_per_channel_];
       for (size_t k = 0; k < audio_frame.samples_per_channel_; k++) {
-        stereo_audio[k << 1] = audio_frame.data_[k];
-        stereo_audio[(k << 1) + 1] = audio_frame.data_[k];
+        stereo_audio[k << 1] = frame_data[k];
+        stereo_audio[(k << 1) + 1] = frame_data[k];
       }
       if (fwrite(stereo_audio, sizeof(int16_t),
                  2 * audio_frame.samples_per_channel_, pcm_file_) !=
@@ -171,7 +174,7 @@ void PCMFile::Write10MsData(AudioFrame& audio_frame) {
       delete[] stereo_audio;
     }
   } else {
-    if (fwrite(audio_frame.data_, sizeof(int16_t),
+    if (fwrite(audio_frame.data(), sizeof(int16_t),
                audio_frame.num_channels_ * audio_frame.samples_per_channel_,
                pcm_file_) !=
         static_cast<size_t>(audio_frame.num_channels_ *
@@ -181,7 +184,8 @@ void PCMFile::Write10MsData(AudioFrame& audio_frame) {
   }
 }
 
-void PCMFile::Write10MsData(int16_t* playout_buffer, size_t length_smpls) {
+void PCMFile::Write10MsData(const int16_t* playout_buffer,
+                            size_t length_smpls) {
   if (fwrite(playout_buffer, sizeof(uint16_t), length_smpls, pcm_file_) !=
       length_smpls) {
     return;

@@ -18,13 +18,13 @@
 #include "webrtc/system_wrappers/include/sleep.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
-webrtc_adm_linux_alsa::AlsaSymbolTable AlsaSymbolTable;
+webrtc::adm_linux_alsa::AlsaSymbolTable AlsaSymbolTable;
 
 // Accesses ALSA functions through our late-binding symbol table instead of
 // directly. This way we don't have to link to libasound, which means our binary
 // will work on systems that don't have it.
 #define LATE(sym) \
-  LATESYM_GET(webrtc_adm_linux_alsa::AlsaSymbolTable, &AlsaSymbolTable, sym)
+  LATESYM_GET(webrtc::adm_linux_alsa::AlsaSymbolTable, &AlsaSymbolTable, sym)
 
 // Redefine these here to be able to do late-binding
 #undef snd_ctl_card_info_alloca
@@ -62,7 +62,6 @@ static const unsigned int ALSA_CAPTURE_WAIT_TIMEOUT = 5; // in ms
 
 AudioDeviceLinuxALSA::AudioDeviceLinuxALSA(const int32_t id) :
     _ptrAudioBuffer(NULL),
-    _critSect(*CriticalSectionWrapper::CreateCriticalSection()),
     _id(id),
     _mixerManager(id),
     _inputDeviceIndex(0),
@@ -130,13 +129,12 @@ AudioDeviceLinuxALSA::~AudioDeviceLinuxALSA()
         delete [] _playoutBuffer;
         _playoutBuffer = NULL;
     }
-    delete &_critSect;
 }
 
 void AudioDeviceLinuxALSA::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer)
 {
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     _ptrAudioBuffer = audioBuffer;
 
@@ -157,7 +155,7 @@ int32_t AudioDeviceLinuxALSA::ActiveAudioLayer(
 }
 
 AudioDeviceGeneric::InitStatus AudioDeviceLinuxALSA::Init() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   // Load libasound
   if (!AlsaSymbolTable.Load()) {
@@ -194,7 +192,7 @@ int32_t AudioDeviceLinuxALSA::Terminate()
         return 0;
     }
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     _mixerManager.Close();
 
@@ -243,7 +241,7 @@ bool AudioDeviceLinuxALSA::Initialized() const
 int32_t AudioDeviceLinuxALSA::InitSpeaker()
 {
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     if (_playing)
     {
@@ -258,7 +256,7 @@ int32_t AudioDeviceLinuxALSA::InitSpeaker()
 int32_t AudioDeviceLinuxALSA::InitMicrophone()
 {
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     if (_recording)
     {
@@ -560,7 +558,7 @@ int32_t AudioDeviceLinuxALSA::MicrophoneBoost(bool& enabled) const
 int32_t AudioDeviceLinuxALSA::StereoRecordingIsAvailable(bool& available)
 {
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     // If we already have initialized in stereo it's obviously available
     if (_recIsInitialized && (2 == _recChannels))
@@ -631,7 +629,7 @@ int32_t AudioDeviceLinuxALSA::StereoRecording(bool& enabled) const
 int32_t AudioDeviceLinuxALSA::StereoPlayoutIsAvailable(bool& available)
 {
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     // If we already have initialized in stereo it's obviously available
     if (_playIsInitialized && (2 == _playChannels))
@@ -1009,7 +1007,7 @@ int32_t AudioDeviceLinuxALSA::InitPlayout()
 
     int errVal = 0;
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     if (_playing)
     {
         return -1;
@@ -1162,7 +1160,7 @@ int32_t AudioDeviceLinuxALSA::InitRecording()
 
     int errVal = 0;
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     if (_recording)
     {
@@ -1397,7 +1395,7 @@ int32_t AudioDeviceLinuxALSA::StopRecording()
 {
 
     {
-      CriticalSectionScoped lock(&_critSect);
+      rtc::CritScope lock(&_critSect);
 
       if (!_recIsInitialized)
       {
@@ -1420,7 +1418,7 @@ int32_t AudioDeviceLinuxALSA::StopRecording()
         _ptrThreadRec.reset();
     }
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     _recordingFramesLeft = 0;
     if (_recordingBuffer)
     {
@@ -1523,7 +1521,7 @@ int32_t AudioDeviceLinuxALSA::StopPlayout()
 {
 
     {
-        CriticalSectionScoped lock(&_critSect);
+        rtc::CritScope lock(&_critSect);
 
         if (!_playIsInitialized)
         {
@@ -1545,7 +1543,7 @@ int32_t AudioDeviceLinuxALSA::StopPlayout()
         _ptrThreadPlay.reset();
     }
 
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
 
     _playoutFramesLeft = 0;
     delete [] _playoutBuffer;
@@ -1635,49 +1633,49 @@ int32_t AudioDeviceLinuxALSA::CPULoad(uint16_t& load) const
 
 bool AudioDeviceLinuxALSA::PlayoutWarning() const
 {
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     return (_playWarning > 0);
 }
 
 bool AudioDeviceLinuxALSA::PlayoutError() const
 {
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     return (_playError > 0);
 }
 
 bool AudioDeviceLinuxALSA::RecordingWarning() const
 {
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     return (_recWarning > 0);
 }
 
 bool AudioDeviceLinuxALSA::RecordingError() const
 {
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     return (_recError > 0);
 }
 
 void AudioDeviceLinuxALSA::ClearPlayoutWarning()
 {
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     _playWarning = 0;
 }
 
 void AudioDeviceLinuxALSA::ClearPlayoutError()
 {
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     _playError = 0;
 }
 
 void AudioDeviceLinuxALSA::ClearRecordingWarning()
 {
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     _recWarning = 0;
 }
 
 void AudioDeviceLinuxALSA::ClearRecordingError()
 {
-    CriticalSectionScoped lock(&_critSect);
+    rtc::CritScope lock(&_critSect);
     _recError = 0;
 }
 

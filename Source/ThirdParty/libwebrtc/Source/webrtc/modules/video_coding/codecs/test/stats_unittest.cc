@@ -16,42 +16,31 @@
 namespace webrtc {
 namespace test {
 
-class StatsTest : public testing::Test {
- protected:
-  StatsTest() {}
-
-  virtual ~StatsTest() {}
-
-  void SetUp() { stats_ = new Stats(); }
-
-  void TearDown() { delete stats_; }
-
-  Stats* stats_;
-};
-
-// Test empty object
-TEST_F(StatsTest, Uninitialized) {
-  EXPECT_EQ(0u, stats_->stats_.size());
-  stats_->PrintSummary();  // should not crash
+TEST(StatsTest, TestEmptyObject) {
+  Stats stats;
+  EXPECT_EQ(0u, stats.stats_.size());
+  stats.PrintSummary();  // should not crash
 }
 
-// Add single frame stats and verify
-TEST_F(StatsTest, AddOne) {
-  stats_->NewFrame(0u);
-  FrameStatistic* frameStat = &stats_->stats_[0];
-  EXPECT_EQ(0, frameStat->frame_number);
+TEST(StatsTest, AddSingleFrame) {
+  const int kFrameNumber = 0;
+  Stats stats;
+  stats.NewFrame(kFrameNumber);
+  EXPECT_EQ(1u, stats.stats_.size());
+  FrameStatistic* frame_stat = &stats.stats_[0];
+  EXPECT_EQ(kFrameNumber, frame_stat->frame_number);
 }
 
-// Add multiple frame stats and verify
-TEST_F(StatsTest, AddMany) {
-  int nbr_of_frames = 1000;
-  for (int i = 0; i < nbr_of_frames; ++i) {
-    FrameStatistic& frameStat = stats_->NewFrame(i);
-    EXPECT_EQ(i, frameStat.frame_number);
+TEST(StatsTest, AddMultipleFrames) {
+  Stats stats;
+  const int kNumFrames = 1000;
+  for (int i = 0; i < kNumFrames; ++i) {
+    FrameStatistic& frame_stat = stats.NewFrame(i);
+    EXPECT_EQ(i, frame_stat.frame_number);
   }
-  EXPECT_EQ(nbr_of_frames, static_cast<int>(stats_->stats_.size()));
+  EXPECT_EQ(kNumFrames, static_cast<int>(stats.stats_.size()));
 
-  stats_->PrintSummary();  // should not crash
+  stats.PrintSummary();  // should not crash
 }
 
 }  // namespace test

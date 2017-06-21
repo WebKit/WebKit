@@ -11,10 +11,12 @@
 #ifndef WEBRTC_BASE_TESTCLIENT_H_
 #define WEBRTC_BASE_TESTCLIENT_H_
 
+#include <memory>
 #include <vector>
 #include "webrtc/base/asyncudpsocket.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/criticalsection.h"
+#include "webrtc/base/fakeclock.h"
 
 namespace rtc {
 
@@ -42,7 +44,11 @@ class TestClient : public sigslot::has_slots<> {
 
   // Creates a client that will send and receive with the given socket and
   // will post itself messages with the given thread.
-  explicit TestClient(AsyncPacketSocket* socket);
+  explicit TestClient(std::unique_ptr<AsyncPacketSocket> socket);
+  // Create a test client that will use a fake clock. NextPacket needs to wait
+  // for a packet to be received, and thus it needs to advance the fake clock
+  // if the test is using one, rather than just sleeping.
+  TestClient(std::unique_ptr<AsyncPacketSocket> socket, FakeClock* fake_clock);
   ~TestClient() override;
 
   SocketAddress address() const { return socket_->GetLocalAddress(); }
@@ -62,10 +68,9 @@ class TestClient : public sigslot::has_slots<> {
   // Sends using the clients socket to the given destination.
   int SendTo(const char* buf, size_t size, const SocketAddress& dest);
 
-  // Returns the next packet received by the client or 0 if none is received
-  // within the specified timeout. The caller must delete the packet
-  // when done with it.
-  Packet* NextPacket(int timeout_ms);
+  // Returns the next packet received by the client or null if none is received
+  // within the specified timeout.
+  std::unique_ptr<Packet> NextPacket(int timeout_ms);
 
   // Checks that the next packet has the given contents. Returns the remote
   // address that the packet was sent from.
@@ -93,10 +98,12 @@ class TestClient : public sigslot::has_slots<> {
                 const PacketTime& packet_time);
   void OnReadyToSend(AsyncPacketSocket* socket);
   bool CheckTimestamp(int64_t packet_timestamp);
+  void AdvanceTime(int ms);
 
+  FakeClock* fake_clock_ = nullptr;
   CriticalSection crit_;
-  AsyncPacketSocket* socket_;
-  std::vector<Packet*>* packets_;
+  std::unique_ptr<AsyncPacketSocket> socket_;
+  std::vector<std::unique_ptr<Packet>> packets_;
   int ready_to_send_count_ = 0;
   int64_t prev_packet_timestamp_;
   RTC_DISALLOW_COPY_AND_ASSIGN(TestClient);

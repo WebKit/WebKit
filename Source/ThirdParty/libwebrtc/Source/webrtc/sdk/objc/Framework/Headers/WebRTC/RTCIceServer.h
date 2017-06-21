@@ -36,6 +36,13 @@ RTC_EXPORT
  */
 @property(nonatomic, readonly) RTCTlsCertPolicy tlsCertPolicy;
 
+/**
+  If the URIs in |urls| only contain IP addresses, this field can be used
+  to indicate the hostname, which may be necessary for TLS (using the SNI
+  extension). If |urls| itself contains the hostname, this isn't necessary.
+ */
+@property(nonatomic, readonly, nullable) NSString *hostname;
+
 - (nonnull instancetype)init NS_UNAVAILABLE;
 
 /** Convenience initializer for a server with no authentication (e.g. STUN). */
@@ -56,8 +63,17 @@ RTC_EXPORT
 - (instancetype)initWithURLStrings:(NSArray<NSString *> *)urlStrings
                           username:(nullable NSString *)username
                         credential:(nullable NSString *)credential
+                     tlsCertPolicy:(RTCTlsCertPolicy)tlsCertPolicy;
+
+/**
+ * Initialize an RTCIceServer with its associated URLs, optional username,
+ * optional credential, TLS cert policy and hostname.
+ */
+- (instancetype)initWithURLStrings:(NSArray<NSString *> *)urlStrings
+                          username:(nullable NSString *)username
+                        credential:(nullable NSString *)credential
                      tlsCertPolicy:(RTCTlsCertPolicy)tlsCertPolicy
-    NS_DESIGNATED_INITIALIZER;
+                          hostname:(nullable NSString *)hostname NS_DESIGNATED_INITIALIZER;
 
 @end
 

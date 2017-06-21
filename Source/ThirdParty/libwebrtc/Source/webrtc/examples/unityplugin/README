@@ -1,0 +1,204 @@
+This directory contains an example Unity native plugin for Windows OS.
+The APIs use Platform Invoke (P/Invoke) technology as required by Unity native plugin.
+This plugin dll can also be used by Windows C# applications other than Unity.
+
+An example of wrapping native plugin into a C# managed class in Unity is given as following:
+
+using System;
+using System.Runtime.InteropServices;
+
+namespace SimplePeerConnectionM {
+  // This is a managed wrap up class for the native c style peer connection APIs.
+  public class PeerConnectionM {
+    //private const string dll_path = "SimplePeerConnection";
+    private const string dll_path = "webrtc_unity_plugin";
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern int CreatePeerConnection();
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool ClosePeerConnection(int peer_connection_id);
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool AddStream(int peer_connection_id, bool audio_only);
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool AddDataChannel(int peer_connection_id);
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool CreateOffer(int peer_connection_id);
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool CreateAnswer(int peer_connection_id);
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool SendDataViaDataChannel(int peer_connection_id, string data);
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool SetAudioControl(int peer_connection_id, bool is_mute, bool is_record);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void LocalDataChannelReadyInternalDelegate();
+    public delegate void LocalDataChannelReadyDelegate(int id);
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool RegisterOnLocalDataChannelReady(int peer_connection_id, LocalDataChannelReadyInternalDelegate callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void DataFromDataChannelReadyInternalDelegate(string s);
+    public delegate void DataFromDataChannelReadyDelegate(int id, string s);
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool RegisterOnDataFromDataChannelReady(int peer_connection_id, DataFromDataChannelReadyInternalDelegate callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void FailureMessageInternalDelegate(string msg);
+    public delegate void FailureMessageDelegate(int id, string msg);
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool RegisterOnFailure(int peer_connection_id, FailureMessageInternalDelegate callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void AudioBusReadyInternalDelegate(IntPtr data, int bits_per_sample,
+        int sample_rate, int number_of_channels, int number_of_frames);
+    public delegate void AudioBusReadyDelegate(int id, IntPtr data, int bits_per_sample,
+        int sample_rate, int number_of_channels, int number_of_frames);
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool RegisterOnAudioBusReady(int peer_connection_id, AudioBusReadyInternalDelegate callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void LocalSdpReadytoSendInternalDelegate(string s);
+    public delegate void LocalSdpReadytoSendDelegate(int id, string s);
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool RegisterOnLocalSdpReadytoSend(int peer_connection_id, LocalSdpReadytoSendInternalDelegate callback);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void IceCandiateReadytoSendInternalDelegate(string s);
+    public delegate void IceCandiateReadytoSendDelegate(int id, string s);
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool RegisterOnIceCandiateReadytoSend(int peer_connection_id, IceCandiateReadytoSendInternalDelegate callback);
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern int ReceivedSdp(int peer_connection_id, string sdp);
+
+    [DllImport(dll_path, CallingConvention = CallingConvention.Cdecl)]
+    private static extern bool ReceivedIceCandidate(int peer_connection_id, string ice_candidate);
+
+    public void CreatePeerConnectionM() {
+      peer_connection_id_ = CreatePeerConnection();
+      RegisterCallbacks();
+    }
+
+    private void RegisterCallbacks() {
+      localDataChannelReadyDelegate_ = new LocalDataChannelReadyInternalDelegate(RaiseLocalDataChannelReady);
+      RegisterOnLocalDataChannelReady(peer_connection_id_, localDataChannelReadyDelegate_);
+
+      dataFromDataChannelReadyDelegate_ = new DataFromDataChannelReadyInternalDelegate(RaiseDataFromDataChannelReady);
+      RegisterOnDataFromDataChannelReady(peer_connection_id_, dataFromDataChannelReadyDelegate_);
+
+      failureMessageDelegate_ = new FailureMessageInternalDelegate(RaiseFailureMessage);
+      RegisterOnFailure(peer_connection_id_, failureMessageDelegate_);
+
+      audioBusReadyDelegate_ = new AudioBusReadyInternalDelegate(RaiseAudioBusReady);
+      RegisterOnAudioBusReady(peer_connection_id_, audioBusReadyDelegate_);
+
+      localSdpReadytoSendDelegate_ = new LocalSdpReadytoSendInternalDelegate(RaiseLocalSdpReadytoSend);
+      RegisterOnLocalSdpReadytoSend(peer_connection_id_, localSdpReadytoSendDelegate_);
+
+      iceCandiateReadytoSendDelegate_ = new IceCandiateReadytoSendInternalDelegate(RaiseIceCandiateReadytoSend);
+      RegisterOnIceCandiateReadytoSend(peer_connection_id_, iceCandiateReadytoSendDelegate_);
+    }
+
+    public void ClosePeerConnectionM() {
+      ClosePeerConnection(peer_connection_id_);
+      peer_connection_id_ = -1;
+    }
+
+    // Return -1 if Peerconnection is not available.
+    public int GetUniqueId() {
+      return peer_connection_id_;
+    }
+
+    public void AddStreamM(bool audio_only) {
+      AddStream(peer_connection_id_, audio_only);
+    }
+
+    public void AddDataChannelM() {
+      AddDataChannel(peer_connection_id_);
+    }
+
+    public void CreateOfferM() {
+      CreateOffer(peer_connection_id_);
+    }
+
+    public void CreateAnswerM() {
+      CreateAnswer(peer_connection_id_);
+    }
+
+    public void SendDataViaDataChannelM(string data) {
+      SendDataViaDataChannel(peer_connection_id_, data);
+    }
+
+    public void SetAudioControl(bool is_mute, bool is_record) {
+      SetAudioControl(peer_connection_id_, is_mute, is_record);
+    }
+
+    public void ReceivedSdpM(string sdp) {
+      peer_connection_id_ = ReceivedSdp(peer_connection_id_, sdp);
+      RegisterCallbacks();
+    }
+
+    public void ReceivedIceCandidateM(string ice_candidate) {
+      ReceivedIceCandidate(peer_connection_id_, ice_candidate);
+    }
+
+    private void RaiseLocalDataChannelReady() {
+      if (OnLocalDataChannelReady != null)
+        OnLocalDataChannelReady(peer_connection_id_);
+    }
+
+    private void RaiseDataFromDataChannelReady(string data) {
+      if (OnDataFromDataChannelReady != null)
+        OnDataFromDataChannelReady(peer_connection_id_, data);
+    }
+
+    private void RaiseFailureMessage(string msg) {
+      if (OnFailureMessage != null)
+        OnFailureMessage(peer_connection_id_, msg);
+    }
+
+    private void RaiseAudioBusReady(IntPtr data, int bits_per_sample,
+      int sample_rate, int number_of_channels, int number_of_frames) {
+      if (OnAudioBusReady != null)
+        OnAudioBusReady(peer_connection_id_, data, bits_per_sample, sample_rate,
+            number_of_channels, number_of_frames);
+    }
+
+    private void RaiseLocalSdpReadytoSend(string msg) {
+      if (OnLocalSdpReadytoSend != null)
+        OnLocalSdpReadytoSend(peer_connection_id_, msg);
+    }
+
+    private void RaiseIceCandiateReadytoSend(string msg) {
+      if (OnIceCandiateReadytoSend != null)
+        OnIceCandiateReadytoSend(peer_connection_id_, msg);
+    }
+
+    private LocalDataChannelReadyInternalDelegate localDataChannelReadyDelegate_ = null;
+    public event LocalDataChannelReadyDelegate OnLocalDataChannelReady;
+
+    private DataFromDataChannelReadyInternalDelegate dataFromDataChannelReadyDelegate_ = null;
+    public event DataFromDataChannelReadyDelegate OnDataFromDataChannelReady;
+
+    private FailureMessageInternalDelegate failureMessageDelegate_ = null;
+    public event FailureMessageDelegate OnFailureMessage;
+
+    private AudioBusReadyInternalDelegate audioBusReadyDelegate_ = null;
+    public event AudioBusReadyDelegate OnAudioBusReady;
+
+    private LocalSdpReadytoSendInternalDelegate localSdpReadytoSendDelegate_ = null;
+    public event LocalSdpReadytoSendDelegate OnLocalSdpReadytoSend;
+
+    private IceCandiateReadytoSendInternalDelegate iceCandiateReadytoSendDelegate_ = null;
+    public event IceCandiateReadytoSendDelegate OnIceCandiateReadytoSend;
+
+    private int peer_connection_id_ = -1;
+  }
+}

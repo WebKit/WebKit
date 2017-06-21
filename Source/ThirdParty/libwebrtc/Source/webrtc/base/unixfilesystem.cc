@@ -123,16 +123,6 @@ bool UnixFilesystem::CreateFolder(const Pathname &path) {
   return CreateFolder(path, 0755);
 }
 
-FileStream *UnixFilesystem::OpenFile(const Pathname &filename,
-                                     const std::string &mode) {
-  FileStream *fs = new FileStream();
-  if (fs && !fs->Open(filename.pathname().c_str(), mode.c_str(), nullptr)) {
-    delete fs;
-    fs = nullptr;
-  }
-  return fs;
-}
-
 bool UnixFilesystem::DeleteFile(const Pathname &filename) {
   LOG(LS_INFO) << "Deleting file:" << filename.pathname();
 
@@ -141,17 +131,6 @@ bool UnixFilesystem::DeleteFile(const Pathname &filename) {
     return false;
   }
   return ::unlink(filename.pathname().c_str()) == 0;
-}
-
-bool UnixFilesystem::DeleteEmptyFolder(const Pathname &folder) {
-  LOG(LS_INFO) << "Deleting folder" << folder.pathname();
-
-  if (!IsFolder(folder)) {
-    RTC_DCHECK(IsFolder(folder));
-    return false;
-  }
-  std::string no_slash(folder.pathname(), 0, folder.pathname().length()-1);
-  return ::rmdir(no_slash.c_str()) == 0;
 }
 
 bool UnixFilesystem::GetTemporaryFolder(Pathname &pathname, bool create,
@@ -204,12 +183,7 @@ bool UnixFilesystem::MoveFile(const Pathname &old_path,
   LOG(LS_VERBOSE) << "Moving " << old_path.pathname()
                   << " to " << new_path.pathname();
   if (rename(old_path.pathname().c_str(), new_path.pathname().c_str()) != 0) {
-    if (errno != EXDEV)
-      return false;
-    if (!CopyFile(old_path, new_path))
-      return false;
-    if (!DeleteFile(old_path))
-      return false;
+    return false;
   }
   return true;
 }
@@ -219,54 +193,6 @@ bool UnixFilesystem::IsFolder(const Pathname &path) {
   if (stat(path.pathname().c_str(), &st) < 0)
     return false;
   return S_ISDIR(st.st_mode);
-}
-
-bool UnixFilesystem::CopyFile(const Pathname &old_path,
-                              const Pathname &new_path) {
-  LOG(LS_VERBOSE) << "Copying " << old_path.pathname()
-                  << " to " << new_path.pathname();
-  char buf[256];
-  size_t len;
-
-  StreamInterface *source = OpenFile(old_path, "rb");
-  if (!source)
-    return false;
-
-  StreamInterface *dest = OpenFile(new_path, "wb");
-  if (!dest) {
-    delete source;
-    return false;
-  }
-
-  while (source->Read(buf, sizeof(buf), &len, nullptr) == SR_SUCCESS)
-    dest->Write(buf, len, nullptr, nullptr);
-
-  delete source;
-  delete dest;
-  return true;
-}
-
-bool UnixFilesystem::IsTemporaryPath(const Pathname& pathname) {
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_MAC)
-  RTC_DCHECK(provided_app_temp_folder_ != nullptr);
-#endif
-
-  const char* const kTempPrefixes[] = {
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_MAC)
-    provided_app_temp_folder_,
-#if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
-    "/private/tmp/", "/private/var/tmp/", "/private/var/folders/",
-#endif  // WEBRTC_MAC && !defined(WEBRTC_IOS)
-#else
-    "/tmp/", "/var/tmp/",
-#endif  // WEBRTC_ANDROID || WEBRTC_IOS
-  };
-  for (size_t i = 0; i < arraysize(kTempPrefixes); ++i) {
-    if (0 == strncmp(pathname.pathname().c_str(), kTempPrefixes[i],
-                     strlen(kTempPrefixes[i])))
-      return true;
-  }
-  return false;
 }
 
 bool UnixFilesystem::IsFile(const Pathname& pathname) {
@@ -290,57 +216,6 @@ bool UnixFilesystem::GetFileSize(const Pathname& pathname, size_t *size) {
     return false;
   *size = st.st_size;
   return true;
-}
-
-bool UnixFilesystem::GetFileTime(const Pathname& path, FileTimeType which,
-                                 time_t* time) {
-  struct stat st;
-  if (::stat(path.pathname().c_str(), &st) != 0)
-    return false;
-  switch (which) {
-  case FTT_CREATED:
-    *time = st.st_ctime;
-    break;
-  case FTT_MODIFIED:
-    *time = st.st_mtime;
-    break;
-  case FTT_ACCESSED:
-    *time = st.st_atime;
-    break;
-  default:
-    return false;
-  }
-  return true;
-}
-
-bool UnixFilesystem::GetAppTempFolder(Pathname* path) {
-#if defined(WEBRTC_ANDROID) || defined(WEBRTC_MAC)
-  RTC_DCHECK(provided_app_temp_folder_ != nullptr);
-  path->SetPathname(provided_app_temp_folder_);
-  return true;
-#else
-  RTC_DCHECK(!application_name_.empty());
-  // TODO: Consider whether we are worried about thread safety.
-  if (app_temp_path_ != nullptr && strlen(app_temp_path_) > 0) {
-    path->SetPathname(app_temp_path_);
-    return true;
-  }
-
-  // Create a random directory as /tmp/<appname>-<pid>-<timestamp>
-  char buffer[128];
-  sprintfn(buffer, arraysize(buffer), "-%d-%d",
-           static_cast<int>(getpid()),
-           static_cast<int>(time(0)));
-  std::string folder(application_name_);
-  folder.append(buffer);
-  if (!GetTemporaryFolder(*path, true, &folder))
-    return false;
-
-  delete [] app_temp_path_;
-  app_temp_path_ = CopyString(path->pathname());
-  // TODO: atexit(DeleteFolderAndContents(app_temp_path_));
-  return true;
-#endif
 }
 
 char* UnixFilesystem::CopyString(const std::string& str) {

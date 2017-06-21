@@ -16,6 +16,8 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/event.h"
+#include "webrtc/base/fakeclock.h"
 #include "webrtc/base/messagequeue.h"
 #include "webrtc/base/socketserver.h"
 
@@ -31,12 +33,12 @@ class SocketAddressPair;
 // they are bound to addresses from incompatible families.
 class VirtualSocketServer : public SocketServer, public sigslot::has_slots<> {
  public:
-  // TODO: Add "owned" parameter.
-  // If "owned" is set, the supplied socketserver will be deleted later.
-  explicit VirtualSocketServer(SocketServer* ss);
+  VirtualSocketServer();
+  // This constructor needs to be used if the test uses a fake clock and
+  // ProcessMessagesUntilIdle, since ProcessMessagesUntilIdle needs a way of
+  // advancing time.
+  explicit VirtualSocketServer(FakeClock* fake_clock);
   ~VirtualSocketServer() override;
-
-  SocketServer* socketserver() { return server_; }
 
   // The default route indicates which local address to use when a socket is
   // bound to the 'any' address, e.g. 0.0.0.0.
@@ -245,8 +247,12 @@ class VirtualSocketServer : public SocketServer, public sigslot::has_slots<> {
   typedef std::map<SocketAddress, VirtualSocket*> AddressMap;
   typedef std::map<SocketAddressPair, VirtualSocket*> ConnectionMap;
 
-  SocketServer* server_;
-  bool server_owned_;
+  // May be null if the test doesn't use a fake clock, or it does but doesn't
+  // use ProcessMessagesUntilIdle.
+  FakeClock* fake_clock_ = nullptr;
+
+  // Used to implement Wait/WakeUp.
+  Event wakeup_;
   MessageQueue* msg_queue_;
   bool stop_on_idle_;
   in_addr next_ipv4_;
@@ -311,7 +317,6 @@ class VirtualSocket : public AsyncSocket,
   ConnState GetState() const override;
   int GetOption(Option opt, int* value) override;
   int SetOption(Option opt, int value) override;
-  int EstimateMTU(uint16_t* mtu) override;
   void OnMessage(Message* pmsg) override;
 
   bool was_any() { return was_any_; }

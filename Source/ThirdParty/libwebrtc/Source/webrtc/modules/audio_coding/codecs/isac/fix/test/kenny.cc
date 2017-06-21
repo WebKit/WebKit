@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
     printf("iSAC version %s \n\n", version_number);
 
     printf("Usage:\n\n");
-    printf("./kenny.exe [-F num][-I] bottleneck_value infile outfile \n\n");
+    printf("%s [-F num][-I] bottleneck_value infile outfile \n\n", argv[0]);
     printf("with:\n");
     printf("[-I]             :if -I option is specified, the coder will use\n");
     printf("                  an instantaneous Bottleneck value. If not, it\n");
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
     printf("infile          : Normal speech input file\n\n");
     printf("outfile         : Speech output file\n\n");
     printf("Example usage   : \n\n");
-    printf("./kenny.exe -I bottleneck.txt speechIn.pcm speechOut.pcm\n\n");
+    printf("%s -I bottleneck.txt speechIn.pcm speechOut.pcm\n\n", argv[0]);
     exit(0);
 
   }
@@ -755,7 +755,11 @@ int main(int argc, char* argv[])
           /* Error check */
           if (err < 0 || declen < 0 || FL != static_cast<size_t>(declen)) {
             errtype=WebRtcIsacfix_GetErrorCode(ISAC_main_inst);
-            printf("\nError in decode_B/or getFrameLen: %d.\n", errtype);
+            printf(
+                "\nError %d in ReadFrameLen (%s), Decode (%s), with FL %zu and "
+                "declen %d.\n",
+                errtype, err < 0 ? "yes" : "no", declen < 0 ? "yes" : "no", FL,
+                declen);
           }
           prevFrameSize = static_cast<size_t>(declen/480);
 

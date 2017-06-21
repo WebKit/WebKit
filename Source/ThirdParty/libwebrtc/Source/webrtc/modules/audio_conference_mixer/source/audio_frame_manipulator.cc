@@ -41,12 +41,15 @@ const size_t rampSize = sizeof(rampArray)/sizeof(rampArray[0]);
 namespace webrtc {
 uint32_t CalculateEnergy(const AudioFrame& audioFrame)
 {
+    if (audioFrame.muted()) return 0;
+
     uint32_t energy = 0;
+    const int16_t* frame_data = audioFrame.data();
     for(size_t position = 0; position < audioFrame.samples_per_channel_;
         position++)
     {
         // TODO(andrew): this can easily overflow.
-        energy += audioFrame.data_[position] * audioFrame.data_[position];
+        energy += frame_data[position] * frame_data[position];
     }
     return energy;
 }
@@ -54,24 +57,29 @@ uint32_t CalculateEnergy(const AudioFrame& audioFrame)
 void RampIn(AudioFrame& audioFrame)
 {
     assert(rampSize <= audioFrame.samples_per_channel_);
+    if (audioFrame.muted()) return;
+
+    int16_t* frame_data = audioFrame.mutable_data();
     for(size_t i = 0; i < rampSize; i++)
     {
-        audioFrame.data_[i] = static_cast<int16_t>(rampArray[i] *
-                                                   audioFrame.data_[i]);
+        frame_data[i] = static_cast<int16_t>(rampArray[i] * frame_data[i]);
     }
 }
 
 void RampOut(AudioFrame& audioFrame)
 {
     assert(rampSize <= audioFrame.samples_per_channel_);
+    if (audioFrame.muted()) return;
+
+    int16_t* frame_data = audioFrame.mutable_data();
     for(size_t i = 0; i < rampSize; i++)
     {
         const size_t rampPos = rampSize - 1 - i;
-        audioFrame.data_[i] = static_cast<int16_t>(rampArray[rampPos] *
-                                                   audioFrame.data_[i]);
+        frame_data[i] = static_cast<int16_t>(rampArray[rampPos] *
+                                             frame_data[i]);
     }
-    memset(&audioFrame.data_[rampSize], 0,
+    memset(&frame_data[rampSize], 0,
            (audioFrame.samples_per_channel_ - rampSize) *
-           sizeof(audioFrame.data_[0]));
+           sizeof(frame_data[0]));
 }
 }  // namespace webrtc

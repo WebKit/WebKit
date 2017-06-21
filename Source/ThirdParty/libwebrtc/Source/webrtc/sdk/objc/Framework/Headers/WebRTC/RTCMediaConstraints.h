@@ -14,6 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/** Constraint keys for media sources. */
 RTC_EXTERN NSString * const kRTCMediaConstraintsMinAspectRatio;
 RTC_EXTERN NSString * const kRTCMediaConstraintsMaxAspectRatio;
 RTC_EXTERN NSString * const kRTCMediaConstraintsMaxWidth;
@@ -28,6 +29,13 @@ RTC_EXTERN NSString * const kRTCMediaConstraintsLevelControl;
  */
 RTC_EXTERN NSString * const kRTCMediaConstraintsAudioNetworkAdaptorConfig;
 
+/** Constraint keys for generating offers and answers. */
+RTC_EXTERN NSString * const kRTCMediaConstraintsIceRestart;
+RTC_EXTERN NSString * const kRTCMediaConstraintsOfferToReceiveAudio;
+RTC_EXTERN NSString * const kRTCMediaConstraintsOfferToReceiveVideo;
+RTC_EXTERN NSString * const kRTCMediaConstraintsVoiceActivityDetection;
+
+/** Constraint values for Boolean parameters. */
 RTC_EXTERN NSString * const kRTCMediaConstraintsValueTrue;
 RTC_EXTERN NSString * const kRTCMediaConstraintsValueFalse;
 

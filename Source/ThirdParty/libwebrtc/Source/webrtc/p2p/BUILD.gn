@@ -37,6 +37,8 @@ rtc_static_library("rtc_p2p") {
     "base/p2pconstants.h",
     "base/p2ptransportchannel.cc",
     "base/p2ptransportchannel.h",
+    "base/packetlossestimator.cc",
+    "base/packetlossestimator.h",
     "base/packetsocketfactory.h",
     "base/packettransportinterface.h",
     "base/packettransportinternal.h",
@@ -83,15 +85,11 @@ rtc_static_library("rtc_p2p") {
   defines = []
 
   deps = [
+    "../api:libjingle_peerconnection_api",
+    "../api:ortc_api",
     "../base:rtc_base",
+    "../system_wrappers:field_trial_api",
   ]
-
-  if (rtc_build_expat) {
-    deps += [ "//third_party/expat" ]
-    public_deps = [
-      "//third_party/expat",
-    ]
-  }
 
   public_configs = [ ":rtc_p2p_inherited_config" ]
 
@@ -140,19 +138,46 @@ rtc_static_library("rtc_p2p") {
 }
 
 if (rtc_include_tests) {
-  rtc_source_set("rtc_p2p_unittests") {
+  rtc_source_set("p2p_test_utils") {
     testonly = true
     sources = [
-      "base/asyncstuntcpsocket_unittest.cc",
-      "base/dtlstransportchannel_unittest.cc",
+      "base/fakecandidatepair.h",
       "base/fakedtlstransport.h",
       "base/fakeicetransport.h",
       "base/fakepackettransport.h",
       "base/fakeportallocator.h",
       "base/faketransportcontroller.h",
-      "base/jseptransport_unittest.cc",
       "base/mockicetransport.h",
+      "base/testrelayserver.h",
+      "base/teststunserver.h",
+      "base/testturnserver.h",
+    ]
+    deps = [
+      ":rtc_p2p",
+      "../api:ortc_api",
+      "../base:rtc_base",
+      "../base:rtc_base_approved",
+      "../base:rtc_base_tests_utils",
+      "../test:test_support",
+      "//testing/gmock",
+    ]
+  }
+
+  rtc_source_set("rtc_p2p_unittests") {
+    testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc:rtc_unittests" ]
+    }
+    sources = [
+      "base/asyncstuntcpsocket_unittest.cc",
+      "base/dtlstransportchannel_unittest.cc",
+      "base/jseptransport_unittest.cc",
       "base/p2ptransportchannel_unittest.cc",
+      "base/packetlossestimator_unittest.cc",
       "base/port_unittest.cc",
       "base/portallocator_unittest.cc",
       "base/pseudotcp_unittest.cc",
@@ -163,9 +188,6 @@ if (rtc_include_tests) {
       "base/stunrequest_unittest.cc",
       "base/stunserver_unittest.cc",
       "base/tcpport_unittest.cc",
-      "base/testrelayserver.h",
-      "base/teststunserver.h",
-      "base/testturnserver.h",
       "base/transportcontroller_unittest.cc",
       "base/transportdescriptionfactory_unittest.cc",
       "base/turnport_unittest.cc",
@@ -183,8 +205,14 @@ if (rtc_include_tests) {
       ]
     }
     deps = [
+      ":p2p_test_utils",
       ":rtc_p2p",
       "../api:fakemetricsobserver",
+      "../api:ortc_api",
+      "../base:rtc_base",
+      "../base:rtc_base_approved",
+      "../base:rtc_base_tests_utils",
+      "../test:test_support",
       "//testing/gmock",
       "//testing/gtest",
     ]
@@ -208,6 +236,7 @@ rtc_static_library("libstunprober") {
   }
 
   deps = [
+    ":rtc_p2p",
     "..:webrtc_common",
     "../base:rtc_base",
   ]
@@ -216,11 +245,22 @@ rtc_static_library("libstunprober") {
 if (rtc_include_tests) {
   rtc_source_set("libstunprober_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc:rtc_unittests" ]
+    }
     sources = [
       "stunprober/stunprober_unittest.cc",
     ]
     deps = [
       ":libstunprober",
+      ":p2p_test_utils",
+      ":rtc_p2p",
+      "../base:rtc_base",
+      "../base:rtc_base_tests_utils",
       "//testing/gmock",
       "//testing/gtest",
     ]

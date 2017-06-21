@@ -78,6 +78,9 @@ DEFINE_string(ed_graph, "", "Output filename for graph of echo likelihood");
 DEFINE_int32(agc,
              kParameterNotSpecifiedValue,
              "Activate (1) or deactivate(0) the AGC");
+DEFINE_int32(agc2,
+             kParameterNotSpecifiedValue,
+             "Activate (1) or deactivate(0) the AGC2");
 DEFINE_int32(hpf,
              kParameterNotSpecifiedValue,
              "Activate (1) or deactivate(0) the high-pass filter");
@@ -230,6 +233,7 @@ SimulationSettings CreateSettings() {
   SetSettingIfFlagSet(FLAGS_ed, &settings.use_ed);
   SetSettingIfSpecified(FLAGS_ed_graph, &settings.ed_graph_output_filename);
   SetSettingIfFlagSet(FLAGS_agc, &settings.use_agc);
+  SetSettingIfFlagSet(FLAGS_agc2, &settings.use_agc2);
   SetSettingIfFlagSet(FLAGS_hpf, &settings.use_hpf);
   SetSettingIfFlagSet(FLAGS_ns, &settings.use_ns);
   SetSettingIfFlagSet(FLAGS_ts, &settings.use_ts);

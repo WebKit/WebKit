@@ -36,6 +36,10 @@ class SigslotReceiver : public sigslot::has_slots<slot_policy> {
   ~SigslotReceiver() {
   }
 
+  // Provide copy constructor so that tests can exercise the has_slots copy
+  // constructor.
+  SigslotReceiver(const SigslotReceiver&) = default;
+
   void Connect(sigslot::signal0<signal_policy>* signal) {
     if (!signal) return;
     Disconnect();
@@ -222,7 +226,7 @@ TEST_F(SigslotMTLockTest, LockSanity) {
 }
 
 // Destroy signal and slot in different orders.
-TEST(DestructionOrder, SignalFirst) {
+TEST(SigslotDestructionOrder, SignalFirst) {
   sigslot::signal0<>* signal = new sigslot::signal0<>;
   SigslotReceiver<>* receiver = new SigslotReceiver<>();
   receiver->Connect(signal);
@@ -232,7 +236,7 @@ TEST(DestructionOrder, SignalFirst) {
   delete receiver;
 }
 
-TEST(DestructionOrder, SlotFirst) {
+TEST(SigslotDestructionOrder, SlotFirst) {
   sigslot::signal0<>* signal = new sigslot::signal0<>;
   SigslotReceiver<>* receiver = new SigslotReceiver<>();
   receiver->Connect(signal);
@@ -242,4 +246,112 @@ TEST(DestructionOrder, SlotFirst) {
   delete receiver;
   (*signal)();
   delete signal;
+}
+
+// Test that if a signal is copied, its slot connections are copied as well.
+TEST(SigslotTest, CopyConnectedSignal) {
+  sigslot::signal<> signal;
+  SigslotReceiver<> receiver;
+  receiver.Connect(&signal);
+
+  // Fire the copied signal, expecting the receiver to be notified.
+  sigslot::signal<> copied_signal(signal);
+  copied_signal();
+  EXPECT_EQ(1, receiver.signal_count());
+}
+
+// Test that if a slot is copied, its signal connections are copied as well.
+TEST(SigslotTest, CopyConnectedSlot) {
+  sigslot::signal<> signal;
+  SigslotReceiver<> receiver;
+  receiver.Connect(&signal);
+
+  // Fire the signal after copying the receiver, expecting the copied receiver
+  // to be notified.
+  SigslotReceiver<> copied_receiver(receiver);
+  signal();
+  EXPECT_EQ(1, copied_receiver.signal_count());
+}
+
+// Just used for the test below.
+class Disconnector : public sigslot::has_slots<> {
+ public:
+  Disconnector(SigslotReceiver<>* receiver1, SigslotReceiver<>* receiver2)
+      : receiver1_(receiver1), receiver2_(receiver2) {}
+
+  void Connect(sigslot::signal<>* signal) {
+    signal_ = signal;
+    signal->connect(this, &Disconnector::Disconnect);
+  }
+
+ private:
+  void Disconnect() {
+    receiver1_->Disconnect();
+    receiver2_->Disconnect();
+    signal_->disconnect(this);
+  }
+
+  sigslot::signal<>* signal_;
+  SigslotReceiver<>* receiver1_;
+  SigslotReceiver<>* receiver2_;
+};
+
+// Test that things work as expected if a signal is disconnected from a slot
+// while it's firing.
+TEST(SigslotTest, DisconnectFromSignalWhileFiring) {
+  sigslot::signal<> signal;
+  SigslotReceiver<> receiver1;
+  SigslotReceiver<> receiver2;
+  SigslotReceiver<> receiver3;
+  Disconnector disconnector(&receiver1, &receiver2);
+
+  // From this ordering, receiver1 should receive the signal, then the
+  // disconnector will be invoked, causing receiver2 to be disconnected before
+  // it receives the signal. And receiver3 should also receive the signal,
+  // since it was never disconnected.
+  receiver1.Connect(&signal);
+  disconnector.Connect(&signal);
+  receiver2.Connect(&signal);
+  receiver3.Connect(&signal);
+  signal();
+
+  EXPECT_EQ(1, receiver1.signal_count());
+  EXPECT_EQ(0, receiver2.signal_count());
+  EXPECT_EQ(1, receiver3.signal_count());
+}
+
+// Uses disconnect_all instead of disconnect.
+class Disconnector2 : public sigslot::has_slots<> {
+ public:
+  void Connect(sigslot::signal<>* signal) {
+    signal_ = signal;
+    signal->connect(this, &Disconnector2::Disconnect);
+  }
+
+ private:
+  void Disconnect() {
+    signal_->disconnect_all();
+  }
+
+  sigslot::signal<>* signal_;
+};
+
+// Test that things work as expected if a signal is disconnected from a slot
+// while it's firing using disconnect_all.
+TEST(SigslotTest, CallDisconnectAllWhileSignalFiring) {
+  sigslot::signal<> signal;
+  SigslotReceiver<> receiver1;
+  SigslotReceiver<> receiver2;
+  Disconnector2 disconnector;
+
+  // From this ordering, receiver1 should receive the signal, then the
+  // disconnector will be invoked, causing receiver2 to be disconnected before
+  // it receives the signal.
+  receiver1.Connect(&signal);
+  disconnector.Connect(&signal);
+  receiver2.Connect(&signal);
+  signal();
+
+  EXPECT_EQ(1, receiver1.signal_count());
+  EXPECT_EQ(0, receiver2.signal_count());
 }

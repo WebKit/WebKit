@@ -15,9 +15,9 @@
 #include <string>
 
 #include "webrtc/base/macutils.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/modules/desktop_capture/mac/window_list_utils.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 
 namespace webrtc {

@@ -141,6 +141,26 @@ int inet_pton(int af, const char* src, void *dst) {
 #endif
 }
 
+bool HasIPv4Enabled() {
+#if defined(WEBRTC_POSIX) && !defined(__native_client__)
+  bool has_ipv4 = false;
+  struct ifaddrs* ifa;
+  if (getifaddrs(&ifa) < 0) {
+    return false;
+  }
+  for (struct ifaddrs* cur = ifa; cur != nullptr; cur = cur->ifa_next) {
+    if (cur->ifa_addr->sa_family == AF_INET) {
+      has_ipv4 = true;
+      break;
+    }
+  }
+  freeifaddrs(ifa);
+  return has_ipv4;
+#else
+  return true;
+#endif
+}
+
 bool HasIPv6Enabled() {
 #if defined(WEBRTC_WIN)
   if (IsWindowsVistaOrLater()) {

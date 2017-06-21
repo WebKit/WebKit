@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/utility/include/process_thread.h"
@@ -28,7 +29,6 @@
 #include "webrtc/modules/video_coding/jitter_buffer_common.h"
 #include "webrtc/modules/video_coding/jitter_estimator.h"
 #include "webrtc/modules/video_coding/nack_module.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -315,7 +315,7 @@ class VCMJitterBuffer {
   Clock* clock_;
   // If we are running (have started) or not.
   bool running_;
-  CriticalSectionWrapper* crit_sect_;
+  rtc::CriticalSection crit_sect_;
   // Event to signal when we have a frame ready for decoder.
   std::unique_ptr<EventWrapper> frame_event_;
   // Number of allocated frames.

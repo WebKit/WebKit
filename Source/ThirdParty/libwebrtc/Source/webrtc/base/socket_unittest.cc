@@ -13,16 +13,24 @@
 #include "webrtc/base/socket_unittest.h"
 
 #include "webrtc/base/arraysize.h"
-#include "webrtc/base/buffer.h"
 #include "webrtc/base/asyncudpsocket.h"
+#include "webrtc/base/buffer.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/nethelpers.h"
+#include "webrtc/base/ptr_util.h"
 #include "webrtc/base/socketserver.h"
 #include "webrtc/base/testclient.h"
 #include "webrtc/base/testutils.h"
 #include "webrtc/base/thread.h"
 
 namespace rtc {
+
+using webrtc::testing::SSE_CLOSE;
+using webrtc::testing::SSE_ERROR;
+using webrtc::testing::SSE_OPEN;
+using webrtc::testing::SSE_READ;
+using webrtc::testing::SSE_WRITE;
+using webrtc::testing::StreamSink;
 
 #define MAYBE_SKIP_IPV6                             \
   if (!HasIPv6Enabled()) {                          \
@@ -204,7 +212,7 @@ bool IsUnspecOrEmptyIP(const IPAddress& address) {
 }
 
 void SocketTest::ConnectInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create client.
@@ -223,7 +231,7 @@ void SocketTest::ConnectInternal(const IPAddress& loopback) {
   EXPECT_EQ(AsyncSocket::CS_CONNECTING, server->GetState());
 
   // Ensure no pending server connections, since we haven't done anything yet.
-  EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(server.get(), SSE_READ));
   EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_TRUE(accept_addr.IsNil());
 
@@ -234,11 +242,11 @@ void SocketTest::ConnectInternal(const IPAddress& loopback) {
 
   // Client is connecting, outcome not yet determined.
   EXPECT_EQ(AsyncSocket::CS_CONNECTING, client->GetState());
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
 
   // Server has pending connection, accept it.
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), SSE_READ)), kTimeout);
   std::unique_ptr<AsyncSocket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   EXPECT_FALSE(accept_addr.IsNil());
@@ -251,15 +259,15 @@ void SocketTest::ConnectInternal(const IPAddress& loopback) {
 
   // Connected from client perspective, check the addresses are correct.
   EXPECT_EQ_WAIT(AsyncSocket::CS_CONNECTED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_EQ(client->GetRemoteAddress(), server->GetLocalAddress());
   EXPECT_EQ(client->GetRemoteAddress(), accepted->GetLocalAddress());
 }
 
 void SocketTest::ConnectWithDnsLookupInternal(const IPAddress& loopback,
                                               const std::string& host) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create client.
@@ -283,11 +291,11 @@ void SocketTest::ConnectWithDnsLookupInternal(const IPAddress& loopback,
 
   // Client is connecting, outcome not yet determined.
   EXPECT_EQ(AsyncSocket::CS_CONNECTING, client->GetState());
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
 
   // Server has pending connection, accept it.
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), SSE_READ)), kTimeout);
   std::unique_ptr<AsyncSocket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   EXPECT_FALSE(accept_addr.IsNil());
@@ -300,14 +308,14 @@ void SocketTest::ConnectWithDnsLookupInternal(const IPAddress& loopback,
 
   // Connected from client perspective, check the addresses are correct.
   EXPECT_EQ_WAIT(AsyncSocket::CS_CONNECTED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_EQ(client->GetRemoteAddress(), server->GetLocalAddress());
   EXPECT_EQ(client->GetRemoteAddress(), accepted->GetLocalAddress());
 }
 
 void SocketTest::ConnectFailInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create client.
@@ -329,18 +337,18 @@ void SocketTest::ConnectFailInternal(const IPAddress& loopback) {
 
   // Wait for connection to fail (ECONNREFUSED).
   EXPECT_EQ_WAIT(AsyncSocket::CS_CLOSED, client->GetState(), kTimeout);
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_OPEN));
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_ERROR));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_OPEN));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_ERROR));
   EXPECT_TRUE(client->GetRemoteAddress().IsNil());
 
   // Should be no pending server connections.
-  EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(server.get(), SSE_READ));
   EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_EQ(IPAddress(), accept_addr.ipaddr());
 }
 
 void SocketTest::ConnectWithDnsLookupFailInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create client.
@@ -371,11 +379,11 @@ void SocketTest::ConnectWithDnsLookupFailInternal(const IPAddress& loopback) {
   }
 
   EXPECT_EQ_WAIT(AsyncSocket::CS_CLOSED, client->GetState(), kTimeout);
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_OPEN));
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_ERROR));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_OPEN));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_ERROR));
   EXPECT_TRUE(client->GetRemoteAddress().IsNil());
   // Should be no pending server connections.
-  EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(server.get(), SSE_READ));
   EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_TRUE(accept_addr.IsNil());
 }
@@ -400,7 +408,7 @@ void SocketTest::ConnectWithClosedSocketInternal(const IPAddress& loopback) {
 
 void SocketTest::ConnectWhileNotClosedInternal(const IPAddress& loopback) {
   // Create server and listen.
-  testing::StreamSink sink;
+  StreamSink sink;
   std::unique_ptr<AsyncSocket> server(
       ss_->CreateAsyncSocket(loopback.family(), SOCK_STREAM));
   sink.Monitor(server.get());
@@ -417,7 +425,7 @@ void SocketTest::ConnectWhileNotClosedInternal(const IPAddress& loopback) {
 
   // Accept the original connection.
   SocketAddress accept_addr;
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), SSE_READ)), kTimeout);
   std::unique_ptr<AsyncSocket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   EXPECT_FALSE(accept_addr.IsNil());
@@ -442,7 +450,7 @@ void SocketTest::ConnectWhileNotClosedInternal(const IPAddress& loopback) {
 }
 
 void SocketTest::ServerCloseDuringConnectInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
 
   // Create client.
   std::unique_ptr<AsyncSocket> client(
@@ -460,17 +468,17 @@ void SocketTest::ServerCloseDuringConnectInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Close down the server while the socket is in the accept queue.
-  EXPECT_TRUE_WAIT(sink.Check(server.get(), testing::SSE_READ), kTimeout);
+  EXPECT_TRUE_WAIT(sink.Check(server.get(), SSE_READ), kTimeout);
   server->Close();
 
   // This should fail the connection for the client. Clean up.
   EXPECT_EQ_WAIT(AsyncSocket::CS_CLOSED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_ERROR));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_ERROR));
   client->Close();
 }
 
 void SocketTest::ClientCloseDuringConnectInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create client.
@@ -489,7 +497,7 @@ void SocketTest::ClientCloseDuringConnectInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Close down the client while the socket is in the accept queue.
-  EXPECT_TRUE_WAIT(sink.Check(server.get(), testing::SSE_READ), kTimeout);
+  EXPECT_TRUE_WAIT(sink.Check(server.get(), SSE_READ), kTimeout);
   client->Close();
 
   // The connection should still be able to be accepted.
@@ -500,15 +508,15 @@ void SocketTest::ClientCloseDuringConnectInternal(const IPAddress& loopback) {
 
   // The accepted socket should then close (possibly with err, timing-related)
   EXPECT_EQ_WAIT(AsyncSocket::CS_CLOSED, accepted->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(accepted.get(), testing::SSE_CLOSE) ||
-              sink.Check(accepted.get(), testing::SSE_ERROR));
+  EXPECT_TRUE(sink.Check(accepted.get(), SSE_CLOSE) ||
+              sink.Check(accepted.get(), SSE_ERROR));
 
   // The client should not get a close event.
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
 }
 
 void SocketTest::ServerCloseInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create client.
@@ -527,14 +535,14 @@ void SocketTest::ServerCloseInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Accept connection.
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), SSE_READ)), kTimeout);
   std::unique_ptr<AsyncSocket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   sink.Monitor(accepted.get());
 
   // Both sides are now connected.
   EXPECT_EQ_WAIT(AsyncSocket::CS_CONNECTED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_OPEN));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_OPEN));
   EXPECT_EQ(client->GetRemoteAddress(), accepted->GetLocalAddress());
   EXPECT_EQ(accepted->GetRemoteAddress(), client->GetLocalAddress());
 
@@ -544,8 +552,8 @@ void SocketTest::ServerCloseInternal(const IPAddress& loopback) {
   EXPECT_EQ(AsyncSocket::CS_CLOSED, accepted->GetState());
 
   // Expect that the client is notified, and has not yet closed.
-  EXPECT_TRUE_WAIT(sink.Check(client.get(), testing::SSE_READ), kTimeout);
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_TRUE_WAIT(sink.Check(client.get(), SSE_READ), kTimeout);
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_EQ(AsyncSocket::CS_CONNECTED, client->GetState());
 
   // Ensure the data can be read.
@@ -555,20 +563,20 @@ void SocketTest::ServerCloseInternal(const IPAddress& loopback) {
 
   // Now we should close, but the remote address will remain.
   EXPECT_EQ_WAIT(AsyncSocket::CS_CLOSED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_FALSE(client->GetRemoteAddress().IsAnyIP());
 
   // The closer should not get a close signal.
-  EXPECT_FALSE(sink.Check(accepted.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(accepted.get(), SSE_CLOSE));
   EXPECT_TRUE(accepted->GetRemoteAddress().IsNil());
 
   // And the closee should only get a single signal.
   Thread::Current()->ProcessMessages(0);
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
 
   // Close down the client and ensure all is good.
   client->Close();
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_TRUE(client->GetRemoteAddress().IsNil());
 }
 
@@ -581,7 +589,7 @@ class SocketCloser : public sigslot::has_slots<> {
 };
 
 void SocketTest::CloseInClosedCallbackInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketCloser closer;
   SocketAddress accept_addr;
 
@@ -602,14 +610,14 @@ void SocketTest::CloseInClosedCallbackInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Accept connection.
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), SSE_READ)), kTimeout);
   std::unique_ptr<AsyncSocket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   sink.Monitor(accepted.get());
 
   // Both sides are now connected.
   EXPECT_EQ_WAIT(AsyncSocket::CS_CONNECTED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_OPEN));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_OPEN));
   EXPECT_EQ(client->GetRemoteAddress(), accepted->GetLocalAddress());
   EXPECT_EQ(accepted->GetRemoteAddress(), client->GetLocalAddress());
 
@@ -618,12 +626,12 @@ void SocketTest::CloseInClosedCallbackInternal(const IPAddress& loopback) {
   EXPECT_EQ(AsyncSocket::CS_CLOSED, accepted->GetState());
 
   // Expect that the client is notified, and has not yet closed.
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_EQ(AsyncSocket::CS_CONNECTED, client->GetState());
 
   // Now we should be closed and invalidated
   EXPECT_EQ_WAIT(AsyncSocket::CS_CLOSED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_TRUE(Socket::CS_CLOSED == client->GetState());
 }
 
@@ -636,7 +644,7 @@ class Sleeper : public MessageHandler {
 };
 
 void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create & connect server and client sockets.
@@ -650,7 +658,7 @@ void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, server->Listen(5));
 
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), SSE_READ)), kTimeout);
 
   std::unique_ptr<AsyncSocket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
@@ -660,17 +668,17 @@ void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
   EXPECT_EQ(client->GetLocalAddress(), accepted->GetRemoteAddress());
 
   EXPECT_EQ_WAIT(AsyncSocket::CS_CONNECTED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client.get(), testing::SSE_CLOSE));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client.get(), SSE_CLOSE));
   EXPECT_EQ(client->GetRemoteAddress(), server->GetLocalAddress());
   EXPECT_EQ(client->GetRemoteAddress(), accepted->GetLocalAddress());
 
   // Do an i/o operation, triggering an eventual callback.
-  EXPECT_FALSE(sink.Check(accepted.get(), testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(accepted.get(), SSE_READ));
   char buf[1024] = {0};
 
   EXPECT_EQ(1024, client->Send(buf, 1024));
-  EXPECT_FALSE(sink.Check(accepted.get(), testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(accepted.get(), SSE_READ));
 
   // Shouldn't signal when blocked in a thread Send, where process_io is false.
   std::unique_ptr<Thread> thread(new Thread());
@@ -678,16 +686,16 @@ void SocketTest::SocketServerWaitInternal(const IPAddress& loopback) {
   Sleeper sleeper;
   TypedMessageData<AsyncSocket*> data(client.get());
   thread->Send(RTC_FROM_HERE, &sleeper, 0, &data);
-  EXPECT_FALSE(sink.Check(accepted.get(), testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(accepted.get(), SSE_READ));
 
   // But should signal when process_io is true.
-  EXPECT_TRUE_WAIT((sink.Check(accepted.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(accepted.get(), SSE_READ)), kTimeout);
   EXPECT_LT(0, accepted->Recv(buf, 1024, nullptr));
 }
 
 void SocketTest::TcpInternal(const IPAddress& loopback, size_t data_size,
     ptrdiff_t max_send_size) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create receiving client.
@@ -706,14 +714,14 @@ void SocketTest::TcpInternal(const IPAddress& loopback, size_t data_size,
   EXPECT_EQ(0, receiver->Connect(server->GetLocalAddress()));
 
   // Accept connection which will be used for sending.
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), SSE_READ)), kTimeout);
   std::unique_ptr<AsyncSocket> sender(server->Accept(&accept_addr));
   ASSERT_TRUE(sender);
   sink.Monitor(sender.get());
 
   // Both sides are now connected.
   EXPECT_EQ_WAIT(AsyncSocket::CS_CONNECTED, receiver->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(receiver.get(), testing::SSE_OPEN));
+  EXPECT_TRUE(sink.Check(receiver.get(), SSE_OPEN));
   EXPECT_EQ(receiver->GetRemoteAddress(), sender->GetLocalAddress());
   EXPECT_EQ(sender->GetRemoteAddress(), receiver->GetLocalAddress());
 
@@ -765,8 +773,7 @@ void SocketTest::TcpInternal(const IPAddress& loopback, size_t data_size,
     while (recv_buffer.size() < sent_size) {
       if (!readable) {
         // Wait until data is available.
-        EXPECT_TRUE_WAIT(sink.Check(receiver.get(), testing::SSE_READ),
-            kTimeout);
+        EXPECT_TRUE_WAIT(sink.Check(receiver.get(), SSE_READ), kTimeout);
         readable = true;
         recv_called = false;
       }
@@ -795,8 +802,7 @@ void SocketTest::TcpInternal(const IPAddress& loopback, size_t data_size,
     // Once all that we've sent has been received, expect to be able to send
     // again.
     if (!writable) {
-      ASSERT_TRUE_WAIT(sink.Check(sender.get(), testing::SSE_WRITE),
-                       kTimeout);
+      ASSERT_TRUE_WAIT(sink.Check(sender.get(), SSE_WRITE), kTimeout);
       writable = true;
       send_called = false;
     }
@@ -810,12 +816,12 @@ void SocketTest::TcpInternal(const IPAddress& loopback, size_t data_size,
   // Close down.
   sender->Close();
   EXPECT_EQ_WAIT(AsyncSocket::CS_CLOSED, receiver->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(receiver.get(), testing::SSE_CLOSE));
+  EXPECT_TRUE(sink.Check(receiver.get(), SSE_CLOSE));
   receiver->Close();
 }
 
 void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  StreamSink sink;
   SocketAddress accept_addr;
 
   // Create client.
@@ -834,19 +840,19 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   EXPECT_EQ(0, client->Connect(server->GetLocalAddress()));
 
   // Accept connection.
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), SSE_READ)), kTimeout);
   std::unique_ptr<AsyncSocket> accepted(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted);
   sink.Monitor(accepted.get());
 
   // Both sides are now connected.
   EXPECT_EQ_WAIT(AsyncSocket::CS_CONNECTED, client->GetState(), kTimeout);
-  EXPECT_TRUE(sink.Check(client.get(), testing::SSE_OPEN));
+  EXPECT_TRUE(sink.Check(client.get(), SSE_OPEN));
   EXPECT_EQ(client->GetRemoteAddress(), accepted->GetLocalAddress());
   EXPECT_EQ(accepted->GetRemoteAddress(), client->GetLocalAddress());
 
   // Expect a writable callback from the connect.
-  EXPECT_TRUE_WAIT(sink.Check(accepted.get(), testing::SSE_WRITE), kTimeout);
+  EXPECT_TRUE_WAIT(sink.Check(accepted.get(), SSE_WRITE), kTimeout);
 
   // Fill the socket buffer.
   char buf[1024 * 16] = {0};
@@ -855,7 +861,7 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   EXPECT_TRUE(accepted->IsBlocking());
 
   // Wait until data is available.
-  EXPECT_TRUE_WAIT(sink.Check(client.get(), testing::SSE_READ), kTimeout);
+  EXPECT_TRUE_WAIT(sink.Check(client.get(), SSE_READ), kTimeout);
 
   // Pull data.
   for (int i = 0; i < sends; ++i) {
@@ -863,7 +869,7 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   }
 
   // Expect at least one additional writable callback.
-  EXPECT_TRUE_WAIT(sink.Check(accepted.get(), testing::SSE_WRITE), kTimeout);
+  EXPECT_TRUE_WAIT(sink.Check(accepted.get(), SSE_WRITE), kTimeout);
 
   // Adding data in response to the writeable callback shouldn't cause infinite
   // callbacks.
@@ -871,7 +877,7 @@ void SocketTest::SingleFlowControlCallbackInternal(const IPAddress& loopback) {
   for (int i = 0; i < 100; ++i) {
     accepted->Send(&buf, arraysize(buf));
     rtc::Thread::Current()->ProcessMessages(1);
-    if (sink.Check(accepted.get(), testing::SSE_WRITE)) {
+    if (sink.Check(accepted.get(), SSE_WRITE)) {
       extras++;
     }
   }
@@ -898,9 +904,9 @@ void SocketTest::UdpInternal(const IPAddress& loopback) {
 
   // Test send/receive behavior.
   std::unique_ptr<TestClient> client1(
-      new TestClient(AsyncUDPSocket::Create(ss_, addr1)));
+      new TestClient(WrapUnique(AsyncUDPSocket::Create(ss_, addr1))));
   std::unique_ptr<TestClient> client2(
-      new TestClient(AsyncUDPSocket::Create(ss_, empty)));
+      new TestClient(WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
 
   SocketAddress addr2;
   EXPECT_EQ(3, client2->SendTo("foo", 3, addr1));
@@ -912,7 +918,8 @@ void SocketTest::UdpInternal(const IPAddress& loopback) {
   EXPECT_EQ(addr3, addr1);
   // TODO: figure out what the intent is here
   for (int i = 0; i < 10; ++i) {
-    client2.reset(new TestClient(AsyncUDPSocket::Create(ss_, empty)));
+    client2.reset(
+        new TestClient(WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
 
     SocketAddress addr4;
     EXPECT_EQ(3, client2->SendTo("foo", 3, addr1));
@@ -939,7 +946,7 @@ void SocketTest::UdpReadyToSend(const IPAddress& loopback) {
 
   // Test send
   std::unique_ptr<TestClient> client(
-      new TestClient(AsyncUDPSocket::Create(ss_, empty)));
+      new TestClient(WrapUnique(AsyncUDPSocket::Create(ss_, empty))));
   int test_packet_size = 1200;
   std::unique_ptr<char[]> test_packet(new char[test_packet_size]);
   // Init the test packet just to avoid memcheck warning.
@@ -1006,30 +1013,6 @@ void SocketTest::GetSetOptionsInternal(const IPAddress& loopback) {
   int current_nd, desired_nd = 1;
   ASSERT_EQ(-1, socket->GetOption(Socket::OPT_NODELAY, &current_nd));
   ASSERT_EQ(-1, socket->SetOption(Socket::OPT_NODELAY, desired_nd));
-
-  // Skip the esimate MTU test for IPv6 for now.
-  if (loopback.family() != AF_INET6) {
-    // Try estimating MTU.
-    std::unique_ptr<AsyncSocket> mtu_socket(
-        ss_->CreateAsyncSocket(loopback.family(), SOCK_DGRAM));
-    mtu_socket->Bind(SocketAddress(loopback, 0));
-    uint16_t mtu;
-    // should fail until we connect
-    ASSERT_EQ(-1, mtu_socket->EstimateMTU(&mtu));
-    mtu_socket->Connect(SocketAddress(loopback, 0));
-#if defined(WEBRTC_WIN)
-    // now it should succeed
-    ASSERT_NE(-1, mtu_socket->EstimateMTU(&mtu));
-    ASSERT_GE(mtu, 1492);  // should be at least the 1492 "plateau" on localhost
-#elif defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
-    // except on WEBRTC_MAC && !WEBRTC_IOS, where it's not yet implemented
-    ASSERT_EQ(-1, mtu_socket->EstimateMTU(&mtu));
-#else
-    // and the behavior seems unpredictable on Linux,
-    // failing on the build machine
-    // but succeeding on my Ubiquity instance.
-#endif
-  }
 }
 
 void SocketTest::SocketRecvTimestamp(const IPAddress& loopback) {

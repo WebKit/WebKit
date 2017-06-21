@@ -10,6 +10,7 @@
 #ifndef WEBRTC_TEST_FAKE_TEXTURE_FRAME_H_
 #define WEBRTC_TEST_FAKE_TEXTURE_FRAME_H_
 
+#include "webrtc/api/video/i420_buffer.h"
 #include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/common_video/include/video_frame_buffer.h"
@@ -17,31 +18,29 @@
 namespace webrtc {
 namespace test {
 
-class FakeNativeHandle {
+class FakeNativeBuffer : public VideoFrameBuffer {
  public:
-  static VideoFrame CreateFrame(FakeNativeHandle* native_handle,
-                                int width,
+  static VideoFrame CreateFrame(int width,
                                 int height,
                                 uint32_t timestamp,
                                 int64_t render_time_ms,
                                 VideoRotation rotation);
-};
 
-class FakeNativeHandleBuffer : public NativeHandleBuffer {
- public:
-  FakeNativeHandleBuffer(void* native_handle, int width, int height)
-      : NativeHandleBuffer(native_handle, width, height) {}
+  FakeNativeBuffer(int width, int height) : width_(width), height_(height) {}
 
-  ~FakeNativeHandleBuffer() {
-    delete reinterpret_cast<FakeNativeHandle*>(native_handle_);
-  }
+  Type type() const override { return Type::kNative; }
+  int width() const override { return width_; }
+  int height() const override { return height_; }
 
  private:
-  rtc::scoped_refptr<VideoFrameBuffer> NativeToI420Buffer() override {
+  rtc::scoped_refptr<I420BufferInterface> ToI420() override {
     rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width_, height_);
     I420Buffer::SetBlack(buffer);
     return buffer;
   }
+
+  const int width_;
+  const int height_;
 };
 
 }  // namespace test

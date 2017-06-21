@@ -21,11 +21,6 @@ namespace webrtc {
 
 namespace {
 
-constexpr size_t kNumMatchedFilters = 4;
-constexpr size_t kMatchedFilterWindowSizeSubBlocks = 32;
-constexpr size_t kMatchedFilterAlignmentShiftSizeSubBlocks =
-    kMatchedFilterWindowSizeSubBlocks * 3 / 4;
-
 constexpr int kDownSamplingFactor = 4;
 }  // namespace
 
@@ -43,19 +38,19 @@ EchoPathDelayEstimator::EchoPathDelayEstimator(ApmDataDumper* data_dumper)
 
 EchoPathDelayEstimator::~EchoPathDelayEstimator() = default;
 
+void EchoPathDelayEstimator::Reset() {
+  matched_filter_lag_aggregator_.Reset();
+  matched_filter_.Reset();
+}
+
 rtc::Optional<size_t> EchoPathDelayEstimator::EstimateDelay(
-    rtc::ArrayView<const float> render,
+    const DownsampledRenderBuffer& render_buffer,
     rtc::ArrayView<const float> capture) {
   RTC_DCHECK_EQ(kBlockSize, capture.size());
-  RTC_DCHECK_EQ(render.size(), capture.size());
 
-  std::array<float, kSubBlockSize> downsampled_render;
   std::array<float, kSubBlockSize> downsampled_capture;
-
-  render_decimator_.Decimate(render, &downsampled_render);
-  capture_decimator_.Decimate(capture, &downsampled_capture);
-
-  matched_filter_.Update(downsampled_render, downsampled_capture);
+  capture_decimator_.Decimate(capture, downsampled_capture);
+  matched_filter_.Update(render_buffer, downsampled_capture);
 
   rtc::Optional<size_t> aggregated_matched_filter_lag =
       matched_filter_lag_aggregator_.Aggregate(

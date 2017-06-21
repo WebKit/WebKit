@@ -14,9 +14,11 @@
 #include <string.h>
 #include <sys/shm.h>
 
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/desktop_capture/desktop_frame.h"
 #include "webrtc/modules/desktop_capture/x11/x_error_trap.h"
-#include "webrtc/system_wrappers/include/logging.h"
+
+namespace webrtc {
 
 namespace {
 
@@ -55,9 +57,78 @@ bool IsXImageRGBFormat(XImage* image) {
       image->blue_mask == 0xff;
 }
 
-}  // namespace
+// We expose two forms of blitting to handle variations in the pixel format.
+// In FastBlit(), the operation is effectively a memcpy.
+void FastBlit(XImage* x_image,
+              uint8_t* src_pos,
+              const DesktopRect& rect,
+              DesktopFrame* frame) {
+  int src_stride = x_image->bytes_per_line;
+  int dst_x = rect.left(), dst_y = rect.top();
 
-namespace webrtc {
+  uint8_t* dst_pos = frame->data() + frame->stride() * dst_y;
+  dst_pos += dst_x * DesktopFrame::kBytesPerPixel;
+
+  int height = rect.height();
+  int row_bytes = rect.width() * DesktopFrame::kBytesPerPixel;
+  for (int y = 0; y < height; ++y) {
+    memcpy(dst_pos, src_pos, row_bytes);
+    src_pos += src_stride;
+    dst_pos += frame->stride();
+  }
+}
+
+void SlowBlit(XImage* x_image,
+              uint8_t* src_pos,
+              const DesktopRect& rect,
+              DesktopFrame* frame) {
+  int src_stride = x_image->bytes_per_line;
+  int dst_x = rect.left(), dst_y = rect.top();
+  int width = rect.width(), height = rect.height();
+
+  uint32_t red_mask = x_image->red_mask;
+  uint32_t green_mask = x_image->red_mask;
+  uint32_t blue_mask = x_image->blue_mask;
+
+  uint32_t red_shift = MaskToShift(red_mask);
+  uint32_t green_shift = MaskToShift(green_mask);
+  uint32_t blue_shift = MaskToShift(blue_mask);
+
+  int bits_per_pixel = x_image->bits_per_pixel;
+
+  uint8_t* dst_pos = frame->data() + frame->stride() * dst_y;
+  dst_pos += dst_x * DesktopFrame::kBytesPerPixel;
+  // TODO(hclam): Optimize, perhaps using MMX code or by converting to
+  // YUV directly.
+  // TODO(sergeyu): This code doesn't handle XImage byte order properly and
+  // won't work with 24bpp images. Fix it.
+  for (int y = 0; y < height; y++) {
+    uint32_t* dst_pos_32 = reinterpret_cast<uint32_t*>(dst_pos);
+    uint32_t* src_pos_32 = reinterpret_cast<uint32_t*>(src_pos);
+    uint16_t* src_pos_16 = reinterpret_cast<uint16_t*>(src_pos);
+    for (int x = 0; x < width; x++) {
+      // Dereference through an appropriately-aligned pointer.
+      uint32_t pixel;
+      if (bits_per_pixel == 32) {
+        pixel = src_pos_32[x];
+      } else if (bits_per_pixel == 16) {
+        pixel = src_pos_16[x];
+      } else {
+        pixel = src_pos[x];
+      }
+      uint32_t r = (pixel & red_mask) << red_shift;
+      uint32_t g = (pixel & green_mask) << green_shift;
+      uint32_t b = (pixel & blue_mask) << blue_shift;
+      // Write as 32-bit RGB.
+      dst_pos_32[x] =
+          ((r >> 8) & 0xff0000) | ((g >> 16) & 0xff00) | ((b >> 24) & 0xff);
+    }
+    dst_pos += frame->stride();
+    src_pos += src_stride;
+  }
+}
+
+}  // namespace
 
 XServerPixelBuffer::XServerPixelBuffer() {}
 
@@ -68,7 +139,11 @@ XServerPixelBuffer::~XServerPixelBuffer() {
 void XServerPixelBuffer::Release() {
   if (x_image_) {
     XDestroyImage(x_image_);
-    x_image_ = NULL;
+    x_image_ = nullptr;
+  }
+  if (x_shm_image_) {
+    XDestroyImage(x_shm_image_);
+    x_shm_image_ = nullptr;
   }
   if (shm_pixmap_) {
     XFreePixmap(display_, shm_pixmap_);
@@ -76,17 +151,23 @@ void XServerPixelBuffer::Release() {
   }
   if (shm_gc_) {
     XFreeGC(display_, shm_gc_);
-    shm_gc_ = NULL;
+    shm_gc_ = nullptr;
   }
-  if (shm_segment_info_) {
-    if (shm_segment_info_->shmaddr != reinterpret_cast<char*>(-1))
-      shmdt(shm_segment_info_->shmaddr);
-    if (shm_segment_info_->shmid != -1)
-      shmctl(shm_segment_info_->shmid, IPC_RMID, 0);
-    delete shm_segment_info_;
-    shm_segment_info_ = NULL;
-  }
+
+  ReleaseSharedMemorySegment();
+
   window_ = 0;
+}
+
+void XServerPixelBuffer::ReleaseSharedMemorySegment() {
+  if (!shm_segment_info_)
+    return;
+  if (shm_segment_info_->shmaddr != nullptr)
+    shmdt(shm_segment_info_->shmaddr);
+  if (shm_segment_info_->shmid != -1)
+    shmctl(shm_segment_info_->shmid, IPC_RMID, 0);
+  delete shm_segment_info_;
+  shm_segment_info_ = nullptr;
 }
 
 bool XServerPixelBuffer::Init(Display* display, Window window) {
@@ -123,19 +204,21 @@ void XServerPixelBuffer::InitShm(const XWindowAttributes& attributes) {
   bool using_shm = false;
   shm_segment_info_ = new XShmSegmentInfo;
   shm_segment_info_->shmid = -1;
-  shm_segment_info_->shmaddr = reinterpret_cast<char*>(-1);
+  shm_segment_info_->shmaddr = nullptr;
   shm_segment_info_->readOnly = False;
-  x_image_ = XShmCreateImage(display_, default_visual, default_depth, ZPixmap,
-                             0, shm_segment_info_, window_size_.width(),
-                             window_size_.height());
-  if (x_image_) {
-    shm_segment_info_->shmid = shmget(
-        IPC_PRIVATE, x_image_->bytes_per_line * x_image_->height,
-        IPC_CREAT | 0600);
+  x_shm_image_ = XShmCreateImage(display_, default_visual, default_depth,
+                                 ZPixmap, 0, shm_segment_info_,
+                                 window_size_.width(), window_size_.height());
+  if (x_shm_image_) {
+    shm_segment_info_->shmid =
+        shmget(IPC_PRIVATE, x_shm_image_->bytes_per_line * x_shm_image_->height,
+               IPC_CREAT | 0600);
     if (shm_segment_info_->shmid != -1) {
-      shm_segment_info_->shmaddr = x_image_->data =
-          reinterpret_cast<char*>(shmat(shm_segment_info_->shmid, 0, 0));
-      if (x_image_->data != reinterpret_cast<char*>(-1)) {
+      void* shmat_result = shmat(shm_segment_info_->shmid, 0, 0);
+      if (shmat_result != reinterpret_cast<void*>(-1)) {
+        shm_segment_info_->shmaddr = reinterpret_cast<char*>(shmat_result);
+        x_shm_image_->data = shm_segment_info_->shmaddr;
+
         XErrorTrap error_trap(display_);
         using_shm = XShmAttach(display_, shm_segment_info_);
         XSync(display_, False);
@@ -154,7 +237,7 @@ void XServerPixelBuffer::InitShm(const XWindowAttributes& attributes) {
 
   if (!using_shm) {
     LOG(LS_WARNING) << "Not using shared memory. Performance may be degraded.";
-    Release();
+    ReleaseSharedMemorySegment();
     return;
   }
 
@@ -227,7 +310,7 @@ void XServerPixelBuffer::Synchronize() {
     XErrorTrap error_trap(display_);
     // XShmGetImage fails if the window is partially out of screen.
     xshm_get_image_succeeded_ =
-        XShmGetImage(display_, window_, x_image_, 0, 0, AllPlanes);
+        XShmGetImage(display_, window_, x_shm_image_, 0, 0, AllPlanes);
   }
 }
 
@@ -236,6 +319,7 @@ bool XServerPixelBuffer::CaptureRect(const DesktopRect& rect,
   assert(rect.right() <= window_size_.width());
   assert(rect.bottom() <= window_size_.height());
 
+  XImage* image;
   uint8_t* data;
 
   if (shm_segment_info_ && (shm_pixmap_ || xshm_get_image_succeeded_)) {
@@ -245,9 +329,12 @@ bool XServerPixelBuffer::CaptureRect(const DesktopRect& rect,
                 rect.left(), rect.top());
       XSync(display_, False);
     }
-    data = reinterpret_cast<uint8_t*>(x_image_->data) +
-        rect.top() * x_image_->bytes_per_line +
-        rect.left() * x_image_->bits_per_pixel / 8;
+
+    image = x_shm_image_;
+    data = reinterpret_cast<uint8_t*>(image->data) +
+           rect.top() * image->bytes_per_line +
+           rect.left() * image->bits_per_pixel / 8;
+
   } else {
     if (x_image_)
       XDestroyImage(x_image_);
@@ -256,85 +343,17 @@ bool XServerPixelBuffer::CaptureRect(const DesktopRect& rect,
     if (!x_image_)
       return false;
 
-    data = reinterpret_cast<uint8_t*>(x_image_->data);
+    image = x_image_;
+    data = reinterpret_cast<uint8_t*>(image->data);
   }
 
-  if (IsXImageRGBFormat(x_image_)) {
-    FastBlit(data, rect, frame);
+  if (IsXImageRGBFormat(image)) {
+    FastBlit(image, data, rect, frame);
   } else {
-    SlowBlit(data, rect, frame);
+    SlowBlit(image, data, rect, frame);
   }
 
   return true;
-}
-
-void XServerPixelBuffer::FastBlit(uint8_t* image,
-                                  const DesktopRect& rect,
-                                  DesktopFrame* frame) {
-  uint8_t* src_pos = image;
-  int src_stride = x_image_->bytes_per_line;
-  int dst_x = rect.left(), dst_y = rect.top();
-
-  uint8_t* dst_pos = frame->data() + frame->stride() * dst_y;
-  dst_pos += dst_x * DesktopFrame::kBytesPerPixel;
-
-  int height = rect.height();
-  int row_bytes = rect.width() * DesktopFrame::kBytesPerPixel;
-  for (int y = 0; y < height; ++y) {
-    memcpy(dst_pos, src_pos, row_bytes);
-    src_pos += src_stride;
-    dst_pos += frame->stride();
-  }
-}
-
-void XServerPixelBuffer::SlowBlit(uint8_t* image,
-                                  const DesktopRect& rect,
-                                  DesktopFrame* frame) {
-  int src_stride = x_image_->bytes_per_line;
-  int dst_x = rect.left(), dst_y = rect.top();
-  int width = rect.width(), height = rect.height();
-
-  uint32_t red_mask = x_image_->red_mask;
-  uint32_t green_mask = x_image_->red_mask;
-  uint32_t blue_mask = x_image_->blue_mask;
-
-  uint32_t red_shift = MaskToShift(red_mask);
-  uint32_t green_shift = MaskToShift(green_mask);
-  uint32_t blue_shift = MaskToShift(blue_mask);
-
-  int bits_per_pixel = x_image_->bits_per_pixel;
-
-  uint8_t* dst_pos = frame->data() + frame->stride() * dst_y;
-  uint8_t* src_pos = image;
-  dst_pos += dst_x * DesktopFrame::kBytesPerPixel;
-  // TODO(hclam): Optimize, perhaps using MMX code or by converting to
-  // YUV directly.
-  // TODO(sergeyu): This code doesn't handle XImage byte order properly and
-  // won't work with 24bpp images. Fix it.
-  for (int y = 0; y < height; y++) {
-    uint32_t* dst_pos_32 = reinterpret_cast<uint32_t*>(dst_pos);
-    uint32_t* src_pos_32 = reinterpret_cast<uint32_t*>(src_pos);
-    uint16_t* src_pos_16 = reinterpret_cast<uint16_t*>(src_pos);
-    for (int x = 0; x < width; x++) {
-      // Dereference through an appropriately-aligned pointer.
-      uint32_t pixel;
-      if (bits_per_pixel == 32) {
-        pixel = src_pos_32[x];
-      } else if (bits_per_pixel == 16) {
-        pixel = src_pos_16[x];
-      } else {
-        pixel = src_pos[x];
-      }
-      uint32_t r = (pixel & red_mask) << red_shift;
-      uint32_t g = (pixel & green_mask) << green_shift;
-      uint32_t b = (pixel & blue_mask) << blue_shift;
-      // Write as 32-bit RGB.
-      dst_pos_32[x] = ((r >> 8) & 0xff0000) | ((g >> 16) & 0xff00) |
-          ((b >> 24) & 0xff);
-    }
-    dst_pos += frame->stride();
-    src_pos += src_stride;
-  }
 }
 
 }  // namespace webrtc

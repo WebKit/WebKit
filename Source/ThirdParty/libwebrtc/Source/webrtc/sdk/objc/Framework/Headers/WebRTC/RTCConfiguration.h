@@ -109,7 +109,7 @@ RTC_EXPORT
  */
 @property(nonatomic, copy, nullable) NSNumber *iceCheckMinInterval;
 
-- (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)init;
 
 @end
 

@@ -159,7 +159,12 @@ TEST(AudioCodingModuleTest, TestPacketLossBurst) {
   Trace::ReturnTrace();
 }
 
-TEST(AudioCodingModuleTest, TestPacketLossStereo) {
+// Disabled on ios as flake, see https://crbug.com/webrtc/7057
+#if defined(WEBRTC_IOS)
+TEST(AudioCodingModuleTest, DISABLED_TestPacketLossStereo) {
+#else
+  TEST(AudioCodingModuleTest, TestPacketLossStereo) {
+#endif
   Trace::CreateTrace();
   Trace::SetTraceFile((webrtc::test::OutputPath() +
       "acm_packetloss_trace.txt").c_str());

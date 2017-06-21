@@ -413,12 +413,6 @@ TEST(ThreadTest, SetNameOnSignalQueueDestroyed) {
   Thread* thread2 = new AutoThread();
   SetNameOnSignalQueueDestroyedTester tester2(thread2);
   delete thread2;
-
-#if defined(WEBRTC_WIN)
-  Thread* thread3 = new ComThread();
-  SetNameOnSignalQueueDestroyedTester tester3(thread3);
-  delete thread3;
-#endif
 }
 
 class AsyncInvokeTest : public testing::Test {
@@ -426,13 +420,6 @@ class AsyncInvokeTest : public testing::Test {
   void IntCallback(int value) {
     EXPECT_EQ(expected_thread_, Thread::Current());
     int_value_ = value;
-  }
-  void AsyncInvokeIntCallback(AsyncInvoker* invoker, Thread* thread) {
-    expected_thread_ = thread;
-    invoker->AsyncInvoke(RTC_FROM_HERE, RTC_FROM_HERE, thread, FunctorC(),
-                         &AsyncInvokeTest::IntCallback,
-                         static_cast<AsyncInvokeTest*>(this));
-    invoke_started_.Set();
   }
   void SetExpectedThreadForIntCallback(Thread* thread) {
     expected_thread_ = thread;
@@ -442,11 +429,9 @@ class AsyncInvokeTest : public testing::Test {
   enum { kWaitTimeout = 1000 };
   AsyncInvokeTest()
       : int_value_(0),
-        invoke_started_(true, false),
         expected_thread_(nullptr) {}
 
   int int_value_;
-  Event invoke_started_;
   Thread* expected_thread_;
 };
 
@@ -459,71 +444,6 @@ TEST_F(AsyncInvokeTest, FireAndForget) {
   AtomicBool called;
   invoker.AsyncInvoke<void>(RTC_FROM_HERE, &thread, FunctorB(&called));
   EXPECT_TRUE_WAIT(called.get(), kWaitTimeout);
-}
-
-TEST_F(AsyncInvokeTest, WithCallback) {
-  AsyncInvoker invoker;
-  // Create and start the thread.
-  Thread thread;
-  thread.Start();
-  // Try calling functor.
-  SetExpectedThreadForIntCallback(Thread::Current());
-  invoker.AsyncInvoke(RTC_FROM_HERE, RTC_FROM_HERE, &thread, FunctorA(),
-                      &AsyncInvokeTest::IntCallback,
-                      static_cast<AsyncInvokeTest*>(this));
-  EXPECT_EQ_WAIT(42, int_value_, kWaitTimeout);
-}
-
-TEST_F(AsyncInvokeTest, CancelInvoker) {
-  // Create and start the thread.
-  Thread thread;
-  thread.Start();
-  // Try destroying invoker during call.
-  {
-    AsyncInvoker invoker;
-    invoker.AsyncInvoke(RTC_FROM_HERE, RTC_FROM_HERE, &thread, FunctorC(),
-                        &AsyncInvokeTest::IntCallback,
-                        static_cast<AsyncInvokeTest*>(this));
-  }
-  // With invoker gone, callback should be cancelled.
-  Thread::Current()->ProcessMessages(kWaitTimeout);
-  EXPECT_EQ(0, int_value_);
-}
-
-TEST_F(AsyncInvokeTest, CancelCallingThread) {
-  AsyncInvoker invoker;
-  { // Create and start the thread.
-    Thread thread;
-    thread.Start();
-    // Try calling functor.
-    thread.Invoke<void>(
-        RTC_FROM_HERE,
-        Bind(&AsyncInvokeTest::AsyncInvokeIntCallback,
-             static_cast<AsyncInvokeTest*>(this), &invoker, Thread::Current()));
-    // Wait for the call to begin.
-    ASSERT_TRUE(invoke_started_.Wait(kWaitTimeout));
-  }
-  // Calling thread is gone. Return message shouldn't happen.
-  Thread::Current()->ProcessMessages(kWaitTimeout);
-  EXPECT_EQ(0, int_value_);
-}
-
-TEST_F(AsyncInvokeTest, KillInvokerBeforeExecute) {
-  Thread thread;
-  thread.Start();
-  {
-    AsyncInvoker invoker;
-    // Try calling functor.
-    thread.Invoke<void>(
-        RTC_FROM_HERE,
-        Bind(&AsyncInvokeTest::AsyncInvokeIntCallback,
-             static_cast<AsyncInvokeTest*>(this), &invoker, Thread::Current()));
-    // Wait for the call to begin.
-    ASSERT_TRUE(invoke_started_.Wait(kWaitTimeout));
-  }
-  // Invoker is destroyed. Function should not execute.
-  Thread::Current()->ProcessMessages(kWaitTimeout);
-  EXPECT_EQ(0, int_value_);
 }
 
 TEST_F(AsyncInvokeTest, KillInvokerDuringExecute) {
@@ -605,13 +525,6 @@ class GuardedAsyncInvokeTest : public testing::Test {
     EXPECT_EQ(expected_thread_, Thread::Current());
     int_value_ = value;
   }
-  void AsyncInvokeIntCallback(GuardedAsyncInvoker* invoker, Thread* thread) {
-    expected_thread_ = thread;
-    invoker->AsyncInvoke(RTC_FROM_HERE, RTC_FROM_HERE, FunctorC(),
-                         &GuardedAsyncInvokeTest::IntCallback,
-                         static_cast<GuardedAsyncInvokeTest*>(this));
-    invoke_started_.Set();
-  }
   void SetExpectedThreadForIntCallback(Thread* thread) {
     expected_thread_ = thread;
   }
@@ -620,11 +533,9 @@ class GuardedAsyncInvokeTest : public testing::Test {
   const static int kWaitTimeout = 1000;
   GuardedAsyncInvokeTest()
       : int_value_(0),
-        invoke_started_(true, false),
         expected_thread_(nullptr) {}
 
   int int_value_;
-  Event invoke_started_;
   Thread* expected_thread_;
 };
 
@@ -654,26 +565,6 @@ TEST_F(GuardedAsyncInvokeTest, KillThreadFireAndForget) {
   EXPECT_FALSE(called.get());
 }
 
-// Test that we can call AsyncInvoke with callback after the thread died.
-TEST_F(GuardedAsyncInvokeTest, KillThreadWithCallback) {
-  // Create and start the thread.
-  std::unique_ptr<Thread> thread(new Thread());
-  thread->Start();
-  std::unique_ptr<GuardedAsyncInvoker> invoker;
-  // Create the invoker on |thread|.
-  thread->Invoke<void>(RTC_FROM_HERE, CreateInvoker(&invoker));
-  // Kill |thread|.
-  thread = nullptr;
-  // Try calling functor.
-  EXPECT_FALSE(
-      invoker->AsyncInvoke(RTC_FROM_HERE, RTC_FROM_HERE, FunctorC(),
-                           &GuardedAsyncInvokeTest::IntCallback,
-                           static_cast<GuardedAsyncInvokeTest*>(this)));
-  // With thread gone, callback should be cancelled.
-  Thread::Current()->ProcessMessages(kWaitTimeout);
-  EXPECT_EQ(0, int_value_);
-}
-
 // The remaining tests check that GuardedAsyncInvoker behaves as AsyncInvoker
 // when Thread is still alive.
 TEST_F(GuardedAsyncInvokeTest, FireAndForget) {
@@ -682,67 +573,6 @@ TEST_F(GuardedAsyncInvokeTest, FireAndForget) {
   AtomicBool called;
   EXPECT_TRUE(invoker.AsyncInvoke<void>(RTC_FROM_HERE, FunctorB(&called)));
   EXPECT_TRUE_WAIT(called.get(), kWaitTimeout);
-}
-
-TEST_F(GuardedAsyncInvokeTest, WithCallback) {
-  GuardedAsyncInvoker invoker;
-  // Try calling functor.
-  SetExpectedThreadForIntCallback(Thread::Current());
-  EXPECT_TRUE(invoker.AsyncInvoke(RTC_FROM_HERE, RTC_FROM_HERE, FunctorA(),
-                                  &GuardedAsyncInvokeTest::IntCallback,
-                                  static_cast<GuardedAsyncInvokeTest*>(this)));
-  EXPECT_EQ_WAIT(42, int_value_, kWaitTimeout);
-}
-
-TEST_F(GuardedAsyncInvokeTest, CancelInvoker) {
-  // Try destroying invoker during call.
-  {
-    GuardedAsyncInvoker invoker;
-    EXPECT_TRUE(
-        invoker.AsyncInvoke(RTC_FROM_HERE, RTC_FROM_HERE, FunctorC(),
-                            &GuardedAsyncInvokeTest::IntCallback,
-                            static_cast<GuardedAsyncInvokeTest*>(this)));
-  }
-  // With invoker gone, callback should be cancelled.
-  Thread::Current()->ProcessMessages(kWaitTimeout);
-  EXPECT_EQ(0, int_value_);
-}
-
-TEST_F(GuardedAsyncInvokeTest, CancelCallingThread) {
-  GuardedAsyncInvoker invoker;
-  // Try destroying calling thread during call.
-  {
-    Thread thread;
-    thread.Start();
-    // Try calling functor.
-    thread.Invoke<void>(RTC_FROM_HERE,
-                        Bind(&GuardedAsyncInvokeTest::AsyncInvokeIntCallback,
-                             static_cast<GuardedAsyncInvokeTest*>(this),
-                             &invoker, Thread::Current()));
-    // Wait for the call to begin.
-    ASSERT_TRUE(invoke_started_.Wait(kWaitTimeout));
-  }
-  // Calling thread is gone. Return message shouldn't happen.
-  Thread::Current()->ProcessMessages(kWaitTimeout);
-  EXPECT_EQ(0, int_value_);
-}
-
-TEST_F(GuardedAsyncInvokeTest, KillInvokerBeforeExecute) {
-  Thread thread;
-  thread.Start();
-  {
-    GuardedAsyncInvoker invoker;
-    // Try calling functor.
-    thread.Invoke<void>(RTC_FROM_HERE,
-                        Bind(&GuardedAsyncInvokeTest::AsyncInvokeIntCallback,
-                             static_cast<GuardedAsyncInvokeTest*>(this),
-                             &invoker, Thread::Current()));
-    // Wait for the call to begin.
-    ASSERT_TRUE(invoke_started_.Wait(kWaitTimeout));
-  }
-  // Invoker is destroyed. Function should not execute.
-  Thread::Current()->ProcessMessages(kWaitTimeout);
-  EXPECT_EQ(0, int_value_);
 }
 
 TEST_F(GuardedAsyncInvokeTest, Flush) {
@@ -781,29 +611,3 @@ TEST_F(GuardedAsyncInvokeTest, FlushWithIds) {
   EXPECT_FALSE(flag1.get());
   EXPECT_TRUE(flag2.get());
 }
-
-#if defined(WEBRTC_WIN)
-class ComThreadTest : public testing::Test, public MessageHandler {
- public:
-  ComThreadTest() : done_(false) {}
- protected:
-  virtual void OnMessage(Message* message) {
-    HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-    // S_FALSE means the thread was already inited for a multithread apartment.
-    EXPECT_EQ(S_FALSE, hr);
-    if (SUCCEEDED(hr)) {
-      CoUninitialize();
-    }
-    done_ = true;
-  }
-  bool done_;
-};
-
-TEST_F(ComThreadTest, ComInited) {
-  Thread* thread = new ComThread();
-  EXPECT_TRUE(thread->Start());
-  thread->Post(RTC_FROM_HERE, this, 0);
-  EXPECT_TRUE_WAIT(done_, 1000);
-  delete thread;
-}
-#endif

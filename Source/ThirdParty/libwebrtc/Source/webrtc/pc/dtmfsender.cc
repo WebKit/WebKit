@@ -39,10 +39,10 @@ static const int kDtmfCodeTwoSecondDelay = -1;
 static const int kDtmfTwoSecondInMs = 2000;
 static const char kDtmfValidTones[] = ",0123456789*#ABCDabcd";
 static const char kDtmfTonesTable[] = ",0123456789*#ABCD";
-// The duration cannot be more than 6000ms or less than 70ms. The gap between
+// The duration cannot be more than 6000ms or less than 40ms. The gap between
 // tones must be at least 50 ms.
 static const int kDtmfDefaultDurationMs = 100;
-static const int kDtmfMinDurationMs = 70;
+static const int kDtmfMinDurationMs = 40;
 static const int kDtmfMaxDurationMs = 6000;
 static const int kDtmfDefaultGapMs = 50;
 static const int kDtmfMinGapMs = 50;

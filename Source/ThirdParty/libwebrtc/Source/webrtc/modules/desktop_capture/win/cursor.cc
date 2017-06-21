@@ -13,11 +13,11 @@
 #include <algorithm>
 #include <memory>
 
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/desktop_capture/win/scoped_gdi_object.h"
 #include "webrtc/modules/desktop_capture/desktop_frame.h"
 #include "webrtc/modules/desktop_capture/desktop_geometry.h"
 #include "webrtc/modules/desktop_capture/mouse_cursor.h"
-#include "webrtc/system_wrappers/include/logging.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {

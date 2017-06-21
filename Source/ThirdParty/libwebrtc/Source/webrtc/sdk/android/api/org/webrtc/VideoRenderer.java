@@ -89,6 +89,38 @@ public class VideoRenderer {
       }
     }
 
+    /**
+     * Construct a frame of the given dimensions from VideoFrame.Buffer.
+     */
+    public I420Frame(int width, int height, int rotationDegree, float[] samplingMatrix,
+        VideoFrame.Buffer buffer, long nativeFramePointer) {
+      this.width = width;
+      this.height = height;
+      this.rotationDegree = rotationDegree;
+      if (rotationDegree % 90 != 0) {
+        throw new IllegalArgumentException("Rotation degree not multiple of 90: " + rotationDegree);
+      }
+      this.samplingMatrix = samplingMatrix;
+      if (buffer instanceof VideoFrame.TextureBuffer) {
+        VideoFrame.TextureBuffer textureBuffer = (VideoFrame.TextureBuffer) buffer;
+        this.yuvFrame = false;
+        this.textureId = textureBuffer.getTextureId();
+
+        this.yuvStrides = null;
+        this.yuvPlanes = null;
+      } else {
+        VideoFrame.I420Buffer i420Buffer = buffer.toI420();
+        this.yuvFrame = true;
+        this.yuvStrides =
+            new int[] {i420Buffer.getStrideY(), i420Buffer.getStrideU(), i420Buffer.getStrideV()};
+        this.yuvPlanes =
+            new ByteBuffer[] {i420Buffer.getDataY(), i420Buffer.getDataU(), i420Buffer.getDataV()};
+
+        this.textureId = 0;
+      }
+      this.nativeFramePointer = nativeFramePointer;
+    }
+
     public int rotatedWidth() {
       return (rotationDegree % 180 == 0) ? width : height;
     }

@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "webrtc/api/jsepsessiondescription.h"
 #include "webrtc/api/mediastreaminterface.h"
 #include "webrtc/api/peerconnectioninterface.h"
@@ -25,7 +26,9 @@
 #include "webrtc/base/sslstreamadapter.h"
 #include "webrtc/base/stringutils.h"
 #include "webrtc/base/thread.h"
+#include "webrtc/base/virtualsocketserver.h"
 #include "webrtc/media/base/fakevideocapturer.h"
+#include "webrtc/media/engine/webrtcmediaengine.h"
 #include "webrtc/media/sctp/sctptransportinternal.h"
 #include "webrtc/p2p/base/fakeportallocator.h"
 #include "webrtc/pc/audiotrack.h"
@@ -526,13 +529,6 @@ class MockTrackObserver : public ObserverInterface {
 
 class MockPeerConnectionObserver : public PeerConnectionObserver {
  public:
-  // We need these using declarations because there are two versions of each of
-  // the below methods and we only override one of them.
-  // TODO(deadbeef): Remove once there's only one version of the methods.
-  using PeerConnectionObserver::OnAddStream;
-  using PeerConnectionObserver::OnRemoveStream;
-  using PeerConnectionObserver::OnDataChannel;
-
   MockPeerConnectionObserver() : remote_streams_(StreamCollection::Create()) {}
   virtual ~MockPeerConnectionObserver() {
   }
@@ -640,47 +636,77 @@ class MockPeerConnectionObserver : public PeerConnectionObserver {
 
 }  // namespace
 
-// The PeerConnectionMediaConfig tests below verify that configuration
-// and constraints are propagated into the MediaConfig passed to
-// CreateMediaController. These settings are intended for MediaChannel
-// constructors, but that is not exercised by these unittest.
+// The PeerConnectionMediaConfig tests below verify that configuration and
+// constraints are propagated into the PeerConnection's MediaConfig. These
+// settings are intended for MediaChannel constructors, but that is not
+// exercised by these unittest.
 class PeerConnectionFactoryForTest : public webrtc::PeerConnectionFactory {
  public:
-  PeerConnectionFactoryForTest()
-      : webrtc::PeerConnectionFactory(
-            webrtc::CreateBuiltinAudioEncoderFactory(),
-            webrtc::CreateBuiltinAudioDecoderFactory()) {}
+  static rtc::scoped_refptr<PeerConnectionFactoryForTest>
+  CreatePeerConnectionFactoryForTest() {
+    auto audio_encoder_factory = webrtc::CreateBuiltinAudioEncoderFactory();
+    auto audio_decoder_factory = webrtc::CreateBuiltinAudioDecoderFactory();
 
-  webrtc::MediaControllerInterface* CreateMediaController(
-      const cricket::MediaConfig& config,
-      webrtc::RtcEventLog* event_log) const override {
-    create_media_controller_called_ = true;
-    create_media_controller_config_ = config;
+    auto media_engine = std::unique_ptr<cricket::MediaEngineInterface>(
+        cricket::WebRtcMediaEngineFactory::Create(
+            nullptr, audio_encoder_factory, audio_decoder_factory, nullptr,
+            nullptr, nullptr));
 
-    webrtc::MediaControllerInterface* mc =
-        PeerConnectionFactory::CreateMediaController(config, event_log);
-    EXPECT_TRUE(mc != nullptr);
-    return mc;
+    std::unique_ptr<webrtc::CallFactoryInterface> call_factory =
+        webrtc::CreateCallFactory();
+
+    std::unique_ptr<webrtc::RtcEventLogFactoryInterface> event_log_factory =
+        webrtc::CreateRtcEventLogFactory();
+
+    return new rtc::RefCountedObject<PeerConnectionFactoryForTest>(
+        rtc::Thread::Current(), rtc::Thread::Current(), rtc::Thread::Current(),
+        nullptr, audio_encoder_factory, audio_decoder_factory, nullptr, nullptr,
+        nullptr, std::move(media_engine), std::move(call_factory),
+        std::move(event_log_factory));
   }
+
+  PeerConnectionFactoryForTest(
+      rtc::Thread* network_thread,
+      rtc::Thread* worker_thread,
+      rtc::Thread* signaling_thread,
+      webrtc::AudioDeviceModule* default_adm,
+      rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
+      rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory,
+      cricket::WebRtcVideoEncoderFactory* video_encoder_factory,
+      cricket::WebRtcVideoDecoderFactory* video_decoder_factory,
+      rtc::scoped_refptr<webrtc::AudioMixer> audio_mixer,
+      std::unique_ptr<cricket::MediaEngineInterface> media_engine,
+      std::unique_ptr<webrtc::CallFactoryInterface> call_factory,
+      std::unique_ptr<webrtc::RtcEventLogFactoryInterface> event_log_factory)
+      : webrtc::PeerConnectionFactory(network_thread,
+                                      worker_thread,
+                                      signaling_thread,
+                                      default_adm,
+                                      audio_encoder_factory,
+                                      audio_decoder_factory,
+                                      video_encoder_factory,
+                                      video_decoder_factory,
+                                      audio_mixer,
+                                      std::move(media_engine),
+                                      std::move(call_factory),
+                                      std::move(event_log_factory)) {}
 
   cricket::TransportController* CreateTransportController(
       cricket::PortAllocator* port_allocator,
       bool redetermine_role_on_ice_restart) override {
     transport_controller = new cricket::TransportController(
         rtc::Thread::Current(), rtc::Thread::Current(), port_allocator,
-        redetermine_role_on_ice_restart);
+        redetermine_role_on_ice_restart, rtc::CryptoOptions());
     return transport_controller;
   }
 
   cricket::TransportController* transport_controller;
-  // Mutable, so they can be modified in the above const-declared method.
-  mutable bool create_media_controller_called_ = false;
-  mutable cricket::MediaConfig create_media_controller_config_;
 };
 
 class PeerConnectionInterfaceTest : public testing::Test {
  protected:
-  PeerConnectionInterfaceTest() {
+  PeerConnectionInterfaceTest()
+      : vss_(new rtc::VirtualSocketServer()), main_(vss_.get()) {
 #ifdef WEBRTC_ANDROID
     webrtc::InitializeAndroidObjects();
 #endif
@@ -692,7 +718,7 @@ class PeerConnectionInterfaceTest : public testing::Test {
         nullptr, nullptr, nullptr);
     ASSERT_TRUE(pc_factory_);
     pc_factory_for_test_ =
-        new rtc::RefCountedObject<PeerConnectionFactoryForTest>();
+        PeerConnectionFactoryForTest::CreatePeerConnectionFactoryForTest();
     pc_factory_for_test_->Initialize();
   }
 
@@ -739,6 +765,8 @@ class PeerConnectionInterfaceTest : public testing::Test {
         new cricket::FakePortAllocator(rtc::Thread::Current(), nullptr));
     port_allocator_ = port_allocator.get();
 
+    // Create certificate generator unless DTLS constraint is explicitly set to
+    // false.
     std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator;
     bool dtls;
     if (FindConstraint(constraints,
@@ -857,7 +885,7 @@ class PeerConnectionInterfaceTest : public testing::Test {
       pc_->CreateAnswer(observer, constraints);
     }
     EXPECT_EQ_WAIT(true, observer->called(), kTimeout);
-    desc->reset(observer->release_desc());
+    *desc = observer->MoveDescription();
     return observer->result();
   }
 
@@ -1142,6 +1170,8 @@ class PeerConnectionInterfaceTest : public testing::Test {
     return audio_desc->streams()[0].cname;
   }
 
+  std::unique_ptr<rtc::VirtualSocketServer> vss_;
+  rtc::AutoSocketServerThread main_;
   cricket::FakePortAllocator* port_allocator_ = nullptr;
   FakeRTCCertificateGenerator* fake_certificate_generator_ = nullptr;
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> pc_factory_;
@@ -1654,6 +1684,18 @@ TEST_F(PeerConnectionInterfaceTest, RemoveTrackAfterAddStream) {
   const cricket::MediaContentDescription* video_desc =
       cricket::GetFirstVideoContentDescription(offer->description());
   EXPECT_TRUE(video_desc == nullptr);
+}
+
+// Verify that CreateDtmfSender only succeeds if called with a valid local
+// track. Other aspects of DtmfSenders are tested in
+// peerconnection_integrationtest.cc.
+TEST_F(PeerConnectionInterfaceTest, CreateDtmfSenderWithInvalidParams) {
+  CreatePeerConnection();
+  AddAudioVideoStream(kStreamLabel1, "audio_label", "video_label");
+  EXPECT_EQ(nullptr, pc_->CreateDtmfSender(nullptr));
+  rtc::scoped_refptr<webrtc::AudioTrackInterface> non_localtrack(
+      pc_factory_->CreateAudioTrack("dummy_track", nullptr));
+  EXPECT_EQ(nullptr, pc_->CreateDtmfSender(non_localtrack));
 }
 
 // Test creating a sender with a stream ID, and ensure the ID is populated
@@ -2282,6 +2324,43 @@ TEST_F(PeerConnectionInterfaceTest,
   RTCError error;
   EXPECT_FALSE(pc_->SetConfiguration(config, &error));
   EXPECT_EQ(RTCErrorType::INVALID_MODIFICATION, error.type());
+}
+
+// Test that after setting an answer, extra pooled sessions are discarded. The
+// ICE candidate pool is only intended to be used for the first offer/answer.
+TEST_F(PeerConnectionInterfaceTest,
+       ExtraPooledSessionsDiscardedAfterApplyingAnswer) {
+  CreatePeerConnection();
+
+  // Set a larger-than-necessary size.
+  PeerConnectionInterface::RTCConfiguration config;
+  config.ice_candidate_pool_size = 4;
+  EXPECT_TRUE(pc_->SetConfiguration(config));
+
+  // Do offer/answer.
+  CreateOfferAsRemoteDescription();
+  CreateAnswerAsLocalDescription();
+
+  // Expect no pooled sessions to be left.
+  const cricket::PortAllocatorSession* session =
+      port_allocator_->GetPooledSession();
+  EXPECT_EQ(nullptr, session);
+}
+
+// After Close is called, pooled candidates should be discarded so as to not
+// waste network resources.
+TEST_F(PeerConnectionInterfaceTest, PooledSessionsDiscardedAfterClose) {
+  CreatePeerConnection();
+
+  PeerConnectionInterface::RTCConfiguration config;
+  config.ice_candidate_pool_size = 3;
+  EXPECT_TRUE(pc_->SetConfiguration(config));
+  pc_->Close();
+
+  // Expect no pooled sessions to be left.
+  const cricket::PortAllocatorSession* session =
+      port_allocator_->GetPooledSession();
+  EXPECT_EQ(nullptr, session);
 }
 
 // Test that SetConfiguration returns an invalid modification error if
@@ -3120,22 +3199,230 @@ TEST_F(PeerConnectionInterfaceTest,
   pc_->StopRtcEventLog();
 }
 
+// Test that generated offers/answers include "ice-option:trickle".
+TEST_F(PeerConnectionInterfaceTest, OffersAndAnswersHaveTrickleIceOption) {
+  CreatePeerConnection();
+
+  // First, create an offer with audio/video.
+  FakeConstraints constraints;
+  constraints.SetMandatoryReceiveAudio(true);
+  constraints.SetMandatoryReceiveVideo(true);
+  std::unique_ptr<SessionDescriptionInterface> offer;
+  ASSERT_TRUE(DoCreateOffer(&offer, &constraints));
+  cricket::SessionDescription* desc = offer->description();
+  ASSERT_EQ(2u, desc->transport_infos().size());
+  EXPECT_TRUE(desc->transport_infos()[0].description.HasOption("trickle"));
+  EXPECT_TRUE(desc->transport_infos()[1].description.HasOption("trickle"));
+
+  // Apply the offer as a remote description, then create an answer.
+  EXPECT_TRUE(DoSetRemoteDescription(offer.release()));
+  std::unique_ptr<SessionDescriptionInterface> answer;
+  ASSERT_TRUE(DoCreateAnswer(&answer, &constraints));
+  desc = answer->description();
+  ASSERT_EQ(2u, desc->transport_infos().size());
+  EXPECT_TRUE(desc->transport_infos()[0].description.HasOption("trickle"));
+  EXPECT_TRUE(desc->transport_infos()[1].description.HasOption("trickle"));
+}
+
+// Test that ICE renomination isn't offered if it's not enabled in the PC's
+// RTCConfiguration.
+TEST_F(PeerConnectionInterfaceTest, IceRenominationNotOffered) {
+  PeerConnectionInterface::RTCConfiguration config;
+  config.enable_ice_renomination = false;
+  CreatePeerConnection(config, nullptr);
+  AddVoiceStream("foo");
+
+  std::unique_ptr<SessionDescriptionInterface> offer;
+  ASSERT_TRUE(DoCreateOffer(&offer, nullptr));
+  cricket::SessionDescription* desc = offer->description();
+  EXPECT_EQ(1u, desc->transport_infos().size());
+  EXPECT_FALSE(
+      desc->transport_infos()[0].description.GetIceParameters().renomination);
+}
+
+// Test that the ICE renomination option is present in generated offers/answers
+// if it's enabled in the PC's RTCConfiguration.
+TEST_F(PeerConnectionInterfaceTest, IceRenominationOptionInOfferAndAnswer) {
+  PeerConnectionInterface::RTCConfiguration config;
+  config.enable_ice_renomination = true;
+  CreatePeerConnection(config, nullptr);
+  AddVoiceStream("foo");
+
+  std::unique_ptr<SessionDescriptionInterface> offer;
+  ASSERT_TRUE(DoCreateOffer(&offer, nullptr));
+  cricket::SessionDescription* desc = offer->description();
+  EXPECT_EQ(1u, desc->transport_infos().size());
+  EXPECT_TRUE(
+      desc->transport_infos()[0].description.GetIceParameters().renomination);
+
+  // Set the offer as a remote description, then create an answer and ensure it
+  // has the renomination flag too.
+  EXPECT_TRUE(DoSetRemoteDescription(offer.release()));
+  std::unique_ptr<SessionDescriptionInterface> answer;
+  ASSERT_TRUE(DoCreateAnswer(&answer, nullptr));
+  desc = answer->description();
+  EXPECT_EQ(1u, desc->transport_infos().size());
+  EXPECT_TRUE(
+      desc->transport_infos()[0].description.GetIceParameters().renomination);
+}
+
+// Test that if CreateOffer is called with the deprecated "offer to receive
+// audio/video" constraints, they're processed and result in an offer with
+// audio/video sections just as if RTCOfferAnswerOptions had been used.
+TEST_F(PeerConnectionInterfaceTest, CreateOfferWithOfferToReceiveConstraints) {
+  CreatePeerConnection();
+
+  FakeConstraints constraints;
+  constraints.SetMandatoryReceiveAudio(true);
+  constraints.SetMandatoryReceiveVideo(true);
+  std::unique_ptr<SessionDescriptionInterface> offer;
+  ASSERT_TRUE(DoCreateOffer(&offer, &constraints));
+
+  cricket::SessionDescription* desc = offer->description();
+  const cricket::ContentInfo* audio = cricket::GetFirstAudioContent(desc);
+  const cricket::ContentInfo* video = cricket::GetFirstVideoContent(desc);
+  ASSERT_NE(nullptr, audio);
+  ASSERT_NE(nullptr, video);
+  EXPECT_FALSE(audio->rejected);
+  EXPECT_FALSE(video->rejected);
+}
+
+// Test that if CreateAnswer is called with the deprecated "offer to receive
+// audio/video" constraints, they're processed and can be used to reject an
+// offered m= section just as can be done with RTCOfferAnswerOptions;
+TEST_F(PeerConnectionInterfaceTest, CreateAnswerWithOfferToReceiveConstraints) {
+  CreatePeerConnection();
+
+  // First, create an offer with audio/video and apply it as a remote
+  // description.
+  FakeConstraints constraints;
+  constraints.SetMandatoryReceiveAudio(true);
+  constraints.SetMandatoryReceiveVideo(true);
+  std::unique_ptr<SessionDescriptionInterface> offer;
+  ASSERT_TRUE(DoCreateOffer(&offer, &constraints));
+  EXPECT_TRUE(DoSetRemoteDescription(offer.release()));
+
+  // Now create answer that rejects audio/video.
+  constraints.SetMandatoryReceiveAudio(false);
+  constraints.SetMandatoryReceiveVideo(false);
+  std::unique_ptr<SessionDescriptionInterface> answer;
+  ASSERT_TRUE(DoCreateAnswer(&answer, &constraints));
+
+  cricket::SessionDescription* desc = answer->description();
+  const cricket::ContentInfo* audio = cricket::GetFirstAudioContent(desc);
+  const cricket::ContentInfo* video = cricket::GetFirstVideoContent(desc);
+  ASSERT_NE(nullptr, audio);
+  ASSERT_NE(nullptr, video);
+  EXPECT_TRUE(audio->rejected);
+  EXPECT_TRUE(video->rejected);
+}
+
+#ifdef HAVE_SCTP
+#define MAYBE_DataChannelOnlyOfferWithMaxBundlePolicy \
+  DataChannelOnlyOfferWithMaxBundlePolicy
+#else
+#define MAYBE_DataChannelOnlyOfferWithMaxBundlePolicy \
+  DISABLED_DataChannelOnlyOfferWithMaxBundlePolicy
+#endif
+
+// Test that negotiation can succeed with a data channel only, and with the max
+// bundle policy. Previously there was a bug that prevented this.
+TEST_F(PeerConnectionInterfaceTest,
+       MAYBE_DataChannelOnlyOfferWithMaxBundlePolicy) {
+  PeerConnectionInterface::RTCConfiguration config;
+  config.bundle_policy = PeerConnectionInterface::kBundlePolicyMaxBundle;
+  CreatePeerConnection(config, nullptr);
+
+  // First, create an offer with only a data channel and apply it as a remote
+  // description.
+  pc_->CreateDataChannel("test", nullptr);
+  std::unique_ptr<SessionDescriptionInterface> offer;
+  ASSERT_TRUE(DoCreateOffer(&offer, nullptr));
+  EXPECT_TRUE(DoSetRemoteDescription(offer.release()));
+
+  // Create and set answer as well.
+  std::unique_ptr<SessionDescriptionInterface> answer;
+  ASSERT_TRUE(DoCreateAnswer(&answer, nullptr));
+  EXPECT_TRUE(DoSetLocalDescription(answer.release()));
+}
+
+TEST_F(PeerConnectionInterfaceTest, SetBitrateWithoutMinSucceeds) {
+  CreatePeerConnection();
+  PeerConnectionInterface::BitrateParameters bitrate;
+  bitrate.current_bitrate_bps = rtc::Optional<int>(100000);
+  EXPECT_TRUE(pc_->SetBitrate(bitrate).ok());
+}
+
+TEST_F(PeerConnectionInterfaceTest, SetBitrateNegativeMinFails) {
+  CreatePeerConnection();
+  PeerConnectionInterface::BitrateParameters bitrate;
+  bitrate.min_bitrate_bps = rtc::Optional<int>(-1);
+  EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
+}
+
+TEST_F(PeerConnectionInterfaceTest, SetBitrateCurrentLessThanMinFails) {
+  CreatePeerConnection();
+  PeerConnectionInterface::BitrateParameters bitrate;
+  bitrate.min_bitrate_bps = rtc::Optional<int>(5);
+  bitrate.current_bitrate_bps = rtc::Optional<int>(3);
+  EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
+}
+
+TEST_F(PeerConnectionInterfaceTest, SetBitrateCurrentNegativeFails) {
+  CreatePeerConnection();
+  PeerConnectionInterface::BitrateParameters bitrate;
+  bitrate.current_bitrate_bps = rtc::Optional<int>(-1);
+  EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
+}
+
+TEST_F(PeerConnectionInterfaceTest, SetBitrateMaxLessThanCurrentFails) {
+  CreatePeerConnection();
+  PeerConnectionInterface::BitrateParameters bitrate;
+  bitrate.current_bitrate_bps = rtc::Optional<int>(10);
+  bitrate.max_bitrate_bps = rtc::Optional<int>(8);
+  EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
+}
+
+TEST_F(PeerConnectionInterfaceTest, SetBitrateMaxLessThanMinFails) {
+  CreatePeerConnection();
+  PeerConnectionInterface::BitrateParameters bitrate;
+  bitrate.min_bitrate_bps = rtc::Optional<int>(10);
+  bitrate.max_bitrate_bps = rtc::Optional<int>(8);
+  EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
+}
+
+TEST_F(PeerConnectionInterfaceTest, SetBitrateMaxNegativeFails) {
+  CreatePeerConnection();
+  PeerConnectionInterface::BitrateParameters bitrate;
+  bitrate.max_bitrate_bps = rtc::Optional<int>(-1);
+  EXPECT_FALSE(pc_->SetBitrate(bitrate).ok());
+}
+
+// The current bitrate from Call's BitrateConfigMask is currently clamped by
+// Call's BitrateConfig, which comes from the SDP or a default value. This test
+// checks that a call to SetBitrate with a current bitrate that will be clamped
+// succeeds.
+TEST_F(PeerConnectionInterfaceTest, SetBitrateCurrentLessThanImplicitMin) {
+  CreatePeerConnection();
+  PeerConnectionInterface::BitrateParameters bitrate;
+  bitrate.current_bitrate_bps = rtc::Optional<int>(1);
+  EXPECT_TRUE(pc_->SetBitrate(bitrate).ok());
+}
+
 class PeerConnectionMediaConfigTest : public testing::Test {
  protected:
   void SetUp() override {
-    pcf_ = new rtc::RefCountedObject<PeerConnectionFactoryForTest>();
+    pcf_ = PeerConnectionFactoryForTest::CreatePeerConnectionFactoryForTest();
     pcf_->Initialize();
   }
-  const cricket::MediaConfig& TestCreatePeerConnection(
+  const cricket::MediaConfig TestCreatePeerConnection(
       const PeerConnectionInterface::RTCConfiguration& config,
       const MediaConstraintsInterface *constraints) {
-    pcf_->create_media_controller_called_ = false;
 
     rtc::scoped_refptr<PeerConnectionInterface> pc(pcf_->CreatePeerConnection(
         config, constraints, nullptr, nullptr, &observer_));
     EXPECT_TRUE(pc.get());
-    EXPECT_TRUE(pcf_->create_media_controller_called_);
-    return pcf_->create_media_controller_config_;
+    return pc->GetConfiguration().media_config;
   }
 
   rtc::scoped_refptr<PeerConnectionFactoryForTest> pcf_;
@@ -3158,7 +3445,7 @@ TEST_F(PeerConnectionMediaConfigTest, TestDefaults) {
 }
 
 // This test verifies the DSCP constraint is recognized and passed to
-// the CreateMediaController call.
+// the PeerConnection.
 TEST_F(PeerConnectionMediaConfigTest, TestDscpConstraintTrue) {
   PeerConnectionInterface::RTCConfiguration config;
   FakeConstraints constraints;
@@ -3171,7 +3458,7 @@ TEST_F(PeerConnectionMediaConfigTest, TestDscpConstraintTrue) {
 }
 
 // This test verifies the cpu overuse detection constraint is
-// recognized and passed to the CreateMediaController call.
+// recognized and passed to the PeerConnection.
 TEST_F(PeerConnectionMediaConfigTest, TestCpuOveruseConstraintFalse) {
   PeerConnectionInterface::RTCConfiguration config;
   FakeConstraints constraints;
@@ -3185,7 +3472,7 @@ TEST_F(PeerConnectionMediaConfigTest, TestCpuOveruseConstraintFalse) {
 }
 
 // This test verifies that the disable_prerenderer_smoothing flag is
-// propagated from RTCConfiguration to the CreateMediaController call.
+// propagated from RTCConfiguration to the PeerConnection.
 TEST_F(PeerConnectionMediaConfigTest, TestDisablePrerendererSmoothingTrue) {
   PeerConnectionInterface::RTCConfiguration config;
   FakeConstraints constraints;
@@ -3198,7 +3485,7 @@ TEST_F(PeerConnectionMediaConfigTest, TestDisablePrerendererSmoothingTrue) {
 }
 
 // This test verifies the suspend below min bitrate constraint is
-// recognized and passed to the CreateMediaController call.
+// recognized and passed to the PeerConnection.
 TEST_F(PeerConnectionMediaConfigTest,
        TestSuspendBelowMinBitrateConstraintTrue) {
   PeerConnectionInterface::RTCConfiguration config;

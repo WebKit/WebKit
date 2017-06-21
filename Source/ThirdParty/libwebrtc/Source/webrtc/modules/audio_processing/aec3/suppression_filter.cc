@@ -16,6 +16,7 @@
 #include <functional>
 #include <numeric>
 
+#include "webrtc/base/safe_minmax.h"
 #include "webrtc/modules/audio_processing/utility/ooura_fft.h"
 
 namespace webrtc {
@@ -74,6 +75,7 @@ void SuppressionFilter::ApplyGain(
     const FftData& comfort_noise,
     const FftData& comfort_noise_high_band,
     const std::array<float, kFftLengthBy2Plus1>& suppression_gain,
+    float high_bands_gain,
     std::vector<std::vector<float>>* e) {
   RTC_DCHECK(e);
   RTC_DCHECK_EQ(e->size(), NumBandsForRate(sample_rate_hz_));
@@ -121,7 +123,7 @@ void SuppressionFilter::ApplyGain(
   std::transform((*e)[0].begin(), (*e)[0].end(), e_extended.begin(),
                  (*e)[0].begin(), std::plus<float>());
   std::for_each((*e)[0].begin(), (*e)[0].end(), [](float& x_k) {
-    x_k = std::max(std::min(x_k, 32767.0f), -32768.0f);
+    x_k = rtc::SafeClamp(x_k, -32768.f, 32767.f);
   });
   std::copy(e_extended.begin() + kFftLengthBy2, e_extended.begin() + kFftLength,
             std::begin(e_output_old_[0]));
@@ -138,11 +140,7 @@ void SuppressionFilter::ApplyGain(
     fft_.Ifft(E, &time_domain_high_band_noise);
 
     // Scale and apply the noise to the signals.
-    RTC_DCHECK_LT(3, suppression_gain.size());
-    float high_bands_gain = *std::min_element(suppression_gain.begin() + 32,
-                                              suppression_gain.end());
-
-    float high_bands_noise_scaling =
+    const float high_bands_noise_scaling =
         0.4f * std::max(1.f - high_bands_gain, 0.f);
 
     std::transform(
@@ -157,7 +155,7 @@ void SuppressionFilter::ApplyGain(
     if (e->size() > 2) {
       RTC_DCHECK_EQ(3, e->size());
       std::for_each((*e)[2].begin(), (*e)[2].end(), [&](float& a) {
-        a = std::max(std::min(a * high_bands_gain, 32767.0f), -32768.0f);
+        a = rtc::SafeClamp(a * high_bands_gain, -32768.f, 32767.f);
       });
     }
 

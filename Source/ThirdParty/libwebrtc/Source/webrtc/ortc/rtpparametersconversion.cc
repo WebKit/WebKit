@@ -277,6 +277,22 @@ rtc::Optional<RtcpFeedback> ToRtcpFeedback(
   return rtc::Optional<RtcpFeedback>();
 }
 
+std::vector<RtpEncodingParameters> ToRtpEncodings(
+    const cricket::StreamParamsVec& stream_params) {
+  std::vector<RtpEncodingParameters> rtp_encodings;
+  for (const cricket::StreamParams& stream_param : stream_params) {
+    RtpEncodingParameters rtp_encoding;
+    rtp_encoding.ssrc.emplace(stream_param.first_ssrc());
+    uint32_t rtx_ssrc = 0;
+    if (stream_param.GetFidSsrc(stream_param.first_ssrc(), &rtx_ssrc)) {
+      RtpRtxParameters rtx_param(rtx_ssrc);
+      rtp_encoding.rtx.emplace(rtx_param);
+    }
+    rtp_encodings.push_back(std::move(rtp_encoding));
+  }
+  return rtp_encodings;
+}
+
 template <typename C>
 cricket::MediaType KindOfCodec();
 
@@ -332,6 +348,47 @@ template RtpCodecCapability ToRtpCodecCapability<cricket::AudioCodec>(
 template RtpCodecCapability ToRtpCodecCapability<cricket::VideoCodec>(
     const cricket::VideoCodec& cricket_codec);
 
+template <typename C>
+static void ToRtpCodecParametersTypeSpecific(const C& cricket_codec,
+                                             RtpCodecParameters* codec);
+template <>
+void ToRtpCodecParametersTypeSpecific<cricket::AudioCodec>(
+    const cricket::AudioCodec& cricket_codec,
+    RtpCodecParameters* codec) {
+  codec->num_channels =
+      rtc::Optional<int>(static_cast<int>(cricket_codec.channels));
+}
+
+template <>
+void ToRtpCodecParametersTypeSpecific<cricket::VideoCodec>(
+    const cricket::VideoCodec& cricket_codec,
+    RtpCodecParameters* codec) {}
+
+template <typename C>
+RtpCodecParameters ToRtpCodecParameters(const C& cricket_codec) {
+  RtpCodecParameters codec_param;
+  codec_param.name = cricket_codec.name;
+  codec_param.kind = KindOfCodec<C>();
+  codec_param.clock_rate.emplace(cricket_codec.clockrate);
+  codec_param.payload_type = cricket_codec.id;
+  for (const cricket::FeedbackParam& cricket_feedback :
+       cricket_codec.feedback_params.params()) {
+    rtc::Optional<RtcpFeedback> feedback = ToRtcpFeedback(cricket_feedback);
+    if (feedback) {
+      codec_param.rtcp_feedback.push_back(feedback.MoveValue());
+    }
+  }
+  ToRtpCodecParametersTypeSpecific(cricket_codec, &codec_param);
+  codec_param.parameters.insert(cricket_codec.params.begin(),
+                                cricket_codec.params.end());
+  return codec_param;
+}
+
+template RtpCodecParameters ToRtpCodecParameters<cricket::AudioCodec>(
+    const cricket::AudioCodec& cricket_codec);
+template RtpCodecParameters ToRtpCodecParameters<cricket::VideoCodec>(
+    const cricket::VideoCodec& cricket_codec);
+
 template <class C>
 RtpCapabilities ToRtpCapabilities(
     const std::vector<C>& cricket_codecs,
@@ -372,5 +429,31 @@ template RtpCapabilities ToRtpCapabilities<cricket::AudioCodec>(
 template RtpCapabilities ToRtpCapabilities<cricket::VideoCodec>(
     const std::vector<cricket::VideoCodec>& cricket_codecs,
     const cricket::RtpHeaderExtensions& cricket_extensions);
+
+template <class C>
+RtpParameters ToRtpParameters(
+    const std::vector<C>& cricket_codecs,
+    const cricket::RtpHeaderExtensions& cricket_extensions,
+    const cricket::StreamParamsVec& stream_params) {
+  RtpParameters rtp_parameters;
+  for (const C& cricket_codec : cricket_codecs) {
+    rtp_parameters.codecs.push_back(ToRtpCodecParameters(cricket_codec));
+  }
+  for (const RtpExtension& cricket_extension : cricket_extensions) {
+    rtp_parameters.header_extensions.emplace_back(cricket_extension.uri,
+                                                  cricket_extension.id);
+  }
+  rtp_parameters.encodings = ToRtpEncodings(stream_params);
+  return rtp_parameters;
+}
+
+template RtpParameters ToRtpParameters<cricket::AudioCodec>(
+    const std::vector<cricket::AudioCodec>& cricket_codecs,
+    const cricket::RtpHeaderExtensions& cricket_extensions,
+    const cricket::StreamParamsVec& stream_params);
+template RtpParameters ToRtpParameters<cricket::VideoCodec>(
+    const std::vector<cricket::VideoCodec>& cricket_codecs,
+    const cricket::RtpHeaderExtensions& cricket_extensions,
+    const cricket::StreamParamsVec& stream_params);
 
 }  // namespace webrtc

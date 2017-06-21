@@ -13,7 +13,6 @@
 #include <algorithm>
 
 #include "webrtc/base/logging.h"
-#include "webrtc/system_wrappers/include/trace.h"
 
 namespace webrtc {
 

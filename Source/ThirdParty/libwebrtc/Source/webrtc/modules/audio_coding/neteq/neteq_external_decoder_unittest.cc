@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/neteq/mock/mock_external_decoder_pcm16b.h"
 #include "webrtc/modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "webrtc/modules/audio_coding/neteq/tools/neteq_external_decoder_test.h"
@@ -130,13 +131,12 @@ class NetEqExternalDecoderUnitTest : public test::NetEqExternalDecoderTest {
     }
   }
 
-  void InsertPacket(WebRtcRTPHeader rtp_header,
+  void InsertPacket(RTPHeader rtp_header,
                     rtc::ArrayView<const uint8_t> payload,
                     uint32_t receive_timestamp) override {
-    EXPECT_CALL(
-        *external_decoder_,
-        IncomingPacket(_, payload.size(), rtp_header.header.sequenceNumber,
-                       rtp_header.header.timestamp, receive_timestamp));
+    EXPECT_CALL(*external_decoder_,
+                IncomingPacket(_, payload.size(), rtp_header.sequenceNumber,
+                               rtp_header.timestamp, receive_timestamp));
     NetEqExternalDecoderTest::InsertPacket(rtp_header, payload,
                                            receive_timestamp);
   }
@@ -159,7 +159,7 @@ class NetEqExternalDecoderUnitTest : public test::NetEqExternalDecoderTest {
   uint32_t last_send_time_;
   uint32_t last_arrival_time_;
   std::unique_ptr<test::InputAudioFile> input_file_;
-  WebRtcRTPHeader rtp_header_;
+  RTPHeader rtp_header_;
 };
 
 // This test encodes a few packets of PCM16b 32 kHz data and inserts it into two
@@ -200,13 +200,15 @@ class NetEqExternalVsInternalDecoderTest : public NetEqExternalDecoderUnitTest,
     // Get audio from external decoder instance.
     GetOutputAudio(&output_);
 
+    const int16_t* output_data = output_.data();
+    const int16_t* output_internal_data = output_internal_.data();
     for (size_t i = 0; i < output_.samples_per_channel_; ++i) {
-      ASSERT_EQ(output_.data_[i], output_internal_.data_[i])
+      ASSERT_EQ(output_data[i], output_internal_data[i])
           << "Diff in sample " << i << ".";
     }
   }
 
-  void InsertPacket(WebRtcRTPHeader rtp_header,
+  void InsertPacket(RTPHeader rtp_header,
                     rtc::ArrayView<const uint8_t> payload,
                     uint32_t receive_timestamp) override {
     // Insert packet in internal decoder.
@@ -298,8 +300,9 @@ class LargeTimestampJumpTest : public NetEqExternalDecoderUnitTest,
     }
 
     ASSERT_EQ(1u, output.num_channels_);
+    const int16_t* output_data = output.data();
     for (size_t i = 0; i < output.samples_per_channel_; ++i) {
-      if (output.data_[i] != 0)
+      if (output_data[i] != 0)
         return;
     }
     EXPECT_TRUE(false)

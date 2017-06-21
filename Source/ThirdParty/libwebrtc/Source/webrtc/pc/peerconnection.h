@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "webrtc/api/peerconnectioninterface.h"
+#include "webrtc/pc/iceserverparsing.h"
 #include "webrtc/pc/peerconnectionfactory.h"
 #include "webrtc/pc/rtcstatscollector.h"
 #include "webrtc/pc/rtpreceiver.h"
@@ -53,14 +54,6 @@ bool ExtractMediaSessionOptions(
 bool ParseConstraintsForAnswer(const MediaConstraintsInterface* constraints,
                                cricket::MediaSessionOptions* session_options);
 
-// Parses the URLs for each server in |servers| to build |stun_servers| and
-// |turn_servers|. Can return SYNTAX_ERROR if the URL is malformed, or
-// INVALID_PARAMETER if a TURN server is missing |username| or |password|.
-RTCErrorType ParseIceServers(
-    const PeerConnectionInterface::IceServers& servers,
-    cricket::ServerAddresses* stun_servers,
-    std::vector<cricket::RelayServerConfig>* turn_servers);
-
 // PeerConnection implements the PeerConnectionInterface interface.
 // It uses WebRtcSession to implement the PeerConnection functionality.
 class PeerConnection : public PeerConnectionInterface,
@@ -68,7 +61,9 @@ class PeerConnection : public PeerConnectionInterface,
                        public rtc::MessageHandler,
                        public sigslot::has_slots<> {
  public:
-  explicit PeerConnection(PeerConnectionFactory* factory);
+  explicit PeerConnection(PeerConnectionFactory* factory,
+                          std::unique_ptr<RtcEventLog> event_log,
+                          std::unique_ptr<Call> call);
 
   bool Initialize(
       const PeerConnectionInterface::RTCConfiguration& configuration,
@@ -151,6 +146,8 @@ class PeerConnection : public PeerConnectionInterface,
 
   void RegisterUMAObserver(UMAObserver* observer) override;
 
+  RTCError SetBitrate(const BitrateParameters& bitrate) override;
+
   bool StartRtcEventLog(rtc::PlatformFile file,
                         int64_t max_size_bytes) override;
   void StopRtcEventLog() override;
@@ -203,9 +200,10 @@ class PeerConnection : public PeerConnectionInterface,
                           VideoTrackInterface* video_track);
 
   // Implements IceObserver
-  void OnIceConnectionChange(IceConnectionState new_state) override;
+  void OnIceConnectionStateChange(IceConnectionState new_state) override;
   void OnIceGatheringChange(IceGatheringState new_state) override;
-  void OnIceCandidate(const IceCandidateInterface* candidate) override;
+  void OnIceCandidate(
+      std::unique_ptr<IceCandidateInterface> candidate) override;
   void OnIceCandidatesRemoved(
       const std::vector<cricket::Candidate>& candidates) override;
   void OnIceConnectionReceivingChange(bool receiving) override;
@@ -405,15 +403,16 @@ class PeerConnection : public PeerConnectionInterface,
   rtc::scoped_refptr<PeerConnectionFactory> factory_;
   PeerConnectionObserver* observer_;
   UMAObserver* uma_observer_;
+
+  // The EventLog needs to outlive |call_| (and any other object that uses it).
+  std::unique_ptr<RtcEventLog> event_log_;
+
   SignalingState signaling_state_;
   IceConnectionState ice_connection_state_;
   IceGatheringState ice_gathering_state_;
   PeerConnectionInterface::RTCConfiguration configuration_;
 
   std::unique_ptr<cricket::PortAllocator> port_allocator_;
-  // The EventLog needs to outlive the media controller.
-  std::unique_ptr<RtcEventLog> event_log_;
-  std::unique_ptr<MediaControllerInterface> media_controller_;
 
   // One PeerConnection has only one RTCP CNAME.
   // https://tools.ietf.org/html/draft-ietf-rtcweb-rtp-usage-26#section-4.9
@@ -440,14 +439,16 @@ class PeerConnection : public PeerConnectionInterface,
 
   bool remote_peer_supports_msid_ = false;
 
+  std::unique_ptr<Call> call_;
+  std::unique_ptr<WebRtcSession> session_;
+  std::unique_ptr<StatsCollector> stats_;  // A pointer is passed to senders_
+  rtc::scoped_refptr<RTCStatsCollector> stats_collector_;
+
   std::vector<rtc::scoped_refptr<RtpSenderProxyWithInternal<RtpSenderInternal>>>
       senders_;
   std::vector<
       rtc::scoped_refptr<RtpReceiverProxyWithInternal<RtpReceiverInternal>>>
       receivers_;
-  std::unique_ptr<WebRtcSession> session_;
-  std::unique_ptr<StatsCollector> stats_;
-  rtc::scoped_refptr<RTCStatsCollector> stats_collector_;
 };
 
 }  // namespace webrtc

@@ -21,6 +21,7 @@
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
+
 // Delta times between two successive playout callbacks are limited to this
 // value before added to an internal array.
 const size_t kMaxDeltaTimeInMs = 500;
@@ -251,6 +252,12 @@ class AudioDeviceBuffer {
   // Setting this member to false prevents (possiby invalid) log messages from
   // being printed in the LogStats() task.
   bool log_stats_ ACCESS_ON(task_queue_);
+
+// Should *never* be defined in production builds. Only used for testing.
+// When defined, the output signal will be replaced by a sinus tone at 440Hz.
+#ifdef AUDIO_DEVICE_PLAYS_SINUS_TONE
+  double phase_ ACCESS_ON(playout_thread_checker_);
+#endif
 };
 
 }  // namespace webrtc

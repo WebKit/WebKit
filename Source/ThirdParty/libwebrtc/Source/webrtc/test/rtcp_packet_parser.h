@@ -25,10 +25,8 @@
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rapid_resync_request.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/remb.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rpsi.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sli.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
@@ -90,10 +88,8 @@ class RtcpPacketParser {
     return &receiver_report_;
   }
   PacketCounter<rtcp::Remb>* remb() { return &remb_; }
-  PacketCounter<rtcp::Rpsi>* rpsi() { return &rpsi_; }
   PacketCounter<rtcp::Sdes>* sdes() { return &sdes_; }
   PacketCounter<rtcp::SenderReport>* sender_report() { return &sender_report_; }
-  PacketCounter<rtcp::Sli>* sli() { return &sli_; }
   PacketCounter<rtcp::Tmmbn>* tmmbn() { return &tmmbn_; }
   PacketCounter<rtcp::Tmmbr>* tmmbr() { return &tmmbr_; }
   PacketCounter<rtcp::TransportFeedback>* transport_feedback() {
@@ -112,10 +108,8 @@ class RtcpPacketParser {
   PacketCounter<rtcp::RapidResyncRequest> rrr_;
   PacketCounter<rtcp::ReceiverReport> receiver_report_;
   PacketCounter<rtcp::Remb> remb_;
-  PacketCounter<rtcp::Rpsi> rpsi_;
   PacketCounter<rtcp::Sdes> sdes_;
   PacketCounter<rtcp::SenderReport> sender_report_;
-  PacketCounter<rtcp::Sli> sli_;
   PacketCounter<rtcp::Tmmbn> tmmbn_;
   PacketCounter<rtcp::Tmmbr> tmmbr_;
   PacketCounter<rtcp::TransportFeedback> transport_feedback_;

@@ -11,4 +11,19 @@ specific_include_rules = {
   "audio_device_ios\.mm": [
     "+webrtc/sdk/objc",
   ],
+  "audio_device_unittest_ios\.mm": [
+    "+webrtc/sdk/objc",
+  ],
+  "RTCAudioSession\.h": [
+    "+webrtc/sdk/objc",
+  ],
+  "RTCAudioSessionConfiguration\.h": [
+    "+webrtc/sdk/objc",
+  ],
+  "RTCAudioSessionDelegateAdapter\.h": [
+    "+webrtc/sdk/objc",
+  ],
+  "voice_processing_audio_unit\.mm": [
+    "+webrtc/sdk/objc",
+  ],
 }

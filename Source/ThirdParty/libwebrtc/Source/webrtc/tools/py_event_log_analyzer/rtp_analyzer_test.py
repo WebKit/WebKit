@@ -17,19 +17,19 @@ or
 import collections
 import unittest
 
-missing_numpy = False
+MISSING_NUMPY = False  # pylint: disable=invalid-name
 try:
   import numpy
   import rtp_analyzer
 except ImportError:
-  missing_numpy = True
+  MISSING_NUMPY = True
 
 FakePoint = collections.namedtuple("FakePoint",
                                    ["real_send_time_ms", "absdelay"])
 
 
 class TestDelay(unittest.TestCase):
-  def assertMaskEqual(self, masked_array, data, mask):
+  def AssertMaskEqual(self, masked_array, data, mask):
     self.assertEqual(list(masked_array.data), data)
 
     if isinstance(masked_array.mask, numpy.bool_):
@@ -40,23 +40,22 @@ class TestDelay(unittest.TestCase):
 
   def testCalculateDelaySimple(self):
     points = [FakePoint(0, 0), FakePoint(1, 0)]
-    mask = rtp_analyzer.calculate_delay(0, 1, 1, points)
-    self.assertMaskEqual(mask, [0, 0], False)
+    mask = rtp_analyzer.CalculateDelay(0, 1, 1, points)
+    self.AssertMaskEqual(mask, [0, 0], False)
 
   def testCalculateDelayMissing(self):
     points = [FakePoint(0, 0), FakePoint(2, 0)]
-    mask = rtp_analyzer.calculate_delay(0, 2, 1, points)
-    self.assertMaskEqual(mask, [0, -1, 0], [False, True, False])
+    mask = rtp_analyzer.CalculateDelay(0, 2, 1, points)
+    self.AssertMaskEqual(mask, [0, -1, 0], [False, True, False])
 
   def testCalculateDelayBorders(self):
     points = [FakePoint(0, 0), FakePoint(2, 0)]
-    mask = rtp_analyzer.calculate_delay(0, 3, 2, points)
-    self.assertMaskEqual(mask, [0, 0, -1], [False, False, True])
+    mask = rtp_analyzer.CalculateDelay(0, 3, 2, points)
+    self.AssertMaskEqual(mask, [0, 0, -1], [False, False, True])
 
 
 if __name__ == "__main__":
-  if missing_numpy:
-    # pylint: disable=superfluous-parens
-    print("Missing numpy, skipping test.")
+  if MISSING_NUMPY:
+    print "Missing numpy, skipping test."
   else:
     unittest.main()

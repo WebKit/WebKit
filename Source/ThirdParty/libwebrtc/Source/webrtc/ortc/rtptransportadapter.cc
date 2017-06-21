@@ -32,6 +32,20 @@ RtpTransportAdapter* GetInternal() override {
 }
 END_PROXY_MAP()
 
+BEGIN_OWNED_PROXY_MAP(SrtpTransport)
+PROXY_SIGNALING_THREAD_DESTRUCTOR()
+PROXY_CONSTMETHOD0(PacketTransportInterface*, GetRtpPacketTransport)
+PROXY_CONSTMETHOD0(PacketTransportInterface*, GetRtcpPacketTransport)
+PROXY_METHOD1(RTCError, SetRtcpParameters, const RtcpParameters&)
+PROXY_CONSTMETHOD0(RtcpParameters, GetRtcpParameters)
+PROXY_METHOD1(RTCError, SetSrtpSendKey, const cricket::CryptoParams&)
+PROXY_METHOD1(RTCError, SetSrtpReceiveKey, const cricket::CryptoParams&)
+protected:
+RtpTransportAdapter* GetInternal() override {
+  return internal();
+}
+END_PROXY_MAP()
+
 // static
 RTCErrorOr<std::unique_ptr<RtpTransportInterface>>
 RtpTransportAdapter::CreateProxied(
@@ -64,7 +78,43 @@ RtpTransportAdapter::CreateProxied(
       rtp_transport_controller->signaling_thread(),
       rtp_transport_controller->worker_thread(),
       std::unique_ptr<RtpTransportAdapter>(new RtpTransportAdapter(
-          rtcp_parameters, rtp, rtcp, rtp_transport_controller)));
+          rtcp_parameters, rtp, rtcp, rtp_transport_controller,
+          /*is_srtp_transport*/ false)));
+}
+
+RTCErrorOr<std::unique_ptr<SrtpTransportInterface>>
+RtpTransportAdapter::CreateSrtpProxied(
+    const RtcpParameters& rtcp_parameters,
+    PacketTransportInterface* rtp,
+    PacketTransportInterface* rtcp,
+    RtpTransportControllerAdapter* rtp_transport_controller) {
+  if (!rtp) {
+    LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER,
+                         "Must provide an RTP packet transport.");
+  }
+  if (!rtcp_parameters.mux && !rtcp) {
+    LOG_AND_RETURN_ERROR(
+        RTCErrorType::INVALID_PARAMETER,
+        "Must provide an RTCP packet transport when RTCP muxing is not used.");
+  }
+  if (rtcp_parameters.mux && rtcp) {
+    LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER,
+                         "Creating an RtpTransport with RTCP muxing enabled, "
+                         "with a separate RTCP packet transport?");
+  }
+  if (!rtp_transport_controller) {
+    // Since OrtcFactory::CreateRtpTransport creates an RtpTransportController
+    // automatically when one isn't passed in, this should never be reached.
+    RTC_NOTREACHED();
+    LOG_AND_RETURN_ERROR(RTCErrorType::INVALID_PARAMETER,
+                         "Must provide an RTP transport controller.");
+  }
+  return SrtpTransportProxyWithInternal<RtpTransportAdapter>::Create(
+      rtp_transport_controller->signaling_thread(),
+      rtp_transport_controller->worker_thread(),
+      std::unique_ptr<RtpTransportAdapter>(new RtpTransportAdapter(
+          rtcp_parameters, rtp, rtcp, rtp_transport_controller,
+          /*is_srtp_transport*/ true)));
 }
 
 void RtpTransportAdapter::TakeOwnershipOfRtpTransportController(
@@ -78,11 +128,13 @@ RtpTransportAdapter::RtpTransportAdapter(
     const RtcpParameters& rtcp_parameters,
     PacketTransportInterface* rtp,
     PacketTransportInterface* rtcp,
-    RtpTransportControllerAdapter* rtp_transport_controller)
+    RtpTransportControllerAdapter* rtp_transport_controller,
+    bool is_srtp_transport)
     : rtp_packet_transport_(rtp),
       rtcp_packet_transport_(rtcp),
       rtp_transport_controller_(rtp_transport_controller),
-      rtcp_parameters_(rtcp_parameters) {
+      rtcp_parameters_(rtcp_parameters),
+      is_srtp_transport_(is_srtp_transport) {
   RTC_DCHECK(rtp_transport_controller);
   // CNAME should have been filled by OrtcFactory if empty.
   RTC_DCHECK(!rtcp_parameters_.cname.empty());
@@ -123,6 +175,38 @@ RTCError RtpTransportAdapter::SetRtcpParameters(
   if (rtcp_parameters_.mux) {
     rtcp_packet_transport_ = nullptr;
   }
+  return RTCError::OK();
+}
+
+RTCError RtpTransportAdapter::SetSrtpSendKey(
+    const cricket::CryptoParams& params) {
+  if (send_key_) {
+    LOG_AND_RETURN_ERROR(
+        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
+        "Setting the SRTP send key twice is currently unsupported.");
+  }
+  if (receive_key_ && receive_key_->cipher_suite != params.cipher_suite) {
+    LOG_AND_RETURN_ERROR(
+        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
+        "The send key and receive key must have the same cipher suite.");
+  }
+  send_key_ = rtc::Optional<cricket::CryptoParams>(params);
+  return RTCError::OK();
+}
+
+RTCError RtpTransportAdapter::SetSrtpReceiveKey(
+    const cricket::CryptoParams& params) {
+  if (receive_key_) {
+    LOG_AND_RETURN_ERROR(
+        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
+        "Setting the SRTP receive key twice is currently unsupported.");
+  }
+  if (send_key_ && send_key_->cipher_suite != params.cipher_suite) {
+    LOG_AND_RETURN_ERROR(
+        webrtc::RTCErrorType::UNSUPPORTED_OPERATION,
+        "The send key and receive key must have the same cipher suite.");
+  }
+  receive_key_ = rtc::Optional<cricket::CryptoParams>(params);
   return RTCError::OK();
 }
 

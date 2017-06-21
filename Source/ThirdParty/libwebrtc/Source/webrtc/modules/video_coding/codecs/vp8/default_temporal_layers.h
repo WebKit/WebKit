@@ -28,7 +28,7 @@ class DefaultTemporalLayers : public TemporalLayers {
 
   // Returns the recommended VP8 encode flags needed. May refresh the decoder
   // and/or update the reference buffers.
-  int EncodeFlags(uint32_t timestamp) override;
+  TemporalLayers::FrameConfig UpdateLayerConfig(uint32_t timestamp) override;
 
   // Update state based on new bitrate target and incoming framerate.
   // Returns the bitrate allocation for the active temporal layers.
@@ -38,55 +38,24 @@ class DefaultTemporalLayers : public TemporalLayers {
 
   bool UpdateConfiguration(vpx_codec_enc_cfg_t* cfg) override;
 
-  void PopulateCodecSpecific(bool base_layer_sync,
+  void PopulateCodecSpecific(bool frame_is_keyframe,
+                             const TemporalLayers::FrameConfig& tl_config,
                              CodecSpecificInfoVP8* vp8_info,
                              uint32_t timestamp) override;
 
-  void FrameEncoded(unsigned int size, uint32_t timestamp, int qp) override {}
+  void FrameEncoded(unsigned int size, int qp) override {}
 
-  int CurrentLayerId() const override;
+  int GetTemporalLayerId(
+      const TemporalLayers::FrameConfig& references) const override;
+
+  uint8_t Tl0PicIdx() const override;
 
  private:
-  enum TemporalReferences {
-    // For 1 layer case: reference all (last, golden, and alt ref), but only
-    // update last.
-    kTemporalUpdateLastRefAll = 12,
-    // First base layer frame for 3 temporal layers, which updates last and
-    // golden with alt ref dependency.
-    kTemporalUpdateLastAndGoldenRefAltRef = 11,
-    // First enhancement layer with alt ref dependency.
-    kTemporalUpdateGoldenRefAltRef = 10,
-    // First enhancement layer with alt ref dependency.
-    kTemporalUpdateGoldenWithoutDependencyRefAltRef = 9,
-    // Base layer with alt ref dependency.
-    kTemporalUpdateLastRefAltRef = 8,
-    // Highest enhacement layer without dependency on golden with alt ref
-    // dependency.
-    kTemporalUpdateNoneNoRefGoldenRefAltRef = 7,
-    // Second layer and last frame in cycle, for 2 layers.
-    kTemporalUpdateNoneNoRefAltref = 6,
-    // Highest enhancement layer.
-    kTemporalUpdateNone = 5,
-    // Second enhancement layer.
-    kTemporalUpdateAltref = 4,
-    // Second enhancement layer without dependency on previous frames in
-    // the second enhancement layer.
-    kTemporalUpdateAltrefWithoutDependency = 3,
-    // First enhancement layer.
-    kTemporalUpdateGolden = 2,
-    // First enhancement layer without dependency on previous frames in
-    // the first enhancement layer.
-    kTemporalUpdateGoldenWithoutDependency = 1,
-    // Base layer.
-    kTemporalUpdateLast = 0,
-  };
-  enum { kMaxTemporalPattern = 16 };
+  const size_t num_layers_;
+  const std::vector<unsigned int> temporal_ids_;
+  const std::vector<bool> temporal_layer_sync_;
+  const std::vector<TemporalLayers::FrameConfig> temporal_pattern_;
 
-  const int number_of_temporal_layers_;
-  int temporal_ids_length_;
-  int temporal_ids_[kMaxTemporalPattern];
-  int temporal_pattern_length_;
-  TemporalReferences temporal_pattern_[kMaxTemporalPattern];
   uint8_t tl0_pic_idx_;
   uint8_t pattern_idx_;
   uint32_t timestamp_;

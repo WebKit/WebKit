@@ -107,6 +107,29 @@ class SrtpFilterTest : public testing::Test {
     EXPECT_TRUE(f1_.IsActive());
     EXPECT_TRUE(f2_.IsActive());
   }
+  void TestRtpAuthParams(cricket::SrtpFilter* filter, const std::string& cs) {
+    int overhead;
+    EXPECT_TRUE(filter->GetSrtpOverhead(&overhead));
+    switch (rtc::SrtpCryptoSuiteFromName(cs)) {
+      case rtc::SRTP_AES128_CM_SHA1_32:
+        EXPECT_EQ(32/8, overhead);  // 32-bit tag.
+        break;
+      case rtc::SRTP_AES128_CM_SHA1_80:
+        EXPECT_EQ(80/8, overhead);  // 80-bit tag.
+        break;
+      default:
+        RTC_NOTREACHED();
+        break;
+    }
+
+    uint8_t* auth_key = nullptr;
+    int key_len = 0;
+    int tag_len = 0;
+    EXPECT_TRUE(filter->GetRtpAuthParams(&auth_key, &key_len, &tag_len));
+    EXPECT_NE(nullptr, auth_key);
+    EXPECT_EQ(160/8, key_len);  // Length of SHA-1 is 160 bits.
+    EXPECT_EQ(overhead, tag_len);
+  }
   void TestProtectUnprotect(const std::string& cs1, const std::string& cs2) {
     rtc::Buffer rtp_buffer(sizeof(kPcmuFrame) + rtp_auth_tag_len(cs1));
     char* rtp_packet = rtp_buffer.data<char>();
@@ -127,18 +150,30 @@ class SrtpFilterTest : public testing::Test {
                                &out_len));
     EXPECT_EQ(out_len, rtp_len + rtp_auth_tag_len(cs1));
     EXPECT_NE(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
-    EXPECT_TRUE(f2_.UnprotectRtp(rtp_packet, out_len, &out_len));
-    EXPECT_EQ(rtp_len, out_len);
-    EXPECT_EQ(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
+    if (!f1_.IsExternalAuthActive()) {
+      EXPECT_TRUE(f2_.UnprotectRtp(rtp_packet, out_len, &out_len));
+      EXPECT_EQ(rtp_len, out_len);
+      EXPECT_EQ(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
+    } else {
+      // With external auth enabled, SRTP doesn't write the auth tag and
+      // unprotect would fail. Check accessing the information about the
+      // tag instead, similar to what the actual code would do that relies
+      // on external auth.
+      TestRtpAuthParams(&f1_, cs1);
+    }
 
     EXPECT_TRUE(f2_.ProtectRtp(rtp_packet, rtp_len,
                                static_cast<int>(rtp_buffer.size()),
                                &out_len));
     EXPECT_EQ(out_len, rtp_len + rtp_auth_tag_len(cs2));
     EXPECT_NE(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
-    EXPECT_TRUE(f1_.UnprotectRtp(rtp_packet, out_len, &out_len));
-    EXPECT_EQ(rtp_len, out_len);
-    EXPECT_EQ(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
+    if (!f2_.IsExternalAuthActive()) {
+      EXPECT_TRUE(f1_.UnprotectRtp(rtp_packet, out_len, &out_len));
+      EXPECT_EQ(rtp_len, out_len);
+      EXPECT_EQ(0, memcmp(rtp_packet, original_rtp_packet, rtp_len));
+    } else {
+      TestRtpAuthParams(&f2_, cs2);
+    }
 
     EXPECT_TRUE(f1_.ProtectRtcp(rtcp_packet, rtcp_len,
                                 static_cast<int>(rtcp_buffer.size()),
@@ -157,6 +192,30 @@ class SrtpFilterTest : public testing::Test {
     EXPECT_TRUE(f1_.UnprotectRtcp(rtcp_packet, out_len, &out_len));
     EXPECT_EQ(rtcp_len, out_len);
     EXPECT_EQ(0, memcmp(rtcp_packet, kRtcpReport, rtcp_len));
+  }
+  void TestProtectSetParamsDirect(bool enable_external_auth, int cs,
+      const uint8_t* key1, int key1_len, const uint8_t* key2, int key2_len,
+      const std::string& cs_name) {
+    EXPECT_EQ(key1_len, key2_len);
+    EXPECT_EQ(cs_name, rtc::SrtpCryptoSuiteToName(cs));
+    if (enable_external_auth) {
+      f1_.EnableExternalAuth();
+      f2_.EnableExternalAuth();
+    }
+    EXPECT_TRUE(f1_.SetRtpParams(cs, key1, key1_len, cs, key2, key2_len));
+    EXPECT_TRUE(f2_.SetRtpParams(cs, key2, key2_len, cs, key1, key1_len));
+    EXPECT_TRUE(f1_.SetRtcpParams(cs, key1, key1_len, cs, key2, key2_len));
+    EXPECT_TRUE(f2_.SetRtcpParams(cs, key2, key2_len, cs, key1, key1_len));
+    EXPECT_TRUE(f1_.IsActive());
+    EXPECT_TRUE(f2_.IsActive());
+    if (rtc::IsGcmCryptoSuite(cs)) {
+      EXPECT_FALSE(f1_.IsExternalAuthActive());
+      EXPECT_FALSE(f2_.IsExternalAuthActive());
+    } else if (enable_external_auth) {
+      EXPECT_TRUE(f1_.IsExternalAuthActive());
+      EXPECT_TRUE(f2_.IsExternalAuthActive());
+    }
+    TestProtectUnprotect(cs_name, cs_name);
   }
   cricket::SrtpFilter f1_;
   cricket::SrtpFilter f2_;
@@ -547,97 +606,47 @@ TEST_F(SrtpFilterTest, TestDisableEncryption) {
   EXPECT_FALSE(f2_.IsActive());
 }
 
+class SrtpFilterProtectSetParamsDirectTest
+  : public SrtpFilterTest,
+    public testing::WithParamInterface<bool> {
+};
+
 // Test directly setting the params with AES_CM_128_HMAC_SHA1_80.
-TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_AES_CM_128_HMAC_SHA1_80) {
-  EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AES128_CM_SHA1_80, kTestKey1,
-                               kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_80,
-                               kTestKey2, kTestKeyLen));
-  EXPECT_TRUE(f2_.SetRtpParams(rtc::SRTP_AES128_CM_SHA1_80, kTestKey2,
-                               kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_80,
-                               kTestKey1, kTestKeyLen));
-  EXPECT_TRUE(f1_.SetRtcpParams(rtc::SRTP_AES128_CM_SHA1_80, kTestKey1,
-                                kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_80,
-                                kTestKey2, kTestKeyLen));
-  EXPECT_TRUE(f2_.SetRtcpParams(rtc::SRTP_AES128_CM_SHA1_80, kTestKey2,
-                                kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_80,
-                                kTestKey1, kTestKeyLen));
-  EXPECT_TRUE(f1_.IsActive());
-  EXPECT_TRUE(f2_.IsActive());
-#if defined(ENABLE_EXTERNAL_AUTH)
-  EXPECT_TRUE(f1_.IsExternalAuthActive());
-  EXPECT_TRUE(f2_.IsExternalAuthActive());
-#endif
-  TestProtectUnprotect(CS_AES_CM_128_HMAC_SHA1_80, CS_AES_CM_128_HMAC_SHA1_80);
+TEST_P(SrtpFilterProtectSetParamsDirectTest, Test_AES_CM_128_HMAC_SHA1_80) {
+  bool enable_external_auth = GetParam();
+  TestProtectSetParamsDirect(enable_external_auth, rtc::SRTP_AES128_CM_SHA1_80,
+      kTestKey1, kTestKeyLen, kTestKey2, kTestKeyLen,
+      CS_AES_CM_128_HMAC_SHA1_80);
 }
 
 // Test directly setting the params with AES_CM_128_HMAC_SHA1_32.
-TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_AES_CM_128_HMAC_SHA1_32) {
-  EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AES128_CM_SHA1_32, kTestKey1,
-                               kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_32,
-                               kTestKey2, kTestKeyLen));
-  EXPECT_TRUE(f2_.SetRtpParams(rtc::SRTP_AES128_CM_SHA1_32, kTestKey2,
-                               kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_32,
-                               kTestKey1, kTestKeyLen));
-  EXPECT_TRUE(f1_.SetRtcpParams(rtc::SRTP_AES128_CM_SHA1_32, kTestKey1,
-                                kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_32,
-                                kTestKey2, kTestKeyLen));
-  EXPECT_TRUE(f2_.SetRtcpParams(rtc::SRTP_AES128_CM_SHA1_32, kTestKey2,
-                                kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_32,
-                                kTestKey1, kTestKeyLen));
-  EXPECT_TRUE(f1_.IsActive());
-  EXPECT_TRUE(f2_.IsActive());
-#if defined(ENABLE_EXTERNAL_AUTH)
-  EXPECT_TRUE(f1_.IsExternalAuthActive());
-  EXPECT_TRUE(f2_.IsExternalAuthActive());
-#endif
-  TestProtectUnprotect(CS_AES_CM_128_HMAC_SHA1_32, CS_AES_CM_128_HMAC_SHA1_32);
+TEST_P(SrtpFilterProtectSetParamsDirectTest, Test_AES_CM_128_HMAC_SHA1_32) {
+  bool enable_external_auth = GetParam();
+  TestProtectSetParamsDirect(enable_external_auth, rtc::SRTP_AES128_CM_SHA1_32,
+      kTestKey1, kTestKeyLen, kTestKey2, kTestKeyLen,
+      CS_AES_CM_128_HMAC_SHA1_32);
 }
 
 // Test directly setting the params with SRTP_AEAD_AES_128_GCM.
-TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_SRTP_AEAD_AES_128_GCM) {
-  EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AEAD_AES_128_GCM, kTestKeyGcm128_1,
-                               kTestKeyGcm128Len, rtc::SRTP_AEAD_AES_128_GCM,
-                               kTestKeyGcm128_2, kTestKeyGcm128Len));
-  EXPECT_TRUE(f2_.SetRtpParams(rtc::SRTP_AEAD_AES_128_GCM, kTestKeyGcm128_2,
-                               kTestKeyGcm128Len, rtc::SRTP_AEAD_AES_128_GCM,
-                               kTestKeyGcm128_1, kTestKeyGcm128Len));
-  EXPECT_TRUE(f1_.SetRtcpParams(rtc::SRTP_AEAD_AES_128_GCM, kTestKeyGcm128_1,
-                                kTestKeyGcm128Len, rtc::SRTP_AEAD_AES_128_GCM,
-                                kTestKeyGcm128_2, kTestKeyGcm128Len));
-  EXPECT_TRUE(f2_.SetRtcpParams(rtc::SRTP_AEAD_AES_128_GCM, kTestKeyGcm128_2,
-                                kTestKeyGcm128Len, rtc::SRTP_AEAD_AES_128_GCM,
-                                kTestKeyGcm128_1, kTestKeyGcm128Len));
-  EXPECT_TRUE(f1_.IsActive());
-  EXPECT_TRUE(f2_.IsActive());
-#if defined(ENABLE_EXTERNAL_AUTH)
-  EXPECT_FALSE(f1_.IsExternalAuthActive());
-  EXPECT_FALSE(f2_.IsExternalAuthActive());
-#endif
-  TestProtectUnprotect(CS_AEAD_AES_128_GCM, CS_AEAD_AES_128_GCM);
+TEST_P(SrtpFilterProtectSetParamsDirectTest, Test_SRTP_AEAD_AES_128_GCM) {
+  bool enable_external_auth = GetParam();
+  TestProtectSetParamsDirect(enable_external_auth, rtc::SRTP_AEAD_AES_128_GCM,
+      kTestKeyGcm128_1, kTestKeyGcm128Len, kTestKeyGcm128_2, kTestKeyGcm128Len,
+      CS_AEAD_AES_128_GCM);
 }
 
 // Test directly setting the params with SRTP_AEAD_AES_256_GCM.
-TEST_F(SrtpFilterTest, TestProtect_SetParamsDirect_SRTP_AEAD_AES_256_GCM) {
-  EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AEAD_AES_256_GCM, kTestKeyGcm256_1,
-                               kTestKeyGcm256Len, rtc::SRTP_AEAD_AES_256_GCM,
-                               kTestKeyGcm256_2, kTestKeyGcm256Len));
-  EXPECT_TRUE(f2_.SetRtpParams(rtc::SRTP_AEAD_AES_256_GCM, kTestKeyGcm256_2,
-                               kTestKeyGcm256Len, rtc::SRTP_AEAD_AES_256_GCM,
-                               kTestKeyGcm256_1, kTestKeyGcm256Len));
-  EXPECT_TRUE(f1_.SetRtcpParams(rtc::SRTP_AEAD_AES_256_GCM, kTestKeyGcm256_1,
-                                kTestKeyGcm256Len, rtc::SRTP_AEAD_AES_256_GCM,
-                                kTestKeyGcm256_2, kTestKeyGcm256Len));
-  EXPECT_TRUE(f2_.SetRtcpParams(rtc::SRTP_AEAD_AES_256_GCM, kTestKeyGcm256_2,
-                                kTestKeyGcm256Len, rtc::SRTP_AEAD_AES_256_GCM,
-                                kTestKeyGcm256_1, kTestKeyGcm256Len));
-  EXPECT_TRUE(f1_.IsActive());
-  EXPECT_TRUE(f2_.IsActive());
-#if defined(ENABLE_EXTERNAL_AUTH)
-  EXPECT_FALSE(f1_.IsExternalAuthActive());
-  EXPECT_FALSE(f2_.IsExternalAuthActive());
-#endif
-  TestProtectUnprotect(CS_AEAD_AES_256_GCM, CS_AEAD_AES_256_GCM);
+TEST_P(SrtpFilterProtectSetParamsDirectTest, Test_SRTP_AEAD_AES_256_GCM) {
+  bool enable_external_auth = GetParam();
+  TestProtectSetParamsDirect(enable_external_auth, rtc::SRTP_AEAD_AES_256_GCM,
+      kTestKeyGcm256_1, kTestKeyGcm256Len, kTestKeyGcm256_2, kTestKeyGcm256Len,
+      CS_AEAD_AES_256_GCM);
 }
+
+// Run all tests both with and without external auth enabled.
+INSTANTIATE_TEST_CASE_P(ExternalAuth,
+                        SrtpFilterProtectSetParamsDirectTest,
+                        ::testing::Values(true, false));
 
 // Test directly setting the params with bogus keys.
 TEST_F(SrtpFilterTest, TestSetParamsKeyTooShort) {
@@ -648,25 +657,6 @@ TEST_F(SrtpFilterTest, TestSetParamsKeyTooShort) {
                                  kTestKeyLen - 1, rtc::SRTP_AES128_CM_SHA1_80,
                                  kTestKey1, kTestKeyLen - 1));
 }
-
-#if defined(ENABLE_EXTERNAL_AUTH)
-TEST_F(SrtpFilterTest, TestGetSendAuthParams) {
-  EXPECT_TRUE(f1_.SetRtpParams(rtc::SRTP_AES128_CM_SHA1_32, kTestKey1,
-                               kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_32,
-                               kTestKey2, kTestKeyLen));
-  EXPECT_TRUE(f1_.SetRtcpParams(rtc::SRTP_AES128_CM_SHA1_32, kTestKey1,
-                                kTestKeyLen, rtc::SRTP_AES128_CM_SHA1_32,
-                                kTestKey2, kTestKeyLen));
-  // Non-GCM ciphers support external auth.
-  EXPECT_TRUE(f1_.IsExternalAuthActive());
-  uint8_t* auth_key = NULL;
-  int auth_key_len = 0, auth_tag_len = 0;
-  EXPECT_TRUE(f1_.GetRtpAuthParams(&auth_key, &auth_key_len, &auth_tag_len));
-  EXPECT_TRUE(auth_key != NULL);
-  EXPECT_EQ(20, auth_key_len);
-  EXPECT_EQ(4, auth_tag_len);
-}
-#endif
 
 class SrtpSessionTest : public testing::Test {
  protected:
@@ -850,173 +840,4 @@ TEST_F(SrtpSessionTest, TestReplay) {
   rtc::SetBE16(reinterpret_cast<uint8_t*>(rtp_packet_) + 2, seqnum_small + 1);
   EXPECT_TRUE(s1_.ProtectRtp(rtp_packet_, rtp_len_, sizeof(rtp_packet_),
                              &out_len));
-}
-
-class SrtpStatTest
-    : public testing::Test,
-      public sigslot::has_slots<> {
- public:
-  SrtpStatTest()
-      : ssrc_(0U),
-        mode_(-1),
-        error_(cricket::SrtpFilter::ERROR_NONE) {
-    srtp_stat_.SignalSrtpError.connect(this, &SrtpStatTest::OnSrtpError);
-    srtp_stat_.set_signal_silent_time(200);
-  }
-
- protected:
-  void OnSrtpError(uint32_t ssrc,
-                   cricket::SrtpFilter::Mode mode,
-                   cricket::SrtpFilter::Error error) {
-    ssrc_ = ssrc;
-    mode_ = mode;
-    error_ = error;
-  }
-  void Reset() {
-    ssrc_ = 0U;
-    mode_ = -1;
-    error_ = cricket::SrtpFilter::ERROR_NONE;
-  }
-
-  cricket::SrtpStat srtp_stat_;
-  uint32_t ssrc_;
-  int mode_;
-  cricket::SrtpFilter::Error error_;
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(SrtpStatTest);
-};
-
-TEST_F(SrtpStatTest, TestProtectRtpError) {
-  Reset();
-  srtp_stat_.AddProtectRtpResult(1, srtp_err_status_ok);
-  EXPECT_EQ(0U, ssrc_);
-  EXPECT_EQ(-1, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_NONE, error_);
-  Reset();
-  srtp_stat_.AddProtectRtpResult(1, srtp_err_status_auth_fail);
-  EXPECT_EQ(1U, ssrc_);
-  EXPECT_EQ(cricket::SrtpFilter::PROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_AUTH, error_);
-  Reset();
-  srtp_stat_.AddProtectRtpResult(1, srtp_err_status_fail);
-  EXPECT_EQ(1U, ssrc_);
-  EXPECT_EQ(cricket::SrtpFilter::PROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_FAIL, error_);
-  // Within 200ms, the error will not be triggered.
-  Reset();
-  srtp_stat_.AddProtectRtpResult(1, srtp_err_status_fail);
-  EXPECT_EQ(0U, ssrc_);
-  EXPECT_EQ(-1, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_NONE, error_);
-  // Now the error will be triggered again.
-  Reset();
-  rtc::Thread::Current()->SleepMs(210);
-  srtp_stat_.AddProtectRtpResult(1, srtp_err_status_fail);
-  EXPECT_EQ(1U, ssrc_);
-  EXPECT_EQ(cricket::SrtpFilter::PROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_FAIL, error_);
-}
-
-TEST_F(SrtpStatTest, TestUnprotectRtpError) {
-  Reset();
-  srtp_stat_.AddUnprotectRtpResult(1, srtp_err_status_ok);
-  EXPECT_EQ(0U, ssrc_);
-  EXPECT_EQ(-1, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_NONE, error_);
-  Reset();
-  srtp_stat_.AddUnprotectRtpResult(1, srtp_err_status_auth_fail);
-  EXPECT_EQ(1U, ssrc_);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_AUTH, error_);
-  Reset();
-  srtp_stat_.AddUnprotectRtpResult(1, srtp_err_status_replay_fail);
-  EXPECT_EQ(1U, ssrc_);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_REPLAY, error_);
-  Reset();
-  rtc::Thread::Current()->SleepMs(210);
-  srtp_stat_.AddUnprotectRtpResult(1, srtp_err_status_replay_old);
-  EXPECT_EQ(1U, ssrc_);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_REPLAY, error_);
-  Reset();
-  srtp_stat_.AddUnprotectRtpResult(1, srtp_err_status_fail);
-  EXPECT_EQ(1U, ssrc_);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_FAIL, error_);
-  // Within 200ms, the error will not be triggered.
-  Reset();
-  srtp_stat_.AddUnprotectRtpResult(1, srtp_err_status_fail);
-  EXPECT_EQ(0U, ssrc_);
-  EXPECT_EQ(-1, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_NONE, error_);
-  // Now the error will be triggered again.
-  Reset();
-  rtc::Thread::Current()->SleepMs(210);
-  srtp_stat_.AddUnprotectRtpResult(1, srtp_err_status_fail);
-  EXPECT_EQ(1U, ssrc_);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_FAIL, error_);
-}
-
-TEST_F(SrtpStatTest, TestProtectRtcpError) {
-  Reset();
-  srtp_stat_.AddProtectRtcpResult(srtp_err_status_ok);
-  EXPECT_EQ(-1, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_NONE, error_);
-  Reset();
-  srtp_stat_.AddProtectRtcpResult(srtp_err_status_auth_fail);
-  EXPECT_EQ(cricket::SrtpFilter::PROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_AUTH, error_);
-  Reset();
-  srtp_stat_.AddProtectRtcpResult(srtp_err_status_fail);
-  EXPECT_EQ(cricket::SrtpFilter::PROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_FAIL, error_);
-  // Within 200ms, the error will not be triggered.
-  Reset();
-  srtp_stat_.AddProtectRtcpResult(srtp_err_status_fail);
-  EXPECT_EQ(-1, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_NONE, error_);
-  // Now the error will be triggered again.
-  Reset();
-  rtc::Thread::Current()->SleepMs(210);
-  srtp_stat_.AddProtectRtcpResult(srtp_err_status_fail);
-  EXPECT_EQ(cricket::SrtpFilter::PROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_FAIL, error_);
-}
-
-TEST_F(SrtpStatTest, TestUnprotectRtcpError) {
-  Reset();
-  srtp_stat_.AddUnprotectRtcpResult(srtp_err_status_ok);
-  EXPECT_EQ(-1, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_NONE, error_);
-  Reset();
-  srtp_stat_.AddUnprotectRtcpResult(srtp_err_status_auth_fail);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_AUTH, error_);
-  Reset();
-  srtp_stat_.AddUnprotectRtcpResult(srtp_err_status_replay_fail);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_REPLAY, error_);
-  Reset();
-  rtc::Thread::Current()->SleepMs(210);
-  srtp_stat_.AddUnprotectRtcpResult(srtp_err_status_replay_fail);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_REPLAY, error_);
-  Reset();
-  srtp_stat_.AddUnprotectRtcpResult(srtp_err_status_fail);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_FAIL, error_);
-  // Within 200ms, the error will not be triggered.
-  Reset();
-  srtp_stat_.AddUnprotectRtcpResult(srtp_err_status_fail);
-  EXPECT_EQ(-1, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_NONE, error_);
-  // Now the error will be triggered again.
-  Reset();
-  rtc::Thread::Current()->SleepMs(210);
-  srtp_stat_.AddUnprotectRtcpResult(srtp_err_status_fail);
-  EXPECT_EQ(cricket::SrtpFilter::UNPROTECT, mode_);
-  EXPECT_EQ(cricket::SrtpFilter::ERROR_FAIL, error_);
 }

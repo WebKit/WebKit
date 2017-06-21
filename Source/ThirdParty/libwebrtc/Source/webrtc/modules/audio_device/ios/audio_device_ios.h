@@ -14,7 +14,10 @@
 #include <memory>
 
 #include "WebRTC/RTCMacros.h"
+#include "webrtc/base/buffer.h"
+#include "webrtc/base/gtest_prod_util.h"
 #include "webrtc/base/thread.h"
+#include "webrtc/base/thread_annotations.h"
 #include "webrtc/base/thread_checker.h"
 #include "webrtc/modules/audio_device/audio_device_generic.h"
 #include "webrtc/modules/audio_device/ios/audio_session_observer.h"
@@ -51,13 +54,13 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
 
   InitStatus Init() override;
   int32_t Terminate() override;
-  bool Initialized() const override { return initialized_; }
+  bool Initialized() const override;
 
   int32_t InitPlayout() override;
-  bool PlayoutIsInitialized() const override { return audio_is_initialized_; }
+  bool PlayoutIsInitialized() const override;
 
   int32_t InitRecording() override;
-  bool RecordingIsInitialized() const override { return audio_is_initialized_; }
+  bool RecordingIsInitialized() const override;
 
   int32_t StartPlayout() override;
   int32_t StopPlayout() override;
@@ -164,6 +167,7 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   void OnInterruptionEnd() override;
   void OnValidRouteChange() override;
   void OnCanPlayOrRecordChange(bool can_play_or_record) override;
+  void OnChangedOutputVolume() override;
 
   // VoiceProcessingAudioUnitObserver methods.
   OSStatus OnDeliverRecordedData(AudioUnitRenderActionFlags* flags,
@@ -187,6 +191,8 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   void HandleValidRouteChange();
   void HandleCanPlayOrRecordChange(bool can_play_or_record);
   void HandleSampleRateChange(float sample_rate);
+  void HandlePlayoutGlitchDetected();
+  void HandleOutputVolumeChange();
 
   // Uses current |playout_parameters_| and |record_parameters_| to inform the
   // audio device buffer (ADB) about our internal audio parameters.
@@ -206,7 +212,7 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   void UpdateAudioUnit(bool can_play_or_record);
 
   // Configures the audio session for WebRTC.
-  void ConfigureAudioSession();
+  bool ConfigureAudioSession();
   // Unconfigures the audio session.
   void UnconfigureAudioSession();
 
@@ -220,6 +226,10 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   // Ensures that methods are called from the same thread as this object is
   // created on.
   rtc::ThreadChecker thread_checker_;
+
+  // Native I/O audio thread checker.
+  rtc::ThreadChecker io_thread_checker_;
+
   // Thread that this object is created on.
   rtc::Thread* thread_;
 
@@ -259,17 +269,12 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   // to WebRTC and the remaining part is stored.
   std::unique_ptr<FineAudioBuffer> fine_audio_buffer_;
 
-  // Extra audio buffer to be used by the playout side for rendering audio.
-  // The buffer size is given by FineAudioBuffer::RequiredBufferSizeBytes().
-  std::unique_ptr<int8_t[]> playout_audio_buffer_;
-
-  // Provides a mechanism for encapsulating one or more buffers of audio data.
-  // Only used on the recording side.
-  AudioBufferList audio_record_buffer_list_;
-
   // Temporary storage for recorded data. AudioUnitRender() renders into this
   // array as soon as a frame of the desired buffer size has been recorded.
-  std::unique_ptr<int8_t[]> record_audio_buffer_;
+  // On real iOS devices, the size will be fixed and set once. For iOS
+  // simulators, the size can vary from callback to callback and the size
+  // will be changed dynamically to account for this behavior.
+  rtc::BufferT<int8_t> record_audio_buffer_;
 
   // Set to 1 when recording is active and 0 otherwise.
   volatile int recording_;
@@ -278,7 +283,7 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   volatile int playing_;
 
   // Set to true after successful call to Init(), false otherwise.
-  bool initialized_;
+  bool initialized_ ACCESS_ON(thread_checker_);
 
   // Set to true after successful call to InitRecording() or InitPlayout(),
   // false otherwise.
@@ -288,10 +293,27 @@ class AudioDeviceIOS : public AudioDeviceGeneric,
   bool is_interrupted_;
 
   // Audio interruption observer instance.
-  RTCAudioSessionDelegateAdapter* audio_session_observer_;
+  RTCAudioSessionDelegateAdapter* audio_session_observer_
+      ACCESS_ON(thread_checker_);
 
   // Set to true if we've activated the audio session.
-  bool has_configured_session_;
+  bool has_configured_session_ ACCESS_ON(thread_checker_);
+
+  // Counts number of detected audio glitches on the playout side.
+  int64_t num_detected_playout_glitches_ ACCESS_ON(thread_checker_);
+  int64_t last_playout_time_ ACCESS_ON(io_thread_checker_);
+
+  // Counts number of playout callbacks per call.
+  // The value isupdated on the native I/O thread and later read on the
+  // creating thread (see thread_checker_) but at this stage no audio is
+  // active. Hence, it is a "thread safe" design and no lock is needed.
+  int64_t num_playout_callbacks_;
+
+  // Contains the time for when the last output volume change was detected.
+  int64_t last_output_volume_change_time_ ACCESS_ON(thread_checker_);
+
+  // Exposes private members for testing purposes only.
+  FRIEND_TEST_ALL_PREFIXES(AudioDeviceTest, testInterruptedAudioSession);
 };
 
 }  // namespace webrtc

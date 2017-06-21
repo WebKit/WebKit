@@ -39,6 +39,10 @@ ClockInterface* SetClockForTesting(ClockInterface* clock) {
   return prev;
 }
 
+ClockInterface* GetClockForTesting() {
+  return g_clock;
+}
+
 int64_t SystemTimeNanos() {
   int64_t ticks;
 #if defined(WEBRTC_MAC)

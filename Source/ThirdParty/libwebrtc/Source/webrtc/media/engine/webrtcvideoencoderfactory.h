@@ -24,46 +24,15 @@ namespace cricket {
 
 class WEBRTC_DYLIB_EXPORT WebRtcVideoEncoderFactory {
  public:
-  // This VideoCodec class is deprecated. Use cricket::VideoCodec directly
-  // instead and the corresponding factory function. See
-  // http://crbug/webrtc/6402 for more info.
-  struct VideoCodec {
-    webrtc::VideoCodecType type;
-    std::string name;
-
-    VideoCodec(webrtc::VideoCodecType t, const std::string& nm)
-        : type(t), name(nm) {}
-
-    VideoCodec(webrtc::VideoCodecType t,
-               const std::string& nm,
-               int,
-               int,
-               int)
-        : type(t), name(nm) {}
-  };
-
   virtual ~WebRtcVideoEncoderFactory() {}
 
-  // TODO(magjed): Make these functions pure virtual when every external client
-  // implements it. See http://crbug/webrtc/6402 for more info.
   // Caller takes the ownership of the returned object and it should be released
   // by calling DestroyVideoEncoder().
   virtual webrtc::VideoEncoder* CreateVideoEncoder(
-      const cricket::VideoCodec& codec);
+      const cricket::VideoCodec& codec) = 0;
 
   // Returns a list of supported codecs in order of preference.
-  virtual const std::vector<cricket::VideoCodec>& supported_codecs() const;
-
-  // Caller takes the ownership of the returned object and it should be released
-  // by calling DestroyVideoEncoder().
-  // Deprecated: Use cricket::VideoCodec as argument instead. See
-  // http://crbug/webrtc/6402 for more info.
-  virtual webrtc::VideoEncoder* CreateVideoEncoder(webrtc::VideoCodecType type);
-
-  // Returns a list of supported codecs in order of preference.
-  // Deprecated: Return cricket::VideoCodecs instead. See
-  // http://crbug/webrtc/6402 for more info.
-  virtual const std::vector<VideoCodec>& codecs() const;
+  virtual const std::vector<cricket::VideoCodec>& supported_codecs() const = 0;
 
   // Returns true if encoders created by this factory of the given codec type
   // will use internal camera sources, meaning that they don't require/expect
@@ -75,13 +44,6 @@ class WEBRTC_DYLIB_EXPORT WebRtcVideoEncoderFactory {
   }
 
   virtual void DestroyVideoEncoder(webrtc::VideoEncoder* encoder) = 0;
-
- private:
-  // TODO(magjed): Remove these. They are necessary in order to return a const
-  // reference to a std::vector in the default implementations of codecs() and
-  // supported_codecs(). See http://crbug/webrtc/6402 for more info.
-  mutable std::vector<VideoCodec> encoder_codecs_;
-  mutable std::vector<cricket::VideoCodec> codecs_;
 };
 
 }  // namespace cricket

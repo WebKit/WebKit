@@ -16,6 +16,7 @@
 #include <memory>
 
 #include "webrtc/base/checks.h"
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/modules/audio_device/audio_device_buffer.h"
 #include "webrtc/modules/audio_device/include/audio_device.h"
 
@@ -23,7 +24,6 @@ namespace webrtc {
 
 class AudioDeviceGeneric;
 class AudioManager;
-class CriticalSectionWrapper;
 
 class AudioDeviceModuleImpl : public AudioDeviceModule {
  public:
@@ -203,9 +203,9 @@ class AudioDeviceModuleImpl : public AudioDeviceModule {
   PlatformType Platform() const;
   AudioLayer PlatformAudioLayer() const;
 
-  CriticalSectionWrapper& _critSect;
-  CriticalSectionWrapper& _critSectEventCb;
-  CriticalSectionWrapper& _critSectAudioCb;
+  rtc::CriticalSection _critSect;
+  rtc::CriticalSection _critSectEventCb;
+  rtc::CriticalSection _critSectAudioCb;
 
   AudioDeviceObserver* _ptrCbAudioDeviceObserver;
 

@@ -46,6 +46,8 @@ rtc_static_library("audio_processing") {
     "aec3/comfort_noise_generator.h",
     "aec3/decimator_by_4.cc",
     "aec3/decimator_by_4.h",
+    "aec3/downsampled_render_buffer.cc",
+    "aec3/downsampled_render_buffer.h",
     "aec3/echo_canceller3.cc",
     "aec3/echo_canceller3.h",
     "aec3/echo_path_delay_estimator.cc",
@@ -60,8 +62,6 @@ rtc_static_library("audio_processing") {
     "aec3/erl_estimator.h",
     "aec3/erle_estimator.cc",
     "aec3/erle_estimator.h",
-    "aec3/fft_buffer.cc",
-    "aec3/fft_buffer.h",
     "aec3/fft_data.h",
     "aec3/frame_blocker.cc",
     "aec3/frame_blocker.h",
@@ -73,8 +73,8 @@ rtc_static_library("audio_processing") {
     "aec3/matched_filter_lag_aggregator.h",
     "aec3/output_selector.cc",
     "aec3/output_selector.h",
-    "aec3/power_echo_model.cc",
-    "aec3/power_echo_model.h",
+    "aec3/render_buffer.cc",
+    "aec3/render_buffer.h",
     "aec3/render_delay_buffer.cc",
     "aec3/render_delay_buffer.h",
     "aec3/render_delay_controller.cc",
@@ -94,6 +94,7 @@ rtc_static_library("audio_processing") {
     "aec3/suppression_filter.h",
     "aec3/suppression_gain.cc",
     "aec3/suppression_gain.h",
+    "aec3/vector_math.h",
     "aecm/aecm_core.cc",
     "aecm/aecm_core.h",
     "aecm/echo_control_mobile.cc",
@@ -107,6 +108,10 @@ rtc_static_library("audio_processing") {
     "agc/loudness_histogram.h",
     "agc/utility.cc",
     "agc/utility.h",
+    "agc2/digital_gain_applier.cc",
+    "agc2/digital_gain_applier.h",
+    "agc2/gain_controller2.cc",
+    "agc2/gain_controller2.h",
     "audio_buffer.cc",
     "audio_buffer.h",
     "audio_processing_impl.cc",
@@ -229,9 +234,12 @@ rtc_static_library("audio_processing") {
 
   defines = []
   deps = [
+    ":aec_dump_interface",
+    "..:module_api",
     "../..:webrtc_common",
     "../../audio/utility:audio_frame_operations",
     "../../base:gtest_prod",
+    "../../base:protobuf_utils",
     "../audio_coding:isac",
   ]
   public_deps = [
@@ -298,6 +306,17 @@ rtc_static_library("audio_processing") {
     "../../base:rtc_base_approved",
     "../../common_audio",
     "../../system_wrappers",
+  ]
+}
+
+rtc_source_set("aec_dump_interface") {
+  sources = [
+    "include/aec_dump.cc",
+    "include/aec_dump.h",
+  ]
+
+  deps = [
+    "../../base:rtc_base_approved",
   ]
 }
 
@@ -475,6 +494,8 @@ if (rtc_include_tests) {
         ":audioproc_f",
         ":audioproc_unittest_proto",
         ":unpack_aecdump",
+        "aec_dump:aec_dump_unittests",
+        "test/conversational_speech",
         "test/py_quality_assessment",
       ]
     }
@@ -482,6 +503,13 @@ if (rtc_include_tests) {
 
   rtc_source_set("audio_processing_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
       "aec/echo_cancellation_unittest.cc",
       "aec/system_delay_unittest.cc",
@@ -521,14 +549,18 @@ if (rtc_include_tests) {
     deps = [
       ":audio_processing",
       ":audioproc_test_utils",
+      "..:module_api",
       "../..:webrtc_common",
       "../../base:gtest_prod",
+      "../../base:protobuf_utils",
       "../../base:rtc_base",
       "../../base:rtc_base_approved",
       "../../common_audio:common_audio",
       "../../system_wrappers:system_wrappers",
       "../../test:test_support",
-      "../audio_coding:neteq_unittest_tools",
+      "../audio_coding:neteq_tools",
+      "aec_dump:mock_aec_dump_unittests",
+      "test/conversational_speech:unittest",
       "//testing/gmock",
       "//testing/gtest",
     ]
@@ -563,6 +595,9 @@ if (rtc_include_tests) {
         ":audioproc_debug_proto",
         ":audioproc_protobuf_utils",
         ":audioproc_unittest_proto",
+        "../../base:rtc_task_queue",
+        "aec_dump",
+        "aec_dump:aec_dump_unittests",
       ]
       sources += [
         "aec3/adaptive_fir_filter_unittest.cc",
@@ -581,14 +616,13 @@ if (rtc_include_tests) {
         "aec3/echo_remover_unittest.cc",
         "aec3/erl_estimator_unittest.cc",
         "aec3/erle_estimator_unittest.cc",
-        "aec3/fft_buffer_unittest.cc",
         "aec3/fft_data_unittest.cc",
         "aec3/frame_blocker_unittest.cc",
         "aec3/main_filter_update_gain_unittest.cc",
         "aec3/matched_filter_lag_aggregator_unittest.cc",
         "aec3/matched_filter_unittest.cc",
         "aec3/output_selector_unittest.cc",
-        "aec3/power_echo_model_unittest.cc",
+        "aec3/render_buffer_unittest.cc",
         "aec3/render_delay_buffer_unittest.cc",
         "aec3/render_delay_controller_metrics_unittest.cc",
         "aec3/render_delay_controller_unittest.cc",
@@ -598,6 +632,8 @@ if (rtc_include_tests) {
         "aec3/subtractor_unittest.cc",
         "aec3/suppression_filter_unittest.cc",
         "aec3/suppression_gain_unittest.cc",
+        "aec3/vector_math_unittest.cc",
+        "agc2/gain_controller2_unittest.cc",
         "audio_processing_impl_locking_unittest.cc",
         "audio_processing_impl_unittest.cc",
         "audio_processing_unittest.cc",
@@ -646,6 +682,13 @@ if (rtc_include_tests) {
     #  //webrtc/modules:_modules_unittests__library
     check_includes = false
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc:webrtc_perf_tests" ]
+    }
     sources = [
       "audio_processing_performance_unittest.cc",
       "level_controller/level_controller_complexity_unittest.cc",
@@ -654,8 +697,10 @@ if (rtc_include_tests) {
     deps = [
       ":audio_processing",
       ":audioproc_test_utils",
+      "../../base:protobuf_utils",
       "//testing/gtest",
     ]
+
     if (rtc_enable_intelligibility_enhancer) {
       defines = [ "WEBRTC_INTELLIGIBILITY_ENHANCER=1" ]
     } else {
@@ -676,6 +721,7 @@ if (rtc_include_tests) {
         ":audioproc_protobuf_utils",
         ":audioproc_test_utils",
         "../..:webrtc_common",
+        "../../base:protobuf_utils",
         "../../base:rtc_base_approved",
         "../../common_audio",
         "../../system_wrappers:system_wrappers_default",
@@ -700,11 +746,15 @@ if (rtc_include_tests) {
         ":audioproc_debug_proto",
         ":audioproc_protobuf_utils",
         ":audioproc_test_utils",
+        "../../base:protobuf_utils",
         "../../base:rtc_base_approved",
+        "../../base:rtc_task_queue",
         "../../common_audio:common_audio",
         "../../system_wrappers",
         "../../system_wrappers:system_wrappers_default",
         "../../test:test_support",
+        "aec_dump",
+        "aec_dump:aec_dump_impl",
         "//testing/gtest",
         "//third_party/gflags:gflags",
       ]
@@ -726,6 +776,7 @@ if (rtc_include_tests) {
 
     deps = [
       ":audio_processing",
+      "..:module_api",
       "../../base:rtc_base_approved",
       "../../common_audio",
       "../../system_wrappers:system_wrappers",
@@ -741,6 +792,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":audio_processing",
+      "..:module_api",
       "../..:webrtc_common",
       "../../common_audio:common_audio",
       "../../system_wrappers:metrics_default",
@@ -815,6 +867,7 @@ if (rtc_include_tests) {
       deps = [
         ":audioproc_debug_proto",
         "../..:webrtc_common",
+        "../../base:protobuf_utils",
         "../../base:rtc_base_approved",
       ]
     }

@@ -359,7 +359,7 @@ using namespace webrtc::videocapturemodule;
   tempCaptureCapability.width = CVPixelBufferGetWidth(videoFrame);
   tempCaptureCapability.height = CVPixelBufferGetHeight(videoFrame);
   tempCaptureCapability.maxFPS = _capability.maxFPS;
-  tempCaptureCapability.rawType = kVideoNV12;
+  tempCaptureCapability.videoType = VideoType::kNV12;
 
   _owner->IncomingFrame(baseAddress, frameSize, tempCaptureCapability, 0);
 

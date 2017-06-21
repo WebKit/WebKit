@@ -38,7 +38,7 @@ bool DesktopCapturer::FocusOnSelectedSource() {
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateWindowCapturer(
     const DesktopCaptureOptions& options) {
   std::unique_ptr<DesktopCapturer> capturer = CreateRawWindowCapturer(options);
-  if (options.detect_updated_region()) {
+  if (capturer && options.detect_updated_region()) {
     capturer.reset(new DesktopCapturerDifferWrapper(std::move(capturer)));
   }
 
@@ -49,7 +49,7 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateWindowCapturer(
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateScreenCapturer(
     const DesktopCaptureOptions& options) {
   std::unique_ptr<DesktopCapturer> capturer = CreateRawScreenCapturer(options);
-  if (options.detect_updated_region()) {
+  if (capturer && options.detect_updated_region()) {
     capturer.reset(new DesktopCapturerDifferWrapper(std::move(capturer)));
   }
 

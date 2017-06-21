@@ -118,6 +118,11 @@ void ExtendedReports::SetTargetBitrate(const TargetBitrate& bitrate) {
   target_bitrate_ = rtc::Optional<TargetBitrate>(bitrate);
 }
 
+size_t ExtendedReports::BlockLength() const {
+  return kHeaderLength + kXrBaseLength + RrtrLength() + DlrrLength() +
+         VoipMetricLength() + TargetBitrateLength();
+}
+
 bool ExtendedReports::Create(uint8_t* packet,
                              size_t* index,
                              size_t max_length,

@@ -18,6 +18,8 @@ namespace webrtc {
 
 namespace {
 
+enum class EchoCanceller3ApiCall { kCapture, kRender };
+
 bool DetectSaturation(rtc::ArrayView<const float> y) {
   for (auto y_k : y) {
     if (y_k >= 32700.0f || y_k <= -32700.0f) {
@@ -85,7 +87,7 @@ void ProcessRemainingCaptureFrameContent(
   output_framer->InsertBlock(*block);
 }
 
-bool BufferRenderFrameContent(
+void BufferRenderFrameContent(
     std::vector<std::vector<float>>* render_frame,
     size_t sub_frame_index,
     FrameBlocker* render_blocker,
@@ -94,27 +96,30 @@ bool BufferRenderFrameContent(
     std::vector<rtc::ArrayView<float>>* sub_frame_view) {
   FillSubFrameView(render_frame, sub_frame_index, sub_frame_view);
   render_blocker->InsertSubFrameAndExtractBlock(*sub_frame_view, block);
-  return block_processor->BufferRender(block);
+  block_processor->BufferRender(*block);
 }
 
-bool BufferRemainingRenderFrameContent(FrameBlocker* render_blocker,
+void BufferRemainingRenderFrameContent(FrameBlocker* render_blocker,
                                        BlockProcessor* block_processor,
                                        std::vector<std::vector<float>>* block) {
   if (!render_blocker->IsBlockAvailable()) {
-    return true;
+    return;
   }
   render_blocker->ExtractBlock(block);
-  return block_processor->BufferRender(block);
+  block_processor->BufferRender(*block);
 }
 
-void CopyLowestBandIntoFrame(AudioBuffer* buffer,
-                             size_t num_bands,
-                             size_t frame_length,
-                             std::vector<std::vector<float>>* frame) {
+void CopyBufferIntoFrame(AudioBuffer* buffer,
+                         size_t num_bands,
+                         size_t frame_length,
+                         std::vector<std::vector<float>>* frame) {
   RTC_DCHECK_EQ(num_bands, frame->size());
   RTC_DCHECK_EQ(frame_length, (*frame)[0].size());
-  rtc::ArrayView<float> buffer_view(&buffer->channels_f()[0][0], frame_length);
-  std::copy(buffer_view.begin(), buffer_view.end(), (*frame)[0].begin());
+  for (size_t k = 0; k < num_bands; ++k) {
+    rtc::ArrayView<float> buffer_view(&buffer->split_bands_f(0)[k][0],
+                                      frame_length);
+    std::copy(buffer_view.begin(), buffer_view.end(), (*frame)[k].begin());
+  }
 }
 
 // [B,A] = butter(2,100/4000,'high')
@@ -129,8 +134,6 @@ const CascadedBiQuadFilter::BiQuadCoefficients
                                          {-1.94448f, 0.94598f}};
 const int kNumberOfHighPassBiQuads_16kHz = 1;
 
-static constexpr size_t kRenderTransferQueueSize = 30;
-
 }  // namespace
 
 class EchoCanceller3::RenderWriter {
@@ -143,7 +146,7 @@ class EchoCanceller3::RenderWriter {
                int frame_length,
                int num_bands);
   ~RenderWriter();
-  bool Insert(AudioBuffer* render);
+  void Insert(AudioBuffer* render);
 
  private:
   ApmDataDumper* data_dumper_;
@@ -178,21 +181,21 @@ EchoCanceller3::RenderWriter::RenderWriter(
 
 EchoCanceller3::RenderWriter::~RenderWriter() = default;
 
-bool EchoCanceller3::RenderWriter::Insert(AudioBuffer* input) {
+void EchoCanceller3::RenderWriter::Insert(AudioBuffer* input) {
   RTC_DCHECK_EQ(1, input->num_channels());
   RTC_DCHECK_EQ(frame_length_, input->num_frames_per_band());
   data_dumper_->DumpWav("aec3_render_input", frame_length_,
-                        &input->channels_f()[0][0],
+                        &input->split_bands_f(0)[0][0],
                         LowestBandRate(sample_rate_hz_), 1);
 
-  CopyLowestBandIntoFrame(input, num_bands_, frame_length_,
-                          &render_queue_input_frame_);
+  CopyBufferIntoFrame(input, num_bands_, frame_length_,
+                      &render_queue_input_frame_);
 
   if (render_highpass_filter_) {
     render_highpass_filter_->Process(render_queue_input_frame_[0]);
   }
 
-  return render_transfer_queue_->Insert(&render_queue_input_frame_);
+  static_cast<void>(render_transfer_queue_->Insert(&render_queue_input_frame_));
 }
 
 int EchoCanceller3::instance_count_ = 0;
@@ -251,9 +254,12 @@ EchoCanceller3::EchoCanceller3(int sample_rate_hz,
 
 EchoCanceller3::~EchoCanceller3() = default;
 
-bool EchoCanceller3::AnalyzeRender(AudioBuffer* render) {
+void EchoCanceller3::AnalyzeRender(AudioBuffer* render) {
   RTC_DCHECK_RUNS_SERIALIZED(&render_race_checker_);
   RTC_DCHECK(render);
+  data_dumper_->DumpRaw("aec3_call_order",
+                        static_cast<int>(EchoCanceller3ApiCall::kRender));
+
   return render_writer_->Insert(render);
 }
 
@@ -280,6 +286,8 @@ void EchoCanceller3::ProcessCapture(AudioBuffer* capture, bool level_change) {
   RTC_DCHECK_EQ(1u, capture->num_channels());
   RTC_DCHECK_EQ(num_bands_, capture->num_bands());
   RTC_DCHECK_EQ(frame_length_, capture->num_frames_per_band());
+  data_dumper_->DumpRaw("aec3_call_order",
+                        static_cast<int>(EchoCanceller3ApiCall::kCapture));
 
   rtc::ArrayView<float> capture_lower_band =
       rtc::ArrayView<float>(&capture->split_bands_f(0)[0][0], frame_length_);
@@ -287,8 +295,7 @@ void EchoCanceller3::ProcessCapture(AudioBuffer* capture, bool level_change) {
   data_dumper_->DumpWav("aec3_capture_input", capture_lower_band,
                         LowestBandRate(sample_rate_hz_), 1);
 
-  const bool successful_buffering = EmptyRenderQueue();
-  RTC_DCHECK(successful_buffering);
+  EmptyRenderQueue();
 
   if (capture_highpass_filter_) {
     capture_highpass_filter_->Process(capture_lower_band);
@@ -327,35 +334,26 @@ bool EchoCanceller3::Validate(
   return true;
 }
 
-bool EchoCanceller3::EmptyRenderQueue() {
+void EchoCanceller3::EmptyRenderQueue() {
   RTC_DCHECK_RUNS_SERIALIZED(&capture_race_checker_);
-  bool successful_buffering = true;
   bool frame_to_buffer =
       render_transfer_queue_.Remove(&render_queue_output_frame_);
   while (frame_to_buffer) {
-    successful_buffering =
-        BufferRenderFrameContent(&render_queue_output_frame_, 0,
-                                 &render_blocker_, block_processor_.get(),
-                                 &block_, &sub_frame_view_) &&
-        successful_buffering;
+    BufferRenderFrameContent(&render_queue_output_frame_, 0, &render_blocker_,
+                             block_processor_.get(), &block_, &sub_frame_view_);
 
     if (sample_rate_hz_ != 8000) {
-      successful_buffering =
-          BufferRenderFrameContent(&render_queue_output_frame_, 1,
-                                   &render_blocker_, block_processor_.get(),
-                                   &block_, &sub_frame_view_) &&
-          successful_buffering;
+      BufferRenderFrameContent(&render_queue_output_frame_, 1, &render_blocker_,
+                               block_processor_.get(), &block_,
+                               &sub_frame_view_);
     }
 
-    successful_buffering =
-        BufferRemainingRenderFrameContent(&render_blocker_,
-                                          block_processor_.get(), &block_) &&
-        successful_buffering;
+    BufferRemainingRenderFrameContent(&render_blocker_, block_processor_.get(),
+                                      &block_);
 
     frame_to_buffer =
         render_transfer_queue_.Remove(&render_queue_output_frame_);
   }
-  return successful_buffering;
 }
 
 }  // namespace webrtc

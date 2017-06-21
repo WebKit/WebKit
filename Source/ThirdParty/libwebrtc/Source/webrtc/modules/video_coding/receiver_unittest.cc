@@ -22,7 +22,6 @@
 #include "webrtc/modules/video_coding/test/test_util.h"
 #include "webrtc/modules/video_coding/timing.h"
 #include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/test/gtest.h"
 
 namespace webrtc {

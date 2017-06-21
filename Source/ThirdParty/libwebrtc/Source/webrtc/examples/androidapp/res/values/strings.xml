@@ -152,6 +152,10 @@
     <string name="pref_enable_level_control_title">Enable level control.</string>
     <string name="pref_enable_level_control_default">false</string>
 
+    <string name="pref_disable_webrtc_agc_and_hpf_key">disable_webrtc_agc_and_hpf_preference</string>
+    <string name="pref_disable_webrtc_agc_and_hpf_title">Disable WebRTC AGC and HPF.</string>
+    <string name="pref_disable_webrtc_agc_default">false</string>
+
     <string name="pref_speakerphone_key">speakerphone_preference</string>
     <string name="pref_speakerphone_title">Speakerphone.</string>
     <string name="pref_speakerphone_dlg">Speakerphone.</string>

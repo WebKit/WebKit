@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "webrtc/base/checks.h"
+#include "webrtc/base/fakeclock.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/physicalsocketserver.h"
 #include "webrtc/base/socketaddresspair.h"
@@ -27,7 +28,7 @@
 
 namespace rtc {
 #if defined(WEBRTC_WIN)
-const in_addr kInitialNextIPv4 = { {0x01, 0, 0, 0} };
+const in_addr kInitialNextIPv4 = { { { 0x01, 0, 0, 0 } } };
 #else
 // This value is entirely arbitrary, hence the lack of concern about endianness.
 const in_addr kInitialNextIPv4 = { 0x01000000 };
@@ -56,6 +57,7 @@ enum {
   MSG_ID_ADDRESS_BOUND,
   MSG_ID_CONNECT,
   MSG_ID_DISCONNECT,
+  MSG_ID_SIGNALREADEVENT,
 };
 
 // Packets are passed between sockets as messages.  We copy the data just like
@@ -303,6 +305,14 @@ int VirtualSocket::RecvFrom(void* pv,
     delete packet;
   }
 
+  // To behave like a real socket, SignalReadEvent should fire in the next
+  // message loop pass if there's still data buffered.
+  if (!recv_buffer_.empty()) {
+    // Clear the message so it doesn't end up posted multiple times.
+    server_->msg_queue_->Clear(this, MSG_ID_SIGNALREADEVENT);
+    server_->msg_queue_->Post(RTC_FROM_HERE, this, MSG_ID_SIGNALREADEVENT);
+  }
+
   if (SOCK_STREAM == type_) {
     bool was_full = (recv_buffer_size_ == server_->recv_buffer_capacity_);
     recv_buffer_size_ -= data_read;
@@ -384,13 +394,6 @@ int VirtualSocket::SetOption(Option opt, int value) {
   return 0;  // 0 is success to emulate setsockopt()
 }
 
-int VirtualSocket::EstimateMTU(uint16_t* mtu) {
-  if (CS_CONNECTED != state_)
-    return ENOTCONN;
-  else
-    return 65536;
-}
-
 void VirtualSocket::OnMessage(Message* pmsg) {
   if (pmsg->message_id == MSG_ID_PACKET) {
     RTC_DCHECK(nullptr != pmsg->pdata);
@@ -428,6 +431,10 @@ void VirtualSocket::OnMessage(Message* pmsg) {
     }
   } else if (pmsg->message_id == MSG_ID_ADDRESS_BOUND) {
     SignalAddressReady(this, GetLocalAddress());
+  } else if (pmsg->message_id == MSG_ID_SIGNALREADEVENT) {
+    if (!recv_buffer_.empty()) {
+      SignalReadEvent(this);
+    }
   } else {
     RTC_NOTREACHED();
   }
@@ -522,9 +529,11 @@ void VirtualSocket::OnSocketServerReadyToSend() {
   }
 }
 
-VirtualSocketServer::VirtualSocketServer(SocketServer* ss)
-    : server_(ss),
-      server_owned_(false),
+VirtualSocketServer::VirtualSocketServer() : VirtualSocketServer(nullptr) {}
+
+VirtualSocketServer::VirtualSocketServer(FakeClock* fake_clock)
+    : fake_clock_(fake_clock),
+      wakeup_(/*manual_reset=*/false, /*initially_signaled=*/false),
       msg_queue_(nullptr),
       stop_on_idle_(false),
       next_ipv4_(kInitialNextIPv4),
@@ -540,19 +549,12 @@ VirtualSocketServer::VirtualSocketServer(SocketServer* ss)
       delay_stddev_(0),
       delay_samples_(NUM_SAMPLES),
       drop_prob_(0.0) {
-  if (!server_) {
-    server_ = new PhysicalSocketServer();
-    server_owned_ = true;
-  }
   UpdateDelayDistribution();
 }
 
 VirtualSocketServer::~VirtualSocketServer() {
   delete bindings_;
   delete connections_;
-  if (server_owned_) {
-    delete server_;
-  }
 }
 
 IPAddress VirtualSocketServer::GetNextIP(int family) {
@@ -628,20 +630,32 @@ bool VirtualSocketServer::Wait(int cmsWait, bool process_io) {
   if (stop_on_idle_ && Thread::Current()->empty()) {
     return false;
   }
-  return socketserver()->Wait(cmsWait, process_io);
+  // Note: we don't need to do anything with |process_io| since we don't have
+  // any real I/O. Received packets come in the form of queued messages, so
+  // MessageQueue will ensure WakeUp is called if another thread sends a
+  // packet.
+  wakeup_.Wait(cmsWait);
+  return true;
 }
 
 void VirtualSocketServer::WakeUp() {
-  socketserver()->WakeUp();
+  wakeup_.Set();
 }
 
 bool VirtualSocketServer::ProcessMessagesUntilIdle() {
   RTC_DCHECK(msg_queue_ == Thread::Current());
   stop_on_idle_ = true;
   while (!msg_queue_->empty()) {
-    Message msg;
-    if (msg_queue_->Get(&msg, Thread::kForever)) {
-      msg_queue_->Dispatch(&msg);
+    if (fake_clock_) {
+      // If using a fake clock, advance it in millisecond increments until the
+      // queue is empty.
+      fake_clock_->AdvanceTime(rtc::TimeDelta::FromMilliseconds(1));
+    } else {
+      // Otherwise, run a normal message loop.
+      Message msg;
+      if (msg_queue_->Get(&msg, Thread::kForever)) {
+        msg_queue_->Dispatch(&msg);
+      }
     }
   }
   stop_on_idle_ = false;

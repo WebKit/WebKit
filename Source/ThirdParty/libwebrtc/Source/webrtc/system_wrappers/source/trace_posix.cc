@@ -19,15 +19,10 @@
 
 namespace webrtc {
 
-TracePosix::TracePosix()
-    : crit_sect_(*CriticalSectionWrapper::CreateCriticalSection()) {
+TracePosix::TracePosix() {
   struct timeval system_time_high_res;
   gettimeofday(&system_time_high_res, 0);
   prev_api_tick_count_ = prev_tick_count_ = system_time_high_res.tv_sec;
-}
-
-TracePosix::~TracePosix() {
-  delete &crit_sect_;
 }
 
 int32_t TracePosix::AddTime(char* trace_message, const TraceLevel level) const {
@@ -42,7 +37,7 @@ int32_t TracePosix::AddTime(char* trace_message, const TraceLevel level) const {
   const uint32_t ms_time = system_time_high_res.tv_usec / 1000;
   uint32_t prev_tickCount = 0;
   {
-    CriticalSectionScoped lock(&crit_sect_);
+    rtc::CritScope lock(&crit_sect_);
     if (level == kTraceApiCall) {
       prev_tickCount = prev_tick_count_;
       prev_tick_count_ = ms_time;

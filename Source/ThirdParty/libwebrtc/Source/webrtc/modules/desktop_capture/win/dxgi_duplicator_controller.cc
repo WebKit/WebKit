@@ -18,20 +18,11 @@
 #include "webrtc/base/checks.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/modules/desktop_capture/desktop_capture_types.h"
+#include "webrtc/modules/desktop_capture/win/dxgi_frame.h"
 #include "webrtc/modules/desktop_capture/win/screen_capture_utils.h"
 #include "webrtc/system_wrappers/include/sleep.h"
 
 namespace webrtc {
-
-DxgiDuplicatorController::Context::Context() = default;
-
-DxgiDuplicatorController::Context::~Context() {
-  DxgiDuplicatorController::Instance()->Unregister(this);
-}
-
-void DxgiDuplicatorController::Context::Reset() {
-  identity_ = 0;
-}
 
 // static
 DxgiDuplicatorController* DxgiDuplicatorController::Instance() {
@@ -53,11 +44,6 @@ bool DxgiDuplicatorController::IsSupported() {
   return Initialize();
 }
 
-void DxgiDuplicatorController::Reset() {
-  rtc::CritScope lock(&lock_);
-  Deinitialize();
-}
-
 bool DxgiDuplicatorController::RetrieveD3dInfo(D3dInfo* info) {
   rtc::CritScope lock(&lock_);
   if (!Initialize()) {
@@ -65,6 +51,17 @@ bool DxgiDuplicatorController::RetrieveD3dInfo(D3dInfo* info) {
   }
   *info = d3d_info_;
   return true;
+}
+
+DxgiDuplicatorController::Result
+DxgiDuplicatorController::Duplicate(DxgiFrame* frame) {
+  return DoDuplicate(frame, -1);
+}
+
+DxgiDuplicatorController::Result
+DxgiDuplicatorController::DuplicateMonitor(DxgiFrame* frame, int monitor_id) {
+  RTC_DCHECK_GE(monitor_id, 0);
+  return DoDuplicate(frame, monitor_id);
 }
 
 DesktopVector DxgiDuplicatorController::dpi() {
@@ -75,38 +72,61 @@ DesktopVector DxgiDuplicatorController::dpi() {
   return DesktopVector();
 }
 
-DesktopRect DxgiDuplicatorController::desktop_rect() {
-  rtc::CritScope lock(&lock_);
-  if (Initialize()) {
-    return desktop_rect_;
-  }
-  return DesktopRect();
-}
-
-DesktopSize DxgiDuplicatorController::desktop_size() {
-  DesktopRect rect = desktop_rect();
-  return DesktopSize(rect.right(), rect.bottom());
-}
-
-DesktopRect DxgiDuplicatorController::ScreenRect(int id) {
-  RTC_DCHECK(id >= 0);
-  rtc::CritScope lock(&lock_);
-  if (!Initialize()) {
-    return DesktopRect();
-  }
-  for (size_t i = 0; i < duplicators_.size(); i++) {
-    if (id >= duplicators_[i].screen_count()) {
-      id -= duplicators_[i].screen_count();
-    } else {
-      return duplicators_[i].ScreenRect(id);
-    }
-  }
-  return DesktopRect();
-}
-
 int DxgiDuplicatorController::ScreenCount() {
   rtc::CritScope lock(&lock_);
-  return ScreenCountUnlocked();
+  if (Initialize()) {
+    return ScreenCountUnlocked();
+  }
+  return 0;
+}
+
+DxgiDuplicatorController::Result
+DxgiDuplicatorController::DoDuplicate(DxgiFrame* frame, int monitor_id) {
+  RTC_DCHECK(frame);
+  rtc::CritScope lock(&lock_);
+
+  // The dxgi components and APIs do not update the screen resolution without
+  // a reinitialization. So we use the GetDC() function to retrieve the screen
+  // resolution to decide whether dxgi components need to be reinitialized.
+  // If the screen resolution changed, it's very likely the next Duplicate()
+  // function call will fail because of a missing monitor or the frame size is
+  // not enough to store the output. So we reinitialize dxgi components in-place
+  // to avoid a capture failure.
+  // But there is no guarantee GetDC() function returns the same resolution as
+  // dxgi APIs, we still rely on dxgi components to return the output frame
+  // size.
+  // TODO(zijiehe): Confirm whether IDXGIOutput::GetDesc() and
+  // IDXGIOutputDuplication::GetDesc() can detect the resolution change without
+  // reinitialization.
+  if (resolution_change_detector_.IsChanged(
+          GetScreenRect(kFullDesktopScreenId, std::wstring()).size())) {
+    Deinitialize();
+  }
+
+  if (!Initialize()) {
+    // Cannot initialize COM components now, display mode may be changing.
+    return Result::INITIALIZATION_FAILED;
+  }
+
+  if (!frame->Prepare(SelectedDesktopSize(monitor_id), monitor_id)) {
+    return Result::FRAME_PREPARE_FAILED;
+  }
+
+  frame->frame()->mutable_updated_region()->Clear();
+
+  if (DoDuplicateUnlocked(frame->context(), monitor_id, frame->frame())) {
+    return Result::SUCCEEDED;
+  }
+  if (monitor_id >= ScreenCountUnlocked()) {
+    // It's a user error to provide a |monitor_id| larger than screen count. We
+    // do not need to deinitialize.
+    return Result::INVALID_MONITOR_ID;
+  }
+
+  // If the |monitor_id| is valid, but DoDuplicateUnlocked() failed, something
+  // must be wrong from capturer APIs. We should Deinitialize().
+  Deinitialize();
+  return Result::DUPLICATION_FAILED;
 }
 
 void DxgiDuplicatorController::Unregister(const Context* const context) {
@@ -117,7 +137,7 @@ void DxgiDuplicatorController::Unregister(const Context* const context) {
     return;
   }
   for (size_t i = 0; i < duplicators_.size(); i++) {
-    duplicators_[i].Unregister(&context->contexts_[i]);
+    duplicators_[i].Unregister(&context->contexts[i]);
   }
 }
 
@@ -162,18 +182,9 @@ bool DxgiDuplicatorController::DoInitialize() {
       d3d_info_.min_feature_level = feature_level;
     }
 
-    if (desktop_rect_.is_empty()) {
-      desktop_rect_ = duplicators_.back().desktop_rect();
-    } else {
-      const DesktopRect& left = desktop_rect_;
-      const DesktopRect& right = duplicators_.back().desktop_rect();
-      desktop_rect_ =
-          DesktopRect::MakeLTRB(std::min(left.left(), right.left()),
-                                std::min(left.top(), right.top()),
-                                std::max(left.right(), right.right()),
-                                std::max(left.bottom(), right.bottom()));
-    }
+    desktop_rect_.UnionWith(duplicators_.back().desktop_rect());
   }
+  TranslateRect();
 
   HDC hdc = GetDC(nullptr);
   // Use old DPI value if failed.
@@ -194,66 +205,26 @@ void DxgiDuplicatorController::Deinitialize() {
 
 bool DxgiDuplicatorController::ContextExpired(
     const Context* const context) const {
-  return context->identity_ != identity_ ||
-         context->contexts_.size() != duplicators_.size();
+  RTC_DCHECK(context);
+  return context->controller_id != identity_ ||
+         context->contexts.size() != duplicators_.size();
 }
 
 void DxgiDuplicatorController::Setup(Context* context) {
   if (ContextExpired(context)) {
-    context->contexts_.clear();
-    context->contexts_.resize(duplicators_.size());
+    RTC_DCHECK(context);
+    context->contexts.clear();
+    context->contexts.resize(duplicators_.size());
     for (size_t i = 0; i < duplicators_.size(); i++) {
-      duplicators_[i].Setup(&context->contexts_[i]);
+      duplicators_[i].Setup(&context->contexts[i]);
     }
-    context->identity_ = identity_;
+    context->controller_id = identity_;
   }
-}
-
-bool DxgiDuplicatorController::Duplicate(Context* context,
-                                         SharedDesktopFrame* target) {
-  return DoDuplicate(context, -1, target);
-}
-
-bool DxgiDuplicatorController::DuplicateMonitor(Context* context,
-                                                int monitor_id,
-                                                SharedDesktopFrame* target) {
-  RTC_DCHECK_GE(monitor_id, 0);
-  return DoDuplicate(context, monitor_id, target);
-}
-
-bool DxgiDuplicatorController::DoDuplicate(Context* context,
-                                           int monitor_id,
-                                           SharedDesktopFrame* target) {
-  RTC_DCHECK(target);
-  target->mutable_updated_region()->Clear();
-  rtc::CritScope lock(&lock_);
-  if (DoDuplicateUnlocked(context, monitor_id, target)) {
-    return true;
-  }
-  if (monitor_id < ScreenCountUnlocked()) {
-    // It's a user error to provide a |monitor_id| larger than screen count. We
-    // do not need to deinitialize.
-    Deinitialize();
-  }
-  return false;
 }
 
 bool DxgiDuplicatorController::DoDuplicateUnlocked(Context* context,
                                                    int monitor_id,
                                                    SharedDesktopFrame* target) {
-  if (!Initialize()) {
-    // Cannot initialize COM components now, display mode may be changing.
-    return false;
-  }
-
-  if (resolution_change_detector_.IsChanged(
-          GetScreenRect(kFullDesktopScreenId, std::wstring()).size())) {
-    // Resolution of entire screen has been changed, which usually means a new
-    // monitor has been attached or one has been removed. The simplest way is to
-    // Deinitialize() and returns false to indicate downstream components.
-    return false;
-  }
-
   Setup(context);
 
   if (!EnsureFrameCaptured(context, target)) {
@@ -279,7 +250,7 @@ bool DxgiDuplicatorController::DoDuplicateUnlocked(Context* context,
 bool DxgiDuplicatorController::DoDuplicateAll(Context* context,
                                               SharedDesktopFrame* target) {
   for (size_t i = 0; i < duplicators_.size(); i++) {
-    if (!duplicators_[i].Duplicate(&context->contexts_[i], target)) {
+    if (!duplicators_[i].Duplicate(&context->contexts[i], target)) {
       return false;
     }
   }
@@ -290,12 +261,12 @@ bool DxgiDuplicatorController::DoDuplicateOne(Context* context,
                                               int monitor_id,
                                               SharedDesktopFrame* target) {
   RTC_DCHECK(monitor_id >= 0);
-  for (size_t i = 0; i < duplicators_.size() && i < context->contexts_.size();
+  for (size_t i = 0; i < duplicators_.size() && i < context->contexts.size();
        i++) {
     if (monitor_id >= duplicators_[i].screen_count()) {
       monitor_id -= duplicators_[i].screen_count();
     } else {
-      if (duplicators_[i].DuplicateMonitor(&context->contexts_[i], monitor_id,
+      if (duplicators_[i].DuplicateMonitor(&context->contexts[i], monitor_id,
                                            target)) {
         return true;
       }
@@ -314,15 +285,37 @@ int64_t DxgiDuplicatorController::GetNumFramesCaptured() const {
   return min;
 }
 
-int DxgiDuplicatorController::ScreenCountUnlocked() {
-  if (!Initialize()) {
-    return 0;
+DesktopSize DxgiDuplicatorController::desktop_size() const {
+  return desktop_rect_.size();
+}
+
+DesktopRect DxgiDuplicatorController::ScreenRect(int id) const {
+  RTC_DCHECK(id >= 0);
+  for (size_t i = 0; i < duplicators_.size(); i++) {
+    if (id >= duplicators_[i].screen_count()) {
+      id -= duplicators_[i].screen_count();
+    } else {
+      return duplicators_[i].ScreenRect(id);
+    }
   }
+  return DesktopRect();
+}
+
+int DxgiDuplicatorController::ScreenCountUnlocked() const {
   int result = 0;
   for (auto& duplicator : duplicators_) {
     result += duplicator.screen_count();
   }
   return result;
+}
+
+DesktopSize DxgiDuplicatorController::SelectedDesktopSize(
+    int monitor_id) const {
+  if (monitor_id < 0) {
+    return desktop_size();
+  }
+
+  return ScreenRect(monitor_id).size();
 }
 
 bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
@@ -374,6 +367,15 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
     }
   }
   return true;
+}
+
+void DxgiDuplicatorController::TranslateRect() {
+  const DesktopVector position =
+      DesktopVector().subtract(desktop_rect_.top_left());
+  desktop_rect_.Translate(position);
+  for (auto& duplicator : duplicators_) {
+    duplicator.TranslateRect(position);
+  }
 }
 
 }  // namespace webrtc

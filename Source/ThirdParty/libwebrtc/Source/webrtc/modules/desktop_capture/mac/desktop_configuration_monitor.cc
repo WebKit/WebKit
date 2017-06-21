@@ -10,9 +10,9 @@
 
 #include "webrtc/modules/desktop_capture/mac/desktop_configuration_monitor.h"
 
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/desktop_capture/mac/desktop_configuration.h"
 #include "webrtc/system_wrappers/include/event_wrapper.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 

@@ -15,6 +15,7 @@
 #include <memory>
 #include <set>
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/optional.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/include/module.h"
@@ -25,8 +26,8 @@ namespace webrtc {
 class AlrDetector;
 class BitrateProber;
 class Clock;
-class CriticalSectionWrapper;
 class ProbeClusterCreatedObserver;
+class RtcEventLog;
 
 namespace paced_sender {
 class IntervalBudget;
@@ -68,9 +69,11 @@ class PacedSender : public Module, public RtpPacketSender {
   // overshoots from the encoder.
   static const float kDefaultPaceMultiplier;
 
-  PacedSender(Clock* clock, PacketSender* packet_sender);
+  PacedSender(const Clock* clock,
+              PacketSender* packet_sender,
+              RtcEventLog* event_log);
 
-  virtual ~PacedSender();
+  ~PacedSender() override;
 
   virtual void CreateProbeCluster(int bitrate_bps);
 
@@ -116,6 +119,10 @@ class PacedSender : public Module, public RtpPacketSender {
 
   virtual size_t QueueSizePackets() const;
 
+  // Returns the time when the first packet was sent, or -1 if no packet is
+  // sent.
+  virtual int64_t FirstSentPacketTimeMs() const;
+
   // Returns the number of milliseconds it will take to send the current
   // packets in the queue, given the current size and bitrate, ignoring prio.
   virtual int64_t ExpectedQueueTimeMs() const;
@@ -139,6 +146,9 @@ class PacedSender : public Module, public RtpPacketSender {
   // Process any pending packets in the queue(s).
   void Process() override;
 
+  // Called when the prober is associated with a process thread.
+  void ProcessThreadAttached(ProcessThread* process_thread) override;
+
  private:
   // Updates the number of bytes that can be sent for the next time interval.
   void UpdateBudgetWithElapsedTime(int64_t delta_time_in_ms)
@@ -152,11 +162,11 @@ class PacedSender : public Module, public RtpPacketSender {
   size_t SendPadding(size_t padding_needed, const PacedPacketInfo& cluster_info)
       EXCLUSIVE_LOCKS_REQUIRED(critsect_);
 
-  Clock* const clock_;
+  const Clock* const clock_;
   PacketSender* const packet_sender_;
   std::unique_ptr<AlrDetector> alr_detector_ GUARDED_BY(critsect_);
 
-  std::unique_ptr<CriticalSectionWrapper> critsect_;
+  rtc::CriticalSection critsect_;
   bool paused_ GUARDED_BY(critsect_);
   // This is the media budget, keeping track of how many bits of media
   // we can pace out during the current interval.
@@ -178,9 +188,11 @@ class PacedSender : public Module, public RtpPacketSender {
   uint32_t pacing_bitrate_kbps_ GUARDED_BY(critsect_);
 
   int64_t time_last_update_us_ GUARDED_BY(critsect_);
+  int64_t first_sent_packet_ms_ GUARDED_BY(critsect_);
 
   std::unique_ptr<paced_sender::PacketQueue> packets_ GUARDED_BY(critsect_);
   uint64_t packet_counter_;
+  ProcessThread* process_thread_ = nullptr;
 };
 }  // namespace webrtc
 #endif  // WEBRTC_MODULES_PACING_PACED_SENDER_H_

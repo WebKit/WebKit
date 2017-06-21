@@ -57,11 +57,8 @@ bool LoopBackTransport::SendRtp(const uint8_t* data,
   RTC_CHECK_GE(len, header.headerLength);
   const size_t payload_length = len - header.headerLength;
   receive_statistics_->IncomingPacket(header, len, false);
-  if (!rtp_receiver_->IncomingRtpPacket(header, payload, payload_length,
-                                        payload_specific, true)) {
-    return false;
-  }
-  return true;
+  return rtp_receiver_->IncomingRtpPacket(header, payload, payload_length,
+                                          payload_specific, true);
 }
 
 bool LoopBackTransport::SendRtcp(const uint8_t* data, size_t len) {
@@ -105,12 +102,9 @@ class RtpRtcpAPITest : public ::testing::Test {
     module_.reset(RtpRtcp::CreateRtpRtcp(configuration));
     module_->SetSSRC(initial_ssrc);
     rtp_payload_registry_.reset(new RTPPayloadRegistry());
-    rtp_receiver_.reset(RtpReceiver::CreateAudioReceiver(
-        &fake_clock_, NULL, NULL, rtp_payload_registry_.get()));
   }
 
   std::unique_ptr<RTPPayloadRegistry> rtp_payload_registry_;
-  std::unique_ptr<RtpReceiver> rtp_receiver_;
   std::unique_ptr<RtpRtcp> module_;
   uint32_t test_ssrc_;
   uint32_t test_timestamp_;
@@ -136,7 +130,6 @@ TEST_F(RtpRtcpAPITest, Basic) {
 TEST_F(RtpRtcpAPITest, PacketSize) {
   module_->SetMaxRtpPacketSize(1234);
   EXPECT_EQ(1234u, module_->MaxRtpPacketSize());
-  EXPECT_EQ(1234u - 12u /* Minimum RTP header */, module_->MaxPayloadSize());
 }
 
 TEST_F(RtpRtcpAPITest, SSRC) {

@@ -216,30 +216,16 @@ void MessageQueue::DoDestroy() {
   MessageQueueManager::Remove(this);
   Clear(nullptr);
 
-  SharedScope ss(&ss_lock_);
   if (ss_) {
     ss_->SetMessageQueue(nullptr);
   }
 }
 
 SocketServer* MessageQueue::socketserver() {
-  SharedScope ss(&ss_lock_);
   return ss_;
 }
 
-void MessageQueue::set_socketserver(SocketServer* ss) {
-  // Need to lock exclusively here to prevent simultaneous modifications from
-  // other threads. Can't be a shared lock to prevent races with other reading
-  // threads.
-  // Other places that only read "ss_" can use a shared lock as simultaneous
-  // read access is allowed.
-  ExclusiveScope es(&ss_lock_);
-  ss_ = ss ? ss : own_ss_.get();
-  ss_->SetMessageQueue(this);
-}
-
 void MessageQueue::WakeUpSocketServer() {
-  SharedScope ss(&ss_lock_);
   ss_->WakeUp();
 }
 
@@ -357,7 +343,6 @@ bool MessageQueue::Get(Message *pmsg, int cmsWait, bool process_io) {
 
     {
       // Wait and multiplex in the meantime
-      SharedScope ss(&ss_lock_);
       if (!ss_->Wait(static_cast<int>(cmsNext), process_io))
         return false;
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 The WebRTC project authors. All Rights Reserved.
+ *  Copyright 2017 The WebRTC Project Authors. All rights reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -16,45 +16,9 @@
 #import "WebRTC/RTCLogging.h"
 #import "WebRTC/RTCVideoFrame.h"
 
-#include "webrtc/api/video/video_rotation.h"
+#import "RTCMTLRenderer+Private.h"
 
 #define MTL_STRINGIFY(s) @ #s
-
-// As defined in shaderSource.
-static NSString *const vertexFunctionName = @"vertexPassthrough";
-static NSString *const fragmentFunctionName = @"fragmentColorConversion";
-
-static NSString *const pipelineDescriptorLabel = @"RTCPipeline";
-static NSString *const commandBufferLabel = @"RTCCommandBuffer";
-static NSString *const renderEncoderLabel = @"RTCEncoder";
-static NSString *const renderEncoderDebugGroup = @"RTCDrawFrame";
-
-static const float cubeVertexData[64] = {
-    -1.0, -1.0, 0.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0,
-
-    // rotation = 90, offset = 16.
-    -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 0.0, -1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0,
-
-    // rotation = 180, offset = 32.
-    -1.0, -1.0, 1.0, 0.0, 1.0, -1.0, 0.0, 0.0, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0,
-
-    // rotation = 270, offset = 48.
-    -1.0, -1.0, 0.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0,
-};
-
-static inline int offsetForRotation(webrtc::VideoRotation rotation) {
-  switch (rotation) {
-    case webrtc::kVideoRotation_0:
-      return 0;
-    case webrtc::kVideoRotation_90:
-      return 16;
-    case webrtc::kVideoRotation_180:
-      return 32;
-    case webrtc::kVideoRotation_270:
-      return 48;
-  }
-  return 0;
-}
 
 static NSString *const shaderSource = MTL_STRINGIFY(
     using namespace metal; typedef struct {
@@ -73,7 +37,6 @@ static NSString *const shaderSource = MTL_STRINGIFY(
       device Vertex &v = verticies[vid];
       out.position = float4(float2(v.position), 0.0, 1.0);
       out.texcoord = v.texcoord;
-
       return out;
     }
 
@@ -93,189 +56,35 @@ static NSString *const shaderSource = MTL_STRINGIFY(
       return half4(out);
     });
 
-// The max number of command buffers in flight (submitted to GPU).
-// For now setting it up to 1.
-// In future we might use triple buffering method if it improves performance.
-static const NSInteger kMaxInflightBuffers = 1;
-
 @implementation RTCMTLNV12Renderer {
-  __kindof MTKView *_view;
-
-  // Controller.
-  dispatch_semaphore_t _inflight_semaphore;
-
-  // Renderer.
-  id<MTLDevice> _device;
-  id<MTLCommandQueue> _commandQueue;
-  id<MTLLibrary> _defaultLibrary;
-  id<MTLRenderPipelineState> _pipelineState;
-
   // Textures.
   CVMetalTextureCacheRef _textureCache;
   id<MTLTexture> _yTexture;
   id<MTLTexture> _CrCbTexture;
-
-  // Buffers.
-  id<MTLBuffer> _vertexBuffer;
-
-  // RTC Frame parameters.
-  int _offset;
-}
-
-- (instancetype)init {
-  if (self = [super init]) {
-    // _offset of 0 is equal to rotation of 0.
-    _offset = 0;
-    _inflight_semaphore = dispatch_semaphore_create(kMaxInflightBuffers);
-  }
-
-  return self;
 }
 
 - (BOOL)addRenderingDestination:(__kindof MTKView *)view {
-  return [self setupWithView:view];
-}
-
-#pragma mark - Private
-
-- (BOOL)setupWithView:(__kindof MTKView *)view {
-  BOOL success = NO;
-  if ([self setupMetal]) {
-    [self setupView:view];
-    [self loadAssets];
-    [self setupBuffers];
+  if ([super addRenderingDestination:view]) {
     [self initializeTextureCache];
-    success = YES;
+    return YES;
   }
-  return success;
-}
-
-#pragma mark - GPU methods
-
-- (BOOL)setupMetal {
-  // Set the view to use the default device.
-  _device = MTLCreateSystemDefaultDevice();
-  if (!_device) {
-    return NO;
-  }
-
-  // Create a new command queue.
-  _commandQueue = [_device newCommandQueue];
-
-  // Load metal library from source.
-  NSError *libraryError = nil;
-
-  id<MTLLibrary> sourceLibrary =
-      [_device newLibraryWithSource:shaderSource options:NULL error:&libraryError];
-
-  if (libraryError) {
-    RTCLogError(@"Metal: Library with source failed\n%@", libraryError);
-    return NO;
-  }
-
-  if (!sourceLibrary) {
-    RTCLogError(@"Metal: Failed to load library. %@", libraryError);
-    return NO;
-  }
-  _defaultLibrary = sourceLibrary;
-
-  return YES;
-}
-
-- (void)setupView:(__kindof MTKView *)view {
-  view.device = _device;
-
-  view.preferredFramesPerSecond = 30;
-  view.autoResizeDrawable = NO;
-
-  // We need to keep reference to the view as it's needed down the rendering pipeline.
-  _view = view;
-}
-
-- (void)loadAssets {
-  id<MTLFunction> vertexFunction = [_defaultLibrary newFunctionWithName:vertexFunctionName];
-  id<MTLFunction> fragmentFunction =
-      [_defaultLibrary newFunctionWithName:fragmentFunctionName];
-
-  MTLRenderPipelineDescriptor *pipelineDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
-  pipelineDescriptor.label = pipelineDescriptorLabel;
-  pipelineDescriptor.vertexFunction = vertexFunction;
-  pipelineDescriptor.fragmentFunction = fragmentFunction;
-  pipelineDescriptor.colorAttachments[0].pixelFormat = _view.colorPixelFormat;
-  pipelineDescriptor.depthAttachmentPixelFormat = MTLPixelFormatInvalid;
-  NSError *error = nil;
-  _pipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineDescriptor error:&error];
-
-  if (!_pipelineState) {
-    RTCLogError(@"Metal: Failed to create pipeline state. %@", error);
-  }
-}
-
-- (void)setupBuffers {
-  _vertexBuffer = [_device newBufferWithBytes:cubeVertexData
-                                       length:sizeof(cubeVertexData)
-                                      options:MTLResourceOptionCPUCacheModeDefault];
+  return NO;
 }
 
 - (void)initializeTextureCache {
-  CVReturn status =
-      CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, _device, nil, &_textureCache);
+  CVReturn status = CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, [self currentMetalDevice],
+                                              nil, &_textureCache);
   if (status != kCVReturnSuccess) {
     RTCLogError(@"Metal: Failed to initialize metal texture cache. Return status is %d", status);
   }
 }
 
-- (void)render {
-  // Wait until the inflight (curently sent to GPU) command buffer
-  // has completed the GPU work.
-  dispatch_semaphore_wait(_inflight_semaphore, DISPATCH_TIME_FOREVER);
-
-  id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
-  commandBuffer.label = commandBufferLabel;
-
-  __block dispatch_semaphore_t block_semaphore = _inflight_semaphore;
-  [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> _Nonnull) {
-    // GPU work completed.
-    dispatch_semaphore_signal(block_semaphore);
-  }];
-
-  MTLRenderPassDescriptor *_renderPassDescriptor = _view.currentRenderPassDescriptor;
-  if (_renderPassDescriptor) {  // Valid drawable.
-    id<MTLRenderCommandEncoder> renderEncoder =
-        [commandBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
-    renderEncoder.label = renderEncoderLabel;
-
-    // Set context state.
-    [renderEncoder pushDebugGroup:renderEncoderDebugGroup];
-    [renderEncoder setRenderPipelineState:_pipelineState];
-    [renderEncoder setVertexBuffer:_vertexBuffer offset:_offset * sizeof(float) atIndex:0];
-    [renderEncoder setFragmentTexture:_yTexture atIndex:0];
-    [renderEncoder setFragmentTexture:_CrCbTexture atIndex:1];
-
-    [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip
-                      vertexStart:0
-                      vertexCount:4
-                    instanceCount:1];
-    [renderEncoder popDebugGroup];
-    [renderEncoder endEncoding];
-
-    [commandBuffer presentDrawable:_view.currentDrawable];
-  }
-
-  // CPU work is completed, GPU work can be started.
-  [commandBuffer commit];
+- (NSString *)shaderSource {
+  return shaderSource;
 }
 
-#pragma mark - RTCMTLRenderer
-
-- (void)drawFrame:(RTCVideoFrame *)frame {
-  [self setupTexturesForFrame:frame];
-  @autoreleasepool {
-    [self render];
-  }
-}
-
-- (void)setupTexturesForFrame:(nonnull RTCVideoFrame *)frame {
+- (BOOL)setupTexturesForFrame:(nonnull RTCVideoFrame *)frame {
+  [super setupTexturesForFrame:frame];
   CVPixelBufferRef pixelBuffer = frame.nativeHandle;
 
   id<MTLTexture> lumaTexture = nil;
@@ -312,8 +121,14 @@ static const NSInteger kMaxInflightBuffers = 1;
   if (lumaTexture != nil && chromaTexture != nil) {
     _yTexture = lumaTexture;
     _CrCbTexture = chromaTexture;
-    _offset = offsetForRotation((webrtc::VideoRotation)frame.rotation);
+    return YES;
   }
+  return NO;
+}
+
+- (void)uploadTexturesToRenderEncoder:(id<MTLRenderCommandEncoder>)renderEncoder {
+  [renderEncoder setFragmentTexture:_yTexture atIndex:0];
+  [renderEncoder setFragmentTexture:_CrCbTexture atIndex:1];
 }
 
 @end

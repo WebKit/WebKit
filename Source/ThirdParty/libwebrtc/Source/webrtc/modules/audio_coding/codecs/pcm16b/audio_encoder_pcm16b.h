@@ -31,6 +31,11 @@ class AudioEncoderPcm16B final : public AudioEncoderPcm {
   explicit AudioEncoderPcm16B(const Config& config)
       : AudioEncoderPcm(config, config.sample_rate_hz) {}
   explicit AudioEncoderPcm16B(const CodecInst& codec_inst);
+  AudioEncoderPcm16B(int payload_type, const SdpAudioFormat& format);
+
+  static constexpr const char* GetPayloadName() { return "L16"; }
+  static rtc::Optional<AudioCodecInfo> QueryAudioEncoder(
+      const SdpAudioFormat& format);
 
  protected:
   size_t EncodeCall(const int16_t* audio,

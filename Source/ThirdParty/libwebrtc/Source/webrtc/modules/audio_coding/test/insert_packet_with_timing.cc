@@ -147,7 +147,7 @@ class InsertPacketWithTiming {
       receive_acm_->PlayoutData10Ms(static_cast<int>(FLAGS_output_fs_hz),
                                     &frame_, &muted);
       ASSERT_FALSE(muted);
-      fwrite(frame_.data_, sizeof(frame_.data_[0]),
+      fwrite(frame_.data(), sizeof(*frame_.data()),
              frame_.samples_per_channel_ * frame_.num_channels_, pcm_out_fid_);
       *action |= kAudioPlayedOut;
     }

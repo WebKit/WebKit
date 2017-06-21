@@ -29,7 +29,7 @@ class DriftingClock : public Clock {
 
   int64_t TimeInMilliseconds() const override;
   int64_t TimeInMicroseconds() const override;
-  void CurrentNtp(uint32_t& seconds, uint32_t& fractions) const override;
+  NtpTime CurrentNtpTime() const override;
   int64_t CurrentNtpInMilliseconds() const override;
 
  private:

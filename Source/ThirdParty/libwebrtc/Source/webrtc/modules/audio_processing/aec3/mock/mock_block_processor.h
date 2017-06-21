@@ -27,7 +27,8 @@ class MockBlockProcessor : public BlockProcessor {
                void(bool level_change,
                     bool saturated_microphone_signal,
                     std::vector<std::vector<float>>* capture_block));
-  MOCK_METHOD1(BufferRender, bool(std::vector<std::vector<float>>* block));
+  MOCK_METHOD1(BufferRender,
+               void(const std::vector<std::vector<float>>& block));
   MOCK_METHOD1(UpdateEchoLeakageStatus, void(bool leakage_detected));
 };
 

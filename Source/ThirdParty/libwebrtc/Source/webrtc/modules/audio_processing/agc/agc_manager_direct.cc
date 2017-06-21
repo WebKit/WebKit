@@ -17,10 +17,11 @@
 #endif
 
 #include "webrtc/base/checks.h"
+#include "webrtc/base/logging.h"
+#include "webrtc/base/safe_minmax.h"
 #include "webrtc/modules/audio_processing/agc/gain_map_internal.h"
 #include "webrtc/modules/audio_processing/gain_control_impl.h"
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/system_wrappers/include/logging.h"
 #include "webrtc/system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -56,7 +57,7 @@ const int kMaxResidualGainChange = 15;
 const int kSurplusCompressionGain = 6;
 
 int ClampLevel(int mic_level) {
-  return std::min(std::max(kMinMicLevel, mic_level), kMaxMicLevel);
+  return rtc::SafeClamp(mic_level, kMinMicLevel, kMaxMicLevel);
 }
 
 int LevelFromGainError(int gain_error, int level) {
@@ -380,8 +381,9 @@ void AgcManagerDirect::UpdateGain() {
   rms_error += kMinCompressionGain;
 
   // Handle as much error as possible with the compressor first.
-  int raw_compression = std::max(std::min(rms_error, max_compression_gain_),
-                                 kMinCompressionGain);
+  int raw_compression =
+      rtc::SafeClamp(rms_error, kMinCompressionGain, max_compression_gain_);
+
   // Deemphasize the compression gain error. Move halfway between the current
   // target and the newly received target. This serves to soften perceptible
   // intra-talkspurt adjustments, at the cost of some adaptation speed.
@@ -400,9 +402,9 @@ void AgcManagerDirect::UpdateGain() {
   // Residual error will be handled by adjusting the volume slider. Use the
   // raw rather than deemphasized compression here as we would otherwise
   // shrink the amount of slack the compressor provides.
-  int residual_gain = rms_error - raw_compression;
-  residual_gain = std::min(std::max(residual_gain, -kMaxResidualGainChange),
-      kMaxResidualGainChange);
+  const int residual_gain =
+      rtc::SafeClamp(rms_error - raw_compression, -kMaxResidualGainChange,
+                     kMaxResidualGainChange);
   LOG(LS_INFO) << "[agc] rms_error=" << rms_error << ", "
                << "target_compression=" << target_compression_ << ", "
                << "residual_gain=" << residual_gain;

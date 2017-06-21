@@ -13,7 +13,6 @@
 
 #include "webrtc/base/atomicops.h"
 #include "webrtc/base/bind.h"
-#include "webrtc/base/callback.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/messagehandler.h"
 #include "webrtc/base/sigslot.h"
@@ -48,93 +47,6 @@ class FireAndForgetAsyncClosure : public AsyncClosure {
   virtual void Execute() {
     functor_();
   }
- private:
-  FunctorT functor_;
-};
-
-// Base class for closures that may trigger a callback for the calling thread.
-// Listens for the "destroyed" signals from the calling thread and the invoker,
-// and cancels the callback to the calling thread if either is destroyed.
-class NotifyingAsyncClosureBase : public AsyncClosure,
-                                  public sigslot::has_slots<> {
- public:
-  ~NotifyingAsyncClosureBase() override;
-
- protected:
-  NotifyingAsyncClosureBase(AsyncInvoker* invoker,
-                            const Location& callback_posted_from,
-                            Thread* calling_thread);
-  void TriggerCallback();
-  void SetCallback(const Callback0<void>& callback) {
-    CritScope cs(&crit_);
-    callback_ = callback;
-  }
-  bool CallbackCanceled() const {
-    CritScope cs(&crit_);
-    return calling_thread_ == nullptr;
-  }
-
- private:
-  Location callback_posted_from_;
-  CriticalSection crit_;
-  Callback0<void> callback_ GUARDED_BY(crit_);
-  Thread* calling_thread_ GUARDED_BY(crit_);
-
-  void CancelCallback();
-};
-
-// Closures that have a non-void return value and require a callback.
-template <class ReturnT, class FunctorT, class HostT>
-class NotifyingAsyncClosure : public NotifyingAsyncClosureBase {
- public:
-  NotifyingAsyncClosure(AsyncInvoker* invoker,
-                        const Location& callback_posted_from,
-                        Thread* calling_thread,
-                        const FunctorT& functor,
-                        void (HostT::*callback)(ReturnT),
-                        HostT* callback_host)
-      : NotifyingAsyncClosureBase(invoker,
-                                  callback_posted_from,
-                                  calling_thread),
-        functor_(functor),
-        callback_(callback),
-        callback_host_(callback_host) {}
-  virtual void Execute() {
-    ReturnT result = functor_();
-    if (!CallbackCanceled()) {
-      SetCallback(Callback0<void>(Bind(callback_, callback_host_, result)));
-      TriggerCallback();
-    }
-  }
-
- private:
-  FunctorT functor_;
-  void (HostT::*callback_)(ReturnT);
-  HostT* callback_host_;
-};
-
-// Closures that have a void return value and require a callback.
-template <class FunctorT, class HostT>
-class NotifyingAsyncClosure<void, FunctorT, HostT>
-    : public NotifyingAsyncClosureBase {
- public:
-  NotifyingAsyncClosure(AsyncInvoker* invoker,
-                        const Location& callback_posted_from,
-                        Thread* calling_thread,
-                        const FunctorT& functor,
-                        void (HostT::*callback)(),
-                        HostT* callback_host)
-      : NotifyingAsyncClosureBase(invoker,
-                                  callback_posted_from,
-                                  calling_thread),
-        functor_(functor) {
-    SetCallback(Callback0<void>(Bind(callback, callback_host)));
-  }
-  virtual void Execute() {
-    functor_();
-    TriggerCallback();
-  }
-
  private:
   FunctorT functor_;
 };

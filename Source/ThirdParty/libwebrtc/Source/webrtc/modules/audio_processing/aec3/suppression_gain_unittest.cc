@@ -10,9 +10,10 @@
 
 #include "webrtc/modules/audio_processing/aec3/suppression_gain.h"
 
-#include "webrtc/typedefs.h"
+#include "webrtc/base/checks.h"
 #include "webrtc/system_wrappers/include/cpu_features_wrapper.h"
 #include "webrtc/test/gtest.h"
+#include "webrtc/typedefs.h"
 
 namespace webrtc {
 namespace aec3 {
@@ -24,101 +25,36 @@ TEST(SuppressionGain, NullOutputGains) {
   std::array<float, kFftLengthBy2Plus1> E2;
   std::array<float, kFftLengthBy2Plus1> R2;
   std::array<float, kFftLengthBy2Plus1> N2;
-  EXPECT_DEATH(
-      SuppressionGain(DetectOptimization()).GetGain(E2, R2, N2, 0.1f, nullptr),
-      "");
+  E2.fill(0.f);
+  R2.fill(0.f);
+  N2.fill(0.f);
+  float high_bands_gain;
+  EXPECT_DEATH(SuppressionGain(DetectOptimization())
+                   .GetGain(E2, R2, N2, false,
+                            std::vector<std::vector<float>>(
+                                3, std::vector<float>(kBlockSize, 0.f)),
+                            false, &high_bands_gain, nullptr),
+               "");
 }
 
-#endif
-
-#if defined(WEBRTC_ARCH_X86_FAMILY)
-// Verifies that the optimized methods are bitexact to their reference
-// counterparts.
-TEST(SuppressionGain, TestOptimizations) {
-  if (WebRtc_GetCPUInfo(kSSE2) != 0) {
-    std::array<float, kFftLengthBy2 - 1> G2_old;
-    std::array<float, kFftLengthBy2 - 1> M2_old;
-    std::array<float, kFftLengthBy2 - 1> G2_old_SSE2;
-    std::array<float, kFftLengthBy2 - 1> M2_old_SSE2;
-    std::array<float, kFftLengthBy2Plus1> E2;
-    std::array<float, kFftLengthBy2Plus1> R2;
-    std::array<float, kFftLengthBy2Plus1> N2;
-    std::array<float, kFftLengthBy2Plus1> g;
-    std::array<float, kFftLengthBy2Plus1> g_SSE2;
-
-    G2_old.fill(1.f);
-    M2_old.fill(.23f);
-    G2_old_SSE2.fill(1.f);
-    M2_old_SSE2.fill(.23f);
-
-    E2.fill(10.f);
-    R2.fill(0.1f);
-    N2.fill(100.f);
-    for (int k = 0; k < 10; ++k) {
-      ComputeGains(E2, R2, N2, 0.1f, &G2_old, &M2_old, &g);
-      ComputeGains_SSE2(E2, R2, N2, 0.1f, &G2_old_SSE2, &M2_old_SSE2, &g_SSE2);
-      for (size_t j = 0; j < G2_old.size(); ++j) {
-        EXPECT_NEAR(G2_old[j], G2_old_SSE2[j], 0.0000001f);
-      }
-      for (size_t j = 0; j < M2_old.size(); ++j) {
-        EXPECT_NEAR(M2_old[j], M2_old_SSE2[j], 0.0000001f);
-      }
-      for (size_t j = 0; j < g.size(); ++j) {
-        EXPECT_NEAR(g[j], g_SSE2[j], 0.0000001f);
-      }
-    }
-
-    E2.fill(100.f);
-    R2.fill(0.1f);
-    N2.fill(0.f);
-    for (int k = 0; k < 10; ++k) {
-      ComputeGains(E2, R2, N2, 0.1f, &G2_old, &M2_old, &g);
-      ComputeGains_SSE2(E2, R2, N2, 0.1f, &G2_old_SSE2, &M2_old_SSE2, &g_SSE2);
-      for (size_t j = 0; j < G2_old.size(); ++j) {
-        EXPECT_NEAR(G2_old[j], G2_old_SSE2[j], 0.0000001f);
-      }
-      for (size_t j = 0; j < M2_old.size(); ++j) {
-        EXPECT_NEAR(M2_old[j], M2_old_SSE2[j], 0.0000001f);
-      }
-      for (size_t j = 0; j < g.size(); ++j) {
-        EXPECT_NEAR(g[j], g_SSE2[j], 0.0000001f);
-      }
-    }
-
-    E2.fill(0.1f);
-    R2.fill(100.f);
-    N2.fill(0.f);
-    for (int k = 0; k < 10; ++k) {
-      ComputeGains(E2, R2, N2, 0.1f, &G2_old, &M2_old, &g);
-      ComputeGains_SSE2(E2, R2, N2, 0.1f, &G2_old_SSE2, &M2_old_SSE2, &g_SSE2);
-      for (size_t j = 0; j < G2_old.size(); ++j) {
-        EXPECT_NEAR(G2_old[j], G2_old_SSE2[j], 0.0000001f);
-      }
-      for (size_t j = 0; j < M2_old.size(); ++j) {
-        EXPECT_NEAR(M2_old[j], M2_old_SSE2[j], 0.0000001f);
-      }
-      for (size_t j = 0; j < g.size(); ++j) {
-        EXPECT_NEAR(g[j], g_SSE2[j], 0.0000001f);
-      }
-    }
-  }
-}
 #endif
 
 // Does a sanity check that the gains are correctly computed.
 TEST(SuppressionGain, BasicGainComputation) {
   SuppressionGain suppression_gain(DetectOptimization());
+  float high_bands_gain;
   std::array<float, kFftLengthBy2Plus1> E2;
   std::array<float, kFftLengthBy2Plus1> R2;
   std::array<float, kFftLengthBy2Plus1> N2;
   std::array<float, kFftLengthBy2Plus1> g;
+  std::vector<std::vector<float>> x(1, std::vector<float>(kBlockSize, 0.f));
 
   // Ensure that a strong noise is detected to mask any echoes.
   E2.fill(10.f);
   R2.fill(0.1f);
   N2.fill(100.f);
   for (int k = 0; k < 10; ++k) {
-    suppression_gain.GetGain(E2, R2, N2, 0.1f, &g);
+    suppression_gain.GetGain(E2, R2, N2, false, x, false, &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),
                 [](float a) { EXPECT_NEAR(1.f, a, 0.001); });
@@ -128,20 +64,25 @@ TEST(SuppressionGain, BasicGainComputation) {
   R2.fill(0.1f);
   N2.fill(0.f);
   for (int k = 0; k < 10; ++k) {
-    suppression_gain.GetGain(E2, R2, N2, 0.1f, &g);
+    suppression_gain.GetGain(E2, R2, N2, false, x, false, &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),
                 [](float a) { EXPECT_NEAR(1.f, a, 0.001); });
 
   // Ensure that a strong echo is suppressed.
-  E2.fill(0.1f);
-  R2.fill(100.f);
+  E2.fill(1000000000.f);
+  R2.fill(10000000000000.f);
   N2.fill(0.f);
   for (int k = 0; k < 10; ++k) {
-    suppression_gain.GetGain(E2, R2, N2, 0.1f, &g);
+    suppression_gain.GetGain(E2, R2, N2, false, x, false, &high_bands_gain, &g);
   }
   std::for_each(g.begin(), g.end(),
                 [](float a) { EXPECT_NEAR(0.f, a, 0.001); });
+
+  // Verify the functionality for forcing a zero gain.
+  suppression_gain.GetGain(E2, R2, N2, false, x, true, &high_bands_gain, &g);
+  std::for_each(g.begin(), g.end(), [](float a) { EXPECT_FLOAT_EQ(0.f, a); });
+  EXPECT_FLOAT_EQ(0.f, high_bands_gain);
 }
 
 }  // namespace aec3

@@ -21,30 +21,26 @@ class RtcEventLogTestHelper {
   static void VerifyVideoReceiveStreamConfig(
       const ParsedRtcEventLog& parsed_log,
       size_t index,
-      const VideoReceiveStream::Config& config);
-  static void VerifyVideoSendStreamConfig(
-      const ParsedRtcEventLog& parsed_log,
-      size_t index,
-      const VideoSendStream::Config& config);
+      const rtclog::StreamConfig& config);
+  static void VerifyVideoSendStreamConfig(const ParsedRtcEventLog& parsed_log,
+                                          size_t index,
+                                          const rtclog::StreamConfig& config);
   static void VerifyAudioReceiveStreamConfig(
       const ParsedRtcEventLog& parsed_log,
       size_t index,
-      const AudioReceiveStream::Config& config);
-  static void VerifyAudioSendStreamConfig(
-      const ParsedRtcEventLog& parsed_log,
-      size_t index,
-      const AudioSendStream::Config& config);
+      const rtclog::StreamConfig& config);
+  static void VerifyAudioSendStreamConfig(const ParsedRtcEventLog& parsed_log,
+                                          size_t index,
+                                          const rtclog::StreamConfig& config);
   static void VerifyRtpEvent(const ParsedRtcEventLog& parsed_log,
                              size_t index,
                              PacketDirection direction,
-                             MediaType media_type,
                              const uint8_t* header,
                              size_t header_size,
                              size_t total_size);
   static void VerifyRtcpEvent(const ParsedRtcEventLog& parsed_log,
                               size_t index,
                               PacketDirection direction,
-                              MediaType media_type,
                               const uint8_t* packet,
                               size_t total_size);
   static void VerifyPlayoutEvent(const ParsedRtcEventLog& parsed_log,
@@ -63,7 +59,7 @@ class RtcEventLogTestHelper {
   static void VerifyAudioNetworkAdaptation(
       const ParsedRtcEventLog& parsed_log,
       size_t index,
-      const AudioNetworkAdaptor::EncoderRuntimeConfig& config);
+      const AudioEncoderRuntimeConfig& config);
 
   static void VerifyLogStartEvent(const ParsedRtcEventLog& parsed_log,
                                   size_t index);

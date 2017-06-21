@@ -26,7 +26,6 @@
 #include "webrtc/base/location.h"
 #include "webrtc/base/messagehandler.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/sharedexclusivelock.h"
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/socketserver.h"
 #include "webrtc/base/timeutils.h"
@@ -210,7 +209,6 @@ class MessageQueue {
   virtual ~MessageQueue();
 
   SocketServer* socketserver();
-  void set_socketserver(SocketServer* ss);
 
   // Note: The behavior of MessageQueue has changed.  When a MQ is stopped,
   // futher Posts and Sends will fail.  However, any pending Sends and *ready*
@@ -317,10 +315,9 @@ class MessageQueue {
   volatile int stop_;
 
   // The SocketServer might not be owned by MessageQueue.
-  SocketServer* ss_ GUARDED_BY(ss_lock_);
+  SocketServer* const ss_;
   // Used if SocketServer ownership lies with |this|.
   std::unique_ptr<SocketServer> own_ss_;
-  SharedExclusiveLock ss_lock_;
 
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(MessageQueue);
 };

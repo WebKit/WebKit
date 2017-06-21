@@ -75,6 +75,11 @@ bool Nack::Parse(const CommonHeader& packet) {
   return true;
 }
 
+size_t Nack::BlockLength() const {
+  return kHeaderLength + kCommonFeedbackLength +
+         packed_.size() * kNackItemLength;
+}
+
 bool Nack::Create(uint8_t* packet,
                   size_t* index,
                   size_t max_length,
@@ -114,11 +119,6 @@ bool Nack::Create(uint8_t* packet,
   }
 
   return true;
-}
-
-size_t Nack::BlockLength() const {
-  return kHeaderLength + kCommonFeedbackLength +
-         packed_.size() * kNackItemLength;
 }
 
 void Nack::SetPacketIds(const uint16_t* nack_list, size_t length) {

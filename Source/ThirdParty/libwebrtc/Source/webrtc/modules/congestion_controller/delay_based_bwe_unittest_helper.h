@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/modules/congestion_controller/acknowledge_bitrate_estimator.h"
 #include "webrtc/modules/congestion_controller/delay_based_bwe.h"
 #include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
 #include "webrtc/system_wrappers/include/clock.h"
@@ -54,7 +55,8 @@ class RtpStream {
   // Generates a new frame for this stream. If called too soon after the
   // previous frame, no frame will be generated. The frame is split into
   // packets.
-  int64_t GenerateFrame(int64_t time_now_us, std::vector<PacketInfo>* packets);
+  int64_t GenerateFrame(int64_t time_now_us,
+                        std::vector<PacketFeedback>* packets);
 
   // The send-side time when the next frame can be generated.
   int64_t next_rtp_time() const;
@@ -94,7 +96,8 @@ class StreamGenerator {
 
   // TODO(holmer): Break out the channel simulation part from this class to make
   // it possible to simulate different types of channels.
-  int64_t GenerateFrame(std::vector<PacketInfo>* packets, int64_t time_now_us);
+  int64_t GenerateFrame(std::vector<PacketFeedback>* packets,
+                        int64_t time_now_us);
 
  private:
   // Capacity of the simulated channel in bits per second.
@@ -162,6 +165,7 @@ class DelayBasedBweTest : public ::testing::Test {
 
   SimulatedClock clock_;  // Time at the receiver.
   test::TestBitrateObserver bitrate_observer_;
+  std::unique_ptr<AcknowledgedBitrateEstimator> acknowledged_bitrate_estimator_;
   std::unique_ptr<DelayBasedBwe> bitrate_estimator_;
   std::unique_ptr<test::StreamGenerator> stream_generator_;
   int64_t arrival_time_offset_ms_;

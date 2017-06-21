@@ -23,11 +23,10 @@
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/sslidentity.h"
 #include "webrtc/base/thread.h"
-#include "webrtc/media/base/mediachannel.h"
+#include "webrtc/call/call.h"
 #include "webrtc/p2p/base/candidate.h"
 #include "webrtc/p2p/base/transportcontroller.h"
 #include "webrtc/pc/datachannel.h"
-#include "webrtc/pc/mediacontroller.h"
 #include "webrtc/pc/mediasession.h"
 
 #ifdef HAVE_QUIC
@@ -55,6 +54,7 @@ namespace webrtc {
 class IceRestartAnswerLatch;
 class JsepIceCandidate;
 class MediaStreamSignaling;
+class RtcEventLog;
 class WebRtcSessionDescriptionFactory;
 
 extern const char kBundleWithoutRtcpMux[];
@@ -82,15 +82,14 @@ class IceObserver {
  public:
   IceObserver() {}
   // Called any time the IceConnectionState changes
-  // TODO(honghaiz): Change the name to OnIceConnectionStateChange so as to
-  // conform to the w3c standard.
-  virtual void OnIceConnectionChange(
+  virtual void OnIceConnectionStateChange(
       PeerConnectionInterface::IceConnectionState new_state) {}
   // Called any time the IceGatheringState changes
   virtual void OnIceGatheringChange(
       PeerConnectionInterface::IceGatheringState new_state) {}
   // New Ice candidate have been found.
-  virtual void OnIceCandidate(const IceCandidateInterface* candidate) = 0;
+  virtual void OnIceCandidate(
+      std::unique_ptr<IceCandidateInterface> candidate) = 0;
 
   // Some local ICE candidates have been removed.
   virtual void OnIceCandidatesRemoved(
@@ -160,7 +159,10 @@ class WebRtcSession :
 
   // |sctp_factory| may be null, in which case SCTP is treated as unsupported.
   WebRtcSession(
-      webrtc::MediaControllerInterface* media_controller,
+      Call* call,
+      cricket::ChannelManager* channel_manager,
+      const cricket::MediaConfig& media_config,
+      RtcEventLog* event_log,
       rtc::Thread* network_thread,
       rtc::Thread* worker_thread,
       rtc::Thread* signaling_thread,
@@ -291,6 +293,8 @@ class WebRtcSession :
   void AddSctpDataStream(int sid) override;
   void RemoveSctpDataStream(int sid) override;
   bool ReadyToSendData() const override;
+
+  virtual Call::Stats GetCallStats();
 
   // Returns stats for all channels of all transports.
   // This avoids exposing the internal structures used to track them.
@@ -560,7 +564,9 @@ class WebRtcSession :
 
   const std::unique_ptr<cricket::TransportController> transport_controller_;
   const std::unique_ptr<cricket::SctpTransportInternalFactory> sctp_factory_;
-  MediaControllerInterface* media_controller_;
+  const cricket::MediaConfig media_config_;
+  RtcEventLog* event_log_;
+  Call* call_;
   std::unique_ptr<cricket::VoiceChannel> voice_channel_;
   std::unique_ptr<cricket::VideoChannel> video_channel_;
   // |rtp_data_channel_| is used if in RTP data channel mode, |sctp_transport_|

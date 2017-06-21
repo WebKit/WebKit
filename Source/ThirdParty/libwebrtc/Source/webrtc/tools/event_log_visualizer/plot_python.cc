@@ -33,6 +33,7 @@ void PythonPlot::Draw() {
     printf("rgb_colors = [colorsys.hls_to_rgb(*hls) for hls in hls_colors]\n");
 
     for (size_t i = 0; i < series_list_.size(); i++) {
+      printf("\n# === Series: %s ===\n", series_list_[i].label.c_str());
       // List x coordinates
       printf("x%zu = [", i);
       if (series_list_[i].points.size() > 0)
@@ -74,6 +75,11 @@ void PythonPlot::Draw() {
         printf(
             "plt.plot(x%zu[1:], y%zu[:-1], color=rgb_colors[%zu], "
             "label=\'%s\')\n",
+            i, i, i, series_list_[i].label.c_str());
+      } else if (series_list_[i].style == DOT_GRAPH) {
+        printf(
+            "plt.plot(x%zu, y%zu, color=rgb_colors[%zu], label=\'%s\', "
+            "marker='o', ls=' ')\n",
             i, i, i, series_list_[i].label.c_str());
       } else {
         printf("raise Exception(\"Unknown graph type\")\n");

@@ -52,10 +52,6 @@ public:
   Pathname& operator=(const Pathname&);
   Pathname& operator=(Pathname&&);
 
-  // Set's the default folder delimiter for this Pathname
-  char folder_delimiter() const { return folder_delimiter_; }
-  void SetFolderDelimiter(char delimiter);
-
   // Normalize changes all folder delimiters to folder_delimiter()
   void Normalize();
 
@@ -73,33 +69,19 @@ public:
   void SetPathname(const std::string& pathname);
   void SetPathname(const std::string& folder, const std::string& filename);
 
-  // Append pathname to the current folder (if any).  Any existing filename
-  // will be discarded.
-  void AppendPathname(const std::string& pathname);
-
   std::string folder() const;
-  std::string folder_name() const;
   std::string parent_folder() const;
   // SetFolder and AppendFolder will append a folder delimiter, if needed.
   void SetFolder(const std::string& folder);
   void AppendFolder(const std::string& folder);
 
-  std::string basename() const;
   bool SetBasename(const std::string& basename);
 
-  std::string extension() const;
   // SetExtension will prefix a period, if needed.
   bool SetExtension(const std::string& extension);
 
   std::string filename() const;
   bool SetFilename(const std::string& filename);
-
-#if defined(WEBRTC_WIN)
-  bool GetDrive(char* drive, uint32_t bytes) const;
-  static bool GetDrive(char* drive,
-                       uint32_t bytes,
-                       const std::string& pathname);
-#endif
 
 private:
   std::string folder_, basename_, extension_;

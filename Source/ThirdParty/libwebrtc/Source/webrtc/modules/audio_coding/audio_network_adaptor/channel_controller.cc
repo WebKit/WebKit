@@ -41,8 +41,7 @@ void ChannelController::UpdateNetworkMetrics(
     uplink_bandwidth_bps_ = network_metrics.uplink_bandwidth_bps;
 }
 
-void ChannelController::MakeDecision(
-    AudioNetworkAdaptor::EncoderRuntimeConfig* config) {
+void ChannelController::MakeDecision(AudioEncoderRuntimeConfig* config) {
   // Decision on |num_channels| should not have been made.
   RTC_DCHECK(!config->num_channels);
 

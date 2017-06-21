@@ -34,19 +34,9 @@ class UnixFilesystem : public FilesystemInterface {
   static void SetAppTempFolder(const std::string& folder);
 #endif
 
-  // Opens a file. Returns an open StreamInterface if function succeeds.
-  // Otherwise, returns null.
-  FileStream* OpenFile(const Pathname& filename,
-                       const std::string& mode) override;
-
   // This will attempt to delete the file located at filename.
   // It will fail with VERIY if you pass it a non-existant file, or a directory.
   bool DeleteFile(const Pathname& filename) override;
-
-  // This will attempt to delete the folder located at 'folder'
-  // It DCHECKs and returns false if you pass it a non-existant folder or a
-  // plain file.
-  bool DeleteEmptyFolder(const Pathname& folder) override;
 
   // Creates a directory. This will call itself recursively to create /foo/bar
   // even if /foo does not exist. All created directories are created with the
@@ -62,16 +52,8 @@ class UnixFilesystem : public FilesystemInterface {
   // Returns true if function succeeds.
   bool MoveFile(const Pathname& old_path, const Pathname& new_path) override;
 
-  // This copies a file from old_path to _new_path where "file" can be a plain
-  // file or directory, which will be copied recursively.
-  // Returns true if function succeeds
-  bool CopyFile(const Pathname& old_path, const Pathname& new_path) override;
-
   // Returns true if a pathname is a directory
   bool IsFolder(const Pathname& pathname) override;
-
-  // Returns true if pathname represents a temporary location on the system.
-  bool IsTemporaryPath(const Pathname& pathname) override;
 
   // Returns true of pathname represents an existing file
   bool IsFile(const Pathname& pathname) override;
@@ -90,12 +72,6 @@ class UnixFilesystem : public FilesystemInterface {
                           const std::string* append) override;
 
   bool GetFileSize(const Pathname& path, size_t* size) override;
-  bool GetFileTime(const Pathname& path,
-                   FileTimeType which,
-                   time_t* time) override;
-
-  // Get a temporary folder that is unique to the current user and application.
-  bool GetAppTempFolder(Pathname* path) override;
 
  private:
 #if defined(WEBRTC_ANDROID) || defined(WEBRTC_MAC)

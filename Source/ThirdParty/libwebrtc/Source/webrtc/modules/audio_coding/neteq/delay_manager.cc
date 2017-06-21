@@ -15,11 +15,11 @@
 
 #include <algorithm>  // max, min
 
+#include "webrtc/base/logging.h"
 #include "webrtc/base/safe_conversions.h"
 #include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
 #include "webrtc/modules/audio_coding/neteq/delay_peak_detector.h"
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 
@@ -372,6 +372,10 @@ void DelayManager::LastDecodedWasCngOrDtmf(bool it_was) {
   } else if (last_pack_cng_or_dtmf_ != 0) {
     last_pack_cng_or_dtmf_ = -1;
   }
+}
+
+void DelayManager::RegisterEmptyPacket() {
+  ++last_seq_no_;
 }
 
 bool DelayManager::SetMinimumDelay(int delay_ms) {

@@ -218,6 +218,7 @@ class Optional final {
 
   // Conversion to bool to test if we have a value.
   explicit operator bool() const { return has_value_; }
+  bool has_value() const { return has_value_; }
 
   // Dereferencing. Only allowed if we have a value.
   const T* operator->() const {
@@ -233,6 +234,14 @@ class Optional final {
     return value_;
   }
   T& operator*() {
+    RTC_DCHECK(has_value_);
+    return value_;
+  }
+  const T& value() const {
+    RTC_DCHECK(has_value_);
+    return value_;
+  }
+  T& value() {
     RTC_DCHECK(has_value_);
     return value_;
   }

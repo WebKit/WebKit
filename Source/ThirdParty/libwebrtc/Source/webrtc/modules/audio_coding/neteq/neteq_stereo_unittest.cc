@@ -16,6 +16,7 @@
 #include <list>
 
 #include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/codecs/pcm16b/pcm16b.h"
 #include "webrtc/modules/audio_coding/neteq/include/neteq.h"
 #include "webrtc/modules/audio_coding/neteq/tools/input_audio_file.h"
@@ -164,10 +165,12 @@ class NetEqStereoTest : public ::testing::TestWithParam<TestParameters> {
   }
 
   virtual void VerifyOutput(size_t num_samples) {
+    const int16_t* output_data = output_.data();
+    const int16_t* output_multi_channel_data = output_multi_channel_.data();
     for (size_t i = 0; i < num_samples; ++i) {
       for (size_t j = 0; j < num_channels_; ++j) {
-        ASSERT_EQ(output_.data_[i],
-                  output_multi_channel_.data_[i * num_channels_ + j])
+        ASSERT_EQ(output_data[i],
+                  output_multi_channel_data[i * num_channels_ + j])
             << "Diff in sample " << i << ", channel " << j << ".";
       }
     }
@@ -202,11 +205,12 @@ class NetEqStereoTest : public ::testing::TestWithParam<TestParameters> {
                                                 encoded_, payload_size_bytes_),
                                             next_arrival_time));
         // Insert packet in multi-channel instance.
-        ASSERT_EQ(NetEq::kOK, neteq_->InsertPacket(
-                                  rtp_header_, rtc::ArrayView<const uint8_t>(
-                                                   encoded_multi_channel_,
-                                                   multi_payload_size_bytes_),
-                                  next_arrival_time));
+        ASSERT_EQ(NetEq::kOK,
+                  neteq_->InsertPacket(
+                      rtp_header_,
+                      rtc::ArrayView<const uint8_t>(encoded_multi_channel_,
+                                                    multi_payload_size_bytes_),
+                      next_arrival_time));
         // Get next input packets (mono and multi-channel).
         do {
           next_send_time = GetNewPackets();
@@ -252,8 +256,8 @@ class NetEqStereoTest : public ::testing::TestWithParam<TestParameters> {
   uint8_t* encoded_multi_channel_;
   AudioFrame output_;
   AudioFrame output_multi_channel_;
-  WebRtcRTPHeader rtp_header_mono_;
-  WebRtcRTPHeader rtp_header_;
+  RTPHeader rtp_header_mono_;
+  RTPHeader rtp_header_;
   size_t payload_size_bytes_;
   size_t multi_payload_size_bytes_;
   int last_send_time_;
@@ -357,16 +361,18 @@ class NetEqStereoTestLosses : public NetEqStereoTest {
   // TODO(hlundin): NetEq is not giving bitexact results for these cases.
   virtual void VerifyOutput(size_t num_samples) {
     for (size_t i = 0; i < num_samples; ++i) {
+      const int16_t* output_data = output_.data();
+      const int16_t* output_multi_channel_data = output_multi_channel_.data();
       auto first_channel_sample =
-          output_multi_channel_.data_[i * num_channels_];
+          output_multi_channel_data[i * num_channels_];
       for (size_t j = 0; j < num_channels_; ++j) {
         const int kErrorMargin = 200;
-        EXPECT_NEAR(output_.data_[i],
-                    output_multi_channel_.data_[i * num_channels_ + j],
+        EXPECT_NEAR(output_data[i],
+                    output_multi_channel_data[i * num_channels_ + j],
                     kErrorMargin)
             << "Diff in sample " << i << ", channel " << j << ".";
         EXPECT_EQ(first_channel_sample,
-                  output_multi_channel_.data_[i * num_channels_ + j]);
+                  output_multi_channel_data[i * num_channels_ + j]);
       }
     }
   }

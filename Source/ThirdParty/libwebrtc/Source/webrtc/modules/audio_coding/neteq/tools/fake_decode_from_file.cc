@@ -29,7 +29,7 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
     RTC_DCHECK_GT(last_decoded_length_, 0);
     std::fill_n(decoded, last_decoded_length_, 0);
     *speech_type = kComfortNoise;
-    return last_decoded_length_;
+    return rtc::dchecked_cast<int>(last_decoded_length_);
   }
 
   RTC_CHECK_GE(encoded_len, 12);
@@ -42,8 +42,8 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
     if (last_decoded_length_ > 0) {
       // Use length of last decoded packet, but since this is the total for all
       // channels, we have to divide by 2 in the stereo case.
-      samples_to_decode = rtc::CheckedDivExact(
-          last_decoded_length_, static_cast<size_t>(stereo_ ? 2uL : 1uL));
+      samples_to_decode = rtc::dchecked_cast<int>(rtc::CheckedDivExact(
+          last_decoded_length_, static_cast<size_t>(stereo_ ? 2uL : 1uL)));
     } else {
       // This is the first packet to decode, and we do not know the length of
       // it. Set it to 10 ms.
@@ -70,7 +70,7 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
     std::fill_n(decoded, last_decoded_length_, 0);
     *speech_type = kComfortNoise;
     cng_mode_ = true;
-    return last_decoded_length_;
+    return rtc::dchecked_cast<int>(last_decoded_length_);
   }
 
   cng_mode_ = false;
@@ -83,7 +83,8 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
   }
 
   *speech_type = kSpeech;
-  return last_decoded_length_ = samples_to_decode;
+  last_decoded_length_ = samples_to_decode;
+  return rtc::dchecked_cast<int>(last_decoded_length_);
 }
 
 void FakeDecodeFromFile::PrepareEncoded(uint32_t timestamp,

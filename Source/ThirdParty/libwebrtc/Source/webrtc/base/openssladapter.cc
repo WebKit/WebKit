@@ -154,6 +154,21 @@ static long socket_ctrl(BIO* b, int cmd, long num, void* ptr) {
   }
 }
 
+static void LogSslError() {
+  // Walk down the error stack to find the SSL error.
+  uint32_t error_code;
+  const char* file;
+  int line;
+  do {
+    error_code = ERR_get_error_line(&file, &line);
+    if (ERR_GET_LIB(error_code) == ERR_LIB_SSL) {
+      LOG(LS_ERROR) << "ERR_LIB_SSL: " << error_code << ", " << file << ":"
+                    << line;
+      break;
+    }
+  } while (error_code != 0);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // OpenSSLAdapter
 /////////////////////////////////////////////////////////////////////////////
@@ -332,15 +347,28 @@ OpenSSLAdapter::BeginSSL() {
   }
 
   SSL_set_app_data(ssl_, this);
-  // WEBKIT Changes - Start
+  // WEBKIT change start
   if (ssl_host_name_.length()) {
     SSL_set_tlsext_host_name(ssl_, ssl_host_name_.c_str());
   }
-  // WEBKIT Changes - End
+  // WEBKIT change end
 
   SSL_set_bio(ssl_, bio, bio);
+  // SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER allows different buffers to be passed
+  // into SSL_write when a record could only be partially transmitted (and thus
+  // requires another call to SSL_write to finish transmission). This allows us
+  // to copy the data into our own buffer when this occurs, since the original
+  // buffer can't safely be accessed after control exits Send.
+  // TODO(deadbeef): Do we want SSL_MODE_ENABLE_PARTIAL_WRITE? It doesn't
+  // appear Send handles partial writes properly, though maybe we never notice
+  // since we never send more than 16KB at once..
   SSL_set_mode(ssl_, SSL_MODE_ENABLE_PARTIAL_WRITE |
                      SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER);
+
+  // Enable SNI.
+  if (!ssl_host_name_.empty()) {
+    SSL_set_tlsext_host_name(ssl_, ssl_host_name_.c_str());
+  }
 
   // the SSL object owns the bio now
   bio = nullptr;
@@ -431,6 +459,7 @@ OpenSSLAdapter::Cleanup() {
   ssl_read_needs_write_ = false;
   ssl_write_needs_read_ = false;
   custom_verification_succeeded_ = false;
+  pending_data_.Clear();
 
   if (ssl_) {
     SSL_free(ssl_);
@@ -444,6 +473,46 @@ OpenSSLAdapter::Cleanup() {
 
   // Clear the DTLS timer
   Thread::Current()->Clear(this, MSG_TIMEOUT);
+}
+
+int OpenSSLAdapter::DoSslWrite(const void* pv, size_t cb, int* error) {
+  // If we have pending data (that was previously only partially written by
+  // SSL_write), we shouldn't be attempting to write anything else.
+  RTC_DCHECK(pending_data_.empty() || pv == pending_data_.data());
+  RTC_DCHECK(error != nullptr);
+
+  ssl_write_needs_read_ = false;
+  int ret = SSL_write(ssl_, pv, checked_cast<int>(cb));
+  *error = SSL_get_error(ssl_, ret);
+  switch (*error) {
+    case SSL_ERROR_NONE:
+      // Success!
+      return ret;
+    case SSL_ERROR_WANT_READ:
+      LOG(LS_INFO) << " -- error want read";
+      ssl_write_needs_read_ = true;
+      SetError(EWOULDBLOCK);
+      break;
+    case SSL_ERROR_WANT_WRITE:
+      LOG(LS_INFO) << " -- error want write";
+      SetError(EWOULDBLOCK);
+      break;
+    case SSL_ERROR_ZERO_RETURN:
+      // LOG(LS_INFO) << " -- remote side closed";
+      SetError(EWOULDBLOCK);
+      // do we need to signal closure?
+      break;
+    case SSL_ERROR_SSL:
+      LogSslError();
+      Error("SSL_write", ret ? ret : -1, false);
+      break;
+    default:
+      LOG(LS_WARNING) << "Unknown error from SSL_write: " << *error;
+      Error("SSL_write", ret ? ret : -1, false);
+      break;
+  }
+
+  return SOCKET_ERROR;
 }
 
 //
@@ -471,38 +540,53 @@ OpenSSLAdapter::Send(const void* pv, size_t cb) {
     return SOCKET_ERROR;
   }
 
+  int ret;
+  int error;
+
+  if (!pending_data_.empty()) {
+    ret = DoSslWrite(pending_data_.data(), pending_data_.size(), &error);
+    if (ret != static_cast<int>(pending_data_.size())) {
+      // We couldn't finish sending the pending data, so we definitely can't
+      // send any more data. Return with an EWOULDBLOCK error.
+      SetError(EWOULDBLOCK);
+      return SOCKET_ERROR;
+    }
+    // We completed sending the data previously passed into SSL_write! Now
+    // we're allowed to send more data.
+    pending_data_.Clear();
+  }
+
   // OpenSSL will return an error if we try to write zero bytes
   if (cb == 0)
     return 0;
 
-  ssl_write_needs_read_ = false;
+  ret = DoSslWrite(pv, cb, &error);
 
-  int code = SSL_write(ssl_, pv, checked_cast<int>(cb));
-  switch (SSL_get_error(ssl_, code)) {
-  case SSL_ERROR_NONE:
-    //LOG(LS_INFO) << " -- success";
-    return code;
-  case SSL_ERROR_WANT_READ:
-    //LOG(LS_INFO) << " -- error want read";
-    ssl_write_needs_read_ = true;
-    SetError(EWOULDBLOCK);
-    break;
-  case SSL_ERROR_WANT_WRITE:
-    //LOG(LS_INFO) << " -- error want write";
-    SetError(EWOULDBLOCK);
-    break;
-  case SSL_ERROR_ZERO_RETURN:
-    //LOG(LS_INFO) << " -- remote side closed";
-    SetError(EWOULDBLOCK);
-    // do we need to signal closure?
-    break;
-  default:
-    //LOG(LS_INFO) << " -- error " << code;
-    Error("SSL_write", (code ? code : -1), false);
-    break;
+  // If SSL_write fails with SSL_ERROR_WANT_READ or SSL_ERROR_WANT_WRITE, this
+  // means the underlying socket is blocked on reading or (more typically)
+  // writing. When this happens, OpenSSL requires that the next call to
+  // SSL_write uses the same arguments (though, with
+  // SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER, the actual buffer pointer may be
+  // different).
+  //
+  // However, after Send exits, we will have lost access to data the user of
+  // this class is trying to send, and there's no guarantee that the user of
+  // this class will call Send with the same arguements when it fails. So, we
+  // buffer the data ourselves. When we know the underlying socket is writable
+  // again from OnWriteEvent (or if Send is called again before that happens),
+  // we'll retry sending this buffered data.
+  if (error == SSL_ERROR_WANT_READ || error == SSL_ERROR_WANT_WRITE) {
+    // Shouldn't be able to get to this point if we already have pending data.
+    RTC_DCHECK(pending_data_.empty());
+    LOG(LS_WARNING)
+        << "SSL_write couldn't write to the underlying socket; buffering data.";
+    pending_data_.SetData(static_cast<const uint8_t*>(pv), cb);
+    // Since we're taking responsibility for sending this data, return its full
+    // size. The user of this class can consider it sent.
+    return cb;
   }
 
-  return SOCKET_ERROR;
+  return ret;
 }
 
 int
@@ -544,28 +628,33 @@ int OpenSSLAdapter::Recv(void* pv, size_t cb, int64_t* timestamp) {
   ssl_read_needs_write_ = false;
 
   int code = SSL_read(ssl_, pv, checked_cast<int>(cb));
-  switch (SSL_get_error(ssl_, code)) {
-  case SSL_ERROR_NONE:
-    //LOG(LS_INFO) << " -- success";
-    return code;
-  case SSL_ERROR_WANT_READ:
-    //LOG(LS_INFO) << " -- error want read";
-    SetError(EWOULDBLOCK);
-    break;
-  case SSL_ERROR_WANT_WRITE:
-    //LOG(LS_INFO) << " -- error want write";
-    ssl_read_needs_write_ = true;
-    SetError(EWOULDBLOCK);
-    break;
-  case SSL_ERROR_ZERO_RETURN:
-    //LOG(LS_INFO) << " -- remote side closed";
-    SetError(EWOULDBLOCK);
-    // do we need to signal closure?
-    break;
-  default:
-    //LOG(LS_INFO) << " -- error " << code;
-    Error("SSL_read", (code ? code : -1), false);
-    break;
+  int error = SSL_get_error(ssl_, code);
+  switch (error) {
+    case SSL_ERROR_NONE:
+      // LOG(LS_INFO) << " -- success";
+      return code;
+    case SSL_ERROR_WANT_READ:
+      // LOG(LS_INFO) << " -- error want read";
+      SetError(EWOULDBLOCK);
+      break;
+    case SSL_ERROR_WANT_WRITE:
+      // LOG(LS_INFO) << " -- error want write";
+      ssl_read_needs_write_ = true;
+      SetError(EWOULDBLOCK);
+      break;
+    case SSL_ERROR_ZERO_RETURN:
+      // LOG(LS_INFO) << " -- remote side closed";
+      SetError(EWOULDBLOCK);
+      // do we need to signal closure?
+      break;
+    case SSL_ERROR_SSL:
+      LogSslError();
+      Error("SSL_read", (code ? code : -1), false);
+      break;
+    default:
+      LOG(LS_WARNING) << "Unknown error from SSL_read: " << error;
+      Error("SSL_read", (code ? code : -1), false);
+      break;
   }
 
   return SOCKET_ERROR;
@@ -685,6 +774,16 @@ OpenSSLAdapter::OnWriteEvent(AsyncSocket* socket) {
   if (ssl_read_needs_write_)  {
     //LOG(LS_INFO) << " -- onStreamReadable";
     AsyncSocketAdapter::OnReadEvent(socket);
+  }
+
+  // If a previous SSL_write failed due to the underlying socket being blocked,
+  // this will attempt finishing the write operation.
+  if (!pending_data_.empty()) {
+    int error;
+    if (DoSslWrite(pending_data_.data(), pending_data_.size(), &error) ==
+        static_cast<int>(pending_data_.size())) {
+      pending_data_.Clear();
+    }
   }
 
   //LOG(LS_INFO) << " -- onStreamWriteable";

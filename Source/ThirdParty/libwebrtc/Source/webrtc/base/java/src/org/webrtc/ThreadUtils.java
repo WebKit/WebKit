@@ -13,7 +13,6 @@ package org.webrtc;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -211,7 +210,7 @@ public class ThreadUtils {
     });
   }
 
-  private static StackTraceElement[] concatStackTraces(
+  static StackTraceElement[] concatStackTraces(
       StackTraceElement[] inner, StackTraceElement[] outer) {
     final StackTraceElement[] combined = new StackTraceElement[inner.length + outer.length];
     System.arraycopy(inner, 0, combined, 0, inner.length);

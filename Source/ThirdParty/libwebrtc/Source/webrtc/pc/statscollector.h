@@ -110,6 +110,7 @@ class StatsCollector {
 
   void ExtractDataInfo();
   void ExtractSessionInfo();
+  void ExtractBweInfo();
   void ExtractVoiceInfo();
   void ExtractVideoInfo(PeerConnectionInterface::StatsOutputLevel level);
   void ExtractSenderInfo();

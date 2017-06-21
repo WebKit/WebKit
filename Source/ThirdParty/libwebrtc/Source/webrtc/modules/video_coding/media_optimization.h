@@ -14,10 +14,10 @@
 #include <list>
 #include <memory>
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/video_coding/include/video_coding.h"
 #include "webrtc/modules/video_coding/media_opt_util.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 
 namespace webrtc {
 
@@ -101,7 +101,7 @@ class MediaOptimization {
   uint32_t SentFrameRateInternal() EXCLUSIVE_LOCKS_REQUIRED(crit_sect_);
 
   // Protect all members.
-  std::unique_ptr<CriticalSectionWrapper> crit_sect_;
+  rtc::CriticalSection crit_sect_;
 
   Clock* clock_ GUARDED_BY(crit_sect_);
   int32_t max_bit_rate_ GUARDED_BY(crit_sect_);

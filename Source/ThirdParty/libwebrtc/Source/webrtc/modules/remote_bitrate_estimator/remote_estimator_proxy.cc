@@ -15,10 +15,11 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
-#include "webrtc/system_wrappers/include/clock.h"
+#include "webrtc/base/safe_minmax.h"
 #include "webrtc/modules/pacing/packet_router.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
+#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
+#include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -33,7 +34,7 @@ const int RemoteEstimatorProxy::kDefaultSendIntervalMs = 100;
 static constexpr int64_t kMaxTimeMs =
     std::numeric_limits<int64_t>::max() / 1000;
 
-RemoteEstimatorProxy::RemoteEstimatorProxy(Clock* clock,
+RemoteEstimatorProxy::RemoteEstimatorProxy(const Clock* clock,
                                            PacketRouter* packet_router)
     : clock_(clock),
       packet_router_(packet_router),
@@ -44,13 +45,6 @@ RemoteEstimatorProxy::RemoteEstimatorProxy(Clock* clock,
       send_interval_ms_(kDefaultSendIntervalMs) {}
 
 RemoteEstimatorProxy::~RemoteEstimatorProxy() {}
-
-void RemoteEstimatorProxy::IncomingPacketFeedbackVector(
-    const std::vector<PacketInfo>& packet_feedback_vector) {
-  rtc::CritScope cs(&lock_);
-  for (PacketInfo info : packet_feedback_vector)
-    OnPacketArrival(info.sequence_number, info.arrival_time_ms);
-}
 
 void RemoteEstimatorProxy::IncomingPacket(int64_t arrival_time_ms,
                                           size_t payload_size,
@@ -90,7 +84,7 @@ void RemoteEstimatorProxy::Process() {
     rtcp::TransportFeedback feedback_packet;
     if (BuildFeedbackPacket(&feedback_packet)) {
       RTC_DCHECK(packet_router_ != nullptr);
-      packet_router_->SendFeedback(&feedback_packet);
+      packet_router_->SendTransportFeedback(&feedback_packet);
     } else {
       more_to_build = false;
     }
@@ -111,8 +105,9 @@ void RemoteEstimatorProxy::OnBitrateChanged(int bitrate_bps) {
 
   // Let TWCC reports occupy 5% of total bandwidth.
   rtc::CritScope cs(&lock_);
-  send_interval_ms_ = static_cast<int>(0.5 + kTwccReportSize * 8.0 * 1000.0 /
-      (std::max(std::min(0.05 * bitrate_bps, kMaxTwccRate), kMinTwccRate)));
+  send_interval_ms_ = static_cast<int>(
+      0.5 + kTwccReportSize * 8.0 * 1000.0 /
+                rtc::SafeClamp(0.05 * bitrate_bps, kMinTwccRate, kMaxTwccRate));
 }
 
 void RemoteEstimatorProxy::OnPacketArrival(uint16_t sequence_number,

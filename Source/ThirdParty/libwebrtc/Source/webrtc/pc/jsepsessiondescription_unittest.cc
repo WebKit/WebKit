@@ -34,6 +34,9 @@ static const char kCandidateUfragVoice[] = "ufrag_voice";
 static const char kCandidatePwdVoice[] = "pwd_voice";
 static const char kCandidateUfragVideo[] = "ufrag_video";
 static const char kCandidatePwdVideo[] = "pwd_video";
+static const char kCandidateFoundation[] = "a0+B/1";
+static const uint32_t kCandidatePriority = 2130706432U;  // pref = 1.0
+static const uint32_t kCandidateGeneration = 2;
 
 // This creates a session description with both audio and video media contents.
 // In SDP this is described by two m lines, one audio and one video.
@@ -227,4 +230,178 @@ TEST_F(JsepSessionDescriptionTest, SerializeDeserializeWithCandidates) {
   std::string parsed_sdp_with_candidate = Serialize(parsed_jsep_desc.get());
 
   EXPECT_EQ(sdp_with_candidate, parsed_sdp_with_candidate);
+}
+
+// TODO(zhihuang): Modify these tests. These are used to verify that after
+// adding the candidates, the connection_address field is set correctly. Modify
+// those so that the "connection address" is tested directly.
+// Tests serialization of SDP with only IPv6 candidates and verifies that IPv6
+// is used as default address in c line according to preference.
+TEST_F(JsepSessionDescriptionTest, SerializeSessionDescriptionWithIPv6Only) {
+  // Stun has a high preference than local host.
+  cricket::Candidate candidate1(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
+      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+  cricket::Candidate candidate2(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("::2", 1235), kCandidatePriority, "", "",
+      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+
+  JsepIceCandidate jice1("audio", 0, candidate1);
+  JsepIceCandidate jice2("audio", 0, candidate2);
+  JsepIceCandidate jice3("video", 0, candidate1);
+  JsepIceCandidate jice4("video", 0, candidate2);
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice1));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice2));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice3));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice4));
+  std::string message = Serialize(jsep_desc_.get());
+
+  // Should have a c line like this one.
+  EXPECT_NE(message.find("c=IN IP6 ::1"), std::string::npos);
+  // Shouldn't have a IP4 c line.
+  EXPECT_EQ(message.find("c=IN IP4"), std::string::npos);
+}
+
+// Tests serialization of SDP with both IPv4 and IPv6 candidates and
+// verifies that IPv4 is used as default address in c line even if the
+// preference of IPv4 is lower.
+TEST_F(JsepSessionDescriptionTest,
+       SerializeSessionDescriptionWithBothIPFamilies) {
+  cricket::Candidate candidate_v4(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("192.168.1.5", 1234), kCandidatePriority, "", "",
+      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+  cricket::Candidate candidate_v6(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
+      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+
+  JsepIceCandidate jice_v4("audio", 0, candidate_v4);
+  JsepIceCandidate jice_v6("audio", 0, candidate_v6);
+  JsepIceCandidate jice_v4_video("video", 0, candidate_v4);
+  JsepIceCandidate jice_v6_video("video", 0, candidate_v6);
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice_v4));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice_v6));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice_v4_video));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice_v6_video));
+  std::string message = Serialize(jsep_desc_.get());
+
+  // Should have a c line like this one.
+  EXPECT_NE(message.find("c=IN IP4 192.168.1.5"), std::string::npos);
+  // Shouldn't have a IP6 c line.
+  EXPECT_EQ(message.find("c=IN IP6"), std::string::npos);
+}
+
+// Tests serialization of SDP with both UDP and TCP candidates and
+// verifies that UDP is used as default address in c line even if the
+// preference of UDP is lower.
+TEST_F(JsepSessionDescriptionTest,
+       SerializeSessionDescriptionWithBothProtocols) {
+  // Stun has a high preference than local host.
+  cricket::Candidate candidate1(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "tcp",
+      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
+      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+  cricket::Candidate candidate2(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("fe80::1234:5678:abcd:ef12", 1235), kCandidatePriority,
+      "", "", cricket::LOCAL_PORT_TYPE, kCandidateGeneration,
+      kCandidateFoundation);
+
+  JsepIceCandidate jice1("audio", 0, candidate1);
+  JsepIceCandidate jice2("audio", 0, candidate2);
+  JsepIceCandidate jice3("video", 0, candidate1);
+  JsepIceCandidate jice4("video", 0, candidate2);
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice1));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice2));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice3));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice4));
+  std::string message = Serialize(jsep_desc_.get());
+
+  // Should have a c line like this one.
+  EXPECT_NE(message.find("c=IN IP6 fe80::1234:5678:abcd:ef12"),
+            std::string::npos);
+  // Shouldn't have a IP4 c line.
+  EXPECT_EQ(message.find("c=IN IP4"), std::string::npos);
+}
+
+// Tests serialization of SDP with only TCP candidates and verifies that
+// null IPv4 is used as default address in c line.
+TEST_F(JsepSessionDescriptionTest, SerializeSessionDescriptionWithTCPOnly) {
+  // Stun has a high preference than local host.
+  cricket::Candidate candidate1(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "tcp",
+      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
+      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+  cricket::Candidate candidate2(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "tcp",
+      rtc::SocketAddress("::2", 1235), kCandidatePriority, "", "",
+      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+
+  JsepIceCandidate jice1("audio", 0, candidate1);
+  JsepIceCandidate jice2("audio", 0, candidate2);
+  JsepIceCandidate jice3("video", 0, candidate1);
+  JsepIceCandidate jice4("video", 0, candidate2);
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice1));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice2));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice3));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice4));
+
+  std::string message = Serialize(jsep_desc_.get());
+  EXPECT_EQ(message.find("c=IN IP6 ::3"), std::string::npos);
+  // Should have a c line like this one when no any default exists.
+  EXPECT_NE(message.find("c=IN IP4 0.0.0.0"), std::string::npos);
+}
+
+// Tests that the connection address will be correctly set when the Candidate is
+// removed.
+TEST_F(JsepSessionDescriptionTest, RemoveCandidateAndSetConnectionAddress) {
+  cricket::Candidate candidate1(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
+      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+  candidate1.set_transport_name("audio");
+
+  cricket::Candidate candidate2(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "tcp",
+      rtc::SocketAddress("::2", 1235), kCandidatePriority, "", "",
+      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+  candidate2.set_transport_name("audio");
+
+  cricket::Candidate candidate3(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("192.168.1.1", 1236), kCandidatePriority, "", "",
+      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+  candidate3.set_transport_name("audio");
+
+  JsepIceCandidate jice1("audio", 0, candidate1);
+  JsepIceCandidate jice2("audio", 0, candidate2);
+  JsepIceCandidate jice3("audio", 0, candidate3);
+
+  size_t audio_index = 0;
+  auto media_desc = static_cast<cricket::MediaContentDescription*>(
+      jsep_desc_->description()->contents()[audio_index].description);
+
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice1));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice2));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice3));
+
+  std::vector<cricket::Candidate> candidates;
+  EXPECT_EQ("192.168.1.1:1236", media_desc->connection_address().ToString());
+
+  candidates.push_back(candidate3);
+  ASSERT_TRUE(jsep_desc_->RemoveCandidates(candidates));
+  EXPECT_EQ("[::1]:1234", media_desc->connection_address().ToString());
+
+  candidates.clear();
+  candidates.push_back(candidate2);
+  ASSERT_TRUE(jsep_desc_->RemoveCandidates(candidates));
+  EXPECT_EQ("[::1]:1234", media_desc->connection_address().ToString());
+
+  candidates.clear();
+  candidates.push_back(candidate1);
+  ASSERT_TRUE(jsep_desc_->RemoveCandidates(candidates));
+  EXPECT_EQ("0.0.0.0:9", media_desc->connection_address().ToString());
 }

@@ -24,8 +24,8 @@
 #include <endpointvolume.h>
 #include <mediaobj.h>        // IMediaObject
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 
 // Use Multimedia Class Scheduler Service (MMCSS) to boost the thread priority
 #pragma comment( lib, "avrt.lib" )
@@ -237,10 +237,8 @@ private:    // thread functions
     void _Lock() { _critSect.Enter(); };
     void _UnLock() { _critSect.Leave(); };
 
-private:
     int32_t Id() {return _id;}
 
-private:
     int SetDMOProperties();
 
     int SetBoolProperty(IPropertyStore* ptrPS,
@@ -272,21 +270,18 @@ private:
 
     int32_t InitRecordingDMO();
 
-private:
     ScopedCOMInitializer                    _comInit;
     AudioDeviceBuffer*                      _ptrAudioBuffer;
-    CriticalSectionWrapper&                 _critSect;
-    CriticalSectionWrapper&                 _volumeMutex;
-    int32_t                           _id;
+    rtc::CriticalSection                    _critSect;
+    rtc::CriticalSection                    _volumeMutex;
+    int32_t                                 _id;
 
-private:  // MMDevice
     IMMDeviceEnumerator*                    _ptrEnumerator;
     IMMDeviceCollection*                    _ptrRenderCollection;
     IMMDeviceCollection*                    _ptrCaptureCollection;
     IMMDevice*                              _ptrDeviceOut;
     IMMDevice*                              _ptrDeviceIn;
 
-private:  // WASAPI
     IAudioClient*                           _ptrClientOut;
     IAudioClient*                           _ptrClientIn;
     IAudioRenderClient*                     _ptrRenderClient;
@@ -318,7 +313,8 @@ private:  // WASAPI
     UINT                                    _playAudioFrameSize;
     uint32_t                          _playSampleRate;
     uint32_t                          _devicePlaySampleRate;
-    uint32_t                          _playBlockSize;
+    uint32_t                          _playBlockSizeInFrames;
+    uint32_t                          _playBlockSizeInSamples;
     uint32_t                          _devicePlayBlockSize;
     uint32_t                          _playChannels;
     uint32_t                          _sndCardPlayDelay;

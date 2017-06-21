@@ -10,27 +10,17 @@
 
 #include "webrtc/base/timeutils.h"
 #include "webrtc/modules/audio_conference_mixer/source/time_scheduler.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 
 namespace webrtc {
 TimeScheduler::TimeScheduler(const int64_t periodicityInMs)
-    : _crit(CriticalSectionWrapper::CreateCriticalSection()),
-      _isStarted(false),
+    : _isStarted(false),
       _lastPeriodMark(),
       _periodicityInMs(periodicityInMs),
       _periodicityInTicks(periodicityInMs * rtc::kNumNanosecsPerMillisec),
-      _missedPeriods(0)
- {
- }
+      _missedPeriods(0) {}
 
-TimeScheduler::~TimeScheduler()
-{
-    delete _crit;
-}
-
-int32_t TimeScheduler::UpdateScheduler()
-{
-    CriticalSectionScoped cs(_crit);
+int32_t TimeScheduler::UpdateScheduler() {
+    rtc::CritScope cs(&_crit);
     if(!_isStarted)
     {
         _isStarted = true;
@@ -79,7 +69,7 @@ int32_t TimeScheduler::UpdateScheduler()
 int32_t TimeScheduler::TimeToNextUpdate(
     int64_t& updateTimeInMS) const
 {
-    CriticalSectionScoped cs(_crit);
+    rtc::CritScope cs(&_crit);
     // Missed periods means that the next UpdateScheduler() should happen
     // immediately.
     if(_missedPeriods > 0)

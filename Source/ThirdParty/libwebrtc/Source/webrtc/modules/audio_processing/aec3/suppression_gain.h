@@ -12,50 +12,49 @@
 #define WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_SUPPRESSION_GAIN_H_
 
 #include <array>
+#include <vector>
 
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/audio_processing/aec3/aec3_common.h"
-#include "webrtc/modules/audio_processing/aec3/fft_buffer.h"
 
 namespace webrtc {
-namespace aec3 {
-#if defined(WEBRTC_ARCH_X86_FAMILY)
-
-void ComputeGains_SSE2(
-    const std::array<float, kFftLengthBy2Plus1>& nearend_power,
-    const std::array<float, kFftLengthBy2Plus1>& residual_echo_power,
-    const std::array<float, kFftLengthBy2Plus1>& comfort_noise_power,
-    float strong_nearend_margin,
-    std::array<float, kFftLengthBy2 - 1>* previous_gain_squared,
-    std::array<float, kFftLengthBy2 - 1>* previous_masker,
-    std::array<float, kFftLengthBy2Plus1>* gain);
-
-#endif
-
-void ComputeGains(
-    const std::array<float, kFftLengthBy2Plus1>& nearend_power,
-    const std::array<float, kFftLengthBy2Plus1>& residual_echo_power,
-    const std::array<float, kFftLengthBy2Plus1>& comfort_noise_power,
-    float strong_nearend_margin,
-    std::array<float, kFftLengthBy2 - 1>* previous_gain_squared,
-    std::array<float, kFftLengthBy2 - 1>* previous_masker,
-    std::array<float, kFftLengthBy2Plus1>* gain);
-
-}  // namespace aec3
 
 class SuppressionGain {
  public:
   explicit SuppressionGain(Aec3Optimization optimization);
-  void GetGain(const std::array<float, kFftLengthBy2Plus1>& nearend_power,
-               const std::array<float, kFftLengthBy2Plus1>& residual_echo_power,
-               const std::array<float, kFftLengthBy2Plus1>& comfort_noise_power,
-               float strong_nearend_margin,
-               std::array<float, kFftLengthBy2Plus1>* gain);
+  void GetGain(const std::array<float, kFftLengthBy2Plus1>& nearend,
+               const std::array<float, kFftLengthBy2Plus1>& echo,
+               const std::array<float, kFftLengthBy2Plus1>& comfort_noise,
+               bool saturated_echo,
+               const std::vector<std::vector<float>>& render,
+               bool force_zero_gain,
+               float* high_bands_gain,
+               std::array<float, kFftLengthBy2Plus1>* low_band_gain);
 
  private:
+  void LowerBandGain(bool stationary_with_low_power,
+                     bool saturated_echo,
+                     const std::array<float, kFftLengthBy2Plus1>& nearend,
+                     const std::array<float, kFftLengthBy2Plus1>& echo,
+                     const std::array<float, kFftLengthBy2Plus1>& comfort_noise,
+                     std::array<float, kFftLengthBy2Plus1>* gain);
+
+  class LowNoiseRenderDetector {
+   public:
+    bool Detect(const std::vector<std::vector<float>>& render);
+
+   private:
+    float average_power_ = 32768.f * 32768.f;
+  };
+
   const Aec3Optimization optimization_;
-  std::array<float, kFftLengthBy2 - 1> previous_gain_squared_;
-  std::array<float, kFftLengthBy2 - 1> previous_masker_;
+  std::array<float, kFftLengthBy2Plus1> last_gain_;
+  std::array<float, kFftLengthBy2Plus1> last_masker_;
+  std::array<float, kFftLengthBy2Plus1> gain_increase_;
+  std::array<float, kFftLengthBy2Plus1> last_echo_;
+
+  LowNoiseRenderDetector low_render_detector_;
+  size_t no_saturation_counter_ = 0;
   RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(SuppressionGain);
 };
 

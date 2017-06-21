@@ -12,6 +12,7 @@
 
 #include <android/log.h>
 
+#include "webrtc/base/array_view.h"
 #include "webrtc/base/arraysize.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/format_macros.h"
@@ -335,9 +336,9 @@ void OpenSLESRecorder::AllocateDataBuffers() {
         audio_parameters_.GetBytesPerBuffer());
   ALOGD("native sample rate: %d", audio_parameters_.sample_rate());
   RTC_DCHECK(audio_device_buffer_);
-  fine_audio_buffer_.reset(new FineAudioBuffer(
-      audio_device_buffer_, audio_parameters_.GetBytesPerBuffer(),
-      audio_parameters_.sample_rate()));
+  fine_audio_buffer_.reset(
+      new FineAudioBuffer(audio_device_buffer_, audio_parameters_.sample_rate(),
+                          2 * audio_parameters_.GetBytesPerBuffer()));
   // Allocate queue of audio buffers that stores recorded audio samples.
   const int data_size_bytes = audio_parameters_.GetBytesPerBuffer();
   audio_buffers_.reset(new std::unique_ptr<SLint8[]>[kNumOfOpenSLESBuffers]);
@@ -371,7 +372,8 @@ void OpenSLESRecorder::ReadBufferQueue() {
       static_cast<size_t>(audio_parameters_.GetBytesPerBuffer());
   const int8_t* data =
       static_cast<const int8_t*>(audio_buffers_[buffer_index_].get());
-  fine_audio_buffer_->DeliverRecordedData(data, size_in_bytes, 25, 25);
+  fine_audio_buffer_->DeliverRecordedData(
+      rtc::ArrayView<const int8_t>(data, size_in_bytes), 25, 25);
   // Enqueue the utilized audio buffer and use if for recording again.
   EnqueueAudioBuffer();
 }

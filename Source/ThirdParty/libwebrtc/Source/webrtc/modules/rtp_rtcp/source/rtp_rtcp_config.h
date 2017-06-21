@@ -26,7 +26,6 @@ enum { RTCP_MAX_REPORT_BLOCKS = 31 };  // RFC 3550 page 37
 enum {
   kRtcpAppCode_DATA_SIZE = 32 * 4
 };  // multiple of 4, this is not a limitation of the size
-enum { RTCP_RPSI_DATA_SIZE = 30 };
 enum { RTCP_NUMBER_OF_SR = 60 };
 
 enum { MAX_NUMBER_OF_TEMPORAL_ID = 8 };              // RFC

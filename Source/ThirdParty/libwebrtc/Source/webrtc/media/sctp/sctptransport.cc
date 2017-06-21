@@ -37,7 +37,6 @@ enum PreservedErrno {
 #include "webrtc/base/trace_event.h"
 #include "webrtc/media/base/codec.h"
 #include "webrtc/media/base/mediaconstants.h"
-#include "webrtc/media/base/rtputils.h"  // For IsRtpPacket
 #include "webrtc/media/base/streamparams.h"
 #include "webrtc/p2p/base/dtlstransportinternal.h"  // For PF_NORMAL
 
@@ -833,9 +832,8 @@ void SctpTransport::OnPacketRead(rtc::PacketTransportInternal* transport,
   RTC_DCHECK_EQ(transport_channel_, transport);
   TRACE_EVENT0("webrtc", "SctpTransport::OnPacketRead");
 
-  // TODO(pthatcher): Do this in a more robust way by checking for
-  // SCTP or DTLS.
-  if (IsRtpPacket(data, len)) {
+  if (flags & PF_SRTP_BYPASS) {
+    // We are only interested in SCTP packets.
     return;
   }
 

@@ -138,14 +138,17 @@ class RtpPacketizerVp9Test : public ::testing::Test {
   size_t payload_pos_;
   RTPVideoHeaderVP9 expected_;
   std::unique_ptr<RtpPacketizerVp9> packetizer_;
+  size_t num_packets_;
 
   void Init(size_t payload_size, size_t packet_size) {
     payload_.reset(new uint8_t[payload_size]);
     memset(payload_.get(), 7, payload_size);
     payload_size_ = payload_size;
     payload_pos_ = 0;
-    packetizer_.reset(new RtpPacketizerVp9(expected_, packet_size));
-    packetizer_->SetPayloadData(payload_.get(), payload_size_, NULL);
+    packetizer_.reset(new RtpPacketizerVp9(expected_, packet_size,
+                                           /*last_packet_reduction_len=*/0));
+    num_packets_ =
+        packetizer_->SetPayloadData(payload_.get(), payload_size_, nullptr);
   }
 
   void CheckPayload(const uint8_t* packet,
@@ -162,24 +165,24 @@ class RtpPacketizerVp9Test : public ::testing::Test {
                                   const size_t* expected_sizes,
                                   size_t expected_num_packets) {
     ASSERT_TRUE(packetizer_.get() != NULL);
-    bool last = false;
     if (expected_num_packets == 0) {
-      EXPECT_FALSE(packetizer_->NextPacket(&packet_, &last));
+      EXPECT_FALSE(packetizer_->NextPacket(&packet_));
       return;
     }
+    EXPECT_EQ(expected_num_packets, num_packets_);
     for (size_t i = 0; i < expected_num_packets; ++i) {
-      EXPECT_TRUE(packetizer_->NextPacket(&packet_, &last));
+      EXPECT_TRUE(packetizer_->NextPacket(&packet_));
       auto rtp_payload = packet_.payload();
       EXPECT_EQ(expected_sizes[i], rtp_payload.size());
       RTPVideoHeaderVP9 hdr = expected_;
       hdr.beginning_of_frame = (i == 0);
-      hdr.end_of_frame = last;
+      hdr.end_of_frame = (i + 1) == expected_num_packets;
       ParseAndCheckPacket(rtp_payload.data(), hdr, expected_hdr_sizes[i],
                           rtp_payload.size());
       CheckPayload(rtp_payload.data(), expected_hdr_sizes[i],
-                   rtp_payload.size(), last);
+                   rtp_payload.size(), (i + 1) == expected_num_packets);
+      expected_.ss_data_available = false;
     }
-    EXPECT_TRUE(last);
   }
 };
 
@@ -205,7 +208,7 @@ TEST_F(RtpPacketizerVp9Test, TestEqualSizedMode_TwoPackets) {
   // I:0, P:0, L:0, F:0, B:1, E:0, V:0  (1hdr + 14 payload)
   // I:0, P:0, L:0, F:0, B:0, E:1, V:0  (1hdr + 13 payload)
   const size_t kExpectedHdrSizes[] = {1, 1};
-  const size_t kExpectedSizes[] = {15, 14};
+  const size_t kExpectedSizes[] = {14, 15};
   const size_t kExpectedNum = GTEST_ARRAY_SIZE_(kExpectedSizes);
   CreateParseAndCheckPackets(kExpectedHdrSizes, kExpectedSizes, kExpectedNum);
 }
@@ -250,7 +253,7 @@ TEST_F(RtpPacketizerVp9Test, TestTwoBytePictureId) {
   // I:1, P:0, L:0, F:0, B:0, E:0, V:0 (3hdr + 8 payload)
   // I:1, P:0, L:0, F:0, B:0, E:1, V:0 (3hdr + 7 payload)
   const size_t kExpectedHdrSizes[] = {3, 3, 3, 3};
-  const size_t kExpectedSizes[] = {11, 11, 11, 10};
+  const size_t kExpectedSizes[] = {10, 11, 11, 11};
   const size_t kExpectedNum = GTEST_ARRAY_SIZE_(kExpectedSizes);
   CreateParseAndCheckPackets(kExpectedHdrSizes, kExpectedSizes, kExpectedNum);
 }
@@ -432,9 +435,56 @@ TEST_F(RtpPacketizerVp9Test, TestSsData) {
   CreateParseAndCheckPackets(kExpectedHdrSizes, kExpectedSizes, kExpectedNum);
 }
 
+TEST_F(RtpPacketizerVp9Test, TestSsDataDoesNotFitInAveragePacket) {
+  const size_t kFrameSize = 24;
+  const size_t kPacketSize = 20;
+
+  expected_.ss_data_available = true;
+  expected_.num_spatial_layers = 2;
+  expected_.spatial_layer_resolution_present = true;
+  expected_.width[0] = 640;
+  expected_.width[1] = 1280;
+  expected_.height[0] = 360;
+  expected_.height[1] = 720;
+  expected_.gof.num_frames_in_gof = 3;
+  expected_.gof.temporal_idx[0] = 0;
+  expected_.gof.temporal_idx[1] = 1;
+  expected_.gof.temporal_idx[2] = 2;
+  expected_.gof.temporal_up_switch[0] = true;
+  expected_.gof.temporal_up_switch[1] = true;
+  expected_.gof.temporal_up_switch[2] = false;
+  expected_.gof.num_ref_pics[0] = 0;
+  expected_.gof.num_ref_pics[1] = 3;
+  expected_.gof.num_ref_pics[2] = 2;
+  expected_.gof.pid_diff[1][0] = 5;
+  expected_.gof.pid_diff[1][1] = 6;
+  expected_.gof.pid_diff[1][2] = 7;
+  expected_.gof.pid_diff[2][0] = 8;
+  expected_.gof.pid_diff[2][1] = 9;
+  Init(kFrameSize, kPacketSize);
+
+  // Three packets:
+  // I:0, P:0, L:0, F:0, B:1, E:1, V:1 (19hdr + 1 payload)
+  // N_S:1, Y:1, G:1
+  // WIDTH:640   // 2 bytes
+  // HEIGHT:360  // 2 bytes
+  // WIDTH:1280  // 2 bytes
+  // HEIGHT:720  // 2 bytes
+  // N_G:3
+  // T:0, U:1, R:0
+  // T:1, U:1, R:3 | P_DIFF[1][0]:5 | P_DIFF[1][1]:6 | P_DIFF[1][2]:7
+  // T:2, U:0, R:2 | P_DIFF[2][0]:8 | P_DIFF[2][0]:9
+  // Last two packets 1 bytes vp9 hdrs and the rest of payload 14 and 9 bytes.
+  const size_t kExpectedHdrSizes[] = {19, 1, 1};
+  const size_t kExpectedSizes[] = {20, 15, 10};
+  const size_t kExpectedNum = GTEST_ARRAY_SIZE_(kExpectedSizes);
+  CreateParseAndCheckPackets(kExpectedHdrSizes, kExpectedSizes, kExpectedNum);
+}
+
 TEST_F(RtpPacketizerVp9Test, TestOnlyHighestSpatialLayerSetMarker) {
   const size_t kFrameSize = 10;
-  const size_t kPacketSize = 9;  // 2 packet per frame.
+  const size_t kPacketSize = 8;
+  const size_t kLastPacketReductionLen = 0;
   const uint8_t kFrame[kFrameSize] = {7};
   const RTPFragmentationHeader* kNoFragmentation = nullptr;
 
@@ -444,36 +494,89 @@ TEST_F(RtpPacketizerVp9Test, TestOnlyHighestSpatialLayerSetMarker) {
   vp9_header.num_spatial_layers = 3;
 
   RtpPacketToSend packet(kNoExtensions);
-  bool last;
 
   vp9_header.spatial_idx = 0;
-  RtpPacketizerVp9 packetizer0(vp9_header, kPacketSize);
+  RtpPacketizerVp9 packetizer0(vp9_header, kPacketSize,
+                               kLastPacketReductionLen);
   packetizer0.SetPayloadData(kFrame, sizeof(kFrame), kNoFragmentation);
-  ASSERT_TRUE(packetizer0.NextPacket(&packet, &last));
-  EXPECT_FALSE(last);
+  ASSERT_TRUE(packetizer0.NextPacket(&packet));
   EXPECT_FALSE(packet.Marker());
-  ASSERT_TRUE(packetizer0.NextPacket(&packet, &last));
-  EXPECT_TRUE(last);
+  ASSERT_TRUE(packetizer0.NextPacket(&packet));
   EXPECT_FALSE(packet.Marker());
 
   vp9_header.spatial_idx = 1;
-  RtpPacketizerVp9 packetizer1(vp9_header, kPacketSize);
+  RtpPacketizerVp9 packetizer1(vp9_header, kPacketSize,
+                               kLastPacketReductionLen);
   packetizer1.SetPayloadData(kFrame, sizeof(kFrame), kNoFragmentation);
-  ASSERT_TRUE(packetizer1.NextPacket(&packet, &last));
-  EXPECT_FALSE(last);
+  ASSERT_TRUE(packetizer1.NextPacket(&packet));
   EXPECT_FALSE(packet.Marker());
-  ASSERT_TRUE(packetizer1.NextPacket(&packet, &last));
-  EXPECT_TRUE(last);
+  ASSERT_TRUE(packetizer1.NextPacket(&packet));
   EXPECT_FALSE(packet.Marker());
 
   vp9_header.spatial_idx = 2;
-  RtpPacketizerVp9 packetizer2(vp9_header, kPacketSize);
+  RtpPacketizerVp9 packetizer2(vp9_header, kPacketSize,
+                               kLastPacketReductionLen);
   packetizer2.SetPayloadData(kFrame, sizeof(kFrame), kNoFragmentation);
-  ASSERT_TRUE(packetizer2.NextPacket(&packet, &last));
-  EXPECT_FALSE(last);
+  ASSERT_TRUE(packetizer2.NextPacket(&packet));
   EXPECT_FALSE(packet.Marker());
-  ASSERT_TRUE(packetizer2.NextPacket(&packet, &last));
-  EXPECT_TRUE(last);
+  ASSERT_TRUE(packetizer2.NextPacket(&packet));
+  EXPECT_TRUE(packet.Marker());
+}
+
+TEST_F(RtpPacketizerVp9Test, TestGeneratesMinimumNumberOfPackets) {
+  const size_t kFrameSize = 10;
+  const size_t kPacketSize = 8;
+  const size_t kLastPacketReductionLen = 0;
+  // Calculated by hand. One packet can contain
+  // |kPacketSize| - |kVp9MinDiscriptorSize| = 6 bytes of the frame payload,
+  // thus to fit 10 bytes two packets are required.
+  const size_t kMinNumberOfPackets = 2;
+  const uint8_t kFrame[kFrameSize] = {7};
+  const RTPFragmentationHeader* kNoFragmentation = nullptr;
+
+  RTPVideoHeaderVP9 vp9_header;
+  vp9_header.InitRTPVideoHeaderVP9();
+
+  RtpPacketToSend packet(kNoExtensions);
+
+  RtpPacketizerVp9 packetizer(vp9_header, kPacketSize, kLastPacketReductionLen);
+  EXPECT_EQ(kMinNumberOfPackets, packetizer.SetPayloadData(
+                                     kFrame, sizeof(kFrame), kNoFragmentation));
+  ASSERT_TRUE(packetizer.NextPacket(&packet));
+  EXPECT_FALSE(packet.Marker());
+  ASSERT_TRUE(packetizer.NextPacket(&packet));
+  EXPECT_TRUE(packet.Marker());
+}
+
+TEST_F(RtpPacketizerVp9Test, TestRespectsLastPacketReductionLen) {
+  const size_t kFrameSize = 10;
+  const size_t kPacketSize = 8;
+  const size_t kLastPacketReductionLen = 5;
+  // Calculated by hand. VP9 payload descriptor is 2 bytes. Like in the test
+  // above, 1 packet is not enough. 2 packets can contain
+  // 2*(|kPacketSize| - |kVp9MinDiscriptorSize|) - |kLastPacketReductionLen| = 7
+  // But three packets are enough, since they have capacity of 3*(8-2)-5=13
+  // bytes.
+  const size_t kMinNumberOfPackets = 3;
+  const uint8_t kFrame[kFrameSize] = {7};
+  const RTPFragmentationHeader* kNoFragmentation = nullptr;
+
+  RTPVideoHeaderVP9 vp9_header;
+  vp9_header.InitRTPVideoHeaderVP9();
+  vp9_header.flexible_mode = true;
+
+  RtpPacketToSend packet(kNoExtensions);
+
+  RtpPacketizerVp9 packetizer0(vp9_header, kPacketSize,
+                               kLastPacketReductionLen);
+  EXPECT_EQ(
+      packetizer0.SetPayloadData(kFrame, sizeof(kFrame), kNoFragmentation),
+      kMinNumberOfPackets);
+  ASSERT_TRUE(packetizer0.NextPacket(&packet));
+  EXPECT_FALSE(packet.Marker());
+  ASSERT_TRUE(packetizer0.NextPacket(&packet));
+  EXPECT_FALSE(packet.Marker());
+  ASSERT_TRUE(packetizer0.NextPacket(&packet));
   EXPECT_TRUE(packet.Marker());
 }
 

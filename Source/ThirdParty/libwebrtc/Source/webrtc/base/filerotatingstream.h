@@ -68,7 +68,7 @@ class FileRotatingStream : public StreamInterface {
   std::string GetFilePath(size_t index) const;
 
   // Returns the number of files that will used by this stream.
-  size_t GetNumFiles() { return file_names_.size(); }
+  size_t GetNumFiles() const { return file_names_.size(); }
 
  protected:
   size_t GetMaxFileSize() const { return max_file_size_; }

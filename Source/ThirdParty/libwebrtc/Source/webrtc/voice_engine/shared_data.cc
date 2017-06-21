@@ -27,20 +27,16 @@ SharedData::SharedData()
       _channelManager(_gInstanceCounter),
       _engineStatistics(_gInstanceCounter),
       _audioDevicePtr(NULL),
-      _moduleProcessThreadPtr(
-          ProcessThread::Create("VoiceProcessThread")) {
-    Trace::CreateTrace();
-    if (OutputMixer::Create(_outputMixerPtr, _gInstanceCounter) == 0)
-    {
-        _outputMixerPtr->SetEngineInformation(_engineStatistics);
-    }
-    if (TransmitMixer::Create(_transmitMixerPtr, _gInstanceCounter) == 0)
-    {
-        _transmitMixerPtr->SetEngineInformation(*_moduleProcessThreadPtr,
-                                                _engineStatistics,
-                                                _channelManager);
-    }
-    _audioDeviceLayer = AudioDeviceModule::kPlatformDefaultAudio;
+      _moduleProcessThreadPtr(ProcessThread::Create("VoiceProcessThread")),
+      encoder_queue_("AudioEncoderQueue") {
+  Trace::CreateTrace();
+  if (OutputMixer::Create(_outputMixerPtr, _gInstanceCounter) == 0) {
+    _outputMixerPtr->SetEngineInformation(_engineStatistics);
+  }
+  if (TransmitMixer::Create(_transmitMixerPtr, _gInstanceCounter) == 0) {
+    _transmitMixerPtr->SetEngineInformation(*_moduleProcessThreadPtr,
+                                            _engineStatistics, _channelManager);
+  }
 }
 
 SharedData::~SharedData()
@@ -52,6 +48,11 @@ SharedData::~SharedData()
     }
     _moduleProcessThreadPtr->Stop();
     Trace::ReturnTrace();
+}
+
+rtc::TaskQueue* SharedData::encoder_queue() {
+  RTC_DCHECK_RUN_ON(&construction_thread_);
+  return &encoder_queue_;
 }
 
 void SharedData::set_audio_device(

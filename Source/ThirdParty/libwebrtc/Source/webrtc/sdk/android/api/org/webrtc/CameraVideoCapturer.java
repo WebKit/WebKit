@@ -10,6 +10,8 @@
 
 package org.webrtc;
 
+import android.media.MediaRecorder;
+
 /**
  * Base interface for camera1 and camera2 implementations. Extends VideoCapturer with a
  * switchCamera() function. Also provides subinterfaces for handling camera events, and a helper
@@ -58,6 +60,32 @@ public interface CameraVideoCapturer extends VideoCapturer {
    * This function can be called from any thread.
    */
   void switchCamera(CameraSwitchHandler switchEventsHandler);
+
+  /**
+   * MediaRecorder add/remove handler - one of these functions are invoked with the result of
+   * addMediaRecorderToCamera() or removeMediaRecorderFromCamera calls.
+   * The callback may be called on an arbitrary thread.
+   */
+  public interface MediaRecorderHandler {
+    // Invoked on success.
+    void onMediaRecorderSuccess();
+
+    // Invoked on failure, e.g. camera is stopped or any exception happens.
+    void onMediaRecorderError(String errorDescription);
+  }
+
+  /**
+   * Add MediaRecorder to camera pipeline. This can only be called while the camera is running.
+   * Once MediaRecorder is added to camera pipeline camera switch is not allowed.
+   * This function can be called from any thread.
+   */
+  void addMediaRecorderToCamera(MediaRecorder mediaRecorder, MediaRecorderHandler resultHandler);
+
+  /**
+   * Remove MediaRecorder from camera pipeline. This can only be called while the camera is running.
+   * This function can be called from any thread.
+   */
+  void removeMediaRecorderFromCamera(MediaRecorderHandler resultHandler);
 
   /**
    * Helper class to log framerate and detect if the camera freezes. It will run periodic callbacks

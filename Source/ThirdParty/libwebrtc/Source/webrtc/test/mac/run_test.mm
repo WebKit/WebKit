@@ -36,10 +36,10 @@ TestBlock functionToBlock(void(*function)()) {
 }
 
 - (void)runAllTests:(TestBlock)testBlock {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  testBlock();
-  running_ = NO;
-  [pool release];
+  @autoreleasepool {
+    testBlock();
+    running_ = NO;
+  }
 }
 
 - (BOOL)running {
@@ -51,24 +51,22 @@ namespace webrtc {
 namespace test {
 
 void RunTest(void(*test)()) {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  [NSApplication sharedApplication];
+  @autoreleasepool {
+    [NSApplication sharedApplication];
 
-  // Convert the function pointer to an Objective-C block and call on a
-  // separate thread, to avoid blocking the main thread.
-  TestRunner *testRunner = [[TestRunner alloc] init];
-  TestBlock testBlock = functionToBlock(test);
-  [NSThread detachNewThreadSelector:@selector(runAllTests:)
-                           toTarget:testRunner
-                         withObject:testBlock];
+    // Convert the function pointer to an Objective-C block and call on a
+    // separate thread, to avoid blocking the main thread.
+    TestRunner *testRunner = [[TestRunner alloc] init];
+    TestBlock testBlock = functionToBlock(test);
+    [NSThread detachNewThreadSelector:@selector(runAllTests:)
+                             toTarget:testRunner
+                           withObject:testBlock];
 
-  NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-  while ([testRunner running] &&
-         [runLoop runMode:NSDefaultRunLoopMode
-               beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]]);
-
-  [testRunner release];
-  [pool release];
+    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+    while ([testRunner running] && [runLoop runMode:NSDefaultRunLoopMode
+                                         beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]])
+      ;
+  }
 }
 
 }  // namespace test

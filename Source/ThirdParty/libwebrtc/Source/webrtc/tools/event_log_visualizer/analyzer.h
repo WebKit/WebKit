@@ -20,6 +20,7 @@
 
 #include "webrtc/base/function_view.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log_parser.h"
+#include "webrtc/modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
 #include "webrtc/tools/event_log_visualizer/plot_base.h"
@@ -55,7 +56,7 @@ struct LossBasedBweUpdate {
 
 struct AudioNetworkAdaptationEvent {
   uint64_t timestamp;
-  AudioNetworkAdaptor::EncoderRuntimeConfig config;
+  AudioEncoderRuntimeConfig config;
 };
 
 class EventLogAnalyzer {
@@ -99,6 +100,9 @@ class EventLogAnalyzer {
   void CreateAudioEncoderEnableFecGraph(Plot* plot);
   void CreateAudioEncoderEnableDtxGraph(Plot* plot);
   void CreateAudioEncoderNumChannelsGraph(Plot* plot);
+  void CreateAudioJitterBufferGraph(const std::string& replacement_file_name,
+                                    int file_sample_rate_hz,
+                                    Plot* plot);
 
   // Returns a vector of capture and arrival timestamps for the video frames
   // of the stream with the most number of frames.
@@ -140,11 +144,6 @@ class EventLogAnalyzer {
 
   std::string GetStreamName(StreamId) const;
 
-  void FillAudioEncoderTimeSeries(
-      Plot* plot,
-      rtc::FunctionView<rtc::Optional<float>(
-          const AudioNetworkAdaptationEvent& ana_event)> get_y) const;
-
   const ParsedRtcEventLog& parsed_log_;
 
   // A list of SSRCs we are interested in analysing.
@@ -167,10 +166,24 @@ class EventLogAnalyzer {
 
   std::map<StreamId, std::vector<LoggedRtcpPacket>> rtcp_packets_;
 
+  // Maps an SSRC to the timestamps of parsed audio playout events.
+  std::map<uint32_t, std::vector<uint64_t>> audio_playout_events_;
+
+  // Stores the timestamps for all log segments, in the form of associated start
+  // and end events.
+  std::vector<std::pair<uint64_t, uint64_t>> log_segments_;
+
   // A list of all updates from the send-side loss-based bandwidth estimator.
   std::vector<LossBasedBweUpdate> bwe_loss_updates_;
 
   std::vector<AudioNetworkAdaptationEvent> audio_network_adaptation_events_;
+
+  std::vector<ParsedRtcEventLog::BweProbeClusterCreatedEvent>
+      bwe_probe_cluster_created_events_;
+
+  std::vector<ParsedRtcEventLog::BweProbeResultEvent> bwe_probe_result_events_;
+
+  std::vector<ParsedRtcEventLog::BweDelayBasedUpdate> bwe_delay_updates_;
 
   // Window and step size used for calculating moving averages, e.g. bitrate.
   // The generated data points will be |step_| microseconds apart.

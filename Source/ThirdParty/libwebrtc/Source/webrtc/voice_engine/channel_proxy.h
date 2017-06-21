@@ -12,6 +12,8 @@
 #define WEBRTC_VOICE_ENGINE_CHANNEL_PROXY_H_
 
 #include "webrtc/api/audio/audio_mixer.h"
+#include "webrtc/api/audio_codecs/audio_encoder.h"
+#include "webrtc/api/rtpreceiverinterface.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/race_checker.h"
 #include "webrtc/base/thread_checker.h"
@@ -33,6 +35,7 @@ class RtpPacketSender;
 class RtpPacketReceived;
 class RtpReceiver;
 class RtpRtcp;
+class RtpTransportControllerSendInterface;
 class Transport;
 class TransportFeedbackObserver;
 
@@ -53,6 +56,11 @@ class ChannelProxy {
   explicit ChannelProxy(const ChannelOwner& channel_owner);
   virtual ~ChannelProxy();
 
+  virtual bool SetEncoder(int payload_type,
+                          std::unique_ptr<AudioEncoder> encoder);
+  virtual void ModifyEncoder(
+      rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier);
+
   virtual void SetRTCPStatus(bool enable);
   virtual void SetLocalSSRC(uint32_t ssrc);
   virtual void SetRTCP_CNAME(const std::string& c_name);
@@ -62,19 +70,18 @@ class ChannelProxy {
   virtual void EnableSendTransportSequenceNumber(int id);
   virtual void EnableReceiveTransportSequenceNumber(int id);
   virtual void RegisterSenderCongestionControlObjects(
-      RtpPacketSender* rtp_packet_sender,
-      TransportFeedbackObserver* transport_feedback_observer,
-      PacketRouter* packet_router,
+      RtpTransportControllerSendInterface* transport,
       RtcpBandwidthObserver* bandwidth_observer);
   virtual void RegisterReceiverCongestionControlObjects(
       PacketRouter* packet_router);
-  virtual void ResetCongestionControlObjects();
+  virtual void ResetSenderCongestionControlObjects();
+  virtual void ResetReceiverCongestionControlObjects();
   virtual CallStatistics GetRTCPStatistics() const;
   virtual std::vector<ReportBlock> GetRemoteRTCPReportBlocks() const;
   virtual NetworkStatistics GetNetworkStatistics() const;
   virtual AudioDecodingCallStats GetDecodingCallStatistics() const;
-  virtual int32_t GetSpeechOutputLevel() const;
-  virtual int32_t GetSpeechOutputLevelFullRange() const;
+  virtual int GetSpeechOutputLevel() const;
+  virtual int GetSpeechOutputLevelFullRange() const;
   virtual uint32_t GetDelayEstimate() const;
   virtual bool SetSendTelephoneEventPayloadType(int payload_type,
                                                 int payload_frequency);
@@ -82,6 +89,7 @@ class ChannelProxy {
   virtual void SetBitrate(int bitrate_bps, int64_t probing_interval_ms);
   virtual void SetRecPayloadType(int payload_type,
                                  const SdpAudioFormat& format);
+  virtual void SetReceiveCodecs(const std::map<int, SdpAudioFormat>& codecs);
   virtual void SetSink(std::unique_ptr<AudioSinkInterface> sink);
   virtual void SetInputMute(bool muted);
   virtual void RegisterExternalTransport(Transport* transport);
@@ -92,10 +100,6 @@ class ChannelProxy {
       GetAudioDecoderFactory() const;
   virtual void SetChannelOutputVolumeScaling(float scaling);
   virtual void SetRtcEventLog(RtcEventLog* event_log);
-  virtual void EnableAudioNetworkAdaptor(const std::string& config_string);
-  virtual void DisableAudioNetworkAdaptor();
-  virtual void SetReceiverFrameLengthRange(int min_frame_length_ms,
-                                           int max_frame_length_ms);
   virtual AudioMixer::Source::AudioFrameInfo GetAudioFrameWithInfo(
       int sample_rate_hz,
       AudioFrame* audio_frame);
@@ -109,13 +113,11 @@ class ChannelProxy {
   virtual void SetMinimumPlayoutDelay(int delay_ms);
   virtual void SetRtcpRttStats(RtcpRttStats* rtcp_rtt_stats);
   virtual bool GetRecCodec(CodecInst* codec_inst) const;
-  virtual bool GetSendCodec(CodecInst* codec_inst) const;
-  virtual bool SetVADStatus(bool enable);
-  virtual bool SetCodecFECStatus(bool enable);
-  virtual bool SetOpusDtx(bool enable);
-  virtual bool SetOpusMaxPlaybackRate(int frequency_hz);
-  virtual bool SetSendCodec(const CodecInst& codec_inst);
-  virtual bool SetSendCNPayloadType(int type, PayloadFrequencies frequency);
+  virtual void OnTwccBasedUplinkPacketLossRate(float packet_loss_rate);
+  virtual void OnRecoverableUplinkPacketLossRate(
+      float recoverable_packet_loss_rate);
+  virtual void RegisterLegacyReceiveCodecs();
+  virtual std::vector<webrtc::RtpSource> GetSources() const;
 
  private:
   Channel* channel() const;

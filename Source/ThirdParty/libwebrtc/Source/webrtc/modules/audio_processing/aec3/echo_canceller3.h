@@ -71,7 +71,7 @@ class EchoCanceller3 {
   ~EchoCanceller3();
   // Analyzes and stores an internal copy of the split-band domain render
   // signal.
-  bool AnalyzeRender(AudioBuffer* farend);
+  void AnalyzeRender(AudioBuffer* farend);
   // Analyzes the full-band domain capture signal to detect signal saturation.
   void AnalyzeCapture(AudioBuffer* capture);
   // Processes the split-band domain capture signal in order to remove any echo
@@ -96,9 +96,8 @@ class EchoCanceller3 {
  private:
   class RenderWriter;
 
-  // Empties the render SwapQueue. A bool is returned that indicates the success
-  // of the operation.
-  bool EmptyRenderQueue();
+  // Empties the render SwapQueue.
+  void EmptyRenderQueue();
 
   rtc::RaceChecker capture_race_checker_;
   rtc::RaceChecker render_race_checker_;

@@ -7,13 +7,37 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
-# Customize probing signals, noise sources and scores if needed.
+# Path to the POLQA tool.
+if [ -z ${POLQA_PATH} ]; then  # Check if defined.
+  # Default location.
+  export POLQA_PATH='/var/opt/PolqaOem64'
+fi
+if [ -d "${POLQA_PATH}" ]; then
+  echo "POLQA found in ${POLQA_PATH}"
+else
+  echo "POLQA not found in ${POLQA_PATH}"
+  exit 1
+fi
+
+# Path to the Aechen IR database.
+if [ -z ${AECHEN_IR_DATABASE_PATH} ]; then  # Check if defined.
+  # Default location.
+  export AECHEN_IR_DATABASE_PATH='/var/opt/AIR_1_4'
+fi
+if [ -d "${AECHEN_IR_DATABASE_PATH}" ]; then
+  echo "AIR database found in ${AECHEN_IR_DATABASE_PATH}"
+else
+  echo "AIR database not found in ${AECHEN_IR_DATABASE_PATH}"
+  exit 1
+fi
+
+# Customize probing signals, test data generators and scores if needed.
 PROBING_SIGNALS=(probing_signals/*.wav)
-NOISE_SOURCES=( \
+TEST_DATA_GENERATORS=( \
     "identity" \
-    "white" \
-    "environmental" \
-    "echo" \
+    "white_noise" \
+    "environmental_noise" \
+    "reverberation" \
 )
 SCORES=( \
     "polqa" \
@@ -22,8 +46,8 @@ SCORES=( \
 OUTPUT_PATH=output
 
 # Generate standard APM config files.
-chmod +x apm_quality_assessment-gencfgs.py
-./apm_quality_assessment-gencfgs.py
+chmod +x apm_quality_assessment_gencfgs.py
+./apm_quality_assessment_gencfgs.py
 
 # Customize APM configurations if needed.
 APM_CONFIGS=(apm_configs/*.json)
@@ -33,20 +57,22 @@ if [ ! -d ${OUTPUT_PATH} ]; then
   mkdir ${OUTPUT_PATH}
 fi
 
-# Start one process for each "probing signal"-"noise source" pair.
+# Start one process for each "probing signal"-"test data source" pair.
 chmod +x apm_quality_assessment.py
 for probing_signal_filepath in "${PROBING_SIGNALS[@]}" ; do
   probing_signal_name="$(basename $probing_signal_filepath)"
   probing_signal_name="${probing_signal_name%.*}"
-  for noise_source_name in "${NOISE_SOURCES[@]}" ; do
+  for test_data_gen_name in "${TEST_DATA_GENERATORS[@]}" ; do
     LOG_FILE="${OUTPUT_PATH}/apm_qa-${probing_signal_name}-"`
-             `"${noise_source_name}.log"
-    echo "Starting ${probing_signal_name} ${noise_source_name} "`
+             `"${test_data_gen_name}.log"
+    echo "Starting ${probing_signal_name} ${test_data_gen_name} "`
          `"(see ${LOG_FILE})"
     ./apm_quality_assessment.py \
-        -i ${probing_signal_filepath}\
+        --polqa_path ${POLQA_PATH}\
+        --air_db_path ${AECHEN_IR_DATABASE_PATH}\
+        -i ${probing_signal_filepath} \
         -o ${OUTPUT_PATH} \
-        -n ${noise_source_name} \
+        -t ${test_data_gen_name} \
         -c "${APM_CONFIGS[@]}" \
         -e "${SCORES[@]}" > $LOG_FILE 2>&1 &
   done
@@ -56,8 +82,8 @@ done
 wait
 
 # Export results.
-chmod +x ./apm_quality_assessment-export.py
-./apm_quality_assessment-export.py -o ${OUTPUT_PATH}
+chmod +x ./apm_quality_assessment_export.py
+./apm_quality_assessment_export.py -o ${OUTPUT_PATH}
 
 # Show results in the browser.
 RESULTS_FILE="$(realpath ${OUTPUT_PATH}/results.html)"

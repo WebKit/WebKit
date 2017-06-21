@@ -15,7 +15,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
+import android.os.Environment;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -326,8 +332,7 @@ class CameraVideoCapturerTestFixtures {
   private TestObjectFactory testObjectFactory;
 
   CameraVideoCapturerTestFixtures(TestObjectFactory testObjectFactory) {
-    PeerConnectionFactory.initializeAndroidGlobals(
-        testObjectFactory.getAppContext(), true, true, true);
+    PeerConnectionFactory.initializeAndroidGlobals(testObjectFactory.getAppContext(), true);
 
     this.peerConnectionFactory = new PeerConnectionFactory(null /* options */);
     this.testObjectFactory = testObjectFactory;
@@ -499,6 +504,111 @@ class CameraVideoCapturerTestFixtures {
     assertTrue(cameraSwitchSuccessful[0]);
     // Ensure that frames are received.
     assertTrue(videoTrackWithRenderer.rendererCallbacks.waitForNextFrameToRender() > 0);
+    disposeCapturer(capturerInstance);
+    disposeVideoTrackWithRenderer(videoTrackWithRenderer);
+  }
+
+  @TargetApi(21)
+  private static void prepareMediaRecorderForTests(
+      MediaRecorder mediaRecorder, File outputFile, boolean useSurfaceCapture) throws IOException {
+    mediaRecorder.setVideoSource(
+        useSurfaceCapture ? MediaRecorder.VideoSource.SURFACE : MediaRecorder.VideoSource.CAMERA);
+    CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_480P);
+    profile.videoCodec = MediaRecorder.VideoEncoder.H264;
+    profile.videoBitRate = 2500000;
+    profile.videoFrameWidth = 640;
+    profile.videoFrameHeight = 480;
+    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+    mediaRecorder.setVideoFrameRate(profile.videoFrameRate);
+    mediaRecorder.setVideoSize(profile.videoFrameWidth, profile.videoFrameHeight);
+    mediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
+    mediaRecorder.setVideoEncoder(profile.videoCodec);
+    mediaRecorder.setOutputFile(outputFile.getPath());
+    mediaRecorder.prepare();
+  }
+
+  @TargetApi(21)
+  public void updateMediaRecorder(boolean useSurfaceCapture)
+      throws InterruptedException, IOException {
+    final CapturerInstance capturerInstance = createCapturer(false /* initialize */);
+    final VideoTrackWithRenderer videoTrackWithRenderer =
+        createVideoTrackWithRenderer(capturerInstance.capturer);
+    // Wait for the camera to start so we can add and remove MediaRecorder.
+    assertTrue(videoTrackWithRenderer.rendererCallbacks.waitForNextFrameToRender() > 0);
+
+    final String videoOutPath = Environment.getExternalStorageDirectory().getPath()
+        + "/chromium_tests_root/testmediarecorder.mp4";
+    File outputFile = new File(videoOutPath);
+
+    // Create MediaRecorder object
+    MediaRecorder mediaRecorder = new MediaRecorder();
+    if (useSurfaceCapture) {
+      // When using using surface capture, media recorder has to be prepared before adding it to the
+      // camera.
+      prepareMediaRecorderForTests(mediaRecorder, outputFile, useSurfaceCapture);
+    }
+
+    // Add MediaRecorder to camera pipeline.
+    final boolean[] addMediaRecorderSuccessful = new boolean[1];
+    final CountDownLatch addBarrier = new CountDownLatch(1);
+    CameraVideoCapturer.MediaRecorderHandler addMediaRecorderHandler =
+        new CameraVideoCapturer.MediaRecorderHandler() {
+          @Override
+          public void onMediaRecorderSuccess() {
+            addMediaRecorderSuccessful[0] = true;
+            addBarrier.countDown();
+          }
+          @Override
+          public void onMediaRecorderError(String errorDescription) {
+            Logging.e(TAG, errorDescription);
+            addMediaRecorderSuccessful[0] = false;
+            addBarrier.countDown();
+          }
+        };
+    capturerInstance.capturer.addMediaRecorderToCamera(mediaRecorder, addMediaRecorderHandler);
+    // Wait until MediaRecoder has been added.
+    addBarrier.await();
+    // Check result.
+    assertTrue(addMediaRecorderSuccessful[0]);
+
+    // Start MediaRecorder and wait for a few frames to capture.
+    if (!useSurfaceCapture) {
+      // When using using camera capture, media recorder has to be prepared after adding it to the
+      // camera.
+      prepareMediaRecorderForTests(mediaRecorder, outputFile, useSurfaceCapture);
+    }
+    mediaRecorder.start();
+    for (int i = 0; i < 5; i++) {
+      assertTrue(videoTrackWithRenderer.rendererCallbacks.waitForNextFrameToRender() > 0);
+    }
+    mediaRecorder.stop();
+
+    // Remove MediaRecorder from camera pipeline.
+    final boolean[] removeMediaRecorderSuccessful = new boolean[1];
+    final CountDownLatch removeBarrier = new CountDownLatch(1);
+    CameraVideoCapturer.MediaRecorderHandler removeMediaRecorderHandler =
+        new CameraVideoCapturer.MediaRecorderHandler() {
+          @Override
+          public void onMediaRecorderSuccess() {
+            removeMediaRecorderSuccessful[0] = true;
+            removeBarrier.countDown();
+          }
+          @Override
+          public void onMediaRecorderError(String errorDescription) {
+            removeMediaRecorderSuccessful[0] = false;
+            removeBarrier.countDown();
+          }
+        };
+    capturerInstance.capturer.removeMediaRecorderFromCamera(removeMediaRecorderHandler);
+    // Wait until MediaRecoder has been removed.
+    removeBarrier.await();
+    // Check result.
+    assertTrue(removeMediaRecorderSuccessful[0]);
+    // Ensure that frames are received after removing MediaRecorder.
+    assertTrue(videoTrackWithRenderer.rendererCallbacks.waitForNextFrameToRender() > 0);
+    // Check that recorded file contains some data.
+    assertTrue(outputFile.length() > 0);
+
     disposeCapturer(capturerInstance);
     disposeVideoTrackWithRenderer(videoTrackWithRenderer);
   }

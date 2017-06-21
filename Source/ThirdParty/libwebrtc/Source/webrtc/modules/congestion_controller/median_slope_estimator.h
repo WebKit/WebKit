@@ -48,10 +48,8 @@ class MedianSlopeEstimator {
 
  private:
   struct DelayInfo {
-    DelayInfo(int64_t time, double delay, size_t slope_count)
-        : time(time), delay(delay) {
-      slopes.reserve(slope_count);
-    }
+    DelayInfo(int64_t time, double delay, size_t slope_count);
+    ~DelayInfo();
     int64_t time;
     double delay;
     std::vector<double> slopes;

@@ -43,6 +43,8 @@ SenderReport::SenderReport()
       sender_packet_count_(0),
       sender_octet_count_(0) {}
 
+SenderReport::~SenderReport() = default;
+
 bool SenderReport::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);
 
@@ -72,6 +74,11 @@ bool SenderReport::Parse(const CommonHeader& packet) {
   RTC_DCHECK_LE(next_block - payload,
                 static_cast<ptrdiff_t>(packet.payload_size_bytes()));
   return true;
+}
+
+size_t SenderReport::BlockLength() const {
+  return kHeaderLength + kSenderBaseLength +
+         report_blocks_.size() * ReportBlock::kLength;
 }
 
 bool SenderReport::Create(uint8_t* packet,

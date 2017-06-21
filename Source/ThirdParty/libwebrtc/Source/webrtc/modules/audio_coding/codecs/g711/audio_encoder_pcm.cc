@@ -10,9 +10,11 @@
 
 #include "webrtc/modules/audio_coding/codecs/g711/audio_encoder_pcm.h"
 
+#include <algorithm>
 #include <limits>
 
 #include "webrtc/base/checks.h"
+#include "webrtc/base/string_to_number.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/codecs/g711/g711_interface.h"
 
@@ -27,6 +29,35 @@ typename T::Config CreateConfig(const CodecInst& codec_inst) {
   config.num_channels = codec_inst.channels;
   config.payload_type = codec_inst.pltype;
   return config;
+}
+
+template <typename T>
+typename T::Config CreateConfig(int payload_type,
+                                const SdpAudioFormat& format) {
+  typename T::Config config;
+  config.frame_size_ms = 20;
+  auto ptime_iter = format.parameters.find("ptime");
+  if (ptime_iter != format.parameters.end()) {
+    auto ptime = rtc::StringToNumber<int>(ptime_iter->second);
+    if (ptime && *ptime > 0) {
+      const int whole_packets = *ptime / 10;
+      config.frame_size_ms = std::max(10, std::min(whole_packets * 10, 60));
+    }
+  }
+  config.num_channels = format.num_channels;
+  config.payload_type = payload_type;
+  return config;
+}
+
+template <typename T>
+rtc::Optional<AudioCodecInfo> QueryAudioEncoderImpl(
+    const SdpAudioFormat& format) {
+  if (STR_CASE_CMP(format.name.c_str(), T::GetPayloadName()) == 0 &&
+      format.clockrate_hz == 8000 && format.num_channels >= 1 &&
+      CreateConfig<T>(0, format).IsOk()) {
+    return rtc::Optional<AudioCodecInfo>({8000, format.num_channels, 64000});
+  }
+  return rtc::Optional<AudioCodecInfo>();
 }
 
 }  // namespace
@@ -107,6 +138,15 @@ void AudioEncoderPcm::Reset() {
 AudioEncoderPcmA::AudioEncoderPcmA(const CodecInst& codec_inst)
     : AudioEncoderPcmA(CreateConfig<AudioEncoderPcmA>(codec_inst)) {}
 
+AudioEncoderPcmA::AudioEncoderPcmA(int payload_type,
+                                   const SdpAudioFormat& format)
+    : AudioEncoderPcmA(CreateConfig<AudioEncoderPcmA>(payload_type, format)) {}
+
+rtc::Optional<AudioCodecInfo> AudioEncoderPcmA::QueryAudioEncoder(
+    const SdpAudioFormat& format) {
+  return QueryAudioEncoderImpl<AudioEncoderPcmA>(format);
+}
+
 size_t AudioEncoderPcmA::EncodeCall(const int16_t* audio,
                                     size_t input_len,
                                     uint8_t* encoded) {
@@ -123,6 +163,15 @@ AudioEncoder::CodecType AudioEncoderPcmA::GetCodecType() const {
 
 AudioEncoderPcmU::AudioEncoderPcmU(const CodecInst& codec_inst)
     : AudioEncoderPcmU(CreateConfig<AudioEncoderPcmU>(codec_inst)) {}
+
+AudioEncoderPcmU::AudioEncoderPcmU(int payload_type,
+                                   const SdpAudioFormat& format)
+    : AudioEncoderPcmU(CreateConfig<AudioEncoderPcmU>(payload_type, format)) {}
+
+rtc::Optional<AudioCodecInfo> AudioEncoderPcmU::QueryAudioEncoder(
+    const SdpAudioFormat& format) {
+  return QueryAudioEncoderImpl<AudioEncoderPcmU>(format);
+}
 
 size_t AudioEncoderPcmU::EncodeCall(const int16_t* audio,
                                     size_t input_len,

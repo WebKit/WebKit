@@ -26,8 +26,9 @@ LayerFilteringTransport::LayerFilteringTransport(
     uint8_t vp8_video_payload_type,
     uint8_t vp9_video_payload_type,
     int selected_tl,
-    int selected_sl)
-    : test::DirectTransport(config, send_call),
+    int selected_sl,
+    const std::map<uint8_t, MediaType>& payload_type_map)
+    : test::DirectTransport(config, send_call, payload_type_map),
       vp8_video_payload_type_(vp8_video_payload_type),
       vp9_video_payload_type_(vp9_video_payload_type),
       selected_tl_(selected_tl),

@@ -156,6 +156,7 @@ TEST(OptionalTest, TestConstructDefault) {
   {
     Optional<Logger> x;
     EXPECT_FALSE(x);
+    EXPECT_FALSE(x.has_value());
   }
   EXPECT_EQ(V(), *log);
 }
@@ -165,8 +166,10 @@ TEST(OptionalTest, TestConstructCopyEmpty) {
   {
     Optional<Logger> x;
     EXPECT_FALSE(x);
+    EXPECT_FALSE(x.has_value());
     auto y = x;
     EXPECT_FALSE(y);
+    EXPECT_FALSE(y.has_value());
   }
   EXPECT_EQ(V(), *log);
 }
@@ -177,9 +180,11 @@ TEST(OptionalTest, TestConstructCopyFull) {
     Logger a;
     Optional<Logger> x(a);
     EXPECT_TRUE(x);
+    EXPECT_TRUE(x.has_value());
     log->push_back("---");
     auto y = x;
     EXPECT_TRUE(y);
+    EXPECT_TRUE(y.has_value());
     log->push_back("---");
   }
   EXPECT_EQ(V("0:0. default constructor", "1:0. copy constructor (from 0:0)",
@@ -193,8 +198,10 @@ TEST(OptionalTest, TestConstructMoveEmpty) {
   {
     Optional<Logger> x;
     EXPECT_FALSE(x);
+    EXPECT_FALSE(x.has_value());
     auto y = std::move(x);
     EXPECT_FALSE(y);
+    EXPECT_FALSE(y.has_value());
   }
   EXPECT_EQ(V(), *log);
 }
@@ -204,10 +211,13 @@ TEST(OptionalTest, TestConstructMoveFull) {
   {
     Optional<Logger> x(Logger(17));
     EXPECT_TRUE(x);
+    EXPECT_TRUE(x.has_value());
     log->push_back("---");
     auto y = std::move(x);
     EXPECT_TRUE(x);
+    EXPECT_TRUE(x.has_value());
     EXPECT_TRUE(y);
+    EXPECT_TRUE(y.has_value());
     log->push_back("---");
   }
   EXPECT_EQ(
@@ -621,13 +631,35 @@ TEST(OptionalTest, TestDereference) {
     (*std::move(x)).Foo();
     (*std::move(y)).Foo();
     log->push_back("---");
+    x.value().Foo();
+    y.value().Foo();
+    std::move(x).value().Foo();
+    std::move(y).value().Foo();
+    log->push_back("---");
   }
+  // clang-format off
   EXPECT_EQ(V("0:42. explicit constructor",
-              "1:42. move constructor (from 0:42)", "0:42. destructor", "---",
-              "1:42. Foo()", "1:42. Foo() const", "1:42. Foo()",
-              "1:42. Foo() const", "---", "1:42. Foo()", "1:42. Foo() const",
-              "1:42. Foo()", "1:42. Foo() const", "---", "1:42. destructor"),
+              "1:42. move constructor (from 0:42)",
+              "0:42. destructor",
+              "---",
+              "1:42. Foo()",
+              "1:42. Foo() const",
+              "1:42. Foo()",
+              "1:42. Foo() const",
+              "---",
+              "1:42. Foo()",
+              "1:42. Foo() const",
+              "1:42. Foo()",
+              "1:42. Foo() const",
+              "---",
+              "1:42. Foo()",
+              "1:42. Foo() const",
+              "1:42. Foo()",
+              "1:42. Foo() const",
+              "---",
+              "1:42. destructor"),
             *log);
+  // clang-format on
 }
 
 TEST(OptionalTest, TestDereferenceWithDefault) {

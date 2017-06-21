@@ -11,69 +11,23 @@
 #ifndef WEBRTC_MODULES_VIDEO_CODING_TEST_TEST_UTIL_H_
 #define WEBRTC_MODULES_VIDEO_CODING_TEST_TEST_UTIL_H_
 
-/*
- * General declarations used through out VCM offline tests.
- */
-
-#include <string>
-
-#include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/include/video_coding.h"
 #include "webrtc/system_wrappers/include/event_wrapper.h"
-
-enum { kMaxNackListSize = 250 };
-enum { kMaxPacketAgeToNack = 450 };
-
-class NullEvent : public webrtc::EventWrapper {
- public:
-  virtual ~NullEvent() {}
-
-  bool Set() override { return true; }
-
-  webrtc::EventTypeWrapper Wait(unsigned long max_time) override {  // NOLINT
-    return webrtc::kEventTimeout;
-  }
-};
 
 class NullEventFactory : public webrtc::EventFactory {
  public:
   virtual ~NullEventFactory() {}
 
   webrtc::EventWrapper* CreateEvent() override { return new NullEvent; }
-};
-
-class FileOutputFrameReceiver : public webrtc::VCMReceiveCallback {
- public:
-  FileOutputFrameReceiver(const std::string& base_out_filename, uint32_t ssrc);
-  virtual ~FileOutputFrameReceiver();
-
-  // VCMReceiveCallback
-  int32_t FrameToRender(webrtc::VideoFrame& video_frame,
-                        rtc::Optional<uint8_t> qp) override;
-
  private:
-  std::string out_filename_;
-  FILE* out_file_;
-  FILE* timing_file_;
-  int width_;
-  int height_;
-  int count_;
-
-  RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(FileOutputFrameReceiver);
-};
-
-class CmdArgs {
- public:
-  CmdArgs();
-
-  std::string codecName;
-  webrtc::VideoCodecType codecType;
-  int width;
-  int height;
-  int rtt;
-  std::string inputFile;
-  std::string outputFile;
+  // Private class to avoid more dependencies on it in tests.
+  class NullEvent : public webrtc::EventWrapper {
+   public:
+    ~NullEvent() override {}
+    bool Set() override { return true; }
+    webrtc::EventTypeWrapper Wait(unsigned long max_time) override {  // NOLINT
+      return webrtc::kEventTimeout;
+    }
+  };
 };
 
 #endif  // WEBRTC_MODULES_VIDEO_CODING_TEST_TEST_UTIL_H_

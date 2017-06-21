@@ -65,8 +65,7 @@ void FrameLengthController::UpdateNetworkMetrics(
     overhead_bytes_per_packet_ = network_metrics.overhead_bytes_per_packet;
 }
 
-void FrameLengthController::MakeDecision(
-    AudioNetworkAdaptor::EncoderRuntimeConfig* config) {
+void FrameLengthController::MakeDecision(AudioEncoderRuntimeConfig* config) {
   // Decision on |frame_length_ms| should not have been made.
   RTC_DCHECK(!config->frame_length_ms);
 
@@ -92,7 +91,7 @@ bool FrameLengthController::Config::FrameLengthChange::operator<(
 }
 
 bool FrameLengthController::FrameLengthIncreasingDecision(
-    const AudioNetworkAdaptor::EncoderRuntimeConfig& config) const {
+    const AudioEncoderRuntimeConfig& config) const {
   // Increase frame length if
   // 1. |uplink_bandwidth_bps| is known to be smaller or equal than
   //    |min_encoder_bitrate_bps| plus |prevent_overuse_margin_bps| plus the
@@ -129,7 +128,7 @@ bool FrameLengthController::FrameLengthIncreasingDecision(
 }
 
 bool FrameLengthController::FrameLengthDecreasingDecision(
-    const AudioNetworkAdaptor::EncoderRuntimeConfig& config) const {
+    const AudioEncoderRuntimeConfig& config) const {
   // Decrease frame length if
   // 1. shorter frame length is available AND
   // 2. |uplink_bandwidth_bps| is known to be bigger than

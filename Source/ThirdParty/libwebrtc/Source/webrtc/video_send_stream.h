@@ -69,9 +69,12 @@ class VideoSendStream {
     bool suspended = false;
     bool bw_limited_resolution = false;
     bool cpu_limited_resolution = false;
+    bool bw_limited_framerate = false;
+    bool cpu_limited_framerate = false;
     // Total number of times resolution as been requested to be changed due to
-    // CPU adaptation.
+    // CPU/quality adaptation.
     int number_of_cpu_adapt_changes = 0;
+    int number_of_quality_adapt_changes = 0;
     std::map<uint32_t, StreamStats> substreams;
   };
 
@@ -214,12 +217,21 @@ class VideoSendStream {
 
   // Based on the spec in
   // https://w3c.github.io/webrtc-pc/#idl-def-rtcdegradationpreference.
+  // These options are enforced on a best-effort basis. For instance, all of
+  // these options may suffer some frame drops in order to avoid queuing.
+  // TODO(sprang): Look into possibility of more strictly enforcing the
+  // maintain-framerate option.
   enum class DegradationPreference {
+    // Don't take any actions based on over-utilization signals.
+    kDegradationDisabled,
+    // On over-use, request lower frame rate, possibly causing frame drops.
     kMaintainResolution,
-    // TODO(perkj): Implement kMaintainFrameRate. kBalanced will drop frames
-    // if the encoder overshoots or the encoder can not encode fast enough.
+    // On over-use, request lower resolution, possibly causing down-scaling.
+    kMaintainFramerate,
+    // Try to strike a "pleasing" balance between frame rate or resolution.
     kBalanced,
   };
+
   virtual void SetSource(
       rtc::VideoSourceInterface<webrtc::VideoFrame>* source,
       const DegradationPreference& degradation_preference) = 0;

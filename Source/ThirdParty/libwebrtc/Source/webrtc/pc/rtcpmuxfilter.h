@@ -45,9 +45,6 @@ class RtcpMuxFilter {
   // Specifies whether the answer indicates the use of RTCP mux.
   bool SetAnswer(bool answer_enable, ContentSource src);
 
-  // Determines whether the specified packet is RTCP.
-  bool DemuxRtcp(const char* data, int len);
-
  private:
   bool ExpectOffer(bool offer_enable, ContentSource source);
   bool ExpectAnswer(ContentSource source);

@@ -13,7 +13,6 @@
 
 #include "webrtc/modules/audio_device/include/audio_device.h"
 #include "webrtc/modules/audio_device/linux/pulseaudiosymboltable_linux.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/typedefs.h"
 #include "webrtc/base/thread_checker.h"
 

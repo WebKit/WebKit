@@ -14,11 +14,11 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/base/win32.h"
 #include "webrtc/modules/desktop_capture/desktop_capturer.h"
 #include "webrtc/modules/desktop_capture/desktop_frame_win.h"
 #include "webrtc/modules/desktop_capture/win/window_capture_utils.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 
@@ -252,12 +252,12 @@ void WindowCapturerWin::CaptureFrame() {
   frame->mutable_updated_region()->SetRect(
       DesktopRect::MakeSize(frame->size()));
 
-  if (!result) {
+  if (result) {
+    callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
+  } else {
     LOG(LS_ERROR) << "Both PrintWindow() and BitBlt() failed.";
-    frame.reset();
+    callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
   }
-
-  callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }
 
 }  // namespace

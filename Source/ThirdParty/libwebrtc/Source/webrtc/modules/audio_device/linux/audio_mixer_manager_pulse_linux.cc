@@ -14,14 +14,14 @@
 #include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/base/checks.h"
 
-extern webrtc_adm_linux_pulse::PulseAudioSymbolTable PaSymbolTable;
+extern webrtc::adm_linux_pulse::PulseAudioSymbolTable PaSymbolTable;
 
 // Accesses Pulse functions through our late-binding symbol table instead of
 // directly. This way we don't have to link to libpulse, which means our
 // binary will work on systems that don't have it.
-#define LATE(sym) \
-  LATESYM_GET(webrtc_adm_linux_pulse::PulseAudioSymbolTable, \
-              &PaSymbolTable, sym)
+#define LATE(sym)                                                             \
+  LATESYM_GET(webrtc::adm_linux_pulse::PulseAudioSymbolTable, &PaSymbolTable, \
+              sym)
 
 namespace webrtc
 {

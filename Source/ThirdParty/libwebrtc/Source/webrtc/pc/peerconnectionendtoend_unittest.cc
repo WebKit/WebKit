@@ -10,19 +10,29 @@
 
 #include <memory>
 
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/base/ptr_util.h"
 #include "webrtc/base/ssladapter.h"
-#include "webrtc/base/thread.h"
 #include "webrtc/base/sslstreamadapter.h"
 #include "webrtc/base/stringencode.h"
 #include "webrtc/base/stringutils.h"
+#include "webrtc/base/thread.h"
 #ifdef WEBRTC_ANDROID
 #include "webrtc/pc/test/androidtestinitializer.h"
 #endif
 #include "webrtc/pc/test/peerconnectiontestwrapper.h"
 // Notice that mockpeerconnectionobservers.h must be included after the above!
 #include "webrtc/pc/test/mockpeerconnectionobservers.h"
+#include "webrtc/test/mock_audio_decoder.h"
+#include "webrtc/test/mock_audio_decoder_factory.h"
+
+using testing::AtLeast;
+using testing::Invoke;
+using testing::StrictMock;
+using testing::_;
 
 using webrtc::DataChannelInterface;
 using webrtc::FakeConstraints;
@@ -59,13 +69,14 @@ class PeerConnectionEndToEndTest
 #endif
   }
 
-  void CreatePcs() {
-    CreatePcs(NULL);
-  }
-
-  void CreatePcs(const MediaConstraintsInterface* pc_constraints) {
-    EXPECT_TRUE(caller_->CreatePc(pc_constraints, config_));
-    EXPECT_TRUE(callee_->CreatePc(pc_constraints, config_));
+  void CreatePcs(
+      const MediaConstraintsInterface* pc_constraints,
+      rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
+      rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory) {
+    EXPECT_TRUE(caller_->CreatePc(
+        pc_constraints, config_, audio_encoder_factory, audio_decoder_factory));
+    EXPECT_TRUE(callee_->CreatePc(
+        pc_constraints, config_, audio_encoder_factory, audio_decoder_factory));
     PeerConnectionTestWrapper::Connect(caller_.get(), callee_.get());
 
     caller_->SignalOnDataChannel.connect(
@@ -163,13 +174,99 @@ class PeerConnectionEndToEndTest
   webrtc::PeerConnectionInterface::RTCConfiguration config_;
 };
 
+std::unique_ptr<webrtc::AudioDecoder> CreateForwardingMockDecoder(
+    std::unique_ptr<webrtc::AudioDecoder> real_decoder) {
+  class ForwardingMockDecoder : public StrictMock<webrtc::MockAudioDecoder> {
+   public:
+    ForwardingMockDecoder(std::unique_ptr<AudioDecoder> decoder)
+        : decoder_(std::move(decoder)) {}
+
+   private:
+    std::unique_ptr<AudioDecoder> decoder_;
+  };
+
+  const auto dec = real_decoder.get();  // For lambda capturing.
+  auto mock_decoder =
+      rtc::MakeUnique<ForwardingMockDecoder>(std::move(real_decoder));
+  EXPECT_CALL(*mock_decoder, Channels())
+      .Times(AtLeast(1))
+      .WillRepeatedly(Invoke([dec] { return dec->Channels(); }));
+  EXPECT_CALL(*mock_decoder, DecodeInternal(_, _, _, _, _))
+      .Times(AtLeast(1))
+      .WillRepeatedly(
+          Invoke([dec](const uint8_t* encoded, size_t encoded_len,
+                       int sample_rate_hz, int16_t* decoded,
+                       webrtc::AudioDecoder::SpeechType* speech_type) {
+            return dec->Decode(encoded, encoded_len, sample_rate_hz,
+                               std::numeric_limits<size_t>::max(), decoded,
+                               speech_type);
+          }));
+  EXPECT_CALL(*mock_decoder, Die());
+  EXPECT_CALL(*mock_decoder, HasDecodePlc()).WillRepeatedly(Invoke([dec] {
+    return dec->HasDecodePlc();
+  }));
+  EXPECT_CALL(*mock_decoder, IncomingPacket(_, _, _, _, _))
+      .Times(AtLeast(1))
+      .WillRepeatedly(Invoke([dec](const uint8_t* payload, size_t payload_len,
+                                   uint16_t rtp_sequence_number,
+                                   uint32_t rtp_timestamp,
+                                   uint32_t arrival_timestamp) {
+        return dec->IncomingPacket(payload, payload_len, rtp_sequence_number,
+                                   rtp_timestamp, arrival_timestamp);
+      }));
+  EXPECT_CALL(*mock_decoder, PacketDuration(_, _))
+      .Times(AtLeast(1))
+      .WillRepeatedly(Invoke([dec](const uint8_t* encoded, size_t encoded_len) {
+        return dec->PacketDuration(encoded, encoded_len);
+      }));
+  EXPECT_CALL(*mock_decoder, SampleRateHz())
+      .Times(AtLeast(1))
+      .WillRepeatedly(Invoke([dec] { return dec->SampleRateHz(); }));
+
+  return std::move(mock_decoder);
+}
+
+rtc::scoped_refptr<webrtc::AudioDecoderFactory>
+CreateForwardingMockDecoderFactory(
+    webrtc::AudioDecoderFactory* real_decoder_factory) {
+  rtc::scoped_refptr<webrtc::MockAudioDecoderFactory> mock_decoder_factory =
+      new rtc::RefCountedObject<StrictMock<webrtc::MockAudioDecoderFactory>>;
+  EXPECT_CALL(*mock_decoder_factory, GetSupportedDecoders())
+      .Times(AtLeast(1))
+      .WillRepeatedly(Invoke([real_decoder_factory] {
+        return real_decoder_factory->GetSupportedDecoders();
+      }));
+  EXPECT_CALL(*mock_decoder_factory, IsSupportedDecoder(_))
+      .Times(AtLeast(1))
+      .WillRepeatedly(
+          Invoke([real_decoder_factory](const webrtc::SdpAudioFormat& format) {
+            return real_decoder_factory->IsSupportedDecoder(format);
+          }));
+  EXPECT_CALL(*mock_decoder_factory, MakeAudioDecoderMock(_, _))
+      .Times(AtLeast(2))
+      .WillRepeatedly(
+          Invoke([real_decoder_factory](
+                     const webrtc::SdpAudioFormat& format,
+                     std::unique_ptr<webrtc::AudioDecoder>* return_value) {
+            auto real_decoder = real_decoder_factory->MakeAudioDecoder(format);
+            *return_value =
+                real_decoder
+                    ? CreateForwardingMockDecoder(std::move(real_decoder))
+                    : nullptr;
+          }));
+  return mock_decoder_factory;
+}
+
 // Disabled for TSan v2, see
 // https://bugs.chromium.org/p/webrtc/issues/detail?id=4719 for details.
 // Disabled for Mac, see
 // https://bugs.chromium.org/p/webrtc/issues/detail?id=5231 for details.
 #if !defined(THREAD_SANITIZER) && !defined(WEBRTC_MAC)
 TEST_F(PeerConnectionEndToEndTest, Call) {
-  CreatePcs();
+  rtc::scoped_refptr<webrtc::AudioDecoderFactory> real_decoder_factory =
+      webrtc::CreateBuiltinAudioDecoderFactory();
+  CreatePcs(nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
+            CreateForwardingMockDecoderFactory(real_decoder_factory.get()));
   GetAndAddUserMedia();
   Negotiate();
   WaitForCallEstablished();
@@ -181,7 +278,8 @@ TEST_F(PeerConnectionEndToEndTest, CallWithLegacySdp) {
   FakeConstraints pc_constraints;
   pc_constraints.AddMandatory(MediaConstraintsInterface::kEnableDtlsSrtp,
                               false);
-  CreatePcs(&pc_constraints);
+  CreatePcs(&pc_constraints, webrtc::CreateBuiltinAudioEncoderFactory(),
+            webrtc::CreateBuiltinAudioDecoderFactory());
   GetAndAddUserMedia();
   Negotiate();
   WaitForCallEstablished();
@@ -192,7 +290,8 @@ TEST_F(PeerConnectionEndToEndTest, CallWithLegacySdp) {
 // Verifies that a DataChannel created before the negotiation can transition to
 // "OPEN" and transfer data.
 TEST_F(PeerConnectionEndToEndTest, CreateDataChannelBeforeNegotiate) {
-  CreatePcs();
+  CreatePcs(nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
+            webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
   rtc::scoped_refptr<DataChannelInterface> caller_dc(
@@ -216,7 +315,8 @@ TEST_F(PeerConnectionEndToEndTest, CreateDataChannelBeforeNegotiate) {
 // Verifies that a DataChannel created after the negotiation can transition to
 // "OPEN" and transfer data.
 TEST_F(PeerConnectionEndToEndTest, CreateDataChannelAfterNegotiate) {
-  CreatePcs();
+  CreatePcs(nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
+            webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
 
@@ -247,7 +347,8 @@ TEST_F(PeerConnectionEndToEndTest, CreateDataChannelAfterNegotiate) {
 
 // Verifies that DataChannel IDs are even/odd based on the DTLS roles.
 TEST_F(PeerConnectionEndToEndTest, DataChannelIdAssignment) {
-  CreatePcs();
+  CreatePcs(nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
+            webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
   rtc::scoped_refptr<DataChannelInterface> caller_dc_1(
@@ -274,7 +375,8 @@ TEST_F(PeerConnectionEndToEndTest, DataChannelIdAssignment) {
 // there are multiple DataChannels.
 TEST_F(PeerConnectionEndToEndTest,
        MessageTransferBetweenTwoPairsOfDataChannels) {
-  CreatePcs();
+  CreatePcs(nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
+            webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
 
@@ -395,7 +497,8 @@ TEST_F(PeerConnectionEndToEndTest, MessageTransferBetweenQuicDataChannels) {
 // See: https://bugs.chromium.org/p/webrtc/issues/detail?id=4453
 TEST_F(PeerConnectionEndToEndTest,
        DISABLED_DataChannelFromOpenWorksAfterClose) {
-  CreatePcs();
+  CreatePcs(nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
+            webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
   rtc::scoped_refptr<DataChannelInterface> caller_dc(
@@ -421,7 +524,8 @@ TEST_F(PeerConnectionEndToEndTest,
 // reference count), no memory access violation will occur.
 // See: https://code.google.com/p/chromium/issues/detail?id=565048
 TEST_F(PeerConnectionEndToEndTest, CloseDataChannelRemotelyWhileNotReferenced) {
-  CreatePcs();
+  CreatePcs(nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
+            webrtc::MockAudioDecoderFactory::CreateEmptyFactory());
 
   webrtc::DataChannelInit init;
   rtc::scoped_refptr<DataChannelInterface> caller_dc(

@@ -35,7 +35,7 @@ class DtxController final : public Controller {
 
   void UpdateNetworkMetrics(const NetworkMetrics& network_metrics) override;
 
-  void MakeDecision(AudioNetworkAdaptor::EncoderRuntimeConfig* config) override;
+  void MakeDecision(AudioEncoderRuntimeConfig* config) override;
 
  private:
   const Config config_;

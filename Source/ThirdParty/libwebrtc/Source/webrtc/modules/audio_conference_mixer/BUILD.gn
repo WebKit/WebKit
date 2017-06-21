@@ -39,6 +39,7 @@ rtc_static_library("audio_conference_mixer") {
   }
 
   deps = [
+    "..:module_api",
     "../..:webrtc_common",
     "../../audio/utility:audio_frame_operations",
     "../../base:rtc_base_approved",
@@ -50,6 +51,13 @@ rtc_static_library("audio_conference_mixer") {
 if (rtc_include_tests) {
   rtc_source_set("audio_conference_mixer_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
       "test/audio_conference_mixer_unittest.cc",
     ]

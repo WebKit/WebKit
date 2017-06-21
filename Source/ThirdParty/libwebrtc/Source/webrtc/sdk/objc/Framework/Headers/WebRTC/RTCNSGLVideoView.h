@@ -15,6 +15,7 @@
 #import <AppKit/NSOpenGLView.h>
 
 #import <WebRTC/RTCVideoRenderer.h>
+#import <WebRTC/RTCVideoViewShading.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,6 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface RTCNSGLVideoView : NSOpenGLView <RTCVideoRenderer>
 
 @property(nonatomic, weak) id<RTCNSGLVideoViewDelegate> delegate;
+
+- (instancetype)initWithFrame:(NSRect)frameRect
+                  pixelFormat:(NSOpenGLPixelFormat *)format
+                       shader:(id<RTCVideoViewShading>)shader NS_DESIGNATED_INITIALIZER;
 
 @end
 

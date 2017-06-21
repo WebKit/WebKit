@@ -2,4 +2,6 @@ include_rules = [
   "+webrtc/base",
   "+webrtc/media/base",
   "+webrtc/system_wrappers",
+  # TODO(magjed): This is temporary, remove once external clients are updated.
+  "+webrtc/sdk/objc",
 ]

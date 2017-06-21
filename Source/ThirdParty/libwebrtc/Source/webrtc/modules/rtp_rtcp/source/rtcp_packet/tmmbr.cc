@@ -43,6 +43,11 @@ constexpr uint8_t Tmmbr::kFeedbackMessageType;
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  | MxTBR Exp |  MxTBR Mantissa                 |Measured Overhead|
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Tmmbr::Tmmbr() = default;
+
+Tmmbr::~Tmmbr() = default;
+
 bool Tmmbr::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);
   RTC_DCHECK_EQ(packet.fmt(), kFeedbackMessageType);
@@ -73,6 +78,11 @@ bool Tmmbr::Parse(const CommonHeader& packet) {
 
 void Tmmbr::AddTmmbr(const TmmbItem& item) {
   items_.push_back(item);
+}
+
+size_t Tmmbr::BlockLength() const {
+  return kHeaderLength + kCommonFeedbackLength +
+         TmmbItem::kLength * items_.size();
 }
 
 bool Tmmbr::Create(uint8_t* packet,

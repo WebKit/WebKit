@@ -279,6 +279,15 @@ bool IsValidRtpPayloadType(int payload_type) {
   return payload_type >= 0 && payload_type <= 127;
 }
 
+bool IsValidRtpRtcpPacketSize(bool rtcp, size_t size) {
+  return (rtcp ? size >= kMinRtcpPacketLen : size >= kMinRtpPacketLen) &&
+         size <= kMaxRtpPacketLen;
+}
+
+const char* RtpRtcpStringLiteral(bool rtcp) {
+  return rtcp ? "RTCP" : "RTP";
+}
+
 bool ValidateRtpHeader(const uint8_t* rtp,
                        size_t length,
                        size_t* header_length) {

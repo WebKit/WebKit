@@ -1353,15 +1353,26 @@ void P2PTransportChannel::PruneConnections() {
   // switch. If |best_conn_on_network| is not connected, we may be reconnecting
   // a TCP connection and should not prune connections in this network.
   // See the big comment in CompareConnectionStates.
+  //
+  // An exception is made for connections on an "any address" network, meaning
+  // not bound to any specific network interface. We don't want to keep one of
+  // these alive as a backup, since it could be using the same network
+  // interface as the higher-priority, selected candidate pair.
   auto best_connection_by_network = GetBestConnectionByNetwork();
   for (Connection* conn : connections_) {
-    // Do not prune connections if the current best connection on this network
-    // is weak. Otherwise, it may delete connections prematurely.
-    Connection* best_conn_on_network =
-        best_connection_by_network[conn->port()->Network()];
-    if (best_conn_on_network && conn != best_conn_on_network &&
-        !best_conn_on_network->weak() &&
-        CompareConnectionCandidates(best_conn_on_network, conn) >= 0) {
+    Connection* best_conn = selected_connection_;
+    if (!rtc::IPIsAny(conn->port()->Network()->ip())) {
+      // If the connection is bound to a specific network interface (not an
+      // "any address" network), compare it against the best connection for
+      // that network interface rather than the best connection overall. This
+      // ensures that at least one connection per network will be left
+      // unpruned.
+      best_conn = best_connection_by_network[conn->port()->Network()];
+    }
+    // Do not prune connections if the connection being compared against is
+    // weak. Otherwise, it may delete connections prematurely.
+    if (best_conn && conn != best_conn && !best_conn->weak() &&
+        CompareConnectionCandidates(best_conn, conn) >= 0) {
       conn->Prune();
     }
   }

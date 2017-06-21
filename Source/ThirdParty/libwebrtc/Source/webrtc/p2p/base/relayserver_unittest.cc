@@ -11,16 +11,16 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/p2p/base/relayserver.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/helpers.h"
 #include "webrtc/base/logging.h"
-#include "webrtc/base/physicalsocketserver.h"
+#include "webrtc/base/ptr_util.h"
 #include "webrtc/base/socketaddress.h"
 #include "webrtc/base/ssladapter.h"
 #include "webrtc/base/testclient.h"
 #include "webrtc/base/thread.h"
 #include "webrtc/base/virtualsocketserver.h"
+#include "webrtc/p2p/base/relayserver.h"
 
 using rtc::SocketAddress;
 using namespace cricket;
@@ -39,9 +39,8 @@ static const char* msg2 = "Lobster Thermidor a Crevette with a mornay sauce...";
 class RelayServerTest : public testing::Test {
  public:
   RelayServerTest()
-      : pss_(new rtc::PhysicalSocketServer),
-        ss_(new rtc::VirtualSocketServer(pss_.get())),
-        ss_scope_(ss_.get()),
+      : ss_(new rtc::VirtualSocketServer()),
+        thread_(ss_.get()),
         username_(rtc::CreateRandomString(12)),
         password_(rtc::CreateRandomString(12)) {}
 
@@ -55,9 +54,9 @@ class RelayServerTest : public testing::Test {
         rtc::AsyncUDPSocket::Create(ss_.get(), server_ext_addr));
 
     client1_.reset(new rtc::TestClient(
-        rtc::AsyncUDPSocket::Create(ss_.get(), client1_addr)));
+        WrapUnique(rtc::AsyncUDPSocket::Create(ss_.get(), client1_addr))));
     client2_.reset(new rtc::TestClient(
-        rtc::AsyncUDPSocket::Create(ss_.get(), client2_addr)));
+        WrapUnique(rtc::AsyncUDPSocket::Create(ss_.get(), client2_addr))));
   }
 
   void Allocate() {
@@ -116,24 +115,22 @@ class RelayServerTest : public testing::Test {
   }
   StunMessage* Receive(rtc::TestClient* client) {
     StunMessage* msg = NULL;
-    rtc::TestClient::Packet* packet =
+    std::unique_ptr<rtc::TestClient::Packet> packet =
         client->NextPacket(rtc::TestClient::kTimeoutMs);
     if (packet) {
       rtc::ByteBufferWriter buf(packet->buf, packet->size);
       rtc::ByteBufferReader read_buf(buf);
       msg = new RelayMessage();
       msg->Read(&read_buf);
-      delete packet;
     }
     return msg;
   }
   std::string ReceiveRaw(rtc::TestClient* client) {
     std::string raw;
-    rtc::TestClient::Packet* packet =
+    std::unique_ptr<rtc::TestClient::Packet> packet =
         client->NextPacket(rtc::TestClient::kTimeoutMs);
     if (packet) {
       raw = std::string(packet->buf, packet->size);
-      delete packet;
     }
     return raw;
   }
@@ -146,34 +143,29 @@ class RelayServerTest : public testing::Test {
     return msg;
   }
   static void AddMagicCookieAttr(StunMessage* msg) {
-    StunByteStringAttribute* attr =
-        StunAttribute::CreateByteString(STUN_ATTR_MAGIC_COOKIE);
+    auto attr = StunAttribute::CreateByteString(STUN_ATTR_MAGIC_COOKIE);
     attr->CopyBytes(TURN_MAGIC_COOKIE_VALUE, sizeof(TURN_MAGIC_COOKIE_VALUE));
-    msg->AddAttribute(attr);
+    msg->AddAttribute(std::move(attr));
   }
   static void AddUsernameAttr(StunMessage* msg, const std::string& val) {
-    StunByteStringAttribute* attr =
-        StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
+    auto attr = StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
     attr->CopyBytes(val.c_str(), val.size());
-    msg->AddAttribute(attr);
+    msg->AddAttribute(std::move(attr));
   }
   static void AddLifetimeAttr(StunMessage* msg, int val) {
-    StunUInt32Attribute* attr =
-        StunAttribute::CreateUInt32(STUN_ATTR_LIFETIME);
+    auto attr = StunAttribute::CreateUInt32(STUN_ATTR_LIFETIME);
     attr->SetValue(val);
-    msg->AddAttribute(attr);
+    msg->AddAttribute(std::move(attr));
   }
   static void AddDestinationAttr(StunMessage* msg, const SocketAddress& addr) {
-    StunAddressAttribute* attr =
-        StunAttribute::CreateAddress(STUN_ATTR_DESTINATION_ADDRESS);
+    auto attr = StunAttribute::CreateAddress(STUN_ATTR_DESTINATION_ADDRESS);
     attr->SetIP(addr.ipaddr());
     attr->SetPort(addr.port());
-    msg->AddAttribute(attr);
+    msg->AddAttribute(std::move(attr));
   }
 
-  std::unique_ptr<rtc::PhysicalSocketServer> pss_;
   std::unique_ptr<rtc::VirtualSocketServer> ss_;
-  rtc::SocketServerScope ss_scope_;
+  rtc::AutoSocketServerThread thread_;
   std::unique_ptr<RelayServer> server_;
   std::unique_ptr<rtc::TestClient> client1_;
   std::unique_ptr<rtc::TestClient> client2_;
@@ -458,10 +450,9 @@ TEST_F(RelayServerTest, TestSendRaw) {
     AddUsernameAttr(req.get(), username_);
     AddDestinationAttr(req.get(), client2_addr);
 
-    StunByteStringAttribute* send_data =
-        StunAttribute::CreateByteString(STUN_ATTR_DATA);
+    auto send_data = StunAttribute::CreateByteString(STUN_ATTR_DATA);
     send_data->CopyBytes(msg1);
-    req->AddAttribute(send_data);
+    req->AddAttribute(std::move(send_data));
 
     Send1(req.get());
     EXPECT_EQ(msg1, ReceiveRaw2());
@@ -500,10 +491,9 @@ TEST_F(RelayServerTest, DISABLED_TestExpiration) {
   AddUsernameAttr(req.get(), username_);
   AddDestinationAttr(req.get(), client2_addr);
 
-  StunByteStringAttribute* data_attr =
-      StunAttribute::CreateByteString(STUN_ATTR_DATA);
+  auto data_attr = StunAttribute::CreateByteString(STUN_ATTR_DATA);
   data_attr->CopyBytes(msg1);
-  req->AddAttribute(data_attr);
+  req->AddAttribute(std::move(data_attr));
 
   Send1(req.get());
   res.reset(Receive1());

@@ -36,13 +36,13 @@ const char kFlexfecFmtpRepairWindow[] = "repair-window";
 const char kCodecParamAssociatedPayloadType[] = "apt";
 
 const char kOpusCodecName[] = "opus";
-const char kIsacCodecName[] = "isac";
-const char kL16CodecName[]  = "l16";
-const char kG722CodecName[] = "g722";
-const char kIlbcCodecName[] = "ilbc";
-const char kPcmuCodecName[] = "pcmu";
-const char kPcmaCodecName[] = "pcma";
-const char kCnCodecName[]   = "cn";
+const char kIsacCodecName[] = "ISAC";
+const char kL16CodecName[]  = "L16";
+const char kG722CodecName[] = "G722";
+const char kIlbcCodecName[] = "ILBC";
+const char kPcmuCodecName[] = "PCMU";
+const char kPcmaCodecName[] = "PCMA";
+const char kCnCodecName[]   = "CN";
 const char kDtmfCodecName[] = "telephone-event";
 
 // draft-spittka-payload-rtp-opus-03.txt

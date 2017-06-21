@@ -65,21 +65,6 @@ TargetBitrate::BitrateItem::BitrateItem(uint8_t spatial_layer,
 TargetBitrate::TargetBitrate() {}
 TargetBitrate::~TargetBitrate() {}
 
-void TargetBitrate::Create(uint8_t* buffer) const {
-  buffer[0] = kBlockType;
-  buffer[1] = 0;  // Reserved.
-  const size_t block_length_words = (BlockLength() / 4) - 1;
-  ByteWriter<uint16_t>::WriteBigEndian(&buffer[2], block_length_words);
-
-  size_t index = kTargetBitrateHeaderSizeBytes;
-  for (const BitrateItem& item : bitrates_) {
-    buffer[index] = (item.spatial_layer << 4) | item.temporal_layer;
-    ByteWriter<uint32_t, 3>::WriteBigEndian(&buffer[index + 1],
-                                            item.target_bitrate_kbps);
-    index += kBitrateItemSizeBytes;
-  }
-}
-
 bool TargetBitrate::Parse(const uint8_t* block, uint16_t block_length) {
   if (block_length < 1) {
     LOG(LS_WARNING)
@@ -128,6 +113,21 @@ TargetBitrate::GetTargetBitrates() const {
 size_t TargetBitrate::BlockLength() const {
   return kTargetBitrateHeaderSizeBytes +
          bitrates_.size() * kBitrateItemSizeBytes;
+}
+
+void TargetBitrate::Create(uint8_t* buffer) const {
+  buffer[0] = kBlockType;
+  buffer[1] = 0;  // Reserved.
+  const size_t block_length_words = (BlockLength() / 4) - 1;
+  ByteWriter<uint16_t>::WriteBigEndian(&buffer[2], block_length_words);
+
+  size_t index = kTargetBitrateHeaderSizeBytes;
+  for (const BitrateItem& item : bitrates_) {
+    buffer[index] = (item.spatial_layer << 4) | item.temporal_layer;
+    ByteWriter<uint32_t, 3>::WriteBigEndian(&buffer[index + 1],
+                                            item.target_bitrate_kbps);
+    index += kBitrateItemSizeBytes;
+  }
 }
 
 }  // namespace rtcp

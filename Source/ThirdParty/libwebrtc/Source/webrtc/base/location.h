@@ -15,7 +15,7 @@
 
 #include "webrtc/base/event.h"
 #include "webrtc/base/export.h"
-#include "webrtc/system_wrappers/include/stringize_macros.h"
+#include "webrtc/base/stringize_macros.h"
 
 namespace rtc {
 

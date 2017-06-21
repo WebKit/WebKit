@@ -17,9 +17,9 @@
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/audio_processing/aec3/adaptive_fir_filter.h"
 #include "webrtc/modules/audio_processing/aec3/aec3_common.h"
+#include "webrtc/modules/audio_processing/aec3/render_buffer.h"
 #include "webrtc/modules/audio_processing/aec3/render_signal_analyzer.h"
 #include "webrtc/modules/audio_processing/aec3/subtractor_output.h"
-#include "webrtc/modules/audio_processing/aec3/fft_buffer.h"
 
 namespace webrtc {
 
@@ -35,7 +35,7 @@ class MainFilterUpdateGain {
   void HandleEchoPathChange();
 
   // Computes the gain.
-  void Compute(const FftBuffer& render_buffer,
+  void Compute(const RenderBuffer& render_buffer,
                const RenderSignalAnalyzer& render_signal_analyzer,
                const SubtractorOutput& subtractor_output,
                const AdaptiveFirFilter& filter,

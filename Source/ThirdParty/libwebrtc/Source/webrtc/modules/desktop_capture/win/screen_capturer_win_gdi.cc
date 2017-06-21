@@ -23,7 +23,6 @@
 #include "webrtc/modules/desktop_capture/win/cursor.h"
 #include "webrtc/modules/desktop_capture/win/desktop.h"
 #include "webrtc/modules/desktop_capture/win/screen_capture_utils.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 
@@ -94,6 +93,7 @@ void ScreenCapturerWinGdi::CaptureFrame() {
   frame->set_capture_time_ms(
       (rtc::TimeNanos() - capture_start_time_nanos) /
       rtc::kNumNanosecsPerMillisec);
+  frame->set_capturer_id(DesktopCapturerId::kScreenCapturerWinGdi);
   callback_->OnCaptureResult(Result::SUCCESS, std::move(frame));
 }
 

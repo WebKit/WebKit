@@ -32,6 +32,11 @@ constexpr size_t App::kMaxDataSize;
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  8 |                   application-dependent data                ...
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+App::App() : sub_type_(0), ssrc_(0), name_(0) {}
+
+App::~App() = default;
+
 bool App::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);
   if (packet.payload_size_bytes() < kAppBaseLength) {
@@ -63,6 +68,10 @@ void App::SetData(const uint8_t* data, size_t data_length) {
                                            << " exceed maximum of "
                                            << kMaxDataSize << " bytes.";
   data_.SetData(data, data_length);
+}
+
+size_t App::BlockLength() const {
+  return kHeaderLength + kAppBaseLength + data_.size();
 }
 
 bool App::Create(uint8_t* packet,

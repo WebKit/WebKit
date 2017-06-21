@@ -11,7 +11,6 @@
 #include "webrtc/modules/audio_coding/neteq/timestamp_scaler.h"
 
 #include "webrtc/modules/audio_coding/neteq/decoder_database.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 

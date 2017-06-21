@@ -25,7 +25,7 @@ namespace voe {
 void RemixAndResample(const AudioFrame& src_frame,
                       PushResampler<int16_t>* resampler,
                       AudioFrame* dst_frame) {
-  RemixAndResample(src_frame.data_, src_frame.samples_per_channel_,
+  RemixAndResample(src_frame.data(), src_frame.samples_per_channel_,
                    src_frame.num_channels_, src_frame.sample_rate_hz_,
                    resampler, dst_frame);
   dst_frame->timestamp_ = src_frame.timestamp_;
@@ -64,13 +64,18 @@ void RemixAndResample(const int16_t* src_data,
             << ", audio_ptr_num_channels = " << audio_ptr_num_channels;
   }
 
+  // TODO(yujo): for muted input frames, don't resample. Either 1) allow
+  // resampler to return output length without doing the resample, so we know
+  // how much to zero here; or 2) make resampler accept a hint that the input is
+  // zeroed.
   const size_t src_length = samples_per_channel * audio_ptr_num_channels;
-  int out_length = resampler->Resample(audio_ptr, src_length, dst_frame->data_,
+  int out_length = resampler->Resample(audio_ptr, src_length,
+                                       dst_frame->mutable_data(),
                                        AudioFrame::kMaxDataSizeSamples);
   if (out_length == -1) {
     RTC_FATAL() << "Resample failed: audio_ptr = " << audio_ptr
             << ", src_length = " << src_length
-            << ", dst_frame->data_ = " << dst_frame->data_;
+            << ", dst_frame->mutable_data() = " << dst_frame->mutable_data();
   }
   dst_frame->samples_per_channel_ = out_length / audio_ptr_num_channels;
 

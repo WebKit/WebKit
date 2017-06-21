@@ -100,10 +100,6 @@ AsyncSocket::ConnState AsyncSocketAdapter::GetState() const {
   return socket_->GetState();
 }
 
-int AsyncSocketAdapter::EstimateMTU(uint16_t* mtu) {
-  return socket_->EstimateMTU(mtu);
-}
-
 int AsyncSocketAdapter::GetOption(Option opt, int* value) {
   return socket_->GetOption(opt, value);
 }

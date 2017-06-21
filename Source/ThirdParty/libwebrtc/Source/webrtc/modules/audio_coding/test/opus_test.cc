@@ -20,7 +20,6 @@
 #include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "webrtc/modules/audio_coding/test/TestStereo.h"
 #include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"
 #include "webrtc/typedefs.h"
@@ -263,7 +262,7 @@ void OpusTest::Run(TestPackStereo* channel, size_t channels, int bitrate,
 
     // If input audio is sampled at 32 kHz, resampling to 48 kHz is required.
     EXPECT_EQ(480,
-              resampler_.Resample10Msec(audio_frame.data_,
+              resampler_.Resample10Msec(audio_frame.data(),
                                         audio_frame.sample_rate_hz_,
                                         48000,
                                         channels,
@@ -348,7 +347,7 @@ void OpusTest::Run(TestPackStereo* channel, size_t channels, int bitrate,
 
     // Write output speech to file.
     out_file_.Write10MsData(
-        audio_frame.data_,
+        audio_frame.data(),
         audio_frame.samples_per_channel_ * audio_frame.num_channels_);
 
     // Write stand-alone speech to file.

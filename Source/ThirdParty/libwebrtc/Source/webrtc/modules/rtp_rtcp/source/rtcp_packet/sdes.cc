@@ -20,6 +20,7 @@
 namespace webrtc {
 namespace rtcp {
 constexpr uint8_t Sdes::kPacketType;
+constexpr size_t Sdes::kMaxNumberOfChunks;
 // Source Description (SDES) (RFC 3550).
 //
 //         0                   1                   2                   3
@@ -152,6 +153,10 @@ bool Sdes::AddCName(uint32_t ssrc, std::string cname) {
   chunks_.push_back(chunk);
   block_length_ += ChunkSize(chunk);
   return true;
+}
+
+size_t Sdes::BlockLength() const {
+  return block_length_;
 }
 
 bool Sdes::Create(uint8_t* packet,

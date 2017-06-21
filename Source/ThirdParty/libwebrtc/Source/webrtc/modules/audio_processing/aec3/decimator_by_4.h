@@ -26,8 +26,7 @@ class DecimatorBy4 {
   DecimatorBy4();
 
   // Downsamples the signal.
-  void Decimate(rtc::ArrayView<const float> in,
-                std::array<float, kSubBlockSize>* out);
+  void Decimate(rtc::ArrayView<const float> in, rtc::ArrayView<float> out);
 
  private:
   CascadedBiQuadFilter low_pass_filter_;

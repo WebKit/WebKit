@@ -52,7 +52,7 @@ void RenderDelayControllerMetrics::Update(rtc::Optional<size_t> delay_samples,
         delay_blocks_ = delay_blocks;
       }
     }
-  } else if (++initial_call_counter_ == 5 * 250) {
+  } else if (++initial_call_counter_ == 5 * kNumBlocksPerSecond) {
     initial_update = false;
   }
 

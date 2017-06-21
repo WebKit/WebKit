@@ -12,6 +12,7 @@
 #define WEBRTC_MODULES_VIDEO_CODING_GENERIC_ENCODER_H_
 
 #include <stdio.h>
+#include <map>
 #include <vector>
 
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
@@ -21,7 +22,6 @@
 #include "webrtc/base/race_checker.h"
 
 namespace webrtc {
-class CriticalSectionWrapper;
 
 namespace media_optimization {
 class MediaOptimization;
@@ -45,14 +45,43 @@ class VCMEncodedFrameCallback : public EncodedImageCallback {
       const EncodedImage& encoded_image,
       const CodecSpecificInfo* codec_specific_info,
       const RTPFragmentationHeader* fragmentation) override;
+
   void SetInternalSource(bool internal_source) {
     internal_source_ = internal_source;
   }
 
+  // Timing frames configuration methods. These 4 should be called before
+  // |OnEncodedImage| at least once.
+  void OnTargetBitrateChanged(size_t bitrate_bytes_per_sec,
+                              size_t simulcast_svc_idx);
+
+  void OnFrameRateChanged(size_t framerate);
+
+  void OnEncodeStarted(int64_t capture_time_ms, size_t simulcast_svc_idx);
+
+  void SetTimingFramesThresholds(
+      const VideoCodec::TimingFrameTriggerThresholds& thresholds) {
+    rtc::CritScope crit(&timing_params_lock_);
+    timing_frames_thresholds_ = thresholds;
+  }
+
  private:
+  rtc::CriticalSection timing_params_lock_;
   bool internal_source_;
   EncodedImageCallback* const post_encode_callback_;
   media_optimization::MediaOptimization* const media_opt_;
+
+  struct TimingFramesLayerInfo {
+    size_t target_bitrate_bytes_per_sec = 0;
+    std::map<int64_t, int64_t> encode_start_time_ms;
+  };
+  // Separate instance for each simulcast stream or spatial layer.
+  std::vector<TimingFramesLayerInfo> timing_frames_info_
+      GUARDED_BY(timing_params_lock_);
+  size_t framerate_ GUARDED_BY(timing_params_lock_);
+  int64_t last_timing_frame_time_ms_ GUARDED_BY(timing_params_lock_);
+  VideoCodec::TimingFrameTriggerThresholds timing_frames_thresholds_
+      GUARDED_BY(timing_params_lock_);
 };
 
 class VCMGenericEncoder {
@@ -89,6 +118,7 @@ class VCMGenericEncoder {
   rtc::CriticalSection params_lock_;
   EncoderParameters encoder_params_ GUARDED_BY(params_lock_);
   bool is_screenshare_;
+  size_t streams_or_svc_num_;
 };
 
 }  // namespace webrtc

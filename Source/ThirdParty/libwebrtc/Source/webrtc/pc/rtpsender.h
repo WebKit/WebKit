@@ -22,7 +22,9 @@
 #include "webrtc/api/rtpsenderinterface.h"
 #include "webrtc/base/basictypes.h"
 #include "webrtc/base/criticalsection.h"
-#include "webrtc/media/base/audiosource.h"
+// Adding 'nogncheck' to disable the gn include headers check to support modular
+// WebRTC build targets.
+#include "webrtc/media/base/audiosource.h"  // nogncheck
 #include "webrtc/pc/channel.h"
 #include "webrtc/pc/dtmfsender.h"
 #include "webrtc/pc/statscollector.h"

@@ -16,7 +16,6 @@
 
 #include "webrtc/system_wrappers/include/event_wrapper.h"
 #include "webrtc/typedefs.h"
-#include "webrtc/voice_engine/include/voe_neteq_stats.h"
 #include "webrtc/voice_engine/test/auto_test/automated_mode.h"
 #include "webrtc/voice_engine/test/auto_test/voe_test_defines.h"
 #include "webrtc/voice_engine/voice_engine_defines.h"
@@ -28,8 +27,7 @@ DEFINE_bool(automated, false,
             "If true, we'll run the automated tests we have in noninteractive "
             "mode.");
 
-using namespace webrtc;
-
+namespace webrtc {
 namespace voetest {
 
 int dummy = 0;  // Dummy used in different functions to avoid warnings
@@ -44,14 +42,10 @@ void SubAPIManager::DisplayStatus() const {
     TEST_LOG("  File\n");
   if (_hardware)
     TEST_LOG("  Hardware\n");
-  if (_netEqStats)
-    TEST_LOG("  NetEqStats\n");
   if (_network)
     TEST_LOG("  Network\n");
   if (_rtp_rtcp)
     TEST_LOG("  RTP_RTCP\n");
-  if (_volumeControl)
-    TEST_LOG("  VolumeControl\n");
   if (_apm)
     TEST_LOG("  AudioProcessing\n");
   ANL();
@@ -64,23 +58,16 @@ void SubAPIManager::DisplayStatus() const {
     TEST_LOG("  File\n");
   if (!_hardware)
     TEST_LOG("  Hardware\n");
-  if (!_netEqStats)
-    TEST_LOG("  NetEqStats\n");
   if (!_network)
     TEST_LOG("  Network\n");
   if (!_rtp_rtcp)
     TEST_LOG("  RTP_RTCP\n");
-  if (!_volumeControl)
-    TEST_LOG("  VolumeControl\n");
   if (!_apm)
     TEST_LOG("  AudioProcessing\n");
   ANL();
 }
-}  // namespace voetest
 
 int RunInManualMode() {
-  using namespace voetest;
-
   SubAPIManager api_manager;
   api_manager.DisplayStatus();
 
@@ -106,24 +93,23 @@ int RunInManualMode() {
   }
 }
 
-// ----------------------------------------------------------------------------
-//                                       main
-// ----------------------------------------------------------------------------
+}  // namespace voetest
+}  // namespace webrtc
 
 #if !defined(WEBRTC_IOS)
 int main(int argc, char** argv) {
   // This function and RunInAutomatedMode is defined in automated_mode.cc
   // to avoid macro clashes with googletest (for instance ASSERT_TRUE).
-  InitializeGoogleTest(&argc, argv);
+  webrtc::voetest::InitializeGoogleTest(&argc, argv);
   // AllowCommandLineParsing allows us to ignore flags passed on to us by
   // Chromium build bots without having to explicitly disable them.
   google::AllowCommandLineReparsing();
   google::ParseCommandLineFlags(&argc, &argv, true);
 
   if (FLAGS_automated) {
-    return RunInAutomatedMode();
+    return webrtc::voetest::RunInAutomatedMode();
   }
 
-  return RunInManualMode();
+  return webrtc::voetest::RunInManualMode();
 }
 #endif //#if !defined(WEBRTC_IOS)

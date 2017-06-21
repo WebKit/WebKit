@@ -12,6 +12,15 @@ specific_include_rules = {
     "+webrtc/voice_engine",
   ],
 
+  # TODO(ossu): Remove this exception when {builtin_,}audio_encoder_factory.h
+  # has moved to api/.
+  "peerconnectioninterface\.h": [
+    "+webrtc/call/callfactoryinterface.h",
+    "+webrtc/logging/rtc_event_log/rtc_event_log_factory_interface.h",
+    "+webrtc/modules/audio_coding/codecs/audio_encoder_factory.h",
+    "+webrtc/modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
+  ],
+
   # We allow .cc files in webrtc/api/ to #include a bunch of stuff
   # that's off-limits for the .h files. That's because .h files leak
   # their #includes to whoever's #including them, but .cc files do not

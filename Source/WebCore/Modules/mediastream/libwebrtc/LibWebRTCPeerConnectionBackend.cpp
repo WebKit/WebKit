@@ -94,6 +94,7 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
         rtcConfiguration.servers.push_back(WTFMove(iceServer));
     }
 
+    rtcConfiguration.set_cpu_adaptation(false);
     rtcConfiguration.ice_candidate_pool_size = configuration.iceCandidatePoolSize;
 
     return rtcConfiguration;

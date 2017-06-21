@@ -23,6 +23,7 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/base/macutils.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/modules/desktop_capture/desktop_capturer.h"
@@ -36,7 +37,6 @@
 #include "webrtc/modules/desktop_capture/screen_capture_frame_queue.h"
 #include "webrtc/modules/desktop_capture/screen_capturer_helper.h"
 #include "webrtc/modules/desktop_capture/shared_desktop_frame.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 // Once Chrome no longer supports OSX 10.8, everything within this
 // preprocessor block can be removed. https://crbug.com/579255
@@ -98,7 +98,7 @@ class DisplayStreamManager {
         CFRunLoopSourceRef source =
             CGDisplayStreamGetRunLoopSource(wrapper.stream);
         CFRunLoopRemoveSource(CFRunLoopGetCurrent(), source,
-                              kCFRunLoopDefaultMode);
+                              kCFRunLoopCommonModes);
         CGDisplayStreamStop(wrapper.stream);
       }
     }
@@ -304,7 +304,9 @@ class ScreenCapturerMac : public DesktopCapturer {
   bool RegisterRefreshAndMoveHandlers();
   void UnregisterRefreshAndMoveHandlers();
 
-  void ScreenRefresh(CGRectCount count, const CGRect *rect_array);
+  void ScreenRefresh(CGRectCount count,
+                     const CGRect *rect_array,
+                     DesktopVector display_origin);
   void ReleaseBuffers();
 
   std::unique_ptr<DesktopFrame> CreateFrame();
@@ -938,6 +940,8 @@ bool ScreenCapturerMac::RegisterRefreshAndMoveHandlers() {
     DisplayStreamManager* manager = display_stream_manager_;
     int unique_id = manager->GetUniqueId();
     CGDirectDisplayID display_id = config.id;
+    DesktopVector display_origin = config.pixel_bounds.top_left();
+
     CGDisplayStreamFrameAvailableHandler handler =
         ^(CGDisplayStreamFrameStatus status, uint64_t display_time,
           IOSurfaceRef frame_surface, CGDisplayStreamUpdateRef updateRef) {
@@ -959,7 +963,7 @@ bool ScreenCapturerMac::RegisterRefreshAndMoveHandlers() {
           if (count != 0) {
             // According to CGDisplayStream.h, it's safe to call
             // CGDisplayStreamStop() from within the callback.
-            ScreenRefresh(count, rects);
+            ScreenRefresh(count, rects, display_origin);
           }
         };
     CGDisplayStreamRef display_stream = CGDisplayStreamCreate(
@@ -972,7 +976,7 @@ bool ScreenCapturerMac::RegisterRefreshAndMoveHandlers() {
 
       CFRunLoopSourceRef source =
           CGDisplayStreamGetRunLoopSource(display_stream);
-      CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopDefaultMode);
+      CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
       display_stream_manager_->SaveStream(unique_id, display_stream);
     }
   }
@@ -985,9 +989,18 @@ void ScreenCapturerMac::UnregisterRefreshAndMoveHandlers() {
 }
 
 void ScreenCapturerMac::ScreenRefresh(CGRectCount count,
-                                      const CGRect* rect_array) {
+                                      const CGRect* rect_array,
+                                      DesktopVector display_origin) {
   if (screen_pixel_bounds_.is_empty())
     ScreenConfigurationChanged();
+
+  // The refresh rects are in display coordinates. We want to translate to
+  // framebuffer coordinates. If a specific display is being captured, then no
+  // change is necessary. If all displays are being captured, then we want to
+  // translate by the origin of the display.
+  DesktopVector translate_vector;
+  if (!current_display_)
+    translate_vector = display_origin;
 
   DesktopRegion region;
   for (CGRectCount i = 0; i < count; ++i) {
@@ -995,6 +1008,9 @@ void ScreenCapturerMac::ScreenRefresh(CGRectCount count,
     DesktopRect rect = DesktopRect::MakeXYWH(
         rect_array[i].origin.x, rect_array[i].origin.y,
         rect_array[i].size.width, rect_array[i].size.height);
+
+    rect.Translate(translate_vector);
+
     region.AddRect(rect);
   }
 

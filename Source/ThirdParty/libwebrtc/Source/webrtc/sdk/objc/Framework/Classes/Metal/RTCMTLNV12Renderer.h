@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 The WebRTC project authors. All Rights Reserved.
+ *  Copyright 2017 The WebRTC Project Authors. All rights reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -9,35 +9,10 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <MetalKit/MTKView.h>
 
-#import "WebRTC/RTCVideoFrame.h"
+#import "RTCMTLRenderer.h"
 
-/**
- * Protocol defining ability to render RTCVideoFrame in Metal enabled views.
- */
-@protocol RTCMTLRenderer <NSObject>
-
-/**
- * Method to be implemented to perform actual rendering of the provided frame.
- *
- * @param frame The frame to be rendered.
- */
-- (void)drawFrame:(RTCVideoFrame *)frame;
-
-/**
- * Sets the provided view as rendering destination if possible.
- *
- * If not possible method returns NO and callers of the method are responisble for performing
- * cleanups.
- */
-- (BOOL)addRenderingDestination:(__kindof UIView *)view;
-
-@end
-
-/**
- * Implementation of RTCMTLRenderer protocol for rendering native nv12 video frames.
- */
-@interface RTCMTLNV12Renderer : NSObject <RTCMTLRenderer>
+NS_AVAILABLE(10_11, 9_0)
+@interface RTCMTLNV12Renderer : RTCMTLRenderer
 
 @end

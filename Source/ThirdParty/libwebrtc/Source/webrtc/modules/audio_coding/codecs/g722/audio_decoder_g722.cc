@@ -18,24 +18,24 @@
 
 namespace webrtc {
 
-AudioDecoderG722::AudioDecoderG722() {
+AudioDecoderG722Impl::AudioDecoderG722Impl() {
   WebRtcG722_CreateDecoder(&dec_state_);
   WebRtcG722_DecoderInit(dec_state_);
 }
 
-AudioDecoderG722::~AudioDecoderG722() {
+AudioDecoderG722Impl::~AudioDecoderG722Impl() {
   WebRtcG722_FreeDecoder(dec_state_);
 }
 
-bool AudioDecoderG722::HasDecodePlc() const {
+bool AudioDecoderG722Impl::HasDecodePlc() const {
   return false;
 }
 
-int AudioDecoderG722::DecodeInternal(const uint8_t* encoded,
-                                     size_t encoded_len,
-                                     int sample_rate_hz,
-                                     int16_t* decoded,
-                                     SpeechType* speech_type) {
+int AudioDecoderG722Impl::DecodeInternal(const uint8_t* encoded,
+                                         size_t encoded_len,
+                                         int sample_rate_hz,
+                                         int16_t* decoded,
+                                         SpeechType* speech_type) {
   RTC_DCHECK_EQ(SampleRateHz(), sample_rate_hz);
   int16_t temp_type = 1;  // Default is speech.
   size_t ret =
@@ -44,28 +44,28 @@ int AudioDecoderG722::DecodeInternal(const uint8_t* encoded,
   return static_cast<int>(ret);
 }
 
-void AudioDecoderG722::Reset() {
+void AudioDecoderG722Impl::Reset() {
   WebRtcG722_DecoderInit(dec_state_);
 }
 
-std::vector<AudioDecoder::ParseResult> AudioDecoderG722::ParsePayload(
+std::vector<AudioDecoder::ParseResult> AudioDecoderG722Impl::ParsePayload(
     rtc::Buffer&& payload,
     uint32_t timestamp) {
   return LegacyEncodedAudioFrame::SplitBySamples(this, std::move(payload),
                                                  timestamp, 8, 16);
 }
 
-int AudioDecoderG722::PacketDuration(const uint8_t* encoded,
-                                     size_t encoded_len) const {
+int AudioDecoderG722Impl::PacketDuration(const uint8_t* encoded,
+                                         size_t encoded_len) const {
   // 1/2 encoded byte per sample per channel.
   return static_cast<int>(2 * encoded_len / Channels());
 }
 
-int AudioDecoderG722::SampleRateHz() const {
+int AudioDecoderG722Impl::SampleRateHz() const {
   return 16000;
 }
 
-size_t AudioDecoderG722::Channels() const {
+size_t AudioDecoderG722Impl::Channels() const {
   return 1;
 }
 

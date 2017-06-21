@@ -27,7 +27,6 @@
 #include "webrtc/modules/video_coding/codecs/test/videoprocessor.h"
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
 #include "webrtc/modules/video_coding/include/video_coding.h"
-#include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/testsupport/frame_reader.h"
 #include "webrtc/test/testsupport/frame_writer.h"
 #include "webrtc/test/testsupport/metrics/video_metrics.h"

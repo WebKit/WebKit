@@ -26,8 +26,8 @@ constexpr std::intmax_t m1 = -1;
 static_assert(static_cast<std::uintmax_t>(m1) == umax, "");
 static_assert(m1 == static_cast<std::intmax_t>(umax), "");
 
-std::pair<int, int> p1(1, 1);
-std::pair<int, int> p2(1, 2);
+static const std::pair<int, int> p1(1, 1);
+static const std::pair<int, int> p2(1, 2);
 
 }  // namespace
 
@@ -77,48 +77,48 @@ bool TestLessThanConst6(unsigned a) { return safe_cmp::Lt( a,  a); }
 // clang-format on
 
 TEST(SafeCmpTest, Eq) {
-  EXPECT_FALSE(safe_cmp::Eq(-1, 2));
-  EXPECT_FALSE(safe_cmp::Eq(-1, 2u));
-  EXPECT_FALSE(safe_cmp::Eq(2, -1));
-  EXPECT_FALSE(safe_cmp::Eq(2u, -1));
+  static_assert(!safe_cmp::Eq(-1, 2), "");
+  static_assert(!safe_cmp::Eq(-1, 2u), "");
+  static_assert(!safe_cmp::Eq(2, -1), "");
+  static_assert(!safe_cmp::Eq(2u, -1), "");
 
-  EXPECT_FALSE(safe_cmp::Eq(1, 2));
-  EXPECT_FALSE(safe_cmp::Eq(1, 2u));
-  EXPECT_FALSE(safe_cmp::Eq(1u, 2));
-  EXPECT_FALSE(safe_cmp::Eq(1u, 2u));
-  EXPECT_FALSE(safe_cmp::Eq(2, 1));
-  EXPECT_FALSE(safe_cmp::Eq(2, 1u));
-  EXPECT_FALSE(safe_cmp::Eq(2u, 1));
-  EXPECT_FALSE(safe_cmp::Eq(2u, 1u));
+  static_assert(!safe_cmp::Eq(1, 2), "");
+  static_assert(!safe_cmp::Eq(1, 2u), "");
+  static_assert(!safe_cmp::Eq(1u, 2), "");
+  static_assert(!safe_cmp::Eq(1u, 2u), "");
+  static_assert(!safe_cmp::Eq(2, 1), "");
+  static_assert(!safe_cmp::Eq(2, 1u), "");
+  static_assert(!safe_cmp::Eq(2u, 1), "");
+  static_assert(!safe_cmp::Eq(2u, 1u), "");
 
-  EXPECT_TRUE(safe_cmp::Eq(2, 2));
-  EXPECT_TRUE(safe_cmp::Eq(2, 2u));
-  EXPECT_TRUE(safe_cmp::Eq(2u, 2));
-  EXPECT_TRUE(safe_cmp::Eq(2u, 2u));
+  static_assert(safe_cmp::Eq(2, 2), "");
+  static_assert(safe_cmp::Eq(2, 2u), "");
+  static_assert(safe_cmp::Eq(2u, 2), "");
+  static_assert(safe_cmp::Eq(2u, 2u), "");
 
-  EXPECT_TRUE(safe_cmp::Eq(imin, imin));
-  EXPECT_FALSE(safe_cmp::Eq(imin, umax));
-  EXPECT_FALSE(safe_cmp::Eq(umax, imin));
-  EXPECT_TRUE(safe_cmp::Eq(umax, umax));
+  static_assert(safe_cmp::Eq(imin, imin), "");
+  static_assert(!safe_cmp::Eq(imin, umax), "");
+  static_assert(!safe_cmp::Eq(umax, imin), "");
+  static_assert(safe_cmp::Eq(umax, umax), "");
 
-  EXPECT_TRUE(safe_cmp::Eq(m1, m1));
-  EXPECT_FALSE(safe_cmp::Eq(m1, umax));
-  EXPECT_FALSE(safe_cmp::Eq(umax, m1));
-  EXPECT_TRUE(safe_cmp::Eq(umax, umax));
+  static_assert(safe_cmp::Eq(m1, m1), "");
+  static_assert(!safe_cmp::Eq(m1, umax), "");
+  static_assert(!safe_cmp::Eq(umax, m1), "");
+  static_assert(safe_cmp::Eq(umax, umax), "");
 
-  EXPECT_FALSE(safe_cmp::Eq(1, 2));
-  EXPECT_FALSE(safe_cmp::Eq(1, 2.0));
-  EXPECT_FALSE(safe_cmp::Eq(1.0, 2));
-  EXPECT_FALSE(safe_cmp::Eq(1.0, 2.0));
-  EXPECT_FALSE(safe_cmp::Eq(2, 1));
-  EXPECT_FALSE(safe_cmp::Eq(2, 1.0));
-  EXPECT_FALSE(safe_cmp::Eq(2.0, 1));
-  EXPECT_FALSE(safe_cmp::Eq(2.0, 1.0));
+  static_assert(!safe_cmp::Eq(1, 2), "");
+  static_assert(!safe_cmp::Eq(1, 2.0), "");
+  static_assert(!safe_cmp::Eq(1.0, 2), "");
+  static_assert(!safe_cmp::Eq(1.0, 2.0), "");
+  static_assert(!safe_cmp::Eq(2, 1), "");
+  static_assert(!safe_cmp::Eq(2, 1.0), "");
+  static_assert(!safe_cmp::Eq(2.0, 1), "");
+  static_assert(!safe_cmp::Eq(2.0, 1.0), "");
 
-  EXPECT_TRUE(safe_cmp::Eq(2, 2));
-  EXPECT_TRUE(safe_cmp::Eq(2, 2.0));
-  EXPECT_TRUE(safe_cmp::Eq(2.0, 2));
-  EXPECT_TRUE(safe_cmp::Eq(2.0, 2.0));
+  static_assert(safe_cmp::Eq(2, 2), "");
+  static_assert(safe_cmp::Eq(2, 2.0), "");
+  static_assert(safe_cmp::Eq(2.0, 2), "");
+  static_assert(safe_cmp::Eq(2.0, 2.0), "");
 
   EXPECT_TRUE(safe_cmp::Eq(p1, p1));
   EXPECT_FALSE(safe_cmp::Eq(p1, p2));
@@ -127,48 +127,48 @@ TEST(SafeCmpTest, Eq) {
 }
 
 TEST(SafeCmpTest, Ne) {
-  EXPECT_TRUE(safe_cmp::Ne(-1, 2));
-  EXPECT_TRUE(safe_cmp::Ne(-1, 2u));
-  EXPECT_TRUE(safe_cmp::Ne(2, -1));
-  EXPECT_TRUE(safe_cmp::Ne(2u, -1));
+  static_assert(safe_cmp::Ne(-1, 2), "");
+  static_assert(safe_cmp::Ne(-1, 2u), "");
+  static_assert(safe_cmp::Ne(2, -1), "");
+  static_assert(safe_cmp::Ne(2u, -1), "");
 
-  EXPECT_TRUE(safe_cmp::Ne(1, 2));
-  EXPECT_TRUE(safe_cmp::Ne(1, 2u));
-  EXPECT_TRUE(safe_cmp::Ne(1u, 2));
-  EXPECT_TRUE(safe_cmp::Ne(1u, 2u));
-  EXPECT_TRUE(safe_cmp::Ne(2, 1));
-  EXPECT_TRUE(safe_cmp::Ne(2, 1u));
-  EXPECT_TRUE(safe_cmp::Ne(2u, 1));
-  EXPECT_TRUE(safe_cmp::Ne(2u, 1u));
+  static_assert(safe_cmp::Ne(1, 2), "");
+  static_assert(safe_cmp::Ne(1, 2u), "");
+  static_assert(safe_cmp::Ne(1u, 2), "");
+  static_assert(safe_cmp::Ne(1u, 2u), "");
+  static_assert(safe_cmp::Ne(2, 1), "");
+  static_assert(safe_cmp::Ne(2, 1u), "");
+  static_assert(safe_cmp::Ne(2u, 1), "");
+  static_assert(safe_cmp::Ne(2u, 1u), "");
 
-  EXPECT_FALSE(safe_cmp::Ne(2, 2));
-  EXPECT_FALSE(safe_cmp::Ne(2, 2u));
-  EXPECT_FALSE(safe_cmp::Ne(2u, 2));
-  EXPECT_FALSE(safe_cmp::Ne(2u, 2u));
+  static_assert(!safe_cmp::Ne(2, 2), "");
+  static_assert(!safe_cmp::Ne(2, 2u), "");
+  static_assert(!safe_cmp::Ne(2u, 2), "");
+  static_assert(!safe_cmp::Ne(2u, 2u), "");
 
-  EXPECT_FALSE(safe_cmp::Ne(imin, imin));
-  EXPECT_TRUE(safe_cmp::Ne(imin, umax));
-  EXPECT_TRUE(safe_cmp::Ne(umax, imin));
-  EXPECT_FALSE(safe_cmp::Ne(umax, umax));
+  static_assert(!safe_cmp::Ne(imin, imin), "");
+  static_assert(safe_cmp::Ne(imin, umax), "");
+  static_assert(safe_cmp::Ne(umax, imin), "");
+  static_assert(!safe_cmp::Ne(umax, umax), "");
 
-  EXPECT_FALSE(safe_cmp::Ne(m1, m1));
-  EXPECT_TRUE(safe_cmp::Ne(m1, umax));
-  EXPECT_TRUE(safe_cmp::Ne(umax, m1));
-  EXPECT_FALSE(safe_cmp::Ne(umax, umax));
+  static_assert(!safe_cmp::Ne(m1, m1), "");
+  static_assert(safe_cmp::Ne(m1, umax), "");
+  static_assert(safe_cmp::Ne(umax, m1), "");
+  static_assert(!safe_cmp::Ne(umax, umax), "");
 
-  EXPECT_TRUE(safe_cmp::Ne(1, 2));
-  EXPECT_TRUE(safe_cmp::Ne(1, 2.0));
-  EXPECT_TRUE(safe_cmp::Ne(1.0, 2));
-  EXPECT_TRUE(safe_cmp::Ne(1.0, 2.0));
-  EXPECT_TRUE(safe_cmp::Ne(2, 1));
-  EXPECT_TRUE(safe_cmp::Ne(2, 1.0));
-  EXPECT_TRUE(safe_cmp::Ne(2.0, 1));
-  EXPECT_TRUE(safe_cmp::Ne(2.0, 1.0));
+  static_assert(safe_cmp::Ne(1, 2), "");
+  static_assert(safe_cmp::Ne(1, 2.0), "");
+  static_assert(safe_cmp::Ne(1.0, 2), "");
+  static_assert(safe_cmp::Ne(1.0, 2.0), "");
+  static_assert(safe_cmp::Ne(2, 1), "");
+  static_assert(safe_cmp::Ne(2, 1.0), "");
+  static_assert(safe_cmp::Ne(2.0, 1), "");
+  static_assert(safe_cmp::Ne(2.0, 1.0), "");
 
-  EXPECT_FALSE(safe_cmp::Ne(2, 2));
-  EXPECT_FALSE(safe_cmp::Ne(2, 2.0));
-  EXPECT_FALSE(safe_cmp::Ne(2.0, 2));
-  EXPECT_FALSE(safe_cmp::Ne(2.0, 2.0));
+  static_assert(!safe_cmp::Ne(2, 2), "");
+  static_assert(!safe_cmp::Ne(2, 2.0), "");
+  static_assert(!safe_cmp::Ne(2.0, 2), "");
+  static_assert(!safe_cmp::Ne(2.0, 2.0), "");
 
   EXPECT_FALSE(safe_cmp::Ne(p1, p1));
   EXPECT_TRUE(safe_cmp::Ne(p1, p2));
@@ -177,48 +177,48 @@ TEST(SafeCmpTest, Ne) {
 }
 
 TEST(SafeCmpTest, Lt) {
-  EXPECT_TRUE(safe_cmp::Lt(-1, 2));
-  EXPECT_TRUE(safe_cmp::Lt(-1, 2u));
-  EXPECT_FALSE(safe_cmp::Lt(2, -1));
-  EXPECT_FALSE(safe_cmp::Lt(2u, -1));
+  static_assert(safe_cmp::Lt(-1, 2), "");
+  static_assert(safe_cmp::Lt(-1, 2u), "");
+  static_assert(!safe_cmp::Lt(2, -1), "");
+  static_assert(!safe_cmp::Lt(2u, -1), "");
 
-  EXPECT_TRUE(safe_cmp::Lt(1, 2));
-  EXPECT_TRUE(safe_cmp::Lt(1, 2u));
-  EXPECT_TRUE(safe_cmp::Lt(1u, 2));
-  EXPECT_TRUE(safe_cmp::Lt(1u, 2u));
-  EXPECT_FALSE(safe_cmp::Lt(2, 1));
-  EXPECT_FALSE(safe_cmp::Lt(2, 1u));
-  EXPECT_FALSE(safe_cmp::Lt(2u, 1));
-  EXPECT_FALSE(safe_cmp::Lt(2u, 1u));
+  static_assert(safe_cmp::Lt(1, 2), "");
+  static_assert(safe_cmp::Lt(1, 2u), "");
+  static_assert(safe_cmp::Lt(1u, 2), "");
+  static_assert(safe_cmp::Lt(1u, 2u), "");
+  static_assert(!safe_cmp::Lt(2, 1), "");
+  static_assert(!safe_cmp::Lt(2, 1u), "");
+  static_assert(!safe_cmp::Lt(2u, 1), "");
+  static_assert(!safe_cmp::Lt(2u, 1u), "");
 
-  EXPECT_FALSE(safe_cmp::Lt(2, 2));
-  EXPECT_FALSE(safe_cmp::Lt(2, 2u));
-  EXPECT_FALSE(safe_cmp::Lt(2u, 2));
-  EXPECT_FALSE(safe_cmp::Lt(2u, 2u));
+  static_assert(!safe_cmp::Lt(2, 2), "");
+  static_assert(!safe_cmp::Lt(2, 2u), "");
+  static_assert(!safe_cmp::Lt(2u, 2), "");
+  static_assert(!safe_cmp::Lt(2u, 2u), "");
 
-  EXPECT_FALSE(safe_cmp::Lt(imin, imin));
-  EXPECT_TRUE(safe_cmp::Lt(imin, umax));
-  EXPECT_FALSE(safe_cmp::Lt(umax, imin));
-  EXPECT_FALSE(safe_cmp::Lt(umax, umax));
+  static_assert(!safe_cmp::Lt(imin, imin), "");
+  static_assert(safe_cmp::Lt(imin, umax), "");
+  static_assert(!safe_cmp::Lt(umax, imin), "");
+  static_assert(!safe_cmp::Lt(umax, umax), "");
 
-  EXPECT_FALSE(safe_cmp::Lt(m1, m1));
-  EXPECT_TRUE(safe_cmp::Lt(m1, umax));
-  EXPECT_FALSE(safe_cmp::Lt(umax, m1));
-  EXPECT_FALSE(safe_cmp::Lt(umax, umax));
+  static_assert(!safe_cmp::Lt(m1, m1), "");
+  static_assert(safe_cmp::Lt(m1, umax), "");
+  static_assert(!safe_cmp::Lt(umax, m1), "");
+  static_assert(!safe_cmp::Lt(umax, umax), "");
 
-  EXPECT_TRUE(safe_cmp::Lt(1, 2));
-  EXPECT_TRUE(safe_cmp::Lt(1, 2.0));
-  EXPECT_TRUE(safe_cmp::Lt(1.0, 2));
-  EXPECT_TRUE(safe_cmp::Lt(1.0, 2.0));
-  EXPECT_FALSE(safe_cmp::Lt(2, 1));
-  EXPECT_FALSE(safe_cmp::Lt(2, 1.0));
-  EXPECT_FALSE(safe_cmp::Lt(2.0, 1));
-  EXPECT_FALSE(safe_cmp::Lt(2.0, 1.0));
+  static_assert(safe_cmp::Lt(1, 2), "");
+  static_assert(safe_cmp::Lt(1, 2.0), "");
+  static_assert(safe_cmp::Lt(1.0, 2), "");
+  static_assert(safe_cmp::Lt(1.0, 2.0), "");
+  static_assert(!safe_cmp::Lt(2, 1), "");
+  static_assert(!safe_cmp::Lt(2, 1.0), "");
+  static_assert(!safe_cmp::Lt(2.0, 1), "");
+  static_assert(!safe_cmp::Lt(2.0, 1.0), "");
 
-  EXPECT_FALSE(safe_cmp::Lt(2, 2));
-  EXPECT_FALSE(safe_cmp::Lt(2, 2.0));
-  EXPECT_FALSE(safe_cmp::Lt(2.0, 2));
-  EXPECT_FALSE(safe_cmp::Lt(2.0, 2.0));
+  static_assert(!safe_cmp::Lt(2, 2), "");
+  static_assert(!safe_cmp::Lt(2, 2.0), "");
+  static_assert(!safe_cmp::Lt(2.0, 2), "");
+  static_assert(!safe_cmp::Lt(2.0, 2.0), "");
 
   EXPECT_FALSE(safe_cmp::Lt(p1, p1));
   EXPECT_TRUE(safe_cmp::Lt(p1, p2));
@@ -227,48 +227,48 @@ TEST(SafeCmpTest, Lt) {
 }
 
 TEST(SafeCmpTest, Le) {
-  EXPECT_TRUE(safe_cmp::Le(-1, 2));
-  EXPECT_TRUE(safe_cmp::Le(-1, 2u));
-  EXPECT_FALSE(safe_cmp::Le(2, -1));
-  EXPECT_FALSE(safe_cmp::Le(2u, -1));
+  static_assert(safe_cmp::Le(-1, 2), "");
+  static_assert(safe_cmp::Le(-1, 2u), "");
+  static_assert(!safe_cmp::Le(2, -1), "");
+  static_assert(!safe_cmp::Le(2u, -1), "");
 
-  EXPECT_TRUE(safe_cmp::Le(1, 2));
-  EXPECT_TRUE(safe_cmp::Le(1, 2u));
-  EXPECT_TRUE(safe_cmp::Le(1u, 2));
-  EXPECT_TRUE(safe_cmp::Le(1u, 2u));
-  EXPECT_FALSE(safe_cmp::Le(2, 1));
-  EXPECT_FALSE(safe_cmp::Le(2, 1u));
-  EXPECT_FALSE(safe_cmp::Le(2u, 1));
-  EXPECT_FALSE(safe_cmp::Le(2u, 1u));
+  static_assert(safe_cmp::Le(1, 2), "");
+  static_assert(safe_cmp::Le(1, 2u), "");
+  static_assert(safe_cmp::Le(1u, 2), "");
+  static_assert(safe_cmp::Le(1u, 2u), "");
+  static_assert(!safe_cmp::Le(2, 1), "");
+  static_assert(!safe_cmp::Le(2, 1u), "");
+  static_assert(!safe_cmp::Le(2u, 1), "");
+  static_assert(!safe_cmp::Le(2u, 1u), "");
 
-  EXPECT_TRUE(safe_cmp::Le(2, 2));
-  EXPECT_TRUE(safe_cmp::Le(2, 2u));
-  EXPECT_TRUE(safe_cmp::Le(2u, 2));
-  EXPECT_TRUE(safe_cmp::Le(2u, 2u));
+  static_assert(safe_cmp::Le(2, 2), "");
+  static_assert(safe_cmp::Le(2, 2u), "");
+  static_assert(safe_cmp::Le(2u, 2), "");
+  static_assert(safe_cmp::Le(2u, 2u), "");
 
-  EXPECT_TRUE(safe_cmp::Le(imin, imin));
-  EXPECT_TRUE(safe_cmp::Le(imin, umax));
-  EXPECT_FALSE(safe_cmp::Le(umax, imin));
-  EXPECT_TRUE(safe_cmp::Le(umax, umax));
+  static_assert(safe_cmp::Le(imin, imin), "");
+  static_assert(safe_cmp::Le(imin, umax), "");
+  static_assert(!safe_cmp::Le(umax, imin), "");
+  static_assert(safe_cmp::Le(umax, umax), "");
 
-  EXPECT_TRUE(safe_cmp::Le(m1, m1));
-  EXPECT_TRUE(safe_cmp::Le(m1, umax));
-  EXPECT_FALSE(safe_cmp::Le(umax, m1));
-  EXPECT_TRUE(safe_cmp::Le(umax, umax));
+  static_assert(safe_cmp::Le(m1, m1), "");
+  static_assert(safe_cmp::Le(m1, umax), "");
+  static_assert(!safe_cmp::Le(umax, m1), "");
+  static_assert(safe_cmp::Le(umax, umax), "");
 
-  EXPECT_TRUE(safe_cmp::Le(1, 2));
-  EXPECT_TRUE(safe_cmp::Le(1, 2.0));
-  EXPECT_TRUE(safe_cmp::Le(1.0, 2));
-  EXPECT_TRUE(safe_cmp::Le(1.0, 2.0));
-  EXPECT_FALSE(safe_cmp::Le(2, 1));
-  EXPECT_FALSE(safe_cmp::Le(2, 1.0));
-  EXPECT_FALSE(safe_cmp::Le(2.0, 1));
-  EXPECT_FALSE(safe_cmp::Le(2.0, 1.0));
+  static_assert(safe_cmp::Le(1, 2), "");
+  static_assert(safe_cmp::Le(1, 2.0), "");
+  static_assert(safe_cmp::Le(1.0, 2), "");
+  static_assert(safe_cmp::Le(1.0, 2.0), "");
+  static_assert(!safe_cmp::Le(2, 1), "");
+  static_assert(!safe_cmp::Le(2, 1.0), "");
+  static_assert(!safe_cmp::Le(2.0, 1), "");
+  static_assert(!safe_cmp::Le(2.0, 1.0), "");
 
-  EXPECT_TRUE(safe_cmp::Le(2, 2));
-  EXPECT_TRUE(safe_cmp::Le(2, 2.0));
-  EXPECT_TRUE(safe_cmp::Le(2.0, 2));
-  EXPECT_TRUE(safe_cmp::Le(2.0, 2.0));
+  static_assert(safe_cmp::Le(2, 2), "");
+  static_assert(safe_cmp::Le(2, 2.0), "");
+  static_assert(safe_cmp::Le(2.0, 2), "");
+  static_assert(safe_cmp::Le(2.0, 2.0), "");
 
   EXPECT_TRUE(safe_cmp::Le(p1, p1));
   EXPECT_TRUE(safe_cmp::Le(p1, p2));
@@ -277,48 +277,48 @@ TEST(SafeCmpTest, Le) {
 }
 
 TEST(SafeCmpTest, Gt) {
-  EXPECT_FALSE(safe_cmp::Gt(-1, 2));
-  EXPECT_FALSE(safe_cmp::Gt(-1, 2u));
-  EXPECT_TRUE(safe_cmp::Gt(2, -1));
-  EXPECT_TRUE(safe_cmp::Gt(2u, -1));
+  static_assert(!safe_cmp::Gt(-1, 2), "");
+  static_assert(!safe_cmp::Gt(-1, 2u), "");
+  static_assert(safe_cmp::Gt(2, -1), "");
+  static_assert(safe_cmp::Gt(2u, -1), "");
 
-  EXPECT_FALSE(safe_cmp::Gt(1, 2));
-  EXPECT_FALSE(safe_cmp::Gt(1, 2u));
-  EXPECT_FALSE(safe_cmp::Gt(1u, 2));
-  EXPECT_FALSE(safe_cmp::Gt(1u, 2u));
-  EXPECT_TRUE(safe_cmp::Gt(2, 1));
-  EXPECT_TRUE(safe_cmp::Gt(2, 1u));
-  EXPECT_TRUE(safe_cmp::Gt(2u, 1));
-  EXPECT_TRUE(safe_cmp::Gt(2u, 1u));
+  static_assert(!safe_cmp::Gt(1, 2), "");
+  static_assert(!safe_cmp::Gt(1, 2u), "");
+  static_assert(!safe_cmp::Gt(1u, 2), "");
+  static_assert(!safe_cmp::Gt(1u, 2u), "");
+  static_assert(safe_cmp::Gt(2, 1), "");
+  static_assert(safe_cmp::Gt(2, 1u), "");
+  static_assert(safe_cmp::Gt(2u, 1), "");
+  static_assert(safe_cmp::Gt(2u, 1u), "");
 
-  EXPECT_FALSE(safe_cmp::Gt(2, 2));
-  EXPECT_FALSE(safe_cmp::Gt(2, 2u));
-  EXPECT_FALSE(safe_cmp::Gt(2u, 2));
-  EXPECT_FALSE(safe_cmp::Gt(2u, 2u));
+  static_assert(!safe_cmp::Gt(2, 2), "");
+  static_assert(!safe_cmp::Gt(2, 2u), "");
+  static_assert(!safe_cmp::Gt(2u, 2), "");
+  static_assert(!safe_cmp::Gt(2u, 2u), "");
 
-  EXPECT_FALSE(safe_cmp::Gt(imin, imin));
-  EXPECT_FALSE(safe_cmp::Gt(imin, umax));
-  EXPECT_TRUE(safe_cmp::Gt(umax, imin));
-  EXPECT_FALSE(safe_cmp::Gt(umax, umax));
+  static_assert(!safe_cmp::Gt(imin, imin), "");
+  static_assert(!safe_cmp::Gt(imin, umax), "");
+  static_assert(safe_cmp::Gt(umax, imin), "");
+  static_assert(!safe_cmp::Gt(umax, umax), "");
 
-  EXPECT_FALSE(safe_cmp::Gt(m1, m1));
-  EXPECT_FALSE(safe_cmp::Gt(m1, umax));
-  EXPECT_TRUE(safe_cmp::Gt(umax, m1));
-  EXPECT_FALSE(safe_cmp::Gt(umax, umax));
+  static_assert(!safe_cmp::Gt(m1, m1), "");
+  static_assert(!safe_cmp::Gt(m1, umax), "");
+  static_assert(safe_cmp::Gt(umax, m1), "");
+  static_assert(!safe_cmp::Gt(umax, umax), "");
 
-  EXPECT_FALSE(safe_cmp::Gt(1, 2));
-  EXPECT_FALSE(safe_cmp::Gt(1, 2.0));
-  EXPECT_FALSE(safe_cmp::Gt(1.0, 2));
-  EXPECT_FALSE(safe_cmp::Gt(1.0, 2.0));
-  EXPECT_TRUE(safe_cmp::Gt(2, 1));
-  EXPECT_TRUE(safe_cmp::Gt(2, 1.0));
-  EXPECT_TRUE(safe_cmp::Gt(2.0, 1));
-  EXPECT_TRUE(safe_cmp::Gt(2.0, 1.0));
+  static_assert(!safe_cmp::Gt(1, 2), "");
+  static_assert(!safe_cmp::Gt(1, 2.0), "");
+  static_assert(!safe_cmp::Gt(1.0, 2), "");
+  static_assert(!safe_cmp::Gt(1.0, 2.0), "");
+  static_assert(safe_cmp::Gt(2, 1), "");
+  static_assert(safe_cmp::Gt(2, 1.0), "");
+  static_assert(safe_cmp::Gt(2.0, 1), "");
+  static_assert(safe_cmp::Gt(2.0, 1.0), "");
 
-  EXPECT_FALSE(safe_cmp::Gt(2, 2));
-  EXPECT_FALSE(safe_cmp::Gt(2, 2.0));
-  EXPECT_FALSE(safe_cmp::Gt(2.0, 2));
-  EXPECT_FALSE(safe_cmp::Gt(2.0, 2.0));
+  static_assert(!safe_cmp::Gt(2, 2), "");
+  static_assert(!safe_cmp::Gt(2, 2.0), "");
+  static_assert(!safe_cmp::Gt(2.0, 2), "");
+  static_assert(!safe_cmp::Gt(2.0, 2.0), "");
 
   EXPECT_FALSE(safe_cmp::Gt(p1, p1));
   EXPECT_FALSE(safe_cmp::Gt(p1, p2));
@@ -327,48 +327,48 @@ TEST(SafeCmpTest, Gt) {
 }
 
 TEST(SafeCmpTest, Ge) {
-  EXPECT_FALSE(safe_cmp::Ge(-1, 2));
-  EXPECT_FALSE(safe_cmp::Ge(-1, 2u));
-  EXPECT_TRUE(safe_cmp::Ge(2, -1));
-  EXPECT_TRUE(safe_cmp::Ge(2u, -1));
+  static_assert(!safe_cmp::Ge(-1, 2), "");
+  static_assert(!safe_cmp::Ge(-1, 2u), "");
+  static_assert(safe_cmp::Ge(2, -1), "");
+  static_assert(safe_cmp::Ge(2u, -1), "");
 
-  EXPECT_FALSE(safe_cmp::Ge(1, 2));
-  EXPECT_FALSE(safe_cmp::Ge(1, 2u));
-  EXPECT_FALSE(safe_cmp::Ge(1u, 2));
-  EXPECT_FALSE(safe_cmp::Ge(1u, 2u));
-  EXPECT_TRUE(safe_cmp::Ge(2, 1));
-  EXPECT_TRUE(safe_cmp::Ge(2, 1u));
-  EXPECT_TRUE(safe_cmp::Ge(2u, 1));
-  EXPECT_TRUE(safe_cmp::Ge(2u, 1u));
+  static_assert(!safe_cmp::Ge(1, 2), "");
+  static_assert(!safe_cmp::Ge(1, 2u), "");
+  static_assert(!safe_cmp::Ge(1u, 2), "");
+  static_assert(!safe_cmp::Ge(1u, 2u), "");
+  static_assert(safe_cmp::Ge(2, 1), "");
+  static_assert(safe_cmp::Ge(2, 1u), "");
+  static_assert(safe_cmp::Ge(2u, 1), "");
+  static_assert(safe_cmp::Ge(2u, 1u), "");
 
-  EXPECT_TRUE(safe_cmp::Ge(2, 2));
-  EXPECT_TRUE(safe_cmp::Ge(2, 2u));
-  EXPECT_TRUE(safe_cmp::Ge(2u, 2));
-  EXPECT_TRUE(safe_cmp::Ge(2u, 2u));
+  static_assert(safe_cmp::Ge(2, 2), "");
+  static_assert(safe_cmp::Ge(2, 2u), "");
+  static_assert(safe_cmp::Ge(2u, 2), "");
+  static_assert(safe_cmp::Ge(2u, 2u), "");
 
-  EXPECT_TRUE(safe_cmp::Ge(imin, imin));
-  EXPECT_FALSE(safe_cmp::Ge(imin, umax));
-  EXPECT_TRUE(safe_cmp::Ge(umax, imin));
-  EXPECT_TRUE(safe_cmp::Ge(umax, umax));
+  static_assert(safe_cmp::Ge(imin, imin), "");
+  static_assert(!safe_cmp::Ge(imin, umax), "");
+  static_assert(safe_cmp::Ge(umax, imin), "");
+  static_assert(safe_cmp::Ge(umax, umax), "");
 
-  EXPECT_TRUE(safe_cmp::Ge(m1, m1));
-  EXPECT_FALSE(safe_cmp::Ge(m1, umax));
-  EXPECT_TRUE(safe_cmp::Ge(umax, m1));
-  EXPECT_TRUE(safe_cmp::Ge(umax, umax));
+  static_assert(safe_cmp::Ge(m1, m1), "");
+  static_assert(!safe_cmp::Ge(m1, umax), "");
+  static_assert(safe_cmp::Ge(umax, m1), "");
+  static_assert(safe_cmp::Ge(umax, umax), "");
 
-  EXPECT_FALSE(safe_cmp::Ge(1, 2));
-  EXPECT_FALSE(safe_cmp::Ge(1, 2.0));
-  EXPECT_FALSE(safe_cmp::Ge(1.0, 2));
-  EXPECT_FALSE(safe_cmp::Ge(1.0, 2.0));
-  EXPECT_TRUE(safe_cmp::Ge(2, 1));
-  EXPECT_TRUE(safe_cmp::Ge(2, 1.0));
-  EXPECT_TRUE(safe_cmp::Ge(2.0, 1));
-  EXPECT_TRUE(safe_cmp::Ge(2.0, 1.0));
+  static_assert(!safe_cmp::Ge(1, 2), "");
+  static_assert(!safe_cmp::Ge(1, 2.0), "");
+  static_assert(!safe_cmp::Ge(1.0, 2), "");
+  static_assert(!safe_cmp::Ge(1.0, 2.0), "");
+  static_assert(safe_cmp::Ge(2, 1), "");
+  static_assert(safe_cmp::Ge(2, 1.0), "");
+  static_assert(safe_cmp::Ge(2.0, 1), "");
+  static_assert(safe_cmp::Ge(2.0, 1.0), "");
 
-  EXPECT_TRUE(safe_cmp::Ge(2, 2));
-  EXPECT_TRUE(safe_cmp::Ge(2, 2.0));
-  EXPECT_TRUE(safe_cmp::Ge(2.0, 2));
-  EXPECT_TRUE(safe_cmp::Ge(2.0, 2.0));
+  static_assert(safe_cmp::Ge(2, 2), "");
+  static_assert(safe_cmp::Ge(2, 2.0), "");
+  static_assert(safe_cmp::Ge(2.0, 2), "");
+  static_assert(safe_cmp::Ge(2.0, 2.0), "");
 
   EXPECT_TRUE(safe_cmp::Ge(p1, p1));
   EXPECT_FALSE(safe_cmp::Ge(p1, p2));
@@ -381,14 +381,14 @@ TEST(SafeCmpTest, Enum) {
   enum { e2 = 13 };
   enum E3 : unsigned { e3 = 13 };
   enum : unsigned { e4 = 13 };
-  EXPECT_TRUE(safe_cmp::Eq(13, e1));
-  EXPECT_TRUE(safe_cmp::Eq(13u, e1));
-  EXPECT_TRUE(safe_cmp::Eq(13, e2));
-  EXPECT_TRUE(safe_cmp::Eq(13u, e2));
-  EXPECT_TRUE(safe_cmp::Eq(13, e3));
-  EXPECT_TRUE(safe_cmp::Eq(13u, e3));
-  EXPECT_TRUE(safe_cmp::Eq(13, e4));
-  EXPECT_TRUE(safe_cmp::Eq(13u, e4));
+  static_assert(safe_cmp::Eq(13, e1), "");
+  static_assert(safe_cmp::Eq(13u, e1), "");
+  static_assert(safe_cmp::Eq(13, e2), "");
+  static_assert(safe_cmp::Eq(13u, e2), "");
+  static_assert(safe_cmp::Eq(13, e3), "");
+  static_assert(safe_cmp::Eq(13u, e3), "");
+  static_assert(safe_cmp::Eq(13, e4), "");
+  static_assert(safe_cmp::Eq(13u, e4), "");
 }
 
 }  // namespace rtc

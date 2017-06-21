@@ -14,7 +14,7 @@
 #include <utility>
 
 #include "webrtc/common_types.h"
-#include "webrtc/video_encoder.h"
+#include "webrtc/api/video_codecs/video_encoder.h"
 #include "webrtc/base/optional.h"
 #include "webrtc/base/sequenced_task_checker.h"
 #include "webrtc/modules/video_coding/utility/moving_average.h"

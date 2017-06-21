@@ -12,11 +12,12 @@
 
 #include "webrtc/base/basictypes.h"
 #include "webrtc/base/logging.h"
-#include "webrtc/common_video/include/video_bitrate_allocator.h"
 #include "webrtc/common_types.h"
+#include "webrtc/common_video/include/video_bitrate_allocator.h"
 #include "webrtc/modules/video_coding/codecs/vp8/screenshare_layers.h"
+#include "webrtc/modules/video_coding/codecs/vp8/simulcast_rate_allocator.h"
 #include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
-#include "webrtc/modules/video_coding/utility/simulcast_rate_allocator.h"
+#include "webrtc/modules/video_coding/include/video_coding_defines.h"
 #include "webrtc/modules/video_coding/utility/default_video_bitrate_allocator.h"
 #include "webrtc/system_wrappers/include/clock.h"
 
@@ -71,11 +72,13 @@ VideoCodecInitializer::CreateBitrateAllocator(
   std::unique_ptr<VideoBitrateAllocator> rate_allocator;
 
   switch (codec.codecType) {
+#if !defined(RTC_DISABLE_VP8)
     case kVideoCodecVP8: {
       // Set up default VP8 temporal layer factory, if not provided.
       rate_allocator.reset(
           new SimulcastRateAllocator(codec, std::move(tl_factory)));
     } break;
+#endif
     default:
       rate_allocator.reset(new DefaultVideoBitrateAllocator(codec));
   }
@@ -167,6 +170,8 @@ VideoCodec VideoCodecInitializer::VideoEncoderConfigToVideoCodec(
   video_codec.minBitrate = streams[0].min_bitrate_bps / 1000;
   if (video_codec.minBitrate < kEncoderMinBitrateKbps)
     video_codec.minBitrate = kEncoderMinBitrateKbps;
+  video_codec.timing_frame_thresholds = {kDefaultTimingFramesDelayMs,
+                                         kDefaultOutlierFrameSizePercent};
   RTC_DCHECK_LE(streams.size(), kMaxSimulcastStreams);
   if (video_codec.codecType == kVideoCodecVP9) {
     // If the vector is empty, bitrates will be configured automatically.

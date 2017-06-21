@@ -72,6 +72,11 @@ if (rtc_include_tests) {
       "test/bwe_test_framework.cc",
       "test/bwe_test_framework.h",
       "test/bwe_test_logging.h",
+      "test/estimators/bbr.cc",
+      "test/estimators/bbr.h",
+      "test/estimators/congestion_window.h",
+      "test/estimators/max_bandwidth_filter.h",
+      "test/estimators/min_rtt_filter.h",
       "test/estimators/nada.cc",
       "test/estimators/nada.h",
       "test/estimators/remb.cc",
@@ -109,6 +114,7 @@ if (rtc_include_tests) {
 
     deps = [
       ":remote_bitrate_estimator",
+      "..:module_api",
       "../..:webrtc_common",
       "../../base:gtest_prod",
       "../../base:rtc_base",
@@ -127,6 +133,13 @@ if (rtc_include_tests) {
 
   rtc_source_set("remote_bitrate_estimator_perf_tests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc:webrtc_perf_tests" ]
+    }
     sources = [
       "remote_bitrate_estimators_test.cc",
     ]
@@ -134,7 +147,7 @@ if (rtc_include_tests) {
       ":bwe_simulator_lib",
       ":remote_bitrate_estimator",
       "../../base:rtc_base_approved",
-      "../../test:fileutils",
+      "../../test:test_support",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
@@ -144,10 +157,15 @@ if (rtc_include_tests) {
 
   rtc_source_set("remote_bitrate_estimator_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
       "aimd_rate_control_unittest.cc",
-      "include/mock/mock_remote_bitrate_estimator.h",
-      "include/mock/mock_remote_bitrate_observer.h",
       "inter_arrival_unittest.cc",
       "overuse_detector_unittest.cc",
       "remote_bitrate_estimator_abs_send_time_unittest.cc",
@@ -163,6 +181,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":bwe_simulator_lib",
+      ":mock_remote_bitrate_observer",
       ":remote_bitrate_estimator",
       "../..:webrtc_common",
       "../../base:rtc_base",
@@ -184,6 +203,17 @@ if (rtc_include_tests) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
+  }
+
+  rtc_source_set("mock_remote_bitrate_observer") {
+    testonly = true
+    sources = [
+      "include/mock/mock_remote_bitrate_observer.h",
+    ]
+    deps = [
+      ":remote_bitrate_estimator",
+      "../../test:test_support",
+    ]
   }
 
   rtc_test("bwe_simulations_tests") {

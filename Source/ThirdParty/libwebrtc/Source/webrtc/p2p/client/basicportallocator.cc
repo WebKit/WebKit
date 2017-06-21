@@ -169,6 +169,9 @@ void BasicPortAllocator::OnIceRegathering(PortAllocatorSession* session,
 }
 
 BasicPortAllocator::~BasicPortAllocator() {
+  // Our created port allocator sessions depend on us, so destroy our remaining
+  // pooled sessions before anything else.
+  DiscardCandidatePool();
 }
 
 PortAllocatorSession* BasicPortAllocator::CreateSessionInternal(
@@ -552,8 +555,9 @@ std::vector<rtc::Network*> BasicPortAllocatorSession::GetNetworks() {
     network_manager->GetNetworks(&networks);
     // If network enumeration fails, use the ANY address as a fallback, so we
     // can at least try gathering candidates using the default route chosen by
-    // the OS.
-    if (networks.empty()) {
+    // the OS. Or, if the PORTALLOCATOR_ENABLE_ANY_ADDRESS_PORTS flag is
+    // set, we'll use ANY address candidates either way.
+    if (networks.empty() || flags() & PORTALLOCATOR_ENABLE_ANY_ADDRESS_PORTS) {
       network_manager->GetAnyAddressNetworks(&networks);
     }
   }
@@ -607,6 +611,13 @@ void BasicPortAllocatorSession::DoAllocate() {
       if (!(sequence_flags & PORTALLOCATOR_ENABLE_IPV6) &&
           networks[i]->GetBestIP().family() == AF_INET6) {
         // Skip IPv6 networks unless the flag's been set.
+        continue;
+      }
+
+      if (!(sequence_flags & PORTALLOCATOR_ENABLE_IPV6_ON_WIFI) &&
+          networks[i]->GetBestIP().family() == AF_INET6 &&
+          networks[i]->type() == rtc::ADAPTER_TYPE_WIFI) {
+        // Skip IPv6 Wi-Fi networks unless the flag's been set.
         continue;
       }
 
@@ -689,6 +700,8 @@ void BasicPortAllocatorSession::AddAllocatedPort(Port* port,
   port->set_content_name(content_name());
   port->set_component(component());
   port->set_generation(generation());
+  if (allocator_->proxy().type != rtc::PROXY_NONE)
+    port->set_proxy(allocator_->user_agent(), allocator_->proxy());
   port->set_send_retransmit_count_attribute(
       (flags() & PORTALLOCATOR_ENABLE_STUN_RETRANSMIT_ATTRIBUTE) != 0);
 

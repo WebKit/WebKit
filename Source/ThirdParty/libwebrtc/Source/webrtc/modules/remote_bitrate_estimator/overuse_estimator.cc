@@ -65,8 +65,10 @@ void OveruseEstimator::Update(int64_t t_delta,
   E_[0][0] += process_noise_[0];
   E_[1][1] += process_noise_[1];
 
-  if ((current_hypothesis == kBwOverusing && offset_ < prev_offset_) ||
-      (current_hypothesis == kBwUnderusing && offset_ > prev_offset_)) {
+  if ((current_hypothesis == BandwidthUsage::kBwOverusing &&
+       offset_ < prev_offset_) ||
+      (current_hypothesis == BandwidthUsage::kBwUnderusing &&
+       offset_ > prev_offset_)) {
     E_[1][1] += 10 * process_noise_[1];
   }
 
@@ -78,7 +80,8 @@ void OveruseEstimator::Update(int64_t t_delta,
 
   const double residual = t_ts_delta - slope_*h[0] - offset_;
 
-  const bool in_stable_state = (current_hypothesis == kBwNormal);
+  const bool in_stable_state =
+      (current_hypothesis == BandwidthUsage::kBwNormal);
   const double max_residual = 3.0 * sqrt(var_noise_);
   // We try to filter out very late frames. For instance periodic key
   // frames doesn't fit the Gaussian model well.

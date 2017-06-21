@@ -13,7 +13,6 @@
 #include "webrtc/p2p/base/asyncstuntcpsocket.h"
 #include "webrtc/base/asyncsocket.h"
 #include "webrtc/base/gunit.h"
-#include "webrtc/base/physicalsocketserver.h"
 #include "webrtc/base/virtualsocketserver.h"
 
 namespace cricket {
@@ -69,9 +68,7 @@ class AsyncStunTCPSocketTest : public testing::Test,
                                public sigslot::has_slots<> {
  protected:
   AsyncStunTCPSocketTest()
-      : vss_(new rtc::VirtualSocketServer(NULL)),
-        ss_scope_(vss_.get()) {
-  }
+      : vss_(new rtc::VirtualSocketServer()), thread_(vss_.get()) {}
 
   virtual void SetUp() {
     CreateSockets();
@@ -89,6 +86,8 @@ class AsyncStunTCPSocketTest : public testing::Test,
         kClientAddr.family(), SOCK_STREAM);
     send_socket_.reset(AsyncStunTCPSocket::Create(
         client, kClientAddr, recv_socket_->GetLocalAddress()));
+    send_socket_->SignalSentPacket.connect(
+        this, &AsyncStunTCPSocketTest::OnSentPacket);
     ASSERT_TRUE(send_socket_.get() != NULL);
     vss_->ProcessMessagesUntilIdle();
   }
@@ -97,6 +96,11 @@ class AsyncStunTCPSocketTest : public testing::Test,
                     size_t len, const rtc::SocketAddress& remote_addr,
                     const rtc::PacketTime& packet_time) {
     recv_packets_.push_back(std::string(data, len));
+  }
+
+  void OnSentPacket(rtc::AsyncPacketSocket* socket,
+                    const rtc::SentPacket& packet) {
+    ++sent_packets_;
   }
 
   void OnNewConnection(rtc::AsyncPacketSocket* server,
@@ -125,11 +129,12 @@ class AsyncStunTCPSocketTest : public testing::Test,
   }
 
   std::unique_ptr<rtc::VirtualSocketServer> vss_;
-  rtc::SocketServerScope ss_scope_;
+  rtc::AutoSocketServerThread thread_;
   std::unique_ptr<AsyncStunTCPSocket> send_socket_;
   std::unique_ptr<AsyncStunTCPSocket> recv_socket_;
   std::unique_ptr<rtc::AsyncPacketSocket> listen_socket_;
   std::list<std::string> recv_packets_;
+  int sent_packets_ = 0;
 };
 
 // Testing a stun packet sent/recv properly.
@@ -260,6 +265,27 @@ TEST_F(AsyncStunTCPSocketTest, DISABLED_TestWithSmallSendBuffer) {
   EXPECT_EQ(1u, recv_packets_.size());
   EXPECT_TRUE(CheckData(kTurnChannelDataMessageWithOddLength,
                         sizeof(kTurnChannelDataMessageWithOddLength)));
+}
+
+// Test that SignalSentPacket is fired when a packet is sent.
+TEST_F(AsyncStunTCPSocketTest, SignalSentPacketFiredWhenPacketSent) {
+  ASSERT_TRUE(
+      Send(kStunMessageWithZeroLength, sizeof(kStunMessageWithZeroLength)));
+  EXPECT_EQ(1, sent_packets_);
+  // Send another packet for good measure.
+  ASSERT_TRUE(
+      Send(kStunMessageWithZeroLength, sizeof(kStunMessageWithZeroLength)));
+  EXPECT_EQ(2, sent_packets_);
+}
+
+// Test that SignalSentPacket isn't fired when a packet isn't sent (for
+// example, because it's invalid).
+TEST_F(AsyncStunTCPSocketTest, SignalSentPacketNotFiredWhenPacketNotSent) {
+  // Attempt to send a packet that's too small; since it isn't sent,
+  // SignalSentPacket shouldn't fire.
+  char data[1];
+  ASSERT_FALSE(Send(data, sizeof(data)));
+  EXPECT_EQ(0, sent_packets_);
 }
 
 }  // namespace cricket

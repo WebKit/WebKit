@@ -95,10 +95,11 @@ int32_t AudioCoder::Encode(const AudioFrame& audio,
   // For any codec with a frame size that is longer than 10 ms the encoded
   // length in bytes should be zero until a a full frame has been encoded.
   encoded_length_in_bytes_ = 0;
+  encoded_data_ = encoded_data;
   if (acm_->Add10MsData((AudioFrame&)audio_frame) == -1) {
     return -1;
   }
-  encoded_data_ = encoded_data;
+
   *encoded_length_in_bytes = encoded_length_in_bytes_;
   return 0;
 }

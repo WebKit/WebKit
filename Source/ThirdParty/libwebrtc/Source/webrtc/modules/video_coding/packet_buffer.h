@@ -11,8 +11,9 @@
 #ifndef WEBRTC_MODULES_VIDEO_CODING_PACKET_BUFFER_H_
 #define WEBRTC_MODULES_VIDEO_CODING_PACKET_BUFFER_H_
 
-#include <vector>
 #include <memory>
+#include <set>
+#include <vector>
 
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/scoped_ref_ptr.h"
@@ -54,6 +55,11 @@ class PacketBuffer {
   virtual bool InsertPacket(VCMPacket* packet);
   void ClearTo(uint16_t seq_num);
   void Clear();
+  void PaddingReceived(uint16_t seq_num);
+
+  // Timestamp (not RTP timestamp) of the last received packet/keyframe packet.
+  rtc::Optional<int64_t> LastReceivedPacketMs() const;
+  rtc::Optional<int64_t> LastReceivedKeyframePacketMs() const;
 
   int AddRef() const;
   int Release() const;
@@ -117,6 +123,8 @@ class PacketBuffer {
   // Virtual for testing.
   virtual void ReturnFrame(RtpFrameObject* frame);
 
+  void UpdateMissingPackets(uint16_t seq_num) EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
   rtc::CriticalSection crit_;
 
   // Buffer size_ and max_size_ must always be a power of two.
@@ -141,6 +149,14 @@ class PacketBuffer {
 
   // Called when a received frame is found.
   OnReceivedFrameCallback* const received_frame_callback_;
+
+  // Timestamp (not RTP timestamp) of the last received packet/keyframe packet.
+  rtc::Optional<int64_t> last_received_packet_ms_ GUARDED_BY(crit_);
+  rtc::Optional<int64_t> last_received_keyframe_packet_ms_ GUARDED_BY(crit_);
+
+  rtc::Optional<uint16_t> newest_inserted_seq_num_ GUARDED_BY(crit_);
+  std::set<uint16_t, DescendingSeqNumComp<uint16_t>> missing_packets_
+      GUARDED_BY(crit_);
 
   mutable volatile int ref_count_ = 0;
 };

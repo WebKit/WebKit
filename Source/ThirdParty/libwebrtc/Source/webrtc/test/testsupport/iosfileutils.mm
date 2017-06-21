@@ -15,7 +15,7 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/typedefs.h"
-#include "webrtc/sdk/objc/Framework/Classes/helpers.h"
+#include "webrtc/sdk/objc/Framework/Classes/Common/helpers.h"
 
 namespace webrtc {
 namespace test {

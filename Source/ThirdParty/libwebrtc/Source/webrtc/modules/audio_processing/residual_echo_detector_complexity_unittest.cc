@@ -26,16 +26,24 @@
 namespace webrtc {
 namespace {
 
-const size_t kNumFramesToProcess = 500;
-const size_t kProcessingBatchSize = 20;
-const size_t kWarmupBatchSize = 2 * kProcessingBatchSize;
-const int kSampleRate = AudioProcessing::kSampleRate48kHz;
-const int kNumberOfChannels = 1;
+constexpr size_t kNumFramesToProcess = 20000;
+constexpr size_t kNumFramesToProcessStandalone = 50 * kNumFramesToProcess;
+constexpr size_t kProcessingBatchSize = 200;
+constexpr size_t kProcessingBatchSizeStandalone = 50 * kProcessingBatchSize;
+constexpr size_t kNumberOfWarmupMeasurements =
+    (kNumFramesToProcess / kProcessingBatchSize) / 2;
+constexpr size_t kNumberOfWarmupMeasurementsStandalone =
+    (kNumFramesToProcessStandalone / kProcessingBatchSizeStandalone) / 2;
+constexpr int kSampleRate = AudioProcessing::kSampleRate48kHz;
+constexpr int kNumberOfChannels = 1;
 
-std::string FormPerformanceMeasureString(const test::PerformanceTimer& timer) {
-  std::string s = std::to_string(timer.GetDurationAverage());
+std::string FormPerformanceMeasureString(const test::PerformanceTimer& timer,
+                                         int number_of_warmup_samples) {
+  std::string s =
+      std::to_string(timer.GetDurationAverage(number_of_warmup_samples));
   s += ", ";
-  s += std::to_string(timer.GetDurationStandardDeviation());
+  s += std::to_string(
+      timer.GetDurationStandardDeviation(number_of_warmup_samples));
   return s;
 }
 
@@ -43,16 +51,19 @@ void RunStandaloneSubmodule() {
   test::SimulatorBuffers buffers(
       kSampleRate, kSampleRate, kSampleRate, kSampleRate, kNumberOfChannels,
       kNumberOfChannels, kNumberOfChannels, kNumberOfChannels);
-  test::PerformanceTimer timer(kNumFramesToProcess);
+  test::PerformanceTimer timer(kNumFramesToProcessStandalone /
+                               kProcessingBatchSizeStandalone);
 
   ResidualEchoDetector echo_detector;
   echo_detector.Initialize();
+  float sum = 0.f;
 
-  for (size_t frame_no = 0; frame_no < kNumFramesToProcess; ++frame_no) {
+  for (size_t frame_no = 0; frame_no < kNumFramesToProcessStandalone;
+       ++frame_no) {
     // The first batch of frames are for warming up, and are not part of the
     // benchmark. After that the processing time is measured in chunks of
     // kProcessingBatchSize frames.
-    if (frame_no >= kWarmupBatchSize && frame_no % kProcessingBatchSize == 0) {
+    if (frame_no % kProcessingBatchSizeStandalone == 0) {
       timer.StartTimer();
     }
 
@@ -63,15 +74,19 @@ void RunStandaloneSubmodule() {
     echo_detector.AnalyzeCaptureAudio(rtc::ArrayView<const float>(
         buffers.capture_input_buffer->split_bands_const_f(0)[kBand0To8kHz],
         buffers.capture_input_buffer->num_frames_per_band()));
+    sum += echo_detector.echo_likelihood();
 
-    if (frame_no >= kWarmupBatchSize &&
-        frame_no % kProcessingBatchSize == kProcessingBatchSize - 1) {
+    if (frame_no % kProcessingBatchSizeStandalone ==
+        kProcessingBatchSizeStandalone - 1) {
       timer.StopTimer();
     }
   }
+  EXPECT_EQ(0.0f, sum);
   webrtc::test::PrintResultMeanAndError(
       "echo_detector_call_durations", "", "StandaloneEchoDetector",
-      FormPerformanceMeasureString(timer), "us", false);
+      FormPerformanceMeasureString(timer,
+                                   kNumberOfWarmupMeasurementsStandalone),
+      "us", false);
 }
 
 void RunTogetherWithApm(std::string test_description,
@@ -80,7 +95,7 @@ void RunTogetherWithApm(std::string test_description,
   test::SimulatorBuffers buffers(
       kSampleRate, kSampleRate, kSampleRate, kSampleRate, kNumberOfChannels,
       kNumberOfChannels, kNumberOfChannels, kNumberOfChannels);
-  test::PerformanceTimer timer(kNumFramesToProcess);
+  test::PerformanceTimer timer(kNumFramesToProcess / kProcessingBatchSize);
 
   webrtc::Config config;
   AudioProcessing::Config apm_config;
@@ -124,7 +139,7 @@ void RunTogetherWithApm(std::string test_description,
     // The first batch of frames are for warming up, and are not part of the
     // benchmark. After that the processing time is measured in chunks of
     // kProcessingBatchSize frames.
-    if (frame_no >= kWarmupBatchSize && frame_no % kProcessingBatchSize == 0) {
+    if (frame_no % kProcessingBatchSize == 0) {
       timer.StartTimer();
     }
 
@@ -146,15 +161,15 @@ void RunTogetherWithApm(std::string test_description,
               apm->ProcessStream(&buffers.capture_input[0], stream_config,
                                  stream_config, &buffers.capture_output[0]));
 
-    if (frame_no >= kWarmupBatchSize &&
-        frame_no % kProcessingBatchSize == kProcessingBatchSize - 1) {
+    if (frame_no % kProcessingBatchSize == kProcessingBatchSize - 1) {
       timer.StopTimer();
     }
   }
 
   webrtc::test::PrintResultMeanAndError(
       "echo_detector_call_durations", "_total", test_description,
-      FormPerformanceMeasureString(timer), "us", false);
+      FormPerformanceMeasureString(timer, kNumberOfWarmupMeasurements), "us",
+      false);
 }
 
 }  // namespace

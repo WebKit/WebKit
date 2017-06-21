@@ -6,11 +6,9 @@ tina.legrand@webrtc.org
 tommi@webrtc.org
 per-file .gitignore=*
 per-file .gn=kjellander@webrtc.org
-per-file *.gyp=*
+per-file *.py=kjellander@webrtc.org
 per-file AUTHORS=*
 per-file BUILD.gn=kjellander@webrtc.org
 per-file DEPS=*
-per-file PRESUBMIT.py=kjellander@webrtc.org
-per-file setup_links.py=*
-per-file sync_chromium.py=kjellander@webrtc.org
+per-file pylintrc=kjellander@webrtc.org
 per-file WATCHLISTS=*

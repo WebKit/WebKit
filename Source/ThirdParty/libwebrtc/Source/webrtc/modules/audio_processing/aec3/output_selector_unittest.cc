@@ -23,49 +23,47 @@ namespace webrtc {
 TEST(OutputSelector, ProperSwitching) {
   OutputSelector selector;
 
-  constexpr int kNumBlocksToSwitchToSubtractor = 3;
-  constexpr int kNumBlocksToSwitchFromSubtractor = 10;
-
-  std::array<float, kBlockSize> weaker;
-  std::array<float, kBlockSize> stronger;
   std::array<float, kBlockSize> y;
   std::array<float, kBlockSize> e;
-  weaker.fill(10.f);
-  stronger.fill(20.f);
-
-  bool y_is_weakest = false;
-
-  const auto form_e_and_y = [&](bool y_equals_weaker) {
-    if (y_equals_weaker) {
-      std::copy(weaker.begin(), weaker.end(), y.begin());
-      std::copy(stronger.begin(), stronger.end(), e.begin());
-    } else {
-      std::copy(stronger.begin(), stronger.end(), y.begin());
-      std::copy(weaker.begin(), weaker.end(), e.begin());
-    }
+  std::array<float, kBlockSize> e_ref;
+  std::array<float, kBlockSize> y_ref;
+  auto init_blocks = [](std::array<float, kBlockSize>* e,
+                        std::array<float, kBlockSize>* y) {
+    e->fill(10.f);
+    y->fill(20.f);
   };
 
-  for (int k = 0; k < 30; ++k) {
-    // Verify that it takes a while for the signals transition to take effect.
-    const int num_blocks_to_switch = y_is_weakest
-                                         ? kNumBlocksToSwitchFromSubtractor
-                                         : kNumBlocksToSwitchToSubtractor;
-    for (int j = 0; j < num_blocks_to_switch; ++j) {
-      form_e_and_y(y_is_weakest);
-      selector.FormLinearOutput(e, y);
-      EXPECT_EQ(stronger, y);
-      EXPECT_EQ(y_is_weakest, selector.UseSubtractorOutput());
-    }
+  init_blocks(&e_ref, &y_ref);
 
-    // Verify that the transition block is a mix between the signals.
-    form_e_and_y(y_is_weakest);
-    selector.FormLinearOutput(e, y);
-    EXPECT_NE(weaker, y);
-    EXPECT_NE(stronger, y);
-    EXPECT_EQ(!y_is_weakest, selector.UseSubtractorOutput());
+  init_blocks(&e, &y);
+  selector.FormLinearOutput(false, e, y);
+  EXPECT_EQ(y_ref, y);
 
-    y_is_weakest = !y_is_weakest;
-  }
+  init_blocks(&e, &y);
+  selector.FormLinearOutput(true, e, y);
+  EXPECT_NE(e_ref, y);
+  EXPECT_NE(y_ref, y);
+
+  init_blocks(&e, &y);
+  selector.FormLinearOutput(true, e, y);
+  EXPECT_EQ(e_ref, y);
+
+  init_blocks(&e, &y);
+  selector.FormLinearOutput(true, e, y);
+  EXPECT_EQ(e_ref, y);
+
+  init_blocks(&e, &y);
+  selector.FormLinearOutput(false, e, y);
+  EXPECT_NE(e_ref, y);
+  EXPECT_NE(y_ref, y);
+
+  init_blocks(&e, &y);
+  selector.FormLinearOutput(false, e, y);
+  EXPECT_EQ(y_ref, y);
+
+  init_blocks(&e, &y);
+  selector.FormLinearOutput(false, e, y);
+  EXPECT_EQ(y_ref, y);
 }
 
 }  // namespace webrtc

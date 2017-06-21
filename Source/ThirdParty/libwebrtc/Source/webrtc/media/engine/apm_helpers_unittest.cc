@@ -11,11 +11,11 @@
 #include "webrtc/media/engine/apm_helpers.h"
 
 #include "webrtc/media/engine/webrtcvoe.h"
-#include "webrtc/modules/audio_coding/codecs/mock/mock_audio_decoder_factory.h"
 #include "webrtc/modules/audio_device/include/mock_audio_device.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
 #include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
+#include "webrtc/test/mock_audio_decoder_factory.h"
 #include "webrtc/voice_engine/transmit_mixer.h"
 
 namespace webrtc {
@@ -123,25 +123,21 @@ TEST(ApmHelpersTest, AgcStatus_EnableDisable) {
   TestHelper helper;
   GainControl* gc = helper.apm()->gain_control();
 #if defined(WEBRTC_IOS) || defined(WEBRTC_ANDROID)
-  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), false,
-                            kAgcFixedDigital);
+  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), false);
   EXPECT_FALSE(gc->is_enabled());
   EXPECT_EQ(GainControl::kFixedDigital, gc->mode());
 
-  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), true,
-                            kAgcFixedDigital);
+  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), true);
   EXPECT_TRUE(gc->is_enabled());
   EXPECT_EQ(GainControl::kFixedDigital, gc->mode());
 #else
   EXPECT_CALL(*helper.adm(), SetAGC(false)).WillOnce(testing::Return(0));
-  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), false,
-                            kAgcAdaptiveAnalog);
+  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), false);
   EXPECT_FALSE(gc->is_enabled());
   EXPECT_EQ(GainControl::kAdaptiveAnalog, gc->mode());
 
   EXPECT_CALL(*helper.adm(), SetAGC(true)).WillOnce(testing::Return(0));
-  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), true,
-                            kAgcAdaptiveAnalog);
+  apm_helpers::SetAgcStatus(helper.apm(), helper.adm(), true);
   EXPECT_TRUE(gc->is_enabled());
   EXPECT_EQ(GainControl::kAdaptiveAnalog, gc->mode());
 #endif

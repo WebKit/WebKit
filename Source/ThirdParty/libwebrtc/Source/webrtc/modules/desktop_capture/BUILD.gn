@@ -35,6 +35,13 @@ rtc_static_library("primitives") {
 if (rtc_include_tests) {
   rtc_source_set("desktop_capture_modules_tests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_tests" ]
+    }
     sources = []
     deps = []
     if (rtc_desktop_capture_supported) {
@@ -44,7 +51,7 @@ if (rtc_include_tests) {
         ":screen_drawer",
         "../../base:rtc_base",
         "../../base:rtc_base_approved",
-        "../../system_wrappers:system_wrappers",
+        "../../system_wrappers",
         "../../test:test_support",
         "../../test:video_test_support",
       ]
@@ -57,10 +64,19 @@ if (rtc_include_tests) {
 
   rtc_source_set("desktop_capture_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
+      "blank_detector_desktop_capturer_wrapper_unittest.cc",
       "desktop_and_cursor_composer_unittest.cc",
       "desktop_capturer_differ_wrapper_unittest.cc",
       "desktop_frame_rotation_unittest.cc",
+      "desktop_geometry_unittest.cc",
       "desktop_region_unittest.cc",
       "differ_block_unittest.cc",
       "fallback_desktop_capturer_wrapper_unittest.cc",
@@ -77,10 +93,9 @@ if (rtc_include_tests) {
       ":desktop_capture",
       ":desktop_capture_mock",
       ":primitives",
-      ":rgba_color",
       "../..:webrtc_common",
       "../../base:rtc_base_approved",
-      "../../system_wrappers:system_wrappers",
+      "../../system_wrappers",
       "../../test:test_support",
       "//testing/gmock",
     ]
@@ -99,29 +114,11 @@ if (rtc_include_tests) {
     }
   }
 
-  source_set("rgba_color") {
-    testonly = true
-
-    public_deps = [
-      ":desktop_capture",
-    ]
-
-    sources = [
-      "rgba_color.cc",
-      "rgba_color.h",
-    ]
-
-    deps = [
-      ":primitives",
-      "../..:webrtc_common",
-    ]
-  }
-
   source_set("screen_drawer") {
     testonly = true
 
     public_deps = [
-      ":rgba_color",
+      ":desktop_capture",
     ]
 
     sources = [
@@ -144,7 +141,6 @@ if (rtc_include_tests) {
 
     public_deps = [
       ":desktop_capture",
-      ":rgba_color",
       "//testing/gmock",
     ]
 
@@ -167,6 +163,8 @@ if (rtc_include_tests) {
 
 rtc_static_library("desktop_capture") {
   sources = [
+    "blank_detector_desktop_capturer_wrapper.cc",
+    "blank_detector_desktop_capturer_wrapper.h",
     "cropped_desktop_frame.cc",
     "cropped_desktop_frame.h",
     "cropping_window_capturer.cc",
@@ -205,6 +203,8 @@ rtc_static_library("desktop_capture") {
     "mouse_cursor_monitor_win.cc",
     "resolution_change_detector.cc",
     "resolution_change_detector.h",
+    "rgba_color.cc",
+    "rgba_color.h",
     "screen_capture_frame_queue.h",
     "screen_capturer_helper.cc",
     "screen_capturer_helper.h",
@@ -218,8 +218,12 @@ rtc_static_library("desktop_capture") {
     "win/desktop.h",
     "win/dxgi_adapter_duplicator.cc",
     "win/dxgi_adapter_duplicator.h",
+    "win/dxgi_context.cc",
+    "win/dxgi_context.h",
     "win/dxgi_duplicator_controller.cc",
     "win/dxgi_duplicator_controller.h",
+    "win/dxgi_frame.cc",
+    "win/dxgi_frame.h",
     "win/dxgi_output_duplicator.cc",
     "win/dxgi_output_duplicator.h",
     "win/dxgi_texture.cc",

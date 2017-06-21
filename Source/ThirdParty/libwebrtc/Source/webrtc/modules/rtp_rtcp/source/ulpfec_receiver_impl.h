@@ -23,7 +23,7 @@ namespace webrtc {
 
 class UlpfecReceiverImpl : public UlpfecReceiver {
  public:
-  explicit UlpfecReceiverImpl(RtpData* callback);
+  explicit UlpfecReceiverImpl(RecoveredPacketReceiver* callback);
   virtual ~UlpfecReceiverImpl();
 
   int32_t AddReceivedRedPacket(const RTPHeader& rtp_header,
@@ -37,7 +37,7 @@ class UlpfecReceiverImpl : public UlpfecReceiver {
 
  private:
   rtc::CriticalSection crit_sect_;
-  RtpData* recovered_packet_callback_;
+  RecoveredPacketReceiver* recovered_packet_callback_;
   std::unique_ptr<ForwardErrorCorrection> fec_;
   // TODO(holmer): In the current version |received_packets_| is never more
   // than one packet, since we process FEC every time a new packet

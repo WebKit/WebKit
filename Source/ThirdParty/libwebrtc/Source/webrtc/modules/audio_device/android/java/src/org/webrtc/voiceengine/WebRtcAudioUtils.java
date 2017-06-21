@@ -10,16 +10,14 @@
 
 package org.webrtc.voiceengine;
 
-import org.webrtc.Logging;
-
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Process;
-
 import java.lang.Thread;
 import java.util.Arrays;
 import java.util.List;
+import org.webrtc.Logging;
 
 public final class WebRtcAudioUtils {
   private static final String TAG = "WebRtcAudioUtils";
@@ -28,20 +26,24 @@ public final class WebRtcAudioUtils {
   // the low latency output mode in combination with OpenSL ES.
   // The device name is given by Build.MODEL.
   private static final String[] BLACKLISTED_OPEN_SL_ES_MODELS = new String[] {
-      // This list is currently empty ;-)
+      // It is recommended to maintain a list of blacklisted models outside
+      // this package and instead call
+      // WebRtcAudioManager.setBlacklistDeviceForOpenSLESUsage(true)
+      // from the client for devices where OpenSL ES shall be disabled.
   };
 
   // List of devices where it has been verified that the built-in effect
   // bad and where it makes sense to avoid using it and instead rely on the
   // native WebRTC version instead. The device name is given by Build.MODEL.
   private static final String[] BLACKLISTED_AEC_MODELS = new String[] {
-      "D6503", // Sony Xperia Z2 D6503
-      "ONE A2005", // OnePlus 2
-      "MotoG3", // Moto G (3rd Generation)
+      // It is recommended to maintain a list of blacklisted models outside
+      // this package and instead call setWebRtcBasedAcousticEchoCanceler(true)
+      // from the client for devices where the built-in AEC shall be disabled.
   };
   private static final String[] BLACKLISTED_NS_MODELS = new String[] {
-      "Nexus 10", "Nexus 9",
-      "ONE A2005", // OnePlus 2
+    // It is recommended to maintain a list of blacklisted models outside
+    // this package and instead call setWebRtcBasedNoiseSuppressor(true)
+    // from the client for devices where the built-in NS shall be disabled.
   };
 
   // Use 16kHz as the default sample rate. A higher sample rate might prevent
@@ -127,16 +129,6 @@ public final class WebRtcAudioUtils {
 
   public static List<String> getBlackListedModelsForNsUsage() {
     return Arrays.asList(WebRtcAudioUtils.BLACKLISTED_NS_MODELS);
-  }
-
-  public static boolean runningOnGingerBreadOrHigher() {
-    // November 2010: Android 2.3, API Level 9.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
-  }
-
-  public static boolean runningOnJellyBeanOrHigher() {
-    // June 2012: Android 4.1. API Level 16.
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
   }
 
   public static boolean runningOnJellyBeanMR1OrHigher() {

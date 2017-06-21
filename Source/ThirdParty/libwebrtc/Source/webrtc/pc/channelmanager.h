@@ -20,9 +20,6 @@
 #include "webrtc/media/base/mediaengine.h"
 #include "webrtc/pc/voicechannel.h"
 
-namespace webrtc {
-class MediaControllerInterface;
-}
 namespace cricket {
 
 class VoiceChannel;
@@ -88,7 +85,8 @@ class ChannelManager {
   // The operations below all occur on the worker thread.
   // Creates a voice channel, to be associated with the specified session.
   VoiceChannel* CreateVoiceChannel(
-      webrtc::MediaControllerInterface* media_controller,
+      webrtc::Call* call,
+      const cricket::MediaConfig& media_config,
       DtlsTransportInternal* rtp_transport,
       DtlsTransportInternal* rtcp_transport,
       rtc::Thread* signaling_thread,
@@ -97,7 +95,8 @@ class ChannelManager {
       const AudioOptions& options);
   // Version of the above that takes PacketTransportInternal.
   VoiceChannel* CreateVoiceChannel(
-      webrtc::MediaControllerInterface* media_controller,
+      webrtc::Call* call,
+      const cricket::MediaConfig& media_config,
       rtc::PacketTransportInternal* rtp_transport,
       rtc::PacketTransportInternal* rtcp_transport,
       rtc::Thread* signaling_thread,
@@ -109,7 +108,8 @@ class ChannelManager {
   // Creates a video channel, synced with the specified voice channel, and
   // associated with the specified session.
   VideoChannel* CreateVideoChannel(
-      webrtc::MediaControllerInterface* media_controller,
+      webrtc::Call* call,
+      const cricket::MediaConfig& media_config,
       DtlsTransportInternal* rtp_transport,
       DtlsTransportInternal* rtcp_transport,
       rtc::Thread* signaling_thread,
@@ -118,7 +118,8 @@ class ChannelManager {
       const VideoOptions& options);
   // Version of the above that takes PacketTransportInternal.
   VideoChannel* CreateVideoChannel(
-      webrtc::MediaControllerInterface* media_controller,
+      webrtc::Call* call,
+      const cricket::MediaConfig& media_config,
       rtc::PacketTransportInternal* rtp_transport,
       rtc::PacketTransportInternal* rtcp_transport,
       rtc::Thread* signaling_thread,
@@ -128,7 +129,7 @@ class ChannelManager {
   // Destroys a video channel created with the Create API.
   void DestroyVideoChannel(VideoChannel* video_channel);
   RtpDataChannel* CreateRtpDataChannel(
-      webrtc::MediaControllerInterface* media_controller,
+      const cricket::MediaConfig& media_config,
       DtlsTransportInternal* rtp_transport,
       DtlsTransportInternal* rtcp_transport,
       rtc::Thread* signaling_thread,
@@ -145,10 +146,6 @@ class ChannelManager {
   // RTX will be enabled/disabled in engines that support it. The supporting
   // engines will start offering an RTX codec. Must be called before Init().
   bool SetVideoRtxEnabled(bool enable);
-
-  // Define crypto options to set on newly created channels. Doesn't change
-  // options on already created channels.
-  bool SetCryptoOptions(const rtc::CryptoOptions& crypto_options);
 
   // Starts/stops the local microphone and enables polling of the input level.
   bool capturing() const { return capturing_; }
@@ -175,9 +172,9 @@ class ChannelManager {
   bool InitMediaEngine_w();
   void DestructorDeletes_w();
   void Terminate_w();
-  bool SetCryptoOptions_w(const rtc::CryptoOptions& crypto_options);
   VoiceChannel* CreateVoiceChannel_w(
-      webrtc::MediaControllerInterface* media_controller,
+      webrtc::Call* call,
+      const cricket::MediaConfig& media_config,
       DtlsTransportInternal* rtp_dtls_transport,
       DtlsTransportInternal* rtcp_dtls_transport,
       rtc::PacketTransportInternal* rtp_packet_transport,
@@ -188,7 +185,8 @@ class ChannelManager {
       const AudioOptions& options);
   void DestroyVoiceChannel_w(VoiceChannel* voice_channel);
   VideoChannel* CreateVideoChannel_w(
-      webrtc::MediaControllerInterface* media_controller,
+      webrtc::Call* call,
+      const cricket::MediaConfig& media_config,
       DtlsTransportInternal* rtp_dtls_transport,
       DtlsTransportInternal* rtcp_dtls_transport,
       rtc::PacketTransportInternal* rtp_packet_transport,
@@ -199,7 +197,7 @@ class ChannelManager {
       const VideoOptions& options);
   void DestroyVideoChannel_w(VideoChannel* video_channel);
   RtpDataChannel* CreateRtpDataChannel_w(
-      webrtc::MediaControllerInterface* media_controller,
+      const cricket::MediaConfig& media_config,
       DtlsTransportInternal* rtp_transport,
       DtlsTransportInternal* rtcp_transport,
       rtc::Thread* signaling_thread,

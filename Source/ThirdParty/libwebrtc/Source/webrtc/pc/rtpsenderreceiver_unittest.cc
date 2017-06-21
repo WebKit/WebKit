@@ -21,7 +21,6 @@
 #include "webrtc/p2p/base/faketransportcontroller.h"
 #include "webrtc/pc/audiotrack.h"
 #include "webrtc/pc/channelmanager.h"
-#include "webrtc/pc/fakemediacontroller.h"
 #include "webrtc/pc/localaudiosource.h"
 #include "webrtc/pc/mediastream.h"
 #include "webrtc/pc/remoteaudiosource.h"
@@ -49,7 +48,6 @@ static const uint32_t kVideoSsrc2 = 100;
 static const uint32_t kAudioSsrc = 99;
 static const uint32_t kAudioSsrc2 = 101;
 static const int kDefaultTimeout = 10000;  // 10 seconds.
-
 }  // namespace
 
 namespace webrtc {
@@ -66,7 +64,6 @@ class RtpSenderReceiverTest : public testing::Test,
             rtc::Thread::Current(),
             rtc::Thread::Current()),
         fake_call_(Call::Config(&event_log_)),
-        fake_media_controller_(&channel_manager_, &fake_call_),
         local_stream_(MediaStream::Create(kStreamLabel1)) {
     // Create channels to be used by the RtpSenders and RtpReceivers.
     channel_manager_.Init();
@@ -75,10 +72,12 @@ class RtpSenderReceiverTest : public testing::Test,
         fake_transport_controller_.CreateDtlsTransport(
             cricket::CN_AUDIO, cricket::ICE_CANDIDATE_COMPONENT_RTP);
     voice_channel_ = channel_manager_.CreateVoiceChannel(
-        &fake_media_controller_, rtp_transport, nullptr, rtc::Thread::Current(),
+        &fake_call_, cricket::MediaConfig(),
+        rtp_transport, nullptr, rtc::Thread::Current(),
         cricket::CN_AUDIO, srtp_required, cricket::AudioOptions());
     video_channel_ = channel_manager_.CreateVideoChannel(
-        &fake_media_controller_, rtp_transport, nullptr, rtc::Thread::Current(),
+        &fake_call_, cricket::MediaConfig(),
+        rtp_transport, nullptr, rtc::Thread::Current(),
         cricket::CN_VIDEO, srtp_required, cricket::VideoOptions());
     voice_channel_->Enable(true);
     video_channel_->Enable(true);
@@ -251,7 +250,6 @@ class RtpSenderReceiverTest : public testing::Test,
   cricket::FakeTransportController fake_transport_controller_;
   cricket::ChannelManager channel_manager_;
   cricket::FakeCall fake_call_;
-  cricket::FakeMediaController fake_media_controller_;
   cricket::VoiceChannel* voice_channel_;
   cricket::VideoChannel* video_channel_;
   cricket::FakeVoiceMediaChannel* voice_media_channel_;

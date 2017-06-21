@@ -17,13 +17,6 @@
 #include <string>
 #include <vector>
 
-#include "webrtc/p2p/base/candidate.h"
-#include "webrtc/p2p/base/candidatepairinterface.h"
-#include "webrtc/p2p/base/jseptransport.h"
-#include "webrtc/p2p/base/packetsocketfactory.h"
-#include "webrtc/p2p/base/portinterface.h"
-#include "webrtc/p2p/base/stun.h"
-#include "webrtc/p2p/base/stunrequest.h"
 #include "webrtc/base/asyncpacketsocket.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/network.h"
@@ -33,6 +26,14 @@
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/socketaddress.h"
 #include "webrtc/base/thread.h"
+#include "webrtc/p2p/base/candidate.h"
+#include "webrtc/p2p/base/candidatepairinterface.h"
+#include "webrtc/p2p/base/jseptransport.h"
+#include "webrtc/p2p/base/packetlossestimator.h"
+#include "webrtc/p2p/base/packetsocketfactory.h"
+#include "webrtc/p2p/base/portinterface.h"
+#include "webrtc/p2p/base/stun.h"
+#include "webrtc/p2p/base/stunrequest.h"
 
 namespace cricket {
 
@@ -718,6 +719,8 @@ class Connection : public CandidatePairInterface,
   int64_t last_ping_response_received_;
   int64_t receiving_unchanged_since_ = 0;
   std::vector<SentPing> pings_since_last_response_;
+
+  PacketLossEstimator packet_loss_estimator_;
 
   bool reported_;
   IceCandidatePairState state_;

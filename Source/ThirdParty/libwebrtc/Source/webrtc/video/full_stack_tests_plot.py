@@ -57,7 +57,7 @@ HIDE_DROPPED = 256
 RIGHT_Y_AXIS = 512
 
 # internal field id, field name, title
-_fields = [
+_FIELDS = [
     # Raw
     (DROPPED, "dropped", "dropped"),
     (INPUT_TIME, "input_time_ms", "input time"),
@@ -75,16 +75,16 @@ _fields = [
     (RENDERED_DELTA, "rendered_delta", "rendered delta"),
 ]
 
-name_to_id = {field[1]: field[0] for field in _fields}
-id_to_title = {field[0]: field[2] for field in _fields}
+NAME_TO_ID = {field[1]: field[0] for field in _FIELDS}
+ID_TO_TITLE = {field[0]: field[2] for field in _FIELDS}
 
-def field_arg_to_id(arg):
+def FieldArgToId(arg):
   if arg == "none":
     return None
-  if arg in name_to_id:
-    return name_to_id[arg]
-  if arg + "_ms" in name_to_id:
-    return name_to_id[arg + "_ms"]
+  if arg in NAME_TO_ID:
+    return NAME_TO_ID[arg]
+  if arg + "_ms" in NAME_TO_ID:
+    return NAME_TO_ID[arg + "_ms"]
   raise Exception("Unrecognized field name \"{}\"".format(arg))
 
 
@@ -105,9 +105,9 @@ class Data(object):
     self.length = 0
     self.samples = defaultdict(list)
 
-    self._read_samples(filename)
+    self._ReadSamples(filename)
 
-  def _read_samples(self, filename):
+  def _ReadSamples(self, filename):
     """Reads graph data from the given file."""
     f = open(filename)
     it = iter(f)
@@ -115,7 +115,7 @@ class Data(object):
     self.title = it.next().strip()
     self.length = int(it.next())
     field_names = [name.strip() for name in it.next().split()]
-    field_ids = [name_to_id[name] for name in field_names]
+    field_ids = [NAME_TO_ID[name] for name in field_names]
 
     for field_id in field_ids:
       self.samples[field_id] = [0.0] * self.length
@@ -124,18 +124,18 @@ class Data(object):
       for col, value in enumerate(it.next().split()):
         self.samples[field_ids[col]][sample_id] = float(value)
 
-    self._subtract_first_input_time()
-    self._generate_additional_data()
+    self._SubtractFirstInputTime()
+    self._GenerateAdditionalData()
 
     f.close()
 
-  def _subtract_first_input_time(self):
+  def _SubtractFirstInputTime(self):
     offset = self.samples[INPUT_TIME][0]
     for field in [INPUT_TIME, SEND_TIME, RECV_TIME, RENDER_TIME]:
       if field in self.samples:
         self.samples[field] = [x - offset for x in self.samples[field]]
 
-  def _generate_additional_data(self):
+  def _GenerateAdditionalData(self):
     """Calculates sender time, receiver time etc. from the raw data."""
     s = self.samples
     last_render_time = 0
@@ -153,16 +153,16 @@ class Data(object):
           s[RENDERED_DELTA][k] = decoded_time - last_render_time
         last_render_time = decoded_time
 
-  def _hide(self, values):
+  def _Hide(self, values):
     """
     Replaces values for dropped frames with None.
-    These values are then skipped by the plot() method.
+    These values are then skipped by the Plot() method.
     """
 
     return [None if self.samples[DROPPED][k] else values[k]
             for k in range(len(values))]
 
-  def add_samples(self, config, target_lines_list):
+  def AddSamples(self, config, target_lines_list):
     """Creates graph lines from the current data set with given config."""
     for field in config.fields:
       # field is None means the user wants just to skip the color.
@@ -174,14 +174,14 @@ class Data(object):
       values = self.samples[field_id]
 
       if field & HIDE_DROPPED:
-        values = self._hide(values)
+        values = self._Hide(values)
 
       target_lines_list.append(PlotLine(
-          self.title + " " + id_to_title[field_id],
+          self.title + " " + ID_TO_TITLE[field_id],
           values, field & ~FIELD_MASK))
 
 
-def average_over_cycle(values, length):
+def AverageOverCycle(values, length):
   """
   Returns the list:
     [
@@ -220,16 +220,16 @@ class PlotConfig(object):
     self.output_filename = output_filename
     self.title = title
 
-  def plot(self, ax1):
+  def Plot(self, ax1):
     lines = []
     for data in self.data_list:
       if not data:
         # Add None lines to skip the colors.
         lines.extend([None] * len(self.fields))
       else:
-        data.add_samples(self, lines)
+        data.AddSamples(self, lines)
 
-    def _slice_values(values):
+    def _SliceValues(values):
       if self.offset:
         values = values[self.offset:]
       if self.frames:
@@ -241,9 +241,9 @@ class PlotConfig(object):
       if line is None:
         continue
 
-      line.values = _slice_values(line.values)
+      line.values = _SliceValues(line.values)
       if self.cycle_length:
-        line.values = average_over_cycle(line.values, self.cycle_length)
+        line.values = AverageOverCycle(line.values, self.cycle_length)
 
       if length is None:
         length = len(line.values)
@@ -272,7 +272,7 @@ class PlotConfig(object):
         x = numpy.array(range(self.offset, self.offset + len(line.values)))
       y = numpy.array(line.values)
       ax = ax2 if line.flags & RIGHT_Y_AXIS else ax1
-      ax.plot(x, y, "o-", label=line.label, markersize=3.0, linewidth=1.0,
+      ax.Plot(x, y, "o-", label=line.label, markersize=3.0, linewidth=1.0,
               color=color_iter.next())
 
     ax1.grid(True)
@@ -283,20 +283,20 @@ class PlotConfig(object):
       ax1.legend(loc="best", shadow=True, fontsize="large")
 
 
-def load_files(filenames):
+def LoadFiles(filenames):
   result = []
   for filename in filenames:
-    if filename in load_files.cache:
-      result.append(load_files.cache[filename])
+    if filename in LoadFiles.cache:
+      result.append(LoadFiles.cache[filename])
     else:
       data = Data(filename)
-      load_files.cache[filename] = data
+      LoadFiles.cache[filename] = data
       result.append(data)
   return result
-load_files.cache = {}
+LoadFiles.cache = {}
 
 
-def get_parser():
+def GetParser():
   class CustomAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
       if "ordered_args" not in namespace:
@@ -335,7 +335,7 @@ def get_parser():
   return parser
 
 
-def _plot_config_from_args(args, graph_num):
+def _PlotConfigFromArgs(args, graph_num):
   # Pylint complains about using kwargs, so have to do it this way.
   cycle_length = None
   frames = None
@@ -362,7 +362,7 @@ def _plot_config_from_args(args, graph_num):
     elif key == "right":
       mask |= RIGHT_Y_AXIS
     elif key == "field":
-      field_id = field_arg_to_id(values[0])
+      field_id = FieldArgToId(values[0])
       fields.append(field_id | mask if field_id is not None else None)
       mask = 0  # Reset mask after the field argument.
     elif key == "files":
@@ -373,12 +373,12 @@ def _plot_config_from_args(args, graph_num):
   if not fields:
     raise Exception("Missing field argument(s) for graph #{}".format(graph_num))
 
-  return PlotConfig(fields, load_files(files), cycle_length=cycle_length,
+  return PlotConfig(fields, LoadFiles(files), cycle_length=cycle_length,
       frames=frames, offset=offset, output_filename=output_filename,
       title=title)
 
 
-def plot_configs_from_args(args):
+def PlotConfigsFromArgs(args):
   """Generates plot configs for given command line arguments."""
   # The way it works:
   #   First we detect separators -n/--next and split arguments into groups, one
@@ -388,21 +388,21 @@ def plot_configs_from_args(args):
   args = itertools.groupby(args, lambda x: x in ["-n", "--next"])
   args = list(list(group) for match, group in args if not match)
 
-  parser = get_parser()
+  parser = GetParser()
   plot_configs = []
   for index, raw_args in enumerate(args):
     graph_args = parser.parse_args(raw_args).ordered_args
-    plot_configs.append(_plot_config_from_args(graph_args, index))
+    plot_configs.append(_PlotConfigFromArgs(graph_args, index))
   return plot_configs
 
 
-def show_or_save_plots(plot_configs):
+def ShowOrSavePlots(plot_configs):
   for config in plot_configs:
     fig = plt.figure(figsize=(14.0, 10.0))
-    ax = fig.add_subplot(1, 1, 1)
+    ax = fig.add_subPlot(1, 1, 1)
 
     plt.title(config.title)
-    config.plot(ax)
+    config.Plot(ax)
     if config.output_filename:
       print "Saving to", config.output_filename
       fig.savefig(config.output_filename)
@@ -411,4 +411,4 @@ def show_or_save_plots(plot_configs):
   plt.show()
 
 if __name__ == "__main__":
-  show_or_save_plots(plot_configs_from_args(sys.argv[1:]))
+  ShowOrSavePlots(PlotConfigsFromArgs(sys.argv[1:]))

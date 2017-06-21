@@ -46,7 +46,7 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
 
   VideoReceiveStream::Stats GetStats() const;
 
-  void OnDecodedFrame(rtc::Optional<uint8_t> qp);
+  void OnDecodedFrame(rtc::Optional<uint8_t> qp, VideoContentType content_type);
   void OnSyncOffsetUpdated(int64_t sync_offset_ms, double estimated_freq_khz);
   void OnRenderedFrame(const VideoFrame& frame);
   void OnIncomingPayloadType(int payload_type);
@@ -104,9 +104,8 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
 
   void QualitySample() EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  // Removes info about old frames and then updates the framerate/bitrate.
-  void UpdateFrameAndBitrate(int64_t now_ms) const
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  // Removes info about old frames and then updates the framerate.
+  void UpdateFramerate(int64_t now_ms) const EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   Clock* const clock_;
   // Ownership of this object lies with the owner of the ReceiveStatisticsProxy
@@ -132,6 +131,7 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   RateStatistics renders_fps_estimator_ GUARDED_BY(crit_);
   rtc::RateTracker render_fps_tracker_ GUARDED_BY(crit_);
   rtc::RateTracker render_pixel_tracker_ GUARDED_BY(crit_);
+  rtc::RateTracker total_byte_tracker_ GUARDED_BY(crit_);
   SampleCounter render_width_counter_ GUARDED_BY(crit_);
   SampleCounter render_height_counter_ GUARDED_BY(crit_);
   SampleCounter sync_offset_counter_ GUARDED_BY(crit_);
@@ -140,7 +140,10 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   SampleCounter target_delay_counter_ GUARDED_BY(crit_);
   SampleCounter current_delay_counter_ GUARDED_BY(crit_);
   SampleCounter delay_counter_ GUARDED_BY(crit_);
-  SampleCounter e2e_delay_counter_ GUARDED_BY(crit_);
+  SampleCounter e2e_delay_counter_video_ GUARDED_BY(crit_);
+  SampleCounter e2e_delay_counter_screenshare_ GUARDED_BY(crit_);
+  int64_t e2e_delay_max_ms_video_ GUARDED_BY(crit_);
+  int64_t e2e_delay_max_ms_screenshare_ GUARDED_BY(crit_);
   MaxCounter freq_offset_counter_ GUARDED_BY(crit_);
   int64_t first_report_block_time_ms_ GUARDED_BY(crit_);
   ReportBlockStats report_block_stats_ GUARDED_BY(crit_);
@@ -148,7 +151,7 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   std::map<uint32_t, StreamDataCounters> rtx_stats_ GUARDED_BY(crit_);
   int64_t avg_rtt_ms_ GUARDED_BY(crit_);
   mutable std::map<int64_t, size_t> frame_window_ GUARDED_BY(&crit_);
-  mutable size_t frame_window_accumulated_bytes_ GUARDED_BY(&crit_);
+  VideoContentType last_content_type_ GUARDED_BY(&crit_);
 };
 
 }  // namespace webrtc

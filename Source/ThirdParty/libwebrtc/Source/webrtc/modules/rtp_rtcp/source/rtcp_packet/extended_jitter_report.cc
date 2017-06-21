@@ -39,6 +39,10 @@ constexpr uint8_t ExtendedJitterReport::kPacketType;
 //  (inside a compound RTCP packet), and MUST have the same value for RC
 //  (reception report count) as the receiver report.
 
+ExtendedJitterReport::ExtendedJitterReport() = default;
+
+ExtendedJitterReport::~ExtendedJitterReport() = default;
+
 bool ExtendedJitterReport::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);
 
@@ -65,6 +69,10 @@ bool ExtendedJitterReport::SetJitterValues(std::vector<uint32_t> values) {
   }
   inter_arrival_jitters_ = std::move(values);
   return true;
+}
+
+size_t ExtendedJitterReport::BlockLength() const {
+  return kHeaderLength + kJitterSizeBytes * inter_arrival_jitters_.size();
 }
 
 bool ExtendedJitterReport::Create(

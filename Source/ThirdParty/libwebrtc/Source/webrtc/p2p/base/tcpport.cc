@@ -96,23 +96,9 @@ TCPPort::TCPPort(rtc::Thread* thread,
       error_(0) {
   // TODO(mallinath) - Set preference value as per RFC 6544.
   // http://b/issue?id=7141794
-}
-
-bool TCPPort::Init() {
   if (allow_listen_) {
-    // Treat failure to create or bind a TCP socket as fatal.  This
-    // should never happen.
-    socket_ = socket_factory()->CreateServerTcpSocket(
-        rtc::SocketAddress(ip(), 0), min_port(), max_port(),
-        false /* ssl */);
-    if (!socket_) {
-      LOG_J(LS_ERROR, this) << "TCP socket creation failed.";
-      return false;
-    }
-    socket_->SignalNewConnection.connect(this, &TCPPort::OnNewConnection);
-    socket_->SignalAddressReady.connect(this, &TCPPort::OnAddressReady);
+    TryCreateServerSocket();
   }
-  return true;
 }
 
 TCPPort::~TCPPort() {
@@ -157,10 +143,19 @@ Connection* TCPPort::CreateConnection(const Candidate& address,
   TCPConnection* conn = NULL;
   if (rtc::AsyncPacketSocket* socket =
       GetIncoming(address.address(), true)) {
+    // Incoming connection; we already created a socket and connected signals,
+    // so we need to hand off the "read packet" responsibility to
+    // TCPConnection.
     socket->SignalReadPacket.disconnect(this);
     conn = new TCPConnection(this, address, socket);
   } else {
+    // Outgoing connection, which will create a new socket for which we still
+    // need to connect SignalReadyToSend and SignalSentPacket.
     conn = new TCPConnection(this, address);
+    if (conn->socket()) {
+      conn->socket()->SignalReadyToSend.connect(this, &TCPPort::OnReadyToSend);
+      conn->socket()->SignalSentPacket.connect(this, &TCPPort::OnSentPacket);
+    }
   }
   AddOrReplaceConnection(conn);
   return conn;
@@ -263,6 +258,18 @@ void TCPPort::OnNewConnection(rtc::AsyncPacketSocket* socket,
   LOG_J(LS_VERBOSE, this) << "Accepted connection from "
                           << incoming.addr.ToSensitiveString();
   incoming_.push_back(incoming);
+}
+
+void TCPPort::TryCreateServerSocket() {
+  socket_ = socket_factory()->CreateServerTcpSocket(
+      rtc::SocketAddress(ip(), 0), min_port(), max_port(), false /* ssl */);
+  if (!socket_) {
+    LOG_J(LS_WARNING, this)
+        << "TCP server socket creation failed; continuing anyway.";
+    return;
+  }
+  socket_->SignalNewConnection.connect(this, &TCPPort::OnNewConnection);
+  socket_->SignalAddressReady.connect(this, &TCPPort::OnAddressReady);
 }
 
 rtc::AsyncPacketSocket* TCPPort::GetIncoming(

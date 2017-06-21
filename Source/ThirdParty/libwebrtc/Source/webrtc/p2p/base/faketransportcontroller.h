@@ -35,26 +35,39 @@ class FakeTransportController : public TransportController {
   FakeTransportController()
       : TransportController(rtc::Thread::Current(),
                             rtc::Thread::Current(),
-                            nullptr) {}
+                            nullptr,
+                            /*redetermine_role_on_ice_restart=*/true,
+                            rtc::CryptoOptions()) {}
 
   explicit FakeTransportController(bool redetermine_role_on_ice_restart)
       : TransportController(rtc::Thread::Current(),
                             rtc::Thread::Current(),
                             nullptr,
-                            redetermine_role_on_ice_restart) {}
+                            redetermine_role_on_ice_restart,
+                            rtc::CryptoOptions()) {}
 
   explicit FakeTransportController(IceRole role)
       : TransportController(rtc::Thread::Current(),
                             rtc::Thread::Current(),
-                            nullptr) {
+                            nullptr,
+                            /*redetermine_role_on_ice_restart=*/true,
+                            rtc::CryptoOptions()) {
     SetIceRole(role);
   }
 
   explicit FakeTransportController(rtc::Thread* network_thread)
-      : TransportController(rtc::Thread::Current(), network_thread, nullptr) {}
+      : TransportController(rtc::Thread::Current(),
+                            network_thread,
+                            nullptr,
+                            /*redetermine_role_on_ice_restart=*/true,
+                            rtc::CryptoOptions()) {}
 
   FakeTransportController(rtc::Thread* network_thread, IceRole role)
-      : TransportController(rtc::Thread::Current(), network_thread, nullptr) {
+      : TransportController(rtc::Thread::Current(),
+                            network_thread,
+                            nullptr,
+                            /*redetermine_role_on_ice_restart=*/true,
+                            rtc::CryptoOptions()) {
     SetIceRole(role);
   }
 

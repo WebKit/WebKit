@@ -29,6 +29,7 @@ namespace webrtc {
 
 struct AecCore;
 
+class AecDump;
 class AudioFrame;
 
 class NonlinearBeamformer;
@@ -267,6 +268,14 @@ class AudioProcessing {
     struct EchoCanceller3 {
       bool enabled = false;
     } echo_canceller3;
+
+    // Enables the next generation AGC functionality. This feature replaces the
+    // standard methods of gain control in the previous AGC.
+    // The functionality is not yet activated in the code and turning this on
+    // does not yet have the desired behavior.
+    struct GainController2 {
+      bool enabled = false;
+    } gain_controller2;
   };
 
   // TODO(mgraczyk): Remove once all methods that use ChannelLayout are gone.
@@ -429,7 +438,7 @@ class AudioProcessing {
   //     t_render is the time the first sample of the same frame is rendered by
   //     the audio hardware.
   //   - t_capture is the time the first sample of a frame is captured by the
-  //     audio hardware and t_pull is the time the same frame is passed to
+  //     audio hardware and t_process is the time the same frame is passed to
   //     ProcessStream().
   virtual int set_stream_delay_ms(int delay) = 0;
   virtual int stream_delay_ms() const = 0;
@@ -446,6 +455,20 @@ class AudioProcessing {
   // set_stream_delay_ms() to return an error.
   virtual void set_delay_offset_ms(int offset) = 0;
   virtual int delay_offset_ms() const = 0;
+
+  // Attaches provided webrtc::AecDump for recording debugging
+  // information. Log file and maximum file size logic is supposed to
+  // be handled by implementing instance of AecDump. Calling this
+  // method when another AecDump is attached resets the active AecDump
+  // with a new one. This causes the d-tor of the earlier AecDump to
+  // be called. The d-tor call may block until all pending logging
+  // tasks are completed.
+  virtual void AttachAecDump(std::unique_ptr<AecDump> aec_dump) = 0;
+
+  // If no AecDump is attached, this has no effect. If an AecDump is
+  // attached, it's destructor is called. The d-tor may block until
+  // all pending logging tasks are completed.
+  virtual void DetachAecDump() = 0;
 
   // Starts recording debugging information to a file specified by |filename|,
   // a NULL-terminated string. If there is an ongoing recording, the old file
@@ -558,6 +581,9 @@ class AudioProcessing {
   virtual LevelEstimator* level_estimator() const = 0;
   virtual NoiseSuppression* noise_suppression() const = 0;
   virtual VoiceDetection* voice_detection() const = 0;
+
+  // Returns the last applied configuration.
+  virtual AudioProcessing::Config GetConfig() const = 0;
 
   enum Error {
     // Fatal errors.

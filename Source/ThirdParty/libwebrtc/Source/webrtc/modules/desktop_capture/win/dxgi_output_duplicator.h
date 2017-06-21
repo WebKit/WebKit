@@ -26,6 +26,7 @@
 #include "webrtc/modules/desktop_capture/desktop_frame_rotation.h"
 #include "webrtc/modules/desktop_capture/shared_desktop_frame.h"
 #include "webrtc/modules/desktop_capture/win/d3d_device.h"
+#include "webrtc/modules/desktop_capture/win/dxgi_context.h"
 #include "webrtc/modules/desktop_capture/win/dxgi_texture.h"
 
 namespace webrtc {
@@ -34,12 +35,7 @@ namespace webrtc {
 // video card. None of functions in this class is thread-safe.
 class DxgiOutputDuplicator {
  public:
-  struct Context {
-    // The updated region DxgiOutputDuplicator::DetectUpdatedRegion() output
-    // during last Duplicate() function call. It's a DesktopRegion translated by
-    // offset of each DxgiOutputDuplicator instance.
-    DesktopRegion updated_region;
-  };
+  using Context = DxgiOutputContext;
 
   // Creates an instance of DxgiOutputDuplicator from a D3dDevice and one of its
   // IDXGIOutput1. Caller must maintain the lifetime of device, to make sure it
@@ -79,12 +75,13 @@ class DxgiOutputDuplicator {
   // How many frames have been captured by this DxigOutputDuplicator.
   int64_t num_frames_captured() const;
 
+  // Moves |desktop_rect_|. See DxgiDuplicatorController::TranslateRect().
+  void TranslateRect(const DesktopVector& position);
+
  private:
-  // Detects updated region translated by offset from IDXGIOutput1. This
-  // function will set the |updated_region| as entire DesktopRect starts from
-  // offset if it failed to execute Windows APIs.
+  // Calls DoDetectUpdatedRegion(). If it fails, this function sets the
+  // |updated_region| as entire UntranslatedDesktopRect().
   void DetectUpdatedRegion(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
-                           DesktopVector offset,
                            DesktopRegion* updated_region);
 
   // Returns untranslated updated region, which are directly returned by Windows
@@ -98,17 +95,24 @@ class DxgiOutputDuplicator {
   // Returns false if system does not support IDXGIOutputDuplication.
   bool DuplicateOutput();
 
-  // Returns a DesktopRect with the same size of desktop_size_, but translated
+  // Returns a DesktopRect with the same size of desktop_size(), but translated
   // by offset.
-  DesktopRect TranslatedDesktopRect(DesktopVector offset);
+  DesktopRect GetTranslatedDesktopRect(DesktopVector offset) const;
+
+  // Returns a DesktopRect with the same size of desktop_size(), but starts from
+  // (0, 0).
+  DesktopRect GetUntranslatedDesktopRect() const;
 
   // Spreads changes from |context| to other registered Context(s) in
   // contexts_.
   void SpreadContextChange(const Context* const context);
 
+  // Returns the size of desktop rectangle current instance representing.
+  DesktopSize desktop_size() const;
+
   const D3dDevice device_;
   const Microsoft::WRL::ComPtr<IDXGIOutput1> output_;
-  const DesktopRect desktop_rect_;
+  DesktopRect desktop_rect_;
   Microsoft::WRL::ComPtr<IDXGIOutputDuplication> duplication_;
   DXGI_OUTDUPL_DESC desc_;
   std::vector<uint8_t> metadata_;
@@ -128,7 +132,7 @@ class DxgiOutputDuplicator {
   std::unique_ptr<SharedDesktopFrame> last_frame_;
   DesktopVector last_frame_offset_;
 
-  int64_t num_frames_captured_;
+  int64_t num_frames_captured_ = 0;
 };
 
 }  // namespace webrtc

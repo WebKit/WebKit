@@ -11,12 +11,21 @@
 #ifndef WEBRTC_MEDIA_ENGINE_APM_HELPERS_H_
 #define WEBRTC_MEDIA_ENGINE_APM_HELPERS_H_
 
-#include "webrtc/common_types.h"
-
 namespace webrtc {
 
 class AudioProcessing;
 class AudioDeviceModule;
+
+enum EcModes {
+  kEcConference,     // Conferencing default (aggressive AEC).
+  kEcAecm,           // AEC mobile.
+};
+
+struct AgcConfig {
+  unsigned short targetLeveldBOv;
+  unsigned short digitalCompressionGaindB;
+  bool limiterEnable;
+};
 
 namespace apm_helpers {
 
@@ -25,8 +34,7 @@ void SetAgcConfig(AudioProcessing* apm,
                   const AgcConfig& config);
 void SetAgcStatus(AudioProcessing* apm,
                   AudioDeviceModule* adm,
-                  bool enable,
-                  AgcModes mode);
+                  bool enable);
 void SetEcStatus(AudioProcessing* apm,
                  bool enable,
                  EcModes mode);

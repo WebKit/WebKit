@@ -21,9 +21,13 @@ const bool kErrorConcealmentOn = false;
 const bool kDenoisingOn = false;
 const bool kFrameDropperOn = true;
 const bool kSpatialResizeOn = false;
+const bool kResilienceOn = false;
 const VideoCodecType kVideoCodecType[] = {kVideoCodecVP8};
 const bool kHwCodec = false;
 const bool kUseSingleCore = true;
+
+// Test settings.
+const bool kBatchMode = true;
 
 // Packet loss probability [0.0, 1.0].
 const float kPacketLoss = 0.0f;
@@ -59,31 +63,39 @@ class PlotVideoProcessorIntegrationTest
                    0);  // frame_index_rate_update
     rate_profile.frame_index_rate_update[1] = kNumFramesLong + 1;
     rate_profile.num_frames = kNumFramesLong;
+
     // Codec/network settings.
     CodecParams process_settings;
-    SetCodecParams(&process_settings, codec_type_, kHwCodec, kUseSingleCore,
-                   kPacketLoss,
-                   -1,  // key_frame_interval
-                   1,   // num_temporal_layers
-                   kErrorConcealmentOn, kDenoisingOn, kFrameDropperOn,
-                   kSpatialResizeOn, width, height, filename, kVerboseLogging);
-    // Thresholds for expected quality (PSNR avg, PSNR min, SSIM avg, SSIM min).
+    SetCodecParams(
+        &process_settings, codec_type_, kHwCodec, kUseSingleCore, kPacketLoss,
+        -1,  // key_frame_interval
+        1,   // num_temporal_layers
+        kErrorConcealmentOn, kDenoisingOn, kFrameDropperOn, kSpatialResizeOn,
+        kResilienceOn, width, height, filename, kVerboseLogging, kBatchMode);
+
+    // Use default thresholds for quality (PSNR and SSIM).
     QualityThresholds quality_thresholds;
-    SetQualityThresholds(&quality_thresholds, 15.0, 10.0, 0.2, 0.1);
-    // Thresholds for rate control.
+
+    // Use very loose thresholds for rate control, so even poor HW codecs will
+    // pass the requirements.
     RateControlThresholds rc_thresholds[1];
-    SetRateControlThresholds(rc_thresholds,
-                             0,    // update_index
-                             300,  // max_num_dropped_frames,
-                             400,  // max_key_frame_size_mismatch
-                             200,  // max_delta_frame_size_mismatch
-                             100,  // max_encoding_rate_mismatch
-                             300,  // max_time_hit_target
-                             0,    // num_spatial_resizes
-                             1);   // num_key_frames
+    // clang-format off
+    SetRateControlThresholds(
+      rc_thresholds,
+      0,                   // update_index
+      kNumFramesLong + 1,  // max_num_dropped_frames
+      10000,               // max_key_frame_size_mismatch
+      10000,               // max_delta_frame_size_mismatch
+      10000,               // max_encoding_rate_mismatch
+      kNumFramesLong + 1,  // max_time_hit_target
+      0,                   // num_spatial_resizes
+      1);                  // num_key_frames
+    // clang-format on
+
     ProcessFramesAndVerify(quality_thresholds, rate_profile, process_settings,
                            rc_thresholds, &kVisualizationParams);
   }
+
   const int bitrate_;
   const int framerate_;
   const VideoCodecType codec_type_;

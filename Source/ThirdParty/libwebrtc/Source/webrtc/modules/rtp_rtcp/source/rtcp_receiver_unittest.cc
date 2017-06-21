@@ -28,10 +28,8 @@
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rapid_resync_request.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/remb.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rpsi.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sli.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_receiver.h"
@@ -65,8 +63,6 @@ class MockRtcpPacketTypeCounterObserver : public RtcpPacketTypeCounterObserver {
 class MockRtcpIntraFrameObserver : public RtcpIntraFrameObserver {
  public:
   MOCK_METHOD1(OnReceivedIntraFrameRequest, void(uint32_t));
-  MOCK_METHOD2(OnReceivedSLI, void(uint32_t, uint8_t));
-  MOCK_METHOD2(OnReceivedRPSI, void(uint32_t, uint64_t));
 };
 
 class MockRtcpCallbackImpl : public RtcpStatisticsCallback {
@@ -77,10 +73,11 @@ class MockRtcpCallbackImpl : public RtcpStatisticsCallback {
 
 class MockTransportFeedbackObserver : public TransportFeedbackObserver {
  public:
-  MOCK_METHOD2(AddPacket, void(uint16_t, size_t));
-  MOCK_METHOD3(AddPacket, void(uint16_t, size_t, const PacedPacketInfo&));
+  MOCK_METHOD3(AddPacket, void(uint32_t, uint16_t, size_t));
+  MOCK_METHOD4(AddPacket,
+               void(uint32_t, uint16_t, size_t, const PacedPacketInfo&));
   MOCK_METHOD1(OnTransportFeedback, void(const rtcp::TransportFeedback&));
-  MOCK_CONST_METHOD0(GetTransportFeedbackVector, std::vector<PacketInfo>());
+  MOCK_CONST_METHOD0(GetTransportFeedbackVector, std::vector<PacketFeedback>());
 };
 
 class MockRtcpBandwidthObserver : public RtcpBandwidthObserver {
@@ -174,60 +171,6 @@ TEST_F(RtcpReceiverTest, InvalidFeedbackPacketIsIgnored) {
   // is not called once parser would be adjusted to avoid that callback on
   // semi-valid packets.
   InjectRtcpPacket(bad_packet);
-}
-
-TEST_F(RtcpReceiverTest, RpsiWithFractionalPaddingIsIgnored) {
-  // Padding size represent fractional number of bytes.
-  const uint8_t kPaddingSizeBits = 0x0b;
-  // clang-format off
-  const uint8_t bad_packet[] = {0x80 | rtcp::Rpsi::kFeedbackMessageType,
-                                      rtcp::Rpsi::kPacketType, 0, 3,
-                                0x12, 0x34, 0x56, 0x78,
-                                0x98, 0x76, 0x54, 0x32,
-                                kPaddingSizeBits, 0x00, 0x00, 0x00};
-  // clang-format on
-  EXPECT_CALL(intra_frame_observer_, OnReceivedRPSI(_, _)).Times(0);
-  InjectRtcpPacket(bad_packet);
-}
-
-TEST_F(RtcpReceiverTest, RpsiWithTooLargePaddingIsIgnored) {
-  // Padding size exceeds packet size.
-  const uint8_t kPaddingSizeBits = 0xa8;
-  // clang-format off
-  const uint8_t bad_packet[] = {0x80 | rtcp::Rpsi::kFeedbackMessageType,
-                                      rtcp::Rpsi::kPacketType, 0, 3,
-                                0x12, 0x34, 0x56, 0x78,
-                                0x98, 0x76, 0x54, 0x32,
-                                kPaddingSizeBits, 0x00, 0x00, 0x00};
-  // clang-format on
-  EXPECT_CALL(intra_frame_observer_, OnReceivedRPSI(_, _)).Times(0);
-  InjectRtcpPacket(bad_packet);
-}
-
-// With parsing using rtcp classes this test will make no sense.
-// With current stateful parser this test was failing.
-TEST_F(RtcpReceiverTest, TwoHalfValidRpsiAreIgnored) {
-  // clang-format off
-  const uint8_t bad_packet[] = {0x80 | rtcp::Rpsi::kFeedbackMessageType,
-                                      rtcp::Rpsi::kPacketType, 0, 2,
-                                0x12, 0x34, 0x56, 0x78,
-                                0x98, 0x76, 0x54, 0x32,
-                                0x80 | rtcp::Rpsi::kFeedbackMessageType,
-                                      rtcp::Rpsi::kPacketType, 0, 2,
-                                0x12, 0x34, 0x56, 0x78,
-                                0x98, 0x76, 0x54, 0x32};
-  // clang-format on
-  EXPECT_CALL(intra_frame_observer_, OnReceivedRPSI(_, _)).Times(0);
-  InjectRtcpPacket(bad_packet);
-}
-
-TEST_F(RtcpReceiverTest, InjectRpsiPacket) {
-  const uint64_t kPictureId = 0x123456789;
-  rtcp::Rpsi rpsi;
-  rpsi.SetPictureId(kPictureId);
-
-  EXPECT_CALL(intra_frame_observer_, OnReceivedRPSI(_, kPictureId));
-  InjectRtcpPacket(rpsi);
 }
 
 TEST_F(RtcpReceiverTest, InjectSrPacket) {
@@ -682,15 +625,6 @@ TEST_F(RtcpReceiverTest, FirPacketNotToUsIgnored) {
 
   EXPECT_CALL(intra_frame_observer_, OnReceivedIntraFrameRequest(_)).Times(0);
   InjectRtcpPacket(fir);
-}
-
-TEST_F(RtcpReceiverTest, InjectSliPacket) {
-  const uint8_t kPictureId = 40;
-  rtcp::Sli sli;
-  sli.AddPictureId(kPictureId);
-
-  EXPECT_CALL(intra_frame_observer_, OnReceivedSLI(_, kPictureId));
-  InjectRtcpPacket(sli);
 }
 
 TEST_F(RtcpReceiverTest, ExtendedReportsPacketWithZeroReportBlocksIgnored) {

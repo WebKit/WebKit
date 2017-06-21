@@ -116,7 +116,6 @@ rtc_source_set("common_audio_c") {
     "signal_processing/copy_set_operations.c",
     "signal_processing/cross_correlation.c",
     "signal_processing/division_operations.c",
-    "signal_processing/dot_product_with_scale.c",
     "signal_processing/downsample_fast.c",
     "signal_processing/energy.c",
     "signal_processing/filter_ar.c",
@@ -200,6 +199,23 @@ rtc_source_set("common_audio_c") {
   if (is_win) {
     cflags = [ "/wd4334" ]  # Ignore warning on shift operator promotion.
   }
+
+  public_configs = [ ":common_audio_config" ]
+  deps = [
+    ":common_audio_cc",
+    "..:webrtc_common",
+    "../base:compile_assert_c",
+    "../base:rtc_base_approved",
+    "../system_wrappers:system_wrappers",
+  ]
+}
+
+rtc_source_set("common_audio_cc") {
+  visibility = [ ":*" ]  # Only targets in this file can depend on this.
+  sources = [
+    "signal_processing/dot_product_with_scale.cc",
+    "signal_processing/dot_product_with_scale.h",
+  ]
 
   public_configs = [ ":common_audio_config" ]
   deps = [
@@ -381,6 +397,7 @@ if (rtc_include_tests) {
       ":sinc_resampler",
       "..:webrtc_common",
       "../base:rtc_base_approved",
+      "../base:rtc_base_tests_utils",
       "../system_wrappers",
       "../test:test_main",
       "//testing/gmock",

@@ -13,9 +13,9 @@
 
 #include <memory>
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/video_coding/codec_timer.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -114,7 +114,7 @@ class VCMTiming {
  private:
   void UpdateHistograms() const;
 
-  CriticalSectionWrapper* crit_sect_;
+  rtc::CriticalSection crit_sect_;
   Clock* const clock_;
   bool master_ GUARDED_BY(crit_sect_);
   TimestampExtrapolator* ts_extrapolator_ GUARDED_BY(crit_sect_);

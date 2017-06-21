@@ -9,6 +9,7 @@
  */
 
 #include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "webrtc/media/engine/webrtcmediaengine.h"
 #include "webrtc/test/gtest.h"
 
@@ -188,7 +189,8 @@ TEST(WebRtcMediaEngineFactoryTest, CreateOldApi) {
 
 TEST(WebRtcMediaEngineFactoryTest, CreateWithBuiltinDecoders) {
   std::unique_ptr<MediaEngineInterface> engine(WebRtcMediaEngineFactory::Create(
-      nullptr, webrtc::CreateBuiltinAudioDecoderFactory(), nullptr, nullptr));
+      nullptr, webrtc::CreateBuiltinAudioEncoderFactory(),
+      webrtc::CreateBuiltinAudioDecoderFactory(), nullptr, nullptr));
   EXPECT_TRUE(engine);
 }
 

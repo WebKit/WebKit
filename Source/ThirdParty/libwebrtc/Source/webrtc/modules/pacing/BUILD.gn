@@ -26,16 +26,27 @@ rtc_static_library("pacing") {
   }
 
   deps = [
-    "../..:webrtc_common",
+    "..:module_api",
+    "../../:webrtc_common",
     "../../base:rtc_base_approved",
+    "../../logging:rtc_event_log_api",
     "../../system_wrappers",
+    "../remote_bitrate_estimator",
     "../rtp_rtcp",
+    "../utility",
   ]
 }
 
 if (rtc_include_tests) {
   rtc_source_set("pacing_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
       "alr_detector_unittest.cc",
       "bitrate_prober_unittest.cc",
@@ -45,10 +56,11 @@ if (rtc_include_tests) {
     deps = [
       ":pacing",
       "../../base:rtc_base_approved",
+      "../../base:rtc_base_tests_utils",
       "../../system_wrappers:system_wrappers",
       "../../test:test_support",
       "../rtp_rtcp",
-      "../rtp_rtcp:rtp_rtcp_unittests",
+      "../rtp_rtcp:mock_rtp_rtcp",
       "//testing/gmock",
     ]
 

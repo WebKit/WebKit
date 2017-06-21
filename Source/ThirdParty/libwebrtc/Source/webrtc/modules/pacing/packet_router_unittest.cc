@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "webrtc/base/checks.h"
+#include "webrtc/base/fakeclock.h"
 #include "webrtc/modules/pacing/packet_router.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
 #include "webrtc/modules/rtp_rtcp/mocks/mock_rtp_rtcp.h"
@@ -39,8 +40,8 @@ class PacketRouterTest : public ::testing::Test {
 TEST_F(PacketRouterTest, TimeToSendPacket) {
   MockRtpRtcp rtp_1;
   MockRtpRtcp rtp_2;
-  packet_router_->AddRtpModule(&rtp_1);
-  packet_router_->AddRtpModule(&rtp_2);
+  packet_router_->AddSendRtpModule(&rtp_1);
+  packet_router_->AddSendRtpModule(&rtp_2);
 
   const uint16_t kSsrc1 = 1234;
   uint16_t sequence_number = 17;
@@ -98,7 +99,7 @@ TEST_F(PacketRouterTest, TimeToSendPacket) {
       kSsrc1 + kSsrc2, sequence_number, timestamp, retransmission,
       PacedPacketInfo(1, kProbeMinProbes, kProbeMinBytes)));
 
-  packet_router_->RemoveRtpModule(&rtp_1);
+  packet_router_->RemoveSendRtpModule(&rtp_1);
 
   // rtp_1 has been removed, try sending a packet on that ssrc and make sure
   // it is dropped as expected by not expecting any calls to rtp_1.
@@ -110,7 +111,7 @@ TEST_F(PacketRouterTest, TimeToSendPacket) {
       PacedPacketInfo(PacedPacketInfo::kNotAProbe, kProbeMinBytes,
                       kProbeMinBytes)));
 
-  packet_router_->RemoveRtpModule(&rtp_2);
+  packet_router_->RemoveSendRtpModule(&rtp_2);
 }
 
 TEST_F(PacketRouterTest, TimeToSendPadding) {
@@ -124,8 +125,8 @@ TEST_F(PacketRouterTest, TimeToSendPadding) {
   // rtp_2 will be prioritized for padding.
   EXPECT_CALL(rtp_2, RtxSendStatus()).WillOnce(Return(kRtxRedundantPayloads));
   EXPECT_CALL(rtp_2, SSRC()).WillRepeatedly(Return(kSsrc2));
-  packet_router_->AddRtpModule(&rtp_1);
-  packet_router_->AddRtpModule(&rtp_2);
+  packet_router_->AddSendRtpModule(&rtp_1);
+  packet_router_->AddSendRtpModule(&rtp_2);
 
   // Default configuration, sending padding on all modules sending media,
   // ordered by priority (based on rtx mode).
@@ -191,7 +192,7 @@ TEST_F(PacketRouterTest, TimeToSendPadding) {
                 PacedPacketInfo(PacedPacketInfo::kNotAProbe, kProbeMinBytes,
                                 kProbeMinBytes)));
 
-  packet_router_->RemoveRtpModule(&rtp_1);
+  packet_router_->RemoveSendRtpModule(&rtp_1);
 
   // rtp_1 has been removed, try sending padding and make sure rtp_1 isn't asked
   // to send by not expecting any calls. Instead verify rtp_2 is called.
@@ -204,12 +205,12 @@ TEST_F(PacketRouterTest, TimeToSendPadding) {
                 PacedPacketInfo(PacedPacketInfo::kNotAProbe, kProbeMinBytes,
                                 kProbeMinBytes)));
 
-  packet_router_->RemoveRtpModule(&rtp_2);
+  packet_router_->RemoveSendRtpModule(&rtp_2);
 }
 
 TEST_F(PacketRouterTest, SenderOnlyFunctionsRespectSendingMedia) {
   MockRtpRtcp rtp;
-  packet_router_->AddRtpModule(&rtp);
+  packet_router_->AddSendRtpModule(&rtp);
   static const uint16_t kSsrc = 1234;
   EXPECT_CALL(rtp, SSRC()).WillRepeatedly(Return(kSsrc));
   EXPECT_CALL(rtp, SendingMedia()).WillRepeatedly(Return(false));
@@ -226,7 +227,7 @@ TEST_F(PacketRouterTest, SenderOnlyFunctionsRespectSendingMedia) {
                 200, PacedPacketInfo(PacedPacketInfo::kNotAProbe,
                                      kProbeMinBytes, kProbeMinBytes)));
 
-  packet_router_->RemoveRtpModule(&rtp);
+  packet_router_->RemoveSendRtpModule(&rtp);
 }
 
 TEST_F(PacketRouterTest, AllocateSequenceNumbers) {
@@ -242,18 +243,237 @@ TEST_F(PacketRouterTest, AllocateSequenceNumbers) {
   }
 }
 
-TEST_F(PacketRouterTest, SendFeedback) {
+TEST_F(PacketRouterTest, SendTransportFeedback) {
   MockRtpRtcp rtp_1;
   MockRtpRtcp rtp_2;
-  packet_router_->AddRtpModule(&rtp_1);
-  packet_router_->AddRtpModule(&rtp_2);
+  packet_router_->AddSendRtpModule(&rtp_1);
+  packet_router_->AddReceiveRtpModule(&rtp_2);
 
   rtcp::TransportFeedback feedback;
-  EXPECT_CALL(rtp_1, SendFeedbackPacket(_)).Times(1);
-  packet_router_->SendFeedback(&feedback);
-  packet_router_->RemoveRtpModule(&rtp_1);
-  EXPECT_CALL(rtp_2, SendFeedbackPacket(_)).Times(1);
-  packet_router_->SendFeedback(&feedback);
-  packet_router_->RemoveRtpModule(&rtp_2);
+  EXPECT_CALL(rtp_1, SendFeedbackPacket(_)).Times(1).WillOnce(Return(true));
+  packet_router_->SendTransportFeedback(&feedback);
+  packet_router_->RemoveSendRtpModule(&rtp_1);
+  EXPECT_CALL(rtp_2, SendFeedbackPacket(_)).Times(1).WillOnce(Return(true));
+  packet_router_->SendTransportFeedback(&feedback);
+  packet_router_->RemoveReceiveRtpModule(&rtp_2);
 }
+
+TEST(PacketRouterRembTest, PreferSendModuleOverReceiveModule) {
+  rtc::ScopedFakeClock clock;
+  MockRtpRtcp rtp_recv;
+  MockRtpRtcp rtp_send;
+  PacketRouter packet_router;
+
+  EXPECT_CALL(rtp_recv, SetREMBStatus(true)).Times(1);
+  packet_router.AddReceiveRtpModule(&rtp_recv);
+
+  const uint32_t bitrate_estimate = 456;
+  const std::vector<uint32_t> ssrcs = {1234};
+
+  ON_CALL(rtp_recv, REMB()).WillByDefault(Return(true));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Call OnReceiveBitrateChanged twice to get a first estimate.
+  clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1000));
+  EXPECT_CALL(rtp_recv, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Add a send module, which should be preferred over the receive module.
+  EXPECT_CALL(rtp_recv, SetREMBStatus(false)).Times(1);
+  EXPECT_CALL(rtp_send, SetREMBStatus(true)).Times(1);
+  packet_router.AddSendRtpModule(&rtp_send);
+  ON_CALL(rtp_recv, REMB()).WillByDefault(Return(false));
+  ON_CALL(rtp_send, REMB()).WillByDefault(Return(true));
+
+  // Lower bitrate to send another REMB packet.
+  EXPECT_CALL(rtp_send, SetREMBData(bitrate_estimate - 100, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate - 100);
+
+  EXPECT_CALL(rtp_send, SetREMBStatus(false)).Times(1);
+  EXPECT_CALL(rtp_recv, SetREMBStatus(true)).Times(1);
+  packet_router.RemoveSendRtpModule(&rtp_send);
+  EXPECT_CALL(rtp_recv, SetREMBStatus(false)).Times(1);
+  packet_router.RemoveReceiveRtpModule(&rtp_recv);
+}
+
+TEST(PacketRouterRembTest, LowerEstimateToSendRemb) {
+  rtc::ScopedFakeClock clock;
+  MockRtpRtcp rtp;
+  PacketRouter packet_router;
+
+  EXPECT_CALL(rtp, SetREMBStatus(true)).Times(1);
+  packet_router.AddSendRtpModule(&rtp);
+
+  uint32_t bitrate_estimate = 456;
+  const std::vector<uint32_t> ssrcs = {1234};
+
+  ON_CALL(rtp, REMB()).WillByDefault(Return(true));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Call OnReceiveBitrateChanged twice to get a first estimate.
+  clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1000));
+  EXPECT_CALL(rtp, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Lower the estimate with more than 3% to trigger a call to SetREMBData right
+  // away.
+  bitrate_estimate = bitrate_estimate - 100;
+  EXPECT_CALL(rtp, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  EXPECT_CALL(rtp, SetREMBStatus(false)).Times(1);
+  packet_router.RemoveSendRtpModule(&rtp);
+}
+
+TEST(PacketRouterRembTest, VerifyIncreasingAndDecreasing) {
+  rtc::ScopedFakeClock clock;
+  MockRtpRtcp rtp;
+  PacketRouter packet_router;
+  packet_router.AddSendRtpModule(&rtp);
+
+  uint32_t bitrate_estimate[] = {456, 789};
+  std::vector<uint32_t> ssrcs = {1234, 5678};
+
+  ON_CALL(rtp, REMB()).WillByDefault(Return(true));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate[0]);
+
+  // Call OnReceiveBitrateChanged twice to get a first estimate.
+  EXPECT_CALL(rtp, SetREMBData(bitrate_estimate[0], ssrcs)).Times(1);
+  clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1000));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate[0]);
+
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate[1] + 100);
+
+  // Lower the estimate to trigger a callback.
+  EXPECT_CALL(rtp, SetREMBData(bitrate_estimate[1], ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate[1]);
+
+  packet_router.RemoveSendRtpModule(&rtp);
+}
+
+TEST(PacketRouterRembTest, NoRembForIncreasedBitrate) {
+  rtc::ScopedFakeClock clock;
+  MockRtpRtcp rtp;
+  PacketRouter packet_router;
+  packet_router.AddSendRtpModule(&rtp);
+
+  uint32_t bitrate_estimate = 456;
+  std::vector<uint32_t> ssrcs = {1234, 5678};
+
+  ON_CALL(rtp, REMB()).WillByDefault(Return(true));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Call OnReceiveBitrateChanged twice to get a first estimate.
+  EXPECT_CALL(rtp, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1000));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Increased estimate shouldn't trigger a callback right away.
+  EXPECT_CALL(rtp, SetREMBData(_, _)).Times(0);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate + 1);
+
+  // Decreasing the estimate less than 3% shouldn't trigger a new callback.
+  EXPECT_CALL(rtp, SetREMBData(_, _)).Times(0);
+  int lower_estimate = bitrate_estimate * 98 / 100;
+  packet_router.OnReceiveBitrateChanged(ssrcs, lower_estimate);
+
+  packet_router.RemoveSendRtpModule(&rtp);
+}
+
+TEST(PacketRouterRembTest, ChangeSendRtpModule) {
+  rtc::ScopedFakeClock clock;
+  MockRtpRtcp rtp_send;
+  MockRtpRtcp rtp_recv;
+  PacketRouter packet_router;
+  packet_router.AddSendRtpModule(&rtp_send);
+  packet_router.AddReceiveRtpModule(&rtp_recv);
+
+  uint32_t bitrate_estimate = 456;
+  std::vector<uint32_t> ssrcs = {1234, 5678};
+
+  ON_CALL(rtp_send, REMB()).WillByDefault(Return(true));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Call OnReceiveBitrateChanged twice to get a first estimate.
+  clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1000));
+  EXPECT_CALL(rtp_send, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Decrease estimate to trigger a REMB.
+  bitrate_estimate = bitrate_estimate - 100;
+  EXPECT_CALL(rtp_send, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Remove the sending module -> should get remb on the second module.
+  packet_router.RemoveSendRtpModule(&rtp_send);
+
+  ON_CALL(rtp_send, REMB()).WillByDefault(Return(false));
+  ON_CALL(rtp_recv, REMB()).WillByDefault(Return(true));
+
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  bitrate_estimate = bitrate_estimate - 100;
+  EXPECT_CALL(rtp_recv, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  packet_router.RemoveReceiveRtpModule(&rtp_recv);
+}
+
+TEST(PacketRouterRembTest, OnlyOneRembForRepeatedOnReceiveBitrateChanged) {
+  rtc::ScopedFakeClock clock;
+  MockRtpRtcp rtp;
+  PacketRouter packet_router;
+  packet_router.AddSendRtpModule(&rtp);
+
+  uint32_t bitrate_estimate = 456;
+  const std::vector<uint32_t> ssrcs = {1234};
+
+  ON_CALL(rtp, REMB()).WillByDefault(Return(true));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Call OnReceiveBitrateChanged twice to get a first estimate.
+  clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1000));
+  EXPECT_CALL(rtp, SetREMBData(_, _)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Lower the estimate, should trigger a call to SetREMBData right away.
+  bitrate_estimate = bitrate_estimate - 100;
+  EXPECT_CALL(rtp, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Call OnReceiveBitrateChanged again, this should not trigger a new callback.
+  EXPECT_CALL(rtp, SetREMBData(_, _)).Times(0);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+  packet_router.RemoveSendRtpModule(&rtp);
+}
+
+// Only register receiving modules and make sure we fallback to trigger a REMB
+// packet on this one.
+TEST(PacketRouterRembTest, NoSendingRtpModule) {
+  rtc::ScopedFakeClock clock;
+  MockRtpRtcp rtp;
+  PacketRouter packet_router;
+
+  EXPECT_CALL(rtp, SetREMBStatus(true)).Times(1);
+  packet_router.AddReceiveRtpModule(&rtp);
+
+  uint32_t bitrate_estimate = 456;
+  const std::vector<uint32_t> ssrcs = {1234};
+
+  ON_CALL(rtp, REMB()).WillByDefault(Return(true));
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Call OnReceiveBitrateChanged twice to get a first estimate.
+  clock.AdvanceTime(rtc::TimeDelta::FromMilliseconds(1000));
+  EXPECT_CALL(rtp, SetREMBData(bitrate_estimate, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate);
+
+  // Lower the estimate to trigger a new packet REMB packet.
+  EXPECT_CALL(rtp, SetREMBData(bitrate_estimate - 100, ssrcs)).Times(1);
+  packet_router.OnReceiveBitrateChanged(ssrcs, bitrate_estimate - 100);
+
+  EXPECT_CALL(rtp, SetREMBStatus(false)).Times(1);
+  packet_router.RemoveReceiveRtpModule(&rtp);
+}
+
 }  // namespace webrtc

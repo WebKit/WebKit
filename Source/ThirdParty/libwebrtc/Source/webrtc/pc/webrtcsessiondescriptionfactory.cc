@@ -378,7 +378,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
     for (const cricket::ContentInfo& content :
          session_->local_description()->description()->contents()) {
       // Include all local ICE candidates in the SessionDescription unless
-      // the remote peer has requested an ICE restart.
+      // an ICE restart was requested.
       if (!request.options.transport_options[content.name].ice_restart) {
         CopyCandidatesFromSessionDescription(session_->local_description(),
                                              content.name, offer);

@@ -35,7 +35,7 @@ class RealFourier {
   // Construct a wrapper instance for the given input order, which must be
   // between 1 and kMaxFftOrder, inclusively.
   static std::unique_ptr<RealFourier> Create(int fft_order);
-  virtual ~RealFourier() {};
+  virtual ~RealFourier() {}
 
   // Helper to compute the smallest FFT order (a power of 2) which will contain
   // the given input length.

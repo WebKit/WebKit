@@ -169,7 +169,7 @@ TEST(AudioMixer, LargestEnergyVadActiveMixed) {
 
     // We set the 80-th sample value since the first 80 samples may be
     // modified by a ramped-in window.
-    participants[i].fake_frame()->data_[80] = i;
+    participants[i].fake_frame()->mutable_data()[80] = i;
 
     EXPECT_TRUE(mixer->AddSource(&participants[i]));
     EXPECT_CALL(participants[i], GetAudioFrameWithInfo(_, _)).Times(Exactly(1));
@@ -208,8 +208,9 @@ TEST(AudioMixer, FrameNotModifiedForSingleParticipant) {
   const size_t n_samples = participant.fake_frame()->samples_per_channel_;
 
   // Modify the frame so that it's not zero.
+  int16_t* fake_frame_data = participant.fake_frame()->mutable_data();
   for (size_t j = 0; j < n_samples; ++j) {
-    participant.fake_frame()->data_[j] = static_cast<int16_t>(j);
+    fake_frame_data[j] = static_cast<int16_t>(j);
   }
 
   EXPECT_TRUE(mixer->AddSource(&participant));
@@ -223,7 +224,8 @@ TEST(AudioMixer, FrameNotModifiedForSingleParticipant) {
   }
 
   EXPECT_EQ(
-      0, memcmp(participant.fake_frame()->data_, audio_frame.data_, n_samples));
+      0,
+      memcmp(participant.fake_frame()->data(), audio_frame.data(), n_samples));
 }
 
 TEST(AudioMixer, SourceAtNativeRateShouldNeverResample) {
@@ -328,7 +330,7 @@ TEST(AudioMixer, RampedOutSourcesShouldNotBeMarkedMixed) {
     ResetFrame(participants[i].fake_frame());
     // Set the participant audio energy to increase with the index
     // |i|.
-    participants[i].fake_frame()->data_[0] = 100 * i;
+    participants[i].fake_frame()->mutable_data()[0] = 100 * i;
   }
 
   // Add all participants but the loudest for mixing.
@@ -444,7 +446,8 @@ TEST(AudioMixer, ActiveShouldMixBeforeLoud) {
   std::vector<AudioMixer::Source::AudioFrameInfo> frame_info(
       kAudioSources, AudioMixer::Source::AudioFrameInfo::kNormal);
   frames[0].vad_activity_ = AudioFrame::kVadPassive;
-  std::fill(frames[0].data_, frames[0].data_ + kDefaultSampleRateHz / 100,
+  int16_t* frame_data = frames[0].mutable_data();
+  std::fill(frame_data, frame_data + kDefaultSampleRateHz / 100,
             std::numeric_limits<int16_t>::max());
   std::vector<bool> expected_status(kAudioSources, true);
   expected_status[0] = false;
@@ -464,7 +467,8 @@ TEST(AudioMixer, UnmutedShouldMixBeforeLoud) {
   std::vector<AudioMixer::Source::AudioFrameInfo> frame_info(
       kAudioSources, AudioMixer::Source::AudioFrameInfo::kNormal);
   frame_info[0] = AudioMixer::Source::AudioFrameInfo::kMuted;
-  std::fill(frames[0].data_, frames[0].data_ + kDefaultSampleRateHz / 100,
+  int16_t* frame_data = frames[0].mutable_data();
+  std::fill(frame_data, frame_data + kDefaultSampleRateHz / 100,
             std::numeric_limits<int16_t>::max());
   std::vector<bool> expected_status(kAudioSources, true);
   expected_status[0] = false;

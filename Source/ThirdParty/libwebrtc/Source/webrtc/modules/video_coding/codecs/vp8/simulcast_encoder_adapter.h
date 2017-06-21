@@ -13,15 +13,21 @@
 #define WEBRTC_MODULES_VIDEO_CODING_CODECS_VP8_SIMULCAST_ENCODER_ADAPTER_H_
 
 #include <memory>
+#include <stack>
 #include <string>
+#include <utility>
 #include <vector>
 
+#include "webrtc/base/atomicops.h"
+#include "webrtc/base/sequenced_task_checker.h"
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
 
 namespace webrtc {
 
 class SimulcastRateAllocator;
 
+// TODO(brandtr): Remove this class and replace its use with a
+// WebRtcVideoEncoderFactory.
 class VideoEncoderFactory {
  public:
   virtual VideoEncoder* Create() = 0;
@@ -31,14 +37,16 @@ class VideoEncoderFactory {
 
 // SimulcastEncoderAdapter implements simulcast support by creating multiple
 // webrtc::VideoEncoder instances with the given VideoEncoderFactory.
-// All the public interfaces are expected to be called from the same thread,
-// e.g the encoder thread.
+// The object is created and destroyed on the worker thread, but all public
+// interfaces should be called from the encoder task queue.
 class SimulcastEncoderAdapter : public VP8Encoder {
  public:
+  // TODO(brandtr): Make it clear that the ownership of |factory| is transferred
+  // by only accepting a std::unique_ptr<VideoEncoderFactory> here.
   explicit SimulcastEncoderAdapter(VideoEncoderFactory* factory);
   virtual ~SimulcastEncoderAdapter();
 
-  // Implements VideoEncoder
+  // Implements VideoEncoder.
   int Release() override;
   int InitEncode(const VideoCodec* inst,
                  int number_of_cores,
@@ -67,47 +75,50 @@ class SimulcastEncoderAdapter : public VP8Encoder {
 
  private:
   struct StreamInfo {
-    StreamInfo()
-        : encoder(NULL),
-          callback(NULL),
-          width(0),
-          height(0),
-          key_frame_request(false),
-          send_stream(true) {}
     StreamInfo(VideoEncoder* encoder,
-               EncodedImageCallback* callback,
+               std::unique_ptr<EncodedImageCallback> callback,
                uint16_t width,
                uint16_t height,
                bool send_stream)
         : encoder(encoder),
-          callback(callback),
+          callback(std::move(callback)),
           width(width),
           height(height),
           key_frame_request(false),
           send_stream(send_stream) {}
-    // Deleted by SimulcastEncoderAdapter::Release().
+    // Deleted by SimulcastEncoderAdapter::DestroyStoredEncoders().
     VideoEncoder* encoder;
-    EncodedImageCallback* callback;
+    std::unique_ptr<EncodedImageCallback> callback;
     uint16_t width;
     uint16_t height;
     bool key_frame_request;
     bool send_stream;
   };
 
-  // Populate the codec settings for each stream.
-  void PopulateStreamCodec(const webrtc::VideoCodec* inst,
-                           int stream_index,
-                           uint32_t start_bitrate_kbps,
-                           bool highest_resolution_stream,
-                           webrtc::VideoCodec* stream_codec);
+  // Populate the codec settings for each simulcast stream.
+  static void PopulateStreamCodec(const webrtc::VideoCodec& inst,
+                                  int stream_index,
+                                  uint32_t start_bitrate_kbps,
+                                  bool highest_resolution_stream,
+                                  webrtc::VideoCodec* stream_codec);
 
   bool Initialized() const;
 
-  std::unique_ptr<VideoEncoderFactory> factory_;
+  void DestroyStoredEncoders();
+
+  volatile int inited_;  // Accessed atomically.
+  const std::unique_ptr<VideoEncoderFactory> factory_;
   VideoCodec codec_;
   std::vector<StreamInfo> streaminfos_;
   EncodedImageCallback* encoded_complete_callback_;
   std::string implementation_name_;
+
+  // Used for checking the single-threaded access of the encoder interface.
+  rtc::SequencedTaskChecker encoder_queue_;
+
+  // Store encoders in between calls to Release and InitEncode, so they don't
+  // have to be recreated. Remaining encoders are destroyed by the destructor.
+  std::stack<VideoEncoder*> stored_encoders_;
 };
 
 }  // namespace webrtc

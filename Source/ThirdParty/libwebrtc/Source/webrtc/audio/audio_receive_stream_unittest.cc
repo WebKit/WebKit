@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -15,11 +16,11 @@
 #include "webrtc/audio/audio_receive_stream.h"
 #include "webrtc/audio/conversion.h"
 #include "webrtc/logging/rtc_event_log/mock/mock_rtc_event_log.h"
-#include "webrtc/modules/audio_coding/codecs/mock/mock_audio_decoder_factory.h"
 #include "webrtc/modules/bitrate_controller/include/mock/mock_bitrate_controller.h"
 #include "webrtc/modules/pacing/packet_router.h"
 #include "webrtc/modules/rtp_rtcp/source/byte_io.h"
 #include "webrtc/test/gtest.h"
+#include "webrtc/test/mock_audio_decoder_factory.h"
 #include "webrtc/test/mock_voe_channel_proxy.h"
 #include "webrtc/test/mock_voice_engine.h"
 
@@ -96,7 +97,7 @@ struct ConfigHelper {
           EXPECT_CALL(*channel_proxy_,
               RegisterReceiverCongestionControlObjects(&packet_router_))
                   .Times(1);
-          EXPECT_CALL(*channel_proxy_, ResetCongestionControlObjects())
+          EXPECT_CALL(*channel_proxy_, ResetReceiverCongestionControlObjects())
               .Times(1);
           EXPECT_CALL(*channel_proxy_, RegisterExternalTransport(nullptr))
               .Times(1);
@@ -111,6 +112,11 @@ struct ConfigHelper {
               .Times(1)
               .After(expect_set);
           EXPECT_CALL(*channel_proxy_, DisassociateSendChannel()).Times(1);
+          EXPECT_CALL(*channel_proxy_, SetReceiveCodecs(_))
+              .WillRepeatedly(
+                  Invoke([](const std::map<int, SdpAudioFormat>& codecs) {
+                    EXPECT_THAT(codecs, testing::IsEmpty());
+                  }));
           return channel_proxy_;
         }));
     stream_config_.voe_channel_id = kChannelId;

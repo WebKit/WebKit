@@ -35,7 +35,7 @@ enum BweNames {
   kBweNamesMax = 4
 };
 
-enum BandwidthUsage {
+enum class BandwidthUsage {
   kBwNormal = 0,
   kBwUnderusing = 1,
   kBwOverusing = 2,
@@ -48,10 +48,8 @@ enum RateControlRegion { kRcNearMax, kRcAboveMax, kRcMaxUnknown };
 struct RateControlInput {
   RateControlInput(BandwidthUsage bw_state,
                    const rtc::Optional<uint32_t>& incoming_bitrate,
-                   double noise_var)
-      : bw_state(bw_state),
-        incoming_bitrate(incoming_bitrate),
-        noise_var(noise_var) {}
+                   double noise_var);
+  ~RateControlInput();
 
   BandwidthUsage bw_state;
   rtc::Optional<uint32_t> incoming_bitrate;

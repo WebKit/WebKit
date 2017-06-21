@@ -19,6 +19,7 @@ import android.os.Process;
 import java.lang.System;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
+import org.webrtc.ContextUtils;
 import org.webrtc.Logging;
 import org.webrtc.ThreadUtils;
 
@@ -47,7 +48,6 @@ public class WebRtcAudioRecord {
   private static final long AUDIO_RECORD_THREAD_JOIN_TIMEOUT_MS = 2000;
 
   private final long nativeAudioRecord;
-  private final Context context;
 
   private WebRtcAudioEffects effects = null;
 
@@ -60,9 +60,14 @@ public class WebRtcAudioRecord {
   private byte[] emptyBytes;
 
   // Audio recording error handler functions.
+  public enum AudioRecordStartErrorCode {
+    AUDIO_RECORD_START_EXCEPTION,
+    AUDIO_RECORD_START_STATE_MISMATCH,
+  }
+
   public static interface WebRtcAudioRecordErrorCallback {
     void onWebRtcAudioRecordInitError(String errorMessage);
-    void onWebRtcAudioRecordStartError(String errorMessage);
+    void onWebRtcAudioRecordStartError(AudioRecordStartErrorCode errorCode, String errorMessage);
     void onWebRtcAudioRecordError(String errorMessage);
   }
 
@@ -134,9 +139,8 @@ public class WebRtcAudioRecord {
     }
   }
 
-  WebRtcAudioRecord(Context context, long nativeAudioRecord) {
+  WebRtcAudioRecord(long nativeAudioRecord) {
     Logging.d(TAG, "ctor" + WebRtcAudioUtils.getThreadInfo());
-    this.context = context;
     this.nativeAudioRecord = nativeAudioRecord;
     if (DEBUG) {
       WebRtcAudioUtils.logDeviceInfo(TAG);
@@ -164,7 +168,8 @@ public class WebRtcAudioRecord {
 
   private int initRecording(int sampleRate, int channels) {
     Logging.d(TAG, "initRecording(sampleRate=" + sampleRate + ", channels=" + channels + ")");
-    if (!WebRtcAudioUtils.hasPermission(context, android.Manifest.permission.RECORD_AUDIO)) {
+    if (!WebRtcAudioUtils.hasPermission(
+            ContextUtils.getApplicationContext(), android.Manifest.permission.RECORD_AUDIO)) {
       reportWebRtcAudioRecordInitError("RECORD_AUDIO permission is missing");
       return -1;
     }
@@ -227,11 +232,14 @@ public class WebRtcAudioRecord {
     try {
       audioRecord.startRecording();
     } catch (IllegalStateException e) {
-      reportWebRtcAudioRecordStartError("AudioRecord.startRecording failed: " + e.getMessage());
+      reportWebRtcAudioRecordStartError(AudioRecordStartErrorCode.AUDIO_RECORD_START_EXCEPTION,
+          "AudioRecord.startRecording failed: " + e.getMessage());
       return false;
     }
     if (audioRecord.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
-      reportWebRtcAudioRecordStartError("AudioRecord.startRecording failed - incorrect state :"
+      reportWebRtcAudioRecordStartError(
+          AudioRecordStartErrorCode.AUDIO_RECORD_START_STATE_MISMATCH,
+          "AudioRecord.startRecording failed - incorrect state :"
           + audioRecord.getRecordingState());
       return false;
     }
@@ -308,10 +316,11 @@ public class WebRtcAudioRecord {
     }
   }
 
-  private void reportWebRtcAudioRecordStartError(String errorMessage) {
-    Logging.e(TAG, "Start recording error: " + errorMessage);
+  private void reportWebRtcAudioRecordStartError(
+      AudioRecordStartErrorCode errorCode, String errorMessage) {
+    Logging.e(TAG, "Start recording error: " + errorCode + ". " + errorMessage);
     if (errorCallback != null) {
-      errorCallback.onWebRtcAudioRecordStartError(errorMessage);
+      errorCallback.onWebRtcAudioRecordStartError(errorCode, errorMessage);
     }
   }
 

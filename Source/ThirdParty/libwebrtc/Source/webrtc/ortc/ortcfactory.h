@@ -49,6 +49,12 @@ class OrtcFactory : public OrtcFactoryInterface {
       PacketTransportInterface* rtcp,
       RtpTransportControllerInterface* transport_controller) override;
 
+  RTCErrorOr<std::unique_ptr<SrtpTransportInterface>> CreateSrtpTransport(
+      const RtcpParameters& rtcp_parameters,
+      PacketTransportInterface* rtp,
+      PacketTransportInterface* rtcp,
+      RtpTransportControllerInterface* transport_controller) override;
+
   RtpCapabilities GetRtpSenderCapabilities(
       cricket::MediaType kind) const override;
 
@@ -129,6 +135,7 @@ class OrtcFactory : public OrtcFactoryInterface {
   std::unique_ptr<rtc::Thread> worker_thread_;
   // Media-releated objects.
   std::unique_ptr<RtcEventLog> null_event_log_;
+  rtc::scoped_refptr<AudioEncoderFactory> audio_encoder_factory_;
   rtc::scoped_refptr<AudioDecoderFactory> audio_decoder_factory_;
   std::unique_ptr<cricket::ChannelManager> channel_manager_;
   // Default CNAME to use for RtpTransports if none is passed in.

@@ -14,7 +14,7 @@ import("//build/config/ui.gni")
 import("//build_overrides/build.gni")
 import("//testing/test.gni")
 
-if (is_component_build) {
+if (!build_with_chromium && is_component_build) {
   print("The Gn argument `is_component_build` is currently " +
         "ignored for WebRTC builds.")
   print("Component builds are supported by Chromium and the argument " +
@@ -78,7 +78,6 @@ declare_args() {
   rtc_enable_sctp = true
 
   # Disable these to not build components which can be externally provided.
-  rtc_build_expat = true
   rtc_build_json = true
   rtc_build_libjpeg = true
   rtc_build_libsrtp = true
@@ -148,6 +147,12 @@ declare_args() {
   # use file-based audio playout and record.
   rtc_use_dummy_audio_file_devices = false
 
+  # When set to true, replace the audio output with a sinus tone at 440Hz.
+  # The ADM will ask for audio data from WebRTC but instead of reading real
+  # audio samples from NetEQ, a sinus tone will be generated and replace the
+  # real audio samples.
+  rtc_audio_device_plays_sinus_tone = false
+
   # When set to true, test targets will declare the files needed to run memcheck
   # as data dependencies. This is to enable memcheck execution on swarming bots.
   rtc_use_memcheck = false
@@ -211,6 +216,10 @@ webrtc_root = get_path_info(".", "abspath")
 # native code is built as part of Chromium.
 rtc_common_configs = [ webrtc_root + ":common_config" ]
 
+if (is_mac || is_ios) {
+  rtc_common_configs += [ "//build/config/compiler:enable_arc" ]
+}
+
 # Global public configuration that should be applied to all WebRTC targets. You
 # normally shouldn't need to include this in your target as it's automatically
 # included when using the rtc_* templates. It set the defines, include paths and
@@ -263,6 +272,10 @@ template("rtc_test") {
     if (defined(invoker.public_configs)) {
       public_configs += invoker.public_configs
     }
+    if (!build_with_chromium && is_android) {
+      android_manifest = "//webrtc/test/android/AndroidManifest.xml"
+      deps += [ "//webrtc/test:native_test_java" ]
+    }
   }
 }
 
@@ -299,7 +312,7 @@ template("rtc_executable") {
     configs -= rtc_remove_configs
     configs -= invoker.suppressed_configs
     deps = [
-      "//build/config/sanitizers:deps",
+      "//build/config:exe_and_shlib_deps",
     ]
     deps += invoker.deps
     public_configs = [ rtc_common_inherited_config ]

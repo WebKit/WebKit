@@ -38,6 +38,74 @@ static bool IsTypeSupported(const std::string& type) {
   return type_supported;
 }
 
+// RFC 5245
+// It is RECOMMENDED that default candidates be chosen based on the
+// likelihood of those candidates to work with the peer that is being
+// contacted.  It is RECOMMENDED that relayed > reflexive > host.
+static const int kPreferenceUnknown = 0;
+static const int kPreferenceHost = 1;
+static const int kPreferenceReflexive = 2;
+static const int kPreferenceRelayed = 3;
+
+static const char kDummyAddress[] = "0.0.0.0";
+static const int kDummyPort = 9;
+
+static int GetCandidatePreferenceFromType(const std::string& type) {
+  int preference = kPreferenceUnknown;
+  if (type == cricket::LOCAL_PORT_TYPE) {
+    preference = kPreferenceHost;
+  } else if (type == cricket::STUN_PORT_TYPE) {
+    preference = kPreferenceReflexive;
+  } else if (type == cricket::RELAY_PORT_TYPE) {
+    preference = kPreferenceRelayed;
+  } else {
+    preference = kPreferenceUnknown;
+  }
+  return preference;
+}
+
+// Update the connection address for the MediaContentDescription based on the
+// candidates.
+static void UpdateConnectionAddress(
+    const JsepCandidateCollection& candidate_collection,
+    cricket::ContentDescription* content_description) {
+  int port = kDummyPort;
+  std::string ip = kDummyAddress;
+  int current_preference = kPreferenceUnknown;
+  int current_family = AF_UNSPEC;
+  for (size_t i = 0; i < candidate_collection.count(); ++i) {
+    const IceCandidateInterface* jsep_candidate = candidate_collection.at(i);
+    if (jsep_candidate->candidate().component() !=
+        cricket::ICE_CANDIDATE_COMPONENT_RTP) {
+      continue;
+    }
+    // Default destination should be UDP only.
+    if (jsep_candidate->candidate().protocol() != cricket::UDP_PROTOCOL_NAME) {
+      continue;
+    }
+    const int preference =
+        GetCandidatePreferenceFromType(jsep_candidate->candidate().type());
+    const int family = jsep_candidate->candidate().address().ipaddr().family();
+    // See if this candidate is more preferable then the current one if it's the
+    // same family. Or if the current family is IPv4 already so we could safely
+    // ignore all IPv6 ones. WebRTC bug 4269.
+    // http://code.google.com/p/webrtc/issues/detail?id=4269
+    if ((preference <= current_preference && current_family == family) ||
+        (current_family == AF_INET && family == AF_INET6)) {
+      continue;
+    }
+    current_preference = preference;
+    current_family = family;
+    port = jsep_candidate->candidate().address().port();
+    ip = jsep_candidate->candidate().address().ipaddr().ToString();
+  }
+  rtc::SocketAddress connection_addr;
+  connection_addr.SetIP(ip);
+  connection_addr.SetPort(port);
+  static_cast<cricket::MediaContentDescription*>(content_description)
+      ->set_connection_address(connection_addr);
+}
+
 const char SessionDescriptionInterface::kOffer[] = "offer";
 const char SessionDescriptionInterface::kPrAnswer[] = "pranswer";
 const char SessionDescriptionInterface::kAnswer[] = "answer";
@@ -116,9 +184,13 @@ bool JsepSessionDescription::AddCandidate(
                            static_cast<int>(mediasection_index),
                            updated_candidate));
   if (!candidate_collection_[mediasection_index].HasCandidate(
-          updated_candidate_wrapper.get()))
+          updated_candidate_wrapper.get())) {
     candidate_collection_[mediasection_index].add(
         updated_candidate_wrapper.release());
+    UpdateConnectionAddress(
+        candidate_collection_[mediasection_index],
+        description_->contents()[mediasection_index].description);
+  }
 
   return true;
 }
@@ -133,6 +205,9 @@ size_t JsepSessionDescription::RemoveCandidates(
       continue;
     }
     num_removed += candidate_collection_[mediasection_index].remove(candidate);
+    UpdateConnectionAddress(
+        candidate_collection_[mediasection_index],
+        description_->contents()[mediasection_index].description);
   }
   return num_removed;
 }

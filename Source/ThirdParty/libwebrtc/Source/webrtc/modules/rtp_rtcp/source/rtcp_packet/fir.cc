@@ -43,6 +43,11 @@ constexpr uint8_t Fir::kFeedbackMessageType;
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //  | Seq nr.       |    Reserved = 0                               |
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Fir::Fir() = default;
+
+Fir::~Fir() = default;
+
 bool Fir::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);
   RTC_DCHECK_EQ(packet.fmt(), kFeedbackMessageType);
@@ -70,6 +75,10 @@ bool Fir::Parse(const CommonHeader& packet) {
     next_fci += kFciLength;
   }
   return true;
+}
+
+size_t Fir::BlockLength() const {
+  return kHeaderLength + kCommonFeedbackLength + kFciLength * items_.size();
 }
 
 bool Fir::Create(uint8_t* packet,

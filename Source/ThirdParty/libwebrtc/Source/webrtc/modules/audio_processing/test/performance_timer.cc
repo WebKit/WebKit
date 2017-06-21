@@ -36,23 +36,39 @@ void PerformanceTimer::StopTimer() {
 }
 
 double PerformanceTimer::GetDurationAverage() const {
-  RTC_DCHECK(!timestamps_us_.empty());
-  return static_cast<double>(
-             std::accumulate(timestamps_us_.begin(), timestamps_us_.end(), 0)) /
-         timestamps_us_.size();
+  return GetDurationAverage(0);
 }
 
 double PerformanceTimer::GetDurationStandardDeviation() const {
-  RTC_DCHECK(!timestamps_us_.empty());
-  double average_duration = GetDurationAverage();
+  return GetDurationStandardDeviation(0);
+}
+
+double PerformanceTimer::GetDurationAverage(
+    size_t number_of_warmup_samples) const {
+  RTC_DCHECK_GT(timestamps_us_.size(), number_of_warmup_samples);
+  const size_t number_of_samples =
+      timestamps_us_.size() - number_of_warmup_samples;
+  return static_cast<double>(
+             std::accumulate(timestamps_us_.begin() + number_of_warmup_samples,
+                             timestamps_us_.end(), static_cast<int64_t>(0))) /
+         number_of_samples;
+}
+
+double PerformanceTimer::GetDurationStandardDeviation(
+    size_t number_of_warmup_samples) const {
+  RTC_DCHECK_GT(timestamps_us_.size(), number_of_warmup_samples);
+  const size_t number_of_samples =
+      timestamps_us_.size() - number_of_warmup_samples;
+  RTC_DCHECK_GT(number_of_samples, 0);
+  double average_duration = GetDurationAverage(number_of_warmup_samples);
 
   double variance = std::accumulate(
-      timestamps_us_.begin(), timestamps_us_.end(), 0.0,
-      [average_duration](const double& a, const int64_t& b) {
+      timestamps_us_.begin() + number_of_warmup_samples, timestamps_us_.end(),
+      0.0, [average_duration](const double& a, const int64_t& b) {
         return a + (b - average_duration) * (b - average_duration);
       });
 
-  return sqrt(variance / timestamps_us_.size());
+  return sqrt(variance / number_of_samples);
 }
 
 }  // namespace test

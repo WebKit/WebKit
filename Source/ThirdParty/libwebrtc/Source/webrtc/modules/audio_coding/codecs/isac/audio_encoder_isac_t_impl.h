@@ -12,9 +12,15 @@
 #define WEBRTC_MODULES_AUDIO_CODING_CODECS_ISAC_AUDIO_ENCODER_ISAC_T_IMPL_H_
 
 #include "webrtc/base/checks.h"
+#include "webrtc/base/string_to_number.h"
 #include "webrtc/common_types.h"
 
 namespace webrtc {
+namespace {  // NOLINT (not a "regular" header file)
+int GetIsacMaxBitrate(int clockrate_hz) {
+  return (clockrate_hz == 32000) ? 56000 : 32000;
+}
+}  // namespace
 
 template <typename T>
 typename AudioEncoderIsacT<T>::Config CreateIsacConfig(
@@ -29,6 +35,33 @@ typename AudioEncoderIsacT<T>::Config CreateIsacConfig(
   config.adaptive_mode = (codec_inst.rate == -1);
   if (codec_inst.rate != -1)
     config.bit_rate = codec_inst.rate;
+  return config;
+}
+
+template <typename T>
+typename AudioEncoderIsacT<T>::Config CreateIsacConfig(
+    int payload_type,
+    const SdpAudioFormat& format) {
+  typename AudioEncoderIsacT<T>::Config config;
+  config.payload_type = payload_type;
+  config.sample_rate_hz = format.clockrate_hz;
+
+  // We only support different frame sizes at 16000 Hz.
+  if (config.sample_rate_hz == 16000) {
+    auto ptime_iter = format.parameters.find("ptime");
+    if (ptime_iter != format.parameters.end()) {
+      auto ptime = rtc::StringToNumber<int>(ptime_iter->second);
+      if (ptime && *ptime >= 60) {
+        config.frame_size_ms = 60;
+      } else {
+        config.frame_size_ms = 30;
+      }
+    }
+  }
+
+  // Set the default bitrate for ISAC to the maximum bitrate allowed at this
+  // clockrate. At this point, adaptive mode is not used by WebRTC.
+  config.bit_rate = GetIsacMaxBitrate(format.clockrate_hz);
   return config;
 }
 
@@ -71,6 +104,25 @@ AudioEncoderIsacT<T>::AudioEncoderIsacT(
     const CodecInst& codec_inst,
     const rtc::scoped_refptr<LockedIsacBandwidthInfo>& bwinfo)
     : AudioEncoderIsacT(CreateIsacConfig<T>(codec_inst, bwinfo)) {}
+
+template <typename T>
+AudioEncoderIsacT<T>::AudioEncoderIsacT(int payload_type,
+                                        const SdpAudioFormat& format)
+    : AudioEncoderIsacT(CreateIsacConfig<T>(payload_type, format)) {}
+
+template <typename T>
+rtc::Optional<AudioCodecInfo> AudioEncoderIsacT<T>::QueryAudioEncoder(
+    const SdpAudioFormat& format) {
+  if (STR_CASE_CMP(format.name.c_str(), GetPayloadName()) == 0) {
+    Config config = CreateIsacConfig<T>(0, format);
+    if (config.IsOk()) {
+      return rtc::Optional<AudioCodecInfo>(
+          {config.sample_rate_hz, 1, config.bit_rate, 10000,
+           GetIsacMaxBitrate(format.clockrate_hz)});
+    }
+  }
+  return rtc::Optional<AudioCodecInfo>();
+}
 
 template <typename T>
 AudioEncoderIsacT<T>::~AudioEncoderIsacT() {

@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 
-def run_ant_build_command(path_to_ant_build_file):
+def RunAntBuildCommand(path_to_ant_build_file):
   """Tries to build the passed build file with ant."""
   ant_executable = 'ant'
   if sys.platform == 'win32':
@@ -32,13 +32,13 @@ def run_ant_build_command(path_to_ant_build_file):
                                                                 e)
     return -1
 
-def _main():
+def main():
   core_build = os.path.join('third_party', 'zxing', 'core', 'build.xml')
-  run_ant_build_command(core_build)
+  RunAntBuildCommand(core_build)
 
   javase_build = os.path.join('third_party', 'zxing', 'javase', 'build.xml')
-  return run_ant_build_command(javase_build)
+  return RunAntBuildCommand(javase_build)
 
 
 if __name__ == '__main__':
-  sys.exit(_main())
+  sys.exit(main())

@@ -13,8 +13,8 @@
 
 #include <stdlib.h>
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/test/testsupport/packet_reader.h"
 
 namespace webrtc {
@@ -91,7 +91,7 @@ class PacketManipulatorImpl : public PacketManipulator {
   PacketManipulatorImpl(PacketReader* packet_reader,
                         const NetworkingConfig& config,
                         bool verbose);
-  virtual ~PacketManipulatorImpl();
+  ~PacketManipulatorImpl() = default;
   int ManipulatePackets(webrtc::EncodedImage* encoded_image) override;
   virtual void InitializeRandomSeed(unsigned int seed);
 
@@ -104,7 +104,7 @@ class PacketManipulatorImpl : public PacketManipulator {
   const NetworkingConfig& config_;
   // Used to simulate a burst over several frames.
   int active_burst_packets_;
-  CriticalSectionWrapper* critsect_;
+  rtc::CriticalSection critsect_;
   unsigned int random_seed_;
   bool verbose_;
 };

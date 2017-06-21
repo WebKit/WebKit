@@ -15,16 +15,15 @@
 #include <vector>
 
 #include "webrtc/api/video/video_frame.h"
+// For EncodedImage
+#include "webrtc/common_video/include/video_frame.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/typedefs.h"
-// For EncodedImage
-#include "webrtc/video_frame.h"
 
 namespace webrtc {
 
 // Error codes
 #define VCM_FRAME_NOT_READY 3
-#define VCM_REQUEST_SLI 2
 #define VCM_MISSING_CALLBACK 1
 #define VCM_OK 0
 #define VCM_GENERAL_ERROR -1
@@ -38,10 +37,16 @@ namespace webrtc {
 #define VCM_JITTER_BUFFER_ERROR -9
 #define VCM_OLD_PACKET_ERROR -10
 #define VCM_NO_FRAME_DECODED -11
-#define VCM_ERROR_REQUEST_SLI -12
 #define VCM_NOT_IMPLEMENTED -20
 
-enum { kDefaultStartBitrateKbps = 300 };
+enum {
+  kDefaultStartBitrateKbps = 300,
+  // Timing frames settings. Timing frames are sent every
+  // |kDefaultTimingFramesDelayMs|, or if the frame is at least
+  // |kDefaultOutliserFrameSizePercent| in size of average frame.
+  kDefaultTimingFramesDelayMs = 200,
+  kDefaultOutlierFrameSizePercent = 250,
+};
 
 enum VCMVideoProtection {
   kProtectionNone,
@@ -64,7 +69,9 @@ struct VCMFrameCount {
 class VCMReceiveCallback {
  public:
   virtual int32_t FrameToRender(VideoFrame& videoFrame,  // NOLINT
-                                rtc::Optional<uint8_t> qp) = 0;
+                                rtc::Optional<uint8_t> qp,
+                                VideoContentType /*content_type*/) = 0;
+
   virtual int32_t ReceivedDecodedReferenceFrame(const uint64_t pictureId) {
     return -1;
   }
@@ -106,21 +113,6 @@ class VCMReceiveStatisticsCallback {
   virtual ~VCMReceiveStatisticsCallback() {}
 };
 
-// Callback class used for informing the user of decode timing info.
-class VCMDecoderTimingCallback {
- public:
-  virtual void OnDecoderTiming(int decode_ms,
-                               int max_decode_ms,
-                               int current_delay_ms,
-                               int target_delay_ms,
-                               int jitter_buffer_ms,
-                               int min_playout_delay_ms,
-                               int render_delay_ms) = 0;
-
- protected:
-  virtual ~VCMDecoderTimingCallback() {}
-};
-
 // Callback class used for telling the user about how to configure the FEC,
 // and the rates sent the last second is returned to the VCM.
 class VCMProtectionCallback {
@@ -141,9 +133,6 @@ class VCMProtectionCallback {
 class VCMFrameTypeCallback {
  public:
   virtual int32_t RequestKeyFrame() = 0;
-  virtual int32_t SliceLossIndicationRequest(const uint64_t pictureId) {
-    return -1;
-  }
 
  protected:
   virtual ~VCMFrameTypeCallback() {}

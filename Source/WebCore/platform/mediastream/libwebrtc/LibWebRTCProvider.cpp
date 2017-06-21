@@ -35,7 +35,7 @@
 #include <webrtc/base/physicalsocketserver.h>
 #include <webrtc/p2p/client/basicportallocator.h>
 #include <webrtc/pc/peerconnectionfactory.h>
-#include <webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h>
+#include <webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.h>
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/darwin/WeakLinking.h>

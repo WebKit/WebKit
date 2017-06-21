@@ -13,7 +13,6 @@
 #include "webrtc/modules/video_capture/video_capture_config.h"
 #include "webrtc/modules/video_capture/windows/help_functions_ds.h"
 #include "webrtc/modules/video_capture/windows/sink_filter_ds.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
 #include <Dvdmedia.h> // VIDEOINFOHEADER2
@@ -153,7 +152,7 @@ int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8)
 int32_t VideoCaptureDS::StartCapture(
                                       const VideoCaptureCapability& capability)
 {
-    CriticalSectionScoped cs(&_apiCs);
+    rtc::CritScope cs(&_apiCs);
 
     if (capability != _requestedCapability)
     {
@@ -176,7 +175,7 @@ int32_t VideoCaptureDS::StartCapture(
 
 int32_t VideoCaptureDS::StopCapture()
 {
-    CriticalSectionScoped cs(&_apiCs);
+    rtc::CritScope cs(&_apiCs);
 
     HRESULT hr = _mediaControl->Pause();
     if (FAILED(hr))

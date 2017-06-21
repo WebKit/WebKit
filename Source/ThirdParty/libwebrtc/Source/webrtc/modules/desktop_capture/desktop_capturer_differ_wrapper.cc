@@ -214,6 +214,7 @@ void DesktopCapturerDifferWrapper::OnCaptureResult(
   frame->set_capture_time_ms(frame->GetUnderlyingFrame()->capture_time_ms() +
                              (rtc::TimeNanos() - start_time_nanos) /
                                  rtc::kNumNanosecsPerMillisec);
+  frame->set_capturer_id(frame->GetUnderlyingFrame()->capturer_id());
   callback_->OnCaptureResult(result, std::move(frame));
 }
 

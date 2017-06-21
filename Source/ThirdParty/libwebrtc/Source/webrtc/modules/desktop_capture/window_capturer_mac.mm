@@ -14,6 +14,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/base/macutils.h"
 #include "webrtc/base/scoped_ref_ptr.h"
 #include "webrtc/modules/desktop_capture/desktop_capturer.h"
@@ -22,7 +23,6 @@
 #include "webrtc/modules/desktop_capture/mac/desktop_configuration.h"
 #include "webrtc/modules/desktop_capture/mac/full_screen_chrome_window_detector.h"
 #include "webrtc/modules/desktop_capture/mac/window_list_utils.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 

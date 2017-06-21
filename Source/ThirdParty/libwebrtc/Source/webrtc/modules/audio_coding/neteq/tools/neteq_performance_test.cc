@@ -12,6 +12,7 @@
 
 #include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/base/checks.h"
+#include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/codecs/pcm16b/pcm16b.h"
 #include "webrtc/modules/audio_coding/neteq/include/neteq.h"
 #include "webrtc/modules/audio_coding/neteq/tools/audio_loop.h"
@@ -24,7 +25,6 @@
 using webrtc::NetEq;
 using webrtc::test::AudioLoop;
 using webrtc::test::RtpGenerator;
-using webrtc::WebRtcRTPHeader;
 
 namespace webrtc {
 namespace test {
@@ -59,7 +59,7 @@ int64_t NetEqPerformanceTest::Run(int runtime_ms,
   int32_t time_now_ms = 0;
 
   // Get first input packet.
-  WebRtcRTPHeader rtp_header;
+  RTPHeader rtp_header;
   RtpGenerator rtp_gen(kSampRateHz / 1000);
   // Start with positive drift first half of simulation.
   rtp_gen.set_drift_factor(drift_factor);
@@ -83,7 +83,7 @@ int64_t NetEqPerformanceTest::Run(int runtime_ms,
       // Drop every N packets, where N = FLAGS_lossrate.
       bool lost = false;
       if (lossrate > 0) {
-        lost = ((rtp_header.header.sequenceNumber - 1) % lossrate) == 0;
+        lost = ((rtp_header.sequenceNumber - 1) % lossrate) == 0;
       }
       if (!lost) {
         // Insert packet.

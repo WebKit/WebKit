@@ -156,8 +156,7 @@ uint32_t VideoSender::TargetBitrateKbps() {
 PacedVideoSender::PacedVideoSender(PacketProcessorListener* listener,
                                    VideoSource* source,
                                    BandwidthEstimatorType estimator)
-    : VideoSender(listener, source, estimator),
-      pacer_(&clock_, this) {
+    : VideoSender(listener, source, estimator), pacer_(&clock_, this, nullptr) {
   modules_.push_back(&pacer_);
   pacer_.SetEstimatedBitrate(source->bits_per_second());
 }

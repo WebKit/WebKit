@@ -279,6 +279,7 @@ bool PlatformThread::SetPriority(ThreadPriority priority) {
   if (run_function_) {
     // The non-deprecated way of how this function gets called, is that it must
     // be called on the worker thread itself.
+    RTC_DCHECK(!thread_checker_.CalledOnValidThread());
     RTC_DCHECK(spawned_thread_checker_.CalledOnValidThread());
   } else {
     // In the case of deprecated use of this method, it must be called on the

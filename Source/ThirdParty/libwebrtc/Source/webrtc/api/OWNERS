@@ -6,8 +6,7 @@ solenberg@webrtc.org
 tkchin@webrtc.org
 tommi@webrtc.org
 deadbeef@webrtc.org
+kwiberg@webrtc.org
 
-# These are for the common case of adding or renaming files. If you're doing
-# structural changes, please get a review from a reviewer in this file.
-per-file *.gn=*
-per-file *.gni=*
+per-file *.gn=kjellander@webrtc.org
+per-file *.gni=kjellander@webrtc.org

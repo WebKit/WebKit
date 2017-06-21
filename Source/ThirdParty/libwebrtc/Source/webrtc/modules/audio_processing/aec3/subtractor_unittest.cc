@@ -28,17 +28,15 @@ float RunSubtractorTest(int num_blocks_to_process,
                         const std::vector<int>& blocks_with_echo_path_changes) {
   ApmDataDumper data_dumper(42);
   Subtractor subtractor(&data_dumper, DetectOptimization());
-  std::vector<float> x(kBlockSize, 0.f);
+  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::vector<float> y(kBlockSize, 0.f);
   std::array<float, kBlockSize> x_old;
   SubtractorOutput output;
-  FftBuffer X_buffer(
-      Aec3Optimization::kNone, subtractor.MinFarendBufferLength(),
-      std::vector<size_t>(1, subtractor.MinFarendBufferLength()));
+  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, kAdaptiveFilterLength,
+                             std::vector<size_t>(1, kAdaptiveFilterLength));
   RenderSignalAnalyzer render_signal_analyzer;
   Random random_generator(42U);
   Aec3Fft fft;
-  FftData X;
   std::array<float, kFftLengthBy2Plus1> Y2;
   std::array<float, kFftLengthBy2Plus1> E2_main;
   std::array<float, kFftLengthBy2Plus1> E2_shadow;
@@ -50,15 +48,14 @@ float RunSubtractorTest(int num_blocks_to_process,
 
   DelayBuffer<float> delay_buffer(delay_samples);
   for (int k = 0; k < num_blocks_to_process; ++k) {
-    RandomizeSampleVector(&random_generator, x);
+    RandomizeSampleVector(&random_generator, x[0]);
     if (uncorrelated_inputs) {
       RandomizeSampleVector(&random_generator, y);
     } else {
-      delay_buffer.Delay(x, y);
+      delay_buffer.Delay(x[0], y);
     }
-    fft.PaddedFft(x, x_old, &X);
-    X_buffer.Insert(X);
-    render_signal_analyzer.Update(X_buffer, aec_state.FilterDelay());
+    render_buffer.Insert(x);
+    render_signal_analyzer.Update(render_buffer, aec_state.FilterDelay());
 
     // Handle echo path changes.
     if (std::find(blocks_with_echo_path_changes.begin(),
@@ -66,12 +63,13 @@ float RunSubtractorTest(int num_blocks_to_process,
                   k) != blocks_with_echo_path_changes.end()) {
       subtractor.HandleEchoPathChange(EchoPathVariability(true, true));
     }
-    subtractor.Process(X_buffer, y, render_signal_analyzer, false, &output);
+    subtractor.Process(render_buffer, y, render_signal_analyzer, aec_state,
+                       &output);
 
+    aec_state.HandleEchoPathChange(EchoPathVariability(false, false));
     aec_state.Update(subtractor.FilterFrequencyResponse(),
                      rtc::Optional<size_t>(delay_samples / kBlockSize),
-                     X_buffer, E2_main, E2_shadow, Y2, x,
-                     EchoPathVariability(false, false), false);
+                     render_buffer, E2_main, Y2, x[0], false);
   }
 
   const float output_power = std::inner_product(
@@ -105,31 +103,29 @@ TEST(Subtractor, NullDataDumper) {
 TEST(Subtractor, DISABLED_NullOutput) {
   ApmDataDumper data_dumper(42);
   Subtractor subtractor(&data_dumper, DetectOptimization());
-  FftBuffer X_buffer(
-      Aec3Optimization::kNone, subtractor.MinFarendBufferLength(),
-      std::vector<size_t>(1, subtractor.MinFarendBufferLength()));
+  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, kAdaptiveFilterLength,
+                             std::vector<size_t>(1, kAdaptiveFilterLength));
   RenderSignalAnalyzer render_signal_analyzer;
   std::vector<float> y(kBlockSize, 0.f);
 
-  EXPECT_DEATH(
-      subtractor.Process(X_buffer, y, render_signal_analyzer, false, nullptr),
-      "");
+  EXPECT_DEATH(subtractor.Process(render_buffer, y, render_signal_analyzer,
+                                  AecState(), nullptr),
+               "");
 }
 
 // Verifies the check for the capture signal size.
 TEST(Subtractor, WrongCaptureSize) {
   ApmDataDumper data_dumper(42);
   Subtractor subtractor(&data_dumper, DetectOptimization());
-  FftBuffer X_buffer(
-      Aec3Optimization::kNone, subtractor.MinFarendBufferLength(),
-      std::vector<size_t>(1, subtractor.MinFarendBufferLength()));
+  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, kAdaptiveFilterLength,
+                             std::vector<size_t>(1, kAdaptiveFilterLength));
   RenderSignalAnalyzer render_signal_analyzer;
   std::vector<float> y(kBlockSize - 1, 0.f);
   SubtractorOutput output;
 
-  EXPECT_DEATH(
-      subtractor.Process(X_buffer, y, render_signal_analyzer, false, &output),
-      "");
+  EXPECT_DEATH(subtractor.Process(render_buffer, y, render_signal_analyzer,
+                                  AecState(), &output),
+               "");
 }
 
 #endif

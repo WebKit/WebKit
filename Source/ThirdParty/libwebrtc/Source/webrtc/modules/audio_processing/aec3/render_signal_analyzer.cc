@@ -27,7 +27,7 @@ RenderSignalAnalyzer::RenderSignalAnalyzer() {
 RenderSignalAnalyzer::~RenderSignalAnalyzer() = default;
 
 void RenderSignalAnalyzer::Update(
-    const FftBuffer& X_buffer,
+    const RenderBuffer& render_buffer,
     const rtc::Optional<size_t>& delay_partitions) {
   if (!delay_partitions) {
     narrow_band_counters_.fill(0);
@@ -35,7 +35,7 @@ void RenderSignalAnalyzer::Update(
   }
 
   const std::array<float, kFftLengthBy2Plus1>& X2 =
-      X_buffer.Spectrum(*delay_partitions);
+      render_buffer.Spectrum(*delay_partitions);
 
   // Detect narrow band signal regions.
   for (size_t k = 1; k < (X2.size() - 1); ++k) {

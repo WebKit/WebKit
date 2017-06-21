@@ -26,7 +26,6 @@ public class WebRtcJniBootTest {
   @SmallTest
   public void testJniLoadsWithoutError() throws InterruptedException {
     PeerConnectionFactory.initializeAndroidGlobals(InstrumentationRegistry.getTargetContext(),
-        true /* initializeAudio */, true /* initializeVideo */,
         false /* videoCodecHwAcceleration */);
 
     PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();

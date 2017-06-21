@@ -20,7 +20,6 @@
 #include <assert.h>
 
 #include "webrtc/base/checks.h"
-#include "webrtc/system_wrappers/include/trace.h"
 
 #if ((defined WEBRTC_CODEC_ISAC) && (defined WEBRTC_CODEC_ISACFX))
 #error iSAC and iSACFX codecs cannot be enabled at the same time

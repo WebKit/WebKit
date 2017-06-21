@@ -21,14 +21,15 @@
 namespace webrtc {
 
 FineAudioBuffer::FineAudioBuffer(AudioDeviceBuffer* device_buffer,
-                                 size_t desired_frame_size_bytes,
-                                 int sample_rate)
+                                 int sample_rate,
+                                 size_t capacity)
     : device_buffer_(device_buffer),
-      desired_frame_size_bytes_(desired_frame_size_bytes),
       sample_rate_(sample_rate),
       samples_per_10_ms_(static_cast<size_t>(sample_rate_ * 10 / 1000)),
-      bytes_per_10_ms_(samples_per_10_ms_ * sizeof(int16_t)) {
-  LOG(INFO) << "desired_frame_size_bytes:" << desired_frame_size_bytes;
+      bytes_per_10_ms_(samples_per_10_ms_ * sizeof(int16_t)),
+      playout_buffer_(0, capacity),
+      record_buffer_(0, capacity) {
+  LOG(INFO) << "samples_per_10_ms_:" << samples_per_10_ms_;
 }
 
 FineAudioBuffer::~FineAudioBuffer() {}
@@ -41,11 +42,11 @@ void FineAudioBuffer::ResetRecord() {
   record_buffer_.Clear();
 }
 
-void FineAudioBuffer::GetPlayoutData(int8_t* buffer) {
-  const size_t num_bytes = desired_frame_size_bytes_;
+void FineAudioBuffer::GetPlayoutData(rtc::ArrayView<int8_t> audio_buffer) {
   // Ask WebRTC for new data in chunks of 10ms until we have enough to
   // fulfill the request. It is possible that the buffer already contains
   // enough samples from the last round.
+  const size_t num_bytes = audio_buffer.size();
   while (playout_buffer_.size() < num_bytes) {
     // Get 10ms decoded audio from WebRTC.
     device_buffer_->RequestPlayoutData(samples_per_10_ms_);
@@ -61,19 +62,19 @@ void FineAudioBuffer::GetPlayoutData(int8_t* buffer) {
     RTC_DCHECK_EQ(bytes_per_10_ms_, bytes_written);
   }
   // Provide the requested number of bytes to the consumer.
-  memcpy(buffer, playout_buffer_.data(), num_bytes);
+  memcpy(audio_buffer.data(), playout_buffer_.data(), num_bytes);
   // Move remaining samples to start of buffer to prepare for next round.
   memmove(playout_buffer_.data(), playout_buffer_.data() + num_bytes,
           playout_buffer_.size() - num_bytes);
   playout_buffer_.SetSize(playout_buffer_.size() - num_bytes);
 }
 
-void FineAudioBuffer::DeliverRecordedData(const int8_t* buffer,
-                                          size_t size_in_bytes,
-                                          int playout_delay_ms,
-                                          int record_delay_ms) {
+void FineAudioBuffer::DeliverRecordedData(
+    rtc::ArrayView<const int8_t> audio_buffer,
+    int playout_delay_ms,
+    int record_delay_ms) {
   // Always append new data and grow the buffer if needed.
-  record_buffer_.AppendData(buffer, size_in_bytes);
+  record_buffer_.AppendData(audio_buffer.data(), audio_buffer.size());
   // Consume samples from buffer in chunks of 10ms until there is not
   // enough data left. The number of remaining bytes in the cache is given by
   // the new size of the buffer.

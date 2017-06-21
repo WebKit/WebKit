@@ -280,6 +280,19 @@ bool StunProber::Prepare(const std::vector<rtc::SocketAddress>& servers,
   timeout_ms_ = timeout_ms;
   servers_ = servers;
   observer_ = observer;
+  // Remove addresses that are already resolved.
+  for (auto it = servers_.begin(); it != servers_.end();) {
+    if (it->ipaddr().family() != AF_UNSPEC) {
+      all_servers_addrs_.push_back(*it);
+      it = servers_.erase(it);
+    } else {
+      ++it;
+    }
+  }
+  if (servers_.empty()) {
+    CreateSockets();
+    return true;
+  }
   return ResolveServerName(servers_.back());
 }
 
@@ -339,6 +352,10 @@ void StunProber::OnServerResolved(rtc::AsyncResolverInterface* resolver) {
     return;
   }
 
+  CreateSockets();
+}
+
+void StunProber::CreateSockets() {
   // Dedupe.
   std::set<rtc::SocketAddress> addrs(all_servers_addrs_.begin(),
                                      all_servers_addrs_.end());

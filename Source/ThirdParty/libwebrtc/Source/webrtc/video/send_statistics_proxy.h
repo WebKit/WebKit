@@ -50,18 +50,21 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
                       VideoEncoderConfig::ContentType content_type);
   virtual ~SendStatisticsProxy();
 
-  VideoSendStream::Stats GetStats();
+  virtual VideoSendStream::Stats GetStats();
 
   virtual void OnSendEncodedImage(const EncodedImage& encoded_image,
                                   const CodecSpecificInfo* codec_info);
   // Used to update incoming frame rate.
   void OnIncomingFrame(int width, int height);
 
-  void OnCpuRestrictedResolutionChanged(bool cpu_restricted_resolution);
-  void OnQualityRestrictedResolutionChanged(int num_quality_downscales);
-  void SetResolutionRestrictionStats(bool scaling_enabled,
-                                     bool cpu_restricted,
-                                     int num_quality_downscales);
+  // Adaptation stats.
+  void SetAdaptationStats(const ViEEncoder::AdaptCounts& cpu_counts,
+                          const ViEEncoder::AdaptCounts& quality_counts);
+  void OnCpuAdaptationChanged(const ViEEncoder::AdaptCounts& cpu_counts,
+                              const ViEEncoder::AdaptCounts& quality_counts);
+  void OnQualityAdaptationChanged(
+      const ViEEncoder::AdaptCounts& cpu_counts,
+      const ViEEncoder::AdaptCounts& quality_counts);
 
   void OnEncoderStatsUpdate(uint32_t framerate, uint32_t bitrate);
   void OnSuspendChange(bool is_suspended);
@@ -145,13 +148,26 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
     bool last_paused_or_resumed;
     int64_t last_ms;
   };
+  struct StatsTimer {
+    void Start(int64_t now_ms);
+    void Stop(int64_t now_ms);
+    void Restart(int64_t now_ms);
+    int64_t start_ms = -1;
+    int64_t total_ms = 0;
+  };
   struct QpCounters {
-    SampleCounter vp8;   // QP range: 0-127
-    SampleCounter vp9;   // QP range: 0-255
-    SampleCounter h264;  // QP range: 0-51
+    SampleCounter vp8;   // QP range: 0-127.
+    SampleCounter vp9;   // QP range: 0-255.
+    SampleCounter h264;  // QP range: 0-51.
   };
   void PurgeOldStats() EXCLUSIVE_LOCKS_REQUIRED(crit_);
   VideoSendStream::StreamStats* GetStatsEntry(uint32_t ssrc)
+      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  void SetAdaptTimer(const ViEEncoder::AdaptCounts& counts, StatsTimer* timer)
+      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+  void UpdateAdaptationStats(const ViEEncoder::AdaptCounts& cpu_counts,
+                             const ViEEncoder::AdaptCounts& quality_counts)
       EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   Clock* const clock_;
@@ -164,7 +180,8 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
   uint32_t last_sent_frame_timestamp_ GUARDED_BY(crit_);
   std::map<uint32_t, StatsUpdateTimes> update_times_ GUARDED_BY(crit_);
   rtc::ExpFilter encode_time_ GUARDED_BY(crit_);
-  int quality_downscales_ GUARDED_BY(crit_) = 0;
+  int quality_downscales_ GUARDED_BY(crit_);
+  int cpu_downscales_ GUARDED_BY(crit_);
 
   // Contains stats used for UMA histograms. These stats will be reset if
   // content type changes between real-time video and screenshare, since these
@@ -208,10 +225,13 @@ class SendStatisticsProxy : public CpuOveruseMetricsObserver,
     RateAccCounter fec_byte_counter_;
     int64_t first_rtcp_stats_time_ms_;
     int64_t first_rtp_stats_time_ms_;
+    StatsTimer cpu_adapt_timer_;
+    StatsTimer quality_adapt_timer_;
     BoolSampleCounter paused_time_counter_;
     TargetRateUpdates target_rate_updates_;
     ReportBlockStats report_block_stats_;
     const VideoSendStream::Stats start_stats_;
+
     std::map<int, QpCounters>
         qp_counters_;  // QP counters mapped by spatial idx.
   };

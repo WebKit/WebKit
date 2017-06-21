@@ -59,14 +59,16 @@ class FrameGeneratorTest : public ::testing::Test {
   void CheckFrameAndMutate(VideoFrame* frame, uint8_t y, uint8_t u, uint8_t v) {
     // Check that frame is valid, has the correct color and timestamp are clean.
     ASSERT_NE(nullptr, frame);
+    rtc::scoped_refptr<I420BufferInterface> i420_buffer =
+        frame->video_frame_buffer()->ToI420();
     const uint8_t* buffer;
-    buffer = frame->video_frame_buffer()->DataY();
+    buffer = i420_buffer->DataY();
     for (int i = 0; i < y_size; ++i)
       ASSERT_EQ(y, buffer[i]);
-    buffer = frame->video_frame_buffer()->DataU();
+    buffer = i420_buffer->DataU();
     for (int i = 0; i < uv_size; ++i)
       ASSERT_EQ(u, buffer[i]);
-    buffer = frame->video_frame_buffer()->DataV();
+    buffer = i420_buffer->DataV();
     for (int i = 0; i < uv_size; ++i)
       ASSERT_EQ(v, buffer[i]);
     EXPECT_EQ(0, frame->ntp_time_ms());

@@ -21,11 +21,12 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
+import android.media.MediaRecorder;
 import android.os.Handler;
 import android.util.Range;
 import android.view.Surface;
 import android.view.WindowManager;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
@@ -49,6 +50,7 @@ class Camera2Session implements CameraSession {
   private final Context applicationContext;
   private final CameraManager cameraManager;
   private final SurfaceTextureHelper surfaceTextureHelper;
+  private final Surface mediaRecorderSurface;
   private final String cameraId;
   private final int width;
   private final int height;
@@ -123,9 +125,14 @@ class Camera2Session implements CameraSession {
       final SurfaceTexture surfaceTexture = surfaceTextureHelper.getSurfaceTexture();
       surfaceTexture.setDefaultBufferSize(captureFormat.width, captureFormat.height);
       surface = new Surface(surfaceTexture);
+      List<Surface> surfaces = new ArrayList<Surface>();
+      surfaces.add(surface);
+      if (mediaRecorderSurface != null) {
+        Logging.d(TAG, "Add MediaRecorder surface to capture session.");
+        surfaces.add(mediaRecorderSurface);
+      }
       try {
-        camera.createCaptureSession(
-            Arrays.asList(surface), new CaptureSessionCallback(), cameraThreadHandler);
+        camera.createCaptureSession(surfaces, new CaptureSessionCallback(), cameraThreadHandler);
       } catch (CameraAccessException e) {
         reportError("Failed to create capture session. " + e);
         return;
@@ -175,6 +182,10 @@ class Camera2Session implements CameraSession {
         chooseFocusMode(captureRequestBuilder);
 
         captureRequestBuilder.addTarget(surface);
+        if (mediaRecorderSurface != null) {
+          Logging.d(TAG, "Add MediaRecorder surface to CaptureRequest.Builder");
+          captureRequestBuilder.addTarget(mediaRecorderSurface);
+        }
         session.setRepeatingRequest(
             captureRequestBuilder.build(), new CameraCaptureCallback(), cameraThreadHandler);
       } catch (CameraAccessException e) {
@@ -280,15 +291,15 @@ class Camera2Session implements CameraSession {
 
   public static void create(CreateSessionCallback callback, Events events,
       Context applicationContext, CameraManager cameraManager,
-      SurfaceTextureHelper surfaceTextureHelper, String cameraId, int width, int height,
-      int framerate) {
+      SurfaceTextureHelper surfaceTextureHelper, MediaRecorder mediaRecorder, String cameraId,
+      int width, int height, int framerate) {
     new Camera2Session(callback, events, applicationContext, cameraManager, surfaceTextureHelper,
-        cameraId, width, height, framerate);
+        mediaRecorder, cameraId, width, height, framerate);
   }
 
   private Camera2Session(CreateSessionCallback callback, Events events, Context applicationContext,
-      CameraManager cameraManager, SurfaceTextureHelper surfaceTextureHelper, String cameraId,
-      int width, int height, int framerate) {
+      CameraManager cameraManager, SurfaceTextureHelper surfaceTextureHelper,
+      MediaRecorder mediaRecorder, String cameraId, int width, int height, int framerate) {
     Logging.d(TAG, "Create new camera2 session on camera " + cameraId);
 
     constructionTimeNs = System.nanoTime();
@@ -299,6 +310,7 @@ class Camera2Session implements CameraSession {
     this.applicationContext = applicationContext;
     this.cameraManager = cameraManager;
     this.surfaceTextureHelper = surfaceTextureHelper;
+    this.mediaRecorderSurface = (mediaRecorder != null) ? mediaRecorder.getSurface() : null;
     this.cameraId = cameraId;
     this.width = width;
     this.height = height;

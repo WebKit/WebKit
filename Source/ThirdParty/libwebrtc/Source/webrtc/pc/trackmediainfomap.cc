@@ -34,7 +34,9 @@ void GetAudioAndVideoTrackBySsrc(
     std::map<uint32_t, AudioTrackInterface*>* local_audio_track_by_ssrc,
     std::map<uint32_t, VideoTrackInterface*>* local_video_track_by_ssrc,
     std::map<uint32_t, AudioTrackInterface*>* remote_audio_track_by_ssrc,
-    std::map<uint32_t, VideoTrackInterface*>* remote_video_track_by_ssrc) {
+    std::map<uint32_t, VideoTrackInterface*>* remote_video_track_by_ssrc,
+    AudioTrackInterface** unsignaled_audio_track,
+    VideoTrackInterface** unsignaled_video_track) {
   RTC_DCHECK(local_audio_track_by_ssrc->empty());
   RTC_DCHECK(local_video_track_by_ssrc->empty());
   RTC_DCHECK(remote_audio_track_by_ssrc->empty());
@@ -80,6 +82,12 @@ void GetAudioAndVideoTrackBySsrc(
     RtpParameters params = rtp_receiver->GetParameters();
     for (const RtpEncodingParameters& encoding : params.encodings) {
       if (!encoding.ssrc) {
+        if (media_type == cricket::MEDIA_TYPE_AUDIO) {
+          *unsignaled_audio_track = static_cast<AudioTrackInterface*>(track);
+        } else {
+          RTC_DCHECK(media_type == cricket::MEDIA_TYPE_VIDEO);
+          *unsignaled_video_track = static_cast<VideoTrackInterface*>(track);
+        }
         continue;
       }
       if (media_type == cricket::MEDIA_TYPE_AUDIO) {
@@ -110,12 +118,13 @@ TrackMediaInfoMap::TrackMediaInfoMap(
   std::map<uint32_t, VideoTrackInterface*> local_video_track_by_ssrc;
   std::map<uint32_t, AudioTrackInterface*> remote_audio_track_by_ssrc;
   std::map<uint32_t, VideoTrackInterface*> remote_video_track_by_ssrc;
-  GetAudioAndVideoTrackBySsrc(rtp_senders,
-                              rtp_receivers,
-                              &local_audio_track_by_ssrc,
-                              &local_video_track_by_ssrc,
-                              &remote_audio_track_by_ssrc,
-                              &remote_video_track_by_ssrc);
+  AudioTrackInterface* unsignaled_audio_track = nullptr;
+  VideoTrackInterface* unsignaled_video_track = nullptr;
+  GetAudioAndVideoTrackBySsrc(
+      rtp_senders, rtp_receivers, &local_audio_track_by_ssrc,
+      &local_video_track_by_ssrc, &remote_audio_track_by_ssrc,
+      &remote_video_track_by_ssrc, &unsignaled_audio_track,
+      &unsignaled_video_track);
   if (voice_media_info_) {
     for (auto& sender_info : voice_media_info_->senders) {
       AudioTrackInterface* associated_track =
@@ -137,6 +146,9 @@ TrackMediaInfoMap::TrackMediaInfoMap(
         RTC_DCHECK(voice_info_by_remote_track_.find(associated_track) ==
                    voice_info_by_remote_track_.end());
         voice_info_by_remote_track_[associated_track] = &receiver_info;
+      } else if (unsignaled_audio_track) {
+        audio_track_by_receiver_info_[&receiver_info] = unsignaled_audio_track;
+        voice_info_by_remote_track_[unsignaled_audio_track] = &receiver_info;
       }
     }
   }
@@ -161,6 +173,9 @@ TrackMediaInfoMap::TrackMediaInfoMap(
         RTC_DCHECK(video_info_by_remote_track_.find(associated_track) ==
                    video_info_by_remote_track_.end());
         video_info_by_remote_track_[associated_track] = &receiver_info;
+      } else if (unsignaled_video_track) {
+        video_track_by_receiver_info_[&receiver_info] = unsignaled_video_track;
+        video_info_by_remote_track_[unsignaled_video_track] = &receiver_info;
       }
     }
   }

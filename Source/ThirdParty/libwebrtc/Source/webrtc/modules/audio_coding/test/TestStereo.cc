@@ -18,7 +18,6 @@
 #include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
 #include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"
 #include "webrtc/typedefs.h"
@@ -807,7 +806,7 @@ void TestStereo::Run(TestPackStereo* channel, int in_channels, int out_channels,
 
     // Write output speech to file
     out_file_.Write10MsData(
-        audio_frame.data_,
+        audio_frame.data(),
         audio_frame.samples_per_channel_ * audio_frame.num_channels_);
   }
 

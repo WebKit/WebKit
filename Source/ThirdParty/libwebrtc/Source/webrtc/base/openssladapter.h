@@ -12,6 +12,7 @@
 #define WEBRTC_BASE_OPENSSLADAPTER_H__
 
 #include <string>
+#include "webrtc/base/buffer.h"
 #include "webrtc/base/messagehandler.h"
 #include "webrtc/base/messagequeue.h"
 #include "webrtc/base/ssladapter.h"
@@ -65,6 +66,10 @@ private:
   void Error(const char* context, int err, bool signal = true);
   void Cleanup();
 
+  // Return value and arguments have the same meanings as for Send; |error| is
+  // an output parameter filled with the result of SSL_get_error.
+  int DoSslWrite(const void* pv, size_t cb, int* error);
+
   void OnMessage(Message* msg) override;
 
   static bool VerifyServerName(SSL* ssl, const char* host,
@@ -85,6 +90,11 @@ private:
   bool ssl_write_needs_read_;
   // If true, socket will retain SSL configuration after Close.
   bool restartable_;
+
+  // This buffer is used if SSL_write fails with SSL_ERROR_WANT_WRITE, which
+  // means we need to keep retrying with *the same exact data* until it
+  // succeeds. Afterwards it will be cleared.
+  Buffer pending_data_;
 
   SSL* ssl_;
   SSL_CTX* ssl_ctx_;

@@ -44,7 +44,7 @@ class RtpFrameReferenceFinder {
   // Manage this frame until:
   //  - We have all information needed to determine its references, after
   //    which |frame_callback_| is called with the completed frame, or
-  //  - We have too many stashed frames (determined by |kMaxStashedFrames)
+  //  - We have too many stashed frames (determined by |kMaxStashedFrames|)
   //    so we drop this frame, or
   //  - It gets cleared by ClearTo, which also means we drop it.
   void ManageFrame(std::unique_ptr<RtpFrameObject> frame);
@@ -65,6 +65,7 @@ class RtpFrameReferenceFinder {
   static const int kMaxGofSaved = 50;
   static const int kMaxPaddingAge = 100;
 
+  enum FrameDecision { kStash, kHandOff, kDrop };
 
   struct GofInfo {
     GofInfo(GofInfoVP9* gof, uint16_t last_picture_id)
@@ -80,33 +81,29 @@ class RtpFrameReferenceFinder {
   void UpdateLastPictureIdWithPadding(uint16_t seq_num)
       EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  // Retry finding references for all frames that previously didn't have
-  // all information needed.
+  // Retry stashed frames until no more complete frames are found.
   void RetryStashedFrames() EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  FrameDecision ManageFrameInternal(RtpFrameObject* frame)
+      EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Find references for generic frames. If |picture_id| is unspecified
   // then packet sequence numbers will be used to determine the references
   // of the frames.
-  void ManageFrameGeneric(std::unique_ptr<RtpFrameObject> frame,
-                          int picture_id) EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  // Find references for Vp8 frames
-  void ManageFrameVp8(std::unique_ptr<RtpFrameObject> frame)
+  FrameDecision ManageFrameGeneric(RtpFrameObject* frame, int picture_id)
       EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
-  // Updates all necessary state used to determine frame references
-  // for Vp8 and then calls the |frame_callback| callback with the
-  // completed frame.
-  void CompletedFrameVp8(std::unique_ptr<RtpFrameObject> frame)
+  // Find references for Vp8 frames
+  FrameDecision ManageFrameVp8(RtpFrameObject* frame)
+      EXCLUSIVE_LOCKS_REQUIRED(crit_);
+
+  // Updates necessary layer info state used to determine frame references for
+  // Vp8.
+  void UpdateLayerInfoVp8(RtpFrameObject* frame)
       EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Find references for Vp9 frames
-  void ManageFrameVp9(std::unique_ptr<RtpFrameObject> frame)
-      EXCLUSIVE_LOCKS_REQUIRED(crit_);
-
-  // Unwrap the picture id and the frame references  and then call the
-  // |frame_callback| callback with the completed frame.
-  void CompletedFrameVp9(std::unique_ptr<RtpFrameObject> frame)
+  FrameDecision ManageFrameVp9(RtpFrameObject* frame)
       EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
   // Check if we are missing a frame necessary to determine the references
@@ -126,6 +123,8 @@ class RtpFrameReferenceFinder {
                              uint8_t temporal_idx,
                              uint16_t pid_ref) EXCLUSIVE_LOCKS_REQUIRED(crit_);
 
+  // Unwrap |frame|s picture id and its references to 16 bits.
+  void UnwrapPictureIds(RtpFrameObject* frame) EXCLUSIVE_LOCKS_REQUIRED(crit_);
   // All picture ids are unwrapped to 16 bits.
   uint16_t UnwrapPictureId(uint16_t picture_id) EXCLUSIVE_LOCKS_REQUIRED(crit_);
 

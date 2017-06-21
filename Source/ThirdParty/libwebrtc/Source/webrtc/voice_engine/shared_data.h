@@ -15,6 +15,9 @@
 
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/scoped_ref_ptr.h"
+#include "webrtc/base/task_queue.h"
+#include "webrtc/base/thread_annotations.h"
+#include "webrtc/base/thread_checker.h"
 #include "webrtc/modules/audio_device/include/audio_device.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
 #include "webrtc/modules/utility/include/process_thread.h"
@@ -46,12 +49,7 @@ public:
     OutputMixer* output_mixer() { return _outputMixerPtr; }
     rtc::CriticalSection* crit_sec() { return &_apiCritPtr; }
     ProcessThread* process_thread() { return _moduleProcessThreadPtr.get(); }
-    AudioDeviceModule::AudioLayer audio_device_layer() const {
-      return _audioDeviceLayer;
-    }
-    void set_audio_device_layer(AudioDeviceModule::AudioLayer layer) {
-      _audioDeviceLayer = layer;
-    }
+    rtc::TaskQueue* encoder_queue();
 
     int NumOfSendingChannels();
     int NumOfPlayingChannels();
@@ -63,20 +61,22 @@ public:
                       const char* msg) const;
 
 protected:
-    const uint32_t _instanceId;
-    rtc::CriticalSection _apiCritPtr;
-    ChannelManager _channelManager;
-    Statistics _engineStatistics;
-    rtc::scoped_refptr<AudioDeviceModule> _audioDevicePtr;
-    OutputMixer* _outputMixerPtr;
-    TransmitMixer* _transmitMixerPtr;
-    std::unique_ptr<AudioProcessing> audioproc_;
-    std::unique_ptr<ProcessThread> _moduleProcessThreadPtr;
+ rtc::ThreadChecker construction_thread_;
+ const uint32_t _instanceId;
+ rtc::CriticalSection _apiCritPtr;
+ ChannelManager _channelManager;
+ Statistics _engineStatistics;
+ rtc::scoped_refptr<AudioDeviceModule> _audioDevicePtr;
+ OutputMixer* _outputMixerPtr;
+ TransmitMixer* _transmitMixerPtr;
+ std::unique_ptr<AudioProcessing> audioproc_;
+ std::unique_ptr<ProcessThread> _moduleProcessThreadPtr;
+ // |encoder_queue| is defined last to ensure all pending tasks are cancelled
+ // and deleted before any other members.
+ rtc::TaskQueue encoder_queue_ ACCESS_ON(construction_thread_);
 
-    AudioDeviceModule::AudioLayer _audioDeviceLayer;
-
-    SharedData();
-    virtual ~SharedData();
+ SharedData();
+ virtual ~SharedData();
 };
 
 }  // namespace voe

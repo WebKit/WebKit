@@ -9,12 +9,12 @@
  */
 
 #include "webrtc/base/format_macros.h"
+#include "webrtc/base/timeutils.h"
 #include "webrtc/modules/audio_coding/codecs/opus/audio_encoder_opus.h"
 #include "webrtc/modules/audio_coding/neteq/tools/audio_loop.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"
 #include "webrtc/test/testsupport/perf_test.h"
-#include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -35,8 +35,7 @@ int64_t RunComplexityTest(const AudioEncoderOpus::Config& config) {
   EXPECT_TRUE(audio_loop.Init(kInputFileName, kMaxLoopLengthSamples,
                               kInputBlockSizeSamples));
   // Encode.
-  webrtc::Clock* clock = webrtc::Clock::GetRealTimeClock();
-  const int64_t start_time_ms = clock->TimeInMilliseconds();
+  const int64_t start_time_ms = rtc::TimeMillis();
   AudioEncoder::EncodedInfo info;
   rtc::Buffer encoded(500);
   uint32_t rtp_timestamp = 0u;
@@ -45,7 +44,7 @@ int64_t RunComplexityTest(const AudioEncoderOpus::Config& config) {
     info = encoder.Encode(rtp_timestamp, audio_loop.GetNextBlock(), &encoded);
     rtp_timestamp += kInputBlockSizeSamples;
   }
-  return clock->TimeInMilliseconds() - start_time_ms;
+  return rtc::TimeMillis() - start_time_ms;
 }
 }  // namespace
 

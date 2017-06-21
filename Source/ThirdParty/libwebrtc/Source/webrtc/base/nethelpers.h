@@ -59,6 +59,7 @@ class AsyncResolver : public SignalThread, public AsyncResolverInterface {
 const char* inet_ntop(int af, const void *src, char* dst, socklen_t size);
 int inet_pton(int af, const char* src, void *dst);
 
+bool HasIPv4Enabled();
 bool HasIPv6Enabled();
 }  // namespace rtc
 

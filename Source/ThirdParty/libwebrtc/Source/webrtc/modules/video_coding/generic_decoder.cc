@@ -10,6 +10,7 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/base/timeutils.h"
 #include "webrtc/base/trace_event.h"
 #include "webrtc/modules/video_coding/include/video_coding.h"
 #include "webrtc/modules/video_coding/generic_decoder.h"
@@ -20,25 +21,29 @@ namespace webrtc {
 
 VCMDecodedFrameCallback::VCMDecodedFrameCallback(VCMTiming* timing,
                                                  Clock* clock)
-    : _critSect(CriticalSectionWrapper::CreateCriticalSection()),
-      _clock(clock),
-      _receiveCallback(NULL),
+    : _clock(clock),
       _timing(timing),
       _timestampMap(kDecoderFrameMemoryLength),
-      _lastReceivedPictureID(0) {}
+      _lastReceivedPictureID(0) {
+  ntp_offset_ =
+      _clock->CurrentNtpInMilliseconds() - _clock->TimeInMilliseconds();
+}
 
 VCMDecodedFrameCallback::~VCMDecodedFrameCallback() {
-  delete _critSect;
 }
 
 void VCMDecodedFrameCallback::SetUserReceiveCallback(
     VCMReceiveCallback* receiveCallback) {
-  CriticalSectionScoped cs(_critSect);
+  RTC_DCHECK(construction_thread_.CalledOnValidThread());
+  RTC_DCHECK((!_receiveCallback && receiveCallback) ||
+             (_receiveCallback && !receiveCallback));
   _receiveCallback = receiveCallback;
 }
 
 VCMReceiveCallback* VCMDecodedFrameCallback::UserReceiveCallback() {
-  CriticalSectionScoped cs(_critSect);
+  // Called on the decode thread via VCMCodecDataBase::GetDecoder.
+  // The callback must always have been set before this happens.
+  RTC_DCHECK(_receiveCallback);
   return _receiveCallback;
 }
 
@@ -58,16 +63,15 @@ int32_t VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
 void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
                                       rtc::Optional<int32_t> decode_time_ms,
                                       rtc::Optional<uint8_t> qp) {
+  RTC_DCHECK(_receiveCallback) << "Callback must not be null at this point";
   TRACE_EVENT_INSTANT1("webrtc", "VCMDecodedFrameCallback::Decoded",
                        "timestamp", decodedImage.timestamp());
   // TODO(holmer): We should improve this so that we can handle multiple
   // callbacks from one call to Decode().
   VCMFrameInformation* frameInfo;
-  VCMReceiveCallback* callback;
   {
-    CriticalSectionScoped cs(_critSect);
+    rtc::CritScope cs(&lock_);
     frameInfo = _timestampMap.Pop(decodedImage.timestamp());
-    callback = _receiveCallback;
   }
 
   if (frameInfo == NULL) {
@@ -84,25 +88,39 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   _timing->StopDecodeTimer(decodedImage.timestamp(), *decode_time_ms, now_ms,
                            frameInfo->renderTimeMs);
 
+  // Report timing information.
+  if (frameInfo->timing.is_timing_frame) {
+    // Convert remote timestamps to local time from ntp timestamps.
+    frameInfo->timing.encode_start_ms -= ntp_offset_;
+    frameInfo->timing.encode_finish_ms -= ntp_offset_;
+    frameInfo->timing.packetization_finish_ms -= ntp_offset_;
+    frameInfo->timing.pacer_exit_ms -= ntp_offset_;
+    frameInfo->timing.network_timestamp_ms -= ntp_offset_;
+    frameInfo->timing.network2_timestamp_ms -= ntp_offset_;
+    // TODO(ilnik): Report timing information here.
+    // Capture time: decodedImage.ntp_time_ms() - ntp_offset
+    // Encode start: frameInfo->timing.encode_start_ms
+    // Encode finish: frameInfo->timing.encode_finish_ms
+    // Packetization done: frameInfo->timing.packetization_finish_ms
+    // Pacer exit: frameInfo->timing.pacer_exit_ms
+    // Network timestamp: frameInfo->timing.network_timestamp_ms
+    // Network2 timestamp: frameInfo->timing.network2_timestamp_ms
+    // Receive start: frameInfo->timing.receive_start_ms
+    // Receive finish: frameInfo->timing.receive_finish_ms
+    // Decode start: frameInfo->decodeStartTimeMs
+    // Decode finish: now_ms
+    // Render time: frameInfo->renderTimeMs
+  }
+
   decodedImage.set_timestamp_us(
       frameInfo->renderTimeMs * rtc::kNumMicrosecsPerMillisec);
   decodedImage.set_rotation(frameInfo->rotation);
-  // TODO(sakal): Investigate why callback is NULL sometimes and replace if
-  // statement with a DCHECK.
-  if (callback) {
-    callback->FrameToRender(decodedImage, qp);
-  } else {
-    LOG(LS_WARNING) << "No callback, dropping frame.";
-  }
+  _receiveCallback->FrameToRender(decodedImage, qp, frameInfo->content_type);
 }
 
 int32_t VCMDecodedFrameCallback::ReceivedDecodedReferenceFrame(
     const uint64_t pictureId) {
-  CriticalSectionScoped cs(_critSect);
-  if (_receiveCallback != NULL) {
-    return _receiveCallback->ReceivedDecodedReferenceFrame(pictureId);
-  }
-  return -1;
+  return _receiveCallback->ReceivedDecodedReferenceFrame(pictureId);
 }
 
 int32_t VCMDecodedFrameCallback::ReceivedDecodedFrame(
@@ -117,19 +135,17 @@ uint64_t VCMDecodedFrameCallback::LastReceivedPictureID() const {
 
 void VCMDecodedFrameCallback::OnDecoderImplementationName(
     const char* implementation_name) {
-  CriticalSectionScoped cs(_critSect);
-  if (_receiveCallback)
-    _receiveCallback->OnDecoderImplementationName(implementation_name);
+  _receiveCallback->OnDecoderImplementationName(implementation_name);
 }
 
 void VCMDecodedFrameCallback::Map(uint32_t timestamp,
                                   VCMFrameInformation* frameInfo) {
-  CriticalSectionScoped cs(_critSect);
+  rtc::CritScope cs(&lock_);
   _timestampMap.Add(timestamp, frameInfo);
 }
 
 int32_t VCMDecodedFrameCallback::Pop(uint32_t timestamp) {
-  CriticalSectionScoped cs(_critSect);
+  rtc::CritScope cs(&lock_);
   if (_timestampMap.Pop(timestamp) == NULL) {
     return VCM_GENERAL_ERROR;
   }
@@ -143,7 +159,8 @@ VCMGenericDecoder::VCMGenericDecoder(VideoDecoder* decoder, bool isExternal)
       _decoder(decoder),
       _codecType(kVideoCodecUnknown),
       _isExternal(isExternal),
-      _keyFrameDecoded(false) {}
+      _keyFrameDecoded(false),
+      _last_keyframe_content_type(VideoContentType::UNSPECIFIED) {}
 
 VCMGenericDecoder::~VCMGenericDecoder() {}
 
@@ -161,6 +178,16 @@ int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, int64_t nowMs) {
     _frameInfos[_nextFrameInfoIdx].decodeStartTimeMs = nowMs;
     _frameInfos[_nextFrameInfoIdx].renderTimeMs = frame.RenderTimeMs();
     _frameInfos[_nextFrameInfoIdx].rotation = frame.rotation();
+    _frameInfos[_nextFrameInfoIdx].timing = frame.video_timing();
+    // Set correctly only for key frames. Thus, use latest key frame
+    // content type. If the corresponding key frame was lost, decode will fail
+    // and content type will be ignored.
+    if (frame.FrameType() == kVideoFrameKey) {
+      _frameInfos[_nextFrameInfoIdx].content_type = frame.contentType();
+      _last_keyframe_content_type = frame.contentType();
+    } else {
+      _frameInfos[_nextFrameInfoIdx].content_type = _last_keyframe_content_type;
+    }
     _callback->Map(frame.TimeStamp(), &_frameInfos[_nextFrameInfoIdx]);
 
     _nextFrameInfoIdx = (_nextFrameInfoIdx + 1) % kDecoderFrameMemoryLength;

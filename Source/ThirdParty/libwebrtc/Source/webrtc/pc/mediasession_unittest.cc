@@ -25,13 +25,9 @@
 #include "webrtc/pc/mediasession.h"
 #include "webrtc/pc/srtpfilter.h"
 
-#ifdef HAVE_SRTP
 #define ASSERT_CRYPTO(cd, s, cs) \
     ASSERT_EQ(s, cd->cryptos().size()); \
     ASSERT_EQ(std::string(cs), cd->cryptos()[0].cipher_suite)
-#else
-#define ASSERT_CRYPTO(cd, s, cs) ASSERT_EQ(0, cd->cryptos().size());
-#endif
 
 typedef std::vector<cricket::Candidate> Candidates;
 
@@ -266,8 +262,8 @@ class MediaSessionDescriptionFactoryTest : public testing::Test {
   bool GetIceRenomination(const TransportInfo* transport_info) {
     const std::vector<std::string>& ice_options =
         transport_info->description.transport_options;
-    auto iter = std::find(ice_options.begin(), ice_options.end(),
-                          cricket::ICE_RENOMINATION_STR);
+    auto iter =
+        std::find(ice_options.begin(), ice_options.end(), "renomination");
     return iter != ice_options.end();
   }
 
@@ -1010,6 +1006,41 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateDataAnswerWithoutSctpmap) {
   const DataContentDescription* dcd_answer =
       static_cast<const DataContentDescription*>(dc_answer->description);
   EXPECT_FALSE(dcd_answer->use_sctpmap());
+}
+
+// Test that a valid answer will be created for "DTLS/SCTP", "UDP/DTLS/SCTP"
+// and "TCP/DTLS/SCTP" offers.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       TestCreateDataAnswerToDifferentOfferedProtos) {
+  // Need to enable DTLS offer/answer generation (disabled by default in this
+  // test).
+  f1_.set_secure(SEC_ENABLED);
+  f2_.set_secure(SEC_ENABLED);
+  tdf1_.set_secure(SEC_ENABLED);
+  tdf2_.set_secure(SEC_ENABLED);
+
+  MediaSessionOptions opts;
+  opts.data_channel_type = cricket::DCT_SCTP;
+  std::unique_ptr<SessionDescription> offer(f1_.CreateOffer(opts, nullptr));
+  ASSERT_TRUE(offer.get() != nullptr);
+  ContentInfo* dc_offer = offer->GetContentByName("data");
+  ASSERT_TRUE(dc_offer != nullptr);
+  DataContentDescription* dcd_offer =
+      static_cast<DataContentDescription*>(dc_offer->description);
+
+  std::vector<std::string> protos = {"DTLS/SCTP", "UDP/DTLS/SCTP",
+                                     "TCP/DTLS/SCTP"};
+  for (const std::string& proto : protos) {
+    dcd_offer->set_protocol(proto);
+    std::unique_ptr<SessionDescription> answer(
+        f2_.CreateAnswer(offer.get(), opts, nullptr));
+    const ContentInfo* dc_answer = answer->GetContentByName("data");
+    ASSERT_TRUE(dc_answer != nullptr);
+    const DataContentDescription* dcd_answer =
+        static_cast<const DataContentDescription*>(dc_answer->description);
+    EXPECT_FALSE(dc_answer->rejected);
+    EXPECT_EQ(proto, dcd_answer->protocol());
+  }
 }
 
 // Verifies that the order of the media contents in the offer is preserved in

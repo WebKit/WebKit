@@ -49,6 +49,10 @@ bool Pli::Parse(const CommonHeader& packet) {
   return true;
 }
 
+size_t Pli::BlockLength() const {
+  return kHeaderLength + kCommonFeedbackLength;
+}
+
 bool Pli::Create(uint8_t* packet,
                  size_t* index,
                  size_t max_length,

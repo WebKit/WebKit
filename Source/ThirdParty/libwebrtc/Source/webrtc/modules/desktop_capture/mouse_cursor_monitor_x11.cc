@@ -16,11 +16,11 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/desktop_capture/desktop_capture_options.h"
 #include "webrtc/modules/desktop_capture/desktop_frame.h"
 #include "webrtc/modules/desktop_capture/mouse_cursor.h"
 #include "webrtc/modules/desktop_capture/x11/x_error_trap.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace {
 
@@ -183,6 +183,21 @@ void MouseCursorMonitorX11::Capture() {
       // |window_|.
       state =
           (window_ == root_window || child_window != None) ? INSIDE : OUTSIDE;
+    }
+
+    // As the comments to GetTopLevelWindow() above indicate, in window capture,
+    // the cursor position capture happens in |window_|, while the frame catpure
+    // happens in |child_window|. These two windows are not alwyas same, as
+    // window manager may add some decorations to the |window_|. So translate
+    // the coordinate in |window_| to the coordinate space of |child_window|.
+    if (window_ != root_window && state == INSIDE) {
+      int translated_x, translated_y;
+      Window unused;
+      if (XTranslateCoordinates(display(), window_, child_window, win_x, win_y,
+                                &translated_x, &translated_y, &unused)) {
+        win_x = translated_x;
+        win_y = translated_y;
+      }
     }
 
     callback_->OnMouseCursorPosition(state,

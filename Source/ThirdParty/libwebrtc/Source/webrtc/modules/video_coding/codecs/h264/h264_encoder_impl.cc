@@ -21,8 +21,8 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/base/timeutils.h"
 #include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
-#include "webrtc/media/base/mediaconstants.h"
 #include "webrtc/system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -107,8 +107,8 @@ static void RtpFragmentize(EncodedImage* encoded_image,
     // should be more than enough to hold any encoded data of future frames of
     // the same size (avoiding possible future reallocation due to variations in
     // required size).
-    encoded_image->_size =
-        CalcBufferSize(kI420, frame_buffer.width(), frame_buffer.height());
+    encoded_image->_size = CalcBufferSize(
+        VideoType::kI420, frame_buffer.width(), frame_buffer.height());
     if (encoded_image->_size < required_size) {
       // Encoded data > unencoded data. Allocate required bytes.
       LOG(LS_WARNING) << "Encoding produced more bytes than the original image "
@@ -254,8 +254,8 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* codec_settings,
                                &video_format);
 
   // Initialize encoded image. Default buffer size: size of unencoded data.
-  encoded_image_._size =
-      CalcBufferSize(kI420, codec_settings->width, codec_settings->height);
+  encoded_image_._size = CalcBufferSize(VideoType::kI420, codec_settings->width,
+                                        codec_settings->height);
   encoded_image_._buffer = new uint8_t[encoded_image_._size];
   encoded_image_buffer_.reset(encoded_image_._buffer);
   encoded_image_._completeFrame = true;
@@ -332,8 +332,8 @@ int32_t H264EncoderImpl::Encode(const VideoFrame& input_frame,
     // (If every frame is a key frame we get lag/delays.)
     openh264_encoder_->ForceIntraFrame(true);
   }
-  rtc::scoped_refptr<const VideoFrameBuffer> frame_buffer =
-      input_frame.video_frame_buffer();
+  rtc::scoped_refptr<const I420BufferInterface> frame_buffer =
+      input_frame.video_frame_buffer()->ToI420();
   // EncodeFrame input.
   SSourcePicture picture;
   memset(&picture, 0, sizeof(SSourcePicture));
@@ -367,6 +367,10 @@ int32_t H264EncoderImpl::Encode(const VideoFrame& input_frame,
   encoded_image_.ntp_time_ms_ = input_frame.ntp_time_ms();
   encoded_image_.capture_time_ms_ = input_frame.render_time_ms();
   encoded_image_.rotation_ = input_frame.rotation();
+  encoded_image_.content_type_ = (mode_ == kScreensharing)
+                                     ? VideoContentType::SCREENSHARE
+                                     : VideoContentType::UNSPECIFIED;
+  encoded_image_.timing_.is_timing_frame = false;
   encoded_image_._frameType = ConvertToVideoFrameType(info.eFrameType);
 
   // Split encoded image up into fragments. This also updates |encoded_image_|.

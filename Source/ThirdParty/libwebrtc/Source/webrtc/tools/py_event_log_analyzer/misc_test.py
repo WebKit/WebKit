@@ -24,17 +24,17 @@ import misc
 class TestMisc(unittest.TestCase):
   def testUnwrapMod3(self):
     data = [0, 1, 2, 0, -1, -2, -3, -4]
-    unwrapped_3 = misc.unwrap(data, 3)
+    unwrapped_3 = misc.Unwrap(data, 3)
     self.assertEqual([0, 1, 2, 3, 2, 1, 0, -1], unwrapped_3)
 
   def testUnwrapMod4(self):
     data = [0, 1, 2, 0, -1, -2, -3, -4]
-    unwrapped_4 = misc.unwrap(data, 4)
+    unwrapped_4 = misc.Unwrap(data, 4)
     self.assertEqual([0, 1, 2, 0, -1, -2, -3, -4], unwrapped_4)
 
   def testDataShouldNotChangeAfterUnwrap(self):
     data = [0, 1, 2, 0, -1, -2, -3, -4]
-    _ = misc.unwrap(data, 4)
+    _ = misc.Unwrap(data, 4)
 
     self.assertEqual([0, 1, 2, 0, -1, -2, -3, -4], data)
 
@@ -43,7 +43,7 @@ class TestMisc(unittest.TestCase):
     random_data = [random.randint(0, 9) for _ in range(100)]
 
     for mod in range(1, 100):
-      random_data_unwrapped_mod = misc.unwrap(random_data, mod)
+      random_data_unwrapped_mod = misc.Unwrap(random_data, mod)
 
       for (old_a, a) in zip(random_data, random_data_unwrapped_mod):
         self.assertEqual((old_a - a) % mod, 0)
@@ -54,7 +54,7 @@ class TestMisc(unittest.TestCase):
     random_data = [random.randint(0, 9) for _ in range(100)]
 
     for mod in range(1, 100):
-      random_data_unwrapped_mod = misc.unwrap(random_data, mod)
+      random_data_unwrapped_mod = misc.Unwrap(random_data, mod)
 
       for (a, b) in zip(random_data_unwrapped_mod,
                         random_data_unwrapped_mod[1:]):
@@ -64,7 +64,7 @@ class TestMisc(unittest.TestCase):
     random_data = [random.randint(0, 9) for _ in range(100)]
     random_data_copy = random_data[:]
     for mod in range(1, 100):
-      _ = misc.unwrap(random_data, mod)
+      _ = misc.Unwrap(random_data, mod)
 
       self.assertEqual(random_data, random_data_copy)
 

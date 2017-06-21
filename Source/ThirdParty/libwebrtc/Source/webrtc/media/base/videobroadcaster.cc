@@ -84,9 +84,7 @@ void VideoBroadcaster::UpdateWants() {
       wants.rotation_applied = true;
     }
     // wants.max_pixel_count == MIN(sink.wants.max_pixel_count)
-    if (sink.wants.max_pixel_count &&
-        (!wants.max_pixel_count ||
-         (*sink.wants.max_pixel_count < *wants.max_pixel_count))) {
+    if (sink.wants.max_pixel_count < wants.max_pixel_count) {
       wants.max_pixel_count = sink.wants.max_pixel_count;
     }
     // Select the minimum requested target_pixel_count, if any, of all sinks so
@@ -98,11 +96,15 @@ void VideoBroadcaster::UpdateWants() {
          (*sink.wants.target_pixel_count < *wants.target_pixel_count))) {
       wants.target_pixel_count = sink.wants.target_pixel_count;
     }
+    // Select the minimum for the requested max framerates.
+    if (sink.wants.max_framerate_fps < wants.max_framerate_fps) {
+      wants.max_framerate_fps = sink.wants.max_framerate_fps;
+    }
   }
 
-  if (wants.max_pixel_count && wants.target_pixel_count &&
-      *wants.target_pixel_count >= *wants.max_pixel_count) {
-    wants.target_pixel_count = wants.max_pixel_count;
+  if (wants.target_pixel_count &&
+      *wants.target_pixel_count >= wants.max_pixel_count) {
+    wants.target_pixel_count.emplace(wants.max_pixel_count);
   }
   current_wants_ = wants;
 }

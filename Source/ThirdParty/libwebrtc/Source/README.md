@@ -7,7 +7,7 @@ developed for the browser, mobile platforms, and IoT devices, and allow them
 all to communicate via a common set of protocols.
 
 The WebRTC initiative is a project supported by Google, Mozilla and Opera,
-amongst others. This page is maintained by the Google Chrome team.
+amongst others.
 
 ### Development
 

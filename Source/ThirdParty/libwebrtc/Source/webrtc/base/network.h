@@ -119,6 +119,10 @@ class NetworkManager : public DefaultLocalAddressProvider {
   // IP address.  (i.e. INADDR_ANY for IPv4 or in6addr_any for IPv6). This is
   // useful as binding to such interfaces allow default routing behavior like
   // http traffic.
+  //
+  // This method appends the "any address" networks to the list, such that this
+  // can optionally be called after GetNetworks.
+  //
   // TODO(guoweis): remove this body when chromium implements this.
   virtual void GetAnyAddressNetworks(NetworkList*) {}
 

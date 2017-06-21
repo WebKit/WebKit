@@ -32,11 +32,9 @@ class TransportFeedback;
 
 class RemoteEstimatorProxy : public RemoteBitrateEstimator {
  public:
-  RemoteEstimatorProxy(Clock* clock, PacketRouter* packet_router);
+  RemoteEstimatorProxy(const Clock* clock, PacketRouter* packet_router);
   virtual ~RemoteEstimatorProxy();
 
-  void IncomingPacketFeedbackVector(
-      const std::vector<PacketInfo>& packet_feedback_vector) override;
   void IncomingPacket(int64_t arrival_time_ms,
                       size_t payload_size,
                       const RTPHeader& header) override;
@@ -59,7 +57,7 @@ class RemoteEstimatorProxy : public RemoteBitrateEstimator {
       EXCLUSIVE_LOCKS_REQUIRED(&lock_);
   bool BuildFeedbackPacket(rtcp::TransportFeedback* feedback_packet);
 
-  Clock* const clock_;
+  const Clock* const clock_;
   PacketRouter* const packet_router_;
   int64_t last_process_time_ms_;
 

@@ -34,6 +34,6 @@ bool WebRtcIlbcfix_CbConstruct(
     int16_t* mem,              /* (i) Buffer for codevector construction */
     size_t lMem,               /* (i) Length of buffer */
     size_t veclen              /* (i) Length of vector */
-    ) WARN_UNUSED_RESULT;
+    ) RTC_WARN_UNUSED_RESULT;
 
 #endif

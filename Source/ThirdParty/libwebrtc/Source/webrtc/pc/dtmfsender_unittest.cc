@@ -330,11 +330,11 @@ TEST_F(DtmfSenderTest, TryInsertDtmfWhenItDoesNotWork) {
 
 TEST_F(DtmfSenderTest, InsertDtmfWithInvalidDurationOrGap) {
   std::string tones = "3,4";
-  int duration = 100;
+  int duration = 40;
   int inter_tone_gap = 50;
 
   EXPECT_FALSE(dtmf_->InsertDtmf(tones, 6001, inter_tone_gap));
-  EXPECT_FALSE(dtmf_->InsertDtmf(tones, 69, inter_tone_gap));
+  EXPECT_FALSE(dtmf_->InsertDtmf(tones, 39, inter_tone_gap));
   EXPECT_FALSE(dtmf_->InsertDtmf(tones, duration, 49));
 
   EXPECT_TRUE(dtmf_->InsertDtmf(tones, duration, inter_tone_gap));

@@ -18,138 +18,148 @@
 
 // Extension of RTCMTLVideoView for testing purposes.
 @interface RTCMTLVideoView (Testing)
-@property(nonatomic, strong) id<RTCMTLRenderer> renderer;
-@property(nonatomic, strong) UIView* metalView;
-@property(atomic, strong) RTCVideoFrame* videoFrame;
 
 + (BOOL)isMetalAvailable;
 + (UIView*)createMetalView:(CGRect)frame;
-+ (id<RTCMTLRenderer>)createMetalRenderer;
++ (id<RTCMTLRenderer>)createNV12Renderer;
++ (id<RTCMTLRenderer>)createI420Renderer;
 - (void)drawInMTKView:(id)view;
 @end
 
 @interface RTCMTLVideoViewTests : NSObject
 @property(nonatomic, strong) id classMock;
 @property(nonatomic, strong) id metalViewMock;
-@property(nonatomic, strong) id rendererMock;
+@property(nonatomic, strong) id rendererNV12Mock;
+@property(nonatomic, strong) id rendererI420Mock;
+@property(nonatomic, strong) id frameMock;
 @end
 
 @implementation RTCMTLVideoViewTests
 
 @synthesize classMock = _classMock;
 @synthesize metalViewMock = _metalViewMock;
-@synthesize rendererMock = _rendererMock;
+@synthesize rendererNV12Mock = _rendererNV12Mock;
+@synthesize rendererI420Mock = _rendererI420Mock;
+@synthesize frameMock = _frameMock;
 
 - (void)setup {
   self.classMock = OCMClassMock([RTCMTLVideoView class]);
-
-  self.metalViewMock = OCMClassMock([RTCMTLVideoViewTests class]);
-  // NOTE: OCMock doesen't provide modern syntax for -ignoringNonObjectArgs.
-  [[[[self.classMock stub] ignoringNonObjectArgs] andReturn:self.metalViewMock]
-      createMetalView:CGRectZero];
-
-  self.rendererMock = OCMProtocolMock(@protocol(RTCMTLRenderer));
-  OCMStub([self.classMock createMetalRenderer]).andReturn(self.rendererMock);
 }
 
 - (void)tearDown {
   [self.classMock stopMocking];
-  [self.rendererMock stopMocking];
+  [self.rendererI420Mock stopMocking];
+  [self.rendererNV12Mock stopMocking];
   [self.metalViewMock stopMocking];
+  [self.frameMock stopMocking];
   self.classMock = nil;
-  self.rendererMock = nil;
+  self.rendererI420Mock = nil;
+  self.rendererNV12Mock = nil;
   self.metalViewMock = nil;
+  self.frameMock = nil;
 }
 
-- (void)testMetalConfigureNotExecuted {
-  // when
-  OCMStub([self.classMock isMetalAvailable]).andReturn(NO);
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
-
-  // then
-  EXPECT_TRUE(realView.renderer == nil);
-  EXPECT_TRUE(realView.metalView == nil);
+- (id)frameMockWithNativeHandle:(BOOL)hasNativeHandle {
+  id frameMock = OCMClassMock([RTCVideoFrame class]);
+  if (hasNativeHandle) {
+    OCMStub([frameMock nativeHandle]).andReturn((CVPixelBufferRef)[OCMArg anyPointer]);
+  } else {
+    OCMStub([frameMock nativeHandle]).andReturn((CVPixelBufferRef) nullptr);
+  }
+  return frameMock;
 }
 
-- (void)testMetalConfigureExecuted {
-  // given
-  OCMStub([self.classMock isMetalAvailable]).andReturn(YES);
-  OCMStub([self.rendererMock addRenderingDestination:self.metalViewMock])
-      .andReturn(NO);
+- (id)rendererMockWithSuccessfulSetup:(BOOL)sucess {
+  id rendererMock = OCMProtocolMock(@protocol(RTCMTLRenderer));
+  OCMStub([rendererMock addRenderingDestination:[OCMArg any]]).andReturn(sucess);
 
-  // when
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
-
-  // then
-  EXPECT_TRUE(realView.renderer == nil);
-  EXPECT_TRUE(realView.metalView != nil);
+  return rendererMock;
 }
 
-- (void)testMetalDrawCallback {
+#pragma mark - Test cases
+- (void)testInitAssertsIfMetalUnavailabe {
   // given
   OCMStub([self.classMock isMetalAvailable]).andReturn(NO);
-  OCMExpect([self.rendererMock drawFrame:[OCMArg any]]);
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
-  realView.metalView = self.metalViewMock;
-  realView.renderer = self.rendererMock;
 
   // when
-  [realView drawInMTKView:self.metalViewMock];
+  BOOL asserts = NO;
+  @try {
+    RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] initWithFrame:CGRectZero];
+    (void)realView;
+  } @catch (NSException *ex) {
+    asserts = YES;
+  }
 
-  // then
-  [self.rendererMock verify];
+  EXPECT_TRUE(asserts);
 }
 
 - (void)testRTCVideoRenderNilFrameCallback {
   // given
-  OCMStub([self.classMock isMetalAvailable]).andReturn(NO);
+  OCMStub([self.classMock isMetalAvailable]).andReturn(YES);
   RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+  self.frameMock = OCMClassMock([RTCVideoFrame class]);
+
+  [[self.frameMock reject] nativeHandle];
+  [[self.classMock reject] createNV12Renderer];
+  [[self.classMock reject] createI420Renderer];
 
   // when
   [realView renderFrame:nil];
-
-  // then
-  EXPECT_TRUE(realView.videoFrame == nil);
-}
-
-- (void)testRTCVideoRenderFrameCallback {
-  // given
-  OCMStub([self.classMock isMetalAvailable]).andReturn(NO);
-  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
-  id frame = OCMClassMock([RTCVideoFrame class]);
-  realView.metalView = self.metalViewMock;
-  realView.renderer = self.rendererMock;
-  OCMExpect([self.rendererMock drawFrame:frame]);
-
-  // when
-  [realView renderFrame:frame];
   [realView drawInMTKView:self.metalViewMock];
 
   // then
-  EXPECT_EQ(realView.videoFrame, frame);
-  [self.rendererMock verify];
+  [self.frameMock verify];
+  [self.classMock verify];
+}
+
+- (void)testRTCVideoRenderFrameCallbackI420 {
+  // given
+  OCMStub([self.classMock isMetalAvailable]).andReturn(YES);
+  self.rendererI420Mock = [self rendererMockWithSuccessfulSetup:YES];
+  self.frameMock = [self frameMockWithNativeHandle:NO];
+
+  OCMExpect([self.rendererI420Mock drawFrame:self.frameMock]);
+  OCMExpect([self.classMock createI420Renderer]).andReturn(self.rendererI420Mock);
+  [[self.classMock reject] createNV12Renderer];
+
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+
+  // when
+  [realView renderFrame:self.frameMock];
+  [realView drawInMTKView:self.metalViewMock];
+
+  // then
+  [self.rendererI420Mock verify];
+  [self.classMock verify];
+}
+
+- (void)testRTCVideoRenderFrameCallbackNV12 {
+  // given
+  OCMStub([self.classMock isMetalAvailable]).andReturn(YES);
+  self.rendererNV12Mock = [self rendererMockWithSuccessfulSetup:YES];
+  self.frameMock = [self frameMockWithNativeHandle:YES];
+
+  OCMExpect([self.rendererNV12Mock drawFrame:self.frameMock]);
+  OCMExpect([self.classMock createNV12Renderer]).andReturn(self.rendererNV12Mock);
+  [[self.classMock reject] createI420Renderer];
+
+  RTCMTLVideoView *realView = [[RTCMTLVideoView alloc] init];
+
+  // when
+  [realView renderFrame:self.frameMock];
+  [realView drawInMTKView:self.metalViewMock];
+
+  // then
+  [self.rendererNV12Mock verify];
+  [self.classMock verify];
 }
 @end
 
-TEST(RTCMTLVideoViewTests, MetalConfigureNotExecuted) {
+TEST(RTCMTLVideoViewTests, InitAssertsIfMetalUnavailabe) {
   RTCMTLVideoViewTests *test = [[RTCMTLVideoViewTests alloc] init];
   [test setup];
-  [test testMetalConfigureNotExecuted];
-  [test tearDown];
-}
 
-
-TEST(RTCMTLVideoViewTests, MetalConfigureExecuted) {
-  RTCMTLVideoViewTests *test = [[RTCMTLVideoViewTests alloc] init];
-  [test setup];
-  [test testMetalConfigureExecuted];
-  [test tearDown];
-}
-
-TEST(RTCMTLVideoViewTests, MetalDrawCallback) {
-  RTCMTLVideoViewTests *test = [[RTCMTLVideoViewTests alloc] init];
-  [test setup];
-  [test testMetalDrawCallback];
+  [test testInitAssertsIfMetalUnavailabe];
   [test tearDown];
 }
 
@@ -160,9 +170,18 @@ TEST(RTCMTLVideoViewTests, RTCVideoRenderNilFrameCallback) {
   [test tearDown];
 }
 
-TEST(RTCMTLVideoViewTests, RTCVideoRenderFrameCallback) {
+TEST(RTCMTLVideoViewTests, RTCVideoRenderFrameCallbackI420) {
   RTCMTLVideoViewTests *test = [[RTCMTLVideoViewTests alloc] init];
   [test setup];
-  [test testRTCVideoRenderFrameCallback];
+
+  [test testRTCVideoRenderFrameCallbackI420];
+  [test tearDown];
+}
+
+TEST(RTCMTLVideoViewTests, RTCVideoRenderFrameCallbackNV12) {
+  RTCMTLVideoViewTests *test = [[RTCMTLVideoViewTests alloc] init];
+  [test setup];
+
+  [test testRTCVideoRenderFrameCallbackNV12];
   [test tearDown];
 }

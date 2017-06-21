@@ -130,24 +130,23 @@ int Normal::Process(const int16_t* input,
 
       // Interpolate the expanded data into the new vector.
       // (NB/WB/SWB32/SWB48 8/16/32/48 samples.)
-      RTC_DCHECK_LT(fs_shift, 3);  // Will always be 0, 1, or, 2.
-      increment = 4 >> fs_shift;
-      int fraction = increment;
-      // Don't interpolate over more samples than what is in output. When this
-      // cap strikes, the interpolation will likely sound worse, but this is an
-      // emergency operation in response to unexpected input.
-      const size_t interp_len_samples =
-          std::min(static_cast<size_t>(8 * fs_mult), output->Size());
-      for (size_t i = 0; i < interp_len_samples; ++i) {
-        // TODO(hlundin): Add 16 instead of 8 for correct rounding. Keeping 8
-        // now for legacy bit-exactness.
-        RTC_DCHECK_LT(channel_ix, output->Channels());
-        RTC_DCHECK_LT(i, output->Size());
-        (*output)[channel_ix][i] =
-            static_cast<int16_t>((fraction * (*output)[channel_ix][i] +
-                (32 - fraction) * expanded[channel_ix][i] + 8) >> 5);
-        fraction += increment;
+      size_t win_length = samples_per_ms_;
+      int16_t win_slope_Q14 = default_win_slope_Q14_;
+      RTC_DCHECK_LT(channel_ix, output->Channels());
+      if (win_length > output->Size()) {
+        win_length = output->Size();
+        win_slope_Q14 = (1 << 14) / static_cast<int16_t>(win_length);
       }
+      int16_t win_up_Q14 = 0;
+      for (size_t i = 0; i < win_length; i++) {
+        win_up_Q14 += win_slope_Q14;
+        (*output)[channel_ix][i] =
+            (win_up_Q14 * (*output)[channel_ix][i] +
+             ((1 << 14) - win_up_Q14) * expanded[channel_ix][i] + (1 << 13)) >>
+            14;
+      }
+      RTC_DCHECK_GT(win_up_Q14,
+                    (1 << 14) - 32);  // Worst case rouding is a length of 34
     }
   } else if (last_mode == kModeRfc3389Cng) {
     RTC_DCHECK_EQ(output->Channels(), 1);  // Not adapted for multi-channel yet.
@@ -171,16 +170,22 @@ int Normal::Process(const int16_t* input,
     }
     // Interpolate the CNG into the new vector.
     // (NB/WB/SWB32/SWB48 8/16/32/48 samples.)
-    RTC_DCHECK_LT(fs_shift, 3);  // Will always be 0, 1, or, 2.
-    int16_t increment = 4 >> fs_shift;
-    int16_t fraction = increment;
-    for (size_t i = 0; i < static_cast<size_t>(8 * fs_mult); i++) {
-      // TODO(hlundin): Add 16 instead of 8 for correct rounding. Keeping 8 now
-      // for legacy bit-exactness.
-      (*output)[0][i] = (fraction * (*output)[0][i] +
-          (32 - fraction) * cng_output[i] + 8) >> 5;
-      fraction += increment;
+    size_t win_length = samples_per_ms_;
+    int16_t win_slope_Q14 = default_win_slope_Q14_;
+    if (win_length > kCngLength) {
+      win_length = kCngLength;
+      win_slope_Q14 = (1 << 14) / static_cast<int16_t>(win_length);
     }
+    int16_t win_up_Q14 = 0;
+    for (size_t i = 0; i < win_length; i++) {
+      win_up_Q14 += win_slope_Q14;
+      (*output)[0][i] =
+          (win_up_Q14 * (*output)[0][i] +
+           ((1 << 14) - win_up_Q14) * cng_output[i] + (1 << 13)) >>
+          14;
+    }
+    RTC_DCHECK_GT(win_up_Q14,
+                  (1 << 14) - 32);  // Worst case rouding is a length of 34
   } else if (external_mute_factor_array[0] < 16384) {
     // Previous was neither of Expand, FadeToBGN or RFC3389_CNG, but we are
     // still ramping up from previous muting.

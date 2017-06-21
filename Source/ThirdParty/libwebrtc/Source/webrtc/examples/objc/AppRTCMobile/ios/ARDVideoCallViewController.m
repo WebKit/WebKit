@@ -10,9 +10,10 @@
 
 #import "ARDVideoCallViewController.h"
 
-#import "webrtc/modules/audio_device/ios/objc/RTCAudioSession.h"
+#import "WebRTC/RTCAudioSession.h"
 
 #import "ARDAppClient.h"
+#import "ARDCaptureController.h"
 #import "ARDSettingsModel.h"
 #import "ARDVideoCallView.h"
 #import "WebRTC/RTCAVFoundationVideoSource.h"
@@ -22,7 +23,6 @@
 
 @interface ARDVideoCallViewController () <ARDAppClientDelegate,
     ARDVideoCallViewDelegate>
-@property(nonatomic, strong) RTCVideoTrack *localVideoTrack;
 @property(nonatomic, strong) RTCVideoTrack *remoteVideoTrack;
 @property(nonatomic, readonly) ARDVideoCallView *videoCallView;
 @end
@@ -30,34 +30,23 @@
 @implementation ARDVideoCallViewController {
   ARDAppClient *_client;
   RTCVideoTrack *_remoteVideoTrack;
-  RTCVideoTrack *_localVideoTrack;
+  ARDCaptureController *_captureController;
   AVAudioSessionPortOverride _portOverride;
 }
 
 @synthesize videoCallView = _videoCallView;
+@synthesize remoteVideoTrack = _remoteVideoTrack;
 @synthesize delegate = _delegate;
 
 - (instancetype)initForRoom:(NSString *)room
                  isLoopback:(BOOL)isLoopback
-                isAudioOnly:(BOOL)isAudioOnly
-          shouldMakeAecDump:(BOOL)shouldMakeAecDump
-      shouldUseLevelControl:(BOOL)shouldUseLevelControl
                    delegate:(id<ARDVideoCallViewControllerDelegate>)delegate {
   if (self = [super init]) {
-    _delegate = delegate;
-    _client = [[ARDAppClient alloc] initWithDelegate:self];
     ARDSettingsModel *settingsModel = [[ARDSettingsModel alloc] init];
-    RTCMediaConstraints *cameraConstraints = [[RTCMediaConstraints alloc]
-        initWithMandatoryConstraints:nil
-                 optionalConstraints:[settingsModel
-                                         currentMediaConstraintFromStoreAsRTCDictionary]];
-    [_client setMaxBitrate:[settingsModel currentMaxBitrateSettingFromStore]];
-    [_client setCameraConstraints:cameraConstraints];
-    [_client connectToRoomWithId:room
-                      isLoopback:isLoopback
-                     isAudioOnly:isAudioOnly
-               shouldMakeAecDump:shouldMakeAecDump
-           shouldUseLevelControl:shouldUseLevelControl];
+    _delegate = delegate;
+
+    _client = [[ARDAppClient alloc] initWithDelegate:self];
+    [_client connectToRoomWithId:room settings:settingsModel isLoopback:isLoopback];
   }
   return self;
 }
@@ -100,8 +89,16 @@
 }
 
 - (void)appClient:(ARDAppClient *)client
+    didCreateLocalCapturer:(RTCCameraVideoCapturer *)localCapturer {
+  _videoCallView.localVideoView.captureSession = localCapturer.captureSession;
+  ARDSettingsModel *settingsModel = [[ARDSettingsModel alloc] init];
+  _captureController =
+      [[ARDCaptureController alloc] initWithCapturer:localCapturer settings:settingsModel];
+  [_captureController startCapture];
+}
+
+- (void)appClient:(ARDAppClient *)client
     didReceiveLocalVideoTrack:(RTCVideoTrack *)localVideoTrack {
-  self.localVideoTrack = localVideoTrack;
 }
 
 - (void)appClient:(ARDAppClient *)client
@@ -120,8 +117,8 @@
          didError:(NSError *)error {
   NSString *message =
       [NSString stringWithFormat:@"%@", error.localizedDescription];
-  [self showAlertWithMessage:message];
   [self hangup];
+  [self showAlertWithMessage:message];
 }
 
 #pragma mark - ARDVideoCallViewDelegate
@@ -133,7 +130,7 @@
 - (void)videoCallViewDidSwitchCamera:(ARDVideoCallView *)view {
   // TODO(tkchin): Rate limit this so you can't tap continously on it.
   // Probably through an animation.
-  [self switchCamera];
+  [_captureController switchCamera];
 }
 
 - (void)videoCallViewDidChangeRoute:(ARDVideoCallView *)view {
@@ -163,20 +160,6 @@
 
 #pragma mark - Private
 
-- (void)setLocalVideoTrack:(RTCVideoTrack *)localVideoTrack {
-  if (_localVideoTrack == localVideoTrack) {
-    return;
-  }
-  _localVideoTrack = nil;
-  _localVideoTrack = localVideoTrack;
-  RTCAVFoundationVideoSource *source = nil;
-  if ([localVideoTrack.source
-          isKindOfClass:[RTCAVFoundationVideoSource class]]) {
-    source = (RTCAVFoundationVideoSource*)localVideoTrack.source;
-  }
-  _videoCallView.localVideoView.captureSession = source.captureSession;
-}
-
 - (void)setRemoteVideoTrack:(RTCVideoTrack *)remoteVideoTrack {
   if (_remoteVideoTrack == remoteVideoTrack) {
     return;
@@ -190,17 +173,11 @@
 
 - (void)hangup {
   self.remoteVideoTrack = nil;
-  self.localVideoTrack = nil;
+  _videoCallView.localVideoView.captureSession = nil;
+  [_captureController stopCapture];
+  _captureController = nil;
   [_client disconnect];
   [_delegate viewControllerDidFinish:self];
-}
-
-- (void)switchCamera {
-  RTCVideoSource* source = self.localVideoTrack.source;
-  if ([source isKindOfClass:[RTCAVFoundationVideoSource class]]) {
-    RTCAVFoundationVideoSource* avSource = (RTCAVFoundationVideoSource*)source;
-    avSource.useBackCamera = !avSource.useBackCamera;
-  }
 }
 
 - (NSString *)statusTextForState:(RTCIceConnectionState)state {
@@ -219,12 +196,18 @@
 }
 
 - (void)showAlertWithMessage:(NSString*)message {
-  UIAlertView* alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                      message:message
-                                                     delegate:nil
-                                            cancelButtonTitle:@"OK"
-                                            otherButtonTitles:nil];
-  [alertView show];
+  UIAlertController *alert =
+      [UIAlertController alertControllerWithTitle:nil
+                                          message:message
+                                   preferredStyle:UIAlertControllerStyleAlert];
+
+  UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:@"OK"
+                                                          style:UIAlertActionStyleDefault
+                                                        handler:^(UIAlertAction *action){
+                                                        }];
+
+  [alert addAction:defaultAction];
+  [self presentViewController:alert animated:YES completion:nil];
 }
 
 @end

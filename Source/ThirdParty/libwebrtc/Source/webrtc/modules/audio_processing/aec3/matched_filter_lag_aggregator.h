@@ -29,6 +29,9 @@ class MatchedFilterLagAggregator {
                              size_t num_lag_estimates);
   ~MatchedFilterLagAggregator();
 
+  // Resets the aggregator.
+  void Reset();
+
   // Aggregates the provided lag estimates.
   rtc::Optional<size_t> Aggregate(
       rtc::ArrayView<const MatchedFilter::LagEstimate> lag_estimates);

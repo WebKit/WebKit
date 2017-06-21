@@ -11,12 +11,12 @@
 #ifndef WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_IMPL_H_
 #define WEBRTC_MODULES_MEDIA_FILE_MEDIA_FILE_IMPL_H_
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/media_file/media_file.h"
 #include "webrtc/modules/media_file/media_file_defines.h"
 #include "webrtc/modules/media_file/media_file_utility.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 
 namespace webrtc {
 class MediaFileImpl : public MediaFile
@@ -120,8 +120,8 @@ private:
         const uint32_t stopPointMs);
 
     int32_t _id;
-    CriticalSectionWrapper* _crit;
-    CriticalSectionWrapper* _callbackCrit;
+    rtc::CriticalSection _crit;
+    rtc::CriticalSection _callbackCrit;
 
     ModuleFileUtility* _ptrFileUtilityObj;
     CodecInst codec_info_;

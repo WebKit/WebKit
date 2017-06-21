@@ -33,9 +33,8 @@
 
 #include "Logging.h"
 #include <webrtc/api/video/i420_buffer.h>
-#include <webrtc/common_video/include/corevideo_frame_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
-#include <webrtc/media/base/videoframe.h>
+#include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
 #include <wtf/MainThread.h>
 
 #include "CoreMediaSoftLink.h"
@@ -171,7 +170,7 @@ void RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded()
             RELEASE_LOG(WebRTC, "RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded unable to send black frames");
             return;
         }
-        frame->SetToBlack();
+        webrtc::I420Buffer::SetBlack(frame.get());
         m_blackFrame = WTFMove(frame);
     }
     sendOneBlackFrame();
@@ -228,7 +227,7 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
         if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0) {
             // FIXME: We should make AVVideoCaptureSource handle the rotation whenever possible.
             // This implementation is inefficient, we should rotate on the CMSampleBuffer directly instead of doing this double allocation.
-            auto rotatedBuffer = buffer->NativeToI420Buffer();
+            auto rotatedBuffer = buffer->ToI420();
             ASSERT(rotatedBuffer);
             buffer = webrtc::I420Buffer::Rotate(*rotatedBuffer, m_currentRotation);
         }
@@ -249,10 +248,10 @@ void RealtimeOutgoingVideoSource::videoSampleAvailable(MediaSample& sample)
         return;
     }
     if (pixelFormatType == kCVPixelFormatType_32BGRA)
-        webrtc::ConvertToI420(webrtc::kARGB, source, 0, 0, m_width, m_height, 0, webrtc::kVideoRotation_0, newBuffer);
+        webrtc::ConvertToI420(webrtc::VideoType::kARGB, source, 0, 0, m_width, m_height, 0, webrtc::kVideoRotation_0, newBuffer);
     else {
         ASSERT(pixelFormatType == kCVPixelFormatType_32ARGB);
-        webrtc::ConvertToI420(webrtc::kBGRA, source, 0, 0, m_width, m_height, 0, webrtc::kVideoRotation_0, newBuffer);
+        webrtc::ConvertToI420(webrtc::VideoType::kBGRA, source, 0, 0, m_width, m_height, 0, webrtc::kVideoRotation_0, newBuffer);
     }
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     if (m_shouldApplyRotation && m_currentRotation != webrtc::kVideoRotation_0)

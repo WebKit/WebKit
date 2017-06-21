@@ -26,7 +26,7 @@ class Clock;
 // bitrate is adjusted by an application.
 class ProbeController {
  public:
-  ProbeController(PacedSender* pacer, Clock* clock);
+  ProbeController(PacedSender* pacer, const Clock* clock);
 
   void SetBitrates(int64_t min_bitrate_bps,
                    int64_t start_bitrate_bps,
@@ -37,6 +37,11 @@ class ProbeController {
   void SetEstimatedBitrate(int64_t bitrate_bps);
 
   void EnablePeriodicAlrProbing(bool enable);
+
+  // Resets the ProbeController to a state equivalent to as if it was just
+  // created EXCEPT for |enable_periodic_alr_probing_|.
+  void Reset();
+
   void Process();
 
  private:
@@ -56,7 +61,7 @@ class ProbeController {
 
   rtc::CriticalSection critsect_;
   PacedSender* const pacer_;
-  Clock* const clock_;
+  const Clock* const clock_;
   NetworkState network_state_ GUARDED_BY(critsect_);
   State state_ GUARDED_BY(critsect_);
   int64_t min_bitrate_to_probe_further_bps_ GUARDED_BY(critsect_);

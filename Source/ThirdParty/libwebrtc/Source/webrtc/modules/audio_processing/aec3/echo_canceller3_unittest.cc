@@ -86,25 +86,6 @@ bool VerifyOutputFrameBitexactness(size_t frame_length,
   return true;
 }
 
-// Verifies the that samples in the output frame are identical to the samples
-// that were produced for the input frame, with an offset in order to compensate
-// for buffering delays.
-bool VerifyOutputFrameBitexactness(size_t frame_length,
-                                   size_t frame_index,
-                                   const float* const* frame,
-                                   int offset) {
-  float reference_frame[480];
-
-  PopulateInputFrame(frame_length, frame_index, reference_frame, offset);
-  for (size_t i = 0; i < frame_length; ++i) {
-    if (reference_frame[i] != frame[0][i]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 // Class for testing that the capture data is properly received by the block
 // processor and that the processor data is properly passed to the
 // EchoCanceller3 output.
@@ -118,9 +99,7 @@ class CaptureTransportVerificationProcessor : public BlockProcessor {
                       std::vector<std::vector<float>>* capture_block) override {
   }
 
-  bool BufferRender(std::vector<std::vector<float>>* block) override {
-    return true;
-  }
+  void BufferRender(const std::vector<std::vector<float>>& block) override {}
 
   void UpdateEchoLeakageStatus(bool leakage_detected) override {}
 
@@ -144,9 +123,8 @@ class RenderTransportVerificationProcessor : public BlockProcessor {
     capture_block->swap(render_block);
   }
 
-  bool BufferRender(std::vector<std::vector<float>>* block) override {
-    received_render_blocks_.push_back(*block);
-    return true;
+  void BufferRender(const std::vector<std::vector<float>>& block) override {
+    received_render_blocks_.push_back(block);
   }
 
   void UpdateEchoLeakageStatus(bool leakage_detected) override {}
@@ -192,7 +170,7 @@ class EchoCanceller3Tester {
       PopulateInputFrame(frame_length_, frame_index,
                          &render_buffer_.channels_f()[0][0], 0);
 
-      EXPECT_TRUE(aec3.AnalyzeRender(&render_buffer_));
+      aec3.AnalyzeRender(&render_buffer_);
       aec3.ProcessCapture(&capture_buffer_, false);
       EXPECT_TRUE(VerifyOutputFrameBitexactness(
           frame_length_, num_bands_, frame_index,
@@ -214,14 +192,14 @@ class EchoCanceller3Tester {
       OptionalBandSplit();
       PopulateInputFrame(frame_length_, num_bands_, frame_index,
                          &capture_buffer_.split_bands_f(0)[0], 100);
-      PopulateInputFrame(frame_length_, frame_index,
-                         &render_buffer_.channels_f()[0][0], 0);
+      PopulateInputFrame(frame_length_, num_bands_, frame_index,
+                         &render_buffer_.split_bands_f(0)[0], 0);
 
-      EXPECT_TRUE(aec3.AnalyzeRender(&render_buffer_));
+      aec3.AnalyzeRender(&render_buffer_);
       aec3.ProcessCapture(&capture_buffer_, false);
       EXPECT_TRUE(VerifyOutputFrameBitexactness(
-          frame_length_, frame_index, &capture_buffer_.split_bands_f(0)[0],
-          -64));
+          frame_length_, num_bands_, frame_index,
+          &capture_buffer_.split_bands_f(0)[0], -64));
     }
   }
 
@@ -248,8 +226,7 @@ class EchoCanceller3Tester {
         block_processor_mock(
             new StrictMock<webrtc::test::MockBlockProcessor>());
     EXPECT_CALL(*block_processor_mock, BufferRender(_))
-        .Times(expected_num_block_to_process)
-        .WillRepeatedly(Return(true));
+        .Times(expected_num_block_to_process);
     EXPECT_CALL(*block_processor_mock, UpdateEchoLeakageStatus(_)).Times(0);
 
     switch (echo_path_change_test_variant) {
@@ -296,7 +273,7 @@ class EchoCanceller3Tester {
       PopulateInputFrame(frame_length_, frame_index,
                          &render_buffer_.channels_f()[0][0], 0);
 
-      EXPECT_TRUE(aec3.AnalyzeRender(&render_buffer_));
+      aec3.AnalyzeRender(&render_buffer_);
       aec3.ProcessCapture(&capture_buffer_, echo_path_change);
     }
   }
@@ -326,8 +303,7 @@ class EchoCanceller3Tester {
         block_processor_mock(
             new StrictMock<webrtc::test::MockBlockProcessor>());
     EXPECT_CALL(*block_processor_mock, BufferRender(_))
-        .Times(expected_num_block_to_process)
-        .WillRepeatedly(Return(true));
+        .Times(expected_num_block_to_process);
     EXPECT_CALL(*block_processor_mock, ProcessCapture(_, _, _))
         .Times(expected_num_block_to_process);
 
@@ -387,7 +363,7 @@ class EchoCanceller3Tester {
       PopulateInputFrame(frame_length_, frame_index,
                          &render_buffer_.channels_f()[0][0], 0);
 
-      EXPECT_TRUE(aec3.AnalyzeRender(&render_buffer_));
+      aec3.AnalyzeRender(&render_buffer_);
       aec3.ProcessCapture(&capture_buffer_, false);
     }
   }
@@ -417,8 +393,7 @@ class EchoCanceller3Tester {
         block_processor_mock(
             new StrictMock<webrtc::test::MockBlockProcessor>());
     EXPECT_CALL(*block_processor_mock, BufferRender(_))
-        .Times(expected_num_block_to_process)
-        .WillRepeatedly(Return(true));
+        .Times(expected_num_block_to_process);
     EXPECT_CALL(*block_processor_mock, UpdateEchoLeakageStatus(_)).Times(0);
 
     switch (saturation_variant) {
@@ -469,10 +444,10 @@ class EchoCanceller3Tester {
 
       PopulateInputFrame(frame_length_, num_bands_, frame_index,
                          &capture_buffer_.split_bands_f(0)[0], 0);
-      PopulateInputFrame(frame_length_, frame_index,
-                         &render_buffer_.channels_f()[0][0], 0);
+      PopulateInputFrame(frame_length_, num_bands_, frame_index,
+                         &render_buffer_.split_bands_f(0)[0], 0);
 
-      EXPECT_TRUE(aec3.AnalyzeRender(&render_buffer_));
+      aec3.AnalyzeRender(&render_buffer_);
       aec3.ProcessCapture(&capture_buffer_, false);
     }
   }
@@ -485,19 +460,22 @@ class EchoCanceller3Tester {
         std::unique_ptr<BlockProcessor>(
             new RenderTransportVerificationProcessor(num_bands_)));
 
-    constexpr size_t kSwapQueueLength = 30;
-    for (size_t frame_index = 0; frame_index < kSwapQueueLength;
+    for (size_t frame_index = 0; frame_index < kRenderTransferQueueSize;
          ++frame_index) {
       if (sample_rate_hz_ > 16000) {
         render_buffer_.SplitIntoFrequencyBands();
       }
-      PopulateInputFrame(frame_length_, frame_index,
-                         &render_buffer_.channels_f()[0][0], 0);
+      PopulateInputFrame(frame_length_, num_bands_, frame_index,
+                         &render_buffer_.split_bands_f(0)[0], 0);
 
-      EXPECT_TRUE(aec3.AnalyzeRender(&render_buffer_));
+      if (sample_rate_hz_ > 16000) {
+        render_buffer_.SplitIntoFrequencyBands();
+      }
+
+      aec3.AnalyzeRender(&render_buffer_);
     }
 
-    for (size_t frame_index = 0; frame_index < kSwapQueueLength;
+    for (size_t frame_index = 0; frame_index < kRenderTransferQueueSize;
          ++frame_index) {
       aec3.AnalyzeCapture(&capture_buffer_);
       if (sample_rate_hz_ > 16000) {
@@ -509,8 +487,8 @@ class EchoCanceller3Tester {
 
       aec3.ProcessCapture(&capture_buffer_, false);
       EXPECT_TRUE(VerifyOutputFrameBitexactness(
-          frame_length_, frame_index, &capture_buffer_.split_bands_f(0)[0],
-          -64));
+          frame_length_, num_bands_, frame_index,
+          &capture_buffer_.split_bands_f(0)[0], -64));
     }
   }
 
@@ -519,9 +497,9 @@ class EchoCanceller3Tester {
   void RunRenderPipelineSwapQueueOverrunReturnValueTest() {
     EchoCanceller3 aec3(sample_rate_hz_, false);
 
-    constexpr size_t kSwapQueueLength = 30;
+    constexpr size_t kRenderTransferQueueSize = 30;
     for (size_t k = 0; k < 2; ++k) {
-      for (size_t frame_index = 0; frame_index < kSwapQueueLength;
+      for (size_t frame_index = 0; frame_index < kRenderTransferQueueSize;
            ++frame_index) {
         if (sample_rate_hz_ > 16000) {
           render_buffer_.SplitIntoFrequencyBands();
@@ -530,9 +508,9 @@ class EchoCanceller3Tester {
                            &render_buffer_.channels_f()[0][0], 0);
 
         if (k == 0) {
-          EXPECT_TRUE(aec3.AnalyzeRender(&render_buffer_));
+          aec3.AnalyzeRender(&render_buffer_);
         } else {
-          EXPECT_FALSE(aec3.AnalyzeRender(&render_buffer_));
+          aec3.AnalyzeRender(&render_buffer_);
         }
       }
     }
@@ -646,7 +624,7 @@ TEST(EchoCanceller3Buffering, RenderBitexactness) {
 }
 
 TEST(EchoCanceller3Buffering, RenderSwapQueue) {
-  for (auto rate : {8000, 16000, 32000, 48000}) {
+  for (auto rate : {8000, 16000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     EchoCanceller3Tester(rate).RunRenderSwapQueueVerificationTest();
   }
@@ -744,7 +722,9 @@ TEST(EchoCanceller3InputCheck, NullCaptureProcessingParameter) {
 }
 
 // Verifies the check for correct sample rate.
-TEST(EchoCanceller3InputCheck, WrongSampleRate) {
+// TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
+// tests on test bots has been fixed.
+TEST(EchoCanceller3InputCheck, DISABLED_WrongSampleRate) {
   ApmDataDumper data_dumper(0);
   EXPECT_DEATH(EchoCanceller3(8001, false), "");
 }

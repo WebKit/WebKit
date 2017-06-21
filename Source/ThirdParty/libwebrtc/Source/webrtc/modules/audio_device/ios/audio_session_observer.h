@@ -31,6 +31,8 @@ class AudioSessionObserver {
   // Called when the ability to play or record changes.
   virtual void OnCanPlayOrRecordChange(bool can_play_or_record) = 0;
 
+  virtual void OnChangedOutputVolume() = 0;
+
  protected:
   virtual ~AudioSessionObserver() {}
 };

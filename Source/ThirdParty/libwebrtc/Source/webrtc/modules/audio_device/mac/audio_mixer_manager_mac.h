@@ -11,8 +11,9 @@
 #ifndef WEBRTC_AUDIO_DEVICE_AUDIO_MIXER_MANAGER_MAC_H
 #define WEBRTC_AUDIO_DEVICE_AUDIO_MIXER_MANAGER_MAC_H
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/modules/audio_device/include/audio_device.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
+#include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/typedefs.h"
 
 #include <CoreAudio/CoreAudio.h>
@@ -64,7 +65,7 @@ class AudioMixerManagerMac {
                        const char* err);
 
  private:
-  CriticalSectionWrapper& _critSect;
+  rtc::CriticalSection _critSect;
   int32_t _id;
 
   AudioDeviceID _inputDeviceID;

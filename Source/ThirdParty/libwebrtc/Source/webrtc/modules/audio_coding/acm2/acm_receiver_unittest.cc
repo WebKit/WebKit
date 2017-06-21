@@ -103,8 +103,7 @@ class AcmReceiverTestOldApi : public AudioPacketizationCallback,
     frame.sample_rate_hz_ = codec.plfreq;
     frame.samples_per_channel_ = codec.plfreq / 100;  // 10 ms.
     frame.num_channels_ = codec.channels;
-    memset(frame.data_, 0, frame.samples_per_channel_ * frame.num_channels_ *
-           sizeof(int16_t));
+    frame.Mute();
     packet_sent_ = false;
     last_packet_send_timestamp_ = timestamp_;
     while (!packet_sent_) {

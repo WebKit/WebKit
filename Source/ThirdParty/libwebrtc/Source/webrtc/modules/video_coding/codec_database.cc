@@ -10,8 +10,6 @@
 
 #include "webrtc/modules/video_coding/codec_database.h"
 
-#include <assert.h>
-
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
@@ -46,9 +44,9 @@ VideoCodecVP9 VideoEncoder::GetDefaultVp9Settings() {
   VideoCodecVP9 vp9_settings;
   memset(&vp9_settings, 0, sizeof(vp9_settings));
 
-  vp9_settings.resilience = 1;
+  vp9_settings.resilienceOn = true;
   vp9_settings.numberOfTemporalLayers = 1;
-  vp9_settings.denoisingOn = false;
+  vp9_settings.denoisingOn = true;
   vp9_settings.frameDroppingOn = true;
   vp9_settings.keyFrameInterval = 3000;
   vp9_settings.adaptiveQpMode = true;
@@ -79,7 +77,7 @@ VCMDecoderMapItem::VCMDecoderMapItem(VideoCodec* settings,
     : settings(settings),
       number_of_cores(number_of_cores),
       require_key_frame(require_key_frame) {
-  assert(number_of_cores >= 0);
+  RTC_DCHECK_GE(number_of_cores, 0);
 }
 
 VCMExtDecoderMapItem::VCMExtDecoderMapItem(
@@ -129,6 +127,9 @@ void VCMCodecDataBase::Codec(VideoCodecType codec_type, VideoCodec* settings) {
       settings->height = VCM_DEFAULT_CODEC_HEIGHT;
       settings->numberOfSimulcastStreams = 0;
       settings->qpMax = 56;
+      settings->timing_frame_thresholds = {
+          kDefaultTimingFramesDelayMs, kDefaultOutlierFrameSizePercent,
+      };
       *(settings->VP8()) = VideoEncoder::GetDefaultVp8Settings();
       return;
     case kVideoCodecVP9:
@@ -144,6 +145,9 @@ void VCMCodecDataBase::Codec(VideoCodecType codec_type, VideoCodec* settings) {
       settings->height = VCM_DEFAULT_CODEC_HEIGHT;
       settings->numberOfSimulcastStreams = 0;
       settings->qpMax = 56;
+      settings->timing_frame_thresholds = {
+          kDefaultTimingFramesDelayMs, kDefaultOutlierFrameSizePercent,
+      };
       *(settings->VP9()) = VideoEncoder::GetDefaultVp9Settings();
       return;
     case kVideoCodecH264:
@@ -159,6 +163,9 @@ void VCMCodecDataBase::Codec(VideoCodecType codec_type, VideoCodec* settings) {
       settings->height = VCM_DEFAULT_CODEC_HEIGHT;
       settings->numberOfSimulcastStreams = 0;
       settings->qpMax = 56;
+      settings->timing_frame_thresholds = {
+          kDefaultTimingFramesDelayMs, kDefaultOutlierFrameSizePercent,
+      };
       *(settings->H264()) = VideoEncoder::GetDefaultH264Settings();
       return;
     case kVideoCodecI420:
@@ -280,7 +287,7 @@ VideoCodecType VCMCodecDataBase::SendCodec() const {
 
 bool VCMCodecDataBase::DeregisterExternalEncoder(uint8_t payload_type,
                                                  bool* was_send_codec) {
-  assert(was_send_codec);
+  RTC_DCHECK(was_send_codec);
   *was_send_codec = false;
   if (encoder_payload_type_ != payload_type) {
     return false;
@@ -451,25 +458,10 @@ bool VCMCodecDataBase::DeregisterReceiveCodec(uint8_t payload_type) {
   return true;
 }
 
-bool VCMCodecDataBase::ReceiveCodec(VideoCodec* current_receive_codec) const {
-  assert(current_receive_codec);
-  if (!ptr_decoder_) {
-    return false;
-  }
-  memcpy(current_receive_codec, &receive_codec_, sizeof(VideoCodec));
-  return true;
-}
-
-VideoCodecType VCMCodecDataBase::ReceiveCodec() const {
-  if (!ptr_decoder_) {
-    return kVideoCodecUnknown;
-  }
-  return receive_codec_.codecType;
-}
-
 VCMGenericDecoder* VCMCodecDataBase::GetDecoder(
     const VCMEncodedFrame& frame,
     VCMDecodedFrameCallback* decoded_frame_callback) {
+  RTC_DCHECK(decoded_frame_callback->UserReceiveCallback());
   uint8_t payload_type = frame.PayloadType();
   if (payload_type == receive_codec_.plType || payload_type == 0) {
     return ptr_decoder_;
@@ -485,8 +477,7 @@ VCMGenericDecoder* VCMCodecDataBase::GetDecoder(
     return nullptr;
   }
   VCMReceiveCallback* callback = decoded_frame_callback->UserReceiveCallback();
-  if (callback)
-    callback->OnIncomingPayloadType(receive_codec_.plType);
+  callback->OnIncomingPayloadType(receive_codec_.plType);
   if (ptr_decoder_->RegisterDecodeCompleteCallback(decoded_frame_callback) <
       0) {
     ReleaseDecoder(ptr_decoder_);
@@ -499,7 +490,7 @@ VCMGenericDecoder* VCMCodecDataBase::GetDecoder(
 
 void VCMCodecDataBase::ReleaseDecoder(VCMGenericDecoder* decoder) const {
   if (decoder) {
-    assert(decoder->_decoder);
+    RTC_DCHECK(decoder->_decoder);
     decoder->Release();
     if (!decoder->External()) {
       delete decoder->_decoder;
@@ -524,7 +515,7 @@ VCMGenericDecoder* VCMCodecDataBase::CreateAndInitDecoder(
   uint8_t payload_type = frame.PayloadType();
   LOG(LS_INFO) << "Initializing decoder with payload type '"
                << static_cast<int>(payload_type) << "'.";
-  assert(new_codec);
+  RTC_DCHECK(new_codec);
   const VCMDecoderMapItem* decoder_item = FindDecoderItem(payload_type);
   if (!decoder_item) {
     LOG(LS_ERROR) << "Can't find a decoder associated with payload type: "

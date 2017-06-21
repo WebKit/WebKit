@@ -17,7 +17,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
-
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.concurrent.Callable;
@@ -259,9 +258,7 @@ public class SurfaceTextureHelper {
 
     final float[] transformMatrix = new float[16];
     surfaceTexture.getTransformMatrix(transformMatrix);
-    final long timestampNs = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-        ? surfaceTexture.getTimestamp()
-        : TimeUnit.MILLISECONDS.toNanos(SystemClock.elapsedRealtime());
+    final long timestampNs = surfaceTexture.getTimestamp();
     listener.onTextureFrameAvailable(oesTextureId, transformMatrix, timestampNs);
   }
 

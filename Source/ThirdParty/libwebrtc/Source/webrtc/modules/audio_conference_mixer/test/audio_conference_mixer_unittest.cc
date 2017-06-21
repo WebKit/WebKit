@@ -129,7 +129,7 @@ TEST(AudioConferenceMixer, LargestEnergyVadActiveMixed) {
 
     // We set the 80-th sample value since the first 80 samples may be
     // modified by a ramped-in window.
-    participants[i].fake_frame()->data_[80] = i;
+    participants[i].fake_frame()->mutable_data()[80] = i;
 
     EXPECT_EQ(0, mixer->SetMixabilityStatus(&participants[i], true));
     EXPECT_CALL(participants[i], GetAudioFrame(_, _))

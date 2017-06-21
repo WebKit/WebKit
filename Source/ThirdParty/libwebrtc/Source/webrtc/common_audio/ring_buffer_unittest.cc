@@ -58,7 +58,8 @@ static void RandomStressTest(int** data_ptr) {
   printf("seed=%u\n", seed);
   srand(seed);
   for (int i = 0; i < kNumTests; i++) {
-    const int buffer_size = std::max(rand() % kMaxBufferSize, 1);
+    // rand_r is not supported on many platforms, so rand is used.
+    const int buffer_size = std::max(rand() % kMaxBufferSize, 1);  // NOLINT
     std::unique_ptr<int[]> write_data(new int[buffer_size]);
     std::unique_ptr<int[]> read_data(new int[buffer_size]);
     scoped_ring_buffer buffer(WebRtc_CreateBuffer(buffer_size, sizeof(int)));
@@ -68,8 +69,8 @@ static void RandomStressTest(int** data_ptr) {
     int write_element = 0;
     int read_element = 0;
     for (int j = 0; j < kNumOps; j++) {
-      const bool write = rand() % 2 == 0 ? true : false;
-      const int num_elements = rand() % buffer_size;
+      const bool write = rand() % 2 == 0 ? true : false;  // NOLINT
+      const int num_elements = rand() % buffer_size;  // NOLINT
       if (write) {
         const int buffer_available = buffer_size - buffer_consumed;
         ASSERT_EQ(static_cast<size_t>(buffer_available),

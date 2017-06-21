@@ -35,9 +35,9 @@ const int16_t kRefData[kTimeDataLength] = {
 
 class RealFFTTest : public ::testing::Test {
  protected:
-   RealFFTTest() {
-     WebRtcSpl_Init();
-   }
+  RealFFTTest() {
+    WebRtcSpl_Init();
+  }
 };
 
 TEST_F(RealFFTTest, CreateFailsOnBadInput) {
@@ -60,7 +60,7 @@ TEST_F(RealFFTTest, RealAndComplexMatch) {
   for (i = 0, j = 0; i < kTimeDataLength; i += 1, j += 2) {
     complex_fft_buff[j] = kRefData[i];
     complex_fft_buff[j + 1] = 0;  // Insert zero's to imaginary parts.
-  };
+  }
 
   // Create and run real forward FFT.
   RealFFT* fft = WebRtcSpl_CreateRealFFT(kOrder);

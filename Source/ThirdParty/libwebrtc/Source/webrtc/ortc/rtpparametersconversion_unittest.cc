@@ -456,6 +456,80 @@ TEST(RtpParametersConversionTest, ToVideoRtpCodecCapability) {
             codec.rtcp_feedback[1]);
 }
 
+TEST(RtpParametersConversionTest, ToRtpEncodingsWithEmptyStreamParamsVec) {
+  cricket::StreamParamsVec streams;
+  auto rtp_encodings = ToRtpEncodings(streams);
+  ASSERT_EQ(0u, rtp_encodings.size());
+}
+
+TEST(RtpParametersConversionTest, ToRtpEncodingsWithMultipleStreamParams) {
+  cricket::StreamParamsVec streams;
+  cricket::StreamParams stream1;
+  stream1.ssrcs.push_back(1111u);
+  stream1.AddFidSsrc(1111u, 0xaaaaaaaa);
+
+  cricket::StreamParams stream2;
+  stream2.ssrcs.push_back(2222u);
+  stream2.AddFidSsrc(2222u, 0xaaaaaaab);
+
+  streams.push_back(stream1);
+  streams.push_back(stream2);
+
+  auto rtp_encodings = ToRtpEncodings(streams);
+  ASSERT_EQ(2u, rtp_encodings.size());
+  EXPECT_EQ(1111u, rtp_encodings[0].ssrc);
+  EXPECT_EQ(0xaaaaaaaa, rtp_encodings[0].rtx->ssrc);
+  EXPECT_EQ(2222u, rtp_encodings[1].ssrc);
+  EXPECT_EQ(0xaaaaaaab, rtp_encodings[1].rtx->ssrc);
+}
+
+TEST(RtpParametersConversionTest, ToAudioRtpCodecParameters) {
+  cricket::AudioCodec cricket_codec;
+  cricket_codec.name = "foo";
+  cricket_codec.id = 50;
+  cricket_codec.clockrate = 22222;
+  cricket_codec.channels = 4;
+  cricket_codec.params["foo"] = "bar";
+  cricket_codec.feedback_params.Add(cricket::FeedbackParam("transport-cc"));
+  RtpCodecParameters codec = ToRtpCodecParameters(cricket_codec);
+
+  EXPECT_EQ("foo", codec.name);
+  EXPECT_EQ(cricket::MEDIA_TYPE_AUDIO, codec.kind);
+  EXPECT_EQ(50, codec.payload_type);
+  EXPECT_EQ(rtc::Optional<int>(22222), codec.clock_rate);
+  EXPECT_EQ(rtc::Optional<int>(4), codec.num_channels);
+  ASSERT_EQ(1u, codec.parameters.size());
+  EXPECT_EQ("bar", codec.parameters["foo"]);
+  EXPECT_EQ(1u, codec.rtcp_feedback.size());
+  EXPECT_EQ(RtcpFeedback(RtcpFeedbackType::TRANSPORT_CC),
+            codec.rtcp_feedback[0]);
+}
+
+TEST(RtpParametersConversionTest, ToVideoRtpCodecParameters) {
+  cricket::VideoCodec cricket_codec;
+  cricket_codec.name = "VID";
+  cricket_codec.id = 101;
+  cricket_codec.clockrate = 80000;
+  cricket_codec.params["foo"] = "bar";
+  cricket_codec.params["ANOTHER"] = "param";
+  cricket_codec.feedback_params.Add(cricket::FeedbackParam("transport-cc"));
+  cricket_codec.feedback_params.Add({"nack", "pli"});
+  RtpCodecParameters codec = ToRtpCodecParameters(cricket_codec);
+
+  EXPECT_EQ("VID", codec.name);
+  EXPECT_EQ(cricket::MEDIA_TYPE_VIDEO, codec.kind);
+  EXPECT_EQ(101, codec.payload_type);
+  EXPECT_EQ(rtc::Optional<int>(80000), codec.clock_rate);
+  ASSERT_EQ(2u, codec.parameters.size());
+  EXPECT_EQ("bar", codec.parameters["foo"]);
+  EXPECT_EQ("param", codec.parameters["ANOTHER"]);
+  EXPECT_EQ(2u, codec.rtcp_feedback.size());
+  EXPECT_EQ(RtcpFeedback(RtcpFeedbackType::TRANSPORT_CC),
+            codec.rtcp_feedback[0]);
+  EXPECT_EQ(RtcpFeedback(RtcpFeedbackType::NACK, RtcpFeedbackMessageType::PLI),
+            codec.rtcp_feedback[1]);
+}
+
 // An unknown feedback param should just be ignored.
 TEST(RtpParametersConversionTest, ToRtpCodecCapabilityUnknownFeedbackParam) {
   cricket::AudioCodec cricket_codec;
@@ -530,6 +604,42 @@ TEST(RtpParametersConversionTest, ToRtpCapabilities) {
   EXPECT_NE(capabilities.fec.end(),
             std::find(capabilities.fec.begin(), capabilities.fec.end(),
                       FecMechanism::FLEXFEC));
+}
+
+TEST(RtpParametersConversionTest, ToRtpParameters) {
+  cricket::VideoCodec vp8;
+  vp8.name = "VP8";
+  vp8.id = 101;
+  vp8.clockrate = 90000;
+
+  cricket::VideoCodec red;
+  red.name = "red";
+  red.id = 102;
+  red.clockrate = 90000;
+
+  cricket::VideoCodec ulpfec;
+  ulpfec.name = "ulpfec";
+  ulpfec.id = 103;
+  ulpfec.clockrate = 90000;
+
+  cricket::StreamParamsVec streams;
+  cricket::StreamParams stream;
+  stream.ssrcs.push_back(1234u);
+  streams.push_back(stream);
+
+  RtpParameters rtp_parameters = ToRtpParameters<cricket::VideoCodec>(
+      {vp8, red, ulpfec}, {{"uri", 1}, {"uri2", 3}}, streams);
+  ASSERT_EQ(3u, rtp_parameters.codecs.size());
+  EXPECT_EQ("VP8", rtp_parameters.codecs[0].name);
+  EXPECT_EQ("red", rtp_parameters.codecs[1].name);
+  EXPECT_EQ("ulpfec", rtp_parameters.codecs[2].name);
+  ASSERT_EQ(2u, rtp_parameters.header_extensions.size());
+  EXPECT_EQ("uri", rtp_parameters.header_extensions[0].uri);
+  EXPECT_EQ(1, rtp_parameters.header_extensions[0].id);
+  EXPECT_EQ("uri2", rtp_parameters.header_extensions[1].uri);
+  EXPECT_EQ(3, rtp_parameters.header_extensions[1].id);
+  ASSERT_EQ(1u, rtp_parameters.encodings.size());
+  EXPECT_EQ(1234u, rtp_parameters.encodings[0].ssrc);
 }
 
 }  // namespace webrtc

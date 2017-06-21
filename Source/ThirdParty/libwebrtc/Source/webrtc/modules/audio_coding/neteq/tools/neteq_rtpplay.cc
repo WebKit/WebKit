@@ -281,8 +281,7 @@ class FilterSsrcInput : public NetEqInput {
   // the desired SSRC.
   std::unique_ptr<PacketData> PopPacket() override {
     std::unique_ptr<PacketData> packet_to_return = source_->PopPacket();
-    RTC_DCHECK(!packet_to_return ||
-               packet_to_return->header.header.ssrc == ssrc_);
+    RTC_DCHECK(!packet_to_return || packet_to_return->header.ssrc == ssrc_);
     // Pre-fetch the next packet with correct SSRC. Hence, |source_| will always
     // be have a valid packet (or empty if no more packets are available) when
     // this method returns.
@@ -446,11 +445,11 @@ int RunTest(int argc, char* argv[]) {
     ext_codecs[replacement_pt] = ext_dec_info;
   }
 
-  DefaultNetEqTestErrorCallback error_cb;
+  NetEqTest::Callbacks callbacks;
   NetEq::Config config;
   config.sample_rate_hz = sample_rate_hz;
   NetEqTest test(config, codecs, ext_codecs, std::move(input),
-                 std::move(output), &error_cb);
+                 std::move(output), callbacks);
 
   int64_t test_duration_ms = test.Run();
   NetEqNetworkStatistics stats = test.SimulationStats();

@@ -20,6 +20,10 @@ import java.io.RandomAccessFile;
 import java.io.IOException;
 
 public class FileVideoCapturer implements VideoCapturer {
+  static {
+    System.loadLibrary("jingle_peerconnection_so");
+  }
+
   private interface VideoReader {
     int getFrameWidth();
     int getFrameHeight();

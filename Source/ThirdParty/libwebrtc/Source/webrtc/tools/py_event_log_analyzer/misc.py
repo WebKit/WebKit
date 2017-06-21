@@ -14,7 +14,7 @@ import collections
 import sys
 
 
-def count_reordered(sequence_numbers):
+def CountReordered(sequence_numbers):
   """Returns number of reordered indices.
 
   A reordered index is an index `i` for which sequence_numbers[i] >=
@@ -25,7 +25,7 @@ def count_reordered(sequence_numbers):
              s1 >= s2)
 
 
-def ssrc_normalized_size_table(data_points):
+def SsrcNormalizedSizeTable(data_points):
   """Counts proportion of data for every SSRC.
 
   Args:
@@ -40,10 +40,10 @@ def ssrc_normalized_size_table(data_points):
   mapping = collections.defaultdict(int)
   for point in data_points:
     mapping[point.ssrc] += point.size
-  return normalize_counter(mapping)
+  return NormalizeCounter(mapping)
 
 
-def normalize_counter(counter):
+def NormalizeCounter(counter):
   """Returns a normalized version of the dictionary `counter`.
 
   Does not modify `counter`.
@@ -56,14 +56,14 @@ def normalize_counter(counter):
   return {key: counter[key] / total for key in counter}
 
 
-def unwrap(data, mod):
+def Unwrap(data, mod):
   """Returns `data` unwrapped modulo `mod`. Does not modify data.
 
   Adds integer multiples of mod to all elements of data except the
   first, such that all pairs of consecutive elements (a, b) satisfy
   -mod / 2 <= b - a < mod / 2.
 
-  E.g. unwrap([0, 1, 2, 0, 1, 2, 7, 8], 3) -> [0, 1, 2, 3,
+  E.g. Unwrap([0, 1, 2, 0, 1, 2, 7, 8], 3) -> [0, 1, 2, 3,
   4, 5, 4, 5]
   """
   lst = data[:]
@@ -73,7 +73,7 @@ def unwrap(data, mod):
   return lst
 
 
-def ssrc_directions(data_points):
+def SsrcDirections(data_points):
   ssrc_is_incoming = {}
   for point in data_points:
     ssrc_is_incoming[point.ssrc] = point.incoming
@@ -82,6 +82,6 @@ def ssrc_directions(data_points):
 
 # Python 2/3-compatible input function
 if sys.version_info[0] <= 2:
-  get_input = raw_input
+  get_input = raw_input  # pylint: disable=invalid-name
 else:
-  get_input = input
+  get_input = input  # pylint: disable=invalid-name

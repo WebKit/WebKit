@@ -18,7 +18,13 @@
 namespace webrtc {
 namespace plotting {
 
-enum PlotStyle { LINE_GRAPH, LINE_DOT_GRAPH, BAR_GRAPH, LINE_STEP_GRAPH };
+enum PlotStyle {
+  LINE_GRAPH,
+  LINE_DOT_GRAPH,
+  BAR_GRAPH,
+  LINE_STEP_GRAPH,
+  DOT_GRAPH
+};
 
 struct TimeSeriesPoint {
   TimeSeriesPoint(float x, float y) : x(x), y(y) {}
@@ -28,6 +34,9 @@ struct TimeSeriesPoint {
 
 struct TimeSeries {
   TimeSeries() = default;
+  TimeSeries(const char* label, PlotStyle style) : label(label), style(style) {}
+  TimeSeries(const std::string& label, PlotStyle style)
+      : label(label), style(style) {}
   TimeSeries(TimeSeries&& other)
       : label(std::move(other.label)),
         style(other.style),
@@ -97,7 +106,12 @@ class Plot {
   // Sets the title of the plot.
   void SetTitle(std::string title);
 
-  std::vector<TimeSeries> series_list_;
+  // Add a new TimeSeries to the plot.
+  void AppendTimeSeries(TimeSeries&& time_series);
+
+  // Add a new TimeSeries to the plot if the series contains contains data.
+  // Otherwise, the call has no effect and the timeseries is destroyed.
+  void AppendTimeSeriesIfNotEmpty(TimeSeries&& time_series);
 
  protected:
   float xaxis_min_;
@@ -107,6 +121,7 @@ class Plot {
   float yaxis_max_;
   std::string yaxis_label_;
   std::string title_;
+  std::vector<TimeSeries> series_list_;
 };
 
 class PlotCollection {

@@ -14,6 +14,9 @@
 #define WEBRTC_TEST_TESTSUPPORT_FILEUTILS_H_
 
 #include <string>
+#include <vector>
+
+#include "webrtc/base/optional.h"
 
 namespace webrtc {
 namespace test {
@@ -66,13 +69,28 @@ std::string ResourcePath(const std::string& name,
 // directory.
 std::string WorkingDir();
 
+// Reads the content of a directory and, in case of success, returns a vector
+// of strings with one element for each found file or directory. Each element is
+// a path created by prepending |dir| to the file/directory name. "." and ".."
+// are never added in the returned vector.
+rtc::Optional<std::vector<std::string>> ReadDirectory(std::string path);
+
 // Creates a directory if it not already exists.
 // Returns true if successful. Will print an error message to stderr and return
 // false if a file with the same name already exists.
 bool CreateDir(const std::string& directory_name);
 
+// Removes a directory, which must already be empty.
+bool RemoveDir(const std::string& directory_name);
+
+// Removes a file.
+bool RemoveFile(const std::string& file_name);
+
 // Checks if a file exists.
 bool FileExists(const std::string& file_name);
+
+// Checks if a directory exists.
+bool DirExists(const std::string& directory_name);
 
 // File size of the supplied file in bytes. Will return 0 if the file is
 // empty or if the file does not exist/is readable.

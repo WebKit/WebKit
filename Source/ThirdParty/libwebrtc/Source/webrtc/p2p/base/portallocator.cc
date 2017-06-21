@@ -40,25 +40,21 @@ bool PortAllocator::SetConfiguration(
   turn_servers_ = turn_servers;
   prune_turn_ports_ = prune_turn_ports;
 
-  bool candidate_pool_drain_began =
-      static_cast<int>(pooled_sessions_.size()) != candidate_pool_size_;
-  if (candidate_pool_drain_began &&
-      candidate_pool_size != candidate_pool_size_) {
-    LOG(LS_ERROR) << "Trying to change candidate pool size after pool started "
-                     "to be drained.";
-    return false;
+  if (candidate_pool_frozen_) {
+    if (candidate_pool_size != candidate_pool_size_) {
+      LOG(LS_ERROR) << "Trying to change candidate pool size after pool was "
+                    << "frozen.";
+      return false;
+    }
+    return true;
   }
+
   if (candidate_pool_size < 0) {
     LOG(LS_ERROR) << "Can't set negative pool size.";
     return false;
   }
-  candidate_pool_size_ = candidate_pool_size;
 
-  // If sessions need to be recreated, only recreate as many as the current
-  // pool size if the pool has begun to be drained.
-  int sessions_needed = candidate_pool_drain_began
-                            ? static_cast<int>(pooled_sessions_.size())
-                            : candidate_pool_size_;
+  candidate_pool_size_ = candidate_pool_size;
 
   // If ICE servers changed, throw away any existing pooled sessions and create
   // new ones.
@@ -66,16 +62,16 @@ bool PortAllocator::SetConfiguration(
     pooled_sessions_.clear();
   }
 
-  // If |sessions_needed| is less than the number of pooled sessions, get rid
-  // of the extras.
-  while (sessions_needed < static_cast<int>(pooled_sessions_.size())) {
+  // If |candidate_pool_size_| is less than the number of pooled sessions, get
+  // rid of the extras.
+  while (candidate_pool_size_ < static_cast<int>(pooled_sessions_.size())) {
     pooled_sessions_.front().reset(nullptr);
     pooled_sessions_.pop_front();
   }
 
-  // If |sessions_needed| is greater than the number of pooled sessions,
+  // If |candidate_pool_size_| is greater than the number of pooled sessions,
   // create new sessions.
-  while (static_cast<int>(pooled_sessions_.size()) < sessions_needed) {
+  while (static_cast<int>(pooled_sessions_.size()) < candidate_pool_size_) {
     PortAllocatorSession* pooled_session = CreateSessionInternal("", 0, "", "");
     pooled_session->StartGettingPorts();
     pooled_sessions_.push_back(
@@ -120,6 +116,14 @@ const PortAllocatorSession* PortAllocator::GetPooledSession() const {
     return nullptr;
   }
   return pooled_sessions_.front().get();
+}
+
+void PortAllocator::FreezeCandidatePool() {
+  candidate_pool_frozen_ = true;
+}
+
+void PortAllocator::DiscardCandidatePool() {
+  pooled_sessions_.clear();
 }
 
 }  // namespace cricket

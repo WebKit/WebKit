@@ -47,19 +47,10 @@ constexpr int kRepeatedProbeMinPercentage = 70;
 
 }  // namespace
 
-ProbeController::ProbeController(PacedSender* pacer, Clock* clock)
-    : pacer_(pacer),
-      clock_(clock),
-      network_state_(kNetworkUp),
-      state_(State::kInit),
-      min_bitrate_to_probe_further_bps_(kExponentialProbingDisabled),
-      time_last_probing_initiated_ms_(0),
-      estimated_bitrate_bps_(0),
-      start_bitrate_bps_(0),
-      max_bitrate_bps_(0),
-      last_alr_probing_time_(clock_->TimeInMilliseconds()),
-      enable_periodic_alr_probing_(false),
-      mid_call_probing_waiting_for_result_(false) {}
+ProbeController::ProbeController(PacedSender* pacer, const Clock* clock)
+    : pacer_(pacer), clock_(clock), enable_periodic_alr_probing_(false) {
+  Reset();
+}
 
 void ProbeController::SetBitrates(int64_t min_bitrate_bps,
                                   int64_t start_bitrate_bps,
@@ -68,6 +59,7 @@ void ProbeController::SetBitrates(int64_t min_bitrate_bps,
 
   if (start_bitrate_bps > 0)  {
     start_bitrate_bps_ = start_bitrate_bps;
+    estimated_bitrate_bps_ = start_bitrate_bps;
   } else if (start_bitrate_bps_ == 0) {
     start_bitrate_bps_ = min_bitrate_bps;
   }
@@ -186,6 +178,19 @@ void ProbeController::EnablePeriodicAlrProbing(bool enable) {
   enable_periodic_alr_probing_ = enable;
 }
 
+void ProbeController::Reset() {
+  rtc::CritScope cs(&critsect_);
+  network_state_ = kNetworkUp;
+  state_ = State::kInit;
+  min_bitrate_to_probe_further_bps_ = kExponentialProbingDisabled;
+  time_last_probing_initiated_ms_ = 0;
+  estimated_bitrate_bps_ = 0;
+  start_bitrate_bps_ = 0;
+  max_bitrate_bps_ = 0;
+  last_alr_probing_time_ = clock_->TimeInMilliseconds();
+  mid_call_probing_waiting_for_result_ = false;
+}
+
 void ProbeController::Process() {
   rtc::CritScope cs(&critsect_);
 
@@ -208,7 +213,7 @@ void ProbeController::Process() {
   // Probe bandwidth periodically when in ALR state.
   rtc::Optional<int64_t> alr_start_time =
       pacer_->GetApplicationLimitedRegionStartTime();
-  if (alr_start_time) {
+  if (alr_start_time && estimated_bitrate_bps_ > 0) {
     int64_t next_probe_time_ms =
         std::max(*alr_start_time, time_last_probing_initiated_ms_) +
         kAlrPeriodicProbingIntervalMs;
@@ -223,6 +228,7 @@ void ProbeController::InitiateProbing(
     std::initializer_list<int64_t> bitrates_to_probe,
     bool probe_further) {
   for (int64_t bitrate : bitrates_to_probe) {
+    RTC_DCHECK_GT(bitrate, 0);
     int64_t max_probe_bitrate_bps =
         max_bitrate_bps_ > 0 ? max_bitrate_bps_ : kDefaultMaxProbingBitrateBps;
     if (bitrate > max_probe_bitrate_bps) {

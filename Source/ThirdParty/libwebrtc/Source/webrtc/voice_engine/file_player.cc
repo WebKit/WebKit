@@ -10,12 +10,11 @@
 
 #include "webrtc/voice_engine/file_player.h"
 
+#include "webrtc/base/logging.h"
 #include "webrtc/common_audio/resampler/include/resampler.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/media_file/media_file.h"
 #include "webrtc/modules/media_file/media_file_defines.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
-#include "webrtc/system_wrappers/include/logging.h"
 #include "webrtc/typedefs.h"
 #include "webrtc/voice_engine/coder.h"
 
@@ -127,9 +126,9 @@ int32_t FilePlayerImpl::Get10msAudioFromFile(int16_t* outBuffer,
     unresampledAudioFrame.sample_rate_hz_ = _codec.plfreq;
 
     // L16 is un-encoded data. Just pull 10 ms.
-    size_t lengthInBytes = sizeof(unresampledAudioFrame.data_);
+    size_t lengthInBytes = AudioFrame::kMaxDataSizeBytes;
     if (_fileModule.PlayoutAudioData(
-            reinterpret_cast<int8_t*>(unresampledAudioFrame.data_),
+            reinterpret_cast<int8_t*>(unresampledAudioFrame.mutable_data()),
             lengthInBytes) == -1) {
       // End of file reached.
       return -1;
@@ -174,7 +173,7 @@ int32_t FilePlayerImpl::Get10msAudioFromFile(int16_t* outBuffer,
     memset(outBuffer, 0, outLen * sizeof(int16_t));
     return 0;
   }
-  _resampler.Push(unresampledAudioFrame.data_,
+  _resampler.Push(unresampledAudioFrame.data(),
                   unresampledAudioFrame.samples_per_channel_, outBuffer,
                   MAX_AUDIO_BUFFER_IN_SAMPLES, outLen);
 

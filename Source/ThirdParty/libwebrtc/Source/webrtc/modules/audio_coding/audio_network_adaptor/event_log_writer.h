@@ -24,18 +24,16 @@ class EventLogWriter final {
                  float min_bitrate_change_fraction,
                  float min_packet_loss_change_fraction);
   ~EventLogWriter();
-  void MaybeLogEncoderConfig(
-      const AudioNetworkAdaptor::EncoderRuntimeConfig& config);
+  void MaybeLogEncoderConfig(const AudioEncoderRuntimeConfig& config);
 
  private:
-  void LogEncoderConfig(
-      const AudioNetworkAdaptor::EncoderRuntimeConfig& config);
+  void LogEncoderConfig(const AudioEncoderRuntimeConfig& config);
 
   RtcEventLog* const event_log_;
   const int min_bitrate_change_bps_;
   const float min_bitrate_change_fraction_;
   const float min_packet_loss_change_fraction_;
-  AudioNetworkAdaptor::EncoderRuntimeConfig last_logged_config_;
+  AudioEncoderRuntimeConfig last_logged_config_;
   RTC_DISALLOW_COPY_AND_ASSIGN(EventLogWriter);
 };
 

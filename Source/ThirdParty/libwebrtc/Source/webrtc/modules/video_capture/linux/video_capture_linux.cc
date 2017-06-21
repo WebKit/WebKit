@@ -24,7 +24,6 @@
 #include "webrtc/base/refcount.h"
 #include "webrtc/base/scoped_ref_ptr.h"
 #include "webrtc/modules/video_capture/linux/video_capture_linux.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
 namespace webrtc {
@@ -42,7 +41,6 @@ rtc::scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
 
 VideoCaptureModuleV4L2::VideoCaptureModuleV4L2()
     : VideoCaptureImpl(),
-      _captureCritSect(CriticalSectionWrapper::CreateCriticalSection()),
       _deviceId(-1),
       _deviceFd(-1),
       _buffersAllocatedByDevice(-1),
@@ -50,10 +48,8 @@ VideoCaptureModuleV4L2::VideoCaptureModuleV4L2()
       _currentHeight(-1),
       _currentFrameRate(-1),
       _captureStarted(false),
-      _captureVideoType(kVideoI420),
-      _pool(NULL)
-{
-}
+      _captureVideoType(VideoType::kI420),
+      _pool(NULL) {}
 
 int32_t VideoCaptureModuleV4L2::Init(const char* deviceUniqueIdUTF8)
 {
@@ -107,10 +103,6 @@ int32_t VideoCaptureModuleV4L2::Init(const char* deviceUniqueIdUTF8)
 VideoCaptureModuleV4L2::~VideoCaptureModuleV4L2()
 {
     StopCapture();
-    if (_captureCritSect)
-    {
-        delete _captureCritSect;
-    }
     if (_deviceFd != -1)
       close(_deviceFd);
 }
@@ -120,11 +112,10 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
 {
     if (_captureStarted)
     {
-        if (capability.width == _currentWidth &&
-            capability.height == _currentHeight &&
-            _captureVideoType == capability.rawType)
-        {
-            return 0;
+      if (capability.width == _currentWidth &&
+          capability.height == _currentHeight &&
+          _captureVideoType == capability.videoType) {
+        return 0;
         }
         else
         {
@@ -132,7 +123,7 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
         }
     }
 
-    CriticalSectionScoped cs(_captureCritSect);
+    rtc::CritScope cs(&_captureCritSect);
     //first open /dev/video device
     char device[20];
     sprintf(device, "/dev/video%d", (int) _deviceId);
@@ -207,14 +198,14 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
     video_fmt.fmt.pix.pixelformat = fmts[fmtsIdx];
 
     if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUYV)
-        _captureVideoType = kVideoYUY2;
+      _captureVideoType = VideoType::kYUY2;
     else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_YUV420)
-        _captureVideoType = kVideoI420;
+      _captureVideoType = VideoType::kI420;
     else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_UYVY)
-        _captureVideoType = kVideoUYVY;
+      _captureVideoType = VideoType::kUYVY;
     else if (video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG ||
              video_fmt.fmt.pix.pixelformat == V4L2_PIX_FMT_JPEG)
-        _captureVideoType = kVideoMJPEG;
+      _captureVideoType = VideoType::kMJPEG;
 
     //set format and frame size now
     if (ioctl(_deviceFd, VIDIOC_S_FMT, &video_fmt) < 0)
@@ -258,7 +249,7 @@ int32_t VideoCaptureModuleV4L2::StartCapture(
     // If driver doesn't support framerate control, need to hardcode.
     // Hardcoding the value based on the frame size.
     if (!driver_framerate_support) {
-      if(_currentWidth >= 800 && _captureVideoType != kVideoMJPEG) {
+      if (_currentWidth >= 800 && _captureVideoType != VideoType::kMJPEG) {
         _currentFrameRate = 15;
       } else {
         _currentFrameRate = 30;
@@ -303,7 +294,7 @@ int32_t VideoCaptureModuleV4L2::StopCapture()
         _captureThread.reset();
     }
 
-    CriticalSectionScoped cs(_captureCritSect);
+    rtc::CritScope cs(&_captureCritSect);
     if (_captureStarted)
     {
         _captureStarted = false;
@@ -410,7 +401,7 @@ bool VideoCaptureModuleV4L2::CaptureProcess()
     fd_set rSet;
     struct timeval timeout;
 
-    _captureCritSect->Enter();
+    rtc::CritScope cs(&_captureCritSect);
 
     FD_ZERO(&rSet);
     FD_SET(_deviceFd, &rSet);
@@ -421,19 +412,16 @@ bool VideoCaptureModuleV4L2::CaptureProcess()
     if (retVal < 0 && errno != EINTR) // continue if interrupted
     {
         // select failed
-        _captureCritSect->Leave();
         return false;
     }
     else if (retVal == 0)
     {
         // select timed out
-        _captureCritSect->Leave();
         return true;
     }
     else if (!FD_ISSET(_deviceFd, &rSet))
     {
         // not event on camera handle
-        _captureCritSect->Leave();
         return true;
     }
 
@@ -450,14 +438,13 @@ bool VideoCaptureModuleV4L2::CaptureProcess()
             {
                 WEBRTC_TRACE(webrtc::kTraceError, webrtc::kTraceVideoCapture, 0,
                            "could not sync on a buffer on device %s", strerror(errno));
-                _captureCritSect->Leave();
                 return true;
             }
         }
         VideoCaptureCapability frameInfo;
         frameInfo.width = _currentWidth;
         frameInfo.height = _currentHeight;
-        frameInfo.rawType = _captureVideoType;
+        frameInfo.videoType = _captureVideoType;
 
         // convert to to I420 if needed
         IncomingFrame((unsigned char*) _pool[buf.index].start,
@@ -469,7 +456,6 @@ bool VideoCaptureModuleV4L2::CaptureProcess()
                        "Failed to enqueue capture buffer");
         }
     }
-    _captureCritSect->Leave();
     usleep(0);
     return true;
 }
@@ -479,7 +465,7 @@ int32_t VideoCaptureModuleV4L2::CaptureSettings(VideoCaptureCapability& settings
     settings.width = _currentWidth;
     settings.height = _currentHeight;
     settings.maxFPS = _currentFrameRate;
-    settings.rawType=_captureVideoType;
+    settings.videoType = _captureVideoType;
 
     return 0;
 }

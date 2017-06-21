@@ -10,7 +10,6 @@
 
 #include "webrtc/voice_engine/output_mixer.h"
 
-#include "webrtc/audio/utility/audio_frame_operations.h"
 #include "webrtc/base/format_macros.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
 #include "webrtc/system_wrappers/include/file_wrapper.h"
@@ -91,10 +90,7 @@ OutputMixer::Create(OutputMixer*& mixer, uint32_t instanceId)
 
 OutputMixer::OutputMixer(uint32_t instanceId) :
     _mixerModule(*AudioConferenceMixer::Create(instanceId)),
-    _audioLevel(),
     _instanceId(instanceId),
-    _panLeft(1.0f),
-    _panRight(1.0f),
     _mixingFrequencyHz(8000),
     _outputFileRecording(false)
 {
@@ -171,47 +167,6 @@ int32_t
 OutputMixer::MixActiveChannels()
 {
     _mixerModule.Process();
-    return 0;
-}
-
-int
-OutputMixer::GetSpeechOutputLevel(uint32_t& level)
-{
-    int8_t currentLevel = _audioLevel.Level();
-    level = static_cast<uint32_t> (currentLevel);
-    WEBRTC_TRACE(kTraceStateInfo, kTraceVoice, VoEId(_instanceId,-1),
-                 "GetSpeechOutputLevel() => level=%u", level);
-    return 0;
-}
-
-int
-OutputMixer::GetSpeechOutputLevelFullRange(uint32_t& level)
-{
-    int16_t currentLevel = _audioLevel.LevelFullRange();
-    level = static_cast<uint32_t> (currentLevel);
-    WEBRTC_TRACE(kTraceStateInfo, kTraceVoice, VoEId(_instanceId,-1),
-                 "GetSpeechOutputLevelFullRange() => level=%u", level);
-    return 0;
-}
-
-int
-OutputMixer::SetOutputVolumePan(float left, float right)
-{
-    WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId,-1),
-                 "OutputMixer::SetOutputVolumePan()");
-    _panLeft = left;
-    _panRight = right;
-    return 0;
-}
-
-int
-OutputMixer::GetOutputVolumePan(float& left, float& right)
-{
-    left = _panLeft;
-    right = _panRight;
-    WEBRTC_TRACE(kTraceStateInfo, kTraceVoice, VoEId(_instanceId,-1),
-                 "GetOutputVolumePan() => left=%2.1f, right=%2.1f",
-                 left, right);
     return 0;
 }
 
@@ -422,22 +377,6 @@ OutputMixer::DoOperationsOnCombinedSignal(bool feed_data_to_apm)
         _mixingFrequencyHz = _audioFrame.sample_rate_hz_;
     }
 
-    // Scale left and/or right channel(s) if balance is active
-    if (_panLeft != 1.0 || _panRight != 1.0)
-    {
-        if (_audioFrame.num_channels_ == 1)
-        {
-            AudioFrameOperations::MonoToStereo(&_audioFrame);
-        }
-        else
-        {
-            // Pure stereo mode (we are receiving a stereo signal).
-        }
-
-        assert(_audioFrame.num_channels_ == 2);
-        AudioFrameOperations::Scale(_panLeft, _panRight, _audioFrame);
-    }
-
     // --- Far-end Voice Quality Enhancement (AudioProcessing Module)
     if (feed_data_to_apm) {
       if (_audioProcessingModulePtr->ProcessReverseStream(&_audioFrame) != 0) {
@@ -446,9 +385,6 @@ OutputMixer::DoOperationsOnCombinedSignal(bool feed_data_to_apm)
         RTC_NOTREACHED();
       }
     }
-
-    // --- Measure audio level (0-9) for the combined signal
-    _audioLevel.ComputeLevel(_audioFrame);
 
     return 0;
 }

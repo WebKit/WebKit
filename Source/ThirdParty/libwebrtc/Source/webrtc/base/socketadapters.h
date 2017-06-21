@@ -21,6 +21,7 @@
 
 namespace rtc {
 
+struct HttpAuthContext;
 class ByteBufferReader;
 class ByteBufferWriter;
 
@@ -91,6 +92,114 @@ class AsyncSSLServerSocket : public BufferedReadAdapter {
  protected:
   void ProcessInput(char* data, size_t* len) override;
   RTC_DISALLOW_COPY_AND_ASSIGN(AsyncSSLServerSocket);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Implements a socket adapter that speaks the HTTP/S proxy protocol.
+class AsyncHttpsProxySocket : public BufferedReadAdapter {
+ public:
+  AsyncHttpsProxySocket(AsyncSocket* socket, const std::string& user_agent,
+    const SocketAddress& proxy,
+    const std::string& username, const CryptString& password);
+  ~AsyncHttpsProxySocket() override;
+
+  // If connect is forced, the adapter will always issue an HTTP CONNECT to the
+  // target address.  Otherwise, it will connect only if the destination port
+  // is not port 80.
+  void SetForceConnect(bool force) { force_connect_ = force; }
+
+  int Connect(const SocketAddress& addr) override;
+  SocketAddress GetRemoteAddress() const override;
+  int Close() override;
+  ConnState GetState() const override;
+
+ protected:
+  void OnConnectEvent(AsyncSocket* socket) override;
+  void OnCloseEvent(AsyncSocket* socket, int err) override;
+  void ProcessInput(char* data, size_t* len) override;
+
+  bool ShouldIssueConnect() const;
+  void SendRequest();
+  void ProcessLine(char* data, size_t len);
+  void EndResponse();
+  void Error(int error);
+
+ private:
+  SocketAddress proxy_, dest_;
+  std::string agent_, user_, headers_;
+  CryptString pass_;
+  bool force_connect_;
+  size_t content_length_;
+  int defer_error_;
+  bool expect_close_;
+  enum ProxyState {
+    PS_INIT, PS_LEADER, PS_AUTHENTICATE, PS_SKIP_HEADERS, PS_ERROR_HEADERS,
+    PS_TUNNEL_HEADERS, PS_SKIP_BODY, PS_TUNNEL, PS_WAIT_CLOSE, PS_ERROR
+  } state_;
+  HttpAuthContext * context_;
+  std::string unknown_mechanisms_;
+  RTC_DISALLOW_COPY_AND_ASSIGN(AsyncHttpsProxySocket);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Implements a socket adapter that speaks the SOCKS proxy protocol.
+class AsyncSocksProxySocket : public BufferedReadAdapter {
+ public:
+  AsyncSocksProxySocket(AsyncSocket* socket, const SocketAddress& proxy,
+    const std::string& username, const CryptString& password);
+  ~AsyncSocksProxySocket() override;
+
+  int Connect(const SocketAddress& addr) override;
+  SocketAddress GetRemoteAddress() const override;
+  int Close() override;
+  ConnState GetState() const override;
+
+ protected:
+  void OnConnectEvent(AsyncSocket* socket) override;
+  void ProcessInput(char* data, size_t* len) override;
+
+  void SendHello();
+  void SendConnect();
+  void SendAuth();
+  void Error(int error);
+
+ private:
+  enum State {
+    SS_INIT, SS_HELLO, SS_AUTH, SS_CONNECT, SS_TUNNEL, SS_ERROR
+  };
+  State state_;
+  SocketAddress proxy_, dest_;
+  std::string user_;
+  CryptString pass_;
+  RTC_DISALLOW_COPY_AND_ASSIGN(AsyncSocksProxySocket);
+};
+
+// Implements a proxy server socket for the SOCKS protocol.
+class AsyncSocksProxyServerSocket : public AsyncProxyServerSocket {
+ public:
+  explicit AsyncSocksProxyServerSocket(AsyncSocket* socket);
+
+ private:
+  void ProcessInput(char* data, size_t* len) override;
+  void DirectSend(const ByteBufferWriter& buf);
+
+  void HandleHello(ByteBufferReader* request);
+  void SendHelloReply(uint8_t method);
+  void HandleAuth(ByteBufferReader* request);
+  void SendAuthReply(uint8_t result);
+  void HandleConnect(ByteBufferReader* request);
+  void SendConnectResult(int result, const SocketAddress& addr) override;
+
+  void Error(int error);
+
+  static const int kBufferSize = 1024;
+  enum State {
+    SS_HELLO, SS_AUTH, SS_CONNECT, SS_CONNECT_PENDING, SS_TUNNEL, SS_ERROR
+  };
+  State state_;
+  RTC_DISALLOW_COPY_AND_ASSIGN(AsyncSocksProxyServerSocket);
 };
 
 }  // namespace rtc

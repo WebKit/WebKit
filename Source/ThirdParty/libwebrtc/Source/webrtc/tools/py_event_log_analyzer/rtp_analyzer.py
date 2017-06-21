@@ -42,13 +42,13 @@ class RTPStatistics(object):
     """
 
     self.data_points = data_points
-    self.ssrc_frequencies = misc.normalize_counter(
+    self.ssrc_frequencies = misc.NormalizeCounter(
         collections.Counter([pt.ssrc for pt in self.data_points]))
-    self.ssrc_size_table = misc.ssrc_normalized_size_table(self.data_points)
+    self.ssrc_size_table = misc.SsrcNormalizedSizeTable(self.data_points)
     self.bandwidth_kbps = None
     self.smooth_bw_kbps = None
 
-  def print_header_statistics(self):
+  def PrintHeaderStatistics(self):
     print("{:>6}{:>14}{:>14}{:>6}{:>6}{:>3}{:>11}".format(
         "SeqNo", "TimeStamp", "SendTime", "Size", "PT", "M", "SSRC"))
     for point in self.data_points:
@@ -57,7 +57,7 @@ class RTPStatistics(object):
           int(point.arrival_timestamp_ms), point.size, point.payload_type,
           point.marker_bit, "0x{:x}".format(point.ssrc)))
 
-  def print_ssrc_info(self, ssrc_id, ssrc):
+  def PrintSsrcInfo(self, ssrc_id, ssrc):
     """Prints packet and size statistics for a given SSRC.
 
     Args:
@@ -66,7 +66,7 @@ class RTPStatistics(object):
     """
     filtered_ssrc = [point for point in self.data_points if point.ssrc
                      == ssrc]
-    payloads = misc.normalize_counter(
+    payloads = misc.NormalizeCounter(
         collections.Counter([point.payload_type for point in
                              filtered_ssrc]))
 
@@ -86,25 +86,25 @@ class RTPStatistics(object):
         for i in range(len(bin_proportions))
     ]))
 
-  def choose_ssrc(self):
+  def ChooseSsrc(self):
     """Queries user for SSRC."""
 
     if len(self.ssrc_frequencies) == 1:
       chosen_ssrc = self.ssrc_frequencies[0][-1]
-      self.print_ssrc_info("", chosen_ssrc)
+      self.PrintSsrcInfo("", chosen_ssrc)
       return chosen_ssrc
 
-    ssrc_is_incoming = misc.ssrc_directions(self.data_points)
+    ssrc_is_incoming = misc.SsrcDirections(self.data_points)
     incoming = [ssrc for ssrc in ssrc_is_incoming if ssrc_is_incoming[ssrc]]
     outgoing = [ssrc for ssrc in ssrc_is_incoming if not ssrc_is_incoming[ssrc]]
 
     print("\nIncoming:\n")
     for (i, ssrc) in enumerate(incoming):
-      self.print_ssrc_info(i, ssrc)
+      self.PrintSsrcInfo(i, ssrc)
 
     print("\nOutgoing:\n")
     for (i, ssrc) in enumerate(outgoing):
-      self.print_ssrc_info(i + len(incoming), ssrc)
+      self.PrintSsrcInfo(i + len(incoming), ssrc)
 
     while True:
       chosen_index = int(misc.get_input("choose one> "))
@@ -113,7 +113,7 @@ class RTPStatistics(object):
       else:
         print("Invalid index!")
 
-  def filter_ssrc(self, chosen_ssrc):
+  def FilterSsrc(self, chosen_ssrc):
     """Filters and wraps data points.
 
     Removes data points with `ssrc != chosen_ssrc`. Unwraps sequence
@@ -121,20 +121,20 @@ class RTPStatistics(object):
     """
     self.data_points = [point for point in self.data_points if
                         point.ssrc == chosen_ssrc]
-    unwrapped_sequence_numbers = misc.unwrap(
+    unwrapped_sequence_numbers = misc.Unwrap(
         [point.sequence_number for point in self.data_points], 2**16 - 1)
     for (data_point, sequence_number) in zip(self.data_points,
                                              unwrapped_sequence_numbers):
       data_point.sequence_number = sequence_number
 
-    unwrapped_timestamps = misc.unwrap([point.timestamp for point in
+    unwrapped_timestamps = misc.Unwrap([point.timestamp for point in
                                         self.data_points], 2**32 - 1)
 
     for (data_point, timestamp) in zip(self.data_points,
                                        unwrapped_timestamps):
       data_point.timestamp = timestamp
 
-  def print_sequence_number_statistics(self):
+  def PrintSequenceNumberStatistics(self):
     seq_no_set = set(point.sequence_number for point in
                      self.data_points)
     missing_sequence_numbers = max(seq_no_set) - min(seq_no_set) + (
@@ -147,10 +147,10 @@ class RTPStatistics(object):
     print("Duplicated packets: {}".format(len(self.data_points) -
                                           len(seq_no_set)))
     print("Reordered packets: {}".format(
-        misc.count_reordered([point.sequence_number for point in
-                              self.data_points])))
+        misc.CountReordered([point.sequence_number for point in
+                             self.data_points])))
 
-  def estimate_frequency(self, always_query_sample_rate):
+  def EstimateFrequency(self, always_query_sample_rate):
     """Estimates frequency and updates data.
 
     Guesses the most probable frequency by looking at changes in
@@ -183,7 +183,7 @@ class RTPStatistics(object):
                                  self.data_points[0].timestamp) / freq
       point.delay = point.arrival_timestamp_ms - point.real_send_time_ms
 
-  def print_duration_statistics(self):
+  def PrintDurationStatistics(self):
     """Prints delay, clock drift and bitrate statistics."""
 
     min_delay = min(point.delay for point in self.data_points)
@@ -215,7 +215,7 @@ class RTPStatistics(object):
     print("Receive average bitrate: {:.2f} kbps".format(
         total_size / stream_duration_receiver))
 
-  def remove_reordered(self):
+  def RemoveReordered(self):
     last = self.data_points[0]
     data_points_ordered = [last]
     for point in self.data_points[1:]:
@@ -225,7 +225,7 @@ class RTPStatistics(object):
         last = point
     self.data_points = data_points_ordered
 
-  def compute_bandwidth(self):
+  def ComputeBandwidth(self):
     """Computes bandwidth averaged over several consecutive packets.
 
     The number of consecutive packets used in the average is
@@ -246,7 +246,7 @@ class RTPStatistics(object):
                         RTPStatistics.BANDWIDTH_SMOOTHING_WINDOW_SIZE)
     self.smooth_bw_kbps = numpy.correlate(self.bandwidth_kbps, correlate_filter)
 
-  def plot_statistics(self):
+  def PlotStatistics(self):
     """Plots changes in delay and average bandwidth."""
 
     start_ms = self.data_points[0].real_send_time_ms
@@ -254,7 +254,7 @@ class RTPStatistics(object):
     time_axis = numpy.arange(start_ms / 1000, stop_ms / 1000,
                              RTPStatistics.PLOT_RESOLUTION_MS / 1000)
 
-    delay = calculate_delay(start_ms, stop_ms,
+    delay = CalculateDelay(start_ms, stop_ms,
                             RTPStatistics.PLOT_RESOLUTION_MS,
                             self.data_points)
 
@@ -271,7 +271,7 @@ class RTPStatistics(object):
     plt.show()
 
 
-def calculate_delay(start, stop, step, points):
+def CalculateDelay(start, stop, step, points):
   """Quantizes the time coordinates for the delay.
 
   Quantizes points by rounding the timestamps downwards to the nearest
@@ -315,26 +315,26 @@ def main():
   if options.working_directory and not os.path.isabs(input_file):
     input_file = os.path.join(options.working_directory, input_file)
 
-  data_points = pb_parse.parse_protobuf(input_file)
+  data_points = pb_parse.ParseProtobuf(input_file)
   rtp_stats = RTPStatistics(data_points)
 
   if options.dump_header_to_stdout:
     print("Printing header info to stdout.", file=sys.stderr)
-    rtp_stats.print_header_statistics()
+    rtp_stats.PrintHeaderStatistics()
     sys.exit(0)
 
-  chosen_ssrc = rtp_stats.choose_ssrc()
+  chosen_ssrc = rtp_stats.ChooseSsrc()
   print("Chosen SSRC: 0X{:X}".format(chosen_ssrc))
 
-  rtp_stats.filter_ssrc(chosen_ssrc)
+  rtp_stats.FilterSsrc(chosen_ssrc)
 
   print("Statistics:")
-  rtp_stats.print_sequence_number_statistics()
-  rtp_stats.estimate_frequency(options.query_sample_rate)
-  rtp_stats.print_duration_statistics()
-  rtp_stats.remove_reordered()
-  rtp_stats.compute_bandwidth()
-  rtp_stats.plot_statistics()
+  rtp_stats.PrintSequenceNumberStatistics()
+  rtp_stats.EstimateFrequency(options.query_sample_rate)
+  rtp_stats.PrintDurationStatistics()
+  rtp_stats.RemoveReordered()
+  rtp_stats.ComputeBandwidth()
+  rtp_stats.PlotStatistics()
 
 if __name__ == "__main__":
   main()

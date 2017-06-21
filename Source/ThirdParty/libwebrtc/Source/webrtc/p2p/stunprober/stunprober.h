@@ -175,6 +175,8 @@ class StunProber : public sigslot::has_slots<> {
   void OnSocketReady(rtc::AsyncPacketSocket* socket,
                      const rtc::SocketAddress& addr);
 
+  void CreateSockets();
+
   bool Done() {
     return num_request_sent_ >= requests_per_ip_ * all_servers_addrs_.size();
   }

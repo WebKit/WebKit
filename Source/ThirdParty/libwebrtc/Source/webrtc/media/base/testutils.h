@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 
-#include "libyuv/compare.h"
 #include "webrtc/base/arraysize.h"
 #include "webrtc/base/basictypes.h"
 #include "webrtc/base/sigslot.h"

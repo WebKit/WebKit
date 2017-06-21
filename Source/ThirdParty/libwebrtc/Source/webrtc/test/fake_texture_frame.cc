@@ -13,14 +13,12 @@
 namespace webrtc {
 namespace test {
 
-VideoFrame FakeNativeHandle::CreateFrame(FakeNativeHandle* native_handle,
-                                         int width,
+VideoFrame FakeNativeBuffer::CreateFrame(int width,
                                          int height,
                                          uint32_t timestamp,
                                          int64_t render_time_ms,
                                          VideoRotation rotation) {
-  return VideoFrame(new rtc::RefCountedObject<FakeNativeHandleBuffer>(
-                        native_handle, width, height),
+  return VideoFrame(new rtc::RefCountedObject<FakeNativeBuffer>(width, height),
                     timestamp, render_time_ms, rotation);
 }
 }  // namespace test

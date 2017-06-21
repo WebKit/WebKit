@@ -16,7 +16,7 @@
 #include <DXGI1_2.h>
 
 #include "webrtc/base/checks.h"
-#include "webrtc/system_wrappers/include/logging.h"
+#include "webrtc/base/logging.h"
 
 using Microsoft::WRL::ComPtr;
 

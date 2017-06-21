@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
     printf("iSAC-swb version %s \n\n", version_number);
 
     printf("Usage:\n\n");
-    printf("./kenny.exe [-I] bottleneck_value infile outfile \n\n");
+    printf("%s [-I] bottleneck_value infile outfile \n\n", argv[0]);
     printf("with:\n");
     printf("[-FS num]       : sampling frequency in kHz, valid values are\n");
     printf("                  16 & 32, with 16 as default.\n");

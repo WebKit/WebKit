@@ -13,7 +13,7 @@
 
 #include "webrtc/base/gunit.h"
 
-#include "avfoundationformatmapper.h"
+#include "Video/avfoundationformatmapper.h"
 
 
 // Width and height don't play any role so lets use predefined values throughout
@@ -97,7 +97,6 @@ static cricket::VideoFormat expectedFormat =
     CFRelease(_format);
     _format = nil;
   }
-  [super dealloc];
 }
 
 // Redefinition of AVCaptureDevice methods we want to mock.

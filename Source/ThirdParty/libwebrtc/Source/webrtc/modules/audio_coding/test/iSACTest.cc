@@ -26,7 +26,6 @@
 #include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
 #include "webrtc/modules/audio_coding/test/utility.h"
 #include "webrtc/system_wrappers/include/event_wrapper.h"
-#include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/testsupport/fileutils.h"
 
 namespace webrtc {

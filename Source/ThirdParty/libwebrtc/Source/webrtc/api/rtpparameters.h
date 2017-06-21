@@ -16,8 +16,8 @@
 #include <vector>
 
 #include "webrtc/api/mediatypes.h"
-#include "webrtc/config.h"
 #include "webrtc/base/optional.h"
+#include "webrtc/config.h"
 
 namespace webrtc {
 

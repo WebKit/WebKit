@@ -19,13 +19,13 @@ group("pc") {
 }
 
 config("rtc_pc_config") {
-  defines = [ "HAVE_SRTP" ]
+  defines = []
   if (rtc_enable_sctp) {
     defines += [ "HAVE_SCTP" ]
   }
 }
 
-rtc_static_library("rtc_pc") {
+rtc_static_library("rtc_pc_base") {
   defines = []
   sources = [
     "audiomonitor.cc",
@@ -38,29 +38,33 @@ rtc_static_library("rtc_pc") {
     "channelmanager.h",
     "currentspeakermonitor.cc",
     "currentspeakermonitor.h",
+    "externalhmac.cc",
+    "externalhmac.h",
     "mediamonitor.cc",
     "mediamonitor.h",
     "mediasession.cc",
     "mediasession.h",
     "rtcpmuxfilter.cc",
     "rtcpmuxfilter.h",
+    "rtptransport.cc",
+    "rtptransport.h",
     "srtpfilter.cc",
     "srtpfilter.h",
     "voicechannel.h",
   ]
 
   deps = [
+    "..:webrtc_common",
     "../api:call_api",
+    "../api:libjingle_peerconnection_api",
+    "../api:ortc_api",
     "../base:rtc_base",
-    "../media",
+    "../base:rtc_task_queue",
+    "../media:rtc_data",
+    "../media:rtc_media_base",
+    "../p2p:rtc_p2p",
   ]
 
-  if (rtc_enable_external_auth) {
-    sources += [
-      "externalhmac.cc",
-      "externalhmac.h",
-    ]
-  }
   if (rtc_build_libsrtp) {
     deps += [ "//third_party/libsrtp" ]
   }
@@ -73,6 +77,16 @@ rtc_static_library("rtc_pc") {
   }
 }
 
+rtc_source_set("rtc_pc") {
+  public_deps = [
+    ":rtc_pc_base",
+  ]
+
+  deps = [
+    "../media:rtc_audio_video",
+  ]
+}
+
 config("libjingle_peerconnection_warnings_config") {
   # GN orders flags on a target before flags from configs. The default config
   # adds these flags so to cancel them out they need to come from a config and
@@ -82,8 +96,7 @@ config("libjingle_peerconnection_warnings_config") {
   }
 }
 
-rtc_static_library("libjingle_peerconnection") {
-  check_includes = false  # TODO(kjellander): Remove (bugs.webrtc.org/6828)
+rtc_static_library("peerconnection") {
   cflags = []
   sources = [
     "audiotrack.cc",
@@ -92,12 +105,12 @@ rtc_static_library("libjingle_peerconnection") {
     "datachannel.h",
     "dtmfsender.cc",
     "dtmfsender.h",
+    "iceserverparsing.cc",
+    "iceserverparsing.h",
     "jsepicecandidate.cc",
     "jsepsessiondescription.cc",
     "localaudiosource.cc",
     "localaudiosource.h",
-    "mediacontroller.cc",
-    "mediacontroller.h",
     "mediastream.cc",
     "mediastream.h",
     "mediastreamobserver.cc",
@@ -144,15 +157,65 @@ rtc_static_library("libjingle_peerconnection") {
   }
 
   deps = [
-    ":rtc_pc",
+    ":rtc_pc_base",
+    "..:webrtc_common",
     "../api:call_api",
     "../api:rtc_stats_api",
-    "../call",
-    "../media",
+    "../api/video_codecs:video_codecs_api",
+    "../base:rtc_base",
+    "../base:rtc_base_approved",
+    "../call:call_interfaces",
+    "../logging:rtc_event_log_api",
+    "../media:rtc_data",
+    "../media:rtc_media_base",
+    "../p2p:rtc_p2p",
     "../stats",
+    "../system_wrappers:system_wrappers",
   ]
 
   public_deps = [
+    "../api:libjingle_peerconnection_api",
+  ]
+}
+
+# This target implements CreatePeerConnectionFactory methods that will create a
+# PeerConnection will full functionality (audio, video and data). Applications
+# that wish to reduce their binary size by ommitting functionality they don't
+# need should use CreateModularCreatePeerConnectionFactory instead, using the
+# "peerconnection" build target and other targets specific to their
+# requrements. See comment in peerconnectionfactoryinterface.h.
+rtc_source_set("create_pc_factory") {
+  sources = [
+    "createpeerconnectionfactory.cc",
+  ]
+
+  deps = [
+    "../api:audio_mixer_api",
+    "../api:libjingle_peerconnection_api",
+    "../api/audio_codecs:audio_codecs_api",
+    "../api/audio_codecs:builtin_audio_decoder_factory",
+    "../api/audio_codecs:builtin_audio_encoder_factory",
+    "../base:rtc_base",
+    "../base:rtc_base_approved",
+    "../call",
+    "../call:call_interfaces",
+    "../logging:rtc_event_log_api",
+    "../media:rtc_audio_video",
+    "../modules/audio_device:audio_device",
+  ]
+
+  configs += [ ":libjingle_peerconnection_warnings_config" ]
+
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+rtc_source_set("libjingle_peerconnection") {
+  public_deps = [
+    ":create_pc_factory",
+    ":peerconnection",
     "../api:libjingle_peerconnection_api",
   ]
 
@@ -190,6 +253,7 @@ if (rtc_include_tests) {
       "currentspeakermonitor_unittest.cc",
       "mediasession_unittest.cc",
       "rtcpmuxfilter_unittest.cc",
+      "rtptransport_unittest.cc",
       "srtpfilter_unittest.cc",
     ]
 
@@ -209,8 +273,15 @@ if (rtc_include_tests) {
     deps = [
       ":libjingle_peerconnection",
       ":rtc_pc",
+      "../base:rtc_base",
+      "../base:rtc_base_approved",
+      "../base:rtc_base_tests_main",
       "../base:rtc_base_tests_utils",
-      "../media:rtc_unittest_main",
+      "../logging:rtc_event_log_api",
+      "../media:rtc_media_base",
+      "../media:rtc_media_tests_utils",
+      "../p2p:p2p_test_utils",
+      "../p2p:rtc_p2p",
       "../system_wrappers:metrics_default",
     ]
 
@@ -245,7 +316,19 @@ if (rtc_include_tests) {
 
     deps = [
       ":libjingle_peerconnection",
+      "..:webrtc_common",
+      "../api:libjingle_peerconnection_test_api",
+      "../api:rtc_stats_api",
+      "../base:rtc_base",
+      "../base:rtc_base_approved",
       "../base:rtc_base_tests_utils",
+      "../call:call_interfaces",
+      "../logging:rtc_event_log_api",
+      "../media:rtc_media",
+      "../media:rtc_media_tests_utils",
+      "../modules/audio_device:audio_device",
+      "../p2p:p2p_test_utils",
+      "../test:test_support",
       "//testing/gmock",
     ]
 
@@ -281,12 +364,12 @@ if (rtc_include_tests) {
     sources = [
       "datachannel_unittest.cc",
       "dtmfsender_unittest.cc",
-      "fakemediacontroller.h",
+      "iceserverparsing_unittest.cc",
       "jsepsessiondescription_unittest.cc",
       "localaudiosource_unittest.cc",
       "mediaconstraintsinterface_unittest.cc",
       "mediastream_unittest.cc",
-      "peerconnection_unittest.cc",
+      "peerconnection_integrationtest.cc",
       "peerconnectionendtoend_unittest.cc",
       "peerconnectionfactory_unittest.cc",
       "peerconnectioninterface_unittest.cc",
@@ -354,10 +437,12 @@ if (rtc_include_tests) {
       ":pc_test_utils",
       "..:webrtc_common",
       "../api:fakemetricsobserver",
+      "../base:rtc_base_tests_main",
       "../base:rtc_base_tests_utils",
-      "../media:rtc_unittest_main",
+      "../media:rtc_media_tests_utils",
       "../pc:rtc_pc",
       "../system_wrappers:metrics_default",
+      "../test:audio_codec_mocks",
       "//testing/gmock",
     ]
 

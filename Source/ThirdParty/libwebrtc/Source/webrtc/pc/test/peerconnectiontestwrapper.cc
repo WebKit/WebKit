@@ -59,7 +59,9 @@ PeerConnectionTestWrapper::~PeerConnectionTestWrapper() {}
 
 bool PeerConnectionTestWrapper::CreatePc(
     const MediaConstraintsInterface* constraints,
-    const webrtc::PeerConnectionInterface::RTCConfiguration& config) {
+    const webrtc::PeerConnectionInterface::RTCConfiguration& config,
+    rtc::scoped_refptr<webrtc::AudioEncoderFactory> audio_encoder_factory,
+    rtc::scoped_refptr<webrtc::AudioDecoderFactory> audio_decoder_factory) {
   std::unique_ptr<cricket::PortAllocator> port_allocator(
       new cricket::FakePortAllocator(network_thread_, nullptr));
 
@@ -70,7 +72,8 @@ bool PeerConnectionTestWrapper::CreatePc(
 
   peer_connection_factory_ = webrtc::CreatePeerConnectionFactory(
       network_thread_, worker_thread_, rtc::Thread::Current(),
-      fake_audio_capture_module_, NULL, NULL);
+      fake_audio_capture_module_, audio_encoder_factory, audio_decoder_factory,
+      nullptr, nullptr);
   if (!peer_connection_factory_) {
     return false;
   }

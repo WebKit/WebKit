@@ -7,14 +7,20 @@ message NetworkMetrics {
   optional float uplink_packet_loss_fraction = 2;
   optional int32 target_audio_bitrate_bps = 3;
   optional int32 rtt_ms = 4;
+  optional int32 uplink_recoverable_packet_loss_fraction = 5;
 }
 
 message EncoderRuntimeConfig {
   optional int32 bitrate_bps = 1;
   optional int32 frame_length_ms = 2;
+  // Note: This is what we tell the encoder. It doesn't have to reflect
+  // the actual NetworkMetrics; it's subject to our decision.
   optional float uplink_packet_loss_fraction = 3;
   optional bool enable_fec = 4;
   optional bool enable_dtx = 5;
+  // Some encoders can encode fewer channels than the actual input to make
+  // better use of the bandwidth. |num_channels| sets the number of channels
+  // to encode.
   optional uint32 num_channels = 6;
 }
 

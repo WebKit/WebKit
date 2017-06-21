@@ -58,23 +58,17 @@ class XServerPixelBuffer {
   bool CaptureRect(const DesktopRect& rect, DesktopFrame* frame);
 
  private:
+  void ReleaseSharedMemorySegment();
+
   void InitShm(const XWindowAttributes& attributes);
   bool InitPixmaps(int depth);
-
-  // We expose two forms of blitting to handle variations in the pixel format.
-  // In FastBlit(), the operation is effectively a memcpy.
-  void FastBlit(uint8_t* image,
-                const DesktopRect& rect,
-                DesktopFrame* frame);
-  void SlowBlit(uint8_t* image,
-                const DesktopRect& rect,
-                DesktopFrame* frame);
 
   Display* display_ = nullptr;
   Window window_ = 0;
   DesktopSize window_size_;
   XImage* x_image_ = nullptr;
   XShmSegmentInfo* shm_segment_info_ = nullptr;
+  XImage* x_shm_image_ = nullptr;
   Pixmap shm_pixmap_ = 0;
   GC shm_gc_ = nullptr;
   bool xshm_get_image_succeeded_ = false;

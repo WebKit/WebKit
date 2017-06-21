@@ -39,15 +39,14 @@ int64_t DriftingClock::TimeInMicroseconds() const {
   return clock_->TimeInMicroseconds() + Drift();
 }
 
-void DriftingClock::CurrentNtp(uint32_t& seconds, uint32_t& fractions) const {
+NtpTime DriftingClock::CurrentNtpTime() const {
   // NTP precision is 1/2^32 seconds, i.e. 2^32 ntp fractions = 1 second.
   const double kNtpFracPerMicroSecond = 4294.967296;  // = 2^32 / 10^6
 
-  clock_->CurrentNtp(seconds, fractions);
-  uint64_t total_fractions = (static_cast<uint64_t>(seconds) << 32) | fractions;
+  NtpTime ntp = clock_->CurrentNtpTime();
+  uint64_t total_fractions = static_cast<uint64_t>(ntp);
   total_fractions += Drift() * kNtpFracPerMicroSecond;
-  seconds = total_fractions >> 32;
-  fractions = static_cast<uint32_t>(total_fractions);
+  return NtpTime(total_fractions);
 }
 
 int64_t DriftingClock::CurrentNtpInMilliseconds() const {

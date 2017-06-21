@@ -298,7 +298,9 @@ class JsepTransport : public sigslot::has_slots<> {
   // changed ufrag/password).
   bool NeedsIceRestart() const;
 
-  void GetSslRole(rtc::SSLRole* ssl_role) const;
+  // Returns role if negotiated, or empty Optional if it hasn't been negotiated
+  // yet.
+  rtc::Optional<rtc::SSLRole> GetSslRole() const;
 
   // TODO(deadbeef): Make this const. See comment in transportcontroller.h.
   bool GetStats(TransportStats* stats);
@@ -325,21 +327,20 @@ class JsepTransport : public sigslot::has_slots<> {
                                     const rtc::SSLFingerprint* fingerprint,
                                     std::string* error_desc) const;
 
-  // Negotiates the SSL role based off the offer and answer as specified by
-  // RFC 4145, section-4.1. Returns false if the SSL role cannot be determined
-  // from the local description and remote description.
-  bool NegotiateRole(ContentAction local_role,
-                     rtc::SSLRole* ssl_role,
-                     std::string* error_desc) const;
-
  private:
   // Negotiates the transport parameters based on the current local and remote
   // transport description, such as the ICE role to use, and whether DTLS
   // should be activated.
   //
   // Called when an answer TransportDescription is applied.
-  bool NegotiateTransportDescription(ContentAction local_role,
+  bool NegotiateTransportDescription(ContentAction local_description_type,
                                      std::string* error_desc);
+
+  // Negotiates the SSL role based off the offer and answer as specified by
+  // RFC 4145, section-4.1. Returns false if the SSL role cannot be determined
+  // from the local description and remote description.
+  bool NegotiateRole(ContentAction local_description_type,
+                     std::string* error_desc);
 
   // Pushes down the transport parameters from the local description, such
   // as the ICE ufrag and pwd.
@@ -360,7 +361,7 @@ class JsepTransport : public sigslot::has_slots<> {
   // needs-ice-restart bit as described in JSEP.
   bool needs_ice_restart_ = false;
   rtc::scoped_refptr<rtc::RTCCertificate> certificate_;
-  rtc::SSLRole secure_role_ = rtc::SSL_CLIENT;
+  rtc::Optional<rtc::SSLRole> ssl_role_;
   std::unique_ptr<rtc::SSLFingerprint> remote_fingerprint_;
   std::unique_ptr<TransportDescription> local_description_;
   std::unique_ptr<TransportDescription> remote_description_;

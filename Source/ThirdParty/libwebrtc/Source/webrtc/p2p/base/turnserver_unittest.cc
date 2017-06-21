@@ -9,7 +9,6 @@
  */
 
 #include "webrtc/base/gunit.h"
-#include "webrtc/base/physicalsocketserver.h"
 #include "webrtc/base/virtualsocketserver.h"
 #include "webrtc/p2p/base/basicpacketsocketfactory.h"
 #include "webrtc/p2p/base/turnserver.h"
@@ -21,7 +20,7 @@ namespace cricket {
 
 class TurnServerConnectionTest : public testing::Test {
  public:
-  TurnServerConnectionTest() : vss_(&pss_), ss_scope_(&vss_) {}
+  TurnServerConnectionTest() : thread_(&vss_) {}
 
   void ExpectEqual(const TurnServerConnection& a,
                    const TurnServerConnection& b) {
@@ -39,10 +38,9 @@ class TurnServerConnectionTest : public testing::Test {
   }
 
  protected:
-  rtc::PhysicalSocketServer pss_;
   rtc::VirtualSocketServer vss_;
-  rtc::SocketServerScope ss_scope_;
-  // Since this is constructed after |ss_scope_|, it will pick up |ss_scope_|'s
+  rtc::AutoSocketServerThread thread_;
+  // Since this is constructed after |thread_|, it will pick up |threads_|'s
   // socket server.
   rtc::BasicPacketSocketFactory socket_factory_;
 };

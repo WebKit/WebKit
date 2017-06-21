@@ -17,8 +17,8 @@
 #include "webrtc/api/rtcerror.h"
 #include "webrtc/api/rtpparameters.h"
 #include "webrtc/base/optional.h"
-#include "webrtc/pc/mediasession.h"
 #include "webrtc/media/base/codec.h"
+#include "webrtc/pc/mediasession.h"
 
 namespace webrtc {
 
@@ -83,6 +83,12 @@ RTCErrorOr<cricket::StreamParamsVec> ToCricketStreamParamsVec(
 rtc::Optional<RtcpFeedback> ToRtcpFeedback(
     const cricket::FeedbackParam& cricket_feedback);
 
+std::vector<RtpEncodingParameters> ToRtpEncodings(
+    const cricket::StreamParamsVec& stream_params);
+
+template <typename C>
+RtpCodecParameters ToRtpCodecParameters(const C& cricket_codec);
+
 template <typename C>
 RtpCodecCapability ToRtpCodecCapability(const C& cricket_codec);
 
@@ -90,6 +96,12 @@ template <class C>
 RtpCapabilities ToRtpCapabilities(
     const std::vector<C>& cricket_codecs,
     const cricket::RtpHeaderExtensions& cricket_extensions);
+
+template <class C>
+RtpParameters ToRtpParameters(
+    const std::vector<C>& cricket_codecs,
+    const cricket::RtpHeaderExtensions& cricket_extensions,
+    const cricket::StreamParamsVec& stream_params);
 
 }  // namespace webrtc
 

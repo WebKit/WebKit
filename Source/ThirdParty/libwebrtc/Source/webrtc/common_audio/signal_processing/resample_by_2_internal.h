@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef WEBRTC_SPL_RESAMPLE_BY_2_INTERNAL_H_
-#define WEBRTC_SPL_RESAMPLE_BY_2_INTERNAL_H_
+#ifndef WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_RESAMPLE_BY_2_INTERNAL_H_
+#define WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_RESAMPLE_BY_2_INTERNAL_H_
 
 #include "webrtc/typedefs.h"
 
@@ -44,4 +44,4 @@ void WebRtcSpl_LPBy2ShortToInt(const int16_t* in, int32_t len,
 void WebRtcSpl_LPBy2IntToInt(const int32_t* in, int32_t len, int32_t* out,
                              int32_t* state);
 
-#endif // WEBRTC_SPL_RESAMPLE_BY_2_INTERNAL_H_
+#endif  // WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_RESAMPLE_BY_2_INTERNAL_H_

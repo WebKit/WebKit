@@ -30,44 +30,4 @@ TEST(MAYBE_FilesystemTest, GetTemporaryFolder) {
   EXPECT_TRUE(Filesystem::GetTemporaryFolder(path, true, nullptr));
 }
 
-// Test creating a temp file, reading it back in, and deleting it.
-TEST(MAYBE_FilesystemTest, TestOpenFile) {
-  Pathname path;
-  EXPECT_TRUE(Filesystem::GetTemporaryFolder(path, true, nullptr));
-  path.SetPathname(Filesystem::TempFilename(path, "ut"));
-
-  FileStream* fs;
-  char buf[256];
-  size_t bytes;
-
-  fs = Filesystem::OpenFile(path, "wb");
-  ASSERT_TRUE(fs != nullptr);
-  EXPECT_EQ(SR_SUCCESS, fs->Write("test", 4, &bytes, nullptr));
-  EXPECT_EQ(4U, bytes);
-  delete fs;
-
-  EXPECT_TRUE(Filesystem::IsFile(path));
-
-  fs = Filesystem::OpenFile(path, "rb");
-  ASSERT_TRUE(fs != nullptr);
-  EXPECT_EQ(SR_SUCCESS, fs->Read(buf, sizeof(buf), &bytes, nullptr));
-  EXPECT_EQ(4U, bytes);
-  delete fs;
-
-  EXPECT_TRUE(Filesystem::DeleteFile(path));
-  EXPECT_FALSE(Filesystem::IsFile(path));
-}
-
-// Test opening a non-existent file.
-TEST(MAYBE_FilesystemTest, TestOpenBadFile) {
-  Pathname path;
-  EXPECT_TRUE(Filesystem::GetTemporaryFolder(path, true, nullptr));
-  path.SetFilename("not an actual file");
-
-  EXPECT_FALSE(Filesystem::IsFile(path));
-
-  FileStream* fs = Filesystem::OpenFile(path, "rb");
-  EXPECT_FALSE(fs != nullptr);
-}
-
 }  // namespace rtc

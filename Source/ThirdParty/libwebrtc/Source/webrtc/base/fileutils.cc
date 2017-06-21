@@ -130,41 +130,4 @@ FilesystemInterface *Filesystem::EnsureDefaultFilesystem() {
   return default_filesystem_;
 }
 
-DirectoryIterator* FilesystemInterface::IterateDirectory() {
-  return new DirectoryIterator();
-}
-
-bool FilesystemInterface::DeleteFolderContents(const Pathname &folder) {
-  bool success = true;
-  RTC_CHECK(IsFolder(folder));
-  DirectoryIterator *di = IterateDirectory();
-  if (!di)
-    return false;
-  if (di->Iterate(folder)) {
-    do {
-      if (di->Name() == "." || di->Name() == "..")
-        continue;
-      Pathname subdir;
-      subdir.SetFolder(folder.pathname());
-      if (di->IsDirectory()) {
-        subdir.AppendFolder(di->Name());
-        if (!DeleteFolderAndContents(subdir)) {
-          success = false;
-        }
-      } else {
-        subdir.SetFilename(di->Name());
-        if (!DeleteFile(subdir)) {
-          success = false;
-        }
-      }
-    } while (di->Next());
-  }
-  delete di;
-  return success;
-}
-
-bool FilesystemInterface::DeleteFolderAndContents(const Pathname& folder) {
-  return DeleteFolderContents(folder) && DeleteEmptyFolder(folder);
-}
-
 }  // namespace rtc

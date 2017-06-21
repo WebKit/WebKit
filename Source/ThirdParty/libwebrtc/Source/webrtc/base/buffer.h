@@ -179,6 +179,13 @@ class BufferT {
     return data()[index];
   }
 
+  T* begin() { return data(); }
+  T* end() { return data() + size(); }
+  const T* begin() const { return data(); }
+  const T* end() const { return data() + size(); }
+  const T* cbegin() const { return data(); }
+  const T* cend() const { return data() + size(); }
+
   // The SetData functions replace the contents of the buffer. They accept the
   // same input types as the constructors.
   template <typename U,

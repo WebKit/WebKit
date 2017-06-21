@@ -24,7 +24,7 @@ namespace webrtc {
 class AimdRateControl {
  public:
   AimdRateControl();
-  virtual ~AimdRateControl();
+  ~AimdRateControl();
 
   // Returns true if there is a valid estimate of the incoming bitrate, false
   // otherwise.
@@ -39,16 +39,14 @@ class AimdRateControl {
   bool TimeToReduceFurther(int64_t time_now,
                            uint32_t incoming_bitrate_bps) const;
   uint32_t LatestEstimate() const;
-  uint32_t UpdateBandwidthEstimate(int64_t now_ms);
   void SetRtt(int64_t rtt);
-  void Update(const RateControlInput* input, int64_t now_ms);
+  uint32_t Update(const RateControlInput* input, int64_t now_ms);
   void SetEstimate(int bitrate_bps, int64_t now_ms);
 
-  // Returns the increase rate which is used when used bandwidth is near the
-  // maximal available bandwidth.
-  virtual int GetNearMaxIncreaseRateBps() const;
-
-  virtual rtc::Optional<int> GetLastBitrateDecreaseBps() const;
+  // Returns the increase rate when used bandwidth is near the link capacity.
+  int GetNearMaxIncreaseRateBps() const;
+  // Returns the expected time between overuse signals (assuming steady state).
+  int GetExpectedBandwidthPeriodMs() const;
 
  private:
   // Update the target bitrate according based on, among other things,
@@ -59,7 +57,7 @@ class AimdRateControl {
   // incoming bitrate. When in the "hold" state the bitrate will be kept
   // constant to allow built up queues to drain.
   uint32_t ChangeBitrate(uint32_t current_bitrate,
-                         uint32_t incoming_bitrate,
+                         const RateControlInput& input,
                          int64_t now_ms);
   // Clamps new_bitrate_bps to within the configured min bitrate and a linear
   // function of the incoming bitrate, so that the new bitrate can't grow too
@@ -72,7 +70,6 @@ class AimdRateControl {
   void UpdateChangePeriod(int64_t now_ms);
   void UpdateMaxBitRateEstimate(float incoming_bit_rate_kbps);
   void ChangeState(const RateControlInput& input, int64_t now_ms);
-  void ChangeState(RateControlState new_state);
   void ChangeRegion(RateControlRegion region);
 
   uint32_t min_configured_bitrate_bps_;
@@ -83,8 +80,6 @@ class AimdRateControl {
   RateControlState rate_control_state_;
   RateControlRegion rate_control_region_;
   int64_t time_last_bitrate_change_;
-  RateControlInput current_input_;
-  bool updated_;
   int64_t time_first_incoming_estimate_;
   bool bitrate_is_initialized_;
   float beta_;

@@ -26,26 +26,17 @@ class FrameCombiner {
 
   // Combine several frames into one. Assumes sample_rate,
   // samples_per_channel of the input frames match the parameters. The
-  // extra parameters are needed because 'mix_list' can be empty.
+  // parameters 'number_of_channels' and 'sample_rate' are needed
+  // because 'mix_list' can be empty. The parameter
+  // 'number_of_streams' is used for determining whether to pass the
+  // data through a limiter.
   void Combine(const std::vector<AudioFrame*>& mix_list,
                size_t number_of_channels,
                int sample_rate,
+               size_t number_of_streams,
                AudioFrame* audio_frame_for_mixing) const;
 
  private:
-  // Lower-level helper function called from Combine(...) when there
-  // are several input frames.
-  //
-  // TODO(aleloi): change interface to ArrayView<int16_t> output_frame
-  // once we have gotten rid of the APM limiter.
-  //
-  // Only the 'data' field of output_frame should be modified. The
-  // rest are used for potentially sending the output to the APM
-  // limiter.
-  void CombineMultipleFrames(
-      const std::vector<rtc::ArrayView<const int16_t>>& input_frames,
-      AudioFrame* audio_frame_for_mixing) const;
-
   const bool use_apm_limiter_;
   std::unique_ptr<AudioProcessing> limiter_;
 };

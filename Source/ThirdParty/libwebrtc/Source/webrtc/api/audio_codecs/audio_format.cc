@@ -19,17 +19,17 @@ SdpAudioFormat::SdpAudioFormat(SdpAudioFormat&&) = default;
 
 SdpAudioFormat::SdpAudioFormat(const char* name,
                                int clockrate_hz,
-                               int num_channels)
+                               size_t num_channels)
     : name(name), clockrate_hz(clockrate_hz), num_channels(num_channels) {}
 
 SdpAudioFormat::SdpAudioFormat(const std::string& name,
                                int clockrate_hz,
-                               int num_channels)
+                               size_t num_channels)
     : name(name), clockrate_hz(clockrate_hz), num_channels(num_channels) {}
 
 SdpAudioFormat::SdpAudioFormat(const char* name,
                                int clockrate_hz,
-                               int num_channels,
+                               size_t num_channels,
                                const Parameters& param)
     : name(name),
       clockrate_hz(clockrate_hz),
@@ -38,12 +38,17 @@ SdpAudioFormat::SdpAudioFormat(const char* name,
 
 SdpAudioFormat::SdpAudioFormat(const std::string& name,
                                int clockrate_hz,
-                               int num_channels,
+                               size_t num_channels,
                                const Parameters& param)
     : name(name),
       clockrate_hz(clockrate_hz),
       num_channels(num_channels),
       parameters(param) {}
+
+bool SdpAudioFormat::Matches(const SdpAudioFormat& o) const {
+  return STR_CASE_CMP(name.c_str(), o.name.c_str()) == 0 &&
+         clockrate_hz == o.clockrate_hz && num_channels == o.num_channels;
+}
 
 SdpAudioFormat::~SdpAudioFormat() = default;
 SdpAudioFormat& SdpAudioFormat::operator=(const SdpAudioFormat&) = default;
@@ -77,9 +82,49 @@ std::ostream& operator<<(std::ostream& os, const SdpAudioFormat& saf) {
   return os;
 }
 
-AudioCodecSpec::AudioCodecSpec(const SdpAudioFormat& format) : format(format) {}
+AudioCodecInfo::AudioCodecInfo(int sample_rate_hz,
+                               size_t num_channels,
+                               int bitrate_bps)
+    : AudioCodecInfo(sample_rate_hz,
+                     num_channels,
+                     bitrate_bps,
+                     bitrate_bps,
+                     bitrate_bps) {}
 
-AudioCodecSpec::AudioCodecSpec(SdpAudioFormat&& format)
-    : format(std::move(format)) {}
+AudioCodecInfo::AudioCodecInfo(int sample_rate_hz,
+                               size_t num_channels,
+                               int default_bitrate_bps,
+                               int min_bitrate_bps,
+                               int max_bitrate_bps)
+    : sample_rate_hz(sample_rate_hz),
+      num_channels(num_channels),
+      default_bitrate_bps(default_bitrate_bps),
+      min_bitrate_bps(min_bitrate_bps),
+      max_bitrate_bps(max_bitrate_bps) {
+  RTC_DCHECK_GT(sample_rate_hz, 0);
+  RTC_DCHECK_GT(num_channels, 0);
+  RTC_DCHECK_GE(min_bitrate_bps, 0);
+  RTC_DCHECK_LE(min_bitrate_bps, default_bitrate_bps);
+  RTC_DCHECK_GE(max_bitrate_bps, default_bitrate_bps);
+}
+
+std::ostream& operator<<(std::ostream& os, const AudioCodecInfo& aci) {
+  os << "{sample_rate_hz: " << aci.sample_rate_hz;
+  os << ", num_channels: " << aci.num_channels;
+  os << ", default_bitrate_bps: " << aci.default_bitrate_bps;
+  os << ", min_bitrate_bps: " << aci.min_bitrate_bps;
+  os << ", max_bitrate_bps: " << aci.max_bitrate_bps;
+  os << ", allow_comfort_noise: " << aci.allow_comfort_noise;
+  os << ", supports_network_adaption: " << aci.supports_network_adaption;
+  os << "}";
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const AudioCodecSpec& acs) {
+  os << "{format: " << acs.format;
+  os << ", info: " << acs.info;
+  os << "}";
+  return os;
+}
 
 }  // namespace webrtc

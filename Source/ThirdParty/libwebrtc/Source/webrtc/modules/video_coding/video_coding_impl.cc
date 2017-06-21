@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "webrtc/base/criticalsection.h"
+#include "webrtc/base/thread_checker.h"
 #include "webrtc/common_types.h"
 #include "webrtc/common_video/include/video_bitrate_allocator.h"
 #include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
@@ -49,21 +50,19 @@ namespace {
 // a register method all the way down to the function calling it.
 class EncodedImageCallbackWrapper : public EncodedImageCallback {
  public:
-  EncodedImageCallbackWrapper()
-      : cs_(CriticalSectionWrapper::CreateCriticalSection()),
-        callback_(nullptr) {}
+  EncodedImageCallbackWrapper() : callback_(nullptr) {}
 
   virtual ~EncodedImageCallbackWrapper() {}
 
   void Register(EncodedImageCallback* callback) {
-    CriticalSectionScoped cs(cs_.get());
+    rtc::CritScope lock(&cs_);
     callback_ = callback;
   }
 
   virtual Result OnEncodedImage(const EncodedImage& encoded_image,
                                 const CodecSpecificInfo* codec_specific_info,
                                 const RTPFragmentationHeader* fragmentation) {
-    CriticalSectionScoped cs(cs_.get());
+    rtc::CritScope lock(&cs_);
     if (callback_) {
       return callback_->OnEncodedImage(encoded_image, codec_specific_info,
                                        fragmentation);
@@ -72,7 +71,7 @@ class EncodedImageCallbackWrapper : public EncodedImageCallback {
   }
 
  private:
-  std::unique_ptr<CriticalSectionWrapper> cs_;
+  rtc::CriticalSection cs_;
   EncodedImageCallback* callback_ GUARDED_BY(cs_);
 };
 
@@ -98,8 +97,8 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   int64_t TimeUntilNextProcess() override {
     int64_t sender_time = sender_.TimeUntilNextProcess();
     int64_t receiver_time = receiver_.TimeUntilNextProcess();
-    assert(sender_time >= 0);
-    assert(receiver_time >= 0);
+    RTC_DCHECK_GE(sender_time, 0);
+    RTC_DCHECK_GE(receiver_time, 0);
     return VCM_MIN(sender_time, receiver_time);
   }
 
@@ -111,7 +110,6 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   int32_t RegisterSendCodec(const VideoCodec* sendCodec,
                             uint32_t numberOfCores,
                             uint32_t maxPayloadSize) override {
-#if !defined(RTC_DISABLE_VP8)
     if (sendCodec != nullptr && sendCodec->codecType == kVideoCodecVP8) {
       // Set up a rate allocator and temporal layers factory for this vp8
       // instance. The codec impl will have a raw pointer to the TL factory,
@@ -127,7 +125,6 @@ class VideoCodingModuleImpl : public VideoCodingModule {
       return sender_.RegisterSendCodec(&vp8_codec, numberOfCores,
                                        maxPayloadSize);
     }
-#endif
     return sender_.RegisterSendCodec(sendCodec, numberOfCores, maxPayloadSize);
   }
 
@@ -192,17 +189,13 @@ class VideoCodingModuleImpl : public VideoCodingModule {
 
   int32_t RegisterReceiveCallback(
       VCMReceiveCallback* receiveCallback) override {
+    RTC_DCHECK(construction_thread_.CalledOnValidThread());
     return receiver_.RegisterReceiveCallback(receiveCallback);
   }
 
   int32_t RegisterReceiveStatisticsCallback(
       VCMReceiveStatisticsCallback* receiveStats) override {
     return receiver_.RegisterReceiveStatisticsCallback(receiveStats);
-  }
-
-  int32_t RegisterDecoderTimingCallback(
-      VCMDecoderTimingCallback* decoderTiming) override {
-    return receiver_.RegisterDecoderTimingCallback(decoderTiming);
   }
 
   int32_t RegisterFrameTypeCallback(
@@ -212,19 +205,12 @@ class VideoCodingModuleImpl : public VideoCodingModule {
 
   int32_t RegisterPacketRequestCallback(
       VCMPacketRequestCallback* callback) override {
+    RTC_DCHECK(construction_thread_.CalledOnValidThread());
     return receiver_.RegisterPacketRequestCallback(callback);
   }
 
   int32_t Decode(uint16_t maxWaitTimeMs) override {
     return receiver_.Decode(maxWaitTimeMs);
-  }
-
-  int32_t ReceiveCodec(VideoCodec* currentReceiveCodec) const override {
-    return receiver_.ReceiveCodec(currentReceiveCodec);
-  }
-
-  VideoCodecType ReceiveCodec() const override {
-    return receiver_.ReceiveCodec();
   }
 
   int32_t IncomingPacket(const uint8_t* incomingPayload,
@@ -242,10 +228,6 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   }
 
   int32_t Delay() const override { return receiver_.Delay(); }
-
-  uint32_t DiscardedPackets() const override {
-    return receiver_.DiscardedPackets();
-  }
 
   int SetReceiverRobustnessMode(ReceiverRobustness robustnessMode,
                                 VCMDecodeErrorMode errorMode) override {
@@ -279,6 +261,7 @@ class VideoCodingModuleImpl : public VideoCodingModule {
   void TriggerDecoderShutdown() override { receiver_.TriggerDecoderShutdown(); }
 
  private:
+  rtc::ThreadChecker construction_thread_;
   EncodedImageCallbackWrapper post_encode_callback_;
   vcm::VideoSender sender_;
   std::unique_ptr<VideoBitrateAllocator> rate_allocator_;
@@ -291,37 +274,14 @@ void VideoCodingModule::Codec(VideoCodecType codecType, VideoCodec* codec) {
   VCMCodecDataBase::Codec(codecType, codec);
 }
 
-// Create method for the new jitter buffer.
-VideoCodingModule* VideoCodingModule::Create(
-    Clock* clock,
-    VCMQMSettingsCallback* qm_settings_callback,
-    NackSender* nack_sender,
-    KeyFrameRequestSender* keyframe_request_sender,
-    EncodedImageCallback* pre_decode_image_callback) {
-  return new VideoCodingModuleImpl(clock, nullptr, nack_sender,
-                                   keyframe_request_sender,
-                                   pre_decode_image_callback);
-}
-
-// Create method for current interface, will be removed when the
+// DEPRECATED.  Create method for current interface, will be removed when the
 // new jitter buffer is in place.
 VideoCodingModule* VideoCodingModule::Create(Clock* clock,
                                              EventFactory* event_factory) {
-  return VideoCodingModule::Create(clock, event_factory,
-                                   nullptr,   // NackSender
-                                   nullptr);  // KeyframeRequestSender
-}
-
-// Create method for the new jitter buffer.
-VideoCodingModule* VideoCodingModule::Create(
-    Clock* clock,
-    EventFactory* event_factory,
-    NackSender* nack_sender,
-    KeyFrameRequestSender* keyframe_request_sender) {
-  assert(clock);
-  assert(event_factory);
-  return new VideoCodingModuleImpl(clock, event_factory, nack_sender,
-                                   keyframe_request_sender, nullptr);
+  RTC_DCHECK(clock);
+  RTC_DCHECK(event_factory);
+  return new VideoCodingModuleImpl(clock, event_factory, nullptr, nullptr,
+                                   nullptr);
 }
 
 }  // namespace webrtc

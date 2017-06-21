@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 
+#include "webrtc/api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/thread_annotations.h"
@@ -22,7 +23,6 @@
 #include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 #include "webrtc/modules/audio_mixer/audio_mixer_impl.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_header_parser.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/metrics_default.h"
 #include "webrtc/test/call_test.h"
 #include "webrtc/test/direct_transport.h"
@@ -31,6 +31,7 @@
 #include "webrtc/test/fake_audio_device.h"
 #include "webrtc/test/fake_decoder.h"
 #include "webrtc/test/fake_encoder.h"
+#include "webrtc/test/field_trial.h"
 #include "webrtc/test/frame_generator.h"
 #include "webrtc/test/frame_generator_capturer.h"
 #include "webrtc/test/gtest.h"
@@ -146,7 +147,9 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
   metrics::Reset();
   VoiceEngine* voice_engine = VoiceEngine::Create();
   VoEBase* voe_base = VoEBase::GetInterface(voice_engine);
-  FakeAudioDevice fake_audio_device(audio_rtp_speed, 48000, 256);
+  FakeAudioDevice fake_audio_device(
+      FakeAudioDevice::CreatePulsedNoiseCapturer(256, 48000),
+      FakeAudioDevice::CreateDiscardRenderer(48000), audio_rtp_speed);
   EXPECT_EQ(0, voe_base->Init(&fake_audio_device, nullptr, decoder_factory_));
   VoEBase::ChannelConfig config;
   config.enable_voice_pacing = true;
@@ -156,56 +159,45 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
   AudioState::Config send_audio_state_config;
   send_audio_state_config.voice_engine = voice_engine;
   send_audio_state_config.audio_mixer = AudioMixerImpl::Create();
-  Call::Config sender_config(&event_log_);
+  Call::Config sender_config(event_log_.get());
   sender_config.audio_state = AudioState::Create(send_audio_state_config);
-  Call::Config receiver_config(&event_log_);
+  Call::Config receiver_config(event_log_.get());
   receiver_config.audio_state = sender_config.audio_state;
   CreateCalls(sender_config, receiver_config);
 
 
   VideoRtcpAndSyncObserver observer(Clock::GetRealTimeClock());
 
-  // Helper class to ensure we deliver correct media_type to the receiving call.
-  class MediaTypePacketReceiver : public PacketReceiver {
-   public:
-    MediaTypePacketReceiver(PacketReceiver* packet_receiver,
-                            MediaType media_type)
-        : packet_receiver_(packet_receiver), media_type_(media_type) {}
-
-    DeliveryStatus DeliverPacket(MediaType media_type,
-                                 const uint8_t* packet,
-                                 size_t length,
-                                 const PacketTime& packet_time) override {
-      return packet_receiver_->DeliverPacket(media_type_, packet, length,
-                                             packet_time);
-    }
-   private:
-    PacketReceiver* packet_receiver_;
-    const MediaType media_type_;
-
-    RTC_DISALLOW_IMPLICIT_CONSTRUCTORS(MediaTypePacketReceiver);
-  };
-
   FakeNetworkPipe::Config audio_net_config;
   audio_net_config.queue_delay_ms = 500;
   audio_net_config.loss_percent = 5;
+
+  std::map<uint8_t, MediaType> audio_pt_map;
+  std::map<uint8_t, MediaType> video_pt_map;
+  std::copy_if(std::begin(payload_type_map_), std::end(payload_type_map_),
+               std::inserter(audio_pt_map, audio_pt_map.end()),
+               [](const std::pair<const uint8_t, MediaType>& pair) {
+                 return pair.second == MediaType::AUDIO;
+               });
+  std::copy_if(std::begin(payload_type_map_), std::end(payload_type_map_),
+               std::inserter(video_pt_map, video_pt_map.end()),
+               [](const std::pair<const uint8_t, MediaType>& pair) {
+                 return pair.second == MediaType::VIDEO;
+               });
+
   test::PacketTransport audio_send_transport(sender_call_.get(), &observer,
                                              test::PacketTransport::kSender,
-                                             audio_net_config);
-  MediaTypePacketReceiver audio_receiver(receiver_call_->Receiver(),
-                                         MediaType::AUDIO);
-  audio_send_transport.SetReceiver(&audio_receiver);
+                                             audio_pt_map, audio_net_config);
+  audio_send_transport.SetReceiver(receiver_call_->Receiver());
 
-  test::PacketTransport video_send_transport(sender_call_.get(), &observer,
-                                             test::PacketTransport::kSender,
-                                             FakeNetworkPipe::Config());
-  MediaTypePacketReceiver video_receiver(receiver_call_->Receiver(),
-                                         MediaType::VIDEO);
-  video_send_transport.SetReceiver(&video_receiver);
+  test::PacketTransport video_send_transport(
+      sender_call_.get(), &observer, test::PacketTransport::kSender,
+      video_pt_map, FakeNetworkPipe::Config());
+  video_send_transport.SetReceiver(receiver_call_->Receiver());
 
   test::PacketTransport receive_transport(
       receiver_call_.get(), &observer, test::PacketTransport::kReceiver,
-      FakeNetworkPipe::Config());
+      payload_type_map_, FakeNetworkPipe::Config());
   receive_transport.SetReceiver(sender_call_->Receiver());
 
   test::FakeDecoder fake_decoder;
@@ -216,8 +208,10 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
   AudioSendStream::Config audio_send_config(&audio_send_transport);
   audio_send_config.voe_channel_id = send_channel_id;
   audio_send_config.rtp.ssrc = kAudioSendSsrc;
-  audio_send_config.send_codec_spec.codec_inst =
-      CodecInst{103, "ISAC", 16000, 480, 1, 32000};
+  audio_send_config.send_codec_spec =
+      rtc::Optional<AudioSendStream::Config::SendCodecSpec>(
+          {kAudioSendPayloadType, {"ISAC", 16000, 1}});
+  audio_send_config.encoder_factory = CreateBuiltinAudioEncoderFactory();
   AudioSendStream* audio_send_stream =
       sender_call_->CreateAudioSendStream(audio_send_config);
 
@@ -239,6 +233,7 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
   audio_recv_config.voe_channel_id = recv_channel_id;
   audio_recv_config.sync_group = kSyncGroup;
   audio_recv_config.decoder_factory = decoder_factory_;
+  audio_recv_config.decoder_map = {{kAudioSendPayloadType, {"ISAC", 16000, 1}}};
 
   AudioReceiveStream* audio_receive_stream;
 
@@ -339,13 +334,15 @@ void CallPerfTest::TestCaptureNtpTime(const FakeNetworkPipe::Config& net_config,
 
    private:
     test::PacketTransport* CreateSendTransport(Call* sender_call) override {
-      return new test::PacketTransport(
-          sender_call, this, test::PacketTransport::kSender, net_config_);
+      return new test::PacketTransport(sender_call, this,
+                                       test::PacketTransport::kSender,
+                                       payload_type_map_, net_config_);
     }
 
     test::PacketTransport* CreateReceiveTransport() override {
-      return new test::PacketTransport(
-          nullptr, this, test::PacketTransport::kReceiver, net_config_);
+      return new test::PacketTransport(nullptr, this,
+                                       test::PacketTransport::kReceiver,
+                                       payload_type_map_, net_config_);
     }
 
     void OnFrame(const VideoFrame& video_frame) override {
@@ -470,13 +467,15 @@ TEST_F(CallPerfTest, CaptureNtpTimeWithNetworkJitter) {
 }
 
 TEST_F(CallPerfTest, ReceivesCpuOveruseAndUnderuse) {
+  // Minimal normal usage at the start, then 30s overuse to allow filter to
+  // settle, and then 80s underuse to allow plenty of time for rampup again.
+  test::ScopedFieldTrials fake_overuse_settings(
+      "WebRTC-ForceSimulatedOveruseIntervalMs/1-30000-80000/");
+
   class LoadObserver : public test::SendTest,
                        public test::FrameGeneratorCapturer::SinkWantsObserver {
    public:
-    LoadObserver()
-        : SendTest(kLongTimeoutMs),
-          expect_lower_resolution_wants_(true),
-          encoder_(Clock::GetRealTimeClock(), 35 /* delay_ms */) {}
+    LoadObserver() : SendTest(kLongTimeoutMs), test_phase_(TestPhase::kStart) {}
 
     void OnFrameGeneratorCapturerCreated(
         test::FrameGeneratorCapturer* frame_generator_capturer) override {
@@ -487,24 +486,43 @@ TEST_F(CallPerfTest, ReceivesCpuOveruseAndUnderuse) {
 
     // OnSinkWantsChanged is called when FrameGeneratorCapturer::AddOrUpdateSink
     // is called.
+    // TODO(sprang): Add integration test for maintain-framerate mode?
     void OnSinkWantsChanged(rtc::VideoSinkInterface<VideoFrame>* sink,
                             const rtc::VideoSinkWants& wants) override {
       // First expect CPU overuse. Then expect CPU underuse when the encoder
       // delay has been decreased.
-      if (wants.target_pixel_count &&
-          *wants.target_pixel_count <
-              wants.max_pixel_count.value_or(std::numeric_limits<int>::max())) {
-        // On adapting up, ViEEncoder::VideoSourceProxy will set the target
-        // pixel count to a step up from the current and the max value to
-        // something higher than the target.
-        EXPECT_FALSE(expect_lower_resolution_wants_);
-        observation_complete_.Set();
-      } else if (wants.max_pixel_count) {
-        // On adapting down, ViEEncoder::VideoSourceProxy will set only the max
-        // pixel count, leaving the target unset.
-        EXPECT_TRUE(expect_lower_resolution_wants_);
-        expect_lower_resolution_wants_ = false;
-        encoder_.SetDelay(2);
+      switch (test_phase_) {
+        case TestPhase::kStart:
+          if (wants.max_pixel_count < std::numeric_limits<int>::max()) {
+            // On adapting down, ViEEncoder::VideoSourceProxy will set only the
+            // max pixel count, leaving the target unset.
+            test_phase_ = TestPhase::kAdaptedDown;
+          } else {
+            ADD_FAILURE() << "Got unexpected adaptation request, max res = "
+                          << wants.max_pixel_count << ", target res = "
+                          << wants.target_pixel_count.value_or(-1)
+                          << ", max fps = " << wants.max_framerate_fps;
+          }
+          break;
+        case TestPhase::kAdaptedDown:
+          // On adapting up, the adaptation counter will again be at zero, and
+          // so all constraints will be reset.
+          if (wants.max_pixel_count == std::numeric_limits<int>::max() &&
+              !wants.target_pixel_count) {
+            test_phase_ = TestPhase::kAdaptedUp;
+            observation_complete_.Set();
+          } else {
+            ADD_FAILURE() << "Got unexpected adaptation request, max res = "
+                          << wants.max_pixel_count << ", target res = "
+                          << wants.target_pixel_count.value_or(-1)
+                          << ", max fps = " << wants.max_framerate_fps;
+          }
+          break;
+        case TestPhase::kAdaptedUp:
+          ADD_FAILURE() << "Got unexpected adaptation request, max res = "
+                        << wants.max_pixel_count << ", target res = "
+                        << wants.target_pixel_count.value_or(-1)
+                        << ", max fps = " << wants.max_framerate_fps;
       }
     }
 
@@ -512,15 +530,13 @@ TEST_F(CallPerfTest, ReceivesCpuOveruseAndUnderuse) {
         VideoSendStream::Config* send_config,
         std::vector<VideoReceiveStream::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
-      send_config->encoder_settings.encoder = &encoder_;
     }
 
     void PerformTest() override {
       EXPECT_TRUE(Wait()) << "Timed out before receiving an overuse callback.";
     }
 
-    bool expect_lower_resolution_wants_;
-    test::DelayedEncoder encoder_;
+    enum class TestPhase { kStart, kAdaptedDown, kAdaptedUp } test_phase_;
   } test;
 
   RunBaseTest(&test);
@@ -692,7 +708,7 @@ TEST_F(CallPerfTest, KeepsHighBitrateWhenReconfiguringSender) {
 
     Call::Config GetSenderCallConfig() override {
       Call::Config config = EndToEndTest::GetSenderCallConfig();
-      config.event_log = &event_log_;
+      config.event_log = event_log_.get();
       config.bitrate_config.start_bitrate_bps = kInitialBitrateKbps * 1000;
       return config;
     }

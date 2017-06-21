@@ -130,6 +130,10 @@ class SctpTransportTest : public testing::Test, public sigslot::has_slots<> {
   static void SetUpTestCase() {}
 
   void SetupConnectedTransportsWithTwoStreams() {
+    SetupConnectedTransportsWithTwoStreams(kTransport1Port, kTransport2Port);
+  }
+
+  void SetupConnectedTransportsWithTwoStreams(int port1, int port2) {
     fake_dtls1_.reset(new FakeDtlsTransport("fake dtls 1", 0));
     fake_dtls2_.reset(new FakeDtlsTransport("fake dtls 2", 0));
     recv1_.reset(new SctpFakeDataReceiver());
@@ -153,8 +157,8 @@ class SctpTransportTest : public testing::Test, public sigslot::has_slots<> {
     LOG(LS_VERBOSE) << "Connect the transports -----------------------------";
     // Both transports need to have started (with matching ports) for an
     // association to be formed.
-    transport1_->Start(kTransport1Port, kTransport2Port);
-    transport2_->Start(kTransport2Port, kTransport1Port);
+    transport1_->Start(port1, port2);
+    transport2_->Start(port2, port1);
   }
 
   bool AddStream(int sid) {
@@ -449,6 +453,20 @@ TEST_F(SctpTransportTest, SendDataWithNonexistentStreamFails) {
   SendDataResult result;
   EXPECT_FALSE(SendData(transport2(), 123, "some data", &result));
   EXPECT_EQ(SDR_ERROR, result);
+}
+
+TEST_F(SctpTransportTest, SendDataHighPorts) {
+  SetupConnectedTransportsWithTwoStreams(32768, 32769);
+
+  SendDataResult result;
+  ASSERT_TRUE(SendData(transport1(), 1, "hello?", &result));
+  EXPECT_EQ(SDR_SUCCESS, result);
+  EXPECT_TRUE_WAIT(ReceivedData(receiver2(), 1, "hello?"), kDefaultTimeout);
+
+  ASSERT_TRUE(SendData(transport2(), 2, "hi transport1", &result));
+  EXPECT_EQ(SDR_SUCCESS, result);
+  EXPECT_TRUE_WAIT(ReceivedData(receiver1(), 2, "hi transport1"),
+                   kDefaultTimeout);
 }
 
 TEST_F(SctpTransportTest, ClosesRemoteStream) {

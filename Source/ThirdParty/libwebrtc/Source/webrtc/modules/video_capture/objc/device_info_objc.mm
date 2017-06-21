@@ -60,19 +60,19 @@
     capability.width = 352;
     capability.height = 288;
     capability.maxFPS = 30;
-    capability.rawType = webrtc::kVideoNV12;
+    capability.videoType = webrtc::VideoType::kNV12;
     capability.interlaced = false;
   } else if ([preset isEqualToString:AVCaptureSessionPreset640x480]) {
     capability.width = 640;
     capability.height = 480;
     capability.maxFPS = 30;
-    capability.rawType = webrtc::kVideoNV12;
+    capability.videoType = webrtc::VideoType::kNV12;
     capability.interlaced = false;
   } else if ([preset isEqualToString:AVCaptureSessionPreset1280x720]) {
     capability.width = 1280;
     capability.height = 720;
     capability.maxFPS = 30;
-    capability.rawType = webrtc::kVideoNV12;
+    capability.videoType = webrtc::VideoType::kNV12;
     capability.interlaced = false;
   }
 

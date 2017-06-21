@@ -9,4 +9,7 @@ specific_include_rules = {
   "gunit_prod.h": [
     "+gtest",
   ],
+  "protobuf_utils.h": [
+    "+third_party/protobuf",
+  ],
 }

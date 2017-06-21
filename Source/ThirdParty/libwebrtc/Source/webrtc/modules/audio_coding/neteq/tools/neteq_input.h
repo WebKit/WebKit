@@ -13,12 +13,13 @@
 
 #include <algorithm>
 #include <memory>
+#include <string>
 
 #include "webrtc/base/buffer.h"
 #include "webrtc/base/optional.h"
+#include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/neteq/tools/packet.h"
 #include "webrtc/modules/audio_coding/neteq/tools/packet_source.h"
-#include "webrtc/modules/include/module_common_types.h"
 
 namespace webrtc {
 namespace test {
@@ -27,7 +28,9 @@ namespace test {
 class NetEqInput {
  public:
   struct PacketData {
-    WebRtcRTPHeader header;
+    std::string ToString() const;
+
+    RTPHeader header;
     rtc::Buffer payload;
     double time_ms;
   };

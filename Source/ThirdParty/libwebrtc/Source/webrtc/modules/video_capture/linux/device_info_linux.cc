@@ -287,26 +287,26 @@ int32_t DeviceInfoLinux::FillCapabilities(int fd)
                     cap.height = video_fmt.fmt.pix.height;
                     if (videoFormats[fmts] == V4L2_PIX_FMT_YUYV)
                     {
-                        cap.rawType = kVideoYUY2;
+                      cap.videoType = VideoType::kYUY2;
                     }
                     else if (videoFormats[fmts] == V4L2_PIX_FMT_YUV420)
                     {
-                        cap.rawType = kVideoI420;
+                      cap.videoType = VideoType::kI420;
                     }
                     else if (videoFormats[fmts] == V4L2_PIX_FMT_MJPEG)
                     {
-                        cap.rawType = kVideoMJPEG;
+                      cap.videoType = VideoType::kMJPEG;
                     }
                     else if (videoFormats[fmts] == V4L2_PIX_FMT_UYVY)
                     {
-                        cap.rawType = kVideoUYVY;
+                      cap.videoType = VideoType::kUYVY;
                     }
 
                     // get fps of current camera mode
                     // V4l2 does not have a stable method of knowing so we just guess.
-                    if(cap.width >= 800 && cap.rawType != kVideoMJPEG)
-                    {
-                        cap.maxFPS = 15;
+                    if (cap.width >= 800 &&
+                        cap.videoType != VideoType::kMJPEG) {
+                      cap.maxFPS = 15;
                     }
                     else
                     {
@@ -318,7 +318,7 @@ int32_t DeviceInfoLinux::FillCapabilities(int fd)
                     WEBRTC_TRACE(
                         webrtc::kTraceInfo, webrtc::kTraceVideoCapture, 0,
                         "Camera capability, width:%d height:%d type:%d fps:%d",
-                        cap.width, cap.height, cap.rawType, cap.maxFPS);
+                        cap.width, cap.height, cap.videoType, cap.maxFPS);
                 }
             }
         }

@@ -22,6 +22,16 @@
 
 namespace webrtc {
 
+namespace {
+size_t AddIntToSizeTWithLowerCap(int a, size_t b) {
+  const size_t ret = b + a;
+  // If a + b is negative, resulting in a negative wrap, cap it to zero instead.
+  static_assert(sizeof(size_t) >= sizeof(int),
+                "int must not be wider than size_t for this to work");
+  return (a < 0 && ret > b) ? 0 : ret;
+}
+}  // namespace
+
 // Allocating the static const so that it can be passed by reference to
 // RTC_DCHECK.
 const size_t StatisticsCalculator::kLenWaitingTimes;
@@ -146,6 +156,16 @@ void StatisticsCalculator::ExpandedVoiceSamples(size_t num_samples) {
 
 void StatisticsCalculator::ExpandedNoiseSamples(size_t num_samples) {
   expanded_noise_samples_ += num_samples;
+}
+
+void StatisticsCalculator::ExpandedVoiceSamplesCorrection(int num_samples) {
+  expanded_speech_samples_ =
+      AddIntToSizeTWithLowerCap(num_samples, expanded_speech_samples_);
+}
+
+void StatisticsCalculator::ExpandedNoiseSamplesCorrection(int num_samples) {
+  expanded_noise_samples_ =
+      AddIntToSizeTWithLowerCap(num_samples, expanded_noise_samples_);
 }
 
 void StatisticsCalculator::PreemptiveExpandedSamples(size_t num_samples) {

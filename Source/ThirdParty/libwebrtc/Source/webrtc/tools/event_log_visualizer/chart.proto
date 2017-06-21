@@ -10,6 +10,7 @@ message ChartStyle {
     LINE_CHART = 1;
     BAR_CHART = 2;
     LINE_STEP_CHART = 3;
+    SCATTER_CHART = 4;
   }
 }
 

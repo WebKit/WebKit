@@ -26,7 +26,7 @@ class Clock;
 // methods will acquire (the same) lock befeore executing.
 class RateLimiter {
  public:
-  RateLimiter(Clock* clock, int64_t max_window_ms);
+  RateLimiter(const Clock* clock, int64_t max_window_ms);
   ~RateLimiter();
 
   // Try to use rate to send bytes. Returns true on success and if so updates
@@ -42,7 +42,7 @@ class RateLimiter {
   bool SetWindowSize(int64_t window_size_ms);
 
  private:
-  Clock* const clock_;
+  const Clock* const clock_;
   rtc::CriticalSection lock_;
   RateStatistics current_rate_ GUARDED_BY(lock_);
   int64_t window_size_ms_ GUARDED_BY(lock_);

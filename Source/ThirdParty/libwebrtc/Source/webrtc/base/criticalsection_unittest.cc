@@ -18,7 +18,6 @@
 #include "webrtc/base/event.h"
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/platform_thread.h"
-#include "webrtc/base/scopedptrcollection.h"
 #include "webrtc/base/thread.h"
 
 namespace rtc {
@@ -199,13 +198,13 @@ struct CompareAndSwapOp {
   static int AtomicOp(int* i) { return AtomicOps::CompareAndSwap(i, 0, 1); }
 };
 
-void StartThreads(ScopedPtrCollection<Thread>* threads,
+void StartThreads(std::vector<std::unique_ptr<Thread>>* threads,
                   MessageHandler* handler) {
   for (int i = 0; i < kNumThreads; ++i) {
-    Thread* thread = new Thread();
+    std::unique_ptr<Thread> thread(new Thread());
     thread->Start();
     thread->Post(RTC_FROM_HERE, handler);
-    threads->PushBack(thread);
+    threads->push_back(std::move(thread));
   }
 }
 
@@ -248,7 +247,7 @@ TEST(AtomicOpsTest, SimplePtr) {
 TEST(AtomicOpsTest, Increment) {
   // Create and start lots of threads.
   AtomicOpRunner<IncrementOp, UniqueValueVerifier> runner(0);
-  ScopedPtrCollection<Thread> threads;
+  std::vector<std::unique_ptr<Thread>> threads;
   StartThreads(&threads, &runner);
   runner.SetExpectedThreadCount(kNumThreads);
 
@@ -261,7 +260,7 @@ TEST(AtomicOpsTest, Decrement) {
   // Create and start lots of threads.
   AtomicOpRunner<DecrementOp, UniqueValueVerifier> runner(
       kOperationsToRun * kNumThreads);
-  ScopedPtrCollection<Thread> threads;
+  std::vector<std::unique_ptr<Thread>> threads;
   StartThreads(&threads, &runner);
   runner.SetExpectedThreadCount(kNumThreads);
 
@@ -273,7 +272,7 @@ TEST(AtomicOpsTest, Decrement) {
 TEST(AtomicOpsTest, CompareAndSwap) {
   // Create and start lots of threads.
   AtomicOpRunner<CompareAndSwapOp, CompareAndSwapVerifier> runner(0);
-  ScopedPtrCollection<Thread> threads;
+  std::vector<std::unique_ptr<Thread>> threads;
   StartThreads(&threads, &runner);
   runner.SetExpectedThreadCount(kNumThreads);
 
@@ -285,7 +284,7 @@ TEST(AtomicOpsTest, CompareAndSwap) {
 TEST(GlobalLockTest, Basic) {
   // Create and start lots of threads.
   LockRunner<GlobalLock> runner;
-  ScopedPtrCollection<Thread> threads;
+  std::vector<std::unique_ptr<Thread>> threads;
   StartThreads(&threads, &runner);
   runner.SetExpectedThreadCount(kNumThreads);
 
@@ -297,7 +296,7 @@ TEST(GlobalLockTest, Basic) {
 TEST(CriticalSectionTest, Basic) {
   // Create and start lots of threads.
   LockRunner<CriticalSectionLock> runner;
-  ScopedPtrCollection<Thread> threads;
+  std::vector<std::unique_ptr<Thread>> threads;
   StartThreads(&threads, &runner);
   runner.SetExpectedThreadCount(kNumThreads);
 

@@ -34,7 +34,7 @@ class BitrateAllocatorObserver {
   virtual uint32_t OnBitrateUpdated(uint32_t bitrate_bps,
                                     uint8_t fraction_loss,
                                     int64_t rtt,
-                                    int64_t probing_interval_ms) = 0;
+                                    int64_t bwe_period_ms) = 0;
 
  protected:
   virtual ~BitrateAllocatorObserver() {}
@@ -64,7 +64,7 @@ class BitrateAllocator {
   void OnNetworkChanged(uint32_t target_bitrate_bps,
                         uint8_t fraction_loss,
                         int64_t rtt,
-                        int64_t probing_interval_ms);
+                        int64_t bwe_period_ms);
 
   // Set the start and max send bitrate used by the bandwidth management.
   //
@@ -160,7 +160,7 @@ class BitrateAllocator {
   uint32_t last_non_zero_bitrate_bps_ GUARDED_BY(&sequenced_checker_);
   uint8_t last_fraction_loss_ GUARDED_BY(&sequenced_checker_);
   int64_t last_rtt_ GUARDED_BY(&sequenced_checker_);
-  int64_t last_probing_interval_ms_ GUARDED_BY(&sequenced_checker_);
+  int64_t last_bwe_period_ms_ GUARDED_BY(&sequenced_checker_);
   // Number of mute events based on too low BWE, not network up/down.
   int num_pause_events_ GUARDED_BY(&sequenced_checker_);
   Clock* const clock_ GUARDED_BY(&sequenced_checker_);

@@ -71,6 +71,7 @@ class RampUpTester : public test::EndToEndTest {
   const size_t num_flexfec_streams_;
   const bool rtx_;
   const bool red_;
+  const bool report_perf_stats_;
   Call* sender_call_;
   VideoSendStream* send_stream_;
   test::PacketTransport* send_transport_;
@@ -99,7 +100,6 @@ class RampUpTester : public test::EndToEndTest {
 
   const int start_bitrate_bps_;
   const int64_t min_run_time_ms_;
-  const bool report_perf_stats_;
   int expected_bitrate_bps_;
   int64_t test_start_ms_;
   int64_t ramp_up_finished_ms_;
@@ -121,7 +121,8 @@ class RampUpDownUpTester : public RampUpTester {
                      const std::string& extension_type,
                      bool rtx,
                      bool red,
-                     const std::vector<int>& loss_rates);
+                     const std::vector<int>& loss_rates,
+                     bool report_perf_stats);
   ~RampUpDownUpTester() override;
 
  protected:

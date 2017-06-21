@@ -24,12 +24,17 @@ namespace webrtc {
 #define ALIGN16_END __attribute__((aligned(16)))
 #endif
 
-enum class Aec3Optimization { kNone, kSse2 };
+enum class Aec3Optimization { kNone, kSse2, kNeon };
 
-constexpr int kMetricsReportingIntervalBlocks = 10 * 250;
+constexpr int kNumBlocksPerSecond = 250;
+
+constexpr int kMetricsReportingIntervalBlocks = 10 * kNumBlocksPerSecond;
 constexpr int kMetricsComputationBlocks = 9;
 constexpr int kMetricsCollectionBlocks =
     kMetricsReportingIntervalBlocks - kMetricsComputationBlocks;
+
+constexpr int kAdaptiveFilterLength = 12;
+constexpr int kResidualEchoPowerRenderWindowSize = 30;
 
 constexpr size_t kFftLengthBy2 = 64;
 constexpr size_t kFftLengthBy2Plus1 = kFftLengthBy2 + 1;
@@ -43,6 +48,27 @@ constexpr size_t kBlockSize = kFftLengthBy2;
 constexpr size_t kExtendedBlockSize = 2 * kFftLengthBy2;
 constexpr size_t kSubBlockSize = 16;
 
+constexpr size_t kNumMatchedFilters = 4;
+constexpr size_t kMatchedFilterWindowSizeSubBlocks = 32;
+constexpr size_t kMatchedFilterAlignmentShiftSizeSubBlocks =
+    kMatchedFilterWindowSizeSubBlocks * 3 / 4;
+constexpr size_t kDownsampledRenderBufferSize =
+    kSubBlockSize *
+    (kMatchedFilterAlignmentShiftSizeSubBlocks * kNumMatchedFilters +
+     kMatchedFilterWindowSizeSubBlocks +
+     1);
+
+constexpr float kFixedEchoPathGain = 100;
+
+constexpr size_t kRenderDelayBufferSize =
+    (3 * kDownsampledRenderBufferSize) / (4 * kSubBlockSize);
+
+constexpr size_t kMaxApiCallsJitterBlocks = 20;
+constexpr size_t kRenderTransferQueueSize = kMaxApiCallsJitterBlocks / 2;
+static_assert(2 * kRenderTransferQueueSize >= kMaxApiCallsJitterBlocks,
+              "Requirement to ensure buffer overflow detection");
+
+// TODO(peah): Integrate this with how it is done inside audio_processing_impl.
 constexpr size_t NumBandsForRate(int sample_rate_hz) {
   return static_cast<size_t>(sample_rate_hz == 8000 ? 1
                                                     : sample_rate_hz / 16000);

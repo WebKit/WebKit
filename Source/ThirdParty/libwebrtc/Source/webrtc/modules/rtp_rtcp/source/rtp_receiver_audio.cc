@@ -212,9 +212,13 @@ int32_t RTPReceiverAudio::ParseAudioCodecSpecific(
     size_t payload_length,
     const AudioPayload& audio_specific,
     bool is_red) {
-
-  if (payload_length == 0) {
-    return 0;
+  RTC_DCHECK_GE(payload_length, rtp_header->header.paddingLength);
+  const size_t payload_data_length =
+      payload_length - rtp_header->header.paddingLength;
+  if (payload_data_length == 0) {
+    rtp_header->type.Audio.isCNG = false;
+    rtp_header->frameType = kEmptyFrame;
+    return data_callback_->OnReceivedPayloadData(nullptr, 0, rtp_header);
   }
 
   bool telephone_event_packet =
@@ -229,16 +233,17 @@ int32_t RTPReceiverAudio::ParseAudioCodecSpecific(
     // |     event     |E|R| volume    |          duration             |
     // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     //
-    if (payload_length % 4 != 0) {
+    if (payload_data_length % 4 != 0) {
       return -1;
     }
-    size_t number_of_events = payload_length / 4;
+    size_t number_of_events = payload_data_length / 4;
 
     // sanity
     if (number_of_events >= MAX_NUMBER_OF_PARALLEL_TELEPHONE_EVENTS) {
       number_of_events = MAX_NUMBER_OF_PARALLEL_TELEPHONE_EVENTS;
     }
     for (size_t n = 0; n < number_of_events; ++n) {
+      RTC_DCHECK_GE(payload_data_length, (4 * n) + 2);
       bool end = (payload_data[(4 * n) + 1] & 0x80) ? true : false;
 
       std::set<uint8_t>::iterator event =
@@ -291,17 +296,18 @@ int32_t RTPReceiverAudio::ParseAudioCodecSpecific(
     }
   }
   // TODO(holmer): Break this out to have RED parsing handled generically.
+  RTC_DCHECK_GT(payload_data_length, 0);
   if (is_red && !(payload_data[0] & 0x80)) {
     // we recive only one frame packed in a RED packet remove the RED wrapper
     rtp_header->header.payloadType = payload_data[0];
 
     // only one frame in the RED strip the one byte to help NetEq
     return data_callback_->OnReceivedPayloadData(
-        payload_data + 1, payload_length - 1, rtp_header);
+        payload_data + 1, payload_data_length - 1, rtp_header);
   }
 
   rtp_header->type.Audio.channel = audio_specific.channels;
-  return data_callback_->OnReceivedPayloadData(
-      payload_data, payload_length, rtp_header);
+  return data_callback_->OnReceivedPayloadData(payload_data,
+                                               payload_data_length, rtp_header);
 }
 }  // namespace webrtc

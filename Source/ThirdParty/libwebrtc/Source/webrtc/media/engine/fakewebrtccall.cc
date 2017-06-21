@@ -26,6 +26,11 @@ FakeAudioSendStream::FakeAudioSendStream(
   RTC_DCHECK(config.voe_channel_id != -1);
 }
 
+void FakeAudioSendStream::Reconfigure(
+    const webrtc::AudioSendStream::Config& config) {
+  config_ = config;
+}
+
 const webrtc::AudioSendStream::Config&
     FakeAudioSendStream::GetConfig() const {
   return config_;
@@ -108,6 +113,7 @@ FakeVideoSendStream::FakeVideoSendStream(
       config_(std::move(config)),
       codec_settings_set_(false),
       resolution_scaling_enabled_(false),
+      framerate_scaling_enabled_(false),
       source_(nullptr),
       num_swapped_frames_(0) {
   RTC_DCHECK(config.encoder_settings.encoder != NULL);
@@ -252,9 +258,24 @@ void FakeVideoSendStream::SetSource(
   if (source_)
     source_->RemoveSink(this);
   source_ = source;
-  resolution_scaling_enabled_ =
-      degradation_preference !=
-      webrtc::VideoSendStream::DegradationPreference::kMaintainResolution;
+  switch (degradation_preference) {
+    case DegradationPreference::kMaintainFramerate:
+      resolution_scaling_enabled_ = true;
+      framerate_scaling_enabled_ = false;
+      break;
+    case DegradationPreference::kMaintainResolution:
+      resolution_scaling_enabled_ = false;
+      framerate_scaling_enabled_ = true;
+      break;
+    case DegradationPreference::kBalanced:
+      resolution_scaling_enabled_ = true;
+      framerate_scaling_enabled_ = true;
+      break;
+    case DegradationPreference::kDegradationDisabled:
+      resolution_scaling_enabled_ = false;
+      framerate_scaling_enabled_ = false;
+      break;
+  }
   if (source)
     source->AddOrUpdateSink(this, resolution_scaling_enabled_
                                       ? sink_wants_
@@ -333,7 +354,9 @@ FakeCall::FakeCall(const webrtc::Call::Config& config)
       audio_network_state_(webrtc::kNetworkUp),
       video_network_state_(webrtc::kNetworkUp),
       num_created_send_streams_(0),
-      num_created_receive_streams_(0) {}
+      num_created_receive_streams_(0),
+      audio_transport_overhead_(0),
+      video_transport_overhead_(0) {}
 
 FakeCall::~FakeCall() {
   EXPECT_EQ(0u, video_send_streams_.size());
@@ -520,19 +543,20 @@ FakeCall::DeliveryStatus FakeCall::DeliverPacket(
     size_t length,
     const webrtc::PacketTime& packet_time) {
   EXPECT_GE(length, 12u);
+  RTC_DCHECK(media_type == webrtc::MediaType::AUDIO ||
+             media_type == webrtc::MediaType::VIDEO);
+
   uint32_t ssrc;
   if (!GetRtpSsrc(packet, length, &ssrc))
     return DELIVERY_PACKET_ERROR;
 
-  if (media_type == webrtc::MediaType::ANY ||
-      media_type == webrtc::MediaType::VIDEO) {
+  if (media_type == webrtc::MediaType::VIDEO) {
     for (auto receiver : video_receive_streams_) {
       if (receiver->GetConfig().rtp.remote_ssrc == ssrc)
         return DELIVERY_OK;
     }
   }
-  if (media_type == webrtc::MediaType::ANY ||
-      media_type == webrtc::MediaType::AUDIO) {
+  if (media_type == webrtc::MediaType::AUDIO) {
     for (auto receiver : audio_receive_streams_) {
       if (receiver->GetConfig().rtp.remote_ssrc == ssrc) {
         receiver->DeliverRtp(packet, length, packet_time);
@@ -562,6 +586,11 @@ webrtc::Call::Stats FakeCall::GetStats() const {
 void FakeCall::SetBitrateConfig(
     const webrtc::Call::Config::BitrateConfig& bitrate_config) {
   config_.bitrate_config = bitrate_config;
+}
+
+void FakeCall::SetBitrateConfigMask(
+    const webrtc::Call::Config::BitrateConfigMask& mask) {
+  // TODO(zstein): not implemented
 }
 
 void FakeCall::SignalChannelNetworkState(webrtc::MediaType media,

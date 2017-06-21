@@ -22,14 +22,14 @@ EVENT_START = 'RUN      ] CodecSettings/PlotVideoProcessorIntegrationTest.'
 EVENT_END = 'OK ] CodecSettings/PlotVideoProcessorIntegrationTest.'
 
 # Metrics to plot, tuple: (name to parse in file, label to use when plotting).
-BITRATE = ('Target Bitrate', 'bitrate (kbps)')
+BITRATE = ('Target Bitrate', 'target bitrate (kbps)')
 WIDTH = ('Width', 'width')
 HEIGHT = ('Height', 'height')
 FILENAME = ('Filename', 'clip')
 CODEC_TYPE = ('Codec type', 'Codec')
 ENCODER_IMPLEMENTATION_NAME = ('Encoder implementation name', 'enc name')
 DECODER_IMPLEMENTATION_NAME = ('Decoder implementation name', 'dec name')
-NUM_FRAMES = ('Total # of frames', 'num frames')
+CODEC_IMPLEMENTATION_NAME = ('Codec implementation name', 'codec name')
 CORES = ('#CPU cores used', 'CPU cores used')
 DENOISING = ('Denoising', 'denoising')
 RESILIENCE = ('Resilience', 'resilience')
@@ -39,6 +39,7 @@ PSNR = ('PSNR avg', 'PSNR (dB)')
 SSIM = ('SSIM avg', 'SSIM')
 ENC_BITRATE = ('Encoding bitrate', 'encoded bitrate (kbps)')
 FRAMERATE = ('Frame rate', 'fps')
+NUM_FRAMES = ('Number of processed frames', 'num frames')
 NUM_DROPPED_FRAMES = ('Number of dropped frames', 'num dropped frames')
 NUM_FRAMES_TO_TARGET = ('Number of frames to approach target rate',
                         'frames to reach target rate')
@@ -78,6 +79,7 @@ SUBPLOT_SETTINGS = [
   CODEC_TYPE,
   ENCODER_IMPLEMENTATION_NAME,
   DECODER_IMPLEMENTATION_NAME,
+  CODEC_IMPLEMENTATION_NAME,
 ] + X_SETTINGS
 
 # Results.
@@ -99,8 +101,8 @@ METRICS_TO_PARSE = SETTINGS + SUBPLOT_SETTINGS + RESULTS
 Y_METRICS = [res[1] for res in RESULTS]
 
 # Parameters for plotting.
-FIG_SIZE_SCALE_FACTOR_X = 2
-FIG_SIZE_SCALE_FACTOR_Y = 2.8
+FIG_SIZE_SCALE_FACTOR_X = 1.6
+FIG_SIZE_SCALE_FACTOR_Y = 1.8
 GRID_COLOR = [0.45, 0.45, 0.45]
 
 
@@ -116,16 +118,16 @@ def ParseSetting(filename, setting):
 
   settings = []
 
-  f = open(filename)
+  settings_file = open(filename)
   while True:
-    line = f.readline()
+    line = settings_file.readline()
     if not line:
       break
     if re.search(r'%s' % EVENT_START, line):
       # Parse event.
       parsed = {}
       while True:
-        line = f.readline()
+        line = settings_file.readline()
         if not line:
           break
         if re.search(r'%s' % EVENT_END, line):
@@ -136,9 +138,9 @@ def ParseSetting(filename, setting):
               settings.append(s)
           break
 
-        TryFindMetric(parsed, line, f)
+        TryFindMetric(parsed, line, settings_file)
 
-  f.close()
+  settings_file.close()
   return settings
 
 
@@ -181,16 +183,16 @@ def ParseMetrics(filename, setting1, setting2):
   metrics = {}
 
   # Parse events.
-  f = open(filename)
+  settings_file = open(filename)
   while True:
-    line = f.readline()
+    line = settings_file.readline()
     if not line:
       break
     if re.search(r'%s' % EVENT_START, line):
       # Parse event.
       parsed = {}
       while True:
-        line = f.readline()
+        line = settings_file.readline()
         if not line:
           break
         if re.search(r'%s' % EVENT_END, line):
@@ -209,13 +211,13 @@ def ParseMetrics(filename, setting1, setting2):
 
           break
 
-        TryFindMetric(parsed, line, f)
+        TryFindMetric(parsed, line, settings_file)
 
-  f.close()
+  settings_file.close()
   return metrics
 
 
-def TryFindMetric(parsed, line, f):
+def TryFindMetric(parsed, line, settings_file):
   for metric in METRICS_TO_PARSE:
     name = metric[0]
     label = metric[1]
@@ -224,13 +226,13 @@ def TryFindMetric(parsed, line, f):
       if not found:
         # TODO(asapersson): Change format.
         # Try find min, max, average stats.
-        found, minimum = GetMetric("Min", f.readline())
+        found, minimum = GetMetric("Min", settings_file.readline())
         if not found:
           return
-        found, maximum = GetMetric("Max", f.readline())
+        found, maximum = GetMetric("Max", settings_file.readline())
         if not found:
           return
-        found, average = GetMetric("Average", f.readline())
+        found, average = GetMetric("Average", settings_file.readline())
         if not found:
           return
 
@@ -285,7 +287,7 @@ def Plot(y_metric, x_metric, metrics):
       },
     }
     """
-  for key in metrics:
+  for key in sorted(metrics):
     data = metrics[key]
     if y_metric not in data:
       print "Failed to find metric: %s" % y_metric
@@ -315,7 +317,8 @@ def PlotFigure(settings, y_metrics, x_metric, metrics, title):
   """
 
   plt.figure()
-  plt.suptitle(title, fontsize='small', fontweight='bold')
+  plt.suptitle(title, fontsize='large', fontweight='bold')
+  settings.sort()
   rows = len(settings)
   cols = 1
   pos = 1
@@ -323,39 +326,47 @@ def PlotFigure(settings, y_metrics, x_metric, metrics, title):
     plt.rc('grid', color=GRID_COLOR)
     ax = plt.subplot(rows, cols, pos)
     plt.grid()
-    plt.setp(ax.get_xticklabels(), visible=(pos == rows), fontsize='small')
-    plt.setp(ax.get_yticklabels(), fontsize='small')
+    plt.setp(ax.get_xticklabels(), visible=(pos == rows), fontsize='large')
+    plt.setp(ax.get_yticklabels(), fontsize='large')
     setting = settings[pos - 1]
     Plot(y_metrics[pos - 1], x_metric, metrics[setting])
-    plt.title(setting, fontsize='x-small')
-    plt.legend(fontsize='xx-small')
+    if setting.startswith(WIDTH[1]):
+      plt.title(setting, fontsize='medium')
+    plt.legend(fontsize='large', loc='best')
     pos += 1
 
-  plt.xlabel(x_metric, fontsize='small')
-  plt.subplots_adjust(left=0.04, right=0.98, bottom=0.04, top=0.96, hspace=0.1)
+  plt.xlabel(x_metric, fontsize='large')
+  plt.subplots_adjust(left=0.06, right=0.98, bottom=0.05, top=0.94, hspace=0.08)
 
 
-def GetTitle(filename):
+def GetTitle(filename, setting):
   title = ''
-  codec_types = ParseSetting(filename, CODEC_TYPE[1])
-  for i in range(0, len(codec_types)):
-    title += codec_types[i] + ', '
+  if setting != CODEC_IMPLEMENTATION_NAME[1] and setting != CODEC_TYPE[1]:
+    codec_types = ParseSetting(filename, CODEC_TYPE[1])
+    for i in range(0, len(codec_types)):
+      title += codec_types[i] + ', '
 
-  cores = ParseSetting(filename, CORES[1])
-  for i in range(0, len(cores)):
-    title += cores[i].split('.')[0] + ', '
+  if setting != CORES[1]:
+    cores = ParseSetting(filename, CORES[1])
+    for i in range(0, len(cores)):
+      title += cores[i].split('.')[0] + ', '
 
-  framerate = ParseSetting(filename, FRAMERATE[1])
-  for i in range(0, len(framerate)):
-    title += framerate[i].split('.')[0] + ', '
+  if setting != FRAMERATE[1]:
+    framerate = ParseSetting(filename, FRAMERATE[1])
+    for i in range(0, len(framerate)):
+      title += framerate[i].split('.')[0] + ', '
 
-  enc_names = ParseSetting(filename, ENCODER_IMPLEMENTATION_NAME[1])
-  for i in range(0, len(enc_names)):
-    title += enc_names[i] + ', '
+  if (setting != CODEC_IMPLEMENTATION_NAME[1] and
+      setting != ENCODER_IMPLEMENTATION_NAME[1]):
+    enc_names = ParseSetting(filename, ENCODER_IMPLEMENTATION_NAME[1])
+    for i in range(0, len(enc_names)):
+      title += enc_names[i] + ', '
 
-  dec_names = ParseSetting(filename, DECODER_IMPLEMENTATION_NAME[1])
-  for i in range(0, len(dec_names)):
-    title += dec_names[i] + ', '
+  if (setting != CODEC_IMPLEMENTATION_NAME[1] and
+      setting != DECODER_IMPLEMENTATION_NAME[1]):
+    dec_names = ParseSetting(filename, DECODER_IMPLEMENTATION_NAME[1])
+    for i in range(0, len(dec_names)):
+      title += dec_names[i] + ', '
 
   filenames = ParseSetting(filename, FILENAME[1])
   title += filenames[0].split('_')[0]
@@ -430,7 +441,8 @@ def main():
   figsize[1] *= FIG_SIZE_SCALE_FACTOR_Y
   plt.rcParams["figure.figsize"] = figsize
 
-  PlotFigure(sub_keys, y_metrics, x_metric, metrics, GetTitle(filename))
+  PlotFigure(sub_keys, y_metrics, x_metric, metrics,
+             GetTitle(filename, setting2))
 
   plt.show()
 

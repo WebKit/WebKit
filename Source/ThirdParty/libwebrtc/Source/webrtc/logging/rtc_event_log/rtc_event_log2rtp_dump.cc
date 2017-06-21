@@ -15,13 +15,15 @@
 
 #include "gflags/gflags.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/call/call.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log_parser.h"
 #include "webrtc/modules/rtp_rtcp/source/byte_io.h"
+#include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
 #include "webrtc/test/rtp_file_writer.h"
 
 namespace {
+
+using MediaType = webrtc::ParsedRtcEventLog::MediaType;
 
 DEFINE_bool(noaudio,
             false,
@@ -118,21 +120,28 @@ int main(int argc, char* argv[]) {
         parsed_stream.GetEventType(i) == webrtc::ParsedRtcEventLog::RTP_EVENT) {
       webrtc::test::RtpPacket packet;
       webrtc::PacketDirection direction;
-      webrtc::MediaType media_type;
-      parsed_stream.GetRtpHeader(i, &direction, &media_type, packet.data,
-                                 &packet.length, &packet.original_length);
+      parsed_stream.GetRtpHeader(i, &direction, packet.data, &packet.length,
+                                 &packet.original_length);
       if (packet.original_length > packet.length)
         header_only = true;
       packet.time_ms = parsed_stream.GetTimestamp(i) / 1000;
 
+      webrtc::RtpUtility::RtpHeaderParser rtp_parser(packet.data,
+                                                     packet.length);
+
       // TODO(terelius): Maybe add a flag to dump outgoing traffic instead?
       if (direction == webrtc::kOutgoingPacket)
         continue;
-      if (FLAGS_noaudio && media_type == webrtc::MediaType::AUDIO)
+
+      webrtc::RTPHeader parsed_header;
+      rtp_parser.Parse(&parsed_header);
+      MediaType media_type =
+          parsed_stream.GetMediaType(parsed_header.ssrc, direction);
+      if (FLAGS_noaudio && media_type == MediaType::AUDIO)
         continue;
-      if (FLAGS_novideo && media_type == webrtc::MediaType::VIDEO)
+      if (FLAGS_novideo && media_type == MediaType::VIDEO)
         continue;
-      if (FLAGS_nodata && media_type == webrtc::MediaType::DATA)
+      if (FLAGS_nodata && media_type == MediaType::DATA)
         continue;
       if (!FLAGS_ssrc.empty()) {
         const uint32_t packet_ssrc =
@@ -150,9 +159,7 @@ int main(int argc, char* argv[]) {
             webrtc::ParsedRtcEventLog::RTCP_EVENT) {
       webrtc::test::RtpPacket packet;
       webrtc::PacketDirection direction;
-      webrtc::MediaType media_type;
-      parsed_stream.GetRtcpPacket(i, &direction, &media_type, packet.data,
-                                  &packet.length);
+      parsed_stream.GetRtcpPacket(i, &direction, packet.data, &packet.length);
       // For RTCP packets the original_length should be set to 0 in the
       // RTPdump format.
       packet.original_length = 0;
@@ -161,16 +168,20 @@ int main(int argc, char* argv[]) {
       // TODO(terelius): Maybe add a flag to dump outgoing traffic instead?
       if (direction == webrtc::kOutgoingPacket)
         continue;
-      if (FLAGS_noaudio && media_type == webrtc::MediaType::AUDIO)
+
+      // Note that |packet_ssrc| is the sender SSRC. An RTCP message may contain
+      // report blocks for many streams, thus several SSRCs and they doen't
+      // necessarily have to be of the same media type.
+      const uint32_t packet_ssrc = webrtc::ByteReader<uint32_t>::ReadBigEndian(
+          reinterpret_cast<const uint8_t*>(packet.data + 4));
+      MediaType media_type = parsed_stream.GetMediaType(packet_ssrc, direction);
+      if (FLAGS_noaudio && media_type == MediaType::AUDIO)
         continue;
-      if (FLAGS_novideo && media_type == webrtc::MediaType::VIDEO)
+      if (FLAGS_novideo && media_type == MediaType::VIDEO)
         continue;
-      if (FLAGS_nodata && media_type == webrtc::MediaType::DATA)
+      if (FLAGS_nodata && media_type == MediaType::DATA)
         continue;
       if (!FLAGS_ssrc.empty()) {
-        const uint32_t packet_ssrc =
-            webrtc::ByteReader<uint32_t>::ReadBigEndian(
-                reinterpret_cast<const uint8_t*>(packet.data + 4));
         if (packet_ssrc != ssrc_filter)
           continue;
       }

@@ -24,12 +24,12 @@ specific_include_rules = {
     "+crypto",
   ],
 
-  # TODO(kwiberg): Remove these exceptions when audio_decoder_factory.h
+  # TODO(ossu): Remove these exceptions when audio_encoder_factory.h
   # has moved to api/.
   "peerconnectionfactory\.cc": [
-    "+webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h",
+    "+webrtc/modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
   ],
   "peerconnectioninterface_unittest\.cc": [
-    "+webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h",
+    "+webrtc/modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
   ],
 }

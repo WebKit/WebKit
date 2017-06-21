@@ -16,22 +16,26 @@
 #import "WebRTC/RTCLogging.h"
 #import "WebRTC/RTCVideoFrame.h"
 
+#import "RTCMTLI420Renderer.h"
 #import "RTCMTLNV12Renderer.h"
 
 // To avoid unreconized symbol linker errors, we're taking advantage of the objc runtime.
 // Linking errors occur when compiling for architectures that don't support Metal.
 #define MTKViewClass NSClassFromString(@"MTKView")
 #define RTCMTLNV12RendererClass NSClassFromString(@"RTCMTLNV12Renderer")
+#define RTCMTLI420RendererClass NSClassFromString(@"RTCMTLI420Renderer")
 
 @interface RTCMTLVideoView () <MTKViewDelegate>
-@property(nonatomic, strong) RTCMTLNV12Renderer *renderer;
+@property(nonatomic, strong) RTCMTLI420Renderer *rendererI420;
+@property(nonatomic, strong) RTCMTLNV12Renderer *rendererNV12;
 @property(nonatomic, strong) MTKView *metalView;
 @property(atomic, strong) RTCVideoFrame *videoFrame;
 @end
 
 @implementation RTCMTLVideoView
 
-@synthesize renderer = _renderer;
+@synthesize rendererI420 = _rendererI420;
+@synthesize rendererNV12 = _rendererNV12;
 @synthesize metalView = _metalView;
 @synthesize videoFrame = _videoFrame;
 
@@ -66,30 +70,19 @@
   return view;
 }
 
-+ (RTCMTLNV12Renderer *)createMetalRenderer {
-  RTCMTLNV12Renderer *renderer = [[RTCMTLNV12RendererClass alloc] init];
-  return renderer;
++ (RTCMTLNV12Renderer *)createNV12Renderer {
+  return [[RTCMTLNV12RendererClass alloc] init];
+}
+
++ (RTCMTLI420Renderer *)createI420Renderer {
+  return [[RTCMTLI420RendererClass alloc] init];
 }
 
 - (void)configure {
-  if (![RTCMTLVideoView isMetalAvailable]) {
-    RTCLog("Metal unavailable");
-    return;
-  }
+  NSAssert([RTCMTLVideoView isMetalAvailable], @"Metal not availiable on this device");
 
   _metalView = [RTCMTLVideoView createMetalView:self.bounds];
-  _renderer = [RTCMTLVideoView createMetalRenderer];
-
-  if ([self configureMetalRenderer]) {
-    [self configureMetalView];
-  } else {
-    _renderer = nil;
-    RTCLogError("Metal configuration falied.");
-  }
-}
-
-- (BOOL)configureMetalRenderer {
-  return [_renderer addRenderingDestination:_metalView];
+  [self configureMetalView];
 }
 
 - (void)configureMetalView {
@@ -110,7 +103,32 @@
 
 - (void)drawInMTKView:(nonnull MTKView *)view {
   NSAssert(view == self.metalView, @"Receiving draw callbacks from foreign instance.");
-  [self.renderer drawFrame:self.videoFrame];
+  if (!self.videoFrame) {
+    return;
+  }
+
+  id<RTCMTLRenderer> renderer = nil;
+  if (self.videoFrame.nativeHandle) {
+    if (!self.rendererNV12) {
+      self.rendererNV12 = [RTCMTLVideoView createNV12Renderer];
+      if (![self.rendererNV12 addRenderingDestination:self.metalView]) {
+        self.rendererNV12 = nil;
+        RTCLogError(@"Failed to create NV12 renderer");
+      }
+    }
+    renderer = self.rendererNV12;
+  } else {
+    if (!self.rendererI420) {
+      self.rendererI420 = [RTCMTLVideoView createI420Renderer];
+      if (![self.rendererI420 addRenderingDestination:self.metalView]) {
+        self.rendererI420 = nil;
+        RTCLogError(@"Failed to create I420 renderer");
+      }
+    }
+    renderer = self.rendererI420;
+  }
+
+  [renderer drawFrame:self.videoFrame];
 }
 
 - (void)mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size {
@@ -120,7 +138,6 @@
 
 - (void)setSize:(CGSize)size {
   self.metalView.drawableSize = size;
-  [self.metalView draw];
 }
 
 - (void)renderFrame:(nullable RTCVideoFrame *)frame {

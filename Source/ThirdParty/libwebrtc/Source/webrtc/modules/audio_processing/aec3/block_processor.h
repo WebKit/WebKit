@@ -42,9 +42,9 @@ class BlockProcessor {
       bool capture_signal_saturation,
       std::vector<std::vector<float>>* capture_block) = 0;
 
-  // Buffers a block of render data supplied by a FrameBlocker object. Returns a
-  // bool indicating the success of the buffering.
-  virtual bool BufferRender(std::vector<std::vector<float>>* render_block) = 0;
+  // Buffers a block of render data supplied by a FrameBlocker object.
+  virtual void BufferRender(
+      const std::vector<std::vector<float>>& render_block) = 0;
 
   // Reports whether echo leakage has been detected in the echo canceller
   // output.

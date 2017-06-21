@@ -25,13 +25,20 @@ group("logging") {
 rtc_source_set("rtc_event_log_api") {
   sources = [
     "rtc_event_log/rtc_event_log.h",
+    "rtc_event_log/rtc_event_log_factory_interface.h",
+  ]
+  deps = [
+    "..:video_stream_api",
+    "..:webrtc_common",
+    "../base:rtc_base_approved",
   ]
 }
 
 rtc_static_library("rtc_event_log_impl") {
   sources = [
-    "rtc_event_log/ringbuffer.h",
     "rtc_event_log/rtc_event_log.cc",
+    "rtc_event_log/rtc_event_log_factory.cc",
+    "rtc_event_log/rtc_event_log_factory.h",
     "rtc_event_log/rtc_event_log_helper_thread.cc",
     "rtc_event_log/rtc_event_log_helper_thread.h",
   ]
@@ -41,9 +48,12 @@ rtc_static_library("rtc_event_log_impl") {
   deps = [
     ":rtc_event_log_api",
     "..:webrtc_common",
-    "../call:call_interfaces",
+    "../base:protobuf_utils",
+    "../base:rtc_base_approved",
     "../modules/audio_coding:audio_network_adaptor",
+    "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
     "../modules/rtp_rtcp",
+    "../system_wrappers",
   ]
 
   if (rtc_enable_protobuf) {
@@ -71,30 +81,44 @@ if (rtc_enable_protobuf) {
     ]
 
     public_deps = [
+      ":rtc_event_log_api",
       ":rtc_event_log_proto",
       "..:webrtc_common",
+      "../modules/audio_coding:audio_network_adaptor",
+      "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
+      "../modules/rtp_rtcp:rtp_rtcp",
+      "../system_wrappers",
     ]
 
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
+    deps = [
+      "..:video_stream_api",
+      "../base:protobuf_utils",
+      "../base:rtc_base_approved",
+    ]
   }
 
   if (rtc_include_tests) {
     rtc_source_set("rtc_event_log_tests") {
       testonly = true
       sources = [
-        "rtc_event_log/ringbuffer_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest.cc",
         "rtc_event_log/rtc_event_log_unittest_helper.cc",
       ]
       deps = [
         ":rtc_event_log_impl",
         ":rtc_event_log_parser",
+        "../base:rtc_base_approved",
+        "../base:rtc_base_tests_utils",
         "../call",
+        "../modules/audio_coding:audio_network_adaptor",
+        "../modules/remote_bitrate_estimator:remote_bitrate_estimator",
         "../modules/rtp_rtcp",
         "../system_wrappers:metrics_default",
+        "../test:test_support",
         "//testing/gmock",
         "//testing/gtest",
       ]
@@ -113,7 +137,6 @@ if (rtc_enable_protobuf) {
         ":rtc_event_log_impl",
         ":rtc_event_log_parser",
         "../base:rtc_base_approved",
-        "../call:call_interfaces",
         "../modules/rtp_rtcp:rtp_rtcp",
         "../system_wrappers:field_trial_default",
         "../system_wrappers:metrics_default",
@@ -141,6 +164,25 @@ if (rtc_enable_protobuf) {
         # TODO(kwiberg): Remove this dependency.
         "../api/audio_codecs:audio_codecs_api",
         "../modules/rtp_rtcp:rtp_rtcp",
+        "//third_party/gflags",
+      ]
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
+    }
+  }
+  if (rtc_include_tests) {
+    rtc_executable("rtc_event_log2stats") {
+      testonly = true
+      sources = [
+        "rtc_event_log/rtc_event_log2stats.cc",
+      ]
+      deps = [
+        ":rtc_event_log_api",
+        ":rtc_event_log_impl",
+        ":rtc_event_log_proto",
+        "../base:rtc_base_approved",
         "//third_party/gflags",
       ]
       if (!build_with_chromium && is_clang) {

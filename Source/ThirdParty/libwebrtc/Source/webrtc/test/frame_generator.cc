@@ -46,20 +46,18 @@ class SquareGenerator : public FrameGenerator {
     height_ = static_cast<int>(height);
     RTC_CHECK(width_ > 0);
     RTC_CHECK(height_ > 0);
-    half_width_ = (width_ + 1) / 2;
-    y_size_ = width_ * height_;
-    uv_size_ = half_width_ * ((height_ + 1) / 2);
   }
 
   VideoFrame* NextFrame() override {
     rtc::CritScope lock(&crit_);
 
-    // Ensure stride == width.
-    rtc::scoped_refptr<I420Buffer> buffer(
-        I420Buffer::Create(width_, height_, width_, half_width_, half_width_));
-    memset(buffer->MutableDataY(), 127, y_size_);
-    memset(buffer->MutableDataU(), 127, uv_size_);
-    memset(buffer->MutableDataV(), 127, uv_size_);
+    rtc::scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width_, height_));
+
+    memset(buffer->MutableDataY(), 127, height_ * buffer->StrideY());
+    memset(buffer->MutableDataU(), 127,
+           buffer->ChromaHeight() * buffer->StrideU());
+    memset(buffer->MutableDataV(), 127,
+           buffer->ChromaHeight() * buffer->StrideV());
 
     for (const auto& square : squares_)
       square->Draw(buffer);
@@ -83,18 +81,20 @@ class SquareGenerator : public FrameGenerator {
     void Draw(const rtc::scoped_refptr<I420Buffer>& buffer) {
       x_ = (x_ + random_generator_.Rand(0, 4)) % (buffer->width() - length_);
       y_ = (y_ + random_generator_.Rand(0, 4)) % (buffer->height() - length_);
-      for (int x = x_; x < x_ + length_; ++x) {
         for (int y = y_; y < y_ + length_; ++y) {
-          uint8_t* pos_y = (buffer->MutableDataY() + x + y * buffer->StrideY());
-          *pos_y = yuv_y_;
-          uint8_t* pos_u =
-              (buffer->MutableDataU() + x / 2 + y / 2 * buffer->StrideU());
-          *pos_u = yuv_u_;
-          uint8_t* pos_v =
-              (buffer->MutableDataV() + x / 2 + y / 2 * buffer->StrideV());
-          *pos_v = yuv_v_;
+          uint8_t* pos_y =
+              (buffer->MutableDataY() + x_ + y * buffer->StrideY());
+          memset(pos_y, yuv_y_, length_);
         }
-      }
+
+        for (int y = y_; y < y_ + length_; y = y + 2) {
+          uint8_t* pos_u =
+              (buffer->MutableDataU() + x_ / 2 + y / 2 * buffer->StrideU());
+          memset(pos_u, yuv_u_, length_ / 2);
+          uint8_t* pos_v =
+              (buffer->MutableDataV() + x_ / 2 + y / 2 * buffer->StrideV());
+          memset(pos_v, yuv_v_, length_ / 2);
+        }
     }
 
    private:
@@ -110,9 +110,6 @@ class SquareGenerator : public FrameGenerator {
   rtc::CriticalSection crit_;
   int width_ GUARDED_BY(&crit_);
   int height_ GUARDED_BY(&crit_);
-  int half_width_ GUARDED_BY(&crit_);
-  size_t y_size_ GUARDED_BY(&crit_);
-  size_t uv_size_ GUARDED_BY(&crit_);
   std::vector<std::unique_ptr<Square>> squares_ GUARDED_BY(&crit_);
   std::unique_ptr<VideoFrame> frame_ GUARDED_BY(&crit_);
 };
@@ -127,7 +124,7 @@ class YuvFileGenerator : public FrameGenerator {
         files_(files),
         width_(width),
         height_(height),
-        frame_size_(CalcBufferSize(kI420,
+        frame_size_(CalcBufferSize(VideoType::kI420,
                                    static_cast<int>(width_),
                                    static_cast<int>(height_))),
         frame_buffer_(new uint8_t[frame_size_]),
@@ -251,25 +248,21 @@ class ScrollingImageFrameGenerator : public FrameGenerator {
     int pixels_scrolled_y =
         static_cast<int>(scroll_margin_y * scroll_factor + 0.5);
 
-    int offset_y = (current_source_frame_->video_frame_buffer()->StrideY() *
-                    pixels_scrolled_y) +
-                   pixels_scrolled_x;
-    int offset_u = (current_source_frame_->video_frame_buffer()->StrideU() *
-                    (pixels_scrolled_y / 2)) +
+    rtc::scoped_refptr<I420BufferInterface> i420_buffer =
+        current_source_frame_->video_frame_buffer()->ToI420();
+    int offset_y =
+        (i420_buffer->StrideY() * pixels_scrolled_y) + pixels_scrolled_x;
+    int offset_u = (i420_buffer->StrideU() * (pixels_scrolled_y / 2)) +
                    (pixels_scrolled_x / 2);
-    int offset_v = (current_source_frame_->video_frame_buffer()->StrideV() *
-                    (pixels_scrolled_y / 2)) +
+    int offset_v = (i420_buffer->StrideV() * (pixels_scrolled_y / 2)) +
                    (pixels_scrolled_x / 2);
 
-    rtc::scoped_refptr<VideoFrameBuffer> frame_buffer(
-        current_source_frame_->video_frame_buffer());
     current_frame_ = rtc::Optional<webrtc::VideoFrame>(webrtc::VideoFrame(
         new rtc::RefCountedObject<webrtc::WrappedI420Buffer>(
-            target_width_, target_height_,
-            &frame_buffer->DataY()[offset_y], frame_buffer->StrideY(),
-            &frame_buffer->DataU()[offset_u], frame_buffer->StrideU(),
-            &frame_buffer->DataV()[offset_v], frame_buffer->StrideV(),
-            KeepRefUntilDone(frame_buffer)),
+            target_width_, target_height_, &i420_buffer->DataY()[offset_y],
+            i420_buffer->StrideY(), &i420_buffer->DataU()[offset_u],
+            i420_buffer->StrideU(), &i420_buffer->DataV()[offset_v],
+            i420_buffer->StrideV(), KeepRefUntilDone(i420_buffer)),
         kVideoRotation_0, 0));
   }
 

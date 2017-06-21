@@ -16,14 +16,14 @@
 #include <string.h>
 
 #include "webrtc/base/constructormagic.h"
-#include "webrtc/system_wrappers/include/trace.h"
 
 // This file provides macros for creating "symbol table" classes to simplify the
 // dynamic loading of symbols from DLLs. Currently the implementation only
 // supports Linux and pure C symbols.
 // See talk/sound/pulseaudiosymboltable.(h|cc) for an example.
 
-namespace webrtc_adm_linux {
+namespace webrtc {
+namespace adm_linux {
 
 #ifdef WEBRTC_LINUX
 typedef void *DllHandle;
@@ -81,8 +81,6 @@ class LateBindingSymbolTable {
     if (undefined_symbols_) {
       // We do not attempt to load again because repeated attempts are not
       // likely to succeed and DLL loading is costly.
-      //WEBRTC_TRACE(kTraceError, kTraceAudioDevice, -1,
-      //           "We know there are undefined symbols");
       return false;
     }
     handle_ = InternalLoadDll(kDllName);
@@ -135,18 +133,19 @@ enum {
   ClassName##_SYMBOL_TABLE_INDEX_##sym,
 
 // This macro completes the header declaration.
-#define LATE_BINDING_SYMBOL_TABLE_DECLARE_END(ClassName) \
-  ClassName##_SYMBOL_TABLE_SIZE \
-}; \
-\
-extern const char ClassName##_kDllName[]; \
-extern const char *const \
-    ClassName##_kSymbolNames[ClassName##_SYMBOL_TABLE_SIZE]; \
-\
-typedef ::webrtc_adm_linux::LateBindingSymbolTable<ClassName##_SYMBOL_TABLE_SIZE, \
-                                            ClassName##_kDllName, \
-                                            ClassName##_kSymbolNames> \
-    ClassName;
+#define LATE_BINDING_SYMBOL_TABLE_DECLARE_END(ClassName)       \
+  ClassName##_SYMBOL_TABLE_SIZE                                \
+  }                                                            \
+  ;                                                            \
+                                                               \
+  extern const char ClassName##_kDllName[];                    \
+  extern const char* const                                     \
+      ClassName##_kSymbolNames[ClassName##_SYMBOL_TABLE_SIZE]; \
+                                                               \
+  typedef ::webrtc::adm_linux::LateBindingSymbolTable<         \
+      ClassName##_SYMBOL_TABLE_SIZE, ClassName##_kDllName,     \
+      ClassName##_kSymbolNames>                                \
+      ClassName;
 
 // This macro must be invoked in a .cc file to define a previously-declared
 // symbol table class.
@@ -173,6 +172,7 @@ const char *const ClassName##_kSymbolNames[ClassName##_SYMBOL_TABLE_SIZE] = {
   (*reinterpret_cast<typeof(&sym)>( \
       (inst)->GetSymbol(LATESYM_INDEXOF(ClassName, sym))))
 
-}  // namespace webrtc_adm_linux
+}  // namespace adm_linux
+}  // namespace webrtc
 
 #endif  // WEBRTC_ADM_LATEBINDINGSYMBOLTABLE_LINUX_H

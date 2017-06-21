@@ -13,8 +13,8 @@
 #include <algorithm>
 
 #include "webrtc/base/checks.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/base/timeutils.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 #ifdef ENABLE_RTC_EVENT_LOG
 
@@ -38,8 +38,6 @@ RtcEventLogHelperThread::RtcEventLogHelperThread(
     SwapQueue<std::unique_ptr<rtclog::Event>>* event_queue)
     : message_queue_(message_queue),
       event_queue_(event_queue),
-      history_(kEventsInHistory),
-      config_history_(),
       file_(FileWrapper::Create()),
       thread_(&ThreadOutputFunction, this, "RtcEventLog thread"),
       max_size_bytes_(std::numeric_limits<int64_t>::max()),
@@ -47,8 +45,6 @@ RtcEventLogHelperThread::RtcEventLogHelperThread(
       start_time_(0),
       stop_time_(std::numeric_limits<int64_t>::max()),
       has_recent_event_(false),
-      most_recent_event_(),
-      output_string_(),
       wake_periodically_(false, false),
       wake_from_hibernation_(false, false),
       file_finished_(false, false) {
@@ -120,6 +116,8 @@ bool RtcEventLogHelperThread::LogToMemory() {
       config_history_.push_back(std::move(most_recent_event_));
     } else {
       history_.push_back(std::move(most_recent_event_));
+      if (history_.size() > kEventsInHistory)
+        history_.pop_front();
     }
     has_recent_event_ = event_queue_->Remove(&most_recent_event_);
     message_received = true;

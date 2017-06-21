@@ -81,4 +81,9 @@
 - (void)audioSessionDidStopPlayOrRecord:(RTCAudioSession *)session {
 }
 
+- (void)audioSession:(RTCAudioSession *)audioSession
+    didChangeOutputVolume:(float)outputVolume {
+  _observer->OnChangedOutputVolume();
+}
+
 @end

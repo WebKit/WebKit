@@ -769,7 +769,8 @@ void BweTest::RunLongTcpFairness(BandwidthEstimatorType bwe_type) {
   // max_delay_ms = 1000;
 
   std::string title("5.6_Long_TCP_Fairness");
-  std::string flow_name(bwe_names[bwe_type] + 'x' + bwe_names[kTcpEstimator]);
+  std::string flow_name = std::string() +
+      bwe_names[bwe_type] + 'x' + bwe_names[kTcpEstimator];
 
   RunFairnessTest(bwe_type, kNumRmcatFlows, kNumTcpFlows, kRunTimeS,
                   kCapacityKbps, max_delay_ms, rtt_ms, kMaxJitterMs, kOffSetsMs,

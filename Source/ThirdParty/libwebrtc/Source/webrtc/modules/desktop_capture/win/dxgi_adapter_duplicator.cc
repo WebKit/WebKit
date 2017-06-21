@@ -25,15 +25,10 @@ using Microsoft::WRL::ComPtr;
 namespace {
 
 bool IsValidRect(const RECT& rect) {
-  return rect.left >= 0 && rect.top >= 0 && rect.right > rect.left &&
-         rect.bottom > rect.top;
+  return rect.right > rect.left && rect.bottom > rect.top;
 }
 
 }  // namespace
-
-DxgiAdapterDuplicator::Context::Context() = default;
-DxgiAdapterDuplicator::Context::Context(const Context& other) = default;
-DxgiAdapterDuplicator::Context::~Context() = default;
 
 DxgiAdapterDuplicator::DxgiAdapterDuplicator(const D3dDevice& device)
     : device_(device) {}
@@ -81,17 +76,7 @@ bool DxgiAdapterDuplicator::DoInitialize() {
         if (!duplicators_.back().Initialize()) {
           return false;
         }
-        if (desktop_rect_.is_empty()) {
-          desktop_rect_ = duplicators_.back().desktop_rect();
-        } else {
-          const DesktopRect& left = desktop_rect_;
-          const DesktopRect& right = duplicators_.back().desktop_rect();
-          desktop_rect_ =
-              DesktopRect::MakeLTRB(std::min(left.left(), right.left()),
-                                    std::min(left.top(), right.top()),
-                                    std::max(left.right(), right.right()),
-                                    std::max(left.bottom(), right.bottom()));
-        }
+        desktop_rect_.UnionWith(duplicators_.back().desktop_rect());
       }
     } else {
       LOG(LS_WARNING) << "Failed to get output description of device " << i
@@ -155,6 +140,14 @@ int64_t DxgiAdapterDuplicator::GetNumFramesCaptured() const {
   }
 
   return min;
+}
+
+void DxgiAdapterDuplicator::TranslateRect(const DesktopVector& position) {
+  desktop_rect_.Translate(position);
+  RTC_DCHECK(desktop_rect_.left() >= 0 && desktop_rect_.top() >= 0);
+  for (auto& duplicator : duplicators_) {
+    duplicator.TranslateRect(position);
+  }
 }
 
 }  // namespace webrtc

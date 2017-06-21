@@ -47,15 +47,13 @@
                                    NSData *data,
                                    NSError *error))completionHandler {
   // Kick off an async request which will call back on main thread.
-  [NSURLConnection sendAsynchronousRequest:request
-                                     queue:[NSOperationQueue mainQueue]
-                         completionHandler:^(NSURLResponse *response,
-                                             NSData *data,
-                                             NSError *error) {
-    if (completionHandler) {
-      completionHandler(response, data, error);
-    }
-  }];
+  NSURLSession *session = [NSURLSession sharedSession];
+  [[session dataTaskWithRequest:request
+              completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                if (completionHandler) {
+                  completionHandler(response, data, error);
+                }
+              }] resume];
 }
 
 // Posts data to the specified URL.

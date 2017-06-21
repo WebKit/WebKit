@@ -154,14 +154,14 @@ TEST(SyncBuffer, GetNextAudioInterleaved) {
   EXPECT_EQ(kNewLen / 2, output2.samples_per_channel_);
 
   // Verify the data.
-  int16_t* output_ptr = output1.data_;
+  const int16_t* output_ptr = output1.data();
   for (size_t i = 0; i < kNewLen / 2; ++i) {
     for (size_t channel = 0; channel < kChannels; ++channel) {
       EXPECT_EQ(new_data[channel][i], *output_ptr);
       ++output_ptr;
     }
   }
-  output_ptr = output2.data_;
+  output_ptr = output2.data();
   for (size_t i = kNewLen / 2; i < kNewLen; ++i) {
     for (size_t channel = 0; channel < kChannels; ++channel) {
       EXPECT_EQ(new_data[channel][i], *output_ptr);

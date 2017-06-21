@@ -42,14 +42,14 @@ class TransportController : public sigslot::has_slots<>,
   // If |redetermine_role_on_ice_restart| is true, ICE role is redetermined
   // upon setting a local transport description that indicates an ICE restart.
   // For the constructor that doesn't take this parameter, it defaults to true.
+  //
+  // |crypto_options| is used to determine if created DTLS transports negotiate
+  // GCM crypto suites or not.
   TransportController(rtc::Thread* signaling_thread,
                       rtc::Thread* network_thread,
                       PortAllocator* port_allocator,
-                      bool redetermine_role_on_ice_restart);
-
-  TransportController(rtc::Thread* signaling_thread,
-                      rtc::Thread* network_thread,
-                      PortAllocator* port_allocator);
+                      bool redetermine_role_on_ice_restart,
+                      const rtc::CryptoOptions& crypto_options);
 
   virtual ~TransportController();
 
@@ -262,6 +262,7 @@ class TransportController : public sigslot::has_slots<>,
   IceRole ice_role_ = ICEROLE_CONTROLLING;
   bool redetermine_role_on_ice_restart_;
   uint64_t ice_tiebreaker_ = rtc::CreateRandomId64();
+  rtc::CryptoOptions crypto_options_;
   rtc::SSLProtocolVersion ssl_max_version_ = rtc::SSL_PROTOCOL_DTLS_12;
   rtc::scoped_refptr<rtc::RTCCertificate> certificate_;
   rtc::AsyncInvoker invoker_;

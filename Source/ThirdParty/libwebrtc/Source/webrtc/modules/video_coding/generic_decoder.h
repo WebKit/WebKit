@@ -11,9 +11,11 @@
 #ifndef WEBRTC_MODULES_VIDEO_CODING_GENERIC_DECODER_H_
 #define WEBRTC_MODULES_VIDEO_CODING_GENERIC_DECODER_H_
 
+#include "webrtc/base/criticalsection.h"
+#include "webrtc/base/thread_checker.h"
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/modules/video_coding/include/video_codec_interface.h"
 #include "webrtc/modules/video_coding/encoded_frame.h"
+#include "webrtc/modules/video_coding/include/video_codec_interface.h"
 #include "webrtc/modules/video_coding/timestamp_map.h"
 #include "webrtc/modules/video_coding/timing.h"
 
@@ -28,37 +30,46 @@ struct VCMFrameInformation {
   int64_t decodeStartTimeMs;
   void* userData;
   VideoRotation rotation;
+  VideoContentType content_type;
+  EncodedImage::Timing timing;
 };
 
 class VCMDecodedFrameCallback : public DecodedImageCallback {
  public:
   VCMDecodedFrameCallback(VCMTiming* timing, Clock* clock);
-    virtual ~VCMDecodedFrameCallback();
-    void SetUserReceiveCallback(VCMReceiveCallback* receiveCallback);
-    VCMReceiveCallback* UserReceiveCallback();
+  ~VCMDecodedFrameCallback() override;
+  void SetUserReceiveCallback(VCMReceiveCallback* receiveCallback);
+  VCMReceiveCallback* UserReceiveCallback();
 
-    int32_t Decoded(VideoFrame& decodedImage) override;
-    int32_t Decoded(VideoFrame& decodedImage, int64_t decode_time_ms) override;
-    void Decoded(VideoFrame& decodedImage,
-                 rtc::Optional<int32_t> decode_time_ms,
-                 rtc::Optional<uint8_t> qp) override;
-    int32_t ReceivedDecodedReferenceFrame(const uint64_t pictureId) override;
-    int32_t ReceivedDecodedFrame(const uint64_t pictureId) override;
+  int32_t Decoded(VideoFrame& decodedImage) override;
+  int32_t Decoded(VideoFrame& decodedImage, int64_t decode_time_ms) override;
+  void Decoded(VideoFrame& decodedImage,
+               rtc::Optional<int32_t> decode_time_ms,
+               rtc::Optional<uint8_t> qp) override;
+  int32_t ReceivedDecodedReferenceFrame(const uint64_t pictureId) override;
+  int32_t ReceivedDecodedFrame(const uint64_t pictureId) override;
 
-    uint64_t LastReceivedPictureID() const;
-    void OnDecoderImplementationName(const char* implementation_name);
+  uint64_t LastReceivedPictureID() const;
+  void OnDecoderImplementationName(const char* implementation_name);
 
-    void Map(uint32_t timestamp, VCMFrameInformation* frameInfo);
-    int32_t Pop(uint32_t timestamp);
+  void Map(uint32_t timestamp, VCMFrameInformation* frameInfo);
+  int32_t Pop(uint32_t timestamp);
 
  private:
-    // Protect |_receiveCallback| and |_timestampMap|.
-    CriticalSectionWrapper* _critSect;
-    Clock* _clock;
-    VCMReceiveCallback* _receiveCallback GUARDED_BY(_critSect);
-    VCMTiming* _timing;
-    VCMTimestampMap _timestampMap GUARDED_BY(_critSect);
-    uint64_t _lastReceivedPictureID;
+  rtc::ThreadChecker construction_thread_;
+  // Protect |_timestampMap|.
+  Clock* const _clock;
+  // This callback must be set before the decoder thread starts running
+  // and must only be unset when external threads (e.g decoder thread)
+  // have been stopped. Due to that, the variable should regarded as const
+  // while there are more than one threads involved, it must be set
+  // from the same thread, and therfore a lock is not required to access it.
+  VCMReceiveCallback* _receiveCallback = nullptr;
+  VCMTiming* _timing;
+  rtc::CriticalSection lock_;
+  VCMTimestampMap _timestampMap GUARDED_BY(lock_);
+  uint64_t _lastReceivedPictureID;
+  int64_t ntp_offset_;
 };
 
 class VCMGenericDecoder {
@@ -101,6 +112,7 @@ class VCMGenericDecoder {
   VideoCodecType _codecType;
   bool _isExternal;
   bool _keyFrameDecoded;
+  VideoContentType _last_keyframe_content_type;
 };
 
 }  // namespace webrtc

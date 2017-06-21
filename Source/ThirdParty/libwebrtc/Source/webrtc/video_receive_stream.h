@@ -132,6 +132,15 @@ class VideoReceiveStream {
         bool receiver_reference_time_report = false;
       } rtcp_xr;
 
+      // TODO(nisse): This remb setting is currently set but never
+      // applied. REMB logic is now the responsibility of
+      // PacketRouter, and it will generate REMB feedback if
+      // OnReceiveBitrateChanged is used, which depends on how the
+      // estimators belonging to the ReceiveSideCongestionController
+      // are configured. Decide if this setting should be deleted, and
+      // if it needs to be replaced by a setting in PacketRouter to
+      // disable REMB feedback.
+
       // See draft-alvestrand-rmcat-remb for information.
       bool remb = false;
 
@@ -146,6 +155,9 @@ class VideoReceiveStream {
 
       // SSRC for retransmissions.
       uint32_t rtx_ssrc = 0;
+
+      // Set if the stream is protected using FlexFEC.
+      bool protected_by_flexfec = false;
 
       // Map from video payload type (apt) -> RTX payload type (pt).
       // For RTX to be enabled, both an SSRC and this mapping are needed.

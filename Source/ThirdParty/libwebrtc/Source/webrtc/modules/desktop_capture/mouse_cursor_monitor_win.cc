@@ -15,12 +15,12 @@
 
 #include <memory>
 
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/desktop_capture/desktop_frame.h"
 #include "webrtc/modules/desktop_capture/desktop_geometry.h"
 #include "webrtc/modules/desktop_capture/mouse_cursor.h"
 #include "webrtc/modules/desktop_capture/win/cursor.h"
 #include "webrtc/modules/desktop_capture/win/window_capture_utils.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 

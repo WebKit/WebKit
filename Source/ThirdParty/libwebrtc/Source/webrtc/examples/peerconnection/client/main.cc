@@ -21,7 +21,8 @@
 int PASCAL wWinMain(HINSTANCE instance, HINSTANCE prev_instance,
                     wchar_t* cmd_line, int cmd_show) {
   rtc::EnsureWinsockInit();
-  rtc::Win32Thread w32_thread;
+  rtc::Win32SocketServer w32_ss;
+  rtc::Win32Thread w32_thread(&w32_ss);
   rtc::ThreadManager::Instance()->SetCurrentThread(&w32_thread);
 
   rtc::WindowsCommandLineArguments win_args;

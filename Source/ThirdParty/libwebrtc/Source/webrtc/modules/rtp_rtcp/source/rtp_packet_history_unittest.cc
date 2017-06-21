@@ -11,6 +11,7 @@
 #include "webrtc/modules/rtp_rtcp/source/rtp_packet_history.h"
 
 #include <memory>
+#include <utility>
 
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"

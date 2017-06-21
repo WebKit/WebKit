@@ -177,7 +177,7 @@ std::unique_ptr<AudioEncoder> CreateEncoder(
 #endif
 #ifdef WEBRTC_CODEC_G722
   if (STR_CASE_CMP(speech_inst.plname, "g722") == 0)
-    return std::unique_ptr<AudioEncoder>(new AudioEncoderG722(speech_inst));
+    return std::unique_ptr<AudioEncoder>(new AudioEncoderG722Impl(speech_inst));
 #endif
   LOG_F(LS_ERROR) << "Could not create encoder of type " << speech_inst.plname;
   return std::unique_ptr<AudioEncoder>();

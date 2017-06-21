@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 
 #include "LibWebRTCMacros.h"
-#include <webrtc/sdk/objc/Framework/Classes/videotoolboxvideocodecfactory.h>
+#include <webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.h>
 
 namespace WebCore {
 

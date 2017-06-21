@@ -287,7 +287,6 @@ void ExtractStats(const cricket::VideoSenderInfo& info, StatsReport* report) {
 
 void ExtractStats(const cricket::BandwidthEstimationInfo& info,
                   double stats_gathering_started,
-                  PeerConnectionInterface::StatsOutputLevel level,
                   StatsReport* report) {
   RTC_DCHECK(report->type() == StatsReport::kStatsReportTypeBwe);
 
@@ -436,11 +435,13 @@ void StatsCollector::AddLocalAudioTrack(AudioTrackInterface* audio_track,
 void StatsCollector::RemoveLocalAudioTrack(AudioTrackInterface* audio_track,
                                            uint32_t ssrc) {
   RTC_DCHECK(audio_track != NULL);
-  local_audio_tracks_.erase(std::remove_if(local_audio_tracks_.begin(),
-      local_audio_tracks_.end(),
-      [audio_track, ssrc](const LocalAudioTrackVector::value_type& track) {
-        return track.first == audio_track && track.second == ssrc;
-      }));
+  local_audio_tracks_.erase(
+      std::remove_if(
+          local_audio_tracks_.begin(), local_audio_tracks_.end(),
+          [audio_track, ssrc](const LocalAudioTrackVector::value_type& track) {
+            return track.first == audio_track && track.second == ssrc;
+          }),
+      local_audio_tracks_.end());
 }
 
 void StatsCollector::GetStats(MediaStreamTrackInterface* track,
@@ -506,6 +507,7 @@ StatsCollector::UpdateStats(PeerConnectionInterface::StatsOutputLevel level) {
     // since we'd be creating/updating the stats report objects consistently on
     // the same thread (this class has no locks right now).
     ExtractSessionInfo();
+    ExtractBweInfo();
     ExtractVoiceInfo();
     ExtractVideoInfo(level);
     ExtractSenderInfo();
@@ -767,6 +769,27 @@ void StatsCollector::ExtractSessionInfo() {
   }
 }
 
+void StatsCollector::ExtractBweInfo() {
+  RTC_DCHECK(pc_->session()->signaling_thread()->IsCurrent());
+
+  if (pc_->session()->state() == WebRtcSession::State::STATE_CLOSED)
+    return;
+
+  webrtc::Call::Stats call_stats = pc_->session()->GetCallStats();
+  cricket::BandwidthEstimationInfo bwe_info;
+  bwe_info.available_send_bandwidth = call_stats.send_bandwidth_bps;
+  bwe_info.available_recv_bandwidth = call_stats.recv_bandwidth_bps;
+  bwe_info.bucket_delay = call_stats.pacer_delay_ms;
+  // Fill in target encoder bitrate, actual encoder bitrate, rtx bitrate, etc.
+  // TODO(holmer): Also fill this in for audio.
+  if (pc_->session()->video_channel()) {
+    pc_->session()->video_channel()->FillBitrateInfo(&bwe_info);
+  }
+  StatsReport::Id report_id(StatsReport::NewBandwidthEstimationId());
+  StatsReport* report = reports_.FindOrAddNew(report_id);
+  ExtractStats(bwe_info, stats_gathering_started_, report);
+}
+
 void StatsCollector::ExtractVoiceInfo() {
   RTC_DCHECK(pc_->session()->signaling_thread()->IsCurrent());
 
@@ -827,14 +850,6 @@ void StatsCollector::ExtractVideoInfo(
       StatsReport::kReceive);
   ExtractStatsFromList(video_info.senders, transport_id, this,
       StatsReport::kSend);
-  if (video_info.bw_estimations.size() != 1) {
-    LOG(LS_ERROR) << "BWEs count: " << video_info.bw_estimations.size();
-  } else {
-    StatsReport::Id report_id(StatsReport::NewBandwidthEstimationId());
-    StatsReport* report = reports_.FindOrAddNew(report_id);
-    ExtractStats(
-        video_info.bw_estimations[0], stats_gathering_started_, level, report);
-  }
 }
 
 void StatsCollector::ExtractSenderInfo() {

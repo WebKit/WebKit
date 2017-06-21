@@ -13,6 +13,9 @@
 
 #include <vector>
 
+#include "webrtc/base/thread.h"
+#include "webrtc/call/call.h"
+#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/pc/peerconnection.h"
 #include "webrtc/test/gmock.h"
 
@@ -23,8 +26,19 @@ class FakePeerConnectionFactory
     : public rtc::RefCountedObject<webrtc::PeerConnectionFactory> {
  public:
   FakePeerConnectionFactory()
-      : rtc::RefCountedObject<webrtc::PeerConnectionFactory>(nullptr, nullptr) {
-  }
+      : rtc::RefCountedObject<webrtc::PeerConnectionFactory>(
+            rtc::Thread::Current(),
+            rtc::Thread::Current(),
+            rtc::Thread::Current(),
+            nullptr,
+            nullptr,
+            nullptr,
+            nullptr,
+            nullptr,
+            nullptr,
+            std::unique_ptr<cricket::MediaEngineInterface>(),
+            std::unique_ptr<webrtc::CallFactoryInterface>(),
+            std::unique_ptr<RtcEventLogFactoryInterface>()) {}
 };
 
 class MockPeerConnection
@@ -32,7 +46,9 @@ class MockPeerConnection
  public:
   MockPeerConnection()
       : rtc::RefCountedObject<webrtc::PeerConnection>(
-            new FakePeerConnectionFactory()) {}
+            new FakePeerConnectionFactory(),
+            std::unique_ptr<RtcEventLog>(),
+            std::unique_ptr<Call>()) {}
   MOCK_METHOD0(local_streams,
                rtc::scoped_refptr<StreamCollectionInterface>());
   MOCK_METHOD0(remote_streams,

@@ -12,6 +12,7 @@
 #define WEBRTC_MEDIA_BASE_FAKEVIDEORENDERER_H_
 
 #include "webrtc/api/video/video_frame.h"
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/media/base/videosinkinterface.h"
 
@@ -35,7 +36,7 @@ class FakeVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
     // tolerance on Y values. Some unit tests produce Y values close
     // to 16 rather than close to zero, for supposedly black frames.
     // Largest value observed is 34, e.g., running
-    // P2PTestConductor.LocalP2PTest16To9 (peerconnection_unittests).
+    // PeerConnectionIntegrationTest.SendAndReceive16To9AspectRatio.
     black_frame_ = CheckFrameColorYuv(0, 48, 128, 128, 128, 128, &frame);
     // Treat unexpected frame size as error.
     ++num_rendered_frames_;
@@ -83,12 +84,14 @@ class FakeVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
     if (!frame || !frame->video_frame_buffer()) {
       return false;
     }
+    rtc::scoped_refptr<const webrtc::I420BufferInterface> i420_buffer =
+        frame->video_frame_buffer()->ToI420();
     // Y
     int y_width = frame->width();
     int y_height = frame->height();
-    const uint8_t* y_plane = frame->video_frame_buffer()->DataY();
+    const uint8_t* y_plane = i420_buffer->DataY();
     const uint8_t* y_pos = y_plane;
-    int32_t y_pitch = frame->video_frame_buffer()->StrideY();
+    int32_t y_pitch = i420_buffer->StrideY();
     for (int i = 0; i < y_height; ++i) {
       for (int j = 0; j < y_width; ++j) {
         uint8_t y_value = *(y_pos + j);
@@ -99,14 +102,14 @@ class FakeVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame> {
       y_pos += y_pitch;
     }
     // U and V
-    int chroma_width = (frame->width() + 1)/2;
-    int chroma_height = (frame->height() + 1)/2;
-    const uint8_t* u_plane = frame->video_frame_buffer()->DataU();
-    const uint8_t* v_plane = frame->video_frame_buffer()->DataV();
+    int chroma_width = i420_buffer->ChromaWidth();
+    int chroma_height = i420_buffer->ChromaHeight();
+    const uint8_t* u_plane = i420_buffer->DataU();
+    const uint8_t* v_plane = i420_buffer->DataV();
     const uint8_t* u_pos = u_plane;
     const uint8_t* v_pos = v_plane;
-    int32_t u_pitch = frame->video_frame_buffer()->StrideU();
-    int32_t v_pitch = frame->video_frame_buffer()->StrideV();
+    int32_t u_pitch = i420_buffer->StrideU();
+    int32_t v_pitch = i420_buffer->StrideV();
     for (int i = 0; i < chroma_height; ++i) {
       for (int j = 0; j < chroma_width; ++j) {
         uint8_t u_value = *(u_pos + j);

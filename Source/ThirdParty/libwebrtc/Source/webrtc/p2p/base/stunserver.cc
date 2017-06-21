@@ -62,10 +62,10 @@ void StunServer::SendErrorResponse(
   err_msg.SetType(GetStunErrorResponseType(msg.type()));
   err_msg.SetTransactionID(msg.transaction_id());
 
-  StunErrorCodeAttribute* err_code = StunAttribute::CreateErrorCode();
+  auto err_code = StunAttribute::CreateErrorCode();
   err_code->SetCode(error_code);
   err_code->SetReason(error_desc);
-  err_msg.AddAttribute(err_code);
+  err_msg.AddAttribute(std::move(err_code));
 
   SendResponse(err_msg, addr);
 }
@@ -86,14 +86,14 @@ void StunServer::GetStunBindReqponse(StunMessage* request,
   response->SetTransactionID(request->transaction_id());
 
   // Tell the user the address that we received their request from.
-  StunAddressAttribute* mapped_addr;
+  std::unique_ptr<StunAddressAttribute> mapped_addr;
   if (!request->IsLegacy()) {
     mapped_addr = StunAttribute::CreateAddress(STUN_ATTR_MAPPED_ADDRESS);
   } else {
     mapped_addr = StunAttribute::CreateXorAddress(STUN_ATTR_XOR_MAPPED_ADDRESS);
   }
   mapped_addr->SetAddress(remote_addr);
-  response->AddAttribute(mapped_addr);
+  response->AddAttribute(std::move(mapped_addr));
 }
 
 }  // namespace cricket

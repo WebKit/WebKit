@@ -12,7 +12,14 @@
 #define WEBRTC_MODULES_AUDIO_PROCESSING_AEC3_RENDER_DELAY_BUFFER_H_
 
 #include <stddef.h>
+#include <array>
 #include <vector>
+
+#include "webrtc/base/array_view.h"
+#include "webrtc/modules/audio_processing/aec3/aec3_common.h"
+#include "webrtc/modules/audio_processing/aec3/downsampled_render_buffer.h"
+#include "webrtc/modules/audio_processing/aec3/fft_data.h"
+#include "webrtc/modules/audio_processing/aec3/render_buffer.h"
 
 namespace webrtc {
 
@@ -20,36 +27,31 @@ namespace webrtc {
 // extracted with a specified delay.
 class RenderDelayBuffer {
  public:
-  static RenderDelayBuffer* Create(size_t size_blocks,
-                                   size_t num_bands,
-                                   size_t max_api_jitter_blocks);
+  static RenderDelayBuffer* Create(size_t num_bands);
   virtual ~RenderDelayBuffer() = default;
 
-  // Swaps a block into the buffer (the content of block is destroyed) and
-  // returns true if the insert is successful.
-  virtual bool Insert(std::vector<std::vector<float>>* block) = 0;
+  // Resets the buffer data.
+  virtual void Reset() = 0;
 
-  // Gets a reference to the next block (having the specified buffer delay) to
-  // read in the buffer. This method can only be called if a block is
-  // available which means that that must be checked prior to the call using
-  // the method IsBlockAvailable().
-  virtual const std::vector<std::vector<float>>& GetNext() = 0;
+  // Inserts a block into the buffer and returns true if the insert is
+  // successful.
+  virtual bool Insert(const std::vector<std::vector<float>>& block) = 0;
 
-  // Sets the buffer delay. The delay set must be lower than the delay reported
-  // by MaxDelay().
+  // Updates the buffers one step based on the specified buffer delay. Returns
+  // true if there was no overrun, otherwise returns false.
+  virtual bool UpdateBuffers() = 0;
+
+  // Sets the buffer delay.
   virtual void SetDelay(size_t delay) = 0;
 
   // Gets the buffer delay.
   virtual size_t Delay() const = 0;
 
-  // Returns the maximum allowed buffer delay increase.
-  virtual size_t MaxDelay() const = 0;
+  // Returns the render buffer for the echo remover.
+  virtual const RenderBuffer& GetRenderBuffer() const = 0;
 
-  // Returns whether a block is available for reading.
-  virtual bool IsBlockAvailable() const = 0;
-
-  // Returns the maximum allowed api call jitter in blocks.
-  virtual size_t MaxApiJitter() const = 0;
+  // Returns the downsampled render buffer.
+  virtual const DownsampledRenderBuffer& GetDownsampledRenderBuffer() const = 0;
 };
 
 }  // namespace webrtc

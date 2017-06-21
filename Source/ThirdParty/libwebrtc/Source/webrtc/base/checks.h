@@ -141,8 +141,7 @@ std::string* MakeCheckOpString(const t1& v1, const t2& v2, const char* names) {
 // in logging.cc.
 extern template std::string* MakeCheckOpString<int, int>(
     const int&, const int&, const char* names);
-extern template
-std::string* MakeCheckOpString<unsigned long, unsigned long>(
+extern template std::string* MakeCheckOpString<unsigned long, unsigned long>(
     const unsigned long&, const unsigned long&, const char* names);
 extern template
 std::string* MakeCheckOpString<unsigned long, unsigned int>(

@@ -94,10 +94,7 @@ AudioReceiveStream::AudioReceiveStream(
                channel_proxy_->GetAudioDecoderFactory());
 
   channel_proxy_->RegisterExternalTransport(config.rtcp_send_transport);
-
-  for (const auto& kv : config.decoder_map) {
-    channel_proxy_->SetRecPayloadType(kv.first, kv.second);
-  }
+  channel_proxy_->SetReceiveCodecs(config.decoder_map);
 
   for (const auto& extension : config.rtp.extensions) {
     if (extension.uri == RtpExtension::kAudioLevelUri) {
@@ -120,7 +117,7 @@ AudioReceiveStream::~AudioReceiveStream() {
   }
   channel_proxy_->DisassociateSendChannel();
   channel_proxy_->DeRegisterExternalTransport();
-  channel_proxy_->ResetCongestionControlObjects();
+  channel_proxy_->ResetReceiverCongestionControlObjects();
   channel_proxy_->SetRtcEventLog(nullptr);
 }
 
@@ -220,6 +217,11 @@ void AudioReceiveStream::SetSink(std::unique_ptr<AudioSinkInterface> sink) {
 void AudioReceiveStream::SetGain(float gain) {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
   channel_proxy_->SetChannelOutputVolumeScaling(gain);
+}
+
+std::vector<RtpSource> AudioReceiveStream::GetSources() const {
+  RTC_DCHECK_RUN_ON(&worker_thread_checker_);
+  return channel_proxy_->GetSources();
 }
 
 AudioMixer::Source::AudioFrameInfo AudioReceiveStream::GetAudioFrameWithInfo(

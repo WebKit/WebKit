@@ -46,12 +46,10 @@ class RemoteNtpTimeEstimatorTest : public ::testing::Test {
 
   void SendRtcpSr() {
     uint32_t rtcp_timestamp = GetRemoteTimestamp();
-    uint32_t ntp_seconds;
-    uint32_t ntp_fractions;
-    remote_clock_.CurrentNtp(ntp_seconds, ntp_fractions);
+    NtpTime ntp = remote_clock_.CurrentNtpTime();
 
     AdvanceTimeMilliseconds(kTestRtt / 2);
-    ReceiveRtcpSr(kTestRtt, rtcp_timestamp, ntp_seconds, ntp_fractions);
+    ReceiveRtcpSr(kTestRtt, rtcp_timestamp, ntp.seconds(), ntp.fractions());
   }
 
   void UpdateRtcpTimestamp(int64_t rtt, uint32_t ntp_secs, uint32_t ntp_frac,

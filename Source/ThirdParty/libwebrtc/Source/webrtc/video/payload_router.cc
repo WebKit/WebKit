@@ -129,6 +129,22 @@ EncodedImageCallback::Result PayloadRouter::OnEncodedImage(
   if (codec_specific_info)
     CopyCodecSpecific(codec_specific_info, &rtp_video_header);
   rtp_video_header.rotation = encoded_image.rotation_;
+  rtp_video_header.content_type = encoded_image.content_type_;
+  if (encoded_image.timing_.is_timing_frame) {
+    rtp_video_header.video_timing.encode_start_delta_ms =
+        VideoTiming::GetDeltaCappedMs(encoded_image.capture_time_ms_,
+                                      encoded_image.timing_.encode_start_ms);
+    rtp_video_header.video_timing.encode_finish_delta_ms =
+        VideoTiming::GetDeltaCappedMs(encoded_image.capture_time_ms_,
+                                      encoded_image.timing_.encode_finish_ms);
+    rtp_video_header.video_timing.packetization_finish_delta_ms = 0;
+    rtp_video_header.video_timing.pacer_exit_delta_ms = 0;
+    rtp_video_header.video_timing.network_timstamp_delta_ms = 0;
+    rtp_video_header.video_timing.network2_timstamp_delta_ms = 0;
+    rtp_video_header.video_timing.is_timing_frame = true;
+  } else {
+    rtp_video_header.video_timing.is_timing_frame = false;
+  }
   rtp_video_header.playout_delay = encoded_image.playout_delay_;
 
   int stream_index = rtp_video_header.simulcastIdx;

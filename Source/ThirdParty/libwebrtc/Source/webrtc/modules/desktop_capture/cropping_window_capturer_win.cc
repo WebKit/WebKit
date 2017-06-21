@@ -11,10 +11,10 @@
 #include "webrtc/modules/desktop_capture/cropping_window_capturer.h"
 
 #include "webrtc/base/win32.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/desktop_capture/win/scoped_gdi_object.h"
 #include "webrtc/modules/desktop_capture/win/screen_capture_utils.h"
 #include "webrtc/modules/desktop_capture/win/window_capture_utils.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 

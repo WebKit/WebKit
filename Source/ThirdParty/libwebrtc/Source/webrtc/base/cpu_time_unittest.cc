@@ -17,6 +17,15 @@
 #include "webrtc/system_wrappers/include/cpu_info.h"
 #include "webrtc/system_wrappers/include/sleep.h"
 
+// Only run these tests on non-instrumented builds, because timing on
+// instrumented builds is unreliable, causing the test to be flaky.
+#if defined(THREAD_SANITIZER) || defined(MEMORY_SANITIZER) || \
+    defined(ADDRESS_SANITIZER)
+#define MAYBE_TEST(test_name) DISABLED_##test_name
+#else
+#define MAYBE_TEST(test_name) test_name
+#endif
+
 namespace {
 const int kAllowedErrorMillisecs = 30;
 const int kProcessingTimeMillisecs = 300;
@@ -38,7 +47,20 @@ bool WorkingFunction(void* counter_pointer) {
 
 namespace rtc {
 
-TEST(CpuTimeTest, TwoThreads) {
+// A minimal test which can be run on instrumented builds, so that they're at
+// least exercising the code to check for memory leaks/etc.
+TEST(CpuTimeTest, BasicTest) {
+  int64_t process_start_time_nanos = GetProcessCpuTimeNanos();
+  int64_t thread_start_time_nanos = GetThreadCpuTimeNanos();
+  int64_t process_duration_nanos =
+      GetProcessCpuTimeNanos() - process_start_time_nanos;
+  int64_t thread_duration_nanos =
+      GetThreadCpuTimeNanos() - thread_start_time_nanos;
+  EXPECT_GE(process_duration_nanos, 0);
+  EXPECT_GE(thread_duration_nanos, 0);
+}
+
+TEST(CpuTimeTest, MAYBE_TEST(TwoThreads)) {
   int64_t process_start_time_nanos = GetProcessCpuTimeNanos();
   int64_t thread_start_time_nanos = GetThreadCpuTimeNanos();
   int64_t counter1;
@@ -62,15 +84,15 @@ TEST(CpuTimeTest, TwoThreads) {
   // Therefore GetThreadCpuTime is not a wall clock.
   EXPECT_LE(thread_duration_nanos,
             kAllowedErrorMillisecs * kNumNanosecsPerMillisec);
-  // Total process time is twice working threads' CPU time.
+  // Total process time is at least twice working threads' CPU time.
   // Therefore process and thread times are correctly related.
-  EXPECT_NEAR(
+  EXPECT_GE(
       process_duration_nanos,
-      kWorkingThreads * kProcessingTimeMillisecs * kNumNanosecsPerMillisec,
-      kWorkingThreads * kAllowedErrorMillisecs * kNumNanosecsPerMillisec);
+      kWorkingThreads * (kProcessingTimeMillisecs - kAllowedErrorMillisecs)
+      * kNumNanosecsPerMillisec);
 }
 
-TEST(CpuTimeTest, Sleeping) {
+TEST(CpuTimeTest, MAYBE_TEST(Sleeping)) {
   int64_t process_start_time_nanos = GetProcessCpuTimeNanos();
   webrtc::SleepMs(kProcessingTimeMillisecs);
   int64_t process_duration_nanos =

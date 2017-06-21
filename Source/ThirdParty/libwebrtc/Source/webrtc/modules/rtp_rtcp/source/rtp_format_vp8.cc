@@ -13,10 +13,11 @@
 #include <assert.h>  // assert
 #include <string.h>  // memcpy
 
+#include <limits>
+#include <utility>
 #include <vector>
 
 #include "webrtc/base/logging.h"
-#include "webrtc/modules/rtp_rtcp/source/vp8_partition_aggregator.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
 
 namespace webrtc {
@@ -140,48 +141,36 @@ int ParseVP8FrameSize(RtpDepacketizer::ParsedPayload* parsed_payload,
 }
 }  // namespace
 
-// Define how the VP8PacketizerModes are implemented.
-// Modes are: kStrict, kAggregate, kEqualSize.
-const RtpPacketizerVp8::AggregationMode RtpPacketizerVp8::aggr_modes_
-    [kNumModes] = {kAggrNone, kAggrPartitions, kAggrFragments};
-const bool RtpPacketizerVp8::balance_modes_[kNumModes] = {true, true, true};
-const bool RtpPacketizerVp8::separate_first_modes_[kNumModes] = {true, false,
-                                                                 false};
-
 RtpPacketizerVp8::RtpPacketizerVp8(const RTPVideoHeaderVP8& hdr_info,
                                    size_t max_payload_len,
+                                   size_t last_packet_reduction_len,
                                    VP8PacketizerMode mode)
     : payload_data_(NULL),
       payload_size_(0),
       vp8_fixed_payload_descriptor_bytes_(1),
-      aggr_mode_(aggr_modes_[mode]),
-      balance_(balance_modes_[mode]),
-      separate_first_(separate_first_modes_[mode]),
+      mode_(mode),
       hdr_info_(hdr_info),
       num_partitions_(0),
       max_payload_len_(max_payload_len),
-      packets_calculated_(false) {
-}
+      last_packet_reduction_len_(last_packet_reduction_len) {}
 
 RtpPacketizerVp8::RtpPacketizerVp8(const RTPVideoHeaderVP8& hdr_info,
-                                   size_t max_payload_len)
+                                   size_t max_payload_len,
+                                   size_t last_packet_reduction_len)
     : payload_data_(NULL),
       payload_size_(0),
       part_info_(),
       vp8_fixed_payload_descriptor_bytes_(1),
-      aggr_mode_(aggr_modes_[kEqualSize]),
-      balance_(balance_modes_[kEqualSize]),
-      separate_first_(separate_first_modes_[kEqualSize]),
+      mode_(kEqualSize),
       hdr_info_(hdr_info),
       num_partitions_(0),
       max_payload_len_(max_payload_len),
-      packets_calculated_(false) {
-}
+      last_packet_reduction_len_(last_packet_reduction_len) {}
 
 RtpPacketizerVp8::~RtpPacketizerVp8() {
 }
 
-void RtpPacketizerVp8::SetPayloadData(
+size_t RtpPacketizerVp8::SetPayloadData(
     const uint8_t* payload_data,
     size_t payload_size,
     const RTPFragmentationHeader* fragmentation) {
@@ -196,36 +185,29 @@ void RtpPacketizerVp8::SetPayloadData(
     part_info_.fragmentationOffset[0] = 0;
     num_partitions_ = part_info_.fragmentationVectorSize;
   }
+  if (GeneratePackets() < 0) {
+    return 0;
+  }
+  return packets_.size();
 }
 
-bool RtpPacketizerVp8::NextPacket(RtpPacketToSend* packet, bool* last_packet) {
+bool RtpPacketizerVp8::NextPacket(RtpPacketToSend* packet) {
   RTC_DCHECK(packet);
-  RTC_DCHECK(last_packet);
-  if (!packets_calculated_) {
-    int ret = 0;
-    if (aggr_mode_ == kAggrPartitions && balance_) {
-      ret = GeneratePacketsBalancedAggregates();
-    } else {
-      ret = GeneratePackets();
-    }
-    if (ret < 0) {
-      return false;
-    }
-  }
   if (packets_.empty()) {
     return false;
   }
   InfoStruct packet_info = packets_.front();
   packets_.pop();
 
-  uint8_t* buffer = packet->AllocatePayload(max_payload_len_);
+  uint8_t* buffer = packet->AllocatePayload(
+      packets_.empty() ? max_payload_len_ - last_packet_reduction_len_
+                       : max_payload_len_);
   int bytes = WriteHeaderAndPayload(packet_info, buffer, max_payload_len_);
   if (bytes < 0) {
     return false;
   }
   packet->SetPayloadSize(bytes);
-  *last_packet = packets_.empty();
-  packet->SetMarker(*last_packet);
+  packet->SetMarker(packets_.empty());
   return true;
 }
 
@@ -252,199 +234,179 @@ std::string RtpPacketizerVp8::ToString() {
   return "RtpPacketizerVp8";
 }
 
-size_t RtpPacketizerVp8::CalcNextSize(size_t max_payload_len,
-                                      size_t remaining_bytes,
-                                      bool split_payload) const {
-  if (max_payload_len == 0 || remaining_bytes == 0) {
-    return 0;
-  }
-  if (!split_payload) {
-    return max_payload_len >= remaining_bytes ? remaining_bytes : 0;
-  }
-
-  if (balance_) {
-    // Balance payload sizes to produce (almost) equal size
-    // fragments.
-    // Number of fragments for remaining_bytes:
-    size_t num_frags = remaining_bytes / max_payload_len + 1;
-    // Number of bytes in this fragment:
-    return static_cast<size_t>(
-        static_cast<double>(remaining_bytes) / num_frags + 0.5);
-  } else {
-    return max_payload_len >= remaining_bytes ? remaining_bytes
-                                              : max_payload_len;
-  }
-}
-
 int RtpPacketizerVp8::GeneratePackets() {
   if (max_payload_len_ < vp8_fixed_payload_descriptor_bytes_ +
-                             PayloadDescriptorExtraLength() + 1) {
+                             PayloadDescriptorExtraLength() + 1 +
+                             last_packet_reduction_len_) {
     // The provided payload length is not long enough for the payload
-    // descriptor and one payload byte. Return an error.
+    // descriptor and one payload byte in the last packet.
+    // Return an error.
     return -1;
   }
-  size_t total_bytes_processed = 0;
-  bool start_on_new_fragment = true;
-  bool beginning = true;
-  size_t part_ix = 0;
-  while (total_bytes_processed < payload_size_) {
-    size_t packet_bytes = 0;    // How much data to send in this packet.
-    bool split_payload = true;  // Splitting of partitions is initially allowed.
-    size_t remaining_in_partition = part_info_.fragmentationOffset[part_ix] -
-                                 total_bytes_processed +
-                                 part_info_.fragmentationLength[part_ix];
-    size_t rem_payload_len =
-        max_payload_len_ -
-        (vp8_fixed_payload_descriptor_bytes_ + PayloadDescriptorExtraLength());
-    size_t first_partition_in_packet = part_ix;
 
-    while (size_t next_size = CalcNextSize(
-               rem_payload_len, remaining_in_partition, split_payload)) {
-      packet_bytes += next_size;
-      rem_payload_len -= next_size;
-      remaining_in_partition -= next_size;
+  size_t per_packet_capacity =
+      max_payload_len_ -
+      (vp8_fixed_payload_descriptor_bytes_ + PayloadDescriptorExtraLength());
 
-      if (remaining_in_partition == 0 && !(beginning && separate_first_)) {
-        // Advance to next partition?
-        // Check that there are more partitions; verify that we are either
-        // allowed to aggregate fragments, or that we are allowed to
-        // aggregate intact partitions and that we started this packet
-        // with an intact partition (indicated by first_fragment_ == true).
-        if (part_ix + 1 < num_partitions_ &&
-            ((aggr_mode_ == kAggrFragments) ||
-             (aggr_mode_ == kAggrPartitions && start_on_new_fragment))) {
-          assert(part_ix < num_partitions_);
-          remaining_in_partition = part_info_.fragmentationLength[++part_ix];
-          // Disallow splitting unless kAggrFragments. In kAggrPartitions,
-          // we can only aggregate intact partitions.
-          split_payload = (aggr_mode_ == kAggrFragments);
-        }
-      } else if (balance_ && remaining_in_partition > 0) {
-        break;
-      }
-    }
-    if (remaining_in_partition == 0) {
-      ++part_ix;  // Advance to next partition.
-    }
-    assert(packet_bytes > 0);
-
-    QueuePacket(total_bytes_processed,
-                packet_bytes,
-                first_partition_in_packet,
-                start_on_new_fragment);
-    total_bytes_processed += packet_bytes;
-    start_on_new_fragment = (remaining_in_partition == 0);
-    beginning = false;  // Next packet cannot be first packet in frame.
+  if (mode_ == kEqualSize) {
+    GeneratePacketsSplitPayloadBalanced(0, payload_size_, per_packet_capacity,
+                                        true, 0);
+    return 0;
   }
-  packets_calculated_ = true;
-  assert(total_bytes_processed == payload_size_);
-  return 0;
-}
-
-int RtpPacketizerVp8::GeneratePacketsBalancedAggregates() {
-  if (max_payload_len_ < vp8_fixed_payload_descriptor_bytes_ +
-                             PayloadDescriptorExtraLength() + 1) {
-    // The provided payload length is not long enough for the payload
-    // descriptor and one payload byte. Return an error.
-    return -1;
-  }
-  std::vector<int> partition_decision;
-  const size_t overhead =
-      vp8_fixed_payload_descriptor_bytes_ + PayloadDescriptorExtraLength();
-  const size_t max_payload_len = max_payload_len_ - overhead;
-  int min_size, max_size;
-  AggregateSmallPartitions(&partition_decision, &min_size, &max_size);
-
-  size_t total_bytes_processed = 0;
-  size_t part_ix = 0;
-  while (part_ix < num_partitions_) {
-    if (partition_decision[part_ix] == -1) {
-      // Split large partitions.
-      size_t remaining_partition = part_info_.fragmentationLength[part_ix];
-      size_t num_fragments = Vp8PartitionAggregator::CalcNumberOfFragments(
-          remaining_partition, max_payload_len, overhead, min_size, max_size);
-      const size_t packet_bytes =
-          (remaining_partition + num_fragments - 1) / num_fragments;
-      for (size_t n = 0; n < num_fragments; ++n) {
-        const size_t this_packet_bytes = packet_bytes < remaining_partition
-                                             ? packet_bytes
-                                             : remaining_partition;
-        QueuePacket(
-            total_bytes_processed, this_packet_bytes, part_ix, (n == 0));
-        remaining_partition -= this_packet_bytes;
-        total_bytes_processed += this_packet_bytes;
-        if (static_cast<int>(this_packet_bytes) < min_size) {
-          min_size = this_packet_bytes;
-        }
-        if (static_cast<int>(this_packet_bytes) > max_size) {
-          max_size = this_packet_bytes;
-        }
-      }
-      assert(remaining_partition == 0);
-      ++part_ix;
+  size_t part_idx = 0;
+  while (part_idx < num_partitions_) {
+    size_t current_packet_capacity = per_packet_capacity;
+    bool last_partition = (part_idx + 1) == num_partitions_;
+    if (last_partition)
+      current_packet_capacity -= last_packet_reduction_len_;
+    // Check if the next partition fits in to single packet with some space
+    // left to aggregate some partitions together.
+    if (mode_ == kAggregate &&
+        part_info_.fragmentationLength[part_idx] < current_packet_capacity) {
+      part_idx =
+          GeneratePacketsAggregatePartitions(part_idx, per_packet_capacity);
     } else {
-      size_t this_packet_bytes = 0;
-      const size_t first_partition_in_packet = part_ix;
-      const int aggregation_index = partition_decision[part_ix];
-      while (part_ix < partition_decision.size() &&
-             partition_decision[part_ix] == aggregation_index) {
-        // Collect all partitions that were aggregated into the same packet.
-        this_packet_bytes += part_info_.fragmentationLength[part_ix];
-        ++part_ix;
-      }
-      QueuePacket(total_bytes_processed,
-                  this_packet_bytes,
-                  first_partition_in_packet,
-                  true);
-      total_bytes_processed += this_packet_bytes;
+      GeneratePacketsSplitPayloadBalanced(
+          part_info_.fragmentationOffset[part_idx],
+          part_info_.fragmentationLength[part_idx], per_packet_capacity,
+          last_partition, part_idx);
+      ++part_idx;
     }
   }
-  packets_calculated_ = true;
   return 0;
 }
 
-void RtpPacketizerVp8::AggregateSmallPartitions(std::vector<int>* partition_vec,
-                                                int* min_size,
-                                                int* max_size) {
-  assert(min_size && max_size);
-  *min_size = -1;
-  *max_size = -1;
-  assert(partition_vec);
-  partition_vec->assign(num_partitions_, -1);
-  const size_t overhead =
-      vp8_fixed_payload_descriptor_bytes_ + PayloadDescriptorExtraLength();
-  const size_t max_payload_len = max_payload_len_ - overhead;
-  size_t first_in_set = 0;
-  size_t last_in_set = 0;
-  int num_aggregate_packets = 0;
-  // Find sets of partitions smaller than max_payload_len_.
-  while (first_in_set < num_partitions_) {
-    if (part_info_.fragmentationLength[first_in_set] < max_payload_len) {
-      // Found start of a set.
-      last_in_set = first_in_set;
-      while (last_in_set + 1 < num_partitions_ &&
-             part_info_.fragmentationLength[last_in_set + 1] <
-                 max_payload_len) {
-        ++last_in_set;
-      }
-      // Found end of a set. Run optimized aggregator. It is ok if start == end.
-      Vp8PartitionAggregator aggregator(part_info_, first_in_set, last_in_set);
-      if (*min_size >= 0 && *max_size >= 0) {
-        aggregator.SetPriorMinMax(*min_size, *max_size);
-      }
-      Vp8PartitionAggregator::ConfigVec optimal_config =
-          aggregator.FindOptimalConfiguration(max_payload_len, overhead);
-      aggregator.CalcMinMax(optimal_config, min_size, max_size);
-      for (size_t i = first_in_set, j = 0; i <= last_in_set; ++i, ++j) {
-        // Transfer configuration for this set of partitions to the joint
-        // partition vector representing all partitions in the frame.
-        (*partition_vec)[i] = num_aggregate_packets + optimal_config[j];
-      }
-      num_aggregate_packets += optimal_config.back() + 1;
-      first_in_set = last_in_set;
+void RtpPacketizerVp8::GeneratePacketsSplitPayloadBalanced(size_t payload_start,
+                                                           size_t payload_len,
+                                                           size_t capacity,
+                                                           bool last_partition,
+                                                           size_t part_idx) {
+  // Last packet of the last partition is smaller. Pretend that it's the same
+  // size, but we must write more payload to it.
+  size_t total_bytes = payload_len;
+  if (last_partition)
+    total_bytes += last_packet_reduction_len_;
+  // Integer divisions with rounding up.
+  size_t num_packets_left = (total_bytes + capacity - 1) / capacity;
+  size_t bytes_per_packet = total_bytes / num_packets_left;
+  size_t num_larger_packets = total_bytes % num_packets_left;
+  size_t remaining_data = payload_len;
+  while (remaining_data > 0) {
+    // Last num_larger_packets are 1 byte wider than the rest. Increase
+    // per-packet payload size when needed.
+    if (num_packets_left == num_larger_packets)
+      ++bytes_per_packet;
+    size_t current_packet_bytes = bytes_per_packet;
+    if (current_packet_bytes > remaining_data) {
+      current_packet_bytes = remaining_data;
     }
-    ++first_in_set;
+    // This is not the last packet in the whole payload, but there's no data
+    // left for the last packet. Leave at least one byte for the last packet.
+    if (num_packets_left == 2 && current_packet_bytes == remaining_data &&
+        last_partition) {
+      --current_packet_bytes;
+    }
+    QueuePacket(payload_start + payload_len - remaining_data,
+                current_packet_bytes, part_idx, remaining_data == payload_len);
+    remaining_data -= current_packet_bytes;
+    --num_packets_left;
   }
+}
+
+size_t RtpPacketizerVp8::GeneratePacketsAggregatePartitions(size_t part_idx,
+                                                            size_t capacity) {
+  // Bloat the last partition by the reduction of the last packet. As it always
+  // will be in the last packet we can pretend that the last packet is the same
+  // size as the rest of the packets. Done temporary to simplify calculations.
+  part_info_.fragmentationLength[num_partitions_ - 1] +=
+      last_packet_reduction_len_;
+  // Current partition should fit into the packet.
+  RTC_CHECK_LE(part_info_.fragmentationLength[part_idx], capacity);
+  // Find all partitions, shorter than capacity.
+  size_t end_part = part_idx + 1;
+  while (end_part < num_partitions_ &&
+         part_info_.fragmentationLength[end_part] <= capacity) {
+    ++end_part;
+  }
+  size_t total_partitions = end_part - part_idx;
+
+  // Aggregate partitions |part_idx|..|end_part-1| to blocks of size at most
+  // |capacity| minimizing the number of packets and then size of a largest
+  // block using dynamic programming. |scores[i]| stores best score in the form
+  // <number of packets, largest packet> for last i partitions. Maximum index is
+  // |total_partitions|, minimum index is 0, hence the length is
+  // |total_partitions|+1.
+
+  struct PartitionScore {
+    size_t num_packets = std::numeric_limits<size_t>::max();
+    size_t largest_packet_len = std::numeric_limits<size_t>::max();
+    // Compare num_packets first then largest_packet_len
+    bool operator <(const PartitionScore& other) const {
+      if (num_packets < other.num_packets) return true;
+      if (num_packets > other.num_packets) return false;
+      return largest_packet_len < other.largest_packet_len;
+    }
+  };
+
+  std::vector<PartitionScore> scores(total_partitions + 1);
+  // 0 partitions can be split into 0 packets with largest of size 0.
+  scores[0].num_packets = 0;
+  scores[0].largest_packet_len = 0;
+
+  // best_block_size[i] stores optimal number of partitions to be aggregated
+  // in the first packet if only last i partitions are considered.
+  std::vector<size_t> best_block_size(total_partitions + 1, 0);
+  // Calculate scores and best_block_size iteratively.
+  for (size_t partitions_left = 0; partitions_left < total_partitions;
+       ++partitions_left) {
+    // Here scores[paritions_left] is already calculated correctly. Update
+    // possible score for every possible new_paritions_left > partitions_left by
+    // aggregating all partitions in between into a single packet.
+    size_t current_payload_len = 0;
+    PartitionScore current_score = scores[partitions_left];
+    // Some next partitions are aggregated into one packet.
+    current_score.num_packets += 1;
+    // Calculate new score for last |new_partitions_left| partitions given
+    // best score for |partitions_left| partitions.
+    for (size_t new_partitions_left = partitions_left + 1;
+         new_partitions_left <= total_partitions; ++new_partitions_left) {
+      current_payload_len +=
+          part_info_.fragmentationLength[end_part - new_partitions_left];
+      if (current_payload_len > capacity)
+        break;
+      // Update maximum packet size.
+      if (current_payload_len > current_score.largest_packet_len)
+        current_score.largest_packet_len = current_payload_len;
+      // Score with less num_packets is better. If equal, minimum largest packet
+      // size is better.
+      if (current_score < scores[new_partitions_left]) {
+        scores[new_partitions_left] = current_score;
+        best_block_size[new_partitions_left] =
+            new_partitions_left - partitions_left;
+      }
+    }
+  }
+  // Undo temporary change.
+  part_info_.fragmentationLength[num_partitions_ - 1] -=
+      last_packet_reduction_len_;
+  // Restore answer given sizes of aggregated blocks in |best_block_size| for
+  // each possible left number of partitions.
+  size_t partitions_left = total_partitions;
+  while (partitions_left > 0) {
+    size_t cur_parts = best_block_size[partitions_left];
+    size_t first_partition = end_part - partitions_left;
+    size_t start_offset = part_info_.fragmentationOffset[first_partition];
+    size_t post_last_partition = first_partition + cur_parts;
+    size_t finish_offset =
+        (post_last_partition < num_partitions_)
+            ? part_info_.fragmentationOffset[post_last_partition]
+            : payload_size_;
+    size_t current_payload_len = finish_offset - start_offset;
+    QueuePacket(start_offset, current_payload_len, first_partition, true);
+    // Go to next packet.
+    partitions_left -= cur_parts;
+  }
+  return end_part;
 }
 
 void RtpPacketizerVp8::QueuePacket(size_t start_pos,

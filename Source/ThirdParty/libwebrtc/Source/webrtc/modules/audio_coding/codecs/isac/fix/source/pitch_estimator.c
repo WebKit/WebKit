@@ -10,7 +10,7 @@
 
 #include "webrtc/modules/audio_coding/codecs/isac/fix/source/pitch_estimator.h"
 #include "webrtc/common_audio/signal_processing/include/signal_processing_library.h"
-#include "webrtc/system_wrappers/include/compile_assert_c.h"
+#include "webrtc/base/compile_assert_c.h"
 
 /* log2[0.2, 0.5, 0.98] in Q8 */
 static const int16_t kLogLagWinQ8[3] = {

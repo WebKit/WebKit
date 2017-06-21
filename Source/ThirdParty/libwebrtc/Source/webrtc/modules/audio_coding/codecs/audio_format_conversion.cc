@@ -25,7 +25,7 @@ namespace {
 CodecInst MakeCodecInst(int payload_type,
                         const char* name,
                         int sample_rate,
-                        int num_channels) {
+                        size_t num_channels) {
   // Create a CodecInst with some fields set. The remaining fields are zeroed,
   // but we tell MSan to consider them uninitialized.
   CodecInst ci = {0};
@@ -34,7 +34,7 @@ CodecInst MakeCodecInst(int payload_type,
   strncpy(ci.plname, name, sizeof(ci.plname));
   ci.plname[sizeof(ci.plname) - 1] = '\0';
   ci.plfreq = sample_rate;
-  ci.channels = rtc::dchecked_cast<size_t>(num_channels);
+  ci.channels = num_channels;
   return ci;
 }
 
@@ -44,7 +44,7 @@ SdpAudioFormat CodecInstToSdp(const CodecInst& ci) {
   if (STR_CASE_CMP(ci.plname, "g722") == 0) {
     RTC_CHECK_EQ(16000, ci.plfreq);
     RTC_CHECK(ci.channels == 1 || ci.channels == 2);
-    return {"g722", 8000, static_cast<int>(ci.channels)};
+    return {"g722", 8000, ci.channels};
   } else if (STR_CASE_CMP(ci.plname, "opus") == 0) {
     RTC_CHECK_EQ(48000, ci.plfreq);
     RTC_CHECK(ci.channels == 1 || ci.channels == 2);
@@ -52,7 +52,7 @@ SdpAudioFormat CodecInstToSdp(const CodecInst& ci) {
                ? SdpAudioFormat("opus", 48000, 2)
                : SdpAudioFormat("opus", 48000, 2, {{"stereo", "1"}});
   } else {
-    return {ci.plname, ci.plfreq, rtc::checked_cast<int>(ci.channels)};
+    return {ci.plname, ci.plfreq, ci.channels};
   }
 }
 

@@ -88,6 +88,14 @@ struct RtpExtension {
   static const char* kVideoRotationUri;
   static const int kVideoRotationDefaultId;
 
+  // Header extension for video content type. E.g. default or screenshare.
+  static const char* kVideoContentTypeUri;
+  static const int kVideoContentTypeDefaultId;
+
+  // Header extension for video timing.
+  static const char* kVideoTimingUri;
+  static const int kVideoTimingDefaultId;
+
   // Header extension for transport sequence number, see url for details:
   // http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions
   static const char* kTransportSequenceNumberUri;

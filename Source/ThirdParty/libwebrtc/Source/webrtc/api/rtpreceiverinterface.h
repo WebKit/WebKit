@@ -15,6 +15,7 @@
 #define WEBRTC_API_RTPRECEIVERINTERFACE_H_
 
 #include <string>
+#include <vector>
 
 #include "webrtc/api/mediatypes.h"
 #include "webrtc/api/mediastreaminterface.h"
@@ -24,6 +25,46 @@
 #include "webrtc/base/scoped_ref_ptr.h"
 
 namespace webrtc {
+
+enum class RtpSourceType {
+  SSRC,
+  CSRC,
+};
+
+class RtpSource {
+ public:
+  RtpSource() = delete;
+  RtpSource(int64_t timestamp_ms, uint32_t source_id, RtpSourceType source_type)
+      : timestamp_ms_(timestamp_ms),
+        source_id_(source_id),
+        source_type_(source_type) {}
+
+  int64_t timestamp_ms() const { return timestamp_ms_; }
+  void update_timestamp_ms(int64_t timestamp_ms) {
+    RTC_DCHECK_LE(timestamp_ms_, timestamp_ms);
+    timestamp_ms_ = timestamp_ms;
+  }
+
+  // The identifier of the source can be the CSRC or the SSRC.
+  uint32_t source_id() const { return source_id_; }
+
+  // The source can be either a contributing source or a synchronization source.
+  RtpSourceType source_type() const { return source_type_; }
+
+  // This isn't implemented yet and will always return an empty Optional.
+  // TODO(zhihuang): Implement this to return real audio level.
+  rtc::Optional<int8_t> audio_level() const { return rtc::Optional<int8_t>(); }
+
+  bool operator==(const RtpSource& o) const {
+    return timestamp_ms_ == o.timestamp_ms() && source_id_ == o.source_id() &&
+           source_type_ == o.source_type();
+  }
+
+ private:
+  int64_t timestamp_ms_;
+  uint32_t source_id_;
+  RtpSourceType source_type_;
+};
 
 class RtpReceiverObserverInterface {
  public:
@@ -61,6 +102,13 @@ class RtpReceiverInterface : public rtc::RefCountInterface {
   // Must call SetObserver(nullptr) before the observer is destroyed.
   virtual void SetObserver(RtpReceiverObserverInterface* observer) = 0;
 
+  // TODO(zhihuang): Remove the default implementation once the subclasses
+  // implement this. Currently, the only relevant subclass is the
+  // content::FakeRtpReceiver in Chromium.
+  virtual std::vector<RtpSource> GetSources() const {
+    return std::vector<RtpSource>();
+  }
+
  protected:
   virtual ~RtpReceiverInterface() {}
 };
@@ -76,7 +124,8 @@ BEGIN_SIGNALING_PROXY_MAP(RtpReceiver)
   PROXY_CONSTMETHOD0(RtpParameters, GetParameters);
   PROXY_METHOD1(bool, SetParameters, const RtpParameters&)
   PROXY_METHOD1(void, SetObserver, RtpReceiverObserverInterface*);
-END_PROXY_MAP()
+  PROXY_CONSTMETHOD0(std::vector<RtpSource>, GetSources);
+  END_PROXY_MAP()
 
 }  // namespace webrtc
 

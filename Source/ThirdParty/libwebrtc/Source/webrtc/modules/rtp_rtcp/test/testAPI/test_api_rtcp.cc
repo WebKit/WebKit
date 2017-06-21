@@ -25,9 +25,6 @@
 namespace webrtc {
 namespace {
 
-const uint64_t kTestPictureId = 12345678;
-const uint8_t kSliPictureId = 156;
-
 class RtcpCallback : public RtcpIntraFrameObserver {
  public:
   void SetModule(RtpRtcp* module) {
@@ -38,14 +35,6 @@ class RtcpCallback : public RtcpIntraFrameObserver {
   virtual void OnLipSyncUpdate(const int32_t id,
                                const int32_t audioVideoOffset) {}
   virtual void OnReceivedIntraFrameRequest(uint32_t ssrc) {}
-  virtual void OnReceivedSLI(uint32_t ssrc,
-                             uint8_t pictureId) {
-    EXPECT_EQ(kSliPictureId & 0x3f, pictureId);
-  }
-  virtual void OnReceivedRPSI(uint32_t ssrc,
-                              uint64_t pictureId) {
-    EXPECT_EQ(kTestPictureId, pictureId);
-  }
 
  private:
   RtpRtcp* _rtpRtcpModule;
@@ -190,11 +179,6 @@ class RtpRtcpRtcpTest : public ::testing::Test {
   SimulatedClock fake_clock;
   RateLimiter retransmission_rate_limiter_;
 };
-
-TEST_F(RtpRtcpRtcpTest, RTCP_PLI_RPSI) {
-  EXPECT_EQ(0, module1->SendRTCPReferencePictureSelection(kTestPictureId));
-  EXPECT_EQ(0, module1->SendRTCPSliceLossIndication(kSliPictureId));
-}
 
 TEST_F(RtpRtcpRtcpTest, RTCP_CNAME) {
   uint32_t testOfCSRC[webrtc::kRtpCsrcSize];

@@ -35,6 +35,6 @@ bool WebRtcIlbcfix_DecodeResidual(
     int16_t* decresidual,      /* (o) decoded residual frame */
     int16_t* syntdenum         /* (i) the decoded synthesis filter
                                                          coefficients */
-    ) WARN_UNUSED_RESULT;
+    ) RTC_WARN_UNUSED_RESULT;
 
 #endif

@@ -1,3 +1,22 @@
+2017-06-21  Youenn Fablet  <youenn@apple.com>
+
+        Refresh libwebrtc code up to a87675d4a160e2c49c3e754cd9ca291d6c8f36ae
+        https://bugs.webkit.org/show_bug.cgi?id=173602
+
+        Reviewed by Eric Carlson.
+
+        No feature change.
+
+        Updated according small libwebrtc API changes.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::configurationFromMediaEndpointConfiguration):
+        * platform/mediastream/mac/RealtimeIncomingVideoSource.cpp:
+        (WebCore::RealtimeIncomingVideoSource::pixelBufferFromVideoFrame):
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::sendBlackFramesIfNeeded):
+        (WebCore::RealtimeOutgoingVideoSource::videoSampleAvailable):
+
 2017-06-21  Sam Weinig  <sam@webkit.org>
 
         Add support for structured serialization of CSS Geometry types

@@ -15,16 +15,12 @@
 #include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/typedefs.h"
-#include "webrtc/voice_engine/include/voe_audio_processing.h"
 #include "webrtc/voice_engine/include/voe_base.h"
 #include "webrtc/voice_engine/include/voe_codec.h"
 #include "webrtc/voice_engine/include/voe_errors.h"
 #include "webrtc/voice_engine/include/voe_file.h"
-#include "webrtc/voice_engine/include/voe_hardware.h"
-#include "webrtc/voice_engine/include/voe_neteq_stats.h"
 #include "webrtc/voice_engine/include/voe_network.h"
 #include "webrtc/voice_engine/include/voe_rtp_rtcp.h"
-#include "webrtc/voice_engine/include/voe_volume_control.h"
 #include "webrtc/voice_engine/test/auto_test/voe_test_common.h"
 
 // This convenient fixture sets up all voice engine interfaces automatically for
@@ -50,13 +46,9 @@ class BeforeInitializationFixture : public testing::Test {
   webrtc::VoiceEngine*        voice_engine_;
   webrtc::VoEBase*            voe_base_;
   webrtc::VoECodec*           voe_codec_;
-  webrtc::VoEVolumeControl*   voe_volume_control_;
   webrtc::VoERTP_RTCP*        voe_rtp_rtcp_;
-  webrtc::VoEAudioProcessing* voe_apm_;
   webrtc::VoENetwork*         voe_network_;
   webrtc::VoEFile*            voe_file_;
-  webrtc::VoEHardware*        voe_hardware_;
-  webrtc::VoENetEqStats*      voe_neteq_stats_;
 };
 
 #endif  // SRC_VOICE_ENGINE_MAIN_TEST_AUTO_TEST_STANDARD_TEST_BASE_H_

@@ -14,6 +14,8 @@ rtc_static_library("rtp_rtcp") {
     "include/flexfec_sender.h",
     "include/receive_statistics.h",
     "include/remote_ntp_time_estimator.h",
+    "include/rtp_cvo.h",
+    "include/rtp_header_extension_map.h",
     "include/rtp_header_parser.h",
     "include/rtp_payload_registry.h",
     "include/rtp_receiver.h",
@@ -74,8 +76,6 @@ rtc_static_library("rtp_rtcp") {
     "source/rtcp_packet/remb.h",
     "source/rtcp_packet/report_block.cc",
     "source/rtcp_packet/report_block.h",
-    "source/rtcp_packet/rpsi.cc",
-    "source/rtcp_packet/rpsi.h",
     "source/rtcp_packet/rrtr.cc",
     "source/rtcp_packet/rrtr.h",
     "source/rtcp_packet/rtpfb.cc",
@@ -84,8 +84,6 @@ rtc_static_library("rtp_rtcp") {
     "source/rtcp_packet/sdes.h",
     "source/rtcp_packet/sender_report.cc",
     "source/rtcp_packet/sender_report.h",
-    "source/rtcp_packet/sli.cc",
-    "source/rtcp_packet/sli.h",
     "source/rtcp_packet/target_bitrate.cc",
     "source/rtcp_packet/target_bitrate.h",
     "source/rtcp_packet/tmmb_item.cc",
@@ -112,8 +110,7 @@ rtc_static_library("rtp_rtcp") {
     "source/rtp_format_vp8.h",
     "source/rtp_format_vp9.cc",
     "source/rtp_format_vp9.h",
-    "source/rtp_header_extension.cc",
-    "source/rtp_header_extension.h",
+    "source/rtp_header_extension_map.cc",
     "source/rtp_header_extensions.cc",
     "source/rtp_header_extensions.h",
     "source/rtp_header_parser.cc",
@@ -154,8 +151,6 @@ rtc_static_library("rtp_rtcp") {
     "source/ulpfec_receiver_impl.cc",
     "source/ulpfec_receiver_impl.h",
     "source/video_codec_information.h",
-    "source/vp8_partition_aggregator.cc",
-    "source/vp8_partition_aggregator.h",
   ]
 
   if (rtc_enable_bwe_test_logging) {
@@ -170,15 +165,18 @@ rtc_static_library("rtp_rtcp") {
   }
 
   deps = [
+    "..:module_api",
     "../..:webrtc_common",
+    "../../api:libjingle_peerconnection_api",
     "../../api:transport_api",
+    "../../api/audio_codecs:audio_codecs_api",
     "../../base:gtest_prod",
     "../../base:rtc_base_approved",
-    "../../base:rtc_task_queue",
-    "../../call:call_interfaces",
+    "../../base:sequenced_task_checker",
     "../../common_video",
     "../../logging:rtc_event_log_api",
     "../../system_wrappers",
+    "../audio_coding:audio_format_conversion",
     "../remote_bitrate_estimator",
   ]
 
@@ -191,6 +189,41 @@ rtc_static_library("rtp_rtcp") {
       "/wd4373",  # virtual function override.
     ]
   }
+}
+
+rtc_source_set("fec_test_helper") {
+  testonly = true
+  sources = [
+    "source/fec_test_helper.cc",
+    "source/fec_test_helper.h",
+  ]
+  deps = [
+    ":rtp_rtcp",
+    "..:module_api",
+    "../../base:rtc_base_approved",
+  ]
+
+  # TODO(jschuh): bugs.webrtc.org/1348: fix this warning.
+  configs += [ "//build/config/compiler:no_size_t_to_int_warning" ]
+  if (!build_with_chromium && is_clang) {
+    # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
+    suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+  }
+}
+
+rtc_source_set("mock_rtp_rtcp") {
+  testonly = true
+  sources = [
+    "mocks/mock_recovered_packet_receiver.h",
+    "mocks/mock_rtcp_rtt_stats.h",
+    "mocks/mock_rtp_rtcp.h",
+  ]
+  deps = [
+    ":rtp_rtcp",
+    "..:module_api",
+    "../../base:rtc_base_approved",
+    "../../test:test_support",
+  ]
 }
 
 if (rtc_include_tests) {
@@ -211,6 +244,13 @@ if (rtc_include_tests) {
 
   rtc_source_set("rtp_rtcp_modules_tests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_tests" ]
+    }
     sources = [
       "test/testFec/test_fec.cc",
     ]
@@ -227,11 +267,15 @@ if (rtc_include_tests) {
 
   rtc_source_set("rtp_rtcp_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
-      "mocks/mock_rtp_rtcp.h",
       "source/byte_io_unittest.cc",
-      "source/fec_test_helper.cc",
-      "source/fec_test_helper.h",
       "source/flexfec_header_reader_writer_unittest.cc",
       "source/flexfec_receiver_unittest.cc",
       "source/flexfec_sender_unittest.cc",
@@ -255,11 +299,9 @@ if (rtc_include_tests) {
       "source/rtcp_packet/receiver_report_unittest.cc",
       "source/rtcp_packet/remb_unittest.cc",
       "source/rtcp_packet/report_block_unittest.cc",
-      "source/rtcp_packet/rpsi_unittest.cc",
       "source/rtcp_packet/rrtr_unittest.cc",
       "source/rtcp_packet/sdes_unittest.cc",
       "source/rtcp_packet/sender_report_unittest.cc",
-      "source/rtcp_packet/sli_unittest.cc",
       "source/rtcp_packet/target_bitrate_unittest.cc",
       "source/rtcp_packet/tmmbn_unittest.cc",
       "source/rtcp_packet/tmmbr_unittest.cc",
@@ -270,14 +312,16 @@ if (rtc_include_tests) {
       "source/rtcp_sender_unittest.cc",
       "source/rtp_fec_unittest.cc",
       "source/rtp_format_h264_unittest.cc",
+      "source/rtp_format_video_generic_unittest.cc",
       "source/rtp_format_vp8_test_helper.cc",
       "source/rtp_format_vp8_test_helper.h",
       "source/rtp_format_vp8_unittest.cc",
       "source/rtp_format_vp9_unittest.cc",
-      "source/rtp_header_extension_unittest.cc",
+      "source/rtp_header_extension_map_unittest.cc",
       "source/rtp_packet_history_unittest.cc",
       "source/rtp_packet_unittest.cc",
       "source/rtp_payload_registry_unittest.cc",
+      "source/rtp_receiver_unittest.cc",
       "source/rtp_rtcp_impl_unittest.cc",
       "source/rtp_sender_unittest.cc",
       "source/rtp_utility_unittest.cc",
@@ -285,7 +329,6 @@ if (rtc_include_tests) {
       "source/ulpfec_generator_unittest.cc",
       "source/ulpfec_header_reader_writer_unittest.cc",
       "source/ulpfec_receiver_unittest.cc",
-      "source/vp8_partition_aggregator_unittest.cc",
       "test/testAPI/test_api.cc",
       "test/testAPI/test_api.h",
       "test/testAPI/test_api_audio.cc",
@@ -293,7 +336,10 @@ if (rtc_include_tests) {
       "test/testAPI/test_api_video.cc",
     ]
     deps = [
+      ":fec_test_helper",
+      ":mock_rtp_rtcp",
       ":rtp_rtcp",
+      "..:module_api",
       "../..:webrtc_common",
       "../../api:transport_api",
       "../../base:rtc_base_approved",

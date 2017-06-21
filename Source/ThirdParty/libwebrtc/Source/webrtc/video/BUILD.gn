@@ -24,10 +24,10 @@ rtc_static_library("video") {
     "receive_statistics_proxy.h",
     "report_block_stats.cc",
     "report_block_stats.h",
-    "rtp_stream_receiver.cc",
-    "rtp_stream_receiver.h",
     "rtp_streams_synchronizer.cc",
     "rtp_streams_synchronizer.h",
+    "rtp_video_stream_receiver.cc",
+    "rtp_video_stream_receiver.h",
     "send_delay_stats.cc",
     "send_delay_stats.h",
     "send_statistics_proxy.cc",
@@ -46,8 +46,6 @@ rtc_static_library("video") {
     "video_stream_decoder.h",
     "vie_encoder.cc",
     "vie_encoder.h",
-    "vie_remb.cc",
-    "vie_remb.h",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -56,14 +54,21 @@ rtc_static_library("video") {
   }
 
   deps = [
+    "..:video_stream_api",
     "..:webrtc_common",
     "../api:transport_api",
+    "../api/video_codecs:video_codecs_api",
     "../base:rtc_base_approved",
     "../base:rtc_numerics",
     "../base:rtc_task_queue",
+    "../base:sequenced_task_checker",
+    "../base:weak_ptr",
+    "../call:call_interfaces",
+    "../call:rtp_interfaces",
     "../common_video",
     "../logging:rtc_event_log_api",
     "../media:rtc_media_base",
+    "../modules:module_api",
     "../modules/bitrate_controller",
     "../modules/congestion_controller",
     "../modules/pacing",
@@ -71,6 +76,8 @@ rtc_static_library("video") {
     "../modules/rtp_rtcp",
     "../modules/utility",
     "../modules/video_coding",
+    "../modules/video_coding:video_coding_utility",
+    "../modules/video_coding:webrtc_vp8",
     "../modules/video_processing",
     "../system_wrappers",
     "../voice_engine",
@@ -80,6 +87,7 @@ rtc_static_library("video") {
 if (rtc_include_tests) {
   rtc_source_set("video_quality_test") {
     testonly = true
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
     sources = [
       "video_quality_test.cc",
       "video_quality_test.h",
@@ -87,15 +95,24 @@ if (rtc_include_tests) {
     deps = [
       "../base:rtc_base_tests_utils",
       "../base:rtc_task_queue",
+      "../call:call_interfaces",
+      "../common_video",
+      "../logging:rtc_event_log_api",
+      "../media:rtc_media",
       "../media:rtc_media_base",
+      "../modules/audio_mixer:audio_mixer_impl",
+      "../modules/rtp_rtcp",
+      "../modules/video_coding:webrtc_h264",
+      "../modules/video_coding:webrtc_vp8",
+      "../modules/video_coding:webrtc_vp9",
       "../system_wrappers",
+      "../test:test_common",
+      "../test:test_support",
+      "../voice_engine",
       "//testing/gtest",
       "//webrtc/test:test_renderer",
       "//webrtc/test:video_test_common",
     ]
-    if (!is_android) {
-      deps += [ "../modules/video_capture:video_capture_internal_impl" ]
-    }
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
@@ -104,11 +121,20 @@ if (rtc_include_tests) {
 
   rtc_source_set("video_full_stack_tests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc:webrtc_perf_tests" ]
+    }
     sources = [
       "full_stack_tests.cc",
     ]
     deps = [
       ":video_quality_test",
+      "../test:field_trial",
+      "../test:test_support",
       "//testing/gtest",
       "//webrtc/test:test_common",
     ]
@@ -133,6 +159,7 @@ if (rtc_include_tests) {
       "../test:run_test",
       "../test:test_common",
       "../test:test_renderer",
+      "../test:test_support",
       "//testing/gmock",
       "//testing/gtest",
       "//third_party/gflags",
@@ -151,12 +178,13 @@ if (rtc_include_tests) {
 
     deps = [
       ":video_quality_test",
+      "../base:rtc_base_approved",
       "../system_wrappers:metrics_default",
       "../test:field_trial",
       "../test:run_test",
       "../test:test_common",
       "../test:test_renderer",
-      "//third_party/gflags",
+      "../test:test_support",
     ]
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from Chrome's Clang plugins.
@@ -171,16 +199,24 @@ if (rtc_include_tests) {
       "replay.cc",
     ]
     deps = [
+      "..:webrtc_common",
+      "../api/video_codecs:video_codecs_api",
+      "../base:rtc_base_approved",
+      "../call:call_interfaces",
+      "../common_video",
+      "../logging:rtc_event_log_api",
+      "../modules/rtp_rtcp",
+      "../system_wrappers",
       "../system_wrappers:metrics_default",
       "../test:field_trial",
+      "../test:rtp_test_utils",
       "../test:run_test",
       "../test:test_common",
       "../test:test_renderer",
+      "../test:test_support",
+      "../test:video_test_common",
       "//third_party/gflags",
     ]
-    if (!is_android) {
-      deps += [ "../modules/video_capture:video_capture_internal_impl" ]
-    }
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
@@ -190,6 +226,13 @@ if (rtc_include_tests) {
   # TODO(pbos): Rename test suite.
   rtc_source_set("video_tests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc:video_engine_tests" ]
+    }
     defines = []
     sources = [
       "call_stats_unittest.cc",
@@ -200,7 +243,7 @@ if (rtc_include_tests) {
       "quality_threshold_unittest.cc",
       "receive_statistics_proxy_unittest.cc",
       "report_block_stats_unittest.cc",
-      "rtp_stream_receiver_unittest.cc",
+      "rtp_video_stream_receiver_unittest.cc",
       "send_delay_stats_unittest.cc",
       "send_statistics_proxy_unittest.cc",
       "stats_counter_unittest.cc",
@@ -208,11 +251,40 @@ if (rtc_include_tests) {
       "video_receive_stream_unittest.cc",
       "video_send_stream_tests.cc",
       "vie_encoder_unittest.cc",
-      "vie_remb_unittest.cc",
     ]
     deps = [
       ":video",
+      "..:video_stream_api",
+      "../api:video_frame_api",
+      "../api/video_codecs:video_codecs_api",
+      "../base:rtc_base_approved",
+      "../base:rtc_base_tests_utils",
+      "../call:call_interfaces",
+      "../common_video",
+      "../logging:rtc_event_log_api",
+      "../media:rtc_media",
       "../media:rtc_media_base",
+      "../media:rtc_media_tests_utils",
+      "../modules:module_api",
+      "../modules/pacing",
+      "../modules/rtp_rtcp",
+      "../modules/rtp_rtcp:mock_rtp_rtcp",
+      "../modules/utility",
+      "../modules/video_coding",
+      "../modules/video_coding:video_coding_utility",
+      "../modules/video_coding:webrtc_h264",
+      "../modules/video_coding:webrtc_vp8",
+      "../modules/video_coding:webrtc_vp9",
+      "../system_wrappers",
+      "../system_wrappers:field_trial_default",
+      "../system_wrappers:metrics_api",
+      "../system_wrappers:metrics_default",
+      "../test:direct_transport",
+      "../test:field_trial",
+      "../test:rtp_test_utils",
+      "../test:test_common",
+      "../test:test_support",
+      "../test:video_test_common",
       "//testing/gmock",
       "//testing/gtest",
     ]

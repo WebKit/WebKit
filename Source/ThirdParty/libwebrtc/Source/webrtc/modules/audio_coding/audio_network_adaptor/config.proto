@@ -39,6 +39,41 @@ message FecController {
   optional int32 time_constant_ms = 3;
 }
 
+message FecControllerRplrBased {
+  message Threshold {
+    // Threshold defines a curve in the bandwidth/recoverable-packet-loss
+    // domain.
+    // The curve is characterized by the two conjunction points: A and B.
+    //
+    // recoverable ^
+    // packet      |  |
+    //  loss       | A|
+    //             |   \        A: (low_bandwidth_bps,
+    //             |    \           low_bandwidth_recoverable_packet_loss)
+    //             |     \       B: (high_bandwidth_bps,
+    //             |      \          high_bandwidth_recoverable_packet_loss)
+    //             |      B\________
+    //             |---------------> bandwidth
+    optional int32 low_bandwidth_bps = 1;
+    optional float low_bandwidth_recoverable_packet_loss = 2;
+    optional int32 high_bandwidth_bps = 3;
+    optional float high_bandwidth_recoverable_packet_loss = 4;
+  }
+
+  // |fec_enabling_threshold| defines a curve, above which FEC should be
+  // enabled. |fec_disabling_threshold| defines a curve, under which FEC
+  // should be disabled. See below
+  //
+  // packet-loss ^   |  |
+  //             |   |  |   FEC
+  //             |    \  \   ON
+  //             | FEC \  \_______ fec_enabling_threshold
+  //             | OFF  \_________ fec_disabling_threshold
+  //             |-----------------> bandwidth
+  optional Threshold fec_enabling_threshold = 1;
+  optional Threshold fec_disabling_threshold = 2;
+}
+
 message FrameLengthController {
   // Uplink packet loss fraction below which frame length can increase.
   optional float fl_increasing_packet_loss_fraction = 1;
@@ -101,6 +136,7 @@ message Controller {
     ChannelController channel_controller = 23;
     DtxController dtx_controller = 24;
     BitrateController bitrate_controller = 25;
+    FecControllerRplrBased fec_controller_rplr_based = 26;
   }
 }
 

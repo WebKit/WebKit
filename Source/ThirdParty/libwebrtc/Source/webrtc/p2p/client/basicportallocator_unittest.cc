@@ -11,13 +11,6 @@
 #include <algorithm>
 #include <memory>
 
-#include "webrtc/p2p/base/basicpacketsocketfactory.h"
-#include "webrtc/p2p/base/p2pconstants.h"
-#include "webrtc/p2p/base/p2ptransportchannel.h"
-#include "webrtc/p2p/base/testrelayserver.h"
-#include "webrtc/p2p/base/teststunserver.h"
-#include "webrtc/p2p/base/testturnserver.h"
-#include "webrtc/p2p/client/basicportallocator.h"
 #include "webrtc/base/fakeclock.h"
 #include "webrtc/base/fakenetwork.h"
 #include "webrtc/base/firewallsocketserver.h"
@@ -27,16 +20,29 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/base/natserver.h"
 #include "webrtc/base/natsocketfactory.h"
+#include "webrtc/base/nethelpers.h"
 #include "webrtc/base/network.h"
-#include "webrtc/base/physicalsocketserver.h"
 #include "webrtc/base/socketaddress.h"
 #include "webrtc/base/ssladapter.h"
 #include "webrtc/base/thread.h"
 #include "webrtc/base/virtualsocketserver.h"
+#include "webrtc/p2p/base/basicpacketsocketfactory.h"
+#include "webrtc/p2p/base/p2pconstants.h"
+#include "webrtc/p2p/base/p2ptransportchannel.h"
+#include "webrtc/p2p/base/testrelayserver.h"
+#include "webrtc/p2p/base/teststunserver.h"
+#include "webrtc/p2p/base/testturnserver.h"
+#include "webrtc/p2p/client/basicportallocator.h"
 
 using rtc::IPAddress;
 using rtc::SocketAddress;
 using rtc::Thread;
+
+#define MAYBE_SKIP_IPV4                    \
+  if (!rtc::HasIPv4Enabled()) {            \
+    LOG(LS_INFO) << "No IPv4... skipping"; \
+    return;                                \
+  }
 
 static const SocketAddress kAnyAddr("0.0.0.0", 0);
 static const SocketAddress kClientAddr("11.11.11.11", 0);
@@ -110,10 +116,9 @@ class BasicPortAllocatorTestBase : public testing::Test,
                                    public sigslot::has_slots<> {
  public:
   BasicPortAllocatorTestBase()
-      : pss_(new rtc::PhysicalSocketServer),
-        vss_(new rtc::VirtualSocketServer(pss_.get())),
+      : vss_(new rtc::VirtualSocketServer()),
         fss_(new rtc::FirewallSocketServer(vss_.get())),
-        ss_scope_(fss_.get()),
+        thread_(fss_.get()),
         // Note that the NAT is not used by default. ResetWithStunServerAndNat
         // must be called.
         nat_factory_(vss_.get(), kNatUdpAddr, kNatTcpAddr),
@@ -458,10 +463,9 @@ class BasicPortAllocatorTestBase : public testing::Test,
     allocator().set_step_delay(kMinimumStepDelay);
   }
 
-  std::unique_ptr<rtc::PhysicalSocketServer> pss_;
   std::unique_ptr<rtc::VirtualSocketServer> vss_;
   std::unique_ptr<rtc::FirewallSocketServer> fss_;
-  rtc::SocketServerScope ss_scope_;
+  rtc::AutoSocketServerThread thread_;
   std::unique_ptr<rtc::NATServer> nat_server_;
   rtc::NATSocketFactory nat_factory_;
   std::unique_ptr<rtc::BasicPacketSocketFactory> nat_socket_factory_;
@@ -639,9 +643,9 @@ class BasicPortAllocatorTest : public FakeClockBase,
     AddTurnServers(kTurnUdpIntIPv6Addr, kTurnTcpIntIPv6Addr);
 
     allocator_->set_step_delay(kMinimumStepDelay);
-    allocator_->set_flags(allocator().flags() |
-                          PORTALLOCATOR_ENABLE_SHARED_SOCKET |
-                          PORTALLOCATOR_ENABLE_IPV6);
+    allocator_->set_flags(
+        allocator().flags() | PORTALLOCATOR_ENABLE_SHARED_SOCKET |
+        PORTALLOCATOR_ENABLE_IPV6 | PORTALLOCATOR_ENABLE_IPV6_ON_WIFI);
     EXPECT_TRUE(CreateSession(ICE_CANDIDATE_COMPONENT_RTP));
     session_->StartGettingPorts();
     EXPECT_TRUE_SIMULATED_WAIT(candidate_allocation_done_,
@@ -1523,6 +1527,9 @@ TEST_F(BasicPortAllocatorTest,
 // using the fake clock.
 TEST_F(BasicPortAllocatorTestWithRealClock,
        TestSharedSocketWithServerAddressResolve) {
+  // This test relies on a real query for "localhost", so it won't work on an
+  // IPv6-only machine.
+  MAYBE_SKIP_IPV4;
   turn_server_.AddInternalSocket(rtc::SocketAddress("127.0.0.1", 3478),
                                  PROTO_UDP);
   AddInterface(kClientAddr);

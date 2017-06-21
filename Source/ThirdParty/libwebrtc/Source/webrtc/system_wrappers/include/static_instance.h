@@ -13,7 +13,7 @@
 
 #include <assert.h>
 
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
+#include "webrtc/base/criticalsection.h"
 #ifdef _WIN32
 #include "webrtc/system_wrappers/include/fix_interlocked_exchange_pointer_win.h"
 #endif
@@ -40,14 +40,8 @@ static T* GetStaticInstance(CountOperation count_operation) {
   static T* volatile instance = NULL;
   CreateOperation state = kInstanceExists;
 #ifndef _WIN32
-  // This memory is staticly allocated once. The application does not try to
-  // free this memory. This approach is taken to avoid issues with
-  // destruction order for statically allocated memory. The memory will be
-  // reclaimed by the OS and memory leak tools will not recognize memory
-  // reachable from statics leaked so no noise is added by doing this.
-  static CriticalSectionWrapper* crit_sect(
-    CriticalSectionWrapper::CreateCriticalSection());
-  CriticalSectionScoped lock(crit_sect);
+  static rtc::CriticalSection crit_sect;
+  rtc::CritScope lock(&crit_sect);
 
   if (count_operation ==
       kAddRefNoCreate && instance_count == 0) {
@@ -77,13 +71,13 @@ static T* GetStaticInstance(CountOperation count_operation) {
     // since the thread owned by the tracing class also traces).
     // TODO(hellner): this is a bit out of place but here goes, de-couple
     // thread implementation with trace implementation.
-    crit_sect->Leave();
+    crit_sect.Leave();
     if (old_instance) {
       delete old_instance;
     }
     // Re-acquire the lock since the scoped critical section will release
     // it.
-    crit_sect->Enter();
+    crit_sect.Enter();
     return NULL;
   }
 #else  // _WIN32

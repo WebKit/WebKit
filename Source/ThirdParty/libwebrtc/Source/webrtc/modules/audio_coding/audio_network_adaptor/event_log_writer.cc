@@ -30,7 +30,7 @@ EventLogWriter::EventLogWriter(RtcEventLog* event_log,
 EventLogWriter::~EventLogWriter() = default;
 
 void EventLogWriter::MaybeLogEncoderConfig(
-    const AudioNetworkAdaptor::EncoderRuntimeConfig& config) {
+    const AudioEncoderRuntimeConfig& config) {
   if (last_logged_config_.num_channels != config.num_channels)
     return LogEncoderConfig(config);
   if (last_logged_config_.enable_dtx != config.enable_dtx)
@@ -59,8 +59,7 @@ void EventLogWriter::MaybeLogEncoderConfig(
   }
 }
 
-void EventLogWriter::LogEncoderConfig(
-    const AudioNetworkAdaptor::EncoderRuntimeConfig& config) {
+void EventLogWriter::LogEncoderConfig(const AudioEncoderRuntimeConfig& config) {
   event_log_->LogAudioNetworkAdaptation(config);
   last_logged_config_ = config;
 }

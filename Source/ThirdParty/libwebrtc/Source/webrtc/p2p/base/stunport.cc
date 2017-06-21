@@ -66,7 +66,7 @@ class StunBindingRequest : public StunRequest {
   virtual void OnErrorResponse(StunMessage* response) override {
     const StunErrorCodeAttribute* attr = response->GetErrorCode();
     if (!attr) {
-      LOG(LS_ERROR) << "Bad allocate response error code";
+      LOG(LS_ERROR) << "Missing binding response error code.";
     } else {
       LOG(LS_ERROR) << "Binding error response:"
                     << " class=" << attr->eclass()

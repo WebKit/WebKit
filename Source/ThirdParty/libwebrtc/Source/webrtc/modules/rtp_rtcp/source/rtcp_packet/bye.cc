@@ -34,6 +34,8 @@ constexpr uint8_t Bye::kPacketType;
 //       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 Bye::Bye() : sender_ssrc_(0) {}
 
+Bye::~Bye() = default;
+
 bool Bye::Parse(const CommonHeader& packet) {
   RTC_DCHECK_EQ(packet.type(), kPacketType);
 

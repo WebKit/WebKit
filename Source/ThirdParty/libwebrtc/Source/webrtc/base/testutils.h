@@ -37,6 +37,7 @@
 #include "webrtc/base/stringutils.h"
 #include "webrtc/base/thread.h"
 
+namespace webrtc {
 namespace testing {
 
 using namespace rtc;
@@ -420,21 +421,21 @@ class SocketTestServer : public sigslot::has_slots<> {
 // Unittest predicates which are similar to STREQ, but for raw memory
 ///////////////////////////////////////////////////////////////////////////////
 
-inline AssertionResult CmpHelperMemEq(const char* expected_expression,
-                                      const char* expected_length_expression,
-                                      const char* actual_expression,
-                                      const char* actual_length_expression,
-                                      const void* expected,
-                                      size_t expected_length,
-                                      const void* actual,
-                                      size_t actual_length)
-{
+inline ::testing::AssertionResult CmpHelperMemEq(
+    const char* expected_expression,
+    const char* expected_length_expression,
+    const char* actual_expression,
+    const char* actual_length_expression,
+    const void* expected,
+    size_t expected_length,
+    const void* actual,
+    size_t actual_length) {
   if ((expected_length == actual_length)
       && (0 == memcmp(expected, actual, expected_length))) {
-    return AssertionSuccess();
+    return ::testing::AssertionSuccess();
   }
 
-  Message msg;
+  ::testing::Message msg;
   msg << "Value of: " << actual_expression
       << " [" << actual_length_expression << "]";
   if (true) {  //!actual_value.Equals(actual_expression)) {
@@ -558,6 +559,8 @@ inline bool IsScreencastingAvailable() {
 #endif
   return true;
 }
+
 }  // namespace testing
+}  // namespace webrtc
 
 #endif  // WEBRTC_BASE_TESTUTILS_H__

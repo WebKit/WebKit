@@ -30,6 +30,10 @@ NativeHandleBuffer::NativeHandleBuffer(void* native_handle,
   RTC_DCHECK_GT(height, 0);
 }
 
+VideoFrameBuffer::Type NativeHandleBuffer::type() const {
+  return Type::kNative;
+}
+
 int NativeHandleBuffer::width() const {
   return width_;
 }
@@ -118,15 +122,6 @@ int WrappedI420Buffer::StrideU() const {
 }
 int WrappedI420Buffer::StrideV() const {
   return v_stride_;
-}
-
-void* WrappedI420Buffer::native_handle() const {
-  return nullptr;
-}
-
-rtc::scoped_refptr<VideoFrameBuffer> WrappedI420Buffer::NativeToI420Buffer() {
-  RTC_NOTREACHED();
-  return nullptr;
 }
 
 }  // namespace webrtc

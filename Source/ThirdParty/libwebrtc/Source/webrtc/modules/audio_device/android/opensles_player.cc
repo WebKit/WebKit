@@ -12,6 +12,7 @@
 
 #include <android/log.h>
 
+#include "webrtc/base/array_view.h"
 #include "webrtc/base/arraysize.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/format_macros.h"
@@ -209,9 +210,9 @@ void OpenSLESPlayer::AllocateDataBuffers() {
   ALOGD("native buffer size: %" PRIuS, buffer_size_in_bytes);
   ALOGD("native buffer size in ms: %.2f",
         audio_parameters_.GetBufferSizeInMilliseconds());
-  fine_audio_buffer_.reset(
-      new FineAudioBuffer(audio_device_buffer_, buffer_size_in_bytes,
-                          audio_parameters_.sample_rate()));
+  fine_audio_buffer_.reset(new FineAudioBuffer(audio_device_buffer_,
+                                               audio_parameters_.sample_rate(),
+                                               2 * buffer_size_in_bytes));
   // Allocated memory for audio buffers.
   for (int i = 0; i < kNumOfOpenSLESBuffers; ++i) {
     audio_buffers_[i].reset(new SLint8[buffer_size_in_bytes]);
@@ -398,7 +399,8 @@ void OpenSLESPlayer::EnqueuePlayoutData(bool silence) {
     // Read audio data from the WebRTC source using the FineAudioBuffer object
     // to adjust for differences in buffer size between WebRTC (10ms) and native
     // OpenSL ES.
-    fine_audio_buffer_->GetPlayoutData(audio_ptr);
+    fine_audio_buffer_->GetPlayoutData(rtc::ArrayView<SLint8>(
+        audio_ptr, audio_parameters_.GetBytesPerBuffer()));
   }
   // Enqueue the decoded audio buffer for playback.
   SLresult err = (*simple_buffer_queue_)

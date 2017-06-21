@@ -24,48 +24,14 @@ namespace webrtc {
 
 namespace {
 
-class RenderBuffer {
- public:
-  explicit RenderBuffer(size_t size)
-      : buffer_(size, std::vector<float>(kBlockSize, 0.f)) {}
-  ~RenderBuffer() = default;
-
-  bool Insert(rtc::ArrayView<const float> v) {
-    if (size_ >= buffer_.size() - 1) {
-      return false;
-    }
-
-    last_insert_index_ = (last_insert_index_ + 1) % buffer_.size();
-    RTC_DCHECK_EQ(buffer_[last_insert_index_].size(), v.size());
-
-    buffer_[last_insert_index_].clear();
-    buffer_[last_insert_index_].insert(buffer_[last_insert_index_].begin(),
-                                       v.begin(), v.end());
-    ++size_;
-    return true;
-  }
-  rtc::ArrayView<const float> Get() {
-    RTC_DCHECK_LT(0, size_);
-    --size_;
-    return buffer_[(last_insert_index_ - size_ + buffer_.size()) %
-                   buffer_.size()];
-  }
-
-  size_t Size() { return size_; }
-
- private:
-  std::vector<std::vector<float>> buffer_;
-  size_t size_ = 0;
-  int last_insert_index_ = 0;
-};
-
 class RenderDelayControllerImpl final : public RenderDelayController {
  public:
-  RenderDelayControllerImpl(int sample_rate_hz,
-                            const RenderDelayBuffer& render_delay_buffer);
+  RenderDelayControllerImpl(int sample_rate_hz);
   ~RenderDelayControllerImpl() override;
-  size_t GetDelay(rtc::ArrayView<const float> capture) override;
-  bool AnalyzeRender(rtc::ArrayView<const float> render) override;
+  void Reset() override;
+  void SetDelay(size_t render_delay) override;
+  size_t GetDelay(const DownsampledRenderBuffer& render_buffer,
+                  rtc::ArrayView<const float> capture) override;
   rtc::Optional<size_t> AlignmentHeadroomSamples() const override {
     return headroom_samples_;
   }
@@ -73,9 +39,7 @@ class RenderDelayControllerImpl final : public RenderDelayController {
  private:
   static int instance_count_;
   std::unique_ptr<ApmDataDumper> data_dumper_;
-  const size_t max_delay_;
-  size_t delay_;
-  RenderBuffer render_buffer_;
+  size_t delay_ = 0;
   EchoPathDelayEstimator delay_estimator_;
   size_t blocks_since_last_delay_estimate_ = 300000;
   int echo_path_delay_samples_ = 0;
@@ -86,7 +50,6 @@ class RenderDelayControllerImpl final : public RenderDelayController {
 };
 
 size_t ComputeNewBufferDelay(size_t current_delay,
-                             size_t max_delay,
                              size_t echo_path_delay_samples) {
   // The below division is not exact and the truncation is intended.
   const int echo_path_delay_blocks = echo_path_delay_samples / kBlockSize;
@@ -100,46 +63,54 @@ size_t ComputeNewBufferDelay(size_t current_delay,
     new_delay = current_delay;
   }
 
-  // Limit the delay to what is possible.
-  new_delay = std::min(new_delay, max_delay);
-
   return new_delay;
 }
 
 int RenderDelayControllerImpl::instance_count_ = 0;
 
-RenderDelayControllerImpl::RenderDelayControllerImpl(
-    int sample_rate_hz,
-    const RenderDelayBuffer& render_delay_buffer)
+RenderDelayControllerImpl::RenderDelayControllerImpl(int sample_rate_hz)
     : data_dumper_(
           new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
-      max_delay_(render_delay_buffer.MaxDelay()),
-      delay_(render_delay_buffer.Delay()),
-      render_buffer_(render_delay_buffer.MaxApiJitter() + 1),
       delay_estimator_(data_dumper_.get()) {
   RTC_DCHECK(ValidFullBandRate(sample_rate_hz));
 }
 
 RenderDelayControllerImpl::~RenderDelayControllerImpl() = default;
 
+void RenderDelayControllerImpl::Reset() {
+  delay_ = 0;
+  blocks_since_last_delay_estimate_ = 300000;
+  echo_path_delay_samples_ = 0;
+  align_call_counter_ = 0;
+  headroom_samples_ = rtc::Optional<size_t>();
+
+  delay_estimator_.Reset();
+}
+
+void RenderDelayControllerImpl::SetDelay(size_t render_delay) {
+  if (delay_ != render_delay) {
+    // If a the delay set does not match the actual delay, reset the delay
+    // controller.
+    Reset();
+    delay_ = render_delay;
+  }
+}
+
 size_t RenderDelayControllerImpl::GetDelay(
+    const DownsampledRenderBuffer& render_buffer,
     rtc::ArrayView<const float> capture) {
   RTC_DCHECK_EQ(kBlockSize, capture.size());
-  if (render_buffer_.Size() == 0) {
-    return delay_;
-  }
 
   ++align_call_counter_;
-  rtc::ArrayView<const float> render = render_buffer_.Get();
   rtc::Optional<size_t> echo_path_delay_samples =
-      delay_estimator_.EstimateDelay(render, capture);
+      delay_estimator_.EstimateDelay(render_buffer, capture);
   if (echo_path_delay_samples) {
     echo_path_delay_samples_ = *echo_path_delay_samples;
 
     // Compute and set new render delay buffer delay.
     const size_t new_delay =
-        ComputeNewBufferDelay(delay_, max_delay_, echo_path_delay_samples_);
-    if (new_delay != delay_ && align_call_counter_ > 250) {
+        ComputeNewBufferDelay(delay_, echo_path_delay_samples_);
+    if (new_delay != delay_ && align_call_counter_ > kNumBlocksPerSecond) {
       delay_ = new_delay;
     }
 
@@ -148,7 +119,7 @@ size_t RenderDelayControllerImpl::GetDelay(
     const int headroom = echo_path_delay_samples_ - delay_ * kBlockSize;
     RTC_DCHECK_LE(0, headroom);
     headroom_samples_ = rtc::Optional<size_t>(headroom);
-  } else if (++blocks_since_last_delay_estimate_ > 250 * 20) {
+  } else if (++blocks_since_last_delay_estimate_ > 20 * kNumBlocksPerSecond) {
     headroom_samples_ = rtc::Optional<size_t>();
   }
 
@@ -161,17 +132,10 @@ size_t RenderDelayControllerImpl::GetDelay(
   return delay_;
 }
 
-bool RenderDelayControllerImpl::AnalyzeRender(
-    rtc::ArrayView<const float> render) {
-  return render_buffer_.Insert(render);
-}
-
 }  // namespace
 
-RenderDelayController* RenderDelayController::Create(
-    int sample_rate_hz,
-    const RenderDelayBuffer& render_delay_buffer) {
-  return new RenderDelayControllerImpl(sample_rate_hz, render_delay_buffer);
+RenderDelayController* RenderDelayController::Create(int sample_rate_hz) {
+  return new RenderDelayControllerImpl(sample_rate_hz);
 }
 
 }  // namespace webrtc

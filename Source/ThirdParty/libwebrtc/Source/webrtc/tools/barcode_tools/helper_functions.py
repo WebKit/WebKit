@@ -20,7 +20,7 @@ class HelperError(Exception):
   pass
 
 
-def zero_pad(number, padding=_DEFAULT_PADDING):
+def ZeroPad(number, padding=_DEFAULT_PADDING):
   """Converts an int into a zero padded string.
 
   Args:
@@ -35,7 +35,7 @@ def zero_pad(number, padding=_DEFAULT_PADDING):
   return str(number).zfill(padding)
 
 
-def run_shell_command(cmd_list, fail_msg=None):
+def RunShellCommand(cmd_list, fail_msg=None):
   """Executes a command.
 
   Args:
@@ -60,8 +60,8 @@ def run_shell_command(cmd_list, fail_msg=None):
   return output.strip()
 
 
-def perform_action_on_all_files(directory, file_pattern, file_extension,
-                                start_number, action, **kwargs):
+def PerformActionOnAllFiles(directory, file_pattern, file_extension,
+                            start_number, action, **kwargs):
   """Function that performs a given action on all files matching a pattern.
 
   It is assumed that the files are named file_patternxxxx.file_extension, where
@@ -86,7 +86,7 @@ def perform_action_on_all_files(directory, file_pattern, file_extension,
   process_pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
   results = []
   while True:
-    zero_padded_file_number = zero_pad(file_number)
+    zero_padded_file_number = ZeroPad(file_number)
     file_name = file_prefix + zero_padded_file_number + '.' + file_extension
     if not os.path.isfile(file_name):
       break

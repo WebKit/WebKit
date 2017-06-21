@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "webrtc/base/thread_checker.h"
+#include "webrtc/call/rtp_packet_sink_interface.h"
 #include "webrtc/call/syncable.h"
 #include "webrtc/common_video/include/incoming_video_stream.h"
 #include "webrtc/common_video/libyuv/include/webrtc_libyuv.h"
@@ -23,8 +24,8 @@
 #include "webrtc/modules/video_coding/video_coding_impl.h"
 #include "webrtc/system_wrappers/include/clock.h"
 #include "webrtc/video/receive_statistics_proxy.h"
-#include "webrtc/video/rtp_stream_receiver.h"
 #include "webrtc/video/rtp_streams_synchronizer.h"
+#include "webrtc/video/rtp_video_stream_receiver.h"
 #include "webrtc/video/transport_adapter.h"
 #include "webrtc/video/video_stream_decoder.h"
 #include "webrtc/video_receive_stream.h"
@@ -35,7 +36,6 @@ class CallStats;
 class IvfFileWriter;
 class ProcessThread;
 class RTPFragmentationHeader;
-class VieRemb;
 class VCMTiming;
 class VCMJitterEstimator;
 
@@ -47,23 +47,20 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
                            public NackSender,
                            public KeyFrameRequestSender,
                            public video_coding::OnCompleteFrameCallback,
-                           public Syncable {
+                           public Syncable,
+                           public RtpPacketSinkInterface {
  public:
   VideoReceiveStream(int num_cpu_cores,
-                     bool protected_by_flexfec,
                      PacketRouter* packet_router,
                      VideoReceiveStream::Config config,
                      ProcessThread* process_thread,
-                     CallStats* call_stats,
-                     VieRemb* remb);
+                     CallStats* call_stats);
   ~VideoReceiveStream() override;
 
   const Config& config() const { return config_; }
 
   void SignalNetworkState(NetworkState state);
   bool DeliverRtcp(const uint8_t* packet, size_t length);
-
-  bool OnRecoveredPacket(const uint8_t* packet, size_t length);
 
   void SetSync(Syncable* audio_syncable);
 
@@ -81,8 +78,8 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
   void EnableEncodedFrameRecording(rtc::PlatformFile file,
                                    size_t byte_limit) override;
 
-  // TODO(nisse): Intended to be part of an RtpPacketReceiver interface.
-  void OnRtpPacket(const RtpPacketReceived& packet);
+  // RtpPacketSinkInterface.
+  void OnRtpPacket(const RtpPacketReceived& packet) override;
 
   // Implements rtc::VideoSinkInterface<VideoFrame>.
   void OnFrame(const VideoFrame& video_frame) override;
@@ -119,7 +116,6 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
   TransportAdapter transport_adapter_;
   const VideoReceiveStream::Config config_;
   const int num_cpu_cores_;
-  const bool protected_by_flexfec_;
   ProcessThread* const process_thread_;
   Clock* const clock_;
 
@@ -131,7 +127,7 @@ class VideoReceiveStream : public webrtc::VideoReceiveStream,
   vcm::VideoReceiver video_receiver_;
   std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>> incoming_video_stream_;
   ReceiveStatisticsProxy stats_proxy_;
-  RtpStreamReceiver rtp_stream_receiver_;
+  RtpVideoStreamReceiver rtp_video_stream_receiver_;
   std::unique_ptr<VideoStreamDecoder> video_stream_decoder_;
   RtpStreamsSynchronizer rtp_stream_sync_;
 

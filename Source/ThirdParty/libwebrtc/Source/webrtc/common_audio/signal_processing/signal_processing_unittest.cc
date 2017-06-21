@@ -20,11 +20,11 @@ static const int16_t vector16[kVector16Size] = {1, -15511, 4323, 1963,
 
 class SplTest : public testing::Test {
  protected:
-   SplTest() {
-     WebRtcSpl_Init();
-   }
-   virtual ~SplTest() {
-   }
+  SplTest() {
+    WebRtcSpl_Init();
+  }
+  virtual ~SplTest() {
+  }
 };
 
 TEST_F(SplTest, MacroTest) {
@@ -328,7 +328,8 @@ TEST_F(SplTest, VectorOperationsTest) {
     for (size_t kk = 0; kk < kVectorSize; ++kk) {
         EXPECT_EQ((B[kk]*3+7)>>2, bTmp16[kk]);
     }
-    WebRtcSpl_ScaleAndAddVectorsWithRound(b16, 3, b16, 2, 2, bTmp16, kVectorSize);
+    WebRtcSpl_ScaleAndAddVectorsWithRound(b16, 3, b16, 2, 2, bTmp16,
+                                          kVectorSize);
     for (size_t kk = 0; kk < kVectorSize; ++kk) {
         EXPECT_EQ((B[kk]*3+B[kk]*2+2)>>2, bTmp16[kk]);
     }
@@ -355,7 +356,8 @@ TEST_F(SplTest, VectorOperationsTest) {
     for (size_t kk = 0; kk < kVectorSize; ++kk) {
         EXPECT_EQ(B[kk] >> 1, bTmp16[kk]);
     }
-    WebRtcSpl_ReverseOrderMultArrayElements(bTmp16, a16, &b16[3], kVectorSize, 2);
+    WebRtcSpl_ReverseOrderMultArrayElements(bTmp16, a16, &b16[3],
+                                            kVectorSize, 2);
     for (size_t kk = 0; kk < kVectorSize; ++kk) {
         EXPECT_EQ((a16[kk]*b16[3-kk])>>2, bTmp16[kk]);
     }
@@ -558,7 +560,7 @@ TEST_F(SplTest, FFTTest) {
 //    }
     WebRtcSpl_ComplexBitReverse(B, 3);
     for (int kk = 0; kk < 16; ++kk) {
-        //EXPECT_EQ(A[kk], B[kk]);
+//      EXPECT_EQ(A[kk], B[kk]);
     }
 }
 

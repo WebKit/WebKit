@@ -24,6 +24,14 @@ class FirewallSocket : public AsyncSocketAdapter {
     : AsyncSocketAdapter(socket), server_(server), type_(type) {
   }
 
+  int Bind(const SocketAddress& addr) override {
+    if (!server_->IsBindableIp(addr.ipaddr())) {
+      SetError(EINVAL);
+      return SOCKET_ERROR;
+    }
+    return AsyncSocketAdapter::Bind(addr);
+  }
+
   int Connect(const SocketAddress& addr) override {
     if (type_ == SOCK_STREAM) {
       if (!server_->Check(FP_TCP, GetLocalAddress(), addr)) {
@@ -174,6 +182,16 @@ bool FirewallSocketServer::Check(FirewallProtocol p,
     return r.allow;
   }
   return true;
+}
+
+void FirewallSocketServer::SetUnbindableIps(
+    const std::vector<rtc::IPAddress>& unbindable_ips) {
+  unbindable_ips_ = unbindable_ips;
+}
+
+bool FirewallSocketServer::IsBindableIp(const rtc::IPAddress& ip) {
+  return std::find(unbindable_ips_.begin(), unbindable_ips_.end(), ip) ==
+         unbindable_ips_.end();
 }
 
 Socket* FirewallSocketServer::CreateSocket(int type) {

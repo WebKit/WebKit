@@ -13,6 +13,7 @@
 
 #include "webrtc/base/array_view.h"
 #include "webrtc/base/optional.h"
+#include "webrtc/modules/audio_processing/aec3/downsampled_render_buffer.h"
 #include "webrtc/modules/audio_processing/aec3/render_delay_controller.h"
 #include "webrtc/test/gmock.h"
 
@@ -23,8 +24,11 @@ class MockRenderDelayController : public RenderDelayController {
  public:
   virtual ~MockRenderDelayController() = default;
 
-  MOCK_METHOD1(GetDelay, size_t(rtc::ArrayView<const float> capture));
-  MOCK_METHOD1(AnalyzeRender, bool(rtc::ArrayView<const float> capture));
+  MOCK_METHOD0(Reset, void());
+  MOCK_METHOD1(SetDelay, void(size_t render_delay));
+  MOCK_METHOD2(GetDelay,
+               size_t(const DownsampledRenderBuffer& render_buffer,
+                      rtc::ArrayView<const float> capture));
   MOCK_CONST_METHOD0(AlignmentHeadroomSamples, rtc::Optional<size_t>());
 };
 

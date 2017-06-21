@@ -19,7 +19,6 @@
 #include "webrtc/modules/audio_coding/audio_network_adaptor/debug_dump_writer.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/event_log_writer.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
-#include "webrtc/system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -31,7 +30,6 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
     Config();
     ~Config();
     RtcEventLog* event_log;
-    const Clock* clock;
   };
 
   AudioNetworkAdaptorImpl(
@@ -45,13 +43,16 @@ class AudioNetworkAdaptorImpl final : public AudioNetworkAdaptor {
 
   void SetUplinkPacketLossFraction(float uplink_packet_loss_fraction) override;
 
+  void SetUplinkRecoverablePacketLossFraction(
+      float uplink_recoverable_packet_loss_fraction) override;
+
   void SetRtt(int rtt_ms) override;
 
   void SetTargetAudioBitrate(int target_audio_bitrate_bps) override;
 
   void SetOverhead(size_t overhead_bytes_per_packet) override;
 
-  EncoderRuntimeConfig GetEncoderRuntimeConfig() override;
+  AudioEncoderRuntimeConfig GetEncoderRuntimeConfig() override;
 
   void StartDebugDump(FILE* file_handle) override;
 

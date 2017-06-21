@@ -122,8 +122,6 @@ inline bool IsCurrentProcessLowIntegrity() {
       level < SECURITY_MANDATORY_MEDIUM_RID);
 }
 
-bool AdjustCurrentProcessPrivilege(const TCHAR* privilege, bool to_enable);
-
 }  // namespace rtc
 
 #endif  // WEBRTC_WIN

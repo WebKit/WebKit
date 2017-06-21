@@ -9,6 +9,9 @@
  */
 
 #include "webrtc/base/testclient.h"
+
+#include "webrtc/base/gunit.h"
+#include "webrtc/base/ptr_util.h"
 #include "webrtc/base/thread.h"
 #include "webrtc/base/timeutils.h"
 
@@ -18,25 +21,25 @@ namespace rtc {
 //         Callers can retrieve received packets from any thread by calling
 //         NextPacket.
 
-TestClient::TestClient(AsyncPacketSocket* socket)
-    : socket_(socket), prev_packet_timestamp_(-1) {
-  packets_ = new std::vector<Packet*>();
+TestClient::TestClient(std::unique_ptr<AsyncPacketSocket> socket)
+    : TestClient(std::move(socket), nullptr) {}
+
+TestClient::TestClient(std::unique_ptr<AsyncPacketSocket> socket,
+                       FakeClock* fake_clock)
+    : fake_clock_(fake_clock),
+      socket_(std::move(socket)),
+      prev_packet_timestamp_(-1) {
   socket_->SignalReadPacket.connect(this, &TestClient::OnPacket);
   socket_->SignalReadyToSend.connect(this, &TestClient::OnReadyToSend);
 }
 
-TestClient::~TestClient() {
-  delete socket_;
-  for (unsigned i = 0; i < packets_->size(); i++)
-    delete (*packets_)[i];
-  delete packets_;
-}
+TestClient::~TestClient() {}
 
 bool TestClient::CheckConnState(AsyncPacketSocket::State state) {
   // Wait for our timeout value until the socket reaches the desired state.
   int64_t end = TimeAfter(kTimeoutMs);
   while (socket_->GetState() != state && TimeUntil(end) > 0) {
-    Thread::Current()->ProcessMessages(1);
+    AdvanceTime(1);
   }
   return (socket_->GetState() == state);
 }
@@ -52,7 +55,7 @@ int TestClient::SendTo(const char* buf, size_t size,
   return socket_->SendTo(buf, size, dest, options);
 }
 
-TestClient::Packet* TestClient::NextPacket(int timeout_ms) {
+std::unique_ptr<TestClient::Packet> TestClient::NextPacket(int timeout_ms) {
   // If no packets are currently available, we go into a get/dispatch loop for
   // at most timeout_ms.  If, during the loop, a packet arrives, then we can
   // stop early and return it.
@@ -68,19 +71,19 @@ TestClient::Packet* TestClient::NextPacket(int timeout_ms) {
   while (TimeUntil(end) > 0) {
     {
       CritScope cs(&crit_);
-      if (packets_->size() != 0) {
+      if (packets_.size() != 0) {
         break;
       }
     }
-    Thread::Current()->ProcessMessages(1);
+    AdvanceTime(1);
   }
 
   // Return the first packet placed in the queue.
-  Packet* packet = nullptr;
+  std::unique_ptr<Packet> packet;
   CritScope cs(&crit_);
-  if (packets_->size() > 0) {
-    packet = packets_->front();
-    packets_->erase(packets_->begin());
+  if (packets_.size() > 0) {
+    packet = std::move(packets_.front());
+    packets_.erase(packets_.begin());
   }
 
   return packet;
@@ -89,13 +92,12 @@ TestClient::Packet* TestClient::NextPacket(int timeout_ms) {
 bool TestClient::CheckNextPacket(const char* buf, size_t size,
                                  SocketAddress* addr) {
   bool res = false;
-  Packet* packet = NextPacket(kTimeoutMs);
+  std::unique_ptr<Packet> packet = NextPacket(kTimeoutMs);
   if (packet) {
     res = (packet->size == size && memcmp(packet->buf, buf, size) == 0 &&
            CheckTimestamp(packet->packet_time.timestamp));
     if (addr)
       *addr = packet->addr;
-    delete packet;
   }
   return res;
 }
@@ -114,12 +116,18 @@ bool TestClient::CheckTimestamp(int64_t packet_timestamp) {
   return res;
 }
 
+void TestClient::AdvanceTime(int ms) {
+  // If the test is using a fake clock, we must advance the fake clock to
+  // advance time. Otherwise, ProcessMessages will work.
+  if (fake_clock_) {
+    SIMULATED_WAIT(false, ms, *fake_clock_);
+  } else {
+    Thread::Current()->ProcessMessages(1);
+  }
+}
+
 bool TestClient::CheckNoPacket() {
-  bool res;
-  Packet* packet = NextPacket(kNoPacketTimeoutMs);
-  res = (packet == nullptr);
-  delete packet;
-  return res;
+  return NextPacket(kNoPacketTimeoutMs) == nullptr;
 }
 
 int TestClient::GetError() {
@@ -134,7 +142,7 @@ void TestClient::OnPacket(AsyncPacketSocket* socket, const char* buf,
                           size_t size, const SocketAddress& remote_addr,
                           const PacketTime& packet_time) {
   CritScope cs(&crit_);
-  packets_->push_back(new Packet(remote_addr, buf, size, packet_time));
+  packets_.push_back(MakeUnique<Packet>(remote_addr, buf, size, packet_time));
 }
 
 void TestClient::OnReadyToSend(AsyncPacketSocket* socket) {

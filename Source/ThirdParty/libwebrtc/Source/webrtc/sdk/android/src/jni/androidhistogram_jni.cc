@@ -13,7 +13,6 @@
 
 #include "webrtc/sdk/android/src/jni/classreferenceholder.h"
 #include "webrtc/sdk/android/src/jni/jni_helpers.h"
-#include "webrtc/sdk/android/src/jni/native_handle_impl.h"
 #include "webrtc/system_wrappers/include/metrics.h"
 
 // Enables collection of native histograms and creating them.

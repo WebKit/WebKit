@@ -72,6 +72,14 @@ const char* RtpExtension::kPlayoutDelayUri =
     "http://www.webrtc.org/experiments/rtp-hdrext/playout-delay";
 const int RtpExtension::kPlayoutDelayDefaultId = 6;
 
+const char* RtpExtension::kVideoContentTypeUri =
+    "http://www.webrtc.org/experiments/rtp-hdrext/video-content-type";
+const int RtpExtension::kVideoContentTypeDefaultId = 7;
+
+const char* RtpExtension::kVideoTimingUri =
+    "http://www.webrtc.org/experiments/rtp-hdrext/video-timing";
+const int RtpExtension::kVideoTimingDefaultId = 8;
+
 const int RtpExtension::kMinId = 1;
 const int RtpExtension::kMaxId = 14;
 
@@ -85,7 +93,9 @@ bool RtpExtension::IsSupportedForVideo(const std::string& uri) {
          uri == webrtc::RtpExtension::kAbsSendTimeUri ||
          uri == webrtc::RtpExtension::kVideoRotationUri ||
          uri == webrtc::RtpExtension::kTransportSequenceNumberUri ||
-         uri == webrtc::RtpExtension::kPlayoutDelayUri;
+         uri == webrtc::RtpExtension::kPlayoutDelayUri ||
+         uri == webrtc::RtpExtension::kVideoContentTypeUri ||
+         uri == webrtc::RtpExtension::kVideoTimingUri;
 }
 
 VideoStream::VideoStream()

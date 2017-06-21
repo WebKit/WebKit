@@ -26,8 +26,8 @@ DesktopFrame::DesktopFrame(DesktopSize size,
       shared_memory_(shared_memory),
       size_(size),
       stride_(stride),
-      capture_time_ms_(0) {
-}
+      capture_time_ms_(0),
+      capturer_id_(DesktopCapturerId::kUnknown) {}
 
 DesktopFrame::~DesktopFrame() {}
 
@@ -76,6 +76,7 @@ DesktopFrame* BasicDesktopFrame::CopyOf(const DesktopFrame& frame) {
   }
   result->set_dpi(frame.dpi());
   result->set_capture_time_ms(frame.capture_time_ms());
+  result->set_capturer_id(frame.capturer_id());
   *result->mutable_updated_region() = frame.updated_region();
   return result;
 }

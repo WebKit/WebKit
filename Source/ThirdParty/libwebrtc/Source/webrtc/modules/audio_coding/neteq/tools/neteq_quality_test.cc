@@ -406,7 +406,7 @@ int NetEqQualityTest::DecodeBlock() {
     RTC_DCHECK_EQ(out_frame_.samples_per_channel_,
                   static_cast<size_t>(kOutputSizeMs * out_sampling_khz_));
     RTC_CHECK(output_->WriteArray(
-        out_frame_.data_,
+        out_frame_.data(),
         out_frame_.samples_per_channel_ * out_frame_.num_channels_));
     return static_cast<int>(out_frame_.samples_per_channel_);
   }

@@ -1090,7 +1090,7 @@ bool OpenSSLStreamAdapter::VerifyPeerCertificate() {
   Buffer computed_digest(digest, digest_length);
   if (computed_digest != peer_certificate_digest_value_) {
     LOG(LS_WARNING) << "Rejected peer certificate due to mismatched digest.";
-    return 0;
+    return false;
   }
   // Ignore any verification error if the digest matches, since there is no
   // value in checking the validity of a self-signed cert issued by untrusted

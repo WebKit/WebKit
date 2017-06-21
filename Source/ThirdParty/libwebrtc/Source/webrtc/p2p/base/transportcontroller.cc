@@ -65,22 +65,17 @@ class TransportController::ChannelPair {
   RTC_DISALLOW_COPY_AND_ASSIGN(ChannelPair);
 };
 
-TransportController::TransportController(rtc::Thread* signaling_thread,
-                                         rtc::Thread* network_thread,
-                                         PortAllocator* port_allocator,
-                                         bool redetermine_role_on_ice_restart)
+TransportController::TransportController(
+    rtc::Thread* signaling_thread,
+    rtc::Thread* network_thread,
+    PortAllocator* port_allocator,
+    bool redetermine_role_on_ice_restart,
+    const rtc::CryptoOptions& crypto_options)
     : signaling_thread_(signaling_thread),
       network_thread_(network_thread),
       port_allocator_(port_allocator),
-      redetermine_role_on_ice_restart_(redetermine_role_on_ice_restart) {}
-
-TransportController::TransportController(rtc::Thread* signaling_thread,
-                                         rtc::Thread* network_thread,
-                                         PortAllocator* port_allocator)
-    : TransportController(signaling_thread,
-                          network_thread,
-                          port_allocator,
-                          true) {}
+      redetermine_role_on_ice_restart_(redetermine_role_on_ice_restart),
+      crypto_options_(crypto_options) {}
 
 TransportController::~TransportController() {
   // Channel destructors may try to send packets, so this needs to happen on
@@ -362,7 +357,7 @@ DtlsTransportInternal* TransportController::CreateDtlsTransportChannel_n(
     const std::string&,
     int,
     IceTransportInternal* ice) {
-  DtlsTransport* dtls = new DtlsTransport(ice);
+  DtlsTransport* dtls = new DtlsTransport(ice, crypto_options_);
   dtls->SetSslMaxProtocolVersion(ssl_max_version_);
   return dtls;
 }
@@ -521,7 +516,11 @@ bool TransportController::GetSslRole_n(const std::string& transport_name,
   if (!t) {
     return false;
   }
-  t->GetSslRole(role);
+  rtc::Optional<rtc::SSLRole> current_role = t->GetSslRole();
+  if (!current_role) {
+    return false;
+  }
+  *role = *current_role;
   return true;
 }
 
@@ -598,7 +597,11 @@ bool TransportController::SetLocalTransportDescription_n(
   if (redetermine_role_on_ice_restart_ && transport->local_description() &&
       IceCredentialsChanged(transport->local_description()->ice_ufrag,
                             transport->local_description()->ice_pwd,
-                            tdesc.ice_ufrag, tdesc.ice_pwd)) {
+                            tdesc.ice_ufrag, tdesc.ice_pwd) &&
+      // Don't change the ICE role if the remote endpoint is ICE lite; we
+      // should always be controlling in that case.
+      (!transport->remote_description() ||
+       transport->remote_description()->ice_mode != ICEMODE_LITE)) {
     IceRole new_ice_role =
         (action == CA_OFFER) ? ICEROLE_CONTROLLING : ICEROLE_CONTROLLED;
     SetIceRole(new_ice_role);

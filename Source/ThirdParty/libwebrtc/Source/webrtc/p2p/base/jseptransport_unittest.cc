@@ -32,15 +32,20 @@ static const char kIcePwd2[] = "TESTICEPWD00000000000002";
 
 class JsepTransportTest : public testing::Test, public sigslot::has_slots<> {
  public:
-  JsepTransportTest()
-      : transport_(new JsepTransport("test content name", nullptr)) {}
+  JsepTransportTest() { RecreateTransport(); }
+
   bool SetupChannel() {
     fake_ice_transport_.reset(new FakeIceTransport(transport_->mid(), 1));
     fake_dtls_transport_.reset(
         new FakeDtlsTransport(fake_ice_transport_.get()));
     return transport_->AddChannel(fake_dtls_transport_.get(), 1);
   }
+
   void DestroyChannel() { transport_->RemoveChannel(1); }
+
+  void RecreateTransport() {
+    transport_.reset(new JsepTransport("test content name", nullptr));
+  }
 
  protected:
   std::unique_ptr<FakeDtlsTransport> fake_dtls_transport_;
@@ -167,10 +172,22 @@ TEST_F(JsepTransportTest, TestVerifyCertificateFingerprint) {
   }
 }
 
-// Tests that NegotiateRole sets the SSL role correctly.
-TEST_F(JsepTransportTest, TestNegotiateRole) {
+// Tests the logic of DTLS role negotiation for an initial offer/answer.
+TEST_F(JsepTransportTest, DtlsRoleNegotiation) {
+  rtc::scoped_refptr<rtc::RTCCertificate> certificate =
+      rtc::RTCCertificate::Create(std::unique_ptr<rtc::SSLIdentity>(
+          rtc::SSLIdentity::Generate("testing", rtc::KT_ECDSA)));
+  std::unique_ptr<rtc::SSLFingerprint> fingerprint(
+      rtc::SSLFingerprint::CreateFromCertificate(certificate));
+
   TransportDescription local_desc(kIceUfrag1, kIcePwd1);
   TransportDescription remote_desc(kIceUfrag2, kIcePwd2);
+  // Just use the same fingerprint in both descriptions; the remote fingerprint
+  // doesn't matter in a non end-to-end test.
+  local_desc.identity_fingerprint.reset(
+      TransportDescription::CopyFingerprint(fingerprint.get()));
+  remote_desc.identity_fingerprint.reset(
+      TransportDescription::CopyFingerprint(fingerprint.get()));
 
   struct NegotiateRoleParams {
     cricket::ConnectionRole local_role;
@@ -179,7 +196,6 @@ TEST_F(JsepTransportTest, TestNegotiateRole) {
     cricket::ContentAction remote_action;
   };
 
-  rtc::SSLRole ssl_role;
   std::string error_desc;
 
   // Parameters which set the SSL role to SSL_CLIENT.
@@ -194,16 +210,25 @@ TEST_F(JsepTransportTest, TestNegotiateRole) {
        cricket::CA_OFFER, cricket::CA_PRANSWER}};
 
   for (auto& param : valid_client_params) {
+    RecreateTransport();
+    transport_->SetLocalCertificate(certificate);
+
     local_desc.connection_role = param.local_role;
     remote_desc.connection_role = param.remote_role;
 
-    ASSERT_TRUE(transport_->SetRemoteTransportDescription(
-        remote_desc, param.remote_action, nullptr));
-    ASSERT_TRUE(transport_->SetLocalTransportDescription(
-        local_desc, param.local_action, nullptr));
-    EXPECT_TRUE(
-        transport_->NegotiateRole(param.local_action, &ssl_role, &error_desc));
-    EXPECT_EQ(rtc::SSL_CLIENT, ssl_role);
+    // Set the offer first.
+    if (param.local_action == cricket::CA_OFFER) {
+      EXPECT_TRUE(transport_->SetLocalTransportDescription(
+          local_desc, param.local_action, nullptr));
+      EXPECT_TRUE(transport_->SetRemoteTransportDescription(
+          remote_desc, param.remote_action, nullptr));
+    } else {
+      EXPECT_TRUE(transport_->SetRemoteTransportDescription(
+          remote_desc, param.remote_action, nullptr));
+      EXPECT_TRUE(transport_->SetLocalTransportDescription(
+          local_desc, param.local_action, nullptr));
+    }
+    EXPECT_EQ(rtc::SSL_CLIENT, *transport_->GetSslRole());
   }
 
   // Parameters which set the SSL role to SSL_SERVER.
@@ -218,16 +243,25 @@ TEST_F(JsepTransportTest, TestNegotiateRole) {
        cricket::CA_OFFER, cricket::CA_PRANSWER}};
 
   for (auto& param : valid_server_params) {
+    RecreateTransport();
+    transport_->SetLocalCertificate(certificate);
+
     local_desc.connection_role = param.local_role;
     remote_desc.connection_role = param.remote_role;
 
-    ASSERT_TRUE(transport_->SetRemoteTransportDescription(
-        remote_desc, param.remote_action, nullptr));
-    ASSERT_TRUE(transport_->SetLocalTransportDescription(
-        local_desc, param.local_action, nullptr));
-    EXPECT_TRUE(
-        transport_->NegotiateRole(param.local_action, &ssl_role, &error_desc));
-    EXPECT_EQ(rtc::SSL_SERVER, ssl_role);
+    // Set the offer first.
+    if (param.local_action == cricket::CA_OFFER) {
+      EXPECT_TRUE(transport_->SetLocalTransportDescription(
+          local_desc, param.local_action, nullptr));
+      EXPECT_TRUE(transport_->SetRemoteTransportDescription(
+          remote_desc, param.remote_action, nullptr));
+    } else {
+      EXPECT_TRUE(transport_->SetRemoteTransportDescription(
+          remote_desc, param.remote_action, nullptr));
+      EXPECT_TRUE(transport_->SetLocalTransportDescription(
+          local_desc, param.local_action, nullptr));
+    }
+    EXPECT_EQ(rtc::SSL_SERVER, *transport_->GetSslRole());
   }
 
   // Invalid parameters due to both peers having a duplicate role.
@@ -258,15 +292,24 @@ TEST_F(JsepTransportTest, TestNegotiateRole) {
        cricket::CA_OFFER, cricket::CA_PRANSWER}};
 
   for (auto& param : duplicate_params) {
+    RecreateTransport();
+    transport_->SetLocalCertificate(certificate);
+
     local_desc.connection_role = param.local_role;
     remote_desc.connection_role = param.remote_role;
 
-    ASSERT_TRUE(transport_->SetRemoteTransportDescription(
-        remote_desc, param.remote_action, nullptr));
-    ASSERT_TRUE(transport_->SetLocalTransportDescription(
-        local_desc, param.local_action, nullptr));
-    EXPECT_FALSE(
-        transport_->NegotiateRole(param.local_action, &ssl_role, &error_desc));
+    // Set the offer first.
+    if (param.local_action == cricket::CA_OFFER) {
+      EXPECT_TRUE(transport_->SetLocalTransportDescription(
+          local_desc, param.local_action, nullptr));
+      EXPECT_FALSE(transport_->SetRemoteTransportDescription(
+          remote_desc, param.remote_action, nullptr));
+    } else {
+      EXPECT_TRUE(transport_->SetRemoteTransportDescription(
+          remote_desc, param.remote_action, nullptr));
+      EXPECT_FALSE(transport_->SetLocalTransportDescription(
+          local_desc, param.local_action, nullptr));
+    }
   }
 
   // Invalid parameters due to the offerer not using ACTPASS.
@@ -297,14 +340,113 @@ TEST_F(JsepTransportTest, TestNegotiateRole) {
        cricket::CA_OFFER, cricket::CA_PRANSWER}};
 
   for (auto& param : offerer_without_actpass_params) {
+    RecreateTransport();
+    transport_->SetLocalCertificate(certificate);
+
     local_desc.connection_role = param.local_role;
     remote_desc.connection_role = param.remote_role;
 
-    ASSERT_TRUE(transport_->SetRemoteTransportDescription(
-        remote_desc, param.remote_action, nullptr));
-    ASSERT_TRUE(transport_->SetLocalTransportDescription(
-        local_desc, param.local_action, nullptr));
-    EXPECT_FALSE(
-        transport_->NegotiateRole(param.local_action, &ssl_role, &error_desc));
+    // Set the offer first.
+    // TODO(deadbeef): Really this should fail as soon as the offer is
+    // attempted to be applied, and not when the answer is applied.
+    if (param.local_action == cricket::CA_OFFER) {
+      EXPECT_TRUE(transport_->SetLocalTransportDescription(
+          local_desc, param.local_action, nullptr));
+      EXPECT_FALSE(transport_->SetRemoteTransportDescription(
+          remote_desc, param.remote_action, nullptr));
+    } else {
+      EXPECT_TRUE(transport_->SetRemoteTransportDescription(
+          remote_desc, param.remote_action, nullptr));
+      EXPECT_FALSE(transport_->SetLocalTransportDescription(
+          local_desc, param.local_action, nullptr));
+    }
   }
+}
+
+// Test that a remote offer with the current negotiated role can be accepted.
+// This is allowed by dtls-sdp, though we'll never generate such an offer,
+// since JSEP requires generating "actpass".
+TEST_F(JsepTransportTest, RemoteOfferWithCurrentNegotiatedDtlsRole) {
+  rtc::scoped_refptr<rtc::RTCCertificate> certificate =
+      rtc::RTCCertificate::Create(std::unique_ptr<rtc::SSLIdentity>(
+          rtc::SSLIdentity::Generate("testing", rtc::KT_ECDSA)));
+  std::unique_ptr<rtc::SSLFingerprint> fingerprint(
+      rtc::SSLFingerprint::CreateFromCertificate(certificate));
+  transport_->SetLocalCertificate(certificate);
+
+  TransportDescription local_desc(kIceUfrag1, kIcePwd1);
+  TransportDescription remote_desc(kIceUfrag2, kIcePwd2);
+  // Just use the same fingerprint in both descriptions; the remote fingerprint
+  // doesn't matter in a non end-to-end test.
+  local_desc.identity_fingerprint.reset(
+      TransportDescription::CopyFingerprint(fingerprint.get()));
+  remote_desc.identity_fingerprint.reset(
+      TransportDescription::CopyFingerprint(fingerprint.get()));
+
+  remote_desc.connection_role = cricket::CONNECTIONROLE_ACTPASS;
+  local_desc.connection_role = cricket::CONNECTIONROLE_ACTIVE;
+
+  // Normal initial offer/answer with "actpass" in the offer and "active" in
+  // the answer.
+  ASSERT_TRUE(transport_->SetRemoteTransportDescription(
+      remote_desc, cricket::CA_OFFER, nullptr));
+  ASSERT_TRUE(transport_->SetLocalTransportDescription(
+      local_desc, cricket::CA_ANSWER, nullptr));
+
+  // Sanity check that role was actually negotiated.
+  rtc::Optional<rtc::SSLRole> role = transport_->GetSslRole();
+  ASSERT_TRUE(role);
+  EXPECT_EQ(rtc::SSL_CLIENT, *role);
+
+  // Subsequent offer with current negotiated role of "passive".
+  remote_desc.connection_role = cricket::CONNECTIONROLE_PASSIVE;
+  EXPECT_TRUE(transport_->SetRemoteTransportDescription(
+      remote_desc, cricket::CA_OFFER, nullptr));
+  EXPECT_TRUE(transport_->SetLocalTransportDescription(
+      local_desc, cricket::CA_ANSWER, nullptr));
+}
+
+// Test that a remote offer with the inverse of the current negotiated DTLS
+// role is rejected.
+TEST_F(JsepTransportTest, RemoteOfferThatChangesNegotiatedDtlsRole) {
+  rtc::scoped_refptr<rtc::RTCCertificate> certificate =
+      rtc::RTCCertificate::Create(std::unique_ptr<rtc::SSLIdentity>(
+          rtc::SSLIdentity::Generate("testing", rtc::KT_ECDSA)));
+  std::unique_ptr<rtc::SSLFingerprint> fingerprint(
+      rtc::SSLFingerprint::CreateFromCertificate(certificate));
+  transport_->SetLocalCertificate(certificate);
+
+  TransportDescription local_desc(kIceUfrag1, kIcePwd1);
+  TransportDescription remote_desc(kIceUfrag2, kIcePwd2);
+  // Just use the same fingerprint in both descriptions; the remote fingerprint
+  // doesn't matter in a non end-to-end test.
+  local_desc.identity_fingerprint.reset(
+      TransportDescription::CopyFingerprint(fingerprint.get()));
+  remote_desc.identity_fingerprint.reset(
+      TransportDescription::CopyFingerprint(fingerprint.get()));
+
+  remote_desc.connection_role = cricket::CONNECTIONROLE_ACTPASS;
+  local_desc.connection_role = cricket::CONNECTIONROLE_ACTIVE;
+
+  // Normal initial offer/answer with "actpass" in the offer and "active" in
+  // the answer.
+  ASSERT_TRUE(transport_->SetRemoteTransportDescription(
+      remote_desc, cricket::CA_OFFER, nullptr));
+  ASSERT_TRUE(transport_->SetLocalTransportDescription(
+      local_desc, cricket::CA_ANSWER, nullptr));
+
+  // Sanity check that role was actually negotiated.
+  rtc::Optional<rtc::SSLRole> role = transport_->GetSslRole();
+  ASSERT_TRUE(role);
+  EXPECT_EQ(rtc::SSL_CLIENT, *role);
+
+  // Subsequent offer with "active", which is the opposite of the remote
+  // endpoint's negotiated role.
+  // TODO(deadbeef): Really this should fail as soon as the offer is
+  // attempted to be applied, and not when the answer is applied.
+  remote_desc.connection_role = cricket::CONNECTIONROLE_ACTIVE;
+  EXPECT_TRUE(transport_->SetRemoteTransportDescription(
+      remote_desc, cricket::CA_OFFER, nullptr));
+  EXPECT_FALSE(transport_->SetLocalTransportDescription(
+      local_desc, cricket::CA_ANSWER, nullptr));
 }

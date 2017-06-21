@@ -182,14 +182,6 @@ class RTCPReceiver {
                  PacketInformation* packet_information)
       EXCLUSIVE_LOCKS_REQUIRED(rtcp_receiver_lock_);
 
-  void HandleSli(const rtcp::CommonHeader& rtcp_block,
-                 PacketInformation* packet_information)
-      EXCLUSIVE_LOCKS_REQUIRED(rtcp_receiver_lock_);
-
-  void HandleRpsi(const rtcp::CommonHeader& rtcp_block,
-                  PacketInformation* packet_information)
-      EXCLUSIVE_LOCKS_REQUIRED(rtcp_receiver_lock_);
-
   void HandlePsfbApp(const rtcp::CommonHeader& rtcp_block,
                      PacketInformation* packet_information)
       EXCLUSIVE_LOCKS_REQUIRED(rtcp_receiver_lock_);

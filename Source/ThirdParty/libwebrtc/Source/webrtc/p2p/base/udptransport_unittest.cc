@@ -18,7 +18,6 @@
 #include "webrtc/base/thread.h"
 #include "webrtc/base/asyncpacketsocket.h"
 #include "webrtc/base/ipaddress.h"
-#include "webrtc/base/physicalsocketserver.h"
 #include "webrtc/base/socketaddress.h"
 #include "webrtc/base/socketserver.h"
 #include "webrtc/base/virtualsocketserver.h"
@@ -35,11 +34,8 @@ static const rtc::IPAddress kIPv4LocalHostAddress =
 class UdpTransportTest : public testing::Test, public sigslot::has_slots<> {
  public:
   UdpTransportTest()
-      : network_thread_(rtc::Thread::Current()),
-        physical_socket_server_(new rtc::PhysicalSocketServer),
-        virtual_socket_server_(
-            new rtc::VirtualSocketServer(physical_socket_server_.get())),
-        ss_scope_(virtual_socket_server_.get()),
+      : virtual_socket_server_(new rtc::VirtualSocketServer()),
+        network_thread_(virtual_socket_server_.get()),
         ep1_("Name1",
              std::unique_ptr<rtc::AsyncPacketSocket>(
                  socket_factory_.CreateUdpSocket(
@@ -121,10 +117,8 @@ class UdpTransportTest : public testing::Test, public sigslot::has_slots<> {
     uint32_t num_sig_ready_to_send_ = 0;  // Increases on SignalReadyToSend.
   };
 
-  rtc::Thread* network_thread_ = nullptr;
-  std::unique_ptr<rtc::PhysicalSocketServer> physical_socket_server_;
   std::unique_ptr<rtc::VirtualSocketServer> virtual_socket_server_;
-  rtc::SocketServerScope ss_scope_;
+  rtc::AutoSocketServerThread network_thread_;
   // Uses current thread's socket server, which will be set by ss_scope_.
   rtc::BasicPacketSocketFactory socket_factory_;
 

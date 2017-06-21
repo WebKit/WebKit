@@ -26,7 +26,7 @@ class SyncBuffer : public AudioMultiVector {
         end_timestamp_(0),
         dtmf_index_(0) {}
 
-  // Returns the number of samples yet to play out form the buffer.
+  // Returns the number of samples yet to play out from the buffer.
   size_t FutureLength() const;
 
   // Adds the contents of |append_this| to the back of the SyncBuffer. Removes

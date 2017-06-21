@@ -16,11 +16,10 @@
 #include <vector>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/protobuf_utils.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/controller.h"
 
 namespace webrtc {
-
-class Clock;
 
 class ControllerManager {
  public:
@@ -36,20 +35,17 @@ class ControllerManager {
 class ControllerManagerImpl final : public ControllerManager {
  public:
   struct Config {
-    Config(int min_reordering_time_ms,
-           float min_reordering_squared_distance,
-           const Clock* clock);
+    Config(int min_reordering_time_ms, float min_reordering_squared_distance);
     ~Config();
     // Least time since last reordering for a new reordering to be made.
     int min_reordering_time_ms;
     // Least squared distance from last scoring point for a new reordering to be
     // made.
     float min_reordering_squared_distance;
-    const Clock* clock;
   };
 
   static std::unique_ptr<ControllerManager> Create(
-      const std::string& config_string,
+      const ProtoString& config_string,
       size_t num_encoder_channels,
       rtc::ArrayView<const int> encoder_frame_lengths_ms,
       int min_encoder_bitrate_bps,
@@ -57,8 +53,7 @@ class ControllerManagerImpl final : public ControllerManager {
       int initial_frame_length_ms,
       int initial_bitrate_bps,
       bool initial_fec_enabled,
-      bool initial_dtx_enabled,
-      const Clock* clock);
+      bool initial_dtx_enabled);
 
   explicit ControllerManagerImpl(const Config& config);
 
@@ -81,6 +76,7 @@ class ControllerManagerImpl final : public ControllerManager {
   // Scoring point is a subset of NetworkMetrics that is used for comparing the
   // significance of controllers.
   struct ScoringPoint {
+    // TODO(eladalon): Do we want to experiment with RPLR-based scoring?
     ScoringPoint(int uplink_bandwidth_bps, float uplink_packet_loss_fraction);
 
     // Calculate the normalized [0,1] distance between two scoring points.
@@ -101,7 +97,7 @@ class ControllerManagerImpl final : public ControllerManager {
 
   std::vector<Controller*> sorted_controllers_;
 
-  // |scoring_points_| saves the characteristic scoring points of various
+  // |scoring_points_| saves the scoring points of various
   // controllers.
   std::map<const Controller*, ScoringPoint> controller_scoring_points_;
 

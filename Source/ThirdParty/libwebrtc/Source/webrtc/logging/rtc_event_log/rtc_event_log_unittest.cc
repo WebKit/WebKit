@@ -22,9 +22,11 @@
 #include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log_parser.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log_unittest_helper.h"
+#include "webrtc/modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor.h"
+#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
+#include "webrtc/modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extension.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "webrtc/test/gtest.h"
@@ -124,7 +126,7 @@ RtpPacketToSend GenerateRtpPacket(const RtpHeaderExtensionMap* extensions,
 
   rtp_packet.SetExtension<TransmissionOffset>(prng->Rand(0x00ffffff));
   rtp_packet.SetExtension<AudioLevel>(prng->Rand<bool>(), prng->Rand(127));
-  rtp_packet.SetExtension<AbsoluteSendTime>(prng->Rand<int32_t>());
+  rtp_packet.SetExtension<AbsoluteSendTime>(prng->Rand(0x00ffffff));
   rtp_packet.SetExtension<VideoOrientation>(prng->Rand(2));
   rtp_packet.SetExtension<TransportSequenceNumber>(prng->Rand<uint16_t>());
 
@@ -151,86 +153,75 @@ rtc::Buffer GenerateRtcpPacket(Random* prng) {
 }
 
 void GenerateVideoReceiveConfig(uint32_t extensions_bitvector,
-                                VideoReceiveStream::Config* config,
+                                rtclog::StreamConfig* config,
                                 Random* prng) {
-  // Create a map from a payload type to an encoder name.
-  VideoReceiveStream::Decoder decoder;
-  decoder.payload_type = prng->Rand(0, 127);
-  decoder.payload_name = (prng->Rand<bool>() ? "VP8" : "H264");
-  config->decoders.push_back(decoder);
   // Add SSRCs for the stream.
-  config->rtp.remote_ssrc = prng->Rand<uint32_t>();
-  config->rtp.local_ssrc = prng->Rand<uint32_t>();
+  config->remote_ssrc = prng->Rand<uint32_t>();
+  config->local_ssrc = prng->Rand<uint32_t>();
   // Add extensions and settings for RTCP.
-  config->rtp.rtcp_mode =
+  config->rtcp_mode =
       prng->Rand<bool>() ? RtcpMode::kCompound : RtcpMode::kReducedSize;
-  config->rtp.remb = prng->Rand<bool>();
-  config->rtp.rtx_ssrc = prng->Rand<uint32_t>();
-  // Add a map from a payload type to a new payload type for RTX.
-  config->rtp.rtx_payload_types.insert(
-      std::make_pair(prng->Rand(0, 127), prng->Rand(0, 127)));
+  config->remb = prng->Rand<bool>();
+  config->rtx_ssrc = prng->Rand<uint32_t>();
+  config->codecs.emplace_back(prng->Rand<bool>() ? "VP8" : "H264",
+                              prng->Rand(1, 127), prng->Rand(1, 127));
   // Add header extensions.
   for (unsigned i = 0; i < kNumExtensions; i++) {
     if (extensions_bitvector & (1u << i)) {
-      config->rtp.extensions.push_back(
-          RtpExtension(kExtensionNames[i], prng->Rand<int>()));
+      config->rtp_extensions.emplace_back(kExtensionNames[i],
+                                          prng->Rand<int>());
     }
   }
 }
 
 void GenerateVideoSendConfig(uint32_t extensions_bitvector,
-                             VideoSendStream::Config* config,
+                             rtclog::StreamConfig* config,
                              Random* prng) {
-  // Create a map from a payload type to an encoder name.
-  config->encoder_settings.payload_type = prng->Rand(0, 127);
-  config->encoder_settings.payload_name = (prng->Rand<bool>() ? "VP8" : "H264");
-  // Add SSRCs for the stream.
-  config->rtp.ssrcs.push_back(prng->Rand<uint32_t>());
-  // Add a map from a payload type to new ssrcs and a new payload type for RTX.
-  config->rtp.rtx.ssrcs.push_back(prng->Rand<uint32_t>());
-  config->rtp.rtx.payload_type = prng->Rand(0, 127);
+  config->codecs.emplace_back(prng->Rand<bool>() ? "VP8" : "H264",
+                              prng->Rand(1, 127), prng->Rand(1, 127));
+  config->local_ssrc = prng->Rand<uint32_t>();
+  config->rtx_ssrc = prng->Rand<uint32_t>();
   // Add header extensions.
   for (unsigned i = 0; i < kNumExtensions; i++) {
     if (extensions_bitvector & (1u << i)) {
-      config->rtp.extensions.push_back(
+      config->rtp_extensions.push_back(
           RtpExtension(kExtensionNames[i], prng->Rand<int>()));
     }
   }
 }
 
 void GenerateAudioReceiveConfig(uint32_t extensions_bitvector,
-                                AudioReceiveStream::Config* config,
+                                rtclog::StreamConfig* config,
                                 Random* prng) {
   // Add SSRCs for the stream.
-  config->rtp.remote_ssrc = prng->Rand<uint32_t>();
-  config->rtp.local_ssrc = prng->Rand<uint32_t>();
+  config->remote_ssrc = prng->Rand<uint32_t>();
+  config->local_ssrc = prng->Rand<uint32_t>();
   // Add header extensions.
   for (unsigned i = 0; i < kNumExtensions; i++) {
     if (extensions_bitvector & (1u << i)) {
-      config->rtp.extensions.push_back(
+      config->rtp_extensions.push_back(
           RtpExtension(kExtensionNames[i], prng->Rand<int>()));
     }
   }
 }
 
 void GenerateAudioSendConfig(uint32_t extensions_bitvector,
-                             AudioSendStream::Config* config,
+                             rtclog::StreamConfig* config,
                              Random* prng) {
   // Add SSRC to the stream.
-  config->rtp.ssrc = prng->Rand<uint32_t>();
+  config->local_ssrc = prng->Rand<uint32_t>();
   // Add header extensions.
   for (unsigned i = 0; i < kNumExtensions; i++) {
     if (extensions_bitvector & (1u << i)) {
-      config->rtp.extensions.push_back(
+      config->rtp_extensions.push_back(
           RtpExtension(kExtensionNames[i], prng->Rand<int>()));
     }
   }
 }
 
-void GenerateAudioNetworkAdaptation(
-    uint32_t extensions_bitvector,
-    AudioNetworkAdaptor::EncoderRuntimeConfig* config,
-    Random* prng) {
+void GenerateAudioNetworkAdaptation(uint32_t extensions_bitvector,
+                                    AudioEncoderRuntimeConfig* config,
+                                    Random* prng) {
   config->bitrate_bps = rtc::Optional<int>(prng->Rand(0, 3000000));
   config->enable_fec = rtc::Optional<bool>(prng->Rand<bool>());
   config->enable_dtx = rtc::Optional<bool>(prng->Rand<bool>());
@@ -257,8 +248,8 @@ void LogSessionAndReadBack(size_t rtp_count,
   std::vector<uint32_t> playout_ssrcs;
   std::vector<std::pair<int32_t, uint8_t> > bwe_loss_updates;
 
-  VideoReceiveStream::Config receiver_config(nullptr);
-  VideoSendStream::Config sender_config(nullptr);
+  rtclog::StreamConfig receiver_config;
+  rtclog::StreamConfig sender_config;
 
   Random prng(random_seed);
 
@@ -315,13 +306,11 @@ void LogSessionAndReadBack(size_t rtp_count,
     for (size_t i = 1; i <= rtp_count; i++) {
       log_dumper->LogRtpHeader(
           (i % 2 == 0) ? kIncomingPacket : kOutgoingPacket,
-          (i % 3 == 0) ? MediaType::AUDIO : MediaType::VIDEO,
           rtp_packets[i - 1].data(), rtp_packets[i - 1].size());
       fake_clock.AdvanceTimeMicros(prng.Rand(1, 1000));
       if (i * rtcp_count >= rtcp_index * rtp_count) {
         log_dumper->LogRtcpPacket(
             (rtcp_index % 2 == 0) ? kIncomingPacket : kOutgoingPacket,
-            rtcp_index % 3 == 0 ? MediaType::AUDIO : MediaType::VIDEO,
             rtcp_packets[rtcp_index - 1].data(),
             rtcp_packets[rtcp_index - 1].size());
         rtcp_index++;
@@ -377,7 +366,6 @@ void LogSessionAndReadBack(size_t rtp_count,
     RtcEventLogTestHelper::VerifyRtpEvent(
         parsed_log, event_index,
         (i % 2 == 0) ? kIncomingPacket : kOutgoingPacket,
-        (i % 3 == 0) ? MediaType::AUDIO : MediaType::VIDEO,
         rtp_packets[i - 1].data(), rtp_packets[i - 1].headers_size(),
         rtp_packets[i - 1].size());
     event_index++;
@@ -385,7 +373,6 @@ void LogSessionAndReadBack(size_t rtp_count,
       RtcEventLogTestHelper::VerifyRtcpEvent(
           parsed_log, event_index,
           rtcp_index % 2 == 0 ? kIncomingPacket : kOutgoingPacket,
-          rtcp_index % 3 == 0 ? MediaType::AUDIO : MediaType::VIDEO,
           rtcp_packets[rtcp_index - 1].data(),
           rtcp_packets[rtcp_index - 1].size());
       event_index++;
@@ -463,15 +450,15 @@ TEST(RtcEventLogTest, LogEventAndReadBack) {
   fake_clock.SetTimeMicros(prng.Rand<uint32_t>());
   std::unique_ptr<RtcEventLog> log_dumper(RtcEventLog::Create());
 
-  log_dumper->LogRtpHeader(kIncomingPacket, MediaType::VIDEO, rtp_packet.data(),
+  log_dumper->LogRtpHeader(kIncomingPacket, rtp_packet.data(),
                            rtp_packet.size());
   fake_clock.AdvanceTimeMicros(prng.Rand(1, 1000));
 
   log_dumper->StartLogging(temp_filename, 10000000);
   fake_clock.AdvanceTimeMicros(prng.Rand(1, 1000));
 
-  log_dumper->LogRtcpPacket(kOutgoingPacket, MediaType::VIDEO,
-                            rtcp_packet.data(), rtcp_packet.size());
+  log_dumper->LogRtcpPacket(kOutgoingPacket, rtcp_packet.data(),
+                            rtcp_packet.size());
   fake_clock.AdvanceTimeMicros(prng.Rand(1, 1000));
 
   log_dumper->StopLogging();
@@ -487,12 +474,11 @@ TEST(RtcEventLogTest, LogEventAndReadBack) {
   RtcEventLogTestHelper::VerifyLogStartEvent(parsed_log, 0);
 
   RtcEventLogTestHelper::VerifyRtpEvent(
-      parsed_log, 1, kIncomingPacket, MediaType::VIDEO, rtp_packet.data(),
+      parsed_log, 1, kIncomingPacket, rtp_packet.data(),
       rtp_packet.headers_size(), rtp_packet.size());
 
-  RtcEventLogTestHelper::VerifyRtcpEvent(parsed_log, 2, kOutgoingPacket,
-                                         MediaType::VIDEO, rtcp_packet.data(),
-                                         rtcp_packet.size());
+  RtcEventLogTestHelper::VerifyRtcpEvent(
+      parsed_log, 2, kOutgoingPacket, rtcp_packet.data(), rtcp_packet.size());
 
   RtcEventLogTestHelper::VerifyLogEndEvent(parsed_log, 3);
 
@@ -560,11 +546,11 @@ TEST(RtcEventLogTest, LogDelayBasedBweUpdateAndReadBack) {
   std::unique_ptr<RtcEventLog> log_dumper(RtcEventLog::Create());
   log_dumper->StartLogging(temp_filename, 10000000);
   fake_clock.AdvanceTimeMicros(prng.Rand(1, 1000));
-  log_dumper->LogDelayBasedBweUpdate(bitrate1, kBwNormal);
+  log_dumper->LogDelayBasedBweUpdate(bitrate1, BandwidthUsage::kBwNormal);
   fake_clock.AdvanceTimeMicros(prng.Rand(1, 1000));
-  log_dumper->LogDelayBasedBweUpdate(bitrate2, kBwOverusing);
+  log_dumper->LogDelayBasedBweUpdate(bitrate2, BandwidthUsage::kBwOverusing);
   fake_clock.AdvanceTimeMicros(prng.Rand(1, 1000));
-  log_dumper->LogDelayBasedBweUpdate(bitrate3, kBwUnderusing);
+  log_dumper->LogDelayBasedBweUpdate(bitrate3, BandwidthUsage::kBwUnderusing);
   fake_clock.AdvanceTimeMicros(prng.Rand(1, 1000));
   log_dumper->StopLogging();
 
@@ -577,11 +563,11 @@ TEST(RtcEventLogTest, LogDelayBasedBweUpdateAndReadBack) {
   EXPECT_EQ(5u, parsed_log.GetNumberOfEvents());
   RtcEventLogTestHelper::VerifyLogStartEvent(parsed_log, 0);
   RtcEventLogTestHelper::VerifyBweDelayEvent(parsed_log, 1, bitrate1,
-                                             kBwNormal);
+                                             BandwidthUsage::kBwNormal);
   RtcEventLogTestHelper::VerifyBweDelayEvent(parsed_log, 2, bitrate2,
-                                             kBwOverusing);
+                                             BandwidthUsage::kBwOverusing);
   RtcEventLogTestHelper::VerifyBweDelayEvent(parsed_log, 3, bitrate3,
-                                             kBwUnderusing);
+                                             BandwidthUsage::kBwUnderusing);
   RtcEventLogTestHelper::VerifyLogEndEvent(parsed_log, 4);
 
   // Clean up temporary file - can be pretty slow.
@@ -792,12 +778,12 @@ class AudioReceiveConfigReadWriteTest : public ConfigReadWriteTest {
     RtcEventLogTestHelper::VerifyAudioReceiveStreamConfig(parsed_log, index,
                                                           config);
   }
-  AudioReceiveStream::Config config;
+  rtclog::StreamConfig config;
 };
 
 class AudioSendConfigReadWriteTest : public ConfigReadWriteTest {
  public:
-  AudioSendConfigReadWriteTest() : config(nullptr) {}
+  AudioSendConfigReadWriteTest() {}
   void GenerateConfig(uint32_t extensions_bitvector) override {
     GenerateAudioSendConfig(extensions_bitvector, &config, &prng);
   }
@@ -809,12 +795,12 @@ class AudioSendConfigReadWriteTest : public ConfigReadWriteTest {
     RtcEventLogTestHelper::VerifyAudioSendStreamConfig(parsed_log, index,
                                                        config);
   }
-  AudioSendStream::Config config;
+  rtclog::StreamConfig config;
 };
 
 class VideoReceiveConfigReadWriteTest : public ConfigReadWriteTest {
  public:
-  VideoReceiveConfigReadWriteTest() : config(nullptr) {}
+  VideoReceiveConfigReadWriteTest() {}
   void GenerateConfig(uint32_t extensions_bitvector) override {
     GenerateVideoReceiveConfig(extensions_bitvector, &config, &prng);
   }
@@ -826,12 +812,12 @@ class VideoReceiveConfigReadWriteTest : public ConfigReadWriteTest {
     RtcEventLogTestHelper::VerifyVideoReceiveStreamConfig(parsed_log, index,
                                                           config);
   }
-  VideoReceiveStream::Config config;
+  rtclog::StreamConfig config;
 };
 
 class VideoSendConfigReadWriteTest : public ConfigReadWriteTest {
  public:
-  VideoSendConfigReadWriteTest() : config(nullptr) {}
+  VideoSendConfigReadWriteTest() {}
   void GenerateConfig(uint32_t extensions_bitvector) override {
     GenerateVideoSendConfig(extensions_bitvector, &config, &prng);
   }
@@ -843,7 +829,7 @@ class VideoSendConfigReadWriteTest : public ConfigReadWriteTest {
     RtcEventLogTestHelper::VerifyVideoSendStreamConfig(parsed_log, index,
                                                        config);
   }
-  VideoSendStream::Config config;
+  rtclog::StreamConfig config;
 };
 
 class AudioNetworkAdaptationReadWriteTest : public ConfigReadWriteTest {
@@ -859,7 +845,7 @@ class AudioNetworkAdaptationReadWriteTest : public ConfigReadWriteTest {
     RtcEventLogTestHelper::VerifyAudioNetworkAdaptation(parsed_log, index,
                                                         config);
   }
-  AudioNetworkAdaptor::EncoderRuntimeConfig config;
+  AudioEncoderRuntimeConfig config;
 };
 
 TEST(RtcEventLogTest, LogAudioReceiveConfig) {

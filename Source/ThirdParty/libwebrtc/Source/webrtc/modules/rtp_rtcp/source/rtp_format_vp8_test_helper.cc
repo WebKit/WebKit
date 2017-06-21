@@ -68,15 +68,14 @@ void RtpFormatVp8TestHelper::GetAllPacketsAndCheck(
     const bool* expected_frag_start,
     size_t expected_num_packets) {
   ASSERT_TRUE(inited_);
-  bool last = false;
   for (size_t i = 0; i < expected_num_packets; ++i) {
     std::ostringstream ss;
     ss << "Checking packet " << i;
     SCOPED_TRACE(ss.str());
-    EXPECT_TRUE(packetizer->NextPacket(&packet_, &last));
-    CheckPacket(expected_sizes[i], last, expected_frag_start[i]);
+    EXPECT_TRUE(packetizer->NextPacket(&packet_));
+    CheckPacket(expected_sizes[i], i + 1 == expected_num_packets,
+                expected_frag_start[i]);
   }
-  EXPECT_TRUE(last);
 }
 
 // Payload descriptor

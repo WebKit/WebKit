@@ -51,11 +51,11 @@ RampUpTester::RampUpTester(size_t num_video_streams,
       num_flexfec_streams_(num_flexfec_streams),
       rtx_(rtx),
       red_(red),
+      report_perf_stats_(report_perf_stats),
       sender_call_(nullptr),
       send_stream_(nullptr),
       start_bitrate_bps_(start_bitrate_bps),
       min_run_time_ms_(min_run_time_ms),
-      report_perf_stats_(report_perf_stats),
       expected_bitrate_bps_(0),
       test_start_ms_(-1),
       ramp_up_finished_ms_(-1),
@@ -90,9 +90,9 @@ void RampUpTester::OnVideoStreamsCreated(
 }
 
 test::PacketTransport* RampUpTester::CreateSendTransport(Call* sender_call) {
-  send_transport_ = new test::PacketTransport(sender_call, this,
-                                              test::PacketTransport::kSender,
-                                              forward_transport_config_);
+  send_transport_ = new test::PacketTransport(
+      sender_call, this, test::PacketTransport::kSender,
+      test::CallTest::payload_type_map_, forward_transport_config_);
   return send_transport_;
 }
 
@@ -356,13 +356,8 @@ void RampUpTester::TriggerTestDone() {
   }
 
   if (report_perf_stats_) {
-    ReportResult("ramp-up-total-packets-sent", total_packets_sent, "packets");
-    ReportResult("ramp-up-total-sent", total_sent, "bytes");
     ReportResult("ramp-up-media-sent", media_sent, "bytes");
     ReportResult("ramp-up-padding-sent", padding_sent, "bytes");
-    ReportResult("ramp-up-rtx-total-packets-sent", rtx_total_packets_sent,
-                 "packets");
-    ReportResult("ramp-up-rtx-total-sent", rtx_total_sent, "bytes");
     ReportResult("ramp-up-rtx-media-sent", rtx_media_sent, "bytes");
     ReportResult("ramp-up-rtx-padding-sent", rtx_padding_sent, "bytes");
     if (ramp_up_finished_ms_ >= 0) {
@@ -390,7 +385,8 @@ RampUpDownUpTester::RampUpDownUpTester(size_t num_video_streams,
                                        const std::string& extension_type,
                                        bool rtx,
                                        bool red,
-                                       const std::vector<int>& loss_rates)
+                                       const std::vector<int>& loss_rates,
+                                       bool report_perf_stats)
     : RampUpTester(num_video_streams,
                    num_audio_streams,
                    num_flexfec_streams,
@@ -399,9 +395,10 @@ RampUpDownUpTester::RampUpDownUpTester(size_t num_video_streams,
                    extension_type,
                    rtx,
                    red,
-                   true),
-      link_rates_({GetHighLinkCapacity(), kLowBandwidthLimitBps / 1000,
-                   GetHighLinkCapacity(), 0}),
+                   report_perf_stats),
+      link_rates_({4 * GetExpectedHighBitrate() / (3 * 1000),
+                   kLowBandwidthLimitBps / 1000,
+                   4 * GetExpectedHighBitrate() / (3 * 1000), 0}),
       test_state_(kFirstRampup),
       next_state_(kTransitionToNextState),
       state_start_ms_(clock_->TimeInMilliseconds()),
@@ -471,10 +468,6 @@ int RampUpDownUpTester::GetExpectedHighBitrate() const {
   return expected_bitrate_bps;
 }
 
-int RampUpDownUpTester::GetHighLinkCapacity() const {
-  return 4 * GetExpectedHighBitrate() / (3 * 1000);
-}
-
 size_t RampUpDownUpTester::GetFecBytes() const {
   size_t flex_fec_bytes = 0;
   if (num_flexfec_streams_ > 0) {
@@ -495,9 +488,11 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
     case kFirstRampup:
       EXPECT_FALSE(suspended);
       if (bitrate_bps >= GetExpectedHighBitrate()) {
-        webrtc::test::PrintResult("ramp_up_down_up", GetModifierString(),
-                                  "first_rampup", now - state_start_ms_, "ms",
-                                  false);
+        if (report_perf_stats_) {
+          webrtc::test::PrintResult("ramp_up_down_up", GetModifierString(),
+                                    "first_rampup", now - state_start_ms_, "ms",
+                                    false);
+        }
         // Apply loss during the transition between states if FEC is enabled.
         forward_transport_config_.loss_percent = loss_rates_[test_state_];
         test_state_ = kTransitionToNextState;
@@ -509,9 +504,11 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
       bool check_suspend_state = num_video_streams_ > 0;
       if (bitrate_bps < kExpectedLowBitrateBps &&
           suspended == check_suspend_state) {
-        webrtc::test::PrintResult("ramp_up_down_up", GetModifierString(),
-                                  "rampdown", now - state_start_ms_, "ms",
-                                  false);
+        if (report_perf_stats_) {
+          webrtc::test::PrintResult("ramp_up_down_up", GetModifierString(),
+                                    "rampdown", now - state_start_ms_, "ms",
+                                    false);
+        }
         // Apply loss during the transition between states if FEC is enabled.
         forward_transport_config_.loss_percent = loss_rates_[test_state_];
         test_state_ = kTransitionToNextState;
@@ -521,11 +518,13 @@ void RampUpDownUpTester::EvolveTestState(int bitrate_bps, bool suspended) {
     }
     case kSecondRampup:
       if (bitrate_bps >= GetExpectedHighBitrate() && !suspended) {
-        webrtc::test::PrintResult("ramp_up_down_up", GetModifierString(),
-                                  "second_rampup", now - state_start_ms_, "ms",
-                                  false);
-        ReportResult("ramp-up-down-up-average-network-latency",
-                     send_transport_->GetAverageDelayMs(), "milliseconds");
+        if (report_perf_stats_) {
+          webrtc::test::PrintResult("ramp_up_down_up", GetModifierString(),
+                                    "second_rampup", now - state_start_ms_,
+                                    "ms", false);
+          ReportResult("ramp-up-down-up-average-network-latency",
+                       send_transport_->GetAverageDelayMs(), "milliseconds");
+        }
         // Apply loss during the transition between states if FEC is enabled.
         forward_transport_config_.loss_percent = loss_rates_[test_state_];
         test_state_ = kTransitionToNextState;
@@ -566,8 +565,8 @@ static const uint32_t kStartBitrateBps = 60000;
 TEST_F(RampUpTest, UpDownUpAbsSendTimeSimulcastRedRtx) {
   std::vector<int> loss_rates = {0, 0, 0, 0};
   RampUpDownUpTester test(3, 0, 0, kStartBitrateBps,
-                          RtpExtension::kAbsSendTimeUri, true, true,
-                          loss_rates);
+                          RtpExtension::kAbsSendTimeUri, true, true, loss_rates,
+                          true);
   RunBaseTest(&test);
 }
 
@@ -575,15 +574,17 @@ TEST_F(RampUpTest, UpDownUpTransportSequenceNumberRtx) {
   std::vector<int> loss_rates = {0, 0, 0, 0};
   RampUpDownUpTester test(3, 0, 0, kStartBitrateBps,
                           RtpExtension::kTransportSequenceNumberUri, true,
-                          false, loss_rates);
+                          false, loss_rates, true);
   RunBaseTest(&test);
 }
 
+// TODO(holmer): Tests which don't report perf stats should be moved to a
+// different executable since they per definition are not perf tests.
 TEST_F(RampUpTest, UpDownUpTransportSequenceNumberPacketLoss) {
   std::vector<int> loss_rates = {20, 0, 0, 0};
   RampUpDownUpTester test(1, 0, 1, kStartBitrateBps,
                           RtpExtension::kTransportSequenceNumberUri, true,
-                          false, loss_rates);
+                          false, loss_rates, false);
   RunBaseTest(&test);
 }
 
@@ -591,7 +592,7 @@ TEST_F(RampUpTest, UpDownUpAudioVideoTransportSequenceNumberRtx) {
   std::vector<int> loss_rates = {0, 0, 0, 0};
   RampUpDownUpTester test(3, 1, 0, kStartBitrateBps,
                           RtpExtension::kTransportSequenceNumberUri, true,
-                          false, loss_rates);
+                          false, loss_rates, false);
   RunBaseTest(&test);
 }
 
@@ -599,7 +600,7 @@ TEST_F(RampUpTest, UpDownUpAudioTransportSequenceNumberRtx) {
   std::vector<int> loss_rates = {0, 0, 0, 0};
   RampUpDownUpTester test(0, 1, 0, kStartBitrateBps,
                           RtpExtension::kTransportSequenceNumberUri, true,
-                          false, loss_rates);
+                          false, loss_rates, false);
   RunBaseTest(&test);
 }
 
@@ -611,7 +612,7 @@ TEST_F(RampUpTest, TOffsetSimulcastRedRtx) {
 
 TEST_F(RampUpTest, AbsSendTime) {
   RampUpTester test(1, 0, 0, 0, 0, RtpExtension::kAbsSendTimeUri, false, false,
-                    true);
+                    false);
   RunBaseTest(&test);
 }
 
@@ -623,13 +624,13 @@ TEST_F(RampUpTest, AbsSendTimeSimulcastRedRtx) {
 
 TEST_F(RampUpTest, TransportSequenceNumber) {
   RampUpTester test(1, 0, 0, 0, 0, RtpExtension::kTransportSequenceNumberUri,
-                    false, false, true);
+                    false, false, false);
   RunBaseTest(&test);
 }
 
 TEST_F(RampUpTest, TransportSequenceNumberSimulcast) {
   RampUpTester test(3, 0, 0, 0, 0, RtpExtension::kTransportSequenceNumberUri,
-                    false, false, true);
+                    false, false, false);
   RunBaseTest(&test);
 }
 

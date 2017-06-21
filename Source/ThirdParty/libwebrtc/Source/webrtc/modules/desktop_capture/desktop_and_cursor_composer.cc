@@ -81,6 +81,7 @@ DesktopFrameWithCursor::DesktopFrameWithCursor(
                    frame->shared_memory()) {
   set_dpi(frame->dpi());
   set_capture_time_ms(frame->capture_time_ms());
+  set_capturer_id(frame->capturer_id());
   mutable_updated_region()->Swap(frame->mutable_updated_region());
   original_frame_ = std::move(frame);
 

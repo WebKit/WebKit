@@ -27,20 +27,19 @@ class RtpPacketizerH264 : public RtpPacketizer {
   // Initialize with payload from encoder.
   // The payload_data must be exactly one encoded H264 frame.
   RtpPacketizerH264(size_t max_payload_len,
+                    size_t last_packet_reduction_len,
                     H264PacketizationMode packetization_mode);
 
   virtual ~RtpPacketizerH264();
 
-  void SetPayloadData(const uint8_t* payload_data,
-                      size_t payload_size,
-                      const RTPFragmentationHeader* fragmentation) override;
+  size_t SetPayloadData(const uint8_t* payload_data,
+                        size_t payload_size,
+                        const RTPFragmentationHeader* fragmentation) override;
 
   // Get the next payload with H264 payload header.
   // Write payload and set marker bit of the |packet|.
-  // The parameter |last_packet| is true for the last packet of the frame, false
-  // otherwise (i.e., call the function again to get the next packet).
   // Returns true on success, false otherwise.
-  bool NextPacket(RtpPacketToSend* rtp_packet, bool* last_packet) override;
+  bool NextPacket(RtpPacketToSend* rtp_packet) override;
 
   ProtectionType GetProtectionType() override;
 
@@ -88,10 +87,12 @@ class RtpPacketizerH264 : public RtpPacketizer {
   void PacketizeFuA(size_t fragment_index);
   size_t PacketizeStapA(size_t fragment_index);
   void PacketizeSingleNalu(size_t fragment_index);
-  void NextAggregatePacket(RtpPacketToSend* rtp_packet);
+  void NextAggregatePacket(RtpPacketToSend* rtp_packet, bool last);
   void NextFragmentPacket(RtpPacketToSend* rtp_packet);
 
   const size_t max_payload_len_;
+  const size_t last_packet_reduction_len_;
+  size_t num_packets_left_;
   const H264PacketizationMode packetization_mode_;
   std::deque<Fragment> input_fragments_;
   std::queue<PacketUnit> packets_;

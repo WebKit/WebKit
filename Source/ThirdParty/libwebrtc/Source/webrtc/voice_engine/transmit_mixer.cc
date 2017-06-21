@@ -289,9 +289,6 @@ TransmitMixer::PrepareDemux(const void* audioSamples,
     TypingDetection(keyPressed);
 #endif
 
-    // --- Mute signal
-    AudioFrameOperations::Mute(&_audioFrame, _mute, _mute);
-
     // --- Mix with file (does not affect the mixing frequency)
     if (_filePlaying)
     {
@@ -314,66 +311,14 @@ TransmitMixer::PrepareDemux(const void* audioSamples,
     return 0;
 }
 
-int32_t
-TransmitMixer::DemuxAndMix()
-{
-    WEBRTC_TRACE(kTraceStream, kTraceVoice, VoEId(_instanceId, -1),
-                 "TransmitMixer::DemuxAndMix()");
-
-    for (ChannelManager::Iterator it(_channelManagerPtr); it.IsValid();
-         it.Increment())
-    {
-        Channel* channelPtr = it.GetChannel();
-        if (channelPtr->Sending())
-        {
-            // Demultiplex makes a copy of its input.
-            channelPtr->Demultiplex(_audioFrame);
-            channelPtr->PrepareEncodeAndSend(_audioFrame.sample_rate_hz_);
-        }
+void TransmitMixer::ProcessAndEncodeAudio() {
+  RTC_DCHECK_GT(_audioFrame.samples_per_channel_, 0);
+  for (ChannelManager::Iterator it(_channelManagerPtr); it.IsValid();
+       it.Increment()) {
+    Channel* const channel = it.GetChannel();
+    if (channel->Sending()) {
+      channel->ProcessAndEncodeAudio(_audioFrame);
     }
-    return 0;
-}
-
-void TransmitMixer::DemuxAndMix(const int voe_channels[],
-                                size_t number_of_voe_channels) {
-  for (size_t i = 0; i < number_of_voe_channels; ++i) {
-    voe::ChannelOwner ch = _channelManagerPtr->GetChannel(voe_channels[i]);
-    voe::Channel* channel_ptr = ch.channel();
-    if (channel_ptr) {
-      if (channel_ptr->Sending()) {
-        // Demultiplex makes a copy of its input.
-        channel_ptr->Demultiplex(_audioFrame);
-        channel_ptr->PrepareEncodeAndSend(_audioFrame.sample_rate_hz_);
-      }
-    }
-  }
-}
-
-int32_t
-TransmitMixer::EncodeAndSend()
-{
-    WEBRTC_TRACE(kTraceStream, kTraceVoice, VoEId(_instanceId, -1),
-                 "TransmitMixer::EncodeAndSend()");
-
-    for (ChannelManager::Iterator it(_channelManagerPtr); it.IsValid();
-         it.Increment())
-    {
-        Channel* channelPtr = it.GetChannel();
-        if (channelPtr->Sending())
-        {
-            channelPtr->EncodeAndSend();
-        }
-    }
-    return 0;
-}
-
-void TransmitMixer::EncodeAndSend(const int voe_channels[],
-                                  size_t number_of_voe_channels) {
-  for (size_t i = 0; i < number_of_voe_channels; ++i) {
-    voe::ChannelOwner ch = _channelManagerPtr->GetChannel(voe_channels[i]);
-    voe::Channel* channel_ptr = ch.channel();
-    if (channel_ptr && channel_ptr->Sending())
-      channel_ptr->EncodeAndSend();
   }
 }
 
@@ -894,21 +839,6 @@ TransmitMixer::SetMixWithMicStatus(bool mix)
     _mixFileWithMicrophone = mix;
 }
 
-int
-TransmitMixer::SetMute(bool enable)
-{
-    WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId, -1),
-                 "TransmitMixer::SetMute(enable=%d)", enable);
-    _mute = enable;
-    return 0;
-}
-
-bool
-TransmitMixer::Mute() const
-{
-    return _mute;
-}
-
 int8_t TransmitMixer::AudioLevel() const
 {
     // Speech + file level [0,9]
@@ -1006,7 +936,7 @@ int32_t TransmitMixer::MixOrReplaceAudioWithFile(
     {
         // Currently file stream is always mono.
         // TODO(xians): Change the code when FilePlayer supports real stereo.
-        MixWithSat(_audioFrame.data_,
+        MixWithSat(_audioFrame.mutable_data(),
                    _audioFrame.num_channels_,
                    fileBuffer.get(),
                    1,
@@ -1080,33 +1010,6 @@ void TransmitMixer::TypingDetection(bool keyPressed)
       _typingNoiseDetected = false;
     }
   }
-}
-#endif
-
-#if WEBRTC_VOICE_ENGINE_TYPING_DETECTION
-int TransmitMixer::TimeSinceLastTyping(int &seconds)
-{
-    // We check in VoEAudioProcessingImpl that this is only called when
-    // typing detection is active.
-    seconds = _typingDetection.TimeSinceLastDetectionInSeconds();
-    return 0;
-}
-#endif
-
-#if WEBRTC_VOICE_ENGINE_TYPING_DETECTION
-int TransmitMixer::SetTypingDetectionParameters(int timeWindow,
-                                                int costPerTyping,
-                                                int reportingThreshold,
-                                                int penaltyDecay,
-                                                int typeEventDelay)
-{
-    _typingDetection.SetParameters(timeWindow,
-                                   costPerTyping,
-                                   reportingThreshold,
-                                   penaltyDecay,
-                                   typeEventDelay,
-                                   0);
-    return 0;
 }
 #endif
 

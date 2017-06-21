@@ -17,6 +17,11 @@ rtc_source_set("audio_codecs_api") {
     "audio_decoder.cc",
     "audio_decoder.h",
     "audio_decoder_factory.h",
+    "audio_decoder_factory_template.h",
+    "audio_encoder.cc",
+    "audio_encoder.h",
+    "audio_encoder_factory.h",
+    "audio_encoder_factory_template.h",
     "audio_format.cc",
     "audio_format.h",
   ]
@@ -35,5 +40,17 @@ rtc_static_library("builtin_audio_decoder_factory") {
     ":audio_codecs_api",
     "../../base:rtc_base_approved",
     "../../modules/audio_coding:builtin_audio_decoder_factory_internal",
+  ]
+}
+
+rtc_static_library("builtin_audio_encoder_factory") {
+  sources = [
+    "builtin_audio_encoder_factory.cc",
+    "builtin_audio_encoder_factory.h",
+  ]
+  deps = [
+    ":audio_codecs_api",
+    "../../base:rtc_base_approved",
+    "../../modules/audio_coding:builtin_audio_encoder_factory_internal",
   ]
 }

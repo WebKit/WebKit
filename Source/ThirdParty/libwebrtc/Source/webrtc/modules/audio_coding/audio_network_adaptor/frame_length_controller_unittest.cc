@@ -101,7 +101,7 @@ void UpdateNetworkMetrics(
 void CheckDecision(FrameLengthController* controller,
                    const rtc::Optional<bool>& enable_fec,
                    int expected_frame_length_ms) {
-  AudioNetworkAdaptor::EncoderRuntimeConfig config;
+  AudioEncoderRuntimeConfig config;
   config.enable_fec = enable_fec;
   controller->MakeDecision(&config);
   EXPECT_EQ(rtc::Optional<int>(expected_frame_length_ms),

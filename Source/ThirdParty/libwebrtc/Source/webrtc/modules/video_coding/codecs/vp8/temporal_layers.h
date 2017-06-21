@@ -14,7 +14,6 @@
 
 #include <vector>
 
-#include "webrtc/common_video/include/video_image.h"
 #include "webrtc/typedefs.h"
 
 struct vpx_codec_enc_cfg;
@@ -26,13 +25,50 @@ struct CodecSpecificInfoVP8;
 
 class TemporalLayers {
  public:
+  enum BufferFlags {
+    kNone = 0,
+    kReference = 1,
+    kUpdate = 2,
+    kReferenceAndUpdate = kReference | kUpdate,
+  };
+  enum FreezeEntropy { kFreezeEntropy };
+
+  struct FrameConfig {
+    FrameConfig();
+
+    FrameConfig(BufferFlags last, BufferFlags golden, BufferFlags arf);
+    FrameConfig(BufferFlags last,
+                BufferFlags golden,
+                BufferFlags arf,
+                FreezeEntropy);
+
+    bool drop_frame;
+    BufferFlags last_buffer_flags;
+    BufferFlags golden_buffer_flags;
+    BufferFlags arf_buffer_flags;
+
+    // TODO(pbos): Consider breaking these out of here and returning only a
+    // pattern index that needs to be returned to fill CodecSpecificInfoVP8 or
+    // EncodeFlags.
+    bool layer_sync;
+    bool freeze_entropy;
+
+    int pattern_idx;
+
+   private:
+    FrameConfig(BufferFlags last,
+                BufferFlags golden,
+                BufferFlags arf,
+                bool freeze_entropy);
+  };
+
   // Factory for TemporalLayer strategy. Default behavior is a fixed pattern
   // of temporal layers. See default_temporal_layers.cc
   virtual ~TemporalLayers() {}
 
   // Returns the recommended VP8 encode flags needed. May refresh the decoder
   // and/or update the reference buffers.
-  virtual int EncodeFlags(uint32_t timestamp) = 0;
+  virtual FrameConfig UpdateLayerConfig(uint32_t timestamp) = 0;
 
   // Update state based on new bitrate target and incoming framerate.
   // Returns the bitrate allocation for the active temporal layers.
@@ -44,13 +80,19 @@ class TemporalLayers {
   // Returns true iff the configuration was actually modified.
   virtual bool UpdateConfiguration(vpx_codec_enc_cfg_t* cfg) = 0;
 
-  virtual void PopulateCodecSpecific(bool base_layer_sync,
-                                     CodecSpecificInfoVP8* vp8_info,
-                                     uint32_t timestamp) = 0;
+  virtual void PopulateCodecSpecific(
+      bool is_keyframe,
+      const TemporalLayers::FrameConfig& tl_config,
+      CodecSpecificInfoVP8* vp8_info,
+      uint32_t timestamp) = 0;
 
-  virtual void FrameEncoded(unsigned int size, uint32_t timestamp, int qp) = 0;
+  virtual void FrameEncoded(unsigned int size, int qp) = 0;
 
-  virtual int CurrentLayerId() const = 0;
+  // Returns the current tl0_pic_idx, so it can be reused in future
+  // instantiations.
+  virtual uint8_t Tl0PicIdx() const = 0;
+  virtual int GetTemporalLayerId(
+      const TemporalLayers::FrameConfig& tl_config) const = 0;
 };
 
 class TemporalLayersListener;
@@ -75,18 +117,6 @@ class ScreenshareTemporalLayersFactory : public webrtc::TemporalLayersFactory {
   webrtc::TemporalLayers* Create(int simulcast_id,
                                  int num_temporal_layers,
                                  uint8_t initial_tl0_pic_idx) const override;
-};
-
-// Factory for a temporal layers strategy that adaptively changes the number of
-// layers based on input frame rate so that the base layer has an acceptable
-// frame rate. See realtime_temporal_layers.cc
-class RealTimeTemporalLayersFactory : public TemporalLayersFactory {
- public:
-  RealTimeTemporalLayersFactory() {}
-  ~RealTimeTemporalLayersFactory() override {}
-  TemporalLayers* Create(int simulcast_id,
-                         int num_temporal_layers,
-                         uint8_t initial_tl0_pic_idx) const override;
 };
 
 class TemporalLayersListener {

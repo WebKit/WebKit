@@ -16,7 +16,8 @@ extern "C" {
 #include "webrtc/common_audio/vad/vad_gmm.h"
 }
 
-namespace {
+namespace webrtc {
+namespace test {
 
 TEST_F(VadTest, vad_gmm) {
   int16_t delta = 0;
@@ -40,4 +41,5 @@ TEST_F(VadTest, vad_gmm) {
   EXPECT_EQ(0, WebRtcVad_GaussianProbability(105, 0, 128, &delta));
   EXPECT_EQ(13440, delta);
 }
-}  // namespace
+}  // namespace test
+}  // namespace webrtc

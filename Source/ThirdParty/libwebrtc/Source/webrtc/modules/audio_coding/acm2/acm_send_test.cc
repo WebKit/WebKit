@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "webrtc/api/audio_codecs/audio_encoder.h"
 #include "webrtc/base/checks.h"
-#include "webrtc/modules/audio_coding/codecs/audio_encoder.h"
 #include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 #include "webrtc/modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "webrtc/modules/audio_coding/neteq/tools/packet.h"
@@ -86,13 +86,13 @@ std::unique_ptr<Packet> AcmSendTestOldApi::NextPacket() {
   // Insert audio and process until one packet is produced.
   while (clock_.TimeInMilliseconds() < test_duration_ms_) {
     clock_.AdvanceTimeMilliseconds(kBlockSizeMs);
-    RTC_CHECK(
-        audio_source_->Read(input_block_size_samples_, input_frame_.data_));
+    RTC_CHECK(audio_source_->Read(input_block_size_samples_,
+                                  input_frame_.mutable_data()));
     if (input_frame_.num_channels_ > 1) {
-      InputAudioFile::DuplicateInterleaved(input_frame_.data_,
+      InputAudioFile::DuplicateInterleaved(input_frame_.data(),
                                            input_block_size_samples_,
                                            input_frame_.num_channels_,
-                                           input_frame_.data_);
+                                           input_frame_.mutable_data());
     }
     data_to_send_ = false;
     RTC_CHECK_GE(acm_->Add10MsData(input_frame_), 0);

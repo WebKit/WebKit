@@ -16,6 +16,8 @@ rtc_static_library("audio_coder") {
   deps = [
     "..:webrtc_common",
     "../api/audio_codecs:builtin_audio_decoder_factory",
+    "../api/audio_codecs:builtin_audio_encoder_factory",
+    "../modules:module_api",
     "../modules/audio_coding",
     "../modules/audio_coding:audio_format_conversion",
     "../modules/audio_coding:rent_a_codec",
@@ -35,9 +37,10 @@ rtc_static_library("file_player") {
   deps = [
     ":audio_coder",
     "..:webrtc_common",
+    "../base:rtc_base_approved",
     "../common_audio",
+    "../modules:module_api",
     "../modules/media_file",
-    "../system_wrappers",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -54,8 +57,10 @@ rtc_static_library("file_recorder") {
   deps = [
     ":audio_coder",
     "..:webrtc_common",
+    "../audio/utility:audio_frame_operations",
     "../base:rtc_base_approved",
     "../common_audio",
+    "../modules:module_api",
     "../modules/media_file:media_file",
     "../system_wrappers",
   ]
@@ -74,16 +79,12 @@ rtc_static_library("voice_engine") {
     "channel_manager.h",
     "channel_proxy.cc",
     "channel_proxy.h",
-    "include/voe_audio_processing.h",
     "include/voe_base.h",
     "include/voe_codec.h",
     "include/voe_errors.h",
     "include/voe_file.h",
-    "include/voe_hardware.h",
-    "include/voe_neteq_stats.h",
     "include/voe_network.h",
     "include/voe_rtp_rtcp.h",
-    "include/voe_volume_control.h",
     "monitor_module.h",
     "output_mixer.cc",
     "output_mixer.h",
@@ -97,24 +98,16 @@ rtc_static_library("voice_engine") {
     "transport_feedback_packet_loss_tracker.h",
     "utility.cc",
     "utility.h",
-    "voe_audio_processing_impl.cc",
-    "voe_audio_processing_impl.h",
     "voe_base_impl.cc",
     "voe_base_impl.h",
     "voe_codec_impl.cc",
     "voe_codec_impl.h",
     "voe_file_impl.cc",
     "voe_file_impl.h",
-    "voe_hardware_impl.cc",
-    "voe_hardware_impl.h",
-    "voe_neteq_stats_impl.cc",
-    "voe_neteq_stats_impl.h",
     "voe_network_impl.cc",
     "voe_network_impl.h",
     "voe_rtp_rtcp_impl.cc",
     "voe_rtp_rtcp_impl.h",
-    "voe_volume_control_impl.cc",
-    "voe_volume_control_impl.h",
     "voice_engine_defines.h",
     "voice_engine_impl.cc",
     "voice_engine_impl.h",
@@ -138,19 +131,24 @@ rtc_static_library("voice_engine") {
     "../modules/audio_coding",
   ]
   deps = [
+    ":audio_level",
     ":file_player",
     ":file_recorder",
-    ":level_indicator",
     "..:webrtc_common",
     "../api:audio_mixer_api",
     "../api:call_api",
+    "../api:libjingle_peerconnection_api",
     "../api:transport_api",
     "../api/audio_codecs:audio_codecs_api",
     "../api/audio_codecs:builtin_audio_decoder_factory",
+    "../api/audio_codecs:builtin_audio_encoder_factory",
     "../audio/utility:audio_frame_operations",
     "../base:rtc_base_approved",
+    "../base:rtc_task_queue",
+    "../call:rtp_interfaces",
     "../common_audio",
     "../logging:rtc_event_log_api",
+    "../modules:module_api",
     "../modules/audio_coding:audio_format_conversion",
     "../modules/audio_coding:rent_a_codec",
     "../modules/audio_conference_mixer",
@@ -165,90 +163,28 @@ rtc_static_library("voice_engine") {
   ]
 }
 
-rtc_static_library("level_indicator") {
+rtc_static_library("audio_level") {
   sources = [
-    "level_indicator.cc",
-    "level_indicator.h",
+    "audio_level.cc",
+    "audio_level.h",
   ]
 
   deps = [
     "..:webrtc_common",
     "../base:rtc_base_approved",
     "../common_audio",
+    "../modules:module_api",
   ]
 }
 
 if (rtc_include_tests) {
-  config("channel_transport_warnings_config") {
-    if (is_win) {
-      cflags = [ "/wd4302" ]  # cast truncation
-
-      if (is_clang) {
-        # GN orders flags on a target before flags from configs. The default
-        # config adds -Wall, and this flag have to be after -Wall -- so they need
-        # to come from a config and cannot be on the target directly.
-        cflags += [
-          "-Wno-parentheses-equality",
-          "-Wno-reorder",
-          "-Wno-tautological-constant-out-of-range-compare",
-
-          # See https://bugs.chromium.org/p/webrtc/issues/detail?id=6268
-          # for -Wno-thread-safety-analysis
-          "-Wno-thread-safety-analysis",
-          "-Wno-unused-private-field",
-        ]
-      }
-    }
-  }
-
-  rtc_static_library("channel_transport") {
-    testonly = true
-    sources = [
-      "test/channel_transport/channel_transport.cc",
-      "test/channel_transport/channel_transport.h",
-      "test/channel_transport/traffic_control_win.cc",
-      "test/channel_transport/traffic_control_win.h",
-      "test/channel_transport/udp_socket2_manager_win.cc",
-      "test/channel_transport/udp_socket2_manager_win.h",
-      "test/channel_transport/udp_socket2_win.cc",
-      "test/channel_transport/udp_socket2_win.h",
-      "test/channel_transport/udp_socket_manager_posix.cc",
-      "test/channel_transport/udp_socket_manager_posix.h",
-      "test/channel_transport/udp_socket_manager_wrapper.cc",
-      "test/channel_transport/udp_socket_manager_wrapper.h",
-      "test/channel_transport/udp_socket_posix.cc",
-      "test/channel_transport/udp_socket_posix.h",
-      "test/channel_transport/udp_socket_wrapper.cc",
-      "test/channel_transport/udp_socket_wrapper.h",
-      "test/channel_transport/udp_transport.h",
-      "test/channel_transport/udp_transport_impl.cc",
-      "test/channel_transport/udp_transport_impl.h",
-    ]
-
-    configs += [ ":channel_transport_warnings_config" ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-
-    deps = [
-      ":voice_engine",
-      "..:webrtc_common",
-      "../api:transport_api",
-      "../base:rtc_base_approved",
-      "../system_wrappers",
-      "../test:test_support",
-      "//testing/gtest",
-    ]
-  }
-
   rtc_test("voice_engine_unittests") {
     deps = [
-      ":channel_transport",
       ":file_player",
       ":voice_engine",
       "../base:rtc_base_approved",
+      "../base:rtc_base_tests_utils",
+      "../modules:module_api",
       "../test:test_common",
       "//testing/gmock",
       "//testing/gtest",
@@ -275,12 +211,8 @@ if (rtc_include_tests) {
     sources = [
       "channel_unittest.cc",
       "file_player_unittests.cc",
-      "test/channel_transport/udp_socket_manager_unittest.cc",
-      "test/channel_transport/udp_socket_wrapper_unittest.cc",
-      "test/channel_transport/udp_transport_unittest.cc",
       "transport_feedback_packet_loss_tracker_unittest.cc",
       "utility_unittest.cc",
-      "voe_audio_processing_unittest.cc",
       "voe_base_unittest.cc",
       "voe_codec_unittest.cc",
       "voe_network_unittest.cc",
@@ -308,42 +240,15 @@ if (rtc_include_tests) {
     }
   }
 
-  rtc_executable("voe_cmd_test") {
-    testonly = true
-
-    deps = [
-      ":channel_transport",
-      ":voice_engine",
-      "..:webrtc_common",
-      "../base:rtc_base_approved",
-      "//testing/gtest",
-      "//third_party/gflags",
-      "//webrtc/logging:rtc_event_log_api",
-      "//webrtc/modules/audio_processing",
-      "//webrtc/system_wrappers",
-      "//webrtc/system_wrappers:system_wrappers_default",
-      "//webrtc/test:test_support",
-    ]
-
-    sources = [
-      "test/cmd_test/voe_cmd_test.cc",
-    ]
-
-    if (!build_with_chromium && is_clang) {
-      # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
-      suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
-    }
-  }
-
   if (!is_ios) {
     rtc_executable("voe_auto_test") {
       testonly = true
 
       deps = [
-        ":channel_transport",
         ":voice_engine",
         "..:webrtc_common",
         "../base:rtc_base_approved",
+        "../modules:module_api",
         "../modules/audio_device:audio_device",
         "../modules/audio_processing:audio_processing",
         "../modules/rtp_rtcp:rtp_rtcp",
@@ -361,8 +266,6 @@ if (rtc_include_tests) {
 
       sources = [
         "test/auto_test/automated_mode.cc",
-        "test/auto_test/extended/agc_config_test.cc",
-        "test/auto_test/extended/ec_metrics_test.cc",
         "test/auto_test/fakes/conference_transport.cc",
         "test/auto_test/fakes/conference_transport.h",
         "test/auto_test/fakes/loudest_filter.cc",
@@ -375,32 +278,17 @@ if (rtc_include_tests) {
         "test/auto_test/fixtures/before_initialization_fixture.h",
         "test/auto_test/fixtures/before_streaming_fixture.cc",
         "test/auto_test/fixtures/before_streaming_fixture.h",
-        "test/auto_test/standard/audio_processing_test.cc",
         "test/auto_test/standard/codec_before_streaming_test.cc",
         "test/auto_test/standard/codec_test.cc",
         "test/auto_test/standard/dtmf_test.cc",
-        "test/auto_test/standard/file_before_streaming_test.cc",
-        "test/auto_test/standard/file_test.cc",
-        "test/auto_test/standard/hardware_before_initializing_test.cc",
-        "test/auto_test/standard/hardware_test.cc",
-        "test/auto_test/standard/mixing_test.cc",
-        "test/auto_test/standard/neteq_stats_test.cc",
         "test/auto_test/standard/rtp_rtcp_before_streaming_test.cc",
         "test/auto_test/standard/rtp_rtcp_extensions.cc",
         "test/auto_test/standard/rtp_rtcp_test.cc",
-        "test/auto_test/standard/voe_base_misc_test.cc",
-        "test/auto_test/standard/volume_test.cc",
         "test/auto_test/voe_conference_test.cc",
         "test/auto_test/voe_standard_test.cc",
         "test/auto_test/voe_standard_test.h",
         "test/auto_test/voe_test_defines.h",
       ]
-
-      if (!is_android) {
-        # Some tests are not supported on android yet, exclude these tests.
-        sources +=
-            [ "test/auto_test/standard/hardware_before_streaming_test.cc" ]
-      }
 
       defines = []
 

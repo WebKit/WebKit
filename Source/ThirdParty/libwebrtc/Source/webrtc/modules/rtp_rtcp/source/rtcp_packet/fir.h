@@ -30,8 +30,8 @@ class Fir : public Psfb {
     uint8_t seq_nr;
   };
 
-  Fir() {}
-  ~Fir() override {}
+  Fir();
+  ~Fir() override;
 
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& packet);
@@ -41,7 +41,8 @@ class Fir : public Psfb {
   }
   const std::vector<Request>& requests() const { return items_; }
 
- protected:
+  size_t BlockLength() const override;
+
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
@@ -49,9 +50,7 @@ class Fir : public Psfb {
 
  private:
   static constexpr size_t kFciLength = 8;
-  size_t BlockLength() const override {
-    return kHeaderLength + kCommonFeedbackLength + kFciLength * items_.size();
-  }
+
   // SSRC of media source is not used in FIR packet. Shadow base functions.
   void SetMediaSsrc(uint32_t ssrc);
   uint32_t media_ssrc() const;

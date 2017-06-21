@@ -9,7 +9,6 @@
  */
 
 #include "webrtc/modules/audio_device/mac/audio_mixer_manager_mac.h"
-#include "webrtc/system_wrappers/include/trace.h"
 
 #include <unistd.h>  // getpid()
 
@@ -44,8 +43,7 @@ namespace webrtc {
   } while (0)
 
 AudioMixerManagerMac::AudioMixerManagerMac(const int32_t id)
-    : _critSect(*CriticalSectionWrapper::CreateCriticalSection()),
-      _id(id),
+    : _id(id),
       _inputDeviceID(kAudioObjectUnknown),
       _outputDeviceID(kAudioObjectUnknown),
       _noInputChannels(0),
@@ -57,10 +55,7 @@ AudioMixerManagerMac::AudioMixerManagerMac(const int32_t id)
 AudioMixerManagerMac::~AudioMixerManagerMac() {
   WEBRTC_TRACE(kTraceMemory, kTraceAudioDevice, _id, "%s destructed",
                __FUNCTION__);
-
   Close();
-
-  delete &_critSect;
 }
 
 // ============================================================================
@@ -70,7 +65,7 @@ AudioMixerManagerMac::~AudioMixerManagerMac() {
 int32_t AudioMixerManagerMac::Close() {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "%s", __FUNCTION__);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   CloseSpeaker();
   CloseMicrophone();
@@ -81,7 +76,7 @@ int32_t AudioMixerManagerMac::Close() {
 int32_t AudioMixerManagerMac::CloseSpeaker() {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "%s", __FUNCTION__);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   _outputDeviceID = kAudioObjectUnknown;
   _noOutputChannels = 0;
@@ -92,7 +87,7 @@ int32_t AudioMixerManagerMac::CloseSpeaker() {
 int32_t AudioMixerManagerMac::CloseMicrophone() {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id, "%s", __FUNCTION__);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   _inputDeviceID = kAudioObjectUnknown;
   _noInputChannels = 0;
@@ -104,7 +99,7 @@ int32_t AudioMixerManagerMac::OpenSpeaker(AudioDeviceID deviceID) {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id,
                "AudioMixerManagerMac::OpenSpeaker(id=%d)", deviceID);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   OSStatus err = noErr;
   UInt32 size = 0;
@@ -155,7 +150,7 @@ int32_t AudioMixerManagerMac::OpenMicrophone(AudioDeviceID deviceID) {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id,
                "AudioMixerManagerMac::OpenMicrophone(id=%d)", deviceID);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   OSStatus err = noErr;
   UInt32 size = 0;
@@ -216,7 +211,7 @@ int32_t AudioMixerManagerMac::SetSpeakerVolume(uint32_t volume) {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id,
                "AudioMixerManagerMac::SetSpeakerVolume(volume=%u)", volume);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_outputDeviceID == kAudioObjectUnknown) {
     WEBRTC_TRACE(kTraceWarning, kTraceAudioDevice, _id,
@@ -456,7 +451,7 @@ int32_t AudioMixerManagerMac::SetSpeakerMute(bool enable) {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id,
                "AudioMixerManagerMac::SetSpeakerMute(enable=%u)", enable);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_outputDeviceID == kAudioObjectUnknown) {
     WEBRTC_TRACE(kTraceWarning, kTraceAudioDevice, _id,
@@ -632,7 +627,7 @@ int32_t AudioMixerManagerMac::SetMicrophoneMute(bool enable) {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id,
                "AudioMixerManagerMac::SetMicrophoneMute(enable=%u)", enable);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_inputDeviceID == kAudioObjectUnknown) {
     WEBRTC_TRACE(kTraceWarning, kTraceAudioDevice, _id,
@@ -759,7 +754,7 @@ int32_t AudioMixerManagerMac::SetMicrophoneBoost(bool enable) {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id,
                "AudioMixerManagerMac::SetMicrophoneBoost(enable=%u)", enable);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_inputDeviceID == kAudioObjectUnknown) {
     WEBRTC_TRACE(kTraceWarning, kTraceAudioDevice, _id,
@@ -837,7 +832,7 @@ int32_t AudioMixerManagerMac::SetMicrophoneVolume(uint32_t volume) {
   WEBRTC_TRACE(kTraceInfo, kTraceAudioDevice, _id,
                "AudioMixerManagerMac::SetMicrophoneVolume(volume=%u)", volume);
 
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_inputDeviceID == kAudioObjectUnknown) {
     WEBRTC_TRACE(kTraceWarning, kTraceAudioDevice, _id,

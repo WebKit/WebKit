@@ -13,18 +13,19 @@
 #include "webrtc/sdk/android/src/jni/androidmediaencoder_jni.h"
 
 #include <algorithm>
-#include <memory>
 #include <list>
+#include <memory>
+#include <string>
+#include <utility>
 
 #include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
 #include "third_party/libyuv/include/libyuv/video_common.h"
-#include "webrtc/sdk/android/src/jni/androidmediacodeccommon.h"
-#include "webrtc/sdk/android/src/jni/classreferenceholder.h"
-#include "webrtc/sdk/android/src/jni/native_handle_impl.h"
+#include "webrtc/api/video_codecs/video_encoder.h"
 #include "webrtc/base/bind.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/base/random.h"
 #include "webrtc/base/sequenced_task_checker.h"
 #include "webrtc/base/task_queue.h"
 #include "webrtc/base/thread.h"
@@ -38,9 +39,11 @@
 #include "webrtc/modules/video_coding/include/video_codec_interface.h"
 #include "webrtc/modules/video_coding/utility/quality_scaler.h"
 #include "webrtc/modules/video_coding/utility/vp8_header_parser.h"
+#include "webrtc/modules/video_coding/utility/vp9_uncompressed_header_parser.h"
+#include "webrtc/sdk/android/src/jni/androidmediacodeccommon.h"
+#include "webrtc/sdk/android/src/jni/classreferenceholder.h"
+#include "webrtc/sdk/android/src/jni/native_handle_impl.h"
 #include "webrtc/system_wrappers/include/field_trial.h"
-#include "webrtc/system_wrappers/include/logcat_trace_context.h"
-#include "webrtc/video_encoder.h"
 
 using rtc::Bind;
 using rtc::Thread;
@@ -86,6 +89,7 @@ namespace {
 const size_t kFrameDiffThresholdMs = 350;
 const int kMinKeyFrameInterval = 6;
 const char kH264HighProfileFieldTrial[] = "WebRTC-H264HighProfile";
+const char kCustomQPThresholdsFieldTrial[] = "WebRTC-CustomQPThresholds";
 }  // namespace
 
 // MediaCodecVideoEncoder is a webrtc::VideoEncoder implementation that uses
@@ -122,7 +126,7 @@ class MediaCodecVideoEncoder : public webrtc::VideoEncoder {
  private:
   class EncodeTask : public rtc::QueuedTask {
    public:
-    EncodeTask(rtc::WeakPtr<MediaCodecVideoEncoder> encoder);
+    explicit EncodeTask(rtc::WeakPtr<MediaCodecVideoEncoder> encoder);
     bool Run() override;
 
    private:
@@ -180,6 +184,8 @@ class MediaCodecVideoEncoder : public webrtc::VideoEncoder {
   // Displays encoder statistics.
   void LogStatistics(bool force_log);
 
+  VideoCodecType GetCodecType() const;
+
 #if RTC_DCHECK_IS_ON
   // Mutex for protecting inited_. It is only used for correctness checking on
   // debug build. It is used for checking that encoder has been released in the
@@ -218,7 +224,6 @@ class MediaCodecVideoEncoder : public webrtc::VideoEncoder {
   int height_;  // Frame height in pixels.
   bool inited_;
   bool use_surface_;
-  uint16_t picture_id_;
   enum libyuv::FourCC encoder_fourcc_;  // Encoder color space format.
   int last_set_bitrate_kbps_;  // Last-requested bitrate in kbps.
   int last_set_fps_;  // Last-requested frame rate.
@@ -231,7 +236,7 @@ class MediaCodecVideoEncoder : public webrtc::VideoEncoder {
   int64_t stat_start_time_ms_;  // Start time for statistics.
   int current_frames_;  // Number of frames in the current statistics interval.
   int current_bytes_;  // Encoded bytes in the current statistics interval.
-  int current_acc_qp_; // Accumulated QP in the current statistics interval.
+  int current_acc_qp_;  // Accumulated QP in the current statistics interval.
   int current_encoding_time_ms_;  // Overall encoding time in the current second
   int64_t last_input_timestamp_ms_;  // Timestamp of last received yuv frame.
   int64_t last_output_timestamp_ms_;  // Timestamp of last encoded frame.
@@ -256,26 +261,27 @@ class MediaCodecVideoEncoder : public webrtc::VideoEncoder {
     const webrtc::VideoRotation rotation;
   };
   std::list<InputFrameInfo> input_frame_infos_;
-  int32_t output_timestamp_;      // Last output frame timestamp from
-                                  // |input_frame_infos_|.
-  int64_t output_render_time_ms_; // Last output frame render time from
-                                  // |input_frame_infos_|.
+  int32_t output_timestamp_;       // Last output frame timestamp from
+                                   // |input_frame_infos_|.
+  int64_t output_render_time_ms_;  // Last output frame render time from
+                                   // |input_frame_infos_|.
   webrtc::VideoRotation output_rotation_;  // Last output frame rotation from
                                            // |input_frame_infos_|.
+
   // Frame size in bytes fed to MediaCodec.
   int yuv_size_;
   // True only when between a callback_->OnEncodedImage() call return a positive
   // value and the next Encode() call being ignored.
   bool drop_next_input_frame_;
   bool scale_;
+  webrtc::H264::Profile profile_;
   // Global references; must be deleted in Release().
   std::vector<jobject> input_buffers_;
   webrtc::H264BitstreamParser h264_bitstream_parser_;
 
   // VP9 variables to populate codec specific structure.
-  webrtc::GofInfoVP9 gof_; // Contains each frame's temporal information for
-                           // non-flexible VP9 mode.
-  uint8_t tl0_pic_idx_;
+  webrtc::GofInfoVP9 gof_;  // Contains each frame's temporal information for
+                            // non-flexible VP9 mode.
   size_t gof_idx_;
 
   // EGL context - owned by factory, should not be allocated/destroyed
@@ -288,6 +294,10 @@ class MediaCodecVideoEncoder : public webrtc::VideoEncoder {
   int64_t last_frame_received_ms_;
   int frames_received_since_last_key_;
   webrtc::VideoCodecMode codec_mode_;
+
+  // RTP state.
+  uint16_t picture_id_;
+  uint8_t tl0_pic_idx_;
 
   bool sw_fallback_required_;
 
@@ -320,19 +330,16 @@ MediaCodecVideoEncoder::MediaCodecVideoEncoder(JNIEnv* jni,
                                      "()V"))),
       inited_(false),
       use_surface_(false),
-      picture_id_(0),
       egl_context_(egl_context),
       sw_fallback_required_(false) {
   encoder_queue_checker_.Detach();
 
   jclass j_output_buffer_info_class =
       FindClass(jni, "org/webrtc/MediaCodecVideoEncoder$OutputBufferInfo");
-  j_init_encode_method_ = GetMethodID(
-      jni,
-      *j_media_codec_video_encoder_class_,
-      "initEncode",
-      "(Lorg/webrtc/MediaCodecVideoEncoder$VideoCodecType;"
-      "IIIILorg/webrtc/EglBase14$Context;)Z");
+  j_init_encode_method_ =
+      GetMethodID(jni, *j_media_codec_video_encoder_class_, "initEncode",
+                  "(Lorg/webrtc/MediaCodecVideoEncoder$VideoCodecType;"
+                  "IIIIILorg/webrtc/EglBase14$Context;)Z");
   j_get_input_buffers_method_ = GetMethodID(
       jni,
       *j_media_codec_video_encoder_class_,
@@ -371,7 +378,10 @@ MediaCodecVideoEncoder::MediaCodecVideoEncoder(JNIEnv* jni,
     ALOGW << "MediaCodecVideoEncoder ctor failed.";
     ProcessHWError(true /* reset_if_fallback_unavailable */);
   }
-  srand(time(NULL));
+
+  webrtc::Random random(rtc::TimeMicros());
+  picture_id_ = random.Rand<uint16_t>() & 0x7FFF;
+  tl0_pic_idx_ = random.Rand<uint8_t>();
 }
 
 int32_t MediaCodecVideoEncoder::InitEncode(
@@ -384,8 +394,7 @@ int32_t MediaCodecVideoEncoder::InitEncode(
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
   // Factory should guard against other codecs being used with us.
-  const VideoCodecType codec_type = webrtc::PayloadNameToCodecType(codec_.name)
-                                        .value_or(webrtc::kVideoCodecUnknown);
+  const VideoCodecType codec_type = GetCodecType();
   RTC_CHECK(codec_settings->codecType == codec_type)
       << "Unsupported codec " << codec_settings->codecType << " for "
       << codec_type;
@@ -395,17 +404,29 @@ int32_t MediaCodecVideoEncoder::InitEncode(
   codec_mode_ = codec_settings->mode;
   int init_width = codec_settings->width;
   int init_height = codec_settings->height;
-  // Scaling is disabled for VP9, but optionally enabled for VP8.
+  // Scaling is optionally enabled for VP8 and VP9.
   // TODO(pbos): Extract automaticResizeOn out of VP8 settings.
   scale_ = false;
   if (codec_type == kVideoCodecVP8) {
     scale_ = codec_settings->VP8().automaticResizeOn;
-  } else if (codec_type != kVideoCodecVP9) {
+  } else if (codec_type == kVideoCodecVP9) {
+    scale_ = codec_settings->VP9().automaticResizeOn;
+  } else {
     scale_ = true;
   }
 
   ALOGD << "InitEncode request: " << init_width << " x " << init_height;
   ALOGD << "Encoder automatic resize " << (scale_ ? "enabled" : "disabled");
+
+  // Check allowed H.264 profile
+  profile_ = webrtc::H264::Profile::kProfileBaseline;
+  if (codec_type == kVideoCodecH264) {
+    const rtc::Optional<webrtc::H264::ProfileLevelId> profile_level_id =
+        webrtc::H264::ParseSdpProfileLevelId(codec_.params);
+    RTC_DCHECK(profile_level_id);
+    profile_ = profile_level_id->profile;
+    ALOGD << "H.264 profile: " << profile_;
+  }
 
   return InitEncodeInternal(
       init_width, init_height, codec_settings->startBitrate,
@@ -456,6 +477,11 @@ bool MediaCodecVideoEncoder::EncodeTask::Run() {
   // about it and let the next app-called API method reveal the borkedness.
   encoder_->DeliverPendingOutputs(jni);
 
+  if (!encoder_) {
+    // Encoder can be destroyed in DeliverPendingOutputs.
+    return true;
+  }
+
   // Call log statistics here so it's called even if no frames are being
   // delivered.
   encoder_->LogStatistics(false);
@@ -493,6 +519,11 @@ int32_t MediaCodecVideoEncoder::ProcessHWErrorOnEncode() {
                                : WEBRTC_VIDEO_CODEC_ERROR;
 }
 
+VideoCodecType MediaCodecVideoEncoder::GetCodecType() const {
+  return webrtc::PayloadNameToCodecType(codec_.name)
+      .value_or(webrtc::kVideoCodecUnknown);
+}
+
 int32_t MediaCodecVideoEncoder::InitEncodeInternal(int width,
                                                    int height,
                                                    int kbps,
@@ -506,10 +537,10 @@ int32_t MediaCodecVideoEncoder::InitEncodeInternal(int width,
   JNIEnv* jni = AttachCurrentThreadIfNeeded();
   ScopedLocalRefFrame local_ref_frame(jni);
 
-  const VideoCodecType codec_type = webrtc::PayloadNameToCodecType(codec_.name)
-                                        .value_or(webrtc::kVideoCodecUnknown);
-  ALOGD << "InitEncodeInternal Type: " << (int)codec_type << ", " << width
-        << " x " << height << ". Bitrate: " << kbps << " kbps. Fps: " << fps;
+  const VideoCodecType codec_type = GetCodecType();
+  ALOGD << "InitEncodeInternal Type: " << static_cast<int>(codec_type) << ", "
+        << width << " x " << height << ". Bitrate: " << kbps
+        << " kbps. Fps: " << fps << ". Profile: " << profile_ << ".";
   if (kbps == 0) {
     kbps = last_set_bitrate_kbps_;
   }
@@ -539,21 +570,17 @@ int32_t MediaCodecVideoEncoder::InitEncodeInternal(int width,
   input_frame_infos_.clear();
   drop_next_input_frame_ = false;
   use_surface_ = use_surface;
-  picture_id_ = static_cast<uint16_t>(rand()) & 0x7FFF;
   gof_.SetGofInfoVP9(webrtc::TemporalStructureMode::kTemporalStructureMode1);
-  tl0_pic_idx_ = static_cast<uint8_t>(rand());
   gof_idx_ = 0;
   last_frame_received_ms_ = -1;
   frames_received_since_last_key_ = kMinKeyFrameInterval;
-  weak_factory_.reset(new rtc::WeakPtrFactory<MediaCodecVideoEncoder>(this));
-  encode_task_.reset(new EncodeTask(weak_factory_->GetWeakPtr()));
 
   // We enforce no extra stride/padding in the format creation step.
   jobject j_video_codec_enum = JavaEnumFromIndexAndClassName(
       jni, "MediaCodecVideoEncoder$VideoCodecType", codec_type);
   const bool encode_status = jni->CallBooleanMethod(
-      *j_media_codec_video_encoder_, j_init_encode_method_,
-      j_video_codec_enum, width, height, kbps, fps,
+      *j_media_codec_video_encoder_, j_init_encode_method_, j_video_codec_enum,
+      profile_, width, height, kbps, fps,
       (use_surface ? egl_context_ : nullptr));
   if (!encode_status) {
     ALOGE << "Failed to configure encoder.";
@@ -620,6 +647,9 @@ int32_t MediaCodecVideoEncoder::InitEncodeInternal(int width,
 #endif
     inited_ = true;
   }
+  weak_factory_.reset(new rtc::WeakPtrFactory<MediaCodecVideoEncoder>(this));
+  encode_task_.reset(new EncodeTask(weak_factory_->GetWeakPtr()));
+
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -664,7 +694,7 @@ int32_t MediaCodecVideoEncoder::Encode(
   }
   if (frames_encoded_ < kMaxEncodedLogFrames) {
     ALOGD << "Encoder frame in # " << (frames_received_ - 1)
-          << ". TS: " << (int)(current_timestamp_us_ / 1000)
+          << ". TS: " << static_cast<int>(current_timestamp_us_ / 1000)
           << ". Q: " << input_frame_infos_.size() << ". Fps: " << last_set_fps_
           << ". Kbps: " << last_set_bitrate_kbps_;
   }
@@ -684,7 +714,7 @@ int32_t MediaCodecVideoEncoder::Encode(
   if (input_frame_infos_.size() > MAX_ENCODER_Q_SIZE) {
     ALOGD << "Already " << input_frame_infos_.size()
           << " frames in the queue, dropping"
-          << ". TS: " << (int)(current_timestamp_us_ / 1000)
+          << ". TS: " << static_cast<int>(current_timestamp_us_ / 1000)
           << ". Fps: " << last_set_fps_
           << ". Consecutive drops: " << consecutive_full_queue_frame_drops_;
     current_timestamp_us_ += rtc::kNumMicrosecsPerSec / last_set_fps_;
@@ -713,7 +743,8 @@ int32_t MediaCodecVideoEncoder::Encode(
   const bool key_frame =
       frame_types->front() != webrtc::kVideoFrameDelta || send_key_frame;
   bool encode_status = true;
-  if (!input_frame.video_frame_buffer()->native_handle()) {
+  if (input_frame.video_frame_buffer()->type() !=
+      webrtc::VideoFrameBuffer::Type::kNative) {
     int j_input_buffer_index = jni->CallIntMethod(
         *j_media_codec_video_encoder_, j_dequeue_input_buffer_method_);
     if (CheckException(jni)) {
@@ -773,9 +804,7 @@ bool MediaCodecVideoEncoder::MaybeReconfigureEncoder(
     const webrtc::VideoFrame& frame) {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&encoder_queue_checker_);
 
-  const bool is_texture_frame =
-      frame.video_frame_buffer()->native_handle() != nullptr;
-  const bool reconfigure_due_to_format = is_texture_frame != use_surface_;
+  const bool reconfigure_due_to_format = frame.is_texture() != use_surface_;
   const bool reconfigure_due_to_size =
       frame.width() != width_ || frame.height() != height_;
 
@@ -800,7 +829,7 @@ bool MediaCodecVideoEncoder::MaybeReconfigureEncoder(
 
   Release();
 
-  return InitEncodeInternal(width_, height_, 0, 0, is_texture_frame) ==
+  return InitEncodeInternal(width_, height_, 0, 0, frame.is_texture()) ==
          WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -820,13 +849,11 @@ bool MediaCodecVideoEncoder::EncodeByteBuffer(JNIEnv* jni,
     return false;
   }
   RTC_CHECK(yuv_buffer) << "Indirect buffer??";
+  rtc::scoped_refptr<webrtc::I420BufferInterface> i420_buffer =
+      frame.video_frame_buffer()->ToI420();
   RTC_CHECK(!libyuv::ConvertFromI420(
-      frame.video_frame_buffer()->DataY(),
-      frame.video_frame_buffer()->StrideY(),
-      frame.video_frame_buffer()->DataU(),
-      frame.video_frame_buffer()->StrideU(),
-      frame.video_frame_buffer()->DataV(),
-      frame.video_frame_buffer()->StrideV(),
+      i420_buffer->DataY(), i420_buffer->StrideY(), i420_buffer->DataU(),
+      i420_buffer->StrideU(), i420_buffer->DataV(), i420_buffer->StrideV(),
       yuv_buffer, width_, width_, height_, encoder_fourcc_))
       << "ConvertFromI420 failed";
 
@@ -849,15 +876,14 @@ bool MediaCodecVideoEncoder::EncodeTexture(JNIEnv* jni,
                                            const webrtc::VideoFrame& frame) {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&encoder_queue_checker_);
   RTC_CHECK(use_surface_);
-  NativeHandleImpl* handle = static_cast<NativeHandleImpl*>(
-      frame.video_frame_buffer()->native_handle());
-  jfloatArray sampling_matrix = handle->sampling_matrix.ToJava(jni);
-  bool encode_status = jni->CallBooleanMethod(*j_media_codec_video_encoder_,
-                                              j_encode_texture_method_,
-                                              key_frame,
-                                              handle->oes_texture_id,
-                                              sampling_matrix,
-                                              current_timestamp_us_);
+  NativeHandleImpl handle =
+      static_cast<AndroidTextureBuffer*>(frame.video_frame_buffer().get())
+          ->native_handle_impl();
+
+  jfloatArray sampling_matrix = handle.sampling_matrix.ToJava(jni);
+  bool encode_status = jni->CallBooleanMethod(
+      *j_media_codec_video_encoder_, j_encode_texture_method_, key_frame,
+      handle.oes_texture_id, sampling_matrix, current_timestamp_us_);
   if (CheckException(jni)) {
     ALOGE << "Exception in encode texture.";
     ProcessHWError(true /* reset_if_fallback_unavailable */);
@@ -884,6 +910,8 @@ int32_t MediaCodecVideoEncoder::Release() {
   ALOGD << "EncoderRelease: Frames received: " << frames_received_
         << ". Encoded: " << frames_encoded_
         << ". Dropped: " << frames_dropped_media_encoder_;
+  encode_task_.reset(nullptr);
+  weak_factory_.reset(nullptr);
   ScopedLocalRefFrame local_ref_frame(jni);
   for (size_t i = 0; i < input_buffers_.size(); ++i)
     jni->DeleteGlobalRef(input_buffers_[i]);
@@ -901,8 +929,6 @@ int32_t MediaCodecVideoEncoder::Release() {
     inited_ = false;
   }
   use_surface_ = false;
-  encode_task_.reset(nullptr);
-  weak_factory_.reset(nullptr);
   ALOGD << "EncoderRelease done.";
   return WEBRTC_VIDEO_CODEC_OK;
 }
@@ -1016,9 +1042,7 @@ bool MediaCodecVideoEncoder::DeliverPendingOutputs(JNIEnv* jni) {
     }
 
     // Callback - return encoded frame.
-    const VideoCodecType codec_type =
-        webrtc::PayloadNameToCodecType(codec_.name)
-            .value_or(webrtc::kVideoCodecUnknown);
+    const VideoCodecType codec_type = GetCodecType();
     webrtc::EncodedImageCallback::Result callback_result(
         webrtc::EncodedImageCallback::Result::OK);
     if (callback_) {
@@ -1029,6 +1053,11 @@ bool MediaCodecVideoEncoder::DeliverPendingOutputs(JNIEnv* jni) {
       image->_timeStamp = output_timestamp_;
       image->capture_time_ms_ = output_render_time_ms_;
       image->rotation_ = output_rotation_;
+      image->content_type_ =
+          (codec_mode_ == webrtc::VideoCodecMode::kScreensharing)
+              ? webrtc::VideoContentType::SCREENSHARE
+              : webrtc::VideoContentType::UNSPECIFIED;
+      image->timing_.is_timing_frame = false;
       image->_frameType =
           (key_frame ? webrtc::kVideoFrameKey : webrtc::kVideoFrameDelta);
       image->_completeFrame = true;
@@ -1084,6 +1113,12 @@ bool MediaCodecVideoEncoder::DeliverPendingOutputs(JNIEnv* jni) {
             current_acc_qp_ += qp;
             image->qp_ = qp;
           }
+        } else if (codec_type == kVideoCodecVP9) {
+          int qp;
+          if (webrtc::vp9::GetQp(payload, payload_size, &qp)) {
+            current_acc_qp_ += qp;
+            image->qp_ = qp;
+          }
         }
       } else if (codec_type == kVideoCodecH264) {
         h264_bitstream_parser_.ParseBitstream(payload, payload_size);
@@ -1129,14 +1164,13 @@ bool MediaCodecVideoEncoder::DeliverPendingOutputs(JNIEnv* jni) {
       frame_encoding_time_ms = rtc::TimeMillis() - encoding_start_time_ms;
     }
     if (frames_encoded_ < kMaxEncodedLogFrames) {
-      int current_latency =
-          (int)(last_input_timestamp_ms_ - last_output_timestamp_ms_);
-      ALOGD << "Encoder frame out # " << frames_encoded_ <<
-          ". Key: " << key_frame <<
-          ". Size: " << payload_size <<
-          ". TS: " << (int)last_output_timestamp_ms_ <<
-          ". Latency: " << current_latency <<
-          ". EncTime: " << frame_encoding_time_ms;
+      int current_latency = static_cast<int>(last_input_timestamp_ms_ -
+                                             last_output_timestamp_ms_);
+      ALOGD << "Encoder frame out # " << frames_encoded_
+            << ". Key: " << key_frame << ". Size: " << payload_size
+            << ". TS: " << static_cast<int>(last_output_timestamp_ms_)
+            << ". Latency: " << current_latency
+            << ". EncTime: " << frame_encoding_time_ms;
     }
 
     // Calculate and print encoding statistics - every 3 seconds.
@@ -1180,6 +1214,33 @@ void MediaCodecVideoEncoder::LogStatistics(bool force_log) {
 
 webrtc::VideoEncoder::ScalingSettings
 MediaCodecVideoEncoder::GetScalingSettings() const {
+  if (webrtc::field_trial::IsEnabled(kCustomQPThresholdsFieldTrial)) {
+    const VideoCodecType codec_type = GetCodecType();
+    std::string experiment_string =
+        webrtc::field_trial::FindFullName(kCustomQPThresholdsFieldTrial);
+    ALOGD << "QP custom thresholds: " << experiment_string << " for codec "
+          << codec_type;
+    int low_vp8_qp_threshold;
+    int high_vp8_qp_threshold;
+    int low_h264_qp_threshold;
+    int high_h264_qp_threshold;
+    int parsed_values = sscanf(experiment_string.c_str(), "Enabled-%u,%u,%u,%u",
+                               &low_vp8_qp_threshold, &high_vp8_qp_threshold,
+                               &low_h264_qp_threshold, &high_h264_qp_threshold);
+    if (parsed_values == 4) {
+      RTC_CHECK_GT(high_vp8_qp_threshold, low_vp8_qp_threshold);
+      RTC_CHECK_GT(low_vp8_qp_threshold, 0);
+      RTC_CHECK_GT(high_h264_qp_threshold, low_h264_qp_threshold);
+      RTC_CHECK_GT(low_h264_qp_threshold, 0);
+      if (codec_type == kVideoCodecVP8) {
+        return VideoEncoder::ScalingSettings(scale_, low_vp8_qp_threshold,
+                                             high_vp8_qp_threshold);
+      } else if (codec_type == kVideoCodecH264) {
+        return VideoEncoder::ScalingSettings(scale_, low_h264_qp_threshold,
+                                             high_h264_qp_threshold);
+      }
+    }
+  }
   return VideoEncoder::ScalingSettings(scale_);
 }
 
@@ -1201,7 +1262,7 @@ MediaCodecVideoEncoderFactory::MediaCodecVideoEncoderFactory()
   CHECK_EXCEPTION(jni);
   if (is_vp8_hw_supported) {
     ALOGD << "VP8 HW Encoder supported.";
-    supported_codecs_.push_back(cricket::VideoCodec("VP8"));
+    supported_codecs_.push_back(cricket::VideoCodec(cricket::kVp8CodecName));
   }
 
   bool is_vp9_hw_supported = jni->CallStaticBooleanMethod(
@@ -1210,7 +1271,7 @@ MediaCodecVideoEncoderFactory::MediaCodecVideoEncoderFactory()
   CHECK_EXCEPTION(jni);
   if (is_vp9_hw_supported) {
     ALOGD << "VP9 HW Encoder supported.";
-    supported_codecs_.push_back(cricket::VideoCodec("VP9"));
+    supported_codecs_.push_back(cricket::VideoCodec(cricket::kVp9CodecName));
   }
   supported_codecs_with_h264_hp_ = supported_codecs_;
 

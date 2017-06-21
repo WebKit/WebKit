@@ -21,6 +21,7 @@
 
 namespace webrtc {
 
+class ApmDataDumper;
 class AudioBuffer;
 class EchoDetector;
 
@@ -52,6 +53,8 @@ class ResidualEchoDetector {
   }
 
  private:
+  static int instance_count_;
+  std::unique_ptr<ApmDataDumper> data_dumper_;
   // Keep track if the |Process| function has been previously called.
   bool first_process_call_ = true;
   // Buffer for storing the power of incoming farend buffers. This is needed for
@@ -82,6 +85,8 @@ class ResidualEchoDetector {
   // Reliability of the current likelihood.
   float reliability_ = 0.f;
   MovingMax recent_likelihood_max_;
+
+  int log_counter_ = 0;
 };
 
 }  // namespace webrtc

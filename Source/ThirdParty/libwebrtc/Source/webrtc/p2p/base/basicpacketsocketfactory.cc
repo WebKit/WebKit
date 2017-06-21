@@ -114,10 +114,27 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   }
 
   if (BindSocket(socket, local_address, 0, 0) < 0) {
-    LOG(LS_ERROR) << "TCP bind failed with error "
-                  << socket->GetError();
-    delete socket;
-    return NULL;
+    // Allow BindSocket to fail if we're binding to the ANY address, since this
+    // is mostly redundant in the first place. The socket will be bound when we
+    // call Connect() instead.
+    if (local_address.IsAnyIP()) {
+      LOG(LS_WARNING) << "TCP bind failed with error " << socket->GetError()
+                      << "; ignoring since socket is using 'any' address.";
+    } else {
+      LOG(LS_ERROR) << "TCP bind failed with error " << socket->GetError();
+      delete socket;
+      return NULL;
+    }
+  }
+
+  // If using a proxy, wrap the socket in a proxy socket.
+  if (proxy_info.type == PROXY_SOCKS5) {
+    socket = new AsyncSocksProxySocket(
+        socket, proxy_info.address, proxy_info.username, proxy_info.password);
+  } else if (proxy_info.type == PROXY_HTTPS) {
+    socket =
+        new AsyncHttpsProxySocket(socket, user_agent, proxy_info.address,
+                                  proxy_info.username, proxy_info.password);
   }
 
   // Assert that at most one TLS option is used.

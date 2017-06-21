@@ -17,7 +17,7 @@ namespace webrtc {
 
 TEST(TestI420BufferPool, SimpleFrameReuse) {
   I420BufferPool pool;
-  rtc::scoped_refptr<VideoFrameBuffer> buffer = pool.CreateBuffer(16, 16);
+  rtc::scoped_refptr<I420BufferInterface> buffer = pool.CreateBuffer(16, 16);
   EXPECT_EQ(16, buffer->width());
   EXPECT_EQ(16, buffer->height());
   // Extract non-refcounted pointers for testing.
@@ -37,7 +37,7 @@ TEST(TestI420BufferPool, SimpleFrameReuse) {
 
 TEST(TestI420BufferPool, FailToReuse) {
   I420BufferPool pool;
-  rtc::scoped_refptr<VideoFrameBuffer> buffer = pool.CreateBuffer(16, 16);
+  rtc::scoped_refptr<I420BufferInterface> buffer = pool.CreateBuffer(16, 16);
   // Extract non-refcounted pointers for testing.
   const uint8_t* u_ptr = buffer->DataU();
   const uint8_t* v_ptr = buffer->DataV();
@@ -65,7 +65,7 @@ TEST(TestI420BufferPool, FrameValidAfterPoolDestruction) {
 
 TEST(TestI420BufferPool, MaxNumberOfBuffers) {
   I420BufferPool pool(false, 1);
-  rtc::scoped_refptr<VideoFrameBuffer> buffer1 = pool.CreateBuffer(16, 16);
+  rtc::scoped_refptr<I420BufferInterface> buffer1 = pool.CreateBuffer(16, 16);
   EXPECT_NE(nullptr, buffer1.get());
   EXPECT_EQ(nullptr, pool.CreateBuffer(16, 16).get());
 }

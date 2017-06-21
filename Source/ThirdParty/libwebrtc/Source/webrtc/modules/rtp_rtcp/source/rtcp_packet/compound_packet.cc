@@ -15,6 +15,10 @@
 namespace webrtc {
 namespace rtcp {
 
+CompoundPacket::CompoundPacket() = default;
+
+CompoundPacket::~CompoundPacket() = default;
+
 void CompoundPacket::Append(RtcpPacket* packet) {
   RTC_CHECK(packet);
   appended_packets_.push_back(packet);

@@ -41,6 +41,7 @@ public class SurfaceViewRenderer
   private RendererCommon.RendererEvents rendererEvents;
 
   private final Object layoutLock = new Object();
+  private boolean isRenderingPaused = false;
   private boolean isFirstFrameRendered;
   private int rotatedFrameWidth;
   private int rotatedFrameHeight;
@@ -111,21 +112,23 @@ public class SurfaceViewRenderer
   /**
    * Register a callback to be invoked when a new video frame has been received.
    *
-   * @param listener The callback to be invoked.
+   * @param listener The callback to be invoked. The callback will be invoked on the render thread.
+   *                 It should be lightweight and must not call removeFrameListener.
    * @param scale    The scale of the Bitmap passed to the callback, or 0 if no Bitmap is
    *                 required.
    * @param drawer   Custom drawer to use for this frame listener.
    */
   public void addFrameListener(
-      EglRenderer.FrameListener listener, float scale, final RendererCommon.GlDrawer drawer) {
-    eglRenderer.addFrameListener(listener, scale, drawer);
+      EglRenderer.FrameListener listener, float scale, RendererCommon.GlDrawer drawerParam) {
+    eglRenderer.addFrameListener(listener, scale, drawerParam);
   }
 
   /**
    * Register a callback to be invoked when a new video frame has been received. This version uses
    * the drawer of the EglRenderer that was passed in init.
    *
-   * @param listener The callback to be invoked.
+   * @param listener The callback to be invoked. The callback will be invoked on the render thread.
+   *                 It should be lightweight and must not call removeFrameListener.
    * @param scale    The scale of the Bitmap passed to the callback, or 0 if no Bitmap is
    *                 required.
    */
@@ -175,14 +178,23 @@ public class SurfaceViewRenderer
    *            reduction.
    */
   public void setFpsReduction(float fps) {
+    synchronized (layoutLock) {
+      isRenderingPaused = fps == 0f;
+    }
     eglRenderer.setFpsReduction(fps);
   }
 
   public void disableFpsReduction() {
+    synchronized (layoutLock) {
+      isRenderingPaused = false;
+    }
     eglRenderer.disableFpsReduction();
   }
 
   public void pauseVideo() {
+    synchronized (layoutLock) {
+      isRenderingPaused = true;
+    }
     eglRenderer.pauseVideo();
   }
 
@@ -293,6 +305,9 @@ public class SurfaceViewRenderer
   // Update frame dimensions and report any changes to |rendererEvents|.
   private void updateFrameDimensionsAndReportEvents(VideoRenderer.I420Frame frame) {
     synchronized (layoutLock) {
+      if (isRenderingPaused) {
+        return;
+      }
       if (!isFirstFrameRendered) {
         isFirstFrameRendered = true;
         logD("Reporting first rendered frame.");

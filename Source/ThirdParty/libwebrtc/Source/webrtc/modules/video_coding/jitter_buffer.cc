@@ -27,7 +27,6 @@
 #include "webrtc/modules/video_coding/jitter_estimator.h"
 #include "webrtc/modules/video_coding/packet.h"
 #include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/event_wrapper.h"
 #include "webrtc/system_wrappers/include/field_trial.h"
 #include "webrtc/system_wrappers/include/metrics.h"
@@ -221,7 +220,6 @@ VCMJitterBuffer::VCMJitterBuffer(Clock* clock,
                                  KeyFrameRequestSender* keyframe_request_sender)
     : clock_(clock),
       running_(false),
-      crit_sect_(CriticalSectionWrapper::CreateCriticalSection()),
       frame_event_(std::move(event)),
       max_number_of_frames_(kStartNumberOfFrames),
       free_frames_(),
@@ -272,7 +270,6 @@ VCMJitterBuffer::~VCMJitterBuffer() {
        it != decodable_frames_.end(); ++it) {
     delete it->second;
   }
-  delete crit_sect_;
 }
 
 void VCMJitterBuffer::UpdateHistograms() {
@@ -304,7 +301,7 @@ void VCMJitterBuffer::UpdateHistograms() {
 }
 
 void VCMJitterBuffer::Start() {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   running_ = true;
   incoming_frame_count_ = 0;
   incoming_frame_rate_ = 0;
@@ -332,7 +329,7 @@ void VCMJitterBuffer::Start() {
 }
 
 void VCMJitterBuffer::Stop() {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   UpdateHistograms();
   running_ = false;
   last_decoded_state_.Reset();
@@ -342,12 +339,12 @@ void VCMJitterBuffer::Stop() {
 }
 
 bool VCMJitterBuffer::Running() const {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   return running_;
 }
 
 void VCMJitterBuffer::Flush() {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   decodable_frames_.Reset(&free_frames_);
   incomplete_frames_.Reset(&free_frames_);
   last_decoded_state_.Reset();  // TODO(mikhal): sync reset.
@@ -364,22 +361,22 @@ void VCMJitterBuffer::Flush() {
 
 // Get received key and delta frames
 FrameCounts VCMJitterBuffer::FrameStatistics() const {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   return receive_statistics_;
 }
 
 int VCMJitterBuffer::num_packets() const {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   return num_packets_;
 }
 
 int VCMJitterBuffer::num_duplicated_packets() const {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   return num_duplicated_packets_;
 }
 
 int VCMJitterBuffer::num_discarded_packets() const {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   return num_discarded_packets_;
 }
 
@@ -388,7 +385,7 @@ void VCMJitterBuffer::IncomingRateStatistics(unsigned int* framerate,
                                              unsigned int* bitrate) {
   assert(framerate);
   assert(bitrate);
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   const int64_t now = clock_->TimeInMilliseconds();
   int64_t diff = now - time_last_incoming_frame_count_;
   if (diff < 1000 && incoming_frame_rate_ > 0 && incoming_bit_rate_ > 0) {
@@ -445,9 +442,9 @@ void VCMJitterBuffer::IncomingRateStatistics(unsigned int* framerate,
 // Returns immediately or a |max_wait_time_ms| ms event hang waiting for a
 // complete frame, |max_wait_time_ms| decided by caller.
 VCMEncodedFrame* VCMJitterBuffer::NextCompleteFrame(uint32_t max_wait_time_ms) {
-  crit_sect_->Enter();
+  crit_sect_.Enter();
   if (!running_) {
-    crit_sect_->Leave();
+    crit_sect_.Leave();
     return nullptr;
   }
   CleanUpOldOrEmptyFrames();
@@ -458,14 +455,14 @@ VCMEncodedFrame* VCMJitterBuffer::NextCompleteFrame(uint32_t max_wait_time_ms) {
         clock_->TimeInMilliseconds() + max_wait_time_ms;
     int64_t wait_time_ms = max_wait_time_ms;
     while (wait_time_ms > 0) {
-      crit_sect_->Leave();
+      crit_sect_.Leave();
       const EventTypeWrapper ret =
           frame_event_->Wait(static_cast<uint32_t>(wait_time_ms));
-      crit_sect_->Enter();
+      crit_sect_.Enter();
       if (ret == kEventSignaled) {
         // Are we shutting down the jitter buffer?
         if (!running_) {
-          crit_sect_->Leave();
+          crit_sect_.Leave();
           return nullptr;
         }
         // Finding oldest frame ready for decoder.
@@ -483,16 +480,16 @@ VCMEncodedFrame* VCMJitterBuffer::NextCompleteFrame(uint32_t max_wait_time_ms) {
   }
   if (decodable_frames_.empty() ||
       decodable_frames_.Front()->GetState() != kStateComplete) {
-    crit_sect_->Leave();
+    crit_sect_.Leave();
     return nullptr;
   }
   VCMEncodedFrame* encoded_frame = decodable_frames_.Front();
-  crit_sect_->Leave();
+  crit_sect_.Leave();
   return encoded_frame;
 }
 
 bool VCMJitterBuffer::NextMaybeIncompleteTimestamp(uint32_t* timestamp) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   if (!running_) {
     return false;
   }
@@ -529,7 +526,7 @@ bool VCMJitterBuffer::NextMaybeIncompleteTimestamp(uint32_t* timestamp) {
 }
 
 VCMEncodedFrame* VCMJitterBuffer::ExtractAndSetDecode(uint32_t timestamp) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   if (!running_) {
     return NULL;
   }
@@ -583,7 +580,7 @@ VCMEncodedFrame* VCMJitterBuffer::ExtractAndSetDecode(uint32_t timestamp) {
 // frames from within the jitter buffer.
 void VCMJitterBuffer::ReleaseFrame(VCMEncodedFrame* frame) {
   RTC_CHECK(frame != nullptr);
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   VCMFrameBuffer* frame_buffer = static_cast<VCMFrameBuffer*>(frame);
   RecycleFrameBuffer(frame_buffer);
 }
@@ -624,7 +621,7 @@ VCMFrameBufferEnum VCMJitterBuffer::GetFrame(const VCMPacket& packet,
 int64_t VCMJitterBuffer::LastPacketTime(const VCMEncodedFrame* frame,
                                         bool* retransmitted) const {
   assert(retransmitted);
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   const VCMFrameBuffer* frame_buffer =
       static_cast<const VCMFrameBuffer*>(frame);
   *retransmitted = (frame_buffer->GetNackCount() > 0);
@@ -633,7 +630,7 @@ int64_t VCMJitterBuffer::LastPacketTime(const VCMEncodedFrame* frame,
 
 VCMFrameBufferEnum VCMJitterBuffer::InsertPacket(const VCMPacket& packet,
                                                  bool* retransmitted) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
 
   ++num_packets_;
   if (num_packets_ == 1) {
@@ -880,7 +877,7 @@ void VCMJitterBuffer::FindAndInsertContinuousFramesWithState(
 }
 
 uint32_t VCMJitterBuffer::EstimatedJitterMs() {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   // Compute RTT multiplier for estimation.
   // low_rtt_nackThresholdMs_ == -1 means no FEC.
   double rtt_mult = 1.0f;
@@ -894,7 +891,7 @@ uint32_t VCMJitterBuffer::EstimatedJitterMs() {
 }
 
 void VCMJitterBuffer::UpdateRtt(int64_t rtt_ms) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   rtt_ms_ = rtt_ms;
   jitter_estimate_.UpdateRtt(rtt_ms);
   if (!WaitForRetransmissions())
@@ -904,7 +901,7 @@ void VCMJitterBuffer::UpdateRtt(int64_t rtt_ms) {
 void VCMJitterBuffer::SetNackMode(VCMNackMode mode,
                                   int64_t low_rtt_nack_threshold_ms,
                                   int64_t high_rtt_nack_threshold_ms) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   nack_mode_ = mode;
   if (mode == kNoNack) {
     missing_sequence_numbers_.clear();
@@ -928,7 +925,7 @@ void VCMJitterBuffer::SetNackMode(VCMNackMode mode,
 void VCMJitterBuffer::SetNackSettings(size_t max_nack_list_size,
                                       int max_packet_age_to_nack,
                                       int max_incomplete_time_ms) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   assert(max_packet_age_to_nack >= 0);
   assert(max_incomplete_time_ms_ >= 0);
   max_nack_list_size_ = max_nack_list_size;
@@ -937,7 +934,7 @@ void VCMJitterBuffer::SetNackSettings(size_t max_nack_list_size,
 }
 
 VCMNackMode VCMJitterBuffer::nack_mode() const {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   return nack_mode_;
 }
 
@@ -964,7 +961,7 @@ uint16_t VCMJitterBuffer::EstimatedLowSequenceNumber(
 }
 
 std::vector<uint16_t> VCMJitterBuffer::GetNackList(bool* request_key_frame) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   *request_key_frame = false;
   if (nack_mode_ == kNoNack) {
     return std::vector<uint16_t>();
@@ -1024,7 +1021,7 @@ std::vector<uint16_t> VCMJitterBuffer::GetNackList(bool* request_key_frame) {
 }
 
 void VCMJitterBuffer::SetDecodeErrorMode(VCMDecodeErrorMode error_mode) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   decode_error_mode_ = error_mode;
 }
 
@@ -1124,7 +1121,7 @@ void VCMJitterBuffer::DropPacketsFromNackList(
 
 void VCMJitterBuffer::RegisterStatsCallback(
     VCMReceiveStatisticsCallback* callback) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   stats_callback_ = callback;
 }
 

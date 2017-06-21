@@ -71,22 +71,8 @@ class VideoCodingModule : public Module {
  public:
   enum SenderNackMode { kNackNone, kNackAll, kNackSelective };
 
-  enum ReceiverRobustness { kNone, kHardNack, kSoftNack, kReferenceSelection };
-
+  // DEPRECATED.
   static VideoCodingModule* Create(Clock* clock, EventFactory* event_factory);
-
-  static VideoCodingModule* Create(
-      Clock* clock,
-      VCMQMSettingsCallback* qm_settings_callback,
-      NackSender* nack_sender,
-      KeyFrameRequestSender* keyframe_request_sender,
-      EncodedImageCallback* pre_decode_image_callback);
-
-  static VideoCodingModule* Create(
-      Clock* clock,
-      EventFactory* event_factory,
-      NackSender* nack_sender,
-      KeyFrameRequestSender* keyframe_request_sender);
 
   // Get supported codec settings using codec type
   //
@@ -311,18 +297,6 @@ class VideoCodingModule : public Module {
   virtual int32_t RegisterReceiveStatisticsCallback(
       VCMReceiveStatisticsCallback* receiveStats) = 0;
 
-  // Register a decoder timing callback which will be called to deliver
-  // information about the timing of the decoder in the receiving side of the
-  // VCM, for instance the current and maximum frame decode latency.
-  //
-  // Input:
-  //      - decoderTiming  : The callback object to register.
-  //
-  // Return value      : VCM_OK, on success.
-  //                     < 0,    on error.
-  virtual int32_t RegisterDecoderTimingCallback(
-      VCMDecoderTimingCallback* decoderTiming) = 0;
-
   // Register a frame type request callback. This callback will be called when
   // the
   // module needs to request specific frame types from the send side.
@@ -359,22 +333,6 @@ class VideoCodingModule : public Module {
   // Return value      : VCM_OK, on success.
   //                     < 0,    on error.
   virtual int32_t Decode(uint16_t maxWaitTimeMs = 200) = 0;
-
-  // API to get the codec which is currently used for decoding by the module.
-  //
-  // Input:
-  //      - currentReceiveCodec      : Settings for the codec to be registered.
-  //
-  // Return value      : VCM_OK, on success.
-  //                     < 0,    on error.
-  virtual int32_t ReceiveCodec(VideoCodec* currentReceiveCodec) const = 0;
-
-  // API to get the codec type currently used for decoding by the module.
-  //
-  // Return value      : codecy type,            on success.
-  //                     kVideoCodecUnknown, on error or if no receive codec is
-  //                     registered
-  virtual VideoCodecType ReceiveCodec() const = 0;
 
   // Insert a parsed packet into the receiver side of the module. Will be placed
   // in the
@@ -422,19 +380,13 @@ class VideoCodingModule : public Module {
   //                     < 0,               on error.
   virtual int32_t Delay() const = 0;
 
-  // Returns the number of packets discarded by the jitter buffer due to being
-  // too late. This can include duplicated packets which arrived after the
-  // frame was sent to the decoder. Therefore packets which were prematurely
-  // NACKed will be counted.
-  virtual uint32_t DiscardedPackets() const = 0;
-
   // Robustness APIs
 
+  // DEPRECATED.
   // Set the receiver robustness mode. The mode decides how the receiver
-  // responds to losses in the stream. The type of counter-measure (soft or
-  // hard NACK, dual decoder, RPS, etc.) is selected through the
-  // robustnessMode parameter. The errorMode parameter decides if it is
-  // allowed to display frames corrupted by losses. Note that not all
+  // responds to losses in the stream. The type of counter-measure is selected
+  // through the robustnessMode parameter. The errorMode parameter decides if it
+  // is allowed to display frames corrupted by losses. Note that not all
   // combinations of the two parameters are feasible. An error will be
   // returned for invalid combinations.
   // Input:
@@ -443,6 +395,7 @@ class VideoCodingModule : public Module {
   //
   // Return value      : VCM_OK, on success;
   //                     < 0, on error.
+  enum ReceiverRobustness { kNone, kHardNack };
   virtual int SetReceiverRobustnessMode(ReceiverRobustness robustnessMode,
                                         VCMDecodeErrorMode errorMode) = 0;
 

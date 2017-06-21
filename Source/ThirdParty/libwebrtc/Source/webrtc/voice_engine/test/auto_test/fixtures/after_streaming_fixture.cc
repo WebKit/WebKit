@@ -16,5 +16,6 @@ AfterStreamingFixture::AfterStreamingFixture()
   webrtc::VoiceEngineImpl* voe_impl =
       static_cast<webrtc::VoiceEngineImpl*>(voice_engine_);
   channel_proxy_ = voe_impl->GetChannelProxy(channel_);
+  channel_proxy_->RegisterLegacyReceiveCodecs();
   ResumePlaying();
 }

@@ -14,7 +14,6 @@
 
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/video_coding/packet.h"
-#include "webrtc/modules/video_coding/test/test_util.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {

@@ -24,8 +24,8 @@ class ExtendedJitterReport : public RtcpPacket {
   static constexpr uint8_t kPacketType = 195;
   static constexpr size_t kMaxNumberOfJitterValues = 0x1f;
 
-  ExtendedJitterReport() {}
-  ~ExtendedJitterReport() override {}
+  ExtendedJitterReport();
+  ~ExtendedJitterReport() override;
 
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& packet);
@@ -36,7 +36,8 @@ class ExtendedJitterReport : public RtcpPacket {
     return inter_arrival_jitters_;
   }
 
- protected:
+  size_t BlockLength() const override;
+
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
@@ -44,10 +45,6 @@ class ExtendedJitterReport : public RtcpPacket {
 
  private:
   static constexpr size_t kJitterSizeBytes = 4;
-
-  size_t BlockLength() const override {
-    return kHeaderLength + kJitterSizeBytes * inter_arrival_jitters_.size();
-  }
 
   std::vector<uint32_t> inter_arrival_jitters_;
 };

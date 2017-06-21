@@ -85,10 +85,6 @@ class WEBRTC_DLLEXPORT VoiceEngine {
   // receives callbacks for generated trace messages.
   static int SetTraceCallback(TraceCallback* callback);
 
-#if !defined(WEBRTC_CHROMIUM_BUILD)
-  static int SetAndroidObjects(void* javaVM, void* context);
-#endif
-
   static std::string GetVersionString();
 
  protected:

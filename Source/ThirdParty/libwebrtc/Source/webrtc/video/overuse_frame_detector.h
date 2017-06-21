@@ -68,7 +68,7 @@ class OveruseFrameDetector {
                        AdaptationObserverInterface* overuse_observer,
                        EncodedFrameObserver* encoder_timing_,
                        CpuOveruseMetricsObserver* metrics_observer);
-  ~OveruseFrameDetector();
+  virtual ~OveruseFrameDetector();
 
   // Start to periodically check for overuse.
   void StartCheckForOveruse();
@@ -76,6 +76,13 @@ class OveruseFrameDetector {
   // StopCheckForOveruse must be called before destruction if
   // StartCheckForOveruse has been called.
   void StopCheckForOveruse();
+
+  // Defines the current maximum framerate targeted by the capturer. This is
+  // used to make sure the encode usage percent doesn't drop unduly if the
+  // capturer has quiet periods (for instance caused by screen capturers with
+  // variable capture rate depending on content updates), otherwise we might
+  // experience adaptation toggling.
+  virtual void OnTargetFramerateUpdated(int framerate_fps);
 
   // Called for each captured frame.
   void FrameCaptured(const VideoFrame& frame, int64_t time_when_first_seen_us);
@@ -87,6 +94,7 @@ class OveruseFrameDetector {
   void CheckForOveruse();  // Protected for test purposes.
 
  private:
+  class OverdoseInjector;
   class SendProcessingUsage;
   class CheckOveruseTask;
   struct FrameTiming {
@@ -110,6 +118,9 @@ class OveruseFrameDetector {
 
   void ResetAll(int num_pixels);
 
+  static std::unique_ptr<SendProcessingUsage> CreateSendProcessingUsage(
+      const CpuOveruseOptions& options);
+
   rtc::SequencedTaskChecker task_checker_;
   // Owned by the task queue from where StartCheckForOveruse is called.
   CheckOveruseTask* check_overuse_task_;
@@ -131,6 +142,7 @@ class OveruseFrameDetector {
 
   // Number of pixels of last captured frame.
   int num_pixels_ GUARDED_BY(task_checker_);
+  int max_framerate_ GUARDED_BY(task_checker_);
   int64_t last_overuse_time_ms_ GUARDED_BY(task_checker_);
   int checks_above_threshold_ GUARDED_BY(task_checker_);
   int num_overuse_detections_ GUARDED_BY(task_checker_);

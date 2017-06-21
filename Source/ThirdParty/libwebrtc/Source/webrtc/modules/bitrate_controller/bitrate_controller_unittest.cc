@@ -184,34 +184,35 @@ TEST_F(BitrateControllerTest, OneBitrateObserverOneRtcpObserver) {
 }
 
 TEST_F(BitrateControllerTest, OneBitrateObserverTwoRtcpObservers) {
-  const uint32_t kSsrc1 = 1;
-  const uint32_t kSsrc2 = 2;
-  // REMBs during the first 2 seconds apply immediately.
+  const uint32_t kSenderSsrc1 = 1;
+  const uint32_t kSenderSsrc2 = 2;
+  const uint32_t kMediaSsrc1 = 3;
+  const uint32_t kMediaSsrc2 = 4;
+
   int64_t time_ms = 1;
   webrtc::ReportBlockList report_blocks;
-  report_blocks.push_back(CreateReportBlock(kSsrc1, 2, 0, 1));
+  report_blocks = {CreateReportBlock(kSenderSsrc1, kMediaSsrc1, 0, 1)};
   bandwidth_observer_->OnReceivedRtcpReceiverReport(report_blocks, 50, time_ms);
-  report_blocks.clear();
   time_ms += 500;
 
   RtcpBandwidthObserver* second_bandwidth_observer =
       controller_->CreateRtcpBandwidthObserver();
+  report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 21)};
+  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
+      report_blocks, 100, time_ms);
 
   // Test start bitrate.
-  report_blocks.push_back(CreateReportBlock(2, 2, 0, 21));
-  second_bandwidth_observer->OnReceivedRtcpReceiverReport(
-      report_blocks, 100, 1);
   EXPECT_EQ(200000, bitrate_observer_.last_bitrate_);
   EXPECT_EQ(0, bitrate_observer_.last_fraction_loss_);
   EXPECT_EQ(100, bitrate_observer_.last_rtt_);
   time_ms += 500;
 
   // Test bitrate increase 8% per second.
-  report_blocks.clear();
-  report_blocks.push_back(CreateReportBlock(kSsrc1, 2, 0, 21));
+  report_blocks = {CreateReportBlock(kSenderSsrc1, kMediaSsrc1, 0, 21)};
   bandwidth_observer_->OnReceivedRtcpReceiverReport(report_blocks, 50, time_ms);
   time_ms += 500;
-  report_blocks.front().remoteSSRC = kSsrc2;
+
+  report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 21)};
   second_bandwidth_observer->OnReceivedRtcpReceiverReport(
       report_blocks, 100, time_ms);
   EXPECT_EQ(217000, bitrate_observer_.last_bitrate_);
@@ -220,51 +221,44 @@ TEST_F(BitrateControllerTest, OneBitrateObserverTwoRtcpObservers) {
   time_ms += 500;
 
   // Extra report should not change estimate.
-  report_blocks.clear();
-  report_blocks.push_back(CreateReportBlock(kSsrc2, 2, 0, 31));
+  report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 31)};
   second_bandwidth_observer->OnReceivedRtcpReceiverReport(
       report_blocks, 100, time_ms);
   EXPECT_EQ(217000, bitrate_observer_.last_bitrate_);
   time_ms += 500;
 
-  report_blocks.clear();
-  report_blocks.push_back(CreateReportBlock(kSsrc1, 2, 0, 41));
+  report_blocks = {CreateReportBlock(kSenderSsrc1, kMediaSsrc1, 0, 41)};
   bandwidth_observer_->OnReceivedRtcpReceiverReport(report_blocks, 50, time_ms);
   EXPECT_EQ(235360, bitrate_observer_.last_bitrate_);
 
   // Second report should not change estimate.
-  report_blocks.clear();
-  report_blocks.push_back(CreateReportBlock(kSsrc2, 2, 0, 41));
+  report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 41)};
   second_bandwidth_observer->OnReceivedRtcpReceiverReport(
       report_blocks, 100, time_ms);
   EXPECT_EQ(235360, bitrate_observer_.last_bitrate_);
   time_ms += 1000;
 
   // Reports from only one bandwidth observer is ok.
-  report_blocks.clear();
-  report_blocks.push_back(CreateReportBlock(kSsrc2, 2, 0, 61));
+  report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 61)};
   second_bandwidth_observer->OnReceivedRtcpReceiverReport(
       report_blocks, 50, time_ms);
   EXPECT_EQ(255189, bitrate_observer_.last_bitrate_);
   time_ms += 1000;
 
-  report_blocks.clear();
-  report_blocks.push_back(CreateReportBlock(kSsrc2, 2, 0, 81));
+  report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 81)};
   second_bandwidth_observer->OnReceivedRtcpReceiverReport(
       report_blocks, 50, time_ms);
   EXPECT_EQ(276604, bitrate_observer_.last_bitrate_);
   time_ms += 1000;
 
-  report_blocks.clear();
-  report_blocks.push_back(CreateReportBlock(kSsrc2, 2, 0, 121));
+  report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 121)};
   second_bandwidth_observer->OnReceivedRtcpReceiverReport(
       report_blocks, 50, time_ms);
   EXPECT_EQ(299732, bitrate_observer_.last_bitrate_);
   time_ms += 1000;
 
   // Reach max cap.
-  report_blocks.clear();
-  report_blocks.push_back(CreateReportBlock(kSsrc2, 2, 0, 141));
+  report_blocks = {CreateReportBlock(kSenderSsrc2, kMediaSsrc2, 0, 141)};
   second_bandwidth_observer->OnReceivedRtcpReceiverReport(
       report_blocks, 50, time_ms);
   EXPECT_EQ(300000, bitrate_observer_.last_bitrate_);
@@ -439,20 +433,20 @@ TEST_F(BitrateControllerTest, TimeoutsWithoutFeedback) {
         report_blocks, 50, clock_.TimeInMilliseconds());
     expected_bitrate_bps = expected_bitrate_bps * 1.08 + 1000;
     EXPECT_EQ(expected_bitrate_bps, bitrate_observer_.last_bitrate_);
-    clock_.AdvanceTimeMilliseconds(1000);
+    clock_.AdvanceTimeMilliseconds(4000);
 
-    // 1 seconds since feedback, expect increase.
+    // 4 seconds since feedback, expect increase.
     controller_->Process();
     expected_bitrate_bps = expected_bitrate_bps * 1.08 + 1000;
     EXPECT_EQ(expected_bitrate_bps, bitrate_observer_.last_bitrate_);
-    clock_.AdvanceTimeMilliseconds(800);
+    clock_.AdvanceTimeMilliseconds(2000);
 
-    // 1.8 seconds since feedback, expect no increase.
+    // 6 seconds since feedback, expect no increase.
     controller_->Process();
     EXPECT_EQ(expected_bitrate_bps, bitrate_observer_.last_bitrate_);
-    clock_.AdvanceTimeMilliseconds(3701);
+    clock_.AdvanceTimeMilliseconds(9001);
 
-    // More than 4.5 seconds since feedback, expect decrease.
+    // More than 15 seconds since feedback, expect decrease.
     controller_->Process();
     expected_bitrate_bps *= 0.8;
     EXPECT_EQ(expected_bitrate_bps, bitrate_observer_.last_bitrate_);

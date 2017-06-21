@@ -33,48 +33,6 @@ public interface VideoCapturer {
         int rotation, long timestamp);
   }
 
-  // An implementation of CapturerObserver that forwards all calls from
-  // Java to the C layer.
-  static class AndroidVideoTrackSourceObserver implements CapturerObserver {
-    // Pointer to VideoTrackSourceProxy proxying AndroidVideoTrackSource.
-    private final long nativeSource;
-
-    public AndroidVideoTrackSourceObserver(long nativeSource) {
-      this.nativeSource = nativeSource;
-    }
-
-    @Override
-    public void onCapturerStarted(boolean success) {
-      nativeCapturerStarted(nativeSource, success);
-    }
-
-    @Override
-    public void onCapturerStopped() {
-      nativeCapturerStopped(nativeSource);
-    }
-
-    @Override
-    public void onByteBufferFrameCaptured(
-        byte[] data, int width, int height, int rotation, long timeStamp) {
-      nativeOnByteBufferFrameCaptured(
-          nativeSource, data, data.length, width, height, rotation, timeStamp);
-    }
-
-    @Override
-    public void onTextureFrameCaptured(int width, int height, int oesTextureId,
-        float[] transformMatrix, int rotation, long timestamp) {
-      nativeOnTextureFrameCaptured(
-          nativeSource, width, height, oesTextureId, transformMatrix, rotation, timestamp);
-    }
-
-    private native void nativeCapturerStarted(long nativeSource, boolean success);
-    private native void nativeCapturerStopped(long nativeSource);
-    private native void nativeOnByteBufferFrameCaptured(long nativeSource, byte[] data, int length,
-        int width, int height, int rotation, long timeStamp);
-    private native void nativeOnTextureFrameCaptured(long nativeSource, int width, int height,
-        int oesTextureId, float[] transformMatrix, int rotation, long timestamp);
-  }
-
   /**
    * This function is used to initialize the camera thread, the android application context, and the
    * capture observer. It will be called only once and before any startCapture() request. The

@@ -22,6 +22,12 @@
 
 namespace rtc {
 
+#define MAYBE_SKIP_IPV4                    \
+  if (!HasIPv4Enabled()) {                 \
+    LOG(LS_INFO) << "No IPv4... skipping"; \
+    return;                                \
+  }
+
 #define MAYBE_SKIP_IPV6                    \
   if (!HasIPv6Enabled()) {                 \
     LOG(LS_INFO) << "No IPv6... skipping"; \
@@ -115,16 +121,15 @@ class PhysicalSocketTest : public SocketTest {
  protected:
   PhysicalSocketTest()
     : server_(new FakePhysicalSocketServer(this)),
-      scope_(server_.get()),
+      thread_(server_.get()),
       fail_accept_(false),
-      max_send_size_(-1) {
-  }
+      max_send_size_(-1) {}
 
   void ConnectInternalAcceptError(const IPAddress& loopback);
   void WritableAfterPartialWrite(const IPAddress& loopback);
 
   std::unique_ptr<FakePhysicalSocketServer> server_;
-  SocketServerScope scope_;
+  rtc::AutoSocketServerThread thread_;
   bool fail_accept_;
   int max_send_size_;
 };
@@ -165,6 +170,7 @@ int FakeSocketDispatcher::DoSendTo(SOCKET socket, const char* buf, int len,
 }
 
 TEST_F(PhysicalSocketTest, TestConnectIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestConnectIPv4();
 }
 
@@ -173,6 +179,7 @@ TEST_F(PhysicalSocketTest, TestConnectIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestConnectWithDnsLookupIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestConnectWithDnsLookupIPv4();
 }
 
@@ -181,11 +188,12 @@ TEST_F(PhysicalSocketTest, TestConnectWithDnsLookupIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestConnectFailIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestConnectFailIPv4();
 }
 
 void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
-  testing::StreamSink sink;
+  webrtc::testing::StreamSink sink;
   SocketAddress accept_addr;
 
   // Create two clients.
@@ -210,7 +218,7 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
   EXPECT_EQ(AsyncSocket::CS_CONNECTING, server->GetState());
 
   // Ensure no pending server connections, since we haven't done anything yet.
-  EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(server.get(), webrtc::testing::SSE_READ));
   EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_TRUE(accept_addr.IsNil());
 
@@ -221,11 +229,12 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
 
   // Client is connecting, outcome not yet determined.
   EXPECT_EQ(AsyncSocket::CS_CONNECTING, client1->GetState());
-  EXPECT_FALSE(sink.Check(client1.get(), testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client1.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client1.get(), webrtc::testing::SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client1.get(), webrtc::testing::SSE_CLOSE));
 
   // Server has pending connection, try to accept it (will fail).
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), webrtc::testing::SSE_READ)),
+                   kTimeout);
   // Simulate "::accept" returning an error.
   SetFailAccept(true);
   std::unique_ptr<AsyncSocket> accepted(server->Accept(&accept_addr));
@@ -233,7 +242,7 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
   ASSERT_TRUE(accept_addr.IsNil());
 
   // Ensure no more pending server connections.
-  EXPECT_FALSE(sink.Check(server.get(), testing::SSE_READ));
+  EXPECT_FALSE(sink.Check(server.get(), webrtc::testing::SSE_READ));
   EXPECT_TRUE(nullptr == server->Accept(&accept_addr));
   EXPECT_TRUE(accept_addr.IsNil());
 
@@ -244,11 +253,12 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
 
   // Client is connecting, outcome not yet determined.
   EXPECT_EQ(AsyncSocket::CS_CONNECTING, client2->GetState());
-  EXPECT_FALSE(sink.Check(client2.get(), testing::SSE_OPEN));
-  EXPECT_FALSE(sink.Check(client2.get(), testing::SSE_CLOSE));
+  EXPECT_FALSE(sink.Check(client2.get(), webrtc::testing::SSE_OPEN));
+  EXPECT_FALSE(sink.Check(client2.get(), webrtc::testing::SSE_CLOSE));
 
   // Server has pending connection, try to accept it (will succeed).
-  EXPECT_TRUE_WAIT((sink.Check(server.get(), testing::SSE_READ)), kTimeout);
+  EXPECT_TRUE_WAIT((sink.Check(server.get(), webrtc::testing::SSE_READ)),
+                   kTimeout);
   SetFailAccept(false);
   std::unique_ptr<AsyncSocket> accepted2(server->Accept(&accept_addr));
   ASSERT_TRUE(accepted2);
@@ -257,6 +267,7 @@ void PhysicalSocketTest::ConnectInternalAcceptError(const IPAddress& loopback) {
 }
 
 TEST_F(PhysicalSocketTest, TestConnectAcceptErrorIPv4) {
+  MAYBE_SKIP_IPV4;
   ConnectInternalAcceptError(kIPv4Loopback);
 }
 
@@ -283,6 +294,7 @@ void PhysicalSocketTest::WritableAfterPartialWrite(const IPAddress& loopback) {
 #define MAYBE_TestWritableAfterPartialWriteIPv4 TestWritableAfterPartialWriteIPv4
 #endif
 TEST_F(PhysicalSocketTest, MAYBE_TestWritableAfterPartialWriteIPv4) {
+  MAYBE_SKIP_IPV4;
   WritableAfterPartialWrite(kIPv4Loopback);
 }
 
@@ -302,6 +314,7 @@ TEST_F(PhysicalSocketTest, TestConnectFailIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestConnectWithDnsLookupFailIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestConnectWithDnsLookupFailIPv4();
 }
 
@@ -311,6 +324,7 @@ TEST_F(PhysicalSocketTest, TestConnectWithDnsLookupFailIPv6) {
 
 
 TEST_F(PhysicalSocketTest, TestConnectWithClosedSocketIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestConnectWithClosedSocketIPv4();
 }
 
@@ -319,6 +333,7 @@ TEST_F(PhysicalSocketTest, TestConnectWithClosedSocketIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestConnectWhileNotClosedIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestConnectWhileNotClosedIPv4();
 }
 
@@ -327,6 +342,7 @@ TEST_F(PhysicalSocketTest, TestConnectWhileNotClosedIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestServerCloseDuringConnectIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestServerCloseDuringConnectIPv4();
 }
 
@@ -335,6 +351,7 @@ TEST_F(PhysicalSocketTest, TestServerCloseDuringConnectIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestClientCloseDuringConnectIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestClientCloseDuringConnectIPv4();
 }
 
@@ -343,6 +360,7 @@ TEST_F(PhysicalSocketTest, TestClientCloseDuringConnectIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestServerCloseIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestServerCloseIPv4();
 }
 
@@ -351,6 +369,7 @@ TEST_F(PhysicalSocketTest, TestServerCloseIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestCloseInClosedCallbackIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestCloseInClosedCallbackIPv4();
 }
 
@@ -359,6 +378,7 @@ TEST_F(PhysicalSocketTest, TestCloseInClosedCallbackIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestSocketServerWaitIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestSocketServerWaitIPv4();
 }
 
@@ -367,6 +387,7 @@ TEST_F(PhysicalSocketTest, TestSocketServerWaitIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestTcpIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestTcpIPv4();
 }
 
@@ -375,6 +396,7 @@ TEST_F(PhysicalSocketTest, TestTcpIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestUdpIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestUdpIPv4();
 }
 
@@ -398,6 +420,7 @@ TEST_F(PhysicalSocketTest, TestUdpIPv6) {
 #define MAYBE_TestUdpReadyToSendIPv4 TestUdpReadyToSendIPv4
 #endif
 TEST_F(PhysicalSocketTest, MAYBE_TestUdpReadyToSendIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestUdpReadyToSendIPv4();
 }
 
@@ -412,6 +435,7 @@ TEST_F(PhysicalSocketTest, MAYBE_TestUdpReadyToSendIPv6) {
 }
 
 TEST_F(PhysicalSocketTest, TestGetSetOptionsIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestGetSetOptionsIPv4();
 }
 
@@ -424,6 +448,7 @@ TEST_F(PhysicalSocketTest, TestGetSetOptionsIPv6) {
 // We don't get recv timestamps on Mac.
 #if !defined(WEBRTC_MAC)
 TEST_F(PhysicalSocketTest, TestSocketRecvTimestampIPv4) {
+  MAYBE_SKIP_IPV4;
   SocketTest::TestSocketRecvTimestampIPv4();
 }
 
@@ -436,6 +461,7 @@ TEST_F(PhysicalSocketTest, TestSocketRecvTimestampIPv6) {
 // (not loopback), Bind will return an error.
 TEST_F(PhysicalSocketTest,
        BindFailsIfNetworkBinderFailsForNonLoopbackInterface) {
+  MAYBE_SKIP_IPV4;
   FakeNetworkBinder fake_network_binder;
   server_->set_network_binder(&fake_network_binder);
   std::unique_ptr<AsyncSocket> socket(
@@ -448,6 +474,7 @@ TEST_F(PhysicalSocketTest,
 // Network binder shouldn't be used if the socket is bound to the "any" IP.
 TEST_F(PhysicalSocketTest,
        NetworkBinderIsNotUsedForAnyIp) {
+  MAYBE_SKIP_IPV4;
   FakeNetworkBinder fake_network_binder;
   server_->set_network_binder(&fake_network_binder);
   std::unique_ptr<AsyncSocket> socket(
@@ -461,6 +488,7 @@ TEST_F(PhysicalSocketTest,
 // tolerated.
 TEST_F(PhysicalSocketTest,
        BindSucceedsIfNetworkBinderFailsForLoopbackInterface) {
+  MAYBE_SKIP_IPV4;
   FakeNetworkBinder fake_network_binder;
   server_->set_network_binder(&fake_network_binder);
   std::unique_ptr<AsyncSocket> socket(

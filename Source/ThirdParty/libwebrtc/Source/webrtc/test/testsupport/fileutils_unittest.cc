@@ -12,9 +12,14 @@
 
 #include <stdio.h>
 
+#include <fstream>
+#include <iostream>
 #include <list>
 #include <string>
 
+#include "webrtc/base/checks.h"
+#include "webrtc/base/optional.h"
+#include "webrtc/base/pathutils.h"
 #include "webrtc/test/gtest.h"
 
 #ifdef WIN32
@@ -24,11 +29,41 @@ static const char* kPathDelimiter = "\\";
 static const char* kPathDelimiter = "/";
 #endif
 
-static const std::string kResourcesDir = "resources";
-static const std::string kTestName = "fileutils_unittest";
-static const std::string kExtension = "tmp";
+static const char kTestName[] = "fileutils_unittest";
+static const char kExtension[] = "tmp";
 
 namespace webrtc {
+namespace test {
+
+namespace {
+
+// Remove files and directories in a directory non-recursively and writes the
+// number of deleted items in |num_deleted_entries|.
+void CleanDir(const std::string& dir, size_t* num_deleted_entries) {
+  RTC_DCHECK(num_deleted_entries);
+  *num_deleted_entries = 0;
+  rtc::Optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
+  EXPECT_TRUE(dir_content);
+  for (const auto& entry : *dir_content) {
+    if (DirExists(entry)) {
+      EXPECT_TRUE(RemoveDir(entry));
+      (*num_deleted_entries)++;
+    } else if (FileExists(entry)) {
+      EXPECT_TRUE(RemoveFile(entry));
+      (*num_deleted_entries)++;
+    } else {
+      FAIL();
+    }
+  }
+}
+
+void WriteStringInFile(const std::string& what, const std::string& file_path) {
+  std::ofstream out(file_path);
+  out << what;
+  out.close();
+}
+
+}  // namespace
 
 // Test fixture to restore the working directory between each test, since some
 // of them change it with chdir during execution (not restored by the
@@ -150,4 +185,56 @@ TEST_F(FileUtilsTest, GetFileSizeNonExistingFile) {
   ASSERT_EQ(0u, webrtc::test::GetFileSize("non-existing-file.tmp"));
 }
 
+TEST_F(FileUtilsTest, DirExists) {
+  // Check that an existing directory is recognized as such.
+  ASSERT_TRUE(webrtc::test::DirExists(webrtc::test::OutputPath()))
+      << "Existing directory not found";
+
+  // Check that a non-existing directory is recognized as such.
+  std::string directory = "direxists-unittest-non_existing-dir";
+  ASSERT_FALSE(webrtc::test::DirExists(directory))
+      << "Non-existing directory found";
+
+  // Check that an existing file is not recognized as an existing directory.
+  std::string temp_filename = webrtc::test::TempFilename(
+      webrtc::test::OutputPath(), "TempFilenameTest");
+  ASSERT_TRUE(webrtc::test::FileExists(temp_filename))
+      << "Couldn't find file: " << temp_filename;
+  ASSERT_FALSE(webrtc::test::DirExists(temp_filename))
+      << "Existing file recognized as existing directory";
+  remove(temp_filename.c_str());
+}
+
+TEST_F(FileUtilsTest, WriteReadDeleteFilesAndDirs) {
+  size_t num_deleted_entries;
+
+  // Create an empty temporary directory for this test.
+  const std::string temp_directory =
+      OutputPath() + "TempFileUtilsTestReadDirectory" + kPathDelimiter;
+  CreateDir(temp_directory);
+  EXPECT_NO_FATAL_FAILURE(CleanDir(temp_directory, &num_deleted_entries));
+  EXPECT_TRUE(DirExists(temp_directory));
+
+  // Add a file.
+  const std::string temp_filename = temp_directory + "TempFilenameTest";
+  WriteStringInFile("test\n", temp_filename);
+  EXPECT_TRUE(FileExists(temp_filename));
+
+  // Add an empty directory.
+  const std::string temp_subdir = temp_directory + "subdir" + kPathDelimiter;
+  EXPECT_TRUE(CreateDir(temp_subdir));
+  EXPECT_TRUE(DirExists(temp_subdir));
+
+  // Checks.
+  rtc::Optional<std::vector<std::string>> dir_content =
+      ReadDirectory(temp_directory);
+  EXPECT_TRUE(dir_content);
+  EXPECT_EQ(2u, dir_content->size());
+  EXPECT_NO_FATAL_FAILURE(CleanDir(temp_directory, &num_deleted_entries));
+  EXPECT_EQ(2u, num_deleted_entries);
+  EXPECT_TRUE(RemoveDir(temp_directory));
+  EXPECT_FALSE(DirExists(temp_directory));
+}
+
+}  // namespace test
 }  // namespace webrtc

@@ -22,7 +22,6 @@
 #include "webrtc/modules/audio_mixer/output_rate_calculator.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -49,12 +48,6 @@ class AudioMixerImpl : public AudioMixer {
   static const int kMaximumAmountOfMixedAudioSources = 3;
 
   static rtc::scoped_refptr<AudioMixerImpl> Create();
-
-  // TODO(aleloi): remove this when dependencies have updated to
-  // use Create(rate_calculator, limiter) instead. See bugs.webrtc.org/7167.
-  RTC_DEPRECATED static rtc::scoped_refptr<AudioMixerImpl>
-  CreateWithOutputRateCalculator(
-      std::unique_ptr<OutputRateCalculator> output_rate_calculator);
 
   static rtc::scoped_refptr<AudioMixerImpl> Create(
       std::unique_ptr<OutputRateCalculator> output_rate_calculator,

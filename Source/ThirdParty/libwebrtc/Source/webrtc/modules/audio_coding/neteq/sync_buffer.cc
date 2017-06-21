@@ -76,7 +76,8 @@ void SyncBuffer::GetNextAudioInterleaved(size_t requested_len,
   const size_t samples_to_read = std::min(FutureLength(), requested_len);
   output->Reset();
   const size_t tot_samples_read =
-      ReadInterleavedFromIndex(next_index_, samples_to_read, output->data_);
+      ReadInterleavedFromIndex(next_index_, samples_to_read,
+                               output->mutable_data());
   const size_t samples_read_per_channel = tot_samples_read / Channels();
   next_index_ += samples_read_per_channel;
   output->num_channels_ = Channels();

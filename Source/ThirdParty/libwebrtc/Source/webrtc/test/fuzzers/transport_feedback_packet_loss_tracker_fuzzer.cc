@@ -11,6 +11,7 @@
 #include <algorithm>
 
 #include "webrtc/base/array_view.h"
+#include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/modules/rtp_rtcp/source/byte_io.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "webrtc/voice_engine/transport_feedback_packet_loss_tracker.h"
@@ -47,22 +48,24 @@ class TransportFeedbackGenerator {
   explicit TransportFeedbackGenerator(const uint8_t** data, size_t* size)
       : data_(data), size_(size) {}
 
-  bool GetNextTransportFeedback(rtcp::TransportFeedback* feedback) {
-    uint16_t base_seq_num = 0;
-    if (!ReadData<uint16_t>(&base_seq_num)) {
-      return false;
-    }
-    constexpr int64_t kBaseTimeUs = 1234;  // Irrelevant to this test.
-    feedback->SetBase(base_seq_num, kBaseTimeUs);
+  bool GetNextTransportFeedbackVector(
+      std::vector<PacketFeedback>* feedback_vector) {
+    RTC_CHECK(feedback_vector->empty());
 
     uint16_t remaining_packets = 0;
-    if (!ReadData<uint16_t>(&remaining_packets))
+    if (!ReadData<uint16_t>(&remaining_packets)) {
       return false;
-    // Range is [0x00001 : 0x10000], but we keep it 0x0000 to 0xffff for now,
-    // and add the last status as RECEIVED. That is because of a limitation
-    // that says that the last status cannot be LOST.
+    }
 
-    uint16_t seq_num = base_seq_num;
+    if (remaining_packets == 0) {
+      return true;
+    }
+
+    uint16_t seq_num;
+    if (!ReadData<uint16_t>(&seq_num)) {  // Fuzz base sequence number.
+      return false;
+    }
+
     while (remaining_packets > 0) {
       uint8_t status_byte = 0;
       if (!ReadData<uint8_t>(&status_byte)) {
@@ -70,17 +73,17 @@ class TransportFeedbackGenerator {
       }
       // Each status byte contains 8 statuses.
       for (size_t i = 0; i < 8 && remaining_packets > 0; ++i) {
+        // Any positive integer signals reception. kNotReceived signals loss.
+        // Other values are just illegal.
+        constexpr int64_t kArrivalTimeMs = 1234;
+
         const bool received = (status_byte & (0x01 << i));
-        if (received) {
-          feedback->AddReceivedPacket(seq_num, kBaseTimeUs);
-        }
-        ++seq_num;
+        feedback_vector->emplace_back(PacketFeedback(
+            received ? kArrivalTimeMs : PacketFeedback::kNotReceived,
+            seq_num++));
         --remaining_packets;
       }
     }
-
-    // As mentioned above, all feedbacks must report with a received packet.
-    feedback->AddReceivedPacket(seq_num, kBaseTimeUs);
 
     return true;
   }
@@ -109,16 +112,12 @@ bool Setup(const uint8_t** data,
 
   constexpr size_t kSeqNumHalf = 0x8000u;
 
-  // 0x8000 >= max_window_size >= plr_min_num_packets > rplr_min_num_pairs >= 1
-  // (The distribution isn't uniform, but it's enough; more would be overkill.)
-  const size_t max_window_size = FuzzInRange(data, size, 2, kSeqNumHalf);
-  const size_t plr_min_num_packets =
-      FuzzInRange(data, size, 2, max_window_size);
-  const size_t rplr_min_num_pairs =
-      FuzzInRange(data, size, 1, plr_min_num_packets - 1);
+  const int64_t max_window_size_ms = FuzzInRange(data, size, 1, 1 << 16);
+  const size_t plr_min_num_packets = FuzzInRange(data, size, 1, kSeqNumHalf);
+  const size_t rplr_min_num_pairs = FuzzInRange(data, size, 1, kSeqNumHalf - 1);
 
   tracker->reset(new TransportFeedbackPacketLossTracker(
-      max_window_size, plr_min_num_packets, rplr_min_num_pairs));
+      max_window_size_ms, plr_min_num_packets, rplr_min_num_pairs));
 
   return true;
 }
@@ -140,10 +139,56 @@ bool FuzzSequenceNumberDelta(const uint8_t** data,
   return true;
 }
 
+bool FuzzClockAdvancement(const uint8_t** data,
+                          size_t* size,
+                          int64_t* time_ms) {
+  // Fuzzing 64-bit worth of delta would be extreme overkill, as 32-bit is
+  // already ~49 days long. We'll fuzz deltas up to a smaller value, and this
+  // way also guarantee that wrap-around is impossible, as in real life.
+
+  // Higher likelihood for more likely cases:
+  //  5% chance of delta = 0.
+  // 20% chance of delta in range [1 : 10] (uniformly distributed)
+  // 55% chance of delta in range [11 : 500] (uniformly distributed)
+  // 20% chance of delta in range [501 : 10000] (uniformly distributed)
+  struct ProbabilityDistribution {
+    float probability;
+    size_t lower;
+    size_t higher;
+  };
+  constexpr ProbabilityDistribution clock_probability_distribution[] = {
+      {0.05, 0, 0}, {0.20, 1, 10}, {0.55, 11, 500}, {0.20, 501, 10000}};
+
+  if (*size < sizeof(uint8_t)) {
+    return false;
+  }
+  const float fuzzed = FuzzInput<uint8_t>(data, size) / 256.0f;
+
+  float cumulative_probability = 0;
+  for (const auto& dist : clock_probability_distribution) {
+    cumulative_probability += dist.probability;
+    if (fuzzed < cumulative_probability) {
+      if (dist.lower == dist.higher) {
+        *time_ms += dist.lower;
+        return true;
+      } else if (*size < sizeof(uint16_t)) {
+        return false;
+      } else {
+        *time_ms += FuzzInRange(data, size, dist.lower, dist.higher);
+        return true;
+      }
+    }
+  }
+
+  RTC_NOTREACHED();
+  return false;
+}
+
 bool FuzzPacketSendBlock(
     std::unique_ptr<TransportFeedbackPacketLossTracker>& tracker,
     const uint8_t** data,
-    size_t* size) {
+    size_t* size,
+    int64_t* time_ms) {
   // We want to test with block lengths between 1 and 2^16, inclusive.
   if (*size < sizeof(uint8_t)) {
     return false;
@@ -155,16 +200,24 @@ bool FuzzPacketSendBlock(
     return false;
   }
   uint16_t seq_num = FuzzInput<uint16_t>(data, size);
-  tracker->OnPacketAdded(seq_num);
+  tracker->OnPacketAdded(seq_num, *time_ms);
   tracker->Validate();
+
+  bool may_continue = FuzzClockAdvancement(data, size, time_ms);
+  if (!may_continue) {
+    return false;
+  }
 
   for (size_t i = 1; i < packet_block_len; i++) {
     uint16_t delta;
-    bool may_continue = FuzzSequenceNumberDelta(data, size, &delta);
+    may_continue = FuzzSequenceNumberDelta(data, size, &delta);
+    if (!may_continue)
+      return false;
+    may_continue = FuzzClockAdvancement(data, size, time_ms);
     if (!may_continue)
       return false;
     seq_num += delta;
-    tracker->OnPacketAdded(seq_num);
+    tracker->OnPacketAdded(seq_num, *time_ms);
     tracker->Validate();
   }
 
@@ -186,12 +239,13 @@ bool FuzzTransportFeedbackBlock(
   TransportFeedbackGenerator feedback_generator(data, size);
 
   for (size_t i = 0; i < feedbacks_num; i++) {
-    rtcp::TransportFeedback feedback;
-    bool may_continue = feedback_generator.GetNextTransportFeedback(&feedback);
+    std::vector<PacketFeedback> feedback_vector;
+    bool may_continue =
+        feedback_generator.GetNextTransportFeedbackVector(&feedback_vector);
     if (!may_continue) {
       return false;
     }
-    tracker->OnReceivedTransportFeedback(feedback);
+    tracker->OnPacketFeedbackVector(feedback_vector);
     tracker->Validate();
   }
 
@@ -206,8 +260,15 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
 
   may_continue = Setup(&data, &size, &tracker);
 
+  // We never expect this to wrap around, so it makes sense to just start with
+  // a sane value, and keep on incrementing by a fuzzed delta.
+  if (size < sizeof(uint32_t)) {
+    return;
+  }
+  int64_t time_ms = FuzzInput<uint32_t>(&data, &size);
+
   while (may_continue) {
-    may_continue = FuzzPacketSendBlock(tracker, &data, &size);
+    may_continue = FuzzPacketSendBlock(tracker, &data, &size, &time_ms);
     if (!may_continue) {
       return;
     }

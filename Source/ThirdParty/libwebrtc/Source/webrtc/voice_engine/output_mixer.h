@@ -19,8 +19,6 @@
 #include "webrtc/modules/audio_conference_mixer/include/audio_conference_mixer.h"
 #include "webrtc/modules/audio_conference_mixer/include/audio_conference_mixer_defines.h"
 #include "webrtc/voice_engine/file_recorder.h"
-#include "webrtc/voice_engine/level_indicator.h"
-#include "webrtc/voice_engine/voice_engine_defines.h"
 
 namespace webrtc {
 
@@ -56,15 +54,6 @@ public:
 
     int GetMixedAudio(int sample_rate_hz, size_t num_channels,
                       AudioFrame* audioFrame);
-
-    // VoEVolumeControl
-    int GetSpeechOutputLevel(uint32_t& level);
-
-    int GetSpeechOutputLevelFullRange(uint32_t& level);
-
-    int SetOutputVolumePan(float left, float right);
-
-    int GetOutputVolumePan(float& left, float& right);
 
     // VoEFile
     int StartRecordingPlayout(const char* fileName,
@@ -106,10 +95,7 @@ private:
     PushResampler<int16_t> resampler_;
     // Converts mixed audio to the audio processing rate.
     PushResampler<int16_t> audioproc_resampler_;
-    AudioLevel _audioLevel;    // measures audio level for the combined signal
     int _instanceId;
-    float _panLeft;
-    float _panRight;
     int _mixingFrequencyHz;
     std::unique_ptr<FileRecorder> output_file_recorder_;
     bool _outputFileRecording;

@@ -23,7 +23,6 @@ struct SubtractorOutput {
   std::array<float, kBlockSize> e_main;
   std::array<float, kBlockSize> e_shadow;
   FftData E_main;
-  FftData E_shadow;
   std::array<float, kFftLengthBy2Plus1> E2_main;
   std::array<float, kFftLengthBy2Plus1> E2_shadow;
 
@@ -32,8 +31,6 @@ struct SubtractorOutput {
     e_shadow.fill(0.f);
     E_main.re.fill(0.f);
     E_main.im.fill(0.f);
-    E_shadow.re.fill(0.f);
-    E_shadow.im.fill(0.f);
     E2_main.fill(0.f);
     E2_shadow.fill(0.f);
   }

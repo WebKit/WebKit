@@ -72,8 +72,7 @@ std::unique_ptr<Packet> RtpFileSource::NextPacket() {
         packet_memory.release(), temp_packet.length,
         temp_packet.original_length, temp_packet.time_ms, *parser_.get()));
     if (!packet->valid_header()) {
-      assert(false);
-      return NULL;
+      continue;
     }
     if (filter_.test(packet->header().payloadType) ||
         (use_ssrc_filter_ && packet->header().ssrc != ssrc_)) {

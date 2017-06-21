@@ -260,6 +260,15 @@ TEST_F(TestFrameBuffer2, OneSuperFrame) {
   CheckFrame(1, pid, 1);
 }
 
+TEST_F(TestFrameBuffer2, SetPlayoutDelay) {
+  const PlayoutDelay kPlayoutDelayMs = {123, 321};
+  std::unique_ptr<FrameObjectFake> test_frame(new FrameObjectFake());
+  test_frame->SetPlayoutDelay(kPlayoutDelayMs);
+  buffer_.InsertFrame(std::move(test_frame));
+  EXPECT_EQ(kPlayoutDelayMs.min_ms, timing_.min_playout_delay());
+  EXPECT_EQ(kPlayoutDelayMs.max_ms, timing_.max_playout_delay());
+}
+
 // Flaky test, see bugs.webrtc.org/7068.
 TEST_F(TestFrameBuffer2, DISABLED_OneUnorderedSuperFrame) {
   uint16_t pid = Rand();
@@ -495,6 +504,39 @@ TEST_F(TestFrameBuffer2, StatsCallback) {
 
   ExtractFrame();
   CheckFrame(0, pid, 0);
+}
+
+TEST_F(TestFrameBuffer2, ForwardJumps) {
+  EXPECT_EQ(5453, InsertFrame(5453, 0, 1, false));
+  ExtractFrame();
+  EXPECT_EQ(5454, InsertFrame(5454, 0, 1, false, 5453));
+  ExtractFrame();
+  EXPECT_EQ(15670, InsertFrame(15670, 0, 1, false));
+  ExtractFrame();
+  EXPECT_EQ(29804, InsertFrame(29804, 0, 1, false));
+  ExtractFrame();
+  EXPECT_EQ(29805, InsertFrame(29805, 0, 1, false, 29804));
+  ExtractFrame();
+  EXPECT_EQ(29806, InsertFrame(29806, 0, 1, false, 29805));
+  ExtractFrame();
+  EXPECT_EQ(33819, InsertFrame(33819, 0, 1, false));
+  ExtractFrame();
+  EXPECT_EQ(41248, InsertFrame(41248, 0, 1, false));
+  ExtractFrame();
+}
+
+TEST_F(TestFrameBuffer2, DuplicateFrames) {
+  EXPECT_EQ(22256, InsertFrame(22256, 0, 1, false));
+  ExtractFrame();
+  EXPECT_EQ(22256, InsertFrame(22256, 0, 1, false));
+}
+
+// TODO(philipel): implement more unittests related to invalid references.
+TEST_F(TestFrameBuffer2, InvalidReferences) {
+  EXPECT_EQ(-1, InsertFrame(0, 0, 1000, false, 2));
+  EXPECT_EQ(1, InsertFrame(1, 0, 2000, false));
+  ExtractFrame();
+  EXPECT_EQ(2, InsertFrame(2, 0, 3000, false, 1));
 }
 
 }  // namespace video_coding

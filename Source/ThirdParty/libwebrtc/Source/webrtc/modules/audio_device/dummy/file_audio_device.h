@@ -16,9 +16,9 @@
 #include <memory>
 #include <string>
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/modules/audio_device/audio_device_generic.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/file_wrapper.h"
 
 namespace rtc {
@@ -176,7 +176,7 @@ class FileAudioDevice : public AudioDeviceGeneric {
   int8_t* _playoutBuffer;  // In bytes.
   uint32_t _recordingFramesLeft;
   uint32_t _playoutFramesLeft;
-  CriticalSectionWrapper& _critSect;
+  rtc::CriticalSection _critSect;
 
   size_t _recordingBufferSizeIn10MS;
   size_t _recordingFramesIn10MS;

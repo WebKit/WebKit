@@ -37,7 +37,7 @@ const int kPayloadType = 123;
 const int kRtxPayloadType = 98;
 const int64_t kMaxRttMs = 1000;
 
-class VerifyingRtxReceiver : public NullRtpData {
+class VerifyingRtxReceiver : public RtpData {
  public:
   VerifyingRtxReceiver() {}
 

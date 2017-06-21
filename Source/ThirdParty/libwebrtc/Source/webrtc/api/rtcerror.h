@@ -16,6 +16,7 @@
 #include <utility>  // For std::move.
 
 #include "webrtc/base/checks.h"
+#include "webrtc/base/export.h"
 #include "webrtc/base/logging.h"
 
 namespace webrtc {
@@ -77,7 +78,7 @@ enum class RTCErrorType {
 //
 // Doesn't contain anything beyond a type and message now, but will in the
 // future as more errors are implemented.
-class RTCError {
+class WEBRTC_DYLIB_EXPORT RTCError {
  public:
   // Constructors.
 
@@ -106,7 +107,7 @@ class RTCError {
   // Identical to default constructed error.
   //
   // Preferred over the default constructor for code readability.
-  static RTCError OK();
+  static RTCError OK() { return RTCError(); }
 
   // Error type.
   RTCErrorType type() const { return type_; }
@@ -203,7 +204,7 @@ class RTCErrorOr {
   // is marked 'explicit' to try to catch cases like 'return {};', where people
   // think RTCErrorOr<std::vector<int>> will be initialized with an empty
   // vector, instead of a RTCErrorType::INTERNAL_ERROR error.
-  explicit RTCErrorOr() : error_(RTCErrorType::INTERNAL_ERROR) {}
+  RTCErrorOr() : error_(RTCErrorType::INTERNAL_ERROR) {}
 
   // Constructs a new RTCErrorOr with the given non-ok error. After calling
   // this constructor, calls to value() will DCHECK-fail.
@@ -213,7 +214,7 @@ class RTCErrorOr {
   // RTCError(...)' when the return type is RTCErrorOr<T>.
   //
   // REQUIRES: !error.ok(). This requirement is DCHECKed.
-  RTCErrorOr(RTCError&& error) : error_(std::move(error)) {
+  RTCErrorOr(RTCError&& error) : error_(std::move(error)) {  // NOLINT
     RTC_DCHECK(!error.ok());
   }
 
@@ -224,7 +225,7 @@ class RTCErrorOr {
   // NOTE: Not explicit - we want to use RTCErrorOr<T> as a return type
   // so it is convenient and sensible to be able to do 'return T()'
   // when the return type is RTCErrorOr<T>.
-  RTCErrorOr(T&& value) : value_(std::move(value)) {}
+  RTCErrorOr(T&& value) : value_(std::move(value)) {}  // NOLINT
 
   // Delete the copy constructor and assignment operator; there aren't any use
   // cases where you should need to copy an RTCErrorOr, as opposed to moving
@@ -248,7 +249,7 @@ class RTCErrorOr {
   // Conversion constructor and assignment operator; T must be copy or move
   // constructible from U.
   template <typename U>
-  RTCErrorOr(RTCErrorOr<U> other)
+  RTCErrorOr(RTCErrorOr<U> other)  // NOLINT
       : error_(std::move(other.error_)), value_(std::move(other.value_)) {}
   template <typename U>
   RTCErrorOr& operator=(RTCErrorOr<U> other) {

@@ -19,6 +19,7 @@
 #include "webrtc/p2p/base/port.h"
 #include "webrtc/p2p/base/portinterface.h"
 #include "webrtc/base/helpers.h"
+#include "webrtc/base/proxyinfo.h"
 #include "webrtc/base/sigslot.h"
 #include "webrtc/base/thread.h"
 
@@ -73,6 +74,18 @@ enum {
   // candidates. Doing so ensures that even if a cellular network type was not
   // detected initially, it would not be used if a Wi-Fi network is present.
   PORTALLOCATOR_DISABLE_COSTLY_NETWORKS = 0x2000,
+
+  // When specified, do not collect IPv6 ICE candidates on Wi-Fi.
+  PORTALLOCATOR_ENABLE_IPV6_ON_WIFI = 0x4000,
+
+  // When this flag is set, ports not bound to any specific network interface
+  // will be used, in addition to normal ports bound to the enumerated
+  // interfaces. Without this flag, these "any address" ports would only be
+  // used when network enumeration fails or is disabled. But under certain
+  // conditions, these ports may succeed where others fail, so they may allow
+  // the application to work in a wider variety of environments, at the expense
+  // of having to allocate additional candidates.
+  PORTALLOCATOR_ENABLE_ANY_ADDRESS_PORTS = 0x8000,
 };
 
 // Defines various reasons that have caused ICE regathering.
@@ -125,14 +138,23 @@ typedef std::vector<ProtocolAddress> PortList;
 struct RelayServerConfig {
   RelayServerConfig(RelayType type) : type(type) {}
 
+  RelayServerConfig(const rtc::SocketAddress& address,
+                    const std::string& username,
+                    const std::string& password,
+                    ProtocolType proto)
+      : type(RELAY_TURN), credentials(username, password) {
+    ports.push_back(ProtocolAddress(address, proto));
+  }
+
   RelayServerConfig(const std::string& address,
                     int port,
                     const std::string& username,
                     const std::string& password,
                     ProtocolType proto)
-      : type(RELAY_TURN), credentials(username, password) {
-    ports.push_back(ProtocolAddress(rtc::SocketAddress(address, port), proto));
-  }
+      : RelayServerConfig(rtc::SocketAddress(address, port),
+                          username,
+                          password,
+                          proto) {}
 
   // Legacy constructor where "secure" and PROTO_TCP implies PROTO_TLS.
   RelayServerConfig(const std::string& address,
@@ -306,6 +328,7 @@ class PortAllocator : public sigslot::has_slots<> {
       allow_tcp_listen_(true),
       candidate_filter_(CF_ALL) {
   }
+
   virtual ~PortAllocator() {}
 
   // This should be called on the PortAllocator's thread before the
@@ -315,11 +338,13 @@ class PortAllocator : public sigslot::has_slots<> {
   // Set STUN and TURN servers to be used in future sessions, and set
   // candidate pool size, as described in JSEP.
   //
-  // If the servers are changing and the candidate pool size is nonzero,
-  // existing pooled sessions will be destroyed and new ones created.
+  // If the servers are changing, and the candidate pool size is nonzero, and
+  // FreezeCandidatePool hasn't been called, existing pooled sessions will be
+  // destroyed and new ones created.
   //
-  // If the servers are not changing but the candidate pool size is,
-  // pooled sessions will be either created or destroyed as necessary.
+  // If the servers are not changing but the candidate pool size is, and
+  // FreezeCandidatePool hasn't been called, pooled sessions will be either
+  // created or destroyed as necessary.
   //
   // Returns true if the configuration could successfully be changed.
   bool SetConfiguration(const ServerAddresses& stun_servers,
@@ -362,8 +387,30 @@ class PortAllocator : public sigslot::has_slots<> {
   // Returns the next session that would be returned by TakePooledSession.
   const PortAllocatorSession* GetPooledSession() const;
 
+  // After FreezeCandidatePool is called, changing the candidate pool size will
+  // no longer be allowed, and changing ICE servers will not cause pooled
+  // sessions to be recreated.
+  //
+  // Expected to be called when SetLocalDescription is called on a
+  // PeerConnection. Can be called safely on any thread as long as not
+  // simultaneously with SetConfiguration.
+  void FreezeCandidatePool();
+
+  // Discard any remaining pooled sessions.
+  void DiscardCandidatePool();
+
   uint32_t flags() const { return flags_; }
   void set_flags(uint32_t flags) { flags_ = flags; }
+
+  // These three methods are deprecated. If connections need to go through a
+  // proxy, the application should create a BasicPortAllocator given a custom
+  // PacketSocketFactory that creates proxy sockets.
+  const std::string& user_agent() const { return agent_; }
+  const rtc::ProxyInfo& proxy() const { return proxy_; }
+  void set_proxy(const std::string& agent, const rtc::ProxyInfo& proxy) {
+    agent_ = agent;
+    proxy_ = proxy;
+  }
 
   // Gets/Sets the port range to use when choosing client ports.
   int min_port() const { return min_port_; }
@@ -417,6 +464,8 @@ class PortAllocator : public sigslot::has_slots<> {
   }
 
   uint32_t flags_;
+  std::string agent_;
+  rtc::ProxyInfo proxy_;
   int min_port_;
   int max_port_;
   uint32_t step_delay_;
@@ -429,6 +478,7 @@ class PortAllocator : public sigslot::has_slots<> {
   std::vector<RelayServerConfig> turn_servers_;
   int candidate_pool_size_ = 0;  // Last value passed into SetConfiguration.
   std::deque<std::unique_ptr<PortAllocatorSession>> pooled_sessions_;
+  bool candidate_pool_frozen_ = false;
   bool prune_turn_ports_ = false;
 
   webrtc::MetricsObserverInterface* metrics_observer_ = nullptr;

@@ -262,7 +262,7 @@ rtc::scoped_refptr<VideoTrackSourceInterface> VideoCapturerTrackSource::Create(
     const webrtc::MediaConstraintsInterface* constraints,
     bool remote) {
   RTC_DCHECK(worker_thread != NULL);
-  RTC_DCHECK(capturer != NULL);
+  RTC_DCHECK(capturer != nullptr);
   rtc::scoped_refptr<VideoCapturerTrackSource> source(
       new rtc::RefCountedObject<VideoCapturerTrackSource>(
           worker_thread, std::move(capturer), remote));
@@ -275,7 +275,7 @@ rtc::scoped_refptr<VideoTrackSourceInterface> VideoCapturerTrackSource::Create(
     std::unique_ptr<cricket::VideoCapturer> capturer,
     bool remote) {
   RTC_DCHECK(worker_thread != NULL);
-  RTC_DCHECK(capturer != NULL);
+  RTC_DCHECK(capturer != nullptr);
   rtc::scoped_refptr<VideoCapturerTrackSource> source(
       new rtc::RefCountedObject<VideoCapturerTrackSource>(
           worker_thread, std::move(capturer), remote));

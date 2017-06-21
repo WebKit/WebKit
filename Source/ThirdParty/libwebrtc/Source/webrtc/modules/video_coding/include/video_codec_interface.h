@@ -14,12 +14,12 @@
 #include <vector>
 
 #include "webrtc/api/video/video_frame.h"
+#include "webrtc/api/video_codecs/video_decoder.h"
+#include "webrtc/api/video_codecs/video_encoder.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/video_coding/include/video_error_codes.h"
 #include "webrtc/typedefs.h"
-#include "webrtc/video_decoder.h"
-#include "webrtc/video_encoder.h"
 
 namespace webrtc {
 
@@ -28,10 +28,6 @@ class RTPFragmentationHeader;  // forward declaration
 // Note: if any pointers are added to this struct, it must be fitted
 // with a copy-constructor. See below.
 struct CodecSpecificInfoVP8 {
-  bool hasReceivedSLI;
-  uint8_t pictureIdSLI;
-  bool hasReceivedRPSI;
-  uint64_t pictureIdRPSI;
   int16_t pictureId;  // Negative value to skip pictureId.
   bool nonReference;
   uint8_t simulcastIdx;
@@ -42,10 +38,6 @@ struct CodecSpecificInfoVP8 {
 };
 
 struct CodecSpecificInfoVP9 {
-  bool has_received_sli;
-  uint8_t picture_id_sli;
-  bool has_received_rpsi;
-  uint64_t picture_id_rpsi;
   int16_t picture_id;  // Negative value to skip pictureId.
 
   bool inter_pic_predicted;  // This layer frame is dependent on previously

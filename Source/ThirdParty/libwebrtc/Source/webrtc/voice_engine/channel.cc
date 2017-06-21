@@ -21,8 +21,10 @@
 #include "webrtc/base/location.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/rate_limiter.h"
+#include "webrtc/base/task_queue.h"
 #include "webrtc/base/thread_checker.h"
 #include "webrtc/base/timeutils.h"
+#include "webrtc/call/rtp_transport_controller_send_interface.h"
 #include "webrtc/config.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
@@ -36,6 +38,7 @@
 #include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_receiver_strategy.h"
 #include "webrtc/modules/utility/include/process_thread.h"
+#include "webrtc/system_wrappers/include/field_trial.h"
 #include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/voice_engine/include/voe_rtp_rtcp.h"
 #include "webrtc/voice_engine/output_mixer.h"
@@ -73,23 +76,16 @@ class RtcEventLogProxy final : public webrtc::RtcEventLog {
   void StopLogging() override { RTC_NOTREACHED(); }
 
   void LogVideoReceiveStreamConfig(
-      const webrtc::VideoReceiveStream::Config& config) override {
-    rtc::CritScope lock(&crit_);
-    if (event_log_) {
-      event_log_->LogVideoReceiveStreamConfig(config);
-    }
+      const webrtc::rtclog::StreamConfig&) override {
+    RTC_NOTREACHED();
   }
 
-  void LogVideoSendStreamConfig(
-      const webrtc::VideoSendStream::Config& config) override {
-    rtc::CritScope lock(&crit_);
-    if (event_log_) {
-      event_log_->LogVideoSendStreamConfig(config);
-    }
+  void LogVideoSendStreamConfig(const webrtc::rtclog::StreamConfig&) override {
+    RTC_NOTREACHED();
   }
 
   void LogAudioReceiveStreamConfig(
-      const webrtc::AudioReceiveStream::Config& config) override {
+      const webrtc::rtclog::StreamConfig& config) override {
     rtc::CritScope lock(&crit_);
     if (event_log_) {
       event_log_->LogAudioReceiveStreamConfig(config);
@@ -97,7 +93,7 @@ class RtcEventLogProxy final : public webrtc::RtcEventLog {
   }
 
   void LogAudioSendStreamConfig(
-      const webrtc::AudioSendStream::Config& config) override {
+      const webrtc::rtclog::StreamConfig& config) override {
     rtc::CritScope lock(&crit_);
     if (event_log_) {
       event_log_->LogAudioSendStreamConfig(config);
@@ -105,32 +101,28 @@ class RtcEventLogProxy final : public webrtc::RtcEventLog {
   }
 
   void LogRtpHeader(webrtc::PacketDirection direction,
-                    webrtc::MediaType media_type,
                     const uint8_t* header,
                     size_t packet_length) override {
-    LogRtpHeader(direction, media_type, header, packet_length,
-                 PacedPacketInfo::kNotAProbe);
+    LogRtpHeader(direction, header, packet_length, PacedPacketInfo::kNotAProbe);
   }
 
   void LogRtpHeader(webrtc::PacketDirection direction,
-                    webrtc::MediaType media_type,
                     const uint8_t* header,
                     size_t packet_length,
                     int probe_cluster_id) override {
     rtc::CritScope lock(&crit_);
     if (event_log_) {
-      event_log_->LogRtpHeader(direction, media_type, header, packet_length,
+      event_log_->LogRtpHeader(direction, header, packet_length,
                                probe_cluster_id);
     }
   }
 
   void LogRtcpPacket(webrtc::PacketDirection direction,
-                     webrtc::MediaType media_type,
                      const uint8_t* packet,
                      size_t length) override {
     rtc::CritScope lock(&crit_);
     if (event_log_) {
-      event_log_->LogRtcpPacket(direction, media_type, packet, length);
+      event_log_->LogRtcpPacket(direction, packet, length);
     }
   }
 
@@ -160,7 +152,7 @@ class RtcEventLogProxy final : public webrtc::RtcEventLog {
   }
 
   void LogAudioNetworkAdaptation(
-      const AudioNetworkAdaptor::EncoderRuntimeConfig& config) override {
+      const AudioEncoderRuntimeConfig& config) override {
     rtc::CritScope lock(&crit_);
     if (event_log_) {
       event_log_->LogAudioNetworkAdaptation(config);
@@ -247,13 +239,14 @@ class TransportFeedbackProxy : public TransportFeedbackObserver {
   }
 
   // Implements TransportFeedbackObserver.
-  void AddPacket(uint16_t sequence_number,
+  void AddPacket(uint32_t ssrc,
+                 uint16_t sequence_number,
                  size_t length,
                  const PacedPacketInfo& pacing_info) override {
     RTC_DCHECK(pacer_thread_.CalledOnValidThread());
     rtc::CritScope lock(&crit_);
     if (feedback_observer_)
-      feedback_observer_->AddPacket(sequence_number, length, pacing_info);
+      feedback_observer_->AddPacket(ssrc, sequence_number, length, pacing_info);
   }
 
   void OnTransportFeedback(const rtcp::TransportFeedback& feedback) override {
@@ -262,9 +255,9 @@ class TransportFeedbackProxy : public TransportFeedbackObserver {
     if (feedback_observer_)
       feedback_observer_->OnTransportFeedback(feedback);
   }
-  std::vector<PacketInfo> GetTransportFeedbackVector() const override {
+  std::vector<PacketFeedback> GetTransportFeedbackVector() const override {
     RTC_NOTREACHED();
-    return std::vector<PacketInfo>();
+    return std::vector<PacketFeedback>();
   }
 
  private:
@@ -396,7 +389,7 @@ class VoERtcpObserver : public RtcpBandwidthObserver {
           (fraction_lost_aggregate + total_number_of_packets / 2) /
           total_number_of_packets;
     }
-    owner_->OnIncomingFractionLoss(weighted_fraction_lost);
+    owner_->OnUplinkPacketLossRate(weighted_fraction_lost / 255.0f);
   }
 
  private:
@@ -407,12 +400,32 @@ class VoERtcpObserver : public RtcpBandwidthObserver {
   RtcpBandwidthObserver* bandwidth_observer_ GUARDED_BY(crit_);
 };
 
+class Channel::ProcessAndEncodeAudioTask : public rtc::QueuedTask {
+ public:
+  ProcessAndEncodeAudioTask(std::unique_ptr<AudioFrame> audio_frame,
+                            Channel* channel)
+      : audio_frame_(std::move(audio_frame)), channel_(channel) {
+    RTC_DCHECK(channel_);
+  }
+
+ private:
+  bool Run() override {
+    RTC_DCHECK_RUN_ON(channel_->encoder_queue_);
+    channel_->ProcessAndEncodeAudioOnTaskQueue(audio_frame_.get());
+    return true;
+  }
+
+  std::unique_ptr<AudioFrame> audio_frame_;
+  Channel* const channel_;
+};
+
 int32_t Channel::SendData(FrameType frameType,
                           uint8_t payloadType,
                           uint32_t timeStamp,
                           const uint8_t* payloadData,
                           size_t payloadSize,
                           const RTPFragmentationHeader* fragmentation) {
+  RTC_DCHECK_RUN_ON(encoder_queue_);
   WEBRTC_TRACE(kTraceStream, kTraceVoice, VoEId(_instanceId, _channelId),
                "Channel::SendData(frameType=%u, payloadType=%u, timeStamp=%u,"
                " payloadSize=%" PRIuS ", fragmentation=0x%x)",
@@ -440,18 +453,6 @@ int32_t Channel::SendData(FrameType frameType,
     return -1;
   }
 
-  _lastLocalTimeStamp = timeStamp;
-  _lastPayloadType = payloadType;
-
-  return 0;
-}
-
-int32_t Channel::InFrameType(FrameType frame_type) {
-  WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId, _channelId),
-               "Channel::InFrameType(frame_type=%d)", frame_type);
-
-  rtc::CritScope cs(&_callbackCritSect);
-  _sendFrameType = (frame_type == kAudioFrameSpeech);
   return 0;
 }
 
@@ -659,7 +660,7 @@ MixerParticipant::AudioFrameInfo Channel::GetAudioFrameWithMuted(
     rtc::CritScope cs(&_callbackCritSect);
     if (audio_sink_) {
       AudioSinkInterface::Data data(
-          &audioFrame->data_[0], audioFrame->samples_per_channel_,
+          audioFrame->data(), audioFrame->samples_per_channel_,
           audioFrame->sample_rate_hz_, audioFrame->num_channels_,
           audioFrame->timestamp_);
       audio_sink_->OnData(data);
@@ -667,35 +668,15 @@ MixerParticipant::AudioFrameInfo Channel::GetAudioFrameWithMuted(
   }
 
   float output_gain = 1.0f;
-  float left_pan = 1.0f;
-  float right_pan = 1.0f;
   {
     rtc::CritScope cs(&volume_settings_critsect_);
     output_gain = _outputGain;
-    left_pan = _panLeft;
-    right_pan = _panRight;
   }
 
   // Output volume scaling
   if (output_gain < 0.99f || output_gain > 1.01f) {
-    AudioFrameOperations::ScaleWithSat(output_gain, *audioFrame);
-  }
-
-  // Scale left and/or right channel(s) if stereo and master balance is
-  // active
-
-  if (left_pan != 1.0f || right_pan != 1.0f) {
-    if (audioFrame->num_channels_ == 1) {
-      // Emulate stereo mode since panning is active.
-      // The mono signal is copied to both left and right channels here.
-      AudioFrameOperations::MonoToStereo(audioFrame);
-    }
-    // For true stereo mode (when we are receiving a stereo signal), no
-    // action is needed.
-
-    // Do the panning operation (the audio frame contains stereo at this
-    // stage)
-    AudioFrameOperations::Scale(left_pan, right_pan, *audioFrame);
+    // TODO(solenberg): Combine with mute state - this can cause clicks!
+    AudioFrameOperations::ScaleWithSat(output_gain, audioFrame);
   }
 
   // Mix decoded PCM output with file if file mixing is enabled
@@ -806,11 +787,10 @@ int32_t Channel::NeededFrequency(int32_t id) const {
   return (highestNeeded);
 }
 
-int32_t Channel::CreateChannel(
-    Channel*& channel,
-    int32_t channelId,
-    uint32_t instanceId,
-    const VoEBase::ChannelConfig& config) {
+int32_t Channel::CreateChannel(Channel*& channel,
+                               int32_t channelId,
+                               uint32_t instanceId,
+                               const VoEBase::ChannelConfig& config) {
   WEBRTC_TRACE(kTraceMemory, kTraceVoice, VoEId(instanceId, channelId),
                "Channel::CreateChannel(channelId=%d, instanceId=%d)", channelId,
                instanceId);
@@ -913,15 +893,10 @@ Channel::Channel(int32_t channelId,
       _voiceEngineObserverPtr(NULL),
       _callbackCritSectPtr(NULL),
       _transportPtr(NULL),
-      _sendFrameType(0),
-      _mixFileWithMicrophone(false),
       input_mute_(false),
       previous_frame_muted_(false),
-      _panLeft(1.0f),
-      _panRight(1.0f),
       _outputGain(1.0f),
-      _lastLocalTimeStamp(0),
-      _lastPayloadType(0),
+      _mixFileWithMicrophone(false),
       _includeAudioLevelIndication(false),
       transport_overhead_per_packet_(0),
       rtp_overhead_per_packet_(0),
@@ -935,7 +910,9 @@ Channel::Channel(int32_t channelId,
       rtp_packet_sender_proxy_(new RtpPacketSenderProxy()),
       retransmission_rate_limiter_(new RateLimiter(Clock::GetRealTimeClock(),
                                                    kMaxRetransmissionWindowMs)),
-      decoder_factory_(config.acm_config.decoder_factory) {
+      decoder_factory_(config.acm_config.decoder_factory),
+      use_twcc_plr_for_ana_(
+          webrtc::field_trial::FindFullName("UseTwccPlrForAna") == "Enabled") {
   WEBRTC_TRACE(kTraceMemory, kTraceVoice, VoEId(_instanceId, _channelId),
                "Channel::Channel() - ctor");
   AudioCodingModule::Config acm_config(config.acm_config);
@@ -967,50 +944,12 @@ Channel::Channel(int32_t channelId,
 }
 
 Channel::~Channel() {
-  rtp_receive_statistics_->RegisterRtcpStatisticsCallback(NULL);
-  WEBRTC_TRACE(kTraceMemory, kTraceVoice, VoEId(_instanceId, _channelId),
-               "Channel::~Channel() - dtor");
-
-  StopSend();
-  StopPlayout();
-
-  {
-    rtc::CritScope cs(&_fileCritSect);
-    if (input_file_player_) {
-      input_file_player_->RegisterModuleFileCallback(NULL);
-      input_file_player_->StopPlayingFile();
-    }
-    if (output_file_player_) {
-      output_file_player_->RegisterModuleFileCallback(NULL);
-      output_file_player_->StopPlayingFile();
-    }
-    if (output_file_recorder_) {
-      output_file_recorder_->RegisterModuleFileCallback(NULL);
-      output_file_recorder_->StopRecording();
-    }
-  }
-
-  // The order to safely shutdown modules in a channel is:
-  // 1. De-register callbacks in modules
-  // 2. De-register modules in process thread
-  // 3. Destroy modules
-  if (audio_coding_->RegisterTransportCallback(NULL) == -1) {
-    WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
-                 "~Channel() failed to de-register transport callback"
-                 " (Audio coding module)");
-  }
-  if (audio_coding_->RegisterVADCallback(NULL) == -1) {
-    WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
-                 "~Channel() failed to de-register VAD callback"
-                 " (Audio coding module)");
-  }
-  // De-register modules in process thread
-  _moduleProcessThreadPtr->DeRegisterModule(_rtpRtcpModule.get());
-
-  // End of modules shutdown
+  RTC_DCHECK(!channel_state_.Get().sending);
+  RTC_DCHECK(!channel_state_.Get().playing);
 }
 
 int32_t Channel::Init() {
+  RTC_DCHECK(construction_thread_.CalledOnValidThread());
   WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId, _channelId),
                "Channel::Init()");
 
@@ -1048,26 +987,57 @@ int32_t Channel::Init() {
   // RTCP is enabled by default.
   _rtpRtcpModule->SetRTCPStatus(RtcpMode::kCompound);
   // --- Register all permanent callbacks
-  const bool fail = (audio_coding_->RegisterTransportCallback(this) == -1) ||
-                    (audio_coding_->RegisterVADCallback(this) == -1);
-
-  if (fail) {
+  if (audio_coding_->RegisterTransportCallback(this) == -1) {
     _engineStatisticsPtr->SetLastError(
         VE_CANNOT_INIT_CHANNEL, kTraceError,
         "Channel::Init() callbacks not registered");
     return -1;
   }
 
-  // --- Register all supported codecs to the receiving side of the
-  // RTP/RTCP module
-
-  CodecInst codec;
-  const uint8_t nSupportedCodecs = AudioCodingModule::NumberOfCodecs();
-
+  // Register a default set of send codecs.
+  const int nSupportedCodecs = AudioCodingModule::NumberOfCodecs();
   for (int idx = 0; idx < nSupportedCodecs; idx++) {
+    CodecInst codec;
+    RTC_CHECK_EQ(0, audio_coding_->Codec(idx, &codec));
+
+    // Ensure that PCMU is used as default send codec.
+    if (STR_CASE_CMP(codec.plname, "PCMU") == 0 && codec.channels == 1) {
+      SetSendCodec(codec);
+    }
+
+    // Register default PT for 'telephone-event'
+    if (STR_CASE_CMP(codec.plname, "telephone-event") == 0) {
+      if (_rtpRtcpModule->RegisterSendPayload(codec) == -1) {
+        WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
+                     "Channel::Init() failed to register outband "
+                     "'telephone-event' (%d/%d) correctly",
+                     codec.pltype, codec.plfreq);
+      }
+    }
+
+    if (STR_CASE_CMP(codec.plname, "CN") == 0) {
+      if (!codec_manager_.RegisterEncoder(codec) ||
+          !codec_manager_.MakeEncoder(&rent_a_codec_, audio_coding_.get()) ||
+          _rtpRtcpModule->RegisterSendPayload(codec) == -1) {
+        WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
+                     "Channel::Init() failed to register CN (%d/%d) "
+                     "correctly - 1",
+                     codec.pltype, codec.plfreq);
+      }
+    }
+  }
+
+  return 0;
+}
+
+void Channel::RegisterLegacyReceiveCodecs() {
+  const int nSupportedCodecs = AudioCodingModule::NumberOfCodecs();
+  for (int idx = 0; idx < nSupportedCodecs; idx++) {
+    CodecInst codec;
+    RTC_CHECK_EQ(0, audio_coding_->Codec(idx, &codec));
+
     // Open up the RTP/RTCP receiver for all supported codecs
-    if ((audio_coding_->Codec(idx, &codec) == -1) ||
-        (rtp_receiver_->RegisterReceivePayload(codec) == -1)) {
+    if (rtp_receiver_->RegisterReceivePayload(codec) == -1) {
       WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
                    "Channel::Init() unable to register %s "
                    "(%d/%d/%" PRIuS "/%d) to RTP/RTCP receiver",
@@ -1082,29 +1052,20 @@ int32_t Channel::Init() {
                    codec.rate);
     }
 
-    // Ensure that PCMU is used as default codec on the sending side
-    if (!STR_CASE_CMP(codec.plname, "PCMU") && (codec.channels == 1)) {
-      SetSendCodec(codec);
-    }
-
-    // Register default PT for outband 'telephone-event'
-    if (!STR_CASE_CMP(codec.plname, "telephone-event")) {
-      if (_rtpRtcpModule->RegisterSendPayload(codec) == -1 ||
-          !audio_coding_->RegisterReceiveCodec(codec.pltype,
+    // Register default PT for 'telephone-event'
+    if (STR_CASE_CMP(codec.plname, "telephone-event") == 0) {
+      if (!audio_coding_->RegisterReceiveCodec(codec.pltype,
                                                CodecInstToSdp(codec))) {
         WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
-                     "Channel::Init() failed to register outband "
+                     "Channel::Init() failed to register inband "
                      "'telephone-event' (%d/%d) correctly",
                      codec.pltype, codec.plfreq);
       }
     }
 
-    if (!STR_CASE_CMP(codec.plname, "CN")) {
-      if (!codec_manager_.RegisterEncoder(codec) ||
-          !codec_manager_.MakeEncoder(&rent_a_codec_, audio_coding_.get()) ||
-          !audio_coding_->RegisterReceiveCodec(codec.pltype,
-                                               CodecInstToSdp(codec)) ||
-          _rtpRtcpModule->RegisterSendPayload(codec) == -1) {
+    if (STR_CASE_CMP(codec.plname, "CN") == 0) {
+      if (!audio_coding_->RegisterReceiveCodec(codec.pltype,
+                                               CodecInstToSdp(codec))) {
         WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
                      "Channel::Init() failed to register CN (%d/%d) "
                      "correctly - 1",
@@ -1112,8 +1073,56 @@ int32_t Channel::Init() {
       }
     }
   }
+}
 
-  return 0;
+void Channel::Terminate() {
+  RTC_DCHECK(construction_thread_.CalledOnValidThread());
+  // Must be called on the same thread as Init().
+  WEBRTC_TRACE(kTraceMemory, kTraceVoice, VoEId(_instanceId, _channelId),
+               "Channel::Terminate");
+
+  rtp_receive_statistics_->RegisterRtcpStatisticsCallback(NULL);
+
+  StopSend();
+  StopPlayout();
+
+  {
+    rtc::CritScope cs(&_fileCritSect);
+    if (input_file_player_) {
+      input_file_player_->RegisterModuleFileCallback(NULL);
+      input_file_player_->StopPlayingFile();
+    }
+    if (output_file_player_) {
+      output_file_player_->RegisterModuleFileCallback(NULL);
+      output_file_player_->StopPlayingFile();
+    }
+    if (output_file_recorder_) {
+      output_file_recorder_->RegisterModuleFileCallback(NULL);
+      output_file_recorder_->StopRecording();
+    }
+  }
+
+  // The order to safely shutdown modules in a channel is:
+  // 1. De-register callbacks in modules
+  // 2. De-register modules in process thread
+  // 3. Destroy modules
+  if (audio_coding_->RegisterTransportCallback(NULL) == -1) {
+    WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
+                 "Terminate() failed to de-register transport callback"
+                 " (Audio coding module)");
+  }
+
+  if (audio_coding_->RegisterVADCallback(NULL) == -1) {
+    WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
+                 "Terminate() failed to de-register VAD callback"
+                 " (Audio coding module)");
+  }
+
+  // De-register modules in process thread
+  if (_moduleProcessThreadPtr)
+    _moduleProcessThreadPtr->DeRegisterModule(_rtpRtcpModule.get());
+
+  // End of modules shutdown
 }
 
 int32_t Channel::SetEngineInformation(Statistics& engineStatistics,
@@ -1121,7 +1130,10 @@ int32_t Channel::SetEngineInformation(Statistics& engineStatistics,
                                       ProcessThread& moduleProcessThread,
                                       AudioDeviceModule& audioDeviceModule,
                                       VoiceEngineObserver* voiceEngineObserver,
-                                      rtc::CriticalSection* callbackCritSect) {
+                                      rtc::CriticalSection* callbackCritSect,
+                                      rtc::TaskQueue* encoder_queue) {
+  RTC_DCHECK(encoder_queue);
+  RTC_DCHECK(!encoder_queue_);
   WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId, _channelId),
                "Channel::SetEngineInformation()");
   _engineStatisticsPtr = &engineStatistics;
@@ -1130,11 +1142,7 @@ int32_t Channel::SetEngineInformation(Statistics& engineStatistics,
   _audioDeviceModulePtr = &audioDeviceModule;
   _voiceEngineObserverPtr = voiceEngineObserver;
   _callbackCritSectPtr = callbackCritSect;
-  return 0;
-}
-
-int32_t Channel::UpdateLocalTimeStamp() {
-  _timeStamp += static_cast<uint32_t>(_audioFrame.samples_per_channel_);
+  encoder_queue_ = encoder_queue;
   return 0;
 }
 
@@ -1198,7 +1206,11 @@ int32_t Channel::StartSend() {
     return 0;
   }
   channel_state_.SetSending(true);
-
+  {
+    // It is now OK to start posting tasks to the encoder task queue.
+    rtc::CritScope cs(&encoder_queue_lock_);
+    encoder_queue_is_active_ = true;
+  }
   // Resume the previous sequence number which was reset by StopSend(). This
   // needs to be done before |sending| is set to true on the RTP/RTCP module.
   if (send_sequence_number_) {
@@ -1218,13 +1230,31 @@ int32_t Channel::StartSend() {
   return 0;
 }
 
-int32_t Channel::StopSend() {
+void Channel::StopSend() {
   WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId, _channelId),
                "Channel::StopSend()");
   if (!channel_state_.Get().sending) {
-    return 0;
+    return;
   }
   channel_state_.SetSending(false);
+
+  // Post a task to the encoder thread which sets an event when the task is
+  // executed. We know that no more encoding tasks will be added to the task
+  // queue for this channel since sending is now deactivated. It means that,
+  // if we wait for the event to bet set, we know that no more pending tasks
+  // exists and it is therfore guaranteed that the task queue will never try
+  // to acccess and invalid channel object.
+  RTC_DCHECK(encoder_queue_);
+
+  rtc::Event flush(false, false);
+  {
+    // Clear |encoder_queue_is_active_| under lock to prevent any other tasks
+    // than this final "flush task" to be posted on the queue.
+    rtc::CritScope cs(&encoder_queue_lock_);
+    encoder_queue_is_active_ = false;
+    encoder_queue_->PostTask([&flush]() { flush.Set(); });
+  }
+  flush.Wait(rtc::Event::kForever);
 
   // Store the sequence number to be able to pick up the same sequence for
   // the next StartSend(). This is needed for restarting device, otherwise
@@ -1242,8 +1272,55 @@ int32_t Channel::StopSend() {
         "StartSend() RTP/RTCP failed to stop sending");
   }
   _rtpRtcpModule->SetSendingMediaStatus(false);
+}
 
-  return 0;
+bool Channel::SetEncoder(int payload_type,
+                         std::unique_ptr<AudioEncoder> encoder) {
+  RTC_DCHECK_GE(payload_type, 0);
+  RTC_DCHECK_LE(payload_type, 127);
+  // TODO(ossu): Make CodecInsts up, for now: one for the RTP/RTCP module and
+  // one for for us to keep track of sample rate and number of channels, etc.
+
+  // The RTP/RTCP module needs to know the RTP timestamp rate (i.e. clockrate)
+  // as well as some other things, so we collect this info and send it along.
+  CodecInst rtp_codec;
+  rtp_codec.pltype = payload_type;
+  strncpy(rtp_codec.plname, "audio", sizeof(rtp_codec.plname));
+  rtp_codec.plname[sizeof(rtp_codec.plname) - 1] = 0;
+  // Seems unclear if it should be clock rate or sample rate. CodecInst
+  // supposedly carries the sample rate, but only clock rate seems sensible to
+  // send to the RTP/RTCP module.
+  rtp_codec.plfreq = encoder->RtpTimestampRateHz();
+  rtp_codec.pacsize = rtc::CheckedDivExact(
+      static_cast<int>(encoder->Max10MsFramesInAPacket() * rtp_codec.plfreq),
+      100);
+  rtp_codec.channels = encoder->NumChannels();
+  rtp_codec.rate = 0;
+
+  // For audio encoding we need, instead, the actual sample rate of the codec.
+  // The rest of the information should be the same.
+  CodecInst send_codec = rtp_codec;
+  send_codec.plfreq = encoder->SampleRateHz();
+  cached_send_codec_.emplace(send_codec);
+
+  if (_rtpRtcpModule->RegisterSendPayload(rtp_codec) != 0) {
+    _rtpRtcpModule->DeRegisterSendPayload(payload_type);
+    if (_rtpRtcpModule->RegisterSendPayload(rtp_codec) != 0) {
+      WEBRTC_TRACE(
+          kTraceError, kTraceVoice, VoEId(_instanceId, _channelId),
+          "SetEncoder() failed to register codec to RTP/RTCP module");
+      return false;
+    }
+  }
+
+  audio_coding_->SetEncoder(std::move(encoder));
+  codec_manager_.UnsetCodecInst();
+  return true;
+}
+
+void Channel::ModifyEncoder(
+    rtc::FunctionView<void(std::unique_ptr<AudioEncoder>*)> modifier) {
+  audio_coding_->ModifyEncoder(modifier);
 }
 
 int32_t Channel::RegisterVoiceEngineObserver(VoiceEngineObserver& observer) {
@@ -1277,10 +1354,15 @@ int32_t Channel::DeRegisterVoiceEngineObserver() {
 }
 
 int32_t Channel::GetSendCodec(CodecInst& codec) {
-  auto send_codec = codec_manager_.GetCodecInst();
-  if (send_codec) {
-    codec = *send_codec;
+  if (cached_send_codec_) {
+    codec = *cached_send_codec_;
     return 0;
+  } else {
+    const CodecInst* send_codec = codec_manager_.GetCodecInst();
+    if (send_codec) {
+      codec = *send_codec;
+      return 0;
+    }
   }
   return -1;
 }
@@ -1310,6 +1392,8 @@ int32_t Channel::SetSendCodec(const CodecInst& codec) {
     }
   }
 
+  cached_send_codec_.reset();
+
   return 0;
 }
 
@@ -1325,10 +1409,33 @@ void Channel::SetBitRate(int bitrate_bps, int64_t probing_interval_ms) {
   retransmission_rate_limiter_->SetMaxRate(bitrate_bps);
 }
 
-void Channel::OnIncomingFractionLoss(int fraction_lost) {
+void Channel::OnTwccBasedUplinkPacketLossRate(float packet_loss_rate) {
+  if (!use_twcc_plr_for_ana_)
+    return;
   audio_coding_->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* encoder) {
-    if (*encoder)
-      (*encoder)->OnReceivedUplinkPacketLossFraction(fraction_lost / 255.0f);
+    if (*encoder) {
+      (*encoder)->OnReceivedUplinkPacketLossFraction(packet_loss_rate);
+    }
+  });
+}
+
+void Channel::OnRecoverableUplinkPacketLossRate(
+    float recoverable_packet_loss_rate) {
+  audio_coding_->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* encoder) {
+    if (*encoder) {
+      (*encoder)->OnReceivedUplinkRecoverablePacketLossFraction(
+          recoverable_packet_loss_rate);
+    }
+  });
+}
+
+void Channel::OnUplinkPacketLossRate(float packet_loss_rate) {
+  if (use_twcc_plr_for_ana_)
+    return;
+  audio_coding_->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* encoder) {
+    if (*encoder) {
+      (*encoder)->OnReceivedUplinkPacketLossFraction(packet_loss_rate);
+    }
   });
 }
 
@@ -1356,6 +1463,11 @@ int32_t Channel::GetVADStatus(bool& enabledVAD,
   mode = params->vad_mode;
   disabledDTX = !params->use_cng;
   return 0;
+}
+
+void Channel::SetReceiveCodecs(const std::map<int, SdpAudioFormat>& codecs) {
+  rtp_payload_registry_->SetAudioReceivePayloads(codecs);
+  audio_coding_->SetReceiveCodecs(codecs);
 }
 
 int32_t Channel::SetRecPayloadType(const CodecInst& codec) {
@@ -1523,8 +1635,8 @@ bool Channel::EnableAudioNetworkAdaptor(const std::string& config_string) {
   bool success = false;
   audio_coding_->ModifyEncoder([&](std::unique_ptr<AudioEncoder>* encoder) {
     if (*encoder) {
-      success = (*encoder)->EnableAudioNetworkAdaptor(
-          config_string, event_log_proxy_.get(), Clock::GetRealTimeClock());
+      success = (*encoder)->EnableAudioNetworkAdaptor(config_string,
+                                                      event_log_proxy_.get());
     }
   });
   return success;
@@ -2250,24 +2362,17 @@ void Channel::SetMixWithMicStatus(bool mix) {
   _mixFileWithMicrophone = mix;
 }
 
-int Channel::GetSpeechOutputLevel(uint32_t& level) const {
-  int8_t currentLevel = _outputAudioLevel.Level();
-  level = static_cast<int32_t>(currentLevel);
-  return 0;
+int Channel::GetSpeechOutputLevel() const {
+  return _outputAudioLevel.Level();
 }
 
-int Channel::GetSpeechOutputLevelFullRange(uint32_t& level) const {
-  int16_t currentLevel = _outputAudioLevel.LevelFullRange();
-  level = static_cast<int32_t>(currentLevel);
-  return 0;
+int Channel::GetSpeechOutputLevelFullRange() const {
+  return _outputAudioLevel.LevelFullRange();
 }
 
-int Channel::SetInputMute(bool enable) {
+void Channel::SetInputMute(bool enable) {
   rtc::CritScope cs(&volume_settings_critsect_);
-  WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId, _channelId),
-               "Channel::SetMute(enable=%d)", enable);
   input_mute_ = enable;
-  return 0;
 }
 
 bool Channel::InputMute() const {
@@ -2275,34 +2380,9 @@ bool Channel::InputMute() const {
   return input_mute_;
 }
 
-int Channel::SetOutputVolumePan(float left, float right) {
+void Channel::SetChannelOutputVolumeScaling(float scaling) {
   rtc::CritScope cs(&volume_settings_critsect_);
-  WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId, _channelId),
-               "Channel::SetOutputVolumePan()");
-  _panLeft = left;
-  _panRight = right;
-  return 0;
-}
-
-int Channel::GetOutputVolumePan(float& left, float& right) const {
-  rtc::CritScope cs(&volume_settings_critsect_);
-  left = _panLeft;
-  right = _panRight;
-  return 0;
-}
-
-int Channel::SetChannelOutputVolumeScaling(float scaling) {
-  rtc::CritScope cs(&volume_settings_critsect_);
-  WEBRTC_TRACE(kTraceInfo, kTraceVoice, VoEId(_instanceId, _channelId),
-               "Channel::SetChannelOutputVolumeScaling()");
   _outputGain = scaling;
-  return 0;
-}
-
-int Channel::GetChannelOutputVolumeScaling(float& scaling) const {
-  rtc::CritScope cs(&volume_settings_critsect_);
-  scaling = _outputGain;
-  return 0;
 }
 
 int Channel::SendTelephoneEventOutband(int event, int duration_ms) {
@@ -2345,11 +2425,6 @@ int Channel::SetSendTelephoneEventPayloadType(int payload_type,
       return -1;
     }
   }
-  return 0;
-}
-
-int Channel::VoiceActivityIndicator(int& activity) {
-  activity = _sendFrameType;
   return 0;
 }
 
@@ -2406,10 +2481,13 @@ void Channel::EnableReceiveTransportSequenceNumber(int id) {
 }
 
 void Channel::RegisterSenderCongestionControlObjects(
-    RtpPacketSender* rtp_packet_sender,
-    TransportFeedbackObserver* transport_feedback_observer,
-    PacketRouter* packet_router,
+    RtpTransportControllerSendInterface* transport,
     RtcpBandwidthObserver* bandwidth_observer) {
+  RtpPacketSender* rtp_packet_sender = transport->packet_sender();
+  TransportFeedbackObserver* transport_feedback_observer =
+      transport->transport_feedback_observer();
+  PacketRouter* packet_router = transport->packet_router();
+
   RTC_DCHECK(rtp_packet_sender);
   RTC_DCHECK(transport_feedback_observer);
   RTC_DCHECK(packet_router && !packet_router_);
@@ -2419,26 +2497,32 @@ void Channel::RegisterSenderCongestionControlObjects(
   seq_num_allocator_proxy_->SetSequenceNumberAllocator(packet_router);
   rtp_packet_sender_proxy_->SetPacketSender(rtp_packet_sender);
   _rtpRtcpModule->SetStorePacketsStatus(true, 600);
-  packet_router->AddRtpModule(_rtpRtcpModule.get());
+  packet_router->AddSendRtpModule(_rtpRtcpModule.get());
   packet_router_ = packet_router;
 }
 
 void Channel::RegisterReceiverCongestionControlObjects(
     PacketRouter* packet_router) {
   RTC_DCHECK(packet_router && !packet_router_);
-  packet_router->AddRtpModule(_rtpRtcpModule.get());
+  packet_router->AddReceiveRtpModule(_rtpRtcpModule.get());
   packet_router_ = packet_router;
 }
 
-void Channel::ResetCongestionControlObjects() {
+void Channel::ResetSenderCongestionControlObjects() {
   RTC_DCHECK(packet_router_);
   _rtpRtcpModule->SetStorePacketsStatus(false, 600);
   rtcp_observer_->SetBandwidthObserver(nullptr);
   feedback_observer_proxy_->SetTransportFeedbackObserver(nullptr);
   seq_num_allocator_proxy_->SetSequenceNumberAllocator(nullptr);
-  packet_router_->RemoveRtpModule(_rtpRtcpModule.get());
+  packet_router_->RemoveSendRtpModule(_rtpRtcpModule.get());
   packet_router_ = nullptr;
   rtp_packet_sender_proxy_->SetPacketSender(nullptr);
+}
+
+void Channel::ResetReceiverCongestionControlObjects() {
+  RTC_DCHECK(packet_router_);
+  packet_router_->RemoveReceiveRtpModule(_rtpRtcpModule.get());
+  packet_router_ = nullptr;
 }
 
 void Channel::SetRTCPStatus(bool enable) {
@@ -2650,90 +2734,81 @@ int Channel::ResendPackets(const uint16_t* sequence_numbers, int length) {
   return _rtpRtcpModule->SendNACK(sequence_numbers, length);
 }
 
-uint32_t Channel::Demultiplex(const AudioFrame& audioFrame) {
-  WEBRTC_TRACE(kTraceStream, kTraceVoice, VoEId(_instanceId, _channelId),
-               "Channel::Demultiplex()");
-  _audioFrame.CopyFrom(audioFrame);
-  _audioFrame.id_ = _channelId;
-  return 0;
+void Channel::ProcessAndEncodeAudio(const AudioFrame& audio_input) {
+  // Avoid posting any new tasks if sending was already stopped in StopSend().
+  rtc::CritScope cs(&encoder_queue_lock_);
+  if (!encoder_queue_is_active_) {
+    return;
+  }
+  std::unique_ptr<AudioFrame> audio_frame(new AudioFrame());
+  // TODO(henrika): try to avoid copying by moving ownership of audio frame
+  // either into pool of frames or into the task itself.
+  audio_frame->CopyFrom(audio_input);
+  audio_frame->id_ = ChannelId();
+  encoder_queue_->PostTask(std::unique_ptr<rtc::QueuedTask>(
+      new ProcessAndEncodeAudioTask(std::move(audio_frame), this)));
 }
 
-void Channel::Demultiplex(const int16_t* audio_data,
-                          int sample_rate,
-                          size_t number_of_frames,
-                          size_t number_of_channels) {
+void Channel::ProcessAndEncodeAudio(const int16_t* audio_data,
+                                    int sample_rate,
+                                    size_t number_of_frames,
+                                    size_t number_of_channels) {
+  // Avoid posting as new task if sending was already stopped in StopSend().
+  rtc::CritScope cs(&encoder_queue_lock_);
+  if (!encoder_queue_is_active_) {
+    return;
+  }
   CodecInst codec;
   GetSendCodec(codec);
-
-  // Never upsample or upmix the capture signal here. This should be done at the
-  // end of the send chain.
-  _audioFrame.sample_rate_hz_ = std::min(codec.plfreq, sample_rate);
-  _audioFrame.num_channels_ = std::min(number_of_channels, codec.channels);
+  std::unique_ptr<AudioFrame> audio_frame(new AudioFrame());
+  audio_frame->id_ = ChannelId();
+  audio_frame->sample_rate_hz_ = std::min(codec.plfreq, sample_rate);
+  audio_frame->num_channels_ = std::min(number_of_channels, codec.channels);
   RemixAndResample(audio_data, number_of_frames, number_of_channels,
-                   sample_rate, &input_resampler_, &_audioFrame);
+                   sample_rate, &input_resampler_, audio_frame.get());
+  encoder_queue_->PostTask(std::unique_ptr<rtc::QueuedTask>(
+      new ProcessAndEncodeAudioTask(std::move(audio_frame), this)));
 }
 
-uint32_t Channel::PrepareEncodeAndSend(int mixingFrequency) {
-  WEBRTC_TRACE(kTraceStream, kTraceVoice, VoEId(_instanceId, _channelId),
-               "Channel::PrepareEncodeAndSend()");
-
-  if (_audioFrame.samples_per_channel_ == 0) {
-    WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
-                 "Channel::PrepareEncodeAndSend() invalid audio frame");
-    return 0xFFFFFFFF;
-  }
+void Channel::ProcessAndEncodeAudioOnTaskQueue(AudioFrame* audio_input) {
+  RTC_DCHECK_RUN_ON(encoder_queue_);
+  RTC_DCHECK_GT(audio_input->samples_per_channel_, 0);
+  RTC_DCHECK_LE(audio_input->num_channels_, 2);
+  RTC_DCHECK_EQ(audio_input->id_, ChannelId());
 
   if (channel_state_.Get().input_file_playing) {
-    MixOrReplaceAudioWithFile(mixingFrequency);
+    MixOrReplaceAudioWithFile(audio_input);
   }
 
-  bool is_muted = InputMute();  // Cache locally as InputMute() takes a lock.
-  AudioFrameOperations::Mute(&_audioFrame, previous_frame_muted_, is_muted);
+  bool is_muted = InputMute();
+  AudioFrameOperations::Mute(audio_input, previous_frame_muted_, is_muted);
 
   if (_includeAudioLevelIndication) {
     size_t length =
-        _audioFrame.samples_per_channel_ * _audioFrame.num_channels_;
-    RTC_CHECK_LE(length, sizeof(_audioFrame.data_));
+        audio_input->samples_per_channel_ * audio_input->num_channels_;
+    RTC_CHECK_LE(length, AudioFrame::kMaxDataSizeBytes);
     if (is_muted && previous_frame_muted_) {
       rms_level_.AnalyzeMuted(length);
     } else {
       rms_level_.Analyze(
-          rtc::ArrayView<const int16_t>(_audioFrame.data_, length));
+          rtc::ArrayView<const int16_t>(audio_input->data(), length));
     }
   }
   previous_frame_muted_ = is_muted;
 
-  return 0;
-}
-
-uint32_t Channel::EncodeAndSend() {
-  WEBRTC_TRACE(kTraceStream, kTraceVoice, VoEId(_instanceId, _channelId),
-               "Channel::EncodeAndSend()");
-
-  assert(_audioFrame.num_channels_ <= 2);
-  if (_audioFrame.samples_per_channel_ == 0) {
-    WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
-                 "Channel::EncodeAndSend() invalid audio frame");
-    return 0xFFFFFFFF;
-  }
-
-  _audioFrame.id_ = _channelId;
-
-  // --- Add 10ms of raw (PCM) audio data to the encoder @ 32kHz.
+  // Add 10ms of raw (PCM) audio data to the encoder @ 32kHz.
 
   // The ACM resamples internally.
-  _audioFrame.timestamp_ = _timeStamp;
+  audio_input->timestamp_ = _timeStamp;
   // This call will trigger AudioPacketizationCallback::SendData if encoding
   // is done and payload is ready for packetization and transmission.
   // Otherwise, it will return without invoking the callback.
-  if (audio_coding_->Add10MsData((AudioFrame&)_audioFrame) < 0) {
-    WEBRTC_TRACE(kTraceError, kTraceVoice, VoEId(_instanceId, _channelId),
-                 "Channel::EncodeAndSend() ACM encoding failed");
-    return 0xFFFFFFFF;
+  if (audio_coding_->Add10MsData(*audio_input) < 0) {
+    LOG(LS_ERROR) << "ACM::Add10MsData() failed for channel " << _channelId;
+    return;
   }
 
-  _timeStamp += static_cast<uint32_t>(_audioFrame.samples_per_channel_);
-  return 0;
+  _timeStamp += static_cast<uint32_t>(audio_input->samples_per_channel_);
 }
 
 void Channel::set_associate_send_channel(const ChannelOwner& channel) {
@@ -2842,10 +2917,11 @@ int Channel::GetRtpRtcp(RtpRtcp** rtpRtcpModule,
 
 // TODO(andrew): refactor Mix functions here and in transmit_mixer.cc to use
 // a shared helper.
-int32_t Channel::MixOrReplaceAudioWithFile(int mixingFrequency) {
+int32_t Channel::MixOrReplaceAudioWithFile(AudioFrame* audio_input) {
+  RTC_DCHECK_RUN_ON(encoder_queue_);
   std::unique_ptr<int16_t[]> fileBuffer(new int16_t[640]);
   size_t fileSamples(0);
-
+  const int mixingFrequency = audio_input->sample_rate_hz_;
   {
     rtc::CritScope cs(&_fileCritSect);
 
@@ -2870,18 +2946,18 @@ int32_t Channel::MixOrReplaceAudioWithFile(int mixingFrequency) {
     }
   }
 
-  assert(_audioFrame.samples_per_channel_ == fileSamples);
+  RTC_DCHECK_EQ(audio_input->samples_per_channel_, fileSamples);
 
   if (_mixFileWithMicrophone) {
     // Currently file stream is always mono.
     // TODO(xians): Change the code when FilePlayer supports real stereo.
-    MixWithSat(_audioFrame.data_, _audioFrame.num_channels_, fileBuffer.get(),
-               1, fileSamples);
+    MixWithSat(audio_input->mutable_data(), audio_input->num_channels_,
+               fileBuffer.get(), 1, fileSamples);
   } else {
     // Replace ACM audio with file.
     // Currently file stream is always mono.
     // TODO(xians): Change the code when FilePlayer supports real stereo.
-    _audioFrame.UpdateFrame(
+    audio_input->UpdateFrame(
         _channelId, 0xFFFFFFFF, fileBuffer.get(), fileSamples, mixingFrequency,
         AudioFrame::kNormalSpeech, AudioFrame::kVadUnknown, 1);
   }
@@ -2915,8 +2991,8 @@ int32_t Channel::MixAudioWithFile(AudioFrame& audioFrame, int mixingFrequency) {
   if (audioFrame.samples_per_channel_ == fileSamples) {
     // Currently file stream is always mono.
     // TODO(xians): Change the code when FilePlayer supports real stereo.
-    MixWithSat(audioFrame.data_, audioFrame.num_channels_, fileBuffer.get(), 1,
-               fileSamples);
+    MixWithSat(audioFrame.mutable_data(), audioFrame.num_channels_,
+               fileBuffer.get(), 1, fileSamples);
   } else {
     WEBRTC_TRACE(kTraceWarning, kTraceVoice, VoEId(_instanceId, _channelId),
                  "Channel::MixAudioWithFile() samples_per_channel_(%" PRIuS

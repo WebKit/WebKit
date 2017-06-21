@@ -108,12 +108,14 @@ void StreamInterfaceChannel::Close() {
   state_ = rtc::SS_CLOSED;
 }
 
-DtlsTransport::DtlsTransport(IceTransportInternal* ice_transport)
+DtlsTransport::DtlsTransport(IceTransportInternal* ice_transport,
+                             const rtc::CryptoOptions& crypto_options)
     : transport_name_(ice_transport->transport_name()),
       component_(ice_transport->component()),
       network_thread_(rtc::Thread::Current()),
       ice_transport_(ice_transport),
       downward_(NULL),
+      srtp_ciphers_(GetSupportedDtlsSrtpCryptoSuites(crypto_options)),
       ssl_role_(rtc::SSL_CLIENT),
       ssl_max_version_(rtc::SSL_PROTOCOL_DTLS_12) {
   ice_transport_->SignalWritableState.connect(this,
@@ -315,51 +317,6 @@ bool DtlsTransport::SetupDtls() {
   // If the underlying ice_transport is already writable at this point, we may
   // be able to start DTLS right away.
   MaybeStartDtls();
-  return true;
-}
-
-bool DtlsTransport::SetSrtpCryptoSuites(const std::vector<int>& ciphers) {
-  if (srtp_ciphers_ == ciphers)
-    return true;
-
-  if (dtls_state() == DTLS_TRANSPORT_CONNECTING) {
-    LOG(LS_WARNING) << "Ignoring new SRTP ciphers while DTLS is negotiating";
-    return true;
-  }
-
-  if (dtls_state() == DTLS_TRANSPORT_CONNECTED) {
-    // We don't support DTLS renegotiation currently. If new set of srtp ciphers
-    // are different than what's being used currently, we will not use it.
-    // So for now, let's be happy (or sad) with a warning message.
-    int current_srtp_cipher;
-    if (!dtls_->GetDtlsSrtpCryptoSuite(&current_srtp_cipher)) {
-      LOG(LS_ERROR)
-          << "Failed to get the current SRTP cipher for DTLS transport";
-      return false;
-    }
-    const std::vector<int>::const_iterator iter =
-        std::find(ciphers.begin(), ciphers.end(), current_srtp_cipher);
-    if (iter == ciphers.end()) {
-      std::string requested_str;
-      for (size_t i = 0; i < ciphers.size(); ++i) {
-        requested_str.append(" ");
-        requested_str.append(rtc::SrtpCryptoSuiteToName(ciphers[i]));
-        requested_str.append(" ");
-      }
-      LOG(LS_WARNING) << "Ignoring new set of SRTP ciphers, as DTLS "
-                      << "renegotiation is not supported currently "
-                      << "current cipher = " << current_srtp_cipher << " and "
-                      << "requested = " << "[" << requested_str << "]";
-    }
-    return true;
-  }
-
-  if (dtls_state() != DTLS_TRANSPORT_NEW) {
-    LOG(LS_ERROR) << "Can't set SRTP ciphers for a closed session";
-    return false;
-  }
-
-  srtp_ciphers_ = ciphers;
   return true;
 }
 

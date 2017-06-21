@@ -60,7 +60,7 @@ void SendStunError(const StunMessage& msg, rtc::AsyncPacketSocket* socket,
   err_msg.SetType(GetStunErrorResponseType(msg.type()));
   err_msg.SetTransactionID(msg.transaction_id());
 
-  StunByteStringAttribute* magic_cookie_attr =
+  auto magic_cookie_attr =
       StunAttribute::CreateByteString(cricket::STUN_ATTR_MAGIC_COOKIE);
   if (magic_cookie.size() == 0) {
     magic_cookie_attr->CopyBytes(cricket::TURN_MAGIC_COOKIE_VALUE,
@@ -68,13 +68,13 @@ void SendStunError(const StunMessage& msg, rtc::AsyncPacketSocket* socket,
   } else {
     magic_cookie_attr->CopyBytes(magic_cookie.c_str(), magic_cookie.size());
   }
-  err_msg.AddAttribute(magic_cookie_attr);
+  err_msg.AddAttribute(std::move(magic_cookie_attr));
 
-  StunErrorCodeAttribute* err_code = StunAttribute::CreateErrorCode();
+  auto err_code = StunAttribute::CreateErrorCode();
   err_code->SetClass(error_code / 100);
   err_code->SetNumber(error_code % 100);
   err_code->SetReason(error_desc);
-  err_msg.AddAttribute(err_code);
+  err_msg.AddAttribute(std::move(err_code));
 
   SendStun(err_msg, socket, remote_addr);
 }
@@ -421,26 +421,24 @@ void RelayServer::HandleStunAllocate(
   response.SetType(STUN_ALLOCATE_RESPONSE);
   response.SetTransactionID(request.transaction_id());
 
-  StunByteStringAttribute* magic_cookie_attr =
+  auto magic_cookie_attr =
       StunAttribute::CreateByteString(cricket::STUN_ATTR_MAGIC_COOKIE);
   magic_cookie_attr->CopyBytes(int_conn->binding()->magic_cookie().c_str(),
                                int_conn->binding()->magic_cookie().size());
-  response.AddAttribute(magic_cookie_attr);
+  response.AddAttribute(std::move(magic_cookie_attr));
 
   size_t index = rand() % external_sockets_.size();
   rtc::SocketAddress ext_addr =
       external_sockets_[index]->GetLocalAddress();
 
-  StunAddressAttribute* addr_attr =
-      StunAttribute::CreateAddress(STUN_ATTR_MAPPED_ADDRESS);
+  auto addr_attr = StunAttribute::CreateAddress(STUN_ATTR_MAPPED_ADDRESS);
   addr_attr->SetIP(ext_addr.ipaddr());
   addr_attr->SetPort(ext_addr.port());
-  response.AddAttribute(addr_attr);
+  response.AddAttribute(std::move(addr_attr));
 
-  StunUInt32Attribute* res_lifetime_attr =
-      StunAttribute::CreateUInt32(STUN_ATTR_LIFETIME);
+  auto res_lifetime_attr = StunAttribute::CreateUInt32(STUN_ATTR_LIFETIME);
   res_lifetime_attr->SetValue(int_conn->binding()->lifetime() / 1000);
-  response.AddAttribute(res_lifetime_attr);
+  response.AddAttribute(std::move(res_lifetime_attr));
 
   // TODO: Support transport-prefs (preallocate RTCP port).
   // TODO: Support bandwidth restrictions.
@@ -494,16 +492,16 @@ void RelayServer::HandleStunSend(
     response.SetType(STUN_SEND_RESPONSE);
     response.SetTransactionID(request.transaction_id());
 
-    StunByteStringAttribute* magic_cookie_attr =
+    auto magic_cookie_attr =
         StunAttribute::CreateByteString(cricket::STUN_ATTR_MAGIC_COOKIE);
     magic_cookie_attr->CopyBytes(int_conn->binding()->magic_cookie().c_str(),
                                  int_conn->binding()->magic_cookie().size());
-    response.AddAttribute(magic_cookie_attr);
+    response.AddAttribute(std::move(magic_cookie_attr));
 
-    StunUInt32Attribute* options2_attr =
-      StunAttribute::CreateUInt32(cricket::STUN_ATTR_OPTIONS);
+    auto options2_attr =
+        StunAttribute::CreateUInt32(cricket::STUN_ATTR_OPTIONS);
     options2_attr->SetValue(0x01);
-    response.AddAttribute(options2_attr);
+    response.AddAttribute(std::move(options2_attr));
 
     int_conn->SendStun(response);
   }
@@ -603,23 +601,21 @@ void RelayServerConnection::Send(
   RelayMessage msg;
   msg.SetType(STUN_DATA_INDICATION);
 
-  StunByteStringAttribute* magic_cookie_attr =
+  auto magic_cookie_attr =
       StunAttribute::CreateByteString(cricket::STUN_ATTR_MAGIC_COOKIE);
   magic_cookie_attr->CopyBytes(binding_->magic_cookie().c_str(),
                                binding_->magic_cookie().size());
-  msg.AddAttribute(magic_cookie_attr);
+  msg.AddAttribute(std::move(magic_cookie_attr));
 
-  StunAddressAttribute* addr_attr =
-      StunAttribute::CreateAddress(STUN_ATTR_SOURCE_ADDRESS2);
+  auto addr_attr = StunAttribute::CreateAddress(STUN_ATTR_SOURCE_ADDRESS2);
   addr_attr->SetIP(from_addr.ipaddr());
   addr_attr->SetPort(from_addr.port());
-  msg.AddAttribute(addr_attr);
+  msg.AddAttribute(std::move(addr_attr));
 
-  StunByteStringAttribute* data_attr =
-      StunAttribute::CreateByteString(STUN_ATTR_DATA);
+  auto data_attr = StunAttribute::CreateByteString(STUN_ATTR_DATA);
   RTC_DCHECK(size <= 65536);
   data_attr->CopyBytes(data, uint16_t(size));
-  msg.AddAttribute(data_attr);
+  msg.AddAttribute(std::move(data_attr));
 
   SendStun(msg);
 }

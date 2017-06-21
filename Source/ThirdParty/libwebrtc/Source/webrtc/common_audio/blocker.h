@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_INTERNAL_BEAMFORMER_BLOCKER_H_
-#define WEBRTC_INTERNAL_BEAMFORMER_BLOCKER_H_
+#ifndef WEBRTC_COMMON_AUDIO_BLOCKER_H_
+#define WEBRTC_COMMON_AUDIO_BLOCKER_H_
 
 #include <memory>
 
@@ -124,4 +124,4 @@ class Blocker {
 
 }  // namespace webrtc
 
-#endif  // WEBRTC_INTERNAL_BEAMFORMER_BLOCKER_H_
+#endif  // WEBRTC_COMMON_AUDIO_BLOCKER_H_

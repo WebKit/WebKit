@@ -72,8 +72,7 @@ VCMReceiver::VCMReceiver(VCMTiming* timing,
                          std::unique_ptr<EventWrapper> jitter_buffer_event,
                          NackSender* nack_sender,
                          KeyFrameRequestSender* keyframe_request_sender)
-    : crit_sect_(CriticalSectionWrapper::CreateCriticalSection()),
-      clock_(clock),
+    : clock_(clock),
       jitter_buffer_(clock_,
                      std::move(jitter_buffer_event),
                      nack_sender,
@@ -86,11 +85,10 @@ VCMReceiver::VCMReceiver(VCMTiming* timing,
 
 VCMReceiver::~VCMReceiver() {
   render_wait_event_->Set();
-  delete crit_sect_;
 }
 
 void VCMReceiver::Reset() {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   if (!jitter_buffer_.Running()) {
     jitter_buffer_.Start();
   } else {
@@ -239,14 +237,10 @@ void VCMReceiver::ReceiveStatistics(uint32_t* bitrate, uint32_t* framerate) {
   jitter_buffer_.IncomingRateStatistics(framerate, bitrate);
 }
 
-uint32_t VCMReceiver::DiscardedPackets() const {
-  return jitter_buffer_.num_discarded_packets();
-}
-
 void VCMReceiver::SetNackMode(VCMNackMode nackMode,
                               int64_t low_rtt_nack_threshold_ms,
                               int64_t high_rtt_nack_threshold_ms) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   // Default to always having NACK enabled in hybrid mode.
   jitter_buffer_.SetNackMode(nackMode, low_rtt_nack_threshold_ms,
                              high_rtt_nack_threshold_ms);
@@ -260,7 +254,7 @@ void VCMReceiver::SetNackSettings(size_t max_nack_list_size,
 }
 
 VCMNackMode VCMReceiver::NackMode() const {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   return jitter_buffer_.nack_mode();
 }
 
@@ -277,7 +271,7 @@ VCMDecodeErrorMode VCMReceiver::DecodeErrorMode() const {
 }
 
 int VCMReceiver::SetMinReceiverDelay(int desired_delay_ms) {
-  CriticalSectionScoped cs(crit_sect_);
+  rtc::CritScope cs(&crit_sect_);
   if (desired_delay_ms < 0 || desired_delay_ms > kMaxReceiverDelayMs) {
     return -1;
   }

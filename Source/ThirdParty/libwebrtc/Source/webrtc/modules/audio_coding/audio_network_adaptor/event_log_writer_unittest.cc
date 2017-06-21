@@ -43,7 +43,7 @@ MATCHER_P(EncoderRuntimeConfigIs, config, "") {
 struct EventLogWriterStates {
   std::unique_ptr<EventLogWriter> event_log_writer;
   std::unique_ptr<testing::StrictMock<MockRtcEventLog>> event_log;
-  AudioNetworkAdaptor::EncoderRuntimeConfig runtime_config;
+  AudioEncoderRuntimeConfig runtime_config;
 };
 
 EventLogWriterStates CreateEventLogWriter() {

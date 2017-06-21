@@ -33,6 +33,6 @@ int WebRtcIlbcfix_DecodeImpl(
                                            structure */
     int16_t mode               /* (i) 0: bad packet, PLC,
                                       1: normal */
-    ) WARN_UNUSED_RESULT;
+    ) RTC_WARN_UNUSED_RESULT;
 
 #endif

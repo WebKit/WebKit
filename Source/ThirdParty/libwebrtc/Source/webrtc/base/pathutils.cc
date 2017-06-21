@@ -16,7 +16,6 @@
 #endif  // WEBRTC_WIN
 
 #include "webrtc/base/checks.h"
-#include "webrtc/base/fileutils.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/pathutils.h"
 #include "webrtc/base/stringutils.h"
@@ -70,11 +69,6 @@ Pathname::Pathname(const std::string& folder, const std::string& filename)
 Pathname& Pathname::operator=(const Pathname&) = default;
 Pathname& Pathname::operator=(Pathname&&) = default;
 
-void Pathname::SetFolderDelimiter(char delimiter) {
-  RTC_DCHECK(IsFolderDelimiter(delimiter));
-  folder_delimiter_ = delimiter;
-}
-
 void Pathname::Normalize() {
   for (size_t i=0; i<folder_.length(); ++i) {
     if (IsFolderDelimiter(folder_[i])) {
@@ -122,26 +116,8 @@ void Pathname::SetPathname(const std::string& folder,
   SetFilename(filename);
 }
 
-void Pathname::AppendPathname(const std::string& pathname) {
-  std::string full_pathname(folder_);
-  full_pathname.append(pathname);
-  SetPathname(full_pathname);
-}
-
 std::string Pathname::folder() const {
   return folder_;
-}
-
-std::string Pathname::folder_name() const {
-  std::string::size_type pos = std::string::npos;
-  if (folder_.size() >= 2) {
-    pos = folder_.find_last_of(FOLDER_DELIMS, folder_.length() - 2);
-  }
-  if (pos != std::string::npos) {
-    return folder_.substr(pos + 1);
-  } else {
-    return folder_;
-  }
 }
 
 std::string Pathname::parent_folder() const {
@@ -172,20 +148,12 @@ void Pathname::AppendFolder(const std::string& folder) {
   }
 }
 
-std::string Pathname::basename() const {
-  return basename_;
-}
-
 bool Pathname::SetBasename(const std::string& basename) {
   if(basename.find_first_of(FOLDER_DELIMS) != std::string::npos) {
     return false;
   }
   basename_.assign(basename);
   return true;
-}
-
-std::string Pathname::extension() const {
-  return extension_;
 }
 
 bool Pathname::SetExtension(const std::string& extension) {
@@ -215,29 +183,6 @@ bool Pathname::SetFilename(const std::string& filename) {
     return SetExtension(filename.substr(pos)) && SetBasename(filename.substr(0, pos));
   }
 }
-
-#if defined(WEBRTC_WIN)
-bool Pathname::GetDrive(char* drive, uint32_t bytes) const {
-  return GetDrive(drive, bytes, folder_);
-}
-
-// static
-bool Pathname::GetDrive(char* drive,
-                        uint32_t bytes,
-                        const std::string& pathname) {
-  // need at lease 4 bytes to save c:
-  if (bytes < 4 || pathname.size() < 3) {
-    return false;
-  }
-
-  memcpy(drive, pathname.c_str(), 3);
-  drive[3] = 0;
-  // sanity checking
-  return (isalpha(drive[0]) &&
-          drive[1] == ':' &&
-          drive[2] == '\\');
-}
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 

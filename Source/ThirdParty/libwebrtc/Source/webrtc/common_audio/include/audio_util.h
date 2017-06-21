@@ -11,6 +11,7 @@
 #ifndef WEBRTC_COMMON_AUDIO_INCLUDE_AUDIO_UTIL_H_
 #define WEBRTC_COMMON_AUDIO_INCLUDE_AUDIO_UTIL_H_
 
+#include <algorithm>
 #include <limits>
 #include <cstring>
 

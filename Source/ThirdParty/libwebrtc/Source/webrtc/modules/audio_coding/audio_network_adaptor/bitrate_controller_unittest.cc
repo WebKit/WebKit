@@ -39,7 +39,7 @@ void UpdateNetworkMetrics(
 void CheckDecision(BitrateController* controller,
                    const rtc::Optional<int>& frame_length_ms,
                    int expected_bitrate_bps) {
-  AudioNetworkAdaptor::EncoderRuntimeConfig config;
+  AudioEncoderRuntimeConfig config;
   config.frame_length_ms = frame_length_ms;
   controller->MakeDecision(&config);
   EXPECT_EQ(rtc::Optional<int>(expected_bitrate_bps), config.bitrate_bps);

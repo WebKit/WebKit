@@ -86,9 +86,12 @@ class StreamInterfaceChannel : public rtc::StreamInterface {
 //     into packet writes on ice_transport_.
 class DtlsTransport : public DtlsTransportInternal {
  public:
-  // The parameters here is:
-  // ice_transport -- the ice transport we are wrapping
-  explicit DtlsTransport(IceTransportInternal* ice_transport);
+  // |ice_transport| is the ICE transport this DTLS transport is wrapping.
+  //
+  // |crypto_options| are the options used for the DTLS handshake. This affects
+  // whether GCM crypto suites are negotiated.
+  explicit DtlsTransport(IceTransportInternal* ice_transport,
+                         const rtc::CryptoOptions& crypto_options);
   ~DtlsTransport() override;
 
   DtlsTransportState dtls_state() const override { return dtls_state_; }
@@ -121,11 +124,6 @@ class DtlsTransport : public DtlsTransportInternal {
   }
 
   virtual bool SetSslMaxProtocolVersion(rtc::SSLProtocolVersion version);
-
-  // Set up the ciphers to use for DTLS-SRTP. If this method is not called
-  // before DTLS starts, or |ciphers| is empty, SRTP keys won't be negotiated.
-  // This method should be called before SetupDtls.
-  bool SetSrtpCryptoSuites(const std::vector<int>& ciphers) override;
 
   // Find out which DTLS-SRTP cipher was negotiated
   bool GetSrtpCryptoSuite(int* cipher) override;
@@ -172,14 +170,6 @@ class DtlsTransport : public DtlsTransportInternal {
 
   int SetOption(rtc::Socket::Option opt, int value) override {
     return ice_transport_->SetOption(opt, value);
-  }
-
-  bool SetSrtpCiphers(const std::vector<std::string>& ciphers) override {
-    std::vector<int> crypto_suites;
-    for (const auto cipher : ciphers) {
-      crypto_suites.push_back(rtc::SrtpCryptoSuiteFromName(cipher));
-    }
-    return SetSrtpCryptoSuites(crypto_suites);
   }
 
   std::string ToString() const {

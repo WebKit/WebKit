@@ -53,6 +53,9 @@ class ClockInterface {
 // that uses it, eliminating the need for a global variable and this function.
 ClockInterface* SetClockForTesting(ClockInterface* clock);
 
+// Returns previously set clock, or nullptr if no custom clock is being used.
+ClockInterface* GetClockForTesting();
+
 // Returns the actual system time, even if a clock is set for testing.
 // Useful for timeouts while using a test clock, or for logging.
 int64_t SystemTimeNanos();

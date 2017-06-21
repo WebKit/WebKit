@@ -508,12 +508,8 @@ class StatsCollectorTest : public testing::Test {
             std::unique_ptr<cricket::MediaEngineInterface>(media_engine_),
             worker_thread_,
             network_thread_)),
-        media_controller_(
-            webrtc::MediaControllerInterface::Create(cricket::MediaConfig(),
-                                                     worker_thread_,
-                                                     channel_manager_.get(),
-                                                     &event_log_)),
-        session_(media_controller_.get()) {
+
+        session_(channel_manager_.get(), cricket::MediaConfig()) {
     // By default, we ignore session GetStats calls.
     EXPECT_CALL(session_, GetStats(_)).WillRepeatedly(ReturnNull());
     // Add default returns for mock classes.
@@ -784,7 +780,6 @@ class StatsCollectorTest : public testing::Test {
   // |media_engine_| is actually owned by |channel_manager_|.
   cricket::FakeMediaEngine* media_engine_;
   std::unique_ptr<cricket::ChannelManager> channel_manager_;
-  std::unique_ptr<webrtc::MediaControllerInterface> media_controller_;
   MockWebRtcSession session_;
   MockPeerConnection pc_;
   FakeDataChannelProvider data_channel_provider_;
@@ -905,8 +900,75 @@ TEST_F(StatsCollectorTest, BytesCounterHandles64Bits) {
   EXPECT_EQ(kBytesSentString, result);
 }
 
-// Test that BWE information is reported via stats.
-TEST_F(StatsCollectorTest, BandwidthEstimationInfoIsReported) {
+// Test that audio BWE information is reported via stats.
+TEST_F(StatsCollectorTest, AudioBandwidthEstimationInfoIsReported) {
+  StatsCollectorForTest stats(&pc_);
+
+  EXPECT_CALL(session_, GetLocalCertificate(_, _))
+      .WillRepeatedly(Return(false));
+  EXPECT_CALL(session_, GetRemoteSSLCertificate_ReturnsRawPointer(_))
+      .WillRepeatedly(Return(nullptr));
+
+  const char kAudioChannelName[] = "audio";
+
+  InitSessionStats(kAudioChannelName);
+  EXPECT_CALL(session_, GetStats(_))
+      .WillRepeatedly(Invoke([this](const ChannelNamePairs&) {
+        return std::unique_ptr<SessionStats>(new SessionStats(session_stats_));
+      }));
+
+  MockVoiceMediaChannel* media_channel = new MockVoiceMediaChannel();
+  cricket::VoiceChannel voice_channel(
+      worker_thread_, network_thread_, nullptr, nullptr, media_channel,
+      kAudioChannelName, kDefaultRtcpMuxRequired, kDefaultSrtpRequired);
+
+  StatsReports reports;  // returned values.
+  cricket::VoiceSenderInfo voice_sender_info;
+  cricket::VoiceMediaInfo stats_read;
+  // Set up an SSRC just to test that we get both kinds of stats back: SSRC and
+  // BWE.
+  const int64_t kBytesSent = 12345678901234LL;
+  const std::string kBytesSentString("12345678901234");
+
+  AddOutgoingAudioTrackStats();
+  stats.AddStream(stream_);
+
+  // Construct a stats value to read.
+  voice_sender_info.add_ssrc(1234);
+  voice_sender_info.bytes_sent = kBytesSent;
+  stats_read.senders.push_back(voice_sender_info);
+
+  webrtc::Call::Stats call_stats;
+  const int kSendBandwidth = 1234567;
+  const int kRecvBandwidth = 12345678;
+  const int kPacerDelay = 123;
+  call_stats.send_bandwidth_bps = kSendBandwidth;
+  call_stats.recv_bandwidth_bps = kRecvBandwidth;
+  call_stats.pacer_delay_ms = kPacerDelay;
+  EXPECT_CALL(session_, GetCallStats()).WillRepeatedly(Return(call_stats));
+  EXPECT_CALL(session_, voice_channel()).WillRepeatedly(Return(&voice_channel));
+  EXPECT_CALL(session_, video_channel()).WillRepeatedly(ReturnNull());
+  EXPECT_CALL(*media_channel, GetStats(_))
+      .WillOnce(DoAll(SetArgPointee<0>(stats_read), Return(true)));
+
+  stats.UpdateStats(PeerConnectionInterface::kStatsOutputLevelStandard);
+  stats.GetStats(NULL, &reports);
+  std::string result =
+      ExtractSsrcStatsValue(reports, StatsReport::kStatsValueNameBytesSent);
+  EXPECT_EQ(kBytesSentString, result);
+  result = ExtractBweStatsValue(
+      reports, StatsReport::kStatsValueNameAvailableSendBandwidth);
+  EXPECT_EQ(rtc::ToString(kSendBandwidth), result);
+  result = ExtractBweStatsValue(
+      reports, StatsReport::kStatsValueNameAvailableReceiveBandwidth);
+  EXPECT_EQ(rtc::ToString(kRecvBandwidth), result);
+  result =
+      ExtractBweStatsValue(reports, StatsReport::kStatsValueNameBucketDelay);
+  EXPECT_EQ(rtc::ToString(kPacerDelay), result);
+}
+
+// Test that video BWE information is reported via stats.
+TEST_F(StatsCollectorTest, VideoBandwidthEstimationInfoIsReported) {
   StatsCollectorForTest stats(&pc_);
 
   EXPECT_CALL(session_, GetLocalCertificate(_, _))
@@ -943,12 +1005,15 @@ TEST_F(StatsCollectorTest, BandwidthEstimationInfoIsReported) {
   video_sender_info.add_ssrc(1234);
   video_sender_info.bytes_sent = kBytesSent;
   stats_read.senders.push_back(video_sender_info);
-  cricket::BandwidthEstimationInfo bwe;
-  const int kTargetEncBitrate = 123456;
-  const std::string kTargetEncBitrateString("123456");
-  bwe.target_enc_bitrate = kTargetEncBitrate;
-  stats_read.bw_estimations.push_back(bwe);
 
+  webrtc::Call::Stats call_stats;
+  const int kSendBandwidth = 1234567;
+  const int kRecvBandwidth = 12345678;
+  const int kPacerDelay = 123;
+  call_stats.send_bandwidth_bps = kSendBandwidth;
+  call_stats.recv_bandwidth_bps = kRecvBandwidth;
+  call_stats.pacer_delay_ms = kPacerDelay;
+  EXPECT_CALL(session_, GetCallStats()).WillRepeatedly(Return(call_stats));
   EXPECT_CALL(session_, video_channel()).WillRepeatedly(Return(&video_channel));
   EXPECT_CALL(session_, voice_channel()).WillRepeatedly(ReturnNull());
   EXPECT_CALL(*media_channel, GetStats(_))
@@ -959,9 +1024,15 @@ TEST_F(StatsCollectorTest, BandwidthEstimationInfoIsReported) {
   std::string result = ExtractSsrcStatsValue(reports,
       StatsReport::kStatsValueNameBytesSent);
   EXPECT_EQ(kBytesSentString, result);
-  result = ExtractBweStatsValue(reports,
-      StatsReport::kStatsValueNameTargetEncBitrate);
-  EXPECT_EQ(kTargetEncBitrateString, result);
+  result = ExtractBweStatsValue(
+      reports, StatsReport::kStatsValueNameAvailableSendBandwidth);
+  EXPECT_EQ(rtc::ToString(kSendBandwidth), result);
+  result = ExtractBweStatsValue(
+      reports, StatsReport::kStatsValueNameAvailableReceiveBandwidth);
+  EXPECT_EQ(rtc::ToString(kRecvBandwidth), result);
+  result =
+      ExtractBweStatsValue(reports, StatsReport::kStatsValueNameBucketDelay);
+  EXPECT_EQ(rtc::ToString(kPacerDelay), result);
 }
 
 // This test verifies that an object of type "googSession" always

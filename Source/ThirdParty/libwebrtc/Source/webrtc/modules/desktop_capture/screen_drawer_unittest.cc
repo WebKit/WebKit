@@ -12,9 +12,9 @@
 
 #include <stdint.h>
 
+#include "webrtc/base/logging.h"
 #include "webrtc/base/random.h"
 #include "webrtc/base/timeutils.h"
-#include "webrtc/system_wrappers/include/logging.h"
 #include "webrtc/system_wrappers/include/sleep.h"
 #include "webrtc/test/gtest.h"
 

@@ -47,7 +47,7 @@ bool IsComfortNoisePayload(uint8_t payload_type) {
   return false;
 }
 
-class VerifyingAudioReceiver : public NullRtpData {
+class VerifyingAudioReceiver : public RtpData {
  public:
   int32_t OnReceivedPayloadData(
       const uint8_t* payloadData,

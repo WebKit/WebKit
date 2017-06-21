@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "webrtc/modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "webrtc/system_wrappers/include/field_trial.h"
 
 namespace webrtc {
@@ -25,4 +26,15 @@ int GetMinBitrateBps() {
 }
 
 }  // namespace congestion_controller
+
+RateControlInput::RateControlInput(
+    BandwidthUsage bw_state,
+    const rtc::Optional<uint32_t>& incoming_bitrate,
+    double noise_var)
+    : bw_state(bw_state),
+      incoming_bitrate(incoming_bitrate),
+      noise_var(noise_var) {}
+
+RateControlInput::~RateControlInput() = default;
+
 }  // namespace webrtc

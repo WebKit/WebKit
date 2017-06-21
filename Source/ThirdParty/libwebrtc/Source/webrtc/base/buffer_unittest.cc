@@ -356,6 +356,24 @@ TEST(BufferTest, TestBracketWrite) {
   }
 }
 
+TEST(BufferTest, TestBeginEnd) {
+  const Buffer cbuf(kTestData);
+  Buffer buf(kTestData);
+  auto b1 = cbuf.begin();
+  for (auto& x : buf) {
+    EXPECT_EQ(*b1, x);
+    ++b1;
+    ++x;
+  }
+  EXPECT_EQ(cbuf.end(), b1);
+  auto b2 = buf.begin();
+  for (auto& y : cbuf) {
+    EXPECT_EQ(*b2, y + 1);
+    ++b2;
+  }
+  EXPECT_EQ(buf.end(), b2);
+}
+
 TEST(BufferTest, TestInt16) {
   static constexpr int16_t test_data[] = {14, 15, 16, 17, 18};
   BufferT<int16_t> buf(test_data);

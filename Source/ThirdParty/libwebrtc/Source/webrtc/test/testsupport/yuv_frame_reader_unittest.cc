@@ -61,8 +61,7 @@ TEST_F(YuvFrameReaderTest, NumberOfFrames) {
 }
 
 TEST_F(YuvFrameReaderTest, ReadFrame) {
-  rtc::scoped_refptr<VideoFrameBuffer> buffer;
-  buffer = frame_reader_->ReadFrame();
+  rtc::scoped_refptr<I420BufferInterface> buffer = frame_reader_->ReadFrame();
   ASSERT_TRUE(buffer);
   // Expect I420 packed as YUV.
   EXPECT_EQ(kInputFileContents[0], buffer->DataY()[0]);

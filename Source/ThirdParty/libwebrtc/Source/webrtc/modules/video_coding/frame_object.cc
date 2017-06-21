@@ -9,6 +9,7 @@
  */
 
 #include "webrtc/base/checks.h"
+#include "webrtc/common_video/h264/h264_common.h"
 #include "webrtc/modules/video_coding/frame_object.h"
 #include "webrtc/modules/video_coding/packet_buffer.h"
 
@@ -34,7 +35,7 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
       received_time_(received_time),
       times_nacked_(times_nacked) {
   VCMPacket* first_packet = packet_buffer_->GetPacket(first_seq_num);
-  RTC_DCHECK(first_packet);
+  RTC_CHECK(first_packet);
 
   // RtpFrameObject members
   frame_type_ = first_packet->frameType;
@@ -47,6 +48,10 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
   _payloadType = first_packet->payloadType;
   _timeStamp = first_packet->timestamp;
   ntp_time_ms_ = first_packet->ntp_time_ms_;
+
+  // Setting frame's playout delays to the same values
+  // as of the first packet's.
+  SetPlayoutDelay(first_packet->video_header.playout_delay);
 
   // Since FFmpeg use an optimized bitstream reader that reads in chunks of
   // 32/64 bits we have to add at least that much padding to the buffer
@@ -61,7 +66,33 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
 
   _buffer = new uint8_t[_size];
   _length = frame_size;
-  _frameType = first_packet->frameType;
+
+  // For H264 frames we can't determine the frame type by just looking at the
+  // first packet. Instead we consider the frame to be a keyframe if it
+  // contains an IDR NALU.
+  if (codec_type_ == kVideoCodecH264) {
+    _frameType = kVideoFrameDelta;
+    frame_type_ = kVideoFrameDelta;
+    for (uint16_t seq_num = first_seq_num;
+         seq_num != static_cast<uint16_t>(last_seq_num + 1) &&
+         _frameType == kVideoFrameDelta;
+         ++seq_num) {
+      VCMPacket* packet = packet_buffer_->GetPacket(seq_num);
+      RTC_CHECK(packet);
+      const RTPVideoHeaderH264& header = packet->video_header.codecHeader.H264;
+      for (size_t i = 0; i < header.nalus_length; ++i) {
+        if (header.nalus[i].type == H264::NaluType::kIdr) {
+          _frameType = kVideoFrameKey;
+          frame_type_ = kVideoFrameKey;
+          break;
+        }
+      }
+    }
+  } else {
+    _frameType = first_packet->frameType;
+    frame_type_ = first_packet->frameType;
+  }
+
   GetBitstream(_buffer);
   _encodedWidth = first_packet->width;
   _encodedHeight = first_packet->height;
@@ -70,7 +101,7 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
   timestamp = first_packet->timestamp;
 
   VCMPacket* last_packet = packet_buffer_->GetPacket(last_seq_num);
-  RTC_DCHECK(last_packet && last_packet->markerBit);
+  RTC_CHECK(last_packet && last_packet->markerBit);
   // http://www.etsi.org/deliver/etsi_ts/126100_126199/126114/12.07.00_60/
   // ts_126114v120700p.pdf Section 7.4.5.
   // The MTSI client shall add the payload bytes as defined in this clause
@@ -79,6 +110,35 @@ RtpFrameObject::RtpFrameObject(PacketBuffer* packet_buffer,
   // (HEVC)).
   rotation_ = last_packet->video_header.rotation;
   _rotation_set = true;
+  content_type_ = last_packet->video_header.content_type;
+  if (last_packet->video_header.video_timing.is_timing_frame) {
+    // ntp_time_ms_ may be -1 if not estimated yet. This is not a problem,
+    // as this will be dealt with at the time of reporting.
+    timing_.is_timing_frame = true;
+    timing_.encode_start_ms =
+        ntp_time_ms_ +
+        last_packet->video_header.video_timing.encode_start_delta_ms;
+    timing_.encode_finish_ms =
+        ntp_time_ms_ +
+        last_packet->video_header.video_timing.encode_finish_delta_ms;
+    timing_.packetization_finish_ms =
+        ntp_time_ms_ +
+        last_packet->video_header.video_timing.packetization_finish_delta_ms;
+    timing_.pacer_exit_ms =
+        ntp_time_ms_ +
+        last_packet->video_header.video_timing.pacer_exit_delta_ms;
+    timing_.network_timestamp_ms =
+        ntp_time_ms_ +
+        last_packet->video_header.video_timing.network_timstamp_delta_ms;
+    timing_.network2_timestamp_ms =
+        ntp_time_ms_ +
+        last_packet->video_header.video_timing.network2_timstamp_delta_ms;
+
+    timing_.receive_start_ms = first_packet->receive_time_ms;
+    timing_.receive_finish_ms = last_packet->receive_time_ms;
+  } else {
+    timing_.is_timing_frame = false;
+  }
 }
 
 RtpFrameObject::~RtpFrameObject() {

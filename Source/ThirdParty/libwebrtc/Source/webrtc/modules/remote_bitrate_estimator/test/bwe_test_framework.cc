@@ -15,6 +15,7 @@
 #include <sstream>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/base/safe_minmax.h"
 
 namespace webrtc {
 namespace testing {
@@ -152,6 +153,14 @@ void MediaPacket::SetAbsSendTimeMs(int64_t abs_send_time_ms) {
     (1 << 18)) + 500) / 1000) & 0x00fffffful;
 }
 
+BbrBweFeedback::BbrBweFeedback(
+    int flow_id,
+    int64_t send_time_us,
+    int64_t latest_send_time_ms,
+    const std::vector<std::pair<uint64_t, int64_t>>& packet_feedback_vector)
+    : FeedbackPacket(flow_id, send_time_us, latest_send_time_ms),
+      packet_feedback_vector_(packet_feedback_vector) {}
+
 RembFeedback::RembFeedback(int flow_id,
                            int64_t send_time_us,
                            int64_t last_send_time_ms,
@@ -166,10 +175,9 @@ SendSideBweFeedback::SendSideBweFeedback(
     int flow_id,
     int64_t send_time_us,
     int64_t last_send_time_ms,
-    const std::vector<PacketInfo>& packet_feedback_vector)
+    const std::vector<PacketFeedback>& packet_feedback_vector)
     : FeedbackPacket(flow_id, send_time_us, last_send_time_ms),
-      packet_feedback_vector_(packet_feedback_vector) {
-}
+      packet_feedback_vector_(packet_feedback_vector) {}
 
 bool IsTimeSorted(const Packets& packets) {
   PacketsConstIt last_it = packets.begin();
@@ -222,11 +230,12 @@ RateCounterFilter::RateCounterFilter(PacketProcessorListener* listener,
       packets_per_second_stats_(),
       kbps_stats_(),
       start_plotting_time_ms_(0),
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
       flow_id_(flow_id),
-#endif
       name_(name),
-      algorithm_name_(algorithm_name) {}
+      algorithm_name_(algorithm_name) {
+  // Only used when compiling with BWE test logging enabled.
+  RTC_UNUSED(flow_id_);
+}
 
 RateCounterFilter::RateCounterFilter(PacketProcessorListener* listener,
                                      const FlowIds& flow_ids,
@@ -277,7 +286,6 @@ Stats<double> RateCounterFilter::GetBitrateStats() const {
 void RateCounterFilter::Plot(int64_t timestamp_ms) {
   // TODO(stefan): Reorganize logging configuration to reduce amount
   // of preprocessor conditionals in the code.
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
   uint32_t plot_kbps = 0;
   if (timestamp_ms >= start_plotting_time_ms_) {
     plot_kbps = rate_counter_.bits_per_second() / 1000.0;
@@ -291,7 +299,7 @@ void RateCounterFilter::Plot(int64_t timestamp_ms) {
                                              timestamp_ms, plot_kbps, flow_id_,
                                              algorithm_name_);
   }
-#endif
+  RTC_UNUSED(plot_kbps);
 }
 
 void RateCounterFilter::RunFor(int64_t /*time_ms*/, Packets* in_out) {
@@ -399,8 +407,8 @@ namespace {
 inline int64_t TruncatedNSigmaGaussian(Random* const random,
                                        int64_t mean,
                                        int64_t std_dev) {
-  int64_t gaussian_random = random->Gaussian(mean, std_dev);
-  return std::max(std::min(gaussian_random, kN * std_dev), -kN * std_dev);
+  const int64_t gaussian_random = random->Gaussian(mean, std_dev);
+  return rtc::SafeClamp(gaussian_random, -kN * std_dev, kN * std_dev);
 }
 }
 

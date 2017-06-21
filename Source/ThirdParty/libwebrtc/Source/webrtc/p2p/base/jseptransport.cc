@@ -278,9 +278,8 @@ bool JsepTransport::NeedsIceRestart() const {
   return needs_ice_restart_;
 }
 
-void JsepTransport::GetSslRole(rtc::SSLRole* ssl_role) const {
-  RTC_DCHECK(ssl_role);
-  *ssl_role = secure_role_;
+rtc::Optional<rtc::SSLRole> JsepTransport::GetSslRole() const {
+  return ssl_role_;
 }
 
 bool JsepTransport::GetStats(TransportStats* stats) {
@@ -342,11 +341,6 @@ bool JsepTransport::ApplyLocalTransportDescription(
 bool JsepTransport::ApplyRemoteTransportDescription(
     DtlsTransportInternal* dtls_transport,
     std::string* error_desc) {
-  // Currently, all ICE-related calls still go through this DTLS channel. But
-  // that will change once we get rid of TransportChannelImpl, and the DTLS
-  // channel interface no longer includes ICE-specific methods. Then this class
-  // will need to call dtls->ice()->SetIceRole(), for example, assuming the Dtls
-  // interface will expose its inner ICE channel.
   dtls_transport->ice_transport()->SetRemoteIceParameters(
       remote_description_->GetIceParameters());
   dtls_transport->ice_transport()->SetRemoteIceMode(
@@ -359,7 +353,7 @@ bool JsepTransport::ApplyNegotiatedTransportDescription(
     std::string* error_desc) {
   // Set SSL role. Role must be set before fingerprint is applied, which
   // initiates DTLS setup.
-  if (!dtls_transport->SetSslRole(secure_role_)) {
+  if (ssl_role_ && !dtls_transport->SetSslRole(*ssl_role_)) {
     return BadTransportDescription("Failed to set SSL role for the channel.",
                                    error_desc);
   }
@@ -374,8 +368,9 @@ bool JsepTransport::ApplyNegotiatedTransportDescription(
   return true;
 }
 
-bool JsepTransport::NegotiateTransportDescription(ContentAction local_role,
-                                                  std::string* error_desc) {
+bool JsepTransport::NegotiateTransportDescription(
+    ContentAction local_description_type,
+    std::string* error_desc) {
   if (!local_description_ || !remote_description_) {
     const std::string msg =
         "Applying an answer transport description "
@@ -388,10 +383,10 @@ bool JsepTransport::NegotiateTransportDescription(ContentAction local_role,
       remote_description_->identity_fingerprint.get();
   if (remote_fp && local_fp) {
     remote_fingerprint_.reset(new rtc::SSLFingerprint(*remote_fp));
-    if (!NegotiateRole(local_role, &secure_role_, error_desc)) {
+    if (!NegotiateRole(local_description_type, error_desc)) {
       return false;
     }
-  } else if (local_fp && (local_role == CA_ANSWER)) {
+  } else if (local_fp && (local_description_type == CA_ANSWER)) {
     return BadTransportDescription(
         "Local fingerprint supplied when caller didn't offer DTLS.",
         error_desc);
@@ -412,10 +407,8 @@ bool JsepTransport::NegotiateTransportDescription(ContentAction local_role,
   return true;
 }
 
-bool JsepTransport::NegotiateRole(ContentAction local_role,
-                                  rtc::SSLRole* ssl_role,
-                                  std::string* error_desc) const {
-  RTC_DCHECK(ssl_role);
+bool JsepTransport::NegotiateRole(ContentAction local_description_type,
+                                  std::string* error_desc) {
   if (!local_description_ || !remote_description_) {
     const std::string msg =
         "Local and Remote description must be set before "
@@ -450,7 +443,7 @@ bool JsepTransport::NegotiateRole(ContentAction local_role,
   ConnectionRole remote_connection_role = remote_description_->connection_role;
 
   bool is_remote_server = false;
-  if (local_role == CA_OFFER) {
+  if (local_description_type == CA_OFFER) {
     if (local_connection_role != CONNECTIONROLE_ACTPASS) {
       return BadTransportDescription(
           "Offerer must use actpass value for setup attribute.", error_desc);
@@ -470,8 +463,23 @@ bool JsepTransport::NegotiateRole(ContentAction local_role,
   } else {
     if (remote_connection_role != CONNECTIONROLE_ACTPASS &&
         remote_connection_role != CONNECTIONROLE_NONE) {
-      return BadTransportDescription(
-          "Offerer must use actpass value for setup attribute.", error_desc);
+      // Accept a remote role attribute that's not "actpass", but matches the
+      // current negotiated role. This is allowed by dtls-sdp, though our
+      // implementation will never generate such an offer as it's not
+      // recommended.
+      //
+      // See https://datatracker.ietf.org/doc/html/draft-ietf-mmusic-dtls-sdp,
+      // section 5.5.
+      if (!ssl_role_ ||
+          (*ssl_role_ == rtc::SSL_CLIENT &&
+           remote_connection_role == CONNECTIONROLE_ACTIVE) ||
+          (*ssl_role_ == rtc::SSL_SERVER &&
+           remote_connection_role == CONNECTIONROLE_PASSIVE)) {
+        return BadTransportDescription(
+            "Offerer must use actpass value or current negotiated role for "
+            "setup attribute.",
+            error_desc);
+      }
     }
 
     if (local_connection_role == CONNECTIONROLE_ACTIVE ||
@@ -487,7 +495,7 @@ bool JsepTransport::NegotiateRole(ContentAction local_role,
     // If local is passive, local will act as server.
   }
 
-  *ssl_role = is_remote_server ? rtc::SSL_CLIENT : rtc::SSL_SERVER;
+  ssl_role_.emplace(is_remote_server ? rtc::SSL_CLIENT : rtc::SSL_SERVER);
   return true;
 }
 

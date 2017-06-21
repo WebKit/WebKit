@@ -11,92 +11,9 @@
 #ifndef WEBRTC_COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_
 #define WEBRTC_COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_
 
-#include <map>
-#include <string>
+#include "webrtc/media/base/h264_profile_level_id.h"
 
-#include "webrtc/base/optional.h"
-#include "webrtc/common_types.h"
-
-namespace webrtc {
-namespace H264 {
-
-// Map containting SDP codec parameters.
-typedef std::map<std::string, std::string> CodecParameterMap;
-
-// All values are equal to ten times the level number, except level 1b which is
-// special.
-enum Level {
-  kLevel1_b = 0,
-  kLevel1 = 10,
-  kLevel1_1 = 11,
-  kLevel1_2 = 12,
-  kLevel1_3 = 13,
-  kLevel2 = 20,
-  kLevel2_1 = 21,
-  kLevel2_2 = 22,
-  kLevel3 = 30,
-  kLevel3_1 = 31,
-  kLevel3_2 = 32,
-  kLevel4 = 40,
-  kLevel4_1 = 41,
-  kLevel4_2 = 42,
-  kLevel5 = 50,
-  kLevel5_1 = 51,
-  kLevel5_2 = 52
-};
-
-struct ProfileLevelId {
-  ProfileLevelId(Profile profile, Level level)
-      : profile(profile), level(level) {}
-  Profile profile;
-  Level level;
-};
-
-// Parse profile level id that is represented as a string of 3 hex bytes.
-// Nothing will be returned if the string is not a recognized H264
-// profile level id.
-rtc::Optional<ProfileLevelId> ParseProfileLevelId(const char* str);
-
-// Parse profile level id that is represented as a string of 3 hex bytes
-// contained in an SDP key-value map. A default profile level id will be
-// returned if the profile-level-id key is missing. Nothing will be returned if
-// the key is present but the string is invalid.
-rtc::Optional<ProfileLevelId> ParseSdpProfileLevelId(
-    const CodecParameterMap& params);
-
-// Given that a decoder supports up to a given frame size (in pixels) at up to a
-// given number of frames per second, return the highest H.264 level where it
-// can guarantee that it will be able to support all valid encoded streams that
-// are within that level.
-rtc::Optional<Level> SupportedLevel(int max_frame_pixel_count, float max_fps);
-
-// Returns canonical string representation as three hex bytes of the profile
-// level id, or returns nothing for invalid profile level ids.
-rtc::Optional<std::string> ProfileLevelIdToString(
-    const ProfileLevelId& profile_level_id);
-
-// Generate codec parameters that will be used as answer in an SDP negotiation
-// based on local supported parameters and remote offered parameters. Both
-// |local_supported_params|, |remote_offered_params|, and |answer_params|
-// represent sendrecv media descriptions, i.e they are a mix of both encode and
-// decode capabilities. In theory, when the profile in |local_supported_params|
-// represent a strict superset of the profile in |remote_offered_params|, we
-// could limit the profile in |answer_params| to the profile in
-// |remote_offered_params|. However, to simplify the code, each supported H264
-// profile should be listed explicitly in the list of local supported codecs,
-// even if they are redundant. Then each local codec in the list should be
-// tested one at a time against the remote codec, and only when the profiles are
-// equal should this function be called. Therefore, this function does not need
-// to handle profile intersection, and the profile of |local_supported_params|
-// and |remote_offered_params| must be equal before calling this function. The
-// parameters that are used when negotiating are the level part of
-// profile-level-id and level-asymmetry-allowed.
-void GenerateProfileLevelIdForAnswer(
-    const CodecParameterMap& local_supported_params,
-    const CodecParameterMap& remote_offered_params,
-    CodecParameterMap* answer_params);
-
-}  // namespace H264
-}  // namespace webrtc
+// TODO(zhihuang): Delete this file once dependent applications switch to
+// including "webrtc/media/base/h264_profile_level_id.h" directly.
 
 #endif  // WEBRTC_COMMON_VIDEO_H264_PROFILE_LEVEL_ID_H_

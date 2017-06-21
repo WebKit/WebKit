@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "webrtc/api/video_codecs/video_encoder.h"
 #include "webrtc/common_video/include/video_bitrate_allocator.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/video_coding/codecs/vp8/temporal_layers.h"
 #include "webrtc/modules/video_coding/include/video_codec_initializer.h"
 #include "webrtc/test/gtest.h"
-#include "webrtc/video_encoder.h"
 
 namespace webrtc {
 

@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #include "webrtc/api/video/i420_buffer.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/base/refcount.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/base/trace_event.h"
@@ -20,8 +21,6 @@
 #include "webrtc/modules/include/module_common_types.h"
 #include "webrtc/modules/video_capture/video_capture_config.h"
 #include "webrtc/system_wrappers/include/clock.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
-#include "webrtc/system_wrappers/include/logging.h"
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -33,9 +32,8 @@ rtc::scoped_refptr<VideoCaptureModule> VideoCaptureImpl::Create(
   return implementation;
 }
 
-const char* VideoCaptureImpl::CurrentDeviceName() const
-{
-    return _deviceUniqueId;
+const char* VideoCaptureImpl::CurrentDeviceName() const {
+  return _deviceUniqueId;
 }
 
 // static
@@ -81,7 +79,6 @@ int32_t VideoCaptureImpl::RotationInDegrees(VideoRotation rotation,
 
 VideoCaptureImpl::VideoCaptureImpl()
     : _deviceUniqueId(NULL),
-      _apiCs(*CriticalSectionWrapper::CreateCriticalSection()),
       _requestedCapability(),
       _lastProcessTimeNanos(rtc::TimeNanos()),
       _lastFrameRateCallbackTimeNanos(rtc::TimeNanos()),
@@ -92,27 +89,25 @@ VideoCaptureImpl::VideoCaptureImpl()
     _requestedCapability.width = kDefaultWidth;
     _requestedCapability.height = kDefaultHeight;
     _requestedCapability.maxFPS = 30;
-    _requestedCapability.rawType = kVideoI420;
+    _requestedCapability.videoType = VideoType::kI420;
     memset(_incomingFrameTimesNanos, 0, sizeof(_incomingFrameTimesNanos));
 }
 
 VideoCaptureImpl::~VideoCaptureImpl()
 {
     DeRegisterCaptureDataCallback();
-    delete &_apiCs;
-
     if (_deviceUniqueId)
         delete[] _deviceUniqueId;
 }
 
 void VideoCaptureImpl::RegisterCaptureDataCallback(
     rtc::VideoSinkInterface<VideoFrame>* dataCallBack) {
-    CriticalSectionScoped cs(&_apiCs);
+    rtc::CritScope cs(&_apiCs);
     _dataCallBack = dataCallBack;
 }
 
 void VideoCaptureImpl::DeRegisterCaptureDataCallback() {
-    CriticalSectionScoped cs(&_apiCs);
+    rtc::CritScope cs(&_apiCs);
     _dataCallBack = NULL;
 }
 int32_t VideoCaptureImpl::DeliverCapturedFrame(VideoFrame& captureFrame) {
@@ -131,7 +126,7 @@ int32_t VideoCaptureImpl::IncomingFrame(
     const VideoCaptureCapability& frameInfo,
     int64_t captureTime/*=0*/)
 {
-    CriticalSectionScoped cs(&_apiCs);
+    rtc::CritScope cs(&_apiCs);
 
     const int32_t width = frameInfo.width;
     const int32_t height = frameInfo.height;
@@ -139,15 +134,11 @@ int32_t VideoCaptureImpl::IncomingFrame(
     TRACE_EVENT1("webrtc", "VC::IncomingFrame", "capture_time", captureTime);
 
     // Not encoded, convert to I420.
-    const VideoType commonVideoType =
-              RawVideoTypeToCommonVideoVideoType(frameInfo.rawType);
-
-    if (frameInfo.rawType != kVideoMJPEG &&
-        CalcBufferSize(commonVideoType, width,
-                       abs(height)) != videoFrameLength)
-    {
-        LOG(LS_ERROR) << "Wrong incoming frame length.";
-        return -1;
+    if (frameInfo.videoType != VideoType::kMJPEG &&
+        CalcBufferSize(frameInfo.videoType, width, abs(height)) !=
+            videoFrameLength) {
+      LOG(LS_ERROR) << "Wrong incoming frame length.";
+      return -1;
     }
 
     int stride_y = width;
@@ -175,19 +166,17 @@ int32_t VideoCaptureImpl::IncomingFrame(
     rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(
         target_width, abs(target_height), stride_y, stride_uv, stride_uv);
     const int conversionResult = ConvertToI420(
-        commonVideoType, videoFrame, 0, 0,  // No cropping
+        frameInfo.videoType, videoFrame, 0, 0,  // No cropping
         width, height, videoFrameLength,
         apply_rotation ? _rotateFrame : kVideoRotation_0, buffer.get());
-    if (conversionResult < 0)
-    {
+    if (conversionResult < 0) {
       LOG(LS_ERROR) << "Failed to convert capture frame from type "
-                    << frameInfo.rawType << "to I420.";
-        return -1;
+                    << static_cast<int>(frameInfo.videoType) << "to I420.";
+      return -1;
     }
 
-    VideoFrame captureFrame(
-        buffer, 0, rtc::TimeMillis(),
-        !apply_rotation ? _rotateFrame : kVideoRotation_0);
+    VideoFrame captureFrame(buffer, 0, rtc::TimeMillis(),
+                            !apply_rotation ? _rotateFrame : kVideoRotation_0);
     captureFrame.set_ntp_time_ms(captureTime);
 
     DeliverCapturedFrame(captureFrame);
@@ -196,7 +185,7 @@ int32_t VideoCaptureImpl::IncomingFrame(
 }
 
 int32_t VideoCaptureImpl::SetCaptureRotation(VideoRotation rotation) {
-  CriticalSectionScoped cs(&_apiCs);
+  rtc::CritScope cs(&_apiCs);
   _rotateFrame = rotation;
   return 0;
 }
@@ -209,52 +198,40 @@ bool VideoCaptureImpl::SetApplyRotation(bool enable) {
   return true;
 }
 
-void VideoCaptureImpl::UpdateFrameCount()
-{
-  if (_incomingFrameTimesNanos[0] / rtc::kNumNanosecsPerMicrosec == 0)
-    {
-        // first no shift
+void VideoCaptureImpl::UpdateFrameCount() {
+  if (_incomingFrameTimesNanos[0] / rtc::kNumNanosecsPerMicrosec == 0) {
+    // first no shift
+  } else {
+    // shift
+    for (int i = (kFrameRateCountHistorySize - 2); i >= 0; --i) {
+      _incomingFrameTimesNanos[i + 1] = _incomingFrameTimesNanos[i];
     }
-    else
-    {
-        // shift
-        for (int i = (kFrameRateCountHistorySize - 2); i >= 0; i--)
-        {
-            _incomingFrameTimesNanos[i + 1] = _incomingFrameTimesNanos[i];
-        }
-    }
-    _incomingFrameTimesNanos[0] = rtc::TimeNanos();
+  }
+  _incomingFrameTimesNanos[0] = rtc::TimeNanos();
 }
 
-uint32_t VideoCaptureImpl::CalculateFrameRate(int64_t now_ns)
-{
-    int32_t num = 0;
-    int32_t nrOfFrames = 0;
-    for (num = 1; num < (kFrameRateCountHistorySize - 1); num++)
-    {
-        if (_incomingFrameTimesNanos[num] <= 0 ||
-            (now_ns - _incomingFrameTimesNanos[num]) /
-            rtc::kNumNanosecsPerMillisec >
-                kFrameRateHistoryWindowMs) // don't use data older than 2sec
-        {
-            break;
-        }
-        else
-        {
-            nrOfFrames++;
-        }
+uint32_t VideoCaptureImpl::CalculateFrameRate(int64_t now_ns) {
+  int32_t num = 0;
+  int32_t nrOfFrames = 0;
+  for (num = 1; num < (kFrameRateCountHistorySize - 1); ++num) {
+    if (_incomingFrameTimesNanos[num] <= 0 ||
+        (now_ns - _incomingFrameTimesNanos[num]) /
+                rtc::kNumNanosecsPerMillisec >
+            kFrameRateHistoryWindowMs) {  // don't use data older than 2sec
+      break;
+    } else {
+      nrOfFrames++;
     }
-    if (num > 1)
-    {
-        int64_t diff = (now_ns - _incomingFrameTimesNanos[num - 1]) /
-                       rtc::kNumNanosecsPerMillisec;
-        if (diff > 0)
-        {
-            return uint32_t((nrOfFrames * 1000.0f / diff) + 0.5f);
-        }
+  }
+  if (num > 1) {
+    int64_t diff = (now_ns - _incomingFrameTimesNanos[num - 1]) /
+                   rtc::kNumNanosecsPerMillisec;
+    if (diff > 0) {
+      return uint32_t((nrOfFrames * 1000.0f / diff) + 0.5f);
     }
+  }
 
-    return nrOfFrames;
+  return nrOfFrames;
 }
 }  // namespace videocapturemodule
 }  // namespace webrtc

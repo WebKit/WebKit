@@ -20,25 +20,29 @@
 namespace webrtc {
 RtpPacketizer* RtpPacketizer::Create(RtpVideoCodecTypes type,
                                      size_t max_payload_len,
+                                     size_t last_packet_reduction_len,
                                      const RTPVideoTypeHeader* rtp_type_header,
                                      FrameType frame_type) {
   switch (type) {
     case kRtpVideoH264:
       RTC_CHECK(rtp_type_header);
-      return new RtpPacketizerH264(max_payload_len,
+      return new RtpPacketizerH264(max_payload_len, last_packet_reduction_len,
                                    rtp_type_header->H264.packetization_mode);
     case kRtpVideoVp8:
       RTC_CHECK(rtp_type_header);
-      return new RtpPacketizerVp8(rtp_type_header->VP8, max_payload_len);
+      return new RtpPacketizerVp8(rtp_type_header->VP8, max_payload_len,
+                                  last_packet_reduction_len);
     case kRtpVideoVp9:
       RTC_CHECK(rtp_type_header);
-      return new RtpPacketizerVp9(rtp_type_header->VP9, max_payload_len);
+      return new RtpPacketizerVp9(rtp_type_header->VP9, max_payload_len,
+                                  last_packet_reduction_len);
     case kRtpVideoGeneric:
-      return new RtpPacketizerGeneric(frame_type, max_payload_len);
+      return new RtpPacketizerGeneric(frame_type, max_payload_len,
+                                      last_packet_reduction_len);
     case kRtpVideoNone:
       RTC_NOTREACHED();
   }
-  return NULL;
+  return nullptr;
 }
 
 RtpDepacketizer* RtpDepacketizer::Create(RtpVideoCodecTypes type) {
@@ -54,6 +58,6 @@ RtpDepacketizer* RtpDepacketizer::Create(RtpVideoCodecTypes type) {
     case kRtpVideoNone:
       assert(false);
   }
-  return NULL;
+  return nullptr;
 }
 }  // namespace webrtc

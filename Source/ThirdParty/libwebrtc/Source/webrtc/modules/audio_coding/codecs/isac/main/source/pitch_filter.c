@@ -16,7 +16,7 @@
 
 #include "os_specific_inline.h"
 
-#include "webrtc/system_wrappers/include/compile_assert_c.h"
+#include "webrtc/base/compile_assert_c.h"
 
 /*
  * We are implementing the following filters;
@@ -277,7 +277,7 @@ static void FilterFrame(const double* in_data, PitchFiltstr* filter_state,
   /* Copy states to local variables. */
   memcpy(filter_parameters.buffer, filter_state->ubuf,
          sizeof(filter_state->ubuf));
-  COMPILE_ASSERT(sizeof(filter_parameters.buffer) >=
+  RTC_COMPILE_ASSERT(sizeof(filter_parameters.buffer) >=
                  sizeof(filter_state->ubuf));
   memset(filter_parameters.buffer +
              sizeof(filter_state->ubuf) / sizeof(filter_state->ubuf[0]),

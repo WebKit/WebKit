@@ -29,16 +29,12 @@ class RapidResyncRequest : public Rtpfb {
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& header);
 
- protected:
+  size_t BlockLength() const override;
+
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
               RtcpPacket::PacketReadyCallback* callback) const override;
-
- private:
-  size_t BlockLength() const override {
-    return kHeaderLength + kCommonFeedbackLength;
-  }
 };
 }  // namespace rtcp
 }  // namespace webrtc

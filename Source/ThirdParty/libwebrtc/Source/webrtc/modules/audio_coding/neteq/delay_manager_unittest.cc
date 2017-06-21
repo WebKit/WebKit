@@ -266,6 +266,58 @@ TEST_F(DelayManagerTest, MinAndRequiredDelay) {
   EXPECT_EQ(kMinDelayPackets << 8, dm_->TargetLevel());
 }
 
+// Tests that skipped sequence numbers (simulating empty packets) are handled
+// correctly.
+TEST_F(DelayManagerTest, EmptyPacketsReported) {
+  SetPacketAudioLength(kFrameSizeMs);
+  // First packet arrival.
+  InsertNextPacket();
+
+  // Advance time by one frame size.
+  IncreaseTime(kFrameSizeMs);
+
+  // Advance the sequence number by 5, simulating that 5 empty packets were
+  // received, but never inserted.
+  seq_no_ += 10;
+  for (int j = 0; j < 10; ++j) {
+    dm_->RegisterEmptyPacket();
+  }
+
+  // Second packet arrival.
+  // Expect detector update method to be called once with inter-arrival time
+  // equal to 1 packet, and (base) target level equal to 1 as well.
+  // Return false to indicate no peaks found.
+  EXPECT_CALL(detector_, Update(1, 1)).WillOnce(Return(false));
+  InsertNextPacket();
+
+  EXPECT_EQ(1 << 8, dm_->TargetLevel());  // In Q8.
+}
+
+// Same as above, but do not call RegisterEmptyPacket. Observe the target level
+// increase dramatically.
+TEST_F(DelayManagerTest, EmptyPacketsNotReported) {
+  SetPacketAudioLength(kFrameSizeMs);
+  // First packet arrival.
+  InsertNextPacket();
+
+  // Advance time by one frame size.
+  IncreaseTime(kFrameSizeMs);
+
+  // Advance the sequence number by 5, simulating that 5 empty packets were
+  // received, but never inserted.
+  seq_no_ += 10;
+
+  // Second packet arrival.
+  // Expect detector update method to be called once with inter-arrival time
+  // equal to 1 packet, and (base) target level equal to 1 as well.
+  // Return false to indicate no peaks found.
+  EXPECT_CALL(detector_, Update(10, 10)).WillOnce(Return(false));
+  InsertNextPacket();
+
+  // Note 10 times higher target value.
+  EXPECT_EQ(10 * 1 << 8, dm_->TargetLevel());  // In Q8.
+}
+
 TEST_F(DelayManagerTest, Failures) {
   // Wrong sample rate.
   EXPECT_EQ(-1, dm_->Update(0, 0, -1));

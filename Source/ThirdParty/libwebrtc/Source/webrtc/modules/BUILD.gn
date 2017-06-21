@@ -29,6 +29,18 @@ group("modules") {
   ]
 }
 
+rtc_source_set("module_api") {
+  sources = [
+    "include/module.h",
+    "include/module_common_types.h",
+  ]
+  deps = [
+    "..:webrtc_common",
+    "../api:video_frame_api",
+    "../base:rtc_base_approved",
+  ]
+}
+
 if (rtc_include_tests) {
   modules_tests_resources = [
     "//resources/audio_coding/testfile32kHz.pcm",
@@ -186,7 +198,6 @@ if (rtc_include_tests) {
     "//resources/verizon4g-uplink.rx",
     "//resources/voice_engine/audio_tiny48.wav",
   ]
-
   if (is_ios) {
     bundle_data("modules_unittests_bundle_data") {
       testonly = true
@@ -199,8 +210,6 @@ if (rtc_include_tests) {
 
   rtc_test("modules_unittests") {
     testonly = true
-
-    deps = []
     defines = []
     sources = [
       "module_common_types_unittest.cc",
@@ -211,7 +220,8 @@ if (rtc_include_tests) {
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
     }
 
-    deps += [
+    deps = [
+      ":module_api",
       "../test:test_main",
       "audio_coding:audio_coding_unittests",
       "audio_conference_mixer:audio_conference_mixer_unittests",

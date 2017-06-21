@@ -59,14 +59,6 @@ inline bool IsEqualCodec(const cricket::VideoCodec& a,
   return a.id == b.id && a.name == b.name;
 }
 
-namespace std {
-inline std::ostream& operator<<(std::ostream& s, const cricket::VideoCodec& c) {
-  s << "{" << c.name << "(" << c.id << ")"
-    << "}";
-  return s;
-}
-}  // namespace std
-
 template<class E, class C>
 class VideoMediaChannelTest : public testing::Test,
                               public sigslot::has_slots<> {

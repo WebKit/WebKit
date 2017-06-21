@@ -15,8 +15,6 @@
 #ifndef WEBRTC_MODULES_BITRATE_CONTROLLER_INCLUDE_BITRATE_CONTROLLER_H_
 #define WEBRTC_MODULES_BITRATE_CONTROLLER_INCLUDE_BITRATE_CONTROLLER_H_
 
-#include <map>
-
 #include "webrtc/modules/congestion_controller/delay_based_bwe.h"
 #include "webrtc/modules/include/module.h"
 #include "webrtc/modules/pacing/paced_sender.h"
@@ -24,9 +22,7 @@
 
 namespace webrtc {
 
-class CriticalSectionWrapper;
 class RtcEventLog;
-struct PacketInfo;
 
 // Deprecated
 // TODO(perkj): Remove BitrateObserver when no implementations use it.
@@ -44,7 +40,8 @@ class BitrateObserver {
   virtual ~BitrateObserver() {}
 };
 
-class BitrateController : public Module {
+class BitrateController : public Module,
+                          public RtcpBandwidthObserver {
   // This class collects feedback from all streams sent to a peer (via
   // RTCPBandwidthObservers). It does one  aggregated send side bandwidth
   // estimation and divide the available bitrate between all its registered
@@ -55,15 +52,16 @@ class BitrateController : public Module {
   // Deprecated:
   // TODO(perkj): BitrateObserver has been deprecated and is not used in WebRTC.
   // Remove this method once other other projects does not use it.
-  static BitrateController* CreateBitrateController(Clock* clock,
+  static BitrateController* CreateBitrateController(const Clock* clock,
                                                     BitrateObserver* observer,
                                                     RtcEventLog* event_log);
 
-  static BitrateController* CreateBitrateController(Clock* clock,
+  static BitrateController* CreateBitrateController(const Clock* clock,
                                                     RtcEventLog* event_log);
 
   virtual ~BitrateController() {}
 
+  // Creates RtcpBandwidthObserver caller responsible to delete.
   virtual RtcpBandwidthObserver* CreateRtcpBandwidthObserver() = 0;
 
   // Deprecated

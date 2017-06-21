@@ -210,7 +210,15 @@ RelayPort::~RelayPort() {
 }
 
 void RelayPort::AddServerAddress(const ProtocolAddress& addr) {
-  server_addr_.push_back(addr);
+  // Since HTTP proxies usually only allow 443,
+  // let's up the priority on PROTO_SSLTCP
+  if (addr.proto == PROTO_SSLTCP &&
+      (proxy().type == rtc::PROXY_HTTPS ||
+       proxy().type == rtc::PROXY_UNKNOWN)) {
+    server_addr_.push_front(addr);
+  } else {
+    server_addr_.push_back(addr);
+  }
 }
 
 void RelayPort::AddExternalAddress(const ProtocolAddress& addr) {
@@ -568,36 +576,32 @@ int RelayEntry::SendTo(const void* data, size_t size,
   RelayMessage request;
   request.SetType(STUN_SEND_REQUEST);
 
-  StunByteStringAttribute* magic_cookie_attr =
+  auto magic_cookie_attr =
       StunAttribute::CreateByteString(STUN_ATTR_MAGIC_COOKIE);
   magic_cookie_attr->CopyBytes(TURN_MAGIC_COOKIE_VALUE,
                                sizeof(TURN_MAGIC_COOKIE_VALUE));
-  request.AddAttribute(magic_cookie_attr);
+  request.AddAttribute(std::move(magic_cookie_attr));
 
-  StunByteStringAttribute* username_attr =
-      StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
+  auto username_attr = StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
   username_attr->CopyBytes(port_->username_fragment().c_str(),
                            port_->username_fragment().size());
-  request.AddAttribute(username_attr);
+  request.AddAttribute(std::move(username_attr));
 
-  StunAddressAttribute* addr_attr =
-      StunAttribute::CreateAddress(STUN_ATTR_DESTINATION_ADDRESS);
+  auto addr_attr = StunAttribute::CreateAddress(STUN_ATTR_DESTINATION_ADDRESS);
   addr_attr->SetIP(addr.ipaddr());
   addr_attr->SetPort(addr.port());
-  request.AddAttribute(addr_attr);
+  request.AddAttribute(std::move(addr_attr));
 
   // Attempt to lock
   if (ext_addr_ == addr) {
-    StunUInt32Attribute* options_attr =
-      StunAttribute::CreateUInt32(STUN_ATTR_OPTIONS);
+    auto options_attr = StunAttribute::CreateUInt32(STUN_ATTR_OPTIONS);
     options_attr->SetValue(0x1);
-    request.AddAttribute(options_attr);
+    request.AddAttribute(std::move(options_attr));
   }
 
-  StunByteStringAttribute* data_attr =
-      StunAttribute::CreateByteString(STUN_ATTR_DATA);
+  auto data_attr = StunAttribute::CreateByteString(STUN_ATTR_DATA);
   data_attr->CopyBytes(data, size);
-  request.AddAttribute(data_attr);
+  request.AddAttribute(std::move(data_attr));
 
   // TODO: compute the HMAC.
 
@@ -779,12 +783,11 @@ AllocateRequest::AllocateRequest(RelayEntry* entry,
 void AllocateRequest::Prepare(StunMessage* request) {
   request->SetType(STUN_ALLOCATE_REQUEST);
 
-  StunByteStringAttribute* username_attr =
-      StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
+  auto username_attr = StunAttribute::CreateByteString(STUN_ATTR_USERNAME);
   username_attr->CopyBytes(
       entry_->port()->username_fragment().c_str(),
       entry_->port()->username_fragment().size());
-  request->AddAttribute(username_attr);
+  request->AddAttribute(std::move(username_attr));
 }
 
 void AllocateRequest::OnSent() {
@@ -821,7 +824,7 @@ void AllocateRequest::OnResponse(StunMessage* response) {
 void AllocateRequest::OnErrorResponse(StunMessage* response) {
   const StunErrorCodeAttribute* attr = response->GetErrorCode();
   if (!attr) {
-    LOG(INFO) << "Bad allocate response error code";
+    LOG(LS_ERROR) << "Missing allocate response error code.";
   } else {
     LOG(INFO) << "Allocate error response:"
               << " code=" << attr->code()

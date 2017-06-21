@@ -20,7 +20,6 @@
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/modules/pacing/paced_sender.h"
 #include "webrtc/modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/metrics.h"
 #include "webrtc/typedefs.h"
 
@@ -81,7 +80,7 @@ bool RemoteBitrateEstimatorAbsSendTime::IsWithinClusterBounds(
 
   RemoteBitrateEstimatorAbsSendTime::RemoteBitrateEstimatorAbsSendTime(
       RemoteBitrateObserver* observer,
-      Clock* clock)
+      const Clock* clock)
       : clock_(clock),
         observer_(observer),
         inter_arrival_(),
@@ -208,16 +207,6 @@ bool RemoteBitrateEstimatorAbsSendTime::IsBitrateImproving(
   return initial_probe || bitrate_above_estimate;
 }
 
-void RemoteBitrateEstimatorAbsSendTime::IncomingPacketFeedbackVector(
-    const std::vector<PacketInfo>& packet_feedback_vector) {
-  RTC_DCHECK(network_thread_.CalledOnValidThread());
-  for (const auto& packet_info : packet_feedback_vector) {
-    IncomingPacketInfo(packet_info.arrival_time_ms,
-                       ConvertMsTo24Bits(packet_info.send_time_ms),
-                       packet_info.payload_size, 0);
-  }
-}
-
 void RemoteBitrateEstimatorAbsSendTime::IncomingPacket(
     int64_t arrival_time_ms,
     size_t payload_size,
@@ -326,7 +315,7 @@ void RemoteBitrateEstimatorAbsSendTime::IncomingPacketInfo(
       if (last_update_ms_ == -1 ||
           now_ms - last_update_ms_ > remote_rate_.GetFeedbackInterval()) {
         update_estimate = true;
-      } else if (detector_.State() == kBwOverusing) {
+      } else if (detector_.State() == BandwidthUsage::kBwOverusing) {
         rtc::Optional<uint32_t> incoming_rate =
             incoming_bitrate_.Rate(arrival_time_ms);
         if (incoming_rate &&
@@ -343,8 +332,7 @@ void RemoteBitrateEstimatorAbsSendTime::IncomingPacketInfo(
       const RateControlInput input(detector_.State(),
                                    incoming_bitrate_.Rate(arrival_time_ms),
                                    estimator_->var_noise());
-      remote_rate_.Update(&input, now_ms);
-      target_bitrate_bps = remote_rate_.UpdateBandwidthEstimate(now_ms);
+      target_bitrate_bps = remote_rate_.Update(&input, now_ms);
       update_estimate = remote_rate_.ValidEstimate();
       ssrcs = Keys(ssrcs_);
     }

@@ -15,6 +15,7 @@
 #include <utility>
 #include <vector>
 
+#include "webrtc/base/checks.h"
 #include "webrtc/base/optional.h"
 #include "webrtc/modules/include/module.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp.h"
@@ -30,9 +31,6 @@ class MockRtpData : public RtpData {
                int32_t(const uint8_t* payload_data,
                        size_t payload_size,
                        const WebRtcRTPHeader* rtp_header));
-
-  MOCK_METHOD2(OnRecoveredPacket,
-               bool(const uint8_t* packet, size_t packet_length));
 };
 
 class MockRtpRtcp : public RtpRtcp {
@@ -55,7 +53,6 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_METHOD1(RegisterSendTransport, int32_t(Transport* outgoing_transport));
   MOCK_METHOD1(SetMaxRtpPacketSize, void(size_t size));
   MOCK_METHOD1(SetTransportOverhead, void(int transport_overhead_per_packet));
-  MOCK_CONST_METHOD0(MaxPayloadSize, size_t());
   MOCK_CONST_METHOD0(MaxRtpPacketSize, size_t());
   MOCK_METHOD1(RegisterSendPayload, int32_t(const CodecInst& voice_codec));
   MOCK_METHOD1(RegisterSendPayload, int32_t(const VideoCodec& video_codec));
@@ -144,8 +141,6 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_METHOD1(SendRTCP, int32_t(RTCPPacketType packet_type));
   MOCK_METHOD1(SendCompoundRTCP,
                int32_t(const std::set<RTCPPacketType>& packet_types));
-  MOCK_METHOD1(SendRTCPReferencePictureSelection, int32_t(uint64_t picture_id));
-  MOCK_METHOD1(SendRTCPSliceLossIndication, int32_t(uint8_t picture_id));
   MOCK_CONST_METHOD2(DataCountersRTP,
                      int32_t(size_t* bytes_sent, uint32_t* packets_sent));
   MOCK_CONST_METHOD2(GetSendStreamDataCounters,
@@ -196,7 +191,6 @@ class MockRtpRtcp : public RtpRtcp {
                     const FecProtectionParams& key_params));
   MOCK_METHOD1(SetKeyFrameRequestMethod, int32_t(KeyFrameRequestMethod method));
   MOCK_METHOD0(RequestKeyFrame, int32_t());
-  MOCK_METHOD0(TimeUntilNextProcess, int64_t());
   MOCK_METHOD0(Process, void());
   MOCK_METHOD1(RegisterSendFrameCountObserver, void(FrameCountObserver*));
   MOCK_CONST_METHOD0(GetSendFrameCountObserver, FrameCountObserver*(void));
@@ -207,6 +201,12 @@ class MockRtpRtcp : public RtpRtcp {
   MOCK_METHOD1(SetVideoBitrateAllocation, void(const BitrateAllocation&));
   // Members.
   unsigned int remote_ssrc_;
+
+ private:
+  // Mocking this method is currently not required and having a default
+  // implementation like MOCK_METHOD0(TimeUntilNextProcess, int64_t())
+  // can be dangerous since it can cause a tight loop on a process thread.
+  virtual int64_t TimeUntilNextProcess() { return 0xffffffff; }
 };
 
 }  // namespace webrtc

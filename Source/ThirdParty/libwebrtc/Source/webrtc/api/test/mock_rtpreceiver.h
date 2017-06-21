@@ -12,6 +12,7 @@
 #define WEBRTC_API_TEST_MOCK_RTPRECEIVER_H_
 
 #include <string>
+#include <vector>
 
 #include "webrtc/api/rtpreceiverinterface.h"
 #include "webrtc/test/gmock.h"
@@ -27,6 +28,7 @@ class MockRtpReceiver : public rtc::RefCountedObject<RtpReceiverInterface> {
   MOCK_CONST_METHOD0(GetParameters, RtpParameters());
   MOCK_METHOD1(SetParameters, bool(const RtpParameters&));
   MOCK_METHOD1(SetObserver, void(RtpReceiverObserverInterface*));
+  MOCK_CONST_METHOD0(GetSources, std::vector<RtpSource>());
 };
 
 }  // namespace webrtc

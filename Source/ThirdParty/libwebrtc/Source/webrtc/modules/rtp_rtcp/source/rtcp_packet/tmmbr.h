@@ -27,8 +27,8 @@ class Tmmbr : public Rtpfb {
  public:
   static constexpr uint8_t kFeedbackMessageType = 3;
 
-  Tmmbr() {}
-  ~Tmmbr() override {}
+  Tmmbr();
+  ~Tmmbr() override;
 
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& packet);
@@ -37,18 +37,14 @@ class Tmmbr : public Rtpfb {
 
   const std::vector<TmmbItem>& requests() const { return items_; }
 
- protected:
+  size_t BlockLength() const override;
+
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
               RtcpPacket::PacketReadyCallback* callback) const override;
 
  private:
-  size_t BlockLength() const override {
-    return kHeaderLength + kCommonFeedbackLength +
-           TmmbItem::kLength * items_.size();
-  }
-
   // Media ssrc is unused, shadow base class setter.
   void SetMediaSsrc(uint32_t ssrc);
 

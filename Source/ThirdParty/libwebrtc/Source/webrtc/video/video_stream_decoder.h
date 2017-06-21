@@ -43,7 +43,6 @@ enum StreamType {
 
 class VideoStreamDecoder : public VCMReceiveCallback,
                            public VCMReceiveStatisticsCallback,
-                           public VCMDecoderTimingCallback,
                            public CallStatsObserver {
  public:
   friend class ChannelStatsObserver;
@@ -60,7 +59,8 @@ class VideoStreamDecoder : public VCMReceiveCallback,
 
   // Implements VCMReceiveCallback.
   int32_t FrameToRender(VideoFrame& video_frame,
-                        rtc::Optional<uint8_t> qp) override;
+                        rtc::Optional<uint8_t> qp,
+                        VideoContentType content_type) override;
   int32_t ReceivedDecodedReferenceFrame(const uint64_t picture_id) override;
   void OnIncomingPayloadType(int payload_type) override;
   void OnDecoderImplementationName(const char* implementation_name) override;
@@ -77,15 +77,6 @@ class VideoStreamDecoder : public VCMReceiveCallback,
                                    int jitter_buffer_ms,
                                    int min_playout_delay_ms,
                                    int render_delay_ms) override;
-
-  // Implements VCMDecoderTimingCallback.
-  void OnDecoderTiming(int decode_ms,
-                       int max_decode_ms,
-                       int current_delay_ms,
-                       int target_delay_ms,
-                       int jitter_buffer_ms,
-                       int min_playout_delay_ms,
-                       int render_delay_ms) override;
 
   void RegisterReceiveStatisticsProxy(
       ReceiveStatisticsProxy* receive_statistics_proxy);

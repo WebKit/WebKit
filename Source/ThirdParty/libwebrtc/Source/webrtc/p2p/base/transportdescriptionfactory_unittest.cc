@@ -127,8 +127,7 @@ class TransportDescriptionFactoryTest : public testing::Test {
                           bool renomination_expected) {
     ASSERT_TRUE(desc != nullptr);
     std::vector<std::string>& options = desc->transport_options;
-    auto iter = std::find(options.begin(), options.end(),
-                          cricket::ICE_RENOMINATION_STR);
+    auto iter = std::find(options.begin(), options.end(), "renomination");
     EXPECT_EQ(renomination_expected, iter != options.end());
   }
 
@@ -299,4 +298,15 @@ TEST_F(TransportDescriptionFactoryTest, TestIceRenomination) {
 // is enabled.
 TEST_F(TransportDescriptionFactoryTest, TestIceRenominationWithDtls) {
   TestIceRenomination(true);
+}
+
+// Test that offers and answers have ice-option:trickle.
+TEST_F(TransportDescriptionFactoryTest, AddsTrickleIceOption) {
+  cricket::TransportOptions options;
+  std::unique_ptr<TransportDescription> offer(
+      f1_.CreateOffer(options, nullptr));
+  EXPECT_TRUE(offer->HasOption("trickle"));
+  std::unique_ptr<TransportDescription> answer(
+      f2_.CreateAnswer(offer.get(), options, true, nullptr));
+  EXPECT_TRUE(answer->HasOption("trickle"));
 }

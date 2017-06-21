@@ -15,6 +15,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.filters.MediumTest;
 import android.support.test.filters.SmallTest;
+import java.io.IOException;
 import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.After;
 import org.junit.Before;
@@ -118,6 +119,12 @@ public class Camera1CapturerUsingByteBufferTest {
   @MediumTest
   public void testCameraEvents() throws InterruptedException {
     fixtures.cameraEventsInvoked();
+  }
+
+  @Test
+  @MediumTest
+  public void testUpdateMediaRecorder() throws InterruptedException, IOException {
+    fixtures.updateMediaRecorder(false /* useSurfaceCapture */);
   }
 
   // Test what happens when attempting to call e.g. switchCamera() after camera has been stopped.

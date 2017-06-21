@@ -55,12 +55,6 @@ bool RtcpPacketParser::Parse(const void* data, size_t length) {
           case rtcp::Remb::kFeedbackMessageType:
             remb_.Parse(header, &sender_ssrc_);
             break;
-          case rtcp::Rpsi::kFeedbackMessageType:
-            rpsi_.Parse(header, &sender_ssrc_);
-            break;
-          case rtcp::Sli::kFeedbackMessageType:
-            sli_.Parse(header, &sender_ssrc_);
-            break;
           default:
             LOG(LS_WARNING) << "Unknown rtcp payload specific feedback type "
                             << header.fmt();

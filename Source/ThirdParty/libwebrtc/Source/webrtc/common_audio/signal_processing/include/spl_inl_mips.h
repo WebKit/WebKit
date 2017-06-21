@@ -12,8 +12,8 @@
 // This header file includes the inline functions in
 // the fix point signal processing library.
 
-#ifndef WEBRTC_SPL_SPL_INL_MIPS_H_
-#define WEBRTC_SPL_SPL_INL_MIPS_H_
+#ifndef WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_
+#define WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_
 
 static __inline int32_t WEBRTC_SPL_MUL_16_16(int32_t a,
                                              int32_t b) {
@@ -33,8 +33,7 @@ static __inline int32_t WEBRTC_SPL_MUL_16_16(int32_t a,
     "mul    %[value32],     %[a1],  %[b1]       \n\t"
     : [value32] "=r" (value32), [a1] "=&r" (a1), [b1] "=&r" (b1)
     : [a] "r" (a), [b] "r" (b)
-    : "hi", "lo"
-  );
+    : "hi", "lo");
   return value32;
 }
 
@@ -61,8 +60,7 @@ static __inline int32_t WEBRTC_SPL_MUL_16_32_RSFT16(int16_t a,
     : [value32] "=&r" (value32), [b1] "=&r" (b1), [b2] "=&r" (b2),
       [a1] "=&r" (a1)
     : [a] "r" (a), [b] "r" (b)
-    : "hi", "lo"
-  );
+    : "hi", "lo");
   return value32;
 }
 
@@ -72,8 +70,7 @@ static __inline int16_t WebRtcSpl_SatW32ToW16(int32_t value32) {
     "shll_s.w   %[value32], %[value32], 16      \n\t"
     "sra        %[value32], %[value32], 16      \n\t"
     : [value32] "+r" (value32)
-    :
-  );
+    :);
   int16_t out16 = (int16_t)value32;
   return out16;
 }
@@ -84,8 +81,7 @@ static __inline int16_t WebRtcSpl_AddSatW16(int16_t a, int16_t b) {
   __asm __volatile(
     "addq_s.ph      %[value32],     %[a],   %[b]    \n\t"
     : [value32] "=r" (value32)
-    : [a] "r" (a), [b] "r" (b)
-  );
+    : [a] "r" (a), [b] "r" (b) );
   return (int16_t)value32;
 }
 
@@ -95,8 +91,7 @@ static __inline int32_t WebRtcSpl_AddSatW32(int32_t l_var1, int32_t l_var2) {
   __asm __volatile(
     "addq_s.w   %[l_sum],       %[l_var1],      %[l_var2]    \n\t"
     : [l_sum] "=r" (l_sum)
-    : [l_var1] "r" (l_var1), [l_var2] "r" (l_var2)
-  );
+    : [l_var1] "r" (l_var1), [l_var2] "r" (l_var2) );
 
   return l_sum;
 }
@@ -107,8 +102,7 @@ static __inline int16_t WebRtcSpl_SubSatW16(int16_t var1, int16_t var2) {
   __asm __volatile(
     "subq_s.ph  %[value32], %[var1],    %[var2]     \n\t"
     : [value32] "=r" (value32)
-    : [var1] "r" (var1), [var2] "r" (var2)
-  );
+    : [var1] "r" (var1), [var2] "r" (var2) );
 
   return (int16_t)value32;
 }
@@ -119,8 +113,7 @@ static __inline int32_t WebRtcSpl_SubSatW32(int32_t l_var1, int32_t l_var2) {
   __asm __volatile(
     "subq_s.w   %[l_diff],      %[l_var1],      %[l_var2]    \n\t"
     : [l_diff] "=r" (l_diff)
-    : [l_var1] "r" (l_var1), [l_var2] "r" (l_var2)
-  );
+    : [l_var1] "r" (l_var1), [l_var2] "r" (l_var2) );
 
   return l_diff;
 }
@@ -134,8 +127,7 @@ static __inline int16_t WebRtcSpl_GetSizeInBits(uint32_t n) {
     "clz    %[bits],    %[n]                    \n\t"
     "subu   %[bits],    %[i32],     %[bits]     \n\t"
     : [bits] "=&r" (bits)
-    : [n] "r" (n), [i32] "r" (i32)
-  );
+    : [n] "r" (n), [i32] "r" (i32) );
 
   return (int16_t)bits;
 }
@@ -157,8 +149,7 @@ static __inline int16_t WebRtcSpl_NormW32(int32_t a) {
    "2:                                              \n\t"
     ".set       pop                                 \n\t"
     : [zeros]"=&r"(zeros)
-    : [a] "r" (a)
-  );
+    : [a] "r" (a) );
 
   return (int16_t)zeros;
 }
@@ -169,8 +160,7 @@ static __inline int16_t WebRtcSpl_NormU32(uint32_t a) {
   __asm __volatile(
     "clz    %[zeros],   %[a]    \n\t"
     : [zeros] "=r" (zeros)
-    : [a] "r" (a)
-  );
+    : [a] "r" (a) );
 
   return (int16_t)(zeros & 0x1f);
 }
@@ -193,8 +183,7 @@ static __inline int16_t WebRtcSpl_NormW16(int16_t a) {
    "2:                                              \n\t"
     ".set       pop                                 \n\t"
     : [zeros]"=&r"(zeros)
-    : [a0] "r" (a0)
-  );
+    : [a0] "r" (a0) );
 
   return (int16_t)zeros;
 }
@@ -217,9 +206,8 @@ static __inline int32_t WebRtc_MulAccumW16(int16_t a,
     "addu   %[c1],      %[c],   %[res]  \n\t"
     : [c1] "=r" (c1), [res] "=&r" (res)
     : [a] "r" (a), [b] "r" (b), [c] "r" (c)
-    : "hi", "lo"
-  );
+    : "hi", "lo");
   return (c1);
 }
 
-#endif  // WEBRTC_SPL_SPL_INL_MIPS_H_
+#endif  // WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_MIPS_H_

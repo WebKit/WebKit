@@ -44,8 +44,9 @@ TEST(SuppressionFilter, NullOutput) {
   FftData cn_high_bands;
   std::array<float, kFftLengthBy2Plus1> gain;
 
-  EXPECT_DEATH(
-      SuppressionFilter(16000).ApplyGain(cn, cn_high_bands, gain, nullptr), "");
+  EXPECT_DEATH(SuppressionFilter(16000).ApplyGain(cn, cn_high_bands, gain, 1.0f,
+                                                  nullptr),
+               "");
 }
 
 // Verifies the check for allowed sample rate.
@@ -70,7 +71,7 @@ TEST(SuppressionFilter, ComfortNoiseInUnityGain) {
 
   std::vector<std::vector<float>> e(3, std::vector<float>(kBlockSize, 0.f));
   std::vector<std::vector<float>> e_ref = e;
-  filter.ApplyGain(cn, cn_high_bands, gain, &e);
+  filter.ApplyGain(cn, cn_high_bands, gain, 1.f, &e);
 
   for (size_t k = 0; k < e.size(); ++k) {
     EXPECT_EQ(e_ref[k], e[k]);
@@ -102,7 +103,7 @@ TEST(SuppressionFilter, SignalSuppression) {
                     e[0]);
     e0_input =
         std::inner_product(e[0].begin(), e[0].end(), e[0].begin(), e0_input);
-    filter.ApplyGain(cn, cn_high_bands, gain, &e);
+    filter.ApplyGain(cn, cn_high_bands, gain, 1.f, &e);
     e0_output =
         std::inner_product(e[0].begin(), e[0].end(), e[0].begin(), e0_output);
   }
@@ -136,7 +137,7 @@ TEST(SuppressionFilter, SignalTransparency) {
                     e[0]);
     e0_input =
         std::inner_product(e[0].begin(), e[0].end(), e[0].begin(), e0_input);
-    filter.ApplyGain(cn, cn_high_bands, gain, &e);
+    filter.ApplyGain(cn, cn_high_bands, gain, 1.f, &e);
     e0_output =
         std::inner_product(e[0].begin(), e[0].end(), e[0].begin(), e0_output);
   }
@@ -166,7 +167,7 @@ TEST(SuppressionFilter, Delay) {
       }
     }
 
-    filter.ApplyGain(cn, cn_high_bands, gain, &e);
+    filter.ApplyGain(cn, cn_high_bands, gain, 1.f, &e);
     if (k > 2) {
       for (size_t j = 0; j < 2; ++j) {
         for (size_t i = 0; i < kBlockSize; ++i) {

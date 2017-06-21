@@ -22,7 +22,7 @@
 #include "webrtc/base/stringencode.h"
 #include "webrtc/base/stringutils.h"
 #include "webrtc/media/base/mediaconstants.h"
-#include "webrtc/media/engine/webrtcvideoengine2.h"
+#include "webrtc/media/engine/webrtcvideoengine.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
 #include "webrtc/p2p/base/p2pconstants.h"
 #include "webrtc/pc/mediasession.h"
@@ -694,7 +694,7 @@ static const char kSdpTcpInvalidCandidate[] =
 // One candidate reference string with IPV6 address.
 static const char kRawIPV6Candidate[] =
     "candidate:a0+B/1 1 udp 2130706432 "
-    "abcd::abcd::abcd::abcd::abcd::abcd::abcd::abcd 1234 typ host generation 2";
+    "abcd:abcd:abcd:abcd:abcd:abcd:abcd:abcd 1234 typ host generation 2";
 
 // One candidate reference string.
 static const char kSdpOneCandidateWithUfragPwd[] =
@@ -875,6 +875,8 @@ class WebRtcSdpTest : public testing::Test {
     audio_stream.sync_label = kStreamLabel1;
     audio_stream.ssrcs.push_back(kAudioTrack1Ssrc);
     audio_desc_->AddStream(audio_stream);
+    rtc::SocketAddress audio_addr("74.125.127.126", 2345);
+    audio_desc_->set_connection_address(audio_addr);
     desc_.AddContent(kAudioContentName, NS_JINGLE_RTP, audio_desc_);
 
     // VideoContentDescription
@@ -888,6 +890,8 @@ class WebRtcSdpTest : public testing::Test {
     cricket::SsrcGroup ssrc_group(kFecSsrcGroupSemantics, video_stream.ssrcs);
     video_stream.ssrc_groups.push_back(ssrc_group);
     video_desc_->AddStream(video_stream);
+    rtc::SocketAddress video_addr("74.125.224.39", 3457);
+    video_desc_->set_connection_address(video_addr);
     desc_.AddContent(kVideoContentName, NS_JINGLE_RTP, video_desc_);
 
     // TransportInfo
@@ -1090,7 +1094,6 @@ class WebRtcSdpTest : public testing::Test {
     desc_.AddContent(kAudioContentName2, NS_JINGLE_RTP, audio_desc_2);
     EXPECT_TRUE(desc_.AddTransportInfo(TransportInfo(
         kAudioContentName2, TransportDescription(kUfragVoice2, kPwdVoice2))));
-
     // Video track 2, in stream 2.
     VideoContentDescription* video_desc_2 = CreateVideoContentDescription();
     StreamParams video_track_2;
@@ -1470,6 +1473,7 @@ class WebRtcSdpTest : public testing::Test {
         audio_desc_->Copy());
     video_desc_ = static_cast<VideoContentDescription*>(
         video_desc_->Copy());
+
     desc_.RemoveContentByName(kAudioContentName);
     desc_.RemoveContentByName(kVideoContentName);
     desc_.AddContent(kAudioContentName, NS_JINGLE_RTP, audio_rejected,
@@ -1485,10 +1489,7 @@ class WebRtcSdpTest : public testing::Test {
     ReplaceRejected(audio_rejected, video_rejected, &new_sdp);
 
     JsepSessionDescription jdesc_no_candidates(kDummyString);
-    if (!jdesc_no_candidates.Initialize(desc_.Copy(), kSessionId,
-                                        kSessionVersion)) {
-      return false;
-    }
+    MakeDescriptionWithoutCandidates(&jdesc_no_candidates);
     std::string message = webrtc::SdpSerialize(jdesc_no_candidates, false);
     EXPECT_EQ(new_sdp, message);
     return true;
@@ -1766,6 +1767,18 @@ class WebRtcSdpTest : public testing::Test {
     EXPECT_TRUE(CompareSessionDescription(jdesc, jdesc_output_des));
   }
 
+  // Calling 'Initialize' with a copy of the inner SessionDescription will
+  // create a copy of the JsepSessionDescription without candidates. The
+  // 'connection address' field, previously set from the candidates, must also
+  // be reset.
+  void MakeDescriptionWithoutCandidates(JsepSessionDescription* jdesc) {
+    rtc::SocketAddress audio_addr("0.0.0.0", 9);
+    rtc::SocketAddress video_addr("0.0.0.0", 9);
+    audio_desc_->set_connection_address(audio_addr);
+    video_desc_->set_connection_address(video_addr);
+    ASSERT_TRUE(jdesc->Initialize(desc_.Copy(), kSessionId, kSessionVersion));
+  }
+
  protected:
   SessionDescription desc_;
   AudioContentDescription* audio_desc_;
@@ -1801,134 +1814,12 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionEmpty) {
   EXPECT_EQ("", webrtc::SdpSerialize(jdesc_empty, false));
 }
 
-// This tests serialization of SDP with only IPv6 candidates and verifies that
-// IPv6 is used as default address in c line according to preference.
-TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithIPv6Only) {
-  // Only test 1 m line.
-  desc_.RemoveContentByName("video_content_name");
-  // Stun has a high preference than local host.
-  cricket::Candidate candidate1(
-      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
-      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
-      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation1);
-  cricket::Candidate candidate2(
-      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
-      rtc::SocketAddress("::2", 1235), kCandidatePriority, "", "",
-      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation1);
-  JsepSessionDescription jdesc(kDummyString);
-  ASSERT_TRUE(jdesc.Initialize(desc_.Copy(), kSessionId, kSessionVersion));
-
-  // Only add the candidates to audio m line.
-  JsepIceCandidate jice1("audio_content_name", 0, candidate1);
-  JsepIceCandidate jice2("audio_content_name", 0, candidate2);
-  ASSERT_TRUE(jdesc.AddCandidate(&jice1));
-  ASSERT_TRUE(jdesc.AddCandidate(&jice2));
-  std::string message = webrtc::SdpSerialize(jdesc, false);
-
-  // Audio line should have a c line like this one.
-  EXPECT_NE(message.find("c=IN IP6 ::1"), std::string::npos);
-  // Shouldn't have a IP4 c line.
-  EXPECT_EQ(message.find("c=IN IP4"), std::string::npos);
-}
-
-// This tests serialization of SDP with both IPv4 and IPv6 candidates and
-// verifies that IPv4 is used as default address in c line even if the
-// preference of IPv4 is lower.
-TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithBothIPFamilies) {
-  // Only test 1 m line.
-  desc_.RemoveContentByName("video_content_name");
-  cricket::Candidate candidate_v4(
-      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
-      rtc::SocketAddress("192.168.1.5", 1234), kCandidatePriority, "", "",
-      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation1);
-  cricket::Candidate candidate_v6(
-      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
-      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
-      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation1);
-  JsepSessionDescription jdesc(kDummyString);
-  ASSERT_TRUE(jdesc.Initialize(desc_.Copy(), kSessionId, kSessionVersion));
-
-  // Only add the candidates to audio m line.
-  JsepIceCandidate jice_v4("audio_content_name", 0, candidate_v4);
-  JsepIceCandidate jice_v6("audio_content_name", 0, candidate_v6);
-  ASSERT_TRUE(jdesc.AddCandidate(&jice_v4));
-  ASSERT_TRUE(jdesc.AddCandidate(&jice_v6));
-  std::string message = webrtc::SdpSerialize(jdesc, false);
-
-  // Audio line should have a c line like this one.
-  EXPECT_NE(message.find("c=IN IP4 192.168.1.5"), std::string::npos);
-  // Shouldn't have a IP6 c line.
-  EXPECT_EQ(message.find("c=IN IP6"), std::string::npos);
-}
-
-// This tests serialization of SDP with both UDP and TCP candidates and
-// verifies that UDP is used as default address in c line even if the
-// preference of UDP is lower.
-TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithBothProtocols) {
-  // Only test 1 m line.
-  desc_.RemoveContentByName("video_content_name");
-  // Stun has a high preference than local host.
-  cricket::Candidate candidate1(
-      cricket::ICE_CANDIDATE_COMPONENT_RTP, "tcp",
-      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
-      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation1);
-  cricket::Candidate candidate2(
-      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
-      rtc::SocketAddress("fe80::1234:5678:abcd:ef12", 1235), kCandidatePriority,
-      "", "", cricket::LOCAL_PORT_TYPE, kCandidateGeneration,
-      kCandidateFoundation1);
-  JsepSessionDescription jdesc(kDummyString);
-  ASSERT_TRUE(jdesc.Initialize(desc_.Copy(), kSessionId, kSessionVersion));
-
-  // Only add the candidates to audio m line.
-  JsepIceCandidate jice1("audio_content_name", 0, candidate1);
-  JsepIceCandidate jice2("audio_content_name", 0, candidate2);
-  ASSERT_TRUE(jdesc.AddCandidate(&jice1));
-  ASSERT_TRUE(jdesc.AddCandidate(&jice2));
-  std::string message = webrtc::SdpSerialize(jdesc, false);
-
-  // Audio line should have a c line like this one.
-  EXPECT_NE(message.find("c=IN IP6 fe80::1234:5678:abcd:ef12"),
-            std::string::npos);
-  // Shouldn't have a IP4 c line.
-  EXPECT_EQ(message.find("c=IN IP4"), std::string::npos);
-}
-
-// This tests serialization of SDP with only TCP candidates and verifies that
-// null IPv4 is used as default address in c line.
-TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithTCPOnly) {
-  // Only test 1 m line.
-  desc_.RemoveContentByName("video_content_name");
-  // Stun has a high preference than local host.
-  cricket::Candidate candidate1(
-      cricket::ICE_CANDIDATE_COMPONENT_RTP, "tcp",
-      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
-      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation1);
-  cricket::Candidate candidate2(
-      cricket::ICE_CANDIDATE_COMPONENT_RTP, "tcp",
-      rtc::SocketAddress("::2", 1235), kCandidatePriority, "", "",
-      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation1);
-  JsepSessionDescription jdesc(kDummyString);
-  ASSERT_TRUE(jdesc.Initialize(desc_.Copy(), kSessionId, kSessionVersion));
-
-  // Only add the candidates to audio m line.
-  JsepIceCandidate jice1("audio_content_name", 0, candidate1);
-  JsepIceCandidate jice2("audio_content_name", 0, candidate2);
-  ASSERT_TRUE(jdesc.AddCandidate(&jice1));
-  ASSERT_TRUE(jdesc.AddCandidate(&jice2));
-  std::string message = webrtc::SdpSerialize(jdesc, false);
-
-  // Audio line should have a c line like this one when no any default exists.
-  EXPECT_NE(message.find("c=IN IP4 0.0.0.0"), std::string::npos);
-}
-
 // This tests serialization of SDP with a=crypto and a=fingerprint, as would be
 // the case in a DTLS offer.
 TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithFingerprint) {
   AddFingerprint();
   JsepSessionDescription jdesc_with_fingerprint(kDummyString);
-  ASSERT_TRUE(jdesc_with_fingerprint.Initialize(desc_.Copy(),
-                                                kSessionId, kSessionVersion));
+  MakeDescriptionWithoutCandidates(&jdesc_with_fingerprint);
   std::string message = webrtc::SdpSerialize(jdesc_with_fingerprint, false);
 
   std::string sdp_with_fingerprint = kSdpString;
@@ -1946,8 +1837,7 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithFingerprintNoCryptos) {
   AddFingerprint();
   RemoveCryptos();
   JsepSessionDescription jdesc_with_fingerprint(kDummyString);
-  ASSERT_TRUE(jdesc_with_fingerprint.Initialize(desc_.Copy(),
-                                                kSessionId, kSessionVersion));
+  MakeDescriptionWithoutCandidates(&jdesc_with_fingerprint);
   std::string message = webrtc::SdpSerialize(jdesc_with_fingerprint, false);
 
   std::string sdp_with_fingerprint = kSdpString;
@@ -1964,8 +1854,7 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithFingerprintNoCryptos) {
 TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithoutCandidates) {
   // JsepSessionDescription with desc but without candidates.
   JsepSessionDescription jdesc_no_candidates(kDummyString);
-  ASSERT_TRUE(jdesc_no_candidates.Initialize(desc_.Copy(), kSessionId,
-                                             kSessionVersion));
+  MakeDescriptionWithoutCandidates(&jdesc_no_candidates);
   std::string message = webrtc::SdpSerialize(jdesc_no_candidates, false);
   EXPECT_EQ(std::string(kSdpString), message);
 }
@@ -2058,7 +1947,7 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithRtpDataChannel) {
   AddRtpDataChannel();
   JsepSessionDescription jsep_desc(kDummyString);
 
-  ASSERT_TRUE(jsep_desc.Initialize(desc_.Copy(), kSessionId, kSessionVersion));
+  MakeDescriptionWithoutCandidates(&jsep_desc);
   std::string message = webrtc::SdpSerialize(jsep_desc, false);
 
   std::string expected_sdp = kSdpString;
@@ -2071,7 +1960,7 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithSctpDataChannel) {
   AddSctpDataChannel(use_sctpmap);
   JsepSessionDescription jsep_desc(kDummyString);
 
-  ASSERT_TRUE(jsep_desc.Initialize(desc_.Copy(), kSessionId, kSessionVersion));
+  MakeDescriptionWithoutCandidates(&jsep_desc);
   std::string message = webrtc::SdpSerialize(jsep_desc, false);
 
   std::string expected_sdp = kSdpString;
@@ -2083,8 +1972,7 @@ TEST_F(WebRtcSdpTest, SerializeWithSctpDataChannelAndNewPort) {
   bool use_sctpmap = true;
   AddSctpDataChannel(use_sctpmap);
   JsepSessionDescription jsep_desc(kDummyString);
-
-  ASSERT_TRUE(jsep_desc.Initialize(desc_.Copy(), kSessionId, kSessionVersion));
+  MakeDescriptionWithoutCandidates(&jsep_desc);
   DataContentDescription* dcdesc = static_cast<DataContentDescription*>(
       jsep_desc.description()->GetContentDescriptionByName(kDataContentName));
 
@@ -2112,11 +2000,10 @@ TEST_F(WebRtcSdpTest, SerializeWithSctpDataChannelAndNewPort) {
 }
 
 TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithDataChannelAndBandwidth) {
+  JsepSessionDescription jsep_desc(kDummyString);
   AddRtpDataChannel();
   data_desc_->set_bandwidth(100*1000);
-  JsepSessionDescription jsep_desc(kDummyString);
-
-  ASSERT_TRUE(jsep_desc.Initialize(desc_.Copy(), kSessionId, kSessionVersion));
+  MakeDescriptionWithoutCandidates(&jsep_desc);
   std::string message = webrtc::SdpSerialize(jsep_desc, false);
 
   std::string expected_sdp = kSdpString;
@@ -2131,8 +2018,7 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithDataChannelAndBandwidth) {
 TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithExtmap) {
   AddExtmap();
   JsepSessionDescription desc_with_extmap("dummy");
-  ASSERT_TRUE(desc_with_extmap.Initialize(desc_.Copy(),
-                                          kSessionId, kSessionVersion));
+  MakeDescriptionWithoutCandidates(&desc_with_extmap);
   std::string message = webrtc::SdpSerialize(desc_with_extmap, false);
 
   std::string sdp_with_extmap = kSdpString;
@@ -3503,4 +3389,122 @@ TEST_F(WebRtcSdpTest, DeserializeMsidAttributeWithMissingStreamId) {
 
   JsepSessionDescription jdesc_output(kDummyString);
   EXPECT_FALSE(SdpDeserialize(kSdpWithMissingStreamId, &jdesc_output));
+}
+
+// Tests that if both session-level address and media-level address exist, use
+// the media-level address.
+TEST_F(WebRtcSdpTest, ParseConnectionData) {
+  JsepSessionDescription jsep_desc(kDummyString);
+
+  // Sesssion-level address.
+  std::string sdp = kSdpFullString;
+  InjectAfter("s=-\r\n", "c=IN IP4 192.168.0.3\r\n", &sdp);
+  EXPECT_TRUE(SdpDeserialize(sdp, &jsep_desc));
+
+  const auto& content1 = jsep_desc.description()->contents()[0];
+  EXPECT_EQ("74.125.127.126:2345",
+            static_cast<cricket::MediaContentDescription*>(content1.description)
+                ->connection_address()
+                .ToString());
+  const auto& content2 = jsep_desc.description()->contents()[1];
+  EXPECT_EQ("74.125.224.39:3457",
+            static_cast<cricket::MediaContentDescription*>(content2.description)
+                ->connection_address()
+                .ToString());
+}
+
+// Tests that the session-level connection address will be used if the media
+// level-addresses are not specified.
+TEST_F(WebRtcSdpTest, ParseConnectionDataSessionLevelOnly) {
+  JsepSessionDescription jsep_desc(kDummyString);
+
+  // Sesssion-level address.
+  std::string sdp = kSdpString;
+  InjectAfter("s=-\r\n", "c=IN IP4 192.168.0.3\r\n", &sdp);
+  // Remove the media level addresses.
+  Replace("c=IN IP4 0.0.0.0\r\n", "", &sdp);
+  Replace("c=IN IP4 0.0.0.0\r\n", "", &sdp);
+  EXPECT_TRUE(SdpDeserialize(sdp, &jsep_desc));
+
+  const auto& content1 = jsep_desc.description()->contents()[0];
+  EXPECT_EQ("192.168.0.3:9",
+            static_cast<cricket::MediaContentDescription*>(content1.description)
+                ->connection_address()
+                .ToString());
+  const auto& content2 = jsep_desc.description()->contents()[1];
+  EXPECT_EQ("192.168.0.3:9",
+            static_cast<cricket::MediaContentDescription*>(content2.description)
+                ->connection_address()
+                .ToString());
+}
+
+TEST_F(WebRtcSdpTest, ParseConnectionDataIPv6) {
+  JsepSessionDescription jsep_desc(kDummyString);
+
+  std::string sdp = kSdpString;
+  EXPECT_TRUE(SdpDeserialize(sdp, &jsep_desc));
+  Replace("m=audio 9 RTP/SAVPF 111 103 104\r\nc=IN IP4 0.0.0.0\r\n",
+          "m=audio 9 RTP/SAVPF 111 103 104\r\nc=IN IP6 "
+          "2001:0db8:85a3:0000:0000:8a2e:0370:7335\r\n",
+          &sdp);
+  Replace("m=video 9 RTP/SAVPF 120\r\nc=IN IP4 0.0.0.0\r\n",
+          "m=video 9 RTP/SAVPF 120\r\nc=IN IP6 "
+          "2001:0db8:85a3:0000:0000:8a2e:0370:7336\r\n",
+          &sdp);
+  EXPECT_TRUE(SdpDeserialize(sdp, &jsep_desc));
+  const auto& content1 = jsep_desc.description()->contents()[0];
+  EXPECT_EQ("[2001:db8:85a3::8a2e:370:7335]:9",
+            static_cast<cricket::MediaContentDescription*>(content1.description)
+                ->connection_address()
+                .ToString());
+  const auto& content2 = jsep_desc.description()->contents()[1];
+  EXPECT_EQ("[2001:db8:85a3::8a2e:370:7336]:9",
+            static_cast<cricket::MediaContentDescription*>(content2.description)
+                ->connection_address()
+                .ToString());
+}
+
+// Test that the invalid or unsupprted connection data cannot be parsed.
+TEST_F(WebRtcSdpTest, ParseConnectionDataFailure) {
+  JsepSessionDescription jsep_desc(kDummyString);
+  std::string sdp = kSdpString;
+  EXPECT_TRUE(SdpDeserialize(sdp, &jsep_desc));
+
+  // Unsupported multicast IPv4 address.
+  sdp = kSdpFullString;
+  Replace("c=IN IP4 74.125.224.39\r\n", "c=IN IP4 74.125.224.39/127\r\n", &sdp);
+  EXPECT_FALSE(SdpDeserialize(sdp, &jsep_desc));
+
+  // Unsupported multicast IPv6 address.
+  sdp = kSdpFullString;
+  Replace("c=IN IP4 74.125.224.39\r\n", "c=IN IP6 ::1/3\r\n", &sdp);
+  EXPECT_FALSE(SdpDeserialize(sdp, &jsep_desc));
+
+  // Mismatched address type.
+  sdp = kSdpFullString;
+  Replace("c=IN IP4 74.125.224.39\r\n", "c=IN IP6 74.125.224.39\r\n", &sdp);
+  EXPECT_FALSE(SdpDeserialize(sdp, &jsep_desc));
+
+  sdp = kSdpFullString;
+  Replace("c=IN IP4 74.125.224.39\r\n",
+          "c=IN IP4 2001:0db8:85a3:0000:0000:8a2e:0370:7334\r\n", &sdp);
+  EXPECT_FALSE(SdpDeserialize(sdp, &jsep_desc));
+}
+
+TEST_F(WebRtcSdpTest, SerializeAndDeserializeWithConnectionAddress) {
+  JsepSessionDescription expected_jsep(kDummyString);
+  MakeDescriptionWithoutCandidates(&expected_jsep);
+  // Serialization.
+  std::string message = webrtc::SdpSerialize(expected_jsep, false);
+  // Deserialization.
+  JsepSessionDescription jdesc(kDummyString);
+  EXPECT_TRUE(SdpDeserialize(message, &jdesc));
+  auto audio_desc = static_cast<cricket::MediaContentDescription*>(
+      jdesc.description()->GetContentByName(kAudioContentName)->description);
+  auto video_desc = static_cast<cricket::MediaContentDescription*>(
+      jdesc.description()->GetContentByName(kVideoContentName)->description);
+  EXPECT_EQ(audio_desc_->connection_address().ToString(),
+            audio_desc->connection_address().ToString());
+  EXPECT_EQ(video_desc_->connection_address().ToString(),
+            video_desc->connection_address().ToString());
 }

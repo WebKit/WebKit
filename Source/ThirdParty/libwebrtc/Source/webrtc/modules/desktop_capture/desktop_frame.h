@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "webrtc/base/constructormagic.h"
+#include "webrtc/modules/desktop_capture/desktop_capture_types.h"
 #include "webrtc/modules/desktop_capture/desktop_geometry.h"
 #include "webrtc/modules/desktop_capture/desktop_region.h"
 #include "webrtc/modules/desktop_capture/shared_memory.h"
@@ -68,6 +69,14 @@ class DesktopFrame {
   // A helper to return the data pointer of a frame at the specified position.
   uint8_t* GetFrameDataAtPos(const DesktopVector& pos) const;
 
+  // The DesktopCapturer implementation which generates current DesktopFrame.
+  // Not all DesktopCapturer implementations set this field; it's set to
+  // kUnknown by default.
+  uint32_t capturer_id() const { return capturer_id_; }
+  void set_capturer_id(uint32_t capturer_id) {
+    capturer_id_ = capturer_id;
+  }
+
  protected:
   DesktopFrame(DesktopSize size,
                int stride,
@@ -87,6 +96,7 @@ class DesktopFrame {
   DesktopRegion updated_region_;
   DesktopVector dpi_;
   int64_t capture_time_ms_;
+  uint32_t capturer_id_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(DesktopFrame);
 };

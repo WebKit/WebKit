@@ -74,6 +74,7 @@ public class ConnectActivity extends Activity {
   private String keyprefDisableBuiltInAgc;
   private String keyprefDisableBuiltInNs;
   private String keyprefEnableLevelControl;
+  private String keyprefDisableWebRtcAGCAndHPF;
   private String keyprefDisplayHud;
   private String keyprefTracing;
   private String keyprefRoomServerUrl;
@@ -118,6 +119,7 @@ public class ConnectActivity extends Activity {
     keyprefDisableBuiltInAgc = getString(R.string.pref_disable_built_in_agc_key);
     keyprefDisableBuiltInNs = getString(R.string.pref_disable_built_in_ns_key);
     keyprefEnableLevelControl = getString(R.string.pref_enable_level_control_key);
+    keyprefDisableWebRtcAGCAndHPF = getString(R.string.pref_disable_webrtc_agc_and_hpf_key);
     keyprefDisplayHud = getString(R.string.pref_displayhud_key);
     keyprefTracing = getString(R.string.pref_tracing_key);
     keyprefRoomServerUrl = getString(R.string.pref_room_server_url_key);
@@ -393,6 +395,11 @@ public class ConnectActivity extends Activity {
         CallActivity.EXTRA_ENABLE_LEVEL_CONTROL, R.string.pref_enable_level_control_key,
         useValuesFromIntent);
 
+    // Check Disable gain control
+    boolean disableWebRtcAGCAndHPF = sharedPrefGetBoolean(
+        R.string.pref_disable_webrtc_agc_and_hpf_key, CallActivity.EXTRA_DISABLE_WEBRTC_AGC_AND_HPF,
+        R.string.pref_disable_webrtc_agc_and_hpf_key, useValuesFromIntent);
+
     // Get video resolution from settings.
     int videoWidth = 0;
     int videoHeight = 0;
@@ -521,6 +528,7 @@ public class ConnectActivity extends Activity {
       intent.putExtra(CallActivity.EXTRA_DISABLE_BUILT_IN_AGC, disableBuiltInAGC);
       intent.putExtra(CallActivity.EXTRA_DISABLE_BUILT_IN_NS, disableBuiltInNS);
       intent.putExtra(CallActivity.EXTRA_ENABLE_LEVEL_CONTROL, enableLevelControl);
+      intent.putExtra(CallActivity.EXTRA_DISABLE_WEBRTC_AGC_AND_HPF, disableWebRtcAGCAndHPF);
       intent.putExtra(CallActivity.EXTRA_AUDIO_BITRATE, audioStartBitrate);
       intent.putExtra(CallActivity.EXTRA_AUDIOCODEC, audioCodec);
       intent.putExtra(CallActivity.EXTRA_DISPLAY_HUD, displayHud);

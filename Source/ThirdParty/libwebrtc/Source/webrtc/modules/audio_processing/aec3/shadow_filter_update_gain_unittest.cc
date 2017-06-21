@@ -16,9 +16,10 @@
 #include <vector>
 
 #include "webrtc/base/random.h"
+#include "webrtc/base/safe_minmax.h"
 #include "webrtc/modules/audio_processing/aec3/adaptive_fir_filter.h"
-#include "webrtc/modules/audio_processing/aec3/aec_state.h"
 #include "webrtc/modules/audio_processing/aec3/aec3_common.h"
+#include "webrtc/modules/audio_processing/aec3/aec_state.h"
 #include "webrtc/modules/audio_processing/test/echo_canceller_test_tools.h"
 #include "webrtc/test/gtest.h"
 
@@ -34,20 +35,20 @@ void RunFilterUpdateTest(int num_blocks_to_process,
                          std::array<float, kBlockSize>* y_last_block,
                          FftData* G_last_block) {
   ApmDataDumper data_dumper(42);
-  AdaptiveFirFilter main_filter(9, true, DetectOptimization(), &data_dumper);
-  AdaptiveFirFilter shadow_filter(9, true, DetectOptimization(), &data_dumper);
+  AdaptiveFirFilter main_filter(9, DetectOptimization(), &data_dumper);
+  AdaptiveFirFilter shadow_filter(9, DetectOptimization(), &data_dumper);
   Aec3Fft fft;
-  FftBuffer X_buffer(Aec3Optimization::kNone, main_filter.SizePartitions(),
-                     std::vector<size_t>(1, main_filter.SizePartitions()));
+  RenderBuffer render_buffer(
+      Aec3Optimization::kNone, 3, main_filter.SizePartitions(),
+      std::vector<size_t>(1, main_filter.SizePartitions()));
   std::array<float, kBlockSize> x_old;
   x_old.fill(0.f);
   ShadowFilterUpdateGain shadow_gain;
   Random random_generator(42U);
-  std::vector<float> x(kBlockSize, 0.f);
+  std::vector<std::vector<float>> x(3, std::vector<float>(kBlockSize, 0.f));
   std::vector<float> y(kBlockSize, 0.f);
   AecState aec_state;
   RenderSignalAnalyzer render_signal_analyzer;
-  FftData X;
   std::array<float, kFftLength> s;
   FftData S;
   FftData G;
@@ -64,26 +65,24 @@ void RunFilterUpdateTest(int num_blocks_to_process,
                   k) != blocks_with_saturation.end();
 
     // Create the render signal.
-    RandomizeSampleVector(&random_generator, x);
-    delay_buffer.Delay(x, y);
-    fft.PaddedFft(x, x_old, &X);
-    X_buffer.Insert(X);
+    RandomizeSampleVector(&random_generator, x[0]);
+    delay_buffer.Delay(x[0], y);
+    render_buffer.Insert(x);
     render_signal_analyzer.Update(
-        X_buffer, rtc::Optional<size_t>(delay_samples / kBlockSize));
+        render_buffer, rtc::Optional<size_t>(delay_samples / kBlockSize));
 
-    shadow_filter.Filter(X_buffer, &S);
+    shadow_filter.Filter(render_buffer, &S);
     fft.Ifft(S, &s);
     std::transform(y.begin(), y.end(), s.begin() + kFftLengthBy2,
                    e_shadow.begin(),
                    [&](float a, float b) { return a - b * kScale; });
-    std::for_each(e_shadow.begin(), e_shadow.end(), [](float& a) {
-      a = std::max(std::min(a, 32767.0f), -32768.0f);
-    });
+    std::for_each(e_shadow.begin(), e_shadow.end(),
+                  [](float& a) { a = rtc::SafeClamp(a, -32768.f, 32767.f); });
     fft.ZeroPaddedFft(e_shadow, &E_shadow);
 
-    shadow_gain.Compute(X_buffer, render_signal_analyzer, E_shadow,
+    shadow_gain.Compute(render_buffer, render_signal_analyzer, E_shadow,
                         shadow_filter.SizePartitions(), saturation, &G);
-    shadow_filter.Adapt(X_buffer, G);
+    shadow_filter.Adapt(render_buffer, G);
   }
 
   std::copy(e_shadow.begin(), e_shadow.end(), e_last_block->begin());
@@ -105,11 +104,12 @@ std::string ProduceDebugText(size_t delay) {
 // Verifies that the check for non-null output gain parameter works.
 TEST(ShadowFilterUpdateGain, NullDataOutputGain) {
   ApmDataDumper data_dumper(42);
-  FftBuffer X_buffer(Aec3Optimization::kNone, 1, std::vector<size_t>(1, 1));
+  RenderBuffer render_buffer(Aec3Optimization::kNone, 3, 1,
+                             std::vector<size_t>(1, 1));
   RenderSignalAnalyzer analyzer;
   FftData E;
   ShadowFilterUpdateGain gain;
-  EXPECT_DEATH(gain.Compute(X_buffer, analyzer, E, 1, false, nullptr), "");
+  EXPECT_DEATH(gain.Compute(render_buffer, analyzer, E, 1, false, nullptr), "");
 }
 
 #endif

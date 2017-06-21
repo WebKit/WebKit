@@ -14,6 +14,7 @@
 
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
+#include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/modules/pacing/paced_sender.h"
 
 namespace webrtc {
@@ -45,10 +46,13 @@ constexpr int64_t kProbeClusterTimeoutMs = 5000;
 
 }  // namespace
 
-BitrateProber::BitrateProber()
+BitrateProber::BitrateProber() : BitrateProber(nullptr) {}
+
+BitrateProber::BitrateProber(RtcEventLog* event_log)
     : probing_state_(ProbingState::kDisabled),
       next_probe_time_ms_(-1),
-      next_cluster_id_(0) {
+      next_cluster_id_(0),
+      event_log_(event_log) {
   SetEnabled(true);
 }
 
@@ -82,6 +86,7 @@ void BitrateProber::OnIncomingPacket(size_t packet_size) {
 
 void BitrateProber::CreateProbeCluster(int bitrate_bps, int64_t now_ms) {
   RTC_DCHECK(probing_state_ != ProbingState::kDisabled);
+  RTC_DCHECK_GT(bitrate_bps, 0);
   while (!clusters_.empty() &&
          now_ms - clusters_.front().time_created_ms > kProbeClusterTimeoutMs) {
     clusters_.pop();
@@ -95,6 +100,11 @@ void BitrateProber::CreateProbeCluster(int bitrate_bps, int64_t now_ms) {
   cluster.pace_info.send_bitrate_bps = bitrate_bps;
   cluster.pace_info.probe_cluster_id = next_cluster_id_++;
   clusters_.push(cluster);
+  if (event_log_)
+    event_log_->LogProbeClusterCreated(
+        cluster.pace_info.probe_cluster_id, cluster.pace_info.send_bitrate_bps,
+        cluster.pace_info.probe_cluster_min_probes,
+        cluster.pace_info.probe_cluster_min_bytes);
 
   LOG(LS_INFO) << "Probe cluster (bitrate:min bytes:min packets): ("
                << cluster.pace_info.send_bitrate_bps << ":"
@@ -142,7 +152,7 @@ int BitrateProber::TimeUntilNextProbe(int64_t now_ms) {
 
 PacedPacketInfo BitrateProber::CurrentCluster() const {
   RTC_DCHECK(!clusters_.empty());
-  RTC_DCHECK(ProbingState::kActive == probing_state_);
+  RTC_DCHECK(probing_state_ == ProbingState::kActive);
   return clusters_.front().pace_info;
 }
 
@@ -167,7 +177,7 @@ void BitrateProber::ProbeSent(int64_t now_ms, size_t bytes) {
     }
     cluster->sent_bytes += static_cast<int>(bytes);
     cluster->sent_probes += 1;
-    next_probe_time_ms_ = GetNextProbeTime(clusters_.front());
+    next_probe_time_ms_ = GetNextProbeTime(*cluster);
     if (cluster->sent_bytes >= cluster->pace_info.probe_cluster_min_bytes &&
         cluster->sent_probes >= cluster->pace_info.probe_cluster_min_probes) {
       clusters_.pop();

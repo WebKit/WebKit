@@ -12,72 +12,6 @@
 #include "webrtc/media/base/testutils.h"
 #include "webrtc/pc/rtcpmuxfilter.h"
 
-TEST(RtcpMuxFilterTest, DemuxRtcpSender) {
-  cricket::RtcpMuxFilter filter;
-  const char data[] = { 0, 73, 0, 0 };
-  const int len = 4;
-
-  // Init state - refuse to demux
-  EXPECT_FALSE(filter.DemuxRtcp(data, len));
-  // After sent offer, demux should be enabled
-  filter.SetOffer(true, cricket::CS_LOCAL);
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
-  // Remote accepted, demux should be enabled
-  filter.SetAnswer(true, cricket::CS_REMOTE);
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
-}
-
-TEST(RtcpMuxFilterTest, DemuxRtcpReceiver) {
-  cricket::RtcpMuxFilter filter;
-  const char data[] = { 0, 73, 0, 0 };
-  const int len = 4;
-
-  // Init state - refuse to demux
-  EXPECT_FALSE(filter.DemuxRtcp(data, len));
-  // After received offer, demux should not be enabled
-  filter.SetOffer(true, cricket::CS_REMOTE);
-  EXPECT_FALSE(filter.DemuxRtcp(data, len));
-  // We accept, demux is now enabled
-  filter.SetAnswer(true, cricket::CS_LOCAL);
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
-}
-
-TEST(RtcpMuxFilterTest, DemuxRtcpSenderProvisionalAnswer) {
-  cricket::RtcpMuxFilter filter;
-  const char data[] = { 0, 73, 0, 0 };
-  const int len = 4;
-
-  filter.SetOffer(true, cricket::CS_REMOTE);
-  // Received provisional answer without mux enabled.
-  filter.SetProvisionalAnswer(false, cricket::CS_LOCAL);
-  EXPECT_FALSE(filter.DemuxRtcp(data, len));
-  // Received provisional answer with mux enabled.
-  filter.SetProvisionalAnswer(true, cricket::CS_LOCAL);
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
-  // Remote accepted, demux should be enabled.
-  filter.SetAnswer(true, cricket::CS_LOCAL);
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
-}
-
-TEST(RtcpMuxFilterTest, DemuxRtcpReceiverProvisionalAnswer) {
-  cricket::RtcpMuxFilter filter;
-  const char data[] = { 0, 73, 0, 0 };
-  const int len = 4;
-
-  filter.SetOffer(true, cricket::CS_LOCAL);
-  // Received provisional answer without mux enabled.
-  filter.SetProvisionalAnswer(false, cricket::CS_REMOTE);
-  // After sent offer, demux should be enabled until we have received a
-  // final answer.
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
-  // Received provisional answer with mux enabled.
-  filter.SetProvisionalAnswer(true, cricket::CS_REMOTE);
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
-  // Remote accepted, demux should be enabled.
-  filter.SetAnswer(true, cricket::CS_REMOTE);
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
-}
-
 TEST(RtcpMuxFilterTest, IsActiveSender) {
   cricket::RtcpMuxFilter filter;
   // Init state - not active
@@ -222,12 +156,9 @@ TEST(RtcpMuxFilterTest, KeepFilterDisabledDuringUpdate) {
 // Test that we can SetActive and then can't deactivate.
 TEST(RtcpMuxFilterTest, SetActiveCantDeactivate) {
   cricket::RtcpMuxFilter filter;
-  const char data[] = { 0, 73, 0, 0 };
-  const int len = 4;
 
   filter.SetActive();
   EXPECT_TRUE(filter.IsActive());
-  EXPECT_TRUE(filter.DemuxRtcp(data, len));
 
   EXPECT_FALSE(filter.SetOffer(false, cricket::CS_LOCAL));
   EXPECT_TRUE(filter.IsActive());

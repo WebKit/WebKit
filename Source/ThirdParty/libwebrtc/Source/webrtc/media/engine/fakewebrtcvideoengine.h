@@ -14,7 +14,10 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <string>
 
+#include "webrtc/api/video_codecs/video_decoder.h"
+#include "webrtc/api/video_codecs/video_encoder.h"
 #include "webrtc/base/basictypes.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/gunit.h"
@@ -24,8 +27,6 @@
 #include "webrtc/media/engine/webrtcvideodecoderfactory.h"
 #include "webrtc/media/engine/webrtcvideoencoderfactory.h"
 #include "webrtc/modules/video_coding/include/video_error_codes.h"
-#include "webrtc/video_decoder.h"
-#include "webrtc/video_encoder.h"
 
 namespace cricket {
 static const int kEventTimeoutMs = 10000;
@@ -246,10 +247,6 @@ class FakeWebRtcVideoEncoderFactory : public WebRtcVideoEncoderFactory {
   }
 
  private:
-  // Disable overloaded virtual function warning. TODO(magjed): Remove once
-  // http://crbug/webrtc/6402 is fixed.
-  using cricket::WebRtcVideoEncoderFactory::CreateVideoEncoder;
-
   rtc::CriticalSection crit_;
   rtc::Event created_video_encoder_event_;
   std::vector<cricket::VideoCodec> codecs_;

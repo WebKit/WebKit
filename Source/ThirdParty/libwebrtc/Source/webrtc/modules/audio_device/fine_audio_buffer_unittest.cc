@@ -13,6 +13,7 @@
 #include <limits.h>
 #include <memory>
 
+#include "webrtc/base/array_view.h"
 #include "webrtc/modules/audio_device/mock_audio_device_buffer.h"
 #include "webrtc/test/gmock.h"
 #include "webrtc/test/gtest.h"
@@ -23,6 +24,9 @@ using ::testing::InSequence;
 using ::testing::Return;
 
 namespace webrtc {
+
+const int kSampleRate = 44100;
+const int kSamplesPer10Ms = kSampleRate * 10 / 1000;
 
 // The fake audio data is 0,1,..SCHAR_MAX-1,0,1,... This is to make it easy
 // to detect errors. This function verifies that the buffers contain such data.
@@ -80,8 +84,7 @@ ACTION_P2(VerifyInputBuffer, iteration, samples_per_10_ms) {
   return 0;
 }
 
-void RunFineBufferTest(int sample_rate, int frame_size_in_samples) {
-  const int kSamplesPer10Ms = sample_rate * 10 / 1000;
+void RunFineBufferTest(int frame_size_in_samples) {
   const int kFrameSizeBytes =
       frame_size_in_samples * static_cast<int>(sizeof(int16_t));
   const int kNumberOfFrames = 5;
@@ -114,33 +117,29 @@ void RunFineBufferTest(int sample_rate, int frame_size_in_samples) {
       .Times(kNumberOfUpdateBufferCalls - 1)
       .WillRepeatedly(Return(kSamplesPer10Ms));
 
-  FineAudioBuffer fine_buffer(&audio_device_buffer, kFrameSizeBytes,
-                              sample_rate);
+  FineAudioBuffer fine_buffer(&audio_device_buffer, kSampleRate,
+                              kFrameSizeBytes);
+  std::unique_ptr<int8_t[]> out_buffer(new int8_t[kFrameSizeBytes]);
+  std::unique_ptr<int8_t[]> in_buffer(new int8_t[kFrameSizeBytes]);
 
-  std::unique_ptr<int8_t[]> out_buffer;
-  out_buffer.reset(new int8_t[kFrameSizeBytes]);
-  std::unique_ptr<int8_t[]> in_buffer;
-  in_buffer.reset(new int8_t[kFrameSizeBytes]);
   for (int i = 0; i < kNumberOfFrames; ++i) {
-    fine_buffer.GetPlayoutData(out_buffer.get());
+    fine_buffer.GetPlayoutData(
+        rtc::ArrayView<int8_t>(out_buffer.get(), kFrameSizeBytes));
     EXPECT_TRUE(VerifyBuffer(out_buffer.get(), i, kFrameSizeBytes));
     UpdateInputBuffer(in_buffer.get(), i, kFrameSizeBytes);
-    fine_buffer.DeliverRecordedData(in_buffer.get(), kFrameSizeBytes, 0, 0);
+    fine_buffer.DeliverRecordedData(
+        rtc::ArrayView<const int8_t>(in_buffer.get(), kFrameSizeBytes), 0, 0);
   }
 }
 
 TEST(FineBufferTest, BufferLessThan10ms) {
-  const int kSampleRate = 44100;
-  const int kSamplesPer10Ms = kSampleRate * 10 / 1000;
   const int kFrameSizeSamples = kSamplesPer10Ms - 50;
-  RunFineBufferTest(kSampleRate, kFrameSizeSamples);
+  RunFineBufferTest(kFrameSizeSamples);
 }
 
 TEST(FineBufferTest, GreaterThan10ms) {
-  const int kSampleRate = 44100;
-  const int kSamplesPer10Ms = kSampleRate * 10 / 1000;
   const int kFrameSizeSamples = kSamplesPer10Ms + 50;
-  RunFineBufferTest(kSampleRate, kFrameSizeSamples);
+  RunFineBufferTest(kFrameSizeSamples);
 }
 
 }  // namespace webrtc

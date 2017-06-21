@@ -15,10 +15,17 @@ namespace webrtc {
 
 namespace {
 
+constexpr int kLowFrequencyLimit = kFftLengthBy2 / 2;
+
 void VerifyErle(const std::array<float, kFftLengthBy2Plus1>& erle,
-                float reference) {
-  std::for_each(erle.begin(), erle.end(),
-                [reference](float a) { EXPECT_NEAR(reference, a, 0.001); });
+                float reference_lf,
+                float reference_hf) {
+  std::for_each(
+      erle.begin(), erle.begin() + kLowFrequencyLimit,
+      [reference_lf](float a) { EXPECT_NEAR(reference_lf, a, 0.001); });
+  std::for_each(
+      erle.begin() + kLowFrequencyLimit, erle.end(),
+      [reference_hf](float a) { EXPECT_NEAR(reference_hf, a, 0.001); });
 }
 
 }  // namespace
@@ -38,7 +45,7 @@ TEST(ErleEstimator, Estimates) {
   for (size_t k = 0; k < 200; ++k) {
     estimator.Update(X2, Y2, E2);
   }
-  VerifyErle(estimator.Erle(), 8.f);
+  VerifyErle(estimator.Erle(), 8.f, 1.5f);
 
   // Verifies that the ERLE is not immediately decreased when the ERLE in the
   // data decreases.
@@ -46,13 +53,13 @@ TEST(ErleEstimator, Estimates) {
   for (size_t k = 0; k < 98; ++k) {
     estimator.Update(X2, Y2, E2);
   }
-  VerifyErle(estimator.Erle(), 8.f);
+  VerifyErle(estimator.Erle(), 8.f, 1.5f);
 
   // Verifies that the minimum ERLE is eventually achieved.
   for (size_t k = 0; k < 1000; ++k) {
     estimator.Update(X2, Y2, E2);
   }
-  VerifyErle(estimator.Erle(), 1.f);
+  VerifyErle(estimator.Erle(), 1.f, 1.f);
 
   // Verifies that the ERLE estimate is is not updated for low-level render
   // signals.
@@ -61,6 +68,6 @@ TEST(ErleEstimator, Estimates) {
   for (size_t k = 0; k < 200; ++k) {
     estimator.Update(X2, Y2, E2);
   }
-  VerifyErle(estimator.Erle(), 1.f);
+  VerifyErle(estimator.Erle(), 1.f, 1.f);
 }
 }  // namespace webrtc

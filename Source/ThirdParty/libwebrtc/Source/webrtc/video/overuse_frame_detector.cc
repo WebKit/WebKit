@@ -16,12 +16,16 @@
 #include <algorithm>
 #include <list>
 #include <map>
+#include <string>
+#include <utility>
 
 #include "webrtc/api/video/video_frame.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/numerics/exp_filter.h"
+#include "webrtc/base/timeutils.h"
 #include "webrtc/common_video/include/frame_callback.h"
+#include "webrtc/system_wrappers/include/field_trial.h"
 
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
 #include <mach/mach.h>
@@ -45,8 +49,20 @@ const double kRampUpBackoffFactor = 2.0;
 const int kMaxOverusesBeforeApplyRampupDelay = 4;
 
 // The maximum exponent to use in VCMExpFilter.
-const float kSampleDiffMs = 33.0f;
 const float kMaxExp = 7.0f;
+// Default value used before first reconfiguration.
+const int kDefaultFrameRate = 30;
+// Default sample diff, default frame rate.
+const float kDefaultSampleDiffMs = 1000.0f / kDefaultFrameRate;
+// A factor applied to the sample diff on OnTargetFramerateUpdated to determine
+// a max limit for the sample diff. For instance, with a framerate of 30fps,
+// the sample diff is capped to (1000 / 30) * 1.35 = 45ms. This prevents
+// triggering too soon if there are individual very large outliers.
+const float kMaxSampleDiffMarginFactor = 1.35f;
+// Minimum framerate allowed for usage calculation. This prevents crazy long
+// encode times from being accepted if the frame rate happens to be low.
+const int kMinFramerate = 7;
+const int kMaxFramerate = 30;
 
 const auto kScaleReasonCpu = AdaptationObserverInterface::AdaptReason::kCpu;
 }  // namespace
@@ -109,42 +125,45 @@ class OveruseFrameDetector::SendProcessingUsage {
       : kWeightFactorFrameDiff(0.998f),
         kWeightFactorProcessing(0.995f),
         kInitialSampleDiffMs(40.0f),
-        kMaxSampleDiffMs(45.0f),
         count_(0),
         options_(options),
+        max_sample_diff_ms_(kDefaultSampleDiffMs * kMaxSampleDiffMarginFactor),
         filtered_processing_ms_(new rtc::ExpFilter(kWeightFactorProcessing)),
         filtered_frame_diff_ms_(new rtc::ExpFilter(kWeightFactorFrameDiff)) {
     Reset();
   }
-  ~SendProcessingUsage() {}
+  virtual ~SendProcessingUsage() {}
 
   void Reset() {
     count_ = 0;
+    max_sample_diff_ms_ = kDefaultSampleDiffMs * kMaxSampleDiffMarginFactor;
     filtered_frame_diff_ms_->Reset(kWeightFactorFrameDiff);
     filtered_frame_diff_ms_->Apply(1.0f, kInitialSampleDiffMs);
     filtered_processing_ms_->Reset(kWeightFactorProcessing);
     filtered_processing_ms_->Apply(1.0f, InitialProcessingMs());
   }
 
+  void SetMaxSampleDiffMs(float diff_ms) { max_sample_diff_ms_ = diff_ms; }
+
   void AddCaptureSample(float sample_ms) {
-    float exp = sample_ms / kSampleDiffMs;
+    float exp = sample_ms / kDefaultSampleDiffMs;
     exp = std::min(exp, kMaxExp);
     filtered_frame_diff_ms_->Apply(exp, sample_ms);
   }
 
   void AddSample(float processing_ms, int64_t diff_last_sample_ms) {
     ++count_;
-    float exp = diff_last_sample_ms / kSampleDiffMs;
+    float exp = diff_last_sample_ms / kDefaultSampleDiffMs;
     exp = std::min(exp, kMaxExp);
     filtered_processing_ms_->Apply(exp, processing_ms);
   }
 
-  int Value() const {
+  virtual int Value() {
     if (count_ < static_cast<uint32_t>(options_.min_frame_samples)) {
       return static_cast<int>(InitialUsageInPercent() + 0.5f);
     }
     float frame_diff_ms = std::max(filtered_frame_diff_ms_->filtered(), 1.0f);
-    frame_diff_ms = std::min(frame_diff_ms, kMaxSampleDiffMs);
+    frame_diff_ms = std::min(frame_diff_ms, max_sample_diff_ms_);
     float encode_usage_percent =
         100.0f * filtered_processing_ms_->filtered() / frame_diff_ms;
     return static_cast<int>(encode_usage_percent + 0.5);
@@ -164,12 +183,123 @@ class OveruseFrameDetector::SendProcessingUsage {
   const float kWeightFactorFrameDiff;
   const float kWeightFactorProcessing;
   const float kInitialSampleDiffMs;
-  const float kMaxSampleDiffMs;
   uint64_t count_;
   const CpuOveruseOptions options_;
+  float max_sample_diff_ms_;
   std::unique_ptr<rtc::ExpFilter> filtered_processing_ms_;
   std::unique_ptr<rtc::ExpFilter> filtered_frame_diff_ms_;
 };
+
+// Class used for manual testing of overuse, enabled via field trial flag.
+class OveruseFrameDetector::OverdoseInjector
+    : public OveruseFrameDetector::SendProcessingUsage {
+ public:
+  OverdoseInjector(const CpuOveruseOptions& options,
+                   int64_t normal_period_ms,
+                   int64_t overuse_period_ms,
+                   int64_t underuse_period_ms)
+      : OveruseFrameDetector::SendProcessingUsage(options),
+        normal_period_ms_(normal_period_ms),
+        overuse_period_ms_(overuse_period_ms),
+        underuse_period_ms_(underuse_period_ms),
+        state_(State::kNormal),
+        last_toggling_ms_(-1) {
+    RTC_DCHECK_GT(overuse_period_ms, 0);
+    RTC_DCHECK_GT(normal_period_ms, 0);
+    LOG(LS_INFO) << "Simulating overuse with intervals " << normal_period_ms
+                 << "ms normal mode, " << overuse_period_ms
+                 << "ms overuse mode.";
+  }
+
+  ~OverdoseInjector() override {}
+
+  int Value() override {
+    int64_t now_ms = rtc::TimeMillis();
+    if (last_toggling_ms_ == -1) {
+      last_toggling_ms_ = now_ms;
+    } else {
+      switch (state_) {
+        case State::kNormal:
+          if (now_ms > last_toggling_ms_ + normal_period_ms_) {
+            state_ = State::kOveruse;
+            last_toggling_ms_ = now_ms;
+            LOG(LS_INFO) << "Simulating CPU overuse.";
+          }
+          break;
+        case State::kOveruse:
+          if (now_ms > last_toggling_ms_ + overuse_period_ms_) {
+            state_ = State::kUnderuse;
+            last_toggling_ms_ = now_ms;
+            LOG(LS_INFO) << "Simulating CPU underuse.";
+          }
+          break;
+        case State::kUnderuse:
+          if (now_ms > last_toggling_ms_ + underuse_period_ms_) {
+            state_ = State::kNormal;
+            last_toggling_ms_ = now_ms;
+            LOG(LS_INFO) << "Actual CPU overuse measurements in effect.";
+          }
+          break;
+      }
+    }
+
+    rtc::Optional<int> overried_usage_value;
+    switch (state_) {
+      case State::kNormal:
+        break;
+      case State::kOveruse:
+        overried_usage_value.emplace(250);
+        break;
+      case State::kUnderuse:
+        overried_usage_value.emplace(5);
+        break;
+    }
+
+    return overried_usage_value.value_or(SendProcessingUsage::Value());
+  }
+
+ private:
+  const int64_t normal_period_ms_;
+  const int64_t overuse_period_ms_;
+  const int64_t underuse_period_ms_;
+  enum class State { kNormal, kOveruse, kUnderuse } state_;
+  int64_t last_toggling_ms_;
+};
+
+std::unique_ptr<OveruseFrameDetector::SendProcessingUsage>
+OveruseFrameDetector::CreateSendProcessingUsage(
+    const CpuOveruseOptions& options) {
+  std::unique_ptr<SendProcessingUsage> instance;
+  std::string toggling_interval =
+      field_trial::FindFullName("WebRTC-ForceSimulatedOveruseIntervalMs");
+  if (!toggling_interval.empty()) {
+    int normal_period_ms = 0;
+    int overuse_period_ms = 0;
+    int underuse_period_ms = 0;
+    if (sscanf(toggling_interval.c_str(), "%d-%d-%d", &normal_period_ms,
+               &overuse_period_ms, &underuse_period_ms) == 3) {
+      if (normal_period_ms > 0 && overuse_period_ms > 0 &&
+          underuse_period_ms > 0) {
+        instance.reset(new OverdoseInjector(
+            options, normal_period_ms, overuse_period_ms, underuse_period_ms));
+      } else {
+        LOG(LS_WARNING)
+            << "Invalid (non-positive) normal/overuse/underuse periods: "
+            << normal_period_ms << " / " << overuse_period_ms << " / "
+            << underuse_period_ms;
+      }
+    } else {
+      LOG(LS_WARNING) << "Malformed toggling interval: " << toggling_interval;
+    }
+  }
+
+  if (!instance) {
+    // No valid overuse simulation parameters set, use normal usage class.
+    instance.reset(new SendProcessingUsage(options));
+  }
+
+  return instance;
+}
 
 class OveruseFrameDetector::CheckOveruseTask : public rtc::QueuedTask {
  public:
@@ -216,13 +346,14 @@ OveruseFrameDetector::OveruseFrameDetector(
       last_capture_time_us_(-1),
       last_processed_capture_time_us_(-1),
       num_pixels_(0),
+      max_framerate_(kDefaultFrameRate),
       last_overuse_time_ms_(-1),
       checks_above_threshold_(0),
       num_overuse_detections_(0),
       last_rampup_time_ms_(-1),
       in_quick_rampup_(false),
       current_rampup_delay_ms_(kStandardRampUpDelayMs),
-      usage_(new SendProcessingUsage(options)) {
+      usage_(CreateSendProcessingUsage(options)) {
   task_checker_.Detach();
 }
 
@@ -267,6 +398,8 @@ bool OveruseFrameDetector::FrameTimeoutDetected(int64_t now_us) const {
 }
 
 void OveruseFrameDetector::ResetAll(int num_pixels) {
+  // Reset state, as a result resolution being changed. Do not however change
+  // the current frame rate back to the default.
   RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
   num_pixels_ = num_pixels;
   usage_->Reset();
@@ -275,6 +408,15 @@ void OveruseFrameDetector::ResetAll(int num_pixels) {
   last_processed_capture_time_us_ = -1;
   num_process_times_ = 0;
   metrics_ = rtc::Optional<CpuOveruseMetrics>();
+  OnTargetFramerateUpdated(max_framerate_);
+}
+
+void OveruseFrameDetector::OnTargetFramerateUpdated(int framerate_fps) {
+  RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+  RTC_DCHECK_GE(framerate_fps, 0);
+  max_framerate_ = std::min(kMaxFramerate, framerate_fps);
+  usage_->SetMaxSampleDiffMs((1000 / std::max(kMinFramerate, max_framerate_)) *
+                             kMaxSampleDiffMarginFactor);
 }
 
 void OveruseFrameDetector::FrameCaptured(const VideoFrame& frame,
@@ -320,8 +462,9 @@ void OveruseFrameDetector::FrameSent(uint32_t timestamp,
   while (!frame_timing_.empty()) {
     FrameTiming timing = frame_timing_.front();
     if (time_sent_in_us - timing.capture_us <
-        kEncodingTimeMeasureWindowMs * rtc::kNumMicrosecsPerMillisec)
+        kEncodingTimeMeasureWindowMs * rtc::kNumMicrosecsPerMillisec) {
       break;
+    }
     if (timing.last_send_us != -1) {
       int encode_duration_us =
           static_cast<int>(timing.last_send_us - timing.capture_us);
@@ -396,6 +539,7 @@ void OveruseFrameDetector::CheckForOveruse() {
 
 bool OveruseFrameDetector::IsOverusing(const CpuOveruseMetrics& metrics) {
   RTC_DCHECK_CALLED_SEQUENTIALLY(&task_checker_);
+
   if (metrics.encode_usage_percent >=
       options_.high_encode_usage_threshold_percent) {
     ++checks_above_threshold_;

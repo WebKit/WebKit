@@ -39,13 +39,8 @@ class TCPPort : public Port {
                          const std::string& username,
                          const std::string& password,
                          bool allow_listen) {
-    TCPPort* port = new TCPPort(thread, factory, network, ip, min_port,
-                                max_port, username, password, allow_listen);
-    if (!port->Init()) {
-      delete port;
-      port = NULL;
-    }
-    return port;
+    return new TCPPort(thread, factory, network, ip, min_port, max_port,
+                       username, password, allow_listen);
   }
   ~TCPPort() override;
 
@@ -73,7 +68,6 @@ class TCPPort : public Port {
           const std::string& username,
           const std::string& password,
           bool allow_listen);
-  bool Init();
 
   // Handles sending using the local TCP socket.
   int SendTo(const void* data,
@@ -91,6 +85,8 @@ class TCPPort : public Port {
     rtc::SocketAddress addr;
     rtc::AsyncPacketSocket* socket;
   };
+
+  void TryCreateServerSocket();
 
   rtc::AsyncPacketSocket* GetIncoming(
       const rtc::SocketAddress& addr, bool remove = false);

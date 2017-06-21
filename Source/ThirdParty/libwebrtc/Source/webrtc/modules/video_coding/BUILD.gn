@@ -59,6 +59,8 @@ rtc_static_library("video_coding") {
     "packet_buffer.h",
     "protection_bitrate_calculator.cc",
     "protection_bitrate_calculator.h",
+    "qp_parser.cc",
+    "qp_parser.h",
     "receiver.cc",
     "receiver.h",
     "rtp_frame_reference_finder.cc",
@@ -92,11 +94,14 @@ rtc_static_library("video_coding") {
     ":webrtc_i420",
     ":webrtc_vp8",
     ":webrtc_vp9",
+    "..:module_api",
+    "../..:video_stream_api",
     "../..:webrtc_common",
     "../../base:rtc_base",
     "../../base:rtc_base_approved",
     "../../base:rtc_numerics",
     "../../base:rtc_task_queue",
+    "../../base:sequenced_task_checker",
     "../../common_video",
     "../../system_wrappers",
     "../rtp_rtcp:rtp_rtcp",
@@ -105,10 +110,6 @@ rtc_static_library("video_coding") {
 }
 
 rtc_static_library("video_coding_utility") {
-  # TODO(ehmaldonado): Remove (bugs.webrtc.org/6828)
-  # Errors on cyclic dependency with :video_coding if enabled.
-  check_includes = false
-
   sources = [
     "utility/default_video_bitrate_allocator.cc",
     "utility/default_video_bitrate_allocator.h",
@@ -118,14 +119,12 @@ rtc_static_library("video_coding_utility") {
     "utility/ivf_file_writer.h",
     "utility/moving_average.cc",
     "utility/moving_average.h",
-    "utility/qp_parser.cc",
-    "utility/qp_parser.h",
     "utility/quality_scaler.cc",
     "utility/quality_scaler.h",
-    "utility/simulcast_rate_allocator.cc",
-    "utility/simulcast_rate_allocator.h",
     "utility/vp8_header_parser.cc",
     "utility/vp8_header_parser.h",
+    "utility/vp9_uncompressed_header_parser.cc",
+    "utility/vp9_uncompressed_header_parser.h",
   ]
 
   if (!build_with_chromium && is_clang) {
@@ -134,10 +133,15 @@ rtc_static_library("video_coding_utility") {
   }
 
   deps = [
+    "..:module_api",
     "../..:webrtc_common",
+    "../../api/video_codecs:video_codecs_api",
     "../../base:rtc_base_approved",
     "../../base:rtc_numerics",
+    "../../base:rtc_task_queue",
+    "../../base:sequenced_task_checker",
     "../../common_video",
+    "../../modules/rtp_rtcp:rtp_rtcp",
     "../../system_wrappers",
   ]
 }
@@ -206,13 +210,12 @@ rtc_static_library("webrtc_vp8") {
     "codecs/vp8/default_temporal_layers.h",
     "codecs/vp8/include/vp8.h",
     "codecs/vp8/include/vp8_common_types.h",
-    "codecs/vp8/realtime_temporal_layers.cc",
-    "codecs/vp8/reference_picture_selection.cc",
-    "codecs/vp8/reference_picture_selection.h",
     "codecs/vp8/screenshare_layers.cc",
     "codecs/vp8/screenshare_layers.h",
     "codecs/vp8/simulcast_encoder_adapter.cc",
     "codecs/vp8/simulcast_encoder_adapter.h",
+    "codecs/vp8/simulcast_rate_allocator.cc",
+    "codecs/vp8/simulcast_rate_allocator.h",
     "codecs/vp8/temporal_layers.h",
     "codecs/vp8/vp8_impl.cc",
     "codecs/vp8/vp8_impl.h",
@@ -228,8 +231,11 @@ rtc_static_library("webrtc_vp8") {
 
   deps = [
     ":video_coding_utility",
+    "..:module_api",
     "../..:webrtc_common",
+    "../../api/video_codecs:video_codecs_api",
     "../../base:rtc_base_approved",
+    "../../base:sequenced_task_checker",
     "../../common_video",
     "../../system_wrappers",
   ]
@@ -262,6 +268,7 @@ rtc_static_library("webrtc_vp9") {
 
   deps = [
     ":video_coding_utility",
+    "..:module_api",
     "../../base:rtc_base_approved",
     "../../common_video",
     "../../system_wrappers",
@@ -311,6 +318,8 @@ if (rtc_include_tests) {
       "codecs/test/predictive_packet_manipulator.h",
       "codecs/test/stats.cc",
       "codecs/test/stats.h",
+      "codecs/test/video_codec_test.cc",
+      "codecs/test/video_codec_test.h",
       "codecs/test/videoprocessor.cc",
       "codecs/test/videoprocessor.h",
     ]
@@ -323,11 +332,14 @@ if (rtc_include_tests) {
     deps = [
       ":video_coding",
       ":video_coding_utility",
+      ":webrtc_vp8",
       "../..:webrtc_common",
+      "../../api/video_codecs:video_codecs_api",
       "../../base:rtc_base_approved",
       "../../common_video:common_video",
       "../../system_wrappers:system_wrappers",
       "../../test:test_support",
+      "../../test:video_test_common",
       "../../test:video_test_support",
     ]
   }
@@ -369,7 +381,7 @@ if (rtc_include_tests) {
     if (is_ios || is_mac) {
       deps += [
         "../../media:rtc_media_base",
-        "../../sdk:webrtc_h264_video_toolbox",
+        "../../sdk:objc_videotoolbox",
       ]
     }
   }
@@ -377,14 +389,23 @@ if (rtc_include_tests) {
   rtc_source_set("video_coding_modules_tests") {
     testonly = true
 
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_tests" ]
+    }
     sources = [
+      "codecs/h264/test/h264_impl_unittest.cc",
       "codecs/test/videoprocessor_integrationtest.cc",
       "codecs/vp8/test/vp8_impl_unittest.cc",
       "codecs/vp9/test/vp9_impl_unittest.cc",
     ]
 
     deps = [
+      ":video_codecs_test_framework",
       ":video_coding_videoprocessor_integration_test",
+      ":webrtc_h264",
       ":webrtc_vp8",
       ":webrtc_vp9",
       "../../api:video_frame_api",
@@ -474,18 +495,25 @@ if (rtc_include_tests) {
 
   rtc_source_set("video_coding_unittests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc/modules:modules_unittests" ]
+    }
     sources = [
       "codecs/test/packet_manipulator_unittest.cc",
       "codecs/test/stats_unittest.cc",
       "codecs/test/videoprocessor_unittest.cc",
       "codecs/vp8/default_temporal_layers_unittest.cc",
-      "codecs/vp8/reference_picture_selection_unittest.cc",
       "codecs/vp8/screenshare_layers_unittest.cc",
       "codecs/vp8/simulcast_encoder_adapter_unittest.cc",
       "codecs/vp8/simulcast_unittest.cc",
       "codecs/vp8/simulcast_unittest.h",
       "decoding_state_unittest.cc",
       "frame_buffer2_unittest.cc",
+      "generic_encoder_unittest.cc",
       "h264_sprop_parameter_sets_unittest.cc",
       "h264_sps_pps_tracker_unittest.cc",
       "histogram_unittest.cc",
@@ -508,7 +536,6 @@ if (rtc_include_tests) {
       "utility/quality_scaler_unittest.cc",
       "utility/simulcast_rate_allocator_unittest.cc",
       "video_codec_initializer_unittest.cc",
-      "video_coding_robustness_unittest.cc",
       "video_packet_buffer_unittest.cc",
       "video_receiver_unittest.cc",
       "video_sender_unittest.cc",
@@ -526,8 +553,10 @@ if (rtc_include_tests) {
       ":webrtc_h264",
       ":webrtc_vp8",
       ":webrtc_vp9",
+      "..:module_api",
       "../..:webrtc_common",
       "../../api:video_frame_api",
+      "../../api/video_codecs:video_codecs_api",
       "../../base:rtc_base",
       "../../base:rtc_base_approved",
       "../../base:rtc_task_queue",

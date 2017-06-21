@@ -29,10 +29,6 @@ class InternalEncoderFactory : public WebRtcVideoEncoderFactory {
   void DestroyVideoEncoder(webrtc::VideoEncoder* encoder) override;
 
  private:
-  // Disable overloaded virtual function warning. TODO(magjed): Remove once
-  // http://crbug/webrtc/6402 is fixed.
-  using WebRtcVideoEncoderFactory::CreateVideoEncoder;
-
   std::vector<cricket::VideoCodec> supported_codecs_;
 };
 

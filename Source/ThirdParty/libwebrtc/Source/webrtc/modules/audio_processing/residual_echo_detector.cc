@@ -13,13 +13,20 @@
 #include <algorithm>
 #include <numeric>
 
+#include "webrtc/base/atomicops.h"
+#include "webrtc/base/logging.h"
 #include "webrtc/modules/audio_processing/audio_buffer.h"
+#include "webrtc/modules/audio_processing/logging/apm_data_dumper.h"
 #include "webrtc/system_wrappers/include/metrics.h"
 
 namespace {
 
 float Power(rtc::ArrayView<const float> input) {
-  return std::inner_product(input.begin(), input.end(), input.begin(), 0.f);
+  if (input.size() == 0) {
+    return 0.f;
+  }
+  return std::inner_product(input.begin(), input.end(), input.begin(), 0.f) /
+         input.size();
 }
 
 constexpr size_t kLookbackFrames = 650;
@@ -33,8 +40,12 @@ constexpr size_t kAggregationBufferSize = 10 * 100;
 
 namespace webrtc {
 
+int ResidualEchoDetector::instance_count_ = 0;
+
 ResidualEchoDetector::ResidualEchoDetector()
-    : render_buffer_(kRenderBufferSize),
+    : data_dumper_(
+          new ApmDataDumper(rtc::AtomicOps::Increment(&instance_count_))),
+      render_buffer_(kRenderBufferSize),
       render_power_(kLookbackFrames),
       render_power_mean_(kLookbackFrames),
       render_power_std_dev_(kLookbackFrames),
@@ -45,6 +56,11 @@ ResidualEchoDetector::~ResidualEchoDetector() = default;
 
 void ResidualEchoDetector::AnalyzeRenderAudio(
     rtc::ArrayView<const float> render_audio) {
+  // Dump debug data assuming 48 kHz sample rate (if this assumption is not
+  // valid the dumped audio will need to be converted offline accordingly).
+  data_dumper_->DumpWav("ed_render", render_audio.size(), render_audio.data(),
+                        48000, 1);
+
   if (render_buffer_.Size() == 0) {
     frames_since_zero_buffer_size_ = 0;
   } else if (frames_since_zero_buffer_size_ >= kRenderBufferSize) {
@@ -61,6 +77,11 @@ void ResidualEchoDetector::AnalyzeRenderAudio(
 
 void ResidualEchoDetector::AnalyzeCaptureAudio(
     rtc::ArrayView<const float> capture_audio) {
+  // Dump debug data assuming 48 kHz sample rate (if this assumption is not
+  // valid the dumped audio will need to be converted offline accordingly).
+  data_dumper_->DumpWav("ed_capture", capture_audio.size(),
+                        capture_audio.data(), 48000, 1);
+
   if (first_process_call_) {
     // On the first process call (so the start of a call), we must flush the
     // render buffer, otherwise the render data will be delayed.
@@ -93,19 +114,56 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
 
   // Update the covariance values and determine the new echo likelihood.
   echo_likelihood_ = 0.f;
+  size_t read_index = next_insertion_index_;
+
+  int best_delay = -1;
   for (size_t delay = 0; delay < covariances_.size(); ++delay) {
-    const size_t read_index =
-        (kLookbackFrames + next_insertion_index_ - delay) % kLookbackFrames;
     RTC_DCHECK_LT(read_index, render_power_.size());
     covariances_[delay].Update(capture_power, capture_mean,
                                capture_std_deviation, render_power_[read_index],
                                render_power_mean_[read_index],
                                render_power_std_dev_[read_index]);
-    echo_likelihood_ = std::max(
-        echo_likelihood_, covariances_[delay].normalized_cross_correlation());
+    read_index = read_index > 0 ? read_index - 1 : kLookbackFrames - 1;
+
+    if (covariances_[delay].normalized_cross_correlation() > echo_likelihood_) {
+      echo_likelihood_ = covariances_[delay].normalized_cross_correlation();
+      best_delay = static_cast<int>(delay);
+    }
   }
+  // This is a temporary log message to help find the underlying cause for echo
+  // likelihoods > 1.0.
+  // TODO(ivoc): Remove once the issue is resolved.
+  if (echo_likelihood_ > 1.1f) {
+    // Make sure we don't spam the log.
+    if (log_counter_ < 5 && best_delay != -1) {
+      size_t read_index = kLookbackFrames + next_insertion_index_ - best_delay;
+      if (read_index >= kLookbackFrames) {
+        read_index -= kLookbackFrames;
+      }
+      RTC_DCHECK_LT(read_index, render_power_.size());
+      LOG_F(LS_ERROR) << "Echo detector internal state: {"
+                      << "Echo likelihood: " << echo_likelihood_
+                      << ", Best Delay: " << best_delay << ", Covariance: "
+                      << covariances_[best_delay].covariance()
+                      << ", Last capture power: " << capture_power
+                      << ", Capture mean: " << capture_mean
+                      << ", Capture_standard deviation: "
+                      << capture_std_deviation
+                      << ", Last render power: " << render_power_[read_index]
+                      << ", Render mean: " << render_power_mean_[read_index]
+                      << ", Render standard deviation: "
+                      << render_power_std_dev_[read_index]
+                      << ", Reliability: " << reliability_ << "}";
+      log_counter_++;
+    }
+  }
+  RTC_DCHECK_LT(echo_likelihood_, 1.1f);
+
   reliability_ = (1.0f - kAlpha) * reliability_ + kAlpha * 1.0f;
   echo_likelihood_ *= reliability_;
+  // This is a temporary fix to prevent echo likelihood values > 1.0.
+  // TODO(ivoc): Find the root cause of this issue and fix it.
+  echo_likelihood_ = std::min(echo_likelihood_, 1.0f);
   int echo_percentage = static_cast<int>(echo_likelihood_ * 100);
   RTC_HISTOGRAM_COUNTS("WebRTC.Audio.ResidualEchoDetector.EchoLikelihood",
                        echo_percentage, 0, 100, 100 /* number of bins */);
@@ -114,8 +172,9 @@ void ResidualEchoDetector::AnalyzeCaptureAudio(
   recent_likelihood_max_.Update(echo_likelihood_);
 
   // Update the next insertion index.
-  ++next_insertion_index_;
-  next_insertion_index_ %= kLookbackFrames;
+  next_insertion_index_ = next_insertion_index_ < (kLookbackFrames - 1)
+                              ? next_insertion_index_ + 1
+                              : 0;
 }
 
 void ResidualEchoDetector::Initialize() {
@@ -137,13 +196,9 @@ void ResidualEchoDetector::Initialize() {
 void ResidualEchoDetector::PackRenderAudioBuffer(
     AudioBuffer* audio,
     std::vector<float>* packed_buffer) {
-  RTC_DCHECK_GE(160, audio->num_frames_per_band());
-
   packed_buffer->clear();
-  packed_buffer->insert(packed_buffer->end(),
-                        audio->split_bands_const_f(0)[kBand0To8kHz],
-                        (audio->split_bands_const_f(0)[kBand0To8kHz] +
-                         audio->num_frames_per_band()));
+  packed_buffer->insert(packed_buffer->end(), audio->channels_f()[0],
+                        audio->channels_f()[0] + audio->num_frames());
 }
 
 }  // namespace webrtc

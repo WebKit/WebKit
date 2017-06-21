@@ -13,10 +13,10 @@
 
 #include <memory>
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/modules/audio_device/audio_device_generic.h"
 #include "webrtc/modules/audio_device/linux/audio_mixer_manager_alsa_linux.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 
 #if defined(USE_X11)
 #include <X11/Xlib.h>
@@ -145,7 +145,6 @@ public:
     // CPU load
     int32_t CPULoad(uint16_t& load) const override;
 
-public:
  bool PlayoutWarning() const override;
  bool PlayoutError() const override;
  bool RecordingWarning() const override;
@@ -155,7 +154,6 @@ public:
  void ClearRecordingWarning() override;
  void ClearRecordingError() override;
 
-public:
  void AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) override;
 
 private:
@@ -166,26 +164,22 @@ private:
                            const int32_t ednLen = 0) const;
     int32_t ErrorRecovery(int32_t error, snd_pcm_t* deviceHandle);
 
-private:
     bool KeyPressed() const;
 
-private:
     void Lock() EXCLUSIVE_LOCK_FUNCTION(_critSect) { _critSect.Enter(); };
     void UnLock() UNLOCK_FUNCTION(_critSect) { _critSect.Leave(); };
-private:
+
     inline int32_t InputSanityCheckAfterUnlockedPeriod() const;
     inline int32_t OutputSanityCheckAfterUnlockedPeriod() const;
 
-private:
     static bool RecThreadFunc(void*);
     static bool PlayThreadFunc(void*);
     bool RecThreadProcess();
     bool PlayThreadProcess();
 
-private:
     AudioDeviceBuffer* _ptrAudioBuffer;
 
-    CriticalSectionWrapper& _critSect;
+    rtc::CriticalSection _critSect;
 
     // TODO(pbos): Make plain members and start/stop instead of resetting these
     // pointers. A thread can be reused.
@@ -226,7 +220,6 @@ private:
 
     AudioDeviceModule::BufferType _playBufType;
 
-private:
     bool _initialized;
     bool _recording;
     bool _playing;

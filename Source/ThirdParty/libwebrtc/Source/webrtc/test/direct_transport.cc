@@ -15,17 +15,29 @@
 namespace webrtc {
 namespace test {
 
-DirectTransport::DirectTransport(Call* send_call)
-    : DirectTransport(FakeNetworkPipe::Config(), send_call) {}
+DirectTransport::DirectTransport(
+    Call* send_call,
+    const std::map<uint8_t, MediaType>& payload_type_map)
+    : DirectTransport(FakeNetworkPipe::Config(), send_call, payload_type_map) {}
+
+DirectTransport::DirectTransport(
+    const FakeNetworkPipe::Config& config,
+    Call* send_call,
+    const std::map<uint8_t, MediaType>& payload_type_map)
+    : DirectTransport(
+          config,
+          send_call,
+          std::unique_ptr<Demuxer>(new DemuxerImpl(payload_type_map))) {}
 
 DirectTransport::DirectTransport(const FakeNetworkPipe::Config& config,
-                                 Call* send_call)
+                                 Call* send_call,
+                                 std::unique_ptr<Demuxer> demuxer)
     : send_call_(send_call),
       packet_event_(false, false),
       thread_(NetworkProcess, this, "NetworkProcess"),
       clock_(Clock::GetRealTimeClock()),
       shutting_down_(false),
-      fake_network_(clock_, config) {
+      fake_network_(clock_, config, std::move(demuxer)) {
   thread_.Start();
   if (send_call_) {
     send_call_->SignalChannelNetworkState(MediaType::AUDIO, kNetworkUp);
@@ -74,6 +86,22 @@ bool DirectTransport::SendRtcp(const uint8_t* data, size_t length) {
 
 int DirectTransport::GetAverageDelayMs() {
   return fake_network_.AverageDelay();
+}
+
+DirectTransport::ForceDemuxer::ForceDemuxer(MediaType media_type)
+    : media_type_(media_type) {}
+
+void DirectTransport::ForceDemuxer::SetReceiver(PacketReceiver* receiver) {
+  packet_receiver_ = receiver;
+}
+
+void DirectTransport::ForceDemuxer::DeliverPacket(
+    const NetworkPacket* packet,
+    const PacketTime& packet_time) {
+  if (!packet_receiver_)
+    return;
+  packet_receiver_->DeliverPacket(media_type_, packet->data(),
+                                  packet->data_length(), packet_time);
 }
 
 bool DirectTransport::NetworkProcess(void* transport) {

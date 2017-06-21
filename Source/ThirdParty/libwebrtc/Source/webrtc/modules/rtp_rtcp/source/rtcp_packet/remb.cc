@@ -38,6 +38,11 @@ constexpr uint8_t Remb::kFeedbackMessageType;
 // 16 |   SSRC feedback                                               |
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //    :  ...                                                          :
+
+Remb::Remb() : bitrate_bps_(0) {}
+
+Remb::~Remb() = default;
+
 bool Remb::Parse(const CommonHeader& packet) {
   RTC_DCHECK(packet.type() == kPacketType);
   RTC_DCHECK_EQ(packet.fmt(), kFeedbackMessageType);
@@ -90,6 +95,10 @@ bool Remb::SetSsrcs(std::vector<uint32_t> ssrcs) {
   }
   ssrcs_ = std::move(ssrcs);
   return true;
+}
+
+size_t Remb::BlockLength() const {
+  return kHeaderLength + kCommonFeedbackLength + (2 + ssrcs_.size()) * 4;
 }
 
 bool Remb::Create(uint8_t* packet,

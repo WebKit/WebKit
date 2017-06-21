@@ -13,7 +13,6 @@
 #include "webrtc/base/gunit.h"
 #include "webrtc/base/nethelpers.h"
 #include "webrtc/base/win32.h"
-#include "webrtc/base/winping.h"
 
 #if !defined(WEBRTC_WIN)
 #error Only for Windows
@@ -34,29 +33,6 @@ TEST_F(Win32Test, FileTimeToUInt64Test) {
 
   uint64_t expected = 0xBAADF00DFEED3456;
   EXPECT_EQ(expected, ToUInt64(ft));
-}
-
-TEST_F(Win32Test, WinPingTest) {
-  WinPing ping;
-  ASSERT_TRUE(ping.IsValid());
-
-  // Test valid ping cases.
-  WinPing::PingResult result = ping.Ping(IPAddress(INADDR_LOOPBACK), 20, 50, 1,
-                                         false);
-  ASSERT_EQ(WinPing::PING_SUCCESS, result);
-  if (HasIPv6Enabled()) {
-    WinPing::PingResult v6result = ping.Ping(IPAddress(in6addr_loopback), 20,
-                                             50, 1, false);
-    ASSERT_EQ(WinPing::PING_SUCCESS, v6result);
-  }
-
-  // Test invalid parameter cases.
-  ASSERT_EQ(WinPing::PING_INVALID_PARAMS, ping.Ping(
-            IPAddress(INADDR_LOOPBACK), 0, 50, 1, false));
-  ASSERT_EQ(WinPing::PING_INVALID_PARAMS, ping.Ping(
-            IPAddress(INADDR_LOOPBACK), 20, 0, 1, false));
-  ASSERT_EQ(WinPing::PING_INVALID_PARAMS, ping.Ping(
-            IPAddress(INADDR_LOOPBACK), 20, 50, 0, false));
 }
 
 TEST_F(Win32Test, IPv6AddressCompression) {
@@ -90,6 +66,33 @@ TEST_F(Win32Test, IPv6AddressCompression) {
   // Make sure noncompressable IPv6 is the same.
   ASSERT_TRUE(IPFromString("1234:5678:abcd:1234:5678:abcd:1234:5678", &ipv6));
   EXPECT_EQ("1234:5678:abcd:1234:5678:abcd:1234:5678", ipv6.ToString());
+}
+
+// Test that invalid IPv6 addresses are recognized and false is returned.
+TEST_F(Win32Test, InvalidIPv6AddressParsing) {
+  IPAddress ipv6;
+
+  // More than 1 run of "::"s.
+  EXPECT_FALSE(IPFromString("1::2::3", &ipv6));
+
+  // More than 1 run of "::"s in a longer address.
+  // See: https://bugs.chromium.org/p/webrtc/issues/detail?id=7592
+  EXPECT_FALSE(IPFromString("1::2::3::4::5::6::7::8", &ipv6));
+
+  // Three ':'s in a row.
+  EXPECT_FALSE(IPFromString("1:::2", &ipv6));
+
+  // Non-hex character.
+  EXPECT_FALSE(IPFromString("test::1", &ipv6));
+
+  // More than 4 hex digits per group.
+  EXPECT_FALSE(IPFromString("abcde::1", &ipv6));
+
+  // More than 8 groups.
+  EXPECT_FALSE(IPFromString("1:2:3:4:5:6:7:8:9", &ipv6));
+
+  // Less than 8 groups.
+  EXPECT_FALSE(IPFromString("1:2:3:4:5:6:7", &ipv6));
 }
 
 }  // namespace rtc

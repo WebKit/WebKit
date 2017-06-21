@@ -55,7 +55,7 @@ void ProduceDecimatedSinusoidalOutputPower(int sample_rate_hz,
 
     decimator.Decimate(
         rtc::ArrayView<const float>(&input[k * kBlockSize], kBlockSize),
-        &sub_block);
+        sub_block);
 
     std::copy(sub_block.begin(), sub_block.end(),
               output.begin() + k * kSubBlockSize);
@@ -112,7 +112,7 @@ TEST(DecimatorBy4, WrongInputSize) {
   DecimatorBy4 decimator;
   std::vector<float> x(std::vector<float>(kBlockSize - 1, 0.f));
   std::array<float, kSubBlockSize> x_downsampled;
-  EXPECT_DEATH(decimator.Decimate(x, &x_downsampled), "");
+  EXPECT_DEATH(decimator.Decimate(x, x_downsampled), "");
 }
 
 // Verifies the check for non-null output parameter.

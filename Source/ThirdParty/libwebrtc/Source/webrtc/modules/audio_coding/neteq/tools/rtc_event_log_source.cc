@@ -39,38 +39,46 @@ bool RtcEventLogSource::RegisterRtpHeaderExtension(RTPExtensionType type,
 }
 
 std::unique_ptr<Packet> RtcEventLogSource::NextPacket() {
-  while (rtp_packet_index_ < parsed_stream_.GetNumberOfEvents()) {
+  for (; rtp_packet_index_ < parsed_stream_.GetNumberOfEvents();
+       rtp_packet_index_++) {
     if (parsed_stream_.GetEventType(rtp_packet_index_) ==
         ParsedRtcEventLog::RTP_EVENT) {
       PacketDirection direction;
-      MediaType media_type;
       size_t header_length;
       size_t packet_length;
       uint64_t timestamp_us = parsed_stream_.GetTimestamp(rtp_packet_index_);
-      parsed_stream_.GetRtpHeader(rtp_packet_index_, &direction, &media_type,
-                                  nullptr, &header_length, &packet_length);
-      if (direction == kIncomingPacket && media_type == MediaType::AUDIO) {
-        uint8_t* packet_header = new uint8_t[header_length];
-        parsed_stream_.GetRtpHeader(rtp_packet_index_, nullptr, nullptr,
-                                    packet_header, nullptr, nullptr);
-        std::unique_ptr<Packet> packet(new Packet(
-            packet_header, header_length, packet_length,
-            static_cast<double>(timestamp_us) / 1000, *parser_.get()));
-        if (packet->valid_header()) {
-          // Check if the packet should not be filtered out.
-          if (!filter_.test(packet->header().payloadType) &&
-              !(use_ssrc_filter_ && packet->header().ssrc != ssrc_)) {
-            rtp_packet_index_++;
-            return packet;
-          }
-        } else {
-          std::cout << "Warning: Packet with index " << rtp_packet_index_
-                    << " has an invalid header and will be ignored."
-                    << std::endl;
-        }
+      parsed_stream_.GetRtpHeader(rtp_packet_index_, &direction, nullptr,
+                                  &header_length, &packet_length);
+
+      if (direction != kIncomingPacket) {
+        continue;
+      }
+
+      uint8_t* packet_header = new uint8_t[header_length];
+      parsed_stream_.GetRtpHeader(rtp_packet_index_, nullptr, packet_header,
+                                  nullptr, nullptr);
+      std::unique_ptr<Packet> packet(
+          new Packet(packet_header, header_length, packet_length,
+                     static_cast<double>(timestamp_us) / 1000, *parser_.get()));
+
+      if (!packet->valid_header()) {
+        std::cout << "Warning: Packet with index " << rtp_packet_index_
+                  << " has an invalid header and will be ignored." << std::endl;
+        continue;
+      }
+
+      if (parsed_stream_.GetMediaType(packet->header().ssrc, direction) !=
+          webrtc::ParsedRtcEventLog::MediaType::AUDIO) {
+        continue;
+      }
+
+      // Check if the packet should not be filtered out.
+      if (!filter_.test(packet->header().payloadType) &&
+          !(use_ssrc_filter_ && packet->header().ssrc != ssrc_)) {
+        ++rtp_packet_index_;
+        return packet;
       }
     }
-    rtp_packet_index_++;
   }
   return nullptr;
 }

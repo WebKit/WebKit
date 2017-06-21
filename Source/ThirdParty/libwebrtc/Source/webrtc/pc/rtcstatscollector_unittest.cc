@@ -281,12 +281,7 @@ class RTCStatsCollectorTestHelper : public SetSessionDescriptionObserver {
             std::unique_ptr<cricket::MediaEngineInterface>(media_engine_),
             worker_thread_,
             network_thread_)),
-        media_controller_(
-            MediaControllerInterface::Create(cricket::MediaConfig(),
-                                             worker_thread_,
-                                             channel_manager_.get(),
-                                             &event_log_)),
-        session_(media_controller_.get()),
+        session_(channel_manager_.get(), cricket::MediaConfig()),
         pc_() {
     // Default return values for mocks.
     EXPECT_CALL(pc_, local_streams()).WillRepeatedly(Return(nullptr));
@@ -493,7 +488,6 @@ class RTCStatsCollectorTestHelper : public SetSessionDescriptionObserver {
   // |media_engine_| is actually owned by |channel_manager_|.
   cricket::FakeMediaEngine* media_engine_;
   std::unique_ptr<cricket::ChannelManager> channel_manager_;
-  std::unique_ptr<MediaControllerInterface> media_controller_;
   MockWebRtcSession session_;
   MockPeerConnection pc_;
 
@@ -1269,9 +1263,6 @@ TEST_F(RTCStatsCollectorTest, CollectRTCIceCandidatePairStats) {
   // Mock the session to return bandwidth estimation info. These should only
   // be used for a selected candidate pair.
   cricket::VideoMediaInfo video_media_info;
-  video_media_info.bw_estimations.push_back(cricket::BandwidthEstimationInfo());
-  video_media_info.bw_estimations[0].available_send_bandwidth = 8888;
-  video_media_info.bw_estimations[0].available_recv_bandwidth = 9999;
   EXPECT_CALL(*video_media_channel, GetStats(_))
       .WillOnce(DoAll(SetArgPointee<0>(video_media_info), Return(true)));
   EXPECT_CALL(test_->session(), video_channel())
@@ -1351,8 +1342,6 @@ TEST_F(RTCStatsCollectorTest, CollectRTCIceCandidatePairStats) {
       .channel_stats[0]
       .connection_infos[0]
       .best_connection = true;
-  video_media_info.bw_estimations[0].available_send_bandwidth = 0;
-  video_media_info.bw_estimations[0].available_recv_bandwidth = 0;
   EXPECT_CALL(*video_media_channel, GetStats(_))
       .WillOnce(DoAll(SetArgPointee<0>(video_media_info), Return(true)));
   collector_->ClearCachedStatsReport();
@@ -1366,14 +1355,19 @@ TEST_F(RTCStatsCollectorTest, CollectRTCIceCandidatePairStats) {
   EXPECT_TRUE(report->Get(*expected_pair.transport_id));
 
   // Set bandwidth and "GetStats" again.
-  video_media_info.bw_estimations[0].available_send_bandwidth = 888;
-  video_media_info.bw_estimations[0].available_recv_bandwidth = 999;
+  webrtc::Call::Stats call_stats;
+  const int kSendBandwidth = 888;
+  call_stats.send_bandwidth_bps = kSendBandwidth;
+  const int kRecvBandwidth = 999;
+  call_stats.recv_bandwidth_bps = kRecvBandwidth;
+  EXPECT_CALL(test_->session(), GetCallStats())
+      .WillRepeatedly(Return(call_stats));
   EXPECT_CALL(*video_media_channel, GetStats(_))
       .WillOnce(DoAll(SetArgPointee<0>(video_media_info), Return(true)));
   collector_->ClearCachedStatsReport();
   report = GetStatsReport();
-  expected_pair.available_outgoing_bitrate = 888;
-  expected_pair.available_incoming_bitrate = 999;
+  expected_pair.available_outgoing_bitrate = kSendBandwidth;
+  expected_pair.available_incoming_bitrate = kRecvBandwidth;
   ASSERT_TRUE(report->Get(expected_pair.id()));
   EXPECT_EQ(
       expected_pair,
@@ -1458,6 +1452,39 @@ TEST_F(RTCStatsCollectorTest, CollectRTCPeerConnectionStats) {
                                     report->timestamp_us());
     expected.data_channels_opened = 2;
     expected.data_channels_closed = 1;
+    ASSERT_TRUE(report->Get("RTCPeerConnection"));
+    EXPECT_EQ(expected,
+              report->Get("RTCPeerConnection")->cast_to<
+                  RTCPeerConnectionStats>());
+  }
+
+  // Re-opening a data channel (or opening a new data channel that is re-using
+  // the same address in memory) should increase the opened count.
+  dummy_channel_b->SignalOpened(dummy_channel_b.get());
+
+  {
+    collector_->ClearCachedStatsReport();
+    rtc::scoped_refptr<const RTCStatsReport> report = GetStatsReport();
+    RTCPeerConnectionStats expected("RTCPeerConnection",
+                                    report->timestamp_us());
+    expected.data_channels_opened = 3;
+    expected.data_channels_closed = 1;
+    ASSERT_TRUE(report->Get("RTCPeerConnection"));
+    EXPECT_EQ(expected,
+              report->Get("RTCPeerConnection")->cast_to<
+                  RTCPeerConnectionStats>());
+  }
+
+  dummy_channel_a->SignalClosed(dummy_channel_a.get());
+  dummy_channel_b->SignalClosed(dummy_channel_b.get());
+
+  {
+    collector_->ClearCachedStatsReport();
+    rtc::scoped_refptr<const RTCStatsReport> report = GetStatsReport();
+    RTCPeerConnectionStats expected("RTCPeerConnection",
+                                    report->timestamp_us());
+    expected.data_channels_opened = 3;
+    expected.data_channels_closed = 3;
     ASSERT_TRUE(report->Get("RTCPeerConnection"));
     EXPECT_EQ(expected,
               report->Get("RTCPeerConnection")->cast_to<

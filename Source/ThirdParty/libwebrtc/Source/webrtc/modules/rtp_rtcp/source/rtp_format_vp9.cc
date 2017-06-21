@@ -30,10 +30,6 @@ namespace {
 // Length of VP9 payload descriptors' fixed part.
 const size_t kFixedPayloadDescriptorBytes = 1;
 
-// Packet fragmentation mode. If true, packets are split into (almost) equal
-// sizes. Otherwise, as many bytes as possible are fit into one packet.
-const bool kBalancedMode = true;
-
 const uint32_t kReservedBitValue0 = 0;
 
 uint8_t TemporalIdxField(const RTPVideoHeaderVP9& hdr, uint8_t def) {
@@ -462,29 +458,16 @@ bool ParseSsData(rtc::BitBuffer* parser, RTPVideoHeaderVP9* vp9) {
   }
   return true;
 }
-
-// Gets the size of next payload chunk to send. Returns 0 on error.
-size_t CalcNextSize(size_t max_length, size_t rem_bytes) {
-  if (max_length == 0 || rem_bytes == 0) {
-    return 0;
-  }
-  if (kBalancedMode) {
-    size_t num_frags = std::ceil(static_cast<double>(rem_bytes) / max_length);
-    return static_cast<size_t>(
-        static_cast<double>(rem_bytes) / num_frags + 0.5);
-  }
-  return max_length >= rem_bytes ? rem_bytes : max_length;
-}
 }  // namespace
 
-
 RtpPacketizerVp9::RtpPacketizerVp9(const RTPVideoHeaderVP9& hdr,
-                                   size_t max_payload_length)
+                                   size_t max_payload_length,
+                                   size_t last_packet_reduction_len)
     : hdr_(hdr),
       max_payload_length_(max_payload_length),
       payload_(nullptr),
-      payload_size_(0) {
-}
+      payload_size_(0),
+      last_packet_reduction_len_(last_packet_reduction_len) {}
 
 RtpPacketizerVp9::~RtpPacketizerVp9() {
 }
@@ -511,54 +494,105 @@ std::string RtpPacketizerVp9::ToString() {
   return "RtpPacketizerVp9";
 }
 
-void RtpPacketizerVp9::SetPayloadData(
+size_t RtpPacketizerVp9::SetPayloadData(
     const uint8_t* payload,
     size_t payload_size,
     const RTPFragmentationHeader* fragmentation) {
   payload_ = payload;
   payload_size_ = payload_size;
   GeneratePackets();
+  return packets_.size();
 }
 
+// Splits payload in minimal number of roughly equal in size packets.
 void RtpPacketizerVp9::GeneratePackets() {
   if (max_payload_length_ < PayloadDescriptorLength(hdr_) + 1) {
-    LOG(LS_ERROR) << "Payload header and one payload byte won't fit.";
+    LOG(LS_ERROR) << "Payload header and one payload byte won't fit in the "
+                     "first packet.";
     return;
   }
-  size_t bytes_processed = 0;
-  while (bytes_processed < payload_size_) {
-    size_t rem_bytes = payload_size_ - bytes_processed;
-    size_t rem_payload_len = max_payload_length_ -
-         (bytes_processed ? PayloadDescriptorLengthMinusSsData(hdr_)
-                          : PayloadDescriptorLength(hdr_));
+  if (max_payload_length_ < PayloadDescriptorLengthMinusSsData(hdr_) + 1 +
+                                last_packet_reduction_len_) {
+    LOG(LS_ERROR) << "Payload header and one payload byte won't fit in the last"
+                     " packet.";
+    return;
+  }
+  if (payload_size_ == 1 &&
+      max_payload_length_ <
+          PayloadDescriptorLength(hdr_) + 1 + last_packet_reduction_len_) {
+    LOG(LS_ERROR) << "Can't fit header and payload into single packet, but "
+                     "payload size is one: no way to generate packets with "
+                     "nonzero payload.";
+    return;
+  }
 
-    size_t packet_bytes = CalcNextSize(rem_payload_len, rem_bytes);
-    if (packet_bytes == 0) {
-      LOG(LS_ERROR) << "Failed to generate VP9 packets.";
-      while (!packets_.empty())
-        packets_.pop();
-      return;
+  // Instead of making last packet smaller, we pretend that we must write
+  // additional data into it. We account for this virtual payload while
+  // calculating packets number and sizes. We also pretend that all packets
+  // headers are the same length and extra SS header data in the fits packet
+  // is also treated as a payload here.
+
+  size_t ss_data_len = SsDataLength(hdr_);
+  // Payload, virtual payload and SS hdr data in the first packet together.
+  size_t total_bytes = ss_data_len + payload_size_ + last_packet_reduction_len_;
+  // Now all packets will have the same lenght of vp9 headers.
+  size_t per_packet_capacity =
+      max_payload_length_ - PayloadDescriptorLengthMinusSsData(hdr_);
+  // Integer division rounding up.
+  size_t num_packets =
+      (total_bytes + per_packet_capacity - 1) / per_packet_capacity;
+  // Average rounded down.
+  size_t per_packet_bytes = total_bytes / num_packets;
+  // Several last packets are 1 byte larger than the rest.
+  // i.e. if 14 bytes were split between 4 packets, it would be 3+3+4+4.
+  size_t num_larger_packets = total_bytes % num_packets;
+  size_t bytes_processed = 0;
+  size_t num_packets_left = num_packets;
+  while (bytes_processed < payload_size_) {
+    if (num_packets_left == num_larger_packets)
+      ++per_packet_bytes;
+    size_t packet_bytes = per_packet_bytes;
+    // First packet also has SS hdr data.
+    if (bytes_processed == 0) {
+      // Must write at least one byte of the real payload to the packet.
+      if (packet_bytes > ss_data_len) {
+        packet_bytes -= ss_data_len;
+      } else {
+        packet_bytes = 1;
+      }
+    }
+    size_t rem_bytes = payload_size_ - bytes_processed;
+    if (packet_bytes >= rem_bytes) {
+      // All remaining payload fits into this packet.
+      packet_bytes = rem_bytes;
+      // If this is the penultimate packet, leave at least 1 byte of payload for
+      // the last packet.
+      if (num_packets_left == 2)
+        --packet_bytes;
     }
     QueuePacket(bytes_processed, packet_bytes, bytes_processed == 0,
                 rem_bytes == packet_bytes, &packets_);
+    --num_packets_left;
     bytes_processed += packet_bytes;
+    // Last packet should be smaller
+    RTC_DCHECK(num_packets_left > 0 ||
+               per_packet_capacity >=
+                   packet_bytes + last_packet_reduction_len_);
   }
-  assert(bytes_processed == payload_size_);
+  RTC_CHECK_EQ(bytes_processed, payload_size_);
 }
 
-bool RtpPacketizerVp9::NextPacket(RtpPacketToSend* packet, bool* last_packet) {
+bool RtpPacketizerVp9::NextPacket(RtpPacketToSend* packet) {
   RTC_DCHECK(packet);
-  RTC_DCHECK(last_packet);
   if (packets_.empty()) {
     return false;
   }
   PacketInfo packet_info = packets_.front();
   packets_.pop();
 
-  if (!WriteHeaderAndPayload(packet_info, packet)) {
+  if (!WriteHeaderAndPayload(packet_info, packet, packets_.empty())) {
     return false;
   }
-  *last_packet = packets_.empty();
   packet->SetMarker(packets_.empty() &&
                     (hdr_.spatial_idx == kNoSpatialIdx ||
                      hdr_.spatial_idx == hdr_.num_spatial_layers - 1));
@@ -602,8 +636,11 @@ bool RtpPacketizerVp9::NextPacket(RtpPacketToSend* packet, bool* last_packet) {
 //      +-+-+-+-+-+-+-+-+
 
 bool RtpPacketizerVp9::WriteHeaderAndPayload(const PacketInfo& packet_info,
-                                             RtpPacketToSend* packet) const {
-  uint8_t* buffer = packet->AllocatePayload(max_payload_length_);
+                                             RtpPacketToSend* packet,
+                                             bool last) const {
+  uint8_t* buffer = packet->AllocatePayload(
+      last ? max_payload_length_ - last_packet_reduction_len_
+           : max_payload_length_);
   RTC_DCHECK(buffer);
   size_t header_length;
   if (!WriteHeader(packet_info, buffer, &header_length))

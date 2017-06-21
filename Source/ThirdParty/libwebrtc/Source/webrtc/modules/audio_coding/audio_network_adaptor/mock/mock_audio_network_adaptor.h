@@ -26,13 +26,16 @@ class MockAudioNetworkAdaptor : public AudioNetworkAdaptor {
   MOCK_METHOD1(SetUplinkPacketLossFraction,
                void(float uplink_packet_loss_fraction));
 
+  MOCK_METHOD1(SetUplinkRecoverablePacketLossFraction,
+               void(float uplink_recoverable_packet_loss_fraction));
+
   MOCK_METHOD1(SetRtt, void(int rtt_ms));
 
   MOCK_METHOD1(SetTargetAudioBitrate, void(int target_audio_bitrate_bps));
 
   MOCK_METHOD1(SetOverhead, void(size_t overhead_bytes_per_packet));
 
-  MOCK_METHOD0(GetEncoderRuntimeConfig, EncoderRuntimeConfig());
+  MOCK_METHOD0(GetEncoderRuntimeConfig, AudioEncoderRuntimeConfig());
 
   MOCK_METHOD1(StartDebugDump, void(FILE* file_handle));
 

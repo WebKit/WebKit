@@ -27,7 +27,8 @@
 
 #include "webrtc/modules/audio_device/linux/alsasymboltable_linux.h"
 
-namespace webrtc_adm_linux_alsa {
+namespace webrtc {
+namespace adm_linux_alsa {
 
 LATE_BINDING_SYMBOL_TABLE_DEFINE_BEGIN(AlsaSymbolTable, "libasound.so.2")
 #define X(sym) \
@@ -36,4 +37,5 @@ ALSA_SYMBOLS_LIST
 #undef X
 LATE_BINDING_SYMBOL_TABLE_DEFINE_END(AlsaSymbolTable)
 
-}  // namespace webrtc_adm_linux_alsa
+}  // namespace adm_linux_alsa
+}  // namespace webrtc

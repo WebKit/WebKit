@@ -10,6 +10,7 @@
 
 #include <memory>
 
+#include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/neteq/tools/neteq_external_decoder_test.h"
 #include "webrtc/modules/audio_coding/neteq/tools/rtp_generator.h"
 #include "webrtc/modules/include/module_common_types.h"
@@ -304,7 +305,7 @@ NetEqNetworkStatsTest(NetEqDecoder codec,
   const int samples_per_ms_;
   const size_t frame_size_samples_;
   std::unique_ptr<test::RtpGenerator> rtp_generator_;
-  WebRtcRTPHeader rtp_header_;
+  RTPHeader rtp_header_;
   uint32_t last_lost_time_;
   uint32_t packet_loss_interval_;
   AudioFrame output_frame_;

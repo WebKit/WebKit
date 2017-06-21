@@ -17,8 +17,6 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/call/call.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
-#include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/call_test.h"
 #include "webrtc/test/direct_transport.h"
 #include "webrtc/test/encoder_settings.h"
@@ -104,13 +102,15 @@ class BitrateEstimatorTest : public test::CallTest {
   virtual ~BitrateEstimatorTest() { EXPECT_TRUE(streams_.empty()); }
 
   virtual void SetUp() {
-    Call::Config config(&event_log_);
+    Call::Config config(event_log_.get());
     receiver_call_.reset(Call::Create(config));
     sender_call_.reset(Call::Create(config));
 
-    send_transport_.reset(new test::DirectTransport(sender_call_.get()));
+    send_transport_.reset(
+        new test::DirectTransport(sender_call_.get(), payload_type_map_));
     send_transport_->SetReceiver(receiver_call_->Receiver());
-    receive_transport_.reset(new test::DirectTransport(receiver_call_.get()));
+    receive_transport_.reset(
+        new test::DirectTransport(receiver_call_.get(), payload_type_map_));
     receive_transport_->SetReceiver(sender_call_->Receiver());
 
     video_send_config_ = VideoSendStream::Config(send_transport_.get());
@@ -172,7 +172,7 @@ class BitrateEstimatorTest : public test::CallTest {
           Clock::GetRealTimeClock()));
       send_stream_->SetSource(
           frame_generator_capturer_.get(),
-          VideoSendStream::DegradationPreference::kBalanced);
+          VideoSendStream::DegradationPreference::kMaintainFramerate);
       send_stream_->Start();
       frame_generator_capturer_->Start();
 

@@ -13,7 +13,7 @@
 #include "webrtc/base/checks.h"
 
 #import "WebRTC/RTCLogging.h"
-#import "webrtc/modules/audio_device/ios/objc/RTCAudioSessionConfiguration.h"
+#import "webrtc/sdk/objc/Framework/Headers/WebRTC/RTCAudioSessionConfiguration.h"
 
 #if !defined(NDEBUG)
 static void LogStreamDescription(AudioStreamBasicDescription description) {

@@ -45,6 +45,7 @@ class MockDelayManager : public DelayManager {
       void(int* lower_limit, int* higher_limit));
   MOCK_CONST_METHOD0(TargetLevel,
       int());
+  MOCK_METHOD0(RegisterEmptyPacket, void());
   MOCK_METHOD1(set_extra_delay_ms,
       void(int16_t delay));
   MOCK_CONST_METHOD0(base_target_level,

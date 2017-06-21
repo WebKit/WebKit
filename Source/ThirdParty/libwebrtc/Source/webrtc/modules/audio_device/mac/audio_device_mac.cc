@@ -93,7 +93,6 @@ void AudioDeviceMac::logCAMsg(const TraceLevel level,
 
 AudioDeviceMac::AudioDeviceMac(const int32_t id)
     : _ptrAudioBuffer(NULL),
-      _critSect(*CriticalSectionWrapper::CreateCriticalSection()),
       _stopEventRec(*EventWrapper::Create()),
       _stopEvent(*EventWrapper::Create()),
       _id(id),
@@ -197,7 +196,6 @@ AudioDeviceMac::~AudioDeviceMac() {
 
   delete &_stopEvent;
   delete &_stopEventRec;
-  delete &_critSect;
 }
 
 // ============================================================================
@@ -205,7 +203,7 @@ AudioDeviceMac::~AudioDeviceMac() {
 // ============================================================================
 
 void AudioDeviceMac::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   _ptrAudioBuffer = audioBuffer;
 
@@ -223,7 +221,7 @@ int32_t AudioDeviceMac::ActiveAudioLayer(
 }
 
 AudioDeviceGeneric::InitStatus AudioDeviceMac::Init() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_initialized) {
     return InitStatus::OK;
@@ -423,7 +421,7 @@ int32_t AudioDeviceMac::SpeakerIsAvailable(bool& available) {
 }
 
 int32_t AudioDeviceMac::InitSpeaker() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_playing) {
     return -1;
@@ -471,7 +469,7 @@ int32_t AudioDeviceMac::MicrophoneIsAvailable(bool& available) {
 }
 
 int32_t AudioDeviceMac::InitMicrophone() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_recording) {
     return -1;
@@ -901,7 +899,7 @@ int16_t AudioDeviceMac::PlayoutDevices() {
 }
 
 int32_t AudioDeviceMac::SetPlayoutDevice(uint16_t index) {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_playIsInitialized) {
     return -1;
@@ -1053,7 +1051,7 @@ int32_t AudioDeviceMac::RecordingIsAvailable(bool& available) {
 }
 
 int32_t AudioDeviceMac::InitPlayout() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_playing) {
     return -1;
@@ -1200,7 +1198,7 @@ int32_t AudioDeviceMac::InitPlayout() {
 }
 
 int32_t AudioDeviceMac::InitRecording() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (_recording) {
     return -1;
@@ -1402,7 +1400,7 @@ int32_t AudioDeviceMac::InitRecording() {
 }
 
 int32_t AudioDeviceMac::StartRecording() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (!_recIsInitialized) {
     return -1;
@@ -1439,7 +1437,7 @@ int32_t AudioDeviceMac::StartRecording() {
 }
 
 int32_t AudioDeviceMac::StopRecording() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (!_recIsInitialized) {
     return 0;
@@ -1455,7 +1453,7 @@ int32_t AudioDeviceMac::StopRecording() {
       _doStopRec = true;  // Signal to io proc to stop audio device
       _critSect.Leave();  // Cannot be under lock, risk of deadlock
       if (kEventTimeout == _stopEventRec.Wait(2000)) {
-        CriticalSectionScoped critScoped(&_critSect);
+        rtc::CritScope critScoped(&_critSect);
         WEBRTC_TRACE(kTraceWarning, kTraceAudioDevice, _id,
                      " Timed out stopping the capture IOProc. "
                      "We may have failed to detect a device removal.");
@@ -1481,7 +1479,7 @@ int32_t AudioDeviceMac::StopRecording() {
       _doStop = true;     // Signal to io proc to stop audio device
       _critSect.Leave();  // Cannot be under lock, risk of deadlock
       if (kEventTimeout == _stopEvent.Wait(2000)) {
-        CriticalSectionScoped critScoped(&_critSect);
+        rtc::CritScope critScoped(&_critSect);
         WEBRTC_TRACE(kTraceWarning, kTraceAudioDevice, _id,
                      " Timed out stopping the shared IOProc. "
                      "We may have failed to detect a device removal.");
@@ -1540,7 +1538,7 @@ bool AudioDeviceMac::PlayoutIsInitialized() const {
 }
 
 int32_t AudioDeviceMac::StartPlayout() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (!_playIsInitialized) {
     return -1;
@@ -1566,7 +1564,7 @@ int32_t AudioDeviceMac::StartPlayout() {
 }
 
 int32_t AudioDeviceMac::StopPlayout() {
-  CriticalSectionScoped lock(&_critSect);
+  rtc::CritScope lock(&_critSect);
 
   if (!_playIsInitialized) {
     return 0;
@@ -1587,7 +1585,7 @@ int32_t AudioDeviceMac::StopPlayout() {
     _doStop = true;     // Signal to io proc to stop audio device
     _critSect.Leave();  // Cannot be under lock, risk of deadlock
     if (kEventTimeout == _stopEvent.Wait(2000)) {
-      CriticalSectionScoped critScoped(&_critSect);
+      rtc::CritScope critScoped(&_critSect);
       WEBRTC_TRACE(kTraceWarning, kTraceAudioDevice, _id,
                    " Timed out stopping the render IOProc. "
                    "We may have failed to detect a device removal.");

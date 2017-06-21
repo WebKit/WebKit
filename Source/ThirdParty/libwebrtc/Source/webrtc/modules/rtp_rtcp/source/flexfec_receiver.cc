@@ -112,7 +112,7 @@ bool FlexfecReceiver::AddReceivedPacket(const RtpPacketReceived& packet) {
 // This implementation only returns _recovered_ media packets through the
 // callback, whereas the implementation in UlpfecReceiver returns _all inserted_
 // media packets through the callback. The latter behaviour makes sense
-// for ULPFEC, since the ULPFEC receiver is owned by the RtpStreamReceiver.
+// for ULPFEC, since the ULPFEC receiver is owned by the RtpVideoStreamReceiver.
 // Here, however, the received media pipeline is more decoupled from the
 // FlexFEC decoder, and we therefore do not interfere with the reception
 // of non-recovered media packets.
@@ -132,11 +132,11 @@ bool FlexfecReceiver::ProcessReceivedPackets() {
       continue;
     }
     ++packet_counter_.num_recovered_packets;
-    if (!recovered_packet_receiver_->OnRecoveredPacket(
-            recovered_packet->pkt->data, recovered_packet->pkt->length)) {
-      return false;
-    }
+    // Set this flag first, since OnRecoveredPacket may end up here
+    // again, with the same packet.
     recovered_packet->returned = true;
+    recovered_packet_receiver_->OnRecoveredPacket(
+        recovered_packet->pkt->data, recovered_packet->pkt->length);
     // Periodically log the incoming packets.
     int64_t now_ms = clock_->TimeInMilliseconds();
     if (now_ms - last_recovered_packet_ms_ > kPacketLogIntervalMs) {

@@ -13,34 +13,32 @@
 
 #include <vector>
 
-#include "webrtc/common_video/include/video_image.h"
+#include "webrtc/common_types.h"
 
 namespace webrtc {
 namespace test {
 
-// Contains statistics of a single frame that has been processed.
+// Contains statistics of a single processed frame.
 struct FrameStatistic {
-  FrameStatistic();
-
-  bool encoding_successful;
-  bool decoding_successful;
-  int encode_return_code;
-  int decode_return_code;
-  int encode_time_in_us;
-  int decode_time_in_us;
-  int qp;
-  int frame_number;
+  bool encoding_successful = false;
+  bool decoding_successful = false;
+  int encode_return_code = 0;
+  int decode_return_code = 0;
+  int encode_time_in_us = 0;
+  int decode_time_in_us = 0;
+  int qp = -1;
+  int frame_number = 0;
   // How many packets were discarded of the encoded frame data (if any).
-  int packets_dropped;
-  size_t total_packets;
+  int packets_dropped = 0;
+  size_t total_packets = 0;
 
   // Current bit rate. Calculated out of the size divided with the time
   // interval per frame.
-  int bit_rate_in_kbps;
+  int bit_rate_in_kbps = 0;
 
-  // Copied from EncodedImage
-  size_t encoded_frame_length_in_bytes;
-  webrtc::FrameType frame_type;
+  // Copied from EncodedImage.
+  size_t encoded_frame_length_in_bytes = 0;
+  webrtc::FrameType frame_type = kVideoFrameDelta;
 };
 
 // Handles statistics from a single video processing run.
@@ -53,13 +51,13 @@ class Stats {
   virtual ~Stats();
 
   // Add a new statistic data object.
-  // The frame number must be incrementing and start at zero in order to use
-  // it as an index for the frame_statistics_ vector.
+  // The |frame_number| must be incrementing and start at zero in order to use
+  // it as an index for the FrameStatistic vector.
   // Returns the newly created statistic object.
   FrameStatistic& NewFrame(int frame_number);
 
   // Prints a summary of all the statistics that have been gathered during the
-  // processing
+  // processing.
   void PrintSummary();
 
   std::vector<FrameStatistic> stats_;

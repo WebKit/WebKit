@@ -53,7 +53,6 @@
 
 #include "webrtc/modules/audio_device/dummy/audio_device_dummy.h"
 #include "webrtc/modules/audio_device/dummy/file_audio_device.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 
 #define CHECK_INITIALIZED() \
   {                         \
@@ -118,10 +117,7 @@ rtc::scoped_refptr<AudioDeviceModule> AudioDeviceModule::Create(
 
 AudioDeviceModuleImpl::AudioDeviceModuleImpl(const int32_t id,
                                              const AudioLayer audioLayer)
-    : _critSect(*CriticalSectionWrapper::CreateCriticalSection()),
-      _critSectEventCb(*CriticalSectionWrapper::CreateCriticalSection()),
-      _critSectAudioCb(*CriticalSectionWrapper::CreateCriticalSection()),
-      _ptrCbAudioDeviceObserver(NULL),
+    : _ptrCbAudioDeviceObserver(NULL),
       _ptrAudioDevice(NULL),
       _id(id),
       _platformAudioLayer(audioLayer),
@@ -358,15 +354,10 @@ int32_t AudioDeviceModuleImpl::AttachAudioBuffer() {
 
 AudioDeviceModuleImpl::~AudioDeviceModuleImpl() {
   LOG(INFO) << __FUNCTION__;
-
   if (_ptrAudioDevice) {
     delete _ptrAudioDevice;
     _ptrAudioDevice = NULL;
   }
-
-  delete &_critSect;
-  delete &_critSectEventCb;
-  delete &_critSectAudioCb;
 }
 
 // ============================================================================
@@ -398,7 +389,7 @@ void AudioDeviceModuleImpl::Process() {
 
   // kPlayoutWarning
   if (_ptrAudioDevice->PlayoutWarning()) {
-    CriticalSectionScoped lock(&_critSectEventCb);
+    rtc::CritScope lock(&_critSectEventCb);
     if (_ptrCbAudioDeviceObserver) {
       LOG(WARNING) << "=> OnWarningIsReported(kPlayoutWarning)";
       _ptrCbAudioDeviceObserver->OnWarningIsReported(
@@ -409,7 +400,7 @@ void AudioDeviceModuleImpl::Process() {
 
   // kPlayoutError
   if (_ptrAudioDevice->PlayoutError()) {
-    CriticalSectionScoped lock(&_critSectEventCb);
+    rtc::CritScope lock(&_critSectEventCb);
     if (_ptrCbAudioDeviceObserver) {
       LOG(LERROR) << "=> OnErrorIsReported(kPlayoutError)";
       _ptrCbAudioDeviceObserver->OnErrorIsReported(
@@ -420,7 +411,7 @@ void AudioDeviceModuleImpl::Process() {
 
   // kRecordingWarning
   if (_ptrAudioDevice->RecordingWarning()) {
-    CriticalSectionScoped lock(&_critSectEventCb);
+    rtc::CritScope lock(&_critSectEventCb);
     if (_ptrCbAudioDeviceObserver) {
       LOG(WARNING) << "=> OnWarningIsReported(kRecordingWarning)";
       _ptrCbAudioDeviceObserver->OnWarningIsReported(
@@ -431,7 +422,7 @@ void AudioDeviceModuleImpl::Process() {
 
   // kRecordingError
   if (_ptrAudioDevice->RecordingError()) {
-    CriticalSectionScoped lock(&_critSectEventCb);
+    rtc::CritScope lock(&_critSectEventCb);
     if (_ptrCbAudioDeviceObserver) {
       LOG(LERROR) << "=> OnErrorIsReported(kRecordingError)";
       _ptrCbAudioDeviceObserver->OnErrorIsReported(
@@ -1459,7 +1450,7 @@ bool AudioDeviceModuleImpl::Recording() const {
 int32_t AudioDeviceModuleImpl::RegisterEventObserver(
     AudioDeviceObserver* eventCallback) {
   LOG(INFO) << __FUNCTION__;
-  CriticalSectionScoped lock(&_critSectEventCb);
+  rtc::CritScope lock(&_critSectEventCb);
   _ptrCbAudioDeviceObserver = eventCallback;
 
   return 0;
@@ -1472,7 +1463,7 @@ int32_t AudioDeviceModuleImpl::RegisterEventObserver(
 int32_t AudioDeviceModuleImpl::RegisterAudioCallback(
     AudioTransport* audioCallback) {
   LOG(INFO) << __FUNCTION__;
-  CriticalSectionScoped lock(&_critSectAudioCb);
+  rtc::CritScope lock(&_critSectAudioCb);
   return _audioDeviceBuffer.RegisterAudioCallback(audioCallback);
 }
 

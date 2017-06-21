@@ -205,39 +205,39 @@ CaptureInputPin::CheckMediaType ( IN const CMediaType * pMediaType)
         if(*SubType == MEDIASUBTYPE_MJPG
             && pvi->bmiHeader.biCompression == MAKEFOURCC('M','J','P','G'))
         {
-            _resultingCapability.rawType = kVideoMJPEG;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kMJPEG;
+          return S_OK;  // This format is acceptable.
         }
         if(*SubType == MEDIASUBTYPE_I420
             && pvi->bmiHeader.biCompression == MAKEFOURCC('I','4','2','0'))
         {
-            _resultingCapability.rawType = kVideoI420;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kI420;
+          return S_OK;  // This format is acceptable.
         }
         if(*SubType == MEDIASUBTYPE_YUY2
             && pvi->bmiHeader.biCompression == MAKEFOURCC('Y','U','Y','2'))
         {
-            _resultingCapability.rawType = kVideoYUY2;
-            ::Sleep(60); // workaround for bad driver
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kYUY2;
+          ::Sleep(60);  // workaround for bad driver
+          return S_OK;  // This format is acceptable.
         }
         if(*SubType == MEDIASUBTYPE_UYVY
             && pvi->bmiHeader.biCompression == MAKEFOURCC('U','Y','V','Y'))
         {
-            _resultingCapability.rawType = kVideoUYVY;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kUYVY;
+          return S_OK;  // This format is acceptable.
         }
 
         if(*SubType == MEDIASUBTYPE_HDYC)
         {
-            _resultingCapability.rawType = kVideoUYVY;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kUYVY;
+          return S_OK;  // This format is acceptable.
         }
         if(*SubType == MEDIASUBTYPE_RGB24
             && pvi->bmiHeader.biCompression == BI_RGB)
         {
-            _resultingCapability.rawType = kVideoRGB24;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kRGB24;
+          return S_OK;  // This format is acceptable.
         }
     }
     if(*formatType == FORMAT_VideoInfo2)
@@ -272,38 +272,38 @@ CaptureInputPin::CheckMediaType ( IN const CMediaType * pMediaType)
         if(*SubType == MEDIASUBTYPE_MJPG
             && pvi->bmiHeader.biCompression == MAKEFOURCC('M','J','P','G'))
         {
-            _resultingCapability.rawType = kVideoMJPEG;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kMJPEG;
+          return S_OK;  // This format is acceptable.
         }
         if(*SubType == MEDIASUBTYPE_I420
             && pvi->bmiHeader.biCompression == MAKEFOURCC('I','4','2','0'))
         {
-            _resultingCapability.rawType = kVideoI420;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kI420;
+          return S_OK;  // This format is acceptable.
         }
         if(*SubType == MEDIASUBTYPE_YUY2
             && pvi->bmiHeader.biCompression == MAKEFOURCC('Y','U','Y','2'))
         {
-            _resultingCapability.rawType = kVideoYUY2;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kYUY2;
+          return S_OK;  // This format is acceptable.
         }
         if(*SubType == MEDIASUBTYPE_UYVY
             && pvi->bmiHeader.biCompression == MAKEFOURCC('U','Y','V','Y'))
         {
-            _resultingCapability.rawType = kVideoUYVY;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kUYVY;
+          return S_OK;  // This format is acceptable.
         }
 
         if(*SubType == MEDIASUBTYPE_HDYC)
         {
-            _resultingCapability.rawType = kVideoUYVY;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kUYVY;
+          return S_OK;  // This format is acceptable.
         }
         if(*SubType == MEDIASUBTYPE_RGB24
             && pvi->bmiHeader.biCompression == BI_RGB)
         {
-            _resultingCapability.rawType = kVideoRGB24;
-            return S_OK; // This format is acceptable.
+          _resultingCapability.videoType = VideoType::kRGB24;
+          return S_OK;  // This format is acceptable.
         }
     }
     return E_INVALIDARG;

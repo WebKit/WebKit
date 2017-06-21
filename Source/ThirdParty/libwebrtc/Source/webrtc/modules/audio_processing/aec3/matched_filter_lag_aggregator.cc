@@ -23,6 +23,12 @@ MatchedFilterLagAggregator::MatchedFilterLagAggregator(
 
 MatchedFilterLagAggregator::~MatchedFilterLagAggregator() = default;
 
+void MatchedFilterLagAggregator::Reset() {
+  candidate_ = 0;
+  candidate_counter_ = 0;
+  std::fill(lag_updates_in_a_row_.begin(), lag_updates_in_a_row_.end(), 0.f);
+}
+
 rtc::Optional<size_t> MatchedFilterLagAggregator::Aggregate(
     rtc::ArrayView<const MatchedFilter::LagEstimate> lag_estimates) {
   RTC_DCHECK_EQ(lag_updates_in_a_row_.size(), lag_estimates.size());

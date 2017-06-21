@@ -205,6 +205,22 @@ int16_t WebRtcOpus_DisableDtx(OpusEncInst* inst) {
   }
 }
 
+int16_t WebRtcOpus_EnableCbr(OpusEncInst* inst) {
+  if (inst) {
+    return opus_encoder_ctl(inst->encoder, OPUS_SET_VBR(0));
+  } else {
+    return -1;
+  }
+}
+
+int16_t WebRtcOpus_DisableCbr(OpusEncInst* inst) {
+  if (inst) {
+    return opus_encoder_ctl(inst->encoder, OPUS_SET_VBR(1));
+  } else {
+    return -1;
+  }
+}
+
 int16_t WebRtcOpus_SetComplexity(OpusEncInst* inst, int32_t complexity) {
   if (inst) {
     return opus_encoder_ctl(inst->encoder, OPUS_SET_COMPLEXITY(complexity));

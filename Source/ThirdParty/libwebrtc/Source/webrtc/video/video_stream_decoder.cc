@@ -46,7 +46,6 @@ VideoStreamDecoder::VideoStreamDecoder(
   video_receiver_->RegisterReceiveCallback(this);
   video_receiver_->RegisterFrameTypeCallback(vcm_frame_type_callback);
   video_receiver_->RegisterReceiveStatisticsCallback(this);
-  video_receiver_->RegisterDecoderTimingCallback(this);
 
   VCMVideoProtection video_protection =
       enable_nack ? (enable_fec ? kProtectionNackFEC : kProtectionNack)
@@ -61,9 +60,12 @@ VideoStreamDecoder::VideoStreamDecoder(
 }
 
 VideoStreamDecoder::~VideoStreamDecoder() {
+  // Note: There's an assumption at this point that the decoder thread is
+  // *not* running. If it was, then there could be a race for each of these
+  // callbacks.
+
   // Unset all the callback pointers that we set in the ctor.
   video_receiver_->RegisterPacketRequestCallback(nullptr);
-  video_receiver_->RegisterDecoderTimingCallback(nullptr);
   video_receiver_->RegisterReceiveStatisticsCallback(nullptr);
   video_receiver_->RegisterFrameTypeCallback(nullptr);
   video_receiver_->RegisterReceiveCallback(nullptr);
@@ -74,10 +76,10 @@ VideoStreamDecoder::~VideoStreamDecoder() {
 // thread may have held the lock when calling VideoDecoder::Decode, Reset, or
 // Release. Acquiring the same lock in the path of decode callback can deadlock.
 int32_t VideoStreamDecoder::FrameToRender(VideoFrame& video_frame,
-                                          rtc::Optional<uint8_t> qp) {
-  receive_stats_callback_->OnDecodedFrame(qp);
+                                          rtc::Optional<uint8_t> qp,
+                                          VideoContentType content_type) {
+  receive_stats_callback_->OnDecodedFrame(qp, content_type);
   incoming_video_stream_->OnFrame(video_frame);
-
   return 0;
 }
 
@@ -108,14 +110,6 @@ void VideoStreamDecoder::OnDiscardedPacketsUpdated(int discarded_packets) {
 void VideoStreamDecoder::OnFrameCountsUpdated(const FrameCounts& frame_counts) {
   receive_stats_callback_->OnFrameCountsUpdated(frame_counts);
 }
-
-void VideoStreamDecoder::OnDecoderTiming(int decode_ms,
-                                         int max_decode_ms,
-                                         int current_delay_ms,
-                                         int target_delay_ms,
-                                         int jitter_buffer_ms,
-                                         int min_playout_delay_ms,
-                                         int render_delay_ms) {}
 
 void VideoStreamDecoder::OnFrameBufferTimingsUpdated(int decode_ms,
                                                      int max_decode_ms,

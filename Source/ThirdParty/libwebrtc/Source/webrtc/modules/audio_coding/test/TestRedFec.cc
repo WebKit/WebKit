@@ -16,7 +16,6 @@
 #include "webrtc/modules/audio_coding/codecs/audio_format_conversion.h"
 #include "webrtc/modules/audio_coding/include/audio_coding_module_typedefs.h"
 #include "webrtc/modules/audio_coding/test/utility.h"
-#include "webrtc/system_wrappers/include/trace.h"
 #include "webrtc/test/testsupport/fileutils.h"
 #include "webrtc/typedefs.h"
 
@@ -465,7 +464,7 @@ void TestRedFec::Run() {
     bool muted;
     EXPECT_EQ(0, _acmB->PlayoutData10Ms(outFreqHzB, &audioFrame, &muted));
     ASSERT_FALSE(muted);
-    _outFileB.Write10MsData(audioFrame.data_, audioFrame.samples_per_channel_);
+    _outFileB.Write10MsData(audioFrame.data(), audioFrame.samples_per_channel_);
   }
   _inFileA.Rewind();
 }

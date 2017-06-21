@@ -11,7 +11,13 @@
 #ifndef WEBRTC_BASE_PHYSICALSOCKETSERVER_H__
 #define WEBRTC_BASE_PHYSICALSOCKETSERVER_H__
 
+#if defined(WEBRTC_POSIX) && defined(WEBRTC_LINUX)
+#include <sys/epoll.h>
+#define WEBRTC_USE_EPOLL 1
+#endif
+
 #include <memory>
+#include <set>
 #include <vector>
 
 #include "webrtc/base/nethelpers.h"
@@ -76,6 +82,7 @@ class PhysicalSocketServer : public SocketServer {
 
   void Add(Dispatcher* dispatcher);
   void Remove(Dispatcher* dispatcher);
+  void Update(Dispatcher* dispatcher);
 
 #if defined(WEBRTC_POSIX)
   // Sets the function to be executed in response to the specified POSIX signal.
@@ -95,16 +102,30 @@ class PhysicalSocketServer : public SocketServer {
 #endif
 
  private:
-  typedef std::vector<Dispatcher*> DispatcherList;
-  typedef std::vector<size_t*> IteratorList;
+  typedef std::set<Dispatcher*> DispatcherSet;
+
+  void AddRemovePendingDispatchers();
 
 #if defined(WEBRTC_POSIX)
+  bool WaitSelect(int cms, bool process_io);
   static bool InstallSignal(int signum, void (*handler)(int));
 
   std::unique_ptr<PosixSignalDispatcher> signal_dispatcher_;
-#endif
-  DispatcherList dispatchers_;
-  IteratorList iterators_;
+#endif  // WEBRTC_POSIX
+#if defined(WEBRTC_USE_EPOLL)
+  void AddEpoll(Dispatcher* dispatcher);
+  void RemoveEpoll(Dispatcher* dispatcher);
+  void UpdateEpoll(Dispatcher* dispatcher);
+  bool WaitEpoll(int cms);
+  bool WaitPoll(int cms, Dispatcher* dispatcher);
+
+  int epoll_fd_ = INVALID_SOCKET;
+  std::vector<struct epoll_event> epoll_events_;
+#endif  // WEBRTC_USE_EPOLL
+  DispatcherSet dispatchers_;
+  DispatcherSet pending_add_dispatchers_;
+  DispatcherSet pending_remove_dispatchers_;
+  bool processing_dispatchers_ = false;
   Signaler* signal_wakeup_;
   CriticalSection crit_;
   bool fWait_;
@@ -151,8 +172,6 @@ class PhysicalSocket : public AsyncSocket, public sigslot::has_slots<> {
 
   int Close() override;
 
-  int EstimateMTU(uint16_t* mtu) override;
-
   SocketServer* socketserver() { return ss_; }
 
  protected:
@@ -173,11 +192,15 @@ class PhysicalSocket : public AsyncSocket, public sigslot::has_slots<> {
   void UpdateLastError();
   void MaybeRemapSendError();
 
+  uint8_t enabled_events() const { return enabled_events_; }
+  virtual void SetEnabledEvents(uint8_t events);
+  virtual void EnableEvents(uint8_t events);
+  virtual void DisableEvents(uint8_t events);
+
   static int TranslateOption(Option opt, int* slevel, int* sopt);
 
   PhysicalSocketServer* ss_;
   SOCKET s_;
-  uint8_t enabled_events_;
   bool udp_;
   CriticalSection crit_;
   int error_ GUARDED_BY(crit_);
@@ -187,6 +210,9 @@ class PhysicalSocket : public AsyncSocket, public sigslot::has_slots<> {
 #if !defined(NDEBUG)
   std::string dbg_addr_;
 #endif
+
+ private:
+  uint8_t enabled_events_ = 0;
 };
 
 class SocketDispatcher : public Dispatcher, public PhysicalSocket {
@@ -215,13 +241,28 @@ class SocketDispatcher : public Dispatcher, public PhysicalSocket {
 
   int Close() override;
 
-#if defined(WEBRTC_WIN)
+#if defined(WEBRTC_USE_EPOLL)
+ protected:
+  void StartBatchedEventUpdates();
+  void FinishBatchedEventUpdates();
+
+  void SetEnabledEvents(uint8_t events) override;
+  void EnableEvents(uint8_t events) override;
+  void DisableEvents(uint8_t events) override;
+#endif
+
  private:
+#if defined(WEBRTC_WIN)
   static int next_id_;
   int id_;
   bool signal_close_;
   int signal_err_;
 #endif // WEBRTC_WIN
+#if defined(WEBRTC_USE_EPOLL)
+  void MaybeUpdateDispatcher(uint8_t old_events);
+
+  int saved_enabled_events_ = -1;
+#endif
 };
 
 } // namespace rtc

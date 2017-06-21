@@ -14,14 +14,7 @@
 
 @protocol ARDMainViewDelegate <NSObject>
 
-- (void)mainView:(ARDMainView *)mainView
-             didInputRoom:(NSString *)room
-               isLoopback:(BOOL)isLoopback
-              isAudioOnly:(BOOL)isAudioOnly
-        shouldMakeAecDump:(BOOL)shouldMakeAecDump
-    shouldUseLevelControl:(BOOL)shouldUseLevelControl
-           useManualAudio:(BOOL)useManualAudio;
-
+- (void)mainView:(ARDMainView *)mainView didInputRoom:(NSString *)room isLoopback:(BOOL)isLoopback;
 - (void)mainViewDidToggleAudioLoop:(ARDMainView *)mainView;
 
 @end

@@ -1,4 +1,5 @@
 include_rules = [
   "+webrtc/base",
   "+webrtc/system_wrappers",
+  "+webrtc/logging/rtc_event_log"
 ]

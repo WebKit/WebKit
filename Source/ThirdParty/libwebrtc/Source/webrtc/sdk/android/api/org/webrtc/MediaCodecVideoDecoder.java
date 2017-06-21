@@ -82,7 +82,8 @@ public class MediaCodecVideoDecoder {
   private static final String[] supportedH264HwCodecPrefixes = {
       "OMX.qcom.", "OMX.Intel.", "OMX.Exynos."};
   // List of supported HW H.264 high profile decoders.
-  private static final String[] supportedH264HighProfileHwCodecPrefixes = {"OMX.qcom."};
+  private static final String supportedQcomH264HighProfileHwCodecPrefix = "OMX.qcom.";
+  private static final String supportedExynosH264HighProfileHwCodecPrefix = "OMX.Exynos.";
 
   // NV12 color format supported by QCOM codec, but not declared in MediaCodec -
   // see /hardware/qcom/media/mm-core/inc/OMX_QCOMExtns.h
@@ -160,9 +161,22 @@ public class MediaCodecVideoDecoder {
   }
 
   public static boolean isH264HighProfileHwSupported() {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-        && !hwDecoderDisabledTypes.contains(H264_MIME_TYPE)
-        && (findDecoder(H264_MIME_TYPE, supportedH264HighProfileHwCodecPrefixes) != null);
+    if (hwDecoderDisabledTypes.contains(H264_MIME_TYPE)) {
+      return false;
+    }
+    // Support H.264 HP decoding on QCOM chips for Android L and above.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+        && findDecoder(H264_MIME_TYPE, new String[] {supportedQcomH264HighProfileHwCodecPrefix})
+            != null) {
+      return true;
+    }
+    // Support H.264 HP decoding on Exynos chips for Android M and above.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+        && findDecoder(H264_MIME_TYPE, new String[] {supportedExynosH264HighProfileHwCodecPrefix})
+            != null) {
+      return true;
+    }
+    return false;
   }
 
   public static void printStackTrace() {

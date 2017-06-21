@@ -19,22 +19,50 @@ It assumes you have a Android device plugged in.
 """
 
 import argparse
+import json
 import logging
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SRC_DIR = os.path.normpath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir,
                                         os.pardir))
+BAD_DEVICES_JSON = os.path.join(SRC_DIR,
+                                os.environ.get('CHROMIUM_OUT_DIR', 'out'),
+                                'bad_devices.json')
+
+
+class Error(Exception):
+  pass
+
+
+class VideoQualityTestError(Error):
+  pass
 
 
 def _RunCommand(argv, cwd=SRC_DIR, **kwargs):
   logging.info('Running %r', argv)
   subprocess.check_call(argv, cwd=cwd, **kwargs)
+
+
+def _RunCommandWithOutput(argv, cwd=SRC_DIR, **kwargs):
+  logging.info('Running %r', argv)
+  return subprocess.check_output(argv, cwd=cwd, **kwargs)
+
+
+def _RunBackgroundCommand(argv, cwd=SRC_DIR):
+  logging.info('Running %r', argv)
+  process = subprocess.Popen(argv, cwd=cwd)
+  time.sleep(0.5)
+  status = process.poll()
+  if status:  # is not None or 0
+    raise subprocess.CalledProcessError(status, argv)
+  return process
 
 
 def _ParseArgs():
@@ -45,16 +73,13 @@ def _ParseArgs():
       help='The path to the build directory for building locally.')
   parser.add_argument('--temp_dir',
       help='A temporary directory to put the output.')
+  parser.add_argument('--adb-path', help='Path to adb binary.', default='adb')
 
   args = parser.parse_args()
   return args
 
 
 def main():
-  print 'This test is currently disabled (https://bugs.webrtc.org/7185)'
-  return 0
-
-  # pylint: disable=W0101
   logging.basicConfig(level=logging.INFO)
 
   args = _ParseArgs()
@@ -62,6 +87,7 @@ def main():
   build_dir_android = args.build_dir_android
   build_dir_x86 = args.build_dir_x86
   temp_dir = args.temp_dir
+  adb_path = args.adb_path
   if not temp_dir:
     temp_dir = tempfile.mkdtemp()
   else:
@@ -73,63 +99,118 @@ def main():
     _RunCommand(['gn', 'gen', build_dir_x86])
     _RunCommand(['ninja', '-C', build_dir_x86, 'frame_analyzer'])
 
-  toolchain_dir = os.path.join(SRC_DIR, 'tools-webrtc',
-      'video_quality_toolchain')
+  tools_dir = os.path.join(SRC_DIR, 'tools_webrtc')
+  toolchain_dir = os.path.join(tools_dir, 'video_quality_toolchain')
 
   # Download ffmpeg and zxing.
-  download_script = os.path.join(toolchain_dir, 'download.py')
-  _RunCommand([sys.executable, download_script])
+  download_tools_script = os.path.join(tools_dir, 'download_tools.py')
+  _RunCommand([sys.executable, download_tools_script, toolchain_dir])
 
-  # Run the Espresso code.
-  test_script = os.path.join(build_dir_android,
-      'bin', 'run_AppRTCMobileTestStubbedVideoIO')
-  _RunCommand([sys.executable, test_script])
+  testing_tools_dir = os.path.join(SRC_DIR, 'webrtc', 'tools', 'testing')
 
-  # Pull the output video.
-  test_video = os.path.join(temp_dir, 'test_video.y4m')
-  _RunCommand(['adb', 'pull', '/sdcard/output.y4m', test_video])
+  # Download, extract and build AppRTC.
+  setup_apprtc_script = os.path.join(testing_tools_dir, 'setup_apprtc.py')
+  _RunCommand([sys.executable, setup_apprtc_script, temp_dir])
 
-  test_video_yuv = os.path.join(temp_dir, 'test_video.yuv')
+  # Select an Android device in case multiple are connected
+  try:
+    with open(BAD_DEVICES_JSON) as bad_devices_file:
+      bad_devices = json.load(bad_devices_file)
+  except IOError:
+    if os.environ.get('CHROME_HEADLESS'):
+      logging.warning('Cannot read %r', BAD_DEVICES_JSON)
+    bad_devices = {}
 
-  ffmpeg_path = os.path.join(toolchain_dir, 'linux', 'ffmpeg')
+  for line in _RunCommandWithOutput([adb_path, 'devices']).splitlines():
+    if line.endswith('\tdevice'):
+      android_device = line.split('\t')[0]
+      if android_device not in bad_devices:
+        break
+  else:
+    raise VideoQualityTestError('Cannot find any connected Android device.')
 
-  def convert_video(input_video, output_video):
-    _RunCommand([ffmpeg_path, '-y', '-i', input_video, output_video])
+  processes = []
+  try:
+    # Start AppRTC Server
+    dev_appserver = os.path.join(temp_dir, 'apprtc', 'temp', 'google-cloud-sdk',
+                                'bin', 'dev_appserver.py')
+    appengine_dir = os.path.join(temp_dir, 'apprtc', 'out', 'app_engine')
+    processes.append(_RunBackgroundCommand([
+        'python', dev_appserver, appengine_dir,
+        '--port=9999', '--admin_port=9998',
+        '--skip_sdk_update_check', '--clear_datastore=yes']))
 
-  convert_video(test_video, test_video_yuv)
+    # Start Collider
+    collider_path = os.path.join(temp_dir, 'collider', 'collidermain')
+    processes.append(_RunBackgroundCommand([
+        collider_path, '-tls=false', '-port=8089',
+        '-room-server=http://localhost:9999']))
 
-  reference_video = os.path.join(SRC_DIR,
-      'resources', 'reference_video_640x360_30fps.y4m')
+    # Start adb reverse forwarder
+    reverseforwarder_path = os.path.join(
+        SRC_DIR, 'build', 'android', 'adb_reverse_forwarder.py')
+    processes.append(_RunBackgroundCommand([
+        reverseforwarder_path, '--device', android_device,
+        '9999', '9999', '8089', '8089']))
 
-  reference_video_yuv = os.path.join(temp_dir,
-      'reference_video_640x360_30fps.yuv')
+    # Run the Espresso code.
+    test_script = os.path.join(build_dir_android,
+        'bin', 'run_AppRTCMobileTestStubbedVideoIO')
+    _RunCommand([test_script, '--device', android_device])
 
-  convert_video(reference_video, reference_video_yuv)
+    # Pull the output video.
+    test_video = os.path.join(temp_dir, 'test_video.y4m')
+    _RunCommand([adb_path, '-s', android_device,
+                'pull', '/sdcard/output.y4m', test_video])
 
-  # Run compare script.
-  compare_script = os.path.join(SRC_DIR, 'webrtc', 'tools',
-      'compare_videos.py')
-  zxing_path = os.path.join(toolchain_dir, 'linux', 'zxing')
+    test_video_yuv = os.path.join(temp_dir, 'test_video.yuv')
 
-  # The frame_analyzer binary should be built for local computer and not for
-  # Android
-  frame_analyzer = os.path.join(build_dir_x86, 'frame_analyzer')
+    ffmpeg_path = os.path.join(toolchain_dir, 'linux', 'ffmpeg')
 
-  frame_width = 640
-  frame_height = 360
+    def ConvertVideo(input_video, output_video):
+      _RunCommand([ffmpeg_path, '-y', '-i', input_video, output_video])
 
-  stats_file_ref = os.path.join(temp_dir, 'stats_ref.txt')
-  stats_file_test = os.path.join(temp_dir, 'stats_test.txt')
+    ConvertVideo(test_video, test_video_yuv)
 
-  _RunCommand([
-      sys.executable, compare_script, '--ref_video', reference_video_yuv,
-      '--test_video', test_video_yuv, '--yuv_frame_width', str(frame_width),
-      '--yuv_frame_height', str(frame_height),
-      '--stats_file_ref', stats_file_ref,
-      '--stats_file_test', stats_file_test, '--frame_analyzer', frame_analyzer,
-      '--ffmpeg_path', ffmpeg_path, '--zxing_path', zxing_path])
+    reference_video = os.path.join(SRC_DIR,
+        'resources', 'reference_video_640x360_30fps.y4m')
 
-  shutil.rmtree(temp_dir)
+    reference_video_yuv = os.path.join(temp_dir,
+        'reference_video_640x360_30fps.yuv')
+
+    ConvertVideo(reference_video, reference_video_yuv)
+
+    # Run compare script.
+    compare_script = os.path.join(SRC_DIR, 'webrtc', 'tools',
+                                  'compare_videos.py')
+    zxing_path = os.path.join(toolchain_dir, 'linux', 'zxing')
+
+    # The frame_analyzer binary should be built for local computer and not for
+    # Android
+    frame_analyzer = os.path.join(build_dir_x86, 'frame_analyzer')
+
+    frame_width = 640
+    frame_height = 360
+
+    stats_file_ref = os.path.join(temp_dir, 'stats_ref.txt')
+    stats_file_test = os.path.join(temp_dir, 'stats_test.txt')
+
+    _RunCommand([
+        sys.executable, compare_script, '--ref_video', reference_video_yuv,
+        '--test_video', test_video_yuv, '--yuv_frame_width', str(frame_width),
+        '--yuv_frame_height', str(frame_height),
+        '--stats_file_ref', stats_file_ref,
+        '--stats_file_test', stats_file_test,
+        '--frame_analyzer', frame_analyzer,
+        '--ffmpeg_path', ffmpeg_path, '--zxing_path', zxing_path])
+
+  finally:
+    for process in processes:
+      if process:
+        process.terminate()
+        process.wait()
+
+    shutil.rmtree(temp_dir)
 
 
 if __name__ == '__main__':

@@ -27,13 +27,15 @@ struct VideoSinkWants {
   bool black_frames = false;
 
   // Tells the source the maximum number of pixels the sink wants.
-  rtc::Optional<int> max_pixel_count;
+  int max_pixel_count = std::numeric_limits<int>::max();
   // Tells the source the desired number of pixels the sinks wants. This will
   // typically be used when stepping the resolution up again when conditions
   // have improved after an earlier downgrade. The source should select the
   // closest resolution to this pixel count, but if max_pixel_count is set, it
   // still sets the absolute upper bound.
   rtc::Optional<int> target_pixel_count;
+  // Tells the source the maximum framerate the sink wants.
+  int max_framerate_fps = std::numeric_limits<int>::max();
 };
 
 template <typename VideoFrameT>

@@ -13,11 +13,11 @@
 
 #include <memory>
 
+#include "webrtc/base/criticalsection.h"
 #include "webrtc/base/platform_thread.h"
 #include "webrtc/base/thread_checker.h"
 #include "webrtc/modules/audio_device/audio_device_generic.h"
 #include "webrtc/modules/audio_device/linux/audio_mixer_manager_pulse_linux.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 
 #include <X11/Xlib.h>
 #include <pulse/pulseaudio.h>
@@ -280,7 +280,7 @@ private:
 
     AudioDeviceBuffer* _ptrAudioBuffer;
 
-    CriticalSectionWrapper& _critSect;
+    rtc::CriticalSection _critSect;
     EventWrapper& _timeEventRec;
     EventWrapper& _timeEventPlay;
     EventWrapper& _recStartEvent;

@@ -1,9 +1,9 @@
 include_rules = [
   "+webrtc/base",
   "+webrtc/call",
-  "+webrtc/common_audio/resampler",
+  "+webrtc/common_audio",
   "+webrtc/logging/rtc_event_log",
-  "+webrtc/modules/audio_coding/codecs/mock",
+  "+webrtc/modules/audio_coding",
   "+webrtc/modules/audio_device",
   "+webrtc/modules/audio_mixer",
   "+webrtc/modules/audio_processing/include",
@@ -15,3 +15,15 @@ include_rules = [
   "+webrtc/system_wrappers",
   "+webrtc/voice_engine",
 ]
+
+specific_include_rules = {
+  "audio_send_stream.cc": [
+    "+webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.h",
+  ],
+  # TODO(ossu): Remove this exception when builtin_audio_encoder_factory.h
+  # has moved to api/, or when the proper mocks have been made.
+  "audio_send_stream_unittest.cc": [
+    "+webrtc/modules/audio_coding/codecs/builtin_audio_encoder_factory.h",
+  ],
+}
+

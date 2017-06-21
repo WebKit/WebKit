@@ -12,7 +12,6 @@
 #define WEBRTC_MODULES_AUDIO_CODING_AUDIO_NETWORK_ADAPTOR_DEBUG_DUMP_WRITER_H_
 
 #include <memory>
-#include <string>
 
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/controller.h"
@@ -27,9 +26,8 @@ class DebugDumpWriter {
 
   virtual ~DebugDumpWriter() = default;
 
-  virtual void DumpEncoderRuntimeConfig(
-      const AudioNetworkAdaptor::EncoderRuntimeConfig& config,
-      int64_t timestamp) = 0;
+  virtual void DumpEncoderRuntimeConfig(const AudioEncoderRuntimeConfig& config,
+                                        int64_t timestamp) = 0;
 
   virtual void DumpNetworkMetrics(const Controller::NetworkMetrics& metrics,
                                   int64_t timestamp) = 0;

@@ -33,10 +33,8 @@
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rapid_resync_request.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/receiver_report.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/remb.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/rpsi.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sdes.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
-#include "webrtc/modules/rtp_rtcp/source/rtcp_packet/sli.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmbn.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/tmmbr.h"
 #include "webrtc/modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
@@ -66,8 +64,6 @@ struct RTCPReceiver::PacketInformation {
   std::vector<uint16_t> nack_sequence_numbers;
   ReportBlockList report_blocks;
   int64_t rtt_ms = 0;
-  uint8_t sli_picture_id = 0;
-  uint64_t rpsi_picture_id = 0;
   uint32_t receiver_estimated_max_bitrate_bps = 0;
   std::unique_ptr<rtcp::TransportFeedback> transport_feedback;
   rtc::Optional<BitrateAllocation> target_bitrate_allocation;
@@ -358,12 +354,6 @@ bool RTCPReceiver::ParseCompoundPacket(const uint8_t* packet_begin,
         switch (rtcp_block.fmt()) {
           case rtcp::Pli::kFeedbackMessageType:
             HandlePli(rtcp_block, packet_information);
-            break;
-          case rtcp::Sli::kFeedbackMessageType:
-            HandleSli(rtcp_block, packet_information);
-            break;
-          case rtcp::Rpsi::kFeedbackMessageType:
-            HandleRpsi(rtcp_block, packet_information);
             break;
           case rtcp::Fir::kFeedbackMessageType:
             HandleFir(rtcp_block, packet_information);
@@ -839,35 +829,6 @@ void RTCPReceiver::HandleSrReq(const CommonHeader& rtcp_block,
   packet_information->packet_type_flags |= kRtcpSrReq;
 }
 
-void RTCPReceiver::HandleSli(const CommonHeader& rtcp_block,
-                             PacketInformation* packet_information) {
-  rtcp::Sli sli;
-  if (!sli.Parse(rtcp_block)) {
-    ++num_skipped_packets_;
-    return;
-  }
-
-  for (const rtcp::Sli::Macroblocks& item : sli.macroblocks()) {
-    // In theory there could be multiple slices lost.
-    // Received signal that we need to refresh a slice.
-    packet_information->packet_type_flags |= kRtcpSli;
-    packet_information->sli_picture_id = item.picture_id();
-  }
-}
-
-void RTCPReceiver::HandleRpsi(const CommonHeader& rtcp_block,
-                              PacketInformation* packet_information) {
-  rtcp::Rpsi rpsi;
-  if (!rpsi.Parse(rtcp_block)) {
-    ++num_skipped_packets_;
-    return;
-  }
-
-  // Received signal that we have a confirmed reference picture.
-  packet_information->packet_type_flags |= kRtcpRpsi;
-  packet_information->rpsi_picture_id = rpsi.picture_id();
-}
-
 void RTCPReceiver::HandlePsfbApp(const CommonHeader& rtcp_block,
                                  PacketInformation* packet_information) {
   rtcp::Remb remb;
@@ -1002,14 +963,6 @@ void RTCPReceiver::TriggerCallbacksFromRtcpPacket(
                         << packet_information.remote_ssrc;
       }
       rtcp_intra_frame_observer_->OnReceivedIntraFrameRequest(local_ssrc);
-    }
-    if (packet_information.packet_type_flags & kRtcpSli) {
-      rtcp_intra_frame_observer_->OnReceivedSLI(
-          local_ssrc, packet_information.sli_picture_id);
-    }
-    if (packet_information.packet_type_flags & kRtcpRpsi) {
-      rtcp_intra_frame_observer_->OnReceivedRPSI(
-          local_ssrc, packet_information.rpsi_picture_id);
     }
   }
   if (rtcp_bandwidth_observer_) {

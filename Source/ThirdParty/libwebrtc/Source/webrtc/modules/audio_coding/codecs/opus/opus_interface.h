@@ -180,6 +180,32 @@ int16_t WebRtcOpus_EnableDtx(OpusEncInst* inst);
  */
 int16_t WebRtcOpus_DisableDtx(OpusEncInst* inst);
 
+/****************************************************************************
+ * WebRtcOpus_EnableCbr()
+ *
+ * This function enables CBR for encoding.
+ *
+ * Input:
+ *      - inst               : Encoder context
+ *
+ * Return value              :  0 - Success
+ *                             -1 - Error
+ */
+int16_t WebRtcOpus_EnableCbr(OpusEncInst* inst);
+
+/****************************************************************************
+ * WebRtcOpus_DisableCbr()
+ *
+ * This function disables CBR for encoding.
+ *
+ * Input:
+ *      - inst               : Encoder context
+ *
+ * Return value              :  0 - Success
+ *                             -1 - Error
+ */
+int16_t WebRtcOpus_DisableCbr(OpusEncInst* inst);
+
 /*
  * WebRtcOpus_SetComplexity(...)
  *

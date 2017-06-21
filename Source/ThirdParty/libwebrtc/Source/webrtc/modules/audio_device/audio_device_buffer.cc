@@ -9,6 +9,7 @@
  */
 
 #include <algorithm>
+#include <cmath>
 
 #include "webrtc/modules/audio_device/audio_device_buffer.h"
 
@@ -36,6 +37,9 @@ static const size_t kTimerIntervalInMilliseconds =
 static const size_t kMinValidCallTimeTimeInSeconds = 10;
 static const size_t kMinValidCallTimeTimeInMilliseconds =
     kMinValidCallTimeTimeInSeconds * rtc::kNumMillisecsPerSec;
+#ifdef AUDIO_DEVICE_PLAYS_SINUS_TONE
+static const double k2Pi = 6.28318530717959;
+#endif
 
 AudioDeviceBuffer::AudioDeviceBuffer()
     : task_queue_(kTimerQueueName),
@@ -60,6 +64,10 @@ AudioDeviceBuffer::AudioDeviceBuffer()
       only_silence_recorded_(true),
       log_stats_(false) {
   LOG(INFO) << "AudioDeviceBuffer::ctor";
+#ifdef AUDIO_DEVICE_PLAYS_SINUS_TONE
+  phase_ = 0.0;
+  LOG(WARNING) << "AUDIO_DEVICE_PLAYS_SINUS_TONE is defined!";
+#endif
   playout_thread_checker_.DetachFromThread();
   recording_thread_checker_.DetachFromThread();
 }
@@ -391,9 +399,18 @@ int32_t AudioDeviceBuffer::RequestPlayoutData(size_t samples_per_channel) {
 int32_t AudioDeviceBuffer::GetPlayoutData(void* audio_buffer) {
   RTC_DCHECK_RUN_ON(&playout_thread_checker_);
   RTC_DCHECK_GT(play_buffer_.size(), 0);
-  const size_t bytes_per_sample = sizeof(int16_t);
+#ifdef AUDIO_DEVICE_PLAYS_SINUS_TONE
+  const double phase_increment =
+      k2Pi * 440.0 / static_cast<double>(play_sample_rate_);
+  int16_t* destination_r = reinterpret_cast<int16_t*>(audio_buffer);
+  for (size_t i = 0; i < play_buffer_.size(); ++i) {
+    destination_r[i] = static_cast<int16_t>((sin(phase_) * (1 << 14)));
+    phase_ += phase_increment;
+  }
+#else
   memcpy(audio_buffer, play_buffer_.data(),
-         play_buffer_.size() * bytes_per_sample);
+         play_buffer_.size() * sizeof(int16_t));
+#endif
   // Return samples per channel or number of frames.
   return static_cast<int32_t>(play_buffer_.size() / play_channels_);
 }

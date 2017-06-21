@@ -83,11 +83,10 @@ AudioManager::AudioManager()
   j_native_registration_ = j_environment_->RegisterNatives(
       "org/webrtc/voiceengine/WebRtcAudioManager", native_methods,
       arraysize(native_methods));
-  j_audio_manager_.reset(new JavaAudioManager(
-      j_native_registration_.get(),
-      j_native_registration_->NewObject(
-          "<init>", "(Landroid/content/Context;J)V",
-          JVM::GetInstance()->context(), PointerTojlong(this))));
+  j_audio_manager_.reset(
+      new JavaAudioManager(j_native_registration_.get(),
+                           j_native_registration_->NewObject(
+                               "<init>", "(J)V", PointerTojlong(this))));
 }
 
 AudioManager::~AudioManager() {

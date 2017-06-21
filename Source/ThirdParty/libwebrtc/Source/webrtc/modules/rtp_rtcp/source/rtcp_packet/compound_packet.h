@@ -23,8 +23,8 @@ namespace rtcp {
 
 class CompoundPacket : public RtcpPacket {
  public:
-  CompoundPacket() {}
-  ~CompoundPacket() override {}
+  CompoundPacket();
+  ~CompoundPacket() override;
 
   void Append(RtcpPacket* packet);
 

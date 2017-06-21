@@ -12,13 +12,25 @@
 
 #import <WebRTC/RTCMacros.h>
 #import <WebRTC/RTCMediaSource.h>
+#import <WebRTC/RTCVideoCapturer.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 RTC_EXPORT
-@interface RTCVideoSource : RTCMediaSource
+
+@interface RTCVideoSource : RTCMediaSource <RTCVideoCapturerDelegate>
 
 - (instancetype)init NS_UNAVAILABLE;
+
+/**
+ * Calling this function will cause frames to be scaled down to the
+ * requested resolution. Also, frames will be cropped to match the
+ * requested aspect ratio, and frames will be dropped to match the
+ * requested fps. The requested aspect ratio is orientation agnostic and
+ * will be adjusted to maintain the input orientation, so it doesn't
+ * matter if e.g. 1280x720 or 720x1280 is requested.
+ */
+- (void)adaptOutputFormatToWidth:(int)width height:(int)height fps:(int)fps;
 
 @end
 

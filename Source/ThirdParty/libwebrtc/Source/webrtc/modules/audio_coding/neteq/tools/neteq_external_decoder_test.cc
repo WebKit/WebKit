@@ -37,7 +37,7 @@ void NetEqExternalDecoderTest::Init() {
 }
 
 void NetEqExternalDecoderTest::InsertPacket(
-    WebRtcRTPHeader rtp_header,
+    RTPHeader rtp_header,
     rtc::ArrayView<const uint8_t> payload,
     uint32_t receive_timestamp) {
   ASSERT_EQ(NetEq::kOK,

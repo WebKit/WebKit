@@ -14,8 +14,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(int, ARDSettingsSections) {
-  ARDSettingsSectionMediaConstraints = 0,
-  ARDSettingsSectionBitRate
+  ARDSettingsSectionAudioSettings = 0,
+  ARDSettingsSectionVideoResolution,
+  ARDSettingsSectionVideoCodec,
+  ARDSettingsSectionBitRate,
+};
+
+typedef NS_ENUM(int, ARDAudioSettingsOptions) {
+  ARDAudioSettingsAudioOnly = 0,
+  ARDAudioSettingsCreateAecDump,
+  ARDAudioSettingsUseLevelController,
+  ARDAudioSettingsUseManualAudioConfig,
 };
 
 @interface ARDSettingsViewController () <UITextFieldDelegate> {
@@ -43,15 +52,18 @@ typedef NS_ENUM(int, ARDSettingsSections) {
   [self addDoneBarButton];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-  [super viewDidAppear:animated];
-  [self selectCurrentlyStoredOrDefaultMediaConstraints];
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
 }
 
 #pragma mark - Data source
 
-- (NSArray<NSString *> *)mediaConstraintsArray {
-  return _settingsModel.availableVideoResoultionsMediaConstraints;
+- (NSArray<NSString *> *)videoResolutionArray {
+  return [_settingsModel availableVideoResolutions];
+}
+
+- (NSArray<NSString *> *)videoCodecArray {
+  return [_settingsModel availableVideoCodecs];
 }
 
 #pragma mark -
@@ -64,18 +76,6 @@ typedef NS_ENUM(int, ARDSettingsSections) {
   self.navigationItem.leftBarButtonItem = barItem;
 }
 
-- (void)selectCurrentlyStoredOrDefaultMediaConstraints {
-  NSString *currentSelection = [_settingsModel currentVideoResoultionConstraintFromStore];
-
-  NSUInteger indexOfSelection = [[self mediaConstraintsArray] indexOfObject:currentSelection];
-  NSIndexPath *pathToBeSelected = [NSIndexPath indexPathForRow:indexOfSelection inSection:0];
-  [self.tableView selectRowAtIndexPath:pathToBeSelected
-                              animated:NO
-                        scrollPosition:UITableViewScrollPositionNone];
-  // Manully invoke the delegate method because the previous invocation will not.
-  [self tableView:self.tableView didSelectRowAtIndexPath:pathToBeSelected];
-}
-
 #pragma mark - Dismissal of view controller
 
 - (void)dismissModally:(id)sender {
@@ -85,107 +85,154 @@ typedef NS_ENUM(int, ARDSettingsSections) {
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-  return 2;
+  return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-  if ([self sectionIsMediaConstraints:section]) {
-    return self.mediaConstraintsArray.count;
+  switch (section) {
+    case ARDSettingsSectionAudioSettings:
+      return 4;
+    case ARDSettingsSectionVideoResolution:
+      return self.videoResolutionArray.count;
+    case ARDSettingsSectionVideoCodec:
+      return self.videoCodecArray.count;
+    default:
+      return 1;
   }
-
-  return 1;
 }
 
-#pragma mark - Index path helpers
+#pragma mark - Table view delegate helpers
 
-- (BOOL)sectionIsMediaConstraints:(int)section {
-  return section == ARDSettingsSectionMediaConstraints;
+- (void)removeAllAccessories:(UITableView *)tableView
+                   inSection:(int)section
+{
+  for (int i = 0; i < [tableView numberOfRowsInSection:section]; i++) {
+    NSIndexPath *rowPath = [NSIndexPath indexPathForRow:i inSection:section];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:rowPath];
+    cell.accessoryType = UITableViewCellAccessoryNone;
+  }
 }
 
-- (BOOL)sectionIsBitrate:(int)section {
-  return section == ARDSettingsSectionBitRate;
-}
-
-- (BOOL)indexPathIsMediaConstraints:(NSIndexPath *)indexPath {
-  return [self sectionIsMediaConstraints:indexPath.section];
-}
-
-- (BOOL)indexPathIsBitrate:(NSIndexPath *)indexPath {
-  return [self sectionIsBitrate:indexPath.section];
+- (void)tableView:(UITableView *)tableView
+updateListSelectionAtIndexPath:(NSIndexPath *)indexPath
+        inSection:(int)section {
+  [self removeAllAccessories:tableView inSection:section];
+  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+  cell.accessoryType = UITableViewCellAccessoryCheckmark;
+  [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark - Table view delegate
 
 - (nullable NSString *)tableView:(UITableView *)tableView
          titleForHeaderInSection:(NSInteger)section {
-  if ([self sectionIsMediaConstraints:section]) {
-    return @"Media constraints";
+  switch (section) {
+    case ARDSettingsSectionAudioSettings:
+      return @"Audio";
+    case ARDSettingsSectionVideoResolution:
+      return @"Video resolution";
+    case ARDSettingsSectionVideoCodec:
+      return @"Video codec";
+    case ARDSettingsSectionBitRate:
+      return @"Maximum bitrate";
+    default:
+      return @"";
   }
-
-  if ([self sectionIsBitrate:section]) {
-    return @"Maximum bitrate";
-  }
-
-  return @"";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  if ([self indexPathIsMediaConstraints:indexPath]) {
-    return [self mediaConstraintsTableViewCellForTableView:tableView atIndexPath:indexPath];
-  }
+  switch (indexPath.section) {
+    case ARDSettingsSectionAudioSettings:
+      return [self audioSettingsTableViewCellForTableView:tableView atIndexPath:indexPath];
 
-  if ([self indexPathIsBitrate:indexPath]) {
-    return [self bitrateTableViewCellForTableView:tableView atIndexPath:indexPath];
-  }
+    case ARDSettingsSectionVideoResolution:
+      return [self videoResolutionTableViewCellForTableView:tableView atIndexPath:indexPath];
 
-  return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                reuseIdentifier:@"identifier"];
-}
+    case ARDSettingsSectionVideoCodec:
+      return [self videoCodecTableViewCellForTableView:tableView atIndexPath:indexPath];
 
-- (nullable NSIndexPath *)tableView:(UITableView *)tableView
-           willSelectRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
-  if ([self indexPathIsMediaConstraints:indexPath]) {
-    return [self tableView:tableView willDeselectMediaConstraintsRowAtIndexPath:indexPath];
+    case ARDSettingsSectionBitRate:
+      return [self bitrateTableViewCellForTableView:tableView atIndexPath:indexPath];
+
+    default:
+      return [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                    reuseIdentifier:@"identifier"];
   }
-  return indexPath;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-  if ([self indexPathIsMediaConstraints:indexPath]) {
-    [self tableView:tableView didSelectMediaConstraintsCellAtIndexPath:indexPath];
+  switch (indexPath.section) {
+    case ARDSettingsSectionVideoResolution:
+      [self tableView:tableView disSelectVideoResolutionAtIndex:indexPath];
+      break;
+
+    case ARDSettingsSectionVideoCodec:
+      [self tableView:tableView didSelectVideoCodecCellAtIndexPath:indexPath];
+      break;
   }
 }
 
-#pragma mark - Table view delegate(Media Constraints)
+#pragma mark - Table view delegate(Video Resolution)
 
-- (UITableViewCell *)mediaConstraintsTableViewCellForTableView:(UITableView *)tableView
-                                                   atIndexPath:(NSIndexPath *)indexPath {
-  NSString *dequeueIdentifier = @"ARDSettingsMediaConstraintsViewCellIdentifier";
+- (UITableViewCell *)videoResolutionTableViewCellForTableView:(UITableView *)tableView
+                                                  atIndexPath:(NSIndexPath *)indexPath {
+  NSString *dequeueIdentifier = @"ARDSettingsVideoResolutionViewCellIdentifier";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
   if (!cell) {
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                   reuseIdentifier:dequeueIdentifier];
   }
-  cell.textLabel.text = self.mediaConstraintsArray[indexPath.row];
+  NSString *resolution = self.videoResolutionArray[indexPath.row];
+  cell.textLabel.text = resolution;
+  if ([resolution isEqualToString:[_settingsModel currentVideoResolutionSettingFromStore]]) {
+    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+  } else {
+    cell.accessoryType = UITableViewCellAccessoryNone;
+  }
+
   return cell;
 }
 
 - (void)tableView:(UITableView *)tableView
-    didSelectMediaConstraintsCellAtIndexPath:(NSIndexPath *)indexPath {
-  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-  cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    disSelectVideoResolutionAtIndex:(NSIndexPath *)indexPath {
+  [self tableView:tableView
+      updateListSelectionAtIndexPath:indexPath
+                           inSection:ARDSettingsSectionVideoResolution];
 
-  NSString *mediaConstraintsString = self.mediaConstraintsArray[indexPath.row];
-  [_settingsModel storeVideoResoultionConstraint:mediaConstraintsString];
+  NSString *videoResolution = self.videoResolutionArray[indexPath.row];
+  [_settingsModel storeVideoResolutionSetting:videoResolution];
 }
 
-- (NSIndexPath *)tableView:(UITableView *)tableView
-    willDeselectMediaConstraintsRowAtIndexPath:(NSIndexPath *)indexPath {
-  NSIndexPath *oldSelection = [tableView indexPathForSelectedRow];
-  UITableViewCell *cell = [tableView cellForRowAtIndexPath:oldSelection];
-  cell.accessoryType = UITableViewCellAccessoryNone;
-  return indexPath;
+#pragma mark - Table view delegate(Video Codec)
+
+- (UITableViewCell *)videoCodecTableViewCellForTableView:(UITableView *)tableView
+                                             atIndexPath:(NSIndexPath *)indexPath {
+  NSString *dequeueIdentifier = @"ARDSettingsVideoCodecCellIdentifier";
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
+  if (!cell) {
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                  reuseIdentifier:dequeueIdentifier];
+  }
+  NSString *codec = self.videoCodecArray[indexPath.row];
+  cell.textLabel.text = codec;
+  if ([codec isEqualToString:[_settingsModel currentVideoCodecSettingFromStore]]) {
+    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+  } else {
+    cell.accessoryType = UITableViewCellAccessoryNone;
+  }
+
+  return cell;
+}
+
+- (void)tableView:(UITableView *)tableView
+    didSelectVideoCodecCellAtIndexPath:(NSIndexPath *)indexPath {
+  [self tableView:tableView
+    updateListSelectionAtIndexPath:indexPath
+        inSection:ARDSettingsSectionVideoCodec];
+
+  NSString *videoCodec = self.videoCodecArray[indexPath.row];
+  [_settingsModel storeVideoCodecSetting:videoCodec];
 }
 
 #pragma mark - Table view delegate(Bitrate)
@@ -238,6 +285,84 @@ typedef NS_ENUM(int, ARDSettingsSections) {
   }
 
   [_settingsModel storeMaxBitrateSetting:bitrateNumber];
+}
+
+#pragma mark - Table view delegate(Audio settings)
+
+- (UITableViewCell *)audioSettingsTableViewCellForTableView:(UITableView *)tableView
+                                                atIndexPath:(NSIndexPath *)indexPath {
+  NSString *dequeueIdentifier = @"ARDSettingsAudioSettingsCellIdentifier";
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:dequeueIdentifier];
+  if (!cell) {
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                  reuseIdentifier:dequeueIdentifier];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    UISwitch *switchView = [[UISwitch alloc] initWithFrame:CGRectZero];
+    switchView.tag = indexPath.row;
+    [switchView addTarget:self
+                   action:@selector(audioSettingSwitchChanged:)
+         forControlEvents:UIControlEventValueChanged];
+    cell.accessoryView = switchView;
+  }
+
+  cell.textLabel.text = [self labelForAudioSettingAtIndexPathRow:indexPath.row];
+  UISwitch *switchView = (UISwitch *)cell.accessoryView;
+  switchView.on = [self valueForAudioSettingAtIndexPathRow:indexPath.row];
+
+  return cell;
+}
+
+- (NSString *)labelForAudioSettingAtIndexPathRow:(NSInteger)setting {
+  switch (setting) {
+    case ARDAudioSettingsAudioOnly:
+      return @"Audio only";
+    case ARDAudioSettingsCreateAecDump:
+      return @"Create AecDump";
+    case ARDAudioSettingsUseLevelController:
+      return @"Use level controller";
+    case ARDAudioSettingsUseManualAudioConfig:
+      return @"Use manual audio config";
+    default:
+      return @"";
+  }
+}
+
+- (BOOL)valueForAudioSettingAtIndexPathRow:(NSInteger)setting {
+  switch (setting) {
+    case ARDAudioSettingsAudioOnly:
+      return [_settingsModel currentAudioOnlySettingFromStore];
+    case ARDAudioSettingsCreateAecDump:
+      return [_settingsModel currentCreateAecDumpSettingFromStore];
+    case ARDAudioSettingsUseLevelController:
+      return [_settingsModel currentUseLevelControllerSettingFromStore];
+    case ARDAudioSettingsUseManualAudioConfig:
+      return [_settingsModel currentUseManualAudioConfigSettingFromStore];
+    default:
+      return NO;
+  }
+}
+
+- (void)audioSettingSwitchChanged:(UISwitch *)sender {
+  switch (sender.tag) {
+    case ARDAudioSettingsAudioOnly: {
+      [_settingsModel storeAudioOnlySetting:sender.isOn];
+      break;
+    }
+    case ARDAudioSettingsCreateAecDump: {
+      [_settingsModel storeCreateAecDumpSetting:sender.isOn];
+      break;
+    }
+    case ARDAudioSettingsUseLevelController: {
+      [_settingsModel storeUseLevelControllerSetting:sender.isOn];
+      break;
+    }
+    case ARDAudioSettingsUseManualAudioConfig: {
+      [_settingsModel storeUseManualAudioConfigSetting:sender.isOn];
+      break;
+    }
+    default:
+      break;
+  }
 }
 
 @end

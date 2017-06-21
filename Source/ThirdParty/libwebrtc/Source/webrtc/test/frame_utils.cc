@@ -52,28 +52,22 @@ bool FrameBufsEqual(const rtc::scoped_refptr<webrtc::VideoFrameBuffer>& f1,
     return false;
   }
 
-  if (f1->width() != f2->width() || f1->height() != f2->height()) {
+  if (f1->width() != f2->width() || f1->height() != f2->height() ||
+      f1->type() != f2->type()) {
     return false;
-  }
-  // Exclude native handle
-  if (f1->native_handle()) {
-    return f1->native_handle() == f2->native_handle();
   }
 
-  if (f2->native_handle()) {
-    return false;
-  }
-  const int half_width = (f1->width() + 1) / 2;
-  const int half_height = (f1->height() + 1) / 2;
-  return EqualPlane(f1->DataY(), f2->DataY(),
-                    f1->StrideY(), f2->StrideY(),
-                    f1->width(), f1->height()) &&
-         EqualPlane(f1->DataU(), f2->DataU(),
-                    f1->StrideU(), f2->StrideU(),
-                    half_width, half_height) &&
-         EqualPlane(f1->DataV(), f2->DataV(),
-                    f1->StrideV(), f2->StrideV(),
-                    half_width, half_height);
+  rtc::scoped_refptr<webrtc::I420BufferInterface> f1_i420 = f1->ToI420();
+  rtc::scoped_refptr<webrtc::I420BufferInterface> f2_i420 = f2->ToI420();
+  return EqualPlane(f1_i420->DataY(), f2_i420->DataY(),
+                    f1_i420->StrideY(), f2_i420->StrideY(),
+                    f1_i420->width(), f1_i420->height()) &&
+         EqualPlane(f1_i420->DataU(), f2_i420->DataU(),
+                    f1_i420->StrideU(), f2_i420->StrideU(),
+                    f1_i420->ChromaWidth(), f1_i420->ChromaHeight()) &&
+         EqualPlane(f1_i420->DataV(), f2_i420->DataV(),
+                    f1_i420->StrideV(), f2_i420->StrideV(),
+                    f1_i420->ChromaWidth(), f1_i420->ChromaHeight());
 }
 
 rtc::scoped_refptr<I420Buffer> ReadI420Buffer(int width, int height, FILE *f) {

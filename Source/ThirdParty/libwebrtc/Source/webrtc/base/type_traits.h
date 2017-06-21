@@ -72,6 +72,69 @@ static_assert(!HasDataAndSize<Test4, int>::value,
 
 }  // namespace test_has_data_and_size
 
+namespace type_traits_impl {
+
+// Determines if the given type is an enum that converts implicitly to
+// an integral type.
+template <typename T>
+struct IsIntEnum {
+ private:
+  // This overload is used if the type is an enum, and unary plus
+  // compiles and turns it into an integral type.
+  template <typename X,
+            typename std::enable_if<
+                std::is_enum<X>::value &&
+                std::is_integral<decltype(+std::declval<X>())>::value>::type* =
+                nullptr>
+  static int Test(int);
+
+  // Otherwise, this overload is used.
+  template <typename>
+  static char Test(...);
+
+ public:
+  static constexpr bool value =
+      std::is_same<decltype(Test<typename std::remove_reference<T>::type>(0)),
+                   int>::value;
+};
+
+}  // namespace type_traits_impl
+
+// Determines if the given type is integral, or an enum that
+// converts implicitly to an integral type.
+template <typename T>
+struct IsIntlike {
+ private:
+  using X = typename std::remove_reference<T>::type;
+
+ public:
+  static constexpr bool value =
+      std::is_integral<X>::value || type_traits_impl::IsIntEnum<X>::value;
+};
+
+namespace test_enum_intlike {
+
+enum E1 { e1 };
+enum { e2 };
+enum class E3 { e3 };
+struct S {};
+
+static_assert(type_traits_impl::IsIntEnum<E1>::value, "");
+static_assert(type_traits_impl::IsIntEnum<decltype(e2)>::value, "");
+static_assert(!type_traits_impl::IsIntEnum<E3>::value, "");
+static_assert(!type_traits_impl::IsIntEnum<int>::value, "");
+static_assert(!type_traits_impl::IsIntEnum<float>::value, "");
+static_assert(!type_traits_impl::IsIntEnum<S>::value, "");
+
+static_assert(IsIntlike<E1>::value, "");
+static_assert(IsIntlike<decltype(e2)>::value, "");
+static_assert(!IsIntlike<E3>::value, "");
+static_assert(IsIntlike<int>::value, "");
+static_assert(!IsIntlike<float>::value, "");
+static_assert(!IsIntlike<S>::value, "");
+
+}  // test_enum_intlike
+
 }  // namespace rtc
 
 #endif  // WEBRTC_BASE_TYPE_TRAITS_H_

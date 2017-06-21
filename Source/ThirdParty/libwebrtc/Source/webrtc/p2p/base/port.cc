@@ -13,8 +13,6 @@
 #include <algorithm>
 #include <vector>
 
-#include "webrtc/p2p/base/common.h"
-#include "webrtc/p2p/base/portallocator.h"
 #include "webrtc/base/base64.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/crc32.h"
@@ -22,8 +20,12 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/base/messagedigest.h"
 #include "webrtc/base/network.h"
+#include "webrtc/base/ptr_util.h"
+#include "webrtc/base/safe_minmax.h"
 #include "webrtc/base/stringencode.h"
 #include "webrtc/base/stringutils.h"
+#include "webrtc/p2p/base/common.h"
+#include "webrtc/p2p/base/portallocator.h"
 
 namespace {
 
@@ -68,7 +70,7 @@ const int DEFAULT_RTT = 3000;  // 3 seconds
 
 // Computes our estimate of the RTT given the current estimate.
 inline int ConservativeRTTEstimate(int rtt) {
-  return std::max(MINIMUM_RTT, std::min(MAXIMUM_RTT, 2 * rtt));
+  return rtc::SafeClamp(2 * rtt, MINIMUM_RTT, MAXIMUM_RTT);
 }
 
 // Weighting of the old rtt value to new data.
@@ -77,11 +79,18 @@ const int RTT_RATIO = 3;  // 3 : 1
 // The delay before we begin checking if this port is useless. We set
 // it to a little higher than a total STUN timeout.
 const int kPortTimeoutDelay = cricket::STUN_TOTAL_TIMEOUT + 5000;
+
+// For packet loss estimation.
+const int64_t kConsiderPacketLostAfter = 3000;  // 3 seconds
+
+// For packet loss estimation.
+const int64_t kForgetPacketAfter = 30000;  // 30 seconds
+
 }  // namespace
 
 namespace cricket {
 
-// TODO(ronghuawu): Use "host", "srflx", "prflx" and "relay". But this requires
+// TODO(ronghuawu): Use "local", "srflx", "prflx" and "relay". But this requires
 // the signaling part be updated correspondingly as well.
 const char LOCAL_PORT_TYPE[] = "local";
 const char STUN_PORT_TYPE[] = "stun";
@@ -591,7 +600,7 @@ void Port::SendBindingResponse(StunMessage* request,
   if (retransmit_attr) {
     // Inherit the incoming retransmit value in the response so the other side
     // can see our view of lost pings.
-    response.AddAttribute(new StunUInt32Attribute(
+    response.AddAttribute(rtc::MakeUnique<StunUInt32Attribute>(
         STUN_ATTR_RETRANSMIT_COUNT, retransmit_attr->value()));
 
     if (retransmit_attr->value() > CONNECTION_WRITE_CONNECT_FAILURES) {
@@ -601,8 +610,8 @@ void Port::SendBindingResponse(StunMessage* request,
     }
   }
 
-  response.AddAttribute(
-      new StunXorAddressAttribute(STUN_ATTR_XOR_MAPPED_ADDRESS, addr));
+  response.AddAttribute(rtc::MakeUnique<StunXorAddressAttribute>(
+      STUN_ATTR_XOR_MAPPED_ADDRESS, addr));
   response.AddMessageIntegrity(password_);
   response.AddFingerprint();
 
@@ -644,10 +653,10 @@ void Port::SendBindingErrorResponse(StunMessage* request,
 
   // When doing GICE, we need to write out the error code incorrectly to
   // maintain backwards compatiblility.
-  StunErrorCodeAttribute* error_attr = StunAttribute::CreateErrorCode();
+  auto error_attr = StunAttribute::CreateErrorCode();
   error_attr->SetCode(error_code);
   error_attr->SetReason(reason);
-  response.AddAttribute(error_attr);
+  response.AddAttribute(std::move(error_attr));
 
   // Per Section 10.1.2, certain error cases don't get a MESSAGE-INTEGRITY,
   // because we don't have enough information to determine the shared secret.
@@ -776,37 +785,37 @@ class ConnectionRequest : public StunRequest {
     connection_->port()->CreateStunUsername(
         connection_->remote_candidate().username(), &username);
     request->AddAttribute(
-        new StunByteStringAttribute(STUN_ATTR_USERNAME, username));
+        rtc::MakeUnique<StunByteStringAttribute>(STUN_ATTR_USERNAME, username));
 
     // connection_ already holds this ping, so subtract one from count.
     if (connection_->port()->send_retransmit_count_attribute()) {
-      request->AddAttribute(new StunUInt32Attribute(
+      request->AddAttribute(rtc::MakeUnique<StunUInt32Attribute>(
           STUN_ATTR_RETRANSMIT_COUNT,
           static_cast<uint32_t>(connection_->pings_since_last_response_.size() -
                                 1)));
     }
     uint32_t network_info = connection_->port()->Network()->id();
     network_info = (network_info << 16) | connection_->port()->network_cost();
-    request->AddAttribute(
-        new StunUInt32Attribute(STUN_ATTR_NETWORK_INFO, network_info));
+    request->AddAttribute(rtc::MakeUnique<StunUInt32Attribute>(
+        STUN_ATTR_NETWORK_INFO, network_info));
 
     // Adding ICE_CONTROLLED or ICE_CONTROLLING attribute based on the role.
     if (connection_->port()->GetIceRole() == ICEROLE_CONTROLLING) {
-      request->AddAttribute(new StunUInt64Attribute(
+      request->AddAttribute(rtc::MakeUnique<StunUInt64Attribute>(
           STUN_ATTR_ICE_CONTROLLING, connection_->port()->IceTiebreaker()));
       // We should have either USE_CANDIDATE attribute or ICE_NOMINATION
       // attribute but not both. That was enforced in p2ptransportchannel.
       if (connection_->use_candidate_attr()) {
-        request->AddAttribute(new StunByteStringAttribute(
-            STUN_ATTR_USE_CANDIDATE));
+        request->AddAttribute(
+            rtc::MakeUnique<StunByteStringAttribute>(STUN_ATTR_USE_CANDIDATE));
       }
       if (connection_->nomination() &&
           connection_->nomination() != connection_->acked_nomination()) {
-        request->AddAttribute(new StunUInt32Attribute(
+        request->AddAttribute(rtc::MakeUnique<StunUInt32Attribute>(
             STUN_ATTR_NOMINATION, connection_->nomination()));
       }
     } else if (connection_->port()->GetIceRole() == ICEROLE_CONTROLLED) {
-      request->AddAttribute(new StunUInt64Attribute(
+      request->AddAttribute(rtc::MakeUnique<StunUInt64Attribute>(
           STUN_ATTR_ICE_CONTROLLED, connection_->port()->IceTiebreaker()));
     } else {
       RTC_NOTREACHED();
@@ -825,8 +834,8 @@ class ConnectionRequest : public StunRequest {
     uint32_t prflx_priority =
         type_preference << 24 |
         (connection_->local_candidate().priority() & 0x00FFFFFF);
-    request->AddAttribute(
-        new StunUInt32Attribute(STUN_ATTR_PRIORITY, prflx_priority));
+    request->AddAttribute(rtc::MakeUnique<StunUInt32Attribute>(
+        STUN_ATTR_PRIORITY, prflx_priority));
 
     // Adding Message Integrity attribute.
     request->AddMessageIntegrity(connection_->remote_candidate().password());
@@ -885,6 +894,7 @@ Connection::Connection(Port* port,
       last_ping_received_(0),
       last_data_received_(0),
       last_ping_response_received_(0),
+      packet_loss_estimator_(kConsiderPacketLostAfter, kForgetPacketAfter),
       reported_(false),
       state_(IceCandidatePairState::WAITING),
       receiving_timeout_(WEAK_CONNECTION_RECEIVE_TIMEOUT),
@@ -1139,6 +1149,11 @@ void Connection::Prune() {
 }
 
 void Connection::Destroy() {
+  // TODO(deadbeef, nisse): This may leak if an application closes a
+  // PeerConnection and then quickly destroys the PeerConnectionFactory (along
+  // with the networking thread on which this message is posted). Also affects
+  // tests, with a workaround in
+  // AutoSocketServerThread::~AutoSocketServerThread.
   LOG_J(LS_VERBOSE, this) << "Connection destroyed";
   port_->thread()->Post(RTC_FROM_HERE, this, MSG_DELETE);
 }
@@ -1237,6 +1252,7 @@ void Connection::Ping(int64_t now) {
   last_ping_sent_ = now;
   ConnectionRequest *req = new ConnectionRequest(this);
   pings_since_last_response_.push_back(SentPing(req->id(), now, nomination_));
+  packet_loss_estimator_.ExpectResponse(req->id(), now);
   LOG_J(LS_VERBOSE, this) << "Sending STUN ping "
                           << ", id=" << rtc::hex_encode(req->id())
                           << ", nomination=" << nomination_;
@@ -1391,6 +1407,9 @@ void Connection::OnConnectionRequestResponse(ConnectionRequest* request,
   }
   ReceivedPingResponse(rtt, request->id());
 
+  int64_t time_received = rtc::TimeMillis();
+  packet_loss_estimator_.ReceivedResponse(request->id(), time_received);
+
   stats_.recv_ping_responses++;
 
   MaybeUpdateLocalCandidate(request, response);
@@ -1398,12 +1417,7 @@ void Connection::OnConnectionRequestResponse(ConnectionRequest* request,
 
 void Connection::OnConnectionRequestErrorResponse(ConnectionRequest* request,
                                                   StunMessage* response) {
-  const StunErrorCodeAttribute* error_attr = response->GetErrorCode();
-  int error_code = STUN_ERROR_GLOBAL_FAILURE;
-  if (error_attr) {
-    error_code = error_attr->code();
-  }
-
+  int error_code = response->GetErrorCodeValue();
   LOG_J(LS_INFO, this) << "Received STUN error response"
                        << " id=" << rtc::hex_encode(request->id())
                        << " code=" << error_code

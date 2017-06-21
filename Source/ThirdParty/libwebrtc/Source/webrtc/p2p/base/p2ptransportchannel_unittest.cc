@@ -22,13 +22,14 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/base/natserver.h"
 #include "webrtc/base/natsocketfactory.h"
-#include "webrtc/base/physicalsocketserver.h"
+#include "webrtc/base/proxyserver.h"
+#include "webrtc/base/ptr_util.h"
 #include "webrtc/base/socketaddress.h"
 #include "webrtc/base/ssladapter.h"
 #include "webrtc/base/thread.h"
 #include "webrtc/base/virtualsocketserver.h"
-#include "webrtc/p2p/base/icetransportinternal.h"
 #include "webrtc/p2p/base/fakeportallocator.h"
+#include "webrtc/p2p/base/icetransportinternal.h"
 #include "webrtc/p2p/base/p2ptransportchannel.h"
 #include "webrtc/p2p/base/packettransportinternal.h"
 #include "webrtc/p2p/base/testrelayserver.h"
@@ -63,6 +64,12 @@ static const SocketAddress kAlternateAddrs[2] = {
 static const SocketAddress kIPv6AlternateAddrs[2] = {
     SocketAddress("2401:4030:1:2c00:be30:abcd:efab:cdef", 0),
     SocketAddress("2601:0:1000:1b03:2e41:38ff:fea6:f2a4", 0)};
+// Addresses for HTTP proxy servers.
+static const SocketAddress kHttpsProxyAddrs[2] =
+    { SocketAddress("11.11.11.1", 443), SocketAddress("22.22.22.1", 443) };
+// Addresses for SOCKS proxy servers.
+static const SocketAddress kSocksProxyAddrs[2] =
+    { SocketAddress("11.11.11.1", 1080), SocketAddress("22.22.22.1", 1080) };
 // Internal addresses for NAT boxes.
 static const SocketAddress kNatAddrs[2] =
     { SocketAddress("192.168.1.1", 0), SocketAddress("192.168.2.1", 0) };
@@ -174,14 +181,20 @@ class P2PTransportChannelTestBase : public testing::Test,
                                     public sigslot::has_slots<> {
  public:
   P2PTransportChannelTestBase()
-      : main_(rtc::Thread::Current()),
-        pss_(new rtc::PhysicalSocketServer),
-        vss_(new rtc::VirtualSocketServer(pss_.get())),
+      : vss_(new rtc::VirtualSocketServer()),
         nss_(new rtc::NATSocketServer(vss_.get())),
         ss_(new rtc::FirewallSocketServer(nss_.get())),
-        ss_scope_(ss_.get()),
-        stun_server_(TestStunServer::Create(main_, kStunAddr)),
-        turn_server_(main_, kTurnUdpIntAddr, kTurnUdpExtAddr),
+        main_(ss_.get()),
+        stun_server_(TestStunServer::Create(&main_, kStunAddr)),
+        turn_server_(&main_, kTurnUdpIntAddr, kTurnUdpExtAddr),
+        socks_server1_(ss_.get(),
+                       kSocksProxyAddrs[0],
+                       ss_.get(),
+                       kSocksProxyAddrs[0]),
+        socks_server2_(ss_.get(),
+                       kSocksProxyAddrs[1],
+                       ss_.get(),
+                       kSocksProxyAddrs[1]),
         force_relay_(false) {
     ep1_.role_ = ICEROLE_CONTROLLING;
     ep2_.role_ = ICEROLE_CONTROLLED;
@@ -213,6 +226,9 @@ class P2PTransportChannelTestBase : public testing::Test,
     NAT_SYMMETRIC_THEN_CONE,        // Double NAT, symmetric outer, cone inner
     BLOCK_UDP,                      // Firewall, UDP in/out blocked
     BLOCK_UDP_AND_INCOMING_TCP,     // Firewall, UDP in/out and TCP in blocked
+    BLOCK_ALL_BUT_OUTGOING_HTTP,    // Firewall, only TCP out on 80/443
+    PROXY_HTTPS,                    // All traffic through HTTPS proxy
+    PROXY_SOCKS,                    // All traffic through SOCKS proxy
     NUM_CONFIGS
   };
 
@@ -434,6 +450,13 @@ class P2PTransportChannelTestBase : public testing::Test,
   void RemoveAddress(int endpoint, const SocketAddress& addr) {
     GetEndpoint(endpoint)->network_manager_.RemoveInterface(addr);
     fw()->AddRule(false, rtc::FP_ANY, rtc::FD_ANY, addr);
+  }
+  void SetProxy(int endpoint, rtc::ProxyType type) {
+    rtc::ProxyInfo info;
+    info.type = type;
+    info.address = (type == rtc::PROXY_HTTPS) ?
+        kHttpsProxyAddrs[endpoint] : kSocksProxyAddrs[endpoint];
+    GetAllocator(endpoint)->set_proxy("unittest/1.0", info);
   }
   void SetAllocatorFlags(int endpoint, int flags) {
     GetAllocator(endpoint)->set_flags(flags);
@@ -670,8 +693,8 @@ class P2PTransportChannelTestBase : public testing::Test,
       GetEndpoint(ch)->saved_candidates_.push_back(
           std::unique_ptr<CandidatesData>(new CandidatesData(ch, c)));
     } else {
-      main_->Post(RTC_FROM_HERE, this, MSG_ADD_CANDIDATES,
-                  new CandidatesData(ch, c));
+      main_.Post(RTC_FROM_HERE, this, MSG_ADD_CANDIDATES,
+                 new CandidatesData(ch, c));
     }
   }
   void OnSelectedCandidatePairChanged(
@@ -700,7 +723,7 @@ class P2PTransportChannelTestBase : public testing::Test,
                            const std::vector<Candidate>& candidates) {
     // Candidate removals are not paused.
     CandidatesData* candidates_data = new CandidatesData(ch, candidates);
-    main_->Post(RTC_FROM_HERE, this, MSG_REMOVE_CANDIDATES, candidates_data);
+    main_.Post(RTC_FROM_HERE, this, MSG_REMOVE_CANDIDATES, candidates_data);
   }
 
   // Tcp candidate verification has to be done when they are generated.
@@ -723,7 +746,7 @@ class P2PTransportChannelTestBase : public testing::Test,
   void ResumeCandidates(int endpoint) {
     Endpoint* ed = GetEndpoint(endpoint);
     for (auto& candidate : ed->saved_candidates_) {
-      main_->Post(RTC_FROM_HERE, this, MSG_ADD_CANDIDATES, candidate.release());
+      main_.Post(RTC_FROM_HERE, this, MSG_ADD_CANDIDATES, candidate.release());
     }
     ed->saved_candidates_.clear();
     ed->save_candidates_ = false;
@@ -849,14 +872,14 @@ class P2PTransportChannelTestBase : public testing::Test,
   bool nominated() { return nominated_; }
 
  private:
-  rtc::Thread* main_;
-  std::unique_ptr<rtc::PhysicalSocketServer> pss_;
   std::unique_ptr<rtc::VirtualSocketServer> vss_;
   std::unique_ptr<rtc::NATSocketServer> nss_;
   std::unique_ptr<rtc::FirewallSocketServer> ss_;
-  rtc::SocketServerScope ss_scope_;
+  rtc::AutoSocketServerThread main_;
   std::unique_ptr<TestStunServer> stun_server_;
   TestTurnServer turn_server_;
+  rtc::SocksProxyServer socks_server1_;
+  rtc::SocksProxyServer socks_server2_;
   Endpoint ep1_;
   Endpoint ep2_;
   RemoteIceParameterSource remote_ice_parameter_source_ = FROM_CANDIDATE;
@@ -998,6 +1021,9 @@ class P2PTransportChannelTest : public P2PTransportChannelTestBase {
         break;
       case BLOCK_UDP:
       case BLOCK_UDP_AND_INCOMING_TCP:
+      case BLOCK_ALL_BUT_OUTGOING_HTTP:
+      case PROXY_HTTPS:
+      case PROXY_SOCKS:
         AddAddress(endpoint, kPublicAddrs[endpoint]);
         // Block all UDP
         fw()->AddRule(false, rtc::FP_UDP, rtc::FD_ANY,
@@ -1006,9 +1032,32 @@ class P2PTransportChannelTest : public P2PTransportChannelTestBase {
           // Block TCP inbound to the endpoint
           fw()->AddRule(false, rtc::FP_TCP, SocketAddress(),
                         kPublicAddrs[endpoint]);
+        } else if (config == BLOCK_ALL_BUT_OUTGOING_HTTP) {
+          // Block all TCP to/from the endpoint except 80/443 out
+          fw()->AddRule(true, rtc::FP_TCP, kPublicAddrs[endpoint],
+                        SocketAddress(rtc::IPAddress(INADDR_ANY), 80));
+          fw()->AddRule(true, rtc::FP_TCP, kPublicAddrs[endpoint],
+                        SocketAddress(rtc::IPAddress(INADDR_ANY), 443));
+          fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY,
+                        kPublicAddrs[endpoint]);
+        } else if (config == PROXY_HTTPS) {
+          // Block all TCP to/from the endpoint except to the proxy server
+          fw()->AddRule(true, rtc::FP_TCP, kPublicAddrs[endpoint],
+                        kHttpsProxyAddrs[endpoint]);
+          fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY,
+                        kPublicAddrs[endpoint]);
+          SetProxy(endpoint, rtc::PROXY_HTTPS);
+        } else if (config == PROXY_SOCKS) {
+          // Block all TCP to/from the endpoint except to the proxy server
+          fw()->AddRule(true, rtc::FP_TCP, kPublicAddrs[endpoint],
+                        kSocksProxyAddrs[endpoint]);
+          fw()->AddRule(false, rtc::FP_TCP, rtc::FD_ANY,
+                        kPublicAddrs[endpoint]);
+          SetProxy(endpoint, rtc::PROXY_SOCKS5);
         }
         break;
       default:
+        RTC_NOTREACHED();
         break;
     }
   }
@@ -1036,19 +1085,23 @@ class P2PTransportChannelTest : public P2PTransportChannelTestBase {
 // Test matrix. Originator behavior defined by rows, receiever by columns.
 
 // TODO: Fix NULLs caused by lack of TCP support in NATSocket.
+// TODO: Fix NULLs caused by no HTTP proxy support.
 // TODO: Rearrange rows/columns from best to worst.
 const P2PTransportChannelTest::Result*
     P2PTransportChannelTest::kMatrix[NUM_CONFIGS][NUM_CONFIGS] = {
-        //      OPEN  CONE  ADDR  PORT  SYMM  2CON  SCON  !UDP  !TCP
-        /*OP*/ {LULU, LUSU, LUSU, LUSU, LUPU, LUSU, LUPU, LTPT, LTPT},
-        /*CO*/ {SULU, SUSU, SUSU, SUSU, SUPU, SUSU, SUPU, NULL, NULL},
-        /*AD*/ {SULU, SUSU, SUSU, SUSU, SUPU, SUSU, SUPU, NULL, NULL},
-        /*PO*/ {SULU, SUSU, SUSU, SUSU, RUPU, SUSU, RUPU, NULL, NULL},
-        /*SY*/ {PULU, PUSU, PUSU, PURU, PURU, PUSU, PURU, NULL, NULL},
-        /*2C*/ {SULU, SUSU, SUSU, SUSU, SUPU, SUSU, SUPU, NULL, NULL},
-        /*SC*/ {PULU, PUSU, PUSU, PURU, PURU, PUSU, PURU, NULL, NULL},
-        /*!U*/ {LTPT, NULL, NULL, NULL, NULL, NULL, NULL, LTPT, LTPT},
-        /*!T*/ {PTLT, NULL, NULL, NULL, NULL, NULL, NULL, PTLT, LTRT},
+//      OPEN  CONE  ADDR  PORT  SYMM  2CON  SCON  !UDP  !TCP  HTTP  PRXH  PRXS
+/*OP*/ {LULU, LUSU, LUSU, LUSU, LUPU, LUSU, LUPU, LTPT, LTPT, LSRS, NULL, LTPT},
+/*CO*/ {SULU, SUSU, SUSU, SUSU, SUPU, SUSU, SUPU, NULL, NULL, LSRS, NULL, LTRT},
+/*AD*/ {SULU, SUSU, SUSU, SUSU, SUPU, SUSU, SUPU, NULL, NULL, LSRS, NULL, LTRT},
+/*PO*/ {SULU, SUSU, SUSU, SUSU, RUPU, SUSU, RUPU, NULL, NULL, LSRS, NULL, LTRT},
+/*SY*/ {PULU, PUSU, PUSU, PURU, PURU, PUSU, PURU, NULL, NULL, LSRS, NULL, LTRT},
+/*2C*/ {SULU, SUSU, SUSU, SUSU, SUPU, SUSU, SUPU, NULL, NULL, LSRS, NULL, LTRT},
+/*SC*/ {PULU, PUSU, PUSU, PURU, PURU, PUSU, PURU, NULL, NULL, LSRS, NULL, LTRT},
+/*!U*/ {LTPT, NULL, NULL, NULL, NULL, NULL, NULL, LTPT, LTPT, LSRS, NULL, LTRT},
+/*!T*/ {PTLT, NULL, NULL, NULL, NULL, NULL, NULL, PTLT, LTRT, LSRS, NULL, LTRT},
+/*HT*/ {LSRS, LSRS, LSRS, LSRS, LSRS, LSRS, LSRS, LSRS, LSRS, LSRS, NULL, LSRS},
+/*PR*/ {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL},
+/*PR*/ {LTRT, LTRT, LTRT, LTRT, LTRT, LTRT, LTRT, LTRT, LTRT, LSRS, NULL, LTRT},
 };
 
 // The actual tests that exercise all the various configurations.
@@ -1066,16 +1119,19 @@ const P2PTransportChannelTest::Result*
 #define P2P_TEST(x, y) \
   P2P_TEST_DECLARATION(x, y,)
 
-#define P2P_TEST_SET(x)                \
-  P2P_TEST(x, OPEN)                    \
-  P2P_TEST(x, NAT_FULL_CONE)           \
-  P2P_TEST(x, NAT_ADDR_RESTRICTED)     \
-  P2P_TEST(x, NAT_PORT_RESTRICTED)     \
-  P2P_TEST(x, NAT_SYMMETRIC)           \
-  P2P_TEST(x, NAT_DOUBLE_CONE)         \
-  P2P_TEST(x, NAT_SYMMETRIC_THEN_CONE) \
-  P2P_TEST(x, BLOCK_UDP)               \
-  P2P_TEST(x, BLOCK_UDP_AND_INCOMING_TCP)
+#define P2P_TEST_SET(x)                    \
+  P2P_TEST(x, OPEN)                        \
+  P2P_TEST(x, NAT_FULL_CONE)               \
+  P2P_TEST(x, NAT_ADDR_RESTRICTED)         \
+  P2P_TEST(x, NAT_PORT_RESTRICTED)         \
+  P2P_TEST(x, NAT_SYMMETRIC)               \
+  P2P_TEST(x, NAT_DOUBLE_CONE)             \
+  P2P_TEST(x, NAT_SYMMETRIC_THEN_CONE)     \
+  P2P_TEST(x, BLOCK_UDP)                   \
+  P2P_TEST(x, BLOCK_UDP_AND_INCOMING_TCP)  \
+  P2P_TEST(x, BLOCK_ALL_BUT_OUTGOING_HTTP) \
+  P2P_TEST(x, PROXY_HTTPS)                 \
+  P2P_TEST(x, PROXY_SOCKS)
 
 P2P_TEST_SET(OPEN)
 P2P_TEST_SET(NAT_FULL_CONE)
@@ -1086,6 +1142,9 @@ P2P_TEST_SET(NAT_DOUBLE_CONE)
 P2P_TEST_SET(NAT_SYMMETRIC_THEN_CONE)
 P2P_TEST_SET(BLOCK_UDP)
 P2P_TEST_SET(BLOCK_UDP_AND_INCOMING_TCP)
+P2P_TEST_SET(BLOCK_ALL_BUT_OUTGOING_HTTP)
+P2P_TEST_SET(PROXY_HTTPS)
+P2P_TEST_SET(PROXY_SOCKS)
 
 // Test that we restart candidate allocation when local ufrag&pwd changed.
 // Standard Ice protocol is used.
@@ -1508,6 +1567,32 @@ TEST_F(P2PTransportChannelTest, IncomingOnlyOpen) {
   DestroyChannels();
 }
 
+// Test that two peers can connect when one can only make outgoing TCP
+// connections. This has been observed in some scenarios involving
+// VPNs/firewalls.
+TEST_F(P2PTransportChannelTest, CanOnlyMakeOutgoingTcpConnections) {
+  // The PORTALLOCATOR_ENABLE_ANY_ADDRESS_PORTS flag is required if the
+  // application needs this use case to work, since the application must accept
+  // the tradeoff that more candidates need to be allocated.
+  //
+  // TODO(deadbeef): Later, make this flag the default, and do more elegant
+  // things to ensure extra candidates don't waste resources?
+  ConfigureEndpoints(
+      OPEN, OPEN,
+      kDefaultPortAllocatorFlags | PORTALLOCATOR_ENABLE_ANY_ADDRESS_PORTS,
+      kDefaultPortAllocatorFlags);
+  // In order to simulate nothing working but outgoing TCP connections, prevent
+  // the endpoint from binding to its interface's address as well as the
+  // "any" addresses. It can then only make a connection by using "Connect()".
+  fw()->SetUnbindableIps({rtc::GetAnyIP(AF_INET), rtc::GetAnyIP(AF_INET6),
+                          kPublicAddrs[0].ipaddr()});
+  CreateChannels();
+  // Expect a "prflx" candidate on the side that can only make outgoing
+  // connections, endpoint 0.
+  Test(kPrflxTcpToLocalTcp);
+  DestroyChannels();
+}
+
 TEST_F(P2PTransportChannelTest, TestTcpConnectionsFromActiveToPassive) {
   rtc::ScopedFakeClock clock;
   AddAddress(0, kPublicAddrs[0]);
@@ -1650,8 +1735,10 @@ TEST_F(P2PTransportChannelTest, TestIPv6Connections) {
   SetAllocationStepDelay(1, kMinimumStepDelay);
 
   // Enable IPv6
-  SetAllocatorFlags(0, PORTALLOCATOR_ENABLE_IPV6);
-  SetAllocatorFlags(1, PORTALLOCATOR_ENABLE_IPV6);
+  SetAllocatorFlags(
+      0, PORTALLOCATOR_ENABLE_IPV6 | PORTALLOCATOR_ENABLE_IPV6_ON_WIFI);
+  SetAllocatorFlags(
+      1, PORTALLOCATOR_ENABLE_IPV6 | PORTALLOCATOR_ENABLE_IPV6_ON_WIFI);
 
   CreateChannels();
 
@@ -2196,8 +2283,10 @@ TEST_F(P2PTransportChannelMultihomedTest, TestFailoverWithManyConnections) {
   GetAllocator(0)->AddTurnServer(turn_server);
   GetAllocator(1)->AddTurnServer(turn_server);
   // Enable IPv6
-  SetAllocatorFlags(0, PORTALLOCATOR_ENABLE_IPV6);
-  SetAllocatorFlags(1, PORTALLOCATOR_ENABLE_IPV6);
+  SetAllocatorFlags(
+      0, PORTALLOCATOR_ENABLE_IPV6 | PORTALLOCATOR_ENABLE_IPV6_ON_WIFI);
+  SetAllocatorFlags(
+      1, PORTALLOCATOR_ENABLE_IPV6 | PORTALLOCATOR_ENABLE_IPV6_ON_WIFI);
   SetAllocationStepDelay(0, kMinimumStepDelay);
   SetAllocationStepDelay(1, kMinimumStepDelay);
 
@@ -2865,9 +2954,7 @@ class P2PTransportChannelPingTest : public testing::Test,
                                     public sigslot::has_slots<> {
  public:
   P2PTransportChannelPingTest()
-      : pss_(new rtc::PhysicalSocketServer),
-        vss_(new rtc::VirtualSocketServer(pss_.get())),
-        ss_scope_(vss_.get()) {}
+      : vss_(new rtc::VirtualSocketServer()), thread_(vss_.get()) {}
 
  protected:
   void PrepareChannel(P2PTransportChannel* ch) {
@@ -2977,13 +3064,14 @@ class P2PTransportChannelPingTest : public testing::Test,
                                uint32_t nomination = 0) {
     IceMessage msg;
     msg.SetType(STUN_BINDING_REQUEST);
-    msg.AddAttribute(new StunByteStringAttribute(
+    msg.AddAttribute(rtc::MakeUnique<StunByteStringAttribute>(
         STUN_ATTR_USERNAME,
         conn->local_candidate().username() + ":" + remote_ufrag));
-    msg.AddAttribute(new StunUInt32Attribute(STUN_ATTR_PRIORITY, priority));
+    msg.AddAttribute(
+        rtc::MakeUnique<StunUInt32Attribute>(STUN_ATTR_PRIORITY, priority));
     if (nomination != 0) {
-      msg.AddAttribute(
-          new StunUInt32Attribute(STUN_ATTR_NOMINATION, nomination));
+      msg.AddAttribute(rtc::MakeUnique<StunUInt32Attribute>(
+          STUN_ATTR_NOMINATION, nomination));
     }
     msg.SetTransactionID(rtc::CreateRandomString(kStunTransactionIdLength));
     msg.AddMessageIntegrity(conn->local_candidate().password());
@@ -3014,9 +3102,8 @@ class P2PTransportChannelPingTest : public testing::Test,
   }
 
  private:
-  std::unique_ptr<rtc::PhysicalSocketServer> pss_;
   std::unique_ptr<rtc::VirtualSocketServer> vss_;
-  rtc::SocketServerScope ss_scope_;
+  rtc::AutoSocketServerThread thread_;
   CandidatePairInterface* last_selected_candidate_pair_ = nullptr;
   int selected_candidate_pair_switches_ = 0;
   int last_sent_packet_id_ = -1;
@@ -3180,11 +3267,11 @@ TEST_F(P2PTransportChannelPingTest, PingingStartedAsSoonAsPossible) {
   // candidate pair while we still don't have remote ICE parameters.
   IceMessage request;
   request.SetType(STUN_BINDING_REQUEST);
-  request.AddAttribute(
-      new StunByteStringAttribute(STUN_ATTR_USERNAME, kIceUfrag[1]));
+  request.AddAttribute(rtc::MakeUnique<StunByteStringAttribute>(
+      STUN_ATTR_USERNAME, kIceUfrag[1]));
   uint32_t prflx_priority = ICE_TYPE_PREFERENCE_PRFLX << 24;
   request.AddAttribute(
-      new StunUInt32Attribute(STUN_ATTR_PRIORITY, prflx_priority));
+      rtc::MakeUnique<StunUInt32Attribute>(STUN_ATTR_PRIORITY, prflx_priority));
   Port* port = GetPort(&ch);
   ASSERT_NE(nullptr, port);
   port->SignalUnknownAddress(port, rtc::SocketAddress("1.1.1.1", 1), PROTO_UDP,
@@ -3349,11 +3436,11 @@ TEST_F(P2PTransportChannelPingTest, ConnectionResurrection) {
   // Create a minimal STUN message with prflx priority.
   IceMessage request;
   request.SetType(STUN_BINDING_REQUEST);
-  request.AddAttribute(
-      new StunByteStringAttribute(STUN_ATTR_USERNAME, kIceUfrag[1]));
+  request.AddAttribute(rtc::MakeUnique<StunByteStringAttribute>(
+      STUN_ATTR_USERNAME, kIceUfrag[1]));
   uint32_t prflx_priority = ICE_TYPE_PREFERENCE_PRFLX << 24;
   request.AddAttribute(
-      new StunUInt32Attribute(STUN_ATTR_PRIORITY, prflx_priority));
+      rtc::MakeUnique<StunUInt32Attribute>(STUN_ATTR_PRIORITY, prflx_priority));
   EXPECT_NE(prflx_priority, remote_priority);
 
   Port* port = GetPort(&ch);
@@ -3492,11 +3579,11 @@ TEST_F(P2PTransportChannelPingTest, TestSelectConnectionFromUnknownAddress) {
   // A minimal STUN message with prflx priority.
   IceMessage request;
   request.SetType(STUN_BINDING_REQUEST);
-  request.AddAttribute(
-      new StunByteStringAttribute(STUN_ATTR_USERNAME, kIceUfrag[1]));
+  request.AddAttribute(rtc::MakeUnique<StunByteStringAttribute>(
+      STUN_ATTR_USERNAME, kIceUfrag[1]));
   uint32_t prflx_priority = ICE_TYPE_PREFERENCE_PRFLX << 24;
   request.AddAttribute(
-      new StunUInt32Attribute(STUN_ATTR_PRIORITY, prflx_priority));
+      rtc::MakeUnique<StunUInt32Attribute>(STUN_ATTR_PRIORITY, prflx_priority));
   TestUDPPort* port = static_cast<TestUDPPort*>(GetPort(&ch));
   port->SignalUnknownAddress(port, rtc::SocketAddress("1.1.1.1", 1), PROTO_UDP,
                              &request, kIceUfrag[1], false);
@@ -3534,7 +3621,8 @@ TEST_F(P2PTransportChannelPingTest, TestSelectConnectionFromUnknownAddress) {
 
   // However if the request contains use_candidate attribute, it will be
   // selected as the selected connection.
-  request.AddAttribute(new StunByteStringAttribute(STUN_ATTR_USE_CANDIDATE));
+  request.AddAttribute(
+      rtc::MakeUnique<StunByteStringAttribute>(STUN_ATTR_USE_CANDIDATE));
   port->SignalUnknownAddress(port, rtc::SocketAddress("4.4.4.4", 4), PROTO_UDP,
                              &request, kIceUfrag[1], false);
   Connection* conn4 = WaitForConnectionTo(&ch, "4.4.4.4", 4);
@@ -3589,12 +3677,13 @@ TEST_F(P2PTransportChannelPingTest, TestSelectConnectionBasedOnMediaReceived) {
   // nominate the selected connection.
   IceMessage request;
   request.SetType(STUN_BINDING_REQUEST);
-  request.AddAttribute(
-      new StunByteStringAttribute(STUN_ATTR_USERNAME, kIceUfrag[1]));
+  request.AddAttribute(rtc::MakeUnique<StunByteStringAttribute>(
+      STUN_ATTR_USERNAME, kIceUfrag[1]));
   uint32_t prflx_priority = ICE_TYPE_PREFERENCE_PRFLX << 24;
   request.AddAttribute(
-      new StunUInt32Attribute(STUN_ATTR_PRIORITY, prflx_priority));
-  request.AddAttribute(new StunByteStringAttribute(STUN_ATTR_USE_CANDIDATE));
+      rtc::MakeUnique<StunUInt32Attribute>(STUN_ATTR_PRIORITY, prflx_priority));
+  request.AddAttribute(
+      rtc::MakeUnique<StunByteStringAttribute>(STUN_ATTR_USE_CANDIDATE));
   Port* port = GetPort(&ch);
   port->SignalUnknownAddress(port, rtc::SocketAddress("3.3.3.3", 3), PROTO_UDP,
                              &request, kIceUfrag[1], false);

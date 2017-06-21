@@ -12,6 +12,7 @@
 
 #include "webrtc/base/checks.h"
 
+namespace webrtc {
 namespace voetest {
 
 void LoudestFilter::RemoveTimeoutStreams(int64_t time_ms) {
@@ -78,4 +79,4 @@ bool LoudestFilter::ForwardThisPacket(const webrtc::RTPHeader& rtp_header) {
 }
 
 }  // namespace voetest
-
+}  // namespace webrtc

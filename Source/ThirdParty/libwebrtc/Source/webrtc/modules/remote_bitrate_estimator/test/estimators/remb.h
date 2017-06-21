@@ -70,9 +70,7 @@ class RembReceiver : public BweReceiver, public RemoteBitrateObserver {
   bool LatestEstimate(uint32_t* estimate_bps);
 
   std::string estimate_log_prefix_;
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
   bool plot_estimate_ = false;
-#endif
   SimulatedClock clock_;
   std::unique_ptr<ReceiveStatistics> recv_stats_;
   int64_t latest_estimate_bps_;

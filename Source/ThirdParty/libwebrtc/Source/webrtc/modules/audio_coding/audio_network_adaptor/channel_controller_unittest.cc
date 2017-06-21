@@ -39,7 +39,7 @@ void CheckDecision(ChannelController* controller,
     network_metrics.uplink_bandwidth_bps = uplink_bandwidth_bps;
     controller->UpdateNetworkMetrics(network_metrics);
   }
-  AudioNetworkAdaptor::EncoderRuntimeConfig config;
+  AudioEncoderRuntimeConfig config;
   controller->MakeDecision(&config);
   EXPECT_EQ(rtc::Optional<size_t>(expected_num_channels), config.num_channels);
 }

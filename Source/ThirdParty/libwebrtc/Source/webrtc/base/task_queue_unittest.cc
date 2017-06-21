@@ -8,6 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#if defined(WEBRTC_WIN)
+// clang-format off
+#include <windows.h>  // Must come first.
+#include <mmsystem.h>
+// clang-format on
+#endif
+
 #include <memory>
 #include <vector>
 
@@ -18,6 +25,26 @@
 #include "webrtc/base/timeutils.h"
 
 namespace rtc {
+namespace {
+// Noop on all platforms except Windows, where it turns on high precision
+// multimedia timers which increases the precision of TimeMillis() while in
+// scope.
+class EnableHighResTimers {
+ public:
+#if !defined(WEBRTC_WIN)
+  EnableHighResTimers() {}
+#else
+  EnableHighResTimers() : enabled_(timeBeginPeriod(1) == TIMERR_NOERROR) {}
+  ~EnableHighResTimers() {
+    if (enabled_)
+      timeEndPeriod(1);
+  }
+
+ private:
+  const bool enabled_;
+#endif
+};
+}
 
 namespace {
 void CheckCurrent(const char* expected_queue, Event* signal, TaskQueue* queue) {
@@ -115,6 +142,26 @@ TEST(TaskQueueTest, PostDelayed) {
   EXPECT_NEAR(end - start, 190u, 100u);  // Accept 90-290.
 }
 
+// This task needs to be run manually due to the slowness of some of our bots.
+// TODO(tommi): Can we run this on the perf bots?
+TEST(TaskQueueTest, DISABLED_PostDelayedHighRes) {
+  EnableHighResTimers high_res_scope;
+
+  static const char kQueueName[] = "PostDelayedHighRes";
+  Event event(false, false);
+  TaskQueue queue(kQueueName, TaskQueue::Priority::HIGH);
+
+  uint32_t start = Time();
+  queue.PostDelayedTask(Bind(&CheckCurrent, kQueueName, &event, &queue), 3);
+  EXPECT_TRUE(event.Wait(1000));
+  uint32_t end = TimeMillis();
+  // These tests are a little relaxed due to how "powerful" our test bots can
+  // be.  Most recently we've seen windows bots fire the callback after 94-99ms,
+  // which is why we have a little bit of leeway backwards as well.
+  EXPECT_GE(end - start, 3u);
+  EXPECT_NEAR(end - start, 3, 3u);
+}
+
 TEST(TaskQueueTest, PostMultipleDelayed) {
   static const char kQueueName[] = "PostMultipleDelayed";
   TaskQueue queue(kQueueName);
@@ -123,7 +170,7 @@ TEST(TaskQueueTest, PostMultipleDelayed) {
   for (int i = 0; i < 100; ++i) {
     events.push_back(std::unique_ptr<Event>(new Event(false, false)));
     queue.PostDelayedTask(
-        Bind(&CheckCurrent, kQueueName, events.back().get(), &queue), 10);
+        Bind(&CheckCurrent, kQueueName, events.back().get(), &queue), i);
   }
 
   for (const auto& e : events)

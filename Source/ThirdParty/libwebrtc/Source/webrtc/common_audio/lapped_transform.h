@@ -99,11 +99,11 @@ class LappedTransform {
    public:
     explicit BlockThunk(LappedTransform* parent) : parent_(parent) {}
 
- void ProcessBlock(const float* const* input,
-                              size_t num_frames,
-                              size_t num_input_channels,
-                              size_t num_output_channels,
-                              float* const* output) override;
+    void ProcessBlock(const float* const* input,
+                      size_t num_frames,
+                      size_t num_input_channels,
+                      size_t num_output_channels,
+                      float* const* output) override;
 
    private:
     LappedTransform* const parent_;

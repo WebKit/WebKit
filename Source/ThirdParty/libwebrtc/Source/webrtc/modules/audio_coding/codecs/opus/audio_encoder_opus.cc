@@ -12,11 +12,16 @@
 
 #include <algorithm>
 #include <iterator>
+#include <utility>
 
+#include "webrtc/base/arraysize.h"
 #include "webrtc/base/checks.h"
 #include "webrtc/base/logging.h"
 #include "webrtc/base/numerics/exp_filter.h"
+#include "webrtc/base/protobuf_utils.h"
 #include "webrtc/base/safe_conversions.h"
+#include "webrtc/base/safe_minmax.h"
+#include "webrtc/base/string_to_number.h"
 #include "webrtc/base/timeutils.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/audio_network_adaptor/audio_network_adaptor_impl.h"
@@ -28,38 +33,41 @@ namespace webrtc {
 
 namespace {
 
-constexpr int kSampleRateHz = 48000;
+// Codec parameters for Opus.
+// draft-spittka-payload-rtp-opus-03
+
+// Recommended bitrates:
+// 8-12 kb/s for NB speech,
+// 16-20 kb/s for WB speech,
+// 28-40 kb/s for FB speech,
+// 48-64 kb/s for FB mono music, and
+// 64-128 kb/s for FB stereo music.
+// The current implementation applies the following values to mono signals,
+// and multiplies them by 2 for stereo.
+constexpr int kOpusBitrateNbBps = 12000;
+constexpr int kOpusBitrateWbBps = 20000;
+constexpr int kOpusBitrateFbBps = 32000;
 
 // Opus API allows a min bitrate of 500bps, but Opus documentation suggests
-// a minimum bitrate of 6kbps.
-constexpr int kMinBitrateBps = 6000;
+// bitrate should be in the range of 6000 to 510000, inclusive.
+constexpr int kOpusMinBitrateBps = 6000;
+constexpr int kOpusMaxBitrateBps = 510000;
 
-constexpr int kMaxBitrateBps = 512000;
+constexpr int kSampleRateHz = 48000;
+constexpr int kDefaultMaxPlaybackRate = 48000;
 
+// These two lists must be sorted from low to high
 #if WEBRTC_OPUS_SUPPORT_120MS_PTIME
-constexpr int kSupportedFrameLengths[] = {20, 60, 120};
+constexpr int kANASupportedFrameLengths[] = {20, 60, 120};
+constexpr int kOpusSupportedFrameLengths[] = {10, 20, 40, 60, 120};
 #else
-constexpr int kSupportedFrameLengths[] = {20, 60};
+constexpr int kANASupportedFrameLengths[] = {20, 60};
+constexpr int kOpusSupportedFrameLengths[] = {10, 20, 40, 60};
 #endif
 
 // PacketLossFractionSmoother uses an exponential filter with a time constant
 // of -1.0 / ln(0.9999) = 10000 ms.
 constexpr float kAlphaForPacketLossFractionSmoother = 0.9999f;
-
-AudioEncoderOpus::Config CreateConfig(const CodecInst& codec_inst) {
-  AudioEncoderOpus::Config config;
-  config.frame_size_ms = rtc::CheckedDivExact(codec_inst.pacsize, 48);
-  config.num_channels = codec_inst.channels;
-  config.bitrate_bps = rtc::Optional<int>(codec_inst.rate);
-  config.payload_type = codec_inst.pltype;
-  config.application = config.num_channels == 1 ? AudioEncoderOpus::kVoip
-                                                : AudioEncoderOpus::kAudio;
-  config.supported_frame_lengths_ms.push_back(config.frame_size_ms);
-#if WEBRTC_OPUS_VARIABLE_COMPLEXITY
-  config.low_rate_complexity = 9;
-#endif
-  return config;
-}
 
 // Optimize the loss rate to configure Opus. Basically, optimized loss rate is
 // the input loss rate rounded down to various levels, because a robustly good
@@ -101,13 +109,185 @@ float OptimizePacketLossRate(float new_loss_rate, float old_loss_rate) {
   }
 }
 
+rtc::Optional<std::string> GetFormatParameter(const SdpAudioFormat& format,
+                                              const std::string& param) {
+  auto it = format.parameters.find(param);
+  return (it == format.parameters.end())
+             ? rtc::Optional<std::string>()
+             : rtc::Optional<std::string>(it->second);
+}
+
+template <typename T>
+rtc::Optional<T> GetFormatParameter(const SdpAudioFormat& format,
+                                    const std::string& param) {
+  return rtc::StringToNumber<T>(GetFormatParameter(format, param).value_or(""));
+}
+
+int CalculateDefaultBitrate(int max_playback_rate, size_t num_channels) {
+  const int bitrate = [&] {
+    if (max_playback_rate <= 8000) {
+      return kOpusBitrateNbBps * rtc::dchecked_cast<int>(num_channels);
+    } else if (max_playback_rate <= 16000) {
+      return kOpusBitrateWbBps * rtc::dchecked_cast<int>(num_channels);
+    } else {
+      return kOpusBitrateFbBps * rtc::dchecked_cast<int>(num_channels);
+    }
+  }();
+  RTC_DCHECK_GE(bitrate, kOpusMinBitrateBps);
+  RTC_DCHECK_LE(bitrate, kOpusMaxBitrateBps);
+  return bitrate;
+}
+
+// Get the maxaveragebitrate parameter in string-form, so we can properly figure
+// out how invalid it is and accurately log invalid values.
+int CalculateBitrate(int max_playback_rate_hz,
+                     size_t num_channels,
+                     rtc::Optional<std::string> bitrate_param) {
+  const int default_bitrate =
+      CalculateDefaultBitrate(max_playback_rate_hz, num_channels);
+
+  if (bitrate_param) {
+    const auto bitrate = rtc::StringToNumber<int>(*bitrate_param);
+    if (bitrate) {
+      const int chosen_bitrate =
+          std::max(kOpusMinBitrateBps, std::min(*bitrate, kOpusMaxBitrateBps));
+      if (bitrate != chosen_bitrate) {
+        LOG(LS_WARNING) << "Invalid maxaveragebitrate " << *bitrate
+                        << " clamped to " << chosen_bitrate;
+      }
+      return chosen_bitrate;
+    }
+    LOG(LS_WARNING) << "Invalid maxaveragebitrate \"" << *bitrate_param
+                    << "\" replaced by default bitrate " << default_bitrate;
+  }
+
+  return default_bitrate;
+}
+
+int GetChannelCount(const SdpAudioFormat& format) {
+  const auto param = GetFormatParameter(format, "stereo");
+  if (param == "1") {
+    return 2;
+  } else {
+    return 1;
+  }
+}
+
+int GetMaxPlaybackRate(const SdpAudioFormat& format) {
+  const auto param = GetFormatParameter<int>(format, "maxplaybackrate");
+  if (param && *param >= 8000) {
+    return std::min(*param, kDefaultMaxPlaybackRate);
+  }
+  return kDefaultMaxPlaybackRate;
+}
+
+int GetFrameSizeMs(const SdpAudioFormat& format) {
+  const auto ptime = GetFormatParameter<int>(format, "ptime");
+  if (ptime) {
+    // Pick the next highest supported frame length from
+    // kOpusSupportedFrameLengths.
+    for (const int supported_frame_length : kOpusSupportedFrameLengths) {
+      if (supported_frame_length >= *ptime) {
+        return supported_frame_length;
+      }
+    }
+    // If none was found, return the largest supported frame length.
+    return *(std::end(kOpusSupportedFrameLengths) - 1);
+  }
+
+  return AudioEncoderOpus::Config::kDefaultFrameSizeMs;
+}
+
+void FindSupportedFrameLengths(int min_frame_length_ms,
+                               int max_frame_length_ms,
+                               std::vector<int>* out) {
+  out->clear();
+  std::copy_if(std::begin(kANASupportedFrameLengths),
+               std::end(kANASupportedFrameLengths), std::back_inserter(*out),
+               [&](int frame_length_ms) {
+                 return frame_length_ms >= min_frame_length_ms &&
+                        frame_length_ms <= max_frame_length_ms;
+               });
+  RTC_DCHECK(std::is_sorted(out->begin(), out->end()));
+}
+
 }  // namespace
+
+rtc::Optional<AudioCodecInfo> AudioEncoderOpus::QueryAudioEncoder(
+    const SdpAudioFormat& format) {
+  if (STR_CASE_CMP(format.name.c_str(), GetPayloadName()) == 0 &&
+      format.clockrate_hz == 48000 && format.num_channels == 2) {
+    const size_t num_channels = GetChannelCount(format);
+    const int bitrate =
+        CalculateBitrate(GetMaxPlaybackRate(format), num_channels,
+                         GetFormatParameter(format, "maxaveragebitrate"));
+    AudioCodecInfo info(48000, num_channels, bitrate, kOpusMinBitrateBps,
+                        kOpusMaxBitrateBps);
+    info.allow_comfort_noise = false;
+    info.supports_network_adaption = true;
+
+    return rtc::Optional<AudioCodecInfo>(info);
+  }
+  return rtc::Optional<AudioCodecInfo>();
+}
+
+AudioEncoderOpus::Config AudioEncoderOpus::CreateConfig(
+    const CodecInst& codec_inst) {
+  AudioEncoderOpus::Config config;
+  config.frame_size_ms = rtc::CheckedDivExact(codec_inst.pacsize, 48);
+  config.num_channels = codec_inst.channels;
+  config.bitrate_bps = rtc::Optional<int>(codec_inst.rate);
+  config.payload_type = codec_inst.pltype;
+  config.application = config.num_channels == 1 ? AudioEncoderOpus::kVoip
+                                                : AudioEncoderOpus::kAudio;
+  config.supported_frame_lengths_ms.push_back(config.frame_size_ms);
+#if WEBRTC_OPUS_VARIABLE_COMPLEXITY
+  config.low_rate_complexity = 9;
+#endif
+  return config;
+}
+
+AudioEncoderOpus::Config AudioEncoderOpus::CreateConfig(
+    int payload_type,
+    const SdpAudioFormat& format) {
+  AudioEncoderOpus::Config config;
+
+  config.num_channels = GetChannelCount(format);
+  config.frame_size_ms = GetFrameSizeMs(format);
+  config.max_playback_rate_hz = GetMaxPlaybackRate(format);
+  config.fec_enabled = (GetFormatParameter(format, "useinbandfec") == "1");
+  config.dtx_enabled = (GetFormatParameter(format, "usedtx") == "1");
+  config.cbr_enabled = (GetFormatParameter(format, "cbr") == "1");
+  config.bitrate_bps = rtc::Optional<int>(
+      CalculateBitrate(config.max_playback_rate_hz, config.num_channels,
+                       GetFormatParameter(format, "maxaveragebitrate")));
+  config.payload_type = payload_type;
+  config.application = config.num_channels == 1 ? AudioEncoderOpus::kVoip
+                                                : AudioEncoderOpus::kAudio;
+#if WEBRTC_OPUS_VARIABLE_COMPLEXITY
+  config.low_rate_complexity = 9;
+#endif
+
+  constexpr int kMinANAFrameLength = kANASupportedFrameLengths[0];
+  constexpr int kMaxANAFrameLength =
+      kANASupportedFrameLengths[arraysize(kANASupportedFrameLengths) - 1];
+  // For now, minptime and maxptime are only used with ANA. If ptime is outside
+  // of this range, it will get adjusted once ANA takes hold. Ideally, we'd know
+  // if ANA was to be used when setting up the config, and adjust accordingly.
+  const int min_frame_length_ms =
+      GetFormatParameter<int>(format, "minptime").value_or(kMinANAFrameLength);
+  const int max_frame_length_ms =
+      GetFormatParameter<int>(format, "maxptime").value_or(kMaxANAFrameLength);
+
+  FindSupportedFrameLengths(min_frame_length_ms, max_frame_length_ms,
+                            &config.supported_frame_lengths_ms);
+  return config;
+}
 
 class AudioEncoderOpus::PacketLossFractionSmoother {
  public:
-  explicit PacketLossFractionSmoother(const Clock* clock)
-      : clock_(clock),
-        last_sample_time_ms_(clock_->TimeInMilliseconds()),
+  explicit PacketLossFractionSmoother()
+      : last_sample_time_ms_(rtc::TimeMillis()),
         smoother_(kAlphaForPacketLossFractionSmoother) {}
 
   // Gets the smoothed packet loss fraction.
@@ -118,14 +298,13 @@ class AudioEncoderOpus::PacketLossFractionSmoother {
 
   // Add new observation to the packet loss fraction smoother.
   void AddSample(float packet_loss_fraction) {
-    int64_t now_ms = clock_->TimeInMilliseconds();
+    int64_t now_ms = rtc::TimeMillis();
     smoother_.Apply(static_cast<float>(now_ms - last_sample_time_ms_),
                     packet_loss_fraction);
     last_sample_time_ms_ = now_ms;
   }
 
  private:
-  const Clock* const clock_;
   int64_t last_sample_time_ms_;
 
   // An exponential filter is used to smooth the packet loss fraction.
@@ -147,7 +326,7 @@ bool AudioEncoderOpus::Config::IsOk() const {
   if (num_channels != 1 && num_channels != 2)
     return false;
   if (bitrate_bps &&
-      (*bitrate_bps < kMinBitrateBps || *bitrate_bps > kMaxBitrateBps))
+      (*bitrate_bps < kOpusMinBitrateBps || *bitrate_bps > kOpusMaxBitrateBps))
     return false;
   if (complexity < 0 || complexity > 10)
     return false;
@@ -187,26 +366,28 @@ AudioEncoderOpus::AudioEncoderOpus(
           "WebRTC-SendSideBwe-WithOverhead")),
       packet_loss_rate_(0.0),
       inst_(nullptr),
-      packet_loss_fraction_smoother_(new PacketLossFractionSmoother(
-          config.clock)),
+      packet_loss_fraction_smoother_(new PacketLossFractionSmoother()),
       audio_network_adaptor_creator_(
           audio_network_adaptor_creator
               ? std::move(audio_network_adaptor_creator)
-              : [this](const std::string& config_string,
-                       RtcEventLog* event_log,
-                       const Clock* clock) {
+              : [this](const ProtoString& config_string,
+                       RtcEventLog* event_log) {
                   return DefaultAudioNetworkAdaptorCreator(config_string,
-                                                           event_log, clock);
+                                                           event_log);
               }),
       bitrate_smoother_(bitrate_smoother
           ? std::move(bitrate_smoother) : std::unique_ptr<SmoothingFilter>(
               // We choose 5sec as initial time constant due to empirical data.
-              new SmoothingFilterImpl(5000, config.clock))) {
+              new SmoothingFilterImpl(5000))) {
   RTC_CHECK(RecreateEncoderInstance(config));
 }
 
 AudioEncoderOpus::AudioEncoderOpus(const CodecInst& codec_inst)
     : AudioEncoderOpus(CreateConfig(codec_inst), nullptr) {}
+
+AudioEncoderOpus::AudioEncoderOpus(int payload_type,
+                                   const SdpAudioFormat& format)
+    : AudioEncoderOpus(CreateConfig(payload_type, format), nullptr) {}
 
 AudioEncoderOpus::~AudioEncoderOpus() {
   RTC_CHECK_EQ(0, WebRtcOpus_EncoderFree(inst_));
@@ -281,10 +462,9 @@ void AudioEncoderOpus::SetMaxPlaybackRate(int frequency_hz) {
 
 bool AudioEncoderOpus::EnableAudioNetworkAdaptor(
     const std::string& config_string,
-    RtcEventLog* event_log,
-    const Clock* clock) {
+    RtcEventLog* event_log) {
   audio_network_adaptor_ =
-      audio_network_adaptor_creator_(config_string, event_log, clock);
+      audio_network_adaptor_creator_(config_string, event_log);
   return audio_network_adaptor_.get() != nullptr;
 }
 
@@ -301,6 +481,15 @@ void AudioEncoderOpus::OnReceivedUplinkPacketLossFraction(
   }
   audio_network_adaptor_->SetUplinkPacketLossFraction(
       uplink_packet_loss_fraction);
+  ApplyAudioNetworkAdaptor();
+}
+
+void AudioEncoderOpus::OnReceivedUplinkRecoverablePacketLossFraction(
+    float uplink_recoverable_packet_loss_fraction) {
+  if (!audio_network_adaptor_)
+    return;
+  audio_network_adaptor_->SetUplinkRecoverablePacketLossFraction(
+      uplink_recoverable_packet_loss_fraction);
   ApplyAudioNetworkAdaptor();
 }
 
@@ -335,8 +524,8 @@ void AudioEncoderOpus::OnReceivedUplinkBandwidth(
     const int overhead_bps = static_cast<int>(
         *overhead_bytes_per_packet_ * 8 * 100 / Num10MsFramesInNextPacket());
     SetTargetBitrate(std::min(
-        kMaxBitrateBps,
-        std::max(kMinBitrateBps, target_audio_bitrate_bps - overhead_bps)));
+        kOpusMaxBitrateBps,
+        std::max(kOpusMinBitrateBps, target_audio_bitrate_bps - overhead_bps)));
   } else {
     SetTargetBitrate(target_audio_bitrate_bps);
   }
@@ -365,17 +554,8 @@ void AudioEncoderOpus::SetReceiverFrameLengthRange(int min_frame_length_ms,
   // |EnableAudioNetworkAdaptor|, otherwise we need to recreate
   // |audio_network_adaptor_|, which is not a needed use case.
   RTC_DCHECK(!audio_network_adaptor_);
-
-  config_.supported_frame_lengths_ms.clear();
-  std::copy_if(std::begin(kSupportedFrameLengths),
-               std::end(kSupportedFrameLengths),
-               std::back_inserter(config_.supported_frame_lengths_ms),
-               [&](int frame_length_ms) {
-                 return frame_length_ms >= min_frame_length_ms &&
-                        frame_length_ms <= max_frame_length_ms;
-               });
-  RTC_DCHECK(std::is_sorted(config_.supported_frame_lengths_ms.begin(),
-                            config_.supported_frame_lengths_ms.end()));
+  FindSupportedFrameLengths(min_frame_length_ms, max_frame_length_ms,
+                            &config_.supported_frame_lengths_ms);
 }
 
 AudioEncoder::EncodedInfo AudioEncoderOpus::EncodeImpl(
@@ -448,6 +628,7 @@ size_t AudioEncoderOpus::SufficientOutputBufferSize() const {
 bool AudioEncoderOpus::RecreateEncoderInstance(const Config& config) {
   if (!config.IsOk())
     return false;
+  config_ = config;
   if (inst_)
     RTC_CHECK_EQ(0, WebRtcOpus_EncoderFree(inst_));
   input_buffer_.clear();
@@ -474,8 +655,11 @@ bool AudioEncoderOpus::RecreateEncoderInstance(const Config& config) {
   RTC_CHECK_EQ(0,
                WebRtcOpus_SetPacketLossRate(
                    inst_, static_cast<int32_t>(packet_loss_rate_ * 100 + .5)));
-  config_ = config;
-
+  if (config.cbr_enabled) {
+    RTC_CHECK_EQ(0, WebRtcOpus_EnableCbr(inst_));
+  } else {
+    RTC_CHECK_EQ(0, WebRtcOpus_DisableCbr(inst_));
+  }
   num_channels_to_encode_ = NumChannels();
   next_frame_length_ms_ = config_.frame_size_ms;
   return true;
@@ -507,8 +691,8 @@ void AudioEncoderOpus::SetProjectedPacketLossRate(float fraction) {
 }
 
 void AudioEncoderOpus::SetTargetBitrate(int bits_per_second) {
-  config_.bitrate_bps = rtc::Optional<int>(
-      std::max(std::min(bits_per_second, kMaxBitrateBps), kMinBitrateBps));
+  config_.bitrate_bps = rtc::Optional<int>(rtc::SafeClamp<int>(
+      bits_per_second, kOpusMinBitrateBps, kOpusMaxBitrateBps));
   RTC_DCHECK(config_.IsOk());
   RTC_CHECK_EQ(0, WebRtcOpus_SetBitRate(inst_, config_.GetBitrateBps()));
   const auto new_complexity = config_.GetNewComplexity();
@@ -539,18 +723,16 @@ void AudioEncoderOpus::ApplyAudioNetworkAdaptor() {
 
 std::unique_ptr<AudioNetworkAdaptor>
 AudioEncoderOpus::DefaultAudioNetworkAdaptorCreator(
-    const std::string& config_string,
-    RtcEventLog* event_log,
-    const Clock* clock) const {
+    const ProtoString& config_string,
+    RtcEventLog* event_log) const {
   AudioNetworkAdaptorImpl::Config config;
-  config.clock = clock;
   config.event_log = event_log;
   return std::unique_ptr<AudioNetworkAdaptor>(new AudioNetworkAdaptorImpl(
       config,
       ControllerManagerImpl::Create(
           config_string, NumChannels(), supported_frame_lengths_ms(),
-          kMinBitrateBps, num_channels_to_encode_, next_frame_length_ms_,
-          GetTargetBitrate(), config_.fec_enabled, GetDtx(), clock)));
+          kOpusMinBitrateBps, num_channels_to_encode_, next_frame_length_ms_,
+          GetTargetBitrate(), config_.fec_enabled, GetDtx())));
 }
 
 void AudioEncoderOpus::MaybeUpdateUplinkBandwidth() {

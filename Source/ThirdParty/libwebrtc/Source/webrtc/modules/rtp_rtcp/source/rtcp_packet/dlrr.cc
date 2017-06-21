@@ -33,6 +33,12 @@ namespace rtcp {
 //  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ block
 //  :                               ...                             :   2
 
+Dlrr::Dlrr() = default;
+
+Dlrr::Dlrr(const Dlrr& other) = default;
+
+Dlrr::~Dlrr() = default;
+
 bool Dlrr::Parse(const uint8_t* buffer, uint16_t block_length_32bits) {
   RTC_DCHECK(buffer[0] == kBlockType);
   // kReserved = buffer[1];

@@ -8,36 +8,37 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extension.h"
+#include "webrtc/modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_packet_received.h"
 
 namespace webrtc {
 
-// We decide which header extensions to register by reading one byte
+// We decide which header extensions to register by reading two bytes
 // from the beginning of |data| and interpreting it as a bitmask over
-// the RTPExtensionType enum. This assert ensures one byte is enough.
-static_assert(kRtpExtensionNumberOfExtensions <= 8,
+// the RTPExtensionType enum. This assert ensures two bytes are enough.
+static_assert(kRtpExtensionNumberOfExtensions <= 16,
               "Insufficient bits read to configure all header extensions. Add "
               "an extra byte and update the switches.");
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  if (size <= 1)
+  if (size <= 2)
     return;
 
-  // Don't use the configuration byte as part of the packet.
-  std::bitset<8> extensionMask(data[0]);
-  data++;
-  size--;
+  // Don't use the configuration bytes as part of the packet.
+  std::bitset<16> extensionMask(*reinterpret_cast<const uint16_t*>(data));
+  data += 2;
+  size -= 2;
 
   RtpPacketReceived::ExtensionManager extensions;
-  for (int i = 0; i < kRtpExtensionNumberOfExtensions; i++) {
+  // Skip i = 0 since it maps to ExtensionNone and extension id = 0 is invalid.
+  for (int i = 1; i < kRtpExtensionNumberOfExtensions; i++) {
     RTPExtensionType extension_type = static_cast<RTPExtensionType>(i);
     if (extensionMask[i] && extension_type != kRtpExtensionNone) {
       // Extensions are registered with an ID, which you signal to the
       // peer so they know what to expect. This code only cares about
       // parsing so the value of the ID isn't relevant; we use i.
-      extensions.Register(extension_type, i);
+      extensions.RegisterByType(i, extension_type);
     }
   }
 
@@ -85,6 +86,24 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
         PlayoutDelay playout;
         packet.GetExtension<PlayoutDelayLimits>(&playout);
         break;
+      case kRtpExtensionVideoContentType:
+        VideoContentType content_type;
+        packet.GetExtension<VideoContentTypeExtension>(&content_type);
+        break;
+      case kRtpExtensionVideoTiming:
+        VideoTiming timing;
+        packet.GetExtension<VideoTimingExtension>(&timing);
+        break;
+      case kRtpExtensionRtpStreamId: {
+        std::string rsid;
+        packet.GetExtension<RtpStreamId>(&rsid);
+        break;
+      }
+      case kRtpExtensionRepairedRtpStreamId: {
+        std::string rsid;
+        packet.GetExtension<RepairedRtpStreamId>(&rsid);
+        break;
+      }
     }
   }
 }

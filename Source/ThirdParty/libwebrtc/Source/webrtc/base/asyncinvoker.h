@@ -100,52 +100,12 @@ class AsyncInvoker : public MessageHandler {
     DoInvokeDelayed(posted_from, thread, std::move(closure), delay_ms, id);
   }
 
-  // Call |functor| asynchronously on |thread|, calling |callback| when done.
-  // Uses a separate Location for |callback_posted_from| so that the functor
-  // invoke and the callback invoke can be differentiated.
-  template <class ReturnT, class FunctorT, class HostT>
-  void AsyncInvoke(const Location& posted_from,
-                   const Location& callback_posted_from,
-                   Thread* thread,
-                   const FunctorT& functor,
-                   void (HostT::*callback)(ReturnT),
-                   HostT* callback_host,
-                   uint32_t id = 0) {
-    std::unique_ptr<AsyncClosure> closure(
-        new NotifyingAsyncClosure<ReturnT, FunctorT, HostT>(
-            this, callback_posted_from, Thread::Current(), functor, callback,
-            callback_host));
-    DoInvoke(posted_from, thread, std::move(closure), id);
-  }
-
-  // Call |functor| asynchronously on |thread|, calling |callback| when done.
-  // Uses a separate Location for |callback_posted_from| so that the functor
-  // invoke and the callback invoke can be differentiated.
-  // Overloaded for void return.
-  template <class ReturnT, class FunctorT, class HostT>
-  void AsyncInvoke(const Location& posted_from,
-                   const Location& callback_posted_from,
-                   Thread* thread,
-                   const FunctorT& functor,
-                   void (HostT::*callback)(),
-                   HostT* callback_host,
-                   uint32_t id = 0) {
-    std::unique_ptr<AsyncClosure> closure(
-        new NotifyingAsyncClosure<void, FunctorT, HostT>(
-            this, callback_posted_from, Thread::Current(), functor, callback,
-            callback_host));
-    DoInvoke(posted_from, thread, std::move(closure), id);
-  }
-
   // Synchronously execute on |thread| all outstanding calls we own
   // that are pending on |thread|, and wait for calls to complete
   // before returning. Optionally filter by message id.
   // The destructor will not wait for outstanding calls, so if that
   // behavior is desired, call Flush() before destroying this object.
   void Flush(Thread* thread, uint32_t id = MQID_ANY);
-
-  // Signaled when this object is destructed.
-  sigslot::signal0<> SignalInvokerDestroyed;
 
  private:
   void OnMessage(Message* msg) override;

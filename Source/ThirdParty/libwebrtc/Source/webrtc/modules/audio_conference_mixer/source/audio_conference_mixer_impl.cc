@@ -13,7 +13,6 @@
 #include "webrtc/modules/audio_conference_mixer/source/audio_conference_mixer_impl.h"
 #include "webrtc/modules/audio_conference_mixer/source/audio_frame_manipulator.h"
 #include "webrtc/modules/audio_processing/include/audio_processing.h"
-#include "webrtc/system_wrappers/include/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/include/trace.h"
 
 namespace webrtc {
@@ -128,14 +127,6 @@ AudioConferenceMixerImpl::AudioConferenceMixerImpl(int id)
       _processCalls(0) {}
 
 bool AudioConferenceMixerImpl::Init() {
-    _crit.reset(CriticalSectionWrapper::CreateCriticalSection());
-    if (_crit.get() == NULL)
-        return false;
-
-    _cbCrit.reset(CriticalSectionWrapper::CreateCriticalSection());
-    if(_cbCrit.get() == NULL)
-        return false;
-
     Config config;
     config.Set<ExperimentalAgc>(new ExperimentalAgc(false));
     _limiter.reset(AudioProcessing::Create(config));
@@ -181,7 +172,7 @@ AudioConferenceMixerImpl::~AudioConferenceMixerImpl() {
 // Process should be called every kProcessPeriodicityInMs ms
 int64_t AudioConferenceMixerImpl::TimeUntilNextProcess() {
     int64_t timeUntilNextProcess = 0;
-    CriticalSectionScoped cs(_crit.get());
+    rtc::CritScope cs(&_crit);
     if(_timeScheduler.TimeToNextUpdate(timeUntilNextProcess) != 0) {
         WEBRTC_TRACE(kTraceError, kTraceAudioMixerServer, _id,
                      "failed in TimeToNextUpdate() call");
@@ -196,7 +187,7 @@ void AudioConferenceMixerImpl::Process() {
     size_t remainingParticipantsAllowedToMix =
         kMaximumAmountOfMixedParticipants;
     {
-        CriticalSectionScoped cs(_crit.get());
+        rtc::CritScope cs(&_crit);
         assert(_processCalls == 0);
         _processCalls++;
 
@@ -209,7 +200,7 @@ void AudioConferenceMixerImpl::Process() {
     AudioFrameList additionalFramesList;
     std::map<int, MixerParticipant*> mixedParticipantsMap;
     {
-        CriticalSectionScoped cs(_cbCrit.get());
+        rtc::CritScope cs(&_cbCrit);
 
         int32_t lowFreq = GetLowestMixingFrequency();
         // SILK can run in 12 kHz and 24 kHz. These frequencies are not
@@ -223,9 +214,9 @@ void AudioConferenceMixerImpl::Process() {
             lowFreq = 32000;
         }
         if(lowFreq <= 0) {
-            CriticalSectionScoped cs(_crit.get());
-            _processCalls--;
-            return;
+          rtc::CritScope cs(&_crit);
+          _processCalls--;
+          return;
         } else {
             switch(lowFreq) {
             case 8000:
@@ -251,7 +242,7 @@ void AudioConferenceMixerImpl::Process() {
             default:
                 assert(false);
 
-                CriticalSectionScoped cs(_crit.get());
+                rtc::CritScope cs(&_crit);
                 _processCalls--;
                 return;
             }
@@ -274,7 +265,7 @@ void AudioConferenceMixerImpl::Process() {
     }
 
     {
-        CriticalSectionScoped cs(_crit.get());
+        rtc::CritScope cs(&_crit);
 
         // TODO(henrike): it might be better to decide the number of channels
         //                with an API instead of dynamically.
@@ -311,7 +302,7 @@ void AudioConferenceMixerImpl::Process() {
     }
 
     {
-        CriticalSectionScoped cs(_cbCrit.get());
+        rtc::CritScope cs(&_cbCrit);
         if(_mixReceiver != NULL) {
             const AudioFrame** dummy = NULL;
             _mixReceiver->NewMixedAudio(
@@ -328,7 +319,7 @@ void AudioConferenceMixerImpl::Process() {
     ClearAudioFrameList(&rampOutList);
     ClearAudioFrameList(&additionalFramesList);
     {
-        CriticalSectionScoped cs(_crit.get());
+        rtc::CritScope cs(&_crit);
         _processCalls--;
     }
     return;
@@ -336,7 +327,7 @@ void AudioConferenceMixerImpl::Process() {
 
 int32_t AudioConferenceMixerImpl::RegisterMixedStreamCallback(
     AudioMixerOutputReceiver* mixReceiver) {
-    CriticalSectionScoped cs(_cbCrit.get());
+    rtc::CritScope cs(&_cbCrit);
     if(_mixReceiver != NULL) {
         return -1;
     }
@@ -345,7 +336,7 @@ int32_t AudioConferenceMixerImpl::RegisterMixedStreamCallback(
 }
 
 int32_t AudioConferenceMixerImpl::UnRegisterMixedStreamCallback() {
-    CriticalSectionScoped cs(_cbCrit.get());
+    rtc::CritScope cs(&_cbCrit);
     if(_mixReceiver == NULL) {
         return -1;
     }
@@ -355,7 +346,7 @@ int32_t AudioConferenceMixerImpl::UnRegisterMixedStreamCallback() {
 
 int32_t AudioConferenceMixerImpl::SetOutputFrequency(
     const Frequency& frequency) {
-    CriticalSectionScoped cs(_crit.get());
+    rtc::CritScope cs(&_crit);
 
     _outputFrequency = frequency;
     _sampleSize =
@@ -366,7 +357,7 @@ int32_t AudioConferenceMixerImpl::SetOutputFrequency(
 
 AudioConferenceMixer::Frequency
 AudioConferenceMixerImpl::OutputFrequency() const {
-    CriticalSectionScoped cs(_crit.get());
+    rtc::CritScope cs(&_crit);
     return _outputFrequency;
 }
 
@@ -379,7 +370,7 @@ int32_t AudioConferenceMixerImpl::SetMixabilityStatus(
     }
     size_t numMixedParticipants;
     {
-        CriticalSectionScoped cs(_cbCrit.get());
+        rtc::CritScope cs(&_cbCrit);
         const bool isMixed =
             IsParticipantInList(*participant, _participantList);
         // API must be called with a new state.
@@ -413,20 +404,20 @@ int32_t AudioConferenceMixerImpl::SetMixabilityStatus(
     // A MixerParticipant was added or removed. Make sure the scratch
     // buffer is updated if necessary.
     // Note: The scratch buffer may only be updated in Process().
-    CriticalSectionScoped cs(_crit.get());
+    rtc::CritScope cs(&_crit);
     _numMixedParticipants = numMixedParticipants;
     return 0;
 }
 
 bool AudioConferenceMixerImpl::MixabilityStatus(
     const MixerParticipant& participant) const {
-    CriticalSectionScoped cs(_cbCrit.get());
+    rtc::CritScope cs(&_cbCrit);
     return IsParticipantInList(participant, _participantList);
 }
 
 int32_t AudioConferenceMixerImpl::SetAnonymousMixabilityStatus(
     MixerParticipant* participant, bool anonymous) {
-    CriticalSectionScoped cs(_cbCrit.get());
+    rtc::CritScope cs(&_cbCrit);
     if(IsParticipantInList(*participant, _additionalParticipantList)) {
         if(anonymous) {
             return 0;
@@ -461,7 +452,7 @@ int32_t AudioConferenceMixerImpl::SetAnonymousMixabilityStatus(
 
 bool AudioConferenceMixerImpl::AnonymousMixabilityStatus(
     const MixerParticipant& participant) const {
-    CriticalSectionScoped cs(_cbCrit.get());
+    rtc::CritScope cs(&_cbCrit);
     return IsParticipantInList(participant, _additionalParticipantList);
 }
 
@@ -772,8 +763,7 @@ void AudioConferenceMixerImpl::UpdateMixedStatus(
         participant != _participantList.end();
          ++participant) {
         bool isMixed = false;
-        for (std::map<int, MixerParticipant*>::const_iterator it =
-                 mixedParticipantsMap.begin();
+        for (auto it = mixedParticipantsMap.begin();
              it != mixedParticipantsMap.end();
              ++it) {
           if (it->second == *participant) {

@@ -18,12 +18,9 @@
 #include "webrtc/test/testsupport/fileutils.h"
 #include "webrtc/voice_engine/test/auto_test/voe_test_common.h"
 
-#if defined(WEBRTC_ANDROID)
-extern char mobileLogMsg[640];
-#endif
-
 DECLARE_bool(include_timing_dependent_tests);
 
+namespace webrtc {
 namespace voetest {
 
 class SubAPIManager {
@@ -33,18 +30,14 @@ class SubAPIManager {
       _codec(false),
       _file(false),
       _hardware(false),
-      _netEqStats(false),
       _network(false),
       _rtp_rtcp(false),
-      _volumeControl(false),
       _apm(false) {
       _codec = true;
       _file = true;
       _hardware = true;
-      _netEqStats = true;
       _network = true;
       _rtp_rtcp = true;
-      _volumeControl = true;
       _apm = true;
   }
 
@@ -53,9 +46,10 @@ class SubAPIManager {
  private:
   bool _base, _codec;
   bool _file, _hardware;
-  bool _netEqStats, _network, _rtp_rtcp, _volumeControl, _apm;
+  bool _network, _rtp_rtcp, _apm;
 };
 
 }  // namespace voetest
+}  // namespace webrtc
 
 #endif // WEBRTC_VOICE_ENGINE_VOE_STANDARD_TEST_H

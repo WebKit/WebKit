@@ -53,7 +53,7 @@ void CheckExpectedBufferSizes(size_t src_length,
   RTC_DCHECK_GE(dst_capacity, dst_size_10ms);
 #endif
 }
-}
+}  // namespace
 
 template <typename T>
 PushResampler<T>::PushResampler()

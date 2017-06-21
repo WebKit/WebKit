@@ -38,8 +38,8 @@ enum VideoMetricsType { kPSNR, kSSIM, kBoth };
 
 // Calculates metrics for a frame and adds statistics to the result for it.
 void CalculateFrame(VideoMetricsType video_metrics_type,
-                    const VideoFrameBuffer& ref,
-                    const VideoFrameBuffer& test,
+                    const I420BufferInterface& ref,
+                    const I420BufferInterface& test,
                     int frame_number,
                     QualityMetricsResult* result) {
   FrameResult frame_result = {0, 0};

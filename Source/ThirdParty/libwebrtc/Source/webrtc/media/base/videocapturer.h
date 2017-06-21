@@ -20,12 +20,6 @@
 #include <string>
 #include <vector>
 
-// TODO(nisse): Transition hack, some downstream applications expect that
-// including this file declares I420Buffer and NativeHandleBuffer. Delete after
-// users of these classes are fixed to include the right headers.
-#include "webrtc/api/video/i420_buffer.h"
-#include "webrtc/common_video/include/video_frame_buffer.h"
-
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/media/base/videosourceinterface.h"

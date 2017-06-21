@@ -18,10 +18,10 @@ typedef struct WebRtcG722DecInst G722DecInst;
 
 namespace webrtc {
 
-class AudioDecoderG722 final : public AudioDecoder {
+class AudioDecoderG722Impl final : public AudioDecoder {
  public:
-  AudioDecoderG722();
-  ~AudioDecoderG722() override;
+  AudioDecoderG722Impl();
+  ~AudioDecoderG722Impl() override;
   bool HasDecodePlc() const override;
   void Reset() override;
   std::vector<ParseResult> ParsePayload(rtc::Buffer&& payload,
@@ -39,7 +39,7 @@ class AudioDecoderG722 final : public AudioDecoder {
 
  private:
   G722DecInst* dec_state_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(AudioDecoderG722);
+  RTC_DISALLOW_COPY_AND_ASSIGN(AudioDecoderG722Impl);
 };
 
 class AudioDecoderG722Stereo final : public AudioDecoder {

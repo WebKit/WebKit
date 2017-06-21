@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * It has id<RTCVideoRenderer> property that renders video frames in the view's
  * bounds using Metal.
+ * NOTE: always check if metal is available on the running device via
+ * RTC_SUPPORTS_METAL macro before initializing this class.
  */
 NS_CLASS_AVAILABLE_IOS(9)
 

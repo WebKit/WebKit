@@ -6,11 +6,8 @@ stefan@webrtc.org
 tina.legrand@webrtc.org
 tommi@webrtc.org
 
-
-# These are for the common case of adding or renaming files. If you're doing
-# structural changes, please get a review from a reviewer in this file.
-per-file *.gn=*
-per-file *.gni=*
+per-file *.gn=kjellander@webrtc.org
+per-file *.gni=kjellander@webrtc.org
 
 per-file *video*.h=pbos@webrtc.org
 per-file DEPS=kjellander@webrtc.org

@@ -15,6 +15,7 @@
 
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/call/flexfec_receive_stream.h"
+#include "webrtc/call/rtp_packet_sink_interface.h"
 
 namespace webrtc {
 
@@ -26,7 +27,8 @@ class RtcpRttStats;
 class RtpPacketReceived;
 class RtpRtcp;
 
-class FlexfecReceiveStreamImpl : public FlexfecReceiveStream {
+class FlexfecReceiveStreamImpl : public FlexfecReceiveStream,
+                                 public RtpPacketSinkInterface {
  public:
   FlexfecReceiveStreamImpl(const Config& config,
                            RecoveredPacketReceiver* recovered_packet_receiver,
@@ -36,8 +38,8 @@ class FlexfecReceiveStreamImpl : public FlexfecReceiveStream {
 
   const Config& GetConfig() const { return config_; }
 
-  // TODO(nisse): Intended to be part of an RtpPacketReceiver interface.
-  void OnRtpPacket(const RtpPacketReceived& packet);
+  // RtpPacketSinkInterface.
+  void OnRtpPacket(const RtpPacketReceived& packet) override;
 
   // Implements FlexfecReceiveStream.
   void Start() override;

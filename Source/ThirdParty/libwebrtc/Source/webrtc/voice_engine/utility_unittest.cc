@@ -47,12 +47,13 @@ class UtilityTest : public ::testing::Test {
 // used so non-integer values result in rounding error, but not an accumulating
 // error.
 void SetMonoFrame(float data, int sample_rate_hz, AudioFrame* frame) {
-  memset(frame->data_, 0, sizeof(frame->data_));
+  frame->Mute();
   frame->num_channels_ = 1;
   frame->sample_rate_hz_ = sample_rate_hz;
   frame->samples_per_channel_ = rtc::CheckedDivExact(sample_rate_hz, 100);
+  int16_t* frame_data = frame->mutable_data();
   for (size_t i = 0; i < frame->samples_per_channel_; i++) {
-    frame->data_[i] = static_cast<int16_t>(data * i);
+    frame_data[i] = static_cast<int16_t>(data * i);
   }
 }
 
@@ -67,13 +68,14 @@ void SetStereoFrame(float left,
                     float right,
                     int sample_rate_hz,
                     AudioFrame* frame) {
-  memset(frame->data_, 0, sizeof(frame->data_));
+  frame->Mute();
   frame->num_channels_ = 2;
   frame->sample_rate_hz_ = sample_rate_hz;
   frame->samples_per_channel_ = rtc::CheckedDivExact(sample_rate_hz, 100);
+  int16_t* frame_data = frame->mutable_data();
   for (size_t i = 0; i < frame->samples_per_channel_; i++) {
-    frame->data_[i * 2] = static_cast<int16_t>(left * i);
-    frame->data_[i * 2 + 1] = static_cast<int16_t>(right * i);
+    frame_data[i * 2] = static_cast<int16_t>(left * i);
+    frame_data[i * 2 + 1] = static_cast<int16_t>(right * i);
   }
 }
 
@@ -90,15 +92,16 @@ void SetQuadFrame(float ch1,
                   float ch4,
                   int sample_rate_hz,
                   AudioFrame* frame) {
-  memset(frame->data_, 0, sizeof(frame->data_));
+  frame->Mute();
   frame->num_channels_ = 4;
   frame->sample_rate_hz_ = sample_rate_hz;
   frame->samples_per_channel_ = rtc::CheckedDivExact(sample_rate_hz, 100);
+  int16_t* frame_data = frame->mutable_data();
   for (size_t i = 0; i < frame->samples_per_channel_; i++) {
-    frame->data_[i * 4] = static_cast<int16_t>(ch1 * i);
-    frame->data_[i * 4 + 1] = static_cast<int16_t>(ch2 * i);
-    frame->data_[i * 4 + 2] = static_cast<int16_t>(ch3 * i);
-    frame->data_[i * 4 + 3] = static_cast<int16_t>(ch4 * i);
+    frame_data[i * 4] = static_cast<int16_t>(ch1 * i);
+    frame_data[i * 4 + 1] = static_cast<int16_t>(ch2 * i);
+    frame_data[i * 4 + 2] = static_cast<int16_t>(ch3 * i);
+    frame_data[i * 4 + 3] = static_cast<int16_t>(ch4 * i);
   }
 }
 
@@ -119,11 +122,13 @@ float ComputeSNR(const AudioFrame& ref_frame, const AudioFrame& test_frame,
   for (size_t delay = 0; delay <= max_delay; delay++) {
     float mse = 0;
     float variance = 0;
+    const int16_t* ref_frame_data = ref_frame.data();
+    const int16_t* test_frame_data = test_frame.data();
     for (size_t i = 0; i < ref_frame.samples_per_channel_ *
         ref_frame.num_channels_ - delay; i++) {
-      int error = ref_frame.data_[i] - test_frame.data_[i + delay];
+      int error = ref_frame_data[i] - test_frame_data[i + delay];
       mse += error * error;
-      variance += ref_frame.data_[i] * ref_frame.data_[i];
+      variance += ref_frame_data[i] * ref_frame_data[i];
     }
     float snr = 100;  // We assign 100 dB to the zero-error case.
     if (mse > 0)
@@ -140,9 +145,11 @@ float ComputeSNR(const AudioFrame& ref_frame, const AudioFrame& test_frame,
 void VerifyFramesAreEqual(const AudioFrame& ref_frame,
                           const AudioFrame& test_frame) {
   VerifyParams(ref_frame, test_frame);
+  const int16_t* ref_frame_data = ref_frame.data();
+  const int16_t* test_frame_data  = test_frame.data();
   for (size_t i = 0;
        i < ref_frame.samples_per_channel_ * ref_frame.num_channels_; i++) {
-    EXPECT_EQ(ref_frame.data_[i], test_frame.data_[i]);
+    EXPECT_EQ(ref_frame_data[i], test_frame_data[i]);
   }
 }
 

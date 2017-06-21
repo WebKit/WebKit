@@ -61,6 +61,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
   int max_target_bitrate_kbps;
   int64_t last_encode_time_ms;
   size_t num_encoded_bytes;
+  VideoCodecMode mode;
   {
     rtc::CritScope cs(&crit_sect_);
     max_framerate = config_.maxFramerate;
@@ -73,6 +74,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     max_target_bitrate_kbps = max_target_bitrate_kbps_;
     last_encode_time_ms = last_encode_time_ms_;
     num_encoded_bytes = sizeof(encoded_buffer_);
+    mode = config_.mode;
   }
 
   int64_t time_now_ms = clock_->TimeInMilliseconds();
@@ -142,7 +144,11 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     encoded._encodedWidth = simulcast_streams[i].width;
     encoded._encodedHeight = simulcast_streams[i].height;
     encoded.rotation_ = input_image.rotation();
+    encoded.content_type_ = (mode == kScreensharing)
+                                ? VideoContentType::SCREENSHARE
+                                : VideoContentType::UNSPECIFIED;
     specifics.codec_name = ImplementationName();
+    specifics.codecSpecific.generic.simulcast_idx = i;
     RTC_DCHECK(callback);
     if (callback->OnEncodedImage(encoded, &specifics, nullptr).error !=
         EncodedImageCallback::Result::OK) {

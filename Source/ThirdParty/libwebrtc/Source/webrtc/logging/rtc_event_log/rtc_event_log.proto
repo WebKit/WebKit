@@ -45,49 +45,50 @@ message Event {
   // required - Indicates the type of this event
   optional EventType type = 2;
 
-  // optional - but required if type == RTP_EVENT
-  optional RtpPacket rtp_packet = 3;
+  oneof subtype {
+    // required if type == RTP_EVENT
+    RtpPacket rtp_packet = 3;
 
-  // optional - but required if type == RTCP_EVENT
-  optional RtcpPacket rtcp_packet = 4;
+    // required if type == RTCP_EVENT
+    RtcpPacket rtcp_packet = 4;
 
-  // optional - but required if type == AUDIO_PLAYOUT_EVENT
-  optional AudioPlayoutEvent audio_playout_event = 5;
+    // required if type == AUDIO_PLAYOUT_EVENT
+    AudioPlayoutEvent audio_playout_event = 5;
 
-  // optional - but required if type == LOSS_BASED_BWE_UPDATE
-  optional LossBasedBweUpdate loss_based_bwe_update = 6;
+    // required if type == LOSS_BASED_BWE_UPDATE
+    LossBasedBweUpdate loss_based_bwe_update = 6;
 
-  // optional - but required if type == DELAY_BASED_BWE_UPDATE
-  optional DelayBasedBweUpdate delay_based_bwe_update = 7;
+    // required if type == DELAY_BASED_BWE_UPDATE
+    DelayBasedBweUpdate delay_based_bwe_update = 7;
 
-  // optional - but required if type == VIDEO_RECEIVER_CONFIG_EVENT
-  optional VideoReceiveConfig video_receiver_config = 8;
+    // required if type == VIDEO_RECEIVER_CONFIG_EVENT
+    VideoReceiveConfig video_receiver_config = 8;
 
-  // optional - but required if type == VIDEO_SENDER_CONFIG_EVENT
-  optional VideoSendConfig video_sender_config = 9;
+    // required if type == VIDEO_SENDER_CONFIG_EVENT
+    VideoSendConfig video_sender_config = 9;
 
-  // optional - but required if type == AUDIO_RECEIVER_CONFIG_EVENT
-  optional AudioReceiveConfig audio_receiver_config = 10;
+    // required if type == AUDIO_RECEIVER_CONFIG_EVENT
+    AudioReceiveConfig audio_receiver_config = 10;
 
-  // optional - but required if type == AUDIO_SENDER_CONFIG_EVENT
-  optional AudioSendConfig audio_sender_config = 11;
+    // required if type == AUDIO_SENDER_CONFIG_EVENT
+    AudioSendConfig audio_sender_config = 11;
 
-  // optional - but required if type == AUDIO_NETWORK_ADAPTATION_EVENT
-  optional AudioNetworkAdaptation audio_network_adaptation = 16;
+    // required if type == AUDIO_NETWORK_ADAPTATION_EVENT
+    AudioNetworkAdaptation audio_network_adaptation = 16;
 
-  // optional - but required if type == BWE_PROBE_CLUSTER_CREATED_EVENT
-  optional BweProbeCluster probe_cluster = 17;
+    // required if type == BWE_PROBE_CLUSTER_CREATED_EVENT
+    BweProbeCluster probe_cluster = 17;
 
-  // optional - but required if type == BWE_PROBE_RESULT_EVENT
-  optional BweProbeResult probe_result = 18;
+    // required if type == BWE_PROBE_RESULT_EVENT
+    BweProbeResult probe_result = 18;
+  }
 }
 
 message RtpPacket {
   // required - True if the packet is incoming w.r.t. the user logging the data
   optional bool incoming = 1;
 
-  // required
-  optional MediaType type = 2;
+  optional MediaType type = 2 [deprecated = true];
 
   // required - The size of the packet including both payload and header.
   optional uint32 packet_length = 3;
@@ -105,8 +106,7 @@ message RtcpPacket {
   // required - True if the packet is incoming w.r.t. the user logging the data
   optional bool incoming = 1;
 
-  // required
-  optional MediaType type = 2;
+  optional MediaType type = 2 [deprecated = true];
 
   // required - The whole packet including both payload and header.
   optional bytes packet_data = 3;

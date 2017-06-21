@@ -11,11 +11,13 @@
 #include "webrtc/ortc/ortcfactory.h"
 
 #include <sstream>
-#include <vector>
 #include <utility>  // For std::move.
+#include <vector>
 
-#include "webrtc/api/proxy.h"
+#include "webrtc/api/audio_codecs/builtin_audio_decoder_factory.h"
+#include "webrtc/api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "webrtc/api/mediastreamtrackproxy.h"
+#include "webrtc/api/proxy.h"
 #include "webrtc/api/rtcerror.h"
 #include "webrtc/api/videosourceproxy.h"
 #include "webrtc/base/asyncpacketsocket.h"
@@ -25,7 +27,6 @@
 #include "webrtc/base/logging.h"
 #include "webrtc/logging/rtc_event_log/rtc_event_log.h"
 #include "webrtc/media/base/mediaconstants.h"
-#include "webrtc/modules/audio_coding/codecs/builtin_audio_decoder_factory.h"
 #include "webrtc/ortc/ortcrtpreceiveradapter.h"
 #include "webrtc/ortc/ortcrtpsenderadapter.h"
 #include "webrtc/ortc/rtpparametersconversion.h"
@@ -33,9 +34,9 @@
 #include "webrtc/ortc/rtptransportcontrolleradapter.h"
 #include "webrtc/p2p/base/basicpacketsocketfactory.h"
 #include "webrtc/p2p/base/udptransport.h"
+#include "webrtc/pc/audiotrack.h"
 #include "webrtc/pc/channelmanager.h"
 #include "webrtc/pc/localaudiosource.h"
-#include "webrtc/pc/audiotrack.h"
 #include "webrtc/pc/videocapturertracksource.h"
 #include "webrtc/pc/videotrack.h"
 
@@ -78,6 +79,14 @@ PROXY_METHOD4(RTCErrorOr<std::unique_ptr<RtpTransportInterface>>,
               PacketTransportInterface*,
               PacketTransportInterface*,
               RtpTransportControllerInterface*)
+
+PROXY_METHOD4(RTCErrorOr<std::unique_ptr<SrtpTransportInterface>>,
+              CreateSrtpTransport,
+              const RtcpParameters&,
+              PacketTransportInterface*,
+              PacketTransportInterface*,
+              RtpTransportControllerInterface*)
+
 PROXY_CONSTMETHOD1(RtpCapabilities,
                    GetRtpSenderCapabilities,
                    cricket::MediaType)
@@ -160,6 +169,7 @@ OrtcFactory::OrtcFactory(rtc::Thread* network_thread,
       socket_factory_(socket_factory),
       adm_(adm),
       null_event_log_(RtcEventLog::CreateNull()),
+      audio_encoder_factory_(CreateBuiltinAudioEncoderFactory()),
       audio_decoder_factory_(CreateBuiltinAudioDecoderFactory()) {
   if (!rtc::CreateRandomString(kDefaultRtcpCnameLength, &default_cname_)) {
     LOG(LS_ERROR) << "Failed to generate CNAME?";
@@ -239,6 +249,43 @@ OrtcFactory::CreateRtpTransport(
         controller->GetInternal()->CreateProxiedRtpTransport(copied_parameters,
                                                              rtp, rtcp);
     // If RtpTransport was successfully created, transfer ownership of
+    // |rtp_transport_controller|. Otherwise it will go out of scope and be
+    // deleted automatically.
+    if (transport_result.ok()) {
+      transport_result.value()
+          ->GetInternal()
+          ->TakeOwnershipOfRtpTransportController(std::move(controller));
+    }
+    return transport_result;
+  }
+}
+
+RTCErrorOr<std::unique_ptr<SrtpTransportInterface>>
+OrtcFactory::CreateSrtpTransport(
+    const RtcpParameters& rtcp_parameters,
+    PacketTransportInterface* rtp,
+    PacketTransportInterface* rtcp,
+    RtpTransportControllerInterface* transport_controller) {
+  RTC_DCHECK_RUN_ON(signaling_thread_);
+  RtcpParameters copied_parameters = rtcp_parameters;
+  if (copied_parameters.cname.empty()) {
+    copied_parameters.cname = default_cname_;
+  }
+  if (transport_controller) {
+    return transport_controller->GetInternal()->CreateProxiedSrtpTransport(
+        copied_parameters, rtp, rtcp);
+  } else {
+    // If |transport_controller| is null, create one automatically, which the
+    // returned SrtpTransport will own.
+    auto controller_result = CreateRtpTransportController();
+    if (!controller_result.ok()) {
+      return controller_result.MoveError();
+    }
+    auto controller = controller_result.MoveValue();
+    auto transport_result =
+        controller->GetInternal()->CreateProxiedSrtpTransport(copied_parameters,
+                                                              rtp, rtcp);
+    // If SrtpTransport was successfully created, transfer ownership of
     // |rtp_transport_controller|. Otherwise it will go out of scope and be
     // deleted automatically.
     if (transport_result.ok()) {
@@ -497,8 +544,9 @@ OrtcFactory::CreateMediaEngine_w() {
   // Note that |adm_| may be null, in which case the platform-specific default
   // AudioDeviceModule will be used.
   return std::unique_ptr<cricket::MediaEngineInterface>(
-      cricket::WebRtcMediaEngineFactory::Create(adm_, audio_decoder_factory_,
-                                                nullptr, nullptr, nullptr));
+      cricket::WebRtcMediaEngineFactory::Create(adm_, audio_encoder_factory_,
+                                                audio_decoder_factory_, nullptr,
+                                                nullptr, nullptr));
 }
 
 }  // namespace webrtc

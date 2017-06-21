@@ -103,8 +103,8 @@ public class EglRendererTest {
 
   @Before
   public void setUp() throws Exception {
-    PeerConnectionFactory.initializeAndroidGlobals(InstrumentationRegistry.getTargetContext(),
-        true /* initializeAudio */, true /* initializeVideo */, true /* videoHwAcceleration */);
+    PeerConnectionFactory.initializeAndroidGlobals(
+        InstrumentationRegistry.getTargetContext(), true /* videoHwAcceleration */);
     eglRenderer = new EglRenderer("TestRenderer: ");
     eglRenderer.init(null /* sharedContext */, EglBase.CONFIG_RGBA, new GlRectDrawer());
     oesTextureId = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES);
@@ -305,6 +305,34 @@ public class EglRendererTest {
       feedFrame(1);
     }
     // Check the frame listener hasn't triggered.
+    assertFalse(testFrameListener.waitForBitmap(RENDER_WAIT_MS));
+  }
+
+  @Test
+  @SmallTest
+  public void testFrameListenersFpsReduction() throws Exception {
+    // Test that normal frame listeners receive frames while the renderer is paused.
+    eglRenderer.pauseVideo();
+    eglRenderer.addFrameListener(testFrameListener, 1f /* scaleFactor */);
+    feedFrame(0);
+    assertTrue(testFrameListener.waitForBitmap(RENDER_WAIT_MS));
+    checkBitmapContent(testFrameListener.resetAndGetBitmap(), 0);
+
+    // Test that frame listeners with FPS reduction applied receive frames while the renderer is not
+    // paused.
+    eglRenderer.disableFpsReduction();
+    eglRenderer.addFrameListener(
+        testFrameListener, 1f /* scaleFactor */, null, true /* applyFpsReduction */);
+    feedFrame(1);
+    assertTrue(testFrameListener.waitForBitmap(RENDER_WAIT_MS));
+    checkBitmapContent(testFrameListener.resetAndGetBitmap(), 1);
+
+    // Test that frame listeners with FPS reduction applied will not receive frames while the
+    // renderer is paused.
+    eglRenderer.pauseVideo();
+    eglRenderer.addFrameListener(
+        testFrameListener, 1f /* scaleFactor */, null, true /* applyFpsReduction */);
+    feedFrame(1);
     assertFalse(testFrameListener.waitForBitmap(RENDER_WAIT_MS));
   }
 }

@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "webrtc/base/ignore_wundef.h"
+#include "webrtc/base/protobuf_utils.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
 #include "webrtc/modules/audio_processing/debug.pb.h"
@@ -26,7 +27,7 @@ namespace webrtc {
 size_t ReadMessageBytesFromFile(FILE* file, std::unique_ptr<uint8_t[]>* bytes);
 
 // Returns true on success, false on error or end-of-file.
-bool ReadMessageFromFile(FILE* file, ::google::protobuf::MessageLite* msg);
+bool ReadMessageFromFile(FILE* file, MessageLite* msg);
 
 }  // namespace webrtc
 

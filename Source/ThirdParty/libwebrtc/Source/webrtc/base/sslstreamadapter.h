@@ -38,9 +38,7 @@ const int SRTP_AEAD_AES_128_GCM = 0x0007;
 const int SRTP_AEAD_AES_256_GCM = 0x0008;
 #endif
 
-// Cipher suite to use for SRTP. Typically a 80-bit HMAC will be used, except
-// in applications (voice) where the additional bandwidth may be significant.
-// A 80-bit HMAC is always used for SRTCP.
+// Names of SRTP profiles listed above.
 // 128-bit AES with 80-bit SHA-1 HMAC.
 extern const char CS_AES_CM_128_HMAC_SHA1_80[];
 // 128-bit AES with 32-bit SHA-1 HMAC.
@@ -81,6 +79,11 @@ struct CryptoOptions {
   // if both sides enable it.
   bool enable_gcm_crypto_suites = false;
 };
+
+// Returns supported crypto suites, given |crypto_options|.
+// CS_AES_CM_128_HMAC_SHA1_32 will be preferred by default.
+std::vector<int> GetSupportedDtlsSrtpCryptoSuites(
+    const rtc::CryptoOptions& crypto_options);
 
 // SSLStreamAdapter : A StreamInterfaceAdapter that does SSL/TLS.
 // After SSL has been started, the stream will only open on successful

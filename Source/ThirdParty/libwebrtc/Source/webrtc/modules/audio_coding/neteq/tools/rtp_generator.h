@@ -12,7 +12,7 @@
 #define WEBRTC_MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
 
 #include "webrtc/base/constructormagic.h"
-#include "webrtc/modules/include/module_common_types.h"
+#include "webrtc/common_types.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -41,7 +41,7 @@ class RtpGenerator {
   // |payload_length_samples| determines the send time for the next packet.
   virtual uint32_t GetRtpHeader(uint8_t payload_type,
                                 size_t payload_length_samples,
-                                WebRtcRTPHeader* rtp_header);
+                                RTPHeader* rtp_header);
 
   void set_drift_factor(double factor);
 
@@ -70,7 +70,7 @@ class TimestampJumpRtpGenerator : public RtpGenerator {
 
   uint32_t GetRtpHeader(uint8_t payload_type,
                         size_t payload_length_samples,
-                        WebRtcRTPHeader* rtp_header) override;
+                        RTPHeader* rtp_header) override;
 
  private:
   uint32_t jump_from_timestamp_;

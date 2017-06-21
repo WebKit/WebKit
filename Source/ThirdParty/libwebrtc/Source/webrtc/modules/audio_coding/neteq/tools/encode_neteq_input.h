@@ -13,7 +13,7 @@
 
 #include <memory>
 
-#include "webrtc/modules/audio_coding/codecs/audio_encoder.h"
+#include "webrtc/api/audio_codecs/audio_encoder.h"
 #include "webrtc/modules/audio_coding/neteq/tools/neteq_input.h"
 #include "webrtc/modules/include/module_common_types.h"
 

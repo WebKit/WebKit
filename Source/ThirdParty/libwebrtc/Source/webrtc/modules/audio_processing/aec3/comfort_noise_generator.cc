@@ -188,6 +188,17 @@ void ComfortNoiseGenerator::Compute(
     }
   }
 
+  // Limit the noise to a floor of -96 dBFS.
+  constexpr float kNoiseFloor = 440.f;
+  for (auto& n : N2_) {
+    n = std::max(n, kNoiseFloor);
+  }
+  if (N2_initial_) {
+    for (auto& n : *N2_initial_) {
+      n = std::max(n, kNoiseFloor);
+    }
+  }
+
   // Choose N2 estimate to use.
   const std::array<float, kFftLengthBy2Plus1>& N2 =
       N2_initial_ ? *N2_initial_ : N2_;

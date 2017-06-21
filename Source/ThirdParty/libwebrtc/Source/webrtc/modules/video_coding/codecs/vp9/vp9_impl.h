@@ -107,7 +107,6 @@ class VP9EncoderImpl : public VP9Encoder {
   VideoCodec codec_;
   bool inited_;
   int64_t timestamp_;
-  uint16_t picture_id_;
   int cpu_speed_;
   uint32_t rc_max_intra_target_;
   vpx_codec_ctx_t* encoder_;
@@ -117,7 +116,6 @@ class VP9EncoderImpl : public VP9Encoder {
   const VideoFrame* input_image_;
   GofInfoVP9 gof_;       // Contains each frame's temporal information for
                          // non-flexible mode.
-  uint8_t tl0_pic_idx_;  // Only used in non-flexible mode.
   size_t frames_since_kf_;
   uint8_t num_temporal_layers_;
   uint8_t num_spatial_layers_;
@@ -129,6 +127,10 @@ class VP9EncoderImpl : public VP9Encoder {
   uint8_t num_ref_pics_[kMaxVp9NumberOfSpatialLayers];
   uint8_t p_diff_[kMaxVp9NumberOfSpatialLayers][kMaxVp9RefPics];
   std::unique_ptr<ScreenshareLayersVP9> spatial_layer_;
+
+  // RTP state.
+  uint16_t picture_id_;
+  uint8_t tl0_pic_idx_;  // Only used in non-flexible mode.
 };
 
 class VP9DecoderImpl : public VP9Decoder {

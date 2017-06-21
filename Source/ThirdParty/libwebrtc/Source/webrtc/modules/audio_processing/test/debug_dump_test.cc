@@ -14,7 +14,9 @@
 #include <string>
 #include <vector>
 
+#include "webrtc/base/task_queue.h"
 #include "webrtc/modules/audio_coding/neteq/tools/resample_input_audio_file.h"
+#include "webrtc/modules/audio_processing/aec_dump/aec_dump_factory.h"
 #include "webrtc/modules/audio_processing/test/debug_dump_replayer.h"
 #include "webrtc/modules/audio_processing/test/test_utils.h"
 #include "webrtc/test/gtest.h"
@@ -104,6 +106,7 @@ class DebugDumpGenerator {
   std::unique_ptr<ChannelBuffer<float>> reverse_;
   std::unique_ptr<ChannelBuffer<float>> output_;
 
+  rtc::TaskQueue worker_queue_;
   std::unique_ptr<AudioProcessing> apm_;
 
   const std::string dump_file_name_;
@@ -130,9 +133,9 @@ DebugDumpGenerator::DebugDumpGenerator(const std::string& input_file_name,
                                         reverse_config_.num_channels())),
       output_(new ChannelBuffer<float>(output_config_.num_frames(),
                                        output_config_.num_channels())),
+      worker_queue_("debug_dump_generator_worker_queue"),
       apm_(AudioProcessing::Create(config)),
-      dump_file_name_(dump_file_name) {
-}
+      dump_file_name_(dump_file_name) {}
 
 DebugDumpGenerator::DebugDumpGenerator(
     const Config& config,
@@ -187,7 +190,8 @@ void DebugDumpGenerator::SetOutputChannels(int channels) {
 }
 
 void DebugDumpGenerator::StartRecording() {
-  apm_->StartDebugRecording(dump_file_name_.c_str(), -1);
+  apm_->AttachAecDump(
+      AecDumpFactory::Create(dump_file_name_.c_str(), -1, &worker_queue_));
 }
 
 void DebugDumpGenerator::Process(size_t num_blocks) {
@@ -211,7 +215,7 @@ void DebugDumpGenerator::Process(size_t num_blocks) {
 }
 
 void DebugDumpGenerator::StopRecording() {
-  apm_->StopDebugRecording();
+  apm_->DetachAecDump();
 }
 
 void DebugDumpGenerator::ReadAndDeinterleave(ResampleInputAudioFile* audio,

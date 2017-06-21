@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <limits>
 #include "webrtc/base/checks.h"
+#include "webrtc/base/safe_conversions.h"
+#include "webrtc/base/string_to_number.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/audio_coding/codecs/ilbc/ilbc.h"
 
@@ -27,6 +29,34 @@ AudioEncoderIlbc::Config CreateConfig(const CodecInst& codec_inst) {
   config.frame_size_ms = codec_inst.pacsize / 8;
   config.payload_type = codec_inst.pltype;
   return config;
+}
+
+AudioEncoderIlbc::Config CreateConfig(int payload_type,
+                                      const SdpAudioFormat& format) {
+  AudioEncoderIlbc::Config config;
+  config.payload_type = payload_type;
+  auto ptime_iter = format.parameters.find("ptime");
+  if (ptime_iter != format.parameters.end()) {
+    auto ptime = rtc::StringToNumber<int>(ptime_iter->second);
+    if (ptime && *ptime > 0) {
+      const int whole_packets = *ptime / 10;
+      config.frame_size_ms = std::max(20, std::min(whole_packets * 10, 60));
+    }
+  }
+  return config;
+}
+
+int GetIlbcBitrate(int ptime) {
+  switch (ptime) {
+    case 20: case 40:
+      // 38 bytes per frame of 20 ms => 15200 bits/s.
+      return 15200;
+    case 30: case 60:
+      // 50 bytes per frame of 30 ms => (approx) 13333 bits/s.
+      return 13333;
+    default:
+      RTC_FATAL();
+  }
 }
 
 }  // namespace
@@ -52,6 +82,24 @@ AudioEncoderIlbc::AudioEncoderIlbc(const Config& config)
 AudioEncoderIlbc::AudioEncoderIlbc(const CodecInst& codec_inst)
     : AudioEncoderIlbc(CreateConfig(codec_inst)) {}
 
+AudioEncoderIlbc::AudioEncoderIlbc(int payload_type,
+                                   const SdpAudioFormat& format)
+    : AudioEncoderIlbc(CreateConfig(payload_type, format)) {}
+
+rtc::Optional<AudioCodecInfo> AudioEncoderIlbc::QueryAudioEncoder(
+    const SdpAudioFormat& format) {
+  if (STR_CASE_CMP(format.name.c_str(), GetPayloadName()) == 0 &&
+      format.clockrate_hz == 8000 && format.num_channels == 1) {
+    Config config = CreateConfig(0, format);
+    if (config.IsOk()) {
+      return rtc::Optional<AudioCodecInfo>(
+          {kSampleRateHz, 1, GetIlbcBitrate(config.frame_size_ms)});
+    }
+  }
+
+  return rtc::Optional<AudioCodecInfo>();
+}
+
 AudioEncoderIlbc::~AudioEncoderIlbc() {
   RTC_CHECK_EQ(0, WebRtcIlbcfix_EncoderFree(encoder_));
 }
@@ -73,16 +121,8 @@ size_t AudioEncoderIlbc::Max10MsFramesInAPacket() const {
 }
 
 int AudioEncoderIlbc::GetTargetBitrate() const {
-  switch (num_10ms_frames_per_packet_) {
-    case 2: case 4:
-      // 38 bytes per frame of 20 ms => 15200 bits/s.
-      return 15200;
-    case 3: case 6:
-      // 50 bytes per frame of 30 ms => (approx) 13333 bits/s.
-      return 13333;
-    default:
-      RTC_FATAL();
-  }
+  return GetIlbcBitrate(rtc::dchecked_cast<int>(num_10ms_frames_per_packet_) *
+                        10);
 }
 
 AudioEncoder::EncodedInfo AudioEncoderIlbc::EncodeImpl(

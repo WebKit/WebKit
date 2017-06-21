@@ -21,8 +21,8 @@ class CommonHeader;
 class App : public RtcpPacket {
  public:
   static constexpr uint8_t kPacketType = 204;
-  App() : sub_type_(0), ssrc_(0), name_(0) {}
-  ~App() override {}
+  App();
+  ~App() override;
 
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& packet);
@@ -38,7 +38,8 @@ class App : public RtcpPacket {
   size_t data_size() const { return data_.size(); }
   const uint8_t* data() const { return data_.data(); }
 
- protected:
+  size_t BlockLength() const override;
+
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
@@ -47,9 +48,6 @@ class App : public RtcpPacket {
  private:
   static constexpr size_t kAppBaseLength = 8;  // Ssrc and Name.
   static constexpr size_t kMaxDataSize = 0xffff * 4 - kAppBaseLength;
-  size_t BlockLength() const override {
-    return kHeaderLength + kAppBaseLength + data_.size();
-  }
 
   uint8_t sub_type_;
   uint32_t ssrc_;

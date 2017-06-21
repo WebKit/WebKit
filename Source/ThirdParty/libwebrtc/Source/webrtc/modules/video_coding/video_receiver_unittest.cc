@@ -21,6 +21,7 @@
 #include "webrtc/test/gtest.h"
 
 using ::testing::_;
+using ::testing::AnyNumber;
 using ::testing::NiceMock;
 
 namespace webrtc {
@@ -45,6 +46,13 @@ class TestVideoReceiver : public ::testing::Test {
     VideoCodingModule::Codec(kVideoCodecVP8, &settings_);
     settings_.plType = kUnusedPayloadType;  // Use the mocked encoder.
     EXPECT_EQ(0, receiver_->RegisterReceiveCodec(&settings_, 1, true));
+
+    // Since we call Decode, we need to provide a valid receive callback.
+    // However, for the purposes of these tests, we ignore the callbacks.
+    EXPECT_CALL(receive_callback_, OnIncomingPayloadType(_)).Times(AnyNumber());
+    EXPECT_CALL(receive_callback_, OnDecoderImplementationName(_))
+        .Times(AnyNumber());
+    receiver_->RegisterReceiveCallback(&receive_callback_);
   }
 
   void InsertAndVerifyPaddingFrame(const uint8_t* payload,
@@ -79,6 +87,7 @@ class TestVideoReceiver : public ::testing::Test {
   NiceMock<MockPacketRequestCallback> packet_request_callback_;
 
   std::unique_ptr<VCMTiming> timing_;
+  MockVCMReceiveCallback receive_callback_;
   std::unique_ptr<VideoReceiver> receiver_;
 };
 

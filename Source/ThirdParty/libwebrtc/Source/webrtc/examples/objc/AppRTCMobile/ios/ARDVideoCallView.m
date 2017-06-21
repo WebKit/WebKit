@@ -31,7 +31,6 @@ static CGFloat const kStatusBarHeight = 20;
   UIButton *_cameraSwitchButton;
   UIButton *_hangupButton;
   CGSize _remoteVideoSize;
-  BOOL _useRearCamera;
 }
 
 @synthesize statusLabel = _statusLabel;

@@ -52,7 +52,8 @@ std::vector<int64_t> TimestampsMs(
 
 class MockPacketRouter : public PacketRouter {
  public:
-  MOCK_METHOD1(SendFeedback, bool(rtcp::TransportFeedback* feedback_packet));
+  MOCK_METHOD1(SendTransportFeedback,
+               bool(rtcp::TransportFeedback* feedback_packet));
 };
 
 class RemoteEstimatorProxyTest : public ::testing::Test {
@@ -82,7 +83,7 @@ class RemoteEstimatorProxyTest : public ::testing::Test {
 TEST_F(RemoteEstimatorProxyTest, SendsSinglePacketFeedback) {
   IncomingPacket(kBaseSeq, kBaseTimeMs);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq, feedback_packet->GetBaseSequence());
         EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
@@ -99,7 +100,7 @@ TEST_F(RemoteEstimatorProxyTest, DuplicatedPackets) {
   IncomingPacket(kBaseSeq, kBaseTimeMs);
   IncomingPacket(kBaseSeq, kBaseTimeMs + 1000);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq, feedback_packet->GetBaseSequence());
         EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
@@ -116,13 +117,13 @@ TEST_F(RemoteEstimatorProxyTest, FeedbackWithMissingStart) {
   // First feedback.
   IncomingPacket(kBaseSeq, kBaseTimeMs);
   IncomingPacket(kBaseSeq + 1, kBaseTimeMs + 1000);
-  EXPECT_CALL(router_, SendFeedback(_)).WillOnce(Return(true));
+  EXPECT_CALL(router_, SendTransportFeedback(_)).WillOnce(Return(true));
   Process();
 
   // Second feedback starts with a missing packet (DROP kBaseSeq + 2).
   IncomingPacket(kBaseSeq + 3, kBaseTimeMs + 3000);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq + 2, feedback_packet->GetBaseSequence());
         EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
@@ -142,7 +143,7 @@ TEST_F(RemoteEstimatorProxyTest, SendsFeedbackWithVaryingDeltas) {
   IncomingPacket(kBaseSeq + 1, kBaseTimeMs + kMaxSmallDeltaMs);
   IncomingPacket(kBaseSeq + 2, kBaseTimeMs + (2 * kMaxSmallDeltaMs) + 1);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq, feedback_packet->GetBaseSequence());
         EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
@@ -165,7 +166,7 @@ TEST_F(RemoteEstimatorProxyTest, SendsFragmentedFeedback) {
   IncomingPacket(kBaseSeq, kBaseTimeMs);
   IncomingPacket(kBaseSeq + 1, kBaseTimeMs + kTooLargeDelta);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq, feedback_packet->GetBaseSequence());
         EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
@@ -194,7 +195,7 @@ TEST_F(RemoteEstimatorProxyTest, GracefullyHandlesReorderingAndWrap) {
   IncomingPacket(kBaseSeq, kBaseTimeMs);
   IncomingPacket(kLargeSeq, kBaseTimeMs + kDeltaMs);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq, feedback_packet->GetBaseSequence());
         EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
@@ -210,7 +211,7 @@ TEST_F(RemoteEstimatorProxyTest, ResendsTimestampsOnReordering) {
   IncomingPacket(kBaseSeq, kBaseTimeMs);
   IncomingPacket(kBaseSeq + 2, kBaseTimeMs + 2);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq, feedback_packet->GetBaseSequence());
         EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
@@ -226,7 +227,7 @@ TEST_F(RemoteEstimatorProxyTest, ResendsTimestampsOnReordering) {
 
   IncomingPacket(kBaseSeq + 1, kBaseTimeMs + 1);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq + 1, feedback_packet->GetBaseSequence());
         EXPECT_EQ(kMediaSsrc, feedback_packet->media_ssrc());
@@ -247,7 +248,7 @@ TEST_F(RemoteEstimatorProxyTest, RemovesTimestampsOutOfScope) {
 
   IncomingPacket(kBaseSeq + 2, kBaseTimeMs);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(Invoke([](rtcp::TransportFeedback* feedback_packet) {
         EXPECT_EQ(kBaseSeq + 2, feedback_packet->GetBaseSequence());
 
@@ -259,7 +260,7 @@ TEST_F(RemoteEstimatorProxyTest, RemovesTimestampsOutOfScope) {
 
   IncomingPacket(kBaseSeq + 3, kTimeoutTimeMs);  // kBaseSeq + 2 times out here.
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(
           Invoke([kTimeoutTimeMs](rtcp::TransportFeedback* feedback_packet) {
             EXPECT_EQ(kBaseSeq + 3, feedback_packet->GetBaseSequence());
@@ -276,7 +277,7 @@ TEST_F(RemoteEstimatorProxyTest, RemovesTimestampsOutOfScope) {
   IncomingPacket(kBaseSeq, kBaseTimeMs - 1);
   IncomingPacket(kBaseSeq + 1, kTimeoutTimeMs - 1);
 
-  EXPECT_CALL(router_, SendFeedback(_))
+  EXPECT_CALL(router_, SendTransportFeedback(_))
       .WillOnce(
           Invoke([kTimeoutTimeMs](rtcp::TransportFeedback* feedback_packet) {
             EXPECT_EQ(kBaseSeq, feedback_packet->GetBaseSequence());

@@ -272,13 +272,42 @@ TEST_F(TransportControllerTest, TestIceRoleConflict) {
 }
 
 TEST_F(TransportControllerTest, TestGetSslRole) {
-  FakeDtlsTransport* transport = CreateFakeDtlsTransport("audio", 1);
-  ASSERT_NE(nullptr, transport);
-  ASSERT_TRUE(transport->SetSslRole(rtc::SSL_CLIENT));
   rtc::SSLRole role;
-  EXPECT_FALSE(transport_controller_->GetSslRole("video", &role));
+  CreateFakeDtlsTransport("audio", 1);
+
+  // Should return false before role has been negotiated.
+  EXPECT_FALSE(transport_controller_->GetSslRole("audio", &role));
+
+  // To negotiate an SSL role, need to set a local certificate, and
+  // local/remote transport descriptions with DTLS info.
+  rtc::scoped_refptr<rtc::RTCCertificate> certificate =
+      rtc::RTCCertificate::Create(std::unique_ptr<rtc::SSLIdentity>(
+          rtc::SSLIdentity::Generate("testing", rtc::KT_ECDSA)));
+  std::unique_ptr<rtc::SSLFingerprint> fingerprint(
+      rtc::SSLFingerprint::CreateFromCertificate(certificate));
+  transport_controller_->SetLocalCertificate(certificate);
+
+  // Set the same fingerprint on both sides since the remote fingerprint
+  // doesn't really matter for this test.
+  TransportDescription local_desc(std::vector<std::string>(), kIceUfrag1,
+                                  kIcePwd1, ICEMODE_FULL,
+                                  CONNECTIONROLE_ACTPASS, fingerprint.get());
+  TransportDescription remote_desc(std::vector<std::string>(), kIceUfrag2,
+                                   kIcePwd2, ICEMODE_FULL,
+                                   CONNECTIONROLE_ACTIVE, fingerprint.get());
+  std::string err;
+  EXPECT_TRUE(transport_controller_->SetLocalTransportDescription(
+      "audio", local_desc, cricket::CA_OFFER, &err));
+  EXPECT_TRUE(transport_controller_->SetRemoteTransportDescription(
+      "audio", remote_desc, cricket::CA_ANSWER, &err));
+
+  // Finally we can get the role. Should be "server" since the remote
+  // endpoint's role was "active".
   EXPECT_TRUE(transport_controller_->GetSslRole("audio", &role));
-  EXPECT_EQ(rtc::SSL_CLIENT, role);
+  EXPECT_EQ(rtc::SSL_SERVER, role);
+
+  // Lastly, test that GetSslRole returns false for a nonexistent transport.
+  EXPECT_FALSE(transport_controller_->GetSslRole("video", &role));
 }
 
 TEST_F(TransportControllerTest, TestSetAndGetLocalCertificate) {
@@ -803,6 +832,37 @@ TEST_F(TransportControllerTest, TestSetRemoteIceLiteInAnswer) {
   // After receiving remote description with ICEMODE_LITE, transport should
   // have mode set to ICEMODE_LITE.
   EXPECT_EQ(ICEMODE_LITE, transport->fake_ice_transport()->remote_ice_mode());
+}
+
+// Tests that the ICE role remains "controlling" if a subsequent offer that
+// does an ICE restart is received from an ICE lite endpoint. Regression test
+// for: https://crbug.com/710760
+TEST_F(TransportControllerTest,
+       IceRoleIsControllingAfterIceRestartFromIceLiteEndpoint) {
+  FakeDtlsTransport* transport = CreateFakeDtlsTransport("audio", 1);
+  ASSERT_NE(nullptr, transport);
+  std::string err;
+
+  // Initial offer/answer.
+  TransportDescription remote_desc(std::vector<std::string>(), kIceUfrag1,
+                                   kIcePwd1, ICEMODE_LITE,
+                                   CONNECTIONROLE_ACTPASS, nullptr);
+  TransportDescription local_desc(kIceUfrag1, kIcePwd1);
+  ASSERT_TRUE(transport_controller_->SetRemoteTransportDescription(
+      "audio", remote_desc, CA_OFFER, &err));
+  ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
+      "audio", local_desc, CA_ANSWER, nullptr));
+  // Subsequent ICE restart offer/answer.
+  remote_desc.ice_ufrag = kIceUfrag2;
+  remote_desc.ice_pwd = kIcePwd2;
+  local_desc.ice_ufrag = kIceUfrag2;
+  local_desc.ice_pwd = kIcePwd2;
+  ASSERT_TRUE(transport_controller_->SetRemoteTransportDescription(
+      "audio", remote_desc, CA_OFFER, &err));
+  ASSERT_TRUE(transport_controller_->SetLocalTransportDescription(
+      "audio", local_desc, CA_ANSWER, nullptr));
+
+  EXPECT_EQ(ICEROLE_CONTROLLING, transport->fake_ice_transport()->GetIceRole());
 }
 
 // Tests SetNeedsIceRestartFlag and NeedsIceRestart, setting the flag and then

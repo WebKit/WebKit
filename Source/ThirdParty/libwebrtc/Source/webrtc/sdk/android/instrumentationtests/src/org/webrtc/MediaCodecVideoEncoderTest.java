@@ -30,6 +30,7 @@ import org.webrtc.MediaCodecVideoEncoder.OutputBufferInfo;
 @RunWith(BaseJUnit4ClassRunner.class)
 public class MediaCodecVideoEncoderTest {
   final static String TAG = "MediaCodecVideoEncoderTest";
+  final static int profile = MediaCodecVideoEncoder.H264Profile.CONSTRAINED_BASELINE.getValue();
 
   @Test
   @SmallTest
@@ -40,7 +41,7 @@ public class MediaCodecVideoEncoderTest {
     }
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
     assertTrue(encoder.initEncode(
-        MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, 640, 480, 300, 30, null));
+        MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile, 640, 480, 300, 30, null));
     encoder.release();
   }
 
@@ -53,8 +54,8 @@ public class MediaCodecVideoEncoderTest {
     }
     EglBase14 eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
-    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, 640, 480,
-        300, 30, eglBase.getEglBaseContext()));
+    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
+        640, 480, 300, 30, eglBase.getEglBaseContext()));
     encoder.release();
     eglBase.release();
   }
@@ -68,11 +69,11 @@ public class MediaCodecVideoEncoderTest {
     }
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
     assertTrue(encoder.initEncode(
-        MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, 640, 480, 300, 30, null));
+        MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile, 640, 480, 300, 30, null));
     encoder.release();
     EglBase14 eglBase = new EglBase14(null, EglBase.CONFIG_PLAIN);
-    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, 640, 480,
-        300, 30, eglBase.getEglBaseContext()));
+    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
+        640, 480, 300, 30, eglBase.getEglBaseContext()));
     encoder.release();
     eglBase.release();
   }
@@ -92,8 +93,8 @@ public class MediaCodecVideoEncoderTest {
 
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
 
-    assertTrue(encoder.initEncode(
-        MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, width, height, 300, 30, null));
+    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
+        width, height, 300, 30, null));
     ByteBuffer[] inputBuffers = encoder.getInputBuffers();
     assertNotNull(inputBuffers);
     assertTrue(min_size <= inputBuffers[0].capacity());
@@ -144,8 +145,8 @@ public class MediaCodecVideoEncoderTest {
 
     MediaCodecVideoEncoder encoder = new MediaCodecVideoEncoder();
 
-    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, width,
-        height, 300, 30, eglOesBase.getEglBaseContext()));
+    assertTrue(encoder.initEncode(MediaCodecVideoEncoder.VideoCodecType.VIDEO_CODEC_VP8, profile,
+        width, height, 300, 30, eglOesBase.getEglBaseContext()));
     assertTrue(
         encoder.encodeTexture(true, oesTextureId, RendererCommon.identityMatrix(), presentationTs));
     GlUtil.checkNoGLES2Error("encodeTexture");

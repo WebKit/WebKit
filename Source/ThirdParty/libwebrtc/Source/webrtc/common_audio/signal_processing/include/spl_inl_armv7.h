@@ -13,8 +13,8 @@
  * the fix point signal processing library.
  */
 
-#ifndef WEBRTC_SPL_SPL_INL_ARMV7_H_
-#define WEBRTC_SPL_SPL_INL_ARMV7_H_
+#ifndef WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_ARMV7_H_
+#define WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_ARMV7_H_
 
 /* TODO(kma): Replace some assembly code with GCC intrinsics
  * (e.g. __builtin_clz).
@@ -88,8 +88,7 @@ static __inline int16_t WebRtcSpl_NormW32(int32_t a) {
 
   if (a == 0) {
     return 0;
-  }
-  else if (a < 0) {
+  } else if (a < 0) {
     a ^= 0xFFFFFFFF;
   }
 
@@ -114,8 +113,7 @@ static __inline int16_t WebRtcSpl_NormW16(int16_t a) {
 
   if (a_32 == 0) {
     return 0;
-  }
-  else if (a_32 < 0) {
+  } else if (a_32 < 0) {
     a_32 ^= 0xFFFFFFFF;
   }
 
@@ -133,4 +131,4 @@ static __inline int16_t WebRtcSpl_SatW32ToW16(int32_t value32) {
   return (int16_t)out;
 }
 
-#endif  // WEBRTC_SPL_SPL_INL_ARMV7_H_
+#endif  // WEBRTC_COMMON_AUDIO_SIGNAL_PROCESSING_INCLUDE_SPL_INL_ARMV7_H_

@@ -7,6 +7,10 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
 
 rtc_static_library("audio") {
   sources = [
@@ -31,10 +35,14 @@ rtc_static_library("audio") {
     "..:webrtc_common",
     "../api:audio_mixer_api",
     "../api:call_api",
+    "../api/audio_codecs:audio_codecs_api",
+    "../api/audio_codecs:builtin_audio_encoder_factory",
     "../base:rtc_base_approved",
     "../base:rtc_task_queue",
     "../call:call_interfaces",
+    "../call:rtp_interfaces",
     "../common_audio",
+    "../modules/audio_coding:cng",
     "../modules/audio_device",
     "../modules/audio_processing",
     "../modules/bitrate_controller:bitrate_controller",
@@ -49,6 +57,13 @@ rtc_static_library("audio") {
 if (rtc_include_tests) {
   rtc_source_set("audio_tests") {
     testonly = true
+
+    # Skip restricting visibility on mobile platforms since the tests on those
+    # gets additional generated targets which would require many lines here to
+    # cover (which would be confusing to read and hard to maintain).
+    if (!is_android && !is_ios) {
+      visibility = [ "//webrtc:video_engine_tests" ]
+    }
 
     # TODO(kjellander): Remove (bugs.webrtc.org/6828)
     # This needs remote_bitrate_estimator to be moved to webrtc/api first.
@@ -67,6 +82,7 @@ if (rtc_include_tests) {
       "../modules/audio_device:mock_audio_device",
       "../modules/audio_mixer:audio_mixer_impl",
       "../modules/congestion_controller:congestion_controller",
+      "../modules/congestion_controller:mock_congestion_controller",
       "../modules/pacing:pacing",
       "../test:test_common",
       "../test:test_support",
@@ -74,9 +90,43 @@ if (rtc_include_tests) {
       "//testing/gmock",
       "//testing/gtest",
     ]
+
     if (!build_with_chromium && is_clang) {
       # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163).
       suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+    }
+  }
+
+  if (rtc_enable_protobuf) {
+    rtc_test("low_bandwidth_audio_test") {
+      testonly = true
+
+      sources = [
+        "test/low_bandwidth_audio_test.cc",
+        "test/low_bandwidth_audio_test.h",
+      ]
+
+      deps = [
+        "../common_audio",
+        "../system_wrappers",
+        "../test:fake_audio_device",
+        "../test:test_common",
+        "../test:test_main",
+        "//third_party/gflags",
+      ]
+      if (is_android) {
+        deps += [ "//testing/android/native_test:native_test_native_code" ]
+      }
+
+      data = [
+        "//resources/voice_engine/audio_tiny16.wav",
+        "//resources/voice_engine/audio_tiny48.wav",
+      ]
+
+      if (!build_with_chromium && is_clang) {
+        # Suppress warnings from the Chromium Clang plugin (bugs.webrtc.org/163)
+        suppressed_configs += [ "//build/config/clang:find_bad_constructs" ]
+      }
     }
   }
 }

@@ -63,16 +63,6 @@ bool Win32Filesystem::CreateFolder(const Pathname &pathname) {
   return (::CreateDirectory(path16.c_str(), nullptr) != 0);
 }
 
-FileStream *Win32Filesystem::OpenFile(const Pathname &filename,
-                                      const std::string &mode) {
-  FileStream *fs = new FileStream();
-  if (fs && !fs->Open(filename.pathname().c_str(), mode.c_str(), nullptr)) {
-    delete fs;
-    fs = nullptr;
-  }
-  return fs;
-}
-
 bool Win32Filesystem::DeleteFile(const Pathname &filename) {
   LOG(LS_INFO) << "Deleting file " << filename.pathname();
   if (!IsFile(filename)) {
@@ -80,13 +70,6 @@ bool Win32Filesystem::DeleteFile(const Pathname &filename) {
     return false;
   }
   return ::DeleteFile(ToUtf16(filename.pathname()).c_str()) != 0;
-}
-
-bool Win32Filesystem::DeleteEmptyFolder(const Pathname &folder) {
-  LOG(LS_INFO) << "Deleting folder " << folder.pathname();
-
-  std::string no_slash(folder.pathname(), 0, folder.pathname().length()-1);
-  return ::RemoveDirectory(ToUtf16(no_slash).c_str()) != 0;
 }
 
 bool Win32Filesystem::GetTemporaryFolder(Pathname &pathname, bool create,
@@ -160,23 +143,6 @@ bool Win32Filesystem::IsAbsent(const Pathname& path) {
   return (ERROR_FILE_NOT_FOUND == err || ERROR_PATH_NOT_FOUND == err);
 }
 
-bool Win32Filesystem::CopyFile(const Pathname &old_path,
-                               const Pathname &new_path) {
-  return ::CopyFile(ToUtf16(old_path.pathname()).c_str(),
-                    ToUtf16(new_path.pathname()).c_str(), TRUE) != 0;
-}
-
-bool Win32Filesystem::IsTemporaryPath(const Pathname& pathname) {
-  TCHAR buffer[MAX_PATH + 1];
-  if (!::GetTempPath(arraysize(buffer), buffer))
-    return false;
-  if (!IsCurrentProcessLowIntegrity() &&
-      !::GetLongPathName(buffer, buffer, arraysize(buffer)))
-    return false;
-  return (::strnicmp(ToUtf16(pathname.pathname()).c_str(),
-                     buffer, strlen(buffer)) == 0);
-}
-
 bool Win32Filesystem::GetFileSize(const Pathname &pathname, size_t *size) {
   WIN32_FILE_ATTRIBUTE_DATA data = {0};
   if (::GetFileAttributesEx(ToUtf16(pathname.pathname()).c_str(),
@@ -184,43 +150,6 @@ bool Win32Filesystem::GetFileSize(const Pathname &pathname, size_t *size) {
   return false;
   *size = data.nFileSizeLow;
   return true;
-}
-
-bool Win32Filesystem::GetFileTime(const Pathname& path, FileTimeType which,
-                                  time_t* time) {
-  WIN32_FILE_ATTRIBUTE_DATA data = {0};
-  if (::GetFileAttributesEx(ToUtf16(path.pathname()).c_str(),
-                            GetFileExInfoStandard, &data) == 0)
-    return false;
-  switch (which) {
-  case FTT_CREATED:
-    FileTimeToUnixTime(data.ftCreationTime, time);
-    break;
-  case FTT_MODIFIED:
-    FileTimeToUnixTime(data.ftLastWriteTime, time);
-    break;
-  case FTT_ACCESSED:
-    FileTimeToUnixTime(data.ftLastAccessTime, time);
-    break;
-  default:
-    return false;
-  }
-  return true;
-}
-
-bool Win32Filesystem::GetAppPathname(Pathname* path) {
-  TCHAR buffer[MAX_PATH + 1];
-  if (0 == ::GetModuleFileName(nullptr, buffer, arraysize(buffer)))
-    return false;
-  path->SetPathname(ToUtf8(buffer));
-  return true;
-}
-
-bool Win32Filesystem::GetAppTempFolder(Pathname* path) {
-  if (!GetAppPathname(path))
-    return false;
-  std::string filename(path->filename());
-  return GetTemporaryFolder(*path, true, &filename);
 }
 
 }  // namespace rtc

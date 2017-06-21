@@ -23,14 +23,16 @@
 #include <vector>
 
 #include "webrtc/api/video/video_frame.h"
-// TODO(nisse): Transition hack, Chrome expects that including this
-// file declares I420Buffer. Delete after users of I420Buffer are
-// fixed to include the new header.
-#include "webrtc/api/video/i420_buffer.h"
+#include "webrtc/base/optional.h"
+// TODO(zhihuang): Remove unrelated headers once downstream applications stop
+// relying on them; they were previously transitively included by
+// mediachannel.h, which is no longer a dependency of this file.
+#include "webrtc/base/ratetracker.h"
 #include "webrtc/base/refcount.h"
 #include "webrtc/base/scoped_ref_ptr.h"
-#include "webrtc/base/optional.h"
-#include "webrtc/media/base/mediachannel.h"
+#include "webrtc/base/thread.h"
+#include "webrtc/base/timeutils.h"
+#include "webrtc/media/base/streamparams.h"
 #include "webrtc/media/base/videosinkinterface.h"
 #include "webrtc/media/base/videosourceinterface.h"
 

@@ -87,7 +87,8 @@ extern const char CONNECTIONROLE_PASSIVE_STR[];
 extern const char CONNECTIONROLE_ACTPASS_STR[];
 extern const char CONNECTIONROLE_HOLDCONN_STR[];
 
-constexpr auto ICE_RENOMINATION_STR = "renomination";
+constexpr auto ICE_OPTION_TRICKLE = "trickle";
+constexpr auto ICE_OPTION_RENOMINATION = "renomination";
 
 bool StringToConnectionRole(const std::string& role_str, ConnectionRole* role);
 bool ConnectionRoleToString(const ConnectionRole& role, std::string* role_str);
@@ -140,6 +141,7 @@ struct TransportDescription {
     return *this;
   }
 
+  // TODO(deadbeef): Rename to HasIceOption, etc.
   bool HasOption(const std::string& option) const {
     return (std::find(transport_options.begin(), transport_options.end(),
                       option) != transport_options.end());
@@ -147,10 +149,11 @@ struct TransportDescription {
   void AddOption(const std::string& option) {
     transport_options.push_back(option);
   }
-  bool secure() const { return identity_fingerprint != NULL; }
+  bool secure() const { return identity_fingerprint != nullptr; }
 
   IceParameters GetIceParameters() {
-    return IceParameters(ice_ufrag, ice_pwd, HasOption(ICE_RENOMINATION_STR));
+    return IceParameters(ice_ufrag, ice_pwd,
+                         HasOption(ICE_OPTION_RENOMINATION));
   }
 
   static rtc::SSLFingerprint* CopyFingerprint(
@@ -161,6 +164,9 @@ struct TransportDescription {
     return new rtc::SSLFingerprint(*from);
   }
 
+  // These are actually ICE options (appearing in the ice-options attribute in
+  // SDP).
+  // TODO(deadbeef): Rename to ice_options.
   std::vector<std::string> transport_options;
   std::string ice_ufrag;
   std::string ice_pwd;

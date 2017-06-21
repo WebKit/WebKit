@@ -457,7 +457,7 @@ void TestAllCodecs::Run(TestPack* channel) {
     ASSERT_FALSE(muted);
 
     // Write output speech to file.
-    outfile_b_.Write10MsData(audio_frame.data_,
+    outfile_b_.Write10MsData(audio_frame.data(),
                              audio_frame.samples_per_channel_);
 
     // Update loop counter

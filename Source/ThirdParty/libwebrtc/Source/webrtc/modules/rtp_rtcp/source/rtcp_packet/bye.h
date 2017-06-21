@@ -26,7 +26,7 @@ class Bye : public RtcpPacket {
   static constexpr uint8_t kPacketType = 203;
 
   Bye();
-  ~Bye() override {}
+  ~Bye() override;
 
   // Parse assumes header is already parsed and validated.
   bool Parse(const CommonHeader& packet);
@@ -39,7 +39,8 @@ class Bye : public RtcpPacket {
   const std::vector<uint32_t>& csrcs() const { return csrcs_; }
   const std::string& reason() const { return reason_; }
 
- protected:
+  size_t BlockLength() const override;
+
   bool Create(uint8_t* packet,
               size_t* index,
               size_t max_length,
@@ -47,8 +48,6 @@ class Bye : public RtcpPacket {
 
  private:
   static const int kMaxNumberOfCsrcs = 0x1f - 1;  // First item is sender SSRC.
-
-  size_t BlockLength() const override;
 
   uint32_t sender_ssrc_;
   std::vector<uint32_t> csrcs_;

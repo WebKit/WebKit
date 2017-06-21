@@ -11,6 +11,9 @@
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"
 
+namespace webrtc {
+namespace voetest {
+
 void InitializeGoogleTest(int* argc, char** argv) {
   // Initialize WebRTC testing framework so paths to resources can be resolved.
   webrtc::test::SetExecutablePath(argv[0]);
@@ -20,3 +23,6 @@ void InitializeGoogleTest(int* argc, char** argv) {
 int RunInAutomatedMode() {
   return RUN_ALL_TESTS();
 }
+
+}  // namespace voetest
+}  // namespace webrtc

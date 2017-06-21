@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "webrtc/api/call/transport.h"
+#include "webrtc/base/array_view.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/criticalsection.h"
 #include "webrtc/base/deprecation.h"
@@ -26,9 +27,9 @@
 #include "webrtc/base/thread_annotations.h"
 #include "webrtc/common_types.h"
 #include "webrtc/modules/rtp_rtcp/include/flexfec_sender.h"
+#include "webrtc/modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "webrtc/modules/rtp_rtcp/source/playout_delay_oracle.h"
-#include "webrtc/modules/rtp_rtcp/source/rtp_header_extension.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_packet_history.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "webrtc/modules/rtp_rtcp/source/rtp_utility.h"
@@ -71,9 +72,6 @@ class RTPSender {
   uint32_t FecOverheadRate() const;
   uint32_t NackOverheadRate() const;
 
-  // Excluding size of RTP and FEC headers.
-  size_t MaxPayloadSize() const;
-
   int32_t RegisterPayload(const char* payload_name,
                           const int8_t payload_type,
                           const uint32_t frequency,
@@ -83,8 +81,6 @@ class RTPSender {
   int32_t DeRegisterSendPayload(const int8_t payload_type);
 
   void SetSendPayloadType(int8_t payload_type);
-
-  int8_t SendPayloadType() const;
 
   void SetSendingMediaStatus(bool enabled);
   bool SendingMedia() const;
@@ -150,6 +146,9 @@ class RTPSender {
 
   void SetRtxPayloadType(int payload_type, int associated_payload_type);
 
+  // Size info for header extensions used by FEC packets.
+  static rtc::ArrayView<const RtpExtensionSize> FecExtensionSizes();
+
   // Create empty packet, fills ssrc, csrcs and reserve place for header
   // extensions RtpSender updates before sending.
   std::unique_ptr<RtpPacketToSend> AllocatePacket() const;
@@ -158,6 +157,7 @@ class RTPSender {
   // Return false if sending was turned off.
   bool AssignSequenceNumber(RtpPacketToSend* packet);
 
+  // Used for padding and FEC packets only.
   size_t RtpHeaderLength() const;
   uint16_t AllocateSequenceNumber(uint16_t packets_to_send);
   // Including RTP headers.

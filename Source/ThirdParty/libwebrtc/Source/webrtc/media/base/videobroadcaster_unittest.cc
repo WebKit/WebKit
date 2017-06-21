@@ -87,23 +87,24 @@ TEST(VideoBroadcasterTest, AppliesRotationIfAnySinkWantsRotationApplied) {
 
 TEST(VideoBroadcasterTest, AppliesMinOfSinkWantsMaxPixelCount) {
   VideoBroadcaster broadcaster;
-  EXPECT_TRUE(!broadcaster.wants().max_pixel_count);
+  EXPECT_EQ(std::numeric_limits<int>::max(),
+            broadcaster.wants().max_pixel_count);
 
   FakeVideoRenderer sink1;
   VideoSinkWants wants1;
-  wants1.max_pixel_count = rtc::Optional<int>(1280 * 720);
+  wants1.max_pixel_count = 1280 * 720;
 
   broadcaster.AddOrUpdateSink(&sink1, wants1);
-  EXPECT_EQ(1280 * 720, *broadcaster.wants().max_pixel_count);
+  EXPECT_EQ(1280 * 720, broadcaster.wants().max_pixel_count);
 
   FakeVideoRenderer sink2;
   VideoSinkWants wants2;
-  wants2.max_pixel_count = rtc::Optional<int>(640 * 360);
+  wants2.max_pixel_count = 640 * 360;
   broadcaster.AddOrUpdateSink(&sink2, wants2);
-  EXPECT_EQ(640 * 360, *broadcaster.wants().max_pixel_count);
+  EXPECT_EQ(640 * 360, broadcaster.wants().max_pixel_count);
 
   broadcaster.RemoveSink(&sink2);
-  EXPECT_EQ(1280 * 720, *broadcaster.wants().max_pixel_count);
+  EXPECT_EQ(1280 * 720, broadcaster.wants().max_pixel_count);
 }
 
 TEST(VideoBroadcasterTest, AppliesMinOfSinkWantsMaxAndTargetPixelCount) {
@@ -125,6 +126,28 @@ TEST(VideoBroadcasterTest, AppliesMinOfSinkWantsMaxAndTargetPixelCount) {
 
   broadcaster.RemoveSink(&sink2);
   EXPECT_EQ(1280 * 720, *broadcaster.wants().target_pixel_count);
+}
+
+TEST(VideoBroadcasterTest, AppliesMinOfSinkWantsMaxFramerate) {
+  VideoBroadcaster broadcaster;
+  EXPECT_EQ(std::numeric_limits<int>::max(),
+            broadcaster.wants().max_framerate_fps);
+
+  FakeVideoRenderer sink1;
+  VideoSinkWants wants1;
+  wants1.max_framerate_fps = 30;
+
+  broadcaster.AddOrUpdateSink(&sink1, wants1);
+  EXPECT_EQ(30, broadcaster.wants().max_framerate_fps);
+
+  FakeVideoRenderer sink2;
+  VideoSinkWants wants2;
+  wants2.max_framerate_fps = 15;
+  broadcaster.AddOrUpdateSink(&sink2, wants2);
+  EXPECT_EQ(15, broadcaster.wants().max_framerate_fps);
+
+  broadcaster.RemoveSink(&sink2);
+  EXPECT_EQ(30, broadcaster.wants().max_framerate_fps);
 }
 
 TEST(VideoBroadcasterTest, SinkWantsBlackFrames) {

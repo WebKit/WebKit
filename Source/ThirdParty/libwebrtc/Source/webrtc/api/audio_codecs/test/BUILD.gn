@@ -1,0 +1,32 @@
+# Copyright (c) 2017 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+if (is_android) {
+  import("//build/config/android/config.gni")
+  import("//build/config/android/rules.gni")
+}
+
+if (rtc_include_tests) {
+  rtc_source_set("audio_codecs_api_unittests") {
+    testonly = true
+    sources = [
+      "audio_decoder_factory_template_unittest.cc",
+      "audio_encoder_factory_template_unittest.cc",
+    ]
+    deps = [
+      "..:audio_codecs_api",
+      "../../../base:rtc_base_approved",
+      "../../../test:audio_codec_mocks",
+      "../../../test:test_support",
+      "../g722:audio_decoder_g722",
+      "../g722:audio_encoder_g722",
+      "//testing/gmock",
+    ]
+  }
+}

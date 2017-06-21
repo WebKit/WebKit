@@ -40,7 +40,7 @@ class SmoothingFilterImpl final : public SmoothingFilter {
   // earlier samples quickly. After the initialization period, the time constant
   // will be set to |init_time_ms| first and can be changed through
   // |SetTimeConstantMs|.
-  SmoothingFilterImpl(int init_time_ms, const Clock* clock);
+  explicit SmoothingFilterImpl(int init_time_ms);
   ~SmoothingFilterImpl() override;
 
   void AddSample(float sample) override;
@@ -57,7 +57,6 @@ class SmoothingFilterImpl final : public SmoothingFilter {
   const int init_time_ms_;
   const float init_factor_;
   const float init_const_;
-  const Clock* const clock_;
 
   rtc::Optional<int64_t> init_end_time_ms_;
   float last_sample_;

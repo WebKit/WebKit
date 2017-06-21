@@ -19,7 +19,8 @@ extern "C" {
 #include "webrtc/common_audio/vad/vad_sp.h"
 }
 
-namespace {
+namespace webrtc {
+namespace test {
 
 TEST_F(VadTest, vad_sp) {
   VadInstT* self = reinterpret_cast<VadInstT*>(malloc(sizeof(VadInstT)));
@@ -71,4 +72,5 @@ TEST_F(VadTest, vad_sp) {
 
   free(self);
 }
-}  // namespace
+}  // namespace test
+}  // namespace webrtc

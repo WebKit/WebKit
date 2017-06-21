@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-#include "webrtc/video_decoder.h"
+#include "webrtc/api/video_codecs/video_decoder.h"
 
 namespace webrtc {
 

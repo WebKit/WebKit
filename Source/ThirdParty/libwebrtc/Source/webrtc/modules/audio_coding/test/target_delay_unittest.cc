@@ -15,7 +15,6 @@
 #include "webrtc/modules/audio_coding/include/audio_coding_module.h"
 #include "webrtc/modules/audio_coding/test/utility.h"
 #include "webrtc/modules/include/module_common_types.h"
-#include "webrtc/system_wrappers/include/sleep.h"
 #include "webrtc/test/gtest.h"
 #include "webrtc/test/testsupport/fileutils.h"
 
@@ -254,4 +253,3 @@ TEST_F(TargetDelayTest, MAYBE_TargetDelayBufferMinMax) {
 }
 
 }  // namespace webrtc
-

@@ -27,7 +27,6 @@ enum AndroidSdkVersion {
   SDK_VERSION_MARSHMALLOW = 23
 };
 
-jobject AndroidNetworkMonitor::application_context_ = nullptr;
 int AndroidNetworkMonitor::android_sdk_int_ = 0;
 
 static NetworkType GetNetworkTypeFromJava(JNIEnv* jni, jobject j_network_type) {
@@ -163,14 +162,6 @@ std::string NetworkInformation::ToString() const {
   return ss.str();
 }
 
-// static
-void AndroidNetworkMonitor::SetAndroidContext(JNIEnv* jni, jobject context) {
-  if (application_context_) {
-    jni->DeleteGlobalRef(application_context_);
-  }
-  application_context_ = NewGlobalRef(jni, context);
-}
-
 AndroidNetworkMonitor::AndroidNetworkMonitor()
     : j_network_monitor_class_(jni(),
                                FindClass(jni(), "org/webrtc/NetworkMonitor")),
@@ -178,13 +169,10 @@ AndroidNetworkMonitor::AndroidNetworkMonitor()
           jni(),
           jni()->CallStaticObjectMethod(
               *j_network_monitor_class_,
-              GetStaticMethodID(
-                  jni(),
-                  *j_network_monitor_class_,
-                  "init",
-                  "(Landroid/content/Context;)Lorg/webrtc/NetworkMonitor;"),
-              application_context_)) {
-  RTC_DCHECK(application_context_ != nullptr);
+              GetStaticMethodID(jni(),
+                                *j_network_monitor_class_,
+                                "getInstance",
+                                "()Lorg/webrtc/NetworkMonitor;"))) {
   CHECK_EXCEPTION(jni()) << "Error during NetworkMonitor.init";
   if (android_sdk_int_ <= 0) {
     jmethodID m = GetStaticMethodID(jni(), *j_network_monitor_class_,

@@ -42,7 +42,7 @@ class WebRtcVideoCapturerTest : public testing::Test {
     vga.width = 640;
     vga.height = 480;
     vga.maxFPS = 30;
-    vga.rawType = webrtc::kVideoI420;
+    vga.videoType = webrtc::VideoType::kI420;
     factory_->device_info.AddCapability(kTestDeviceId, vga);
   }
 

@@ -34,10 +34,6 @@ class MediaCodecVideoEncoderFactory
   void DestroyVideoEncoder(webrtc::VideoEncoder* encoder) override;
 
  private:
-  // Disable overloaded virtual function warning. TODO(magjed): Remove once
-  // http://crbug/webrtc/6402 is fixed.
-  using cricket::WebRtcVideoEncoderFactory::CreateVideoEncoder;
-
   jobject egl_context_;
 
   // Empty if platform support is lacking, const after ctor returns.

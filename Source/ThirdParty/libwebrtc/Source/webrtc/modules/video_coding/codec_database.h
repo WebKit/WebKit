@@ -98,12 +98,6 @@ class VCMCodecDataBase {
 
   bool DeregisterReceiveCodec(uint8_t payload_type);
 
-  // Get current receive side codec. Relevant for internal codecs only.
-  bool ReceiveCodec(VideoCodec* current_receive_codec) const;
-
-  // Get current receive side codec type. Relevant for internal codecs only.
-  VideoCodecType ReceiveCodec() const;
-
   // Returns a decoder specified by |payload_type|. The decoded frame callback
   // of the encoder is set to |decoded_frame_callback|. If no such decoder
   // already exists an instance will be created and initialized.

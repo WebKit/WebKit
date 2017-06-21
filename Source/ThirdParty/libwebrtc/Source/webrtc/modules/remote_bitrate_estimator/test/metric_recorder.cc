@@ -13,6 +13,7 @@
 #include <algorithm>
 
 #include "webrtc/modules/remote_bitrate_estimator/test/packet_sender.h"
+#include "webrtc/typedefs.h"
 
 namespace webrtc {
 namespace testing {
@@ -262,7 +263,6 @@ void MetricRecorder::PlotThroughputHistogram(
     size_t num_flows,
     int64_t extra_offset_ms,
     const std::string optimum_id) const {
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
   double optimal_bitrate_per_flow_kbps = static_cast<double>(
       optimal_throughput_bits_ / RunDurationMs(extra_offset_ms));
 
@@ -290,7 +290,11 @@ void MetricRecorder::PlotThroughputHistogram(
                         "%lf %%",
                         100.0 * static_cast<double>(average_bitrate_kbps) /
                             optimal_bitrate_per_flow_kbps);
-#endif  // BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
+
+  RTC_UNUSED(pos_error);
+  RTC_UNUSED(neg_error);
+  RTC_UNUSED(extra_error);
+  RTC_UNUSED(optimal_bitrate_per_flow_kbps);
 }
 
 void MetricRecorder::PlotThroughputHistogram(const std::string& title,
@@ -304,7 +308,6 @@ void MetricRecorder::PlotDelayHistogram(const std::string& title,
                                         const std::string& bwe_name,
                                         size_t num_flows,
                                         int64_t one_way_path_delay_ms) const {
-#if BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
   double average_delay_ms =
       static_cast<double>(sum_delays_ms_) / num_packets_received_;
   int64_t percentile_5_ms = NthDelayPercentile(5);
@@ -322,7 +325,10 @@ void MetricRecorder::PlotDelayHistogram(const std::string& title,
                         "%ld ms", percentile_5_ms - one_way_path_delay_ms);
   BWE_TEST_LOGGING_LOG1("RESULTS >>> " + bwe_name + " Delay 95th percentile : ",
                         "%ld ms", percentile_95_ms - one_way_path_delay_ms);
-#endif  // BWE_TEST_LOGGING_COMPILE_TIME_ENABLE
+
+  RTC_UNUSED(average_delay_ms);
+  RTC_UNUSED(percentile_5_ms);
+  RTC_UNUSED(percentile_95_ms);
 }
 
 void MetricRecorder::PlotLossHistogram(const std::string& title,

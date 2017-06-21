@@ -12,12 +12,14 @@
 #define WEBRTC_AUDIO_AUDIO_RECEIVE_STREAM_H_
 
 #include <memory>
+#include <vector>
 
 #include "webrtc/api/audio/audio_mixer.h"
 #include "webrtc/audio/audio_state.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/thread_checker.h"
 #include "webrtc/call/audio_receive_stream.h"
+#include "webrtc/call/rtp_packet_sink_interface.h"
 #include "webrtc/call/syncable.h"
 
 namespace webrtc {
@@ -34,7 +36,8 @@ class AudioSendStream;
 
 class AudioReceiveStream final : public webrtc::AudioReceiveStream,
                                  public AudioMixer::Source,
-                                 public Syncable {
+                                 public Syncable,
+                                 public RtpPacketSinkInterface {
  public:
   AudioReceiveStream(PacketRouter* packet_router,
                      const webrtc::AudioReceiveStream::Config& config,
@@ -49,9 +52,10 @@ class AudioReceiveStream final : public webrtc::AudioReceiveStream,
   int GetOutputLevel() const override;
   void SetSink(std::unique_ptr<AudioSinkInterface> sink) override;
   void SetGain(float gain) override;
+  std::vector<webrtc::RtpSource> GetSources() const override;
 
-  // TODO(nisse): Intended to be part of an RtpPacketReceiver interface.
-  void OnRtpPacket(const RtpPacketReceived& packet);
+  // RtpPacketSinkInterface.
+  void OnRtpPacket(const RtpPacketReceived& packet) override;
 
   // AudioMixer::Source
   AudioFrameInfo GetAudioFrameWithInfo(int sample_rate_hz,
