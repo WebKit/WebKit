@@ -65,6 +65,7 @@ function installDependenciesWithBrew {
          libcroco \
          libgcrypt \
          libgpg-error \
+         libtasn1 \
          libtiff \
          libtool \
          ninja \
@@ -130,6 +131,7 @@ function installDependenciesWithApt {
         libsoup2.4-dev \
         libsqlite3-dev \
         libsrtp0-dev \
+        libtasn1-6-dev \
         libtheora-dev \
         libtool \
         libvorbis-dev \
@@ -279,6 +281,7 @@ function installDependenciesWithPacman {
         libsoup \
         libsrtp \
         sqlite \
+        libtasn1 \
         libtheora \
         libtool \
         libvorbis \
@@ -405,6 +408,7 @@ function installDependenciesWithDnf {
         libsecret-devel \
         libsoup-devel \
         libsrtp-devel \
+        libtasn1-devel \
         libtheora-devel \
         libv4l-devel \
         libvorbis-devel \

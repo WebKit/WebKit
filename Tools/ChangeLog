@@ -1,3 +1,13 @@
+2017-06-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        List libtasn1 packages in GTK+ and WPE install-dependencies scripts
+        as one of the dependencies required to build the product.
+
+        Rubber-stamped by Carlos Garcia Campos.
+
+        * gtk/install-dependencies:
+        * wpe/install-dependencies:
+
 2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Disable font variations on macOS Sierra and iOS 10

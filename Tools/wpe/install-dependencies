@@ -72,6 +72,7 @@ function installDependenciesWithApt {
         libjpeg-dev \
         $(aptIfElse libpng-dev libpng12-dev) \
         libsqlite3-dev \
+        libtasn1-6-dev \
         libtool \
         libwebp-dev \
         libxml2-dev \
@@ -148,6 +149,7 @@ function installDependenciesWithPacman {
         itstool \
         libjpeg-turbo \
         libpng \
+        libtasn1 \
         libtool \
         libwebp \
         libxml2 \
@@ -227,6 +229,7 @@ function installDependenciesWithDnf {
         libicu-devel \
         libjpeg-turbo-devel \
         libpng-devel \
+        libtasn1-devel \
         libtool \
         libwebp-devel \
         libxml2-devel \
