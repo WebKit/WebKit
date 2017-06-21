@@ -4239,6 +4239,7 @@ static bool isAssistableInputType(InputType type)
         [self cleanUpDragSourceSessionState];
     }
 
+    RELEASE_LOG(DragAndDrop, "Handling drag start request (started: %d, completion block: %p)", started, savedCompletionBlock.get());
     if (savedCompletionBlock)
         savedCompletionBlock();
 }
@@ -4356,6 +4357,7 @@ static UIDropOperation dropOperationForWebCoreDragOperation(DragOperation operat
 
 - (void)cleanUpDragSourceSessionState
 {
+    RELEASE_LOG(DragAndDrop, "Cleaning up dragging state (has pending operation: %d)", [[WebItemProviderPasteboard sharedInstance] hasPendingOperation]);
     if (![[WebItemProviderPasteboard sharedInstance] hasPendingOperation]) {
         // If we're performing a drag operation, don't clear out the pasteboard yet, since another web view may still require access to it.
         // The pasteboard will be cleared after the last client is finished performing a drag operation using the item providers.
@@ -4427,6 +4429,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)_didPerformDataInteractionControllerOperation:(BOOL)handled
 {
+    RELEASE_LOG(DragAndDrop, "Finished performing drag controller operation (handled: %d)", handled);
     [[WebItemProviderPasteboard sharedInstance] decrementPendingOperationCount];
     RetainPtr<id <UIDropSession>> dropSession = _dataInteractionState.dropSession;
     if ([self.webViewUIDelegate respondsToSelector:@selector(_webView:dataInteractionOperationWasHandled:forSession:itemProviders:)])
@@ -4506,8 +4509,10 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
 {
+    RELEASE_LOG(DragAndDrop, "Preparing for drag session: %p", session);
     if (self.currentDragOrDropSession) {
         // FIXME: Support multiple simultaneous drag sessions in the future.
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (a current drag session already exists)", session);
         completion();
         return;
     }
@@ -4519,6 +4524,7 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
     [self doAfterPositionInformationUpdate:[retainedSelf, session, dragOrigin, capturedBlock = makeBlockPtr(completion)] (InteractionInformationAtPosition positionInformation) {
         if (!positionInformationMayStartDataInteraction(positionInformation)) {
+            RELEASE_LOG(DragAndDrop, "Drag session failed: %p (no draggable content at {%.1f, %.1f})", session, dragOrigin.x, dragOrigin.y);
             capturedBlock();
             return;
         }
@@ -4531,18 +4537,25 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
         state.linkURL = retainedSelf->_positionInformation.url;
         state.dragSession = session;
         retainedSelf->_page->requestStartDataInteraction(roundedIntPoint(state.adjustedOrigin), roundedIntPoint([retainedSelf convertPoint:state.adjustedOrigin toView:[retainedSelf window]]));
+
+        auto elementBounds = state.elementBounds;
+        RELEASE_LOG(DragAndDrop, "Drag session requested: %p at element bounds: {{%.1f, %.1f}, {%.1f, %.1f}}", session, elementBounds.origin.x, elementBounds.origin.y, elementBounds.size.width, elementBounds.size.height);
     } forRequest:InteractionInformationRequest(roundedIntPoint(dragOrigin))];
 }
 
 - (NSArray<UIDragItem *> *)dragInteraction:(UIDragInteraction *)interaction itemsForBeginningSession:(id <UIDragSession>)session
 {
-    if (_dataInteractionState.dragSession != session)
+    RELEASE_LOG(DragAndDrop, "Drag items requested for session: %p", session);
+    if (_dataInteractionState.dragSession != session) {
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (delegate session does not match %p)", session, _dataInteractionState.dragSession.get());
         return @[ ];
+    }
 
     WebItemProviderPasteboard *draggingPasteboard = [WebItemProviderPasteboard sharedInstance];
     ASSERT(interaction == _dataInteraction);
     NSUInteger numberOfItems = draggingPasteboard.numberOfItems;
     if (!numberOfItems) {
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (no item providers generated before adjustment)", session);
         _page->dragCancelled();
         return @[ ];
     }
@@ -4578,6 +4591,7 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
     if (![itemsForDragInteraction count])
         _page->dragCancelled();
 
+    RELEASE_LOG(DragAndDrop, "Drag session: %p starting with %tu items", session, [itemsForDragInteraction count]);
     return itemsForDragInteraction.get();
 }
 
@@ -4594,6 +4608,7 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
 - (void)dragInteraction:(UIDragInteraction *)interaction sessionWillBegin:(id <UIDragSession>)session
 {
+    RELEASE_LOG(DragAndDrop, "Drag session beginning: %p", session);
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:sessionWillBegin:)])
         [uiDelegate _webView:_webView dataInteraction:interaction sessionWillBegin:session];
@@ -4608,6 +4623,7 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
 - (void)_api_dragInteraction:(UIDragInteraction *)interaction session:(id <UIDragSession>)session didEndWithOperation:(UIDropOperation)operation
 {
+    RELEASE_LOG(DragAndDrop, "Drag session ended: %p (with operation: %tu, performing operation: %d, began dragging: %d)", session, operation, _dataInteractionState.isPerformingOperation, _dataInteractionState.didBeginDragging);
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:session:didEndWithOperation:)])
         [uiDelegate _webView:_webView dataInteraction:interaction session:session didEndWithOperation:operation];
@@ -4643,11 +4659,14 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 {
     // FIXME: Support multiple simultaneous drop sessions in the future.
     id <UIDragDropSession> dragOrDropSession = self.currentDragOrDropSession;
+    RELEASE_LOG(DragAndDrop, "Can handle drag session: %p with local session: %p existing session: %p?", session, session.localDragSession, dragOrDropSession);
+
     return !dragOrDropSession || session.localDragSession == dragOrDropSession;
 }
 
 - (void)_api_dropInteraction:(UIDropInteraction *)interaction sessionDidEnter:(id <UIDropSession>)session
 {
+    RELEASE_LOG(DragAndDrop, "Drop session entered: %p with %tu items", session, session.items.count);
     _dataInteractionState.dropSession = session;
 
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
@@ -4675,6 +4694,7 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
 - (void)dropInteraction:(UIDropInteraction *)interaction sessionDidExit:(id <UIDropSession>)session
 {
+    RELEASE_LOG(DragAndDrop, "Drop session exited: %p with %tu items", session, session.items.count);
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
 
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
@@ -4702,12 +4722,14 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
     _dataInteractionState.isPerformingOperation = YES;
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
 
+    RELEASE_LOG(DragAndDrop, "Loading data from %tu item providers for session: %p", itemProviders.count, session);
     // Always loading content from the item provider ensures that the web process will be allowed to call back in to the UI
     // process to access pasteboard contents at a later time. Ideally, we only need to do this work if we're over a file input
     // or the page prevented default on `dragover`, but without this, dropping into a normal editable areas will fail due to
     // item providers not loading any data.
     RetainPtr<WKContentView> retainedSelf(self);
     [[WebItemProviderPasteboard sharedInstance] doAfterLoadingProvidedContentIntoFileURLs:[retainedSelf, capturedDragData = WTFMove(dragData)] (NSArray *fileURLs) mutable {
+        RELEASE_LOG(DragAndDrop, "Loaded data into %tu files", fileURLs.count);
         Vector<String> filenames;
         for (NSURL *fileURL in fileURLs)
             filenames.append([fileURL path]);
@@ -4744,6 +4766,7 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
 - (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnd:(id <UIDropSession>)session
 {
+    RELEASE_LOG(DragAndDrop, "Drop session ended: %p (performing operation: %d, began dragging: %d)", session, _dataInteractionState.isPerformingOperation, _dataInteractionState.didBeginDragging);
     if (_dataInteractionState.isPerformingOperation || _dataInteractionState.didBeginDragging)
         return;
 

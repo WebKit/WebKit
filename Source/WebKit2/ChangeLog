@@ -1,3 +1,28 @@
+2017-06-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Add drag-and-drop release logging around WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=173636
+
+        Reviewed by Tim Horton.
+
+        Add logging at key points in the drag-and-drop lifecycle in the UI process, so that sysdiagnoses will contain
+        sufficient information to debug sparse failures.
+
+        * Platform/Logging.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didHandleStartDataInteractionRequest:]):
+        (-[WKContentView cleanUpDragSourceSessionState]):
+        (-[WKContentView _didPerformDataInteractionControllerOperation:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+        (-[WKContentView dragInteraction:sessionWillBegin:]):
+        (-[WKContentView _api_dragInteraction:session:didEndWithOperation:]):
+        (-[WKContentView dropInteraction:canHandleSession:]):
+        (-[WKContentView _api_dropInteraction:sessionDidEnter:]):
+        (-[WKContentView dropInteraction:sessionDidExit:]):
+        (-[WKContentView dropInteraction:performDrop:]):
+        (-[WKContentView dropInteraction:sessionDidEnd:]):
+
 2017-06-21  Jeremy Jones  <jeremyj@apple.com>
 
         Don't clear audio mute when muting capture.
