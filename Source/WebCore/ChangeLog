@@ -1,5 +1,26 @@
 2017-06-21  Youenn Fablet  <youenn@apple.com>
 
+        Fix AVVideoCaptureSource frameRate setter and getter
+        https://bugs.webkit.org/show_bug.cgi?id=173637
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing.
+
+        Using activeVideoMaxFrameDuration to get the frame rate.
+        Setting the frame rate according the given vale if in the allowed range.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.h:
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::updateSettings):
+        (WebCore::AVVideoCaptureSource::applyFrameRate):
+        (WebCore::AVVideoCaptureSource::applySizeAndFrameRate):
+        (WebCore::AVVideoCaptureSource::shutdownCaptureSession):
+        (WebCore::AVVideoCaptureSource::processNewFrame):
+        (WebCore::AVVideoCaptureSource::updateFramerate): Deleted.
+
+2017-06-21  Youenn Fablet  <youenn@apple.com>
+
         Refresh libwebrtc code up to a87675d4a160e2c49c3e754cd9ca291d6c8f36ae
         https://bugs.webkit.org/show_bug.cgi?id=173602
 

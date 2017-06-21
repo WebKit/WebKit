@@ -257,8 +257,10 @@ void AVVideoCaptureSource::updateSettings(RealtimeMediaSourceSettings& settings)
         settings.setFacingMode(RealtimeMediaSourceSettings::Environment);
     else
         settings.setFacingMode(RealtimeMediaSourceSettings::Unknown);
-    
-    settings.setFrameRate(m_frameRate);
+
+    // FIXME: Observe frame rate changes.
+    auto maxFrameDuration = [device() activeVideoMaxFrameDuration];
+    settings.setFrameRate(maxFrameDuration.timescale / maxFrameDuration.value);
     settings.setWidth(m_width);
     settings.setHeight(m_height);
     settings.setAspectRatio(static_cast<float>(m_width) / m_height);
@@ -326,15 +328,16 @@ bool AVVideoCaptureSource::setPreset(NSString *preset)
 
 bool AVVideoCaptureSource::applyFrameRate(double rate)
 {
+    double epsilon = 0.00001;
     AVFrameRateRangeType *bestFrameRateRange = nil;
     for (AVFrameRateRangeType *frameRateRange in [[device() activeFormat] videoSupportedFrameRateRanges]) {
-        if (rate >= [frameRateRange minFrameRate] && rate <= [frameRateRange maxFrameRate]) {
+        if (rate + epsilon >= [frameRateRange minFrameRate] && rate - epsilon <= [frameRateRange maxFrameRate]) {
             if (!bestFrameRateRange || CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], >, [bestFrameRateRange minFrameDuration]))
                 bestFrameRateRange = frameRateRange;
         }
     }
 
-    if (!bestFrameRateRange) {
+    if (!bestFrameRateRange || !isFrameRateSupported(rate)) {
         LOG(Media, "AVVideoCaptureSource::applyFrameRate(%p), frame rate %f not supported by video device", this, rate);
         return false;
     }
@@ -342,7 +345,13 @@ bool AVVideoCaptureSource::applyFrameRate(double rate)
     NSError *error = nil;
     @try {
         if ([device() lockForConfiguration:&error]) {
-            [device() setActiveVideoMinFrameDuration:[bestFrameRateRange minFrameDuration]];
+            if (bestFrameRateRange.minFrameRate == bestFrameRateRange.maxFrameRate) {
+                [device() setActiveVideoMinFrameDuration:[bestFrameRateRange minFrameDuration]];
+                [device() setActiveVideoMaxFrameDuration:[bestFrameRateRange maxFrameDuration]];
+            } else {
+                [device() setActiveVideoMinFrameDuration: CMTimeMake(1, rate)];
+                [device() setActiveVideoMaxFrameDuration: CMTimeMake(1, rate)];
+            }
             [device() unlockForConfiguration];
         }
     } @catch(NSException *exception) {
@@ -361,7 +370,8 @@ bool AVVideoCaptureSource::applyFrameRate(double rate)
 
 void AVVideoCaptureSource::applySizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
-    setPreset(bestSessionPresetForVideoDimensions(WTFMove(width), WTFMove(height)));
+    if (width || height)
+        setPreset(bestSessionPresetForVideoDimensions(WTFMove(width), WTFMove(height)));
 
     if (frameRate)
         applyFrameRate(frameRate.value());
@@ -451,30 +461,8 @@ void AVVideoCaptureSource::shutdownCaptureSession()
 {
     m_buffer = nullptr;
     m_lastImage = nullptr;
-    m_videoFrameTimeStamps.clear();
-    m_frameRate = 0;
     m_width = 0;
     m_height = 0;
-}
-
-bool AVVideoCaptureSource::updateFramerate(CMSampleBufferRef sampleBuffer)
-{
-    CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-    if (!CMTIME_IS_NUMERIC(sampleTime))
-        return false;
-
-    Float64 frameTime = CMTimeGetSeconds(sampleTime);
-    Float64 oneSecondAgo = frameTime - 1;
-    
-    m_videoFrameTimeStamps.append(frameTime);
-    
-    while (m_videoFrameTimeStamps[0] < oneSecondAgo)
-        m_videoFrameTimeStamps.remove(0);
-
-    Float64 frameRate = m_frameRate;
-    m_frameRate = (m_frameRate + m_videoFrameTimeStamps.size()) / 2;
-
-    return frameRate != m_frameRate;
 }
 
 void AVVideoCaptureSource::monitorOrientation(OrientationNotifier& notifier)
@@ -529,7 +517,6 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
     if (!formatDescription)
         return;
 
-    updateFramerate(sampleBuffer.get());
     m_buffer = sampleBuffer;
     m_lastImage = nullptr;
 
@@ -581,6 +568,16 @@ NSString* AVVideoCaptureSource::bestSessionPresetForVideoDimensions(std::optiona
     return nil;
 }
 
+bool AVVideoCaptureSource::isFrameRateSupported(double frameRate)
+{
+    double epsilon = 0.00001;
+    for (AVFrameRateRangeType *range in [[device() activeFormat] videoSupportedFrameRateRanges]) {
+        if (frameRate + epsilon >= range.minFrameRate && frameRate - epsilon <= range.maxFrameRate)
+            return true;
+    }
+    return false;
+}
+
 bool AVVideoCaptureSource::supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate)
 {
     if (!height && !width && !frameRate)
@@ -592,13 +589,7 @@ bool AVVideoCaptureSource::supportsSizeAndFrameRate(std::optional<int> width, st
     if (!frameRate)
         return true;
 
-    int rate = static_cast<int>(frameRate.value());
-    for (AVFrameRateRangeType *range in [[device() activeFormat] videoSupportedFrameRateRanges]) {
-        if (rate >= static_cast<int>(range.minFrameRate) && rate <= static_cast<int>(range.maxFrameRate))
-            return true;
-    }
-
-    return false;
+    return isFrameRateSupported(frameRate.value());
 }
 
 } // namespace WebCore

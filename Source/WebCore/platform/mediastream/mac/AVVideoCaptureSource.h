@@ -69,6 +69,8 @@ private:
     void monitorOrientation(OrientationNotifier&) final;
     void computeSampleRotation();
 
+    bool isFrameRateSupported(double frameRate);
+
     NSString *bestSessionPresetForVideoDimensions(std::optional<int> width, std::optional<int> height) const;
     bool supportsSizeAndFrameRate(std::optional<int> width, std::optional<int> height, std::optional<double>) final;
 
@@ -80,8 +82,6 @@ private:
 
     bool setFrameRateConstraint(double minFrameRate, double maxFrameRate);
 
-    bool updateFramerate(CMSampleBufferRef);
-
     void captureOutputDidOutputSampleBufferFromConnection(AVCaptureOutput*, CMSampleBufferRef, AVCaptureConnection*) final;
     void processNewFrame(RetainPtr<CMSampleBufferRef>, RetainPtr<AVCaptureConnection>);
 
@@ -92,8 +92,6 @@ private:
 
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;
 
-    Vector<Float64> m_videoFrameTimeStamps;
-    Float64 m_frameRate { 0 };
     int32_t m_width { 0 };
     int32_t m_height { 0 };
     int m_sensorOrientation { 0 };
