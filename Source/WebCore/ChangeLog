@@ -1,3 +1,16 @@
+2017-06-20  Yoav Weiss  <yoav@yoav.ws>
+
+        [preload] Turn on preload's feature flag by default.
+        https://bugs.webkit.org/show_bug.cgi?id=173139
+
+        Reviewed by Youenn Fablet.
+
+        Turn on the runtime enabled feature flag for link preload by default.
+
+        No new tests as this just turns on a feature that was already on-by-default for tests.
+
+        * page/RuntimeEnabledFeatures.h:
+
 2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Disable font variations on macOS Sierra and iOS 10

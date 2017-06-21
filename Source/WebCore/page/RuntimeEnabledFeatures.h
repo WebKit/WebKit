@@ -206,7 +206,7 @@ private:
     RuntimeEnabledFeatures();
 
     bool m_areModernMediaControlsEnabled { false };
-    bool m_isLinkPreloadEnabled { false };
+    bool m_isLinkPreloadEnabled { true };
     bool m_isMediaPreloadingEnabled { false };
     bool m_isResourceTimingEnabled { false };
     bool m_isUserTimingEnabled { false };
