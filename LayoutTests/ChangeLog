@@ -1,3 +1,17 @@
+2017-06-21  Antoine Quint  <graouts@apple.com>
+
+        CSS text properties affect <video> shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=173664
+        <rdar://problem/32904328>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that ensures that setting an inheritable style on the <video> does not affect
+        time labels within the shadow root.
+
+        * media/modern-media-controls/time-label/time-label-inherited-text-indent-expected.txt: Added.
+        * media/modern-media-controls/time-label/time-label-inherited-text-indent.html: Added.
+
 2017-06-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Using "break on all exceptions" when throwing stack overflow hangs inspector

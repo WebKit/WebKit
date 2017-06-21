@@ -51,6 +51,8 @@
 
 /* We need to use relative positioning due to webkit.org/b/163603 */
 .media-controls-container {
+    all: initial;
+    display: block;
     position: relative;
     will-change: z-index;
 }
