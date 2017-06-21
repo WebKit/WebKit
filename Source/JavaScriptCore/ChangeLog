@@ -1,3 +1,29 @@
+2017-06-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Using "break on all exceptions" when throwing stack overflow hangs inspector
+        https://bugs.webkit.org/show_bug.cgi?id=172432
+        <rdar://problem/29870873>
+
+        Reviewed by Saam Barati.
+
+        Avoid pausing on StackOverflow and OutOfMemory errors to avoid a hang.
+        We will proceed to improve debugging of these cases in the follow-up bugs.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::exception):
+        Ignore pausing on these errors.
+
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::setStackOverflowError):
+        (JSC::ErrorInstance::isStackOverflowError):
+        (JSC::ErrorInstance::setOutOfMemoryError):
+        (JSC::ErrorInstance::isOutOfMemoryError):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createStackOverflowError):
+        * runtime/Error.cpp:
+        (JSC::createOutOfMemoryError):
+        Mark these kinds of errors.
+
 2017-06-21  Saam Barati  <sbarati@apple.com>
 
         Make it clear that regenerating ICs are holding the CodeBlock's lock by passing the locker as a parameter

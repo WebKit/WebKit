@@ -30,11 +30,11 @@
 #include "FunctionPrototype.h"
 #include "Interpreter.h"
 #include "JSArray.h"
+#include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSString.h"
-#include "JSCInlines.h"
 #include "NativeErrorConstructor.h"
 #include "SourceCode.h"
 #include "StackFrame.h"
@@ -310,7 +310,9 @@ JSObject* createURIError(ExecState* exec, const String& message)
 
 JSObject* createOutOfMemoryError(ExecState* exec)
 {
-    return createError(exec, ASCIILiteral("Out of memory"), nullptr);
+    auto* error = createError(exec, ASCIILiteral("Out of memory"), nullptr);
+    jsCast<ErrorInstance*>(error)->setOutOfMemoryError();
+    return error;
 }
 
 

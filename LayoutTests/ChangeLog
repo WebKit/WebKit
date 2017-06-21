@@ -1,3 +1,16 @@
+2017-06-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Using "break on all exceptions" when throwing stack overflow hangs inspector
+        https://bugs.webkit.org/show_bug.cgi?id=172432
+        <rdar://problem/29870873>
+
+        Reviewed by Saam Barati.
+
+        * inspector/debugger/no-pause-out-of-memory-exception-expected.txt: Added.
+        * inspector/debugger/no-pause-out-of-memory-exception.html: Added.
+        * inspector/debugger/no-pause-stack-overflow-exception-expected.txt: Added.
+        * inspector/debugger/no-pause-stack-overflow-exception.html: Added.
+
 2017-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         Remove WILL_REVEAL_EDGE_EVENTS code

@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 10: RangeError: Maximum call stack size exceeded.
+Test we do not pause on a StackOverflow Exception.
+
+
+== Running test suite: Debugger.StackOverflowException
+-- Running test case: Debugger.StackOverflowException.NoPause
+Uncaught exception in test page: RangeError: Maximum call stack size exceeded. [no-pause-stack-overflow-exception.html:10]
+PASS: Should not pause on StackOverflow Exception.
+

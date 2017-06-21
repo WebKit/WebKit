@@ -61,6 +61,11 @@ public:
     RuntimeType runtimeTypeForCause() const { return m_runtimeTypeForCause; }
     void clearRuntimeTypeForCause() { m_runtimeTypeForCause = TypeNothing; }
 
+    void setStackOverflowError() { m_stackOverflowError = true; }
+    bool isStackOverflowError() const { return m_stackOverflowError; }
+    void setOutOfMemoryError() { m_outOfMemoryError = true; }
+    bool isOutOfMemoryError() const { return m_outOfMemoryError; }
+
     JS_EXPORT_PRIVATE String sanitizedToString(ExecState*);
 
 protected:
@@ -70,6 +75,8 @@ protected:
 
     SourceAppender m_sourceAppender { nullptr };
     RuntimeType m_runtimeTypeForCause { TypeNothing };
+    bool m_stackOverflowError { false };
+    bool m_outOfMemoryError { false };
 };
 
 } // namespace JSC
