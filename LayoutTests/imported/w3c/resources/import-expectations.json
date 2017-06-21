@@ -259,14 +259,9 @@
     "web-platform-tests/remote-playback": "skip", 
     "web-platform-tests/resource-timing": "import", 
     "web-platform-tests/screen-orientation": "skip", 
-<<<<<<< HEAD
     "web-platform-tests/secure-contexts": "import", 
-=======
     "web-platform-tests/scroll-anchoring": "skip", 
     "web-platform-tests/scroll-into-view": "skip", 
-    "web-platform-tests/secure-contexts": "skip", 
->>>>>>> refreshing wpt tests
-    "web-platform-tests/secure_context": "skip", 
     "web-platform-tests/selection": "skip", 
     "web-platform-tests/selectors": "skip", 
     "web-platform-tests/selectors-api": "skip", 

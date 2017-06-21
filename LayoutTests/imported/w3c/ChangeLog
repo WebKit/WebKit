@@ -1,3 +1,12 @@
+2017-06-21  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTests/imported/w3c/resources/import-expectations.json is broken after http://trac.webkit.org/changeset/218181
+        https://bugs.webkit.org/show_bug.cgi?id=173651
+
+        Reviewed by Chris Dumez.
+
+        * resources/import-expectations.json: Fix the merge.
+
 2017-06-19  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Properly model buffer source / typed arrays as their own IDL types
