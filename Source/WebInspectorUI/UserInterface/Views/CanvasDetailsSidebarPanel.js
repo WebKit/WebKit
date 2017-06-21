@@ -91,6 +91,12 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
         let sourceSection = new WebInspector.DetailsSection("canvas-source", WebInspector.UIString("Source"));
         sourceSection.groups = [new WebInspector.DetailsSectionGroup([this._nodeRow, this._cssCanvasRow, this._widthRow, this._heightRow, this._datachedRow])];
         this.contentView.element.appendChild(sourceSection.element);
+
+        this._attributesDataGridRow = new WebInspector.DetailsSectionDataGridRow(null, WebInspector.UIString("No Attributes"));
+
+        let attributesSection = new WebInspector.DetailsSection("canvas-attributes", WebInspector.UIString("Attributes"));
+        attributesSection.groups = [new WebInspector.DetailsSectionGroup([this._attributesDataGridRow])];
+        this.contentView.element.appendChild(attributesSection.element);
     }
 
     layout()
@@ -102,6 +108,15 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
 
         this._refreshIdentitySection();
         this._refreshSourceSection();
+        this._refreshAttributesSection();
+    }
+
+    sizeDidChange()
+    {
+        super.sizeDidChange();
+
+        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
+        this._attributesDataGridRow.sizeDidChange();
     }
 
     // Private
@@ -184,5 +199,35 @@ WebInspector.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends
             if (!this._canvas.cssCanvasName && !this._node.parentNode)
                 this._datachedRow.value = WebInspector.UIString("Yes");
         });
+    }
+
+    _refreshAttributesSection()
+    {
+        if (!this._canvas)
+            return;
+
+        if (isEmptyObject(this._canvas.contextAttributes)) {
+            // Remove the DataGrid to show the placeholder text.
+            this._attributesDataGridRow.dataGrid = null;
+            return;
+        }
+
+        let dataGrid = this._attributesDataGridRow.dataGrid;
+        if (!dataGrid) {
+            dataGrid = this._attributesDataGridRow.dataGrid = new WebInspector.DataGrid({
+                name: {title: WebInspector.UIString("Name")},
+                value: {title: WebInspector.UIString("Value"), width: "30%"},
+            });
+        }
+
+        dataGrid.removeChildren();
+
+        for (let attribute in this._canvas.contextAttributes) {
+            let data = {name: attribute, value: this._canvas.contextAttributes[attribute]};
+            let dataGridNode = new WebInspector.DataGridNode(data);
+            dataGrid.appendChild(dataGridNode);
+        }
+
+        dataGrid.updateLayoutIfNeeded();
     }
 };

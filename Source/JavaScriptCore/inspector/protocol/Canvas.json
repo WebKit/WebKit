@@ -15,6 +15,20 @@
             "description": "The type of rendering context backing the canvas element."
         },
         {
+            "id": "ContextAttributes",
+            "type": "object",
+            "description": "WebGL drawing surface attributes.",
+            "properties": [
+                { "name": "alpha", "type": "boolean" },
+                { "name": "depth", "type": "boolean" },
+                { "name": "stencil", "type": "boolean" },
+                { "name": "antialias", "type": "boolean" },
+                { "name": "premultipliedAlpha", "type": "boolean" },
+                { "name": "preserveDrawingBuffer", "type": "boolean" },
+                { "name": "failIfMajorPerformanceCaveat", "type": "boolean" }
+            ]
+        },
+        {
             "id": "Canvas",
             "type": "object",
             "description": "Information about a 2D/WebGL canvas for which a rendering context has been created.",
@@ -23,7 +37,8 @@
                 { "name": "contextType", "$ref": "ContextType", "description": "The type of rendering context backing the canvas." },
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Parent frame identifier." },
                 { "name": "nodeId", "$ref": "DOM.NodeId", "optional": true, "description": "The corresponding DOM node id." },
-                { "name": "cssCanvasName", "type": "string", "optional": true, "description": "The CSS canvas identifier, for canvases created with <code>document.getCSSCanvasContext</code>." }
+                { "name": "cssCanvasName", "type": "string", "optional": true, "description": "The CSS canvas identifier, for canvases created with <code>document.getCSSCanvasContext</code>." },
+                { "name": "contextAttributes", "$ref": "ContextAttributes", "optional": true, "description": "Context attributes for WebGL rendering contexts." }
             ]
         }
     ],

@@ -1,3 +1,24 @@
+2017-06-20  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Send context attributes for tracked canvases
+        https://bugs.webkit.org/show_bug.cgi?id=173327
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Canvas.js:
+        (WebInspector.Canvas.fromPayload):
+        (WebInspector.Canvas.prototype.get contextAttributes):
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.layout):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.sizeDidChange):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshAttributesSection):
+
+        * UserInterface/Views/DataGridNode.js:
+        (WebInspector.DataGridNode.prototype.createCellContent):
+        Instead of checking if the value of the cell is falsy, check that the key exists in the data.
+        This allows values like `false` to be displayed.
+
 2017-06-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: create canvas content view and details sidebar panel

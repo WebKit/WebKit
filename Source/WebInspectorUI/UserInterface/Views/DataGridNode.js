@@ -383,10 +383,10 @@ WebInspector.DataGridNode = class DataGridNode extends WebInspector.Object
 
     createCellContent(columnIdentifier)
     {
-        let data = this.data[columnIdentifier];
-        if (!data)
+        if (!(columnIdentifier in this.data))
             return zeroWidthSpace; // Zero width space to keep the cell from collapsing.
 
+        let data = this.data[columnIdentifier];
         return (typeof data === "number") ? data.maxDecimals(2).toLocaleString() : data;
     }
 

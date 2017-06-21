@@ -25,7 +25,7 @@
 
 WebInspector.Canvas = class Canvas extends WebInspector.Object
 {
-    constructor(identifier, contextType, frame, {domNode, cssCanvasName} = {})
+    constructor(identifier, contextType, frame, {domNode, cssCanvasName, contextAttributes} = {})
     {
         super();
 
@@ -38,6 +38,7 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         this._frame = frame;
         this._domNode = domNode || null;
         this._cssCanvasName = cssCanvasName || "";
+        this._contextAttributes = contextAttributes || {};
     }
 
     // Static
@@ -60,6 +61,7 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         return new WebInspector.Canvas(payload.canvasId, contextType, frame, {
             domNode: payload.nodeId ? WebInspector.domTreeManager.nodeForId(payload.nodeId) : null,
             cssCanvasName: payload.cssCanvasName,
+            contextAttributes: payload.contextAttributes,
         });
     }
 
@@ -86,6 +88,7 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
     get contextType() { return this._contextType; }
     get frame() { return this._frame; }
     get cssCanvasName() { return this._cssCanvasName; }
+    get contextAttributes() { return this._contextAttributes; }
 
     get displayName()
     {

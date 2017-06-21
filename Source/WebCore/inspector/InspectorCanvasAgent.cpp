@@ -34,6 +34,8 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
+#include "WebGLContextAttributes.h"
+#include "WebGLRenderingContextBase.h"
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorProtocolObjects.h>
 
@@ -276,6 +278,22 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvasAgent::buildObjectForCan
         if (nodeId)
             canvas->setNodeId(nodeId);
     }
+
+#if ENABLE(WEBGL)
+    if (is<WebGLRenderingContextBase>(context)) {
+        if (std::optional<WebGLContextAttributes> attributes = downcast<WebGLRenderingContextBase>(context)->getContextAttributes()) {
+            canvas->setContextAttributes(Inspector::Protocol::Canvas::ContextAttributes::create()
+                .setAlpha(attributes->alpha)
+                .setDepth(attributes->depth)
+                .setStencil(attributes->stencil)
+                .setAntialias(attributes->antialias)
+                .setPremultipliedAlpha(attributes->premultipliedAlpha)
+                .setPreserveDrawingBuffer(attributes->preserveDrawingBuffer)
+                .setFailIfMajorPerformanceCaveat(attributes->failIfMajorPerformanceCaveat)
+                .release());
+        }
+    }
+#endif
 
     return canvas;
 }
