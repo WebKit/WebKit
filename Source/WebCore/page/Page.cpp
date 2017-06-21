@@ -85,6 +85,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ResourceUsageOverlay.h"
+#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "SchemeRegistry.h"
@@ -1145,7 +1146,7 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::suspendScriptedAnimations()
 {
-    if (settings().shouldLogScriptedAnimationControllerSuspensionChange()) {
+    if (MacApplication::isDumpRenderTree()) {
         WTFLogAlways("\nPage::suspendScriptedAnimations()");
         WTFReportBacktrace();
     }
@@ -1159,7 +1160,7 @@ void Page::suspendScriptedAnimations()
 
 void Page::resumeScriptedAnimations()
 {
-    if (settings().shouldLogScriptedAnimationControllerSuspensionChange()) {
+    if (MacApplication::isDumpRenderTree()) {
         WTFLogAlways("\nPage::resumeScriptedAnimations()");
         WTFReportBacktrace();
     }

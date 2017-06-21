@@ -966,8 +966,6 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setResourceTimingEnabled:YES];
     [preferences setUserTimingEnabled:YES];
 
-    [preferences setShouldLogScriptedAnimationControllerSuspensionChange:YES];
-
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];
 }

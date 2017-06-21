@@ -39,6 +39,7 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "RequestAnimationFrameCallback.h"
+#include "RuntimeApplicationChecks.h"
 #include "Settings.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
@@ -93,7 +94,7 @@ void ScriptedAnimationController::resume()
 
 void ScriptedAnimationController::logSuspendCount()
 {
-    if (!m_document || !m_document->frame() || !m_document->frame()->settings().shouldLogScriptedAnimationControllerSuspensionChange())
+    if (!m_document || !m_document->frame() || MacApplication::isDumpRenderTree())
         return;
 
     WTFLogAlways("\nScriptedAnimationController::m_suspendCount = %d", m_suspendCount);

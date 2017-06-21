@@ -2846,7 +2846,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setVisualViewportEnabled([preferences visualViewportEnabled]);
     settings.setMediaContentTypesRequiringHardwareSupport([preferences mediaContentTypesRequiringHardwareSupport]);
-    settings.setShouldLogScriptedAnimationControllerSuspensionChange([preferences shouldLogScriptedAnimationControllerSuspensionChange]);
 
     switch ([preferences storageBlockingPolicy]) {
     case WebAllowAllStorage:

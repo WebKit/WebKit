@@ -45,6 +45,7 @@ WEBCORE_EXPORT bool isAOLInstantMessenger();
 WEBCORE_EXPORT bool isAdobeInstaller();
 WEBCORE_EXPORT bool isAperture();
 WEBCORE_EXPORT bool isAppleMail();
+bool isDumpRenderTree();
 WEBCORE_EXPORT bool isIBooks();
 WEBCORE_EXPORT bool isITunes();
 WEBCORE_EXPORT bool isMicrosoftMessenger();

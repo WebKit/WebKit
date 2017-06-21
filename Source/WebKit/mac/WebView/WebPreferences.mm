@@ -671,7 +671,6 @@ public:
         @NO, WebKitMediaUserGestureInheritsFromDocument,
         @NO, WebKitIsSecureContextAttributeEnabledPreferenceKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
-        @NO, WebKitShouldLogScriptedAnimationControllerSuspensionChangePreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -3136,16 +3135,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setIsSecureContextAttributeEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitIsSecureContextAttributeEnabledPreferenceKey];
-}
-
-- (BOOL)shouldLogScriptedAnimationControllerSuspensionChange
-{
-    return [self _boolValueForKey:WebKitShouldLogScriptedAnimationControllerSuspensionChangePreferenceKey];
-}
-
-- (void)setShouldLogScriptedAnimationControllerSuspensionChange:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitShouldLogScriptedAnimationControllerSuspensionChangePreferenceKey];
 }
 
 @end

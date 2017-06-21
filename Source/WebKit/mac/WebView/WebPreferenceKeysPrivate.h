@@ -241,4 +241,3 @@
 #define WebKitUserTimingEnabledPreferenceKey @"WebKitUserTimingEnabled"
 #define WebKitResourceTimingEnabledPreferenceKey @"WebKitResourceTimingEnabled"
 #define WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey @"WebKitMediaContentTypesRequiringHardwareSupport"
-#define WebKitShouldLogScriptedAnimationControllerSuspensionChangePreferenceKey @"WebKitShouldLogScriptedAnimationControllerSuspensionChange"
