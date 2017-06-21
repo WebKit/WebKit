@@ -1,0 +1,4 @@
+
+
+PASS Frames with `allow-top-navigation` should be able to navigate the top frame. 
+
