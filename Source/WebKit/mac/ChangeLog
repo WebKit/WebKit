@@ -1,3 +1,16 @@
+2017-06-21  Daniel Bates  <dabates@apple.com>
+
+        Cleanup FrameLoadRequest
+        https://bugs.webkit.org/show_bug.cgi?id=173564
+        <rdar://problem/32903570>
+
+        Reviewed by Brent Fulgham.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]): Move FrameLoadRequest instantiation
+        into a local variable and use C++11 brace initialization syntax to make it easier to identify
+        the arguments passed to FrameLoader::loadFrameRequest().
+
 2017-06-21  Antoine Quint  <graouts@apple.com>
 
         Add logging to identify when the Page suspends scripted animations

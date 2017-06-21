@@ -37,9 +37,8 @@
 namespace WebCore {
 
 FrameLoadRequest::FrameLoadRequest(Frame& frame, const ResourceRequest& resourceRequest, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const SubstituteData& substituteData)
-    : m_requester { &frame.document()->securityOrigin() }
+    : m_requester { makeRef(frame.document()->securityOrigin()) }
     , m_resourceRequest { resourceRequest }
-    , m_shouldCheckNewWindowPolicy { false }
     , m_substituteData { substituteData }
     , m_lockHistory { LockHistory::No }
     , m_lockBackForwardList { LockBackForwardList::No }

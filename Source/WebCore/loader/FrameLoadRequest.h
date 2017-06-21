@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,79 +35,42 @@ class Frame;
 
 struct FrameLoadRequest {
 public:
-    FrameLoadRequest(SecurityOrigin& requester, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
-        : m_requester(&requester)
-        , m_lockHistory(lockHistory)
-        , m_lockBackForwardList(lockBackForwardList)
-        , m_shouldSendReferrer(shouldSendReferrer)
-        , m_allowNavigationToInvalidURL(allowNavigationToInvalidURL)
-        , m_newFrameOpenerPolicy(newFrameOpenerPolicy)
-        , m_shouldReplaceDocumentIfJavaScriptURL(ReplaceDocumentIfJavaScriptURL)
-        , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
+    FrameLoadRequest(SecurityOrigin& requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute = { })
+        : m_requester { makeRef(requester) }
+        , m_resourceRequest { resourceRequest }
+        , m_frameName { frameName }
+        , m_lockHistory { lockHistory }
+        , m_lockBackForwardList { lockBackForwardList }
+        , m_shouldSendReferrer { shouldSendReferrer }
+        , m_allowNavigationToInvalidURL { allowNavigationToInvalidURL }
+        , m_newFrameOpenerPolicy { newFrameOpenerPolicy }
+        , m_shouldReplaceDocumentIfJavaScriptURL { shouldReplaceDocumentIfJavaScriptURL }
+        , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
+        , m_downloadAttribute { downloadAttribute }
     {
     }
-
-    FrameLoadRequest(SecurityOrigin& requester, const ResourceRequest& resourceRequest, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
-        : m_requester(&requester)
-        , m_resourceRequest(resourceRequest)
-        , m_lockHistory(lockHistory)
-        , m_lockBackForwardList(lockBackForwardList)
-        , m_shouldSendReferrer(shouldSendReferrer)
-        , m_allowNavigationToInvalidURL(allowNavigationToInvalidURL)
-        , m_newFrameOpenerPolicy(newFrameOpenerPolicy)
-        , m_shouldReplaceDocumentIfJavaScriptURL(ReplaceDocumentIfJavaScriptURL)
-        , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
-    {
-    }
-
-    FrameLoadRequest(SecurityOrigin& requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
-        : m_requester(&requester)
-        , m_resourceRequest(resourceRequest)
-        , m_frameName(frameName)
-        , m_lockHistory(lockHistory)
-        , m_lockBackForwardList(lockBackForwardList)
-        , m_shouldSendReferrer(shouldSendReferrer)
-        , m_allowNavigationToInvalidURL(allowNavigationToInvalidURL)
-        , m_newFrameOpenerPolicy(newFrameOpenerPolicy)
-        , m_shouldReplaceDocumentIfJavaScriptURL(ReplaceDocumentIfJavaScriptURL)
-        , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
-    {
-    }
-
-    FrameLoadRequest(SecurityOrigin& requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)
-        : m_requester(&requester)
-        , m_resourceRequest(resourceRequest)
-        , m_frameName(frameName)
-        , m_lockHistory(lockHistory)
-        , m_lockBackForwardList(lockBackForwardList)
-        , m_shouldSendReferrer(shouldSendReferrer)
-        , m_allowNavigationToInvalidURL(allowNavigationToInvalidURL)
-        , m_newFrameOpenerPolicy(newFrameOpenerPolicy)
-        , m_shouldReplaceDocumentIfJavaScriptURL(shouldReplaceDocumentIfJavaScriptURL)
-        , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
-    {
-    }
-
-    FrameLoadRequest(SecurityOrigin& requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
-        : m_requester(&requester)
-        , m_resourceRequest(resourceRequest)
-        , m_frameName(frameName)
-        , m_lockHistory(lockHistory)
-        , m_lockBackForwardList(lockBackForwardList)
-        , m_shouldSendReferrer(shouldSendReferrer)
-        , m_allowNavigationToInvalidURL(allowNavigationToInvalidURL)
-        , m_newFrameOpenerPolicy(newFrameOpenerPolicy)
-        , m_shouldReplaceDocumentIfJavaScriptURL(shouldReplaceDocumentIfJavaScriptURL)
-        , m_shouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy)
-        , m_downloadAttribute(downloadAttribute)
-    {
-    }
-
     WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, ShouldOpenExternalURLsPolicy, const SubstituteData& = SubstituteData());
+
+    FrameLoadRequest(const FrameLoadRequest& other)
+        : m_requester { other.m_requester.copyRef() }
+        , m_resourceRequest { other.m_resourceRequest }
+        , m_frameName { other.m_frameName }
+        , m_substituteData { other.m_substituteData }
+        , m_shouldCheckNewWindowPolicy { other.m_shouldCheckNewWindowPolicy }
+        , m_lockHistory { other.m_lockHistory }
+        , m_lockBackForwardList { other.m_lockBackForwardList }
+        , m_shouldSendReferrer { other.m_shouldSendReferrer }
+        , m_allowNavigationToInvalidURL { other.m_allowNavigationToInvalidURL }
+        , m_newFrameOpenerPolicy { other.m_newFrameOpenerPolicy }
+        , m_shouldReplaceDocumentIfJavaScriptURL { other.m_shouldReplaceDocumentIfJavaScriptURL }
+        , m_shouldOpenExternalURLsPolicy { other.m_shouldOpenExternalURLsPolicy }
+        , m_downloadAttribute { other.m_downloadAttribute }
+    {
+    }
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 
-    const SecurityOrigin* requester() const { return m_requester.get(); }
+    const SecurityOrigin& requester() const { return m_requester.get(); }
 
     ResourceRequest& resourceRequest() { return m_resourceRequest; }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
@@ -138,12 +101,12 @@ public:
     const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
 
 private:
-    RefPtr<SecurityOrigin> m_requester;
+    Ref<SecurityOrigin> m_requester;
     ResourceRequest m_resourceRequest;
     String m_frameName;
-    bool m_shouldCheckNewWindowPolicy { false };
     SubstituteData m_substituteData;
 
+    bool m_shouldCheckNewWindowPolicy { false };
     LockHistory m_lockHistory;
     LockBackForwardList m_lockBackForwardList;
     ShouldSendReferrer m_shouldSendReferrer;

@@ -1,3 +1,22 @@
+2017-06-21  Daniel Bates  <dabates@apple.com>
+
+        Cleanup FrameLoadRequest
+        https://bugs.webkit.org/show_bug.cgi?id=173564
+        <rdar://problem/32903570>
+
+        Reviewed by Brent Fulgham.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::start): Explicitly pass an empty ResourceRequest (we populate it after
+        we instantiate the FrameLoadRequest) and pass the null-string for the target frame name as
+        we do not have one. Use C++11 brace initialization syntax.
+        (WebCore::PluginView::getURLNotify): Explicitly pass the null-string for the target frame
+        name as we do not have one. Use C++11 brace initialization syntax.
+        (WebCore::PluginView::getURL): Ditto.
+        (WebCore::PluginView::handlePost): Move instantiation of FrameLoadRequest from the top of the
+        function to closer to where it is actually used. Explicitly pass the null-string for the target
+        frame name as we do not have one. Use C++11 brace initialization syntax.
+
 2017-06-20  Daniel Bates  <dabates@apple.com>
 
         Have FrameLoadRequest takes a Frame& instead of a Frame*

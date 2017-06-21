@@ -419,12 +419,12 @@ void InspectorPageAgent::reload(ErrorString&, const bool* const optionalIgnoreCa
 
 void InspectorPageAgent::navigate(ErrorString&, const String& url)
 {
-    UserGestureIndicator indicator(ProcessingUserGesture);
+    UserGestureIndicator indicator { ProcessingUserGesture };
     Frame& frame = m_page.mainFrame();
 
-    ResourceRequest resourceRequest(frame.document()->completeURL(url));
-    FrameLoadRequest frameRequest(frame.document()->securityOrigin(), resourceRequest, "_self", LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldReplaceDocumentIfJavaScriptURL::ReplaceDocumentIfJavaScriptURL, ShouldOpenExternalURLsPolicy::ShouldNotAllow);
-    frame.loader().changeLocation(frameRequest);
+    ResourceRequest resourceRequest { frame.document()->completeURL(url) };
+    FrameLoadRequest frameLoadRequest { frame.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+    frame.loader().changeLocation(frameLoadRequest);
 }
 
 static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)

@@ -1,3 +1,20 @@
+2017-06-21  Daniel Bates  <dabates@apple.com>
+
+        Cleanup FrameLoadRequest
+        https://bugs.webkit.org/show_bug.cgi?id=173564
+        <rdar://problem/32903570>
+
+        Reviewed by Brent Fulgham.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL): Explicitly pass the null-string for the target frame
+        name as we do not have one. Use C++11 brace initialization syntax.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage): Ditto.
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab): It is no longer necessary to pass ReplaceDocumentIfJavaScriptURL
+        when instantiating the FrameLoadRequest as it defaults to this policy. Use C++11 brace initialization syntax.
+
 2017-06-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] Add drag-and-drop release logging around WKContentView

@@ -1,3 +1,58 @@
+2017-06-21  Daniel Bates  <dabates@apple.com>
+
+        Cleanup FrameLoadRequest
+        https://bugs.webkit.org/show_bug.cgi?id=173564
+        <rdar://problem/32903570>
+
+        Reviewed by Brent Fulgham.
+
+        FrameLoadRequest has too many constructors. Use default values to reduce the number of
+        constructors. Have FrameLoadRequest hold a Ref<SecurityOrigin> instead of a RefPtr<SecurityOrigin>
+        as FrameLoadRequest must always hold a valid SecurityOrigin, the security origin of the
+        document that initiated the request.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab): Explicitly pass the null-string for
+        the target frame name as we do not have one. Use C++11 brace initialization syntax and ASCIILiteral().
+        Rename local variable from request to frameLoadRequest to better describe its purpose. Fix up
+        FIXME comment added in r105600 to better describe the issue we should fix as the code as
+        changed since the FIXME was added.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::navigate): No need to pass ShouldReplaceDocumentIfJavaScriptURL::ReplaceDocumentIfJavaScriptURL
+        now that the FrameLoadRequests constructor uses this policy by default. Use C++11 brace
+        initialization syntax and ASCIILiteral(). Rename local variable from frameRequest to frameLoadRequest
+        to better describe its purpose.
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest): Use C++11 brace initialization syntax.
+        * loader/FrameLoadRequest.h: Remove many constructor overloads. Changed m_requester from
+        RefPtr<SecurityOrigin> to Ref<SecurityOrigin> as we can never be instantiated with a null
+        SecurityOrigin. Moved m_shouldCheckNewWindowPolicy to be under ShouldOpenExternalURLsPolicy
+        to reduce the size of the class by 8 bytes.
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest): Added copy constructor as we must use Ref::copyRef()
+        to copy the Ref<SecurityOrigin>.
+        (WebCore::FrameLoadRequest::requester): Return a const SecurityOrigin& instead of a const SecurityOrigin*.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected): Update now that the order of the ShouldReplaceDocumentIfJavaScriptURL
+        and ShouldOpenExternalURLsPolicy arguments in the FrameLoadRequest constructor has changed.
+        (WebCore::FrameLoader::loadURLIntoChildFrame): Ditto. Also use C++11 brace initialization syntax
+        and ASCIILiteral().
+        (WebCore::FrameLoader::loadFrameRequest): Update code now that FrameLoadRequest::requester() returns a
+        SecurityOrigin& instead of a SecurityOrigin*. Use C++11 brace initialization syntax.
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::scheduleLocationChange): Use C++11 brace initialization syntax.
+        Rename local variable from frameRequest to frameLoadRequest to better describe its purpose.
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        (WebCore::ContextMenuController::contextMenuItemSelected): ove FrameLoadRequest instantiation
+        into a local variable and use C++11 brace initialization syntax to make it easier to identify
+        the arguments passed to FrameLoader::loadFrameRequest().
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow): Update now that the order of the ShouldReplaceDocumentIfJavaScriptURL
+        and ShouldOpenExternalURLsPolicy arguments in the FrameLoadRequest constructor has changed.
+        Use C++11 brace initialization syntax and ASCIILiteral(). Rename some local variables to better
+        describe their purpose.
+
 2017-06-20  Simon Fraser  <simon.fraser@apple.com>
 
         svgPath.getTotalLength() freezes webkit
