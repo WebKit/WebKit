@@ -59,7 +59,7 @@ Plan::Plan(VM* vm, Ref<ModuleInformation> info, CompletionTask&& task)
 }
 
 Plan::Plan(VM* vm, const uint8_t* source, size_t sourceLength, CompletionTask&& task)
-    : m_moduleInformation(makeRef(*new ModuleInformation(Vector<uint8_t>())))
+    : m_moduleInformation(adoptRef(*new ModuleInformation(Vector<uint8_t>())))
     , m_source(source)
     , m_sourceLength(sourceLength)
 {

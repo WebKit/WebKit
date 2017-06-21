@@ -1,3 +1,28 @@
+2017-06-20  Keith Miller  <keith_miller@apple.com>
+
+        Fix leak of ModuleInformations in BBQPlan constructors.
+        https://bugs.webkit.org/show_bug.cgi?id=173577
+
+        Reviewed by Saam Barati.
+
+        This patch fixes a leak in the BBQPlan constructiors. Previously,
+        the plans were calling makeRef on the newly constructed objects.
+        This patch fixes the issue and uses adoptRef instead. Additionally,
+        an old, incorrect, attempt to fix the leak is removed.
+
+        * inspector/remote/cocoa/RemoteInspectorXPCConnection.mm:
+        (Inspector::RemoteInspectorXPCConnection::RemoteInspectorXPCConnection):
+        * jit/JITWorklist.cpp:
+        (JSC::JITWorklist::Thread::Thread):
+        * runtime/PromiseDeferredTimer.cpp:
+        (JSC::PromiseDeferredTimer::addPendingPromise):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::BBQPlan):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::Plan):
+
 2017-06-20  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Send context attributes for tracked canvases

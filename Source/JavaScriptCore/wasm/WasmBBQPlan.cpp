@@ -59,7 +59,7 @@ BBQPlan::BBQPlan(VM* vm, Ref<ModuleInformation> info, AsyncWork work, Completion
 }
 
 BBQPlan::BBQPlan(VM* vm, Vector<uint8_t>&& source, AsyncWork work, CompletionTask&& task)
-    : BBQPlan(vm, makeRef(*new ModuleInformation(WTFMove(source))), work, WTFMove(task))
+    : BBQPlan(vm, adoptRef(*new ModuleInformation(WTFMove(source))), work, WTFMove(task))
 {
     m_state = State::Initial;
 }
