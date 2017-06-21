@@ -34,7 +34,7 @@ WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
         if (className)
             this._element.classList.add(className);
         this._element.textContent = label;
-        this._element.addEventListener("click", this._clicked.bind(this));
+        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
 
         this._id = id;
         this._label = label;
@@ -90,8 +90,12 @@ WebInspector.ScopeBarItem = class ScopeBarItem extends WebInspector.Object
 
     // Private
 
-    _clicked(event)
+    _handleMouseDown(event)
     {
+        // Only handle left mouse clicks.
+        if (event.button !== 0)
+            return;
+
         this.setSelected(!this.selected, event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey);
     }
 };

@@ -34,7 +34,7 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
 
         this._titleElement = document.createElement("span");
         this._element.appendChild(this._titleElement);
-        this._element.addEventListener("click", this._clicked.bind(this));
+        this._element.addEventListener("mousedown", this._handleMouseDown.bind(this));
 
         this._selectElement = document.createElement("select");
         this._selectElement.addEventListener("change", this._selectElementSelectionChanged.bind(this));
@@ -164,12 +164,17 @@ WebInspector.MultipleScopeBarItem = class MultipleScopeBarItem extends WebInspec
 
     // Private
 
-    _clicked(event)
+    _handleMouseDown(event)
     {
+        // Only handle left mouse clicks.
+        if (event.button !== 0)
+            return;
+
         // Only support click to select when the item is not selected yet.
         // Clicking when selected will cause the menu it appear instead.
         if (this._element.classList.contains("selected"))
             return;
+
         this.selected = true;
     }
 

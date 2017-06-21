@@ -1,5 +1,24 @@
 2017-06-20  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: change the selected ScopeBarItem on mousedown instead of click
+        https://bugs.webkit.org/show_bug.cgi?id=173586
+
+        Reviewed by Matt Baker.
+
+        Both the Tab bar and Sidebar navigation bar switch the active item on "mousedown" instead of
+        on "click". ScopeBarItem should follow this pattern, as it is faster and keeps consistency.
+
+        * UserInterface/Views/MultipleScopeBarItem.js:
+        (WebInspector.MultipleScopeBarItem):
+        (WebInspector.MultipleScopeBarItem.prototype._handleMouseDown):
+        (WebInspector.MultipleScopeBarItem.prototype._clicked): Deleted.
+        * UserInterface/Views/ScopeBarItem.js:
+        (WebInspector.ScopeBarItem):
+        (WebInspector.ScopeBarItem.prototype._handleMouseDown):
+        (WebInspector.ScopeBarItem.prototype._clicked): Deleted.
+
+2017-06-20  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Send context attributes for tracked canvases
         https://bugs.webkit.org/show_bug.cgi?id=173327
 
