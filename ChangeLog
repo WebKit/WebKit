@@ -1,3 +1,14 @@
+2017-06-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyEC SPKI imports
+        https://bugs.webkit.org/show_bug.cgi?id=172927
+
+        Reviewed by Jiewen Tan, Michael Catanzaro and Carlos Garcia Campos.
+
+        * Source/cmake/FindLibtasn1.cmake: Added.
+        * Source/cmake/OptionsGTK.cmake: Require libtasn1 when SUBTLE_CRYPTO is enabled.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2017-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Add initial implementation of glib API

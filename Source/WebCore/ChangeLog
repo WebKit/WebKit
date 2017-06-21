@@ -1,3 +1,35 @@
+2017-06-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyEC SPKI imports
+        https://bugs.webkit.org/show_bug.cgi?id=172927
+
+        Reviewed by Jiewen Tan, Michael Catanzaro and Carlos Garcia Campos.
+
+        No new tests -- affected tests are now passing and are unskipped.
+
+        Implement libgcrypt-based support for SPKI imports of EC keys.
+
+        Using libtasn1 through the utility functions and wrappers, the given key data
+        is decoded against the SubjectPublicKeyInfo ASN.1 definition. The algorithm
+        member is then properly validated, making sure that the key algorithm idenfitier
+        is supported and that the algorithm parameters specify the correct EC curve.
+
+        The public key bit string is then retrieved and validated, ensuring it represents
+        an uncompressed EC point that is of valid size for the specified EC curve. The
+        point is then tested through an EC context to make sure it's positioned on the
+        specified EC curve.
+
+        Finally, the curve name and uncompressed point data are embedded into a
+        `public-key` s-expression that will be used through the libgcrypt API. This is
+        then used, along with other information, to create a valid CryptoKeyEC object.
+
+        * PlatformGTK.cmake: Use LIBTASN1_INCLUDE_DIRECTORIES and LIBTASN1_LIBRARIES.
+        * PlatformWPE.cmake: Ditto.
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::supportedAlgorithmIdentifier):
+        (WebCore::curveForIdentifier):
+        (WebCore::CryptoKeyEC::platformImportSpki):
+
 2017-06-20  Devin Rousso  <drousso@apple.com>
 
         WebGPU contexts should have a back reference to the canvas element

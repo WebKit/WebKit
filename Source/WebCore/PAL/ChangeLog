@@ -1,3 +1,33 @@
+2017-06-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyEC SPKI imports
+        https://bugs.webkit.org/show_bug.cgi?id=172927
+
+        Reviewed by Jiewen Tan, Michael Catanzaro and Carlos Garcia Campos.
+
+        Add a file that provides utility functions for operating with libtasn1 APIs.
+
+        The precomputed ASN.1 declarations, generated from the WebCrypto.asn file with
+        the asn1Parser tool, are used to enable construction of ASN.1 structures that
+        are then used to decode the SPKI or PKCS#8 data through the decodeStructure()
+        function. Raw data of each element in that structure can be retrieved throug the
+        elementData() function.
+
+        The Structure class is added as a wrapper for asn1_node objects that are used
+        as decoding targets, simplifying lifetime management of these objects.
+
+        * pal/PlatformGTK.cmake:
+        * pal/PlatformWPE.cmake:
+        * pal/crypto/tasn1/Utilities.cpp: Added.
+        (PAL::TASN1::asn1Definitions):
+        (PAL::TASN1::decodeStructure):
+        (PAL::TASN1::elementData):
+        * pal/crypto/tasn1/Utilities.h: Added.
+        (PAL::TASN1::Structure::~Structure):
+        (PAL::TASN1::Structure::operator&):
+        (PAL::TASN1::Structure::operator asn1_node):
+        * pal/crypto/tasn1/WebCrypto.asn: Added.
+
 2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Disable font variations on macOS Sierra and iOS 10

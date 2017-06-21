@@ -1,3 +1,13 @@
+2017-06-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyEC SPKI imports
+        https://bugs.webkit.org/show_bug.cgi?id=172927
+
+        Reviewed by Jiewen Tan, Michael Catanzaro and Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations:
+        Unskip or enable the EC-based SPKI import tests that are now passing.
+
 2017-06-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Disable font variations on macOS Sierra and iOS 10
