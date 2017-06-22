@@ -1,3 +1,16 @@
+2017-06-22  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        pretty patch doesn't show image diffs with newer versions of git
+        https://bugs.webkit.org/show_bug.cgi?id=173691
+
+        A new security check added in git >= 2.3.3 causes it to abort
+        when the tool runs "git apply" to generate the images.
+        Detect if git supports the flag --unsafe-paths and pass it.
+
+        Reviewed by Darin Adler.
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2017-05-26  Devin Rousso  <drousso@apple.com>
 
         Provide bug information when https://webkit.org/b/# URLs are added in comments

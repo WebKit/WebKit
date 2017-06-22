@@ -777,7 +777,16 @@ END
 
         def self.run_git_apply_on_patch(output_filepath, patch)
             # Apply the git binary patch using git-apply.
-            cmd = GIT_PATH + " apply --directory=" + File.dirname(output_filepath)
+            cmd = GIT_PATH + " apply"
+            # Check if we need to pass --unsafe-paths (git >= 2.3.3)
+            helpcmd = GIT_PATH + " help apply"
+            stdin, stdout, stderr = *Open3.popen3(helpcmd)
+            begin
+                if stdout.read().include? "--unsafe-paths"
+                    cmd += " --unsafe-paths"
+                end
+            end
+            cmd += " --directory=" + File.dirname(output_filepath)
             stdin, stdout, stderr = *Open3.popen3(cmd)
             begin
                 stdin.puts(patch)
