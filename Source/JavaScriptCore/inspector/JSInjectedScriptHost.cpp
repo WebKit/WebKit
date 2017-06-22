@@ -214,6 +214,8 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     if (!value.asCell()->inherits(vm, JSFunction::info()))
         return jsUndefined();
 
+    // FIXME: <https://webkit.org/b/87192> Web Inspector: Expose function scope / closure data
+
     // FIXME: This should provide better details for JSBoundFunctions.
 
     JSFunction* function = jsCast<JSFunction*>(value);
@@ -245,9 +247,6 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
     String displayName = function->displayName(vm);
     if (!displayName.isEmpty())
         result->putDirect(vm, Identifier::fromString(exec, "displayName"), jsString(exec, displayName));
-
-    // FIXME: provide function scope data in "scopesRaw" property when JSC supports it.
-    // <https://webkit.org/b/87192> [JSC] expose function (closure) inner context to debugger
 
     return result;
 }

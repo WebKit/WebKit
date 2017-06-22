@@ -113,7 +113,6 @@ void InjectedScript::functionDetails(ErrorString& errorString, JSC::JSValue valu
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("functionDetails"), inspectorEnvironment()->functionCallHandler());
     function.appendArgument(value);
-    function.appendArgument(true); // Preview only.
 
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
