@@ -54,7 +54,7 @@
 
 #if !TARGET_OS_IPHONE
 - (void)_resetPluginLoadClientPolicies:(NSDictionary *)policies WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-@property (nonatomic, readonly, copy) NSDictionary *_pluginLoadClientPolicies WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, readonly) NSDictionary *_pluginLoadClientPolicies WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;

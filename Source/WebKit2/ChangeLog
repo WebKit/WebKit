@@ -1,3 +1,19 @@
+2017-06-22  David Kilzer  <ddkilzer@apple.com>
+
+        v2: REGRESSION (r218419): 3 NSMutableDictionary leaks calling -[WKProcessPool _pluginLoadClientPolicies]
+        <https://webkit.org/b/173689>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (policiesHashMapToDictionary): Use -dictionaryWithCapacity:
+        instead of -new since the former returns an autoreleased object
+        while the latter does not.  This has the added benefit of tuning
+        the size of each NSMutableDictionary.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        (-[WKProcessPool _pluginLoadClientPolicies]): Remove 'copy'
+        attribute from @property declaration since it is read-only.
+
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Downloads never have a web view associated in WPE
@@ -77,7 +93,7 @@
 
 2017-06-21  David Kilzer  <ddkilzer@apple.com>
 
-        REGRESSION (r218419): 3 NSMutableDiciontary leaks calling -[WKProcessPool _pluginLoadClientPolicies]
+        REGRESSION (r218419): 3 NSMutableDictionary leaks calling -[WKProcessPool _pluginLoadClientPolicies]
         <https://webkit.org/b/173689>
 
         Reviewed by Chris Dumez.
