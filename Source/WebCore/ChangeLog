@@ -1,3 +1,23 @@
+2017-06-22  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Spreaker live shows won't play
+        https://bugs.webkit.org/show_bug.cgi?id=173306
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This was due to removing the code that negotiated caps for Icecast
+        streams based on the response headers in r191947. The problem is that
+        the typefind element can sometimes squint hard enough and see an MP3
+        stream and attempt to play it, resulting in garbled audio playback. More
+        commonly typefind fails to recognize the Icecast stream and bails,
+        resulting in no playback at all.
+
+        r191947 also removed the emission of metadata into the pipeline. This
+        patch also leaves that out since we have no use for it within WebKit.
+
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (StreamingClient::handleResponseReceived):
+
 2017-06-22  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218633.

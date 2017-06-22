@@ -956,7 +956,16 @@ void StreamingClient::handleResponseReceived(const ResourceResponse& response)
     } else
         gst_app_src_set_size(priv->appsrc, -1);
 
-    gst_app_src_set_caps(priv->appsrc, nullptr);
+    // Signal to downstream if this is an Icecast stream.
+    GRefPtr<GstCaps> caps;
+    String metadataIntervalAsString = response.httpHeaderField(HTTPHeaderName::IcyMetaInt);
+    if (!metadataIntervalAsString.isEmpty()) {
+        bool isMetadataIntervalParsed;
+        int metadataInterval = metadataIntervalAsString.toInt(&isMetadataIntervalParsed);
+        if (isMetadataIntervalParsed && metadataInterval > 0)
+            caps = adoptGRef(gst_caps_new_simple("application/x-icy", "metadata-interval", G_TYPE_INT, metadataInterval, nullptr));
+    }
+    gst_app_src_set_caps(priv->appsrc, caps.get());
 
     // Emit a GST_EVENT_CUSTOM_DOWNSTREAM_STICKY event to let GStreamer know about the HTTP headers sent and received.
     GstStructure* httpHeaders = gst_structure_new_empty("http-headers");
