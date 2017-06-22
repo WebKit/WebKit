@@ -1,5 +1,15 @@
 2017-06-21  Saam Barati  <sbarati@apple.com>
 
+        ArrayPrototype.map builtin declares a var it does not use
+        https://bugs.webkit.org/show_bug.cgi?id=173685
+
+        Reviewed by Keith Miller.
+
+        * builtins/ArrayPrototype.js:
+        (map):
+
+2017-06-21  Saam Barati  <sbarati@apple.com>
+
         eval virtual call is incorrect in the baseline JIT
         https://bugs.webkit.org/show_bug.cgi?id=173587
         <rdar://problem/32867897>
