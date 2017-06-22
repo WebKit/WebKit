@@ -313,13 +313,13 @@ static HashMap<String, HashMap<String, HashMap<String, uint8_t>>> toPluginLoadCl
 
 static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& map)
 {
-    NSMutableDictionary *policies = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *policies = [NSMutableDictionary new];
     for (auto& hostPair : map) {
         NSString *host = hostPair.key;
-        policies[host] = [[NSMutableDictionary alloc] init];
+        policies[host] = [NSMutableDictionary new];
         for (auto& bundleIdentifierPair : hostPair.value) {
             NSString *bundlerIdentifier = bundleIdentifierPair.key;
-            policies[host][bundlerIdentifier] = [[NSMutableDictionary alloc] init];
+            policies[host][bundlerIdentifier] = [NSMutableDictionary new];
             for (auto& versionPair : bundleIdentifierPair.value) {
                 NSString *version = versionPair.key;
                 policies[host][bundlerIdentifier][version] = [NSNumber numberWithUnsignedInt:versionPair.value];

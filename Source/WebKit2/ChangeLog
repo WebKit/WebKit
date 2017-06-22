@@ -1,3 +1,20 @@
+2017-06-21  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r218419): 3 NSMutableDiciontary leaks calling -[WKProcessPool _pluginLoadClientPolicies]
+        <https://webkit.org/b/173689>
+
+        Reviewed by Chris Dumez.
+
+        Caught by the clang static analyzer.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (policiesHashMapToDictionary): Switch from using
+        [[NSMutableDictionary alloc] init] which returns a +1 retained
+        object in MRR to [NSMutableDictionary new] which returns an
+        autoreleased object under MRR.  This bug caused 3 leaks when
+        calling -[WKProcessPool _pluginLoadClientPolicies], which should
+        return an autoreleased object based on its signature.
+
 2017-06-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add release assertions help diagnose a hang in CallbackMap
