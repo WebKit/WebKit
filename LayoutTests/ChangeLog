@@ -1,3 +1,14 @@
+2017-06-22  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r214712): Infinite recursion in RenderTable::layout in paginated mode
+        https://bugs.webkit.org/show_bug.cgi?id=173731
+        <rdar://problem/32237775>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/table/caption-bottom-with-pagination-expected.txt: Added.
+        * fast/table/caption-bottom-with-pagination.html: Added.
+
 2017-06-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark media/modern-media-controls/forward-button/forward-button.html as flaky on mac-wk1.

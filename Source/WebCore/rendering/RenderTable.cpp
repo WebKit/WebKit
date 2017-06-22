@@ -474,8 +474,11 @@ void RenderTable::layout()
 
     LayoutUnit totalSectionLogicalHeight = 0;
     LayoutUnit oldTableLogicalTop = 0;
-    for (unsigned i = 0; i < m_captions.size(); i++)
+    for (unsigned i = 0; i < m_captions.size(); i++) {
+        if (m_captions[i]->style().captionSide() == CAPBOTTOM)
+            continue;
         oldTableLogicalTop += m_captions[i]->logicalHeight() + m_captions[i]->marginBefore() + m_captions[i]->marginAfter();
+    }
 
     bool collapsing = collapseBorders();
 

@@ -1,3 +1,19 @@
+2017-06-22  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION(r214712): Infinite recursion in RenderTable::layout in paginated mode
+        https://bugs.webkit.org/show_bug.cgi?id=173731
+        <rdar://problem/32237775>
+
+        Reviewed by Antti Koivisto.
+
+        We should just skip bottom captions to check if section is moved, since they don't affect
+        the section position (bottom <caption> is preceded by <tfoot>).
+
+        Test: fast/table/caption-bottom-with-pagination.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+
 2017-06-22  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r215809): 50% regression 14E305 -> 15A293a in MotionMark Suits test
