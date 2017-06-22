@@ -35,6 +35,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Threading.h>
 
 namespace WebKit {
 
@@ -100,11 +101,14 @@ public:
 
     virtual ~GenericCallback()
     {
+        ASSERT(currentThread() == m_originThreadID);
         ASSERT(!m_callback);
     }
 
     void performCallbackWithReturnValue(T... returnValue)
     {
+        ASSERT(currentThread() == m_originThreadID);
+
         if (!m_callback)
             return;
 
@@ -120,6 +124,8 @@ public:
 
     void invalidate(Error error = Error::Unknown) final
     {
+        ASSERT(currentThread() == m_originThreadID);
+
         if (!m_callback)
             return;
 
@@ -143,6 +149,10 @@ private:
     }
 
     std::optional<CallbackFunction> m_callback;
+
+#ifndef NDEBUG
+    ThreadIdentifier m_originThreadID { currentThread() };
+#endif
 };
 
 template<typename APIReturnValueType, typename InternalReturnValueType = typename APITypeInfo<APIReturnValueType>::ImplType*>

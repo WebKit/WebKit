@@ -1,3 +1,18 @@
+2017-06-22  Brady Eidson  <beidson@apple.com>
+
+        Add some thread safety guards to GenericCallback.
+        https://bugs.webkit.org/show_bug.cgi?id=173693
+
+        Reviewed by Sam Weinig.
+
+        A callback should be created, performed, invalidated, and/or destroyed all on the same thread.
+        Let's write code to notify us if that doesn't happen.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::GenericCallback::~GenericCallback):
+        (WebKit::GenericCallback::performCallbackWithReturnValue):
+        (WebKit::GenericCallback::invalidate):
+
 2017-06-22  David Kilzer  <ddkilzer@apple.com>
 
         v2: REGRESSION (r218419): 3 NSMutableDictionary leaks calling -[WKProcessPool _pluginLoadClientPolicies]
