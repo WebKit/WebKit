@@ -1,3 +1,18 @@
+2017-06-22  Daniel Bates  <dabates@apple.com>
+
+        [Win] Cleanup: Remove unnecessary include of header FrameLoadRequest.h
+        https://bugs.webkit.org/show_bug.cgi?id=173683
+
+        Reviewed by Alex Christensen.
+
+        Neither file PluginViewWin.cpp nor WebContextMenuClient.cpp need to include
+        header FrameLoadRequest.h. The former includes FrameLoadRequest.h indirectly
+        by including PluginView.h. The latter does not make use of the functionality
+        provided by FrameLoadRequest.h.
+
+        * Plugins/PluginViewWin.cpp:
+        * WebCoreSupport/WebContextMenuClient.cpp:
+
 2017-06-21  Daniel Bates  <dabates@apple.com>
 
         Cleanup FrameLoadRequest

@@ -40,7 +40,6 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
-#include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/FrameView.h>
