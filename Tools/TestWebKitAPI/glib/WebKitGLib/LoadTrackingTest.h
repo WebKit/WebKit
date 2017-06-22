@@ -17,10 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef LoadTrackingTest_h
-#define LoadTrackingTest_h
+#pragma once
 
-#include "TestMain.h"
 #include "WebViewTest.h"
 #include <wtf/Vector.h>
 
@@ -68,5 +66,3 @@ public:
     float m_estimatedProgress;
     CString m_redirectURI;
 };
-
-#endif // LoadTrackingTest_h

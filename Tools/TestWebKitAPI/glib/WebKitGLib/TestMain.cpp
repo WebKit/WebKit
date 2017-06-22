@@ -37,8 +37,8 @@ const char* Test::dataDirectory()
 
 static void registerGResource(void)
 {
-    GUniquePtr<char> resourcesPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "resources", "webkit2gtk-tests-resources.gresource", nullptr));
-    GResource* resource = g_resource_load(resourcesPath.get(), 0);
+    GUniquePtr<char> resourcesPath(g_build_filename(WEBKIT_TEST_RESOURCES_DIR, "webkitglib-tests-resources.gresource", nullptr));
+    GResource* resource = g_resource_load(resourcesPath.get(), nullptr);
     g_assert(resource);
 
     g_resources_register(resource);

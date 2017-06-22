@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef TestMain_h
-#define TestMain_h
+#pragma once
 
 #include <cairo.h>
 #include <glib-object.h>
@@ -67,9 +66,10 @@
         CString __s1 = (s1);                                             \
         CString __s2 = (s2);                                             \
         if (g_strcmp0(__s1.data(), __s2.data()) cmp 0) ;                 \
-        else                                                             \
+        else {                                                           \
             g_assertion_message_cmpstr(G_LOG_DOMAIN, __FILE__, __LINE__, \
                 G_STRFUNC, #s1 " " #cmp " " #s2, __s1.data(), #cmp, __s2.data()); \
+        }                                                                \
     } while (0)
 
 
@@ -135,15 +135,15 @@ public:
 
 
     enum ResourcesDir {
-        WebKit2GTKResources,
+        WebKitGLibResources,
         WebKit2Resources,
     };
 
-    static CString getResourcesDir(ResourcesDir resourcesDir = WebKit2GTKResources)
+    static CString getResourcesDir(ResourcesDir resourcesDir = WebKitGLibResources)
     {
         switch (resourcesDir) {
-        case WebKit2GTKResources: {
-            GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2Gtk", "resources", nullptr));
+        case WebKitGLibResources: {
+            GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKitGLib", "resources", nullptr));
             return resourcesDir.get();
         }
         case WebKit2Resources: {
@@ -182,5 +182,3 @@ public:
     GRefPtr<WebKitWebContext> m_webContext;
     static uint32_t s_webExtensionID;
 };
-
-#endif // TestMain_h

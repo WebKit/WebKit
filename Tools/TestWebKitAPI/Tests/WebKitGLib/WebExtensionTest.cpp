@@ -413,7 +413,7 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
 
 static void registerGResource(void)
 {
-    GUniquePtr<char> resourcesPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "resources", "webkit2gtk-tests-resources.gresource", nullptr));
+    GUniquePtr<char> resourcesPath(g_build_filename(WEBKIT_TEST_RESOURCES_DIR, "webkitglib-tests-resources.gresource", nullptr));
     GResource* resource = g_resource_load(resourcesPath.get(), nullptr);
     g_assert(resource);
 

@@ -18,11 +18,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebViewTest_h
-#define WebViewTest_h
+#pragma once
 
 #include "TestMain.h"
-#include <webkit2/webkit2.h>
 #include <wtf/text/CString.h>
 
 class WebViewTest: public Test {
@@ -101,5 +99,3 @@ public:
 private:
     void doMouseButtonEvent(GdkEventType, int, int, unsigned, unsigned);
 };
-
-#endif // WebViewTest_h

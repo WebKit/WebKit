@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<gresources>
-  <gresource prefix="/org/webkit/webkit2gtk/tests/">
-    <file alias="boring.html">Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/boring.html</file>
-    <file alias="link-title.js">Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/link-title.js</file>
-  </gresource>
-</gresources>

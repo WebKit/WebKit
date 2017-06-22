@@ -256,7 +256,7 @@ static void testWebViewRunJavaScript(WebViewTest* test, gconstpointer)
     g_assert(!error.get());
     g_assert(WebViewTest::javascriptResultIsUndefined(javascriptResult));
 
-    javascriptResult = test->runJavaScriptFromGResourceAndWaitUntilFinished("/org/webkit/webkit2gtk/tests/link-title.js", &error.outPtr());
+    javascriptResult = test->runJavaScriptFromGResourceAndWaitUntilFinished("/org/webkit/glib/tests/link-title.js", &error.outPtr());
     g_assert(javascriptResult);
     g_assert(!error.get());
     valueString.reset(WebViewTest::javascriptResultToCString(javascriptResult));
@@ -781,7 +781,7 @@ public:
         return !g_strcmp0(value.get(), "granted");
     }
 
-   void requestPermissionAndWaitUntilGiven()
+    void requestPermissionAndWaitUntilGiven()
     {
         m_event = None;
         m_isExpectingPermissionRequest = true;

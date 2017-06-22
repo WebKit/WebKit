@@ -119,7 +119,7 @@ static void testLoadRequest(LoadTrackingTest* test, gconstpointer)
 
 static void testLoadFromGResource(LoadTrackingTest* test, gconstpointer)
 {
-    GRefPtr<WebKitURIRequest> request(webkit_uri_request_new("resource:///org/webkit/webkit2gtk/tests/boring.html"));
+    GRefPtr<WebKitURIRequest> request(webkit_uri_request_new("resource:///org/webkit/glib/tests/boring.html"));
     test->loadRequest(request.get());
     test->waitUntilLoadFinished();
     assertNormalLoadHappened(test->m_loadEvents);

@@ -31,10 +31,8 @@
 #include "config.h"
 
 #include "TestMain.h"
-#include "WebViewTest.h"
 #include "WebKitTestServer.h"
-#include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
+#include "WebViewTest.h"
 #include <wtf/glib/GRefPtr.h>
 
 static WebKitTestServer* gServer;

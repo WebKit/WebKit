@@ -141,9 +141,10 @@ public:
         if (!m_domains)
             return false;
 
-        for (size_t i = 0; m_domains[i]; ++i)
+        for (size_t i = 0; m_domains[i]; ++i) {
             if (g_str_equal(m_domains[i], domain))
                 return true;
+        }
         return false;
     }
 

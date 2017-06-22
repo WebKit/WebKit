@@ -1,5 +1,70 @@
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Move WebKit2 GLib API tests to glib directories
+        https://bugs.webkit.org/show_bug.cgi?id=173642
+
+        Reviewed by Žan Doberšek.
+
+        * CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/CMakeLists.txt: Removed.
+        * TestWebKitAPI/Tests/WebKit2Gtk/resources/webkit2gtk-tests.gresource.xml: Removed.
+        * TestWebKitAPI/Tests/WebKitGLib/FrameTest.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/FrameTest.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestAuthentication.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestAutomationSession.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestBackForwardList.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestConsoleMessage.cpp.
+        (testWebKitConsoleMessageNetworkError):
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestCookieManager.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestDownloads.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestFrame.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestLoaderClient.cpp.
+        (testLoadFromGResource):
+        * TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestMultiprocess.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestResources.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestResources.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestSSL.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestUIClient.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebExtensions.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFaviconDatabase.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitFindController.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitPolicyClient.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSecurityOrigin.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSecurityOrigin.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitSettings.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitUserContentManager.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebContext.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitWebView.cpp.
+        (testWebViewRunJavaScript):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/TestWebsiteData.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/WebExtensionTest.cpp.
+        (registerGResource):
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.cpp: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.cpp.
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.h: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/WebProcessTest.h.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/blank.ico: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/blank.ico.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/boring.html: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/boring.html.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/link-title.js: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/link-title.js.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/silence.mpg: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/silence.mpg.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/simple.json: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/simple.json.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/test-cert.pem: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/test-cert.pem.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/test-key.pem: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/test-key.pem.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/test.pdf: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/test.pdf.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/track.ogg: Renamed from Tools/TestWebKitAPI/Tests/WebKit2Gtk/resources/track.ogg.
+        * TestWebKitAPI/Tests/WebKitGLib/resources/webkitglib-tests.gresource.xml: Added.
+        * TestWebKitAPI/glib/CMakeLists.txt: Added.
+        * TestWebKitAPI/glib/PlatformGTK.cmake: Added.
+        * TestWebKitAPI/glib/WebKitGLib/LoadTrackingTest.cpp: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.cpp.
+        * TestWebKitAPI/glib/WebKitGLib/LoadTrackingTest.h: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/LoadTrackingTest.h.
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.cpp: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/TestMain.cpp.
+        (registerGResource):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/TestMain.h.
+        (Test::getResourcesDir):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.cpp: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.cpp.
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.h: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestBus.h.
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.cpp.
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebKitTestServer.h.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.cpp.
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h: Renamed from Tools/TestWebKitAPI/gtk/WebKit2Gtk/WebViewTest.h.
+
+2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Add initial web extensions API
         https://bugs.webkit.org/show_bug.cgi?id=173640
 

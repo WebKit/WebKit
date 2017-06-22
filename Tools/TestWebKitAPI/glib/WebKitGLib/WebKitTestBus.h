@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitTestBus_h
-#define WebKitTestBus_h
+#pragma once
 
 #include <gio/gio.h>
 #include <wtf/glib/GRefPtr.h>
@@ -40,5 +39,3 @@ private:
     CString m_address;
     GRefPtr<GDBusConnection> m_connection;
 };
-
-#endif // WebKitTestBus_h

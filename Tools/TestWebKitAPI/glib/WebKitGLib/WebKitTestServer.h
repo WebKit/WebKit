@@ -17,11 +17,9 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitTestServer_h
-#define WebKitTestServer_h
+#pragma once
 
 #include <libsoup/soup.h>
-#include <webkit2/webkit2.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/CString.h>
@@ -48,5 +46,3 @@ private:
     SoupURI* m_baseURI;
     RefPtr<WorkQueue> m_queue;
 };
-
-#endif // WebKitTestServer_h
