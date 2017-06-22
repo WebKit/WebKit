@@ -5339,7 +5339,7 @@ void HTMLMediaElement::mediaVolumeDidChange()
 
 void HTMLMediaElement::visibilityStateChanged()
 {
-    m_elementIsHidden = document().hidden() && m_videoFullscreenMode == VideoFullscreenModeNone;
+    m_elementIsHidden = document().hidden() && m_videoFullscreenMode != VideoFullscreenModePictureInPicture;
     LOG(Media, "HTMLMediaElement::visibilityStateChanged(%p) - visible = %s", this, boolString(!m_elementIsHidden));
     updateSleepDisabling();
     m_mediaSession->visibilityChanged();

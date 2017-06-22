@@ -1,3 +1,15 @@
+2017-06-22  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r217223): [iOS] Video keeps playing after application is backgrounded
+        https://bugs.webkit.org/show_bug.cgi?id=173727
+
+        Reviewed by Eric Carlson.
+
+        Only override media element visibility if it is in picture-in-picture mode (not fullscreen generally).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::visibilityStateChanged):
+
 2017-06-22  Joseph Pecoraro  <pecoraro@apple.com>
 
         Follow-up to r218662. Only log backtraces for DumpRenderTree.
