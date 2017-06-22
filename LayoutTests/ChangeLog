@@ -1,3 +1,12 @@
+2017-06-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark perf/object-keys.html as flaky on iOS.
+        https://bugs.webkit.org/show_bug.cgi?id=171617
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-06-22  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r214712): Infinite recursion in RenderTable::layout in paginated mode
