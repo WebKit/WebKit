@@ -4200,6 +4200,8 @@ static bool isAssistableInputType(InputType type)
     _dataInteraction = adoptNS([[UIDragInteraction alloc] initWithDelegate:self]);
     _dataOperation = adoptNS([[UIDropInteraction alloc] initWithDelegate:self]);
     [_dataInteraction _setLiftDelay:self.dragLiftDelay];
+    [_dataInteraction setEnabled:YES];
+
     [self addInteraction:_dataInteraction.get()];
     [self addInteraction:_dataOperation.get()];
 }
