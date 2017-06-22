@@ -160,6 +160,8 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
                 this._previewView = new WebInspector.ObjectPreviewView(resolvedValue.preview);
                 valueOrGetterElement = this._previewView.element;
             } else {
+                this._loadPreviewLazilyIfNeeded();
+
                 valueOrGetterElement = WebInspector.FormattedValue.createElementForRemoteObject(resolvedValue, this.hadError());
 
                 // Special case a function property string.
@@ -218,6 +220,22 @@ WebInspector.ObjectTreePropertyTreeElement = class ObjectTreePropertyTreeElement
         }
 
         return container;
+    }
+
+    _loadPreviewLazilyIfNeeded()
+    {
+        let resolvedValue = this.resolvedValue();
+        if (!resolvedValue.canLoadPreview())
+            return;
+
+        resolvedValue.updatePreview((preview) => {
+            if (preview) {
+                this.mainTitle = this._titleFragment();
+
+                if (this.expanded)
+                    this._previewView.showTitle();
+            }
+        });
     }
 
     _alwaysDisplayAsProperty()

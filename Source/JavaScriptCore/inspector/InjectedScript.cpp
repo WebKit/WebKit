@@ -125,6 +125,22 @@ void InjectedScript::functionDetails(ErrorString& errorString, JSC::JSValue valu
     *result = BindingTraits<Inspector::Protocol::Debugger::FunctionDetails>::runtimeCast(WTFMove(resultValue));
 }
 
+void InjectedScript::getPreview(ErrorString& errorString, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>* result)
+{
+    Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getPreview"), inspectorEnvironment()->functionCallHandler());
+    function.appendArgument(objectId);
+
+    RefPtr<InspectorValue> resultValue;
+    makeCall(function, &resultValue);
+    if (!resultValue || resultValue->type() != InspectorValue::Type::Object) {
+        if (!resultValue->asString(errorString))
+            errorString = ASCIILiteral("Internal error");
+        return;
+    }
+
+    *result = BindingTraits<Inspector::Protocol::Runtime::ObjectPreview>::runtimeCast(WTFMove(resultValue));
+}
+
 void InjectedScript::getProperties(ErrorString& errorString, const String& objectId, bool ownProperties, bool generatePreview, RefPtr<Array<Inspector::Protocol::Runtime::PropertyDescriptor>>* properties)
 {
     Deprecated::ScriptFunctionCall function(injectedScriptObject(), ASCIILiteral("getProperties"), inspectorEnvironment()->functionCallHandler());

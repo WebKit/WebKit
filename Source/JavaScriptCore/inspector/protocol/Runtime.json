@@ -243,6 +243,16 @@
             "description": "Calls function with given declaration on the given object. Object group of the result is inherited from the target object."
         },
         {
+            "name": "getPreview",
+            "description": "Returns a preview for the given object.",
+            "parameters": [
+                { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return a preview for." }
+            ],
+            "returns": [
+                { "name": "preview", "$ref": "ObjectPreview" }
+            ]
+        },
+        {
             "name": "getProperties",
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },

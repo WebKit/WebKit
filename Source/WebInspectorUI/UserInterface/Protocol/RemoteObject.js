@@ -231,6 +231,45 @@ WebInspector.RemoteObject = class RemoteObject
         return "_value" in this;
     }
 
+    canLoadPreview()
+    {
+        if (this._failedToLoadPreview)
+            return false;
+
+        if (this._type !== "object")
+            return false;
+
+        if (!this._objectId || this._isSymbol() || this._isFakeObject())
+            return false;
+
+        return true;
+    }
+
+    updatePreview(callback)
+    {
+        if (!this.canLoadPreview()) {
+            callback(null);
+            return;
+        }
+
+        if (!RuntimeAgent.getPreview) {
+            this._failedToLoadPreview = true;
+            callback(null);
+            return;
+        }
+
+        this._target.RuntimeAgent.getPreview(this._objectId, (error, payload) => {
+            if (error) {
+                this._failedToLoadPreview = true;
+                callback(null);
+                return;
+            }
+
+            this._preview = WebInspector.ObjectPreview.fromPayload(payload);
+            callback(this._preview);
+        });
+    }
+
     getOwnPropertyDescriptors(callback)
     {
         this._getPropertyDescriptors(true, callback);

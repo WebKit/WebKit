@@ -1,3 +1,30 @@
+2017-06-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Pausing with a deep call stack can be very slow, avoid eagerly generating object previews
+        https://bugs.webkit.org/show_bug.cgi?id=173698
+
+        Reviewed by Matt Baker.
+
+        Introduce RemoteObject.prototype.updatePreview which can be used to update
+        the preview of a RemoteObject with a current view for the object. Currently
+        we only use this to fetch the preview that we did not have for the `thisObject`
+        in the scope chain sidebar. However this could be used generically to update
+        a RemoteObject's preview (ObjectPreview) at any time.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.canLoadPreview):
+        (WebInspector.RemoteObject.prototype.updatePreview):
+        Allow a RemoteObject to update its preview property. Since this only makes
+        sense on certain Object values include a helper to know when it is appropriate
+        to fetch a preview.
+
+        * UserInterface/Views/ObjectTreePropertyTreeElement.js:
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._createTitlePropertyStyle):
+        (WebInspector.ObjectTreePropertyTreeElement.prototype._loadPreviewLazilyIfNeeded):
+        If the object being shown in the sidebar does not have a preview but can load a
+        preview then attempt to load it lazily. This is the case for the `thisObject`
+        which is injected into an ObjectTree in the scope chain sidebar.
+
 2017-06-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add icon for Canvas.svg

@@ -44,23 +44,36 @@ function test()
 
         InspectorTest.assert(callFrames.length >= expectedFrames.length);
 
-        for (let i = 0; i < expectedFrames.length; i++) {
-            let callFrame = callFrames[i];
-            let expectedFrame = expectedFrames[i];
-            InspectorTest.log("Expected frame: " + JSON.stringify(expectedFrame));
-            InspectorTest.assert(callFrame.functionName === expectedFrame.functionName);
-            InspectorTest.assert(callFrame.isTailDeleted === expectedFrame.isTailDeleted);
-
-            let thisObject = callFrame.thisObject;
-            let properties = thisObject.preview.propertyPreviews;
-            InspectorTest.assert(properties.length === 1);
-            let prop = properties[0];
-            InspectorTest.expectThat(expectedFrame.thisValue[0] === prop.name, `'this' value should have expected property: ${expectedFrame.thisValue[0]}`);
-            InspectorTest.assert('' + expectedFrame.thisValue[1] === prop.value, `'this' value object should have expected property value: ${expectedFrame.thisValue[1]}`);
-            InspectorTest.pass(`Call Frame ${i} 'this' value is correct.`);
+        // Resolve a thisObject preview on each of the CallFrames.
+        let promises = [];
+        for (let callFrame of callFrames) {
+            InspectorTest.assert(!callFrame.thisObject.preview, "thisObject should not have a preview");
+            if (callFrame.thisObject.canLoadPreview()) {
+                promises.push(new Promise((resolve, reject) => {
+                    callFrame.thisObject.updatePreview(resolve);
+                }));
+            }
         }
 
-        WebInspector.debuggerManager.resume();
+        Promise.all(promises).then(() => {
+            for (let i = 0; i < expectedFrames.length; i++) {
+                let callFrame = callFrames[i];
+                let expectedFrame = expectedFrames[i];
+                InspectorTest.log("Expected frame: " + JSON.stringify(expectedFrame));
+                InspectorTest.assert(callFrame.functionName === expectedFrame.functionName);
+                InspectorTest.assert(callFrame.isTailDeleted === expectedFrame.isTailDeleted);
+
+                let thisObject = callFrame.thisObject;
+                let properties = thisObject.preview.propertyPreviews;
+                InspectorTest.assert(properties.length === 1);
+                let prop = properties[0];
+                InspectorTest.expectThat(expectedFrame.thisValue[0] === prop.name, `'this' value should have expected property: ${expectedFrame.thisValue[0]}`);
+                InspectorTest.assert('' + expectedFrame.thisValue[1] === prop.value, `'this' value object should have expected property value: ${expectedFrame.thisValue[1]}`);
+                InspectorTest.pass(`Call Frame ${i} 'this' value is correct.`);
+            }
+
+            WebInspector.debuggerManager.resume();
+        });
     });
 
     WebInspector.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, function(event) {

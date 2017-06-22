@@ -158,6 +158,23 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString& errorString, const Strin
     }
 }
 
+void InspectorRuntimeAgent::getPreview(ErrorString& errorString, const String& objectId, RefPtr<Inspector::Protocol::Runtime::ObjectPreview>& preview)
+{
+    InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
+    if (injectedScript.hasNoValue()) {
+        errorString = ASCIILiteral("Could not find InjectedScript for objectId");
+        return;
+    }
+
+    ScriptDebugServer::PauseOnExceptionsState previousPauseOnExceptionsState = setPauseOnExceptionsState(m_scriptDebugServer, ScriptDebugServer::DontPauseOnExceptions);
+    muteConsole();
+
+    injectedScript.getPreview(errorString, objectId, &preview);
+
+    unmuteConsole();
+    setPauseOnExceptionsState(m_scriptDebugServer, previousPauseOnExceptionsState);
+}
+
 void InspectorRuntimeAgent::getProperties(ErrorString& errorString, const String& objectId, const bool* const ownProperties, const bool* const generatePreview, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::PropertyDescriptor>>& result, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Runtime::InternalPropertyDescriptor>>& internalProperties)
 {
     InjectedScript injectedScript = m_injectedScriptManager.injectedScriptForObjectId(objectId);
