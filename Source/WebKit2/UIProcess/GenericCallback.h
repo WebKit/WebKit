@@ -221,6 +221,7 @@ public:
 
     void invalidate(CallbackBase::Error error)
     {
+        RELEASE_ASSERT(isMainThread());
         invalidateCallbackMap(m_map, error);
     }
 

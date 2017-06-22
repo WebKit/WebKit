@@ -1,3 +1,15 @@
+2017-06-22  Chris Dumez  <cdumez@apple.com>
+
+        Add release assertion in CallbackMap::invalidate()
+        https://bugs.webkit.org/show_bug.cgi?id=173722
+
+        Reviewed by Brady Eidson.
+
+        Add release assertion in CallbackMap::invalidate() to make sure it is called on the main thread.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackMap::invalidate):
+
 2017-06-22  Brady Eidson  <beidson@apple.com>
 
         Add some thread safety guards to GenericCallback.
