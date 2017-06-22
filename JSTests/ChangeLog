@@ -1,3 +1,23 @@
+2017-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Object.values should be implemented in C++
+        https://bugs.webkit.org/show_bug.cgi?id=173703
+
+        Reviewed by Sam Weinig.
+
+        * microbenchmarks/object-keys-map-values.js: Added.
+        (test):
+        * microbenchmarks/object-values.js: Added.
+        (test):
+        * stress/object-values-changing-properties.js: Added.
+        (shouldBe):
+        (throw.new.Error.let.source.get x):
+        (throw.new.Error):
+        (shouldBe.let.handler.get order):
+        (get let):
+        (shouldBe.let.handler.get return):
+        (let.handler.get order):
+
 2017-06-21  Saam Barati  <sbarati@apple.com>
 
         eval virtual call is incorrect in the baseline JIT

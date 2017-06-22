@@ -47,16 +47,6 @@ function enumerableOwnProperties(object, kind)
     return properties;
 }
 
-function values(object)
-{
-    "use strict";
-    
-    if (object == null)
-        @throwTypeError("Object.values requires that input parameter not be null or undefined");
-
-    return @enumerableOwnProperties(object, @iterationKindValue);
-}
-
 function entries(object)
 {
     "use strict";

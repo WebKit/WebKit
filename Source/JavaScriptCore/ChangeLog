@@ -1,3 +1,31 @@
+2017-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Object.values should be implemented in C++
+        https://bugs.webkit.org/show_bug.cgi?id=173703
+
+        Reviewed by Sam Weinig.
+
+        As the same to Object.assign, Object.values() is also inherently polymorphic.
+        And allocating JSString / Symbol for Identifier and JSArray for Object.keys()
+        result is costly.
+
+        In this patch, we implement Object.values() in C++. It can avoid above allocations.
+        Furthermore, by using `slot.isTaintedByOpaqueObject()` information, we can skip
+        non-observable JSObject::get() calls.
+
+        This improves performance by 2.49x. And also now Object.values() beats
+        Object.keys(object).map(key => object[key]) implementation.
+
+                                             baseline                  patched
+
+            object-values               132.1551+-3.7209     ^     53.1254+-1.6139        ^ definitely 2.4876x faster
+            object-keys-map-values       78.2008+-2.1378     ?     78.9078+-2.2121        ?
+
+        * builtins/ObjectConstructor.js:
+        (values): Deleted.
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorValues):
+
 2017-06-21  Saam Barati  <sbarati@apple.com>
 
         ArrayPrototype.map builtin declares a var it does not use
