@@ -1146,10 +1146,12 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::suspendScriptedAnimations()
 {
+#if PLATFORM(MAC)
     if (MacApplication::isDumpRenderTree()) {
         WTFLogAlways("\nPage::suspendScriptedAnimations()");
         WTFReportBacktrace();
     }
+#endif
 
     m_scriptedAnimationsSuspended = true;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
@@ -1160,10 +1162,12 @@ void Page::suspendScriptedAnimations()
 
 void Page::resumeScriptedAnimations()
 {
+#if PLATFORM(MAC)
     if (MacApplication::isDumpRenderTree()) {
         WTFLogAlways("\nPage::resumeScriptedAnimations()");
         WTFReportBacktrace();
     }
+#endif
 
     m_scriptedAnimationsSuspended = false;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {

@@ -94,11 +94,13 @@ void ScriptedAnimationController::resume()
 
 void ScriptedAnimationController::logSuspendCount()
 {
+#if PLATFORM(MAC)
     if (!m_document || !m_document->frame() || MacApplication::isDumpRenderTree())
         return;
 
     WTFLogAlways("\nScriptedAnimationController::m_suspendCount = %d", m_suspendCount);
     WTFReportBacktrace();
+#endif
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && !RELEASE_LOG_DISABLED
