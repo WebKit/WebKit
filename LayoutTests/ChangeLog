@@ -1,5 +1,13 @@
 2017-06-22  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] Skip js geolocation test.
+
+        Unreviewed gardening.
+        Geolocation was disabled since r218553.
+        * platform/wpe/TestExpectations:
+
+2017-06-22  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Unskip http cache tests.
 
         Unreviewed gardening.
