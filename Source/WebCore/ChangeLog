@@ -1,3 +1,18 @@
+2017-06-22  Youenn Fablet  <youenn@apple.com>
+
+        Fix memory leak in LibWebRTCMediaEndpoint
+        https://bugs.webkit.org/show_bug.cgi?id=173717
+
+        Reviewed by Eric Carlson.
+
+        No chnage of behavior.
+        Making sure SessionDescription pointer get properly released.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createSessionDescriptionSucceeded):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * testing/MockLibWebRTCPeerConnection.cpp: Allocating description.
+
 2017-06-22  Daniel Bates  <dabates@apple.com>
 
         Make FrameLoadRequest a move-only type

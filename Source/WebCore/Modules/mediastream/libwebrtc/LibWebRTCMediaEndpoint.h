@@ -100,7 +100,7 @@ private:
     void OnIceCandidate(const webrtc::IceCandidateInterface*) final;
     void OnIceCandidatesRemoved(const std::vector<cricket::Candidate>&) final;
 
-    void createSessionDescriptionSucceeded(webrtc::SessionDescriptionInterface*);
+    void createSessionDescriptionSucceeded(std::unique_ptr<webrtc::SessionDescriptionInterface>&&);
     void createSessionDescriptionFailed(const std::string&);
     void setLocalSessionDescriptionSucceeded();
     void setLocalSessionDescriptionFailed(const std::string&);
@@ -128,7 +128,7 @@ private:
     public:
         explicit CreateSessionDescriptionObserver(LibWebRTCMediaEndpoint &endpoint) : m_endpoint(endpoint) { }
 
-        void OnSuccess(webrtc::SessionDescriptionInterface* sessionDescription) final { m_endpoint.createSessionDescriptionSucceeded(sessionDescription); }
+        void OnSuccess(webrtc::SessionDescriptionInterface* sessionDescription) final { m_endpoint.createSessionDescriptionSucceeded(std::unique_ptr<webrtc::SessionDescriptionInterface>(sessionDescription)); }
         void OnFailure(const std::string& error) final { m_endpoint.createSessionDescriptionFailed(error); }
 
         int AddRef() const { return m_endpoint.AddRef(); }

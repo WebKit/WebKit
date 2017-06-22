@@ -327,8 +327,7 @@ void MockLibWebRTCPeerConnection::CreateOffer(webrtc::CreateSessionDescriptionOb
                     "a=setup:actpass\r\n";
             }
         }
-        MockLibWebRTCSessionDescription description(sdp.str());
-        observer->OnSuccess(&description);
+        observer->OnSuccess(new MockLibWebRTCSessionDescription(sdp.str()));
     });
 }
 
@@ -428,8 +427,7 @@ void MockLibWebRTCPeerConnection::CreateAnswer(webrtc::CreateSessionDescriptionO
                     "a=setup:active\r\n";
             }
         }
-        MockLibWebRTCSessionDescription description(sdp.str());
-        observer->OnSuccess(&description);
+        observer->OnSuccess(new MockLibWebRTCSessionDescription(sdp.str()));
     });
 }
 

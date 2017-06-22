@@ -846,7 +846,7 @@ void LibWebRTCMediaEndpoint::OnIceCandidatesRemoved(const std::vector<cricket::C
     ASSERT_NOT_REACHED();
 }
 
-void LibWebRTCMediaEndpoint::createSessionDescriptionSucceeded(webrtc::SessionDescriptionInterface* description)
+void LibWebRTCMediaEndpoint::createSessionDescriptionSucceeded(std::unique_ptr<webrtc::SessionDescriptionInterface>&& description)
 {
     std::string sdp;
     description->ToString(&sdp);
