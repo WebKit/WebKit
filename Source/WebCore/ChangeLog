@@ -1,3 +1,35 @@
+2017-06-22  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Prevent capturing at unconventional resolutions when using the SW encoder on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=172602
+        <rdar://problem/32407693>
+
+        Reviewed by Eric Carlson.
+
+        Test: platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html
+
+        Add internal API to switch on/off hardware H264 encoder.
+        Add checks for standard size. If using a software encoder and frame size is not standard,
+        the session is destroyed and no frame is sent at all.
+
+        Added tests based on captureStream.
+        Fixed the case of capturing a canvas which size is changing.
+
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasResized):
+        * platform/mediastream/libwebrtc/H264VideoToolBoxEncoder.h:
+        * platform/mediastream/libwebrtc/H264VideoToolBoxEncoder.mm:
+        (WebCore::H264VideoToolboxEncoder::setHardwareEncoderForWebRTCAllowed):
+        (WebCore::H264VideoToolboxEncoder::hardwareEncoderForWebRTCAllowed):
+        (WebCore::isUsingSoftwareEncoder):
+        (WebCore::H264VideoToolboxEncoder::CreateCompressionSession):
+        (isStandardFrameSize): Added.
+        (isUsingSoftwareEncoder): Added.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setH264HardwareEncoderAllowed):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-06-21  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] TypeError when called with body === {}

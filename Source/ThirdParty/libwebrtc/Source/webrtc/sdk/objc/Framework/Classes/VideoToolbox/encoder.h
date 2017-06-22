@@ -70,12 +70,12 @@ class WEBRTC_DYLIB_EXPORT H264VideoToolboxEncoder : public H264Encoder {
   ScalingSettings GetScalingSettings() const override;
 
  protected:
-  virtual int CreateCompressionSession(VTCompressionSessionRef&, VTCompressionOutputCallback, int32_t width, int32_t height);
+  virtual int CreateCompressionSession(VTCompressionSessionRef&, VTCompressionOutputCallback, int32_t width, int32_t height, bool useHardwareEncoder = true);
+  void DestroyCompressionSession();
 
  private:
   int ResetCompressionSession();
   void ConfigureCompressionSession();
-  void DestroyCompressionSession();
   rtc::scoped_refptr<VideoFrameBuffer> GetScaledBufferOnEncode(
       const rtc::scoped_refptr<VideoFrameBuffer>& frame);
   void SetBitrateBps(uint32_t bitrate_bps);

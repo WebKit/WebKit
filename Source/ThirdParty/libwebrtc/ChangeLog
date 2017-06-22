@@ -1,3 +1,17 @@
+2017-06-22  Youenn Fablet  <youenn@apple.com>
+
+        [WebRTC] Prevent capturing at unconventional resolutions when using the SW encoder on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=172602
+        <rdar://problem/32407693>
+
+        Reviewed by Eric Carlson.
+
+        Adding a parameter to disable hardware encoder.
+
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.mm:
+        (webrtc::H264VideoToolboxEncoder::CreateCompressionSession):
+
 2017-06-21  Youenn Fablet  <youenn@apple.com>
 
         Update libyuv to 8cab2e31d76246263206318f3568d452e7f3ff3e
