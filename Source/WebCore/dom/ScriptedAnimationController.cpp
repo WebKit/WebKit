@@ -95,7 +95,7 @@ void ScriptedAnimationController::resume()
 void ScriptedAnimationController::logSuspendCount()
 {
 #if PLATFORM(MAC)
-    if (!m_document || !m_document->frame() || MacApplication::isDumpRenderTree())
+    if (!MacApplication::isDumpRenderTree())
         return;
 
     WTFLogAlways("\nScriptedAnimationController::m_suspendCount = %d", m_suspendCount);

@@ -1,3 +1,12 @@
+2017-06-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Follow-up to r218662. Only log backtraces for DumpRenderTree.
+
+        Rubber-stamped by Antoine Quint.
+
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::logSuspendCount):
+
 2017-06-22  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Spreaker live shows won't play
