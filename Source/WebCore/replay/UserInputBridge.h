@@ -38,9 +38,8 @@ class InputCursor;
 
 namespace WebCore {
 
-struct FrameLoadRequest;
-
 class Frame;
+class FrameLoadRequest;
 class Page;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;

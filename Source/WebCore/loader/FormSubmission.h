@@ -38,8 +38,7 @@ namespace WebCore {
 
 class Event;
 class FormData;
-
-struct FrameLoadRequest;
+class FrameLoadRequest;
 
 class FormSubmission : public RefCounted<FormSubmission> {
 public:

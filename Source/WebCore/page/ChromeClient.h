@@ -74,6 +74,7 @@ class FileChooser;
 class FileIconLoader;
 class FloatRect;
 class Frame;
+class FrameLoadRequest;
 class Geolocation;
 class GraphicsLayer;
 class GraphicsLayerFactory;
@@ -96,7 +97,6 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 #endif
 
 struct DateTimeChooserParameters;
-struct FrameLoadRequest;
 struct GraphicsDeviceAdapter;
 struct ViewportArguments;
 struct WindowFeatures;

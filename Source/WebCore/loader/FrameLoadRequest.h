@@ -31,9 +31,10 @@
 #include "SubstituteData.h"
 
 namespace WebCore {
+
 class Frame;
 
-struct FrameLoadRequest {
+class FrameLoadRequest {
 public:
     FrameLoadRequest(SecurityOrigin& requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute = { })
         : m_requester { makeRef(requester) }

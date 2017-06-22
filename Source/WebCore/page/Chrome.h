@@ -41,6 +41,7 @@ class DateTimeChooserClient;
 class FileChooser;
 class FileIconLoader;
 class FloatRect;
+class FrameLoadRequest;
 class Element;
 class Frame;
 class Geolocation;
@@ -55,7 +56,6 @@ class PopupOpeningObserver;
 class SearchPopupMenu;
 
 struct DateTimeChooserParameters;
-struct FrameLoadRequest;
 struct ViewportArguments;
 struct WindowFeatures;
     

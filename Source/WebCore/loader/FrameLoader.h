@@ -61,6 +61,7 @@ class DocumentLoader;
 class Event;
 class FormState;
 class FormSubmission;
+class FrameLoadRequest;
 class FrameLoaderClient;
 class FrameNetworkingContext;
 class HistoryController;
@@ -78,7 +79,6 @@ class SharedBuffer;
 class SubframeLoader;
 class SubstituteData;
 
-struct FrameLoadRequest;
 struct WindowFeatures;
 
 WEBCORE_EXPORT bool isBackForwardLoadType(FrameLoadType);
