@@ -1,5 +1,16 @@
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Update WPEBackend-mesa
+        https://bugs.webkit.org/show_bug.cgi?id=173705
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        A crash has been fixed, needed for unit tests to work.
+
+        * wpe/jhbuild.modules:
+
+2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Remove unused coordinated graphics C API
         https://bugs.webkit.org/show_bug.cgi?id=173706
 

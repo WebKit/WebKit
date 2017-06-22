@@ -247,7 +247,7 @@
       <dep package="xkbcommon" />
     </dependencies>
     <branch repo="github.com" module="WebPlatformForEmbedded/WPEBackend-mesa.git"
-            tag="de843e2536f3a445737ce39ab643516a23531d5e" />
+            tag="b6e2a82dfd5a12761911dc890625ec81d2a012b4" />
   </cmake>
 
   <autotools id="libgpg-error" autogen-sh="configure">
