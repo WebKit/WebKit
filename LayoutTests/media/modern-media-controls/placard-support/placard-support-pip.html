@@ -35,15 +35,13 @@ const mediaController = createControls(container, media, null);
 const button = document.body.appendChild(document.createElement("div"));
 button.innerText = "Enter picture-in-picture";
 
-button.addEventListener("click", () => {
-    media.webkitSetPresentationMode(media.webkitPresentationMode == "inline" ? "picture-in-picture" : "inline");
-});
+button.addEventListener("click", togglePiP);
 
 media.addEventListener("webkitpresentationmodechanged", () => {
     if (media.webkitPresentationMode == "picture-in-picture") {
         shouldBe("mediaController.controls.placard", "mediaController.controls.pipPlacard");
         shouldBeTrue("mediaController.controls.children.includes(mediaController.controls.pipPlacard)");
-        clickButton();
+        togglePiP();
     } else {
         shouldBeNull("mediaController.controls.placard");
         shouldBeFalse("mediaController.controls.children.includes(mediaController.controls.pipPlacard)");
@@ -58,6 +56,11 @@ media.addEventListener("play", clickButton);
 
 function clickButton() {
     pressOnElement(button);
+}
+
+function togglePiP()
+{
+    media.webkitSetPresentationMode(media.webkitPresentationMode == "inline" ? "picture-in-picture" : "inline");
 }
 
 </script>
