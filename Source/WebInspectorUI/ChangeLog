@@ -1,3 +1,12 @@
+2017-06-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Web Inspector: Add icon for Canvas.svg
+        https://bugs.webkit.org/show_bug.cgi?id=173580
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UserInterface/Images/gtk/Canvas.svg: Added.
+
 2017-06-21  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add NavigationItemCheckers.svg
