@@ -1,3 +1,14 @@
+2017-06-22  Saam Barati  <sbarati@apple.com>
+
+        ValueRep(DoubleRep(@v)) can not simply convert to @v
+        https://bugs.webkit.org/show_bug.cgi?id=173687
+        <rdar://problem/32855563>
+
+        Reviewed by Mark Lam.
+
+        * stress/dont-strength-reduce-valuerep-of-doublerep.js: Added.
+        (i.catch):
+
 2017-06-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Object.values should be implemented in C++

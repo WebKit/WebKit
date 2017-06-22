@@ -215,11 +215,8 @@ private:
             break;
 
         case ValueRep:
-        case Int52Rep:
-        case DoubleRep: {
-            // This short-circuits circuitous conversions, like ValueRep(DoubleRep(value)) or
-            // even more complicated things. Like, it can handle a beast like
-            // ValueRep(DoubleRep(Int52Rep(value))).
+        case Int52Rep: {
+            // This short-circuits circuitous conversions, like ValueRep(Int52Rep(value)).
             
             // The only speculation that we would do beyond validating that we have a type that
             // can be represented a certain way is an Int32 check that would appear on Int52Rep
@@ -258,7 +255,6 @@ private:
                     hadInt32Check = true;
                     continue;
                     
-                case DoubleRep:
                 case ValueRep:
                     continue;
                     
