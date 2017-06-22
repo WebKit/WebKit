@@ -1,5 +1,0 @@
-This .gclient file is used to do download a copy of Chromium.
-Libyuv uses the Chromium build toolchain and a number of shared
-dependencies by creating symlinks to folders in this checkout,
-using the ../setup_links.py script.
-

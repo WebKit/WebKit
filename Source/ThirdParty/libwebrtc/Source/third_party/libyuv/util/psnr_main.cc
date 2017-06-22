@@ -71,8 +71,8 @@ bool ExtractResolutionFromFilename(const char* name,
   // Isolate the .width_height. section of the filename by searching for a
   // dot or underscore followed by a digit.
   for (int i = 0; name[i]; ++i) {
-    if ((name[i] == '.' || name[i] == '_') &&
-        name[i + 1] >= '0' && name[i + 1] <= '9') {
+    if ((name[i] == '.' || name[i] == '_') && name[i + 1] >= '0' &&
+        name[i + 1] <= '9') {
       int n = sscanf(name + i + 1, "%dx%d", width_ptr, height_ptr);  // NOLINT
       if (2 == n) {
         return true;
@@ -88,7 +88,7 @@ bool ExtractResolutionFromFilename(const char* name,
     return false;
   }
   fseek(file_org, 0, SEEK_END);
-  size_t total_size  = ftell(file_org);
+  size_t total_size = ftell(file_org);
   fseek(file_org, 0, SEEK_SET);
   uint8* const ch_org = new uint8[total_size];
   memset(ch_org, 0, total_size);
@@ -109,8 +109,10 @@ bool ExtractResolutionFromFilename(const char* name,
 // This can be useful when comparing codecs that are inconsistant about Y
 uint8 ScaleY(uint8 y) {
   int ny = (y - 16) * 256 / 224;
-  if (ny < 0) ny = 0;
-  if (ny > 255) ny = 255;
+  if (ny < 0)
+    ny = 0;
+  if (ny > 255)
+    ny = 255;
   return static_cast<uint8>(ny);
 }
 
@@ -119,16 +121,18 @@ double GetMSE(double sse, double size) {
   return sse / size;
 }
 
-void PrintHelp(const char * program) {
+void PrintHelp(const char* program) {
   printf("%s [-options] org_seq rec_seq [rec_seq2.. etc]\n", program);
 #ifdef HAVE_JPEG
   printf("jpeg or raw YUV 420 supported.\n");
 #endif
   printf("options:\n");
-  printf(" -s <width> <height> .... specify YUV size, mandatory if none of the "
-         "sequences have the\n");
-  printf("                          resolution embedded in their filename (ie. "
-         "name.1920x800_24Hz_P420.yuv)\n");
+  printf(
+      " -s <width> <height> .... specify YUV size, mandatory if none of the "
+      "sequences have the\n");
+  printf(
+      "                          resolution embedded in their filename (ie. "
+      "name.1920x800_24Hz_P420.yuv)\n");
   printf(" -psnr .................. compute PSNR (default)\n");
   printf(" -ssim .................. compute SSIM\n");
   printf(" -mse ................... compute MSE\n");
@@ -146,7 +150,8 @@ void PrintHelp(const char * program) {
 }
 
 void ParseOptions(int argc, const char* argv[]) {
-  if (argc <= 1) PrintHelp(argv[0]);
+  if (argc <= 1)
+    PrintHelp(argv[0]);
   for (int c = 1; c < argc; ++c) {
     if (!strcmp(argv[c], "-v")) {
       verbose = true;
@@ -168,16 +173,16 @@ void ParseOptions(int argc, const char* argv[]) {
     } else if (!strcmp(argv[c], "-h") || !strcmp(argv[c], "-help")) {
       PrintHelp(argv[0]);
     } else if (!strcmp(argv[c], "-s") && c + 2 < argc) {
-      image_width = atoi(argv[++c]);    // NOLINT
-      image_height = atoi(argv[++c]);   // NOLINT
+      image_width = atoi(argv[++c]);   // NOLINT
+      image_height = atoi(argv[++c]);  // NOLINT
     } else if (!strcmp(argv[c], "-skip") && c + 2 < argc) {
-      num_skip_org = atoi(argv[++c]);   // NOLINT
-      num_skip_rec = atoi(argv[++c]);   // NOLINT
+      num_skip_org = atoi(argv[++c]);  // NOLINT
+      num_skip_rec = atoi(argv[++c]);  // NOLINT
     } else if (!strcmp(argv[c], "-frames") && c + 1 < argc) {
-      num_frames = atoi(argv[++c]);     // NOLINT
+      num_frames = atoi(argv[++c]);  // NOLINT
 #ifdef _OPENMP
     } else if (!strcmp(argv[c], "-t") && c + 1 < argc) {
-      num_threads = atoi(argv[++c]);    // NOLINT
+      num_threads = atoi(argv[++c]);  // NOLINT
 #endif
     } else if (argv[c][0] == '-') {
       fprintf(stderr, "Unknown option. %s\n", argv[c]);
@@ -206,11 +211,9 @@ void ParseOptions(int argc, const char* argv[]) {
     int org_width, org_height;
     int rec_width, rec_height;
     bool org_res_avail = ExtractResolutionFromFilename(argv[fileindex_org],
-                                                       &org_width,
-                                                       &org_height);
+                                                       &org_width, &org_height);
     bool rec_res_avail = ExtractResolutionFromFilename(argv[fileindex_rec],
-                                                       &rec_width,
-                                                       &rec_height);
+                                                       &rec_width, &rec_height);
     if (org_res_avail) {
       if (rec_res_avail) {
         if ((org_width == rec_width) && (org_height == rec_height)) {
@@ -234,11 +237,15 @@ void ParseOptions(int argc, const char* argv[]) {
   }
 }
 
-bool UpdateMetrics(uint8* ch_org, uint8* ch_rec,
-                   const int y_size, const int uv_size, const size_t total_size,
+bool UpdateMetrics(uint8* ch_org,
+                   uint8* ch_rec,
+                   const int y_size,
+                   const int uv_size,
+                   const size_t total_size,
                    int number_of_frames,
                    metric* cur_distortion_psnr,
-                   metric* distorted_frame, bool do_psnr) {
+                   metric* distorted_frame,
+                   bool do_psnr) {
   const int uv_offset = (do_swap_uv ? uv_size : 0);
   const uint8* const u_org = ch_org + y_size + uv_offset;
   const uint8* const u_rec = ch_rec + y_size;
@@ -247,11 +254,11 @@ bool UpdateMetrics(uint8* ch_org, uint8* ch_rec,
   if (do_psnr) {
 #ifdef HAVE_JPEG
     double y_err = static_cast<double>(
-      libyuv::ComputeSumSquareError(ch_org, ch_rec, y_size));
+        libyuv::ComputeSumSquareError(ch_org, ch_rec, y_size));
     double u_err = static_cast<double>(
-      libyuv::ComputeSumSquareError(u_org, u_rec, uv_size));
+        libyuv::ComputeSumSquareError(u_org, u_rec, uv_size));
     double v_err = static_cast<double>(
-      libyuv::ComputeSumSquareError(v_org, v_rec, uv_size));
+        libyuv::ComputeSumSquareError(v_org, v_rec, uv_size));
 #else
     double y_err = ComputeSumSquareError(ch_org, ch_rec, y_size);
     double u_err = ComputeSumSquareError(u_org, u_rec, uv_size);
@@ -265,17 +272,17 @@ bool UpdateMetrics(uint8* ch_org, uint8* ch_rec,
     distorted_frame->y = ComputePSNR(y_err, static_cast<double>(y_size));
     distorted_frame->u = ComputePSNR(u_err, static_cast<double>(uv_size));
     distorted_frame->v = ComputePSNR(v_err, static_cast<double>(uv_size));
-    distorted_frame->all = ComputePSNR(total_err,
-                                       static_cast<double>(total_size));
+    distorted_frame->all =
+        ComputePSNR(total_err, static_cast<double>(total_size));
   } else {
     distorted_frame->y = CalcSSIM(ch_org, ch_rec, image_width, image_height);
-    distorted_frame->u = CalcSSIM(u_org, u_rec, (image_width + 1) / 2,
-                                 (image_height + 1) / 2);
-    distorted_frame->v = CalcSSIM(v_org, v_rec, (image_width + 1) / 2,
-                                 (image_height + 1) / 2);
+    distorted_frame->u =
+        CalcSSIM(u_org, u_rec, (image_width + 1) / 2, (image_height + 1) / 2);
+    distorted_frame->v =
+        CalcSSIM(v_org, v_rec, (image_width + 1) / 2, (image_height + 1) / 2);
     distorted_frame->all =
-      (distorted_frame->y + distorted_frame->u + distorted_frame->v)
-        / total_size;
+        (distorted_frame->y + distorted_frame->u + distorted_frame->v) /
+        total_size;
     distorted_frame->y /= y_size;
     distorted_frame->u /= uv_size;
     distorted_frame->v /= uv_size;
@@ -330,8 +337,8 @@ int main(int argc, const char* argv[]) {
   }
 
   // Open all files to compare to
-  FILE** file_rec = new FILE* [num_rec];
-  memset(file_rec, 0, num_rec * sizeof(FILE*)); // NOLINT
+  FILE** file_rec = new FILE*[num_rec];
+  memset(file_rec, 0, num_rec * sizeof(FILE*));  // NOLINT
   for (int cur_rec = 0; cur_rec < num_rec; ++cur_rec) {
     file_rec[cur_rec] = fopen(argv[fileindex_rec + cur_rec], "rb");
     if (file_rec[cur_rec] == NULL) {
@@ -347,20 +354,21 @@ int main(int argc, const char* argv[]) {
 
   const int y_size = image_width * image_height;
   const int uv_size = ((image_width + 1) / 2) * ((image_height + 1) / 2);
-  const size_t total_size = y_size + 2 * uv_size;    // NOLINT
+  const size_t total_size = y_size + 2 * uv_size;  // NOLINT
 #if defined(_MSC_VER)
-  _fseeki64(file_org,
-            static_cast<__int64>(num_skip_org) *
-            static_cast<__int64>(total_size), SEEK_SET);
+  _fseeki64(
+      file_org,
+      static_cast<__int64>(num_skip_org) * static_cast<__int64>(total_size),
+      SEEK_SET);
 #else
   fseek(file_org, num_skip_org * total_size, SEEK_SET);
 #endif
   for (int cur_rec = 0; cur_rec < num_rec; ++cur_rec) {
 #if defined(_MSC_VER)
-    _fseeki64(file_rec[cur_rec],
-              static_cast<__int64>(num_skip_rec) *
-              static_cast<__int64>(total_size),
-              SEEK_SET);
+    _fseeki64(
+        file_rec[cur_rec],
+        static_cast<__int64>(num_skip_rec) * static_cast<__int64>(total_size),
+        SEEK_SET);
 #else
     fseek(file_rec[cur_rec], num_skip_rec * total_size, SEEK_SET);
 #endif
@@ -420,7 +428,7 @@ int main(int argc, const char* argv[]) {
   }
 
   int number_of_frames;
-  for (number_of_frames = 0; ; ++number_of_frames) {
+  for (number_of_frames = 0;; ++number_of_frames) {
     if (num_frames && number_of_frames >= num_frames)
       break;
 
@@ -432,17 +440,11 @@ int main(int argc, const char* argv[]) {
       memcpy(ch_jpeg, ch_org, bytes_org);
       memset(ch_org, 0, total_size);
 
-      if (0 != libyuv::MJPGToI420(ch_jpeg, bytes_org,
-                                  ch_org,
-                                  image_width,
-                                  ch_org + y_size,
-                                  (image_width + 1) / 2,
+      if (0 != libyuv::MJPGToI420(ch_jpeg, bytes_org, ch_org, image_width,
+                                  ch_org + y_size, (image_width + 1) / 2,
                                   ch_org + y_size + uv_size,
-                                  (image_width + 1) / 2,
-                                  image_width,
-                                  image_height,
-                                  image_width,
-                                  image_height)) {
+                                  (image_width + 1) / 2, image_width,
+                                  image_height, image_width, image_height)) {
         delete[] ch_jpeg;
         break;
       }
@@ -453,8 +455,8 @@ int main(int argc, const char* argv[]) {
     }
 
     for (int cur_rec = 0; cur_rec < num_rec; ++cur_rec) {
-      size_t bytes_rec = fread(ch_rec, sizeof(uint8),
-                               total_size, file_rec[cur_rec]);
+      size_t bytes_rec =
+          fread(ch_rec, sizeof(uint8), total_size, file_rec[cur_rec]);
       if (bytes_rec < total_size) {
 #ifdef HAVE_JPEG
         // Try parsing file as a jpeg.
@@ -462,17 +464,11 @@ int main(int argc, const char* argv[]) {
         memcpy(ch_jpeg, ch_rec, bytes_rec);
         memset(ch_rec, 0, total_size);
 
-        if (0 != libyuv::MJPGToI420(ch_jpeg, bytes_rec,
-                                    ch_rec,
-                                    image_width,
-                                    ch_rec + y_size,
-                                    (image_width + 1) / 2,
+        if (0 != libyuv::MJPGToI420(ch_jpeg, bytes_rec, ch_rec, image_width,
+                                    ch_rec + y_size, (image_width + 1) / 2,
                                     ch_rec + y_size + uv_size,
-                                    (image_width + 1) / 2,
-                                    image_width,
-                                    image_height,
-                                    image_width,
-                                    image_height)) {
+                                    (image_width + 1) / 2, image_width,
+                                    image_height, image_width, image_height)) {
           delete[] ch_jpeg;
           break;
         }
@@ -488,10 +484,8 @@ int main(int argc, const char* argv[]) {
       if (do_psnr) {
         metric distorted_frame;
         metric* cur_distortion_psnr = &distortion_psnr[cur_rec];
-        bool ismin = UpdateMetrics(ch_org, ch_rec,
-                                   y_size, uv_size, total_size,
-                                   number_of_frames,
-                                   cur_distortion_psnr,
+        bool ismin = UpdateMetrics(ch_org, ch_rec, y_size, uv_size, total_size,
+                                   number_of_frames, cur_distortion_psnr,
                                    &distorted_frame, true);
         if (verbose) {
           printf("\t%10.6f", distorted_frame.y);
@@ -504,10 +498,8 @@ int main(int argc, const char* argv[]) {
       if (do_ssim) {
         metric distorted_frame;
         metric* cur_distortion_ssim = &distortion_ssim[cur_rec];
-        bool ismin = UpdateMetrics(ch_org, ch_rec,
-                                   y_size, uv_size, total_size,
-                                   number_of_frames,
-                                   cur_distortion_ssim,
+        bool ismin = UpdateMetrics(ch_org, ch_rec, y_size, uv_size, total_size,
+                                   number_of_frames, cur_distortion_ssim,
                                    &distorted_frame, false);
         if (verbose) {
           printf("\t%10.6f", distorted_frame.y);
@@ -543,24 +535,20 @@ int main(int argc, const char* argv[]) {
     }
 
     if (do_psnr) {
-      const double global_psnr_y = ComputePSNR(
-          cur_distortion_psnr->global_y,
-          static_cast<double>(y_size) * number_of_frames);
-      const double global_psnr_u = ComputePSNR(
-          cur_distortion_psnr->global_u,
-          static_cast<double>(uv_size) * number_of_frames);
-      const double global_psnr_v = ComputePSNR(
-          cur_distortion_psnr->global_v,
-          static_cast<double>(uv_size) * number_of_frames);
-      const double global_psnr_all = ComputePSNR(
-          cur_distortion_psnr->global_all,
-          static_cast<double>(total_size) * number_of_frames);
-      printf("Global:\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d",
-          global_psnr_y,
-          global_psnr_u,
-          global_psnr_v,
-          global_psnr_all,
-          number_of_frames);
+      const double global_psnr_y =
+          ComputePSNR(cur_distortion_psnr->global_y,
+                      static_cast<double>(y_size) * number_of_frames);
+      const double global_psnr_u =
+          ComputePSNR(cur_distortion_psnr->global_u,
+                      static_cast<double>(uv_size) * number_of_frames);
+      const double global_psnr_v =
+          ComputePSNR(cur_distortion_psnr->global_v,
+                      static_cast<double>(uv_size) * number_of_frames);
+      const double global_psnr_all =
+          ComputePSNR(cur_distortion_psnr->global_all,
+                      static_cast<double>(total_size) * number_of_frames);
+      printf("Global:\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d", global_psnr_y,
+             global_psnr_u, global_psnr_v, global_psnr_all, number_of_frames);
       if (show_name) {
         printf("\t%s", argv[fileindex_rec + cur_rec]);
       }
@@ -570,20 +558,14 @@ int main(int argc, const char* argv[]) {
     if (!quiet) {
       printf("Avg:");
       if (do_psnr) {
-        printf("\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d",
-             cur_distortion_psnr->y,
-             cur_distortion_psnr->u,
-             cur_distortion_psnr->v,
-             cur_distortion_psnr->all,
-             number_of_frames);
+        printf("\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d", cur_distortion_psnr->y,
+               cur_distortion_psnr->u, cur_distortion_psnr->v,
+               cur_distortion_psnr->all, number_of_frames);
       }
       if (do_ssim) {
-        printf("\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d",
-             cur_distortion_ssim->y,
-             cur_distortion_ssim->u,
-             cur_distortion_ssim->v,
-             cur_distortion_ssim->all,
-             number_of_frames);
+        printf("\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d", cur_distortion_ssim->y,
+               cur_distortion_ssim->u, cur_distortion_ssim->v,
+               cur_distortion_ssim->all, number_of_frames);
       }
       if (show_name) {
         printf("\t%s", argv[fileindex_rec + cur_rec]);
@@ -594,19 +576,15 @@ int main(int argc, const char* argv[]) {
       printf("Min:");
       if (do_psnr) {
         printf("\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d",
-            cur_distortion_psnr->min_y,
-            cur_distortion_psnr->min_u,
-            cur_distortion_psnr->min_v,
-            cur_distortion_psnr->min_all,
-            cur_distortion_psnr->min_frame);
+               cur_distortion_psnr->min_y, cur_distortion_psnr->min_u,
+               cur_distortion_psnr->min_v, cur_distortion_psnr->min_all,
+               cur_distortion_psnr->min_frame);
       }
       if (do_ssim) {
         printf("\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d",
-            cur_distortion_ssim->min_y,
-            cur_distortion_ssim->min_u,
-            cur_distortion_ssim->min_v,
-            cur_distortion_ssim->min_all,
-            cur_distortion_ssim->min_frame);
+               cur_distortion_ssim->min_y, cur_distortion_ssim->min_u,
+               cur_distortion_ssim->min_v, cur_distortion_ssim->min_all,
+               cur_distortion_ssim->min_frame);
       }
       if (show_name) {
         printf("\t%s", argv[fileindex_rec + cur_rec]);
@@ -615,20 +593,20 @@ int main(int argc, const char* argv[]) {
     }
 
     if (do_mse) {
-      double global_mse_y = GetMSE(cur_distortion_psnr->global_y,
-        static_cast<double>(y_size) * number_of_frames);
-      double global_mse_u = GetMSE(cur_distortion_psnr->global_u,
-        static_cast<double>(uv_size) * number_of_frames);
-      double global_mse_v = GetMSE(cur_distortion_psnr->global_v,
-        static_cast<double>(uv_size) * number_of_frames);
-      double global_mse_all = GetMSE(cur_distortion_psnr->global_all,
-        static_cast<double>(total_size) * number_of_frames);
-      printf("MSE:\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d",
-          global_mse_y,
-          global_mse_u,
-          global_mse_v,
-          global_mse_all,
-          number_of_frames);
+      double global_mse_y =
+          GetMSE(cur_distortion_psnr->global_y,
+                 static_cast<double>(y_size) * number_of_frames);
+      double global_mse_u =
+          GetMSE(cur_distortion_psnr->global_u,
+                 static_cast<double>(uv_size) * number_of_frames);
+      double global_mse_v =
+          GetMSE(cur_distortion_psnr->global_v,
+                 static_cast<double>(uv_size) * number_of_frames);
+      double global_mse_all =
+          GetMSE(cur_distortion_psnr->global_all,
+                 static_cast<double>(total_size) * number_of_frames);
+      printf("MSE:\t%10.6f\t%10.6f\t%10.6f\t%10.6f\t%5d", global_mse_y,
+             global_mse_u, global_mse_v, global_mse_all, number_of_frames);
       if (show_name) {
         printf("\t%s", argv[fileindex_rec + cur_rec]);
       }

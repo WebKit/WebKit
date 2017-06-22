@@ -22,6 +22,19 @@ extern "C" {
 #if !defined(LIBYUV_DISABLE_X86) && \
     (defined(__x86_64__) || (defined(__i386__) && !defined(_MSC_VER)))
 
+uint32 HammingDistance_X86(const uint8* src_a, const uint8* src_b, int count) {
+  uint32 diff = 0u;
+
+  int i;
+  for (i = 0; i < count - 7; i += 8) {
+    uint64 x = *((uint64*)src_a) ^ *((uint64*)src_b);
+    src_a += 8;
+    src_b += 8;
+    diff += __builtin_popcountll(x);
+  }
+  return diff;
+}
+
 uint32 SumSquareError_SSE2(const uint8* src_a, const uint8* src_b, int count) {
   uint32 sse;
   asm volatile (
@@ -62,30 +75,30 @@ uint32 SumSquareError_SSE2(const uint8* src_a, const uint8* src_b, int count) {
   return sse;
 }
 
-static uvec32 kHash16x33 = { 0x92d9e201, 0, 0, 0 };  // 33 ^ 16
+static uvec32 kHash16x33 = {0x92d9e201, 0, 0, 0};  // 33 ^ 16
 static uvec32 kHashMul0 = {
-  0x0c3525e1,  // 33 ^ 15
-  0xa3476dc1,  // 33 ^ 14
-  0x3b4039a1,  // 33 ^ 13
-  0x4f5f0981,  // 33 ^ 12
+    0x0c3525e1,  // 33 ^ 15
+    0xa3476dc1,  // 33 ^ 14
+    0x3b4039a1,  // 33 ^ 13
+    0x4f5f0981,  // 33 ^ 12
 };
 static uvec32 kHashMul1 = {
-  0x30f35d61,  // 33 ^ 11
-  0x855cb541,  // 33 ^ 10
-  0x040a9121,  // 33 ^ 9
-  0x747c7101,  // 33 ^ 8
+    0x30f35d61,  // 33 ^ 11
+    0x855cb541,  // 33 ^ 10
+    0x040a9121,  // 33 ^ 9
+    0x747c7101,  // 33 ^ 8
 };
 static uvec32 kHashMul2 = {
-  0xec41d4e1,  // 33 ^ 7
-  0x4cfa3cc1,  // 33 ^ 6
-  0x025528a1,  // 33 ^ 5
-  0x00121881,  // 33 ^ 4
+    0xec41d4e1,  // 33 ^ 7
+    0x4cfa3cc1,  // 33 ^ 6
+    0x025528a1,  // 33 ^ 5
+    0x00121881,  // 33 ^ 4
 };
 static uvec32 kHashMul3 = {
-  0x00008c61,  // 33 ^ 3
-  0x00000441,  // 33 ^ 2
-  0x00000021,  // 33 ^ 1
-  0x00000001,  // 33 ^ 0
+    0x00008c61,  // 33 ^ 3
+    0x00000441,  // 33 ^ 2
+    0x00000021,  // 33 ^ 1
+    0x00000001,  // 33 ^ 0
 };
 
 uint32 HashDjb2_SSE41(const uint8* src, int count, uint32 seed) {
@@ -148,4 +161,3 @@ uint32 HashDjb2_SSE41(const uint8* src, int count, uint32 seed) {
 }  // extern "C"
 }  // namespace libyuv
 #endif
-

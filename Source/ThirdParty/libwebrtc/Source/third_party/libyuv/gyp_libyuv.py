@@ -9,7 +9,7 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 
-# This script is a modified copy of the src/build/gyp_chromium.py file. 
+# This script is a modified copy of the src/build/gyp_chromium.py file.
 # It is needed for parallel processing.
 
 # This file is (possibly, depending on python version) imported by

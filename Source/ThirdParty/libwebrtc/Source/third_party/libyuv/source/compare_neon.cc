@@ -22,7 +22,7 @@ extern "C" {
     !defined(__aarch64__)
 
 uint32 SumSquareError_NEON(const uint8* src_a, const uint8* src_b, int count) {
-  volatile uint32 sse;
+  uint32 sse;
   asm volatile (
     "vmov.u8    q8, #0                         \n"
     "vmov.u8    q10, #0                        \n"

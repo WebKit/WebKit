@@ -23,3 +23,24 @@ build_with_chromium = false
 
 # Some non-Chromium builds don't support building java targets.
 enable_java_templates = true
+
+# Allow using custom suppressions files (currently not used by libyuv).
+asan_suppressions_file = "//build/sanitizers/asan_suppressions.cc"
+lsan_suppressions_file = "//build/sanitizers/lsan_suppressions.cc"
+tsan_suppressions_file = "//build/sanitizers/tsan_suppressions.cc"
+
+msan_blacklist_path =
+    rebase_path("//tools_libyuv/msan/blacklist.txt", root_build_dir)
+ubsan_blacklist_path =
+    rebase_path("//tools_libyuv/ubsan/blacklist.txt", root_build_dir)
+ubsan_vptr_blacklist_path =
+    rebase_path("//tools_libyuv/ubsan/vptr_blacklist.txt", root_build_dir)
+
+# For Chromium, Android 32-bit non-component, non-clang builds hit a 4GiB size
+# limit, making them requiring symbol_level=2. WebRTC doesn't hit that problem
+# so we just ignore that assert. See https://crbug.com/648948 for more info.
+ignore_elf32_limitations = true
+
+# Use system Xcode installation instead of the Chromium bundled Mac toolchain,
+# since it contains only SDK 10.11, not 10.12 which WebRTC needs.
+use_system_xcode = true

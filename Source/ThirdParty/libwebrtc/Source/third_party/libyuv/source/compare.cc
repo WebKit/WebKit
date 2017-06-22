@@ -32,8 +32,7 @@ LIBYUV_API
 uint32 HashDjb2(const uint8* src, uint64 count, uint32 seed) {
   const int kBlockSize = 1 << 15;  // 32768;
   int remainder;
-  uint32 (*HashDjb2_SSE)(const uint8* src, int count, uint32 seed) =
-      HashDjb2_C;
+  uint32 (*HashDjb2_SSE)(const uint8* src, int count, uint32 seed) = HashDjb2_C;
 #if defined(HAS_HASHDJB2_SSE41)
   if (TestCpuFlag(kCpuHasSSE41)) {
     HashDjb2_SSE = HashDjb2_SSE41;
@@ -50,13 +49,13 @@ uint32 HashDjb2(const uint8* src, uint64 count, uint32 seed) {
     src += kBlockSize;
     count -= kBlockSize;
   }
-  remainder = (int)(count) & ~15;
+  remainder = (int)count & ~15;
   if (remainder) {
     seed = HashDjb2_SSE(src, remainder, seed);
     src += remainder;
     count -= remainder;
   }
-  remainder = (int)(count) & 15;
+  remainder = (int)count & 15;
   if (remainder) {
     seed = HashDjb2_C(src, remainder, seed);
   }
@@ -111,9 +110,55 @@ uint32 ARGBDetect(const uint8* argb, int stride_argb, int width, int height) {
   return fourcc;
 }
 
+LIBYUV_API
+uint64 ComputeHammingDistance(const uint8* src_a,
+                              const uint8* src_b,
+                              int count) {
+  const int kBlockSize = 65536;
+  int remainder = count & (kBlockSize - 1) & ~31;
+  uint64 diff = 0;
+  int i;
+  uint32 (*HammingDistance)(const uint8* src_a, const uint8* src_b, int count) =
+      HammingDistance_C;
+#if defined(HAS_HAMMINGDISTANCE_NEON)
+  if (TestCpuFlag(kCpuHasNEON)) {
+    HammingDistance = HammingDistance_NEON;
+  }
+#endif
+#if defined(HAS_HAMMINGDISTANCE_X86)
+  if (TestCpuFlag(kCpuHasX86)) {
+    HammingDistance = HammingDistance_X86;
+  }
+#endif
+#if defined(HAS_HAMMINGDISTANCE_AVX2)
+  if (TestCpuFlag(kCpuHasAVX2)) {
+    HammingDistance = HammingDistance_AVX2;
+  }
+#endif
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+ : diff)
+#endif
+  for (i = 0; i < (count - (kBlockSize - 1)); i += kBlockSize) {
+    diff += HammingDistance(src_a + i, src_b + i, kBlockSize);
+  }
+  src_a += count & ~(kBlockSize - 1);
+  src_b += count & ~(kBlockSize - 1);
+  if (remainder) {
+    diff += HammingDistance(src_a, src_b, remainder);
+    src_a += remainder;
+    src_b += remainder;
+  }
+  remainder = count & 31;
+  if (remainder) {
+    diff += HammingDistance_C(src_a, src_b, remainder);
+  }
+  return diff;
+}
+
 // TODO(fbarchard): Refactor into row function.
 LIBYUV_API
-uint64 ComputeSumSquareError(const uint8* src_a, const uint8* src_b,
+uint64 ComputeSumSquareError(const uint8* src_a,
+                             const uint8* src_b,
                              int count) {
   // SumSquareError returns values 0 to 65535 for each squared difference.
   // Up to 65536 of those can be summed and remain within a uint32.
@@ -142,7 +187,7 @@ uint64 ComputeSumSquareError(const uint8* src_a, const uint8* src_b,
   }
 #endif
 #ifdef _OPENMP
-#pragma omp parallel for reduction(+: sse)
+#pragma omp parallel for reduction(+ : sse)
 #endif
   for (i = 0; i < (count - (kBlockSize - 1)); i += kBlockSize) {
     sse += SumSquareError(src_a + i, src_b + i, kBlockSize);
@@ -162,14 +207,16 @@ uint64 ComputeSumSquareError(const uint8* src_a, const uint8* src_b,
 }
 
 LIBYUV_API
-uint64 ComputeSumSquareErrorPlane(const uint8* src_a, int stride_a,
-                                  const uint8* src_b, int stride_b,
-                                  int width, int height) {
+uint64 ComputeSumSquareErrorPlane(const uint8* src_a,
+                                  int stride_a,
+                                  const uint8* src_b,
+                                  int stride_b,
+                                  int width,
+                                  int height) {
   uint64 sse = 0;
   int h;
   // Coalesce rows.
-  if (stride_a == width &&
-      stride_b == width) {
+  if (stride_a == width && stride_b == width) {
     width *= height;
     height = 1;
     stride_a = stride_b = 0;
@@ -186,10 +233,10 @@ LIBYUV_API
 double SumSquareErrorToPsnr(uint64 sse, uint64 count) {
   double psnr;
   if (sse > 0) {
-    double mse = (double)(count) / (double)(sse);
+    double mse = (double)count / (double)sse;
     psnr = 10.0 * log10(255.0 * 255.0 * mse);
   } else {
-    psnr = kMaxPsnr;      // Limit to prevent divide by 0
+    psnr = kMaxPsnr;  // Limit to prevent divide by 0
   }
 
   if (psnr > kMaxPsnr)
@@ -199,45 +246,53 @@ double SumSquareErrorToPsnr(uint64 sse, uint64 count) {
 }
 
 LIBYUV_API
-double CalcFramePsnr(const uint8* src_a, int stride_a,
-                     const uint8* src_b, int stride_b,
-                     int width, int height) {
+double CalcFramePsnr(const uint8* src_a,
+                     int stride_a,
+                     const uint8* src_b,
+                     int stride_b,
+                     int width,
+                     int height) {
   const uint64 samples = width * height;
-  const uint64 sse = ComputeSumSquareErrorPlane(src_a, stride_a,
-                                                src_b, stride_b,
-                                                width, height);
+  const uint64 sse = ComputeSumSquareErrorPlane(src_a, stride_a, src_b,
+                                                stride_b, width, height);
   return SumSquareErrorToPsnr(sse, samples);
 }
 
 LIBYUV_API
-double I420Psnr(const uint8* src_y_a, int stride_y_a,
-                const uint8* src_u_a, int stride_u_a,
-                const uint8* src_v_a, int stride_v_a,
-                const uint8* src_y_b, int stride_y_b,
-                const uint8* src_u_b, int stride_u_b,
-                const uint8* src_v_b, int stride_v_b,
-                int width, int height) {
-  const uint64 sse_y = ComputeSumSquareErrorPlane(src_y_a, stride_y_a,
-                                                  src_y_b, stride_y_b,
-                                                  width, height);
+double I420Psnr(const uint8* src_y_a,
+                int stride_y_a,
+                const uint8* src_u_a,
+                int stride_u_a,
+                const uint8* src_v_a,
+                int stride_v_a,
+                const uint8* src_y_b,
+                int stride_y_b,
+                const uint8* src_u_b,
+                int stride_u_b,
+                const uint8* src_v_b,
+                int stride_v_b,
+                int width,
+                int height) {
+  const uint64 sse_y = ComputeSumSquareErrorPlane(src_y_a, stride_y_a, src_y_b,
+                                                  stride_y_b, width, height);
   const int width_uv = (width + 1) >> 1;
   const int height_uv = (height + 1) >> 1;
-  const uint64 sse_u = ComputeSumSquareErrorPlane(src_u_a, stride_u_a,
-                                                  src_u_b, stride_u_b,
-                                                  width_uv, height_uv);
-  const uint64 sse_v = ComputeSumSquareErrorPlane(src_v_a, stride_v_a,
-                                                  src_v_b, stride_v_b,
-                                                  width_uv, height_uv);
+  const uint64 sse_u = ComputeSumSquareErrorPlane(
+      src_u_a, stride_u_a, src_u_b, stride_u_b, width_uv, height_uv);
+  const uint64 sse_v = ComputeSumSquareErrorPlane(
+      src_v_a, stride_v_a, src_v_b, stride_v_b, width_uv, height_uv);
   const uint64 samples = width * height + 2 * (width_uv * height_uv);
   const uint64 sse = sse_y + sse_u + sse_v;
   return SumSquareErrorToPsnr(sse, samples);
 }
 
-static const int64 cc1 =  26634;  // (64^2*(.01*255)^2
+static const int64 cc1 = 26634;   // (64^2*(.01*255)^2
 static const int64 cc2 = 239708;  // (64^2*(.03*255)^2
 
-static double Ssim8x8_C(const uint8* src_a, int stride_a,
-                        const uint8* src_b, int stride_b) {
+static double Ssim8x8_C(const uint8* src_a,
+                        int stride_a,
+                        const uint8* src_b,
+                        int stride_b) {
   int64 sum_a = 0;
   int64 sum_b = 0;
   int64 sum_sq_a = 0;
@@ -270,12 +325,12 @@ static double Ssim8x8_C(const uint8* src_a, int stride_a,
     const int64 ssim_n = (2 * sum_a_x_sum_b + c1) *
                          (2 * count * sum_axb - 2 * sum_a_x_sum_b + c2);
 
-    const int64 sum_a_sq = sum_a*sum_a;
-    const int64 sum_b_sq = sum_b*sum_b;
+    const int64 sum_a_sq = sum_a * sum_a;
+    const int64 sum_b_sq = sum_b * sum_b;
 
-    const int64 ssim_d = (sum_a_sq + sum_b_sq + c1) *
-                         (count * sum_sq_a - sum_a_sq +
-                          count * sum_sq_b - sum_b_sq + c2);
+    const int64 ssim_d =
+        (sum_a_sq + sum_b_sq + c1) *
+        (count * sum_sq_a - sum_a_sq + count * sum_sq_b - sum_b_sq + c2);
 
     if (ssim_d == 0.0) {
       return DBL_MAX;
@@ -288,13 +343,16 @@ static double Ssim8x8_C(const uint8* src_a, int stride_a,
 // on the 4x4 pixel grid. Such arrangement allows the windows to overlap
 // block boundaries to penalize blocking artifacts.
 LIBYUV_API
-double CalcFrameSsim(const uint8* src_a, int stride_a,
-                     const uint8* src_b, int stride_b,
-                     int width, int height) {
+double CalcFrameSsim(const uint8* src_a,
+                     int stride_a,
+                     const uint8* src_b,
+                     int stride_b,
+                     int width,
+                     int height) {
   int samples = 0;
   double ssim_total = 0;
-  double (*Ssim8x8)(const uint8* src_a, int stride_a,
-                    const uint8* src_b, int stride_b) = Ssim8x8_C;
+  double (*Ssim8x8)(const uint8* src_a, int stride_a, const uint8* src_b,
+                    int stride_b) = Ssim8x8_C;
 
   // sample point start with each 4x4 location
   int i;
@@ -314,22 +372,27 @@ double CalcFrameSsim(const uint8* src_a, int stride_a,
 }
 
 LIBYUV_API
-double I420Ssim(const uint8* src_y_a, int stride_y_a,
-                const uint8* src_u_a, int stride_u_a,
-                const uint8* src_v_a, int stride_v_a,
-                const uint8* src_y_b, int stride_y_b,
-                const uint8* src_u_b, int stride_u_b,
-                const uint8* src_v_b, int stride_v_b,
-                int width, int height) {
-  const double ssim_y = CalcFrameSsim(src_y_a, stride_y_a,
-                                      src_y_b, stride_y_b, width, height);
+double I420Ssim(const uint8* src_y_a,
+                int stride_y_a,
+                const uint8* src_u_a,
+                int stride_u_a,
+                const uint8* src_v_a,
+                int stride_v_a,
+                const uint8* src_y_b,
+                int stride_y_b,
+                const uint8* src_u_b,
+                int stride_u_b,
+                const uint8* src_v_b,
+                int stride_v_b,
+                int width,
+                int height) {
+  const double ssim_y =
+      CalcFrameSsim(src_y_a, stride_y_a, src_y_b, stride_y_b, width, height);
   const int width_uv = (width + 1) >> 1;
   const int height_uv = (height + 1) >> 1;
-  const double ssim_u = CalcFrameSsim(src_u_a, stride_u_a,
-                                      src_u_b, stride_u_b,
+  const double ssim_u = CalcFrameSsim(src_u_a, stride_u_a, src_u_b, stride_u_b,
                                       width_uv, height_uv);
-  const double ssim_v = CalcFrameSsim(src_v_a, stride_v_a,
-                                      src_v_b, stride_v_b,
+  const double ssim_v = CalcFrameSsim(src_v_a, stride_v_a, src_v_b, stride_v_b,
                                       width_uv, height_uv);
   return ssim_y * 0.8 + 0.1 * (ssim_u + ssim_v);
 }

@@ -1,5 +1,226 @@
 2017-06-21  Youenn Fablet  <youenn@apple.com>
 
+        Update libyuv to 8cab2e31d76246263206318f3568d452e7f3ff3e
+        https://bugs.webkit.org/show_bug.cgi?id=173675
+
+        Reviewed by Sam Weinig.
+
+        * Source/third_party/libyuv/.clang-format: Added.
+        * Source/third_party/libyuv/.gitignore: Added.
+        * Source/third_party/libyuv/Android.mk:
+        * Source/third_party/libyuv/BUILD.gn:
+        * Source/third_party/libyuv/CM_linux_packages.cmake: Added.
+        * Source/third_party/libyuv/CMakeLists.txt:
+        * Source/third_party/libyuv/DEPS:
+        * Source/third_party/libyuv/PRESUBMIT.py:
+        (_RunPythonTests):
+        (_RunPythonTests.join):
+        (_CommonChecks):
+        (CheckChangeOnUpload):
+        (CheckChangeOnCommit):
+        * Source/third_party/libyuv/README.chromium:
+        * Source/third_party/libyuv/build_overrides/build.gni:
+        * Source/third_party/libyuv/chromium/.gclient: Removed.
+        * Source/third_party/libyuv/chromium/README: Removed.
+        * Source/third_party/libyuv/cleanup_links.py: Added.
+        (WebRTCLinkSetup):
+        (WebRTCLinkSetup.__init__):
+        (WebRTCLinkSetup.CleanupLinks):
+        (_initialize_database):
+        (main):
+        * Source/third_party/libyuv/codereview.settings:
+        * Source/third_party/libyuv/docs/deprecated_builds.md:
+        * Source/third_party/libyuv/docs/getting_started.md:
+        * Source/third_party/libyuv/gyp_libyuv.py:
+        * Source/third_party/libyuv/include/libyuv/basic_types.h:
+        * Source/third_party/libyuv/include/libyuv/compare.h:
+        * Source/third_party/libyuv/include/libyuv/compare_row.h:
+        * Source/third_party/libyuv/include/libyuv/convert.h:
+        * Source/third_party/libyuv/include/libyuv/convert_argb.h:
+        * Source/third_party/libyuv/include/libyuv/convert_from.h:
+        * Source/third_party/libyuv/include/libyuv/convert_from_argb.h:
+        * Source/third_party/libyuv/include/libyuv/cpu_id.h:
+        * Source/third_party/libyuv/include/libyuv/macros_msa.h:
+        * Source/third_party/libyuv/include/libyuv/mjpeg_decoder.h:
+        * Source/third_party/libyuv/include/libyuv/planar_functions.h:
+        * Source/third_party/libyuv/include/libyuv/rotate.h:
+        * Source/third_party/libyuv/include/libyuv/rotate_argb.h:
+        * Source/third_party/libyuv/include/libyuv/rotate_row.h:
+        * Source/third_party/libyuv/include/libyuv/row.h:
+        * Source/third_party/libyuv/include/libyuv/scale.h:
+        * Source/third_party/libyuv/include/libyuv/scale_argb.h:
+        * Source/third_party/libyuv/include/libyuv/scale_row.h:
+        * Source/third_party/libyuv/include/libyuv/version.h:
+        * Source/third_party/libyuv/include/libyuv/video_common.h:
+        * Source/third_party/libyuv/infra/config/OWNERS: Added.
+        * Source/third_party/libyuv/infra/config/README.md: Added.
+        * Source/third_party/libyuv/infra/config/cq.cfg: Added.
+        * Source/third_party/libyuv/libyuv.gyp:
+        * Source/third_party/libyuv/libyuv.gypi:
+        * Source/third_party/libyuv/libyuv_test.gyp:
+        * Source/third_party/libyuv/linux.mk:
+        * Source/third_party/libyuv/pylintrc: Added.
+        * Source/third_party/libyuv/setup_links.py: Removed.
+        * Source/third_party/libyuv/source/compare.cc:
+        * Source/third_party/libyuv/source/compare_common.cc:
+        * Source/third_party/libyuv/source/compare_gcc.cc:
+        * Source/third_party/libyuv/source/compare_neon.cc:
+        * Source/third_party/libyuv/source/compare_neon64.cc:
+        * Source/third_party/libyuv/source/compare_win.cc:
+        * Source/third_party/libyuv/source/convert.cc:
+        * Source/third_party/libyuv/source/convert_argb.cc:
+        * Source/third_party/libyuv/source/convert_from.cc:
+        * Source/third_party/libyuv/source/convert_from_argb.cc:
+        * Source/third_party/libyuv/source/convert_jpeg.cc:
+        * Source/third_party/libyuv/source/convert_to_argb.cc:
+        * Source/third_party/libyuv/source/convert_to_i420.cc:
+        * Source/third_party/libyuv/source/cpu_id.cc:
+        * Source/third_party/libyuv/source/mjpeg_decoder.cc:
+        * Source/third_party/libyuv/source/mjpeg_validate.cc:
+        * Source/third_party/libyuv/source/planar_functions.cc:
+        * Source/third_party/libyuv/source/rotate.cc:
+        * Source/third_party/libyuv/source/rotate_any.cc:
+        * Source/third_party/libyuv/source/rotate_argb.cc:
+        * Source/third_party/libyuv/source/rotate_common.cc:
+        * Source/third_party/libyuv/source/rotate_dspr2.cc: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/source/rotate_mips.cc.
+        * Source/third_party/libyuv/source/rotate_gcc.cc:
+        * Source/third_party/libyuv/source/rotate_msa.cc: Added.
+        * Source/third_party/libyuv/source/rotate_neon.cc:
+        * Source/third_party/libyuv/source/rotate_neon64.cc:
+        * Source/third_party/libyuv/source/rotate_win.cc:
+        * Source/third_party/libyuv/source/row_any.cc:
+        * Source/third_party/libyuv/source/row_common.cc:
+        * Source/third_party/libyuv/source/row_dspr2.cc: Added.
+        * Source/third_party/libyuv/source/row_gcc.cc:
+        * Source/third_party/libyuv/source/row_mips.cc: Removed.
+        * Source/third_party/libyuv/source/row_msa.cc:
+        * Source/third_party/libyuv/source/row_neon.cc:
+        * Source/third_party/libyuv/source/row_neon64.cc:
+        * Source/third_party/libyuv/source/row_win.cc:
+        * Source/third_party/libyuv/source/scale.cc:
+        * Source/third_party/libyuv/source/scale_any.cc:
+        * Source/third_party/libyuv/source/scale_argb.cc:
+        * Source/third_party/libyuv/source/scale_common.cc:
+        * Source/third_party/libyuv/source/scale_dspr2.cc: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/source/scale_mips.cc.
+        * Source/third_party/libyuv/source/scale_gcc.cc:
+        * Source/third_party/libyuv/source/scale_msa.cc: Added.
+        * Source/third_party/libyuv/source/scale_neon.cc:
+        * Source/third_party/libyuv/source/scale_neon64.cc:
+        * Source/third_party/libyuv/source/scale_win.cc:
+        * Source/third_party/libyuv/source/video_common.cc:
+        * Source/third_party/libyuv/sync_chromium.py: Removed.
+        * Source/third_party/libyuv/third_party/gflags/BUILD.gn: Removed.
+        * Source/third_party/libyuv/third_party/gflags/LICENSE: Removed.
+        * Source/third_party/libyuv/third_party/gflags/README.libyuv: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/posix/include/gflags/gflags.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/posix/include/gflags/gflags_completions.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/posix/include/gflags/gflags_declare.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/posix/include/gflags/gflags_gflags.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/posix/include/private/config.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/win/include/gflags/gflags.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/win/include/gflags/gflags_completions.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/win/include/gflags/gflags_declare.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/win/include/gflags/gflags_gflags.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gen/win/include/private/config.h: Removed.
+        * Source/third_party/libyuv/third_party/gflags/gflags.gyp: Removed.
+        * Source/third_party/libyuv/tools/gritsettings/README: Removed.
+        * Source/third_party/libyuv/tools/gritsettings/resource_ids: Removed.
+        * Source/third_party/libyuv/tools/valgrind-libyuv/tsan/OWNERS: Removed.
+        * Source/third_party/libyuv/tools/valgrind-libyuv/tsan/PRESUBMIT.py: Removed.
+        * Source/third_party/libyuv/tools/valgrind-libyuv/tsan/suppressions.txt: Removed.
+        * Source/third_party/libyuv/tools/valgrind-libyuv/tsan/suppressions_mac.txt: Removed.
+        * Source/third_party/libyuv/tools/valgrind-libyuv/tsan/suppressions_win32.txt: Removed.
+        * Source/third_party/libyuv/tools_libyuv/OWNERS: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/OWNERS.
+        * Source/third_party/libyuv/tools_libyuv/autoroller/roll_deps.py: Added.
+        (RollError):
+        (ParseDepsDict):
+        (ParseLocalDepsFile):
+        (ParseRemoteCrDepsFile):
+        (ParseCommitPosition):
+        (_RunCommand):
+        (_GetBranches):
+        (_ReadGitilesContent):
+        (ReadRemoteCrFile):
+        (ReadRemoteCrCommit):
+        (ReadUrlContent):
+        (GetMatchingDepsEntries):
+        (BuildDepsentryDict):
+        (BuildDepsentryDict.AddDepsEntries):
+        (CalculateChangedDeps):
+        (CalculateChangedClang):
+        (CalculateChangedClang.GetClangRev):
+        (GenerateCommitMessage):
+        (UpdateDepsFile):
+        (_IsTreeClean):
+        (_EnsureUpdatedMasterBranch):
+        (_CreateRollBranch):
+        (_RemovePreviousRollBranch):
+        (_LocalCommit):
+        (_UploadCL):
+        (_SendToCQ):
+        (main):
+        * Source/third_party/libyuv/tools_libyuv/autoroller/unittests/roll_deps_test.py: Added.
+        (TestError):
+        (FakeCmd):
+        (FakeCmd.__init__):
+        (FakeCmd.add_expectation):
+        (FakeCmd.__call__):
+        (TestRollChromiumRevision):
+        (TestRollChromiumRevision.setUp):
+        (TestRollChromiumRevision.tearDown):
+        (TestRollChromiumRevision.testUpdateDepsFile):
+        (TestRollChromiumRevision.testParseDepsDict):
+        (TestRollChromiumRevision.testParseDepsDict.assertVar):
+        (TestRollChromiumRevision.testGetMatchingDepsEntriesReturnsPathInSimpleCase):
+        (TestRollChromiumRevision.testGetMatchingDepsEntriesHandlesSimilarStartingPaths):
+        (TestRollChromiumRevision.testGetMatchingDepsEntriesHandlesTwoPathsWithIdenticalFirstParts):
+        (TestRollChromiumRevision.testCalculateChangedDeps):
+        (_SetupGitLsRemoteCall):
+        * Source/third_party/libyuv/tools_libyuv/autoroller/unittests/testdata/DEPS: Added.
+        * Source/third_party/libyuv/tools_libyuv/autoroller/unittests/testdata/DEPS.chromium.new: Added.
+        * Source/third_party/libyuv/tools_libyuv/autoroller/unittests/testdata/DEPS.chromium.old: Added.
+        * Source/third_party/libyuv/tools_libyuv/get_landmines.py: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/get_landmines.py.
+        * Source/third_party/libyuv/tools_libyuv/msan/OWNERS: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/msan/OWNERS.
+        * Source/third_party/libyuv/tools_libyuv/msan/blacklist.txt: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/msan/blacklist.txt.
+        * Source/third_party/libyuv/tools_libyuv/ubsan/OWNERS: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/ubsan/OWNERS.
+        * Source/third_party/libyuv/tools_libyuv/ubsan/blacklist.txt: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/ubsan/blacklist.txt.
+        * Source/third_party/libyuv/tools_libyuv/ubsan/vptr_blacklist.txt: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/ubsan/vptr_blacklist.txt.
+        * Source/third_party/libyuv/tools_libyuv/valgrind/libyuv_tests.bat: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/valgrind-libyuv/libyuv_tests.bat.
+        * Source/third_party/libyuv/tools_libyuv/valgrind/libyuv_tests.py: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/valgrind-libyuv/libyuv_tests.py.
+        (LibyuvTest._DefaultCommand):
+        * Source/third_party/libyuv/tools_libyuv/valgrind/libyuv_tests.sh: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/valgrind-libyuv/libyuv_tests.sh.
+        * Source/third_party/libyuv/tools_libyuv/valgrind/memcheck/OWNERS: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/valgrind-libyuv/memcheck/OWNERS.
+        * Source/third_party/libyuv/tools_libyuv/valgrind/memcheck/PRESUBMIT.py: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/valgrind-libyuv/memcheck/PRESUBMIT.py.
+        (CheckChange):
+        * Source/third_party/libyuv/tools_libyuv/valgrind/memcheck/suppressions.txt: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/valgrind-libyuv/memcheck/suppressions.txt.
+        * Source/third_party/libyuv/tools_libyuv/valgrind/memcheck/suppressions_mac.txt: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/valgrind-libyuv/memcheck/suppressions_mac.txt.
+        * Source/third_party/libyuv/tools_libyuv/valgrind/memcheck/suppressions_win32.txt: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/tools/valgrind-libyuv/memcheck/suppressions_win32.txt.
+        * Source/third_party/libyuv/unit_test/color_test.cc:
+        * Source/third_party/libyuv/unit_test/compare_test.cc:
+        * Source/third_party/libyuv/unit_test/convert_test.cc:
+        * Source/third_party/libyuv/unit_test/cpu_test.cc:
+        * Source/third_party/libyuv/unit_test/cpu_thread_test.cc: Added.
+        * Source/third_party/libyuv/unit_test/math_test.cc:
+        * Source/third_party/libyuv/unit_test/planar_test.cc:
+        * Source/third_party/libyuv/unit_test/rotate_argb_test.cc:
+        * Source/third_party/libyuv/unit_test/rotate_test.cc:
+        * Source/third_party/libyuv/unit_test/scale_argb_test.cc:
+        * Source/third_party/libyuv/unit_test/scale_test.cc:
+        * Source/third_party/libyuv/unit_test/unit_test.cc:
+        * Source/third_party/libyuv/unit_test/unit_test.h:
+        (SizeValid):
+        * Source/third_party/libyuv/unit_test/video_common_test.cc:
+        * Source/third_party/libyuv/util/compare.cc:
+        * Source/third_party/libyuv/util/cpuid.c:
+        (main):
+        * Source/third_party/libyuv/util/psnr.cc:
+        * Source/third_party/libyuv/util/psnr_main.cc:
+        * Source/third_party/libyuv/util/ssim.cc:
+        * Source/third_party/libyuv/util/ssim.h:
+        * Source/third_party/libyuv/util/yuvconvert.cc: Renamed from Source/ThirdParty/libwebrtc/Source/third_party/libyuv/util/convert.cc.
+
+2017-06-21  Youenn Fablet  <youenn@apple.com>
+
         Fix build after r218645
         https://bugs.webkit.org/show_bug.cgi?id=173668
 

@@ -25,7 +25,7 @@ int main(int argc, const char* argv[]) {
 #if defined(__i386__) || defined(__x86_64__) || \
     defined(_M_IX86) || defined(_M_X64)
   if (has_x86) {
-    uint32 family, model, cpu_info[4];
+    int family, model, cpu_info[4];
     // Vendor ID:
     // AuthenticAMD AMD processor
     // CentaurHauls Centaur processor

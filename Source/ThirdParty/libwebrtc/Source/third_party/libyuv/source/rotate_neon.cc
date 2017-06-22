@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "libyuv/row.h"
 #include "libyuv/rotate_row.h"
+#include "libyuv/row.h"
 
 #include "libyuv/basic_types.h"
 
@@ -21,11 +21,13 @@ extern "C" {
 #if !defined(LIBYUV_DISABLE_NEON) && defined(__ARM_NEON__) && \
     !defined(__aarch64__)
 
-static uvec8 kVTbl4x4Transpose =
-  { 0,  4,  8, 12,  1,  5,  9, 13,  2,  6, 10, 14,  3,  7, 11, 15 };
+static uvec8 kVTbl4x4Transpose = {0, 4, 8,  12, 1, 5, 9,  13,
+                                  2, 6, 10, 14, 3, 7, 11, 15};
 
-void TransposeWx8_NEON(const uint8* src, int src_stride,
-                       uint8* dst, int dst_stride,
+void TransposeWx8_NEON(const uint8* src,
+                       int src_stride,
+                       uint8* dst,
+                       int dst_stride,
                        int width) {
   const uint8* src_temp;
   asm volatile (
@@ -240,12 +242,15 @@ void TransposeWx8_NEON(const uint8* src, int src_stride,
   );
 }
 
-static uvec8 kVTbl4x4TransposeDi =
-  { 0,  8,  1,  9,  2, 10,  3, 11,  4, 12,  5, 13,  6, 14,  7, 15 };
+static uvec8 kVTbl4x4TransposeDi = {0, 8,  1, 9,  2, 10, 3, 11,
+                                    4, 12, 5, 13, 6, 14, 7, 15};
 
-void TransposeUVWx8_NEON(const uint8* src, int src_stride,
-                         uint8* dst_a, int dst_stride_a,
-                         uint8* dst_b, int dst_stride_b,
+void TransposeUVWx8_NEON(const uint8* src,
+                         int src_stride,
+                         uint8* dst_a,
+                         int dst_stride_a,
+                         uint8* dst_b,
+                         int dst_stride_b,
                          int width) {
   const uint8* src_temp;
   asm volatile (

@@ -12,11 +12,11 @@
 #include <string.h>
 #include <time.h>
 
+#include "../unit_test/unit_test.h"
 #include "libyuv/basic_types.h"
 #include "libyuv/cpu_id.h"
 #include "libyuv/scale.h"
 #include "libyuv/scale_row.h"
-#include "../unit_test/unit_test.h"
 
 namespace libyuv {
 

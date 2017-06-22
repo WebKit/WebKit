@@ -10,13 +10,13 @@
 
 #include <stdlib.h>
 
+#include "../unit_test/unit_test.h"
 #include "libyuv/basic_types.h"
 #include "libyuv/convert.h"
 #include "libyuv/convert_argb.h"
 #include "libyuv/convert_from.h"
 #include "libyuv/convert_from_argb.h"
 #include "libyuv/cpu_id.h"
-#include "../unit_test/unit_test.h"
 
 namespace libyuv {
 
@@ -38,110 +38,103 @@ namespace libyuv {
 
 #define TESTCS(TESTNAME, YUVTOARGB, ARGBTOYUV, HS1, HS, HN, DIFF)              \
   TEST_F(LibYUVColorTest, TESTNAME) {                                          \
-  const int kPixels = benchmark_width_ * benchmark_height_;                    \
-  const int kHalfPixels = ((benchmark_width_ + 1) / 2) *                       \
-      ((benchmark_height_ + HS1) / HS);                                        \
-  align_buffer_page_end(orig_y, kPixels);                                      \
-  align_buffer_page_end(orig_u, kHalfPixels);                                  \
-  align_buffer_page_end(orig_v, kHalfPixels);                                  \
-  align_buffer_page_end(orig_pixels, kPixels * 4);                             \
-  align_buffer_page_end(temp_y, kPixels);                                      \
-  align_buffer_page_end(temp_u, kHalfPixels);                                  \
-  align_buffer_page_end(temp_v, kHalfPixels);                                  \
-  align_buffer_page_end(dst_pixels_opt, kPixels * 4);                          \
-  align_buffer_page_end(dst_pixels_c, kPixels * 4);                            \
+    const int kPixels = benchmark_width_ * benchmark_height_;                  \
+    const int kHalfPixels =                                                    \
+        ((benchmark_width_ + 1) / 2) * ((benchmark_height_ + HS1) / HS);       \
+    align_buffer_page_end(orig_y, kPixels);                                    \
+    align_buffer_page_end(orig_u, kHalfPixels);                                \
+    align_buffer_page_end(orig_v, kHalfPixels);                                \
+    align_buffer_page_end(orig_pixels, kPixels * 4);                           \
+    align_buffer_page_end(temp_y, kPixels);                                    \
+    align_buffer_page_end(temp_u, kHalfPixels);                                \
+    align_buffer_page_end(temp_v, kHalfPixels);                                \
+    align_buffer_page_end(dst_pixels_opt, kPixels * 4);                        \
+    align_buffer_page_end(dst_pixels_c, kPixels * 4);                          \
                                                                                \
-  MemRandomize(orig_pixels, kPixels * 4);                                      \
-  MemRandomize(orig_y, kPixels);                                               \
-  MemRandomize(orig_u, kHalfPixels);                                           \
-  MemRandomize(orig_v, kHalfPixels);                                           \
-  MemRandomize(temp_y, kPixels);                                               \
-  MemRandomize(temp_u, kHalfPixels);                                           \
-  MemRandomize(temp_v, kHalfPixels);                                           \
-  MemRandomize(dst_pixels_opt, kPixels * 4);                                   \
-  MemRandomize(dst_pixels_c, kPixels * 4);                                     \
+    MemRandomize(orig_pixels, kPixels * 4);                                    \
+    MemRandomize(orig_y, kPixels);                                             \
+    MemRandomize(orig_u, kHalfPixels);                                         \
+    MemRandomize(orig_v, kHalfPixels);                                         \
+    MemRandomize(temp_y, kPixels);                                             \
+    MemRandomize(temp_u, kHalfPixels);                                         \
+    MemRandomize(temp_v, kHalfPixels);                                         \
+    MemRandomize(dst_pixels_opt, kPixels * 4);                                 \
+    MemRandomize(dst_pixels_c, kPixels * 4);                                   \
                                                                                \
-  /* The test is overall for color conversion matrix being reversible, so */   \
-  /* this initializes the pixel with 2x2 blocks to eliminate subsampling. */   \
-  uint8* p = orig_y;                                                           \
-  for (int y = 0; y < benchmark_height_ - HS1; y += HS) {                      \
-    for (int x = 0; x < benchmark_width_ - 1; x += 2) {                        \
-      uint8 r = static_cast<uint8>(fastrand());                                \
-      p[0] = r;                                                                \
-      p[1] = r;                                                                \
-      p[HN] = r;                                                               \
-      p[HN + 1] = r;                                                           \
-      p += 2;                                                                  \
+    /* The test is overall for color conversion matrix being reversible, so */ \
+    /* this initializes the pixel with 2x2 blocks to eliminate subsampling. */ \
+    uint8* p = orig_y;                                                         \
+    for (int y = 0; y < benchmark_height_ - HS1; y += HS) {                    \
+      for (int x = 0; x < benchmark_width_ - 1; x += 2) {                      \
+        uint8 r = static_cast<uint8>(fastrand());                              \
+        p[0] = r;                                                              \
+        p[1] = r;                                                              \
+        p[HN] = r;                                                             \
+        p[HN + 1] = r;                                                         \
+        p += 2;                                                                \
+      }                                                                        \
+      if (benchmark_width_ & 1) {                                              \
+        uint8 r = static_cast<uint8>(fastrand());                              \
+        p[0] = r;                                                              \
+        p[HN] = r;                                                             \
+        p += 1;                                                                \
+      }                                                                        \
+      p += HN;                                                                 \
     }                                                                          \
-    if (benchmark_width_ & 1) {                                                \
-      uint8 r = static_cast<uint8>(fastrand());                                \
-      p[0] = r;                                                                \
-      p[HN] = r;                                                               \
-      p += 1;                                                                  \
+    if ((benchmark_height_ & 1) && HS == 2) {                                  \
+      for (int x = 0; x < benchmark_width_ - 1; x += 2) {                      \
+        uint8 r = static_cast<uint8>(fastrand());                              \
+        p[0] = r;                                                              \
+        p[1] = r;                                                              \
+        p += 2;                                                                \
+      }                                                                        \
+      if (benchmark_width_ & 1) {                                              \
+        uint8 r = static_cast<uint8>(fastrand());                              \
+        p[0] = r;                                                              \
+        p += 1;                                                                \
+      }                                                                        \
     }                                                                          \
-    p += HN;                                                                   \
-  }                                                                            \
-  if ((benchmark_height_ & 1) && HS == 2) {                                    \
-    for (int x = 0; x < benchmark_width_ - 1; x += 2) {                        \
-      uint8 r = static_cast<uint8>(fastrand());                                \
-      p[0] = r;                                                                \
-      p[1] = r;                                                                \
-      p += 2;                                                                  \
+    /* Start with YUV converted to ARGB. */                                    \
+    YUVTOARGB(orig_y, benchmark_width_, orig_u, (benchmark_width_ + 1) / 2,    \
+              orig_v, (benchmark_width_ + 1) / 2, orig_pixels,                 \
+              benchmark_width_ * 4, benchmark_width_, benchmark_height_);      \
+                                                                               \
+    ARGBTOYUV(orig_pixels, benchmark_width_ * 4, temp_y, benchmark_width_,     \
+              temp_u, (benchmark_width_ + 1) / 2, temp_v,                      \
+              (benchmark_width_ + 1) / 2, benchmark_width_,                    \
+              benchmark_height_);                                              \
+                                                                               \
+    MaskCpuFlags(disable_cpu_flags_);                                          \
+    YUVTOARGB(temp_y, benchmark_width_, temp_u, (benchmark_width_ + 1) / 2,    \
+              temp_v, (benchmark_width_ + 1) / 2, dst_pixels_c,                \
+              benchmark_width_ * 4, benchmark_width_, benchmark_height_);      \
+    MaskCpuFlags(benchmark_cpu_info_);                                         \
+                                                                               \
+    for (int i = 0; i < benchmark_iterations_; ++i) {                          \
+      YUVTOARGB(temp_y, benchmark_width_, temp_u, (benchmark_width_ + 1) / 2,  \
+                temp_v, (benchmark_width_ + 1) / 2, dst_pixels_opt,            \
+                benchmark_width_ * 4, benchmark_width_, benchmark_height_);    \
     }                                                                          \
-    if (benchmark_width_ & 1) {                                                \
-      uint8 r = static_cast<uint8>(fastrand());                                \
-      p[0] = r;                                                                \
-      p += 1;                                                                  \
+    /* Test C and SIMD match. */                                               \
+    for (int i = 0; i < kPixels * 4; ++i) {                                    \
+      EXPECT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);                           \
     }                                                                          \
-  }                                                                            \
-  /* Start with YUV converted to ARGB. */                                      \
-  YUVTOARGB(orig_y, benchmark_width_,                                          \
-            orig_u, (benchmark_width_ + 1) / 2,                                \
-            orig_v, (benchmark_width_ + 1) / 2,                                \
-            orig_pixels, benchmark_width_ * 4,                                 \
-            benchmark_width_, benchmark_height_);                              \
+    /* Test SIMD is close to original. */                                      \
+    for (int i = 0; i < kPixels * 4; ++i) {                                    \
+      EXPECT_NEAR(static_cast<int>(orig_pixels[i]),                            \
+                  static_cast<int>(dst_pixels_opt[i]), DIFF);                  \
+    }                                                                          \
                                                                                \
-  ARGBTOYUV(orig_pixels, benchmark_width_ * 4,                                 \
-            temp_y, benchmark_width_,                                          \
-            temp_u, (benchmark_width_ + 1) / 2,                                \
-            temp_v, (benchmark_width_ + 1) / 2,                                \
-            benchmark_width_, benchmark_height_);                              \
-                                                                               \
-  MaskCpuFlags(disable_cpu_flags_);                                            \
-  YUVTOARGB(temp_y, benchmark_width_,                                          \
-            temp_u, (benchmark_width_ + 1) / 2,                                \
-            temp_v, (benchmark_width_ + 1) / 2,                                \
-            dst_pixels_c, benchmark_width_ * 4,                                \
-            benchmark_width_, benchmark_height_);                              \
-  MaskCpuFlags(benchmark_cpu_info_);                                           \
-                                                                               \
-  for (int i = 0; i < benchmark_iterations_; ++i) {                            \
-    YUVTOARGB(temp_y, benchmark_width_,                                        \
-              temp_u, (benchmark_width_ + 1) / 2,                              \
-              temp_v, (benchmark_width_ + 1) / 2,                              \
-              dst_pixels_opt, benchmark_width_ * 4,                            \
-              benchmark_width_, benchmark_height_);                            \
-  }                                                                            \
-  /* Test C and SIMD match. */                                                 \
-  for (int i = 0; i < kPixels * 4; ++i) {                                      \
-    EXPECT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);                             \
-  }                                                                            \
-  /* Test SIMD is close to original. */                                        \
-  for (int i = 0; i < kPixels * 4; ++i) {                                      \
-    EXPECT_NEAR(static_cast<int>(orig_pixels[i]),                              \
-                static_cast<int>(dst_pixels_opt[i]), DIFF);                    \
-  }                                                                            \
-                                                                               \
-  free_aligned_buffer_page_end(orig_pixels);                                   \
-  free_aligned_buffer_page_end(orig_y);                                        \
-  free_aligned_buffer_page_end(orig_u);                                        \
-  free_aligned_buffer_page_end(orig_v);                                        \
-  free_aligned_buffer_page_end(temp_y);                                        \
-  free_aligned_buffer_page_end(temp_u);                                        \
-  free_aligned_buffer_page_end(temp_v);                                        \
-  free_aligned_buffer_page_end(dst_pixels_opt);                                \
-  free_aligned_buffer_page_end(dst_pixels_c);                                  \
-}                                                                              \
+    free_aligned_buffer_page_end(orig_pixels);                                 \
+    free_aligned_buffer_page_end(orig_y);                                      \
+    free_aligned_buffer_page_end(orig_u);                                      \
+    free_aligned_buffer_page_end(orig_v);                                      \
+    free_aligned_buffer_page_end(temp_y);                                      \
+    free_aligned_buffer_page_end(temp_u);                                      \
+    free_aligned_buffer_page_end(temp_v);                                      \
+    free_aligned_buffer_page_end(dst_pixels_opt);                              \
+    free_aligned_buffer_page_end(dst_pixels_c);                                \
+  }
 
 TESTCS(TestI420, I420ToARGB, ARGBToI420, 1, 2, benchmark_width_, ERROR_FULL)
 TESTCS(TestI422, I422ToARGB, ARGBToI422, 0, 1, 0, ERROR_FULL)
@@ -163,11 +156,8 @@ static void YUVToRGB(int y, int u, int v, int* r, int* g, int* b) {
   memset(orig_v, v, kHalfPixels);
 
   /* YUV converted to ARGB. */
-  I422ToARGB(orig_y, kWidth,
-             orig_u, (kWidth + 1) / 2,
-             orig_v, (kWidth + 1) / 2,
-             orig_pixels, kWidth * 4,
-             kWidth, kHeight);
+  I422ToARGB(orig_y, kWidth, orig_u, (kWidth + 1) / 2, orig_v, (kWidth + 1) / 2,
+             orig_pixels, kWidth * 4, kWidth, kHeight);
 
   *b = orig_pixels[0];
   *g = orig_pixels[1];
@@ -189,11 +179,8 @@ static void YUVJToRGB(int y, int u, int v, int* r, int* g, int* b) {
   memset(orig_v, v, kHalfPixels);
 
   /* YUV converted to ARGB. */
-  J422ToARGB(orig_y, kWidth,
-             orig_u, (kWidth + 1) / 2,
-             orig_v, (kWidth + 1) / 2,
-             orig_pixels, kWidth * 4,
-             kWidth, kHeight);
+  J422ToARGB(orig_y, kWidth, orig_u, (kWidth + 1) / 2, orig_v, (kWidth + 1) / 2,
+             orig_pixels, kWidth * 4, kWidth, kHeight);
 
   *b = orig_pixels[0];
   *g = orig_pixels[1];
@@ -248,7 +235,7 @@ static void YJToRGB(int y, int* r, int* g, int* b) {
 
 #if defined(CLAMPMETHOD_IF)
 static int RoundToByte(float f) {
-  int i =  ROUND(f);
+  int i = ROUND(f);
   if (i < 0) {
     i = 0;
   }
@@ -259,52 +246,61 @@ static int RoundToByte(float f) {
 }
 #elif defined(CLAMPMETHOD_TABLE)
 static const unsigned char clamptable[811] = {
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-  10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-  29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-  48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66,
-  67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85,
-  86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103,
-  104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118,
-  119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133,
-  134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148,
-  149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163,
-  164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178,
-  179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193,
-  194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208,
-  209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223,
-  224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238,
-  239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253,
-  254, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
-};
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+    0,   0,   0,   0,   0,   0,   0,   1,   2,   3,   4,   5,   6,   7,   8,
+    9,   10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,
+    24,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,
+    39,  40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  52,  53,
+    54,  55,  56,  57,  58,  59,  60,  61,  62,  63,  64,  65,  66,  67,  68,
+    69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,  83,
+    84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95,  96,  97,  98,
+    99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113,
+    114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128,
+    129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
+    144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158,
+    159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173,
+    174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188,
+    189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203,
+    204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218,
+    219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233,
+    234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248,
+    249, 250, 251, 252, 253, 254, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+    255};
 
 static int RoundToByte(float f) {
   return clamptable[ROUND(f) + 276];
@@ -317,7 +313,7 @@ static int RoundToByte(float f) {
 #elif defined(CLAMPMETHOD_MASK)
 static int RoundToByte(float f) {
   int i = ROUND(f);
-  i =  ((-(i) >> 31) & (i));  // clamp to 0.
+  i = ((-(i) >> 31) & (i));                  // clamp to 0.
   return (((255 - (i)) >> 31) | (i)) & 255;  // clamp to 255.
 }
 #endif
@@ -433,7 +429,6 @@ TEST_F(LibYUVColorTest, TestGreyYUV) {
   EXPECT_EQ(130, g1);
   EXPECT_EQ(130, b1);
 
-
   for (int y = 0; y < 256; ++y) {
     YUVToRGBReference(y, 128, 128, &r0, &g0, &b0);
     YUVToRGB(y, 128, 128, &r1, &g1, &b1);
@@ -477,7 +472,17 @@ static void PrintHistogram(int rh[256], int gh[256], int bh[256]) {
 }
 
 TEST_F(LibYUVColorTest, TestFullYUV) {
-  int rh[256] = { 0, }, gh[256] = { 0, }, bh[256] = { 0, };
+  int rh[256] =
+      {
+          0,
+      },
+      gh[256] =
+          {
+              0,
+          },
+      bh[256] = {
+          0,
+      };
   for (int u = 0; u < 256; ++u) {
     for (int v = 0; v < 256; ++v) {
       for (int y2 = 0; y2 < 256; ++y2) {
@@ -498,7 +503,17 @@ TEST_F(LibYUVColorTest, TestFullYUV) {
 }
 
 TEST_F(LibYUVColorTest, TestFullYUVJ) {
-  int rh[256] = { 0, }, gh[256] = { 0, }, bh[256] = { 0, };
+  int rh[256] =
+      {
+          0,
+      },
+      gh[256] =
+          {
+              0,
+          },
+      bh[256] = {
+          0,
+      };
   for (int u = 0; u < 256; ++u) {
     for (int v = 0; v < 256; ++v) {
       for (int y2 = 0; y2 < 256; ++y2) {

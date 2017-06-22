@@ -11,26 +11,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libyuv/video_common.h"
 #include "../unit_test/unit_test.h"
+#include "libyuv/video_common.h"
 
 namespace libyuv {
 
 // Tests FourCC codes in video common, which are used for ConvertToI420().
 
 static bool TestValidChar(uint32 onecc) {
-  if ((onecc >= '0' && onecc <= '9') ||
-      (onecc >= 'A' && onecc <= 'Z') ||
-      (onecc >= 'a' && onecc <= 'z') ||
-      (onecc == ' ') || (onecc == 0xff)) {
+  if ((onecc >= '0' && onecc <= '9') || (onecc >= 'A' && onecc <= 'Z') ||
+      (onecc >= 'a' && onecc <= 'z') || (onecc == ' ') || (onecc == 0xff)) {
     return true;
   }
   return false;
 }
 
 static bool TestValidFourCC(uint32 fourcc, int bpp) {
-  if (!TestValidChar(fourcc & 0xff) ||
-      !TestValidChar((fourcc >> 8) & 0xff) ||
+  if (!TestValidChar(fourcc & 0xff) || !TestValidChar((fourcc >> 8) & 0xff) ||
       !TestValidChar((fourcc >> 16) & 0xff) ||
       !TestValidChar((fourcc >> 24) & 0xff)) {
     return false;
@@ -52,10 +49,10 @@ TEST_F(LibYUVBaseTest, TestCanonicalFourCC) {
   EXPECT_EQ(static_cast<uint32>(FOURCC_UYVY), CanonicalFourCC(FOURCC_2VUY));
   EXPECT_EQ(static_cast<uint32>(FOURCC_MJPG), CanonicalFourCC(FOURCC_JPEG));
   EXPECT_EQ(static_cast<uint32>(FOURCC_MJPG), CanonicalFourCC(FOURCC_DMB1));
-  EXPECT_EQ(static_cast<uint32>(FOURCC_RAW),  CanonicalFourCC(FOURCC_RGB3));
+  EXPECT_EQ(static_cast<uint32>(FOURCC_RAW), CanonicalFourCC(FOURCC_RGB3));
   EXPECT_EQ(static_cast<uint32>(FOURCC_24BG), CanonicalFourCC(FOURCC_BGR3));
   EXPECT_EQ(static_cast<uint32>(FOURCC_BGRA), CanonicalFourCC(FOURCC_CM32));
-  EXPECT_EQ(static_cast<uint32>(FOURCC_RAW),  CanonicalFourCC(FOURCC_CM24));
+  EXPECT_EQ(static_cast<uint32>(FOURCC_RAW), CanonicalFourCC(FOURCC_CM24));
   EXPECT_EQ(static_cast<uint32>(FOURCC_RGBO), CanonicalFourCC(FOURCC_L555));
   EXPECT_EQ(static_cast<uint32>(FOURCC_RGBP), CanonicalFourCC(FOURCC_L565));
   EXPECT_EQ(static_cast<uint32>(FOURCC_RGBO), CanonicalFourCC(FOURCC_5551));
@@ -77,7 +74,7 @@ TEST_F(LibYUVBaseTest, TestFourCC) {
   EXPECT_TRUE(TestValidFourCC(FOURCC_BGRA, FOURCC_BPP_BGRA));
   EXPECT_TRUE(TestValidFourCC(FOURCC_ABGR, FOURCC_BPP_ABGR));
   EXPECT_TRUE(TestValidFourCC(FOURCC_24BG, FOURCC_BPP_24BG));
-  EXPECT_TRUE(TestValidFourCC(FOURCC_RAW,  FOURCC_BPP_RAW));
+  EXPECT_TRUE(TestValidFourCC(FOURCC_RAW, FOURCC_BPP_RAW));
   EXPECT_TRUE(TestValidFourCC(FOURCC_RGBA, FOURCC_BPP_RGBA));
   EXPECT_TRUE(TestValidFourCC(FOURCC_RGBP, FOURCC_BPP_RGBP));
   EXPECT_TRUE(TestValidFourCC(FOURCC_RGBO, FOURCC_BPP_RGBO));
@@ -100,7 +97,7 @@ TEST_F(LibYUVBaseTest, TestFourCC) {
   EXPECT_TRUE(TestValidFourCC(FOURCC_RGB3, FOURCC_BPP_RGB3));
   EXPECT_TRUE(TestValidFourCC(FOURCC_BGR3, FOURCC_BPP_BGR3));
   EXPECT_TRUE(TestValidFourCC(FOURCC_H264, FOURCC_BPP_H264));
-  EXPECT_TRUE(TestValidFourCC(FOURCC_ANY,  FOURCC_BPP_ANY));
+  EXPECT_TRUE(TestValidFourCC(FOURCC_ANY, FOURCC_BPP_ANY));
 }
 
 }  // namespace libyuv

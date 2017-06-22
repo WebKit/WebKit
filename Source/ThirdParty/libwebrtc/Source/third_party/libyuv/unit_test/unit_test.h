@@ -14,8 +14,8 @@
 #ifdef WIN32
 #include <windows.h>
 #else
-#include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/time.h>
 #endif
 
 #include <gtest/gtest.h>
@@ -54,8 +54,10 @@ static __inline int Abs(int v) {
 static const int kMaxWidth = 32768;
 static const int kMaxHeight = 32768;
 
-static inline bool SizeValid(int src_width, int src_height,
-                             int dst_width, int dst_height) {
+static inline bool SizeValid(int src_width,
+                             int src_height,
+                             int dst_width,
+                             int dst_height) {
   if (src_width > kMaxWidth || src_height > kMaxHeight ||
       dst_width > kMaxWidth || dst_height > kMaxHeight) {
     printf("Warning - size too large to test.  Skipping\n");
@@ -64,15 +66,16 @@ static inline bool SizeValid(int src_width, int src_height,
   return true;
 }
 
-#define align_buffer_page_end(var, size)                                       \
-  uint8* var;                                                                  \
-  uint8* var##_mem;                                                            \
-  var##_mem = reinterpret_cast<uint8*>(malloc(((size) + 4095 + 63) & ~4095));  \
-  var = (uint8*)((intptr_t)(var##_mem + (((size) + 4095 + 63) & ~4095) -       \
-      (size)) & ~63);
+#define align_buffer_page_end(var, size)                                      \
+  uint8* var;                                                                 \
+  uint8* var##_mem;                                                           \
+  var##_mem = reinterpret_cast<uint8*>(malloc(((size) + 4095 + 63) & ~4095)); \
+  var = (uint8*)((intptr_t)(var##_mem + (((size) + 4095 + 63) & ~4095) -      \
+                            (size)) &                                         \
+                 ~63);
 
 #define free_aligned_buffer_page_end(var) \
-  free(var##_mem);  \
+  free(var##_mem);                        \
   var = 0;
 
 #ifdef WIN32
@@ -122,78 +125,78 @@ class LibYUVColorTest : public ::testing::Test {
  protected:
   LibYUVColorTest();
 
-  int benchmark_iterations_;  // Default 1. Use 1000 for benchmarking.
-  int benchmark_width_;  // Default 1280.  Use 640 for benchmarking VGA.
-  int benchmark_height_;  // Default 720.  Use 360 for benchmarking VGA.
+  int benchmark_iterations_;     // Default 1. Use 1000 for benchmarking.
+  int benchmark_width_;          // Default 1280.  Use 640 for benchmarking VGA.
+  int benchmark_height_;         // Default 720.  Use 360 for benchmarking VGA.
   int benchmark_pixels_div256_;  // Total pixels to benchmark / 256.
   int benchmark_pixels_div1280_;  // Total pixels to benchmark / 1280.
-  int disable_cpu_flags_;  // Default 1.  Use -1 for benchmarking.
-  int benchmark_cpu_info_;  // Default -1.  Use 1 to disable SIMD.
+  int disable_cpu_flags_;         // Default 1.  Use -1 for benchmarking.
+  int benchmark_cpu_info_;        // Default -1.  Use 1 to disable SIMD.
 };
 
 class LibYUVConvertTest : public ::testing::Test {
  protected:
   LibYUVConvertTest();
 
-  int benchmark_iterations_;  // Default 1. Use 1000 for benchmarking.
-  int benchmark_width_;  // Default 1280.  Use 640 for benchmarking VGA.
-  int benchmark_height_;  // Default 720.  Use 360 for benchmarking VGA.
+  int benchmark_iterations_;     // Default 1. Use 1000 for benchmarking.
+  int benchmark_width_;          // Default 1280.  Use 640 for benchmarking VGA.
+  int benchmark_height_;         // Default 720.  Use 360 for benchmarking VGA.
   int benchmark_pixels_div256_;  // Total pixels to benchmark / 256.
   int benchmark_pixels_div1280_;  // Total pixels to benchmark / 1280.
-  int disable_cpu_flags_;  // Default 1.  Use -1 for benchmarking.
-  int benchmark_cpu_info_;  // Default -1.  Use 1 to disable SIMD.
+  int disable_cpu_flags_;         // Default 1.  Use -1 for benchmarking.
+  int benchmark_cpu_info_;        // Default -1.  Use 1 to disable SIMD.
 };
 
 class LibYUVScaleTest : public ::testing::Test {
  protected:
   LibYUVScaleTest();
 
-  int benchmark_iterations_;  // Default 1. Use 1000 for benchmarking.
-  int benchmark_width_;  // Default 1280.  Use 640 for benchmarking VGA.
-  int benchmark_height_;  // Default 720.  Use 360 for benchmarking VGA.
+  int benchmark_iterations_;     // Default 1. Use 1000 for benchmarking.
+  int benchmark_width_;          // Default 1280.  Use 640 for benchmarking VGA.
+  int benchmark_height_;         // Default 720.  Use 360 for benchmarking VGA.
   int benchmark_pixels_div256_;  // Total pixels to benchmark / 256.
   int benchmark_pixels_div1280_;  // Total pixels to benchmark / 1280.
-  int disable_cpu_flags_;  // Default 1.  Use -1 for benchmarking.
-  int benchmark_cpu_info_;  // Default -1.  Use 1 to disable SIMD.
+  int disable_cpu_flags_;         // Default 1.  Use -1 for benchmarking.
+  int benchmark_cpu_info_;        // Default -1.  Use 1 to disable SIMD.
 };
 
 class LibYUVRotateTest : public ::testing::Test {
  protected:
   LibYUVRotateTest();
 
-  int benchmark_iterations_;  // Default 1. Use 1000 for benchmarking.
-  int benchmark_width_;  // Default 1280.  Use 640 for benchmarking VGA.
-  int benchmark_height_;  // Default 720.  Use 360 for benchmarking VGA.
+  int benchmark_iterations_;     // Default 1. Use 1000 for benchmarking.
+  int benchmark_width_;          // Default 1280.  Use 640 for benchmarking VGA.
+  int benchmark_height_;         // Default 720.  Use 360 for benchmarking VGA.
   int benchmark_pixels_div256_;  // Total pixels to benchmark / 256.
   int benchmark_pixels_div1280_;  // Total pixels to benchmark / 1280.
-  int disable_cpu_flags_;  // Default 1.  Use -1 for benchmarking.
-  int benchmark_cpu_info_;  // Default -1.  Use 1 to disable SIMD.
+  int disable_cpu_flags_;         // Default 1.  Use -1 for benchmarking.
+  int benchmark_cpu_info_;        // Default -1.  Use 1 to disable SIMD.
 };
 
 class LibYUVPlanarTest : public ::testing::Test {
  protected:
   LibYUVPlanarTest();
 
-  int benchmark_iterations_;  // Default 1. Use 1000 for benchmarking.
-  int benchmark_width_;  // Default 1280.  Use 640 for benchmarking VGA.
-  int benchmark_height_;  // Default 720.  Use 360 for benchmarking VGA.
+  int benchmark_iterations_;     // Default 1. Use 1000 for benchmarking.
+  int benchmark_width_;          // Default 1280.  Use 640 for benchmarking VGA.
+  int benchmark_height_;         // Default 720.  Use 360 for benchmarking VGA.
   int benchmark_pixels_div256_;  // Total pixels to benchmark / 256.
   int benchmark_pixels_div1280_;  // Total pixels to benchmark / 1280.
-  int disable_cpu_flags_;  // Default 1.  Use -1 for benchmarking.
-  int benchmark_cpu_info_;  // Default -1.  Use 1 to disable SIMD.
+  int disable_cpu_flags_;         // Default 1.  Use -1 for benchmarking.
+  int benchmark_cpu_info_;        // Default -1.  Use 1 to disable SIMD.
 };
 
 class LibYUVBaseTest : public ::testing::Test {
  protected:
   LibYUVBaseTest();
 
-  int benchmark_iterations_;  // Default 1. Use 1000 for benchmarking.
-  int benchmark_width_;  // Default 1280.  Use 640 for benchmarking VGA.
-  int benchmark_height_;  // Default 720.  Use 360 for benchmarking VGA.
+  int benchmark_iterations_;     // Default 1. Use 1000 for benchmarking.
+  int benchmark_width_;          // Default 1280.  Use 640 for benchmarking VGA.
+  int benchmark_height_;         // Default 720.  Use 360 for benchmarking VGA.
   int benchmark_pixels_div256_;  // Total pixels to benchmark / 256.
   int benchmark_pixels_div1280_;  // Total pixels to benchmark / 1280.
-  int disable_cpu_flags_;  // Default 1.  Use -1 for benchmarking.
-  int benchmark_cpu_info_;  // Default -1.  Use 1 to disable SIMD.
+  int disable_cpu_flags_;         // Default 1.  Use -1 for benchmarking.
+  int benchmark_cpu_info_;        // Default -1.  Use 1 to disable SIMD.
 };
 
 #endif  // UNIT_TEST_UNIT_TEST_H_  NOLINT

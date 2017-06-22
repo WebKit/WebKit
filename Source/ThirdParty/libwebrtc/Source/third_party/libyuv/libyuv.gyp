@@ -18,7 +18,8 @@
   },
   'variables': {
     'use_system_libjpeg%': 0,
-    'libyuv_disable_jpeg%': 0,
+    # Can be enabled if your jpeg has GYP support.
+    'libyuv_disable_jpeg%': 1,
     # 'chromium_code' treats libyuv as internal and increases warning level.
     'chromium_code': 1,
     # clang compiler default variable usable by other apps that include libyuv.
@@ -120,7 +121,7 @@
         # Enable the following 3 macros to turn off assembly for specified CPU.
         # 'LIBYUV_DISABLE_X86',
         # 'LIBYUV_DISABLE_NEON',
-        # 'LIBYUV_DISABLE_MIPS',
+        # 'LIBYUV_DISABLE_DSPR2',
         # Enable the following macro to build libyuv as a shared library (dll).
         # 'LIBYUV_USING_SHARED_LIBRARY',
         # TODO(fbarchard): Make these into gyp defines.

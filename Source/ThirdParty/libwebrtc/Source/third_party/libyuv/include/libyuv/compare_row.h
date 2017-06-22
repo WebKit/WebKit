@@ -30,8 +30,8 @@ extern "C" {
 #endif
 
 // Visual C 2012 required for AVX2.
-#if defined(_M_IX86) && !defined(__clang__) && \
-    defined(_MSC_VER) && _MSC_VER >= 1700
+#if defined(_M_IX86) && !defined(__clang__) && defined(_MSC_VER) && \
+    _MSC_VER >= 1700
 #define VISUALC_HAS_AVX2 1
 #endif  // VisualStudio >= 2012
 
@@ -42,16 +42,17 @@ extern "C" {
 #endif  // clang >= 3.4
 #endif  // __clang__
 
-#if !defined(LIBYUV_DISABLE_X86) && \
-    defined(_M_IX86) && (defined(VISUALC_HAS_AVX2) || defined(CLANG_HAS_AVX2))
+#if !defined(LIBYUV_DISABLE_X86) && defined(_M_IX86) && \
+    (defined(VISUALC_HAS_AVX2) || defined(CLANG_HAS_AVX2))
 #define HAS_HASHDJB2_AVX2
 #endif
 
 // The following are available for Visual C and GCC:
 #if !defined(LIBYUV_DISABLE_X86) && \
-    (defined(__x86_64__) || (defined(__i386__) || defined(_M_IX86)))
+    (defined(__x86_64__) || defined(__i386__) || defined(_M_IX86))
 #define HAS_HASHDJB2_SSE41
 #define HAS_SUMSQUAREERROR_SSE2
+#define HAS_HAMMINGDISTANCE_X86
 #endif
 
 // The following are available for Visual C and clangcl 32 bit:
@@ -66,6 +67,15 @@ extern "C" {
     (defined(__ARM_NEON__) || defined(LIBYUV_NEON) || defined(__aarch64__))
 #define HAS_SUMSQUAREERROR_NEON
 #endif
+
+// The following are available for Neon 64 bit:
+#if !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
+#define HAS_HAMMINGDISTANCE_NEON
+#endif
+
+uint32 HammingDistance_C(const uint8* src_a, const uint8* src_b, int count);
+uint32 HammingDistance_X86(const uint8* src_a, const uint8* src_b, int count);
+uint32 HammingDistance_NEON(const uint8* src_a, const uint8* src_b, int count);
 
 uint32 SumSquareError_C(const uint8* src_a, const uint8* src_b, int count);
 uint32 SumSquareError_SSE2(const uint8* src_a, const uint8* src_b, int count);

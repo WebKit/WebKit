@@ -8,7 +8,8 @@
 
 {
   'variables': {
-    'libyuv_disable_jpeg%': 0,
+    # Can be enabled if your jpeg has GYP support.
+    'libyuv_disable_jpeg%': 1,
     'mips_msa%': 0,  # Default to msa off.
   },
   'targets': [
@@ -38,6 +39,7 @@
         'unit_test/color_test.cc',
         'unit_test/convert_test.cc',
         'unit_test/cpu_test.cc',
+        'unit_test/cpu_thread_test.cc',
         'unit_test/math_test.cc',
         'unit_test/planar_test.cc',
         'unit_test/rotate_argb_test.cc',
@@ -98,7 +100,7 @@
         # Enable the following 3 macros to turn off assembly for specified CPU.
         # 'LIBYUV_DISABLE_X86',
         # 'LIBYUV_DISABLE_NEON',
-        # 'LIBYUV_DISABLE_MIPS',
+        # 'LIBYUV_DISABLE_DSPR2',
         # Enable the following macro to build libyuv as a shared library (dll).
         # 'LIBYUV_USING_SHARED_LIBRARY',
       ],
@@ -122,14 +124,14 @@
       ], # conditions
     },
     {
-      'target_name': 'convert',
+      'target_name': 'yuvconvert',
       'type': 'executable',
       'dependencies': [
         'libyuv.gyp:libyuv',
       ],
       'sources': [
         # sources
-        'util/convert.cc',
+        'util/yuvconvert.cc',
       ],
       'conditions': [
         ['OS=="linux"', {

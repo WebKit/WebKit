@@ -39,10 +39,12 @@ int main(int argc, char** argv) {
   int amt2 = 0;
   do {
     amt1 = static_cast<int>(fread(buf1, 1, kBlockSize, fin1));
-    if (amt1 > 0) hash1 = libyuv::HashDjb2(buf1, amt1, hash1);
+    if (amt1 > 0)
+      hash1 = libyuv::HashDjb2(buf1, amt1, hash1);
     if (fin2) {
       amt2 = static_cast<int>(fread(buf2, 1, kBlockSize, fin2));
-      if (amt2 > 0) hash2 = libyuv::HashDjb2(buf2, amt2, hash2);
+      if (amt2 > 0)
+        hash2 = libyuv::HashDjb2(buf2, amt2, hash2);
       int amt_min = (amt1 < amt2) ? amt1 : amt2;
       size_min += amt_min;
       sum_square_err += libyuv::ComputeSumSquareError(buf1, buf2, amt_min);
@@ -52,8 +54,8 @@ int main(int argc, char** argv) {
   printf("hash1 %x", hash1);
   if (fin2) {
     printf(", hash2 %x", hash2);
-    double mse = static_cast<double>(sum_square_err) /
-                 static_cast<double>(size_min);
+    double mse =
+        static_cast<double>(sum_square_err) / static_cast<double>(size_min);
     printf(", mse %.2f", mse);
     double psnr = libyuv::SumSquareErrorToPsnr(sum_square_err, size_min);
     printf(", psnr %.2f\n", psnr);

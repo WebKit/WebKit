@@ -32,14 +32,14 @@ LOCAL_OBJ_FILES := \
 	source/rotate.o            \
 	source/rotate_common.o     \
 	source/rotate_gcc.o        \
-	source/rotate_mips.o       \
+	source/rotate_dspr2.o      \
 	source/rotate_neon64.o     \
 	source/rotate_neon.o       \
 	source/rotate_win.o        \
 	source/row_any.o           \
 	source/row_common.o        \
 	source/row_gcc.o           \
-	source/row_mips.o          \
+	source/row_dspr2.o         \
 	source/row_neon64.o        \
 	source/row_neon.o          \
 	source/row_win.o           \
@@ -48,7 +48,7 @@ LOCAL_OBJ_FILES := \
 	source/scale.o             \
 	source/scale_common.o      \
 	source/scale_gcc.o         \
-	source/scale_mips.o        \
+	source/scale_dspr2.o       \
 	source/scale_neon64.o      \
 	source/scale_neon.o        \
 	source/scale_win.o         \

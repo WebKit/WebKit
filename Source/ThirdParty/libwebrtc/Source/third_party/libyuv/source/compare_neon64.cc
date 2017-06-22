@@ -20,8 +20,40 @@ extern "C" {
 
 #if !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
 
+// 256 bits at a time
+uint32 HammingDistance_NEON(const uint8* src_a, const uint8* src_b, int count) {
+  uint32 diff;
+  asm volatile (
+    "movi       d4, #0                         \n"
+
+  "1:                                          \n"
+    MEMACCESS(0)
+    "ld1        {v0.16b, v1.16b}, [%0], #32    \n"
+    MEMACCESS(1)
+    "ld1        {v2.16b, v3.16b}, [%1], #32    \n"
+    "subs       %w2, %w2, #32                  \n"
+    "eor        v0.16b, v0.16b, v2.16b         \n"
+    "eor        v1.16b, v1.16b, v3.16b         \n"
+    "cnt        v0.16b, v0.16b                 \n"
+    "cnt        v1.16b, v1.16b                 \n"
+    "uaddlv     h0, v0.16b                     \n"
+    "uaddlv     h1, v1.16b                     \n"
+    "add        d4, d4, d0                     \n"
+    "add        d4, d4, d1                     \n"
+    "b.gt       1b                             \n"
+
+    "fmov       %w3, s4                        \n"
+    : "+r"(src_a),
+      "+r"(src_b),
+      "+r"(count),
+      "=r"(diff)
+    :
+    : "cc", "v0", "v1", "v2", "v3", "v4");
+  return diff;
+}
+
 uint32 SumSquareError_NEON(const uint8* src_a, const uint8* src_b, int count) {
-  volatile uint32 sse;
+  uint32 sse;
   asm volatile (
     "eor        v16.16b, v16.16b, v16.16b      \n"
     "eor        v18.16b, v18.16b, v18.16b      \n"

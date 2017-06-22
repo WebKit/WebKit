@@ -21,85 +21,82 @@ extern "C" {
     (defined(__x86_64__) || (defined(__i386__) && !defined(_MSC_VER)))
 
 // Offsets for source bytes 0 to 9
-static uvec8 kShuf0 =
-  { 0, 1, 3, 4, 5, 7, 8, 9, 128, 128, 128, 128, 128, 128, 128, 128 };
+static uvec8 kShuf0 = {0,   1,   3,   4,   5,   7,   8,   9,
+                       128, 128, 128, 128, 128, 128, 128, 128};
 
 // Offsets for source bytes 11 to 20 with 8 subtracted = 3 to 12.
-static uvec8 kShuf1 =
-  { 3, 4, 5, 7, 8, 9, 11, 12, 128, 128, 128, 128, 128, 128, 128, 128 };
+static uvec8 kShuf1 = {3,   4,   5,   7,   8,   9,   11,  12,
+                       128, 128, 128, 128, 128, 128, 128, 128};
 
 // Offsets for source bytes 21 to 31 with 16 subtracted = 5 to 31.
-static uvec8 kShuf2 =
-  { 5, 7, 8, 9, 11, 12, 13, 15, 128, 128, 128, 128, 128, 128, 128, 128 };
+static uvec8 kShuf2 = {5,   7,   8,   9,   11,  12,  13,  15,
+                       128, 128, 128, 128, 128, 128, 128, 128};
 
 // Offsets for source bytes 0 to 10
-static uvec8 kShuf01 =
-  { 0, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7, 8, 9, 9, 10 };
+static uvec8 kShuf01 = {0, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7, 8, 9, 9, 10};
 
 // Offsets for source bytes 10 to 21 with 8 subtracted = 3 to 13.
-static uvec8 kShuf11 =
-  { 2, 3, 4, 5, 5, 6, 6, 7, 8, 9, 9, 10, 10, 11, 12, 13 };
+static uvec8 kShuf11 = {2, 3, 4, 5, 5, 6, 6, 7, 8, 9, 9, 10, 10, 11, 12, 13};
 
 // Offsets for source bytes 21 to 31 with 16 subtracted = 5 to 31.
-static uvec8 kShuf21 =
-  { 5, 6, 6, 7, 8, 9, 9, 10, 10, 11, 12, 13, 13, 14, 14, 15 };
+static uvec8 kShuf21 = {5,  6,  6,  7,  8,  9,  9,  10,
+                        10, 11, 12, 13, 13, 14, 14, 15};
 
 // Coefficients for source bytes 0 to 10
-static uvec8 kMadd01 =
-  { 3, 1, 2, 2, 1, 3, 3, 1, 2, 2, 1, 3, 3, 1, 2, 2 };
+static uvec8 kMadd01 = {3, 1, 2, 2, 1, 3, 3, 1, 2, 2, 1, 3, 3, 1, 2, 2};
 
 // Coefficients for source bytes 10 to 21
-static uvec8 kMadd11 =
-  { 1, 3, 3, 1, 2, 2, 1, 3, 3, 1, 2, 2, 1, 3, 3, 1 };
+static uvec8 kMadd11 = {1, 3, 3, 1, 2, 2, 1, 3, 3, 1, 2, 2, 1, 3, 3, 1};
 
 // Coefficients for source bytes 21 to 31
-static uvec8 kMadd21 =
-  { 2, 2, 1, 3, 3, 1, 2, 2, 1, 3, 3, 1, 2, 2, 1, 3 };
+static uvec8 kMadd21 = {2, 2, 1, 3, 3, 1, 2, 2, 1, 3, 3, 1, 2, 2, 1, 3};
 
 // Coefficients for source bytes 21 to 31
-static vec16 kRound34 =
-  { 2, 2, 2, 2, 2, 2, 2, 2 };
+static vec16 kRound34 = {2, 2, 2, 2, 2, 2, 2, 2};
 
-static uvec8 kShuf38a =
-  { 0, 3, 6, 8, 11, 14, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128 };
+static uvec8 kShuf38a = {0,   3,   6,   8,   11,  14,  128, 128,
+                         128, 128, 128, 128, 128, 128, 128, 128};
 
-static uvec8 kShuf38b =
-  { 128, 128, 128, 128, 128, 128, 0, 3, 6, 8, 11, 14, 128, 128, 128, 128 };
+static uvec8 kShuf38b = {128, 128, 128, 128, 128, 128, 0,   3,
+                         6,   8,   11,  14,  128, 128, 128, 128};
 
 // Arrange words 0,3,6 into 0,1,2
-static uvec8 kShufAc =
-  { 0, 1, 6, 7, 12, 13, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128 };
+static uvec8 kShufAc = {0,   1,   6,   7,   12,  13,  128, 128,
+                        128, 128, 128, 128, 128, 128, 128, 128};
 
 // Arrange words 0,3,6 into 3,4,5
-static uvec8 kShufAc3 =
-  { 128, 128, 128, 128, 128, 128, 0, 1, 6, 7, 12, 13, 128, 128, 128, 128 };
+static uvec8 kShufAc3 = {128, 128, 128, 128, 128, 128, 0,   1,
+                         6,   7,   12,  13,  128, 128, 128, 128};
 
 // Scaling values for boxes of 3x3 and 2x3
-static uvec16 kScaleAc33 =
-  { 65536 / 9, 65536 / 9, 65536 / 6, 65536 / 9, 65536 / 9, 65536 / 6, 0, 0 };
+static uvec16 kScaleAc33 = {65536 / 9, 65536 / 9, 65536 / 6, 65536 / 9,
+                            65536 / 9, 65536 / 6, 0,         0};
 
 // Arrange first value for pixels 0,1,2,3,4,5
-static uvec8 kShufAb0 =
-  { 0, 128, 3, 128, 6, 128, 8, 128, 11, 128, 14, 128, 128, 128, 128, 128 };
+static uvec8 kShufAb0 = {0,  128, 3,  128, 6,   128, 8,   128,
+                         11, 128, 14, 128, 128, 128, 128, 128};
 
 // Arrange second value for pixels 0,1,2,3,4,5
-static uvec8 kShufAb1 =
-  { 1, 128, 4, 128, 7, 128, 9, 128, 12, 128, 15, 128, 128, 128, 128, 128 };
+static uvec8 kShufAb1 = {1,  128, 4,  128, 7,   128, 9,   128,
+                         12, 128, 15, 128, 128, 128, 128, 128};
 
 // Arrange third value for pixels 0,1,2,3,4,5
-static uvec8 kShufAb2 =
-  { 2, 128, 5, 128, 128, 128, 10, 128, 13, 128, 128, 128, 128, 128, 128, 128 };
+static uvec8 kShufAb2 = {2,  128, 5,   128, 128, 128, 10,  128,
+                         13, 128, 128, 128, 128, 128, 128, 128};
 
 // Scaling values for boxes of 3x2 and 2x2
-static uvec16 kScaleAb2 =
-  { 65536 / 3, 65536 / 3, 65536 / 2, 65536 / 3, 65536 / 3, 65536 / 2, 0, 0 };
+static uvec16 kScaleAb2 = {65536 / 3, 65536 / 3, 65536 / 2, 65536 / 3,
+                           65536 / 3, 65536 / 2, 0,         0};
 
 // GCC versions of row functions are verbatim conversions from Visual C.
 // Generated using gcc disassembly on Visual C object file:
 // objdump -D yuvscaler.obj >yuvscaler.txt
 
-void ScaleRowDown2_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
-                         uint8* dst_ptr, int dst_width) {
+void ScaleRowDown2_SSSE3(const uint8* src_ptr,
+                         ptrdiff_t src_stride,
+                         uint8* dst_ptr,
+                         int dst_width) {
+  (void)src_stride;
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -120,8 +117,11 @@ void ScaleRowDown2_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
   );
 }
 
-void ScaleRowDown2Linear_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
-                               uint8* dst_ptr, int dst_width) {
+void ScaleRowDown2Linear_SSSE3(const uint8* src_ptr,
+                               ptrdiff_t src_stride,
+                               uint8* dst_ptr,
+                               int dst_width) {
+  (void)src_stride;
   asm volatile (
     "pcmpeqb    %%xmm4,%%xmm4                  \n"
     "psrlw      $0xf,%%xmm4                    \n"
@@ -149,8 +149,10 @@ void ScaleRowDown2Linear_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
   );
 }
 
-void ScaleRowDown2Box_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
-                            uint8* dst_ptr, int dst_width) {
+void ScaleRowDown2Box_SSSE3(const uint8* src_ptr,
+                            ptrdiff_t src_stride,
+                            uint8* dst_ptr,
+                            int dst_width) {
   asm volatile (
     "pcmpeqb    %%xmm4,%%xmm4                  \n"
     "psrlw      $0xf,%%xmm4                    \n"
@@ -189,8 +191,11 @@ void ScaleRowDown2Box_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
 }
 
 #ifdef HAS_SCALEROWDOWN2_AVX2
-void ScaleRowDown2_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
-                        uint8* dst_ptr, int dst_width) {
+void ScaleRowDown2_AVX2(const uint8* src_ptr,
+                        ptrdiff_t src_stride,
+                        uint8* dst_ptr,
+                        int dst_width) {
+  (void)src_stride;
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -213,8 +218,11 @@ void ScaleRowDown2_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
   );
 }
 
-void ScaleRowDown2Linear_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
-                              uint8* dst_ptr, int dst_width) {
+void ScaleRowDown2Linear_AVX2(const uint8* src_ptr,
+                              ptrdiff_t src_stride,
+                              uint8* dst_ptr,
+                              int dst_width) {
+  (void)src_stride;
   asm volatile (
     "vpcmpeqb   %%ymm4,%%ymm4,%%ymm4           \n"
     "vpsrlw     $0xf,%%ymm4,%%ymm4             \n"
@@ -244,8 +252,10 @@ void ScaleRowDown2Linear_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
   );
 }
 
-void ScaleRowDown2Box_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
-                           uint8* dst_ptr, int dst_width) {
+void ScaleRowDown2Box_AVX2(const uint8* src_ptr,
+                           ptrdiff_t src_stride,
+                           uint8* dst_ptr,
+                           int dst_width) {
   asm volatile (
     "vpcmpeqb   %%ymm4,%%ymm4,%%ymm4           \n"
     "vpsrlw     $0xf,%%ymm4,%%ymm4             \n"
@@ -286,8 +296,11 @@ void ScaleRowDown2Box_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
 }
 #endif  // HAS_SCALEROWDOWN2_AVX2
 
-void ScaleRowDown4_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
-                        uint8* dst_ptr, int dst_width) {
+void ScaleRowDown4_SSSE3(const uint8* src_ptr,
+                         ptrdiff_t src_stride,
+                         uint8* dst_ptr,
+                         int dst_width) {
+  (void)src_stride;
   asm volatile (
     "pcmpeqb   %%xmm5,%%xmm5                   \n"
     "psrld     $0x18,%%xmm5                    \n"
@@ -314,8 +327,10 @@ void ScaleRowDown4_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
   );
 }
 
-void ScaleRowDown4Box_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
-                           uint8* dst_ptr, int dst_width) {
+void ScaleRowDown4Box_SSSE3(const uint8* src_ptr,
+                            ptrdiff_t src_stride,
+                            uint8* dst_ptr,
+                            int dst_width) {
   intptr_t stridex3;
   asm volatile (
     "pcmpeqb    %%xmm4,%%xmm4                  \n"
@@ -368,10 +383,12 @@ void ScaleRowDown4Box_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
   );
 }
 
-
 #ifdef HAS_SCALEROWDOWN4_AVX2
-void ScaleRowDown4_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
-                        uint8* dst_ptr, int dst_width) {
+void ScaleRowDown4_AVX2(const uint8* src_ptr,
+                        ptrdiff_t src_stride,
+                        uint8* dst_ptr,
+                        int dst_width) {
+  (void)src_stride;
   asm volatile (
     "vpcmpeqb   %%ymm5,%%ymm5,%%ymm5           \n"
     "vpsrld     $0x18,%%ymm5,%%ymm5            \n"
@@ -400,8 +417,10 @@ void ScaleRowDown4_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
   );
 }
 
-void ScaleRowDown4Box_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
-                           uint8* dst_ptr, int dst_width) {
+void ScaleRowDown4Box_AVX2(const uint8* src_ptr,
+                           ptrdiff_t src_stride,
+                           uint8* dst_ptr,
+                           int dst_width) {
   asm volatile (
     "vpcmpeqb   %%ymm4,%%ymm4,%%ymm4           \n"
     "vpsrlw     $0xf,%%ymm4,%%ymm4             \n"
@@ -455,17 +474,20 @@ void ScaleRowDown4Box_AVX2(const uint8* src_ptr, ptrdiff_t src_stride,
 }
 #endif  // HAS_SCALEROWDOWN4_AVX2
 
-void ScaleRowDown34_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
-                          uint8* dst_ptr, int dst_width) {
-  asm volatile (
-    "movdqa    %0,%%xmm3                       \n"
-    "movdqa    %1,%%xmm4                       \n"
-    "movdqa    %2,%%xmm5                       \n"
-  :
-  : "m"(kShuf0),  // %0
-    "m"(kShuf1),  // %1
-    "m"(kShuf2)   // %2
-  );
+void ScaleRowDown34_SSSE3(const uint8* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint8* dst_ptr,
+                          int dst_width) {
+  (void)src_stride;
+  asm volatile(
+      "movdqa    %0,%%xmm3                       \n"
+      "movdqa    %1,%%xmm4                       \n"
+      "movdqa    %2,%%xmm5                       \n"
+      :
+      : "m"(kShuf0),  // %0
+        "m"(kShuf1),  // %1
+        "m"(kShuf2)   // %2
+      );
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -492,25 +514,26 @@ void ScaleRowDown34_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
 
 void ScaleRowDown34_1_Box_SSSE3(const uint8* src_ptr,
                                 ptrdiff_t src_stride,
-                                uint8* dst_ptr, int dst_width) {
-  asm volatile (
-    "movdqa    %0,%%xmm2                       \n"  // kShuf01
-    "movdqa    %1,%%xmm3                       \n"  // kShuf11
-    "movdqa    %2,%%xmm4                       \n"  // kShuf21
-  :
-  : "m"(kShuf01),  // %0
-    "m"(kShuf11),  // %1
-    "m"(kShuf21)   // %2
-  );
-  asm volatile (
-    "movdqa    %0,%%xmm5                       \n"  // kMadd01
-    "movdqa    %1,%%xmm0                       \n"  // kMadd11
-    "movdqa    %2,%%xmm1                       \n"  // kRound34
-  :
-  : "m"(kMadd01),  // %0
-    "m"(kMadd11),  // %1
-    "m"(kRound34)  // %2
-  );
+                                uint8* dst_ptr,
+                                int dst_width) {
+  asm volatile(
+      "movdqa    %0,%%xmm2                       \n"  // kShuf01
+      "movdqa    %1,%%xmm3                       \n"  // kShuf11
+      "movdqa    %2,%%xmm4                       \n"  // kShuf21
+      :
+      : "m"(kShuf01),  // %0
+        "m"(kShuf11),  // %1
+        "m"(kShuf21)   // %2
+      );
+  asm volatile(
+      "movdqa    %0,%%xmm5                       \n"  // kMadd01
+      "movdqa    %1,%%xmm0                       \n"  // kMadd11
+      "movdqa    %2,%%xmm1                       \n"  // kRound34
+      :
+      : "m"(kMadd01),  // %0
+        "m"(kMadd11),  // %1
+        "m"(kRound34)  // %2
+      );
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -557,25 +580,26 @@ void ScaleRowDown34_1_Box_SSSE3(const uint8* src_ptr,
 
 void ScaleRowDown34_0_Box_SSSE3(const uint8* src_ptr,
                                 ptrdiff_t src_stride,
-                                uint8* dst_ptr, int dst_width) {
-  asm volatile (
-    "movdqa    %0,%%xmm2                       \n"  // kShuf01
-    "movdqa    %1,%%xmm3                       \n"  // kShuf11
-    "movdqa    %2,%%xmm4                       \n"  // kShuf21
-  :
-  : "m"(kShuf01),  // %0
-    "m"(kShuf11),  // %1
-    "m"(kShuf21)   // %2
-  );
-  asm volatile (
-    "movdqa    %0,%%xmm5                       \n"  // kMadd01
-    "movdqa    %1,%%xmm0                       \n"  // kMadd11
-    "movdqa    %2,%%xmm1                       \n"  // kRound34
-  :
-  : "m"(kMadd01),  // %0
-    "m"(kMadd11),  // %1
-    "m"(kRound34)  // %2
-  );
+                                uint8* dst_ptr,
+                                int dst_width) {
+  asm volatile(
+      "movdqa    %0,%%xmm2                       \n"  // kShuf01
+      "movdqa    %1,%%xmm3                       \n"  // kShuf11
+      "movdqa    %2,%%xmm4                       \n"  // kShuf21
+      :
+      : "m"(kShuf01),  // %0
+        "m"(kShuf11),  // %1
+        "m"(kShuf21)   // %2
+      );
+  asm volatile(
+      "movdqa    %0,%%xmm5                       \n"  // kMadd01
+      "movdqa    %1,%%xmm0                       \n"  // kMadd11
+      "movdqa    %2,%%xmm1                       \n"  // kRound34
+      :
+      : "m"(kMadd01),  // %0
+        "m"(kMadd11),  // %1
+        "m"(kRound34)  // %2
+      );
 
   asm volatile (
     LABELALIGN
@@ -624,8 +648,11 @@ void ScaleRowDown34_0_Box_SSSE3(const uint8* src_ptr,
   );
 }
 
-void ScaleRowDown38_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
-                          uint8* dst_ptr, int dst_width) {
+void ScaleRowDown38_SSSE3(const uint8* src_ptr,
+                          ptrdiff_t src_stride,
+                          uint8* dst_ptr,
+                          int dst_width) {
+  (void)src_stride;
   asm volatile (
     "movdqa    %3,%%xmm4                       \n"
     "movdqa    %4,%%xmm5                       \n"
@@ -655,18 +682,19 @@ void ScaleRowDown38_SSSE3(const uint8* src_ptr, ptrdiff_t src_stride,
 
 void ScaleRowDown38_2_Box_SSSE3(const uint8* src_ptr,
                                 ptrdiff_t src_stride,
-                                uint8* dst_ptr, int dst_width) {
-  asm volatile (
-    "movdqa    %0,%%xmm2                       \n"
-    "movdqa    %1,%%xmm3                       \n"
-    "movdqa    %2,%%xmm4                       \n"
-    "movdqa    %3,%%xmm5                       \n"
-  :
-  : "m"(kShufAb0),   // %0
-    "m"(kShufAb1),   // %1
-    "m"(kShufAb2),   // %2
-    "m"(kScaleAb2)   // %3
-  );
+                                uint8* dst_ptr,
+                                int dst_width) {
+  asm volatile(
+      "movdqa    %0,%%xmm2                       \n"
+      "movdqa    %1,%%xmm3                       \n"
+      "movdqa    %2,%%xmm4                       \n"
+      "movdqa    %3,%%xmm5                       \n"
+      :
+      : "m"(kShufAb0),  // %0
+        "m"(kShufAb1),  // %1
+        "m"(kShufAb2),  // %2
+        "m"(kScaleAb2)  // %3
+      );
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -700,17 +728,18 @@ void ScaleRowDown38_2_Box_SSSE3(const uint8* src_ptr,
 
 void ScaleRowDown38_3_Box_SSSE3(const uint8* src_ptr,
                                 ptrdiff_t src_stride,
-                                uint8* dst_ptr, int dst_width) {
-  asm volatile (
-    "movdqa    %0,%%xmm2                       \n"
-    "movdqa    %1,%%xmm3                       \n"
-    "movdqa    %2,%%xmm4                       \n"
-    "pxor      %%xmm5,%%xmm5                   \n"
-  :
-  : "m"(kShufAc),    // %0
-    "m"(kShufAc3),   // %1
-    "m"(kScaleAc33)  // %2
-  );
+                                uint8* dst_ptr,
+                                int dst_width) {
+  asm volatile(
+      "movdqa    %0,%%xmm2                       \n"
+      "movdqa    %1,%%xmm3                       \n"
+      "movdqa    %2,%%xmm4                       \n"
+      "pxor      %%xmm5,%%xmm5                   \n"
+      :
+      : "m"(kShufAc),    // %0
+        "m"(kShufAc3),   // %1
+        "m"(kScaleAc33)  // %2
+      );
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -790,7 +819,6 @@ void ScaleAddRow_SSE2(const uint8* src_ptr, uint16* dst_ptr, int src_width) {
   );
 }
 
-
 #ifdef HAS_SCALEADDROW_AVX2
 // Reads 32 bytes and accumulates to 32 shorts at a time.
 void ScaleAddRow_AVX2(const uint8* src_ptr, uint16* dst_ptr, int src_width) {
@@ -823,17 +851,19 @@ void ScaleAddRow_AVX2(const uint8* src_ptr, uint16* dst_ptr, int src_width) {
 
 // Constant for making pixels signed to avoid pmaddubsw
 // saturation.
-static uvec8 kFsub80 =
-  { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
-    0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80 };
+static uvec8 kFsub80 = {0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+                        0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80};
 
 // Constant for making pixels unsigned and adding .5 for rounding.
-static uvec16 kFadd40 =
-  { 0x4040, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040, 0x4040 };
+static uvec16 kFadd40 = {0x4040, 0x4040, 0x4040, 0x4040,
+                         0x4040, 0x4040, 0x4040, 0x4040};
 
 // Bilinear column filtering. SSSE3 version.
-void ScaleFilterCols_SSSE3(uint8* dst_ptr, const uint8* src_ptr,
-                           int dst_width, int x, int dx) {
+void ScaleFilterCols_SSSE3(uint8* dst_ptr,
+                           const uint8* src_ptr,
+                           int dst_width,
+                           int x,
+                           int dx) {
   intptr_t x0, x1, temp_pixel;
   asm volatile (
     "movd      %6,%%xmm2                       \n"
@@ -925,8 +955,13 @@ void ScaleFilterCols_SSSE3(uint8* dst_ptr, const uint8* src_ptr,
 
 // Reads 4 pixels, duplicates them and writes 8 pixels.
 // Alignment requirement: src_argb 16 byte aligned, dst_argb 16 byte aligned.
-void ScaleColsUp2_SSE2(uint8* dst_ptr, const uint8* src_ptr,
-                       int dst_width, int x, int dx) {
+void ScaleColsUp2_SSE2(uint8* dst_ptr,
+                       const uint8* src_ptr,
+                       int dst_width,
+                       int x,
+                       int dx) {
+  (void)x;
+  (void)dx;
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -950,7 +985,9 @@ void ScaleColsUp2_SSE2(uint8* dst_ptr, const uint8* src_ptr,
 
 void ScaleARGBRowDown2_SSE2(const uint8* src_argb,
                             ptrdiff_t src_stride,
-                            uint8* dst_argb, int dst_width) {
+                            uint8* dst_argb,
+                            int dst_width) {
+  (void)src_stride;
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -971,7 +1008,9 @@ void ScaleARGBRowDown2_SSE2(const uint8* src_argb,
 
 void ScaleARGBRowDown2Linear_SSE2(const uint8* src_argb,
                                   ptrdiff_t src_stride,
-                                  uint8* dst_argb, int dst_width) {
+                                  uint8* dst_argb,
+                                  int dst_width) {
+  (void)src_stride;
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -995,7 +1034,8 @@ void ScaleARGBRowDown2Linear_SSE2(const uint8* src_argb,
 
 void ScaleARGBRowDown2Box_SSE2(const uint8* src_argb,
                                ptrdiff_t src_stride,
-                               uint8* dst_argb, int dst_width) {
+                               uint8* dst_argb,
+                               int dst_width) {
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -1025,10 +1065,14 @@ void ScaleARGBRowDown2Box_SSE2(const uint8* src_argb,
 
 // Reads 4 pixels at a time.
 // Alignment requirement: dst_argb 16 byte aligned.
-void ScaleARGBRowDownEven_SSE2(const uint8* src_argb, ptrdiff_t src_stride,
-                               int src_stepx, uint8* dst_argb, int dst_width) {
+void ScaleARGBRowDownEven_SSE2(const uint8* src_argb,
+                               ptrdiff_t src_stride,
+                               int src_stepx,
+                               uint8* dst_argb,
+                               int dst_width) {
   intptr_t src_stepx_x4 = (intptr_t)(src_stepx);
   intptr_t src_stepx_x12;
+  (void)src_stride;
   asm volatile (
     "lea       " MEMLEA3(0x00,1,4) ",%1        \n"
     "lea       " MEMLEA4(0x00,1,1,2) ",%4      \n"
@@ -1059,8 +1103,10 @@ void ScaleARGBRowDownEven_SSE2(const uint8* src_argb, ptrdiff_t src_stride,
 // Blends four 2x2 to 4x1.
 // Alignment requirement: dst_argb 16 byte aligned.
 void ScaleARGBRowDownEvenBox_SSE2(const uint8* src_argb,
-                                  ptrdiff_t src_stride, int src_stepx,
-                                  uint8* dst_argb, int dst_width) {
+                                  ptrdiff_t src_stride,
+                                  int src_stepx,
+                                  uint8* dst_argb,
+                                  int dst_width) {
   intptr_t src_stepx_x4 = (intptr_t)(src_stepx);
   intptr_t src_stepx_x12;
   intptr_t row1 = (intptr_t)(src_stride);
@@ -1102,8 +1148,11 @@ void ScaleARGBRowDownEvenBox_SSE2(const uint8* src_argb,
   );
 }
 
-void ScaleARGBCols_SSE2(uint8* dst_argb, const uint8* src_argb,
-                        int dst_width, int x, int dx) {
+void ScaleARGBCols_SSE2(uint8* dst_argb,
+                        const uint8* src_argb,
+                        int dst_width,
+                        int x,
+                        int dx) {
   intptr_t x0, x1;
   asm volatile (
     "movd      %5,%%xmm2                       \n"
@@ -1171,8 +1220,13 @@ void ScaleARGBCols_SSE2(uint8* dst_argb, const uint8* src_argb,
 
 // Reads 4 pixels, duplicates them and writes 8 pixels.
 // Alignment requirement: src_argb 16 byte aligned, dst_argb 16 byte aligned.
-void ScaleARGBColsUp2_SSE2(uint8* dst_argb, const uint8* src_argb,
-                           int dst_width, int x, int dx) {
+void ScaleARGBColsUp2_SSE2(uint8* dst_argb,
+                           const uint8* src_argb,
+                           int dst_width,
+                           int x,
+                           int dx) {
+  (void)x;
+  (void)dx;
   asm volatile (
     LABELALIGN
   "1:                                          \n"
@@ -1197,26 +1251,29 @@ void ScaleARGBColsUp2_SSE2(uint8* dst_argb, const uint8* src_argb,
 
 // Shuffle table for arranging 2 pixels into pairs for pmaddubsw
 static uvec8 kShuffleColARGB = {
-  0u, 4u, 1u, 5u, 2u, 6u, 3u, 7u,  // bbggrraa 1st pixel
-  8u, 12u, 9u, 13u, 10u, 14u, 11u, 15u  // bbggrraa 2nd pixel
+    0u, 4u,  1u, 5u,  2u,  6u,  3u,  7u,  // bbggrraa 1st pixel
+    8u, 12u, 9u, 13u, 10u, 14u, 11u, 15u  // bbggrraa 2nd pixel
 };
 
 // Shuffle table for duplicating 2 fractions into 8 bytes each
 static uvec8 kShuffleFractions = {
-  0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 4u, 4u, 4u, 4u, 4u, 4u, 4u,
+    0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 4u, 4u, 4u, 4u, 4u, 4u, 4u,
 };
 
 // Bilinear row filtering combines 4x2 -> 4x1. SSSE3 version
-void ScaleARGBFilterCols_SSSE3(uint8* dst_argb, const uint8* src_argb,
-                               int dst_width, int x, int dx) {
+void ScaleARGBFilterCols_SSSE3(uint8* dst_argb,
+                               const uint8* src_argb,
+                               int dst_width,
+                               int x,
+                               int dx) {
   intptr_t x0, x1;
-  asm volatile (
-    "movdqa    %0,%%xmm4                       \n"
-    "movdqa    %1,%%xmm5                       \n"
-  :
-  : "m"(kShuffleColARGB),  // %0
-    "m"(kShuffleFractions)  // %1
-  );
+  asm volatile(
+      "movdqa    %0,%%xmm4                       \n"
+      "movdqa    %1,%%xmm5                       \n"
+      :
+      : "m"(kShuffleColARGB),   // %0
+        "m"(kShuffleFractions)  // %1
+      );
 
   asm volatile (
     "movd      %5,%%xmm2                       \n"
@@ -1283,34 +1340,32 @@ void ScaleARGBFilterCols_SSSE3(uint8* dst_argb, const uint8* src_argb,
 
 // Divide num by div and return as 16.16 fixed point result.
 int FixedDiv_X86(int num, int div) {
-  asm volatile (
-    "cdq                                       \n"
-    "shld      $0x10,%%eax,%%edx               \n"
-    "shl       $0x10,%%eax                     \n"
-    "idiv      %1                              \n"
-    "mov       %0, %%eax                       \n"
-    : "+a"(num)  // %0
-    : "c"(div)   // %1
-    : "memory", "cc", "edx"
-  );
+  asm volatile(
+      "cdq                                       \n"
+      "shld      $0x10,%%eax,%%edx               \n"
+      "shl       $0x10,%%eax                     \n"
+      "idiv      %1                              \n"
+      "mov       %0, %%eax                       \n"
+      : "+a"(num)  // %0
+      : "c"(div)   // %1
+      : "memory", "cc", "edx");
   return num;
 }
 
 // Divide num - 1 by div - 1 and return as 16.16 fixed point result.
 int FixedDiv1_X86(int num, int div) {
-  asm volatile (
-    "cdq                                       \n"
-    "shld      $0x10,%%eax,%%edx               \n"
-    "shl       $0x10,%%eax                     \n"
-    "sub       $0x10001,%%eax                  \n"
-    "sbb       $0x0,%%edx                      \n"
-    "sub       $0x1,%1                         \n"
-    "idiv      %1                              \n"
-    "mov       %0, %%eax                       \n"
-    : "+a"(num)  // %0
-    : "c"(div)   // %1
-    : "memory", "cc", "edx"
-  );
+  asm volatile(
+      "cdq                                       \n"
+      "shld      $0x10,%%eax,%%edx               \n"
+      "shl       $0x10,%%eax                     \n"
+      "sub       $0x10001,%%eax                  \n"
+      "sbb       $0x0,%%edx                      \n"
+      "sub       $0x1,%1                         \n"
+      "idiv      %1                              \n"
+      "mov       %0, %%eax                       \n"
+      : "+a"(num)  // %0
+      : "c"(div)   // %1
+      : "memory", "cc", "edx");
   return num;
 }
 

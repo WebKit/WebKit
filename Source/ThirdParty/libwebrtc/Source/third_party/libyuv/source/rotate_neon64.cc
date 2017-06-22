@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "libyuv/row.h"
 #include "libyuv/rotate_row.h"
+#include "libyuv/row.h"
 
 #include "libyuv/basic_types.h"
 
@@ -21,13 +21,16 @@ extern "C" {
 // This module is for GCC Neon armv8 64 bit.
 #if !defined(LIBYUV_DISABLE_NEON) && defined(__aarch64__)
 
-static uvec8 kVTbl4x4Transpose =
-  { 0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15 };
+static uvec8 kVTbl4x4Transpose = {0, 4, 8,  12, 1, 5, 9,  13,
+                                  2, 6, 10, 14, 3, 7, 11, 15};
 
-void TransposeWx8_NEON(const uint8* src, int src_stride,
-                       uint8* dst, int dst_stride, int width) {
+void TransposeWx8_NEON(const uint8* src,
+                       int src_stride,
+                       uint8* dst,
+                       int dst_stride,
+                       int width) {
   const uint8* src_temp;
-  int64 width64 = (int64) width;  // Work around clang 3.4 warning.
+  int64 width64 = (int64)width;  // Work around clang 3.4 warning.
   asm volatile (
     // loops are on blocks of 8. loop will stop when
     // counter gets to or below 0. starting the counter
@@ -247,16 +250,19 @@ void TransposeWx8_NEON(const uint8* src, int src_stride,
   );
 }
 
-static uint8 kVTbl4x4TransposeDi[32] =
-  { 0,  16, 32, 48,  2, 18, 34, 50,  4, 20, 36, 52,  6, 22, 38, 54,
-    1,  17, 33, 49,  3, 19, 35, 51,  5, 21, 37, 53,  7, 23, 39, 55};
+static uint8 kVTbl4x4TransposeDi[32] = {
+    0, 16, 32, 48, 2, 18, 34, 50, 4, 20, 36, 52, 6, 22, 38, 54,
+    1, 17, 33, 49, 3, 19, 35, 51, 5, 21, 37, 53, 7, 23, 39, 55};
 
-void TransposeUVWx8_NEON(const uint8* src, int src_stride,
-                         uint8* dst_a, int dst_stride_a,
-                         uint8* dst_b, int dst_stride_b,
+void TransposeUVWx8_NEON(const uint8* src,
+                         int src_stride,
+                         uint8* dst_a,
+                         int dst_stride_a,
+                         uint8* dst_b,
+                         int dst_stride_b,
                          int width) {
   const uint8* src_temp;
-  int64 width64 = (int64) width;  // Work around clang 3.4 warning.
+  int64 width64 = (int64)width;  // Work around clang 3.4 warning.
   asm volatile (
     // loops are on blocks of 8. loop will stop when
     // counter gets to or below 0. starting the counter
