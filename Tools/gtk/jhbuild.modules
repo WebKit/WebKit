@@ -141,13 +141,11 @@
     <dependencies>
       <dep package="icu"/>
     </dependencies>
-    <branch module="software/harfbuzz/release/harfbuzz-1.3.3.tar.bz2"
-            version="1.3.3"
-            checkoutdir="harfbuzz-1.3.3"
+    <branch module="software/harfbuzz/release/harfbuzz-1.4.2.tar.bz2"
+            version="1.4.2"
+            checkoutdir="harfbuzz-1.4.2"
             repo="freedesktop.org"
-            hash="sha256:2620987115a4122b47321610dccbcc18f7f121115fd7b88dc8a695c8b66cb3c9"
-            md5sum="97ae15a72a93f1f27324a2b8d9bd3b1d">
-    </branch>
+            hash="sha256:8f234dcfab000fdec24d43674fffa2fdbdbd654eb176afbde30e8826339cb7b3"/>
   </autotools>
 
   <autotools id="gdk-pixbuf" autogen-sh="configure"

@@ -1,5 +1,14 @@
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Upgrade Harfbuzz to version 1.4.2
+        https://bugs.webkit.org/show_bug.cgi?id=173592
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * gtk/jhbuild.modules:
+
+2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Update WPEBackend-mesa
         https://bugs.webkit.org/show_bug.cgi?id=173705
 
