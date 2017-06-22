@@ -1,3 +1,16 @@
+2017-06-22  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r218633.
+
+        The test is failing frequently on Sierra Debug and Windows
+
+        Reverted changeset:
+
+        "AX: Cannot call setValue() on contenteditable or ARIA text
+        controls"
+        https://bugs.webkit.org/show_bug.cgi?id=173520
+        http://trac.webkit.org/changeset/218633
+
 2017-06-22  David Kilzer  <ddkilzer@apple.com>
 
         [TestWebKitAPI] Fix misuse of -[NSData dataWithBytesNoCopy:length:] with global variables
