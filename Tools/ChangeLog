@@ -1,5 +1,19 @@
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Remove unused coordinated graphics C API
+        https://bugs.webkit.org/show_bug.cgi?id=173706
+
+        Reviewed by Žan Doberšek.
+
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/WKViewIsActiveSetIsActive.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/WKViewIsActiveSetIsActive_Bundle.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/WKViewRestoreZoomAndScrollBackForward.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/WKViewUserViewportToContents.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/backforward1.html: Removed.
+        * TestWebKitAPI/Tests/WebKit2/CoordinatedGraphics/backforward2.html: Removed.
+
+2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Build glib API tests
         https://bugs.webkit.org/show_bug.cgi?id=173702
 
