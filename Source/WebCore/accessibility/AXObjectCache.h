@@ -461,6 +461,7 @@ inline AccessibilityObject* AXObjectCache::focusedUIElementForPage(const Page*) 
 inline AccessibilityObject* AXObjectCache::get(RenderObject*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Widget*) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(RenderObject*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(AccessibilityRole) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return nullptr; }
@@ -477,7 +478,6 @@ inline void AXObjectCache::checkedStateChanged(Node*) { }
 inline void AXObjectCache::childrenChanged(RenderObject*, RenderObject*) { }
 inline void AXObjectCache::childrenChanged(Node*, Node*) { }
 inline void AXObjectCache::childrenChanged(AccessibilityObject*) { }
-inline void AXObjectCache::textChanged(RenderObject*) { }
 inline void AXObjectCache::textChanged(Node*) { }
 inline void AXObjectCache::textChanged(AccessibilityObject*) { }
 inline void AXObjectCache::updateCacheAfterNodeIsAttached(Node*) { }

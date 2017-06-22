@@ -1,3 +1,14 @@
+2017-06-21  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        Compiler error while building with !HAVE(ACCESSIBILITY)
+        https://bugs.webkit.org/show_bug.cgi?id=173670
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::getOrCreate):
+        (WebCore::AXObjectCache::childrenChanged):
+
 2017-06-21  Antoine Quint  <graouts@apple.com>
 
         Build fix.
