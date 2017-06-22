@@ -1,3 +1,27 @@
+2017-06-22  David Kilzer  <ddkilzer@apple.com>
+
+        [TestWebKitAPI] Fix misuse of -[NSData dataWithBytesNoCopy:length:] with global variables
+        <https://webkit.org/b/173690>
+
+        Reviewed by Chris Dumez.
+
+        Per documentation, -[NSData dataWithBytesNoCopy:length:] takes
+        ownership of malloc()-ed memory, then frees it when it's
+        released.  These tests were passing global variables into the
+        method, which is not malloc()-ed memory, which violates the API
+        contract.
+
+        The fix is to switch to use
+        -[NSData dataWithBytesNoCopy:length:freeWhenDone:] and to pass
+        NO for the last argument.
+
+        Caught by the clang static analyzer.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IconLoadingDelegate.mm:
+        (TEST):
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKURLSchemeHandler-1.mm:
+        (TEST):
+
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Upgrade Harfbuzz to version 1.4.2
