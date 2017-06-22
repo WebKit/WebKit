@@ -1,3 +1,21 @@
+2017-06-21  Saam Barati  <sbarati@apple.com>
+
+        eval virtual call is incorrect in the baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=173587
+        <rdar://problem/32867897>
+
+        Reviewed by Michael Saboff.
+
+        When making a virtual call for call_eval, e.g, when the thing
+        we're calling isn't actually eval, we end up calling the caller
+        instead of the callee. This is clearly wrong. The code ends up
+        issuing a load for the Callee in the callers frame instead of
+        the callee we're calling. The fix is simple, we just need to
+        load the real callee. Only the 32-bit baseline JIT had this bug.
+
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileCallEvalSlowCase):
+
 2017-06-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Using "break on all exceptions" when throwing stack overflow hangs inspector

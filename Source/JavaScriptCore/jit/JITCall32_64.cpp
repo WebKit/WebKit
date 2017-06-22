@@ -208,12 +208,13 @@ void JIT::compileCallEvalSlowCase(Instruction* instruction, Vector<SlowCaseEntry
     linkSlowCase(iter);
 
     int registerOffset = -instruction[4].u.operand;
+    int callee = instruction[2].u.operand;
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
 
     move(TrustedImmPtr(info), regT2);
 
-    emitLoad(CallFrameSlot::callee, regT1, regT0);
+    emitLoad(callee, regT1, regT0);
     MacroAssemblerCodeRef virtualThunk = virtualThunkFor(m_vm, *info);
     info->setSlowStub(createJITStubRoutine(virtualThunk, *m_vm, nullptr, true));
     emitNakedCall(virtualThunk.code());
