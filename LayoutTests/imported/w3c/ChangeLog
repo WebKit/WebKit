@@ -1,3 +1,17 @@
+2017-06-22  Frederic Wang  <fwang@igalia.com>
+
+        Remove testRunner.overridePreference from WPT tests
+        https://bugs.webkit.org/show_bug.cgi?id=173713
+
+        Reviewed by Youenn Fablet.
+
+        We update two W3C tests to remove the setting of the Chromium-specific preference
+        WebKitAllowDisplayingInsecureContent. This update also fixes the link to the
+        get-host-info.sub.js resource.
+
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html:
+
 2017-06-21  Sam Weinig  <sam@webkit.org>
 
         Add support for structured serialization of CSS Geometry types
