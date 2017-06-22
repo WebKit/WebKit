@@ -32,6 +32,7 @@
 #include "WKAPICast.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 
@@ -171,9 +172,10 @@ class CallbackMap {
 public:
     uint64_t put(Ref<CallbackBase>&& callback)
     {
-        ASSERT(!m_map.contains(callback->callbackID()));
-
+        RELEASE_ASSERT(isMainThread());
         uint64_t callbackID = callback->callbackID();
+        RELEASE_ASSERT(callbackID);
+        RELEASE_ASSERT(!m_map.contains(callbackID));
         m_map.set(callbackID, WTFMove(callback));
         return callbackID;
     }
@@ -198,6 +200,8 @@ public:
     template<class T>
     RefPtr<T> take(uint64_t callbackID)
     {
+        RELEASE_ASSERT(callbackID);
+        RELEASE_ASSERT(isMainThread());
         auto base = m_map.take(callbackID);
         if (!base)
             return nullptr;
