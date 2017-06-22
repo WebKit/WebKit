@@ -44,6 +44,14 @@ webkit.org/b/173654 http/tests/appcache/insert-html-element-with-manifest-2.html
 webkit.org/b/173654 js/dom/regress-157246.html [ Pass Crash ]
 webkit.org/b/173654 security/set-form-autocomplete-attribute.html [ Pass Crash ]
 
+Bug(WPE) http/tests/cache/ [ Pass ]
+webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
+webkit.org/b/118220 http/tests/cache/partitioned-cache-iframe.html [ Failure ]
+webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Failure ]
+webkit.org/b/153709 http/tests/cache/disk-cache/disk-cache-disable.html [ Failure ]
+webkit.org/b/153708 http/tests/cache/disk-cache/disk-cache-last-modified.html [ Failure ]
+webkit.org/b/172274 http/tests/cache/disk-cache/disk-cache-media-small.html [ Failure ]
+
 # Require ENABLE_CSS_ANIMATIONS_LEVEL_2
 Bug(WPE) animations/trigger-computed-style.html [ Failure ]
 Bug(WPE) animations/trigger-container-scroll-boundaries.html [ Failure ]

@@ -1,3 +1,12 @@
+2017-06-22  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Unskip http cache tests.
+
+        Unreviewed gardening.
+
+        Currently failing tests are the same as in the GTK+ port.
+        * platform/wpe/TestExpectations:
+
 2017-06-21  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] TypeError when called with body === {}
