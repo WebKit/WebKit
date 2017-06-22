@@ -1,3 +1,25 @@
+2017-06-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Cancelling a drag interaction using the ObjC SPI causes subsequent dragging to fail
+        https://bugs.webkit.org/show_bug.cgi?id=173659
+        <rdar://problem/32879788>
+
+        Reviewed by Tim Horton.
+
+        Currently, a drag session that failed to begin is cleaned up either when the web process responds in
+        -[WKContentView _didHandleStartDataInteractionRequest:] with started = NO, or if started is YES, in
+        -dragInteraction:session:didEndWithOperation: instead. However, it is possible that even when the pasteboard has
+        items and the drag has started in the web process, something in the UI process may then cause the drag to be
+        cancelled (for instance, an SPI client returning empty arrays for all adjusted item providers, or UIKit not even
+        calling into -dragInteraction:itemsForBeginningSession: when we invoke their completion block).
+
+        In any case, if the drag session is drag-item-less after calling the drag start completion block, clean up and
+        cancel the drag.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didHandleStartDataInteractionRequest:]):
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+
 2017-06-21  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r218606): 3D Touch action menu for links is missing items

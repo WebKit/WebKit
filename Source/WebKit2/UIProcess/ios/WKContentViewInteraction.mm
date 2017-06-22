@@ -4232,16 +4232,19 @@ static bool isAssistableInputType(InputType type)
     _dataInteractionState.dragStartCompletionBlock = nil;
     ASSERT(savedCompletionBlock);
 
-    if (!started) {
-        // The web process rejected the drag start request, so don't go through with the drag.
-        // By clearing out the source session state, we force -itemsForDragInteraction:session: to return an empty array, which
-        // causes UIKit to bail before beginning the lift animation.
-        [self cleanUpDragSourceSessionState];
-    }
-
     RELEASE_LOG(DragAndDrop, "Handling drag start request (started: %d, completion block: %p)", started, savedCompletionBlock.get());
     if (savedCompletionBlock)
         savedCompletionBlock();
+
+    if (![_dataInteractionState.dragSession items].count) {
+        CGPoint adjustedOrigin = _dataInteractionState.adjustedOrigin;
+        [self cleanUpDragSourceSessionState];
+        if (started) {
+            // A client of the Objective C SPI or UIKit might have prevented the drag from beginning entirely in the UI process, in which case
+            // we need to balance the `dragstart` event with a `dragend`.
+            _page->dragEnded(roundedIntPoint(adjustedOrigin), roundedIntPoint([self convertPoint:adjustedOrigin toView:self.window]), DragOperationNone);
+        }
+    }
 }
 
 static RetainPtr<UIImage> uiImageForImage(RefPtr<Image> image)
@@ -4548,6 +4551,11 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
     RELEASE_LOG(DragAndDrop, "Drag items requested for session: %p", session);
     if (_dataInteractionState.dragSession != session) {
         RELEASE_LOG(DragAndDrop, "Drag session failed: %p (delegate session does not match %p)", session, _dataInteractionState.dragSession.get());
+        return @[ ];
+    }
+
+    if (_dataInteractionState.sourceAction == DragSourceActionNone) {
+        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (no drag source action)", session);
         return @[ ];
     }
 

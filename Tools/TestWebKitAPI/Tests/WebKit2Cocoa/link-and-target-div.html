@@ -21,13 +21,22 @@ code {
     color: green;
 }
 </style>
-<div><a href="https://www.apple.com">Hello world</a></div>
+<div><a id="source" href="https://www.apple.com">Hello world</a></div>
 <div id="target"></div>
+<div id="output"></div>
 <script>
+source.addEventListener("dragstart", event => logOutput("dragstart"));
+source.addEventListener("dragend", event => logOutput("dragend"));
 target.addEventListener("dragenter", event => event.preventDefault());
 target.addEventListener("dragover", event => event.preventDefault());
 target.addEventListener("drop", event => {
     target.innerHTML = "<code>PASS</code>";
     event.preventDefault();
 });
+function logOutput(message)
+{
+    if (output.innerHTML.length)
+        message = ` ${message}`;
+    output.insertAdjacentHTML("beforeend", `<code>${message}</code>`);
+}
 </script>

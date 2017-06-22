@@ -120,6 +120,18 @@ static void checkSuggestedNameAndEstimatedSize(DataInteractionSimulator *simulat
     EXPECT_EQ(estimatedSize.height, sourceItemProvider.estimatedDisplayedSize.height);
 }
 
+static void checkStringArraysAreEqual(NSArray<NSString *> *expected, NSArray<NSString *> *observed)
+{
+    EXPECT_EQ(expected.count, observed.count);
+    for (NSUInteger index = 0; index < expected.count; ++index) {
+        NSString *expectedString = [expected objectAtIndex:index];
+        NSString *observedString = [observed objectAtIndex:index];
+        EXPECT_WK_STREQ(expectedString, observedString);
+        if (![expectedString isEqualToString:observedString])
+            NSLog(@"Expected observed string: %@ to match expected string: %@ at index: %tu", observedString, expectedString, index);
+    }
+}
+
 namespace TestWebKitAPI {
 
 TEST(DataInteractionTests, ImageToContentEditable)
@@ -927,6 +939,33 @@ TEST(DataInteractionTests, LinkWithEmptyHREF)
 
     EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
     EXPECT_WK_STREQ("", [webView editorValue].UTF8String);
+}
+
+TEST(DataInteractionTests, CancelledLiftDoesNotCauseSubsequentDragsToFail)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"link-and-target-div"];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *, NSArray *, NSDictionary *)
+    {
+        return @[ ];
+    }];
+    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    EXPECT_EQ(DataInteractionCancelled, [dataInteractionSimulator phase]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"target.textContent"]);
+    NSString *outputText = [webView stringByEvaluatingJavaScript:@"output.textContent"];
+    checkStringArraysAreEqual(@[@"dragstart", @"dragend"], [outputText componentsSeparatedByString:@" "]);
+
+    [webView stringByEvaluatingJavaScript:@"output.innerHTML = ''"];
+    [dataInteractionSimulator setConvertItemProvidersBlock:^NSArray *(UIItemProvider *itemProvider, NSArray *, NSDictionary *)
+    {
+        return @[ itemProvider ];
+    }];
+    [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
+    EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"]);
+    [webView stringByEvaluatingJavaScript:@"output.textContent"];
+    checkStringArraysAreEqual(@[@"dragstart", @"dragend"], [outputText componentsSeparatedByString:@" "]);
 }
 
 TEST(DataInteractionTests, CustomActionSheetPopover)
