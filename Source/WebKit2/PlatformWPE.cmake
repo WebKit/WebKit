@@ -193,7 +193,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/wpe/ScrollGestureController.cpp
     UIProcess/API/wpe/WebKitWebViewWPE.cpp
     UIProcess/API/wpe/WPEView.cpp
-    UIProcess/API/wpe/WPEViewClient.cpp
 
     UIProcess/Launcher/wpe/ProcessLauncherWPE.cpp
 

@@ -28,7 +28,6 @@
 #include "APIObject.h"
 #include "CompositingManagerProxy.h"
 #include "PageClientImpl.h"
-#include "WPEViewClient.h"
 #include "WebPageProxy.h"
 #include <WebCore/ActivityState.h>
 #include <memory>
@@ -36,7 +35,12 @@
 
 struct wpe_view_backend;
 
+namespace API {
+class ViewClient;
+}
+
 namespace WebKit {
+class DownloadProxy;
 class WebPageGroup;
 class WebProcessPool;
 }
@@ -52,8 +56,9 @@ public:
     virtual ~View();
 
     // Client methods
-    void initializeClient(const WKViewClientBase*);
+    void setClient(std::unique_ptr<API::ViewClient>&&);
     void frameDisplayed();
+    void handleDownloadRequest(WebKit::DownloadProxy&);
 
     WebKit::WebPageProxy& page() { return *m_pageProxy; }
 
@@ -71,7 +76,7 @@ private:
 
     void setSize(const WebCore::IntSize&);
 
-    ViewClient m_client;
+    std::unique_ptr<API::ViewClient> m_client;
 
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebKit::WebPageProxy> m_pageProxy;

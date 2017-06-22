@@ -27,6 +27,7 @@
 #include "WPEView.h"
 
 #include "APIPageConfiguration.h"
+#include "APIViewClient.h"
 #include "DrawingAreaProxy.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -41,7 +42,8 @@ using namespace WebKit;
 namespace WKWPE {
 
 View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseConfiguration)
-    : m_pageClient(std::make_unique<PageClientImpl>(*this))
+    : m_client(std::make_unique<API::ViewClient>())
+    , m_pageClient(std::make_unique<PageClientImpl>(*this))
     , m_size { 800, 600 }
     , m_viewStateFlags(WebCore::ActivityState::WindowIsActive | WebCore::ActivityState::IsFocused | WebCore::ActivityState::IsVisible | WebCore::ActivityState::IsInWindow)
     , m_compositingManagerProxy(*this)
@@ -130,14 +132,22 @@ View::~View()
     wpe_view_backend_destroy(m_backend);
 }
 
-void View::initializeClient(const WKViewClientBase* client)
+void View::setClient(std::unique_ptr<API::ViewClient>&& client)
 {
-    m_client.initialize(client);
+    if (!client)
+        m_client = std::make_unique<API::ViewClient>();
+    else
+        m_client = WTFMove(client);
 }
 
 void View::frameDisplayed()
 {
-    m_client.frameDisplayed(*this);
+    m_client->frameDisplayed(*this);
+}
+
+void View::handleDownloadRequest(DownloadProxy& download)
+{
+    m_client->handleDownloadRequest(*this, download);
 }
 
 void View::setSize(const WebCore::IntSize& size)

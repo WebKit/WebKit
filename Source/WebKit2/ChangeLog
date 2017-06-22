@@ -1,5 +1,32 @@
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Downloads never have a web view associated in WPE
+        https://bugs.webkit.org/show_bug.cgi?id=173709
+
+        Reviewed by Žan Doberšek.
+
+        Convert the WPE view client into an API client and add handleDownloadRequest(). WebKitWebView now uses it to
+        associate itself to the download like the GTK+ port does.
+
+        * PlatformWPE.cmake:
+        * UIProcess/API/C/wpe/WKView.cpp:
+        (WKViewSetViewClient): Add C API client implementation here.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed): Set the view client in WPE.
+        * UIProcess/API/wpe/APIViewClient.h: Renamed from Source/WebKit2/UIProcess/API/wpe/WPEViewClient.h.
+        (API::ViewClient::frameDisplayed):
+        (API::ViewClient::handleDownloadRequest):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::handleDownloadRequest): Call WKWPE::View::handleDownloadRequest().
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::View): Initialize the view client.
+        (WKWPE::View::setClient): Set or reset the client.
+        (WKWPE::View::handleDownloadRequest): Notify the client.
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/API/wpe/WPEViewClient.cpp: Removed.
+
+2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] Page should be closed on WebKitWebView dispose
         https://bugs.webkit.org/show_bug.cgi?id=173707
 

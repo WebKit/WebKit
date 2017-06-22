@@ -27,11 +27,18 @@
 #include "WKView.h"
 
 #include "APIPageConfiguration.h"
+#include "APIViewClient.h"
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
 #include "WPEView.h"
 
 using namespace WebKit;
+
+namespace API {
+template<> struct ClientTraits<WKViewClientBase> {
+    typedef std::tuple<WKViewClientV0> Versions;
+};
+}
 
 WKViewRef WKViewCreate(WKPageConfigurationRef configuration)
 {
@@ -55,5 +62,21 @@ void WKViewSetViewState(WKViewRef view, WKViewState viewState)
 
 void WKViewSetViewClient(WKViewRef view, const WKViewClientBase* client)
 {
-    toImpl(view)->initializeClient(client);
+    class ViewClient final : public API::Client<WKViewClientBase>, public API::ViewClient {
+    public:
+        explicit ViewClient(const WKViewClientBase* client)
+        {
+            initialize(client);
+        }
+
+    private:
+        void frameDisplayed(WKWPE::View& view) override
+        {
+            if (!m_client.frameDisplayed)
+                return;
+            m_client.frameDisplayed(toAPI(&view), m_client.base.clientInfo);
+        }
+    };
+
+    toImpl(view)->setClient(std::make_unique<ViewClient>(client));
 }

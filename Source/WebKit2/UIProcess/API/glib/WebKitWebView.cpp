@@ -77,6 +77,7 @@
 #endif
 
 #if PLATFORM(WPE)
+#include "APIViewClient.h"
 #include "WPEView.h"
 #endif
 
@@ -334,6 +335,24 @@ private:
 
     WebKitWebView* m_webView;
 };
+
+#if PLATFORM(WPE)
+class WebViewClient final : public API::ViewClient {
+public:
+    explicit WebViewClient(WebKitWebView* webView)
+        : m_webView(webView)
+    {
+    }
+
+private:
+    void handleDownloadRequest(WKWPE::View&, DownloadProxy& downloadProxy) override
+    {
+        webkitWebViewHandleDownloadRequest(m_webView, &downloadProxy);
+    }
+
+    WebKitWebView* m_webView;
+};
+#endif
 
 static gboolean webkitWebViewLoadFail(WebKitWebView* webView, WebKitLoadEvent, const char* failingURI, GError* error)
 {
@@ -614,6 +633,10 @@ static void webkitWebViewConstructed(GObject* object)
     attachPolicyClientToView(webView);
     attachContextMenuClientToView(webView);
     attachFormClientToView(webView);
+
+#if PLATFORM(WPE)
+    priv->view->setClient(std::make_unique<WebViewClient>(webView));
+#endif
 
     // This needs to be after attachUIClientToView() because WebPageProxy::setUIClient() calls setCanRunModal() with true.
     // See https://bugs.webkit.org/show_bug.cgi?id=135412.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,21 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WPEViewClient.h"
+#pragma once
 
-#include "WKAPICast.h"
-#include "WKBase.h"
-#include "WPEView.h"
-
-using namespace WebKit;
-
-namespace WKWPE {
-
-void ViewClient::frameDisplayed(View& view)
-{
-    if (m_client.frameDisplayed)
-        m_client.frameDisplayed(toAPI(&view), m_client.base.clientInfo);
+namespace WebKit {
+class DownloadProxy;
 }
 
-} // namespace WKWPE
+namespace WKWPE {
+class View;
+}
+
+namespace API {
+
+class ViewClient {
+public:
+    virtual ~ViewClient() = default;
+
+    virtual void frameDisplayed(WKWPE::View&) { }
+    virtual void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) { }
+};
+
+} // namespace API
