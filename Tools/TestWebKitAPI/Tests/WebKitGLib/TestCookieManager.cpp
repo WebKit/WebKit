@@ -316,7 +316,7 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
     g_assert(domains);
     g_assert_cmpint(g_strv_length(domains), ==, 0);
 
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", webkit_web_view_get_context(test->m_webView),
         "is-ephemeral", TRUE,
         nullptr));

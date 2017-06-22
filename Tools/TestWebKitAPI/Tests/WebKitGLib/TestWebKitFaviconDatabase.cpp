@@ -162,7 +162,7 @@ static void ephemeralViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loa
 
 static void testPrivateBrowsing(FaviconDatabaseTest* test)
 {
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", test->m_webContext.get(),
         "is-ephemeral", TRUE,
         nullptr));

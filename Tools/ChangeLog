@@ -1,5 +1,125 @@
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Build glib API tests
+        https://bugs.webkit.org/show_bug.cgi?id=173702
+
+        Reviewed by Žan Doberšek.
+
+        Many of the tests pass without problems, others need to be investigated, and some others are known issues. The
+        main difference between the GTK+ and WPE WebKitWebView is that in GTK+ it's a GtkWidget, so initially
+        unowned. The tests assume that webkit_web_view_new methods return a floating reference. This patch adds
+        Test::adoptView() method that returns a GRefPtr<WebKitWebView> with a different implementation in GTK+ and
+        WPE. In the case of GTK+, it sinks the floating reference, while in WPE it simply adopts the reference. Another
+        difference is that in GTK+ the web view is initially hidden and needs to be added to a window to make it
+        visible. Also, some tests need the web view to be realized to work, and others need that the view is added to a
+        toplevel window, instead of a popup window. All those things are not needed at all in WPE. I've added several
+        #ifdefs with FIXME comments for the things that we know don't work in WPE yet, for example, because we haven't
+        implemented the methods to send events to the web view. Those will be removed eventually when we fix the issues
+        and implement the missing features.
+
+        * CMakeLists.txt:
+        * TestWebKitAPI/Tests/WebKit2Gtk/EditorTest.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/FrameTest.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp:
+        (testAutomationSessionRequestSession):
+        * TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp:
+        (testWebKitWebViewSessionState):
+        (testWebKitWebViewSessionStateWithFormData):
+        (testWebKitWebViewNavigationAfterSessionRestore):
+        * TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp:
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
+        (testCookieManagerEphemeral):
+        * TestWebKitAPI/Tests/WebKitGLib/TestDownloads.cpp:
+        (testBlobDownload):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestFrame.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestMultiprocess.cpp:
+        (testProcessPerWebView):
+        * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewCreateNavigationData):
+        (testWebViewJavaScriptDialogs):
+        (testWebViewWindowProperties):
+        (testWebViewMouseTarget):
+        (testWebViewGeolocationPermissionRequests):
+        (testWebViewUserMediaPermissionRequests):
+        (testWebViewAudioOnlyUserMediaPermissionRequests):
+        (testWebViewFileChooserRequest):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+        (testPrivateBrowsing):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFindController.cpp:
+        (testFindControllerHide):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSecurityOrigin.cpp:
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+        (testWebKitSettings):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitUserContentManager.cpp:
+        (testWebViewNewWithUserContentManager):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextEphemeral):
+        (testWebContextProxySettings):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewWebContext):
+        (testWebViewWebContextLifetime):
+        (testWebViewEphemeral):
+        (testWebViewSettings):
+        (testWebViewCanShowMIMEType):
+        (testWebViewPageVisibility):
+        (testWebViewIsPlayingAudio):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebsiteData.cpp:
+        (testWebsiteDataEphemeral):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (documentLoadedCallback):
+        (pageCreatedCallback):
+        (methodCallCallback):
+        * TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.h:
+        * TestWebKitAPI/glib/CMakeLists.txt:
+        * TestWebKitAPI/glib/PlatformGTK.cmake:
+        * TestWebKitAPI/glib/WebKitGLib/LoadTrackingTest.cpp:
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.cpp:
+        (main):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::adoptView):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.cpp:
+        (WebKitTestBus::run):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (WebViewTest::~WebViewTest):
+        (WebViewTest::initializeWebView):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+        * TestWebKitAPI/glib/WebKitGLib/gtk/WebViewTestGtk.cpp: Added.
+        (WebViewTest::platformDestroy):
+        (WebViewTest::platformInitializeWebView):
+        (WebViewTest::quitMainLoopAfterProcessingPendingEvents):
+        (WebViewTest::resizeView):
+        (WebViewTest::hideView):
+        (parentWindowMapped):
+        (WebViewTest::showInWindow):
+        (WebViewTest::showInWindowAndWaitUntilMapped):
+        (WebViewTest::mouseMoveTo):
+        (WebViewTest::clickMouseButton):
+        (WebViewTest::emitPopupMenuSignal):
+        (WebViewTest::keyStroke):
+        (WebViewTest::doMouseButtonEvent):
+        * TestWebKitAPI/glib/WebKitGLib/wpe/WebViewTestWPE.cpp: Copied from Tools/TestWebKitAPI/Tests/WebKitGLib/WebProcessTest.h.
+        (WebViewTest::platformDestroy):
+        (WebViewTest::platformInitializeWebView):
+        (WebViewTest::quitMainLoopAfterProcessingPendingEvents):
+        (WebViewTest::resizeView):
+        (WebViewTest::hideView):
+        (WebViewTest::mouseMoveTo):
+        (WebViewTest::clickMouseButton):
+        (WebViewTest::keyStroke):
+
+2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Move WebKit2 GLib API tests to glib directories
         https://bugs.webkit.org/show_bug.cgi?id=173642
 

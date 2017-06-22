@@ -21,7 +21,6 @@
 
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
-#include <gtk/gtk.h>
 
 static WebKitTestServer* kHttpsServer;
 static WebKitTestServer* kHttpServer;

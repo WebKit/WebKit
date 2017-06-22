@@ -21,10 +21,8 @@
 
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
-#include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <string.h>
-#include <webkit2/webkit2.h>
 
 // Back forward list limit is 100 by default.
 static const int kBackForwardListLimit = 100;
@@ -268,7 +266,7 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
 {
     WebKitWebViewSessionState* state = webkit_web_view_get_session_state(test->m_webView);
     g_assert(state);
-    GRefPtr<WebKitWebView> view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    auto view = Test::adoptView(webkit_web_view_new());
     WebKitBackForwardList* bfList = webkit_web_view_get_back_forward_list(view.get());
     g_assert_cmpuint(webkit_back_forward_list_get_length(bfList), ==, 0);
     webkit_web_view_restore_session_state(view.get(), state);
@@ -277,7 +275,7 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
     g_assert(data);
     state = webkit_web_view_session_state_new(data.get());
     g_assert(state);
-    view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    view = Test::adoptView(webkit_web_view_new());
     bfList = webkit_web_view_get_back_forward_list(view.get());
     g_assert_cmpuint(webkit_back_forward_list_get_length(bfList), ==, 0);
     webkit_web_view_restore_session_state(view.get(), state);
@@ -320,7 +318,7 @@ static void testWebKitWebViewSessionState(BackForwardListTest* test, gconstpoint
     state = webkit_web_view_session_state_new(data.get());
     g_assert(state);
 
-    view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    view = Test::adoptView(webkit_web_view_new());
     bfList = webkit_web_view_get_back_forward_list(view.get());
     g_assert_cmpuint(webkit_back_forward_list_get_length(bfList), ==, 0);
     webkit_web_view_restore_session_state(view.get(), state);
@@ -349,7 +347,7 @@ static void testWebKitWebViewSessionStateWithFormData(BackForwardListTest* test,
 
     WebKitWebViewSessionState* state = webkit_web_view_get_session_state(test->m_webView);
     g_assert(state);
-    GRefPtr<WebKitWebView> view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    auto view = Test::adoptView(webkit_web_view_new());
     WebKitBackForwardList* bfList = webkit_web_view_get_back_forward_list(view.get());
     g_assert_cmpuint(webkit_back_forward_list_get_length(bfList), ==, 0);
     webkit_web_view_restore_session_state(view.get(), state);
@@ -358,7 +356,7 @@ static void testWebKitWebViewSessionStateWithFormData(BackForwardListTest* test,
     g_assert(data);
     state = webkit_web_view_session_state_new(data.get());
     g_assert(state);
-    view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    view = Test::adoptView(webkit_web_view_new());
     bfList = webkit_web_view_get_back_forward_list(view.get());
     g_assert_cmpuint(webkit_back_forward_list_get_length(bfList), ==, 0);
     webkit_web_view_restore_session_state(view.get(), state);
@@ -376,7 +374,7 @@ static void testWebKitWebViewNavigationAfterSessionRestore(BackForwardListTest* 
 {
     // This test checks that a normal load after a session restore with a BackForard list having
     // forward items doesn't produce any runtime critical warning. See https://bugs.webkit.org/show_bug.cgi?id=153233.
-    GRefPtr<WebKitWebView> view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    auto view = Test::adoptView(webkit_web_view_new());
     g_signal_connect(view.get(), "load-changed", G_CALLBACK(viewLoadChanged), test->m_mainLoop);
 
     webkit_web_view_load_uri(view.get(), kServer->getURIForPath("/Page1").data());

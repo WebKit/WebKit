@@ -184,6 +184,7 @@ static void testWebExtensionIsolatedWorld(WebViewTest* test, gconstpointer)
     g_signal_handler_disconnect(test->m_webView, scriptDialogID);
 }
 
+#if PLATFORM(GTK)
 static gboolean permissionRequestCallback(WebKitWebView*, WebKitPermissionRequest* request, WebViewTest* test)
 {
     if (!WEBKIT_IS_INSTALL_MISSING_MEDIA_PLUGINS_PERMISSION_REQUEST(request))
@@ -274,6 +275,7 @@ static void testWebExtensionFormControlsAssociated(WebViewTest* test, gconstpoin
 
     g_dbus_connection_signal_unsubscribe(connection, id);
 }
+#endif // PLATFORM(GTK)
 
 void beforeAll()
 {
@@ -281,13 +283,18 @@ void beforeAll()
     if (!bus->run())
         return;
 
+    // FIXME: Use JSC API in the extension to get the title from JavaScript.
+#if PLATFORM(GTK)
     WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
+#endif
     WebViewTest::add("WebKitWebExtension", "document-loaded-signal", testDocumentLoadedSignal);
     WebViewTest::add("WebKitWebView", "web-process-crashed", testWebKitWebViewProcessCrashed);
     WebViewTest::add("WebKitWebExtension", "window-object-cleared", testWebExtensionWindowObjectCleared);
     WebViewTest::add("WebKitWebExtension", "isolated-world", testWebExtensionIsolatedWorld);
+#if PLATFORM(GTK)
     WebViewTest::add("WebKitWebView", "install-missing-plugins-permission-request", testInstallMissingPluginsPermissionRequest);
     WebViewTest::add("WebKitWebExtension", "form-controls-associated-signal", testWebExtensionFormControlsAssociated);
+#endif
 }
 
 void afterAll()

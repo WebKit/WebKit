@@ -20,8 +20,6 @@
 #include "config.h"
 #include "LoadTrackingTest.h"
 
-#include <webkit2/webkit2.h>
-
 static void loadChangedCallback(WebKitWebView* webView, WebKitLoadEvent loadEvent, LoadTrackingTest* test)
 {
     switch (loadEvent) {

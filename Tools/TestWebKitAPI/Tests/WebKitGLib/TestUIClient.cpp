@@ -52,7 +52,9 @@ public:
             , m_resizable(true)
             , m_fullscreen(false)
         {
+#if PLATFORM(GTK)
             memset(&m_geometry, 0, sizeof(GdkRectangle));
+#endif
         }
 
         WindowProperties(WebKitWindowProperties* windowProperties)
@@ -65,10 +67,12 @@ public:
             , m_resizable(webkit_window_properties_get_resizable(windowProperties))
             , m_fullscreen(webkit_window_properties_get_fullscreen(windowProperties))
         {
+#if PLATFORM(GTK)
             webkit_window_properties_get_geometry(windowProperties, &m_geometry);
+#endif
         }
 
-        WindowProperties(GdkRectangle* geometry, bool toolbarVisible, bool statusbarVisible, bool scrollbarsVisible, bool menubarVisible, bool locationbarVisible, bool resizable, bool fullscreen)
+        WindowProperties(cairo_rectangle_int_t* geometry, bool toolbarVisible, bool statusbarVisible, bool scrollbarsVisible, bool menubarVisible, bool locationbarVisible, bool resizable, bool fullscreen)
             : m_isNull(false)
             , m_geometry(*geometry)
             , m_toolbarVisible(toolbarVisible)
@@ -85,10 +89,12 @@ public:
 
         void assertEqual(const WindowProperties& other) const
         {
+#if PLATFORM(GTK)
             g_assert_cmpint(m_geometry.x, ==, other.m_geometry.x);
             g_assert_cmpint(m_geometry.y, ==, other.m_geometry.y);
             g_assert_cmpint(m_geometry.width, ==, other.m_geometry.width);
             g_assert_cmpint(m_geometry.height, ==, other.m_geometry.height);
+#endif
             g_assert_cmpint(static_cast<int>(m_toolbarVisible), ==, static_cast<int>(other.m_toolbarVisible));
             g_assert_cmpint(static_cast<int>(m_statusbarVisible), ==, static_cast<int>(other.m_statusbarVisible));
             g_assert_cmpint(static_cast<int>(m_scrollbarsVisible), ==, static_cast<int>(other.m_scrollbarsVisible));
@@ -101,7 +107,7 @@ public:
     private:
         bool m_isNull;
 
-        GdkRectangle m_geometry;
+        cairo_rectangle_int_t m_geometry;
 
         bool m_toolbarVisible;
         bool m_statusbarVisible;
@@ -118,7 +124,7 @@ public:
         test->m_windowPropertiesChanged.add(g_param_spec_get_name(paramSpec));
     }
 
-    static GtkWidget* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction* navigation, UIClientTest* test)
+    static WebKitWebView* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction* navigation, UIClientTest* test)
     {
         return test->viewCreate(webView, navigation);
     }
@@ -301,19 +307,24 @@ public:
     void simulateUserInteraction()
     {
         runJavaScriptAndWaitUntilFinished("document.getElementById('testInput').focus()", nullptr);
+        // FIXME: Implement keyStroke in WPE.
+#if PLATFORM(GTK)
         keyStroke(GDK_KEY_a);
         keyStroke(GDK_KEY_b);
         while (gtk_events_pending())
             gtk_main_iteration();
+#endif
     }
 
-    virtual GtkWidget* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
+    virtual WebKitWebView* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
     {
         g_assert(webView == m_webView);
         g_assert(navigation);
 
-        GtkWidget* newWebView = webkit_web_view_new_with_context(webkit_web_view_get_context(webView));
+        auto* newWebView = webkit_web_view_new_with_context(webkit_web_view_get_context(webView));
+#if PLATFORM(GTK)
         g_object_ref_sink(newWebView);
+#endif
 
         m_webViewEvents.append(Create);
 
@@ -326,7 +337,7 @@ public:
         g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(viewReadyToShowCallback), this);
         g_signal_connect(newWebView, "close", G_CALLBACK(viewCloseCallback), this);
 
-        return newWebView;
+        return WEBKIT_WEB_VIEW(newWebView);
     }
 
     virtual void viewReadyToShow(WebKitWebView* webView)
@@ -377,6 +388,7 @@ static void testWebViewCreateReadyClose(UIClientTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, UIClientTest::Close);
 }
 
+#if PLATFORM(GTK)
 class CreateNavigationDataTest: public UIClientTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(CreateNavigationDataTest);
@@ -398,7 +410,7 @@ public:
         m_navigation = nullptr;
     }
 
-    GtkWidget* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
+    WebKitWebView* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
     {
         g_assert(navigation);
         g_assert(!m_navigation);
@@ -425,7 +437,9 @@ public:
 
 static void testWebViewCreateNavigationData(CreateNavigationDataTest* test, gconstpointer)
 {
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
+#endif
 
     test->loadHTML(
         "<html><body>"
@@ -461,7 +475,9 @@ static void testWebViewCreateNavigationData(CreateNavigationDataTest* test, gcon
     g_assert_cmpuint(webkit_navigation_action_get_modifiers(test->m_navigation), ==, 0);
     g_assert(!webkit_navigation_action_is_user_gesture(test->m_navigation));
 }
+#endif // PLATFORM(GTK)
 
+#if PLATFORM(GTK)
 static gboolean checkMimeTypeForFilter(GtkFileFilter* filter, const gchar* mimeType)
 {
     GtkFileFilterInfo filterInfo;
@@ -469,6 +485,7 @@ static gboolean checkMimeTypeForFilter(GtkFileFilter* filter, const gchar* mimeT
     filterInfo.mime_type = mimeType;
     return gtk_file_filter_filter(filter, &filterInfo);
 }
+#endif
 
 class ModalDialogsTest: public UIClientTest {
 public:
@@ -480,11 +497,11 @@ public:
         test->m_webViewEvents.append(RunAsModal);
     }
 
-    GtkWidget* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
+    WebKitWebView* viewCreate(WebKitWebView* webView, WebKitNavigationAction* navigation)
     {
         g_assert(webView == m_webView);
 
-        GtkWidget* newWebView = UIClientTest::viewCreate(webView, navigation);
+        auto* newWebView = UIClientTest::viewCreate(webView, navigation);
         g_signal_connect(newWebView, "run-as-modal", G_CALLBACK(dialogRunAsModalCallback), this);
         return newWebView;
     }
@@ -528,7 +545,9 @@ static void testWebViewDisallowModalDialogs(ModalDialogsTest* test, gconstpointe
 
 static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 {
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
+#endif
 
     static const char* htmlOnLoadFormat = "<html><body onLoad=\"%s\"></body></html>";
     static const char* jsAlertFormat = "alert('%s')";
@@ -607,7 +626,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
 static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
 {
     static const char* windowProrpertiesString = "left=100,top=150,width=400,height=400,location=no,menubar=no,status=no,toolbar=no,scrollbars=no";
-    GdkRectangle geometry = { 100, 150, 400, 400 };
+    cairo_rectangle_int_t geometry = { 100, 150, 400, 400 };
     test->setExpectedWindowProperties(UIClientTest::WindowProperties(&geometry, false, false, false, false, false, true, false));
 
     GUniquePtr<char> htmlString(g_strdup_printf("<html><body onLoad=\"window.open('', '', '%s').close();\"></body></html>", windowProrpertiesString));
@@ -627,6 +646,7 @@ static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
     g_assert_cmpint(events[2], ==, UIClientTest::Close);
 }
 
+#if PLATFORM(GTK)
 static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
 {
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
@@ -739,16 +759,19 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!webkit_hit_test_result_context_is_scrollbar(hitTestResult));
     g_assert(webkit_hit_test_result_context_is_selection(hitTestResult));
     g_assert(!test->m_mouseTargetModifiers);
-
 }
+#endif // PLATFORM(GTK)
 
+#if ENABLE(GEOLOCATION)
 static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstpointer)
 {
     // Some versions of geoclue give a runtime warning because it tries
     // to register the error quark twice. See https://bugs.webkit.org/show_bug.cgi?id=89858.
     // Make warnings non-fatal for this test to make it pass.
     test->removeLogFatalFlag(G_LOG_LEVEL_WARNING);
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
+#endif
     static const char* geolocationRequestHTML =
         "<html>"
         "  <script>"
@@ -784,6 +807,7 @@ static void testWebViewGeolocationPermissionRequests(UIClientTest* test, gconstp
     g_assert_cmpstr(result, !=, "1");
     test->addLogFatalFlag(G_LOG_LEVEL_WARNING);
 }
+#endif // ENABLE(GEOLOCATION)
 
 #if ENABLE(MEDIA_STREAM)
 static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpointer)
@@ -792,7 +816,9 @@ static void testWebViewUserMediaPermissionRequests(UIClientTest* test, gconstpoi
     gboolean enabled = webkit_settings_get_enable_media_stream(settings);
     webkit_settings_set_enable_media_stream(settings, TRUE);
 
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
+#endif
     static const char* userMediaRequestHTML =
         "<html>"
         "  <script>"
@@ -829,7 +855,9 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
     gboolean enabled = webkit_settings_get_enable_media_stream(settings);
     webkit_settings_set_enable_media_stream(settings, TRUE);
 
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
+#endif
     static const char* userMediaRequestHTML =
         "<html>"
         "  <script>"
@@ -856,6 +884,7 @@ static void testWebViewAudioOnlyUserMediaPermissionRequests(UIClientTest* test, 
 }
 #endif // ENABLE(MEDIA_STREAM)
 
+#if PLATFORM(GTK)
 class FileChooserTest: public UIClientTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(FileChooserTest);
@@ -891,7 +920,9 @@ private:
 
 static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
 {
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
+#endif
     static const char* fileChooserHTMLFormat = "<html><body><input style='position:absolute;left:0;top:0;margin:0;padding:0' type='file' %s/></body></html>";
 
     // Multiple selections not allowed, no MIME filtering.
@@ -903,8 +934,10 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
 
     const gchar* const* mimeTypes = webkit_file_chooser_request_get_mime_types(fileChooserRequest);
     g_assert(!mimeTypes);
+#if PLATFORM(GTK)
     GtkFileFilter* filter = webkit_file_chooser_request_get_mime_types_filter(fileChooserRequest);
     g_assert(!filter);
+#endif
     const gchar* const* selectedFiles = webkit_file_chooser_request_get_selected_files(fileChooserRequest);
     g_assert(!selectedFiles);
     webkit_file_chooser_request_cancel(fileChooserRequest);
@@ -918,8 +951,10 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
 
     mimeTypes = webkit_file_chooser_request_get_mime_types(fileChooserRequest);
     g_assert(!mimeTypes);
+#if PLATFORM(GTK)
     filter = webkit_file_chooser_request_get_mime_types_filter(fileChooserRequest);
     g_assert(!filter);
+#endif
     selectedFiles = webkit_file_chooser_request_get_selected_files(fileChooserRequest);
     g_assert(!selectedFiles);
 
@@ -960,17 +995,21 @@ static void testWebViewFileChooserRequest(FileChooserTest* test, gconstpointer)
     g_assert_cmpstr(mimeTypes[2], ==, "image/*");
     g_assert(!mimeTypes[3]);
 
+#if PLATFORM(GTK)
     filter = webkit_file_chooser_request_get_mime_types_filter(fileChooserRequest);
     g_assert(GTK_IS_FILE_FILTER(filter));
     g_assert(checkMimeTypeForFilter(filter, "audio/*"));
     g_assert(checkMimeTypeForFilter(filter, "video/*"));
     g_assert(checkMimeTypeForFilter(filter, "image/*"));
+#endif
 
     selectedFiles = webkit_file_chooser_request_get_selected_files(fileChooserRequest);
     g_assert(!selectedFiles);
     webkit_file_chooser_request_cancel(fileChooserRequest);
 }
+#endif // PLATFORM(GTK)
 
+#if PLATFORM(GTK)
 class ColorChooserTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ColorChooserTest);
@@ -1072,23 +1111,37 @@ static void testWebViewColorChooserRequest(ColorChooserTest* test, gconstpointer
 
     test->cancelRequest();
 }
+#endif // PLATFORM(GTK)
 
 void beforeAll()
 {
     UIClientTest::add("WebKitWebView", "create-ready-close", testWebViewCreateReadyClose);
+    // FIXME: Implement mouse clicks in WPE.
+#if PLATFORM(GTK)
     CreateNavigationDataTest::add("WebKitWebView", "create-navigation-data", testWebViewCreateNavigationData);
+#endif
     ModalDialogsTest::add("WebKitWebView", "allow-modal-dialogs", testWebViewAllowModalDialogs);
     ModalDialogsTest::add("WebKitWebView", "disallow-modal-dialogs", testWebViewDisallowModalDialogs);
     UIClientTest::add("WebKitWebView", "javascript-dialogs", testWebViewJavaScriptDialogs);
     UIClientTest::add("WebKitWebView", "window-properties", testWebViewWindowProperties);
+    // FIXME: Implement mouse move in WPE.
+#if PLATFORM(GTK)
     UIClientTest::add("WebKitWebView", "mouse-target", testWebViewMouseTarget);
+#endif
+#if ENABLE(GEOLOCATION)
     UIClientTest::add("WebKitWebView", "geolocation-permission-requests", testWebViewGeolocationPermissionRequests);
+#endif
 #if ENABLE(MEDIA_STREAM)
     UIClientTest::add("WebKitWebView", "usermedia-permission-requests", testWebViewUserMediaPermissionRequests);
     UIClientTest::add("WebKitWebView", "audio-usermedia-permission-request", testWebViewAudioOnlyUserMediaPermissionRequests);
 #endif
+    // FIXME: Implement mouse click in WPE.
+#if PLATFORM(GTK)
     FileChooserTest::add("WebKitWebView", "file-chooser-request", testWebViewFileChooserRequest);
+#endif
+#if PLATFORM(GTK)
     ColorChooserTest::add("WebKitWebView", "color-chooser-request", testWebViewColorChooserRequest);
+#endif
 }
 
 void afterAll()

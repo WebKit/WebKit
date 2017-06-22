@@ -21,14 +21,17 @@
 #include "TestMain.h"
 
 #include <glib/gstdio.h>
+
+#if PLATFORM(GTK)
 #include <gtk/gtk.h>
+#endif
 
 uint32_t Test::s_webExtensionID = 0;
 
 void beforeAll();
 void afterAll();
 
-static GUniquePtr<char> testDataDirectory(g_dir_make_tmp("WebKit2GtkTests-XXXXXX", nullptr));
+static GUniquePtr<char> testDataDirectory(g_dir_make_tmp("WebKitGLibTests-XXXXXX", nullptr));
 
 const char* Test::dataDirectory()
 {
@@ -64,7 +67,11 @@ static void removeNonEmptyDirectory(const char* directoryPath)
 int main(int argc, char** argv)
 {
     g_unsetenv("DBUS_SESSION_BUS_ADDRESS");
-    gtk_test_init(&argc, &argv, 0);
+#if PLATFORM(GTK)
+    gtk_test_init(&argc, &argv, nullptr);
+#else
+    g_test_init(&argc, &argv, nullptr);
+#endif
     g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
     g_setenv("WEBKIT_INJECTED_BUNDLE_PATH", WEBKIT_INJECTED_BUNDLE_PATH, FALSE);
     g_setenv("LC_ALL", "C", TRUE);

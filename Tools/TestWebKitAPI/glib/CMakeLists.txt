@@ -1,3 +1,11 @@
+set(WebKitGLibAPITests_SOURCES
+    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/LoadTrackingTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/TestMain.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp
+)
+
 set(WebKitGLibAPITests_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
     ${CMAKE_SOURCE_DIR}/Source/WTF
@@ -74,13 +82,7 @@ add_definitions(
 include_directories(${WebKitGLibAPITests_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES})
 
-add_library(WebKitGLibAPITestsCore STATIC
-    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/LoadTrackingTest.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebKitTestBus.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/TestMain.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp
-)
+add_library(WebKitGLibAPITestsCore STATIC ${WebKitGLibAPITests_SOURCES})
 target_link_libraries(WebKitGLibAPITestsCore WebKit2)
 
 add_custom_command(

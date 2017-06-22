@@ -33,9 +33,11 @@ WebKitTestBus::~WebKitTestBus()
 bool WebKitTestBus::run()
 {
     CString display = g_getenv("DISPLAY");
+    CString runtimeDir = g_getenv("XDG_RUNTIME_DIR");
     g_test_dbus_up(m_bus.get());
     m_address = g_test_dbus_get_bus_address(m_bus.get());
     g_setenv("DISPLAY", display.data(), FALSE);
+    g_setenv("XDG_RUNTIME_DIR", runtimeDir.data(), FALSE);
     return !m_address.isNull();
 }
 

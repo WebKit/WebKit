@@ -22,8 +22,6 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <cstdarg>
-#include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
@@ -42,10 +40,10 @@ static void testWebViewNewWithUserContentManager(Test* test, gconstpointer)
 {
     GRefPtr<WebKitUserContentManager> userContentManager1 = adoptGRef(webkit_user_content_manager_new());
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(userContentManager1.get()));
-    GRefPtr<WebKitWebView> webView1 = WEBKIT_WEB_VIEW(webkit_web_view_new_with_user_content_manager(userContentManager1.get()));
+    auto webView1 = Test::adoptView(webkit_web_view_new_with_user_content_manager(userContentManager1.get()));
     g_assert(webkit_web_view_get_user_content_manager(webView1.get()) == userContentManager1.get());
 
-    GRefPtr<WebKitWebView> webView2 = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    auto webView2 = Test::adoptView(webkit_web_view_new());
     g_assert(webkit_web_view_get_user_content_manager(webView2.get()) != userContentManager1.get());
 }
 
@@ -322,6 +320,7 @@ static void testUserContentManagerScriptMessageReceived(UserScriptMessageTest* t
     test->unregisterHandler("anotherHandler");
 }
 
+#if PLATFORM(GTK)
 static void testUserContentManagerScriptMessageFromDOMBindings(UserScriptMessageTest* test, gconstpointer)
 {
     g_assert(test->registerHandler("dom"));
@@ -334,6 +333,7 @@ static void testUserContentManagerScriptMessageFromDOMBindings(UserScriptMessage
 
     test->unregisterHandler("dom");
 }
+#endif
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
@@ -351,7 +351,9 @@ void beforeAll()
     WebViewTest::add("WebKitUserContentManager", "injected-style-sheet", testUserContentManagerInjectedStyleSheet);
     WebViewTest::add("WebKitUserContentManager", "injected-script", testUserContentManagerInjectedScript);
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-received", testUserContentManagerScriptMessageReceived);
+#if PLATFORM(GTK)
     UserScriptMessageTest::add("WebKitUserContentManager", "script-message-from-dom-bindings", testUserContentManagerScriptMessageFromDOMBindings);
+#endif
 }
 
 void afterAll()

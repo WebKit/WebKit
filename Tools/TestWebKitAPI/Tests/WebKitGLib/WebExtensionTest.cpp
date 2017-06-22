@@ -25,12 +25,17 @@
 #include <gst/gst.h>
 #include <stdlib.h>
 #include <string.h>
-#include <webkit2/webkit-web-extension.h>
 #include <wtf/Deque.h>
 #include <wtf/ProcessID.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(GTK)
+#include <webkit2/webkit-web-extension.h>
+#elif PLATFORM(WPE)
+#include <wpe/webkit-web-extension.h>
+#endif
 
 static const char introspectionXML[] =
     "<node>"
@@ -100,9 +105,11 @@ static void emitDocumentLoaded(GDBusConnection* connection)
 
 static void documentLoadedCallback(WebKitWebPage* webPage, WebKitWebExtension* extension)
 {
+#if PLATFORM(GTK)
     WebKitDOMDocument* document = webkit_web_page_get_dom_document(webPage);
     GRefPtr<WebKitDOMDOMWindow> window = adoptGRef(webkit_dom_document_get_default_view(document));
     webkit_dom_dom_window_webkit_message_handlers_post_message(window.get(), "dom", "DocumentLoaded");
+#endif
 
     gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
     if (data)
@@ -175,6 +182,8 @@ static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, W
     return returnValue;
 }
 
+// FIXME: figure out what to do with WebKitWebHitTestResult in WPE.
+#if PLATFORM(GTK)
 static GVariant* serializeContextMenu(WebKitContextMenu* menu)
 {
     GVariantBuilder builder;
@@ -229,7 +238,10 @@ static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu
 
     return FALSE;
 }
+#endif // PLATFORM(GTK)
 
+// FIXME: Use JSC API to send script messages from JavaScript.
+#if PLATFORM(GTK)
 static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMessage* consoleMessage)
 {
     g_assert(consoleMessage);
@@ -241,8 +253,9 @@ static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMess
     g_assert(WEBKIT_DOM_IS_DOM_WINDOW(window.get()));
     webkit_dom_dom_window_webkit_message_handlers_post_message(window.get(), "console", messageString.get());
 }
+#endif
 
-
+#if PLATFORM(GTK)
 static void emitFormControlsAssociated(GDBusConnection* connection, const char* formIds)
 {
     bool ok = g_dbus_connection_emit_signal(
@@ -277,15 +290,18 @@ static void formControlsAssociatedCallback(WebKitWebPage* webPage, GPtrArray* fo
     else
         delayedSignalsQueue.append(DelayedSignal(FormControlsAssociatedSignal, formIds.get()));
 }
+#endif
 
 static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* webPage, gpointer)
 {
     g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), extension);
     g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), extension);
     g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), nullptr);
+#if PLATFORM(GTK)
     g_signal_connect(webPage, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
     g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
     g_signal_connect(webPage, "form-controls-associated", G_CALLBACK(formControlsAssociatedCallback), extension);
+#endif
 }
 
 static JSValueRef echoCallback(JSContextRef jsContext, JSObjectRef, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef*)
@@ -335,9 +351,14 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         if (!page)
             return;
 
+#if PLATFORM(GTK)
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         GUniquePtr<char> title(webkit_dom_document_get_title(document));
         g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", title.get()));
+#elif PLATFORM(WPE)
+        // FIXME: Use JSC API to get the title from JavaScript.
+        g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", ""));
+#endif
     } else if (!g_strcmp0(methodName, "RunJavaScriptInIsolatedWorld")) {
         uint64_t pageID;
         const char* script;
@@ -405,7 +426,11 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
             emitURIChanged(connection, delayedSignal.str.data());
             break;
         case FormControlsAssociatedSignal:
+#if PLATFORM(GTK)
             emitFormControlsAssociated(connection, delayedSignal.str.data());
+#elif PLATFORM(WPE)
+            g_assert_not_reached();
+#endif
             break;
         }
     }

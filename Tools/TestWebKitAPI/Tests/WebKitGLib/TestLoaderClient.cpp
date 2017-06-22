@@ -25,7 +25,6 @@
 #include "WebKitTestBus.h"
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
-#include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

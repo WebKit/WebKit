@@ -22,10 +22,8 @@
 #include "WebKitTestServer.h"
 #include "WebViewTest.h"
 #include <glib/gstdio.h>
-#include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <string.h>
-#include <webkit2/webkit2.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -671,6 +669,7 @@ static void testDownloadMIMEType(DownloadTest* test, gconstpointer)
     test->checkDestinationAndDeleteFile(download.get(), expectedFilename.get());
 }
 
+#if PLATFORM(GTK)
 static gboolean contextMenuCallback(WebKitWebView* webView, WebKitContextMenu* contextMenu, GdkEvent*, WebKitHitTestResult* hitTestResult, WebViewDownloadTest* test)
 {
     g_assert(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult));
@@ -726,10 +725,13 @@ static void testContextMenuDownloadActions(WebViewDownloadTest* test, gconstpoin
     g_assert_cmpint(g_file_info_get_size(downloadFileInfo.get()), >, 0);
     g_file_delete(downloadFile.get(), nullptr, nullptr);
 }
+#endif // PLATFORM(GTK)
 
 static void testBlobDownload(WebViewDownloadTest* test, gconstpointer)
 {
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
+#endif
 
     static const char* linkBlobHTML =
         "<html><body>"
@@ -778,8 +780,14 @@ void beforeAll()
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download", testPolicyResponseDownload);
     PolicyResponseDownloadTest::add("Downloads", "policy-decision-download-cancel", testPolicyResponseDownloadCancel);
     DownloadTest::add("Downloads", "mime-type", testDownloadMIMEType);
+    // FIXME: Implement keyStroke in WPE.
+#if PLATFORM(GTK)
     WebViewDownloadTest::add("Downloads", "contex-menu-download-actions", testContextMenuDownloadActions);
+#endif
+    // FIXME: Implement mouse click in WPE.
+#if PLATFORM(GTK)
     WebViewDownloadTest::add("Downloads", "blob-download", testBlobDownload);
+#endif
 }
 
 void afterAll()

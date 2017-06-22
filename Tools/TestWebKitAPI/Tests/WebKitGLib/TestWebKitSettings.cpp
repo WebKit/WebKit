@@ -283,6 +283,7 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_allow_universal_access_from_file_urls(settings, TRUE);
     g_assert(webkit_settings_get_allow_universal_access_from_file_urls(settings));
 
+#if PLATFORM(GTK)
     // Ondemand is the default hardware acceleration policy.
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER);
@@ -291,6 +292,7 @@ static void testWebKitSettings(Test*, gconstpointer)
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS);
     webkit_settings_set_hardware_acceleration_policy(settings, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
     g_assert_cmpuint(webkit_settings_get_hardware_acceleration_policy(settings), ==, WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND);
+#endif
 
     g_object_unref(G_OBJECT(settings));
 }
@@ -315,6 +317,7 @@ static CString convertWebViewMainResourceDataToCString(WebViewTest* test)
     return CString(mainResourceData, mainResourceDataSize);
 }
 
+#if PLATFORM(GTK)
 static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, const CString& userAgent)
 {
     test->loadURI(gServer->getURIForPath("/").data());
@@ -359,6 +362,7 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     GUniquePtr<char> applicationUserAgent(g_strdup_printf("%s %s", defaultUserAgent.data(), "WebCatGTK+/3.4.5"));
     g_assert_cmpstr(applicationUserAgent.get(), ==, webkit_settings_get_user_agent(settings.get()));
 }
+#endif // PLATFORM(GTK)
 
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
@@ -383,7 +387,9 @@ void beforeAll()
 
     Test::add("WebKitSettings", "webkit-settings", testWebKitSettings);
     Test::add("WebKitSettings", "new-with-settings", testWebKitSettingsNewWithSettings);
+#if PLATFORM(GTK)
     WebViewTest::add("WebKitSettings", "user-agent", testWebKitSettingsUserAgent);
+#endif
 }
 
 void afterAll()

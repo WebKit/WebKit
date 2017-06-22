@@ -22,7 +22,6 @@
 #include "TestMain.h"
 #include "WebKitTestBus.h"
 #include "WebViewTest.h"
-#include <webkit2/webkit2.h>
 #include <wtf/Vector.h>
 
 static const unsigned numViews = 2;
@@ -59,7 +58,7 @@ public:
     {
         g_assert_cmpuint(index, <, numViews);
 
-        m_webViews[index] = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(m_webContext.get()));
+        m_webViews[index] = Test::adoptView(webkit_web_view_new_with_context(m_webContext.get()));
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_webViews[index].get()));
 
         m_webViewBusNames[index] = GUniquePtr<char>(g_strdup_printf("org.webkit.gtk.WebExtensionTest%u", Test::s_webExtensionID));
@@ -89,6 +88,7 @@ public:
         return identifier;
     }
 
+#if PLATFORM(GTK)
     static void nameVanishedCallback(GDBusConnection* connection, const gchar* name, gpointer userData)
     {
         g_main_loop_quit(static_cast<GMainLoop*>(userData));
@@ -104,6 +104,7 @@ public:
         g_main_loop_run(m_mainLoop);
         g_bus_unwatch_name(watcherID);
     }
+#endif
 
     GMainLoop* m_mainLoop;
     unsigned m_initializeWebExtensionsSignalCount;
@@ -129,12 +130,14 @@ static void testProcessPerWebView(MultiprocessTest* test, gconstpointer)
     g_assert_cmpstr(test->m_webViewBusNames[0].get(), !=, test->m_webViewBusNames[1].get());
     g_assert_cmpuint(test->webProcessPid(0), !=, test->webProcessPid(1));
 
+#if PLATFORM(GTK)
     // Check that web processes finish when the web view is destroyed even when it's not finalized.
     // See https://bugs.webkit.org/show_bug.cgi?id=129783.
     for (unsigned i = 0; i < numViews; i++) {
         GRefPtr<WebKitWebView> webView = test->m_webViews[i];
         test->destroyWebViewAndWaitUntilWebProcessFinishes(i);
     }
+#endif
 }
 
 class UIClientMultiprocessTest: public Test {
@@ -147,7 +150,7 @@ public:
         Close
     };
 
-    static GtkWidget* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction*, UIClientMultiprocessTest* test)
+    static WebKitWebView* viewCreateCallback(WebKitWebView* webView, WebKitNavigationAction*, UIClientMultiprocessTest* test)
     {
         return test->viewCreate(webView);
     }
@@ -167,7 +170,10 @@ public:
         , m_initializeWebExtensionsSignalCount(0)
     {
         webkit_web_context_set_process_model(m_webContext.get(), WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
-        m_webView = WEBKIT_WEB_VIEW(g_object_ref_sink(webkit_web_view_new_with_context(m_webContext.get())));
+        m_webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(m_webContext.get()));
+#if PLATFORM(GTK)
+        g_object_ref_sink(m_webView);
+#endif
         webkit_settings_set_javascript_can_open_windows_automatically(webkit_web_view_get_settings(m_webView), TRUE);
 
         g_signal_connect(m_webView, "create", G_CALLBACK(viewCreateCallback), this);
@@ -176,7 +182,7 @@ public:
     ~UIClientMultiprocessTest()
     {
         g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
-        gtk_widget_destroy(GTK_WIDGET(m_webView));
+        g_object_unref(m_webView);
     }
 
     void initializeWebExtensions() override
@@ -185,19 +191,21 @@ public:
         m_initializeWebExtensionsSignalCount++;
     }
 
-    GtkWidget* viewCreate(WebKitWebView* webView)
+    WebKitWebView* viewCreate(WebKitWebView* webView)
     {
         g_assert(webView == m_webView);
 
-        GtkWidget* newWebView = webkit_web_view_new_with_related_view(webView);
+        auto* newWebView = webkit_web_view_new_with_related_view(webView);
+#if PLATFORM(GTK)
         g_object_ref_sink(newWebView);
+#endif
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(newWebView));
         m_webViewEvents.append(Create);
 
         g_signal_connect(newWebView, "ready-to-show", G_CALLBACK(viewReadyToShowCallback), this);
         g_signal_connect(newWebView, "close", G_CALLBACK(viewCloseCallback), this);
 
-        return newWebView;
+        return WEBKIT_WEB_VIEW(newWebView);
     }
 
     void viewReadyToShow(WebKitWebView* webView)

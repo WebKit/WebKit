@@ -21,10 +21,8 @@
 
 #include "LoadTrackingTest.h"
 #include "WebKitTestServer.h"
-#include <gtk/gtk.h>
 #include <limits.h>
 #include <stdlib.h>
-#include <webkit2/webkit2.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -53,11 +51,11 @@ static void testWebContextEphemeral(Test* test, gconstpointer)
     g_assert(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
     g_assert(!webkit_website_data_manager_is_ephemeral(manager));
 
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    auto webView = Test::adoptView(webkit_web_view_new());
     g_assert(!webkit_web_view_is_ephemeral(webView.get()));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) == webkit_web_context_get_website_data_manager(webkit_web_context_get_default()));
 
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(test->m_webContext.get()));
+    webView = Test::adoptView(webkit_web_view_new_with_context(test->m_webContext.get()));
     g_assert(!webkit_web_view_is_ephemeral(webView.get()));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager);
 
@@ -68,7 +66,7 @@ static void testWebContextEphemeral(Test* test, gconstpointer)
     g_assert(webkit_website_data_manager_is_ephemeral(manager));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) != manager);
 
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_context(context.get()));
+    webView = Test::adoptView(webkit_web_view_new_with_context(context.get()));
     g_assert(webkit_web_view_is_ephemeral(webView.get()));
     g_assert(webkit_web_view_get_website_data_manager(webView.get()) == manager);
 
@@ -78,6 +76,7 @@ static void testWebContextEphemeral(Test* test, gconstpointer)
     g_assert(webkit_web_context_is_ephemeral(context.get()));
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 class PluginsTest: public Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(PluginsTest);
@@ -153,6 +152,7 @@ static void testWebContextGetPlugins(PluginsTest* test, gconstpointer)
     g_assert(extensions);
     g_assert_cmpstr(extensions[0], ==, "testnetscape");
 }
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 static const char* kBarHTML = "<html><body>Bar</body></html>";
 static const char* kEchoHTMLFormat = "<html><body>%s</body></html>";
@@ -370,6 +370,7 @@ static void testWebContextURIScheme(URISchemeTest* test, gconstpointer)
     g_assert_error(test->m_error.get(), G_IO_ERROR, G_IO_ERROR_CLOSED);
 }
 
+#if PLATFORM(GTK)
 static void testWebContextSpellChecker(Test* test, gconstpointer)
 {
     WebKitWebContext* webContext = test->m_webContext.get();
@@ -422,6 +423,7 @@ static void testWebContextSpellChecker(Test* test, gconstpointer)
     webkit_web_context_set_spell_checking_enabled(webContext, TRUE);
     g_assert(webkit_web_context_get_spell_checking_enabled(webContext));
 }
+#endif // PLATFORM(GTK)
 
 static void testWebContextLanguages(WebViewTest* test, gconstpointer)
 {
@@ -578,6 +580,7 @@ static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer
         | SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::EmptyDocument);
 }
 
+#if PLATFORM(GTK)
 static void consoleMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, WebKitJavascriptResult** result)
 {
     g_assert(result);
@@ -646,6 +649,7 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
 
     webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), FALSE);
 }
+#endif // PLATFORM(GTK)
 
 class ProxyTest : public WebViewTest {
 public:
@@ -705,7 +709,7 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     webkit_network_proxy_settings_free(settings);
 
     // Proxy settings also affect ephemeral web views.
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", test->m_webContext.get(),
         "is-ephemeral", TRUE,
         nullptr));
@@ -770,12 +774,20 @@ void beforeAll()
 
     Test::add("WebKitWebContext", "default-context", testWebContextDefault);
     Test::add("WebKitWebContext", "ephemeral", testWebContextEphemeral);
+#if ENABLE(NETSCAPE_PLUGIN_API)
     PluginsTest::add("WebKitWebContext", "get-plugins", testWebContextGetPlugins);
+#endif
     URISchemeTest::add("WebKitWebContext", "uri-scheme", testWebContextURIScheme);
+    // FIXME: implement spellchecker in WPE.
+#if PLATFORM(GTK)
     Test::add("WebKitWebContext", "spell-checker", testWebContextSpellChecker);
+#endif
     WebViewTest::add("WebKitWebContext", "languages", testWebContextLanguages);
     SecurityPolicyTest::add("WebKitSecurityManager", "security-policy", testWebContextSecurityPolicy);
+    // FIXME: fix script messages in WPE.
+#if PLATFORM(GTK)
     WebViewTest::add("WebKitSecurityManager", "file-xhr", testWebContextSecurityFileXHR);
+#endif
     ProxyTest::add("WebKitWebContext", "proxy", testWebContextProxySettings);
 }
 

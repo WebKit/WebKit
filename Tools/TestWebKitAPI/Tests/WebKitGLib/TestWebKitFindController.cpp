@@ -20,8 +20,6 @@
 #include "config.h"
 
 #include "LoadTrackingTest.h"
-#include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
 #include <wtf/glib/GRefPtr.h>
 
 static const char* testString = "<html><body>first testing second testing secondHalf</body></html>";
@@ -264,7 +262,9 @@ static void testFindControllerHide(FindControllerTest* test, gconstpointer)
     test->loadHtml(testString, 0);
     test->waitUntilLoadFinished();
 
+#if PLATFORM(GTK)
     test->showInWindowAndWaitUntilMapped();
+#endif
 
     cairo_surface_t* originalSurface = cairo_surface_reference(
         test->getSnapshotAndWaitUntilReady(WEBKIT_SNAPSHOT_REGION_FULL_DOCUMENT, WEBKIT_SNAPSHOT_OPTIONS_NONE));

@@ -20,8 +20,6 @@
 #include "config.h"
 
 #include "WebViewTest.h"
-#include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
 
 static void webkitFrameTestRun(WebViewTest* test, const char* testName)
 {

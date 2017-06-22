@@ -32,6 +32,9 @@ public:
     static bool shouldInitializeWebViewInConstructor;
     void initializeWebView();
 
+    void platformInitializeWebView();
+    void platformDestroy();
+
     virtual void loadURI(const char* uri);
     virtual void loadHtml(const char* html, const char* baseURI);
     virtual void loadPlainText(const char* plainText);
@@ -48,9 +51,8 @@ public:
     void waitUntilLoadFinished();
     void waitUntilTitleChangedTo(const char* expectedTitle);
     void waitUntilTitleChanged();
-    void showInWindow(GtkWindowType = GTK_WINDOW_POPUP);
-    void showInWindowAndWaitUntilMapped(GtkWindowType = GTK_WINDOW_POPUP, int width = 0, int height = 0);
     void resizeView(int width, int height);
+    void hideView();
     void selectAll();
     const char* mainResourceData(size_t& mainResourceDataSize);
 
@@ -61,7 +63,11 @@ public:
     void clickMouseButton(int x, int y, unsigned button = 1, unsigned mouseModifiers = 0);
     void keyStroke(unsigned keyVal, unsigned keyModifiers = 0);
 
+#if PLATFORM(GTK)
+    void showInWindow(GtkWindowType = GTK_WINDOW_POPUP);
+    void showInWindowAndWaitUntilMapped(GtkWindowType = GTK_WINDOW_POPUP, int width = 0, int height = 0);
     void emitPopupMenuSignal();
+#endif
 
     WebKitJavascriptResult* runJavaScriptAndWaitUntilFinished(const char* javascript, GError**);
     WebKitJavascriptResult* runJavaScriptFromGResourceAndWaitUntilFinished(const char* resource, GError**);
@@ -87,7 +93,6 @@ public:
     WebKitWebView* m_webView { nullptr };
     GMainLoop* m_mainLoop;
     CString m_activeURI;
-    GtkWidget* m_parentWindow { nullptr };
     CString m_expectedTitle;
     WebKitJavascriptResult* m_javascriptResult { nullptr };
     GError** m_javascriptError { nullptr };
@@ -96,6 +101,12 @@ public:
     cairo_surface_t* m_surface { nullptr };
     bool m_expectedWebProcessCrash { false };
 
+#if PLATFORM(GTK)
+    GtkWidget* m_parentWindow { nullptr };
+#endif
+
 private:
+#if PLATFORM(GTK)
     void doMouseButtonEvent(GdkEventType, int, int, unsigned, unsigned);
+#endif
 };

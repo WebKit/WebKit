@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,29 +17,44 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <functional>
-#include <wtf/HashMap.h>
-#include <wtf/glib/GRefPtr.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include "config.h"
+#include "WebViewTest.h"
 
-#if PLATFORM(GTK)
-#include <webkit2/webkit-web-extension.h>
-#elif PLATFORM(WPE)
-#include <wpe/webkit-web-extension.h>
-#endif
+void WebViewTest::platformDestroy()
+{
+}
 
-class WebProcessTest {
-public:
-    virtual ~WebProcessTest() { }
-    virtual bool runTest(const char* testName, WebKitWebPage*) = 0;
+void WebViewTest::platformInitializeWebView()
+{
+}
 
-    static void assertObjectIsDeletedWhenTestFinishes(GObject*);
+void WebViewTest::quitMainLoopAfterProcessingPendingEvents()
+{
+    // FIXME: implement if needed.
+    quitMainLoop();
+}
 
-    static void add(const String& testName, std::function<std::unique_ptr<WebProcessTest> ()>);
-    static std::unique_ptr<WebProcessTest> create(const String& testName);
-};
+void WebViewTest::resizeView(int width, int height)
+{
+    // FIXME: implement.
+}
 
-#define REGISTER_TEST(ClassName, TestName) \
-    WebProcessTest::add(String::fromUTF8(TestName), ClassName::create)
+void WebViewTest::hideView()
+{
+    // FIXME: implement.
+}
 
+void WebViewTest::mouseMoveTo(int x, int y, unsigned mouseModifiers)
+{
+    // FIXME: implement.
+}
+
+void WebViewTest::clickMouseButton(int x, int y, unsigned button, unsigned mouseModifiers)
+{
+    // FIXME: implement.
+}
+
+void WebViewTest::keyStroke(unsigned keyVal, unsigned keyModifiers)
+{
+    // FIXME: implement.
+}

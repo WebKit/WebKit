@@ -21,11 +21,22 @@
 
 #include <cairo.h>
 #include <glib-object.h>
-#include <webkit2/webkit2.h>
 #include <wtf/HashSet.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
+
+#if PLATFORM(GTK)
+#include <webkit2/webkit2.h>
+#elif PLATFORM(WPE)
+#include <wpe/webkit.h>
+#endif
+
+#if PLATFORM(GTK)
+#define TEST_PATH_FORMAT "/webkit2/%s/%s"
+#elif PLATFORM(WPE)
+#define TEST_PATH_FORMAT "/wpe/%s/%s"
+#endif
 
 #define MAKE_GLIB_TEST_FIXTURE(ClassName) \
     static void setUp(ClassName* fixture, gconstpointer data) \
@@ -38,7 +49,7 @@
     } \
     static void add(const char* suiteName, const char* testName, void (*testFunc)(ClassName*, const void*)) \
     { \
-        GUniquePtr<gchar> testPath(g_strdup_printf("/webkit2/%s/%s", suiteName, testName)); \
+        GUniquePtr<gchar> testPath(g_strdup_printf(TEST_PATH_FORMAT, suiteName, testName)); \
         g_test_add(testPath.get(), ClassName, 0, ClassName::setUp, testFunc, ClassName::tearDown); \
     }
 
@@ -57,7 +68,7 @@
     } \
     static void add(const char* suiteName, const char* testName, void (*testFunc)(ClassName*, const void*)) \
     { \
-        GUniquePtr<gchar> testPath(g_strdup_printf("/webkit2/%s/%s", suiteName, testName)); \
+        GUniquePtr<gchar> testPath(g_strdup_printf(TEST_PATH_FORMAT, suiteName, testName)); \
         g_test_add(testPath.get(), ClassName, 0, ClassName::setUp, testFunc, ClassName::tearDown); \
     }
 
@@ -76,6 +87,17 @@
 class Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(Test);
+
+    static GRefPtr<WebKitWebView> adoptView(gpointer view)
+    {
+        g_assert(WEBKIT_IS_WEB_VIEW(view));
+#if PLATFORM(GTK)
+        g_assert(g_object_is_floating(view));
+        return GRefPtr<WebKitWebView>(WEBKIT_WEB_VIEW(view));
+#elif PLATFORM(WPE)
+        return adoptGRef(WEBKIT_WEB_VIEW(view));
+#endif
+    }
 
     static const char* dataDirectory();
 

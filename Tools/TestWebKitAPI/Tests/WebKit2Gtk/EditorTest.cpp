@@ -20,7 +20,6 @@
 #include "config.h"
 
 #include "WebProcessTest.h"
-#include <webkit2/webkit-web-extension.h>
 
 #define WEBKIT_DOM_USE_UNSTABLE_API
 #include <webkitdom/WebKitDOMDOMSelection.h>

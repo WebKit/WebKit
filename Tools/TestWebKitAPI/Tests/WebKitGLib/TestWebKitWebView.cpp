@@ -51,15 +51,15 @@ static void testWebViewWebContext(WebViewTest* test, gconstpointer)
     g_assert(webkit_web_context_get_default() != test->m_webContext.get());
 
     // Check that a web view created with g_object_new has the default context.
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr));
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW, nullptr));
     g_assert(webkit_web_view_get_context(webView.get()) == webkit_web_context_get_default());
 
     // Check that a web view created with a related view has the related view context.
-    webView = WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(test->m_webView));
+    webView = Test::adoptView(webkit_web_view_new_with_related_view(test->m_webView));
     g_assert(webkit_web_view_get_context(webView.get()) == test->m_webContext.get());
 
     // Check that a web context given as construct parameter is ignored if a related view is also provided.
-    webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+    webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", webkit_web_context_get_default(), "related-view", test->m_webView, nullptr));
     g_assert(webkit_web_view_get_context(webView.get()) == test->m_webContext.get());
 }
@@ -69,10 +69,12 @@ static void testWebViewWebContextLifetime(WebViewTest* test, gconstpointer)
     WebKitWebContext* webContext = webkit_web_context_new();
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webContext));
 
-    GtkWidget* webView = webkit_web_view_new_with_context(webContext);
+    auto* webView = webkit_web_view_new_with_context(webContext);
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView));
 
+#if PLATFORM(GTK)
     g_object_ref_sink(webView);
+#endif
     g_object_unref(webContext);
 
     // Check that the web view still has a valid context.
@@ -83,10 +85,12 @@ static void testWebViewWebContextLifetime(WebViewTest* test, gconstpointer)
     WebKitWebContext* webContext2 = webkit_web_context_new();
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webContext2));
 
-    GtkWidget* webView2 = webkit_web_view_new_with_context(webContext2);
+    auto* webView2 = webkit_web_view_new_with_context(webContext2);
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView2));
 
+#if PLATFORM(GTK)
     g_object_ref_sink(webView2);
+#endif
     g_object_unref(webView2);
 
     // Check that the context is still valid.
@@ -116,7 +120,7 @@ static void testWebViewEphemeral(WebViewTest* test, gconstpointer)
     g_main_loop_run(test->m_mainLoop);
 
     // A WebView on a non ephemeral context can be ephemeral.
-    GRefPtr<WebKitWebView> webView = WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
+    auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "web-context", webkit_web_view_get_context(test->m_webView),
         "is-ephemeral", TRUE,
         nullptr));
@@ -173,7 +177,7 @@ static void testWebViewSettings(WebViewTest* test, gconstpointer)
     g_assert(settings != defaultSettings);
     g_assert(!webkit_settings_get_enable_javascript(settings));
 
-    GRefPtr<GtkWidget> webView2 = webkit_web_view_new();
+    auto webView2 = Test::adoptView(webkit_web_view_new());
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView2.get()));
     webkit_web_view_set_settings(WEBKIT_WEB_VIEW(webView2.get()), settings);
     g_assert(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView2.get())) == settings);
@@ -185,7 +189,7 @@ static void testWebViewSettings(WebViewTest* test, gconstpointer)
     g_assert(settings == newSettings2.get());
     g_assert(webkit_settings_get_enable_javascript(settings));
 
-    GRefPtr<GtkWidget> webView3 = webkit_web_view_new_with_settings(newSettings2.get());
+    auto webView3 = Test::adoptView(webkit_web_view_new_with_settings(newSettings2.get()));
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webView3.get()));
     g_assert(webkit_web_view_get_settings(WEBKIT_WEB_VIEW(webView3.get())) == newSettings2.get());
 }
@@ -317,7 +321,10 @@ public:
 
     static gboolean leaveFullScreenIdle(FullScreenClientTest* test)
     {
+        // FIXME: Implement key strokes in WPE
+#if PLATFORM(GTK)
         test->keyStroke(GDK_KEY_Escape);
+#endif
         return FALSE;
     }
 
@@ -331,6 +338,7 @@ public:
     FullScreenEvent m_event;
 };
 
+#if ENABLE(FULLSCREEN_API)
 static void testWebViewFullScreen(FullScreenClientTest* test, gconstpointer)
 {
     test->showInWindowAndWaitUntilMapped();
@@ -341,6 +349,7 @@ static void testWebViewFullScreen(FullScreenClientTest* test, gconstpointer)
     test->leaveFullScreenAndWaitUntilLeftFullScreen();
     g_assert_cmpint(test->m_event, ==, FullScreenClientTest::Leave);
 }
+#endif
 
 static void testWebViewCanShowMIMEType(WebViewTest* test, gconstpointer)
 {
@@ -354,13 +363,16 @@ static void testWebViewCanShowMIMEType(WebViewTest* test, gconstpointer)
     g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/zip"));
     g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/octet-stream"));
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // Plugins are only supported when enabled.
     webkit_web_context_set_additional_plugins_directory(webkit_web_view_get_context(test->m_webView), WEBKIT_TEST_PLUGIN_DIR);
     g_assert(webkit_web_view_can_show_mime_type(test->m_webView, "application/x-webkit-test-netscape"));
     webkit_settings_set_enable_plugins(webkit_web_view_get_settings(test->m_webView), FALSE);
     g_assert(!webkit_web_view_can_show_mime_type(test->m_webView, "application/x-webkit-test-netscape"));
+#endif
 }
 
+#if PLATFORM(GTK)
 class FormClientTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(FormClientTest);
@@ -441,6 +453,7 @@ static void testWebViewSubmitForm(FormClientTest* test, gconstpointer)
     g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "text2")), ==, "value2");
     g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "password")), ==, "secret");
 }
+#endif // PLATFORM(GTK)
 
 class SaveWebViewTest: public WebViewTest {
 public:
@@ -538,6 +551,7 @@ static void testWebViewSave(SaveWebViewTest* test, gconstpointer)
     g_assert_cmpint(g_file_info_get_size(fileInfo.get()), ==, totalBytesFromStream);
 }
 
+#if PLATFORM(GTK)
 // To test page visibility API. Currently only 'visible', 'hidden' and 'prerender' states are implemented fully in WebCore.
 // See also http://www.w3.org/TR/2011/WD-page-visibility-20110602/ and https://developers.google.com/chrome/whitepapers/pagevisibility
 static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
@@ -584,7 +598,7 @@ static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
     g_assert(!WebViewTest::javascriptResultToBoolean(javascriptResult));
 
     // Hide the page. The visibility should be updated to 'hidden'.
-    gtk_widget_hide(GTK_WIDGET(test->m_webView));
+    test->hideView();
     test->waitUntilTitleChanged();
 
     javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.visibilityState;", &error.outPtr());
@@ -676,7 +690,9 @@ static void testWebViewSnapshot(SnapshotWebViewTest* test, gconstpointer)
     // Test that cancellation works.
     g_assert(test->getSnapshotAndCancel());
 }
+#endif // PLATFORM(GTK)
 
+#if ENABLE(NOTIFICATIONS)
 class NotificationWebViewTest: public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE_WITH_SETUP_TEARDOWN(NotificationWebViewTest, setup, teardown);
@@ -923,12 +939,15 @@ static void testWebViewNotificationInitialPermissionDisallowed(NotificationWebVi
     test->waitUntilLoadFinished();
     g_assert(!test->hasPermission());
 }
+#endif // ENABLE(NOTIFICATIONS)
 
 static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpointer)
 {
+#if PLATFORM(GTK)
     // The web view must be realized for the video to start playback and
     // trigger changes in WebKitWebView::is-playing-audio.
     test->showInWindowAndWaitUntilMapped(GTK_WINDOW_TOPLEVEL);
+#endif
 
     // Initially, web views should always report no audio being played.
     g_assert(!webkit_web_view_is_playing_audio(test->m_webView));
@@ -951,6 +970,7 @@ static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpoi
     g_assert(!webkit_web_view_is_playing_audio(test->m_webView));
 }
 
+#if PLATFORM(GTK)
 static void testWebViewBackgroundColor(WebViewTest* test, gconstpointer)
 {
     // White is the default background.
@@ -988,6 +1008,7 @@ static void testWebViewPreferredSize(WebViewTest* test, gconstpointer)
     g_assert_cmpint(naturalSize.width, ==, 325);
     g_assert_cmpint(naturalSize.height, ==, 615);
 }
+#endif
 
 class WebViewTitleTest: public WebViewTest {
 public:
@@ -1061,18 +1082,30 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "settings", testWebViewSettings);
     WebViewTest::add("WebKitWebView", "zoom-level", testWebViewZoomLevel);
     WebViewTest::add("WebKitWebView", "run-javascript", testWebViewRunJavaScript);
+#if ENABLE(FULLSCREEN_API)
     FullScreenClientTest::add("WebKitWebView", "fullscreen", testWebViewFullScreen);
+#endif
     WebViewTest::add("WebKitWebView", "can-show-mime-type", testWebViewCanShowMIMEType);
+    // FIXME: implement mouse clicks in WPE.
+#if PLATFORM(GTK)
     FormClientTest::add("WebKitWebView", "submit-form", testWebViewSubmitForm);
+#endif
     SaveWebViewTest::add("WebKitWebView", "save", testWebViewSave);
+    // FIXME: View is initially visible in WPE and has a fixed hardcoded size.
+#if PLATFORM(GTK)
     SnapshotWebViewTest::add("WebKitWebView", "snapshot", testWebViewSnapshot);
     WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
+#endif
+#if ENABLE(NOTIFICATIONS)
     NotificationWebViewTest::add("WebKitWebView", "notification", testWebViewNotification);
     NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-allowed", testWebViewNotificationInitialPermissionAllowed);
     NotificationWebViewTest::add("WebKitWebView", "notification-initial-permission-disallowed", testWebViewNotificationInitialPermissionDisallowed);
+#endif
     IsPlayingAudioWebViewTest::add("WebKitWebView", "is-playing-audio", testWebViewIsPlayingAudio);
+#if PLATFORM(GTK)
     WebViewTest::add("WebKitWebView", "background-color", testWebViewBackgroundColor);
     WebViewTest::add("WebKitWebView", "preferred-size", testWebViewPreferredSize);
+#endif
     WebViewTitleTest::add("WebKitWebView", "title-change", testWebViewTitleChange);
 }
 
