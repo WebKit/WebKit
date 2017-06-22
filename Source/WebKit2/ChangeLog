@@ -1,3 +1,21 @@
+2017-06-22  Chris Dumez  <cdumez@apple.com>
+
+        isMainThread() assertions in CallbackMap are incorrectly failing on some iOS apps
+        https://bugs.webkit.org/show_bug.cgi?id=173738
+        <rdar://problem/32923933>
+
+        Reviewed by Brady Eidson.
+
+        The assertions hit on certain iOS apps even though the crash traces clearly
+        show them on the main thread. We have verified locally that RunLoop::isMain()
+        propertly return true in this case (while WTF::isMainThread() returns false).
+        Update the assertions to use RunLoop::isMain() instead.
+
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackMap::put):
+        (WebKit::CallbackMap::take):
+        (WebKit::CallbackMap::invalidate):
+
 2017-06-22  Daniel Bates  <dabates@apple.com>
 
         Make FrameLoadRequest a move-only type

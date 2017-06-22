@@ -182,7 +182,7 @@ class CallbackMap {
 public:
     uint64_t put(Ref<CallbackBase>&& callback)
     {
-        RELEASE_ASSERT(isMainThread());
+        RELEASE_ASSERT(RunLoop::isMain());
         uint64_t callbackID = callback->callbackID();
         RELEASE_ASSERT(callbackID);
         RELEASE_ASSERT(!m_map.contains(callbackID));
@@ -211,7 +211,7 @@ public:
     RefPtr<T> take(uint64_t callbackID)
     {
         RELEASE_ASSERT(callbackID);
-        RELEASE_ASSERT(isMainThread());
+        RELEASE_ASSERT(RunLoop::isMain());
         auto base = m_map.take(callbackID);
         if (!base)
             return nullptr;
@@ -221,7 +221,7 @@ public:
 
     void invalidate(CallbackBase::Error error)
     {
-        RELEASE_ASSERT(isMainThread());
+        RELEASE_ASSERT(RunLoop::isMain());
         invalidateCallbackMap(m_map, error);
     }
 
