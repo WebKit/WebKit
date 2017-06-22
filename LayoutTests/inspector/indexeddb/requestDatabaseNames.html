@@ -58,6 +58,7 @@ function test()
             .then((event) => {
                 IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                     InspectorTest.expectNoError(error);
+                    names.sort();
                     InspectorTest.expectThat(names.length === 2, "Two IndexedDB databases should exist.");
                     InspectorTest.log(JSON.stringify(names));
                     resolve();
@@ -76,6 +77,7 @@ function test()
             .then((event) => {
                 IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                     InspectorTest.expectNoError(error);
+                    names.sort();
                     InspectorTest.expectThat(names.length === 3, "Three IndexedDB databases should exist.");
                     InspectorTest.log(JSON.stringify(names));
                     resolve();
@@ -94,6 +96,7 @@ function test()
             .then((event) => {
                 IndexedDBAgent.requestDatabaseNames(WebInspector.frameResourceManager.mainFrame.securityOrigin, (error, names) => {
                     InspectorTest.expectNoError(error);
+                    names.sort();
                     InspectorTest.expectThat(names.length === 4, "Four IndexedDB databases should exist.");
                     InspectorTest.log(JSON.stringify(names));
                     resolve();

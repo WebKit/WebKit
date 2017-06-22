@@ -1,3 +1,13 @@
+2017-06-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        LayoutTests/inspector/indexeddb/requestDatabaseNames.html: Sort database names to prevent flakiness
+        https://bugs.webkit.org/show_bug.cgi?id=173699
+
+        Reviewed by Alex Christensen.
+
+        * inspector/indexeddb/requestDatabaseNames.html:
+        Sort database names (when more than one) to ensure a consistent order.
+
 2017-06-22  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Skip js geolocation test.
