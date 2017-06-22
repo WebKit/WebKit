@@ -34,17 +34,20 @@ function initializeFetchRequest(input, init)
     else if (!@isObject(init))
         @throwTypeError("Request init must be an object");
 
-    let headers = this.@initializeWith(input, init);
+    const headers = this.@initializeWith(input, init);
     @assert(headers instanceof @Headers);
 
-    let inputIsRequest = input instanceof @Request;
+    const inputIsRequest = input instanceof @Request;
     if ("headers" in init)
         @fillFetchHeaders(headers, init.headers)
     else if (inputIsRequest)
         @fillFetchHeaders(headers, input.headers)
 
-    let hasInitBody = init.body !== @undefined && init.body !== null;
-    this.@setBody(hasInitBody ? init.body : null, inputIsRequest ? input : null);
+    const hasInitBody = init.body !== @undefined && init.body !== null;
+    if (hasInitBody)
+        this.@setBody(init.body)
+    else
+        this.@setBodyFromInputRequest(inputIsRequest ? input : null);
 
     return this;
 }

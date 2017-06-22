@@ -63,7 +63,8 @@ public:
 #endif
 
     ExceptionOr<void> setStatus(int status, const String& statusText);
-    void initializeWith(JSC::ExecState&, JSC::JSValue);
+    void initializeWith(FetchBody::BindingDataType&&);
+    void setBodyAsReadableStream();
 
     Type type() const { return m_response.type(); }
     const String& url() const;

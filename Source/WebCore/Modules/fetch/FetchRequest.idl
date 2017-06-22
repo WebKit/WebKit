@@ -34,6 +34,9 @@ enum RequestCache { "default", "no-store", "reload", "no-cache", "force-cache", 
 enum RequestRedirect { "follow", "error", "manual" };
 enum ReferrerPolicy { "", "no-referrer",  "no-referrer-when-downgrade", "origin", "origin-when-cross-origin", "unsafe-url" };
 
+typedef (ArrayBufferView or ArrayBuffer) BufferSource;
+typedef (Blob or BufferSource or DOMFormData or URLSearchParams or USVString) BodyInit;
+
 dictionary RequestInit {
     ByteString method;
     // FIXME: Should add: HeadersInit headers;
@@ -78,7 +81,8 @@ dictionary RequestInit {
 
     [MayThrowException, NewObject, PrivateIdentifier] FetchHeaders initializeWith(FetchRequest input, RequestInit init);
     [MayThrowException, NewObject, PrivateIdentifier] FetchHeaders initializeWith(DOMString input, RequestInit init);
-    [CallWith=ScriptState, MayThrowException, PrivateIdentifier] void setBody(any body, FetchRequest? request);
+    [MayThrowException, PrivateIdentifier] void setBody(BodyInit body);
+    [MayThrowException, PrivateIdentifier] void setBodyFromInputRequest(FetchRequest? request);
 };
 
 FetchRequest implements FetchBody;

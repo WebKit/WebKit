@@ -68,7 +68,8 @@ public:
 
     ExceptionOr<FetchHeaders&> initializeWith(FetchRequest&, const Init&);
     ExceptionOr<FetchHeaders&> initializeWith(const String&, const Init&);
-    ExceptionOr<void> setBody(JSC::ExecState&, JSC::JSValue, FetchRequest*);
+    ExceptionOr<void> setBody(FetchBody::BindingDataType&&);
+    ExceptionOr<void> setBodyFromInputRequest(FetchRequest*);
 
     const String& method() const { return m_internalRequest.request.httpMethod(); }
     const String& url() const;

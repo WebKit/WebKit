@@ -51,10 +51,11 @@ function initializeFetchResponse(body, init)
 
         // FIXME: Use @isReadableStream once it is no longer guarded by STREAMS_API compilation guard.
         let isBodyReadableStream = (@isObject(body) && !!body.@readableStreamController);
-        if (isBodyReadableStream)
-          this.@body = body;
-
-        this.@initializeWith(body);
+        if (isBodyReadableStream) {
+            this.@body = body;
+            this.@setBodyAsReadableStream();
+        } else
+            this.@initializeWith(body);
     }
 
     return this;

@@ -65,9 +65,11 @@ protected:
     bool isBodyNull() const { return !m_body; }
     void cloneBody(const FetchBodyOwner&);
 
-    void extractBody(ScriptExecutionContext&, JSC::ExecState&, JSC::JSValue);
+    void extractBody(ScriptExecutionContext&, FetchBody::BindingDataType&&);
     void updateContentType();
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
+
+    void setBody(FetchBody&& body) { m_body = WTFMove(body); }
 
     // ActiveDOMObject API
     void stop() override;

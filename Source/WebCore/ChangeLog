@@ -1,3 +1,47 @@
+2017-06-21  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] TypeError when called with body === {}
+        https://bugs.webkit.org/show_bug.cgi?id=173295
+        <rdar://problem/32746733>
+
+        Reviewed by Sam Weinig.
+
+        Test: fetch/body-init.html
+
+        Handling body of Request and Response using binding generator to correctly handle unions.
+        The biggest change is that any value that is not a specific type in the union will match a String.
+        This is matching WebIDL spec and Firefox behavior.
+
+        Handling of ReadableStream bodies remains in JS builtin for Response.
+        This allows easier handling cloning and consumption of body.
+        Adding setBodyAsReadableStream since this is no longer handled by extractBody.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract): Using Variant instead of JSC::JSValue.
+        (WebCore::FetchBody::readableStreamBody): Introduced to handle the
+        case of readable stream bodies.
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::extractBody):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::setBody):
+        * Modules/fetch/FetchRequest.cpp:
+        (WebCore::FetchRequest::setBody): Splitting setBody for ease of readability.
+        (WebCore::FetchRequest::setBodyFromInputRequest):
+        * Modules/fetch/FetchRequest.h:
+        * Modules/fetch/FetchRequest.idl:
+        * Modules/fetch/FetchRequest.js:
+        (initializeFetchRequest):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::initializeWith):
+        (WebCore::FetchResponse::setBodyAsReadableStream):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/FetchResponse.js:
+        (initializeFetchResponse):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2017-06-21  Simon Fraser  <simon.fraser@apple.com>
 
         Add z-index to compositing logging output

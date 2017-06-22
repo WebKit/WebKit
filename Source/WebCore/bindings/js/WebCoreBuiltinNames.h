@@ -88,6 +88,8 @@ namespace WebCore {
     macro(retrieveResponse) \
     macro(response) \
     macro(setBody) \
+    macro(setBodyAsReadableStream) \
+    macro(setBodyFromInputRequest) \
     macro(setStatus) \
     macro(state) \
     macro(startConsumingStream) \

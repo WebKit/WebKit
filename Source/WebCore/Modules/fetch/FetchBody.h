@@ -31,6 +31,7 @@
 #if ENABLE(FETCH_API)
 
 #include "Blob.h"
+#include "DOMFormData.h"
 #include "FetchBodyConsumer.h"
 #include "FetchLoader.h"
 #include "FormData.h"
@@ -38,11 +39,6 @@
 #include "URLSearchParams.h"
 #include <wtf/Optional.h>
 #include <wtf/Variant.h>
-
-namespace JSC {
-class ExecState;
-class JSValue;
-};
 
 namespace WebCore {
 
@@ -70,8 +66,10 @@ public:
     bool isText() const { return WTF::holds_alternative<String>(m_data); }
     bool isReadableStream() const { return m_isReadableStream; }
 
-    static std::optional<FetchBody> extract(ScriptExecutionContext&, JSC::ExecState&, JSC::JSValue, String&);
+    using BindingDataType = Variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, String>;
+    static FetchBody extract(ScriptExecutionContext&, BindingDataType&&, String&);
     static FetchBody loadingBody() { return { }; }
+    static FetchBody readableStreamBody();
 
     void loadingFailed();
     void loadingSucceeded();
@@ -111,7 +109,8 @@ private:
     const String& textBody() const { return WTF::get<String>(m_data); }
     const URLSearchParams& urlSearchParamsBody() const { return WTF::get<Ref<const URLSearchParams>>(m_data).get(); }
 
-    Variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String> m_data { nullptr };
+    using Data = Variant<std::nullptr_t, Ref<const Blob>, Ref<FormData>, Ref<const ArrayBuffer>, Ref<const ArrayBufferView>, Ref<const URLSearchParams>, String>;
+    Data m_data { nullptr };
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::None };
     RefPtr<DeferredPromise> m_consumePromise;
