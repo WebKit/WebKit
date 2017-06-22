@@ -1,3 +1,21 @@
+2017-06-22  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r215809): 50% regression 14E305 -> 15A293a in MotionMark Suits test
+        https://bugs.webkit.org/show_bug.cgi?id=173728
+        <rdar://problem/32526744>
+
+        Reviewed by Tim Horton.
+
+        It turns out that CGGradientCreateWithColors is much slower than
+        CGGradientCreateWithColorComponents, even without colorspace variations.
+        Update the gradient creation code to only use this slower path
+        when it has extended colors.
+
+        * platform/graphics/Color.h: Add a FIXME about renaming some methods.
+        * platform/graphics/cg/GradientCG.cpp: Use CGGradientCreateWithColorComponents
+        if we have stops that are not extended colors.
+        (WebCore::Gradient::platformGradient):
+
 2017-06-22  Youenn Fablet  <youenn@apple.com>
 
         Fix memory leak in LibWebRTCMediaEndpoint
