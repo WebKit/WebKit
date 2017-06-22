@@ -736,6 +736,10 @@ static void webkitWebViewDispose(GObject* object)
         webView->priv->websiteDataManager = nullptr;
     }
 
+#if PLATFORM(WPE)
+    webView->priv->view->close();
+#endif
+
     G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
 

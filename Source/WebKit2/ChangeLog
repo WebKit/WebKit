@@ -1,5 +1,20 @@
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Page should be closed on WebKitWebView dispose
+        https://bugs.webkit.org/show_bug.cgi?id=173707
+
+        Reviewed by Žan Doberšek.
+
+        In the GTK+ port it's done in the WebKitWebViewBase dispose implementation. It fixes TestMultiprocess.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewDispose): Call WKWPE::View::close().
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::close): Close the WebPageProxy.
+        * UIProcess/API/wpe/WPEView.h:
+
+2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Remove unused coordinated graphics C API
         https://bugs.webkit.org/show_bug.cgi?id=173706
 

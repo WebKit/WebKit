@@ -64,6 +64,8 @@ public:
     WebCore::ActivityState::Flags viewState() const { return m_viewStateFlags; }
     void setViewState(WebCore::ActivityState::Flags);
 
+    void close();
+
 private:
     View(struct wpe_view_backend*, const API::PageConfiguration&);
 

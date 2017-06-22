@@ -158,4 +158,9 @@ void View::setViewState(WebCore::ActivityState::Flags flags)
         m_pageProxy->activityStateDidChange(changedFlags);
 }
 
+void View::close()
+{
+    m_pageProxy->close();
+}
+
 } // namespace WKWPE
