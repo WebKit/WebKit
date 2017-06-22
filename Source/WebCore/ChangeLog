@@ -1,3 +1,10 @@
+2017-06-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix Window Debug build after r218660.
+
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+
 2017-06-21  Andreas Kling  <akling@apple.com>
 
         Increase memory kill limits for WebContent processes that manage multiple tabs.
