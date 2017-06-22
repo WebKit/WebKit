@@ -32,6 +32,7 @@
 #import <WebKit/WKContextPrivateMac.h>
 #import <WebKit/WKPluginInformation.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
 
@@ -67,16 +68,16 @@ TEST(WKProcessPool, resetPluginLoadClientPolicies)
     EXPECT_EQ(1U, ((NSDictionary *)policiesForAppleHost[@"com.microsoft.SilverlightPlugin"]).count);
     EXPECT_EQ(kWKPluginLoadClientPolicyAllow, [policiesForAppleHost[@"com.microsoft.SilverlightPlugin"][@"5.1.50901.0"] unsignedIntegerValue]);
     
-    NSMutableDictionary *newPolicies = [policies mutableCopy];
-    [newPolicies removeObjectForKey:@"apple.com"];
-    newPolicies[@"google.com"] = [[NSMutableDictionary alloc] init];
-    newPolicies[@"google.com"][@"com.macromedia.Flash Player.plugin"] = [[NSMutableDictionary alloc] init];
-    newPolicies[@"google.com"][@"com.macromedia.Flash Player.plugin"][@"26.0.0.126"] = [[NSNumber alloc] initWithUnsignedInt:kWKPluginLoadClientPolicyAllowAlways];
-    newPolicies[@"google.com"][@"com.apple.QuickTime.plugin"] = [[NSMutableDictionary alloc] init];
-    newPolicies[@"google.com"][@"com.apple.QuickTime.plugin"][@"1.0"] = [[NSNumber alloc] initWithUnsignedInt:kWKPluginLoadClientPolicyBlock];
-    newPolicies[@"google.com"][@"com.apple.QuickTime.plugin"][@"1.1"] = [[NSNumber alloc] initWithUnsignedInt:kWKPluginLoadClientPolicyAllow];
+    RetainPtr<NSMutableDictionary> newPolicies = adoptNS([policies mutableCopy]);
+    [newPolicies.get() removeObjectForKey:@"apple.com"];
+    newPolicies.get()[@"google.com"] = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]).get();
+    newPolicies.get()[@"google.com"][@"com.macromedia.Flash Player.plugin"] = adoptNS([[NSMutableDictionary alloc] initWithCapacity:1]).get();
+    newPolicies.get()[@"google.com"][@"com.macromedia.Flash Player.plugin"][@"26.0.0.126"] = adoptNS([[NSNumber alloc] initWithUnsignedInt:kWKPluginLoadClientPolicyAllowAlways]).get();
+    newPolicies.get()[@"google.com"][@"com.apple.QuickTime.plugin"] = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]).get();
+    newPolicies.get()[@"google.com"][@"com.apple.QuickTime.plugin"][@"1.0"] = adoptNS([[NSNumber alloc] initWithUnsignedInt:kWKPluginLoadClientPolicyBlock]).get();
+    newPolicies.get()[@"google.com"][@"com.apple.QuickTime.plugin"][@"1.1"] = adoptNS([[NSNumber alloc] initWithUnsignedInt:kWKPluginLoadClientPolicyAllow]).get();
     
-    [processPool.get() _resetPluginLoadClientPolicies:newPolicies];
+    [processPool.get() _resetPluginLoadClientPolicies:newPolicies.get()];
     
     policies = processPool.get()._pluginLoadClientPolicies;
     EXPECT_EQ(2U, policies.count);

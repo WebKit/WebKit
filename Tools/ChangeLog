@@ -1,3 +1,16 @@
+2017-06-22  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r218419): 7 leaks in PluginLoadClientPolicies.mm
+        <https://webkit.org/b/173721>
+
+        Reviewed by Joseph Pecoraro.
+
+        Use RetainPtr<> to create NSMutableDictionary and NSNumber
+        objects to fix leaks and to avoid the autoreleasepool.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/PluginLoadClientPolicies.mm:
+        (TEST):
+
 2017-06-22  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218633.
