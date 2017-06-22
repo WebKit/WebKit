@@ -52,22 +52,8 @@ public:
     }
     WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, ShouldOpenExternalURLsPolicy, const SubstituteData& = SubstituteData());
 
-    FrameLoadRequest(const FrameLoadRequest& other)
-        : m_requester { other.m_requester.copyRef() }
-        , m_resourceRequest { other.m_resourceRequest }
-        , m_frameName { other.m_frameName }
-        , m_substituteData { other.m_substituteData }
-        , m_shouldCheckNewWindowPolicy { other.m_shouldCheckNewWindowPolicy }
-        , m_lockHistory { other.m_lockHistory }
-        , m_lockBackForwardList { other.m_lockBackForwardList }
-        , m_shouldSendReferrer { other.m_shouldSendReferrer }
-        , m_allowNavigationToInvalidURL { other.m_allowNavigationToInvalidURL }
-        , m_newFrameOpenerPolicy { other.m_newFrameOpenerPolicy }
-        , m_shouldReplaceDocumentIfJavaScriptURL { other.m_shouldReplaceDocumentIfJavaScriptURL }
-        , m_shouldOpenExternalURLsPolicy { other.m_shouldOpenExternalURLsPolicy }
-        , m_downloadAttribute { other.m_downloadAttribute }
-    {
-    }
+    FrameLoadRequest(FrameLoadRequest&&) = default;
+    FrameLoadRequest& operator=(FrameLoadRequest&&) = default;
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 

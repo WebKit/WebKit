@@ -152,7 +152,7 @@ void WebInspector::openInNewTab(const String& urlString)
     if (!newPage)
         return;
 
-    newPage->mainFrame().loader().load(frameLoadRequest);
+    newPage->mainFrame().loader().load(WTFMove(frameLoadRequest));
 }
 
 void WebInspector::evaluateScriptForTest(const String& script)

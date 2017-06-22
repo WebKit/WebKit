@@ -501,7 +501,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
         FrameLoadRequest frameLoadRequest { *core(frame), request, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
         frameLoadRequest.setFrameName(target);
         frameLoadRequest.setShouldCheckNewWindowPolicy(true);
-        core(frame)->loader().load(frameLoadRequest);
+        core(frame)->loader().load(WTFMove(frameLoadRequest));
     }
 }
 

@@ -1219,7 +1219,7 @@ void WebPage::loadRequest(const LoadParameters& loadParameters)
     ShouldOpenExternalURLsPolicy externalURLsPolicy = static_cast<ShouldOpenExternalURLsPolicy>(loadParameters.shouldOpenExternalURLsPolicy);
     frameLoadRequest.setShouldOpenExternalURLsPolicy(externalURLsPolicy);
 
-    corePage()->userInputBridge().loadRequest(frameLoadRequest);
+    corePage()->userInputBridge().loadRequest(WTFMove(frameLoadRequest));
 
     ASSERT(!m_pendingNavigationID);
 }

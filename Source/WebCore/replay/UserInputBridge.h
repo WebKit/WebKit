@@ -88,7 +88,7 @@ public:
     bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, InputSource source = InputSource::User);
 
     // Navigation APIs.
-    WEBCORE_EXPORT void loadRequest(const FrameLoadRequest&, InputSource source = InputSource::User);
+    WEBCORE_EXPORT void loadRequest(FrameLoadRequest&&, InputSource = InputSource::User);
     WEBCORE_EXPORT void reloadFrame(Frame*, OptionSet<ReloadOption>, InputSource = InputSource::User);
     WEBCORE_EXPORT void stopLoadingFrame(Frame*, InputSource source = InputSource::User);
     WEBCORE_EXPORT bool tryClosePage(InputSource source = InputSource::User);

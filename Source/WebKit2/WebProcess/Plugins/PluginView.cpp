@@ -86,9 +86,9 @@ static const Seconds pluginSnapshotTimerDelay { 1100_ms };
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
-    static Ref<PluginView::URLRequest> create(uint64_t requestID, const FrameLoadRequest& request, bool allowPopups)
+    static Ref<PluginView::URLRequest> create(uint64_t requestID, FrameLoadRequest&& request, bool allowPopups)
     {
-        return adoptRef(*new URLRequest(requestID, request, allowPopups));
+        return adoptRef(*new URLRequest(requestID, WTFMove(request), allowPopups));
     }
 
     uint64_t requestID() const { return m_requestID; }
@@ -97,10 +97,10 @@ public:
     bool allowPopups() const { return m_allowPopups; }
 
 private:
-    URLRequest(uint64_t requestID, const FrameLoadRequest& request, bool allowPopups)
-        : m_requestID(requestID)
-        , m_request(request)
-        , m_allowPopups(allowPopups)
+    URLRequest(uint64_t requestID, FrameLoadRequest&& request, bool allowPopups)
+        : m_requestID { requestID }
+        , m_request { WTFMove(request) }
+        , m_allowPopups { allowPopups }
     {
     }
 
@@ -1202,7 +1202,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
         FrameLoadRequest frameLoadRequest { *frame, request->request(), ShouldOpenExternalURLsPolicy::ShouldNotAllow };
         frameLoadRequest.setFrameName(request->target());
         frameLoadRequest.setShouldCheckNewWindowPolicy(true);
-        frame->loader().load(frameLoadRequest);
+        frame->loader().load(WTFMove(frameLoadRequest));
 
         // FIXME: We don't know whether the window was successfully created here so we just assume that it worked.
         // It's better than not telling the plug-in anything.
@@ -1402,7 +1402,7 @@ void PluginView::loadURL(uint64_t requestID, const String& method, const String&
     if (!referrer.isEmpty())
         frameLoadRequest.resourceRequest().setHTTPReferrer(referrer);
 
-    m_pendingURLRequests.append(URLRequest::create(requestID, frameLoadRequest, allowPopups));
+    m_pendingURLRequests.append(URLRequest::create(requestID, WTFMove(frameLoadRequest), allowPopups));
     m_pendingURLRequestsTimer.startOneShot(0_s);
 }
 

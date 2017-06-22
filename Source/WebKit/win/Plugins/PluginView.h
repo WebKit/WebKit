@@ -80,12 +80,14 @@ namespace WebCore {
     class PluginRequest {
         WTF_MAKE_NONCOPYABLE(PluginRequest); WTF_MAKE_FAST_ALLOCATED;
     public:
-        PluginRequest(const FrameLoadRequest& frameLoadRequest, bool sendNotification, void* notifyData, bool shouldAllowPopups)
-            : m_frameLoadRequest(frameLoadRequest)
-            , m_notifyData(notifyData)
-            , m_sendNotification(sendNotification)
-            , m_shouldAllowPopups(shouldAllowPopups) { }
-    public:
+        PluginRequest(FrameLoadRequest&& frameLoadRequest, bool sendNotification, void* notifyData, bool shouldAllowPopups)
+            : m_frameLoadRequest { WTFMove(frameLoadRequest) }
+            , m_notifyData { notifyData }
+            , m_sendNotification { sendNotification }
+            , m_shouldAllowPopups { shouldAllowPopups }
+        {
+        }
+
         const FrameLoadRequest& frameLoadRequest() const { return m_frameLoadRequest; }
         void* notifyData() const { return m_notifyData; }
         bool sendNotification() const { return m_sendNotification; }
@@ -239,7 +241,7 @@ namespace WebCore {
         void platformDestroy();
         static void setCurrentPluginView(PluginView*);
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        NPError load(const FrameLoadRequest&, bool sendNotification, void* notifyData);
+        NPError load(FrameLoadRequest&&, bool sendNotification, void* notifyData);
         NPError handlePost(const char* url, const char* target, uint32_t len, const char* buf, bool file, void* notifyData, bool sendNotification, bool allowHeaders);
         NPError handlePostReadFile(Vector<char>& buffer, uint32_t len, const char* buf);
 #endif

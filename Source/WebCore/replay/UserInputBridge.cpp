@@ -237,9 +237,9 @@ bool UserInputBridge::logicalScrollRecursively(ScrollLogicalDirection direction,
     return m_page.focusController().focusedOrMainFrame().eventHandler().logicalScrollRecursively(direction, granularity, nullptr);
 }
 
-void UserInputBridge::loadRequest(const FrameLoadRequest& request, InputSource)
+void UserInputBridge::loadRequest(FrameLoadRequest&& request, InputSource)
 {
-    m_page.mainFrame().loader().load(request);
+    m_page.mainFrame().loader().load(WTFMove(request));
 }
 
 void UserInputBridge::reloadFrame(Frame* frame, OptionSet<ReloadOption> options, InputSource)

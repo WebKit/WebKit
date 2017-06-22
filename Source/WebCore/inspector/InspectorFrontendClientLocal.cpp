@@ -230,7 +230,7 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
     FrameLoadRequest frameLoadRequest { mainFrame.document()->securityOrigin(), ResourceRequest(), ASCIILiteral("_blank"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 
     bool created;
-    RefPtr<Frame> frame = WebCore::createWindow(mainFrame, mainFrame, frameLoadRequest, { }, created);
+    RefPtr<Frame> frame = WebCore::createWindow(mainFrame, mainFrame, WTFMove(frameLoadRequest), { }, created);
     if (!frame)
         return;
 
@@ -240,7 +240,7 @@ void InspectorFrontendClientLocal::openInNewTab(const String& url)
     // FIXME: Why do we compute the absolute URL with respect to |frame| instead of |mainFrame|?
     ResourceRequest resourceRequest { frame->document()->completeURL(url) };
     FrameLoadRequest frameLoadRequest2 { mainFrame.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
-    frame->loader().changeLocation(frameLoadRequest2);
+    frame->loader().changeLocation(WTFMove(frameLoadRequest2));
 }
 
 void InspectorFrontendClientLocal::moveWindowBy(float x, float y)

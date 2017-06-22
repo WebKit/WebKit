@@ -1039,7 +1039,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     // Call to the frame loader because this is where our security checks are made.
     Frame* frame = core([dataSource webFrame]);
     FrameLoadRequest frameLoadRequest { frame->document()->securityOrigin(), { URL }, { }, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
-    frame->loader().loadFrameRequest(frameLoadRequest, event.get(), nullptr);
+    frame->loader().loadFrameRequest(WTFMove(frameLoadRequest), event.get(), nullptr);
 }
 
 - (void)PDFViewOpenPDFInNativeApplication:(PDFView *)sender

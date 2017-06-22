@@ -424,7 +424,7 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
 
     ResourceRequest resourceRequest { frame.document()->completeURL(url) };
     FrameLoadRequest frameLoadRequest { frame.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
-    frame.loader().changeLocation(frameLoadRequest);
+    frame.loader().changeLocation(WTFMove(frameLoadRequest));
 }
 
 static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)

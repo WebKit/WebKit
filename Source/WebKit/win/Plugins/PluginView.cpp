@@ -258,7 +258,7 @@ bool PluginView::start()
         FrameLoadRequest frameLoadRequest { m_parentFrame->document()->securityOrigin(), { }, { }, LockHistory::No, LockBackForwardList::No, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
         frameLoadRequest.resourceRequest().setHTTPMethod("GET");
         frameLoadRequest.resourceRequest().setURL(m_url);
-        load(frameLoadRequest, false, 0);
+        load(WTFMove(frameLoadRequest), false, nullptr);
     }
 
     m_status = PluginStatusLoadedSuccessfully;
@@ -425,7 +425,7 @@ void PluginView::performRequest(PluginRequest* request)
             FrameLoadRequest frameLoadRequest { *m_parentFrame.get(), request->frameLoadRequest().resourceRequest(), ShouldOpenExternalURLsPolicy::ShouldNotAllow };
             frameLoadRequest.setFrameName(targetFrameName);
             frameLoadRequest.setShouldCheckNewWindowPolicy(true);
-            m_parentFrame->loader().load(frameLoadRequest);
+            m_parentFrame->loader().load(WTFMove(frameLoadRequest));
 
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
@@ -488,7 +488,7 @@ void PluginView::scheduleRequest(std::unique_ptr<PluginRequest> request)
         m_requestTimer.startOneShot(0_s);
 }
 
-NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNotification, void* notifyData)
+NPError PluginView::load(FrameLoadRequest&& frameLoadRequest, bool sendNotification, void* notifyData)
 {
     ASSERT(frameLoadRequest.resourceRequest().httpMethod() == "GET" || frameLoadRequest.resourceRequest().httpMethod() == "POST");
 
@@ -516,7 +516,7 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
     } else if (!m_parentFrame->document()->securityOrigin().canDisplay(url))
         return NPERR_GENERIC_ERROR;
 
-    scheduleRequest(std::make_unique<PluginRequest>(frameLoadRequest, sendNotification, notifyData, arePopupsAllowed()));
+    scheduleRequest(std::make_unique<PluginRequest>(WTFMove(frameLoadRequest), sendNotification, notifyData, arePopupsAllowed()));
 
     return NPERR_NO_ERROR;
 }
@@ -539,7 +539,7 @@ NPError PluginView::getURLNotify(const char* url, const char* target, void* noti
     frameLoadRequest.resourceRequest().setHTTPMethod("GET");
     frameLoadRequest.resourceRequest().setURL(makeURL(m_parentFrame->document()->baseURL(), url));
 
-    return load(frameLoadRequest, true, notifyData);
+    return load(WTFMove(frameLoadRequest), true, notifyData);
 }
 
 NPError PluginView::getURL(const char* url, const char* target)
@@ -549,7 +549,7 @@ NPError PluginView::getURL(const char* url, const char* target)
     frameLoadRequest.resourceRequest().setHTTPMethod("GET");
     frameLoadRequest.resourceRequest().setURL(makeURL(m_parentFrame->document()->baseURL(), url));
 
-    return load(frameLoadRequest, false, 0);
+    return load(WTFMove(frameLoadRequest), false, nullptr);
 }
 
 NPError PluginView::postURLNotify(const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData)
@@ -1093,7 +1093,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
     frameLoadRequest.resourceRequest().setHTTPHeaderFields(WTFMove(headerFields));
     frameLoadRequest.resourceRequest().setHTTPBody(FormData::create(postData, postDataLength));
 
-    return load(frameLoadRequest, sendNotification, notifyData);
+    return load(WTFMove(frameLoadRequest), sendNotification, notifyData);
 }
 
 void PluginView::invalidateWindowlessPluginRect(const IntRect& rect)
