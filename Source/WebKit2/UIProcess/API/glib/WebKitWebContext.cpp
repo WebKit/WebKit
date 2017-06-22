@@ -229,6 +229,12 @@ private:
 
 WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
+#if PLATFORM(GTK)
+#define INJECTED_BUNDLE_FILENAME "libwebkit2gtkinjectedbundle.so"
+#elif PLATFORM(WPE)
+#define INJECTED_BUNDLE_FILENAME "libWPEInjectedBundle.so"
+#endif
+
 static const char* injectedBundleDirectory()
 {
 #if ENABLE(DEVELOPER_MODE)
@@ -242,7 +248,7 @@ static const char* injectedBundleDirectory()
         G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
     return injectedBundlePath;
 #elif PLATFORM(WPE)
-    // FIXME: Add web extensions API support to WPE.
+    // FIXME: Make it possible to use installed injected bundle in WPE.
     return nullptr;
 #endif
 }
@@ -296,7 +302,7 @@ static void webkitWebContextConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_web_context_parent_class)->constructed(object);
 
-    GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), "libwebkit2gtkinjectedbundle.so", nullptr));
+    GUniquePtr<char> bundleFilename(g_build_filename(injectedBundleDirectory(), INJECTED_BUNDLE_FILENAME, nullptr));
 
     API::ProcessPoolConfiguration configuration;
     configuration.setInjectedBundlePath(WebCore::stringFromFileSystemRepresentation(bundleFilename.get()));

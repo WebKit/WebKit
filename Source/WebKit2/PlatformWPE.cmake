@@ -1,6 +1,7 @@
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPE_API_DIR})
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_DIR})
+file(MAKE_DIRECTORY ${FORWARDING_HEADERS_WPE_EXTENSION_DIR})
 
 configure_file(wpe/wpe-webkit.pc.in ${CMAKE_BINARY_DIR}/wpe-webkit.pc @ONLY)
 
@@ -22,7 +23,19 @@ add_custom_command(
     COMMAND ln -n -s -f ${WEBKIT2_DIR}/UIProcess/API/wpe ${FORWARDING_HEADERS_WPE_DIR}/wpe
 )
 
+add_custom_command(
+    OUTPUT ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe
+    DEPENDS ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/wpe
+    COMMAND ln -n -s -f ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/wpe ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe
+)
+
+add_custom_target(webkit2wpe-fake-api-headers
+    DEPENDS ${FORWARDING_HEADERS_WPE_DIR}/wpe
+            ${FORWARDING_HEADERS_WPE_EXTENSION_DIR}/wpe
+)
+
 set(WEBKIT2_EXTRA_DEPENDENCIES
+    webkit2wpe-fake-api-headers
     webkit2wpe-forwarding-headers
 )
 
@@ -211,6 +224,14 @@ list(APPEND WebKit2_SOURCES
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
     WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
 
+    WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp
+    WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp
+    WebProcess/InjectedBundle/API/glib/WebKitFrame.cpp
+    WebProcess/InjectedBundle/API/glib/WebKitScriptWorld.cpp
+    WebProcess/InjectedBundle/API/glib/WebKitWebEditor.cpp
+    WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp
+    WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp
+
     WebProcess/InjectedBundle/glib/InjectedBundleGlib.cpp
 
     WebProcess/MediaCache/WebMediaKeyStorageManager.cpp
@@ -350,6 +371,7 @@ add_custom_command(
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_DIR}"
     "${FORWARDING_HEADERS_WPE_DIR}"
+    "${FORWARDING_HEADERS_WPE_EXTENSION_DIR}"
     "${DERIVED_SOURCES_DIR}"
     "${DERIVED_SOURCES_WPE_API_DIR}"
     "${WEBCORE_DIR}/platform/graphics/cairo"
@@ -381,6 +403,8 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/gstreamer"
     "${WEBKIT2_DIR}/UIProcess/linux"
     "${WEBKIT2_DIR}/UIProcess/soup"
+    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/glib"
+    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/wpe"
     "${WEBKIT2_DIR}/WebProcess/soup"
     "${WEBKIT2_DIR}/WebProcess/unix"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/soup"
@@ -479,6 +503,10 @@ add_dependencies(WPEWebInspectorResources WebKit2)
 target_link_libraries(WPEWebInspectorResources ${WPEWebInspectorResources_LIBRARIES})
 target_include_directories(WPEWebInspectorResources PUBLIC ${WPEWebInspectorResources_INCLUDE_DIRECTORIES})
 install(TARGETS WPEWebInspectorResources DESTINATION "${LIB_INSTALL_DIR}")
+
+add_library(WPEInjectedBundle MODULE "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")
+add_webkit2_prefix_header(WPEInjectedBundle)
+target_link_libraries(WPEInjectedBundle WebKit2)
 
 if (EXPORT_DEPRECATED_WEBKIT2_C_API)
     set(WPE_INSTALLED_WEBKIT_HEADERS
