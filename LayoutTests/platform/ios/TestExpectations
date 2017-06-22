@@ -1932,9 +1932,6 @@ fast/events/mouse-cursor-image-set.html
 fast/events/recorded-keydown-event.html
 fast/events/remove-child-onscroll.html
 fast/events/resize-subframe.html
-fast/events/will-reveal-edges-body-attributes.html
-fast/events/will-reveal-edges-event-listeners.html
-fast/events/will-reveal-edges-window-attributes.html
 fast/files/apply-blob-url-to-img.html
 fast/files/apply-blob-url-to-xhr.html
 fast/files/file-reader-abort.html
