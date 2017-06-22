@@ -1,3 +1,18 @@
+2017-06-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Add z-index to compositing logging output
+        https://bugs.webkit.org/show_bug.cgi?id=173684
+
+        Reviewed by Zalan Bujtas.
+
+        Show z-index, which is often useful to find negative z-index items.
+
+        Log "+foreground" rather than "foreground" to indicate that this layer has an
+        additional foreground/background layer, and fix spacing.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+
 2017-06-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, fix Window Debug build after r218660.

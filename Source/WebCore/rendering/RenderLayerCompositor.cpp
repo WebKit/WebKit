@@ -814,6 +814,9 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, int depth)
         absoluteBounds.x().toFloat(), absoluteBounds.y().toFloat(), absoluteBounds.maxX().toFloat(), absoluteBounds.maxY().toFloat(),
         backing->backingStoreMemoryEstimate() / 1024));
     
+    if (!layer.renderer().style().hasAutoZIndex())
+        logString.append(String::format(" z-index: %d", layer.renderer().style().zIndex())); 
+
     logString.appendLiteral(" (");
     logString.append(logReasonsForCompositing(layer));
     logString.appendLiteral(") ");
@@ -836,12 +839,16 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer& layer, int depth)
         if (backing->foregroundLayer() || backing->backgroundLayer()) {
             if (prependSpace)
                 logString.appendLiteral(", ");
-            if (backing->foregroundLayer() && backing->backgroundLayer())
-                logString.appendLiteral("foreground+background");
-            else if (backing->foregroundLayer())
-                logString.appendLiteral("foreground");
-            else
-                logString.appendLiteral("background");
+            if (backing->foregroundLayer() && backing->backgroundLayer()) {
+                logString.appendLiteral("+foreground+background");
+                prependSpace = true;
+            } else if (backing->foregroundLayer()) {
+                logString.appendLiteral("+foreground");
+                prependSpace = true;
+            } else {
+                logString.appendLiteral("+background");
+                prependSpace = true;
+            }
         }
         
         if (backing->paintsSubpixelAntialiasedText()) {
