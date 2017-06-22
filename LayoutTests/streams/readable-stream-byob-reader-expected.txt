@@ -13,6 +13,7 @@ PASS If controller has already been errored when ReadableStreamBYOBReader is cre
 PASS Calling ReadableStreamBYOBReader.releaseLock() with a this object different from ReadableStreamBYOBReader should be rejected 
 PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError 
 PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is not readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError 
+PASS Calling ReadableStreamBYOBReader.read() with a this object different from ReadableStreamBYOBReader should be rejected 
 PASS Getting a ReadableStreamBYOBReader should succeed 
 PASS ReadableStreamBYOBReader instances should have the correct list of properties 
 PASS Calling getReader() with a this object different from ReadableStream should throw a TypeError 
@@ -27,4 +28,5 @@ PASS If controller has already been errored when ReadableStreamBYOBReader is cre
 PASS Calling ReadableStreamBYOBReader.releaseLock() with a this object different from ReadableStreamBYOBReader should be rejected 
 PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError 
 PASS Calling ReadableStreamBYOBReader.releaseLock() on a stream that is not readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError 
+PASS Calling ReadableStreamBYOBReader.read() with a this object different from ReadableStreamBYOBReader should be rejected 
 

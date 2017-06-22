@@ -1,3 +1,32 @@
+2017-06-22  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Implement ReadableStreamBYOBReader read()
+        https://bugs.webkit.org/show_bug.cgi?id=172714
+
+        Reviewed by Youenn Fablet.
+
+        Implemented read() method of ReadableStreamBYOBReader [1]. Also added code related 
+        to BYOB features that were previously described as FIXMEs and that now become reachable.
+
+        In addition, WPT tests that involve read() have allowed to identify 2 bugs not directly 
+        related to read() (172716 and 172717). They will be fixed distinctly. Once done, all WPT
+        tests should pass.
+
+        [1] https://streams.spec.whatwg.org/#byob-reader-read
+
+        WPT tests (web-platform-tests/streams/readable-byte-streams/general.js) already cover
+        most cases for read() usage. Corresponding expectations have been updated. In addition,
+        1 test has been added to WebKit tests (in streams/readable-stream-byob-reader.js) to 
+        check that read() can only be applied to a ReadableStreamBYOBReader.
+
+        * Modules/streams/ReadableByteStreamInternals.js:
+        (readableByteStreamControllerClearPendingPullIntos): Implemented.
+        (readableByteStreamControllerEnqueue): Updated with support for BYOBReader.
+        (readableByteStreamControllerPullInto): Added.
+        (readableStreamAddReadIntoRequest): Added.
+        * Modules/streams/ReadableStreamBYOBReader.js:
+        (read): Added.
+
 2017-06-22  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Prevent capturing at unconventional resolutions when using the SW encoder on Mac

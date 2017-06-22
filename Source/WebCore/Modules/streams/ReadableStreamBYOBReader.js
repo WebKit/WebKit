@@ -41,8 +41,22 @@ function read(view)
 {
     "use strict";
 
-    // FIXME: Implement appropriate behavior.
-    @throwTypeError("ReadableStreamBYOBReader read() is not implemented");
+    if (!@isReadableStreamBYOBReader(this))
+        return @Promise.@reject(@makeThisTypeError("ReadableStreamBYOBReader", "read"));
+
+    if (!this.@ownerReadableStream)
+        return @Promise.@reject(new @TypeError("read() called on a reader owned by no readable stream"));
+
+    if (!@isObject(view))
+        return @Promise.@reject(new @TypeError("Provided view is not an object"));
+
+    if (!@ArrayBuffer.@isView(view))
+        return @Promise.@reject(new @TypeError("Provided view is not an ArrayBufferView"));
+
+    if (view.byteLength === 0)
+        return @Promise.@reject(new @TypeError("Provided view cannot have a 0 byteLength"));
+
+    return @readableStreamBYOBReaderRead(this, view);
 }
 
 function releaseLock()

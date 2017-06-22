@@ -179,7 +179,8 @@ function readableByteStreamControllerClearPendingPullIntos(controller)
 {
     "use strict";
 
-    // FIXME: To be implemented in conjunction with ReadableStreamBYOBRequest.
+    @readableByteStreamControllerInvalidateBYOBRequest(controller);
+    controller.@pendingPullIntos = [];
 }
 
 function readableByteStreamControllerGetDesiredSize(controller)
@@ -348,9 +349,8 @@ function readableByteStreamControllerEnqueue(controller, chunk)
     }
 
     if (@readableStreamHasBYOBReader(stream)) {
-        // FIXME: To be implemented once ReadableStreamBYOBReader has been implemented (for the moment,
-        // test cannot be true).
-        @throwTypeError("ReadableByteStreamController enqueue operation has no support for BYOB reader");
+        @readableByteStreamControllerEnqueueChunk(controller, transferredBuffer, byteOffset, byteLength);
+        @readableByteStreamControllerProcessPullDescriptors(controller);
         return;
     }
 
@@ -595,4 +595,99 @@ function readableStreamFulfillReadIntoRequest(stream, chunk, done)
     "use strict";
 
     stream.@reader.@readIntoRequests.@shift().@resolve.@call(@undefined, {value: chunk, done: done});
+}
+
+function readableStreamBYOBReaderRead(reader, view)
+{
+    "use strict";
+
+    const stream = reader.@ownerReadableStream;
+    @assert(!!stream);
+
+    stream.@disturbed = true;
+    if (stream.@state === @streamErrored)
+        return @Promise.@reject(stream.@storedError);
+
+    return @readableByteStreamControllerPullInto(stream.@readableStreamController, view);
+}
+
+function readableByteStreamControllerPullInto(controller, view)
+{
+    "use strict";
+
+    const stream = controller.@controlledReadableStream;
+    let elementSize = 1;
+    // Spec describes that in the case where view is a TypedArray, elementSize
+    // should be set to the size of an element (e.g. 2 for UInt16Array). For
+    // DataView, BYTES_PER_ELEMENT is undefined, contrary to the same property
+    // for TypedArrays.
+    // FIXME: Getting BYTES_PER_ELEMENT like this is not safe (property is read-only
+    // but can be modified if the prototype is redefined). A safe way of getting
+    // it would be to determine which type of ArrayBufferView view is an instance
+    // of based on typed arrays private variables. However, this is not possible due
+    // to bug 167697, which prevents access to typed arrays through their private
+    // names unless public name has already been met before.
+    if (view.BYTES_PER_ELEMENT !== @undefined)
+        elementSize = view.BYTES_PER_ELEMENT;
+
+    // FIXME: Getting constructor like this is not safe. A safe way of getting
+    // it would be to determine which type of ArrayBufferView view is an instance
+    // of, and to assign appropriate constructor based on this (e.g. ctor =
+    // @Uint8Array). However, this is not possible due to bug 167697, which
+    // prevents access to typed arrays through their private names unless public
+    // name has already been met before.
+    const ctor = view.constructor;
+
+    const pullIntoDescriptor = {
+        buffer: view.buffer,
+        byteOffset: view.byteOffset,
+        byteLength: view.byteLength,
+        bytesFilled: 0,
+        elementSize,
+        ctor,
+        readerType: 'byob'
+    };
+
+    if (controller.@pendingPullIntos.length) {
+        pullIntoDescriptor.buffer = @transferBufferToCurrentRealm(pullIntoDescriptor.buffer);
+        controller.@pendingPullIntos.@push(pullIntoDescriptor);
+        return @readableStreamAddReadIntoRequest(stream);
+    }
+
+    if (stream.@state === @streamClosed) {
+        const emptyView = new ctor(pullIntoDescriptor.buffer, pullIntoDescriptor.byteOffset, 0);
+        return @Promise.@resolve({ value: emptyView, done: true });
+    }
+
+    if (controller.@totalQueuedBytes > 0) {
+        if (@readableByteStreamControllerFillDescriptorFromQueue(controller, pullIntoDescriptor)) {
+            const filledView = @readableByteStreamControllerConvertDescriptor(pullIntoDescriptor);
+            @readableByteStreamControllerHandleQueueDrain(controller);
+            return @Promise.@resolve({ value: filledView, done: false });
+        }
+        if (controller.@closeRequested) {
+            const e = new @TypeError("Closing stream has been requested");
+            @readableByteStreamControllerError(controller, e);
+            return @Promise.@reject(e);
+        }
+    }
+
+    pullIntoDescriptor.buffer = @transferBufferToCurrentRealm(pullIntoDescriptor.buffer);
+    controller.@pendingPullIntos.@push(pullIntoDescriptor);
+    const promise = @readableStreamAddReadIntoRequest(stream);
+    @readableByteStreamControllerCallPullIfNeeded(controller);
+    return promise;
+}
+
+function readableStreamAddReadIntoRequest(stream)
+{
+    "use strict";
+
+    @assert(@isReadableStreamBYOBReader(stream.@reader));
+    @assert(stream.@state === @streamReadable || stream.@state === @streamClosed);
+
+    const readRequest = @newPromiseCapability(@Promise);
+    stream.@reader.@readIntoRequests.@push(readRequest);
+
+    return readRequest.@promise;
 }

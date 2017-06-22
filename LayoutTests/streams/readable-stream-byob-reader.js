@@ -215,4 +215,13 @@ promise_test(function(test) {
     return promise_rejects(test, myError, reader.closed);
 }, "Calling ReadableStreamBYOBReader.releaseLock() on a stream that is not readable should result in ReadableStreamBYOBReader.closed promise to be rejected with a TypeError");
 
+promise_test(function(test) {
+    const rs = new ReadableStream({ type: 'bytes' });
+    const reader = rs.getReader({ mode: 'byob' });
+    let rp = reader.read.apply(rs);
+    const myError= new TypeError("Can only call ReadableStreamBYOBReader.read() on instances of ReadableStreamBYOBReader");
+
+    return promise_rejects(test, myError, rp);
+}, "Calling ReadableStreamBYOBReader.read() with a this object different from ReadableStreamBYOBReader should be rejected");
+
 done();
