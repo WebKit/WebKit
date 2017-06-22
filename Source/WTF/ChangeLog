@@ -1,3 +1,26 @@
+2017-06-21  Andreas Kling  <akling@apple.com>
+
+        Increase memory kill limits for WebContent processes that manage multiple tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=173674
+
+        Reviewed by Geoffrey Garen.
+
+        When opening <a target=_blank> links, we currently have to use the same WebContent
+        process for the new tab, to support scripting the window.opener object.
+        This means that some WebContent processes end up hosting multiple tabs, making it
+        more likely that those processes will hit the memory limits.
+
+        Address this by adding some additional allowance for multi-tab processes:
+
+            For each additional tab, up to 4 tabs, add 1GB to the memory kill limit.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::thresholdForMemoryKillWithProcessState):
+        (WTF::MemoryPressureHandler::setTabCount):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        * wtf/MemoryPressureHandler.h:
+
 2017-06-21  Chris Dumez  <cdumez@apple.com>
 
         Allow constructing a WTF:Function from a function pointer

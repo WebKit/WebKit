@@ -1,3 +1,16 @@
+2017-06-21  Andreas Kling  <akling@apple.com>
+
+        Increase memory kill limits for WebContent processes that manage multiple tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=173674
+
+        Reviewed by Geoffrey Garen.
+
+        Plumb the non-utility Page count down to WTF::MemoryPressureHandler.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+
 2017-06-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebCrypto] Restore ordering of CryptoAlgorithmIdentifier in SerializedScriptValue

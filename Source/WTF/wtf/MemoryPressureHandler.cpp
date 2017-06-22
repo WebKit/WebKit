@@ -81,21 +81,34 @@ static const char* toString(MemoryUsagePolicy policy)
 }
 #endif
 
-static size_t thresholdForMemoryKillWithProcessState(WebsamProcessState processState)
+static size_t thresholdForMemoryKillWithProcessState(WebsamProcessState processState, unsigned tabCount)
 {
 #if CPU(X86_64) || CPU(ARM64)
+    size_t baseThreshold;
     if (processState == WebsamProcessState::Active)
-        return 4 * GB;
-    return 2 * GB;
+        baseThreshold = 4 * GB;
+    else
+        baseThreshold = 2 * GB;
+    if (tabCount <= 1)
+        return baseThreshold;
+    return baseThreshold + (std::min(tabCount - 1, 4u) * 1 * GB);
 #else
     UNUSED_PARAM(processState);
+    UNUSED_PARAM(tabCount);
     return 3 * GB;
 #endif
 }
 
+void MemoryPressureHandler::setTabCount(unsigned tabCount)
+{
+    if (singleton().m_tabCount == tabCount)
+        return;
+    singleton().m_tabCount = tabCount;
+}
+
 size_t MemoryPressureHandler::thresholdForMemoryKill()
 {
-    return thresholdForMemoryKillWithProcessState(m_processState);
+    return thresholdForMemoryKillWithProcessState(m_processState, m_tabCount);
 }
 
 static size_t thresholdForPolicy(MemoryUsagePolicy policy)
@@ -176,7 +189,7 @@ void MemoryPressureHandler::measurementTimerFired()
         break;
     }
 
-    if (processState() == WebsamProcessState::Active && footprint.value() > thresholdForMemoryKillWithProcessState(WebsamProcessState::Inactive))
+    if (processState() == WebsamProcessState::Active && footprint.value() > thresholdForMemoryKillWithProcessState(WebsamProcessState::Inactive, m_tabCount))
         doesExceedInactiveLimitWhileActive();
     else
         doesNotExceedInactiveLimitWhileActive();

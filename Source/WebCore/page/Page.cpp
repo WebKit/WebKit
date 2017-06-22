@@ -287,8 +287,10 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
     ASSERT(!allPages->contains(this));
     allPages->add(this);
-    if (!isUtilityPage())
+    if (!isUtilityPage()) {
         ++nonUtilityPageCount;
+        MemoryPressureHandler::setTabCount(nonUtilityPageCount);
+    }
 
 #ifndef NDEBUG
     pageCounter.increment();
@@ -314,8 +316,10 @@ Page::~Page()
     m_mainFrame->setView(nullptr);
     setGroupName(String());
     allPages->remove(this);
-    if (!isUtilityPage())
+    if (!isUtilityPage()) {
         --nonUtilityPageCount;
+        MemoryPressureHandler::setTabCount(nonUtilityPageCount);
+    }
     
     m_settings->pageDestroyed();
 
