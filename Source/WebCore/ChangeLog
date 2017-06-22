@@ -1,3 +1,19 @@
+2017-06-21  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] Restore ordering of CryptoAlgorithmIdentifier in SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=173678
+        <rdar://problem/32879314>
+
+        Reviewed by Sam Weinig.
+
+        r218030 reorders the ordering of CryptoAlgorithmIdentifier in SerializedScriptValue,
+        which introduces backward compatibility issues with CryptoKey objects stored in the
+        IndexedDB. Hence, we should restore it back.
+
+        No tests.
+
+        * bindings/js/SerializedScriptValue.cpp:
+
 2017-06-21  Daniel Bates  <dabates@apple.com>
 
         Change FrameLoadRequest from a struct to a class
