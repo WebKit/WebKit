@@ -240,8 +240,6 @@ static gboolean contextMenuCallback(WebKitWebPage* page, WebKitContextMenu* menu
 }
 #endif // PLATFORM(GTK)
 
-// FIXME: Use JSC API to send script messages from JavaScript.
-#if PLATFORM(GTK)
 static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMessage* consoleMessage)
 {
     g_assert(consoleMessage);
@@ -249,11 +247,29 @@ static void consoleMessageSentCallback(WebKitWebPage* webPage, WebKitConsoleMess
         webkit_console_message_get_level(consoleMessage), webkit_console_message_get_text(consoleMessage),
         webkit_console_message_get_line(consoleMessage), webkit_console_message_get_source_id(consoleMessage));
     GUniquePtr<char> messageString(g_variant_print(variant.get(), FALSE));
+#if PLATFORM(GTK)
     GRefPtr<WebKitDOMDOMWindow> window = adoptGRef(webkit_dom_document_get_default_view(webkit_web_page_get_dom_document(webPage)));
     g_assert(WEBKIT_DOM_IS_DOM_WINDOW(window.get()));
     webkit_dom_dom_window_webkit_message_handlers_post_message(window.get(), "console", messageString.get());
-}
+#else
+    GUniquePtr<char> escapedMessageString(static_cast<char*>(g_malloc(strlen(messageString.get()) * 2 + 1)));
+    char* src = messageString.get();
+    char* dest = escapedMessageString.get();
+    while (*src) {
+        if (*src == '"') {
+            *dest++ = '\\';
+            *dest++ = '"';
+        } else
+            *dest++ = *src;
+        ++src;
+    }
+    *dest = '\0';
+    GUniquePtr<char> script(g_strdup_printf("window.webkit.messageHandlers.console.postMessage(\"%s\");", escapedMessageString.get()));
+    JSGlobalContextRef jsContext = webkit_frame_get_javascript_global_context(webkit_web_page_get_main_frame(webPage));
+    JSRetainPtr<JSStringRef> jsScript(Adopt, JSStringCreateWithUTF8CString(script.get()));
+    JSEvaluateScript(jsContext, jsScript.get(), nullptr, nullptr, 1, nullptr);
 #endif
+}
 
 #if PLATFORM(GTK)
 static void emitFormControlsAssociated(GDBusConnection* connection, const char* formIds)
@@ -297,9 +313,9 @@ static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* we
     g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), extension);
     g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), extension);
     g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), nullptr);
+    g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
 #if PLATFORM(GTK)
     g_signal_connect(webPage, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
-    g_signal_connect(webPage, "console-message-sent", G_CALLBACK(consoleMessageSentCallback), nullptr);
     g_signal_connect(webPage, "form-controls-associated", G_CALLBACK(formControlsAssociatedCallback), extension);
 #endif
 }

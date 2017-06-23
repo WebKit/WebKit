@@ -21,7 +21,6 @@
 
 #include "WebViewTest.h"
 
-#if PLATFORM(GTK)
 class ConsoleMessageTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ConsoleMessageTest);
@@ -140,17 +139,13 @@ static void testWebKitConsoleMessageSecurityError(ConsoleMessageTest* test, gcon
     test->waitUntilConsoleMessageReceived();
     g_assert(test->m_consoleMessage == referenceMessage);
 }
-#endif // PLATFORM(GTK)
 
 void beforeAll()
 {
-    // FIXME: Use JSC API to send script messages from JavaScript.
-#if PLATFORM(GTK)
     ConsoleMessageTest::add("WebKitConsoleMessage", "console-api", testWebKitConsoleMessageConsoleAPI);
     ConsoleMessageTest::add("WebKitConsoleMessage", "js-exception", testWebKitConsoleMessageJavaScriptException);
     ConsoleMessageTest::add("WebKitConsoleMessage", "network-error", testWebKitConsoleMessageNetworkError);
     ConsoleMessageTest::add("WebKitConsoleMessage", "security-error", testWebKitConsoleMessageSecurityError);
-#endif
 }
 
 void afterAll()

@@ -1,5 +1,31 @@
 2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Use JSC API to send script messages from web extension in tests
+        https://bugs.webkit.org/show_bug.cgi?id=173757
+
+        Reviewed by Žan Doberšek.
+
+        The GTK+ uses DOM bindings to send the messages. We can just build the message string and use JSEvaluateScript
+        to run postMessage().
+
+        Fixes: /wpe/WebKitSecurityManager/file-xhr
+               /wpe/WebKitConsoleMessage/console-api
+               /wpe/WebKitConsoleMessage/js-exception
+               /wpe/WebKitConsoleMessage/network-error
+               /wpe/WebKitConsoleMessage/security-error
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp:
+        (testWebKitConsoleMessageSecurityError): Remove ifdefs.
+        (beforeAll): Ditto.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (testWebContextSecurityFileXHR): Ditto.
+        (beforeAll): Ditto.
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (consoleMessageSentCallback): Use JSEvaluateScript in WPE. We need to escape the '"' in the message string.
+        (pageCreatedCallback): Remove ifdefs.
+
+2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix WPE /wpe/WebKitWebView/javascript-dialogs and /wpe/WebKitWebView/window-properties
 
         Skip onbeforeunload dialog tests for now in WPE since we don't have a implemention for

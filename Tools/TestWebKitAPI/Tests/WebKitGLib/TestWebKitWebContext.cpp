@@ -580,7 +580,6 @@ static void testWebContextSecurityPolicy(SecurityPolicyTest* test, gconstpointer
         | SecurityPolicyTest::CORSEnabled | SecurityPolicyTest::EmptyDocument);
 }
 
-#if PLATFORM(GTK)
 static void consoleMessageReceivedCallback(WebKitUserContentManager*, WebKitJavascriptResult* message, WebKitJavascriptResult** result)
 {
     g_assert(result);
@@ -649,7 +648,6 @@ static void testWebContextSecurityFileXHR(WebViewTest* test, gconstpointer)
 
     webkit_settings_set_allow_file_access_from_file_urls(webkit_web_view_get_settings(test->m_webView), FALSE);
 }
-#endif // PLATFORM(GTK)
 
 class ProxyTest : public WebViewTest {
 public:
@@ -784,10 +782,7 @@ void beforeAll()
 #endif
     WebViewTest::add("WebKitWebContext", "languages", testWebContextLanguages);
     SecurityPolicyTest::add("WebKitSecurityManager", "security-policy", testWebContextSecurityPolicy);
-    // FIXME: fix script messages in WPE.
-#if PLATFORM(GTK)
     WebViewTest::add("WebKitSecurityManager", "file-xhr", testWebContextSecurityFileXHR);
-#endif
     ProxyTest::add("WebKitWebContext", "proxy", testWebContextProxySettings);
 }
 
