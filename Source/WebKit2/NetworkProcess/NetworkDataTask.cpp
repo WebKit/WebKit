@@ -34,6 +34,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 
 #if PLATFORM(COCOA)
 #include "NetworkDataTaskCocoa.h"

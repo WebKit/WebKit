@@ -1,5 +1,11 @@
 2017-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, fix Debug build after r218763
+
+        * NetworkProcess/NetworkDataTask.cpp:
+
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
         Add more release logging for process assertions
         https://bugs.webkit.org/show_bug.cgi?id=173624
         <rdar://problem/32412701>
