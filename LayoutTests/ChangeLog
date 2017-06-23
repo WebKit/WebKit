@@ -1,3 +1,21 @@
+2017-06-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Drop the AES-CFB support
+        https://bugs.webkit.org/show_bug.cgi?id=173547
+
+        Reviewed by Jiewen Tan.
+
+        Add GTK+-specific baselines for AES tests that also cover the CFB variation.
+        These tests still pass because errors are expected, it's just that errors now
+        occur because the algorithm isn't supported anymore, rather than because of
+        operation errors due to malformed parameters.
+
+        * platform/gtk/crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt: Added.
+        * platform/gtk/crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt: Added.
+        * platform/gtk/crypto/subtle/aes-export-key-malformed-parameters-expected.txt: Added.
+        * platform/gtk/crypto/subtle/aes-generate-key-malformed-parameters-expected.txt: Added.
+        * platform/gtk/crypto/subtle/aes-import-key-malformed-parameters-expected.txt: Added.
+
 2017-06-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r217695): Offscreen/overflowed items not being rendered while translating in-frame

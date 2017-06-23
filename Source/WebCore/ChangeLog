@@ -1,3 +1,23 @@
+2017-06-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Drop the AES-CFB support
+        https://bugs.webkit.org/show_bug.cgi?id=173547
+
+        Reviewed by Jiewen Tan.
+
+        No new tests -- relevant test baselines are updated.
+
+        Stop registering the AES-CFB algorithm as something that's supported by
+        the libgcrypt implementation. This algorithm was previously included in
+        the Web Crypto API specification, but has since been dropped from it.
+
+        Conveniently, libgcrypt only recently gained support for the CFB8 AES
+        cipher mode that's required by the specification, meaning we could only
+        support this algorithm with future releases of the libgcrypt library.
+
+        * crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp:
+        (WebCore::CryptoAlgorithmRegistry::platformRegisterAlgorithms):
+
 2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Enable PUBLIC_SUFFIX_LIST
