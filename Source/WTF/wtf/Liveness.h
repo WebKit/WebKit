@@ -27,7 +27,6 @@
 
 #include <wtf/BitVector.h>
 #include <wtf/IndexSparseSet.h>
-#include <wtf/ListDump.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

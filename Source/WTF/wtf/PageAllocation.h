@@ -29,7 +29,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/OSAllocator.h>
 #include <wtf/PageBlock.h>
-#include <wtf/VMTags.h>
 #include <algorithm>
 
 #if OS(DARWIN)

@@ -29,8 +29,6 @@
 #define ParallelJobs_h
 
 #include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 // Usage:
