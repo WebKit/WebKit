@@ -1,5 +1,20 @@
 2017-06-23  Frederic Wang  <fwang@igalia.com>
 
+        Remove fast/regions/region-leak-js-information-when-disabled-at-runtime.html
+        https://bugs.webkit.org/show_bug.cgi?id=173784
+
+        Reviewed by Simon Fraser.
+
+        fast/regions/region-leak-js-information-when-disabled-at-runtime.html is supposed to test
+        that some JS properties are undefined when CSS regions are disabled at runtime. However, this
+        part is currently commented out and the test is no longer relevant after r200524. Hence we
+        just remove it.
+
+        * fast/regions/region-leak-js-information-when-disabled-at-runtime-expected.txt: Removed.
+        * fast/regions/region-leak-js-information-when-disabled-at-runtime.html: Removed.
+
+2017-06-23  Frederic Wang  <fwang@igalia.com>
+
         Use window.internals instead of overridePreference to set WebCore settings in tests
         https://bugs.webkit.org/show_bug.cgi?id=173714
 
