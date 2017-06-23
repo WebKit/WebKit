@@ -1,3 +1,12 @@
+2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Enable PUBLIC_SUFFIX_LIST
+        https://bugs.webkit.org/show_bug.cgi?id=173758
+
+        Reviewed by Žan Doberšek.
+
+        * PlatformWPE.cmake: Add PublicSuffixSoup.cpp to the build.
+
 2017-06-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r217695): Offscreen/overflowed items not being rendered while translating in-frame
