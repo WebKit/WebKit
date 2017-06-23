@@ -35,8 +35,9 @@ function gotDescription1(desc, options)
         options.observeOffer(desc);
 
     localConnection.setLocalDescription(desc);
-    remoteConnection.setRemoteDescription(desc);
-    remoteConnection.createAnswer().then((desc) => gotDescription2(desc, options), onCreateSessionDescriptionError);
+    remoteConnection.setRemoteDescription(desc).then(() => {
+        remoteConnection.createAnswer().then((desc) => gotDescription2(desc, options), onCreateSessionDescriptionError);
+    });
 }
 
 function gotDescription2(desc, options)

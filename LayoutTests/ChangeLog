@@ -1,5 +1,14 @@
 2017-06-23  Youenn Fablet  <youenn@apple.com>
 
+        webrtc/routines.js should call createAnswer once setRemoteDescription promise is resolved
+        https://bugs.webkit.org/show_bug.cgi?id=173785
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/routines.js:
+
+2017-06-23  Youenn Fablet  <youenn@apple.com>
+
         webrtc::WebRtcSession is not handling correctly its state when setLocalDescription fails and is called again
         https://bugs.webkit.org/show_bug.cgi?id=173783
 
