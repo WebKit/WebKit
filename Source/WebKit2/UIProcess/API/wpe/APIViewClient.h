@@ -25,6 +25,8 @@
 
 #pragma once
 
+typedef struct OpaqueJSContext* JSGlobalContextRef;
+
 namespace WebKit {
 class DownloadProxy;
 }
@@ -41,6 +43,7 @@ public:
 
     virtual void frameDisplayed(WKWPE::View&) { }
     virtual void handleDownloadRequest(WKWPE::View&, WebKit::DownloadProxy&) { }
+    virtual JSGlobalContextRef javascriptGlobalContext() { return nullptr; }
 };
 
 } // namespace API

@@ -119,6 +119,8 @@ private:
 
     void didChangeAvoidsUnsafeArea(bool) override { }
 
+    JSGlobalContextRef javascriptGlobalContext() override;
+
     WKWPE::View& m_view;
 
     std::unique_ptr<ScrollGestureController> m_scrollGestureController;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
+#include "PageClientImpl.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotImplemented.h>
 
@@ -34,6 +35,11 @@ namespace WebKit {
 void WebPageProxy::platformInitialize()
 {
     notImplemented();
+}
+
+JSGlobalContextRef WebPageProxy::javascriptGlobalContext()
+{
+    return m_pageClient.javascriptGlobalContext();
 }
 
 String WebPageProxy::standardUserAgent(const String&)

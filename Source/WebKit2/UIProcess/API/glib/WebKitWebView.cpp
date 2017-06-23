@@ -59,6 +59,7 @@
 #include "WebKitWebsiteDataManagerPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/GUniquePtrSoup.h>
 #include <WebCore/JSDOMExceptionHandling.h>
@@ -180,9 +181,6 @@ class PageLoadStateObserver;
 struct _WebKitWebViewPrivate {
     ~_WebKitWebViewPrivate()
     {
-        if (javascriptGlobalContext)
-            JSGlobalContextRelease(javascriptGlobalContext);
-
         // For modal dialogs, make sure the main loop is stopped when finalizing the webView.
         if (modalLoop && g_main_loop_is_running(modalLoop.get()))
             g_main_loop_quit(modalLoop.get());
@@ -215,7 +213,7 @@ struct _WebKitWebViewPrivate {
     WebEvent::Modifiers mouseTargetModifiers;
 
     GRefPtr<WebKitFindController> findController;
-    JSGlobalContextRef javascriptGlobalContext;
+    JSRetainPtr<JSGlobalContextRef> javascriptGlobalContext;
 
     GRefPtr<WebKitWebResource> mainResource;
     LoadingResourcesMap loadingResourcesMap;
@@ -348,6 +346,11 @@ private:
     void handleDownloadRequest(WKWPE::View&, DownloadProxy& downloadProxy) override
     {
         webkitWebViewHandleDownloadRequest(m_webView, &downloadProxy);
+    }
+
+    JSGlobalContextRef javascriptGlobalContext() override
+    {
+        return webkit_web_view_get_javascript_global_context(m_webView);
     }
 
     WebKitWebView* m_webView;
@@ -3069,11 +3072,11 @@ WebKitFindController* webkit_web_view_get_find_controller(WebKitWebView* webView
  */
 JSGlobalContextRef webkit_web_view_get_javascript_global_context(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
     if (!webView->priv->javascriptGlobalContext)
-        webView->priv->javascriptGlobalContext = JSGlobalContextCreate(0);
-    return webView->priv->javascriptGlobalContext;
+        webView->priv->javascriptGlobalContext = adopt(JSGlobalContextCreate(nullptr));
+    return webView->priv->javascriptGlobalContext.get();
 }
 
 static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSerializedScriptValue, const WebCore::ExceptionDetails& exceptionDetails, GTask* task)
@@ -3101,8 +3104,8 @@ static void webkitWebViewRunJavaScriptCallback(API::SerializedScriptValue* wkSer
         return;
     }
 
-    WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task));
-    g_task_return_pointer(task, webkitJavascriptResultCreate(webView,
+    auto* jsContext = webkit_web_view_get_javascript_global_context(WEBKIT_WEB_VIEW(g_task_get_source_object(task)));
+    g_task_return_pointer(task, webkitJavascriptResultCreate(jsContext,
         *wkSerializedScriptValue->internalRepresentation()),
         reinterpret_cast<GDestroyNotify>(webkit_javascript_result_unref));
 }

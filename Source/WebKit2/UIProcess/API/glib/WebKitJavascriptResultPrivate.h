@@ -21,6 +21,5 @@
 
 #include <WebCore/SerializedScriptValue.h>
 #include "WebKitJavascriptResult.h"
-#include "WebKitWebView.h"
 
-WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView*, WebCore::SerializedScriptValue&);
+WebKitJavascriptResult* webkitJavascriptResultCreate(JSGlobalContextRef, WebCore::SerializedScriptValue&);

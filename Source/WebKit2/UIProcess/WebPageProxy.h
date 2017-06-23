@@ -177,6 +177,10 @@ using FloatBoxExtent = BoxExtent<float>;
 typedef GtkWidget* PlatformWidget;
 #endif
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+typedef struct OpaqueJSContext* JSGlobalContextRef;
+#endif
+
 namespace WebKit {
 class CertificateInfo;
 class DrawingAreaProxy;
@@ -628,6 +632,10 @@ public:
     PlatformWidget viewWidget();
     const WebCore::Color& backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(const WebCore::Color& color) { m_backgroundColor = color; }
+#endif
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    JSGlobalContextRef javascriptGlobalContext();
 #endif
 
     void handleMouseEvent(const NativeWebMouseEvent&);

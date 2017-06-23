@@ -33,6 +33,7 @@
 #include <memory>
 #include <wtf/RefPtr.h>
 
+typedef struct OpaqueJSContext* JSGlobalContextRef;
 struct wpe_view_backend;
 
 namespace API {
@@ -59,6 +60,7 @@ public:
     void setClient(std::unique_ptr<API::ViewClient>&&);
     void frameDisplayed();
     void handleDownloadRequest(WebKit::DownloadProxy&);
+    JSGlobalContextRef javascriptGlobalContext();
 
     WebKit::WebPageProxy& page() { return *m_pageProxy; }
 

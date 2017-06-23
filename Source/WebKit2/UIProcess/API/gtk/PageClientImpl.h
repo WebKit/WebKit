@@ -148,6 +148,8 @@ private:
 
     void didChangeAvoidsUnsafeArea(bool) override { }
 
+    JSGlobalContextRef javascriptGlobalContext() override;
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

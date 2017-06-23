@@ -1,3 +1,50 @@
+2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] User script messages don't work
+        https://bugs.webkit.org/show_bug.cgi?id=173712
+
+        Reviewed by Žan Doberšek.
+
+        When a user script message is received we need to create a WebKitJavascriptResult to deserialize the script
+        value. WebKitJavascriptResult is created with a WebKitWebView for two reasons: to get its JavaScript global
+        context and to take a reference that ensures the JavaScript context will be alive while the results is
+        alive. However, we could create the WebKitJavascriptResult with the JavaScript global context and take a
+        reference of the context itself. This way we don't need to access the WebKitWebView from the
+        WebScriptMessageHandler client. But we still need access to the JavaScript context, so I've added a
+        javascriptGlobalContext() method to WebPageProxy for GTK+ and WPE that is implemented from the page client.
+
+        Fixes /wpe/WebKitUserContentManager/script-message-received.
+
+        * UIProcess/API/glib/WebKitJavascriptResult.cpp:
+        (_WebKitJavascriptResult::_WebKitJavascriptResult): Create the WebKitJavascriptResult with a JSGlobalContextRef
+        instead of a WEbKitWebView.
+        (webkitJavascriptResultCreate): Pass the js context to the constructor.
+        (webkit_javascript_result_get_global_context): Return the js context.
+        * UIProcess/API/glib/WebKitJavascriptResultPrivate.h:
+        * UIProcess/API/glib/WebKitUserContentManager.cpp:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate::~_WebKitWebViewPrivate): Use JSRetainPtr
+        (webkit_web_view_get_javascript_global_context):
+        (webkitWebViewRunJavaScriptCallback):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::javascriptGlobalContext):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/wpe/APIViewClient.h:
+        (API::ViewClient::javascriptGlobalContext):
+        * UIProcess/API/wpe/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::javascriptGlobalContext):
+        * UIProcess/API/wpe/PageClientImpl.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::javascriptGlobalContext):
+        * UIProcess/API/wpe/WPEView.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::javascriptGlobalContext):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::javascriptGlobalContext):
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebPageProxy::javascriptGlobalContext):
+
 2017-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] Enable in-app dragging from WKWebView on the phone

@@ -22,17 +22,18 @@
 
 #include "APISerializedScriptValue.h"
 #include "WebKitJavascriptResultPrivate.h"
+#include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/glib/GRefPtr.h>
 
 struct _WebKitJavascriptResult {
-    _WebKitJavascriptResult(WebKitWebView* view, WebCore::SerializedScriptValue& serializedScriptValue)
-        : webView(view)
+    _WebKitJavascriptResult(JSGlobalContextRef jsContext, WebCore::SerializedScriptValue& serializedScriptValue)
+        : javascriptGlobalContext(jsContext)
         , referenceCount(1)
     {
-        value = serializedScriptValue.deserialize(webkit_web_view_get_javascript_global_context(view), nullptr);
+        value = serializedScriptValue.deserialize(javascriptGlobalContext.get(), nullptr);
     }
 
-    GRefPtr<WebKitWebView> webView;
+    JSRetainPtr<JSGlobalContextRef> javascriptGlobalContext;
     JSValueRef value;
 
     int referenceCount;
@@ -40,10 +41,10 @@ struct _WebKitJavascriptResult {
 
 G_DEFINE_BOXED_TYPE(WebKitJavascriptResult, webkit_javascript_result, webkit_javascript_result_ref, webkit_javascript_result_unref)
 
-WebKitJavascriptResult* webkitJavascriptResultCreate(WebKitWebView* webView, WebCore::SerializedScriptValue& serializedScriptValue)
+WebKitJavascriptResult* webkitJavascriptResultCreate(JSGlobalContextRef javascriptGlobalContext, WebCore::SerializedScriptValue& serializedScriptValue)
 {
     WebKitJavascriptResult* result = static_cast<WebKitJavascriptResult*>(fastMalloc(sizeof(WebKitJavascriptResult)));
-    new (result) WebKitJavascriptResult(webView, serializedScriptValue);
+    new (result) WebKitJavascriptResult(javascriptGlobalContext, serializedScriptValue);
     return result;
 }
 
@@ -90,7 +91,7 @@ void webkit_javascript_result_unref(WebKitJavascriptResult* javascriptResult)
  */
 JSGlobalContextRef webkit_javascript_result_get_global_context(WebKitJavascriptResult* javascriptResult)
 {
-    return webkit_web_view_get_javascript_global_context(javascriptResult->webView.get());
+    return javascriptResult->javascriptGlobalContext.get();
 }
 
 /**

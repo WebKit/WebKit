@@ -29,6 +29,10 @@
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 
+#if PLATFORM(WPE)
+#include "WPEView.h"
+#endif
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -186,13 +190,9 @@ public:
 
     void didPostMessage(WebPageProxy& page, const FrameInfoData&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
-#if PLATFORM(GTK)
-        WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(WEBKIT_WEB_VIEW(page.viewWidget()), serializedScriptValue);
+        WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(page.javascriptGlobalContext(), serializedScriptValue);
         g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
-#else
-        // FIXME: We need a way to get the WebKitWebView here in WPE.
-#endif
     }
 
     virtual ~ScriptMessageClientGtk() { }

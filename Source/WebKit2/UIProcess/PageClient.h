@@ -379,6 +379,10 @@ public:
 #endif
 
     virtual void didChangeAvoidsUnsafeArea(bool avoidsUnsafeArea) = 0;
+
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    virtual JSGlobalContextRef javascriptGlobalContext() { return nullptr; }
+#endif
 };
 
 } // namespace WebKit

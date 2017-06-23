@@ -320,4 +320,9 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
     return WebCore::UserInterfaceLayoutDirection::LTR;
 }
 
+JSGlobalContextRef PageClientImpl::javascriptGlobalContext()
+{
+    return m_view.javascriptGlobalContext();
+}
+
 } // namespace WebKit
