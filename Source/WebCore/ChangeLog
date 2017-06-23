@@ -1,3 +1,39 @@
+2017-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        @font-face rules with invalid primary fonts never download their secondary fonts
+        https://bugs.webkit.org/show_bug.cgi?id=173138
+        <rdar://problem/32554450>
+
+        Reviewed by Simon Fraser.
+
+        We have logic in CSSFontAccessor::font() which disallows downloading a CSSFontFace if that CSSFontFace
+        is already in the Succeeded state. However, it was possible for a succeeded CSSFontFace to still fail
+        to create a font. In this situation, we wouldn't be able to use the downloaded font, and we wouldn't
+        try to download the next item in the src: list because the CSSFontFace is succeeded.
+
+        This patch strengthens the meaning of the Succeeded state. Previously, it just meant that the bytes
+        in the file were downloaded successfully. This patch extends this to also mean that the bytes in the
+        file can be successfully interpreted as a font. This way, the CSSFontFace in the example above won't be
+        set to the Succeeded state, so we will continue follow the src: list and download the secondary fonts.
+
+        This has an added benefit that the CSS Font Loading API's promises will be called more appropriately.
+        The transition to the Succeeded state will trigger a resolve of the promise. Now, these promises will
+        only be resolved if the fonts are actually parsed and understood by our text system.
+
+        Test: fast/text/font-fallback-invalid-load.html
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::fontLoaded): Move to the failed state if we can't understand the font
+        data. This is the crux of this patch.
+        (WebCore::CSSFontFaceSource::font): This function should only be called if we are in the Succeeded
+        state, which means now we know we should always be able to understand the bytes of the file. Therefore,
+        we can change some if statements into ASSERT()s.
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::createFont): Ditto.
+        (WebCore::CachedSVGFont::ensureCustomFontData): Similarly to CSSFontFaceSource::fontLoaded(), this
+        adds another check to our criteria for transitioning into the Succeeded state, which will guarantee that
+        later we will always be able to create the font object.
+
 2017-06-22  Andreas Kling  <akling@apple.com>
 
         Rename MemoryPressureHandler::setTabCount to setPageCount
