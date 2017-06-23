@@ -215,7 +215,7 @@ void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
     
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(dataTypesToRemove, notifyPages, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(dataTypesToRemove, notifyPages, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue
             m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
                 protectedThis->coreStore().handleFreshStartWithEmptyOrNoStore(WTFMove(topDomains));

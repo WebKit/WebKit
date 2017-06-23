@@ -270,7 +270,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
     }
 }
 
-void WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, Function<void(HashSet<String>&&)>&& completionHandler)
+void WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, Function<void(HashSet<String>&&)>&& completionHandler)
 {
     // We expect this to be called on the main thread so we get the default website data store.
     ASSERT(isMainThread());
