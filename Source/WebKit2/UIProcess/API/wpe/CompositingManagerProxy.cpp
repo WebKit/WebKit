@@ -47,6 +47,11 @@ void CompositingManagerProxy::initialize()
     m_view.page().process().processPool().addMessageReceiver(Messages::CompositingManagerProxy::messageReceiverName(), m_view.page().pageID(), *this);
 }
 
+void CompositingManagerProxy::finalize()
+{
+    m_view.page().process().processPool().removeMessageReceiver(Messages::CompositingManagerProxy::messageReceiverName(), m_view.page().pageID());
+}
+
 void CompositingManagerProxy::establishConnection(IPC::Attachment& connectionHandle)
 {
     connectionHandle = IPC::Attachment(wpe_view_backend_get_renderer_host_fd(m_view.backend()));

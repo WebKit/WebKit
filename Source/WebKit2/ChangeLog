@@ -1,5 +1,25 @@
 2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [WPE] Crash in wpe_view_backend_get_renderer_host_fd
+        https://bugs.webkit.org/show_bug.cgi?id=173760
+
+        Reviewed by Žan Doberšek.
+
+        This can happen if views are created and destroyed quickly. The problem is that CompositingManagerProxy adds a
+        message receiver but never removes it, so it's possible that the message arrives right after the view has been
+        destroyed. This is happening most of the times running /wpe/WebKitAutomationSession/request-session that creates
+        3 web views in a row that are deleted when the test finishes.
+
+        Fixes /wpe/WebKitAutomationSession/request-session.
+
+        * UIProcess/API/wpe/CompositingManagerProxy.cpp:
+        (WebKit::CompositingManagerProxy::finalize): Remove the message handler.
+        * UIProcess/API/wpe/CompositingManagerProxy.h:
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::View::~View): Call CompositingManagerProxy::finalize().
+
+2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [WPE] User script messages don't work
         https://bugs.webkit.org/show_bug.cgi?id=173712
 

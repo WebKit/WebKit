@@ -45,6 +45,7 @@ public:
     virtual ~CompositingManagerProxy();
 
     void initialize();
+    void finalize();
 
 private:
     // IPC::MessageReceiver

@@ -130,6 +130,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
 
 View::~View()
 {
+    m_compositingManagerProxy.finalize();
     wpe_view_backend_destroy(m_backend);
 }
 
