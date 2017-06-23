@@ -700,3 +700,6 @@ webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbi
 webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAllKeys.html [ Pass Failure ]
 
 webkit.org/b/172201 webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
+
+webkit.org/b/173608 webrtc/video-replace-muted-track.html [ Pass Failure ]
+
