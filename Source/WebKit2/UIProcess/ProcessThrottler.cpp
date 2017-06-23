@@ -93,6 +93,8 @@ void ProcessThrottler::updateAssertion()
 
 void ProcessThrottler::didConnectToProcess(pid_t pid)
 {
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottler::didConnectToProcess(%d)", this, pid);
+
     m_suspendTimer.stop();
     if (m_shouldTakeUIBackgroundAssertion)
         m_assertion = std::make_unique<ProcessAndUIAssertion>(pid, assertionState());

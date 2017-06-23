@@ -105,6 +105,7 @@ using WebKit::ProcessAssertionClient;
 - (void)_updateBackgroundTask
 {
     if (_needsToRunInBackgroundCount && _backgroundTask == UIBackgroundTaskInvalid) {
+        RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - beginBackgroundTaskWithName", self);
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.ProcessAssertion" expirationHandler:^{
             RELEASE_LOG_ERROR(ProcessSuspension, "Background task expired while holding WebKit ProcessAssertion (isMainThread? %d).", RunLoop::isMain());
             // The expiration handler gets called on a non-main thread when the underlying assertion could not be taken (rdar://problem/27278419).
@@ -121,6 +122,7 @@ using WebKit::ProcessAssertionClient;
     }
 
     if (!_needsToRunInBackgroundCount && _backgroundTask != UIBackgroundTaskInvalid) {
+        RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager - endBackgroundTask", self);
         [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
         _backgroundTask = UIBackgroundTaskInvalid;
     }
@@ -166,7 +168,7 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, Fun
     auto weakThis = createWeakPtr();
     BKSProcessAssertionAcquisitionHandler handler = ^(BOOL acquired) {
         if (!acquired) {
-            RELEASE_LOG_ERROR(ProcessSuspension, "Unable to acquire assertion for process %d", pid);
+            RELEASE_LOG_ERROR(ProcessSuspension, " %p - ProcessAssertion() Unable to acquire assertion for process with PID %d", this, pid);
             ASSERT_NOT_REACHED();
             dispatch_async(dispatch_get_main_queue(), ^{
                 if (weakThis)
@@ -174,9 +176,11 @@ ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, Fun
             });
         }
     };
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Acquiring assertion for process with PID %d", this, pid);
     m_assertion = adoptNS([[BKSProcessAssertion alloc] initWithPID:pid flags:flagsForState(assertionState) reason:BKSProcessAssertionReasonExtension name:@"Web content visible" withHandler:handler]);
     m_assertion.get().invalidationHandler = ^() {
         dispatch_async(dispatch_get_main_queue(), ^{
+            RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Process assertion for process with PID %d was invalidated", this, pid);
             if (weakThis)
                 markAsInvalidated();
         });
@@ -189,6 +193,8 @@ ProcessAssertion::~ProcessAssertion()
 
     if (ProcessAssertionClient* client = this->client())
         [[WKProcessAssertionBackgroundTaskManager shared] removeClient:*client];
+
+    RELEASE_LOG(ProcessSuspension, "%p - ~ProcessAssertion() Releasing process assertion", this);
     [m_assertion invalidate];
 }
 
@@ -205,6 +211,7 @@ void ProcessAssertion::setState(AssertionState assertionState)
     if (m_assertionState == assertionState)
         return;
 
+    RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion::setState(%u)", this, static_cast<unsigned>(assertionState));
     m_assertionState = assertionState;
     [m_assertion setFlags:flagsForState(assertionState)];
 }
