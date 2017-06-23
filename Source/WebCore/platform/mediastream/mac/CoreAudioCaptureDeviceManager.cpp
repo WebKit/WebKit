@@ -59,6 +59,12 @@ static bool deviceHasInputStreams(AudioObjectID deviceID)
     return !err && dataSize;
 }
 
+static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
+{
+    // Ignore unnamed devices and aggregate devices created by VPIO.
+    return !device.label().isEmpty() && !device.label().startsWith("VPAUAggregateAudioDevice");
+}
+
 Vector<CoreAudioCaptureDevice>& CoreAudioCaptureDeviceManager::coreAudioCaptureDevices()
 {
     static bool initialized;
@@ -113,10 +119,10 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices()
             continue;
 
         auto device = CoreAudioCaptureDevice::create(deviceID);
-        if (!device)
+        if (!device || !isValidCaptureDevice(device.value()))
             continue;
-        m_coreAudioCaptureDevices.append(WTFMove(device.value()));
 
+        m_coreAudioCaptureDevices.append(WTFMove(device.value()));
         haveDeviceChanges = true;
     }
 

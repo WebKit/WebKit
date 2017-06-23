@@ -1,3 +1,16 @@
+2017-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream macOS] enumerateDevices should only return valid audio capture devices
+        https://bugs.webkit.org/show_bug.cgi?id=173790
+        <rdar://problem/32260334>
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::isValidCaptureDevice): A valid device has a name and is not an aggregate device
+        created by VPIO.
+        (WebCore::CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices):
+
 2017-06-23  Jer Noble  <jer.noble@apple.com>
 
         [WK2] Support -[WebAVPlayerController setMuted:]
