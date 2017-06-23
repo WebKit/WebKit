@@ -235,10 +235,10 @@ protected:
 
     void videoSampleAvailable(MediaSample&);
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
-    
-private:
+
     WeakPtr<RealtimeMediaSource> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
+private:
     virtual void startProducingData() { }
     virtual void stopProducingData() { }
 

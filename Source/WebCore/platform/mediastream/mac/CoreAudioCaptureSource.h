@@ -51,7 +51,7 @@ class AudioSampleDataSource;
 class CaptureDeviceInfo;
 class WebAudioSourceProviderAVFObjC;
 
-class CoreAudioCaptureSource final : public RealtimeMediaSource {
+class CoreAudioCaptureSource : public RealtimeMediaSource {
 public:
 
     static CaptureSourceOrError create(const String& deviceID, const MediaConstraints*);
@@ -68,14 +68,17 @@ public:
 
     CMClockRef timebaseClock();
 
-private:
+    void beginInterruption();
+    void endInterruption();
+    void scheduleReconfiguration();
+
+protected:
     CoreAudioCaptureSource(const String& deviceID, const String& label, uint32_t persistentID);
     virtual ~CoreAudioCaptureSource();
 
+private:
     friend class CoreAudioSharedUnit;
     friend class CoreAudioCaptureSourceFactory;
-
-    void scheduleReconfiguration();
 
     bool isCaptureSource() const final { return true; }
     void startProducingData() final;
@@ -89,14 +92,22 @@ private:
     const RealtimeMediaSourceSettings& settings() const final;
     void settingsDidChange() final;
 
-    uint32_t m_captureDeviceID { 0 };
+    bool interrupted() const final;
 
-    bool m_isSuspended { false };
+    uint32_t m_captureDeviceID { 0 };
 
     mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
     mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
 
-    bool m_reconfigurationOngoing { false };
+    enum class SuspensionType { None, WhilePaused, WhilePlaying };
+    SuspensionType m_suspendType { SuspensionType::None };
+
+    enum class ReconfigurationState { None, Required, Ongoing };
+    ReconfigurationState m_reconfigurationState { ReconfigurationState::None };
+
+    bool m_reconfigurationRequired { false };
+    bool m_suspendPending { false };
+    bool m_resumePending { false };
 };
 
 } // namespace WebCore

@@ -261,6 +261,8 @@
 		07ABEF6E1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 07ABEF6D1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		07AC47011952102100EE9723 /* ISOVTTCue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07AC46FF1952102100EE9723 /* ISOVTTCue.cpp */; };
 		07AC47021952102100EE9723 /* ISOVTTCue.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AC47001952102100EE9723 /* ISOVTTCue.h */; };
+		07AFF4221EFB144900B545B3 /* CoreAudioCaptureSourceIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 07AFF4201EFB144700B545B3 /* CoreAudioCaptureSourceIOS.h */; };
+		07AFF4231EFB144900B545B3 /* CoreAudioCaptureSourceIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AFF4211EFB144700B545B3 /* CoreAudioCaptureSourceIOS.mm */; };
 		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
 		07B0ABCF1032242200FBDC33 /* AccessibilityMathMLElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0ABCE1032242200FBDC33 /* AccessibilityMathMLElement.h */; };
 		07B442D6166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */; };
@@ -7687,6 +7689,8 @@
 		07ABEF6D1D8A1C7600F21972 /* MediaDevicesEnumerationRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDevicesEnumerationRequest.h; sourceTree = "<group>"; };
 		07AC46FF1952102100EE9723 /* ISOVTTCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISOVTTCue.cpp; sourceTree = "<group>"; };
 		07AC47001952102100EE9723 /* ISOVTTCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISOVTTCue.h; sourceTree = "<group>"; };
+		07AFF4201EFB144700B545B3 /* CoreAudioCaptureSourceIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAudioCaptureSourceIOS.h; sourceTree = "<group>"; };
+		07AFF4211EFB144700B545B3 /* CoreAudioCaptureSourceIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreAudioCaptureSourceIOS.mm; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
 		07B0ABCE1032242200FBDC33 /* AccessibilityMathMLElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMathMLElement.h; sourceTree = "<group>"; };
 		07B442D4166C70B000556CAD /* InbandTextTrackPrivateAVF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InbandTextTrackPrivateAVF.cpp; sourceTree = "<group>"; };
@@ -24466,6 +24470,8 @@
 				CDC675241EAEA9D400727C84 /* AVAudioSessionCaptureDevice.mm */,
 				CDC675211EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.h */,
 				CDC675201EAEA9B700727C84 /* AVAudioSessionCaptureDeviceManager.mm */,
+				07AFF4201EFB144700B545B3 /* CoreAudioCaptureSourceIOS.h */,
+				07AFF4211EFB144700B545B3 /* CoreAudioCaptureSourceIOS.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -26908,6 +26914,7 @@
 				9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */,
 				3F8020351E9E47BF00DEC61D /* CoreAudioCaptureDevice.h in Headers */,
 				3F8020371E9E47C500DEC61D /* CoreAudioCaptureDeviceManager.h in Headers */,
+				07AFF4221EFB144900B545B3 /* CoreAudioCaptureSourceIOS.h in Headers */,
 				CE1252371A15BDBE00864480 /* CoreGraphicsSPI.h in Headers */,
 				443818001A91B2F8006E04F2 /* CoreMediaSoftLink.h in Headers */,
 				4449A4051A964B0000B64AD5 /* CoreMediaSPI.h in Headers */,
@@ -31008,6 +31015,7 @@
 				3F8020361E9E47C300DEC61D /* CoreAudioCaptureDevice.cpp in Sources */,
 				3F8020381E9E47C900DEC61D /* CoreAudioCaptureDeviceManager.cpp in Sources */,
 				3FF1FA661E7350FD00C1002F /* CoreAudioCaptureSource.cpp in Sources */,
+				07AFF4231EFB144900B545B3 /* CoreAudioCaptureSourceIOS.mm in Sources */,
 				443817FF1A91B2F8006E04F2 /* CoreMediaSoftLink.cpp in Sources */,
 				CD7D33471C7A16BF00041293 /* CoreVideoSoftLink.cpp in Sources */,
 				BC5EB9500E82056B00B25965 /* CounterDirectives.cpp in Sources */,

@@ -1,3 +1,40 @@
+2017-06-23  Eric Carlson  <eric.carlson@apple.com>
+
+        [iOS] Respond to AudioSession interruption and resume
+        https://bugs.webkit.org/show_bug.cgi?id=173718
+        <rdar://problem/32925263>
+
+        Reviewed by Youenn Fablet.
+
+        Tested manually.
+
+        * WebCore.xcodeproj/project.pbxproj: Add CoreAudioCaptureSourceIOS.mm/.h
+
+        * platform/mediastream/RealtimeMediaSource.h: Make createWeakPtr protected so derived classes
+        can use it.
+
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.h: Added.
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm: Added.
+        (-[WebCoreAudioCaptureSourceIOSListener initWithCallback:]):
+        (-[WebCoreAudioCaptureSourceIOSListener invalidate]):
+        (-[WebCoreAudioCaptureSourceIOSListener handleInterruption:]):
+        (-[WebCoreAudioCaptureSourceIOSListener sessionMediaServicesWereReset:]):
+        (WebCore::CoreAudioCaptureSourceIOS::CoreAudioCaptureSourceIOS):
+        (WebCore::CoreAudioCaptureSourceIOS::~CoreAudioCaptureSourceIOS):
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::suspended): 
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit): Clear m_suspended.
+        (WebCore::CoreAudioSharedUnit::suspend): Don't clear sources or uninitialize the audio unit,
+        suspend is temporary. Set m_suspended.
+        (WebCore::CoreAudioSharedUnit::resume): New, restart the audio unit.
+        (WebCore::CoreAudioCaptureSource::create): Create the correct object.
+        (WebCore::CoreAudioCaptureSource::scheduleReconfiguration): Dispatch to main thread if necessary.
+        (WebCore::CoreAudioCaptureSource::beginInterruption): New, suspend from main thread.
+        (WebCore::CoreAudioCaptureSource::endInterruption): New, resume/reconfigure from main thread.
+        (WebCore::CoreAudioCaptureSource::interrupted):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+
 2017-06-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Drop the AES-CFB support
