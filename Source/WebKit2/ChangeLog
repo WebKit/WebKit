@@ -1,5 +1,18 @@
 2017-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Stop passing Vector by value in WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores()
+        https://bugs.webkit.org/show_bug.cgi?id=173782
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
         Avoid copying HashSet to Vector in WebPageProxy::clearLoadDependentCallbacks()
         https://bugs.webkit.org/show_bug.cgi?id=173786
 

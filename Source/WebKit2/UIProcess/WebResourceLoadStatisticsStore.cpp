@@ -119,7 +119,7 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = CrossThreadCopier<Vector<String>>::copy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove, WTFMove(prevalentResourceDomains), notifyPages, [this, protectedThis = WTFMove(protectedThis)](Vector<String> domainsWithDeletedWebsiteData) mutable {
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove, WTFMove(prevalentResourceDomains), notifyPages, [this, protectedThis = WTFMove(protectedThis)](const Vector<String>& domainsWithDeletedWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue.
             m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<Vector<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
                 protectedThis->coreStore().updateStatisticsForRemovedDataRecords(topDomains);
