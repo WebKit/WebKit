@@ -1,3 +1,18 @@
+2017-06-23  David Kilzer  <ddkilzer@apple.com>
+
+        v3: REGRESSION (r218419): 3 NSMutableDictionary leaks calling -[WKProcessPool _pluginLoadClientPolicies]
+        <https://webkit.org/b/173689>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (policiesHashMapToDictionary): Use adoptNS().get() to avoid
+        dumping objects into autoreleasepools unnecessarily.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        (-[WKProcessPool _pluginLoadClientPolicies]): Add back 'copy'
+        attribute to document that we're returning a new object on each
+        invocation.  I shouldn't have removed it in the v2 patch.
+
 2017-06-23  Youenn Fablet  <youenn@apple.com>
 
         LibWebRTCSocketClient should not destroy its socket within signalClose callback

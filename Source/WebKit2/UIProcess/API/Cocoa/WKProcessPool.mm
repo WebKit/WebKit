@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -313,20 +313,20 @@ static HashMap<String, HashMap<String, HashMap<String, uint8_t>>> toPluginLoadCl
 
 static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& map)
 {
-    NSMutableDictionary *policies = [NSMutableDictionary dictionaryWithCapacity:map.size()];
+    auto policies = adoptNS([[NSMutableDictionary alloc] initWithCapacity:map.size()]);
     for (auto& hostPair : map) {
         NSString *host = hostPair.key;
-        policies[host] = [NSMutableDictionary dictionaryWithCapacity:hostPair.value.size()];
+        policies.get()[host] = adoptNS([[NSMutableDictionary alloc] initWithCapacity:hostPair.value.size()]).get();
         for (auto& bundleIdentifierPair : hostPair.value) {
             NSString *bundlerIdentifier = bundleIdentifierPair.key;
-            policies[host][bundlerIdentifier] = [NSMutableDictionary dictionaryWithCapacity:bundleIdentifierPair.value.size()];
+            policies.get()[host][bundlerIdentifier] = adoptNS([[NSMutableDictionary alloc] initWithCapacity:bundleIdentifierPair.value.size()]).get();
             for (auto& versionPair : bundleIdentifierPair.value) {
                 NSString *version = versionPair.key;
-                policies[host][bundlerIdentifier][version] = [NSNumber numberWithUnsignedInt:versionPair.value];
+                policies.get()[host][bundlerIdentifier][version] = adoptNS([[NSNumber alloc] initWithUnsignedInt:versionPair.value]).get();
             }
         }
     }
-    return policies;
+    return policies.autorelease();
 }
 
 #endif

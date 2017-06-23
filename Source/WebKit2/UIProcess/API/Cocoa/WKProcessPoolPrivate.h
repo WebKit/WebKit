@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,7 @@
 
 #if !TARGET_OS_IPHONE
 - (void)_resetPluginLoadClientPolicies:(NSDictionary *)policies WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-@property (nonatomic, readonly) NSDictionary *_pluginLoadClientPolicies WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, readonly, copy) NSDictionary *_pluginLoadClientPolicies WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
