@@ -1,5 +1,14 @@
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Upgrade pixman and cairo in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=173710
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * gtk/jhbuild.modules:
+
+2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r218686): [GTK] Several unit tests are failing after r218686 in the bots
         https://bugs.webkit.org/show_bug.cgi?id=173711
 

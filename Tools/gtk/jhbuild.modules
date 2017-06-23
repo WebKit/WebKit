@@ -97,25 +97,20 @@
       <dep package="pixman"/>
       <dep package="glib"/>
     </dependencies>
-    <branch module="releases/cairo-1.14.2.tar.xz" version="1.14.2"
+    <branch module="releases/cairo-1.14.8.tar.xz" version="1.14.8"
             repo="cairographics.org"
-            hash="sha1:c8da68aa66ca0855b5d0ff552766d3e8679e1d24"/>
+	    hash="sha1:c6f7b99986f93c9df78653c3e6a3b5043f65145e"/>
   </autotools>
 
-  <!-- FIXME: Pixman 0.32.6 isn't buildable with Clang, but disable-mmx option fixes
-              the build. This workaround can be removed once the original bug is fixed.
-              Details can be found here: https://bugs.webkit.org/show_bug.cgi?id=151441 -->
   <!-- FIXME: Pixman 0.32.6 ARM iwMMXt fast path isn't buildable with GCC 4.9 and
               ARM traditional instruction set. It causes a build failure on Raspbian.
               This workaround can be removed once we raise the minimum GCC version
               for WebKitGTK+ above 4.9 -->
   <autotools id="pixman" autogen-sh="configure"
-             autogenargs="--enable-gtk=no --disable-mmx --disable-arm-iwmmxt">
-    <branch module="releases/pixman-0.32.6.tar.gz" version="0.32.6"
+             autogenargs="--enable-gtk=no --disable-arm-iwmmxt">
+    <branch module="releases/pixman-0.34.0.tar.gz" version="0.34.0"
             repo="cairographics.org"
-            hash="sha256:3dfed13b8060eadabf0a4945c7045b7793cc7e3e910e748a8bb0f0dc3e794904"
-            md5sum="3a30859719a41bd0f5cccffbfefdd4c2">
-    </branch>
+	    hash="sha1:a1b1683c1a55acce9d928fea1ab6ceb79142ddc7"/>
   </autotools>
 
   <autotools id="fonts" supports-non-srcdir-builds="no"
