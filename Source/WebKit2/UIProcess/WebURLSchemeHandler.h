@@ -45,8 +45,8 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
 
-    void startTask(WebPageProxy&, uint64_t resourceIdentifier, const WebCore::ResourceRequest&);
-    void stopTask(WebPageProxy&, uint64_t resourceIdentifier);
+    void startTask(WebPageProxy&, uint64_t taskIdentifier, const WebCore::ResourceRequest&);
+    void stopTask(WebPageProxy&, uint64_t taskIdentifier);
 
 protected:
     WebURLSchemeHandler();

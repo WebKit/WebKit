@@ -52,10 +52,12 @@ public:
     enum class ExceptionType {
         DataAlreadySent,
         CompleteAlreadyCalled,
+        RedirectAfterResponse,
         TaskAlreadyStopped,
         NoResponseSent,
         None,
     };
+    ExceptionType didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     ExceptionType didReceiveResponse(const WebCore::ResourceResponse&);
     ExceptionType didReceiveData(Ref<WebCore::SharedBuffer>);
     ExceptionType didComplete(const WebCore::ResourceError&);

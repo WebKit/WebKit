@@ -1607,8 +1607,8 @@ private:
 #endif
 #endif
 
-    void startURLSchemeTask(uint64_t handlerIdentifier, uint64_t resourceIdentifier, const WebCore::ResourceRequest&);
-    void stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t resourceIdentifier);
+    void startURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceRequest&);
+    void stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier);
 
     void handleAutoFillButtonClick(const UserData&);
 

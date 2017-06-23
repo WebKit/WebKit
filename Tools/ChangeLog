@@ -1,3 +1,20 @@
+2017-06-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to WKURLSchemeTask for redirection
+        https://bugs.webkit.org/show_bug.cgi?id=173730
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKURLSchemeHandler-1.mm:
+        (-[SchemeHandler webView:startURLSchemeTask:]):
+        (-[SchemeHandler webView:stopURLSchemeTask:]):
+        (TEST):
+        (-[RedirectSchemeHandler webView:startURLSchemeTask:]):
+        (-[RedirectSchemeHandler webView:stopURLSchemeTask:]):
+        (-[RedirectSchemeHandler webView:didReceiveServerRedirectForProvisionalNavigation:]):
+        (-[RedirectSchemeHandler webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        (-[RedirectSchemeHandler userContentController:didReceiveScriptMessage:]):
+
 2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Use JSC API to send script messages from web extension in tests

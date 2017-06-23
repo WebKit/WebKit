@@ -62,9 +62,32 @@ void WebURLSchemeTaskProxy::stopLoading()
     // This line will result in this being deleted.
     m_urlSchemeHandler.taskDidStopLoading(*this);
 }
+    
+void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request)
+{
+    if (!hasLoader())
+        return;
+    
+    auto completionHandler = [this, protectedThis = makeRef(*this), originalRequest = request] (ResourceRequest&& request) {
+        m_waitingForRedirectCompletionHandler = false;
+        // We do not inform the UIProcess of WebKit's new request with the given suggested request.
+        // We do want to know if WebKit would have generated a request that differs from the suggested request, though.
+        if (request.url() != originalRequest.url())
+            WTFLogAlways("Redirected scheme task would have been sent to a different URL.");
+    };
+    
+    if (m_waitingForRedirectCompletionHandler)
+        WTFLogAlways("Received redirect during previous redirect processing.");
+    m_waitingForRedirectCompletionHandler = true;
+
+    m_coreLoader->willSendRequest(WTFMove(request), redirectResponse, WTFMove(completionHandler));
+}
 
 void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)
 {
+    if (m_waitingForRedirectCompletionHandler)
+        WTFLogAlways("Received response during redirect processing.");
+    
     if (!hasLoader())
         return;
 

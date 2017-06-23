@@ -6879,20 +6879,20 @@ WebURLSchemeHandler* WebPageProxy::urlSchemeHandlerForScheme(const String& schem
     return m_urlSchemeHandlersByScheme.get(scheme);
 }
 
-void WebPageProxy::startURLSchemeTask(uint64_t handlerIdentifier, uint64_t resourceIdentifier, const WebCore::ResourceRequest& request)
+void WebPageProxy::startURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceRequest& request)
 {
     auto iterator = m_urlSchemeHandlersByIdentifier.find(handlerIdentifier);
     ASSERT(iterator != m_urlSchemeHandlersByIdentifier.end());
 
-    iterator->value->startTask(*this, resourceIdentifier, request);
+    iterator->value->startTask(*this, taskIdentifier, request);
 }
 
-void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t resourceIdentifier)
+void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskIdentifier)
 {
     auto iterator = m_urlSchemeHandlersByIdentifier.find(handlerIdentifier);
     ASSERT(iterator != m_urlSchemeHandlersByIdentifier.end());
 
-    iterator->value->stopTask(*this, resourceIdentifier);
+    iterator->value->stopTask(*this, taskIdentifier);
 }
 
 void WebPageProxy::setAvoidsUnsafeArea(bool avoidsUnsafeArea)

@@ -48,13 +48,21 @@ WebURLSchemeHandlerProxy::~WebURLSchemeHandlerProxy()
 
 void WebURLSchemeHandlerProxy::startNewTask(ResourceLoader& loader)
 {
-    auto result = m_tasks.add(loader.identifier(), std::make_unique<WebURLSchemeTaskProxy>(*this, loader));
+    auto result = m_tasks.add(loader.identifier(), WebURLSchemeTaskProxy::create(*this, loader));
     ASSERT(result.isNewEntry);
 
     WebProcess::singleton().webLoaderStrategy().addURLSchemeTaskProxy(*result.iterator->value);
     result.iterator->value->startLoading();
 }
 
+void WebURLSchemeHandlerProxy::taskDidPerformRedirection(uint64_t taskIdentifier, WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& newRequest)
+{
+    auto* task = m_tasks.get(taskIdentifier);
+    if (!task)
+        return;
+    
+    task->didPerformRedirection(WTFMove(redirectResponse), WTFMove(newRequest));
+}
 
 void WebURLSchemeHandlerProxy::taskDidReceiveResponse(uint64_t taskIdentifier, const ResourceResponse& response)
 {

@@ -1,3 +1,54 @@
+2017-06-23  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to WKURLSchemeTask for redirection
+        https://bugs.webkit.org/show_bug.cgi?id=173730
+
+        Reviewed by Brady Eidson.
+
+        This is needed for testing an upcoming fix for redirect callbacks, and it might be
+        necessary for loading with custom schemes in general. Right now just responding with
+         an HTTP 301/302/307/308 response code doesn't work because there is nothing that
+        synthesizes an NSURLRequest from the Location header like we do in 
+        SynchronousResourceHandleCFURLConnectionDelegate::willSendRequest et al. for HSTS, 
+        and that would require using an NSHTTPURLResponse for non-HTTP responses, which is 
+        conceptually wrong.  Instead of waiting for a completion handler in the API, we are
+        following the pattern of WKNavigationDelegate.didReceiveServerRedirectForProvisionalNavigation
+        and allowing the SPI to indicate that a redirect has happened to update the state of
+        WebKit, but not allowing the SPI to wait for a processed request and slow down loading.
+
+        This adds WKURLSchemeTaskPrivate._didPerformRedirection which is covered by new API tests.
+
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (raiseExceptionIfNecessary):
+        (-[WKURLSchemeTaskImpl _didPerformRedirection:newRequest:completionHandler:]):
+        * UIProcess/API/Cocoa/WKURLSchemeTaskInternal.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTaskPrivate.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startURLSchemeTask):
+        (WebKit::WebPageProxy::stopURLSchemeTask):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebURLSchemeHandler.cpp:
+        (WebKit::WebURLSchemeHandler::startTask):
+        (WebKit::WebURLSchemeHandler::stopTask):
+        * UIProcess/WebURLSchemeHandler.h:
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didReceiveResponse): Deleted.
+        (WebKit::WebURLSchemeTask::didReceiveData): Deleted.
+        (WebKit::WebURLSchemeTask::didComplete): Deleted.
+        * UIProcess/WebURLSchemeTask.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::urlSchemeTaskDidPerformRedirection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp:
+        (WebKit::WebURLSchemeHandlerProxy::taskDidPerformRedirection):
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        (WebKit::WebURLSchemeTaskProxy::didPerformRedirection):
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.h:
+
 2017-06-23  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Support Mac Mini Flash Player Features

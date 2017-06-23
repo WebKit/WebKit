@@ -28,10 +28,11 @@
 
 #if WK_API_ENABLED
 
-#include "WebURLSchemeTask.h"
-#include <WebCore/ResourceError.h>
-#include <WebCore/ResourceResponse.h>
-#include <WebCore/SharedBuffer.h>
+#import "WebURLSchemeTask.h"
+#import <WebCore/ResourceError.h>
+#import <WebCore/ResourceResponse.h>
+#import <WebCore/SharedBuffer.h>
+#import <wtf/BlockPtr.h>
 
 using namespace WebCore;
 
@@ -51,6 +52,9 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
         break;
     case WebKit::WebURLSchemeTask::ExceptionType::NoResponseSent:
         [NSException raise:NSInternalInconsistencyException format:@"No response has been sent for this task"];
+        break;
+    case WebKit::WebURLSchemeTask::ExceptionType::RedirectAfterResponse:
+        [NSException raise:NSInternalInconsistencyException format:@"No redirects are allowed after the response"];
         break;
     }
 }
@@ -83,6 +87,12 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 - (void)didFailWithError:(NSError *)error
 {
     auto result = _urlSchemeTask->task().didComplete(error);
+    raiseExceptionIfNecessary(result);
+}
+
+- (void)_didPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request
+{
+    auto result = _urlSchemeTask->task().didPerformRedirection(response, request);
     raiseExceptionIfNecessary(result);
 }
 

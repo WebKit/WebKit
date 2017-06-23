@@ -118,7 +118,8 @@ std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceRe
 {
     using namespace std::chrono;
 
-    ASSERT(response.url().protocolIsInHTTPFamily());
+    if (!response.url().protocolIsInHTTPFamily())
+        return 0us;
 
     // Freshness Lifetime:
     // http://tools.ietf.org/html/rfc7234#section-4.2.1

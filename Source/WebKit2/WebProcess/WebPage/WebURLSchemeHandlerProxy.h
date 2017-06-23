@@ -27,21 +27,25 @@
 
 #include "WebURLSchemeTaskProxy.h"
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
+class ResourceRequest;
 }
 
 namespace WebKit {
 
 class WebPage;
 
-class WebURLSchemeHandlerProxy {
-    WTF_MAKE_NONCOPYABLE(WebURLSchemeHandlerProxy);
+class WebURLSchemeHandlerProxy : public RefCounted<WebURLSchemeHandlerProxy> {
 public:
-    WebURLSchemeHandlerProxy(WebPage&, uint64_t identifier);
+    static Ref<WebURLSchemeHandlerProxy> create(WebPage& page, uint64_t identifier)
+    {
+        return adoptRef(*new WebURLSchemeHandlerProxy(page, identifier));
+    }
     ~WebURLSchemeHandlerProxy();
 
     void startNewTask(WebCore::ResourceLoader&);
@@ -49,16 +53,18 @@ public:
     uint64_t identifier() const { return m_identifier; }
     WebPage& page() { return m_webPage; }
 
+    void taskDidPerformRedirection(uint64_t taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     void taskDidReceiveResponse(uint64_t taskIdentifier, const WebCore::ResourceResponse&);
     void taskDidReceiveData(uint64_t taskIdentifier, size_t, const uint8_t* data);
     void taskDidComplete(uint64_t taskIdentifier, const WebCore::ResourceError&);
     void taskDidStopLoading(WebURLSchemeTaskProxy&);
 
 private:
+    WebURLSchemeHandlerProxy(WebPage&, uint64_t identifier);
     WebPage& m_webPage;
     uint64_t m_identifier { 0 };
 
-    HashMap<unsigned long, std::unique_ptr<WebURLSchemeTaskProxy>> m_tasks;
+    HashMap<uint64_t, RefPtr<WebURLSchemeTaskProxy>> m_tasks;
 }; // class WebURLSchemeHandlerProxy
 
 } // namespace WebKit

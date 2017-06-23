@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKURLSchemeTask.h"
+#import "WKURLSchemeTaskPrivate.h"
 
 #if WK_API_ENABLED
 
 #import "APIURLSchemeTask.h"
 #import "WKObject.h"
 
-@interface WKURLSchemeTaskImpl : NSObject <WKURLSchemeTask>
+@interface WKURLSchemeTaskImpl : NSObject <WKURLSchemeTaskPrivate>
 @end
 
 namespace WebKit {

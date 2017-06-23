@@ -48,54 +48,74 @@ WebURLSchemeTask::WebURLSchemeTask(WebURLSchemeHandler& handler, WebPageProxy& p
 {
 }
 
-WebURLSchemeTask::ExceptionType WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response)
+auto WebURLSchemeTask::didPerformRedirection(WebCore::ResourceResponse&& response, WebCore::ResourceRequest&& request) -> ExceptionType
 {
     if (m_stopped)
-        return WebURLSchemeTask::ExceptionType::TaskAlreadyStopped;
+        return ExceptionType::TaskAlreadyStopped;
+    
+    if (m_completed)
+        return ExceptionType::CompleteAlreadyCalled;
+    
+    if (m_dataSent)
+        return ExceptionType::DataAlreadySent;
+    
+    if (m_responseSent)
+        return ExceptionType::RedirectAfterResponse;
+    
+    m_request = request;
+    m_page->send(Messages::WebPage::URLSchemeTaskDidPerformRedirection(m_urlSchemeHandler->identifier(), m_identifier, response, request));
+
+    return ExceptionType::None;
+}
+
+auto WebURLSchemeTask::didReceiveResponse(const ResourceResponse& response) -> ExceptionType
+{
+    if (m_stopped)
+        return ExceptionType::TaskAlreadyStopped;
 
     if (m_completed)
-        return WebURLSchemeTask::ExceptionType::CompleteAlreadyCalled;
+        return ExceptionType::CompleteAlreadyCalled;
 
     if (m_dataSent)
-        return WebURLSchemeTask::ExceptionType::DataAlreadySent;
+        return ExceptionType::DataAlreadySent;
 
     m_responseSent = true;
 
     response.includeCertificateInfo();
     m_page->send(Messages::WebPage::URLSchemeTaskDidReceiveResponse(m_urlSchemeHandler->identifier(), m_identifier, response));
-    return WebURLSchemeTask::ExceptionType::None;
+    return ExceptionType::None;
 }
 
-WebURLSchemeTask::ExceptionType WebURLSchemeTask::didReceiveData(Ref<SharedBuffer> buffer)
+auto WebURLSchemeTask::didReceiveData(Ref<SharedBuffer> buffer) -> ExceptionType
 {
     if (m_stopped)
-        return WebURLSchemeTask::ExceptionType::TaskAlreadyStopped;
+        return ExceptionType::TaskAlreadyStopped;
 
     if (m_completed)
-        return WebURLSchemeTask::ExceptionType::CompleteAlreadyCalled;
+        return ExceptionType::CompleteAlreadyCalled;
 
     if (!m_responseSent)
-        return WebURLSchemeTask::ExceptionType::NoResponseSent;
+        return ExceptionType::NoResponseSent;
 
     m_dataSent = true;
     m_page->send(Messages::WebPage::URLSchemeTaskDidReceiveData(m_urlSchemeHandler->identifier(), m_identifier, IPC::SharedBufferDataReference(buffer.ptr())));
-    return WebURLSchemeTask::ExceptionType::None;
+    return ExceptionType::None;
 }
 
-WebURLSchemeTask::ExceptionType WebURLSchemeTask::didComplete(const ResourceError& error)
+auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
 {
     if (m_stopped)
-        return WebURLSchemeTask::ExceptionType::TaskAlreadyStopped;
+        return ExceptionType::TaskAlreadyStopped;
 
     if (m_completed)
-        return WebURLSchemeTask::ExceptionType::CompleteAlreadyCalled;
+        return ExceptionType::CompleteAlreadyCalled;
 
     if (!m_responseSent && error.isNull())
-        return WebURLSchemeTask::ExceptionType::NoResponseSent;
+        return ExceptionType::NoResponseSent;
 
     m_completed = true;
     m_page->send(Messages::WebPage::URLSchemeTaskDidComplete(m_urlSchemeHandler->identifier(), m_identifier, error));
-    return WebURLSchemeTask::ExceptionType::None;
+    return ExceptionType::None;
 }
 
 void WebURLSchemeTask::pageDestroyed()

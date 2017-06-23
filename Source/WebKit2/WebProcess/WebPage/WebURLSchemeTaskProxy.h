@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/ResourceRequest.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 class ResourceError;
@@ -37,16 +38,19 @@ namespace WebKit {
 
 class WebURLSchemeHandlerProxy;
 
-class WebURLSchemeTaskProxy {
-    WTF_MAKE_NONCOPYABLE(WebURLSchemeTaskProxy);
+class WebURLSchemeTaskProxy : public RefCounted<WebURLSchemeTaskProxy> {
 public:
-    WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy&, WebCore::ResourceLoader&);
-
+    static Ref<WebURLSchemeTaskProxy> create(WebURLSchemeHandlerProxy& handler, WebCore::ResourceLoader& loader)
+    {
+        return adoptRef(*new WebURLSchemeTaskProxy(handler, loader));
+    }
+    
     const WebCore::ResourceRequest& request() const { return m_request; }
 
     void startLoading();
     void stopLoading();
 
+    void didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(size_t, const uint8_t* data);
     void didComplete(const WebCore::ResourceError&);
@@ -54,12 +58,14 @@ public:
     unsigned long identifier() const { return m_identifier; }
 
 private:
+    WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy&, WebCore::ResourceLoader&);
     bool hasLoader();
 
     WebURLSchemeHandlerProxy& m_urlSchemeHandler;
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     WebCore::ResourceRequest m_request;
     unsigned long m_identifier;
+    bool m_waitingForRedirectCompletionHandler { };
 };
 
 } // namespace WebKit

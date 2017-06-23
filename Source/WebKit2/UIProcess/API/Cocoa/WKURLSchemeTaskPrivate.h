@@ -23,50 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebURLSchemeHandler.h"
+#import <WebKit/WKURLSchemeTask.h>
 
-#include "WebURLSchemeTask.h"
+#if WK_API_ENABLED
 
-using namespace WebCore;
+WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+@protocol WKURLSchemeTaskPrivate <WKURLSchemeTask>
 
-namespace WebKit {
+- (void)_didPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request;
 
-static uint64_t generateWebURLSchemeHandlerIdentifier()
-{
-    static uint64_t nextIdentifier = 1;
-    return nextIdentifier++;
-}
+@end
 
-WebURLSchemeHandler::WebURLSchemeHandler()
-    : m_identifier(generateWebURLSchemeHandlerIdentifier())
-{
-}
+#endif
 
-WebURLSchemeHandler::~WebURLSchemeHandler()
-{
-    ASSERT(m_tasks.isEmpty());
-}
-
-void WebURLSchemeHandler::startTask(WebPageProxy& page, uint64_t taskIdentifier, const ResourceRequest& request)
-{
-    auto result = m_tasks.add(taskIdentifier, WebURLSchemeTask::create(*this, page, taskIdentifier, request));
-    ASSERT(result.isNewEntry);
-
-    platformStartTask(page, result.iterator->value);
-}
-
-void WebURLSchemeHandler::stopTask(WebPageProxy& page, uint64_t taskIdentifier)
-{
-    auto iterator = m_tasks.find(taskIdentifier);
-    if (iterator == m_tasks.end())
-        return;
-
-    iterator->value->stop();
-
-    platformStopTask(page, iterator->value);
-
-    m_tasks.remove(iterator);
-}
-
-} // namespace WebKit
