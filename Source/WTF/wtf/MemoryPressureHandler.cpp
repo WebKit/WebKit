@@ -99,16 +99,16 @@ static size_t thresholdForMemoryKillWithProcessState(WebsamProcessState processS
 #endif
 }
 
-void MemoryPressureHandler::setTabCount(unsigned tabCount)
+void MemoryPressureHandler::setPageCount(unsigned pageCount)
 {
-    if (singleton().m_tabCount == tabCount)
+    if (singleton().m_pageCount == pageCount)
         return;
-    singleton().m_tabCount = tabCount;
+    singleton().m_pageCount = pageCount;
 }
 
 size_t MemoryPressureHandler::thresholdForMemoryKill()
 {
-    return thresholdForMemoryKillWithProcessState(m_processState, m_tabCount);
+    return thresholdForMemoryKillWithProcessState(m_processState, m_pageCount);
 }
 
 static size_t thresholdForPolicy(MemoryUsagePolicy policy)
@@ -189,7 +189,7 @@ void MemoryPressureHandler::measurementTimerFired()
         break;
     }
 
-    if (processState() == WebsamProcessState::Active && footprint.value() > thresholdForMemoryKillWithProcessState(WebsamProcessState::Inactive, m_tabCount))
+    if (processState() == WebsamProcessState::Active && footprint.value() > thresholdForMemoryKillWithProcessState(WebsamProcessState::Inactive, m_pageCount))
         doesExceedInactiveLimitWhileActive();
     else
         doesNotExceedInactiveLimitWhileActive();

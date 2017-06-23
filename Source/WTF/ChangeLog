@@ -1,3 +1,21 @@
+2017-06-22  Andreas Kling  <akling@apple.com>
+
+        Rename MemoryPressureHandler::setTabCount to setPageCount
+        https://bugs.webkit.org/show_bug.cgi?id=173750
+
+        Reviewed by Daniel Bates.
+
+        This function is counting WebCore::Page objects (excluding utility Pages used
+        by SVG-as-image and the web inspector) so let's name it appropriately.
+        Not all WebKit clients have tabs.
+
+        * wtf/MemoryPressureHandler.cpp:
+        (WTF::MemoryPressureHandler::setPageCount):
+        (WTF::MemoryPressureHandler::thresholdForMemoryKill):
+        (WTF::MemoryPressureHandler::measurementTimerFired):
+        (WTF::MemoryPressureHandler::setTabCount): Deleted.
+        * wtf/MemoryPressureHandler.h:
+
 2017-06-21  Andreas Kling  <akling@apple.com>
 
         Increase memory kill limits for WebContent processes that manage multiple tabs.

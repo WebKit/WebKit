@@ -289,7 +289,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     allPages->add(this);
     if (!isUtilityPage()) {
         ++nonUtilityPageCount;
-        MemoryPressureHandler::setTabCount(nonUtilityPageCount);
+        MemoryPressureHandler::setPageCount(nonUtilityPageCount);
     }
 
 #ifndef NDEBUG
@@ -318,7 +318,7 @@ Page::~Page()
     allPages->remove(this);
     if (!isUtilityPage()) {
         --nonUtilityPageCount;
-        MemoryPressureHandler::setTabCount(nonUtilityPageCount);
+        MemoryPressureHandler::setPageCount(nonUtilityPageCount);
     }
     
     m_settings->pageDestroyed();
