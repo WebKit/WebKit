@@ -1,3 +1,13 @@
+2017-06-22  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r217695): Offscreen/overflowed items not being rendered while translating in-frame
+        https://bugs.webkit.org/show_bug.cgi?id=173732
+
+        Reviewed by Simon Fraser.
+
+        * compositing/backing/transform-transition-from-outside-view-expected.txt: Added.
+        * compositing/backing/transform-transition-from-outside-view.html: Added.
+
 2017-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         @font-face rules with invalid primary fonts never download their secondary fonts

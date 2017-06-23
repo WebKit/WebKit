@@ -1,3 +1,46 @@
+2017-06-22  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r217695): Offscreen/overflowed items not being rendered while translating in-frame
+        https://bugs.webkit.org/show_bug.cgi?id=173732
+
+        Reviewed by Simon Fraser.
+
+        If an accelerated animation starts completely outside the view we fail to create backing for it
+        when it moves into view.
+
+        Fix by computing the full extent rect of the animation when it starts and doing the viewport overlap
+        testing with that.
+
+        Test: compositing/backing/transform-transition-from-outside-view.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::animationExtent):
+        (WebCore::GraphicsLayer::setAnimationExtent):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::computeVisibleAndCoverageRect):
+
+            Return the current animation transformation matrix so we can use it elsewhere without recomputing.
+
+        (WebCore::GraphicsLayerCA::setVisibleAndCoverageRects):
+
+            If we have animation extent use it instead of bounds for visibility testing.
+
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+
+            Track if theres is a visible ancestor layer with a transition animation.
+
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateCoverage):
+
+            For simplicity create backing for all sublayers of a visible transform animated layer.
+
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        (WebCore::GraphicsLayerCA::VisibleAndCoverageRects::VisibleAndCoverageRects): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
+            Pass the animation extent (including descendants) to GraphicsLayer.
+
 2017-06-22  Chris Dumez  <cdumez@apple.com>
 
         ResourceLoadStatisticsStore should be ThreadSafeRefCounted

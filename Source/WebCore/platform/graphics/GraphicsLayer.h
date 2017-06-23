@@ -571,6 +571,9 @@ public:
     virtual bool isGraphicsLayerTextureMapper() const { return false; }
     virtual bool isCoordinatedGraphicsLayer() const { return false; }
 
+    const std::optional<FloatRect>& animationExtent() const { return m_animationExtent; }
+    void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
+
     static void traverse(GraphicsLayer&, const WTF::Function<void (GraphicsLayer&)>&);
 
 protected:
@@ -676,6 +679,7 @@ protected:
     FloatSize m_contentsTilePhase;
     FloatSize m_contentsTileSize;
     FloatRoundedRect m_backdropFiltersRect;
+    std::optional<FloatRect> m_animationExtent;
 
     int m_repaintCount;
     CustomAppearance m_customAppearance;

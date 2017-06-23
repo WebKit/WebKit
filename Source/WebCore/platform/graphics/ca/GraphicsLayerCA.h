@@ -157,6 +157,7 @@ public:
         int treeDepth { 0 };
         bool ancestorHadChanges { false };
         bool ancestorHasTransformAnimation { false };
+        bool ancestorWithTransformAnimationIntersectsCoverageRect { false };
         bool ancestorIsViewportConstrained { false };
     };
     bool needsCommit(const CommitState&);
@@ -299,12 +300,7 @@ private:
     struct VisibleAndCoverageRects {
         FloatRect visibleRect;
         FloatRect coverageRect;
-        
-        VisibleAndCoverageRects(const FloatRect& visRect, const FloatRect& covRect)
-            : visibleRect(visRect)
-            , coverageRect(covRect)
-        {
-        }
+        TransformationMatrix animatingTransform;
     };
     
     VisibleAndCoverageRects computeVisibleAndCoverageRect(TransformState&, bool accumulateTransform, ComputeVisibleRectFlags = RespectAnimatingTransforms) const;
@@ -400,7 +396,7 @@ private:
     void updateBackfaceVisibility();
     void updateStructuralLayer();
     void updateDrawsContent();
-    void updateCoverage();
+    void updateCoverage(const CommitState&);
     void updateBackgroundColor();
     void updateUserInteractionEnabled();
 
