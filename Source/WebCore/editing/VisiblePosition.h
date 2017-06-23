@@ -27,7 +27,6 @@
 
 #include "EditingBoundary.h"
 #include "Position.h"
-#include "TextFlags.h"
 
 namespace WebCore {
 

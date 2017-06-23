@@ -30,6 +30,7 @@
 #include "ResourceUsageOverlay.h"
 
 #include "FrameView.h"
+#include "MainFrame.h"
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "PlatformMouseEvent.h"

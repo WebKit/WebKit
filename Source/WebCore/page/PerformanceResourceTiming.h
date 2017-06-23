@@ -36,7 +36,7 @@
 #include "LoadTiming.h"
 #include "NetworkLoadMetrics.h"
 #include "PerformanceEntry.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

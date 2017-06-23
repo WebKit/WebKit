@@ -52,6 +52,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
+#include "SharedBuffer.h"
 #include "SubresourceIntegrity.h"
 #include "SubresourceLoader.h"
 #include "ThreadableLoaderClient.h"

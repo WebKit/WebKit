@@ -30,10 +30,8 @@
 #include "CachedResourceHandle.h"
 #include "CachedResourceRequest.h"
 #include "ContentSecurityPolicy.h"
-#include "ResourceLoadPriority.h"
 #include "ResourceTimingInformation.h"
 #include "Timer.h"
-#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>

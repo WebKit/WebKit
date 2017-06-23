@@ -37,6 +37,7 @@
 #include "MainFrame.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "PlatformMouseEvent.h"
 #include "PlugInClient.h"
 #include "PluginViewBase.h"
 #include "RenderImage.h"

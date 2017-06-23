@@ -28,6 +28,7 @@
 #include "HTMLDocumentParser.h"
 
 #include "DocumentFragment.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLParserScheduler.h"

@@ -31,9 +31,8 @@
 #pragma once
 
 #include "ThreadableLoaderClient.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
-#include <wtf/Threading.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 

@@ -35,6 +35,7 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
+#include "SharedBuffer.h"
 #include "TransformSource.h"
 #include "XMLDocumentParser.h"
 #include "XSLTExtensions.h"

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CachedResource.h"
-#include "DocumentLoader.h"
 #include "Element.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"

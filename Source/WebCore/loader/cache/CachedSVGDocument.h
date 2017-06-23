@@ -23,7 +23,6 @@
 #pragma once
 
 #include "CachedResource.h"
-#include "CachedResourceHandle.h"
 #include "SVGDocument.h"
 #include "TextResourceDecoder.h"
 

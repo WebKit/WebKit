@@ -28,11 +28,8 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "AudioTrack.h"
-#include "Language.h"
-#include "LocalizedStrings.h"
 #include "TextTrack.h"
 #include "Timer.h"
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

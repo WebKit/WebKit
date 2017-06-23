@@ -30,8 +30,10 @@
 #include "MediaControls.h"
 
 #include "EventNames.h"
+#include "MouseEvent.h"
 #include "Page.h"
 #include "RenderElement.h"
+#include "RenderTheme.h"
 #include "Settings.h"
 
 namespace WebCore {

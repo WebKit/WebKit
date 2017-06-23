@@ -26,7 +26,6 @@
 #pragma once
 
 #include "EventTrackingRegions.h"
-#include "IntRect.h"
 #include "LayoutRect.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollSnapOffsetsInfo.h"

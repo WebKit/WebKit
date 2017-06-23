@@ -32,7 +32,6 @@
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
 #include "LinkIcon.h"
-#include "ResourceLoadPriority.h"
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>

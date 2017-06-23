@@ -29,7 +29,6 @@
 #include "MediaProducer.h"
 #include "PageVisibilityState.h"
 #include "Pagination.h"
-#include "PlatformScreen.h"
 #include "RTCController.h"
 #include "Region.h"
 #include "ScrollTypes.h"
@@ -42,11 +41,9 @@
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 

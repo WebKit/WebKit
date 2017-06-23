@@ -29,7 +29,6 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "RenderStyleConstants.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {

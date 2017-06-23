@@ -28,10 +28,8 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "ContextDestructionObserver.h"
-#include "EventListener.h"
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
-#include "Timer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

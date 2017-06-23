@@ -74,6 +74,7 @@
 #include "PlatformMediaSessionManager.h"
 #include "ProgressTracker.h"
 #include "RenderLayerCompositor.h"
+#include "RenderTheme.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ResourceLoadInfo.h"

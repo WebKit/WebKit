@@ -31,9 +31,6 @@
 #include "Chrome.h"
 #include "HTMLDivElement.h"
 #include "MediaControlElements.h"
-#include "MouseEvent.h"
-#include "RenderTheme.h"
-#include "Text.h"
 #include <wtf/RefPtr.h>
 
 #if ENABLE(VIDEO_TRACK)

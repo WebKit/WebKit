@@ -25,7 +25,6 @@
 #include "CollectionIndexCache.h"
 #include "HTMLNames.h"
 #include "LiveNodeList.h"
-#include "ScriptWrappable.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {

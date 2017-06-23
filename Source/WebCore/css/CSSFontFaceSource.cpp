@@ -37,6 +37,7 @@
 #include "FontCustomPlatformData.h"
 #include "FontDescription.h"
 #include "SVGToOTFFontConversion.h"
+#include "SharedBuffer.h"
 
 #if ENABLE(SVG_FONTS)
 #include "CachedSVGFont.h"

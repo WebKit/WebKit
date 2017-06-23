@@ -29,7 +29,6 @@
 #include "ExceptionOr.h"
 #include "URL.h"
 #include "URLUtils.h"
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 

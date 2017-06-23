@@ -28,7 +28,6 @@
 #include "GraphicsLayer.h"
 #include "HTMLCanvasElement.h"
 #include "ScriptWrappable.h"
-#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringHash.h>
 

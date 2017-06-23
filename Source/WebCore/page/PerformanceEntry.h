@@ -36,7 +36,6 @@
 #include "Performance.h"
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
-#include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

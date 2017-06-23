@@ -32,7 +32,8 @@
 #include "CachedImage.h"
 #include "CachedImageClient.h"
 #include "CachedRawResource.h"
-#include "CachedResourceLoader.h"
+#include "CachedRawResourceClient.h"
+#include "CachedResourceHandle.h"
 #include "CachedScript.h"
 #include "CachedStyleSheetClient.h"
 

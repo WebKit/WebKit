@@ -30,7 +30,6 @@
 #include "FloatRect.h"
 #include "GraphicsLayer.h"
 #include "IntRect.h"
-#include "MainFrame.h"
 #include "PageOverlay.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>

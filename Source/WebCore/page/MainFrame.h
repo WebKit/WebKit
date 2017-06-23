@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "EventHandler.h"
 #include "Frame.h"
 #include <wtf/Vector.h>
 

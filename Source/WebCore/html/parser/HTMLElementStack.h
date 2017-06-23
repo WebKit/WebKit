@@ -29,7 +29,7 @@
 #include "HTMLStackItem.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

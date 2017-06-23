@@ -33,7 +33,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "EventTarget.h"
 #include "HTMLElement.h"
 #include "TextTrackCue.h"
 

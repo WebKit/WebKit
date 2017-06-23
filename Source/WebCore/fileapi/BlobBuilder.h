@@ -30,8 +30,8 @@
 
 #pragma once
 
+#include "BlobLineEndings.h"
 #include "BlobPart.h"
-#include "BlobPropertyBag.h"
 
 namespace JSC {
 class ArrayBuffer;

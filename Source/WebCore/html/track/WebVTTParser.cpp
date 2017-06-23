@@ -42,6 +42,7 @@
 #include "Text.h"
 #include "VTTScanner.h"
 #include "WebVTTElement.h"
+#include "WebVTTTokenizer.h"
 
 namespace WebCore {
 

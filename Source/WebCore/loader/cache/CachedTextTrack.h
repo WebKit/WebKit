@@ -28,7 +28,6 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "CachedResource.h"
-#include "TextFlags.h"
 
 namespace WebCore {
 

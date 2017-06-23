@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/CurrentTime.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
 

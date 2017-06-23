@@ -37,7 +37,6 @@
 #include "MediaControllerInterface.h"
 #include "MediaElementSession.h"
 #include "MediaProducer.h"
-#include "UserInterfaceLayoutDirection.h"
 #include "VisibilityChangeClient.h"
 #include <wtf/Function.h>
 #include <wtf/WeakPtr.h>

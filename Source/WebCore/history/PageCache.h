@@ -26,7 +26,6 @@
 #pragma once
 
 #include "HistoryItem.h"
-#include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>

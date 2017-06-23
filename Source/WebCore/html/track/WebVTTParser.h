@@ -39,7 +39,6 @@
 #include "HTMLNames.h"
 #include "TextResourceDecoder.h"
 #include "VTTRegion.h"
-#include "WebVTTTokenizer.h"
 #include <memory>
 #include <wtf/MediaTime.h>
 #include <wtf/text/StringBuilder.h>

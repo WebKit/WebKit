@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Color.h"
 #include "CompositionUnderline.h"
 #include "DataTransferAccessPolicy.h"
 #include "DictationAlternative.h"

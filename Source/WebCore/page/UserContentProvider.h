@@ -25,17 +25,11 @@
 
 #pragma once
 
-#include "UserScriptTypes.h"
-#include "UserStyleSheetTypes.h"
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
-
-#if ENABLE(USER_MESSAGE_HANDLERS)
-#include "UserMessageHandlerDescriptorTypes.h"
-#endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
 #include "ContentExtensionActions.h"
@@ -44,10 +38,14 @@
 
 namespace WebCore {
 
+class DOMWrapperWorld;
 class DocumentLoader;
 class Page;
 class ResourceRequest;
 class URL;
+class UserMessageHandlerDescriptor;
+class UserScript;
+class UserStyleSheet;
 
 enum class ResourceType : uint16_t;
 

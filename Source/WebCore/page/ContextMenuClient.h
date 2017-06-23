@@ -27,7 +27,6 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "ContextMenu.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {

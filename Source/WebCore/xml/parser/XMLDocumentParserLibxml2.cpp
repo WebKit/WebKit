@@ -46,6 +46,7 @@
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
 #include "Settings.h"
+#include "SharedBuffer.h"
 #include "StyleScope.h"
 #include "TransformSource.h"
 #include "XMLNSNames.h"
