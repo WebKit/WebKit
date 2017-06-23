@@ -136,7 +136,9 @@ void LibWebRTCSocketClient::signalClose(rtc::AsyncPacketSocket* socket, int erro
     m_rtcProvider.sendFromMainThread([identifier = m_identifier, error](IPC::Connection& connection) {
         connection.send(Messages::WebRTCSocket::SignalClose(error), identifier);
     });
-    m_rtcProvider.takeSocket(m_identifier);
+    // We want to remove 'this' from the socket map now but we will destroy it asynchronously
+    // so that the socket parameter of signalClose remains alive as the caller of signalClose may actually being using it afterwards.
+    m_rtcProvider.callOnRTCNetworkThread([socket = m_rtcProvider.takeSocket(m_identifier)] { });
 }
 
 } // namespace WebKit

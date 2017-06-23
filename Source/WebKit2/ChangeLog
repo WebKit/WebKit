@@ -1,3 +1,13 @@
+2017-06-23  Youenn Fablet  <youenn@apple.com>
+
+        LibWebRTCSocketClient should not destroy its socket within signalClose callback
+        https://bugs.webkit.org/show_bug.cgi?id=173739
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::signalClose): Destroy 'this' asynchronously to make the caller of signalClose valid until it is not used.
+
 2017-06-23  Chris Dumez  <cdumez@apple.com>
 
         Fix typo in WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData() naming
