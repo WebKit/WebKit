@@ -141,38 +141,44 @@ void WebPlaybackSessionModelContext::toggleMuted()
         m_manager->toggleMuted(m_contextId);
 }
 
-void WebPlaybackSessionModelContext::setPlaybackStartedTime(double playbackStartedTime)
+void WebPlaybackSessionModelContext::setMuted(bool muted)
+{
+    if (m_manager)
+        m_manager->setMuted(m_contextId, muted);
+}
+
+void WebPlaybackSessionModelContext::playbackStartedTimeChanged(double playbackStartedTime)
 {
     m_playbackStartedTime = playbackStartedTime;
     m_playbackStartedTimeNeedsUpdate = false;
 }
 
-void WebPlaybackSessionModelContext::setDuration(double duration)
+void WebPlaybackSessionModelContext::durationChanged(double duration)
 {
     m_duration = duration;
     for (auto* client : m_clients)
         client->durationChanged(duration);
 }
 
-void WebPlaybackSessionModelContext::setCurrentTime(double currentTime)
+void WebPlaybackSessionModelContext::currentTimeChanged(double currentTime)
 {
     m_currentTime = currentTime;
     auto anchorTime = [[NSProcessInfo processInfo] systemUptime];
     if (m_playbackStartedTimeNeedsUpdate)
-        setPlaybackStartedTime(currentTime);
+        playbackStartedTimeChanged(currentTime);
 
     for (auto* client : m_clients)
         client->currentTimeChanged(currentTime, anchorTime);
 }
 
-void WebPlaybackSessionModelContext::setBufferedTime(double bufferedTime)
+void WebPlaybackSessionModelContext::bufferedTimeChanged(double bufferedTime)
 {
     m_bufferedTime = bufferedTime;
     for (auto* client : m_clients)
         client->bufferedTimeChanged(bufferedTime);
 }
 
-void WebPlaybackSessionModelContext::setRate(bool isPlaying, float playbackRate)
+void WebPlaybackSessionModelContext::rateChanged(bool isPlaying, float playbackRate)
 {
     m_isPlaying = isPlaying;
     m_playbackRate = playbackRate;
@@ -180,7 +186,7 @@ void WebPlaybackSessionModelContext::setRate(bool isPlaying, float playbackRate)
         client->rateChanged(isPlaying, playbackRate);
 }
 
-void WebPlaybackSessionModelContext::setSeekableRanges(WebCore::TimeRanges& seekableRanges, double lastModifiedTime, double liveUpdateInterval)
+void WebPlaybackSessionModelContext::seekableRangesChanged(WebCore::TimeRanges& seekableRanges, double lastModifiedTime, double liveUpdateInterval)
 {
     m_seekableRanges = seekableRanges;
     m_seekableTimeRangesLastModifiedTime = lastModifiedTime;
@@ -189,14 +195,14 @@ void WebPlaybackSessionModelContext::setSeekableRanges(WebCore::TimeRanges& seek
         client->seekableRangesChanged(seekableRanges, lastModifiedTime, liveUpdateInterval);
 }
 
-void WebPlaybackSessionModelContext::setCanPlayFastReverse(bool canPlayFastReverse)
+void WebPlaybackSessionModelContext::canPlayFastReverseChanged(bool canPlayFastReverse)
 {
     m_canPlayFastReverse = canPlayFastReverse;
     for (auto* client : m_clients)
         client->canPlayFastReverseChanged(canPlayFastReverse);
 }
 
-void WebPlaybackSessionModelContext::setAudioMediaSelectionOptions(const Vector<MediaSelectionOption>& audioMediaSelectionOptions, uint64_t audioMediaSelectedIndex)
+void WebPlaybackSessionModelContext::audioMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& audioMediaSelectionOptions, uint64_t audioMediaSelectedIndex)
 {
     m_audioMediaSelectionOptions = audioMediaSelectionOptions;
     m_audioMediaSelectedIndex = audioMediaSelectedIndex;
@@ -204,7 +210,7 @@ void WebPlaybackSessionModelContext::setAudioMediaSelectionOptions(const Vector<
         client->audioMediaSelectionOptionsChanged(audioMediaSelectionOptions, audioMediaSelectedIndex);
 }
 
-void WebPlaybackSessionModelContext::setLegibleMediaSelectionOptions(const Vector<MediaSelectionOption>& legibleMediaSelectionOptions, uint64_t legibleMediaSelectedIndex)
+void WebPlaybackSessionModelContext::legibleMediaSelectionOptionsChanged(const Vector<MediaSelectionOption>& legibleMediaSelectionOptions, uint64_t legibleMediaSelectedIndex)
 {
     m_legibleMediaSelectionOptions = legibleMediaSelectionOptions;
     m_legibleMediaSelectedIndex = legibleMediaSelectedIndex;
@@ -213,7 +219,7 @@ void WebPlaybackSessionModelContext::setLegibleMediaSelectionOptions(const Vecto
         client->legibleMediaSelectionOptionsChanged(legibleMediaSelectionOptions, legibleMediaSelectedIndex);
 }
 
-void WebPlaybackSessionModelContext::setAudioMediaSelectionIndex(uint64_t selectedIndex)
+void WebPlaybackSessionModelContext::audioMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
     m_audioMediaSelectedIndex = selectedIndex;
 
@@ -221,7 +227,7 @@ void WebPlaybackSessionModelContext::setAudioMediaSelectionIndex(uint64_t select
         client->audioMediaSelectionIndexChanged(selectedIndex);
 }
 
-void WebPlaybackSessionModelContext::setLegibleMediaSelectionIndex(uint64_t selectedIndex)
+void WebPlaybackSessionModelContext::legibleMediaSelectionIndexChanged(uint64_t selectedIndex)
 {
     m_legibleMediaSelectedIndex = selectedIndex;
 
@@ -229,7 +235,7 @@ void WebPlaybackSessionModelContext::setLegibleMediaSelectionIndex(uint64_t sele
         client->legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
-void WebPlaybackSessionModelContext::setExternalPlayback(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedName)
+void WebPlaybackSessionModelContext::externalPlaybackChanged(bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType type, const String& localizedName)
 {
     m_externalPlaybackEnabled = enabled;
     m_externalPlaybackTargetType = type;
@@ -239,14 +245,14 @@ void WebPlaybackSessionModelContext::setExternalPlayback(bool enabled, WebPlayba
         client->externalPlaybackChanged(enabled, type, localizedName);
 }
 
-void WebPlaybackSessionModelContext::setWirelessVideoPlaybackDisabled(bool wirelessVideoPlaybackDisabled)
+void WebPlaybackSessionModelContext::wirelessVideoPlaybackDisabledChanged(bool wirelessVideoPlaybackDisabled)
 {
     m_wirelessVideoPlaybackDisabled = wirelessVideoPlaybackDisabled;
     for (auto* client : m_clients)
         client->wirelessVideoPlaybackDisabledChanged(wirelessVideoPlaybackDisabled);
 }
 
-void WebPlaybackSessionModelContext::setMuted(bool muted)
+void WebPlaybackSessionModelContext::mutedChanged(bool muted)
 {
     m_muted = muted;
     for (auto* client : m_clients)
@@ -368,17 +374,17 @@ void WebPlaybackSessionManagerProxy::resetMediaState(uint64_t contextId)
     ensureInterface(contextId).resetMediaState();
 }
 
-void WebPlaybackSessionManagerProxy::setCurrentTime(uint64_t contextId, double currentTime, double hostTime)
+void WebPlaybackSessionManagerProxy::currentTimeChanged(uint64_t contextId, double currentTime, double hostTime)
 {
-    ensureModel(contextId).setCurrentTime(currentTime);
+    ensureModel(contextId).currentTimeChanged(currentTime);
 }
 
-void WebPlaybackSessionManagerProxy::setBufferedTime(uint64_t contextId, double bufferedTime)
+void WebPlaybackSessionManagerProxy::bufferedTimeChanged(uint64_t contextId, double bufferedTime)
 {
-    ensureModel(contextId).setBufferedTime(bufferedTime);
+    ensureModel(contextId).bufferedTimeChanged(bufferedTime);
 }
 
-void WebPlaybackSessionManagerProxy::setSeekableRangesVector(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)
+void WebPlaybackSessionManagerProxy::seekableRangesVectorChanged(uint64_t contextId, Vector<std::pair<double, double>> ranges, double lastModifiedTime, double liveUpdateInterval)
 {
     Ref<TimeRanges> timeRanges = TimeRanges::create();
     for (const auto& range : ranges) {
@@ -388,65 +394,65 @@ void WebPlaybackSessionManagerProxy::setSeekableRangesVector(uint64_t contextId,
         timeRanges->add(range.first, range.second);
     }
 
-    ensureModel(contextId).setSeekableRanges(timeRanges, lastModifiedTime, liveUpdateInterval);
+    ensureModel(contextId).seekableRangesChanged(timeRanges, lastModifiedTime, liveUpdateInterval);
 }
 
-void WebPlaybackSessionManagerProxy::setCanPlayFastReverse(uint64_t contextId, bool value)
+void WebPlaybackSessionManagerProxy::canPlayFastReverseChanged(uint64_t contextId, bool value)
 {
-    ensureModel(contextId).setCanPlayFastReverse(value);
+    ensureModel(contextId).canPlayFastReverseChanged(value);
 }
 
-void WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
+void WebPlaybackSessionManagerProxy::audioMediaSelectionOptionsChanged(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
-    ensureModel(contextId).setAudioMediaSelectionOptions(options, selectedIndex);
+    ensureModel(contextId).audioMediaSelectionOptionsChanged(options, selectedIndex);
 }
 
-void WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
+void WebPlaybackSessionManagerProxy::legibleMediaSelectionOptionsChanged(uint64_t contextId, Vector<MediaSelectionOption> options, uint64_t selectedIndex)
 {
-    ensureModel(contextId).setLegibleMediaSelectionOptions(options, selectedIndex);
+    ensureModel(contextId).legibleMediaSelectionOptionsChanged(options, selectedIndex);
 }
 
-void WebPlaybackSessionManagerProxy::setAudioMediaSelectionIndex(uint64_t contextId, uint64_t selectedIndex)
+void WebPlaybackSessionManagerProxy::audioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
 {
-    ensureModel(contextId).setAudioMediaSelectionIndex(selectedIndex);
+    ensureModel(contextId).audioMediaSelectionIndexChanged(selectedIndex);
 }
 
-void WebPlaybackSessionManagerProxy::setLegibleMediaSelectionIndex(uint64_t contextId, uint64_t selectedIndex)
+void WebPlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
 {
-    ensureModel(contextId).setLegibleMediaSelectionIndex(selectedIndex);
+    ensureModel(contextId).legibleMediaSelectionIndexChanged(selectedIndex);
 }
 
-void WebPlaybackSessionManagerProxy::setExternalPlaybackProperties(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
+void WebPlaybackSessionManagerProxy::externalPlaybackPropertiesChanged(uint64_t contextId, bool enabled, uint32_t targetType, String localizedDeviceName)
 {
     WebPlaybackSessionModel::ExternalPlaybackTargetType type = static_cast<WebPlaybackSessionModel::ExternalPlaybackTargetType>(targetType);
     ASSERT(type == WebPlaybackSessionModel::TargetTypeAirPlay || type == WebPlaybackSessionModel::TargetTypeTVOut || type == WebPlaybackSessionModel::TargetTypeNone);
 
-    ensureModel(contextId).setExternalPlayback(enabled, type, localizedDeviceName);
+    ensureModel(contextId).externalPlaybackChanged(enabled, type, localizedDeviceName);
 }
 
-void WebPlaybackSessionManagerProxy::setWirelessVideoPlaybackDisabled(uint64_t contextId, bool disabled)
+void WebPlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool disabled)
 {
-    ensureModel(contextId).setWirelessVideoPlaybackDisabled(disabled);
+    ensureModel(contextId).wirelessVideoPlaybackDisabledChanged(disabled);
 }
 
-void WebPlaybackSessionManagerProxy::setMuted(uint64_t contextId, bool muted)
+void WebPlaybackSessionManagerProxy::mutedChanged(uint64_t contextId, bool muted)
 {
-    ensureModel(contextId).setMuted(muted);
+    ensureModel(contextId).mutedChanged(muted);
 }
 
-void WebPlaybackSessionManagerProxy::setDuration(uint64_t contextId, double duration)
+void WebPlaybackSessionManagerProxy::durationChanged(uint64_t contextId, double duration)
 {
-    ensureModel(contextId).setDuration(duration);
+    ensureModel(contextId).mutedChanged(duration);
 }
 
-void WebPlaybackSessionManagerProxy::setPlaybackStartedTime(uint64_t contextId, double playbackStartedTime)
+void WebPlaybackSessionManagerProxy::playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime)
 {
-    ensureModel(contextId).setPlaybackStartedTime(playbackStartedTime);
+    ensureModel(contextId).playbackStartedTimeChanged(playbackStartedTime);
 }
 
-void WebPlaybackSessionManagerProxy::setRate(uint64_t contextId, bool isPlaying, double rate)
+void WebPlaybackSessionManagerProxy::rateChanged(uint64_t contextId, bool isPlaying, double rate)
 {
-    ensureModel(contextId).setRate(isPlaying, rate);
+    ensureModel(contextId).rateChanged(isPlaying, rate);
 }
 
 
@@ -534,6 +540,11 @@ void WebPlaybackSessionManagerProxy::toggleMuted(uint64_t contextId)
     m_page->send(Messages::WebPlaybackSessionManager::ToggleMuted(contextId), m_page->pageID());
 }
 
+void WebPlaybackSessionManagerProxy::setMuted(uint64_t contextId, bool muted)
+{
+    m_page->send(Messages::WebPlaybackSessionManager::SetMuted(contextId, muted), m_page->pageID());
+}
+
 void WebPlaybackSessionManagerProxy::requestControlledElementID()
 {
     if (m_controlsManagerContextId)
@@ -544,7 +555,7 @@ PlatformWebPlaybackSessionInterface* WebPlaybackSessionManagerProxy::controlsMan
 {
     if (!m_controlsManagerContextId)
         return nullptr;
-    
+
     auto& interface = ensureInterface(m_controlsManagerContextId);
     return &interface;
 }

@@ -71,6 +71,7 @@ public:
     WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void togglePictureInPicture() final;
     WEBCORE_EXPORT void toggleMuted() final;
+    WEBCORE_EXPORT void setMuted(bool) final;
 
     double duration() const final;
     double currentTime() const final;

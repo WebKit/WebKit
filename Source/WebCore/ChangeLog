@@ -1,3 +1,25 @@
+2017-06-23  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] Support -[WebAVPlayerController setMuted:]
+        https://bugs.webkit.org/show_bug.cgi?id=173777
+
+        Reviewed by Eric Carlson.
+
+        Have -[WebAVPlayerController setMuted:] pass the request to its delegate (the model)
+        rather than just storing the value.
+
+        * platform/cocoa/WebPlaybackSessionModel.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::toggleMuted):
+        (WebCore::WebPlaybackSessionModelMediaElement::setMuted):
+        * platform/ios/WebAVPlayerController.h:
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController isMuted]):
+        (-[WebAVPlayerController setMuted:]):
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (WebVideoFullscreenControllerContext::setMuted):
+
 2017-06-23  Frederic Wang  <fwang@igalia.com>
 
         Make RenderLayer::handleTouchEvent use usesAcceleratedScrolling()
