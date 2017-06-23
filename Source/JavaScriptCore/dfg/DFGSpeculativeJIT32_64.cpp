@@ -2100,7 +2100,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         default: {
-            JSValueOperand op(this, node->child1());
+            JSValueOperand op(this, node->child1(), ManualOperandSpeculation);
             GPRTemporary resultTag(this, Reuse, op, TagWord);
             GPRTemporary resultPayload(this, Reuse, op, PayloadWord);
             GPRReg sourceTag = op.tagGPR();

@@ -2210,7 +2210,7 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         default: {
-            JSValueOperand op(this, node->child1());
+            JSValueOperand op(this, node->child1(), ManualOperandSpeculation);
             GPRTemporary result(this, Reuse, op);
             m_jit.move(op.gpr(), result.gpr());
             jsValueResult(result.gpr(), node);

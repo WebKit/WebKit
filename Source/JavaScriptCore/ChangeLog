@@ -1,5 +1,27 @@
 2017-06-22  Saam Barati  <sbarati@apple.com>
 
+        The lowering of Identity in the DFG backend needs to use ManualOperandSpeculation
+        https://bugs.webkit.org/show_bug.cgi?id=173743
+        <rdar://problem/32932536>
+
+        Reviewed by Mark Lam.
+
+        The code always manually speculates, however, we weren't specifying
+        ManualOperandSpeculation when creating a JSValueOperand. This would
+        fire an assertion in JSValueOperand construction for a node like:
+        Identity(String:@otherNode)
+        
+        I spent about 45 minutes trying to craft a test and came up
+        empty. However, this fixes a debug assertion on an internal
+        Apple website.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2017-06-22  Saam Barati  <sbarati@apple.com>
+
         ValueRep(DoubleRep(@v)) can not simply convert to @v
         https://bugs.webkit.org/show_bug.cgi?id=173687
         <rdar://problem/32855563>
