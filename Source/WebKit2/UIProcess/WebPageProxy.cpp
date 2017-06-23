@@ -3243,13 +3243,9 @@ void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const Securi
 
 void WebPageProxy::clearLoadDependentCallbacks()
 {
-    Vector<uint64_t> callbackIDsCopy;
-    copyToVector(m_loadDependentStringCallbackIDs, callbackIDsCopy);
-    m_loadDependentStringCallbackIDs.clear();
-
-    for (size_t i = 0; i < callbackIDsCopy.size(); ++i) {
-        auto callback = m_callbacks.take<StringCallback>(callbackIDsCopy[i]);
-        if (callback)
+    HashSet<uint64_t> loadDependentStringCallbackIDs = WTFMove(m_loadDependentStringCallbackIDs);
+    for (auto& callbackID : loadDependentStringCallbackIDs) {
+        if (auto callback = m_callbacks.take<StringCallback>(callbackID))
             callback->invalidate();
     }
 }

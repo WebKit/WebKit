@@ -1,5 +1,19 @@
 2017-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Avoid copying HashSet to Vector in WebPageProxy::clearLoadDependentCallbacks()
+        https://bugs.webkit.org/show_bug.cgi?id=173786
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid copying HashSet to Vector in WebPageProxy::clearLoadDependentCallbacks().
+        Instead, just move the HashSet and iterate on that. This is OK since we were
+        clearing the HashSet right after copying it to the vector anyway.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::clearLoadDependentCallbacks):
+
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, fix Debug build after r218763
 
         * NetworkProcess/NetworkDataTask.cpp:
