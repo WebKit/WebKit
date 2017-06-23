@@ -57,7 +57,7 @@ namespace NetworkCache {
 
 static const AtomicString& resourceType()
 {
-    ASSERT(WTF::isMainThread());
+    ASSERT(WTF::RunLoop::isMain());
     static NeverDestroyed<const AtomicString> resource("Resource", AtomicString::ConstructFromLiteral);
     return resource;
 }
@@ -82,7 +82,7 @@ bool Cache::initialize(const String& cachePath, OptionSet<Option> options)
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     if (options.contains(Option::SpeculativeRevalidation)) {
         m_lowPowerModeNotifier = std::make_unique<WebCore::LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) {
-            ASSERT(WTF::isMainThread());
+            ASSERT(WTF::RunLoop::isMain());
             if (isLowPowerModeEnabled)
                 m_speculativeLoadManager = nullptr;
             else {

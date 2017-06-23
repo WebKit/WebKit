@@ -370,7 +370,7 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
 
 void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     ASSERT(!m_throttle);
 
     if (m_task && m_task->isDownload()) {
@@ -389,7 +389,7 @@ void NetworkLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, 
 
 void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
 #if ENABLE(NETWORK_CAPTURE)
     if (m_recorder)

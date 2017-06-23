@@ -69,7 +69,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
     , m_firstRequest(requestWithCredentials)
     , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (!requestWithCredentials.url().isValid()) {
         scheduleFailure(InvalidURLFailure);
@@ -84,7 +84,7 @@ NetworkDataTask::NetworkDataTask(NetworkSession& session, NetworkDataTaskClient&
 
 NetworkDataTask::~NetworkDataTask()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     ASSERT(!m_client);
 }
 

@@ -427,7 +427,7 @@ static void detachViewForPage(PDFPageInfo& page)
     [highlightView setCornerRadius:highlightBorderRadius];
     [highlightView setColor:highlightColor];
 
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     [self addSubview:highlightView.get()];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [highlightView removeFromSuperview];

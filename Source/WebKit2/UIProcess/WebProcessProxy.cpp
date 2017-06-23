@@ -212,7 +212,7 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
 void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, Function<void(Vector<String>)>&& completionHandler)
 {
     // We expect this to be called on the main thread so we get the default website data store.
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void(Vector<String>)>&& completionHandler)
@@ -259,7 +259,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
         callbackAggregator->addPendingCallback();
         dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, { }, topPrivatelyControlledDomains, [callbackAggregator, shouldNotifyPage, page](Vector<String>&& domainsWithDeletedWebsiteData) {
             // When completing the task, we should be getting called on the main thread.
-            ASSERT(isMainThread());
+            ASSERT(RunLoop::isMain());
             
             if (shouldNotifyPage)
                 page.value->postMessageToInjectedBundle("WebsiteDataDeletionForTopPrivatelyOwnedDomainsFinished", nullptr);
@@ -273,7 +273,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
 void WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, Function<void(HashSet<String>&&)>&& completionHandler)
 {
     // We expect this to be called on the main thread so we get the default website data store.
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void(HashSet<String>&&)>&& completionHandler)
@@ -321,7 +321,7 @@ void WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(OptionSet<Web
         callbackAggregator->addPendingCallback();
         dataStore.topPrivatelyControlledDomainsWithWebsiteData(dataTypes, { }, [callbackAggregator, shouldNotifyPage, page](HashSet<String>&& domainsWithDataRecords) {
             // When completing the task, we should be getting called on the main thread.
-            ASSERT(isMainThread());
+            ASSERT(RunLoop::isMain());
             
             if (shouldNotifyPage)
                 page.value->postMessageToInjectedBundle("WebsiteDataScanForTopPrivatelyControlledDomainsFinished", nullptr);

@@ -60,7 +60,7 @@ NetworkSession& NetworkSession::defaultSession()
 #if PLATFORM(COCOA)
     return NetworkSessionCocoa::defaultSession();
 #else
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     static NetworkSession* session = &NetworkSession::create(SessionID::defaultSessionID()).leakRef();
     return *session;
 #endif

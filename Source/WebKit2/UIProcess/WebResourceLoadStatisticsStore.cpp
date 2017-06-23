@@ -103,7 +103,7 @@ static inline void initializeDataTypesToRemove()
     
 void WebResourceLoadStatisticsStore::removeDataRecords()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     
     if (!coreStore().shouldRemoveDataRecords())
         return;
@@ -176,7 +176,7 @@ bool WebResourceLoadStatisticsStore::resourceLoadStatisticsEnabled() const
 
 void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     
     ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
     ResourceLoadObserver::sharedObserver().setStatisticsQueue(m_statisticsQueue.copyRef());
@@ -200,7 +200,7 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
     
 void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& shouldPartitionCookiesForDomainsHandler)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     
     registerSharedResourceLoadObserver();
     m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([shouldPartitionCookiesForDomainsHandler = WTFMove(shouldPartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst) {
@@ -276,7 +276,7 @@ String WebResourceLoadStatisticsStore::persistentStoragePath(const String& label
 
 void WebResourceLoadStatisticsStore::writeStoreToDisk()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     
     auto encoder = coreStore().createEncoderFromData();
     writeEncoderToDisk(*encoder.get(), "full_browsing_session");
@@ -284,7 +284,7 @@ void WebResourceLoadStatisticsStore::writeStoreToDisk()
 
 void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, const String& label) const
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     
     RefPtr<SharedBuffer> rawData = encoder.finishEncoding();
     if (!rawData)

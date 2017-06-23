@@ -42,7 +42,7 @@ namespace WebKit {
 
 void WebFrameNetworkingContext::ensurePrivateBrowsingSession(SessionID sessionID)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     ASSERT(sessionID.isEphemeral());
 
     if (NetworkStorageSession::storageSession(sessionID))

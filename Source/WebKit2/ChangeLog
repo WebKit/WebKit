@@ -1,3 +1,82 @@
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
+        Consistently use RunLoop::isMain() in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=173745
+        <rdar://problem/32936527>
+
+        Reviewed by Brent Fulgham.
+
+        Consistently use RunLoop:isMain() on WebKit2 instead of WTF::isMainThread().
+        WTF::isMainThread() returns true for the WebThread instead of the UIThread
+        in WebKit1. Therefore WTF::isMainThread() is unsafe to use in the UIProcess
+        as the application may be using WebKit1 as well and have a WebThread.
+
+        Technically, we only *need* to move from WTF::isMainThread() to
+        RunLoop::isMain() in the UIProcess code but I ported all of WebKit2 for
+        consistency. RunLoop::isMain() is always safe in WebKit2.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::NetworkDataTask):
+        (WebKit::NetworkDataTask::~NetworkDataTask):
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        (WebKit::NetworkDataTaskBlob::getSizeForNext):
+        (WebKit::NetworkDataTaskBlob::didGetSize):
+        (WebKit::NetworkDataTaskBlob::seek):
+        (WebKit::NetworkDataTaskBlob::read):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveResponseNetworkSession):
+        (WebKit::NetworkLoad::notifyDidReceiveResponse):
+        * NetworkProcess/NetworkSession.cpp:
+        (WebKit::NetworkSession::defaultSession):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::resourceType):
+        (WebKit::NetworkCache::Cache::initialize):
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::readSyncInThread):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        (WebKit::NetworkSessionCocoa::defaultSession):
+        (WebKit::NetworkSessionCocoa::dataTaskForIdentifier):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::dispatchOnMainThread):
+        (WebKit::CoordinatedGraphicsScene::syncRemoteContent):
+        (WebKit::CoordinatedGraphicsScene::detach):
+        (WebKit::CoordinatedGraphicsScene::appendUpdate):
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        (WebKit::WorkQueuePool::singleton):
+        (WebKit::WorkQueuePool::dispatch):
+        (WebKit::CompositingRunLoop::~CompositingRunLoop):
+        (WebKit::CompositingRunLoop::performTask):
+        (WebKit::CompositingRunLoop::performTaskSync):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::createGLContext):
+        (WebKit::ThreadedCompositor::renderNextFrame):
+        (WebKit::ThreadedCompositor::commitScrollOffset):
+        (WebKit::ThreadedCompositor::updateSceneState):
+        (WebKit::ThreadedCompositor::releaseUpdateAtlases):
+        (WebKit::ThreadedCompositor::frameComplete):
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::NP_Deallocate):
+        * UIProcess/Storage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabasesModifiedSince):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        (WebKit::WebProcessProxy::topPrivatelyControlledDomainsWithWebiteData):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+        (WebKit::WebResourceLoadStatisticsStore::writeStoreToDisk):
+        (WebKit::WebResourceLoadStatisticsStore::writeEncoderToDisk):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView _highlightLinkAnnotation:forDuration:completionHandler:]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _uploadItemForImageData:imageName:successBlock:failureBlock:]):
+        * WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+        (webkitSoupRequestInputStreamReadAsync):
+
 2017-06-23  David Kilzer  <ddkilzer@apple.com>
 
         v3: REGRESSION (r218419): 3 NSMutableDictionary leaks calling -[WKProcessPool _pluginLoadClientPolicies]

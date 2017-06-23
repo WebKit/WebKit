@@ -164,7 +164,7 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void
         return;
     }
 
-    if (!isMainThread()) {
+    if (!RunLoop::isMain()) {
         readSyncInThread(offset, size, queue, WTFMove(completionHandler));
         return;
     }
@@ -181,7 +181,7 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue* queue, Function<void
 
 void IOChannel::readSyncInThread(size_t offset, size_t size, WorkQueue* queue, Function<void (Data&, int error)>&& completionHandler)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     RefPtr<IOChannel> channel(this);
     Thread::create("IOChannel::readSync", [channel, size, queue, completionHandler = WTFMove(completionHandler)] () mutable {

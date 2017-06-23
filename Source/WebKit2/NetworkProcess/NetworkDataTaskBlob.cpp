@@ -180,7 +180,7 @@ void NetworkDataTaskBlob::invalidateAndCancel()
 
 void NetworkDataTaskBlob::getSizeForNext()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // Do we finish validating and counting size for all items?
     if (m_sizeItemCount >= m_blobData->items().size()) {
@@ -205,7 +205,7 @@ void NetworkDataTaskBlob::getSizeForNext()
 
 void NetworkDataTaskBlob::didGetSize(long long size)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     if (m_state == State::Canceling || m_state == State::Completed || (!m_client && !isDownload())) {
         clearStream();
@@ -236,7 +236,7 @@ void NetworkDataTaskBlob::didGetSize(long long size)
 
 void NetworkDataTaskBlob::seek()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // Convert from the suffix length to the range.
     if (m_rangeSuffixLength != kPositionNotSpecified) {
@@ -330,7 +330,7 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
 
 void NetworkDataTaskBlob::read()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
 
     // If there is no more remaining data to read, we are done.
     if (!m_totalRemainingSize || m_readItemCount >= m_blobData->items().size()) {

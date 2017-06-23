@@ -81,7 +81,7 @@ ThreadedCompositor::~ThreadedCompositor()
 
 void ThreadedCompositor::createGLContext()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
 
     ASSERT(m_nativeSurfaceHandle);
 
@@ -165,13 +165,13 @@ void ThreadedCompositor::setDrawsBackground(bool drawsBackground)
 
 void ThreadedCompositor::renderNextFrame()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     m_client.renderNextFrame();
 }
 
 void ThreadedCompositor::commitScrollOffset(uint32_t layerID, const IntSize& offset)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     m_client.commitScrollOffset(layerID, offset);
 }
 
@@ -239,7 +239,7 @@ void ThreadedCompositor::sceneUpdateFinished()
 
 void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     m_scene->appendUpdate([this, scene = makeRef(*m_scene), state] {
         scene->commitSceneState(state);
 
@@ -259,7 +259,7 @@ void ThreadedCompositor::updateSceneState(const CoordinatedGraphicsState& state)
 
 void ThreadedCompositor::releaseUpdateAtlases(Vector<uint32_t>&& atlasesToRemove)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     m_scene->appendUpdate([scene = makeRef(*m_scene), atlasesToRemove = WTFMove(atlasesToRemove)] {
         scene->releaseUpdateAtlases(atlasesToRemove);
     });
@@ -294,7 +294,7 @@ void ThreadedCompositor::coordinateUpdateCompletionWithClient()
 
 void ThreadedCompositor::frameComplete()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     sceneUpdateFinished();
 }
 

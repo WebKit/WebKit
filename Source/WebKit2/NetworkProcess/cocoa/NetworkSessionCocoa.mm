@@ -358,7 +358,7 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     auto taskIdentifier = dataTask.taskIdentifier;
     LOG(NetworkSession, "%llu didReceiveResponse", taskIdentifier);
     if (auto* networkDataTask = [self existingTask:dataTask]) {
-        ASSERT(isMainThread());
+        ASSERT(RunLoop::isMain());
         
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [response respondsToSelector:@selector(statusCode)] ? [(id)response statusCode] : 0;
@@ -535,7 +535,7 @@ Ref<NetworkSession> NetworkSessionCocoa::create(WebCore::SessionID sessionID, Le
 
 NetworkSession& NetworkSessionCocoa::defaultSession()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     static NetworkSession* session = &NetworkSessionCocoa::create(WebCore::SessionID::defaultSessionID(), legacyCustomProtocolManager).leakRef();
     return *session;
 }
@@ -628,7 +628,7 @@ void NetworkSessionCocoa::clearCredentials()
 
 NetworkDataTaskCocoa* NetworkSessionCocoa::dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, WebCore::StoredCredentials storedCredentials)
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     if (storedCredentials == WebCore::StoredCredentials::AllowStoredCredentials)
         return m_dataTaskMapWithCredentials.get(taskIdentifier);
     return m_dataTaskMapWithoutCredentials.get(taskIdentifier);

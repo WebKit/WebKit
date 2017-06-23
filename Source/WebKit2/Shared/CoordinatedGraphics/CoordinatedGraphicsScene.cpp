@@ -37,7 +37,7 @@ namespace WebKit {
 
 void CoordinatedGraphicsScene::dispatchOnMainThread(Function<void()>&& function)
 {
-    if (isMainThread()) {
+    if (RunLoop::isMain()) {
         function();
         return;
     }
@@ -589,7 +589,7 @@ void CoordinatedGraphicsScene::syncRemoteContent()
     ensureRootLayer();
 
     Vector<Function<void()>> renderQueue;
-    bool calledOnMainThread = WTF::isMainThread();
+    bool calledOnMainThread = RunLoop::isMain();
     if (!calledOnMainThread)
         m_renderQueueMutex.lock();
     renderQueue = WTFMove(m_renderQueue);
@@ -642,7 +642,7 @@ void CoordinatedGraphicsScene::setLayerAnimationsIfNeeded(TextureMapperLayer* la
 
 void CoordinatedGraphicsScene::detach()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     m_isActive = false;
     m_client = nullptr;
     LockHolder locker(m_renderQueueMutex);
@@ -654,7 +654,7 @@ void CoordinatedGraphicsScene::appendUpdate(Function<void()>&& function)
     if (!m_isActive)
         return;
 
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     LockHolder locker(m_renderQueueMutex);
     m_renderQueue.append(WTFMove(function));
 }
