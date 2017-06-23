@@ -1,3 +1,16 @@
+2017-06-22  Chris Dumez  <cdumez@apple.com>
+
+        ResourceLoadStatisticsStore should be ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=173753
+        <rdar://problem/32939326>
+
+        Reviewed by Andreas Kling.
+
+        ResourceLoadStatisticsStore should be ThreadSafeRefCounted as it is ref'd/deref'd
+        from different threads.
+
+        * loader/ResourceLoadStatisticsStore.h:
+
 2017-06-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         @font-face rules with invalid primary fonts never download their secondary fonts

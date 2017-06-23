@@ -38,7 +38,7 @@ class URL;
 
 struct ResourceLoadStatistics;
 
-class ResourceLoadStatisticsStore : public RefCounted<ResourceLoadStatisticsStore> {
+class ResourceLoadStatisticsStore : public ThreadSafeRefCounted<ResourceLoadStatisticsStore> {
 public:
     WEBCORE_EXPORT static Ref<ResourceLoadStatisticsStore> create();
 
