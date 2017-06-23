@@ -1,5 +1,15 @@
 2017-06-23  Youenn Fablet  <youenn@apple.com>
 
+        Set getUserMedia permission to true by default on WTR
+        https://bugs.webkit.org/show_bug.cgi?id=173610
+
+        Reviewed by Alex Christensen.
+
+        * fast/mediastream/delayed-permission-allowed.html:
+        * fast/mediastream/delayed-permission-denied.html:
+
+2017-06-23  Youenn Fablet  <youenn@apple.com>
+
         webrtc/routines.js should call createAnswer once setRemoteDescription promise is resolved
         https://bugs.webkit.org/show_bug.cgi?id=173785
 

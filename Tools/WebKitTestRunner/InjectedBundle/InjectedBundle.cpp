@@ -604,6 +604,12 @@ void InjectedBundle::setUserMediaPermission(bool enabled)
     WKBundlePagePostMessage(page()->page(), messageName.get(), messageBody.get());
 }
 
+void InjectedBundle::resetUserMediaPermission()
+{
+    auto messageName = adoptWK(WKStringCreateWithUTF8CString("ResetUserMediaPermission"));
+    WKBundlePagePostMessage(page()->page(), messageName.get(), 0);
+}
+
 void InjectedBundle::setUserMediaPersistentPermissionForOrigin(bool permission, WKStringRef origin, WKStringRef parentOrigin)
 {
     auto messageName = adoptWK(WKStringCreateWithUTF8CString("SetUserMediaPersistentPermissionForOrigin"));

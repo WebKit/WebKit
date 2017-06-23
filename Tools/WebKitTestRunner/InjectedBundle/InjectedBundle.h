@@ -103,6 +103,7 @@ public:
 
     // MediaStream.
     void setUserMediaPermission(bool);
+    void resetUserMediaPermission();
     void setUserMediaPersistentPermissionForOrigin(bool permission, WKStringRef origin, WKStringRef parentOrigin);
     unsigned userMediaPermissionRequestCountForOrigin(WKStringRef origin, WKStringRef parentOrigin) const;
     void resetUserMediaPermissionRequestCountForOrigin(WKStringRef origin, WKStringRef parentOrigin);

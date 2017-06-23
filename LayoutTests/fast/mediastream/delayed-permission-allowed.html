@@ -14,6 +14,9 @@ function allowPermission() {
         testRunner.setUserMediaPermission(true);
 }
 
+if (window.testRunner)
+    testRunner.resetUserMediaPermission();
+
 var options = {audio: true, video: true};
 navigator.mediaDevices.getUserMedia(options)
     .then(stream => {

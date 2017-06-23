@@ -913,6 +913,12 @@ void TestRunner::setUserMediaPermission(bool enabled)
     InjectedBundle::singleton().setUserMediaPermission(enabled);
 }
 
+void TestRunner::resetUserMediaPermission()
+{
+    // FIXME: this should be done by frame.
+    InjectedBundle::singleton().resetUserMediaPermission();
+}
+
 void TestRunner::setUserMediaPersistentPermissionForOrigin(bool permission, JSStringRef origin, JSStringRef parentOrigin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);

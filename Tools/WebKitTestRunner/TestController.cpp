@@ -803,8 +803,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     // Reset UserMedia permissions.
     m_userMediaPermissionRequests.clear();
     m_cachedUserMediaPermissions.clear();
-    m_isUserMediaPermissionSet = false;
-    m_isUserMediaPermissionAllowed = false;
+    setUserMediaPermission(true);
 
     // Reset Custom Policy Delegate.
     setCustomPolicyDelegate(false, false);
@@ -1888,6 +1887,11 @@ void TestController::setUserMediaPermission(bool enabled)
     m_isUserMediaPermissionSet = true;
     m_isUserMediaPermissionAllowed = enabled;
     decidePolicyForUserMediaPermissionRequestIfPossible();
+}
+
+void TestController::resetUserMediaPermission()
+{
+    m_isUserMediaPermissionSet = false;
 }
 
 class OriginSettings : public RefCounted<OriginSettings> {
