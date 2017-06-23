@@ -1,3 +1,20 @@
+2017-06-23  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CoordinatedGraphics] Clean up type aliases in CoordinatedGraphicsScene
+        https://bugs.webkit.org/show_bug.cgi?id=173764
+
+        Reviewed by Carlos Garcia Campos.
+
+        Drop the various type aliases created in the CoordinatedGraphicsScene
+        class. We can leave without these by leveraging `auto` where necessary.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp:
+        (WebKit::CoordinatedGraphicsScene::updateTilesIfNeeded):
+        (WebKit::CoordinatedGraphicsScene::updateImageBacking):
+        (WebKit::CoordinatedGraphicsScene::clearImageBackingContents):
+        (WebKit::CoordinatedGraphicsScene::assignImageBackingToLayer):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsScene.h:
+
 2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Crash in wpe_view_backend_get_renderer_host_fd

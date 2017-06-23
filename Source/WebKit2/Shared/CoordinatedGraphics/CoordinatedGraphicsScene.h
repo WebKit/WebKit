@@ -155,22 +155,17 @@ private:
 
     std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
 
-    typedef HashMap<WebCore::CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore>> ImageBackingMap;
-    ImageBackingMap m_imageBackings;
+    HashMap<WebCore::CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore>> m_imageBackings;
     Vector<RefPtr<CoordinatedBackingStore>> m_releasedImageBackings;
 
-    typedef HashMap<WebCore::TextureMapperLayer*, RefPtr<CoordinatedBackingStore>> BackingStoreMap;
-    BackingStoreMap m_backingStores;
-
+    HashMap<WebCore::TextureMapperLayer*, RefPtr<CoordinatedBackingStore>> m_backingStores;
     HashSet<RefPtr<CoordinatedBackingStore>> m_backingStoresWithPendingBuffers;
 
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    typedef HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::TextureMapperPlatformLayerProxy>> PlatformLayerProxyMap;
-    PlatformLayerProxyMap m_platformLayerProxies;
+    HashMap<WebCore::TextureMapperLayer*, RefPtr<WebCore::TextureMapperPlatformLayerProxy>> m_platformLayerProxies;
 #endif
 
-    typedef HashMap<uint32_t /* atlasID */, RefPtr<WebCore::CoordinatedSurface>> SurfaceMap;
-    SurfaceMap m_surfaces;
+    HashMap<uint32_t /* atlasID */, RefPtr<WebCore::CoordinatedSurface>> m_surfaces;
 
     // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
     CoordinatedGraphicsSceneClient* m_client;
@@ -178,10 +173,8 @@ private:
 
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 
-    typedef HashMap<WebCore::CoordinatedLayerID, std::unique_ptr<WebCore::TextureMapperLayer>> LayerMap;
-    LayerMap m_layers;
-    typedef HashMap<WebCore::CoordinatedLayerID, WebCore::TextureMapperLayer*> LayerRawPtrMap;
-    LayerRawPtrMap m_fixedLayers;
+    HashMap<WebCore::CoordinatedLayerID, std::unique_ptr<WebCore::TextureMapperLayer>> m_layers;
+    HashMap<WebCore::CoordinatedLayerID, WebCore::TextureMapperLayer*> m_fixedLayers;
     WebCore::CoordinatedLayerID m_rootLayerID;
     WebCore::FloatPoint m_scrollPosition;
     WebCore::FloatPoint m_renderedContentsScrollPosition;

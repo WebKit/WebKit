@@ -421,7 +421,7 @@ void CoordinatedGraphicsScene::updateTilesIfNeeded(TextureMapperLayer* layer, co
     for (auto& tile : state.tilesToUpdate) {
         const SurfaceUpdateInfo& surfaceUpdateInfo = tile.updateInfo;
 
-        SurfaceMap::iterator surfaceIt = m_surfaces.find(surfaceUpdateInfo.atlasID);
+        auto surfaceIt = m_surfaces.find(surfaceUpdateInfo.atlasID);
         ASSERT(surfaceIt != m_surfaces.end());
 
         backingStore->updateTile(tile.tileID, surfaceUpdateInfo.updateRect, tile.tileRect, surfaceIt->value.copyRef(), surfaceUpdateInfo.surfaceOffset);
@@ -477,7 +477,7 @@ void CoordinatedGraphicsScene::createImageBacking(CoordinatedImageBackingID imag
 void CoordinatedGraphicsScene::updateImageBacking(CoordinatedImageBackingID imageID, RefPtr<CoordinatedSurface>&& surface)
 {
     ASSERT(m_imageBackings.contains(imageID));
-    ImageBackingMap::iterator it = m_imageBackings.find(imageID);
+    auto it = m_imageBackings.find(imageID);
     RefPtr<CoordinatedBackingStore> backingStore = it->value;
 
     // CoordinatedImageBacking is realized to CoordinatedBackingStore with only one tile in UI Process.
@@ -494,7 +494,7 @@ void CoordinatedGraphicsScene::updateImageBacking(CoordinatedImageBackingID imag
 void CoordinatedGraphicsScene::clearImageBackingContents(CoordinatedImageBackingID imageID)
 {
     ASSERT(m_imageBackings.contains(imageID));
-    ImageBackingMap::iterator it = m_imageBackings.find(imageID);
+    auto it = m_imageBackings.find(imageID);
     RefPtr<CoordinatedBackingStore> backingStore = it->value;
     backingStore->removeAllTiles();
     m_backingStoresWithPendingBuffers.add(backingStore);
@@ -515,7 +515,7 @@ void CoordinatedGraphicsScene::assignImageBackingToLayer(TextureMapperLayer* lay
         return;
     }
 
-    ImageBackingMap::iterator it = m_imageBackings.find(imageID);
+    auto it = m_imageBackings.find(imageID);
     ASSERT(it != m_imageBackings.end());
     layer->setContentsLayer(it->value.get());
 }
