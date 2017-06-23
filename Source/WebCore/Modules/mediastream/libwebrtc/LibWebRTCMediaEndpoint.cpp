@@ -149,6 +149,13 @@ void LibWebRTCMediaEndpoint::doSetLocalDescription(RTCSessionDescription& descri
         m_peerConnectionBackend.setLocalDescriptionFailed(Exception { OperationError, WTFMove(errorMessage) });
         return;
     }
+
+    // FIXME: See https://bugs.webkit.org/show_bug.cgi?id=173783. Remove this test once fixed at LibWebRTC level.
+    if (description.type() == RTCSdpType::Answer && !m_backend->pending_remote_description()) {
+        m_peerConnectionBackend.setLocalDescriptionFailed(Exception { INVALID_STATE_ERR, ASCIILiteral("Failed to set local answer sdp: no pending remote description.") });
+        return;
+    }
+
     m_backend->SetLocalDescription(&m_setLocalSessionDescriptionObserver, sessionDescription.release());
 }
 

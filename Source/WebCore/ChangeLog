@@ -1,3 +1,15 @@
+2017-06-23  Youenn Fablet  <youenn@apple.com>
+
+        webrtc::WebRtcSession is not handling correctly its state when setLocalDescription fails and is called again
+        https://bugs.webkit.org/show_bug.cgi?id=173783
+
+        Reviewed by Alex Christensen.
+
+        Test: webrtc/libwebrtc/setLocalDescriptionCrash.html
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::doSetLocalDescription): Fail early if there is no pending remote description and description is for an answer.
+
 2017-06-23  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream macOS] enumerateDevices should only return valid audio capture devices

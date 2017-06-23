@@ -1,3 +1,13 @@
+2017-06-23  Youenn Fablet  <youenn@apple.com>
+
+        webrtc::WebRtcSession is not handling correctly its state when setLocalDescription fails and is called again
+        https://bugs.webkit.org/show_bug.cgi?id=173783
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/libwebrtc/setLocalDescriptionCrash-expected.txt: Added.
+        * webrtc/libwebrtc/setLocalDescriptionCrash.html: Added.
+
 2017-06-23  Matt Lewis  <jlewis3@apple.com>
 
         Added additional test expectations for webrtc/video-replace-muted-track.html.
