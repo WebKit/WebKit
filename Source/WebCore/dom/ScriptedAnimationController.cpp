@@ -76,7 +76,13 @@ bool ScriptedAnimationController::requestAnimationFrameEnabled() const
 void ScriptedAnimationController::suspend()
 {
     ++m_suspendCount;
-    logSuspendCount();
+
+#if PLATFORM(MAC)
+    if (MacApplication::isDumpRenderTree()) {
+        WTFLogAlways("\nScriptedAnimationController::suspend() called on %p, m_suspendCount = %d, document = %p", this, m_suspendCount, &m_document);
+        WTFReportBacktrace();
+    }
+#endif
 }
 
 void ScriptedAnimationController::resume()
@@ -86,21 +92,16 @@ void ScriptedAnimationController::resume()
     if (m_suspendCount > 0)
         --m_suspendCount;
 
-    logSuspendCount();
+#if PLATFORM(MAC)
+    if (MacApplication::isDumpRenderTree()) {
+        WTFLogAlways("\nScriptedAnimationController::resume() called on %p, m_suspendCount = %d, document = %p", this, m_suspendCount, &m_document);
+        WTFLogAlways("Document = %p", &m_document);
+        WTFReportBacktrace();
+    }
+#endif
 
     if (!m_suspendCount && m_callbacks.size())
         scheduleAnimation();
-}
-
-void ScriptedAnimationController::logSuspendCount()
-{
-#if PLATFORM(MAC)
-    if (!MacApplication::isDumpRenderTree())
-        return;
-
-    WTFLogAlways("\nScriptedAnimationController::m_suspendCount = %d", m_suspendCount);
-    WTFReportBacktrace();
-#endif
 }
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) && !RELEASE_LOG_DISABLED

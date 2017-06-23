@@ -1,3 +1,24 @@
+2017-06-22  Antoine Quint  <graouts@apple.com>
+
+        Log when scripted animations get suspended and resumed
+        https://bugs.webkit.org/show_bug.cgi?id=173751
+
+        Reviewed by Dean Jackson.
+
+        More work toward understanding why rAF callbacks are not serviced on bots (webkit.org/b/173628).
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestAnimationFrame):
+        * dom/ScriptedAnimationController.cpp:
+        (WebCore::ScriptedAnimationController::suspend):
+        (WebCore::ScriptedAnimationController::resume):
+        (WebCore::ScriptedAnimationController::logSuspendCount): Deleted.
+        * dom/ScriptedAnimationController.h:
+        * page/Page.cpp:
+        (WebCore::Page::suspendScriptedAnimations):
+        (WebCore::Page::resumeScriptedAnimations):
+        (WebCore::Page::setIsVisibleInternal):
+
 2017-06-22  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r214712): Infinite recursion in RenderTable::layout in paginated mode

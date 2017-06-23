@@ -1152,7 +1152,7 @@ void Page::suspendScriptedAnimations()
 {
 #if PLATFORM(MAC)
     if (MacApplication::isDumpRenderTree()) {
-        WTFLogAlways("\nPage::suspendScriptedAnimations()");
+        WTFLogAlways("\nPage::suspendScriptedAnimations() %p", this);
         WTFReportBacktrace();
     }
 #endif
@@ -1168,7 +1168,7 @@ void Page::resumeScriptedAnimations()
 {
 #if PLATFORM(MAC)
     if (MacApplication::isDumpRenderTree()) {
-        WTFLogAlways("\nPage::resumeScriptedAnimations()");
+        WTFLogAlways("\nPage::resumeScriptedAnimations() %p", this);
         WTFReportBacktrace();
     }
 #endif
@@ -1689,6 +1689,10 @@ void Page::setIsVisibleInternal(bool isVisible)
     if (isVisible) {
         m_isPrerender = false;
 
+#if PLATFORM(MAC)
+        if (MacApplication::isDumpRenderTree())
+            WTFLogAlways("\nPage::setIsVisibleInternal(%s), %p", isVisible ? "true" : "false", this);
+#endif
         resumeScriptedAnimations();
 #if PLATFORM(IOS)
         resumeDeviceMotionAndOrientationUpdates();
@@ -1725,6 +1729,11 @@ void Page::setIsVisibleInternal(bool isVisible)
 
 #if PLATFORM(IOS)
         suspendDeviceMotionAndOrientationUpdates();
+#endif
+
+#if PLATFORM(MAC)
+        if (MacApplication::isDumpRenderTree())
+            WTFLogAlways("\nPage::setIsVisibleInternal(%s), %p", isVisible ? "true" : "false", this);
 #endif
         suspendScriptedAnimations();
 

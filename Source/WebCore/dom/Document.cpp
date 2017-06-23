@@ -145,6 +145,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RequestAnimationFrameCallback.h"
+#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGElement.h"
@@ -6236,6 +6237,15 @@ int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callbac
         // It's possible that the Page may have suspended scripted animations before
         // we were created. We need to make sure that we don't start up the animation
         // controller on a background tab, for example.
+
+#if PLATFORM(MAC)
+        if (MacApplication::isDumpRenderTree()) {
+            WTFLogAlways("\nDocument::requestAnimationFrame called on %p, page = %p", this, page());
+            if (page())
+                WTFLogAlways("page()->scriptedAnimationsSuspended() = %s", page()->scriptedAnimationsSuspended() ? "true" : "false");
+        }
+#endif
+
         if (!page() || page()->scriptedAnimationsSuspended())
             m_scriptedAnimationController->suspend();
 
