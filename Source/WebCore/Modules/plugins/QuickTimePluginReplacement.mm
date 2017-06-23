@@ -46,6 +46,7 @@
 #import "ScriptController.h"
 #import "ScriptSourceCode.h"
 #import "Settings.h"
+#import "ShadowRoot.h"
 #import "UserAgentScripts.h"
 #import <AVFoundation/AVMetadataItem.h>
 #import <Foundation/NSString.h>

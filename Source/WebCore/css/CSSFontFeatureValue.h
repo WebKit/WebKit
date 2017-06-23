@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CSSValue.h"
-#include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
 
 namespace WebCore {

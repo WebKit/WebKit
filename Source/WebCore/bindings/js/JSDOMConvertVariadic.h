@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
 
 namespace WebCore {
 

@@ -27,6 +27,7 @@
 #include "JSCustomXPathNSResolver.h"
 
 #include "CommonVM.h"
+#include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
 #include "JSDOMExceptionHandling.h"

@@ -34,7 +34,6 @@
 #include <heap/WeakInlines.h>
 #include <runtime/JSArrayBuffer.h>
 #include <runtime/TypedArrayInlines.h>
-#include <runtime/TypedArrays.h>
 
 namespace WebCore {
 

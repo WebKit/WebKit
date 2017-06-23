@@ -32,10 +32,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/text/AtomicString.h>
 
-#if ENABLE(VIDEO_TRACK)
-#include "TextTrack.h"
-#endif
-
 namespace WebCore {
 
 class LabelsNodeList;

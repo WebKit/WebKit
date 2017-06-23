@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWrapper.h"
 

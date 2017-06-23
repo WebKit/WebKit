@@ -26,6 +26,7 @@
 #import "DOMInternal.h"
 
 #import "DOMNodeInternal.h"
+#import <WebCore/Document.h>
 #import <WebCore/Frame.h>
 #import <WebCore/JSNode.h>
 #import <WebCore/ScriptController.h>

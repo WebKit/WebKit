@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "DocumentMarker.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

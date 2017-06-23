@@ -25,6 +25,7 @@
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
+#include "ExceptionOr.h"
 #include "LayoutUnit.h"
 #include <utility>
 #include <wtf/Forward.h>

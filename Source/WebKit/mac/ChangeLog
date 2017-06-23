@@ -1,3 +1,12 @@
+2017-06-23  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove excessive headers from WebCore/{bindings,css,dom}
+        https://bugs.webkit.org/show_bug.cgi?id=173766
+
+        Reviewed by Simon Fraser.
+
+        * DOM/DOMInternal.mm:
+
 2017-06-22  Daniel Bates  <dabates@apple.com>
 
         Make FrameLoadRequest a move-only type

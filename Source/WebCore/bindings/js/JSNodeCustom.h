@@ -27,7 +27,6 @@
 
 #include "JSDOMBinding.h"
 #include "JSNode.h"
-#include "ShadowRoot.h"
 
 namespace WebCore {
 

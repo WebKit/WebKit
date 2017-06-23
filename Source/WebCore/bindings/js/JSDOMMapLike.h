@@ -25,11 +25,9 @@
 
 #pragma once
 
-#include "ActiveDOMCallback.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
-#include "ScriptExecutionContext.h"
 #include <builtins/BuiltinNames.h>
 #include <runtime/CommonIdentifiers.h>
 #include <runtime/JSMap.h>

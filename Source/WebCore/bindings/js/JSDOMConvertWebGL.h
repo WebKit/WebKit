@@ -28,7 +28,6 @@
 #if ENABLE(WEBGL)
 
 #include "IDLTypes.h"
-#include "JSDOMConvertBase.h"
 
 namespace WebCore {
 

@@ -20,7 +20,6 @@
 #pragma once
 
 #include "JSDOMConstructorBase.h"
-#include "JSDOMExceptionHandling.h"
 
 namespace WebCore {
 

@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "CSSParserMode.h"
 #include "ExceptionOr.h"
 #include "StyleSheet.h"
 #include <memory>

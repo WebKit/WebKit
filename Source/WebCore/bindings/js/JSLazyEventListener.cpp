@@ -21,9 +21,13 @@
 #include "JSLazyEventListener.h"
 
 #include "CachedScriptFetcher.h"
+#include "ContainerNode.h"
 #include "ContentSecurityPolicy.h"
+#include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "JSNode.h"
+#include "QualifiedName.h"
 #include "ScriptController.h"
 #include <runtime/FunctionConstructor.h>
 #include <runtime/IdentifierInlines.h>

@@ -28,6 +28,7 @@
 #include "Chrome.h"
 #include "CommonVM.h"
 #include "DOMWindow.h"
+#include "Document.h"
 #include "Frame.h"
 #include "InspectorController.h"
 #include "JSDOMBindingSecurity.h"

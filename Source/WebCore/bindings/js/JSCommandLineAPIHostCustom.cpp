@@ -35,6 +35,7 @@
 
 #include "CommandLineAPIHost.h"
 #include "Database.h"
+#include "Document.h"
 #include "InspectorDOMAgent.h"
 #include "JSDatabase.h"
 #include "JSEventListener.h"

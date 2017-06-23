@@ -25,7 +25,7 @@
 
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"
-#include <runtime/Error.h>
+#include <runtime/ThrowScope.h>
 
 namespace JSC {
 class CatchScope;

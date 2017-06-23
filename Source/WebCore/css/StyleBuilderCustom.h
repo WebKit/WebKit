@@ -42,7 +42,6 @@
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "Rect.h"
-#include "RenderTheme.h"
 #include "SVGElement.h"
 #include "SVGRenderStyle.h"
 #include "StyleBuilderConverter.h"

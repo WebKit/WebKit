@@ -28,7 +28,6 @@
 
 #include "JSDOMConvert.h"
 #include <runtime/IteratorPrototype.h>
-#include <runtime/JSDestructibleObject.h>
 #include <type_traits>
 
 namespace WebCore {

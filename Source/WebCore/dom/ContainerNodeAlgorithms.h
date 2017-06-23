@@ -22,7 +22,6 @@
 #pragma once
 
 #include "ContainerNode.h"
-#include "Frame.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {

@@ -23,7 +23,6 @@
 #include <heap/Strong.h>
 #include <heap/StrongInlines.h>
 #include <memory>
-#include <runtime/JSCell.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

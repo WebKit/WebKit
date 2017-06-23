@@ -24,7 +24,6 @@
 #include "DOMWrapperWorld.h"
 #include "WebCoreBuiltinNames.h"
 #include "WebCoreJSBuiltins.h"
-#include "WebCoreTypedArrayController.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 

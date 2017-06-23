@@ -27,8 +27,8 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include "Element.h"
 #include "JSVideoTrackList.h"
-
 #include "JSNodeCustom.h"
 
 using namespace JSC;

@@ -28,7 +28,6 @@
 #include "BufferSource.h"
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
-#include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
 #include "JSDynamicDowncast.h"
 #include <runtime/JSTypedArrays.h>

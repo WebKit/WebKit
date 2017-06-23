@@ -31,6 +31,7 @@
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMConvertNull.h"
 #include <runtime/IteratorOperations.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 

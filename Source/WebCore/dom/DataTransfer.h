@@ -27,7 +27,6 @@
 #include "DataTransferAccessPolicy.h"
 #include "DragActions.h"
 #include "DragImage.h"
-#include "IntPoint.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -32,7 +32,6 @@
 #include <runtime/JSCJSValue.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 typedef const struct OpaqueJSContext* JSContextRef;
