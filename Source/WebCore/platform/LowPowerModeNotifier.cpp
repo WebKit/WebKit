@@ -34,6 +34,10 @@ LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&&)
 {
 }
 
+LowPowerModeNotifier::~LowPowerModeNotifier()
+{
+}
+
 bool LowPowerModeNotifier::isLowPowerModeEnabled() const
 {
     return false;

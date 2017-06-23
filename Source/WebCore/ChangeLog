@@ -1,3 +1,31 @@
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Potential crash under WebCore::notifyLowPowerModeChanged(WebCore::LowPowerModeNotifier*, bool)
+        https://bugs.webkit.org/show_bug.cgi?id=173755
+        <rdar://problem/32940942>
+
+        Reviewed by Mark Lam.
+
+        The crash was happening because the WebLowPowerModeObserver would dispatch
+        a lambda to the main thread but the LowPowerModeNotifier object could be
+        dead by the time we get to the main thread.
+
+        To address the issue, keep a strong ref to the WebLowPowerModeObserver in
+        the lambda we dispatch to the main thread to make sure it stays alive until
+        we execute the lambda. In the LowPowerModeNotifier destructor, we now reset
+        the WebLowPowerModeObserver's notifier pointer to nil and I added a null
+        check for this notifier in the lambda.
+
+        * platform/LowPowerModeNotifier.cpp:
+        (WebCore::LowPowerModeNotifier::~LowPowerModeNotifier):
+        * platform/LowPowerModeNotifier.h:
+        * platform/ios/LowPowerModeNotifierIOS.mm:
+        (-[WebLowPowerModeObserver initWithNotifier:]):
+        (-[WebLowPowerModeObserver _didReceiveLowPowerModeChange]):
+        (WebCore::LowPowerModeNotifier::LowPowerModeNotifier):
+        (WebCore::LowPowerModeNotifier::~LowPowerModeNotifier):
+        (WebCore::notifyLowPowerModeChanged):
+
 2017-06-23  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to WKURLSchemeTask for redirection

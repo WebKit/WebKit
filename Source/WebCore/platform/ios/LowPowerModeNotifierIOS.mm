@@ -40,13 +40,13 @@
 @implementation WebLowPowerModeObserver {
 }
 
-- (WebLowPowerModeObserver *)initWithNotifier:(WebCore::LowPowerModeNotifier *)notifier
+- (WebLowPowerModeObserver *)initWithNotifier:(WebCore::LowPowerModeNotifier&)notifier
 {
     self = [super init];
     if (!self)
         return nil;
 
-    _notifier = notifier;
+    _notifier = &notifier;
     _isLowPowerModeEnabled = [NSProcessInfo processInfo].lowPowerModeEnabled;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveLowPowerModeChange) name:NSProcessInfoPowerStateDidChangeNotification object:nil];
     return self;
@@ -62,8 +62,9 @@
 {
     _isLowPowerModeEnabled = [NSProcessInfo processInfo].lowPowerModeEnabled;
     // We need to make sure we notify the client on the main thread.
-    callOnMainThread([notifier = _notifier, isLowPowerModeEnabled = _isLowPowerModeEnabled] {
-        notifyLowPowerModeChanged(notifier, isLowPowerModeEnabled);
+    callOnMainThread([self, protectedSelf = RetainPtr<WebLowPowerModeObserver>(self)] {
+        if (_notifier)
+            notifyLowPowerModeChanged(*_notifier, _isLowPowerModeEnabled);
     });
 }
 
@@ -72,9 +73,14 @@
 namespace WebCore {
 
 LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback)
-    : m_observer(adoptNS([[WebLowPowerModeObserver alloc] initWithNotifier: this]))
+    : m_observer(adoptNS([[WebLowPowerModeObserver alloc] initWithNotifier:*this]))
     , m_callback(WTFMove(callback))
 {
+}
+
+LowPowerModeNotifier::~LowPowerModeNotifier()
+{
+    m_observer.get().notifier = nil;
 }
 
 bool LowPowerModeNotifier::isLowPowerModeEnabled() const
@@ -87,10 +93,10 @@ void LowPowerModeNotifier::notifyLowPowerModeChanged(bool enabled)
     m_callback(enabled);
 }
 
-void notifyLowPowerModeChanged(LowPowerModeNotifier* notifier, bool enabled)
+void notifyLowPowerModeChanged(LowPowerModeNotifier& notifier, bool enabled)
 {
     RELEASE_LOG(PerformanceLogging, "Low power mode state has changed to %d", enabled);
-    notifier->notifyLowPowerModeChanged(enabled);
+    notifier.notifyLowPowerModeChanged(enabled);
 }
 
 } // namespace WebCore

@@ -40,13 +40,14 @@ class LowPowerModeNotifier {
 public:
     using LowPowerModeChangeCallback = WTF::Function<void(bool isLowPowerModeEnabled)>;
     WEBCORE_EXPORT explicit LowPowerModeNotifier(LowPowerModeChangeCallback&&);
+    WEBCORE_EXPORT ~LowPowerModeNotifier();
 
     WEBCORE_EXPORT bool isLowPowerModeEnabled() const;
 
 private:
 #if PLATFORM(IOS)
     void notifyLowPowerModeChanged(bool);
-    friend void notifyLowPowerModeChanged(LowPowerModeNotifier*, bool);
+    friend void notifyLowPowerModeChanged(LowPowerModeNotifier&, bool);
 
     RetainPtr<WebLowPowerModeObserver> m_observer;
     LowPowerModeChangeCallback m_callback;
