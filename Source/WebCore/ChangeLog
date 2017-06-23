@@ -1,3 +1,35 @@
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
+        [mac-wk1] requestAnimationFrame callbacks may not get serviced
+        https://bugs.webkit.org/show_bug.cgi?id=173628
+
+        Reviewed by Simon Fraser.
+
+        Page::setIsVisibleInternal() was firing the 'visibilitychange' event
+        synchronously while in the middle of updating its visibility/activity
+        state. This allowed the JavaScript to re-enter the method by calling
+        testRunner.setPageVisibility() / resetPageVisiblity() and we would
+        end up in an inconsistent state.
+
+        No new tests, extended existing test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::visibilityStateChanged):
+        Do no fire the visibilitychange event synchronously as we are in the
+        middle of updating the page's activity state. Instead fire the
+        event asynchronously.
+
+        * page/Page.cpp:
+        (WebCore::Page::setIsVisibleInternal):
+        Move the calling of Document::visibilityStateChanged() until after we're
+        done updating the page's visibility state.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::scriptedAnimationsAreSuspended):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add test infrastructure to check if scripted animations are suspended.
+
 2017-06-23  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] Respond to AudioSession interruption and resume

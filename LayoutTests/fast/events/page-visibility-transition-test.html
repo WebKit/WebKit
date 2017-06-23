@@ -32,11 +32,13 @@ function makePageUnloaded() {
 function checkIsPageVisible() {
     shouldBeEqualToString("document.visibilityState", "visible");
     shouldBeFalse("document.hidden");
+    shouldBeFalse("internals.scriptedAnimationsAreSuspended");
 }
 
 function checkIsPageHidden() {
     shouldBeEqualToString("document.visibilityState", "hidden");
     shouldBeTrue("document.hidden");
+    shouldBeTrue("internals.scriptedAnimationsAreSuspended");
 }
 
 // We will try to change the visibility states as:

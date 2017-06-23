@@ -370,6 +370,7 @@ enum EventThrottlingBehavior {
 
     [MayThrowException] void setLowPowerModeEnabled(boolean enabled);
     readonly attribute double requestAnimationFrameInterval;
+    readonly attribute boolean scriptedAnimationsAreSuspended;
 
     // Override the behavior of WebPage::eventThrottlingDelay(), which only affects iOS.
     attribute EventThrottlingBehavior? eventThrottlingBehaviorOverride;

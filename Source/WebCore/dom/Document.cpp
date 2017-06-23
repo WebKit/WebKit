@@ -1617,7 +1617,7 @@ void Document::unregisterForVisibilityStateChangedCallbacks(VisibilityChangeClie
 
 void Document::visibilityStateChanged()
 {
-    dispatchEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
+    enqueueDocumentEvent(Event::create(eventNames().visibilitychangeEvent, false, false));
     for (auto* client : m_visibilityStateCallbackClients)
         client->visibilityStateChanged();
 

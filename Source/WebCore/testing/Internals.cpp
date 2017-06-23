@@ -1163,6 +1163,15 @@ double Internals::requestAnimationFrameInterval() const
     return scriptedAnimationController->interval().value();
 }
 
+bool Internals::scriptedAnimationsAreSuspended() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return true;
+
+    return document->page()->scriptedAnimationsSuspended();
+}
+
 bool Internals::areTimersThrottled() const
 {
     return contextDocument()->isTimerThrottlingEnabled();

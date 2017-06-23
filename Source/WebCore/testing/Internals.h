@@ -152,6 +152,7 @@ public:
     ExceptionOr<bool> isTimerThrottled(int timeoutId);
     bool isRequestAnimationFrameThrottled() const;
     double requestAnimationFrameInterval() const;
+    bool scriptedAnimationsAreSuspended() const;
     bool areTimersThrottled() const;
 
     enum EventThrottlingBehavior { Responsive, Unresponsive };

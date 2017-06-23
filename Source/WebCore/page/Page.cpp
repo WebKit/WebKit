@@ -1714,13 +1714,6 @@ void Page::setIsVisibleInternal(bool isVisible)
         }
     }
 
-    Vector<Ref<Document>> documents;
-    for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
-        documents.append(*frame->document());
-
-    for (auto& document : documents)
-        document->visibilityStateChanged();
-
     if (!isVisible) {
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
             mainFrame().animation().suspendAnimations();
@@ -1740,6 +1733,13 @@ void Page::setIsVisibleInternal(bool isVisible)
         if (FrameView* view = mainFrame().view())
             view->hide();
     }
+
+    Vector<Ref<Document>> documents;
+    for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext())
+        documents.append(*frame->document());
+
+    for (auto& document : documents)
+        document->visibilityStateChanged();
 }
 
 void Page::setIsPrerender()
