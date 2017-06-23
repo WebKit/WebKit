@@ -1,3 +1,25 @@
+2017-06-23  Brent Fulgham  <bfulgham@apple.com>
+
+        Avoid moving the same vector multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=173748
+        <rdar://problem/32936804>
+
+        Reviewed by Chris Dumez.
+
+        We discovered that a Vector<String> was being moved inside a loop, causing it to be moved more than once.
+        We should never do this!
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        Do not perform a move at each step of the iteration.
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains): Receive vector of top privately
+        controlled domains as a const reference. Copy this vector into the completion handler. Do not move
+        origins out of the vector in the inner loop.
+        (WebKit::WebsiteDataStore::removeDataForTopPrivatelyControlledDomains): Receive vector of top privately
+        controlled domains as a const reference.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-06-23  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to WKURLSchemeTask for redirection

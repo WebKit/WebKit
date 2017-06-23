@@ -257,7 +257,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
             continue;
         visitedSessionIDs.add(dataStore.sessionID());
         callbackAggregator->addPendingCallback();
-        dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, { }, WTFMove(topPrivatelyControlledDomains), [callbackAggregator, shouldNotifyPage, page](Vector<String>&& domainsWithDeletedWebsiteData) {
+        dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, { }, topPrivatelyControlledDomains, [callbackAggregator, shouldNotifyPage, page](Vector<String>&& domainsWithDeletedWebsiteData) {
             // When completing the task, we should be getting called on the main thread.
             ASSERT(isMainThread());
             
