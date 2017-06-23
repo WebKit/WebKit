@@ -1,8 +1,8 @@
 <html>
 <head>
 <script>
-if (window.testRunner)
-  testRunner.overridePreference('WebKitShouldRespectImageOrientation', 1);
+if (window.internals)
+  internals.settings.setShouldRespectImageOrientation(true);
 </script>
 </head>
 <body>

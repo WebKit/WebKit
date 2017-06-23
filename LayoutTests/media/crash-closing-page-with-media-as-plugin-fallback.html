@@ -9,11 +9,11 @@ If it doesn't crash, it passes.<br>
 <div id="result"></div><br>
 
 <script>
-if (window.testRunner) {
+if (window.testRunner && window.internals) {
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
     testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-    testRunner.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
+    internals.settings.setPageCacheSupportsPlugins(true);
     testRunner.setCanOpenWindows(true);
     testRunner.setCloseRemainingWindowsWhenComplete(true);
     var button = document.getElementById("button");

@@ -15,8 +15,8 @@
 <script>
 description("This tests direct navigation to the begin and end of the document in caret mode.");
 
-if (window.testRunner) {
-  testRunner.overridePreference("WebKitEnableCaretBrowsing", true);
+if (window.testRunner && window.internals) {
+  internals.settings.setCaretBrowsingEnabled(true);
   testRunner.dumpAsText();
   testRunner.dumpEditingCallbacks();
 

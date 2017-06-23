@@ -11,8 +11,8 @@
 <script>
 description("This tests the FOCUSABLE and FOCUSED states for text objects.");
 
-if (window.testRunner) {
-  testRunner.overridePreference("WebKitEnableCaretBrowsing", true);
+if (window.testRunner && window.internals) {
+  internals.settings.setCaretBrowsingEnabled(true);
   testRunner.dumpAsText();
 
   if (window.accessibilityController) {

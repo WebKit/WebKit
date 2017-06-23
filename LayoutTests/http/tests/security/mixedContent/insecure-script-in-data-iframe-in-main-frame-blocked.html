@@ -1,12 +1,12 @@
 <html>
 <body>
 <script>
-if (window.testRunner) {
+if (window.testRunner && window.internals) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
     testRunner.setCanOpenWindows();
     testRunner.setCloseRemainingWindowsWhenComplete(true);
-    testRunner.overridePreference("WebKitAllowRunningInsecureContent", false);
+    internals.settings.setAllowRunningOfInsecureContent(false);
 }
 window.addEventListener("message", function (e) {
   if (window.testRunner)

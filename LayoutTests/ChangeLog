@@ -1,3 +1,83 @@
+2017-06-23  Frederic Wang  <fwang@igalia.com>
+
+        Use window.internals instead of overridePreference to set WebCore settings in tests
+        https://bugs.webkit.org/show_bug.cgi?id=173714
+
+        Reviewed by Simon Fraser.
+
+        This commit is a first step to replace the use of testRunner.overridePreference with
+        internals.settings.set* calls in tests. Such a call will fail immediately and obviously if
+        its a function that does not exist, and these settings are restored properly between tests.
+        Some preferences that do not have a WebCore setting or an internals.settings setter are not
+        handled yet. The temporary failure added in r218480 for fast/frames/flattening/set-preference
+        is removed and so is a custom expectation caret-mode-document-begin-end for Mac WK1.
+
+        * accessibility/gtk/caret-browsing-select-focus.html: Use internals.settings.set* function.
+        * accessibility/gtk/caret-browsing-text-focus.html: Ditto.
+        * accessibility/gtk/caret-offsets-and-extraneous-white-spaces.html: Ditto.
+        * accessibility/gtk/caret-offsets.html: Ditto.
+        * accessibility/gtk/text-in-span-block-in-a-block.html: Ditto.
+        * css3/blending/blend-mode-isolation-turn-off-self-painting-layer1.html: Ditto.
+        * css3/blending/blend-mode-simple.html: Ditto.
+        * css3/blending/effect-background-blend-mode.html: Ditto.
+        * css3/filters/blur-filter-page-scroll-parents.html: Ditto.
+        * css3/filters/blur-filter-page-scroll-self.html: Ditto.
+        * css3/filters/blur-filter-page-scroll.html: Ditto.
+        * css3/filters/effect-blur.html: Ditto.
+        * css3/filters/effect-brightness-clamping.html: Ditto.
+        * css3/filters/effect-brightness.html: Ditto.
+        * css3/filters/effect-combined.html: Ditto.
+        * css3/filters/effect-contrast.html: Ditto.
+        * css3/filters/effect-drop-shadow.html: Ditto.
+        * css3/filters/effect-grayscale.html: Ditto.
+        * css3/filters/effect-hue-rotate.html: Ditto.
+        * css3/filters/effect-invert.html: Ditto.
+        * css3/filters/effect-opacity.html: Ditto.
+        * css3/filters/effect-saturate.html: Ditto.
+        * css3/filters/effect-sepia.html: Ditto.
+        * css3/filters/filter-repaint.html: Ditto.
+        * css3/filters/null-effect-check.html: Ditto.
+        * editing/selection/caret-mode-document-begin-end.html: Ditto.
+        * editing/selection/caret-mode-paragraph-keys-navigation.html: Ditto.
+        * fast/animation/request-animation-frame-disabled.html: Ditto.
+        * fast/canvas/canvas-blend-image.html: Ditto.
+        * fast/canvas/canvas-blend-solid.html: Ditto.
+        * fast/canvas/canvas-imageSmoothingQuality.html: Ditto.
+        * fast/canvas/drawImage-with-small-values.html: Ditto.
+        * fast/images/exif-orientation-composited.html: Ditto.
+        * fast/images/exif-orientation-css.html: Ditto.
+        * fast/images/exif-orientation.html: Ditto.
+        * fast/images/image-controls-basic.html: Ditto.
+        * fast/parser/pre-html5-parser-quirks.html: Ditto.
+        * fast/repaint/no-caret-repaint-in-non-content-editable-element.html: Ditto.
+        * http/tests/appcache/disabled.html: Ditto.
+        * http/tests/contentextensions/block-cookies-in-ping.html: Ditto.
+        * http/tests/contentextensions/block-ping.html: Ditto.
+        * http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html: Ditto.
+        * http/tests/contentextensions/hide-on-ping.html: Ditto.
+        * http/tests/misc/favicon-loads-with-icon-loading-override.html: Ditto.
+        * http/tests/navigation/ping-attribute/anchor-cookie.html: Ditto.
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html: Ditto.
+        * http/tests/navigation/ping-attribute/anchor-cross-origin.html: Ditto.
+        * http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html: Ditto.
+        * http/tests/navigation/ping-attribute/anchor-same-origin.html: Ditto.
+        * http/tests/navigation/ping-attribute/area-cookie.html: Ditto.
+        * http/tests/navigation/ping-attribute/area-cross-origin-from-https.html: Ditto.
+        * http/tests/navigation/ping-attribute/area-cross-origin.html: Ditto.
+        * http/tests/navigation/ping-attribute/area-same-origin.html: Ditto.
+        * http/tests/security/mixedContent/insecure-script-in-data-iframe-in-main-frame-blocked.html: Ditto.
+        * imported/blink/fast/css/image-orientation/image-orientation-dynamic-expected.html: Ditto.
+        * loader/meta-refresh-disabled.html: Ditto.
+        * media/crash-closing-page-with-media-as-plugin-fallback.html: Ditto.
+        * platform/mac-wk1/editing/selection/caret-mode-document-begin-end-expected.txt: Removed.
+        Mac WK1 now produces the same output as other platforms.
+        * platform/mac/TestExpectations: Remove the failure for FrameFlattening now that the test
+        uses internals.settings.set*.
+        * platform/mac/fast/frames/flattening/set-preference.html: Use internals.settings.set*.
+        * plugins/crash-restoring-plugin-page-from-page-cache.html: Ditto.
+        * plugins/frameset-with-plugin-frame.html: Ditto.
+        * plugins/netscape-plugin-page-cache-works.html: Ditto.
+
 2017-06-23  Chris Dumez  <cdumez@apple.com>
 
         [mac-wk1] requestAnimationFrame callbacks may not get serviced

@@ -1,7 +1,7 @@
 <head>
 <script>
-if (window.testRunner) {
-    testRunner.overridePreference("WebKitHTTPEquivEnabled", "0");
+if (window.testRunner && window.internals) {
+    internals.settings.setHttpEquivEnabled(false);
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
 }

@@ -11,7 +11,7 @@
 description("This tests that keys navigation through a paragraph work as expected when in caret mode, also with shift and ctrl modifiers.");
 
 if (window.testRunner && window.internals) {
-  testRunner.overridePreference("WebKitEnableCaretBrowsing", true);
+  internals.settings.setCaretBrowsingEnabled(true);
   testRunner.dumpAsText();
   internals.settings.setEditingBehavior('mac');
 

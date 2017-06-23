@@ -7,9 +7,9 @@
 <html>
     <head>
         <script>
-            if (window.testRunner) {
+            if (window.internals) {
                 // Force software rendering mode.
-                window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "0");
+                window.internals.settings.setAcceleratedCompositingEnabled(false);
             }
         </script>
         <style>

@@ -9,8 +9,8 @@
 
 description("Tests for the imageSmoothingQuality attribute.");
 
-if (window.testRunner)
-   testRunner.overridePreference("WebKitCanvasUsesAcceleratedDrawing", 0);
+if (window.internals)
+  internals.settings.setCanvasUsesAcceleratedDrawing(false);
 
 var source = document.getElementById("source");
 source.width = 60;

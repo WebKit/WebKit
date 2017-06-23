@@ -498,9 +498,6 @@ webkit.org/b/112532 fast/frames/flattening/frameset-flattening-subframesets.html
 webkit.org/b/106185 fast/frames/flattening/iframe-flattening-fixed-height.html [ Failure Pass ]
 webkit.org/b/106185 fast/frames/flattening/frameset-flattening-grid.html [ Failure Pass ]
 
-# FrameFlattening enum preferences can not be overridden.
-webkit.org/b/128594 platform/mac/fast/frames/flattening/set-preference.html [ Failure ]
-
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
 # Failing ref tests

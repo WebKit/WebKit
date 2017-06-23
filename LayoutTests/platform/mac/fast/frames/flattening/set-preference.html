@@ -9,8 +9,8 @@ iframe {
 </style>
 <script src="../../../../../resources/check-layout.js"></script>
 <script type="text/javascript">
-if (window.testRunner)
-    testRunner.overridePreference("WebKitFrameFlatteningEnabled", "1");
+if (window.internals)
+    internals.settings.setFrameFlattening("FullyEnabled");
 
 window.onload = function()
 {

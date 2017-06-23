@@ -1,9 +1,9 @@
 <head>
 <script>
-if (window.testRunner) {
+if (window.testRunner && window.internals) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
-    testRunner.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+    internals.settings.setHyperlinkAuditingEnabled(true);
     testRunner.waitUntilDone();
 }
 

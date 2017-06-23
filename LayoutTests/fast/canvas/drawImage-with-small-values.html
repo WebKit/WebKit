@@ -6,8 +6,8 @@
 <body>
 <script>
 description("Test canvas context after draw too small surface.");
-if (self.testRunner)
-  testRunner.overridePreference("WebKitCanvasUsesAcceleratedDrawing", 0);
+if (window.internals)
+  internals.settings.setCanvasUsesAcceleratedDrawing(false);
 
 var tmpimg = document.createElement('canvas');
 tmpimg.width = 720;

@@ -2,12 +2,12 @@
 <head>
 <script src="resources/repaint.js"></script>
 <script>
-if (window.testRunner) {
+if (window.internals) {
     // By definition, when caret browsing is enabled we always paint the caret.
     // So, this test is only applicable when caret browsing is disabled because
     // non-content-editable elements won't cause the caret to be drawn since they
     // are not editable.
-    testRunner.overridePreference("WebKitEnableCaretBrowsing", false);
+    internals.settings.setCaretBrowsingEnabled(false);
 }
 function repaintTest()
 {

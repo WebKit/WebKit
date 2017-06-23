@@ -48,10 +48,10 @@ function resetCaretOffsetForObject(object, offset)
     setCaretOffset(object, offset);
 }
 
-if (window.testRunner) {
-    testRunner.overridePreference("WebKitEnableCaretBrowsing", true);
+if (window.internals)
+    internals.settings.setCaretBrowsingEnabled(true);
+if (window.testRunner)
     testRunner.dumpAsText();
-}
 
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;

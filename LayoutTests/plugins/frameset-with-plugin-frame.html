@@ -5,7 +5,7 @@
         testRunner.waitUntilDone();
         internals.settings.setFrameFlattening("FullyEnabled")
         testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
-        testRunner.overridePreference("WebKitPageCacheSupportsPluginsPreferenceKey", 1);
+        internals.settings.setPageCacheSupportsPlugins(true);
     }
 </script>
 

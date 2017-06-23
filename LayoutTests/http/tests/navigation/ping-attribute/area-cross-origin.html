@@ -3,9 +3,9 @@
 <head>
 <script src="resources/utilities.js"></script>
 <script>
-if (window.testRunner) {
+if (window.testRunner && window.internals) {
     testRunner.dumpAsText();
-    testRunner.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+    internals.settings.setHyperlinkAuditingEnabled(true);
     testRunner.waitUntilDone();
 }
 

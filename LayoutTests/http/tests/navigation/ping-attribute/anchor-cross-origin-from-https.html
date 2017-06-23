@@ -17,9 +17,9 @@ var testCalled = false;
 
 function test() {
     if (!testCalled) {
-        if (window.testRunner) {
+        if (window.testRunner && window.internals) {
             testRunner.dumpAsText();
-            testRunner.overridePreference("WebKitHyperlinkAuditingEnabled", 1);
+            internals.settings.setHyperlinkAuditingEnabled(true);
             testRunner.waitUntilDone();
         }
         testCalled = true;

@@ -1,6 +1,6 @@
 <script>
-    if (window.testRunner) {
-        testRunner.overridePreference("WebKitUsePreHTML5ParserQuirks", "1");
+    if (window.testRunner && window.internals) {
+        internals.settings.setUsePreHTML5ParserQuirks(true);
         testRunner.dumpAsText();
         testRunner.dumpChildFramesAsText();
     }

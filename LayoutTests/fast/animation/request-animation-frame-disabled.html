@@ -2,8 +2,8 @@
 <html>
 <head>
 <script>
-if (window.testRunner)
-    window.testRunner.overridePreference("WebKitRequestAnimationFrameEnabled", "0");
+if (window.internals)
+    internals.settings.setRequestAnimationFrameEnabled(false);
 </script>
 <script src="../../resources/js-test-pre.js"></script>
 </head>

@@ -66,10 +66,10 @@ function globalListener(object, name, offset)
     }
 }
 
-if (window.testRunner) {
-    testRunner.overridePreference("WebKitEnableCaretBrowsing", true);
+if (window.internals)
+    internals.settings.setCaretBrowsingEnabled(true);
+if (window.testRunner)
     testRunner.dumpAsText();
-}
 
 if (window.accessibilityController) {
     var i, linkText, accText, id;

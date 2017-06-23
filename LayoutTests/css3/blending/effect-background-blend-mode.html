@@ -1,8 +1,7 @@
 <!DOCTYPE HTML>
 <script>
-    if (window.testRunner) {
-        window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
-    }
+    if (window.internals)
+        window.internals.settings.setAcceleratedCompositingEnabled(true);
     if (window.testRunner)
       window.testRunner.dumpAsText(true);
 </script>

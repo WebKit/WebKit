@@ -1,3 +1,17 @@
+2017-06-23  Frederic Wang  <fwang@igalia.com>
+
+        Use window.internals instead of overridePreference to set WebCore settings in tests
+        https://bugs.webkit.org/show_bug.cgi?id=173714
+
+        Reviewed by Simon Fraser.
+
+        This commit remove preference to settings mapping in overrideBoolPreferenceForTestRunner that
+        are no longer necessary after the changes done in LayoutTests.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Remove mapping for preferences
+        that no longer require testRunner.overridePreference calls in tests.
+
 2017-06-23  Brent Fulgham  <bfulgham@apple.com>
 
         Avoid moving the same vector multiple times

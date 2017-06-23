@@ -1,10 +1,10 @@
 <html>
 <head>
 <script>
-if (window.testRunner) {
-    testRunner.overridePreference('WebKitShouldRespectImageOrientation', 1);
+if (window.internals)
+    internals.settings.setShouldRespectImageOrientation(true);
+if (window.testRunner)
     testRunner.dumpAsText(true);
-}
 
 function log(str) {
     var li = document.createElement("li");
