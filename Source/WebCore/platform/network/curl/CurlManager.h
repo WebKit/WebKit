@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include <curl/curl.h>
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
@@ -35,6 +34,7 @@
 #include <winsock2.h>
 #endif
 
+#include <curl/curl.h>
 #include "URL.h"
 
 namespace WebCore {
