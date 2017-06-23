@@ -1,3 +1,17 @@
+2017-06-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Support Mac Mini Flash Player Features
+        https://bugs.webkit.org/show_bug.cgi?id=173581
+        <rdar://problem/32804073>
+
+        Reviewed by Dean Jackson.
+
+        Revise the sandboxes for additional IOKit properties identified during Flash video player
+        testing.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-06-23  Zan Dobersek  <zdobersek@igalia.com>
 
         [CoordinatedGraphics] Clean up type aliases in CoordinatedGraphicsScene
