@@ -1,3 +1,16 @@
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
+        Add release assertion to make sure callbackIdentifier is not 0 in DocumentLoader::finishedLoadingIcon()
+        https://bugs.webkit.org/show_bug.cgi?id=173792
+
+        Reviewed by Ryosuke Niwa.
+
+        Add release assertion to make sure callbackIdentifier is not 0 in DocumentLoader::finishedLoadingIcon()
+        as this could cause HashTable corruption on WebPageProxy side.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoadingIcon):
+
 2017-06-23  Youenn Fablet  <youenn@apple.com>
 
         webrtc::WebRtcSession is not handling correctly its state when setLocalDescription fails and is called again

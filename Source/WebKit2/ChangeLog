@@ -1,5 +1,19 @@
 2017-06-23  Chris Dumez  <cdumez@apple.com>
 
+        Add release assertion to make sure callbackIdentifier is not 0 in DocumentLoader::finishedLoadingIcon()
+        https://bugs.webkit.org/show_bug.cgi?id=173792
+
+        Reviewed by Ryosuke Niwa.
+
+        Add release assertion to make sure callbackIdentifier is not 0 in DocumentLoader::finishedLoadingIcon()
+        as this could cause HashTable corruption on WebPageProxy side.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::finishedLoadingIcon):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
         Stop passing Vector by value in WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores()
         https://bugs.webkit.org/show_bug.cgi?id=173782
 

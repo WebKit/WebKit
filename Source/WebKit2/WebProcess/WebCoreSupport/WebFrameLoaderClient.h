@@ -261,7 +261,7 @@ private:
 
     bool useIconLoadingClient() final;
     void getLoadDecisionForIcon(const WebCore::LinkIcon&, uint64_t callbackID) final;
-    void finishedLoadingIcon(uint64_t loadIdentifier, WebCore::SharedBuffer*) final;
+    void finishedLoadingIcon(uint64_t callbackIdentifier, WebCore::SharedBuffer*) final;
 
     WebFrame* m_frame;
     RefPtr<PluginView> m_pluginView;

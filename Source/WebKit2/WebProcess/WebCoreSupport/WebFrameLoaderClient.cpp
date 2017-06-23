@@ -1813,13 +1813,13 @@ void WebFrameLoaderClient::getLoadDecisionForIcon(const LinkIcon& icon, uint64_t
         webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon, callbackID));
 }
 
-void WebFrameLoaderClient::finishedLoadingIcon(uint64_t loadIdentifier, SharedBuffer* data)
+void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer* data)
 {
     if (WebPage* webPage { m_frame->page() }) {
         if (data)
-            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(loadIdentifier, { reinterpret_cast<const uint8_t*>(data->data()), data->size() }));
+            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(callbackIdentifier, { reinterpret_cast<const uint8_t*>(data->data()), data->size() }));
         else
-            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(loadIdentifier, { nullptr, 0 }));
+            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(callbackIdentifier, { nullptr, 0 }));
     }
 }
 

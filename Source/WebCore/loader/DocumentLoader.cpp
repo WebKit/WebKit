@@ -1695,10 +1695,10 @@ void DocumentLoader::finishedLoadingIcon(IconLoader& loader, SharedBuffer* buffe
     // If the DocumentLoader has detached from its frame, all icon loads should have already been cancelled.
     ASSERT(m_frame);
 
-    auto loadIdentifier = m_iconLoaders.take(&loader);
-    ASSERT(loadIdentifier);
+    auto callbackIdentifier = m_iconLoaders.take(&loader);
+    RELEASE_ASSERT(callbackIdentifier);
 
-    m_frame->loader().client().finishedLoadingIcon(loadIdentifier, buffer);
+    m_frame->loader().client().finishedLoadingIcon(callbackIdentifier, buffer);
 }
 
 void DocumentLoader::dispatchOnloadEvents()
