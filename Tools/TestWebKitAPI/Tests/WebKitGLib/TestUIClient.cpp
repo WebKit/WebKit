@@ -580,6 +580,8 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     webkit_web_view_stop_loading(test->m_webView);
     test->waitUntilLoadFinished();
 
+    // FIXME: implement simulateUserInteraction in WPE.
+#if PLATFORM(GTK)
     test->m_scriptDialogType = WEBKIT_SCRIPT_DIALOG_BEFORE_UNLOAD_CONFIRM;
     GUniquePtr<char> beforeUnloadDialogHTML(g_strdup_printf(htmlOnBeforeUnloadFormat, kBeforeUnloadConfirmDialogMessage));
     test->loadHtml(beforeUnloadDialogHTML.get(), nullptr);
@@ -621,6 +623,7 @@ static void testWebViewJavaScriptDialogs(UIClientTest* test, gconstpointer)
     test->m_scriptDialogConfirmed = false;
     test->tryCloseAndWaitUntilClosed();
     g_assert(!test->m_scriptDialogConfirmed);
+#endif // PLATFORM(GTK)
 }
 
 static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
@@ -634,7 +637,10 @@ static void testWebViewWindowProperties(UIClientTest* test, gconstpointer)
     test->waitUntilMainLoopFinishes();
 
     static const char* propertiesChanged[] = {
-        "geometry", "locationbar-visible", "menubar-visible", "statusbar-visible", "toolbar-visible", "scrollbars-visible"
+#if PLATFORM(GTK)
+        "geometry",
+#endif
+        "locationbar-visible", "menubar-visible", "statusbar-visible", "toolbar-visible", "scrollbars-visible"
     };
     for (size_t i = 0; i < G_N_ELEMENTS(propertiesChanged); ++i)
         g_assert(test->m_windowPropertiesChanged.contains(propertiesChanged[i]));

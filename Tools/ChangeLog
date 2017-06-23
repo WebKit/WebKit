@@ -1,3 +1,15 @@
+2017-06-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WPE /wpe/WebKitWebView/javascript-dialogs and /wpe/WebKitWebView/window-properties
+
+        Skip onbeforeunload dialog tests for now in WPE since we don't have a implemention for
+        simulateUserInteraction(). And do not expect changes in "geometry" property of WebKitWindowProperties that
+        doesn't exist yet in WPE.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestUIClient.cpp:
+        (testWebViewJavaScriptDialogs):
+        (testWebViewWindowProperties):
+
 2017-06-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Upgrade pixman and cairo in jhbuild
