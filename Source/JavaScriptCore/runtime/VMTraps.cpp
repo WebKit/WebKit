@@ -59,17 +59,6 @@ struct SignalContext {
         , stackPointer(MachineContext::stackPointer(registers))
         , framePointer(MachineContext::framePointer(registers))
     {
-#if CPU(X86_64) || CPU(X86)
-        // On X86_64, SIGTRAP reports the address after the trapping PC. So, dec by 1.
-        trapPC = reinterpret_cast<uint8_t*>(trapPC) - 1;
-#endif
-    }
-
-    void adjustPCToPointToTrappingInstruction()
-    {
-#if CPU(X86_64) || CPU(X86)
-        MachineContext::instructionPointer(registers) = trapPC;
-#endif
     }
 
     PlatformRegisters& registers;
@@ -130,7 +119,7 @@ static Expected<VMAndStackBounds, VMTraps::Error> findActiveVMAndStackBounds(Sig
 
 static void installSignalHandler()
 {
-    installSignalHandler(Signal::Trap, [] (Signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
+    installSignalHandler(Signal::BadAccess, [] (Signal, SigInfo&, PlatformRegisters& registers) -> SignalAction {
         SignalContext context(registers);
 
         if (!isJITPC(context.trapPC))
@@ -297,10 +286,6 @@ auto VMTraps::tryJettisonCodeBlocksOnStack(SignalContext& context) -> Expected<b
         return false;
 
     invalidateCodeBlocksOnStack(codeBlockSetLocker, topCallFrame);
-
-    // Re-run the trapping instruction now that we've patched it with the invalidation
-    // OSR exit off-ramp.
-    context.adjustPCToPointToTrappingInstruction();
     return true;
 }
 

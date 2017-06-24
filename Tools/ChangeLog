@@ -1,3 +1,13 @@
+2017-06-23  Keith Miller  <keith_miller@apple.com>
+
+        Switch VMTraps to use halt instructions rather than breakpoint instructions
+        https://bugs.webkit.org/show_bug.cgi?id=173677
+
+        Reviewed by JF Bastien.
+
+        * TestWebKitAPI/Tests/WTF/ThreadMessages.cpp:
+        (TEST):
+
 2017-06-23  Youenn Fablet  <youenn@apple.com>
 
         Set getUserMedia permission to true by default on WTR

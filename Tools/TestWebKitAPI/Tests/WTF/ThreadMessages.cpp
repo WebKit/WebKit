@@ -114,7 +114,7 @@ TEST(ThreadMessage, SignalsWorkOnExit)
         receiverShouldKeepRunning.store(false);
         EXPECT_FALSE(static_cast<ReflectedThread*>(receiverThread.get())->hasExited());
         sleep(1);
-        signalFired = !pthread_kill(static_cast<ReflectedThread*>(receiverThread.get())->m_handle, toSystemSignal(Signal::Usr));
+        signalFired = !pthread_kill(static_cast<ReflectedThread*>(receiverThread.get())->m_handle, std::get<0>(toSystemSignal(Signal::Usr)));
     }
 
     receiverThread->waitForCompletion();

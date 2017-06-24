@@ -3803,9 +3803,9 @@ public:
     }
 #endif
 
-    static void replaceWithBreakpoint(CodeLocationLabel instructionStart)
+    static void replaceWithVMHalt(CodeLocationLabel instructionStart)
     {
-        X86Assembler::replaceWithInt3(instructionStart.executableAddress());
+        X86Assembler::replaceWithHlt(instructionStart.executableAddress());
     }
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)

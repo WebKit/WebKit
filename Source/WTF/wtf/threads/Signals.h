@@ -29,6 +29,7 @@
 
 #include <signal.h>
 #include <wtf/Function.h>
+#include <wtf/Optional.h>
 #include <wtf/PlatformRegisters.h>
 
 namespace WTF {
@@ -41,22 +42,18 @@ enum class Signal {
 
     // These signals will only chain if we don't have a handler that can process them. If there is nothing
     // to chain to we restore the default handler and crash.
-    Trap,
     Ill,
-    SegV,
-    Bus,
-    NumberOfSignals,
+    BadAccess, // For posix this is both SIGSEGV and SIGBUS
+    NumberOfSignals = BadAccess + 2, // BadAccess is really two signals.
     Unknown = NumberOfSignals
 };
 
-inline int toSystemSignal(Signal signal)
+inline std::tuple<int, std::optional<int>> toSystemSignal(Signal signal)
 {
     switch (signal) {
-    case Signal::SegV: return SIGSEGV;
-    case Signal::Bus: return SIGBUS;
-    case Signal::Ill: return SIGILL;
-    case Signal::Usr: return SIGUSR2;
-    case Signal::Trap: return SIGTRAP;
+    case Signal::BadAccess: return std::make_tuple(SIGSEGV, SIGBUS);
+    case Signal::Ill: return std::make_tuple(SIGILL, std::nullopt);
+    case Signal::Usr: return std::make_tuple(SIGILL, std::nullopt);
     default: break;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -65,11 +62,10 @@ inline int toSystemSignal(Signal signal)
 inline Signal fromSystemSignal(int signal)
 {
     switch (signal) {
-    case SIGSEGV: return Signal::SegV;
-    case SIGBUS: return Signal::Bus;
+    case SIGSEGV: return Signal::BadAccess;
+    case SIGBUS: return Signal::BadAccess;
     case SIGILL: return Signal::Ill;
     case SIGUSR2: return Signal::Usr;
-    case SIGTRAP: return Signal::Trap;
     default: return Signal::Unknown;
     }
 }

@@ -1,3 +1,59 @@
+2017-06-23  Keith Miller  <keith_miller@apple.com>
+
+        Switch VMTraps to use halt instructions rather than breakpoint instructions
+        https://bugs.webkit.org/show_bug.cgi?id=173677
+        <rdar://problem/32178892>
+
+        Reviewed by JF Bastien.
+
+        Using the breakpoint instruction for VMTraps caused issues with lldb.
+        Since we only need some way to stop execution we can, in theory, use
+        any exceptioning instruction we want. I went with the halt instruction
+        on X86 since that is the only one byte instruction that does not
+        breakpoint (in my tests both 0xf1 and 0xd6 produced EXC_BREAKPOINT).
+        On ARM we use the data cache clearing instruction with the zero register,
+        which triggers a segmentation fault.
+
+        Also, update the platform code to only use signaling VMTraps
+        on where we have an appropriate instruction (x86 and ARM64).
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::replaceWithVMHalt):
+        (JSC::ARM64Assembler::dataCacheZeroVirtualAddress):
+        (JSC::ARM64Assembler::replaceWithBkpt): Deleted.
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::replaceWithBkpt): Deleted.
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::replaceWithBkpt): Deleted.
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::replaceWithBkpt): Deleted.
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::replaceWithBreakpoint): Deleted.
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::replaceWithVMHalt):
+        (JSC::MacroAssemblerARM64::replaceWithBreakpoint): Deleted.
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::storeFence):
+        (JSC::MacroAssemblerARMv7::replaceWithBreakpoint): Deleted.
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::replaceWithBreakpoint): Deleted.
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::replaceWithVMHalt):
+        (JSC::MacroAssemblerX86Common::replaceWithBreakpoint): Deleted.
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::replaceWithHlt):
+        (JSC::X86Assembler::replaceWithInt3): Deleted.
+        * dfg/DFGJumpReplacement.cpp:
+        (JSC::DFG::JumpReplacement::installVMTrapBreakpoint):
+        * runtime/VMTraps.cpp:
+        (JSC::SignalContext::SignalContext):
+        (JSC::installSignalHandler):
+        (JSC::SignalContext::adjustPCToPointToTrappingInstruction): Deleted.
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::enableFastMemory):
+
 2017-06-22  Saam Barati  <sbarati@apple.com>
 
         The lowering of Identity in the DFG backend needs to use ManualOperandSpeculation

@@ -1,3 +1,27 @@
+2017-06-23  Keith Miller  <keith_miller@apple.com>
+
+        Switch VMTraps to use halt instructions rather than breakpoint instructions
+        https://bugs.webkit.org/show_bug.cgi?id=173677
+        <rdar://problem/32178892>
+
+        Reviewed by JF Bastien.
+
+        Remove the Trap signal handler code since it plays badly with lldb and combine
+        SIGBUS with SIGSEGV since distiguishing them is generally non-portable.
+
+        Also, update the platform code to only use signaling VMTraps
+        on where we have an appropriate instruction (x86 and ARM64).
+
+        * wtf/Platform.h:
+        * wtf/threads/Signals.cpp:
+        (WTF::fromMachException):
+        (WTF::toMachMask):
+        (WTF::installSignalHandler):
+        (WTF::jscSignalHandler):
+        * wtf/threads/Signals.h:
+        (WTF::toSystemSignal):
+        (WTF::fromSystemSignal):
+
 2017-06-23  Antti Koivisto  <antti@apple.com>
 
         Add notifyutil registrations for going in and out of simulated low memory state

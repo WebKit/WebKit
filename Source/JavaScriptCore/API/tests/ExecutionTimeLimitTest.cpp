@@ -121,8 +121,8 @@ int testExecutionTimeLimit()
     static const TierOptions tierOptionsList[] = {
         { "LLINT",    0,   "--useConcurrentJIT=false --useLLInt=true --useJIT=false" },
         { "Baseline", 0,   "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=false" },
-        { "DFG",      0,   "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=false" },
-        { "FTL",      200, "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=true" },
+        { "DFG",      200,   "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=false" },
+        { "FTL",      500, "--useConcurrentJIT=false --useLLInt=true --useJIT=true --useDFGJIT=true --useFTLJIT=true" },
     };
     
     bool failed = false;
@@ -151,7 +151,39 @@ int testExecutionTimeLimit()
         JSObjectRef currentCPUTimeFunction = JSObjectMakeFunctionWithCallback(context, currentCPUTimeStr, currentCPUTimeAsJSFunctionCallback);
         JSObjectSetProperty(context, globalObject, currentCPUTimeStr, currentCPUTimeFunction, kJSPropertyAttributeNone, nullptr);
         JSStringRelease(currentCPUTimeStr);
-        
+
+        /* Test script on another thread: */
+        timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
+        JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, shouldTerminateCallback, 0);
+        {
+            unsigned timeAfterWatchdogShouldHaveFired = 300 + tierAdjustmentMillis;
+
+            JSStringRef script = JSStringCreateWithUTF8CString("function foo() { while (true) { } } foo();");
+            exception = nullptr;
+            JSValueRef* exn = &exception;
+            shouldTerminateCallbackWasCalled = false;
+            auto thread = Thread::create("Rogue thread", [=] {
+                JSEvaluateScript(context, script, nullptr, nullptr, 1, exn);
+            });
+
+            sleep(Seconds(timeAfterWatchdogShouldHaveFired / 1000.0));
+
+            if (shouldTerminateCallbackWasCalled)
+                printf("PASS: %s script timed out as expected.\n", tierOptions.tier);
+            else {
+                printf("FAIL: %s script timeout callback was not called.\n", tierOptions.tier);
+                exit(1);
+            }
+
+            if (!exception) {
+                printf("FAIL: %s TerminatedExecutionException was not thrown.\n", tierOptions.tier);
+                exit(1);
+            }
+
+            thread->waitForCompletion();
+            testResetAfterTimeout(failed);
+        }
+
         /* Test script timeout: */
         timeLimit = (100 + tierAdjustmentMillis) / 1000.0;
         JSContextGroupSetExecutionTimeLimit(contextGroup, timeLimit, shouldTerminateCallback, 0);

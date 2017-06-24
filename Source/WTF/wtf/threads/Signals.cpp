@@ -117,9 +117,8 @@ static void startMachExceptionHandlerThread()
 static Signal fromMachException(exception_type_t type)
 {
     switch (type) {
-    case EXC_BAD_ACCESS: return Signal::SegV;
+    case EXC_BAD_ACCESS: return Signal::BadAccess;
     case EXC_BAD_INSTRUCTION: return Signal::Ill;
-    case EXC_BREAKPOINT: return Signal::Trap;
     default: break;
     }
     return Signal::Unknown;
@@ -128,9 +127,8 @@ static Signal fromMachException(exception_type_t type)
 static exception_mask_t toMachMask(Signal signal)
 {
     switch (signal) {
-    case Signal::SegV: return EXC_MASK_BAD_ACCESS;
+    case Signal::BadAccess: return EXC_MASK_BAD_ACCESS;
     case Signal::Ill: return EXC_MASK_BAD_INSTRUCTION;
-    case Signal::Trap: return EXC_MASK_BREAKPOINT;
     default: break;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -166,6 +164,11 @@ kern_return_t catch_mach_exception_raise_state(
     mach_msg_type_number_t* outStateCount)
 {
     RELEASE_ASSERT(port == exceptionPort);
+    // If we wanted to distinguish between SIGBUS and SIGSEGV for EXC_BAD_ACCESS on Darwin we could do:
+    // if (exceptionData[0] == KERN_INVALID_ADDRESS)
+    //    signal = SIGSEGV;
+    // else
+    //    signal = SIGBUS;
     Signal signal = fromMachException(exceptionType);
     RELEASE_ASSERT(signal != Signal::Unknown);
 
@@ -187,7 +190,7 @@ kern_return_t catch_mach_exception_raise_state(
 #endif
 
     SigInfo info;
-    if (signal == Signal::SegV) {
+    if (signal == Signal::BadAccess) {
         ASSERT_UNUSED(dataCount, dataCount == 2);
         info.faultingAddress = reinterpret_cast<void*>(exceptionData[1]);
     }
@@ -249,18 +252,19 @@ void unregisterThreadForMachExceptionHandling(Thread* thread)
 static constexpr bool useMach = false;
 #endif // HAVE(MACH_EXCEPTIONS)
 
+
+inline size_t offsetForSystemSignal(int sig)
+{
+    Signal signal = fromSystemSignal(sig);
+    return static_cast<size_t>(signal) + (sig == SIGBUS);
+}
+
 static void jscSignalHandler(int, siginfo_t*, void*);
 
 void installSignalHandler(Signal signal, SignalHandler&& handler)
 {
     ASSERT(signal < Signal::Unknown);
 #if HAVE(MACH_EXCEPTIONS)
-    // Since mach only has EXC_BAD_ACCESS, which covers both SegV and Bus, we arbitarily choose to make
-    // mach EXC_BAD_ACCESSes map to SegV.
-    // FIXME: We should just use a single Signal::BadAccess value instead of SegV/Bus.
-    // See: https://bugs.webkit.org/show_bug.cgi?id=172063
-    if (signal == Signal::Bus && useMach)
-        return;
     ASSERT(!useMach || signal != Signal::Usr);
 
     if (useMach)
@@ -276,7 +280,10 @@ void installSignalHandler(Signal signal, SignalHandler&& handler)
             auto result = sigfillset(&action.sa_mask);
             RELEASE_ASSERT(!result);
             action.sa_flags = SA_SIGINFO;
-            result = sigaction(toSystemSignal(signal), &action, &oldActions[static_cast<size_t>(signal)]);
+            auto systemSignals = toSystemSignal(signal);
+            result = sigaction(std::get<0>(systemSignals), &action, &oldActions[offsetForSystemSignal(std::get<0>(systemSignals))]);
+            if (std::get<1>(systemSignals))
+                result |= sigaction(*std::get<1>(systemSignals), &action, &oldActions[offsetForSystemSignal(*std::get<1>(systemSignals))]);
             RELEASE_ASSERT(!result);
         }
 
@@ -316,7 +323,7 @@ void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
     }
 
     SigInfo sigInfo;
-    if (signal == Signal::SegV || signal == Signal::Bus)
+    if (signal == Signal::BadAccess)
         sigInfo.faultingAddress = info->si_addr;
 
     PlatformRegisters& registers = registersFromUContext(reinterpret_cast<ucontext_t*>(ucontext));
@@ -341,7 +348,8 @@ void jscSignalHandler(int sig, siginfo_t* info, void* ucontext)
         return;
     }
 
-    struct sigaction& oldAction = oldActions[static_cast<size_t>(signal)];
+    unsigned oldActionIndex = static_cast<size_t>(signal) + (sig == SIGBUS);
+    struct sigaction& oldAction = oldActions[static_cast<size_t>(oldActionIndex)];
     if (signal == Signal::Usr) {
         if (oldAction.sa_sigaction)
             oldAction.sa_sigaction(sig, info, ucontext);

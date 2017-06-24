@@ -3713,9 +3713,9 @@ public:
         return FunctionPtr(reinterpret_cast<void(*)()>(ARM64Assembler::readCallTarget(call.dataLocation())));
     }
 
-    static void replaceWithBreakpoint(CodeLocationLabel instructionStart)
+    static void replaceWithVMHalt(CodeLocationLabel instructionStart)
     {
-        ARM64Assembler::replaceWithBkpt(instructionStart.executableAddress());
+        ARM64Assembler::replaceWithVMHalt(instructionStart.executableAddress());
     }
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)

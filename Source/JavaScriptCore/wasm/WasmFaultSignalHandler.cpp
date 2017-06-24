@@ -123,11 +123,7 @@ void enableFastMemory()
             return;
 
 #if ENABLE(WEBASSEMBLY_FAST_MEMORY)
-        installSignalHandler(Signal::Bus, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
-            return trapHandler(signal, sigInfo, ucontext);
-        });
-
-        installSignalHandler(Signal::SegV, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
+        installSignalHandler(Signal::BadAccess, [] (Signal signal, SigInfo& sigInfo, PlatformRegisters& ucontext) {
             return trapHandler(signal, sigInfo, ucontext);
         });
 

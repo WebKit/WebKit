@@ -2602,9 +2602,10 @@ public:
         linkPointer(addressOf(code, where), valuePtr);
     }
 
-    static void replaceWithBkpt(void* where)
+    static void replaceWithVMHalt(void* where)
     {
-        int insn = excepnGeneration(ExcepnOp_BREAKPOINT, 0, 0);
+        // This should try to write to null which should always Segfault.
+        int insn = dataCacheZeroVirtualAddress(ARM64Registers::zr);
         performJITMemcpy(where, &insn, sizeof(int));
         cacheFlush(where, sizeof(int));
     }
@@ -3654,6 +3655,11 @@ private:
     ALWAYS_INLINE static int nopPseudo()
     {
         return hintPseudo(0);
+    }
+
+    ALWAYS_INLINE static int dataCacheZeroVirtualAddress(RegisterID rt)
+    {
+        return system(0, 1, 0x3, 0x7, 0x4, 0x1, rt);
     }
     
     // 'op' means negate
