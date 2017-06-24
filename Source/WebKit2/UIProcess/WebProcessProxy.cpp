@@ -883,7 +883,7 @@ void WebProcessProxy::fetchWebsiteData(SessionID sessionID, OptionSet<WebsiteDat
     auto token = throttler().backgroundActivityToken();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is fetching Website data", this);
 
-    connection()->sendWithReply(Messages::WebProcess::FetchWebsiteData(sessionID, dataTypes), 0, RunLoop::main(), [this, token, completionHandler = WTFMove(completionHandler), sessionID](auto reply) {
+    connection()->sendWithReply(Messages::WebProcess::FetchWebsiteData(sessionID, dataTypes), 0, RunLoop::main(), [token, completionHandler = WTFMove(completionHandler)](auto reply) {
         if (!reply) {
             completionHandler(WebsiteData { });
             return;
@@ -901,7 +901,7 @@ void WebProcessProxy::deleteWebsiteData(SessionID sessionID, OptionSet<WebsiteDa
     auto token = throttler().backgroundActivityToken();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data", this);
 
-    connection()->sendWithReply(Messages::WebProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince), 0, RunLoop::main(), [this, token, completionHandler = WTFMove(completionHandler), sessionID](auto reply) {
+    connection()->sendWithReply(Messages::WebProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince), 0, RunLoop::main(), [token, completionHandler = WTFMove(completionHandler)](auto reply) {
         completionHandler();
         RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data", this);
     });
@@ -914,7 +914,7 @@ void WebProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, OptionSet
     auto token = throttler().backgroundActivityToken();
     RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is taking a background assertion because the Web process is deleting Website data for several origins", this);
 
-    connection()->sendWithReply(Messages::WebProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins), 0, RunLoop::main(), [this, token, completionHandler = WTFMove(completionHandler), sessionID](auto reply) {
+    connection()->sendWithReply(Messages::WebProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins), 0, RunLoop::main(), [token, completionHandler = WTFMove(completionHandler)](auto reply) {
         completionHandler();
         RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - WebProcessProxy is releasing a background assertion because the Web process is done deleting Website data for several origins", this);
     });

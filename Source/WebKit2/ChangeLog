@@ -1,3 +1,21 @@
+2017-06-24  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Removed unused lambda captures from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=173555
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::fetchWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        (WebKit::NetworkProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::fetchWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        (WebKit::WebProcessProxy::deleteWebsiteDataForOrigins):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::topPrivatelyControlledDomainsWithWebsiteData):
+
 2017-06-23  Chris Dumez  <cdumez@apple.com>
 
         Add release assertion to make sure callbackIdentifier is not 0 in DocumentLoader::finishedLoadingIcon()
