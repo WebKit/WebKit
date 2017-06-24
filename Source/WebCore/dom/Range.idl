@@ -61,7 +61,7 @@
 
     [MayThrowException] boolean intersectsNode(Node node);
 
-    DOMString toString(); // FIXME: Should be stringifier once we support it.
+    stringifier;
 
     // Extensions from CSSOM-view (https://drafts.csswg.org/cssom-view/#extensions-to-the-range-interface).
     DOMRectList getClientRects();

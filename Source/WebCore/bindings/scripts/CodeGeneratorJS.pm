@@ -179,22 +179,41 @@ sub AddStringifierOperationIfNeeded
 {
     my $interface = shift;
 
-    foreach my $attribute (@{$interface->attributes}) {
-        next unless $attribute->isStringifier;
+    foreach my $property (@{$interface->attributes}, @{$interface->operations}, @{$interface->anonymousOperations}) {
+        next unless $property->isStringifier;
+
+        if (ref($property) eq "IDLAttribute") {
+            assert("stringifier can only be used on attributes with type DOMString or USVString") unless $property->type->name eq "DOMString" || $property->type->name eq "USVString";
+        }
+
+        if (ref($property) eq "IDLOperation") {
+            assert("stringifier can only be used on operations with a return type of DOMString") unless $property->type->name eq "DOMString";
+            assert("stringifier can only be used on operations with zero arguments") unless scalar(@{$property->arguments}) == 0;
+
+            # Don't duplicate the operation if it was declared with the name 'toString'.
+            return if $property->name eq "toString";
+        }
 
         my $stringifier = IDLOperation->new();
         $stringifier->name("toString");
+        $stringifier->type(IDLParser::cloneType($property->type));
+        $stringifier->isStringifier(1);
 
-        my $extendedAttributeList = {};
-        $extendedAttributeList->{ImplementedAs} = $attribute->name;
-        $stringifier->extendedAttributes($extendedAttributeList);
-        die "stringifier can only be used on attributes of String types" unless $codeGenerator->IsStringType($attribute->type);
-        
-        my $type = IDLParser::cloneType($attribute->type);
-        $stringifier->type($type);
+        IDLParser::copyExtendedAttributes($stringifier->extendedAttributes, $property->extendedAttributes);
+
+        if ($property->name && !$stringifier->extendedAttributes->{ImplementedAs}) {
+            $stringifier->extendedAttributes->{ImplementedAs} = $property->name;
+        }
+
+        # If the stringifier was declared as read-write attribute and had [CEReactions], we need to remove
+        # it from the operation, as the operation should act like attribute getter, which doesn't respect
+        # [CEReactions].
+        if (ref($property) eq "IDLAttribute" && !$property->isReadOnly && $stringifier->extendedAttributes->{CEReactions}) {
+             delete $stringifier->extendedAttributes->{CEReactions};
+        }
 
         push(@{$interface->operations}, $stringifier);
-        last;
+        return;
     }
 }
 

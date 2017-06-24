@@ -92,5 +92,5 @@
     // Passing a NaN will use a value of 0.
     WebKitCSSMatrix skewY(optional unrestricted double angle = NaN);
 
-    [MayThrowException] DOMString toString(); // FIXME: Should be stringifier; once we support it.
+    [MayThrowException] stringifier;
 };

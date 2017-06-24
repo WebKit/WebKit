@@ -1,3 +1,74 @@
+2017-06-24  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add complete support for stringifier
+        https://bugs.webkit.org/show_bug.cgi?id=173724
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddStringifierOperationIfNeeded):
+        Update AddStringifierOperationIfNeeded to support stringifier on operations and be more
+        strict about the allowed types. Also copies over all extended attributes to the synthetic
+        operation.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseInterfaceMember):
+        (parseOperationOrReadWriteAttributeOrMaplike):
+        (parseReadOnlyMember):
+        (parseStringifier):
+        (parseStaticMember):
+        (parseAttributeOrOperationForStringifierOrStatic):
+        (parseReadWriteAttribute):
+        (parseAttributeRest):
+        (parseOperation):
+        (parseSpecialOperation):
+        (parseMapLikeProperties):
+        (parseOperationRest):
+        (parseAttributeOrOperationOrIterator): Deleted.
+        (parseQualifier): Deleted.
+        (parseAttributeOrOperationRest): Deleted.
+        (parseAttribute): Deleted.
+        (parseOperationOrIterator): Deleted.
+        - Update parser to more closely resemble the WebIDL grammar, splitting out parseStringifier and
+          parseStaticMember into their own subroutines. 
+        - Move those and parseSerializer, parseStringifier, parseStaticMember, parseIterableRest and a split out
+          parseReadOnlyMembers up into parseInterfaceMember to make it clearer that they are top level members
+          and match the grammar.
+        - Rename parseAttributeOrOperationOrIterator to parseOperationOrReadWriteAttributeOrMaplike to match the
+          grammar language and make it clear what it does.
+        - Add parseAttributeOrOperationForStringifierOrStatic which contains most of the logic for parsing stringifiers
+          and static members, which have almost identical grammars.
+        - Remove creator special which no longer exists in the spec.
+
+        * css/DOMMatrixReadOnly.idl:
+        * css/WebKitCSSMatrix.idl:
+        * dom/Range.idl:
+        * html/URLSearchParams.idl:
+        Fix FIXMEs by switching to use stringifier.
+
+        * bindings/scripts/test/JS/JSTestStringifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestStringifier.h: Added.
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp: Added.
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.h: Added.
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp: Added.
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.h: Added.
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp: Added.
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.h: Added.
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp: Added.
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.h: Added.
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp: Added.
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.h: Added.
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp: Added.
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.h: Added.
+        * bindings/scripts/test/TestStringifier.idl: Added.
+        * bindings/scripts/test/TestStringifierAnonymousOperation.idl: Added.
+        * bindings/scripts/test/TestStringifierNamedOperation.idl: Added.
+        * bindings/scripts/test/TestStringifierOperationImplementedAs.idl: Added.
+        * bindings/scripts/test/TestStringifierOperationNamedToString.idl: Added.
+        * bindings/scripts/test/TestStringifierReadOnlyAttribute.idl: Added.
+        * bindings/scripts/test/TestStringifierReadWriteAttribute.idl: Added.
+        Add new tests.
+
 2017-06-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Cannot call setValue() on contenteditable or ARIA text controls

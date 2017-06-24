@@ -96,6 +96,6 @@
     [MayThrowException] Float32Array toFloat32Array();
     [MayThrowException] Float64Array toFloat64Array();
 
-    [MayThrowException] DOMString toString(); // FIXME: Should be stringifier; once it is supported.
+    [MayThrowException] stringifier;
     serializer = { attribute };
 };
