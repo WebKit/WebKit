@@ -1,3 +1,17 @@
+2017-06-23  Chris Dumez  <cdumez@apple.com>
+
+        fast/events/page-visibility-iframe-delete-test.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=173798
+
+        Reviewed by Simon Fraser.
+
+        Modernize the test and deflake it by not making it rely on a specific order
+        for the visibilitychange events. The event queues are per documents and there
+        is therefore no guarantee those events will fire in frame tree order.
+
+        * fast/events/page-visibility-iframe-delete-test-expected.txt:
+        * fast/events/page-visibility-iframe-delete-test.html:
+
 2017-06-23  Youenn Fablet  <youenn@apple.com>
 
         Add a binary data channel webrtc test
