@@ -49,7 +49,7 @@ void MemoryPressureHandler::platformReleaseMemory(Critical critical)
 
 static dispatch_source_t _cache_event_source = 0;
 static dispatch_source_t _timer_event_source = 0;
-static int _notifyToken;
+static int _notifyTokens[3];
 
 // Disable memory event reception for a minimum of s_minimumHoldOffTime
 // seconds after receiving an event. Don't let events fire any sooner than
@@ -98,7 +98,7 @@ void MemoryPressureHandler::install()
     });
 
     // Allow simulation of memory pressure with "notifyutil -p org.WebKit.lowMemory"
-    notify_register_dispatch("org.WebKit.lowMemory", &_notifyToken, dispatch_get_main_queue(), ^(int) {
+    notify_register_dispatch("org.WebKit.lowMemory", &_notifyTokens[0], dispatch_get_main_queue(), ^(int) {
 #if ENABLE(FMW_FOOTPRINT_COMPARISON)
         auto footprintBefore = pagesPerVMTag();
 #endif
@@ -115,6 +115,13 @@ void MemoryPressureHandler::install()
         dispatch_async(dispatch_get_main_queue(), ^{
             endSimulatedMemoryPressure();
         });
+    });
+
+    notify_register_dispatch("org.WebKit.lowMemory.begin", &_notifyTokens[1], dispatch_get_main_queue(), ^(int) {
+        beginSimulatedMemoryPressure();
+    });
+    notify_register_dispatch("org.WebKit.lowMemory.end", &_notifyTokens[2], dispatch_get_main_queue(), ^(int) {
+        endSimulatedMemoryPressure();
     });
 
     m_installed = true;
@@ -140,8 +147,9 @@ void MemoryPressureHandler::uninstall()
     });
 
     m_installed = false;
-    
-    notify_cancel(_notifyToken);
+
+    for (auto& token : _notifyTokens)
+        notify_cancel(token);
 }
 
 void MemoryPressureHandler::holdOff(unsigned seconds)
