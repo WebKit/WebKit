@@ -52,7 +52,6 @@ namespace JSC {
     macro(deferred) \
     macro(countdownHolder) \
     macro(Object) \
-    macro(ownEnumerablePropertyKeys) \
     macro(Number) \
     macro(Array) \
     macro(ArrayBuffer) \

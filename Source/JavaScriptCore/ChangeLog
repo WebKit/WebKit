@@ -1,3 +1,31 @@
+2017-06-24  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Clean up Object.entries implementation
+        https://bugs.webkit.org/show_bug.cgi?id=173759
+
+        Reviewed by Sam Weinig.
+
+        This patch cleans up Object.entries implementation.
+        We drop unused private functions. And we merge the
+        implementation into Object.entries.
+
+        It slightly speeds up Object.entries speed.
+
+                                     baseline                  patched
+
+            object-entries      148.0101+-5.6627          142.1877+-4.8661          might be 1.0409x faster
+
+
+        * builtins/BuiltinNames.h:
+        * builtins/ObjectConstructor.js:
+        (entries):
+        (globalPrivate.enumerableOwnProperties): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ownEnumerablePropertyKeys): Deleted.
+        * runtime/ObjectConstructor.h:
+
 2017-06-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Reflect.enumerate

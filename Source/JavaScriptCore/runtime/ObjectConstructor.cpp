@@ -297,16 +297,6 @@ EncodedJSValue JSC_HOST_CALL objectConstructorKeys(ExecState* exec)
     return JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::Strings, DontEnumPropertiesMode::Exclude));
 }
 
-EncodedJSValue JSC_HOST_CALL ownEnumerablePropertyKeys(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = exec->argument(0).toObject(exec);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    scope.release();
-    return JSValue::encode(ownPropertyKeys(exec, object, PropertyNameMode::StringsAndSymbols, DontEnumPropertiesMode::Exclude));
-}
-
 EncodedJSValue JSC_HOST_CALL objectConstructorAssign(ExecState* exec)
 {
     VM& vm = exec->vm();

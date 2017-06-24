@@ -725,6 +725,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
     JSFunction* privateFuncFloor = JSFunction::create(vm, this, 0, String(), mathProtoFuncFloor, FloorIntrinsic);
     JSFunction* privateFuncTrunc = JSFunction::create(vm, this, 0, String(), mathProtoFuncTrunc, TruncIntrinsic);
 
+    JSFunction* privateFuncGetOwnPropertyNames = JSFunction::create(vm, this, 0, String(), objectConstructorGetOwnPropertyNames);
     JSFunction* privateFuncPropertyIsEnumerable = JSFunction::create(vm, this, 0, String(), globalFuncPropertyIsEnumerable);
     JSFunction* privateFuncImportModule = JSFunction::create(vm, this, 0, String(), globalFuncImportModule);
     JSFunction* privateFuncTypedArrayLength = JSFunction::create(vm, this, 0, String(), typedArrayViewPrivateFuncLength);
@@ -777,7 +778,7 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->Infinity, jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->undefinedKeyword, jsUndefined(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->builtinNames().ownEnumerablePropertyKeysPrivateName(), JSFunction::create(vm, this, 0, String(), ownEnumerablePropertyKeys), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().getOwnPropertyNamesPrivateName(), privateFuncGetOwnPropertyNames, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().propertyIsEnumerablePrivateName(), privateFuncPropertyIsEnumerable, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().importModulePrivateName(), privateFuncImportModule, DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().enqueueJobPrivateName(), JSFunction::create(vm, this, 0, String(), enqueueJob), DontEnum | DontDelete | ReadOnly),
