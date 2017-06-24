@@ -48,8 +48,6 @@ class ResourceRequest;
 class SessionID;
 }
 
-typedef HashMap<RefPtr<WebCore::ResourceLoader>, RetainPtr<WebResource>> ResourceMap;
-
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:
     WebFrameLoaderClient(WebFrame* = 0);
