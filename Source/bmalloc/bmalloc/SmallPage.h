@@ -34,6 +34,8 @@
 
 namespace bmalloc {
 
+class SmallLine;
+
 class SmallPage : public ListNode<SmallPage> {
 public:
     void ref(std::lock_guard<StaticMutex>&);
@@ -65,6 +67,8 @@ static_assert(
     sizeClassCount <= std::numeric_limits<decltype(m_sizeClass)>::max(),
     "Largest size class must fit in SmallPage metadata");
 };
+
+using LineCache = std::array<List<SmallPage>, sizeClassCount>;
 
 inline void SmallPage::ref(std::lock_guard<StaticMutex>&)
 {

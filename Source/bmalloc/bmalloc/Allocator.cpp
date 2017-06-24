@@ -155,7 +155,8 @@ NO_INLINE void Allocator::refillAllocatorSlowCase(BumpAllocator& allocator, size
 
     std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
     m_deallocator.processObjectLog(lock);
-    PerProcess<Heap>::getFastCase()->allocateSmallBumpRanges(lock, sizeClass, allocator, bumpRangeCache);
+    PerProcess<Heap>::getFastCase()->allocateSmallBumpRanges(
+        lock, sizeClass, allocator, bumpRangeCache, m_deallocator.lineCache(lock));
 }
 
 INLINE void Allocator::refillAllocator(BumpAllocator& allocator, size_t sizeClass)

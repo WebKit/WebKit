@@ -191,6 +191,16 @@ void Heap::scheduleScavenger(size_t bytes)
     m_scavenger.runSoon();
 }
 
+void Heap::deallocateLineCache(std::lock_guard<StaticMutex>&, LineCache& lineCache)
+{
+    for (auto& list : lineCache) {
+        while (!list.isEmpty()) {
+            size_t sizeClass = &list - &lineCache[0];
+            m_lineCache[sizeClass].push(list.popFront());
+        }
+    }
+}
+
 void Heap::allocateSmallChunk(std::lock_guard<StaticMutex>& lock, size_t pageClass)
 {
     size_t pageSize = bmalloc::pageSize(pageClass);
@@ -235,10 +245,13 @@ void Heap::deallocateSmallChunk(Chunk* chunk, size_t pageClass)
     m_largeFree.add(LargeRange(chunk, size, physicalSize));
 }
 
-SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass)
+SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t sizeClass, LineCache& lineCache)
 {
-    if (!m_freeLines[sizeClass].isEmpty())
-        return m_freeLines[sizeClass].popFront();
+    if (!lineCache[sizeClass].isEmpty())
+        return lineCache[sizeClass].popFront();
+
+    if (!m_lineCache[sizeClass].isEmpty())
+        return m_lineCache[sizeClass].popFront();
 
     m_isGrowing = true;
     
@@ -270,7 +283,7 @@ SmallPage* Heap::allocateSmallPage(std::lock_guard<StaticMutex>& lock, size_t si
     return page;
 }
 
-void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, Object object)
+void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, Object object, LineCache& lineCache)
 {
     BASSERT(!object.line()->refCount(lock));
     SmallPage* page = object.page();
@@ -278,7 +291,7 @@ void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, Object object
 
     if (!page->hasFreeLines(lock)) {
         page->setHasFreeLines(lock, true);
-        m_freeLines[page->sizeClass()].push(page);
+        lineCache[page->sizeClass()].push(page);
     }
 
     if (page->refCount(lock))
@@ -287,7 +300,7 @@ void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, Object object
     size_t sizeClass = page->sizeClass();
     size_t pageClass = m_pageClasses[sizeClass];
 
-    m_freeLines[sizeClass].remove(page);
+    List<SmallPage>::remove(page); // 'page' may be in any thread's line cache.
     
     Chunk* chunk = Chunk::get(page);
     if (chunk->freePages().isEmpty())
@@ -310,9 +323,10 @@ void Heap::deallocateSmallLine(std::lock_guard<StaticMutex>& lock, Object object
 
 void Heap::allocateSmallBumpRangesByMetadata(
     std::lock_guard<StaticMutex>& lock, size_t sizeClass,
-    BumpAllocator& allocator, BumpRangeCache& rangeCache)
+    BumpAllocator& allocator, BumpRangeCache& rangeCache,
+    LineCache& lineCache)
 {
-    SmallPage* page = allocateSmallPage(lock, sizeClass);
+    SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache);
     SmallLine* lines = page->begin();
     BASSERT(page->hasFreeLines(lock));
     size_t smallLineCount = m_vmPageSizePhysical / smallLineSize;
@@ -356,7 +370,7 @@ void Heap::allocateSmallBumpRangesByMetadata(
 
         // In a fragmented page, some free ranges might not fit in the cache.
         if (rangeCache.size() == rangeCache.capacity()) {
-            m_freeLines[sizeClass].push(page);
+            lineCache[sizeClass].push(page);
             BASSERT(allocator.canAllocate());
             return;
         }
@@ -371,10 +385,11 @@ void Heap::allocateSmallBumpRangesByMetadata(
 
 void Heap::allocateSmallBumpRangesByObject(
     std::lock_guard<StaticMutex>& lock, size_t sizeClass,
-    BumpAllocator& allocator, BumpRangeCache& rangeCache)
+    BumpAllocator& allocator, BumpRangeCache& rangeCache,
+    LineCache& lineCache)
 {
     size_t size = allocator.size();
-    SmallPage* page = allocateSmallPage(lock, sizeClass);
+    SmallPage* page = allocateSmallPage(lock, sizeClass, lineCache);
     BASSERT(page->hasFreeLines(lock));
 
     auto findSmallBumpRange = [&](Object& it, Object& end) {
@@ -410,7 +425,7 @@ void Heap::allocateSmallBumpRangesByObject(
 
         // In a fragmented page, some free ranges might not fit in the cache.
         if (rangeCache.size() == rangeCache.capacity()) {
-            m_freeLines[sizeClass].push(page);
+            lineCache[sizeClass].push(page);
             BASSERT(allocator.canAllocate());
             return;
         }

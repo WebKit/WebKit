@@ -59,8 +59,10 @@ public:
     
     DebugHeap* debugHeap() { return m_debugHeap; }
 
-    void allocateSmallBumpRanges(std::lock_guard<StaticMutex>&, size_t sizeClass, BumpAllocator&, BumpRangeCache&);
-    void derefSmallLine(std::lock_guard<StaticMutex>&, Object);
+    void allocateSmallBumpRanges(std::lock_guard<StaticMutex>&, size_t sizeClass,
+        BumpAllocator&, BumpRangeCache&, LineCache&);
+    void derefSmallLine(std::lock_guard<StaticMutex>&, Object, LineCache&);
+    void deallocateLineCache(std::lock_guard<StaticMutex>&, LineCache&);
 
     void* allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
     void* tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
@@ -91,12 +93,12 @@ private:
     void initializePageMetadata();
 
     void allocateSmallBumpRangesByMetadata(std::lock_guard<StaticMutex>&,
-        size_t sizeClass, BumpAllocator&, BumpRangeCache&);
+        size_t sizeClass, BumpAllocator&, BumpRangeCache&, LineCache&);
     void allocateSmallBumpRangesByObject(std::lock_guard<StaticMutex>&,
-        size_t sizeClass, BumpAllocator&, BumpRangeCache&);
+        size_t sizeClass, BumpAllocator&, BumpRangeCache&, LineCache&);
 
-    SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t sizeClass);
-    void deallocateSmallLine(std::lock_guard<StaticMutex>&, Object);
+    SmallPage* allocateSmallPage(std::lock_guard<StaticMutex>&, size_t sizeClass, LineCache&);
+    void deallocateSmallLine(std::lock_guard<StaticMutex>&, Object, LineCache&);
 
     void allocateSmallChunk(std::lock_guard<StaticMutex>&, size_t pageClass);
     void deallocateSmallChunk(Chunk*, size_t pageClass);
@@ -116,7 +118,7 @@ private:
     Vector<LineMetadata> m_smallLineMetadata;
     std::array<size_t, sizeClassCount> m_pageClasses;
 
-    std::array<List<SmallPage>, sizeClassCount> m_freeLines;
+    LineCache m_lineCache;
     std::array<List<Chunk>, pageClassCount> m_freePages;
     std::array<List<Chunk>, pageClassCount> m_chunkCache;
 
@@ -143,18 +145,19 @@ private:
 
 inline void Heap::allocateSmallBumpRanges(
     std::lock_guard<StaticMutex>& lock, size_t sizeClass,
-    BumpAllocator& allocator, BumpRangeCache& rangeCache)
+    BumpAllocator& allocator, BumpRangeCache& rangeCache,
+    LineCache& lineCache)
 {
     if (sizeClass < bmalloc::sizeClass(smallLineSize))
-        return allocateSmallBumpRangesByMetadata(lock, sizeClass, allocator, rangeCache);
-    return allocateSmallBumpRangesByObject(lock, sizeClass, allocator, rangeCache);
+        return allocateSmallBumpRangesByMetadata(lock, sizeClass, allocator, rangeCache, lineCache);
+    return allocateSmallBumpRangesByObject(lock, sizeClass, allocator, rangeCache, lineCache);
 }
 
-inline void Heap::derefSmallLine(std::lock_guard<StaticMutex>& lock, Object object)
+inline void Heap::derefSmallLine(std::lock_guard<StaticMutex>& lock, Object object, LineCache& lineCache)
 {
     if (!object.line()->deref(lock))
         return;
-    deallocateSmallLine(lock, object);
+    deallocateSmallLine(lock, object, lineCache);
 }
 
 } // namespace bmalloc

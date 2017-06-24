@@ -1,3 +1,64 @@
+2017-06-19  Geoffrey Garen  <ggaren@apple.com>
+
+        bmalloc: Add a per-thread line cache
+        https://bugs.webkit.org/show_bug.cgi?id=173552
+
+        Reviewed by Darin Adler.
+
+        Previously, any thread could allocate out of any page with free lines.
+        Now, the first thread to free a line in a page owns that page's free
+        lines until the whole page becomes free.
+
+        This patch is a big speedup on multi-threaded benchmarks.
+        tree_churn --parallel gets 14% faster on a 2-core (4-hyper-core) MacBook
+        Air and 2.85X faster on 12-core (24-hyper-core) Mac Pro. Other parallel
+        benchmarks show significant but smaller speedups.
+
+        Thread affinity is a great predictor of object lifetime. The per-thread
+        line cache avoids the pathology of shuffling pages between threads,
+        turning predictable lifetimes into unpredictable lifetimes, increasing
+        fragmentation. On tree_churn --parallel, the per-thread line cache
+        increases free memory found per page scanned by 2.85X.
+
+        Free line scanning in fragmented pages is pretty expensive relative to
+        other allocate / initialize / free operations. According to Instruments,
+        on tree_churn --parallel, scanning is about 10X more expensive than
+        freeing. This explains why a 2.85X improvement in scanning efficiency
+        translates into a 2.85X overall speedup on tree_churn --parallel.
+
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::refillAllocatorSlowCase): Pass through our line
+        cache so the Heap can fill it.
+
+        * bmalloc/Deallocator.cpp:
+        (bmalloc::Deallocator::scavenge): Scavenge our line cache.
+
+        (bmalloc::Deallocator::processObjectLog): Deleted.
+
+        * bmalloc/Deallocator.h:
+        (bmalloc::Deallocator::lineCache): Added a line cache.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::deallocateLineCache): Deallocation function for thread
+        destruction.
+
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::deallocateSmallLine):
+        (bmalloc::Heap::allocateSmallBumpRangesByMetadata):
+        (bmalloc::Heap::allocateSmallBumpRangesByObject): Consult the new per-thread line
+        cache for allocation and deallocation.
+
+        * bmalloc/Heap.h:
+        (bmalloc::Heap::allocateSmallBumpRanges):
+        (bmalloc::Heap::derefSmallLine):
+
+        * bmalloc/List.h:
+        (bmalloc::List::remove): Remove has always been a logically static
+        operation. Declare it static now so that the Heap can remove a page from
+        a thread's line cache without holding a direct pointer to the cache.
+
+        * bmalloc/SmallPage.h:
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.

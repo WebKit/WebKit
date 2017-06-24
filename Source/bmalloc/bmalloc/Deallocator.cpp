@@ -59,7 +59,10 @@ void Deallocator::scavenge()
     if (m_debugHeap)
         return;
 
-    processObjectLog();
+    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
+
+    processObjectLog(lock);
+    PerProcess<Heap>::getFastCase()->deallocateLineCache(lock, lineCache(lock));
 }
 
 void Deallocator::processObjectLog(std::lock_guard<StaticMutex>& lock)
@@ -67,15 +70,8 @@ void Deallocator::processObjectLog(std::lock_guard<StaticMutex>& lock)
     Heap* heap = PerProcess<Heap>::getFastCase();
     
     for (Object object : m_objectLog)
-        heap->derefSmallLine(lock, object);
-
+        heap->derefSmallLine(lock, object, lineCache(lock));
     m_objectLog.clear();
-}
-
-void Deallocator::processObjectLog()
-{
-    std::lock_guard<StaticMutex> lock(PerProcess<Heap>::mutex());
-    processObjectLog(lock);
 }
 
 void Deallocator::deallocateSlowCase(void* object)

@@ -103,7 +103,7 @@ public:
         return static_cast<T*>(result);
     }
 
-    void insertAfter(ListNode<T>* it, ListNode<T>* node)
+    static void insertAfter(ListNode<T>* it, ListNode<T>* node)
     {
         ListNode<T>* prev = it;
         ListNode<T>* next = it->next;
@@ -115,7 +115,7 @@ public:
         prev->next = node;
     }
 
-    void remove(ListNode<T>* node)
+    static void remove(ListNode<T>* node)
     {
         ListNode<T>* next = node->next;
         ListNode<T>* prev = node->prev;
