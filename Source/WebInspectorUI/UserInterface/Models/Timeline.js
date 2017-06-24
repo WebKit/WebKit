@@ -71,7 +71,12 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
         if (record.updatesDynamically)
             record.addEventListener(WebInspector.TimelineRecord.Event.Updated, this._recordUpdated, this);
 
-        this._records.push(record);
+        // Because records can be nested, it is possible that outer records with an early start time
+        // may be completed and added to the Timeline after inner records with a later start time
+        // were already added. In most cases this is a small drift, so make an effort to still keep
+        // the list sorted. Do it now, when inserting, so if the timeline is visible it has the
+        // best chance of being as accurate as possible during a recording.
+        this._tryInsertingRecordInSortedOrder(record);
 
         this._updateTimesIfNeeded(record);
 
@@ -123,6 +128,29 @@ WebInspector.Timeline = class Timeline extends WebInspector.Object
     _recordUpdated(event)
     {
         this._updateTimesIfNeeded(event.target);
+    }
+
+    _tryInsertingRecordInSortedOrder(record)
+    {
+        // Fast case add to the end.
+        let lastValue = this._records.lastValue;
+        if (!lastValue || lastValue.startTime < record.startTime || record.updatesDynamically) {
+            this._records.push(record);
+            return;
+        }
+
+        // Slow case, try to insert in the last 20 records.
+        let start = this._records.length - 2;
+        let end = Math.max(this._records.length - 20, 0);
+        for (let i = start; i >= end; --i) {
+            if (this._records[i].startTime < record.startTime) {
+                this._records.insertAtIndex(record, i + 1);
+                return;
+            }
+        }
+
+        // Give up and add to the end.
+        this._records.push(record);
     }
 };
 

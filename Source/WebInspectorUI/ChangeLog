@@ -1,3 +1,19 @@
+2017-06-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Script Timeline bubbles sometimes appear to miss large events
+        https://bugs.webkit.org/show_bug.cgi?id=173746
+        <rdar://problem/32950808>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/Timeline.js:
+        (WebInspector.Timeline.prototype.addRecord):
+        (WebInspector.Timeline.prototype._tryInsertInSortedOrder):
+        The list of records is assumed to be sorted by the code that draws bubbles
+        however the order in which we receive them may not be sorted. Make a quick
+        effort to sort recent records so that as we are drawing the timeline it is
+        more accurate.
+
 2017-06-23  Brian Burg  <bburg@apple.com>
 
         Web Inspector: RTL: flip all go-to-arrow instances
