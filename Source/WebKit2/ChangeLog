@@ -1,3 +1,18 @@
+2017-06-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Introspection: webkit_web_view_new_with_related_view needs to be marked as a constructor
+        https://bugs.webkit.org/show_bug.cgi?id=173765
+
+        Reviewed by Carlos Garcia Campos.
+
+        Because the first parameter to this WebKitWebView constructor is itself a WebKitWebView,
+        the gi-scanner's heuristics decide that it's probably an object method rather than a
+        constructor, resulting in improper introspection generation. Annotate it with (constructor)
+        to override this behavior.
+
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp:
+
 2017-06-24  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r218785.

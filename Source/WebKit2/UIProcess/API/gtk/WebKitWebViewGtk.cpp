@@ -189,7 +189,7 @@ GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
 }
 
 /**
- * webkit_web_view_new_with_related_view:
+ * webkit_web_view_new_with_related_view: (constructor)
  * @web_view: the related #WebKitWebView
  *
  * Creates a new #WebKitWebView sharing the same web process with @web_view.
