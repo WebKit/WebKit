@@ -1,3 +1,12 @@
+2017-06-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove Reflect.enumerate
+        https://bugs.webkit.org/show_bug.cgi?id=173806
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-06-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Cannot call setValue() on contenteditable or ARIA text controls

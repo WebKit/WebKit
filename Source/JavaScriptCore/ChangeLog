@@ -1,3 +1,24 @@
+2017-06-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove Reflect.enumerate
+        https://bugs.webkit.org/show_bug.cgi?id=173806
+
+        Reviewed by Yusuke Suzuki.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::JSInjectedScriptHost::subtype):
+        (Inspector::JSInjectedScriptHost::getInternalProperties):
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSPropertyNameIterator.cpp: Removed.
+        * runtime/JSPropertyNameIterator.h: Removed.
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectEnumerate): Deleted.
+
 2017-06-23  Keith Miller  <keith_miller@apple.com>
 
         Switch VMTraps to use halt instructions rather than breakpoint instructions

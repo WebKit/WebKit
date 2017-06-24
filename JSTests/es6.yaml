@@ -469,7 +469,7 @@
 - path: es6/Reflect_Reflect.deleteProperty.js
   cmd: runES6 :normal
 - path: es6/Reflect_Reflect.enumerate.js
-  cmd: runES6 :normal
+  cmd: runES6 :failDueToOutdatedOrBadTest
 - path: es6/Reflect_Reflect.get.js
   cmd: runES6 :normal
 - path: es6/Reflect_Reflect.getOwnPropertyDescriptor.js

@@ -1166,6 +1166,8 @@ def runES6(mode)
         errorHandler = simpleErrorHandler
     when :fail
         errorHandler = expectedFailErrorHandler
+    when :failDueToOutdatedOrBadTest
+        errorHandler = expectedFailErrorHandler
     else
         raise "Invalid mode: #{mode}"
     end
@@ -1273,6 +1275,8 @@ def runChakra(mode, exception, baselineFile, extraFiles)
     when :pass
         errorHandler = chakraPassFailErrorHandler
         outputHandler = noisyOutputHandler
+    when :skipDueToOutdatedOrBadTest
+        return
     when :skip
         return
     else

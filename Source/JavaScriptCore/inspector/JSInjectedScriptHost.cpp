@@ -42,7 +42,6 @@
 #include "JSMap.h"
 #include "JSMapIterator.h"
 #include "JSPromise.h"
-#include "JSPropertyNameIterator.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
 #include "JSStringIterator.h"
@@ -183,8 +182,7 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
 
     if (value.inherits(vm, JSMapIterator::info())
         || value.inherits(vm, JSSetIterator::info())
-        || value.inherits(vm, JSStringIterator::info())
-        || value.inherits(vm, JSPropertyNameIterator::info()))
+        || value.inherits(vm, JSStringIterator::info()))
         return jsNontrivialString(exec, ASCIILiteral("iterator"));
 
     if (object && object->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().arrayIteratorNextIndexPrivateName()))
@@ -392,15 +390,6 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         return array;
     }
 
-    if (JSPropertyNameIterator* propertyNameIterator = jsDynamicCast<JSPropertyNameIterator*>(vm, value)) {
-        unsigned index = 0;
-        JSArray* array = constructEmptyArray(exec, nullptr, 1);
-        RETURN_IF_EXCEPTION(scope, JSValue());
-        scope.release();
-        array->putDirectIndex(exec, index++, constructInternalProperty(exec, "object", propertyNameIterator->iteratedValue()));
-        return array;
-    }
-
     return jsUndefined();
 }
 
@@ -545,10 +534,7 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
         iterator = setIterator->clone(exec);
     else if (JSStringIterator* stringIterator = jsDynamicCast<JSStringIterator*>(vm, value))
         iterator = stringIterator->clone(exec);
-    else if (JSPropertyNameIterator* propertyNameIterator = jsDynamicCast<JSPropertyNameIterator*>(vm, value)) {
-        iterator = propertyNameIterator->clone(exec);
-        RETURN_IF_EXCEPTION(scope, JSValue());
-    } else {
+    else {
         if (JSObject* iteratorObject = jsDynamicCast<JSObject*>(vm, value)) {
             // Array Iterators are created in JS for performance reasons. Thus the only way to know we have one is to
             // look for a property that is unique to them.

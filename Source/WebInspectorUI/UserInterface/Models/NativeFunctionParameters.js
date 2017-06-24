@@ -134,7 +134,6 @@ WebInspector.NativeConstructorFunctionParameters = {
         construct: "target, argumentsList, [newTarget=target]",
         defineProperty: "target, propertyKey, attributes",
         deleteProperty: "target, propertyKey",
-        enumerate: "target",
         get: "target, propertyKey, [receiver]",
         getOwnPropertyDescriptor: "target, propertyKey",
         getPrototypeOf: "target",

@@ -1,3 +1,23 @@
+2017-06-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove Reflect.enumerate
+        https://bugs.webkit.org/show_bug.cgi?id=173806
+
+        Reviewed by Yusuke Suzuki.
+
+        * ChakraCore.yaml:
+        * es6.yaml:
+        These tests now fail because they use Reflect.enumerate.
+
+        * test262.yaml:
+        This test now passes, it checked that Reflect.enumerate is undefined!
+
+        * stress/property-name-enumerator-should-not-look-into-indexed-values-when-it-is-a-dictionary.js:
+        Convert to for..in which presented the original issue. See bug <https://webkit.org/b/149811>
+
+        * stress/reflect-enumerate.js: Removed.
+        Remove a test solely for Reflect.enumerate.
+
 2017-06-22  Saam Barati  <sbarati@apple.com>
 
         ValueRep(DoubleRep(@v)) can not simply convert to @v

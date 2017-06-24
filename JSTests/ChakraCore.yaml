@@ -1718,7 +1718,7 @@
 - path: ChakraCore/test/es6/proxybug.js
   cmd: runChakra :pass, "NoException", "", []
 - path: ChakraCore/test/es6/proxyenumbug.js
-  cmd: runChakra :pass, "NoException", "", []
+  cmd: runChakra :skipDueToOutdatedOrBadTest, "NoException", "", []
 - path: ChakraCore/test/es6/proxy-issue884.js
   # Different behavior.
   cmd: runChakra :skip, "NoException", "proxy-issue884.baseline", []

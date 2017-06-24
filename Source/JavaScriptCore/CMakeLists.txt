@@ -811,7 +811,6 @@ set(JavaScriptCore_SOURCES
     runtime/JSPromiseDeferred.cpp
     runtime/JSPromisePrototype.cpp
     runtime/JSPropertyNameEnumerator.cpp
-    runtime/JSPropertyNameIterator.cpp
     runtime/JSProxy.cpp
     runtime/JSRunLoopTimer.cpp
     runtime/JSScope.cpp

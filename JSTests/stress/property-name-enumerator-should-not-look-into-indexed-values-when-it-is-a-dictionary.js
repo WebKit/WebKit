@@ -30,7 +30,7 @@ function shouldBe(actual, expected) {
         delete cols[remapcols[i]];
     }
     var count = 0;
-    for (var col2 of Reflect.enumerate(cols)) {
+    for (var col2 in cols) {
         count++;
         shouldBe(col2, '0');
     }

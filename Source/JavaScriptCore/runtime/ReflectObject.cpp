@@ -29,7 +29,6 @@
 #include "BuiltinNames.h"
 #include "JSCInlines.h"
 #include "JSGlobalObjectFunctions.h"
-#include "JSPropertyNameIterator.h"
 #include "Lookup.h"
 #include "ObjectConstructor.h"
 
@@ -37,7 +36,6 @@ namespace JSC {
 
 static EncodedJSValue JSC_HOST_CALL reflectObjectConstruct(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState*);
-static EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectGet(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectGetOwnPropertyDescriptor(ExecState*);
 static EncodedJSValue JSC_HOST_CALL reflectObjectGetPrototypeOf(ExecState*);
@@ -63,7 +61,6 @@ const ClassInfo ReflectObject::s_info = { "Object", &Base::s_info, &reflectObjec
     construct                reflectObjectConstruct                DontEnum|Function 2
     defineProperty           reflectObjectDefineProperty           DontEnum|Function 3
     deleteProperty           JSBuiltin                             DontEnum|Function 2
-    enumerate                reflectObjectEnumerate                DontEnum|Function 1
     get                      reflectObjectGet                      DontEnum|Function 2
     getOwnPropertyDescriptor reflectObjectGetOwnPropertyDescriptor DontEnum|Function 2
     getPrototypeOf           reflectObjectGetPrototypeOf           DontEnum|Function 1
@@ -154,20 +151,6 @@ EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState* exec)
     JSObject* targetObject = asObject(target);
     scope.release();
     return JSValue::encode(jsBoolean(targetObject->methodTable(vm)->defineOwnProperty(targetObject, exec, propertyName, descriptor, shouldThrow)));
-}
-
-// FIXME: Reflect.enumerate is removed in ECMA 2016 draft.
-// http://www.ecma-international.org/ecma-262/6.0/#sec-reflect.enumerate
-EncodedJSValue JSC_HOST_CALL reflectObjectEnumerate(ExecState* exec)
-{
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue target = exec->argument(0);
-    if (!target.isObject())
-        return JSValue::encode(throwTypeError(exec, scope, ASCIILiteral("Reflect.enumerate requires the first argument be an object")));
-    scope.release();
-    return JSValue::encode(JSPropertyNameIterator::create(exec, exec->lexicalGlobalObject()->propertyNameIteratorStructure(), asObject(target)));
 }
 
 // https://tc39.github.io/ecma262/#sec-reflect.get
