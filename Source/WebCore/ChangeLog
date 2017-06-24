@@ -1,3 +1,9 @@
+2017-06-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Attempt to fix an internal build after r218755.
+
+        * bindings/js/JSMainThreadExecStateInstrumentation.h:
+
 2017-06-23  Chris Dumez  <cdumez@apple.com>
 
         Add release assertion to make sure callbackIdentifier is not 0 in DocumentLoader::finishedLoadingIcon()
