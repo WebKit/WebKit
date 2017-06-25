@@ -1013,7 +1013,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         g_param_spec_boolean(
             "is-controlled-by-automation",
             "Is Controlled By Automation",
-            _("Whether the web view is crontrolled by automation"),
+            _("Whether the web view is controlled by automation"),
             FALSE,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
