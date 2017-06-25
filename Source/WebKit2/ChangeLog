@@ -1,3 +1,21 @@
+2017-06-24  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Make sure encodeClientTypesAndData() / decodeClientTypesAndData() match exactly
+        https://bugs.webkit.org/show_bug.cgi?id=173813
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure encodeClientTypesAndData() / decodeClientTypesAndData() match exactly. The previous
+        IPC encoder code would assume types and data vector have the same length. It would first encode
+        the length of data using |data.size()| but then would encode types.size() values from the
+        data vector. While there are debug assertions to ensure both vectors have the same size, this
+        seems unnecessarily fragile in release builds. If both vectors happen to have different sizes,
+        this will lead to weird IPC bugs.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeClientTypesAndData):
+        (IPC::decodeClientTypesAndData):
+
 2017-06-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Introspection: webkit_web_view_new_with_related_view needs to be marked as a constructor

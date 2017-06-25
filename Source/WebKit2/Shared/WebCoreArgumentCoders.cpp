@@ -1430,8 +1430,8 @@ static void encodeClientTypesAndData(Encoder& encoder, const Vector<String>& typ
     ASSERT(types.size() == data.size());
     encoder << types;
     encoder << static_cast<uint64_t>(data.size());
-    for (size_t i = 0, size = types.size(); i < size; ++i)
-        encodeSharedBuffer(encoder, data[i].get());
+    for (auto& buffer : data)
+        encodeSharedBuffer(encoder, buffer.get());
 }
 
 static bool decodeClientTypesAndData(Decoder& decoder, Vector<String>& types, Vector<RefPtr<SharedBuffer>>& data)
@@ -1439,15 +1439,15 @@ static bool decodeClientTypesAndData(Decoder& decoder, Vector<String>& types, Ve
     if (!decoder.decode(types))
         return false;
 
-    uint64_t clientDataSize;
-    if (!decoder.decode(clientDataSize))
+    uint64_t dataSize;
+    if (!decoder.decode(dataSize))
         return false;
 
-    if (clientDataSize)
-        data.resize(clientDataSize);
+    ASSERT(dataSize == types.size());
 
-    for (size_t i = 0; i < clientDataSize; i++)
-        decodeSharedBuffer(decoder, data[i]);
+    data.resize(dataSize);
+    for (auto& buffer : data)
+        decodeSharedBuffer(decoder, buffer);
 
     return true;
 }
