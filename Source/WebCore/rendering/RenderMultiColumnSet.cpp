@@ -29,6 +29,7 @@
 #include "FrameView.h"
 #include "HitTestResult.h"
 #include "PaintInfo.h"
+#include "RenderBoxRegionInfo.h"
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"

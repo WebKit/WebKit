@@ -24,6 +24,7 @@
 #include "SVGElement.h"
 #include "SVGInlineTextBox.h"
 #include "SVGLengthContext.h"
+#include "SVGTextFragment.h"
 
 namespace WebCore {
 

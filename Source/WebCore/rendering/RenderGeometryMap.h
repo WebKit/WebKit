@@ -27,7 +27,6 @@
 
 #include "FloatPoint.h"
 #include "FloatQuad.h"
-#include "IntSize.h"
 #include "LayoutSize.h"
 #include "RenderObject.h"
 #include "TransformationMatrix.h"

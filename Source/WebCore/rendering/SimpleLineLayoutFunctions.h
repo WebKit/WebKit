@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "LayoutRect.h"
 #include "RenderBlockFlow.h"
 #include "RenderText.h"
 #include <wtf/text/WTFString.h>

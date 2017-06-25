@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGFETileElement.h"
 
+#include "FETile.h"
 #include "FilterEffect.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"

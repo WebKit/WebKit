@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "FEOffset.h"
 #include "SVGAnimatedNumber.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

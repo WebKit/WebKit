@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "SMILTime.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGSMILElement.h"

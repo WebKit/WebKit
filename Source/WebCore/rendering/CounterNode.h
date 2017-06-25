@@ -22,7 +22,6 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 
 // This implements a counter tree that is used for finding parents in counters() lookup,

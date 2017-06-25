@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/Ref.h>
 
 namespace WebCore {
 

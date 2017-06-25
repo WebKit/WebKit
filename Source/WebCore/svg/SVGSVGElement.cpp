@@ -35,6 +35,7 @@
 #include "RenderView.h"
 #include "SMILTimeContainer.h"
 #include "SVGAngle.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGLength.h"
 #include "SVGMatrix.h"
 #include "SVGNumber.h"

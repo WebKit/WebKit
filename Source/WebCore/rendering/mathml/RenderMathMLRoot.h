@@ -29,7 +29,6 @@
 #if ENABLE(MATHML)
 
 #include "MathOperator.h"
-#include "RenderMathMLBlock.h"
 #include "RenderMathMLRow.h"
 
 namespace WebCore {

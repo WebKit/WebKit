@@ -29,7 +29,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "MediaControlElements.h"
 #include "RenderBlockFlow.h"
 #include "RenderFlexibleBox.h"
 

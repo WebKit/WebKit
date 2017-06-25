@@ -27,7 +27,6 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 

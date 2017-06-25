@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include "GridPositionsResolver.h"
+#include "GridPosition.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 

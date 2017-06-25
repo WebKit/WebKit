@@ -27,7 +27,6 @@
 
 #if ENABLE(MATHML)
 
-#include "MathMLElement.h"
 #include "MathMLOperatorDictionary.h"
 #include "MathOperator.h"
 #include "RenderMathMLToken.h"

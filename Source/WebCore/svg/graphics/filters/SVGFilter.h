@@ -24,9 +24,7 @@
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "FloatRect.h"
-#include "FloatSize.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {

@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "FETile.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {

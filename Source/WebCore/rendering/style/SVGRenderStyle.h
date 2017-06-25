@@ -24,10 +24,9 @@
 #pragma once
 
 #include "DataRef.h"
-#include "GraphicsTypes.h"
-#include "Path.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
+#include "WindRule.h"
 
 namespace WebCore {
 

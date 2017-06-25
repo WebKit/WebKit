@@ -20,11 +20,12 @@
 
 #pragma once
 
-#include "SVGRenderStyleDefs.h"
-#include "SVGTextContentElement.h"
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class AffineTransform;
 class SVGInlineTextBox;
 
 // A SVGTextChunk describes a range of SVGTextFragments, see the SVG spec definition of a "text chunk".

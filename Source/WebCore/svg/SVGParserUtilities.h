@@ -23,6 +23,7 @@
 
 #include "ParserUtilities.h"
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 typedef std::pair<unsigned, unsigned> UnicodeRange;
 typedef Vector<UnicodeRange> UnicodeRanges;

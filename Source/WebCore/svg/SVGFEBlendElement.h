@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "FEBlend.h"
 #include "SVGAnimatedEnumeration.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

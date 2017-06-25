@@ -32,10 +32,12 @@
 #include "Color.h"
 #include "CounterDirectives.h"
 #include "DataRef.h"
+#include "FilterOperations.h"
 #include "FontDescription.h"
 #include "GraphicsTypes.h"
 #include "Length.h"
 #include "LengthBox.h"
+#include "LengthFunctions.h"
 #include "LengthPoint.h"
 #include "LengthSize.h"
 #include "LineClampValue.h"
@@ -101,7 +103,6 @@ class BorderData;
 class ContentData;
 class CounterContent;
 class CursorList;
-class FilterOperations;
 class FontCascade;
 class FontMetrics;
 class IntRect;

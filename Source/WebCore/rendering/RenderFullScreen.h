@@ -27,7 +27,6 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "RenderFlexibleBox.h"
-#include "StyleInheritedData.h"
 
 namespace WebCore {
 

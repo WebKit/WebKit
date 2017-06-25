@@ -22,6 +22,7 @@
 #include "config.h"
 #include "SVGFEBlendElement.h"
 
+#include "FEBlend.h"
 #include "FilterEffect.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"

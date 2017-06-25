@@ -28,7 +28,6 @@
 #include "LayoutRect.h"
 #include "RenderBlockFlow.h"
 #include "SimpleLineLayoutFlowContents.h"
-#include "SimpleLineLayoutFunctions.h"
 #include <wtf/IteratorRange.h>
 #include <wtf/text/WTFString.h>
 

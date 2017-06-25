@@ -29,6 +29,7 @@
 #include "ComposedTreeIterator.h"
 #include "FlowThreadController.h"
 #include "PseudoElement.h"
+#include "RenderNamedFlowThread.h"
 #include "RenderObject.h"
 #include "ShadowRoot.h"
 

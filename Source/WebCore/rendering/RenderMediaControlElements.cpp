@@ -30,6 +30,7 @@
 #if ENABLE(VIDEO)
 #include "RenderMediaControlElements.h"
 
+#include "MediaControlElements.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 

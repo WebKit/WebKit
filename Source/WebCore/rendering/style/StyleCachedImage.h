@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "StyleImage.h"
 

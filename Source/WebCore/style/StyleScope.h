@@ -30,7 +30,6 @@
 #include "Timer.h"
 #include <memory>
 #include <wtf/FastMalloc.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>

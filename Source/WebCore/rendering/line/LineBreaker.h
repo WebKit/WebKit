@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "FontCascade.h"
 #include "InlineIterator.h"
 #include "LineInfo.h"
 #include "LineInlineHeaders.h"
@@ -32,6 +33,7 @@
 namespace WebCore {
 
 class RenderText;
+class TextLayout;
 
 struct RenderTextInfo {
     RenderText* text { nullptr };

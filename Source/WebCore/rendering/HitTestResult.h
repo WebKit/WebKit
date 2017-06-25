@@ -21,12 +21,10 @@
 
 #pragma once
 
-#include "FloatQuad.h"
 #include "FloatRect.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
 #include "LayoutRect.h"
-#include "TextFlags.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>

@@ -31,6 +31,7 @@
 #pragma once
 
 #include "BasicShapes.h"
+#include "RenderStyleConstants.h"
 #include "StyleImage.h"
 
 namespace WebCore {

@@ -22,6 +22,7 @@
 #include "SVGFEMergeElement.h"
 
 #include "ElementIterator.h"
+#include "FEMerge.h"
 #include "FilterEffect.h"
 #include "SVGFEMergeNodeElement.h"
 #include "SVGFilterBuilder.h"

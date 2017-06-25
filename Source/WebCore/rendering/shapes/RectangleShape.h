@@ -29,7 +29,6 @@
 
 #pragma once
 
-#include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "Shape.h"

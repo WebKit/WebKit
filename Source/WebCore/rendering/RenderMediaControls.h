@@ -27,7 +27,6 @@
 
 #if ENABLE(VIDEO)
 
-#include "MediaControlElements.h"
 
 namespace WebCore {
 

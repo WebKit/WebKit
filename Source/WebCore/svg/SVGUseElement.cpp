@@ -33,10 +33,11 @@
 #include "EventNames.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
-#include "ShadowRoot.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGGElement.h"
 #include "SVGSVGElement.h"
 #include "SVGSymbolElement.h"
+#include "ShadowRoot.h"
 #include "XLinkNames.h"
 
 namespace WebCore {

@@ -21,7 +21,6 @@
 
 #include "RenderSVGShape.h"
 #include "RenderStyleConstants.h"
-#include "SVGDocumentExtensions.h"
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {

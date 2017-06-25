@@ -25,6 +25,7 @@
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGAnimatedPointList.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPoint.h"

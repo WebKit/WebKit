@@ -25,16 +25,13 @@
 
 #pragma once
 
-#include "RenderStyleConstants.h"
-#include "RenderTreePosition.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
 #include "StyleChange.h"
 #include "StyleSharingResolver.h"
 #include "StyleUpdate.h"
-#include "StyleValidity.h"
 #include <wtf/Function.h>
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
 

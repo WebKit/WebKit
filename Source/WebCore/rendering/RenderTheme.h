@@ -33,7 +33,6 @@
 #include "PaintInfo.h"
 #include "PopupMenuStyle.h"
 #include "ScrollTypes.h"
-#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

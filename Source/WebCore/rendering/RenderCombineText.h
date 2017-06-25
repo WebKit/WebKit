@@ -21,7 +21,6 @@
 #pragma once
 
 #include "FontCascade.h"
-#include "RenderElement.h"
 #include "RenderText.h"
 #include "Text.h"
 

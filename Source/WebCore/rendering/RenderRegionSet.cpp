@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderRegionSet.h"
 
+#include "RenderBoxRegionInfo.h"
 #include "RenderFlowThread.h"
 
 namespace WebCore {

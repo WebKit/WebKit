@@ -26,7 +26,7 @@
 #pragma once
 
 #include "RenderElement.h"
-#include "RenderNamedFlowThread.h"
+#include "RenderFlowThread.h"
 #include "RenderText.h"
 #include "RenderView.h"
 

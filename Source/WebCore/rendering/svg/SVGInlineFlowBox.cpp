@@ -26,6 +26,7 @@
 #include "GraphicsContext.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRenderingContext.h"
+#include "SVGTextFragment.h"
 
 namespace WebCore {
 

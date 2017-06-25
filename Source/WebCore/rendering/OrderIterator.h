@@ -32,7 +32,6 @@
 #pragma once
 
 #include <set>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

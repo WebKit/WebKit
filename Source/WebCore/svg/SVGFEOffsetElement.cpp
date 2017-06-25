@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SVGFEOffsetElement.h"
 
+#include "FEOffset.h"
 #include "FilterEffect.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"

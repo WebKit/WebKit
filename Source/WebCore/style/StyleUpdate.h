@@ -27,11 +27,9 @@
 
 #include "Node.h"
 #include "StyleChange.h"
-#include "StyleRelations.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

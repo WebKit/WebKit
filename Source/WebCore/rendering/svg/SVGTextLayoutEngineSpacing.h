@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include "SVGTextMetrics.h"
+#include <unicode/uchar.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

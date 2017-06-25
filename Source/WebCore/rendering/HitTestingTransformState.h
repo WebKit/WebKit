@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "AffineTransform.h"
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "IntSize.h"

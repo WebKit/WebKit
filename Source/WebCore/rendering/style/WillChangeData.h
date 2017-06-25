@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

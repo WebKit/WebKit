@@ -25,6 +25,7 @@
 #include "SVGElement.h"
 #include "SVGInlineTextBox.h"
 #include "SVGLengthContext.h"
+#include "SVGTextContentElement.h"
 #include "SVGTextLayoutEngineBaseline.h"
 #include "SVGTextLayoutEngineSpacing.h"
 

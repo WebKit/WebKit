@@ -23,6 +23,7 @@
 
 #include "RenderSVGResource.h"
 #include "RenderSVGTextPath.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #include <wtf/NeverDestroyed.h>

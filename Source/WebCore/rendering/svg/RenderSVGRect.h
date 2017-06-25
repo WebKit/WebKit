@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "RenderSVGPath.h"
+#include "RenderSVGShape.h"
 #include "SVGRectElement.h"
 
 namespace WebCore {

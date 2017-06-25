@@ -22,7 +22,6 @@
 #pragma once
 
 #include "InlineTextBox.h"
-#include "SVGTextLayoutEngine.h"
 #include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 
@@ -30,6 +29,7 @@ namespace WebCore {
 
 class RenderSVGResource;
 class SVGRootInlineBox;
+struct SVGTextFragment;
 
 class SVGInlineTextBox final : public InlineTextBox {
 public:

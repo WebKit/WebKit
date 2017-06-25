@@ -25,7 +25,6 @@
 #include "PatternAttributes.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGPatternElement.h"
-#include "SVGUnitTypes.h"
 #include <memory>
 #include <wtf/HashMap.h>
 

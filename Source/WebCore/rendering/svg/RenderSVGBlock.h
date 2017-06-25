@@ -21,7 +21,6 @@
 
 #include "RenderBlockFlow.h"
 #include "SVGGraphicsElement.h"
-#include "SVGRenderSupport.h"
 
 namespace WebCore {
 

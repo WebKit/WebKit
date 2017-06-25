@@ -53,6 +53,7 @@
 #include "RenderTextFragment.h"
 #include "ShadowRoot.h"
 #include "SimpleLineLayout.h"
+#include "SimpleLineLayoutFunctions.h"
 #include "SimpleLineLayoutResolver.h"
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"

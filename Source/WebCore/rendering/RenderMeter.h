@@ -23,7 +23,6 @@
 #if ENABLE(METER_ELEMENT)
 
 #include "RenderBlockFlow.h"
-#include "RenderWidget.h"
 
 namespace WebCore {
 

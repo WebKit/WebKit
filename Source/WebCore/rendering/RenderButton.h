@@ -21,7 +21,6 @@
 #pragma once
 
 #include "RenderFlexibleBox.h"
-#include "Timer.h"
 #include <memory>
 
 namespace WebCore {

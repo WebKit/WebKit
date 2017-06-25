@@ -31,7 +31,6 @@
 
 #include "LayerFragment.h"
 #include "RenderBlockFlow.h"
-#include "StyleInheritedData.h"
 #include "VisiblePosition.h"
 #include <memory>
 

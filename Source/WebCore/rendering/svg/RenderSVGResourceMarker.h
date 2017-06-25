@@ -21,7 +21,6 @@
 
 #include "RenderSVGResourceContainer.h"
 #include "SVGMarkerElement.h"
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 

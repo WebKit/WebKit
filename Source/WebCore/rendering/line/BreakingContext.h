@@ -33,6 +33,7 @@
 #include "RenderCombineText.h"
 #include "RenderCounter.h"
 #include "RenderInline.h"
+#include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListMarker.h"
 #include "RenderRubyRun.h"

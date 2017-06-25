@@ -23,7 +23,6 @@
 #pragma once
 
 #include "RootInlineBox.h"
-#include "SVGRenderSupport.h"
 #include "SVGTextLayoutEngine.h"
 
 namespace WebCore {

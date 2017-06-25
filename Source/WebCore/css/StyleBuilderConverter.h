@@ -43,6 +43,7 @@
 #include "CSSReflectValue.h"
 #include "FontSelectionValueInlines.h"
 #include "Frame.h"
+#include "GridPositionsResolver.h"
 #include "Length.h"
 #include "Pair.h"
 #include "QuotesData.h"

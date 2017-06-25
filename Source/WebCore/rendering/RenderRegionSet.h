@@ -26,7 +26,6 @@
 #pragma once
 
 #include "RenderRegion.h"
-#include "RenderBoxRegionInfo.h"
 
 namespace WebCore {
 

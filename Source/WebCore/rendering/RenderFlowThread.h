@@ -31,7 +31,6 @@
 
 #include "LayerFragment.h"
 #include "RenderBlockFlow.h"
-#include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
 
 namespace WebCore {

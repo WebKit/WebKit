@@ -21,7 +21,6 @@
 
 #include "FloatSize.h"
 #include "Image.h"
-#include "IntSize.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 

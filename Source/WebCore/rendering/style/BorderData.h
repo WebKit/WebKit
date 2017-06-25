@@ -25,7 +25,6 @@
 #pragma once
 
 #include "BorderValue.h"
-#include "IntRect.h"
 #include "LengthSize.h"
 #include "NinePieceImage.h"
 

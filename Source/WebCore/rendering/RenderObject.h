@@ -31,7 +31,6 @@
 #include "Frame.h"
 #include "LayoutRect.h"
 #include "Page.h"
-#include "PaintPhase.h"
 #include "RenderObjectEnums.h"
 #include "RenderStyle.h"
 #include "ScrollAlignment.h"

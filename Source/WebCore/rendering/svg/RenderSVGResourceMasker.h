@@ -20,7 +20,6 @@
 #pragma once
 
 #include "ImageBuffer.h"
-#include "IntSize.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGMaskElement.h"
 #include "SVGUnitTypes.h"

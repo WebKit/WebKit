@@ -41,6 +41,8 @@
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
+#include "RenderElement.h"
+#include "RenderView.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StyleFontSizeFunctions.h"
