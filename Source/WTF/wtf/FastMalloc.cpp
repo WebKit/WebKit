@@ -48,7 +48,9 @@ namespace WTF {
 
 #if !defined(NDEBUG)
 namespace {
-size_t maxSingleAllocationSize = std::numeric_limits<size_t>::max();
+// We do not use std::numeric_limits<size_t>::max() here due to the edge case in VC++.
+// https://bugs.webkit.org/show_bug.cgi?id=173720
+static size_t maxSingleAllocationSize = SIZE_MAX;
 };
 
 void fastSetMaxSingleAllocationSize(size_t size)
