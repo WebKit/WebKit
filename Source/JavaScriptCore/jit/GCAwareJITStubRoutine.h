@@ -29,7 +29,6 @@
 
 #include "JITStubRoutine.h"
 #include "JSObject.h"
-#include "JSString.h"
 #include "WriteBarrier.h"
 #include <wtf/Vector.h>
 

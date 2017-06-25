@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "CallLinkInfo.h"
 #include "JSCell.h"
 #include "PromiseDeferredTimer.h"
 #include "Structure.h"

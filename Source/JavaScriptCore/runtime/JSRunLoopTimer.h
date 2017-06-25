@@ -32,7 +32,6 @@
 #include <wtf/RunLoop.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Threading.h>
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>

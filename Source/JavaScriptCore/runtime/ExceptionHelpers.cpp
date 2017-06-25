@@ -30,6 +30,7 @@
 #include "ExceptionHelpers.h"
 
 #include "CallFrame.h"
+#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "ErrorHandlingScope.h"
 #include "Exception.h"

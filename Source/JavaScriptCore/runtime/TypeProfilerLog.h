@@ -30,7 +30,6 @@
 
 #include "JSCJSValue.h"
 #include "Structure.h"
-#include "TypeProfiler.h"
 
 namespace JSC {
 

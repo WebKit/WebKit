@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "CatchScope.h"
 #include "Exception.h"
 #include "FunctionPrototype.h"
 #include "JSCInlines.h"

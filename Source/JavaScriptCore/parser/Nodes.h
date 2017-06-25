@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include "BuiltinNames.h"
-#include "Error.h"
-#include "Interpreter.h"
+#include "BytecodeIntrinsicRegistry.h"
 #include "JITCode.h"
 #include "ParserArena.h"
+#include "ParserModes.h"
 #include "ParserTokens.h"
 #include "ResultType.h"
 #include "SourceCode.h"

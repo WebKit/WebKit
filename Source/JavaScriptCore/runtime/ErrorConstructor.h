@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include "ErrorInstance.h"
 #include "InternalFunction.h"
 
 namespace JSC {

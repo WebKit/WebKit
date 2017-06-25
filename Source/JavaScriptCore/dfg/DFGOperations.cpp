@@ -42,6 +42,7 @@
 #include "DirectArguments.h"
 #include "FTLForOSREntryJITCode.h"
 #include "FTLOSREntry.h"
+#include "FrameTracers.h"
 #include "HasOwnPropertyCache.h"
 #include "HostCallReturnValue.h"
 #include "Interpreter.h"

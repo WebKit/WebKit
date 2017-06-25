@@ -28,6 +28,7 @@
 #include "JSModuleLoader.h"
 
 #include "BuiltinNames.h"
+#include "CatchScope.h"
 #include "CodeProfiling.h"
 #include "Error.h"
 #include "Exception.h"

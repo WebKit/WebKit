@@ -29,7 +29,7 @@
 
 #pragma once
 
-#include "MacroAssembler.h"
+#include "CodeLocation.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringImpl.h>

@@ -30,7 +30,6 @@
 #include "Instruction.h"
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
-#include "ObjectPropertyConditionSet.h"
 #include "Options.h"
 #include "RegisterSet.h"
 #include "Structure.h"

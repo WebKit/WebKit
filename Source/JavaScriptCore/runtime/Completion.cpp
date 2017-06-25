@@ -24,6 +24,7 @@
 #include "Completion.h"
 
 #include "CallFrame.h"
+#include "CatchScope.h"
 #include "CodeProfiling.h"
 #include "Exception.h"
 #include "IdentifierInlines.h"

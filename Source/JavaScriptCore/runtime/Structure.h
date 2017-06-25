@@ -35,7 +35,6 @@
 #include "PropertyName.h"
 #include "PropertyNameArray.h"
 #include "PropertyOffset.h"
-#include "Protect.h"
 #include "PutPropertySlot.h"
 #include "StructureIDBlob.h"
 #include "StructureRareData.h"
@@ -43,9 +42,7 @@
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
 #include "Watchpoint.h"
-#include "Weak.h"
 #include "WriteBarrierInlines.h"
-#include <wtf/CompilationThread.h>
 #include <wtf/PrintStream.h>
 
 namespace WTF {

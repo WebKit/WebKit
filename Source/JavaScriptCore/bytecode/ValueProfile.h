@@ -29,12 +29,8 @@
 #pragma once
 
 #include "ConcurrentJSLock.h"
-#include "Heap.h"
-#include "JSArray.h"
 #include "SpeculatedType.h"
 #include "Structure.h"
-#include "TagRegistersMode.h"
-#include "WriteBarrier.h"
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 

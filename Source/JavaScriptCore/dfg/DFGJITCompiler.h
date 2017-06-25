@@ -34,8 +34,6 @@
 #include "DFGInlineCacheWrapper.h"
 #include "DFGJITCode.h"
 #include "DFGOSRExitCompilationInfo.h"
-#include "DFGRegisterBank.h"
-#include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "HandlerInfo.h"
 #include "JITCode.h"
@@ -43,7 +41,6 @@
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include "PCToCodeOriginMap.h"
-#include "TempRegisterSet.h"
 
 namespace JSC {
 

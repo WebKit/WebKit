@@ -28,7 +28,6 @@
 #include "ClassInfo.h"
 #include "Identifier.h"
 #include <wtf/Condition.h>
-#include <wtf/HashTable.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>

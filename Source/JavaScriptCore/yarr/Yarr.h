@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "YarrPattern.h"
+#include <limits.h>
 
 namespace JSC { namespace Yarr {
 

@@ -26,6 +26,7 @@
 #include "JSGlobalObjectFunctions.h"
 
 #include "CallFrame.h"
+#include "CatchScope.h"
 #include "EvalExecutable.h"
 #include "Exception.h"
 #include "IndirectEvalExecutable.h"

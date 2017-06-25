@@ -26,20 +26,16 @@
 #pragma once
 
 #include "BytecodeConventions.h"
-#include "CodeSpecializationKind.h"
 #include "CodeType.h"
-#include "ConstructAbility.h"
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
 #include "JSCell.h"
-#include "JSString.h"
 #include "LockDuringMarking.h"
 #include "ParserModes.h"
 #include "RegExp.h"
 #include "SpecialPointer.h"
 #include "UnlinkedFunctionExecutable.h"
-#include "VariableEnvironment.h"
 #include "VirtualRegister.h"
 #include <wtf/BitVector.h>
 #include <wtf/TriState.h>

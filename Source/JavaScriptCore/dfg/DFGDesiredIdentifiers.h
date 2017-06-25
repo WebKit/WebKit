@@ -27,11 +27,13 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "Identifier.h"
+#include <wtf/HashMap.h>
+#include <wtf/text/UniquedStringImpl.h>
 
 namespace JSC {
 
 class CodeBlock;
+class VM;
 
 namespace DFG {
 

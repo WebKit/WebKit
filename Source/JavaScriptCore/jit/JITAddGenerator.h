@@ -29,7 +29,6 @@
 
 #include "CCallHelpers.h"
 #include "JITMathICInlineResult.h"
-#include "JITOperations.h"
 #include "SnippetOperand.h"
 
 namespace JSC {

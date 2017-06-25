@@ -28,8 +28,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGBasicBlock.h"
-#include "DFGCommon.h"
-#include "DFGDominators.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 

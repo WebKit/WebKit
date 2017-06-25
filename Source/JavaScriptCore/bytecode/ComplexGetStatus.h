@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
 

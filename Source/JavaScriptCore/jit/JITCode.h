@@ -28,7 +28,6 @@
 #include "ArityCheckMode.h"
 #include "CallFrame.h"
 #include "CodeOrigin.h"
-#include "Disassembler.h"
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterSet.h"

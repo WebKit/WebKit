@@ -31,7 +31,6 @@
 
 #pragma once
 
-#include "InspectorProtocolObjects.h"
 #include "ScriptCallFrame.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>

@@ -32,7 +32,6 @@
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/Noncopyable.h>
 
 namespace JSC {
 

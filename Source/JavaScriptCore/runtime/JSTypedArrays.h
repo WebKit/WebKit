@@ -27,7 +27,6 @@
 
 #include "JSGenericTypedArrayView.h"
 #include "TypedArrayAdaptors.h"
-#include "TypedArrays.h"
 
 namespace JSC {
 

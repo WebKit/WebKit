@@ -41,6 +41,7 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/CatchScope.h>
 #import <JavaScriptCore/Completion.h>
 #import <JavaScriptCore/Error.h>
 #import <JavaScriptCore/JSLock.h>

@@ -26,9 +26,7 @@
 #pragma once
 
 #include "CallLinkStatus.h"
-#include "ExitingJITType.h"
 #include "PutByIdVariant.h"
-#include <wtf/text/StringImpl.h>
 
 namespace JSC {
 

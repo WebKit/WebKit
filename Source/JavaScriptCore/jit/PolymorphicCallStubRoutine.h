@@ -29,9 +29,7 @@
 
 #include "CallEdge.h"
 #include "CallVariant.h"
-#include "CodeOrigin.h"
 #include "GCAwareJITStubRoutine.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 

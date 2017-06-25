@@ -27,7 +27,6 @@
 
 #include "Identifier.h"
 #include "JSCJSValue.h"
-#include "JSGlobalObjectFunctions.h"
 #include <array>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

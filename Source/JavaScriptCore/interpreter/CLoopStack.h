@@ -33,7 +33,6 @@
 #include "Register.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PageReservation.h>
-#include <wtf/VMTags.h>
 
 namespace JSC {
 

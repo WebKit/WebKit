@@ -27,7 +27,6 @@
 
 #include "CallLinkInfo.h"
 #include "StructureStubInfo.h"
-#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 

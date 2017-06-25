@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <wtf/NotFound.h>
 #include <wtf/PrintStream.h>
-#include <wtf/Vector.h> // for notFound
 
 namespace JSC {
 

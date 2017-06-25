@@ -27,7 +27,6 @@
 
 #include "JSCell.h"
 #include "Structure.h"
-#include <wtf/HashFunctions.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
 

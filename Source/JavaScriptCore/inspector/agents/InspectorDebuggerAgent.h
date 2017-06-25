@@ -35,7 +35,6 @@
 #include "debugger/Debugger.h"
 #include "inspector/InspectorAgentBase.h"
 #include "inspector/ScriptBreakpoint.h"
-#include "inspector/ScriptCallStack.h"
 #include "inspector/ScriptDebugListener.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

@@ -30,6 +30,7 @@
 #include "ArrayIteratorPrototype.h"
 #include "BuiltinNames.h"
 #include "BytecodeGenerator.h"
+#include "IterationKind.h"
 #include "JSCJSValueInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObject.h"

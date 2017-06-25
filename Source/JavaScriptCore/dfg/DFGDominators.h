@@ -27,11 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGBasicBlock.h"
-#include "DFGBlockMap.h"
-#include "DFGBlockSet.h"
 #include "DFGCFG.h"
-#include "DFGCommon.h"
 #include "DFGGraph.h"
 #include <wtf/Dominators.h>
 #include <wtf/FastMalloc.h>

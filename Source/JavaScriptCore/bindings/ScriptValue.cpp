@@ -31,6 +31,7 @@
 #include "ScriptValue.h"
 
 #include "APICast.h"
+#include "CatchScope.h"
 #include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "JSLock.h"

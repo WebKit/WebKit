@@ -30,6 +30,7 @@
 #include "InjectedScriptManager.h"
 #include "InspectorConsoleAgent.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalObjectScriptDebugServer.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"

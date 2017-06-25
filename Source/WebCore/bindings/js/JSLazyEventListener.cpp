@@ -29,6 +29,7 @@
 #include "JSNode.h"
 #include "QualifiedName.h"
 #include "ScriptController.h"
+#include <runtime/CatchScope.h>
 #include <runtime/FunctionConstructor.h>
 #include <runtime/IdentifierInlines.h>
 #include <wtf/NeverDestroyed.h>

@@ -30,6 +30,7 @@
 #include "HeapInlines.h"
 #include "InspectorEnvironment.h"
 #include "SamplingProfiler.h"
+#include "ScriptDebugServer.h"
 #include <wtf/Stopwatch.h>
 
 using namespace JSC;

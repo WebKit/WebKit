@@ -23,7 +23,6 @@
 #pragma once
 
 #include "JSExportMacros.h"
-#include "PureNaN.h"
 #include <functional>
 #include <math.h>
 #include <stddef.h>

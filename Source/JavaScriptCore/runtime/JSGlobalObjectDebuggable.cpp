@@ -31,6 +31,7 @@
 #include "InspectorAgentBase.h"
 #include "InspectorFrontendChannel.h"
 #include "JSGlobalObject.h"
+#include "JSGlobalObjectInspectorController.h"
 #include "JSLock.h"
 #include "RemoteInspector.h"
 

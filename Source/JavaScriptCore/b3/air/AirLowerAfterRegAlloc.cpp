@@ -40,6 +40,7 @@
 #include "B3ValueInlines.h"
 #include "RegisterSet.h"
 #include <wtf/HashMap.h>
+#include <wtf/ListDump.h>
 
 namespace JSC { namespace B3 { namespace Air {
 

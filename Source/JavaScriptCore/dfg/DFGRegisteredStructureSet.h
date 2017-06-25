@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ArrayProfile.h"
 #include "DFGRegisteredStructure.h"
 #include "StructureSet.h"
 #include <wtf/TinyPtrSet.h>

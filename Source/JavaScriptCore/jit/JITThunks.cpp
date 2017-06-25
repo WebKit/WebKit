@@ -31,6 +31,7 @@
 #include "JIT.h"
 #include "JSCInlines.h"
 #include "LLIntData.h"
+#include "ThunkGenerators.h"
 #include "VM.h"
 
 namespace JSC {

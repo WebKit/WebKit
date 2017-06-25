@@ -28,7 +28,6 @@
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
 #include "inspector/InspectorAgentBase.h"
-#include "runtime/ConsoleTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>

@@ -27,7 +27,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeOrigin.h"
 #include "DFGCommonData.h"
 #include "DFGDesiredInferredType.h"
 #include "InferredValue.h"

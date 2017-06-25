@@ -24,6 +24,7 @@
 #include "Parser.h"
 
 #include "ASTBuilder.h"
+#include "BuiltinNames.h"
 #include "DebuggerParseData.h"
 #include "JSCInlines.h"
 #include "VM.h"

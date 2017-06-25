@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "Heap.h"
 
 class VM;
 

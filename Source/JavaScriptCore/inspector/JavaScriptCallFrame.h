@@ -27,7 +27,6 @@
 
 #include "JSCJSValueInlines.h"
 #include "debugger/DebuggerCallFrame.h"
-#include "interpreter/CallFrame.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/TextPosition.h>

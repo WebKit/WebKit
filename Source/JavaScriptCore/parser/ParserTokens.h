@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ParserModes.h"
 #include <limits.h>
 #include <stdint.h>
 

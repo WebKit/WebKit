@@ -31,6 +31,7 @@
 #include "JSNPObject.h"
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
+#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSCellInlines.h>
 #include <JavaScriptCore/JSLock.h>

@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "CodeBlock.h"
 #include "Instruction.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>

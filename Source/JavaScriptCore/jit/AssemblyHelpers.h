@@ -35,13 +35,11 @@
 #include "JITCode.h"
 #include "MacroAssembler.h"
 #include "MarkedSpace.h"
-#include "MaxFrameExtentForSlowPathCall.h"
 #include "RegisterAtOffsetList.h"
 #include "RegisterSet.h"
-#include "SuperSampler.h"
+#include "TagRegistersMode.h"
 #include "TypeofType.h"
 #include "VM.h"
-#include <wtf/FastTLS.h>
 
 namespace JSC {
 

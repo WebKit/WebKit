@@ -25,6 +25,7 @@
 #include "JSObject.h"
 
 #include "ButterflyInlines.h"
+#include "CatchScope.h"
 #include "CustomGetterSetter.h"
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"

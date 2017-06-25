@@ -27,16 +27,10 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "CodeOrigin.h"
-#include "DFGCommon.h"
-#include "DFGExitProfile.h"
 #include "DFGOSRExitBase.h"
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "MethodOfGettingAValueProfile.h"
-#include "Operands.h"
-#include "ValueProfile.h"
-#include "ValueRecovery.h"
 
 namespace JSC { namespace DFG {
 

@@ -26,6 +26,7 @@
 #ifndef APIUtils_h
 #define APIUtils_h
 
+#include "CatchScope.h"
 #include "Exception.h"
 #include "JSCJSValue.h"
 #include "JSGlobalObjectInspectorController.h"

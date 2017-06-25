@@ -27,7 +27,6 @@
 
 #include "DisallowScope.h"
 #include "Heap.h"
-#include <wtf/Noncopyable.h>
 #include <wtf/ThreadSpecific.h>
 
 namespace JSC {

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "JSRunLoopTimer.h"
-#include <wtf/Vector.h>
 
 namespace JSC {
 

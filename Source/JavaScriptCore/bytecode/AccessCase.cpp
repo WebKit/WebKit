@@ -46,6 +46,7 @@
 #include "ScratchRegisterAllocator.h"
 #include "SlotVisitorInlines.h"
 #include "StructureStubInfo.h"
+#include "ThunkGenerators.h"
 
 namespace JSC {
 

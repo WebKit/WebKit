@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CodeBlock.h"
-#include <wtf/FastBitVector.h>
 
 namespace JSC {
 

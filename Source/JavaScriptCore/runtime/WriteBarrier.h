@@ -27,8 +27,6 @@
 
 #include "GCAssertions.h"
 #include "HandleTypes.h"
-#include "Heap.h"
-#include "SamplingCounter.h"
 
 namespace JSC {
 

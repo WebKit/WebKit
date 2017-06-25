@@ -40,6 +40,7 @@
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "SlowPathCall.h"
+#include "ThunkGenerators.h"
 #include "TypeLocation.h"
 #include "TypeProfilerLog.h"
 #include "VirtualRegister.h"

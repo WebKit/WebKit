@@ -28,13 +28,10 @@
 #if ENABLE(JIT)
 
 #include "AccessCase.h"
-#include "CodeOrigin.h"
 #include "JITStubRoutine.h"
 #include "JSFunctionInlines.h"
 #include "MacroAssembler.h"
-#include "ObjectPropertyConditionSet.h"
 #include "ScratchRegisterAllocator.h"
-#include "Structure.h"
 #include <wtf/Vector.h>
 
 namespace JSC {

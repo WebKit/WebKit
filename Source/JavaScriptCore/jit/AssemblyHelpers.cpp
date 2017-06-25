@@ -31,6 +31,8 @@
 #include "JITOperations.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"
+#include "MaxFrameExtentForSlowPathCall.h"
+#include "ThunkGenerators.h"
 
 #if ENABLE(WEBASSEMBLY)
 #include "WasmContext.h"

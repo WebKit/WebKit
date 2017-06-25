@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CallFrame.h"
 #include "DFGCompilationMode.h"
 #include "DFGPlan.h"
 

@@ -42,6 +42,7 @@
 #include "ErrorHandlingScope.h"
 #include "EvalCodeBlock.h"
 #include "ExceptionFuzz.h"
+#include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
@@ -68,6 +69,7 @@
 #include "StructureStubInfo.h"
 #include "SuperSampler.h"
 #include "TestRunnerUtils.h"
+#include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
 #include "VMInlines.h"
 #include <wtf/InlineASM.h>

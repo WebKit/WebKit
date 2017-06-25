@@ -81,6 +81,7 @@
 #include "SetupVarargsFrame.h"
 #include "ShadowChicken.h"
 #include "StructureStubInfo.h"
+#include "ThunkGenerators.h"
 #include "VirtualRegister.h"
 #include "Watchdog.h"
 #include <atomic>

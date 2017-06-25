@@ -27,8 +27,6 @@
 
 #include "CodeBlock.h"
 #include "DFGCommon.h"
-#include "Interpreter.h"
-#include "Intrinsic.h"
 #include "Options.h"
 
 namespace JSC { namespace DFG {

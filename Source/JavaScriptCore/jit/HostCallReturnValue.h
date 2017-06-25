@@ -26,7 +26,6 @@
 #pragma once
 
 #include "JSCJSValue.h"
-#include "MacroAssemblerCodeRef.h"
 
 #if ENABLE(JIT)
 

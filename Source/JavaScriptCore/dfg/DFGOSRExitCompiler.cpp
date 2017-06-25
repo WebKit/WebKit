@@ -32,6 +32,7 @@
 #include "DFGCommon.h"
 #include "DFGJITCode.h"
 #include "DFGOSRExitPreparation.h"
+#include "DFGOperations.h"
 #include "LinkBuffer.h"
 #include "OperandsInlines.h"
 #include "JSCInlines.h"

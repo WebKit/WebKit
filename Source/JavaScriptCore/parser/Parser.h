@@ -23,7 +23,6 @@
 #pragma once
 
 #include "ExecutableInfo.h"
-#include "ExceptionHelpers.h"
 #include "Lexer.h"
 #include "ModuleScopeData.h"
 #include "Nodes.h"

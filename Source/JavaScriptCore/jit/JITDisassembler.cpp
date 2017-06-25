@@ -30,6 +30,7 @@
 
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
+#include "Disassembler.h"
 #include "JIT.h"
 #include "JSCInlines.h"
 #include "LinkBuffer.h"

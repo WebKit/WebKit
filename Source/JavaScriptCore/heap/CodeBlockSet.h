@@ -26,12 +26,10 @@
 #pragma once
 
 #include "CollectionScope.h"
-#include "GCSegmentedArray.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
-#include <wtf/RefPtr.h>
 
 namespace JSC {
 

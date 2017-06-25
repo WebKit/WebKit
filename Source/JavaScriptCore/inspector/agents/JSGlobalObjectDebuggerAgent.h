@@ -26,7 +26,6 @@
 #pragma once
 
 #include "InspectorDebuggerAgent.h"
-#include "JSGlobalObjectScriptDebugServer.h"
 
 namespace Inspector {
 

@@ -22,7 +22,6 @@
 #pragma once
 
 #include "ConcurrentJSLock.h"
-#include "ExecutableAllocator.h"
 #include "MatchResult.h"
 #include "RegExpKey.h"
 #include "Structure.h"

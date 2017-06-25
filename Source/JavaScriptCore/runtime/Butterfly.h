@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IndexingHeader.h"
-#include "PropertyOffset.h"
 #include "PropertyStorage.h"
 #include <wtf/Noncopyable.h>
 

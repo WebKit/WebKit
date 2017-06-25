@@ -26,7 +26,6 @@
 #pragma once
 
 #include "JSGlobalObject.h"
-#include "ObjectPrototype.h"
 #include "SlotVisitor.h"
 #include "WriteBarrier.h"
 

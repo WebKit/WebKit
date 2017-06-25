@@ -26,6 +26,9 @@
 #ifndef Bag_h
 #define Bag_h
 
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+
 namespace WTF {
 
 template<typename T>

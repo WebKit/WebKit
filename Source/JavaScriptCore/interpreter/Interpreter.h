@@ -30,10 +30,7 @@
 #pragma once
 
 #include "ArgList.h"
-#include "CatchScope.h"
-#include "FrameTracers.h"
 #include "JSCJSValue.h"
-#include "JSCell.h"
 #include "JSObject.h"
 #include "Opcode.h"
 #include "StackAlignment.h"
@@ -59,6 +56,7 @@ namespace JSC {
     class ModuleProgramExecutable;
     class Register;
     class JSScope;
+    class SourceCode;
     class StackFrame;
     struct CallFrameClosure;
     struct HandlerInfo;

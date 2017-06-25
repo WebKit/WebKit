@@ -35,6 +35,7 @@
 #include "JSDOMBinding.h"
 #include "npruntime_priv.h"
 #include "runtime_root.h"
+#include <runtime/CatchScope.h>
 #include <runtime/Error.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>

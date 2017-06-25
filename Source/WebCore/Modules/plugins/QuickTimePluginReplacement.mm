@@ -53,6 +53,7 @@
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <objc/runtime.h>
+#import <runtime/CatchScope.h>
 #import <wtf/text/Base64.h>
 
 #import "CoreMediaSoftLink.h"

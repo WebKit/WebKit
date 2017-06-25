@@ -32,7 +32,6 @@
 #include <wtf/Lock.h>
 #include <wtf/MetaAllocatorHandle.h>
 #include <wtf/MetaAllocator.h>
-#include <wtf/PageAllocation.h>
 
 #if OS(IOS)
 #include <libkern/OSCacheControl.h>

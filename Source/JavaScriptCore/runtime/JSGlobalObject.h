@@ -29,7 +29,6 @@
 #include "JSArrayBufferPrototype.h"
 #include "JSClassRef.h"
 #include "JSGlobalLexicalEnvironment.h"
-#include "JSProxy.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
 #include "LazyProperty.h"
@@ -104,6 +103,7 @@ class RegExpConstructor;
 class RegExpPrototype;
 class SetPrototype;
 class SourceCode;
+class SourceOrigin;
 class UnlinkedModuleProgramCodeBlock;
 class VariableEnvironment;
 struct ActivationStackNode;

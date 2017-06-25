@@ -32,7 +32,6 @@
 #pragma once
 
 #include "InspectorBackendDispatchers.h"
-#include "InspectorFrontendDispatchers.h"
 #include "inspector/InspectorAgentBase.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

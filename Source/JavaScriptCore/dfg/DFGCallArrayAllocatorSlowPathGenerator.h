@@ -27,7 +27,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGCommon.h"
 #include "DFGSlowPathGenerator.h"
 #include "DFGSpeculativeJIT.h"
 #include <wtf/Vector.h>

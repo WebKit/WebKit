@@ -37,6 +37,7 @@ namespace JSC  {
     class Interpreter;
     class JSCallee;
     class JSScope;
+    class SourceOrigin;
 
     struct Instruction;
 

@@ -29,6 +29,7 @@
 
 #if ENABLE(FTL_JIT)
 
+#include "CallFrame.h"
 #include "DFGNodeOrigin.h"
 #include "ExitKind.h"
 #include "HandlerInfo.h"

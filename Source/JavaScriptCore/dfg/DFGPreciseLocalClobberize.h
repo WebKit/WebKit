@@ -28,7 +28,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGClobberize.h"
-#include "DFGMayExit.h"
 
 namespace JSC { namespace DFG {
 

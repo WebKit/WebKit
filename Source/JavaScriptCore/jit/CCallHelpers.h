@@ -29,7 +29,6 @@
 
 #include "AssemblyHelpers.h"
 #include "GPRInfo.h"
-#include "RegisterMap.h"
 #include "StackAlignment.h"
 
 namespace JSC {

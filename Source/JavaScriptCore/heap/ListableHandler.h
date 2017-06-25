@@ -21,9 +21,7 @@
 
 #include <stdint.h>
 #include <wtf/Lock.h>
-#include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/ThreadingPrimitives.h>
 
 namespace JSC {
 

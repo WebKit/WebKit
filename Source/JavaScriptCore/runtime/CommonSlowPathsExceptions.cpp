@@ -28,6 +28,7 @@
 
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "FrameTracers.h"
 #include "Interpreter.h"
 #include "JITExceptions.h"
 #include "LLIntCommon.h"

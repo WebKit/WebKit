@@ -25,29 +25,23 @@
 
 #pragma once
 
-#include "BytecodeConventions.h"
 #include "CodeSpecializationKind.h"
-#include "CodeType.h"
 #include "ConstructAbility.h"
 #include "ExecutableInfo.h"
 #include "ExpressionRangeInfo.h"
-#include "HandlerInfo.h"
 #include "Identifier.h"
 #include "Intrinsic.h"
 #include "JSCell.h"
-#include "JSString.h"
 #include "ParserModes.h"
 #include "RegExp.h"
-#include "SpecialPointer.h"
+#include "SourceCode.h"
 #include "VariableEnvironment.h"
-#include "VirtualRegister.h"
 
 namespace JSC {
 
 class FunctionMetadataNode;
 class FunctionExecutable;
 class ParserError;
-class SourceCode;
 class SourceProvider;
 class UnlinkedFunctionCodeBlock;
 

@@ -36,6 +36,7 @@
 #include "LinkBuffer.h"
 #include "JSCInlines.h"
 #include "ProfilerCompilation.h"
+#include "ThunkGenerators.h"
 #include "VirtualRegister.h"
 
 namespace JSC { namespace FTL {

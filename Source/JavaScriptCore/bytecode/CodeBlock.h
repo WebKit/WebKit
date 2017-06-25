@@ -33,15 +33,14 @@
 #include "ByValInfo.h"
 #include "BytecodeConventions.h"
 #include "CallLinkInfo.h"
-#include "CallReturnOffsetToBytecodeOffset.h"
 #include "CodeBlockHash.h"
 #include "CodeOrigin.h"
 #include "CodeType.h"
 #include "CompactJITCodeMap.h"
+#include "CompilationResult.h"
 #include "ConcurrentJSLock.h"
 #include "DFGCommon.h"
 #include "DFGExitProfile.h"
-#include "DeferredCompilationCallback.h"
 #include "DirectEvalCodeCache.h"
 #include "EvalExecutable.h"
 #include "ExecutionCounter.h"
@@ -69,7 +68,6 @@
 #include "VirtualRegister.h"
 #include "Watchpoint.h"
 #include <wtf/Bag.h>
-#include <wtf/FastBitVector.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>

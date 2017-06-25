@@ -35,6 +35,7 @@
 #include "JSWebAssemblyInstance.h"
 #include "LinkBuffer.h"
 #include "NativeErrorConstructor.h"
+#include "ThunkGenerators.h"
 #include "WasmCallingConvention.h"
 #include "WasmContext.h"
 #include "WasmExceptionType.h"

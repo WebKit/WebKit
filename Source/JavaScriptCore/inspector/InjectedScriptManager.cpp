@@ -31,6 +31,7 @@
 #include "config.h"
 #include "InjectedScriptManager.h"
 
+#include "CatchScope.h"
 #include "Completion.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptSource.h"

@@ -28,6 +28,7 @@
 #include "NodeConstructors.h"
 
 #include "JSCInlines.h"
+#include "ModuleScopeData.h"
 #include <wtf/Assertions.h>
 
 using namespace WTF;

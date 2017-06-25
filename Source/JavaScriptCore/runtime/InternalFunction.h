@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include "Identifier.h"
 #include "JSDestructibleObject.h"
 
 namespace JSC {

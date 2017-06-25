@@ -29,6 +29,7 @@
 #include "config.h"
 #include "DebuggerCallFrame.h"
 
+#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "DebuggerEvalEnabler.h"
 #include "DebuggerScope.h"

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSGlobalObjectInspectorController.h"
 
+#include "CatchScope.h"
 #include "Completion.h"
 #include "ConsoleMessage.h"
 #include "ErrorHandlingScope.h"

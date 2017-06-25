@@ -25,13 +25,16 @@
 
 #pragma once
 
-#include "HeapSnapshot.h"
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
 #include "heap/HeapObserver.h"
 #include "inspector/InspectorAgentBase.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+
+namespace JSC {
+struct HeapSnapshotNode;
+}
 
 namespace Inspector {
 

@@ -29,6 +29,7 @@
 #if ENABLE(ASSEMBLER)
 
 #include "CodeBlock.h"
+#include "Disassembler.h"
 #include "JITCode.h"
 #include "JSCInlines.h"
 #include "Options.h"

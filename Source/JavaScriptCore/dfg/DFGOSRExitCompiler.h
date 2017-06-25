@@ -27,10 +27,9 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "AssemblyHelpers.h"
 #include "CCallHelpers.h"
 #include "DFGOSRExit.h"
-#include "DFGOperations.h"
+#include "Operands.h"
 
 namespace JSC {
 

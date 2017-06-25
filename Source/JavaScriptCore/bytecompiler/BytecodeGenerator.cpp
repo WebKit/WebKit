@@ -33,6 +33,7 @@
 
 #include "ArithProfile.h"
 #include "BuiltinExecutables.h"
+#include "BuiltinNames.h"
 #include "BytecodeGeneratorification.h"
 #include "BytecodeLivenessAnalysis.h"
 #include "DefinePropertyAttributes.h"

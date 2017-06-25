@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSFunction.h"
 
+#include "BuiltinNames.h"
 #include "ClonedArguments.h"
 #include "CodeBlock.h"
 #include "CommonIdentifiers.h"

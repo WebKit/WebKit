@@ -29,6 +29,7 @@
 
 #include "JSFunctionInlines.h"
 #include "ObjectPropertyConditionSet.h"
+#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 

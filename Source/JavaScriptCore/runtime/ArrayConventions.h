@@ -21,6 +21,7 @@
 #pragma once
 
 #include "IndexingHeader.h"
+#include "PureNaN.h"
 #include "WriteBarrier.h"
 
 namespace JSC {

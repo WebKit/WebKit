@@ -27,7 +27,9 @@
 #include "JITExceptions.h"
 
 #include "CallFrame.h"
+#include "CatchScope.h"
 #include "CodeBlock.h"
+#include "Disassembler.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSCJSValue.h"

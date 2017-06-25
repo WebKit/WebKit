@@ -38,6 +38,7 @@
 #include "Error.h"
 #include "ErrorHandlingScope.h"
 #include "ExceptionFuzz.h"
+#include "FrameTracers.h"
 #include "GetterSetter.h"
 #include "HostCallReturnValue.h"
 #include "ICStats.h"
@@ -60,6 +61,7 @@
 #include "ObjectConstructor.h"
 #include "ScopedArguments.h"
 #include "StructureRareDataInlines.h"
+#include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
 #include <wtf/StringPrintStream.h>
 

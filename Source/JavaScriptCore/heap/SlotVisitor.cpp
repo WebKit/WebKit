@@ -41,6 +41,7 @@
 #include "StopIfNecessaryTimer.h"
 #include "SuperSampler.h"
 #include "VM.h"
+#include <wtf/ListDump.h>
 #include <wtf/Lock.h>
 
 namespace JSC {

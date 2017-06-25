@@ -26,6 +26,8 @@
 #pragma once
 
 #include "AbstractModuleRecord.h"
+#include "SourceCode.h"
+#include "VariableEnvironment.h"
 
 namespace JSC {
 

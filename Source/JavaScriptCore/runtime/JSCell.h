@@ -34,7 +34,6 @@
 #include "SlotVisitor.h"
 #include "TypedArrayType.h"
 #include "WriteBarrier.h"
-#include <wtf/Noncopyable.h>
 
 namespace JSC {
 

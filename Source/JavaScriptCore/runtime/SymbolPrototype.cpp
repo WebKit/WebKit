@@ -30,6 +30,7 @@
 #include "Error.h"
 #include "JSCInlines.h"
 #include "JSString.h"
+#include "SymbolObject.h"
 
 namespace JSC {
 

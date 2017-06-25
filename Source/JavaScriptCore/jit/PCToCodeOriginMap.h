@@ -28,12 +28,9 @@
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"
-#include "DFGCommon.h"
 #include "MacroAssembler.h"
 #include "VM.h"
-#include <wtf/Bag.h>
 #include <wtf/Optional.h>
-#include <wtf/RedBlackTree.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

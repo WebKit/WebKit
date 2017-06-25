@@ -25,9 +25,7 @@
 
 #pragma once
 
-#include "JSCJSValue.h"
 #include "ProfilerBytecode.h"
-#include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

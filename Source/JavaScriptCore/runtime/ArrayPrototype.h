@@ -21,7 +21,6 @@
 #pragma once
 
 #include "JSArray.h"
-#include "Lookup.h"
 
 namespace JSC {
 

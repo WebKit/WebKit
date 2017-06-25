@@ -98,6 +98,7 @@
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "StructureInlines.h"
+#include "ThunkGenerators.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"

@@ -27,7 +27,6 @@
 
 #if ENABLE(JIT)
 
-#include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "Reg.h"

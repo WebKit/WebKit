@@ -26,8 +26,6 @@
 #pragma once
 
 #include <wtf/DoublyLinkedList.h>
-#include <wtf/ListDump.h>
-#include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

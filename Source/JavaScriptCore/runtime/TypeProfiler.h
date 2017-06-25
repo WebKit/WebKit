@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "CodeBlock.h"
 #include "TypeLocation.h"
 #include "TypeLocationCache.h"
 #include <wtf/Bag.h>

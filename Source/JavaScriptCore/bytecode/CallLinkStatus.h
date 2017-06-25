@@ -28,10 +28,7 @@
 #include "CallLinkInfo.h"
 #include "CallVariant.h"
 #include "CodeOrigin.h"
-#include "CodeSpecializationKind.h"
 #include "ConcurrentJSLock.h"
-#include "ExitingJITType.h"
-#include "Intrinsic.h"
 #include "JSCJSValue.h"
 
 namespace JSC {

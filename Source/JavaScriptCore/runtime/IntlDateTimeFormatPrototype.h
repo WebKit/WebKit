@@ -27,7 +27,6 @@
 
 #if ENABLE(INTL)
 
-#include "IntlDateTimeFormat.h"
 #include "JSObject.h"
 
 namespace JSC {

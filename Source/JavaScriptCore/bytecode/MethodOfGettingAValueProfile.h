@@ -32,7 +32,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "GPRInfo.h"
-#include "JSCJSValue.h"
 
 namespace JSC {
 

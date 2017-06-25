@@ -30,7 +30,8 @@
 #if ENABLE(DFG_JIT)
 
 #include "Options.h"
-#include "VirtualRegister.h"
+#include <limits.h>
+#include <wtf/text/StringImpl.h>
 
 namespace JSC { namespace DFG {
 

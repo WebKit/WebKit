@@ -27,7 +27,6 @@
 #pragma once
 
 #include "MacroAssembler.h"
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

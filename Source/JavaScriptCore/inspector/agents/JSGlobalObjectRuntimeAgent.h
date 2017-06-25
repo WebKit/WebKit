@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InspectorFrontendDispatchers.h"
 #include "InspectorRuntimeAgent.h"
 
 namespace JSC {

@@ -38,6 +38,7 @@
 #include "InspectorValues.h"
 #include "JSCInlines.h"
 #include "RegularExpression.h"
+#include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"

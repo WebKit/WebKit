@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FunctionOverrides.h"
 
+#include "Options.h"
 #include <stdio.h>
 #include <string.h>
 #include <wtf/DataLog.h>

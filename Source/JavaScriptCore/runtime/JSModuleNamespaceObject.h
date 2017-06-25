@@ -27,7 +27,6 @@
 
 #include "AbstractModuleRecord.h"
 #include "JSDestructibleObject.h"
-#include "ScopeOffset.h"
 
 namespace JSC {
 

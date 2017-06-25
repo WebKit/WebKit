@@ -25,10 +25,8 @@
 
 #pragma once
 
-#include "CallMode.h"
 #include "CodeBlockHash.h"
-#include "CodeSpecializationKind.h"
-#include "WriteBarrier.h"
+#include <limits.h>
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>

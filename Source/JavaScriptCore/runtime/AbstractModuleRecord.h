@@ -27,8 +27,6 @@
 
 #include "Identifier.h"
 #include "JSDestructibleObject.h"
-#include "SourceCode.h"
-#include "VariableEnvironment.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Optional.h>

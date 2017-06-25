@@ -31,7 +31,6 @@
 #include "FunctionCodeBlock.h"
 #include "SlowPathReturnType.h"
 #include "StackAlignment.h"
-#include "Symbol.h"
 #include "VMInlines.h"
 #include <wtf/StdLibExtras.h>
 

@@ -27,7 +27,6 @@
 
 #if ENABLE(INTL)
 
-#include "IntlCollator.h"
 #include "JSObject.h"
 
 namespace JSC {

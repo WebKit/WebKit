@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ArrayBuffer.h"
 #include "JSObject.h"
 
 namespace JSC {

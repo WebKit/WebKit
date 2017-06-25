@@ -27,7 +27,6 @@
 #pragma once
 
 #include "InternalFunction.h"
-#include "Symbol.h"
 
 namespace JSC {
 

@@ -28,13 +28,10 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGAbstractValue.h"
-#include "DFGAvailability.h"
 #include "DFGAvailabilityMap.h"
 #include "DFGBranchDirection.h"
-#include "DFGFlushedAt.h"
 #include "DFGNode.h"
 #include "DFGNodeAbstractValuePair.h"
-#include "DFGNodeOrigin.h"
 #include "DFGStructureClobberState.h"
 #include "Operands.h"
 #include <wtf/Vector.h>

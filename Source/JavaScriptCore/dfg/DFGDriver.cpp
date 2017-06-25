@@ -38,6 +38,7 @@
 #include "JITCode.h"
 #include "JSCInlines.h"
 #include "Options.h"
+#include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
 #include <wtf/Atomics.h>
 #include <wtf/NeverDestroyed.h>

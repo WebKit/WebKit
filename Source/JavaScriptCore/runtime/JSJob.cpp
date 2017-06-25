@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSJob.h"
 
+#include "CatchScope.h"
 #include "Error.h"
 #include "Exception.h"
 #include "JSCInlines.h"

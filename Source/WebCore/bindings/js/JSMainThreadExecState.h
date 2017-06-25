@@ -28,6 +28,7 @@
 
 #include "CustomElementReactionQueue.h"
 #include "JSDOMBinding.h"
+#include <runtime/CatchScope.h>
 #include <runtime/Completion.h>
 #include <runtime/Microtask.h>
 #include <wtf/MainThread.h>

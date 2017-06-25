@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MacroAssemblerCodeRef.h"
 
+#include "Disassembler.h"
 #include "JSCInlines.h"
 #include "LLIntData.h"
 

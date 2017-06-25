@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CallLinkStatus.h"
-#include "JSCJSValue.h"
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
 #include "StructureSet.h"

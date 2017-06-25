@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CallFrame.h"
-#include "JSObject.h"
 #include "VirtualRegister.h"
 
 #include <wtf/PrintStream.h>

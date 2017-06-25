@@ -27,7 +27,6 @@
 
 #include "ProfilerBytecodeSequence.h"
 #include "ProfilerBytecodes.h"
-#include "ProfilerOriginStack.h"
 
 namespace JSC { namespace Profiler {
 

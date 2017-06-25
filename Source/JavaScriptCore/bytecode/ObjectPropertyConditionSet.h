@@ -27,7 +27,6 @@
 
 #include "ObjectPropertyCondition.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

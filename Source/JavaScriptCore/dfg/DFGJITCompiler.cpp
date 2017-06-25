@@ -44,6 +44,7 @@
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "StructureStubInfo.h"
+#include "ThunkGenerators.h"
 #include "VM.h"
 
 namespace JSC { namespace DFG {

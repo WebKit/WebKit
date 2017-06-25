@@ -47,6 +47,7 @@
 #include "WorkerThread.h"
 #include <heap/StrongInlines.h>
 #include <inspector/ScriptCallStack.h>
+#include <runtime/CatchScope.h>
 #include <runtime/Exception.h>
 #include <runtime/JSPromise.h>
 #include <wtf/MainThread.h>

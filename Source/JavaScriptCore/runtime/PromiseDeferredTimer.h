@@ -27,11 +27,9 @@
 
 #include "JSRunLoopTimer.h"
 #include "Strong.h"
-#include "WriteBarrier.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/SharedTask.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

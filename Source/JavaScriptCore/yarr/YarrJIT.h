@@ -27,7 +27,6 @@
 
 #if ENABLE(YARR_JIT)
 
-#include "VM.h"
 #include "MacroAssemblerCodeRef.h"
 #include "MatchResult.h"
 #include "Yarr.h"

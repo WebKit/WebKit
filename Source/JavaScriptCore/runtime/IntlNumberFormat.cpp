@@ -30,6 +30,7 @@
 
 #if ENABLE(INTL)
 
+#include "CatchScope.h"
 #include "Error.h"
 #include "IntlNumberFormatConstructor.h"
 #include "IntlObject.h"

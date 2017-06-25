@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ConcurrentJSLock.h"
-#include "JSArray.h"
 #include "Structure.h"
 #include <wtf/SegmentedVector.h>
 

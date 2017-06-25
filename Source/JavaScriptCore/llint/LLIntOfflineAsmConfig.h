@@ -27,7 +27,6 @@
 
 #include "LLIntCommon.h"
 #include <wtf/Assertions.h>
-#include <wtf/InlineASM.h>
 
 #if !ENABLE(JIT)
 #define OFFLINE_ASM_C_LOOP 1

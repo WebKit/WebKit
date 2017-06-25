@@ -25,7 +25,6 @@
 #include "RegisterState.h"
 #include <wtf/DoublyLinkedList.h>
 #include <wtf/Lock.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/ScopedLambda.h>
 #include <wtf/ThreadSpecific.h>
 

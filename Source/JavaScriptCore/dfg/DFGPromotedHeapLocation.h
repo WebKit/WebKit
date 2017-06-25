@@ -29,7 +29,6 @@
 
 #include "DFGEdge.h"
 #include "DFGNodeOrigin.h"
-#include "DFGOpInfo.h"
 #include <wtf/HashTable.h>
 #include <wtf/PrintStream.h>
 

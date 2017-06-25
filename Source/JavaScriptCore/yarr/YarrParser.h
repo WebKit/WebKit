@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Yarr.h"
+#include "YarrPattern.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
 

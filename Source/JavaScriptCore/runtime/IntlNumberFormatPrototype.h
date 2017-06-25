@@ -27,7 +27,6 @@
 
 #if ENABLE(INTL)
 
-#include "IntlNumberFormat.h"
 #include "JSObject.h"
 
 namespace JSC {

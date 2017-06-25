@@ -28,7 +28,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "DeferredCompilationCallback.h"
-#include <wtf/RefPtr.h>
+#include <wtf/Ref.h>
 
 namespace JSC {
 

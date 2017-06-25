@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CallData.h"
 
+#include "CatchScope.h"
 #include "Interpreter.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"

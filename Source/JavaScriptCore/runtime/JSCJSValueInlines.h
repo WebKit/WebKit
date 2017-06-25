@@ -33,6 +33,7 @@
 #include "JSCellInlines.h"
 #include "JSFunction.h"
 #include "JSObject.h"
+#include "JSProxy.h"
 #include "JSStringInlines.h"
 #include "MathCommon.h"
 #include <wtf/text/StringImpl.h>

@@ -30,7 +30,6 @@
 #include "B3SparseCollection.h"
 #include "BasicBlockLocation.h"
 #include "CodeBlock.h"
-#include "DFGAbstractValue.h"
 #include "DFGAdjacencyList.h"
 #include "DFGArithMode.h"
 #include "DFGArrayMode.h"
@@ -53,7 +52,6 @@
 #include "Operands.h"
 #include "PutByIdVariant.h"
 #include "SpeculatedType.h"
-#include "StructureSet.h"
 #include "TypeLocation.h"
 #include "ValueProfile.h"
 #include <type_traits>

@@ -22,7 +22,6 @@
 
 #include "JSObject.h"
 #include "RuntimeType.h"
-#include "SourceProvider.h"
 
 namespace JSC {
 

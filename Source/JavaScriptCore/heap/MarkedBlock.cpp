@@ -34,6 +34,7 @@
 #include "MarkedBlockInlines.h"
 #include "SuperSampler.h"
 #include "SweepingScope.h"
+#include <wtf/CommaPrinter.h>
 
 namespace JSC {
 

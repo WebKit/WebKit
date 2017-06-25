@@ -28,8 +28,8 @@
 #include "AllocatorAttributes.h"
 #include "FreeList.h"
 #include "MarkedBlock.h"
+#include <wtf/DataLog.h>
 #include <wtf/FastBitVector.h>
-#include <wtf/SentinelLinkedList.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

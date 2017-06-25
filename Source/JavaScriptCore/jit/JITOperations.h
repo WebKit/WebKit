@@ -28,10 +28,7 @@
 #if ENABLE(JIT)
 
 #include "JITMathICForwards.h"
-#include "MacroAssemblerCodeRef.h"
-#include "PropertyOffset.h"
 #include "SlowPathReturnType.h"
-#include "TypedArrayType.h"
 #include <wtf/Platform.h>
 #include <wtf/text/UniquedStringImpl.h>
 

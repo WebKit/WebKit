@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/StdLibExtras.h>
-#include "MacroAssemblerCodeRef.h"
 
 namespace JSC {
 

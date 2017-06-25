@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ProfilerDatabase.h"
 
+#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "JSONObject.h"
 #include "ObjectConstructor.h"

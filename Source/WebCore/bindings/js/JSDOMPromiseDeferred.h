@@ -27,6 +27,7 @@
 
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
+#include <runtime/CatchScope.h>
 #include <runtime/JSPromiseDeferred.h>
 
 namespace WebCore {

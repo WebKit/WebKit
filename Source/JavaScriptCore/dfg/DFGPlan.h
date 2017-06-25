@@ -38,7 +38,6 @@
 #include "ProfilerCompilation.h"
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/text/CString.h>
 
 namespace JSC {
 

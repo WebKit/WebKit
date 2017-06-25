@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "IterationKind.h"
 #include "JSObject.h"
 
 namespace JSC {

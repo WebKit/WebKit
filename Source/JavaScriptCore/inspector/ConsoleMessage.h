@@ -31,8 +31,10 @@
 #pragma once
 
 #include "ConsoleTypes.h"
-#include "InspectorFrontendDispatchers.h"
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 class ExecState;
@@ -40,6 +42,7 @@ class ExecState;
 
 namespace Inspector {
 
+class ConsoleFrontendDispatcher;
 class InjectedScriptManager;
 class ScriptArguments;
 class ScriptCallStack;

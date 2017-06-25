@@ -51,6 +51,7 @@
 #include "StyleTreeResolver.h"
 #include "SubframeLoader.h"
 #include "TypedElementDescendantIterator.h"
+#include <runtime/CatchScope.h>
 
 namespace WebCore {
 

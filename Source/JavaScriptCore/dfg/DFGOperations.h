@@ -29,7 +29,7 @@
 
 #include "DFGArithMode.h"
 #include "JITOperations.h"
-#include "PutKind.h"
+#include "TypedArrayType.h"
 
 namespace JSC { namespace DFG {
 

@@ -27,7 +27,6 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
-#include "JSGlobalObjectInspectorController.h"
 #include "RemoteInspectionTarget.h"
 #include <wtf/Noncopyable.h>
 

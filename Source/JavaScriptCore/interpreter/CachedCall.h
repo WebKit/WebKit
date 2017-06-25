@@ -28,7 +28,6 @@
 #include "CallFrameClosure.h"
 #include "ExceptionHelpers.h"
 #include "JSFunction.h"
-#include "JSGlobalObject.h"
 #include "Interpreter.h"
 #include "ProtoCallFrame.h"
 #include "VMEntryScope.h"

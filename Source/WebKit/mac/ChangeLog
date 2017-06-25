@@ -1,3 +1,13 @@
+2017-06-25  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Remove excessive headers from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=173812
+
+        Reviewed by Darin Adler.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        * WebView/WebView.mm:
+
 2017-06-23  Tim Horton  <timothy_horton@apple.com>
 
         Remove an unused typedef from WebFrameLoaderClient

@@ -25,9 +25,7 @@
 
 #pragma once
 
-#include "ArrayProfile.h"
 #include "DumpContext.h"
-#include "SpeculatedType.h"
 #include "Structure.h"
 #include <wtf/TinyPtrSet.h>
 

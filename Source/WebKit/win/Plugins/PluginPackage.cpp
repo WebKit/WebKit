@@ -31,6 +31,7 @@
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginView.h"
+#include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>

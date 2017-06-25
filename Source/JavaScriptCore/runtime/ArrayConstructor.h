@@ -22,7 +22,6 @@
 
 #include "InternalFunction.h"
 #include "ProxyObject.h"
-#include "ThrowScope.h"
 
 namespace JSC {
 

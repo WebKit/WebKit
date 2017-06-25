@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "JSGlobalObject.h"
 #include <wtf/HashSet.h>
 
 namespace JSC {

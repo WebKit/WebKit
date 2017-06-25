@@ -27,7 +27,6 @@
 
 #include "JSGlobalObject.h"
 #include "JSObject.h"
-#include "RuntimeType.h"
 
 namespace JSC {
 

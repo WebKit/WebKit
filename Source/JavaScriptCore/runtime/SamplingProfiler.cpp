@@ -29,6 +29,7 @@
 #if ENABLE(SAMPLING_PROFILER)
 
 #include "CallFrame.h"
+#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "CodeBlockSet.h"
 #include "HeapIterationScope.h"

@@ -42,6 +42,7 @@
 #include "ScriptSourceCode.h"
 #include "inspector/InspectorValues.h"
 #include <bindings/ScriptObject.h>
+#include <runtime/CatchScope.h>
 #include <wtf/NeverDestroyed.h>
 
 using namespace Inspector;

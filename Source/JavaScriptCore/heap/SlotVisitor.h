@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "CellState.h"
 #include "HandleTypes.h"
 #include "IterationStatus.h"
 #include "MarkStack.h"
 #include "OpaqueRootSet.h"
 #include "VisitRaceKey.h"
 #include <wtf/MonotonicTime.h>
+#include <wtf/text/CString.h>
 
 namespace JSC {
 

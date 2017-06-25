@@ -26,7 +26,6 @@
 #pragma once
 
 #include "JSType.h"
-#include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
 
 namespace JSC {

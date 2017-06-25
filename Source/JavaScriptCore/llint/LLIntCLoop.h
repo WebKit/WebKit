@@ -27,7 +27,6 @@
 
 #if !ENABLE(JIT)
 
-#include "CallFrame.h"
 #include "JSCJSValue.h"
 #include "Opcode.h"
 #include "ProtoCallFrame.h"

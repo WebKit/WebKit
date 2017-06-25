@@ -45,7 +45,6 @@
 #include "UnlinkedCodeBlock.h"
 #include <functional>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/HashTraits.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Vector.h>

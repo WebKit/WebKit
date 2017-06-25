@@ -26,7 +26,6 @@
 #pragma once
 
 #include "DOMJITHeapRange.h"
-#include <wtf/Optional.h>
 
 namespace JSC { namespace DOMJIT {
 

@@ -29,8 +29,6 @@
 #include "CCallHelpers.h"
 #include "FPRInfo.h"
 #include "GPRInfo.h"
-#include "JITCode.h"
-#include "JITOperations.h"
 #include "JSCJSValue.h"
 #include "JSString.h"
 #include "MacroAssembler.h"

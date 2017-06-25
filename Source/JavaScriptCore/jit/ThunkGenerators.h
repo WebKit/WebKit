@@ -26,12 +26,13 @@
 #pragma once
 
 #include "CodeSpecializationKind.h"
-#include "ThunkGenerator.h"
 
 #if ENABLE(JIT)
 namespace JSC {
 
 class CallLinkInfo;
+class MacroAssemblerCodeRef;
+class VM;
 
 MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(VM*);
 

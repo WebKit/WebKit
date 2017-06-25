@@ -28,7 +28,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayProfile.h"
-#include "DFGNodeFlags.h"
 #include "SpeculatedType.h"
 
 namespace JSC {

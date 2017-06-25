@@ -25,9 +25,7 @@
 
 #pragma once
 
-#include "ArrayPrototype.h"
 #include "Error.h"
-#include "ExceptionHelpers.h"
 #include "JSArrayBufferViewInlines.h"
 #include "JSCBuiltins.h"
 #include "JSCJSValueInlines.h"

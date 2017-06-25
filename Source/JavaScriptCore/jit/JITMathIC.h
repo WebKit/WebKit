@@ -36,7 +36,6 @@
 #include "JITSubGenerator.h"
 #include "LinkBuffer.h"
 #include "Repatch.h"
-#include "SnippetOperand.h"
 
 namespace JSC {
 

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "JSDestructibleObject.h"
 #include "Structure.h"
 #include "TemplateRegistryKey.h"
 

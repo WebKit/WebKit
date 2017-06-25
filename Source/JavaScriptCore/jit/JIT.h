@@ -38,7 +38,6 @@
 #define ASSERT_JIT_OFFSET(actual, expected) ASSERT_WITH_MESSAGE(actual == expected, "JIT Offset \"%s\" should be %d, not %d.\n", #expected, static_cast<int>(expected), static_cast<int>(actual));
 
 #include "CodeBlock.h"
-#include "CompactJITCodeMap.h"
 #include "JITDisassembler.h"
 #include "JITInlineCacheGenerator.h"
 #include "JITMathIC.h"

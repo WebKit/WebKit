@@ -212,6 +212,7 @@
 #import <mach-o/dyld.h>
 #import <objc/runtime.h>
 #import <runtime/ArrayPrototype.h>
+#import <runtime/CatchScope.h>
 #import <runtime/DateInstance.h>
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSCJSValue.h>

@@ -28,7 +28,6 @@
 #include "CallLinkStatus.h"
 #include "CodeOrigin.h"
 #include "ConcurrentJSLock.h"
-#include "ExitingJITType.h"
 #include "GetByIdVariant.h"
 #include "ScopeOffset.h"
 

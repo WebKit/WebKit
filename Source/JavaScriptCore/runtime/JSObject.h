@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "ArgList.h"
 #include "ArrayConventions.h"
 #include "ArrayStorage.h"
 #include "AuxiliaryBarrier.h"
@@ -30,9 +29,7 @@
 #include "CPU.h"
 #include "CallFrame.h"
 #include "ClassInfo.h"
-#include "CommonIdentifiers.h"
 #include "CustomGetterSetter.h"
-#include "DeferGC.h"
 #include "Heap.h"
 #include "IndexingHeaderInlines.h"
 #include "JSCell.h"
@@ -41,7 +38,6 @@
 #include "PropertyStorage.h"
 #include "PutDirectIndexMode.h"
 #include "PutPropertySlot.h"
-#include "RuntimeType.h"
 #include "Structure.h"
 #include "VM.h"
 #include "JSString.h"

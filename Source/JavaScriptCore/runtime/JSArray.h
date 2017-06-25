@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "ArgList.h"
 #include "ArrayConventions.h"
 #include "ButterflyInlines.h"
 #include "JSCellInlines.h"

@@ -31,7 +31,6 @@
 
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
-#include "bindings/ScriptObject.h"
 #include "debugger/Debugger.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>

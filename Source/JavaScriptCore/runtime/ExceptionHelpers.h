@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "CatchScope.h"
 #include "ErrorInstance.h"
 #include "JSObject.h"
 #include "ThrowScope.h"

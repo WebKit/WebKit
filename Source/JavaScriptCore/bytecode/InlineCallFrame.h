@@ -30,7 +30,6 @@
 #include "CodeOrigin.h"
 #include "ValueRecovery.h"
 #include "WriteBarrier.h"
-#include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

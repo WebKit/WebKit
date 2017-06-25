@@ -26,8 +26,6 @@
 #pragma once
 
 #include <functional>
-#include <wtf/StackBounds.h>
-#include <wtf/StackStats.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

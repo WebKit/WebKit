@@ -34,6 +34,7 @@
 #include "ScriptCallStackFactory.h"
 
 #include "CallFrame.h"
+#include "CatchScope.h"
 #include "CodeBlock.h"
 #include "Exception.h"
 #include "JSCJSValue.h"

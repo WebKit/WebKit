@@ -27,6 +27,7 @@
 
 #include "ConstraintVolatility.h"
 #include "VisitingTimeout.h"
+#include <limits.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>

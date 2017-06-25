@@ -35,6 +35,7 @@
 
 #include "WebCoreJSClientData.h"
 #include <heap/HeapInlines.h>
+#include <runtime/CatchScope.h>
 #include <runtime/IdentifierInlines.h>
 #include <runtime/JSObjectInlines.h>
 

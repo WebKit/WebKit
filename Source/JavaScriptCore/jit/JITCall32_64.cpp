@@ -39,8 +39,8 @@
 #include "ResultType.h"
 #include "SetupVarargsFrame.h"
 #include "StackAlignment.h"
+#include "ThunkGenerators.h"
 #include <wtf/StringPrintStream.h>
-
 
 namespace JSC {
 

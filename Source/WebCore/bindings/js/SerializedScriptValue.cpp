@@ -62,6 +62,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <runtime/ArrayBuffer.h>
 #include <runtime/BooleanObject.h>
+#include <runtime/CatchScope.h>
 #include <runtime/DateInstance.h>
 #include <runtime/Error.h>
 #include <runtime/Exception.h>

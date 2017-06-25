@@ -40,6 +40,7 @@
 #include "ScopedArguments.h"
 #include "StringObject.h"
 #include "ValueProfile.h"
+#include <wtf/CommaPrinter.h>
 #include <wtf/StringPrintStream.h>
 
 namespace JSC {

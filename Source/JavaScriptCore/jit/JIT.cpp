@@ -48,6 +48,7 @@
 #include "ResultType.h"
 #include "SlowPathCall.h"
 #include "StackAlignment.h"
+#include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/GraphNodeWorklist.h>

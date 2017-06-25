@@ -27,6 +27,7 @@
 #include "InspectorHeapAgent.h"
 
 #include "HeapProfiler.h"
+#include "HeapSnapshot.h"
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorEnvironment.h"

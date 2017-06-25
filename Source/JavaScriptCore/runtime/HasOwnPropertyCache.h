@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSProxy.h"
+#include "JSObject.h"
 #include "PropertySlot.h"
 #include "Structure.h"
 

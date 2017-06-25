@@ -28,7 +28,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGSpeculativeJIT.h"
-#include "Snippet.h"
 #include "SnippetParams.h"
 
 namespace JSC { namespace DFG {

@@ -28,6 +28,7 @@
 
 #include "JSGenericTypedArrayViewPrototypeInlines.h"
 #include "JSCInlines.h"
+#include "JSTypedArrayViewPrototype.h"
 
 namespace JSC {
 

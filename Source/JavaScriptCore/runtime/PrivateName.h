@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/text/SymbolImpl.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
 

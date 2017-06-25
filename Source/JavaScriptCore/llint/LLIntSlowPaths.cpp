@@ -35,6 +35,7 @@
 #include "EvalCodeBlock.h"
 #include "Exception.h"
 #include "ExceptionFuzz.h"
+#include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "FunctionWhitelist.h"
 #include "GetterSetter.h"

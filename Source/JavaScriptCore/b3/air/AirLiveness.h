@@ -29,6 +29,7 @@
 
 #include "AirLivenessAdapter.h"
 #include "B3TimingScope.h"
+#include "SuperSampler.h"
 #include <wtf/Liveness.h>
 
 namespace JSC { namespace B3 { namespace Air {

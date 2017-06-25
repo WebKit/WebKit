@@ -28,7 +28,6 @@
 #if ENABLE(INSPECTOR_ALTERNATE_DISPATCHERS)
 
 #include "InspectorAlternateBackendDispatchers.h"
-#include "InspectorBackendDispatchers.h"
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <wtf/Forward.h>
 

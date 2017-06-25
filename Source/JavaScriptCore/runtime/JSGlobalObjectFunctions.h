@@ -25,7 +25,6 @@
 
 #include "JSCJSValue.h"
 #include <unicode/uchar.h>
-#include <wtf/text/LChar.h>
 
 namespace JSC {
 

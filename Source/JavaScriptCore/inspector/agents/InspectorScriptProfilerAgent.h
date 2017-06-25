@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include "Debugger.h"
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
 #include "inspector/InspectorAgentBase.h"
-#include "inspector/ScriptDebugServer.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

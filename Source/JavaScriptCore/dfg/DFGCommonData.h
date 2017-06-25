@@ -34,7 +34,6 @@
 #include "InlineCallFrameSet.h"
 #include "JSCell.h"
 #include "ProfilerCompilation.h"
-#include "SymbolTable.h"
 #include <wtf/Bag.h>
 #include <wtf/Noncopyable.h>
 

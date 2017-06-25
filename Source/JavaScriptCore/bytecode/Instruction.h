@@ -29,7 +29,6 @@
 #pragma once
 
 #include "BasicBlockLocation.h"
-#include "MacroAssembler.h"
 #include "PutByIdFlags.h"
 #include "SymbolTable.h"
 #include "TypeLocation.h"
@@ -38,7 +37,6 @@
 #include "Structure.h"
 #include "StructureChain.h"
 #include "ToThisStatus.h"
-#include "VirtualRegister.h"
 #include <wtf/VectorTraits.h>
 
 namespace JSC {
