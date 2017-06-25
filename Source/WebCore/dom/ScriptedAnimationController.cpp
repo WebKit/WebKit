@@ -39,7 +39,6 @@
 #include "MainFrame.h"
 #include "Page.h"
 #include "RequestAnimationFrameCallback.h"
-#include "RuntimeApplicationChecks.h"
 #include "Settings.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
@@ -76,13 +75,6 @@ bool ScriptedAnimationController::requestAnimationFrameEnabled() const
 void ScriptedAnimationController::suspend()
 {
     ++m_suspendCount;
-
-#if PLATFORM(MAC)
-    if (MacApplication::isDumpRenderTree()) {
-        WTFLogAlways("\nScriptedAnimationController::suspend() called on %p, m_suspendCount = %d, document = %p", this, m_suspendCount, &m_document);
-        WTFReportBacktrace();
-    }
-#endif
 }
 
 void ScriptedAnimationController::resume()
@@ -91,14 +83,6 @@ void ScriptedAnimationController::resume()
     // even when suspend hasn't (if a tab was created in the background).
     if (m_suspendCount > 0)
         --m_suspendCount;
-
-#if PLATFORM(MAC)
-    if (MacApplication::isDumpRenderTree()) {
-        WTFLogAlways("\nScriptedAnimationController::resume() called on %p, m_suspendCount = %d, document = %p", this, m_suspendCount, &m_document);
-        WTFLogAlways("Document = %p", &m_document);
-        WTFReportBacktrace();
-    }
-#endif
 
     if (!m_suspendCount && m_callbacks.size())
         scheduleAnimation();

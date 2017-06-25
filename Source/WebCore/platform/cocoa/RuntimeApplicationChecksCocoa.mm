@@ -162,11 +162,6 @@ bool MacApplication::isSolidStateNetworksDownloader()
     return isSolidStateNetworksDownloader;
 }
 
-bool MacApplication::isDumpRenderTree()
-{
-    return [[[NSProcessInfo processInfo] processName] isEqualToString:@"DumpRenderTree"];
-}
-
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS)

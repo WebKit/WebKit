@@ -85,7 +85,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ResourceUsageOverlay.h"
-#include "RuntimeApplicationChecks.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SVGDocumentExtensions.h"
 #include "SchemeRegistry.h"
@@ -1150,13 +1149,6 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
 
 void Page::suspendScriptedAnimations()
 {
-#if PLATFORM(MAC)
-    if (MacApplication::isDumpRenderTree()) {
-        WTFLogAlways("\nPage::suspendScriptedAnimations() %p", this);
-        WTFReportBacktrace();
-    }
-#endif
-
     m_scriptedAnimationsSuspended = true;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
@@ -1166,13 +1158,6 @@ void Page::suspendScriptedAnimations()
 
 void Page::resumeScriptedAnimations()
 {
-#if PLATFORM(MAC)
-    if (MacApplication::isDumpRenderTree()) {
-        WTFLogAlways("\nPage::resumeScriptedAnimations() %p", this);
-        WTFReportBacktrace();
-    }
-#endif
-
     m_scriptedAnimationsSuspended = false;
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
@@ -1689,10 +1674,6 @@ void Page::setIsVisibleInternal(bool isVisible)
     if (isVisible) {
         m_isPrerender = false;
 
-#if PLATFORM(MAC)
-        if (MacApplication::isDumpRenderTree())
-            WTFLogAlways("\nPage::setIsVisibleInternal(%s), %p", isVisible ? "true" : "false", this);
-#endif
         resumeScriptedAnimations();
 #if PLATFORM(IOS)
         resumeDeviceMotionAndOrientationUpdates();
@@ -1724,10 +1705,6 @@ void Page::setIsVisibleInternal(bool isVisible)
         suspendDeviceMotionAndOrientationUpdates();
 #endif
 
-#if PLATFORM(MAC)
-        if (MacApplication::isDumpRenderTree())
-            WTFLogAlways("\nPage::setIsVisibleInternal(%s), %p", isVisible ? "true" : "false", this);
-#endif
         suspendScriptedAnimations();
 
         if (FrameView* view = mainFrame().view())
