@@ -25,7 +25,6 @@
 
 #include "FilterEffect.h"
 #include "FloatPoint.h"
-#include "FloatSize.h"
 #include "Filter.h"
 #include <wtf/Vector.h>
 

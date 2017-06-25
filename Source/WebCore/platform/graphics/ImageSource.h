@@ -32,7 +32,6 @@
 #include "IntPoint.h"
 #include "NativeImage.h"
 #include "TextStream.h"
-#include "URL.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Optional.h>

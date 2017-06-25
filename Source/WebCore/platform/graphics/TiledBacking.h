@@ -37,7 +37,9 @@ enum TileSizeMode {
 
 class FloatPoint;
 class FloatRect;
+class FloatSize;
 class IntRect;
+class IntSize;
 class PlatformCALayer;
 
 enum ScrollingModeIndication {

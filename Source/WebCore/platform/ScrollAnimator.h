@@ -33,7 +33,6 @@
 #define ScrollAnimator_h
 
 #include "FloatPoint.h"
-#include "LayoutUnit.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
 #include "WheelEventTestTrigger.h"

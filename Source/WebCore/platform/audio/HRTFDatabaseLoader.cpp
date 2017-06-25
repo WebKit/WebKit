@@ -33,6 +33,7 @@
 #include "HRTFDatabaseLoader.h"
 
 #include "HRTFDatabase.h"
+#include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 

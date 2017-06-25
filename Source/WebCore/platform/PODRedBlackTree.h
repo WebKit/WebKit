@@ -76,7 +76,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 #ifndef NDEBUG
-#include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 #endif

@@ -25,7 +25,6 @@
 #pragma once
 
 #include "Animation.h"
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

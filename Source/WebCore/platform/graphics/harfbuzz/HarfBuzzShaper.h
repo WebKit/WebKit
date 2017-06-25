@@ -36,7 +36,6 @@
 #include "TextRun.h"
 #include "hb.h"
 #include <memory>
-#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
 

@@ -28,7 +28,6 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 

@@ -29,7 +29,6 @@
 #include "IntPointHash.h"
 #include "IntRect.h"
 #include "IntSizeHash.h"
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
 namespace WTF {

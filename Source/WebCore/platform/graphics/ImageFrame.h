@@ -32,7 +32,6 @@
 #include "ImageTypes.h"
 #include "IntSize.h"
 #include "NativeImage.h"
-#include <wtf/Deque.h>
 
 namespace WebCore {
 

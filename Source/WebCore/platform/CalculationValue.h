@@ -32,10 +32,9 @@
 #define CalculationValue_h
 
 #include "Length.h"
-#include "LengthFunctions.h"
 #include <memory>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 

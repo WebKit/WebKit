@@ -34,7 +34,6 @@
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

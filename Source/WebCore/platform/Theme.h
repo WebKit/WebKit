@@ -29,8 +29,6 @@
 #include "Color.h"
 #include "ControlStates.h"
 #include "FontCascade.h"
-#include "GraphicsTypes.h"
-#include "IntRect.h"
 #include "LengthBox.h"
 #include "LengthSize.h"
 #include "ThemeTypes.h"

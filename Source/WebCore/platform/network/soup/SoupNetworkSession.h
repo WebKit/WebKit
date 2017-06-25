@@ -29,7 +29,6 @@
 #include <glib-object.h>
 #include <wtf/Function.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 

@@ -37,7 +37,6 @@
 #if USE(SOUP)
 
 #include "SessionID.h"
-#include <wtf/RefCounted.h>
 #include <wtf/StreamBuffer.h>
 #include <wtf/glib/GRefPtr.h>
 

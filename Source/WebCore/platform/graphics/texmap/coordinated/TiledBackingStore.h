@@ -26,7 +26,6 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "Tile.h"
-#include "Timer.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 

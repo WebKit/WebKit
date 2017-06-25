@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "Logging.h"
 
 #include <gst/gst.h>
 #include <gst/video/video-format.h>

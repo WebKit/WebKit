@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include <WebCore/CalculationValue.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 class TextStream;

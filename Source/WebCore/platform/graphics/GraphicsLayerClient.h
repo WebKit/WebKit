@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "IntSize.h"
 #include "TiledBacking.h"
 #include <wtf/Forward.h>
 

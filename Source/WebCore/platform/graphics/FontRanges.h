@@ -27,7 +27,6 @@
 #define FontRanges_h
 
 #include "Font.h"
-#include <wtf/TypeCasts.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

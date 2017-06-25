@@ -26,10 +26,11 @@
 #pragma once
 
 #include "AuthenticationClient.h"
-#include "HTTPHeaderMap.h"
 #include "ResourceHandleTypes.h"
-#include "ResourceLoadPriority.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
 #include <wtf/RetainPtr.h>

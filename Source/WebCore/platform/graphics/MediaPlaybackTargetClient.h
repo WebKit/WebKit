@@ -29,7 +29,6 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include "MediaPlaybackTarget.h"
-#include "MediaProducer.h"
 
 namespace WebCore {
 

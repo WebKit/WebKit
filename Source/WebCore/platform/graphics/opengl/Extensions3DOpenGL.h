@@ -28,7 +28,6 @@
 #include "Extensions3DOpenGLCommon.h"
 
 #include "GraphicsContext3D.h"
-#include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

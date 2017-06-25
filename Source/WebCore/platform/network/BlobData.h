@@ -33,9 +33,7 @@
 
 #include "BlobDataFileReference.h"
 #include "ThreadSafeDataBuffer.h"
-#include "URL.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 

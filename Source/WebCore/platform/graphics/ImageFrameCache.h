@@ -26,13 +26,11 @@
 #pragma once
 
 #include "ImageFrame.h"
-#include "TextStream.h"
 
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/SynchronizedFixedQueue.h>
 #include <wtf/WorkQueue.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 

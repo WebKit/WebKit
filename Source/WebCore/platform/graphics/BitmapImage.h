@@ -33,7 +33,6 @@
 #include "ImageOrientation.h"
 #include "ImageSource.h"
 #include "IntSize.h"
-#include "URL.h"
 
 #if USE(CG) || USE(APPKIT)
 #include <wtf/RetainPtr.h>

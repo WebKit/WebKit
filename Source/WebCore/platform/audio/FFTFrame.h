@@ -44,7 +44,6 @@ G_END_DECLS
 
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 

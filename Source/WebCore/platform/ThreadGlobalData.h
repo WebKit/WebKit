@@ -27,11 +27,9 @@
 #ifndef ThreadGlobalData_h
 #define ThreadGlobalData_h
 
-#include <wtf/Noncopyable.h>
 #include <wtf/text/StringHash.h>
 
 #include <wtf/ThreadSpecific.h>
-#include <wtf/Threading.h>
 using WTF::ThreadSpecific;
 
 namespace WebCore {

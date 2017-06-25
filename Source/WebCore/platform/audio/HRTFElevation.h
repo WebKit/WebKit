@@ -32,9 +32,7 @@
 #include "HRTFKernel.h"
 #include <memory>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

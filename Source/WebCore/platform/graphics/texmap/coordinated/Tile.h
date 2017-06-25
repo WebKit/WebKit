@@ -31,7 +31,6 @@
 #include "IntPoint.h"
 #include "IntPointHash.h"
 #include "IntRect.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

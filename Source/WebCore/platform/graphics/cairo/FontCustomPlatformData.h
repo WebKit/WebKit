@@ -24,7 +24,6 @@
 
 #if USE(CAIRO)
 
-#include "TextFlags.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

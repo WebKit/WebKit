@@ -26,7 +26,6 @@
 
 #include "TextFlags.h"
 #include "WritingMode.h"
-#include <wtf/RefCounted.h>
 #include <wtf/text/StringView.h>
 
 namespace WebCore {

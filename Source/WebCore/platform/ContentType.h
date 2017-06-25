@@ -27,7 +27,6 @@
 #ifndef ContentType_h
 #define ContentType_h
 
-#include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

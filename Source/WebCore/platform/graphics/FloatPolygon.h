@@ -33,7 +33,6 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "PODIntervalTree.h"
-#include "ValueToString.h"
 #include "WindRule.h"
 #include <memory>
 #include <wtf/Vector.h>

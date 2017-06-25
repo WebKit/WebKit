@@ -25,7 +25,6 @@
 
 #include "ClipStack.h"
 #include "FilterOperation.h"
-#include "FloatQuad.h"
 #include "GraphicsContext3D.h"
 #include "IntSize.h"
 #include "TextureMapper.h"

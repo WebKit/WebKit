@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include "AuthenticationChallenge.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
-#include "AuthenticationChallenge.h"
 #include "Timer.h"
 
 #if USE(CFURLCONNECTION)
@@ -49,7 +49,6 @@
 #endif
 
 #if USE(SOUP)
-#include "GUniquePtrSoup.h"
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
 #include <wtf/RunLoop.h>

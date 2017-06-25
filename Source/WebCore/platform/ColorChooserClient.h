@@ -32,7 +32,6 @@
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-#include "ColorChooser.h"
 #include "IntRect.h"
 #include <wtf/Vector.h>
 

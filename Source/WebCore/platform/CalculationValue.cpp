@@ -31,6 +31,7 @@
 
 #include "config.h"
 #include "CalculationValue.h"
+#include "LengthFunctions.h"
 #include "TextStream.h"
 
 #include <limits>

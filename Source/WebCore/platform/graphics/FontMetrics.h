@@ -22,7 +22,6 @@
 
 #include "FontBaseline.h"
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

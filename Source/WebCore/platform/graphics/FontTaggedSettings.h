@@ -27,8 +27,8 @@
 #pragma once
 
 #include <array>
+#include <wtf/HashTraits.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

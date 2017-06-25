@@ -29,9 +29,6 @@
 #if USE(COORDINATED_GRAPHICS_THREADED)
 
 #include "GraphicsTypes3D.h"
-#include "TextureMapper.h"
-#include "TransformationMatrix.h"
-#include <wtf/Condition.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
@@ -44,6 +41,7 @@
 
 namespace WebCore {
 
+class IntSize;
 class TextureMapperGL;
 class TextureMapperLayer;
 class TextureMapperPlatformLayerProxy;

@@ -28,6 +28,7 @@
 #include "BitmapTexturePool.h"
 #include "Extensions3D.h"
 #include "FilterOperations.h"
+#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "LengthFunctions.h"

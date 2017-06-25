@@ -31,7 +31,6 @@
 #include "ImageFrame.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "PlatformScreen.h"
 #include "SharedBuffer.h"
 #include <wtf/Assertions.h>
 #include <wtf/Optional.h>

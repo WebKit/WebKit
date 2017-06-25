@@ -36,7 +36,6 @@
 #include <wtf/RunLoop.h>
 
 #if USE(TEXTURE_MAPPER)
-#include "TextureMapperPlatformLayer.h"
 #include "TextureMapperPlatformLayerProxy.h"
 #endif
 

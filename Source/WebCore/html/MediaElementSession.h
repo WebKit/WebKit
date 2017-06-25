@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "MediaPlayer.h"
+#include "MediaProducer.h"
 #include "PlatformMediaSession.h"
 #include "SuccessOr.h"
 #include "Timer.h"

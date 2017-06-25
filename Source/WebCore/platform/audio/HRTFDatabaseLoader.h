@@ -31,7 +31,6 @@
 
 #include "HRTFDatabase.h"
 #include <memory>
-#include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

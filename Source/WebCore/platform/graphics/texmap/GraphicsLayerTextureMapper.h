@@ -28,7 +28,6 @@
 #include "TextureMapperLayer.h"
 #include "TextureMapperPlatformLayer.h"
 #include "TextureMapperTiledBackingStore.h"
-#include "Timer.h"
 
 namespace WebCore {
 

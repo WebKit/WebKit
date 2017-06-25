@@ -32,6 +32,8 @@
 
 #include "ReverbConvolverStage.h"
 
+#include "DirectConvolver.h"
+#include "FFTConvolver.h"
 #include "FFTFrame.h"
 #include "VectorMath.h"
 #include "ReverbAccumulationBuffer.h"

@@ -27,7 +27,6 @@
 #define ANGLEWebKitBridge_h
 
 #include <ANGLE/ShaderLang.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)

@@ -26,7 +26,6 @@
 #ifndef BlobDataFileReference_h
 #define BlobDataFileReference_h
 
-#include "FileSystem.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 

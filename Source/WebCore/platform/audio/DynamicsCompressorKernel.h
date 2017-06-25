@@ -31,6 +31,7 @@
 
 #include "AudioArray.h"
 #include <memory>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

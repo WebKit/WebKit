@@ -30,16 +30,12 @@
 #ifndef ReverbConvolver_h
 #define ReverbConvolver_h
 
-#include "AudioArray.h"
-#include "DirectConvolver.h"
-#include "FFTConvolver.h"
 #include "ReverbAccumulationBuffer.h"
 #include "ReverbConvolverStage.h"
 #include "ReverbInputBuffer.h"
 #include <memory>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 

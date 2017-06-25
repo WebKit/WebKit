@@ -28,6 +28,7 @@
 #import <WebCore/IntRectHash.h>
 #import <condition_variable>
 #import <wtf/Condition.h>
+#import <wtf/HashMap.h>
 #import <wtf/Lock.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>

@@ -28,6 +28,7 @@
 
 #include "SessionState.h"
 #include <WebCore/BlobData.h>
+#include <WebCore/FileSystem.h>
 #include <WebCore/FormData.h>
 #include <WebCore/HistoryItem.h>
 

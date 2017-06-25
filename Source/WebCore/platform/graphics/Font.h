@@ -25,7 +25,6 @@
 #define Font_h
 
 #include "FloatRect.h"
-#include "FontBaseline.h"
 #include "FontMetrics.h"
 #include "FontPlatformData.h"
 #include "GlyphBuffer.h"
@@ -37,7 +36,6 @@
 #endif
 #include <wtf/BitVector.h>
 #include <wtf/Optional.h>
-#include <wtf/TypeCasts.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)

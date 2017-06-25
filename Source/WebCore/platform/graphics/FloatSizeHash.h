@@ -27,7 +27,6 @@
 #define FloatSizeHash_h
 
 #include "FloatSize.h"
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
 namespace WTF {

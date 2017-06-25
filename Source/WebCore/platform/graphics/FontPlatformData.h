@@ -26,9 +26,7 @@
 
 #include "TextFlags.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/text/StringImpl.h>
 
 
 #if PLATFORM(WIN)
@@ -38,14 +36,12 @@
 
 #if USE(CAIRO)
 #include "RefPtrCairo.h"
-#include <wtf/HashFunctions.h>
 #include <cairo.h>
 #endif
 
 #if USE(FREETYPE)
 #include "FcUniquePtr.h"
 #include "HarfBuzzFace.h"
-#include "OpenTypeVerticalData.h"
 #endif
 
 #if USE(APPKIT)

@@ -22,7 +22,6 @@
 
 #include "GLContext.h"
 #include "GraphicsContext3D.h"
-#include "PlatformLayer.h"
 
 namespace WebCore {
 

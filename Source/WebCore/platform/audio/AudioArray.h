@@ -32,7 +32,6 @@
 #include <string.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

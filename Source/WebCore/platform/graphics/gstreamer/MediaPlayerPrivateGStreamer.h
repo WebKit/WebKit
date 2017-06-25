@@ -28,7 +28,6 @@
 
 #include "GRefPtrGStreamer.h"
 #include "MediaPlayerPrivateGStreamerBase.h"
-#include "Timer.h"
 
 #include <glib.h>
 #include <gst/gst.h>

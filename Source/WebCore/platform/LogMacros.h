@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <functional>
-
 #if LOG_DISABLED
 
 #define LOG_WITH_STREAM(channel, commands) ((void)0)

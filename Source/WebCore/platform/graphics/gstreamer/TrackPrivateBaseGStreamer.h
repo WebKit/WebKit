@@ -31,7 +31,6 @@
 #include "GRefPtrGStreamer.h"
 #include "MainThreadNotifier.h"
 #include <wtf/Lock.h>
-#include <wtf/ThreadingPrimitives.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
