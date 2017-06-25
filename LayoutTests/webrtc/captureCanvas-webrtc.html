@@ -40,7 +40,7 @@ function testCanvas(testName, array1, isSame, count)
     if (count === 20)
         return Promise.reject(testName + " failed, expected " + JSON.stringify(array1) + " but got " + JSON.stringify(array2));
 
-    return waitFor(50).then(() => {
+    return waitFor(100).then(() => {
         return testCanvas(testName, array1, isSame, ++count);
     });
 }
@@ -89,9 +89,9 @@ promise_test((test) => {
 }, "Checking canvas is green again");
 
 promise_test((test) => {
-        canvas1.width = 640;
-        canvas1.height = 480;
-        return waitForVideoSize(video, 640, 480);
+    canvas1.width = 640;
+    canvas1.height = 480;
+    return waitForVideoSize(video, 640, 480);
 }, "Checking canvas size change");
         </script>
     </head>

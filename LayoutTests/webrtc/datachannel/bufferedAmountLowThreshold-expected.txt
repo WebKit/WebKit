@@ -1,5 +1,4 @@
 
-PASS Default buffer threshold 
 PASS Large buffer threshold reached 
 PASS Medium buffer threshold not reached 
 

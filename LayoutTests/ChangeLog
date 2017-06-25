@@ -1,3 +1,25 @@
+2017-06-25  Youenn Fablet  <youenn@apple.com>
+
+        Remove use of mock webrtc backend factory at injected bundle reset time
+        https://bugs.webkit.org/show_bug.cgi?id=173817
+
+        Reviewed by Darin Adler.
+
+        Making some tests less flaky.
+
+        * TestExpectations:
+        * fast/mediastream/RTCPeerConnection-media-setup-two-dialogs-expected.txt:
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html:
+        * webrtc/audio-peer-connection-webaudio.html:
+        * webrtc/captureCanvas-webrtc.html:
+        * webrtc/datachannel/bufferedAmountLowThreshold-default-expected.txt: Added.
+        * webrtc/datachannel/bufferedAmountLowThreshold-default.html: Added.
+        * webrtc/datachannel/bufferedAmountLowThreshold-expected.txt:
+        * webrtc/datachannel/bufferedAmountLowThreshold.html:
+        * webrtc/routines.js:
+        * webrtc/video-replace-muted-track.html:
+        * webrtc/video-unmute.html:
+
 2017-06-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Reflect.enumerate

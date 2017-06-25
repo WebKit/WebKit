@@ -37,6 +37,7 @@ class LibWebRTCProvider;
 class MockRtpSender;
 
 void useMockRTCPeerConnectionFactory(LibWebRTCProvider*, const String&);
+void useRealRTCPeerConnectionFactory();
 
 class MockLibWebRTCPeerConnection : public webrtc::PeerConnectionInterface {
 public:
@@ -256,7 +257,6 @@ private:
 
 private:
     String m_testCase;
-    unsigned m_numberOfRealPeerConnections { 0 };
 };
 
 } // namespace WebCore

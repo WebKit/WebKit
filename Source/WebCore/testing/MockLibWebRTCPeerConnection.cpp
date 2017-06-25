@@ -47,6 +47,15 @@ static inline webrtc::PeerConnectionFactoryInterface* realPeerConnectionFactory(
     return getRealPeerConnectionFactory().get();
 }
 
+void useRealRTCPeerConnectionFactory()
+{
+    auto& factory = getRealPeerConnectionFactory();
+    if (!factory)
+        return;
+    LibWebRTCProvider::setPeerConnectionFactory(factory.get());
+    factory = nullptr;
+}
+
 void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, const String& testCase)
 {
     if (provider && !realPeerConnectionFactory()) {
@@ -152,25 +161,10 @@ private:
 MockLibWebRTCPeerConnectionFactory::MockLibWebRTCPeerConnectionFactory(String&& testCase)
     : m_testCase(WTFMove(testCase))
 {
-    if (m_testCase == "TwoRealPeerConnections") {
-        m_numberOfRealPeerConnections = 2;
-        return;
-    }
-    if (m_testCase == "OneRealPeerConnection")
-        m_numberOfRealPeerConnections = 1;
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionFactory::CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration& configuration, std::unique_ptr<cricket::PortAllocator> portAllocator, std::unique_ptr<rtc::RTCCertificateGeneratorInterface> generator, webrtc::PeerConnectionObserver* observer)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionFactory::CreatePeerConnection(const webrtc::PeerConnectionInterface::RTCConfiguration&, std::unique_ptr<cricket::PortAllocator>, std::unique_ptr<rtc::RTCCertificateGeneratorInterface>, webrtc::PeerConnectionObserver* observer)
 {
-    if (!realPeerConnectionFactory())
-        return nullptr;
-
-    if (m_numberOfRealPeerConnections) {
-        auto connection = realPeerConnectionFactory()->CreatePeerConnection(configuration, WTFMove(portAllocator), WTFMove(generator), observer);
-        --m_numberOfRealPeerConnections;
-        return connection;
-    }
-
     if (m_testCase == "ICECandidates")
         return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionForIceCandidates>(*observer);
 
@@ -191,15 +185,11 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> MockLibWebRTCPeerConnectionF
 
 rtc::scoped_refptr<webrtc::VideoTrackInterface> MockLibWebRTCPeerConnectionFactory::CreateVideoTrack(const std::string& id, webrtc::VideoTrackSourceInterface* source)
 {
-    if (m_testCase == "TwoRealPeerConnections")
-        return realPeerConnectionFactory()->CreateVideoTrack(id, source);
     return new rtc::RefCountedObject<MockLibWebRTCVideoTrack>(id, source);
 }
 
 rtc::scoped_refptr<webrtc::AudioTrackInterface> MockLibWebRTCPeerConnectionFactory::CreateAudioTrack(const std::string& id, webrtc::AudioSourceInterface* source)
 {
-    if (m_testCase == "TwoRealPeerConnections")
-        return realPeerConnectionFactory()->CreateAudioTrack(id, source);
     return new rtc::RefCountedObject<MockLibWebRTCAudioTrack>(id, source);
 }
 

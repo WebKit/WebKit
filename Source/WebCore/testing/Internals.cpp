@@ -465,6 +465,10 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     printContextForTesting() = nullptr;
+
+#if USE(LIBWEBRTC)
+    WebCore::useRealRTCPeerConnectionFactory();
+#endif
 }
 
 Internals::Internals(Document& document)

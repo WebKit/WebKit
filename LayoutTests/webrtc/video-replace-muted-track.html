@@ -32,20 +32,20 @@ var stopPolling = false;
 function pollVideoBlackCheck(expected, resolve, delay)
 {
     if (isVideoBlack() === expected || stopPolling) {
-        resolve();
+        resolve(true);
         return;
     }
 
     setTimeout(() => pollVideoBlackCheck(expected, resolve), delay);
 }
 
-function checkVideoBlack(expected, duration, id, delay)
+async function checkVideoBlack(expected, duration, id, delay)
 {
     stopPolling = false;
     return new Promise((resolve, reject) => {
         pollVideoBlackCheck(expected, resolve, delay);
         setTimeout(() => {
-            reject("checkVideoBlack timed out for " + id + ", expected " + expected);
+            resolve(false);
             stopPolling = true;
         }, duration);
     });
@@ -59,6 +59,15 @@ function grabImagePixels()
 
     imageData = canvas.getContext('2d').getImageData(20, 20, 2, 2);
     return imageData.data;
+}
+
+async function checkForNoBlackFrames()
+{
+    for (var cptr = 0; cptr < 10; cptr++) {
+        if (!(await checkVideoBlack(true, 1500, "test3", 50)))
+            return true;
+    }
+    return false;
 }
 
 promise_test((test) => {
@@ -93,11 +102,14 @@ promise_test((test) => {
     }).then(() => {
         return waitFor(200);
     }).then(() => {
-        // Let's ensure we have some non black frames sent.
         return checkVideoBlack(false, 5000, "test2", 200);
+    }).then((result) => {
+        assert_true(result, "expect to receive some non black frames");
     }).then(() => {
-        // Let's ensure there are no black frames sent.
-        return checkVideoBlack(true, 2000, "test3", 50).then(assert_unreached, () => { });
+        // Let's ensure there are no black frames being received.
+        return checkForNoBlackFrames();
+    }).then((result) => {
+        assert_true(result, "check no black frame");
     });
 }, "Switching from disabled to enabled track");
         </script>

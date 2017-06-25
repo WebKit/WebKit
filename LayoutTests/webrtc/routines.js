@@ -144,7 +144,7 @@ function waitForVideoSize(video, width, height, count)
     if (++count > 20)
         return Promise.reject("waitForVideoSize timed out, expected " + width + "x"+ height + " but got " + video.videoWidth + "x" + video.videoHeight);
 
-    return waitFor(50).then(() => {
+    return waitFor(100).then(() => {
         return waitForVideoSize(video, width, height, count);
     });
 }
@@ -152,10 +152,11 @@ function waitForVideoSize(video, width, height, count)
 async function doHumAnalysis(stream, expected)
 {
     var context = new webkitAudioContext();
-    for (var cptr = 0; cptr < 10; cptr++) {
+    for (var cptr = 0; cptr < 20; cptr++) {
         var results = await analyseAudio(stream, 200, context);
         if (results.heardHum === expected)
             return true;
+        await waitFor(50);
     }
     await context.close();
     return false;
