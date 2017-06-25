@@ -1,3 +1,16 @@
+2017-06-25  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r215190.
+
+        Broke product select element on GNOME Bugzilla
+
+        Reverted changeset:
+
+        "[GTK] Misplaced right click menu on web page due to
+        deprecated gtk_menu_popup()"
+        https://bugs.webkit.org/show_bug.cgi?id=170553
+        http://trac.webkit.org/changeset/215190
+
 2017-06-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Reflect.enumerate

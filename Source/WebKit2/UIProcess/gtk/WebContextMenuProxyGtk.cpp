@@ -171,13 +171,8 @@ void WebContextMenuProxyGtk::show()
     NativeWebMouseEvent* mouseEvent = m_page->currentlyProcessedMouseDownEvent();
     const GdkEvent* event = mouseEvent ? mouseEvent->nativeEvent() : 0;
     gtk_menu_attach_to_widget(m_menu, GTK_WIDGET(m_webView), nullptr);
-
-#if GTK_CHECK_VERSION(3, 22, 0)
-    gtk_menu_popup_at_pointer(m_menu, event);
-#else
     gtk_menu_popup(m_menu, nullptr, nullptr, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this,
                    event ? event->button.button : 3, event ? event->button.time : GDK_CURRENT_TIME);
-#endif
 }
 
 void WebContextMenuProxyGtk::showContextMenuWithItems(const Vector<WebContextMenuItemData>& items)
@@ -213,7 +208,6 @@ WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
     gtk_widget_destroy(GTK_WIDGET(m_menu));
 }
 
-#if !GTK_CHECK_VERSION(3, 22, 0)
 void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* y, gboolean* pushIn, WebContextMenuProxyGtk* popupMenu)
 {
     GtkRequisition menuSize;
@@ -230,7 +224,6 @@ void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* 
 
     *pushIn = FALSE;
 }
-#endif
 
 } // namespace WebKit
 #endif // ENABLE(CONTEXT_MENUS)

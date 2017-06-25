@@ -84,39 +84,22 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
 
     resetTypeAheadFindState();
 
+    IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, rect.location());
+    menuPosition.move(0, rect.height());
+
     // This approach follows the one in gtkcombobox.c.
     GtkRequisition requisition;
     gtk_widget_set_size_request(m_popup, -1, -1);
     gtk_widget_get_preferred_size(m_popup, &requisition, nullptr);
     gtk_widget_set_size_request(m_popup, std::max(rect.width(), requisition.width), -1);
 
-    // Reposition the menu after giving it a new width.
-    gtk_menu_reposition(GTK_MENU(m_popup));
-
-#if GTK_CHECK_VERSION(3, 22, 0)
-    // With a recent GTK+ we calculate an offset from the position where the menu would
-    // be normally popped up, and use it as value of the "rect-anchor-dy" property.
-    // The code in gtkcombobox.c starts with the offset hardcoded as -2 as well.
-    IntPoint menuPosition { 0, -2 };
-#else
-    IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, rect.location());
-    menuPosition.move(0, rect.height());
-#endif
-
     if (int itemCount = items.size()) {
         GUniquePtr<GList> children(gtk_container_get_children(GTK_CONTAINER(m_popup)));
         int i;
         GList* child;
         for (i = 0, child = children.get(); i < itemCount; i++, child = g_list_next(child)) {
-#if GTK_CHECK_VERSION(3, 22, 0)
-            // Do not count the last one: we are using the top-left corner of the
-            // item (GDK_GRAVITY_NORTH_WEST) as reference point of the popup.
-            if (i >= selectedIndex)
-                break;
-#else
             if (i > selectedIndex)
                 break;
-#endif
 
             GtkWidget* item = GTK_WIDGET(child->data);
             GtkRequisition itemRequisition;
@@ -131,12 +114,6 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
     gtk_menu_attach_to_widget(GTK_MENU(m_popup), GTK_WIDGET(m_webView), nullptr);
 
     const GdkEvent* event = m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : nullptr;
-#if GTK_CHECK_VERSION(3, 22, 0)
-    // Set the same properties that GTK+ uses itself for combo box popups.
-    g_object_set(m_popup, "menu-type-hint", GDK_WINDOW_TYPE_HINT_COMBO, "rect-anchor-dy", menuPosition.y(), "anchor-hints", GDK_ANCHOR_SLIDE | GDK_ANCHOR_RESIZE, nullptr);
-    const GdkRectangle referenceRect = { rect.x(), rect.y(), rect.width(), rect.height() };
-    gtk_menu_popup_at_rect(GTK_MENU(m_popup), gtk_widget_get_window(m_webView), &referenceRect, GDK_GRAVITY_NORTH_WEST, GDK_GRAVITY_NORTH_WEST, event);
-#else
     gtk_menu_popup_for_device(GTK_MENU(m_popup), event ? gdk_event_get_device(event) : nullptr, nullptr, nullptr,
         [](GtkMenu*, gint* x, gint* y, gboolean* pushIn, gpointer userData) {
             // We can pass a pointer to the menuPosition local variable because the nested main loop ensures this is called in the function context.
@@ -146,7 +123,6 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection, dou
             *pushIn = menuPosition->y() < 0;
         }, &menuPosition, nullptr, event && event->type == GDK_BUTTON_PRESS ? event->button.button : 1,
         event ? gdk_event_get_time(event) : GDK_CURRENT_TIME);
-#endif
 
     // Now that the menu has a position, schedule a resize to make sure it's resized to fit vertically in the work area.
     gtk_widget_queue_resize(m_popup);
