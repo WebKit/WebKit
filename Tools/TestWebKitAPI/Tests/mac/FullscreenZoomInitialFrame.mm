@@ -88,12 +88,15 @@ public:
     void setPageScale(WKView *, double);
     void sendMouseDownEvent(WebView *, NSEvent *);
     void sendMouseDownEvent(WKView *, NSEvent *);
+
+private:
+    RetainPtr<id <WebUIDelegate>> m_delegate;
 };
 
 void FullscreenZoomInitialFrame::initializeView(WebView *webView)
 {
-    // Released in teardownView.
-    webView.UIDelegate = [[FullscreenStateDelegate alloc] init];
+    m_delegate = adoptNS([[FullscreenStateDelegate alloc] init]);
+    webView.UIDelegate = m_delegate.get();
 
     RetainPtr<WebPreferences> customPreferences = adoptNS([[WebPreferences alloc] initWithIdentifier:@"FullscreenZoomInitialFramePreferences"]);
     [customPreferences setFullScreenEnabled:YES];
@@ -102,9 +105,9 @@ void FullscreenZoomInitialFrame::initializeView(WebView *webView)
 
 void FullscreenZoomInitialFrame::teardownView(WebView *webView)
 {
-    id uiDelegate = webView.UIDelegate;
+    EXPECT_TRUE(webView.UIDelegate == m_delegate.get());
     webView.UIDelegate = nil;
-    [uiDelegate release];
+    m_delegate = nil;
 }
 
 void FullscreenZoomInitialFrame::initializeView(WKView *wkView)

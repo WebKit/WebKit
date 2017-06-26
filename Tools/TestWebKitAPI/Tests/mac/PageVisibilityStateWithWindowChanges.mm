@@ -77,20 +77,24 @@ public:
     void initializeView(WKView *) override;
     void teardownView(WebView *) override;
     void teardownView(WKView *) override;
+
+private:
+    RetainPtr<id <WebUIDelegate>> m_delegate;
 };
 
 void PageVisibilityStateWithWindowChanges::initializeView(WebView *webView)
 {
-    // Released in teardownView.
-    webView.UIDelegate = [[PageVisibilityStateDelegate alloc] init];
+    m_delegate = adoptNS([[PageVisibilityStateDelegate alloc] init]);
+    webView.UIDelegate = m_delegate.get();
+
     [webView _setVisibilityState:WebPageVisibilityStatePrerender isInitialState:YES];
 }
 
 void PageVisibilityStateWithWindowChanges::teardownView(WebView *webView)
 {
-    id uiDelegate = webView.UIDelegate;
+    EXPECT_TRUE(webView.UIDelegate == m_delegate.get());
     webView.UIDelegate = nil;
-    [uiDelegate release];
+    m_delegate = nil;
 }
 
 void PageVisibilityStateWithWindowChanges::initializeView(WKView *wkView)

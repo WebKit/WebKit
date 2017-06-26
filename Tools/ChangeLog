@@ -1,5 +1,31 @@
 2017-06-26  David Kilzer  <ddkilzer@apple.com>
 
+        [TestWebKitAPI] Fix false-positive bad release warnings found by clang static analyzer
+        <https://webkit.org/b/173837>
+
+        Reviewed by Geoffrey Garen.
+
+        The clang static analyzer can't reason about objects that are
+        assigned to a delegate as +1 retained, and then released
+        later in a different method when the delegate is cleared.
+
+        Instead, use a common idiom where the object setting the
+        delegate retains it as an instance variable on initialization.
+        Then the same object clears the delegate and releases its
+        instance variable during teardown.
+
+        Also add EXPECT_TRUE() tests to make sure the delegate objects
+        match before teardown.
+
+        * TestWebKitAPI/Tests/mac/FullscreenZoomInitialFrame.mm:
+        (TestWebKitAPI::FullscreenZoomInitialFrame::initializeView):
+        (TestWebKitAPI::FullscreenZoomInitialFrame::teardownView):
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::initializeView):
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::teardownView):
+
+2017-06-26  David Kilzer  <ddkilzer@apple.com>
+
         [TestWebKitAPI] REGRESSION (r218750): Fix leak of NSURLResponse in WKURLSchemeHandler-1.mm
         <https://webkit.org/b/173836>
 
