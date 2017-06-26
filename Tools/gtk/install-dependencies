@@ -107,6 +107,7 @@ function installDependenciesWithApt {
         libedit-dev \
         libenchant-dev \
         libfaad-dev \
+        libffi-dev \
         $(aptIfElse libgcrypt20-dev libgcrypt11-dev) \
         $(aptIfElse libgeoclue-2-dev libgeoclue-dev) \
         libgirepository1.0-dev \
@@ -232,6 +233,7 @@ function installDependenciesWithPacman {
         bison \
         cmake \
         libedit \
+        libffi \
         file \
         findutils \
         flex \
@@ -399,6 +401,7 @@ function installDependenciesWithDnf {
         libXtst-devel \
         libxslt-devel \
         libedit-devel \
+        libffi-devel \
         libgcrypt-devel \
         libgudev1-devel \
         libjpeg-turbo-devel \
