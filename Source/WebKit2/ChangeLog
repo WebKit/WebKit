@@ -1,3 +1,20 @@
+2017-06-26  Jeremy Jones  <jeremyj@apple.com>
+
+        When Mission Control closes fullscreen window, allow media element to update its state.
+        https://bugs.webkit.org/show_bug.cgi?id=173671
+        rdar://problem/32892671
+
+        Reviewed by Eric Carlson.
+
+        When Mission Control closes element fullscreen without an animation, we need to notify the
+        media element that fullscreen has exited.
+
+        Without this change, the page still behaves like the element is in fullscreen.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+
 2017-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] Beginning a drag session should prevent clicking via long press
