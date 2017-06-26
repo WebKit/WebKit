@@ -1,3 +1,14 @@
+2017-06-26  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE][GCrypt] Unreviewed gardening
+
+        After r218744, land new expectations for AES-CFB tests.
+        * platform/wpe/crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt: Added.
+        * platform/wpe/crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt: Added.
+        * platform/wpe/crypto/subtle/aes-export-key-malformed-parameters-expected.txt: Added.
+        * platform/wpe/crypto/subtle/aes-generate-key-malformed-parameters-expected.txt: Added.
+        * platform/wpe/crypto/subtle/aes-import-key-malformed-parameters-expected.txt: Added.
+
 2017-06-26  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.
