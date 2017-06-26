@@ -94,8 +94,6 @@ protected:
     SocketProvider* socketProvider();
 
 private:
-    // Static function executed as the core routine on the new thread. Passed a pointer to a WorkerThread object.
-    static void workerThreadStart(void*);
     void workerThread();
 
     RefPtr<Thread> m_thread;

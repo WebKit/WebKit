@@ -82,16 +82,10 @@ void OfflineAudioDestinationNode::startRendering()
     if (!m_startedRendering) {
         m_startedRendering = true;
         ref(); // See corresponding deref() call in notifyCompleteDispatch().
-        m_renderThread = Thread::create(OfflineAudioDestinationNode::offlineRenderEntry, this, "offline renderer");
+        m_renderThread = Thread::create("offline renderer", [this] {
+            offlineRender();
+        });
     }
-}
-
-// Do offline rendering in this thread.
-void OfflineAudioDestinationNode::offlineRenderEntry(void* threadData)
-{
-    OfflineAudioDestinationNode* destinationNode = reinterpret_cast<OfflineAudioDestinationNode*>(threadData);
-    ASSERT(destinationNode);
-    destinationNode->offlineRender();
 }
 
 void OfflineAudioDestinationNode::offlineRender()

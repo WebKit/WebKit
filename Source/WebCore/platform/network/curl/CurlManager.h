@@ -84,7 +84,7 @@ private:
     bool addToCurl(CURL* curlHandle);
     bool removeFromCurl(CURL* curlHandle);
 
-    static void workerThread(void* data);
+    void workerThread();
 
     RefPtr<Thread> m_thread;
     CURLM* m_curlMultiHandle { nullptr };

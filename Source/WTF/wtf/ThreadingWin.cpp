@@ -516,7 +516,9 @@ DWORD absoluteTimeToWaitTimeoutInterval(double absoluteTime)
 // Remove this workaround code when <rdar://problem/31793213> is fixed.
 ThreadIdentifier createThread(ThreadFunction function, void* data, const char* threadName)
 {
-    return Thread::create(function, data, threadName)->id();
+    return Thread::create(threadName, [function, data] {
+        function(data);
+    })->id();
 }
 
 int waitForThreadCompletion(ThreadIdentifier threadID)

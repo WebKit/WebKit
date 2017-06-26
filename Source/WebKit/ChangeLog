@@ -1,3 +1,15 @@
+2017-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Drop Thread::create(obsolete things) API since we can use lambda
+        https://bugs.webkit.org/show_bug.cgi?id=173825
+
+        Reviewed by Saam Barati.
+
+        * Storage/StorageThread.cpp:
+        (WebCore::StorageThread::start):
+        (WebCore::StorageThread::threadEntryPointCallback): Deleted.
+        * Storage/StorageThread.h:
+
 2017-06-16  Alex Christensen  <achristensen@webkit.org>
 
         Fix Visual Studio 2017 64-bit build after r218258

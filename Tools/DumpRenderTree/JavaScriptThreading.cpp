@@ -61,7 +61,7 @@ static ThreadSet& javaScriptThreads()
 
 // This function exercises JSC in a loop until javaScriptThreadsShouldTerminate
 // becomes true or it probabilistically decides to spawn a replacement thread and exit.
-void runJavaScriptThread(void*)
+void runJavaScriptThread()
 {
     static const char* const script =
         "var array = [];"
@@ -111,7 +111,7 @@ void runJavaScriptThread(void*)
         Thread& thread = Thread::current();
         thread.detach();
         javaScriptThreads().remove(&thread);
-        javaScriptThreads().add(Thread::create(&runJavaScriptThread, 0, 0));
+        javaScriptThreads().add(Thread::create("JavaScript Thread", &runJavaScriptThread));
         break;
     }
 
@@ -128,7 +128,7 @@ void startJavaScriptThreads()
     LockHolder locker(javaScriptThreadsMutex());
 
     for (size_t i = 0; i < javaScriptThreadsCount; ++i)
-        javaScriptThreads().add(Thread::create(&runJavaScriptThread, 0, 0));
+        javaScriptThreads().add(Thread::create("JavaScript Thread", &runJavaScriptThread));
 }
 
 void stopJavaScriptThreads()

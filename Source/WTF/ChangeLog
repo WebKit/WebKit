@@ -1,3 +1,24 @@
+2017-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Drop Thread::create(obsolete things) API since we can use lambda
+        https://bugs.webkit.org/show_bug.cgi?id=173825
+
+        Reviewed by Saam Barati.
+
+        Thread::create(ThreadFunction, void* data, const char* name) is a bit old API.
+        Since we have C++ lambda, the above API is simply unnecessary. And C++ lambda
+        based one is better since the above API needs casting data to and from void*.
+
+        * wtf/Function.h:
+        Avoid ambiguity.
+        * wtf/ParallelJobsGeneric.cpp:
+        (WTF::ParallelEnvironment::ThreadPrivate::tryLockFor):
+        (WTF::ParallelEnvironment::ThreadPrivate::workerThread): Deleted.
+        * wtf/ParallelJobsGeneric.h:
+        * wtf/Threading.cpp:
+        * wtf/ThreadingWin.cpp:
+        (WTF::createThread):
+
 2017-06-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         initializeThreading() [first] causes WTFCrash due to maxSingleAllocationSize not being initialized

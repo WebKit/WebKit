@@ -182,7 +182,6 @@ public:
     WEBCORE_EXPORT bool shouldStopThreadActivity() const final;
 
 private:    
-    static void iconDatabaseSyncThreadStart(void *);
     void iconDatabaseSyncThread();
     
     // The following block of methods are called exclusively by the sync thread to manage i/o to and from the database

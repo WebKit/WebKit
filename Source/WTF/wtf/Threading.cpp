@@ -111,13 +111,6 @@ RefPtr<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
     return Thread::createInternal(threadEntryPoint, context, name);
 }
 
-RefPtr<Thread> Thread::create(ThreadFunction entryPoint, void* data, const char* name)
-{
-    return Thread::create(name, [entryPoint, data] {
-        entryPoint(data);
-    });
-}
-
 void Thread::didExit()
 {
     std::unique_lock<std::mutex> locker(m_mutex);

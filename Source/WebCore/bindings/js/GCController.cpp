@@ -38,7 +38,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-static void collect(void*)
+static void collect()
 {
     JSLockHolder lock(commonVM());
     commonVM().heap.collectNow(Async, CollectionScope::Full);
@@ -76,7 +76,7 @@ void GCController::garbageCollectOnNextRunLoop()
 
 void GCController::gcTimerFired()
 {
-    collect(nullptr);
+    collect();
 }
 
 void GCController::garbageCollectNow()
@@ -101,7 +101,7 @@ void GCController::garbageCollectNowIfNotDoneRecently()
 
 void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDone)
 {
-    RefPtr<Thread> thread = Thread::create(collect, 0, "WebCore: GCController");
+    RefPtr<Thread> thread = Thread::create("WebCore: GCController", &collect);
 
     if (waitUntilDone) {
         thread->waitForCompletion();

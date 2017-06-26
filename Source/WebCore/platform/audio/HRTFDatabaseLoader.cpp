@@ -80,14 +80,6 @@ HRTFDatabaseLoader::~HRTFDatabaseLoader()
     loaderMap().remove(m_databaseSampleRate);
 }
 
-// Asynchronously load the database in this thread.
-static void databaseLoaderEntry(void* threadData)
-{
-    HRTFDatabaseLoader* loader = reinterpret_cast<HRTFDatabaseLoader*>(threadData);
-    ASSERT(loader);
-    loader->load();
-}
-
 void HRTFDatabaseLoader::load()
 {
     ASSERT(!isMainThread());
@@ -105,7 +97,9 @@ void HRTFDatabaseLoader::loadAsynchronously()
     
     if (!m_hrtfDatabase.get() && !m_databaseLoaderThread) {
         // Start the asynchronous database loading process.
-        m_databaseLoaderThread = Thread::create(databaseLoaderEntry, this, "HRTF database loader");
+        m_databaseLoaderThread = Thread::create("HRTF database loader", [this] {
+            load();
+        });
     }
 }
 

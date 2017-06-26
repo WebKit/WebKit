@@ -1,3 +1,18 @@
+2017-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Drop Thread::create(obsolete things) API since we can use lambda
+        https://bugs.webkit.org/show_bug.cgi?id=173825
+
+        Reviewed by Saam Barati.
+
+        * DumpRenderTree/JavaScriptThreading.cpp:
+        (runJavaScriptThread):
+        (startJavaScriptThreads):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (runThread):
+        (runPthread):
+        (testThreadIdentifierMap):
+
 2017-06-26  David Kilzer  <ddkilzer@apple.com>
 
         [TestWebKitAPI] Fix false-positive bad release warnings found by clang static analyzer

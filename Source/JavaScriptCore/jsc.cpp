@@ -3173,22 +3173,20 @@ int jscmain(int argc, char** argv);
 static double s_desiredTimeout;
 static double s_timeoutMultiplier = 1.0;
 
-static NO_RETURN_DUE_TO_CRASH void timeoutThreadMain(void*)
-{
-    Seconds timeoutDuration(s_desiredTimeout * s_timeoutMultiplier);
-    sleep(timeoutDuration);
-    dataLog("Timed out after ", timeoutDuration, " seconds!\n");
-    CRASH();
-}
-
 static void startTimeoutThreadIfNeeded()
 {
     if (char* timeoutString = getenv("JSCTEST_timeout")) {
         if (sscanf(timeoutString, "%lf", &s_desiredTimeout) != 1) {
             dataLog("WARNING: timeout string is malformed, got ", timeoutString,
                 " but expected a number. Not using a timeout.\n");
-        } else
-            Thread::create(timeoutThreadMain, 0, "jsc Timeout Thread");
+        } else {
+            Thread::create("jsc Timeout Thread", [] () {
+                Seconds timeoutDuration(s_desiredTimeout * s_timeoutMultiplier);
+                sleep(timeoutDuration);
+                dataLog("Timed out after ", timeoutDuration, " seconds!\n");
+                CRASH();
+            });
+        }
     }
 }
 

@@ -80,23 +80,15 @@ void ScrollingThread::createThreadIfNeeded()
     {
         std::unique_lock<Lock> lock(m_initializeRunLoopMutex);
 
-        m_thread = Thread::create(threadCallback, this, "WebCore: Scrolling");
+        m_thread = Thread::create("WebCore: Scrolling", [this] {
+            WTF::Thread::setCurrentThreadIsUserInteractive();
+            initializeRunLoop();
+        });
         
 #if PLATFORM(COCOA)
         m_initializeRunLoopConditionVariable.wait(lock, [this]{ return m_threadRunLoop; });
 #endif
     }
-}
-
-void ScrollingThread::threadCallback(void* scrollingThread)
-{
-    WTF::Thread::setCurrentThreadIsUserInteractive();
-    static_cast<ScrollingThread*>(scrollingThread)->threadBody();
-}
-
-void ScrollingThread::threadBody()
-{
-    initializeRunLoop();
 }
 
 void ScrollingThread::dispatchFunctionsFromScrollingThread()

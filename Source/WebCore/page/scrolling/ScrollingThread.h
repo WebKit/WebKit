@@ -61,8 +61,6 @@ private:
     static ScrollingThread& singleton();
 
     void createThreadIfNeeded();
-    static void threadCallback(void* scrollingThread);
-    void threadBody();
     void dispatchFunctionsFromScrollingThread();
 
     void initializeRunLoop();

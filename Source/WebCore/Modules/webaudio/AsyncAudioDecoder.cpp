@@ -39,7 +39,9 @@ AsyncAudioDecoder::AsyncAudioDecoder()
 {
     // Start worker thread.
     LockHolder lock(m_threadCreationMutex);
-    m_thread = Thread::create(AsyncAudioDecoder::threadEntry, this, "Audio Decoder");
+    m_thread = Thread::create("Audio Decoder", [this] {
+        runLoop();
+    });
 }
 
 AsyncAudioDecoder::~AsyncAudioDecoder()
@@ -57,14 +59,6 @@ void AsyncAudioDecoder::decodeAsync(Ref<ArrayBuffer>&& audioData, float sampleRa
 
     auto decodingTask = std::make_unique<DecodingTask>(WTFMove(audioData), sampleRate, WTFMove(successCallback), WTFMove(errorCallback));
     m_queue.append(WTFMove(decodingTask)); // note that ownership of the task is effectively taken by the queue.
-}
-
-// Asynchronously decode in this thread.
-void AsyncAudioDecoder::threadEntry(void* threadData)
-{
-    ASSERT(threadData);
-    AsyncAudioDecoder* decoder = reinterpret_cast<AsyncAudioDecoder*>(threadData);
-    decoder->runLoop();
 }
 
 void AsyncAudioDecoder::runLoop()

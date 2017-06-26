@@ -109,7 +109,9 @@ void CurlManager::startThreadIfNeeded()
         if (m_thread)
             m_thread->waitForCompletion();
         setRunThread(true);
-        m_thread = Thread::create(workerThread, this, "curlThread");
+        m_thread = Thread::create("curlThread", [this] {
+            workerThread();
+        });
     }
 }
 
@@ -176,15 +178,13 @@ bool CurlManager::removeFromCurl(CURL* curlHandle)
     return false;
 }
 
-void CurlManager::workerThread(void* data)
+void CurlManager::workerThread()
 {
     ASSERT(!isMainThread());
 
-    CurlManager* manager = reinterpret_cast<CurlManager*>(data);
+    while (runThread()) {
 
-    while (manager->runThread()) {
-
-        manager->updateHandleList();
+        updateHandleList();
 
         // Retry 'select' if it was interrupted by a process signal.
         int rc = 0;
@@ -204,7 +204,7 @@ void CurlManager::workerThread(void* data)
             FD_ZERO(&fdread);
             FD_ZERO(&fdwrite);
             FD_ZERO(&fdexcep);
-            curl_multi_fdset(manager->getMultiHandle(), &fdread, &fdwrite, &fdexcep, &maxfd);
+            curl_multi_fdset(getMultiHandle(), &fdread, &fdwrite, &fdexcep, &maxfd);
             // When the 3 file descriptors are empty, winsock will return -1
             // and bail out, stopping the file download. So make sure we
             // have valid file descriptors before calling select.
@@ -213,10 +213,10 @@ void CurlManager::workerThread(void* data)
         } while (rc == -1 && errno == EINTR);
 
         int activeCount = 0;
-        while (curl_multi_perform(manager->getMultiHandle(), &activeCount) == CURLM_CALL_MULTI_PERFORM) { }
+        while (curl_multi_perform(getMultiHandle(), &activeCount) == CURLM_CALL_MULTI_PERFORM) { }
 
         int messagesInQueue = 0;
-        CURLMsg* msg = curl_multi_info_read(manager->getMultiHandle(), &messagesInQueue);
+        CURLMsg* msg = curl_multi_info_read(getMultiHandle(), &messagesInQueue);
 
         if (!msg)
             continue;
@@ -230,9 +230,9 @@ void CurlManager::workerThread(void* data)
         CurlJobAction action = job->handleCurlMsg(msg);
 
         if (action == CurlJobAction::Finished)
-            manager->removeFromCurl(msg->easy_handle);
+            removeFromCurl(msg->easy_handle);
 
-        manager->stopThreadIfIdle();
+        stopThreadIfIdle();
     }
 }
 

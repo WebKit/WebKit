@@ -60,10 +60,11 @@ public:
     ReverbInputBuffer* inputBuffer() { return &m_inputBuffer; }
 
     bool useBackgroundThreads() const { return m_useBackgroundThreads; }
-    void backgroundThreadEntry();
 
     size_t latencyFrames() const;
 private:
+    void backgroundThreadEntry();
+
     Vector<std::unique_ptr<ReverbConvolverStage>> m_stages;
     Vector<std::unique_ptr<ReverbConvolverStage>> m_backgroundStages;
     size_t m_impulseResponseLength;

@@ -53,15 +53,13 @@ StorageThread::~StorageThread()
 bool StorageThread::start()
 {
     ASSERT(isMainThread());
-    if (!m_thread)
-        m_thread = Thread::create(StorageThread::threadEntryPointCallback, this, "WebCore: LocalStorage");
+    if (!m_thread) {
+        m_thread = Thread::create("WebCore: LocalStorage", [this] {
+            threadEntryPoint();
+        });
+    }
     activeStorageThreads().add(this);
     return m_thread;
-}
-
-void StorageThread::threadEntryPointCallback(void* thread)
-{
-    static_cast<StorageThread*>(thread)->threadEntryPoint();
 }
 
 void StorageThread::threadEntryPoint()

@@ -48,28 +48,6 @@ static void emptyPerform(void*)
 {
 }
 
-static void runLoaderThread(void*)
-{
-    {
-        std::lock_guard<StaticLock> lock(loaderRunLoopMutex);
-
-        loaderRunLoopObject = CFRunLoopGetCurrent();
-
-        // Must add a source to the run loop to prevent CFRunLoopRun() from exiting.
-        CFRunLoopSourceContext ctxt = {0, (void*)1 /*must be non-null*/, 0, 0, 0, 0, 0, 0, 0, emptyPerform};
-        CFRunLoopSourceRef bogusSource = CFRunLoopSourceCreate(0, 0, &ctxt);
-        CFRunLoopAddSource(loaderRunLoopObject, bogusSource, kCFRunLoopDefaultMode);
-
-        loaderRunLoopConditionVariable.notifyOne();
-    }
-
-    SInt32 result;
-    do {
-        AutodrainedPool pool;
-        result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::numeric_limits<double>::max(), true);
-    } while (result != kCFRunLoopRunStopped && result != kCFRunLoopRunFinished);
-}
-
 CFRunLoopRef loaderRunLoop()
 {
     ASSERT(isMainThread());
@@ -77,7 +55,26 @@ CFRunLoopRef loaderRunLoop()
     std::unique_lock<StaticLock> lock(loaderRunLoopMutex);
 
     if (!loaderRunLoopObject) {
-        Thread::create(runLoaderThread, 0, "WebCore: CFNetwork Loader");
+        Thread::create("WebCore: CFNetwork Loader", [] {
+            {
+                std::lock_guard<StaticLock> lock(loaderRunLoopMutex);
+
+                loaderRunLoopObject = CFRunLoopGetCurrent();
+
+                // Must add a source to the run loop to prevent CFRunLoopRun() from exiting.
+                CFRunLoopSourceContext ctxt = {0, (void*)1 /*must be non-null*/, 0, 0, 0, 0, 0, 0, 0, emptyPerform};
+                CFRunLoopSourceRef bogusSource = CFRunLoopSourceCreate(0, 0, &ctxt);
+                CFRunLoopAddSource(loaderRunLoopObject, bogusSource, kCFRunLoopDefaultMode);
+
+                loaderRunLoopConditionVariable.notifyOne();
+            }
+
+            SInt32 result;
+            do {
+                AutodrainedPool pool;
+                result = CFRunLoopRunInMode(kCFRunLoopDefaultMode, std::numeric_limits<double>::max(), true);
+            } while (result != kCFRunLoopRunStopped && result != kCFRunLoopRunFinished);
+        });
 
         loaderRunLoopConditionVariable.wait(lock, [] { return loaderRunLoopObject; });
     }

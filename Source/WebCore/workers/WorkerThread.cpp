@@ -138,14 +138,11 @@ bool WorkerThread::start()
     if (m_thread)
         return true;
 
-    m_thread = Thread::create(WorkerThread::workerThreadStart, this, "WebCore: Worker");
+    m_thread = Thread::create("WebCore: Worker", [this] {
+        workerThread();
+    });
 
     return m_thread;
-}
-
-void WorkerThread::workerThreadStart(void* thread)
-{
-    static_cast<WorkerThread*>(thread)->workerThread();
 }
 
 void WorkerThread::workerThread()

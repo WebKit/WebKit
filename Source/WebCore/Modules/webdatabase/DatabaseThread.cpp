@@ -63,7 +63,9 @@ bool DatabaseThread::start()
     if (m_thread)
         return true;
 
-    m_thread = Thread::create(DatabaseThread::databaseThreadStart, this, "WebCore: Database");
+    m_thread = Thread::create("WebCore: Database", [this] {
+        databaseThread();
+    });
 
     return m_thread;
 }
@@ -85,12 +87,6 @@ bool DatabaseThread::terminationRequested(DatabaseTaskSynchronizer* taskSynchron
 #endif
 
     return m_queue.killed();
-}
-
-void DatabaseThread::databaseThreadStart(void* vDatabaseThread)
-{
-    DatabaseThread* dbThread = static_cast<DatabaseThread*>(vDatabaseThread);
-    dbThread->databaseThread();
 }
 
 void DatabaseThread::databaseThread()

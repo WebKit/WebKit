@@ -56,7 +56,9 @@ IDBServer::IDBServer(IDBBackingStoreTemporaryFileHandler& fileHandler)
     : m_backingStoreTemporaryFileHandler(fileHandler)
 {
     Locker<Lock> locker(m_databaseThreadCreationLock);
-    m_thread = Thread::create(IDBServer::databaseThreadEntry, this, "IndexedDatabase Server");
+    m_thread = Thread::create("IndexedDatabase Server", [this] {
+        databaseRunLoop();
+    });
 }
 
 IDBServer::IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTemporaryFileHandler& fileHandler)
@@ -66,7 +68,9 @@ IDBServer::IDBServer(const String& databaseDirectoryPath, IDBBackingStoreTempora
     LOG(IndexedDB, "IDBServer created at path %s", databaseDirectoryPath.utf8().data());
 
     Locker<Lock> locker(m_databaseThreadCreationLock);
-    m_thread = Thread::create(IDBServer::databaseThreadEntry, this, "IndexedDatabase Server");
+    m_thread = Thread::create("IndexedDatabase Server", [this] {
+        databaseRunLoop();
+    });
 }
 
 void IDBServer::registerConnection(IDBConnectionToClient& connection)
@@ -498,13 +502,6 @@ void IDBServer::postDatabaseTaskReply(CrossThreadTask&& task)
     callOnMainThread([this] {
         handleTaskRepliesOnMainThread();
     });
-}
-
-void IDBServer::databaseThreadEntry(void* threadData)
-{
-    ASSERT(threadData);
-    IDBServer* server = reinterpret_cast<IDBServer*>(threadData);
-    server->databaseRunLoop();
 }
 
 void IDBServer::databaseRunLoop()

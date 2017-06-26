@@ -58,7 +58,6 @@ private:
     void notifyObservers(ResourceUsageData&&);
 
     void createThreadIfNeeded();
-    static void threadCallback(void* scrollingThread);
     void threadBody();
     void platformThreadBody(JSC::VM*, ResourceUsageData&);
 

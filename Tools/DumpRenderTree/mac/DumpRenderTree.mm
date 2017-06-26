@@ -1052,7 +1052,7 @@ static void setDefaultsToConsistentValuesForTesting()
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:processInstanceDefaults forName:NSArgumentDomain];
 }
 
-static void runThread(void* arg)
+static void runThread()
 {
     static ThreadIdentifier previousId = 0;
     ThreadIdentifier currentId = currentThread();
@@ -1061,10 +1061,10 @@ static void runThread(void* arg)
     previousId = currentId;
 }
 
-static void* runPthread(void* arg)
+static void* runPthread(void*)
 {
-    runThread(arg);
-    return 0;
+    runThread();
+    return nullptr;
 }
 
 static void testThreadIdentifierMap()
@@ -1079,7 +1079,7 @@ static void testThreadIdentifierMap()
 
     // Now create another thread using WTF. On OSX, it will have the same pthread handle
     // but should get a different RefPtr<Thread>.
-    Thread::create(runThread, 0, "DumpRenderTree: test");
+    Thread::create("DumpRenderTree: test", runThread);
 }
 
 static void allocateGlobalControllers()

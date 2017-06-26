@@ -65,7 +65,6 @@ private:
     // Rendering thread.
     RefPtr<Thread> m_renderThread;
     bool m_startedRendering;
-    static void offlineRenderEntry(void* threadData);
     void offlineRender();
     
     // For completion callback on main thread.

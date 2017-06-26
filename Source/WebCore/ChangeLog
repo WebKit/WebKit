@@ -1,3 +1,66 @@
+2017-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Drop Thread::create(obsolete things) API since we can use lambda
+        https://bugs.webkit.org/show_bug.cgi?id=173825
+
+        Reviewed by Saam Barati.
+
+        No behavior change.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::IDBServer):
+        (WebCore::IDBServer::IDBServer::databaseThreadEntry): Deleted.
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/webaudio/AsyncAudioDecoder.cpp:
+        (WebCore::AsyncAudioDecoder::AsyncAudioDecoder):
+        (WebCore::AsyncAudioDecoder::threadEntry): Deleted.
+        * Modules/webaudio/AsyncAudioDecoder.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        (WebCore::OfflineAudioDestinationNode::offlineRenderEntry): Deleted.
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        * Modules/webdatabase/DatabaseThread.cpp:
+        (WebCore::DatabaseThread::start):
+        (WebCore::DatabaseThread::databaseThreadStart): Deleted.
+        * Modules/webdatabase/DatabaseThread.h:
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::gcTimerFired):
+        (WebCore::GCController::garbageCollectOnAlternateThreadForDebugging):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        (WebCore::IconDatabase::iconDatabaseSyncThreadStart): Deleted.
+        * loader/icon/IconDatabase.h:
+        * page/ResourceUsageThread.cpp:
+        (WebCore::ResourceUsageThread::createThreadIfNeeded):
+        (WebCore::ResourceUsageThread::threadCallback): Deleted.
+        * page/ResourceUsageThread.h:
+        * page/scrolling/ScrollingThread.cpp:
+        (WebCore::ScrollingThread::createThreadIfNeeded):
+        (WebCore::ScrollingThread::threadCallback): Deleted.
+        (WebCore::ScrollingThread::threadBody): Deleted.
+        * page/scrolling/ScrollingThread.h:
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::loadAsynchronously):
+        (WebCore::databaseLoaderEntry): Deleted.
+        * platform/audio/HRTFDatabaseLoader.h:
+        * platform/audio/ReverbConvolver.cpp:
+        (WebCore::ReverbConvolver::ReverbConvolver):
+        (WebCore::backgroundThreadEntry): Deleted.
+        * platform/audio/ReverbConvolver.h:
+        (WebCore::ReverbConvolver::useBackgroundThreads):
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        (WebCore::loaderRunLoop):
+        (WebCore::runLoaderThread): Deleted.
+        * platform/network/curl/CurlManager.cpp:
+        (WebCore::CurlManager::startThreadIfNeeded):
+        (WebCore::CurlManager::workerThread):
+        * platform/network/curl/CurlManager.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::start):
+        (WebCore::WorkerThread::workerThreadStart): Deleted.
+        * workers/WorkerThread.h:
+
 2017-06-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Add support for aria-details and aria-errormessage

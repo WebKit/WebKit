@@ -118,7 +118,6 @@ private:
     void performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
     void didPerformCloseAndDeleteDatabases(uint64_t callbackID);
 
-    static void databaseThreadEntry(void*);
     void databaseRunLoop();
     void handleTaskRepliesOnMainThread();
 

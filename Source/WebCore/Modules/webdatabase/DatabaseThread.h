@@ -65,7 +65,6 @@ public:
 private:
     DatabaseThread();
 
-    static void databaseThreadStart(void*);
     void databaseThread();
 
     Lock m_threadCreationMutex;
