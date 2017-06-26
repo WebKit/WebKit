@@ -3139,37 +3139,44 @@ void SpeculativeJIT::compileParseInt(Node* node)
         GPRReg radixGPR = radix.gpr();
         if (node->child1().useKind() == UntypedUse) {
             JSValueOperand value(this, node->child1());
+#if USE(JSVALUE64)
+            auto result = resultRegs.gpr();
+            auto valueReg = value.gpr();
+#else
+            auto result = resultRegs;
+            auto valueReg = value.jsValueRegs();
+#endif
 
             flushRegisters();
-#if USE(JSVALUE64)
-            callOperation(operationParseIntGeneric, resultRegs.gpr(), value.gpr(), radixGPR);
-#else
-            callOperation(operationParseIntGeneric, resultRegs, value.jsValueRegs(), radixGPR);
-#endif
+            callOperation(operationParseIntGeneric, result, valueReg, radixGPR);
             m_jit.exceptionCheck();
         } else {
             SpeculateCellOperand value(this, node->child1());
             GPRReg valueGPR = value.gpr();
             speculateString(node->child1(), valueGPR);
 
-            flushRegisters();
 #if USE(JSVALUE64)
-            callOperation(operationParseIntString, resultRegs.gpr(), valueGPR, radixGPR);
+            auto result = resultRegs.gpr();
 #else
-            callOperation(operationParseIntString, resultRegs, valueGPR, radixGPR);
+            auto result = resultRegs;
 #endif
+
+            flushRegisters();
+            callOperation(operationParseIntString, result, valueGPR, radixGPR);
             m_jit.exceptionCheck();
         }
     } else {
         if (node->child1().useKind() == UntypedUse) {
             JSValueOperand value(this, node->child1());
+#if USE(JSVALUE64)
+            auto result = resultRegs.gpr();
+#else
+            auto result = resultRegs;
+#endif
+            JSValueRegs valueRegs = value.jsValueRegs();
 
             flushRegisters();
-#if USE(JSVALUE64)
-            callOperation(operationParseIntNoRadixGeneric, resultRegs.gpr(), value.jsValueRegs());
-#else
-            callOperation(operationParseIntNoRadixGeneric, resultRegs, value.jsValueRegs());
-#endif
+            callOperation(operationParseIntNoRadixGeneric, result, valueRegs);
             m_jit.exceptionCheck();
         } else {
             SpeculateCellOperand value(this, node->child1());
