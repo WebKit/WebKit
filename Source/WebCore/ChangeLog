@@ -1,3 +1,15 @@
+2017-06-26  Chris Dumez  <cdumez@apple.com>
+
+        ImageFrameCache::startAsyncDecodingQueue() unsafely passes Strings across threads
+        https://bugs.webkit.org/show_bug.cgi?id=173842
+
+        Reviewed by Simon Fraser.
+
+        The URL string was passed across thread without isolated copy.
+
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::startAsyncDecodingQueue):
+
 2017-06-26  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r218783.
