@@ -4514,6 +4514,8 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
 {
+    [self _cancelLongPressGestureRecognizer];
+
     RELEASE_LOG(DragAndDrop, "Preparing for drag session: %p", session);
     if (self.currentDragOrDropSession) {
         // FIXME: Support multiple simultaneous drag sessions in the future.

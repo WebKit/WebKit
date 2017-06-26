@@ -1,3 +1,19 @@
+2017-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Beginning a drag session should prevent clicking via long press
+        https://bugs.webkit.org/show_bug.cgi?id=173838
+
+        Reviewed by Tim Horton.
+
+        After r218579, WebKit no longer attempts to replace out-of-the-box UIKit long-press/drag lift disambiguation by
+        firing events immediately. However, this means that dragging will defer the highlight long press gesture
+        recognizer until dragging ends rather than cancel it immediately, which causes WKContentView to dispatch a
+        synthetic click immediately upon lift. To fix this, we should bail out of the highlight long press gesture when
+        beginning a drag.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+
 2017-06-26  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed, add missing header icncludes
