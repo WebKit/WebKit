@@ -1,5 +1,11 @@
 2017-06-26  Konstantin Tokarev  <annulen@yandex.ru>
 
+        Unreviewed, add missing header icncludes
+
+        * WebProcess/soup/WebKitSoupRequestInputStream.cpp:
+
+2017-06-26  Konstantin Tokarev  <annulen@yandex.ru>
+
         [GTK] Unreviewed, added missing includes to fix debug build
 
         * NetworkProcess/NetworkSession.cpp:

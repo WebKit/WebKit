@@ -21,6 +21,7 @@
 #include "WebKitSoupRequestInputStream.h"
 
 #include <wtf/MainThread.h>
+#include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 
