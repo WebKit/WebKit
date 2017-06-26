@@ -24,8 +24,10 @@ aria-colspan
 aria-controls
 aria-current
 aria-describedby
+aria-details
 aria-disabled
 aria-dropeffect
+aria-errormessage
 aria-expanded
 aria-flowto
 aria-grabbed

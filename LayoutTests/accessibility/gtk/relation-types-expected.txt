@@ -34,6 +34,12 @@ flowTo.ariaFlowToReferencingElementAtIndex(0): AXGroup: 'label 1 label 2'
 
 axElement.ariaFlowToElementAtIndex(1): AXGroup: 'next group (2 of 2)'
 flowTo.ariaFlowToReferencingElementAtIndex(0): AXGroup: 'label 1 label 2'
+
+axElement.ariaDetailsElementAtIndex(0): AXSection: 'Detailed descriptive information.'
+details.ariaDetailsReferencingElementAtIndex(0): AXGroup: 'label 1 label 2'
+
+axElement.ariaErrorMessageElementAtIndex(0): AXSection: 'Information about the error.'
+error.ariaErrorMessageReferencingElementAtIndex(0): AXGroup: 'label 1 label 2'
 PASS successfullyParsed is true
 
 TEST COMPLETE

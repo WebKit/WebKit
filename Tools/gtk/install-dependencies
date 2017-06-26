@@ -198,6 +198,7 @@ function installDependenciesWithApt {
         libxcb-xfixes0-dev \
         $(aptIfElse libxfont1-dev libxfont-dev) \
         libxkbfile-dev \
+        libxkbcommon-x11-dev \
         libtool-bin \
         libudev-dev \
         python-dev \
@@ -342,6 +343,7 @@ function installDependenciesWithPacman {
         libxfont \
         libxcb \
         libxkbfile \
+        libxkbcommon-x11 \
         mtdev \
         orc \
         python2 \
@@ -479,6 +481,7 @@ function installDependenciesWithDnf {
         libtiff-devel \
         libxcb-devel \
         libxkbfile-devel \
+        libxkbcommon-x11-devel \
         mesa-libEGL-devel \
         mtdev-devel \
         orc-devel \

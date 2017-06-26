@@ -910,6 +910,38 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDescribedByReferencin
     return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_DESCRIPTION_FOR, index);
 }
 
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsElementAtIndex(unsigned index)
+{
+#if ATK_CHECK_VERSION(2, 25, 2)
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_DETAILS, index);
+#endif
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaDetailsReferencingElementAtIndex(unsigned index)
+{
+#if ATK_CHECK_VERSION(2, 25, 2)
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_DETAILS_FOR, index);
+#endif
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageElementAtIndex(unsigned index)
+{
+#if ATK_CHECK_VERSION(2, 25, 2)
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_ERROR_MESSAGE, index);
+#endif
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElement::ariaErrorMessageReferencingElementAtIndex(unsigned index)
+{
+#if ATK_CHECK_VERSION(2, 25, 2)
+    return accessibilityElementAtIndex(m_element.get(), ATK_RELATION_ERROR_FOR, index);
+#endif
+    return nullptr;
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::disclosedRowAtIndex(unsigned index)
 {
     // FIXME: implement

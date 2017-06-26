@@ -667,6 +667,10 @@ public:
     void ariaControlsReferencingElements(AccessibilityChildrenVector&) const;
     void ariaDescribedByElements(AccessibilityChildrenVector&) const;
     void ariaDescribedByReferencingElements(AccessibilityChildrenVector&) const;
+    void ariaDetailsElements(AccessibilityChildrenVector&) const;
+    void ariaDetailsReferencingElements(AccessibilityChildrenVector&) const;
+    void ariaErrorMessageElements(AccessibilityChildrenVector&) const;
+    void ariaErrorMessageReferencingElements(AccessibilityChildrenVector&) const;
     void ariaFlowToElements(AccessibilityChildrenVector&) const;
     void ariaFlowToReferencingElements(AccessibilityChildrenVector&) const;
     void ariaLabelledByElements(AccessibilityChildrenVector&) const;

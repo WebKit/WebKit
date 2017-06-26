@@ -160,6 +160,10 @@ interface AccessibilityUIElement {
     AccessibilityUIElement ariaLabelledByReferencingElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaDescribedByElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaDescribedByReferencingElementAtIndex(unsigned long index);
+    AccessibilityUIElement ariaDetailsElementAtIndex(unsigned long index);
+    AccessibilityUIElement ariaDetailsReferencingElementAtIndex(unsigned long index);
+    AccessibilityUIElement ariaErrorMessageElementAtIndex(unsigned long index);
+    AccessibilityUIElement ariaErrorMessageReferencingElementAtIndex(unsigned long index);
 
     // Paramaterized attributes.
     DOMString parameterizedAttributeNames();

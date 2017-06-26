@@ -1,3 +1,15 @@
+2017-06-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [ATK] Add support for aria-details and aria-errormessage
+        https://bugs.webkit.org/show_bug.cgi?id=172588
+
+        Reviewed by Chris Fleizach.
+
+        Add new test cases to relation-types.html.
+
+        * accessibility/gtk/relation-types-expected.txt:
+        * accessibility/gtk/relation-types.html:
+
 2017-06-26  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GCrypt] Unreviewed gardening

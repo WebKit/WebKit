@@ -203,6 +203,10 @@ public:
     RefPtr<AccessibilityUIElement> ariaControlsReferencingElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaLabelledByReferencingElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaDescribedByReferencingElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaDetailsReferencingElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
+    RefPtr<AccessibilityUIElement> ariaErrorMessageReferencingElementAtIndex(unsigned);
 #else
     RefPtr<AccessibilityUIElement> ariaLabelledByElementAtIndex(unsigned) { return nullptr; }
     RefPtr<AccessibilityUIElement> ariaDescribedByElementAtIndex(unsigned) { return nullptr; }
@@ -211,6 +215,10 @@ public:
     RefPtr<AccessibilityUIElement> ariaControlsReferencingElementAtIndex(unsigned) { return nullptr; }
     RefPtr<AccessibilityUIElement> ariaLabelledByReferencingElementAtIndex(unsigned) { return nullptr; }
     RefPtr<AccessibilityUIElement> ariaDescribedByReferencingElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaDetailsReferencingElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned) { return nullptr; }
+    RefPtr<AccessibilityUIElement> ariaErrorMessageReferencingElementAtIndex(unsigned) { return nullptr; }
 #endif
 
     // ARIA Drag and Drop

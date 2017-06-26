@@ -12,6 +12,8 @@
        aria-owns="owned1 	 	 owned2"
        aria-controls="controlled1
                       controlled2"
+       aria-details="details"
+       aria-errormessage="error"
        aria-labelledby="label1 label2"
        aria-describedby="description1 description2">
   </div>
@@ -25,6 +27,8 @@
   <div id="description2">description 2</div>
   <div tabindex="0" id="flowto1" role="group" aria-label="next group (1 of 2)" aria-describedby="description1"></div>
   <div tabindex="0" id="flowto2" role="group" aria-label="next group (2 of 2)" aria-describedby="description2"></div>
+  <div id="details">Detailed descriptive information.</div>
+  <div id="error">Information about the error.</div>
 </div>
 <p id="description"></p>
 <div id="console"></div>
@@ -95,6 +99,16 @@
         flowFrom = flowTo.ariaFlowToReferencingElementAtIndex(0);
         debug("\naxElement.ariaFlowToElementAtIndex(1): " + info(flowTo));
         debug("flowTo.ariaFlowToReferencingElementAtIndex(0): " + info(flowFrom));
+
+        var details = axElement.ariaDetailsElementAtIndex(0);
+        var detailsFor = details.ariaDetailsReferencingElementAtIndex(0);
+        debug("\naxElement.ariaDetailsElementAtIndex(0): " + info(details));
+        debug("details.ariaDetailsReferencingElementAtIndex(0): " + info(detailsFor));
+
+        var error = axElement.ariaErrorMessageElementAtIndex(0);
+        var errorFor = error.ariaErrorMessageReferencingElementAtIndex(0);
+        debug("\naxElement.ariaErrorMessageElementAtIndex(0): " + info(error));
+        debug("error.ariaErrorMessageReferencingElementAtIndex(0): " + info(errorFor));
 
         document.getElementById("content").style.visibility = "hidden";
     }

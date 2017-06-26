@@ -2455,7 +2455,9 @@ bool AccessibilityObject::supportsARIAAttributes() const
         || hasAttribute(aria_controlsAttr)
         || hasAttribute(aria_currentAttr)
         || hasAttribute(aria_describedbyAttr)
+        || hasAttribute(aria_detailsAttr)
         || hasAttribute(aria_disabledAttr)
+        || hasAttribute(aria_errormessageAttr)
         || hasAttribute(aria_flowtoAttr)
         || hasAttribute(aria_haspopupAttr)
         || hasAttribute(aria_invalidAttr)
@@ -3325,6 +3327,26 @@ void AccessibilityObject::ariaDescribedByElements(AccessibilityChildrenVector& a
 void AccessibilityObject::ariaDescribedByReferencingElements(AccessibilityChildrenVector& describers) const
 {
     ariaElementsReferencedByAttribute(describers, aria_describedbyAttr);
+}
+
+void AccessibilityObject::ariaDetailsElements(AccessibilityChildrenVector& ariaDetails) const
+{
+    ariaElementsFromAttribute(ariaDetails, aria_detailsAttr);
+}
+
+void AccessibilityObject::ariaDetailsReferencingElements(AccessibilityChildrenVector& detailsFor) const
+{
+    ariaElementsReferencedByAttribute(detailsFor, aria_detailsAttr);
+}
+
+void AccessibilityObject::ariaErrorMessageElements(AccessibilityChildrenVector& ariaErrorMessage) const
+{
+    ariaElementsFromAttribute(ariaErrorMessage, aria_errormessageAttr);
+}
+
+void AccessibilityObject::ariaErrorMessageReferencingElements(AccessibilityChildrenVector& errorMessageFor) const
+{
+    ariaElementsReferencedByAttribute(errorMessageFor, aria_errormessageAttr);
 }
 
 void AccessibilityObject::ariaFlowToElements(AccessibilityChildrenVector& flowTo) const

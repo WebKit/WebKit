@@ -261,6 +261,36 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
     coreObject->ariaOwnsReferencingElements(owners);
     for (const auto& accessibilityObject : owners)
         atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_NODE_CHILD_OF, accessibilityObject->wrapper());
+
+#if ATK_CHECK_VERSION(2, 25, 2)
+    // Elements with aria-details should have the details relation as per the ARIA AAM spec.
+    removeAtkRelationByType(relationSet, ATK_RELATION_DETAILS);
+    AccessibilityObject::AccessibilityChildrenVector ariaDetails;
+    coreObject->ariaDetailsElements(ariaDetails);
+    for (const auto& accessibilityObject : ariaDetails)
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DETAILS, accessibilityObject->wrapper());
+
+    // Elements referenced by aria-details should have the details-for relation as per the ARIA AAM spec.
+    removeAtkRelationByType(relationSet, ATK_RELATION_DETAILS_FOR);
+    AccessibilityObject::AccessibilityChildrenVector details;
+    coreObject->ariaDetailsReferencingElements(details);
+    for (const auto& accessibilityObject : details)
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_DETAILS_FOR, accessibilityObject->wrapper());
+
+    // Elements with aria-errormessage should have the error-message relation as per the ARIA AAM spec.
+    removeAtkRelationByType(relationSet, ATK_RELATION_ERROR_MESSAGE);
+    AccessibilityObject::AccessibilityChildrenVector ariaErrorMessage;
+    coreObject->ariaErrorMessageElements(ariaErrorMessage);
+    for (const auto& accessibilityObject : ariaErrorMessage)
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_ERROR_MESSAGE, accessibilityObject->wrapper());
+
+    // Elements referenced by aria-errormessage should have the error-for relation as per the ARIA AAM spec.
+    removeAtkRelationByType(relationSet, ATK_RELATION_ERROR_FOR);
+    AccessibilityObject::AccessibilityChildrenVector errors;
+    coreObject->ariaErrorMessageReferencingElements(errors);
+    for (const auto& accessibilityObject : errors)
+        atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_ERROR_FOR, accessibilityObject->wrapper());
+#endif
 }
 
 static gpointer webkitAccessibleParentClass = nullptr;
