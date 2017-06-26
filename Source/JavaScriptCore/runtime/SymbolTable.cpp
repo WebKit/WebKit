@@ -29,6 +29,7 @@
 #include "config.h"
 #include "SymbolTable.h"
 
+#include "CodeBlock.h"
 #include "JSDestructibleObject.h"
 #include "JSCInlines.h"
 #include "SlotVisitorInlines.h"
