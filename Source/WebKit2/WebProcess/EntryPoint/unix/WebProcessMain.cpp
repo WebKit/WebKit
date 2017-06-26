@@ -27,6 +27,10 @@
 
 #include <cstdlib>
 
+#if USE(GCRYPT)
+#include <gcrypt.h>
+#endif
+
 using namespace WebKit;
 
 int main(int argc, char** argv)
@@ -40,6 +44,16 @@ int main(int argc, char** argv)
     // https://bugzilla.gnome.org/show_bug.cgi?id=738633
     // WARNING: This needs to be KEPT IN SYNC with WebProcessMain.cpp.
     setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:!VERS-SSL3.0:!ARCFOUR-128", 0);
+
+#if USE(GCRYPT)
+    // Call gcry_check_version() before any other libgcrypt call, ignoring the
+    // returned version string.
+    gcry_check_version(nullptr);
+
+    // Pre-allocate 16kB of secure memory and finish the initialization.
+    gcry_control(GCRYCTL_INIT_SECMEM, 16384, nullptr);
+    gcry_control(GCRYCTL_INITIALIZATION_FINISHED, nullptr);
+#endif
 
     return WebProcessMainUnix(argc, argv);
 }

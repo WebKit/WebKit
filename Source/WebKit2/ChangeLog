@@ -1,3 +1,21 @@
+2017-06-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Properly initialize libgcrypt before using it
+        https://bugs.webkit.org/show_bug.cgi?id=173589
+
+        Reviewed by Michael Catanzaro.
+
+        Initialize libgcrypt in the Unix-specific main() entrypoint. This is early enough
+        to ensure no other libgcrypt API function is invoked and to also ensure this is
+        done in a thread-safe manner.
+
+        Initialization is initiated through the gcry_check_version() call. 16 kilobytes of
+        secure memory is pre-allocated before we mark the initialization as complete, as
+        recommended by the libgcrypt documentation.
+
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+
 2017-06-26  Jeremy Jones  <jeremyj@apple.com>
 
         When Mission Control closes fullscreen window, allow media element to update its state.
