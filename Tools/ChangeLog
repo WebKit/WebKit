@@ -1,3 +1,17 @@
+2017-06-26  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed, rolling out r218783.
+
+        Causing accessibility/mac/setting-attributes-is-
+        asynchronous.html to crash consistently on mac-wk2 Debug
+
+        Reverted changeset:
+
+        "AX: Cannot call setValue() on contenteditable or ARIA text
+        controls"
+        https://bugs.webkit.org/show_bug.cgi?id=173520
+        http://trac.webkit.org/changeset/218783
+
 2017-06-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Drop Thread::create(obsolete things) API since we can use lambda

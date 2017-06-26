@@ -69,7 +69,6 @@ interface AccessibilityUIElement {
     boolean isPressActionSupported();
     boolean isIncrementActionSupported();
     boolean isDecrementActionSupported();
-    void setValue(DOMString value);
 
     readonly attribute DOMString stringValue;
     readonly attribute long intValue;
