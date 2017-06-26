@@ -562,7 +562,8 @@ void WebPageProxy::setFindMatchesClient(std::unique_ptr<API::FindMatchesClient>&
 
 void WebPageProxy::setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>&& diagnosticLoggingClient)
 {
-    if (!diagnosticLoggingClient) {
+    // Diagnostic logging is disabled for ephemeral sessions for privacy reasons.
+    if (sessionID().isEphemeral() || !diagnosticLoggingClient) {
         m_diagnosticLoggingClient = std::make_unique<API::DiagnosticLoggingClient>();
         return;
     }
@@ -5145,7 +5146,7 @@ void WebPageProxy::logDiagnosticMessage(const String& message, const String& des
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
 
-    m_diagnosticLoggingClient->logDiagnosticMessage(this, message, description);
+    diagnosticLoggingClient().logDiagnosticMessage(this, message, description);
 }
 
 void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
@@ -5153,7 +5154,7 @@ void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const S
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
 
-    m_diagnosticLoggingClient->logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
+    diagnosticLoggingClient().logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
 }
 
 void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample shouldSample)
@@ -5161,7 +5162,7 @@ void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const St
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
 
-    m_diagnosticLoggingClient->logDiagnosticMessageWithValue(this, message, description, String::number(value, significantFigures));
+    diagnosticLoggingClient().logDiagnosticMessageWithValue(this, message, description, String::number(value, significantFigures));
 }
 
 void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, ShouldSample shouldSample)
@@ -5169,7 +5170,7 @@ void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message
     if (!DiagnosticLoggingClient::shouldLogAfterSampling(shouldSample))
         return;
 
-    m_diagnosticLoggingClient->logDiagnosticMessageWithEnhancedPrivacy(this, message, description);
+    diagnosticLoggingClient().logDiagnosticMessageWithEnhancedPrivacy(this, message, description);
 }
 
 void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)

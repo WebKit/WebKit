@@ -1,3 +1,21 @@
+2017-06-26  Chris Dumez  <cdumez@apple.com>
+
+        Disable diagnostic logging in ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=173849
+        <rdar://problem/32987341>
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setDiagnosticLoggingClient):
+        Construct a dummy logging client if the page's session is ephemeral.
+
+        (WebKit::WebPageProxy::logDiagnosticMessage):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithResult):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithValue):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy):
+        Slight cleanup to make the code look a bit safer.
+
 2017-06-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Properly initialize libgcrypt before using it
