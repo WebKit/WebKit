@@ -1,3 +1,15 @@
+2017-06-26  David Kilzer  <ddkilzer@apple.com>
+
+        [TestWebKitAPI] REGRESSION (r218750): Fix leak of NSURLResponse in WKURLSchemeHandler-1.mm
+        <https://webkit.org/b/173836>
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKURLSchemeHandler-1.mm:
+        (-[RedirectSchemeHandler webView:startURLSchemeTask:]): Use
+        adoptNS() to fix the leak.  Also use auto/adoptNS() for other
+        objects in this test.
+
 2017-06-26  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Add support for aria-details and aria-errormessage

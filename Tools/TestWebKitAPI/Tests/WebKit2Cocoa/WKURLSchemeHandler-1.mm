@@ -203,13 +203,14 @@ static bool responsePolicyDecided;
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
     ASSERT_STREQ(task.request.URL.absoluteString.UTF8String, "testing:///initial");
-    NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:nil expectedContentLength:0 textEncodingName:nil] autorelease];
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:///redirected"]];
-    [(id<WKURLSchemeTaskPrivate>)task _didPerformRedirection:response newRequest:request];
+    auto redirectResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:nil expectedContentLength:0 textEncodingName:nil]);
+    auto request = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"testing:///redirected"]]);
+    [(id<WKURLSchemeTaskPrivate>)task _didPerformRedirection:redirectResponse.get() newRequest:request.get()];
     ASSERT_FALSE(receivedRedirect);
     ASSERT_STREQ(task.request.URL.absoluteString.UTF8String, "testing:///redirected");
     NSString *html = @"<script>window.webkit.messageHandlers.testHandler.postMessage('Document URL: ' + document.URL);</script>";
-    [task didReceiveResponse:[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]];
+    auto finalResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]);
+    [task didReceiveResponse:finalResponse.get()];
     [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
     [task didFinish];
 }
