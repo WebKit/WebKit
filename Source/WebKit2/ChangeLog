@@ -1,3 +1,33 @@
+2017-06-26  Jeremy Jones  <jeremyj@apple.com>
+
+        Invalidate WebVideoFullscreenManager when WebPage is destroyed.
+        https://bugs.webkit.org/show_bug.cgi?id=173835
+        rdar://problem/32969161
+
+        Reviewed by Jer Noble.
+
+        WebVideoFullscreenManager has a pointer to WebPage, and even null checks it in a few places,
+        but the only place it is nulled out is in the destructor. This allows a dangling reference.
+
+        This changes invalidates that reference when WebPage is destructed and adds nullchecks
+        or asserts throughout WebVideoFullscreenManager as appropriate.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage):
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+        (WebKit::WebVideoFullscreenManager::invalidate):
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::~WebVideoFullscreenManager):
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+        (WebKit::WebVideoFullscreenManager::hasVideoChanged):
+        (WebKit::WebVideoFullscreenManager::videoDimensionsChanged):
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen):
+        (WebKit::WebVideoFullscreenManager::didEnterFullscreen):
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen):
+        (WebKit::WebVideoFullscreenManager::fullscreenMayReturnToInline):
+
 2017-06-26  Chris Dumez  <cdumez@apple.com>
 
         Disable diagnostic logging in ephemeral sessions

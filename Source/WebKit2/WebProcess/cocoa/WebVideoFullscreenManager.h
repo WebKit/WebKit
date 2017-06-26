@@ -104,6 +104,8 @@ public:
     static Ref<WebVideoFullscreenManager> create(WebPage&, WebPlaybackSessionManager&);
     virtual ~WebVideoFullscreenManager();
     
+    void invalidate();
+    
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Interface to ChromeClient

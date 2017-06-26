@@ -671,6 +671,11 @@ WebPage::~WebPage()
 #ifndef NDEBUG
     webPageCounter.decrement();
 #endif
+    
+#if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
+    if (m_videoFullscreenManager)
+        m_videoFullscreenManager->invalidate();
+#endif
 }
 
 void WebPage::dummy(bool&)
