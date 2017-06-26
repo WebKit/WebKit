@@ -59,11 +59,11 @@ function testCameraImage(resolve, reject, counter)
         resolve();
         return;
     }
-    if (++counter === 20) {
+    if (++counter === 40) {
         reject("testCameraImage timed out");
         return;
     }
-    setTimeout(() => testCameraImage(resolve, reject, counter));
+    setTimeout(() => testCameraImage(resolve, reject, counter), 100);
 }
 
 function testStoppedImage()
