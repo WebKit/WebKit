@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBBindingUtilities.h"
 #include "IDBCursorInfo.h"
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetAllResult.h"

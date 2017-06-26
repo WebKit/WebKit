@@ -24,11 +24,9 @@
 
 #pragma once
 
-#include "AudioBuffer.h"
 #include "AudioBus.h"
 #include "AudioIOCallback.h"
 #include "AudioNode.h"
-#include "AudioSourceProvider.h"
 #include <wtf/Function.h>
 
 namespace WebCore {

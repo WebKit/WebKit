@@ -32,7 +32,6 @@
 #include "IDBCursorDirection.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStoreInfo.h"
-#include <wtf/HashSet.h>
 
 namespace JSC {
 class ExecState;

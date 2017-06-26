@@ -27,8 +27,6 @@
 
 #include "ActiveDOMObject.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/CrossThreadTask.h>
-#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
 #if ENABLE(INDEXED_DATABASE)

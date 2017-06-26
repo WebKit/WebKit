@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CryptoAlgorithmParameters.h"
-#include <wtf/RefCounted.h>
 
 #if ENABLE(SUBTLE_CRYPTO)
 

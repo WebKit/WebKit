@@ -28,12 +28,13 @@
 
 #pragma once
 
-#include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "SQLCallbackWrapper.h"
 #include "SQLTransactionBackend.h"
 #include "SQLTransactionStateMachine.h"
 #include "SQLValue.h"
+#include <wtf/Deque.h>
+#include <wtf/Lock.h>
 #include <wtf/Optional.h>
 
 namespace WebCore {

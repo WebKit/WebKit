@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include "ActiveDOMObject.h"
 #include "AudioBus.h"
 #include "AudioNode.h"
 #include "EventListener.h"

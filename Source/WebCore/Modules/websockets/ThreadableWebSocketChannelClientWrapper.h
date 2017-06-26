@@ -38,7 +38,6 @@
 #include "WorkerThreadableWebSocketChannel.h"
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

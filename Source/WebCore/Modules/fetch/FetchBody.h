@@ -30,14 +30,11 @@
 
 #if ENABLE(FETCH_API)
 
-#include "Blob.h"
 #include "DOMFormData.h"
 #include "FetchBodyConsumer.h"
-#include "FetchLoader.h"
 #include "FormData.h"
 #include "JSDOMPromiseDeferred.h"
 #include "URLSearchParams.h"
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {

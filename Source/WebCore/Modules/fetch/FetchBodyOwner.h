@@ -33,12 +33,11 @@
 #include "ActiveDOMObject.h"
 #include "FetchBody.h"
 #include "FetchHeaders.h"
+#include "FetchLoader.h"
 #include "FetchLoaderClient.h"
 #include "FetchResponseSource.h"
 
 namespace WebCore {
-
-class FetchLoader;
 
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
 public:

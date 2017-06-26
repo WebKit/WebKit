@@ -30,7 +30,6 @@
 #include "EventTarget.h"
 #include "IDBActiveDOMObject.h"
 #include "IDBConnectionProxy.h"
-#include "IDBConnectionToServer.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBKeyPath.h"
 #include "IDBTransactionMode.h"

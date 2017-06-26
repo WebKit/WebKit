@@ -28,12 +28,10 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStore.h"
-#include "IDBBindingUtilities.h"
 #include "IDBDatabaseIdentifier.h"
 #include "IDBDatabaseInfo.h"
 #include "IDBGetResult.h"
 #include "ServerOpenDBRequest.h"
-#include "ThreadSafeDataBuffer.h"
 #include "Timer.h"
 #include "UniqueIDBDatabaseConnection.h"
 #include "UniqueIDBDatabaseTransaction.h"
@@ -48,6 +46,7 @@
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
+class ExecState;
 class VM;
 }
 

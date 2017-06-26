@@ -135,6 +135,7 @@
 #import <WebCore/DragData.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
+#import <WebCore/Event.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/FontCache.h>

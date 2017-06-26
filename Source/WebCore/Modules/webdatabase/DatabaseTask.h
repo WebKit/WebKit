@@ -29,12 +29,14 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "SQLTransactionBackend.h"
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+class Database;
+class SQLTransaction;
 
 // Can be used to wait until DatabaseTask is completed.
 // Has to be passed into DatabaseTask::create to be associated with the task.

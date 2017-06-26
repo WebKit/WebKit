@@ -27,10 +27,7 @@
 
 #include "BasicCredential.h"
 #include "CredentialUserData.h"
-#include "DOMFormData.h"
 #include "PasswordCredentialData.h"
-#include "URLSearchParams.h"
-#include <wtf/Variant.h>
 
 namespace WebCore {
 

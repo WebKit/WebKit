@@ -32,6 +32,7 @@
 #include "SecurityContext.h"
 #include <heap/HandleTypes.h>
 #include <runtime/ConsoleTypes.h>
+#include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>

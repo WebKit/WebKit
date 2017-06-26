@@ -29,7 +29,6 @@
 #include "JSDOMWrapper.h"
 #include "Node.h"
 #include <interpreter/FrameTracers.h>
-#include <jit/Snippet.h>
 #include <jit/SnippetParams.h>
 
 #if ENABLE(JIT)

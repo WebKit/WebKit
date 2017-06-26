@@ -32,7 +32,7 @@
 
 #include "WebAnimation.h"
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

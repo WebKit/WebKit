@@ -35,7 +35,6 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "GenericEventQueue.h"
-#include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

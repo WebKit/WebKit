@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Event.h"
 #include <wtf/Optional.h>
+#include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

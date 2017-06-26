@@ -35,7 +35,6 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "ExceptionOr.h"
 #include "NotificationDirection.h"
 #include "NotificationPermission.h"
 #include "Timer.h"

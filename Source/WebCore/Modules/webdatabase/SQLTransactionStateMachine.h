@@ -26,7 +26,6 @@
 #pragma once
 
 #include "SQLTransactionState.h"
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 

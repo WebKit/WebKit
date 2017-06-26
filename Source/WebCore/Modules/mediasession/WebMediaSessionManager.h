@@ -31,7 +31,6 @@
 #include "MediaPlaybackTargetPicker.h"
 #include "MediaPlaybackTargetPickerMock.h"
 #include "MediaProducer.h"
-#include "Timer.h"
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>

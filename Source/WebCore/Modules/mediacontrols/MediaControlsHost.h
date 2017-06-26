@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
 
-#include <bindings/ScriptObject.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>

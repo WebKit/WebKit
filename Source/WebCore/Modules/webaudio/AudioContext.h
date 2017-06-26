@@ -29,7 +29,6 @@
 #include "AsyncAudioDecoder.h"
 #include "AudioBus.h"
 #include "AudioDestinationNode.h"
-#include "EventListener.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MediaCanStartListener.h"

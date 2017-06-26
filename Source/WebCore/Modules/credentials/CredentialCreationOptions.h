@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "FederatedCredential.h"
+#include "FederatedCredentialInit.h"
 #include "HTMLFormElement.h"
 #include "PasswordCredential.h"
 #include <wtf/Variant.h>

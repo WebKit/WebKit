@@ -29,6 +29,7 @@
 
 #include "ConvolverNode.h"
 
+#include "AudioBuffer.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "Reverb.h"

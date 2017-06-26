@@ -28,7 +28,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "SecurityOriginData.h"
-#include <wtf/Ref.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 

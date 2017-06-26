@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 #if ENABLE(SUBTLE_CRYPTO)

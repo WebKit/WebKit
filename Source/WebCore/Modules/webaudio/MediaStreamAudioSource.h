@@ -30,8 +30,6 @@
 #include "AudioDestinationConsumer.h"
 #include "RealtimeMediaSource.h"
 #include <wtf/Lock.h>
-#include <wtf/RefCounted.h>
-#include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
