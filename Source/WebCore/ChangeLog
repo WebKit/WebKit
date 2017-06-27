@@ -1,3 +1,35 @@
+2017-06-27  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Accessibility labels should be formatted using NSDateComponentsFormatter
+        https://bugs.webkit.org/show_bug.cgi?id=173858
+        <rdar://problem/32643171>
+
+        Reviewed by Dean Jackson.
+
+        We shouldn't be manually trying to create a formatted string for media controls and instead rely
+        on NSDateComponentsFormatter to perform this task for us. So we remove the ad-hoc code in the JS
+        media controls code and instead add a new MediaControlsHost method to format durations which calls
+        into RenderTheme to provide a formatted duration string relevant to the current platform and locale.
+
+        * English.lproj/modern-media-controls-localized-strings.js:
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::formattedStringForDuration):
+        * Modules/mediacontrols/MediaControlsHost.h:
+        * Modules/mediacontrols/MediaControlsHost.idl:
+        * Modules/modern-media-controls/controls/slider.js:
+        (Slider.prototype.set inputAccessibleLabel):
+        * Modules/modern-media-controls/controls/time-label.js:
+        (TimeLabel.prototype.commitProperty):
+        * Modules/modern-media-controls/main.js:
+        (createControls):
+        (formattedStringForDuration):
+        (formatTimeToString): Deleted.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::mediaControlsFormattedStringForDuration):
+        * rendering/RenderThemeCocoa.h:
+        * rendering/RenderThemeCocoa.mm:
+        (WebCore::RenderThemeCocoa::mediaControlsFormattedStringForDuration):
+
 2017-06-27  Eric Carlson  <eric.carlson@apple.com>
 
         r218647 causes getUserMedia to fail on some machines

@@ -13,7 +13,7 @@
     }
 
 </style>
-<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
+<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls autoplay></video>
 <div id="host"></div>
 <script type="text/javascript">
 
@@ -21,22 +21,19 @@ window.jsTestIsAsync = true;
 
 description("Testing for an accessibility text on the scrubber that correctly reflects the changes in media.currentTime.");
 
-const container = document.querySelector("div#host");
 const media = document.querySelector("video");
-const mediaController = createControls(container, media, null);
+let input;
 
-mediaController.controls.showsStartButton = false;
+media.addEventListener("play", () => {
+    input = internals.shadowRoot(media).querySelector(".time-control > .slider > input");
 
-const scrubberNodes = mediaController.controls.timeControl.scrubber.children;
-const scrubberInput = scrubberNodes[scrubberNodes.length - 1].element;
+    media.pause();
 
-media.addEventListener("canplay", () => {
-
-    shouldBeEqualToString("scrubberInput.getAttribute('aria-valuetext')", "0 Minute 0 Second");
+    shouldBeEqualToString("input.getAttribute('aria-valuetext')", "0 seconds");
     media.currentTime = 2;
     shouldBe("media.currentTime", "2");
-    shouldBecomeEqual("scrubberInput.getAttribute('aria-valuetext') === '0 Minute 2 Seconds'", "true", finishJSTest);
-})
+    shouldBecomeEqual("input.getAttribute('aria-valuetext') === '2 seconds'", "true", finishJSTest);
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

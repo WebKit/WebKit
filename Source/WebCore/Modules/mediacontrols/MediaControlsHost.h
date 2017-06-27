@@ -88,6 +88,7 @@ public:
 
     String shadowRootCSSText() const;
     String base64StringForIconNameAndType(const String& iconName, const String& iconType) const;
+    String formattedStringForDuration(const double) const;
 
 private:
     MediaControlsHost(HTMLMediaElement*);

@@ -1,5 +1,16 @@
 2017-06-27  Antoine Quint  <graouts@apple.com>
 
+        [Modern Media Controls] Accessibility labels should be formatted using NSDateComponentsFormatter
+        https://bugs.webkit.org/show_bug.cgi?id=173858
+        <rdar://problem/32643171>
+
+        Reviewed by Dean Jackson.
+
+        * media/modern-media-controls/scrubber/scrubber-has-correct-ax-label-expected.txt:
+        * media/modern-media-controls/scrubber/scrubber-has-correct-ax-label.html:
+
+2017-06-27  Antoine Quint  <graouts@apple.com>
+
         Placard icons act like buttons (can get keyboard focus and shows up in VoiceOver)
         https://bugs.webkit.org/show_bug.cgi?id=173891
         <rdar://problem/33011855>

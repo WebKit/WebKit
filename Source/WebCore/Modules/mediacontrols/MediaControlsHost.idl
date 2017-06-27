@@ -63,4 +63,5 @@ enum DeviceType {
 
     [EnabledAtRuntime=ModernMediaControls] readonly attribute DOMString shadowRootCSSText;
     [EnabledAtRuntime=ModernMediaControls] DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
+    [EnabledAtRuntime=ModernMediaControls] DOMString formattedStringForDuration(unrestricted double durationInSeconds);
 };

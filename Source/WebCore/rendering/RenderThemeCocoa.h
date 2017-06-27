@@ -35,6 +35,10 @@ private:
     void adjustApplePayButtonStyle(StyleResolver&, RenderStyle&, const Element*) const override;
     bool paintApplePayButton(const RenderObject&, const PaintInfo&, const IntRect&) override;
 #endif
+protected:
+#if ENABLE(VIDEO)
+    String mediaControlsFormattedStringForDuration(const double) override;
+#endif
 };
 
 }

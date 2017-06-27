@@ -23,10 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+let mediaControlsHost;
+
 // This is called from HTMLMediaElement::ensureMediaControlsInjectedScript().
 function createControls(shadowRoot, media, host)
 {
     if (host) {
+        mediaControlsHost = host;
         iconService.mediaControlsHost = host;
         shadowRoot.appendChild(document.createElement("style")).textContent = host.shadowRootCSSText;
     }
@@ -67,12 +70,10 @@ function unitizeTime(value, unit)
     return `${value} ${returnedUnit}`;
 }
 
-function formatTimeToString(timeInSeconds)
+function formattedStringForDuration(timeInSeconds)
 {
-    const time = formatTimeByUnit(timeInSeconds);
-    const timeStrings = [unitizeTime(time.minutes, "Minute"), unitizeTime(time.seconds, "Second")];
-    if (time.hours > 0)
-        timeStrings.unshift(unitizeTime(time.hours, "Hour"));
-
-    return timeStrings.join(" ");
+    if (mediaControlsHost)
+        return mediaControlsHost.formattedStringForDuration(Math.abs(timeInSeconds));
+    else
+        return "";
 }

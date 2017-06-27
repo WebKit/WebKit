@@ -56,7 +56,7 @@ class Slider extends LayoutNode
 
     set inputAccessibleLabel(timeValue)
     {
-        this._input.element.setAttribute("aria-valuetext", formatTimeToString(timeValue));
+        this._input.element.setAttribute("aria-valuetext", formattedStringForDuration(timeValue));
     }
 
     get disabled()
