@@ -1,4 +1,11 @@
 ==================
+WebKitGTK+  2.16.5
+==================
+
+  - Fix a web process crash when page finishes loading in several web sites.
+  - Fix the menu of select elements not showing in some cases under Wayland.
+
+==================
 WebKitGTK+  2.16.4
 ==================
 
