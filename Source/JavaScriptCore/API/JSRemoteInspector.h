@@ -29,6 +29,8 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/WebKitAvailability.h>
 
+#include <unistd.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

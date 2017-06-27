@@ -1,3 +1,12 @@
+2017-06-27  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Add missing includes to fix compilation error on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=172919
+
+        Reviewed by Mark Lam.
+
+        * ImageDiff/cairo/PlatformImageCairo.cpp:
+
 2017-06-26  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed, rolling out r218783.

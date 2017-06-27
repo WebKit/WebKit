@@ -1,3 +1,15 @@
+2017-06-27  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Add missing includes to fix compilation error on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=172919
+
+        Reviewed by Mark Lam.
+
+        No new tests needed.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        * platform/audio/ReverbAccumulationBuffer.cpp:
+
 2017-06-27  Zalan Bujtas  <zalan@apple.com>
 
         Add RenderEmbeddedObject::getReplacementTextGeometry helper.

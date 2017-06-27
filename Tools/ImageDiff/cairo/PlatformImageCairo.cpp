@@ -27,6 +27,7 @@
 
 #include <cairo.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #define FORMAT_SIZE_T "Iu"

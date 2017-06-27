@@ -29,6 +29,8 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKPage.h>
 
+#include <unistd.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

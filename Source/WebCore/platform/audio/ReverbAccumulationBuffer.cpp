@@ -34,6 +34,8 @@
 
 #include "VectorMath.h"
 
+#include <algorithm>
+
 namespace WebCore {
 
 using namespace VectorMath;

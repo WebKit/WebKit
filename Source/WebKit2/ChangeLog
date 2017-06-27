@@ -1,3 +1,14 @@
+2017-06-27  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Add missing includes to fix compilation error on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=172919
+
+        Reviewed by Mark Lam.
+
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/ProcessAssertion.h:
+
 2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Refactor drag start codepaths to plumb a DragItem to client layers

@@ -32,6 +32,7 @@
 #include "GCryptUtilities.h"
 #include "JsonWebKey.h"
 #include "NotImplemented.h"
+#include <array>
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>
 #include <pal/crypto/tasn1/Utilities.h>

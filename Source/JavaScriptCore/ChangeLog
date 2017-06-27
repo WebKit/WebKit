@@ -1,3 +1,14 @@
+2017-06-27  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Add missing includes to fix compilation error on FreeBSD
+        https://bugs.webkit.org/show_bug.cgi?id=172919
+
+        Reviewed by Mark Lam.
+
+        * API/JSRemoteInspector.h:
+        * API/tests/GlobalContextWithFinalizerTest.cpp:
+        * API/tests/TypedArrayCTest.cpp:
+
 2017-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Crash generating object preview for ArrayIterator
