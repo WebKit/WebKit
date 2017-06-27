@@ -4371,14 +4371,6 @@ void FrameView::willPaintContents(GraphicsContext& context, const IntRect&, Pain
 
     paintingState.isTopLevelPainter = !sCurrentPaintTimeStamp;
 
-    if (paintingState.isTopLevelPainter && MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        LOG(MemoryPressure, "Under memory pressure: %s", WTF_PRETTY_FUNCTION);
-
-        // To avoid unnecessary image decoding, we don't prune recently-decoded live resources here since
-        // we might need some live bitmaps on painting.
-        MemoryCache::singleton().prune();
-    }
-
     if (paintingState.isTopLevelPainter)
         sCurrentPaintTimeStamp = monotonicallyIncreasingTime();
 
@@ -4412,11 +4404,6 @@ void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyR
 
     m_paintBehavior = paintingState.paintBehavior;
     m_lastPaintTime = monotonicallyIncreasingTime();
-
-    // Painting can lead to decoding of large amounts of bitmaps
-    // If we are low on memory, wipe them out after the paint.
-    if (paintingState.isTopLevelPainter && MemoryPressureHandler::singleton().isUnderMemoryPressure())
-        MemoryCache::singleton().pruneLiveResources(true);
 
     // Regions may have changed as a result of the visibility/z-index of element changing.
 #if ENABLE(DASHBOARD_SUPPORT)

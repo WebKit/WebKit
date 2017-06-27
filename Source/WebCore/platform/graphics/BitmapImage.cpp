@@ -230,6 +230,9 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
         image = frameImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel, &context);
         if (!image) // If it's too early we won't have an image yet.
             return;
+
+        if (m_currentFrameDecodingStatus != ImageFrame::DecodingStatus::Complete)
+            ++m_decodeCountForTesting;
     }
 
     ASSERT(image);
@@ -494,8 +497,17 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
         m_source.stopAsyncDecodingQueue();
     if (m_currentFrameDecodingStatus == ImageFrame::DecodingStatus::Decoding)
         m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
+
+    if (m_currentFrameDecodingStatus == ImageFrame::DecodingStatus::Complete)
+        ++m_decodeCountForTesting;
+
     if (imageObserver())
         imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::No);
+}
+
+unsigned BitmapImage::decodeCountForTesting() const
+{
+    return m_decodeCountForTesting;
 }
 
 void BitmapImage::dump(TextStream& ts) const

@@ -107,6 +107,8 @@ public:
     bool shouldUseAsyncDecodingForAnimatedImages();
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
 
+    WEBCORE_EXPORT unsigned decodeCountForTesting() const;
+
     // Accessors for native image formats.
 #if USE(APPKIT)
     NSImage *nsImage() override;
@@ -228,6 +230,8 @@ private:
     size_t m_earlyFrameCount { 0 };
     size_t m_cachedFrameCount { 0 };
 #endif
+
+    unsigned m_decodeCountForTesting { 0 };
 
 #if USE(APPKIT)
     mutable RetainPtr<NSImage> m_nsImage; // A cached NSImage of all the frames. Only built lazily if someone actually queries for one.

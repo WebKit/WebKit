@@ -1,3 +1,39 @@
+2017-06-26  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (AsyncImageDecoding): A tab with the WWDC keynote paused is killed for using excessive power (Image thrashing)
+        https://bugs.webkit.org/show_bug.cgi?id=173804
+        <rdar://problem/32623745>
+
+        Reviewed by Simon Fraser.
+
+        When under memory pressure MemoryCache::singleton().pruneLiveResources(true) is called inFrameView::didPaintContents()
+        after top level paint. We end up decoding and pruning bitmaps repeatedly for each tile, which is not great.
+
+        Situation gets worse with async decoding. Painting now doesn’t actually decode the image, it just starts the decoding.
+        When it completes we trigger another paint to get the bits to the tiles. The paint for the first tile then calls
+        pruneLiveResources and loses the bitmap and the second tile triggers another round of async decoding. We have code
+        that prevents pruning of visible images but non-visible images in tiling area can hit this bug easily.
+
+        Test: fast/images/low-memory-decode.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::didPaintContents):
+
+            Eliminate synchronous pruning during painting. This is an obsolete mechanism from early iOS times.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::imageFrameAvailableAtIndex):
+        (WebCore::BitmapImage::decodeCountForTesting):
+
+            Testing support.
+
+        * platform/graphics/BitmapImage.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::imageDecodeCount):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-06-26  Chris Dumez  <cdumez@apple.com>
 
         ImageFrameCache::startAsyncDecodingQueue() unsafely passes Strings across threads

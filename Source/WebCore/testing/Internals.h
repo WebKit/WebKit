@@ -125,6 +125,7 @@ public:
     void resetImageAnimation(HTMLImageElement&);
     bool isImageAnimating(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool);
+    unsigned imageDecodeCount(HTMLImageElement&);
 
     void setGridMaxTracksLimit(unsigned);
 

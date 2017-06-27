@@ -826,6 +826,19 @@ void Internals::setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement
     downcast<BitmapImage>(*image).setClearDecoderAfterAsyncFrameRequestForTesting(value);
 }
 
+unsigned Internals::imageDecodeCount(HTMLImageElement& element)
+{
+    auto* cachedImage = element.cachedImage();
+    if (!cachedImage)
+        return 0;
+
+    auto* image = cachedImage->image();
+    if (!is<BitmapImage>(image))
+        return 0;
+
+    return downcast<BitmapImage>(*image).decodeCountForTesting();
+}
+
 void Internals::setGridMaxTracksLimit(unsigned maxTrackLimit)
 {
     GridPosition::setMaxPositionForTesting(maxTrackLimit);
