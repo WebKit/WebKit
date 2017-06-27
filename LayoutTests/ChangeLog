@@ -1,3 +1,27 @@
+2017-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash generating object preview for ArrayIterator
+        https://bugs.webkit.org/show_bug.cgi?id=173754
+        <rdar://problem/32859012>
+
+        Reviewed by Saam Barati.
+
+        * platform/mac/inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        Test generating a preview for an ArrayIterator that has had a `return` property added to it.
+
+        * inspector/model/remote-object-mutated-iterators-expected.txt: Added.
+        * inspector/model/remote-object-mutated-iterators.html: Added.
+        Test generating a preview for different iterators after the IteratorPrototypes have been mutated.
+
+        * inspector/model/resources/remote-object-utilities.js: Added.
+        (runInBrowserTest):
+        (TestPage.registerInitializer):
+        (TestPage.registerInitializer.checkComplete):
+        (TestPage.registerInitializer.window.runSteps):
+        Share code for remote-object dump tests.
+
 2017-06-27  Frederic Wang  <fwang@igalia.com>
 
         Some tests to verify forbidden frame navigation time out

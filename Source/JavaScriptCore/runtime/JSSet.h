@@ -52,6 +52,7 @@ public:
         return instance;
     }
 
+    bool isIteratorProtocolFastAndNonObservable();
     bool canCloneFastAndNonObservable(Structure*);
     JSSet* clone(ExecState*, VM&, Structure*);
 

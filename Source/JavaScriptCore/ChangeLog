@@ -1,3 +1,58 @@
+2017-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Crash generating object preview for ArrayIterator
+        https://bugs.webkit.org/show_bug.cgi?id=173754
+        <rdar://problem/32859012>
+
+        Reviewed by Saam Barati.
+
+        When Inspector generates an object preview for an ArrayIterator instance it made
+        a "clone" of the original ArrayIterator instance by constructing a new object with
+        the instance's structure. However, user code could have modified that instance's
+        structure, such as adding / removing properties. The `return` property had special
+        meaning, and our clone did not fill that slot. This approach is brittle in that
+        we weren't satisfying the expectations of an object with a particular Structure,
+        and the original goal of having Web Inspector peek values of built-in Iterators
+        was to avoid observable behavior.
+
+        This tightens Web Inspector's Iterator preview to only peek values if the
+        Iterators would actually be non-observable. It also builds an ArrayIterator
+        clone like a regular object construction.
+
+        * inspector/JSInjectedScriptHost.cpp:
+        (Inspector::cloneArrayIteratorObject):
+        Build up the Object from scratch with a new ArrayIterator prototype.
+
+        (Inspector::JSInjectedScriptHost::iteratorEntries):
+        Only clone and peek iterators if it would not be observable.
+        Also update iteration to be more in line with IterationOperations, such as when
+        we call iteratorClose.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::stringIteratorProtocolWatchpoint):
+        * runtime/JSGlobalObjectInlines.h:
+        (JSC::JSGlobalObject::isStringPrototypeIteratorProtocolFastAndNonObservable):
+        Add a StringIterator WatchPoint in line with the Array/Map/Set iterator watchpoints.
+
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::isIteratorProtocolFastAndNonObservable):
+        (JSC::JSMap::canCloneFastAndNonObservable):
+        * runtime/JSMap.h:
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::isIteratorProtocolFastAndNonObservable):
+        (JSC::JSSet::canCloneFastAndNonObservable):
+        * runtime/JSSet.h:
+        Promote isIteratorProtocolFastAndNonObservable to a method.
+
+        * runtime/JSObject.cpp:
+        (JSC::canDoFastPutDirectIndex):
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::isArgumentsType):
+        Helper to detect if an Object is an Arguments type.
+
 2017-06-26  Saam Barati  <sbarati@apple.com>
 
         RegExpPrototype.js builtin uses for-of iteration which is almost certainly incorrect

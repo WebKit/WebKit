@@ -82,6 +82,11 @@ ALWAYS_INLINE bool JSGlobalObject::isSetPrototypeIteratorProtocolFastAndNonObser
     return setIteratorProtocolWatchpoint().isStillValid();
 }
 
+ALWAYS_INLINE bool JSGlobalObject::isStringPrototypeIteratorProtocolFastAndNonObservable()
+{
+    return stringIteratorProtocolWatchpoint().isStillValid();
+}
+
 ALWAYS_INLINE bool JSGlobalObject::isMapPrototypeSetFastAndNonObservable()
 {
     return mapSetWatchpoint().isStillValid();

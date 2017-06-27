@@ -94,6 +94,13 @@ public:
     bool isImmutablePrototypeExoticObject() const { return isSetOnFlags2(IsImmutablePrototypeExoticObject); }
     bool interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero() const { return isSetOnFlags2(InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero); }
 
+    static bool isArgumentsType(JSType type)
+    {
+        return type == DirectArgumentsType
+            || type == ScopedArgumentsType
+            || type == ClonedArgumentsType;
+    }
+
     static ptrdiff_t flagsOffset()
     {
         return OBJECT_OFFSETOF(TypeInfo, m_flags);

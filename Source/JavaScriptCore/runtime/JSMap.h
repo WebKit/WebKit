@@ -56,6 +56,7 @@ public:
         add(exec, key, value);
     }
 
+    bool isIteratorProtocolFastAndNonObservable();
     bool canCloneFastAndNonObservable(Structure*);
     JSMap* clone(ExecState*, VM&, Structure*);
 

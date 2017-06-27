@@ -2362,9 +2362,7 @@ ALWAYS_INLINE static bool canDoFastPutDirectIndex(JSObject* object)
 {
     return isJSArray(object)
         || isJSFinalObject(object)
-        || object->type() == DirectArgumentsType
-        || object->type() == ScopedArgumentsType
-        || object->type() == ClonedArgumentsType;
+        || TypeInfo::isArgumentsType(object->type());
 }
 
 // Defined in ES5.1 8.12.9

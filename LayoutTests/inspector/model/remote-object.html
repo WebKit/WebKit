@@ -1,13 +1,13 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/remote-object-utilities.js"></script>
 <script>
 function test()
 {
-    var currentStepIndex = 0;
-    var steps = [
+    let steps = [
     // Special:
 
         // Null / undefined
@@ -159,6 +159,7 @@ function test()
         {expression: "set = new Set; for (var i = 0; i <= 100; i++) set.add(i); set.values()"},
         {expression: "map.entries()"},
         {expression: "x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.iterator]()"},
+        {expression: "iter = [1, 2][Symbol.iterator](); iter['return'] = function(){}; iter"},
 
         // Promise
         {expression: "new Promise(function(){})"},
@@ -191,60 +192,7 @@ function test()
         return;
     }
 
-    function remoteObjectJSONFilter(key, value)
-    {
-        if (key === "_target" || key === "_hasChildren" || key === "_listeners")
-            return undefined;
-        if (key === "_objectId" || key === "_stackTrace")
-            return "<filtered>";
-        return value;
-    }
-
-    function runSteps() {
-
-        function afterStep() {
-            if (++currentStepIndex >= steps.length)
-                InspectorTest.completeTest();
-        }
-
-        function runStep(step) {
-            if (step.browserOnly) {
-                afterStep();
-                return;
-            }
-
-            WebInspector.runtimeManager.evaluateInInspectedWindow(step.expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, function(remoteObject, wasThrown) {
-                InspectorTest.log("");
-                InspectorTest.log("-----------------------------------------------------");
-                InspectorTest.log("EXPRESSION: " + step.expression);
-                InspectorTest.assert(remoteObject instanceof WebInspector.RemoteObject);
-                InspectorTest.log(JSON.stringify(remoteObject, remoteObjectJSONFilter, "  "));
-                afterStep();
-            });
-        }
-
-        for (var step of steps)
-            runStep(step);
-    }
-
-    runSteps();
-}
-
-function runInBrowserTest()
-{
-    if (window.testRunner)
-        return;
- 
-    test(); // get steps.
-
-    for (var step of steps) {
-        console.info("EXPRESSION", step.expression);
-        try {
-            console.log(eval(step.expression));
-        } catch (e) {
-            console.log("EXCEPTION: " + e);
-        }
-    }
+    runSteps(steps);
 }
 </script>
 </head>
