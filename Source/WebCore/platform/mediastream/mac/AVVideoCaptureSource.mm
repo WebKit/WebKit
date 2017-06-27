@@ -570,7 +570,7 @@ NSString* AVVideoCaptureSource::bestSessionPresetForVideoDimensions(std::optiona
 
 bool AVVideoCaptureSource::isFrameRateSupported(double frameRate)
 {
-    double epsilon = 0.00001;
+    double epsilon = 0.001;
     for (AVFrameRateRangeType *range in [[device() activeFormat] videoSupportedFrameRateRanges]) {
         if (frameRate + epsilon >= range.minFrameRate && frameRate - epsilon <= range.maxFrameRate)
             return true;

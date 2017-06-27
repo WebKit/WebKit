@@ -1,3 +1,14 @@
+2017-06-27  Eric Carlson  <eric.carlson@apple.com>
+
+        r218647 causes getUserMedia to fail on some machines
+        https://bugs.webkit.org/show_bug.cgi?id=173894
+
+        Reviewed by Youenn Fablet.
+
+        * platform/mediastream/mac/AVVideoCaptureSource.mm:
+        (WebCore::AVVideoCaptureSource::isFrameRateSupported): Change frame rate epsilon from 0.00001
+        to 0.001.
+
 2017-06-27  Antoine Quint  <graouts@apple.com>
 
         Placard icons act like buttons (can get keyboard focus and shows up in VoiceOver)
