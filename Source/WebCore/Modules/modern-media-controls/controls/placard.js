@@ -41,6 +41,7 @@ class Placard extends LayoutItem
         if (iconName) {
             this._icon = new Button(this);
             this._icon.iconName = iconName;
+            this._icon.element.disabled = true;
         }
 
         if (!!title)

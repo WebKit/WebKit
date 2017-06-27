@@ -1,3 +1,17 @@
+2017-06-27  Antoine Quint  <graouts@apple.com>
+
+        Placard icons act like buttons (can get keyboard focus and shows up in VoiceOver)
+        https://bugs.webkit.org/show_bug.cgi?id=173891
+        <rdar://problem/33011855>
+
+        Reviewed by Dean Jackson.
+
+        Ensure that we disable buttons inside placards as they're only decorative and should
+        not be interactive.
+
+        * Modules/modern-media-controls/controls/placard.js:
+        (Placard.):
+
 2017-06-27  Jeremy Jones  <jeremyj@apple.com>
 
         Disable m_temporarilyAllowingInlinePlaybackAfterFullscreen on pause

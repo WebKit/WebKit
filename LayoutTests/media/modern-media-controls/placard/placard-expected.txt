@@ -12,6 +12,7 @@ PASS placard.children[0].element.className is "container"
 PASS placard.children[0].children.length is 3
 PASS placard.children[0].children[0] instanceof Button is true
 PASS placard.children[0].children[0].iconName is Icons.AirplayPlacard
+PASS placard.children[0].children[0].element.disabled is true
 PASS placard.children[0].children[1] instanceof LayoutNode is true
 PASS placard.children[0].children[1].element.localName is "div"
 PASS placard.children[0].children[1].element.className is "title"

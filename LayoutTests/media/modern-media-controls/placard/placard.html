@@ -21,6 +21,7 @@ shouldBeEqualToString("placard.children[0].element.className", "container");
 shouldBe("placard.children[0].children.length", "3");
 shouldBeTrue("placard.children[0].children[0] instanceof Button");
 shouldBe("placard.children[0].children[0].iconName", "Icons.AirplayPlacard");
+shouldBeTrue("placard.children[0].children[0].element.disabled");
 shouldBeTrue("placard.children[0].children[1] instanceof LayoutNode");
 shouldBeEqualToString("placard.children[0].children[1].element.localName", "div");
 shouldBeEqualToString("placard.children[0].children[1].element.className", "title");
