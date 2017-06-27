@@ -1,3 +1,18 @@
+2017-06-26  Saam Barati  <sbarati@apple.com>
+
+        RegExpPrototype.js builtin uses for-of iteration which is almost certainly incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=173740
+
+        Reviewed by Mark Lam.
+
+        The builtin was using for-of iteration to iterate over an internal
+        list in its algorithm. For-of iteration is observable via user code
+        in the global object, so this approach was wrong as it would break if
+        a user changed the Array iteration protocol in some way.
+
+        * builtins/RegExpPrototype.js:
+        (replace):
+
 2017-06-26  Mark Lam  <mark.lam@apple.com>
 
         Renamed DumpRegisterFunctor to DumpReturnVirtualPCFunctor.

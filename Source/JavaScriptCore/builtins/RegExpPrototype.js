@@ -252,7 +252,8 @@ function replace(strArg, replace)
     let nextSourcePosition = 0;
     let lastPosition = 0;
 
-    for (result of resultList) {
+    for (let i = 0, resultListLength = resultList.length; i < resultListLength; ++i) {
+        let result = resultList[i];
         let nCaptures = result.length - 1;
         if (nCaptures < 0)
             nCaptures = 0;
