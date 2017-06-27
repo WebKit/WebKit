@@ -1,3 +1,28 @@
+2017-06-27  Saam Barati  <sbarati@apple.com>
+
+        Function constructor needs to follow the spec and validate parameters and body independently
+        https://bugs.webkit.org/show_bug.cgi?id=173303
+        <rdar://problem/32732526>
+
+        Reviewed by Keith Miller.
+
+        The Function constructor must check the arguments and body strings
+        independently for syntax errors. People rely on this specified behavior
+        to verify that a particular string is a valid function body. We used
+        to check these things strings concatenated together, instead of
+        independently. For example, this used to be valid: `Function("/*", "*/){")`.
+        However, we should throw a syntax error here since "(/*)" is not a valid
+        parameter list, and "*/){" is not a valid body.
+        
+        To implement the specified behavior, we check the syntax independently of
+        both the body and the parameter list. To check that the parameter list has
+        valid syntax, we check that it is valid if in a function with an empty body.
+        To check that the body has valid syntax, we check it is valid in a function
+        with an empty parameter list.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+
 2017-06-27  Ting-Wei Lan  <lantw44@gmail.com>
 
         Add missing includes to fix compilation error on FreeBSD

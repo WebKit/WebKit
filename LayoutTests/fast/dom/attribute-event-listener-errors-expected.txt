@@ -1,4 +1,4 @@
 CONSOLE MESSAGE: line 4: ReferenceError: Can't find variable: error
-CONSOLE MESSAGE: line 5: SyntaxError: Invalid character: '@'
+CONSOLE MESSAGE: line 9: SyntaxError: Invalid character: '@'
 This test verifies that an attribute event listener error shows the right line number even if the attribute contains newlines.
   

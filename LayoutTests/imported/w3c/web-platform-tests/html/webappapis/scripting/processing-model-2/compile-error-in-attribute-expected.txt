@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 24: SyntaxError: Unexpected end of script
+CONSOLE MESSAGE: line 26: SyntaxError: Unexpected token ')'
 
 PASS window.onerror - compile error in attribute 
 PASS window.onerror - compile error in attribute (column) 

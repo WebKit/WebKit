@@ -21,6 +21,7 @@
 #include "config.h"
 #include "FunctionConstructor.h"
 
+#include "Completion.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "JSAsyncFunction.h"
@@ -98,45 +99,79 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
     switch (functionConstructionMode) {
     case FunctionConstructionMode::Function:
         structure = globalObject->functionStructure();
-        prefix = "{function ";
+        prefix = "function ";
         break;
     case FunctionConstructionMode::Generator:
         structure = globalObject->generatorFunctionStructure();
-        prefix = "{function *";
+        prefix = "function *";
         break;
     case FunctionConstructionMode::Async:
         structure = globalObject->asyncFunctionStructure();
-        prefix = "{async function ";
+        prefix = "async function ";
         break;
     }
+
+    auto checkBody = [&] (const String& body) {
+        // The spec mandates that the body parses a valid function body independent
+        // of the parameters.
+        String program = makeString("(", prefix, "(){\n", body, "\n})");
+        SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
+        JSValue exception;
+        checkSyntax(exec, source, &exception);
+        if (exception) {
+            scope.throwException(exec, exception);
+            return;
+        }
+    };
 
     // How we stringify functions is sometimes important for web compatibility.
     // See https://bugs.webkit.org/show_bug.cgi?id=24350.
     String program;
     if (args.isEmpty())
-        program = makeString(prefix, functionName.string(), "() {\n\n}}");
+        program = makeString("{", prefix, functionName.string(), "() {\n\n}}");
     else if (args.size() == 1) {
         auto body = args.at(0).toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        program = makeString(prefix, functionName.string(), "() {\n", body, "\n}}");
+        checkBody(body);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        program = makeString("{", prefix, functionName.string(), "() {\n", body, "\n}}");
     } else {
         StringBuilder builder;
+        builder.append("{");
         builder.append(prefix);
         builder.append(functionName.string());
         builder.append('(');
+        StringBuilder parameterBuilder;
         auto viewWithString = args.at(0).toString(exec)->viewWithUnderlyingString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        builder.append(viewWithString.view);
+        parameterBuilder.append(viewWithString.view);
         for (size_t i = 1; i < args.size() - 1; i++) {
-            builder.appendLiteral(", ");
+            parameterBuilder.appendLiteral(", ");
             auto viewWithString = args.at(i).toString(exec)->viewWithUnderlyingString(exec);
             RETURN_IF_EXCEPTION(scope, nullptr);
-            builder.append(viewWithString.view);
+            parameterBuilder.append(viewWithString.view);
         }
+
+        {
+            // The spec mandates that the parameters parse as a valid parameter list
+            // independent of the function body.
+            String program = makeString("(", prefix, "(", parameterBuilder.toString(), "){\n\n})");
+            SourceCode source = makeSource(program, sourceOrigin, sourceURL, position);
+            JSValue exception;
+            checkSyntax(exec, source, &exception);
+            if (exception) {
+                scope.throwException(exec, exception);
+                return nullptr;
+            }
+        }
+
+        builder.append(parameterBuilder);
         builder.appendLiteral(") {\n");
-        viewWithString = args.at(args.size() - 1).toString(exec)->viewWithUnderlyingString(exec);
+        auto body = args.at(args.size() - 1).toWTFString(exec);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        builder.append(viewWithString.view);
+        checkBody(body);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        builder.append(body);
         builder.appendLiteral("\n}}");
         program = builder.toString();
     }
