@@ -1,3 +1,15 @@
+2017-06-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ProcessLauncherMac could leak a xpc connection when the process had failed to launch
+        https://bugs.webkit.org/show_bug.cgi?id=173865
+
+        Reviewed by Antti Koivisto.
+
+        Explicitly cancel the XPC connection even When the process launch had failed to avoid a leak.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2017-06-27  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add telemetry
