@@ -74,10 +74,9 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     // - Broadly, we don't say that we're reading something if that something is
     //   immutable.
     //
-    // - We try to make this work even prior to type inference, just so that we
-    //   can use it for IR dumps. No promises on whether the answers are sound
-    //   prior to type inference - though they probably could be if we did some
-    //   small hacking.
+    // - This must be sound even prior to type inference. We use this as early as
+    //   bytecode parsing to determine at which points in the program it's legal to
+    //   OSR exit.
     //
     // - If you do read(Stack) or read(World), then make sure that readTop() in
     //   PreciseLocalClobberize is correct.
