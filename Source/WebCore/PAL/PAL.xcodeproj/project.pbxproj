@@ -6,13 +6,39 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		C280B4201EFD056400D35135 /* Copy PAL Headers */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C280B4251EFD056400D35135 /* Build configuration list for PBXAggregateTarget "Copy PAL Headers" */;
+			buildPhases = (
+				C280B42A1EFD05CE00D35135 /* Copy PAL Headers */,
+			);
+			dependencies = (
+			);
+			name = "Copy PAL Headers";
+			productName = "Copy PAL Headers";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
+		0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */; };
 		1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0521E31C44100725F18 /* CryptoDigest.h */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C280B42C1EFD07FE00D35135 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1C09D0351E31C32800725F18 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C280B4201EFD056400D35135;
+			remoteInfo = "Copy PAL Headers";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C09D0521E31C44100725F18 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
 		1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoDigestCommonCrypto.cpp; path = commoncrypto/CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
@@ -22,6 +48,7 @@
 		1C09D0631E31EC3100725F18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +83,7 @@
 		1C09D03F1E31C32800725F18 /* pal */ = {
 			isa = PBXGroup;
 			children = (
+				0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */,
 				1C09D0511E31C41200725F18 /* crypto */,
 			);
 			path = pal;
@@ -86,6 +114,7 @@
 				1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */,
 				1C09D05D1E31C77A00725F18 /* PAL.xcconfig */,
 				1C67CEA21E32EE2600F80F2E /* Version.xcconfig */,
+				C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -99,6 +128,7 @@
 			files = (
 				1C09D0581E31C57E00725F18 /* config.h in Headers */,
 				1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */,
+				0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +146,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C280B42D1EFD07FE00D35135 /* PBXTargetDependency */,
 			);
 			name = PAL;
 			productName = PAL;
@@ -132,6 +163,10 @@
 				TargetAttributes = {
 					1C09D03C1E31C32800725F18 = {
 						CreatedOnToolsVersion = 8.3;
+						ProvisioningStyle = Automatic;
+					};
+					C280B4201EFD056400D35135 = {
+						CreatedOnToolsVersion = 8.3.3;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -155,9 +190,27 @@
 			projectRoot = "";
 			targets = (
 				1C09D03C1E31C32800725F18 /* PAL */,
+				C280B4201EFD056400D35135 /* Copy PAL Headers */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C280B42A1EFD05CE00D35135 /* Copy PAL Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy PAL Headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${DEPLOYMENT_LOCATION}\" == \"NO\" ]]; then\n    PRIVATE_HEADERS_PATH=\"${TARGET_BUILD_DIR%/}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nelse\n    PRIVATE_HEADERS_PATH=\"${DSTROOT}/${PRIVATE_HEADERS_FOLDER_PATH}\"\nfi;\n\nmkdir -p \"${PRIVATE_HEADERS_PATH}\"\nrsync -av --no-owner --no-group --prune-empty-dirs --exclude \".svn\" --exclude \"usr\" --exclude \"DerivedSources\" --include \"*/\" --include \"*.h\" --exclude \"*\" \"${SRCROOT}/pal/\" \"${PRIVATE_HEADERS_PATH}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1C09D0391E31C32800725F18 /* Sources */ = {
@@ -169,6 +222,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C280B42D1EFD07FE00D35135 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C280B4201EFD056400D35135 /* Copy PAL Headers */;
+			targetProxy = C280B42C1EFD07FE00D35135 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1C09D0461E31C32800725F18 /* Debug */ = {
@@ -218,6 +279,30 @@
 			};
 			name = Production;
 		};
+		C280B4261EFD056400D35135 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		C280B4271EFD056400D35135 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		C280B4281EFD056400D35135 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -237,6 +322,16 @@
 				1C09D0491E31C32800725F18 /* Debug */,
 				1C09D04A1E31C32800725F18 /* Release */,
 				1C09D05B1E31C6F000725F18 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		C280B4251EFD056400D35135 /* Build configuration list for PBXAggregateTarget "Copy PAL Headers" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C280B4261EFD056400D35135 /* Debug */,
+				C280B4271EFD056400D35135 /* Release */,
+				C280B4281EFD056400D35135 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

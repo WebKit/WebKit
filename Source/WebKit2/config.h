@@ -28,12 +28,10 @@
 #include "cmakeconfig.h"
 #endif
 
-#include <wtf/Platform.h>
-
 #include <WebCore/PlatformExportMacros.h>
+#include <pal/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
 #include <wtf/DisallowCType.h>
-#include <wtf/ExportMacros.h>
 
 #ifdef __cplusplus
 

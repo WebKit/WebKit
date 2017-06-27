@@ -42,11 +42,11 @@ public:
         SHA_384,
         SHA_512,
     };
-    static std::unique_ptr<CryptoDigest> create(Algorithm);
-    ~CryptoDigest();
+    PAL_EXPORT static std::unique_ptr<CryptoDigest> create(Algorithm);
+    PAL_EXPORT ~CryptoDigest();
 
-    void addBytes(const void* input, size_t length);
-    Vector<uint8_t> computeHash();
+    PAL_EXPORT void addBytes(const void* input, size_t length);
+    PAL_EXPORT Vector<uint8_t> computeHash();
 
 private:
     CryptoDigest();

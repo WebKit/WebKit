@@ -3,6 +3,10 @@ include(WebKitCommon)
 set_property(DIRECTORY . PROPERTY FOLDER "WebCore")
 add_subdirectory(PAL/pal)
 
+if (PAL_LIBRARY_TYPE MATCHES STATIC)
+    add_definitions(-DSTATICALLY_LINKED_WITH_PAL=1)
+endif ()
+
 set(WebCore_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WEBCORE_DIR}"
@@ -115,6 +119,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
+    "${PAL_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
 )
 

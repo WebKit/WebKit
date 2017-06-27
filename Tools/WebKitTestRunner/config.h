@@ -21,18 +21,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
-#ifndef WebKitTestRunner_config_h
-#define WebKitTestRunner_config_h
 
-#if defined (BUILDING_WITH_CMAKE)
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H && defined(BUILDING_WITH_CMAKE)
 #include "cmakeconfig.h"
 #endif
 
 #include <WebCore/PlatformExportMacros.h>
 #include <WebKit/WebKit2_C.h>
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
+#include <pal/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
-
-#endif

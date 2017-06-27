@@ -30,6 +30,7 @@
 #include <runtime/JSExportMacros.h>
 #ifndef BUILDING_JSCONLY__
 #include <WebCore/PlatformExportMacros.h>
+#include <pal/ExportMacros.h>
 #endif
 
 #if defined(__APPLE__) && __APPLE__

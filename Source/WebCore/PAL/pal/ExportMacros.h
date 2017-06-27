@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * This file handles shared library symbol export decorations. It is recommended
  * that all WebKit projects use these definitions so that symbol exports work
@@ -34,15 +34,17 @@
 // See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
-#if !PLATFORM(WIN)
-#define WEBCORE_EXPORT WTF_EXPORT
-#define WEBCORE_TESTSUPPORT_EXPORT WTF_EXPORT
+#if defined(BUILDING_PAL) || defined(STATICALLY_LINKED_WITH_PAL)
+#define PAL_EXPORT WTF_EXPORT
 #else
-// Windows must set this per-project
+#define PAL_EXPORT WTF_IMPORT
 #endif
 
+#define PAL_TESTSUPPORT_EXPORT PAL_EXPORT
+
 #else // !USE(EXPORT_MACROS)
-#define WEBCORE_EXPORT
-#define WEBCORE_TESTSUPPORT_EXPORT
+
+#define PAL_EXPORT
+#define PAL_TESTSUPPORT_EXPORT
 
 #endif // USE(EXPORT_MACROS)

@@ -33,9 +33,8 @@
 #include "WebCoreHeaderDetection.h"
 #endif
 
-#include <wtf/ExportMacros.h>
 #include "PlatformExportMacros.h"
-
+#include <pal/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
 
 #ifdef __APPLE__

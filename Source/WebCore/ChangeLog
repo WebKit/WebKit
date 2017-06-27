@@ -1,3 +1,16 @@
+2017-06-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [PAL] Add symbol export macros for PAL
+        https://bugs.webkit.org/show_bug.cgi?id=171519
+
+        Reviewed by Konstantin Tokarev.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * config.h:
+        * platform/PlatformExportMacros.h:
+
 2017-06-27  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add telemetry
