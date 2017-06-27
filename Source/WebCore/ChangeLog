@@ -1,3 +1,18 @@
+2017-06-27  Jeremy Jones  <jeremyj@apple.com>
+
+        Disable m_temporarilyAllowingInlinePlaybackAfterFullscreen on pause
+        https://bugs.webkit.org/show_bug.cgi?id=173843
+        rdar://problem/32982431
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-fullscreen-pause-inline.html
+
+        Some pages may not have a fullscreen button, so disabled m_temporarilyAllowingInlinePlaybackAfterFullscreen on pause.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pause):
+
 2017-06-27  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Avoid taking / releasing process assertions too quickly due to database activity

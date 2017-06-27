@@ -3242,7 +3242,9 @@ bool HTMLMediaElement::playInternal()
 void HTMLMediaElement::pause()
 {
     LOG(Media, "HTMLMediaElement::pause(%p)", this);
-
+    
+    m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
+    
     if (!m_mediaSession->playbackPermitted(*this))
         return;
 
