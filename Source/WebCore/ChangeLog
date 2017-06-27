@@ -1,3 +1,20 @@
+2017-06-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Layout Test webrtc/video.html issues "stack smashing detected"
+        https://bugs.webkit.org/show_bug.cgi?id=173862
+
+        Reviewed by Carlos Garcia Campos.
+
+        Tests: webrtc/video.html
+
+        Passing a bool variable to g_object_get causes out-of-bound write.
+        gboolean should be used, which is 4 bytes while bool is one byte.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::muted): Use gboolean instead of bool.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerOwr.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerOwr::trackEnded): Ditto.
+
 2017-06-26  Chris Dumez  <cdumez@apple.com>
 
         WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains() is inefficient

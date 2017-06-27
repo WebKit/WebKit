@@ -500,7 +500,7 @@ bool MediaPlayerPrivateGStreamerBase::muted() const
     if (!m_volumeElement)
         return false;
 
-    bool muted;
+    gboolean muted;
     g_object_get(m_volumeElement.get(), "mute", &muted, nullptr);
     return muted;
 }

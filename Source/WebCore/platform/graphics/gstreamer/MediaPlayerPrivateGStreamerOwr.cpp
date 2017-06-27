@@ -360,8 +360,8 @@ void MediaPlayerPrivateGStreamerOwr::trackEnded(MediaStreamTrackPrivate& track)
             videoTrack->setSelected(false);
     }
 
-    bool audioDisabled;
-    bool videoDisabled;
+    gboolean audioDisabled;
+    gboolean videoDisabled;
     g_object_get(m_audioRenderer.get(), "disabled", &audioDisabled, nullptr);
     g_object_get(m_videoRenderer.get(), "disabled", &videoDisabled, nullptr);
     if (audioDisabled && videoDisabled) {
