@@ -93,12 +93,8 @@ static void searchCloseButtonClickedCallback(BrowserSearchBar *searchBar)
 static void searchEntryMenuIconPressedCallback(BrowserSearchBar *searchBar, GtkEntryIconPosition iconPosition, GdkEvent *event)
 {
     if (iconPosition == GTK_ENTRY_ICON_PRIMARY) {
-#if GTK_CHECK_VERSION(3, 22, 0)
-        gtk_menu_popup_at_pointer(GTK_MENU(searchBar->optionsMenu), event);
-#else
         GdkEventButton *eventButton = (GdkEventButton *)event;
         gtk_menu_popup(GTK_MENU(searchBar->optionsMenu), NULL, NULL, NULL, NULL, eventButton->button, eventButton->time);
-#endif
     }
 }
 
