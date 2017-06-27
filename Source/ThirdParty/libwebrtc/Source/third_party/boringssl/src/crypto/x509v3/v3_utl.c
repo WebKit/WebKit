@@ -71,6 +71,8 @@
 #include <openssl/x509v3.h>
 
 #include "../conf/internal.h"
+#include "../internal.h"
+
 
 static char *strip_spaces(char *name);
 static int sk_strcmp(const OPENSSL_STRING *a, const OPENSSL_STRING *b);
@@ -690,7 +692,7 @@ static int equal_nocase(const unsigned char *pattern, size_t pattern_len,
     return 1;
 }
 
-/* Compare using memcmp. */
+/* Compare using OPENSSL_memcmp. */
 static int equal_case(const unsigned char *pattern, size_t pattern_len,
                       const unsigned char *subject, size_t subject_len,
                       unsigned int flags)
@@ -698,7 +700,7 @@ static int equal_case(const unsigned char *pattern, size_t pattern_len,
     skip_prefix(&pattern, &pattern_len, subject, subject_len, flags);
     if (pattern_len != subject_len)
         return 0;
-    return !memcmp(pattern, subject, pattern_len);
+    return !OPENSSL_memcmp(pattern, subject, pattern_len);
 }
 
 /*
@@ -822,32 +824,16 @@ static const unsigned char *valid_star(const unsigned char *p, size_t len,
                 return NULL;
             star = &p[i];
             state &= ~LABEL_START;
-        } else if ((state & LABEL_START) != 0) {
-            /*
-             * At the start of a label, skip any "xn--" and
-             * remain in the LABEL_START state, but set the
-             * IDNA label state
-             */
-            if ((state & LABEL_IDNA) == 0 && len - i >= 4
-                && OPENSSL_strncasecmp((char *)&p[i], "xn--", 4) == 0) {
-                i += 3;
-                state |= LABEL_IDNA;
-                continue;
-            }
-            /* Labels must start with a letter or digit */
-            state &= ~LABEL_START;
-            if (('a' <= p[i] && p[i] <= 'z')
-                || ('A' <= p[i] && p[i] <= 'Z')
-                || ('0' <= p[i] && p[i] <= '9'))
-                continue;
-            return NULL;
         } else if (('a' <= p[i] && p[i] <= 'z')
                    || ('A' <= p[i] && p[i] <= 'Z')
                    || ('0' <= p[i] && p[i] <= '9')) {
-            state &= LABEL_IDNA;
-            continue;
+            if ((state & LABEL_START) != 0
+                && len - i >= 4
+                && OPENSSL_strncasecmp((char *)&p[i], "xn--", 4) == 0)
+                state |= LABEL_IDNA;
+            state &= ~(LABEL_HYPHEN | LABEL_START);
         } else if (p[i] == '.') {
-            if (state & (LABEL_HYPHEN | LABEL_START))
+            if ((state & (LABEL_HYPHEN | LABEL_START)) != 0)
                 return NULL;
             state = LABEL_START;
             ++dots;
@@ -909,7 +895,7 @@ static int do_check_string(ASN1_STRING *a, int cmp_type, equal_fn equal,
             return 0;
         if (cmp_type == V_ASN1_IA5STRING)
             rv = equal(a->data, a->length, (unsigned char *)b, blen, flags);
-        else if (a->length == (int)blen && !memcmp(a->data, b, blen))
+        else if (a->length == (int)blen && !OPENSSL_memcmp(a->data, b, blen))
             rv = 1;
         if (rv > 0 && peername)
             *peername = BUF_strndup((char *)a->data, a->length);
@@ -1014,7 +1000,7 @@ int X509_check_host(X509 *x, const char *chk, size_t chklen,
 {
     if (chk == NULL)
         return -2;
-    if (memchr(chk, '\0', chklen))
+    if (OPENSSL_memchr(chk, '\0', chklen))
         return -2;
     return do_x509_check(x, chk, chklen, flags, GEN_DNS, peername);
 }
@@ -1024,7 +1010,7 @@ int X509_check_email(X509 *x, const char *chk, size_t chklen,
 {
     if (chk == NULL)
         return -2;
-    if (memchr(chk, '\0', chklen))
+    if (OPENSSL_memchr(chk, '\0', chklen))
         return -2;
     return do_x509_check(x, chk, chklen, flags, GEN_EMAIL, NULL);
 }
@@ -1213,16 +1199,16 @@ static int ipv6_from_asc(unsigned char *v6, const char *in)
 
     if (v6stat.zero_pos >= 0) {
         /* Copy initial part */
-        memcpy(v6, v6stat.tmp, v6stat.zero_pos);
+        OPENSSL_memcpy(v6, v6stat.tmp, v6stat.zero_pos);
         /* Zero middle */
-        memset(v6 + v6stat.zero_pos, 0, 16 - v6stat.total);
+        OPENSSL_memset(v6 + v6stat.zero_pos, 0, 16 - v6stat.total);
         /* Copy final part */
         if (v6stat.total != v6stat.zero_pos)
-            memcpy(v6 + v6stat.zero_pos + 16 - v6stat.total,
-                   v6stat.tmp + v6stat.zero_pos,
-                   v6stat.total - v6stat.zero_pos);
+            OPENSSL_memcpy(v6 + v6stat.zero_pos + 16 - v6stat.total,
+                           v6stat.tmp + v6stat.zero_pos,
+                           v6stat.total - v6stat.zero_pos);
     } else
-        memcpy(v6, v6stat.tmp, 16);
+        OPENSSL_memcpy(v6, v6stat.tmp, 16);
 
     return 1;
 }

@@ -1,4 +1,4 @@
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM)
 .text	
 
 
@@ -18,13 +18,13 @@ _sha512_block_data_order:
 	orl	%r9d,%r10d
 	cmpl	$1342177792,%r10d
 	je	L$avx_shortcut
+	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-	movq	%rsp,%r11
 	shlq	$4,%rdx
 	subq	$128+32,%rsp
 	leaq	(%rsi,%rdx,8),%rdx
@@ -32,7 +32,7 @@ _sha512_block_data_order:
 	movq	%rdi,128+0(%rsp)
 	movq	%rsi,128+8(%rsp)
 	movq	%rdx,128+16(%rsp)
-	movq	%r11,128+24(%rsp)
+	movq	%rax,128+24(%rsp)
 L$prologue:
 
 	movq	0(%rdi),%rax
@@ -1697,13 +1697,13 @@ L$rounds_16_xx:
 	jb	L$loop
 
 	movq	128+24(%rsp),%rsi
-	movq	(%rsi),%r15
-	movq	8(%rsi),%r14
-	movq	16(%rsi),%r13
-	movq	24(%rsi),%r12
-	movq	32(%rsi),%rbp
-	movq	40(%rsi),%rbx
-	leaq	48(%rsi),%rsp
+	movq	-48(%rsi),%r15
+	movq	-40(%rsi),%r14
+	movq	-32(%rsi),%r13
+	movq	-24(%rsi),%r12
+	movq	-16(%rsi),%rbp
+	movq	-8(%rsi),%rbx
+	leaq	(%rsi),%rsp
 L$epilogue:
 	.byte	0xf3,0xc3
 
@@ -1798,13 +1798,13 @@ K512:
 .p2align	6
 sha512_block_data_order_xop:
 L$xop_shortcut:
+	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-	movq	%rsp,%r11
 	shlq	$4,%rdx
 	subq	$160,%rsp
 	leaq	(%rsi,%rdx,8),%rdx
@@ -1812,7 +1812,7 @@ L$xop_shortcut:
 	movq	%rdi,128+0(%rsp)
 	movq	%rsi,128+8(%rsp)
 	movq	%rdx,128+16(%rsp)
-	movq	%r11,128+24(%rsp)
+	movq	%rax,128+24(%rsp)
 L$prologue_xop:
 
 	vzeroupper
@@ -2867,13 +2867,13 @@ L$xop_00_47:
 
 	movq	128+24(%rsp),%rsi
 	vzeroupper
-	movq	(%rsi),%r15
-	movq	8(%rsi),%r14
-	movq	16(%rsi),%r13
-	movq	24(%rsi),%r12
-	movq	32(%rsi),%rbp
-	movq	40(%rsi),%rbx
-	leaq	48(%rsi),%rsp
+	movq	-48(%rsi),%r15
+	movq	-40(%rsi),%r14
+	movq	-32(%rsi),%r13
+	movq	-24(%rsi),%r12
+	movq	-16(%rsi),%rbp
+	movq	-8(%rsi),%rbx
+	leaq	(%rsi),%rsp
 L$epilogue_xop:
 	.byte	0xf3,0xc3
 
@@ -2881,13 +2881,13 @@ L$epilogue_xop:
 .p2align	6
 sha512_block_data_order_avx:
 L$avx_shortcut:
+	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-	movq	%rsp,%r11
 	shlq	$4,%rdx
 	subq	$160,%rsp
 	leaq	(%rsi,%rdx,8),%rdx
@@ -2895,7 +2895,7 @@ L$avx_shortcut:
 	movq	%rdi,128+0(%rsp)
 	movq	%rsi,128+8(%rsp)
 	movq	%rdx,128+16(%rsp)
-	movq	%r11,128+24(%rsp)
+	movq	%rax,128+24(%rsp)
 L$prologue_avx:
 
 	vzeroupper
@@ -4014,13 +4014,13 @@ L$avx_00_47:
 
 	movq	128+24(%rsp),%rsi
 	vzeroupper
-	movq	(%rsi),%r15
-	movq	8(%rsi),%r14
-	movq	16(%rsi),%r13
-	movq	24(%rsi),%r12
-	movq	32(%rsi),%rbp
-	movq	40(%rsi),%rbx
-	leaq	48(%rsi),%rsp
+	movq	-48(%rsi),%r15
+	movq	-40(%rsi),%r14
+	movq	-32(%rsi),%r13
+	movq	-24(%rsi),%r12
+	movq	-16(%rsi),%rbp
+	movq	-8(%rsi),%rbx
+	leaq	(%rsi),%rsp
 L$epilogue_avx:
 	.byte	0xf3,0xc3
 

@@ -91,6 +91,15 @@ extern "C" {
  * Note: the CPUID bits are pre-adjusted for the OSXSAVE bit and the YMM and XMM
  * bits in XCR0, so it is not necessary to check those. */
 extern uint32_t OPENSSL_ia32cap_P[4];
+
+#if defined(BORINGSSL_FIPS)
+const uint32_t *OPENSSL_ia32cap_get(void);
+#else
+static inline const uint32_t *OPENSSL_ia32cap_get(void) {
+  return OPENSSL_ia32cap_P;
+}
+#endif
+
 #endif
 
 #if defined(OPENSSL_ARM) || defined(OPENSSL_AARCH64)
@@ -147,7 +156,7 @@ static inline int CRYPTO_is_NEON_capable(void) {
 }
 
 static inline int CRYPTO_is_ARMv8_AES_capable(void) {
-#if defined(OPENSSL_STATIC_ARMCAP_AES)
+#if defined(OPENSSL_STATIC_ARMCAP_AES) || defined(__ARM_FEATURE_CRYPTO)
   return 1;
 #else
   return 0;
@@ -155,7 +164,7 @@ static inline int CRYPTO_is_ARMv8_AES_capable(void) {
 }
 
 static inline int CRYPTO_is_ARMv8_PMULL_capable(void) {
-#if defined(OPENSSL_STATIC_ARMCAP_PMULL)
+#if defined(OPENSSL_STATIC_ARMCAP_PMULL) || defined(__ARM_FEATURE_CRYPTO)
   return 1;
 #else
   return 0;
@@ -170,6 +179,8 @@ static inline int CRYPTO_is_ARMv8_PMULL_capable(void) {
 /* CRYPTO_is_PPC64LE_vcrypto_capable returns true iff the current CPU supports
  * the Vector.AES category of instructions. */
 int CRYPTO_is_PPC64LE_vcrypto_capable(void);
+
+extern unsigned long OPENSSL_ppc64le_hwcap2;
 
 #endif  /* OPENSSL_PPC64LE */
 

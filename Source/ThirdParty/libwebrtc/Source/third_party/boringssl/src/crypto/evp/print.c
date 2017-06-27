@@ -61,7 +61,7 @@
 #include <openssl/rsa.h>
 
 #include "../internal.h"
-#include "../rsa/internal.h"
+#include "../fipsmodule/rsa/internal.h"
 
 
 static int bn_print(BIO *bp, const char *number, const BIGNUM *num,
@@ -150,17 +150,6 @@ static int do_rsa_print(BIO *out, const RSA *rsa, int off,
     update_buflen(rsa->dmp1, &buf_len);
     update_buflen(rsa->dmq1, &buf_len);
     update_buflen(rsa->iqmp, &buf_len);
-
-    if (rsa->additional_primes != NULL) {
-      for (size_t i = 0;
-           i < sk_RSA_additional_prime_num(rsa->additional_primes); i++) {
-        const RSA_additional_prime *ap =
-            sk_RSA_additional_prime_value(rsa->additional_primes, i);
-        update_buflen(ap->prime, &buf_len);
-        update_buflen(ap->exp, &buf_len);
-        update_buflen(ap->coeff, &buf_len);
-      }
-    }
   }
 
   m = (uint8_t *)OPENSSL_malloc(buf_len + 10);
@@ -203,26 +192,6 @@ static int do_rsa_print(BIO *out, const RSA *rsa, int off,
         !bn_print(out, "exponent2:", rsa->dmq1, m, off) ||
         !bn_print(out, "coefficient:", rsa->iqmp, m, off)) {
       goto err;
-    }
-
-    if (rsa->additional_primes != NULL &&
-        sk_RSA_additional_prime_num(rsa->additional_primes) > 0) {
-      if (BIO_printf(out, "otherPrimeInfos:\n") <= 0) {
-        goto err;
-      }
-      for (size_t i = 0;
-           i < sk_RSA_additional_prime_num(rsa->additional_primes); i++) {
-        const RSA_additional_prime *ap =
-            sk_RSA_additional_prime_value(rsa->additional_primes, i);
-
-        if (BIO_printf(out, "otherPrimeInfo (prime %u):\n",
-                       (unsigned)(i + 3)) <= 0 ||
-            !bn_print(out, "prime:", ap->prime, m, off) ||
-            !bn_print(out, "exponent:", ap->exp, m, off) ||
-            !bn_print(out, "coeff:", ap->coeff, m, off)) {
-          goto err;
-        }
-      }
     }
   }
   ret = 1;

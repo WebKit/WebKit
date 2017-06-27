@@ -146,9 +146,7 @@ int X509_check_purpose(X509 *x, int id, int ca)
 {
     int idx;
     const X509_PURPOSE *pt;
-    if (!(x->ex_flags & EXFLAG_SET)) {
-        x509v3_cache_extensions(x);
-    }
+    x509v3_cache_extensions(x);
     if (id == -1)
         return 1;
     idx = X509_PURPOSE_get_by_id(id);
@@ -407,16 +405,6 @@ static void setup_crldp(X509 *x)
         setup_dp(x, sk_DIST_POINT_value(x->crldp, i));
 }
 
-/*
- * g_x509_cache_extensions_lock is used to protect against concurrent calls
- * to |x509v3_cache_extensions|. Ideally this would be done with a
- * |CRYPTO_once_t| in the |X509| structure, but |CRYPTO_once_t| isn't public.
- * Note: it's not entirely clear whether this lock is needed. Not all paths to
- * this function took a lock in OpenSSL.
- */
-static struct CRYPTO_STATIC_MUTEX g_x509_cache_extensions_lock =
-    CRYPTO_STATIC_MUTEX_INIT;
-
 static void x509v3_cache_extensions(X509 *x)
 {
     BASIC_CONSTRAINTS *bs;
@@ -428,10 +416,17 @@ static void x509v3_cache_extensions(X509 *x)
     size_t i;
     int j;
 
-    CRYPTO_STATIC_MUTEX_lock_write(&g_x509_cache_extensions_lock);
+    CRYPTO_MUTEX_lock_read(&x->lock);
+    const int is_set = x->ex_flags & EXFLAG_SET;
+    CRYPTO_MUTEX_unlock_read(&x->lock);
 
+    if (is_set) {
+        return;
+    }
+
+    CRYPTO_MUTEX_lock_write(&x->lock);
     if (x->ex_flags & EXFLAG_SET) {
-        CRYPTO_STATIC_MUTEX_unlock_write(&g_x509_cache_extensions_lock);
+        CRYPTO_MUTEX_unlock_write(&x->lock);
         return;
     }
 
@@ -564,7 +559,7 @@ static void x509v3_cache_extensions(X509 *x)
     }
     x->ex_flags |= EXFLAG_SET;
 
-    CRYPTO_STATIC_MUTEX_unlock_write(&g_x509_cache_extensions_lock);
+    CRYPTO_MUTEX_unlock_write(&x->lock);
 }
 
 /*
@@ -604,10 +599,7 @@ static int check_ca(const X509 *x)
 
 int X509_check_ca(X509 *x)
 {
-    if (!(x->ex_flags & EXFLAG_SET)) {
-        x509v3_cache_extensions(x);
-    }
-
+    x509v3_cache_extensions(x);
     return check_ca(x);
 }
 

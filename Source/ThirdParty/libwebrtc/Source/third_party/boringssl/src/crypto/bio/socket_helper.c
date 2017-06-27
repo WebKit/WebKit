@@ -33,6 +33,7 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #endif
 
 #include "internal.h"
+#include "../internal.h"
 
 
 int bio_ip_and_port_to_socket_and_addr(int *out_sock,
@@ -45,7 +46,7 @@ int bio_ip_and_port_to_socket_and_addr(int *out_sock,
 
   *out_sock = -1;
 
-  memset(&hint, 0, sizeof(hint));
+  OPENSSL_memset(&hint, 0, sizeof(hint));
   hint.ai_family = AF_UNSPEC;
   hint.ai_socktype = SOCK_STREAM;
 
@@ -62,8 +63,8 @@ int bio_ip_and_port_to_socket_and_addr(int *out_sock,
     if ((size_t) cur->ai_addrlen > sizeof(struct sockaddr_storage)) {
       continue;
     }
-    memset(out_addr, 0, sizeof(struct sockaddr_storage));
-    memcpy(out_addr, cur->ai_addr, cur->ai_addrlen);
+    OPENSSL_memset(out_addr, 0, sizeof(struct sockaddr_storage));
+    OPENSSL_memcpy(out_addr, cur->ai_addr, cur->ai_addrlen);
     *out_addr_length = cur->ai_addrlen;
 
     *out_sock = socket(cur->ai_family, cur->ai_socktype, cur->ai_protocol);

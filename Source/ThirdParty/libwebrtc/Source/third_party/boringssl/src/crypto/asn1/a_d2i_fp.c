@@ -140,6 +140,21 @@ void *ASN1_item_d2i_fp(const ASN1_ITEM *it, FILE *in, void *x)
 }
 #endif
 
+typedef struct asn1_const_ctx_st
+    {
+    const unsigned char *p;/* work char pointer */
+    int eos;    /* end of sequence read for indefinite encoding */
+    int error;  /* error code to use when returning an error */
+    int inf;    /* constructed if 0x20, indefinite is 0x21 */
+    int tag;    /* tag from last 'get object' */
+    int xclass; /* class from last 'get object' */
+    long slen;  /* length of last 'get object' */
+    const unsigned char *max; /* largest value of p allowed */
+    const unsigned char *q;/* temporary variable */
+    const unsigned char **pp;/* variable */
+    int line;   /* used in error processing */
+    } ASN1_const_CTX;
+
 #define HEADER_SIZE   8
 #define ASN1_CHUNK_INITIAL_SIZE (16 * 1024)
 static int asn1_d2i_read_bio(BIO *in, BUF_MEM **pb)

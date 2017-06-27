@@ -65,6 +65,8 @@
 #include <openssl/x509v3.h>
 
 #include "vpm_int.h"
+#include "../internal.h"
+
 
 /* X509_VERIFY_PARAM functions */
 
@@ -92,7 +94,7 @@ static int int_x509_param_set_hosts(X509_VERIFY_PARAM_ID *id, int mode,
      * Refuse names with embedded NUL bytes.
      * XXX: Do we need to push an error onto the error stack?
      */
-    if (name && memchr(name, '\0', namelen))
+    if (name && OPENSSL_memchr(name, '\0', namelen))
         return 0;
 
     if (mode == SET_HOST && id->hosts) {
@@ -176,8 +178,8 @@ X509_VERIFY_PARAM *X509_VERIFY_PARAM_new(void)
         OPENSSL_free(param);
         return NULL;
     }
-    memset(param, 0, sizeof(X509_VERIFY_PARAM));
-    memset(paramid, 0, sizeof(X509_VERIFY_PARAM_ID));
+    OPENSSL_memset(param, 0, sizeof(X509_VERIFY_PARAM));
+    OPENSSL_memset(paramid, 0, sizeof(X509_VERIFY_PARAM_ID));
     param->id = paramid;
     x509_verify_param_zero(param);
     return param;

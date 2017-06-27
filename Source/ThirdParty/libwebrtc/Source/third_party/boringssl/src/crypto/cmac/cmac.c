@@ -55,6 +55,8 @@
 #include <openssl/cipher.h>
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
 
 struct cmac_ctx_st {
   EVP_CIPHER_CTX cipher_ctx;
@@ -176,7 +178,7 @@ int CMAC_Update(CMAC_CTX *ctx, const uint8_t *in, size_t in_len) {
       todo = in_len;
     }
 
-    memcpy(ctx->block + ctx->block_used, in, todo);
+    OPENSSL_memcpy(ctx->block + ctx->block_used, in, todo);
     in += todo;
     in_len -= todo;
     ctx->block_used += todo;
@@ -206,7 +208,7 @@ int CMAC_Update(CMAC_CTX *ctx, const uint8_t *in, size_t in_len) {
     in_len -= AES_BLOCK_SIZE;
   }
 
-  memcpy(ctx->block, in, in_len);
+  OPENSSL_memcpy(ctx->block, in, in_len);
   ctx->block_used = in_len;
 
   return 1;
@@ -224,8 +226,8 @@ int CMAC_Final(CMAC_CTX *ctx, uint8_t *out, size_t *out_len) {
     /* If the last block is incomplete, terminate it with a single 'one' bit
      * followed by zeros. */
     ctx->block[ctx->block_used] = 0x80;
-    memset(ctx->block + ctx->block_used + 1, 0,
-           AES_BLOCK_SIZE - (ctx->block_used + 1));
+    OPENSSL_memset(ctx->block + ctx->block_used + 1, 0,
+                   AES_BLOCK_SIZE - (ctx->block_used + 1));
 
     mask = ctx->k2;
   }

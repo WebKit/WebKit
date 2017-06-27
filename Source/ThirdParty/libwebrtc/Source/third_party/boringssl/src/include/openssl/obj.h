@@ -135,7 +135,7 @@ OPENSSL_EXPORT int OBJ_nid2cbb(CBB *out, int nid);
 
 /* Dealing with textual representations of object identifiers. */
 
-/* OBJ_txt2obj returns an ASN1_OBJECT for the textual respresentation in |s|.
+/* OBJ_txt2obj returns an ASN1_OBJECT for the textual representation in |s|.
  * If |dont_search_names| is zero, then |s| will be matched against the long
  * and short names of a known objects to find a match. Otherwise |s| must
  * contain an ASCII string with a dotted sequence of numbers. The resulting

@@ -16,84 +16,118 @@
 
 #include <stdio.h>
 
+#if !defined(OPENSSL_WINDOWS)
+#include <sys/select.h>
+#else
+OPENSSL_MSVC_PRAGMA(warning(push, 3))
+#include <winsock2.h>
+OPENSSL_MSVC_PRAGMA(warning(pop))
+#endif
+
 #include <openssl/err.h>
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
 
+#include "../crypto/internal.h"
 #include "internal.h"
 #include "transport_common.h"
 
 
 static const struct argument kArguments[] = {
     {
-     "-connect", kRequiredArgument,
-     "The hostname and port of the server to connect to, e.g. foo.com:443",
+        "-connect", kRequiredArgument,
+        "The hostname and port of the server to connect to, e.g. foo.com:443",
     },
     {
-     "-cipher", kOptionalArgument,
-     "An OpenSSL-style cipher suite string that configures the offered ciphers",
+        "-cipher", kOptionalArgument,
+        "An OpenSSL-style cipher suite string that configures the offered "
+        "ciphers",
     },
     {
-     "-max-version", kOptionalArgument,
-     "The maximum acceptable protocol version",
+        "-curves", kOptionalArgument,
+        "An OpenSSL-style ECDH curves list that configures the offered curves",
     },
     {
-     "-min-version", kOptionalArgument,
-     "The minimum acceptable protocol version",
+        "-max-version", kOptionalArgument,
+        "The maximum acceptable protocol version",
     },
     {
-     "-server-name", kOptionalArgument,
-     "The server name to advertise",
+        "-min-version", kOptionalArgument,
+        "The minimum acceptable protocol version",
     },
     {
-     "-select-next-proto", kOptionalArgument,
-     "An NPN protocol to select if the server supports NPN",
+        "-server-name", kOptionalArgument, "The server name to advertise",
     },
     {
-     "-alpn-protos", kOptionalArgument,
-     "A comma-separated list of ALPN protocols to advertise",
+        "-select-next-proto", kOptionalArgument,
+        "An NPN protocol to select if the server supports NPN",
     },
     {
-     "-fallback-scsv", kBooleanArgument,
-     "Enable FALLBACK_SCSV",
+        "-alpn-protos", kOptionalArgument,
+        "A comma-separated list of ALPN protocols to advertise",
     },
     {
-     "-ocsp-stapling", kBooleanArgument,
-     "Advertise support for OCSP stabling",
+        "-fallback-scsv", kBooleanArgument, "Enable FALLBACK_SCSV",
     },
     {
-     "-signed-certificate-timestamps", kBooleanArgument,
-     "Advertise support for signed certificate timestamps",
+        "-ocsp-stapling", kBooleanArgument,
+        "Advertise support for OCSP stabling",
     },
     {
-     "-channel-id-key", kOptionalArgument,
-     "The key to use for signing a channel ID",
+        "-signed-certificate-timestamps", kBooleanArgument,
+        "Advertise support for signed certificate timestamps",
     },
     {
-     "-false-start", kBooleanArgument,
-     "Enable False Start",
-    },
-    { "-session-in", kOptionalArgument,
-      "A file containing a session to resume.",
-    },
-    { "-session-out", kOptionalArgument,
-      "A file to write the negotiated session to.",
+        "-channel-id-key", kOptionalArgument,
+        "The key to use for signing a channel ID",
     },
     {
-      "-key", kOptionalArgument,
-      "Private-key file to use (default is no client certificate)",
+        "-false-start", kBooleanArgument, "Enable False Start",
     },
     {
-      "-starttls", kOptionalArgument,
-      "A STARTTLS mini-protocol to run before the TLS handshake. Supported"
-      " values: 'smtp'",
+        "-session-in", kOptionalArgument,
+        "A file containing a session to resume.",
     },
     {
-     "-grease", kBooleanArgument,
-     "Enable GREASE",
+        "-session-out", kOptionalArgument,
+        "A file to write the negotiated session to.",
     },
     {
-     "", kOptionalArgument, "",
+        "-key", kOptionalArgument,
+        "PEM-encoded file containing the private key.",
+    },
+    {
+        "-cert", kOptionalArgument,
+        "PEM-encoded file containing the leaf certificate and optional "
+        "certificate chain. This is taken from the -key argument if this "
+        "argument is not provided.",
+    },
+    {
+        "-starttls", kOptionalArgument,
+        "A STARTTLS mini-protocol to run before the TLS handshake. Supported"
+        " values: 'smtp'",
+    },
+    {
+        "-grease", kBooleanArgument, "Enable GREASE",
+    },
+    {
+        "-test-resumption", kBooleanArgument,
+        "Connect to the server twice. The first connection is closed once a "
+        "session is established. The second connection offers it.",
+    },
+    {
+        "-root-certs", kOptionalArgument,
+        "A filename containing one of more PEM root certificates. Implies that "
+        "verification is required.",
+    },
+    {
+        "-early-data", kBooleanArgument, "Allow early data",
+    },
+    {
+        "-ed25519", kBooleanArgument, "Advertise Ed25519 support",
+    },
+    {
+        "", kOptionalArgument, "",
     },
 };
 
@@ -122,6 +156,7 @@ static void KeyLogCallback(const SSL *ssl, const char *line) {
 }
 
 static bssl::UniquePtr<BIO> session_out;
+static bssl::UniquePtr<SSL_SESSION> resume_session;
 
 static int NewSessionCallback(SSL *ssl, SSL_SESSION *session) {
   if (session_out) {
@@ -132,8 +167,107 @@ static int NewSessionCallback(SSL *ssl, SSL_SESSION *session) {
       return 0;
     }
   }
+  resume_session = bssl::UniquePtr<SSL_SESSION>(session);
+  return 1;
+}
 
-  return 0;
+static bool WaitForSession(SSL *ssl, int sock) {
+  fd_set read_fds;
+  FD_ZERO(&read_fds);
+
+  if (!SocketSetNonBlocking(sock, true)) {
+    return false;
+  }
+
+  while (!resume_session) {
+    FD_SET(sock, &read_fds);
+    int ret = select(sock + 1, &read_fds, NULL, NULL, NULL);
+    if (ret <= 0) {
+      perror("select");
+      return false;
+    }
+
+    uint8_t buffer[512];
+    int ssl_ret = SSL_read(ssl, buffer, sizeof(buffer));
+
+    if (ssl_ret <= 0) {
+      int ssl_err = SSL_get_error(ssl, ssl_ret);
+      if (ssl_err == SSL_ERROR_WANT_READ) {
+        continue;
+      }
+      fprintf(stderr, "Error while reading: %d\n", ssl_err);
+      ERR_print_errors_cb(PrintErrorCallback, stderr);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static bool DoConnection(SSL_CTX *ctx,
+                         std::map<std::string, std::string> args_map,
+                         bool (*cb)(SSL *ssl, int sock)) {
+  int sock = -1;
+  if (!Connect(&sock, args_map["-connect"])) {
+    return false;
+  }
+
+  if (args_map.count("-starttls") != 0) {
+    const std::string& starttls = args_map["-starttls"];
+    if (starttls == "smtp") {
+      if (!DoSMTPStartTLS(sock)) {
+        return false;
+      }
+    } else {
+      fprintf(stderr, "Unknown value for -starttls: %s\n", starttls.c_str());
+      return false;
+    }
+  }
+
+  bssl::UniquePtr<BIO> bio(BIO_new_socket(sock, BIO_CLOSE));
+  bssl::UniquePtr<SSL> ssl(SSL_new(ctx));
+
+  if (args_map.count("-server-name") != 0) {
+    SSL_set_tlsext_host_name(ssl.get(), args_map["-server-name"].c_str());
+  }
+
+  if (args_map.count("-session-in") != 0) {
+    bssl::UniquePtr<BIO> in(BIO_new_file(args_map["-session-in"].c_str(),
+                                         "rb"));
+    if (!in) {
+      fprintf(stderr, "Error reading session\n");
+      ERR_print_errors_cb(PrintErrorCallback, stderr);
+      return false;
+    }
+    bssl::UniquePtr<SSL_SESSION> session(PEM_read_bio_SSL_SESSION(in.get(),
+                                         nullptr, nullptr, nullptr));
+    if (!session) {
+      fprintf(stderr, "Error reading session\n");
+      ERR_print_errors_cb(PrintErrorCallback, stderr);
+      return false;
+    }
+    SSL_set_session(ssl.get(), session.get());
+  }
+
+  if (resume_session) {
+    SSL_set_session(ssl.get(), resume_session.get());
+  }
+
+  SSL_set_bio(ssl.get(), bio.get(), bio.get());
+  bio.release();
+
+  int ret = SSL_connect(ssl.get());
+  if (ret != 1) {
+    int ssl_err = SSL_get_error(ssl.get(), ret);
+    fprintf(stderr, "Error while connecting: %d\n", ssl_err);
+    ERR_print_errors_cb(PrintErrorCallback, stderr);
+    return false;
+  }
+
+  fprintf(stderr, "Connected.\n");
+  PrintConnectionInfo(ssl.get());
+
+  return cb(ssl.get(), sock);
 }
 
 bool Client(const std::vector<std::string> &args) {
@@ -161,21 +295,27 @@ bool Client(const std::vector<std::string> &args) {
   }
 
   if (args_map.count("-cipher") != 0 &&
-      !SSL_CTX_set_cipher_list(ctx.get(), args_map["-cipher"].c_str())) {
+      !SSL_CTX_set_strict_cipher_list(ctx.get(), args_map["-cipher"].c_str())) {
     fprintf(stderr, "Failed setting cipher list\n");
     return false;
   }
 
-  if (args_map.count("-max-version") != 0) {
-    uint16_t version;
-    if (!VersionFromString(&version, args_map["-max-version"])) {
-      fprintf(stderr, "Unknown protocol version: '%s'\n",
-              args_map["-max-version"].c_str());
-      return false;
-    }
-    if (!SSL_CTX_set_max_proto_version(ctx.get(), version)) {
-      return false;
-    }
+  if (args_map.count("-curves") != 0 &&
+      !SSL_CTX_set1_curves_list(ctx.get(), args_map["-curves"].c_str())) {
+    fprintf(stderr, "Failed setting curves list\n");
+    return false;
+  }
+
+  uint16_t max_version = TLS1_3_VERSION;
+  if (args_map.count("-max-version") != 0 &&
+      !VersionFromString(&max_version, args_map["-max-version"])) {
+    fprintf(stderr, "Unknown protocol version: '%s'\n",
+            args_map["-max-version"].c_str());
+    return false;
+  }
+
+  if (!SSL_CTX_set_max_proto_version(ctx.get(), max_version)) {
+    return false;
   }
 
   if (args_map.count("-min-version") != 0) {
@@ -217,7 +357,8 @@ bool Client(const std::vector<std::string> &args) {
       }
       wire.push_back(static_cast<uint8_t>(len));
       wire.resize(wire.size() + len);
-      memcpy(wire.data() + wire.size() - len, alpn_protos.data() + i, len);
+      OPENSSL_memcpy(wire.data() + wire.size() - len, alpn_protos.data() + i,
+                     len);
       i = j + 1;
     }
     if (SSL_CTX_set_alpn_protos(ctx.get(), wire.data(), wire.size()) != 0) {
@@ -251,15 +392,21 @@ bool Client(const std::vector<std::string> &args) {
 
   if (args_map.count("-key") != 0) {
     const std::string &key = args_map["-key"];
-    if (!SSL_CTX_use_PrivateKey_file(ctx.get(), key.c_str(), SSL_FILETYPE_PEM)) {
+    if (!SSL_CTX_use_PrivateKey_file(ctx.get(), key.c_str(),
+                                     SSL_FILETYPE_PEM)) {
       fprintf(stderr, "Failed to load private key: %s\n", key.c_str());
       return false;
     }
-    if (!SSL_CTX_use_certificate_chain_file(ctx.get(), key.c_str())) {
-      fprintf(stderr, "Failed to load cert chain: %s\n", key.c_str());
+    const std::string &cert =
+        args_map.count("-cert") != 0 ? args_map["-cert"] : key;
+    if (!SSL_CTX_use_certificate_chain_file(ctx.get(), cert.c_str())) {
+      fprintf(stderr, "Failed to load cert chain: %s\n", cert.c_str());
       return false;
     }
   }
+
+  SSL_CTX_set_session_cache_mode(ctx.get(), SSL_SESS_CACHE_CLIENT);
+  SSL_CTX_sess_set_new_cb(ctx.get(), NewSessionCallback);
 
   if (args_map.count("-session-out") != 0) {
     session_out.reset(BIO_new_file(args_map["-session-out"].c_str(), "wb"));
@@ -269,71 +416,41 @@ bool Client(const std::vector<std::string> &args) {
       ERR_print_errors_cb(PrintErrorCallback, stderr);
       return false;
     }
-    SSL_CTX_set_session_cache_mode(ctx.get(), SSL_SESS_CACHE_CLIENT);
-    SSL_CTX_sess_set_new_cb(ctx.get(), NewSessionCallback);
   }
 
   if (args_map.count("-grease") != 0) {
     SSL_CTX_set_grease_enabled(ctx.get(), 1);
   }
 
-  int sock = -1;
-  if (!Connect(&sock, args_map["-connect"])) {
-    return false;
-  }
-
-  if (args_map.count("-starttls") != 0) {
-    const std::string& starttls = args_map["-starttls"];
-    if (starttls == "smtp") {
-      if (!DoSMTPStartTLS(sock)) {
-        return false;
-      }
-    } else {
-      fprintf(stderr, "Unknown value for -starttls: %s\n", starttls.c_str());
-      return false;
-    }
-  }
-
-  bssl::UniquePtr<BIO> bio(BIO_new_socket(sock, BIO_CLOSE));
-  bssl::UniquePtr<SSL> ssl(SSL_new(ctx.get()));
-
-  if (args_map.count("-server-name") != 0) {
-    SSL_set_tlsext_host_name(ssl.get(), args_map["-server-name"].c_str());
-  }
-
-  if (args_map.count("-session-in") != 0) {
-    bssl::UniquePtr<BIO> in(BIO_new_file(args_map["-session-in"].c_str(),
-                                         "rb"));
-    if (!in) {
-      fprintf(stderr, "Error reading session\n");
+  if (args_map.count("-root-certs") != 0) {
+    if (!SSL_CTX_load_verify_locations(
+            ctx.get(), args_map["-root-certs"].c_str(), nullptr)) {
+      fprintf(stderr, "Failed to load root certificates.\n");
       ERR_print_errors_cb(PrintErrorCallback, stderr);
       return false;
     }
-    bssl::UniquePtr<SSL_SESSION> session(PEM_read_bio_SSL_SESSION(in.get(),
-                                         nullptr, nullptr, nullptr));
-    if (!session) {
-      fprintf(stderr, "Error reading session\n");
-      ERR_print_errors_cb(PrintErrorCallback, stderr);
+    SSL_CTX_set_verify(ctx.get(), SSL_VERIFY_PEER, nullptr);
+  }
+
+  if (args_map.count("-early-data") != 0) {
+    SSL_CTX_set_early_data_enabled(ctx.get(), 1);
+  }
+
+  if (args_map.count("-ed25519") != 0) {
+    SSL_CTX_set_ed25519_enabled(ctx.get(), 1);
+  }
+
+  if (args_map.count("-test-resumption") != 0) {
+    if (args_map.count("-session-in") != 0) {
+      fprintf(stderr,
+              "Flags -session-in and -test-resumption are incompatible.\n");
       return false;
     }
-    SSL_set_session(ssl.get(), session.get());
+
+    if (!DoConnection(ctx.get(), args_map, &WaitForSession)) {
+      return false;
+    }
   }
 
-  SSL_set_bio(ssl.get(), bio.get(), bio.get());
-  bio.release();
-
-  int ret = SSL_connect(ssl.get());
-  if (ret != 1) {
-    int ssl_err = SSL_get_error(ssl.get(), ret);
-    fprintf(stderr, "Error while connecting: %d\n", ssl_err);
-    ERR_print_errors_cb(PrintErrorCallback, stderr);
-    return false;
-  }
-
-  fprintf(stderr, "Connected.\n");
-  PrintConnectionInfo(ssl.get());
-
-  bool ok = TransferData(ssl.get(), sock);
-
-  return ok;
+  return DoConnection(ctx.get(), args_map, &TransferData);
 }

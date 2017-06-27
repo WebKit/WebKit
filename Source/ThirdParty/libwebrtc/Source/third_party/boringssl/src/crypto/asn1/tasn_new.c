@@ -63,6 +63,9 @@
 #include <openssl/mem.h>
 #include <openssl/obj.h>
 
+#include "../internal.h"
+
+
 static int asn1_item_ex_combine_new(ASN1_VALUE **pval, const ASN1_ITEM *it,
                                     int combine);
 static void asn1_item_clear(ASN1_VALUE **pval, const ASN1_ITEM *it);
@@ -153,11 +156,11 @@ static int asn1_item_ex_combine_new(ASN1_VALUE **pval, const ASN1_ITEM *it,
             *pval = OPENSSL_malloc(it->size);
             if (!*pval)
                 goto memerr;
-            memset(*pval, 0, it->size);
+            OPENSSL_memset(*pval, 0, it->size);
         }
         asn1_set_choice_selector(pval, -1, it);
         if (asn1_cb && !asn1_cb(ASN1_OP_NEW_POST, pval, it, NULL))
-            goto auxerr;
+            goto auxerr2;
         break;
 
     case ASN1_ITYPE_NDEF_SEQUENCE:
@@ -178,17 +181,17 @@ static int asn1_item_ex_combine_new(ASN1_VALUE **pval, const ASN1_ITEM *it,
             *pval = OPENSSL_malloc(it->size);
             if (!*pval)
                 goto memerr;
-            memset(*pval, 0, it->size);
+            OPENSSL_memset(*pval, 0, it->size);
             asn1_refcount_set_one(pval, it);
             asn1_enc_init(pval, it);
         }
         for (i = 0, tt = it->templates; i < it->tcount; tt++, i++) {
             pseqval = asn1_get_field_ptr(pval, tt);
             if (!ASN1_template_new(pseqval, tt))
-                goto memerr;
+                goto memerr2;
         }
         if (asn1_cb && !asn1_cb(ASN1_OP_NEW_POST, pval, it, NULL))
-            goto auxerr;
+            goto auxerr2;
         break;
     }
 #ifdef CRYPTO_MDEBUG
@@ -197,18 +200,20 @@ static int asn1_item_ex_combine_new(ASN1_VALUE **pval, const ASN1_ITEM *it,
 #endif
     return 1;
 
+ memerr2:
+    ASN1_item_ex_free(pval, it);
  memerr:
     OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
-    ASN1_item_ex_free(pval, it);
 #ifdef CRYPTO_MDEBUG
     if (it->sname)
         CRYPTO_pop_info();
 #endif
     return 0;
 
+ auxerr2:
+    ASN1_item_ex_free(pval, it);
  auxerr:
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_AUX_ERROR);
-    ASN1_item_ex_free(pval, it);
 #ifdef CRYPTO_MDEBUG
     if (it->sname)
         CRYPTO_pop_info();

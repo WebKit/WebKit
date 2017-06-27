@@ -34,7 +34,7 @@ static int CRYPTO_BUFFER_cmp(const CRYPTO_BUFFER *a, const CRYPTO_BUFFER *b) {
   if (a->len != b->len) {
     return 1;
   }
-  return memcmp(a->data, b->data, a->len);
+  return OPENSSL_memcmp(a->data, b->data, a->len);
 }
 
 CRYPTO_BUFFER_POOL* CRYPTO_BUFFER_POOL_new(void) {
@@ -43,7 +43,7 @@ CRYPTO_BUFFER_POOL* CRYPTO_BUFFER_POOL_new(void) {
     return NULL;
   }
 
-  memset(pool, 0, sizeof(CRYPTO_BUFFER_POOL));
+  OPENSSL_memset(pool, 0, sizeof(CRYPTO_BUFFER_POOL));
   pool->bufs = lh_CRYPTO_BUFFER_new(CRYPTO_BUFFER_hash, CRYPTO_BUFFER_cmp);
   if (pool->bufs == NULL) {
     OPENSSL_free(pool);
@@ -95,7 +95,7 @@ CRYPTO_BUFFER *CRYPTO_BUFFER_new(const uint8_t *data, size_t len,
   if (buf == NULL) {
     return NULL;
   }
-  memset(buf, 0, sizeof(CRYPTO_BUFFER));
+  OPENSSL_memset(buf, 0, sizeof(CRYPTO_BUFFER));
 
   buf->data = BUF_memdup(data, len);
   if (len != 0 && buf->data == NULL) {

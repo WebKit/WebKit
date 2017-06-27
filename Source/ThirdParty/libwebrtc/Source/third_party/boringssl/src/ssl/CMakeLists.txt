@@ -3,17 +3,17 @@ include_directories(../include)
 add_library(
   ssl
 
+  bio_ssl.c
   custom_extensions.c
-  handshake_server.c
-  handshake_client.c
   d1_both.c
   d1_lib.c
   d1_pkt.c
   d1_srtp.c
   dtls_method.c
   dtls_record.c
+  handshake_client.c
+  handshake_server.c
   s3_both.c
-  s3_enc.c
   s3_lib.c
   s3_pkt.c
   ssl_aead_ctx.c
@@ -24,9 +24,12 @@ add_library(
   ssl_ecdh.c
   ssl_file.c
   ssl_lib.c
-  ssl_rsa.c
+  ssl_privkey.c
+  ssl_privkey_cc.cc
   ssl_session.c
   ssl_stat.c
+  ssl_transcript.c
+  ssl_x509.c
   t1_enc.c
   t1_lib.c
   tls_method.c
@@ -44,8 +47,12 @@ add_executable(
 
   ssl_test.cc
 
+  $<TARGET_OBJECTS:gtest_main>
   $<TARGET_OBJECTS:test_support>
 )
 
-target_link_libraries(ssl_test ssl crypto)
+target_link_libraries(ssl_test ssl crypto gtest)
+if (WIN32)
+  target_link_libraries(ssl_test ws2_32)
+endif()
 add_dependencies(all_tests ssl_test)

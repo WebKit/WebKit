@@ -71,7 +71,7 @@ extern "C" {
 #endif
 
 
-/* DSA contains functions for signing and verifing with the Digital Signature
+/* DSA contains functions for signing and verifying with the Digital Signature
  * Algorithm. */
 
 
@@ -296,7 +296,7 @@ OPENSSL_EXPORT DH *DSA_dup_DH(const DSA *dsa);
 
 OPENSSL_EXPORT int DSA_get_ex_new_index(long argl, void *argp,
                                         CRYPTO_EX_unused *unused,
-                                        CRYPTO_EX_dup *dup_func,
+                                        CRYPTO_EX_dup *dup_unused,
                                         CRYPTO_EX_free *free_func);
 OPENSSL_EXPORT int DSA_set_ex_data(DSA *d, int idx, void *arg);
 OPENSSL_EXPORT void *DSA_get_ex_data(const DSA *d, int idx);
@@ -351,10 +351,10 @@ OPENSSL_EXPORT int i2d_DSAPublicKey(const DSA *in, uint8_t **outp);
  * Use |DSA_parse_private_key| instead. */
 OPENSSL_EXPORT DSA *d2i_DSAPrivateKey(DSA **out, const uint8_t **inp, long len);
 
-/* i2d_DSAPrivateKey marshals a private key from |in| to an ASN.1, DER structure.
- * If |outp| is not NULL then the result is written to |*outp| and |*outp| is
- * advanced just past the output. It returns the number of bytes in the result,
- * whether written or not, or a negative value on error.
+/* i2d_DSAPrivateKey marshals a private key from |in| to an ASN.1, DER
+ * structure. If |outp| is not NULL then the result is written to |*outp| and
+ * |*outp| is advanced just past the output. It returns the number of bytes in
+ * the result, whether written or not, or a negative value on error.
  *
  * Use |DSA_marshal_private_key| instead. */
 OPENSSL_EXPORT int i2d_DSAPrivateKey(const DSA *in, uint8_t **outp);

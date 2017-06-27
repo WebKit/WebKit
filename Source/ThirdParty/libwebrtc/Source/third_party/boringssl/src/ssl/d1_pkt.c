@@ -122,6 +122,7 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
+#include "../crypto/internal.h"
 #include "internal.h"
 
 
@@ -141,7 +142,11 @@ again:
   if (ssl_read_buffer_len(ssl) == 0) {
     int read_ret = ssl_read_buffer_extend_to(ssl, 0 /* unused */);
     if (read_ret < 0 && dtls1_is_timer_expired(ssl)) {
-      /* For blocking BIOs, retransmits must be handled internally. */
+      /* Historically, timeouts were handled implicitly if the caller did not
+       * handle them.
+       *
+       * TODO(davidben): This was to support blocking sockets but affected
+       * non-blocking sockets. Can it be removed? */
       int timeout_ret = DTLSv1_handle_timeout(ssl);
       if (timeout_ret <= 0) {
         return timeout_ret;
@@ -265,7 +270,7 @@ again:
     len = rr->length;
   }
 
-  memcpy(buf, rr->data, len);
+  OPENSSL_memcpy(buf, rr->data, len);
   if (!peek) {
     /* TODO(davidben): Should the record be truncated instead? This is a
      * datagram transport. See https://crbug.com/boringssl/65. */
@@ -330,7 +335,7 @@ void dtls1_read_close_notify(SSL *ssl) {
   }
 }
 
-int dtls1_write_app_data(SSL *ssl, const void *buf_, int len) {
+int dtls1_write_app_data(SSL *ssl, const uint8_t *buf, int len) {
   assert(!SSL_in_init(ssl));
 
   if (len > SSL3_RT_MAX_PLAIN_LENGTH) {
@@ -347,7 +352,7 @@ int dtls1_write_app_data(SSL *ssl, const void *buf_, int len) {
     return 0;
   }
 
-  int ret = dtls1_write_record(ssl, SSL3_RT_APPLICATION_DATA, buf_, (size_t)len,
+  int ret = dtls1_write_record(ssl, SSL3_RT_APPLICATION_DATA, buf, (size_t)len,
                                dtls1_use_current_epoch);
   if (ret <= 0) {
     return ret;
@@ -363,21 +368,12 @@ int dtls1_write_record(SSL *ssl, int type, const uint8_t *buf, size_t len,
    * |ssl_write_buffer_flush|. */
   assert(!ssl_write_buffer_is_pending(ssl));
 
-  /* If we have an alert to send, lets send it */
-  if (ssl->s3->alert_dispatch) {
-    int ret = ssl->method->dispatch_alert(ssl);
-    if (ret <= 0) {
-      return ret;
-    }
-    /* if it went, fall through and send more stuff */
-  }
-
   if (len > SSL3_RT_MAX_PLAIN_LENGTH) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return -1;
   }
 
-  size_t max_out = len + ssl_max_seal_overhead(ssl);
+  size_t max_out = len + SSL_max_seal_overhead(ssl);
   uint8_t *out;
   size_t ciphertext_len;
   if (!ssl_write_buffer_init(ssl, &out, max_out) ||
@@ -396,13 +392,12 @@ int dtls1_write_record(SSL *ssl, int type, const uint8_t *buf, size_t len,
 }
 
 int dtls1_dispatch_alert(SSL *ssl) {
-  ssl->s3->alert_dispatch = 0;
   int ret = dtls1_write_record(ssl, SSL3_RT_ALERT, &ssl->s3->send_alert[0], 2,
                                dtls1_use_current_epoch);
   if (ret <= 0) {
-    ssl->s3->alert_dispatch = 1;
     return ret;
   }
+  ssl->s3->alert_dispatch = 0;
 
   /* If the alert is fatal, flush the BIO now. */
   if (ssl->s3->send_alert[0] == SSL3_AL_FATAL) {

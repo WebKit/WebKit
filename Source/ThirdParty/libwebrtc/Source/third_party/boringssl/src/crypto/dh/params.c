@@ -54,7 +54,7 @@
 
 #include <openssl/bn.h>
 
-#include "../bn/internal.h"
+#include "../fipsmodule/bn/internal.h"
 
 
 static const BN_ULONG dh1024_160_p[] = {

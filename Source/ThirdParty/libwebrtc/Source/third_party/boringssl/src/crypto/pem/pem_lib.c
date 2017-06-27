@@ -71,6 +71,9 @@
 #include <openssl/rand.h>
 #include <openssl/x509.h>
 
+#include "../internal.h"
+
+
 #define MIN_LENGTH      4
 
 static int load_iv(char **fromp, unsigned char *to, int num);
@@ -638,7 +641,7 @@ int PEM_read_bio(BIO *bp, char **name, char **header, unsigned char **data,
                 OPENSSL_PUT_ERROR(PEM, ERR_R_MALLOC_FAILURE);
                 goto err;
             }
-            memcpy(nameB->data, &(buf[11]), i - 6);
+            OPENSSL_memcpy(nameB->data, &(buf[11]), i - 6);
             nameB->data[i - 6] = '\0';
             break;
         }
@@ -669,7 +672,7 @@ int PEM_read_bio(BIO *bp, char **name, char **header, unsigned char **data,
             nohead = 1;
             break;
         }
-        memcpy(&(headerB->data[hl]), buf, i);
+        OPENSSL_memcpy(&(headerB->data[hl]), buf, i);
         headerB->data[hl + i] = '\0';
         hl += i;
     }
@@ -701,7 +704,7 @@ int PEM_read_bio(BIO *bp, char **name, char **header, unsigned char **data,
                 OPENSSL_PUT_ERROR(PEM, ERR_R_MALLOC_FAILURE);
                 goto err;
             }
-            memcpy(&(dataB->data[bl]), buf, i);
+            OPENSSL_memcpy(&(dataB->data[bl]), buf, i);
             dataB->data[bl + i] = '\0';
             bl += i;
             if (end) {

@@ -95,9 +95,9 @@ int RSA_verify_PKCS1_PSS(RSA *rsa, const uint8_t *mHash, const EVP_MD *Hash,
   return RSA_verify_PKCS1_PSS_mgf1(rsa, mHash, Hash, NULL, EM, sLen);
 }
 
-int RSA_padding_add_PKCS1_OAEP(uint8_t *to, unsigned to_len,
-                               const uint8_t *from, unsigned from_len,
-                               const uint8_t *param, unsigned param_len) {
+int RSA_padding_add_PKCS1_OAEP(uint8_t *to, size_t to_len,
+                               const uint8_t *from, size_t from_len,
+                               const uint8_t *param, size_t param_len) {
   return RSA_padding_add_PKCS1_OAEP_mgf1(to, to_len, from, from_len, param,
                                          param_len, NULL, NULL);
 }

@@ -62,6 +62,9 @@
 #include <openssl/asn1t.h>
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
+
 static int asn1_i2d_ex_primitive(ASN1_VALUE **pval, unsigned char **out,
                                  const ASN1_ITEM *it, int tag, int aclass);
 static int asn1_set_seq_out(STACK_OF(ASN1_VALUE) *sk, unsigned char **out,
@@ -415,7 +418,7 @@ static int der_cmp(const void *a, const void *b)
     const DER_ENC *d1 = a, *d2 = b;
     int cmplen, i;
     cmplen = (d1->length < d2->length) ? d1->length : d2->length;
-    i = memcmp(d1->data, d2->data, cmplen);
+    i = OPENSSL_memcmp(d1->data, d2->data, cmplen);
     if (i)
         return i;
     return d1->length - d2->length;
@@ -470,7 +473,7 @@ static int asn1_set_seq_out(STACK_OF(ASN1_VALUE) *sk, unsigned char **out,
     /* Output sorted DER encoding */
     p = *out;
     for (i = 0, tder = derlst; i < sk_ASN1_VALUE_num(sk); i++, tder++) {
-        memcpy(p, tder->data, tder->length);
+        OPENSSL_memcpy(p, tder->data, tder->length);
         p += tder->length;
     }
     *out = p;
@@ -660,6 +663,6 @@ int asn1_ex_i2c(ASN1_VALUE **pval, unsigned char *cout, int *putype,
 
     }
     if (cout && len)
-        memcpy(cout, cont, len);
+        OPENSSL_memcpy(cout, cont, len);
     return len;
 }

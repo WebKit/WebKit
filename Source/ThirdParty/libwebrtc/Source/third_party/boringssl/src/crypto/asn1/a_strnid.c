@@ -62,6 +62,9 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 #include <openssl/obj.h>
+#include <openssl/stack.h>
+
+DEFINE_STACK_OF(ASN1_STRING_TABLE)
 
 static STACK_OF(ASN1_STRING_TABLE) *stable = NULL;
 static void st_free(ASN1_STRING_TABLE *tbl);

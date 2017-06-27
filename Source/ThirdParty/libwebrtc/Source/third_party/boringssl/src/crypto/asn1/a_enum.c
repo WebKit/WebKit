@@ -61,6 +61,9 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
+
 /*
  * Code for ENUMERATED type: identical to INTEGER apart from a different tag.
  * for comments on encoding see a_int.c
@@ -79,7 +82,7 @@ int ASN1_ENUMERATED_set(ASN1_ENUMERATED *a, long v)
             OPENSSL_free(a->data);
         if ((a->data =
              (unsigned char *)OPENSSL_malloc(sizeof(long) + 1)) != NULL)
-            memset((char *)a->data, 0, sizeof(long) + 1);
+            OPENSSL_memset((char *)a->data, 0, sizeof(long) + 1);
     }
     if (a->data == NULL) {
         OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);

@@ -110,7 +110,10 @@
 #define OPENSSL_HEADER_CRYPTO_INTERNAL_H
 
 #include <openssl/ex_data.h>
+#include <openssl/stack.h>
 #include <openssl/thread.h>
+
+#include <string.h>
 
 #if defined(_MSC_VER)
 #if !defined(__cplusplus) || _MSC_VER < 1900
@@ -181,17 +184,41 @@ static inline int buffers_alias(const uint8_t *a, size_t a_len,
  *
  * can be written as
  *
- * unsigned int lt = constant_time_lt(a, b);
- * c = constant_time_select(lt, a, b); */
+ * crypto_word_t lt = constant_time_lt_w(a, b);
+ * c = constant_time_select_w(lt, a, b); */
 
-/* constant_time_msb returns the given value with the MSB copied to all the
+/* crypto_word_t is the type that most constant-time functions use. Ideally we
+ * would like it to be |size_t|, but NaCl builds in 64-bit mode with 32-bit
+ * pointers, which means that |size_t| can be 32 bits when |BN_ULONG| is 64
+ * bits. Since we want to be able to do constant-time operations on a
+ * |BN_ULONG|, |crypto_word_t| is defined as an unsigned value with the native
+ * word length. */
+#if defined(OPENSSL_64_BIT)
+typedef uint64_t crypto_word_t;
+#elif defined(OPENSSL_32_BIT)
+typedef uint32_t crypto_word_t;
+#else
+#error "Must define either OPENSSL_32_BIT or OPENSSL_64_BIT"
+#endif
+
+#define CONSTTIME_TRUE_W ~((crypto_word_t)0)
+#define CONSTTIME_FALSE_W ((crypto_word_t)0)
+#define CONSTTIME_TRUE_8 ((uint8_t)0xff)
+
+#define CONSTTIME_TRUE_W ~((crypto_word_t)0)
+#define CONSTTIME_FALSE_W ((crypto_word_t)0)
+#define CONSTTIME_TRUE_8 ((uint8_t)0xff)
+#define CONSTTIME_FALSE_8 ((uint8_t)0)
+
+/* constant_time_msb_w returns the given value with the MSB copied to all the
  * other bits. */
-static inline unsigned int constant_time_msb(unsigned int a) {
-  return (unsigned int)((int)(a) >> (sizeof(int) * 8 - 1));
+static inline crypto_word_t constant_time_msb_w(crypto_word_t a) {
+  return 0u - (a >> (sizeof(a) * 8 - 1));
 }
 
-/* constant_time_lt returns 0xff..f if a < b and 0 otherwise. */
-static inline unsigned int constant_time_lt(unsigned int a, unsigned int b) {
+/* constant_time_lt_w returns 0xff..f if a < b and 0 otherwise. */
+static inline crypto_word_t constant_time_lt_w(crypto_word_t a,
+                                               crypto_word_t b) {
   /* Consider the two cases of the problem:
    *   msb(a) == msb(b): a < b iff the MSB of a - b is set.
    *   msb(a) != msb(b): a < b iff the MSB of b is set.
@@ -223,26 +250,29 @@ static inline unsigned int constant_time_lt(unsigned int a, unsigned int b) {
    * (check-sat)
    * (get-model)
    */
-  return constant_time_msb(a^((a^b)|((a-b)^a)));
+  return constant_time_msb_w(a^((a^b)|((a-b)^a)));
 }
 
-/* constant_time_lt_8 acts like |constant_time_lt| but returns an 8-bit mask. */
-static inline uint8_t constant_time_lt_8(unsigned int a, unsigned int b) {
-  return (uint8_t)(constant_time_lt(a, b));
+/* constant_time_lt_8 acts like |constant_time_lt_w| but returns an 8-bit
+ * mask. */
+static inline uint8_t constant_time_lt_8(crypto_word_t a, crypto_word_t b) {
+  return (uint8_t)(constant_time_lt_w(a, b));
 }
 
-/* constant_time_gt returns 0xff..f if a >= b and 0 otherwise. */
-static inline unsigned int constant_time_ge(unsigned int a, unsigned int b) {
-  return ~constant_time_lt(a, b);
+/* constant_time_ge_w returns 0xff..f if a >= b and 0 otherwise. */
+static inline crypto_word_t constant_time_ge_w(crypto_word_t a,
+                                               crypto_word_t b) {
+  return ~constant_time_lt_w(a, b);
 }
 
-/* constant_time_ge_8 acts like |constant_time_ge| but returns an 8-bit mask. */
-static inline uint8_t constant_time_ge_8(unsigned int a, unsigned int b) {
-  return (uint8_t)(constant_time_ge(a, b));
+/* constant_time_ge_8 acts like |constant_time_ge_w| but returns an 8-bit
+ * mask. */
+static inline uint8_t constant_time_ge_8(crypto_word_t a, crypto_word_t b) {
+  return (uint8_t)(constant_time_ge_w(a, b));
 }
 
 /* constant_time_is_zero returns 0xff..f if a == 0 and 0 otherwise. */
-static inline unsigned int constant_time_is_zero(unsigned int a) {
+static inline crypto_word_t constant_time_is_zero_w(crypto_word_t a) {
   /* Here is an SMT-LIB verification of this formula:
    *
    * (define-fun is_zero ((a (_ BitVec 32))) (_ BitVec 32)
@@ -255,41 +285,45 @@ static inline unsigned int constant_time_is_zero(unsigned int a) {
    * (check-sat)
    * (get-model)
    */
-  return constant_time_msb(~a & (a - 1));
+  return constant_time_msb_w(~a & (a - 1));
 }
 
-/* constant_time_is_zero_8 acts like constant_time_is_zero but returns an 8-bit
+/* constant_time_is_zero_8 acts like |constant_time_is_zero_w| but returns an
+ * 8-bit mask. */
+static inline uint8_t constant_time_is_zero_8(crypto_word_t a) {
+  return (uint8_t)(constant_time_is_zero_w(a));
+}
+
+/* constant_time_eq_w returns 0xff..f if a == b and 0 otherwise. */
+static inline crypto_word_t constant_time_eq_w(crypto_word_t a,
+                                               crypto_word_t b) {
+  return constant_time_is_zero_w(a ^ b);
+}
+
+/* constant_time_eq_8 acts like |constant_time_eq_w| but returns an 8-bit
  * mask. */
-static inline uint8_t constant_time_is_zero_8(unsigned int a) {
-  return (uint8_t)(constant_time_is_zero(a));
+static inline uint8_t constant_time_eq_8(crypto_word_t a, crypto_word_t b) {
+  return (uint8_t)(constant_time_eq_w(a, b));
 }
 
-/* constant_time_eq returns 0xff..f if a == b and 0 otherwise. */
-static inline unsigned int constant_time_eq(unsigned int a, unsigned int b) {
-  return constant_time_is_zero(a ^ b);
-}
-
-/* constant_time_eq_8 acts like |constant_time_eq| but returns an 8-bit mask. */
-static inline uint8_t constant_time_eq_8(unsigned int a, unsigned int b) {
-  return (uint8_t)(constant_time_eq(a, b));
-}
-
-/* constant_time_eq_int acts like |constant_time_eq| but works on int values. */
-static inline unsigned int constant_time_eq_int(int a, int b) {
-  return constant_time_eq((unsigned)(a), (unsigned)(b));
+/* constant_time_eq_int acts like |constant_time_eq_w| but works on int
+ * values. */
+static inline crypto_word_t constant_time_eq_int(int a, int b) {
+  return constant_time_eq_w((crypto_word_t)(a), (crypto_word_t)(b));
 }
 
 /* constant_time_eq_int_8 acts like |constant_time_eq_int| but returns an 8-bit
  * mask. */
 static inline uint8_t constant_time_eq_int_8(int a, int b) {
-  return constant_time_eq_8((unsigned)(a), (unsigned)(b));
+  return constant_time_eq_8((crypto_word_t)(a), (crypto_word_t)(b));
 }
 
-/* constant_time_select returns (mask & a) | (~mask & b). When |mask| is all 1s
- * or all 0s (as returned by the methods above), the select methods return
+/* constant_time_select_w returns (mask & a) | (~mask & b). When |mask| is all
+ * 1s or all 0s (as returned by the methods above), the select methods return
  * either |a| (if |mask| is nonzero) or |b| (if |mask| is zero). */
-static inline unsigned int constant_time_select(unsigned int mask,
-                                                unsigned int a, unsigned int b) {
+static inline crypto_word_t constant_time_select_w(crypto_word_t mask,
+                                                   crypto_word_t a,
+                                                   crypto_word_t b) {
   return (mask & a) | (~mask & b);
 }
 
@@ -297,13 +331,14 @@ static inline unsigned int constant_time_select(unsigned int mask,
  * 8-bit values. */
 static inline uint8_t constant_time_select_8(uint8_t mask, uint8_t a,
                                              uint8_t b) {
-  return (uint8_t)(constant_time_select(mask, a, b));
+  return (uint8_t)(constant_time_select_w(mask, a, b));
 }
 
 /* constant_time_select_int acts like |constant_time_select| but operates on
  * ints. */
-static inline int constant_time_select_int(unsigned int mask, int a, int b) {
-  return (int)(constant_time_select(mask, (unsigned)(a), (unsigned)(b)));
+static inline int constant_time_select_int(crypto_word_t mask, int a, int b) {
+  return (int)(constant_time_select_w(mask, (crypto_word_t)(a),
+                                      (crypto_word_t)(b)));
 }
 
 
@@ -435,7 +470,6 @@ OPENSSL_EXPORT void CRYPTO_STATIC_MUTEX_unlock_write(
 typedef enum {
   OPENSSL_THREAD_LOCAL_ERR = 0,
   OPENSSL_THREAD_LOCAL_RAND,
-  OPENSSL_THREAD_LOCAL_URANDOM_BUF,
   OPENSSL_THREAD_LOCAL_TEST,
   NUM_OPENSSL_THREAD_LOCALS,
 } thread_local_data_t;
@@ -471,6 +505,8 @@ OPENSSL_EXPORT int CRYPTO_set_thread_local(
 
 typedef struct crypto_ex_data_func_st CRYPTO_EX_DATA_FUNCS;
 
+DECLARE_STACK_OF(CRYPTO_EX_DATA_FUNCS)
+
 /* CRYPTO_EX_DATA_CLASS tracks the ex_indices registered for a type which
  * supports ex_data. It should defined as a static global within the module
  * which defines that type. */
@@ -492,7 +528,7 @@ typedef struct {
  * zero otherwise. */
 OPENSSL_EXPORT int CRYPTO_get_ex_new_index(CRYPTO_EX_DATA_CLASS *ex_data_class,
                                            int *out_index, long argl,
-                                           void *argp, CRYPTO_EX_dup *dup_func,
+                                           void *argp,
                                            CRYPTO_EX_free *free_func);
 
 /* CRYPTO_set_ex_data sets an extra data pointer on a given object. Each class
@@ -507,18 +543,96 @@ OPENSSL_EXPORT void *CRYPTO_get_ex_data(const CRYPTO_EX_DATA *ad, int index);
 /* CRYPTO_new_ex_data initialises a newly allocated |CRYPTO_EX_DATA|. */
 OPENSSL_EXPORT void CRYPTO_new_ex_data(CRYPTO_EX_DATA *ad);
 
-/* CRYPTO_dup_ex_data duplicates |from| into a freshly allocated
- * |CRYPTO_EX_DATA|, |to|. Both of which are inside objects of the given
- * class. It returns one on success and zero otherwise. */
-OPENSSL_EXPORT int CRYPTO_dup_ex_data(CRYPTO_EX_DATA_CLASS *ex_data_class,
-                                      CRYPTO_EX_DATA *to,
-                                      const CRYPTO_EX_DATA *from);
-
 /* CRYPTO_free_ex_data frees |ad|, which is embedded inside |obj|, which is an
  * object of the given class. */
 OPENSSL_EXPORT void CRYPTO_free_ex_data(CRYPTO_EX_DATA_CLASS *ex_data_class,
                                         void *obj, CRYPTO_EX_DATA *ad);
 
+
+/* Language bug workarounds.
+ *
+ * Most C standard library functions are undefined if passed NULL, even when the
+ * corresponding length is zero. This gives them (and, in turn, all functions
+ * which call them) surprising behavior on empty arrays. Some compilers will
+ * miscompile code due to this rule. See also
+ * https://www.imperialviolet.org/2016/06/26/nonnull.html
+ *
+ * These wrapper functions behave the same as the corresponding C standard
+ * functions, but behave as expected when passed NULL if the length is zero.
+ *
+ * Note |OPENSSL_memcmp| is a different function from |CRYPTO_memcmp|. */
+
+/* C++ defines |memchr| as a const-correct overload. */
+#if defined(__cplusplus)
+extern "C++" {
+
+static inline const void *OPENSSL_memchr(const void *s, int c, size_t n) {
+  if (n == 0) {
+    return NULL;
+  }
+
+  return memchr(s, c, n);
+}
+
+static inline void *OPENSSL_memchr(void *s, int c, size_t n) {
+  if (n == 0) {
+    return NULL;
+  }
+
+  return memchr(s, c, n);
+}
+
+}  /* extern "C++" */
+#else  /* __cplusplus */
+
+static inline void *OPENSSL_memchr(const void *s, int c, size_t n) {
+  if (n == 0) {
+    return NULL;
+  }
+
+  return memchr(s, c, n);
+}
+
+#endif  /* __cplusplus */
+
+static inline int OPENSSL_memcmp(const void *s1, const void *s2, size_t n) {
+  if (n == 0) {
+    return 0;
+  }
+
+  return memcmp(s1, s2, n);
+}
+
+static inline void *OPENSSL_memcpy(void *dst, const void *src, size_t n) {
+  if (n == 0) {
+    return dst;
+  }
+
+  return memcpy(dst, src, n);
+}
+
+static inline void *OPENSSL_memmove(void *dst, const void *src, size_t n) {
+  if (n == 0) {
+    return dst;
+  }
+
+  return memmove(dst, src, n);
+}
+
+static inline void *OPENSSL_memset(void *dst, int c, size_t n) {
+  if (n == 0) {
+    return dst;
+  }
+
+  return memset(dst, c, n);
+}
+
+#if defined(BORINGSSL_FIPS)
+/* BORINGSSL_FIPS_abort is called when a FIPS power-on or continuous test
+ * fails. It prevents any further cryptographic operations by the current
+ * process. */
+void BORINGSSL_FIPS_abort(void) __attribute__((noreturn));
+#endif
 
 #if defined(__cplusplus)
 }  /* extern C */

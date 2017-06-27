@@ -210,7 +210,7 @@ OPENSSL_EXPORT int DH_marshal_parameters(CBB *cbb, const DH *dh);
 
 OPENSSL_EXPORT int DH_get_ex_new_index(long argl, void *argp,
                                        CRYPTO_EX_unused *unused,
-                                       CRYPTO_EX_dup *dup_func,
+                                       CRYPTO_EX_dup *dup_unused,
                                        CRYPTO_EX_free *free_func);
 OPENSSL_EXPORT int DH_set_ex_data(DH *d, int idx, void *arg);
 OPENSSL_EXPORT void *DH_get_ex_data(DH *d, int idx);

@@ -151,7 +151,8 @@ static int dsa_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
   /* Calculate the public key. */
   ctx = BN_CTX_new();
   if (ctx == NULL ||
-      !BN_mod_exp(dsa->pub_key, dsa->g, dsa->priv_key, dsa->p, ctx)) {
+      !BN_mod_exp_mont(dsa->pub_key, dsa->g, dsa->priv_key, dsa->p, ctx,
+                       NULL)) {
     goto err;
   }
 
@@ -255,7 +256,6 @@ const EVP_PKEY_ASN1_METHOD dsa_asn1_meth = {
   dsa_priv_encode,
 
   NULL /* pkey_opaque */,
-  NULL /* pkey_supports_digest */,
 
   int_dsa_size,
   dsa_bits,

@@ -18,11 +18,14 @@
 #include <string>
 #include <vector>
 
+#include <gtest/gtest.h>
+
 #include <openssl/base64.h>
 #include <openssl/crypto.h>
 #include <openssl/err.h>
 
 #include "../internal.h"
+#include "../test/test_util.h"
 
 
 enum encoding_relation {
@@ -100,7 +103,9 @@ static const TestVector kTestVectors[] = {
      "=======\n"},
 };
 
-static const size_t kNumTests = OPENSSL_ARRAY_SIZE(kTestVectors);
+class Base64Test : public testing::TestWithParam<TestVector> {};
+
+INSTANTIATE_TEST_CASE_P(, Base64Test, testing::ValuesIn(kTestVectors));
 
 // RemoveNewlines returns a copy of |in| with all '\n' characters removed.
 static std::string RemoveNewlines(const char *in) {
@@ -116,279 +121,187 @@ static std::string RemoveNewlines(const char *in) {
   return ret;
 }
 
-static bool TestEncodeBlock() {
-  for (unsigned i = 0; i < kNumTests; i++) {
-    const TestVector *t = &kTestVectors[i];
-    if (t->relation != canonical) {
-      continue;
-    }
+TEST_P(Base64Test, EncodeBlock) {
+  const TestVector &t = GetParam();
+  if (t.relation != canonical) {
+    return;
+  }
 
-    const size_t decoded_len = strlen(t->decoded);
+  const size_t decoded_len = strlen(t.decoded);
+  size_t max_encoded_len;
+  ASSERT_TRUE(EVP_EncodedLength(&max_encoded_len, decoded_len));
+
+  std::vector<uint8_t> out_vec(max_encoded_len);
+  uint8_t *out = out_vec.data();
+  size_t len = EVP_EncodeBlock(out, (const uint8_t *)t.decoded, decoded_len);
+
+  std::string encoded(RemoveNewlines(t.encoded));
+  EXPECT_EQ(Bytes(encoded), Bytes(out, len));
+}
+
+TEST_P(Base64Test, DecodeBase64) {
+  const TestVector &t = GetParam();
+  if (t.relation == valid) {
+    // The non-canonical encodings will generally have odd whitespace etc
+    // that |EVP_DecodeBase64| will reject.
+    return;
+  }
+
+  const std::string encoded(RemoveNewlines(t.encoded));
+  std::vector<uint8_t> out_vec(encoded.size());
+  uint8_t *out = out_vec.data();
+
+  size_t len;
+  int ok = EVP_DecodeBase64(out, &len, out_vec.size(),
+                            (const uint8_t *)encoded.data(), encoded.size());
+
+  if (t.relation == invalid) {
+    EXPECT_FALSE(ok);
+  } else if (t.relation == canonical) {
+    ASSERT_TRUE(ok);
+    EXPECT_EQ(Bytes(t.decoded), Bytes(out, len));
+  }
+}
+
+TEST_P(Base64Test, DecodeBlock) {
+  const TestVector &t = GetParam();
+  if (t.relation != canonical) {
+    return;
+  }
+
+  std::string encoded(RemoveNewlines(t.encoded));
+
+  std::vector<uint8_t> out_vec(encoded.size());
+  uint8_t *out = out_vec.data();
+
+  // Test that the padding behavior of the deprecated API is preserved.
+  int ret =
+      EVP_DecodeBlock(out, (const uint8_t *)encoded.data(), encoded.size());
+  ASSERT_GE(ret, 0);
+  // EVP_DecodeBlock should ignore padding.
+  ASSERT_EQ(0, ret % 3);
+  size_t expected_len = strlen(t.decoded);
+  if (expected_len % 3 != 0) {
+    ret -= 3 - (expected_len % 3);
+  }
+  EXPECT_EQ(Bytes(t.decoded), Bytes(out, static_cast<size_t>(ret)));
+}
+
+TEST_P(Base64Test, EncodeDecode) {
+  const TestVector &t = GetParam();
+
+  EVP_ENCODE_CTX ctx;
+  const size_t decoded_len = strlen(t.decoded);
+
+  if (t.relation == canonical) {
     size_t max_encoded_len;
-    if (!EVP_EncodedLength(&max_encoded_len, decoded_len)) {
-      fprintf(stderr, "#%u: EVP_EncodedLength failed\n", i);
-      return false;
-    }
+    ASSERT_TRUE(EVP_EncodedLength(&max_encoded_len, decoded_len));
 
+    // EVP_EncodeUpdate will output new lines every 64 bytes of output so we
+    // need slightly more than |EVP_EncodedLength| returns. */
+    max_encoded_len += (max_encoded_len + 63) >> 6;
     std::vector<uint8_t> out_vec(max_encoded_len);
     uint8_t *out = out_vec.data();
-    size_t len = EVP_EncodeBlock(out, (const uint8_t *)t->decoded, decoded_len);
 
-    std::string encoded(RemoveNewlines(t->encoded));
-    if (len != encoded.size() ||
-        memcmp(out, encoded.data(), len) != 0) {
-      fprintf(stderr, "encode(\"%s\") = \"%.*s\", want \"%s\"\n",
-              t->decoded, (int)len, (const char*)out, encoded.c_str());
-      return false;
-    }
-  }
+    EVP_EncodeInit(&ctx);
 
-  return true;
-}
-
-static bool TestDecodeBase64() {
-  size_t len;
-
-  for (unsigned i = 0; i < kNumTests; i++) {
-    const TestVector *t = &kTestVectors[i];
-
-    if (t->relation == valid) {
-      // The non-canonical encodings will generally have odd whitespace etc
-      // that |EVP_DecodeBase64| will reject.
-      continue;
-    }
-
-    const std::string encoded(RemoveNewlines(t->encoded));
-    std::vector<uint8_t> out_vec(encoded.size());
-    uint8_t *out = out_vec.data();
-
-    int ok = EVP_DecodeBase64(out, &len, out_vec.size(),
-                              (const uint8_t *)encoded.data(), encoded.size());
-
-    if (t->relation == invalid) {
-      if (ok) {
-        fprintf(stderr, "decode(\"%s\") didn't fail but should have\n",
-                encoded.c_str());
-        return false;
-      }
-    } else if (t->relation == canonical) {
-      if (!ok) {
-        fprintf(stderr, "decode(\"%s\") failed\n", encoded.c_str());
-        return false;
-      }
-
-      if (len != strlen(t->decoded) ||
-          memcmp(out, t->decoded, len) != 0) {
-        fprintf(stderr, "decode(\"%s\") = \"%.*s\", want \"%s\"\n",
-                encoded.c_str(), (int)len, (const char*)out, t->decoded);
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
-static bool TestDecodeBlock() {
-  for (unsigned i = 0; i < kNumTests; i++) {
-    const TestVector *t = &kTestVectors[i];
-    if (t->relation != canonical) {
-      continue;
-    }
-
-    std::string encoded(RemoveNewlines(t->encoded));
-
-    std::vector<uint8_t> out_vec(encoded.size());
-    uint8_t *out = out_vec.data();
-
-    // Test that the padding behavior of the deprecated API is preserved.
-    int ret =
-        EVP_DecodeBlock(out, (const uint8_t *)encoded.data(), encoded.size());
-    if (ret < 0) {
-      fprintf(stderr, "EVP_DecodeBlock(\"%s\") failed\n", t->encoded);
-      return false;
-    }
-    if (ret % 3 != 0) {
-      fprintf(stderr, "EVP_DecodeBlock did not ignore padding\n");
-      return false;
-    }
-    size_t expected_len = strlen(t->decoded);
-    if (expected_len % 3 != 0) {
-      ret -= 3 - (expected_len % 3);
-    }
-    if (static_cast<size_t>(ret) != strlen(t->decoded) ||
-        memcmp(out, t->decoded, ret) != 0) {
-      fprintf(stderr, "decode(\"%s\") = \"%.*s\", want \"%s\"\n",
-              t->encoded, ret, (const char*)out, t->decoded);
-      return false;
-    }
-  }
-
-  return true;
-}
-
-static bool TestEncodeDecode() {
-  for (unsigned test_num = 0; test_num < kNumTests; test_num++) {
-    const TestVector *t = &kTestVectors[test_num];
-
-    EVP_ENCODE_CTX ctx;
-    const size_t decoded_len = strlen(t->decoded);
-
-    if (t->relation == canonical) {
-      size_t max_encoded_len;
-      if (!EVP_EncodedLength(&max_encoded_len, decoded_len)) {
-        fprintf(stderr, "#%u: EVP_EncodedLength failed\n", test_num);
-        return false;
-      }
-
-      // EVP_EncodeUpdate will output new lines every 64 bytes of output so we
-      // need slightly more than |EVP_EncodedLength| returns. */
-      max_encoded_len += (max_encoded_len + 63) >> 6;
-      std::vector<uint8_t> out_vec(max_encoded_len);
-      uint8_t *out = out_vec.data();
-
-      EVP_EncodeInit(&ctx);
-
-      int out_len;
-      EVP_EncodeUpdate(&ctx, out, &out_len,
-                       reinterpret_cast<const uint8_t *>(t->decoded),
-                       decoded_len);
-      size_t total = out_len;
-
-      EVP_EncodeFinal(&ctx, out + total, &out_len);
-      total += out_len;
-
-      if (total != strlen(t->encoded) || memcmp(out, t->encoded, total) != 0) {
-        fprintf(stderr, "#%u: EVP_EncodeUpdate produced different output: '%s' (%u)\n",
-                test_num, out, static_cast<unsigned>(total));
-        return false;
-      }
-    }
-
-    std::vector<uint8_t> out_vec(strlen(t->encoded));
-    uint8_t *out = out_vec.data();
-
-    EVP_DecodeInit(&ctx);
     int out_len;
-    size_t total = 0;
-    int ret = EVP_DecodeUpdate(&ctx, out, &out_len,
-                               reinterpret_cast<const uint8_t *>(t->encoded),
-                               strlen(t->encoded));
-    if (ret != -1) {
-      total = out_len;
-      ret = EVP_DecodeFinal(&ctx, out + total, &out_len);
-      total += out_len;
-    }
+    EVP_EncodeUpdate(&ctx, out, &out_len,
+                     reinterpret_cast<const uint8_t *>(t.decoded),
+                     decoded_len);
+    size_t total = out_len;
 
-    switch (t->relation) {
-      case canonical:
-      case valid:
-        if (ret == -1) {
-          fprintf(stderr, "#%u: EVP_DecodeUpdate failed\n", test_num);
-          return false;
-        }
-        if (total != decoded_len || memcmp(out, t->decoded, decoded_len)) {
-          fprintf(stderr, "#%u: EVP_DecodeUpdate produced incorrect output\n",
-                  test_num);
-          return false;
-        }
-        break;
+    EVP_EncodeFinal(&ctx, out + total, &out_len);
+    total += out_len;
 
-      case invalid:
-        if (ret != -1) {
-          fprintf(stderr, "#%u: EVP_DecodeUpdate was successful but shouldn't have been\n", test_num);
-          return false;
-        }
-        break;
-    }
+    EXPECT_EQ(Bytes(t.encoded), Bytes(out, total));
   }
 
-  return true;
+  std::vector<uint8_t> out_vec(strlen(t.encoded));
+  uint8_t *out = out_vec.data();
+
+  EVP_DecodeInit(&ctx);
+  int out_len;
+  size_t total = 0;
+  int ret = EVP_DecodeUpdate(&ctx, out, &out_len,
+                             reinterpret_cast<const uint8_t *>(t.encoded),
+                             strlen(t.encoded));
+  if (ret != -1) {
+    total = out_len;
+    ret = EVP_DecodeFinal(&ctx, out + total, &out_len);
+    total += out_len;
+  }
+
+  switch (t.relation) {
+    case canonical:
+    case valid:
+      ASSERT_NE(-1, ret);
+      EXPECT_EQ(Bytes(t.decoded), Bytes(out, total));
+      break;
+
+    case invalid:
+      EXPECT_EQ(-1, ret);
+      break;
+  }
 }
 
-static bool TestDecodeUpdateStreaming() {
-  for (unsigned test_num = 0; test_num < kNumTests; test_num++) {
-    const TestVector *t = &kTestVectors[test_num];
-    if (t->relation == invalid) {
-      continue;
-    }
+TEST_P(Base64Test, DecodeUpdateStreaming) {
+  const TestVector &t = GetParam();
+  if (t.relation == invalid) {
+    return;
+  }
 
-    const size_t encoded_len = strlen(t->encoded);
+  const size_t encoded_len = strlen(t.encoded);
 
-    std::vector<uint8_t> out(encoded_len);
+  std::vector<uint8_t> out(encoded_len);
 
-    for (size_t chunk_size = 1; chunk_size <= encoded_len; chunk_size++) {
-      size_t out_len = 0;
-      EVP_ENCODE_CTX ctx;
-      EVP_DecodeInit(&ctx);
+  for (size_t chunk_size = 1; chunk_size <= encoded_len; chunk_size++) {
+    SCOPED_TRACE(chunk_size);
+    size_t out_len = 0;
+    EVP_ENCODE_CTX ctx;
+    EVP_DecodeInit(&ctx);
 
-      for (size_t i = 0; i < encoded_len;) {
-        size_t todo = encoded_len - i;
-        if (todo > chunk_size) {
-          todo = chunk_size;
-        }
-
-        int bytes_written;
-        int ret = EVP_DecodeUpdate(
-            &ctx, out.data() + out_len, &bytes_written,
-            reinterpret_cast<const uint8_t *>(t->encoded + i), todo);
-        i += todo;
-
-        switch (ret) {
-          case -1:
-            fprintf(stderr, "#%u: EVP_DecodeUpdate returned error\n", test_num);
-            return 0;
-          case 0:
-            out_len += bytes_written;
-            if (i == encoded_len ||
-                (i + 1 == encoded_len && t->encoded[i] == '\n') ||
-                /* If there was an '-' in the input (which means “EOF”) then
-                 * this loop will continue to test that |EVP_DecodeUpdate| will
-                 * ignore the remainder of the input. */
-                strchr(t->encoded, '-') != nullptr) {
-              break;
-            }
-
-            fprintf(stderr,
-                    "#%u: EVP_DecodeUpdate returned zero before end of "
-                    "encoded data\n",
-                    test_num);
-            return 0;
-          default:
-            out_len += bytes_written;
-        }
+    for (size_t i = 0; i < encoded_len;) {
+      size_t todo = encoded_len - i;
+      if (todo > chunk_size) {
+        todo = chunk_size;
       }
 
       int bytes_written;
-      int ret = EVP_DecodeFinal(&ctx, out.data() + out_len, &bytes_written);
-      if (ret == -1) {
-        fprintf(stderr, "#%u: EVP_DecodeFinal returned error\n", test_num);
-        return 0;
-      }
-      out_len += bytes_written;
+      int ret = EVP_DecodeUpdate(
+          &ctx, out.data() + out_len, &bytes_written,
+          reinterpret_cast<const uint8_t *>(t.encoded + i), todo);
+      i += todo;
 
-      if (out_len != strlen(t->decoded) ||
-          memcmp(out.data(), t->decoded, out_len) != 0) {
-        fprintf(stderr, "#%u: incorrect output\n", test_num);
-        return 0;
+      switch (ret) {
+        case -1:
+          FAIL() << "EVP_DecodeUpdate failed";
+        case 0:
+          out_len += bytes_written;
+          if (i == encoded_len ||
+              (i + 1 == encoded_len && t.encoded[i] == '\n') ||
+              /* If there was an '-' in the input (which means “EOF”) then
+               * this loop will continue to test that |EVP_DecodeUpdate| will
+               * ignore the remainder of the input. */
+              strchr(t.encoded, '-') != nullptr) {
+            break;
+          }
+
+          FAIL()
+              << "EVP_DecodeUpdate returned zero before end of encoded data.";
+        case 1:
+          out_len += bytes_written;
+          break;
+        default:
+          FAIL() << "Invalid return value " << ret;
       }
     }
+
+    int bytes_written;
+    int ret = EVP_DecodeFinal(&ctx, out.data() + out_len, &bytes_written);
+    ASSERT_NE(ret, -1);
+    out_len += bytes_written;
+
+    EXPECT_EQ(Bytes(t.decoded), Bytes(out.data(), out_len));
   }
-
-  return true;
-}
-
-int main(void) {
-  CRYPTO_library_init();
-
-  if (!TestEncodeBlock() ||
-      !TestDecodeBase64() ||
-      !TestDecodeBlock() ||
-      !TestDecodeUpdateStreaming() ||
-      !TestEncodeDecode()) {
-    return 1;
-  }
-
-  printf("PASS\n");
-  return 0;
 }

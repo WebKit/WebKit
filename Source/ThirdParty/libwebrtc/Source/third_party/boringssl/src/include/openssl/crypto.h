@@ -54,6 +54,10 @@ OPENSSL_EXPORT int CRYPTO_is_confidential_build(void);
  * in which case it returns zero. */
 OPENSSL_EXPORT int CRYPTO_has_asm(void);
 
+/* FIPS_mode returns zero unless BoringSSL is built with BORINGSSL_FIPS, in
+ * which case it returns one. */
+OPENSSL_EXPORT int FIPS_mode(void);
+
 
 /* Deprecated functions. */
 
@@ -82,9 +86,6 @@ OPENSSL_EXPORT int ENGINE_register_all_complete(void);
 
 /* OPENSSL_load_builtin_modules does nothing. */
 OPENSSL_EXPORT void OPENSSL_load_builtin_modules(void);
-
-/* FIPS_mode returns zero. */
-OPENSSL_EXPORT int FIPS_mode(void);
 
 
 #if defined(__cplusplus)

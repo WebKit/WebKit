@@ -45,6 +45,16 @@ not
 Rather than `malloc()` and `free()`, use the wrappers `OPENSSL_malloc()`
 and `OPENSSL_free()`. Use the standard C `assert()` function freely.
 
+Use the following wrappers, found in `crypto/internal.h` instead of the
+corresponding C standard library functions. They behave the same but avoid
+confusing undefined behavior.
+
+* `OPENSSL_memchr`
+* `OPENSSL_memcmp`
+* `OPENSSL_memcpy`
+* `OPENSSL_memmove`
+* `OPENSSL_memset`
+
 For new constants, prefer enums when the values are sequential and typed
 constants for flags. If adding values to an existing set of `#define`s,
 continue with `#define`.

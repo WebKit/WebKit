@@ -47,6 +47,7 @@ OPENSSL_MSVC_PRAGMA(comment(lib, "Ws2_32.lib"))
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
 
+#include "../crypto/internal.h"
 #include "internal.h"
 #include "transport_common.h"
 
@@ -98,7 +99,7 @@ bool Connect(int *out_sock, const std::string &hostname_and_port) {
   }
 
   struct addrinfo hint, *result;
-  memset(&hint, 0, sizeof(hint));
+  OPENSSL_memset(&hint, 0, sizeof(hint));
   hint.ai_family = AF_UNSPEC;
   hint.ai_socktype = SOCK_STREAM;
 
@@ -151,19 +152,30 @@ out:
 bool Accept(int *out_sock, const std::string &port) {
   struct sockaddr_in6 addr, cli_addr;
   socklen_t cli_addr_len = sizeof(cli_addr);
-  memset(&addr, 0, sizeof(addr));
+  OPENSSL_memset(&addr, 0, sizeof(addr));
 
   addr.sin6_family = AF_INET6;
-  addr.sin6_addr = in6addr_any;
+  addr.sin6_addr = IN6ADDR_ANY_INIT;
   addr.sin6_port = htons(atoi(port.c_str()));
 
   bool ok = false;
+#if defined(OPENSSL_WINDOWS)
+  const BOOL enable = TRUE;
+#else
+  const int enable = 1;
+#endif
   int server_sock = -1;
 
   server_sock =
       socket(addr.sin6_family, SOCK_STREAM, 0);
   if (server_sock < 0) {
     perror("socket");
+    goto out;
+  }
+
+  if (setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&enable,
+                 sizeof(enable)) < 0) {
+    perror("setsockopt");
     goto out;
   }
 
@@ -226,6 +238,8 @@ static const char *SignatureAlgorithmToString(uint16_t version, uint16_t sigalg)
       return "rsa_pss_sha384";
     case SSL_SIGN_RSA_PSS_SHA512:
       return "rsa_pss_sha512";
+    case SSL_SIGN_ED25519:
+      return "ed25519";
     default:
       return "(unknown)";
   }
@@ -241,10 +255,6 @@ void PrintConnectionInfo(const SSL *ssl) {
   uint16_t curve = SSL_get_curve_id(ssl);
   if (curve != 0) {
     fprintf(stderr, "  ECDHE curve: %s\n", SSL_get_curve_name(curve));
-  }
-  unsigned dhe_bits = SSL_get_dhe_group_size(ssl);
-  if (dhe_bits != 0) {
-    fprintf(stderr, "  DHE group size: %u bits\n", dhe_bits);
   }
   uint16_t sigalg = SSL_get_peer_signature_algorithm(ssl);
   if (sigalg != 0) {
@@ -267,17 +277,36 @@ void PrintConnectionInfo(const SSL *ssl) {
   SSL_get0_alpn_selected(ssl, &alpn, &alpn_len);
   fprintf(stderr, "  ALPN protocol: %.*s\n", alpn_len, alpn);
 
+  const char *host_name = SSL_get_servername(ssl, TLSEXT_NAMETYPE_host_name);
+  if (host_name != nullptr && SSL_is_server(ssl)) {
+    fprintf(stderr, "  Client sent SNI: %s\n", host_name);
+  }
+
+  if (!SSL_is_server(ssl)) {
+    const uint8_t *ocsp_staple;
+    size_t ocsp_staple_len;
+    SSL_get0_ocsp_response(ssl, &ocsp_staple, &ocsp_staple_len);
+    fprintf(stderr, "  OCSP staple: %s\n", ocsp_staple_len > 0 ? "yes" : "no");
+
+    const uint8_t *sct_list;
+    size_t sct_list_len;
+    SSL_get0_signed_cert_timestamp_list(ssl, &sct_list, &sct_list_len);
+    fprintf(stderr, "  SCT list: %s\n", sct_list_len > 0 ? "yes" : "no");
+  }
+
+  fprintf(stderr, "  Early data: %s\n",
+          SSL_early_data_accepted(ssl) ? "yes" : "no");
+
   // Print the server cert subject and issuer names.
-  X509 *peer = SSL_get_peer_certificate(ssl);
-  if (peer != NULL) {
+  bssl::UniquePtr<X509> peer(SSL_get_peer_certificate(ssl));
+  if (peer != nullptr) {
     fprintf(stderr, "  Cert subject: ");
-    X509_NAME_print_ex_fp(stderr, X509_get_subject_name(peer), 0,
+    X509_NAME_print_ex_fp(stderr, X509_get_subject_name(peer.get()), 0,
                           XN_FLAG_ONELINE);
     fprintf(stderr, "\n  Cert issuer: ");
-    X509_NAME_print_ex_fp(stderr, X509_get_issuer_name(peer), 0,
+    X509_NAME_print_ex_fp(stderr, X509_get_issuer_name(peer.get()), 0,
                           XN_FLAG_ONELINE);
     fprintf(stderr, "\n");
-    X509_free(peer);
   }
 }
 
@@ -427,7 +456,7 @@ class SocketLineReader {
 
         out_line->assign(buf_, length);
         buf_len_ -= i + 1;
-        memmove(buf_, &buf_[i + 1], buf_len_);
+        OPENSSL_memmove(buf_, &buf_[i + 1], buf_len_);
 
         return true;
       }

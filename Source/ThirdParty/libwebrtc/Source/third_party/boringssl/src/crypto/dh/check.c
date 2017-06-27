@@ -93,7 +93,7 @@ int DH_check_pub_key(const DH *dh, const BIGNUM *pub_key, int *ret) {
     /* Check |pub_key|^|dh->q| is 1 mod |dh->p|. This is necessary for RFC 5114
      * groups which are not safe primes but pick a generator on a prime-order
      * subgroup of size |dh->q|. */
-    if (!BN_mod_exp(tmp, pub_key, dh->q, dh->p, ctx)) {
+    if (!BN_mod_exp_mont(tmp, pub_key, dh->q, dh->p, ctx, NULL)) {
       goto err;
     }
     if (!BN_is_one(tmp)) {
@@ -145,7 +145,7 @@ int DH_check(const DH *dh, int *ret) {
       *ret |= DH_CHECK_NOT_SUITABLE_GENERATOR;
     } else {
       /* Check g^q == 1 mod p */
-      if (!BN_mod_exp(t1, dh->g, dh->q, dh->p, ctx)) {
+      if (!BN_mod_exp_mont(t1, dh->g, dh->q, dh->p, ctx, NULL)) {
         goto err;
       }
       if (!BN_is_one(t1)) {

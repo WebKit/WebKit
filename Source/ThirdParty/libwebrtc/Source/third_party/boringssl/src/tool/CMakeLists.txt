@@ -8,11 +8,13 @@ add_executable(
   client.cc
   const.cc
   digest.cc
+  file.cc
   generate_ed25519.cc
   genrsa.cc
   pkcs12.cc
   rand.cc
   server.cc
+  sign.cc
   speed.cc
   tool.cc
   transport_common.cc

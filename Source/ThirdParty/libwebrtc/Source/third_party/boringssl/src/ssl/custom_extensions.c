@@ -58,7 +58,8 @@ static int default_add_callback(SSL *ssl, unsigned extension_value,
   return 1;
 }
 
-static int custom_ext_add_hello(SSL *ssl, CBB *extensions) {
+static int custom_ext_add_hello(SSL_HANDSHAKE *hs, CBB *extensions) {
+  SSL *const ssl = hs->ssl;
   STACK_OF(SSL_CUSTOM_EXTENSION) *stack = ssl->ctx->client_custom_extensions;
   if (ssl->server) {
     stack = ssl->ctx->server_custom_extensions;
@@ -68,11 +69,19 @@ static int custom_ext_add_hello(SSL *ssl, CBB *extensions) {
     return 1;
   }
 
+  if (ssl->cert->enable_early_data) {
+    /* TODO(svaldez): Support Custom Extensions with 0-RTT. For now the caller
+     * is expected not to configure both together.
+     * https://crbug.com/boringssl/173. */
+    OPENSSL_PUT_ERROR(SSL, SSL_R_CUSTOM_EXTENSION_ERROR);
+    return 0;
+  }
+
   for (size_t i = 0; i < sk_SSL_CUSTOM_EXTENSION_num(stack); i++) {
     const SSL_CUSTOM_EXTENSION *ext = sk_SSL_CUSTOM_EXTENSION_value(stack, i);
 
     if (ssl->server &&
-        !(ssl->s3->hs->custom_extensions.received & (1u << i))) {
+        !(hs->custom_extensions.received & (1u << i))) {
       /* Servers cannot echo extensions that the client didn't send. */
       continue;
     }
@@ -90,7 +99,7 @@ static int custom_ext_add_hello(SSL *ssl, CBB *extensions) {
             !CBB_add_bytes(&contents_cbb, contents, contents_len) ||
             !CBB_flush(extensions)) {
           OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
-          ERR_add_error_dataf("extension: %u", (unsigned) ext->value);
+          ERR_add_error_dataf("extension %u", (unsigned) ext->value);
           if (ext->free_callback && 0 < contents_len) {
             ext->free_callback(ssl, ext->value, contents, ext->add_arg);
           }
@@ -102,8 +111,8 @@ static int custom_ext_add_hello(SSL *ssl, CBB *extensions) {
         }
 
         if (!ssl->server) {
-          assert((ssl->s3->hs->custom_extensions.sent & (1u << i)) == 0);
-          ssl->s3->hs->custom_extensions.sent |= (1u << i);
+          assert((hs->custom_extensions.sent & (1u << i)) == 0);
+          hs->custom_extensions.sent |= (1u << i);
         }
         break;
 
@@ -113,7 +122,7 @@ static int custom_ext_add_hello(SSL *ssl, CBB *extensions) {
       default:
         ssl3_send_alert(ssl, SSL3_AL_FATAL, alert);
         OPENSSL_PUT_ERROR(SSL, SSL_R_CUSTOM_EXTENSION_ERROR);
-        ERR_add_error_dataf("extension: %u", (unsigned) ext->value);
+        ERR_add_error_dataf("extension %u", (unsigned) ext->value);
         return 0;
     }
   }
@@ -121,12 +130,13 @@ static int custom_ext_add_hello(SSL *ssl, CBB *extensions) {
   return 1;
 }
 
-int custom_ext_add_clienthello(SSL *ssl, CBB *extensions) {
-  return custom_ext_add_hello(ssl, extensions);
+int custom_ext_add_clienthello(SSL_HANDSHAKE *hs, CBB *extensions) {
+  return custom_ext_add_hello(hs, extensions);
 }
 
-int custom_ext_parse_serverhello(SSL *ssl, int *out_alert, uint16_t value,
-                                 const CBS *extension) {
+int custom_ext_parse_serverhello(SSL_HANDSHAKE *hs, int *out_alert,
+                                 uint16_t value, const CBS *extension) {
+  SSL *const ssl = hs->ssl;
   unsigned index;
   const SSL_CUSTOM_EXTENSION *ext =
       custom_ext_find(ssl->ctx->client_custom_extensions, &index, value);
@@ -134,9 +144,9 @@ int custom_ext_parse_serverhello(SSL *ssl, int *out_alert, uint16_t value,
   if (/* Unknown extensions are not allowed in a ServerHello. */
       ext == NULL ||
       /* Also, if we didn't send the extension, that's also unacceptable. */
-      !(ssl->s3->hs->custom_extensions.sent & (1u << index))) {
+      !(hs->custom_extensions.sent & (1u << index))) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_UNEXPECTED_EXTENSION);
-    ERR_add_error_dataf("extension: %u", (unsigned)value);
+    ERR_add_error_dataf("extension %u", (unsigned)value);
     *out_alert = SSL_AD_UNSUPPORTED_EXTENSION;
     return 0;
   }
@@ -145,15 +155,16 @@ int custom_ext_parse_serverhello(SSL *ssl, int *out_alert, uint16_t value,
       !ext->parse_callback(ssl, value, CBS_data(extension), CBS_len(extension),
                            out_alert, ext->parse_arg)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_CUSTOM_EXTENSION_ERROR);
-    ERR_add_error_dataf("extension: %u", (unsigned)ext->value);
+    ERR_add_error_dataf("extension %u", (unsigned)ext->value);
     return 0;
   }
 
   return 1;
 }
 
-int custom_ext_parse_clienthello(SSL *ssl, int *out_alert, uint16_t value,
-                                 const CBS *extension) {
+int custom_ext_parse_clienthello(SSL_HANDSHAKE *hs, int *out_alert,
+                                 uint16_t value, const CBS *extension) {
+  SSL *const ssl = hs->ssl;
   unsigned index;
   const SSL_CUSTOM_EXTENSION *ext =
       custom_ext_find(ssl->ctx->server_custom_extensions, &index, value);
@@ -162,22 +173,22 @@ int custom_ext_parse_clienthello(SSL *ssl, int *out_alert, uint16_t value,
     return 1;
   }
 
-  assert((ssl->s3->hs->custom_extensions.received & (1u << index)) == 0);
-  ssl->s3->hs->custom_extensions.received |= (1u << index);
+  assert((hs->custom_extensions.received & (1u << index)) == 0);
+  hs->custom_extensions.received |= (1u << index);
 
   if (ext->parse_callback &&
       !ext->parse_callback(ssl, value, CBS_data(extension), CBS_len(extension),
                            out_alert, ext->parse_arg)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_CUSTOM_EXTENSION_ERROR);
-    ERR_add_error_dataf("extension: %u", (unsigned)ext->value);
+    ERR_add_error_dataf("extension %u", (unsigned)ext->value);
     return 0;
   }
 
   return 1;
 }
 
-int custom_ext_add_serverhello(SSL *ssl, CBB *extensions) {
-  return custom_ext_add_hello(ssl, extensions);
+int custom_ext_add_serverhello(SSL_HANDSHAKE *hs, CBB *extensions) {
+  return custom_ext_add_hello(hs, extensions);
 }
 
 /* MAX_NUM_CUSTOM_EXTENSIONS is the maximum number of custom extensions that

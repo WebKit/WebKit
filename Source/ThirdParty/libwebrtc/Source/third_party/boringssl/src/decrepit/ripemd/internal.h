@@ -91,7 +91,7 @@ static void ripemd160_block_data_order(uint32_t h[5], const uint8_t *data,
   } while (0)
 #define HASH_BLOCK_DATA_ORDER ripemd160_block_data_order
 
-#include "../../crypto/digest/md32_common.h"
+#include "../../crypto/fipsmodule/digest/md32_common.h"
 
 /* Transformed F2 and F4 are courtesy of Wei Dai <weidai@eskimo.com> */
 #define F1(x, y, z) ((x) ^ (y) ^ (z))

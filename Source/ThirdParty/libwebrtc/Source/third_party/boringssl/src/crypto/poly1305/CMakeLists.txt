@@ -19,13 +19,3 @@ add_library(
 
   ${POLY1305_ARCH_SOURCES}
 )
-
-add_executable(
-  poly1305_test
-
-  poly1305_test.cc
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(poly1305_test crypto)
-add_dependencies(all_tests poly1305_test)

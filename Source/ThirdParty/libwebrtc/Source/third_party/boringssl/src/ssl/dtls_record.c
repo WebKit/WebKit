@@ -249,10 +249,35 @@ enum ssl_open_record_t dtls_open_record(SSL *ssl, uint8_t *out_type, CBS *out,
   return ssl_open_record_success;
 }
 
+static const SSL_AEAD_CTX *get_write_aead(const SSL *ssl,
+                                          enum dtls1_use_epoch_t use_epoch) {
+  if (use_epoch == dtls1_use_previous_epoch) {
+    /* DTLS renegotiation is unsupported, so only epochs 0 (NULL cipher) and 1
+     * (negotiated cipher) exist. */
+    assert(ssl->d1->w_epoch == 1);
+    return NULL;
+  }
+
+  return ssl->s3->aead_write_ctx;
+}
+
+size_t dtls_max_seal_overhead(const SSL *ssl,
+                              enum dtls1_use_epoch_t use_epoch) {
+  return DTLS1_RT_HEADER_LENGTH +
+         SSL_AEAD_CTX_max_overhead(get_write_aead(ssl, use_epoch));
+}
+
+size_t dtls_seal_prefix_len(const SSL *ssl, enum dtls1_use_epoch_t use_epoch) {
+  return DTLS1_RT_HEADER_LENGTH +
+         SSL_AEAD_CTX_explicit_nonce_len(get_write_aead(ssl, use_epoch));
+}
+
 int dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
                      uint8_t type, const uint8_t *in, size_t in_len,
                      enum dtls1_use_epoch_t use_epoch) {
-  if (buffers_alias(in, in_len, out, max_out)) {
+  const size_t prefix = dtls_seal_prefix_len(ssl, use_epoch);
+  if (buffers_alias(in, in_len, out, max_out) &&
+      (max_out < prefix || out + prefix != in)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_OUTPUT_ALIASES_INPUT);
     return 0;
   }
@@ -283,7 +308,7 @@ int dtls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
 
   out[3] = epoch >> 8;
   out[4] = epoch & 0xff;
-  memcpy(&out[5], &seq[2], 6);
+  OPENSSL_memcpy(&out[5], &seq[2], 6);
 
   size_t ciphertext_len;
   if (!SSL_AEAD_CTX_seal(aead, out + DTLS1_RT_HEADER_LENGTH, &ciphertext_len,

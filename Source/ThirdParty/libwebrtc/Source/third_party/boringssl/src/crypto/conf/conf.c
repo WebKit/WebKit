@@ -66,7 +66,12 @@
 
 #include "conf_def.h"
 #include "internal.h"
+#include "../internal.h"
 
+
+/* The maximum length we can grow a value to after variable expansion. 64k
+ * should be more than enough for all reasonable uses. */
+#define MAX_CONF_VALUE_LENGTH 65536
 
 static uint32_t conf_value_hash(const CONF_VALUE *v) {
   return (lh_strhash(v->section) << 2) ^ lh_strhash(v->name);
@@ -118,7 +123,7 @@ CONF_VALUE *CONF_VALUE_new(void) {
     OPENSSL_PUT_ERROR(CONF, ERR_R_MALLOC_FAILURE);
     return NULL;
   }
-  memset(v, 0, sizeof(CONF_VALUE));
+  OPENSSL_memset(v, 0, sizeof(CONF_VALUE));
   return v;
 }
 
@@ -315,7 +320,15 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from) {
         OPENSSL_PUT_ERROR(CONF, CONF_R_VARIABLE_HAS_NO_VALUE);
         goto err;
       }
-      BUF_MEM_grow_clean(buf, (strlen(p) + buf->length - (e - from)));
+      size_t newsize = strlen(p) + buf->length - (e - from);
+      if (newsize > MAX_CONF_VALUE_LENGTH) {
+        OPENSSL_PUT_ERROR(CONF, CONF_R_VARIABLE_EXPANSION_TOO_LONG);
+        goto err;
+      }
+      if (!BUF_MEM_grow_clean(buf, newsize)) {
+        OPENSSL_PUT_ERROR(CONF, ERR_R_MALLOC_FAILURE);
+        goto err;
+      }
       while (*p) {
         buf->data[to++] = *(p++);
       }
@@ -353,7 +366,7 @@ err:
 static CONF_VALUE *get_section(const CONF *conf, const char *section) {
   CONF_VALUE template;
 
-  memset(&template, 0, sizeof(template));
+  OPENSSL_memset(&template, 0, sizeof(template));
   template.section = (char *) section;
   return lh_CONF_VALUE_retrieve(conf->data, &template);
 }
@@ -370,7 +383,7 @@ const char *NCONF_get_string(const CONF *conf, const char *section,
                              const char *name) {
   CONF_VALUE template, *value;
 
-  memset(&template, 0, sizeof(template));
+  OPENSSL_memset(&template, 0, sizeof(template));
   template.section = (char *) section;
   template.name = (char *) name;
   value = lh_CONF_VALUE_retrieve(conf->data, &template);

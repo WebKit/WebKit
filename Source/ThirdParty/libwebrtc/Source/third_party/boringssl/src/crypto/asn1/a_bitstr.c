@@ -61,6 +61,9 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
+
 int ASN1_BIT_STRING_set(ASN1_BIT_STRING *x, unsigned char *d, int len)
 {
     return M_ASN1_BIT_STRING_set(x, d, len);
@@ -115,7 +118,7 @@ int i2c_ASN1_BIT_STRING(ASN1_BIT_STRING *a, unsigned char **pp)
 
     *(p++) = (unsigned char)bits;
     d = a->data;
-    memcpy(p, d, len);
+    OPENSSL_memcpy(p, d, len);
     p += len;
     if (len > 0)
         p[-1] &= (0xff << bits);
@@ -162,7 +165,7 @@ ASN1_BIT_STRING *c2i_ASN1_BIT_STRING(ASN1_BIT_STRING **a,
             OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
             goto err;
         }
-        memcpy(s, p, (int)len);
+        OPENSSL_memcpy(s, p, (int)len);
         s[len - 1] &= (0xff << padding);
         p += len;
     } else
@@ -215,7 +218,7 @@ int ASN1_BIT_STRING_set_bit(ASN1_BIT_STRING *a, int n, int value)
             return 0;
         }
         if (w + 1 - a->length > 0)
-            memset(c + a->length, 0, w + 1 - a->length);
+            OPENSSL_memset(c + a->length, 0, w + 1 - a->length);
         a->data = c;
         a->length = w + 1;
     }

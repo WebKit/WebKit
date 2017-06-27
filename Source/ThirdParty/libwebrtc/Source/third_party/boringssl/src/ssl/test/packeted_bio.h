@@ -28,21 +28,15 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 
 
 // PacketedBioCreate creates a filter BIO which implements a reliable in-order
-// blocking datagram socket. It internally maintains a clock and honors
-// |BIO_CTRL_DGRAM_SET_NEXT_TIMEOUT| based on it.
+// blocking datagram socket. It uses the value of |*clock| as the clock.
 //
 // During a |BIO_read|, the peer may signal the filter BIO to simulate a
-// timeout. If |advance_clock| is true, it automatically advances the clock and
-// continues reading, subject to the read deadline. Otherwise, it fails
-// immediately. The caller must then call |PacketedBioAdvanceClock| before
-// retrying |BIO_read|.
-bssl::UniquePtr<BIO> PacketedBioCreate(bool advance_clock);
+// timeout. The operation will fail immediately. The caller must then call
+// |PacketedBioAdvanceClock| before retrying |BIO_read|.
+bssl::UniquePtr<BIO> PacketedBioCreate(timeval *clock);
 
-// PacketedBioGetClock returns the current time for |bio|.
-timeval PacketedBioGetClock(const BIO *bio);
-
-// PacketedBioAdvanceClock advances |bio|'s internal clock and returns true if
-// there is a pending timeout. Otherwise, it returns false.
+// PacketedBioAdvanceClock advances |bio|'s clock and returns true if there is a
+// pending timeout. Otherwise, it returns false.
 bool PacketedBioAdvanceClock(BIO *bio);
 
 

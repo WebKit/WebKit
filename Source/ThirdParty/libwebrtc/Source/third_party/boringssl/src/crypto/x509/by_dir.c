@@ -84,8 +84,8 @@ typedef struct lookup_dir_st {
     STACK_OF(BY_DIR_ENTRY) *dirs;
 } BY_DIR;
 
-DECLARE_STACK_OF(BY_DIR_HASH)
-DECLARE_STACK_OF(BY_DIR_ENTRY)
+DEFINE_STACK_OF(BY_DIR_HASH)
+DEFINE_STACK_OF(BY_DIR_ENTRY)
 
 static int dir_ctrl(X509_LOOKUP *ctx, int cmd, const char *argp, long argl,
                     char **ret);
@@ -433,7 +433,7 @@ static int get_cert_by_subject(X509_LOOKUP *xl, int type, X509_NAME *name,
             if (tmp != NULL) {
                 ok = 1;
                 ret->type = tmp->type;
-                memcpy(&ret->data, &tmp->data, sizeof(ret->data));
+                OPENSSL_memcpy(&ret->data, &tmp->data, sizeof(ret->data));
                 /*
                  * If we were going to up the reference count, we would need
                  * to do it on a perl 'type' basis

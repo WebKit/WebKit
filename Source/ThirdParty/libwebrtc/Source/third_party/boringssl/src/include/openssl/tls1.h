@@ -205,13 +205,15 @@ extern "C" {
 /* ExtensionType value from RFC4507 */
 #define TLSEXT_TYPE_session_ticket 35
 
-/* ExtensionType values from draft-ietf-tls-tls13-16 */
+/* ExtensionType values from draft-ietf-tls-tls13-18 */
 #define TLSEXT_TYPE_supported_groups 10
 #define TLSEXT_TYPE_key_share 40
 #define TLSEXT_TYPE_pre_shared_key 41
 #define TLSEXT_TYPE_early_data 42
 #define TLSEXT_TYPE_supported_versions 43
 #define TLSEXT_TYPE_cookie 44
+#define TLSEXT_TYPE_psk_key_exchange_modes 45
+#define TLSEXT_TYPE_ticket_early_data_info 46
 
 /* ExtensionType value from RFC5746 */
 #define TLSEXT_TYPE_renegotiate 0xff01
@@ -406,29 +408,15 @@ extern "C" {
 #define TLS1_CK_ECDH_RSA_WITH_AES_128_GCM_SHA256 0x0300C031
 #define TLS1_CK_ECDH_RSA_WITH_AES_256_GCM_SHA384 0x0300C032
 
-#define TLS1_CK_ECDHE_RSA_CHACHA20_POLY1305_OLD 0x0300CC13
-#define TLS1_CK_ECDHE_ECDSA_CHACHA20_POLY1305_OLD 0x0300CC14
-
 /* ChaCha20-Poly1305 cipher suites from RFC 7905. */
 #define TLS1_CK_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 0x0300CCA8
 #define TLS1_CK_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 0x0300CCA9
 #define TLS1_CK_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256 0x0300CCAC
 
-/* TODO(davidben): Remove this. Historically, the CK names for CHACHA20_POLY1305
- * were missing 'WITH' and 'SHA256'. */
-#define TLS1_CK_ECDHE_RSA_CHACHA20_POLY1305 \
-  TLS1_CK_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-
 /* TLS 1.3 ciphersuites from draft-ietf-tls-tls13-16 */
 #define TLS1_CK_AES_128_GCM_SHA256 0x03001301
 #define TLS1_CK_AES_256_GCM_SHA384 0x03001302
 #define TLS1_CK_CHACHA20_POLY1305_SHA256 0x03001303
-
-/* CECPQ1 ciphersuites.  These are specific to BoringSSL and not standard. */
-#define TLS1_CK_CECPQ1_RSA_WITH_CHACHA20_POLY1305_SHA256 0x030016B7
-#define TLS1_CK_CECPQ1_ECDSA_WITH_CHACHA20_POLY1305_SHA256 0x030016B8
-#define TLS1_CK_CECPQ1_RSA_WITH_AES_256_GCM_SHA384 0x030016B9
-#define TLS1_CK_CECPQ1_ECDSA_WITH_AES_256_GCM_SHA384 0x030016BA
 
 /* XXX
  * Inconsistency alert:
@@ -590,14 +578,6 @@ extern "C" {
 #define TLS1_TXT_ECDH_RSA_WITH_AES_128_GCM_SHA256 "ECDH-RSA-AES128-GCM-SHA256"
 #define TLS1_TXT_ECDH_RSA_WITH_AES_256_GCM_SHA384 "ECDH-RSA-AES256-GCM-SHA384"
 
-/* For convenience, the old and new CHACHA20_POLY1305 ciphers have the same
- * name. In cipher strings, both will be selected. This is temporary and will be
- * removed when the pre-standard construction is removed. */
-#define TLS1_TXT_ECDHE_RSA_WITH_CHACHA20_POLY1305_OLD \
-  "ECDHE-RSA-CHACHA20-POLY1305"
-#define TLS1_TXT_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_OLD \
-  "ECDHE-ECDSA-CHACHA20-POLY1305"
-
 #define TLS1_TXT_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 \
   "ECDHE-RSA-CHACHA20-POLY1305"
 #define TLS1_TXT_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 \
@@ -605,25 +585,10 @@ extern "C" {
 #define TLS1_TXT_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256 \
   "ECDHE-PSK-CHACHA20-POLY1305"
 
-/* TODO(davidben): Remove this. Historically, the TXT names for CHACHA20_POLY1305
- * were missing 'SHA256'. */
-#define TLS1_TXT_ECDHE_RSA_WITH_CHACHA20_POLY1305 \
-  TLS1_TXT_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-
 /* TLS 1.3 ciphersuites from draft-ietf-tls-tls13-16 */
 #define TLS1_TXT_AES_128_GCM_SHA256 "AEAD-AES128-GCM-SHA256"
 #define TLS1_TXT_AES_256_GCM_SHA384 "AEAD-AES256-GCM-SHA384"
 #define TLS1_TXT_CHACHA20_POLY1305_SHA256 "AEAD-CHACHA20-POLY1305-SHA256"
-
-/* CECPQ1 ciphersuites.  These are specific to BoringSSL and not standard. */
-#define TLS1_TXT_CECPQ1_RSA_WITH_CHACHA20_POLY1305_SHA256 \
-  "CECPQ1-RSA-CHACHA20-POLY1305-SHA256"
-#define TLS1_TXT_CECPQ1_ECDSA_WITH_CHACHA20_POLY1305_SHA256 \
-  "CECPQ1-ECDSA-CHACHA20-POLY1305-SHA256"
-#define TLS1_TXT_CECPQ1_RSA_WITH_AES_256_GCM_SHA384 \
-  "CECPQ1-RSA-AES256-GCM-SHA384"
-#define TLS1_TXT_CECPQ1_ECDSA_WITH_AES_256_GCM_SHA384 \
-  "CECPQ1-ECDSA-AES256-GCM-SHA384"
 
 
 #define TLS_CT_RSA_SIGN 1

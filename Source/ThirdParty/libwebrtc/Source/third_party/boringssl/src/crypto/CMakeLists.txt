@@ -1,43 +1,63 @@
 include_directories(../include)
 
-if(APPLE)
-  if (${ARCH} STREQUAL "x86")
-    set(PERLASM_FLAGS "-fPIC -DOPENSSL_IA32_SSE2")
-  endif()
-  set(PERLASM_STYLE macosx)
-  set(ASM_EXT S)
-  enable_language(ASM)
-elseif(UNIX)
-  if (${ARCH} STREQUAL "aarch64")
-    # The "armx" Perl scripts look for "64" in the style argument
-    # in order to decide whether to generate 32- or 64-bit asm.
-    set(PERLASM_STYLE linux64)
-  elseif (${ARCH} STREQUAL "arm")
-    set(PERLASM_STYLE linux32)
-  elseif (${ARCH} STREQUAL "x86")
-    set(PERLASM_FLAGS "-fPIC -DOPENSSL_IA32_SSE2")
-    set(PERLASM_STYLE elf)
-  elseif (${ARCH} STREQUAL "ppc64le")
-    set(PERLASM_STYLE ppc64le)
-  else()
-    set(PERLASM_STYLE elf)
-  endif()
-  set(ASM_EXT S)
-  enable_language(ASM)
-  set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,--noexecstack")
-else()
-  if (CMAKE_CL_64)
-    message("Using nasm")
-    set(PERLASM_STYLE nasm)
-  else()
-    message("Using win32n")
-    set(PERLASM_STYLE win32n)
-    set(PERLASM_FLAGS "-DOPENSSL_IA32_SSE2")
-  endif()
+if(NOT OPENSSL_NO_ASM)
+  if(UNIX)
+    if (${ARCH} STREQUAL "aarch64")
+      # The "armx" Perl scripts look for "64" in the style argument
+      # in order to decide whether to generate 32- or 64-bit asm.
+      if (APPLE)
+        set(PERLASM_STYLE ios64)
+      else()
+        set(PERLASM_STYLE linux64)
+      endif()
+    elseif (${ARCH} STREQUAL "arm")
+      if (APPLE)
+        set(PERLASM_STYLE ios32)
+      else()
+        set(PERLASM_STYLE linux32)
+      endif()
+    elseif (${ARCH} STREQUAL "ppc64le")
+      set(PERLASM_STYLE linux64le)
+    else()
+      if (${ARCH} STREQUAL "x86")
+        set(PERLASM_FLAGS "-fPIC -DOPENSSL_IA32_SSE2")
+      endif()
+      if (APPLE)
+        set(PERLASM_STYLE macosx)
+      else()
+        set(PERLASM_STYLE elf)
+      endif()
+    endif()
+    set(ASM_EXT S)
+    enable_language(ASM)
+    set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,--noexecstack")
 
-  # On Windows, we use the NASM output, specifically built with Yasm.
-  set(ASM_EXT asm)
-  enable_language(ASM_NASM)
+    # Clang's integerated assembler does not support debug symbols.
+    if(NOT CMAKE_ASM_COMPILER_ID MATCHES "Clang")
+      set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,-g")
+    endif()
+
+    # CMake does not add -isysroot and -arch flags to assembly.
+    if (APPLE)
+      if (CMAKE_OSX_SYSROOT)
+        set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -isysroot ${CMAKE_OSX_SYSROOT}")
+      endif()
+      foreach(arch ${CMAKE_OSX_ARCHITECTURES})
+        set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -arch ${arch}")
+      endforeach()
+    endif()
+  else()
+    if (CMAKE_CL_64)
+      set(PERLASM_STYLE nasm)
+    else()
+      set(PERLASM_STYLE win32n)
+      set(PERLASM_FLAGS "-DOPENSSL_IA32_SSE2")
+    endif()
+
+    # On Windows, we use the NASM output, specifically built with Yasm.
+    set(ASM_EXT asm)
+    enable_language(ASM_NASM)
+  endif()
 endif()
 
 function(perlasm dest src)
@@ -64,27 +84,21 @@ add_subdirectory(err)
 add_subdirectory(buf)
 add_subdirectory(base64)
 add_subdirectory(bytestring)
+add_subdirectory(pool)
 
 # Level 0.2 - depends on nothing but itself
-add_subdirectory(sha)
-add_subdirectory(md4)
-add_subdirectory(md5)
-add_subdirectory(modes)
-add_subdirectory(aes)
-add_subdirectory(des)
 add_subdirectory(rc4)
 add_subdirectory(conf)
 add_subdirectory(chacha)
 add_subdirectory(poly1305)
 add_subdirectory(curve25519)
-add_subdirectory(newhope)
 
 # Level 1, depends only on 0.*
-add_subdirectory(digest)
-add_subdirectory(cipher)
-add_subdirectory(rand)
+add_subdirectory(digest_extra)
+add_subdirectory(cipher_extra)
+add_subdirectory(rand_extra)
 add_subdirectory(bio)
-add_subdirectory(bn)
+add_subdirectory(bn_extra)
 add_subdirectory(obj)
 add_subdirectory(asn1)
 
@@ -92,11 +106,10 @@ add_subdirectory(asn1)
 add_subdirectory(engine)
 add_subdirectory(dh)
 add_subdirectory(dsa)
-add_subdirectory(rsa)
-add_subdirectory(ec)
+add_subdirectory(rsa_extra)
+add_subdirectory(ec_extra)
 add_subdirectory(ecdh)
-add_subdirectory(ecdsa)
-add_subdirectory(hmac)
+add_subdirectory(ecdsa_extra)
 
 # Level 3
 add_subdirectory(cmac)
@@ -107,13 +120,18 @@ add_subdirectory(x509)
 add_subdirectory(x509v3)
 
 # Level 4
+add_subdirectory(pkcs7)
 add_subdirectory(pkcs8)
 
 # Test support code
 add_subdirectory(test)
 
+add_subdirectory(fipsmodule)
+
 add_library(
-  crypto
+  crypto_base
+
+  OBJECT
 
   cpu-aarch64-linux.c
   cpu-arm.c
@@ -129,81 +147,127 @@ add_library(
   thread_none.c
   thread_pthread.c
   thread_win.c
-  time_support.c
+)
 
+if(FIPS_DELOCATE)
+  SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES EXTERNAL_OBJECT true)
+  SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES GENERATED true)
+
+  set(
+    CRYPTO_FIPS_OBJECTS
+
+    fipsmodule/bcm.o
+  )
+endif()
+
+add_library(
+  crypto
+
+  $<TARGET_OBJECTS:crypto_base>
   $<TARGET_OBJECTS:stack>
   $<TARGET_OBJECTS:lhash>
   $<TARGET_OBJECTS:err>
   $<TARGET_OBJECTS:base64>
   $<TARGET_OBJECTS:bytestring>
-  $<TARGET_OBJECTS:sha>
-  $<TARGET_OBJECTS:md4>
-  $<TARGET_OBJECTS:md5>
-  $<TARGET_OBJECTS:digest>
-  $<TARGET_OBJECTS:cipher>
-  $<TARGET_OBJECTS:modes>
-  $<TARGET_OBJECTS:aes>
-  $<TARGET_OBJECTS:des>
+  $<TARGET_OBJECTS:pool>
+  $<TARGET_OBJECTS:fipsmodule>
+  $<TARGET_OBJECTS:digest_extra>
+  $<TARGET_OBJECTS:cipher_extra>
   $<TARGET_OBJECTS:rc4>
   $<TARGET_OBJECTS:conf>
   $<TARGET_OBJECTS:chacha>
   $<TARGET_OBJECTS:poly1305>
   $<TARGET_OBJECTS:curve25519>
   $<TARGET_OBJECTS:buf>
-  $<TARGET_OBJECTS:bn>
+  $<TARGET_OBJECTS:bn_extra>
   $<TARGET_OBJECTS:bio>
-  $<TARGET_OBJECTS:rand>
+  $<TARGET_OBJECTS:rand_extra>
   $<TARGET_OBJECTS:obj>
   $<TARGET_OBJECTS:asn1>
   $<TARGET_OBJECTS:engine>
   $<TARGET_OBJECTS:dh>
   $<TARGET_OBJECTS:dsa>
-  $<TARGET_OBJECTS:rsa>
-  $<TARGET_OBJECTS:ec>
+  $<TARGET_OBJECTS:rsa_extra>
+  $<TARGET_OBJECTS:ec_extra>
   $<TARGET_OBJECTS:ecdh>
-  $<TARGET_OBJECTS:ecdsa>
-  $<TARGET_OBJECTS:hmac>
+  $<TARGET_OBJECTS:ecdsa_extra>
   $<TARGET_OBJECTS:cmac>
   $<TARGET_OBJECTS:evp>
   $<TARGET_OBJECTS:hkdf>
   $<TARGET_OBJECTS:pem>
   $<TARGET_OBJECTS:x509>
   $<TARGET_OBJECTS:x509v3>
+  $<TARGET_OBJECTS:pkcs7>
   $<TARGET_OBJECTS:pkcs8_lib>
-  $<TARGET_OBJECTS:newhope>
+
+  ${CRYPTO_FIPS_OBJECTS}
 )
+
+if(FIPS_DELOCATE)
+  add_dependencies(crypto bcm_o_target)
+endif()
+
+SET_TARGET_PROPERTIES(crypto PROPERTIES LINKER_LANGUAGE C)
 
 if(NOT MSVC AND NOT ANDROID)
   target_link_libraries(crypto pthread)
 endif()
 
+# TODO(davidben): Convert the remaining tests to GTest.
 add_executable(
-  constant_time_test
+  crypto_test
 
-  constant_time_test.c
+  asn1/asn1_test.cc
+  base64/base64_test.cc
+  bio/bio_test.cc
+  bytestring/bytestring_test.cc
+  chacha/chacha_test.cc
+  cipher_extra/aead_test.cc
+  cipher_extra/cipher_test.cc
+  cmac/cmac_test.cc
+  compiler_test.cc
+  constant_time_test.cc
+  curve25519/ed25519_test.cc
+  curve25519/spake25519_test.cc
+  curve25519/x25519_test.cc
+  ecdh/ecdh_test.cc
+  dh/dh_test.cc
+  digest_extra/digest_test.cc
+  dsa/dsa_test.cc
+  err/err_test.cc
+  evp/evp_extra_test.cc
+  evp/evp_test.cc
+  evp/pbkdf_test.cc
+  evp/scrypt_test.cc
+  fipsmodule/aes/aes_test.cc
+  fipsmodule/bn/bn_test.cc
+  fipsmodule/ec/ec_test.cc
+  fipsmodule/ec/p256-x86_64_test.cc
+  fipsmodule/ecdsa/ecdsa_test.cc
+  fipsmodule/modes/gcm_test.cc
+  fipsmodule/rand/ctrdrbg_test.cc
+  hkdf/hkdf_test.cc
+  hmac_extra/hmac_test.cc
+  lhash/lhash_test.cc
+  obj/obj_test.cc
+  pkcs7/pkcs7_test.cc
+  pkcs8/pkcs8_test.cc
+  pkcs8/pkcs12_test.cc
+  poly1305/poly1305_test.cc
+  pool/pool_test.cc
+  refcount_test.cc
+  rsa_extra/rsa_test.cc
+  test/file_test_gtest.cc
+  thread_test.cc
+  x509/x509_test.cc
 
+  $<TARGET_OBJECTS:crypto_test_data>
+  $<TARGET_OBJECTS:gtest_main>
   $<TARGET_OBJECTS:test_support>
 )
 
-target_link_libraries(constant_time_test crypto)
-add_dependencies(all_tests constant_time_test)
-
-add_executable(
-  thread_test
-
-  thread_test.c
-
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(thread_test crypto)
-add_dependencies(all_tests thread_test)
-
-add_executable(
-  refcount_test
-
-  refcount_test.c
-)
-
-target_link_libraries(refcount_test crypto)
-add_dependencies(all_tests refcount_test)
+target_link_libraries(crypto_test crypto gtest)
+if (WIN32)
+  target_link_libraries(crypto_test ws2_32)
+endif()
+add_dependencies(all_tests crypto_test)

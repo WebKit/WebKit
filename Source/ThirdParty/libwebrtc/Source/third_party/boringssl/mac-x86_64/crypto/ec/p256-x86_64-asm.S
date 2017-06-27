@@ -1,4 +1,4 @@
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM)
 .text	
 
 
@@ -15,47 +15,6 @@ L$Three:
 .long	3,3,3,3,3,3,3,3
 L$ONE_mont:
 .quad	0x0000000000000001, 0xffffffff00000000, 0xffffffffffffffff, 0x00000000fffffffe
-
-
-.p2align	6
-ecp_nistz256_mul_by_2:
-	pushq	%r12
-	pushq	%r13
-
-	movq	0(%rsi),%r8
-	movq	8(%rsi),%r9
-	addq	%r8,%r8
-	movq	16(%rsi),%r10
-	adcq	%r9,%r9
-	movq	24(%rsi),%r11
-	leaq	L$poly(%rip),%rsi
-	movq	%r8,%rax
-	adcq	%r10,%r10
-	adcq	%r11,%r11
-	movq	%r9,%rdx
-	sbbq	%r13,%r13
-
-	subq	0(%rsi),%r8
-	movq	%r10,%rcx
-	sbbq	8(%rsi),%r9
-	sbbq	16(%rsi),%r10
-	movq	%r11,%r12
-	sbbq	24(%rsi),%r11
-	testq	%r13,%r13
-
-	cmovzq	%rax,%r8
-	cmovzq	%rdx,%r9
-	movq	%r8,0(%rdi)
-	cmovzq	%rcx,%r10
-	movq	%r9,8(%rdi)
-	cmovzq	%r12,%r11
-	movq	%r10,16(%rdi)
-	movq	%r11,24(%rdi)
-
-	popq	%r13
-	popq	%r12
-	.byte	0xf3,0xc3
-
 
 
 
@@ -552,103 +511,6 @@ __ecp_nistz256_sqr_montq:
 
 
 
-
-
-
-
-.globl	_ecp_nistz256_from_mont
-.private_extern _ecp_nistz256_from_mont
-
-.p2align	5
-_ecp_nistz256_from_mont:
-	pushq	%r12
-	pushq	%r13
-
-	movq	0(%rsi),%rax
-	movq	L$poly+24(%rip),%r13
-	movq	8(%rsi),%r9
-	movq	16(%rsi),%r10
-	movq	24(%rsi),%r11
-	movq	%rax,%r8
-	movq	L$poly+8(%rip),%r12
-
-
-
-	movq	%rax,%rcx
-	shlq	$32,%r8
-	mulq	%r13
-	shrq	$32,%rcx
-	addq	%r8,%r9
-	adcq	%rcx,%r10
-	adcq	%rax,%r11
-	movq	%r9,%rax
-	adcq	$0,%rdx
-
-
-
-	movq	%r9,%rcx
-	shlq	$32,%r9
-	movq	%rdx,%r8
-	mulq	%r13
-	shrq	$32,%rcx
-	addq	%r9,%r10
-	adcq	%rcx,%r11
-	adcq	%rax,%r8
-	movq	%r10,%rax
-	adcq	$0,%rdx
-
-
-
-	movq	%r10,%rcx
-	shlq	$32,%r10
-	movq	%rdx,%r9
-	mulq	%r13
-	shrq	$32,%rcx
-	addq	%r10,%r11
-	adcq	%rcx,%r8
-	adcq	%rax,%r9
-	movq	%r11,%rax
-	adcq	$0,%rdx
-
-
-
-	movq	%r11,%rcx
-	shlq	$32,%r11
-	movq	%rdx,%r10
-	mulq	%r13
-	shrq	$32,%rcx
-	addq	%r11,%r8
-	adcq	%rcx,%r9
-	movq	%r8,%rcx
-	adcq	%rax,%r10
-	movq	%r9,%rsi
-	adcq	$0,%rdx
-
-
-
-	subq	$-1,%r8
-	movq	%r10,%rax
-	sbbq	%r12,%r9
-	sbbq	$0,%r10
-	movq	%rdx,%r11
-	sbbq	%r13,%rdx
-	sbbq	%r13,%r13
-
-	cmovnzq	%rcx,%r8
-	cmovnzq	%rsi,%r9
-	movq	%r8,0(%rdi)
-	cmovnzq	%rax,%r10
-	movq	%r9,8(%rdi)
-	cmovzq	%rdx,%r11
-	movq	%r10,16(%rdi)
-	movq	%r11,24(%rdi)
-
-	popq	%r13
-	popq	%r12
-	.byte	0xf3,0xc3
-
-
-
 .globl	_ecp_nistz256_select_w5
 .private_extern _ecp_nistz256_select_w5
 
@@ -766,13 +628,14 @@ _ecp_nistz256_avx2_select_w7:
 
 .p2align	5
 __ecp_nistz256_add_toq:
+	xorq	%r11,%r11
 	addq	0(%rbx),%r12
 	adcq	8(%rbx),%r13
 	movq	%r12,%rax
 	adcq	16(%rbx),%r8
 	adcq	24(%rbx),%r9
 	movq	%r13,%rbp
-	sbbq	%r11,%r11
+	adcq	$0,%r11
 
 	subq	$-1,%r12
 	movq	%r8,%rcx
@@ -780,14 +643,14 @@ __ecp_nistz256_add_toq:
 	sbbq	$0,%r8
 	movq	%r9,%r10
 	sbbq	%r15,%r9
-	testq	%r11,%r11
+	sbbq	$0,%r11
 
-	cmovzq	%rax,%r12
-	cmovzq	%rbp,%r13
+	cmovcq	%rax,%r12
+	cmovcq	%rbp,%r13
 	movq	%r12,0(%rdi)
-	cmovzq	%rcx,%r8
+	cmovcq	%rcx,%r8
 	movq	%r13,8(%rdi)
-	cmovzq	%r10,%r9
+	cmovcq	%r10,%r9
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
@@ -855,13 +718,14 @@ __ecp_nistz256_subq:
 
 .p2align	5
 __ecp_nistz256_mul_by_2q:
+	xorq	%r11,%r11
 	addq	%r12,%r12
 	adcq	%r13,%r13
 	movq	%r12,%rax
 	adcq	%r8,%r8
 	adcq	%r9,%r9
 	movq	%r13,%rbp
-	sbbq	%r11,%r11
+	adcq	$0,%r11
 
 	subq	$-1,%r12
 	movq	%r8,%rcx
@@ -869,14 +733,14 @@ __ecp_nistz256_mul_by_2q:
 	sbbq	$0,%r8
 	movq	%r9,%r10
 	sbbq	%r15,%r9
-	testq	%r11,%r11
+	sbbq	$0,%r11
 
-	cmovzq	%rax,%r12
-	cmovzq	%rbp,%r13
+	cmovcq	%rax,%r12
+	cmovcq	%rbp,%r13
 	movq	%r12,0(%rdi)
-	cmovzq	%rcx,%r8
+	cmovcq	%rcx,%r8
 	movq	%r13,8(%rdi)
-	cmovzq	%r10,%r9
+	cmovcq	%r10,%r9
 	movq	%r8,16(%rdi)
 	movq	%r9,24(%rdi)
 
@@ -1108,16 +972,14 @@ _ecp_nistz256_point_add:
 	movq	%rdx,%rsi
 	movdqa	%xmm0,384(%rsp)
 	movdqa	%xmm1,384+16(%rsp)
-	por	%xmm0,%xmm1
 	movdqa	%xmm2,416(%rsp)
 	movdqa	%xmm3,416+16(%rsp)
-	por	%xmm2,%xmm3
 	movdqa	%xmm4,448(%rsp)
 	movdqa	%xmm5,448+16(%rsp)
-	por	%xmm1,%xmm3
+	por	%xmm4,%xmm5
 
 	movdqu	0(%rsi),%xmm0
-	pshufd	$0xb1,%xmm3,%xmm5
+	pshufd	$0xb1,%xmm5,%xmm3
 	movdqu	16(%rsi),%xmm1
 	movdqu	32(%rsi),%xmm2
 	por	%xmm3,%xmm5
@@ -1129,14 +991,14 @@ _ecp_nistz256_point_add:
 	movdqa	%xmm0,480(%rsp)
 	pshufd	$0x1e,%xmm5,%xmm4
 	movdqa	%xmm1,480+16(%rsp)
-	por	%xmm0,%xmm1
-.byte	102,72,15,110,199
+	movdqu	64(%rsi),%xmm0
+	movdqu	80(%rsi),%xmm1
 	movdqa	%xmm2,512(%rsp)
 	movdqa	%xmm3,512+16(%rsp)
-	por	%xmm2,%xmm3
 	por	%xmm4,%xmm5
 	pxor	%xmm4,%xmm4
-	por	%xmm1,%xmm3
+	por	%xmm0,%xmm1
+.byte	102,72,15,110,199
 
 	leaq	64-0(%rsi),%rsi
 	movq	%rax,544+0(%rsp)
@@ -1147,8 +1009,8 @@ _ecp_nistz256_point_add:
 	call	__ecp_nistz256_sqr_montq
 
 	pcmpeqd	%xmm4,%xmm5
-	pshufd	$0xb1,%xmm3,%xmm4
-	por	%xmm3,%xmm4
+	pshufd	$0xb1,%xmm1,%xmm4
+	por	%xmm1,%xmm4
 	pshufd	$0,%xmm5,%xmm5
 	pshufd	$0x1e,%xmm4,%xmm3
 	por	%xmm3,%xmm4
@@ -1331,6 +1193,7 @@ L$add_proceedq:
 
 
 
+	xorq	%r11,%r11
 	addq	%r12,%r12
 	leaq	96(%rsp),%rsi
 	adcq	%r13,%r13
@@ -1338,7 +1201,7 @@ L$add_proceedq:
 	adcq	%r8,%r8
 	adcq	%r9,%r9
 	movq	%r13,%rbp
-	sbbq	%r11,%r11
+	adcq	$0,%r11
 
 	subq	$-1,%r12
 	movq	%r8,%rcx
@@ -1346,15 +1209,15 @@ L$add_proceedq:
 	sbbq	$0,%r8
 	movq	%r9,%r10
 	sbbq	%r15,%r9
-	testq	%r11,%r11
+	sbbq	$0,%r11
 
-	cmovzq	%rax,%r12
+	cmovcq	%rax,%r12
 	movq	0(%rsi),%rax
-	cmovzq	%rbp,%r13
+	cmovcq	%rbp,%r13
 	movq	8(%rsi),%rbp
-	cmovzq	%rcx,%r8
+	cmovcq	%rcx,%r8
 	movq	16(%rsi),%rcx
-	cmovzq	%r10,%r9
+	cmovcq	%r10,%r9
 	movq	24(%rsi),%r10
 
 	call	__ecp_nistz256_subq
@@ -1509,16 +1372,14 @@ _ecp_nistz256_point_add_affine:
 	movq	64+24(%rsi),%r8
 	movdqa	%xmm0,320(%rsp)
 	movdqa	%xmm1,320+16(%rsp)
-	por	%xmm0,%xmm1
 	movdqa	%xmm2,352(%rsp)
 	movdqa	%xmm3,352+16(%rsp)
-	por	%xmm2,%xmm3
 	movdqa	%xmm4,384(%rsp)
 	movdqa	%xmm5,384+16(%rsp)
-	por	%xmm1,%xmm3
+	por	%xmm4,%xmm5
 
 	movdqu	0(%rbx),%xmm0
-	pshufd	$0xb1,%xmm3,%xmm5
+	pshufd	$0xb1,%xmm5,%xmm3
 	movdqu	16(%rbx),%xmm1
 	movdqu	32(%rbx),%xmm2
 	por	%xmm3,%xmm5
@@ -1636,6 +1497,7 @@ _ecp_nistz256_point_add_affine:
 
 
 
+	xorq	%r11,%r11
 	addq	%r12,%r12
 	leaq	192(%rsp),%rsi
 	adcq	%r13,%r13
@@ -1643,7 +1505,7 @@ _ecp_nistz256_point_add_affine:
 	adcq	%r8,%r8
 	adcq	%r9,%r9
 	movq	%r13,%rbp
-	sbbq	%r11,%r11
+	adcq	$0,%r11
 
 	subq	$-1,%r12
 	movq	%r8,%rcx
@@ -1651,15 +1513,15 @@ _ecp_nistz256_point_add_affine:
 	sbbq	$0,%r8
 	movq	%r9,%r10
 	sbbq	%r15,%r9
-	testq	%r11,%r11
+	sbbq	$0,%r11
 
-	cmovzq	%rax,%r12
+	cmovcq	%rax,%r12
 	movq	0(%rsi),%rax
-	cmovzq	%rbp,%r13
+	cmovcq	%rbp,%r13
 	movq	8(%rsi),%rbp
-	cmovzq	%rcx,%r8
+	cmovcq	%rcx,%r8
 	movq	16(%rsi),%rcx
-	cmovzq	%r10,%r9
+	cmovcq	%r10,%r9
 	movq	24(%rsi),%r10
 
 	call	__ecp_nistz256_subq

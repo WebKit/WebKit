@@ -23,6 +23,8 @@
 #include <openssl/rsa.h>
 #include <openssl/thread.h>
 
+#include "../internal.h"
+
 
 struct engine_st {
   RSA_METHOD *rsa_method;
@@ -35,7 +37,7 @@ ENGINE *ENGINE_new(void) {
     return NULL;
   }
 
-  memset(engine, 0, sizeof(ENGINE));
+  OPENSSL_memset(engine, 0, sizeof(ENGINE));
   return engine;
 }
 

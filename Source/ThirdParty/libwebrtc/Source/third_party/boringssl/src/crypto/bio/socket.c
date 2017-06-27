@@ -142,10 +142,6 @@ static int sock_write(BIO *b, const char *in, int inl) {
   return ret;
 }
 
-static int sock_puts(BIO *bp, const char *str) {
-  return sock_write(bp, str, strlen(str));
-}
-
 static long sock_ctrl(BIO *b, int cmd, long num, void *ptr) {
   long ret = 1;
   int *ip;
@@ -185,8 +181,11 @@ static long sock_ctrl(BIO *b, int cmd, long num, void *ptr) {
 }
 
 static const BIO_METHOD methods_sockp = {
-    BIO_TYPE_SOCKET,  "socket",  sock_write, sock_read, sock_puts,
-    NULL /* gets, */, sock_ctrl, sock_new,   sock_free, NULL,
+    BIO_TYPE_SOCKET, "socket",
+    sock_write,      sock_read,
+    NULL /* puts */, NULL /* gets, */,
+    sock_ctrl,       sock_new,
+    sock_free,       NULL /* callback_ctrl */,
 };
 
 const BIO_METHOD *BIO_s_socket(void) { return &methods_sockp; }

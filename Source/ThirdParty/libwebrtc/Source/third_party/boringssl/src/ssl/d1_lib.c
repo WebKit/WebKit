@@ -64,7 +64,9 @@
 #include <openssl/mem.h>
 #include <openssl/nid.h>
 
+#include "../crypto/internal.h"
 #include "internal.h"
+
 
 
 /* DTLS1_MTU_TIMEOUTS is the maximum number of timeouts to expire
@@ -86,7 +88,7 @@ int dtls1_new(SSL *ssl) {
     ssl3_free(ssl);
     return 0;
   }
-  memset(d1, 0, sizeof *d1);
+  OPENSSL_memset(d1, 0, sizeof *d1);
 
   ssl->d1 = d1;
 
@@ -113,10 +115,6 @@ void dtls1_free(SSL *ssl) {
   ssl->d1 = NULL;
 }
 
-int dtls1_supports_cipher(const SSL_CIPHER *cipher) {
-  return cipher->algorithm_enc != SSL_eNULL;
-}
-
 void DTLSv1_set_initial_timeout_duration(SSL *ssl, unsigned int duration_ms) {
   ssl->initial_timeout_duration_ms = duration_ms;
 }
@@ -137,8 +135,6 @@ void dtls1_start_timer(SSL *ssl) {
     ssl->d1->next_timeout.tv_sec++;
     ssl->d1->next_timeout.tv_usec -= 1000000;
   }
-  BIO_ctrl(ssl->rbio, BIO_CTRL_DGRAM_SET_NEXT_TIMEOUT, 0,
-           &ssl->d1->next_timeout);
 }
 
 int DTLSv1_get_timeout(const SSL *ssl, struct timeval *out) {
@@ -151,32 +147,43 @@ int DTLSv1_get_timeout(const SSL *ssl, struct timeval *out) {
     return 0;
   }
 
-  struct timeval timenow;
+  struct OPENSSL_timeval timenow;
   ssl_get_current_time(ssl, &timenow);
 
   /* If timer already expired, set remaining time to 0 */
   if (ssl->d1->next_timeout.tv_sec < timenow.tv_sec ||
       (ssl->d1->next_timeout.tv_sec == timenow.tv_sec &&
        ssl->d1->next_timeout.tv_usec <= timenow.tv_usec)) {
-    memset(out, 0, sizeof(struct timeval));
+    OPENSSL_memset(out, 0, sizeof(*out));
     return 1;
   }
 
   /* Calculate time left until timer expires */
-  memcpy(out, &ssl->d1->next_timeout, sizeof(struct timeval));
-  out->tv_sec -= timenow.tv_sec;
-  out->tv_usec -= timenow.tv_usec;
-  if (out->tv_usec < 0) {
-    out->tv_sec--;
-    out->tv_usec += 1000000;
+  struct OPENSSL_timeval ret;
+  OPENSSL_memcpy(&ret, &ssl->d1->next_timeout, sizeof(ret));
+  ret.tv_sec -= timenow.tv_sec;
+  if (ret.tv_usec >= timenow.tv_usec) {
+    ret.tv_usec -= timenow.tv_usec;
+  } else {
+    ret.tv_usec = 1000000 + ret.tv_usec - timenow.tv_usec;
+    ret.tv_sec--;
   }
 
   /* If remaining time is less than 15 ms, set it to 0 to prevent issues
-   * because of small devergences with socket timeouts. */
-  if (out->tv_sec == 0 && out->tv_usec < 15000) {
-    memset(out, 0, sizeof(struct timeval));
+   * because of small divergences with socket timeouts. */
+  if (ret.tv_sec == 0 && ret.tv_usec < 15000) {
+    OPENSSL_memset(&ret, 0, sizeof(ret));
   }
 
+  /* Clamp the result in case of overflow. */
+  if (ret.tv_sec > INT_MAX) {
+    assert(0);
+    out->tv_sec = INT_MAX;
+  } else {
+    out->tv_sec = ret.tv_sec;
+  }
+
+  out->tv_usec = ret.tv_usec;
   return 1;
 }
 
@@ -208,10 +215,9 @@ void dtls1_double_timeout(SSL *ssl) {
 void dtls1_stop_timer(SSL *ssl) {
   /* Reset everything */
   ssl->d1->num_timeouts = 0;
-  memset(&ssl->d1->next_timeout, 0, sizeof(struct timeval));
+  OPENSSL_memset(&ssl->d1->next_timeout, 0, sizeof(ssl->d1->next_timeout));
   ssl->d1->timeout_duration_ms = ssl->initial_timeout_duration_ms;
-  BIO_ctrl(ssl->rbio, BIO_CTRL_DGRAM_SET_NEXT_TIMEOUT, 0,
-           &ssl->d1->next_timeout);
+
   /* Clear retransmission buffer */
   dtls_clear_outgoing_messages(ssl);
 }
@@ -238,9 +244,7 @@ int dtls1_check_timeout_num(SSL *ssl) {
 }
 
 int DTLSv1_handle_timeout(SSL *ssl) {
-  ssl->rwstate = SSL_NOTHING;
-  /* Functions which use SSL_get_error must clear the error queue on entry. */
-  ERR_clear_error();
+  ssl_reset_error_state(ssl);
 
   if (!SSL_is_dtls(ssl)) {
     return -1;
@@ -259,12 +263,4 @@ int DTLSv1_handle_timeout(SSL *ssl) {
 
   dtls1_start_timer(ssl);
   return dtls1_retransmit_outgoing_messages(ssl);
-}
-
-void dtls1_expect_flight(SSL *ssl) {
-  dtls1_start_timer(ssl);
-}
-
-void dtls1_received_flight(SSL *ssl) {
-  dtls1_stop_timer(ssl);
 }

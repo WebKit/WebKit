@@ -65,6 +65,9 @@
 #include <openssl/obj.h>
 #include <openssl/x509v3.h>
 
+#include "../internal.h"
+
+
 static void *v2i_NAME_CONSTRAINTS(const X509V3_EXT_METHOD *method,
                                   X509V3_CTX *ctx,
                                   STACK_OF(CONF_VALUE) *nval);
@@ -365,7 +368,7 @@ static int nc_dn(X509_NAME *nm, X509_NAME *base)
         return X509_V_ERR_OUT_OF_MEM;
     if (base->canon_enclen > nm->canon_enclen)
         return X509_V_ERR_PERMITTED_VIOLATION;
-    if (memcmp(base->canon_enc, nm->canon_enc, base->canon_enclen))
+    if (OPENSSL_memcmp(base->canon_enc, nm->canon_enc, base->canon_enclen))
         return X509_V_ERR_PERMITTED_VIOLATION;
     return X509_V_OK;
 }

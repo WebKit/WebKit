@@ -77,6 +77,7 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include <openssl/mem.h>
 
 #include "internal.h"
+#include "../internal.h"
 
 
 enum {
@@ -298,7 +299,7 @@ static BIO_CONNECT *BIO_CONNECT_new(void) {
   if (ret == NULL) {
     return NULL;
   }
-  memset(ret, 0, sizeof(BIO_CONNECT));
+  OPENSSL_memset(ret, 0, sizeof(BIO_CONNECT));
 
   ret->state = BIO_CONN_S_BEFORE;
   return ret;
@@ -467,14 +468,6 @@ static long conn_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       break;
     case BIO_CTRL_FLUSH:
       break;
-    case BIO_CTRL_SET_CALLBACK: {
-#if 0 /* FIXME: Should this be used?  -- Richard Levitte */
-		OPENSSL_PUT_ERROR(BIO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
-		ret = -1;
-#else
-      ret = 0;
-#endif
-    } break;
     case BIO_CTRL_GET_CALLBACK: {
       int (**fptr)(const BIO *bio, int state, int xret);
       fptr = (int (**)(const BIO *bio, int state, int xret))ptr;
@@ -484,7 +477,7 @@ static long conn_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       ret = 0;
       break;
   }
-  return (ret);
+  return ret;
 }
 
 static long conn_callback_ctrl(BIO *bio, int cmd, bio_info_cb fp) {
@@ -494,18 +487,14 @@ static long conn_callback_ctrl(BIO *bio, int cmd, bio_info_cb fp) {
   data = (BIO_CONNECT *)bio->ptr;
 
   switch (cmd) {
-    case BIO_CTRL_SET_CALLBACK: {
+    case BIO_CTRL_SET_CALLBACK:
       data->info_callback = (int (*)(const struct bio_st *, int, int))fp;
-    } break;
+      break;
     default:
       ret = 0;
       break;
   }
   return ret;
-}
-
-static int conn_puts(BIO *bp, const char *str) {
-  return conn_write(bp, str, strlen(str));
 }
 
 BIO *BIO_new_connect(const char *hostname) {
@@ -523,8 +512,8 @@ BIO *BIO_new_connect(const char *hostname) {
 }
 
 static const BIO_METHOD methods_connectp = {
-    BIO_TYPE_CONNECT, "socket connect",         conn_write, conn_read,
-    conn_puts,        NULL /* connect_gets, */, conn_ctrl,  conn_new,
+    BIO_TYPE_CONNECT, "socket connect",   conn_write, conn_read,
+    NULL /* puts */,  NULL /* gets */,    conn_ctrl,  conn_new,
     conn_free,        conn_callback_ctrl,
 };
 

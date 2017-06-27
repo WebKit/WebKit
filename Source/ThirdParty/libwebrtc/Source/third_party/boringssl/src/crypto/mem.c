@@ -68,18 +68,12 @@
 #if defined(OPENSSL_WINDOWS)
 OPENSSL_MSVC_PRAGMA(warning(push, 3))
 #include <windows.h>
-
-/* Work around a clang-cl bug: SecureZeroMemory() below uses __stosb() but
- * windows.h only declares that intrinsic and then uses `#pragma intrinsic` for
- * it.  clang-cl doesn't implement `#pragma intrinsic` yet; it instead defines
- * the function as an always-inline symbol in its intrin.h.
- * TODO(thakis): Remove this once http://llvm.org/PR19898 is fixed.
- */
-#include <intrin.h>
 OPENSSL_MSVC_PRAGMA(warning(pop))
 #else
 #include <strings.h>
 #endif
+
+#include "internal.h"
 
 
 void *OPENSSL_realloc_clean(void *ptr, size_t old_size, size_t new_size) {
@@ -102,7 +96,7 @@ void *OPENSSL_realloc_clean(void *ptr, size_t old_size, size_t new_size) {
     return NULL;
   }
 
-  memcpy(ret, ptr, old_size);
+  OPENSSL_memcpy(ret, ptr, old_size);
   OPENSSL_cleanse(ptr, old_size);
   OPENSSL_free(ptr);
   return ret;
@@ -112,7 +106,7 @@ void OPENSSL_cleanse(void *ptr, size_t len) {
 #if defined(OPENSSL_WINDOWS)
   SecureZeroMemory(ptr, len);
 #else
-  memset(ptr, 0, len);
+  OPENSSL_memset(ptr, 0, len);
 
 #if !defined(OPENSSL_NO_ASM)
   /* As best as we can tell, this is sufficient to break any optimisations that

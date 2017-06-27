@@ -22,6 +22,7 @@
 #include <openssl/mem.h>
 
 #include "internal.h"
+#include "../internal.h"
 
 
 int CBB_finish_i2d(CBB *cbb, uint8_t **outp) {
@@ -42,7 +43,7 @@ int CBB_finish_i2d(CBB *cbb, uint8_t **outp) {
       *outp = der;
       der = NULL;
     } else {
-      memcpy(*outp, der, der_len);
+      OPENSSL_memcpy(*outp, der, der_len);
       *outp += der_len;
     }
   }

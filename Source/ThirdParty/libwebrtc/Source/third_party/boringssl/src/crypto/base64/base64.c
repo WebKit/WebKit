@@ -62,13 +62,41 @@
 
 #include <openssl/type_check.h>
 
+#include "../internal.h"
+
+
+/* constant_time_lt_args_8 behaves like |constant_time_lt_8| but takes |uint8_t|
+ * arguments for a slightly simpler implementation. */
+static inline uint8_t constant_time_lt_args_8(uint8_t a, uint8_t b) {
+  crypto_word_t aw = a;
+  crypto_word_t bw = b;
+  /* |crypto_word_t| is larger than |uint8_t|, so |aw| and |bw| have the same
+   * MSB. |aw| < |bw| iff MSB(|aw| - |bw|) is 1. */
+  return constant_time_msb_w(aw - bw);
+}
+
+/* constant_time_in_range_8 returns |CONSTTIME_TRUE_8| if |min| <= |a| <= |max|
+ * and |CONSTTIME_FALSE_8| otherwise. */
+static inline uint8_t constant_time_in_range_8(uint8_t a, uint8_t min,
+                                               uint8_t max) {
+  a -= min;
+  return constant_time_lt_args_8(a, max - min + 1);
+}
 
 /* Encoding. */
 
-static const unsigned char data_bin2ascii[65] =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-#define conv_bin2ascii(a) (data_bin2ascii[(a) & 0x3f])
+static uint8_t conv_bin2ascii(uint8_t a) {
+  /* Since PEM is sometimes used to carry private keys, we encode base64 data
+   * itself in constant-time. */
+  a &= 0x3f;
+  uint8_t ret = constant_time_select_8(constant_time_eq_8(a, 62), '+', '/');
+  ret =
+      constant_time_select_8(constant_time_lt_args_8(a, 62), a - 52 + '0', ret);
+  ret =
+      constant_time_select_8(constant_time_lt_args_8(a, 52), a - 26 + 'a', ret);
+  ret = constant_time_select_8(constant_time_lt_args_8(a, 26), a + 'A', ret);
+  return ret;
+}
 
 OPENSSL_COMPILE_ASSERT(sizeof(((EVP_ENCODE_CTX *)(NULL))->data) % 3 == 0,
                        data_length_must_be_multiple_of_base64_chunk_size);
@@ -95,7 +123,7 @@ int EVP_EncodedLength(size_t *out_len, size_t len) {
 }
 
 void EVP_EncodeInit(EVP_ENCODE_CTX *ctx) {
-  memset(ctx, 0, sizeof(EVP_ENCODE_CTX));
+  OPENSSL_memset(ctx, 0, sizeof(EVP_ENCODE_CTX));
 }
 
 void EVP_EncodeUpdate(EVP_ENCODE_CTX *ctx, uint8_t *out, int *out_len,
@@ -110,14 +138,14 @@ void EVP_EncodeUpdate(EVP_ENCODE_CTX *ctx, uint8_t *out, int *out_len,
   assert(ctx->data_used < sizeof(ctx->data));
 
   if (sizeof(ctx->data) - ctx->data_used > in_len) {
-    memcpy(&ctx->data[ctx->data_used], in, in_len);
+    OPENSSL_memcpy(&ctx->data[ctx->data_used], in, in_len);
     ctx->data_used += (unsigned)in_len;
     return;
   }
 
   if (ctx->data_used != 0) {
     const size_t todo = sizeof(ctx->data) - ctx->data_used;
-    memcpy(&ctx->data[ctx->data_used], in, todo);
+    OPENSSL_memcpy(&ctx->data[ctx->data_used], in, todo);
     in += todo;
     in_len -= todo;
 
@@ -149,7 +177,7 @@ void EVP_EncodeUpdate(EVP_ENCODE_CTX *ctx, uint8_t *out, int *out_len,
   }
 
   if (in_len != 0) {
-    memcpy(ctx->data, in, in_len);
+    OPENSSL_memcpy(ctx->data, in, in_len);
   }
 
   ctx->data_used = (unsigned)in_len;
@@ -224,32 +252,28 @@ int EVP_DecodedLength(size_t *out_len, size_t len) {
 }
 
 void EVP_DecodeInit(EVP_ENCODE_CTX *ctx) {
-  memset(ctx, 0, sizeof(EVP_ENCODE_CTX));
+  OPENSSL_memset(ctx, 0, sizeof(EVP_ENCODE_CTX));
 }
 
-/* kBase64ASCIIToBinData maps characters (c < 128) to their base64 value, or
- * else 0xff if they are invalid. As a special case, the padding character
- * ('=') is mapped to zero. */
-static const uint8_t kBase64ASCIIToBinData[128] = {
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe0, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe0, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x3e, 0xff, 0xff, 0xff, 0x3f,
-    0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0xff, 0xff,
-    0xff, 0x00, 0xff, 0xff, 0xff, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
-    0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12,
-    0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24,
-    0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30,
-    0x31, 0x32, 0x33, 0xff, 0xff, 0xff, 0xff, 0xff,
-};
-
 static uint8_t base64_ascii_to_bin(uint8_t a) {
-  if (a >= 128) {
-    return 0xFF;
-  }
+  /* Since PEM is sometimes used to carry private keys, we decode base64 data
+   * itself in constant-time. */
+  const uint8_t is_upper = constant_time_in_range_8(a, 'A', 'Z');
+  const uint8_t is_lower = constant_time_in_range_8(a, 'a', 'z');
+  const uint8_t is_digit = constant_time_in_range_8(a, '0', '9');
+  const uint8_t is_plus = constant_time_eq_8(a, '+');
+  const uint8_t is_slash = constant_time_eq_8(a, '/');
+  const uint8_t is_equals = constant_time_eq_8(a, '=');
 
-  return kBase64ASCIIToBinData[a];
+  uint8_t ret = 0xff; /* 0xff signals invalid. */
+  ret = constant_time_select_8(is_upper, a - 'A', ret);      /* [0,26) */
+  ret = constant_time_select_8(is_lower, a - 'a' + 26, ret); /* [26,52) */
+  ret = constant_time_select_8(is_digit, a - '0' + 52, ret); /* [52,62) */
+  ret = constant_time_select_8(is_plus, 62, ret);
+  ret = constant_time_select_8(is_slash, 63, ret);
+  /* Padding maps to zero, to be further handled by the caller. */
+  ret = constant_time_select_8(is_equals, 0, ret);
+  return ret;
 }
 
 /* base64_decode_quad decodes a single “quad” (i.e. four characters) of base64
@@ -320,7 +344,7 @@ int EVP_DecodeUpdate(EVP_ENCODE_CTX *ctx, uint8_t *out, int *out_len,
         continue;
     }
 
-    if (base64_ascii_to_bin(c) == 0xff || ctx->eof_seen) {
+    if (ctx->eof_seen) {
       ctx->error_encountered = 1;
       return -1;
     }

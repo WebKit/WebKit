@@ -66,45 +66,57 @@ extern "C" {
 #endif
 
 
-/* PKCS8_encrypt_pbe serializes and encrypts a PKCS8_PRIV_KEY_INFO with PBES1 or
+/* PKCS8_encrypt serializes and encrypts a PKCS8_PRIV_KEY_INFO with PBES1 or
  * PBES2 as defined in PKCS #5. Only pbeWithSHAAnd128BitRC4,
  * pbeWithSHAAnd3-KeyTripleDES-CBC and pbeWithSHA1And40BitRC2, defined in PKCS
  * #12, and PBES2, are supported.  PBES2 is selected by setting |cipher| and
  * passing -1 for |pbe_nid|.  Otherwise, PBES1 is used and |cipher| is ignored.
  *
- * The |pass_raw_len| bytes pointed to by |pass_raw| are used as the password.
- * Note that any conversions from the password as supplied in a text string
- * (such as those specified in B.1 of PKCS #12) must be performed by the caller.
+ * |pass| is used as the password. If a PBES1 scheme from PKCS #12 is used, this
+ * will be converted to a raw byte string as specified in B.1 of PKCS #12. If
+ * |pass| is NULL, it will be encoded as the empty byte string rather than two
+ * zero bytes, the PKCS #12 encoding of the empty string.
  *
  * If |salt| is NULL, a random salt of |salt_len| bytes is generated. If
  * |salt_len| is zero, a default salt length is used instead.
  *
- * The resulting structure is stored in an X509_SIG which must be freed by the
- * caller.
- *
- * TODO(davidben): Really? An X509_SIG? OpenSSL probably did that because it has
- * the same structure as EncryptedPrivateKeyInfo. */
-OPENSSL_EXPORT X509_SIG *PKCS8_encrypt_pbe(int pbe_nid,
-                                           const EVP_CIPHER *cipher,
-                                           const uint8_t *pass_raw,
-                                           size_t pass_raw_len,
-                                           uint8_t *salt, size_t salt_len,
-                                           int iterations,
-                                           PKCS8_PRIV_KEY_INFO *p8inf);
+ * The resulting structure is stored in an |X509_SIG| which must be freed by the
+ * caller. */
+OPENSSL_EXPORT X509_SIG *PKCS8_encrypt(int pbe_nid, const EVP_CIPHER *cipher,
+                                       const char *pass, int pass_len,
+                                       const uint8_t *salt, size_t salt_len,
+                                       int iterations,
+                                       PKCS8_PRIV_KEY_INFO *p8inf);
 
-/* PKCS8_decrypt_pbe decrypts and decodes a PKCS8_PRIV_KEY_INFO with PBES1 or
- * PBES2 as defined in PKCS #5. Only pbeWithSHAAnd128BitRC4,
+/* PKCS8_marshal_encrypted_private_key behaves like |PKCS8_encrypt| but encrypts
+ * an |EVP_PKEY| and writes the serialized EncryptedPrivateKeyInfo to |out|. It
+ * returns one on success and zero on error. */
+OPENSSL_EXPORT int PKCS8_marshal_encrypted_private_key(
+    CBB *out, int pbe_nid, const EVP_CIPHER *cipher, const char *pass,
+    size_t pass_len, const uint8_t *salt, size_t salt_len, int iterations,
+    const EVP_PKEY *pkey);
+
+/* PKCS8_decrypt decrypts and decodes a PKCS8_PRIV_KEY_INFO with PBES1 or PBES2
+ * as defined in PKCS #5. Only pbeWithSHAAnd128BitRC4,
  * pbeWithSHAAnd3-KeyTripleDES-CBC and pbeWithSHA1And40BitRC2, and PBES2,
  * defined in PKCS #12, are supported.
  *
- * The |pass_raw_len| bytes pointed to by |pass_raw| are used as the password.
- * Note that any conversions from the password as supplied in a text string
- * (such as those specified in B.1 of PKCS #12) must be performed by the caller.
+ * |pass| is used as the password. If a PBES1 scheme from PKCS #12 is used, this
+ * will be converted to a raw byte string as specified in B.1 of PKCS #12. If
+ * |pass| is NULL, it will be encoded as the empty byte string rather than two
+ * zero bytes, the PKCS #12 encoding of the empty string.
  *
  * The resulting structure must be freed by the caller. */
-OPENSSL_EXPORT PKCS8_PRIV_KEY_INFO *PKCS8_decrypt_pbe(X509_SIG *pkcs8,
-                                                      const uint8_t *pass_raw,
-                                                      size_t pass_raw_len);
+OPENSSL_EXPORT PKCS8_PRIV_KEY_INFO *PKCS8_decrypt(X509_SIG *pkcs8,
+                                                  const char *pass,
+                                                  int pass_len);
+
+/* PKCS8_parse_encrypted_private_key behaves like |PKCS8_decrypt| but it parses
+ * the EncryptedPrivateKeyInfo structure from |cbs| and advances |cbs|. It
+ * returns a newly-allocated |EVP_PKEY| on success and zero on error. */
+OPENSSL_EXPORT EVP_PKEY *PKCS8_parse_encrypted_private_key(CBS *cbs,
+                                                           const char *pass,
+                                                           size_t pass_len);
 
 /* PKCS12_get_key_and_certs parses a PKCS#12 structure from |in|, authenticates
  * and decrypts it using |password|, sets |*out_key| to the included private
@@ -116,24 +128,6 @@ OPENSSL_EXPORT int PKCS12_get_key_and_certs(EVP_PKEY **out_key,
 
 
 /* Deprecated functions. */
-
-/* PKCS8_encrypt calls |PKCS8_encrypt_pbe| after (in the PKCS#12 case) treating
- * |pass| as an ASCII string, appending U+0000, and converting to UCS-2. (So the
- * empty password encodes as two NUL bytes.) In the PBES2 case, the password is
- * unchanged.  */
-OPENSSL_EXPORT X509_SIG *PKCS8_encrypt(int pbe_nid, const EVP_CIPHER *cipher,
-                                       const char *pass, int pass_len,
-                                       uint8_t *salt, size_t salt_len,
-                                       int iterations,
-                                       PKCS8_PRIV_KEY_INFO *p8inf);
-
-/* PKCS8_decrypt calls PKCS8_decrypt_pbe after (in the PKCS#12 case) treating
- * |pass| as an ASCII string, appending U+0000, and converting to UCS-2. (So the
- *  empty password encodes as two NUL bytes.) In the PBES2 case, the password is
- * unchanged. */
-OPENSSL_EXPORT PKCS8_PRIV_KEY_INFO *PKCS8_decrypt(X509_SIG *pkcs8,
-                                                  const char *pass,
-                                                  int pass_len);
 
 /* PKCS12_PBE_add does nothing. It exists for compatibility with OpenSSL. */
 OPENSSL_EXPORT void PKCS12_PBE_add(void);

@@ -64,6 +64,9 @@
 #include <openssl/obj.h>
 #include <openssl/x509.h>
 
+#include "../internal.h"
+
+
 /*
  * Limit to ensure we don't overflow: much greater than
  * anything enountered in practice.
@@ -161,7 +164,7 @@ char *X509_NAME_oneline(X509_NAME *a, char *buf, int len)
         } else
             p = &(buf[lold]);
         *(p++) = '/';
-        memcpy(p, s, (unsigned int)l1);
+        OPENSSL_memcpy(p, s, (unsigned int)l1);
         p += l1;
         *(p++) = '=';
 

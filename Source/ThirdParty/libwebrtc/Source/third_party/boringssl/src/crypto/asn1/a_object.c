@@ -63,6 +63,9 @@
 #include <openssl/mem.h>
 #include <openssl/obj.h>
 
+#include "../internal.h"
+
+
 int i2d_ASN1_OBJECT(ASN1_OBJECT *a, unsigned char **pp)
 {
     unsigned char *p;
@@ -77,7 +80,7 @@ int i2d_ASN1_OBJECT(ASN1_OBJECT *a, unsigned char **pp)
 
     p = *pp;
     ASN1_put_object(&p, 0, a->length, V_ASN1_OBJECT, V_ASN1_UNIVERSAL);
-    memcpy(p, a->data, a->length);
+    OPENSSL_memcpy(p, a->data, a->length);
     p += a->length;
 
     *pp = p;
@@ -321,7 +324,7 @@ ASN1_OBJECT *c2i_ASN1_OBJECT(ASN1_OBJECT **a, const unsigned char **pp,
         }
         ret->flags |= ASN1_OBJECT_FLAG_DYNAMIC_DATA;
     }
-    memcpy(data, p, length);
+    OPENSSL_memcpy(data, p, length);
     /* reattach data to object, after which it remains const */
     ret->data = data;
     ret->length = length;

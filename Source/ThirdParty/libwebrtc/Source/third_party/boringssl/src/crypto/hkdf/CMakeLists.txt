@@ -7,14 +7,3 @@ add_library(
 
   hkdf.c
 )
-
-add_executable(
-  hkdf_test
-
-  hkdf_test.c
-
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(hkdf_test crypto)
-add_dependencies(all_tests hkdf_test)

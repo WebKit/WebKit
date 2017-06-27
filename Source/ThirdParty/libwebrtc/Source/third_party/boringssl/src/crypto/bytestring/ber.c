@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "internal.h"
+#include "../internal.h"
 
 
 /* kMaxDepth is a just a sanity limit. The code should be such that the length
@@ -37,7 +38,7 @@ static int is_string_type(unsigned tag) {
     case CBS_ASN1_UTF8STRING:
     case CBS_ASN1_NUMERICSTRING:
     case CBS_ASN1_PRINTABLESTRING:
-    case CBS_ASN1_T16STRING:
+    case CBS_ASN1_T61STRING:
     case CBS_ASN1_VIDEOTEXSTRING:
     case CBS_ASN1_IA5STRING:
     case CBS_ASN1_GRAPHICSTRING:
@@ -100,7 +101,7 @@ static int cbs_find_ber(const CBS *orig_in, char *ber_found, unsigned depth) {
  * |CBS_get_any_ber_asn1_element|, indicate an "end of contents" (EOC) value. */
 static char is_eoc(size_t header_len, CBS *contents) {
   return header_len == 2 && CBS_len(contents) == 2 &&
-         memcmp(CBS_data(contents), "\x00\x00", 2) == 0;
+         OPENSSL_memcmp(CBS_data(contents), "\x00\x00", 2) == 0;
 }
 
 /* cbs_convert_ber reads BER data from |in| and writes DER data to |out|. If

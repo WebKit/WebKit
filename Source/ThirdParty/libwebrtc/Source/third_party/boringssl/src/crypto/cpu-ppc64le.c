@@ -27,14 +27,12 @@
 #define PPC_FEATURE2_HAS_VCRYPTO 0x02000000
 #endif
 
-static unsigned long g_ppc64le_hwcap2 = 0;
-
 void OPENSSL_cpuid_setup(void) {
-  g_ppc64le_hwcap2 = getauxval(AT_HWCAP2);
+  OPENSSL_ppc64le_hwcap2 = getauxval(AT_HWCAP2);
 }
 
 int CRYPTO_is_PPC64LE_vcrypto_capable(void) {
-  return (g_ppc64le_hwcap2 & PPC_FEATURE2_HAS_VCRYPTO) != 0;
+  return (OPENSSL_ppc64le_hwcap2 & PPC_FEATURE2_HAS_VCRYPTO) != 0;
 }
 
 #endif  /* OPENSSL_PPC64LE */

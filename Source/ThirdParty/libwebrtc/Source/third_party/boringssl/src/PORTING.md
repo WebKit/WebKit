@@ -227,6 +227,7 @@ parameter.
 `SSL_CTRL_OPTIONS` | `SSL_CTX_get_options` or `SSL_CTX_set_options`
 `SSL_CTRL_SESS_NUMBER` | `SSL_CTX_sess_number`
 `SSL_CTRL_SET_CURVES` | `SSL_CTX_set1_curves`
+`SSL_CTRL_SET_ECDH_AUTO` | `SSL_CTX_set_ecdh_auto`
 `SSL_CTRL_SET_MAX_CERT_LIST` | `SSL_CTX_set_max_cert_list`
 `SSL_CTRL_SET_MAX_SEND_FRAGMENT` | `SSL_CTX_set_max_send_fragment`
 `SSL_CTRL_SET_MSG_CALLBACK` | `SSL_set_msg_callback`

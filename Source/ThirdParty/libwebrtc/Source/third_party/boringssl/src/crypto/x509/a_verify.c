@@ -75,7 +75,7 @@ int ASN1_item_verify(const ASN1_ITEM *it, X509_ALGOR *a,
 {
     EVP_MD_CTX ctx;
     uint8_t *buf_in = NULL;
-    int ret = 0, inl;
+    int ret = 0, inl = 0;
 
     if (!pkey) {
         OPENSSL_PUT_ERROR(X509, ERR_R_PASSED_NULL_PARAMETER);
@@ -100,28 +100,19 @@ int ASN1_item_verify(const ASN1_ITEM *it, X509_ALGOR *a,
         goto err;
     }
 
-    if (!EVP_DigestVerifyUpdate(&ctx, buf_in, inl)) {
-        OPENSSL_cleanse(buf_in, (unsigned int)inl);
-        OPENSSL_free(buf_in);
+    if (!EVP_DigestVerify(&ctx, signature->data, (size_t)signature->length,
+                          buf_in, inl)) {
         OPENSSL_PUT_ERROR(X509, ERR_R_EVP_LIB);
         goto err;
     }
 
-    OPENSSL_cleanse(buf_in, (unsigned int)inl);
-    OPENSSL_free(buf_in);
-
-    if (EVP_DigestVerifyFinal(&ctx, signature->data,
-                              (size_t)signature->length) <= 0) {
-        OPENSSL_PUT_ERROR(X509, ERR_R_EVP_LIB);
-        goto err;
-    }
-    /*
-     * we don't need to zero the 'ctx' because we just checked public
-     * information
-     */
-    /* memset(&ctx,0,sizeof(ctx)); */
     ret = 1;
- err:
+
+err:
+    if (buf_in != NULL) {
+        OPENSSL_cleanse(buf_in, inl);
+        OPENSSL_free(buf_in);
+    }
     EVP_MD_CTX_cleanup(&ctx);
     return ret;
 }

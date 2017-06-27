@@ -62,6 +62,9 @@
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
 
+#include "../internal.h"
+
+
 static const char *const names[] = {
     "a", "b", ".", "*", "@",
     ".a", "a.", ".b", "b.", ".*", "*.", "*@", "@*", "a@", "@a", "b@", "..",
@@ -334,7 +337,7 @@ static void run_cert(X509 *crt, const char *nameincert,
         size_t namelen = strlen(*pname);
         char *name = malloc(namelen);
         int match, ret;
-        memcpy(name, *pname, namelen);
+        OPENSSL_memcpy(name, *pname, namelen);
 
         ret = X509_check_host(crt, name, namelen, 0, NULL);
         match = -1;

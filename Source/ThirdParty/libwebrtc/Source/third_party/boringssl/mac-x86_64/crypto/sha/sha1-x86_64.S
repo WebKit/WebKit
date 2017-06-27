@@ -1,4 +1,4 @@
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM)
 .text	
 
 
@@ -1240,14 +1240,13 @@ L$epilogue:
 .p2align	4
 sha1_block_data_order_ssse3:
 _ssse3_shortcut:
-	movq	%rsp,%rax
+	movq	%rsp,%r11
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
 	pushq	%r13
 	pushq	%r14
 	leaq	-64(%rsp),%rsp
-	movq	%rax,%r14
 	andq	$-64,%rsp
 	movq	%rdi,%r8
 	movq	%rsi,%r9
@@ -1255,7 +1254,7 @@ _ssse3_shortcut:
 
 	shlq	$6,%r10
 	addq	%r9,%r10
-	leaq	K_XX_XX+64(%rip),%r11
+	leaq	K_XX_XX+64(%rip),%r14
 
 	movl	0(%r8),%eax
 	movl	4(%r8),%ebx
@@ -1267,8 +1266,8 @@ _ssse3_shortcut:
 	xorl	%edx,%edi
 	andl	%edi,%esi
 
-	movdqa	64(%r11),%xmm6
-	movdqa	-64(%r11),%xmm9
+	movdqa	64(%r14),%xmm6
+	movdqa	-64(%r14),%xmm9
 	movdqu	0(%r9),%xmm0
 	movdqu	16(%r9),%xmm1
 	movdqu	32(%r9),%xmm2
@@ -1344,7 +1343,7 @@ L$oop_ssse3:
 	pslld	$2,%xmm9
 	pxor	%xmm10,%xmm4
 	xorl	%ebp,%edx
-	movdqa	-64(%r11),%xmm10
+	movdqa	-64(%r14),%xmm10
 	roll	$5,%ecx
 	addl	%edi,%ebx
 	andl	%edx,%esi
@@ -1405,7 +1404,7 @@ L$oop_ssse3:
 	pslld	$2,%xmm10
 	pxor	%xmm8,%xmm5
 	xorl	%eax,%ebp
-	movdqa	-32(%r11),%xmm8
+	movdqa	-32(%r14),%xmm8
 	roll	$5,%edx
 	addl	%edi,%ecx
 	andl	%ebp,%esi
@@ -1466,7 +1465,7 @@ L$oop_ssse3:
 	pslld	$2,%xmm8
 	pxor	%xmm9,%xmm6
 	xorl	%ebx,%eax
-	movdqa	-32(%r11),%xmm9
+	movdqa	-32(%r14),%xmm9
 	roll	$5,%ebp
 	addl	%edi,%edx
 	andl	%eax,%esi
@@ -1527,7 +1526,7 @@ L$oop_ssse3:
 	pslld	$2,%xmm9
 	pxor	%xmm10,%xmm7
 	xorl	%ecx,%ebx
-	movdqa	-32(%r11),%xmm10
+	movdqa	-32(%r14),%xmm10
 	roll	$5,%eax
 	addl	%edi,%ebp
 	andl	%ebx,%esi
@@ -1638,7 +1637,7 @@ L$oop_ssse3:
 	pxor	%xmm3,%xmm2
 	addl	%esi,%eax
 	xorl	%edx,%edi
-	movdqa	0(%r11),%xmm10
+	movdqa	0(%r14),%xmm10
 	rorl	$7,%ecx
 	paddd	%xmm1,%xmm9
 	addl	%ebx,%eax
@@ -1873,7 +1872,7 @@ L$oop_ssse3:
 	pxor	%xmm0,%xmm7
 	roll	$5,%ebx
 	addl	%esi,%eax
-	movdqa	32(%r11),%xmm9
+	movdqa	32(%r14),%xmm9
 	xorl	%ecx,%edi
 	paddd	%xmm6,%xmm8
 	xorl	%edx,%ecx
@@ -2164,8 +2163,8 @@ L$oop_ssse3:
 	addl	%edx,%ecx
 	cmpq	%r10,%r9
 	je	L$done_ssse3
-	movdqa	64(%r11),%xmm6
-	movdqa	-64(%r11),%xmm9
+	movdqa	64(%r14),%xmm6
+	movdqa	-64(%r14),%xmm9
 	movdqu	0(%r9),%xmm0
 	movdqu	16(%r9),%xmm1
 	movdqu	32(%r9),%xmm2
@@ -2402,13 +2401,12 @@ L$done_ssse3:
 	movl	%ecx,8(%r8)
 	movl	%edx,12(%r8)
 	movl	%ebp,16(%r8)
-	leaq	(%r14),%rsi
-	movq	-40(%rsi),%r14
-	movq	-32(%rsi),%r13
-	movq	-24(%rsi),%r12
-	movq	-16(%rsi),%rbp
-	movq	-8(%rsi),%rbx
-	leaq	(%rsi),%rsp
+	movq	-40(%r11),%r14
+	movq	-32(%r11),%r13
+	movq	-24(%r11),%r12
+	movq	-16(%r11),%rbp
+	movq	-8(%r11),%rbx
+	leaq	(%r11),%rsp
 L$epilogue_ssse3:
 	.byte	0xf3,0xc3
 
@@ -2416,7 +2414,7 @@ L$epilogue_ssse3:
 .p2align	4
 sha1_block_data_order_avx:
 _avx_shortcut:
-	movq	%rsp,%rax
+	movq	%rsp,%r11
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
@@ -2424,7 +2422,6 @@ _avx_shortcut:
 	pushq	%r14
 	leaq	-64(%rsp),%rsp
 	vzeroupper
-	movq	%rax,%r14
 	andq	$-64,%rsp
 	movq	%rdi,%r8
 	movq	%rsi,%r9
@@ -2432,7 +2429,7 @@ _avx_shortcut:
 
 	shlq	$6,%r10
 	addq	%r9,%r10
-	leaq	K_XX_XX+64(%rip),%r11
+	leaq	K_XX_XX+64(%rip),%r14
 
 	movl	0(%r8),%eax
 	movl	4(%r8),%ebx
@@ -2444,8 +2441,8 @@ _avx_shortcut:
 	xorl	%edx,%edi
 	andl	%edi,%esi
 
-	vmovdqa	64(%r11),%xmm6
-	vmovdqa	-64(%r11),%xmm11
+	vmovdqa	64(%r14),%xmm6
+	vmovdqa	-64(%r14),%xmm11
 	vmovdqu	0(%r9),%xmm0
 	vmovdqu	16(%r9),%xmm1
 	vmovdqu	32(%r9),%xmm2
@@ -2570,7 +2567,7 @@ L$oop_avx:
 	vpxor	%xmm10,%xmm5,%xmm5
 	xorl	%eax,%ebp
 	shldl	$5,%edx,%edx
-	vmovdqa	-32(%r11),%xmm11
+	vmovdqa	-32(%r14),%xmm11
 	addl	%edi,%ecx
 	andl	%ebp,%esi
 	xorl	%eax,%ebp
@@ -2783,7 +2780,7 @@ L$oop_avx:
 	addl	%esi,%eax
 	xorl	%edx,%edi
 	vpaddd	%xmm1,%xmm11,%xmm9
-	vmovdqa	0(%r11),%xmm11
+	vmovdqa	0(%r14),%xmm11
 	shrdl	$7,%ecx,%ecx
 	addl	%ebx,%eax
 	vpxor	%xmm8,%xmm2,%xmm2
@@ -3002,7 +2999,7 @@ L$oop_avx:
 	movl	%ebx,%edi
 	xorl	%edx,%esi
 	vpaddd	%xmm6,%xmm11,%xmm9
-	vmovdqa	32(%r11),%xmm11
+	vmovdqa	32(%r14),%xmm11
 	shldl	$5,%ebx,%ebx
 	addl	%esi,%eax
 	vpxor	%xmm8,%xmm7,%xmm7
@@ -3281,8 +3278,8 @@ L$oop_avx:
 	addl	%edx,%ecx
 	cmpq	%r10,%r9
 	je	L$done_avx
-	vmovdqa	64(%r11),%xmm6
-	vmovdqa	-64(%r11),%xmm11
+	vmovdqa	64(%r14),%xmm6
+	vmovdqa	-64(%r14),%xmm11
 	vmovdqu	0(%r9),%xmm0
 	vmovdqu	16(%r9),%xmm1
 	vmovdqu	32(%r9),%xmm2
@@ -3518,13 +3515,12 @@ L$done_avx:
 	movl	%ecx,8(%r8)
 	movl	%edx,12(%r8)
 	movl	%ebp,16(%r8)
-	leaq	(%r14),%rsi
-	movq	-40(%rsi),%r14
-	movq	-32(%rsi),%r13
-	movq	-24(%rsi),%r12
-	movq	-16(%rsi),%rbp
-	movq	-8(%rsi),%rbx
-	leaq	(%rsi),%rsp
+	movq	-40(%r11),%r14
+	movq	-32(%r11),%r13
+	movq	-24(%r11),%r12
+	movq	-16(%r11),%rbp
+	movq	-8(%r11),%rbx
+	leaq	(%r11),%rsp
 L$epilogue_avx:
 	.byte	0xf3,0xc3
 

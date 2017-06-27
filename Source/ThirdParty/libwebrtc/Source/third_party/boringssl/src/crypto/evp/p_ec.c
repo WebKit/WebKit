@@ -69,7 +69,8 @@
 #include <openssl/nid.h>
 
 #include "internal.h"
-#include "../ec/internal.h"
+#include "../fipsmodule/ec/internal.h"
+#include "../internal.h"
 
 
 typedef struct {
@@ -84,7 +85,7 @@ static int pkey_ec_init(EVP_PKEY_CTX *ctx) {
   if (!dctx) {
     return 0;
   }
-  memset(dctx, 0, sizeof(EC_PKEY_CTX));
+  OPENSSL_memset(dctx, 0, sizeof(EC_PKEY_CTX));
 
   ctx->data = dctx;
 
@@ -227,10 +228,12 @@ const EVP_PKEY_METHOD ec_pkey_meth = {
     pkey_ec_cleanup,
     pkey_ec_keygen,
     pkey_ec_sign,
+    NULL /* sign_message */,
     pkey_ec_verify,
-    0 /* verify_recover */,
-    0 /* encrypt */,
-    0 /* decrypt */,
+    NULL /* verify_message */,
+    NULL /* verify_recover */,
+    NULL /* encrypt */,
+    NULL /* decrypt */,
     pkey_ec_derive,
     pkey_ec_ctrl,
 };

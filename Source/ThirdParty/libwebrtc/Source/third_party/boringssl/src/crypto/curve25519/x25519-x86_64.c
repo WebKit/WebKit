@@ -23,6 +23,7 @@
 
 #include <string.h>
 
+#include "../internal.h"
 #include "internal.h"
 
 
@@ -228,7 +229,7 @@ static void mladder(fe25519 *xr, fe25519 *zr, const uint8_t s[32]) {
 void x25519_x86_64(uint8_t out[32], const uint8_t scalar[32],
                   const uint8_t point[32]) {
   uint8_t e[32];
-  memcpy(e, scalar, sizeof(e));
+  OPENSSL_memcpy(e, scalar, sizeof(e));
 
   e[0] &= 248;
   e[31] &= 127;

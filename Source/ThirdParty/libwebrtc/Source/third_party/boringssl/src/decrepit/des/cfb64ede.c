@@ -58,7 +58,8 @@
 
 #include <openssl/des.h>
 
-#include "../crypto/des/internal.h"
+#include "../../crypto/fipsmodule/des/internal.h"
+#include "../../crypto/internal.h"
 
 
 /* The input and output encrypted as though 64bit cfb mode is being used. The
@@ -174,7 +175,7 @@ void DES_ede3_cfb_encrypt(const uint8_t *in, uint8_t *out, int numbits,
         l2c(d0, iv);
         l2c(d1, iv);
         /* shift ovec left most of the bits... */
-        memmove(ovec, ovec + num / 8, 8 + (num % 8 ? 1 : 0));
+        OPENSSL_memmove(ovec, ovec + num / 8, 8 + (num % 8 ? 1 : 0));
         /* now the remaining bits */
         if (num % 8 != 0) {
           for (i = 0; i < 8; ++i) {
@@ -210,7 +211,7 @@ void DES_ede3_cfb_encrypt(const uint8_t *in, uint8_t *out, int numbits,
         l2c(d0, iv);
         l2c(d1, iv);
         /* shift ovec left most of the bits... */
-        memmove(ovec, ovec + num / 8, 8 + (num % 8 ? 1 : 0));
+        OPENSSL_memmove(ovec, ovec + num / 8, 8 + (num % 8 ? 1 : 0));
         /* now the remaining bits */
         if (num % 8 != 0) {
           for (i = 0; i < 8; ++i) {

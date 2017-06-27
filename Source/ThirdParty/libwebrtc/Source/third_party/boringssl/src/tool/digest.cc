@@ -21,6 +21,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -64,8 +65,9 @@ struct Source {
   };
 
   Source() : is_stdin_(false) {}
-  Source(Type) : is_stdin_(true) {}
-  Source(const std::string &name) : is_stdin_(false), filename_(name) {}
+  explicit Source(Type) : is_stdin_(true) {}
+  explicit Source(const std::string &name)
+      : is_stdin_(false), filename_(name) {}
 
   bool is_stdin() const { return is_stdin_; }
   const std::string &filename() const { return filename_; }
@@ -132,12 +134,8 @@ static bool SumFile(std::string *out_hex, const EVP_MD *md,
   static const size_t kBufSize = 8192;
   std::unique_ptr<uint8_t[]> buf(new uint8_t[kBufSize]);
 
-  EVP_MD_CTX ctx;
-  EVP_MD_CTX_init(&ctx);
-  std::unique_ptr<EVP_MD_CTX, func_delete<EVP_MD_CTX, int, EVP_MD_CTX_cleanup>>
-      scoped_ctx(&ctx);
-
-  if (!EVP_DigestInit_ex(&ctx, md, NULL)) {
+  bssl::ScopedEVP_MD_CTX ctx;
+  if (!EVP_DigestInit_ex(ctx.get(), md, NULL)) {
     fprintf(stderr, "Failed to initialize EVP_MD_CTX.\n");
     return false;
   }
@@ -158,7 +156,7 @@ static bool SumFile(std::string *out_hex, const EVP_MD *md,
       return false;
     }
 
-    if (!EVP_DigestUpdate(&ctx, buf.get(), n)) {
+    if (!EVP_DigestUpdate(ctx.get(), buf.get(), n)) {
       fprintf(stderr, "Failed to update hash.\n");
       return false;
     }
@@ -166,7 +164,7 @@ static bool SumFile(std::string *out_hex, const EVP_MD *md,
 
   uint8_t digest[EVP_MAX_MD_SIZE];
   unsigned digest_len;
-  if (!EVP_DigestFinal_ex(&ctx, digest, &digest_len)) {
+  if (!EVP_DigestFinal_ex(ctx.get(), digest, &digest_len)) {
     fprintf(stderr, "Failed to finish hash.\n");
     return false;
   }

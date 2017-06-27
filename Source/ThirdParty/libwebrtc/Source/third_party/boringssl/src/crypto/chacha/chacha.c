@@ -96,7 +96,7 @@ static void chacha_core(uint8_t output[64], const uint32_t input[16]) {
   uint32_t x[16];
   int i;
 
-  memcpy(x, input, sizeof(uint32_t) * 16);
+  OPENSSL_memcpy(x, input, sizeof(uint32_t) * 16);
   for (i = 20; i > 0; i -= 2) {
     QUARTERROUND(0, 4, 8, 12)
     QUARTERROUND(1, 5, 9, 13)

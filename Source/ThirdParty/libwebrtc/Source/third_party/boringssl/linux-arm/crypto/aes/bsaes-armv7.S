@@ -1,4 +1,11 @@
 #if defined(__arm__)
+@ Copyright 2012-2016 The OpenSSL Project Authors. All Rights Reserved.
+@
+@ Licensed under the OpenSSL license (the "License").  You may not use
+@ this file except in compliance with the License.  You can obtain a copy
+@ in the file LICENSE in the source distribution or at
+@ https://www.openssl.org/source/license.html
+
 
 @ ====================================================================
 @ Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
@@ -77,6 +84,7 @@
 .thumb
 #else
 .code	32
+# undef __thumb2__
 #endif
 
 .type	_bsaes_decrypt8,%function
@@ -1313,7 +1321,7 @@ bsaes_cbc_encrypt:
 	vmov	q4,q15		@ just in case ensure that IV
 	vmov	q5,q0			@ and input are preserved
 	bl	AES_decrypt
-	vld1.8	{q0}, [r9,:64]		@ load result
+	vld1.8	{q0}, [r9]		@ load result
 	veor	q0, q0, q4	@ ^= IV
 	vmov	q15, q5		@ q5 holds input
 	vst1.8	{q0}, [r10]		@ write output

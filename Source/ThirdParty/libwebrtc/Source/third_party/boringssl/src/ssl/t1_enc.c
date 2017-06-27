@@ -146,6 +146,7 @@
 #include <openssl/nid.h>
 #include <openssl/rand.h>
 
+#include "../crypto/internal.h"
 #include "internal.h"
 
 
@@ -223,18 +224,17 @@ err:
   return ret;
 }
 
-static int tls1_prf(const SSL *ssl, uint8_t *out, size_t out_len,
-                    const uint8_t *secret, size_t secret_len, const char *label,
-                    size_t label_len, const uint8_t *seed1, size_t seed1_len,
-                    const uint8_t *seed2, size_t seed2_len) {
+int tls1_prf(const EVP_MD *digest, uint8_t *out, size_t out_len,
+             const uint8_t *secret, size_t secret_len, const char *label,
+             size_t label_len, const uint8_t *seed1, size_t seed1_len,
+             const uint8_t *seed2, size_t seed2_len) {
   if (out_len == 0) {
     return 1;
   }
 
-  memset(out, 0, out_len);
+  OPENSSL_memset(out, 0, out_len);
 
-  uint32_t algorithm_prf = ssl_get_algorithm_prf(ssl);
-  if (algorithm_prf == SSL_HANDSHAKE_MAC_DEFAULT) {
+  if (digest == EVP_md5_sha1()) {
     /* If using the MD5/SHA1 PRF, |secret| is partitioned between SHA-1 and
      * MD5, MD5 first. */
     size_t secret_half = secret_len - (secret_len / 2);
@@ -247,107 +247,99 @@ static int tls1_prf(const SSL *ssl, uint8_t *out, size_t out_len,
     /* Note that, if |secret_len| is odd, the two halves share a byte. */
     secret = secret + (secret_len - secret_half);
     secret_len = secret_half;
+
+    digest = EVP_sha1();
   }
 
-  if (!tls1_P_hash(out, out_len, ssl_get_handshake_digest(algorithm_prf),
-                   secret, secret_len, (const uint8_t *)label, label_len,
-                   seed1, seed1_len, seed2, seed2_len)) {
+  if (!tls1_P_hash(out, out_len, digest, secret, secret_len,
+                   (const uint8_t *)label, label_len, seed1, seed1_len, seed2,
+                   seed2_len)) {
     return 0;
   }
 
   return 1;
 }
 
-int tls1_change_cipher_state(SSL *ssl, int which) {
-  /* Ensure the key block is set up. */
-  if (!tls1_setup_key_block(ssl)) {
-    return 0;
+static int ssl3_prf(uint8_t *out, size_t out_len, const uint8_t *secret,
+                    size_t secret_len, const char *label, size_t label_len,
+                    const uint8_t *seed1, size_t seed1_len,
+                    const uint8_t *seed2, size_t seed2_len) {
+  EVP_MD_CTX md5;
+  EVP_MD_CTX sha1;
+  uint8_t buf[16], smd[SHA_DIGEST_LENGTH];
+  uint8_t c = 'A';
+  size_t i, j, k;
+
+  k = 0;
+  EVP_MD_CTX_init(&md5);
+  EVP_MD_CTX_init(&sha1);
+  for (i = 0; i < out_len; i += MD5_DIGEST_LENGTH) {
+    k++;
+    if (k > sizeof(buf)) {
+      /* bug: 'buf' is too small for this ciphersuite */
+      OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+      return 0;
+    }
+
+    for (j = 0; j < k; j++) {
+      buf[j] = c;
+    }
+    c++;
+    if (!EVP_DigestInit_ex(&sha1, EVP_sha1(), NULL)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_LIB_EVP);
+      return 0;
+    }
+    EVP_DigestUpdate(&sha1, buf, k);
+    EVP_DigestUpdate(&sha1, secret, secret_len);
+    /* |label| is ignored for SSLv3. */
+    if (seed1_len) {
+      EVP_DigestUpdate(&sha1, seed1, seed1_len);
+    }
+    if (seed2_len) {
+      EVP_DigestUpdate(&sha1, seed2, seed2_len);
+    }
+    EVP_DigestFinal_ex(&sha1, smd, NULL);
+
+    if (!EVP_DigestInit_ex(&md5, EVP_md5(), NULL)) {
+      OPENSSL_PUT_ERROR(SSL, ERR_LIB_EVP);
+      return 0;
+    }
+    EVP_DigestUpdate(&md5, secret, secret_len);
+    EVP_DigestUpdate(&md5, smd, SHA_DIGEST_LENGTH);
+    if (i + MD5_DIGEST_LENGTH > out_len) {
+      EVP_DigestFinal_ex(&md5, smd, NULL);
+      OPENSSL_memcpy(out, smd, out_len - i);
+    } else {
+      EVP_DigestFinal_ex(&md5, out, NULL);
+    }
+
+    out += MD5_DIGEST_LENGTH;
   }
 
-  /* is_read is true if we have just read a ChangeCipherSpec message - i.e. we
-   * need to update the read cipherspec. Otherwise we have just written one. */
-  const char is_read = (which & SSL3_CC_READ) != 0;
-  /* use_client_keys is true if we wish to use the keys for the "client write"
-   * direction. This is the case if we're a client sending a ChangeCipherSpec,
-   * or a server reading a client's ChangeCipherSpec. */
-  const char use_client_keys = which == SSL3_CHANGE_CIPHER_CLIENT_WRITE ||
-                               which == SSL3_CHANGE_CIPHER_SERVER_READ;
+  OPENSSL_cleanse(smd, SHA_DIGEST_LENGTH);
+  EVP_MD_CTX_cleanup(&md5);
+  EVP_MD_CTX_cleanup(&sha1);
 
-  size_t mac_secret_len = ssl->s3->tmp.new_mac_secret_len;
-  size_t key_len = ssl->s3->tmp.new_key_len;
-  size_t iv_len = ssl->s3->tmp.new_fixed_iv_len;
-  assert((mac_secret_len + key_len + iv_len) * 2 ==
-         ssl->s3->tmp.key_block_length);
-
-  const uint8_t *key_data = ssl->s3->tmp.key_block;
-  const uint8_t *client_write_mac_secret = key_data;
-  key_data += mac_secret_len;
-  const uint8_t *server_write_mac_secret = key_data;
-  key_data += mac_secret_len;
-  const uint8_t *client_write_key = key_data;
-  key_data += key_len;
-  const uint8_t *server_write_key = key_data;
-  key_data += key_len;
-  const uint8_t *client_write_iv = key_data;
-  key_data += iv_len;
-  const uint8_t *server_write_iv = key_data;
-  key_data += iv_len;
-
-  const uint8_t *mac_secret, *key, *iv;
-  if (use_client_keys) {
-    mac_secret = client_write_mac_secret;
-    key = client_write_key;
-    iv = client_write_iv;
-  } else {
-    mac_secret = server_write_mac_secret;
-    key = server_write_key;
-    iv = server_write_iv;
-  }
-
-  SSL_AEAD_CTX *aead_ctx =
-      SSL_AEAD_CTX_new(is_read ? evp_aead_open : evp_aead_seal,
-                       ssl3_protocol_version(ssl), ssl->s3->tmp.new_cipher, key,
-                       key_len, mac_secret, mac_secret_len, iv, iv_len);
-  if (aead_ctx == NULL) {
-    return 0;
-  }
-
-  if (is_read) {
-    return ssl->method->set_read_state(ssl, aead_ctx);
-  }
-
-  return ssl->method->set_write_state(ssl, aead_ctx);
+  return 1;
 }
 
-size_t SSL_get_key_block_len(const SSL *ssl) {
-  return 2 * ((size_t)ssl->s3->tmp.new_mac_secret_len +
-              (size_t)ssl->s3->tmp.new_key_len +
-              (size_t)ssl->s3->tmp.new_fixed_iv_len);
-}
-
-int SSL_generate_key_block(const SSL *ssl, uint8_t *out, size_t out_len) {
-  return ssl->s3->enc_method->prf(
-      ssl, out, out_len, SSL_get_session(ssl)->master_key,
-      SSL_get_session(ssl)->master_key_length, TLS_MD_KEY_EXPANSION_CONST,
-      TLS_MD_KEY_EXPANSION_CONST_SIZE, ssl->s3->server_random, SSL3_RANDOM_SIZE,
-      ssl->s3->client_random, SSL3_RANDOM_SIZE);
-}
-
-int tls1_setup_key_block(SSL *ssl) {
-  if (ssl->s3->tmp.key_block_length != 0) {
+static int tls1_setup_key_block(SSL_HANDSHAKE *hs) {
+  SSL *const ssl = hs->ssl;
+  if (hs->key_block_len != 0) {
     return 1;
   }
 
   SSL_SESSION *session = ssl->session;
-  if (ssl->s3->new_session != NULL) {
-    session = ssl->s3->new_session;
+  if (hs->new_session != NULL) {
+    session = hs->new_session;
   }
 
   const EVP_AEAD *aead = NULL;
   size_t mac_secret_len, fixed_iv_len;
   if (session->cipher == NULL ||
       !ssl_cipher_get_evp_aead(&aead, &mac_secret_len, &fixed_iv_len,
-                               session->cipher, ssl3_protocol_version(ssl))) {
+                               session->cipher, ssl3_protocol_version(ssl),
+                               SSL_is_dtls(ssl))) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_CIPHER_OR_HASH_UNAVAILABLE);
     return 0;
   }
@@ -373,8 +365,6 @@ int tls1_setup_key_block(SSL *ssl) {
 
   size_t key_block_len = SSL_get_key_block_len(ssl);
 
-  ssl3_cleanup_key_block(ssl);
-
   uint8_t *keyblock = OPENSSL_malloc(key_block_len);
   if (keyblock == NULL) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_MALLOC_FAILURE);
@@ -387,110 +377,130 @@ int tls1_setup_key_block(SSL *ssl) {
   }
 
   assert(key_block_len < 256);
-  ssl->s3->tmp.key_block_length = (uint8_t)key_block_len;
-  ssl->s3->tmp.key_block = keyblock;
+  hs->key_block_len = (uint8_t)key_block_len;
+  hs->key_block = keyblock;
   return 1;
 }
 
-static int append_digest(const EVP_MD_CTX *ctx, uint8_t *out, size_t *out_len,
-                         size_t max_out) {
-  int ret = 0;
-  EVP_MD_CTX ctx_copy;
-  EVP_MD_CTX_init(&ctx_copy);
-
-  if (EVP_MD_CTX_size(ctx) > max_out) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_BUFFER_TOO_SMALL);
-    goto err;
-  }
-  unsigned len;
-  if (!EVP_MD_CTX_copy_ex(&ctx_copy, ctx) ||
-      !EVP_DigestFinal_ex(&ctx_copy, out, &len)) {
-    goto err;
-  }
-  assert(len == EVP_MD_CTX_size(ctx));
-
-  *out_len = len;
-  ret = 1;
-
-err:
-  EVP_MD_CTX_cleanup(&ctx_copy);
-  return ret;
-}
-
-/* tls1_handshake_digest calculates the current handshake hash and writes it to
- * |out|, which has space for |out_len| bytes. It returns the number of bytes
- * written or -1 in the event of an error. This function works on a copy of the
- * underlying digests so can be called multiple times and prior to the final
- * update etc. */
-int tls1_handshake_digest(SSL *ssl, uint8_t *out, size_t out_len) {
-  size_t md5_len = 0;
-  if (EVP_MD_CTX_md(&ssl->s3->handshake_md5) != NULL &&
-      !append_digest(&ssl->s3->handshake_md5, out, &md5_len, out_len)) {
-    return -1;
-  }
-
-  size_t len;
-  if (!append_digest(&ssl->s3->handshake_hash, out + md5_len, &len,
-                     out_len - md5_len)) {
-    return -1;
-  }
-
-  return (int)(md5_len + len);
-}
-
-static int tls1_final_finish_mac(SSL *ssl, int from_server, uint8_t *out) {
-  /* At this point, the handshake should have released the handshake buffer on
-   * its own. */
-  assert(ssl->s3->handshake_buffer == NULL);
-
-  const char *label = TLS_MD_CLIENT_FINISH_CONST;
-  size_t label_len = TLS_MD_SERVER_FINISH_CONST_SIZE;
-  if (from_server) {
-    label = TLS_MD_SERVER_FINISH_CONST;
-    label_len = TLS_MD_SERVER_FINISH_CONST_SIZE;
-  }
-
-  uint8_t buf[EVP_MAX_MD_SIZE];
-  int digests_len = tls1_handshake_digest(ssl, buf, sizeof(buf));
-  if (digests_len < 0) {
+int tls1_change_cipher_state(SSL_HANDSHAKE *hs, int which) {
+  SSL *const ssl = hs->ssl;
+  /* Ensure the key block is set up. */
+  if (!tls1_setup_key_block(hs)) {
     return 0;
   }
 
-  static const size_t kFinishedLen = 12;
-  if (!ssl->s3->enc_method->prf(ssl, out, kFinishedLen,
-                                SSL_get_session(ssl)->master_key,
-                                SSL_get_session(ssl)->master_key_length, label,
-                                label_len, buf, digests_len, NULL, 0)) {
+  /* is_read is true if we have just read a ChangeCipherSpec message - i.e. we
+   * need to update the read cipherspec. Otherwise we have just written one. */
+  const char is_read = (which & SSL3_CC_READ) != 0;
+  /* use_client_keys is true if we wish to use the keys for the "client write"
+   * direction. This is the case if we're a client sending a ChangeCipherSpec,
+   * or a server reading a client's ChangeCipherSpec. */
+  const char use_client_keys = which == SSL3_CHANGE_CIPHER_CLIENT_WRITE ||
+                               which == SSL3_CHANGE_CIPHER_SERVER_READ;
+
+  size_t mac_secret_len = ssl->s3->tmp.new_mac_secret_len;
+  size_t key_len = ssl->s3->tmp.new_key_len;
+  size_t iv_len = ssl->s3->tmp.new_fixed_iv_len;
+  assert((mac_secret_len + key_len + iv_len) * 2 == hs->key_block_len);
+
+  const uint8_t *key_data = hs->key_block;
+  const uint8_t *client_write_mac_secret = key_data;
+  key_data += mac_secret_len;
+  const uint8_t *server_write_mac_secret = key_data;
+  key_data += mac_secret_len;
+  const uint8_t *client_write_key = key_data;
+  key_data += key_len;
+  const uint8_t *server_write_key = key_data;
+  key_data += key_len;
+  const uint8_t *client_write_iv = key_data;
+  key_data += iv_len;
+  const uint8_t *server_write_iv = key_data;
+  key_data += iv_len;
+
+  const uint8_t *mac_secret, *key, *iv;
+  if (use_client_keys) {
+    mac_secret = client_write_mac_secret;
+    key = client_write_key;
+    iv = client_write_iv;
+  } else {
+    mac_secret = server_write_mac_secret;
+    key = server_write_key;
+    iv = server_write_iv;
+  }
+
+  SSL_AEAD_CTX *aead_ctx = SSL_AEAD_CTX_new(
+      is_read ? evp_aead_open : evp_aead_seal, ssl3_protocol_version(ssl), SSL_is_dtls(ssl),
+      hs->new_cipher, key, key_len, mac_secret, mac_secret_len, iv, iv_len);
+  if (aead_ctx == NULL) {
     return 0;
   }
 
-  return (int)kFinishedLen;
+  if (is_read) {
+    return ssl->method->set_read_state(ssl, aead_ctx);
+  }
+
+  return ssl->method->set_write_state(ssl, aead_ctx);
 }
 
-int tls1_generate_master_secret(SSL *ssl, uint8_t *out,
+size_t SSL_get_key_block_len(const SSL *ssl) {
+  return 2 * ((size_t)ssl->s3->tmp.new_mac_secret_len +
+              (size_t)ssl->s3->tmp.new_key_len +
+              (size_t)ssl->s3->tmp.new_fixed_iv_len);
+}
+
+int SSL_generate_key_block(const SSL *ssl, uint8_t *out, size_t out_len) {
+  if (ssl3_protocol_version(ssl) == SSL3_VERSION) {
+    return ssl3_prf(out, out_len, SSL_get_session(ssl)->master_key,
+                    SSL_get_session(ssl)->master_key_length,
+                    TLS_MD_KEY_EXPANSION_CONST, TLS_MD_KEY_EXPANSION_CONST_SIZE,
+                    ssl->s3->server_random, SSL3_RANDOM_SIZE,
+                    ssl->s3->client_random, SSL3_RANDOM_SIZE);
+  }
+
+  const EVP_MD *digest = ssl_get_handshake_digest(
+      SSL_get_session(ssl)->cipher->algorithm_prf, ssl3_protocol_version(ssl));
+  if (digest == NULL) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return 0;
+  }
+  return tls1_prf(digest, out, out_len, SSL_get_session(ssl)->master_key,
+                  SSL_get_session(ssl)->master_key_length,
+                  TLS_MD_KEY_EXPANSION_CONST, TLS_MD_KEY_EXPANSION_CONST_SIZE,
+                  ssl->s3->server_random, SSL3_RANDOM_SIZE,
+                  ssl->s3->client_random, SSL3_RANDOM_SIZE);
+}
+
+int tls1_generate_master_secret(SSL_HANDSHAKE *hs, uint8_t *out,
                                 const uint8_t *premaster,
                                 size_t premaster_len) {
-  if (ssl->s3->tmp.extended_master_secret) {
+  const SSL *ssl = hs->ssl;
+  if (hs->extended_master_secret) {
     uint8_t digests[EVP_MAX_MD_SIZE];
-    int digests_len = tls1_handshake_digest(ssl, digests, sizeof(digests));
-    if (digests_len == -1) {
-      return 0;
-    }
-
-    if (!ssl->s3->enc_method->prf(ssl, out, SSL3_MASTER_SECRET_SIZE, premaster,
-                                  premaster_len,
-                                  TLS_MD_EXTENDED_MASTER_SECRET_CONST,
-                                  TLS_MD_EXTENDED_MASTER_SECRET_CONST_SIZE,
-                                  digests, digests_len, NULL, 0)) {
+    size_t digests_len;
+    if (!SSL_TRANSCRIPT_get_hash(&hs->transcript, digests, &digests_len) ||
+        !tls1_prf(SSL_TRANSCRIPT_md(&hs->transcript), out,
+                  SSL3_MASTER_SECRET_SIZE, premaster, premaster_len,
+                  TLS_MD_EXTENDED_MASTER_SECRET_CONST,
+                  TLS_MD_EXTENDED_MASTER_SECRET_CONST_SIZE, digests,
+                  digests_len, NULL, 0)) {
       return 0;
     }
   } else {
-    if (!ssl->s3->enc_method->prf(ssl, out, SSL3_MASTER_SECRET_SIZE, premaster,
-                                  premaster_len, TLS_MD_MASTER_SECRET_CONST,
-                                  TLS_MD_MASTER_SECRET_CONST_SIZE,
-                                  ssl->s3->client_random, SSL3_RANDOM_SIZE,
-                                  ssl->s3->server_random, SSL3_RANDOM_SIZE)) {
-      return 0;
+    if (ssl3_protocol_version(ssl) == SSL3_VERSION) {
+      if (!ssl3_prf(out, SSL3_MASTER_SECRET_SIZE, premaster, premaster_len,
+                    TLS_MD_MASTER_SECRET_CONST, TLS_MD_MASTER_SECRET_CONST_SIZE,
+                    ssl->s3->client_random, SSL3_RANDOM_SIZE,
+                    ssl->s3->server_random, SSL3_RANDOM_SIZE)) {
+        return 0;
+      }
+    } else {
+      if (!tls1_prf(SSL_TRANSCRIPT_md(&hs->transcript), out,
+                    SSL3_MASTER_SECRET_SIZE, premaster, premaster_len,
+                    TLS_MD_MASTER_SECRET_CONST, TLS_MD_MASTER_SECRET_CONST_SIZE,
+                    ssl->s3->client_random, SSL3_RANDOM_SIZE,
+                    ssl->s3->server_random, SSL3_RANDOM_SIZE)) {
+        return 0;
+      }
     }
   }
 
@@ -502,6 +512,11 @@ int SSL_export_keying_material(SSL *ssl, uint8_t *out, size_t out_len,
                                const uint8_t *context, size_t context_len,
                                int use_context) {
   if (!ssl->s3->have_version || ssl->version == SSL3_VERSION) {
+    return 0;
+  }
+
+  /* Exporters may not be used in the middle of a renegotiation. */
+  if (SSL_in_init(ssl) && !SSL_in_false_start(ssl)) {
     return 0;
   }
 
@@ -524,24 +539,24 @@ int SSL_export_keying_material(SSL *ssl, uint8_t *out, size_t out_len,
     return 0;
   }
 
-  memcpy(seed, ssl->s3->client_random, SSL3_RANDOM_SIZE);
-  memcpy(seed + SSL3_RANDOM_SIZE, ssl->s3->server_random, SSL3_RANDOM_SIZE);
+  OPENSSL_memcpy(seed, ssl->s3->client_random, SSL3_RANDOM_SIZE);
+  OPENSSL_memcpy(seed + SSL3_RANDOM_SIZE, ssl->s3->server_random,
+                 SSL3_RANDOM_SIZE);
   if (use_context) {
     seed[2 * SSL3_RANDOM_SIZE] = (uint8_t)(context_len >> 8);
     seed[2 * SSL3_RANDOM_SIZE + 1] = (uint8_t)context_len;
-    memcpy(seed + 2 * SSL3_RANDOM_SIZE + 2, context, context_len);
+    OPENSSL_memcpy(seed + 2 * SSL3_RANDOM_SIZE + 2, context, context_len);
   }
 
-  int ret =
-      ssl->s3->enc_method->prf(ssl, out, out_len,
-                               SSL_get_session(ssl)->master_key,
-                               SSL_get_session(ssl)->master_key_length, label,
-                               label_len, seed, seed_len, NULL, 0);
+  const EVP_MD *digest = ssl_get_handshake_digest(
+      SSL_get_session(ssl)->cipher->algorithm_prf, ssl3_protocol_version(ssl));
+  if (digest == NULL) {
+    OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
+    return 0;
+  }
+  int ret = tls1_prf(digest, out, out_len, SSL_get_session(ssl)->master_key,
+                     SSL_get_session(ssl)->master_key_length, label, label_len,
+                     seed, seed_len, NULL, 0);
   OPENSSL_free(seed);
   return ret;
 }
-
-const SSL3_ENC_METHOD TLSv1_enc_data = {
-    tls1_prf,
-    tls1_final_finish_mac,
-};

@@ -188,7 +188,7 @@ X509_STORE *X509_STORE_new(void)
 
     if ((ret = (X509_STORE *)OPENSSL_malloc(sizeof(X509_STORE))) == NULL)
         return NULL;
-    memset(ret, 0, sizeof(*ret));
+    OPENSSL_memset(ret, 0, sizeof(*ret));
     CRYPTO_MUTEX_init(&ret->objs_lock);
     ret->objs = sk_X509_OBJECT_new(x509_object_cmp);
     if (ret->objs == NULL)
@@ -356,8 +356,12 @@ int X509_STORE_add_cert(X509_STORE *ctx, X509 *x)
         OPENSSL_free(obj);
         OPENSSL_PUT_ERROR(X509, X509_R_CERT_ALREADY_IN_HASH_TABLE);
         ret = 0;
-    } else
-        sk_X509_OBJECT_push(ctx->objs, obj);
+    } else if (!sk_X509_OBJECT_push(ctx->objs, obj)) {
+        X509_OBJECT_free_contents(obj);
+        OPENSSL_free(obj);
+        OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
+        ret = 0;
+    }
 
     CRYPTO_MUTEX_unlock_write(&ctx->objs_lock);
 
@@ -388,12 +392,21 @@ int X509_STORE_add_crl(X509_STORE *ctx, X509_CRL *x)
         OPENSSL_free(obj);
         OPENSSL_PUT_ERROR(X509, X509_R_CERT_ALREADY_IN_HASH_TABLE);
         ret = 0;
-    } else
-        sk_X509_OBJECT_push(ctx->objs, obj);
+    } else if (!sk_X509_OBJECT_push(ctx->objs, obj)) {
+        X509_OBJECT_free_contents(obj);
+        OPENSSL_free(obj);
+        OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
+        ret = 0;
+    }
 
     CRYPTO_MUTEX_unlock_write(&ctx->objs_lock);
 
     return ret;
+}
+
+void X509_STORE_set0_additional_untrusted(X509_STORE *ctx,
+                                          STACK_OF(X509) *untrusted) {
+  ctx->additional_untrusted = untrusted;
 }
 
 int X509_OBJECT_up_ref_count(X509_OBJECT *a)

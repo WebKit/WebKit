@@ -18,15 +18,24 @@ vars = {
 
 deps = {
   'boringssl/util/bot/gyp':
-    Var('chromium_git') + '/external/gyp.git' + '@' + 'e7079f0e0e14108ab0dba58728ff219637458563',
+    Var('chromium_git') + '/external/gyp.git' + '@' + 'eb296f67da078ec01f5e3a9ea9cdc6d26d680161',
 }
 
 deps_os = {
   'android': {
     'boringssl/util/bot/android_tools':
-      Var('chromium_git') + '/android_tools.git' + '@' + 'af1c5a4cd6329ccdcf8c2bc93d9eea02f9d74869',
+      Var('chromium_git') + '/android_tools.git' + '@' + 'cb6bc21107001e2f2eeee2707b482b2b755baf51',
+  },
+  'unix': {
+    'boringssl/util/bot/libFuzzer':
+      Var('chromium_git') + '/chromium/llvm-project/llvm/lib/Fuzzer.git' + '@' + '16f5f743c188c836d32cdaf349d5d3effb8a3518',
   },
 }
+
+recursedeps = [
+  # android_tools pulls in the NDK from a separate repository.
+  'boringssl/util/bot/android_tools',
+]
 
 hooks = [
   {
@@ -99,8 +108,6 @@ hooks = [
                 'boringssl/util/bot/update_clang.py',
     ],
   },
-  # TODO(davidben): Only extract archives when they've changed. Extracting perl
-  # on Windows is a significant part of the cycle time.
   {
     'name': 'cmake_linux64_extract',
     'pattern': '.',

@@ -17,6 +17,8 @@
 
 #include <openssl/base.h>
 
+#include <openssl/stack.h>
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -24,10 +26,12 @@ extern "C" {
 
 /* Buffers and buffer pools.
  *
- * |CRYPTO_BUFFER|s are simply reference-counted blobs. A |CRYPTO_BUFFER_POOL| is
- * an intern table for |CRYPTO_BUFFER|s. This allows for a single copy of a given
- * blob to be kept in memory and referenced from multiple places. */
+ * |CRYPTO_BUFFER|s are simply reference-counted blobs. A |CRYPTO_BUFFER_POOL|
+ * is an intern table for |CRYPTO_BUFFER|s. This allows for a single copy of a
+ * given blob to be kept in memory and referenced from multiple places. */
 
+
+DEFINE_STACK_OF(CRYPTO_BUFFER)
 
 /* CRYPTO_BUFFER_POOL_new returns a freshly allocated |CRYPTO_BUFFER_POOL| or
  * NULL on error. */

@@ -261,7 +261,7 @@ ASN1_TYPE *ASN1_generate_v3(char *str, X509V3_CTX *cnf)
     }
 
     /* Copy across original encoding */
-    memcpy(p, cpy_start, cpy_len);
+    OPENSSL_memcpy(p, cpy_start, cpy_len);
 
     cp = new_der;
 

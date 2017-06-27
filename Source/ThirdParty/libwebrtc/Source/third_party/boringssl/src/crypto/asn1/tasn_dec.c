@@ -180,6 +180,7 @@ int ASN1_item_ex_d2i(ASN1_VALUE **pval, const unsigned char **in, long len,
     int ret = 0;
     ASN1_VALUE **pchptr, *ptmpval;
     int combine = aclass & ASN1_TFLG_COMBINE;
+    aclass &= ~ASN1_TFLG_COMBINE;
     if (!pval)
         return 0;
     if (aux && aux->asn1_cb)
@@ -667,6 +668,7 @@ static int asn1_template_noexp_d2i(ASN1_VALUE **val,
             }
             len -= p - q;
             if (!sk_ASN1_VALUE_push((STACK_OF(ASN1_VALUE) *)*val, skfield)) {
+                ASN1_item_ex_free(&skfield, ASN1_ITEM_ptr(tt->item));
                 OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
                 goto err;
             }
@@ -1108,7 +1110,7 @@ static int collect_data(BUF_MEM *buf, const unsigned char **p, long plen)
             OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);
             return 0;
         }
-        memcpy(buf->data + len, *p, plen);
+        OPENSSL_memcpy(buf->data + len, *p, plen);
     }
     *p += plen;
     return 1;

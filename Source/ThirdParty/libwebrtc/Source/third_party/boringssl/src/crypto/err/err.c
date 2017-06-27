@@ -141,7 +141,7 @@ static void err_clear_data(struct err_error_st *error) {
 /* err_clear clears the given queued error. */
 static void err_clear(struct err_error_st *error) {
   err_clear_data(error);
-  memset(error, 0, sizeof(struct err_error_st));
+  OPENSSL_memset(error, 0, sizeof(struct err_error_st));
 }
 
 /* global_next_library contains the next custom library value to return. */
@@ -175,7 +175,7 @@ static ERR_STATE *err_get_state(void) {
     if (state == NULL) {
       return NULL;
     }
-    memset(state, 0, sizeof(ERR_STATE));
+    OPENSSL_memset(state, 0, sizeof(ERR_STATE));
     if (!CRYPTO_set_thread_local(OPENSSL_THREAD_LOCAL_ERR, state,
                                  err_state_free)) {
       return NULL;
@@ -349,7 +349,7 @@ char *ERR_error_string(uint32_t packed_error, char *ret) {
 #if !defined(NDEBUG)
   /* This is aimed to help catch callers who don't provide
    * |ERR_ERROR_STRING_BUF_LEN| bytes of space. */
-  memset(ret, 0, ERR_ERROR_STRING_BUF_LEN);
+  OPENSSL_memset(ret, 0, ERR_ERROR_STRING_BUF_LEN);
 #endif
 
   ERR_error_string_n(packed_error, ret, ERR_ERROR_STRING_BUF_LEN);
@@ -407,7 +407,7 @@ void ERR_error_string_n(uint32_t packed_error, char *buf, size_t len) {
          * terminating 0). If we're setting this colon, then all whole of the
          * rest of the string must be colons in order to have the correct
          * number. */
-        memset(last_pos, ':', num_colons - i);
+        OPENSSL_memset(last_pos, ':', num_colons - i);
         break;
       }
 
@@ -675,7 +675,7 @@ static void err_add_error_vdata(unsigned num, va_list args) {
       buf = new_buf;
     }
 
-    memcpy(buf + len, substr, substr_len);
+    OPENSSL_memcpy(buf + len, substr, substr_len);
     len = new_len;
   }
 

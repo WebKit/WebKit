@@ -62,7 +62,7 @@ OPENSSL_EXPORT void RAND_set_urandom_fd(int fd);
 OPENSSL_EXPORT void RAND_enable_fork_unsafe_buffering(int fd);
 #endif
 
-#if defined(BORINGSSL_UNSAFE_FUZZER_MODE)
+#if defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE)
 /* RAND_reset_for_fuzzing resets the fuzzer-only deterministic RNG. This
  * function is only defined in the fuzzer-only build configuration. */
 OPENSSL_EXPORT void RAND_reset_for_fuzzing(void);

@@ -60,6 +60,9 @@
 
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
+
 /* kMinSize is the number of pointers that will be initially allocated in a new
  * stack. */
 static const size_t kMinSize = 4;
@@ -71,14 +74,14 @@ _STACK *sk_new(stack_cmp_func comp) {
   if (ret == NULL) {
     goto err;
   }
-  memset(ret, 0, sizeof(_STACK));
+  OPENSSL_memset(ret, 0, sizeof(_STACK));
 
   ret->data = OPENSSL_malloc(sizeof(void *) * kMinSize);
   if (ret->data == NULL) {
     goto err;
   }
 
-  memset(ret->data, 0, sizeof(void *) * kMinSize);
+  OPENSSL_memset(ret->data, 0, sizeof(void *) * kMinSize);
 
   ret->comp = comp;
   ret->num_alloc = kMinSize;
@@ -103,7 +106,7 @@ void sk_zero(_STACK *sk) {
   if (sk == NULL || sk->num == 0) {
     return;
   }
-  memset(sk->data, 0, sizeof(void*) * sk->num);
+  OPENSSL_memset(sk->data, 0, sizeof(void*) * sk->num);
   sk->num = 0;
   sk->sorted = 0;
 }
@@ -177,8 +180,8 @@ size_t sk_insert(_STACK *sk, void *p, size_t where) {
   if (where >= sk->num) {
     sk->data[sk->num] = p;
   } else {
-    memmove(&sk->data[where + 1], &sk->data[where],
-            sizeof(void *) * (sk->num - where));
+    OPENSSL_memmove(&sk->data[where + 1], &sk->data[where],
+                    sizeof(void *) * (sk->num - where));
     sk->data[where] = p;
   }
 
@@ -198,7 +201,7 @@ void *sk_delete(_STACK *sk, size_t where) {
   ret = sk->data[where];
 
   if (where != sk->num - 1) {
-    memmove(&sk->data[where], &sk->data[where + 1],
+    OPENSSL_memmove(&sk->data[where], &sk->data[where + 1],
             sizeof(void *) * (sk->num - where - 1));
   }
 
@@ -308,7 +311,7 @@ _STACK *sk_dup(const _STACK *sk) {
   ret->data = s;
 
   ret->num = sk->num;
-  memcpy(ret->data, sk->data, sizeof(void *) * sk->num);
+  OPENSSL_memcpy(ret->data, sk->data, sizeof(void *) * sk->num);
   ret->sorted = sk->sorted;
   ret->num_alloc = sk->num_alloc;
   ret->comp = sk->comp;

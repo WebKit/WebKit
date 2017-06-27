@@ -573,14 +573,3 @@ void SSL_CTX_set_default_passwd_cb(SSL_CTX *ctx, pem_password_cb *cb) {
 void SSL_CTX_set_default_passwd_cb_userdata(SSL_CTX *ctx, void *data) {
   ctx->default_passwd_callback_userdata = data;
 }
-
-SSL_SESSION *d2i_SSL_SESSION_bio(BIO *bio, SSL_SESSION **out) {
-  return ASN1_d2i_bio_of(SSL_SESSION, SSL_SESSION_new, d2i_SSL_SESSION, bio,
-                         out);
-}
-
-int i2d_SSL_SESSION_bio(BIO *bio, const SSL_SESSION *session) {
-  return ASN1_i2d_bio_of(SSL_SESSION, i2d_SSL_SESSION, bio, session);
-}
-
-IMPLEMENT_PEM_rw(SSL_SESSION, SSL_SESSION, PEM_STRING_SSL_SESSION, SSL_SESSION)

@@ -61,6 +61,9 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
+
 ASN1_INTEGER *ASN1_INTEGER_dup(const ASN1_INTEGER *x)
 {
     return M_ASN1_INTEGER_dup(x);
@@ -157,7 +160,7 @@ int i2c_ASN1_INTEGER(ASN1_INTEGER *a, unsigned char **pp)
     if (a->length == 0)
         *(p++) = 0;
     else if (!neg)
-        memcpy(p, a->data, (unsigned int)a->length);
+        OPENSSL_memcpy(p, a->data, (unsigned int)a->length);
     else {
         /* Begin at the end of the encoding */
         n = a->data + a->length - 1;
@@ -254,7 +257,7 @@ ASN1_INTEGER *c2i_ASN1_INTEGER(ASN1_INTEGER **a, const unsigned char **pp,
             p++;
             len--;
         }
-        memcpy(s, p, (int)len);
+        OPENSSL_memcpy(s, p, (int)len);
     }
 
     if (ret->data != NULL)
@@ -322,7 +325,7 @@ ASN1_INTEGER *d2i_ASN1_UINTEGER(ASN1_INTEGER **a, const unsigned char **pp,
             p++;
             len--;
         }
-        memcpy(s, p, (int)len);
+        OPENSSL_memcpy(s, p, (int)len);
         p += len;
     }
 
@@ -354,7 +357,7 @@ int ASN1_INTEGER_set(ASN1_INTEGER *a, long v)
             OPENSSL_free(a->data);
         if ((a->data =
              (unsigned char *)OPENSSL_malloc(sizeof(long) + 1)) != NULL)
-            memset((char *)a->data, 0, sizeof(long) + 1);
+            OPENSSL_memset((char *)a->data, 0, sizeof(long) + 1);
     }
     if (a->data == NULL) {
         OPENSSL_PUT_ERROR(ASN1, ERR_R_MALLOC_FAILURE);

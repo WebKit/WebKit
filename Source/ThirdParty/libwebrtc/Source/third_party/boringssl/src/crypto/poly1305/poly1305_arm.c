@@ -17,13 +17,13 @@
 
 #include <openssl/poly1305.h>
 
-#if defined(OPENSSL_ARM) && !defined(OPENSSL_NO_ASM)
-
 #include <string.h>
 
 #include "../internal.h"
 #include "internal.h"
 
+
+#if defined(OPENSSL_POLY1305_NEON)
 
 typedef struct {
   uint32_t v[12]; /* for alignment; only using 10 */
@@ -129,7 +129,7 @@ static void fe1305x2_tobytearray(uint8_t *r, fe1305x2 *x) {
  * fe1305x2_frombytearray. */
 static uint32_t load32(uint8_t *t) {
   uint32_t tmp;
-  memcpy(&tmp, t, sizeof(tmp));
+  OPENSSL_memcpy(&tmp, t, sizeof(tmp));
   return tmp;
 }
 
@@ -203,7 +203,7 @@ void CRYPTO_poly1305_init_neon(poly1305_state *state, const uint8_t key[32]) {
   addmulmod(precomp, r, r, &zero);                 /* precompute r^2 */
   addmulmod(precomp + 1, precomp, precomp, &zero); /* precompute r^4 */
 
-  memcpy(st->key, key + 16, 16);
+  OPENSSL_memcpy(st->key, key + 16, 16);
   st->buf_used = 0;
 }
 
@@ -301,4 +301,4 @@ void CRYPTO_poly1305_finish_neon(poly1305_state *state, uint8_t mac[16]) {
   fe1305x2_tobytearray(mac, h);
 }
 
-#endif  /* OPENSSL_ARM && !OPENSSL_NO_ASM */
+#endif  /* OPENSSL_POLY1305_NEON */

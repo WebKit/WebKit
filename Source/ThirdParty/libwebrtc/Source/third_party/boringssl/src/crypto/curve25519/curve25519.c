@@ -29,6 +29,7 @@
 #include <openssl/sha.h>
 
 #include "internal.h"
+#include "../internal.h"
 
 
 static const int64_t kBottom25Bits = INT64_C(0x1ffffff);
@@ -204,15 +205,15 @@ static void fe_tobytes(uint8_t *s, const fe h) {
 
 /* h = f */
 static void fe_copy(fe h, const fe f) {
-  memmove(h, f, sizeof(int32_t) * 10);
+  OPENSSL_memmove(h, f, sizeof(int32_t) * 10);
 }
 
 /* h = 0 */
-static void fe_0(fe h) { memset(h, 0, sizeof(int32_t) * 10); }
+static void fe_0(fe h) { OPENSSL_memset(h, 0, sizeof(int32_t) * 10); }
 
 /* h = 1 */
 static void fe_1(fe h) {
-  memset(h, 0, sizeof(int32_t) * 10);
+  OPENSSL_memset(h, 0, sizeof(int32_t) * 10);
   h[0] = 1;
 }
 
@@ -640,9 +641,6 @@ static void fe_invert(fe out, const fe z) {
   int i;
 
   fe_sq(t0, z);
-  for (i = 1; i < 1; ++i) {
-    fe_sq(t0, t0);
-  }
   fe_sq(t1, t0);
   for (i = 1; i < 2; ++i) {
     fe_sq(t1, t1);
@@ -650,9 +648,6 @@ static void fe_invert(fe out, const fe z) {
   fe_mul(t1, z, t1);
   fe_mul(t0, t0, t1);
   fe_sq(t2, t0);
-  for (i = 1; i < 1; ++i) {
-    fe_sq(t2, t2);
-  }
   fe_mul(t1, t1, t2);
   fe_sq(t2, t1);
   for (i = 1; i < 5; ++i) {
@@ -907,9 +902,6 @@ static void fe_pow22523(fe out, const fe z) {
   int i;
 
   fe_sq(t0, z);
-  for (i = 1; i < 1; ++i) {
-    fe_sq(t0, t0);
-  }
   fe_sq(t1, t0);
   for (i = 1; i < 2; ++i) {
     fe_sq(t1, t1);
@@ -917,9 +909,6 @@ static void fe_pow22523(fe out, const fe z) {
   fe_mul(t1, z, t1);
   fe_mul(t0, t0, t1);
   fe_sq(t0, t0);
-  for (i = 1; i < 1; ++i) {
-    fe_sq(t0, t0);
-  }
   fe_mul(t0, t1, t0);
   fe_sq(t1, t0);
   for (i = 1; i < 5; ++i) {
@@ -4625,20 +4614,7 @@ static void sc_muladd(uint8_t *s, const uint8_t *a, const uint8_t *b,
 void ED25519_keypair(uint8_t out_public_key[32], uint8_t out_private_key[64]) {
   uint8_t seed[32];
   RAND_bytes(seed, 32);
-
-  uint8_t az[SHA512_DIGEST_LENGTH];
-  SHA512(seed, 32, az);
-
-  az[0] &= 248;
-  az[31] &= 63;
-  az[31] |= 64;
-
-  ge_p3 A;
-  x25519_ge_scalarmult_base(&A, az);
-  ge_p3_tobytes(out_public_key, &A);
-
-  memcpy(out_private_key, seed, 32);
-  memmove(out_private_key + 32, out_public_key, 32);
+  ED25519_keypair_from_seed(out_public_key, out_private_key, seed);
 }
 
 int ED25519_sign(uint8_t *out_sig, const uint8_t *message, size_t message_len,
@@ -4687,11 +4663,11 @@ int ED25519_verify(const uint8_t *message, size_t message_len,
   fe_neg(A.T, A.T);
 
   uint8_t pkcopy[32];
-  memcpy(pkcopy, public_key, 32);
+  OPENSSL_memcpy(pkcopy, public_key, 32);
   uint8_t rcopy[32];
-  memcpy(rcopy, signature, 32);
+  OPENSSL_memcpy(rcopy, signature, 32);
   uint8_t scopy[32];
-  memcpy(scopy, signature + 32, 32);
+  OPENSSL_memcpy(scopy, signature + 32, 32);
 
   SHA512_CTX hash_ctx;
   SHA512_Init(&hash_ctx);
@@ -4710,6 +4686,24 @@ int ED25519_verify(const uint8_t *message, size_t message_len,
   x25519_ge_tobytes(rcheck, &R);
 
   return CRYPTO_memcmp(rcheck, rcopy, sizeof(rcheck)) == 0;
+}
+
+void ED25519_keypair_from_seed(uint8_t out_public_key[32],
+                               uint8_t out_private_key[64],
+                               const uint8_t seed[32]) {
+  uint8_t az[SHA512_DIGEST_LENGTH];
+  SHA512(seed, 32, az);
+
+  az[0] &= 248;
+  az[31] &= 63;
+  az[31] |= 64;
+
+  ge_p3 A;
+  x25519_ge_scalarmult_base(&A, az);
+  ge_p3_tobytes(out_public_key, &A);
+
+  OPENSSL_memcpy(out_private_key, seed, 32);
+  OPENSSL_memcpy(out_private_key + 32, out_public_key, 32);
 }
 
 
@@ -4807,7 +4801,7 @@ static void x25519_scalar_mult_generic(uint8_t out[32],
   fe x1, x2, z2, x3, z3, tmp0, tmp1;
 
   uint8_t e[32];
-  memcpy(e, scalar, 32);
+  OPENSSL_memcpy(e, scalar, 32);
   e[0] &= 248;
   e[31] &= 127;
   e[31] |= 64;
@@ -4923,7 +4917,7 @@ void X25519_public_from_private(uint8_t out_public_value[32],
 #endif
 
   uint8_t e[32];
-  memcpy(e, private_key, 32);
+  OPENSSL_memcpy(e, private_key, 32);
   e[0] &= 248;
   e[31] &= 127;
   e[31] |= 64;

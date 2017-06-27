@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 2.8.11)
 
 # Defer enabling C and CXX languages.
 project (BoringSSL NONE)
@@ -8,6 +8,8 @@ if(WIN32)
   # the CMake generators prefer gcc, even on Windows.
   set(CMAKE_GENERATOR_CC cl)
 endif()
+
+include(sources.cmake)
 
 enable_language(C)
 enable_language(CXX)
@@ -34,19 +36,25 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(C_CXX_FLAGS "-Wall -Werror -Wformat=2 -Wsign-compare -Wmissing-field-initializers -Wwrite-strings -ggdb -fvisibility=hidden -fno-common")
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wnewline-eof")
+  else()
+    # GCC (at least 4.8.4) has a bug where it'll find unreachable free() calls
+    # and declare that the code is trying to free a stack pointer.
+    set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wno-free-nonheap-object")
   endif()
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_CXX_FLAGS} -Wmissing-prototypes -Wold-style-definition -Wstrict-prototypes")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${C_CXX_FLAGS} -Wmissing-declarations")
-  # Clang's integerated assembler does not support debug symbols.
-  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,-g")
-  endif()
 elseif(MSVC)
   set(MSVC_DISABLED_WARNINGS_LIST
+      "C4061" # enumerator 'identifier' in switch of enum 'enumeration' is not
+              # explicitly handled by a case label
+              # Disable this because it flags even when there is a default.
       "C4100" # 'exarg' : unreferenced formal parameter
       "C4127" # conditional expression is constant
       "C4200" # nonstandard extension used : zero-sized array in
               # struct/union.
+      "C4204" # nonstandard extension used: non-constant aggregate initializer
+      "C4221" # nonstandard extension used : 'identifier' : cannot be
+              # initialized using address of automatic variable
       "C4242" # 'function' : conversion from 'int' to 'uint8_t',
               # possible loss of data
       "C4244" # 'function' : conversion from 'int' to 'uint8_t',
@@ -75,12 +83,18 @@ elseif(MSVC)
               # copy constructor is inaccessible or deleted
       "C4626" # assignment operator could not be generated because a base class
               # assignment operator is inaccessible or deleted
+      "C4668" # 'symbol' is not defined as a preprocessor macro, replacing with
+              # '0' for 'directives'
+              # Disable this because GTest uses it everywhere.
       "C4706" # assignment within conditional expression
       "C4710" # 'function': function not inlined
       "C4711" # function 'function' selected for inline expansion
+      "C4774" # format string is not a string literal
       "C4800" # 'int' : forcing value to bool 'true' or 'false'
               # (performance warning)
       "C4820" # 'bytes' bytes padding added after construct 'member_name'
+      "C4987" # nonstandard extension used: 'throw (...)'
+      "C5026" # move constructor was implicitly defined as deleted
       "C5027" # move assignment operator was implicitly defined as deleted
       )
   set(MSVC_LEVEL4_WARNINGS_LIST
@@ -125,11 +139,16 @@ if(FUZZ)
     message(FATAL_ERROR "You need to build with Clang for fuzzing to work")
   endif()
 
-  add_definitions(-DBORINGSSL_UNSAFE_FUZZER_MODE)
-  set(RUNNER_ARGS "-fuzzer" "-deterministic" "-shim-config" "fuzzer_mode.json")
+  add_definitions(-DBORINGSSL_UNSAFE_DETERMINISTIC_MODE)
+  set(RUNNER_ARGS "-deterministic")
 
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fsanitize-coverage=edge,indirect-calls,8bit-counters")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize-coverage=edge,indirect-calls,8bit-counters")
+  if(NOT NO_FUZZER_MODE)
+    add_definitions(-DBORINGSSL_UNSAFE_FUZZER_MODE)
+    set(RUNNER_ARGS ${RUNNER_ARGS} "-fuzzer" "-shim-config" "fuzzer_mode.json")
+  endif()
+
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fsanitize-coverage=edge,indirect-calls,trace-pc-guard")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize-coverage=edge,indirect-calls,trace-pc-guard")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
   link_directories(.)
 endif()
@@ -143,7 +162,64 @@ if (BUILD_SHARED_LIBS)
   set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 endif()
 
-if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
+if (MSAN)
+  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    message(FATAL_ERROR "Cannot enable MSAN unless using Clang")
+  endif()
+
+  if (ASAN)
+    message(FATAL_ERROR "ASAN and MSAN are mutually exclusive")
+  endif()
+
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=memory -fsanitize-memory-track-origins -fno-omit-frame-pointer")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory -fsanitize-memory-track-origins -fno-omit-frame-pointer")
+  set(OPENSSL_NO_ASM "1")
+endif()
+
+if (ASAN)
+  if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    message(FATAL_ERROR "Cannot enable ASAN unless using Clang")
+  endif()
+
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer")
+  set(OPENSSL_NO_ASM "1")
+endif()
+
+if (GCOV)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
+
+if(FIPS)
+  add_definitions(-DBORINGSSL_FIPS)
+  if(FIPS_BREAK_TEST)
+    add_definitions("-DBORINGSSL_FIPS_BREAK_${FIPS_BREAK_TEST}=1")
+  endif()
+  # Delocate does not work for ASan and MSan builds.
+  if(NOT ASAN AND NOT MSAN)
+    set(FIPS_DELOCATE "1")
+  endif()
+endif()
+
+# CMake's iOS support uses Apple's multiple-architecture toolchain. It takes an
+# architecture list from CMAKE_OSX_ARCHITECTURES, leaves CMAKE_SYSTEM_PROCESSOR
+# alone, and expects all architecture-specific logic to be conditioned within
+# the source files rather than the build. This does not work for our assembly
+# files, so we fix CMAKE_SYSTEM_PROCESSOR and only support single-architecture
+# builds.
+if (NOT OPENSSL_NO_ASM AND CMAKE_OSX_ARCHITECTURES)
+  list(LENGTH CMAKE_OSX_ARCHITECTURES NUM_ARCHES)
+  if (NOT ${NUM_ARCHES} EQUAL 1)
+    message(FATAL_ERROR "Universal binaries not supported.")
+  endif()
+  list(GET CMAKE_OSX_ARCHITECTURES 0 CMAKE_SYSTEM_PROCESSOR)
+endif()
+
+if (OPENSSL_NO_ASM)
+  add_definitions(-DOPENSSL_NO_ASM)
+  set(ARCH "generic")
+elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
   set(ARCH "x86_64")
 elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "amd64")
   set(ARCH "x86_64")
@@ -160,14 +236,17 @@ elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "i386")
   set(ARCH "x86")
 elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "i686")
   set(ARCH "x86")
-elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm")
-  set(ARCH "arm")
-elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "armv6")
-  set(ARCH "arm")
-elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "armv7-a")
-  set(ARCH "arm")
 elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "aarch64")
   set(ARCH "aarch64")
+elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm64")
+  set(ARCH "aarch64")
+elseif (${CMAKE_SYSTEM_PROCESSOR} MATCHES "^arm*")
+  set(ARCH "arm")
+elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "mips")
+  # Just to avoid the “unknown processor” error.
+  set(ARCH "generic")
+elseif (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ppc64le")
+  set(ARCH "ppc64le")
 else()
   message(FATAL_ERROR "Unknown processor:" ${CMAKE_SYSTEM_PROCESSOR})
 endif()
@@ -186,22 +265,42 @@ if (${ARCH} STREQUAL "x86" AND APPLE)
   set(ARCH "x86_64")
 endif()
 
-if (OPENSSL_NO_ASM)
-  add_definitions(-DOPENSSL_NO_ASM)
-  set(ARCH "generic")
-endif()
+# Add minimal googletest targets. The provided one has many side-effects, and
+# googletest has a very straightforward build.
+add_library(gtest third_party/googletest/src/gtest-all.cc)
+target_include_directories(gtest PRIVATE third_party/googletest)
+
+include_directories(third_party/googletest/include)
 
 # Declare a dummy target to build all unit tests. Test targets should inject
 # themselves as dependencies next to the target definition.
 add_custom_target(all_tests)
 
+add_custom_command(
+  OUTPUT crypto_test_data.cc
+  COMMAND ${GO_EXECUTABLE} run util/embed_test_data.go ${CRYPTO_TEST_DATA} >
+  ${CMAKE_CURRENT_BINARY_DIR}/crypto_test_data.cc
+  DEPENDS util/embed_test_data.go ${CRYPTO_TEST_DATA}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_library(crypto_test_data OBJECT crypto_test_data.cc)
+
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(ssl/test)
+add_subdirectory(fipstools)
 add_subdirectory(tool)
 add_subdirectory(decrepit)
 
 if(FUZZ)
+  if(LIBFUZZER_FROM_DEPS)
+    file(GLOB LIBFUZZER_SOURCES "util/bot/libFuzzer/*.cpp")
+    add_library(Fuzzer STATIC ${LIBFUZZER_SOURCES})
+    # libFuzzer does not pass our aggressive warnings. It also must be built
+    # without -fsanitize-coverage options or clang crashes.
+    set_target_properties(Fuzzer PROPERTIES COMPILE_FLAGS "-Wno-shadow -Wno-format-nonliteral -fsanitize-coverage=0")
+  endif()
+
   add_subdirectory(fuzz)
 endif()
 

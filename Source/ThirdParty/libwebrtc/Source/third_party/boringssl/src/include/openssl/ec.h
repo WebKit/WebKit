@@ -272,8 +272,8 @@ OPENSSL_EXPORT int EC_POINT_add(const EC_GROUP *group, EC_POINT *r,
 OPENSSL_EXPORT int EC_POINT_dbl(const EC_GROUP *group, EC_POINT *r,
                                 const EC_POINT *a, BN_CTX *ctx);
 
-/* EC_POINT_invert sets |a| equal to minus |a|. It returns one on success and zero
- * otherwise. If |ctx| is not NULL, it may be used. */
+/* EC_POINT_invert sets |a| equal to minus |a|. It returns one on success and
+ * zero otherwise. If |ctx| is not NULL, it may be used. */
 OPENSSL_EXPORT int EC_POINT_invert(const EC_GROUP *group, EC_POINT *a,
                                    BN_CTX *ctx);
 
@@ -402,5 +402,6 @@ BORINGSSL_MAKE_DELETER(EC_GROUP, EC_GROUP_free)
 #define EC_R_ENCODE_ERROR 129
 #define EC_R_GROUP_MISMATCH 130
 #define EC_R_INVALID_COFACTOR 131
+#define EC_R_PUBLIC_KEY_VALIDATION_FAILED 132
 
 #endif  /* OPENSSL_HEADER_EC_H */

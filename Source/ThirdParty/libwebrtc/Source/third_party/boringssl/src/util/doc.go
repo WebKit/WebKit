@@ -139,7 +139,7 @@ func extractComment(lines []string, lineNo int) (comment []string, rest []string
 }
 
 func extractDecl(lines []string, lineNo int) (decl string, rest []string, restLineNo int, err error) {
-	if len(lines) == 0 {
+	if len(lines) == 0 || len(lines[0]) == 0 {
 		return "", lines, lineNo, nil
 	}
 

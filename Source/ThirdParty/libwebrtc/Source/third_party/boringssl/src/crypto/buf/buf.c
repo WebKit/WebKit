@@ -61,6 +61,8 @@
 #include <openssl/mem.h>
 #include <openssl/err.h>
 
+#include "../internal.h"
+
 
 BUF_MEM *BUF_MEM_new(void) {
   BUF_MEM *ret;
@@ -71,7 +73,7 @@ BUF_MEM *BUF_MEM_new(void) {
     return NULL;
   }
 
-  memset(ret, 0, sizeof(BUF_MEM));
+  OPENSSL_memset(ret, 0, sizeof(BUF_MEM));
   return ret;
 }
 
@@ -137,7 +139,7 @@ static size_t buf_mem_grow(BUF_MEM *buf, size_t len, int clean) {
     return 0;
   }
   if (buf->length < len) {
-    memset(&buf->data[buf->length], 0, len - buf->length);
+    OPENSSL_memset(&buf->data[buf->length], 0, len - buf->length);
   }
   buf->length = len;
   return len;
@@ -193,7 +195,7 @@ char *BUF_strndup(const char *buf, size_t size) {
     return NULL;
   }
 
-  memcpy(ret, buf, size);
+  OPENSSL_memcpy(ret, buf, size);
   ret[size] = '\0';
   return ret;
 }
@@ -234,6 +236,6 @@ void *BUF_memdup(const void *data, size_t dst_size) {
     return NULL;
   }
 
-  memcpy(ret, data, dst_size);
+  OPENSSL_memcpy(ret, data, dst_size);
   return ret;
 }

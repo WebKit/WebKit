@@ -7,14 +7,3 @@ add_library(
 
   cmac.c
 )
-
-add_executable(
-  cmac_test
-
-  cmac_test.cc
-
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(cmac_test crypto)
-add_dependencies(all_tests cmac_test)

@@ -244,7 +244,6 @@ const EVP_PKEY_ASN1_METHOD ec_asn1_meth = {
   eckey_priv_encode,
 
   eckey_opaque,
-  0 /* pkey_supports_digest */,
 
   int_ec_size,
   ec_bits,

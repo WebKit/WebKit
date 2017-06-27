@@ -63,6 +63,8 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
 
 BIO *BIO_new_mem_buf(const void *buf, int len) {
   BIO *ret;
@@ -144,12 +146,12 @@ static int mem_read(BIO *bio, char *out, int outl) {
   }
 
   if (ret > 0) {
-    memcpy(out, b->data, ret);
+    OPENSSL_memcpy(out, b->data, ret);
     b->length -= ret;
     if (bio->flags & BIO_FLAGS_MEM_RDONLY) {
       b->data += ret;
     } else {
-      memmove(b->data, &b->data[ret], b->length);
+      OPENSSL_memmove(b->data, &b->data[ret], b->length);
     }
   } else if (b->length == 0) {
     ret = bio->num;
@@ -180,15 +182,11 @@ static int mem_write(BIO *bio, const char *in, int inl) {
   if (BUF_MEM_grow_clean(b, blen + inl) != ((size_t) blen) + inl) {
     goto err;
   }
-  memcpy(&b->data[blen], in, inl);
+  OPENSSL_memcpy(&b->data[blen], in, inl);
   ret = inl;
 
 err:
   return ret;
-}
-
-static int mem_puts(BIO *bp, const char *str) {
-  return mem_write(bp, str, strlen(str));
 }
 
 static int mem_gets(BIO *bio, char *buf, int size) {
@@ -240,7 +238,7 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
           b->data -= b->max - b->length;
           b->length = b->max;
         } else {
-          memset(b->data, 0, b->max);
+          OPENSSL_memset(b->data, 0, b->max);
           b->length = 0;
         }
       }
@@ -293,8 +291,12 @@ static long mem_ctrl(BIO *bio, int cmd, long num, void *ptr) {
 }
 
 static const BIO_METHOD mem_method = {
-    BIO_TYPE_MEM, "memory buffer", mem_write, mem_read, mem_puts,
-    mem_gets,     mem_ctrl,        mem_new,   mem_free, NULL, };
+    BIO_TYPE_MEM,    "memory buffer",
+    mem_write,       mem_read,
+    NULL /* puts */, mem_gets,
+    mem_ctrl,        mem_new,
+    mem_free,        NULL /* callback_ctrl */,
+};
 
 const BIO_METHOD *BIO_s_mem(void) { return &mem_method; }
 

@@ -1,5 +1,18 @@
 2017-06-27  Youenn Fablet  <youenn@apple.com>
 
+        Update boringssl to c8ff30cbe716c72279a6f6a9d7d7d0d4091220fa
+        https://bugs.webkit.org/show_bug.cgi?id=173676
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/boringssl.xcconfig: Enabling ASM.
+        * Source/third_party/boringssl/BUILD.generated.gni:
+        * Source/third_party/boringssl: Updated folder according new revision.
+        * WebKit/patch-boringssl: Added, needed to fix some files to disable warnings.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2017-06-27  Youenn Fablet  <youenn@apple.com>
+
         Refresh usrsctp to Source/ThirdParty/libwebrtc/WebKit/patch-usrsctp and libsrtp to ccf84786f8ef803cb9c75e919e5a3976b9f5a67
         https://bugs.webkit.org/show_bug.cgi?id=173673
 

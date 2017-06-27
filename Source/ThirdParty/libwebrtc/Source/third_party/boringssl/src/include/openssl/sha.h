@@ -73,10 +73,6 @@ extern "C" {
 /* SHA_DIGEST_LENGTH is the length of a SHA-1 digest. */
 #define SHA_DIGEST_LENGTH 20
 
-/* TODO(fork): remove */
-#define SHA_LBLOCK 16
-#define SHA_LONG uint32_t
-
 /* SHA1_Init initialises |sha| and returns one. */
 OPENSSL_EXPORT int SHA1_Init(SHA_CTX *sha);
 

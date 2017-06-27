@@ -61,7 +61,6 @@
 
 #include <openssl/err.h>
 #include <openssl/mem.h>
-#include <openssl/time_support.h>
 
 #include "asn1_locl.h"
 
@@ -128,7 +127,7 @@ int asn1_utctime_to_tm(struct tm *tm, const ASN1_UTCTIME *d)
     if (a[o] == 'Z')
         o++;
     else if ((a[o] == '+') || (a[o] == '-')) {
-        int offsign = a[o] == '-' ? -1 : 1, offset = 0;
+        int offsign = a[o] == '-' ? 1 : -1, offset = 0;
         o++;
         if (o + 4 > l)
             goto err;
@@ -270,7 +269,7 @@ time_t ASN1_UTCTIME_get(const ASN1_UTCTIME *s)
     struct tm tm;
     int offset;
 
-    memset(&tm, '\0', sizeof tm);
+    OPENSSL_memset(&tm, '\0', sizeof tm);
 
 # define g2(p) (((p)[0]-'0')*10+(p)[1]-'0')
     tm.tm_year = g2(s->data);

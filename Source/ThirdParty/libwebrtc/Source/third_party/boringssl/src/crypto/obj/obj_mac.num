@@ -100,7 +100,6 @@ rc2_40_cbc		98
 givenName		99
 surname		100
 initials		101
-uniqueIdentifier		102
 crl_distribution_points		103
 md5WithRSA		104
 serialNumber		105
@@ -121,7 +120,6 @@ rc5_cbc		120
 rc5_ecb		121
 rc5_cfb64		122
 rc5_ofb64		123
-rle_compression		124
 zlib_compression		125
 ext_key_usage		126
 id_pkix		127
@@ -347,7 +345,6 @@ id_cmc_confirmCertAcceptance		346
 id_on_personalData		347
 id_pda_dateOfBirth		348
 id_pda_placeOfBirth		349
-id_pda_pseudonym		350
 id_pda_gender		351
 id_pda_countryOfCitizenship		352
 id_pda_countryOfResidence		353
@@ -390,7 +387,6 @@ Enterprises		389
 dcObject		390
 domainComponent		391
 Domain		392
-joint_iso_ccitt		393
 selected_attribute_types		394
 clearance		395
 md4WithRSAEncryption		396
@@ -401,7 +397,6 @@ role		400
 policy_constraints		401
 target_information		402
 no_rev_avail		403
-ccitt		404
 ansi_X9_62		405
 X9_62_prime_field		406
 X9_62_characteristic_two_field		407
@@ -508,7 +503,6 @@ id_hex_partial_message		507
 id_hex_multipart_message		508
 generationQualifier		509
 pseudonym		510
-InternationalRA		511
 id_set		512
 set_ctype		513
 set_msgExt		514
@@ -769,10 +763,7 @@ camellia_256_ofb128		768
 subject_directory_attributes		769
 issuing_distribution_point		770
 certificate_issuer		771
-korea		772
 kisa		773
-kftc		774
-npki_alg		775
 seed_ecb		776
 seed_cbc		777
 seed_ofb128		778
@@ -946,4 +937,4 @@ dhSinglePass_cofactorDH_sha512kdf_scheme		945
 dh_std_kdf		946
 dh_cofactor_kdf		947
 X25519		948
-cecpq1		949
+ED25519		949

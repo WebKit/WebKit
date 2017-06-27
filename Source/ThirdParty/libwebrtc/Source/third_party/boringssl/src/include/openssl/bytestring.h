@@ -126,33 +126,33 @@ OPENSSL_EXPORT int CBS_get_u24_length_prefixed(CBS *cbs, CBS *out);
 /* Parsing ASN.1 */
 
 /* The following values are tag numbers for UNIVERSAL elements. */
-#define CBS_ASN1_BOOLEAN 0x1
-#define CBS_ASN1_INTEGER 0x2
-#define CBS_ASN1_BITSTRING 0x3
-#define CBS_ASN1_OCTETSTRING 0x4
-#define CBS_ASN1_NULL 0x5
-#define CBS_ASN1_OBJECT 0x6
-#define CBS_ASN1_ENUMERATED 0xa
-#define CBS_ASN1_UTF8STRING 0xc
-#define CBS_ASN1_SEQUENCE (0x10 | CBS_ASN1_CONSTRUCTED)
-#define CBS_ASN1_SET (0x11 | CBS_ASN1_CONSTRUCTED)
-#define CBS_ASN1_NUMERICSTRING 0x12
-#define CBS_ASN1_PRINTABLESTRING 0x13
-#define CBS_ASN1_T16STRING 0x14
-#define CBS_ASN1_VIDEOTEXSTRING 0x15
-#define CBS_ASN1_IA5STRING 0x16
-#define CBS_ASN1_UTCTIME 0x17
-#define CBS_ASN1_GENERALIZEDTIME 0x18
-#define CBS_ASN1_GRAPHICSTRING 0x19
-#define CBS_ASN1_VISIBLESTRING 0x1a
-#define CBS_ASN1_GENERALSTRING 0x1b
-#define CBS_ASN1_UNIVERSALSTRING 0x1c
-#define CBS_ASN1_BMPSTRING 0x1e
+#define CBS_ASN1_BOOLEAN 0x1u
+#define CBS_ASN1_INTEGER 0x2u
+#define CBS_ASN1_BITSTRING 0x3u
+#define CBS_ASN1_OCTETSTRING 0x4u
+#define CBS_ASN1_NULL 0x5u
+#define CBS_ASN1_OBJECT 0x6u
+#define CBS_ASN1_ENUMERATED 0xau
+#define CBS_ASN1_UTF8STRING 0xcu
+#define CBS_ASN1_SEQUENCE (0x10u | CBS_ASN1_CONSTRUCTED)
+#define CBS_ASN1_SET (0x11u | CBS_ASN1_CONSTRUCTED)
+#define CBS_ASN1_NUMERICSTRING 0x12u
+#define CBS_ASN1_PRINTABLESTRING 0x13u
+#define CBS_ASN1_T61STRING 0x14u
+#define CBS_ASN1_VIDEOTEXSTRING 0x15u
+#define CBS_ASN1_IA5STRING 0x16u
+#define CBS_ASN1_UTCTIME 0x17u
+#define CBS_ASN1_GENERALIZEDTIME 0x18u
+#define CBS_ASN1_GRAPHICSTRING 0x19u
+#define CBS_ASN1_VISIBLESTRING 0x1au
+#define CBS_ASN1_GENERALSTRING 0x1bu
+#define CBS_ASN1_UNIVERSALSTRING 0x1cu
+#define CBS_ASN1_BMPSTRING 0x1eu
 
 /* CBS_ASN1_CONSTRUCTED may be ORed into a tag to toggle the constructed
  * bit. |CBS| and |CBB| APIs consider the constructed bit to be part of the
  * tag. */
-#define CBS_ASN1_CONSTRUCTED 0x20
+#define CBS_ASN1_CONSTRUCTED 0x20u
 
 /* The following values specify the constructed bit or tag class and may be ORed
  * into a tag number to produce the final tag. If none is used, the tag will be
@@ -161,15 +161,15 @@ OPENSSL_EXPORT int CBS_get_u24_length_prefixed(CBS *cbs, CBS *out);
  * Note that although they currently match the DER serialization, consumers must
  * use these bits rather than make assumptions about the representation. This is
  * to allow for tag numbers beyond 31 in the future. */
-#define CBS_ASN1_APPLICATION 0x40
-#define CBS_ASN1_CONTEXT_SPECIFIC 0x80
-#define CBS_ASN1_PRIVATE 0xc0
+#define CBS_ASN1_APPLICATION 0x40u
+#define CBS_ASN1_CONTEXT_SPECIFIC 0x80u
+#define CBS_ASN1_PRIVATE 0xc0u
 
 /* CBS_ASN1_CLASS_MASK may be ANDed with a tag to query its class. */
-#define CBS_ASN1_CLASS_MASK 0xc0
+#define CBS_ASN1_CLASS_MASK 0xc0u
 
 /* CBS_ASN1_TAG_NUMBER_MASK may be ANDed with a tag to query its number. */
-#define CBS_ASN1_TAG_NUMBER_MASK 0x1f
+#define CBS_ASN1_TAG_NUMBER_MASK 0x1fu
 
 /* CBS_get_asn1 sets |*out| to the contents of DER-encoded, ASN.1 element (not
  * including tag and length bytes) and advances |cbs| over it. The ASN.1
@@ -256,6 +256,15 @@ OPENSSL_EXPORT int CBS_get_optional_asn1_uint64(CBS *cbs, uint64_t *out,
  * failure. */
 OPENSSL_EXPORT int CBS_get_optional_asn1_bool(CBS *cbs, int *out, unsigned tag,
                                               int default_value);
+
+/* CBS_is_valid_asn1_bitstring returns one if |cbs| is a valid ASN.1 BIT STRING
+ * and zero otherwise. */
+OPENSSL_EXPORT int CBS_is_valid_asn1_bitstring(const CBS *cbs);
+
+/* CBS_asn1_bitstring_has_bit returns one if |cbs| is a valid ASN.1 BIT STRING
+ * and the specified bit is present and set. Otherwise, it returns zero. |bit|
+ * is indexed starting from zero. */
+OPENSSL_EXPORT int CBS_asn1_bitstring_has_bit(const CBS *cbs, unsigned bit);
 
 
 /* CRYPTO ByteBuilder.

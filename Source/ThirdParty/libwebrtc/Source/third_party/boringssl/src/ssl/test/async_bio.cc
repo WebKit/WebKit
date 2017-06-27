@@ -20,6 +20,8 @@
 #include <openssl/bio.h>
 #include <openssl/mem.h>
 
+#include "../../crypto/internal.h"
+
 
 namespace {
 
@@ -110,7 +112,7 @@ static int AsyncNew(BIO *bio) {
   if (a == NULL) {
     return 0;
   }
-  memset(a, 0, sizeof(*a));
+  OPENSSL_memset(a, 0, sizeof(*a));
   a->enforce_write_quota = true;
   bio->init = 1;
   bio->ptr = (char *)a;

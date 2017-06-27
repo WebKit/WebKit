@@ -22,8 +22,9 @@
 extern "C" {
 #endif
 
+#if defined(OPENSSL_ARM) && !defined(OPENSSL_NO_ASM) && !defined(OPENSSL_APPLE)
+#define OPENSSL_POLY1305_NEON
 
-#if defined(OPENSSL_ARM) && !defined(OPENSSL_NO_ASM)
 void CRYPTO_poly1305_init_neon(poly1305_state *state, const uint8_t key[32]);
 
 void CRYPTO_poly1305_update_neon(poly1305_state *state, const uint8_t *in,

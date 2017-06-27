@@ -14,10 +14,10 @@ All supported public APIs are documented in the public header files, found in
 Some headers lack documention comments. These are functions and structures from
 OpenSSL's legacy ASN.1, X.509, and PEM implementation. If possible, avoid using
 them. These are left largely unmodified from upstream and are retained only for
-compatibilty with existing OpenSSL consumers.
+compatibility with existing OpenSSL consumers.
 
 
-# Forward declarations
+## Forward declarations
 
 Do not write `typedef struct foo_st FOO` or try otherwise to define BoringSSL's
 types. Including `openssl/base.h` (or `openssl/ossl_typ.h` for consumers who

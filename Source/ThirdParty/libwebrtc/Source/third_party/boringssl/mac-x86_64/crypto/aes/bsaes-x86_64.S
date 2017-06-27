@@ -1,4 +1,4 @@
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM)
 .text	
 
 
@@ -1302,15 +1302,14 @@ L$cbc_dec_bzero:
 	cmpq	%rax,%rbp
 	ja	L$cbc_dec_bzero
 
-	leaq	(%rbp),%rsp
-	movq	72(%rsp),%r15
-	movq	80(%rsp),%r14
-	movq	88(%rsp),%r13
-	movq	96(%rsp),%r12
-	movq	104(%rsp),%rbx
-	movq	112(%rsp),%rax
-	leaq	120(%rsp),%rsp
-	movq	%rax,%rbp
+	leaq	120(%rbp),%rax
+	movq	-48(%rax),%r15
+	movq	-40(%rax),%r14
+	movq	-32(%rax),%r13
+	movq	-24(%rax),%r12
+	movq	-16(%rax),%rbx
+	movq	-8(%rax),%rbp
+	leaq	(%rax),%rsp
 L$cbc_dec_epilogue:
 	.byte	0xf3,0xc3
 
@@ -1503,15 +1502,14 @@ L$ctr_enc_bzero:
 	cmpq	%rax,%rbp
 	ja	L$ctr_enc_bzero
 
-	leaq	(%rbp),%rsp
-	movq	72(%rsp),%r15
-	movq	80(%rsp),%r14
-	movq	88(%rsp),%r13
-	movq	96(%rsp),%r12
-	movq	104(%rsp),%rbx
-	movq	112(%rsp),%rax
-	leaq	120(%rsp),%rsp
-	movq	%rax,%rbp
+	leaq	120(%rbp),%rax
+	movq	-48(%rax),%r15
+	movq	-40(%rax),%r14
+	movq	-32(%rax),%r13
+	movq	-24(%rax),%r12
+	movq	-16(%rax),%rbx
+	movq	-8(%rax),%rbp
+	leaq	(%rax),%rsp
 L$ctr_enc_epilogue:
 	.byte	0xf3,0xc3
 
@@ -1955,15 +1953,14 @@ L$xts_enc_bzero:
 	cmpq	%rax,%rbp
 	ja	L$xts_enc_bzero
 
-	leaq	(%rbp),%rsp
-	movq	72(%rsp),%r15
-	movq	80(%rsp),%r14
-	movq	88(%rsp),%r13
-	movq	96(%rsp),%r12
-	movq	104(%rsp),%rbx
-	movq	112(%rsp),%rax
-	leaq	120(%rsp),%rsp
-	movq	%rax,%rbp
+	leaq	120(%rbp),%rax
+	movq	-48(%rax),%r15
+	movq	-40(%rax),%r14
+	movq	-32(%rax),%r13
+	movq	-24(%rax),%r12
+	movq	-16(%rax),%rbx
+	movq	-8(%rax),%rbp
+	leaq	(%rax),%rsp
 L$xts_enc_epilogue:
 	.byte	0xf3,0xc3
 
@@ -2434,15 +2431,14 @@ L$xts_dec_bzero:
 	cmpq	%rax,%rbp
 	ja	L$xts_dec_bzero
 
-	leaq	(%rbp),%rsp
-	movq	72(%rsp),%r15
-	movq	80(%rsp),%r14
-	movq	88(%rsp),%r13
-	movq	96(%rsp),%r12
-	movq	104(%rsp),%rbx
-	movq	112(%rsp),%rax
-	leaq	120(%rsp),%rsp
-	movq	%rax,%rbp
+	leaq	120(%rbp),%rax
+	movq	-48(%rax),%r15
+	movq	-40(%rax),%r14
+	movq	-32(%rax),%r13
+	movq	-24(%rax),%r12
+	movq	-16(%rax),%rbx
+	movq	-8(%rax),%rbp
+	leaq	(%rax),%rsp
 L$xts_dec_epilogue:
 	.byte	0xf3,0xc3
 

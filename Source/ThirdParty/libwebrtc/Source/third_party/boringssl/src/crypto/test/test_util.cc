@@ -12,10 +12,11 @@
  * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-#include <stdint.h>
-#include <stdio.h>
-
 #include "test_util.h"
+
+#include <ostream>
+
+#include "../internal.h"
 
 
 void hexdump(FILE *fp, const char *msg, const void *in, size_t len) {
@@ -26,4 +27,14 @@ void hexdump(FILE *fp, const char *msg, const void *in, size_t len) {
     fprintf(fp, "%02x", data[i]);
   }
   fputs("\n", fp);
+}
+
+std::ostream &operator<<(std::ostream &os, const Bytes &in) {
+  // Print a byte slice as hex.
+  static const char hex[] = "0123456789abcdef";
+  for (size_t i = 0; i < in.len; i++) {
+    os << hex[in.data[i] >> 4];
+    os << hex[in.data[i] & 0xf];
+  }
+  return os;
 }

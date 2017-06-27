@@ -27,7 +27,7 @@ config("internal_config") {
   ]
   configs = [
     # TODO(davidben): Fix size_t truncations in BoringSSL.
-    # https://crbug.com/429039
+    # https://crbug.com/boringssl/22
     "//build/config/compiler:no_size_t_to_int_warning",
   ]
   if (is_posix) {
@@ -39,11 +39,6 @@ config("internal_config") {
 config("no_asm_config") {
   visibility = [ ":*" ]  # Only targets in this file can depend on this.
   defines = [ "OPENSSL_NO_ASM" ]
-}
-
-config("fuzzer_config") {
-  visibility = [ ":*" ]  # Only targets in this file can depend on this.
-  defines = [ "BORINGSSL_UNSAFE_FUZZER_MODE" ]
 }
 
 all_sources = crypto_sources + ssl_sources
@@ -128,6 +123,38 @@ component("boringssl") {
   }
 }
 
+# These targets are named "_tests" rather than "_test" to avoid colliding with a
+# historical "boringssl_ssl_test" target. This works around a bug with the iOS
+# build rules.
+
+test("boringssl_crypto_tests") {
+  sources = crypto_test_sources + test_support_sources
+  deps = [
+    ":boringssl",
+    "//testing/gtest",
+  ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    ":internal_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
+}
+
+test("boringssl_ssl_tests") {
+  sources = ssl_test_sources + test_support_sources
+  deps = [
+    ":boringssl",
+    "//testing/gtest",
+  ]
+
+  configs -= [ "//build/config/compiler:chromium_code" ]
+  configs += [
+    ":internal_config",
+    "//build/config/compiler:no_chromium_code",
+  ]
+}
+
 if (build_with_chromium) {
   create_tests("boringssl_tests") {
     configs_exclude = [ "//build/config/compiler:chromium_code" ]
@@ -154,6 +181,14 @@ if (build_with_chromium) {
         "boringssl_unittest.cc",
       ]
     }
+  }
+
+  config("fuzzer_config") {
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
+    defines = [
+      "BORINGSSL_UNSAFE_FUZZER_MODE",
+      "BORINGSSL_UNSAFE_DETERMINISTIC_MODE",
+    ]
   }
 
   # The same as boringssl, but builds with BORINGSSL_UNSAFE_FUZZER_MODE.
@@ -199,6 +234,8 @@ if (build_with_chromium) {
         libfuzzer_options = [ "max_len=2048" ]
       } else if ("read_pem" == fuzzer) {
         libfuzzer_options = [ "max_len=512" ]
+      } else if ("session" == fuzzer) {
+        libfuzzer_options = [ "max_len=8192" ]
       } else if ("server" == fuzzer) {
         libfuzzer_options = [ "max_len=4096" ]
       } else if ("spki" == fuzzer) {
@@ -207,5 +244,53 @@ if (build_with_chromium) {
         libfuzzer_options = [ "max_len=256" ]
       }
     }
+  }
+
+  config("fuzzer_no_fuzzer_mode_config") {
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
+    defines = [ "BORINGSSL_UNSAFE_DETERMINISTIC_MODE" ]
+  }
+
+  # The same as boringssl, but builds with BORINGSSL_UNSAFE_DETERMINISTIC_MODE.
+  component("boringssl_fuzzer_no_fuzzer_mode") {
+    visibility = [ ":*" ]  # Only targets in this file can depend on this.
+
+    sources = all_sources
+    deps = [
+      ":boringssl_asm",
+    ]
+
+    public_configs = [
+      ":external_config",
+      ":fuzzer_no_fuzzer_mode_config",
+    ]
+    configs += [ ":internal_config" ]
+
+    configs -= [ "//build/config/compiler:chromium_code" ]
+    configs += [ "//build/config/compiler:no_chromium_code" ]
+
+    if (is_nacl) {
+      deps += [ "//native_client_sdk/src/libraries/nacl_io" ]
+    }
+  }
+
+  fuzzer_test("boringssl_client_no_fuzzer_mode_fuzzer") {
+    sources = [
+      "src/fuzz/client.cc",
+    ]
+    deps = [
+      ":boringssl_fuzzer_no_fuzzer_mode",
+    ]
+    seed_corpus = "src/fuzz/client_corpus_no_fuzzer_mode"
+  }
+
+  fuzzer_test("boringssl_server_no_fuzzer_mode_fuzzer") {
+    sources = [
+      "src/fuzz/server.cc",
+    ]
+    deps = [
+      ":boringssl_fuzzer_no_fuzzer_mode",
+    ]
+    seed_corpus = "src/fuzz/server_corpus_no_fuzzer_mode"
   }
 }

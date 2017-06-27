@@ -16,11 +16,16 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <gtest/gtest.h>
+
 #include <openssl/curve25519.h>
 
+#include "../internal.h"
+#include "../test/test_util.h"
 
-static bool TestX25519() {
-  /* Taken from https://tools.ietf.org/html/rfc7748#section-5.2 */
+
+TEST(X25519Test, TestVector) {
+  // Taken from https://tools.ietf.org/html/rfc7748#section-5.2
   static const uint8_t kScalar1[32] = {
       0xa5, 0x46, 0xe3, 0x6b, 0xf0, 0x52, 0x7c, 0x9d, 0x3b, 0x16, 0x15,
       0x4b, 0x82, 0x46, 0x5e, 0xdd, 0x62, 0x14, 0x4c, 0x0a, 0xc1, 0xfc,
@@ -33,17 +38,14 @@ static bool TestX25519() {
   };
 
   uint8_t out[32];
-  X25519(out, kScalar1, kPoint1);
+  EXPECT_TRUE(X25519(out, kScalar1, kPoint1));
 
   static const uint8_t kExpected1[32] = {
       0xc3, 0xda, 0x55, 0x37, 0x9d, 0xe9, 0xc6, 0x90, 0x8e, 0x94, 0xea,
       0x4d, 0xf2, 0x8d, 0x08, 0x4f, 0x32, 0xec, 0xcf, 0x03, 0x49, 0x1c,
       0x71, 0xf7, 0x54, 0xb4, 0x07, 0x55, 0x77, 0xa2, 0x85, 0x52,
   };
-  if (memcmp(kExpected1, out, sizeof(out)) != 0) {
-    fprintf(stderr, "X25519 test one failed.\n");
-    return false;
-  }
+  EXPECT_EQ(Bytes(kExpected1), Bytes(out));
 
   static const uint8_t kScalar2[32] = {
       0x4b, 0x66, 0xe9, 0xd4, 0xd1, 0xb4, 0x67, 0x3c, 0x5a, 0xd2, 0x26,
@@ -56,22 +58,17 @@ static bool TestX25519() {
       0x3c, 0x3e, 0xfc, 0x4c, 0xd5, 0x49, 0xc7, 0x15, 0xa4, 0x93,
   };
 
-  X25519(out, kScalar2, kPoint2);
+  EXPECT_TRUE(X25519(out, kScalar2, kPoint2));
 
   static const uint8_t kExpected2[32] = {
       0x95, 0xcb, 0xde, 0x94, 0x76, 0xe8, 0x90, 0x7d, 0x7a, 0xad, 0xe4,
       0x5c, 0xb4, 0xb8, 0x73, 0xf8, 0x8b, 0x59, 0x5a, 0x68, 0x79, 0x9f,
       0xa1, 0x52, 0xe6, 0xf8, 0xf7, 0x64, 0x7a, 0xac, 0x79, 0x57,
   };
-  if (memcmp(kExpected2, out, sizeof(out)) != 0) {
-    fprintf(stderr, "X25519 test two failed.\n");
-    return false;
-  }
-
-  return true;
+  EXPECT_EQ(Bytes(kExpected2), Bytes(out));
 }
 
-static bool TestX25519SmallOrder() {
+TEST(X25519Test, SmallOrder) {
   static const uint8_t kSmallOrderPoint[32] = {
       0xe0, 0xeb, 0x7a, 0x7c, 0x3b, 0x41, 0xb8, 0xae, 0x16, 0x56, 0xe3,
       0xfa, 0xf1, 0x9f, 0xc4, 0x6a, 0xda, 0x09, 0x8d, 0xeb, 0x9c, 0x32,
@@ -79,25 +76,25 @@ static bool TestX25519SmallOrder() {
   };
 
   uint8_t out[32], private_key[32];
-  memset(private_key, 0x11, sizeof(private_key));
+  OPENSSL_memset(private_key, 0x11, sizeof(private_key));
 
-  if (X25519(out, private_key, kSmallOrderPoint)) {
-    fprintf(stderr, "X25519 returned success with a small-order input.\n");
-    return false;
-  }
+  OPENSSL_memset(out, 0xff, sizeof(out));
+  EXPECT_FALSE(X25519(out, private_key, kSmallOrderPoint))
+      << "X25519 returned success with a small-order input.";
 
-  return true;
+  // For callers which don't check, |out| should still be filled with zeros.
+  static const uint8_t kZeros[32] = {0};
+  EXPECT_EQ(Bytes(kZeros), Bytes(out));
 }
 
-static bool TestX25519Iterated() {
-  /* Taken from https://tools.ietf.org/html/rfc7748#section-5.2 */
+TEST(X25519Test, Iterated) {
+  // Taken from https://tools.ietf.org/html/rfc7748#section-5.2.
   uint8_t scalar[32] = {9}, point[32] = {9}, out[32];
 
-  unsigned i;
-  for (i = 0; i < 1000; i++) {
-    X25519(out, scalar, point);
-    memcpy(point, scalar, sizeof(point));
-    memcpy(scalar, out, sizeof(scalar));
+  for (unsigned i = 0; i < 1000; i++) {
+    EXPECT_TRUE(X25519(out, scalar, point));
+    OPENSSL_memcpy(point, scalar, sizeof(point));
+    OPENSSL_memcpy(scalar, out, sizeof(scalar));
   }
 
   static const uint8_t kExpected[32] = {
@@ -106,21 +103,5 @@ static bool TestX25519Iterated() {
       0xe3, 0x87, 0x5f, 0x2e, 0xb9, 0x4d, 0x99, 0x53, 0x2c, 0x51,
   };
 
-  if (memcmp(kExpected, scalar, sizeof(kExpected)) != 0) {
-    fprintf(stderr, "Iterated X25519 test failed\n");
-    return false;
-  }
-
-  return true;
-}
-
-int main(int argc, char **argv) {
-  if (!TestX25519() ||
-      !TestX25519Iterated() ||
-      !TestX25519SmallOrder()) {
-    return 1;
-  }
-
-  printf("PASS\n");
-  return 0;
+  EXPECT_EQ(Bytes(kExpected), Bytes(scalar));
 }

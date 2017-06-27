@@ -67,6 +67,9 @@
 #include <openssl/obj.h>
 #include <openssl/x509v3.h>
 
+#include "../internal.h"
+
+
 static char *i2s_ASN1_IA5STRING(X509V3_EXT_METHOD *method,
                                 ASN1_IA5STRING *ia5);
 static ASN1_IA5STRING *s2i_ASN1_IA5STRING(X509V3_EXT_METHOD *method,
@@ -92,7 +95,7 @@ static char *i2s_ASN1_IA5STRING(X509V3_EXT_METHOD *method,
         OPENSSL_PUT_ERROR(X509V3, ERR_R_MALLOC_FAILURE);
         return NULL;
     }
-    memcpy(tmp, ia5->data, ia5->length);
+    OPENSSL_memcpy(tmp, ia5->data, ia5->length);
     tmp[ia5->length] = 0;
     return tmp;
 }

@@ -18,8 +18,13 @@
 
 #include <memory>
 
+#include <gtest/gtest.h>
+
 #include <openssl/crypto.h>
 #include <openssl/chacha.h>
+
+#include "../internal.h"
+#include "../test/test_util.h"
 
 
 static const uint8_t kKey[32] = {
@@ -214,35 +219,18 @@ static const uint8_t kOutput[] = {
 static_assert(sizeof(kInput) == sizeof(kOutput),
               "Input and output lengths don't match.");
 
-static bool TestChaCha20(size_t len) {
-  std::unique_ptr<uint8_t[]> buf(new uint8_t[len]);
-  CRYPTO_chacha_20(buf.get(), kInput, len, kKey, kNonce, kCounter);
-  if (memcmp(buf.get(), kOutput, len) != 0) {
-    fprintf(stderr, "Mismatch at length %zu.\n", len);
-    return false;
-  }
-
-  // Test in-place.
-  memcpy(buf.get(), kInput, len);
-  CRYPTO_chacha_20(buf.get(), buf.get(), len, kKey, kNonce, kCounter);
-  if (memcmp(buf.get(), kOutput, len) != 0) {
-    fprintf(stderr, "Mismatch at length %zu, in-place.\n", len);
-    return false;
-  }
-
-  return true;
-}
-
-int main(int argc, char **argv) {
-  CRYPTO_library_init();
-
+TEST(ChaChaTest, TestVector) {
   // Run the test with the test vector at all lengths.
   for (size_t len = 0; len <= sizeof(kInput); len++) {
-    if (!TestChaCha20(len)) {
-      return 1;
-    }
-  }
+    SCOPED_TRACE(len);
 
-  printf("PASS\n");
-  return 0;
+    std::unique_ptr<uint8_t[]> buf(new uint8_t[len]);
+    CRYPTO_chacha_20(buf.get(), kInput, len, kKey, kNonce, kCounter);
+    EXPECT_EQ(Bytes(kOutput, len), Bytes(buf.get(), len));
+
+    // Test the in-place version.
+    OPENSSL_memcpy(buf.get(), kInput, len);
+    CRYPTO_chacha_20(buf.get(), buf.get(), len, kKey, kNonce, kCounter);
+    EXPECT_EQ(Bytes(kOutput, len), Bytes(buf.get(), len));
+  }
 }

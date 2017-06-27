@@ -16,6 +16,7 @@
 #include <vector>
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <openssl/rand.h>

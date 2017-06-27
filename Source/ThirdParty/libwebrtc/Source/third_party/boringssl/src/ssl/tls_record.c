@@ -125,6 +125,13 @@
  * forever. */
 static const uint8_t kMaxEmptyRecords = 32;
 
+/* kMaxEarlyDataSkipped is the maximum number of rejected early data bytes that
+ * will be skipped. Without this limit an attacker could send records at a
+ * faster rate than we can process and cause trial decryption to loop forever.
+ * This value should be slightly above kMaxEarlyDataAccepted, which is measured
+ * in plaintext. */
+static const size_t kMaxEarlyDataSkipped = 16384;
+
 /* kMaxWarningAlerts is the number of consecutive warning alerts that will be
  * processed. */
 static const uint8_t kMaxWarningAlerts = 4;
@@ -133,7 +140,7 @@ static const uint8_t kMaxWarningAlerts = 4;
  * state needs record-splitting and zero otherwise. */
 static int ssl_needs_record_splitting(const SSL *ssl) {
   return ssl->s3->aead_write_ctx != NULL &&
-         ssl3_protocol_version(ssl) < TLS1_1_VERSION &&
+         ssl->s3->aead_write_ctx->version < TLS1_1_VERSION &&
          (ssl->mode & SSL_MODE_CBC_RECORD_SPLITTING) != 0 &&
          SSL_CIPHER_is_block_cipher(ssl->s3->aead_write_ctx->cipher);
 }
@@ -150,43 +157,44 @@ int ssl_record_sequence_update(uint8_t *seq, size_t seq_len) {
 }
 
 size_t ssl_record_prefix_len(const SSL *ssl) {
+  size_t header_len;
   if (SSL_is_dtls(ssl)) {
-    return DTLS1_RT_HEADER_LENGTH +
-           SSL_AEAD_CTX_explicit_nonce_len(ssl->s3->aead_read_ctx);
+    header_len = DTLS1_RT_HEADER_LENGTH;
   } else {
-    return SSL3_RT_HEADER_LENGTH +
-           SSL_AEAD_CTX_explicit_nonce_len(ssl->s3->aead_read_ctx);
+    header_len = SSL3_RT_HEADER_LENGTH;
   }
+
+  return header_len + SSL_AEAD_CTX_explicit_nonce_len(ssl->s3->aead_read_ctx);
 }
 
 size_t ssl_seal_align_prefix_len(const SSL *ssl) {
   if (SSL_is_dtls(ssl)) {
     return DTLS1_RT_HEADER_LENGTH +
            SSL_AEAD_CTX_explicit_nonce_len(ssl->s3->aead_write_ctx);
-  } else {
-    size_t ret = SSL3_RT_HEADER_LENGTH +
-                 SSL_AEAD_CTX_explicit_nonce_len(ssl->s3->aead_write_ctx);
-    if (ssl_needs_record_splitting(ssl)) {
-      ret += SSL3_RT_HEADER_LENGTH;
-      ret += ssl_cipher_get_record_split_len(ssl->s3->aead_write_ctx->cipher);
-    }
-    return ret;
   }
+
+  size_t ret = SSL3_RT_HEADER_LENGTH +
+               SSL_AEAD_CTX_explicit_nonce_len(ssl->s3->aead_write_ctx);
+  if (ssl_needs_record_splitting(ssl)) {
+    ret += SSL3_RT_HEADER_LENGTH;
+    ret += ssl_cipher_get_record_split_len(ssl->s3->aead_write_ctx->cipher);
+  }
+  return ret;
 }
 
-size_t ssl_max_seal_overhead(const SSL *ssl) {
-  size_t ret = SSL_AEAD_CTX_max_overhead(ssl->s3->aead_write_ctx);
+size_t SSL_max_seal_overhead(const SSL *ssl) {
   if (SSL_is_dtls(ssl)) {
-    ret += DTLS1_RT_HEADER_LENGTH;
-  } else {
-    ret += SSL3_RT_HEADER_LENGTH;
+    return dtls_max_seal_overhead(ssl, dtls1_use_current_epoch);
   }
+
+  size_t ret = SSL3_RT_HEADER_LENGTH;
+  ret += SSL_AEAD_CTX_max_overhead(ssl->s3->aead_write_ctx);
   /* TLS 1.3 needs an extra byte for the encrypted record type. */
-  if (ssl->s3->have_version &&
-      ssl3_protocol_version(ssl) >= TLS1_3_VERSION) {
+  if (ssl->s3->aead_write_ctx != NULL &&
+      ssl->s3->aead_write_ctx->version >= TLS1_3_VERSION) {
     ret += 1;
   }
-  if (!SSL_is_dtls(ssl) && ssl_needs_record_splitting(ssl)) {
+  if (ssl_needs_record_splitting(ssl)) {
     ret *= 2;
   }
   return ret;
@@ -210,9 +218,20 @@ enum ssl_open_record_t tls_open_record(SSL *ssl, uint8_t *out_type, CBS *out,
     return ssl_open_record_partial;
   }
 
-  /* Check that the major version in the record matches. As of TLS 1.3, the
-   * minor version is no longer checked. */
-  if ((version >> 8) != SSL3_VERSION_MAJOR) {
+  int version_ok;
+  if (ssl->s3->aead_read_ctx == NULL) {
+    /* Only check the first byte. Enforcing beyond that can prevent decoding
+     * version negotiation failure alerts. */
+    version_ok = (version >> 8) == SSL3_VERSION_MAJOR;
+  } else if (ssl3_protocol_version(ssl) < TLS1_3_VERSION) {
+    /* Earlier versions of TLS switch the record version. */
+    version_ok = version == ssl->version;
+  } else {
+    /* Starting TLS 1.3, the version field is frozen at {3, 1}. */
+    version_ok = version == TLS1_VERSION;
+  }
+
+  if (!version_ok) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_WRONG_VERSION_NUMBER);
     *out_alert = SSL_AD_PROTOCOL_VERSION;
     return ssl_open_record_error;
@@ -235,15 +254,32 @@ enum ssl_open_record_t tls_open_record(SSL *ssl, uint8_t *out_type, CBS *out,
   ssl_do_msg_callback(ssl, 0 /* read */, SSL3_RT_HEADER, in,
                       SSL3_RT_HEADER_LENGTH);
 
+  *out_consumed = in_len - CBS_len(&cbs);
+
+  /* Skip early data received when expecting a second ClientHello if we rejected
+   * 0RTT. */
+  if (ssl->s3->skip_early_data &&
+      ssl->s3->aead_read_ctx == NULL &&
+      type == SSL3_RT_APPLICATION_DATA) {
+    goto skipped_data;
+  }
+
   /* Decrypt the body in-place. */
   if (!SSL_AEAD_CTX_open(ssl->s3->aead_read_ctx, out, type, version,
                          ssl->s3->read_sequence, (uint8_t *)CBS_data(&body),
                          CBS_len(&body))) {
+    if (ssl->s3->skip_early_data &&
+        ssl->s3->aead_read_ctx != NULL) {
+      ERR_clear_error();
+      goto skipped_data;
+    }
+
     OPENSSL_PUT_ERROR(SSL, SSL_R_DECRYPTION_FAILED_OR_BAD_RECORD_MAC);
     *out_alert = SSL_AD_BAD_RECORD_MAC;
     return ssl_open_record_error;
   }
-  *out_consumed = in_len - CBS_len(&cbs);
+
+  ssl->s3->skip_early_data = 0;
 
   if (!ssl_record_sequence_update(ssl->s3->read_sequence, 8)) {
     *out_alert = SSL_AD_INTERNAL_ERROR;
@@ -251,9 +287,8 @@ enum ssl_open_record_t tls_open_record(SSL *ssl, uint8_t *out_type, CBS *out,
   }
 
   /* TLS 1.3 hides the record type inside the encrypted data. */
-  if (ssl->s3->have_version &&
-      ssl3_protocol_version(ssl) >= TLS1_3_VERSION &&
-      ssl->s3->aead_read_ctx != NULL) {
+  if (ssl->s3->aead_read_ctx != NULL &&
+      ssl->s3->aead_read_ctx->version >= TLS1_3_VERSION) {
     /* The outer record type is always application_data. */
     if (type != SSL3_RT_APPLICATION_DATA) {
       OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_OUTER_RECORD_TYPE);
@@ -292,6 +327,14 @@ enum ssl_open_record_t tls_open_record(SSL *ssl, uint8_t *out_type, CBS *out,
   }
 
   if (type == SSL3_RT_ALERT) {
+    /* Return end_of_early_data alerts as-is for the caller to process. */
+    if (CBS_len(out) == 2 &&
+        CBS_data(out)[0] == SSL3_AL_WARNING &&
+        CBS_data(out)[1] == TLS1_AD_END_OF_EARLY_DATA) {
+      *out_type = type;
+      return ssl_open_record_success;
+    }
+
     return ssl_process_alert(ssl, out_alert, CBS_data(out), CBS_len(out));
   }
 
@@ -299,25 +342,47 @@ enum ssl_open_record_t tls_open_record(SSL *ssl, uint8_t *out_type, CBS *out,
 
   *out_type = type;
   return ssl_open_record_success;
+
+skipped_data:
+  ssl->s3->early_data_skipped += *out_consumed;
+  if (ssl->s3->early_data_skipped < *out_consumed) {
+    ssl->s3->early_data_skipped = kMaxEarlyDataSkipped + 1;
+  }
+
+  if (ssl->s3->early_data_skipped > kMaxEarlyDataSkipped) {
+    OPENSSL_PUT_ERROR(SSL, SSL_R_TOO_MUCH_SKIPPED_EARLY_DATA);
+    *out_alert = SSL_AD_UNEXPECTED_MESSAGE;
+    return ssl_open_record_error;
+  }
+
+  return ssl_open_record_discard;
 }
 
 static int do_seal_record(SSL *ssl, uint8_t *out, size_t *out_len,
                           size_t max_out, uint8_t type, const uint8_t *in,
                           size_t in_len) {
+  assert(!buffers_alias(in, in_len, out, max_out));
+
+  /* TLS 1.3 hides the actual record type inside the encrypted data. */
+  if (ssl->s3->aead_write_ctx != NULL &&
+      ssl->s3->aead_write_ctx->version >= TLS1_3_VERSION) {
+    if (in_len > in_len + SSL3_RT_HEADER_LENGTH + 1 ||
+        max_out < in_len + SSL3_RT_HEADER_LENGTH + 1) {
+      OPENSSL_PUT_ERROR(SSL, SSL_R_BUFFER_TOO_SMALL);
+      return 0;
+    }
+
+    OPENSSL_memcpy(out + SSL3_RT_HEADER_LENGTH, in, in_len);
+    out[SSL3_RT_HEADER_LENGTH + in_len] = type;
+    in = out + SSL3_RT_HEADER_LENGTH;
+    type = SSL3_RT_APPLICATION_DATA;
+    in_len++;
+  }
+
   if (max_out < SSL3_RT_HEADER_LENGTH) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_BUFFER_TOO_SMALL);
     return 0;
   }
-
-  /* Either |in| and |out| don't alias or |in| aligns with the
-   * ciphertext. |tls_seal_record| forbids aliasing, but TLS 1.3 aliases them
-   * internally. */
-  assert(!buffers_alias(in, in_len, out, max_out) ||
-         in ==
-             out + SSL3_RT_HEADER_LENGTH +
-                 SSL_AEAD_CTX_explicit_nonce_len(ssl->s3->aead_write_ctx));
-
-  out[0] = type;
 
   /* The TLS record-layer version number is meaningless and, starting in
    * TLS 1.3, is frozen at TLS 1.0. But for historical reasons, SSL 3.0
@@ -328,24 +393,30 @@ static int do_seal_record(SSL *ssl, uint8_t *out, size_t *out_len,
       (ssl->s3->have_version && ssl3_protocol_version(ssl) < TLS1_3_VERSION)) {
     wire_version = ssl->version;
   }
+
+  /* Write the non-length portions of the header. */
+  out[0] = type;
   out[1] = wire_version >> 8;
   out[2] = wire_version & 0xff;
+  out += 3;
+  max_out -= 3;
 
+  /* Write the ciphertext, leaving two bytes for the length. */
   size_t ciphertext_len;
-  if (!SSL_AEAD_CTX_seal(ssl->s3->aead_write_ctx, out + SSL3_RT_HEADER_LENGTH,
-                         &ciphertext_len, max_out - SSL3_RT_HEADER_LENGTH,
-                         type, wire_version, ssl->s3->write_sequence, in,
-                         in_len) ||
+  if (!SSL_AEAD_CTX_seal(ssl->s3->aead_write_ctx, out + 2, &ciphertext_len,
+                         max_out - 2, type, wire_version,
+                         ssl->s3->write_sequence, in, in_len) ||
       !ssl_record_sequence_update(ssl->s3->write_sequence, 8)) {
     return 0;
   }
 
-  if (ciphertext_len >= 1 << 16) {
+  /* Fill in the length. */
+  if (ciphertext_len >= 1 << 15) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_OVERFLOW);
     return 0;
   }
-  out[3] = ciphertext_len >> 8;
-  out[4] = ciphertext_len & 0xff;
+  out[0] = ciphertext_len >> 8;
+  out[1] = ciphertext_len & 0xff;
 
   *out_len = SSL3_RT_HEADER_LENGTH + ciphertext_len;
 
@@ -362,25 +433,6 @@ int tls_seal_record(SSL *ssl, uint8_t *out, size_t *out_len, size_t max_out,
   }
 
   size_t frag_len = 0;
-
-  /* TLS 1.3 hides the actual record type inside the encrypted data. */
-  if (ssl->s3->have_version &&
-      ssl3_protocol_version(ssl) >= TLS1_3_VERSION &&
-      ssl->s3->aead_write_ctx != NULL) {
-    size_t padding = SSL3_RT_HEADER_LENGTH + 1;
-
-    if (in_len > in_len + padding || max_out < in_len + padding) {
-      OPENSSL_PUT_ERROR(SSL, SSL_R_BUFFER_TOO_SMALL);
-      return 0;
-    }
-
-    memmove(out + SSL3_RT_HEADER_LENGTH, in, in_len);
-    out[SSL3_RT_HEADER_LENGTH + in_len] = type;
-    in = out + SSL3_RT_HEADER_LENGTH;
-    type = SSL3_RT_APPLICATION_DATA;
-    in_len++;
-  }
-
   if (type == SSL3_RT_APPLICATION_DATA && in_len > 1 &&
       ssl_needs_record_splitting(ssl)) {
     if (!do_seal_record(ssl, out, &frag_len, max_out, type, in, 1)) {

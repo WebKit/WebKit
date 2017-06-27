@@ -21,7 +21,9 @@
 # Westmere	9.50/+45%	3.35
 # Sandy Bridge	10.5/+47%	3.20
 # Haswell	8.15/+50%	2.83
+# Skylake	7.53/+22%	2.75
 # Silvermont	17.4/+36%	8.35
+# Goldmont	13.4/+40%	4.36
 # Sledgehammer	10.2/+54%
 # Bulldozer	13.4/+50%	4.38(*)
 #
@@ -36,12 +38,10 @@ require "x86asm.pl";
 $output=pop;
 open STDOUT,">$output";
 
-&asm_init($ARGV[0],"chacha-x86.pl",$ARGV[$#ARGV] eq "386");
+&asm_init($ARGV[0],$ARGV[$#ARGV] eq "386");
 
-$xmm=$ymm=0;
-for (@ARGV) { $xmm=1 if (/-DOPENSSL_IA32_SSE2/); }
-
-$ymm=$xmm;
+$xmm=$ymm=1;
+$gasver=999;  # enable everything
 
 $a="eax";
 ($b,$b_)=("ebx","ebp");
@@ -438,6 +438,12 @@ my ($ap,$bp,$cp,$dp)=map(($_&~3)+(($_-1)&3),($ai,$bi,$ci,$di));	# previous
 				    &label("pic_point"),"eax"));
 	&movdqu		("xmm3",&QWP(0,"ebx"));		# counter and nonce
 
+if (defined($gasver) && $gasver>=2.17) {		# even though we encode
+							# pshufb manually, we
+							# handle only register
+							# operands, while this
+							# segment uses memory
+							# operand...
 	&cmp		($len,64*4);
 	&jb		(&label("1x"));
 
@@ -619,6 +625,7 @@ my ($ap,$bp,$cp,$dp)=map(($_&~3)+(($_-1)&3),($ai,$bi,$ci,$di));	# previous
 	&paddd		("xmm2",&QWP(16*6,"eax"));	# +four
 	&pand		("xmm3",&QWP(16*7,"eax"));
 	&por		("xmm3","xmm2");		# counter value
+}
 {
 my ($a,$b,$c,$d,$t,$t1,$rot16,$rot24)=map("xmm$_",(0..7));
 

@@ -67,9 +67,11 @@
 #include <openssl/x509.h>
 
 #include "../asn1/asn1_locl.h"
+#include "../internal.h"
+
 
 typedef STACK_OF(X509_NAME_ENTRY) STACK_OF_X509_NAME_ENTRY;
-DECLARE_STACK_OF(STACK_OF_X509_NAME_ENTRY)
+DEFINE_STACK_OF(STACK_OF_X509_NAME_ENTRY)
 
 /*
  * Maximum length of X509_NAME: much larger than anything we should
@@ -227,13 +229,12 @@ static int x509_name_ex_d2i(ASN1_VALUE **val,
 
     if (*val)
         x509_name_ex_free(val, NULL);
-    /* We've decoded it: now cache encoding */
-    if (!x509_name_ex_new(&nm.a, NULL) || !BUF_MEM_grow(nm.x->bytes, p - q)) {
-        sk_STACK_OF_X509_NAME_ENTRY_pop_free(intname.s,
-                                             local_sk_X509_NAME_ENTRY_pop_free);
+    if (!x509_name_ex_new(&nm.a, NULL))
         goto err;
-    }
-    memcpy(nm.x->bytes->data, q, p - q);
+    /* We've decoded it: now cache encoding */
+    if (!BUF_MEM_grow(nm.x->bytes, p - q))
+        goto err;
+    OPENSSL_memcpy(nm.x->bytes->data, q, p - q);
 
     /* Convert internal representation to X509_NAME structure */
     for (i = 0; i < sk_STACK_OF_X509_NAME_ENTRY_num(intname.s); i++) {
@@ -243,13 +244,14 @@ static int x509_name_ex_d2i(ASN1_VALUE **val,
             entry->set = i;
             if (!sk_X509_NAME_ENTRY_push(nm.x->entries, entry))
                 goto err;
+            sk_X509_NAME_ENTRY_set(entries, j, NULL);
         }
-        sk_X509_NAME_ENTRY_free(entries);
     }
-    sk_STACK_OF_X509_NAME_ENTRY_free(intname.s);
     ret = x509_name_canon(nm.x);
     if (!ret)
         goto err;
+    sk_STACK_OF_X509_NAME_ENTRY_pop_free(intname.s,
+                                         local_sk_X509_NAME_ENTRY_free);
     nm.x->modified = 0;
     *val = nm.a;
     *in = p;
@@ -257,6 +259,8 @@ static int x509_name_ex_d2i(ASN1_VALUE **val,
  err:
     if (nm.x != NULL)
         X509_NAME_free(nm.x);
+    sk_STACK_OF_X509_NAME_ENTRY_pop_free(intname.s,
+                                         local_sk_X509_NAME_ENTRY_pop_free);
     OPENSSL_PUT_ERROR(X509, ERR_R_ASN1_LIB);
     return 0;
 }
@@ -276,7 +280,7 @@ static int x509_name_ex_i2d(ASN1_VALUE **val, unsigned char **out,
     }
     ret = a->bytes->length;
     if (out != NULL) {
-        memcpy(*out, a->bytes->data, ret);
+        OPENSSL_memcpy(*out, a->bytes->data, ret);
         *out += ret;
     }
     return ret;
@@ -305,8 +309,10 @@ static int x509_name_encode(X509_NAME *a)
             entries = sk_X509_NAME_ENTRY_new_null();
             if (!entries)
                 goto memerr;
-            if (!sk_STACK_OF_X509_NAME_ENTRY_push(intname.s, entries))
+            if (!sk_STACK_OF_X509_NAME_ENTRY_push(intname.s, entries)) {
+                sk_X509_NAME_ENTRY_free(entries);
                 goto memerr;
+            }
             set = entry->set;
         }
         if (!sk_X509_NAME_ENTRY_push(entries, entry))
@@ -336,8 +342,8 @@ static int x509_name_encode(X509_NAME *a)
  * spaces collapsed, converted to lower case and the leading SEQUENCE header
  * removed. In future we could also normalize the UTF8 too. By doing this
  * comparison of Name structures can be rapidly perfomed by just using
- * memcmp() of the canonical encoding. By omitting the leading SEQUENCE name
- * constraints of type dirName can also be checked with a simple memcmp().
+ * OPENSSL_memcmp() of the canonical encoding. By omitting the leading SEQUENCE name
+ * constraints of type dirName can also be checked with a simple OPENSSL_memcmp().
  */
 
 static int x509_name_canon(X509_NAME *a)
@@ -346,7 +352,7 @@ static int x509_name_canon(X509_NAME *a)
     STACK_OF(STACK_OF_X509_NAME_ENTRY) *intname = NULL;
     STACK_OF(X509_NAME_ENTRY) *entries = NULL;
     X509_NAME_ENTRY *entry, *tmpentry = NULL;
-    int set = -1, ret = 0;
+    int set = -1, ret = 0, len;
     size_t i;
 
     if (a->canon_enc) {
@@ -386,7 +392,11 @@ static int x509_name_canon(X509_NAME *a)
 
     /* Finally generate encoding */
 
-    a->canon_enclen = i2d_name_canon(intname, NULL);
+    len = i2d_name_canon(intname, NULL);
+    if (len < 0) {
+        goto err;
+    }
+    a->canon_enclen = len;
 
     p = OPENSSL_malloc(a->canon_enclen);
 

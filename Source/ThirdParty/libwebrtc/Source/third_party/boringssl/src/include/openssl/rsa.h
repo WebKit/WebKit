@@ -96,16 +96,14 @@ OPENSSL_EXPORT void RSA_get0_key(const RSA *rsa, const BIGNUM **out_n,
                                  const BIGNUM **out_e, const BIGNUM **out_d);
 
 /* RSA_get0_factors sets |*out_p| and |*out_q|, if non-NULL, to |rsa|'s prime
- * factors. If |rsa| is a public key, they will be set to NULL. If |rsa| is a
- * multi-prime key, only the first two prime factors will be reported. */
+ * factors. If |rsa| is a public key, they will be set to NULL. */
 OPENSSL_EXPORT void RSA_get0_factors(const RSA *rsa, const BIGNUM **out_p,
                                      const BIGNUM **out_q);
 
 /* RSA_get0_crt_params sets |*out_dmp1|, |*out_dmq1|, and |*out_iqmp|, if
  * non-NULL, to |rsa|'s CRT parameters. These are d (mod p-1), d (mod q-1) and
  * q^-1 (mod p), respectively. If |rsa| is a public key, each parameter will be
- * set to NULL. If |rsa| is a multi-prime key, only the CRT parameters for the
- * first two primes will be reported. */
+ * set to NULL. */
 OPENSSL_EXPORT void RSA_get0_crt_params(const RSA *rsa, const BIGNUM **out_dmp1,
                                         const BIGNUM **out_dmq1,
                                         const BIGNUM **out_iqmp);
@@ -124,11 +122,10 @@ OPENSSL_EXPORT void RSA_get0_crt_params(const RSA *rsa, const BIGNUM **out_dmp1,
 OPENSSL_EXPORT int RSA_generate_key_ex(RSA *rsa, int bits, BIGNUM *e,
                                        BN_GENCB *cb);
 
-/* RSA_generate_multi_prime_key acts like |RSA_generate_key_ex| but can
- * generate an RSA private key with more than two primes. */
-OPENSSL_EXPORT int RSA_generate_multi_prime_key(RSA *rsa, int bits,
-                                                int num_primes, BIGNUM *e,
-                                                BN_GENCB *cb);
+/* RSA_generate_key_fips behaves like |RSA_generate_key_ex| but performs
+ * additional checks for FIPS compliance. The public exponent is always 65537
+ * and |bits| must be either 2048 or 3072. */
+OPENSSL_EXPORT int RSA_generate_key_fips(RSA *rsa, int bits, BN_GENCB *cb);
 
 
 /* Encryption / Decryption */
@@ -214,6 +211,24 @@ OPENSSL_EXPORT int RSA_sign(int hash_nid, const uint8_t *in,
                             unsigned int in_len, uint8_t *out,
                             unsigned int *out_len, RSA *rsa);
 
+/* RSA_sign_pss_mgf1 signs |in_len| bytes from |in| with the public key from
+ * |rsa| using RSASSA-PSS with MGF1 as the mask generation function. It writes,
+ * at most, |max_out| bytes of signature data to |out|. The |max_out| argument
+ * must be, at least, |RSA_size| in order to ensure success. It returns 1 on
+ * success or zero on error.
+ *
+ * The |md| and |mgf1_md| arguments identify the hash used to calculate |msg|
+ * and the MGF1 hash, respectively. If |mgf1_md| is NULL, |md| is
+ * used.
+ *
+ * |salt_len| specifies the expected salt length in bytes. If |salt_len| is -1,
+ * then the salt length is the same as the hash length. If -2, then the salt
+ * length is maximal given the size of |rsa|. If unsure, use -1. */
+OPENSSL_EXPORT int RSA_sign_pss_mgf1(RSA *rsa, size_t *out_len, uint8_t *out,
+                                     size_t max_out, const uint8_t *in,
+                                     size_t in_len, const EVP_MD *md,
+                                     const EVP_MD *mgf1_md, int salt_len);
+
 /* RSA_sign_raw signs |in_len| bytes from |in| with the public key from |rsa|
  * and writes, at most, |max_out| bytes of signature data to |out|. The
  * |max_out| argument must be, at least, |RSA_size| in order to ensure success.
@@ -230,7 +245,7 @@ OPENSSL_EXPORT int RSA_sign_raw(RSA *rsa, size_t *out_len, uint8_t *out,
 /* RSA_verify verifies that |sig_len| bytes from |sig| are a valid,
  * RSASSA-PKCS1-v1_5 signature of |msg_len| bytes at |msg| by |rsa|.
  *
- * The |hash_nid| argument identifies the hash function used to calculate |in|
+ * The |hash_nid| argument identifies the hash function used to calculate |msg|
  * and is embedded in the resulting signature in order to prevent hash
  * confusion attacks. For example, it might be |NID_sha256|.
  *
@@ -240,6 +255,23 @@ OPENSSL_EXPORT int RSA_sign_raw(RSA *rsa, size_t *out_len, uint8_t *out,
  * returned -1 on error. */
 OPENSSL_EXPORT int RSA_verify(int hash_nid, const uint8_t *msg, size_t msg_len,
                               const uint8_t *sig, size_t sig_len, RSA *rsa);
+
+/* RSA_verify_pss_mgf1 verifies that |sig_len| bytes from |sig| are a valid,
+ * RSASSA-PSS signature of |msg_len| bytes at |msg| by |rsa|. It returns one if
+ * the signature is valid and zero otherwise. MGF1 is used as the mask
+ * generation function.
+ *
+ * The |md| and |mgf1_md| arguments identify the hash used to calculate |msg|
+ * and the MGF1 hash, respectively. If |mgf1_md| is NULL, |md| is
+ * used. |salt_len| specifies the expected salt length in bytes.
+ *
+ * If |salt_len| is -1, then the salt length is the same as the hash length. If
+ * -2, then the salt length is recovered and all values accepted. If unsure, use
+ * -1. */
+OPENSSL_EXPORT int RSA_verify_pss_mgf1(RSA *rsa, const uint8_t *msg,
+                                       size_t msg_len, const EVP_MD *md,
+                                       const EVP_MD *mgf1_md, int salt_len,
+                                       const uint8_t *sig, size_t sig_len);
 
 /* RSA_verify_raw verifies |in_len| bytes of signature from |in| using the
  * public key from |rsa| and writes, at most, |max_out| bytes of plaintext to
@@ -292,10 +324,6 @@ OPENSSL_EXPORT unsigned RSA_size(const RSA *rsa);
  * material. Otherwise it returns zero. */
 OPENSSL_EXPORT int RSA_is_opaque(const RSA *rsa);
 
-/* RSA_supports_digest returns one if |rsa| supports signing digests
- * of type |md|. Otherwise it returns zero. */
-OPENSSL_EXPORT int RSA_supports_digest(const RSA *rsa, const EVP_MD *md);
-
 /* RSAPublicKey_dup allocates a fresh |RSA| and copies the public key from
  * |rsa| into it. It returns the fresh |RSA| object, or NULL on error. */
 OPENSSL_EXPORT RSA *RSAPublicKey_dup(const RSA *rsa);
@@ -304,17 +332,14 @@ OPENSSL_EXPORT RSA *RSAPublicKey_dup(const RSA *rsa);
  * |rsa| into it. It returns the fresh |RSA| object, or NULL on error. */
 OPENSSL_EXPORT RSA *RSAPrivateKey_dup(const RSA *rsa);
 
-/* RSA_check_key performs basic validatity tests on |rsa|. It returns one if
+/* RSA_check_key performs basic validity tests on |rsa|. It returns one if
  * they pass and zero otherwise. Opaque keys and public keys always pass. If it
  * returns zero then a more detailed error is available on the error queue. */
 OPENSSL_EXPORT int RSA_check_key(const RSA *rsa);
 
-/* RSA_recover_crt_params uses |rsa->n|, |rsa->d| and |rsa->e| in order to
- * calculate the two primes used and thus the precomputed, CRT values. These
- * values are set in the |p|, |q|, |dmp1|, |dmq1| and |iqmp| members of |rsa|,
- * which must be |NULL| on entry. It returns one on success and zero
- * otherwise. */
-OPENSSL_EXPORT int RSA_recover_crt_params(RSA *rsa);
+/* RSA_check_fips performs public key validity tests on |key|. It returns one
+ * if they pass and zero otherwise. Opaque keys always fail. */
+OPENSSL_EXPORT int RSA_check_fips(RSA *key);
 
 /* RSA_verify_PKCS1_PSS_mgf1 verifies that |EM| is a correct PSS padding of
  * |mHash|, where |mHash| is a digest produced by |Hash|. |EM| must point to
@@ -322,9 +347,14 @@ OPENSSL_EXPORT int RSA_recover_crt_params(RSA *rsa);
  * hash function for generating the mask. If NULL, |Hash| is used. The |sLen|
  * argument specifies the expected salt length in bytes. If |sLen| is -1 then
  * the salt length is the same as the hash length. If -2, then the salt length
- * is maximal and is taken from the size of |EM|.
+ * is recovered and all values accepted.
  *
- * It returns one on success or zero on error. */
+ * If unsure, use -1.
+ *
+ * It returns one on success or zero on error.
+ *
+ * This function implements only the low-level padding logic. Use
+ * |RSA_verify_pss_mgf1| instead. */
 OPENSSL_EXPORT int RSA_verify_PKCS1_PSS_mgf1(RSA *rsa, const uint8_t *mHash,
                                              const EVP_MD *Hash,
                                              const EVP_MD *mgf1Hash,
@@ -338,7 +368,10 @@ OPENSSL_EXPORT int RSA_verify_PKCS1_PSS_mgf1(RSA *rsa, const uint8_t *mHash,
  * the salt length is the same as the hash length. If -2, then the salt length
  * is maximal given the space in |EM|.
  *
- * It returns one on success or zero on error. */
+ * It returns one on success or zero on error.
+ *
+ * This function implements only the low-level padding logic. Use
+ * |RSA_sign_pss_mgf1| instead. */
 OPENSSL_EXPORT int RSA_padding_add_PKCS1_PSS_mgf1(RSA *rsa, uint8_t *EM,
                                                   const uint8_t *mHash,
                                                   const EVP_MD *Hash,
@@ -352,8 +385,8 @@ OPENSSL_EXPORT int RSA_padding_add_PKCS1_PSS_mgf1(RSA *rsa, uint8_t *EM,
  *
  * It returns one on success or zero on error. */
 OPENSSL_EXPORT int RSA_padding_add_PKCS1_OAEP_mgf1(
-    uint8_t *to, unsigned to_len, const uint8_t *from, unsigned from_len,
-    const uint8_t *param, unsigned param_len, const EVP_MD *md,
+    uint8_t *to, size_t to_len, const uint8_t *from, size_t from_len,
+    const uint8_t *param, size_t param_len, const EVP_MD *md,
     const EVP_MD *mgf1md);
 
 /* RSA_add_pkcs1_prefix builds a version of |msg| prefixed with the DigestInfo
@@ -421,7 +454,7 @@ OPENSSL_EXPORT int RSA_private_key_to_bytes(uint8_t **out_bytes,
 
 OPENSSL_EXPORT int RSA_get_ex_new_index(long argl, void *argp,
                                         CRYPTO_EX_unused *unused,
-                                        CRYPTO_EX_dup *dup_func,
+                                        CRYPTO_EX_dup *dup_unused,
                                         CRYPTO_EX_free *free_func);
 OPENSSL_EXPORT int RSA_set_ex_data(RSA *r, int idx, void *arg);
 OPENSSL_EXPORT void *RSA_get_ex_data(const RSA *r, int idx);
@@ -503,25 +536,31 @@ OPENSSL_EXPORT RSA *d2i_RSAPrivateKey(RSA **out, const uint8_t **inp, long len);
 OPENSSL_EXPORT int i2d_RSAPrivateKey(const RSA *in, uint8_t **outp);
 
 /* RSA_padding_add_PKCS1_PSS acts like |RSA_padding_add_PKCS1_PSS_mgf1| but the
- * |mgf1Hash| parameter of the latter is implicitly set to |Hash|. */
+ * |mgf1Hash| parameter of the latter is implicitly set to |Hash|.
+ *
+ * This function implements only the low-level padding logic. Use
+ * |RSA_sign_pss_mgf1| instead. */
 OPENSSL_EXPORT int RSA_padding_add_PKCS1_PSS(RSA *rsa, uint8_t *EM,
                                              const uint8_t *mHash,
                                              const EVP_MD *Hash, int sLen);
 
 /* RSA_verify_PKCS1_PSS acts like |RSA_verify_PKCS1_PSS_mgf1| but the
- * |mgf1Hash| parameter of the latter is implicitly set to |Hash|. */
+ * |mgf1Hash| parameter of the latter is implicitly set to |Hash|.
+ *
+ * This function implements only the low-level padding logic. Use
+ * |RSA_verify_pss_mgf1| instead. */
 OPENSSL_EXPORT int RSA_verify_PKCS1_PSS(RSA *rsa, const uint8_t *mHash,
                                         const EVP_MD *Hash, const uint8_t *EM,
                                         int sLen);
 
 /* RSA_padding_add_PKCS1_OAEP acts like |RSA_padding_add_PKCS1_OAEP_mgf1| but
- * the |md| and |mgf1md| paramaters of the latter are implicitly set to NULL,
+ * the |md| and |mgf1md| parameters of the latter are implicitly set to NULL,
  * which means SHA-1. */
-OPENSSL_EXPORT int RSA_padding_add_PKCS1_OAEP(uint8_t *to, unsigned to_len,
+OPENSSL_EXPORT int RSA_padding_add_PKCS1_OAEP(uint8_t *to, size_t to_len,
                                               const uint8_t *from,
-                                              unsigned from_len,
+                                              size_t from_len,
                                               const uint8_t *param,
-                                              unsigned param_len);
+                                              size_t param_len);
 
 
 struct rsa_meth_st {
@@ -542,13 +581,13 @@ struct rsa_meth_st {
   int (*verify)(int dtype, const uint8_t *m, unsigned int m_length,
                 const uint8_t *sigbuf, unsigned int siglen, const RSA *rsa);
 
-
-  /* These functions mirror the |RSA_*| functions of the same name. */
+  /* Ignored. Set this to NULL. */
   int (*encrypt)(RSA *rsa, size_t *out_len, uint8_t *out, size_t max_out,
                  const uint8_t *in, size_t in_len, int padding);
+
+  /* These functions mirror the |RSA_*| functions of the same name. */
   int (*sign_raw)(RSA *rsa, size_t *out_len, uint8_t *out, size_t max_out,
                   const uint8_t *in, size_t in_len, int padding);
-
   int (*decrypt)(RSA *rsa, size_t *out_len, uint8_t *out, size_t max_out,
                  const uint8_t *in, size_t in_len, int padding);
   /* Ignored. Set this to NULL. */
@@ -580,13 +619,14 @@ struct rsa_meth_st {
 
   int flags;
 
+  /* Ignored. Set this to NULL. */
   int (*keygen)(RSA *rsa, int bits, BIGNUM *e, BN_GENCB *cb);
 
+  /* Ignored. Set this to NULL. */
   int (*multi_prime_keygen)(RSA *rsa, int bits, int num_primes, BIGNUM *e,
                             BN_GENCB *cb);
 
-  /* supports_digest returns one if |rsa| supports digests of type
-   * |md|. If null, it is assumed that all digests are supported. */
+  /* supports_digest is deprecated and ignored. Set it to NULL. */
   int (*supports_digest)(const RSA *rsa, const EVP_MD *md);
 };
 
@@ -606,8 +646,6 @@ struct rsa_st {
   BIGNUM *dmp1;
   BIGNUM *dmq1;
   BIGNUM *iqmp;
-
-  STACK_OF(RSA_additional_prime) *additional_primes;
 
   /* be careful using this if the RSA structure is shared */
   CRYPTO_EX_DATA ex_data;
@@ -695,5 +733,6 @@ BORINGSSL_MAKE_DELETER(RSA, RSA_free)
 #define RSA_R_UNKNOWN_PADDING_TYPE 143
 #define RSA_R_VALUE_MISSING 144
 #define RSA_R_WRONG_SIGNATURE_LENGTH 145
+#define RSA_R_PUBLIC_KEY_VALIDATION_FAILED 146
 
 #endif  /* OPENSSL_HEADER_RSA_H */

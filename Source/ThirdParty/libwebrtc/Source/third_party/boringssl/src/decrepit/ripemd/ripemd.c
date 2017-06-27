@@ -62,7 +62,7 @@
 
 
 int RIPEMD160_Init(RIPEMD160_CTX *ctx) {
-  memset(ctx, 0, sizeof(*ctx));
+  OPENSSL_memset(ctx, 0, sizeof(*ctx));
   ctx->h[0] = RIPEMD160_A;
   ctx->h[1] = RIPEMD160_B;
   ctx->h[2] = RIPEMD160_C;

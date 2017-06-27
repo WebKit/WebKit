@@ -27,8 +27,7 @@ if [ -n "$1" ]; then
 fi
 
 cd "$BUILD"
-cmake "$SRC" -GNinja -DCMAKE_C_FLAGS='-fprofile-arcs -ftest-coverage' \
-  -DCMAKE_CXX_FLAGS='-fprofile-arcs -ftest-coverage'
+cmake "$SRC" -GNinja -DGCOV=1
 ninja
 
 cp -r "$SRC/crypto" "$SRC/decrepit" "$SRC/include" "$SRC/ssl" "$SRC/tool" \
@@ -47,9 +46,8 @@ go test -shim-path "$BUILD/ssl/test/bssl_shim" -num-workers 1
 
 cd "$LCOV"
 lcov -c -d "$BUILD" -b "$BUILD" -o "$BUILD/lcov.info"
-lcov -r "$BUILD/lcov.info" "*_test.c" -o "$BUILD/lcov-1.info"
-lcov -r "$BUILD/lcov-1.info" "*_test.cc" -o "$BUILD/lcov-2.info"
-cat "$BUILD/lcov-2.info" "$BUILD/asm.info" > "$BUILD/final.info"
+lcov -r "$BUILD/lcov.info" -o "$BUILD/filtered.info" "*_test.c" "*_test.cc" "*/third_party/googletest/*"
+cat "$BUILD/filtered.info" "$BUILD/asm.info" > "$BUILD/final.info"
 sed -i "s;$BUILD;$BUILD_SRC;g" "$BUILD/final.info"
 sed -i "s;$SRC;$BUILD_SRC;g" "$BUILD/final.info"
 genhtml -p "$BUILD_SRC" "$BUILD/final.info"

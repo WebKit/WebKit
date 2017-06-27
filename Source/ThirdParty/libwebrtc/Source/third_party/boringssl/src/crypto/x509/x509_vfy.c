@@ -146,12 +146,6 @@ static int null_callback(int ok, X509_STORE_CTX *e)
     return ok;
 }
 
-#if 0
-static int x509_subject_cmp(X509 **a, X509 **b)
-{
-    return X509_subject_name_cmp(*a, *b);
-}
-#endif
 /* Return 1 is a certificate is self signed */
 static int cert_self_signed(X509 *x)
 {
@@ -226,12 +220,35 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
     X509_up_ref(ctx->cert);
     ctx->last_untrusted = 1;
 
-    /* We use a temporary STACK so we can chop and hack at it */
+    /* We use a temporary STACK so we can chop and hack at it.
+     * sktmp = ctx->untrusted ++ ctx->ctx->additional_untrusted */
     if (ctx->untrusted != NULL
         && (sktmp = sk_X509_dup(ctx->untrusted)) == NULL) {
         OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
         ctx->error = X509_V_ERR_OUT_OF_MEM;
         goto end;
+    }
+
+    if (ctx->ctx->additional_untrusted != NULL) {
+        if (sktmp == NULL) {
+            sktmp = sk_X509_new_null();
+            if (sktmp == NULL) {
+                OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
+                ctx->error = X509_V_ERR_OUT_OF_MEM;
+                goto end;
+            }
+        }
+
+        for (size_t k = 0; k < sk_X509_num(ctx->ctx->additional_untrusted);
+             k++) {
+            if (!sk_X509_push(sktmp,
+                              sk_X509_value(ctx->ctx->additional_untrusted,
+                              k))) {
+                OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
+                ctx->error = X509_V_ERR_OUT_OF_MEM;
+                goto end;
+            }
+        }
     }
 
     num = sk_X509_num(ctx->chain);
@@ -269,7 +286,7 @@ int X509_verify_cert(X509_STORE_CTX *ctx)
         }
 
         /* If we were passed a cert chain, use it first */
-        if (ctx->untrusted != NULL) {
+        if (sktmp != NULL) {
             xtmp = find_issuer(ctx, sktmp, x);
             if (xtmp != NULL) {
                 if (!sk_X509_push(ctx->chain, xtmp)) {
@@ -1258,6 +1275,17 @@ static void crl_akid_check(X509_STORE_CTX *ctx, X509_CRL *crl,
             return;
         }
     }
+
+    for (i = 0; i < sk_X509_num(ctx->ctx->additional_untrusted); i++) {
+        crl_issuer = sk_X509_value(ctx->ctx->additional_untrusted, i);
+        if (X509_NAME_cmp(X509_get_subject_name(crl_issuer), cnm))
+            continue;
+        if (X509_check_akid(crl_issuer, crl->akid) == X509_V_OK) {
+            *pissuer = crl_issuer;
+            *pcrl_score |= CRL_SCORE_AKID;
+            return;
+        }
+    }
 }
 
 /*
@@ -1829,7 +1857,7 @@ int X509_cmp_time(const ASN1_TIME *ctm, time_t *cmp_time)
         int max_length = sizeof("YYMMDDHHMMSS+hhmm") - 1;
         if (remaining < min_length || remaining > max_length)
             return 0;
-        memcpy(p, str, 10);
+        OPENSSL_memcpy(p, str, 10);
         p += 10;
         str += 10;
         remaining -= 10;
@@ -1841,7 +1869,7 @@ int X509_cmp_time(const ASN1_TIME *ctm, time_t *cmp_time)
         int max_length = sizeof("YYYYMMDDHHMMSS.fff+hhmm") - 1;
         if (remaining < min_length || remaining > max_length)
             return 0;
-        memcpy(p, str, 12);
+        OPENSSL_memcpy(p, str, 12);
         p += 12;
         str += 12;
         remaining -= 12;
@@ -2067,7 +2095,7 @@ X509_CRL *X509_CRL_diff(X509_CRL *base, X509_CRL *newer,
 
 int X509_STORE_CTX_get_ex_new_index(long argl, void *argp,
                                     CRYPTO_EX_unused * unused,
-                                    CRYPTO_EX_dup *dup_func,
+                                    CRYPTO_EX_dup *dup_unused,
                                     CRYPTO_EX_free *free_func)
 {
     /*
@@ -2076,7 +2104,7 @@ int X509_STORE_CTX_get_ex_new_index(long argl, void *argp,
      */
     int index;
     if (!CRYPTO_get_ex_new_index(&g_ex_data_class, &index, argl, argp,
-                                 dup_func, free_func)) {
+                                 free_func)) {
         return -1;
     }
     return index;
@@ -2226,7 +2254,7 @@ X509_STORE_CTX *X509_STORE_CTX_new(void)
         OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
         return NULL;
     }
-    memset(ctx, 0, sizeof(X509_STORE_CTX));
+    OPENSSL_memset(ctx, 0, sizeof(X509_STORE_CTX));
     return ctx;
 }
 
@@ -2244,7 +2272,7 @@ int X509_STORE_CTX_init(X509_STORE_CTX *ctx, X509_STORE *store, X509 *x509,
 {
     int ret = 1;
 
-    memset(ctx, 0, sizeof(X509_STORE_CTX));
+    OPENSSL_memset(ctx, 0, sizeof(X509_STORE_CTX));
     ctx->ctx = store;
     ctx->cert = x509;
     ctx->untrusted = chain;
@@ -2337,7 +2365,7 @@ int X509_STORE_CTX_init(X509_STORE_CTX *ctx, X509_STORE *store, X509 *x509,
         X509_VERIFY_PARAM_free(ctx->param);
     }
 
-    memset(ctx, 0, sizeof(X509_STORE_CTX));
+    OPENSSL_memset(ctx, 0, sizeof(X509_STORE_CTX));
     OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
     return 0;
 }
@@ -2375,7 +2403,7 @@ void X509_STORE_CTX_cleanup(X509_STORE_CTX *ctx)
         ctx->chain = NULL;
     }
     CRYPTO_free_ex_data(&g_ex_data_class, ctx, &(ctx->ex_data));
-    memset(&ctx->ex_data, 0, sizeof(CRYPTO_EX_DATA));
+    OPENSSL_memset(&ctx->ex_data, 0, sizeof(CRYPTO_EX_DATA));
 }
 
 void X509_STORE_CTX_set_depth(X509_STORE_CTX *ctx, int depth)

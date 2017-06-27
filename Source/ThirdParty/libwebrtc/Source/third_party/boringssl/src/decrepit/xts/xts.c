@@ -53,7 +53,7 @@
 #include <openssl/aes.h>
 #include <openssl/cipher.h>
 
-#include "../crypto/modes/internal.h"
+#include "../crypto/fipsmodule/modes/internal.h"
 
 
 typedef struct xts128_context {
@@ -73,7 +73,7 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
 
   if (len < 16) return 0;
 
-  memcpy(tweak.c, iv, 16);
+  OPENSSL_memcpy(tweak.c, iv, 16);
 
   (*ctx->block2)(tweak.c, tweak.c, ctx->key2);
 
@@ -81,7 +81,7 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
 
   while (len >= 16) {
 #if STRICT_ALIGNMENT
-    memcpy(scratch.c, inp, 16);
+    OPENSSL_memcpy(scratch.c, inp, 16);
     scratch.u[0] ^= tweak.u[0];
     scratch.u[1] ^= tweak.u[1];
 #else
@@ -92,7 +92,7 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
 #if STRICT_ALIGNMENT
     scratch.u[0] ^= tweak.u[0];
     scratch.u[1] ^= tweak.u[1];
-    memcpy(out, scratch.c, 16);
+    OPENSSL_memcpy(out, scratch.c, 16);
 #else
     ((uint64_t *)out)[0] = scratch.u[0] ^= tweak.u[0];
     ((uint64_t *)out)[1] = scratch.u[1] ^= tweak.u[1];
@@ -121,7 +121,7 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
     (*ctx->block1)(scratch.c, scratch.c, ctx->key1);
     scratch.u[0] ^= tweak.u[0];
     scratch.u[1] ^= tweak.u[1];
-    memcpy(out - 16, scratch.c, 16);
+    OPENSSL_memcpy(out - 16, scratch.c, 16);
   } else {
     union {
       uint64_t u[2];
@@ -135,7 +135,7 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
     tweak1.u[0] = (tweak.u[0] << 1) ^ res;
     tweak1.u[1] = (tweak.u[1] << 1) | carry;
 #if STRICT_ALIGNMENT
-    memcpy(scratch.c, inp, 16);
+    OPENSSL_memcpy(scratch.c, inp, 16);
     scratch.u[0] ^= tweak1.u[0];
     scratch.u[1] ^= tweak1.u[1];
 #else
@@ -157,7 +157,7 @@ static size_t CRYPTO_xts128_encrypt(const XTS128_CONTEXT *ctx,
 #if STRICT_ALIGNMENT
     scratch.u[0] ^= tweak.u[0];
     scratch.u[1] ^= tweak.u[1];
-    memcpy(out, scratch.c, 16);
+    OPENSSL_memcpy(out, scratch.c, 16);
 #else
     ((uint64_t *)out)[0] = scratch.u[0] ^ tweak.u[0];
     ((uint64_t *)out)[1] = scratch.u[1] ^ tweak.u[1];
@@ -200,7 +200,7 @@ static int aes_xts_init_key(EVP_CIPHER_CTX *ctx, const uint8_t *key,
 
   if (iv) {
     xctx->xts.key2 = &xctx->ks2;
-    memcpy(ctx->iv, iv, 16);
+    OPENSSL_memcpy(ctx->iv, iv, 16);
   }
 
   return 1;

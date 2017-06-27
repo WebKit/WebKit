@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include "internal.h"
+#include "../internal.h"
 
 
 void CBS_init(CBS *cbs, const uint8_t *data, size_t len) {
@@ -76,7 +77,7 @@ int CBS_strdup(const CBS *cbs, char **out_ptr) {
 }
 
 int CBS_contains_zero_byte(const CBS *cbs) {
-  return memchr(cbs->data, 0, cbs->len) != NULL;
+  return OPENSSL_memchr(cbs->data, 0, cbs->len) != NULL;
 }
 
 int CBS_mem_equal(const CBS *cbs, const uint8_t *data, size_t len) {
@@ -150,7 +151,7 @@ int CBS_copy_bytes(CBS *cbs, uint8_t *out, size_t len) {
   if (!cbs_get(cbs, &v, len)) {
     return 0;
   }
-  memcpy(out, v, len);
+  OPENSSL_memcpy(out, v, len);
   return 1;
 }
 
@@ -328,16 +329,13 @@ int CBS_peek_asn1_tag(const CBS *cbs, unsigned tag_value) {
 
 int CBS_get_asn1_uint64(CBS *cbs, uint64_t *out) {
   CBS bytes;
-  const uint8_t *data;
-  size_t i, len;
-
   if (!CBS_get_asn1(cbs, &bytes, CBS_ASN1_INTEGER)) {
     return 0;
   }
 
   *out = 0;
-  data = CBS_data(&bytes);
-  len = CBS_len(&bytes);
+  const uint8_t *data = CBS_data(&bytes);
+  size_t len = CBS_len(&bytes);
 
   if (len == 0) {
     /* An INTEGER is encoded with at least one octet. */
@@ -354,7 +352,7 @@ int CBS_get_asn1_uint64(CBS *cbs, uint64_t *out) {
     return 0;
   }
 
-  for (i = 0; i < len; i++) {
+  for (size_t i = 0; i < len; i++) {
     if ((*out >> 56) != 0) {
       /* Too large to represent as a uint64_t. */
       return 0;
@@ -450,4 +448,41 @@ int CBS_get_optional_asn1_bool(CBS *cbs, int *out, unsigned tag,
     *out = default_value;
   }
   return 1;
+}
+
+int CBS_is_valid_asn1_bitstring(const CBS *cbs) {
+  CBS in = *cbs;
+  uint8_t num_unused_bits;
+  if (!CBS_get_u8(&in, &num_unused_bits) ||
+      num_unused_bits > 7) {
+    return 0;
+  }
+
+  if (num_unused_bits == 0) {
+    return 1;
+  }
+
+  /* All num_unused_bits bits must exist and be zeros. */
+  uint8_t last;
+  if (!CBS_get_last_u8(&in, &last) ||
+      (last & ((1 << num_unused_bits) - 1)) != 0) {
+    return 0;
+  }
+
+  return 1;
+}
+
+int CBS_asn1_bitstring_has_bit(const CBS *cbs, unsigned bit) {
+  if (!CBS_is_valid_asn1_bitstring(cbs)) {
+    return 0;
+  }
+
+  const unsigned byte_num = (bit >> 3) + 1;
+  const unsigned bit_num = 7 - (bit & 7);
+
+  /* Unused bits are zero, and this function does not distinguish between
+   * missing and unset bits. Thus it is sufficient to do a byte-level length
+   * check. */
+  return byte_num < CBS_len(cbs) &&
+         (CBS_data(cbs)[byte_num] & (1 << bit_num)) != 0;
 }

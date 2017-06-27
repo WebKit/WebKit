@@ -29,7 +29,7 @@ void x25519_x86_64(uint8_t out[32], const uint8_t scalar[32],
 #endif
 
 
-#if defined(OPENSSL_ARM) && !defined(OPENSSL_NO_ASM)
+#if defined(OPENSSL_ARM) && !defined(OPENSSL_NO_ASM) && !defined(OPENSSL_APPLE)
 #define BORINGSSL_X25519_NEON
 
 /* x25519_NEON is defined in asm/x25519-arm.S. */

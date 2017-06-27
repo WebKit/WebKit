@@ -78,6 +78,10 @@ extern "C" {
 
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
 #define OPENSSL_COMPILE_ASSERT(cond, msg) _Static_assert(cond, #msg)
+#elif defined(__GNUC__)
+#define OPENSSL_COMPILE_ASSERT(cond, msg)                      \
+  typedef char OPENSSL_COMPILE_ASSERT_##msg[((cond) ? 1 : -1)] \
+      __attribute__((unused))
 #else
 #define OPENSSL_COMPILE_ASSERT(cond, msg) \
   typedef char OPENSSL_COMPILE_ASSERT_##msg[((cond) ? 1 : -1)]

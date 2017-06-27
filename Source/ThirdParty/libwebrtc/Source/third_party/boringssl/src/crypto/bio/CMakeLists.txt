@@ -7,7 +7,6 @@ add_library(
 
   bio.c
   bio_mem.c
-  buffer.c
   connect.c
   fd.c
   file.c
@@ -17,17 +16,3 @@ add_library(
   socket.c
   socket_helper.c
 )
-
-add_executable(
-  bio_test
-
-  bio_test.cc
-
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(bio_test crypto)
-if (WIN32)
-  target_link_libraries(bio_test ws2_32)
-endif()
-add_dependencies(all_tests bio_test)

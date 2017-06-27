@@ -273,13 +273,13 @@ err:
   return ret;
 }
 
-static int file_puts(BIO *bp, const char *str) {
-  return file_write(bp, str, strlen(str));
-}
-
 static const BIO_METHOD methods_filep = {
-    BIO_TYPE_FILE, "FILE pointer", file_write, file_read, file_puts,
-    file_gets,     file_ctrl,      file_new,   file_free, NULL, };
+    BIO_TYPE_FILE,   "FILE pointer",
+    file_write,      file_read,
+    NULL /* puts */, file_gets,
+    file_ctrl,       file_new,
+    file_free,       NULL /* callback_ctrl */,
+};
 
 const BIO_METHOD *BIO_s_file(void) { return &methods_filep; }
 

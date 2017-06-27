@@ -74,16 +74,16 @@ extern "C" {
  * (once) with |DEFINE_STACK_OF(type)| and declared where needed with
  * |DECLARE_STACK_OF(type)|. For example:
  *
- *   struct foo {
+ *   typedef struct foo_st {
  *     int bar;
- *   };
+ *   } FOO;
  *
- *   DEFINE_STACK_OF(struct foo);
+ *   DEFINE_STACK_OF(FOO);
  *
- * Although note that the stack will contain /pointers/ to |foo|.
+ * Although note that the stack will contain /pointers/ to |FOO|.
  *
  * A macro will be defined for each of the sk_* functions below. For
- * STACK_OF(foo), the macros would be sk_foo_new, sk_foo_pop etc. */
+ * STACK_OF(FOO), the macros would be sk_FOO_new, sk_FOO_pop etc. */
 
 
 /* stack_cmp_func is a comparison function that returns a value < 0, 0 or > 0
@@ -112,85 +112,6 @@ typedef struct stack_st {
 #define STACK_OF(type) struct stack_st_##type
 
 #define DECLARE_STACK_OF(type) STACK_OF(type);
-
-/* The make_macros.sh script in this directory parses the following lines and
- * generates the stack_macros.h file that contains macros for the following
- * types of stacks:
- *
- * STACK_OF:ACCESS_DESCRIPTION
- * STACK_OF:ASN1_ADB_TABLE
- * STACK_OF:ASN1_GENERALSTRING
- * STACK_OF:ASN1_INTEGER
- * STACK_OF:ASN1_OBJECT
- * STACK_OF:ASN1_STRING_TABLE
- * STACK_OF:ASN1_TYPE
- * STACK_OF:ASN1_VALUE
- * STACK_OF:BIO
- * STACK_OF:BY_DIR_ENTRY
- * STACK_OF:BY_DIR_HASH
- * STACK_OF:CONF_VALUE
- * STACK_OF:CRYPTO_EX_DATA_FUNCS
- * STACK_OF:DIST_POINT
- * STACK_OF:GENERAL_NAME
- * STACK_OF:GENERAL_NAMES
- * STACK_OF:GENERAL_SUBTREE
- * STACK_OF:POLICYINFO
- * STACK_OF:POLICYQUALINFO
- * STACK_OF:POLICY_MAPPING
- * STACK_OF:RSA_additional_prime
- * STACK_OF:SSL_COMP
- * STACK_OF:SSL_CUSTOM_EXTENSION
- * STACK_OF:STACK_OF_X509_NAME_ENTRY
- * STACK_OF:SXNETID
- * STACK_OF:X509
- * STACK_OF:X509V3_EXT_METHOD
- * STACK_OF:X509_ALGOR
- * STACK_OF:X509_ATTRIBUTE
- * STACK_OF:X509_CRL
- * STACK_OF:X509_EXTENSION
- * STACK_OF:X509_INFO
- * STACK_OF:X509_LOOKUP
- * STACK_OF:X509_NAME
- * STACK_OF:X509_NAME_ENTRY
- * STACK_OF:X509_OBJECT
- * STACK_OF:X509_POLICY_DATA
- * STACK_OF:X509_POLICY_NODE
- * STACK_OF:X509_PURPOSE
- * STACK_OF:X509_REVOKED
- * STACK_OF:X509_TRUST
- * STACK_OF:X509_VERIFY_PARAM
- * STACK_OF:void
- *
- * Some stacks contain only const structures, so the stack should return const
- * pointers to retain type-checking.
- *
- * CONST_STACK_OF:SRTP_PROTECTION_PROFILE
- * CONST_STACK_OF:SSL_CIPHER */
-
-
-/* Some stacks are special because, although we would like STACK_OF(char *),
- * that would actually be a stack of pointers to char*, but we just want to
- * point to the string directly. In this case we call them "special" and use
- * |DEFINE_SPECIAL_STACK_OF(type)| */
-#define DEFINE_SPECIAL_STACK_OF(type, inner)             \
-  STACK_OF(type) { _STACK special_stack; };              \
-  OPENSSL_COMPILE_ASSERT(sizeof(type) == sizeof(void *), \
-                         special_stack_of_non_pointer_##type);
-
-typedef char *OPENSSL_STRING;
-
-DEFINE_SPECIAL_STACK_OF(OPENSSL_STRING, char)
-
-/* The make_macros.sh script in this directory parses the following lines and
- * generates the stack_macros.h file that contains macros for the following
- * types of stacks:
- *
- * SPECIAL_STACK_OF:OPENSSL_STRING */
-
-#define IN_STACK_H
-#include <openssl/stack_macros.h>
-#undef IN_STACK_H
-
 
 /* These are the raw stack functions, you shouldn't be using them. Rather you
  * should be using the type stack macros implemented above. */
@@ -284,6 +205,143 @@ OPENSSL_EXPORT stack_cmp_func sk_set_cmp_func(_STACK *sk, stack_cmp_func comp);
 OPENSSL_EXPORT _STACK *sk_deep_copy(const _STACK *sk,
                                     void *(*copy_func)(void *),
                                     void (*free_func)(void *));
+
+
+/* Defining stack types.
+ *
+ * This set of macros is used to emit the typed functions that act on a
+ * |STACK_OF(T)|. */
+
+/* Stack functions must be tagged unused to support file-local stack types.
+ * Clang's -Wunused-function only allows unused static inline functions if they
+ * are defined in a header. */
+
+#define DEFINE_STACK_OF_IMPL(name, ptrtype, constptrtype)                      \
+  DECLARE_STACK_OF(name);                                                      \
+                                                                               \
+  typedef int (*stack_##name##_cmp_func)(constptrtype *a, constptrtype *b);    \
+                                                                               \
+  static inline OPENSSL_UNUSED STACK_OF(name) *                                \
+      sk_##name##_new(stack_##name##_cmp_func comp) {                          \
+    return (STACK_OF(name) *)sk_new((stack_cmp_func)comp);                     \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED STACK_OF(name) *sk_##name##_new_null(void) {    \
+    return (STACK_OF(name) *)sk_new_null();                                    \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED size_t sk_##name##_num(                         \
+      const STACK_OF(name) *sk) {                                              \
+    return sk_num((const _STACK *)sk);                                         \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED void sk_##name##_zero(STACK_OF(name) *sk) {     \
+    sk_zero((_STACK *)sk);                                                     \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED ptrtype sk_##name##_value(                      \
+      const STACK_OF(name) *sk, size_t i) {                                    \
+    return (ptrtype)sk_value((const _STACK *)sk, i);                           \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED ptrtype sk_##name##_set(STACK_OF(name) *sk,     \
+                                                       size_t i, ptrtype p) {  \
+    return (ptrtype)sk_set((_STACK *)sk, i, (void *)p);                        \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED void sk_##name##_free(STACK_OF(name) *sk) {     \
+    sk_free((_STACK *)sk);                                                     \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED void sk_##name##_pop_free(                      \
+      STACK_OF(name) *sk, void (*free_func)(ptrtype p)) {                      \
+    sk_pop_free((_STACK *)sk, (void (*)(void *))free_func);                    \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED size_t sk_##name##_insert(                      \
+      STACK_OF(name) *sk, ptrtype p, size_t where) {                           \
+    return sk_insert((_STACK *)sk, (void *)p, where);                          \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED ptrtype sk_##name##_delete(STACK_OF(name) *sk,  \
+                                                          size_t where) {      \
+    return (ptrtype)sk_delete((_STACK *)sk, where);                            \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED ptrtype sk_##name##_delete_ptr(                 \
+      STACK_OF(name) *sk, ptrtype p) {                                         \
+    return (ptrtype)sk_delete_ptr((_STACK *)sk, (void *)p);                    \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED int sk_##name##_find(                           \
+      STACK_OF(name) *sk, size_t *out_index, ptrtype p) {                      \
+    return sk_find((_STACK *)sk, out_index, (void *)p);                        \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED ptrtype sk_##name##_shift(STACK_OF(name) *sk) { \
+    return (ptrtype)sk_shift((_STACK *)sk);                                    \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED size_t sk_##name##_push(STACK_OF(name) *sk,     \
+                                                       ptrtype p) {            \
+    return sk_push((_STACK *)sk, (void *)p);                                   \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED ptrtype sk_##name##_pop(STACK_OF(name) *sk) {   \
+    return (ptrtype)sk_pop((_STACK *)sk);                                      \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED STACK_OF(name) *                                \
+      sk_##name##_dup(const STACK_OF(name) *sk) {                              \
+    return (STACK_OF(name) *)sk_dup((const _STACK *)sk);                       \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED void sk_##name##_sort(STACK_OF(name) *sk) {     \
+    sk_sort((_STACK *)sk);                                                     \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED int sk_##name##_is_sorted(                      \
+      const STACK_OF(name) *sk) {                                              \
+    return sk_is_sorted((const _STACK *)sk);                                   \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED stack_##name##_cmp_func                         \
+      sk_##name##_set_cmp_func(STACK_OF(name) *sk,                             \
+                               stack_##name##_cmp_func comp) {                 \
+    return (stack_##name##_cmp_func)sk_set_cmp_func((_STACK *)sk,              \
+                                                    (stack_cmp_func)comp);     \
+  }                                                                            \
+                                                                               \
+  static inline OPENSSL_UNUSED STACK_OF(name) *                                \
+      sk_##name##_deep_copy(const STACK_OF(name) *sk,                          \
+                            ptrtype(*copy_func)(ptrtype),                      \
+                            void (*free_func)(ptrtype)) {                      \
+    return (STACK_OF(name) *)sk_deep_copy((_STACK *)sk,                        \
+                                          (void *(*)(void *))copy_func,        \
+                                          (void (*)(void *))free_func);        \
+  }
+
+/* DEFINE_STACK_OF defines |STACK_OF(type)| to be a stack whose elements are
+ * |type| *. */
+#define DEFINE_STACK_OF(type) DEFINE_STACK_OF_IMPL(type, type *, const type *)
+
+/* DEFINE_CONST_STACK_OF defines |STACK_OF(type)| to be a stack whose elements
+ * are const |type| *. */
+#define DEFINE_CONST_STACK_OF(type) \
+  DEFINE_STACK_OF_IMPL(type, const type *, const type *)
+
+/* DEFINE_SPECIAL_STACK_OF defines |STACK_OF(type)| to be a stack whose elements
+ * are |type|, where |type| must be a typedef for a pointer. */
+#define DEFINE_SPECIAL_STACK_OF(type)                          \
+  OPENSSL_COMPILE_ASSERT(sizeof(type) == sizeof(void *),       \
+                         special_stack_of_non_pointer_##type); \
+  DEFINE_STACK_OF_IMPL(type, type, const type)
+
+
+typedef char *OPENSSL_STRING;
+
+DEFINE_STACK_OF(void)
+DEFINE_SPECIAL_STACK_OF(OPENSSL_STRING)
 
 
 #if defined(__cplusplus)

@@ -97,6 +97,7 @@ extern "C" {
  *
  * LHASH_OF:ASN1_OBJECT
  * LHASH_OF:CONF_VALUE
+ * LHASH_OF:CRYPTO_BUFFER
  * LHASH_OF:SSL_SESSION */
 
 #define IN_LHASH_H
@@ -143,9 +144,7 @@ typedef struct lhash_st {
   lhash_hash_func hash;
 } _LHASH;
 
-/* lh_new returns a new, empty hash table or NULL on error. If |comp| is NULL,
- * |strcmp| will be used. If |hash| is NULL, a generic hash function will be
- * used. */
+/* lh_new returns a new, empty hash table or NULL on error. */
 OPENSSL_EXPORT _LHASH *lh_new(lhash_hash_func hash, lhash_cmp_func comp);
 
 /* lh_free frees the hash table itself but none of the elements. See

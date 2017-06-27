@@ -134,16 +134,14 @@ typedef struct crypto_ex_data_st CRYPTO_EX_DATA;
 
 #if 0 /* Sample */
 
-/* TYPE_get_ex_new_index allocates a new index for |TYPE|. See the
- * descriptions of the callback typedefs for details of when they are
- * called. Any of the callback arguments may be NULL. The |argl| and |argp|
- * arguments are opaque values that are passed to the callbacks. It returns the
- * new index or a negative number on error.
- *
- * TODO(fork): this should follow the standard calling convention. */
+/* TYPE_get_ex_new_index allocates a new index for |TYPE|. An optional
+ * |free_func| argument may be provided which is called when the owning object
+ * is destroyed. See |CRYPTO_EX_free| for details. The |argl| and |argp|
+ * arguments are opaque values that are passed to the callback. It returns the
+ * new index or a negative number on error. */
 OPENSSL_EXPORT int TYPE_get_ex_new_index(long argl, void *argp,
                                          CRYPTO_EX_unused *unused,
-                                         CRYPTO_EX_dup *dup_func,
+                                         CRYPTO_EX_dup *dup_unused,
                                          CRYPTO_EX_free *free_func);
 
 /* TYPE_set_ex_data sets an extra data pointer on |t|. The |index| argument
@@ -176,23 +174,15 @@ OPENSSL_EXPORT void *TYPE_get_ex_data(const TYPE *t, int index);
 typedef void CRYPTO_EX_free(void *parent, void *ptr, CRYPTO_EX_DATA *ad,
                             int index, long argl, void *argp);
 
-/* CRYPTO_EX_dup is a callback function that is called when an object of the
- * class is being copied and thus the ex_data linked to it also needs to be
- * copied. On entry, |*from_d| points to the data for this index from the
- * original object. When the callback returns, |*from_d| will be set as the
- * data for this index in |to|.
- *
- * This callback may be called with a NULL value for |*from_d| if |from| has no
- * value set for this index. However, the callbacks may also be skipped entirely
- * if no extra data pointers are set on |from| at all. */
-typedef int CRYPTO_EX_dup(CRYPTO_EX_DATA *to, const CRYPTO_EX_DATA *from,
-                          void **from_d, int index, long argl, void *argp);
-
 
 /* Deprecated functions. */
 
 /* CRYPTO_cleanup_all_ex_data does nothing. */
 OPENSSL_EXPORT void CRYPTO_cleanup_all_ex_data(void);
+
+/* CRYPTO_EX_dup is a legacy callback function type which is ignored. */
+typedef int CRYPTO_EX_dup(CRYPTO_EX_DATA *to, const CRYPTO_EX_DATA *from,
+                          void **from_d, int index, long argl, void *argp);
 
 
 /* Private structures. */

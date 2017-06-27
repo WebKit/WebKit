@@ -58,6 +58,7 @@
 
 #include <string.h>
 
+#include "../../crypto/internal.h"
 #include "../macros.h"
 
 
@@ -441,7 +442,7 @@ void BF_set_key(BF_KEY *key, size_t len, const uint8_t *data) {
   uint32_t *p, ri, in[2];
   const uint8_t *d, *end;
 
-  memcpy(key, &bf_init, sizeof(BF_KEY));
+  OPENSSL_memcpy(key, &bf_init, sizeof(BF_KEY));
   p = key->P;
 
   if (len > ((BF_ROUNDS + 2) * 4))

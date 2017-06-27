@@ -62,6 +62,9 @@
 
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
+
 /* kMinNumBuckets is the minimum size of the buckets array in an |_LHASH|. */
 static const size_t kMinNumBuckets = 16;
 
@@ -71,13 +74,11 @@ static const size_t kMaxAverageChainLength = 2;
 static const size_t kMinAverageChainLength = 1;
 
 _LHASH *lh_new(lhash_hash_func hash, lhash_cmp_func comp) {
-  _LHASH *ret;
-
-  ret = OPENSSL_malloc(sizeof(_LHASH));
+  _LHASH *ret = OPENSSL_malloc(sizeof(_LHASH));
   if (ret == NULL) {
     return NULL;
   }
-  memset(ret, 0, sizeof(_LHASH));
+  OPENSSL_memset(ret, 0, sizeof(_LHASH));
 
   ret->num_buckets = kMinNumBuckets;
   ret->buckets = OPENSSL_malloc(sizeof(LHASH_ITEM *) * ret->num_buckets);
@@ -85,17 +86,10 @@ _LHASH *lh_new(lhash_hash_func hash, lhash_cmp_func comp) {
     OPENSSL_free(ret);
     return NULL;
   }
-  memset(ret->buckets, 0, sizeof(LHASH_ITEM *) * ret->num_buckets);
+  OPENSSL_memset(ret->buckets, 0, sizeof(LHASH_ITEM *) * ret->num_buckets);
 
   ret->comp = comp;
-  if (ret->comp == NULL) {
-    ret->comp = (lhash_cmp_func) strcmp;
-  }
   ret->hash = hash;
-  if (ret->hash == NULL) {
-    ret->hash = (lhash_hash_func) lh_strhash;
-  }
-
   return ret;
 }
 
@@ -173,7 +167,7 @@ static void lh_rebucket(_LHASH *lh, const size_t new_num_buckets) {
   if (new_buckets == NULL) {
     return;
   }
-  memset(new_buckets, 0, alloc_size);
+  OPENSSL_memset(new_buckets, 0, alloc_size);
 
   for (i = 0; i < lh->num_buckets; i++) {
     for (cur = lh->buckets[i]; cur != NULL; cur = next) {

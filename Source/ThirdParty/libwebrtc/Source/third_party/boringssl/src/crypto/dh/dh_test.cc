@@ -61,6 +61,8 @@
 
 #include <vector>
 
+#include <gtest/gtest.h>
+
 #include <openssl/bn.h>
 #include <openssl/bytestring.h>
 #include <openssl/crypto.h>
@@ -68,7 +70,8 @@
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
-namespace bssl {
+#include "../internal.h"
+
 
 static bool RunBasicTests();
 static bool RunRFC5114Tests();
@@ -76,20 +79,15 @@ static bool TestBadY();
 static bool TestASN1();
 static bool TestRFC3526();
 
-static int Main() {
-  CRYPTO_library_init();
-
+// TODO(davidben): Convert this file to GTest properly.
+TEST(DHTest, AllTests) {
   if (!RunBasicTests() ||
       !RunRFC5114Tests() ||
       !TestBadY() ||
       !TestASN1() ||
       !TestRFC3526()) {
-    ERR_print_errors_fp(stderr);
-    return 1;
+    ADD_FAILURE() << "Tests failed.";
   }
-
-  printf("PASS\n");
-  return 0;
 }
 
 static int GenerateCallback(int p, int n, BN_GENCB *arg) {
@@ -471,9 +469,9 @@ static bool RunRFC5114Tests() {
     }
 
     if (static_cast<size_t>(ret1) != td->Z_len ||
-        memcmp(Z1.data(), td->Z, td->Z_len) != 0 ||
+        OPENSSL_memcmp(Z1.data(), td->Z, td->Z_len) != 0 ||
         static_cast<size_t>(ret2) != td->Z_len ||
-        memcmp(Z2.data(), td->Z, td->Z_len) != 0) {
+        OPENSSL_memcmp(Z2.data(), td->Z, td->Z_len) != 0) {
       fprintf(stderr, "Test failed RFC5114 set %u\n", i + 1);
       return false;
     }
@@ -568,7 +566,7 @@ static bool TestASN1() {
     return false;
   }
 
-  ScopedCBB cbb;
+  bssl::ScopedCBB cbb;
   uint8_t *der;
   size_t der_len;
   if (!CBB_init(cbb.get(), 0) ||
@@ -577,7 +575,8 @@ static bool TestASN1() {
     return false;
   }
   bssl::UniquePtr<uint8_t> free_der(der);
-  if (der_len != sizeof(kParams) || memcmp(der, kParams, der_len) != 0) {
+  if (der_len != sizeof(kParams) ||
+      OPENSSL_memcmp(der, kParams, der_len) != 0) {
     return false;
   }
 
@@ -619,7 +618,8 @@ static bool TestASN1() {
     return false;
   }
   bssl::UniquePtr<uint8_t> free_der2(der);
-  if (der_len != sizeof(kParamsDSA) || memcmp(der, kParamsDSA, der_len) != 0) {
+  if (der_len != sizeof(kParamsDSA) ||
+      OPENSSL_memcmp(der, kParamsDSA, der_len) != 0) {
     return false;
   }
 
@@ -654,16 +654,10 @@ static bool TestRFC3526() {
   uint8_t buffer[sizeof(kPrime1536)];
   if (BN_num_bytes(bn.get()) != sizeof(kPrime1536) ||
       BN_bn2bin(bn.get(), buffer) != sizeof(kPrime1536) ||
-      memcmp(buffer, kPrime1536, sizeof(kPrime1536)) != 0) {
+      OPENSSL_memcmp(buffer, kPrime1536, sizeof(kPrime1536)) != 0) {
     fprintf(stderr, "1536-bit MODP prime did not match.\n");
     return false;
   }
 
   return true;
-}
-
-}  // namespace bssl
-
-int main() {
-  return bssl::Main();
 }

@@ -72,6 +72,7 @@
 #include <openssl/sha.h>
 #include <openssl/thread.h>
 
+#include "../fipsmodule/bn/internal.h"
 #include "../internal.h"
 
 
@@ -90,7 +91,7 @@ DSA *DSA_new(void) {
     return NULL;
   }
 
-  memset(dsa, 0, sizeof(DSA));
+  OPENSSL_memset(dsa, 0, sizeof(DSA));
 
   dsa->references = 1;
 
@@ -188,7 +189,7 @@ int DSA_generate_parameters_ex(DSA *dsa, unsigned bits, const uint8_t *seed_in,
       /* Only consume as much seed as is expected. */
       seed_len = qsize;
     }
-    memcpy(seed, seed_in, seed_len);
+    OPENSSL_memcpy(seed, seed_in, seed_len);
   }
 
   ctx = BN_CTX_new();
@@ -232,8 +233,8 @@ int DSA_generate_parameters_ex(DSA *dsa, unsigned bits, const uint8_t *seed_in,
         /* If we come back through, use random seed next time. */
         seed_in = NULL;
       }
-      memcpy(buf, seed, qsize);
-      memcpy(buf2, seed, qsize);
+      OPENSSL_memcpy(buf, seed, qsize);
+      OPENSSL_memcpy(buf2, seed, qsize);
       /* precompute "SEED + 1" for step 7: */
       for (i = qsize - 1; i < qsize; i--) {
         buf[i]++;
@@ -433,7 +434,6 @@ int DSA_generate_key(DSA *dsa) {
   int ok = 0;
   BN_CTX *ctx = NULL;
   BIGNUM *pub_key = NULL, *priv_key = NULL;
-  BIGNUM prk;
 
   ctx = BN_CTX_new();
   if (ctx == NULL) {
@@ -460,12 +460,9 @@ int DSA_generate_key(DSA *dsa) {
     }
   }
 
-  BN_init(&prk);
-  BN_with_flags(&prk, priv_key, BN_FLG_CONSTTIME);
-
   if (!BN_MONT_CTX_set_locked(&dsa->method_mont_p, &dsa->method_mont_lock,
                               dsa->p, ctx) ||
-      !BN_mod_exp_mont_consttime(pub_key, dsa->g, &prk, dsa->p, ctx,
+      !BN_mod_exp_mont_consttime(pub_key, dsa->g, priv_key, dsa->p, ctx,
                                  dsa->method_mont_p)) {
     goto err;
   }
@@ -763,7 +760,8 @@ int DSA_check_signature(int *out_valid, const uint8_t *digest,
 
   /* Ensure that the signature uses DER and doesn't have trailing garbage. */
   int der_len = i2d_DSA_SIG(s, &der);
-  if (der_len < 0 || (size_t)der_len != sig_len || memcmp(sig, der, sig_len)) {
+  if (der_len < 0 || (size_t)der_len != sig_len ||
+      OPENSSL_memcmp(sig, der, sig_len)) {
     goto err;
   }
 
@@ -813,7 +811,7 @@ int DSA_size(const DSA *dsa) {
 int DSA_sign_setup(const DSA *dsa, BN_CTX *ctx_in, BIGNUM **out_kinv,
                    BIGNUM **out_r) {
   BN_CTX *ctx;
-  BIGNUM k, kq, qm2, *kinv = NULL, *r = NULL;
+  BIGNUM k, kq, *kinv = NULL, *r = NULL;
   int ret = 0;
 
   if (!dsa->p || !dsa->q || !dsa->g) {
@@ -823,7 +821,6 @@ int DSA_sign_setup(const DSA *dsa, BN_CTX *ctx_in, BIGNUM **out_kinv,
 
   BN_init(&k);
   BN_init(&kq);
-  BN_init(&qm2);
 
   ctx = ctx_in;
   if (ctx == NULL) {
@@ -842,8 +839,6 @@ int DSA_sign_setup(const DSA *dsa, BN_CTX *ctx_in, BIGNUM **out_kinv,
   if (!BN_rand_range_ex(&k, 1, dsa->q)) {
     goto err;
   }
-
-  BN_set_flags(&k, BN_FLG_CONSTTIME);
 
   if (!BN_MONT_CTX_set_locked((BN_MONT_CTX **)&dsa->method_mont_p,
                               (CRYPTO_MUTEX *)&dsa->method_mont_lock, dsa->p,
@@ -872,7 +867,6 @@ int DSA_sign_setup(const DSA *dsa, BN_CTX *ctx_in, BIGNUM **out_kinv,
     goto err;
   }
 
-  BN_set_flags(&kq, BN_FLG_CONSTTIME);
   if (!BN_mod_exp_mont_consttime(r, dsa->g, &kq, dsa->p, ctx,
                                  dsa->method_mont_p)) {
     goto err;
@@ -885,9 +879,7 @@ int DSA_sign_setup(const DSA *dsa, BN_CTX *ctx_in, BIGNUM **out_kinv,
    * Theorem. */
   kinv = BN_new();
   if (kinv == NULL ||
-      !BN_set_word(&qm2, 2) ||
-      !BN_sub(&qm2, dsa->q, &qm2) ||
-      !BN_mod_exp_mont(kinv, &k, &qm2, dsa->q, ctx, dsa->method_mont_q)) {
+      !bn_mod_inverse_prime(kinv, &k, dsa->q, ctx, dsa->method_mont_q)) {
     goto err;
   }
 
@@ -911,14 +903,14 @@ err:
   }
   BN_clear_free(&k);
   BN_clear_free(&kq);
-  BN_free(&qm2);
+  BN_clear_free(kinv);
   return ret;
 }
 
 int DSA_get_ex_new_index(long argl, void *argp, CRYPTO_EX_unused *unused,
-                         CRYPTO_EX_dup *dup_func, CRYPTO_EX_free *free_func) {
+                         CRYPTO_EX_dup *dup_unused, CRYPTO_EX_free *free_func) {
   int index;
-  if (!CRYPTO_get_ex_new_index(&g_ex_data_class, &index, argl, argp, dup_func,
+  if (!CRYPTO_get_ex_new_index(&g_ex_data_class, &index, argl, argp,
                                free_func)) {
     return -1;
   }

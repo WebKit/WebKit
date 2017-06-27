@@ -65,6 +65,10 @@
 #include <stdio.h>
 #endif
 
+/* Include a BoringSSL-only header so consumers including this header without
+ * setting up include paths do not accidentally pick up the system
+ * opensslconf.h. */
+#include <openssl/is_boringssl.h>
 #include <openssl/opensslconf.h>
 
 #if defined(BORINGSSL_PREFIX)
@@ -114,6 +118,14 @@ extern "C" {
 #define OPENSSL_WINDOWS
 #endif
 
+#if defined(__linux__)
+#define OPENSSL_LINUX
+#endif
+
+#if defined(__Fuchsia__)
+#define OPENSSL_FUCHSIA
+#endif
+
 #if defined(TRUSTY)
 #define OPENSSL_TRUSTY
 #define OPENSSL_NO_THREADS
@@ -133,7 +145,7 @@ extern "C" {
  * A consumer may use this symbol in the preprocessor to temporarily build
  * against multiple revisions of BoringSSL at the same time. It is not
  * recommended to do so for longer than is necessary. */
-#define BORINGSSL_API_VERSION 2
+#define BORINGSSL_API_VERSION 4
 
 #if defined(BORINGSSL_SHARED_LIBRARY)
 
@@ -185,6 +197,25 @@ extern "C" {
 #define OPENSSL_MSVC_PRAGMA(arg)
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+#define OPENSSL_UNUSED __attribute__((unused))
+#else
+#define OPENSSL_UNUSED
+#endif
+
+#if defined(BORINGSSL_UNSAFE_FUZZER_MODE) && \
+    !defined(BORINGSSL_UNSAFE_DETERMINISTIC_MODE)
+#define BORINGSSL_UNSAFE_DETERMINISTIC_MODE
+#endif
+
+#if defined(__has_feature)
+#if __has_feature(address_sanitizer)
+#define OPENSSL_ASAN
+#endif
+#if __has_feature(memory_sanitizer)
+#define OPENSSL_MSAN
+#endif
+#endif
 
 /* CRYPTO_THREADID is a dummy value. */
 typedef int CRYPTO_THREADID;
@@ -211,19 +242,14 @@ typedef struct asn1_string_st ASN1_UTCTIME;
 typedef struct asn1_string_st ASN1_UTF8STRING;
 typedef struct asn1_string_st ASN1_VISIBLESTRING;
 typedef struct asn1_type_st ASN1_TYPE;
-
 typedef struct AUTHORITY_KEYID_st AUTHORITY_KEYID;
 typedef struct BASIC_CONSTRAINTS_st BASIC_CONSTRAINTS;
 typedef struct DIST_POINT_st DIST_POINT;
 typedef struct DSA_SIG_st DSA_SIG;
 typedef struct ISSUING_DIST_POINT_st ISSUING_DIST_POINT;
 typedef struct NAME_CONSTRAINTS_st NAME_CONSTRAINTS;
-typedef struct Netscape_certificate_sequence NETSCAPE_CERT_SEQUENCE;
 typedef struct Netscape_spkac_st NETSCAPE_SPKAC;
 typedef struct Netscape_spki_st NETSCAPE_SPKI;
-typedef struct PBE2PARAM_st PBE2PARAM;
-typedef struct PBEPARAM_st PBEPARAM;
-typedef struct PBKDF2PARAM_st PBKDF2PARAM;
 typedef struct RIPEMD160state_st RIPEMD160_CTX;
 typedef struct X509_POLICY_CACHE_st X509_POLICY_CACHE;
 typedef struct X509_POLICY_LEVEL_st X509_POLICY_LEVEL;
@@ -237,7 +263,6 @@ typedef struct X509_extension_st X509_EXTENSION;
 typedef struct X509_info_st X509_INFO;
 typedef struct X509_name_entry_st X509_NAME_ENTRY;
 typedef struct X509_name_st X509_NAME;
-typedef struct X509_objects_st X509_OBJECTS;
 typedef struct X509_pubkey_st X509_PUBKEY;
 typedef struct X509_req_info_st X509_REQ_INFO;
 typedef struct X509_req_st X509_REQ;
@@ -255,6 +280,8 @@ typedef struct cbs_st CBS;
 typedef struct cmac_ctx_st CMAC_CTX;
 typedef struct conf_st CONF;
 typedef struct conf_value_st CONF_VALUE;
+typedef struct crypto_buffer_pool_st CRYPTO_BUFFER_POOL;
+typedef struct crypto_buffer_st CRYPTO_BUFFER;
 typedef struct dh_st DH;
 typedef struct dsa_st DSA;
 typedef struct ec_group_st EC_GROUP;
@@ -276,7 +303,6 @@ typedef struct evp_pkey_st EVP_PKEY;
 typedef struct hmac_ctx_st HMAC_CTX;
 typedef struct md4_state_st MD4_CTX;
 typedef struct md5_state_st MD5_CTX;
-typedef struct newhope_poly_st NEWHOPE_POLY;
 typedef struct pkcs12_st PKCS12;
 typedef struct pkcs8_priv_key_info_st PKCS8_PRIV_KEY_INFO;
 typedef struct private_key_st X509_PKEY;
@@ -293,13 +319,14 @@ typedef struct ssl_cipher_st SSL_CIPHER;
 typedef struct ssl_ctx_st SSL_CTX;
 typedef struct ssl_custom_extension SSL_CUSTOM_EXTENSION;
 typedef struct ssl_method_st SSL_METHOD;
+typedef struct ssl_private_key_method_st SSL_PRIVATE_KEY_METHOD;
 typedef struct ssl_session_st SSL_SESSION;
 typedef struct ssl_st SSL;
+typedef struct ssl_ticket_aead_method_st SSL_TICKET_AEAD_METHOD;
 typedef struct st_ERR_FNS ERR_FNS;
 typedef struct v3_ext_ctx X509V3_CTX;
 typedef struct x509_attributes_st X509_ATTRIBUTE;
 typedef struct x509_cert_aux_st X509_CERT_AUX;
-typedef struct x509_cert_pair_st X509_CERT_PAIR;
 typedef struct x509_cinf_st X509_CINF;
 typedef struct x509_crl_method_st X509_CRL_METHOD;
 typedef struct x509_lookup_st X509_LOOKUP;
@@ -413,7 +440,7 @@ class StackAllocated {
   }
 
 // Holds ownership of heap-allocated BoringSSL structures. Sample usage:
-//   bssl::UniquePtr<BIO> rsa(RSA_new());
+//   bssl::UniquePtr<RSA> rsa(RSA_new());
 //   bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
 template <typename T>
 using UniquePtr = std::unique_ptr<T, internal::Deleter<T>>;

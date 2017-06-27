@@ -77,7 +77,7 @@ extern "C" {
  *   [section_name]
  *   key2=value2
  *
- * Config files are representated by a |CONF|. */
+ * Config files are represented by a |CONF|. */
 
 struct conf_value_st {
   char *section;
@@ -88,6 +88,8 @@ struct conf_value_st {
 struct conf_st {
   LHASH_OF(CONF_VALUE) *data;
 };
+
+DEFINE_STACK_OF(CONF_VALUE)
 
 
 /* NCONF_new returns a fresh, empty |CONF|, or NULL on error. The |method|
@@ -180,5 +182,6 @@ BORINGSSL_MAKE_DELETER(CONF, NCONF_free)
 #define CONF_R_NO_CLOSE_BRACE 103
 #define CONF_R_UNABLE_TO_CREATE_NEW_SECTION 104
 #define CONF_R_VARIABLE_HAS_NO_VALUE 105
+#define CONF_R_VARIABLE_EXPANSION_TOO_LONG 106
 
 #endif  /* OPENSSL_HEADER_THREAD_H */

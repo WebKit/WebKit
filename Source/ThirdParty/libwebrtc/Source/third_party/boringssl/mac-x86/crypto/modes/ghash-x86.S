@@ -1,207 +1,6 @@
 #if defined(__i386__)
 .file	"ghash-x86.S"
 .text
-.globl	_gcm_gmult_4bit_x86
-.private_extern	_gcm_gmult_4bit_x86
-.align	4
-_gcm_gmult_4bit_x86:
-L_gcm_gmult_4bit_x86_begin:
-	pushl	%ebp
-	pushl	%ebx
-	pushl	%esi
-	pushl	%edi
-	subl	$84,%esp
-	movl	104(%esp),%edi
-	movl	108(%esp),%esi
-	movl	(%edi),%ebp
-	movl	4(%edi),%edx
-	movl	8(%edi),%ecx
-	movl	12(%edi),%ebx
-	movl	$0,16(%esp)
-	movl	$471859200,20(%esp)
-	movl	$943718400,24(%esp)
-	movl	$610271232,28(%esp)
-	movl	$1887436800,32(%esp)
-	movl	$1822425088,36(%esp)
-	movl	$1220542464,40(%esp)
-	movl	$1423966208,44(%esp)
-	movl	$3774873600,48(%esp)
-	movl	$4246732800,52(%esp)
-	movl	$3644850176,56(%esp)
-	movl	$3311403008,60(%esp)
-	movl	$2441084928,64(%esp)
-	movl	$2376073216,68(%esp)
-	movl	$2847932416,72(%esp)
-	movl	$3051356160,76(%esp)
-	movl	%ebp,(%esp)
-	movl	%edx,4(%esp)
-	movl	%ecx,8(%esp)
-	movl	%ebx,12(%esp)
-	shrl	$20,%ebx
-	andl	$240,%ebx
-	movl	4(%esi,%ebx,1),%ebp
-	movl	(%esi,%ebx,1),%edx
-	movl	12(%esi,%ebx,1),%ecx
-	movl	8(%esi,%ebx,1),%ebx
-	xorl	%eax,%eax
-	movl	$15,%edi
-	jmp	L000x86_loop
-.align	4,0x90
-L000x86_loop:
-	movb	%bl,%al
-	shrdl	$4,%ecx,%ebx
-	andb	$15,%al
-	shrdl	$4,%edx,%ecx
-	shrdl	$4,%ebp,%edx
-	shrl	$4,%ebp
-	xorl	16(%esp,%eax,4),%ebp
-	movb	(%esp,%edi,1),%al
-	andb	$240,%al
-	xorl	8(%esi,%eax,1),%ebx
-	xorl	12(%esi,%eax,1),%ecx
-	xorl	(%esi,%eax,1),%edx
-	xorl	4(%esi,%eax,1),%ebp
-	decl	%edi
-	js	L001x86_break
-	movb	%bl,%al
-	shrdl	$4,%ecx,%ebx
-	andb	$15,%al
-	shrdl	$4,%edx,%ecx
-	shrdl	$4,%ebp,%edx
-	shrl	$4,%ebp
-	xorl	16(%esp,%eax,4),%ebp
-	movb	(%esp,%edi,1),%al
-	shlb	$4,%al
-	xorl	8(%esi,%eax,1),%ebx
-	xorl	12(%esi,%eax,1),%ecx
-	xorl	(%esi,%eax,1),%edx
-	xorl	4(%esi,%eax,1),%ebp
-	jmp	L000x86_loop
-.align	4,0x90
-L001x86_break:
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	bswap	%ebp
-	movl	104(%esp),%edi
-	movl	%ebx,12(%edi)
-	movl	%ecx,8(%edi)
-	movl	%edx,4(%edi)
-	movl	%ebp,(%edi)
-	addl	$84,%esp
-	popl	%edi
-	popl	%esi
-	popl	%ebx
-	popl	%ebp
-	ret
-.globl	_gcm_ghash_4bit_x86
-.private_extern	_gcm_ghash_4bit_x86
-.align	4
-_gcm_ghash_4bit_x86:
-L_gcm_ghash_4bit_x86_begin:
-	pushl	%ebp
-	pushl	%ebx
-	pushl	%esi
-	pushl	%edi
-	subl	$84,%esp
-	movl	104(%esp),%ebx
-	movl	108(%esp),%esi
-	movl	112(%esp),%edi
-	movl	116(%esp),%ecx
-	addl	%edi,%ecx
-	movl	%ecx,116(%esp)
-	movl	(%ebx),%ebp
-	movl	4(%ebx),%edx
-	movl	8(%ebx),%ecx
-	movl	12(%ebx),%ebx
-	movl	$0,16(%esp)
-	movl	$471859200,20(%esp)
-	movl	$943718400,24(%esp)
-	movl	$610271232,28(%esp)
-	movl	$1887436800,32(%esp)
-	movl	$1822425088,36(%esp)
-	movl	$1220542464,40(%esp)
-	movl	$1423966208,44(%esp)
-	movl	$3774873600,48(%esp)
-	movl	$4246732800,52(%esp)
-	movl	$3644850176,56(%esp)
-	movl	$3311403008,60(%esp)
-	movl	$2441084928,64(%esp)
-	movl	$2376073216,68(%esp)
-	movl	$2847932416,72(%esp)
-	movl	$3051356160,76(%esp)
-.align	4,0x90
-L002x86_outer_loop:
-	xorl	12(%edi),%ebx
-	xorl	8(%edi),%ecx
-	xorl	4(%edi),%edx
-	xorl	(%edi),%ebp
-	movl	%ebx,12(%esp)
-	movl	%ecx,8(%esp)
-	movl	%edx,4(%esp)
-	movl	%ebp,(%esp)
-	shrl	$20,%ebx
-	andl	$240,%ebx
-	movl	4(%esi,%ebx,1),%ebp
-	movl	(%esi,%ebx,1),%edx
-	movl	12(%esi,%ebx,1),%ecx
-	movl	8(%esi,%ebx,1),%ebx
-	xorl	%eax,%eax
-	movl	$15,%edi
-	jmp	L003x86_loop
-.align	4,0x90
-L003x86_loop:
-	movb	%bl,%al
-	shrdl	$4,%ecx,%ebx
-	andb	$15,%al
-	shrdl	$4,%edx,%ecx
-	shrdl	$4,%ebp,%edx
-	shrl	$4,%ebp
-	xorl	16(%esp,%eax,4),%ebp
-	movb	(%esp,%edi,1),%al
-	andb	$240,%al
-	xorl	8(%esi,%eax,1),%ebx
-	xorl	12(%esi,%eax,1),%ecx
-	xorl	(%esi,%eax,1),%edx
-	xorl	4(%esi,%eax,1),%ebp
-	decl	%edi
-	js	L004x86_break
-	movb	%bl,%al
-	shrdl	$4,%ecx,%ebx
-	andb	$15,%al
-	shrdl	$4,%edx,%ecx
-	shrdl	$4,%ebp,%edx
-	shrl	$4,%ebp
-	xorl	16(%esp,%eax,4),%ebp
-	movb	(%esp,%edi,1),%al
-	shlb	$4,%al
-	xorl	8(%esi,%eax,1),%ebx
-	xorl	12(%esi,%eax,1),%ecx
-	xorl	(%esi,%eax,1),%edx
-	xorl	4(%esi,%eax,1),%ebp
-	jmp	L003x86_loop
-.align	4,0x90
-L004x86_break:
-	bswap	%ebx
-	bswap	%ecx
-	bswap	%edx
-	bswap	%ebp
-	movl	112(%esp),%edi
-	leal	16(%edi),%edi
-	cmpl	116(%esp),%edi
-	movl	%edi,112(%esp)
-	jb	L002x86_outer_loop
-	movl	104(%esp),%edi
-	movl	%ebx,12(%edi)
-	movl	%ecx,8(%edi)
-	movl	%edx,4(%edi)
-	movl	%ebp,(%edi)
-	addl	$84,%esp
-	popl	%edi
-	popl	%esi
-	popl	%ebx
-	popl	%ebp
-	ret
 .globl	_gcm_gmult_4bit_mmx
 .private_extern	_gcm_gmult_4bit_mmx
 .align	4
@@ -213,10 +12,10 @@ L_gcm_gmult_4bit_mmx_begin:
 	pushl	%edi
 	movl	20(%esp),%edi
 	movl	24(%esp),%esi
-	call	L005pic_point
-L005pic_point:
+	call	L000pic_point
+L000pic_point:
 	popl	%eax
-	leal	Lrem_4bit-L005pic_point(%eax),%eax
+	leal	Lrem_4bit-L000pic_point(%eax),%eax
 	movzbl	15(%edi),%ebx
 	xorl	%ecx,%ecx
 	movl	%ebx,%edx
@@ -227,9 +26,9 @@ L005pic_point:
 	movq	8(%esi,%ecx,1),%mm0
 	movq	(%esi,%ecx,1),%mm1
 	movd	%mm0,%ebx
-	jmp	L006mmx_loop
+	jmp	L001mmx_loop
 .align	4,0x90
-L006mmx_loop:
+L001mmx_loop:
 	psrlq	$4,%mm0
 	andl	$15,%ebx
 	movq	%mm1,%mm2
@@ -243,7 +42,7 @@ L006mmx_loop:
 	pxor	(%esi,%edx,1),%mm1
 	movl	%ecx,%edx
 	pxor	%mm2,%mm0
-	js	L007mmx_break
+	js	L002mmx_break
 	shlb	$4,%cl
 	andl	$15,%ebx
 	psrlq	$4,%mm0
@@ -256,9 +55,9 @@ L006mmx_loop:
 	movd	%mm0,%ebx
 	pxor	(%esi,%ecx,1),%mm1
 	pxor	%mm2,%mm0
-	jmp	L006mmx_loop
+	jmp	L001mmx_loop
 .align	4,0x90
-L007mmx_break:
+L002mmx_break:
 	shlb	$4,%cl
 	andl	$15,%ebx
 	psrlq	$4,%mm0
@@ -314,10 +113,10 @@ L_gcm_ghash_4bit_mmx_begin:
 	movl	28(%esp),%ecx
 	movl	32(%esp),%edx
 	movl	%esp,%ebp
-	call	L008pic_point
-L008pic_point:
+	call	L003pic_point
+L003pic_point:
 	popl	%esi
-	leal	Lrem_8bit-L008pic_point(%esi),%esi
+	leal	Lrem_8bit-L003pic_point(%esi),%esi
 	subl	$544,%esp
 	andl	$-64,%esp
 	subl	$16,%esp
@@ -556,7 +355,7 @@ L008pic_point:
 	movl	8(%eax),%ebx
 	movl	12(%eax),%edx
 .align	4,0x90
-L009outer:
+L004outer:
 	xorl	12(%ecx),%edx
 	xorl	8(%ecx),%ebx
 	pxor	(%ecx),%mm6
@@ -891,7 +690,7 @@ L009outer:
 	pshufw	$27,%mm6,%mm6
 	bswap	%ebx
 	cmpl	552(%esp),%ecx
-	jne	L009outer
+	jne	L004outer
 	movl	544(%esp),%eax
 	movl	%edx,12(%eax)
 	movl	%ebx,8(%eax)
@@ -910,10 +709,10 @@ _gcm_init_clmul:
 L_gcm_init_clmul_begin:
 	movl	4(%esp),%edx
 	movl	8(%esp),%eax
-	call	L010pic
-L010pic:
+	call	L005pic
+L005pic:
 	popl	%ecx
-	leal	Lbswap-L010pic(%ecx),%ecx
+	leal	Lbswap-L005pic(%ecx),%ecx
 	movdqu	(%eax),%xmm2
 	pshufd	$78,%xmm2,%xmm2
 	pshufd	$255,%xmm2,%xmm4
@@ -978,10 +777,10 @@ _gcm_gmult_clmul:
 L_gcm_gmult_clmul_begin:
 	movl	4(%esp),%eax
 	movl	8(%esp),%edx
-	call	L011pic
-L011pic:
+	call	L006pic
+L006pic:
 	popl	%ecx
-	leal	Lbswap-L011pic(%ecx),%ecx
+	leal	Lbswap-L006pic(%ecx),%ecx
 	movdqu	(%eax),%xmm0
 	movdqa	(%ecx),%xmm5
 	movups	(%edx),%xmm2
@@ -1036,16 +835,16 @@ L_gcm_ghash_clmul_begin:
 	movl	24(%esp),%edx
 	movl	28(%esp),%esi
 	movl	32(%esp),%ebx
-	call	L012pic
-L012pic:
+	call	L007pic
+L007pic:
 	popl	%ecx
-	leal	Lbswap-L012pic(%ecx),%ecx
+	leal	Lbswap-L007pic(%ecx),%ecx
 	movdqu	(%eax),%xmm0
 	movdqa	(%ecx),%xmm5
 	movdqu	(%edx),%xmm2
 .byte	102,15,56,0,197
 	subl	$16,%ebx
-	jz	L013odd_tail
+	jz	L008odd_tail
 	movdqu	(%esi),%xmm3
 	movdqu	16(%esi),%xmm6
 .byte	102,15,56,0,221
@@ -1062,10 +861,10 @@ L012pic:
 	movups	16(%edx),%xmm2
 	nop
 	subl	$32,%ebx
-	jbe	L014even_tail
-	jmp	L015mod_loop
+	jbe	L009even_tail
+	jmp	L010mod_loop
 .align	5,0x90
-L015mod_loop:
+L010mod_loop:
 	pshufd	$78,%xmm0,%xmm4
 	movdqa	%xmm0,%xmm1
 	pxor	%xmm0,%xmm4
@@ -1120,8 +919,8 @@ L015mod_loop:
 .byte	102,15,58,68,221,0
 	leal	32(%esi),%esi
 	subl	$32,%ebx
-	ja	L015mod_loop
-L014even_tail:
+	ja	L010mod_loop
+L009even_tail:
 	pshufd	$78,%xmm0,%xmm4
 	movdqa	%xmm0,%xmm1
 	pxor	%xmm0,%xmm4
@@ -1160,9 +959,9 @@ L014even_tail:
 	psrlq	$1,%xmm0
 	pxor	%xmm1,%xmm0
 	testl	%ebx,%ebx
-	jnz	L016done
+	jnz	L011done
 	movups	(%edx),%xmm2
-L013odd_tail:
+L008odd_tail:
 	movdqu	(%esi),%xmm3
 .byte	102,15,56,0,221
 	pxor	%xmm3,%xmm0
@@ -1201,7 +1000,7 @@ L013odd_tail:
 	pxor	%xmm4,%xmm0
 	psrlq	$1,%xmm0
 	pxor	%xmm1,%xmm0
-L016done:
+L011done:
 .byte	102,15,56,0,197
 	movdqu	%xmm0,(%eax)
 	popl	%edi

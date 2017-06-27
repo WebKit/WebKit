@@ -77,6 +77,7 @@ OPENSSL_EXPORT const EVP_CIPHER *EVP_rc4(void);
 OPENSSL_EXPORT const EVP_CIPHER *EVP_des_cbc(void);
 OPENSSL_EXPORT const EVP_CIPHER *EVP_des_ecb(void);
 OPENSSL_EXPORT const EVP_CIPHER *EVP_des_ede(void);
+OPENSSL_EXPORT const EVP_CIPHER *EVP_des_ede3(void);
 OPENSSL_EXPORT const EVP_CIPHER *EVP_des_ede_cbc(void);
 OPENSSL_EXPORT const EVP_CIPHER *EVP_des_ede3_cbc(void);
 
@@ -191,7 +192,7 @@ OPENSSL_EXPORT int EVP_DecryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out,
  * |*out_len| to the number of bytes written. If padding is enabled (the
  * default) then padding is removed from the final block.
  *
- * WARNING: it is unsafe to call this function with unauthenticted
+ * WARNING: it is unsafe to call this function with unauthenticated
  * ciphertext if padding is enabled. */
 OPENSSL_EXPORT int EVP_DecryptFinal_ex(EVP_CIPHER_CTX *ctx, unsigned char *out,
                                        int *out_len);
@@ -282,12 +283,13 @@ OPENSSL_EXPORT int EVP_CIPHER_CTX_set_padding(EVP_CIPHER_CTX *ctx, int pad);
 /* EVP_CIPHER_CTX_set_key_length sets the key length for |ctx|. This is only
  * valid for ciphers that can take a variable length key. It returns one on
  * success and zero on error. */
-OPENSSL_EXPORT int EVP_CIPHER_CTX_set_key_length(EVP_CIPHER_CTX *ctx, unsigned key_len);
+OPENSSL_EXPORT int EVP_CIPHER_CTX_set_key_length(EVP_CIPHER_CTX *ctx,
+                                                 unsigned key_len);
 
 
 /* Cipher accessors. */
 
-/* EVP_CIPHER_nid returns a NID identifing |cipher|. (For example,
+/* EVP_CIPHER_nid returns a NID identifying |cipher|. (For example,
  * |NID_aes_128_gcm|.) */
 OPENSSL_EXPORT int EVP_CIPHER_nid(const EVP_CIPHER *cipher);
 
@@ -584,5 +586,6 @@ using ScopedEVP_CIPHER_CTX =
 #define CIPHER_R_UNSUPPORTED_TAG_SIZE 122
 #define CIPHER_R_WRONG_FINAL_BLOCK_LENGTH 123
 #define CIPHER_R_NO_DIRECTION_SET 124
+#define CIPHER_R_INVALID_NONCE 125
 
 #endif  /* OPENSSL_HEADER_CIPHER_H */

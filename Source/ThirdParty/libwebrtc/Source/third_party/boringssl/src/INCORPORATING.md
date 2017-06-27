@@ -5,7 +5,7 @@
 
 ## Bazel
 
-If you are using [Bazel](http://www.bazel.io) then you can incorporate
+If you are using [Bazel](https://bazel.build) then you can incorporate
 BoringSSL as an external repository by using a commit from the
 `master-with-bazel` branch. That branch is maintained by a bot from `master`
 and includes the needed generated files and a top-level BUILD file.
@@ -38,7 +38,7 @@ updating things more complex.
 BoringSSL is designed to work with many different build systems. Currently,
 different projects use [GYP](https://gyp.gsrc.io/),
 [GN](https://chromium.googlesource.com/chromium/src/+/master/tools/gn/docs/quick_start.md),
-[Bazel](http://bazel.io/) and [Make](https://www.gnu.org/software/make/)  to
+[Bazel](https://bazel.build/) and [Make](https://www.gnu.org/software/make/)  to
 build BoringSSL, without too much pain.
 
 The development build system is CMake and the CMake build knows how to

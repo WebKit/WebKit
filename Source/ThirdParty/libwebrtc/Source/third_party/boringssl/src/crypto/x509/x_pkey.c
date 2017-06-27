@@ -63,6 +63,9 @@
 #include <openssl/mem.h>
 #include <openssl/thread.h>
 
+#include "../internal.h"
+
+
 X509_PKEY *X509_PKEY_new(void)
 {
     X509_PKEY *ret = OPENSSL_malloc(sizeof(X509_PKEY));
@@ -70,7 +73,7 @@ X509_PKEY *X509_PKEY_new(void)
         OPENSSL_PUT_ERROR(X509, ERR_R_MALLOC_FAILURE);
         goto err;
     }
-    memset(ret, 0, sizeof(X509_PKEY));
+    OPENSSL_memset(ret, 0, sizeof(X509_PKEY));
 
     ret->enc_algor = X509_ALGOR_new();
     if (ret->enc_algor == NULL)

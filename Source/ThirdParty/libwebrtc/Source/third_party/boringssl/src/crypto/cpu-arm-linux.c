@@ -161,7 +161,7 @@ typedef struct {
 
 static int STRING_PIECE_equals(const STRING_PIECE *a, const char *b) {
   size_t b_len = strlen(b);
-  return a->len == b_len && memcmp(a->data, b, b_len) == 0;
+  return a->len == b_len && OPENSSL_memcmp(a->data, b, b_len) == 0;
 }
 
 /* STRING_PIECE_split finds the first occurence of |sep| in |in| and, if found,
@@ -169,7 +169,7 @@ static int STRING_PIECE_equals(const STRING_PIECE *a, const char *b) {
  * returns one if |sep| was found and zero otherwise. */
 static int STRING_PIECE_split(STRING_PIECE *out_left, STRING_PIECE *out_right,
                               const STRING_PIECE *in, char sep) {
-  const char *p = memchr(in->data, sep, in->len);
+  const char *p = OPENSSL_memchr(in->data, sep, in->len);
   if (p == NULL) {
     return 0;
   }

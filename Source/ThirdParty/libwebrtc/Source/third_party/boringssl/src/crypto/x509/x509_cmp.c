@@ -67,6 +67,9 @@
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
 
+#include "../internal.h"
+
+
 int X509_issuer_and_serial_cmp(const X509 *a, const X509 *b)
 {
     int i;
@@ -125,7 +128,7 @@ int X509_CRL_cmp(const X509_CRL *a, const X509_CRL *b)
 
 int X509_CRL_match(const X509_CRL *a, const X509_CRL *b)
 {
-    return memcmp(a->sha1_hash, b->sha1_hash, 20);
+    return OPENSSL_memcmp(a->sha1_hash, b->sha1_hash, 20);
 }
 
 X509_NAME *X509_get_issuer_name(X509 *a)
@@ -178,7 +181,7 @@ int X509_cmp(const X509 *a, const X509 *b)
     X509_check_purpose((X509 *)a, -1, 0);
     X509_check_purpose((X509 *)b, -1, 0);
 
-    rv = memcmp(a->sha1_hash, b->sha1_hash, SHA_DIGEST_LENGTH);
+    rv = OPENSSL_memcmp(a->sha1_hash, b->sha1_hash, SHA_DIGEST_LENGTH);
     if (rv)
         return rv;
     /* Check for match against stored encoding too */
@@ -186,8 +189,8 @@ int X509_cmp(const X509 *a, const X509 *b)
         rv = (int)(a->cert_info->enc.len - b->cert_info->enc.len);
         if (rv)
             return rv;
-        return memcmp(a->cert_info->enc.enc, b->cert_info->enc.enc,
-                      a->cert_info->enc.len);
+        return OPENSSL_memcmp(a->cert_info->enc.enc, b->cert_info->enc.enc,
+                              a->cert_info->enc.len);
     }
     return rv;
 }
@@ -215,7 +218,7 @@ int X509_NAME_cmp(const X509_NAME *a, const X509_NAME *b)
     if (ret)
         return ret;
 
-    return memcmp(a->canon_enc, b->canon_enc, a->canon_enclen);
+    return OPENSSL_memcmp(a->canon_enc, b->canon_enc, a->canon_enclen);
 
 }
 

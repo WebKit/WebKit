@@ -2,7 +2,7 @@
 
 ## Build Prerequisites
 
-  * [CMake](https://cmake.org/download/) 2.8.8 or later is required.
+  * [CMake](https://cmake.org/download/) 2.8.11 or later is required.
 
   * Perl 5.6.1 or later is required. On Windows,
     [Active State Perl](http://www.activestate.com/activeperl/) has been
@@ -33,7 +33,7 @@
     executable may be configured explicitly by setting `GO_EXECUTABLE`.
 
   * To build the x86 and x86\_64 assembly, your assembler must support AVX2
-    instructions. If using GNU binutils, you must have 2.22 or later.
+    instructions and MOVBE. If using GNU binutils, you must have 2.22 or later.
 
 ## Building
 
@@ -96,6 +96,15 @@ higher to build aarch64 binaries.
 
 For other options, see [android-cmake's documentation](./third_party/android-cmake/README.md).
 
+### Building for iOS
+
+To build for iOS, pass `-DCMAKE_OSX_SYSROOT=iphoneos` and
+`-DCMAKE_OSX_ARCHITECTURES=ARCH` to CMake, where `ARCH` is the desired
+architecture, matching values used in the `-arch` flag in Apple's toolchain.
+
+Passing multiple architectures for a multiple-architecture build is not
+supported.
+
 ## Known Limitations on Windows
 
   * Versions of CMake since 3.0.2 have a bug in its Ninja generator that causes
@@ -116,16 +125,18 @@ ARM, unlike Intel, does not have an instruction that allows applications to
 discover the capabilities of the processor. Instead, the capability information
 has to be provided by the operating system somehow.
 
-BoringSSL will try to use `getauxval` to discover the capabilities and, failing
-that, will probe for NEON support by executing a NEON instruction and handling
-any illegal-instruction signal. But some environments don't support that sort
-of thing and, for them, it's possible to configure the CPU capabilities
-at compile time.
+By default, on Linux-based systems, BoringSSL will try to use `getauxval` and
+`/proc` to discover the capabilities. But some environments don't support that
+sort of thing and, for them, it's possible to configure the CPU capabilities at
+compile time.
 
-If you define `OPENSSL_STATIC_ARMCAP` then you can define any of the following
-to enabling the corresponding ARM feature.
+On iOS or builds which define `OPENSSL_STATIC_ARMCAP`, features will be
+determined based on the `__ARM_NEON__` and `__ARM_FEATURE_CRYPTO` preprocessor
+symbols reported by the compiler. These values are usually controlled by the
+`-march` flag. You can also define any of the following to enable the
+corresponding ARM feature.
 
-  * `OPENSSL_STATIC_ARMCAP_NEON` or `__ARM_NEON__` (note that the latter is set by compilers when NEON support is enabled).
+  * `OPENSSL_STATIC_ARMCAP_NEON`
   * `OPENSSL_STATIC_ARMCAP_AES`
   * `OPENSSL_STATIC_ARMCAP_SHA1`
   * `OPENSSL_STATIC_ARMCAP_SHA256`

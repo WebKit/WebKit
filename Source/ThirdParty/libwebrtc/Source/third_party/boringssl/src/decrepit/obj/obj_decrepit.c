@@ -19,6 +19,8 @@
 
 #include <openssl/evp.h>
 
+#include "../../crypto/internal.h"
+
 
 struct wrapped_callback {
   void (*callback)(const OBJ_NAME *, void *arg);
@@ -30,7 +32,7 @@ static void cipher_callback(const EVP_CIPHER *cipher, const char *name,
   const struct wrapped_callback *wrapped = (struct wrapped_callback *)arg;
   OBJ_NAME obj_name;
 
-  memset(&obj_name, 0, sizeof(obj_name));
+  OPENSSL_memset(&obj_name, 0, sizeof(obj_name));
   obj_name.type = OBJ_NAME_TYPE_CIPHER_METH;
   obj_name.name = name;
   obj_name.data = (const char *)cipher;
@@ -43,7 +45,7 @@ static void md_callback(const EVP_MD *md, const char *name, const char *unused,
   const struct wrapped_callback *wrapped = (struct wrapped_callback*) arg;
   OBJ_NAME obj_name;
 
-  memset(&obj_name, 0, sizeof(obj_name));
+  OPENSSL_memset(&obj_name, 0, sizeof(obj_name));
   obj_name.type = OBJ_NAME_TYPE_MD_METH;
   obj_name.name = name;
   obj_name.data = (const char *)md;

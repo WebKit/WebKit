@@ -19,9 +19,11 @@
 
 #include <openssl/mem.h>
 
+#include "../internal.h"
+
 
 void CBB_zero(CBB *cbb) {
-  memset(cbb, 0, sizeof(CBB));
+  OPENSSL_memset(cbb, 0, sizeof(CBB));
 }
 
 static int cbb_init(CBB *cbb, uint8_t *buf, size_t cap) {
@@ -252,8 +254,8 @@ int CBB_flush(CBB *cbb) {
       if (!cbb_buffer_add(cbb->base, NULL, extra_bytes)) {
         goto err;
       }
-      memmove(cbb->base->buf + child_start + extra_bytes,
-              cbb->base->buf + child_start, len);
+      OPENSSL_memmove(cbb->base->buf + child_start + extra_bytes,
+                      cbb->base->buf + child_start, len);
     }
     cbb->base->buf[cbb->child->offset++] = initial_length_byte;
     cbb->child->pending_len_len = len_len - 1;
@@ -303,8 +305,8 @@ static int cbb_add_length_prefixed(CBB *cbb, CBB *out_contents,
     return 0;
   }
 
-  memset(prefix_bytes, 0, len_len);
-  memset(out_contents, 0, sizeof(CBB));
+  OPENSSL_memset(prefix_bytes, 0, len_len);
+  OPENSSL_memset(out_contents, 0, sizeof(CBB));
   out_contents->base = cbb->base;
   cbb->child = out_contents;
   cbb->child->offset = offset;
@@ -346,7 +348,7 @@ int CBB_add_asn1(CBB *cbb, CBB *out_contents, unsigned tag) {
     return 0;
   }
 
-  memset(out_contents, 0, sizeof(CBB));
+  OPENSSL_memset(out_contents, 0, sizeof(CBB));
   out_contents->base = cbb->base;
   cbb->child = out_contents;
   cbb->child->offset = offset;
@@ -363,7 +365,7 @@ int CBB_add_bytes(CBB *cbb, const uint8_t *data, size_t len) {
       !cbb_buffer_add(cbb->base, &dest, len)) {
     return 0;
   }
-  memcpy(dest, data, len);
+  OPENSSL_memcpy(dest, data, len);
   return 1;
 }
 

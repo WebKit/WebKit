@@ -85,6 +85,13 @@ TEST(BoringSSL, UnitTests) {
     if (base::StartsWith(name, "decrepit/", base::CompareCase::SENSITIVE))
       continue;
 
+    // Skip the GTest tests. This wrapper will be removed once all the tests are
+    // converted to GTest. See https://crbug.com/boringssl/129
+    if (base::EndsWith(name, "crypto_test", base::CompareCase::SENSITIVE) ||
+        base::EndsWith(name, "ssl_test", base::CompareCase::SENSITIVE)) {
+      continue;
+    }
+
     name = name.substr(name.find_last_of('/') + 1);
     SCOPED_TRACE(name);
 

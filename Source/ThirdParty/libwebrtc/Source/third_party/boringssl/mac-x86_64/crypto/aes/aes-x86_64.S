@@ -1,4 +1,4 @@
-#if defined(__x86_64__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM)
 .text	
 
 .p2align	4
@@ -332,6 +332,7 @@ L$enc_compact_done:
 
 .private_extern	_asm_AES_encrypt
 _asm_AES_encrypt:
+	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
@@ -340,7 +341,6 @@ _asm_AES_encrypt:
 	pushq	%r15
 
 
-	movq	%rsp,%r10
 	leaq	-63(%rdx),%rcx
 	andq	$-64,%rsp
 	subq	%rsp,%rcx
@@ -350,7 +350,7 @@ _asm_AES_encrypt:
 	subq	$32,%rsp
 
 	movq	%rsi,16(%rsp)
-	movq	%r10,24(%rsp)
+	movq	%rax,24(%rsp)
 L$enc_prologue:
 
 	movq	%rdx,%r15
@@ -382,13 +382,13 @@ L$enc_prologue:
 	movl	%ecx,8(%r9)
 	movl	%edx,12(%r9)
 
-	movq	(%rsi),%r15
-	movq	8(%rsi),%r14
-	movq	16(%rsi),%r13
-	movq	24(%rsi),%r12
-	movq	32(%rsi),%rbp
-	movq	40(%rsi),%rbx
-	leaq	48(%rsi),%rsp
+	movq	-48(%rsi),%r15
+	movq	-40(%rsi),%r14
+	movq	-32(%rsi),%r13
+	movq	-24(%rsi),%r12
+	movq	-16(%rsi),%rbp
+	movq	-8(%rsi),%rbx
+	leaq	(%rsi),%rsp
 L$enc_epilogue:
 	.byte	0xf3,0xc3
 
@@ -778,6 +778,7 @@ L$dec_compact_done:
 
 .private_extern	_asm_AES_decrypt
 _asm_AES_decrypt:
+	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
@@ -786,7 +787,6 @@ _asm_AES_decrypt:
 	pushq	%r15
 
 
-	movq	%rsp,%r10
 	leaq	-63(%rdx),%rcx
 	andq	$-64,%rsp
 	subq	%rsp,%rcx
@@ -796,7 +796,7 @@ _asm_AES_decrypt:
 	subq	$32,%rsp
 
 	movq	%rsi,16(%rsp)
-	movq	%r10,24(%rsp)
+	movq	%rax,24(%rsp)
 L$dec_prologue:
 
 	movq	%rdx,%r15
@@ -830,13 +830,13 @@ L$dec_prologue:
 	movl	%ecx,8(%r9)
 	movl	%edx,12(%r9)
 
-	movq	(%rsi),%r15
-	movq	8(%rsi),%r14
-	movq	16(%rsi),%r13
-	movq	24(%rsi),%r12
-	movq	32(%rsi),%rbp
-	movq	40(%rsi),%rbx
-	leaq	48(%rsi),%rsp
+	movq	-48(%rsi),%r15
+	movq	-40(%rsi),%r14
+	movq	-32(%rsi),%r13
+	movq	-24(%rsi),%r12
+	movq	-16(%rsi),%rbp
+	movq	-8(%rsi),%rbx
+	leaq	(%rsi),%rsp
 L$dec_epilogue:
 	.byte	0xf3,0xc3
 
@@ -1312,10 +1312,9 @@ L$cbc_prologue:
 	movl	%r9d,%r9d
 
 	leaq	L$AES_Te(%rip),%r14
+	leaq	L$AES_Td(%rip),%r10
 	cmpq	$0,%r9
-	jne	L$cbc_picked_te
-	leaq	L$AES_Td(%rip),%r14
-L$cbc_picked_te:
+	cmoveq	%r10,%r14
 
 	movl	_OPENSSL_ia32cap_P(%rip),%r10d
 	cmpq	$512,%rdx

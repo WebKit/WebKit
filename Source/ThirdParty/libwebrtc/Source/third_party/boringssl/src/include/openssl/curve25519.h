@@ -33,6 +33,10 @@ extern "C" {
  * sometimes referred to as “curve25519”, but “X25519” is a more precise name.
  * See http://cr.yp.to/ecdh.html and https://tools.ietf.org/html/rfc7748. */
 
+#define X25519_PRIVATE_KEY_LEN 32
+#define X25519_PUBLIC_VALUE_LEN 32
+#define X25519_SHARED_KEY_LEN 32
+
 /* X25519_keypair sets |out_public_value| and |out_private_key| to a freshly
  * generated, public–private key pair. */
 OPENSSL_EXPORT void X25519_keypair(uint8_t out_public_value[32],
@@ -57,7 +61,12 @@ OPENSSL_EXPORT void X25519_public_from_private(uint8_t out_public_value[32],
 /* Ed25519.
  *
  * Ed25519 is a signature scheme using a twisted-Edwards curve that is
- * birationally equivalent to curve25519. */
+ * birationally equivalent to curve25519.
+ *
+ * Note that, unlike RFC 8032's formulation, our private key representation
+ * includes a public key suffix to make multiple key signing operations with the
+ * same key more efficient. The RFC 8032 key private key is referred to in this
+ * implementation as the "seed" and is the first 32 bytes of our private key. */
 
 #define ED25519_PRIVATE_KEY_LEN 64
 #define ED25519_PUBLIC_KEY_LEN 32
@@ -81,6 +90,15 @@ OPENSSL_EXPORT int ED25519_sign(uint8_t out_sig[64], const uint8_t *message,
 OPENSSL_EXPORT int ED25519_verify(const uint8_t *message, size_t message_len,
                                   const uint8_t signature[64],
                                   const uint8_t public_key[32]);
+
+/* ED25519_keypair_from_seed calculates a public and private key from an
+ * Ed25519 “seed”. Seed values are not exposed by this API (although they
+ * happen to be the first 32 bytes of a private key) so this function is for
+ * interoperating with systems that may store just a seed instead of a full
+ * private key. */
+OPENSSL_EXPORT void ED25519_keypair_from_seed(uint8_t out_public_key[32],
+                                              uint8_t out_private_key[64],
+                                              const uint8_t seed[32]);
 
 
 /* SPAKE2.

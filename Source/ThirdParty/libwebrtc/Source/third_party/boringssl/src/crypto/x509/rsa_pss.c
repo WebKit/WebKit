@@ -279,11 +279,11 @@ int x509_rsa_pss_to_ctx(EVP_MD_CTX *ctx, X509_ALGOR *sigalg, EVP_PKEY *pkey) {
     goto err;
   }
 
-  EVP_PKEY_CTX *pkctx;
-  if (!EVP_DigestVerifyInit(ctx, &pkctx, md, NULL, pkey) ||
-      !EVP_PKEY_CTX_set_rsa_padding(pkctx, RSA_PKCS1_PSS_PADDING) ||
-      !EVP_PKEY_CTX_set_rsa_pss_saltlen(pkctx, saltlen) ||
-      !EVP_PKEY_CTX_set_rsa_mgf1_md(pkctx, mgf1md)) {
+  EVP_PKEY_CTX *pctx;
+  if (!EVP_DigestVerifyInit(ctx, &pctx, md, NULL, pkey) ||
+      !EVP_PKEY_CTX_set_rsa_padding(pctx, RSA_PKCS1_PSS_PADDING) ||
+      !EVP_PKEY_CTX_set_rsa_pss_saltlen(pctx, saltlen) ||
+      !EVP_PKEY_CTX_set_rsa_mgf1_md(pctx, mgf1md)) {
     goto err;
   }
 

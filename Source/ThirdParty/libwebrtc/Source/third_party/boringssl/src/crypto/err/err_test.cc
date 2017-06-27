@@ -15,40 +15,34 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <gtest/gtest.h>
+
 #include <openssl/crypto.h>
 #include <openssl/err.h>
 #include <openssl/mem.h>
 
 
-static bool TestOverflow() {
+TEST(ErrTest, Overflow) {
   for (unsigned i = 0; i < ERR_NUM_ERRORS*2; i++) {
     ERR_put_error(1, 0 /* unused */, i+1, "test", 1);
   }
 
   for (unsigned i = 0; i < ERR_NUM_ERRORS - 1; i++) {
+    SCOPED_TRACE(i);
     uint32_t err = ERR_get_error();
     /* Errors are returned in order they were pushed, with the least recent ones
      * removed, up to |ERR_NUM_ERRORS - 1| errors. So the errors returned are
      * |ERR_NUM_ERRORS + 2| through |ERR_NUM_ERRORS * 2|, inclusive. */
-    if (err == 0 || ((unsigned)ERR_GET_REASON(err)) != i + ERR_NUM_ERRORS + 2) {
-      fprintf(stderr, "ERR_get_error failed at %u\n", i);
-      return false;
-    }
+    EXPECT_NE(0u, err);
+    EXPECT_EQ(static_cast<int>(i + ERR_NUM_ERRORS + 2), ERR_GET_REASON(err));
   }
 
-  if (ERR_get_error() != 0) {
-    fprintf(stderr, "ERR_get_error more than the expected number of values.\n");
-    return false;
-  }
-
-  return true;
+  EXPECT_EQ(0u, ERR_get_error());
 }
 
-static bool TestPutError() {
-  if (ERR_get_error() != 0) {
-    fprintf(stderr, "ERR_get_error returned value before an error was added.\n");
-    return false;
-  }
+TEST(ErrTest, PutError) {
+  ASSERT_EQ(0u, ERR_get_error())
+      << "ERR_get_error returned value before an error was added.";
 
   ERR_put_error(1, 0 /* unused */, 2, "test", 4);
   ERR_add_error_data(1, "testing");
@@ -60,45 +54,31 @@ static bool TestPutError() {
                                &peeked_flags);
   uint32_t packed_error = ERR_get_error_line_data(&file, &line, &data, &flags);
 
-  if (peeked_packed_error != packed_error ||
-      peeked_file != file ||
-      peeked_data != data ||
-      peeked_flags != flags) {
-    fprintf(stderr, "Bad peeked error data returned.\n");
-    return false;
-  }
+  EXPECT_EQ(peeked_packed_error, packed_error);
+  EXPECT_EQ(peeked_file, file);
+  EXPECT_EQ(peeked_data, data);
+  EXPECT_EQ(peeked_flags, flags);
 
-  if (strcmp(file, "test") != 0 ||
-      line != 4 ||
-      (flags & ERR_FLAG_STRING) == 0 ||
-      ERR_GET_LIB(packed_error) != 1 ||
-      ERR_GET_REASON(packed_error) != 2 ||
-      strcmp(data, "testing") != 0) {
-    fprintf(stderr, "Bad error data returned.\n");
-    return false;
-  }
-
-  return true;
+  EXPECT_STREQ("test", file);
+  EXPECT_EQ(4, line);
+  EXPECT_TRUE(flags & ERR_FLAG_STRING);
+  EXPECT_EQ(1, ERR_GET_LIB(packed_error));
+  EXPECT_EQ(2, ERR_GET_REASON(packed_error));
+  EXPECT_STREQ("testing", data);
 }
 
-static bool TestClearError() {
-  if (ERR_get_error() != 0) {
-    fprintf(stderr, "ERR_get_error returned value before an error was added.\n");
-    return false;
-  }
+TEST(ErrTest, ClearError) {
+  ASSERT_EQ(0u, ERR_get_error())
+      << "ERR_get_error returned value before an error was added.";
 
   ERR_put_error(1, 0 /* unused */, 2, "test", 4);
   ERR_clear_error();
 
-  if (ERR_get_error() != 0) {
-    fprintf(stderr, "Error remained after clearing.\n");
-    return false;
-  }
-
-  return true;
+  // The error queue should be cleared.
+  EXPECT_EQ(0u, ERR_get_error());
 }
 
-static bool TestPrint() {
+TEST(ErrTest, Print) {
   ERR_put_error(1, 0 /* unused */, 2, "test", 4);
   ERR_add_error_data(1, "testing");
   uint32_t packed_error = ERR_get_error();
@@ -107,14 +87,14 @@ static bool TestPrint() {
   for (size_t i = 0; i <= sizeof(buf); i++) {
     ERR_error_string_n(packed_error, buf, i);
   }
-
-  return true;
 }
 
-static bool TestRelease() {
+TEST(ErrTest, Release) {
   ERR_put_error(1, 0 /* unused */, 2, "test", 4);
   ERR_remove_thread_state(NULL);
-  return true;
+
+  // The error queue should be cleared.
+  EXPECT_EQ(0u, ERR_get_error());
 }
 
 static bool HasSuffix(const char *str, const char *suffix) {
@@ -126,7 +106,7 @@ static bool HasSuffix(const char *str, const char *suffix) {
   return strcmp(str + str_len - suffix_len, suffix) == 0;
 }
 
-static bool TestPutMacro() {
+TEST(ErrTest, PutMacro) {
   int expected_line = __LINE__ + 1;
   OPENSSL_PUT_ERROR(USER, ERR_R_INTERNAL_ERROR);
 
@@ -134,29 +114,8 @@ static bool TestPutMacro() {
   const char *file;
   uint32_t error = ERR_get_error_line(&file, &line);
 
-  if (!HasSuffix(file, "err_test.cc") ||
-      line != expected_line ||
-      ERR_GET_LIB(error) != ERR_LIB_USER ||
-      ERR_GET_REASON(error) != ERR_R_INTERNAL_ERROR) {
-    fprintf(stderr, "Bad error data returned.\n");
-    return false;
-  }
-
-  return true;
-}
-
-int main() {
-  CRYPTO_library_init();
-
-  if (!TestOverflow() ||
-      !TestPutError() ||
-      !TestClearError() ||
-      !TestPrint() ||
-      !TestRelease() ||
-      !TestPutMacro()) {
-    return 1;
-  }
-
-  printf("PASS\n");
-  return 0;
+  EXPECT_PRED2(HasSuffix, file, "err_test.cc");
+  EXPECT_EQ(expected_line, line);
+  EXPECT_EQ(ERR_LIB_USER, ERR_GET_LIB(error));
+  EXPECT_EQ(ERR_R_INTERNAL_ERROR, ERR_GET_REASON(error));
 }

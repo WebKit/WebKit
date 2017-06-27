@@ -100,12 +100,6 @@ struct evp_pkey_asn1_method_st {
    * custom implementations which do not expose key material and parameters.*/
   int (*pkey_opaque)(const EVP_PKEY *pk);
 
-  /* pkey_supports_digest returns one if |pkey| supports digests of
-   * type |md|. This is intended for use with EVP_PKEYs backing custom
-   * implementations which can't sign all digests. If null, it is
-   * assumed that all digests are supported. */
-  int (*pkey_supports_digest)(const EVP_PKEY *pkey, const EVP_MD *md);
-
   int (*pkey_size)(const EVP_PKEY *pk);
   int (*pkey_bits)(const EVP_PKEY *pk);
 
@@ -170,7 +164,7 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_ctrl(EVP_PKEY_CTX *ctx, int keytype, int optype,
 #define EVP_PKEY_CTRL_RSA_PSS_SALTLEN (EVP_PKEY_ALG_CTRL + 3)
 #define EVP_PKEY_CTRL_GET_RSA_PSS_SALTLEN (EVP_PKEY_ALG_CTRL + 4)
 #define EVP_PKEY_CTRL_RSA_KEYGEN_BITS (EVP_PKEY_ALG_CTRL + 5)
-#define EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP	(EVP_PKEY_ALG_CTRL + 6)
+#define EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP (EVP_PKEY_ALG_CTRL + 6)
 #define EVP_PKEY_CTRL_RSA_OAEP_MD (EVP_PKEY_ALG_CTRL + 7)
 #define EVP_PKEY_CTRL_GET_RSA_OAEP_MD (EVP_PKEY_ALG_CTRL + 8)
 #define EVP_PKEY_CTRL_RSA_MGF1_MD (EVP_PKEY_ALG_CTRL + 9)
@@ -205,8 +199,14 @@ struct evp_pkey_method_st {
   int (*sign)(EVP_PKEY_CTX *ctx, uint8_t *sig, size_t *siglen,
               const uint8_t *tbs, size_t tbslen);
 
+  int (*sign_message)(EVP_PKEY_CTX *ctx, uint8_t *sig, size_t *siglen,
+                      const uint8_t *tbs, size_t tbslen);
+
   int (*verify)(EVP_PKEY_CTX *ctx, const uint8_t *sig, size_t siglen,
                 const uint8_t *tbs, size_t tbslen);
+
+  int (*verify_message)(EVP_PKEY_CTX *ctx, const uint8_t *sig, size_t siglen,
+                        const uint8_t *tbs, size_t tbslen);
 
   int (*verify_recover)(EVP_PKEY_CTX *ctx, uint8_t *out, size_t *out_len,
                         const uint8_t *sig, size_t sig_len);
@@ -222,12 +222,27 @@ struct evp_pkey_method_st {
   int (*ctrl)(EVP_PKEY_CTX *ctx, int type, int p1, void *p2);
 } /* EVP_PKEY_METHOD */;
 
+typedef struct {
+  union {
+    uint8_t priv[64];
+    struct {
+      /* Shift the location of the public key to align with where it is in the
+       * private key representation. */
+      uint8_t pad[32];
+      uint8_t value[32];
+    } pub;
+  } key;
+  char has_private;
+} ED25519_KEY;
+
 extern const EVP_PKEY_ASN1_METHOD dsa_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD ec_asn1_meth;
 extern const EVP_PKEY_ASN1_METHOD rsa_asn1_meth;
+extern const EVP_PKEY_ASN1_METHOD ed25519_asn1_meth;
 
 extern const EVP_PKEY_METHOD rsa_pkey_meth;
 extern const EVP_PKEY_METHOD ec_pkey_meth;
+extern const EVP_PKEY_METHOD ed25519_pkey_meth;
 
 
 #if defined(__cplusplus)

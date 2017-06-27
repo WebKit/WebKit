@@ -7,3 +7,11 @@ add_library(
   malloc.cc
   test_util.cc
 )
+
+add_library(
+  gtest_main
+
+  OBJECT
+
+  gtest_main.cc
+)

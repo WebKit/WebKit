@@ -20,6 +20,8 @@
 #include <openssl/err.h>
 #include <openssl/hmac.h>
 
+#include "../internal.h"
+
 
 int HKDF(uint8_t *out_key, size_t out_len, const EVP_MD *digest,
          const uint8_t *secret, size_t secret_len, const uint8_t *salt,
@@ -95,7 +97,7 @@ int HKDF_expand(uint8_t *out_key, size_t out_len, const EVP_MD *digest,
     if (done + todo > out_len) {
       todo = out_len - done;
     }
-    memcpy(out_key + done, previous, todo);
+    OPENSSL_memcpy(out_key + done, previous, todo);
     done += todo;
   }
 

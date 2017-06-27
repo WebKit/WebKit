@@ -42,16 +42,6 @@ add_library(
   ${CHACHA_ARCH_SOURCES}
 )
 
-add_executable(
-  chacha_test
-
-  chacha_test.cc
-  $<TARGET_OBJECTS:test_support>
-)
-
-target_link_libraries(chacha_test crypto)
-add_dependencies(all_tests chacha_test)
-
 perlasm(chacha-armv4.${ASM_EXT} asm/chacha-armv4.pl)
 perlasm(chacha-armv8.${ASM_EXT} asm/chacha-armv8.pl)
 perlasm(chacha-x86.${ASM_EXT} asm/chacha-x86.pl)
