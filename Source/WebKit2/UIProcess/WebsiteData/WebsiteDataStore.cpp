@@ -507,16 +507,16 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyControlledDomains, Function<void(Vector<WebsiteDataRecord>&&, Vector<String>&&)>&& completionHandler)
+void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyControlledDomains, Function<void(Vector<WebsiteDataRecord>&&, HashSet<String>&&)>&& completionHandler)
 {
     fetchData(dataTypes, fetchOptions, [topPrivatelyControlledDomains, completionHandler = WTFMove(completionHandler)](auto&& existingDataRecords) {
         Vector<WebsiteDataRecord> matchingDataRecords;
-        Vector<String> domainsWithMatchingDataRecords;
+        HashSet<String> domainsWithMatchingDataRecords;
         for (auto&& dataRecord : existingDataRecords) {
             for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomains) {
                 if (dataRecord.matchesTopPrivatelyControlledDomain(topPrivatelyControlledDomain)) {
                     matchingDataRecords.append(WTFMove(dataRecord));
-                    domainsWithMatchingDataRecords.append(topPrivatelyControlledDomain);
+                    domainsWithMatchingDataRecords.add(topPrivatelyControlledDomain);
                     break;
                 }
             }
@@ -1076,9 +1076,9 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
     callbackAggregator->callIfNeeded();
 }
 
-void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyControlledDomains, Function<void(Vector<String>&&)>&& completionHandler)
+void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyControlledDomains, Function<void(HashSet<String>&&)>&& completionHandler)
 {
-    fetchDataForTopPrivatelyControlledDomains(dataTypes, fetchOptions, topPrivatelyControlledDomains, [dataTypes, completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)](Vector<WebsiteDataRecord>&& websiteDataRecords, Vector<String>&& domainsWithDataRecords) mutable {
+    fetchDataForTopPrivatelyControlledDomains(dataTypes, fetchOptions, topPrivatelyControlledDomains, [dataTypes, completionHandler = WTFMove(completionHandler), this, protectedThis = makeRef(*this)](Vector<WebsiteDataRecord>&& websiteDataRecords, HashSet<String>&& domainsWithDataRecords) mutable {
         this->removeData(dataTypes, websiteDataRecords, [domainsWithDataRecords = WTFMove(domainsWithDataRecords), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(WTFMove(domainsWithDataRecords));
         });

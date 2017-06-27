@@ -1,3 +1,14 @@
+2017-06-26  Chris Dumez  <cdumez@apple.com>
+
+        WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains() is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=173850
+
+        Reviewed by Ryosuke Niwa.
+
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords):
+        * loader/ResourceLoadStatisticsStore.h:
+
 2017-06-26  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (AsyncImageDecoding): A tab with the WWDC keynote paused is killed for using excessive power (Image thrashing)

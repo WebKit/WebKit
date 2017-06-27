@@ -209,19 +209,19 @@ WebPageProxy* WebProcessProxy::webPage(uint64_t pageID)
     return globalPageMap().get(pageID);
 }
 
-void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, Function<void (const Vector<String>&)>&& completionHandler)
+void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType> dataTypes, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPage, Function<void (const HashSet<String>&)>&& completionHandler)
 {
     // We expect this to be called on the main thread so we get the default website data store.
     ASSERT(RunLoop::isMain());
     
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(Function<void(Vector<String>)>&& completionHandler)
+        explicit CallbackAggregator(Function<void(HashSet<String>)>&& completionHandler)
             : completionHandler(WTFMove(completionHandler))
         {
         }
-        void addDomainsWithDeletedWebsiteData(const Vector<String>& domains)
+        void addDomainsWithDeletedWebsiteData(const HashSet<String>& domains)
         {
-            domainsWithDeletedWebsiteData.appendVector(domains);
+            domainsWithDeletedWebsiteData.add(domains.begin(), domains.end());
         }
         
         void addPendingCallback()
@@ -244,8 +244,8 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
         }
         
         unsigned pendingCallbacks = 0;
-        Function<void(Vector<String>)> completionHandler;
-        Vector<String> domainsWithDeletedWebsiteData;
+        Function<void(HashSet<String>)> completionHandler;
+        HashSet<String> domainsWithDeletedWebsiteData;
     };
     
     RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(WTFMove(completionHandler)));
@@ -257,7 +257,7 @@ void WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPers
             continue;
         visitedSessionIDs.add(dataStore.sessionID());
         callbackAggregator->addPendingCallback();
-        dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, { }, topPrivatelyControlledDomains, [callbackAggregator, shouldNotifyPage, page](Vector<String>&& domainsWithDeletedWebsiteData) {
+        dataStore.removeDataForTopPrivatelyControlledDomains(dataTypes, { }, topPrivatelyControlledDomains, [callbackAggregator, shouldNotifyPage, page](HashSet<String>&& domainsWithDeletedWebsiteData) {
             // When completing the task, we should be getting called on the main thread.
             ASSERT(RunLoop::isMain());
             

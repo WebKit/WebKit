@@ -77,7 +77,7 @@ public:
 
     WEBCORE_EXPORT bool hasHadRecentUserInteraction(ResourceLoadStatistics&) const;
     WEBCORE_EXPORT Vector<String> topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
-    WEBCORE_EXPORT void updateStatisticsForRemovedDataRecords(const Vector<String>& prevalentResourceDomains);
+    WEBCORE_EXPORT void updateStatisticsForRemovedDataRecords(const HashSet<String>& prevalentResourceDomains);
 
     WEBCORE_EXPORT void handleFreshStartWithEmptyOrNoStore(HashSet<String>&& topPrivatelyControlledDomainsToGrandfather);
     WEBCORE_EXPORT bool shouldRemoveDataRecords() const;

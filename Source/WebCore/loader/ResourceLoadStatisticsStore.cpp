@@ -362,7 +362,7 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
     return prevalentResources;
 }
 
-void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const Vector<String>& prevalentResourceDomains)
+void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const HashSet<String>& prevalentResourceDomains)
 {
     auto locker = holdLock(m_statisticsLock);
     for (auto& prevalentResourceDomain : prevalentResourceDomains) {

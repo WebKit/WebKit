@@ -130,7 +130,7 @@ bool WebsiteDataRecord::matchesTopPrivatelyControlledDomain(const String& topPri
     }
 
     for (const auto& dataRecordOriginData : origins) {
-        if (hostIsInDomain(dataRecordOriginData.securityOrigin().get().host(), topPrivatelyControlledDomain))
+        if (hostIsInDomain(dataRecordOriginData.host, topPrivatelyControlledDomain))
             return true;
     }
 

@@ -1,3 +1,30 @@
+2017-06-26  Chris Dumez  <cdumez@apple.com>
+
+        WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains() is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=173850
+
+        Reviewed by Ryosuke Niwa.
+
+        Update WebsiteDataRecord::matchesTopPrivatelyControlledDomain() to rely on
+        SecurityOriginData::host rather than SecurityOriginData::securityOrigin()->host().
+        SecurityOriginData::securityOrigin() is expensive and it seems unnecessary to call
+        it here since we already have the host.
+
+        Also update WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains() to return
+        domains as a HashSet rather than a Vector to avoid having duplicate domains.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+        * UIProcess/WebsiteData/WebsiteDataRecord.cpp:
+        (WebKit::WebsiteDataRecord::matchesTopPrivatelyControlledDomain):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains):
+        (WebKit::WebsiteDataStore::removeDataForTopPrivatelyControlledDomains):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-06-26  Jeremy Jones  <jeremyj@apple.com>
 
         Invalidate WebVideoFullscreenManager when WebPage is destroyed.
