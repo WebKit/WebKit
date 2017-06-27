@@ -1,3 +1,103 @@
+2017-06-27  Youenn Fablet  <youenn@apple.com>
+
+        Refresh usrsctp to Source/ThirdParty/libwebrtc/WebKit/patch-usrsctp and libsrtp to ccf84786f8ef803cb9c75e919e5a3976b9f5a67
+        https://bugs.webkit.org/show_bug.cgi?id=173673
+
+        Reviewed by Sam Weinig.
+
+        * Source/third_party/libsrtp/README.chromium:
+        * Source/third_party/libsrtp/srtp/srtp.c:
+        (srtp_stream_init_keys):
+        (srtp_calc_aead_iv_srtcp):
+        (srtp_protect_rtcp_aead):
+        (srtp_unprotect_rtcp_aead):
+        * Source/third_party/libsrtp/test/srtp_driver.c:
+        (srtp_validate_encrypted_extensions_headers_gcm):
+        * Source/third_party/usrsctp/usrsctplib/.gitignore: Added.
+        * Source/third_party/usrsctp/usrsctplib/CMakeLists.txt:
+        * Source/third_party/usrsctp/usrsctplib/Makefile.am:
+        * Source/third_party/usrsctp/usrsctplib/README.md:
+        * Source/third_party/usrsctp/usrsctplib/configure.ac:
+        * Source/third_party/usrsctp/usrsctplib/programs/CMakeLists.txt:
+        * Source/third_party/usrsctp/usrsctplib/programs/Makefile.am:
+        * Source/third_party/usrsctp/usrsctplib/programs/client.c:
+        (main):
+        * Source/third_party/usrsctp/usrsctplib/programs/datachan_serv.c:
+        (main):
+        * Source/third_party/usrsctp/usrsctplib/programs/ekr_loop_offload.c: Added.
+        (handle_packets):
+        * Source/third_party/usrsctp/usrsctplib/programs/test_timer.c: Added.
+        (main):
+        * Source/third_party/usrsctp/usrsctplib/usrsctp.pc.in: Added.
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/CMakeLists.txt:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_asconf.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_auth.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_bsd_addr.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_cc_functions.c:
+        (sctp_cwnd_update_after_fr):
+        (sctp_hs_cwnd_update_after_fr):
+        (sctp_htcp_cwnd_update_after_fr):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_constants.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_crc32.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_header.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.c:
+        (sctp_build_readq_entry):
+        (sctp_place_control_in_stream):
+        (sctp_abort_in_reasm):
+        (sctp_queue_data_to_stream):
+        (sctp_build_readq_entry_from_ctl):
+        (sctp_handle_old_unordered_data):
+        (sctp_inject_old_unordered_data):
+        (sctp_deliver_reasm_check):
+        (sctp_add_chk_to_control):
+        (sctp_queue_data_for_reasm):
+        (sctp_find_reasm_entry):
+        (sctp_process_a_data_chunk):
+        (sctp_sack_check):
+        (sctp_process_segment_range):
+        (sctp_check_for_revoked):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_indata.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.c:
+        (sctp_process_init):
+        (sctp_process_cookie_existing):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_input.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_output.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_pcb.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_peeloff.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_ss_functions.c:
+        (sctp_ss_rr_add):
+        (sctp_ss_fcfs_select):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_structs.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_sysctl.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_timer.c:
+        (sctp_recover_sent_list):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_uio.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_usrreq.c:
+        (sctp_init):
+        (sctp_pathmtu_adjustment):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctp_var.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.c:
+        (sctp_log_strm_del):
+        (sctp_init_asoc):
+        (sctp_notify_send_failed):
+        (sctp_notify_send_failed2):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet/sctputil.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_usrreq.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/netinet6/sctp6_var.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.c:
+        (m_get):
+        (mbuf_initialize):
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_mbuf.h:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/user_socket.c:
+        * Source/third_party/usrsctp/usrsctplib/usrsctplib/usrsctp.h:
+        * WebKit/patch-usrsctp: Added.
+
 2017-06-22  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Prevent capturing at unconventional resolutions when using the SW encoder on Mac

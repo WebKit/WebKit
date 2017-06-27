@@ -32,7 +32,7 @@
 
 #ifdef __FreeBSD__
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_pcb.c 303813 2016-08-07 12:51:13Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_pcb.c 313330 2017-02-06 08:49:57Z ae $");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -2855,21 +2855,6 @@ sctp_inpcb_alloc(struct socket *so, uint32_t vrf_id)
 		SCTP_INP_INFO_WUNLOCK();
 		return (ENOBUFS);
 	}
-#ifdef IPSEC
-#if !(defined(__APPLE__))
-	error = ipsec_init_policy(so, &inp->ip_inp.inp.inp_sp);
-#else
-	error = 0;
-#endif
-	if (error != 0) {
-#if defined(__FreeBSD__)
-		crfree(inp->ip_inp.inp.inp_cred);
-#endif
-		SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_ep), inp);
-		SCTP_INP_INFO_WUNLOCK();
-		return error;
-	}
-#endif				/* IPSEC */
 	SCTP_INCR_EP_COUNT();
 	inp->ip_inp.inp.inp_ip_ttl = MODULE_GLOBAL(ip_defttl);
 	SCTP_INP_INFO_WUNLOCK();
@@ -2912,9 +2897,6 @@ sctp_inpcb_alloc(struct socket *so, uint32_t vrf_id)
 		so->so_pcb = NULL;
 #if defined(__FreeBSD__)
 		crfree(inp->ip_inp.inp.inp_cred);
-#ifdef IPSEC
-		ipsec_delete_pcbpolicy(&inp->ip_inp.inp);
-#endif
 #endif
 		SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_ep), inp);
 		return (EOPNOTSUPP);
@@ -2937,9 +2919,6 @@ sctp_inpcb_alloc(struct socket *so, uint32_t vrf_id)
 		so->so_pcb = NULL;
 #if defined(__FreeBSD__)
 		crfree(inp->ip_inp.inp.inp_cred);
-#ifdef IPSEC
-		ipsec_delete_pcbpolicy(&inp->ip_inp.inp);
-#endif
 #endif
 		SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_ep), inp);
 		return (ENOBUFS);
@@ -2954,9 +2933,6 @@ sctp_inpcb_alloc(struct socket *so, uint32_t vrf_id)
 		SCTP_HASH_FREE(inp->sctp_tcbhash, inp->sctp_hashmark);
 #if defined(__FreeBSD__)
 		crfree(inp->ip_inp.inp.inp_cred);
-#ifdef IPSEC
-		ipsec_delete_pcbpolicy(&inp->ip_inp.inp);
-#endif
 #endif
 		SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_ep), inp);
 		return (ENOBUFS);
@@ -2976,12 +2952,6 @@ sctp_inpcb_alloc(struct socket *so, uint32_t vrf_id)
 #endif
 		SCTP_HASH_FREE(inp->sctp_tcbhash, inp->sctp_hashmark);
 		so->so_pcb = NULL;
-#if defined(__FreeBSD__)
-		crfree(inp->ip_inp.inp.inp_cred);
-#ifdef IPSEC
-		ipsec_delete_pcbpolicy(&inp->ip_inp.inp);
-#endif
-#endif
 		SCTP_ZONE_FREE(SCTP_BASE_INFO(ipi_zone_ep), inp);
 		SCTP_UNLOCK_EXC(SCTP_BASE_INFO(sctbinfo).ipi_lock);
 		SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP_PCB, ENOMEM);
@@ -4271,9 +4241,6 @@ sctp_inpcb_free(struct sctp_inpcb *inp, int immediate, int from)
 	 * macro here since le_next will get freed as part of the
 	 * sctp_free_assoc() call.
 	 */
-#ifdef IPSEC
-	ipsec_delete_pcbpolicy(ip_pcb);
-#endif
 #ifndef __Panda__
 	if (ip_pcb->inp_options) {
 		(void)sctp_m_free(ip_pcb->inp_options);
@@ -5589,7 +5556,7 @@ sctp_free_assoc(struct sctp_inpcb *inp, struct sctp_tcb *stcb, int from_inpcbfre
 						 */
 						uint32_t strseq;
 						stcb->asoc.control_pdapi = sq;
-						strseq = (sq->sinfo_stream << 16) | sq->sinfo_ssn;
+						strseq = (sq->sinfo_stream << 16) | (sq->mid & 0x0000ffff);
 						sctp_ulp_notify(SCTP_NOTIFY_PARTIAL_DELVIERY_INDICATION,
 						                stcb,
 						                SCTP_PARTIAL_DELIVERY_ABORTED,
@@ -5689,6 +5656,7 @@ sctp_free_assoc(struct sctp_inpcb *inp, struct sctp_tcb *stcb, int from_inpcbfre
 #else
 				socantrcvmore_locked(so);
 #endif
+				socantsendmore(so);
 				sctp_sowwakeup(inp, so);
 				sctp_sorwakeup(inp, so);
 				SCTP_SOWAKEUP(so);
@@ -5817,11 +5785,11 @@ sctp_free_assoc(struct sctp_inpcb *inp, struct sctp_tcb *stcb, int from_inpcbfre
 	}
 	/* pending send queue SHOULD be empty */
 	TAILQ_FOREACH_SAFE(chk, &asoc->send_queue, sctp_next, nchk) {
-		if (asoc->strmout[chk->rec.data.stream_number].chunks_on_queues > 0) {
-			asoc->strmout[chk->rec.data.stream_number].chunks_on_queues--;
+		if (asoc->strmout[chk->rec.data.sid].chunks_on_queues > 0) {
+			asoc->strmout[chk->rec.data.sid].chunks_on_queues--;
 #ifdef INVARIANTS
 		} else {
-			panic("No chunks on the queues for sid %u.", chk->rec.data.stream_number);
+			panic("No chunks on the queues for sid %u.", chk->rec.data.sid);
 #endif
 		}
 		TAILQ_REMOVE(&asoc->send_queue, chk, sctp_next);
@@ -5849,11 +5817,11 @@ sctp_free_assoc(struct sctp_inpcb *inp, struct sctp_tcb *stcb, int from_inpcbfre
 	/* sent queue SHOULD be empty */
 	TAILQ_FOREACH_SAFE(chk, &asoc->sent_queue, sctp_next, nchk) {
 		if (chk->sent != SCTP_DATAGRAM_NR_ACKED) {
-			if (asoc->strmout[chk->rec.data.stream_number].chunks_on_queues > 0) {
-				asoc->strmout[chk->rec.data.stream_number].chunks_on_queues--;
+			if (asoc->strmout[chk->rec.data.sid].chunks_on_queues > 0) {
+				asoc->strmout[chk->rec.data.sid].chunks_on_queues--;
 #ifdef INVARIANTS
 			} else {
-				panic("No chunks on the queues for sid %u.", chk->rec.data.stream_number);
+				panic("No chunks on the queues for sid %u.", chk->rec.data.sid);
 #endif
 			}
 		}
@@ -6844,8 +6812,7 @@ sctp_pcb_init()
 	TAILQ_INIT(&SCTP_BASE_INFO(callqueue));
 #endif
 #if defined(__Userspace__)
-	mbuf_init(NULL);
-    // atomic_init();
+	mbuf_initialize(NULL);
 #if defined(INET) || defined(INET6)
 	recv_thread_init();
 #endif
@@ -7926,7 +7893,7 @@ sctp_drain_mbufs(struct sctp_tcb *stcb)
 				/* Now its reasm? */
 				TAILQ_FOREACH_SAFE(chk, &ctl->reasm, sctp_next, nchk) {
 					cnt++;
-					SCTP_CALC_TSN_TO_GAP(gap, chk->rec.data.TSN_seq, asoc->mapping_array_base_tsn);
+					SCTP_CALC_TSN_TO_GAP(gap, chk->rec.data.tsn, asoc->mapping_array_base_tsn);
 					asoc->size_on_reasm_queue = sctp_sbspace_sub(asoc->size_on_reasm_queue, chk->send_size);
 					sctp_ucount_decr(asoc->cnt_on_reasm_queue);
 					SCTP_UNSET_TSN_PRESENT(asoc->mapping_array, gap);
@@ -7968,7 +7935,7 @@ sctp_drain_mbufs(struct sctp_tcb *stcb)
 				/* Now its reasm? */
 				TAILQ_FOREACH_SAFE(chk, &ctl->reasm, sctp_next, nchk) {
 					cnt++;
-					SCTP_CALC_TSN_TO_GAP(gap, chk->rec.data.TSN_seq, asoc->mapping_array_base_tsn);
+					SCTP_CALC_TSN_TO_GAP(gap, chk->rec.data.tsn, asoc->mapping_array_base_tsn);
 					asoc->size_on_reasm_queue = sctp_sbspace_sub(asoc->size_on_reasm_queue, chk->send_size);
 					sctp_ucount_decr(asoc->cnt_on_reasm_queue);
 					SCTP_UNSET_TSN_PRESENT(asoc->mapping_array, gap);

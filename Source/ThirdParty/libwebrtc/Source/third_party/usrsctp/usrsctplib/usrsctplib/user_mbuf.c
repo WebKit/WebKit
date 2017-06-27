@@ -121,7 +121,7 @@ m_get(int how, short type)
 	mbuf_mb_args.type = type;
 #endif
 	/* Mbuf master zone, zone_mbuf, has already been
-	 * created in mbuf_init() */
+	 * created in mbuf_initialize() */
 	mret = SCTP_ZONE_GET(zone_mbuf, struct mbuf);
 #if defined(SCTP_SIMPLE_ALLOCATOR)
 	mb_ctor_mbuf(mret, &mbuf_mb_args, 0);
@@ -327,12 +327,8 @@ m_tag_setup(struct m_tag *t, u_int32_t cookie, int type, int len)
 
 /************ End functions to substitute umem_cache_alloc and umem_cache_free **************/
 
-/* __Userspace__
- * TODO: mbuf_init must be called in the initialization routines
- * of userspace stack.
- */
 void
-mbuf_init(void *dummy)
+mbuf_initialize(void *dummy)
 {
 
 	/*

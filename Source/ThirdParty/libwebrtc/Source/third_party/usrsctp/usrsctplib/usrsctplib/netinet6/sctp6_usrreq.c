@@ -32,7 +32,7 @@
 
 #ifdef __FreeBSD__
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet6/sctp6_usrreq.c 302138 2016-06-23 09:13:15Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet6/sctp6_usrreq.c 313330 2017-02-06 08:49:57Z ae $");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -64,11 +64,6 @@ __FBSDID("$FreeBSD: head/sys/netinet6/sctp6_usrreq.c 302138 2016-06-23 09:13:15Z
 #if defined(__APPLE__)
 #define APPLE_FILE_NO 9
 #endif
-#ifdef IPSEC
-#include <netipsec/ipsec.h>
-#include <netipsec/ipsec6.h>
-#endif /* IPSEC */
-
 #if !defined(__Userspace__)
 extern struct protosw inetsw[];
 #endif
@@ -798,10 +793,6 @@ sctp6_attach(struct socket *so, int proto SCTP_UNUSED, struct proc *p SCTP_UNUSE
 	 */
 	inp6->inp_ip_ttl = MODULE_GLOBAL(ip_defttl);
 #endif
-	/*
-	 * Hmm what about the IPSEC stuff that is missing here but in
-	 * sctp_attach()?
-	 */
 	SCTP_INP_WUNLOCK(inp);
 	return (0);
 }

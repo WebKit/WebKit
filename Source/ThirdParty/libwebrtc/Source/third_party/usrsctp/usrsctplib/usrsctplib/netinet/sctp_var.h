@@ -32,7 +32,7 @@
 
 #ifdef __FreeBSD__
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_var.h 301114 2016-06-01 10:14:04Z bz $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctp_var.h 309682 2016-12-07 19:30:59Z tuexen $");
 #endif
 
 #ifndef _NETINET_SCTP_VAR_H_
@@ -340,7 +340,7 @@ extern struct pr_usrreqs sctp_usrreqs;
 	if (stcb->asoc.fs_index > SCTP_FS_SPEC_LOG_SIZE) \
 		stcb->asoc.fs_index = 0;\
 	stcb->asoc.fslog[stcb->asoc.fs_index].total_flight = stcb->asoc.total_flight; \
-	stcb->asoc.fslog[stcb->asoc.fs_index].tsn = tp1->rec.data.TSN_seq; \
+	stcb->asoc.fslog[stcb->asoc.fs_index].tsn = tp1->rec.data.tsn; \
 	stcb->asoc.fslog[stcb->asoc.fs_index].book = tp1->book_size; \
 	stcb->asoc.fslog[stcb->asoc.fs_index].sent = tp1->sent; \
 	stcb->asoc.fslog[stcb->asoc.fs_index].incr = 0; \
@@ -361,7 +361,7 @@ extern struct pr_usrreqs sctp_usrreqs;
 	if (stcb->asoc.fs_index > SCTP_FS_SPEC_LOG_SIZE) \
 		stcb->asoc.fs_index = 0;\
 	stcb->asoc.fslog[stcb->asoc.fs_index].total_flight = stcb->asoc.total_flight; \
-	stcb->asoc.fslog[stcb->asoc.fs_index].tsn = tp1->rec.data.TSN_seq; \
+	stcb->asoc.fslog[stcb->asoc.fs_index].tsn = tp1->rec.data.tsn; \
 	stcb->asoc.fslog[stcb->asoc.fs_index].book = tp1->book_size; \
 	stcb->asoc.fslog[stcb->asoc.fs_index].sent = tp1->sent; \
 	stcb->asoc.fslog[stcb->asoc.fs_index].incr = 1; \

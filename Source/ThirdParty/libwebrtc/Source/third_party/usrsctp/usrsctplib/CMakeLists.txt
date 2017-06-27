@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2015-2015 Oleg Alexeenkov
-# Copyright (C) 2015-2015 Felix Weinrank
+# Copyright (C) 2015-2017 Felix Weinrank
 #
 # All rights reserved.
 #
@@ -35,12 +35,6 @@ cmake_minimum_required(VERSION 2.6)
 if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "No build type selected, using DEBUG")
     set(CMAKE_BUILD_TYPE "DEBUG")
-endif()
-
-# Enable verbose output in DEBUG mode
-if (${CMAKE_BUILD_TYPE} MATCHES "DEBUG")
-    message(STATUS "enabling verbose outout")
-    set(CMAKE_VERBOSE_MAKEFILE on)
 endif()
 
 add_subdirectory(usrsctplib)

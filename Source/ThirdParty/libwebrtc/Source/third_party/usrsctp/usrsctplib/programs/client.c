@@ -97,6 +97,10 @@ main(int argc, char *argv[])
 	char buffer[80];
 	int i, n;
 
+	if (argc < 3) {
+		printf("%s", "Usage: client remote_addr remote_port local_port local_encaps_port remote_encaps_port\n");
+		return (-1);
+	}
 	if (argc > 4) {
 		usrsctp_init(atoi(argv[4]), NULL, debug_printf);
 	} else {

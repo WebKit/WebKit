@@ -470,6 +470,10 @@ main(int argc, char *argv[])
                 flags = SCTP_UNORDERED;
                 prinfo.pr_policy = SCTP_PR_SCTP_TTL;
                 break;
+              default:
+                flags = 0;
+                prinfo.pr_policy = 0;
+                break;
             }
 						sndinfo.snd_sid = stream;
 						sndinfo.snd_flags = flags;

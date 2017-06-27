@@ -32,7 +32,7 @@
 
 #ifdef __FreeBSD__
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctputil.c 304736 2016-08-24 06:22:53Z tuexen $");
+__FBSDID("$FreeBSD: head/sys/netinet/sctputil.c 310590 2016-12-26 11:06:41Z tuexen $");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -310,11 +310,11 @@ sctp_log_strm_del(struct sctp_queued_to_read *control, struct sctp_queued_to_rea
 	}
 	sctp_clog.x.strlog.stcb = control->stcb;
 	sctp_clog.x.strlog.n_tsn = control->sinfo_tsn;
-	sctp_clog.x.strlog.n_sseq = control->sinfo_ssn;
+	sctp_clog.x.strlog.n_sseq = (uint16_t)control->mid;
 	sctp_clog.x.strlog.strm = control->sinfo_stream;
 	if (poschk != NULL) {
 		sctp_clog.x.strlog.e_tsn = poschk->sinfo_tsn;
-		sctp_clog.x.strlog.e_sseq = poschk->sinfo_ssn;
+		sctp_clog.x.strlog.e_sseq = (uint16_t)poschk->mid;
 	} else {
 		sctp_clog.x.strlog.e_tsn = 0;
 		sctp_clog.x.strlog.e_sseq = 0;
@@ -1212,7 +1212,7 @@ sctp_init_asoc(struct sctp_inpcb *inp, struct sctp_tcb *stcb,
 		asoc->strmout[i].abandoned_sent[0] = 0;
 		asoc->strmout[i].abandoned_unsent[0] = 0;
 #endif
-		asoc->strmout[i].stream_no = i;
+		asoc->strmout[i].sid = i;
 		asoc->strmout[i].last_msg_incomplete = 0;
 		asoc->strmout[i].state = SCTP_STREAM_OPENING;
 		asoc->ss_functions.sctp_ss_init_stream(stcb, &asoc->strmout[i], NULL);
@@ -3117,9 +3117,9 @@ sctp_notify_send_failed(struct sctp_tcb *stcb, uint8_t sent, uint32_t error,
 		ssfe->ssfe_length = (uint32_t)(notifhdr_len + payload_len);
 		ssfe->ssfe_error = error;
 		/* not exactly what the user sent in, but should be close :) */
-		ssfe->ssfe_info.snd_sid = chk->rec.data.stream_number;
+		ssfe->ssfe_info.snd_sid = chk->rec.data.sid;
 		ssfe->ssfe_info.snd_flags = chk->rec.data.rcv_flags;
-		ssfe->ssfe_info.snd_ppid = chk->rec.data.payloadtype;
+		ssfe->ssfe_info.snd_ppid = chk->rec.data.ppid;
 		ssfe->ssfe_info.snd_context = chk->rec.data.context;
 		ssfe->ssfe_info.snd_assoc_id = sctp_get_associd(stcb);
 		ssfe->ssfe_assoc_id = sctp_get_associd(stcb);
@@ -3135,10 +3135,10 @@ sctp_notify_send_failed(struct sctp_tcb *stcb, uint8_t sent, uint32_t error,
 		ssf->ssf_length = (uint32_t)(notifhdr_len + payload_len);
 		ssf->ssf_error = error;
 		/* not exactly what the user sent in, but should be close :) */
-		ssf->ssf_info.sinfo_stream = chk->rec.data.stream_number;
-		ssf->ssf_info.sinfo_ssn = (uint16_t)chk->rec.data.stream_seq;
+		ssf->ssf_info.sinfo_stream = chk->rec.data.sid;
+		ssf->ssf_info.sinfo_ssn = (uint16_t)chk->rec.data.mid;
 		ssf->ssf_info.sinfo_flags = chk->rec.data.rcv_flags;
-		ssf->ssf_info.sinfo_ppid = chk->rec.data.payloadtype;
+		ssf->ssf_info.sinfo_ppid = chk->rec.data.ppid;
 		ssf->ssf_info.sinfo_context = chk->rec.data.context;
 		ssf->ssf_info.sinfo_assoc_id = sctp_get_associd(stcb);
 		ssf->ssf_assoc_id = sctp_get_associd(stcb);
@@ -3221,7 +3221,7 @@ sctp_notify_send_failed2(struct sctp_tcb *stcb, uint32_t error,
 		ssfe->ssfe_length = (uint32_t)(notifhdr_len + sp->length);
 		ssfe->ssfe_error = error;
 		/* not exactly what the user sent in, but should be close :) */
-		ssfe->ssfe_info.snd_sid = sp->stream;
+		ssfe->ssfe_info.snd_sid = sp->sid;
 		if (sp->some_taken) {
 			ssfe->ssfe_info.snd_flags = SCTP_DATA_LAST_FRAG;
 		} else {
@@ -3239,7 +3239,7 @@ sctp_notify_send_failed2(struct sctp_tcb *stcb, uint32_t error,
 		ssf->ssf_length = (uint32_t)(notifhdr_len + sp->length);
 		ssf->ssf_error = error;
 		/* not exactly what the user sent in, but should be close :) */
-		ssf->ssf_info.sinfo_stream = sp->stream;
+		ssf->ssf_info.sinfo_stream = sp->sid;
 		ssf->ssf_info.sinfo_ssn = 0;
 		if (sp->some_taken) {
 			ssf->ssf_info.sinfo_flags = SCTP_DATA_LAST_FRAG;
@@ -4027,11 +4027,11 @@ sctp_report_all_outbound(struct sctp_tcb *stcb, uint16_t error, int holds_lock, 
 		TAILQ_REMOVE(&asoc->sent_queue, chk, sctp_next);
 		asoc->sent_queue_cnt--;
 		if (chk->sent != SCTP_DATAGRAM_NR_ACKED) {
-			if (asoc->strmout[chk->rec.data.stream_number].chunks_on_queues > 0) {
-				asoc->strmout[chk->rec.data.stream_number].chunks_on_queues--;
+			if (asoc->strmout[chk->rec.data.sid].chunks_on_queues > 0) {
+				asoc->strmout[chk->rec.data.sid].chunks_on_queues--;
 #ifdef INVARIANTS
 			} else {
-				panic("No chunks on the queues for sid %u.", chk->rec.data.stream_number);
+				panic("No chunks on the queues for sid %u.", chk->rec.data.sid);
 #endif
 			}
 		}
@@ -4051,11 +4051,11 @@ sctp_report_all_outbound(struct sctp_tcb *stcb, uint16_t error, int holds_lock, 
 	TAILQ_FOREACH_SAFE(chk, &asoc->send_queue, sctp_next, nchk) {
 		TAILQ_REMOVE(&asoc->send_queue, chk, sctp_next);
 		asoc->send_queue_cnt--;
-		if (asoc->strmout[chk->rec.data.stream_number].chunks_on_queues > 0) {
-			asoc->strmout[chk->rec.data.stream_number].chunks_on_queues--;
+		if (asoc->strmout[chk->rec.data.sid].chunks_on_queues > 0) {
+			asoc->strmout[chk->rec.data.sid].chunks_on_queues--;
 #ifdef INVARIANTS
 		} else {
-			panic("No chunks on the queues for sid %u.", chk->rec.data.stream_number);
+			panic("No chunks on the queues for sid %u.", chk->rec.data.sid);
 #endif
 		}
 		if (chk->data != NULL) {
@@ -4840,7 +4840,7 @@ sctp_invoke_recv_callback(struct sctp_inpcb *inp,
 		m_copydata(control->data, 0, length, buffer);
 		memset(&rcv, 0, sizeof(struct sctp_rcvinfo));
 		rcv.rcv_sid = control->sinfo_stream;
-		rcv.rcv_ssn = control->sinfo_ssn;
+		rcv.rcv_ssn = (uint16_t)control->mid;
 		rcv.rcv_flags = control->sinfo_flags;
 		rcv.rcv_ppid = control->sinfo_ppid;
 		rcv.rcv_tsn = control->sinfo_tsn;
@@ -5053,7 +5053,7 @@ sctp_generate_no_user_data_cause(uint32_t tsn)
 		no_user_data_cause = mtod(m, struct sctp_error_no_user_data *);
 		no_user_data_cause->cause.code = htons(SCTP_CAUSE_NO_USER_DATA);
 		no_user_data_cause->cause.length = htons(len);
-		no_user_data_cause->tsn = tsn; /* tsn is passed in as NBO */
+		no_user_data_cause->tsn = htonl(tsn);
 	}
 	return (m);
 }
@@ -5104,7 +5104,8 @@ sctp_release_pr_sctp_chunk(struct sctp_tcb *stcb, struct sctp_tmit_chunk *tp1,
 	struct sctp_stream_out *strq;
 	struct sctp_tmit_chunk *chk = NULL, *tp2;
 	struct sctp_stream_queue_pending *sp;
-	uint16_t stream = 0, seq = 0;
+	uint32_t mid;
+	uint16_t sid;
 	uint8_t foundeom = 0;
 	int ret_sz = 0;
 	int notdone;
@@ -5117,19 +5118,19 @@ sctp_release_pr_sctp_chunk(struct sctp_tcb *stcb, struct sctp_tmit_chunk *tp1,
 		sctp_unlock_assert(SCTP_INP_SO(stcb->sctp_ep));
 	}
 #endif
-	stream = tp1->rec.data.stream_number;
-	seq = tp1->rec.data.stream_seq;
+	sid = tp1->rec.data.sid;
+	mid = tp1->rec.data.mid;
 	if (sent || !(tp1->rec.data.rcv_flags & SCTP_DATA_FIRST_FRAG)) {
 		stcb->asoc.abandoned_sent[0]++;
 		stcb->asoc.abandoned_sent[PR_SCTP_POLICY(tp1->flags)]++;
-		stcb->asoc.strmout[stream].abandoned_sent[0]++;
+		stcb->asoc.strmout[sid].abandoned_sent[0]++;
 #if defined(SCTP_DETAILED_STR_STATS)
 		stcb->asoc.strmout[stream].abandoned_sent[PR_SCTP_POLICY(tp1->flags)]++;
 #endif
 	} else {
 		stcb->asoc.abandoned_unsent[0]++;
 		stcb->asoc.abandoned_unsent[PR_SCTP_POLICY(tp1->flags)]++;
-		stcb->asoc.strmout[stream].abandoned_unsent[0]++;
+		stcb->asoc.strmout[sid].abandoned_unsent[0]++;
 #if defined(SCTP_DETAILED_STR_STATS)
 		stcb->asoc.strmout[stream].abandoned_unsent[PR_SCTP_POLICY(tp1->flags)]++;
 #endif
@@ -5183,8 +5184,8 @@ sctp_release_pr_sctp_chunk(struct sctp_tcb *stcb, struct sctp_tmit_chunk *tp1,
 		 * sent queue.
 		 */
 		TAILQ_FOREACH_SAFE(tp1, &stcb->asoc.send_queue, sctp_next, tp2) {
-			if ((tp1->rec.data.stream_number != stream) ||
-			    (tp1->rec.data.stream_seq != seq)) {
+			if ((tp1->rec.data.sid != sid) ||
+			    (!SCTP_MID_EQ(stcb->asoc.idata_supported, tp1->rec.data.mid, mid))) {
 				break;
 			}
 			/* save to chk in case we have some on stream out
@@ -5224,7 +5225,7 @@ sctp_release_pr_sctp_chunk(struct sctp_tcb *stcb, struct sctp_tmit_chunk *tp1,
 		 * is stuff left on the stream out queue.. yuck.
 		 */
 		SCTP_TCB_SEND_LOCK(stcb);
-		strq = &stcb->asoc.strmout[stream];
+		strq = &stcb->asoc.strmout[sid];
 		sp = TAILQ_FIRST(&strq->outqueue);
 		if (sp != NULL) {
 			sp->discard_rest = 1;
@@ -5251,26 +5252,26 @@ sctp_release_pr_sctp_chunk(struct sctp_tcb *stcb, struct sctp_tmit_chunk *tp1,
 				chk->asoc = &stcb->asoc;
 				if (stcb->asoc.idata_supported == 0) {
 					if (sp->sinfo_flags & SCTP_UNORDERED) {
-						chk->rec.data.stream_seq = 0;
+						chk->rec.data.mid = 0;
 					} else {
-						chk->rec.data.stream_seq = strq->next_mid_ordered;
+						chk->rec.data.mid = strq->next_mid_ordered;
 					}
 				} else {
 					if (sp->sinfo_flags & SCTP_UNORDERED) {
-						chk->rec.data.stream_seq = strq->next_mid_unordered;
+						chk->rec.data.mid = strq->next_mid_unordered;
 					} else {
-						chk->rec.data.stream_seq = strq->next_mid_ordered;
+						chk->rec.data.mid = strq->next_mid_ordered;
 					}
 				}
-				chk->rec.data.stream_number = sp->stream;
-				chk->rec.data.payloadtype = sp->ppid;
+				chk->rec.data.sid = sp->sid;
+				chk->rec.data.ppid = sp->ppid;
 				chk->rec.data.context = sp->context;
 				chk->flags = sp->act_flags;
 				chk->whoTo = NULL;
 #if defined(__FreeBSD__) || defined(__Panda__)
-				chk->rec.data.TSN_seq = atomic_fetchadd_int(&stcb->asoc.sending_seq, 1);
+				chk->rec.data.tsn = atomic_fetchadd_int(&stcb->asoc.sending_seq, 1);
 #else
-				chk->rec.data.TSN_seq = stcb->asoc.sending_seq++;
+				chk->rec.data.tsn = stcb->asoc.sending_seq++;
 #endif
 				strq->chunks_on_queues++;
 				TAILQ_INSERT_TAIL(&stcb->asoc.sent_queue, chk, sctp_next);
@@ -6055,7 +6056,7 @@ sctp_sorecvmsg(struct socket *so,
 	/* First lets get off the sinfo and sockaddr info */
 	if ((sinfo != NULL) && (filling_sinfo != 0)) {
 		sinfo->sinfo_stream = control->sinfo_stream;
-		sinfo->sinfo_ssn = (uint16_t)control->sinfo_ssn;
+		sinfo->sinfo_ssn = (uint16_t)control->mid;
 		sinfo->sinfo_flags = control->sinfo_flags;
 		sinfo->sinfo_ppid = control->sinfo_ppid;
 		sinfo->sinfo_context =control->sinfo_context;
@@ -6127,7 +6128,7 @@ sctp_sorecvmsg(struct socket *so,
 		entry = &inp->readlog[index];
 		entry->vtag = control->sinfo_assoc_id;
 		entry->strm = control->sinfo_stream;
-		entry->seq = control->sinfo_ssn;
+		entry->seq = (uint16_t)control->mid;
 		entry->sz = control->length;
 		entry->flgs = control->sinfo_flags;
 	}

@@ -765,6 +765,19 @@ srtp_stream_init_keys(srtp_stream_ctx_t *srtp, const void *key) {
       rtp_xtn_hdr_keylen = srtp_cipher_get_key_length(srtp->rtp_xtn_hdr_cipher);
       rtp_xtn_hdr_base_key_len = base_key_length(srtp->rtp_xtn_hdr_cipher->type, rtp_xtn_hdr_keylen);
       rtp_xtn_hdr_salt_len = rtp_xtn_hdr_keylen - rtp_xtn_hdr_base_key_len;
+      if (rtp_xtn_hdr_salt_len > rtp_salt_len) {
+        switch (srtp->rtp_cipher->type->id) {
+          case SRTP_AES_128_GCM:
+          case SRTP_AES_256_GCM:
+            /* The shorter GCM salt is padded to the required ICM salt length. */
+            rtp_xtn_hdr_salt_len = rtp_salt_len;
+            break;
+          default:
+            /* zeroize temp buffer */
+            octet_string_set_to_zero(tmp_key, MAX_SRTP_KEY_LEN);
+            return srtp_err_status_bad_param;
+        }
+      }
       memset(tmp_xtn_hdr_key, 0x0, MAX_SRTP_KEY_LEN);
       memcpy(tmp_xtn_hdr_key, key, (rtp_xtn_hdr_base_key_len + rtp_xtn_hdr_salt_len));
       xtn_hdr_kdf = &tmp_kdf;
@@ -2861,9 +2874,13 @@ srtp_crypto_policy_set_aes_gcm_256_16_auth(srtp_crypto_policy_t *p) {
  *         seq_num - The SEQ value to use for the IV calculation.
  *         *hdr    - The RTP header, used to get the SSRC value
  *
+ * Returns: srtp_err_status_ok if no error or srtp_err_status_bad_param
+ *          if seq_num is invalid
+ *
  */
-static void srtp_calc_aead_iv_srtcp(srtp_stream_ctx_t *stream, v128_t *iv, 
-                                    uint32_t seq_num, srtcp_hdr_t *hdr)
+static srtp_err_status_t
+srtp_calc_aead_iv_srtcp(srtp_stream_ctx_t *stream, v128_t *iv,
+                        uint32_t seq_num, srtcp_hdr_t *hdr)
 {
     v128_t	in;
     v128_t	salt;
@@ -2874,7 +2891,15 @@ static void srtp_calc_aead_iv_srtcp(srtp_stream_ctx_t *stream, v128_t *iv,
     in.v16[0] = 0;
     memcpy(&in.v16[1], &hdr->ssrc, 4); /* still in network order! */
     in.v16[3] = 0;
-    in.v32[2] = 0x7FFFFFFF & htonl(seq_num); /* bit 32 is suppose to be zero */
+
+    /*
+     *  The SRTCP index (seq_num) spans bits 0 through 30 inclusive.
+     *  The most significant bit should be zero.
+     */
+    if (seq_num & 0x80000000UL) {
+        return srtp_err_status_bad_param;
+    }
+    in.v32[2] = htonl(seq_num);
 
     debug_print(mod_srtp, "Pre-salted RTCP IV = %s\n", v128_hex_string(&in));
 
@@ -2888,6 +2913,8 @@ static void srtp_calc_aead_iv_srtcp(srtp_stream_ctx_t *stream, v128_t *iv,
      * Finally, apply the SALT to the input
      */
     v128_xor(iv, &in, &salt);
+
+    return srtp_err_status_ok;
 }
 
 /*
@@ -2955,9 +2982,12 @@ srtp_protect_rtcp_aead (srtp_t ctx, srtp_stream_ctx_t *stream,
     debug_print(mod_srtp, "srtcp index: %x", seq_num);
 
     /*
-     * Calculating the IV and pass it down to the cipher 
+     * Calculate and set the IV
      */
-    srtp_calc_aead_iv_srtcp(stream, &iv, seq_num, hdr);
+    status = srtp_calc_aead_iv_srtcp(stream, &iv, seq_num, hdr);
+    if (status) {
+        return srtp_err_status_cipher_fail;
+    }
     status = srtp_cipher_set_iv(stream->rtcp_cipher, (uint8_t*)&iv, srtp_direction_encrypt);
     if (status) {
         return srtp_err_status_cipher_fail;
@@ -3102,7 +3132,10 @@ srtp_unprotect_rtcp_aead (srtp_t ctx, srtp_stream_ctx_t *stream,
     /*
      * Calculate and set the IV
      */
-    srtp_calc_aead_iv_srtcp(stream, &iv, seq_num, hdr);
+    status = srtp_calc_aead_iv_srtcp(stream, &iv, seq_num, hdr);
+    if (status) {
+        return srtp_err_status_cipher_fail;
+    }
     status = srtp_cipher_set_iv(stream->rtcp_cipher, (uint8_t*)&iv, srtp_direction_decrypt);
     if (status) {
         return srtp_err_status_cipher_fail;
