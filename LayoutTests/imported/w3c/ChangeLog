@@ -1,3 +1,16 @@
+2017-06-27  Frederic Wang  <fwang@igalia.com>
+
+        Some tests to verify forbidden frame navigation time out
+        https://bugs.webkit.org/show_bug.cgi?id=173657
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation-2-expected.txt: Update the text expectation to PASS.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation_by_user_activation_without_user_gesture-expected.txt: Ditto.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_navigate_ancestor-1-expected.txt: Ditto.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-3-expected.txt: Add the security error until bug 173162 is fixed.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-3-expected.txt: Ditto.
+
 2017-06-23  Youenn Fablet  <youenn@apple.com>
 
         Set getUserMedia permission to true by default on WTR

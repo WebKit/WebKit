@@ -30,14 +30,14 @@ window.addEventListener("message", function(e) {
 
     if (e.data = "iframe-with-inner-frame-on-foreign-domain-LOADED") {
         log("Attempting navigation...");
-        window.savedFunction();
-        setTimeout(function() {
-            // Unfortunately, there's no way to receive positive confirmation
-            // that the navigation failed, so we just complete the test
-            // asynchronously.
+        try {
+            window.savedFunction();
             if (window.testRunner)
                 testRunner.notifyDone();
-        }, 0);
+        } catch(e) {
+            log(e);
+            testRunner.notifyDone();
+        }
         return;
     }
 

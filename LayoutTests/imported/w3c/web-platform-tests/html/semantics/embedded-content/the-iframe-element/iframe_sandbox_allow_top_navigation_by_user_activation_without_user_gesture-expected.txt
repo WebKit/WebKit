@@ -5,5 +5,5 @@ This tests that an iframe in sandbox with 'allow-top-navigation-by-user-activati
 
 
 
-FAIL The sandboxed iframe should post a message saying the test was in the state of 'PASS'. assert_equals: The message should say 'PASS' instead of 'FAIL' expected "PASS" but got "FAIL"
+PASS The sandboxed iframe should post a message saying the test was in the state of 'PASS'. 
 

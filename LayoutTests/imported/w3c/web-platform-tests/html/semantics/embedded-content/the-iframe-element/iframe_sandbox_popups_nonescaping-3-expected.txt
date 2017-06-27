@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: line 15: Unsafe JavaScript attempt to initiate navigation for frame with URL 'about:blank' from frame with URL 'http://localhost:8800/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_helper-3.html'. The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors.
 
+CONSOLE MESSAGE: line 15: SecurityError (DOM Exception 18): The operation is insecure.
 
 
 Harness Error (TIMEOUT), message = null

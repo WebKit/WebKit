@@ -1,3 +1,35 @@
+2017-06-27  Frederic Wang  <fwang@igalia.com>
+
+        Some tests to verify forbidden frame navigation time out
+        https://bugs.webkit.org/show_bug.cgi?id=173657
+
+        Reviewed by Chris Dumez.
+
+        Currently some tests try and perform a forbidden frame navigation and verify the
+        corresponding console error. However, WebKit does not raise any exception for such error so
+        the tests have to wait until the timeout limit to complete, which makes execution slow.
+        This patch modifies the setters of window.location for which such error may happen in order
+        to raise an exception so the tests behave as expected.
+
+        No new tests, already covered by existing tests.
+
+        * page/Location.cpp: Adjust Location::setLocation to return a security exception and pass it
+        to the callers.
+        (WebCore::Location::setHref): Adjust function to possibly return an exception.
+        (WebCore::Location::setProtocol): Ditto.
+        (WebCore::Location::setHost): Ditto.
+        (WebCore::Location::setHostname): Ditto.
+        (WebCore::Location::setPort): Ditto.
+        (WebCore::Location::setPathname): Ditto.
+        (WebCore::Location::setSearch): Ditto.
+        (WebCore::Location::setHash): Ditto.
+        (WebCore::Location::assign): Ditto.
+        (WebCore::Location::setLocation): FrameLoader::findFrameForNavigation is really only used
+        to verify whether navigating m_frame is permitted so it is more simple and clearer to do it
+        directly. When navigation is not permitted, this function now raises a security exception.
+        * page/Location.h: Modify some setters to return an ExceptionOr<void>.
+        * page/Location.idl: Allow some setters to raise an exception.
+
 2017-06-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Layout Test webrtc/video.html issues "stack smashing detected"
