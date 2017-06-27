@@ -722,3 +722,6 @@ http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass ]
 
 webkit.org/b/172922 webrtc/datachannel/basic.html [ Pass Timeout ]
 
+webkit.org/b/173499 [ Release ] http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
+
+
