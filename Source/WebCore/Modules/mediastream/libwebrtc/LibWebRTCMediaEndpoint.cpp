@@ -1051,7 +1051,7 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
     for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
         if (iterator->type() == webrtc::RTCCodecStats::kType)
             continue;
-        RELEASE_LOG(WebRTC, "WebRTC stats for %p: %s", this, iterator->ToString().c_str());
+        RELEASE_LOG(WebRTC, "WebRTC stats for %p: %{public}s", this, iterator->ToString().c_str());
     }
 #else
     UNUSED_PARAM(report);

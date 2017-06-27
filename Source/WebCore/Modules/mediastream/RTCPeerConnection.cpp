@@ -236,7 +236,7 @@ void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDe
 
 void RTCPeerConnection::queuedSetLocalDescription(RTCSessionDescription& description, DOMPromiseDeferred<void>&& promise)
 {
-    RELEASE_LOG(WebRTC, "Setting local description:\n%s\n", description.sdp().utf8().data());
+    RELEASE_LOG(WebRTC, "Setting local description:\n%{public}s\n", description.sdp().utf8().data());
     if (isClosed()) {
         promise.reject(INVALID_STATE_ERR);
         return;
@@ -262,7 +262,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingLocalDescription() const
 
 void RTCPeerConnection::queuedSetRemoteDescription(RTCSessionDescription& description, DOMPromiseDeferred<void>&& promise)
 {
-    RELEASE_LOG(WebRTC, "Setting remote description:\n%s\n", description.sdp().utf8().data());
+    RELEASE_LOG(WebRTC, "Setting remote description:\n%{public}s\n", description.sdp().utf8().data());
 
     if (isClosed()) {
         promise.reject(INVALID_STATE_ERR);
@@ -288,7 +288,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingRemoteDescription() cons
 
 void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOMPromiseDeferred<void>&& promise)
 {
-    RELEASE_LOG(WebRTC, "Received ice candidate:\n%s\n", rtcCandidate ? rtcCandidate->candidate().utf8().data() : "null");
+    RELEASE_LOG(WebRTC, "Received ice candidate:\n%{public}s\n", rtcCandidate ? rtcCandidate->candidate().utf8().data() : "null");
 
     if (isClosed()) {
         promise.reject(INVALID_STATE_ERR);
@@ -464,7 +464,7 @@ static inline const char* rtcIceGatheringStateToString(RTCIceGatheringState newS
 
 void RTCPeerConnection::updateIceGatheringState(RTCIceGatheringState newState)
 {
-    RELEASE_LOG(WebRTC, "New ICE gathering state: %s\n", rtcIceGatheringStateToString(newState));
+    RELEASE_LOG(WebRTC, "New ICE gathering state: %{public}s\n", rtcIceGatheringStateToString(newState));
 
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
         if (protectedThis->isClosed() || protectedThis->m_iceGatheringState == newState)
@@ -500,7 +500,7 @@ static inline const char* rtcIceConnectionStateToString(RTCIceConnectionState ne
 
 void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState newState)
 {
-    RELEASE_LOG(WebRTC, "New ICE connection state: %s\n", rtcIceConnectionStateToString(newState));
+    RELEASE_LOG(WebRTC, "New ICE connection state: %{public}s\n", rtcIceConnectionStateToString(newState));
 
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
         if (protectedThis->isClosed() || protectedThis->m_iceConnectionState == newState)
