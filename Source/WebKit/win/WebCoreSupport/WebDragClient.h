@@ -38,7 +38,7 @@ public:
     virtual WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint&);
     virtual void willPerformDragDestinationAction(WebCore::DragDestinationAction, const WebCore::DragData&);
     virtual void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&);
-    virtual void startDrag(WebCore::DragImage, const WebCore::IntPoint&, const WebCore::IntPoint&, const WebCore::FloatPoint&, WebCore::DataTransfer&, WebCore::Frame&, WebCore::DragSourceAction);
+    virtual void startDrag(WebCore::DragItem, WebCore::DataTransfer&, WebCore::Frame&);
 
 private:
     WebView* m_webView;

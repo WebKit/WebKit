@@ -35,8 +35,8 @@ class SharedBuffer;
 
 class PasteboardWriterData final {
 public:
-    PasteboardWriterData();
-    ~PasteboardWriterData();
+    WEBCORE_EXPORT PasteboardWriterData();
+    WEBCORE_EXPORT ~PasteboardWriterData();
 
     WEBCORE_EXPORT bool isEmpty() const;
 

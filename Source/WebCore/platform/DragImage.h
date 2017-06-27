@@ -97,10 +97,10 @@ FloatPoint anchorPointForLinkDragImage(DragImageRef);
 
 class DragImage final {
 public:
-    DragImage();
+    WEBCORE_EXPORT DragImage();
     explicit DragImage(DragImageRef);
     DragImage(DragImage&&);
-    ~DragImage();
+    WEBCORE_EXPORT ~DragImage();
 
     DragImage& operator=(DragImage&&);
 

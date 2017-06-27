@@ -1,5 +1,49 @@
 2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Refactor drag start codepaths to plumb a DragItem to client layers
+        https://bugs.webkit.org/show_bug.cgi?id=173832
+        Work towards <rdar://problem/32236827>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Add support for serializing a DragItem over IPC. This encodes and decodes all members of DragItem except for the
+        PasteboardWriterData and the DragImage's image. The DragItem is sent over to the UI process in
+        WebDragClient::startDrag via the WebPageProxy::startDrag IPC message (renamed from WebPageProxy::setDragImage)
+        which now takes a DragItem.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::startDrag):
+        (WebKit::WebPageProxy::setDragImage): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Rename SetDragImage to StartDrag and refactor to receive only a DragItem and shareable bitmap handle.
+
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::startDrag):
+        (WebKit::PageClientImpl::startDataInteractionWithImage): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startDrag:item:]):
+        (-[WKContentView _startDataInteractionWithImage:withIndicatorData:atClientPosition:anchorPoint:action:]): Deleted.
+
+        Rename startDataInteractionWithImage to startDrag.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::startDrag):
+        (WebKit::WebPageProxy::setDragImage): Deleted.
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::startDrag):
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::WebDragClient::startDrag):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::startDrag):
+
+2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS DnD] [WK2] WKWebView does not handle drag sessions that exit and re-enter
         https://bugs.webkit.org/show_bug.cgi?id=173856
         <rdar://problem/32957100>

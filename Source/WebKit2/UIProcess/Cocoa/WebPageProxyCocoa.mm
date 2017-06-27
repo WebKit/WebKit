@@ -31,6 +31,7 @@
 #import "LoadParameters.h"
 #import "PageClient.h"
 #import "WebProcessProxy.h"
+#import <WebCore/DragItem.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/SearchPopupMenuCocoa.h>
 #import <WebCore/ValidationBubble.h>
@@ -104,9 +105,9 @@ void WebPageProxy::createSandboxExtensionsIfNeeded(const Vector<String>& files, 
 
 #if PLATFORM(IOS) && ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::setDragImage(const IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, std::optional<TextIndicatorData> textIndicator, const FloatPoint& dragImageAnchor, uint64_t action)
+void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Handle& dragImageHandle)
 {
-    m_pageClient.startDataInteractionWithImage(clientPosition, dragImageHandle, textIndicator, dragImageAnchor, action);
+    m_pageClient.startDrag(dragItem, dragImageHandle);
 }
 
 void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::Handle&, uint64_t, const String&, const String&, const String&, const String&, const String&, const SharedMemory::Handle&, uint64_t)

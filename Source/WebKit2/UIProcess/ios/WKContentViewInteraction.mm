@@ -101,6 +101,7 @@
 #import <UIKit/UIURLDragPreviewView.h>
 #import <UIKit/_UITextDragCaretView.h>
 #import <WebCore/DragData.h>
+#import <WebCore/DragItem.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/WebItemProviderPasteboard.h>
 #endif // ENABLE(DRAG_SUPPORT)
@@ -4220,12 +4221,13 @@ static bool isAssistableInputType(InputType type)
     [self cleanUpDragSourceSessionState];
 }
 
-- (void)_startDataInteractionWithImage:(RetainPtr<CGImageRef>)image withIndicatorData:(std::optional<TextIndicatorData>)indicatorData atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action
+- (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const DragItem&)item
 {
-    ASSERT(action != DragSourceActionNone);
+    ASSERT(item.sourceAction != DragSourceActionNone);
+
     _dataInteractionState.image = adoptNS([[UIImage alloc] initWithCGImage:image.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
-    _dataInteractionState.indicatorData = indicatorData;
-    _dataInteractionState.sourceAction = static_cast<DragSourceAction>(action);
+    _dataInteractionState.indicatorData = item.image.indicatorData();
+    _dataInteractionState.sourceAction = static_cast<DragSourceAction>(item.sourceAction);
 }
 
 - (void)_didHandleStartDataInteractionRequest:(BOOL)started

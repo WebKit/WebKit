@@ -50,6 +50,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/EditorClient.h>
 #import <WebCore/EventHandler.h>
+#import <WebCore/FloatPoint.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/Image.h>
 #import <WebCore/MainFrame.h>
@@ -100,13 +101,16 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction action
     [[m_webView _UIDelegateForwarder] webView:m_webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:mouseDownPoint withPasteboard:[NSPasteboard pasteboardWithName:dataTransfer.pasteboard().name()]];
 }
 
-void WebDragClient::startDrag(DragImage dragImage, const IntPoint& at, const IntPoint& eventPos, const FloatPoint&, DataTransfer& dataTransfer, Frame& frame, DragSourceAction dragSourceAction)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame)
 {
+    auto& dragImage = dragItem.image;
+    auto dragLocationInContentCoordinates = dragItem.dragLocationInContentCoordinates;
+
     RetainPtr<WebHTMLView> htmlView = (WebHTMLView*)[[kit(&frame) frameView] documentView];
     if (![htmlView.get() isKindOfClass:[WebHTMLView class]])
         return;
     
-    NSEvent *event = dragSourceAction == DragSourceActionLink ? frame.eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
+    NSEvent *event = dragItem.sourceAction == DragSourceActionLink ? frame.eventHandler().currentNSEvent() : [htmlView.get() _mouseDownEvent];
     WebHTMLView* topHTMLView = getTopHTMLView(&frame);
     RetainPtr<WebHTMLView> topViewProtector = topHTMLView;
     
@@ -124,14 +128,14 @@ void WebDragClient::startDrag(DragImage dragImage, const IntPoint& at, const Int
     SEL selector = @selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:);
     if ([delegate respondsToSelector:selector]) {
         @try {
-            [delegate webView:m_webView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES forView:topHTMLView];
+            [delegate webView:m_webView dragImage:dragNSImage at:dragLocationInContentCoordinates offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES forView:topHTMLView];
         } @catch (id exception) {
             ReportDiscardedDelegateException(selector, exception);
         }
     } else
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [topHTMLView dragImage:dragNSImage at:at offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES];
+        [topHTMLView dragImage:dragNSImage at:dragLocationInContentCoordinates offset:NSZeroSize event:event pasteboard:pasteboard source:sourceHTMLView slideBack:YES];
 #pragma clang diagnostic pop
 }
 
@@ -198,7 +202,7 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 {
 }
 
-void WebDragClient::startDrag(WebCore::DragImage, const IntPoint&, const IntPoint&, const FloatPoint&, DataTransfer&, Frame&, WebCore::DragSourceAction)
+void WebDragClient::startDrag(WebCore::DragItem, DataTransfer&, Frame&)
 {
 }
 
@@ -239,9 +243,9 @@ void WebDragClient::willPerformDragSourceAction(WebCore::DragSourceAction, const
 {
 }
 
-void WebDragClient::startDrag(DragImage dragImage, const IntPoint& point, const IntPoint& eventLocation, const FloatPoint& dragImageAnchor, DataTransfer& dataTransfer, Frame& frame, DragSourceAction dragSourceAction)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame&)
 {
-    [m_webView _setDataInteractionData:dragImage.get().get() textIndicator:dragImage.indicatorData() atClientPosition:eventLocation anchorPoint:dragImageAnchor action:dragSourceAction];
+    [m_webView _startDrag:dragItem];
 }
 
 void WebDragClient::beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction)

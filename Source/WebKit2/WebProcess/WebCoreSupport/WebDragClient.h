@@ -46,7 +46,7 @@ private:
     void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
     WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
 
-    void startDrag(WebCore::DragImage, const WebCore::IntPoint& dragImageOrigin, const WebCore::IntPoint& eventPos, const WebCore::FloatPoint& dragImageAnchor, WebCore::DataTransfer&, WebCore::Frame&, WebCore::DragSourceAction) override;
+    void startDrag(WebCore::DragItem, WebCore::DataTransfer&, WebCore::Frame&) override;
     void didConcludeEditDrag() override;
 
 #if PLATFORM(COCOA)

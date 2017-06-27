@@ -1,3 +1,37 @@
+2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Refactor drag start codepaths to plumb a DragItem to client layers
+        https://bugs.webkit.org/show_bug.cgi?id=173832
+        Work towards <rdar://problem/32236827>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Refactor drag start logic in WebCore to set up a DragItem and propagate it to WebDragClient. No change in behavior.
+
+        * loader/EmptyClients.cpp:
+        * page/DragClient.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doImageDrag):
+        (WebCore::DragController::doSystemDrag):
+
+        Refactor to pass along a DragItem. Also, remove unused drag image anchor computation.
+
+        * page/DragController.h:
+        * platform/DragImage.h:
+        * platform/DragItem.h:
+
+        Add additional information needed to begin a drag on iOS.
+
+        (WebCore::DragItem::encode):
+        (WebCore::DragItem::decode):
+
+        Add IPC serialization/deserialization support for DragItem.
+
+        * platform/PasteboardWriterData.cpp:
+        (WebCore::PasteboardWriterData::isEmpty):
+        * platform/PasteboardWriterData.h:
+
 2017-06-27  Frederic Wang  <fwang@igalia.com>
 
         Some tests to verify forbidden frame navigation time out

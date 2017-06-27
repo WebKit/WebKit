@@ -48,13 +48,7 @@ PasteboardWriterData::WebContent::~WebContent()
 
 bool PasteboardWriterData::isEmpty() const
 {
-    if (m_plainText)
-        return false;
-
-    if (m_url)
-        return false;
-
-    return true;
+    return !m_plainText && !m_url && !m_webContent;
 }
 
 void PasteboardWriterData::setPlainText(PlainText plainText)

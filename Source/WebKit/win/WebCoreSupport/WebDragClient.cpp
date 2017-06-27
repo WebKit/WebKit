@@ -31,6 +31,7 @@
 #include <WebCore/DataTransfer.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
+#include <WebCore/DragItem.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
@@ -98,11 +99,15 @@ void WebDragClient::willPerformDragSourceAction(DragSourceAction action, const I
         const_cast<Pasteboard&>(dataTransfer.pasteboard()).setExternalDataObject(newDataObject.get());
 }
 
-void WebDragClient::startDrag(DragImage image, const IntPoint& imageOrigin, const IntPoint& dragPoint, const FloatPoint&, DataTransfer& dataTransfer, Frame& frame, DragSourceAction dragSourceAction)
+void WebDragClient::startDrag(DragItem item, DataTransfer& dataTransfer, Frame& frame)
 {
     //FIXME: Allow UIDelegate to override behaviour <rdar://problem/5015953>
 
     //We liberally protect everything, to protect against a load occurring mid-drag
+    auto& image = item.image;
+    auto imageOrigin = item.dragLocationInContentCoordinates;
+    auto dragPoint = item.eventPositionInContentCoordinates;
+
     RefPtr<Frame> frameProtector = &frame;
     COMPtr<IDragSourceHelper> helper;
     COMPtr<IDataObject> dataObject;
@@ -125,7 +130,7 @@ void WebDragClient::startDrag(DragImage image, const IntPoint& imageOrigin, cons
                 sdi.hbmpDragImage = image.get();
                 sdi.ptOffset.x = dragPoint.x() - imageOrigin.x();
                 sdi.ptOffset.y = dragPoint.y() - imageOrigin.y();
-                if (dragSourceAction == DragSourceActionLink)
+                if (item.sourceAction == DragSourceActionLink)
                     sdi.ptOffset.y = b.bmHeight - sdi.ptOffset.y;
 
                 helper->InitializeFromBitmap(&sdi, dataObject.get());

@@ -48,6 +48,7 @@
 #import "WebProcessProxy.h"
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/DragItem.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/NSApplicationSPI.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -269,10 +270,10 @@ void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& type
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, std::optional<TextIndicatorData>, const FloatPoint&, uint64_t action)
+void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Handle& dragImageHandle)
 {
     if (auto dragImage = ShareableBitmap::create(dragImageHandle))
-        m_pageClient.setDragImage(clientPosition, dragImage.releaseNonNull(), static_cast<DragSourceAction>(action));
+        m_pageClient.setDragImage(dragItem.dragLocationInWindowCoordinates, dragImage.releaseNonNull(), static_cast<DragSourceAction>(dragItem.sourceAction));
 
     didStartDrag();
 }

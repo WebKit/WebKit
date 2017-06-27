@@ -92,8 +92,9 @@ void WebDragClient::didConcludeEditDrag()
 {
 }
 
-void WebDragClient::startDrag(DragImage image, const IntPoint& point, const IntPoint&, const FloatPoint&, DataTransfer&, Frame& frame, DragSourceAction dragSourceAction)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame)
 {
+    auto& image = dragItem.image;
     IntSize bitmapSize([image.get() size]);
     RefPtr<ShareableBitmap> bitmap = convertImageToBitmap(image.get().get(), bitmapSize, frame);
     ShareableBitmap::Handle handle;
@@ -101,9 +102,7 @@ void WebDragClient::startDrag(DragImage image, const IntPoint& point, const IntP
         return;
 
     m_page->willStartDrag();
-
-    // FIXME: Seems this message should be named StartDrag, not SetDragImage.
-    m_page->send(Messages::WebPageProxy::SetDragImage(frame.view()->contentsToWindow(point), handle, std::nullopt, { }, dragSourceAction));
+    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, handle));
 }
 
 static WebCore::CachedImage* cachedImage(Element& element)
@@ -207,8 +206,10 @@ static RefPtr<ShareableBitmap> convertCGImageToBitmap(CGImageRef image, const In
     return bitmap;
 }
 
-void WebDragClient::startDrag(DragImage image, const IntPoint& point, const IntPoint& eventLocation, const FloatPoint& dragImageAnchor, DataTransfer& dataTransfer, Frame& frame, DragSourceAction dragSourceAction)
+void WebDragClient::startDrag(DragItem dragItem, DataTransfer& dataTransfer, Frame& frame)
 {
+    auto& image = dragItem.image;
+
     IntSize bitmapSize(CGImageGetWidth(image.get().get()), CGImageGetHeight(image.get().get()));
     auto bitmap = convertCGImageToBitmap(image.get().get(), bitmapSize, frame);
     ShareableBitmap::Handle handle;
@@ -216,7 +217,7 @@ void WebDragClient::startDrag(DragImage image, const IntPoint& point, const IntP
         return;
 
     m_page->willStartDrag();
-    m_page->send(Messages::WebPageProxy::SetDragImage(frame.view()->contentsToWindow(point), handle, image.indicatorData(), dragImageAnchor, dragSourceAction));
+    m_page->send(Messages::WebPageProxy::StartDrag(dragItem, handle));
 }
 
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)

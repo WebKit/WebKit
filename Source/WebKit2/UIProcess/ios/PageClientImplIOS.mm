@@ -786,9 +786,9 @@ void PageClientImpl::didHandleStartDataInteractionRequest(bool started)
     [m_contentView _didHandleStartDataInteractionRequest:started];
 }
 
-void PageClientImpl::startDataInteractionWithImage(const IntPoint& clientPosition, const ShareableBitmap::Handle& image, std::optional<WebCore::TextIndicatorData> indicatorData, const FloatPoint& anchorPoint, uint64_t action)
+void PageClientImpl::startDrag(const DragItem& item, const ShareableBitmap::Handle& image)
 {
-    [m_contentView _startDataInteractionWithImage:ShareableBitmap::create(image)->makeCGImageCopy() withIndicatorData:indicatorData atClientPosition:CGPointMake(clientPosition.x(), clientPosition.y()) anchorPoint:anchorPoint action:action];
+    [m_contentView _startDrag:ShareableBitmap::create(image)->makeCGImageCopy() item:item];
 }
 
 void PageClientImpl::didConcludeEditDataInteraction(std::optional<TextIndicatorData> data)

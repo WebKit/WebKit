@@ -27,6 +27,8 @@
 
 #include "DragImage.h"
 #include "FloatPoint.h"
+#include "IntPoint.h"
+#include "IntRect.h"
 #include "PasteboardWriterData.h"
 
 namespace WebCore {
@@ -37,7 +39,65 @@ struct DragItem final {
     // Where the image should be positioned relative to the cursor.
     FloatPoint imageAnchorPoint;
 
+    DragSourceAction sourceAction { DragSourceActionNone };
+    IntPoint eventPositionInContentCoordinates;
+    IntPoint dragLocationInContentCoordinates;
+    IntPoint eventPositionInWindowCoordinates;
+    IntPoint dragLocationInWindowCoordinates;
+    String title;
+    URL url;
+    IntRect elementBounds;
+
     PasteboardWriterData data;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static bool decode(Decoder&, DragItem&);
 };
+
+template<class Encoder>
+void DragItem::encode(Encoder& encoder) const
+{
+    // FIXME(173815): We should encode and decode PasteboardWriterData and platform drag image data
+    // here too, as part of moving off of the legacy dragging codepath.
+    encoder.encodeEnum(sourceAction);
+    encoder << imageAnchorPoint << eventPositionInContentCoordinates << dragLocationInContentCoordinates << eventPositionInWindowCoordinates << dragLocationInWindowCoordinates << title << url << elementBounds;
+    bool hasIndicatorData = image.hasIndicatorData();
+    encoder << hasIndicatorData;
+    if (hasIndicatorData)
+        encoder << image.indicatorData().value();
+}
+
+template<class Decoder>
+bool DragItem::decode(Decoder& decoder, DragItem& result)
+{
+    if (!decoder.decodeEnum(result.sourceAction))
+        return false;
+    if (!decoder.decode(result.imageAnchorPoint))
+        return false;
+    if (!decoder.decode(result.eventPositionInContentCoordinates))
+        return false;
+    if (!decoder.decode(result.dragLocationInContentCoordinates))
+        return false;
+    if (!decoder.decode(result.eventPositionInWindowCoordinates))
+        return false;
+    if (!decoder.decode(result.dragLocationInWindowCoordinates))
+        return false;
+    if (!decoder.decode(result.title))
+        return false;
+    if (!decoder.decode(result.url))
+        return false;
+    if (!decoder.decode(result.elementBounds))
+        return false;
+    bool hasIndicatorData;
+    if (!decoder.decode(hasIndicatorData))
+        return false;
+    if (hasIndicatorData) {
+        TextIndicatorData indicatorData;
+        if (!decoder.decode(indicatorData))
+            return false;
+        result.image.setIndicatorData(indicatorData);
+    }
+    return true;
+}
 
 }

@@ -39,7 +39,7 @@ public:
     void willPerformDragSourceAction(WebCore::DragSourceAction, const WebCore::IntPoint&, WebCore::DataTransfer&) override;
     void dragControllerDestroyed() override;
     WebCore::DragSourceAction dragSourceActionMaskForPoint(const WebCore::IntPoint& windowPoint) override;
-    void startDrag(WebCore::DragImage, const WebCore::IntPoint& dragPos, const WebCore::IntPoint& eventPos, const WebCore::FloatPoint&, WebCore::DataTransfer&, WebCore::Frame&, WebCore::DragSourceAction) override;
+    void startDrag(WebCore::DragItem, WebCore::DataTransfer&, WebCore::Frame&) override;
 
     void beginDrag(WebCore::DragItem, WebCore::Frame&, const WebCore::IntPoint& mouseDownPosition, const WebCore::IntPoint& mouseDraggedPosition, WebCore::DataTransfer&, WebCore::DragSourceAction) override;
 

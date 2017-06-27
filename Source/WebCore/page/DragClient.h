@@ -49,7 +49,7 @@ public:
     virtual void didConcludeEditDrag() { }
     virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint& rootViewPoint) = 0;
     
-    virtual void startDrag(DragImage, const IntPoint& dragImageOrigin, const IntPoint& eventPos, const FloatPoint& dragImageAnchor, DataTransfer&, Frame&, DragSourceAction) = 0;
+    virtual void startDrag(DragItem, DataTransfer&, Frame&) = 0;
     virtual void dragEnded() { }
 
     virtual void beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&, DataTransfer&, DragSourceAction) { }

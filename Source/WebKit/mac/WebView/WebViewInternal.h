@@ -63,6 +63,12 @@ struct DictationAlternative;
 struct DictionaryPopupInfo;
 }
 
+#if PLATFORM(IOS) && ENABLE(DRAG_SUPPORT)
+namespace WebCore {
+struct DragItem;
+}
+#endif
+
 class WebMediaPlaybackTargetPicker;
 class WebSelectionServiceController;
 
@@ -261,7 +267,7 @@ OBJC_CLASS NSTextAlternatives;
 #endif
 
 #if ENABLE(DATA_INTERACTION) && defined(__cplusplus)
-- (void)_setDataInteractionData:(CGImageRef)image textIndicator:(std::optional<WebCore::TextIndicatorData>)textIndicator atClientPosition:(CGPoint)clientPosition anchorPoint:(CGPoint)anchorPoint action:(uint64_t)action;
+- (void)_startDrag:(const WebCore::DragItem&)dragItem;
 - (void)_didConcludeEditDataInteraction;
 #endif
 
