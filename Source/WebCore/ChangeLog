@@ -1,3 +1,21 @@
+2017-06-27  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Avoid taking / releasing process assertions too quickly due to database activity
+        https://bugs.webkit.org/show_bug.cgi?id=173879
+        <rdar://problem/32412701>
+
+        Reviewed by Antti Koivisto.
+
+        Add HysteresisActivity to WebSQLiteDatabaseTrackerClient to avoid taking / releasing
+        process assertion too quickly due to database activity.
+
+        * platform/ios/WebSQLiteDatabaseTrackerClient.h:
+        * platform/ios/WebSQLiteDatabaseTrackerClient.mm:
+        (WebCore::WebSQLiteDatabaseTrackerClient::WebSQLiteDatabaseTrackerClient):
+        (WebCore::WebSQLiteDatabaseTrackerClient::willBeginFirstTransaction):
+        (WebCore::WebSQLiteDatabaseTrackerClient::didFinishLastTransaction):
+        (WebCore::WebSQLiteDatabaseTrackerClient::hysteresisUpdated):
+
 2017-06-27  Youenn Fablet  <youenn@apple.com>
 
         Using public logging for WebRTC release logging

@@ -1,3 +1,18 @@
+2017-06-27  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Avoid taking / releasing process assertions too quickly due to database activity
+        https://bugs.webkit.org/show_bug.cgi?id=173879
+        <rdar://problem/32412701>
+
+        Reviewed by Antti Koivisto.
+
+        Specify an activity name when taking the process assertion to facilitate
+        debugging in the future. It took me a while to figure out this assertion
+        was the one that was too aggressive because it was anonymous.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setUpSQLiteDatabaseTrackerClient]):
+
 2017-06-27  Don Olmstead  <don.olmstead@sony.com>
 
         [PAL] Add symbol export macros for PAL

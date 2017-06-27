@@ -31,6 +31,7 @@
 #import "WebBackgroundTaskController.h"
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
+#import <wtf/MainThread.h>
 #import <wtf/NeverDestroyed.h>
 
 @interface WebDatabaseTransactionBackgroundTaskController : NSObject
@@ -40,6 +41,8 @@
 
 namespace WebCore {
 
+const double hysteresisDuration = 2; // 2 seconds.
+
 WebSQLiteDatabaseTrackerClient& WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient()
 {
     static NeverDestroyed<WebSQLiteDatabaseTrackerClient> client;
@@ -47,6 +50,7 @@ WebSQLiteDatabaseTrackerClient& WebSQLiteDatabaseTrackerClient::sharedWebSQLiteD
 }
 
 WebSQLiteDatabaseTrackerClient::WebSQLiteDatabaseTrackerClient()
+    : m_hysteresis([this](HysteresisState state) { hysteresisUpdated(state); }, hysteresisDuration)
 {
 }
 
@@ -56,12 +60,24 @@ WebSQLiteDatabaseTrackerClient::~WebSQLiteDatabaseTrackerClient()
 
 void WebSQLiteDatabaseTrackerClient::willBeginFirstTransaction()
 {
-    [WebDatabaseTransactionBackgroundTaskController startBackgroundTask];
+    callOnMainThread([this] {
+        m_hysteresis.start();
+    });
 }
 
 void WebSQLiteDatabaseTrackerClient::didFinishLastTransaction()
 {
-    [WebDatabaseTransactionBackgroundTaskController endBackgroundTask];
+    callOnMainThread([this] {
+        m_hysteresis.stop();
+    });
+}
+
+void WebSQLiteDatabaseTrackerClient::hysteresisUpdated(HysteresisState state)
+{
+    if (state == HysteresisState::Started)
+        [WebDatabaseTransactionBackgroundTaskController startBackgroundTask];
+    else
+        [WebDatabaseTransactionBackgroundTaskController endBackgroundTask];
 }
 
 }

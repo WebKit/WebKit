@@ -29,6 +29,7 @@
 
 #if PLATFORM(IOS)
 
+#include "HysteresisActivity.h"
 #include "SQLiteDatabaseTrackerClient.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
@@ -40,13 +41,17 @@ class WebSQLiteDatabaseTrackerClient final : public SQLiteDatabaseTrackerClient 
 public:
     WEBCORE_EXPORT static WebSQLiteDatabaseTrackerClient& sharedWebSQLiteDatabaseTrackerClient();
 
-    void willBeginFirstTransaction() override;
-    void didFinishLastTransaction() override;
+    void willBeginFirstTransaction() final;
+    void didFinishLastTransaction() final;
 
 private:
     friend class NeverDestroyed<WebSQLiteDatabaseTrackerClient>;
     WebSQLiteDatabaseTrackerClient();
     virtual ~WebSQLiteDatabaseTrackerClient();
+
+    void hysteresisUpdated(HysteresisState);
+
+    HysteresisActivity m_hysteresis;
 };
 
 }

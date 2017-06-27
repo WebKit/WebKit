@@ -602,7 +602,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
     controller.backgroundTaskStartBlock = ^NSUInteger (void (^expirationHandler)())
     {
-        return [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:expirationHandler];
+        return [[UIApplication sharedApplication] beginBackgroundTaskWithName:@"com.apple.WebKit.DatabaseActivity" expirationHandler:expirationHandler];
     };
     controller.backgroundTaskEndBlock = ^(UIBackgroundTaskIdentifier taskIdentifier)
     {
