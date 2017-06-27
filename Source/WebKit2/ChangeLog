@@ -1,3 +1,19 @@
+2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] WKWebView does not handle drag sessions that exit and re-enter
+        https://bugs.webkit.org/show_bug.cgi?id=173856
+        <rdar://problem/32957100>
+
+        Reviewed by Ryosuke Niwa.
+
+        Upon exiting a WKContentView, the dropSession tracked by _dataInteractionState is not cleared out. If the drag
+        session re-enters the WKWebView, a _different_ UIDropSession is sent to the drop delegate, causing us to bail
+        from handling the session altogether in -dropInteraction:canHandleSession:. To fix this, we need to clear out
+        the dropSession when the drag session exits the view.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dropInteraction:sessionDidExit:]):
+
 2017-06-26  Chris Dumez  <cdumez@apple.com>
 
         WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains() is inefficient

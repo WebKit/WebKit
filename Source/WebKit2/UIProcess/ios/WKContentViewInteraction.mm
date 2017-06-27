@@ -4712,6 +4712,8 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
     _page->dragExited(dragData, "data interaction pasteboard");
     _page->resetCurrentDragInformation();
+
+    _dataInteractionState.dropSession = nil;
 }
 
 - (void)dropInteraction:(UIDropInteraction *)interaction performDrop:(id <UIDropSession>)session
