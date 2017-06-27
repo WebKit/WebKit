@@ -74,6 +74,10 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
 
         WebInspector.targetManager.addEventListener(WebInspector.TargetManager.Event.TargetAdded, this._targetAdded, this);
         WebInspector.targetManager.addEventListener(WebInspector.TargetManager.Event.TargetRemoved, this._targetRemoved, this);
+
+        WebInspector.consoleDrawer.addEventListener(WebInspector.ConsoleDrawer.Event.CollapsedStateChanged, this._updateStyles, this);
+
+        WebInspector.TabBrowser.addEventListener(WebInspector.TabBrowser.Event.SelectedTabContentViewDidChange, this._updateStyles, this);
     }
 
     // Public
@@ -91,21 +95,6 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
     set selectedExecutionContext(executionContext)
     {
         WebInspector.runtimeManager.activeExecutionContext = executionContext;
-    }
-
-    consoleLogVisibilityChanged(visible)
-    {
-        if (visible === this.element.classList.contains(WebInspector.QuickConsole.ShowingLogClassName))
-            return;
-
-        this.element.classList.toggle(WebInspector.QuickConsole.ShowingLogClassName, visible);
-
-        this.dispatchEventToListeners(WebInspector.QuickConsole.Event.DidResize);
-    }
-
-    set keyboardShortcutDisabled(disabled)
-    {
-        this._toggleOrFocusKeyboardShortcut.disabled = disabled;
     }
 
     // Protected
@@ -346,14 +335,9 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         else if (!WebInspector.isEditingAnyField() && !WebInspector.isEventTargetAnEditableField(event))
             this.prompt.focus();
     }
-};
 
-WebInspector.QuickConsole.ShowingLogClassName = "showing-log";
-
-WebInspector.QuickConsole.ToolbarSingleLineHeight = 21;
-WebInspector.QuickConsole.ToolbarPromptPadding = 4;
-WebInspector.QuickConsole.ToolbarTopBorder = 1;
-
-WebInspector.QuickConsole.Event = {
-    DidResize: "quick-console-did-resize"
+    _updateStyles()
+    {
+        this.element.classList.toggle("showing-log", WebInspector.isShowingConsoleTab() || WebInspector.isShowingSplitConsole());
+    }
 };

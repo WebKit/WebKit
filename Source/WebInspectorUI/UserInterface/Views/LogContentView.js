@@ -100,12 +100,16 @@ WebInspector.LogContentView = class LogContentView extends WebInspector.ContentV
 
     get navigationItems()
     {
-        let navigationItems = [this._findBanner, this._scopeBar];
+        let navigationItems = [this._scopeBar];
         if (HeapAgent.gc)
             navigationItems.push(this._garbageCollectNavigationItem);
+
         navigationItems.push(this._clearLogNavigationItem);
+
         if (WebInspector.isShowingSplitConsole())
             navigationItems.push(this._showConsoleTabNavigationItem);
+        else if (WebInspector.isShowingConsoleTab())
+            navigationItems.unshift(this._findBanner);
         return navigationItems;
     }
 

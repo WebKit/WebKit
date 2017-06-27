@@ -167,7 +167,6 @@ WebInspector.loaded = function()
 
     // Create settings.
     this._showingSplitConsoleSetting = new WebInspector.Setting("showing-split-console", false);
-    this._splitConsoleHeightSetting = new WebInspector.Setting("split-console-height", 150);
 
     this._openTabsSetting = new WebInspector.Setting("open-tab-types", ["elements", "network", "resources", "timeline", "debugger", "storage", "console"]);
     this._selectedTabIndexSetting = new WebInspector.Setting("selected-tab-index", 0);
@@ -288,19 +287,16 @@ WebInspector.contentLoaded = function()
     this._contentElement.setAttribute("role", "main");
     this._contentElement.setAttribute("aria-label", WebInspector.UIString("Content"));
 
-    const disableBackForward = true;
-    const disableFindBanner = false;
-    this.splitContentBrowser = new WebInspector.ContentBrowser(document.getElementById("split-content-browser"), this, disableBackForward, disableFindBanner);
-    this.splitContentBrowser.navigationBar.element.addEventListener("mousedown", this._consoleResizerMouseDown.bind(this));
+    this.consoleDrawer = new WebInspector.ConsoleDrawer(document.getElementById("console-drawer"));
+    this.consoleDrawer.addEventListener(WebInspector.ConsoleDrawer.Event.CollapsedStateChanged, this._consoleDrawerCollapsedStateDidChange, this);
+    this.consoleDrawer.addEventListener(WebInspector.ConsoleDrawer.Event.Resized, this._consoleDrawerDidResize, this);
 
     this.clearKeyboardShortcut = new WebInspector.KeyboardShortcut(WebInspector.KeyboardShortcut.Modifier.CommandOrControl, "K", this._clear.bind(this));
 
     this.quickConsole = new WebInspector.QuickConsole(document.getElementById("quick-console"));
-    this.quickConsole.addEventListener(WebInspector.QuickConsole.Event.DidResize, this._quickConsoleDidResize, this);
 
     this._consoleRepresentedObject = new WebInspector.LogObject;
-    this._consoleTreeElement = new WebInspector.LogTreeElement(this._consoleRepresentedObject);
-    this.consoleContentView = WebInspector.splitContentBrowser.contentViewForRepresentedObject(this._consoleRepresentedObject);
+    this.consoleContentView = this.consoleDrawer.contentViewForRepresentedObject(this._consoleRepresentedObject);
     this.consoleLogViewController = this.consoleContentView.logViewController;
     this.breakpointPopoverController = new WebInspector.BreakpointPopoverController;
 
@@ -502,8 +498,6 @@ WebInspector.contentLoaded = function()
     // Tell the InspectorFrontendHost we loaded, which causes the window to display
     // and pending InspectorFrontendAPI commands to be sent.
     InspectorFrontendHost.loaded();
-
-    this._updateSplitConsoleHeight(this._splitConsoleHeightSetting.value);
 
     if (this._showingSplitConsoleSetting.value)
         this.showSplitConsole();
@@ -716,14 +710,6 @@ WebInspector.activateExtraDomains = function(domains)
     this._tryToRestorePendingTabs();
 };
 
-WebInspector.contentBrowserTreeElementForRepresentedObject = function(contentBrowser, representedObject)
-{
-    // The console does not have a sidebar, so return a tree element here so something is shown.
-    if (representedObject === this._consoleRepresentedObject)
-        return this._consoleTreeElement;
-    return null;
-};
-
 WebInspector.updateWindowTitle = function()
 {
     var mainFrame = this.frameResourceManager.mainFrame;
@@ -921,7 +907,7 @@ WebInspector.isConsoleFocused = function()
 
 WebInspector.isShowingSplitConsole = function()
 {
-    return !this.splitContentBrowser.element.classList.contains("hidden");
+    return !this.consoleDrawer.collapsed;
 };
 
 WebInspector.dockedConfigurationSupportsSplitContentBrowser = function()
@@ -955,22 +941,16 @@ WebInspector.showSplitConsole = function()
         return;
     }
 
-    this.splitContentBrowser.element.classList.remove("hidden");
+    this.consoleDrawer.collapsed = false;
 
-    this._showingSplitConsoleSetting.value = true;
+    if (this.consoleDrawer.currentContentView === this.consoleContentView)
+        return;
 
-    if (this.splitContentBrowser.currentContentView !== this.consoleContentView) {
-        // Be sure to close the view in the tab content browser before showing it in the
-        // split content browser. We can only show a content view in one browser at a time.
-        if (this.consoleContentView.parentContainer)
-            this.consoleContentView.parentContainer.closeContentView(this.consoleContentView);
-        this.splitContentBrowser.showContentView(this.consoleContentView);
-    } else {
-        // This causes the view to know it was shown and focus the prompt.
-        this.splitContentBrowser.shown();
-    }
-
-    this.quickConsole.consoleLogVisibilityChanged(true);
+    // Be sure to close the view in the tab content browser before showing it in the
+    // split content browser. We can only show a content view in one browser at a time.
+    if (this.consoleContentView.parentContainer)
+        this.consoleContentView.parentContainer.closeContentView(this.consoleContentView);
+    this.consoleDrawer.showContentView(this.consoleContentView);
 };
 
 WebInspector.hideSplitConsole = function()
@@ -978,14 +958,7 @@ WebInspector.hideSplitConsole = function()
     if (!this.isShowingSplitConsole())
         return;
 
-    this.splitContentBrowser.element.classList.add("hidden");
-
-    this._showingSplitConsoleSetting.value = false;
-
-    // This causes the view to know it was hidden.
-    this.splitContentBrowser.hidden();
-
-    this.quickConsole.consoleLogVisibilityChanged(false);
+    this.consoleDrawer.collapsed = true;
 };
 
 WebInspector.showConsoleTab = function(requestedScope)
@@ -1616,11 +1589,18 @@ WebInspector._updateDockNavigationItems = function()
 WebInspector._tabBrowserSizeDidChange = function()
 {
     this.tabBrowser.updateLayout(WebInspector.View.LayoutReason.Resize);
-    this.splitContentBrowser.updateLayout(WebInspector.View.LayoutReason.Resize);
+    this.consoleDrawer.updateLayout(WebInspector.View.LayoutReason.Resize);
     this.quickConsole.updateLayout(WebInspector.View.LayoutReason.Resize);
 };
 
-WebInspector._quickConsoleDidResize = function(event)
+WebInspector._consoleDrawerCollapsedStateDidChange = function(event)
+{
+    this._showingSplitConsoleSetting.value = WebInspector.isShowingSplitConsole();
+
+    WebInspector._consoleDrawerDidResize();
+};
+
+WebInspector._consoleDrawerDidResize = function(event)
 {
     this.tabBrowser.updateLayout(WebInspector.View.LayoutReason.Resize);
 };
@@ -1637,7 +1617,7 @@ WebInspector._setupViewHierarchy = function()
     rootView.addSubview(this.tabBar);
     rootView.addSubview(this.navigationSidebar);
     rootView.addSubview(this.tabBrowser);
-    rootView.addSubview(this.splitContentBrowser);
+    rootView.addSubview(this.consoleDrawer);
     rootView.addSubview(this.quickConsole);
     rootView.addSubview(this.detailsSidebar);
 };
@@ -1647,58 +1627,16 @@ WebInspector._tabBrowserSelectedTabContentViewDidChange = function(event)
     if (this.tabBar.selectedTabBarItem && this.tabBar.selectedTabBarItem.representedObject.constructor.shouldSaveTab())
         this._selectedTabIndexSetting.value = this.tabBar.tabBarItems.indexOf(this.tabBar.selectedTabBarItem);
 
-    if (!this.doesCurrentTabSupportSplitContentBrowser())
-        this.hideSplitConsole();
-
-    if (!this.isShowingSplitConsole())
-        this.quickConsole.consoleLogVisibilityChanged(this.isShowingConsoleTab());
-};
-
-WebInspector._updateSplitConsoleHeight = function(height)
-{
-    const minimumHeight = 64;
-    const maximumHeight = window.innerHeight * 0.55;
-
-    height = Math.max(minimumHeight, Math.min(height, maximumHeight));
-
-    this.splitContentBrowser.element.style.height = height + "px";
-};
-
-WebInspector._consoleResizerMouseDown = function(event)
-{
-    if (event.button !== 0 || event.ctrlKey)
+    if (this.doesCurrentTabSupportSplitContentBrowser()) {
+        if (this._shouldRevealSpitConsoleIfSupported) {
+            this._shouldRevealSpitConsoleIfSupported = false;
+            this.showSplitConsole();
+        }
         return;
-
-    // Only start dragging if the target is one of the elements that we expect.
-    if (!event.target.classList.contains("navigation-bar") && !event.target.classList.contains("flexible-space"))
-        return;
-
-    var resizerElement = event.target;
-    var mouseOffset = resizerElement.offsetHeight - (event.pageY - resizerElement.totalOffsetTop);
-
-    function dockedResizerDrag(event)
-    {
-        if (event.button !== 0)
-            return;
-
-        var height = window.innerHeight - event.pageY - mouseOffset;
-
-        this._splitConsoleHeightSetting.value = height;
-
-        this._updateSplitConsoleHeight(height);
-
-        this.quickConsole.dispatchEventToListeners(WebInspector.QuickConsole.Event.DidResize);
     }
 
-    function dockedResizerDragEnd(event)
-    {
-        if (event.button !== 0)
-            return;
-
-        this.elementDragEnd(event);
-    }
-
-    this.elementDragStart(resizerElement, dockedResizerDrag.bind(this), dockedResizerDragEnd.bind(this), event, "row-resize");
+    this._shouldRevealSpitConsoleIfSupported = this.isShowingSplitConsole();
+    this.hideSplitConsole();
 };
 
 WebInspector._toolbarMouseDown = function(event)
@@ -1957,9 +1895,9 @@ WebInspector._focusedContentBrowser = function()
         return null;
     }
 
-    if (this.splitContentBrowser.element.isSelfOrAncestor(this.currentFocusElement)
+    if (this.consoleDrawer.element.isSelfOrAncestor(this.currentFocusElement)
         || (WebInspector.isShowingSplitConsole() && this.quickConsole.element.isSelfOrAncestor(this.currentFocusElement)))
-        return this.splitContentBrowser;
+        return this.consoleDrawer;
 
     return null;
 };
@@ -1973,9 +1911,9 @@ WebInspector._focusedContentView = function()
         return tabContentView;
     }
 
-    if (this.splitContentBrowser.element.isSelfOrAncestor(this.currentFocusElement)
+    if (this.consoleDrawer.element.isSelfOrAncestor(this.currentFocusElement)
         || (WebInspector.isShowingSplitConsole() && this.quickConsole.element.isSelfOrAncestor(this.currentFocusElement)))
-        return this.splitContentBrowser.currentContentView;
+        return this.consoleDrawer.currentContentView;
 
     return null;
 };

@@ -159,50 +159,6 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     flex: 1;
 }
 
-#split-content-browser {
-    border-top: 1px solid var(--border-color);
-}
-
-#split-content-browser > .navigation-bar {
-    cursor: row-resize;
-
-    background-color: var(--panel-background-color);
-}
-
-#split-content-browser > .navigation-bar :matches(.find-banner, .find-banner + .divider) {
-    display: none;
-}
-
-#split-content-browser > .navigation-bar .item {
-    height: 100%;
-}
-
-#split-content-browser > .navigation-bar .item:not(.flexible-space) {
-    cursor: default;
-}
-
-#split-content-browser .hierarchical-path-component.log-icon .icon {
-    margin-left: 6px;
-    margin-right: 6px;
-    opacity: 0.7;
-}
-
-#split-content-browser .hierarchical-path-component.log-icon .title {
-    color: hsla(0, 0%, 0%, 0.75);
-}
-
-#split-content-browser .hierarchical-path-component.log-icon select {
-    display: none;
-}
-
-#split-content-browser > .navigation-bar > :matches(.hierarchical-path, .log-scope-bar) {
-    pointer-events: none;
-}
-
-#split-content-browser > .navigation-bar > .log-scope-bar > li {
-    pointer-events: all;
-}
-
 #details-sidebar {
     width: 300px;
     height: 100%;

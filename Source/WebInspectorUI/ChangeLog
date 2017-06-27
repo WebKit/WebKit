@@ -1,3 +1,90 @@
+2017-06-27  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: no discoverable way to dismiss the split console
+        https://bugs.webkit.org/show_bug.cgi?id=167034
+        <rdar://problem/30023436>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds an Xcode-style toggle button to the left of the
+        split console navigation bar. Additionally, the split console code
+        has been broken out into it's own class to reduce the clutter in
+        Main.js/css, and simplify future console maintenance.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        Replace the "split" ContentBrowser with a new ConsoleDrawer class,
+        which encapsulates the drawer height setting and resize behavior.
+        (WebInspector.contentLoaded):
+        The console drawer manages its own height.
+
+        * UserInterface/Images/HideConsoleDrawer.svg: Added.
+        * UserInterface/Images/ShowConsoleDrawer.svg: Added.
+        Console drawer toggle button images. Styled after corresponding Xcode button.
+
+        * UserInterface/Main.html:
+
+        * UserInterface/Views/ConsoleDrawer.css: Added.
+        Moved old #split-content-browser styles over from Main.css.
+        (.console-drawer):
+        (.console-drawer > .navigation-bar):
+        (.console-drawer > .navigation-bar > .item.button:not(.clear-log)):
+        Make button spacing less cramped.
+        (.console-drawer > .navigation-bar > .item:not(.flexible-space)):
+        (.console-drawer > .navigation-bar > :matches(.item.button, .log-scope-bar)):
+        (.console-drawer > .navigation-bar > .item > .glyph,):
+
+        * UserInterface/Views/ConsoleDrawer.js: Added.
+        New class responsible for console drawer expand / collapse and resizer
+        dragging, which was previously part of Main.js. The console drawer toolbar
+        now has a toggle button, debugging controls, and a call frames path item.
+        The "Show Console Tab" button has been removed.
+
+        (WebInspector.ConsoleDrawer):
+        (WebInspector.ConsoleDrawer.prototype.get collapsed):
+        (WebInspector.ConsoleDrawer.prototype.set collapsed):
+        (WebInspector.ConsoleDrawer.prototype.get height):
+        (WebInspector.ConsoleDrawer.prototype.shown):
+        (WebInspector.ConsoleDrawer.prototype.layout):
+        (WebInspector.ConsoleDrawer.prototype._consoleResizerMouseDown.dockedResizerDrag):
+        (WebInspector.ConsoleDrawer.prototype._consoleResizerMouseDown.dockedResizerDragEnd):
+        (WebInspector.ConsoleDrawer.prototype._consoleResizerMouseDown):
+        (WebInspector.ConsoleDrawer.prototype._restoreDrawerHeight):
+        (WebInspector.ConsoleDrawer.prototype._updateDrawerHeight):
+        (WebInspector.ConsoleDrawer.prototype._selectedTabContentViewDidChange):
+        When switching to a tab that doesn't support showing the console drawer,
+        hide it without altering the collapsed state.
+
+        * UserInterface/Views/LogContentView.js:
+        (WebInspector.LogContentView.prototype.get navigationItems):
+
+        * UserInterface/Views/Main.css:
+        Renamed #split-content-browser to #console-drawer, and moved related
+        styles to ConsoleDrawer.css.
+
+        (#split-content-browser): Deleted.
+        (#split-content-browser > .navigation-bar): Deleted.
+        (#split-content-browser > .navigation-bar :matches(.find-banner, .find-banner + .divider)): Deleted.
+        (#split-content-browser > .navigation-bar .item): Deleted.
+        (#split-content-browser > .navigation-bar .item:not(.flexible-space)): Deleted.
+        (#split-content-browser .hierarchical-path-component.log-icon .icon): Deleted.
+        (#split-content-browser .hierarchical-path-component.log-icon .title): Deleted.
+        (#split-content-browser .hierarchical-path-component.log-icon select): Deleted.
+        (#split-content-browser > .navigation-bar > :matches(.hierarchical-path, .log-scope-bar)): Deleted.
+        (#split-content-browser > .navigation-bar > .log-scope-bar > li): Deleted.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WebInspector.QuickConsole):
+        (WebInspector.QuickConsole.prototype._toggleOrFocus):
+        (WebInspector.QuickConsole.prototype._updateStyles):
+        Update top border style in response to change in selected TabBrowser
+        tab or the console drawer collapsed state.
+
+        (WebInspector.QuickConsole.prototype.consoleLogVisibilityChanged): Deleted.
+        (WebInspector.QuickConsole.prototype.set keyboardShortcutDisabled): Deleted.
+
 2017-06-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove Reflect.enumerate
