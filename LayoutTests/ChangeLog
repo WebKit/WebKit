@@ -1,3 +1,12 @@
+2017-06-27  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest webrtc/datachannel/multiple-connections.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=173853
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/datachannel/multiple-connections.html:
+
 2017-06-26  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (AsyncImageDecoding): A tab with the WWDC keynote paused is killed for using excessive power (Image thrashing)

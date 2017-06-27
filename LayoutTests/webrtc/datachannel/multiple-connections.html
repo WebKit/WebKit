@@ -26,7 +26,7 @@ for (var cptr = 0;cptr < 256; cptr++) {
                 remoteChannel.onmessage = () => { resolve(); }
             };
         });
-        setTimeout(() => { reject("Test timed out"); }, 1000);
+        setTimeout(() => { reject("Test timed out"); }, 5000);
     }).then(() => {
       localChannel.close();
       remoteChannel.close();
