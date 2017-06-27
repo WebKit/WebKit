@@ -301,8 +301,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const LayoutPoint
     FontCascade font;
     TextRun run(emptyString());
     float textWidth;
-    if (!getReplacementTextGeometry(paintOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth))
-        return;
+    getReplacementTextGeometry(paintOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth);
 
     Path background;
     background.addRoundedRect(indicatorRect, FloatSize(replacementTextRoundedRectRadius, replacementTextRoundedRectRadius));
@@ -349,7 +348,20 @@ void RenderEmbeddedObject::setUnavailablePluginIndicatorIsHidden(bool hidden)
     repaint();
 }
 
-bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, FontCascade& font, TextRun& run, float& textWidth) const
+LayoutRect RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset) const
+{
+    FloatRect contentRect;
+    FloatRect indicatorRect;
+    FloatRect replacementTextRect;
+    FloatRect arrowRect;
+    FontCascade font;
+    TextRun run(emptyString());
+    float textWidth;
+    getReplacementTextGeometry(accumulatedOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth);
+    return LayoutRect(indicatorRect);
+}
+
+void RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, FontCascade& font, TextRun& run, float& textWidth) const
 {
     bool includesArrow = shouldUnavailablePluginMessageBeButton(page(), m_pluginUnavailabilityReason);
 
@@ -381,23 +393,11 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(const LayoutPoint& accumul
         arrowRect.setWidth(arrowRect.height());
         indicatorRect.unite(arrowRect);
     }
-
-    return true;
 }
 
 LayoutRect RenderEmbeddedObject::unavailablePluginIndicatorBounds(const LayoutPoint& accumulatedOffset) const
 {
-    FloatRect contentRect;
-    FloatRect indicatorRect;
-    FloatRect replacementTextRect;
-    FloatRect arrowRect;
-    FontCascade font;
-    TextRun run(emptyString());
-    float textWidth;
-    if (getReplacementTextGeometry(accumulatedOffset, contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth))
-        return LayoutRect(indicatorRect);
-
-    return LayoutRect();
+    return getReplacementTextGeometry(accumulatedOffset);
 }
 
 bool RenderEmbeddedObject::isReplacementObscured() const
@@ -580,15 +580,7 @@ bool RenderEmbeddedObject::logicalScroll(ScrollLogicalDirection direction, Scrol
 
 bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const FloatPoint& point) const
 {
-    FloatRect contentRect;
-    FloatRect indicatorRect;
-    FloatRect replacementTextRect;
-    FloatRect arrowRect;
-    FontCascade font;
-    TextRun run(emptyString());
-    float textWidth;
-    return getReplacementTextGeometry(IntPoint(), contentRect, indicatorRect, replacementTextRect, arrowRect, font, run, textWidth)
-        && indicatorRect.contains(point);
+    return getReplacementTextGeometry(LayoutPoint()).contains(LayoutPoint(point));
 }
 
 bool RenderEmbeddedObject::isInUnavailablePluginIndicator(const MouseEvent& event) const
