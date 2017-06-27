@@ -584,6 +584,13 @@ void ResourceLoadObserver::fireShouldPartitionCookiesHandler(const Vector<String
     });
 }
 
+void ResourceLoadObserver::fireTelemetryHandler()
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(isMainThread());
+    m_store->fireTelemetryHandler();
+}
+    
 String ResourceLoadObserver::primaryDomain(const URL& url)
 {
     return primaryDomain(url.host());

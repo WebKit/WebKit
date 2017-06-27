@@ -55,7 +55,9 @@ public:
     static void fireDataModificationHandler();
     static void fireShouldPartitionCookiesHandler();
     static void fireShouldPartitionCookiesHandlerForOneDomain(const String& hostName, bool value);
+    static void fireTelemetryHandler();
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
+    static void setNotifyPagesWhenTelemetryWasCaptured(bool value);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
     static void clearInMemoryAndPersistentStore();
     static void clearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);

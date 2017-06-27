@@ -144,6 +144,7 @@ public:
     static void deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(OptionSet<WebsiteDataType>, Vector<String>&& topPrivatelyControlledDomains, bool shouldNotifyPages, Function<void (const HashSet<String>&)>&& completionHandler);
     static void topPrivatelyControlledDomainsWithWebsiteData(OptionSet<WebsiteDataType> dataTypes, bool shouldNotifyPage, Function<void(HashSet<String>&&)>&& completionHandler);
     static void notifyPageStatisticsAndDataRecordsProcessed();
+    static void notifyPageStatisticsTelemetryFinished(API::Object* messageBody);
 
     void enableSuddenTermination();
     void disableSuddenTermination();

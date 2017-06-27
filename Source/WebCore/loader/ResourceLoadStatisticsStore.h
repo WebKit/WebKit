@@ -36,6 +36,25 @@ class KeyedDecoder;
 class KeyedEncoder;
 class URL;
 
+static const auto minimumPrevalentResourcesForTelemetry = 3;
+    
+struct PrevalentResourceTelemetry {
+    unsigned numberOfTimesDataRecordsRemoved;
+    bool hasHadUserInteraction;
+    unsigned daysSinceUserInteraction;
+    unsigned subframeUnderTopFrameOrigins;
+    unsigned subresourceUnderTopFrameOrigins;
+    unsigned subresourceUniqueRedirectsTo;
+    PrevalentResourceTelemetry()
+        : numberOfTimesDataRecordsRemoved(0), hasHadUserInteraction(0), daysSinceUserInteraction(0), subframeUnderTopFrameOrigins(0), subresourceUnderTopFrameOrigins(0), subresourceUniqueRedirectsTo(0)
+    {
+    }
+    PrevalentResourceTelemetry(unsigned recordsRemoved, bool userInteraction, unsigned daysSince, unsigned subframe, unsigned subresource, unsigned uniqueRedirects)
+        : numberOfTimesDataRecordsRemoved(recordsRemoved), hasHadUserInteraction(userInteraction), daysSinceUserInteraction(daysSince), subframeUnderTopFrameOrigins(subframe), subresourceUnderTopFrameOrigins(subresource), subresourceUniqueRedirectsTo(uniqueRedirects)
+    {
+    }
+};
+    
 struct ResourceLoadStatistics;
 
 class ResourceLoadStatisticsStore : public ThreadSafeRefCounted<ResourceLoadStatisticsStore> {
@@ -64,8 +83,10 @@ public:
     WEBCORE_EXPORT void setShouldPartitionCookiesCallback(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&&);
     WEBCORE_EXPORT void setWritePersistentStoreCallback(WTF::Function<void()>&&);
     WEBCORE_EXPORT void setGrandfatherExistingWebsiteDataCallback(WTF::Function<void()>&&);
+    WEBCORE_EXPORT void setFireTelemetryCallback(WTF::Function<void()>&& handler);
 
     void fireDataModificationHandler();
+    void fireTelemetryHandler();
     void setTimeToLiveUserInteraction(double seconds);
     void setTimeToLiveCookiePartitionFree(double seconds);
     void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
@@ -77,6 +98,7 @@ public:
 
     WEBCORE_EXPORT bool hasHadRecentUserInteraction(ResourceLoadStatistics&) const;
     WEBCORE_EXPORT Vector<String> topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
+    WEBCORE_EXPORT Vector<PrevalentResourceTelemetry> sortedPrevalentResourceTelemetry() const;
     WEBCORE_EXPORT void updateStatisticsForRemovedDataRecords(const HashSet<String>& prevalentResourceDomains);
 
     WEBCORE_EXPORT void handleFreshStartWithEmptyOrNoStore(HashSet<String>&& topPrivatelyControlledDomainsToGrandfather);
@@ -95,6 +117,7 @@ private:
     WTF::Function<void(const Vector<String>&, const Vector<String>&, bool clearFirst)> m_shouldPartitionCookiesForDomainsHandler;
     WTF::Function<void()> m_writePersistentStoreHandler;
     WTF::Function<void()> m_grandfatherExistingWebsiteDataHandler;
+    WTF::Function<void()> m_fireTelemetryHandler;
 
     double m_endOfGrandfatheringTimestamp { 0 };
     double m_lastTimeDataRecordsWereRemoved { 0 };

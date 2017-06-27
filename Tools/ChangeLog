@@ -1,3 +1,33 @@
+2017-06-27  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=173499
+        <rdar://problem/32826094>
+
+        Reviewed by Brent Fulgham.
+
+        Adds three new testRunner functions:
+        - installStatisticsDidRunTelemetryCallback()
+        - statisticsFireTelemetryHandler()
+        - setStatisticsNotifyPagesWhenTelemetryWasCaptured()
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::installStatisticsDidRunTelemetryCallback):
+        (WTR::TestRunner::statisticsDidRunTelemetryCallback):
+        (WTR::TestRunner::statisticsFireTelemetryHandler):
+        (WTR::TestRunner::setStatisticsNotifyPagesWhenTelemetryWasCaptured):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::statisticsFireTelemetryHandler):
+        (WTR::TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-06-27  Ting-Wei Lan  <lantw44@gmail.com>
 
         Add missing includes to fix compilation error on FreeBSD

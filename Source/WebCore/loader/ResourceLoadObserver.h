@@ -78,6 +78,7 @@ public:
     WEBCORE_EXPORT void fireDataModificationHandler();
     WEBCORE_EXPORT void fireShouldPartitionCookiesHandler();
     WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
+    WEBCORE_EXPORT void fireTelemetryHandler();
 
     WEBCORE_EXPORT void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);
     WEBCORE_EXPORT void setStatisticsQueue(Ref<WTF::WorkQueue>&&);

@@ -767,5 +767,10 @@ String DiagnosticLoggingKeys::backgroundCPUUsageToDiagnosticLoggingKey(double cp
     return ASCIILiteral("over70");
 }
 
+String DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey()
+{
+    return ASCIILiteral("resourceLoadStatisticsTelemetry");
+}
+    
 } // namespace WebCore
 

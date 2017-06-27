@@ -338,6 +338,12 @@ void WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed()
         page.value->postMessageToInjectedBundle("WebsiteDataScanForTopPrivatelyControlledDomainsFinished", nullptr);
 }
     
+void WebProcessProxy::notifyPageStatisticsTelemetryFinished(API::Object* messageBody)
+{
+    for (auto& page : globalPageMap())
+        page.value->postMessageToInjectedBundle("ResourceLoadStatisticsTelemetryFinished", messageBody);
+}
+    
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
     uint64_t pageID = generatePageID();

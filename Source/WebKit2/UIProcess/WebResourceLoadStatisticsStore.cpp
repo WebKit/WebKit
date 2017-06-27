@@ -40,6 +40,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Seconds.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 using namespace WebCore;
@@ -47,7 +48,7 @@ using namespace WebCore;
 namespace WebKit {
 
 static OptionSet<WebKit::WebsiteDataType> dataTypesToRemove;
-static auto notifyPages = false;
+static auto notifyPagesWhenDataRecordsWereScanned = false;
 static auto shouldClassifyResourcesBeforeDataRecordsRemoval = true;
 
 Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(const String& resourceLoadStatisticsDirectory)
@@ -59,7 +60,11 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
     : m_resourceLoadStatisticsStore(ResourceLoadStatisticsStore::create())
     , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue"))
     , m_statisticsStoragePath(resourceLoadStatisticsDirectory)
+    , m_telemetryOneShotTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::telemetryTimerFired)
+    , m_telemetryRepeatedTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::telemetryTimerFired)
 {
+    m_telemetryOneShotTimer.startOneShot(5_s);
+    m_telemetryRepeatedTimer.startRepeating(24_h);
 }
 
 WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
@@ -68,7 +73,7 @@ WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 
 void WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(bool always)
 {
-    notifyPages = always;
+    notifyPagesWhenDataRecordsWereScanned = always;
 }
 
 void WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
@@ -119,7 +124,7 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = CrossThreadCopier<Vector<String>>::copy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove, WTFMove(prevalentResourceDomains), notifyPages, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove, WTFMove(prevalentResourceDomains), notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue.
             m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
                 protectedThis->coreStore().updateStatisticsForRemovedDataRecords(topDomains);
@@ -140,7 +145,7 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
         }
         removeDataRecords();
         
-        if (notifyPages) {
+        if (notifyPagesWhenDataRecordsWereScanned) {
             RunLoop::main().dispatch([] () mutable {
                 WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
             });
@@ -193,6 +198,10 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
     m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this, protectedThis = makeRef(*this)]() {
         grandfatherExistingWebsiteData();
     });
+    m_resourceLoadStatisticsStore->setFireTelemetryCallback([this, protectedThis = makeRef(*this)]() {
+        // This cancels the one shot timer and is only intended for testing purposes.
+        m_telemetryOneShotTimer.startOneShot(100_ms);
+    });
 #if PLATFORM(COCOA)
     WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded();
 #endif
@@ -215,7 +224,7 @@ void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
     
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(dataTypesToRemove, notifyPages, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(dataTypesToRemove, notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue
             m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
                 protectedThis->coreStore().handleFreshStartWithEmptyOrNoStore(WTFMove(topDomains));
@@ -330,4 +339,14 @@ std::unique_ptr<KeyedDecoder> WebResourceLoadStatisticsStore::createDecoderFromD
     return KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(rawData->data()), rawData->size());
 }
 
+void WebResourceLoadStatisticsStore::telemetryTimerFired()
+{
+    ASSERT(RunLoop::isMain());
+    
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        auto locker = holdLock(coreStore().statisticsLock());
+        WebResourceLoadStatisticsTelemetry::calculateAndSubmit(coreStore());
+    });
+}
+    
 } // namespace WebKit

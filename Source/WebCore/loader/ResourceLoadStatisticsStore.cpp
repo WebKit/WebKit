@@ -223,6 +223,11 @@ void ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback(WTF:
     m_grandfatherExistingWebsiteDataHandler = WTFMove(handler);
 }
 
+void ResourceLoadStatisticsStore::setFireTelemetryCallback(WTF::Function<void()>&& handler)
+{
+    m_fireTelemetryHandler = WTFMove(handler);
+}
+    
 void ResourceLoadStatisticsStore::fireDataModificationHandler()
 {
     ASSERT(!isMainThread());
@@ -232,6 +237,13 @@ void ResourceLoadStatisticsStore::fireDataModificationHandler()
     });
 }
 
+void ResourceLoadStatisticsStore::fireTelemetryHandler()
+{
+    ASSERT(isMainThread());
+    if (m_fireTelemetryHandler)
+        m_fireTelemetryHandler();
+}
+    
 static inline bool shouldPartitionCookies(const ResourceLoadStatistics& statistic)
 {
     return statistic.isPrevalentResource
@@ -360,6 +372,37 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
     }
 
     return prevalentResources;
+}
+    
+Vector<PrevalentResourceTelemetry> ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry() const
+{
+    auto locker = holdLock(m_statisticsLock);
+    Vector<PrevalentResourceTelemetry> sorted;
+    
+    for (auto& statistic : m_resourceStatisticsMap.values()) {
+        if (statistic.isPrevalentResource) {
+            unsigned daysSinceUserInteraction = statistic.mostRecentUserInteraction <= 0 ? 0 :
+                std::floor((currentTime() - statistic.mostRecentUserInteraction) / secondsPerDay);
+            sorted.append(PrevalentResourceTelemetry(
+                statistic.dataRecordsRemoved,
+                statistic.hadUserInteraction,
+                daysSinceUserInteraction,
+                statistic.subframeUnderTopFrameOrigins.size(),
+                statistic.subresourceUnderTopFrameOrigins.size(),
+                statistic.subresourceUniqueRedirectsTo.size()
+            ));
+        }
+    }
+    
+    if (sorted.size() < minimumPrevalentResourcesForTelemetry)
+        return Vector<PrevalentResourceTelemetry>();
+
+    std::sort(sorted.begin(), sorted.end(), [](const PrevalentResourceTelemetry& a, const PrevalentResourceTelemetry& b) {
+        return a.subframeUnderTopFrameOrigins + a.subresourceUnderTopFrameOrigins + a.subresourceUniqueRedirectsTo >
+        b.subframeUnderTopFrameOrigins + b.subresourceUnderTopFrameOrigins + b.subresourceUniqueRedirectsTo;
+    });
+    
+    return sorted;
 }
 
 void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const HashSet<String>& prevalentResourceDomains)

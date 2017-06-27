@@ -167,6 +167,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/WebContextMenuListenerProxy.cpp
     UIProcess/WebResourceLoadStatisticsManager.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
+    UIProcess/WebResourceLoadStatisticsTelemetry.cpp
 
     UIProcess/Automation/WebAutomationSession.cpp
 

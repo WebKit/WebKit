@@ -636,6 +636,7 @@ enum {
     DidRemoveSwipeSnapshotCallbackID,
     StatisticsDidModifyDataRecordsCallbackID,
     StatisticsDidScanDataRecordsCallbackID,
+    StatisticsDidRunTelemetryCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     FirstUIScriptCallbackID = 100
 };
@@ -1389,6 +1390,30 @@ void TestRunner::statisticsDidScanDataRecordsCallback()
     callTestRunnerCallback(StatisticsDidScanDataRecordsCallbackID);
 }
 
+void TestRunner::installStatisticsDidRunTelemetryCallback(JSValueRef callback)
+{
+    cacheTestRunnerCallback(StatisticsDidRunTelemetryCallbackID, callback);
+}
+    
+void TestRunner::statisticsDidRunTelemetryCallback(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::singleton().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+    
+    StringBuilder stringBuilder;
+    stringBuilder.appendLiteral("{ \"totalPrevalentResources\" : ");
+    stringBuilder.appendNumber(totalPrevalentResources);
+    stringBuilder.appendLiteral(", \"totalPrevalentResourcesWithUserInteraction\" : ");
+    stringBuilder.appendNumber(totalPrevalentResourcesWithUserInteraction);
+    stringBuilder.appendLiteral(", \"top3SubframeUnderTopFrameOrigins\" : ");
+    stringBuilder.appendNumber(top3SubframeUnderTopFrameOrigins);
+    stringBuilder.appendLiteral(" }");
+    
+    JSValueRef result = JSValueMakeFromJSONString(context, JSStringCreateWithUTF8CString(stringBuilder.toString().utf8().data()));
+    
+    callTestRunnerCallback(StatisticsDidRunTelemetryCallbackID, 1, &result);
+}
+    
 void TestRunner::statisticsFireDataModificationHandler()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireDataModificationHandler"));
@@ -1426,6 +1451,12 @@ void TestRunner::statisticsFireShouldPartitionCookiesHandlerForOneDomain(JSStrin
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::statisticsFireTelemetryHandler()
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireTelemetryHandler"));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
+}
+    
 void TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsNotifyPagesWhenDataRecordsWereScanned"));
@@ -1439,6 +1470,14 @@ void TestRunner::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bo
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsShouldClassifyResourcesBeforeDataRecordsRemoval"));
     WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+    
+void TestRunner::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsNotifyPagesWhenTelemetryWasCaptured"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+    WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(value);
 }
 
 void TestRunner::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds)

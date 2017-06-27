@@ -116,6 +116,11 @@ void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomai
     WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandlerForOneDomain(toWTFString(hostName), value);
 }
 
+void WKResourceLoadStatisticsManagerFireTelemetryHandler()
+{
+    WebResourceLoadStatisticsManager::fireTelemetryHandler();
+}
+
 void WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
     WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned(value);
@@ -124,6 +129,11 @@ void WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(boo
 void WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
 {
     WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
+}
+
+void WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(bool value)
+{
+    WebResourceLoadStatisticsManager::setNotifyPagesWhenTelemetryWasCaptured(value);
 }
 
 void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore()

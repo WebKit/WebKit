@@ -1,3 +1,30 @@
+2017-06-27  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=173499
+        <rdar://problem/32826094>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/loading/resourceLoadStatistics/telemetry-generation.html
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::fireTelemetryHandler):
+            Test infrastructure.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::setFireTelemetryCallback):
+        (WebCore::ResourceLoadStatisticsStore::fireTelemetryHandler):
+            Test infrastructure.
+        (WebCore::ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry):
+            Convenience function for telemetry.
+        * loader/ResourceLoadStatisticsStore.h:
+            Added struct WebCore::PrevalentResourceTelemetry.
+        * page/DiagnosticLoggingKeys.cpp:
+        (WebCore::DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey):
+            Added.
+        * page/DiagnosticLoggingKeys.h:
+
 2017-06-27  Ting-Wei Lan  <lantw44@gmail.com>
 
         Add missing includes to fix compilation error on FreeBSD

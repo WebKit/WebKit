@@ -124,11 +124,21 @@ void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandlerForOneDo
         WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({hostName}, { }, false);
 }
 
+void WebResourceLoadStatisticsManager::fireTelemetryHandler()
+{
+    WebCore::ResourceLoadObserver::sharedObserver().fireTelemetryHandler();
+}
+    
 void WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(value);
 }
 
+void WebResourceLoadStatisticsManager::setNotifyPagesWhenTelemetryWasCaptured(bool value)
+{
+    WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(value);
+}
+    
 void WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
 {
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
@@ -151,6 +161,7 @@ void WebResourceLoadStatisticsManager::resetToConsistentState()
     WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(60);
     WebCore::ResourceLoadObserver::sharedObserver().setGrandfatheringTime(3600);
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
+    WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
     WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryStore();
 }

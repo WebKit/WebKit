@@ -836,6 +836,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options)
     setIgnoresViewportScaleLimits(options.ignoresViewportScaleLimits);
 
     m_openPanelFileURLs = nullptr;
+    
+    statisticsResetToConsistentState();
 
     WKPageLoadURL(m_mainWebView->page(), blankURL());
     runUntil(m_doneResetting, m_currentInvocation->shortTimeout());
@@ -2274,6 +2276,11 @@ void TestController::statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKS
     WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomain(hostName, value);
 }
 
+void TestController::statisticsFireTelemetryHandler()
+{
+    WKResourceLoadStatisticsManagerFireTelemetryHandler();
+}
+    
 void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
     WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(value);
@@ -2284,6 +2291,11 @@ void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemova
     WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(value);
 }
 
+void TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value)
+{
+    WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(value);
+}
+    
 void TestController::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds)
 {
     WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(seconds);

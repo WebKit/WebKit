@@ -1,3 +1,61 @@
+2017-06-27  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add telemetry
+        https://bugs.webkit.org/show_bug.cgi?id=173499
+        <rdar://problem/32826094>
+
+        Reviewed by Brent Fulgham.
+
+        * PlatformGTK.cmake:
+            Added UIProcess/WebResourceLoadStatisticsTelemetry.cpp
+        * PlatformMac.cmake:
+            Added UIProcess/WebResourceLoadStatisticsTelemetry.cpp
+        * PlatformWPE.cmake:
+            Added UIProcess/WebResourceLoadStatisticsTelemetry.cpp
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp:
+        (WKResourceLoadStatisticsManagerFireTelemetryHandler):
+        (WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured):
+            Test infrastructure.
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::notifyPageStatisticsTelemetryFinished):
+            Test infrastructure.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::fireTelemetryHandler):
+        (WebKit::WebResourceLoadStatisticsManager::setNotifyPagesWhenTelemetryWasCaptured):
+        (WebKit::WebResourceLoadStatisticsManager::resetToConsistentState):
+            Test infrastructure.
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+            Configures a timer for telemetry capture. Fires 5 seconds after launch
+            and then every 24 hours.
+        (WebKit::WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned):
+            Variable renamed notifyPages -> notifyPagesWhenDataRecordsWereScanned.
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+            Variable renamed notifyPages -> notifyPagesWhenDataRecordsWereScanned.
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+            Variable renamed notifyPages -> notifyPagesWhenDataRecordsWereScanned.
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+            Variable renamed notifyPages -> notifyPagesWhenDataRecordsWereScanned.
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+            Variable renamed notifyPages -> notifyPagesWhenDataRecordsWereScanned.
+        (WebKit::WebResourceLoadStatisticsStore::telemetryTimerFired):
+             Calls WebResourceLoadStatisticsTelemetry::calculateAndSubmit().
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp: Added.
+        (WebKit::numberOfResourcesWithUserInteraction):
+        (WebKit::median):
+        (WebKit::nonEphemeralWebPageProxy):
+        (WebKit::submitTopList):
+        (WebKit::submitTopLists):
+        (WebKit::notifyPages):
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+        (WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured):
+        * UIProcess/WebResourceLoadStatisticsTelemetry.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-06-27  Ting-Wei Lan  <lantw44@gmail.com>
 
         Add missing includes to fix compilation error on FreeBSD
