@@ -4796,7 +4796,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     CGPoint client;
     [self computeClientAndGlobalPointsForDropSession:session outClientPoint:&client outGlobalPoint:&global];
     [self cleanUpDragSourceSessionState];
-    _page->dragEnded(roundedIntPoint(client), roundedIntPoint(global), UIDragOperationNone);
+    _page->dragEnded(roundedIntPoint(client), roundedIntPoint(global), DragOperationNone);
 }
 
 #pragma mark - Unit testing support
