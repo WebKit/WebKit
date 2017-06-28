@@ -1,3 +1,32 @@
+2017-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Some web pages disappear immediately after rendering
+        https://bugs.webkit.org/show_bug.cgi?id=173768
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This is happening with websites having a "hidden" class in HTML tag when a media element is added. In the GTK+
+        port the media controls CSS contains the following code:
+
+        .hidden {
+            display: none !important;
+        }
+
+        That causes the whole HTML document to become display: none. That's why we just render a white page, and also
+        the reason why it only happens with the GTK+ port and only with some specific websites. We should limit the
+        scope of the hidden class to the media control elements.
+
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-panel.hidden,):
+        (audio::-webkit-media-controls-panel div.mute-box.hidden,):
+        (audio::-webkit-media-controls-current-time-display.hidden,):
+        (audio::-webkit-media-controls-timeline.hidden,):
+        (audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button.hidden,):
+        (video::-webkit-media-controls-closed-captions-container.hidden):
+        (audio::-webkit-media-controls-fullscreen-button.hidden,):
+        (.hidden): Deleted.
+
 2017-06-28  Antoine Quint  <graouts@apple.com>
 
         Media controls volume glyph does not have the correct material
