@@ -34,7 +34,6 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include <limits.h>
-#include <wtf/HashMap.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

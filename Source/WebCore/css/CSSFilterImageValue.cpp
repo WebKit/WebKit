@@ -27,17 +27,13 @@
 #include "config.h"
 #include "CSSFilterImageValue.h"
 
-#include "CSSImageValue.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
-#include "CachedSVGDocumentReference.h"
-#include "CrossfadeGeneratedImage.h"
 #include "FilterEffectRenderer.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "RenderElement.h"
 #include "StyleCachedImage.h"
-#include "StyleGeneratedImage.h"
 #include "StyleResolver.h"
 #include <wtf/text/StringBuilder.h>
 

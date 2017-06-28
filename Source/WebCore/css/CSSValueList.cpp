@@ -21,9 +21,6 @@
 #include "config.h"
 #include "CSSValueList.h"
 
-#include "CSSCustomPropertyValue.h"
-#include "CSSFunctionValue.h"
-#include "CSSPrimitiveValue.h"
 #include "DeprecatedCSSOMValue.h"
 #include <wtf/text/StringBuilder.h>
 

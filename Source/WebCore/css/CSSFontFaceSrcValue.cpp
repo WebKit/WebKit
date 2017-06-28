@@ -33,7 +33,6 @@
 #include "FontCustomPlatformData.h"
 #include "Node.h"
 #include "SVGFontFaceElement.h"
-#include "StyleSheetContents.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

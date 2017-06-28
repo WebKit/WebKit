@@ -32,8 +32,6 @@
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
-#include "StyleProperties.h"
-#include "StyleSheet.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

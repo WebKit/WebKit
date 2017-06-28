@@ -21,7 +21,6 @@
 #include "config.h"
 #include "CSSImageValue.h"
 
-#include "CSSCursorImageValue.h"
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
@@ -29,7 +28,6 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
-#include "CrossOriginAccessControl.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "Document.h"
 #include "Element.h"

@@ -32,7 +32,6 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
-#include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Page.h"
 #include <wtf/text/StringBuilder.h>

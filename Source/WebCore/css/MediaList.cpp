@@ -22,16 +22,12 @@
 #include "MediaList.h"
 
 #include "CSSImportRule.h"
-#include "CSSParser.h"
 #include "CSSStyleSheet.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "HTMLParserIdioms.h"
-#include "MediaFeatureNames.h"
 #include "MediaQuery.h"
 #include "MediaQueryParser.h"
-#include "ScriptableDocumentParser.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 

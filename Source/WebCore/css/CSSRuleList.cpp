@@ -23,7 +23,6 @@
 #include "CSSRuleList.h"
 
 #include "CSSRule.h"
-#include "CSSStyleSheet.h"
 
 namespace WebCore {
 

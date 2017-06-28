@@ -23,8 +23,6 @@
 #include "CSSImportRule.h"
 
 #include "CSSStyleSheet.h"
-#include "CachedCSSStyleSheet.h"
-#include "CachedResourceLoader.h"
 #include "MediaList.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"

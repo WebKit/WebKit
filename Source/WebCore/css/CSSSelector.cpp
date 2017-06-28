@@ -31,7 +31,6 @@
 #include "HTMLNames.h"
 #include "SelectorPseudoTypeMap.h"
 #include <wtf/Assertions.h>
-#include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>

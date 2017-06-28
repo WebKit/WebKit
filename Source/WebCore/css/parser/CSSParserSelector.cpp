@@ -21,10 +21,6 @@
 #include "config.h"
 #include "CSSParserSelector.h"
 
-#include "CSSCustomPropertyValue.h"
-#include "CSSParserIdioms.h"
-#include "CSSPrimitiveValue.h"
-#include "CSSFunctionValue.h"
 #include "CSSSelector.h"
 #include "CSSSelectorList.h"
 #include "SelectorPseudoTypeMap.h"

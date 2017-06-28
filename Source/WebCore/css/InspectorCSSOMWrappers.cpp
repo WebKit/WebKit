@@ -32,7 +32,6 @@
 #include "CSSDefaultStyleSheets.h"
 #include "CSSImportRule.h"
 #include "CSSMediaRule.h"
-#include "CSSNamespaceRule.h"
 #include "CSSRule.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"

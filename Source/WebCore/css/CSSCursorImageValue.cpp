@@ -29,7 +29,6 @@
 #include "SVGCursorElement.h"
 #include "SVGLengthContext.h"
 #include "SVGURIReference.h"
-#include "TreeScope.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>

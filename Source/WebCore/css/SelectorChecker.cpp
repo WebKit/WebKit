@@ -44,7 +44,6 @@
 #include "RenderElement.h"
 #include "SelectorCheckerTestFunctions.h"
 #include "ShadowRoot.h"
-#include "StyledElement.h"
 #include "Text.h"
 
 namespace WebCore {

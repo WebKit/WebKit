@@ -23,9 +23,7 @@
 #include "CSSStyleRule.h"
 
 #include "CSSParser.h"
-#include "CSSSelector.h"
 #include "CSSStyleSheet.h"
-#include "Document.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "RuleSet.h"
 #include "StyleProperties.h"

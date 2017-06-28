@@ -27,13 +27,10 @@
 #include "CSSSegmentedFontFace.h"
 
 #include "CSSFontFace.h"
-#include "CSSFontFaceSource.h"
-#include "CSSFontSelector.h"
-#include "Document.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
-#include "RuntimeEnabledFeatures.h"
+#include "FontSelector.h"
 
 namespace WebCore {
 

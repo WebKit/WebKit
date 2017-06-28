@@ -30,7 +30,6 @@
 #include "config.h"
 #include "MediaQueryParser.h"
 
-#include "CSSParserIdioms.h"
 #include "CSSTokenizer.h"
 #include "MediaList.h"
 #include <wtf/Vector.h>

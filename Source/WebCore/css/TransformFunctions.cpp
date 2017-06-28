@@ -35,7 +35,6 @@
 #include "CSSFunctionValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValueList.h"
-#include "CSSValuePool.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
 #include "PerspectiveTransformOperation.h"

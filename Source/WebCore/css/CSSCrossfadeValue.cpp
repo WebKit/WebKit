@@ -32,10 +32,8 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "CrossfadeGeneratedImage.h"
-#include "ImageBuffer.h"
 #include "RenderElement.h"
 #include "StyleCachedImage.h"
-#include "StyleGeneratedImage.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

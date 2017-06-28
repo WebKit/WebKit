@@ -41,7 +41,6 @@
 
 #ifndef NDEBUG
 #include <stdio.h>
-#include <wtf/ASCIICType.h>
 #include <wtf/text/CString.h>
 #endif
 

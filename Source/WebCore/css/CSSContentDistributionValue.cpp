@@ -27,7 +27,6 @@
 #include "CSSContentDistributionValue.h"
 
 #include "CSSValueList.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

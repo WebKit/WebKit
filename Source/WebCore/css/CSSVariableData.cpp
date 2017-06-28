@@ -31,7 +31,6 @@
 #include "CSSVariableData.h"
 
 #include "CSSCustomPropertyValue.h"
-#include "CSSParser.h"
 #include "CSSParserTokenRange.h"
 #include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/StringBuilder.h>

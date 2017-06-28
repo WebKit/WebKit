@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSCanvasValue.h"
 
-#include "ImageBuffer.h"
 #include "RenderElement.h"
 
 namespace WebCore {

@@ -26,7 +26,6 @@
 #include "CSSFontFamily.h"
 #include "CSSHelper.h"
 #include "CSSMarkup.h"
-#include "CSSParserSelector.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"
@@ -42,8 +41,6 @@
 #include "RGBColor.h"
 #include "Rect.h"
 #include "RenderStyle.h"
-#include "StyleSheetContents.h"
-#include <wtf/ASCIICType.h>
 #include <wtf/DecimalNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>

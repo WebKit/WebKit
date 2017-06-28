@@ -28,7 +28,6 @@
 
 #include "CSSParser.h"
 #include "CSSPrimitiveValueMappings.h"
-#include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 

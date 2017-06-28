@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSCustomPropertyValue.h"
 
-#include "CSSParserSelector.h"
 
 namespace WebCore {
 

@@ -32,7 +32,6 @@
 
 #include "WebKitCSSRegionRule.h"
 
-#include "CSSParser.h"
 #include "CSSRuleList.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>

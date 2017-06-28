@@ -29,9 +29,6 @@
 #include "config.h"
 #include "CSSSupportsRule.h"
 
-#include "CSSParser.h"
-#include "CSSRule.h"
-#include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
 #include "StyleRule.h"
 #include <wtf/text/StringBuilder.h>

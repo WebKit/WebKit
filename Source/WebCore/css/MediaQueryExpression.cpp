@@ -29,11 +29,8 @@
 #include "MediaQueryExpression.h"
 
 #include "CSSAspectRatioValue.h"
-#include "CSSParser.h"
-#include "CSSParserIdioms.h"
 #include "CSSParserToken.h"
 #include "CSSPrimitiveValue.h"
-#include "CSSValueList.h"
 #include "MediaFeatureNames.h"
 #include <wtf/text/StringBuilder.h>
 

@@ -35,7 +35,6 @@
 #include "CSSNamedImageValue.h"
 #include "GeneratedImage.h"
 #include "RenderElement.h"
-#include "StyleCachedImage.h"
 
 namespace WebCore {
 

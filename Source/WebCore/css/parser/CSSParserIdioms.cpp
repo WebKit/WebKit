@@ -30,7 +30,6 @@
 #include "config.h"
 #include "CSSParserIdioms.h"
 #include "CSSValueKeywords.h"
-#include "TextEncoding.h"
 
 namespace WebCore {
 

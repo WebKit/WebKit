@@ -22,7 +22,6 @@
 #include "config.h"
 #include "PropertySetCSSStyleDeclaration.h"
 
-#include "CSSCustomPropertyValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSRule.h"
 #include "CSSStyleSheet.h"

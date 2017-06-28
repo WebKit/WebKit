@@ -31,8 +31,6 @@
 #include "CSSParserFastPaths.h"
 
 #include "CSSFunctionValue.h"
-#include "CSSInheritedValue.h"
-#include "CSSInitialValue.h"
 #include "CSSParserIdioms.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
@@ -42,7 +40,6 @@
 #include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"
 #include "StylePropertyShorthand.h"
-#include "StyleSheetContents.h"
 
 namespace WebCore {
 
