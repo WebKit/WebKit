@@ -1,3 +1,15 @@
+2017-06-28  Jonathan Bedard  <jbedard@apple.com>
+
+        Build fix for PAL
+        https://bugs.webkit.org/show_bug.cgi?id=173896
+
+        Reviewed by Dan Bernstein.
+
+        Remove the workaround build fix in r218863.
+
+        * PAL.xcodeproj/project.pbxproj: We should be using PROJECT_DIR instead of SRCROOT
+        when in a nested Xcode project.
+
 2017-06-27  Jonathan Bedard  <jbedard@apple.com>
 
         Build fix for PAL
