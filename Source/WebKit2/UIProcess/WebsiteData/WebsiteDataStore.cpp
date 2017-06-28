@@ -185,10 +185,16 @@ static ProcessAccessType computeWebProcessAccessTypeForDataFetch(OptionSet<Websi
 
 void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler)
 {
+    fetchDataAndApply(dataTypes, fetchOptions, nullptr, WTFMove(completionHandler));
+}
+
+void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply)
+{
     struct CallbackAggregator final : ThreadSafeRefCounted<CallbackAggregator> {
-        explicit CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, Function<void(Vector<WebsiteDataRecord>)>&& completionHandler)
+        explicit CallbackAggregator(OptionSet<WebsiteDataFetchOption> fetchOptions, RefPtr<WorkQueue>&& queue, Function<void(Vector<WebsiteDataRecord>)>&& apply)
             : fetchOptions(fetchOptions)
-            , completionHandler(WTFMove(completionHandler))
+            , queue(WTFMove(queue))
+            , apply(WTFMove(apply))
         {
         }
 
@@ -267,27 +273,31 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
             if (pendingCallbacks)
                 return;
 
-            RunLoop::main().dispatch([callbackAggregator = makeRef(*this)]() mutable {
+            Vector<WebsiteDataRecord> records;
+            records.reserveInitialCapacity(m_websiteDataRecords.size());
+            for (auto& record : m_websiteDataRecords.values())
+                records.uncheckedAppend(WTFMove(record));
 
-                WTF::Vector<WebsiteDataRecord> records;
-                records.reserveInitialCapacity(callbackAggregator->m_websiteDataRecords.size());
+            auto processRecords = [apply = WTFMove(apply), records = WTFMove(records)] () mutable {
+                apply(WTFMove(records));
+            };
 
-                for (auto& record : callbackAggregator->m_websiteDataRecords.values())
-                    records.uncheckedAppend(WTFMove(record));
-
-                callbackAggregator->completionHandler(WTFMove(records));
-            });
+            if (queue)
+                queue->dispatch(WTFMove(processRecords));
+            else
+                RunLoop::main().dispatch(WTFMove(processRecords));
         }
 
         const OptionSet<WebsiteDataFetchOption> fetchOptions;
 
         unsigned pendingCallbacks = 0;
-        Function<void(Vector<WebsiteDataRecord>)> completionHandler;
+        RefPtr<WorkQueue> queue;
+        Function<void(Vector<WebsiteDataRecord>)> apply;
 
         HashMap<String, WebsiteDataRecord> m_websiteDataRecords;
     };
 
-    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(fetchOptions, WTFMove(completionHandler)));
+    RefPtr<CallbackAggregator> callbackAggregator = adoptRef(new CallbackAggregator(fetchOptions, WTFMove(queue), WTFMove(apply)));
 
 #if ENABLE(VIDEO)
     if (dataTypes.contains(WebsiteDataType::DiskCache)) {
@@ -510,22 +520,22 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
 
 void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyControlledDomains, Function<void(Vector<WebsiteDataRecord>&&, HashSet<String>&&)>&& completionHandler)
 {
-    fetchData(dataTypes, fetchOptions, [queue = m_queue.copyRef(), topPrivatelyControlledDomains = CrossThreadCopier<Vector<String>>::copy(topPrivatelyControlledDomains), completionHandler = WTFMove(completionHandler)] (auto&& existingDataRecords) mutable {
-        queue->dispatch([queue = WTFMove(queue), topPrivatelyControlledDomains = WTFMove(topPrivatelyControlledDomains), existingDataRecords = WTFMove(existingDataRecords), completionHandler = WTFMove(completionHandler)] () mutable {
-            Vector<WebsiteDataRecord> matchingDataRecords;
-            HashSet<String> domainsWithMatchingDataRecords;
-            for (auto&& dataRecord : existingDataRecords) {
-                for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomains) {
-                    if (dataRecord.matchesTopPrivatelyControlledDomain(topPrivatelyControlledDomain)) {
-                        matchingDataRecords.append(WTFMove(dataRecord));
-                        domainsWithMatchingDataRecords.add(topPrivatelyControlledDomain.isolatedCopy());
-                        break;
-                    }
+    fetchDataAndApply(dataTypes, fetchOptions, m_queue.copyRef(), [topPrivatelyControlledDomains = CrossThreadCopier<Vector<String>>::copy(topPrivatelyControlledDomains), completionHandler = WTFMove(completionHandler)] (auto&& existingDataRecords) mutable {
+        ASSERT(!RunLoop::isMain());
+
+        Vector<WebsiteDataRecord> matchingDataRecords;
+        HashSet<String> domainsWithMatchingDataRecords;
+        for (auto&& dataRecord : existingDataRecords) {
+            for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomains) {
+                if (dataRecord.matchesTopPrivatelyControlledDomain(topPrivatelyControlledDomain)) {
+                    matchingDataRecords.append(WTFMove(dataRecord));
+                    domainsWithMatchingDataRecords.add(topPrivatelyControlledDomain.isolatedCopy());
+                    break;
                 }
             }
-            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), matchingDataRecords = WTFMove(matchingDataRecords), domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords)] () mutable {
-                completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithMatchingDataRecords));
-            });
+        }
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), matchingDataRecords = WTFMove(matchingDataRecords), domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords)] () mutable {
+            completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithMatchingDataRecords));
         });
     });
 }

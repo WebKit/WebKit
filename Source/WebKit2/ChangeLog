@@ -1,3 +1,21 @@
+2017-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Avoid double thread dispatch in WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains()
+        https://bugs.webkit.org/show_bug.cgi?id=173904
+
+        Reviewed by Brent Fulgham.
+
+        Avoid double thread dispatch in WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains().
+        It calls fetchData() which dispatches to the main queue, then fetchDataForTopPrivatelyControlledDomains()
+        dispatches to the background queue. It should be possible to get fetchData() to dispatch directly
+        on the right queue.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchData):
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-06-27  Chris Dumez  <cdumez@apple.com>
 
         [ResourceLoadStatistics] Update minimumTimeBetweeenDataRecordsRemoval to 1 hour instead of 1 minute

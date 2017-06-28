@@ -128,6 +128,8 @@ private:
     explicit WebsiteDataStore(WebCore::SessionID);
     explicit WebsiteDataStore(Configuration, WebCore::SessionID);
 
+    void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, RefPtr<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
+
     // WebProcessLifetimeObserver.
     void webPageWasAdded(WebPageProxy&) override;
     void webPageWasRemoved(WebPageProxy&) override;
