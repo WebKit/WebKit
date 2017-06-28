@@ -21,7 +21,10 @@ add_compile_options(/EHa- /EHc- /EHs- /fp:except-)
 add_compile_options(/analyze- /bigobj)
 
 # Use CRT security features
-add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+if (NOT COMPILER_IS_CLANG_CL)
+    add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
+endif ()
 
 # Turn off certain link features
 add_compile_options(/Gy- /openmp- /GF-)
@@ -82,3 +85,14 @@ string(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replace_CMAKE_SHARED_LINKER_FL
 set(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${replace_CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO")
 string(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replace_CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO})
 set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${replace_CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} /INCREMENTAL:NO")
+
+if (COMPILER_IS_CLANG_CL)
+    # FIXME: We need to set the msc-version above the one it defaults to
+    # when using clang-cl with VS2015. This might be unnecessary when moving to
+    # VS2017 as part of https://bugs.webkit.org/show_bug.cgi?id=172412
+    add_compile_options(-fmsc-version=190023918)
+
+    # FIXME: Building with clang-cl seemed to fail with 128 bit int support
+    set(HAVE_INT128_T OFF)
+    list(REMOVE_ITEM _WEBKIT_CONFIG_FILE_VARIABLES HAVE_INT128_T)
+endif ()

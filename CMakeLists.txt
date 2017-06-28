@@ -50,6 +50,10 @@ if (CMAKE_COMPILER_IS_GNUCXX OR COMPILER_IS_CLANG)
     set(COMPILER_IS_GCC_OR_CLANG ON)
 endif ()
 
+if (MSVC AND COMPILER_IS_CLANG)
+    set(COMPILER_IS_CLANG_CL ON)
+endif ()
+
 # -----------------------------------------------------------------------------
 # Determine the target processor
 # -----------------------------------------------------------------------------
