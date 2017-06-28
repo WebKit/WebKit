@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1150,8 +1150,6 @@ unsigned Graph::requiredRegisterCountForExit()
 
 unsigned Graph::requiredRegisterCountForExecutionAndExit()
 {
-    // FIXME: We should make sure that frameRegisterCount() and requiredRegisterCountForExit()
-    // never overflows. https://bugs.webkit.org/show_bug.cgi?id=173852
     return std::max(frameRegisterCount(), requiredRegisterCountForExit());
 }
 

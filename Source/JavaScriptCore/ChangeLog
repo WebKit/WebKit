@@ -1,5 +1,18 @@
 2017-06-28  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r218869.
+
+        Broke the iOS build
+
+        Reverted changeset:
+
+        "Ensure that computed new stack pointer values do not
+        underflow."
+        https://bugs.webkit.org/show_bug.cgi?id=173700
+        http://trac.webkit.org/changeset/218869
+
+2017-06-28  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r218873.
 
         Broke the iOS build

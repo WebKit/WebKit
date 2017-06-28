@@ -29,7 +29,6 @@
 #include "AssemblerCommon.h"
 #include "LLIntCommon.h"
 #include "LLIntData.h"
-#include "MinimumReservedZoneSize.h"
 #include "SigillCrashAnalyzer.h"
 #include <algorithm>
 #include <limits>
@@ -497,11 +496,6 @@ static void recomputeDependentOptions()
 
     if (Options::useSigillCrashAnalyzer())
         enableSigillCrashAnalyzer();
-
-    if (Options::reservedZoneSize() < minimumReservedZoneSize)
-        Options::reservedZoneSize() = minimumReservedZoneSize;
-    if (Options::softReservedZoneSize() < Options::reservedZoneSize() + minimumReservedZoneSize)
-        Options::softReservedZoneSize() = Options::reservedZoneSize() + minimumReservedZoneSize;
 }
 
 void Options::initialize()

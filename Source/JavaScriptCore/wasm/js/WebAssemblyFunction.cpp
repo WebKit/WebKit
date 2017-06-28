@@ -134,7 +134,7 @@ static EncodedJSValue JSC_HOST_CALL callWebAssemblyFunction(ExecState* exec)
         const intptr_t sp = bitwise_cast<intptr_t>(&sp); // A proxy for the current stack pointer.
         const intptr_t frameSize = (boxedArgs.size() + CallFrame::headerSizeInRegisters) * sizeof(Register);
         const intptr_t stackSpaceUsed = 2 * frameSize; // We're making two calls. One to the wrapper, and one to the actual wasm code.
-        if (UNLIKELY((sp < stackSpaceUsed) || ((sp - stackSpaceUsed) < bitwise_cast<intptr_t>(vm.softStackLimit()))))
+        if (UNLIKELY((sp - stackSpaceUsed) < bitwise_cast<intptr_t>(vm.softStackLimit())))
             return JSValue::encode(throwException(exec, scope, createStackOverflowError(exec)));
     }
     Wasm::storeContext(vm, wasmContext);

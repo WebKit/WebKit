@@ -416,16 +416,12 @@ B3IRGenerator::B3IRGenerator(const ModuleInformation& info, Procedure& procedure
                 (Checked<uint32_t>(m_maxNumJSCallArguments) * sizeof(Register) + jscCallingConvention().headerSizeInBytes()).unsafeGet()
             ));
             const int32_t checkSize = m_makesCalls ? (wasmFrameSize + extraFrameSize).unsafeGet() : wasmFrameSize.unsafeGet();
-            bool needUnderflowCheck = static_cast<unsigned>(checkSize) > Options::reservedZoneSize();
             // This allows leaf functions to not do stack checks if their frame size is within
             // certain limits since their caller would have already done the check.
-            if (m_makesCalls || wasmFrameSize >= minimumParentCheckSize || needUnderflowCheck) {
+            if (m_makesCalls || wasmFrameSize >= minimumParentCheckSize) {
                 jit.loadPtr(CCallHelpers::Address(context, Context::offsetOfCachedStackLimit()), scratch2);
                 jit.addPtr(CCallHelpers::TrustedImm32(-checkSize), fp, scratch1);
-                MacroAssembler::JumpList overflow;
-                if (UNLIKELY(needUnderflowCheck))
-                    overflow.append(jit.branchPtr(CCallHelpers::Above, scratch1, fp));
-                overflow.append(jit.branchPtr(CCallHelpers::Below, scratch1, scratch2));
+                auto overflow = jit.branchPtr(CCallHelpers::Below, scratch1, scratch2);
                 jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
                     linkBuffer.link(overflow, CodeLocationLabel(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
                 });
