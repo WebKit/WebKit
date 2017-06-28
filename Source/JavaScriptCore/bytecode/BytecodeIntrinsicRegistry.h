@@ -57,6 +57,7 @@ class Identifier;
     macro(toNumber) \
     macro(toString) \
     macro(newArrayWithSize) \
+    macro(defineEnumerableWritableConfigurableDataProperty) \
 
 #define JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
     macro(undefined) \

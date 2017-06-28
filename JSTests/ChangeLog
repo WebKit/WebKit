@@ -1,3 +1,20 @@
+2017-06-27  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESnext] Implement Object Rest - Implementing Object Rest Destructuring
+        https://bugs.webkit.org/show_bug.cgi?id=167962
+
+        Reviewed by Saam Barati.
+
+        * stress/object-rest-deconstruct.js: Added.
+        (let.assert):
+        (let.assertPropDescriptor):
+        (catch):
+        (get 3):
+        (foo):
+        (let.src.get y):
+        (let.src.set y):
+        (let.gen):
+
 2017-06-27  Saam Barati  <sbarati@apple.com>
 
         Function constructor needs to follow the spec and validate parameters and body independently

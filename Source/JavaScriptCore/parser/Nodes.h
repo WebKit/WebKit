@@ -2133,19 +2133,33 @@ namespace JSC {
         Vector<Entry> m_targetPatterns;
     };
     
-    class ObjectPatternNode : public DestructuringPatternNode, public ParserArenaDeletable {
+    class ObjectPatternNode : public DestructuringPatternNode, public ThrowableExpressionData, public ParserArenaDeletable {
     public:
         using ParserArenaDeletable::operator new;
         
         ObjectPatternNode();
-        void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DestructuringPatternNode* pattern, ExpressionNode* defaultValue)
+        enum class BindingType {
+            Element,
+            RestElement
+        };
+        void appendEntry(const JSTokenLocation&, const Identifier& identifier, bool wasString, DestructuringPatternNode* pattern, ExpressionNode* defaultValue, BindingType bindingType)
         {
-            m_targetPatterns.append(Entry { identifier, nullptr, wasString, pattern, defaultValue });
+            m_targetPatterns.append(Entry{ identifier, nullptr, wasString, pattern, defaultValue, bindingType });  
         }
 
-        void appendEntry(const JSTokenLocation&, ExpressionNode* propertyExpression, DestructuringPatternNode* pattern, ExpressionNode* defaultValue)
+        void appendEntry(VM& vm, const JSTokenLocation&, ExpressionNode* propertyExpression, DestructuringPatternNode* pattern, ExpressionNode* defaultValue, BindingType bindingType)
         {
-            m_targetPatterns.append(Entry { Identifier(), propertyExpression, false, pattern, defaultValue });
+            m_targetPatterns.append(Entry{ vm.propertyNames->nullIdentifier, propertyExpression, false, pattern, defaultValue, bindingType });
+        }
+        
+        void setContainsRestElement(bool containsRestElement)
+        {
+            m_containsRestElement = containsRestElement;
+        }
+        
+        void setContainsComputedProperty(bool containsComputedProperty)
+        {
+            m_containsComputedProperty = containsComputedProperty;
         }
 
     private:
@@ -2158,7 +2172,10 @@ namespace JSC {
             bool wasString;
             DestructuringPatternNode* pattern;
             ExpressionNode* defaultValue;
+            BindingType bindingType;
         };
+        bool m_containsRestElement { false };
+        bool m_containsComputedProperty { false };
         Vector<Entry> m_targetPatterns;
     };
 

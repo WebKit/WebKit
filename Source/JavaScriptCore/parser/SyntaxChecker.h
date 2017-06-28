@@ -346,10 +346,19 @@ public:
     {
         return ObjectDestructuring;
     }
-    void appendObjectPatternEntry(ArrayPattern, const JSTokenLocation&, bool, const Identifier&, DestructuringPattern, int)
+    void appendObjectPatternEntry(ObjectPattern, const JSTokenLocation&, bool, const Identifier&, DestructuringPattern, int)
     {
     }
-    void appendObjectPatternEntry(ArrayPattern, const JSTokenLocation&, Expression, DestructuringPattern, Expression)
+    void appendObjectPatternEntry(VM&, ObjectPattern, const JSTokenLocation&, Expression, DestructuringPattern, Expression)
+    {
+    }
+    void appendObjectPatternRestEntry(VM&, ObjectPattern, const JSTokenLocation&, DestructuringPattern)
+    {
+    }
+    void setContainsObjectRestElement(ObjectPattern, bool)
+    {
+    }
+    void setContainsComputedProperty(ObjectPattern, bool)
     {
     }
 

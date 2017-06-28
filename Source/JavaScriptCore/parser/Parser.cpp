@@ -138,6 +138,7 @@ Parser<LexerType>::Parser(VM* vm, const SourceCode& source, JSParserBuiltinMode 
     m_token.m_location.lineStartOffset = source.startOffset();
     m_functionCache = vm->addSourceProviderCache(source.provider());
     m_expressionErrorClassifier = nullptr;
+    m_useObjectRestSpread = Options::useObjectRestSpread();
 
     ScopeRef scope = pushScope();
     scope->setSourceParseMode(parseMode);
@@ -917,6 +918,27 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseBi
 }
 
 template <typename LexerType>
+template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseObjectRestAssignmentElement(TreeBuilder& context)
+{
+    JSTextPosition startPosition = tokenStartPosition();
+    auto element = parseMemberExpression(context);
+
+    if (!element || !context.isAssignmentLocation(element)) {
+        reclassifyExpressionError(ErrorIndicatesPattern, ErrorIndicatesNothing);
+        semanticFail("Invalid destructuring assignment target");
+    }
+
+    if (strictMode() && m_parserState.lastIdentifier && context.isResolve(element)) {
+        bool isEvalOrArguments = m_vm->propertyNames->eval == *m_parserState.lastIdentifier || m_vm->propertyNames->arguments == *m_parserState.lastIdentifier;
+        if (isEvalOrArguments && strictMode())
+            reclassifyExpressionError(ErrorIndicatesPattern, ErrorIndicatesNothing);
+        failIfTrueIfStrict(isEvalOrArguments, "Cannot modify '", m_parserState.lastIdentifier->impl(), "' in strict mode");
+    }
+
+    return createAssignmentElement(context, element, startPosition, lastTokenEndPosition());
+}
+
+template <typename LexerType>
 template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseAssignmentElement(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, bool* hasDestructuringPattern, AssignmentContext bindingContext, int depth)
 {
     TreeDestructuringPattern assignmentTarget = 0;
@@ -959,6 +981,32 @@ static const char* destructuringKindToVariableKindName(DestructuringKind kind)
     }
     RELEASE_ASSERT_NOT_REACHED();
     return "invalid";
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseObjectRestElement(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, AssignmentContext bindingContext)
+{
+    ASSERT(kind != DestructuringKind::DestructureToExpressions);
+    failIfStackOverflow();
+    TreeDestructuringPattern pattern;
+    
+    if (!matchSpecIdentifier()) {
+        semanticFailureDueToKeyword(destructuringKindToVariableKindName(kind));
+        failWithMessage("Expected a binding element");
+    }
+    failIfTrue(match(LET) && (kind == DestructuringKind::DestructureToLet || kind == DestructuringKind::DestructureToConst), "Cannot use 'let' as an identifier name for a LexicalDeclaration");
+    semanticFailIfTrue(isDisallowedIdentifierAwait(m_token), "Cannot use 'await' as a ", destructuringKindToVariableKindName(kind), " ", disallowedIdentifierAwaitReason());
+    pattern = createBindingPattern(context, kind, exportType, *m_token.m_data.ident, m_token, bindingContext, duplicateIdentifier);
+    next();
+    return pattern;
+}
+
+template <typename LexerType>
+template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseObjectRestBindingOrAssignmentElement(TreeBuilder& context, DestructuringKind kind, ExportType exportType, const Identifier** duplicateIdentifier, AssignmentContext bindingContext)
+{
+    if (kind == DestructuringKind::DestructureToExpressions)
+        return parseObjectRestAssignmentElement(context);
+    return parseObjectRestElement(context, kind, exportType, duplicateIdentifier, bindingContext);
 }
 
 template <typename LexerType>
@@ -1022,11 +1070,26 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
         if (hasDestructuringPattern)
             *hasDestructuringPattern = true;
 
+        bool restElementWasFound = false;
+
         do {
             bool wasString = false;
 
             if (match(CLOSEBRACE))
                 break;
+
+            if (match(DOTDOTDOT) && m_useObjectRestSpread) {
+                JSTokenLocation location = m_token.m_location;
+                next();
+                auto innerPattern = parseObjectRestBindingOrAssignmentElement(context, kind, exportType, duplicateIdentifier, bindingContext);
+                propagateError();
+                if (!innerPattern)
+                    return 0;
+                context.appendObjectPatternRestEntry(*m_vm, objectPattern, location, innerPattern);
+                restElementWasFound = true;
+                context.setContainsObjectRestElement(objectPattern, restElementWasFound);
+                break;
+            }
 
             const Identifier* propertyName = nullptr;
             TreeExpression propertyExpression = 0;
@@ -1092,9 +1155,10 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
             failIfFalse(innerPattern, "Cannot parse this destructuring pattern");
             TreeExpression defaultValue = parseDefaultValueForDestructuringPattern(context);
             propagateError();
-            if (propertyExpression)
-                context.appendObjectPatternEntry(objectPattern, location, propertyExpression, innerPattern, defaultValue);
-            else {
+            if (propertyExpression) {
+                context.appendObjectPatternEntry(*m_vm, objectPattern, location, propertyExpression, innerPattern, defaultValue);
+                context.setContainsComputedProperty(objectPattern, true);
+            } else {
                 ASSERT(propertyName);
                 context.appendObjectPatternEntry(objectPattern, location, wasString, *propertyName, innerPattern, defaultValue);
             }
@@ -1102,7 +1166,7 @@ template <class TreeBuilder> TreeDestructuringPattern Parser<LexerType>::parseDe
 
         if (kind == DestructuringKind::DestructureToExpressions && !match(CLOSEBRACE))
             return 0;
-        consumeOrFail(CLOSEBRACE, "Expected either a closing '}' or an ',' after a property destructuring pattern");
+        consumeOrFail(CLOSEBRACE, restElementWasFound ? "Expected a closing '}' following a rest element destructuring pattern" : "Expected either a closing '}' or an ',' after a property destructuring pattern");
         pattern = objectPattern;
         break;
     }
@@ -3804,6 +3868,13 @@ namedProperty:
         failIfFalse(node, "Cannot parse expression for property declaration");
         context.setEndOffset(node, m_lexer->currentOffset());
         return context.createProperty(propertyName, node, static_cast<PropertyNode::Type>(PropertyNode::Constant | PropertyNode::Computed), PropertyNode::Unknown, complete, SuperBinding::NotNeeded, isClassProperty);
+    }
+    case DOTDOTDOT: {
+        if (m_useObjectRestSpread) {
+            classifyExpressionError(ErrorIndicatesPattern);
+            return 0;
+        }
+        FALLTHROUGH;
     }
     default:
         failIfFalse(m_token.m_type & KeywordTokenFlag, "Expected a property name");

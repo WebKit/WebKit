@@ -715,7 +715,27 @@ valid("var [...[{x} = 20, ...y]] = 20;");
 valid("var {x: [y, ...[...[...{z: [...z]}]]]} = 20");
 valid("var {x: [y, {z: {z: [...z]}}]} = 20");
 invalid("var [...y, ...z] = 20");
-invalid("var [...{...y}] = 20");
+valid("var [...{...y}] = 20");
+valid("var {a, b, ...r} = {a: 1, b: 2, c: 3};");
+invalid("var {a, b, ...{d}} = {a: 1, b: 2, c: 3, d: 4};");
+invalid("var {a, b, ...{d = 15}} = {a: 1, b: 2, c: 3, d: 4};");
+invalid("var {a, b, ...{d = 15, ...r}} = {a: 1, b: 2, c: 3, d: 4};");
+valid("(({a, b, ...r}) => {})({a: 1, b: 2, c: 3, d: 4});");
+valid("(function ({a, b, ...r}) {})({a: 1, b: 2, c: 3, d: 4});");
+valid("var a, b, c; ({a, b, ...r} = {a: 1, b: 2, c: 3, d: 4});");
+valid("try { throw {a:2} } catch({...rest}) {}");
+invalid("function * foo(o) { ({...{ x = yield }} = o); }");
+invalid("var {...r = {a: 2}} = {a: 1, b: 2};");
+invalid("var {...r, b} = {a: 1, b: 2};");
+invalid("var {...r, ...e} = {a: 1, b: 2};");
+invalid("({...new Object()} = {a: 1, b: 2});");
+invalid("(function * (o) { ({ ...{ x: yield } } = o); })()");
+invalid("(function () {'use strict'; ({...eval} = {}); })()");
+invalid("(function () {'use strict'; ({...arguments} = {}); })()");
+invalid("async function foo () { let {...await} = {}; }");
+invalid("let {...let} = {a: 1, b: 2};");
+invalid("const {...let} = {a: 1, b: 2};");
+invalid("try { throw {a:2} } catch({...foo.a}) {}");
 
 debug("Rest parameter");
 valid("function foo(...a) { }");
@@ -751,7 +771,7 @@ invalid("let x = (a = 20, ...b, ...c) => { }");
 valid("let x = (a = 20, ...[...b]) => { }");
 valid("let x = (a = 20, ...[...[b = 40]]) => { }");
 valid("let x = (a = 20, ...{b}) => { }");
-invalid("let x = (a = 20, ...{...b}) => { }");
+valid("let x = (a = 20, ...{...b}) => { }");
 invalid("let x = (a = 20, ...{124}) => { }");
 
 debug("non-simple parameter list")
@@ -910,8 +930,8 @@ invalid("({ async foo({a},...a){} });");
 invalid("({ async foo({...a},...a){} });");
 valid("({ foo(a, ...b){} });");
 valid("({ foo({a}, ...b){} });");
-invalid("({ foo({a, ...b}){} });");
-invalid("({ foo({b, ...a}, ...c){} });");
+valid("({ foo({a, ...b}){} });");
+valid("({ foo({b, ...a}, ...c){} });");
 
 debug("Weird things that used to crash.");
 invalid(`or ([[{break //(elseifo (a=0;a<2;a++)n=

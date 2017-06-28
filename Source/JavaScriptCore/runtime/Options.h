@@ -462,7 +462,8 @@ typedef const char* optionString;
     v(unsigned, webAssemblyFastMemoryPreallocateCount, 0, Normal, "WebAssembly fast memories can be pre-allocated at program startup and remain cached to avoid fragmentation leading to bounds-checked memory. This number is an upper bound on initial allocation as well as total count of fast memories. Zero means no pre-allocation, no caching, and no limit to the number of runtime allocations.") \
     v(bool, useWebAssemblyFastTLS, true, Normal, "If true, we will try to use fast thread-local storage if available on the current platform.") \
     v(bool, useFastTLSForWasmContext, true, Normal, "If true (and fast TLS is enabled), we will store context in fast TLS. If false, we will pin it to a register.") \
-    v(bool, useCallICsForWebAssemblyToJSCalls, true, Normal, "If true, we will use CallLinkInfo to inline cache Wasm to JS calls.")
+    v(bool, useCallICsForWebAssemblyToJSCalls, true, Normal, "If true, we will use CallLinkInfo to inline cache Wasm to JS calls.") \
+    v(bool, useObjectRestSpread, true, Normal, "If true, we will enable Object Rest/Spread feature.")
 
 
 enum OptionEquivalence {

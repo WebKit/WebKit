@@ -1619,9 +1619,7 @@ unsigned BytecodeGenerator::addConstant(const Identifier& ident)
 RegisterID* BytecodeGenerator::addConstantEmptyValue()
 {
     if (!m_emptyValueRegister) {
-        int index = m_nextConstantOffset;
-        m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
-        ++m_nextConstantOffset;
+        int index = addConstantIndex();
         m_codeBlock->addConstant(JSValue());
         m_emptyValueRegister = &m_constantPoolRegisters[index];
     }
@@ -1641,8 +1639,7 @@ RegisterID* BytecodeGenerator::addConstantValue(JSValue v, SourceCodeRepresentat
     EncodedJSValueWithRepresentation valueMapKey { JSValue::encode(v), sourceCodeRepresentation };
     JSValueMap::AddResult result = m_jsValueMap.add(valueMapKey, m_nextConstantOffset);
     if (result.isNewEntry) {
-        m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
-        ++m_nextConstantOffset;
+        addConstantIndex();
         m_codeBlock->addConstant(v, sourceCodeRepresentation);
     } else
         index = result.iterator->value;
@@ -1653,9 +1650,7 @@ RegisterID* BytecodeGenerator::emitMoveLinkTimeConstant(RegisterID* dst, LinkTim
 {
     unsigned constantIndex = static_cast<unsigned>(type);
     if (!m_linkTimeConstantRegisters[constantIndex]) {
-        int index = m_nextConstantOffset;
-        m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
-        ++m_nextConstantOffset;
+        int index = addConstantIndex();
         m_codeBlock->addConstant(type);
         m_linkTimeConstantRegisters[constantIndex] = &m_constantPoolRegisters[index];
     }
@@ -1927,6 +1922,14 @@ void BytecodeGenerator::emitProfileControlFlow(int textOffset)
     }
 }
 
+unsigned BytecodeGenerator::addConstantIndex()
+{
+    unsigned index = m_nextConstantOffset;
+    m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
+    ++m_nextConstantOffset;
+    return index;
+}
+
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, bool b)
 {
     return emitLoad(dst, jsBoolean(b));
@@ -1950,12 +1953,29 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v, SourceCodeRe
     return constantID;
 }
 
+RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet& set)
+{
+    for (ConstantIndentifierSetEntry entry : m_codeBlock->constantIdentifierSets()) {
+        if (entry.first != set)
+            continue;
+        
+        return &m_constantPoolRegisters[entry.second];
+    }
+    
+    unsigned index = addConstantIndex();
+    m_codeBlock->addSetConstant(set);
+    RegisterID* m_setRegister = &m_constantPoolRegisters[index];
+    
+    if (dst)
+        return emitMove(dst, m_setRegister);
+    
+    return m_setRegister;
+}
+
 RegisterID* BytecodeGenerator::emitLoadGlobalObject(RegisterID* dst)
 {
     if (!m_globalObjectRegister) {
-        int index = m_nextConstantOffset;
-        m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
-        ++m_nextConstantOffset;
+        int index = addConstantIndex();
         m_codeBlock->addConstant(JSValue());
         m_globalObjectRegister = &m_constantPoolRegisters[index];
         m_codeBlock->setGlobalObjectRegister(VirtualRegister(index));
@@ -3103,9 +3123,7 @@ RegisterID* BytecodeGenerator::addTemplateRegistryKeyConstant(Ref<TemplateRegist
 {
     return m_templateRegistryKeyMap.ensure(templateRegistryKey.copyRef(), [&] {
         auto* result = JSTemplateRegistryKey::create(*vm(), WTFMove(templateRegistryKey));
-        unsigned index = m_nextConstantOffset;
-        m_constantPoolRegisters.append(FirstConstantRegisterIndex + m_nextConstantOffset);
-        ++m_nextConstantOffset;
+        unsigned index = addConstantIndex();
         m_codeBlock->addConstant(result);
         return &m_constantPoolRegisters[index];
     }).iterator->value;

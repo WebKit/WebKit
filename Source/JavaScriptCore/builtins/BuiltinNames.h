@@ -35,6 +35,7 @@ namespace JSC {
 #define JSC_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSIC_FUNCTIONS_EACH_NAME(macro) \
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
+    macro(add) \
     macro(arrayIteratorNextIndex) \
     macro(arrayIterationKind) \
     macro(arrayIteratorNext) \
@@ -72,6 +73,7 @@ namespace JSC {
     macro(ownKeys) \
     macro(Error) \
     macro(RangeError) \
+    macro(Set) \
     macro(TypeError) \
     macro(typedArrayLength) \
     macro(typedArraySort) \
