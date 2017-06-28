@@ -1,3 +1,12 @@
+2017-06-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] LayoutTest webaudio/silent-audio-interrupted-in-background.html makes its subsequent test flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=173916
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Marked it Skip.
+
 2017-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup RemoteObject tests

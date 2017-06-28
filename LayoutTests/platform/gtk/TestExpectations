@@ -1364,6 +1364,8 @@ webkit.org/b/172952 fast/frames/sandboxed-iframe-navigation-top-denied.html [ Cr
 
 webkit.org/b/172955 media/video-preload.html [ Crash Pass ]
 
+webkit.org/b/173916 webaudio/silent-audio-interrupted-in-background.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
