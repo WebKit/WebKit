@@ -1,3 +1,19 @@
+2017-06-27  Jeremy Jones  <jeremyj@apple.com>
+
+        MediaPlayerPrivate m_private may not yet be created when setPrivateBrowsingMode is called.
+        https://bugs.webkit.org/show_bug.cgi?id=173893
+        rdar://problem/32986872
+        
+        Reviewed by Ryosuke Niwa.
+
+        No new tests because no reproducable case.
+
+        setPrivateBrowsingMode can be called on MediaPlayer before the MediaPlayerPrivate is created.
+        The value should only be pushed down the m_private if it has been created.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setPrivateBrowsingMode):
+
 2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Support dragging out of contenteditable areas without a prior selection

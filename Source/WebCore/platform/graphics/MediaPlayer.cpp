@@ -1126,7 +1126,8 @@ bool MediaPlayer::supportsKeySystem(const String& keySystem, const String& mimeT
 void MediaPlayer::setPrivateBrowsingMode(bool privateBrowsingMode)
 {
     m_privateBrowsing = privateBrowsingMode;
-    m_private->setPrivateBrowsingMode(m_privateBrowsing);
+    if (m_private)
+        m_private->setPrivateBrowsingMode(m_privateBrowsing);
 }
 
 // Client callbacks.
