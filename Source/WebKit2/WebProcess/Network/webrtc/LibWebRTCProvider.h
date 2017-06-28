@@ -36,7 +36,7 @@ public:
     LibWebRTCProvider() { m_useNetworkThreadWithSocketServer = false; }
 
 private:
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&) final;
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&) final;
 };
 #else
 using LibWebRTCProvider = WebCore::LibWebRTCProvider;

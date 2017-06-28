@@ -1,3 +1,39 @@
+2017-06-28  Youenn Fablet  <youenn@apple.com>
+
+        Support PeerConnectionStates::BundlePolicy::MaxBundle when setting rtc configuration
+        https://bugs.webkit.org/show_bug.cgi?id=169389
+
+        Reviewed by Alex Christensen.
+
+        Covered by manual testing (appr.tc and https://youennf.github.io/webrtc-tests/src/content/peerconnection/trickle-ice/).
+        Previously, we were creating a libwebrtc peer connection and then setting its configuration.
+        libwebrtc does not like the configuration to be changed and may refuse to set the configuration.
+        Instead of doing that, we are now creating the libwebrtc peer connection with the provided configuration.
+
+        * Modules/mediastream/MediaEndpointPeerConnection.cpp:
+        (WebCore::MediaEndpointPeerConnection::setConfiguration):
+        * Modules/mediastream/MediaEndpointPeerConnection.h:
+        * Modules/mediastream/PeerConnectionBackend.h:
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::initializeWith):
+        (WebCore::iceServersFromConfiguration):
+        (WebCore::RTCPeerConnection::initializeConfiguration):
+        (WebCore::RTCPeerConnection::setConfiguration):
+        * Modules/mediastream/RTCPeerConnection.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint):
+        (WebCore::LibWebRTCMediaEndpoint::setConfiguration):
+        (WebCore::LibWebRTCMediaEndpoint::stop):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::configurationFromMediaEndpointConfiguration):
+        (WebCore::LibWebRTCPeerConnectionBackend::setConfiguration):
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.cpp:
+        (WebCore::createActualPeerConnection):
+        (WebCore::LibWebRTCProvider::createPeerConnection):
+        * platform/mediastream/libwebrtc/LibWebRTCProvider.h:
+
 2017-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         Teach ResourceLoadStatistics to recognize changes in the file system
