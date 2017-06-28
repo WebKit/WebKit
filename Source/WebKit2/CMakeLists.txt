@@ -1,3 +1,6 @@
+include(CheckCXXSourceCompiles)
+include(CheckFunctionExists)
+
 set_property(DIRECTORY . PROPERTY FOLDER "WebKit2")
 
 set(WebKit2_INCLUDE_DIRECTORIES
@@ -713,11 +716,33 @@ else ()
     set(JavaScriptCore_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/JavaScriptCore/Scripts")
 endif ()
 
-# librt is needed for shm_open on Linux.
-find_library(LIBRT_LIBRARIES NAMES rt)
-mark_as_advanced(LIBRT_LIBRARIES)
-if (LIBRT_LIBRARIES)
-    list(APPEND WebKit2_LIBRARIES ${LIBRT_LIBRARIES})
+if (COMPILER_IS_GCC_OR_CLANG)
+    set(ATOMIC_TEST_SOURCE
+    "
+        #include <atomic>
+        int main() { std::atomic<int64_t> i(0); i++; return 0; }
+    "
+    )
+    check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMIC_INT64_IS_BUILTIN)
+    if (NOT ATOMIC_INT64_IS_BUILTIN)
+        set(CMAKE_REQUIRED_LIBRARIES atomic)
+        check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMIC_INT64_REQUIRES_LIBATOMIC)
+        if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
+            list(APPEND WebKit2_LIBRARIES atomic)
+        endif ()
+        unset(CMAKE_REQUIRED_LIBRARIES)
+    endif ()
+endif ()
+
+if (UNIX)
+    check_function_exists(shm_open SHM_OPEN_EXISTS)
+    if (NOT SHM_OPEN_EXISTS)
+        set(CMAKE_REQUIRED_LIBRARIES rt)
+        check_function_exists(shm_open SHM_OPEN_REQUIRES_LIBRT)
+        if (SHM_OPEN_REQUIRES_LIBRT)
+            list(APPEND WebKit2_LIBRARIES rt)
+        endif ()
+    endif ()
 endif ()
 
 macro(ADD_WEBKIT2_PREFIX_HEADER _target)

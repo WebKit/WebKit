@@ -1,3 +1,20 @@
+2017-06-28  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Improve configuration tests for librt and libatomic
+        https://bugs.webkit.org/show_bug.cgi?id=173921
+
+        Reviewed by Michael Catanzaro.
+
+        1. Both tests are converted to use specialized CMake modules
+        2. Both libraries are now linked only if they are really needed and usable
+           by compiler
+        3. librt is no more required to be detected by find_library(), which may fail
+           in case of cross-compilation
+        4. libatomic test moved to port-independent CMakeLists.txt
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+
 2017-06-28  Alex Christensen  <achristensen@webkit.org>
 
         Fix CMake build.

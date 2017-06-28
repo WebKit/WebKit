@@ -844,15 +844,6 @@ list(APPEND DatabaseProcess_SOURCES
     DatabaseProcess/EntryPoint/unix/DatabaseProcessMain.cpp
 )
 
-file(WRITE ${CMAKE_BINARY_DIR}/test_atomic.cpp
-     "#include <atomic>\n"
-     "int main() { std::atomic<int64_t> i(0); i++; return 0; }\n")
-try_compile(ATOMIC_BUILD_SUCCEEDED ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/test_atomic.cpp)
-if (NOT ATOMIC_BUILD_SUCCEEDED)
-    list(APPEND WebKit2_LIBRARIES atomic)
-endif ()
-file(REMOVE ${CMAKE_BINARY_DIR}/test_atomic.cpp)
-
 set(SharedWebKit2Libraries
     ${WebKit2_LIBRARIES}
 )
