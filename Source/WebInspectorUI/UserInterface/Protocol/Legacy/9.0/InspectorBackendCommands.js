@@ -210,7 +210,6 @@ InspectorBackend.registerEvent("Inspector.evaluateForTestInFrontend", ["script"]
 InspectorBackend.registerEvent("Inspector.inspect", ["object", "hints"]);
 InspectorBackend.registerEvent("Inspector.detached", ["reason"]);
 InspectorBackend.registerEvent("Inspector.activateExtraDomains", ["domains"]);
-InspectorBackend.registerEvent("Inspector.targetCrashed", []);
 InspectorBackend.registerCommand("Inspector.enable", [], []);
 InspectorBackend.registerCommand("Inspector.disable", [], []);
 InspectorBackend.registerCommand("Inspector.initialized", [], []);

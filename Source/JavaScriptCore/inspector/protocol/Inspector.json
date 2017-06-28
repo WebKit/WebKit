@@ -30,22 +30,11 @@
             ]
         },
         {
-            "name": "detached",
-            "description": "Fired when remote debugging connection is about to be terminated. Contains detach reason.",
-            "parameters": [
-                { "name": "reason", "type": "string", "description": "The reason why connection has been terminated." }
-            ]
-        },
-        {
             "name": "activateExtraDomains",
             "description": "Fired when the backend has alternate domains that need to be activated.",
             "parameters": [
                 { "name": "domains", "type": "array", "items": { "type": "string" }, "description": "Domain names that need activation" }
             ]
-        },
-        {
-            "name": "targetCrashed",
-            "description": "Fired when debugging target has crashed"
         }
     ]
 }

@@ -1837,10 +1837,6 @@
             "parameters": [
                 { "name": "domains", "type": "array", "items": { "type": "string" }, "description": "Domain names that need activation" }
             ]
-        },
-        {
-            "name": "targetCrashed",
-            "description": "Fired when debugging target has crashed"
         }
     ]
 }

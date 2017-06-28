@@ -53,11 +53,6 @@ WebInspector.InspectorObserver = class InspectorObserver
         remoteObject.release();
     }
 
-    detached(reason)
-    {
-        // FIXME: Not implemented.
-    }
-
     activateExtraDomains(domains)
     {
         WebInspector.activateExtraDomains(domains);
