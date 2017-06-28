@@ -13,62 +13,62 @@
     "commands": [
         {
             "name": "setDOMBreakpoint",
+            "description": "Sets breakpoint on particular operation with DOM.",
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to set breakpoint on." },
                 { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the operation to stop upon." }
-            ],
-            "description": "Sets breakpoint on particular operation with DOM."
+            ]
         },
         {
             "name": "removeDOMBreakpoint",
+            "description": "Removes DOM breakpoint that was set using <code>setDOMBreakpoint</code>.",
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to remove breakpoint from." },
                 { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the breakpoint to remove." }
-            ],
-            "description": "Removes DOM breakpoint that was set using <code>setDOMBreakpoint</code>."
+            ]
         },
         {
             "name": "setEventListenerBreakpoint",
+            "description": "Sets breakpoint on particular DOM event.",
             "parameters": [
                 { "name": "eventName", "type": "string", "description": "DOM Event name to stop on (any DOM event will do)." }
-            ],
-            "description": "Sets breakpoint on particular DOM event."
+            ]
         },
         {
             "name": "removeEventListenerBreakpoint",
+            "description": "Removes breakpoint on particular DOM event.",
             "parameters": [
                 { "name": "eventName", "type": "string", "description": "Event name." }
-            ],
-            "description": "Removes breakpoint on particular DOM event."
+            ]
         },
         {
             "name": "setInstrumentationBreakpoint",
+            "description": "Sets breakpoint on particular native event.",
             "parameters": [
                 { "name": "eventName", "type": "string", "description": "Instrumentation name to stop on." }
-            ],
-            "description": "Sets breakpoint on particular native event."
+            ]
         },
         {
             "name": "removeInstrumentationBreakpoint",
+            "description": "Sets breakpoint on particular native event.",
             "parameters": [
                 { "name": "eventName", "type": "string", "description": "Instrumentation name to stop on." }
-            ],
-            "description": "Sets breakpoint on particular native event."
+            ]
         },
         {
             "name": "setXHRBreakpoint",
+            "description": "Sets breakpoint on XMLHttpRequest.",
             "parameters": [
                 { "name": "url", "type": "string", "description": "Resource URL substring or regular expression. All XHRs having this substring in the URL will get stopped upon. An empty string will pause on all XHRs." },
-                { "name": "isRegex", "type": "boolean", "optional": true, "descriprion": "Whether the URL string is a regular expression." }
-            ],
-            "description": "Sets breakpoint on XMLHttpRequest."
+                { "name": "isRegex", "type": "boolean", "optional": true, "description": "Whether the URL string is a regular expression." }
+            ]
         },
         {
             "name": "removeXHRBreakpoint",
+            "description": "Removes breakpoint from XMLHttpRequest.",
             "parameters": [
                 { "name": "url", "type": "string", "description": "Resource URL substring. An empty string will stop pausing on all XHRs." }
-            ],
-            "description": "Removes breakpoint from XMLHttpRequest."
+            ]
         }
     ]
 }

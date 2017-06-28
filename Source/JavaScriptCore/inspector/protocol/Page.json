@@ -111,34 +111,34 @@
         },
         {
             "name": "reload",
+            "description": "Reloads the main frame of the inspected page.",
             "parameters": [
                 { "name": "ignoreCache", "type": "boolean", "optional": true, "description": "If true, browser cache is ignored (as if the user pressed Shift+refresh)." },
                 { "name": "revalidateAllResources", "type": "boolean", "optional": true, "description": "If true, all cached subresources will be revalidated when the main resource loads. Otherwise, only expired cached subresources will be revalidated (the default behavior for most WebKit clients)." },
                 { "name": "scriptToEvaluateOnLoad", "type": "string", "optional": true, "description": "If set, the script will be injected into all frames of the inspected page after reload." }
-            ],
-            "description": "Reloads the main frame of the inspected page."
+            ]
         },
         {
             "name": "navigate",
+            "description": "Navigates current page to the given URL.",
             "parameters": [
                 { "name": "url", "type": "string", "description": "URL to navigate the page to." }
-            ],
-            "description": "Navigates current page to the given URL."
+            ]
         },
         {
             "name": "getCookies",
+            "description": "Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the <code>cookies</code> field.",
             "returns": [
                 { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." }
-            ],
-            "description": "Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the <code>cookies</code> field."
+            ]
         },
         {
             "name": "deleteCookie",
+            "description": "Deletes browser cookie with given name, domain and path.",
             "parameters": [
                 { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
-                { "name": "url", "type": "string", "description": "URL to match cooke domain and path." }
-            ],
-            "description": "Deletes browser cookie with given name, domain and path."
+                { "name": "url", "type": "string", "description": "URL to match cookie domain and path." }
+            ]
         },
         {
             "name": "getResourceTree",

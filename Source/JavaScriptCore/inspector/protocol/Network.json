@@ -175,13 +175,14 @@
         },
         {
             "name": "setResourceCachingDisabled",
+            "description": "Toggles whether the resource cache may be used when loading resources in the inspected page. If <code>true</code>, the resource cache will not be used when loading resources.",
             "parameters": [
                 { "name": "disabled", "type": "boolean", "description": "Whether to prevent usage of the resource cache." }
-            ],
-            "description": "Toggles whether the resource cache may be used when loading resources in the inspected page. If <code>true</code>, the resource cache will not be used when loading resources."
+            ]
         },
         {
             "name": "loadResource",
+            "description": "Loads a resource in the context of a frame on the inspected page without cross origin checks.",
             "async": true,
             "parameters": [
                 { "name": "frameId", "$ref": "FrameId", "description": "Frame to load the resource from." },
@@ -191,8 +192,7 @@
                 { "name": "content", "type": "string", "description": "Resource content." },
                 { "name": "mimeType", "type": "string", "description": "Resource mimeType." },
                 { "name": "status", "type": "number", "description": "HTTP response status code." }
-            ],
-            "description": "Loads a resource in the context of a frame on the inspected page without cross origin checks."
+            ]
         },
         {
             "name": "resolveWebSocket",

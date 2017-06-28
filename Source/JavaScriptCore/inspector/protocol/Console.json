@@ -60,33 +60,33 @@
         },
         {
             "name": "setMonitoringXHREnabled",
+            "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued.",
             "parameters": [
                 { "name": "enabled", "type": "boolean", "description": "Monitoring enabled state." }
-            ],
-            "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued."
+            ]
         },
         {
             "name": "addInspectedNode",
+            "description": "Enables console to refer to the node with given id via $0 (see Command Line API for more details).",
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "DOM node id to be accessible by means of $0 command line API." }
-            ],
-            "description": "Enables console to refer to the node with given id via $0 (see Command Line API for more details)."
+            ]
         }
     ],
     "events": [
         {
             "name": "messageAdded",
+            "description": "Issued when new console message is added.",
             "parameters": [
                 { "name": "message", "$ref": "ConsoleMessage", "description": "Console message that has been added." }
-            ],
-            "description": "Issued when new console message is added."
+            ]
         },
         {
             "name": "messageRepeatCountUpdated",
+            "description": "Issued when subsequent message(s) are equal to the previous one(s).",
             "parameters": [
                 { "name": "count", "type": "integer", "description": "New repeat count value." }
-            ],
-            "description": "Issued when subsequent message(s) are equal to the previous one(s)."
+            ]
         },
         {
             "name": "messagesCleared",

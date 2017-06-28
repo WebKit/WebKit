@@ -1,3 +1,22 @@
+2017-06-28  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup Protocol JSON files
+        https://bugs.webkit.org/show_bug.cgi?id=173934
+
+        Reviewed by Matt Baker.
+
+        * inspector/protocol/ApplicationCache.json:
+        * inspector/protocol/CSS.json:
+        * inspector/protocol/Console.json:
+        * inspector/protocol/DOM.json:
+        * inspector/protocol/DOMDebugger.json:
+        * inspector/protocol/Debugger.json:
+        * inspector/protocol/LayerTree.json:
+        * inspector/protocol/Network.json:
+        * inspector/protocol/Page.json:
+        * inspector/protocol/Runtime.json:
+        Be more consistent about placement of `description` property.
+
 2017-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused Inspector domain events

@@ -40,6 +40,7 @@
         {
             "id": "Node",
             "type": "object",
+            "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type.",
             "properties": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Node identifier that is passed into the rest of the DOM messages as the <code>nodeId</code>. Backend will only push node with given <code>id</code> once. It is aware of all requested nodes and will only fire DOM events for nodes known to the client." },
                 { "name": "nodeType", "type": "integer", "description": "<code>Node</code>'s nodeType." },
@@ -66,12 +67,12 @@
                 { "name": "pseudoElements", "type": "array", "items": { "$ref": "Node" }, "optional": true, "description": "Pseudo elements associated with this node." },
                 { "name": "role", "type": "string", "optional": true, "description": "Computed value for first recognized role token, default role per element, or overridden role." },
                 { "name": "contentSecurityPolicyHash", "type": "string", "optional": true, "description": "Computed SHA-256 Content Security Policy hash source for given element." }
-            ],
-            "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
+            ]
         },
         {
             "id": "EventListener",
             "type": "object",
+            "description": "A structure holding event listener properties.",
             "properties": [
                 { "name": "type", "type": "string", "description": "<code>EventListener</code>'s type." },
                 { "name": "useCapture", "type": "boolean", "description": "<code>EventListener</code>'s useCapture." },
@@ -83,8 +84,7 @@
                 { "name": "handler", "$ref": "Runtime.RemoteObject", "optional": true, "description": "Event handler function value." },
                 { "name": "passive", "type": "boolean", "optional": true, "description": "<code>EventListener</code>'s passive." },
                 { "name": "once", "type": "boolean", "optional": true, "description": "<code>EventListener</code>'s once." }
-            ],
-            "description": "A structure holding event listener properties."
+            ]
         },
         {
             "id": "AccessibilityProperties",
@@ -128,13 +128,13 @@
         {
             "id": "RGBAColor",
             "type": "object",
+            "description": "A structure holding an RGBA color.",
             "properties": [
                 { "name": "r", "type": "integer", "description": "The red component, in the [0-255] range." },
                 { "name": "g", "type": "integer", "description": "The green component, in the [0-255] range." },
                 { "name": "b", "type": "integer", "description": "The blue component, in the [0-255] range." },
                 { "name": "a", "type": "number", "optional": true, "description": "The alpha component, in the [0-1] range (default: 1)." }
-            ],
-            "description": "A structure holding an RGBA color."
+            ]
         },
         {
             "id": "Quad",
@@ -147,116 +147,116 @@
         {
             "id": "HighlightConfig",
             "type": "object",
+            "description": "Configuration data for the highlighting of page elements.",
             "properties": [
                 { "name": "showInfo", "type": "boolean", "optional": true, "description": "Whether the node info tooltip should be shown (default: false)." },
                 { "name": "contentColor", "$ref": "RGBAColor", "optional": true, "description": "The content box highlight fill color (default: transparent)." },
                 { "name": "paddingColor", "$ref": "RGBAColor", "optional": true, "description": "The padding highlight fill color (default: transparent)." },
                 { "name": "borderColor", "$ref": "RGBAColor", "optional": true, "description": "The border highlight fill color (default: transparent)." },
                 { "name": "marginColor", "$ref": "RGBAColor", "optional": true, "description": "The margin highlight fill color (default: transparent)." }
-            ],
-            "description": "Configuration data for the highlighting of page elements."
+            ]
         }
     ],
     "commands": [
         {
             "name": "getDocument",
+            "description": "Returns the root DOM node to the caller.",
             "returns": [
                 { "name": "root", "$ref": "Node", "description": "Resulting node." }
-            ],
-            "description": "Returns the root DOM node to the caller."
+            ]
         },
         {
             "name": "requestChildNodes",
+            "description": "Requests that children of the node with given id are returned to the caller in form of <code>setChildNodes</code> events where not only immediate children are retrieved, but all children down to the specified depth.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get children for." },
                 { "name": "depth", "type": "integer", "optional": true, "description": "The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0." }
-            ],
-            "description": "Requests that children of the node with given id are returned to the caller in form of <code>setChildNodes</code> events where not only immediate children are retrieved, but all children down to the specified depth."
+            ]
         },
         {
             "name": "querySelector",
+            "description": "Executes <code>querySelector</code> on a given node.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to query upon." },
                 { "name": "selector", "type": "string", "description": "Selector string." }
             ],
             "returns": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Query selector result." }
-            ],
-            "description": "Executes <code>querySelector</code> on a given node."
+            ]
         },
         {
             "name": "querySelectorAll",
+            "description": "Executes <code>querySelectorAll</code> on a given node.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to query upon." },
                 { "name": "selector", "type": "string", "description": "Selector string." }
             ],
             "returns": [
                 { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Query selector result." }
-            ],
-            "description": "Executes <code>querySelectorAll</code> on a given node."
+            ]
         },
         {
             "name": "setNodeName",
+            "description": "Sets node name for a node with given id.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to set name for." },
                 { "name": "name", "type": "string", "description": "New node's name." }
             ],
             "returns": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "New node's id." }
-            ],
-            "description": "Sets node name for a node with given id."
+            ]
         },
         {
             "name": "setNodeValue",
+            "description": "Sets node value for a node with given id.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to set value for." },
                 { "name": "value", "type": "string", "description": "New node's value." }
-            ],
-            "description": "Sets node value for a node with given id."
+            ]
         },
         {
             "name": "removeNode",
+            "description": "Removes node with given id.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to remove." }
-            ],
-            "description": "Removes node with given id."
+            ]
         },
         {
             "name": "setAttributeValue",
+            "description": "Sets attribute for an element with given id.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the element to set attribute for." },
                 { "name": "name", "type": "string", "description": "Attribute name." },
                 { "name": "value", "type": "string", "description": "Attribute value." }
-            ],
-            "description": "Sets attribute for an element with given id."
+            ]
         },
         {
             "name": "setAttributesAsText",
+            "description": "Sets attributes on element with given id. This method is useful when user edits some existing attribute value and types in several attribute name/value pairs.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the element to set attributes for." },
                 { "name": "text", "type": "string", "description": "Text with a number of attributes. Will parse this text using HTML parser." },
                 { "name": "name", "type": "string", "optional": true, "description": "Attribute name to replace with new attributes derived from text in case text parsed successfully." }
-            ],
-            "description": "Sets attributes on element with given id. This method is useful when user edits some existing attribute value and types in several attribute name/value pairs."
+            ]
         },
         {
             "name": "removeAttribute",
+            "description": "Removes attribute with given name from an element with given id.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the element to remove attribute from." },
                 { "name": "name", "type": "string", "description": "Name of the attribute to remove." }
-            ],
-            "description": "Removes attribute with given name from an element with given id."
+            ]
         },
         {
             "name": "getEventListenersForNode",
+            "description": "Returns event listeners relevant to the node.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get listeners for." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name for handler value. Handler value is not returned without this parameter specified." }
             ],
             "returns": [
                 { "name": "listeners", "type": "array", "items": { "$ref": "EventListener"}, "description": "Array of relevant listeners." }
-            ],
-            "description": "Returns event listeners relevant to the node."
+            ]
         },
         {
             "name": "getAccessibilityPropertiesForNode",
@@ -270,24 +270,25 @@
         },
         {
             "name": "getOuterHTML",
+            "description": "Returns node's HTML markup.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get markup for." }
             ],
             "returns": [
                 { "name": "outerHTML", "type": "string", "description": "Outer HTML markup." }
-            ],
-            "description": "Returns node's HTML markup."
+            ]
         },
         {
             "name": "setOuterHTML",
+            "description": "Sets node HTML markup, returns new node id.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to set markup for." },
                 { "name": "outerHTML", "type": "string", "description": "Outer HTML markup to set." }
-            ],
-            "description": "Sets node HTML markup, returns new node id."
+            ]
         },
         {
             "name": "performSearch",
+            "description": "Searches for a given string in the DOM tree. Use <code>getSearchResults</code> to access search results or <code>cancelSearch</code> to end this search session.",
             "parameters": [
                 { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." },
                 { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "optional": true, "description": "Ids of nodes to use as starting points for the search." }
@@ -295,11 +296,11 @@
             "returns": [
                 { "name": "searchId", "type": "string", "description": "Unique search session identifier." },
                 { "name": "resultCount", "type": "integer", "description": "Number of search results." }
-            ],
-            "description": "Searches for a given string in the DOM tree. Use <code>getSearchResults</code> to access search results or <code>cancelSearch</code> to end this search session."
+            ]
         },
         {
             "name": "getSearchResults",
+            "description": "Returns search results from given <code>fromIndex</code> to given <code>toIndex</code> from the sarch with the given identifier.",
             "parameters": [
                 { "name": "searchId", "type": "string", "description": "Unique search session identifier." },
                 { "name": "fromIndex", "type": "integer", "description": "Start index of the search result to be returned." },
@@ -307,36 +308,36 @@
             ],
             "returns": [
                 { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the search result nodes." }
-            ],
-            "description": "Returns search results from given <code>fromIndex</code> to given <code>toIndex</code> from the sarch with the given identifier."
+            ]
         },
         {
             "name": "discardSearchResults",
+            "description": "Discards search results from the session with the given id. <code>getSearchResults</code> should no longer be called for that search.",
             "parameters": [
                 { "name": "searchId", "type": "string", "description": "Unique search session identifier." }
-            ],
-            "description": "Discards search results from the session with the given id. <code>getSearchResults</code> should no longer be called for that search."
+            ]
         },
         {
             "name": "requestNode",
+            "description": "Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of <code>setChildNodes</code> notifications.",
             "parameters": [
                 { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "JavaScript object id to convert into node." }
             ],
             "returns": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Node id for given object." }
-            ],
-            "description": "Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of <code>setChildNodes</code> notifications."
+            ]
         },
         {
             "name": "setInspectModeEnabled",
+            "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection.",
             "parameters": [
                 { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." },
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "optional": true, "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if <code>enabled == false</code>." }
-            ],
-            "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection."
+            ]
         },
         {
             "name": "highlightRect",
+            "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.",
             "parameters": [
                 { "name": "x", "type": "integer", "description": "X coordinate" },
                 { "name": "y", "type": "integer", "description": "Y coordinate" },
@@ -345,36 +346,35 @@
                 { "name": "color", "$ref": "RGBAColor", "optional": true, "description": "The highlight fill color (default: transparent)." },
                 { "name": "outlineColor", "$ref": "RGBAColor", "optional": true, "description": "The highlight outline color (default: transparent)." },
                 { "name": "usePageCoordinates", "type": "boolean", "optional": true, "description": "Indicates whether the provided parameters are in page coordinates or in viewport coordinates (the default)." }
-            ],
-            "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport."
+            ]
         },
         {
             "name": "highlightQuad",
+            "description": "Highlights given quad. Coordinates are absolute with respect to the main frame viewport.",
             "parameters": [
                 { "name": "quad", "$ref": "Quad", "description": "Quad to highlight" },
                 { "name": "color", "$ref": "RGBAColor", "optional": true, "description": "The highlight fill color (default: transparent)." },
                 { "name": "outlineColor", "$ref": "RGBAColor", "optional": true, "description": "The highlight outline color (default: transparent)." },
                 { "name": "usePageCoordinates", "type": "boolean", "optional": true, "description": "Indicates whether the provided parameters are in page coordinates or in viewport coordinates (the default)." }
-            ],
-            "description": "Highlights given quad. Coordinates are absolute with respect to the main frame viewport."
+            ]
         },
         {
             "name": "highlightSelector",
+            "description": "Highlights all DOM nodes that match a given selector. A string containing a CSS selector must be specified.",
             "parameters": [
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
                 { "name": "selectorString", "type": "string", "description": "A CSS selector for finding matching nodes to highlight." },
                 { "name": "frameId", "type": "string", "optional": true, "description": "Identifier of the frame which will be searched using the selector.  If not provided, the main frame will be used." }
-            ],
-            "description": "Highlights all DOM nodes that match a given selector. A string containing a CSS selector must be specified."
+            ]
         },
         {
             "name": "highlightNode",
+            "description": "Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.",
             "parameters": [
                 { "name": "highlightConfig", "$ref": "HighlightConfig", "description": "A descriptor for the highlight appearance." },
                 { "name": "nodeId", "$ref": "NodeId", "optional": true, "description": "Identifier of the node to highlight." },
                 { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "optional": true, "description": "JavaScript object id of the node to be highlighted." }
-            ],
-            "description": "Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified."
+            ]
         },
         {
             "name": "hideHighlight",
@@ -391,54 +391,55 @@
         },
         {
             "name": "pushNodeByPathToFrontend",
+            "description": "Requests that the node is sent to the caller given its path.",
             "parameters": [
                 { "name": "path", "type": "string", "description": "Path to node in the proprietary format." }
             ],
             "returns": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node for given path." }
-            ],
-            "description": "Requests that the node is sent to the caller given its path. // FIXME, use XPath"
+            ]
         },
         {
             "name": "pushNodeByBackendIdToFrontend",
+            "description": "Requests that the node is sent to the caller given its backend node id.",
             "parameters": [
                 { "name": "backendNodeId", "$ref": "BackendNodeId", "description": "The backend node id of the node." }
             ],
             "returns": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "The pushed node's id." }
-            ],
-            "description": "Requests that the node is sent to the caller given its backend node id."
+            ]
         },
         {
             "name": "releaseBackendNodeIds",
+            "description": "Requests that group of <code>BackendNodeIds</code> is released.",
             "parameters": [
                 { "name": "nodeGroup", "type": "string", "description": "The backend node ids group name." }
-            ],
-            "description": "Requests that group of <code>BackendNodeIds</code> is released."
+            ]
         },
         {
             "name": "resolveNode",
+            "description": "Resolves JavaScript node object for given node id.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to resolve." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
             ],
             "returns": [
                 { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given node." }
-            ],
-            "description": "Resolves JavaScript node object for given node id."
+            ]
         },
         {
             "name": "getAttributes",
+            "description": "Returns attributes for the specified node.",
             "parameters": [
-                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to retrieve attibutes for." }
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to retrieve attributes for." }
             ],
             "returns": [
                 { "name": "attributes", "type": "array", "items": { "type": "string" }, "description": "An interleaved array of node attribute names and values." }
-            ],
-            "description": "Returns attributes for the specified node."
+            ]
         },
         {
             "name": "moveTo",
+            "description": "Moves node into the new container, places it before the given anchor.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to drop." },
                 { "name": "targetNodeId", "$ref": "NodeId", "description": "Id of the element to drop into." },
@@ -446,8 +447,7 @@
             ],
             "returns": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "New id of the moved node." }
-            ],
-            "description": "Moves node into the new container, places it before the given anchor."
+            ]
         },
         {
             "name": "undo",
@@ -463,10 +463,10 @@
         },
         {
             "name": "focus",
+            "description": "Focuses the given element.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to focus." }
-            ],
-            "description": "Focuses the given element."
+            ]
         }
     ],
     "events": [
@@ -476,108 +476,108 @@
         },
         {
             "name": "setChildNodes",
+            "description": "Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids.",
             "parameters": [
                 { "name": "parentId", "$ref": "NodeId", "description": "Parent node id to populate with children." },
                 { "name": "nodes", "type": "array", "items": { "$ref": "Node"}, "description": "Child nodes array." }
-            ],
-            "description": "Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids."
+            ]
         },
         {
             "name": "attributeModified",
+            "description": "Fired when <code>Element</code>'s attribute is modified.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
                 { "name": "name", "type": "string", "description": "Attribute name." },
                 { "name": "value", "type": "string", "description": "Attribute value." }
-            ],
-            "description": "Fired when <code>Element</code>'s attribute is modified."
+            ]
         },
         {
             "name": "attributeRemoved",
+            "description": "Fired when <code>Element</code>'s attribute is removed.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
-                { "name": "name", "type": "string", "description": "A ttribute name." }
-            ],
-            "description": "Fired when <code>Element</code>'s attribute is removed."
+                { "name": "name", "type": "string", "description": "Attribute name." }
+            ]
         },
         {
             "name": "inlineStyleInvalidated",
+            "description": "Fired when <code>Element</code>'s inline style is modified via a CSS property modification.",
             "parameters": [
                 { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the nodes for which the inline styles have been invalidated." }
-            ],
-            "description": "Fired when <code>Element</code>'s inline style is modified via a CSS property modification."
+            ]
         },
         {
             "name": "characterDataModified",
+            "description": "Mirrors <code>DOMCharacterDataModified</code> event.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
                 { "name": "characterData", "type": "string", "description": "New text value." }
-            ],
-            "description": "Mirrors <code>DOMCharacterDataModified</code> event."
+            ]
         },
         {
             "name": "childNodeCountUpdated",
+            "description": "Fired when <code>Container</code>'s child node count has changed.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
                 { "name": "childNodeCount", "type": "integer", "description": "New node count." }
-            ],
-            "description": "Fired when <code>Container</code>'s child node count has changed."
+            ]
         },
         {
             "name": "childNodeInserted",
+            "description": "Mirrors <code>DOMNodeInserted</code> event.",
             "parameters": [
                 { "name": "parentNodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
-                { "name": "previousNodeId", "$ref": "NodeId", "description": "If of the previous siblint." },
+                { "name": "previousNodeId", "$ref": "NodeId", "description": "Id of the previous sibling." },
                 { "name": "node", "$ref": "Node", "description": "Inserted node data." }
-            ],
-            "description": "Mirrors <code>DOMNodeInserted</code> event."
+            ]
         },
         {
             "name": "childNodeRemoved",
+            "description": "Mirrors <code>DOMNodeRemoved</code> event.",
             "parameters": [
                 { "name": "parentNodeId", "$ref": "NodeId", "description": "Parent id." },
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has been removed." }
-            ],
-            "description": "Mirrors <code>DOMNodeRemoved</code> event."
+            ]
         },
         {
             "name": "shadowRootPushed",
+            "description": "Called when shadow root is pushed into the element.",
             "parameters": [
                 { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
                 { "name": "root", "$ref": "Node", "description": "Shadow root." }
-            ],
-            "description": "Called when shadow root is pushed into the element."
+            ]
         },
         {
             "name": "shadowRootPopped",
+            "description": "Called when shadow root is popped from the element.",
             "parameters": [
                 { "name": "hostId", "$ref": "NodeId", "description": "Host element id." },
                 { "name": "rootId", "$ref": "NodeId", "description": "Shadow root id." }
-            ],
-            "description": "Called when shadow root is popped from the element."
+            ]
         },
         {
             "name": "customElementStateChanged",
+            "description": "Called when the custom element state is changed.",
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Element id." },
                 { "name": "customElementState", "$ref": "CustomElementState", "description": "Custom element state." }
-            ],
-            "description": "Called when the custom element state is changed."
+            ]
         },
         {
             "name": "pseudoElementAdded",
+            "description": "Called when a pseudo element is added to an element.",
             "parameters": [
                 { "name": "parentId", "$ref": "NodeId", "description": "Pseudo element's parent element id." },
                 { "name": "pseudoElement", "$ref": "Node", "description": "The added pseudo element." }
-            ],
-            "description": "Called when a pseudo element is added to an element."
+            ]
         },
         {
             "name": "pseudoElementRemoved",
+            "description": "Called when a pseudo element is removed from an element.",
             "parameters": [
                 { "name": "parentId", "$ref": "NodeId", "description": "Pseudo element's parent element id." },
                 { "name": "pseudoElementId", "$ref": "NodeId", "description": "The removed pseudo element id." }
-            ],
-            "description": "Called when a pseudo element is removed from an element."
+            ]
         }
     ]
 }

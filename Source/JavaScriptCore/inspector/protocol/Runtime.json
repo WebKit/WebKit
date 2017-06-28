@@ -197,6 +197,7 @@
     "commands": [
         {
             "name": "parse",
+            "description": "Parses JavaScript source code for errors.",
             "parameters": [
                 { "name": "source", "type": "string", "description": "Source code to parse." }
             ],
@@ -204,11 +205,11 @@
                 { "name": "result", "$ref": "SyntaxErrorType", "description": "Parse result." },
                 { "name": "message", "type": "string", "optional": true, "description": "Parse error message." },
                 { "name": "range", "$ref": "ErrorRange", "optional": true, "description": "Range in the source where the error occurred." }
-            ],
-            "description": "Parses JavaScript source code for errors."
+            ]
         },
         {
             "name": "evaluate",
+            "description": "Evaluates expression on global object.",
             "parameters": [
                 { "name": "expression", "type": "string", "description": "Expression to evaluate." },
                 { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
@@ -223,11 +224,11 @@
                 { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
                 { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." },
                 { "name": "savedResultIndex", "type": "integer", "optional": true, "description": "If the result was saved, this is the $n index that can be used to access the value." }
-            ],
-            "description": "Evaluates expression on global object."
+            ]
         },
         {
             "name": "callFunctionOn",
+            "description": "Calls function with given declaration on the given object. Object group of the result is inherited from the target object.",
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to call function on." },
                 { "name": "functionDeclaration", "type": "string", "description": "Declaration of the function to call." },
@@ -239,8 +240,7 @@
             "returns": [
                 { "name": "result", "$ref": "RemoteObject", "description": "Call result." },
                 { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if the result was thrown during the evaluation." }
-            ],
-            "description": "Calls function with given declaration on the given object. Object group of the result is inherited from the target object."
+            ]
         },
         {
             "name": "getPreview",
@@ -254,6 +254,7 @@
         },
         {
             "name": "getProperties",
+            "description": "Returns properties of a given object. Object group of the result is inherited from the target object.",
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },
                 { "name": "ownProperties", "optional": true, "type": "boolean", "description": "If true, returns properties belonging only to the object itself, not to its prototype chain." },
@@ -262,11 +263,11 @@
             "returns": [
                 { "name": "result", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." },
                 { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties." }
-            ],
-            "description": "Returns properties of a given object. Object group of the result is inherited from the target object."
+            ]
         },
         {
             "name": "getDisplayableProperties",
+            "description": "Returns displayable properties of a given object. Object group of the result is inherited from the target object. Displayable properties are own properties, internal properties, and native getters in the prototype chain (assumed to be bindings and treated like own properties for the frontend).",
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },
                 { "name": "generatePreview", "type": "boolean", "optional": true, "description": "Whether preview should be generated for property values." }
@@ -274,8 +275,7 @@
             "returns": [
                 { "name": "properties", "type": "array", "items": { "$ref": "PropertyDescriptor"}, "description": "Object properties." },
                 { "name": "internalProperties", "optional": true, "type": "array", "items": { "$ref": "InternalPropertyDescriptor"}, "description": "Internal object properties." }
-            ],
-            "description": "Returns displayable properties of a given object. Object group of the result is inherited from the target object. Displayable properties are own properties, internal properties, and native getters in the prototype chain (assumed to be bindings and treated like own properties for the frontend)."
+            ]
         },
         {
             "name": "getCollectionEntries",
@@ -292,28 +292,28 @@
         },
         {
             "name": "saveResult",
+            "description": "Assign a saved result index to this value.",
             "parameters": [
                 { "name": "value", "$ref": "CallArgument", "description": "Id or value of the object to save." },
                 { "name": "contextId", "optional": true, "$ref": "ExecutionContextId", "description": "Unique id of the execution context. To specify in which execution context script evaluation should be performed. If not provided, determine from the CallArgument's objectId." }
             ],
             "returns": [
                 { "name": "savedResultIndex", "type": "integer", "optional": true, "description": "If the value was saved, this is the $n index that can be used to access the value." }
-            ],
-            "description": "Assign a saved result index to this value."
+            ]
         },
         {
             "name": "releaseObject",
+            "description": "Releases remote object with given id.",
             "parameters": [
                 { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to release." }
-            ],
-            "description": "Releases remote object with given id."
+            ]
         },
         {
             "name": "releaseObjectGroup",
+            "description": "Releases all remote objects that belong to a given group.",
             "parameters": [
                 { "name": "objectGroup", "type": "string", "description": "Symbolic object group name." }
-            ],
-            "description": "Releases all remote objects that belong to a given group."
+            ]
         },
         {
             "name": "enable",
@@ -325,13 +325,13 @@
         },
         {
             "name": "getRuntimeTypesForVariablesAtOffsets",
+            "description": "Returns detailed information on the given function.",
             "parameters": [
                 { "name": "locations", "type": "array", "items": { "$ref": "TypeLocation" }, "description": "An array of type locations we're requesting information for. Results are expected in the same order they're sent in."}
             ],
             "returns": [
                 { "name": "types", "type": "array", "items": { "$ref": "TypeDescription", "description": "Types for requested variable." } }
-            ],
-            "description": "Returns detailed informtation on given function."
+            ]
         },
         {
             "name": "enableTypeProfiler",
@@ -351,22 +351,22 @@
         },
         {
             "name": "getBasicBlocks",
+            "description": "Returns a list of basic blocks for the given sourceID with information about their text ranges and whether or not they have executed.",
             "parameters": [
                 { "name": "sourceID", "type": "string", "description": "Indicates which sourceID information is requested for." }
             ],
             "returns": [
                 { "name": "basicBlocks", "type": "array", "items": { "$ref": "BasicBlock", "description": "Array of basic blocks." } }
-            ],
-            "description": "Returns a list of basic blocks for the given sourceID with information about their text ranges and whether or not they have executed."
+            ]
         }
     ],
     "events": [
         {
             "name": "executionContextCreated",
+            "description": "Issued when new execution context is created.",
             "parameters": [
-                { "name": "context", "$ref": "ExecutionContextDescription", "description": "A newly created execution contex." }
-            ],
-            "description": "Issued when new execution context is created."
+                { "name": "context", "$ref": "ExecutionContextDescription", "description": "A newly created execution context." }
+            ]
         }
     ]
 }

@@ -38,10 +38,10 @@
     "commands": [
         {
             "name": "getFramesWithManifests",
+            "description": "Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.",
             "returns": [
                 { "name": "frameIds", "type": "array", "items": { "$ref": "FrameWithManifest" }, "description": "Array of frame identifiers with manifest urls for each frame containing a document associated with some application cache." }
-            ],
-            "description": "Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache."
+            ]
         },
         {
             "name": "enable",
@@ -49,23 +49,23 @@
         },
         {
             "name": "getManifestForFrame",
+            "description": "Returns manifest URL for document in the given frame.",
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing document whose manifest is retrieved." }
             ],
             "returns": [
                 { "name": "manifestURL", "type": "string", "description": "Manifest URL for document in the given frame." }
-            ],
-            "description": "Returns manifest URL for document in the given frame."
+            ]
         },
         {
             "name": "getApplicationCacheForFrame",
+            "description": "Returns relevant application cache data for the document in given frame.",
             "parameters": [
                 { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing document whose application cache is retrieved." }
             ],
             "returns": [
                 { "name": "applicationCache", "$ref": "ApplicationCache", "description": "Relevant application cache data for the document in given frame." }
-            ],
-            "description": "Returns relevant application cache data for the document in given frame."
+            ]
         }
     ],
     "events": [

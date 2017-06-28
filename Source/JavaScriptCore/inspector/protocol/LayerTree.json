@@ -88,19 +88,20 @@
         },
         {
             "name": "layersForNode",
-            "parameters": [
-                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Root of the subtree for which we want to gather layers." }                ],
             "description": "Returns the layer tree structure of the current page.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Root of the subtree for which we want to gather layers." }
+            ],
             "returns": [
                 { "name": "layers", "type": "array", "items": { "$ref": "Layer" }, "description": "Child layers." }
             ]
         },
         {
             "name": "reasonsForCompositingLayer",
+            "description": "Provides the reasons why the given layer was composited.",
             "parameters": [
                 { "name": "layerId", "$ref": "LayerId", "description": "The id of the layer for which we want to get the reasons it was composited." }
             ],
-            "description": "Provides the reasons why the given layer was composited.",
             "returns": [
                 { "name": "compositingReasons", "$ref": "CompositingReasons", "description": "An object containing the reasons why the layer was composited as properties." }
             ]
