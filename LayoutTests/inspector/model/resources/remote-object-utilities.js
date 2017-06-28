@@ -34,7 +34,7 @@ TestPage.registerInitializer(() => {
         for (let {expression, browserOnly} of steps) {
             if (browserOnly) {
                 checkComplete();
-                return;
+                continue;
             }
 
             WebInspector.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test", doNotPauseOnExceptionsAndMuteConsole: true, generatePreview: true}, (remoteObject, wasThrown) => {

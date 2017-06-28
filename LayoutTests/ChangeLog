@@ -1,3 +1,23 @@
+2017-06-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Cleanup RemoteObject tests
+        https://bugs.webkit.org/show_bug.cgi?id=173885
+
+        Reviewed by Matt Baker.
+
+        * inspector/model/remote-object-dom.html: Added.
+        * inspector/model/remote-object-expected.txt:
+        * inspector/model/remote-object.html:
+        Split out DOM results (which differ across ports and features).
+
+        * inspector/model/resources/remote-object-utilities.js:
+        (TestPage.registerInitializer.window.runSteps):
+        This should have been a continue not a return.
+
+        * platform/mac/inspector/model/remote-object-dom-expected.txt: Added.
+        * platform/mac/inspector/model/remote-object-expected.txt: Removed.
+        Platform expectations are now limited to just the DOM test.
+
 2017-06-27  Caio Lima  <ticaiolima@gmail.com>
 
         [ESnext] Implement Object Rest - Implementing Object Rest Destructuring

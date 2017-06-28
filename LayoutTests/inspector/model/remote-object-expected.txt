@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: undefined
+CONSOLE MESSAGE: line 1: Unhandled Promise Rejection: result
 
 -----------------------------------------------------
 EXPRESSION: null
@@ -24,7 +26,7 @@ EXPRESSION: Symbol()
 }
 
 -----------------------------------------------------
-EXPRESSION: Symbol('test')
+EXPRESSION: Symbol("test")
 {
   "_type": "symbol",
   "_objectId": "<filtered>",
@@ -168,7 +170,15 @@ EXPRESSION: "'"
 }
 
 -----------------------------------------------------
-EXPRESSION: 'string'
+EXPRESSION: `template`
+{
+  "_type": "string",
+  "_description": "template",
+  "_value": "template"
+}
+
+-----------------------------------------------------
+EXPRESSION: "string"
 {
   "_type": "string",
   "_description": "string",
@@ -176,7 +186,7 @@ EXPRESSION: 'string'
 }
 
 -----------------------------------------------------
-EXPRESSION: 'Unicode…'
+EXPRESSION: "Unicode…"
 {
   "_type": "string",
   "_description": "Unicode…",
@@ -184,7 +194,7 @@ EXPRESSION: 'Unicode…'
 }
 
 -----------------------------------------------------
-EXPRESSION: 'I wish I had something to put here.'
+EXPRESSION: "I wish I had something to put here."
 {
   "_type": "string",
   "_description": "I wish I had something to put here.",
@@ -240,7 +250,7 @@ EXPRESSION: window.setTimeout
 }
 
 -----------------------------------------------------
-EXPRESSION: Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, 'getter').get
+EXPRESSION: Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, "getter").get
 {
   "_type": "function",
   "_objectId": "<filtered>",
@@ -248,7 +258,7 @@ EXPRESSION: Object.getOwnPropertyDescriptor({ get getter() { return 1 } }, 'gett
 }
 
 -----------------------------------------------------
-EXPRESSION: Object.getOwnPropertyDescriptor({ set setter(v) { console.log(v); } }, 'setter').set
+EXPRESSION: Object.getOwnPropertyDescriptor({ set setter(v) { console.log(v); } }, "setter").set
 {
   "_type": "function",
   "_objectId": "<filtered>",
@@ -352,7 +362,7 @@ EXPRESSION: /^r(e)g[e]{1,}x+/ig
 }
 
 -----------------------------------------------------
-EXPRESSION: new RegExp('')
+EXPRESSION: new RegExp("")
 {
   "_type": "object",
   "_subtype": "regexp",
@@ -376,7 +386,7 @@ EXPRESSION: new RegExp('')
 }
 
 -----------------------------------------------------
-EXPRESSION: new RegExp('test', 'i')
+EXPRESSION: new RegExp("test", "i")
 {
   "_type": "object",
   "_subtype": "regexp",
@@ -545,7 +555,7 @@ EXPRESSION: [[1],[2],[3]]
 }
 
 -----------------------------------------------------
-EXPRESSION: [true, 1, 1.234, 'string', /regex/]
+EXPRESSION: [true, 1, 1.234, "string", /regex/]
 {
   "_type": "object",
   "_subtype": "array",
@@ -987,7 +997,7 @@ EXPRESSION: arr = []; arr.length = 100; arr[10] = 1; arr
 }
 
 -----------------------------------------------------
-EXPRESSION: a = null; (function() { a = arguments; })(1, '2', /3/); a
+EXPRESSION: a = null; (function() { a = arguments; })(1, "2", /3/); a
 {
   "_type": "object",
   "_subtype": "array",
@@ -1035,7 +1045,7 @@ EXPRESSION: new Int32Array(new ArrayBuffer(16))
     "_type": "object",
     "_subtype": "array",
     "_description": "Int32Array",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_size": 4,
     "_properties": [
@@ -1147,7 +1157,7 @@ EXPRESSION: var intArray = new Int32Array(new ArrayBuffer(16)); for (var i = 0; 
     "_type": "object",
     "_subtype": "array",
     "_description": "Int32Array",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_size": 4,
     "_properties": [
@@ -1318,7 +1328,7 @@ EXPRESSION: ({a: 1, b: 0, c: -0})
 }
 
 -----------------------------------------------------
-EXPRESSION: ({a: 1, b: "string", c: /regex/, d: Symbol('sym')})
+EXPRESSION: ({a: 1, b: "string", c: /regex/, d: Symbol("sym")})
 {
   "_type": "object",
   "_objectId": "<filtered>",
@@ -1426,7 +1436,7 @@ EXPRESSION: function Foo() {}; new Foo
   "_preview": {
     "_type": "object",
     "_description": "Foo",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [],
     "_entries": null
@@ -1442,7 +1452,7 @@ EXPRESSION: var Foo2 = function() {}; new Foo2
   "_preview": {
     "_type": "object",
     "_description": "Foo2",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [],
     "_entries": null
@@ -1458,7 +1468,7 @@ EXPRESSION: var namespace = {}; namespace.Foo3 = function() {}; new namespace.Fo
   "_preview": {
     "_type": "object",
     "_description": "Foo3",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [],
     "_entries": null
@@ -1505,56 +1515,13 @@ EXPRESSION: function Bar2() { this._x = 5 }; Bar.prototype = {get x() {return th
   "_preview": {
     "_type": "object",
     "_description": "Bar2",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
         "_name": "_x",
         "_type": "number",
         "_value": "5"
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: window.loadEvent
-{
-  "_type": "object",
-  "_objectId": "<filtered>",
-  "_description": "Event",
-  "_preview": {
-    "_type": "object",
-    "_description": "Event",
-    "_lossless": false,
-    "_overflow": true,
-    "_properties": [
-      {
-        "_name": "clipboardData",
-        "_type": "undefined",
-        "_value": "undefined"
-      },
-      {
-        "_name": "type",
-        "_type": "string",
-        "_value": "load"
-      },
-      {
-        "_name": "target",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "#document"
-      },
-      {
-        "_name": "currentTarget",
-        "_type": "object",
-        "_value": "Window"
-      },
-      {
-        "_name": "eventPhase",
-        "_type": "number",
-        "_value": "2"
       }
     ],
     "_entries": null
@@ -1570,7 +1537,7 @@ EXPRESSION: new ArrayBuffer(16)
   "_preview": {
     "_type": "object",
     "_description": "ArrayBuffer",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -1616,7 +1583,7 @@ EXPRESSION: new DataView(new ArrayBuffer(16))
 }
 
 -----------------------------------------------------
-EXPRESSION: obj = {}; obj['prop'] = 1; obj[Symbol()] = 2; obj[Symbol('sym')] = 3; obj[Symbol('sym')] = 4; obj[Symbol.iterator] = Symbol(); obj
+EXPRESSION: obj = {}; obj["prop"] = 1; obj[Symbol()] = 2; obj[Symbol("sym")] = 3; obj[Symbol("sym")] = 4; obj[Symbol.iterator] = Symbol(); obj
 {
   "_type": "object",
   "_objectId": "<filtered>",
@@ -1658,496 +1625,6 @@ EXPRESSION: obj = {}; obj['prop'] = 1; obj[Symbol()] = 2; obj[Symbol('sym')] = 3
 }
 
 -----------------------------------------------------
-EXPRESSION: document.body
-{
-  "_type": "object",
-  "_subtype": "node",
-  "_objectId": "<filtered>",
-  "_description": "body",
-  "_preview": {
-    "_type": "object",
-    "_subtype": "node",
-    "_description": "body",
-    "_lossless": false,
-    "_overflow": true,
-    "_properties": [
-      {
-        "_name": "aLink",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "background",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "bgColor",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "link",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "text",
-        "_type": "string",
-        "_value": ""
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: div = document.createElement('div'); div.className = 'foo bar'; div
-{
-  "_type": "object",
-  "_subtype": "node",
-  "_objectId": "<filtered>",
-  "_description": "div.foo.bar",
-  "_preview": {
-    "_type": "object",
-    "_subtype": "node",
-    "_description": "div.foo.bar",
-    "_lossless": false,
-    "_overflow": true,
-    "_properties": [
-      {
-        "_name": "align",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "title",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "lang",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "translate",
-        "_type": "boolean",
-        "_value": "true"
-      },
-      {
-        "_name": "dir",
-        "_type": "string",
-        "_value": ""
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: span = document.createElement('span'); span.id = 'foo'; span
-{
-  "_type": "object",
-  "_subtype": "node",
-  "_objectId": "<filtered>",
-  "_description": "span#foo",
-  "_preview": {
-    "_type": "object",
-    "_subtype": "node",
-    "_description": "span#foo",
-    "_lossless": false,
-    "_overflow": true,
-    "_properties": [
-      {
-        "_name": "title",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "lang",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "translate",
-        "_type": "boolean",
-        "_value": "true"
-      },
-      {
-        "_name": "dir",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "tabIndex",
-        "_type": "number",
-        "_value": "-1"
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: input = document.createElement('input'); input.type = 'password'; input
-{
-  "_type": "object",
-  "_subtype": "node",
-  "_objectId": "<filtered>",
-  "_description": "input",
-  "_preview": {
-    "_type": "object",
-    "_subtype": "node",
-    "_description": "input",
-    "_lossless": false,
-    "_overflow": true,
-    "_properties": [
-      {
-        "_name": "selectionStart",
-        "_type": "number",
-        "_value": "0"
-      },
-      {
-        "_name": "selectionEnd",
-        "_type": "number",
-        "_value": "0"
-      },
-      {
-        "_name": "selectionDirection",
-        "_type": "string",
-        "_value": "none"
-      },
-      {
-        "_name": "accept",
-        "_type": "string",
-        "_value": ""
-      },
-      {
-        "_name": "alt",
-        "_type": "string",
-        "_value": ""
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: text = document.createTextNode('text content'); text
-{
-  "_type": "object",
-  "_subtype": "node",
-  "_objectId": "<filtered>",
-  "_description": "#text",
-  "_preview": {
-    "_type": "object",
-    "_subtype": "node",
-    "_description": "#text",
-    "_lossless": false,
-    "_overflow": true,
-    "_properties": [
-      {
-        "_name": "wholeText",
-        "_type": "string",
-        "_value": "text content"
-      },
-      {
-        "_name": "splitText",
-        "_type": "function",
-        "_value": ""
-      },
-      {
-        "_name": "replaceWholeText",
-        "_type": "function",
-        "_value": ""
-      },
-      {
-        "_name": "data",
-        "_type": "string",
-        "_value": "text content"
-      },
-      {
-        "_name": "length",
-        "_type": "number",
-        "_value": "12"
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: comment = document.createComment('comment content'); comment
-{
-  "_type": "object",
-  "_subtype": "node",
-  "_objectId": "<filtered>",
-  "_description": "#comment",
-  "_preview": {
-    "_type": "object",
-    "_subtype": "node",
-    "_description": "#comment",
-    "_lossless": false,
-    "_overflow": true,
-    "_properties": [
-      {
-        "_name": "data",
-        "_type": "string",
-        "_value": "comment content"
-      },
-      {
-        "_name": "length",
-        "_type": "number",
-        "_value": "15"
-      },
-      {
-        "_name": "previousElementSibling",
-        "_type": "object",
-        "_subtype": "null",
-        "_value": "null"
-      },
-      {
-        "_name": "nextElementSibling",
-        "_type": "object",
-        "_subtype": "null",
-        "_value": "null"
-      },
-      {
-        "_name": "substringData",
-        "_type": "function",
-        "_value": ""
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect'); svgElement.classList.add('test'); svgElement
-{
-  "_type": "object",
-  "_subtype": "node",
-  "_objectId": "<filtered>",
-  "_description": "rect.test",
-  "_preview": {
-    "_type": "object",
-    "_subtype": "node",
-    "_description": "rect.test",
-    "_lossless": false,
-    "_overflow": true,
-    "_properties": [
-      {
-        "_name": "x",
-        "_type": "object",
-        "_value": "SVGAnimatedLength"
-      },
-      {
-        "_name": "y",
-        "_type": "object",
-        "_value": "SVGAnimatedLength"
-      },
-      {
-        "_name": "width",
-        "_type": "object",
-        "_value": "SVGAnimatedLength"
-      },
-      {
-        "_name": "height",
-        "_type": "object",
-        "_value": "SVGAnimatedLength"
-      },
-      {
-        "_name": "rx",
-        "_type": "object",
-        "_value": "SVGAnimatedLength"
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: [document.body, div, span, input, text, comment, svgElement]
-{
-  "_type": "object",
-  "_subtype": "array",
-  "_objectId": "<filtered>",
-  "_description": "Array",
-  "_size": 7,
-  "_preview": {
-    "_type": "object",
-    "_subtype": "array",
-    "_description": "Array",
-    "_lossless": false,
-    "_overflow": false,
-    "_size": 7,
-    "_properties": [
-      {
-        "_name": "0",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<body>"
-      },
-      {
-        "_name": "1",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<div class=\"foo bar\">"
-      },
-      {
-        "_name": "2",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<span id=\"foo\">"
-      },
-      {
-        "_name": "3",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<input type=\"password\">"
-      },
-      {
-        "_name": "4",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "#text \"text content\""
-      },
-      {
-        "_name": "5",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<!--comment content-->"
-      },
-      {
-        "_name": "6",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<rect class=\"test\">"
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: document.head.children
-{
-  "_type": "object",
-  "_subtype": "array",
-  "_objectId": "<filtered>",
-  "_description": "HTMLCollection",
-  "_size": 3,
-  "_preview": {
-    "_type": "object",
-    "_subtype": "array",
-    "_description": "HTMLCollection",
-    "_lossless": false,
-    "_overflow": false,
-    "_size": 3,
-    "_properties": [
-      {
-        "_name": "0",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<meta>"
-      },
-      {
-        "_name": "1",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<script>"
-      },
-      {
-        "_name": "2",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<script>"
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: document.getElementsByClassName('my-test')
-{
-  "_type": "object",
-  "_subtype": "array",
-  "_objectId": "<filtered>",
-  "_description": "HTMLCollection",
-  "_size": 3,
-  "_preview": {
-    "_type": "object",
-    "_subtype": "array",
-    "_description": "HTMLCollection",
-    "_lossless": false,
-    "_overflow": false,
-    "_size": 3,
-    "_properties": [
-      {
-        "_name": "0",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<p class=\"my-test\">"
-      },
-      {
-        "_name": "1",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<p class=\"my-test\">"
-      },
-      {
-        "_name": "2",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<p class=\"my-test\">"
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
-EXPRESSION: document.querySelectorAll('.my-test')
-{
-  "_type": "object",
-  "_subtype": "array",
-  "_objectId": "<filtered>",
-  "_description": "NodeList",
-  "_size": 3,
-  "_preview": {
-    "_type": "object",
-    "_subtype": "array",
-    "_description": "NodeList",
-    "_lossless": false,
-    "_overflow": false,
-    "_size": 3,
-    "_properties": [
-      {
-        "_name": "0",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<p class=\"my-test\">"
-      },
-      {
-        "_name": "1",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<p class=\"my-test\">"
-      },
-      {
-        "_name": "2",
-        "_type": "object",
-        "_subtype": "node",
-        "_value": "<p class=\"my-test\">"
-      }
-    ],
-    "_entries": null
-  }
-}
-
------------------------------------------------------
 EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
 {
   "_type": "object",
@@ -2158,7 +1635,7 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
     "_type": "object",
     "_subtype": "error",
     "_description": "TypeError: undefined is not an object (evaluating '[].x.x')",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -2169,7 +1646,7 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
       {
         "_name": "line",
         "_type": "number",
-        "_value": "1"
+        "_value": "3"
       },
       {
         "_name": "column",
@@ -2179,7 +1656,7 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
       {
         "_name": "stack",
         "_type": "string",
-        "_value": "eval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+        "_value": "global code\nevaluateWithScopeExtension@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
       }
     ],
     "_entries": null
@@ -2187,7 +1664,7 @@ EXPRESSION: error = null; try { [].x.x; } catch (e) { error = e; }; error
 }
 
 -----------------------------------------------------
-EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
+EXPRESSION: error = null; try { eval("if()"); } catch (e) { error = e; }; error
 {
   "_type": "object",
   "_subtype": "error",
@@ -2197,7 +1674,7 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
     "_type": "object",
     "_subtype": "error",
     "_description": "SyntaxError: Unexpected token ')'",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -2208,7 +1685,7 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
       {
         "_name": "line",
         "_type": "number",
-        "_value": "1"
+        "_value": "3"
       },
       {
         "_name": "column",
@@ -2218,7 +1695,7 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
       {
         "_name": "stack",
         "_type": "string",
-        "_value": "eval@[native code]\neval code\neval@[native code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+        "_value": "eval@[native code]\nglobal code\nevaluateWithScopeEx…ative code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
       }
     ],
     "_entries": null
@@ -2226,7 +1703,7 @@ EXPRESSION: error = null; try { eval('if()'); } catch (e) { error = e; }; error
 }
 
 -----------------------------------------------------
-EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } catch (e) { error = e; }; error
+EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } catch (e) { error = e; }; error
 {
   "_type": "object",
   "_subtype": "error",
@@ -2252,12 +1729,12 @@ EXPRESSION: error = null; try { document.createTextNode('').splitText(100); } ca
       {
         "_name": "message",
         "_type": "string",
-        "_value": "IndexSizeError: DOM Exception 1"
+        "_value": "The index is not in the allowed range."
       },
       {
         "_name": "line",
         "_type": "number",
-        "_value": "1"
+        "_value": "3"
       },
       {
         "_name": "column",
@@ -2290,7 +1767,7 @@ EXPRESSION: new Map
 }
 
 -----------------------------------------------------
-EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map
+EXPRESSION: map = new Map; map.set(1, 2); map.set("key", "value"); map
 {
   "_type": "object",
   "_subtype": "map",
@@ -2397,7 +1874,7 @@ EXPRESSION: map = new Map; map.set({a:1}, {b:2}); map.set(document.body, [1,2]);
         "_key": {
           "_type": "object",
           "_subtype": "node",
-          "_description": "body",
+          "_description": "<body>",
           "_lossless": false,
           "_overflow": true,
           "_properties": [
@@ -2688,7 +2165,7 @@ EXPRESSION: new Set
 }
 
 -----------------------------------------------------
-EXPRESSION: set = new Set; set.add(1); set.add(2); set.add('key'); set
+EXPRESSION: set = new Set; set.add(1); set.add(2); set.add("key"); set
 {
   "_type": "object",
   "_subtype": "set",
@@ -2775,7 +2252,7 @@ EXPRESSION: set = new Set; set.add({a:1}); set.add(document.body); set.add([1,2]
         "_value": {
           "_type": "object",
           "_subtype": "node",
-          "_description": "body",
+          "_description": "<body>",
           "_lossless": false,
           "_overflow": true,
           "_properties": [
@@ -2977,7 +2454,7 @@ EXPRESSION: set = new WeakSet; strongKey = {id:1}; set.add(strongKey); set
 }
 
 -----------------------------------------------------
-EXPRESSION: 'a'[Symbol.iterator]()
+EXPRESSION: "a"[Symbol.iterator]()
 {
   "_type": "object",
   "_subtype": "iterator",
@@ -3013,7 +2490,7 @@ EXPRESSION: 'a'[Symbol.iterator]()
 }
 
 -----------------------------------------------------
-EXPRESSION: 'long string'[Symbol.iterator]()
+EXPRESSION: "long string"[Symbol.iterator]()
 {
   "_type": "object",
   "_subtype": "iterator",
@@ -3188,7 +2665,7 @@ EXPRESSION: [1][Symbol.iterator]()
 }
 
 -----------------------------------------------------
-EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
+EXPRESSION: [1, "two", 3, "four", 5, "size"][Symbol.iterator]()
 {
   "_type": "object",
   "_subtype": "iterator",
@@ -3271,7 +2748,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'][Symbol.iterator]()
 }
 
 -----------------------------------------------------
-EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
+EXPRESSION: [1, "two", 3, "four", 5, "size"].keys()
 {
   "_type": "object",
   "_subtype": "iterator",
@@ -3354,7 +2831,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].keys()
 }
 
 -----------------------------------------------------
-EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
+EXPRESSION: [1, "two", 3, "four", 5, "size"].entries()
 {
   "_type": "object",
   "_subtype": "iterator",
@@ -3502,7 +2979,7 @@ EXPRESSION: [1, 'two', 3, 'four', 5, 'size'].entries()
 }
 
 -----------------------------------------------------
-EXPRESSION: map = new Map; map.set(1, 2); map.set('key', 'value'); map.values()
+EXPRESSION: map = new Map; map.set(1, 2); map.set("key", "value"); map.values()
 {
   "_type": "object",
   "_subtype": "iterator",
@@ -3849,7 +3326,7 @@ EXPRESSION: map.entries()
 }
 
 -----------------------------------------------------
-EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.iterator]()
+EXPRESSION: x = undefined; (function() { x = arguments; })(1, "two"); x[Symbol.iterator]()
 {
   "_type": "object",
   "_subtype": "iterator",
@@ -3922,7 +3399,7 @@ EXPRESSION: x = undefined; (function() { x = arguments; })(1, 'two'); x[Symbol.i
 }
 
 -----------------------------------------------------
-EXPRESSION: iter = [1, 2][Symbol.iterator](); iter['return'] = function(){}; iter
+EXPRESSION: iter = [1, 2][Symbol.iterator](); iter["return"] = function(){}; iter
 {
   "_type": "object",
   "_subtype": "iterator",
@@ -4003,7 +3480,7 @@ EXPRESSION: new Promise(function(){})
   "_preview": {
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4026,7 +3503,7 @@ EXPRESSION: Promise.reject()
   "_preview": {
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4047,7 +3524,7 @@ EXPRESSION: Promise.reject()
 }
 
 -----------------------------------------------------
-EXPRESSION: Promise.reject('result')
+EXPRESSION: Promise.reject("result")
 {
   "_type": "object",
   "_objectId": "<filtered>",
@@ -4055,7 +3532,7 @@ EXPRESSION: Promise.reject('result')
   "_preview": {
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4084,7 +3561,7 @@ EXPRESSION: Promise.resolve()
   "_preview": {
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4113,7 +3590,7 @@ EXPRESSION: Promise.resolve({result:1})
   "_preview": {
     "_type": "object",
     "_description": "Promise",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -4216,7 +3693,7 @@ EXPRESSION: Person = class Person { constructor(name){} get fullName(){} methodN
     "_objectId": "<filtered>",
     "_description": "Person"
   },
-  "_functionDescription": "function Person(name){}"
+  "_functionDescription": "class Person { constructor(name){} get fullName(){} methodName(p1, p2){} }"
 }
 
 -----------------------------------------------------
@@ -4225,6 +3702,22 @@ EXPRESSION: Person.prototype.methodName
   "_type": "function",
   "_objectId": "<filtered>",
   "_description": "function methodName(p1, p2){}"
+}
+
+-----------------------------------------------------
+EXPRESSION: new Person
+{
+  "_type": "object",
+  "_objectId": "<filtered>",
+  "_description": "Person",
+  "_preview": {
+    "_type": "object",
+    "_description": "Person",
+    "_lossless": false,
+    "_overflow": false,
+    "_properties": [],
+    "_entries": null
+  }
 }
 
 -----------------------------------------------------
@@ -4239,7 +3732,7 @@ EXPRESSION: Alpha = class A { methodA(){} }; Beta = class B extends Alpha { meth
     "_objectId": "<filtered>",
     "_description": "B"
   },
-  "_functionDescription": "function B() { super(...arguments); }"
+  "_functionDescription": "class B extends Alpha { methodB(){} }"
 }
 
 -----------------------------------------------------
