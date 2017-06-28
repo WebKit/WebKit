@@ -705,7 +705,7 @@ http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subreso
 http/tests/loading/resourceLoadStatistics/classify-as-prevalent-based-on-subresource-unique-redirects-to.html [ Pass ]
 http/tests/loading/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 webkit.org/b/172452 http/tests/loading/resourceLoadStatistics/grandfathering.html [ Pass Failure Timeout ]
-http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass ]
+webkit.org/b/173499 http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################
@@ -721,7 +721,4 @@ http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass ]
 
 
 webkit.org/b/172922 webrtc/datachannel/basic.html [ Pass Timeout ]
-
-webkit.org/b/173499 [ Release ] http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Pass Failure ]
-
 
