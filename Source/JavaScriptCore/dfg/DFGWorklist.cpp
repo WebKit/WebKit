@@ -130,9 +130,9 @@ protected:
             
             m_worklist.m_readyPlans.append(m_plan);
             
+            RELEASE_ASSERT(!m_plan->vm->heap.collectorBelievesThatTheWorldIsStopped());
             m_worklist.m_planCompiled.notifyAll();
         }
-        RELEASE_ASSERT(!m_plan->vm->heap.collectorBelievesThatTheWorldIsStopped());
         
         return WorkResult::Continue;
     }

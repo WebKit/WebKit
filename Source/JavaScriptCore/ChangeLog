@@ -1,3 +1,16 @@
+2017-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Do not touch VM after notifying Ready in DFG::Worklist
+        https://bugs.webkit.org/show_bug.cgi?id=173888
+
+        Reviewed by Saam Barati.
+
+        After notifying Plan::Ready and releasing Worklist lock, VM can be destroyed.
+        Thus, Plan::vm() can return a destroyed VM. Do not touch it.
+        This causes occasional SEGV / assertion failures in workers/bomb test.
+
+        * dfg/DFGWorklist.cpp:
+
 2017-06-27  Saam Barati  <sbarati@apple.com>
 
         Remove an inaccurate comment inside DFGClobberize.h
