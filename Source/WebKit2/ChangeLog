@@ -1,3 +1,17 @@
+2017-06-28  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Allow WKWebView clients to play audio in the background
+        https://bugs.webkit.org/show_bug.cgi?id=173932
+        <rdar://problem/32851547>
+
+        Reviewed by Ryosuke Niwa.
+
+        Allow WKWebView clients (such as MobileSafari) to play audio in the background
+        by taking a process assertion whenever a WebPage is audible.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateThrottleState):
+
 2017-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         Teach ResourceLoadStatistics to recognize changes in the file system

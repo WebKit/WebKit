@@ -1528,7 +1528,8 @@ void WebPageProxy::updateThrottleState()
 
 #if PLATFORM(IOS)
     bool isCapturingMedia = m_activityState & ActivityState::IsCapturingMedia;
-    if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority && !isCapturingMedia) {
+    bool isAudible = m_activityState & ActivityState::IsAudible;
+    if (!isViewVisible() && !m_alwaysRunsAtForegroundPriority && !isCapturingMedia && !isAudible) {
         if (m_activityToken) {
             RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is releasing a foreground assertion because the view is no longer visible", this);
             m_activityToken = nullptr;
@@ -1536,6 +1537,8 @@ void WebPageProxy::updateThrottleState()
     } else if (!m_activityToken) {
         if (isViewVisible())
             RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is taking a foreground assertion because the view is visible", this);
+        else if (isAudible)
+            RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is taking a foreground assertion because we are playing audio", this);
         else if (isCapturingMedia)
             RELEASE_LOG_IF_ALLOWED(ProcessSuspension, "%p - UIProcess is taking a foreground assertion because media capture is active", this);
         else
