@@ -1,3 +1,34 @@
+2017-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Dragged content flashes after the preview sets down when cancelling a drag
+        https://bugs.webkit.org/show_bug.cgi?id=173927
+        <rdar://problem/33020792>
+
+        Reviewed by Tim Horton.
+
+        When a drag is cancelled, UIKit normally animates fly-back and set-down animations back-to-back. However, for
+        WebKit2, we need to call out to the web process in order to trigger a repaint of the dragged content at normal
+        opacity when the drag cancel animation completes. Thus, we can hook into UIKit SPI to split the cancellation
+        animation into two discrete phases: the fly-back and the set-down (the latter of which may be deferred using a
+        completion block).
+
+        To do this, we implement a new SPI hook, _dragInteraction:item:shouldDelaySetDownAnimationWithCompletion:, to
+        indicate that the set-down should be deferred, and call the completion block after the next layer tree commit.
+        Since -shouldDelaySetDownAnimationWithCompletion: is invoked after the UIDragAnimating completion block in
+        -willAnimateCancelWithAnimator:, this layer tree commit is guaranteed to come after we've told the web process
+        to repaint at full opacity.
+
+        This patch also accounts for additional changes in UIKit. Once -shouldDelaySetDownAnimationWithCompletion:
+        becomes available, -sessionDidEnd: will no longer be invoked after a cancelled drag lift if the user did not
+        begin moving. This means that our cleanup logic in -sessionDidEnd: will no longer be executed in this case,
+        leaving the view with an inconsistent dragging state. To fix this, we need to implement
+        -dragInteraction:willAnimateLiftWithAnimator:session: to perform drag session cleanup following a cancelled drag
+        lift, for which the drag animator's final position will be UIViewAnimatingPositionStart.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        (-[WKContentView _dragInteraction:item:shouldDelaySetDownAnimationWithCompletion:]):
+
 2017-06-28  Chris Dumez  <cdumez@apple.com>
 
         Avoid double thread dispatch in WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains()

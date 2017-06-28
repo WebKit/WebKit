@@ -4603,6 +4603,21 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return self.dragPreviewForCurrentDataInteractionState.autorelease();
 }
 
+- (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id <UIDragAnimating>)animator session:(id <UIDragSession>)session
+{
+    auto adjustedOrigin = _dataInteractionState.adjustedOrigin;
+    RetainPtr<WKContentView> protectedSelf(self);
+    [animator addCompletion:[session, adjustedOrigin, protectedSelf, page = _page] (UIViewAnimatingPosition finalPosition) {
+        if (finalPosition == UIViewAnimatingPositionStart) {
+            RELEASE_LOG(DragAndDrop, "Drag session ended at start: %p", session);
+            // The lift was canceled, so -dropInteraction:sessionDidEnd: will never be invoked. This is the last chance to clean up.
+            [protectedSelf cleanUpDragSourceSessionState];
+            auto originInWindowCoordinates = [protectedSelf convertPoint:adjustedOrigin toView:[protectedSelf window]];
+            page->dragEnded(roundedIntPoint(adjustedOrigin), roundedIntPoint(originInWindowCoordinates), DragOperationNone);
+        }
+    }];
+}
+
 - (void)dragInteraction:(UIDragInteraction *)interaction sessionWillBegin:(id <UIDragSession>)session
 {
     RELEASE_LOG(DragAndDrop, "Drag session beginning: %p", session);
@@ -4641,6 +4656,14 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
             return overridenPreview;
     }
     return self.dragPreviewForCurrentDataInteractionState.autorelease();
+}
+
+- (BOOL)_dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item shouldDelaySetDownAnimationWithCompletion:(void(^)(void))completion
+{
+    _page->callAfterNextPresentationUpdate([capturedBlock = makeBlockPtr(completion)] (CallbackBase::Error) {
+        capturedBlock();
+    });
+    return YES;
 }
 
 - (void)_api_dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
