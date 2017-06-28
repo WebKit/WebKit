@@ -46,6 +46,7 @@
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/RunLoop.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -509,19 +510,23 @@ void WebsiteDataStore::fetchData(OptionSet<WebsiteDataType> dataTypes, OptionSet
 
 void WebsiteDataStore::fetchDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, const Vector<String>& topPrivatelyControlledDomains, Function<void(Vector<WebsiteDataRecord>&&, HashSet<String>&&)>&& completionHandler)
 {
-    fetchData(dataTypes, fetchOptions, [topPrivatelyControlledDomains, completionHandler = WTFMove(completionHandler)](auto&& existingDataRecords) {
-        Vector<WebsiteDataRecord> matchingDataRecords;
-        HashSet<String> domainsWithMatchingDataRecords;
-        for (auto&& dataRecord : existingDataRecords) {
-            for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomains) {
-                if (dataRecord.matchesTopPrivatelyControlledDomain(topPrivatelyControlledDomain)) {
-                    matchingDataRecords.append(WTFMove(dataRecord));
-                    domainsWithMatchingDataRecords.add(topPrivatelyControlledDomain);
-                    break;
+    fetchData(dataTypes, fetchOptions, [queue = m_queue.copyRef(), topPrivatelyControlledDomains = CrossThreadCopier<Vector<String>>::copy(topPrivatelyControlledDomains), completionHandler = WTFMove(completionHandler)] (auto&& existingDataRecords) mutable {
+        queue->dispatch([queue = WTFMove(queue), topPrivatelyControlledDomains = WTFMove(topPrivatelyControlledDomains), existingDataRecords = WTFMove(existingDataRecords), completionHandler = WTFMove(completionHandler)] () mutable {
+            Vector<WebsiteDataRecord> matchingDataRecords;
+            HashSet<String> domainsWithMatchingDataRecords;
+            for (auto&& dataRecord : existingDataRecords) {
+                for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomains) {
+                    if (dataRecord.matchesTopPrivatelyControlledDomain(topPrivatelyControlledDomain)) {
+                        matchingDataRecords.append(WTFMove(dataRecord));
+                        domainsWithMatchingDataRecords.add(topPrivatelyControlledDomain.isolatedCopy());
+                        break;
+                    }
                 }
             }
-        }
-        completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithMatchingDataRecords));
+            RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), matchingDataRecords = WTFMove(matchingDataRecords), domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords)] () mutable {
+                completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithMatchingDataRecords));
+            });
+        });
     });
 }
     
