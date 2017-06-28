@@ -27,10 +27,11 @@
 #define HysteresisActivity_h
 
 #include "Timer.h"
+#include <wtf/Seconds.h>
 
 namespace WebCore {
 
-static const double DefaultHysteresisSeconds = 5.0;
+static const Seconds defaultHysteresisDuration { 5_s };
 
 enum class HysteresisState {
     Started,
@@ -39,7 +40,7 @@ enum class HysteresisState {
 
 class HysteresisActivity {
 public:
-    explicit HysteresisActivity(WTF::Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, double hysteresisSeconds = DefaultHysteresisSeconds)
+    explicit HysteresisActivity(WTF::Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
         : m_callback(WTFMove(callback))
         , m_hysteresisSeconds(hysteresisSeconds)
         , m_active(false)
@@ -65,7 +66,7 @@ public:
             return;
         m_active = false;
 
-        m_timer.startOneShot(1_s * m_hysteresisSeconds);
+        m_timer.startOneShot(m_hysteresisSeconds);
     }
 
     void impulse()
@@ -89,7 +90,7 @@ private:
     }
 
     WTF::Function<void(HysteresisState)> m_callback;
-    double m_hysteresisSeconds; // FIXME: Should use Seconds.
+    Seconds m_hysteresisSeconds;
     bool m_active;
     Timer m_timer;
 };

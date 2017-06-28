@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-const double hysteresisDuration = 2; // 2 seconds.
+const Seconds hysteresisDuration { 2_s };
 
 WebSQLiteDatabaseTrackerClient& WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient()
 {
