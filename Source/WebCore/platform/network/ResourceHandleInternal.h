@@ -49,6 +49,7 @@
 #endif
 
 #if USE(SOUP)
+#include "GUniquePtrSoup.h"
 #include "SoupNetworkSession.h"
 #include <libsoup/soup.h>
 #include <wtf/RunLoop.h>

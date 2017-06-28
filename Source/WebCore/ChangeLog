@@ -1,3 +1,24 @@
+2017-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r218799): [GTK][WPE] Critical warning at exit
+        https://bugs.webkit.org/show_bug.cgi?id=173907
+
+        Reviewed by Konstantin Tokarev.
+
+        GLib-GObject-CRITICAL **: g_object_unref: assertion 'G_IS_OBJECT (object)' failed
+
+        This is now always happening when closing the MeiniBrowser and it's causing a lot of unit tests to fail. In
+        r218799, GRefPtrGtk.h include was removed from PasteboardHelper.h that contains a GRefPtr<GtkTargetList>. The
+        targets are destroyed at exit, but now trying to use g_object_unref instead of gtk_target_list_unref(). I've
+        found two more cases like this in r218799, that removes GUniquePtrSoup.h from ResourceHandleInternal.h and
+        ResourceRequest.h that have GUniquePtr<SoupBuffer> and GUniquePtr<SoupURI>.
+
+        Fixes several GTK+ and WPE unit tests.
+
+        * platform/gtk/PasteboardHelper.h: Bring back GRefPtrGtk.h.
+        * platform/network/ResourceHandleInternal.h: Bring back GUniquePtrSoup.h.
+        * platform/network/soup/ResourceRequest.h: Ditto.
+
 2017-06-27  Chris Dumez  <cdumez@apple.com>
 
         [ResourceLoadStatistics] Update minimumTimeBetweeenDataRecordsRemoval to 1 hour instead of 1 minute

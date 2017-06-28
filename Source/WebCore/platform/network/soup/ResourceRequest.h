@@ -27,6 +27,7 @@
 #ifndef ResourceRequest_h
 #define ResourceRequest_h
 
+#include "GUniquePtrSoup.h"
 #include "ResourceRequestBase.h"
 #include <libsoup/soup.h>
 
