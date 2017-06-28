@@ -4375,6 +4375,11 @@ static UIDropOperation dropOperationForWebCoreDragOperation(DragOperation operat
         [[WebItemProviderPasteboard sharedInstance] setItemProviders:nil];
     }
 
+    if (auto completionBlock = _dataInteractionState.dragCancelSetDownBlock) {
+        _dataInteractionState.dragCancelSetDownBlock = nil;
+        completionBlock();
+    }
+
     if (auto completionBlock = _dataInteractionState.dragStartCompletionBlock) {
         // If the previous drag session is still initializing, we need to ensure that its completion block is called to prevent UIKit from getting out of state.
         _dataInteractionState.dragStartCompletionBlock = nil;
@@ -4660,16 +4665,20 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (BOOL)_dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item shouldDelaySetDownAnimationWithCompletion:(void(^)(void))completion
 {
-    _page->callAfterNextPresentationUpdate([capturedBlock = makeBlockPtr(completion)] (CallbackBase::Error) {
-        capturedBlock();
-    });
+    _dataInteractionState.dragCancelSetDownBlock = completion;
     return YES;
 }
 
 - (void)_api_dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
 {
-    [animator addCompletion:[page = _page] (UIViewAnimatingPosition finalPosition) {
+    [animator addCompletion:[protectedSelf = retainPtr(self), page = _page] (UIViewAnimatingPosition finalPosition) {
         page->dragCancelled();
+        if (auto completion = protectedSelf->_dataInteractionState.dragCancelSetDownBlock) {
+            protectedSelf->_dataInteractionState.dragCancelSetDownBlock = nil;
+            page->callAfterNextPresentationUpdate([completion] (CallbackBase::Error) {
+                completion();
+            });
+        }
     }];
 }
 

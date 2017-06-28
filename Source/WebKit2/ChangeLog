@@ -1,3 +1,26 @@
+ 2017-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Followup to r218885: adjust for further UIKit SPI changes
+        https://bugs.webkit.org/show_bug.cgi?id=173927
+        <rdar://problem/33020792>
+
+        Reviewed by Tim Horton.
+
+        On ToT, UIKit now invokes -_dragInteraction:item:shouldDelaySetDownAnimationWithCompletion: before the
+        completion block of -dragInteraction:willAnimateLiftWithAnimator:session: is called. This means we now need to
+        store the completion block in -shouldDelaySetDownAnimationWithCompletion: and wait until the UIDragAnimating
+        completion block in -willAnimateCancelWithAnimator: before invoking it.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpDragSourceSessionState]):
+
+        Ensure that the set-down completion block is invoked when a drag session ends (e.g., if the web content process
+        crashes).
+
+        (-[WKContentView _dragInteraction:item:shouldDelaySetDownAnimationWithCompletion:]):
+        (-[WKContentView _api_dragInteraction:item:willAnimateCancelWithAnimator:]):
+
 2017-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         dropInteraction:sessionDidEnd: invokes dragEnded with a UIDragOperation rather than a WebCore::DragOperation

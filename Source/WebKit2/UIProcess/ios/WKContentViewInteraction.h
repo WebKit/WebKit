@@ -128,6 +128,7 @@ struct WKDataInteractionState {
     RetainPtr<id <UIDragSession>> dragSession;
     RetainPtr<id <UIDropSession>> dropSession;
     BlockPtr<void()> dragStartCompletionBlock;
+    BlockPtr<void()> dragCancelSetDownBlock;
     WebCore::DragSourceAction sourceAction { WebCore::DragSourceActionNone };
 
     String linkTitle;
