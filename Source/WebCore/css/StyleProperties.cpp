@@ -1363,7 +1363,7 @@ COMPILE_ASSERT(sizeof(StyleProperties) == sizeof(SameSizeAsStyleProperties), sty
 #ifndef NDEBUG
 void StyleProperties::showStyle()
 {
-    WTFLogAlways("%s\n", asText().ascii().data());
+    fprintf(stderr, "%s\n", asText().ascii().data());
 }
 #endif
 

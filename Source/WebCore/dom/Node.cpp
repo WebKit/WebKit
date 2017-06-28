@@ -1729,12 +1729,12 @@ void Node::showNode(const char* prefix) const
         String value = nodeValue();
         value.replaceWithLiteral('\\', "\\\\");
         value.replaceWithLiteral('\n', "\\n");
-        WTFLogAlways("%s%s\t%p \"%s\"\n", prefix, nodeName().utf8().data(), this, value.utf8().data());
+        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().utf8().data(), this, value.utf8().data());
     } else {
         StringBuilder attrs;
         appendAttributeDesc(this, attrs, classAttr, " CLASS=");
         appendAttributeDesc(this, attrs, styleAttr, " STYLE=");
-        WTFLogAlways("%s%s\t%p (renderer %p) %s%s%s\n", prefix, nodeName().utf8().data(), this, renderer(), attrs.toString().utf8().data(), needsStyleRecalc() ? " (needs style recalc)" : "", childNeedsStyleRecalc() ? " (child needs style recalc)" : "");
+        fprintf(stderr, "%s%s\t%p (renderer %p) %s%s%s\n", prefix, nodeName().utf8().data(), this, renderer(), attrs.toString().utf8().data(), needsStyleRecalc() ? " (needs style recalc)" : "", childNeedsStyleRecalc() ? " (child needs style recalc)" : "");
     }
 }
 
@@ -1757,13 +1757,13 @@ void Node::showNodePathForThis() const
             int count = 0;
             for (const ShadowRoot* shadowRoot = downcast<ShadowRoot>(node); shadowRoot && shadowRoot != node; shadowRoot = shadowRoot->shadowRoot())
                 ++count;
-            WTFLogAlways("/#shadow-root[%d]", count);
+            fprintf(stderr, "/#shadow-root[%d]", count);
             continue;
         }
 
         switch (node->nodeType()) {
         case ELEMENT_NODE: {
-            WTFLogAlways("/%s", node->nodeName().utf8().data());
+            fprintf(stderr, "/%s", node->nodeName().utf8().data());
 
             const Element& element = downcast<Element>(*node);
             const AtomicString& idattr = element.getIdAttribute();
@@ -1774,39 +1774,39 @@ void Node::showNodePathForThis() const
                     if (previous->nodeName() == node->nodeName())
                         ++count;
                 if (hasIdAttr)
-                    WTFLogAlways("[@id=\"%s\" and position()=%d]", idattr.string().utf8().data(), count);
+                    fprintf(stderr, "[@id=\"%s\" and position()=%d]", idattr.string().utf8().data(), count);
                 else
-                    WTFLogAlways("[%d]", count);
+                    fprintf(stderr, "[%d]", count);
             } else if (hasIdAttr)
-                WTFLogAlways("[@id=\"%s\"]", idattr.string().utf8().data());
+                fprintf(stderr, "[@id=\"%s\"]", idattr.string().utf8().data());
             break;
         }
         case TEXT_NODE:
-            WTFLogAlways("/text()");
+            fprintf(stderr, "/text()");
             break;
         case ATTRIBUTE_NODE:
-            WTFLogAlways("/@%s", node->nodeName().utf8().data());
+            fprintf(stderr, "/@%s", node->nodeName().utf8().data());
             break;
         default:
             break;
         }
     }
-    WTFLogAlways("\n");
+    fprintf(stderr, "\n");
 }
 
 static void traverseTreeAndMark(const String& baseIndent, const Node* rootNode, const Node* markedNode1, const char* markedLabel1, const Node* markedNode2, const char* markedLabel2)
 {
     for (const Node* node = rootNode; node; node = NodeTraversal::next(*node)) {
         if (node == markedNode1)
-            WTFLogAlways("%s", markedLabel1);
+            fprintf(stderr, "%s", markedLabel1);
         if (node == markedNode2)
-            WTFLogAlways("%s", markedLabel2);
+            fprintf(stderr, "%s", markedLabel2);
 
         StringBuilder indent;
         indent.append(baseIndent);
         for (const Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentOrShadowHostNode())
             indent.append('\t');
-        WTFLogAlways("%s", indent.toString().utf8().data());
+        fprintf(stderr, "%s", indent.toString().utf8().data());
         node->showNode();
         indent.append('\t');
         if (!node->isShadowRoot()) {

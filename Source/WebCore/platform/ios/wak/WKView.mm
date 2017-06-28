@@ -117,7 +117,7 @@ WKViewRef WKViewCreateWithFrame (CGRect frame, WKViewContext *context)
 void _WKViewSetViewContext (WKViewRef view, WKViewContext *context)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return;
     }
     view->context = context;
@@ -126,7 +126,7 @@ void _WKViewSetViewContext (WKViewRef view, WKViewContext *context)
 CGRect WKViewGetBounds (WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGRectZero;
     }
     
@@ -136,7 +136,7 @@ CGRect WKViewGetBounds (WKViewRef view)
 CGRect WKViewGetFrame (WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGRectZero;
     }
     
@@ -156,7 +156,7 @@ CGPoint WKViewGetOrigin(WKViewRef view)
 static void _WKViewRecursivelyInvalidateGState(WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return;
     }
 
@@ -173,7 +173,7 @@ static void _WKViewRecursivelyInvalidateGState(WKViewRef view)
 void WKViewSetFrameOrigin (WKViewRef view, CGPoint newOrigin)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return;
     }
     
@@ -322,7 +322,7 @@ static void _WKViewAutoresizeChildren(WKViewRef view, const CGRect *oldSuperFram
 void WKViewSetFrameSize (WKViewRef view, CGSize newSize)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return;
     }
     
@@ -386,7 +386,7 @@ float WKViewGetScale(WKViewRef view)
 WAKWindow *WKViewGetWindow (WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return 0;
     }
     
@@ -396,7 +396,7 @@ WAKWindow *WKViewGetWindow (WKViewRef view)
 CFArrayRef WKViewGetSubviews (WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return 0;
     }
     
@@ -406,7 +406,7 @@ CFArrayRef WKViewGetSubviews (WKViewRef view)
 void WKViewAddSubview (WKViewRef view, WKViewRef subview)
 {
     if (!view || !subview) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return;
     }
     
@@ -423,7 +423,7 @@ void WKViewAddSubview (WKViewRef view, WKViewRef subview)
 void WKViewRemoveFromSuperview (WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return;
     }
 
@@ -435,13 +435,13 @@ void WKViewRemoveFromSuperview (WKViewRef view)
     
     CFMutableArrayRef svs = view->superview->subviews;
     if (!svs) {
-        WKError("superview has no subviews");
+        WKError ("superview has no subviews");
         return;
     }
 
     CFIndex index = WKArrayIndexOfValue (svs, view);
     if (index < 0) {
-        WKError("view not in superview subviews");
+        WKError ("view not in superview subviews");
         return;
     }
 
@@ -455,7 +455,7 @@ void WKViewRemoveFromSuperview (WKViewRef view)
 WKViewRef WKViewFirstChild (WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return 0;
     }
 
@@ -474,7 +474,7 @@ WKViewRef WKViewFirstChild (WKViewRef view)
 WKViewRef WKViewNextSibling (WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return 0;
     }
 
@@ -487,7 +487,7 @@ WKViewRef WKViewNextSibling (WKViewRef view)
         
     CFIndex thisIndex = WKArrayIndexOfValue (svs, view);
     if (thisIndex < 0) {
-        WKError("internal error, view is not present in superview subviews");
+        WKError ("internal error, view is not present in superview subviews");
         return 0;
     }
     
@@ -502,7 +502,7 @@ WKViewRef WKViewNextSibling (WKViewRef view)
 WKViewRef WKViewTraverseNext(WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return 0;
     }
 
@@ -538,7 +538,7 @@ CGAffineTransform _WKViewGetTransform(WKViewRef view)
 CGRect WKViewGetVisibleRect(WKViewRef viewRef)
 {
     if (!viewRef) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGRectZero;
     }
 
@@ -564,7 +564,7 @@ CGRect WKViewGetVisibleRect(WKViewRef viewRef)
 CGRect WKViewConvertRectToSuperview(WKViewRef view, CGRect r)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGRectZero;
     }
     
@@ -574,7 +574,7 @@ CGRect WKViewConvertRectToSuperview(WKViewRef view, CGRect r)
 CGRect WKViewConvertRectToBase(WKViewRef view, CGRect r)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGRectZero;
     }
 
@@ -591,7 +591,7 @@ CGRect WKViewConvertRectToBase(WKViewRef view, CGRect r)
 CGPoint WKViewConvertPointToSuperview(WKViewRef view, CGPoint p)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGPointZero;
     }
 
@@ -601,7 +601,7 @@ CGPoint WKViewConvertPointToSuperview(WKViewRef view, CGPoint p)
 CGPoint WKViewConvertPointFromSuperview(WKViewRef view, CGPoint p)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGPointZero;
     }
     
@@ -612,7 +612,7 @@ CGPoint WKViewConvertPointFromSuperview(WKViewRef view, CGPoint p)
 CGPoint WKViewConvertPointToBase(WKViewRef view, CGPoint p)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGPointZero;
     }
 
@@ -637,7 +637,7 @@ static void _WKViewGetAncestorViewsIncludingView (WKViewRef view, WKViewRef *vie
     while (superview) {
         views[count++] = superview;
         if (count >= maxViews) {
-            WKError("Exceeded maxViews, use malloc/realloc");
+            WKError ("Exceeded maxViews, use malloc/realloc");
             *viewCount = 0;
             return;
         }
@@ -649,7 +649,7 @@ static void _WKViewGetAncestorViewsIncludingView (WKViewRef view, WKViewRef *vie
 CGPoint WKViewConvertPointFromBase(WKViewRef view, CGPoint p)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGPointZero;
     }
 
@@ -672,7 +672,7 @@ CGPoint WKViewConvertPointFromBase(WKViewRef view, CGPoint p)
 CGRect WKViewConvertRectFromSuperview(WKViewRef view, CGRect r)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGRectZero;
     }
     
@@ -683,7 +683,7 @@ CGRect WKViewConvertRectFromSuperview(WKViewRef view, CGRect r)
 CGRect WKViewConvertRectFromBase(WKViewRef view, CGRect r)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return CGRectZero;
     }
 
@@ -730,7 +730,7 @@ bool WKViewResignFirstResponder (WKViewRef view)
 unsigned int WKViewGetAutoresizingMask(WKViewRef view)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return 0;
     }    
     return view->autoresizingMask;
@@ -739,7 +739,7 @@ unsigned int WKViewGetAutoresizingMask(WKViewRef view)
 void WKViewSetAutoresizingMask (WKViewRef view, unsigned int mask)
 {
     if (!view) {
-        WKError("invalid parameter");
+        WKError ("invalid parameter");
         return;
     }    
     view->autoresizingMask = mask;

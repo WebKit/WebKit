@@ -610,10 +610,10 @@ void showCounterRendererTree(const WebCore::RenderObject* renderer, const char* 
     for (const WebCore::RenderObject* current = root; current; current = current->nextInPreOrder()) {
         if (!is<WebCore::RenderElement>(*current))
             continue;
-        WTFLogAlways("%c", (current == renderer) ? '*' : ' ');
+        fprintf(stderr, "%c", (current == renderer) ? '*' : ' ');
         for (const WebCore::RenderObject* parent = current; parent && parent != root; parent = parent->parent())
-            WTFLogAlways("    ");
-        WTFLogAlways("%p N:%p P:%p PS:%p NS:%p C:%p\n",
+            fprintf(stderr, "    ");
+        fprintf(stderr, "%p N:%p P:%p PS:%p NS:%p C:%p\n",
             current, current->node(), current->parent(), current->previousSibling(),
             current->nextSibling(), downcast<WebCore::RenderElement>(*current).hasCounterNodeMap() ?
             counterName ? WebCore::counterMaps().get(downcast<WebCore::RenderElement>(current))->get(identifier) : (WebCore::CounterNode*)1 : (WebCore::CounterNode*)0);

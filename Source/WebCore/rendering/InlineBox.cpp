@@ -107,15 +107,15 @@ void InlineBox::showLineTreeAndMark(const InlineBox* markedBox, int depth) const
 
 void InlineBox::showLineBox(bool mark, int depth) const
 {
-    WTFLogAlways("-------- %c-", isDirty() ? 'D' : '-');
+    fprintf(stderr, "-------- %c-", isDirty() ? 'D' : '-');
     int printedCharacters = 0;
     if (mark) {
-        WTFLogAlways("*");
+        fprintf(stderr, "*");
         ++printedCharacters;
     }
     while (++printedCharacters <= depth * 2)
         fputc(' ', stderr);
-    WTFLogAlways("%s  (%.2f, %.2f) (%.2f, %.2f) (%p) renderer->(%p)\n", boxName(), x(), y(), width(), height(), this, &renderer());
+    fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p) renderer->(%p)\n", boxName(), x(), y(), width(), height(), this, &renderer());
 }
 
 #endif // ENABLE(TREE_DEBUGGING)

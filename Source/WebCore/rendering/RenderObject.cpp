@@ -1009,7 +1009,7 @@ FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect&, const Rende
 
 static void showRenderTreeLegend()
 {
-    WTFLogAlways("\n(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, (C)omposited, (+)Dirty style, (+)Dirty layout\n");
+    fprintf(stderr, "\n(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, (C)omposited, (+)Dirty style, (+)Dirty layout\n");
 }
 
 void RenderObject::showNodeTreeForThis() const
@@ -1072,7 +1072,7 @@ void RenderObject::showRegionsInformation() const
     RenderRegion* startRegion = nullptr;
     RenderRegion* endRegion = nullptr;
     ftcb->getRegionRangeForBox(downcast<RenderBox>(this), startRegion, endRegion);
-    WTFLogAlways(" [Rs:%p Re:%p]", startRegion, endRegion);
+    fprintf(stderr, " [Rs:%p Re:%p]", startRegion, endRegion);
 }
 
 void RenderObject::showRenderObject(bool mark, int depth) const
@@ -1142,7 +1142,7 @@ void RenderObject::showRenderObject(bool mark, int depth) const
 
     int printedCharacters = 0;
     if (mark) {
-        WTFLogAlways("*");
+        fprintf(stderr, "*");
         ++printedCharacters;
     }
 
@@ -1150,33 +1150,33 @@ void RenderObject::showRenderObject(bool mark, int depth) const
         fputc(' ', stderr);
 
     if (node())
-        WTFLogAlways("%s ", node()->nodeName().utf8().data());
+        fprintf(stderr, "%s ", node()->nodeName().utf8().data());
 
     String name = renderName();
     // FIXME: Renderer's name should not include property value listing.
     int pos = name.find('(');
     if (pos > 0)
-        WTFLogAlways("%s", name.left(pos - 1).utf8().data());
+        fprintf(stderr, "%s", name.left(pos - 1).utf8().data());
     else
-        WTFLogAlways("%s", name.utf8().data());
+        fprintf(stderr, "%s", name.utf8().data());
 
     if (is<RenderBox>(*this)) {
         auto& renderBox = downcast<RenderBox>(*this);
         FloatRect boxRect = renderBox.frameRect();
         if (renderBox.isInFlowPositioned())
             boxRect.move(renderBox.offsetForInFlowPosition());
-        WTFLogAlways("  (%.2f, %.2f) (%.2f, %.2f)", boxRect.x(), boxRect.y(), boxRect.width(), boxRect.height());
+        fprintf(stderr, "  (%.2f, %.2f) (%.2f, %.2f)", boxRect.x(), boxRect.y(), boxRect.width(), boxRect.height());
     } else if (is<RenderInline>(*this) && isInFlowPositioned()) {
         FloatSize inlineOffset = downcast<RenderInline>(*this).offsetForInFlowPosition();
-        WTFLogAlways("  (%.2f, %.2f)", inlineOffset.width(), inlineOffset.height());
+        fprintf(stderr, "  (%.2f, %.2f)", inlineOffset.width(), inlineOffset.height());
     }
 
-    WTFLogAlways(" renderer->(%p)", this);
+    fprintf(stderr, " renderer->(%p)", this);
     if (node()) {
-        WTFLogAlways(" node->(%p)", node());
+        fprintf(stderr, " node->(%p)", node());
         if (node()->isTextNode()) {
             String value = node()->nodeValue();
-            WTFLogAlways(" length->(%u)", value.length());
+            fprintf(stderr, " length->(%u)", value.length());
 
             value.replaceWithLiteral('\\', "\\\\");
             value.replaceWithLiteral('\n', "\\n");
@@ -1184,31 +1184,31 @@ void RenderObject::showRenderObject(bool mark, int depth) const
             const int maxPrintedLength = 80;
             if (value.length() > maxPrintedLength) {
                 String substring = value.substring(0, maxPrintedLength);
-                WTFLogAlways(" \"%s\"...", substring.utf8().data());
+                fprintf(stderr, " \"%s\"...", substring.utf8().data());
             } else
-                WTFLogAlways(" \"%s\"", value.utf8().data());
+                fprintf(stderr, " \"%s\"", value.utf8().data());
         }
     }
     if (is<RenderBoxModelObject>(*this)) {
         auto& renderer = downcast<RenderBoxModelObject>(*this);
         if (renderer.hasContinuation())
-            WTFLogAlways(" continuation->(%p)", renderer.continuation());
+            fprintf(stderr, " continuation->(%p)", renderer.continuation());
     }
     showRegionsInformation();
     if (needsLayout()) {
-        WTFLogAlways(" layout->");
+        fprintf(stderr, " layout->");
         if (selfNeedsLayout())
-            WTFLogAlways("[self]");
+            fprintf(stderr, "[self]");
         if (normalChildNeedsLayout())
-            WTFLogAlways("[normal child]");
+            fprintf(stderr, "[normal child]");
         if (posChildNeedsLayout())
-            WTFLogAlways("[positioned child]");
+            fprintf(stderr, "[positioned child]");
         if (needsSimplifiedNormalFlowLayout())
-            WTFLogAlways("[simplified]");
+            fprintf(stderr, "[simplified]");
         if (needsPositionedMovementLayout())
-            WTFLogAlways("[positioned movement]");
+            fprintf(stderr, "[positioned movement]");
     }
-    WTFLogAlways("\n");
+    fprintf(stderr, "\n");
 }
 
 void RenderObject::showRenderSubTreeAndMark(const RenderObject* markedObject, int depth) const
@@ -2017,8 +2017,8 @@ void printRenderTreeForLiveDocuments()
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
-            WTFLogAlways("----------------------main frame--------------------------\n");
-        WTFLogAlways("%s", document->url().string().utf8().data());
+            fprintf(stderr, "----------------------main frame--------------------------\n");
+        fprintf(stderr, "%s", document->url().string().utf8().data());
         showRenderTree(document->renderView());
     }
 }
@@ -2029,8 +2029,8 @@ void printLayerTreeForLiveDocuments()
         if (!document->renderView())
             continue;
         if (document->frame() && document->frame()->isMainFrame())
-            WTFLogAlways("----------------------main frame--------------------------\n");
-        WTFLogAlways("%s", document->url().string().utf8().data());
+            fprintf(stderr, "----------------------main frame--------------------------\n");
+        fprintf(stderr, "%s", document->url().string().utf8().data());
         showLayerTree(document->renderView());
     }
 }

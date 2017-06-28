@@ -211,7 +211,7 @@ static void invalidateGStateCallback(WKViewRef view)
     ASSERT(_viewRef);
     if (_viewRef->isa.classInfo == &WKViewClassInfo)
         return [[[WAKView alloc] _initWithViewRef:_viewRef] autorelease];
-    WKError("unable to create wrapper for %s\n", _viewRef->isa.classInfo->name);
+    WKError ("unable to create wrapper for %s\n", _viewRef->isa.classInfo->name);
     return nil;
 }
 
@@ -542,7 +542,7 @@ static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQua
 {
     CGContextRef context = WKGetCurrentGraphicsContext();
     if (!context) {
-        WKError("unable to get context for view");
+        WKError ("unable to get context for view");
         return;
     }
 
@@ -557,7 +557,7 @@ static CGInterpolationQuality toCGInterpolationQuality(WebCore::InterpolationQua
 - (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(CGContextRef)context
 {
     if (!context) {
-        WKError("invalid parameter: context must not be NULL");
+        WKError ("invalid parameter: context must not be NULL");
         return;
     }
 

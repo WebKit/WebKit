@@ -970,6 +970,6 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
         return;
 
     String output = layer->layerTreeAsText(WebCore::LayerTreeAsTextDebug | WebCore::LayerTreeAsTextIncludeVisibleRects | WebCore::LayerTreeAsTextIncludeTileCaches | WebCore::LayerTreeAsTextIncludeContentLayers);
-    WTFLogAlways("%s\n", output.utf8().data());
+    fprintf(stderr, "%s\n", output.utf8().data());
 }
 #endif

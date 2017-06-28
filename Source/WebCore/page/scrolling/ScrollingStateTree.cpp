@@ -272,12 +272,12 @@ void showScrollingStateTree(const WebCore::ScrollingStateTree* tree)
 
     auto rootNode = tree->rootStateNode();
     if (!rootNode) {
-        WTFLogAlways("Scrolling state tree %p with no root node\n", tree);
+        fprintf(stderr, "Scrolling state tree %p with no root node\n", tree);
         return;
     }
 
     String output = rootNode->scrollingStateTreeAsText(WebCore::ScrollingStateTreeAsTextBehaviorDebug);
-    WTFLogAlways("%s\n", output.utf8().data());
+    fprintf(stderr, "%s\n", output.utf8().data());
 }
 
 void showScrollingStateTree(const WebCore::ScrollingStateNode* node)

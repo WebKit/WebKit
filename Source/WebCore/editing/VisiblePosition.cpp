@@ -689,9 +689,9 @@ int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const
 void VisiblePosition::debugPosition(const char* msg) const
 {
     if (isNull())
-        WTFLogAlways("Position [%s]: null\n", msg);
+        fprintf(stderr, "Position [%s]: null\n", msg);
     else {
-        WTFLogAlways("Position [%s]: %s, ", msg, m_deepPosition.deprecatedNode()->nodeName().utf8().data());
+        fprintf(stderr, "Position [%s]: %s, ", msg, m_deepPosition.deprecatedNode()->nodeName().utf8().data());
         m_deepPosition.showAnchorTypeAndOffset();
     }
 }

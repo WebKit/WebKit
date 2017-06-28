@@ -671,21 +671,21 @@ bool VisibleSelection::isInPasswordField() const
 
 void VisibleSelection::debugPosition() const
 {
-    WTFLogAlways("VisibleSelection ===============\n");
+    fprintf(stderr, "VisibleSelection ===============\n");
 
     if (!m_start.anchorNode())
         fputs("pos:   null", stderr);
     else if (m_start == m_end) {
-        WTFLogAlways("pos:   %s ", m_start.anchorNode()->nodeName().utf8().data());
+        fprintf(stderr, "pos:   %s ", m_start.anchorNode()->nodeName().utf8().data());
         m_start.showAnchorTypeAndOffset();
     } else {
-        WTFLogAlways("start: %s ", m_start.anchorNode()->nodeName().utf8().data());
+        fprintf(stderr, "start: %s ", m_start.anchorNode()->nodeName().utf8().data());
         m_start.showAnchorTypeAndOffset();
-        WTFLogAlways("end:   %s ", m_end.anchorNode()->nodeName().utf8().data());
+        fprintf(stderr, "end:   %s ", m_end.anchorNode()->nodeName().utf8().data());
         m_end.showAnchorTypeAndOffset();
     }
 
-    WTFLogAlways("================================\n");
+    fprintf(stderr, "================================\n");
 }
 
 void VisibleSelection::formatForDebugger(char* buffer, unsigned length) const

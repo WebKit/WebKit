@@ -59,7 +59,7 @@ void WKRelease(const void *o)
     WKObjectRef object = (WKObjectRef)(uintptr_t)o;
 
     if (object->referenceCount == 0) {
-        WKError("attempt to release invalid object");
+        WKError ("attempt to release invalid object");
         return;
     }
     

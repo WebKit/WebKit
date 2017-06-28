@@ -190,7 +190,7 @@ void AudioContext::constructCommon()
 AudioContext::~AudioContext()
 {
 #if DEBUG_AUDIONODE_REFERENCES
-    WTFLogAlways("%p: AudioContext::~AudioContext()\n", this);
+    fprintf(stderr, "%p: AudioContext::~AudioContext()\n", this);
 #endif
     ASSERT(!m_isInitialized);
     ASSERT(m_isStopScheduled);

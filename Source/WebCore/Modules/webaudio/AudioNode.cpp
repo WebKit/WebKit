@@ -70,7 +70,7 @@ AudioNode::~AudioNode()
     ASSERT(isMainThread());
 #if DEBUG_AUDIONODE_REFERENCES
     --s_nodeCount[nodeType()];
-    WTFLogAlways("%p: %d: AudioNode::~AudioNode() %d %d\n", this, nodeType(), m_normalRefCount.load(), m_connectionRefCount);
+    fprintf(stderr, "%p: %d: AudioNode::~AudioNode() %d %d\n", this, nodeType(), m_normalRefCount.load(), m_connectionRefCount);
 #endif
 }
 
@@ -404,7 +404,7 @@ void AudioNode::ref(RefType refType)
     }
 
 #if DEBUG_AUDIONODE_REFERENCES
-    WTFLogAlways("%p: %d: AudioNode::ref(%d) %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount);
+    fprintf(stderr, "%p: %d: AudioNode::ref(%d) %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount);
 #endif
 
     // See the disabling code in finishDeref() below. This handles the case where a node
@@ -467,7 +467,7 @@ void AudioNode::finishDeref(RefType refType)
     }
     
 #if DEBUG_AUDIONODE_REFERENCES
-    WTFLogAlways("%p: %d: AudioNode::deref(%d) %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount);
+    fprintf(stderr, "%p: %d: AudioNode::deref(%d) %d %d\n", this, nodeType(), refType, m_normalRefCount, m_connectionRefCount);
 #endif
 
     if (!m_connectionRefCount) {
@@ -493,15 +493,15 @@ int AudioNode::s_nodeCount[NodeTypeEnd];
 
 void AudioNode::printNodeCounts()
 {
-    WTFLogAlways("\n\n");
-    WTFLogAlways("===========================\n");
-    WTFLogAlways("AudioNode: reference counts\n");
-    WTFLogAlways("===========================\n");
+    fprintf(stderr, "\n\n");
+    fprintf(stderr, "===========================\n");
+    fprintf(stderr, "AudioNode: reference counts\n");
+    fprintf(stderr, "===========================\n");
 
     for (unsigned i = 0; i < NodeTypeEnd; ++i)
-        WTFLogAlways("%d: %d\n", i, s_nodeCount[i]);
+        fprintf(stderr, "%d: %d\n", i, s_nodeCount[i]);
 
-    WTFLogAlways("===========================\n\n\n");
+    fprintf(stderr, "===========================\n\n\n");
 }
 
 #endif // DEBUG_AUDIONODE_REFERENCES

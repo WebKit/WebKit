@@ -1398,9 +1398,9 @@ TextDirection Position::primaryDirection() const
 void Position::debugPosition(const char* msg) const
 {
     if (isNull())
-        WTFLogAlways("Position [%s]: null\n", msg);
+        fprintf(stderr, "Position [%s]: null\n", msg);
     else
-        WTFLogAlways("Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8().data(), deprecatedNode(), m_offset);
+        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8().data(), deprecatedNode(), m_offset);
 }
 
 void Position::formatForDebugger(char* buffer, unsigned length) const
@@ -1442,7 +1442,7 @@ void Position::showAnchorTypeAndOffset() const
         fputs("after", stderr);
         break;
     }
-    WTFLogAlways(", offset:%d\n", m_offset);
+    fprintf(stderr, ", offset:%d\n", m_offset);
 }
 
 void Position::showTreeForThis() const
