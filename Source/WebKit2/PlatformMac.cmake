@@ -391,6 +391,7 @@ list(APPEND WebKit2_SOURCES
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
 
 list(APPEND WebKit2_INCLUDE_DIRECTORIES
+    "${PAL_DIR}"
     "${WEBKIT2_DIR}/NetworkProcess/cocoa"
     "${WEBKIT2_DIR}/NetworkProcess/mac"
     "${WEBKIT2_DIR}/PluginProcess/mac"

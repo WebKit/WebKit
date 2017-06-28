@@ -1,3 +1,9 @@
+2017-06-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2017-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] Dragged content flashes after the preview sets down when cancelling a drag

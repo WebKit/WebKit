@@ -1,3 +1,9 @@
+2017-06-28  Alex Christensen  <achristensen@webkit.org>
+
+        Fix CMake build.
+
+        * PlatformMac.cmake:
+
 2017-06-28  Antoine Quint  <graouts@apple.com>
 
         Remove unnecessary `const double` method arguments
