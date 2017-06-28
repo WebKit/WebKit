@@ -1,3 +1,74 @@
+2017-06-28  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that computed new stack pointer values do not underflow.
+        https://bugs.webkit.org/show_bug.cgi?id=173700
+        <rdar://problem/32926032>
+
+        Reviewed by Filip Pizlo and Saam Barati.
+
+        1. Added a RELEASE_ASSERT to BytecodeGenerator::generate() to ensure that
+           m_numCalleeLocals is sane.
+
+        2. Added underflow checks in LLInt code and VarargsFrame code.
+
+        3. Introduce minimumReservedZoneSize, which is hardcoded to 16K.
+           Ensure that Options::reservedZoneSize() is at least minimumReservedZoneSize.
+           Ensure that Options::softReservedZoneSize() is at least greater than
+           Options::reservedZoneSize() by minimumReservedZoneSize.
+
+        4. Ensure that stack checks emitted by JIT tiers include an underflow check if
+           and only if the max size of the frame is greater than Options::reservedZoneSize().
+
+           By design, we are guaranteed to have at least Options::reservedZoneSize() bytes
+           of memory at the bottom (end) of the stack.  This means that, at any time, the
+           frame pointer must be at least Options::reservedZoneSize() bytes away from the
+           end of the stack.  Hence, if the max frame size is less than
+           Options::reservedZoneSize(), there's no way that frame pointer - max
+           frame size can underflow, and we can elide the underflow check.
+
+           Note that we use Options::reservedZoneSize() instead of
+           Options::softReservedZoneSize() for determine if we need an underflow check.
+           This is because the softStackLimit that is used for stack checks can be set
+           based on Options::reservedZoneSize() during error handling (e.g. when creating
+           strings for instantiating the Error object).  Hence, the guaranteed minimum of
+           distance between the frame pointer and the end of the stack is
+           Options::reservedZoneSize() and nor Options::softReservedZoneSize().
+
+           Note also that we ensure that Options::reservedZoneSize() is at least
+           minimumReservedZoneSize (i.e. 16K).  In typical deployments,
+           Options::reservedZoneSize() may be larger.  Using Options::reservedZoneSize()
+           instead of minimumReservedZoneSize gives us more chances to elide underflow
+           checks.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::requiredRegisterCountForExecutionAndExit):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compile):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/MinimumReservedZoneSize.h: Added.
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+        * runtime/VM.cpp:
+        (JSC::VM::updateStackLimits):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::callWebAssemblyFunction):
+
 2017-06-27  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: running out of executable memory should throw OoM

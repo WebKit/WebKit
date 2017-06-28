@@ -78,6 +78,7 @@
 #include "LLIntData.h"
 #include "Lexer.h"
 #include "Lookup.h"
+#include "MinimumReservedZoneSize.h"
 #include "ModuleProgramCodeBlock.h"
 #include "NativeStdFunctionCell.h"
 #include "Nodes.h"
@@ -670,15 +671,22 @@ inline void VM::updateStackLimits()
     void* lastSoftStackLimit = m_softStackLimit;
 #endif
 
+    const StackBounds& stack = wtfThreadData().stack();
     size_t reservedZoneSize = Options::reservedZoneSize();
+    // We should have already ensured that Options::reservedZoneSize() >= minimumReserveZoneSize at
+    // options initialization time, and the option value should not have been changed thereafter.
+    // We don't have the ability to assert here that it hasn't changed, but we can at least assert
+    // that the value is sane.
+    RELEASE_ASSERT(reservedZoneSize >= minimumReservedZoneSize);
+
     if (m_stackPointerAtVMEntry) {
-        ASSERT(wtfThreadData().stack().isGrowingDownward());
+        ASSERT(stack.isGrowingDownward());
         char* startOfStack = reinterpret_cast<char*>(m_stackPointerAtVMEntry);
-        m_softStackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_currentSoftReservedZoneSize);
-        m_stackLimit = wtfThreadData().stack().recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), reservedZoneSize);
+        m_softStackLimit = stack.recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), m_currentSoftReservedZoneSize);
+        m_stackLimit = stack.recursionLimit(startOfStack, Options::maxPerThreadStackUsage(), reservedZoneSize);
     } else {
-        m_softStackLimit = wtfThreadData().stack().recursionLimit(m_currentSoftReservedZoneSize);
-        m_stackLimit = wtfThreadData().stack().recursionLimit(reservedZoneSize);
+        m_softStackLimit = stack.recursionLimit(m_currentSoftReservedZoneSize);
+        m_stackLimit = stack.recursionLimit(reservedZoneSize);
     }
 
 #if OS(WINDOWS)

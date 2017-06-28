@@ -136,6 +136,7 @@ macro doVMEntry(makeCall)
     addp CallFrameHeaderSlots, t4, t4
     lshiftp 3, t4
     subp sp, t4, t3
+    bpa t3, sp, .throwStackOverflow
 
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
@@ -160,6 +161,7 @@ macro doVMEntry(makeCall)
         move t5, vm
     end
 
+.throwStackOverflow:
     move vm, a0
     move protoCallFrame, a1
     cCall2(_llint_throw_stack_overflow_error)
