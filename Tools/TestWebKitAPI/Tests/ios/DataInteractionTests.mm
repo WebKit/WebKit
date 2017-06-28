@@ -274,6 +274,17 @@ TEST(DataInteractionTests, ContentEditableMoveParagraphs)
     checkSelectionRectsWithLogging(@[ makeCGRectValue(190, 100, 130, 20), makeCGRectValue(0, 120, 320, 100), makeCGRectValue(0, 220, 252, 20) ], [dataInteractionSimulator finalSelectionRects]);
 }
 
+TEST(DataInteractionTests, DragImageFromContentEditable)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"contenteditable-and-target"];
+    [dataInteractionSimulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 300)];
+
+    EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"]);
+}
+
 TEST(DataInteractionTests, TextAreaToInput)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

@@ -4228,6 +4228,10 @@ static bool isAssistableInputType(InputType type)
     _dataInteractionState.image = adoptNS([[UIImage alloc] initWithCGImage:image.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
     _dataInteractionState.indicatorData = item.image.indicatorData();
     _dataInteractionState.sourceAction = static_cast<DragSourceAction>(item.sourceAction);
+    _dataInteractionState.adjustedOrigin = item.eventPositionInContentCoordinates;
+    _dataInteractionState.elementBounds = item.elementBounds;
+    _dataInteractionState.linkTitle = item.title.isEmpty() ? nil : (NSString *)item.title;
+    _dataInteractionState.linkURL = item.url.isEmpty() ? nil : (NSURL *)item.url;
 }
 
 - (void)_didHandleStartDataInteractionRequest:(BOOL)started
@@ -4500,11 +4504,6 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
 }
 
-static BOOL positionInformationMayStartDataInteraction(const InteractionInformationAtPosition& positionInformation)
-{
-    return positionInformation.isImage || positionInformation.isLink || positionInformation.isAttachment || positionInformation.hasSelectionAtPosition;
-}
-
 - (id <UIDragDropSession>)currentDragOrDropSession
 {
     if (_dataInteractionState.dropSession)
@@ -4528,28 +4527,12 @@ static BOOL positionInformationMayStartDataInteraction(const InteractionInformat
 
     [self cleanUpDragSourceSessionState];
 
-    CGPoint dragOrigin = [session locationInView:self];
-    RetainPtr<WKContentView> retainedSelf(self);
+    auto dragOrigin = roundedIntPoint([session locationInView:self]);
+    _dataInteractionState.dragStartCompletionBlock = completion;
+    _dataInteractionState.dragSession = session;
+    _page->requestStartDataInteraction(dragOrigin, roundedIntPoint([self convertPoint:dragOrigin toView:self.window]));
 
-    [self doAfterPositionInformationUpdate:[retainedSelf, session, dragOrigin, capturedBlock = makeBlockPtr(completion)] (InteractionInformationAtPosition positionInformation) {
-        if (!positionInformationMayStartDataInteraction(positionInformation)) {
-            RELEASE_LOG(DragAndDrop, "Drag session failed: %p (no draggable content at {%.1f, %.1f})", session, dragOrigin.x, dragOrigin.y);
-            capturedBlock();
-            return;
-        }
-
-        auto& state = retainedSelf->_dataInteractionState;
-        state.dragStartCompletionBlock = capturedBlock;
-        state.adjustedOrigin = retainedSelf->_positionInformation.adjustedPointForNodeRespondingToClickEvents;
-        state.elementBounds = retainedSelf->_positionInformation.bounds;
-        state.linkTitle = retainedSelf->_positionInformation.title;
-        state.linkURL = retainedSelf->_positionInformation.url;
-        state.dragSession = session;
-        retainedSelf->_page->requestStartDataInteraction(roundedIntPoint(state.adjustedOrigin), roundedIntPoint([retainedSelf convertPoint:state.adjustedOrigin toView:[retainedSelf window]]));
-
-        auto elementBounds = state.elementBounds;
-        RELEASE_LOG(DragAndDrop, "Drag session requested: %p at element bounds: {{%.1f, %.1f}, {%.1f, %.1f}}", session, elementBounds.origin.x, elementBounds.origin.y, elementBounds.size.width, elementBounds.size.height);
-    } forRequest:InteractionInformationRequest(roundedIntPoint(dragOrigin))];
+    RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%d, %d}", session, dragOrigin.x(), dragOrigin.y());
 }
 
 - (NSArray<UIDragItem *> *)dragInteraction:(UIDragInteraction *)interaction itemsForBeginningSession:(id <UIDragSession>)session

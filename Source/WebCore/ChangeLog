@@ -1,3 +1,31 @@
+2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Support dragging out of contenteditable areas without a prior selection
+        https://bugs.webkit.org/show_bug.cgi?id=173854
+        <rdar://problem/32236827>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Allows elements to be dragged from contenteditable areas for both WebKit1 and WebKit2 iOS. There are two main
+        changes in WebCore: move the touch point adjustment code into EventHandler::tryToBeginDataInteractionAtPoint, so
+        that the clientPosition specified will be adjusted to an appropriate clickable node if needed. This is necessary
+        because UIWebDocumentView and WKContentView no longer send adjusted points to WebCore when requesting drag
+        start. See <https://bugs.webkit.org/show_bug.cgi?id=173855> for a followup regarding the globalPosition and
+        clientPositions passed in to the MouseEvents when performing a drag or synthetic click.
+
+        Secondly, image elements in Mail's contenteditable area are not draggable unless the heuristic in
+        DragController::draggableElement is tweaked to not reject image dragging across the board if the
+        loadsImagesAutomatically setting is turned off. Instead, even if images are not automatically loaded, allow the
+        image drag to commence if the image renderer already has a cached image.
+
+        Test: DataInteractionTests.DragImageFromContentEditable
+
+        * page/DragController.cpp:
+        (WebCore::imageElementIsDraggable):
+        (WebCore::DragController::draggableElement):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::tryToBeginDataInteractionAtPoint):
+
 2017-06-27  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Accessibility labels should be formatted using NSDateComponentsFormatter

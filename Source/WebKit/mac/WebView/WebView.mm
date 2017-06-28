@@ -1840,6 +1840,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         _private->textIndicatorData = adoptNS([[WebUITextIndicatorData alloc] initWithImage:image textIndicatorData:indicatorData.value() scale:_private->page->deviceScaleFactor()]);
     else
         _private->textIndicatorData = adoptNS([[WebUITextIndicatorData alloc] initWithImage:image scale:_private->page->deviceScaleFactor()]);
+    _private->draggedLinkURL = dragItem.url.isEmpty() ? nil : (NSURL *)dragItem.url;
+    _private->draggedLinkTitle = dragItem.title.isEmpty() ? nil : (NSString *)dragItem.title;
+    _private->draggedElementBounds = dragItem.elementBounds;
+    _private->dragSourceAction = static_cast<WebDragSourceAction>(dragItem.sourceAction);
 }
 
 - (CGRect)_dataInteractionCaretRect
@@ -1853,6 +1857,26 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (WebUITextIndicatorData *)_dataOperationTextIndicator
 {
     return _private->dataOperationTextIndicator.get();
+}
+
+- (WebDragSourceAction)_dragSourceAction
+{
+    return _private->dragSourceAction;
+}
+
+- (NSString *)_draggedLinkTitle
+{
+    return _private->draggedLinkTitle.get();
+}
+
+- (NSURL *)_draggedLinkURL
+{
+    return _private->draggedLinkURL.get();
+}
+
+- (CGRect)_draggedElementBounds
+{
+    return _private->draggedElementBounds;
 }
 
 - (WebUITextIndicatorData *)_getDataInteractionData
@@ -1908,6 +1932,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     WebThreadLock();
     _private->page->dragController().dragEnded();
     _private->dataOperationTextIndicator = nullptr;
+    _private->draggedElementBounds = CGRectNull;
+    _private->dragSourceAction = WebDragSourceActionNone;
+    _private->draggedLinkTitle = nil;
+    _private->draggedLinkURL = nil;
 }
 
 - (void)_didConcludeEditDataInteraction

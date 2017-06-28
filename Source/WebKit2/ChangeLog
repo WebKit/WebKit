@@ -1,3 +1,32 @@
+2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Support dragging out of contenteditable areas without a prior selection
+        https://bugs.webkit.org/show_bug.cgi?id=173854
+        <rdar://problem/32236827>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Instead of allowing a drag to occur only if a position information request discovers a clickable node, remove
+        the position information request entirely and just call into WebCore to try and begin the drag. Currently, the
+        position information request serves two purposes:
+        1. To adjust the hit-test location to account for nearby clickable nodes.
+        2. To obtain information about the content being dragged.
+
+        The first requirement is fulfilled by performing the drag location adjustment in WebCore instead (see
+        ChangeLogs for more detail). The second requirement is fulfilled by refactoring in
+        https://bugs.webkit.org/show_bug.cgi?id=173832 to fold all information relevant to starting a drag into the
+        DragItem struct, and then propagating the DragItem struct. The relevant information from the position
+        information update is now populated when the UI process receives the drag start response.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startDrag:item:]):
+        (-[WKContentView computeClientAndGlobalPointsForDropSession:outClientPoint:outGlobalPoint:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView _api_dropInteraction:sessionDidEnter:]):
+        (-[WKContentView _api_dropInteraction:sessionDidUpdate:]):
+        (positionInformationMayStartDataInteraction): Deleted.
+
 2017-06-27  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Avoid taking / releasing process assertions too quickly due to database activity

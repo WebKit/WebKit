@@ -29,6 +29,7 @@
 
 #import "WebTypesInternal.h"
 #import "WebDelegateImplementationCaching.h"
+#import "WebUIDelegate.h"
 #if HAVE(TOUCH_BAR)
 #import <WebCore/AVKitSPI.h>
 #endif
@@ -300,6 +301,10 @@ private:
 #if ENABLE(DATA_INTERACTION)
     RetainPtr<WebUITextIndicatorData> textIndicatorData;
     RetainPtr<WebUITextIndicatorData> dataOperationTextIndicator;
+    CGRect draggedElementBounds;
+    WebDragSourceAction dragSourceAction;
+    RetainPtr<NSURL> draggedLinkURL;
+    RetainPtr<NSString> draggedLinkTitle;
 #endif
 
 

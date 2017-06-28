@@ -713,6 +713,19 @@ bool DragController::tryDHTMLDrag(const DragData& dragData, DragOperation& opera
     return true;
 }
 
+static bool imageElementIsDraggable(const HTMLImageElement& image, const Frame& sourceFrame)
+{
+    if (sourceFrame.settings().loadsImagesAutomatically())
+        return true;
+
+    auto* renderer = image.renderer();
+    if (!is<RenderImage>(renderer))
+        return false;
+
+    auto* cachedImage = downcast<RenderImage>(*renderer).cachedImage();
+    return cachedImage && !cachedImage->errorOccurred() && cachedImage->imageForRenderer(renderer);
+}
+
 Element* DragController::draggableElement(const Frame* sourceFrame, Element* startElement, const IntPoint& dragOrigin, DragState& state) const
 {
     state.type = (sourceFrame->selection().contains(dragOrigin)) ? DragSourceActionSelection : DragSourceActionNone;
@@ -748,7 +761,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
         if (dragMode == DRAG_AUTO) {
             if ((m_dragSourceAction & DragSourceActionImage)
                 && is<HTMLImageElement>(*element)
-                && sourceFrame->settings().loadsImagesAutomatically()) {
+                && imageElementIsDraggable(downcast<HTMLImageElement>(*element), *sourceFrame)) {
                 state.type = static_cast<DragSourceAction>(state.type | DragSourceActionImage);
                 return element;
             }

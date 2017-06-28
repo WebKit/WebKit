@@ -1,5 +1,26 @@
 2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS DnD] Support dragging out of contenteditable areas without a prior selection
+        https://bugs.webkit.org/show_bug.cgi?id=173854
+        <rdar://problem/32236827>
+
+        Reviewed by Ryosuke Niwa and Tim Horton.
+
+        Vends some information from the DragItem passed into -[WebView _startDrag:] through the WebView as SPI for
+        WebKit1 clients. No behavior change with these changes alone -- see <rdar://problem/32991062> for more detail.
+
+        * WebView/WebView.mm:
+        (-[WebView _startDrag:]):
+        (-[WebView _dragSourceAction]):
+        (-[WebView _draggedLinkTitle]):
+        (-[WebView _draggedLinkURL]):
+        (-[WebView _draggedElementBounds]):
+        (-[WebView _endedDataInteraction:global:]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewPrivate.h:
+
+2017-06-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Refactor drag start codepaths to plumb a DragItem to client layers
         https://bugs.webkit.org/show_bug.cgi?id=173832
         Work towards <rdar://problem/32236827>

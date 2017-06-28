@@ -572,19 +572,30 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     return false;
 }
 
-bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint& globalPosition)
+bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPosition, const IntPoint&)
 {
     Ref<Frame> protectedFrame(m_frame);
 
-    PlatformMouseEvent syntheticMousePressEvent(clientPosition, globalPosition, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime(), 0, NoTap);
-    PlatformMouseEvent syntheticMouseMoveEvent(clientPosition, globalPosition, LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime(), 0, NoTap);
+    auto* document = m_frame.document();
+    if (!document)
+        return false;
+
+    document->updateLayoutIgnorePendingStylesheets();
+
+    FloatPoint adjustedClientPositionAsFloatPoint(clientPosition);
+    protectedFrame->nodeRespondingToClickEvents(clientPosition, adjustedClientPositionAsFloatPoint);
+    IntPoint adjustedClientPosition = roundedIntPoint(adjustedClientPositionAsFloatPoint);
+    IntPoint adjustedGlobalPosition = protectedFrame->view()->windowToContents(adjustedClientPosition);
+
+    PlatformMouseEvent syntheticMousePressEvent(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime(), 0, NoTap);
+    PlatformMouseEvent syntheticMouseMoveEvent(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime(), 0, NoTap);
 
     HitTestRequest request(HitTestRequest::Active | HitTestRequest::DisallowUserAgentShadowContent);
     auto documentPoint = protectedFrame->view() ? protectedFrame->view()->windowToContents(syntheticMouseMoveEvent.position()) : syntheticMouseMoveEvent.position();
-    auto hitTestedMouseEvent = m_frame.document()->prepareMouseEvent(request, documentPoint, syntheticMouseMoveEvent);
+    auto hitTestedMouseEvent = document->prepareMouseEvent(request, documentPoint, syntheticMouseMoveEvent);
 
     RefPtr<Frame> subframe = subframeForHitTestResult(hitTestedMouseEvent);
-    if (subframe && subframe->eventHandler().tryToBeginDataInteractionAtPoint(clientPosition, globalPosition))
+    if (subframe && subframe->eventHandler().tryToBeginDataInteractionAtPoint(adjustedClientPosition, adjustedGlobalPosition))
         return true;
 
     // FIXME: This needs to be refactored, along with handleMousePressEvent and handleMouseMoveEvent, so that state associated only with dragging
@@ -597,7 +608,6 @@ bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPositi
     dragState().source = nullptr;
     dragState().draggedContentRange = nullptr;
     m_mouseDownPos = protectedFrame->view()->windowToContents(syntheticMouseMoveEvent.position());
-    protectedFrame->document()->updateStyleIfNeeded();
 
     return handleMouseDraggedEvent(hitTestedMouseEvent, DontCheckDragHysteresis);
 }
