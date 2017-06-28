@@ -37,7 +37,7 @@ private:
 #endif
 protected:
 #if ENABLE(VIDEO)
-    String mediaControlsFormattedStringForDuration(const double) override;
+    String mediaControlsFormattedStringForDuration(double) override;
 #endif
 };
 
