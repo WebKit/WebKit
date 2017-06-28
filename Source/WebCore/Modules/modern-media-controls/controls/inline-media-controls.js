@@ -43,6 +43,9 @@ class InlineMediaControls extends MediaControls
         this.topLeftControlsBar = new ControlsBar("top-left");
         this._topLeftControlsBarContainer = this.topLeftControlsBar.addChild(new ButtonsContainer);
 
+        this.topRightControlsBar = new ControlsBar("top-right");
+        this._topRightControlsBarContainer = this.topRightControlsBar.addChild(new ButtonsContainer);
+
         this.leftContainer = new ButtonsContainer({ cssClassName: "left" });
         this.rightContainer = new ButtonsContainer({ cssClassName: "right" });
 
@@ -144,8 +147,8 @@ class InlineMediaControls extends MediaControls
         if (this.bottomControlsBar.width < minimumControlsBarWidthForCenterControl) {
             this.playPauseButton.style = Button.Styles.Corner;
             if (!this._shouldUseSingleBarLayout && this.height >= 82) {
-                this.muteButton.style = Button.Styles.Corner;
-                children.push(this.topLeftControlsBar, this.muteButton);
+                children.push(this.topLeftControlsBar);
+                this._addTopRightBarWithMuteButtonToChildren(children);
             }
             this.children = children.concat(this.playPauseButton);
             return;
@@ -207,10 +210,8 @@ class InlineMediaControls extends MediaControls
         if (!this._shouldUseAudioLayout && !this._shouldUseSingleBarLayout)
             children.push(this.topLeftControlsBar);
         children.push(this.bottomControlsBar);
-        if (this.muteButton.style === Button.Styles.Corner || (this.muteButton.dropped && !this._shouldUseAudioLayout && !this._shouldUseSingleBarLayout)) {
-            children.push(this.muteButton);
-            this.muteButton.style = Button.Styles.Corner;
-        }
+        if (this.muteButton.style === Button.Styles.Corner || (this.muteButton.dropped && !this._shouldUseAudioLayout && !this._shouldUseSingleBarLayout))
+            this._addTopRightBarWithMuteButtonToChildren(children);
         this.children = children;
     }
 
@@ -270,6 +271,16 @@ class InlineMediaControls extends MediaControls
         if (this.preferredMuteButtonStyle === Button.Styles.Bar)
             buttons.push(this.muteButton);
         return buttons;
+    }
+
+    _addTopRightBarWithMuteButtonToChildren(children)
+    {
+        delete this.muteButton.dropped;
+        this.muteButton.style = Button.Styles.Bar;
+        this._topRightControlsBarContainer.buttons = [this.muteButton];
+        this._topRightControlsBarContainer.layout();
+        this.topRightControlsBar.width = this._topRightControlsBarContainer.width;
+        children.push(this.topRightControlsBar);
     }
 
 }

@@ -34,6 +34,12 @@
     top: var(--inline-controls-inside-margin);
 }
 
+.media-controls.inline > .controls-bar.top-right {
+    left: auto;
+    right: var(--inline-controls-inside-margin);
+    top: var(--inline-controls-inside-margin);
+}
+
 .media-controls.inline.audio > .controls-bar {
     top: auto;
     left: auto;
@@ -44,15 +50,6 @@
 }
 
 /* Controls placement */
-
-.media-controls.inline > button.mute {
-    /* We override the left property here since the mute button might have
-       been hosted in a controls bar before (for instance if we used audio
-       layout) and set to an absolute value. */
-    left: auto !important;
-    right: var(--inline-controls-inside-margin);
-    top: var(--inline-controls-inside-margin);
-}
 
 .media-controls.inline > button.play-pause.corner {
     left: var(--inline-controls-inside-margin) !important;

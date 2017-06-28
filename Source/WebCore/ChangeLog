@@ -1,3 +1,26 @@
+2017-06-28  Antoine Quint  <graouts@apple.com>
+
+        Media controls volume glyph does not have the correct material
+        https://bugs.webkit.org/show_bug.cgi?id=173918
+        <rdar://problem/33012697>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-mute-button-in-bottom-or-top-right-controls-bar.html
+
+        All buttons were hosted in a ControlsBar save for the MuteButton, so we now host it in a controls bar as well
+        to ensure compositing is similar to all other buttons.
+
+        * Modules/modern-media-controls/controls/inline-media-controls.css:
+        (.media-controls.inline > .controls-bar.top-right):
+        (.media-controls.inline > button.mute): Deleted.
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls):
+        (InlineMediaControls.prototype.layout):
+        (InlineMediaControls.prototype._addTopRightBarWithMuteButtonToChildren):
+        * Modules/modern-media-controls/controls/macos-inline-media-controls.js:
+        (MacOSInlineMediaControls.prototype.handleEvent):
+
 2017-06-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r218799): [GTK][WPE] Critical warning at exit

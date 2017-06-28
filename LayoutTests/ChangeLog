@@ -1,3 +1,18 @@
+2017-06-28  Antoine Quint  <graouts@apple.com>
+
+        Media controls volume glyph does not have the correct material
+        https://bugs.webkit.org/show_bug.cgi?id=173918
+        <rdar://problem/33012697>
+
+        Reviewed by Eric Carlson.
+
+        Add a new test to check the mute button is correctly hosted in the top-right controls bar
+        when width becomes scarce.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-mute-button-in-bottom-or-top-right-controls-bar-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-mute-button-in-bottom-or-top-right-controls-bar.html: Added.
+        * platform/mac/TestExpectations:
+
 2017-06-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] LayoutTest webaudio/silent-audio-interrupted-in-background.html makes its subsequent test flaky crash

@@ -71,7 +71,7 @@ class MacOSInlineMediaControls extends InlineMediaControls
     handleEvent(event)
     {
         if (event.type === "mouseenter" && event.currentTarget === this.muteButton.element) {
-            if (this.muteButton.style === Button.Styles.Bar)
+            if (this.muteButton.parent === this.rightContainer)
                 this.addChild(this._volumeSliderContainer);
         } else if (event.type === "mouseleave" && (event.currentTarget === this.muteButton.element || event.currentTarget === this._volumeSliderContainer.element)) {
             if (!this._volumeSliderContainer.element.contains(event.relatedTarget))
