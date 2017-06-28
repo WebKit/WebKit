@@ -42,6 +42,7 @@ function playbackTargetAvailabilityChangedAgain(event)
 
     shouldBeTrue("mediaController.controls.airplayButton.enabled");
     shouldBeFalse("mediaController.controls.airplayButton.on");
+    shouldBeTrue("mediaController.controls.muteButton.enabled");
 
     enterAirPlay();
 }
@@ -62,6 +63,7 @@ function currentPlaybackTargetIsWirelessChanged(event)
 
     shouldBeTrue("mediaController.controls.airplayButton.enabled");
     shouldBeTrue("mediaController.controls.airplayButton.on");
+    shouldBeFalse("mediaController.controls.muteButton.enabled");
 
     debug("");
     container.remove();

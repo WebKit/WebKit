@@ -275,6 +275,9 @@ class InlineMediaControls extends MediaControls
 
     _addTopRightBarWithMuteButtonToChildren(children)
     {
+        if (!this.muteButton.enabled)
+            return;
+
         delete this.muteButton.dropped;
         this.muteButton.style = Button.Styles.Bar;
         this._topRightControlsBarContainer.buttons = [this.muteButton];

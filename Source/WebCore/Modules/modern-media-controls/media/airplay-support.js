@@ -55,6 +55,7 @@ class AirplaySupport extends MediaControllerSupport
     {
         this.control.enabled = !!this._routesAvailable;
         this.control.on = this.mediaController.media.webkitCurrentPlaybackTargetIsWireless;
+        this.mediaController.controls.muteButton.enabled = !this.control.on;
     }
 
 }

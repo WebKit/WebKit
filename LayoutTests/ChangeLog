@@ -1,3 +1,23 @@
+2017-06-28  Antoine Quint  <graouts@apple.com>
+
+        Volume controls should be hidden when AirPlay is active
+        https://bugs.webkit.org/show_bug.cgi?id=173933
+        <rdar://problem/33011931>
+
+        Reviewed by Dean Jackson.
+
+        Expand the AirplaySupport testing to check that the mute button's enabled state is set to "false"
+        in AirPlay and add new tests to check that volume controls are correctly hidden when the mute button
+        is disabled.
+
+        * media/modern-media-controls/airplay-support/airplay-support-expected.txt:
+        * media/modern-media-controls/airplay-support/airplay-support.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-controls-hidden-when-mute-button-disabled-expected.txt: Added.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-controls-hidden-when-mute-button-disabled.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-top-right-controls-bar-hidden-when-mute-button-disabled-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-top-right-controls-bar-hidden-when-mute-button-disabled.html: Added.
+        * platform/mac/TestExpectations:
+
 2017-06-28  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/IndexedDB/idbindex_getAllKeys.html as flaky.

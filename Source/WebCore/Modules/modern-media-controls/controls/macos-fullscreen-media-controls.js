@@ -123,6 +123,8 @@ class MacOSFullscreenMediaControls extends MediaControls
 
         this._rightContainer.buttonMargin = buttonMargin;
 
+        this._leftContainer.visible = this.muteButton.enabled;
+
         this._leftContainer.layout();
         this._centerContainer.layout();
         this._rightContainer.layout();
