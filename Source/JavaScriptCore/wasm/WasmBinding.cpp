@@ -310,7 +310,10 @@ MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signatu
         return FINALIZE_CODE(linkBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data()));
     }
 
-    // FIXME perform a stack check before updating SP. https://bugs.webkit.org/show_bug.cgi?id=165546
+    // Note: We don't need to perform a stack check here since WasmB3IRGenerator
+    // will do the stack check for us. Whenever it detects that it might make
+    // a call to this thunk, it'll make sure its stack check includes space
+    // for us here.
 
     const unsigned numberOfParameters = argCount + 1; // There is a "this" argument.
     const unsigned numberOfRegsForCall = CallFrame::headerSizeInRegisters + numberOfParameters;

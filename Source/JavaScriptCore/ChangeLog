@@ -1,3 +1,15 @@
+2017-06-27  Saam Barati  <sbarati@apple.com>
+
+        Fix some stale comments in Wasm code base
+        https://bugs.webkit.org/show_bug.cgi?id=173814
+
+        Reviewed by Mark Lam.
+
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::runOMGPlanForIndex):
+
 2017-06-27  Caio Lima  <ticaiolima@gmail.com>
 
         [ESnext] Implement Object Rest - Implementing Object Rest Destructuring
