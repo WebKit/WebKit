@@ -1,5 +1,16 @@
 2017-06-28  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: CLoop build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=173700
+        <rdar://problem/32926032>
+
+        Not reviewed.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
+2017-06-28  Mark Lam  <mark.lam@apple.com>
+
         Ensure that computed new stack pointer values do not underflow.
         https://bugs.webkit.org/show_bug.cgi?id=173700
         <rdar://problem/32926032>

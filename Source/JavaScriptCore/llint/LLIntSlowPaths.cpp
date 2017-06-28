@@ -511,7 +511,7 @@ LLINT_SLOW_PATH_DECL(stack_check)
     // throw the StackOverflowError unconditionally.
 #if !ENABLE(JIT)
     Register* topOfFrame = exec->topOfFrame();
-    if (LIKELY(topOfFrame < exec)) {
+    if (LIKELY(topOfFrame < reinterpret_cast<Register*>(exec))) {
         ASSERT(!vm.interpreter->cloopStack().containsAddress(topOfFrame));
         if (LIKELY(vm.ensureStackCapacityFor(topOfFrame)))
             LLINT_RETURN_TWO(pc, 0);
