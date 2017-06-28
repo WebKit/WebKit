@@ -1,3 +1,13 @@
+2017-06-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS] Expand sandbox to allow access to the CoreMedia volume control endpoint
+        https://bugs.webkit.org/show_bug.cgi?id=173898
+        <rdar://problem/32930754>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Support dragging out of contenteditable areas without a prior selection
