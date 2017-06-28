@@ -28,6 +28,7 @@
 
 #include "WKAPICast.h"
 #include "WebResourceLoadStatisticsManager.h"
+#include <wtf/Seconds.h>
 
 using namespace WebKit;
 
@@ -83,22 +84,22 @@ void WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo(WKStringRef h
 
 void WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(double seconds)
 {
-    WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(seconds);
+    WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(double seconds)
 {
-    WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(seconds);
+    WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(double seconds)
 {
-    WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(seconds);
+    WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerSetGrandfatheringTime(double seconds)
 {
-    WebResourceLoadStatisticsManager::setGrandfatheringTime(seconds);
+    WebResourceLoadStatisticsManager::setGrandfatheringTime(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerFireDataModificationHandler()

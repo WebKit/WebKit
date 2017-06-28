@@ -1,5 +1,42 @@
 2017-06-27  Chris Dumez  <cdumez@apple.com>
 
+        [ResourceLoadStatistics] Update minimumTimeBetweeenDataRecordsRemoval to 1 hour instead of 1 minute
+        https://bugs.webkit.org/show_bug.cgi?id=173895
+        <rdar://problem/32984366>
+
+        Reviewed by Brent Fulgham.
+
+        Update minimumTimeBetweeenDataRecordsRemoval to 1 hour instead of 1 minute to save battery.
+        Also port code to modern time types.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::reduceTimeResolution):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::setTimeToLiveUserInteraction):
+        (WebCore::ResourceLoadObserver::setTimeToLiveCookiePartitionFree):
+        (WebCore::ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebCore::ResourceLoadObserver::setReducedTimestampResolution):
+        (WebCore::ResourceLoadObserver::setGrandfatheringTime):
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.h:
+        (WebCore::ResourceLoadStatistics::mostRecentUserInteractionTime):
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::createEncoderFromData):
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDecoder):
+        (WebCore::shouldPartitionCookies):
+        (WebCore::ResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+        (WebCore::ResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree):
+        (WebCore::ResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebCore::ResourceLoadStatisticsStore::setGrandfatheringTime):
+        (WebCore::ResourceLoadStatisticsStore::hasHadRecentUserInteraction):
+        (WebCore::ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor):
+        (WebCore::ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore):
+        (WebCore::ResourceLoadStatisticsStore::shouldRemoveDataRecords):
+        (WebCore::ResourceLoadStatisticsStore::dataRecordsBeingRemoved):
+        * loader/ResourceLoadStatisticsStore.h:
+
+2017-06-27  Chris Dumez  <cdumez@apple.com>
+
         Port HysteresisActivity to Seconds type
         https://bugs.webkit.org/show_bug.cgi?id=173902
 

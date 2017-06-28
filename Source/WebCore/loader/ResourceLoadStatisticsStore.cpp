@@ -42,12 +42,11 @@
 namespace WebCore {
 
 static const auto statisticsModelVersion = 4;
-static const auto secondsPerHour = 3600;
-static const auto secondsPerDay = 24 * secondsPerHour;
-static auto timeToLiveUserInteraction = 30 * secondsPerDay;
-static auto timeToLiveCookiePartitionFree = 1 * secondsPerDay;
-static auto grandfatheringTime = 1 * secondsPerHour;
-static auto minimumTimeBetweeenDataRecordsRemoval = 60;
+static const auto secondsPerDay = 24 * 3600;
+static Seconds timeToLiveUserInteraction { 24_h * 30. };
+static Seconds timeToLiveCookiePartitionFree { 24_h };
+static Seconds grandfatheringTime { 1_h };
+static Seconds minimumTimeBetweeenDataRecordsRemoval { 1_h };
 
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
@@ -90,7 +89,7 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
 
     auto locker = holdLock(m_statisticsLock);
     encoder->encodeUInt32("version", statisticsModelVersion);
-    encoder->encodeDouble("endOfGrandfatheringTimestamp", m_endOfGrandfatheringTimestamp);
+    encoder->encodeDouble("endOfGrandfatheringTimestamp", m_endOfGrandfatheringTimestamp.secondsSinceEpoch().value());
     
     encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [](KeyedEncoder& encoderInner, const StatisticsValue& origin) {
         origin.value.encode(encoderInner);
@@ -114,9 +113,9 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     if (version > minimumVersionWithGrandfathering) {
         double endOfGrandfatheringTimestamp;
         if (decoder.decodeDouble("endOfGrandfatheringTimestamp", endOfGrandfatheringTimestamp))
-            m_endOfGrandfatheringTimestamp = endOfGrandfatheringTimestamp;
+            m_endOfGrandfatheringTimestamp = WallTime::fromRawSeconds(endOfGrandfatheringTimestamp);
         else
-            m_endOfGrandfatheringTimestamp = 0;
+            m_endOfGrandfatheringTimestamp = { };
     }
 
     Vector<ResourceLoadStatistics> loadedStatistics;
@@ -247,7 +246,7 @@ void ResourceLoadStatisticsStore::fireTelemetryHandler()
 static inline bool shouldPartitionCookies(const ResourceLoadStatistics& statistic)
 {
     return statistic.isPrevalentResource
-        && (!statistic.hadUserInteraction || currentTime() > statistic.mostRecentUserInteraction + timeToLiveCookiePartitionFree);
+        && (!statistic.hadUserInteraction || WallTime::now() > statistic.mostRecentUserInteractionTime() + timeToLiveCookiePartitionFree);
 }
 
 void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
@@ -301,27 +300,27 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector
         ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = true;
 }
 
-void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(double seconds)
+void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds seconds)
 {
-    if (seconds >= 0)
+    if (seconds >= 0_s)
         timeToLiveUserInteraction = seconds;
 }
 
-void ResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(double seconds)
+void ResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(Seconds seconds)
 {
-    if (seconds >= 0)
+    if (seconds >= 0_s)
         timeToLiveCookiePartitionFree = seconds;
 }
 
-void ResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+void ResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(Seconds seconds)
 {
-    if (seconds >= 0)
+    if (seconds >= 0_s)
         minimumTimeBetweeenDataRecordsRemoval = seconds;
 }
 
-void ResourceLoadStatisticsStore::setGrandfatheringTime(double seconds)
+void ResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
 {
-    if (seconds >= 0)
+    if (seconds >= 0_s)
         grandfatheringTime = seconds;
 }
 
@@ -338,7 +337,7 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
     if (!resourceStatistic.hadUserInteraction)
         return false;
 
-    if (currentTime() > resourceStatistic.mostRecentUserInteraction + timeToLiveUserInteraction) {
+    if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime() + timeToLiveUserInteraction) {
         // Drop privacy sensitive data because we no longer need it.
         // Set timestamp to 0.0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
@@ -353,11 +352,11 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
 
 Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor()
 {
-    bool shouldCheckForGrandfathering = m_endOfGrandfatheringTimestamp > currentTime();
+    bool shouldCheckForGrandfathering = m_endOfGrandfatheringTimestamp > WallTime::now();
     bool shouldClearGrandfathering = !shouldCheckForGrandfathering && m_endOfGrandfatheringTimestamp;
 
     if (shouldClearGrandfathering)
-        m_endOfGrandfatheringTimestamp = 0;
+        m_endOfGrandfatheringTimestamp = { };
 
     Vector<String> prevalentResources;
     auto locker = holdLock(m_statisticsLock);
@@ -421,7 +420,7 @@ void ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore(HashSet<Str
         ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
         statistic.grandfathered = true;
     }
-    m_endOfGrandfatheringTimestamp = std::floor(currentTime()) + grandfatheringTime;
+    m_endOfGrandfatheringTimestamp = WallTime::now() + grandfatheringTime;
 }
 
 bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
@@ -430,7 +429,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
     if (m_dataRecordsRemovalPending)
         return false;
 
-    if (m_lastTimeDataRecordsWereRemoved && currentTime() < m_lastTimeDataRecordsWereRemoved + minimumTimeBetweeenDataRecordsRemoval)
+    if (m_lastTimeDataRecordsWereRemoved && MonotonicTime::now() < (m_lastTimeDataRecordsWereRemoved + minimumTimeBetweeenDataRecordsRemoval))
         return false;
 
     return true;
@@ -439,7 +438,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
 void ResourceLoadStatisticsStore::dataRecordsBeingRemoved()
 {
     ASSERT(!isMainThread());
-    m_lastTimeDataRecordsWereRemoved = currentTime();
+    m_lastTimeDataRecordsWereRemoved = MonotonicTime::now();
     m_dataRecordsRemovalPending = true;
 }
 

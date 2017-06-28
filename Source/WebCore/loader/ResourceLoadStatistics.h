@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/HashCountedSet.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -49,11 +50,14 @@ struct ResourceLoadStatistics {
 
     void merge(const ResourceLoadStatistics&);
 
+    WallTime mostRecentUserInteractionTime() const { return WallTime::fromRawSeconds(mostRecentUserInteraction); }
+
     String highLevelDomain;
 
     // User interaction
     bool hadUserInteraction { false };
     // Timestamp. Default value is negative, 0 means it was reset.
+    // FIXME: Can this use WallTime?
     double mostRecentUserInteraction { -1 };
     bool grandfathered { false };
 

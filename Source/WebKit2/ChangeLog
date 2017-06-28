@@ -1,5 +1,29 @@
 2017-06-27  Chris Dumez  <cdumez@apple.com>
 
+        [ResourceLoadStatistics] Update minimumTimeBetweeenDataRecordsRemoval to 1 hour instead of 1 minute
+        https://bugs.webkit.org/show_bug.cgi?id=173895
+        <rdar://problem/32984366>
+
+        Reviewed by Brent Fulgham.
+
+        Update minimumTimeBetweeenDataRecordsRemoval to 1 hour instead of 1 minute to save battery.
+        Also port code to modern time types.
+
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp:
+        (WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction):
+        (WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree):
+        (WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval):
+        (WKResourceLoadStatisticsManagerSetGrandfatheringTime):
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree):
+        (WebKit::WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsManager::setGrandfatheringTime):
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
+2017-06-27  Chris Dumez  <cdumez@apple.com>
+
         Port HysteresisActivity to Seconds type
         https://bugs.webkit.org/show_bug.cgi?id=173902
 

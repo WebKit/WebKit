@@ -28,7 +28,9 @@
 #include "ResourceLoadStatistics.h"
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/RecursiveLockAdapter.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -87,10 +89,10 @@ public:
 
     void fireDataModificationHandler();
     void fireTelemetryHandler();
-    void setTimeToLiveUserInteraction(double seconds);
-    void setTimeToLiveCookiePartitionFree(double seconds);
-    void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
-    void setGrandfatheringTime(double seconds);    
+    void setTimeToLiveUserInteraction(Seconds);
+    void setTimeToLiveCookiePartitionFree(Seconds);
+    void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
+    void setGrandfatheringTime(Seconds);
     WEBCORE_EXPORT void fireShouldPartitionCookiesHandler();
     void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
 
@@ -119,8 +121,8 @@ private:
     WTF::Function<void()> m_grandfatherExistingWebsiteDataHandler;
     WTF::Function<void()> m_fireTelemetryHandler;
 
-    double m_endOfGrandfatheringTimestamp { 0 };
-    double m_lastTimeDataRecordsWereRemoved { 0 };
+    WallTime m_endOfGrandfatheringTimestamp;
+    MonotonicTime m_lastTimeDataRecordsWereRemoved;
     bool m_dataRecordsRemovalPending { false };
 };
     

@@ -86,22 +86,22 @@ void WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo(const Stri
     WebCore::ResourceLoadObserver::sharedObserver().setSubresourceUniqueRedirectTo(URL(URL(), hostName), URL(URL(), hostNameRedirectedTo));
 }
 
-void WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(double seconds)
+void WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(Seconds seconds)
 {
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(seconds);
 }
 
-void WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(double seconds)
+void WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(Seconds seconds)
 {
     WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(seconds);
 }
 
-void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(Seconds seconds)
 {
     WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(seconds);
 }
 
-void WebResourceLoadStatisticsManager::setGrandfatheringTime(double seconds)
+void WebResourceLoadStatisticsManager::setGrandfatheringTime(Seconds seconds)
 {
     WebCore::ResourceLoadObserver::sharedObserver().setGrandfatheringTime(seconds);
 }
@@ -156,10 +156,10 @@ void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStoreModifiedSi
     
 void WebResourceLoadStatisticsManager::resetToConsistentState()
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(2592000);
-    WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(86400);
-    WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(60);
-    WebCore::ResourceLoadObserver::sharedObserver().setGrandfatheringTime(3600);
+    WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(24_h * 30.);
+    WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(24_h);
+    WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(1_h);
+    WebCore::ResourceLoadObserver::sharedObserver().setGrandfatheringTime(1_h);
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
     WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(true);

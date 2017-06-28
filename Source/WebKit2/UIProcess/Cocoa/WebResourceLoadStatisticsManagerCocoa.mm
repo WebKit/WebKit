@@ -43,19 +43,19 @@ void WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded()
         
         double timeToLiveUserInteraction = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveUserInteractionKey()];
         if (timeToLiveUserInteraction > 0 && timeToLiveUserInteraction <= 30 * dayInSeconds)
-            ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(timeToLiveUserInteraction);
+            ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(Seconds { timeToLiveUserInteraction });
         
         double timeToLiveCookiePartitionFree = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveCookiePartitionFreeKey()];
         if (timeToLiveCookiePartitionFree > 0 && timeToLiveCookiePartitionFree <= dayInSeconds)
-            ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(timeToLiveCookiePartitionFree);
+            ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(Seconds { timeToLiveCookiePartitionFree });
         
         double reducedTimestampResolution = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsReducedTimestampResolutionKey()];
         if (reducedTimestampResolution > 0 && reducedTimestampResolution <= hourInSeconds)
-            ResourceLoadObserver::sharedObserver().setReducedTimestampResolution(reducedTimestampResolution);
+            ResourceLoadObserver::sharedObserver().setReducedTimestampResolution(Seconds { reducedTimestampResolution });
 
         double grandfatheringTime = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsGrandfatheringTimeKey()];
         if (grandfatheringTime > 0 && grandfatheringTime <= 7 * dayInSeconds)
-            ResourceLoadObserver::sharedObserver().setGrandfatheringTime(grandfatheringTime);
+            ResourceLoadObserver::sharedObserver().setGrandfatheringTime(Seconds { grandfatheringTime });
     });
 }
 

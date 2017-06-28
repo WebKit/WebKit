@@ -50,8 +50,7 @@
 
 namespace WebCore {
 
-// One hour in seconds.
-static auto timestampResolution = 3600;
+static Seconds timestampResolution { 1_h };
 
 ResourceLoadObserver& ResourceLoadObserver::sharedObserver()
 {
@@ -350,9 +349,9 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     });
 }
 
-static double reduceTimeResolution(double seconds)
+static WallTime reduceTimeResolution(WallTime time)
 {
-    return std::floor(seconds / timestampResolution) * timestampResolution;
+    return WallTime::fromRawSeconds(std::floor(time.secondsSinceEpoch() / timestampResolution) * timestampResolution.seconds());
 }
 
 void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
@@ -373,12 +372,12 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
         {
         auto locker = holdLock(m_store->statisticsLock());
         auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
-        double newTimestamp = reduceTimeResolution(WTF::currentTime());
-        if (newTimestamp == statistics.mostRecentUserInteraction)
+        WallTime newTime = reduceTimeResolution(WallTime::now());
+        if (newTime == statistics.mostRecentUserInteractionTime())
             return;
 
         statistics.hadUserInteraction = true;
-        statistics.mostRecentUserInteraction = newTimestamp;
+        statistics.mostRecentUserInteraction = newTime.secondsSinceEpoch().value();
         }
         
         m_store->fireDataModificationHandler();
@@ -531,28 +530,28 @@ void ResourceLoadObserver::setSubresourceUniqueRedirectTo(const URL& subresource
     });
 }
 
-void ResourceLoadObserver::setTimeToLiveUserInteraction(double seconds)
+void ResourceLoadObserver::setTimeToLiveUserInteraction(Seconds seconds)
 {
     m_store->setTimeToLiveUserInteraction(seconds);
 }
 
-void ResourceLoadObserver::setTimeToLiveCookiePartitionFree(double seconds)
+void ResourceLoadObserver::setTimeToLiveCookiePartitionFree(Seconds seconds)
 {
     m_store->setTimeToLiveCookiePartitionFree(seconds);
 }
 
-void ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+void ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval(Seconds seconds)
 {
     m_store->setMinimumTimeBetweeenDataRecordsRemoval(seconds);
 }
     
-void ResourceLoadObserver::setReducedTimestampResolution(double seconds)
+void ResourceLoadObserver::setReducedTimestampResolution(Seconds seconds)
 {
-    if (seconds > 0)
+    if (seconds > 0_s)
         timestampResolution = seconds;
 }
 
-void ResourceLoadObserver::setGrandfatheringTime(double seconds)
+void ResourceLoadObserver::setGrandfatheringTime(Seconds seconds)
 {
     m_store->setMinimumTimeBetweeenDataRecordsRemoval(seconds);
 }

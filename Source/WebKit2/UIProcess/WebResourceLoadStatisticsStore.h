@@ -59,7 +59,7 @@ public:
     static Ref<WebResourceLoadStatisticsStore> create(const String&);
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
-    static void setMinimumTimeBetweeenDataRecordsRemoval(double);
+    static void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
     virtual ~WebResourceLoadStatisticsStore();
     
     void setResourceLoadStatisticsEnabled(bool);

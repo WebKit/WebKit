@@ -28,6 +28,7 @@
 #include "APIObject.h"
 
 #include <wtf/RefPtr.h>
+#include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -47,11 +48,11 @@ public:
     static void setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
     static void setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
     static void setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo);
-    static void setTimeToLiveUserInteraction(double seconds);
-    static void setTimeToLiveCookiePartitionFree(double seconds);
-    static void setMinimumTimeBetweeenDataRecordsRemoval(double seconds);
-    static void setGrandfatheringTime(double seconds);
-    static void setReducedTimestampResolution(double seconds);
+    static void setTimeToLiveUserInteraction(Seconds);
+    static void setTimeToLiveCookiePartitionFree(Seconds);
+    static void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
+    static void setGrandfatheringTime(Seconds);
+    static void setReducedTimestampResolution(Seconds);
     static void fireDataModificationHandler();
     static void fireShouldPartitionCookiesHandler();
     static void fireShouldPartitionCookiesHandlerForOneDomain(const String& hostName, bool value);
