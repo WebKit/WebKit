@@ -72,6 +72,7 @@ namespace WebCore {
 - (void)attachRootLayer:(CALayer*)layer;
 - (void)detachRootLayer;
 - (BOOL)_web_isDrawingIntoLayer;
+- (BOOL)_web_isDrawingIntoAcceleratedLayer;
 
 #if PLATFORM(IOS)
 - (void)_layoutIfNeeded;

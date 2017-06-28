@@ -931,6 +931,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
     NSView *layerHostingView;
     BOOL drawingIntoLayer;
+    BOOL drawingIntoAcceleratedLayer;
 
 #if !PLATFORM(IOS)
     NSEvent *mouseDownEvent; // Kept after handling the event.
@@ -6693,12 +6694,15 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if (_private) {
         ASSERT(!_private->drawingIntoLayer);
         _private->drawingIntoLayer = YES;
+        _private->drawingIntoAcceleratedLayer = [layer drawsAsynchronously];
     }
 
     [super drawLayer:layer inContext:ctx];
 
-    if (_private)
+    if (_private) {
         _private->drawingIntoLayer = NO;
+        _private->drawingIntoAcceleratedLayer = NO;
+    }
 }
 #endif
 
@@ -6709,6 +6713,11 @@ static BOOL writingDirectionKeyBindingsEnabled()
 #else
     return _private->drawingIntoLayer;
 #endif
+}
+
+- (BOOL)_web_isDrawingIntoAcceleratedLayer
+{
+    return _private->drawingIntoAcceleratedLayer;
 }
 
 #if PLATFORM(MAC)
