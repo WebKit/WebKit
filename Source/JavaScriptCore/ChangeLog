@@ -1,5 +1,27 @@
 2017-06-27  Saam Barati  <sbarati@apple.com>
 
+        JITStubRoutine::passesFilter should use isJITPC
+        https://bugs.webkit.org/show_bug.cgi?id=173906
+
+        Reviewed by JF Bastien.
+
+        This patch makes JITStubRoutine use the isJITPC abstraction defined
+        inside ExecutableAllocator.h. Before, JITStubRoutine was using a
+        hardcoded platform size constant. This means it'd do the wrong thing
+        if Options::jitMemoryReservationSize() was larger than the defined
+        constant for that platform. This patch also removes a bunch of
+        dead code in that file.
+
+        * jit/ExecutableAllocator.cpp:
+        * jit/ExecutableAllocator.h:
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::passesFilter):
+        (JSC::JITStubRoutine::canPerformRangeFilter): Deleted.
+        (JSC::JITStubRoutine::filteringStartAddress): Deleted.
+        (JSC::JITStubRoutine::filteringExtentSize): Deleted.
+
+2017-06-27  Saam Barati  <sbarati@apple.com>
+
         Fix some stale comments in Wasm code base
         https://bugs.webkit.org/show_bug.cgi?id=173814
 
