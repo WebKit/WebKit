@@ -1,3 +1,21 @@
+2017-06-28  Alex Christensen  <achristensen@webkit.org>
+
+        WebsitePolicies given with navigation policy for redirects should apply to the provisional document
+        https://bugs.webkit.org/show_bug.cgi?id=173886
+        <rdar://problem/32543191>
+
+        Reviewed by Andy Estes.
+        
+        If, for example, we deny video autoplay for the initial request but allow it for the redirect destination
+        location, the document should allow video autoplay.  We were putting these settings onto the wrong DocumentLoader.
+        When a navigation policy is given to a response of a redirect location, we currently have the DocumentLoader
+        for the loading document in the FrameLoader's provisionalDocumentLoader, not the documentLoader.
+        
+        Covered by a new API test.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2017-06-28  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Improve configuration tests for librt and libatomic
