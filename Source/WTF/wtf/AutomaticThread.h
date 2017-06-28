@@ -59,7 +59,7 @@ namespace WTF {
 // The terminology we use is:
 //
 // [1] PollResult AutomaticThread::poll()
-// [2] WordResult AutomaticThread::work()
+// [2] WorkResult AutomaticThread::work()
 //
 // Note that poll() and work() may not be called on the same thread every time, since this will shut
 // down the thread as necessary. This is legal since m_condition.wait(m_lock) can drop the lock, and

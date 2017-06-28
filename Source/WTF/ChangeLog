@@ -1,3 +1,9 @@
+2017-06-28  David Kilzer  <ddkilzer@apple.com>
+
+        Fix typo in comment: WordResult => WorkResult
+
+        * wtf/AutomaticThread.h:
+
 2017-06-27  Caio Lima  <ticaiolima@gmail.com>
 
         [ESnext] Implement Object Rest - Implementing Object Rest Destructuring
