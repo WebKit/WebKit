@@ -1966,7 +1966,7 @@ webkit.org/b/171895 webrtc/audio-replace-track.html [ Pass Failure ]
 
 webkit.org/b/170870 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
 
-webkit.org/b/173486 webrtc/video-replace-muted-track.html [ Pass Failure ]
+webkit.org/b/173486 webrtc/video-replace-muted-track.html [ Skip ]
 
 webkit.org/b/17373 fast/forms/file/input-file-write-files-using-open-panel.html [ Skip ]
 
