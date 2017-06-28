@@ -1,3 +1,12 @@
+2017-06-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, unmark workers/bomb.html flakiness after r218856
+
+        * platform/gtk-wayland/TestExpectations:
+        * platform/ios-device/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-06-27  Matt Lewis  <jlewis3@apple.com>
 
         Marked http/tests/loading/resourceLoadStatistics/telemetry-generation.html as flaky.

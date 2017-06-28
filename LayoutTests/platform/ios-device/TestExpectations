@@ -137,8 +137,6 @@ security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.htm
 
 security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ ImageOnlyFailure ]
 
-workers/bomb.html [ Skip ]
-
 # <rdar://problem/30353797> need to differentiated between device types
 tiled-drawing/ios/iphone7
 
