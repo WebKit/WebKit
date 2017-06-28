@@ -1,3 +1,9 @@
+2017-06-28  Don Olmstead  <don.olmstead@sony.com>
+
+        Unreviewed, adding Don Olmstead to contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-06-28  Alex Christensen  <achristensen@webkit.org>
 
         WebsitePolicies given with navigation policy for redirects should apply to the provisional document

@@ -1730,6 +1730,16 @@
       ],
       "status" : "reviewer"
    },
+   "Don Olmstead" : {
+      "emails" : [
+         "don.olmstead@sony.com",
+         "don.olmstead@am.sony.com"
+      ],
+      "nicks" : [
+         "dolmstead"
+      ],
+      "status" : "committer"
+   },
    "Dongseong Hwang" : {
       "emails" : [
          "dongseong.hwang@intel.com",
