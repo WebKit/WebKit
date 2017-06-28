@@ -1,3 +1,14 @@
+2017-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Teach ResourceLoadStatistics to recognize changes in the file system
+        https://bugs.webkit.org/show_bug.cgi?id=173800
+        <rdar://problem/32937842>
+
+        Reviewed by Chris Dumez.
+
+        * wtf/DispatchPtr.h: Added (moved from WebKit2)
+        * wtf/Platform.h: Make sure USE_FILE_LOCK is enabled.
+
 2017-06-28  David Kilzer  <ddkilzer@apple.com>
 
         Fix typo in comment: WordResult => WorkResult

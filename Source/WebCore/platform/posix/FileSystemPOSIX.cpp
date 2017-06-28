@@ -83,6 +83,11 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
         platformFlag |= O_RDONLY;
     else if (mode == OpenForWrite)
         platformFlag |= (O_WRONLY | O_CREAT | O_TRUNC);
+#if OS(DARWIN)
+    else if (mode == OpenForEventsOnly)
+        platformFlag |= O_EVTONLY;
+#endif
+
     return open(fsRep.data(), platformFlag, 0666);
 }
 

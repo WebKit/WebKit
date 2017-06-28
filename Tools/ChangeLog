@@ -1,3 +1,19 @@
+2017-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Teach ResourceLoadStatistics to recognize changes in the file system
+        https://bugs.webkit.org/show_bug.cgi?id=173800
+        <rdar://problem/32937842>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/FileMonitor.cpp: Added.
+        (TestWebKitAPI::FileMonitorTest::tempFilePath):
+        (TestWebKitAPI::handleFileModification):
+        (TestWebKitAPI::handleFileDeletion):
+        (TestWebKitAPI::resetTestState):
+        (TestWebKitAPI::TEST_F):
+
 2017-06-28  Brady Eidson  <beidson@apple.com>
 
         DocumentLoader should always notify the client if there are pending icon loads when the load is stopped.

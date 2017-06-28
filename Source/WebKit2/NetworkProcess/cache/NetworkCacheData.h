@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,10 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/DispatchPtr.h>
+#endif
+
 #if USE(SOUP)
 #include <WebCore/GRefPtrSoup.h>
 #endif
@@ -42,63 +46,6 @@ namespace WebKit {
 class SharedMemory;
 
 namespace NetworkCache {
-
-#if PLATFORM(COCOA)
-template <typename T> class DispatchPtr;
-template <typename T> DispatchPtr<T> adoptDispatch(T dispatchObject);
-
-// FIXME: Use OSObjectPtr instead when it works with dispatch_data_t on all platforms.
-template<typename T> class DispatchPtr {
-public:
-    DispatchPtr()
-        : m_ptr(nullptr)
-    {
-    }
-    explicit DispatchPtr(T ptr)
-        : m_ptr(ptr)
-    {
-        if (m_ptr)
-            dispatch_retain(m_ptr);
-    }
-    DispatchPtr(const DispatchPtr& other)
-        : m_ptr(other.m_ptr)
-    {
-        if (m_ptr)
-            dispatch_retain(m_ptr);
-    }
-    ~DispatchPtr()
-    {
-        if (m_ptr)
-            dispatch_release(m_ptr);
-    }
-
-    DispatchPtr& operator=(const DispatchPtr& other)
-    {
-        auto copy = other;
-        std::swap(m_ptr, copy.m_ptr);
-        return *this;
-    }
-
-    T get() const { return m_ptr; }
-    explicit operator bool() const { return m_ptr; }
-
-    friend DispatchPtr adoptDispatch<T>(T);
-
-private:
-    struct Adopt { };
-    DispatchPtr(Adopt, T data)
-        : m_ptr(data)
-    {
-    }
-
-    T m_ptr;
-};
-
-template <typename T> DispatchPtr<T> adoptDispatch(T dispatchObject)
-{
-    return DispatchPtr<T>(typename DispatchPtr<T>::Adopt { }, dispatchObject);
-}
-#endif
 
 class Data {
 public:

@@ -1,3 +1,39 @@
+2017-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Teach ResourceLoadStatistics to recognize changes in the file system
+        https://bugs.webkit.org/show_bug.cgi?id=173800
+        <rdar://problem/32937842>
+
+        Reviewed by Chris Dumez.
+
+        We want to support the case where multiple UI processes choose to share the same
+        statistics file. To support this, update the ResourceLoadStatistics logic to be aware
+        that the statistics data file might change underneath it, and to take appropriate
+        action when it does.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsEnabled): When we enable
+        the statistics, read in the data and then watch for changes.
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver): Add a
+        'delete data' handler to remove the file on disk, not just write an empty store.
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded): Use ASCIILiteral.
+        (WebKit::WebResourceLoadStatisticsStore::refreshFromDisk): Convenience function.
+        (WebKit::WebResourceLoadStatisticsStore::writeStoreToDisk): Sync with any on-disk
+        storage before writing out.
+        (WebKit::openAndLockFile): Convenience function.
+        (WebKit::closeAndUnlockFile): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::writeEncoderToDisk): Revise to lock file (on
+        platforms that support it) before writing to disk.
+        (WebKit::WebResourceLoadStatisticsStore::deleteStoreFromDisk): Added convenience function.
+        (WebKit::WebResourceLoadStatisticsStore::clearInMemoryData): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage): Create a
+        file system monitor to watch for file changes.
+        (WebKit::WebResourceLoadStatisticsStore::syncWithExistingStatisticsStorageIfNeeded): Added
+        convenience function.
+        (WebKit::WebResourceLoadStatisticsStore::createDecoderFromDisk): Revise to read data
+        directly so we can control file locking.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
  2017-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Followup to r218885: adjust for further UIKit SPI changes

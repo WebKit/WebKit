@@ -84,6 +84,7 @@ public:
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void()>&&);
     WEBCORE_EXPORT void setShouldPartitionCookiesCallback(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&&);
     WEBCORE_EXPORT void setWritePersistentStoreCallback(WTF::Function<void()>&&);
+    WEBCORE_EXPORT void setDeletePersistentStoreCallback(WTF::Function<void()>&&);
     WEBCORE_EXPORT void setGrandfatherExistingWebsiteDataCallback(WTF::Function<void()>&&);
     WEBCORE_EXPORT void setFireTelemetryCallback(WTF::Function<void()>&& handler);
 
@@ -119,6 +120,7 @@ private:
     WTF::Function<void(const Vector<String>&, const Vector<String>&, bool clearFirst)> m_shouldPartitionCookiesForDomainsHandler;
     WTF::Function<void()> m_writePersistentStoreHandler;
     WTF::Function<void()> m_grandfatherExistingWebsiteDataHandler;
+    WTF::Function<void()> m_deletePersistentStoreHandler;
     WTF::Function<void()> m_fireTelemetryHandler;
 
     WallTime m_endOfGrandfatheringTimestamp;

@@ -46,6 +46,7 @@ class WorkQueue;
 namespace WebCore {
 class KeyedDecoder;
 class KeyedEncoder;
+class FileMonitor;
 struct ResourceLoadStatistics;
 }
 
@@ -85,6 +86,8 @@ private:
 
     void classifyResource(WebCore::ResourceLoadStatistics&);
     void removeDataRecords();
+    void startMonitoringStatisticsStorage();
+    void stopMonitoringStatisticsStorage();
 
     String persistentStoragePath(const String& label) const;
 
@@ -97,7 +100,10 @@ private:
     void writeEncoderToDisk(WebCore::KeyedEncoder&, const String& label) const;
     std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& label) const;
     void platformExcludeFromBackup() const;
-    
+    void deleteStoreFromDisk();
+    void clearInMemoryData();
+    void syncWithExistingStatisticsStorageIfNeeded();
+    void refreshFromDisk();
     void telemetryTimerFired();
 
     Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
@@ -107,6 +113,7 @@ private:
     ResourceLoadStatisticsClassifier m_resourceLoadStatisticsClassifier;
 #endif
     Ref<WTF::WorkQueue> m_statisticsQueue;
+    RefPtr<WebCore::FileMonitor> m_statisticsStorageMonitor;
     String m_statisticsStoragePath;
     bool m_resourceLoadStatisticsEnabled { false };
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryOneShotTimer;

@@ -1,3 +1,41 @@
+2017-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Teach ResourceLoadStatistics to recognize changes in the file system
+        https://bugs.webkit.org/show_bug.cgi?id=173800
+        <rdar://problem/32937842>
+
+        Reviewed by Chris Dumez.
+
+        We want to support the case where multiple UI processes choose to share the same
+        statistics file. To support this, update the ResourceLoadStatistics logic to be aware
+        that the statistics data file might change underneath it, and to take appropriate
+        action when it does.
+
+        * WebCore.xcodeproj/project.pbxproj: Update for new sources.
+        * WebCore/CMakeLists.txt: Update for new FileMonitor source file.
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::clearInMemoryAndPersistent): Use the new deletion
+        handler for the data file instead of writing out an empty file.
+        (WebCore::ResourceLoadStatisticsStore::setDeletePersistentStoreCallback): Added.
+        * loader/ResourceLoadStatisticsStore.h:
+        * platform/FileMonitor.cpp: Added.
+        (WebCore::FileMonitor::create):
+        (WebCore::FileMonitor::FileMonitor): Register handlers and begin monitoring file.
+        (WebCore::FileMonitor::~FileMonitor): Stop any active file monitoring.
+        (WebCore::FileMonitor::startMonitoringPath): Stub implementation.
+        (WebCore::FileMonitor::stopMonitoring): Ditto.
+        * platform/FileMonitor.h: Added.
+        * platform/FileSystem.h: Export files needed by WebKit2. Add support for O_EVTONLY
+        Darwin file handles.
+        * platform/Logging.h: Add 'ResourceLoadStatistics' category.
+        * platform/cocoa/FileMonitorCocoa.mm: Added.
+        (WebCore::FileMonitor::startMonitoringPath): Create a new VNODE type dispatch_source
+        to receive notifications when the specified file changes.
+        (WebCore::FileMonitor::stopMonitoring): Cancel the dispatch_source when we are done
+        monitoring the file.
+        * platform/posix/FileSystemPOSIX.cpp: Update 'openFile' to understand the O_EVTONLY
+        mode of file handles (Darwin-only). 
+
 2017-06-28  Brady Eidson  <beidson@apple.com>
 
         DocumentLoader should always notify the client if there are pending icon loads when the load is stopped.

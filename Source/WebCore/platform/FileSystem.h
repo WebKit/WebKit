@@ -28,8 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FileSystem_h
-#define FileSystem_h
+#pragma once
 
 #include <time.h>
 #include <utility>
@@ -71,7 +70,10 @@ const PlatformFileHandle invalidPlatformFileHandle = -1;
 
 enum FileOpenMode {
     OpenForRead = 0,
-    OpenForWrite
+    OpenForWrite,
+#if OS(DARWIN)
+    OpenForEventsOnly
+#endif
 };
 
 enum FileSeekOrigin {
@@ -131,7 +133,7 @@ bool truncateFile(PlatformFileHandle, long long offset);
 // Returns number of bytes actually read if successful, -1 otherwise.
 WEBCORE_EXPORT int writeToFile(PlatformFileHandle, const char* data, int length);
 // Returns number of bytes actually written if successful, -1 otherwise.
-int readFromFile(PlatformFileHandle, char* data, int length);
+WEBCORE_EXPORT int readFromFile(PlatformFileHandle, char* data, int length);
 
 // Appends the contents of the file found at 'path' to the open PlatformFileHandle.
 // Returns true if the write was successful, false if it was not.
@@ -141,8 +143,8 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle&);
 bool hardLinkOrCopyFile(const String& source, const String& destination);
 
 #if USE(FILE_LOCK)
-bool lockFile(PlatformFileHandle, FileLockMode);
-bool unlockFile(PlatformFileHandle);
+WEBCORE_EXPORT bool lockFile(PlatformFileHandle, FileLockMode);
+WEBCORE_EXPORT bool unlockFile(PlatformFileHandle);
 #endif
 
 // Encode a string for use within a file name.
@@ -198,4 +200,3 @@ inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
 
 } // namespace WebCore
 
-#endif // FileSystem_h

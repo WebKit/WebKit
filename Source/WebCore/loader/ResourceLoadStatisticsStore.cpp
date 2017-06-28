@@ -158,8 +158,8 @@ void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 {
     ASSERT(!isMainThread());
     clearInMemory();
-    if (m_writePersistentStoreHandler)
-        m_writePersistentStoreHandler();
+    if (m_deletePersistentStoreHandler)
+        m_deletePersistentStoreHandler();
     if (m_grandfatherExistingWebsiteDataHandler)
         m_grandfatherExistingWebsiteDataHandler();
 }
@@ -220,6 +220,11 @@ void ResourceLoadStatisticsStore::setWritePersistentStoreCallback(WTF::Function<
 void ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback(WTF::Function<void()>&& handler)
 {
     m_grandfatherExistingWebsiteDataHandler = WTFMove(handler);
+}
+
+void ResourceLoadStatisticsStore::setDeletePersistentStoreCallback(WTF::Function<void()>&& handler)
+{
+    m_deletePersistentStoreHandler = WTFMove(handler);
 }
 
 void ResourceLoadStatisticsStore::setFireTelemetryCallback(WTF::Function<void()>&& handler)
