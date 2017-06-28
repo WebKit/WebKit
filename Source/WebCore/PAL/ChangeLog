@@ -1,3 +1,13 @@
+2017-06-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Build fix for PAL
+        https://bugs.webkit.org/show_bug.cgi?id=173896
+
+        Reviewed by Myles C. Maxfield.
+
+        * PAL.xcodeproj/project.pbxproj: Ensure that the SRCROOT is WebCore/PAL and not
+        just WebCore.
+
 2017-06-27  Don Olmstead  <don.olmstead@sony.com>
 
         [PAL] Add symbol export macros for PAL
