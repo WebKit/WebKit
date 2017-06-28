@@ -112,6 +112,10 @@ void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::
         m_codeBlock.set(vm, this, codeBlock);
     } else {
         codeBlock = JSWebAssemblyCodeBlock::create(vm, wasmCodeBlock.copyRef(), m_module.get());
+        if (UNLIKELY(!codeBlock->runnable())) {
+            throwException(exec, scope, JSWebAssemblyLinkError::create(exec, vm, globalObject()->WebAssemblyLinkErrorStructure(), codeBlock->errorMessage()));
+            return;
+        }
         m_codeBlock.set(vm, this, codeBlock);
         module()->setCodeBlock(vm, memoryMode(), codeBlock);
     }

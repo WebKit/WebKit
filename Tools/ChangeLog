@@ -1,3 +1,16 @@
+2017-06-27  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: running out of executable memory should throw OoM
+        https://bugs.webkit.org/show_bug.cgi?id=171537
+        <rdar://problem/32963338>
+
+        Reviewed by Saam Barati.
+
+        * Scripts/run-jsc-stress-tests: add a configuration which runs the
+        tests under limited executable memory and avoids non-WebAssembly
+        code generation so that we more reliably run out of executable
+        memory in WebAssembly.
+
 2017-06-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Support dragging out of contenteditable areas without a prior selection

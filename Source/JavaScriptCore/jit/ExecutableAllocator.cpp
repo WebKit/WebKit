@@ -412,8 +412,11 @@ RefPtr<ExecutableMemoryHandle> ExecutableAllocator::allocate(size_t sizeInBytes,
         size_t bytesAllocated = statistics.bytesAllocated + sizeInBytes;
         size_t bytesAvailable = static_cast<size_t>(
             statistics.bytesReserved * (1 - executablePoolReservationFraction));
-        if (bytesAllocated > bytesAvailable)
+        if (bytesAllocated > bytesAvailable) {
+            if (Options::logExecutableAllocation())
+                dataLog("Allocation failed because bytes allocated ", bytesAllocated,  " > ", bytesAvailable, " bytes available.\n");
             return nullptr;
+        }
     }
     
     RefPtr<ExecutableMemoryHandle> result = allocator->allocate(sizeInBytes, ownerUID);

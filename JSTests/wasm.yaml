@@ -33,6 +33,8 @@
   cmd: runWebAssembly unless parseRunCommands
 - path: wasm/stress
   cmd: runWebAssembly unless parseRunCommands
+- path: wasm/lowExecutableMemory
+  cmd: runWebAssemblyLowExecutableMemory unless parseRunCommands
 
 - path: wasm/spec-tests/address.wast.js
   cmd: runWebAssemblySpecTest :normal

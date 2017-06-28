@@ -51,7 +51,7 @@ static void materializeImportJSCell(JIT& jit, unsigned importIndex, GPRReg resul
     jit.loadPtr(JIT::Address(result, JSWebAssemblyInstance::offsetOfImportFunction(importIndex)), result);
 }
 
-MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
+Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, SignatureIndex signatureIndex, unsigned importIndex)
 {
     // FIXME: This function doesn't properly abstract away the calling convention.
     // It'd be super easy to do so: https://bugs.webkit.org/show_bug.cgi?id=169401
@@ -119,7 +119,10 @@ MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signatu
                 ASSERT(!!vm->callFrameForCatch);
             };
 
-            LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
+            LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
+            if (UNLIKELY(linkBuffer.didFailToAllocate()))
+                return makeUnexpected(BindingFailure::OutOfMemory);
+
             linkBuffer.link(call, throwBadI64);
             return FINALIZE_CODE(linkBuffer, ("WebAssembly->JavaScript invalid i64 use in import[%i]", importIndex));
         }
@@ -303,7 +306,10 @@ MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signatu
         jit.emitFunctionEpilogue();
         jit.ret();
 
-        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID);
+        LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
+        if (UNLIKELY(linkBuffer.didFailToAllocate()))
+            return makeUnexpected(BindingFailure::OutOfMemory);
+
         linkBuffer.link(call, callFunc);
         linkBuffer.link(exceptionCall, doUnwinding);
 
@@ -600,7 +606,10 @@ MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signatu
         });
     }
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
+    if (UNLIKELY(patchBuffer.didFailToAllocate()))
+        return makeUnexpected(BindingFailure::OutOfMemory);
+
     patchBuffer.link(slowCall, FunctionPtr(vm->getCTIStub(linkCallThunkGenerator).code().executableAddress()));
     CodeLocationLabel callReturnLocation(patchBuffer.locationOfNearCall(slowCall));
     CodeLocationLabel hotPathBegin(patchBuffer.locationOf(targetToCheck));
@@ -610,7 +619,7 @@ MacroAssemblerCodeRef wasmToJs(VM* vm, Bag<CallLinkInfo>& callLinkInfos, Signatu
     return FINALIZE_CODE(patchBuffer, ("WebAssembly->JavaScript import[%i] %s", importIndex, signature.toString().ascii().data()));
 }
 
-MacroAssemblerCodeRef wasmToWasm(unsigned importIndex)
+Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(unsigned importIndex)
 {
     const PinnedRegisterInfo& pinnedRegs = PinnedRegisterInfo::get();
     JIT jit;
@@ -653,7 +662,10 @@ MacroAssemblerCodeRef wasmToWasm(unsigned importIndex)
     jit.loadPtr(scratch, scratch);
     jit.jump(scratch);
 
-    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID);
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, JITCompilationCanFail);
+    if (UNLIKELY(patchBuffer.didFailToAllocate()))
+        return makeUnexpected(BindingFailure::OutOfMemory);
+
     return FINALIZE_CODE(patchBuffer, ("WebAssembly->WebAssembly import[%i]", importIndex));
 }
 

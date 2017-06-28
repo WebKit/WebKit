@@ -1234,7 +1234,6 @@ def runWebAssemblySpecTest(mode)
     when :skip
         return
     end
-
     return if !$jitTests
     return if !$isFTLPlatform
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
@@ -1246,10 +1245,22 @@ def runWebAssemblySpecTest(mode)
     prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
 
     runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js", *FTL_OPTIONS)
-    runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, "../spec-harness.js",  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
-    runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
-    runWithOutputHandler("wasm-no-call-ic", noisyOutputHandler, "../spec-harness.js", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
-    runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, "../spec-harness.js", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
+    if !$quickMode
+      runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, "../spec-harness.js",  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
+      runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
+      runWithOutputHandler("wasm-no-call-ic", noisyOutputHandler, "../spec-harness.js", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
+      runWithOutputHandler("wasm-no-tls-context", noisyOutputHandler, "../spec-harness.js", "--useFastTLSForWasmContext=false", *FTL_OPTIONS)
+    end
+end
+
+def runWebAssemblyLowExecutableMemory(*optionalTestSpecificOptions)
+    return if !$jitTests
+    return if !$isFTLPlatform
+    modules = Dir[WASMTESTS_PATH + "*.js"].map { |f| File.basename(f) }
+    prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
+    prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
+    # Only let WebAssembly get executable memory.
+    run("default-wasm", "--useConcurrentGC=0" , "--useConcurrentJIT=0", "--jitMemoryReservationSize=15000", "--useBaselineJIT=0", "--useDFGJIT=0", "--useFTLJIT=0", "-m")
 end
 
 def runChakra(mode, exception, baselineFile, extraFiles)

@@ -175,7 +175,15 @@ void BBQPlan::prepare()
             continue;
         unsigned importFunctionIndex = m_wasmToWasmExitStubs.size();
         dataLogLnIf(verbose, "Processing import function number ", importFunctionIndex, ": ", makeString(import->module), ": ", makeString(import->field));
-        m_wasmToWasmExitStubs.uncheckedAppend(wasmToWasm(importFunctionIndex));
+        auto binding = wasmToWasm(importFunctionIndex);
+        if (UNLIKELY(!binding)) {
+            switch (binding.error()) {
+            case BindingFailure::OutOfMemory:
+                return fail(holdLock(m_lock), makeString("Out of executable memory at import ", String::number(importIndex)));
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        m_wasmToWasmExitStubs.uncheckedAppend(binding.value());
     }
 
     const uint32_t importFunctionCount = m_moduleInformation->importFunctionCount();
@@ -288,19 +296,29 @@ void BBQPlan::complete(const AbstractLocker& locker)
     ASSERT(m_state != State::Compiled || m_currentIndex >= m_moduleInformation->functionLocationInBinary.size());
     dataLogLnIf(verbose, "Starting Completion");
 
-    if (m_state == State::Compiled) {
+    if (!failed() && m_state == State::Compiled) {
         for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functionLocationInBinary.size(); functionIndex++) {
             CompilationContext& context = m_compilationContexts[functionIndex];
             SignatureIndex signatureIndex = m_moduleInformation->internalFunctionSignatureIndices[functionIndex];
             {
-                LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr);
+                LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
+                if (UNLIKELY(linkBuffer.didFailToAllocate())) {
+                    Base::fail(locker, makeString("Out of executable memory in function at index ", String::number(functionIndex)));
+                    return;
+                }
+
                 m_wasmInternalFunctions[functionIndex]->entrypoint.compilation = std::make_unique<B3::Compilation>(
                     FINALIZE_CODE(linkBuffer, ("WebAssembly function[%i] %s", functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
                     WTFMove(context.wasmEntrypointByproducts));
             }
 
             if (auto jsToWasmInternalFunction = m_jsToWasmInternalFunctions.get(functionIndex)) {
-                LinkBuffer linkBuffer(*context.jsEntrypointJIT, nullptr);
+                LinkBuffer linkBuffer(*context.jsEntrypointJIT, nullptr, JITCompilationCanFail);
+                if (UNLIKELY(linkBuffer.didFailToAllocate())) {
+                    Base::fail(locker, makeString("Out of executable memory in function entrypoint at index ", String::number(functionIndex)));
+                    return;
+                }
+
                 jsToWasmInternalFunction->entrypoint.compilation = std::make_unique<B3::Compilation>(
                     FINALIZE_CODE(linkBuffer, ("JavaScript->WebAssembly entrypoint[%i] %s", functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
                     WTFMove(context.jsEntrypointByproducts));

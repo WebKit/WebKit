@@ -112,7 +112,8 @@ typedef const char* optionString;
     v(optionString, configFile, nullptr, Normal, "file to configure JSC options and logging location") \
     \
     v(bool, useLLInt,  true, Normal, "allows the LLINT to be used if true") \
-    v(bool, useJIT,    true, Normal, "allows the baseline JIT to be used if true") \
+    v(bool, useJIT,    true, Normal, "allows the executable pages to be allocated for JIT and thunks if true") \
+    v(bool, useBaselineJIT, true, Normal, "allows the baseline JIT to be used if true") \
     v(bool, useDFGJIT, true, Normal, "allows the DFG JIT to be used if true") \
     v(bool, useRegExpJIT, true, Normal, "allows the RegExp JIT to be used if true") \
     v(bool, useDOMJIT, true, Normal, "allows the DOMJIT to be used if true") \

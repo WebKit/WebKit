@@ -1,3 +1,41 @@
+2017-06-27  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: running out of executable memory should throw OoM
+        https://bugs.webkit.org/show_bug.cgi?id=171537
+        <rdar://problem/32963338>
+
+        Reviewed by Saam Barati.
+
+        Both on first compile with BBQ as well as on tier-up with OMG,
+        running out of X memory shouldn't cause the entire program to
+        terminate. An exception will do when compiling initial code (since
+        we don't have any other fallback at the moment), and refusal to
+        tier up will do as well (it'll just be slower).
+
+        This is useful because programs which generate huge amounts of
+        code simply look like crashes, which developers report to
+        us. Getting a JavaScript exception instead is much clearer.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::allocate):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::shouldJIT):
+        * runtime/Options.h:
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::prepare):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToJs):
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmBinding.h:
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::finalizeCreation):
+
 2017-06-27  Saam Barati  <sbarati@apple.com>
 
         JITStubRoutine::passesFilter should use isJITPC

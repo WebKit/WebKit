@@ -1,3 +1,30 @@
+2017-06-27  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: running out of executable memory should throw OoM
+        https://bugs.webkit.org/show_bug.cgi?id=171537
+        <rdar://problem/32963338>
+
+        Reviewed by Saam Barati.
+
+        * wasm.yaml:
+        * wasm/lowExecutableMemory/executable-memory-oom.js: Added.
+        (const.invoke):
+        (failCount.0.catch):
+        (failCount.0.module.undefined.catch):
+        * wasm/lowExecutableMemory/exports-oom.js: Added.
+        (const.type):
+        (const.params):
+        (const.randomProgram):
+        (failCount.0.catch):
+        (failCount.0.module.undefined.catch):
+        * wasm/lowExecutableMemory/imports-oom.js: Added.
+        (const.type):
+        (const.params):
+        (const.randomProgram):
+        (f.imports.push):
+        (failCount.0.catch):
+        (failCount.0.module.undefined.catch):
+
 2017-06-27  Caio Lima  <ticaiolima@gmail.com>
 
         [ESnext] Implement Object Rest - Implementing Object Rest Destructuring

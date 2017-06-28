@@ -318,8 +318,7 @@ inline bool shouldJIT(ExecState* exec, CodeBlock* codeBlock)
         || !ensureGlobalJITWhitelist().contains(codeBlock))
         return false;
 
-    // You can modify this to turn off JITting without rebuilding the world.
-    return exec->vm().canUseJIT();
+    return exec->vm().canUseJIT() && Options::useBaselineJIT();
 }
 
 // Returns true if we should try to OSR.

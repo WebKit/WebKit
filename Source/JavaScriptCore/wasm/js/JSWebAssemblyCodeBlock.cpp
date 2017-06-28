@@ -58,7 +58,16 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
     m_wasmToJSExitStubs.reserveCapacity(m_codeBlock->functionImportCount());
     for (unsigned importIndex = 0; importIndex < m_codeBlock->functionImportCount(); ++importIndex) {
         Wasm::SignatureIndex signatureIndex = moduleInformation.importFunctionSignatureIndices.at(importIndex);
-        m_wasmToJSExitStubs.uncheckedAppend(Wasm::wasmToJs(&vm, m_callLinkInfos, signatureIndex, importIndex));
+        auto binding = Wasm::wasmToJs(&vm, m_callLinkInfos, signatureIndex, importIndex);
+        if (UNLIKELY(!binding)) {
+            switch (binding.error()) {
+            case Wasm::BindingFailure::OutOfMemory:
+                m_errorMessage = ASCIILiteral("Out of executable memory");
+                return;
+            }
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+        m_wasmToJSExitStubs.uncheckedAppend(binding.value());
         importWasmToJSStub(importIndex) = m_wasmToJSExitStubs[importIndex].code().executableAddress();
     }
 }

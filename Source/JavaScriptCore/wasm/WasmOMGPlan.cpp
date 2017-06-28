@@ -88,7 +88,12 @@ void OMGPlan::work(CompilationEffort)
     }
 
     Entrypoint omgEntrypoint;
-    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr);
+    LinkBuffer linkBuffer(*context.wasmEntrypointJIT, nullptr, JITCompilationCanFail);
+    if (UNLIKELY(linkBuffer.didFailToAllocate())) {
+        Base::fail(holdLock(m_lock), makeString("Out of executable memory while tiering up function at index ", String::number(m_functionIndex)));
+        return;
+    }
+
     omgEntrypoint.compilation = std::make_unique<B3::Compilation>(
         FINALIZE_CODE(linkBuffer, ("WebAssembly OMG function[%i] %s", m_functionIndex, SignatureInformation::get(signatureIndex).toString().ascii().data())),
         WTFMove(context.wasmEntrypointByproducts));
