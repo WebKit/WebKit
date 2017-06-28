@@ -39,11 +39,16 @@
 #if WK_API_ENABLED
 
 static bool doneWithIcons;
-static bool receivedFaviconDataCallback;
 static bool alreadyProvidedIconData;
-static RetainPtr<NSData> receivedFaviconData;
 
-@interface IconLoadingDelegate : NSObject <_WKIconLoadingDelegate>
+@interface IconLoadingDelegate : NSObject <_WKIconLoadingDelegate> {
+    @public
+    RetainPtr<NSData> receivedFaviconData;
+    bool receivedFaviconDataCallback;
+    bool shouldSaveCallback;
+    bool didSaveCallback;
+    void (^savedCallback)(void (^)(NSData*));
+}
 @end
 
 @implementation IconLoadingDelegate {
@@ -70,7 +75,13 @@ static RetainPtr<NSData> receivedFaviconData;
         doneWithIcons = true;
 
     if (parameters.iconType == WKLinkIconTypeFavicon) {
-        completionHandler([](NSData *iconData) {
+        if (shouldSaveCallback) {
+            savedCallback = [completionHandler retain];
+            didSaveCallback = true;
+            return;
+        }
+
+        completionHandler([self](NSData *iconData) {
             receivedFaviconData = iconData;
             receivedFaviconDataCallback = true;
         });
@@ -80,7 +91,12 @@ static RetainPtr<NSData> receivedFaviconData;
 
 @end
 
-@interface IconLoadingSchemeHandler : NSObject <WKURLSchemeHandler>
+@interface IconLoadingSchemeHandler : NSObject <WKURLSchemeHandler> {
+    @public
+    bool shouldIgnoreFaviconTask;
+    bool receivedFaviconTask;
+    bool faviconTaskStopped;
+}
 - (instancetype)initWithData:(NSData *)data;
 - (void)setFaviconData:(NSData *)data;
 @end
@@ -113,6 +129,10 @@ static RetainPtr<NSData> receivedFaviconData;
 
     if ([[task.request.URL absoluteString] isEqual:@"testing:///favicon.ico"]) {
         EXPECT_FALSE(alreadyProvidedIconData);
+        if (shouldIgnoreFaviconTask) {
+            receivedFaviconTask = true;
+            return;
+        }
         response = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"image/png" expectedContentLength:1 textEncodingName:nil]);
         data = faviconData.get();
         alreadyProvidedIconData = true;
@@ -128,6 +148,8 @@ static RetainPtr<NSData> receivedFaviconData;
 
 - (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
 {
+    if ([[task.request.URL absoluteString] isEqual:@"testing:///favicon.ico"])
+        faviconTaskStopped = true;
 }
 
 @end
@@ -154,6 +176,7 @@ TEST(IconLoading, DefaultFavicon)
     [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&doneWithIcons);
+    TestWebKitAPI::Util::run(&iconDelegate.get()->receivedFaviconDataCallback);
 }
 
 static const char mainBytes2[] =
@@ -180,20 +203,86 @@ TEST(IconLoading, AlreadyCachedIcon)
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:///main"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedFaviconDataCallback);
+    TestWebKitAPI::Util::run(&iconDelegate.get()->receivedFaviconDataCallback);
 
-    EXPECT_TRUE([iconDataFromDisk.get() isEqual:receivedFaviconData.get()]);
+    EXPECT_TRUE([iconDataFromDisk.get() isEqual:iconDelegate.get()->receivedFaviconData.get()]);
 
-    receivedFaviconDataCallback = false;
-    receivedFaviconData = nil;
+    iconDelegate.get()->receivedFaviconDataCallback = false;
+    iconDelegate.get()->receivedFaviconData = nil;
 
     // Load another main resource that results in the same icon being loaded (which should come from the memory cache).
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:///main2"]];
     [webView loadRequest:request];
 
-    TestWebKitAPI::Util::run(&receivedFaviconDataCallback);
+    TestWebKitAPI::Util::run(&iconDelegate.get()->receivedFaviconDataCallback);
 
-    EXPECT_TRUE([iconDataFromDisk.get() isEqual:receivedFaviconData.get()]);
+    EXPECT_TRUE([iconDataFromDisk.get() isEqual:iconDelegate.get()->receivedFaviconData.get()]);
+}
+
+TEST(IconLoading, IconLoadCancelledCallback)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    NSData *mainData = [NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes) freeWhenDone:NO];
+    RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:mainData]);
+    handler.get()->shouldIgnoreFaviconTask = true;
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<IconLoadingDelegate> iconDelegate = adoptNS([[IconLoadingDelegate alloc] init]);
+    webView.get()._iconLoadingDelegate = iconDelegate.get();
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:///main"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&handler.get()->receivedFaviconTask);
+
+    // Our scheme handler never replies to the favicon task, so our icon delegate load callback is still pending.
+    // Stop the documentloader's loading and verify the icon delegate callback is called.
+    [webView stopLoading];
+
+    // Wait until the data callback is called, *and* the task is stopped
+    TestWebKitAPI::Util::run(&handler.get()->faviconTaskStopped);
+    TestWebKitAPI::Util::run(&iconDelegate.get()->receivedFaviconDataCallback);
+
+    EXPECT_EQ(iconDelegate.get()->receivedFaviconData.get().length, (unsigned long)0);
+}
+
+TEST(IconLoading, IconLoadCancelledCallback2)
+{
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    NSData *mainData = [NSData dataWithBytesNoCopy:(void*)mainBytes length:sizeof(mainBytes) freeWhenDone:NO];
+    RetainPtr<IconLoadingSchemeHandler> handler = adoptNS([[IconLoadingSchemeHandler alloc] initWithData:mainData]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"testing"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<IconLoadingDelegate> iconDelegate = adoptNS([[IconLoadingDelegate alloc] init]);
+    iconDelegate.get()->shouldSaveCallback = true;
+    webView.get()._iconLoadingDelegate = iconDelegate.get();
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"testing:///main"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&iconDelegate.get()->didSaveCallback);
+
+    // Our scheme handler never replies to the favicon task, so our icon delegate load callback is still pending.
+    // Stop the documentloader's loading and verify the icon delegate callback is called.
+    [webView stopLoading];
+
+
+    // Even though loading has already been stopped (and therefore IconLoaders were cancelled),
+    // we should still get the callback.
+    static bool iconCallbackCalled;
+    iconDelegate.get()->savedCallback([iconCallbackCalled = &iconCallbackCalled](NSData *data) {
+        EXPECT_EQ(data.length, (unsigned long)0);
+
+        *iconCallbackCalled = true;
+    });
+
+    TestWebKitAPI::Util::run(&iconCallbackCalled);
 }
 
 #endif

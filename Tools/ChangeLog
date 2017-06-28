@@ -1,3 +1,12 @@
+2017-06-28  Brady Eidson  <beidson@apple.com>
+
+        DocumentLoader should always notify the client if there are pending icon loads when the load is stopped.
+        https://bugs.webkit.org/show_bug.cgi?id=173874
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/IconLoadingDelegate.mm:
+
 2017-06-28  Don Olmstead  <don.olmstead@sony.com>
 
         Unreviewed, adding Don Olmstead to contributors.json

@@ -368,6 +368,8 @@ private:
     void cancelPolicyCheckIfNeeded();
     void becomeMainResourceClient();
 
+    void notifyFinishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer*);
+
     Frame* m_frame { nullptr };
     Ref<CachedResourceLoader> m_cachedResourceLoader;
 

@@ -1,3 +1,21 @@
+2017-06-28  Brady Eidson  <beidson@apple.com>
+
+        DocumentLoader should always notify the client if there are pending icon loads when the load is stopped.
+        https://bugs.webkit.org/show_bug.cgi?id=173874
+
+        Reviewed by Alex Christensen.
+
+        Covered by API tests.
+
+        Patch started by Carlos Garcia Campos, finished by me.
+        
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading): Make all of the callbacks for cancelled IconLoaders.
+        (WebCore::DocumentLoader::didGetLoadDecisionForIcon): Make the callback even if there's no IconLoader.
+        (WebCore::DocumentLoader::finishedLoadingIcon):
+        (WebCore::DocumentLoader::notifyFinishedLoadingIcon):
+        * loader/DocumentLoader.h:
+
 2017-06-28  Antoine Quint  <graouts@apple.com>
 
         Volume controls should be hidden when AirPlay is active
