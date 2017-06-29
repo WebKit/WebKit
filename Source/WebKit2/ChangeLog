@@ -1,3 +1,24 @@
+2017-06-28  Tim Horton  <timothy_horton@apple.com>
+
+        MobileSafari was constantly using 10-15% CPU viewing a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=173944
+        <rdar://problem/33039910>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _doAfterNextStablePresentationUpdate:]):
+        (-[WKWebView _doAfterNextPresentationUpdate:]):
+        (-[WKWebView _doAfterNextPresentationUpdateWithoutWaitingForPainting:]):
+        Bail early and just dispatch_async the completion block if we are using a custom
+        content view; these methods are very specific to the implementation of WKContentView
+        and don't make sense with custom content views.
+
+        doAfterNextStablePresentationUpdate is particularly egregious because, since
+        we will never call the stable update callbacks (because we bail from didCommitLayerTree
+        if we aren't using WKContentView), it will keep calling doAfterNextPresentationUpdate
+        over and over again.
+
 2017-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS][iOS] Don't request microphone access for clients that don't need it.

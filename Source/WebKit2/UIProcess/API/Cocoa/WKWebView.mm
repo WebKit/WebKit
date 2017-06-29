@@ -5350,6 +5350,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_doAfterNextStablePresentationUpdate:(dispatch_block_t)updateBlock
 {
+    if (![self usesStandardContentView]) {
+        dispatch_async(dispatch_get_main_queue(), updateBlock);
+        return;
+    }
+
     auto updateBlockCopy = makeBlockPtr(updateBlock);
 
     if (_stableStatePresentationUpdateCallbacks)
@@ -5540,20 +5545,30 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 // Execute the supplied block after the next transaction from the WebProcess.
 - (void)_doAfterNextPresentationUpdate:(void (^)(void))updateBlock
 {
-    void (^updateBlockCopy)(void) = nil;
-    if (updateBlock)
-        updateBlockCopy = Block_copy(updateBlock);
+#if PLATFORM(IOS)
+    if (![self usesStandardContentView]) {
+        dispatch_async(dispatch_get_main_queue(), updateBlock);
+        return;
+    }
+#endif
+
+    auto updateBlockCopy = makeBlockPtr(updateBlock);
 
     _page->callAfterNextPresentationUpdate([updateBlockCopy](WebKit::CallbackBase::Error error) {
-        if (updateBlockCopy) {
+        if (updateBlockCopy)
             updateBlockCopy();
-            Block_release(updateBlockCopy);
-        }
     });
 }
 
 - (void)_doAfterNextPresentationUpdateWithoutWaitingForPainting:(void (^)(void))updateBlock
 {
+#if PLATFORM(IOS)
+    if (![self usesStandardContentView]) {
+        dispatch_async(dispatch_get_main_queue(), updateBlock);
+        return;
+    }
+#endif
+
     _page->setShouldSkipWaitingForPaintAfterNextViewDidMoveToWindow(true);
     [self _doAfterNextPresentationUpdate:updateBlock];
 }
