@@ -1,3 +1,12 @@
+2017-06-28  Saam Barati  <sbarati@apple.com>
+
+        Add a Object rest/spread test to the experimental features test page
+        https://bugs.webkit.org/show_bug.cgi?id=173947
+
+        Rubber stamped by Dean Jackson.
+
+        * experimental-features.html:
+
 2017-06-07  Jon Davis  <jond@apple.com>
 
         Update the design of the WebKit Feature Status page
