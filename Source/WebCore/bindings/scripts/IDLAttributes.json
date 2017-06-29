@@ -382,6 +382,9 @@
         "ReturnsOwnPromise": {
             "contextsAllowed": ["operation"]
         },
+        "ReturnValue": {
+            "contextsAllowed": ["argument"]
+        },
         "SameObject": {
             "contextsAllowed": ["attribute"],
             "standard": {

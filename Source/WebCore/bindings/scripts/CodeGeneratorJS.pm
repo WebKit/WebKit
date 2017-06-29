@@ -1691,6 +1691,16 @@ sub OperationShouldBeOnInstance
     return 0;
 }
 
+sub OperationHasForcedReturnValue
+{
+    my ($operation) = @_;
+
+    foreach my $argument (@{$operation->arguments}) {
+        return 1 if $argument->extendedAttributes->{ReturnValue};
+    }
+    return 0;
+}
+
 sub GetJSCAttributesForAttribute
 {
     my $interface = shift;
@@ -5476,7 +5486,7 @@ sub NeedsExplicitPropagateExceptionCall
 
     return 0 unless $operation->extendedAttributes->{MayThrowException};
 
-    return $operation->type && ($operation->type->name eq "void" || $codeGenerator->IsPromiseType($operation->type));
+    return $operation->type && ($operation->type->name eq "void" || $codeGenerator->IsPromiseType($operation->type) || OperationHasForcedReturnValue($operation));
 }
 
 sub GenerateParametersCheck
@@ -5551,6 +5561,8 @@ sub GenerateParametersCheck
             my $nativeValueCastFunction;
 
             if ($argument->isOptional) {
+                assert("[ReturnValue] is not supported for optional arguments") if $argument->extendedAttributes->{ReturnValue};
+
                 if (defined($argument->default)) {
                     if (WillConvertUndefinedToDefaultParameterValue($type, $argument->default)) {
                         $argumentLookupForConversion = "state->argument($argumentIndex)";
@@ -5568,7 +5580,12 @@ sub GenerateParametersCheck
                     $nativeValueCastFunction = "std::optional<Converter<$argumentIDLType>::ReturnType>";
                 }
             } else {
-                $argumentLookupForConversion = "state->uncheckedArgument($argumentIndex)";
+                if ($argument->extendedAttributes->{ReturnValue}) {
+                    push(@$outputArray, $indent . "auto returnValue = state->uncheckedArgument($argumentIndex);\n");
+                    $argumentLookupForConversion = "returnValue";
+                } else {
+                    $argumentLookupForConversion = "state->uncheckedArgument($argumentIndex)";
+                }
             }
     
             my $globalObjectReference = $operation->isStatic ? "*jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())" : "*castedThis->globalObject()";
@@ -5988,7 +6005,10 @@ sub GenerateImplementationFunctionCall
 {
     my ($outputArray, $operation, $interface, $functionString, $indent) = @_;
 
-    if ($operation->type->name eq "void" || $codeGenerator->IsPromiseType($operation->type)) {
+    if (OperationHasForcedReturnValue($operation)) {
+        push(@$outputArray, $indent . "$functionString;\n");
+        push(@$outputArray, $indent . "return JSValue::encode(returnValue);\n");
+    } elsif ($operation->type->name eq "void" || $codeGenerator->IsPromiseType($operation->type)) {
         push(@$outputArray, $indent . "$functionString;\n");
         push(@$outputArray, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {

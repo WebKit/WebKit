@@ -1,3 +1,62 @@
+2017-06-29  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add a new extended attribute to model the forced return value optimization used on Node and Crypto
+        https://bugs.webkit.org/show_bug.cgi?id=173961
+
+        Reviewed by Darin Adler.
+
+        Node and Crypto were both using custom bindings to implement an optimization
+        for operations that always returned one one of the arguments passed in. The
+        optimization directly returns the JSValue argument, avoiding wrapping and 
+        unwrapping, and all the cache lookups that might entail. This allows that 
+        optimization to work without custom bindings by adding a new extended attribute
+        [ReturnValue] that can annotate an argument. When used, the implementation
+        function is expected to return either void or ExceptionOr<void>.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCryptoCustom.cpp: Removed.
+        Remove JSCryptoCustom.cpp.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::insertBefore): Deleted.
+        (WebCore::JSNode::replaceChild): Deleted.
+        (WebCore::JSNode::removeChild): Deleted.
+        (WebCore::JSNode::appendChild): Deleted.
+        Remove custom functions.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (OperationHasForcedReturnValue):
+        Add helper to determine if an operation has [ReturnValue] on any argument.
+
+        (NeedsExplicitPropagateExceptionCall):
+        We must treat operations with a [ReturnValue] argument like we do operations
+        returning void, and explicitly check for exceptions.
+
+        (GenerateParametersCheck):
+        Pull out the argument in a variable called 'returnValue' if it is annotated
+        with [ReturnValue].
+
+        (GenerateImplementationFunctionCall):
+        Special case operations with a [ReturnValue] argument to return the previously
+        set aside 'returnValue' variable.
+
+        * bindings/scripts/IDLAttributes.json:
+        Add [ReturnValue].
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionTestReturnValueOptimizationBody):
+        (WebCore::jsTestObjPrototypeFunctionTestReturnValueOptimization):
+        (WebCore::jsTestObjPrototypeFunctionTestReturnValueOptimizationWithExceptionBody):
+        (WebCore::jsTestObjPrototypeFunctionTestReturnValueOptimizationWithException):
+        * bindings/scripts/test/TestObj.idl:
+        Add tests for [ReturnValue].
+
+        * dom/Node.idl:
+        * page/Crypto.idl:
+        Add [ReturnValue] annotations and remove [Custom] annotations.
+
 2017-06-29  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rolling out r218944.

@@ -40,7 +40,6 @@
 #include "JSCallbackData.cpp"
 #include "JSCanvasRenderingContext2DCustom.cpp"
 #include "JSCommandLineAPIHostCustom.cpp"
-#include "JSCryptoCustom.cpp"
 #include "JSCustomEventCustom.cpp"
 #include "JSCustomXPathNSResolver.cpp"
 #include "JSDOMBindingSecurity.cpp"

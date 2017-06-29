@@ -449,6 +449,9 @@ enum TestConfidence { "high", "kinda-low" };
     legacycaller void legacyCallerNamed(long param);
     legacycaller long (DOMString param);
     legacycaller void ();
+
+    Node testReturnValueOptimization([ReturnValue] Node a, Node b);
+    [MayThrowException] Node testReturnValueOptimizationWithException([ReturnValue] Node a, Node b);
 };
 
 // The following comment should not generate any code.
