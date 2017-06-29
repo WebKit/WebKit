@@ -1,3 +1,13 @@
+2017-06-28  Chris Dumez  <cdumez@apple.com>
+
+        Avoid copying statistics in ResourceLoadStatisticsStore::readDataFromDecoder()
+        https://bugs.webkit.org/show_bug.cgi?id=173951
+
+        Reviewed by Ryosuke Niwa.
+
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::readDataFromDecoder):
+
 2017-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Safari's Speedometer score massively regresses when accessibility is enabled

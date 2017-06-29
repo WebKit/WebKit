@@ -130,14 +130,14 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     prevalentResourceDomainsWithoutUserInteraction.reserveInitialCapacity(loadedStatistics.size());
     
     {
-    auto locker = holdLock(m_statisticsLock);
-    for (auto& statistics : loadedStatistics) {
-        if (statistics.isPrevalentResource && !statistics.hadUserInteraction) {
-            prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
-            statistics.isMarkedForCookiePartitioning = true;
+        auto locker = holdLock(m_statisticsLock);
+        for (auto& statistics : loadedStatistics) {
+            if (statistics.isPrevalentResource && !statistics.hadUserInteraction) {
+                prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
+                statistics.isMarkedForCookiePartitioning = true;
+            }
+            m_resourceStatisticsMap.set(statistics.highLevelDomain, WTFMove(statistics));
         }
-        m_resourceStatisticsMap.set(statistics.highLevelDomain, statistics);
-    }
     }
     
     fireShouldPartitionCookiesHandler({ }, prevalentResourceDomainsWithoutUserInteraction, true);
