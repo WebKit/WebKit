@@ -1,3 +1,23 @@
+2017-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Split ResourceLoadObserver into 2 classes: one for WebCore and one for the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=173990
+
+        Reviewed by Brent Fulgham.
+
+        Split ResourceLoadObserver into 2 classes: one for WebCore and one for the UIProcess.
+        They really have different API and there is therefore close to no code duplication.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::primaryDomain):
+        (WebCore::ResourceLoadObserver::setStatisticsQueue):
+        (WebCore::ResourceLoadObserver::shouldLog):
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::primaryDomain):
+        * loader/ResourceLoadStatisticsStore.h:
+        * platform/URL.h:
+
 2017-06-29  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom binding for UserMessageHandlersNamespace

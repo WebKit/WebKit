@@ -1,3 +1,69 @@
+2017-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Split ResourceLoadObserver into 2 classes: one for WebCore and one for the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=173990
+
+        Reviewed by Brent Fulgham.
+
+        Split ResourceLoadObserver into 2 classes: one for WebCore and one for the UIProcess.
+        They really have different API and there is therefore close to no code duplication.
+
+        * CMakeLists.txt:
+        * UIProcess/Cocoa/WebResourceLoadStatisticsManagerCocoa.mm:
+        (WebKit::WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded):
+        * UIProcess/WebResourceLoadObserver.cpp: Added.
+        (WebKit::primaryDomain):
+        (WebKit::WebResourceLoadObserver::sharedObserver):
+        (WebKit::WebResourceLoadObserver::setStatisticsStore):
+        (WebKit::WebResourceLoadObserver::setStatisticsQueue):
+        (WebKit::WebResourceLoadObserver::clearInMemoryStore):
+        (WebKit::WebResourceLoadObserver::clearInMemoryAndPersistentStore):
+        (WebKit::WebResourceLoadObserver::logUserInteraction):
+        (WebKit::WebResourceLoadObserver::clearUserInteraction):
+        (WebKit::WebResourceLoadObserver::hasHadUserInteraction):
+        (WebKit::WebResourceLoadObserver::setPrevalentResource):
+        (WebKit::WebResourceLoadObserver::isPrevalentResource):
+        (WebKit::WebResourceLoadObserver::clearPrevalentResource):
+        (WebKit::WebResourceLoadObserver::setGrandfathered):
+        (WebKit::WebResourceLoadObserver::isGrandfathered):
+        (WebKit::WebResourceLoadObserver::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadObserver::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadObserver::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadObserver::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadObserver::setTimeToLiveCookiePartitionFree):
+        (WebKit::WebResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebKit::WebResourceLoadObserver::setGrandfatheringTime):
+        (WebKit::WebResourceLoadObserver::fireDataModificationHandler):
+        (WebKit::WebResourceLoadObserver::fireShouldPartitionCookiesHandler):
+        (WebKit::WebResourceLoadObserver::fireTelemetryHandler):
+        * UIProcess/WebResourceLoadObserver.h: Added.
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsManager::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsManager::setHasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsManager::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree):
+        (WebKit::WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsManager::setGrandfatheringTime):
+        (WebKit::WebResourceLoadStatisticsManager::fireDataModificationHandler):
+        (WebKit::WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler):
+        (WebKit::WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandlerForOneDomain):
+        (WebKit::WebResourceLoadStatisticsManager::fireTelemetryHandler):
+        (WebKit::WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore):
+        (WebKit::WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WebKit::WebResourceLoadStatisticsManager::resetToConsistentState):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-06-29  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom binding for UserMessageHandlersNamespace

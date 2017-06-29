@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include "NetworkStorageSession.h"
 #include "PlatformStrategies.h"
+#include "PublicSuffix.h"
 #include "ResourceLoadStatistics.h"
 #include "SharedBuffer.h"
 #include "URL.h"
@@ -464,6 +465,26 @@ void ResourceLoadStatisticsStore::dataRecordsWereRemoved()
 WTF::RecursiveLockAdapter<Lock>& ResourceLoadStatisticsStore::statisticsLock()
 {
     return m_statisticsLock;
+}
+
+String ResourceLoadStatisticsStore::primaryDomain(const URL& url)
+{
+    return primaryDomain(url.host());
+}
+
+String ResourceLoadStatisticsStore::primaryDomain(const String& host)
+{
+    if (host.isNull() || host.isEmpty())
+        return ASCIILiteral("nullOrigin");
+
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String primaryDomain = topPrivatelyControlledDomain(host);
+    // We will have an empty string here if there is no TLD. Use the host as a fallback.
+    if (!primaryDomain.isEmpty())
+        return primaryDomain;
+#endif
+
+    return host;
 }
     
 }

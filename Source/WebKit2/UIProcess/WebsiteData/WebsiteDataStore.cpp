@@ -34,6 +34,7 @@
 #include "WebCookieManagerProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
+#include "WebResourceLoadObserver.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteData.h"
@@ -43,7 +44,6 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/OriginLock.h>
-#include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/CrossThreadCopier.h>
@@ -816,7 +816,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
 #endif
 
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
-        WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(modifiedSince);
+        WebResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(modifiedSince);
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
@@ -1085,7 +1085,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 #endif
 
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
-        WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
+        WebResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();

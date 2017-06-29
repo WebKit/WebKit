@@ -27,8 +27,8 @@
 #include "WebResourceLoadStatisticsManager.h"
 
 #include "Logging.h"
+#include "WebResourceLoadObserver.h"
 #include "WebResourceLoadStatisticsStore.h"
-#include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/URL.h>
 
 using namespace WebCore;
@@ -38,95 +38,95 @@ namespace WebKit {
 void WebResourceLoadStatisticsManager::setPrevalentResource(const String& hostName, bool value)
 {
     if (value)
-        WebCore::ResourceLoadObserver::sharedObserver().setPrevalentResource(URL(URL(), hostName));
+        WebResourceLoadObserver::sharedObserver().setPrevalentResource(URL(URL(), hostName));
     else
-        WebCore::ResourceLoadObserver::sharedObserver().clearPrevalentResource(URL(URL(), hostName));
+        WebResourceLoadObserver::sharedObserver().clearPrevalentResource(URL(URL(), hostName));
 }
 
 bool WebResourceLoadStatisticsManager::isPrevalentResource(const String& hostName)
 {
-    return WebCore::ResourceLoadObserver::sharedObserver().isPrevalentResource(URL(URL(), hostName));
+    return WebResourceLoadObserver::sharedObserver().isPrevalentResource(URL(URL(), hostName));
 }
     
 void WebResourceLoadStatisticsManager::setHasHadUserInteraction(const String& hostName, bool value)
 {
     if (value)
-        WebCore::ResourceLoadObserver::sharedObserver().logUserInteraction(URL(URL(), hostName));
+        WebResourceLoadObserver::sharedObserver().logUserInteraction(URL(URL(), hostName));
     else
-        WebCore::ResourceLoadObserver::sharedObserver().clearUserInteraction(URL(URL(), hostName));
+        WebResourceLoadObserver::sharedObserver().clearUserInteraction(URL(URL(), hostName));
 }
 
 bool WebResourceLoadStatisticsManager::hasHadUserInteraction(const String& hostName)
 {
-    return WebCore::ResourceLoadObserver::sharedObserver().hasHadUserInteraction(URL(URL(), hostName));
+    return WebResourceLoadObserver::sharedObserver().hasHadUserInteraction(URL(URL(), hostName));
 }
 
 void WebResourceLoadStatisticsManager::setGrandfathered(const String& hostName, bool value)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setGrandfathered(URL(URL(), hostName), value);
+    WebResourceLoadObserver::sharedObserver().setGrandfathered(URL(URL(), hostName), value);
 }
 
 bool WebResourceLoadStatisticsManager::isGrandfathered(const String& hostName)
 {
-    return WebCore::ResourceLoadObserver::sharedObserver().isGrandfathered(URL(URL(), hostName));
+    return WebResourceLoadObserver::sharedObserver().isGrandfathered(URL(URL(), hostName));
 }
 
 void WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setSubframeUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
+    WebResourceLoadObserver::sharedObserver().setSubframeUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
 }
 
 void WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setSubresourceUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
+    WebResourceLoadObserver::sharedObserver().setSubresourceUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
 }
 
 void WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setSubresourceUniqueRedirectTo(URL(URL(), hostName), URL(URL(), hostNameRedirectedTo));
+    WebResourceLoadObserver::sharedObserver().setSubresourceUniqueRedirectTo(URL(URL(), hostName), URL(URL(), hostNameRedirectedTo));
 }
 
 void WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(Seconds seconds)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(seconds);
+    WebResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(seconds);
 }
 
 void WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(Seconds seconds)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(seconds);
+    WebResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(seconds);
 }
 
 void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(Seconds seconds)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(seconds);
+    WebResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(seconds);
 }
 
 void WebResourceLoadStatisticsManager::setGrandfatheringTime(Seconds seconds)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setGrandfatheringTime(seconds);
+    WebResourceLoadObserver::sharedObserver().setGrandfatheringTime(seconds);
 }
 
 void WebResourceLoadStatisticsManager::fireDataModificationHandler()
 {
-    WebCore::ResourceLoadObserver::sharedObserver().fireDataModificationHandler();
+    WebResourceLoadObserver::sharedObserver().fireDataModificationHandler();
 }
 
 void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler()
 {
-    WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler();
+    WebResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler();
 }
 
 void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandlerForOneDomain(const String& hostName, bool value)
 {
     if (value)
-        WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({ }, {hostName}, false);
+        WebResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({ }, {hostName}, false);
     else
-        WebCore::ResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({hostName}, { }, false);
+        WebResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({hostName}, { }, false);
 }
 
 void WebResourceLoadStatisticsManager::fireTelemetryHandler()
 {
-    WebCore::ResourceLoadObserver::sharedObserver().fireTelemetryHandler();
+    WebResourceLoadObserver::sharedObserver().fireTelemetryHandler();
 }
     
 void WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned(bool value)
@@ -151,24 +151,24 @@ void WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecor
 
 void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore()
 {
-    WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
+    WebResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
 }
 
 void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
 {
-    WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(std::chrono::system_clock::now() - std::chrono::hours(hours));
+    WebResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(std::chrono::system_clock::now() - std::chrono::hours(hours));
 }
     
 void WebResourceLoadStatisticsManager::resetToConsistentState()
 {
-    WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(24_h * 30.);
-    WebCore::ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(24_h);
-    WebCore::ResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(1_h);
-    WebCore::ResourceLoadObserver::sharedObserver().setGrandfatheringTime(1_h);
+    WebResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(24_h * 30.);
+    WebResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(24_h);
+    WebResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(1_h);
+    WebResourceLoadObserver::sharedObserver().setGrandfatheringTime(1_h);
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
     WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
-    WebCore::ResourceLoadObserver::sharedObserver().clearInMemoryStore();
+    WebResourceLoadObserver::sharedObserver().clearInMemoryStore();
 }
     
 } // namespace WebKit

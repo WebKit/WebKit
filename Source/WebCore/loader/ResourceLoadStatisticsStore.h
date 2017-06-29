@@ -63,10 +63,10 @@ public:
     bool isEmpty() const { return m_resourceStatisticsMap.isEmpty(); }
     size_t size() const { return m_resourceStatisticsMap.size(); }
     WEBCORE_EXPORT void clearInMemory();
-    void clearInMemoryAndPersistent();
+    WEBCORE_EXPORT void clearInMemoryAndPersistent();
 
-    ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
-    ResourceLoadStatistics takeResourceStatisticsForPrimaryDomain(const String&);
+    WEBCORE_EXPORT ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
+    WEBCORE_EXPORT ResourceLoadStatistics takeResourceStatisticsForPrimaryDomain(const String&);
     void setResourceStatisticsForPrimaryDomain(const String&, ResourceLoadStatistics&&);
 
     bool isPrevalentResource(const String&) const;
@@ -81,14 +81,14 @@ public:
     WEBCORE_EXPORT void setGrandfatherExistingWebsiteDataCallback(WTF::Function<void()>&&);
     WEBCORE_EXPORT void setFireTelemetryCallback(WTF::Function<void()>&& handler);
 
-    void fireDataModificationHandler();
-    void fireTelemetryHandler();
-    void setTimeToLiveUserInteraction(Seconds);
-    void setTimeToLiveCookiePartitionFree(Seconds);
-    void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
-    void setGrandfatheringTime(Seconds);
+    WEBCORE_EXPORT void fireDataModificationHandler();
+    WEBCORE_EXPORT void fireTelemetryHandler();
+    WEBCORE_EXPORT void setTimeToLiveUserInteraction(Seconds);
+    WEBCORE_EXPORT void setTimeToLiveCookiePartitionFree(Seconds);
+    WEBCORE_EXPORT void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
+    WEBCORE_EXPORT void setGrandfatheringTime(Seconds);
     WEBCORE_EXPORT void fireShouldPartitionCookiesHandler();
-    void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
+    WEBCORE_EXPORT void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
 
     WEBCORE_EXPORT void processStatistics(WTF::Function<void(ResourceLoadStatistics&)>&&);
 
@@ -103,6 +103,10 @@ public:
     WEBCORE_EXPORT void dataRecordsWereRemoved();
     
     WEBCORE_EXPORT WTF::RecursiveLockAdapter<Lock>& statisticsLock();
+
+    WEBCORE_EXPORT static String primaryDomain(const URL&);
+    WEBCORE_EXPORT static String primaryDomain(const String& host);
+
 private:
     ResourceLoadStatisticsStore() = default;
 

@@ -135,7 +135,7 @@ public:
     bool protocolIsData() const { return protocolIs("data"); }
     bool protocolIsInHTTPFamily() const;
     WEBCORE_EXPORT bool isLocalFile() const;
-    bool isBlankURL() const;
+    WEBCORE_EXPORT bool isBlankURL() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
 
     WEBCORE_EXPORT bool setProtocol(const String&);

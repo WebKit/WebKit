@@ -30,24 +30,22 @@
 #include "Frame.h"
 #include "Logging.h"
 #include "MainFrame.h"
-#include "NetworkStorageSession.h"
 #include "Page.h"
-#include "PlatformStrategies.h"
-#include "PublicSuffix.h"
-#include "ResourceLoadStatistics.h"
 #include "ResourceLoadStatisticsStore.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include "SharedBuffer.h"
 #include "URL.h"
-#include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/WorkQueue.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+template<typename T> static inline String primaryDomain(const T& value)
+{
+    return ResourceLoadStatisticsStore::primaryDomain(value);
+}
 
 static Seconds timestampResolution { 1_h };
 
@@ -69,42 +67,13 @@ void ResourceLoadObserver::setStatisticsQueue(Ref<WTF::WorkQueue>&& queue)
     ASSERT(!m_queue);
     m_queue = WTFMove(queue);
 }
-    
-void ResourceLoadObserver::clearInMemoryStore()
-{
-    if (!m_store)
-        return;
-    
-    ASSERT(m_queue);
-    m_queue->dispatch([this] {
-        m_store->clearInMemory();
-    });
-}
-    
-void ResourceLoadObserver::clearInMemoryAndPersistentStore()
-{
-    if (!m_store)
-        return;
-    
-    ASSERT(m_queue);
-    m_queue->dispatch([this] {
-        m_store->clearInMemoryAndPersistent();
-    });
-}
-
-void ResourceLoadObserver::clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince)
-{
-    // For now, be conservative and clear everything regardless of modifiedSince
-    UNUSED_PARAM(modifiedSince);
-    clearInMemoryAndPersistentStore();
-}
 
 static inline bool is3xxRedirect(const ResourceResponse& response)
 {
     return response.httpStatusCode() >= 300 && response.httpStatusCode() <= 399;
 }
 
-bool ResourceLoadObserver::shouldLog(Page* page)
+bool ResourceLoadObserver::shouldLog(Page* page) const
 {
     // FIXME: Err on the safe side until we have sorted out what to do in worker contexts
     if (!page)
@@ -367,224 +336,9 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     });
 }
 
-void ResourceLoadObserver::logUserInteraction(const URL& url)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return;
-
-    ASSERT(m_queue);
-    m_queue->dispatch([this, primaryDomainString = primaryDomain(url).isolatedCopy()] {
-        {
-        auto locker = holdLock(m_store->statisticsLock());
-        auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
-        statistics.hadUserInteraction = true;
-        statistics.mostRecentUserInteractionTime = WallTime::now();
-        }
-        
-        m_store->fireShouldPartitionCookiesHandler({ primaryDomainString }, { }, false);
-    });
-}
-
-void ResourceLoadObserver::clearUserInteraction(const URL& url)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return;
-
-    auto locker = holdLock(m_store->statisticsLock());
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    statistics.hadUserInteraction = false;
-    statistics.mostRecentUserInteractionTime = { };
-}
-
-bool ResourceLoadObserver::hasHadUserInteraction(const URL& url)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return false;
-
-    auto locker = holdLock(m_store->statisticsLock());
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    return m_store->hasHadRecentUserInteraction(statistics);
-}
-
-void ResourceLoadObserver::setPrevalentResource(const URL& url)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return;
-
-    auto locker = holdLock(m_store->statisticsLock());
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    statistics.isPrevalentResource = true;
-}
-
-bool ResourceLoadObserver::isPrevalentResource(const URL& url)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return false;
-
-    auto locker = holdLock(m_store->statisticsLock());
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    return statistics.isPrevalentResource;
-}
-    
-void ResourceLoadObserver::clearPrevalentResource(const URL& url)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return;
-
-    auto locker = holdLock(m_store->statisticsLock());
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    statistics.isPrevalentResource = false;
-}
-    
-void ResourceLoadObserver::setGrandfathered(const URL& url, bool value)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return;
-    
-    auto locker = holdLock(m_store->statisticsLock());
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    statistics.grandfathered = value;
-}
-    
-bool ResourceLoadObserver::isGrandfathered(const URL& url)
-{
-    if (url.isBlankURL() || url.isEmpty())
-        return false;
-    
-    auto locker = holdLock(m_store->statisticsLock());
-    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    
-    return statistics.grandfathered;
-}
-
-void ResourceLoadObserver::setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame)
-{
-    if (subframe.isBlankURL() || subframe.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
-        return;
-    
-    ASSERT(m_queue);
-    m_queue->dispatch([this, primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubFrameDomainString = primaryDomain(subframe).isolatedCopy()] {
-        auto locker = holdLock(m_store->statisticsLock());
-        auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primarySubFrameDomainString);
-        statistics.subframeUnderTopFrameOrigins.add(primaryTopFrameDomainString);
-    });
-}
-
-void ResourceLoadObserver::setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame)
-{
-    if (subresource.isBlankURL() || subresource.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
-        return;
-    
-    ASSERT(m_queue);
-    m_queue->dispatch([this, primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
-        auto locker = holdLock(m_store->statisticsLock());
-        auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
-        statistics.subresourceUnderTopFrameOrigins.add(primaryTopFrameDomainString);
-    });
-}
-
-void ResourceLoadObserver::setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo)
-{
-    if (subresource.isBlankURL() || subresource.isEmpty() || hostNameRedirectedTo.isBlankURL() || hostNameRedirectedTo.isEmpty())
-        return;
-    
-    ASSERT(m_queue);
-    m_queue->dispatch([this, primaryRedirectDomainString = primaryDomain(hostNameRedirectedTo).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
-        auto locker = holdLock(m_store->statisticsLock());
-        auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
-        statistics.subresourceUniqueRedirectsTo.add(primaryRedirectDomainString);
-    });
-}
-
-void ResourceLoadObserver::setTimeToLiveUserInteraction(Seconds seconds)
-{
-    m_store->setTimeToLiveUserInteraction(seconds);
-}
-
-void ResourceLoadObserver::setTimeToLiveCookiePartitionFree(Seconds seconds)
-{
-    m_store->setTimeToLiveCookiePartitionFree(seconds);
-}
-
-void ResourceLoadObserver::setMinimumTimeBetweeenDataRecordsRemoval(Seconds seconds)
-{
-    m_store->setMinimumTimeBetweeenDataRecordsRemoval(seconds);
-}
-    
-void ResourceLoadObserver::setReducedTimestampResolution(Seconds seconds)
-{
-    if (seconds > 0_s)
-        timestampResolution = seconds;
-}
-
-void ResourceLoadObserver::setGrandfatheringTime(Seconds seconds)
-{
-    m_store->setMinimumTimeBetweeenDataRecordsRemoval(seconds);
-}
-    
-void ResourceLoadObserver::fireDataModificationHandler()
-{
-    // Helper function used by testing system. Should only be called from the main thread.
-    ASSERT(isMainThread());
-    m_queue->dispatch([this] {
-        m_store->fireDataModificationHandler();
-    });
-}
-
-void ResourceLoadObserver::fireShouldPartitionCookiesHandler()
-{
-    // Helper function used by testing system. Should only be called from the main thread.
-    ASSERT(isMainThread());
-    m_queue->dispatch([this] {
-        m_store->fireShouldPartitionCookiesHandler();
-    });
-}
-
-void ResourceLoadObserver::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
-{
-    // Helper function used by testing system. Should only be called from the main thread.
-    ASSERT(isMainThread());
-    m_queue->dispatch([this, domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd), clearFirst] {
-        m_store->fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd, clearFirst);
-    });
-}
-
-void ResourceLoadObserver::fireTelemetryHandler()
-{
-    // Helper function used by testing system. Should only be called from the main thread.
-    ASSERT(isMainThread());
-    m_store->fireTelemetryHandler();
-}
-    
-String ResourceLoadObserver::primaryDomain(const URL& url)
-{
-    return primaryDomain(url.host());
-}
-
-String ResourceLoadObserver::primaryDomain(const String& host)
-{
-    if (host.isNull() || host.isEmpty())
-        return ASCIILiteral("nullOrigin");
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    String primaryDomain = topPrivatelyControlledDomain(host);
-    // We will have an empty string here if there is no TLD. Use the host as a fallback.
-    if (!primaryDomain.isEmpty())
-        return primaryDomain;
-#endif
-
-    return host;
-}
-
 String ResourceLoadObserver::statisticsForOrigin(const String& origin)
 {
     return m_store ? m_store->statisticsForOrigin(origin) : emptyString();
 }
 
-}
+} // namespace WebCore

@@ -30,6 +30,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebResourceLoadObserver.h"
 #include "WebResourceLoadStatisticsManager.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteDataFetchOption.h"
@@ -37,7 +38,6 @@
 #include <WebCore/FileMonitor.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/KeyedCoding.h>
-#include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
@@ -210,8 +210,8 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
 {
     ASSERT(RunLoop::isMain());
     
-    ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
-    ResourceLoadObserver::sharedObserver().setStatisticsQueue(m_statisticsQueue.copyRef());
+    WebResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
+    WebResourceLoadObserver::sharedObserver().setStatisticsQueue(m_statisticsQueue.copyRef());
     m_resourceLoadStatisticsStore->setNotificationCallback([this, protectedThis = makeRef(*this)] {
         if (m_resourceLoadStatisticsStore->isEmpty())
             return;

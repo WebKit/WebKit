@@ -902,6 +902,8 @@
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
 		41FAF5F91E3C1025001AE678 /* LibWebRTCResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FAF5F71E3C0B47001AE678 /* LibWebRTCResolver.cpp */; };
 		4450AEC01DC3FAE5009943F2 /* SharedMemoryCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */; };
+		46343B3A1F0599230003F309 /* WebResourceLoadObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4646AB321F0598D4009D07FC /* WebResourceLoadObserver.cpp */; };
+		46343B3B1F0599260003F309 /* WebResourceLoadObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 4646AB331F0598D4009D07FC /* WebResourceLoadObserver.h */; };
 		463FD4801EB9459600A2982C /* WKProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */ = {isa = PBXBuildFile; fileRef = 463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */; };
 		465250E61ECF52DC002025CB /* WebKit2InitializeCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */; };
@@ -3143,6 +3145,8 @@
 		4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedMemoryCocoa.cpp; path = cocoa/SharedMemoryCocoa.cpp; sourceTree = "<group>"; };
 		463FD47F1EB9458400A2982C /* WKProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessTerminationReason.h; sourceTree = "<group>"; };
 		463FD4811EB94EAD00A2982C /* ProcessTerminationReason.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessTerminationReason.h; sourceTree = "<group>"; };
+		4646AB321F0598D4009D07FC /* WebResourceLoadObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebResourceLoadObserver.cpp; sourceTree = "<group>"; };
+		4646AB331F0598D4009D07FC /* WebResourceLoadObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadObserver.h; sourceTree = "<group>"; };
 		465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKit2InitializeCocoa.mm; sourceTree = "<group>"; };
 		46A2B6061E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundProcessResponsivenessTimer.cpp; sourceTree = "<group>"; };
 		46A2B6071E5675A200C3DEDA /* BackgroundProcessResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundProcessResponsivenessTimer.h; sourceTree = "<group>"; };
@@ -6859,6 +6863,8 @@
 				BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */,
 				BC032DCF10F4389F0058C15A /* WebProcessProxy.h */,
 				BCEE7AB312817095009827DA /* WebProcessProxy.messages.in */,
+				4646AB321F0598D4009D07FC /* WebResourceLoadObserver.cpp */,
+				4646AB331F0598D4009D07FC /* WebResourceLoadObserver.h */,
 				6BE969A11E43B8A4008B7483 /* WebResourceLoadStatisticsManager.cpp */,
 				6BE9699F1E43B86E008B7483 /* WebResourceLoadStatisticsManager.h */,
 				7A9CD8C01C77984900D9F6C7 /* WebResourceLoadStatisticsStore.cpp */,
@@ -8568,6 +8574,7 @@
 				0F5947A8187B517600437857 /* RemoteScrollingCoordinatorMessages.h in Headers */,
 				0F59479B187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h in Headers */,
 				0F5947A4187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h in Headers */,
+				46343B3B1F0599260003F309 /* WebResourceLoadObserver.h in Headers */,
 				0F59479D187B3B6000437857 /* RemoteScrollingTree.h in Headers */,
 				A55BA81F1BA25B27007CD33D /* RemoteWebInspectorProxy.h in Headers */,
 				A55BA8251BA25CFB007CD33D /* RemoteWebInspectorProxyMessages.h in Headers */,
@@ -10284,6 +10291,7 @@
 				C0337DAE127A24FE008FF4F4 /* WebEvent.cpp in Sources */,
 				BC032DBA10F4380F0058C15A /* WebEventConversion.cpp in Sources */,
 				BC111B5E112F629800337BAB /* WebEventFactory.mm in Sources */,
+				46343B3A1F0599230003F309 /* WebResourceLoadObserver.cpp in Sources */,
 				BCE469531214E6CB000B98EB /* WebFormClient.cpp in Sources */,
 				BCE469551214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp in Sources */,
 				BC111ADD112F5B9300337BAB /* WebFrame.cpp in Sources */,

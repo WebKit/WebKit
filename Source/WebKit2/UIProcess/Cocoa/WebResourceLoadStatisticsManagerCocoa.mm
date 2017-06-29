@@ -27,7 +27,7 @@
 #import "WebResourceLoadStatisticsManager.h"
 
 #import "WebPreferencesKeys.h"
-#import <WebCore/ResourceLoadObserver.h>
+#import "WebResourceLoadObserver.h"
 
 using namespace WebCore;
 
@@ -43,19 +43,15 @@ void WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded()
         
         double timeToLiveUserInteraction = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveUserInteractionKey()];
         if (timeToLiveUserInteraction > 0 && timeToLiveUserInteraction <= 30 * dayInSeconds)
-            ResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(Seconds { timeToLiveUserInteraction });
+            WebResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(Seconds { timeToLiveUserInteraction });
         
         double timeToLiveCookiePartitionFree = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveCookiePartitionFreeKey()];
         if (timeToLiveCookiePartitionFree > 0 && timeToLiveCookiePartitionFree <= dayInSeconds)
-            ResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(Seconds { timeToLiveCookiePartitionFree });
-        
-        double reducedTimestampResolution = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsReducedTimestampResolutionKey()];
-        if (reducedTimestampResolution > 0 && reducedTimestampResolution <= hourInSeconds)
-            ResourceLoadObserver::sharedObserver().setReducedTimestampResolution(Seconds { reducedTimestampResolution });
+            WebResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(Seconds { timeToLiveCookiePartitionFree });
 
         double grandfatheringTime = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsGrandfatheringTimeKey()];
         if (grandfatheringTime > 0 && grandfatheringTime <= 7 * dayInSeconds)
-            ResourceLoadObserver::sharedObserver().setGrandfatheringTime(Seconds { grandfatheringTime });
+            WebResourceLoadObserver::sharedObserver().setGrandfatheringTime(Seconds { grandfatheringTime });
     });
 }
 
