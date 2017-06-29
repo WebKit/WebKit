@@ -948,16 +948,29 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
         return;
     }
 
-    // We don't have any direct reasons for this style change to affect layer composition. Test if it might affect things indirectly.
-    if (oldStyle && styleChangeMayAffectIndirectCompositingReasons(layer.renderer(), *oldStyle)) {
+    if (needsCompositingUpdateForStyleChangeOnNonCompositedLayer(layer, oldStyle))
         m_layerNeedsCompositingUpdate = true;
-        return;
-    }
+}
 
-    if (layer.isRootLayer()) {
-        // Needed for scroll bars.
-        m_layerNeedsCompositingUpdate = true;
-    }
+bool RenderLayerCompositor::needsCompositingUpdateForStyleChangeOnNonCompositedLayer(RenderLayer& layer, const RenderStyle* oldStyle) const
+{
+    // Needed for scroll bars.
+    if (layer.isRootLayer())
+        return true;
+
+    if (!oldStyle)
+        return false;
+
+    const RenderStyle& newStyle = layer.renderer().style();
+    // Visibility change may affect geometry of the enclosing composited layer.
+    if (oldStyle->visibility() != newStyle.visibility())
+        return true;
+
+    // We don't have any direct reasons for this style change to affect layer composition. Test if it might affect things indirectly.
+    if (styleChangeMayAffectIndirectCompositingReasons(layer.renderer(), *oldStyle))
+        return true;
+
+    return false;
 }
 
 bool RenderLayerCompositor::canCompositeClipPath(const RenderLayer& layer)

@@ -1,3 +1,14 @@
+2017-06-29  Antti Koivisto  <antti@apple.com>
+
+        NAS4Free Pop-down menus take 3 seconds to appear
+        https://bugs.webkit.org/show_bug.cgi?id=173967
+        <rdar://problem/32690114>
+
+        Reviewed by Andreas Kling.
+
+        * compositing/backing/non-composited-visibility-change-expected.html: Added.
+        * compositing/backing/non-composited-visibility-change.html: Added.
+
 2017-06-28  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update expectations for layout tests.
