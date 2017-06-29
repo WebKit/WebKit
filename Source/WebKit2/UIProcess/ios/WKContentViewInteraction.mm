@@ -4597,7 +4597,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return itemsForDragInteraction.get();
 }
 
-- (UITargetedDragPreview *)_api_dragInteraction:(UIDragInteraction *)interaction previewForLiftingItem:(UIDragItem *)item session:(id <UIDragSession>)session
+- (UITargetedDragPreview *)dragInteraction:(UIDragInteraction *)interaction previewForLiftingItem:(UIDragItem *)item session:(id <UIDragSession>)session
 {
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:previewForLiftingItem:session:)]) {
@@ -4638,7 +4638,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _page->didStartDrag();
 }
 
-- (void)_api_dragInteraction:(UIDragInteraction *)interaction session:(id <UIDragSession>)session didEndWithOperation:(UIDropOperation)operation
+- (void)dragInteraction:(UIDragInteraction *)interaction session:(id <UIDragSession>)session didEndWithOperation:(UIDropOperation)operation
 {
     RELEASE_LOG(DragAndDrop, "Drag session ended: %p (with operation: %tu, performing operation: %d, began dragging: %d)", session, operation, _dataInteractionState.isPerformingOperation, _dataInteractionState.didBeginDragging);
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
@@ -4669,7 +4669,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return YES;
 }
 
-- (void)_api_dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
+- (void)dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
 {
     [animator addCompletion:[protectedSelf = retainPtr(self), page = _page] (UIViewAnimatingPosition finalPosition) {
         page->dragCancelled();
@@ -4693,7 +4693,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return !dragOrDropSession || session.localDragSession == dragOrDropSession;
 }
 
-- (void)_api_dropInteraction:(UIDropInteraction *)interaction sessionDidEnter:(id <UIDropSession>)session
+- (void)dropInteraction:(UIDropInteraction *)interaction sessionDidEnter:(id <UIDropSession>)session
 {
     RELEASE_LOG(DragAndDrop, "Drop session entered: %p with %tu items", session, session.items.count);
     _dataInteractionState.dropSession = session;
@@ -4706,7 +4706,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _dataInteractionState.lastGlobalPosition = dragData.globalPosition();
 }
 
-- (UIDropProposal *)_api_dropInteraction:(UIDropInteraction *)interaction sessionDidUpdate:(id <UIDropSession>)session
+- (UIDropProposal *)dropInteraction:(UIDropInteraction *)interaction sessionDidUpdate:(id <UIDropSession>)session
 {
     [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
 
@@ -4812,12 +4812,12 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)_simulateDataInteractionEntered:(id)session
 {
-    [self _api_dropInteraction:_dataOperation.get() sessionDidEnter:session];
+    [self dropInteraction:_dataOperation.get() sessionDidEnter:session];
 }
 
 - (BOOL)_simulateDataInteractionUpdated:(id)session
 {
-    return [self _api_dropInteraction:_dataOperation.get() sessionDidUpdate:session].operation != UIDropOperationCancel;
+    return [self dropInteraction:_dataOperation.get() sessionDidUpdate:session].operation != UIDropOperationCancel;
 }
 
 - (void)_simulateDataInteractionEnded:(id)session
@@ -4832,7 +4832,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)_simulateDataInteractionSessionDidEnd:(id)session
 {
-    [self _api_dragInteraction:_dataInteraction.get() session:session didEndWithOperation:UIDropOperationCopy];
+    [self dragInteraction:_dataInteraction.get() session:session didEndWithOperation:UIDropOperationCopy];
 }
 
 - (void)_simulateWillBeginDataInteractionWithSession:(id)session
