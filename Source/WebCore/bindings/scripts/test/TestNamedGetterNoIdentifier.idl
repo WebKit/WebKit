@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSUserMessageHandlersNamespace.h"
-
-#if ENABLE(USER_MESSAGE_HANDLERS)
-
-#include "JSDOMConvertInterface.h"
-#include "JSDOMConvertStrings.h"
-#include "JSUserMessageHandler.h"
-#include <runtime/JSCInlines.h>
-
-using namespace JSC;
-
-namespace WebCore {
-
-bool JSUserMessageHandlersNamespace::getOwnPropertySlotDelegate(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
-{
-    if (auto* handler = wrapped().handler(propertyNameToAtomicString(propertyName), globalObject()->world())) {
-        slot.setValue(this, ReadOnly | DontDelete | DontEnum, toJS<IDLInterface<UserMessageHandler>>(*exec, *globalObject(), *handler));
-        return true;
-    }
-    return false;
-}
-
-}
-
-#endif // ENABLE(USER_MESSAGE_HANDLERS)
+interface TestNamedGetterNoIdentifier {
+    getter DOMString (DOMString name);
+};

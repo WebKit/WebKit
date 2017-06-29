@@ -1,3 +1,65 @@
+2017-06-29  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom binding for UserMessageHandlersNamespace
+        https://bugs.webkit.org/show_bug.cgi?id=173956
+
+        Reviewed by Darin Adler.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSUserMessageHandlersNamespaceCustom.cpp: Removed.
+        Remove JSUserMessageHandlersNamespaceCustom.cpp
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateNamedGetterLambda):
+        Add support for calling named getters with additional arguments from [CallWith].
+
+        (GenerateAttributeGetterBodyDefinition):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateCallWithUsingReferences):
+        (GenerateCallWithUsingPointers):
+        (GenerateConstructorCallWithUsingPointers):
+        (GenerateCallWith):
+        (GenerateParametersCheck):
+        Update arguments to GenerateCallWith(Using...) to no longer pass an operation,
+        which was only needed for the no longer used ScriptArguments, pass a thisObject
+        reference, and optionally pass an indentation.
+
+        * bindings/scripts/IDLAttributes.json:
+        Remove no longer used ScriptArguments and CallStack, add World.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjWithScriptArgumentsAndCallStackAttributeGetter): Deleted.
+        (WebCore::jsTestObjWithScriptArgumentsAndCallStackAttribute): Deleted.
+        (WebCore::setJSTestObjWithScriptArgumentsAndCallStackAttributeSetter): Deleted.
+        (WebCore::setJSTestObjWithScriptArgumentsAndCallStackAttribute): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStackBody): Deleted.
+        (WebCore::jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack): Deleted.
+        * bindings/scripts/test/TestObj.idl:
+        Remove tests of ScriptArguments and CallStack.
+
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.h: Added.
+        * bindings/scripts/test/TestNamedGetterCallWith.idl: Added.
+        * bindings/scripts/test/TestNamedGetterNoIdentifier.idl: Added.
+        * bindings/scripts/test/TestNamedGetterWithIdentifier.idl: Added.
+        Add basic named getter tests and a specific test of named getters using CallWith.
+
+        * page/UserMessageHandlersNamespace.cpp:
+        (WebCore::UserMessageHandlersNamespace::supportedPropertyNames):
+        (WebCore::UserMessageHandlersNamespace::namedItem):
+        (WebCore::UserMessageHandlersNamespace::handler): Deleted.
+        * page/UserMessageHandlersNamespace.h:
+        Rename handler to namedItem, matching convention and the expectations of the
+        bindings generator and swap the order of the arguments for the same reason.
+
+        * page/UserMessageHandlersNamespace.idl:
+        Remove CustomGetOwnPropertySlotAndDescriptor, and add the anonymous named getter.
+
 2017-06-29  Chris Dumez  <cdumez@apple.com>
 
         Avoid copying ResourceLoadStatistics objects

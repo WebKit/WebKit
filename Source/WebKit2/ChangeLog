@@ -1,3 +1,14 @@
+2017-06-29  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom binding for UserMessageHandlersNamespace
+        https://bugs.webkit.org/show_bug.cgi?id=173956
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
+        (webkit_dom_dom_window_webkit_message_handlers_post_message):
+        Update for name change.
+
 2017-06-29  John Wilander  <wilander@apple.com>
 
         Fix for intermittent Layout Test fail http/tests/loading/resourceLoadStatistics/telemetry-generation.html

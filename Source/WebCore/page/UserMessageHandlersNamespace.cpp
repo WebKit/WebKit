@@ -64,7 +64,14 @@ void UserMessageHandlersNamespace::didInvalidate(UserContentProvider& provider)
         userMessageHandler->invalidateDescriptor();
 }
 
-UserMessageHandler* UserMessageHandlersNamespace::handler(const AtomicString& name, DOMWrapperWorld& world)
+Vector<AtomicString> UserMessageHandlersNamespace::supportedPropertyNames() const
+{
+    // FIXME: Consider adding support for iterating the registered UserMessageHandlers. This would
+    // require adding support for passing the DOMWrapperWorld to supportedPropertyNames.
+    return { };
+}
+
+UserMessageHandler* UserMessageHandlersNamespace::namedItem(DOMWrapperWorld& world, const AtomicString& name)
 {
     Frame* frame = this->frame();
     if (!frame)
