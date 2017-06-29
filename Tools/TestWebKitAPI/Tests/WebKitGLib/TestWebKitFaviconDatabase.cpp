@@ -50,8 +50,11 @@ public:
 
     static void faviconChangedCallback(WebKitFaviconDatabase* database, const char* pageURI, const char* faviconURI, FaviconDatabaseTest* test)
     {
-        if (!g_strcmp0(webkit_web_view_get_uri(test->m_webView), pageURI))
+        if (!g_strcmp0(webkit_web_view_get_uri(test->m_webView), pageURI)) {
             test->m_faviconURI = faviconURI;
+            if (test->m_waitingForFaviconURI)
+                test->quitMainLoop();
+        }
     }
 
     static void viewFaviconChangedCallback(WebKitWebView* webView, GParamSpec* pspec, gpointer data)
@@ -90,10 +93,20 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
+    void waitUntilFaviconURIChanged()
+    {
+        g_assert(!m_waitingForFaviconURI);
+        m_faviconURI = CString();
+        m_waitingForFaviconURI = true;
+        g_main_loop_run(m_mainLoop);
+        m_waitingForFaviconURI = false;
+    }
+
     cairo_surface_t* m_favicon;
     CString m_faviconURI;
     GUniqueOutPtr<GError> m_error;
     bool m_faviconNotificationReceived;
+    bool m_waitingForFaviconURI { false };
 };
 
 static void
@@ -208,9 +221,11 @@ static void testGetFavicon(FaviconDatabaseTest* test)
     g_assert(!test->m_error);
     cairo_surface_destroy(favicon);
 
-    // Check the API retrieving an invalid favicon.
+    // Check the API retrieving an invalid favicon. Favicon changes only once to reset it, then
+    // the database is updated with the favicon URI, but not with favicon image data.
     test->loadURI(kServer->getURIForPath("/nofavicon").data());
     test->waitUntilFaviconChanged();
+    test->waitUntilFaviconURIChanged();
 
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/nofavicon").data());
     g_assert(!test->m_favicon);

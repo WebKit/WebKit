@@ -121,6 +121,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/C/gtk/WKTextCheckerGtk.cpp
     UIProcess/API/C/gtk/WKView.cpp
 
+    UIProcess/API/glib/IconDatabase.cpp
     UIProcess/API/glib/WebKitAuthenticationRequest.cpp
     UIProcess/API/glib/WebKitAutomationSession.cpp
     UIProcess/API/glib/WebKitBackForwardList.cpp
@@ -140,6 +141,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/glib/WebKitFormSubmissionRequest.cpp
     UIProcess/API/glib/WebKitGeolocationPermissionRequest.cpp
     UIProcess/API/glib/WebKitGeolocationProvider.cpp
+    UIProcess/API/glib/WebKitIconLoadingClient.cpp
     UIProcess/API/glib/WebKitInjectedBundleClient.cpp
     UIProcess/API/glib/WebKitInstallMissingMediaPluginsPermissionRequest.cpp
     UIProcess/API/glib/WebKitJavascriptResult.cpp

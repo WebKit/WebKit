@@ -1,3 +1,145 @@
+2017-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Implement API::IconLoadingClient and rework WebKitFaviconDatabase to use IconDatabase directly
+        https://bugs.webkit.org/show_bug.cgi?id=173877
+
+        Reviewed by Brady Eidson.
+
+        This way IconDatabase and its related classes can be removed from WebCore, as well as the WebKit2 implementation
+        and C API. For now I've copied IconDatabase from WebCore to WebKit2 under the glib API directory, adding the
+        related classes as private inside IconDatabase, and removing some methods that are not used by the GLib API.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/glib/IconDatabase.cpp: Added.
+        (WebKit::urlForLogging):
+        (WebKit::defaultClient):
+        (WebKit::IconDatabase::IconRecord::IconRecord):
+        (WebKit::IconDatabase::IconRecord::~IconRecord):
+        (WebKit::IconDatabase::IconRecord::image):
+        (WebKit::IconDatabase::IconRecord::setImageData):
+        (WebKit::IconDatabase::IconRecord::loadImageFromResource):
+        (WebKit::IconDatabase::IconRecord::imageDataStatus):
+        (WebKit::IconDatabase::IconRecord::snapshot):
+        (WebKit::IconDatabase::PageURLRecord::PageURLRecord):
+        (WebKit::IconDatabase::PageURLRecord::~PageURLRecord):
+        (WebKit::IconDatabase::PageURLRecord::setIconRecord):
+        (WebKit::IconDatabase::PageURLRecord::snapshot):
+        (WebKit::IconDatabase::setClient):
+        (WebKit::IconDatabase::open):
+        (WebKit::IconDatabase::close):
+        (WebKit::IconDatabase::removeAllIcons):
+        (WebKit::documentCanHaveIcon):
+        (WebKit::IconDatabase::synchronousIconForPageURL):
+        (WebKit::IconDatabase::synchronousIconURLForPageURL):
+        (WebKit::IconDatabase::retainIconForPageURL):
+        (WebKit::IconDatabase::performRetainIconForPageURL):
+        (WebKit::IconDatabase::releaseIconForPageURL):
+        (WebKit::IconDatabase::performReleaseIconForPageURL):
+        (WebKit::IconDatabase::setIconDataForIconURL):
+        (WebKit::IconDatabase::setIconURLForPageURL):
+        (WebKit::IconDatabase::synchronousLoadDecisionForIconURL):
+        (WebKit::IconDatabase::synchronousIconDataKnownForIconURL):
+        (WebKit::IconDatabase::setEnabled):
+        (WebKit::IconDatabase::isEnabled):
+        (WebKit::IconDatabase::setPrivateBrowsingEnabled):
+        (WebKit::IconDatabase::isPrivateBrowsingEnabled):
+        (WebKit::IconDatabase::delayDatabaseCleanup):
+        (WebKit::IconDatabase::allowDatabaseCleanup):
+        (WebKit::IconDatabase::checkIntegrityBeforeOpening):
+        (WebKit::IconDatabase::IconDatabase):
+        (WebKit::IconDatabase::~IconDatabase):
+        (WebKit::IconDatabase::wakeSyncThread):
+        (WebKit::IconDatabase::scheduleOrDeferSyncTimer):
+        (WebKit::IconDatabase::syncTimerFired):
+        (WebKit::IconDatabase::isOpen):
+        (WebKit::IconDatabase::isOpenBesidesMainThreadCallbacks):
+        (WebKit::IconDatabase::databasePath):
+        (WebKit::IconDatabase::defaultDatabaseFilename):
+        (WebKit::IconDatabase::getOrCreateIconRecord):
+        (WebKit::IconDatabase::getOrCreatePageURLRecord):
+        (WebKit::IconDatabase::shouldStopThreadActivity):
+        (WebKit::IconDatabase::iconDatabaseSyncThread):
+        (WebKit::databaseVersionNumber):
+        (WebKit::isValidDatabase):
+        (WebKit::createDatabaseTables):
+        (WebKit::IconDatabase::performOpenInitialization):
+        (WebKit::IconDatabase::checkIntegrity):
+        (WebKit::IconDatabase::performURLImport):
+        (WebKit::IconDatabase::syncThreadMainLoop):
+        (WebKit::IconDatabase::performPendingRetainAndReleaseOperations):
+        (WebKit::IconDatabase::readFromDatabase):
+        (WebKit::IconDatabase::writeToDatabase):
+        (WebKit::IconDatabase::pruneUnretainedIcons):
+        (WebKit::IconDatabase::checkForDanglingPageURLs):
+        (WebKit::IconDatabase::removeAllIconsOnThread):
+        (WebKit::IconDatabase::deleteAllPreparedStatements):
+        (WebKit::IconDatabase::cleanupSyncThread):
+        (WebKit::readySQLiteStatement):
+        (WebKit::IconDatabase::setIconURLForPageURLInSQLDatabase):
+        (WebKit::IconDatabase::setIconIDForPageURLInSQLDatabase):
+        (WebKit::IconDatabase::removePageURLFromSQLDatabase):
+        (WebKit::IconDatabase::getIconIDForIconURLFromSQLDatabase):
+        (WebKit::IconDatabase::addIconURLToSQLDatabase):
+        (WebKit::IconDatabase::getImageDataForIconURLFromSQLDatabase):
+        (WebKit::IconDatabase::removeIconFromSQLDatabase):
+        (WebKit::IconDatabase::writeIconSnapshotToSQLDatabase):
+        (WebKit::IconDatabase::checkClosedAfterMainThreadCallback):
+        (WebKit::IconDatabase::dispatchDidImportIconURLForPageURLOnMainThread):
+        (WebKit::IconDatabase::dispatchDidImportIconDataForPageURLOnMainThread):
+        (WebKit::IconDatabase::dispatchDidRemoveAllIconsOnMainThread):
+        (WebKit::IconDatabase::dispatchDidFinishURLImportOnMainThread):
+        * UIProcess/API/glib/IconDatabase.h: Added.
+        (WebKit::IconDatabaseClient::didImportIconURLForPageURL):
+        (WebKit::IconDatabaseClient::didImportIconDataForPageURL):
+        (WebKit::IconDatabaseClient::didChangeIconForPageURL):
+        (WebKit::IconDatabaseClient::didRemoveAllIcons):
+        (WebKit::IconDatabaseClient::didFinishURLImport):
+        (WebKit::IconDatabaseClient::didClose):
+        (WebKit::IconDatabase::IconSnapshot::IconSnapshot):
+        (WebKit::IconDatabase::IconSnapshot::iconURL):
+        (WebKit::IconDatabase::IconSnapshot::timestamp):
+        (WebKit::IconDatabase::IconSnapshot::data):
+        (WebKit::IconDatabase::IconRecord::create):
+        (WebKit::IconDatabase::IconRecord::getTimestamp):
+        (WebKit::IconDatabase::IconRecord::setTimestamp):
+        (WebKit::IconDatabase::IconRecord::iconURL):
+        (WebKit::IconDatabase::IconRecord::retainingPageURLs):
+        (WebKit::IconDatabase::PageURLSnapshot::PageURLSnapshot):
+        (WebKit::IconDatabase::PageURLSnapshot::pageURL):
+        (WebKit::IconDatabase::PageURLSnapshot::iconURL):
+        (WebKit::IconDatabase::PageURLRecord::url):
+        (WebKit::IconDatabase::PageURLRecord::iconRecord):
+        (WebKit::IconDatabase::PageURLRecord::retain):
+        (WebKit::IconDatabase::PageURLRecord::release):
+        (WebKit::IconDatabase::PageURLRecord::retainCount):
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        (_WebKitFaviconDatabasePrivate::~_WebKitFaviconDatabasePrivate):
+        (getIconSurfaceSynchronously):
+        (webkitFaviconDatabaseSetIconURLForPageURL):
+        (webkitFaviconDatabaseCreate):
+        (webkitFaviconDatabaseOpen):
+        (webkitFaviconDatabaseIsOpen):
+        (webkitFaviconDatabaseSetPrivateBrowsingEnabled):
+        (webkitFaviconDatabaseGetLoadDecisionForIcon):
+        (webkitFaviconDatabaseSetIconForPageURL):
+        (webkit_favicon_database_get_favicon):
+        (webkit_favicon_database_get_favicon_uri):
+        * UIProcess/API/glib/WebKitFaviconDatabasePrivate.h:
+        * UIProcess/API/glib/WebKitIconLoadingClient.cpp: Added.
+        (IconLoadingClient::IconLoadingClient):
+        (attachIconLoadingClientToView):
+        * UIProcess/API/glib/WebKitIconLoadingClient.h: Copied from Source/WebKit2/UIProcess/API/glib/WebKitFaviconDatabasePrivate.h.
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (ensureFaviconDatabase):
+        (webkitWebContextEnableIconDatabasePrivateBrowsingIfNeeded):
+        (webkitWebContextDisableIconDatabasePrivateBrowsingIfNeeded):
+        (webkit_web_context_set_favicon_database_directory):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewConstructed):
+        (webkitWebViewGetLoadDecisionForIcon):
+        (webkitWebViewSetIcon):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+
 2017-06-28  Tim Horton  <timothy_horton@apple.com>
 
         MobileSafari was constantly using 10-15% CPU viewing a PDF

@@ -40,6 +40,7 @@
 #include "WebKitFaviconDatabasePrivate.h"
 #include "WebKitFormClient.h"
 #include "WebKitHitTestResultPrivate.h"
+#include "WebKitIconLoadingClient.h"
 #include "WebKitInstallMissingMediaPluginsPermissionRequestPrivate.h"
 #include "WebKitJavascriptResultPrivate.h"
 #include "WebKitLoaderClient.h"
@@ -636,6 +637,7 @@ static void webkitWebViewConstructed(GObject* object)
     attachPolicyClientToView(webView);
     attachContextMenuClientToView(webView);
     attachFormClientToView(webView);
+    attachIconLoadingClientToView(webView);
 
 #if PLATFORM(WPE)
     priv->view->setClient(std::make_unique<WebViewClient>(webView));
@@ -1945,6 +1947,18 @@ void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView* webView, const char* fa
     }
 
     g_signal_emit(webView, signals[LOAD_CHANGED], 0, WEBKIT_LOAD_FINISHED);
+}
+
+void webkitWebViewGetLoadDecisionForIcon(WebKitWebView* webView, const LinkIcon& icon, Function<void(bool)>&& completionHandler)
+{
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webView->priv->context.get());
+    webkitFaviconDatabaseGetLoadDecisionForIcon(database, icon, getPage(webView).pageLoadState().activeURL(), WTFMove(completionHandler));
+}
+
+void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Data& iconData)
+{
+    WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(webView->priv->context.get());
+    webkitFaviconDatabaseSetIconForPageURL(database, icon, iconData, getPage(webView).pageLoadState().activeURL());
 }
 
 WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView* webView, const WindowFeatures& windowFeatures, WebKitNavigationAction* navigationAction)

@@ -35,6 +35,7 @@
 #include "WebKitWebView.h"
 #include "WebPageProxy.h"
 #include <WebCore/IntRect.h>
+#include <WebCore/LinkIcon.h>
 #include <wtf/text/CString.h>
 
 void webkitWebViewCreatePage(WebKitWebView*, Ref<API::PageConfiguration>&&);
@@ -42,6 +43,8 @@ WebKit::WebPageProxy& webkitWebViewGetPage(WebKitWebView*);
 void webkitWebViewLoadChanged(WebKitWebView*, WebKitLoadEvent);
 void webkitWebViewLoadFailed(WebKitWebView*, WebKitLoadEvent, const char* failingURI, GError*);
 void webkitWebViewLoadFailedWithTLSErrors(WebKitWebView*, const char* failingURI, GError*, GTlsCertificateFlags, GTlsCertificate*);
+void webkitWebViewGetLoadDecisionForIcon(WebKitWebView*, const WebCore::LinkIcon&, Function<void(bool)>&&);
+void webkitWebViewSetIcon(WebKitWebView*, const WebCore::LinkIcon&, API::Data&);
 WebKit::WebPageProxy* webkitWebViewCreateNewPage(WebKitWebView*, const WebCore::WindowFeatures&, WebKitNavigationAction*);
 void webkitWebViewReadyToShowPage(WebKitWebView*);
 void webkitWebViewRunAsModal(WebKitWebView*);

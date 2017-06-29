@@ -1,3 +1,16 @@
+2017-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Implement API::IconLoadingClient and rework WebKitFaviconDatabase to use IconDatabase directly
+        https://bugs.webkit.org/show_bug.cgi?id=173877
+
+        Reviewed by Brady Eidson.
+
+        Update favicons unit test to ensure we wait until the database is updated in testGetFavicon() before starting
+        the next tests.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitFaviconDatabase.cpp:
+        (testGetFavicon):
+
 2017-06-28  Tim Horton  <timothy_horton@apple.com>
 
         MobileSafari was constantly using 10-15% CPU viewing a PDF

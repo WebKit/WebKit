@@ -843,7 +843,7 @@ static void ensureFaviconDatabase(WebKitWebContext* context)
     if (priv->faviconDatabase)
         return;
 
-    priv->faviconDatabase = adoptGRef(webkitFaviconDatabaseCreate(priv->processPool->iconDatabase()));
+    priv->faviconDatabase = adoptGRef(webkitFaviconDatabaseCreate());
 }
 
 static void webkitWebContextEnableIconDatabasePrivateBrowsingIfNeeded(WebKitWebContext* context, WebKitWebView* webView)
@@ -853,8 +853,8 @@ static void webkitWebContextEnableIconDatabasePrivateBrowsingIfNeeded(WebKitWebC
     if (!webkit_web_view_is_ephemeral(webView))
         return;
 
-    if (!context->priv->ephemeralPageCount)
-        context->priv->processPool->iconDatabase()->setPrivateBrowsingEnabled(true);
+    if (!context->priv->ephemeralPageCount && context->priv->faviconDatabase)
+        webkitFaviconDatabaseSetPrivateBrowsingEnabled(context->priv->faviconDatabase.get(), true);
     context->priv->ephemeralPageCount++;
 }
 
@@ -867,8 +867,8 @@ static void webkitWebContextDisableIconDatabasePrivateBrowsingIfNeeded(WebKitWeb
 
     ASSERT(context->priv->ephemeralPageCount);
     context->priv->ephemeralPageCount--;
-    if (!context->priv->ephemeralPageCount)
-        context->priv->processPool->iconDatabase()->setPrivateBrowsingEnabled(false);
+    if (!context->priv->ephemeralPageCount && context->priv->faviconDatabase)
+        webkitFaviconDatabaseSetPrivateBrowsingEnabled(context->priv->faviconDatabase.get(), false);
 }
 
 /**
@@ -891,10 +891,6 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
     g_return_if_fail(WEBKIT_IS_WEB_CONTEXT(context));
 
     WebKitWebContextPrivate* priv = context->priv;
-    WebIconDatabase* iconDatabase = priv->processPool->iconDatabase();
-    if (iconDatabase->isOpen())
-        return;
-
     ensureFaviconDatabase(context);
 
     // Use default if 0 is passed as parameter.
@@ -908,10 +904,10 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
         WebCore::IconDatabase::defaultDatabaseFilename().utf8().data(), nullptr));
 
     // Setting the path will cause the icon database to be opened.
-    priv->processPool->setIconDatabasePath(WebCore::stringFromFileSystemRepresentation(faviconDatabasePath.get()));
+    webkitFaviconDatabaseOpen(priv->faviconDatabase.get(), WebCore::stringFromFileSystemRepresentation(faviconDatabasePath.get()));
 
     if (webkit_web_context_is_ephemeral(context))
-        priv->processPool->iconDatabase()->setPrivateBrowsingEnabled(true);
+        webkitFaviconDatabaseSetPrivateBrowsingEnabled(priv->faviconDatabase.get(), true);
 }
 
 /**

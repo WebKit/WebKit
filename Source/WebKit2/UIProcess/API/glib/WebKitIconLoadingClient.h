@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,13 +19,6 @@
 
 #pragma once
 
-#include "APIData.h"
-#include "WebKitFaviconDatabase.h"
-#include <WebCore/LinkIcon.h>
+#include "WebKitWebView.h"
 
-WebKitFaviconDatabase* webkitFaviconDatabaseCreate();
-void webkitFaviconDatabaseOpen(WebKitFaviconDatabase*, const String& path);
-bool webkitFaviconDatabaseIsOpen(WebKitFaviconDatabase*);
-void webkitFaviconDatabaseSetPrivateBrowsingEnabled(WebKitFaviconDatabase*, bool);
-void webkitFaviconDatabaseGetLoadDecisionForIcon(WebKitFaviconDatabase*, const WebCore::LinkIcon&, const String&, Function<void(bool)>&&);
-void webkitFaviconDatabaseSetIconForPageURL(WebKitFaviconDatabase*, const WebCore::LinkIcon&, API::Data&, const String&);
+void attachIconLoadingClientToView(WebKitWebView*);
