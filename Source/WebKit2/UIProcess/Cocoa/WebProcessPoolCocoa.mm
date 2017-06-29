@@ -251,9 +251,18 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     bool webRTCEnabled = m_defaultPageGroup->preferences().peerConnectionEnabled();
     if ([defaults objectForKey:@"ExperimentalPeerConnectionEnabled"])
         webRTCEnabled = [defaults boolForKey:@"ExperimentalPeerConnectionEnabled"];
-    
+
+    bool isSafari = false;
+#if PLATFORM(IOS)
+    if (WebCore::IOSApplication::isMobileSafari())
+        isSafari = true;
+#elif PLATFORM(MAC)
+    if (WebCore::MacApplication::isSafari())
+        isSafari = true;
+#endif
+
     // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (!parameters.shouldCaptureAudioInUIProcess && (mediaDevicesEnabled || webRTCEnabled))
+    if (isSafari && !parameters.shouldCaptureAudioInUIProcess && mediaDevicesEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
 #endif
 }

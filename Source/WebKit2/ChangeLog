@@ -1,3 +1,18 @@
+2017-06-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][macOS][iOS] Don't request microphone access for clients that don't need it.
+        https://bugs.webkit.org/show_bug.cgi?id=173948
+        <rdar://problem/32103275>
+
+        Reviewed by Eric Carlson.
+
+        Don't bother requesting a sandbox extension to access the microphone for any clients
+        on the Cocoa platform that are not Safari. Other clients don't have the necessary
+        system entitlements, and always fail leading to annoying SandboxViolation reports.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): 
+
 2017-06-29  Zalan Bujtas  <zalan@apple.com>
 
         Move RenderEmbeddedObject::isReplacementObscured to HTMLPlugInElement
