@@ -1,3 +1,19 @@
+2017-06-29  Zalan Bujtas  <zalan@apple.com>
+
+        Make InlineBox::m_topLeft and m_logicalWidth protected.
+        https://bugs.webkit.org/show_bug.cgi?id=173973
+
+        Reviewed by Simon Fraser.
+
+        I don't think this reasoning from 10 years ago is valid anymore -> 
+          "FIXME: Would like to make this protected, but methods are accessing these members over in the part."
+        (comment was conveniently removed in a later commit).
+
+        No change in functionality.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2017-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Adopt +objectWithItemProviderData: for serializing NSItemProviderReading-conformant objects
