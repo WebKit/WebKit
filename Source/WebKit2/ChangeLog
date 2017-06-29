@@ -1,3 +1,20 @@
+2017-06-29  Jason Marcell  <jmarcell@apple.com>
+
+        Revert r218727. rdar://problem/32873545
+
+     2017-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS DnD] [WK2] Enable in-app dragging from WKWebView on the phone
+            https://bugs.webkit.org/show_bug.cgi?id=173736
+            <rdar://problem/32873545>
+
+            Reviewed by Tim Horton.
+
+            Flip the drag interaction enabled switch on when initializing WKContentView's UIDragInteraction.
+
+            * UIProcess/ios/WKContentViewInteraction.mm:
+            (-[WKContentView setupDataInteractionDelegates]):
+
 2017-06-29  Dean Jackson  <dino@apple.com>
 
         Disable some features on this release branch.
