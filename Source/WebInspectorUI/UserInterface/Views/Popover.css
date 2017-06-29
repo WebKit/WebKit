@@ -28,6 +28,7 @@
     min-width: 20px;
     min-height: 20px;
     box-sizing: border-box;
+    background-image: -webkit-canvas(popover);
     pointer-events: none;
     z-index: var(--z-index-popover);
 }

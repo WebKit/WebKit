@@ -41,11 +41,8 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         this._contentNeedsUpdate = false;
         this._dismissing = false;
 
-        this._canvasId = "popover-" + (WebInspector.Popover.canvasId++);
-
         this._element = document.createElement("div");
         this._element.className = "popover";
-        this._element.style.backgroundImage = "-webkit-canvas(" + this._canvasId + ")";
         this._element.addEventListener("transitionend", this, true);
 
         this._container = this._element.appendChild(document.createElement("div"));
@@ -439,15 +436,12 @@ WebInspector.Popover = class Popover extends WebInspector.Object
         ctx.stroke();
 
         // Draw the popover into the final context with a drop shadow.
-        var finalContext = document.getCSSCanvasContext("2d", this._canvasId, scaledWidth, scaledHeight);
-
+        let finalContext = document.getCSSCanvasContext("2d", "popover", scaledWidth, scaledHeight);
         finalContext.clearRect(0, 0, scaledWidth, scaledHeight);
-
         finalContext.shadowOffsetX = 1;
         finalContext.shadowOffsetY = 1;
         finalContext.shadowBlur = 5;
         finalContext.shadowColor = "rgba(0, 0, 0, 0.5)";
-
         finalContext.drawImage(scratchCanvas, 0, 0, scaledWidth, scaledHeight);
     }
 
@@ -591,7 +585,6 @@ WebInspector.Popover = class Popover extends WebInspector.Object
 };
 
 WebInspector.Popover.FadeOutClassName = "fade-out";
-WebInspector.Popover.canvasId = 0;
 WebInspector.Popover.CornerRadius = 5;
 WebInspector.Popover.MinWidth = 40;
 WebInspector.Popover.MinHeight = 40;
