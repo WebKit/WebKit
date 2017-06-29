@@ -1,3 +1,86 @@
+2017-06-28  Keith Miller  <keith_miller@apple.com>
+
+        VMTraps has some races
+        https://bugs.webkit.org/show_bug.cgi?id=173941
+
+        Reviewed by Michael Saboff.
+
+        This patch refactors much of the VMTraps API.
+
+        On the message sending side:
+
+        1) No longer uses the Yarr JIT check to determine if we are in
+        RegExp code. That was unsound because RegExp JIT code can be run
+        on compilation threads.  Instead it looks at the current frame's
+        code block slot and checks if it is valid, which is the same as
+        what it did for JIT code previously.
+
+        2) Only have one signal sender thread, previously, there could be
+        many at once, which caused some data races. Additionally, the
+        signal sender thread is an automatic thread so it will deallocate
+        itself when not in use.
+
+        On the VMTraps breakpoint side:
+
+        1) We now have a true mapping of if we hit a breakpoint instead of
+        a JIT assertion. So the exception handler won't eat JIT assertions
+        anymore.
+
+        2) It jettisons all CodeBlocks that have VMTraps breakpoints on
+        them instead of every CodeBlock on the stack. This both prevents
+        us from hitting stale VMTraps breakpoints and also doesn't OSR
+        codeblocks that otherwise don't need to be jettisoned.
+
+        3) The old exception handler could theoretically fail for a couple
+        of reasons then resume execution with a clobbered instruction
+        set. This patch will kill the program if the exception handler
+        would fail.
+
+        This patch also refactors some of the jsc.cpp functions to take the
+        CommandLine options object instead of individual options. Also, there
+        is a new command line option that makes exceptions due to watchdog
+        timeouts an acceptable result.
+
+        * API/tests/testapi.c:
+        (main):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::installVMTrapBreakpoints):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::pcCodeBlockMap):
+        (JSC::DFG::CommonData::invalidate):
+        (JSC::DFG::CommonData::~CommonData):
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::codeBlockForVMTrapPC):
+        * dfg/DFGCommonData.h:
+        * jsc.cpp:
+        (functionDollarAgentStart):
+        (checkUncaughtException):
+        (checkException):
+        (runWithOptions):
+        (printUsageStatement):
+        (CommandLine::parseArguments):
+        (jscmain):
+        (runWithScripts): Deleted.
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/VMTraps.cpp:
+        (JSC::sanitizedTopCallFrame):
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        (JSC::VMTraps::willDestroyVM):
+        (JSC::VMTraps::fireTrap):
+        (JSC::VMTraps::handleTraps):
+        (JSC::VMTraps::VMTraps):
+        (JSC::VMTraps::~VMTraps):
+        (JSC::findActiveVMAndStackBounds): Deleted.
+        (JSC::installSignalHandler): Deleted.
+        (JSC::VMTraps::addSignalSender): Deleted.
+        (JSC::VMTraps::removeSignalSender): Deleted.
+        (JSC::VMTraps::SignalSender::willDestroyVM): Deleted.
+        (JSC::VMTraps::SignalSender::send): Deleted.
+        * runtime/VMTraps.h:
+        (JSC::VMTraps::~VMTraps): Deleted.
+        (JSC::VMTraps::SignalSender::SignalSender): Deleted.
+
 2017-06-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Instrument active pixel memory used by canvases

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/AutomaticThread.h>
+#include <wtf/Box.h>
 #include <wtf/Expected.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -86,12 +88,8 @@ public:
         BitField m_mask;
     };
 
-    ~VMTraps()
-    {
-#if ENABLE(SIGNAL_BASED_VM_TRAPS)
-        ASSERT(m_signalSenders.isEmpty());
-#endif
-    }
+    ~VMTraps();
+    VMTraps();
 
     void willDestroyVM();
 
@@ -110,7 +108,6 @@ public:
     void handleTraps(ExecState*, VMTraps::Mask);
 
     void tryInstallTrapBreakpoints(struct SignalContext&, StackBounds);
-    Expected<bool, Error> tryJettisonCodeBlocksOnStack(struct SignalContext&);
 
 private:
     VM& vm() const;
@@ -134,21 +131,8 @@ private:
     EventType takeTopPriorityTrap(Mask);
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
-    class SignalSender : public ThreadSafeRefCounted<SignalSender> {
-    public:
-        SignalSender(VM& vm, EventType eventType)
-            : m_vm(&vm)
-            , m_eventType(eventType)
-        { }
-
-        void willDestroyVM();
-        void send();
-
-    private:
-        Lock m_lock;
-        VM* m_vm;
-        EventType m_eventType;
-    };
+    class SignalSender;
+    friend class SignalSender;
 
     void invalidateCodeBlocksOnStack();
     void invalidateCodeBlocksOnStack(ExecState* topCallFrame);
@@ -161,7 +145,8 @@ private:
     void invalidateCodeBlocksOnStack(ExecState*) { }
 #endif
 
-    Lock m_lock;
+    Box<Lock> m_lock;
+    RefPtr<AutomaticThreadCondition> m_trapSet;
     union {
         BitField m_needTrapHandling { 0 };
         BitField m_trapsBitField;
@@ -170,7 +155,7 @@ private:
     bool m_isShuttingDown { false };
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
-    HashSet<RefPtr<SignalSender>> m_signalSenders;
+    RefPtr<SignalSender> m_signalSender;
 #endif
 
     friend class LLIntOffsetsExtractor;

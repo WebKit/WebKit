@@ -3036,9 +3036,10 @@ bool CodeBlock::installVMTrapBreakpoints()
     // we should not perturb the refCount of m_jitCode.
     if (!JITCode::isOptimizingJIT(jitType()))
         return false;
-    m_jitCode->dfgCommon()->installVMTrapBreakpoints();
+    m_jitCode->dfgCommon()->installVMTrapBreakpoints(this);
     return true;
 #else
+    UNREACHABLE_FOR_PLATFORM();
     return false;
 #endif
 }

@@ -890,6 +890,11 @@ def runFTLEager(*optionalTestSpecificOptions)
     run("ftl-eager", "--airForceBriggsAllocator=true", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
 end
 
+def runFTLEagerWatchdog(*optionalTestSpecificOptions)
+    timeout = rand(100)
+    run("ftl-eager-watchdog-#{timeout}", "--watchdog=#{timeout}", "--watchdog-exception-ok", *(FTL_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
+end
+
 def runFTLEagerNoCJITValidate(*optionalTestSpecificOptions)
     run("ftl-eager-no-cjit", "--validateGraph=true", "--airForceIRCAllocator=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS + EAGER_OPTIONS + COLLECT_CONTINUOUSLY_OPTIONS + optionalTestSpecificOptions))
 end

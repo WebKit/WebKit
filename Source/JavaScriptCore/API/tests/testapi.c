@@ -1348,7 +1348,6 @@ int main(int argc, char* argv[])
     ::SetErrorMode(0);
 #endif
 
-    testExecutionTimeLimit();
     testCompareAndSwap();
     startMultithreadedMultiVMExecutionTest();
 
