@@ -3196,10 +3196,10 @@ ExceptionOr<Ref<DOMRect>> Internals::selectionBounds()
 ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& element)
 {
     auto* renderer = element.renderer();
-    if (!is<RenderEmbeddedObject>(renderer))
+    if (!is<HTMLPlugInElement>(element) || !is<RenderEmbeddedObject>(renderer))
         return Exception { INVALID_ACCESS_ERR };
 
-    return downcast<RenderEmbeddedObject>(*renderer).isReplacementObscured();
+    return downcast<HTMLPlugInElement>(element).isReplacementObscured();
 }
 
 bool Internals::isPluginSnapshotted(Element& element)

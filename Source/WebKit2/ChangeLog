@@ -1,3 +1,14 @@
+2017-06-29  Zalan Bujtas  <zalan@apple.com>
+
+        Move RenderEmbeddedObject::isReplacementObscured to HTMLPlugInElement
+        https://bugs.webkit.org/show_bug.cgi?id=173802
+        <rdar://problem/32884389>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+
 2017-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r218842): com.apple.WebKit crash in WebKit::ProcessLauncher::launchProcess

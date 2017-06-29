@@ -54,10 +54,9 @@ public:
 
     void handleUnavailablePluginIndicatorEvent(Event*);
 
-    WEBCORE_EXPORT bool isReplacementObscured() const;
-
     bool allowsAcceleratedCompositing() const;
 
+    LayoutRect unavailablePluginIndicatorBounds(const LayoutPoint& accumulatedOffset) const;
 protected:
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
     void paint(PaintInfo&, const LayoutPoint&) override;
@@ -88,7 +87,6 @@ private:
     bool isInUnavailablePluginIndicator(const FloatPoint&) const;
     void getReplacementTextGeometry(const LayoutPoint& accumulatedOffset, FloatRect& contentRect, FloatRect& indicatorRect, FloatRect& replacementTextRect, FloatRect& arrowRect, FontCascade&, TextRun&, float& textWidth) const;
     LayoutRect getReplacementTextGeometry(const LayoutPoint& accumulatedOffset) const;
-    LayoutRect unavailablePluginIndicatorBounds(const LayoutPoint&) const;
 
     bool canHaveChildren() const final;
     virtual bool canHaveWidget() const { return true; }

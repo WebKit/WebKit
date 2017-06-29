@@ -32,6 +32,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "HTMLNames.h"
+#include "HitTestResult.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
@@ -39,7 +40,9 @@
 #include "PluginReplacement.h"
 #include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderLayer.h"
 #include "RenderSnapshottedPlugIn.h"
+#include "RenderView.h"
 #include "RenderWidget.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
@@ -394,6 +397,80 @@ JSC::JSObject* HTMLPlugInElement::scriptObjectForPluginReplacement()
     if (m_pluginReplacement)
         return m_pluginReplacement->scriptObject();
     return nullptr;
+}
+
+// Return whether or not the replacement content for blocked plugins is accessible to the user.
+bool HTMLPlugInElement::isReplacementObscured(const String& unavailabilityDescription)
+{
+    if (!is<RenderEmbeddedObject>(renderer()))
+        return false;
+    Ref<HTMLPlugInElement> protectedThis(*this);
+    downcast<RenderEmbeddedObject>(*renderer()).setPluginUnavailabilityReasonWithDescription(RenderEmbeddedObject::InsecurePluginVersion, unavailabilityDescription);
+    bool replacementIsObscured = isReplacementObscured();
+    // hittest in isReplacementObscured() method could destroy the renderer. Let's refetch it.
+    if (is<RenderEmbeddedObject>(renderer()))
+        downcast<RenderEmbeddedObject>(*renderer()).setUnavailablePluginIndicatorIsHidden(replacementIsObscured);
+    return replacementIsObscured;
+}
+
+bool HTMLPlugInElement::isReplacementObscured()
+{
+    // We should always start hit testing a clean tree.
+    if (document().view())
+        document().view()->updateLayoutAndStyleIfNeededRecursive();
+    // Check if style recalc/layout destroyed the associated renderer.
+    auto* renderView = document().topDocument().renderView();
+    if (!document().view() || !renderView)
+        return false;
+    if (!renderer() || !is<RenderEmbeddedObject>(*renderer()))
+        return false;
+    auto& pluginRenderer = downcast<RenderEmbeddedObject>(*renderer());
+    // Check the opacity of each layer containing the element or its ancestors.
+    float opacity = 1.0;
+    for (auto* layer = pluginRenderer.enclosingLayer(); layer; layer = layer->parent()) {
+        opacity *= layer->renderer().style().opacity();
+        if (opacity < 0.1)
+            return true;
+    }
+    // Calculate the absolute rect for the blocked plugin replacement text.
+    LayoutPoint absoluteLocation(pluginRenderer.absoluteBoundingBoxRect().location());
+    LayoutRect rect = pluginRenderer.unavailablePluginIndicatorBounds(absoluteLocation);
+    if (rect.isEmpty())
+        return true;
+    auto viewRect = document().view()->convertToRootView(snappedIntRect(rect));
+    auto x = viewRect.x();
+    auto y = viewRect.y();
+    auto width = viewRect.width();
+    auto height = viewRect.height();
+    // Hit test the center and near the corners of the replacement text to ensure
+    // it is visible and is not masked by other elements.
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowUserAgentShadowContent | HitTestRequest::AllowChildFrameContent);
+    HitTestResult result;
+    HitTestLocation location = LayoutPoint(x + width / 2, y + height / 2);
+    bool hit = renderView->hitTest(request, location, result);
+    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+        return true;
+
+    location = LayoutPoint(x, y);
+    hit = renderView->hitTest(request, location, result);
+    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+        return true;
+
+    location = LayoutPoint(x + width, y);
+    hit = renderView->hitTest(request, location, result);
+    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+        return true;
+
+    location = LayoutPoint(x + width, y + height);
+    hit = renderView->hitTest(request, location, result);
+    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+        return true;
+
+    location = LayoutPoint(x, y + height);
+    hit = renderView->hitTest(request, location, result);
+    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+        return true;
+    return false;
 }
 
 }

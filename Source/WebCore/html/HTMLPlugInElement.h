@@ -81,7 +81,10 @@ public:
     virtual bool isPlugInImageElement() const { return false; }
 
     bool isUserObservable() const;
-    
+
+    WEBCORE_EXPORT bool isReplacementObscured(const String& unavailabilityDescription);
+    WEBCORE_EXPORT bool isReplacementObscured();
+
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document&);
 

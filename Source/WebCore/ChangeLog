@@ -1,3 +1,27 @@
+2017-06-28  Zalan Bujtas  <zalan@apple.com>
+
+        Move RenderEmbeddedObject::isReplacementObscured to HTMLPlugInElement
+        https://bugs.webkit.org/show_bug.cgi?id=173802
+        <rdar://problem/32884389>
+
+        Reviewed by Simon Fraser.
+
+        Hittesting could potentially destroy "this" renderer so calling it inside RenderEmbeddedObject
+        could leave the caller with a stale pointer.
+        This patch protects the plugin element from getting destroyed and checks if the renderer got
+        deleted during the hittest to avoid nullptr dereference.
+
+        Speculative fix.
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::isReplacementObscured):
+        * html/HTMLPlugInElement.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::isReplacementObscured): Deleted.
+        * rendering/RenderEmbeddedObject.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isPluginUnavailabilityIndicatorObscured):
+
 2017-06-28  Chris Dumez  <cdumez@apple.com>
 
         Avoid copying statistics in ResourceLoadStatisticsStore::readDataFromDecoder()
