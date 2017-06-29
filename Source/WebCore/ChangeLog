@@ -1,3 +1,13 @@
+2017-06-29  Youenn Fablet  <youenn@apple.com>
+
+        Support PeerConnectionStates::BundlePolicy::MaxBundle when setting rtc configuration
+        https://bugs.webkit.org/show_bug.cgi?id=169389
+
+        Unreviewed.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.cpp:
+        (WebCore::configurationFromMediaEndpointConfiguration): Reactivating CPU overuse detection as it might be the cause of the bots regressions.
+
 2017-06-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] ResourceHandleManager violate the class responsibility of ResourceHandle
