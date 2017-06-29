@@ -36,17 +36,12 @@ class KeyedDecoder;
 class KeyedEncoder;
 
 struct ResourceLoadStatistics {
-    explicit ResourceLoadStatistics(const String& primaryDomain)
+    ResourceLoadStatistics(const String& primaryDomain)
         : highLevelDomain(primaryDomain)
     {
     }
 
     ResourceLoadStatistics() = default;
-
-    ResourceLoadStatistics(const ResourceLoadStatistics&) = delete;
-    ResourceLoadStatistics& operator=(const ResourceLoadStatistics&) = delete;
-    ResourceLoadStatistics(ResourceLoadStatistics&&) = default;
-    ResourceLoadStatistics& operator=(ResourceLoadStatistics&&) = default;
 
     void encode(KeyedEncoder&) const;
     bool decode(KeyedDecoder&, unsigned version);

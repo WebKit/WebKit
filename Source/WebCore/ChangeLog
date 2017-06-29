@@ -1,3 +1,15 @@
+2017-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r218944.
+
+        Optimization is incorrect
+
+        Reverted changeset:
+
+        "Avoid copying ResourceLoadStatistics objects"
+        https://bugs.webkit.org/show_bug.cgi?id=173972
+        http://trac.webkit.org/changeset/218944
+
 2017-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r218896): ASSERT in WebPageProxy::dataCallback
