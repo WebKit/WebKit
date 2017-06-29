@@ -3101,23 +3101,42 @@ bool Document::canNavigate(Frame* targetFrame)
     if (!targetFrame)
         return true;
 
-    // Frame-busting is generally allowed, but blocked for sandboxed frames lacking the 'allow-top-navigation' flag.
+    // Cases (i) and (ii) pass the tests from the specifications but might not pass the "security origin" tests.
+    // Hence they are kept for backward compatibility.
+
+    // i. A frame can navigate its top ancestor when its 'allow-top-navigation' flag is set (sometimes known as 'frame-busting').
     if (!isSandboxed(SandboxTopNavigation) && targetFrame == &m_frame->tree().top())
         return true;
 
-    if (isSandboxed(SandboxNavigation)) {
-        if (targetFrame->tree().isDescendantOf(m_frame))
-            return true;
+    // ii. A sandboxed frame can always navigate its descendants.
+    if (isSandboxed(SandboxNavigation) && targetFrame->tree().isDescendantOf(m_frame))
+        return true;
 
-        const char* reason = "The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors.";
-        if (isSandboxed(SandboxTopNavigation) && targetFrame == &m_frame->tree().top())
-            reason = "The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set.";
-
-        printNavigationErrorMessage(targetFrame, url(), reason);
+    // From https://html.spec.whatwg.org/multipage/browsers.html#allowed-to-navigate.
+    // 1. If A is not the same browsing context as B, and A is not one of the ancestor browsing contexts of B, and B is not a top-level browsing context, and A's active document's active sandboxing
+    // flag set has its sandboxed navigation browsing context flag set, then abort these steps negatively.
+    if (m_frame != targetFrame && isSandboxed(SandboxNavigation) && targetFrame->tree().parent() && !targetFrame->tree().isDescendantOf(m_frame)) {
+        printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation is sandboxed, and is therefore disallowed from navigating its ancestors."));
         return false;
     }
 
-    // This is the normal case. A document can navigate its decendant frames,
+    // 2. Otherwise, if B is a top-level browsing context, and is one of the ancestor browsing contexts of A, and A's active document's active sandboxing flag set has its sandboxed
+    // top-level navigation browsing context flag set, then abort these steps negatively.
+    if (m_frame != targetFrame && targetFrame == &m_frame->tree().top() && isSandboxed(SandboxTopNavigation)) {
+        printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set."));
+        return false;
+    }
+
+    // 3. Otherwise, if B is a top-level browsing context, and is neither A nor one of the ancestor browsing contexts of A, and A's Document's active sandboxing flag set has its
+    // sandboxed navigation browsing context flag set, and A is not the one permitted sandboxed navigator of B, then abort these steps negatively.
+    if (!targetFrame->tree().parent() && m_frame != targetFrame && targetFrame != &m_frame->tree().top() && isSandboxed(SandboxNavigation) && targetFrame->loader().opener() != m_frame) {
+        printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation is sandboxed, and is not allowed to navigate this popup."));
+        return false;
+    }
+
+    // 4. Otherwise, terminate positively!
+
+    // This is the normal case. A document can navigate its descendant frames,
     // or, more generally, a document can navigate a frame if the document is
     // in the same origin as any of that frame's ancestors (in the frame
     // hierarchy).

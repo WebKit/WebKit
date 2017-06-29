@@ -1,3 +1,26 @@
+2017-06-28  Frederic Wang  <fwang@igalia.com>
+
+        Align Document::canNavigate on the HTM5 specification
+        https://bugs.webkit.org/show_bug.cgi?id=173162
+
+        Reviewed by Chris Dumez.
+
+        Currently when a frame A with a sandboxed navigation flag tries and navigates another frame B
+        then Document::canNavigate verifies the cases where we try to navigate A's top frame (in
+        that case the allow-top-navigation flag is needed) or not (in that case, B must be a
+        descendant of A). This patch refines that a bit to check the case where B is a popup (in that
+        case navigation is permitted if A is the opener of B). This change aligns on the HTML5
+        specification and allows to pass more W3C Web Platform tests.
+        See https://html.spec.whatwg.org/multipage/browsers.html#allowed-to-navigate
+
+        Tests: imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-3.html
+               imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-3.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::canNavigate): This refines the case where the document's frame has the
+        sandbox navigation flag set in order to handle popup navigation. New comments referring to
+        the HTML5 specification are also added.
+
 2017-06-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Only apply font features for the particular type of font they are being applied to
