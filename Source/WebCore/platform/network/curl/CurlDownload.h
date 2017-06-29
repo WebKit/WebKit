@@ -36,7 +36,7 @@
 #include <winsock2.h>
 #endif
 
-#include "CurlManager.h"
+#include "CurlJobManager.h"
 
 namespace WebCore {
 

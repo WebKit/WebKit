@@ -29,6 +29,8 @@
 
 #include "CurlDownload.h"
 
+#include "CurlContext.h"
+
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "ResourceRequest.h"
@@ -85,7 +87,7 @@ void CurlDownload::init(CurlDownloadListener* listener, const URL& url)
     if (certPath)
         curl_easy_setopt(m_curlHandle, CURLOPT_CAINFO, certPath);
 
-    CURLSH* curlsh = CurlManager::singleton().getCurlShareHandle();
+    CURLSH* curlsh = CurlContext::singleton().curlShareHandle();
     if (curlsh)
         curl_easy_setopt(m_curlHandle, CURLOPT_SHARE, curlsh);
 
@@ -106,13 +108,13 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
 
 bool CurlDownload::start()
 {
-    ref(); // CurlDownloadManager::downloadThread will call deref when the download has finished.
-    return CurlManager::singleton().add(m_curlHandle);
+    ref(); // CurlJobManager will call deref when the download has finished.
+    return CurlJobManager::singleton().add(m_curlHandle);
 }
 
 bool CurlDownload::cancel()
 {
-    return CurlManager::singleton().remove(m_curlHandle);
+    return CurlJobManager::singleton().remove(m_curlHandle);
 }
 
 String CurlDownload::getTempPath() const
@@ -203,7 +205,7 @@ void CurlDownload::didReceiveHeader(const String& header)
         UNUSED_PARAM(err);
 
         if (httpCode >= 200 && httpCode < 300) {
-            URL url = CurlUtils::getEffectiveURL(m_curlHandle);
+            URL url = CurlContext::singleton().getEffectiveURL(m_curlHandle);
             callOnMainThread([this, url = url.isolatedCopy(), protectedThis = makeRef(*this)] {
                 m_response.setURL(url);
                 m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));

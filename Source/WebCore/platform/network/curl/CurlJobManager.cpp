@@ -27,7 +27,9 @@
 #include "config.h"
 
 #if USE(CURL)
-#include "CurlManager.h"
+#include "CurlJobManager.h"
+
+#include "CurlContext.h"
 
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -36,37 +38,18 @@ using namespace WebCore;
 
 namespace WebCore {
 
-class CurlSharedResources {
-public:
-    static void lock(CURL*, curl_lock_data, curl_lock_access, void*);
-    static void unlock(CURL*, curl_lock_data, void*);
-
-private:
-    static Lock* mutexFor(curl_lock_data);
-};
-
-// CurlDownloadManager -------------------------------------------------------------------
-
-CurlManager::CurlManager()
+CurlJobManager::CurlJobManager()
 {
-    curl_global_init(CURL_GLOBAL_ALL);
-    m_curlMultiHandle = curl_multi_init();
-    m_curlShareHandle = curl_share_init();
-    curl_share_setopt(m_curlShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_COOKIE);
-    curl_share_setopt(m_curlShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
-    curl_share_setopt(m_curlShareHandle, CURLSHOPT_LOCKFUNC, CurlSharedResources::lock);
-    curl_share_setopt(m_curlShareHandle, CURLSHOPT_UNLOCKFUNC, CurlSharedResources::unlock);
+    m_curlMultiHandle = CurlContext::singleton().createMultiHandle();
 }
 
-CurlManager::~CurlManager()
+CurlJobManager::~CurlJobManager()
 {
     stopThread();
     curl_multi_cleanup(m_curlMultiHandle);
-    curl_share_cleanup(m_curlShareHandle);
-    curl_global_cleanup();
 }
 
-bool CurlManager::add(CURL* curlHandle)
+bool CurlJobManager::add(CURL* curlHandle)
 {
     ASSERT(isMainThread());
 
@@ -80,7 +63,7 @@ bool CurlManager::add(CURL* curlHandle)
     return true;
 }
 
-bool CurlManager::remove(CURL* curlHandle)
+bool CurlJobManager::remove(CURL* curlHandle)
 {
     LockHolder locker(m_mutex);
 
@@ -89,19 +72,19 @@ bool CurlManager::remove(CURL* curlHandle)
     return true;
 }
 
-int CurlManager::getActiveCount() const
+int CurlJobManager::getActiveCount() const
 {
     LockHolder locker(m_mutex);
     return m_activeHandleList.size();
 }
 
-int CurlManager::getPendingCount() const
+int CurlJobManager::getPendingCount() const
 {
     LockHolder locker(m_mutex);
     return m_pendingHandleList.size();
 }
 
-void CurlManager::startThreadIfNeeded()
+void CurlJobManager::startThreadIfNeeded()
 {
     ASSERT(isMainThread());
 
@@ -115,10 +98,8 @@ void CurlManager::startThreadIfNeeded()
     }
 }
 
-void CurlManager::stopThread()
+void CurlJobManager::stopThread()
 {
-    ASSERT(isMainThread());
-
     setRunThread(false);
 
     if (m_thread) {
@@ -127,13 +108,13 @@ void CurlManager::stopThread()
     }
 }
 
-void CurlManager::stopThreadIfIdle()
+void CurlJobManager::stopThreadIfIdle()
 {
     if (!getActiveCount() && !getPendingCount())
         setRunThread(false);
 }
 
-void CurlManager::updateHandleList()
+void CurlJobManager::updateHandleList()
 {
     LockHolder locker(m_mutex);
 
@@ -152,7 +133,7 @@ void CurlManager::updateHandleList()
     }
 }
 
-bool CurlManager::addToCurl(CURL* curlHandle)
+bool CurlJobManager::addToCurl(CURL* curlHandle)
 {
     CURLMcode retval = curl_multi_add_handle(m_curlMultiHandle, curlHandle);
     if (retval == CURLM_OK) {
@@ -162,7 +143,7 @@ bool CurlManager::addToCurl(CURL* curlHandle)
     return false;
 }
 
-bool CurlManager::removeFromCurl(CURL* curlHandle)
+bool CurlJobManager::removeFromCurl(CURL* curlHandle)
 {
     int handlePos = m_activeHandleList.find(curlHandle);
 
@@ -178,7 +159,7 @@ bool CurlManager::removeFromCurl(CURL* curlHandle)
     return false;
 }
 
-void CurlManager::workerThread()
+void CurlJobManager::workerThread()
 {
     ASSERT(!isMainThread());
 
@@ -234,53 +215,6 @@ void CurlManager::workerThread()
 
         stopThreadIfIdle();
     }
-}
-
-// CURL Utilities
-
-URL CurlUtils::getEffectiveURL(CURL* handle)
-{
-    const char* url;
-    CURLcode err = curl_easy_getinfo(handle, CURLINFO_EFFECTIVE_URL, &url);
-    if (CURLE_OK != err)
-        return URL();
-    return URL(URL(), url);
-}
-
-// Shared Resource management =======================
-
-Lock* CurlSharedResources::mutexFor(curl_lock_data data)
-{
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, cookieMutex, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, dnsMutex, ());
-    DEPRECATED_DEFINE_STATIC_LOCAL(Lock, shareMutex, ());
-
-    switch (data) {
-    case CURL_LOCK_DATA_COOKIE:
-        return &cookieMutex;
-    case CURL_LOCK_DATA_DNS:
-        return &dnsMutex;
-    case CURL_LOCK_DATA_SHARE:
-        return &shareMutex;
-    default:
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    }
-}
-
-// libcurl does not implement its own thread synchronization primitives.
-// these two functions provide mutexes for cookies, and for the global DNS
-// cache.
-void CurlSharedResources::lock(CURL* /* handle */, curl_lock_data data, curl_lock_access /* access */, void* /* userPtr */)
-{
-    if (Lock* mutex = CurlSharedResources::mutexFor(data))
-        mutex->lock();
-}
-
-void CurlSharedResources::unlock(CURL* /* handle */, curl_lock_data data, void* /* userPtr */)
-{
-    if (Lock* mutex = CurlSharedResources::mutexFor(data))
-        mutex->unlock();
 }
 
 }

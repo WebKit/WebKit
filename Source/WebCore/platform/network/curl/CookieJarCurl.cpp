@@ -22,9 +22,8 @@
 #if USE(CURL)
 
 #include "Cookie.h"
-#include "CurlManager.h"
+#include "CurlContext.h"
 #include "NotImplemented.h"
-#include "ResourceHandleManager.h"
 #include "URL.h"
 
 #include <wtf/DateMath.h>
@@ -243,13 +242,15 @@ static String getNetscapeCookieFormat(const URL& url, const String& value)
 
 void setCookiesFromDOM(const NetworkStorageSession&, const URL&, const URL& url, const String& value)
 {
+    const CurlContext& context = CurlContext::singleton();
+
     CURL* curl = curl_easy_init();
 
     if (!curl)
         return;
 
-    const char* cookieJarFileName = ResourceHandleManager::sharedInstance()->getCookieJarFileName();
-    CURLSH* curlsh = CurlManager::singleton().getCurlShareHandle();
+    const char* cookieJarFileName = context.getCookieJarFileName();
+    CURLSH* curlsh = context.curlShareHandle();
 
     curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookieJarFileName);
     curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
@@ -278,7 +279,7 @@ static String cookiesForSession(const NetworkStorageSession&, const URL&, const 
     if (!curl)
         return cookies;
 
-    CURLSH* curlsh = CurlManager::singleton().getCurlShareHandle();
+    CURLSH* curlsh = CurlContext::singleton().curlShareHandle();
 
     curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
 

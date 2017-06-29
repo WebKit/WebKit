@@ -46,26 +46,14 @@ namespace WebCore {
 
 class ResourceHandleManager {
 public:
-    enum ProxyType {
-        HTTP = CURLPROXY_HTTP,
-        Socks4 = CURLPROXY_SOCKS4,
-        Socks4A = CURLPROXY_SOCKS4A,
-        Socks5 = CURLPROXY_SOCKS5,
-        Socks5Hostname = CURLPROXY_SOCKS5_HOSTNAME
-    };
     static ResourceHandleManager* sharedInstance();
     void add(ResourceHandle*);
     void cancel(ResourceHandle*);
-
-    void setCookieJarFileName(const char* cookieJarFileName);
-    const char* getCookieJarFileName() const;
 
     void dispatchSynchronousJob(ResourceHandle*);
 
     void setupPOST(ResourceHandle*, struct curl_slist**);
     void setupPUT(ResourceHandle*, struct curl_slist**);
-
-    void setProxyInfo(const String& host = emptyString(), unsigned long port = 0, ProxyType = HTTP, const String& username = emptyString(), const String& password = emptyString());
 
 private:
     ResourceHandleManager();
@@ -79,23 +67,11 @@ private:
 
     void initializeHandle(ResourceHandle*);
 
-    void initCookieSession();
-
     Timer m_downloadTimer;
     CURLM* m_curlMultiHandle;
-    CURLSH* m_curlShareHandle;
-    char* m_cookieJarFileName;
     char m_curlErrorBuffer[CURL_ERROR_SIZE];
     Vector<ResourceHandle*> m_resourceHandleList;
-    const CString m_certificatePath;
     int m_runningJobs;
-    
-    String m_proxy;
-    ProxyType m_proxyType;
-
-#ifndef NDEBUG
-    FILE* m_logFile;
-#endif
 };
 
 }

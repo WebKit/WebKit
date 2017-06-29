@@ -1,3 +1,77 @@
+2017-06-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Separate global curl settings from ResourceHandleManager as CurlContext class
+        https://bugs.webkit.org/show_bug.cgi?id=173629
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWinCairo.cmake:
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForSession):
+        * platform/network/curl/CurlContext.cpp: Added.
+        (WebCore::certificatePath):
+        (WebCore::cookieJarPath):
+        (WebCore::CurlContext::CurlContext):
+        (WebCore::CurlContext::~CurlContext):
+        (WebCore::CurlContext::initCookieSession):
+        (WebCore::CurlContext::ProxyInfo::url):
+        (WebCore::CurlContext::setProxyInfo):
+        (WebCore::CurlContext::getEffectiveURL):
+        (WebCore::CurlContext::createMultiHandle):
+        (WebCore::CurlContext::mutexFor):
+        (WebCore::CurlContext::lock):
+        (WebCore::CurlContext::unlock):
+        * platform/network/curl/CurlContext.h: Added.
+        (WebCore::CurlContext::singleton):
+        (WebCore::CurlContext::curlShareHandle):
+        (WebCore::CurlContext::getCookieJarFileName):
+        (WebCore::CurlContext::setCookieJarFileName):
+        (WebCore::CurlContext::getCertificatePath):
+        (WebCore::CurlContext::shouldIgnoreSSLErrors):
+        (WebCore::CurlContext::proxyInfo):
+        (WebCore::CurlContext::setProxyInfo):
+        (WebCore::CurlContext::getLogFile):
+        (WebCore::CurlContext::isVerbose):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::init):
+        (WebCore::CurlDownload::start):
+        (WebCore::CurlDownload::cancel):
+        (WebCore::CurlDownload::didReceiveHeader):
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/CurlJobManager.cpp: Renamed from Source/WebCore/platform/network/curl/CurlManager.cpp.
+        (WebCore::CurlJobManager::CurlJobManager):
+        (WebCore::CurlJobManager::~CurlJobManager):
+        (WebCore::CurlJobManager::add):
+        (WebCore::CurlJobManager::remove):
+        (WebCore::CurlJobManager::getActiveCount):
+        (WebCore::CurlJobManager::getPendingCount):
+        (WebCore::CurlJobManager::startThreadIfNeeded):
+        (WebCore::CurlJobManager::stopThread):
+        (WebCore::CurlJobManager::stopThreadIfIdle):
+        (WebCore::CurlJobManager::updateHandleList):
+        (WebCore::CurlJobManager::addToCurl):
+        (WebCore::CurlJobManager::removeFromCurl):
+        (WebCore::CurlJobManager::workerThread):
+        * platform/network/curl/CurlJobManager.h: Renamed from Source/WebCore/platform/network/curl/CurlManager.h.
+        (WebCore::CurlJobManager::singleton):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::~ResourceHandleManager):
+        (WebCore::handleLocalReceiveResponse):
+        (WebCore::getProtectionSpace):
+        (WebCore::headerCallback):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::initializeHandle):
+        (WebCore::certificatePath): Deleted.
+        (WebCore::cookieJarPath): Deleted.
+        (WebCore::ResourceHandleManager::setCookieJarFileName): Deleted.
+        (WebCore::ResourceHandleManager::getCookieJarFileName): Deleted.
+        (WebCore::ResourceHandleManager::setProxyInfo): Deleted.
+        (WebCore::ResourceHandleManager::initCookieSession): Deleted.
+        * platform/network/curl/ResourceHandleManager.h:
+        (): Deleted.
+
 2017-06-29  Chris Dumez  <cdumez@apple.com>
 
         Avoid copying ResourceLoadStatistics objects

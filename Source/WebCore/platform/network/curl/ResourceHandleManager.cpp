@@ -42,7 +42,7 @@
 
 #include "CredentialStorage.h"
 #include "CurlCacheManager.h"
-#include "CurlManager.h"
+#include "CurlContext.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -60,9 +60,6 @@
 #include <wtf/text/StringView.h>
 
 #if OS(WINDOWS)
-#include "WebCoreBundleWin.h"
-#include <shlobj.h>
-#include <shlwapi.h>
 #else
 #include <sys/param.h>
 #define MAX_PATH MAXPATHLEN
@@ -73,13 +70,9 @@
 #if ENABLE(WEB_TIMING)
 #include <wtf/CurrentTime.h>
 #endif
-#if USE(CF)
-#include <wtf/RetainPtr.h>
-#endif
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -87,61 +80,6 @@ const int selectTimeoutMS = 5;
 static const Seconds pollTime { 50_ms };
 const int maxRunningJobs = 128;
 const char* const errorDomainCurl = "CurlErrorDomain";
-
-static const bool ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
-
-static CString certificatePath()
-{
-    char* envPath = getenv("CURL_CA_BUNDLE_PATH");
-    if (envPath)
-        return envPath;
-
-#if USE(CF)
-    CFBundleRef webKitBundleRef = webKitBundle();
-    if (webKitBundleRef) {
-        RetainPtr<CFURLRef> certURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundleRef, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
-        if (certURLRef) {
-            char path[MAX_PATH];
-            CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH);
-            return path;
-        }
-    }
-#endif
-
-    return CString();
-}
-
-static char* cookieJarPath()
-{
-    char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
-    if (cookieJarPath)
-        return fastStrDup(cookieJarPath);
-
-#if OS(WINDOWS)
-    char executablePath[MAX_PATH];
-    char appDataDirectory[MAX_PATH];
-    char cookieJarFullPath[MAX_PATH];
-    char cookieJarDirectory[MAX_PATH];
-
-    if (FAILED(::SHGetFolderPathA(0, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, appDataDirectory))
-        || FAILED(::GetModuleFileNameA(0, executablePath, MAX_PATH)))
-        return fastStrDup("cookies.dat");
-
-    ::PathRemoveExtensionA(executablePath);
-    LPSTR executableName = ::PathFindFileNameA(executablePath);
-    sprintf_s(cookieJarDirectory, MAX_PATH, "%s/%s", appDataDirectory, executableName);
-    sprintf_s(cookieJarFullPath, MAX_PATH, "%s/cookies.dat", cookieJarDirectory);
-
-    if (::SHCreateDirectoryExA(0, cookieJarDirectory, 0) != ERROR_SUCCESS
-        && ::GetLastError() != ERROR_FILE_EXISTS
-        && ::GetLastError() != ERROR_ALREADY_EXISTS)
-        return fastStrDup("cookies.dat");
-
-    return fastStrDup(cookieJarFullPath);
-#else
-    return fastStrDup("cookies.dat");
-#endif
-}
 
 #if ENABLE(WEB_TIMING)
 static void calculateWebTimingInformations(ResourceHandleInternal* d)
@@ -192,47 +130,14 @@ inline static bool isHttpNotModified(int statusCode)
 
 ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(*this, &ResourceHandleManager::downloadTimerCallback)
-    , m_cookieJarFileName(cookieJarPath())
-    , m_certificatePath(certificatePath())
     , m_runningJobs(0)
-#ifndef NDEBUG
-    , m_logFile(nullptr)
-#endif
 {
-    CURLSH* h = CurlManager::singleton().getCurlShareHandle();
-    m_curlShareHandle = h;
-    m_curlMultiHandle = curl_multi_init();
-
-
-    initCookieSession();
-
-#ifndef NDEBUG
-    char* logFile = getenv("CURL_LOG_FILE");
-    if (logFile)
-        m_logFile = fopen(logFile, "a");
-#endif
+    m_curlMultiHandle = CurlContext::singleton().createMultiHandle();
 }
 
 ResourceHandleManager::~ResourceHandleManager()
 {
     curl_multi_cleanup(m_curlMultiHandle);
-    if (m_cookieJarFileName)
-        fastFree(m_cookieJarFileName);
-
-#ifndef NDEBUG
-    if (m_logFile)
-        fclose(m_logFile);
-#endif
-}
-
-void ResourceHandleManager::setCookieJarFileName(const char* cookieJarFileName)
-{
-    m_cookieJarFileName = fastStrDup(cookieJarFileName);
-}
-
-const char* ResourceHandleManager::getCookieJarFileName() const
-{
-    return m_cookieJarFileName;
 }
 
 ResourceHandleManager* ResourceHandleManager::sharedInstance()
@@ -250,7 +155,7 @@ static void handleLocalReceiveResponse (CURL* handle, ResourceHandle* job, Resou
     // which means the ResourceLoader's response does not contain the URL.
     // Run the code here for local files to resolve the issue.
     // TODO: See if there is a better approach for handling this.
-    URL url = CurlUtils::getEffectiveURL(handle);
+    URL url = CurlContext::singleton().getEffectiveURL(handle);
     ASSERT(url.isValid());
     d->m_response.setURL(url);
      if (d->client())
@@ -361,7 +266,7 @@ static bool getProtectionSpace(CURL* h, const ResourceResponse& response, Protec
     if (err != CURLE_OK)
         return false;
 
-    URL url = CurlUtils::getEffectiveURL(h);
+    URL url = CurlContext::singleton().getEffectiveURL(h);
     if (!url.isValid())
         return false;
 
@@ -450,7 +355,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
         curl_easy_getinfo(h, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
         d->m_response.setExpectedContentLength(static_cast<long long int>(contentLength));
 
-        d->m_response.setURL(CurlUtils::getEffectiveURL(h));
+        d->m_response.setURL(CurlContext::singleton().getEffectiveURL(h));
 
         d->m_response.setHTTPStatusCode(httpCode);
         d->m_response.setMimeType(extractMIMETypeFromMediaType(d->m_response.httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
@@ -657,7 +562,7 @@ void ResourceHandleManager::downloadTimerCallback()
                 CurlCacheManager::getInstance().didFinishLoading(*job);
             }
         } else {
-            URL url = CurlUtils::getEffectiveURL(d->m_handle);
+            URL url = CurlContext::singleton().getEffectiveURL(d->m_handle);
 #ifndef NDEBUG
             fprintf(stderr, "Curl ERROR for url='%s', error: '%s'\n", url.string().utf8().data(), curl_easy_strerror(msg->data.result));
 #endif
@@ -676,25 +581,6 @@ void ResourceHandleManager::downloadTimerCallback()
 
     if (!m_downloadTimer.isActive() && (started || (runningHandles > 0)))
         m_downloadTimer.startOneShot(pollTime);
-}
-
-void ResourceHandleManager::setProxyInfo(const String& host,
-                                         unsigned long port,
-                                         ProxyType type,
-                                         const String& username,
-                                         const String& password)
-{
-    m_proxyType = type;
-
-    if (!host.length()) {
-        m_proxy = emptyString();
-    } else {
-        String userPass;
-        if (username.length() || password.length())
-            userPass = username + ":" + password + "@";
-
-        m_proxy = String("http://") + userPass + host + ":" + String::number(port);
-    }
 }
 
 void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
@@ -1019,6 +905,8 @@ void ResourceHandleManager::applyAuthenticationToRequest(ResourceHandle* handle,
 
 void ResourceHandleManager::initializeHandle(ResourceHandle* job)
 {
+    CurlContext& context = CurlContext::singleton();
+
     static const int allowedProtocols = CURLPROTO_FILE | CURLPROTO_FTP | CURLPROTO_FTPS | CURLPROTO_HTTP | CURLPROTO_HTTPS;
     URL url = job->firstRequest().url();
 
@@ -1048,10 +936,10 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
         ASSERT_UNUSED(error, error == CURLE_OK);
     }
 #ifndef NDEBUG
-    if (getenv("DEBUG_CURL"))
+    if (context.isVerbose())
         curl_easy_setopt(d->m_handle, CURLOPT_VERBOSE, 1);
-    if (m_logFile)
-        curl_easy_setopt(d->m_handle, CURLOPT_STDERR, m_logFile);
+    if (context.getLogFile())
+        curl_easy_setopt(d->m_handle, CURLOPT_STDERR, context.getLogFile());
 #endif
     curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, 1L);
     curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYHOST, 2L);
@@ -1065,19 +953,20 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     curl_easy_setopt(d->m_handle, CURLOPT_FOLLOWLOCATION, 1);
     curl_easy_setopt(d->m_handle, CURLOPT_MAXREDIRS, 10);
     curl_easy_setopt(d->m_handle, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-    curl_easy_setopt(d->m_handle, CURLOPT_SHARE, m_curlShareHandle);
+    curl_easy_setopt(d->m_handle, CURLOPT_SHARE, CurlContext::singleton().curlShareHandle());
     curl_easy_setopt(d->m_handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 5); // 5 minutes
     curl_easy_setopt(d->m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
     curl_easy_setopt(d->m_handle, CURLOPT_REDIR_PROTOCOLS, allowedProtocols);
     setSSLClientCertificate(job);
 
-    if (ignoreSSLErrors)
+    if (context.shouldIgnoreSSLErrors())
         curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, false);
     else
         setSSLVerifyOptions(job);
 
-    if (!m_certificatePath.isNull())
-       curl_easy_setopt(d->m_handle, CURLOPT_CAINFO, m_certificatePath.data());
+    const char* certificate = context.getCertificatePath();
+    if (certificate)
+        curl_easy_setopt(d->m_handle, CURLOPT_CAINFO, certificate);
 
     // enable gzip and deflate through Accept-Encoding:
     curl_easy_setopt(d->m_handle, CURLOPT_ENCODING, "");
@@ -1089,8 +978,9 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     d->m_url = fastStrDup(urlString.latin1().data());
     curl_easy_setopt(d->m_handle, CURLOPT_URL, d->m_url);
 
-    if (m_cookieJarFileName)
-        curl_easy_setopt(d->m_handle, CURLOPT_COOKIEJAR, m_cookieJarFileName);
+    const char* cookieJar = context.getCookieJarFileName();
+    if (cookieJar)
+        curl_easy_setopt(d->m_handle, CURLOPT_COOKIEJAR, cookieJar);
 
     struct curl_slist* headers = 0;
     if (job->firstRequest().httpHeaderFields().size() > 0) {
@@ -1150,32 +1040,11 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     applyAuthenticationToRequest(job, job->firstRequest());
 
     // Set proxy options if we have them.
-    if (m_proxy.length()) {
-        curl_easy_setopt(d->m_handle, CURLOPT_PROXY, m_proxy.utf8().data());
-        curl_easy_setopt(d->m_handle, CURLOPT_PROXYTYPE, m_proxyType);
+    auto& proxy = CurlContext::singleton().proxyInfo();
+    if (proxy.type != CurlProxyType::Invalid) {
+        curl_easy_setopt(d->m_handle, CURLOPT_PROXY, proxy.url().utf8().data());
+        curl_easy_setopt(d->m_handle, CURLOPT_PROXYTYPE, proxy.type);
     }
-}
-
-void ResourceHandleManager::initCookieSession()
-{
-    // Curl saves both persistent cookies, and session cookies to the cookie file.
-    // The session cookies should be deleted before starting a new session.
-
-    CURL* curl = curl_easy_init();
-
-    if (!curl)
-        return;
-
-    curl_easy_setopt(curl, CURLOPT_SHARE, m_curlShareHandle);
-
-    if (m_cookieJarFileName) {
-        curl_easy_setopt(curl, CURLOPT_COOKIEFILE, m_cookieJarFileName);
-        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, m_cookieJarFileName);
-    }
-
-    curl_easy_setopt(curl, CURLOPT_COOKIESESSION, 1);
-
-    curl_easy_cleanup(curl);
 }
 
 void ResourceHandleManager::cancel(ResourceHandle* job)

@@ -33,8 +33,9 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CredentialStorageCurl.cpp
     platform/network/curl/CurlCacheEntry.cpp
     platform/network/curl/CurlCacheManager.cpp
+    platform/network/curl/CurlContext.cpp
     platform/network/curl/CurlDownload.cpp
-    platform/network/curl/CurlManager.cpp
+    platform/network/curl/CurlJobManager.cpp
     platform/network/curl/DNSCurl.cpp
     platform/network/curl/FormDataStreamCurl.cpp
     platform/network/curl/MultipartHandle.cpp

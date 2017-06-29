@@ -28,6 +28,7 @@
 
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(WIN)
 #include <windows.h>
@@ -35,7 +36,6 @@
 #endif
 
 #include <curl/curl.h>
-#include "URL.h"
 
 namespace WebCore {
 
@@ -46,28 +46,26 @@ public:
     virtual CurlJobAction handleCurlMsg(CURLMsg*) = 0;
 };
 
-class CurlManager {
+class CurlJobManager {
 public:
-    static CurlManager& singleton()
+    static CurlJobManager& singleton()
     {
         // Since it's a static variable, if the class has already been created,
         // It won't be created again.
         // And it **is** thread-safe in C++11.
 
-        static CurlManager shared;
+        static CurlJobManager shared;
         return shared;
     }
 
-    CurlManager();
-    virtual ~CurlManager();
+    CurlJobManager();
+    virtual ~CurlJobManager();
 
     bool add(CURL* curlHandle);
     bool remove(CURL* curlHandle);
 
     int getActiveCount() const;
     int getPendingCount() const;
-
-    CURLSH* getCurlShareHandle() const { return m_curlShareHandle; }
 
 private:
     void startThreadIfNeeded();
@@ -94,14 +92,7 @@ private:
     mutable Lock m_mutex;
     bool m_runThread { false };
 
-    CURLSH* m_curlShareHandle { nullptr };
-
     friend class CurlJob;
-};
-
-class CurlUtils {
-public:
-    static URL getEffectiveURL(CURL* handle);
 };
 
 }
