@@ -74,6 +74,7 @@
 #include "HTMLLabelElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
+#include "HTMLTextFormControlElement.h"
 #include "InlineElementBox.h"
 #include "MathMLElement.h"
 #include "Page.h"
@@ -93,6 +94,7 @@
 #include "SVGElement.h"
 #include "ScrollView.h"
 #include "TextBoundaries.h"
+#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include <wtf/DataLog.h>
 
@@ -1293,6 +1295,25 @@ void AXObjectCache::postTextReplacementNotification(Node* node, AXTextEditType d
 #endif
 }
 
+void AXObjectCache::postTextReplacementNotificationForTextControl(HTMLTextFormControlElement& textControl, const String& deletedText, const String& insertedText)
+{
+    stopCachingComputedObjectAttributes();
+
+    AccessibilityObject* object = getOrCreate(&textControl);
+#if PLATFORM(COCOA)
+    if (object) {
+        if (enqueuePasswordValueChangeNotification(object))
+            return;
+        object = object->observableObject();
+    }
+
+    postTextReplacementPlatformNotificationForTextControl(object, deletedText, insertedText, textControl);
+#else
+    nodeTextChangePlatformNotification(object, textChangeForEditType(AXTextEditTypeDelete), 0, deletedText);
+    nodeTextChangePlatformNotification(object, textChangeForEditType(AXTextEditTypeInsert), 0, insertedText);
+#endif
+}
+
 bool AXObjectCache::enqueuePasswordValueChangeNotification(AccessibilityObject* object)
 {
     if (!isPasswordFieldOrContainedByPasswordField(object))
@@ -2083,45 +2104,73 @@ AccessibilityObject* AXObjectCache::accessibilityObjectForTextMarkerData(TextMar
     return this->getOrCreate(domNode);
 }
 
-void AXObjectCache::textMarkerDataForVisiblePosition(TextMarkerData& textMarkerData, const VisiblePosition& visiblePos)
+std::optional<TextMarkerData> AXObjectCache::textMarkerDataForVisiblePosition(const VisiblePosition& visiblePos)
 {
-    // This memory must be bzero'd so instances of TextMarkerData can be tested for byte-equivalence.
-    // This also allows callers to check for failure by looking at textMarkerData upon return.
-    memset(&textMarkerData, 0, sizeof(TextMarkerData));
-    
     if (visiblePos.isNull())
-        return;
-    
+        return std::nullopt;
+
     Position deepPos = visiblePos.deepEquivalent();
     Node* domNode = deepPos.deprecatedNode();
     ASSERT(domNode);
     if (!domNode)
-        return;
-    
+        return std::nullopt;
+
     if (is<HTMLInputElement>(*domNode) && downcast<HTMLInputElement>(*domNode).isPasswordField())
-        return;
-    
+        return std::nullopt;
+
     // If the visible position has an anchor type referring to a node other than the anchored node, we should
     // set the text marker data with CharacterOffset so that the offset will correspond to the node.
     CharacterOffset characterOffset = characterOffsetFromVisiblePosition(visiblePos);
     if (deepPos.anchorType() == Position::PositionIsAfterAnchor || deepPos.anchorType() == Position::PositionIsAfterChildren) {
+        TextMarkerData textMarkerData;
         textMarkerDataForCharacterOffset(textMarkerData, characterOffset);
-        return;
+        return textMarkerData;
     }
-    
+
     // find or create an accessibility object for this node
     AXObjectCache* cache = domNode->document().axObjectCache();
     RefPtr<AccessibilityObject> obj = cache->getOrCreate(domNode);
-    
+
+    TextMarkerData textMarkerData;
     textMarkerData.axID = obj.get()->axObjectID();
     textMarkerData.node = domNode;
     textMarkerData.offset = deepPos.deprecatedEditingOffset();
     textMarkerData.affinity = visiblePos.affinity();
-    
+
     textMarkerData.characterOffset = characterOffset.offset;
     textMarkerData.characterStartIndex = characterOffset.startIndex;
-    
+
     cache->setNodeInUse(domNode);
+
+    return textMarkerData;
+}
+
+// This function exits as a performance optimization to avoid a synchronous layout.
+std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTextControl(HTMLTextFormControlElement& textControl)
+{
+    TextControlInnerTextElement* innerTextElement = textControl.innerTextElement();
+    if (!innerTextElement)
+        return std::nullopt;
+
+    if (is<HTMLInputElement>(textControl) && downcast<HTMLInputElement>(textControl).isPasswordField())
+        return std::nullopt;
+
+    Position firstPosition = firstPositionInNode(innerTextElement);
+    Node* firstChild = innerTextElement->firstChild();
+    if (!firstChild)
+        firstChild = innerTextElement;
+    ContainerNode* editingHost = highestEditableRoot(firstPosition);
+
+    AXObjectCache* cache = textControl.document().axObjectCache();
+    RefPtr<AccessibilityObject> obj = cache->getOrCreate(editingHost);
+
+    TextMarkerData textMarkerData;
+    textMarkerData.axID = obj.get()->axObjectID();
+    textMarkerData.node = firstChild;
+
+    cache->setNodeInUse(&textControl);
+
+    return textMarkerData;
 }
 
 CharacterOffset AXObjectCache::nextCharacterOffset(const CharacterOffset& characterOffset, bool ignoreNextNodeStart)

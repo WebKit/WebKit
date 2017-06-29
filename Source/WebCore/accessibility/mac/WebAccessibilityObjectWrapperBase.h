@@ -37,6 +37,7 @@ class AccessibilityObject;
 struct AccessibilitySearchCriteria;
 class IntRect;
 class FloatPoint;
+class HTMLTextFormControlElement;
 class Path;
 class VisiblePosition;
 }

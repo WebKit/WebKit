@@ -40,6 +40,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LayoutDisallowedScope.h"
 #include "Logging.h"
 #include "NoEventDispatchAssertion.h"
 #include "NodeTraversal.h"
@@ -549,7 +550,8 @@ static String innerTextValueFrom(TextControlInnerTextElement& innerText)
 
 void HTMLTextFormControlElement::setInnerTextValue(const String& value)
 {
-    TextControlInnerTextElement* innerText = innerTextElement();
+    LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::PerformanceOptimization);
+    RefPtr<TextControlInnerTextElement> innerText = innerTextElement();
     if (!innerText)
         return;
 
@@ -577,7 +579,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
 #if HAVE(ACCESSIBILITY) && PLATFORM(COCOA)
         if (textIsChanged && renderer()) {
             if (AXObjectCache* cache = document().existingAXObjectCache())
-                cache->postTextReplacementNotification(this, AXTextEditTypeDelete, previousValue, AXTextEditTypeInsert, value, VisiblePosition(Position(this, Position::PositionIsBeforeAnchor)));
+                cache->postTextReplacementNotificationForTextControl(*this, previousValue, value);
         }
 #endif
     }

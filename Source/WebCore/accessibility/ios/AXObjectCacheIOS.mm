@@ -113,6 +113,11 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
     postPlatformNotification(object, AXValueChanged);
 }
 
+void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(AccessibilityObject* object, const String&, const String&, HTMLTextFormControlElement&)
+{
+    postPlatformNotification(object, AXValueChanged);
+}
+
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* axFrameObject, AXLoadingEvent loadingEvent)
 {
     if (!axFrameObject)

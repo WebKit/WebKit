@@ -180,10 +180,10 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 + (WebAccessibilityTextMarker *)textMarkerWithVisiblePosition:(VisiblePosition&)visiblePos cache:(AXObjectCache*)cache
 {
-    TextMarkerData textMarkerData;
-    cache->textMarkerDataForVisiblePosition(textMarkerData, visiblePos);
-    
-    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData cache:cache] autorelease];
+    auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
+    if (!textMarkerData)
+        return nil;
+    return [[[WebAccessibilityTextMarker alloc] initWithTextMarker:&textMarkerData.value() cache:cache] autorelease];
 }
 
 + (WebAccessibilityTextMarker *)textMarkerWithCharacterOffset:(CharacterOffset&)characterOffset cache:(AXObjectCache*)cache

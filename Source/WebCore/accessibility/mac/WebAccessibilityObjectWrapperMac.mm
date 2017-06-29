@@ -681,18 +681,30 @@ static CharacterOffset characterOffsetForTextMarker(AXObjectCache* cache, CFType
 static id textMarkerForVisiblePosition(AXObjectCache* cache, const VisiblePosition& visiblePos)
 {
     ASSERT(cache);
-    
-    TextMarkerData textMarkerData;
-    cache->textMarkerDataForVisiblePosition(textMarkerData, visiblePos);
-    if (!textMarkerData.axID)
+
+    auto textMarkerData = cache->textMarkerDataForVisiblePosition(visiblePos);
+    if (!textMarkerData)
         return nil;
-    
-    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData, sizeof(textMarkerData)));
+
+    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData.value(), sizeof(textMarkerData.value())));
 }
 
 - (id)textMarkerForVisiblePosition:(const VisiblePosition &)visiblePos
 {
     return textMarkerForVisiblePosition(m_object->axObjectCache(), visiblePos);
+}
+
+- (id)textMarkerForFirstPositionInTextControl:(HTMLTextFormControlElement &)textControl
+{
+    auto *cache = m_object->axObjectCache();
+    if (!cache)
+        return nil;
+
+    auto textMarkerData = cache->textMarkerDataForFirstPositionInTextControl(textControl);
+    if (!textMarkerData)
+        return nil;
+
+    return CFBridgingRelease(wkCreateAXTextMarker(&textMarkerData.value(), sizeof(textMarkerData.value())));
 }
 
 static VisiblePosition visiblePositionForTextMarker(AXObjectCache* cache, CFTypeRef textMarker)

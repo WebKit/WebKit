@@ -4240,6 +4240,7 @@
 		9BC6C21C13CCC97B008E0337 /* HTMLTextFormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */; };
 		9BD0BF9312A42BF50072FD43 /* ScopedEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */; };
 		9BD0BF9412A42BF50072FD43 /* ScopedEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */; };
+		9BD1F6821F046310001C9CDD /* LayoutDisallowedScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD1F6811F046310001C9CDD /* LayoutDisallowedScope.cpp */; };
 		9BD4E9161C462872005065BC /* JSCustomElementInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */; };
 		9BD4E9171C462872005065BC /* JSCustomElementInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD4E9151C462872005065BC /* JSCustomElementInterface.h */; };
 		9BD4E91A1C462CFC005065BC /* CustomElementRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD4E9181C462CFC005065BC /* CustomElementRegistry.cpp */; };
@@ -12527,6 +12528,8 @@
 		9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFormControlElement.cpp; sourceTree = "<group>"; };
 		9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedEventQueue.h; sourceTree = "<group>"; };
 		9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedEventQueue.cpp; sourceTree = "<group>"; };
+		9BD1F6801F0462B8001C9CDD /* LayoutDisallowedScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutDisallowedScope.h; sourceTree = "<group>"; };
+		9BD1F6811F046310001C9CDD /* LayoutDisallowedScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutDisallowedScope.cpp; sourceTree = "<group>"; };
 		9BD4E9141C462872005065BC /* JSCustomElementInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementInterface.cpp; sourceTree = "<group>"; };
 		9BD4E9151C462872005065BC /* JSCustomElementInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomElementInterface.h; sourceTree = "<group>"; };
 		9BD4E9181C462CFC005065BC /* CustomElementRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomElementRegistry.cpp; sourceTree = "<group>"; };
@@ -25408,6 +25411,8 @@
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
 				580371631A66F1D300BAF519 /* LayerFragment.h */,
+				9BD1F6811F046310001C9CDD /* LayoutDisallowedScope.cpp */,
+				9BD1F6801F0462B8001C9CDD /* LayoutDisallowedScope.h */,
 				A120ACA113F9984600FE4AC7 /* LayoutRepainter.cpp */,
 				A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */,
 				2D9066040BE141D400956998 /* LayoutState.cpp */,
@@ -33762,6 +33767,7 @@
 				97AABD1814FA09D5007457AE /* ThreadableWebSocketChannelClientWrapper.cpp in Sources */,
 				51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */,
 				0F6383DD18615B29003E5DB5 /* ThreadedScrollingTree.cpp in Sources */,
+				9BD1F6821F046310001C9CDD /* LayoutDisallowedScope.cpp in Sources */,
 				E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */,
 				185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */,
 				7AA3A699194A64E7001CBD24 /* TileController.cpp in Sources */,

@@ -107,6 +107,7 @@
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
 #include "Language.h"
+#include "LayoutDisallowedScope.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MainFrame.h"
@@ -1914,6 +1915,7 @@ void Document::updateStyleIfNeeded()
 
 void Document::updateLayout()
 {
+    ASSERT(LayoutDisallowedScope::isLayoutAllowed());
     ASSERT(isMainThread());
 
     FrameView* frameView = view();

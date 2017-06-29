@@ -1,3 +1,78 @@
+2017-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Safari's Speedometer score massively regresses when accessibility is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=173912
+
+        Reviewed by Chris Fleizach.
+
+        The bug was caused by HTMLTextFormControlElement::setInnerTextValue triggering a synchronous layout
+        via constructing VisiblePosition when the accessibility tree is present.
+
+        Added AXObjectCache::postTextReplacementNotificationForTextControl which avoids the construction of
+        VisiblePosition and other means of triggering a synchronous layout. This patch also fixes a subtle bug
+        that HTMLTextFormControlElement was creating TextMarkerData with axID set to that of the text control
+        element instead of the root editable element inside its shadow tree even though the typing command uses
+        axID of the root editable element. While I couldn't find any user-visible behavioral change from this
+        code change, new code is more self-consistent.
+
+        Also added LayoutDisallowedScope which asserts that no synchronous layout happens in setInnerTextValue
+        so that we don't introduce a new performance regression like this in the future.
+
+        No new tests. Existing tests in accessibility directory covers this.
+
+        * CMakeLists.txt: Added LayoutDisallowedScope.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::postTextReplacementNotificationForTextControl): Added.
+        (WebCore::AXObjectCache::textMarkerDataForVisiblePosition): Modernized. Returns optional<TextMarkerData>
+        instead of taking TextMarkerData as an out-argument, and returning with axID of 0.
+        (WebCore::AXObjectCache::textMarkerDataForFirstPositionInTextControl): Added. This specialized version
+        constructs TextMarkerData for the first position inside the editable region in a text control without
+        triggering a synchronous layout.
+
+        * accessibility/AXObjectCache.h:
+        (WebCore::TextMarkerData): Initialize each member automatically.
+        (WebCore::AXObjectCache::postTextReplacementNotificationForTextControl):
+
+        * accessibility/ios/AXObjectCacheIOS.mm:
+        (WebCore::AXObjectCache::postTextReplacementPlatformNotificationForTextControl): Added.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (+[WebAccessibilityTextMarker textMarkerWithVisiblePosition:cache:]):
+
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::addTextMarkerFor): Extracted from textReplacementChangeDictionary. Added a new variant which
+        takes a text form control instead.
+        (WebCore::textReplacementChangeDictionary): Templatized this function to either take VisiblePosition
+        and call textMarkerForVisiblePosition or take HTMLTextFormControlElement and call
+        textMarkerForFirstPositionInTextControl.
+        (WebCore::postUserInfoForChanges): Extracted from postTextReplacementPlatformNotification.
+        (WebCore::AXObjectCache::postTextReplacementPlatformNotification): 
+        (WebCore::AXObjectCache::postTextReplacementPlatformNotificationForTextControl): Added.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.h:
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (textMarkerForVisiblePosition):
+        (-[WebAccessibilityObjectWrapper textMarkerForFirstPositionInTextControl:]): Added.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayout): Assert that LayoutDisallowedScope is not in the stack frame.
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::setInnerTextValue): Call postTextReplacementNotificationForTextControl
+        to avoid triggering a synchronous layout. Also create LayoutDisallowedScope to avoid a similar performance
+        regression from being introduced in the future in this function. Finally, made innerText a RefPtr for extra
+        safety since we're using it after updating the DOM tree.
+
+        * rendering/LayoutDisallowedScope.cpp: Added.
+        * rendering/LayoutDisallowedScope.h: Added.
+        (WebCore::LayoutDisallowedScope::LayoutDisallowedScope):
+        (WebCore::LayoutDisallowedScope::~LayoutDisallowedScope):
+        (WebCore::LayoutDisallowedScope::isLayoutAllowed):
+
 2017-06-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Cannot italicize or bold text rendered with text styles
