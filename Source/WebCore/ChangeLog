@@ -1,3 +1,15 @@
+2017-06-28  Chris Dumez  <cdumez@apple.com>
+
+        [ResourceLoadStatistics] Simplify PrevalentResourceTelemetry struct
+        https://bugs.webkit.org/show_bug.cgi?id=173953
+
+        Reviewed by Sam Weinig.
+
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry):
+        * loader/ResourceLoadStatisticsStore.h:
+        (WebCore::PrevalentResourceTelemetry::PrevalentResourceTelemetry): Deleted.
+
 2017-06-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange

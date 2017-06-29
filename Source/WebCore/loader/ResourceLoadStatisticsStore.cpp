@@ -42,7 +42,6 @@
 namespace WebCore {
 
 static const auto statisticsModelVersion = 4;
-static const auto secondsPerDay = 24 * 3600;
 static Seconds timeToLiveUserInteraction { 24_h * 30. };
 static Seconds timeToLiveCookiePartitionFree { 24_h };
 static Seconds grandfatheringTime { 1_h };
@@ -382,24 +381,23 @@ Vector<PrevalentResourceTelemetry> ResourceLoadStatisticsStore::sortedPrevalentR
 {
     auto locker = holdLock(m_statisticsLock);
     Vector<PrevalentResourceTelemetry> sorted;
-    
     for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (statistic.isPrevalentResource) {
-            unsigned daysSinceUserInteraction = statistic.mostRecentUserInteraction <= 0 ? 0 :
-                std::floor((currentTime() - statistic.mostRecentUserInteraction) / secondsPerDay);
-            sorted.append(PrevalentResourceTelemetry(
-                statistic.dataRecordsRemoved,
-                statistic.hadUserInteraction,
-                daysSinceUserInteraction,
-                statistic.subframeUnderTopFrameOrigins.size(),
-                statistic.subresourceUnderTopFrameOrigins.size(),
-                statistic.subresourceUniqueRedirectsTo.size()
-            ));
-        }
+        if (!statistic.isPrevalentResource)
+            continue;
+
+        unsigned daysSinceUserInteraction = statistic.mostRecentUserInteraction <= 0 ? 0 : std::floor((WallTime::now() - statistic.mostRecentUserInteractionTime()) / 24_h);
+        sorted.append(PrevalentResourceTelemetry {
+            statistic.dataRecordsRemoved,
+            statistic.hadUserInteraction,
+            daysSinceUserInteraction,
+            statistic.subframeUnderTopFrameOrigins.size(),
+            statistic.subresourceUnderTopFrameOrigins.size(),
+            statistic.subresourceUniqueRedirectsTo.size()
+        });
     }
     
     if (sorted.size() < minimumPrevalentResourcesForTelemetry)
-        return Vector<PrevalentResourceTelemetry>();
+        return { };
 
     std::sort(sorted.begin(), sorted.end(), [](const PrevalentResourceTelemetry& a, const PrevalentResourceTelemetry& b) {
         return a.subframeUnderTopFrameOrigins + a.subresourceUnderTopFrameOrigins + a.subresourceUniqueRedirectsTo >
