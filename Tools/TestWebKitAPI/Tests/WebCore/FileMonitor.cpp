@@ -38,7 +38,8 @@
 #import <wtf/text/StringBuffer.h>
 
 // Note: Currently, only a Cocoa implementation exists. This could probably be supported under GTK using g_file_monitor_file
-#if PLATFORM(COCOA)
+// Note: Disabling iOS since 'system' is not available on that platform.
+#if PLATFORM(MAC)
 
 using namespace WebCore;
 
