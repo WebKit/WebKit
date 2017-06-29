@@ -38,6 +38,7 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
     data->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
 
+    encoder << conditionsApplyOnlyToDomainOffset;
     encoder << actionsOffset;
     encoder << actionsSize;
     encoder << filtersWithoutConditionsBytecodeOffset;
@@ -55,6 +56,8 @@ bool WebCompiledContentRuleListData::decode(IPC::Decoder& decoder, WebCompiledCo
         return false;
     compiledContentRuleListData.data = SharedMemory::map(handle, SharedMemory::Protection::ReadOnly);
 
+    if (!decoder.decode(compiledContentRuleListData.conditionsApplyOnlyToDomainOffset))
+        return false;
     if (!decoder.decode(compiledContentRuleListData.actionsOffset))
         return false;
     if (!decoder.decode(compiledContentRuleListData.actionsSize))

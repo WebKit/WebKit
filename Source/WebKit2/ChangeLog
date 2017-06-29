@@ -1,3 +1,28 @@
+2017-06-29  Alex Christensen  <achristensen@webkit.org>
+
+        WKContentRuleLists with if-top-url or unless-top-url should run regex against entire top URL
+        https://bugs.webkit.org/show_bug.cgi?id=173980
+
+        Reviewed by Tim Horton.
+
+        if-top-url and unless-top-url were broken inside WebKit2 apps.  This fixes them and adds a test.
+        ContentExtension::populateConditionCacheIfNeeded was calling WebCompiledContentRuleList::conditionsApplyOnlyToDomain
+        but m_data.conditionsApplyOnlyToDomainOffset was always 0 instead of ConditionsApplyOnlyToDomainOffset because 
+        it wasn't being encoded and decoded when telling the WebProcess about the content rule list.  This was causing us
+        to use whatever was at offset 0 in the file instead of the correct value stored in the file to determine
+        whether to run regular expressions against the entire top URL for if-top-url or unless-top-url or against
+        just the domain for if-top-domain or unless-top-domain.  Luckily, offset 0 in the file is always 
+        ContentRuleListStore::CurrentContentRuleListFileVersion, so it was deterministic and easy to debug.
+
+        I should have added a LayoutTest with r213669 to verify correct behavior in an actual WKWebView,
+        but I didn't because it wouldn't have caught regressions since the contentextension tests are
+        marked as flaky since r206914, but once that is fixed the new test http/tests/contentextensions/top-url.html
+        will verify that this feature is behaving correctly.  It failed before this change and passes after.
+
+        * Shared/WebCompiledContentRuleListData.cpp:
+        (WebKit::WebCompiledContentRuleListData::encode):
+        (WebKit::WebCompiledContentRuleListData::decode):
+
 2017-06-29  Chris Dumez  <cdumez@apple.com>
 
         statistics.mostRecentUserInteraction should be of type WallTime
