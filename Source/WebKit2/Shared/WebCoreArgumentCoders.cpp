@@ -2244,7 +2244,7 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     
     // User interaction
     encoder << statistics.hadUserInteraction;
-    encoder << statistics.mostRecentUserInteraction;
+    encoder << statistics.mostRecentUserInteractionTime.secondsSinceEpoch().value();
     encoder << statistics.grandfathered;
     
     // Top frame stats
@@ -2288,8 +2288,10 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
     if (!decoder.decode(statistics.hadUserInteraction))
         return false;
 
-    if (!decoder.decode(statistics.mostRecentUserInteraction))
+    double mostRecentUserInteractionTimeAsDouble;
+    if (!decoder.decode(mostRecentUserInteractionTimeAsDouble))
         return false;
+    statistics.mostRecentUserInteractionTime = WallTime::fromRawSeconds(mostRecentUserInteractionTimeAsDouble);
 
     if (!decoder.decode(statistics.grandfathered))
         return false;

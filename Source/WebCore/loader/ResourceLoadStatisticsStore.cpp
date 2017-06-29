@@ -34,7 +34,6 @@
 #include "SharedBuffer.h"
 #include "URL.h"
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -249,8 +248,7 @@ void ResourceLoadStatisticsStore::fireTelemetryHandler()
     
 static inline bool shouldPartitionCookies(const ResourceLoadStatistics& statistic)
 {
-    return statistic.isPrevalentResource
-        && (!statistic.hadUserInteraction || WallTime::now() > statistic.mostRecentUserInteractionTime() + timeToLiveCookiePartitionFree);
+    return statistic.isPrevalentResource && (!statistic.hadUserInteraction || WallTime::now() > statistic.mostRecentUserInteractionTime + timeToLiveCookiePartitionFree);
 }
 
 void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
@@ -341,11 +339,11 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
     if (!resourceStatistic.hadUserInteraction)
         return false;
 
-    if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime() + timeToLiveUserInteraction) {
+    if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime + timeToLiveUserInteraction) {
         // Drop privacy sensitive data because we no longer need it.
-        // Set timestamp to 0.0 so that statistics merge will know
+        // Set timestamp to 0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
-        resourceStatistic.mostRecentUserInteraction = 0;
+        resourceStatistic.mostRecentUserInteractionTime = { };
         resourceStatistic.hadUserInteraction = false;
 
         return false;
@@ -385,7 +383,7 @@ Vector<PrevalentResourceTelemetry> ResourceLoadStatisticsStore::sortedPrevalentR
         if (!statistic.isPrevalentResource)
             continue;
 
-        unsigned daysSinceUserInteraction = statistic.mostRecentUserInteraction <= 0 ? 0 : std::floor((WallTime::now() - statistic.mostRecentUserInteractionTime()) / 24_h);
+        unsigned daysSinceUserInteraction = statistic.mostRecentUserInteractionTime <= WallTime() ? 0 : std::floor((WallTime::now() - statistic.mostRecentUserInteractionTime) / 24_h);
         sorted.append(PrevalentResourceTelemetry {
             statistic.dataRecordsRemoved,
             statistic.hadUserInteraction,

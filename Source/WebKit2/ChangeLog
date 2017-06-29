@@ -1,3 +1,16 @@
+2017-06-29  Chris Dumez  <cdumez@apple.com>
+
+        statistics.mostRecentUserInteraction should be of type WallTime
+        https://bugs.webkit.org/show_bug.cgi?id=173974
+
+        Reviewed by Brent Fulgham.
+
+        statistics.mostRecentUserInteraction should be of type WallTime for clarity.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+
 2017-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Replace staging-prefixed UIKit drag and drop delegate methods with their public SDK versions

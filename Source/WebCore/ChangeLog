@@ -1,3 +1,28 @@
+2017-06-29  Chris Dumez  <cdumez@apple.com>
+
+        statistics.mostRecentUserInteraction should be of type WallTime
+        https://bugs.webkit.org/show_bug.cgi?id=173974
+
+        Reviewed by Brent Fulgham.
+
+        statistics.mostRecentUserInteraction should be of type WallTime for clarity.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::logUserInteraction):
+        (WebCore::ResourceLoadObserver::clearUserInteraction):
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::ResourceLoadStatistics::toString):
+        (WebCore::ResourceLoadStatistics::merge):
+        * loader/ResourceLoadStatistics.h:
+        (WebCore::ResourceLoadStatistics::mostRecentUserInteractionTime): Deleted.
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::shouldPartitionCookies):
+        (WebCore::ResourceLoadStatisticsStore::hasHadRecentUserInteraction):
+        (WebCore::ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry):
+
 2017-06-29  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: disable some APIs under CSP

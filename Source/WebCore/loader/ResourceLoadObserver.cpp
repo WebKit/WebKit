@@ -43,7 +43,6 @@
 #include "SharedBuffer.h"
 #include "URL.h"
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/StringBuilder.h>
@@ -357,11 +356,11 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
         auto locker = holdLock(m_store->statisticsLock());
         auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
         WallTime newTime = reduceTimeResolution(WallTime::now());
-        if (newTime == statistics.mostRecentUserInteractionTime())
+        if (newTime == statistics.mostRecentUserInteractionTime)
             return;
 
         statistics.hadUserInteraction = true;
-        statistics.mostRecentUserInteraction = newTime.secondsSinceEpoch().value();
+        statistics.mostRecentUserInteractionTime = newTime;
         }
         
         m_store->fireDataModificationHandler();
@@ -379,7 +378,7 @@ void ResourceLoadObserver::logUserInteraction(const URL& url)
         auto locker = holdLock(m_store->statisticsLock());
         auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
         statistics.hadUserInteraction = true;
-        statistics.mostRecentUserInteraction = WTF::currentTime();
+        statistics.mostRecentUserInteractionTime = WallTime::now();
         }
         
         m_store->fireShouldPartitionCookiesHandler({ primaryDomainString }, { }, false);
@@ -395,7 +394,7 @@ void ResourceLoadObserver::clearUserInteraction(const URL& url)
     auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
     
     statistics.hadUserInteraction = false;
-    statistics.mostRecentUserInteraction = 0;
+    statistics.mostRecentUserInteractionTime = { };
 }
 
 bool ResourceLoadObserver::hasHadUserInteraction(const URL& url)

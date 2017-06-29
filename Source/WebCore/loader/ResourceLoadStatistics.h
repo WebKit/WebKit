@@ -55,15 +55,12 @@ struct ResourceLoadStatistics {
 
     void merge(const ResourceLoadStatistics&);
 
-    WallTime mostRecentUserInteractionTime() const { return WallTime::fromRawSeconds(mostRecentUserInteraction); }
-
     String highLevelDomain;
 
     // User interaction
     bool hadUserInteraction { false };
     // Timestamp. Default value is negative, 0 means it was reset.
-    // FIXME: Can this use WallTime?
-    double mostRecentUserInteraction { -1 };
+    WallTime mostRecentUserInteractionTime { WallTime::fromRawSeconds(-1) };
     bool grandfathered { false };
 
     // Top frame stats
