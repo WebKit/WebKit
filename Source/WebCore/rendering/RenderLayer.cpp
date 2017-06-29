@@ -2219,7 +2219,7 @@ void RenderLayer::unregisterAsTouchEventListenerForScrolling()
 
 bool RenderLayer::usesCompositedScrolling() const
 {
-    return isComposited() && backing()->scrollingLayer();
+    return isComposited() && backing()->hasScrollingLayer();
 }
 
 bool RenderLayer::usesAsyncScrolling() const

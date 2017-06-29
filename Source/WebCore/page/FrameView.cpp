@@ -945,7 +945,7 @@ TiledBacking* FrameView::tiledBacking() const
     if (!backing)
         return nullptr;
 
-    return backing->graphicsLayer()->tiledBacking();
+    return backing->tiledBacking();
 }
 
 uint64_t FrameView::scrollLayerID() const
@@ -3335,7 +3335,7 @@ void FrameView::updateTilesForExtendedBackgroundMode(ExtendedBackgroundMode mode
     if (!backing)
         return;
 
-    TiledBacking* tiledBacking = backing->graphicsLayer()->tiledBacking();
+    TiledBacking* tiledBacking = backing->tiledBacking();
     if (!tiledBacking)
         return;
 
