@@ -1,3 +1,31 @@
+2017-06-28  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Instrument active pixel memory used by canvases
+        https://bugs.webkit.org/show_bug.cgi?id=173087
+        <rdar://problem/32719261>
+
+        Reviewed by Joseph Pecoraro.
+
+        * .eslintrc:
+        * UserInterface/Controllers/CanvasManager.js:
+        (WebInspector.CanvasManager.prototype.canvasMemoryChanged):
+        * UserInterface/Models/Canvas.js:
+        (WebInspector.Canvas.fromPayload):
+        (WebInspector.Canvas.prototype.get memoryCost):
+        (WebInspector.Canvas.prototype.set memoryCost):
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WebInspector.CanvasObserver.prototype.canvasMemoryChanged):
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshIdentitySection):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._formatMemoryRow):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._canvasMemoryChanged):
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Utilities.js:
+        (Number.bytesToString.value):
+        Add support for gigabyte numbers.
+
 2017-06-27  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused Inspector domain events

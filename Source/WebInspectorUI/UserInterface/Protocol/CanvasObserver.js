@@ -36,4 +36,9 @@ WebInspector.CanvasObserver = class CanvasObserver
     {
         WebInspector.canvasManager.canvasRemoved(canvasId);
     }
+
+    canvasMemoryChanged(canvasId, memoryCost)
+    {
+        WebInspector.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
+    }
 };

@@ -64,6 +64,7 @@ public:
     void frameNavigated(Frame&);
     void didCreateCSSCanvas(HTMLCanvasElement&, const String&);
     void didCreateCanvasRenderingContext(HTMLCanvasElement&);
+    void didChangeCanvasMemory(HTMLCanvasElement&);
 
     // CanvasObserver
     void canvasChanged(HTMLCanvasElement&, const FloatRect&) override { }

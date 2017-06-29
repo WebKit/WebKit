@@ -1081,9 +1081,16 @@ Object.defineProperty(Number, "bytesToString",
         }
 
         let megabytes = kilobytes / 1024;
-        if (higherResolution || Math.abs(megabytes) < 10)
-            return WebInspector.UIString("%.2f MB").format(megabytes);
-        return WebInspector.UIString("%.1f MB").format(megabytes);
+        if (Math.abs(megabytes) < 1024) {
+            if (higherResolution || Math.abs(megabytes) < 10)
+                return WebInspector.UIString("%.2f MB").format(megabytes);
+            return WebInspector.UIString("%.1f MB").format(megabytes);
+        }
+
+        let gigabytes = megabytes / 1024;
+        if (higherResolution || Math.abs(gigabytes) < 10)
+            return WebInspector.UIString("%.2f GB").format(gigabytes);
+        return WebInspector.UIString("%.1f GB").format(gigabytes);
     }
 });
 

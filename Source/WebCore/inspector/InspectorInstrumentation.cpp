@@ -1005,6 +1005,12 @@ void InspectorInstrumentation::didCreateCanvasRenderingContextImpl(Instrumenting
         canvasAgent->didCreateCanvasRenderingContext(canvasElement);
 }
 
+void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+        canvasAgent->didChangeCanvasMemory(canvasElement);
+}
+
 #if ENABLE(WEB_REPLAY)
 void InspectorInstrumentation::sessionCreatedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)
 {

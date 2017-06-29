@@ -25,7 +25,7 @@
 
 WebInspector.Canvas = class Canvas extends WebInspector.Object
 {
-    constructor(identifier, contextType, frame, {domNode, cssCanvasName, contextAttributes} = {})
+    constructor(identifier, contextType, frame, {domNode, cssCanvasName, contextAttributes, memoryCost} = {})
     {
         super();
 
@@ -39,6 +39,7 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         this._domNode = domNode || null;
         this._cssCanvasName = cssCanvasName || "";
         this._contextAttributes = contextAttributes || {};
+        this._memoryCost = memoryCost || NaN;
     }
 
     // Static
@@ -62,6 +63,7 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
             domNode: payload.nodeId ? WebInspector.domTreeManager.nodeForId(payload.nodeId) : null,
             cssCanvasName: payload.cssCanvasName,
             contextAttributes: payload.contextAttributes,
+            memoryCost: payload.memoryCost,
         });
     }
 
@@ -89,6 +91,21 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
     get frame() { return this._frame; }
     get cssCanvasName() { return this._cssCanvasName; }
     get contextAttributes() { return this._contextAttributes; }
+
+    get memoryCost()
+    {
+        return this._memoryCost;
+    }
+
+    set memoryCost(memoryCost)
+    {
+        if (memoryCost === this._memoryCost)
+            return;
+
+        this._memoryCost = memoryCost;
+
+        this.dispatchEventToListeners(WebInspector.Canvas.Event.MemoryChanged);
+    }
 
     get displayName()
     {
@@ -161,3 +178,7 @@ WebInspector.Canvas.ContextType = {
 };
 
 WebInspector.Canvas.ResourceSidebarType = "resource-type-canvas";
+
+WebInspector.Canvas.Event = {
+    MemoryChanged: "canvas-memory-changed",
+};

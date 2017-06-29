@@ -756,11 +756,16 @@ void HTMLCanvasElement::createImageBuffer() const
 
 void HTMLCanvasElement::setImageBuffer(std::unique_ptr<ImageBuffer> buffer) const
 {
-    removeFromActivePixelMemory(memoryCost());
+    size_t previousMemoryCost = memoryCost();
+    removeFromActivePixelMemory(previousMemoryCost);
 
     m_imageBuffer = WTFMove(buffer);
 
-    activePixelMemory += memoryCost();
+    size_t currentMemoryCost = memoryCost();
+    activePixelMemory += currentMemoryCost;
+
+    if (m_imageBuffer && previousMemoryCost != currentMemoryCost)
+        InspectorInstrumentation::didChangeCanvasMemory(const_cast<HTMLCanvasElement&>(*this));
 }
 
 GraphicsContext* HTMLCanvasElement::drawingContext() const

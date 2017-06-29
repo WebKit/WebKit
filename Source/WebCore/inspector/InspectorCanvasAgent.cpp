@@ -180,6 +180,15 @@ void InspectorCanvasAgent::didCreateCanvasRenderingContext(HTMLCanvasElement& ca
     m_frontendDispatcher->canvasAdded(buildObjectForCanvas(newCanvasEntry, canvasElement));
 }
 
+void InspectorCanvasAgent::didChangeCanvasMemory(HTMLCanvasElement& canvasElement)
+{
+    CanvasEntry* canvasEntry = getCanvasEntry(canvasElement);
+    if (!canvasEntry)
+        return;
+
+    m_frontendDispatcher->canvasMemoryChanged(canvasEntry->identifier, canvasElement.memoryCost());
+}
+
 void InspectorCanvasAgent::canvasDestroyed(HTMLCanvasElement& canvasElement)
 {
     auto it = m_canvasEntries.find(&canvasElement);
@@ -294,6 +303,9 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvasAgent::buildObjectForCan
         }
     }
 #endif
+
+    if (size_t memoryCost = canvasElement.memoryCost())
+        canvas->setMemoryCost(memoryCost);
 
     return canvas;
 }

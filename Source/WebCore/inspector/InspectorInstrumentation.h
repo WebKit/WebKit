@@ -247,6 +247,7 @@ public:
 
     static void didCreateCSSCanvas(HTMLCanvasElement&, const String&);
     static void didCreateCanvasRenderingContext(HTMLCanvasElement&);
+    static void didChangeCanvasMemory(HTMLCanvasElement&);
 
     static void networkStateChanged(Page&);
     static void updateApplicationCacheStatus(Frame*);
@@ -422,6 +423,7 @@ private:
 
     static void didCreateCSSCanvasImpl(InstrumentingAgents*, HTMLCanvasElement&, const String&);
     static void didCreateCanvasRenderingContextImpl(InstrumentingAgents*, HTMLCanvasElement&);
+    static void didChangeCanvasMemoryImpl(InstrumentingAgents*, HTMLCanvasElement&);
 
     static void layerTreeDidChangeImpl(InstrumentingAgents&);
     static void renderLayerDestroyedImpl(InstrumentingAgents&, const RenderLayer&);
@@ -1191,6 +1193,13 @@ inline void InspectorInstrumentation::didCreateCanvasRenderingContext(HTMLCanvas
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
         didCreateCanvasRenderingContextImpl(instrumentingAgents, canvasElement);
+}
+
+inline void InspectorInstrumentation::didChangeCanvasMemory(HTMLCanvasElement& canvasElement)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didChangeCanvasMemoryImpl(instrumentingAgents, canvasElement);
 }
 
 inline void InspectorInstrumentation::networkStateChanged(Page& page)
