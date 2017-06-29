@@ -88,9 +88,8 @@ static void webkitFaviconDatabaseDispose(GObject* object)
 {
     WebKitFaviconDatabase* database = WEBKIT_FAVICON_DATABASE(object);
 
-    WebKitFaviconDatabasePrivate* priv = database->priv;
-    if (priv->iconDatabase->isOpen())
-        priv->iconDatabase->close();
+    if (webkitFaviconDatabaseIsOpen(database))
+        database->priv->iconDatabase->close();
 
     G_OBJECT_CLASS(webkit_favicon_database_parent_class)->dispose(object);
 }
@@ -458,6 +457,9 @@ gchar* webkit_favicon_database_get_favicon_uri(WebKitFaviconDatabase* database, 
     g_return_val_if_fail(pageURL, nullptr);
     ASSERT(RunLoop::isMain());
 
+    if (!webkitFaviconDatabaseIsOpen(database))
+        return nullptr;
+
     String iconURLForPageURL = database->priv->iconDatabase->synchronousIconURLForPageURL(String::fromUTF8(pageURL));
     if (iconURLForPageURL.isEmpty())
         return nullptr;
@@ -474,6 +476,9 @@ gchar* webkit_favicon_database_get_favicon_uri(WebKitFaviconDatabase* database, 
 void webkit_favicon_database_clear(WebKitFaviconDatabase* database)
 {
     g_return_if_fail(WEBKIT_IS_FAVICON_DATABASE(database));
+
+    if (!webkitFaviconDatabaseIsOpen(database))
+        return;
 
     database->priv->iconDatabase->removeAllIcons();
 }

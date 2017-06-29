@@ -1,5 +1,16 @@
 2017-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK+ unit tests crashing after r218922.
+
+        We need to check if icon database exists and is open now on dispose and API entry points.
+
+        * UIProcess/API/glib/WebKitFaviconDatabase.cpp:
+        (webkitFaviconDatabaseDispose):
+        (webkit_favicon_database_get_favicon_uri):
+        (webkit_favicon_database_clear):
+
+2017-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Implement API::IconLoadingClient and rework WebKitFaviconDatabase to use IconDatabase directly
         https://bugs.webkit.org/show_bug.cgi?id=173877
 
