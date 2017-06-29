@@ -1,3 +1,29 @@
+2017-06-28  Chris Dumez  <cdumez@apple.com>
+
+        ResourceLoadObserver clean up
+        https://bugs.webkit.org/show_bug.cgi?id=173955
+
+        Reviewed by Sam Weinig and Brent Fulgham.
+
+        ResourceLoadObserver clean up: Modernize code a bit and get rid of unused variables.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::clearInMemoryStore):
+        (WebCore::ResourceLoadObserver::clearInMemoryAndPersistentStore):
+        (WebCore::ResourceLoadObserver::shouldLog):
+        (WebCore::ResourceLoadObserver::logFrameNavigation):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::logUserInteraction):
+        (WebCore::ResourceLoadObserver::setSubframeUnderTopFrameOrigin):
+        (WebCore::ResourceLoadObserver::setSubresourceUnderTopFrameOrigin):
+        (WebCore::ResourceLoadObserver::setSubresourceUniqueRedirectTo):
+        (WebCore::ResourceLoadObserver::fireDataModificationHandler):
+        (WebCore::ResourceLoadObserver::fireShouldPartitionCookiesHandler):
+        (WebCore::ResourceLoadObserver::primaryDomain):
+        (WebCore::ResourceLoadObserver::statisticsForOrigin):
+
 2017-06-28  Zalan Bujtas  <zalan@apple.com>
 
         Move RenderEmbeddedObject::isReplacementObscured to HTMLPlugInElement
