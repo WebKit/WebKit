@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline'">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+const empty = Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x1, 0x00, 0x00, 0x00);
+</script>
+</head>
+<body>
+<!-- The WebAssembly global object and some of its members aren't blocked. -->
+<script>if (typeof WebAssembly !== "object") throw new Error(`Expected WebAssembly object to be accessible under CSP`)</script>
+<script>new WebAssembly.CompileError(`This is OK`)</script>
+<script>new WebAssembly.LinkError(`This is OK`)</script>
+<script>new WebAssembly.Module(empty)</script>
+<script>if (!WebAssembly.validate(empty)) throw new Error(`Expected validation to succeed`)</script>
+<!-- The following APIs aren't accessible under CSP. -->
+<script>new WebAssembly.Memory({ initial: 1 })</script>
+<script>new WebAssembly.Memory({ initial: 1, maximum: 1 })</script>
+<script>new WebAssembly.Memory({ initial: 1, maximum: 1, shared: true })</script>
+<script>new WebAssembly.Table({ element: "anyfunc", initial: 1 })</script>
+<script>new WebAssembly.Table({ element: "anyfunc", initial: 1, maximum: 1 })</script>
+<script>new WebAssembly.Instance(new WebAssembly.Module(empty))</script>
+<!-- FIXME: add WebAssembly.compile and WebAssembly.instantiate https://bugs.webkit.org/show_bug.cgi?id=173977 -->
+<!-- FIXME: add WebAssembly.compileStreaming and WebAssembly.instantiateStreaming https://bugs.webkit.org/show_bug.cgi?id=173105 -->
+</body>
+</html>

@@ -141,6 +141,9 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
         return nullptr;
     };
 
+    if (!globalObject->webAssemblyEnabled())
+        return exception(createEvalError(exec, globalObject->webAssemblyDisabledErrorMessage()));
+
     auto importFailMessage = [&] (const Wasm::Import& import, const char* before, const char* after) {
         return makeString(before, " ", String::fromUTF8(import.module), ":", String::fromUTF8(import.field), " ", after);
     };
@@ -319,7 +322,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
                 return exception(createOutOfMemoryError(exec));
 
             instance->m_memory.set(vm, instance,
-                JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), memory.releaseNonNull()));
+                JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), memory.releaseNonNull()));
             RETURN_IF_EXCEPTION(throwScope, nullptr);
         }
     }
@@ -345,7 +348,8 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
     
     if (!instance->memory()) {
         // Make sure we have a dummy memory, so that wasm -> wasm thunks avoid checking for a nullptr Memory when trying to set pinned registers.
-        instance->m_memory.set(vm, instance, JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), adoptRef(*(new Wasm::Memory()))));
+        instance->m_memory.set(vm, instance, JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), adoptRef(*(new Wasm::Memory()))));
+        RETURN_IF_EXCEPTION(throwScope, nullptr);
     }
     
     // Globals

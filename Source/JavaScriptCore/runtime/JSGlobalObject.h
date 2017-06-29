@@ -441,10 +441,12 @@ public:
 
     TemplateRegistry m_templateRegistry;
 
-    bool m_evalEnabled;
+    bool m_evalEnabled { true };
+    bool m_webAssemblyEnabled { true };
     String m_evalDisabledErrorMessage;
+    String m_webAssemblyDisabledErrorMessage;
     RuntimeFlags m_runtimeFlags;
-    ConsoleClient* m_consoleClient;
+    ConsoleClient* m_consoleClient { nullptr };
 
     static JS_EXPORTDATA const GlobalObjectMethodTable s_globalObjectMethodTable;
     const GlobalObjectMethodTable* m_globalObjectMethodTable;
@@ -799,11 +801,18 @@ public:
     void queueMicrotask(Ref<Microtask>&&);
 
     bool evalEnabled() const { return m_evalEnabled; }
+    bool webAssemblyEnabled() const { return m_webAssemblyEnabled; }
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
+    const String& webAssemblyDisabledErrorMessage() const { return m_webAssemblyDisabledErrorMessage; }
     void setEvalEnabled(bool enabled, const String& errorMessage = String())
     {
         m_evalEnabled = enabled;
         m_evalDisabledErrorMessage = errorMessage;
+    }
+    void setWebAssemblyEnabled(bool enabled, const String& errorMessage = String())
+    {
+        m_webAssemblyEnabled = enabled;
+        m_webAssemblyDisabledErrorMessage = errorMessage;
     }
 
     void resetPrototype(VM&, JSValue prototype);

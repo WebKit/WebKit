@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -446,12 +446,28 @@ void ScriptController::enableEval()
     windowProxy->window()->setEvalEnabled(true);
 }
 
+void ScriptController::enableWebAssembly()
+{
+    auto* windowProxy = existingWindowProxy(mainThreadNormalWorld());
+    if (!windowProxy)
+        return;
+    windowProxy->window()->setWebAssemblyEnabled(true);
+}
+
 void ScriptController::disableEval(const String& errorMessage)
 {
     auto* windowProxy = existingWindowProxy(mainThreadNormalWorld());
     if (!windowProxy)
         return;
     windowProxy->window()->setEvalEnabled(false, errorMessage);
+}
+
+void ScriptController::disableWebAssembly(const String& errorMessage)
+{
+    auto* windowProxy = existingWindowProxy(mainThreadNormalWorld());
+    if (!windowProxy)
+        return;
+    windowProxy->window()->setWebAssemblyEnabled(false, errorMessage);
 }
 
 bool ScriptController::processingUserGesture()

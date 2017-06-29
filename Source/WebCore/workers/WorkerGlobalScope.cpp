@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009, 2011 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -150,6 +150,11 @@ String WorkerGlobalScope::userAgent(const URL&) const
 void WorkerGlobalScope::disableEval(const String& errorMessage)
 {
     m_script->disableEval(errorMessage);
+}
+
+void WorkerGlobalScope::disableWebAssembly(const String& errorMessage)
+{
+    m_script->disableWebAssembly(errorMessage);
 }
 
 #if ENABLE(WEB_SOCKETS)

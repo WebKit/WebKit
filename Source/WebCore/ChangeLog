@@ -1,3 +1,49 @@
+2017-06-29  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: disable some APIs under CSP
+        https://bugs.webkit.org/show_bug.cgi?id=173892
+        <rdar://problem/32914613>
+
+        Reviewed by Daniel Bates.
+
+        This does the basic separation of eval-blocked and
+        WebAssembly-blocked, but currently only blocks neither or both. I
+        think we'll eventually consider allowing one to be blocked but not
+        the other, so this separation makes sense and means that when we
+        want to do the change it'll be tiny. At a minimum we want a
+        different error message, which this patch provides (a lot of the
+        code ties blocking to the error message).
+
+        Tests: http/tests/security/contentSecurityPolicy/WebAssembly-allowed.html
+               http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-about-blank-iframe.html
+               http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-external-script.html
+               http/tests/security/contentSecurityPolicy/WebAssembly-blocked-in-subframe.html
+               http/tests/security/contentSecurityPolicy/WebAssembly-blocked.html
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::enableWebAssembly):
+        (WebCore::ScriptController::disableWebAssembly):
+        * bindings/js/ScriptController.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::disableWebAssembly):
+        * bindings/js/WorkerScriptController.h:
+        * dom/Document.cpp:
+        (WebCore::Document::disableWebAssembly):
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::didCreateWindowProxy):
+        (WebCore::ContentSecurityPolicy::applyPolicyToScriptExecutionContext):
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicyDirectiveList.cpp:
+        (WebCore::ContentSecurityPolicyDirectiveList::create):
+        * page/csp/ContentSecurityPolicyDirectiveList.h:
+        (WebCore::ContentSecurityPolicyDirectiveList::webAssemblyDisabledErrorMessage):
+        (WebCore::ContentSecurityPolicyDirectiveList::setWebAssemblyDisabledErrorMessage):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::disableWebAssembly):
+        * workers/WorkerGlobalScope.h:
+
 2017-06-29  Zalan Bujtas  <zalan@apple.com>
 
         Make InlineBox::m_topLeft and m_logicalWidth protected.

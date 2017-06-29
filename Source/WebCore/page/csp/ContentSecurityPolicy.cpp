@@ -159,6 +159,7 @@ void ContentSecurityPolicy::didCreateWindowProxy(JSDOMWindowProxy& windowProxy) 
         return;
     }
     window->setEvalEnabled(m_lastPolicyEvalDisabledErrorMessage.isNull(), m_lastPolicyEvalDisabledErrorMessage);
+    window->setWebAssemblyEnabled(m_lastPolicyWebAssemblyDisabledErrorMessage.isNull(), m_lastPolicyWebAssemblyDisabledErrorMessage);
 }
 
 ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() const
@@ -230,14 +231,18 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
     bool enableStrictMixedContentMode = false;
     for (auto& policy : m_policies) {
         const ContentSecurityPolicyDirective* violatedDirective = policy->violatedDirectiveForUnsafeEval();
-        if (violatedDirective && !violatedDirective->directiveList().isReportOnly())
+        if (violatedDirective && !violatedDirective->directiveList().isReportOnly()) {
             m_lastPolicyEvalDisabledErrorMessage = policy->evalDisabledErrorMessage();
+            m_lastPolicyWebAssemblyDisabledErrorMessage = policy->webAssemblyDisabledErrorMessage();
+        }
         if (policy->hasBlockAllMixedContentDirective() && !policy->isReportOnly())
             enableStrictMixedContentMode = true;
     }
 
     if (!m_lastPolicyEvalDisabledErrorMessage.isNull())
         m_scriptExecutionContext->disableEval(m_lastPolicyEvalDisabledErrorMessage);
+    if (!m_lastPolicyWebAssemblyDisabledErrorMessage.isNull())
+        m_scriptExecutionContext->disableWebAssembly(m_lastPolicyWebAssemblyDisabledErrorMessage);
     if (m_sandboxFlags != SandboxNone && is<Document>(m_scriptExecutionContext))
         m_scriptExecutionContext->enforceSandboxFlags(m_sandboxFlags);
     if (enableStrictMixedContentMode)

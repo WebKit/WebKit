@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google, Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,7 @@ public:
     bool hasBlockAllMixedContentDirective() const { return m_hasBlockAllMixedContentDirective; }
 
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
+    const String& webAssemblyDisabledErrorMessage() const { return m_webAssemblyDisabledErrorMessage; }
     bool isReportOnly() const { return m_reportOnly; }
     const Vector<String>& reportURIs() const { return m_reportURIs; }
 
@@ -97,6 +98,7 @@ private:
     ContentSecurityPolicySourceListDirective* operativeDirective(ContentSecurityPolicySourceListDirective*) const;
 
     void setEvalDisabledErrorMessage(const String& errorMessage) { m_evalDisabledErrorMessage = errorMessage; }
+    void setWebAssemblyDisabledErrorMessage(const String& errorMessage) { m_webAssemblyDisabledErrorMessage = errorMessage; }
 
     // FIXME: Make this a const reference once we teach applySandboxPolicy() to store its policy as opposed to applying it directly onto ContentSecurityPolicy.
     ContentSecurityPolicy& m_policy;
@@ -127,6 +129,7 @@ private:
     Vector<String> m_reportURIs;
     
     String m_evalDisabledErrorMessage;
+    String m_webAssemblyDisabledErrorMessage;
 };
 
 } // namespace WebCore

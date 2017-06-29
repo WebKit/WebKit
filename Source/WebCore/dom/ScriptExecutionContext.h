@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -85,6 +85,7 @@ public:
     virtual String userAgent(const URL&) const = 0;
 
     virtual void disableEval(const String& errorMessage) = 0;
+    virtual void disableWebAssembly(const String& errorMessage) = 0;
 
 #if ENABLE(INDEXED_DATABASE)
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;

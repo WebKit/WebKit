@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2015, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,6 +75,7 @@ namespace WebCore {
         bool isExecutionForbidden() const;
 
         void disableEval(const String& errorMessage);
+        void disableWebAssembly(const String& errorMessage);
 
         JSC::VM& vm() { return *m_vm; }
         

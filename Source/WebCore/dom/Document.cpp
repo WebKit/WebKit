@@ -3066,6 +3066,14 @@ void Document::disableEval(const String& errorMessage)
     frame()->script().disableEval(errorMessage);
 }
 
+void Document::disableWebAssembly(const String& errorMessage)
+{
+    if (!frame())
+        return;
+
+    frame()->script().disableWebAssembly(errorMessage);
+}
+
 #if ENABLE(INDEXED_DATABASE)
 
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()

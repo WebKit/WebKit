@@ -658,6 +658,7 @@ public:
     String userAgent(const URL&) const final;
 
     void disableEval(const String& errorMessage) final;
+    void disableWebAssembly(const String& errorMessage) final;
 
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;

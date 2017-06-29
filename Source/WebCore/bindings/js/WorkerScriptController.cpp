@@ -187,9 +187,17 @@ bool WorkerScriptController::isExecutionForbidden() const
 void WorkerScriptController::disableEval(const String& errorMessage)
 {
     initScriptIfNeeded();
-    JSLockHolder lock(vm());
+    JSLockHolder lock{vm()};
 
     m_workerGlobalScopeWrapper->setEvalEnabled(false, errorMessage);
+}
+
+void WorkerScriptController::disableWebAssembly(const String& errorMessage)
+{
+    initScriptIfNeeded();
+    JSLockHolder lock{vm()};
+
+    m_workerGlobalScopeWrapper->setWebAssemblyEnabled(false, errorMessage);
 }
 
 void WorkerScriptController::releaseHeapAccess()

@@ -207,6 +207,7 @@ private:
     String m_selfSourceProtocol;
     CSPDirectiveListVector m_policies;
     String m_lastPolicyEvalDisabledErrorMessage;
+    String m_lastPolicyWebAssemblyDisabledErrorMessage;
     SandboxFlags m_sandboxFlags;
     bool m_overrideInlineStyleAllowed { false };
     bool m_isReportingEnabled { true };

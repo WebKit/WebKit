@@ -1,3 +1,79 @@
+2017-06-29  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: disable some APIs under CSP
+        https://bugs.webkit.org/show_bug.cgi?id=173892
+        <rdar://problem/32914613>
+
+        Reviewed by Daniel Bates.
+
+        We should disable parts of WebAssembly under Content Security
+        Policy as discussed here:
+
+        https://github.com/WebAssembly/design/issues/1092
+
+        Exactly what should be disabled isn't super clear, so we may as
+        well be conservative and disable many things if developers already
+        opted into CSP. It's easy to loosen what we disable later.
+
+        This patch disables:
+        - WebAssembly.Instance
+        - WebAssembly.instantiate
+        - WebAssembly.Memory
+        - WebAssembly.Table
+
+        And leaves:
+        - WebAssembly on the global object
+        - WebAssembly.Module
+        - WebAssembly.compile
+        - WebAssembly.CompileError
+        - WebAssembly.LinkError
+
+        Nothing because currently unimplmented:
+        - WebAssembly.compileStreaming
+        - WebAssembly.instantiateStreaming
+
+        That way it won't be possible to call WebAssembly-compiled code,
+        or create memories (which use fancy 4GiB allocations
+        sometimes). Table isn't really useful on its own, and eventually
+        we may make them shareable so without more details it seems benign
+        to disable them (and useless if we don't).
+
+        I haven't done anything with postMessage, so you can still
+        postMessage a WebAssembly.Module cross-CSP, but you can't
+        instantiate it so it's useless. Because of this I elected to leave
+        WebAssembly.Module and friends available.
+
+        I haven't added any new directives. It's still unsafe-eval. We can
+        add something else later, but it seems odd to add a WebAssembly as
+        a new capability and tell developers "you should have been using
+        this directive which we just implemented if you wanted to disable
+        WebAssembly which didn't exist when you adopted CSP". So IMO we
+        should keep unsafe-eval as it currently is, add WebAssembly to
+        what it disables, and later consider having two new directives
+        which do each individually or something.
+
+        In all cases I throw an EvalError *before* other WebAssembly
+        errors would be produced.
+
+        Note that, as for eval, reporting doesn't work and is tracked by
+        https://webkit.org/b/111869
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::webAssemblyEnabled):
+        (JSC::JSGlobalObject::webAssemblyDisabledErrorMessage):
+        (JSC::JSGlobalObject::setWebAssemblyEnabled):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::create):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::create):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::constructJSWebAssemblyMemory):
+
 2017-06-28  Keith Miller  <keith_miller@apple.com>
 
         VMTraps has some races

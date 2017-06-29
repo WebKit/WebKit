@@ -100,7 +100,10 @@ static EncodedJSValue JSC_HOST_CALL constructJSWebAssemblyMemory(ExecState* exec
     if (!memory)
         return JSValue::encode(throwException(exec, throwScope, createOutOfMemoryError(exec)));
 
-    return JSValue::encode(JSWebAssemblyMemory::create(vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), adoptRef(*memory.leakRef())));
+    auto* jsMemory = JSWebAssemblyMemory::create(exec, vm, exec->lexicalGlobalObject()->WebAssemblyMemoryStructure(), adoptRef(*memory.leakRef()));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+
+    return JSValue::encode(jsMemory);
 }
 
 static EncodedJSValue JSC_HOST_CALL callJSWebAssemblyMemory(ExecState* exec)

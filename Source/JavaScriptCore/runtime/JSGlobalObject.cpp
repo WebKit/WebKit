@@ -330,9 +330,7 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_setAddWatchpoint(IsWatched)
     , m_arraySpeciesWatchpoint(ClearWatchpoint)
     , m_templateRegistry(vm)
-    , m_evalEnabled(true)
     , m_runtimeFlags()
-    , m_consoleClient(nullptr)
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
 {
 }

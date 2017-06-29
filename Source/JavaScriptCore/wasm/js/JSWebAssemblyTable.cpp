@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,10 +39,18 @@ const ClassInfo JSWebAssemblyTable::s_info = { "WebAssembly.Table", &Base::s_inf
 JSWebAssemblyTable* JSWebAssemblyTable::create(ExecState* exec, VM& vm, Structure* structure, uint32_t initial, std::optional<uint32_t> maximum)
 {
     auto throwScope = DECLARE_THROW_SCOPE(vm);
-    if (!isValidSize(initial)) {
-        throwException(exec, throwScope, createOutOfMemoryError(exec));
+    auto* globalObject = exec->lexicalGlobalObject();
+
+    auto exception = [&] (JSObject* error) {
+        throwException(exec, throwScope, error);
         return nullptr;
-    }
+    };
+
+    if (!globalObject->webAssemblyEnabled())
+        return exception(createEvalError(exec, globalObject->webAssemblyDisabledErrorMessage()));
+
+    if (!isValidSize(initial))
+        return exception(createOutOfMemoryError(exec));
 
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyTable>(vm.heap)) JSWebAssemblyTable(vm, structure, initial, maximum);
     instance->finishCreation(vm);
