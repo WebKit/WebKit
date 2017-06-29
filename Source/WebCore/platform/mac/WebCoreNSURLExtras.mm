@@ -103,6 +103,12 @@ static BOOL isLookalikeCharacter(std::optional<UChar32> previousCodePoint, UChar
         case 0x0703: /* SYRIAC SUPRALINEAR COLON */
         case 0x0704: /* SYRIAC SUBLINEAR COLON */
         case 0x1735: /* PHILIPPINE SINGLE PUNCTUATION */
+        case 0x1D04: /* LATIN LETTER SMALL CAPITAL C */
+        case 0x1D0F: /* LATIN LETTER SMALL CAPITAL O */
+        case 0x1D1C: /* LATIN LETTER SMALL CAPITAL U */
+        case 0x1D20: /* LATIN LETTER SMALL CAPITAL V */
+        case 0x1D21: /* LATIN LETTER SMALL CAPITAL W */
+        case 0x1D22: /* LATIN LETTER SMALL CAPITAL Z */
         case 0x2024: /* ONE DOT LEADER */
         case 0x2027: /* HYPHENATION POINT */
         case 0x2039: /* SINGLE LEFT-POINTING ANGLE QUOTATION MARK */
@@ -159,6 +165,7 @@ static BOOL isLookalikeCharacter(std::optional<UChar32> previousCodePoint, UChar
         case 0x33AF: /* SQUARE RAD OVER S SQUARED */
         case 0x33C6: /* SQUARE C OVER KG */
         case 0x33DF: /* SQUARE A OVER M */
+        case 0xA731: /* LATIN LETTER SMALL CAPITAL S */
         case 0xA789: /* MODIFIER LETTER COLON */
         case 0xFE14: /* PRESENTATION FORM FOR VERTICAL SEMICOLON */
         case 0xFE15: /* PRESENTATION FORM FOR VERTICAL EXCLAMATION MARK */

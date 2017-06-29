@@ -1,3 +1,16 @@
+2017-06-28  Alex Christensen  <achristensen@webkit.org>
+
+        Prevent displaying URLs with small capital letters
+        https://bugs.webkit.org/show_bug.cgi?id=173949
+        <rdar://problem/32952058>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by new API tests.
+
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::isLookalikeCharacter):
+
 2017-06-28  Youenn Fablet  <youenn@apple.com>
 
         Support PeerConnectionStates::BundlePolicy::MaxBundle when setting rtc configuration

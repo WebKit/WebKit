@@ -82,6 +82,14 @@ TEST(WebCore, URLExtras_Spoof)
         "xn--a-egb", // a, U+034F
         "xn--a-qgn", // a, U+200B
         "xn--a-mgn", // a, U+2009
+        "xn--u7f", // U+1D04
+        "xn--57f", // U+1D0F
+        "xn--i38a", // U+A731
+        "xn--j8f", // U+1D1C
+        "xn--n8f", // U+1D20
+        "xn--o8f", // U+1D21
+        "xn--p8f", // U+1D22
+        "xn--0na", // U+0261
     };
     for (const String& host : punycodedSpoofHosts) {
         auto url = makeString("http://", host, "/").utf8();
@@ -171,3 +179,4 @@ TEST(WebCore, URLExtras_Nil)
 }
 
 } // namespace TestWebKitAPI
+

@@ -1,3 +1,14 @@
+2017-06-28  Alex Christensen  <achristensen@webkit.org>
+
+        Prevent displaying URLs with small capital letters
+        https://bugs.webkit.org/show_bug.cgi?id=173949
+        <rdar://problem/32952058>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/cocoa/URLExtras.mm:
+        (TestWebKitAPI::TEST):
+
 2017-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix.
