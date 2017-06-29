@@ -369,8 +369,8 @@ test(function() {
         type: "bytes"
     });
 
-    assert_equals(controller.desiredSize, 1, "by default initial value of desiredSize should be 1");
-}, "By default initial value of desiredSize should be 1");
+    assert_equals(controller.desiredSize, 0, "by default initial value of desiredSize should be 0");
+}, "By default initial value of desiredSize should be 0");
 
 promise_test(function() {
     const rs = new ReadableStream({
@@ -394,13 +394,33 @@ promise_test(function() {
     });
     return new Promise(function(resolve, reject) {
         setTimeout(function() {
+            if (pullCalls === 0)
+                resolve("ok");
+            else
+                reject("No call should have been made to pull function");
+        }, 200);
+    });
+}, "Test that pull is not called when a new ReadableStream is created with default strategy parameters and a ReadableByteStreamController");
+
+promise_test(function() {
+    let pullCalls = 0;
+    const rs = new ReadableStream({
+        pull: function () {
+            pullCalls++;
+        },
+        type: "bytes"
+    }, {
+        highWaterMark: 1
+    });
+    return new Promise(function(resolve, reject) {
+        setTimeout(function() {
             if (pullCalls === 1)
                 resolve("ok");
             else
                 reject("1 call should have been made to pull function");
         }, 200);
     });
-}, "Test that pull is called once when a new ReadableStream is created with a ReadableByteStreamController");
+}, "Test that pull is called once when a new ReadableStream is created with a highWaterMark of 1 and a ReadableByteStreamController");
 
 promise_test(function() {
     const myError = new Error("Pull failed");
@@ -409,6 +429,8 @@ promise_test(function() {
             throw myError;
         },
         type: "bytes"
+    }, {
+        highWaterMark: 1
     });
 
     return new Promise(function(resolve, reject) {
@@ -423,7 +445,7 @@ promise_test(function() {
                 }
             )
         }, 200)});
-}, "Calling cancel after pull has thrown an error should result in a promise rejected with the same error");
+}, "For a ReadableStream created with a highWaterMark of 1 and a ReadableByteStreamController, calling cancel after pull has thrown an error should result in a promise rejected with the same error");
 
 promise_test(function() {
     const myError = new Error("Start failed");

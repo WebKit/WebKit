@@ -19,10 +19,11 @@ FAIL Pending reading promise should be rejected if controller is errored (case w
 PASS Enqueuing a chunk, getting a reader and calling read should result in a promise resolved with said chunk 
 PASS Getting a reader, calling read and enqueuing a chunk should result in the read promise being resolved with said chunk 
 PASS Getting a reader, enqueuing a chunk and finally calling read should result in a promise resolved with said chunk 
-PASS By default initial value of desiredSize should be 1 
+PASS By default initial value of desiredSize should be 0 
 PASS Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined 
-PASS Test that pull is called once when a new ReadableStream is created with a ReadableByteStreamController 
-PASS Calling cancel after pull has thrown an error should result in a promise rejected with the same error 
+PASS Test that pull is not called when a new ReadableStream is created with default strategy parameters and a ReadableByteStreamController 
+PASS Test that pull is called once when a new ReadableStream is created with a highWaterMark of 1 and a ReadableByteStreamController 
+PASS For a ReadableStream created with a highWaterMark of 1 and a ReadableByteStreamController, calling cancel after pull has thrown an error should result in a promise rejected with the same error 
 PASS Calling cancel after creating a ReadableStream with an underlyingByteStream's start function returning a rejected promise should result in a promise rejected with the same error 
 PASS Creating a ReadableStream with an underlyingSource with type property set to 'bytes' should succeed 
 PASS ReadableByteStreamController instances should have the correct list of properties 
@@ -44,9 +45,10 @@ FAIL Pending reading promise should be rejected if controller is errored (case w
 PASS Enqueuing a chunk, getting a reader and calling read should result in a promise resolved with said chunk 
 PASS Getting a reader, calling read and enqueuing a chunk should result in the read promise being resolved with said chunk 
 PASS Getting a reader, enqueuing a chunk and finally calling read should result in a promise resolved with said chunk 
-PASS By default initial value of desiredSize should be 1 
+PASS By default initial value of desiredSize should be 0 
 PASS Calling cancel() on a readable ReadableStream that is not locked to a reader should return a promise whose fulfillment handler returns undefined 
-PASS Test that pull is called once when a new ReadableStream is created with a ReadableByteStreamController 
-PASS Calling cancel after pull has thrown an error should result in a promise rejected with the same error 
+PASS Test that pull is not called when a new ReadableStream is created with default strategy parameters and a ReadableByteStreamController 
+PASS Test that pull is called once when a new ReadableStream is created with a highWaterMark of 1 and a ReadableByteStreamController 
+PASS For a ReadableStream created with a highWaterMark of 1 and a ReadableByteStreamController, calling cancel after pull has thrown an error should result in a promise rejected with the same error 
 PASS Calling cancel after creating a ReadableStream with an underlyingByteStream's start function returning a rejected promise should result in a promise rejected with the same error 
 

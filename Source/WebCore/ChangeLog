@@ -1,3 +1,20 @@
+2017-06-29  Romain Bellessort  <romain.bellessort@crf.canon.fr>
+
+        [Readable Streams API] Fix ReadableStream "strategy" argument handling
+        https://bugs.webkit.org/show_bug.cgi?id=172716
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Aligned default strategy parameter with spec, as defined in [1].
+        
+        [1] https://streams.spec.whatwg.org/#rs-constructor
+
+        Added new tests and updated some existing ones based on the newly
+        expected behavior. Also updated expectations for WPT streams tests.
+
+        * Modules/streams/ReadableStream.js:
+        (initializeReadableStream): Fixed initialization of strategy.
+
 2017-06-29  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r215347): NAS4Free Pop-down menus fail to appear
