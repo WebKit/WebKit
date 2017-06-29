@@ -1,3 +1,13 @@
+2017-06-29  Jonathan Bedard  <jbedard@apple.com>
+
+        Add WebKitSystemInterface for iOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=173936
+
+        Reviewed by Lucas Forschler.
+
+        * libWebKitSystemInterfaceIOSDevice11.a: Added.
+        * libWebKitSystemInterfaceIOSSimulator11.a: Added.
+
 2017-06-21  Andreas Kling  <akling@apple.com>
 
         [iOS] Ensure that GraphicsServices is initialized before calling GSFontPurgeFontCache().
