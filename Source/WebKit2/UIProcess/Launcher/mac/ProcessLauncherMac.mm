@@ -201,7 +201,8 @@ void ProcessLauncher::launchProcess()
         // And the receive right.
         mach_port_mod_refs(mach_task_self(), listeningPort, MACH_PORT_RIGHT_RECEIVE, -1);
 
-        xpc_connection_cancel(processLauncher->m_xpcConnection.get());
+        if (processLauncher->m_xpcConnection)
+            xpc_connection_cancel(processLauncher->m_xpcConnection.get());
         processLauncher->m_xpcConnection = nullptr;
 
         processLauncher->didFinishLaunchingProcess(0, IPC::Connection::Identifier());
