@@ -1,3 +1,17 @@
+2017-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Adopt +objectWithItemProviderData: for serializing NSItemProviderReading-conformant objects
+        https://bugs.webkit.org/show_bug.cgi?id=173971
+        <rdar://problem/33006605>
+
+        Reviewed by Tim Horton.
+
+        Moves off of a very-recently-deprecated API, in favor of its replacement. Guarded by a runtime check and staging
+        declarations. No change in behavior.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+
 2017-06-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Separate global curl settings from ResourceHandleManager as CurlContext class
