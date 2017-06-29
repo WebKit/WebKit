@@ -66,6 +66,7 @@ public:
     void clearInMemoryAndPersistent();
 
     ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
+    ResourceLoadStatistics takeResourceStatisticsForPrimaryDomain(const String&);
     void setResourceStatisticsForPrimaryDomain(const String&, ResourceLoadStatistics&&);
 
     bool isPrevalentResource(const String&) const;

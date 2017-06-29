@@ -71,6 +71,16 @@ ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsFor
     return addResult.iterator->value;
 }
 
+ResourceLoadStatistics ResourceLoadStatisticsStore::takeResourceStatisticsForPrimaryDomain(const String& primaryDomain)
+{
+    ASSERT(m_statisticsLock.isLocked());
+    auto statististics = m_resourceStatisticsMap.take(primaryDomain);
+    if (statististics.highLevelDomain.isNull())
+        statististics.highLevelDomain = primaryDomain;
+    ASSERT(statististics.highLevelDomain == primaryDomain);
+    return statististics;
+}
+
 void ResourceLoadStatisticsStore::setResourceStatisticsForPrimaryDomain(const String& primaryDomain, ResourceLoadStatistics&& statistics)
 {
     ASSERT(!isMainThread());
