@@ -41,7 +41,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS)
-#include <limits>
+#include "RuntimeApplicationChecks.h"
 #endif
 
 namespace WebCore {
@@ -69,7 +69,10 @@ BitmapImage::~BitmapImage()
 void BitmapImage::updateFromSettings(const Settings& settings)
 {
     m_allowSubsampling = settings.imageSubsamplingEnabled();
-    m_allowLargeImageAsyncDecoding = settings.largeImageAsyncDecodingEnabled();
+#if PLATFORM(IOS)
+    if (!IOSApplication::isIBooks())
+#endif
+        m_allowLargeImageAsyncDecoding = settings.largeImageAsyncDecodingEnabled();
     m_allowAnimatedImageAsyncDecoding = settings.animatedImageAsyncDecodingEnabled();
     m_showDebugBackground = settings.showDebugBorders();
 }

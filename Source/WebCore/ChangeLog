@@ -1,3 +1,18 @@
+2017-06-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Async image decoding should be disabled for iBooks on tvOS
+        https://bugs.webkit.org/show_bug.cgi?id=173945
+
+        Reviewed by Simon Fraser.
+
+        The iBooks on tvOS is an AppStore application. We need to disable async
+        image decoding for iBooks on tvOS permanently through WebKit.
+
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isIBooks):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::updateFromSettings):
+
 2017-06-29  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add a new extended attribute to model the forced return value optimization used on Node and Crypto

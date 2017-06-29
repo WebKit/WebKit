@@ -246,7 +246,8 @@ bool IOSApplication::isWebProcess()
 bool IOSApplication::isIBooks()
 {
     static bool isIBooks = applicationBundleIsEqualTo("com.apple.iBooks");
-    return isIBooks;
+    static bool isIBooksStorytime = applicationBundleIsEqualTo("com.apple.TVBooks");
+    return isIBooks || isIBooksStorytime;
 }
 
 bool IOSApplication::isTheSecretSocietyHiddenMystery()
