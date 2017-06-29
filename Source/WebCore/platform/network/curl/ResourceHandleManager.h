@@ -50,11 +50,6 @@ public:
     void add(ResourceHandle*);
     void cancel(ResourceHandle*);
 
-    void dispatchSynchronousJob(ResourceHandle*);
-
-    void setupPOST(ResourceHandle*, struct curl_slist**);
-    void setupPUT(ResourceHandle*, struct curl_slist**);
-
 private:
     ResourceHandleManager();
     ~ResourceHandleManager();
@@ -63,13 +58,9 @@ private:
     bool removeScheduledJob(ResourceHandle*);
     void startJob(ResourceHandle*);
     bool startScheduledJobs();
-    void applyAuthenticationToRequest(ResourceHandle*, ResourceRequest&);
-
-    void initializeHandle(ResourceHandle*);
 
     Timer m_downloadTimer;
     CURLM* m_curlMultiHandle;
-    char m_curlErrorBuffer[CURL_ERROR_SIZE];
     Vector<ResourceHandle*> m_resourceHandleList;
     int m_runningJobs;
 };

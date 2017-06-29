@@ -1,3 +1,59 @@
+2017-06-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] ResourceHandleManager violate the class responsibility of ResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=173630
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::calculateWebTimingInformations):
+        (WebCore::handleLocalReceiveResponse):
+        (WebCore::writeCallback):
+        (WebCore::isHttpInfo):
+        (WebCore::isHttpRedirect):
+        (WebCore::isHttpAuthentication):
+        (WebCore::isHttpNotModified):
+        (WebCore::isAppendableHeader):
+        (WebCore::removeLeadingAndTrailingQuotes):
+        (WebCore::getProtectionSpace):
+        (WebCore::headerCallback):
+        (WebCore::readCallback):
+        (WebCore::getFormElementsCount):
+        (WebCore::setupFormData):
+        (WebCore::ResourceHandle::setupPUT):
+        (WebCore::ResourceHandle::setupPOST):
+        (WebCore::ResourceHandle::handleDataURL):
+        (WebCore::ResourceHandle::dispatchSynchronousJob):
+        (WebCore::ResourceHandle::applyAuthentication):
+        (WebCore::ResourceHandle::initialize):
+        (WebCore::ResourceHandle::handleCurlMsg):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::startJob):
+        (WebCore::calculateWebTimingInformations): Deleted.
+        (WebCore::isHttpInfo): Deleted.
+        (WebCore::isHttpRedirect): Deleted.
+        (WebCore::isHttpAuthentication): Deleted.
+        (WebCore::isHttpNotModified): Deleted.
+        (WebCore::handleLocalReceiveResponse): Deleted.
+        (WebCore::writeCallback): Deleted.
+        (WebCore::isAppendableHeader): Deleted.
+        (WebCore::removeLeadingAndTrailingQuotes): Deleted.
+        (WebCore::getProtectionSpace): Deleted.
+        (WebCore::headerCallback): Deleted.
+        (WebCore::readCallback): Deleted.
+        (WebCore::getFormElementsCount): Deleted.
+        (WebCore::setupFormData): Deleted.
+        (WebCore::ResourceHandleManager::setupPUT): Deleted.
+        (WebCore::ResourceHandleManager::setupPOST): Deleted.
+        (WebCore::handleDataURL): Deleted.
+        (WebCore::ResourceHandleManager::dispatchSynchronousJob): Deleted.
+        (WebCore::ResourceHandleManager::applyAuthenticationToRequest): Deleted.
+        (WebCore::ResourceHandleManager::initializeHandle): Deleted.
+        * platform/network/curl/ResourceHandleManager.h:
+
 2017-06-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Async image decoding should be disabled for iBooks on tvOS
