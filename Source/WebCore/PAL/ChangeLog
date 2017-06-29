@@ -1,3 +1,10 @@
+2017-06-29  Dean Jackson  <dino@apple.com>
+
+        Disable some features on this release branch.
+        <rdar://problem/32913370>
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-06-28  Jonathan Bedard  <jbedard@apple.com>
 
         Build fix for PAL

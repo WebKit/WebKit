@@ -1,3 +1,11 @@
+2017-06-29  Dean Jackson  <dino@apple.com>
+
+        Disable some features on this release branch.
+        <rdar://problem/32913370>
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-06-28  Tim Horton  <timothy_horton@apple.com>
 
         MobileSafari was constantly using 10-15% CPU viewing a PDF

@@ -1,3 +1,11 @@
+2017-06-29  Dean Jackson  <dino@apple.com>
+
+        Disable some features on this release branch.
+        <rdar://problem/32913370>
+
+        * Configurations/FeatureDefines.xcconfig:
+        * runtime/Options.h:
+
 2017-06-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Instrument active pixel memory used by canvases

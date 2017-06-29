@@ -1,3 +1,11 @@
+2017-06-29  Dean Jackson  <dino@apple.com>
+
+        Disable some features on this release branch.
+        <rdar://problem/32913370>
+
+        * Configurations/FeatureDefines.xcconfig:
+        * page/Settings.in:
+
 2017-06-28  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Only apply font features for the particular type of font they are being applied to
