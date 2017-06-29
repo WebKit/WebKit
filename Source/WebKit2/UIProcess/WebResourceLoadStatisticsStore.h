@@ -52,10 +52,9 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
-class WebProcessPool;
 class WebProcessProxy;
 
-class WebResourceLoadStatisticsStore : public IPC::Connection::WorkQueueMessageReceiver {
+class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     static Ref<WebResourceLoadStatisticsStore> create(const String&);
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);

@@ -1,3 +1,22 @@
+2017-06-29  Chris Dumez  <cdumez@apple.com>
+
+        Slight clean up of WebResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=173976
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::dataTypesToRemove):
+        (WebKit::WebResourceLoadStatisticsStore::classifyResource):
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::WebResourceLoadStatisticsStore::stopMonitoringStatisticsStorage):
+        (WebKit::initializeDataTypesToRemove): Deleted.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        (WebKit::WebResourceLoadStatisticsStore::coreStore): Deleted.
+
 2017-06-29  Alex Christensen  <achristensen@webkit.org>
 
         WKContentRuleLists with if-top-url or unless-top-url should run regex against entire top URL

@@ -42,6 +42,7 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/threads/BinarySemaphore.h>
@@ -54,9 +55,32 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static OptionSet<WebKit::WebsiteDataType> dataTypesToRemove;
-static auto notifyPagesWhenDataRecordsWereScanned = false;
-static auto shouldClassifyResourcesBeforeDataRecordsRemoval = true;
+static bool notifyPagesWhenDataRecordsWereScanned = false;
+static bool shouldClassifyResourcesBeforeDataRecordsRemoval = true;
+
+static const OptionSet<WebsiteDataType>& dataTypesToRemove()
+{
+    static NeverDestroyed<OptionSet<WebsiteDataType>> dataTypes(std::initializer_list<WebsiteDataType>({
+        WebsiteDataType::Cookies,
+        WebsiteDataType::IndexedDBDatabases,
+        WebsiteDataType::LocalStorage,
+#if ENABLE(MEDIA_STREAM)
+        WebsiteDataType::MediaDeviceIdentifier,
+#endif
+        WebsiteDataType::MediaKeys,
+        WebsiteDataType::OfflineWebApplicationCache,
+#if ENABLE(NETSCAPE_PLUGIN_API)
+        WebsiteDataType::PlugInData,
+#endif
+        WebsiteDataType::SearchFieldRecentSearches,
+        WebsiteDataType::SessionStorage,
+        WebsiteDataType::WebSQLDatabases,
+    }));
+
+    ASSERT(RunLoop::isMain());
+
+    return dataTypes;
+}
 
 Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(const String& resourceLoadStatisticsDirectory)
 {
@@ -90,27 +114,8 @@ void WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecords
 
 void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& resourceStatistic)
 {
-    if (!resourceStatistic.isPrevalentResource
-        && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
+    if (!resourceStatistic.isPrevalentResource && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
         resourceStatistic.isPrevalentResource = true;
-}
-
-static inline void initializeDataTypesToRemove()
-{
-    dataTypesToRemove |= WebsiteDataType::Cookies;
-    dataTypesToRemove |= WebsiteDataType::OfflineWebApplicationCache;
-    dataTypesToRemove |= WebsiteDataType::SessionStorage;
-    dataTypesToRemove |= WebsiteDataType::LocalStorage;
-    dataTypesToRemove |= WebsiteDataType::WebSQLDatabases;
-    dataTypesToRemove |= WebsiteDataType::IndexedDBDatabases;
-    dataTypesToRemove |= WebsiteDataType::MediaKeys;
-    dataTypesToRemove |= WebsiteDataType::SearchFieldRecentSearches;
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    dataTypesToRemove |= WebsiteDataType::PlugInData;
-#endif
-#if ENABLE(MEDIA_STREAM)
-    dataTypesToRemove |= WebsiteDataType::MediaDeviceIdentifier;
-#endif
 }
     
 void WebResourceLoadStatisticsStore::removeDataRecords()
@@ -120,18 +125,15 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
     if (!coreStore().shouldRemoveDataRecords())
         return;
 
-    Vector<String> prevalentResourceDomains = coreStore().topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
-    if (!prevalentResourceDomains.size())
+    auto prevalentResourceDomains = coreStore().topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
+    if (prevalentResourceDomains.isEmpty())
         return;
     
     coreStore().dataRecordsBeingRemoved();
 
-    if (dataTypesToRemove.isEmpty())
-        initializeDataTypesToRemove();
-
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = CrossThreadCopier<Vector<String>>::copy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove, WTFMove(prevalentResourceDomains), notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove(), WTFMove(prevalentResourceDomains), notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue.
             m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
                 protectedThis->coreStore().updateStatisticsForRemovedDataRecords(topDomains);
@@ -186,7 +188,7 @@ void WebResourceLoadStatisticsStore::setResourceLoadStatisticsEnabled(bool enabl
 
     if (m_resourceLoadStatisticsEnabled) {
         readDataFromDiskIfNeeded();
-        m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] () {
+        m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
             startMonitoringStatisticsStorage();
         });
     } else
@@ -214,7 +216,7 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
             writeStoreToDisk();
         });
     });
-    m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this, protectedThis = makeRef(*this)]() {
+    m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this, protectedThis = makeRef(*this)] {
         grandfatherExistingWebsiteData();
     });
     m_resourceLoadStatisticsStore->setDeletePersistentStoreCallback([this, protectedThis = makeRef(*this)] {
@@ -222,7 +224,7 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
             deleteStoreFromDisk();
         });
     });
-    m_resourceLoadStatisticsStore->setFireTelemetryCallback([this, protectedThis = makeRef(*this)]() {
+    m_resourceLoadStatisticsStore->setFireTelemetryCallback([this, protectedThis = makeRef(*this)] {
         // This cancels the one shot timer and is only intended for testing purposes.
         m_telemetryOneShotTimer.startOneShot(100_ms);
     });
@@ -243,12 +245,9 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(WTF::Fun
 
 void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
 {
-    if (dataTypesToRemove.isEmpty())
-        initializeDataTypesToRemove();
-    
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(dataTypesToRemove, notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(dataTypesToRemove(), notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue
             m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
                 protectedThis->coreStore().handleFreshStartWithEmptyOrNoStore(WTFMove(topDomains));
@@ -429,9 +428,6 @@ void WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage()
 void WebResourceLoadStatisticsStore::stopMonitoringStatisticsStorage()
 {
     ASSERT(!RunLoop::isMain());
-    if (!m_statisticsStorageMonitor)
-        return;
-
     m_statisticsStorageMonitor = nullptr;
 }
 
