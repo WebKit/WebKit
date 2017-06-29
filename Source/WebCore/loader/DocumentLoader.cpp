@@ -1683,6 +1683,10 @@ void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdent
 {
     auto icon = m_iconsPendingLoadDecision.take(loadIdentifier);
 
+    // If the decision was not to load or this DocumentLoader is already detached, there is no load to perform.
+    if (!decision || !m_frame)
+        return;
+
     // If the LinkIcon we just took is empty, then the DocumentLoader had all of its loaders stopped
     // while this icon load decision was pending.
     // In this case we need to notify the client that the icon finished loading with empty data.
@@ -1690,10 +1694,6 @@ void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdent
         notifyFinishedLoadingIcon(newCallbackID, nullptr);
         return;
     }
-
-    // If the decision was not to load or this DocumentLoader is already detached, there is no load to perform.
-    if (!decision || !m_frame)
-        return;
 
     auto iconLoader = std::make_unique<IconLoader>(*this, icon.url);
     auto* rawIconLoader = iconLoader.get();
@@ -1708,15 +1708,14 @@ void DocumentLoader::finishedLoadingIcon(IconLoader& loader, SharedBuffer* buffe
     ASSERT(m_frame);
 
     auto callbackIdentifier = m_iconLoaders.take(&loader);
-    RELEASE_ASSERT(callbackIdentifier);
-
     notifyFinishedLoadingIcon(callbackIdentifier, buffer);
 }
 
 void DocumentLoader::notifyFinishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer* buffer)
 {
-    if (m_frame)
-        m_frame->loader().client().finishedLoadingIcon(callbackIdentifier, buffer);
+    RELEASE_ASSERT(callbackIdentifier);
+    RELEASE_ASSERT(m_frame);
+    m_frame->loader().client().finishedLoadingIcon(callbackIdentifier, buffer);
 }
 
 void DocumentLoader::dispatchOnloadEvents()
