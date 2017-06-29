@@ -53,6 +53,7 @@ extern "C" {
     WK_EXPORT void WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(bool value);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(bool value);
+    WK_EXPORT void WKResourceLoadStatisticsManagerSetShouldSubmitTelemetry(bool value);
     WK_EXPORT void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore();
     WK_EXPORT void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     WK_EXPORT void WKResourceLoadStatisticsManagerResetToConsistentState();

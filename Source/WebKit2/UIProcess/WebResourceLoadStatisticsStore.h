@@ -60,6 +60,7 @@ public:
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     static void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
+    static void setShouldSubmitTelemetry(bool);
     virtual ~WebResourceLoadStatisticsStore();
     
     void setResourceLoadStatisticsEnabled(bool);
@@ -104,6 +105,7 @@ private:
     void syncWithExistingStatisticsStorageIfNeeded();
     void refreshFromDisk();
     void telemetryTimerFired();
+    void submitTelemetry();
 
     Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
 #if HAVE(CORE_PREDICTION)

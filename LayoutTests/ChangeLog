@@ -1,3 +1,15 @@
+2017-06-29  John Wilander  <wilander@apple.com>
+
+        Fix for intermittent Layout Test fail http/tests/loading/resourceLoadStatistics/telemetry-generation.html
+        https://bugs.webkit.org/show_bug.cgi?id=173940
+        <rdar://problem/33018125>
+
+        Reviewed by Brent Fulgham.
+
+        * platform/wk2/TestExpectations:
+            http/tests/loading/resourceLoadStatistics/telemetry-generation.html
+            is now expected to pass.
+
 2017-06-29  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add a new extended attribute to model the forced return value optimization used on Node and Crypto

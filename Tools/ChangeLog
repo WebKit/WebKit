@@ -1,3 +1,20 @@
+2017-06-29  John Wilander  <wilander@apple.com>
+
+        Fix for intermittent Layout Test fail http/tests/loading/resourceLoadStatistics/telemetry-generation.html
+        https://bugs.webkit.org/show_bug.cgi?id=173940
+        <rdar://problem/33018125>
+
+        Reviewed by Brent Fulgham.
+
+        This change allows the TestController to turn off
+        regular resource load statistics telemetry submission
+        and to manually control when telemetry is calculated
+        and submitted.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+            Turns off automatic resource load statistics telemetry submission.
+
 2017-06-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r218512.

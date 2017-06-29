@@ -139,6 +139,11 @@ void WebResourceLoadStatisticsManager::setNotifyPagesWhenTelemetryWasCaptured(bo
     WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(value);
 }
     
+void WebResourceLoadStatisticsManager::setShouldSubmitTelemetry(bool value)
+{
+    WebResourceLoadStatisticsStore::setShouldSubmitTelemetry(value);
+}
+    
 void WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
 {
     WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(value);

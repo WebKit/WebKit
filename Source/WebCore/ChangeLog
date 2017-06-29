@@ -1,3 +1,17 @@
+2017-06-29  John Wilander  <wilander@apple.com>
+
+        Fix for intermittent Layout Test fail http/tests/loading/resourceLoadStatistics/telemetry-generation.html
+        https://bugs.webkit.org/show_bug.cgi?id=173940
+        <rdar://problem/33018125>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. This change enables the exiting test to pass.
+
+        * loader/ResourceLoadStatisticsStore.cpp:
+        (WebCore::ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry):
+            Added an assert.
+
 2017-06-29  Youenn Fablet  <youenn@apple.com>
 
         Support PeerConnectionStates::BundlePolicy::MaxBundle when setting rtc configuration

@@ -137,6 +137,11 @@ void WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(bool 
     WebResourceLoadStatisticsManager::setNotifyPagesWhenTelemetryWasCaptured(value);
 }
 
+void WKResourceLoadStatisticsManagerSetShouldSubmitTelemetry(bool value)
+{
+    WebResourceLoadStatisticsManager::setShouldSubmitTelemetry(value);
+}
+
 void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore()
 {
     WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore();

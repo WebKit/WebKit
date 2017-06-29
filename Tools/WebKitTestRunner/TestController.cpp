@@ -388,6 +388,9 @@ void TestController::initialize(int argc, const char* argv[])
 #if PLATFORM(MAC)
     WebCoreTestSupport::installMockGamepadProvider();
 #endif
+    
+    WKResourceLoadStatisticsManagerSetShouldSubmitTelemetry(false);
+
     WKRetainPtr<WKStringRef> pageGroupIdentifier(AdoptWK, WKStringCreateWithUTF8CString("WebKitTestRunnerPageGroup"));
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
 }

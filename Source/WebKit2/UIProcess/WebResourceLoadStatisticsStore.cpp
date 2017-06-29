@@ -57,6 +57,7 @@ namespace WebKit {
 
 static bool notifyPagesWhenDataRecordsWereScanned = false;
 static bool shouldClassifyResourcesBeforeDataRecordsRemoval = true;
+static auto shouldSubmitTelemetry = true;
 
 static const OptionSet<WebsiteDataType>& dataTypesToRemove()
 {
@@ -112,6 +113,11 @@ void WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecords
     shouldClassifyResourcesBeforeDataRecordsRemoval = value;
 }
 
+void WebResourceLoadStatisticsStore::setShouldSubmitTelemetry(bool value)
+{
+    shouldSubmitTelemetry = value;
+}
+    
 void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& resourceStatistic)
 {
     if (!resourceStatistic.isPrevalentResource && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
@@ -225,8 +231,7 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
         });
     });
     m_resourceLoadStatisticsStore->setFireTelemetryCallback([this, protectedThis = makeRef(*this)] {
-        // This cancels the one shot timer and is only intended for testing purposes.
-        m_telemetryOneShotTimer.startOneShot(100_ms);
+        submitTelemetry();
     });
 #if PLATFORM(COCOA)
     WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded();
@@ -488,6 +493,14 @@ void WebResourceLoadStatisticsStore::telemetryTimerFired()
 {
     ASSERT(RunLoop::isMain());
     
+    if (!shouldSubmitTelemetry)
+        return;
+    
+    submitTelemetry();
+}
+
+void WebResourceLoadStatisticsStore::submitTelemetry()
+{
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
         auto locker = holdLock(coreStore().statisticsLock());
         WebResourceLoadStatisticsTelemetry::calculateAndSubmit(coreStore());

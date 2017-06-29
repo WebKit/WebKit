@@ -1,3 +1,40 @@
+2017-06-29  John Wilander  <wilander@apple.com>
+
+        Fix for intermittent Layout Test fail http/tests/loading/resourceLoadStatistics/telemetry-generation.html
+        https://bugs.webkit.org/show_bug.cgi?id=173940
+        <rdar://problem/33018125>
+
+        Reviewed by Brent Fulgham.
+
+        This change allows the TestController to turn off
+        regular resource load statistics telemetry submission
+        and to manually control when telemetry is calculated
+        and submitted.
+
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp:
+        (WKResourceLoadStatisticsManagerSetShouldSubmitTelemetry):
+            New test infrastructure.
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::WebResourceLoadStatisticsManager::setShouldSubmitTelemetry):
+            New test infrastructure.
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setShouldSubmitTelemetry):
+            New test infrastructure.
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+            The test function now calls
+            WebResourceLoadStatisticsStore::submitTelemetry() directly
+            instead of firing the timer.
+        (WebKit::WebResourceLoadStatisticsStore::telemetryTimerFired):
+            Now checks whether it should submit telemetry or not.
+        (WebKit::WebResourceLoadStatisticsStore::submitTelemetry):
+            Split out so that the test code doesn't have to fire the timer.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+            Now doesn't submit if it's executed by test code.
+
 2017-06-29  Chris Dumez  <cdumez@apple.com>
 
         Slight clean up of WebResourceLoadStatisticsStore

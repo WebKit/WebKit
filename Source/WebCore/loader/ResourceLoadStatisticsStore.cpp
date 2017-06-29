@@ -190,6 +190,7 @@ Vector<ResourceLoadStatistics> ResourceLoadStatisticsStore::takeStatistics()
 
 void ResourceLoadStatisticsStore::mergeStatistics(const Vector<ResourceLoadStatistics>& statistics)
 {
+    ASSERT(!isMainThread());
     auto locker = holdLock(m_statisticsLock);
     for (auto& statistic : statistics) {
         auto result = m_resourceStatisticsMap.ensure(statistic.highLevelDomain, [&statistic] {
@@ -377,6 +378,7 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
     
 Vector<PrevalentResourceTelemetry> ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry() const
 {
+    ASSERT(!isMainThread());
     auto locker = holdLock(m_statisticsLock);
     Vector<PrevalentResourceTelemetry> sorted;
     for (auto& statistic : m_resourceStatisticsMap.values()) {

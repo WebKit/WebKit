@@ -211,6 +211,12 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadSt
         return;
     }
     
+    if (notifyPagesWhenTelemetryWasCaptured) {
+        notifyPages(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, prevalentResourcesDaysSinceUserInteraction.size());
+        // The notify pages function is for testing so we don't need to do an actual submission.
+        return;
+    }
+    
     webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResources"), sortedPrevalentResources.size(), 0, ShouldSample::No);
     webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResourcesWithUserInteraction"), prevalentResourcesDaysSinceUserInteraction.size(), 0, ShouldSample::No);
     
@@ -220,9 +226,6 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadSt
         webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("medianPrevalentResourcesWithUserInteractionDaysSinceUserInteraction"), median(prevalentResourcesDaysSinceUserInteraction), 0, ShouldSample::No);
     
     submitTopLists(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, *webPageProxy);
-    
-    if (notifyPagesWhenTelemetryWasCaptured)
-        notifyPages(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, prevalentResourcesDaysSinceUserInteraction.size());
 }
     
 void WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(bool always)

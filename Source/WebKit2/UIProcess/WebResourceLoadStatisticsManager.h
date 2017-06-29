@@ -59,6 +59,7 @@ public:
     static void fireTelemetryHandler();
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
     static void setNotifyPagesWhenTelemetryWasCaptured(bool value);
+    static void setShouldSubmitTelemetry(bool value);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
     static void clearInMemoryAndPersistentStore();
     static void clearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
