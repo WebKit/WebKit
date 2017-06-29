@@ -61,7 +61,7 @@
         directly so we can control file locking.
         * UIProcess/WebResourceLoadStatisticsStore.h:
 
- 2017-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+2017-06-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Followup to r218885: adjust for further UIKit SPI changes
         https://bugs.webkit.org/show_bug.cgi?id=173927
