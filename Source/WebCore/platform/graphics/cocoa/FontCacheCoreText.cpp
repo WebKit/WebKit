@@ -420,24 +420,6 @@ static inline bool fontIsSystemFont(CTFontRef font)
     return CFStringGetLength(name.get()) > 0 && CFStringGetCharacterAtIndex(name.get(), 0) == '.';
 }
 
-static inline bool isGXVariableFont(CTFontRef font)
-{
-    auto tables = adoptCF(CTFontCopyAvailableTables(font, kCTFontTableOptionNoOptions));
-    if (!tables)
-        return false;
-    auto size = CFArrayGetCount(tables.get());
-    for (CFIndex i = 0; i < size; ++i) {
-        // This is so yucky.
-        // https://developer.apple.com/reference/coretext/1510774-ctfontcopyavailabletables
-        // "The returned set will contain unboxed values, which can be extracted like so:"
-        // "CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tags, index);"
-        CTFontTableTag tableTag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tables.get(), i)));
-        if (tableTag == 'STAT')
-            return false;
-    }
-    return true;
-}
-
 // These values were calculated by performing a linear regression on the CSS weights/widths/slopes and Core Text weights/widths/slopes of San Francisco.
 // FIXME: <rdar://problem/31312602> Get the real values from Core Text.
 static inline float normalizeWeight(float value)
@@ -487,6 +469,49 @@ static inline float normalizeWidth(float value)
     return normalizeVariationWidth(value + 1);
 }
 #endif
+
+struct FontType {
+    FontType(CTFontRef font)
+    {
+        auto tables = adoptCF(CTFontCopyAvailableTables(font, kCTFontTableOptionNoOptions));
+        if (!tables)
+            return;
+        auto size = CFArrayGetCount(tables.get());
+        for (CFIndex i = 0; i < size; ++i) {
+            // This is so yucky.
+            // https://developer.apple.com/reference/coretext/1510774-ctfontcopyavailabletables
+            // "The returned set will contain unboxed values, which can be extracted like so:"
+            // "CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tags, index);"
+            CTFontTableTag tableTag = static_cast<CTFontTableTag>(reinterpret_cast<uintptr_t>(CFArrayGetValueAtIndex(tables.get(), i)));
+            switch (tableTag) {
+            case 'fvar':
+                if (variationType == VariationType::NotVariable)
+                    variationType = VariationType::TrueTypeGX;
+                break;
+            case 'STAT':
+                variationType = VariationType::OpenType18;
+                break;
+            case 'morx':
+            case 'mort':
+                aatShaping = true;
+                break;
+            case 'GPOS':
+            case 'GSUB':
+                openTypeShaping = true;
+                break;
+            }
+        }
+    }
+
+    enum class VariationType {
+        NotVariable,
+        TrueTypeGX,
+        OpenType18
+    };
+    VariationType variationType { VariationType::NotVariable };
+    bool openTypeShaping { false };
+    bool aatShaping { false };
+};
 
 RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size)
 {
@@ -546,10 +571,12 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     for (auto& newFeature : features)
         featuresToBeApplied.set(newFeature.tag(), newFeature.value());
 
+    FontType fontType(originalFont);
+
 #if ENABLE(VARIATION_FONTS)
     VariationsMap variationsToBeApplied;
 
-    bool needsConversion = isGXVariableFont(originalFont);
+    bool needsConversion = fontType.variationType == FontType::VariationType::TrueTypeGX;
 
     auto applyVariation = [&](const FontTag& tag, float value) {
         auto iterator = defaultValues.find(tag);
@@ -598,8 +625,10 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
         auto featureArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, features.size(), &kCFTypeArrayCallBacks));
         for (auto& p : featuresToBeApplied) {
             auto feature = FontFeature(p.key, p.value);
-            appendTrueTypeFeature(featureArray.get(), feature);
-            appendOpenTypeFeature(featureArray.get(), feature);
+            if (fontType.aatShaping)
+                appendTrueTypeFeature(featureArray.get(), feature);
+            if (fontType.openTypeShaping)
+                appendOpenTypeFeature(featureArray.get(), feature);
         }
         CFDictionaryAddValue(attributes.get(), kCTFontFeatureSettingsAttribute, featureArray.get());
     }
@@ -963,7 +992,7 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
             result.slope = extractVariationBounds(axis);
     }
 
-    if (isGXVariableFont(font.get())) {
+    if (FontType(font.get()).variationType == FontType::VariationType::TrueTypeGX) {
         if (result.weight)
             result.weight = {{ normalizeWeight(result.weight.value().minimum), normalizeWeight(result.weight.value().maximum) }};
         if (result.width)

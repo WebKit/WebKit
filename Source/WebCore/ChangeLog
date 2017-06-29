@@ -1,3 +1,27 @@
+2017-06-28  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Only apply font features for the particular type of font they are being applied to
+        https://bugs.webkit.org/show_bug.cgi?id=172661
+        <rdar://problem/31534119>
+        <rdar://problem/32799624>
+
+        Reviewed by Simon Fraser.
+
+        There are two types of font formats which support features: AAT and OTF. Each of them has
+        a different idea about what the identity of a feature is. We were specifying both types
+        of feature identities to Core Text; however, this is causing Core Text to get confused.
+        Instead, we should only apply AAT features to AAT fonts and OTF features to OTF fonts.
+
+        Test: Un-marking these tests as failure on High Sierra:
+              css3/font-variant-petite-caps-synthesis-coverage.html
+              css3/font-variant-small-caps-synthesis-coverage.html
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontType::FontType):
+        (WebCore::preparePlatformFont):
+        (WebCore::variationCapabilitiesForFontDescriptor):
+        (WebCore::isGXVariableFont): Deleted.
+
 2017-06-28  Chris Dumez  <cdumez@apple.com>
 
         [ResourceLoadStatistics] Simplify PrevalentResourceTelemetry struct
