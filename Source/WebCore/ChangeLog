@@ -1,3 +1,38 @@
+2017-06-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Cannot italicize or bold text rendered with text styles
+        https://bugs.webkit.org/show_bug.cgi?id=173634
+
+        Reviewed by Darin Adler.
+
+        r218616 enabled the new cascade list codepath for "system-ui," but didn't do it for the named
+        text styles (like "font: -apple-system-tall-body;"). This new codepath is better because it
+        correctly specifies weights and italics (using kCTFontWeightTrait and kCTFontSlantTrait) instead
+        of using symbolic traits, and because it correctly handles fonts in the Core Text fallback chain.
+        This patch migrates the named text styles to this new codepath.
+
+        Test: fast/text/ipad/bold-tall-body-text-style.html
+
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::CoreTextCascadeListParameters):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::isHashTableDeletedValue):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::operator==):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::hash):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::CoreTextCascadeListParametersHash::hash):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParameters::CoreTextCascadeListParametersHash::equal):
+        (WebCore::SystemFontDatabase::systemFontCascadeList):
+        (WebCore::convertArray):
+        (WebCore::convertArray):
+        (WebCore::makeNeverDestroyed):
+        (WebCore::isUIFontTextStyle):
+        (WebCore::systemFontParameters):
+        (WebCore::FontCascadeDescription::effectiveFamilyCount):
+        (WebCore::FontCascadeDescription::effectiveFamilyAt):
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParametersHash::hash): Deleted.
+        (WebCore::SystemFontDatabase::CoreTextCascadeListParametersHash::equal): Deleted.
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+
 2017-06-28  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Instrument active pixel memory used by canvases

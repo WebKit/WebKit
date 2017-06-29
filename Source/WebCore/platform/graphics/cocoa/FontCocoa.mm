@@ -183,7 +183,7 @@ void Font::platformInit()
     ascent = ceilf(ascent + adjustment);
     descent = ceilf(descent);
 
-    m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(adoptCF(CTFontCopyFamilyName(m_platformData.font())).get());
+    m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(familyName.get());
 #endif
 
     CGFloat xHeight = 0;

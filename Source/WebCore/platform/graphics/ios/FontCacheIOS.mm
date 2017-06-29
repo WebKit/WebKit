@@ -148,6 +148,7 @@ static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontSelectionValue we
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size)
 {
     if (family.startsWith("UICTFontTextStyle")) {
+#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST
         CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) || FontCache::singleton().shouldMockBoldSystemFontForAccessibility() ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
         RetainPtr<CFStringRef> familyNameStr = family.string().createCFString();
         RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(familyNameStr.get(), RenderThemeIOS::contentSizeCategory(), nullptr));
@@ -155,6 +156,10 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
             fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), traits, traits));
 
         return adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size, nullptr));
+#else
+        UNUSED_PARAM(request);
+        ASSERT_NOT_REACHED();
+#endif
     }
 
     if (equalLettersIgnoringASCIICase(family, "-webkit-system-font") || equalLettersIgnoringASCIICase(family, "-apple-system") || equalLettersIgnoringASCIICase(family, "-apple-system-font") || equalLettersIgnoringASCIICase(family, "system-ui")) {
