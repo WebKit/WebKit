@@ -446,11 +446,11 @@ section = "class statements in eval";
 // Checking if there are CodeCache badness that can result from class statements in
 // identical eval statements.
 (function () {
-    let body1 = "class foo { constructor(x) { return x; } stuff() { return 5; } }; foo";
+    let body1 = "class foo { constructor(x) { return x; } stuff() { return 5; } }";
     // Identical class body as body1.
-    let body2 = "class foo { constructor(x) { return x; } stuff() { return 5; } }; foo";
+    let body2 = "class foo { constructor(x) { return x; } stuff() { return 5; } }";
     // Identical constructor as body1 & body2, but different otherwise.
-    let body3 = "class foo3 { constructor(x) { return x; } stuff3() { return 15; } }; foo3";
+    let body3 = "class foo3 { constructor(x) { return x; } stuff3() { return 15; } }";
 
     let bar1 = eval(body1);
     let bar2 = eval(body2);

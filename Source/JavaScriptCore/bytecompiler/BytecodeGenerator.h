@@ -916,9 +916,7 @@ namespace JSC {
 
         CodeType codeType() const { return m_codeType; }
 
-        bool shouldBeConcernedWithCompletionValue() const { return m_codeType != FunctionCode; }
-
-        bool shouldEmitDebugHooks() const { return m_shouldEmitDebugHooks; }
+        bool shouldEmitDebugHooks() { return m_shouldEmitDebugHooks; }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
 
