@@ -75,7 +75,15 @@ void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTree
     CGRect layerBounds = [m_layer bounds];
     CGPoint anchorPoint = [m_layer anchorPoint];
     CGPoint newPosition = layerPosition - m_constraints.alignmentOffset() + anchorPoint * layerBounds.size;
-    
+
+    if (isnan(newPosition.x) || isnan(newPosition.y)) {
+        WTFLogAlways("Attempt to call [CALayer setPosition] with NaN: newPosition=(%f, %f) layerPosition=(%f, %f) alignmentOffset=(%f, %f)",
+            newPosition.x, newPosition.y, layerPosition.x(), layerPosition.y(),
+            m_constraints.alignmentOffset().width(), m_constraints.alignmentOffset().height());
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     [m_layer setPosition:newPosition];
 
     if (!m_children)

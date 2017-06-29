@@ -1,3 +1,19 @@
+2017-06-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange
+        https://bugs.webkit.org/show_bug.cgi?id=173958
+
+        Reviewed by Simon Fraser.
+
+        The crashed is most likely caused by updateLayersAfterAncestorChange calling [CALayer setPosition]
+        with a CGPoint which contains the x coordinate or the y coordinate of NaN.
+
+        Simon and I inpected the code but we couldn't figure out how we get there. Detect this case and bail out.
+        Also log the relevant values and debug assert when this condition is hit to help identifying the root cause.
+
+        * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+        (WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange):
+
 2017-06-28  Chris Dumez  <cdumez@apple.com>
 
         ResourceLoadObserver clean up
