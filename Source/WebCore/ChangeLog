@@ -1,3 +1,17 @@
+2017-06-29  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r218963.
+
+        This patch and its fix cause immediate flakiness on all WK2
+        testers
+
+        Reverted changeset:
+
+        "Support PeerConnectionStates::BundlePolicy::MaxBundle when
+        setting rtc configuration"
+        https://bugs.webkit.org/show_bug.cgi?id=169389
+        http://trac.webkit.org/changeset/218963
+
 2017-06-29  Chris Dumez  <cdumez@apple.com>
 
         Split ResourceLoadObserver into 2 classes: one for WebCore and one for the UIProcess
