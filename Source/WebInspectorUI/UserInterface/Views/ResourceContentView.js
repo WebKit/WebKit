@@ -36,10 +36,14 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
 
         this.element.classList.add(styleClassName, "resource");
 
-        // Append a spinner while waiting for contentAvailable. The subclasses are responsible for removing
-        // the spinner before showing the resource content.
-        var spinner = new WebInspector.IndeterminateProgressSpinner;
-        this.element.appendChild(spinner.element);
+        this._spinnerTimeout = setTimeout(() => {
+            // Append a spinner while waiting for contentAvailable. Subclasses are responsible for
+            // removing the spinner before showing the resource content by calling removeLoadingIndicator.
+            let spinner = new WebInspector.IndeterminateProgressSpinner;
+            this.element.appendChild(spinner.element);
+
+            this._spinnerTimeout = undefined;
+        }, 100);
 
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), false);
 
@@ -97,6 +101,18 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
             WebInspector.issueManager.removeEventListener(null, null, this);
     }
 
+    // Protected
+
+    removeLoadingIndicator()
+    {
+        if (this._spinnerTimeout) {
+            clearTimeout(this._spinnerTimeout);
+            this._spinnerTimeout = undefined;
+        }
+
+        this.element.removeChildren();
+    }
+
     // Private
 
     _contentAvailable(parameters)
@@ -117,7 +133,8 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
         if (this._hasContent())
             return;
 
-        this.element.removeChildren();
+        this.removeLoadingIndicator();
+
         this.element.appendChild(WebInspector.createMessageTextView(error, true));
 
         this.dispatchEventToListeners(WebInspector.ResourceContentView.Event.ContentError);
@@ -125,7 +142,7 @@ WebInspector.ResourceContentView = class ResourceContentView extends WebInspecto
 
     _hasContent()
     {
-        return !this.element.querySelector(".indeterminate-progress-spinner");
+        return this.element.hasChildNodes() && !this.element.querySelector(".indeterminate-progress-spinner");
     }
 
     _issueWasAdded(event)

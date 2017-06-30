@@ -1,3 +1,38 @@
+2017-06-30  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add small delay before showing the progress spinner when loading resources
+        https://bugs.webkit.org/show_bug.cgi?id=173437
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WebInspector.ResourceContentView):
+        (WebInspector.ResourceContentView.prototype.removeLoadingIndicator): Added.
+        (WebInspector.ResourceContentView.prototype._contentError):
+        (WebInspector.ResourceContentView.prototype._hasContent):
+        Delay the creation of the spinner for 100ms.  If the content is available before then, just
+        clear the timeout and the spinner will never be created/shown.
+
+        We measured an average of 35ms to load and display images with slow cases being around 55ms.
+        100ms was chosen for the timeout to give some room to allow for abnormally slow loading
+        while not being too long as to be outright noticable.
+
+        * UserInterface/Views/FontResourceContentView.js:
+        (WebInspector.FontResourceContentView.prototype.contentAvailable):
+        * UserInterface/Views/ImageResourceContentView.js:
+        (WebInspector.ImageResourceContentView.prototype.contentAvailable):
+        * UserInterface/Views/TextResourceContentView.js:
+        (WebInspector.TextResourceContentView.prototype._contentWillPopulate):
+        Calls the new protected function removeLoadingIndicator to ensure that the spinner (and any
+        other element) is removed.
+
+        This is necessary because TextResourceContentView effectively has two phases of loading its
+        content: getting the content and formatting it for display.  The first follows the same path
+        as the other ResourceContentView subclasses, the second waits for the ContentWillPopulate
+        event on SourceCodeTextEditor before it actually adds the content as a subview.  In this
+        case, the spinner should only be removed right before the content is actually added, not
+        once it's ready.
+
 2017-06-30  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r218983.

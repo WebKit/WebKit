@@ -191,7 +191,8 @@ WebInspector.TextResourceContentView = class TextResourceContentView extends Web
         if (this._textEditor.parentView === this)
             return;
 
-        this.element.removeChildren();
+        this.removeLoadingIndicator();
+
         this.addSubview(this._textEditor);
     }
 

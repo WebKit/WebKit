@@ -53,7 +53,7 @@ WebInspector.ImageResourceContentView = class ImageResourceContentView extends W
             return;
         }
 
-        this.element.removeChildren();
+        this.removeLoadingIndicator();
 
         this._imageElement = document.createElement("img");
         this._imageElement.addEventListener("load", function() { URL.revokeObjectURL(objectURL); });

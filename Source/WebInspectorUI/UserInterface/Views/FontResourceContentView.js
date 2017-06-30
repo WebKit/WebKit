@@ -72,7 +72,7 @@ WebInspector.FontResourceContentView = class FontResourceContentView extends Web
         if (this._styleElement && this._styleElement.parentNode)
             this._styleElement.parentNode.removeChild(this._styleElement);
 
-        this.element.removeChildren();
+        this.removeLoadingIndicator();
 
         this._styleElement = document.createElement("style");
         this._styleElement.textContent = "@font-face { font-family: \"" + uniqueFontName + "\"; src: url(" + this._fontObjectURL + ")" + format + "; }";
