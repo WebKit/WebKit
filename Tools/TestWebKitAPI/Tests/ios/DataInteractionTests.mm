@@ -1059,6 +1059,17 @@ TEST(DataInteractionTests, WebItemProviderPasteboardLoading)
     TestWebKitAPI::Util::run(&hasRunSecondCompletionBlock);
 }
 
+TEST(DataInteractionTests, DoNotCrashWhenSelectionMovesOffscreenAfterDragStart)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dragstart-change-selection-offscreen"];
+
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 100)];
+
+    EXPECT_WK_STREQ("FAR OFFSCREEN", [webView stringByEvaluatingJavaScript:@"getSelection().getRangeAt(0).toString()"]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DATA_INTERACTION)

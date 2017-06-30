@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    font-size: 200px;
+}
+
+#offscreen {
+    position: absolute;
+    top: -500vh;
+    left: -500vw;
+}
+</style>
+<div id="onscreen">DRAG ME</div>
+<div id="offscreen">FAR OFFSCREEN</div>
+<script>
+function selectChildNodesOfElement(element)
+{
+    let range = document.createRange();
+    range.setStartBefore(element.childNodes[0])
+    range.setEndAfter(element.childNodes[element.childNodes.length - 1]);
+    getSelection().removeAllRanges();
+    getSelection().addRange(range);
+}
+selectChildNodesOfElement(onscreen);
+document.body.addEventListener("dragstart", () => selectChildNodesOfElement(offscreen));
+</script>
+</html>

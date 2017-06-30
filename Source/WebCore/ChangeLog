@@ -1,3 +1,20 @@
+2017-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Web content process crashes when the selection is moved far offscreen in dragstart
+        https://bugs.webkit.org/show_bug.cgi?id=174010
+        <rdar://problem/32597802>
+
+        Reviewed by Tim Horton.
+
+        The TextIndicator snapshot generated in createDragImageForSelection is not guaranteed to succeed; this patch
+        adds a null check following TextIndicator::createWithSelectionInFrame and bails early if the snapshot was not
+        successful.
+
+        Test: DataInteractionTests.DoNotCrashWhenSelectionMovesOffscreenAfterDragStart
+
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::createDragImageForSelection):
+
 2017-06-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Cannot call setValue() on contenteditable or ARIA text controls

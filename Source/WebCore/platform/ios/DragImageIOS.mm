@@ -184,6 +184,9 @@ DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData& indica
         options |= TextIndicatorOptionRespectTextColor;
 
     auto textIndicator = TextIndicator::createWithSelectionInFrame(frame, options, TextIndicatorPresentationTransition::None, FloatSize());
+    if (!textIndicator)
+        return nullptr;
+
     auto image = textIndicator->contentImage();
     if (image)
         indicatorData = textIndicator->data();
