@@ -70,6 +70,9 @@ FrameLoadRequest::FrameLoadRequest(Frame& frame, const ResourceRequest& resource
 
 FrameLoadRequest::~FrameLoadRequest() = default;
 
+FrameLoadRequest::FrameLoadRequest(FrameLoadRequest&&) = default;
+FrameLoadRequest& FrameLoadRequest::operator=(FrameLoadRequest&&) = default;
+
 Document& FrameLoadRequest::requester()
 {
     return m_requester.get();

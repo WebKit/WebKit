@@ -1,3 +1,14 @@
+2017-06-30  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the Apple Windows build following <https://trac.webkit.org/changeset/219013>
+        (https://bugs.webkit.org/show_bug.cgi?id=165160)
+
+        Make FrameLoadRequest move constructor and move operator out-of-line so that callers
+        do not need to include header SecurityOrigin.h.
+
+        * loader/FrameLoadRequest.cpp:
+        * loader/FrameLoadRequest.h:
+
 2017-06-30  Alex Christensen  <achristensen@webkit.org>
 
         Stop soft linking with CFNetwork
