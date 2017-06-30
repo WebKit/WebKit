@@ -1,3 +1,17 @@
+2017-06-30  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Initial search is sometimes performed twice, produces duplicate results
+        https://bugs.webkit.org/show_bug.cgi?id=174047
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/SearchTabContentView.js:
+        (WebInspector.SearchTabContentView.prototype.performSearch):
+        The initial layout of the tab content view was setting state to force a search
+        which may happen after a delay, however the global search field was causing
+        its own search to happen. We can clear the flag when a search is being performed
+        to prevent duplicating the search.
+
 2017-06-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add small delay before showing the progress spinner when loading resources

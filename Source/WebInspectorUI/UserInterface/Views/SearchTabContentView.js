@@ -86,6 +86,8 @@ WebInspector.SearchTabContentView = class SearchTabContentView extends WebInspec
     performSearch(searchQuery)
     {
         this.navigationSidebarPanel.performSearch(searchQuery);
+
+        this._forcePerformSearch = false;
     }
 
     handleCopyEvent(event)
