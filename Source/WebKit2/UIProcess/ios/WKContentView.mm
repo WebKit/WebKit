@@ -703,7 +703,8 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     printInfo.snapshotFirstPage = printFormatter.snapshotFirstPage;
     if (printInfo.snapshotFirstPage) {
         static const CGFloat maximumPDFHeight = 200 * 72; // maximum PDF height for a single page is 200 inches
-        printingRect = (CGRect) { CGPointZero, { self.bounds.size.width, std::min(_webView.scrollView.contentSize.height, maximumPDFHeight) } };
+        CGSize contentSize = self.bounds.size;
+        printingRect = (CGRect) { CGPointZero, { contentSize.width, std::min(contentSize.height, maximumPDFHeight) } };
         [printFormatter _setSnapshotPaperRect:printingRect];
     }
     printInfo.availablePaperWidth = CGRectGetWidth(printingRect);

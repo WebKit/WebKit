@@ -1,3 +1,21 @@
+2017-06-29  Andy Estes  <aestes@apple.com>
+
+        [iOS] Don't confuse coordinate spaces when computing the size of PDF snapshots
+        https://bugs.webkit.org/show_bug.cgi?id=173996
+        <rdar://problem/32961028>
+
+        Reviewed by Tim Horton.
+
+        When computing the printing rect for PDF snapshots, we were getting the width the
+        WKContentView's bounds and the height from the WKScrollView's contentSize. These sizes are
+        in different coordinate spaces, leading to incorrect clipping on sites that have a non-1
+        scale factor.
+
+        Fix this by using the WKContentView's bounds for both width and height.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _wk_pageCountForPrintFormatter:]):
+
 2017-06-29  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r218903.
