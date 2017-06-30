@@ -77,6 +77,7 @@ TextStream& operator<<(TextStream& ts, ScrollAlignment::Behavior b)
     case ScrollAlignment::Behavior::AlignToClosestEdge:
         return ts << "AlignToClosestEdge";
     }
+    return ts;
 }
     
 TextStream& operator<<(TextStream& ts, const ScrollAlignment& s)

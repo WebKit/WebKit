@@ -1,5 +1,12 @@
 2017-06-29  Megan Gardner  <megan_gardner@apple.com>
 
+        Unreviewed, fixing Window's build after r218976
+
+        * rendering/ScrollAlignment.cpp:
+        (WebCore::operator<<):
+
+2017-06-29  Megan Gardner  <megan_gardner@apple.com>
+
         Add TextStream operators for Range, VisiblePosition, VisibleSelection, and ScrollAlignment
         https://bugs.webkit.org/show_bug.cgi?id=173997
 
