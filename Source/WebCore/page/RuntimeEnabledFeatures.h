@@ -191,6 +191,11 @@ public:
     bool encryptedMediaAPIEnabled() const { return m_encryptedMediaAPIEnabled; }
 #endif
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void setLegacyEncryptedMediaAPIEnabled(bool isEnabled) { m_legacyEncryptedMediaAPIEnabled = isEnabled; }
+    bool legacyEncryptedMediaAPIEnabled() const { return m_legacyEncryptedMediaAPIEnabled; }
+#endif
+
 #if ENABLE(VIDEO)
     bool audioEnabled() const;
 #endif
@@ -298,6 +303,10 @@ private:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     bool m_encryptedMediaAPIEnabled { false };
+#endif
+
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    bool m_legacyEncryptedMediaAPIEnabled { false };
 #endif
 
 #if ENABLE(INTERSECTION_OBSERVER)

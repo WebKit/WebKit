@@ -80,6 +80,11 @@
     macro(MediaKeyStatusMap) \
     macro(MediaKeySystemAccess) \
     macro(MediaKeys) \
+    macro(WebKitMediaKeyError) \
+    macro(WebKitMediaKeyNeededEvent) \
+    macro(WebKitMediaKeySession) \
+    macro(WebKitMediaKeys) \
+    macro(WebKitMediaKeyMessageEvent) \
     macro(MediaStreamEvent) \
     macro(ModernMediaControls) \
     macro(NaN) \

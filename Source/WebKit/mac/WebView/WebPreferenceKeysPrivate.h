@@ -241,3 +241,4 @@
 #define WebKitUserTimingEnabledPreferenceKey @"WebKitUserTimingEnabled"
 #define WebKitResourceTimingEnabledPreferenceKey @"WebKitResourceTimingEnabled"
 #define WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey @"WebKitMediaContentTypesRequiringHardwareSupport"
+#define WebKitLegacyEncryptedMediaAPIEnabledKey @"WebKitLegacyEncryptedMediaAPIEnabled"

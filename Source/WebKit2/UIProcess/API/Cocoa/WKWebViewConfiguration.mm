@@ -150,6 +150,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _applePayEnabled;
 #endif
     BOOL _needsStorageAccessFromFileURLsQuirk;
+    BOOL _legacyEncryptedMediaAPIEnabled;
 
     RetainPtr<NSString> _overrideContentSecurityPolicy;
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
@@ -173,10 +174,12 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     else
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAll;
     _ignoresViewportScaleLimits = NO;
+    _legacyEncryptedMediaAPIEnabled = NO;
 #else
     _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
     _mediaDataLoadsAutomatically = YES;
     _userInterfaceDirectionPolicy = WKUserInterfaceDirectionPolicyContent;
+    _legacyEncryptedMediaAPIEnabled = YES;
 #endif
     _mainContentUserGestureOverrideEnabled = NO;
     _invisibleAutoplayNotPermitted = NO;
@@ -353,6 +356,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 
     configuration->_urlSchemeHandlers.set(adoptNS([self._urlSchemeHandlers mutableCopyWithZone:zone]));
     configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
+    configuration->_legacyEncryptedMediaAPIEnabled = self->_legacyEncryptedMediaAPIEnabled;
 
     return configuration;
 }
@@ -857,6 +861,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (void)_setMediaContentTypesRequiringHardwareSupport:(NSString *)mediaContentTypesRequiringHardwareSupport
 {
     _mediaContentTypesRequiringHardwareSupport = adoptNS([mediaContentTypesRequiringHardwareSupport copy]);
+}
+
+- (void)_setLegacyEncryptedMediaAPIEnabled:(BOOL)enabled
+{
+    _legacyEncryptedMediaAPIEnabled = enabled;
+}
+
+- (BOOL)_legacyEncryptedMediaAPIEnabled
+{
+    return _legacyEncryptedMediaAPIEnabled;
 }
 
 @end

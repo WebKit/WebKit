@@ -102,8 +102,8 @@ typedef (
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitAudioDecodedByteCount;
     [Conditional=MEDIA_STATISTICS] readonly attribute unsigned long webkitVideoDecodedByteCount;
 
-    [Conditional=LEGACY_ENCRYPTED_MEDIA] readonly attribute WebKitMediaKeys webkitKeys;
-    [Conditional=LEGACY_ENCRYPTED_MEDIA] void webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
+    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] readonly attribute WebKitMediaKeys webkitKeys;
+    [Conditional=LEGACY_ENCRYPTED_MEDIA, EnabledAtRuntime=LegacyEncryptedMediaAPI] void webkitSetMediaKeys(WebKitMediaKeys? mediaKeys);
     [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] readonly attribute MediaKeys mediaKeys;
     [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] attribute EventHandler onencrypted;
     [Conditional=ENCRYPTED_MEDIA, EnabledAtRuntime=EncryptedMediaAPI] attribute EventHandler onwaitingforkey;

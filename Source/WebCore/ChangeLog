@@ -1,3 +1,28 @@
+2017-06-29  Jer Noble  <jer.noble@apple.com>
+
+        Make Legacy EME API controlled by RuntimeEnabled setting.
+        https://bugs.webkit.org/show_bug.cgi?id=173994
+
+        Reviewed by Sam Weinig.
+
+        Add a new RuntimeEnabledFeatures setting to control the availability of the WebKit prefixed EME APIs.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyMessageEvent.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeyNeededEvent.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeySession.idl:
+        * Modules/encryptedmedia/legacy/WebKitMediaKeys.idl:
+        * dom/Element.idl:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::webkitSetMediaKeys):
+        (WebCore::HTMLMediaElement::keyAdded):
+        * html/HTMLMediaElement.idl:
+        * html/WebKitMediaKeyError.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setLegacyEncryptedMediaAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::legacyEncryptedMediaAPIEnabled):
+
 2017-06-30  Chris Dumez  <cdumez@apple.com>
 
         Move ResourceLoadStatisticsStore to WebKit2/UIProcess

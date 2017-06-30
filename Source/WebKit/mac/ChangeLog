@@ -1,3 +1,22 @@
+2017-06-29  Jer Noble  <jer.noble@apple.com>
+
+        Make Legacy EME API controlled by RuntimeEnabled setting.
+        https://bugs.webkit.org/show_bug.cgi?id=173994
+
+        Reviewed by Sam Weinig.
+
+        Add a new preference used to control WebCore's new RuntimeEnabledFeature setting.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences legacyEncryptedMediaAPIEnabled]):
+        (-[WebPreferences setLegacyEncryptedMediaAPIEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2017-06-30  Chris Dumez  <cdumez@apple.com>
 
         ResourceLoadObserver does not need a ResourceLoadStatisticsStore

@@ -1,3 +1,30 @@
+2017-06-29  Jer Noble  <jer.noble@apple.com>
+
+        Make Legacy EME API controlled by RuntimeEnabled setting.
+        https://bugs.webkit.org/show_bug.cgi?id=173994
+
+        Reviewed by Sam Weinig.
+
+        Add a new WKWebViewConfiguration property, as well as a new WKPreferences function, both able to control
+        WebCore's new RuntimeEnabledFeature setting for the Legacy EME API.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetLegacyEncryptedMediaAPIEnabled):
+        (WKPreferencesSetLegacyEncryptedMediaAPIEnabled):
+        * UIProcess/API/C/WKPreferencesRef.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _setLegacyEncryptedMediaAPIEnabled:]):
+        (-[WKWebViewConfiguration _legacyEncryptedMediaAPIEnabled]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-06-30  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (r218757): Touch Bar's media scrubber timeline runs from 00:00 to 00:00 and has no playhead

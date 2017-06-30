@@ -1792,3 +1792,13 @@ bool WKPreferencesGetIsSecureContextAttributeEnabled(WKPreferencesRef preference
 {
     return toImpl(preferencesRef)->isSecureContextAttributeEnabled();
 }
+
+bool WKPreferencesGetLegacyEncryptedMediaAPIEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->legacyEncryptedMediaAPIEnabled();
+}
+
+void WKPreferencesSetLegacyEncryptedMediaAPIEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    return toImpl(preferencesRef)->setLegacyEncryptedMediaAPIEnabled(enabled);
+}

@@ -74,6 +74,7 @@
 #define DEFAULT_MEDIA_CONTROLS_SCALE_WITH_PAGE_ZOOM false
 #define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED false
 #define DEFAULT_REQUIRES_USER_GESTURE_FOR_AUDIO_PLAYBACK true
+#define DEFAULT_LEGACY_ENCRYPTED_MEDIA_API_ENABLED false
 #else
 #define DEFAULT_ALLOWS_PICTURE_IN_PICTURE_MEDIA_PLAYBACK false
 #define DEFAULT_BACKSPACE_KEY_NAVIGATION_ENABLED true
@@ -91,6 +92,7 @@
 #define DEFAULT_MEDIA_CONTROLS_SCALE_WITH_PAGE_ZOOM true
 #define DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED true
 #define DEFAULT_REQUIRES_USER_GESTURE_FOR_AUDIO_PLAYBACK false
+#define DEFAULT_LEGACY_ENCRYPTED_MEDIA_API_ENABLED true
 #endif
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
@@ -282,6 +284,7 @@
     macro(ModernMediaControlsEnabled, modernMediaControlsEnabled, Bool, bool, DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED, "Modern Media Controls", "Use modern media controls look") \
     macro(ResourceTimingEnabled, resourceTimingEnabled, Bool, bool, DEFAULT_RESOURCE_TIMING_ENABLED, "Resource Timing", "Enable ResourceTiming API") \
     macro(UserTimingEnabled, userTimingEnabled, Bool, bool, true, "User Timing", "Enable UserTiming API") \
+    macro(LegacyEncryptedMediaAPIEnabled, legacyEncryptedMediaAPIEnabled, Bool, bool, DEFAULT_LEGACY_ENCRYPTED_MEDIA_API_ENABLED, "Enable Legacy EME API", "Enable legacy EME API") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
