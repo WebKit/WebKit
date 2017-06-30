@@ -191,7 +191,8 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
 
     NativeImagePtr image;
     if (decodingMode == DecodingMode::Asynchronous && shouldUseAsyncDecodingForLargeImages()) {
-        ASSERT(!canAnimate() && !m_currentFrame);
+        ASSERT(!canAnimate());
+        ASSERT(!m_currentFrame || m_animationFinished);
 
         bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(sizeForDrawing));
         bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingOptions(sizeForDrawing));
@@ -200,7 +201,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
         // it is currently being decoded. New data may have been received since the previous request was made.
         if ((!frameIsCompatible && !frameIsBeingDecoded) || m_currentFrameDecodingStatus == ImageFrame::DecodingStatus::Invalid) {
             LOG(Images, "BitmapImage::%s - %p - url: %s [requesting large async decoding]", __FUNCTION__, this, sourceURL().string().utf8().data());
-            m_source.requestFrameAsyncDecodingAtIndex(0, m_currentSubsamplingLevel, sizeForDrawing);
+            m_source.requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, sizeForDrawing);
             m_currentFrameDecodingStatus = ImageFrame::DecodingStatus::Decoding;
         }
 

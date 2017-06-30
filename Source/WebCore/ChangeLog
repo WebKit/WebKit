@@ -1,3 +1,22 @@
+2017-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        ASSERTION FAILED: !canAnimate() && !m_currentFrame
+        https://bugs.webkit.org/show_bug.cgi?id=173089
+
+        Reviewed by Said Abou-Hallawa.
+
+        WebCore::BitmapImage::draw() has an assertion which ensures
+        m_currentFrame is zero in case of async decoding. But, this
+        assertion failed if an GIF animation image which have finished its
+        animation was repainted. In that time, m_currentFrame was the last
+        frame index of the image.
+
+        Test: fast/images/animated-gif-paint-after-animation.html
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw): Assert m_currentFrame is zero or the animation finished.
+        Call requestFrameAsyncDecodingAtIndex with m_currentFrame instead of zero.
+
 2017-06-30  Ross Kirsling  <ross.kirsling@sony.com>
 
         [PAL] Move Sound into PAL

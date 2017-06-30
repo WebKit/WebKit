@@ -1,3 +1,14 @@
+2017-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        ASSERTION FAILED: !canAnimate() && !m_currentFrame
+        https://bugs.webkit.org/show_bug.cgi?id=173089
+
+        Reviewed by Said Abou-Hallawa.
+
+        * fast/images/animated-gif-paint-after-animation-expected.txt: Added.
+        * fast/images/animated-gif-paint-after-animation.html: Added.
+        * fast/images/resources/animated-red-green-1000x1000-repeat-1.gif: Added.
+
 2017-06-30  John Wilander  <wilander@apple.com>
 
         Update expectations for layout tests.
