@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include <WebCore/ResourceLoadStatisticsStore.h>
+#include <chrono>
+#include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -37,6 +38,8 @@ class URL;
 }
 
 namespace WebKit {
+
+class ResourceLoadStatisticsStore;
 
 class WebResourceLoadStatisticsManager {
     friend class NeverDestroyed<WebResourceLoadStatisticsManager>;
@@ -67,7 +70,7 @@ public:
     void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
     void fireTelemetryHandler();
 
-    void setStatisticsStore(Ref<WebCore::ResourceLoadStatisticsStore>&&);
+    void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);
     void setStatisticsQueue(Ref<WTF::WorkQueue>&&);
     void clearInMemoryStore();
     void clearInMemoryAndPersistentStore();
@@ -78,7 +81,7 @@ public:
 #endif
 
 private:
-    RefPtr<WebCore::ResourceLoadStatisticsStore> m_store;
+    RefPtr<ResourceLoadStatisticsStore> m_store;
     RefPtr<WTF::WorkQueue> m_queue;
 };
 

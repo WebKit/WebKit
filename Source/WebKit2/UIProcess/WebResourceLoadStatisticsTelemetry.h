@@ -27,17 +27,14 @@
 
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
-class ResourceLoadStatisticsStore;
-}
-
 namespace WebKit {
-    
+
+class ResourceLoadStatisticsStore;
+
 namespace WebResourceLoadStatisticsTelemetry {
     
-void calculateAndSubmit(const WebCore::ResourceLoadStatisticsStore&);
+void calculateAndSubmit(const ResourceLoadStatisticsStore&);
 void setNotifyPagesWhenTelemetryWasCaptured(bool);
     
-};
-    
+}
 }

@@ -31,7 +31,7 @@
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
-#include "ResourceLoadStatisticsStore.h"
+#include "ResourceLoadStatistics.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
@@ -43,7 +43,7 @@ namespace WebCore {
 
 template<typename T> static inline String primaryDomain(const T& value)
 {
-    return ResourceLoadStatisticsStore::primaryDomain(value);
+    return ResourceLoadStatistics::primaryDomain(value);
 }
 
 static Seconds timestampResolution { 1_h };

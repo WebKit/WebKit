@@ -26,20 +26,18 @@
 #include "config.h"
 #include "ResourceLoadStatisticsStore.h"
 
-#include "KeyedCoding.h"
 #include "Logging.h"
-#include "NetworkStorageSession.h"
-#include "PlatformStrategies.h"
-#include "PublicSuffix.h"
-#include "ResourceLoadStatistics.h"
-#include "SharedBuffer.h"
-#include "URL.h"
+#include <WebCore/KeyedCoding.h>
+#include <WebCore/ResourceLoadStatistics.h>
+#include <WebCore/SharedBuffer.h>
+#include <WebCore/URL.h>
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
-namespace WebCore {
+namespace WebKit {
+
+using namespace WebCore;
 
 static const auto statisticsModelVersion = 4;
 static Seconds timeToLiveUserInteraction { 24_h * 30. };
@@ -76,7 +74,7 @@ typedef HashMap<String, ResourceLoadStatistics>::KeyValuePairType StatisticsValu
 
 std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     auto encoder = KeyedEncoder::encoder();
 
     auto locker = holdLock(m_statisticsLock);
@@ -92,7 +90,7 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
 
 void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     ASSERT(m_statisticsLock.isLocked());
     if (m_resourceStatisticsMap.size())
         return;
@@ -137,7 +135,7 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 
 void ResourceLoadStatisticsStore::clearInMemory()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     {
     auto locker = holdLock(m_statisticsLock);
     m_resourceStatisticsMap.clear();
@@ -148,7 +146,7 @@ void ResourceLoadStatisticsStore::clearInMemory()
 
 void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     clearInMemory();
     if (m_deletePersistentStoreHandler)
         m_deletePersistentStoreHandler();
@@ -158,7 +156,7 @@ void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 
 void ResourceLoadStatisticsStore::mergeStatistics(const Vector<ResourceLoadStatistics>& statistics)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     auto locker = holdLock(m_statisticsLock);
     for (auto& statistic : statistics) {
         auto result = m_resourceStatisticsMap.ensure(statistic.highLevelDomain, [&statistic] {
@@ -201,7 +199,7 @@ void ResourceLoadStatisticsStore::setFireTelemetryCallback(WTF::Function<void()>
     
 void ResourceLoadStatisticsStore::fireDataModificationHandler()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () {
         if (m_dataAddedHandler)
             m_dataAddedHandler();
@@ -210,7 +208,7 @@ void ResourceLoadStatisticsStore::fireDataModificationHandler()
 
 void ResourceLoadStatisticsStore::fireTelemetryHandler()
 {
-    ASSERT(isMainThread());
+    ASSERT(RunLoop::isMain());
     if (m_fireTelemetryHandler)
         m_fireTelemetryHandler();
 }
@@ -222,7 +220,7 @@ static inline bool shouldPartitionCookies(const ResourceLoadStatistics& statisti
 
 void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     Vector<String> domainsToRemove;
     Vector<String> domainsToAdd;
     
@@ -249,7 +247,7 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
 
 void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
     
@@ -297,7 +295,7 @@ void ResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
 
 void ResourceLoadStatisticsStore::processStatistics(WTF::Function<void(ResourceLoadStatistics&)>&& processFunction)
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     auto locker = holdLock(m_statisticsLock);
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
         processFunction(resourceStatistic);
@@ -346,7 +344,7 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
     
 Vector<PrevalentResourceTelemetry> ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry() const
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     auto locker = holdLock(m_statisticsLock);
     Vector<PrevalentResourceTelemetry> sorted;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
@@ -396,7 +394,7 @@ void ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore(HashSet<Str
 
 bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     if (m_dataRecordsRemovalPending)
         return false;
 
@@ -408,40 +406,20 @@ bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
 
 void ResourceLoadStatisticsStore::dataRecordsBeingRemoved()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     m_lastTimeDataRecordsWereRemoved = MonotonicTime::now();
     m_dataRecordsRemovalPending = true;
 }
 
 void ResourceLoadStatisticsStore::dataRecordsWereRemoved()
 {
-    ASSERT(!isMainThread());
+    ASSERT(!RunLoop::isMain());
     m_dataRecordsRemovalPending = false;
 }
     
 WTF::RecursiveLockAdapter<Lock>& ResourceLoadStatisticsStore::statisticsLock()
 {
     return m_statisticsLock;
-}
-
-String ResourceLoadStatisticsStore::primaryDomain(const URL& url)
-{
-    return primaryDomain(url.host());
-}
-
-String ResourceLoadStatisticsStore::primaryDomain(const String& host)
-{
-    if (host.isNull() || host.isEmpty())
-        return ASCIILiteral("nullOrigin");
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    String primaryDomain = topPrivatelyControlledDomain(host);
-    // We will have an empty string here if there is no TLD. Use the host as a fallback.
-    if (!primaryDomain.isEmpty())
-        return primaryDomain;
-#endif
-
-    return host;
 }
     
 }

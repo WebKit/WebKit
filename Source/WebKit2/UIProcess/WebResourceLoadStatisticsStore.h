@@ -28,9 +28,9 @@
 #include "APIObject.h"
 #include "Connection.h"
 #include "ResourceLoadStatisticsClassifier.h"
+#include "ResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataRecord.h"
-#include <WebCore/ResourceLoadStatisticsStore.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -76,8 +76,8 @@ public:
 
     void readDataFromDiskIfNeeded();
 
-    WebCore::ResourceLoadStatisticsStore& coreStore() { return m_resourceLoadStatisticsStore.get(); }
-    const WebCore::ResourceLoadStatisticsStore& coreStore() const { return m_resourceLoadStatisticsStore.get(); }
+    ResourceLoadStatisticsStore& coreStore() { return m_resourceLoadStatisticsStore.get(); }
+    const ResourceLoadStatisticsStore& coreStore() const { return m_resourceLoadStatisticsStore.get(); }
 
 private:
     explicit WebResourceLoadStatisticsStore(const String&);
@@ -107,7 +107,7 @@ private:
     void telemetryTimerFired();
     void submitTelemetry();
 
-    Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
+    Ref<ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
 #if HAVE(CORE_PREDICTION)
     ResourceLoadStatisticsClassifierCocoa m_resourceLoadStatisticsClassifier;
 #else

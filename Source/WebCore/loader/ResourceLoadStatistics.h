@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "URL.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
@@ -48,12 +49,15 @@ struct ResourceLoadStatistics {
     ResourceLoadStatistics(ResourceLoadStatistics&&) = default;
     ResourceLoadStatistics& operator=(ResourceLoadStatistics&&) = default;
 
-    void encode(KeyedEncoder&) const;
-    bool decode(KeyedDecoder&, unsigned version);
+    WEBCORE_EXPORT static String primaryDomain(const URL&);
+    WEBCORE_EXPORT static String primaryDomain(const String& host);
+
+    WEBCORE_EXPORT void encode(KeyedEncoder&) const;
+    WEBCORE_EXPORT bool decode(KeyedDecoder&, unsigned version);
 
     String toString() const;
 
-    void merge(const ResourceLoadStatistics&);
+    WEBCORE_EXPORT void merge(const ResourceLoadStatistics&);
 
     String highLevelDomain;
 

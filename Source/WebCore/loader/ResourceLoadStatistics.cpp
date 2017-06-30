@@ -27,6 +27,7 @@
 #include "ResourceLoadStatistics.h"
 
 #include "KeyedCoding.h"
+#include "PublicSuffix.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -362,6 +363,26 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     
     // In-memory only
     isMarkedForCookiePartitioning |= other.isMarkedForCookiePartitioning;
+}
+
+String ResourceLoadStatistics::primaryDomain(const URL& url)
+{
+    return primaryDomain(url.host());
+}
+
+String ResourceLoadStatistics::primaryDomain(const String& host)
+{
+    if (host.isNull() || host.isEmpty())
+        return ASCIILiteral("nullOrigin");
+
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String primaryDomain = topPrivatelyControlledDomain(host);
+    // We will have an empty string here if there is no TLD. Use the host as a fallback.
+    if (!primaryDomain.isEmpty())
+        return primaryDomain;
+#endif
+
+    return host;
 }
 
 }

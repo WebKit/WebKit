@@ -26,7 +26,8 @@
 #include "config.h"
 #include "WebResourceLoadStatisticsManager.h"
 
-#include <WebCore/ResourceLoadStatisticsStore.h>
+#include "ResourceLoadStatisticsStore.h"
+#include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/URL.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/NeverDestroyed.h>
@@ -39,7 +40,7 @@ using namespace WebCore;
 
 template<typename T> static inline String primaryDomain(const T& value)
 {
-    return ResourceLoadStatisticsStore::primaryDomain(value);
+    return ResourceLoadStatistics::primaryDomain(value);
 }
 
 WebResourceLoadStatisticsManager& WebResourceLoadStatisticsManager::shared()

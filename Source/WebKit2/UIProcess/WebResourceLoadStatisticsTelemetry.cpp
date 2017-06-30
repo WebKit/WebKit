@@ -26,11 +26,11 @@
 #include "config.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 
+#include "ResourceLoadStatisticsStore.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/ResourceLoadStatistics.h>
-#include <WebCore/ResourceLoadStatisticsStore.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>

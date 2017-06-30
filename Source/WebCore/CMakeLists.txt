@@ -1976,7 +1976,6 @@ set(WebCore_SOURCES
     loader/ResourceLoadNotifier.cpp
     loader/ResourceLoadObserver.cpp
     loader/ResourceLoadStatistics.cpp
-    loader/ResourceLoadStatisticsStore.cpp
     loader/ResourceLoader.cpp
     loader/ResourceTiming.cpp
     loader/ResourceTimingInformation.cpp

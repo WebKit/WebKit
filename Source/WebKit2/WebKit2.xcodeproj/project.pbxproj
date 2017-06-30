@@ -1360,6 +1360,7 @@
 		839902031BE9A02B000F3653 /* NetworkLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 839901FE1BE9A01B000F3653 /* NetworkLoad.h */; };
 		839A2F311E2067450039057E /* HighPerformanceGraphicsUsageSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */; };
 		839A2F321E2067450039057E /* HighPerformanceGraphicsUsageSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */; };
+		83AFDC0A1F06CEEA00472815 /* ResourceLoadStatisticsStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83AFDC081F06CEE000472815 /* ResourceLoadStatisticsStore.cpp */; };
 		83BDCCB91AC5FDB6003F6441 /* NetworkCacheStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */; };
 		83BFAC421D96137C00433490 /* BlobDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BFAC401D96136000433490 /* BlobDownloadClient.h */; };
 		83BFAC431D96137C00433490 /* BlobDownloadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BFAC411D96136000433490 /* BlobDownloadClient.cpp */; };
@@ -3664,6 +3665,8 @@
 		839901FF1BE9A01B000F3653 /* NetworkLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkLoad.cpp; path = NetworkProcess/NetworkLoad.cpp; sourceTree = "<group>"; };
 		839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HighPerformanceGraphicsUsageSampler.cpp; sourceTree = "<group>"; };
 		839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighPerformanceGraphicsUsageSampler.h; sourceTree = "<group>"; };
+		83AFDC081F06CEE000472815 /* ResourceLoadStatisticsStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadStatisticsStore.cpp; sourceTree = "<group>"; };
+		83AFDC091F06CEE000472815 /* ResourceLoadStatisticsStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatisticsStore.h; sourceTree = "<group>"; };
 		83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheStatistics.cpp; sourceTree = "<group>"; };
 		83BFAC401D96136000433490 /* BlobDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobDownloadClient.h; path = NetworkProcess/Downloads/BlobDownloadClient.h; sourceTree = "<group>"; };
 		83BFAC411D96136000433490 /* BlobDownloadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobDownloadClient.cpp; path = NetworkProcess/Downloads/BlobDownloadClient.cpp; sourceTree = "<group>"; };
@@ -4713,6 +4716,8 @@
 				1A1D8BA01731A36300141DA4 /* LocalStorageDatabase.h */,
 				1A8C728A1738477C000A6554 /* LocalStorageDatabaseTracker.cpp */,
 				1A8C728B1738477C000A6554 /* LocalStorageDatabaseTracker.h */,
+				83AFDC081F06CEE000472815 /* ResourceLoadStatisticsStore.cpp */,
+				83AFDC091F06CEE000472815 /* ResourceLoadStatisticsStore.h */,
 				1A44B95916B73F9F00B7BBD8 /* StorageManager.cpp */,
 				1A44B95A16B73F9F00B7BBD8 /* StorageManager.h */,
 				1AB31A9316BC65AB00F6DBC9 /* StorageManager.messages.in */,
@@ -9966,6 +9971,7 @@
 				7A821F4E1E2F67A800604577 /* LegacyCustomProtocolManagerClient.mm in Sources */,
 				5C14271D1C23F8CF00D41183 /* LegacyCustomProtocolManagerCocoa.mm in Sources */,
 				2984F588164BA095004BC0C6 /* LegacyCustomProtocolManagerMessageReceiver.cpp in Sources */,
+				83AFDC0A1F06CEEA00472815 /* ResourceLoadStatisticsStore.cpp in Sources */,
 				7A821F4A1E2F65E900604577 /* LegacyCustomProtocolManagerProxy.cpp in Sources */,
 				2984F57C164B915F004BC0C6 /* LegacyCustomProtocolManagerProxyMessageReceiver.cpp in Sources */,
 				1AFDE65D1954E8D500C48FFA /* LegacySessionStateCoding.cpp in Sources */,
