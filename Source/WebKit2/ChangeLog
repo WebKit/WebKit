@@ -1,3 +1,17 @@
+2017-06-30  John Wilander  <wilander@apple.com>
+
+        [WK2] Resource load statistics code is spamming the WebProcess with a test-only message 
+        https://bugs.webkit.org/show_bug.cgi?id=174048
+        <rdar://problem/33062376>
+
+        Reviewed by Brent Fulgham.
+
+        Fix the telemetry data message send so that it is not generated during normal operations.
+        This is only meant to be used by WebKitTestRunner.
+
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit): 
+
 2017-06-30  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the WPE build following <https://trac.webkit.org/changeset/219013>

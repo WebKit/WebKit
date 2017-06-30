@@ -189,7 +189,7 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadSt
     ASSERT(!RunLoop::isMain());
     
     auto sortedPrevalentResources = resourceLoadStatisticsStore.sortedPrevalentResourceTelemetry();
-    if (sortedPrevalentResources.size() < minimumPrevalentResourcesForTelemetry) {
+    if (notifyPagesWhenTelemetryWasCaptured && sortedPrevalentResources.size() < minimumPrevalentResourcesForTelemetry) {
         notifyPages(0, 0, 0);
         return;
     }
