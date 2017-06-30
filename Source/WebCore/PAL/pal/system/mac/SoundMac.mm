@@ -20,16 +20,16 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Sound_h
-#define Sound_h
+#import "config.h"
+#import "Sound.h"
 
-namespace WebCore {
+#import <AppKit/AppKit.h>
 
-    void systemBeep();
+namespace PAL {
 
-} // namespace WebCore
+void systemBeep() { NSBeep(); }
 
-#endif // Sound_h
+} // namespace PAL

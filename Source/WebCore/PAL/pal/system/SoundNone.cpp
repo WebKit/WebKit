@@ -26,13 +26,8 @@
 #include "config.h"
 #include "Sound.h"
 
-#include "NotImplemented.h"
+namespace PAL {
 
-namespace WebCore {
+void systemBeep() { }
 
-void systemBeep()
-{
-    notImplemented();
-}
-
-} // namespace WebCore
+} // namespace PAL

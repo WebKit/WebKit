@@ -145,7 +145,6 @@ list(APPEND WebCorePlatformWPE_SOURCES
     platform/wpe/PlatformScreenWPE.cpp
     platform/wpe/RenderThemeWPE.cpp
     platform/wpe/ScrollbarThemeWPE.cpp
-    platform/wpe/SoundWPE.cpp
     platform/wpe/ThemeWPE.cpp
     platform/wpe/WidgetWPE.cpp
 )

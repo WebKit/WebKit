@@ -25,6 +25,9 @@
 		1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0521E31C44100725F18 /* CryptoDigest.h */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
+		A3788E981F05B6CE00679425 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = A3788E971F05B6CE00679425 /* Sound.h */; };
+		A3788E9C1F05B78200679425 /* SoundNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3788E9B1F05B78200679425 /* SoundNone.cpp */; };
+		A3788E9E1F05B78E00679425 /* SoundMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3788E9D1F05B78E00679425 /* SoundMac.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +51,9 @@
 		1C09D0631E31EC3100725F18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		A3788E971F05B6CE00679425 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound.h; path = system/Sound.h; sourceTree = "<group>"; };
+		A3788E9B1F05B78200679425 /* SoundNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundNone.cpp; path = system/SoundNone.cpp; sourceTree = "<group>"; };
+		A3788E9D1F05B78E00679425 /* SoundMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SoundMac.mm; path = system/mac/SoundMac.mm; sourceTree = "<group>"; };
 		C2147A4A1EFD0AA600056FA5 /* CopyPALHeaders.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CopyPALHeaders.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,8 +89,9 @@
 		1C09D03F1E31C32800725F18 /* pal */ = {
 			isa = PBXGroup;
 			children = (
-				0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */,
 				1C09D0511E31C41200725F18 /* crypto */,
+				A3788E9F1F05B7CE00679425 /* system */,
+				0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */,
 			);
 			path = pal;
 			sourceTree = "<group>";
@@ -119,6 +126,24 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		A3788E9F1F05B7CE00679425 /* system */ = {
+			isa = PBXGroup;
+			children = (
+				A3788EA01F05B7E200679425 /* mac */,
+				A3788E971F05B6CE00679425 /* Sound.h */,
+				A3788E9B1F05B78200679425 /* SoundNone.cpp */,
+			);
+			name = system;
+			sourceTree = "<group>";
+		};
+		A3788EA01F05B7E200679425 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				A3788E9D1F05B78E00679425 /* SoundMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -128,6 +153,7 @@
 			files = (
 				1C09D0581E31C57E00725F18 /* config.h in Headers */,
 				1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */,
+				A3788E981F05B6CE00679425 /* Sound.h in Headers */,
 				0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -218,6 +244,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
+				A3788E9E1F05B78E00679425 /* SoundMac.mm in Sources */,
+				A3788E9C1F05B78200679425 /* SoundNone.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

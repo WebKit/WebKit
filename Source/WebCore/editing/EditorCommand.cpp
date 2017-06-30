@@ -53,13 +53,13 @@
 #include "ReplaceSelectionCommand.h"
 #include "Scrollbar.h"
 #include "Settings.h"
-#include "Sound.h"
 #include "StyleProperties.h"
 #include "TypingCommand.h"
 #include "UnlinkCommand.h"
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
 #include "markup.h"
+#include <pal/system/Sound.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -1002,7 +1002,7 @@ static bool executeSelectToMark(Frame& frame, Event*, EditorCommandSource, const
     RefPtr<Range> mark = frame.editor().mark().toNormalizedRange();
     RefPtr<Range> selection = frame.editor().selectedRange();
     if (!mark || !selection) {
-        systemBeep();
+        PAL::systemBeep();
         return false;
     }
     frame.selection().setSelectedRange(unionDOMRanges(*mark, *selection).get(), DOWNSTREAM, true);
@@ -1061,7 +1061,7 @@ static bool executeSwapWithMark(Frame& frame, Event*, EditorCommandSource, const
     const VisibleSelection& mark = frame.editor().mark();
     const VisibleSelection& selection = frame.selection().selection();
     if (mark.isNone() || selection.isNone()) {
-        systemBeep();
+        PAL::systemBeep();
         return false;
     }
     frame.selection().setSelection(mark);

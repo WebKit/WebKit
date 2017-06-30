@@ -1,3 +1,24 @@
+2017-06-30  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [PAL] Move Sound into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=173999
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/PAL.xcconfig:
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/CMakeLists.txt:
+        * pal/PlatformGTK.cmake:
+        * pal/PlatformMac.cmake:
+        * pal/PlatformWPE.cmake:
+        * pal/PlatformWin.cmake:
+        * pal/system/Sound.h: Renamed from Source/WebCore/platform/ios/SoundIOS.mm.
+        * pal/system/SoundNone.cpp: Renamed from Source/WebCore/platform/wpe/SoundWPE.cpp.
+        (PAL::systemBeep):
+        * pal/system/gtk/SoundGtk.cpp: Renamed from Source/WebCore/platform/gtk/SoundGtk.cpp.
+        * pal/system/mac/SoundMac.mm: Renamed from Source/WebCore/platform/mac/SoundMac.mm.
+        * pal/system/win/SoundWin.cpp: Renamed from Source/WebCore/platform/win/SoundWin.cpp.
+
 2017-06-28  Jonathan Bedard  <jbedard@apple.com>
 
         Build fix for PAL

@@ -18,18 +18,17 @@
  */
 
 #include "config.h"
-
 #include "Sound.h"
 
 #include <gdk/gdk.h>
 
-namespace WebCore {
+namespace PAL {
 
 void systemBeep()
 {
     gdk_beep();
 }
 
-}
+} // namespace PAL
 
 // vim: ts=4 sw=4 et

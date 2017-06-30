@@ -83,7 +83,6 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SimplifyMarkupCommand.h"
-#include "Sound.h"
 #include "SpellChecker.h"
 #include "SpellingCorrectionCommand.h"
 #include "StyleProperties.h"
@@ -97,6 +96,7 @@
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "markup.h"
+#include <pal/system/Sound.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)
@@ -1195,7 +1195,7 @@ void Editor::cut()
     if (tryDHTMLCut())
         return; // DHTML did the whole operation
     if (!canCut()) {
-        systemBeep();
+        PAL::systemBeep();
         return;
     }
 
@@ -1207,7 +1207,7 @@ void Editor::copy()
     if (tryDHTMLCopy())
         return; // DHTML did the whole operation
     if (!canCopy()) {
-        systemBeep();
+        PAL::systemBeep();
         return;
     }
 
@@ -1303,7 +1303,7 @@ void Editor::pasteAsPlainText()
 void Editor::performDelete()
 {
     if (!canDelete()) {
-        systemBeep();
+        PAL::systemBeep();
         return;
     }
 

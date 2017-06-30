@@ -49,9 +49,9 @@
 #include "Pasteboard.h"
 #include "ScriptGlobalObject.h"
 #include "ScriptState.h"
-#include "Sound.h"
 #include "UserGestureIndicator.h"
 #include <bindings/ScriptFunctionCall.h>
+#include <pal/system/Sound.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace Inspector;
@@ -382,7 +382,7 @@ void InspectorFrontendHost::unbufferedLog(const String& message)
 
 void InspectorFrontendHost::beep()
 {
-    systemBeep();
+    PAL::systemBeep();
 }
 
 } // namespace WebCore

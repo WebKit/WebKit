@@ -176,7 +176,6 @@ list(APPEND WebCorePlatformGTK_SOURCES
     platform/gtk/RenderThemeGadget.cpp
     platform/gtk/RenderThemeWidget.cpp
     platform/gtk/ScrollbarThemeGtk.cpp
-    platform/gtk/SoundGtk.cpp
     platform/gtk/WidgetGtk.cpp
 
     rendering/RenderThemeGtk.cpp
