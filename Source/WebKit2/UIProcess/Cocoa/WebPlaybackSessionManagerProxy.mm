@@ -442,7 +442,7 @@ void WebPlaybackSessionManagerProxy::mutedChanged(uint64_t contextId, bool muted
 
 void WebPlaybackSessionManagerProxy::durationChanged(uint64_t contextId, double duration)
 {
-    ensureModel(contextId).mutedChanged(duration);
+    ensureModel(contextId).durationChanged(duration);
 }
 
 void WebPlaybackSessionManagerProxy::playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime)

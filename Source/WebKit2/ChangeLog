@@ -1,3 +1,15 @@
+2017-06-30  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r218757): Touch Bar's media scrubber timeline runs from 00:00 to 00:00 and has no playhead
+        https://bugs.webkit.org/show_bug.cgi?id=174032
+
+        Reviewed by Eric Carlson.
+
+        Fix a copypasta error where durationChange notifications were changing the value of muted.
+
+        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
+        (WebKit::WebPlaybackSessionManagerProxy::durationChanged):
+
 2017-06-30  Chris Dumez  <cdumez@apple.com>
 
         Move ResourceLoadStatisticsStore to WebKit2/UIProcess
