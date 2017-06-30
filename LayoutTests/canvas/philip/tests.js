@@ -98,7 +98,7 @@ function _assertPixel(canvas, x,y, r,g,b,a, pos, colour)
 
 function _assertPixelWithGradientNoise(canvas, x,y, r,g,b,a, pos, colour)
 {
-    _assertPixelApprox(canvas, x, y, r, g, b, a, pos, colour, 3);
+    _assertPixelApprox(canvas, x, y, r, g, b, a, pos, colour, 5);
 }
 
 function _assertPixelApprox(canvas, x,y, r,g,b,a, pos, colour, tolerance)

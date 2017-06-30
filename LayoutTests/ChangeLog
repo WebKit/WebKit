@@ -1,3 +1,22 @@
+2017-06-30  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (High Sierra): Gradient LayoutTests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=174015
+        <rdar://problem/32332022>
+
+        Reviewed by Tim Horton.
+
+        Add the fudge factor to more of the gradient tests.
+
+        * canvas/philip/tests.js:
+        (_assertPixelWithGradientNoise): Bump the factor up a bit.
+        * canvas/philip/tests/2d.gradient.interpolate.multiple.html:
+        * canvas/philip/tests/2d.gradient.interpolate.solid.html:
+        * canvas/philip/tests/2d.gradient.radial.transform.1.html:
+        * canvas/philip/tests/2d.gradient.radial.transform.2.html:
+        * canvas/philip/tests/2d.gradient.radial.transform.3.html:
+        * canvas/philip/tests/initial.reset.gradient.html:
+
 2017-06-29  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Cannot call setValue() on contenteditable or ARIA text controls
