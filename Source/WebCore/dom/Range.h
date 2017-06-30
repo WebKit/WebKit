@@ -179,6 +179,9 @@ inline bool documentOrderComparator(const Node* a, const Node* b)
 {
     return Range::compareBoundaryPoints(const_cast<Node*>(a), 0, const_cast<Node*>(b), 0).releaseReturnValue() < 0;
 }
+    
+TextStream& operator<<(TextStream&, const RangeBoundaryPoint&);
+TextStream& operator<<(TextStream&, const Range&);
 
 } // namespace
 

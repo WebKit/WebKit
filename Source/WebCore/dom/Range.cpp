@@ -1828,6 +1828,16 @@ FloatRect Range::absoluteBoundingRect() const
 {
     return boundingRect(CoordinateSpace::Absolute);
 }
+    
+TextStream& operator<<(TextStream& ts, const RangeBoundaryPoint& r)
+{
+    return ts << r.toPosition();
+}
+    
+TextStream& operator<<(TextStream& ts, const Range& r)
+{
+    return ts << "Range: " << "start: " << r.startPosition() << " end: " << r.endPosition();
+}
 
 } // namespace WebCore
 

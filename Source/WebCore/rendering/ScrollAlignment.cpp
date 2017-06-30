@@ -44,6 +44,9 @@
 #include "config.h"
 #include "ScrollAlignment.h"
 
+#include "Logging.h"
+#include "TextStream.h"
+
 namespace WebCore {
 
 const ScrollAlignment ScrollAlignment::alignCenterIfNotVisible = { Behavior::NoScroll, Behavior::AlignCenter, Behavior::NoScroll };
@@ -55,5 +58,30 @@ const ScrollAlignment ScrollAlignment::alignTopAlways = { Behavior::AlignTop, Be
 const ScrollAlignment ScrollAlignment::alignRightAlways = { Behavior::AlignRight, Behavior::AlignRight, Behavior::AlignRight };
 const ScrollAlignment ScrollAlignment::alignLeftAlways = { Behavior::AlignLeft, Behavior::AlignLeft, Behavior::AlignLeft };
 const ScrollAlignment ScrollAlignment::alignBottomAlways = { Behavior::AlignBottom, Behavior::AlignBottom, Behavior::AlignBottom };
+    
+TextStream& operator<<(TextStream& ts, ScrollAlignment::Behavior b)
+{
+    switch (b) {
+    case ScrollAlignment::Behavior::NoScroll:
+        return ts << "NoScroll";
+    case ScrollAlignment::Behavior::AlignCenter:
+        return ts << "AlignCenter";
+    case ScrollAlignment::Behavior::AlignTop:
+        return ts << "AlignTop";
+    case ScrollAlignment::Behavior::AlignBottom:
+        return ts << "AlignBottom";
+    case ScrollAlignment::Behavior::AlignLeft:
+        return ts << "AlignLeft";
+    case ScrollAlignment::Behavior::AlignRight:
+        return ts << "AlignRight";
+    case ScrollAlignment::Behavior::AlignToClosestEdge:
+        return ts << "AlignToClosestEdge";
+    }
+}
+    
+TextStream& operator<<(TextStream& ts, const ScrollAlignment& s)
+{
+    return ts << "ScrollAlignment: visible: " << s.m_rectVisible << " hidden: " << s.m_rectHidden << " partial: " << s.m_rectPartial;
+}
 
 }; // namespace WebCore

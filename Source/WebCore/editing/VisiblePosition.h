@@ -163,7 +163,7 @@ bool isFirstVisiblePositionInNode(const VisiblePosition&, const Node*);
 bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);
 
 TextStream& operator<<(TextStream&, EAffinity);
-TextStream& operator<<(TextStream&, const VisiblePosition&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const VisiblePosition&);
 
 } // namespace WebCore
 

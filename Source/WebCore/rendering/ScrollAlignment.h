@@ -44,6 +44,8 @@
 #pragma once
 
 namespace WebCore {
+    
+class TextStream;
 
 struct ScrollAlignment {
 
@@ -75,5 +77,8 @@ struct ScrollAlignment {
     Behavior m_rectHidden;
     Behavior m_rectPartial;
 };
+    
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollAlignment::Behavior);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ScrollAlignment&);
 
 }; // namespace WebCore
