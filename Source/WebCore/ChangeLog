@@ -1,3 +1,22 @@
+2017-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r215096) Queries of URLs with non-special schemes should not percent-encode single quotes
+        https://bugs.webkit.org/show_bug.cgi?id=174051
+        <rdar://problem/33002846>
+
+        Reviewed by Tim Horton.
+
+        In r215096 I added ' to the set of characters to be percent-encoded in queries,
+        but for interoperability and compatibility we need to do this only for special schemes, like http.
+
+        Covered by new API tests.
+
+        * platform/URLParser.cpp:
+        (WebCore::isC0Control):
+        (WebCore::shouldPercentEncodeQueryByte):
+        (WebCore::URLParser::utf8QueryEncode):
+        (WebCore::URLParser::encodeQuery):
+
 2017-06-30  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the build following <https://trac.webkit.org/changeset/219019>

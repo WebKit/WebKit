@@ -1,3 +1,14 @@
+2017-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r215096) Queries of URLs with non-special schemes should not percent-encode single quotes
+        https://bugs.webkit.org/show_bug.cgi?id=174051
+        <rdar://problem/33002846>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/URLParser.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-06-30  Daniel Bates  <dabates@apple.com>
 
         API::FrameInfo should know the web page that contains the frame; add API property webView to WKFrameInfo
