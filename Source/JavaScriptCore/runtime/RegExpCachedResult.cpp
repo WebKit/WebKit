@@ -83,6 +83,8 @@ void RegExpCachedResult::setInput(ExecState* exec, JSObject* owner, JSString* in
 {
     // Make sure we're reified, otherwise m_reifiedInput will be ignored.
     lastResult(exec, owner);
+    leftContext(exec, owner);
+    rightContext(exec, owner);
     ASSERT(m_reified);
     m_reifiedInput.set(exec->vm(), owner, input);
 }

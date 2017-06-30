@@ -1,3 +1,14 @@
+2017-06-30  Filip Pizlo  <fpizlo@apple.com>
+
+        RegExpCachedResult::setInput should reify left and right contexts
+        https://bugs.webkit.org/show_bug.cgi?id=173818
+
+        Reviewed by Keith Miller.
+
+        * stress/right-left-context-invalidated-by-input.js: Added.
+        (test.validateContexts):
+        (test):
+
 2017-06-29  Saam Barati  <sbarati@apple.com>
 
         Calculating postCapacity in unshiftCountSlowCase is wrong

@@ -1,3 +1,17 @@
+2017-06-30  Filip Pizlo  <fpizlo@apple.com>
+
+        RegExpCachedResult::setInput should reify left and right contexts
+        https://bugs.webkit.org/show_bug.cgi?id=173818
+
+        Reviewed by Keith Miller.
+        
+        If you don't reify them in setInput, then when you later try to reify them, you'll end up
+        using indices into an old input string to create a substring of a new input string. That
+        never goes well.
+
+        * runtime/RegExpCachedResult.cpp:
+        (JSC::RegExpCachedResult::setInput):
+
 2017-06-30  Keith Miller  <keith_miller@apple.com>
 
         DFG_ASSERT should allow stuffing registers before trapping.
