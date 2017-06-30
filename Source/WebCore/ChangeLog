@@ -1,5 +1,17 @@
 2017-06-29  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r218932. rdar://problem/32937842
+
+    2017-06-29  Brent Fulgham  <bfulgham@apple.com>
+
+            Unreviewed Apple CMake build after r218901
+
+            I did not add 'cocoa/FileMonitorCocoa.mm' to the PlatformMac.cmake file as part of r218901.):
+
+            * PlatformMac.cmake:
+
+2017-06-29  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r218954. rdar://problem/33065684
 
     2017-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
