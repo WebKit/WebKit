@@ -1480,9 +1480,9 @@ void TestRunner::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value)
     WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(value);
 }
 
-void TestRunner::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+void TestRunner::setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds)
 {
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsMinimumTimeBetweeenDataRecordsRemoval"));
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsMinimumTimeBetweenDataRecordsRemoval"));
     WKRetainPtr<WKDoubleRef> messageBody(AdoptWK, WKDoubleCreate(seconds));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }

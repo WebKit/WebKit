@@ -43,7 +43,7 @@ static const auto statisticsModelVersion = 4;
 static Seconds timeToLiveUserInteraction { 24_h * 30. };
 static Seconds timeToLiveCookiePartitionFree { 24_h };
 static Seconds grandfatheringTime { 1_h };
-static Seconds minimumTimeBetweeenDataRecordsRemoval { 1_h };
+static Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
 
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
@@ -281,10 +281,10 @@ void ResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(Seconds secon
         timeToLiveCookiePartitionFree = seconds;
 }
 
-void ResourceLoadStatisticsStore::setMinimumTimeBetweeenDataRecordsRemoval(Seconds seconds)
+void ResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds)
 {
     if (seconds >= 0_s)
-        minimumTimeBetweeenDataRecordsRemoval = seconds;
+        minimumTimeBetweenDataRecordsRemoval = seconds;
 }
 
 void ResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
@@ -398,7 +398,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
     if (m_dataRecordsRemovalPending)
         return false;
 
-    if (m_lastTimeDataRecordsWereRemoved && MonotonicTime::now() < (m_lastTimeDataRecordsWereRemoved + minimumTimeBetweeenDataRecordsRemoval))
+    if (m_lastTimeDataRecordsWereRemoved && MonotonicTime::now() < (m_lastTimeDataRecordsWereRemoved + minimumTimeBetweenDataRecordsRemoval))
         return false;
 
     return true;

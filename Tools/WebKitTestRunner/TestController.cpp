@@ -2299,9 +2299,9 @@ void TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value
     WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(value);
 }
     
-void TestController::setStatisticsMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+void TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds)
 {
-    WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(seconds);
+    WKResourceLoadStatisticsManagerSetMinimumTimeBetweenDataRecordsRemoval(seconds);
 }
 
 void TestController::setStatisticsGrandfatheringTime(double seconds)

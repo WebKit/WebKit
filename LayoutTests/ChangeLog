@@ -1,3 +1,20 @@
+2017-06-30  Chris Dumez  <cdumez@apple.com>
+
+        Move store logic from WebResourceLoadStatisticsManager to WebResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=174038
+
+        Reviewed by Brent Fulgham.
+
+        Fix typo in testRunner API.
+
+        * http/tests/loading/resourceLoadStatistics/grandfathering.html:
+        * http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html:
+        * http/tests/loading/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html:
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html:
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html:
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction.html:
+        * http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html:
+
 2017-06-30  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Default string comparisons to treat numeric characters as numbers

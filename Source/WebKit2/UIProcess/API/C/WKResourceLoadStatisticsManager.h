@@ -42,7 +42,7 @@ extern "C" {
     WK_EXPORT void WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(double seconds);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(double seconds);
-    WK_EXPORT void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(double seconds);
+    WK_EXPORT void WKResourceLoadStatisticsManagerSetMinimumTimeBetweenDataRecordsRemoval(double seconds);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetGrandfatheringTime(double seconds);
     WK_EXPORT void WKResourceLoadStatisticsManagerFireDataModificationHandler();
     WK_EXPORT void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler();

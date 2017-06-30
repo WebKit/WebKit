@@ -1,3 +1,22 @@
+2017-06-30  Chris Dumez  <cdumez@apple.com>
+
+        Move store logic from WebResourceLoadStatisticsManager to WebResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=174038
+
+        Reviewed by Brent Fulgham.
+
+        Fix typo in API name.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsMinimumTimeBetweenDataRecordsRemoval):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+
 2017-06-30  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r215096) Queries of URLs with non-special schemes should not percent-encode single quotes

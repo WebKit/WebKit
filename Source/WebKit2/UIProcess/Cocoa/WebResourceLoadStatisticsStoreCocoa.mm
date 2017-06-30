@@ -26,6 +26,8 @@
 #include "config.h"
 #import "WebResourceLoadStatisticsStore.h"
 
+#import "WebPreferencesKeys.h"
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -35,6 +37,28 @@ void WebResourceLoadStatisticsStore::platformExcludeFromBackup() const
 #if PLATFORM(IOS)
     [[NSURL fileURLWithPath:(NSString *)m_statisticsStoragePath] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
 #endif
+}
+
+void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
+{
+    static dispatch_once_t initOnce;
+
+    dispatch_once(&initOnce, ^ {
+        const size_t hourInSeconds = 3600;
+        const size_t dayInSeconds = 24 * hourInSeconds;
+
+        double timeToLiveUserInteraction = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveUserInteractionKey()];
+        if (timeToLiveUserInteraction > 0 && timeToLiveUserInteraction <= 30 * dayInSeconds)
+            setTimeToLiveUserInteraction(Seconds { timeToLiveUserInteraction });
+
+        double timeToLiveCookiePartitionFree = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveCookiePartitionFreeKey()];
+        if (timeToLiveCookiePartitionFree > 0 && timeToLiveCookiePartitionFree <= dayInSeconds)
+            setTimeToLiveCookiePartitionFree(Seconds { timeToLiveCookiePartitionFree });
+
+        double grandfatheringTime = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsGrandfatheringTimeKey()];
+        if (grandfatheringTime > 0 && grandfatheringTime <= 7 * dayInSeconds)
+            setGrandfatheringTime(Seconds { grandfatheringTime });
+    });
 }
 
 }

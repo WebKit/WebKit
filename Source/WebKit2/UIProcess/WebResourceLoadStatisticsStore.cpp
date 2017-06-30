@@ -54,6 +54,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+template<typename T> static inline String primaryDomain(const T& value)
+{
+    return ResourceLoadStatistics::primaryDomain(value);
+}
+
 static bool notifyPagesWhenDataRecordsWereScanned = false;
 static bool shouldClassifyResourcesBeforeDataRecordsRemoval = true;
 static auto shouldSubmitTelemetry = true;
@@ -209,8 +214,7 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
 {
     ASSERT(RunLoop::isMain());
     
-    WebResourceLoadStatisticsManager::shared().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
-    WebResourceLoadStatisticsManager::shared().setStatisticsQueue(m_statisticsQueue.copyRef());
+    WebResourceLoadStatisticsManager::shared().setStatisticsStore(*this);
     m_resourceLoadStatisticsStore->setNotificationCallback([this, protectedThis = makeRef(*this)] {
         if (m_resourceLoadStatisticsStore->isEmpty())
             return;
@@ -232,11 +236,12 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
     m_resourceLoadStatisticsStore->setFireTelemetryCallback([this, protectedThis = makeRef(*this)] {
         submitTelemetry();
     });
+
 #if PLATFORM(COCOA)
-    WebResourceLoadStatisticsManager::shared().registerUserDefaultsIfNeeded();
+    registerUserDefaultsIfNeeded();
 #endif
 }
-    
+
 void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& shouldPartitionCookiesForDomainsHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -504,6 +509,208 @@ void WebResourceLoadStatisticsStore::submitTelemetry()
         auto locker = holdLock(coreStore().statisticsLock());
         WebResourceLoadStatisticsTelemetry::calculateAndSubmit(coreStore());
     });
+}
+
+void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomainString = primaryDomain(url).isolatedCopy()] {
+        {
+            auto locker = holdLock(coreStore().statisticsLock());
+            auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
+            statistics.hadUserInteraction = true;
+            statistics.mostRecentUserInteractionTime = WallTime::now();
+        }
+
+        coreStore().fireShouldPartitionCookiesHandler({ primaryDomainString }, { }, false);
+    });
+}
+
+void WebResourceLoadStatisticsStore::clearUserInteraction(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto locker = holdLock(coreStore().statisticsLock());
+    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    statistics.hadUserInteraction = false;
+    statistics.mostRecentUserInteractionTime = { };
+}
+
+bool WebResourceLoadStatisticsStore::hasHadUserInteraction(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return false;
+
+    auto locker = holdLock(coreStore().statisticsLock());
+    // FIXME: Why is this potentially creating a store entry just for querying?
+    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    return coreStore().hasHadRecentUserInteraction(statistics);
+}
+
+void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto locker = holdLock(coreStore().statisticsLock());
+    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    statistics.isPrevalentResource = true;
+}
+
+bool WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return false;
+
+    auto locker = holdLock(coreStore().statisticsLock());
+    // FIXME: Why is this potentially creating a store entry just for querying?
+    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    return statistics.isPrevalentResource;
+}
+
+void WebResourceLoadStatisticsStore::clearPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto locker = holdLock(coreStore().statisticsLock());
+    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    statistics.isPrevalentResource = false;
+}
+
+void WebResourceLoadStatisticsStore::setGrandfathered(const URL& url, bool value)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto locker = holdLock(coreStore().statisticsLock());
+    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    statistics.grandfathered = value;
+}
+
+bool WebResourceLoadStatisticsStore::isGrandfathered(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return false;
+
+    auto locker = holdLock(coreStore().statisticsLock());
+    // FIXME: Why is this potentially creating a store entry just for querying?
+    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    return statistics.grandfathered;
+}
+
+void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame)
+{
+    if (subframe.isBlankURL() || subframe.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
+        return;
+
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubFrameDomainString = primaryDomain(subframe).isolatedCopy()] {
+        auto locker = holdLock(coreStore().statisticsLock());
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primarySubFrameDomainString);
+        statistics.subframeUnderTopFrameOrigins.add(primaryTopFrameDomainString);
+    });
+}
+
+void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame)
+{
+    if (subresource.isBlankURL() || subresource.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
+        return;
+
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
+        auto locker = holdLock(coreStore().statisticsLock());
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
+        statistics.subresourceUnderTopFrameOrigins.add(primaryTopFrameDomainString);
+    });
+}
+
+void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo)
+{
+    if (subresource.isBlankURL() || subresource.isEmpty() || hostNameRedirectedTo.isBlankURL() || hostNameRedirectedTo.isEmpty())
+        return;
+
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryRedirectDomainString = primaryDomain(hostNameRedirectedTo).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
+        auto locker = holdLock(coreStore().statisticsLock());
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
+        statistics.subresourceUniqueRedirectsTo.add(primaryRedirectDomainString);
+    });
+}
+
+void WebResourceLoadStatisticsStore::fireDataModificationHandler()
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        coreStore().fireDataModificationHandler();
+    });
+}
+
+void WebResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        coreStore().fireShouldPartitionCookiesHandler();
+    });
+}
+
+void WebResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd), clearFirst] {
+        coreStore().fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd, clearFirst);
+    });
+}
+
+void WebResourceLoadStatisticsStore::fireTelemetryHandler()
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    coreStore().fireTelemetryHandler();
+}
+
+void WebResourceLoadStatisticsStore::clearInMemory()
+{
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        coreStore().clearInMemory();
+    });
+}
+
+void WebResourceLoadStatisticsStore::clearInMemoryAndPersistent()
+{
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        coreStore().clearInMemoryAndPersistent();
+    });
+}
+
+void WebResourceLoadStatisticsStore::clearInMemoryAndPersistent(std::chrono::system_clock::time_point modifiedSince)
+{
+    // For now, be conservative and clear everything regardless of modifiedSince.
+    UNUSED_PARAM(modifiedSince);
+    clearInMemoryAndPersistent();
+}
+
+void WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds seconds)
+{
+    coreStore().setTimeToLiveUserInteraction(seconds);
+}
+
+void WebResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(Seconds seconds)
+{
+    coreStore().setTimeToLiveCookiePartitionFree(seconds);
+}
+
+void WebResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds)
+{
+    coreStore().setMinimumTimeBetweenDataRecordsRemoval(seconds);
+}
+
+void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
+{
+    coreStore().setGrandfatheringTime(seconds);
 }
     
 } // namespace WebKit

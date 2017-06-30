@@ -59,7 +59,6 @@ public:
     static Ref<WebResourceLoadStatisticsStore> create(const String&);
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
-    static void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
     static void setShouldSubmitTelemetry(bool);
     virtual ~WebResourceLoadStatisticsStore();
     
@@ -76,11 +75,36 @@ public:
 
     void readDataFromDiskIfNeeded();
 
-    ResourceLoadStatisticsStore& coreStore() { return m_resourceLoadStatisticsStore.get(); }
-    const ResourceLoadStatisticsStore& coreStore() const { return m_resourceLoadStatisticsStore.get(); }
+    void logUserInteraction(const WebCore::URL&);
+    void clearUserInteraction(const WebCore::URL&);
+    bool hasHadUserInteraction(const WebCore::URL&);
+    void setPrevalentResource(const WebCore::URL&);
+    bool isPrevalentResource(const WebCore::URL&);
+    void clearPrevalentResource(const WebCore::URL&);
+    void setGrandfathered(const WebCore::URL&, bool);
+    bool isGrandfathered(const WebCore::URL&);
+    void setSubframeUnderTopFrameOrigin(const WebCore::URL& subframe, const WebCore::URL& topFrame);
+    void setSubresourceUnderTopFrameOrigin(const WebCore::URL& subresource, const WebCore::URL& topFrame);
+    void setSubresourceUniqueRedirectTo(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedTo);
+    void fireDataModificationHandler();
+    void fireShouldPartitionCookiesHandler();
+    void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
+
+    void fireTelemetryHandler();
+    void clearInMemory();
+    void clearInMemoryAndPersistent();
+    void clearInMemoryAndPersistent(std::chrono::system_clock::time_point modifiedSince);
+
+    void setTimeToLiveUserInteraction(Seconds);
+    void setTimeToLiveCookiePartitionFree(Seconds);
+    void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
+    void setGrandfatheringTime(Seconds);
 
 private:
     explicit WebResourceLoadStatisticsStore(const String&);
+
+    ResourceLoadStatisticsStore& coreStore() { return m_resourceLoadStatisticsStore.get(); }
+    const ResourceLoadStatisticsStore& coreStore() const { return m_resourceLoadStatisticsStore.get(); }
 
     void processStatisticsAndDataRecords();
 
@@ -106,6 +130,10 @@ private:
     void refreshFromDisk();
     void telemetryTimerFired();
     void submitTelemetry();
+
+#if PLATFORM(COCOA)
+    void registerUserDefaultsIfNeeded();
+#endif
 
     Ref<ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
 #if HAVE(CORE_PREDICTION)

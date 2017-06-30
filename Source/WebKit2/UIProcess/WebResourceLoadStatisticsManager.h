@@ -29,22 +29,23 @@
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
-namespace WTF {
-class WorkQueue;
-}
-
 namespace WebCore {
 class URL;
 }
 
 namespace WebKit {
 
-class ResourceLoadStatisticsStore;
+class WebResourceLoadStatisticsStore;
 
+// FIXME: This should probably become an APIObject for the WebResourceLoadStatisticsStore.
 class WebResourceLoadStatisticsManager {
     friend class NeverDestroyed<WebResourceLoadStatisticsManager>;
 public:
+    // FIXME: This should not be a singleton.
     static WebResourceLoadStatisticsManager& shared();
+    void setStatisticsStore(Ref<WebResourceLoadStatisticsStore>&&);
+
+    ~WebResourceLoadStatisticsManager();
 
     void logUserInteraction(const WebCore::URL&);
     bool hasHadUserInteraction(const WebCore::URL&);
@@ -62,7 +63,7 @@ public:
 
     void setTimeToLiveUserInteraction(Seconds);
     void setTimeToLiveCookiePartitionFree(Seconds);
-    void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
+    void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
 
     void fireDataModificationHandler();
@@ -70,19 +71,14 @@ public:
     void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
     void fireTelemetryHandler();
 
-    void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);
-    void setStatisticsQueue(Ref<WTF::WorkQueue>&&);
     void clearInMemoryStore();
     void clearInMemoryAndPersistentStore();
     void clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince);
 
-#if PLATFORM(COCOA)
-    void registerUserDefaultsIfNeeded();
-#endif
-
 private:
-    RefPtr<ResourceLoadStatisticsStore> m_store;
-    RefPtr<WTF::WorkQueue> m_queue;
+    WebResourceLoadStatisticsManager();
+
+    RefPtr<WebResourceLoadStatisticsStore> m_store;
 };
 
 } // namespace WebKit

@@ -96,9 +96,9 @@ void WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(double seco
     WebResourceLoadStatisticsManager::shared().setTimeToLiveCookiePartitionFree(Seconds { seconds });
 }
 
-void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(double seconds)
+void WKResourceLoadStatisticsManagerSetMinimumTimeBetweenDataRecordsRemoval(double seconds)
 {
-    WebResourceLoadStatisticsManager::shared().setMinimumTimeBetweeenDataRecordsRemoval(Seconds { seconds });
+    WebResourceLoadStatisticsManager::shared().setMinimumTimeBetweenDataRecordsRemoval(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerSetGrandfatheringTime(double seconds)
@@ -163,7 +163,7 @@ void WKResourceLoadStatisticsManagerResetToConsistentState()
 {
     WebResourceLoadStatisticsManager::shared().setTimeToLiveUserInteraction(24_h * 30.);
     WebResourceLoadStatisticsManager::shared().setTimeToLiveCookiePartitionFree(24_h);
-    WebResourceLoadStatisticsManager::shared().setMinimumTimeBetweeenDataRecordsRemoval(1_h);
+    WebResourceLoadStatisticsManager::shared().setMinimumTimeBetweenDataRecordsRemoval(1_h);
     WebResourceLoadStatisticsManager::shared().setGrandfatheringTime(1_h);
     WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
     WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
