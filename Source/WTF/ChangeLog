@@ -1,3 +1,15 @@
+2017-06-30  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r218992.
+
+        The patch broke the iOS device builds.
+
+        Reverted changeset:
+
+        "DFG_ASSERT should allow stuffing registers before trapping."
+        https://bugs.webkit.org/show_bug.cgi?id=174005
+        http://trac.webkit.org/changeset/218992
+
 2017-06-30  Keith Miller  <keith_miller@apple.com>
 
         DFG_ASSERT should allow stuffing registers before trapping.

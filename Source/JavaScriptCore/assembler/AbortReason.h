@@ -76,9 +76,4 @@ enum AbortReason {
     YARRNoInputConsumed                               = 340,
 };
 
-// See above for comment on numbering. This enum is for crashes during compilation.
-enum CompilationAbortReason {
-    AIEdgeVerificationFailed                          = 10,
-};
-
 } // namespace JSC

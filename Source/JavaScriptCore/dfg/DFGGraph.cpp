@@ -1438,7 +1438,7 @@ void Graph::assertIsRegistered(Structure* structure)
     DFG_CRASH(*this, nullptr, toCString("Structure ", pointerDump(structure), " is watchable but isn't being watched.").data());
 }
 
-static void logForCrash(
+NO_RETURN_DUE_TO_CRASH static void crash(
     Graph& graph, const CString& whileText, const char* file, int line, const char* function,
     const char* assertion)
 {
@@ -1452,25 +1452,25 @@ static void logForCrash(
     dataLog("\n");
     dataLog("DFG ASSERTION FAILED: ", assertion, "\n");
     dataLog(file, "(", line, ") : ", function, "\n");
-    WTFReportBacktrace();
+    CRASH_WITH_SECURITY_IMPLICATION();
 }
 
-void Graph::logAssertionFailure(
+void Graph::handleAssertionFailure(
     std::nullptr_t, const char* file, int line, const char* function, const char* assertion)
 {
-    logForCrash(*this, "", file, line, function, assertion);
+    crash(*this, "", file, line, function, assertion);
 }
 
-void Graph::logAssertionFailure(
+void Graph::handleAssertionFailure(
     Node* node, const char* file, int line, const char* function, const char* assertion)
 {
-    logForCrash(*this, toCString("While handling node ", node, "\n\n"), file, line, function, assertion);
+    crash(*this, toCString("While handling node ", node, "\n\n"), file, line, function, assertion);
 }
 
-void Graph::logAssertionFailure(
+void Graph::handleAssertionFailure(
     BasicBlock* block, const char* file, int line, const char* function, const char* assertion)
 {
-    logForCrash(*this, toCString("While handling block ", pointerDump(block), "\n\n"), file, line, function, assertion);
+    crash(*this, toCString("While handling block ", pointerDump(block), "\n\n"), file, line, function, assertion);
 }
 
 Dominators& Graph::ensureDominators()
