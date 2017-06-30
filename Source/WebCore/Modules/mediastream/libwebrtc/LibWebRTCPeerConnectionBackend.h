@@ -60,7 +60,7 @@ private:
     void doAddIceCandidate(RTCIceCandidate&) final;
     void doStop() final;
     std::unique_ptr<RTCDataChannelHandler> createDataChannelHandler(const String&, const RTCDataChannelInit&) final;
-    void setConfiguration(MediaEndpointConfiguration&&) final;
+    bool setConfiguration(MediaEndpointConfiguration&&) final;
     void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) final;
     Ref<RTCRtpReceiver> createReceiver(const String& transceiverMid, const String& trackKind, const String& trackId) final;
 

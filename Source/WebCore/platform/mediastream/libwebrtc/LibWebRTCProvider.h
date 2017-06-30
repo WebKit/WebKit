@@ -52,7 +52,7 @@ public:
 
     static bool webRTCAvailable();
 #if USE(LIBWEBRTC)
-    WEBCORE_EXPORT virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&);
+    WEBCORE_EXPORT virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     WEBCORE_EXPORT webrtc::PeerConnectionFactoryInterface* factory();
 
@@ -69,7 +69,7 @@ public:
     void enableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = true; }
 
 protected:
-    WEBCORE_EXPORT rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&);
+    WEBCORE_EXPORT rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     bool m_enableEnumeratingAllNetworkInterfaces { false };
     bool m_useNetworkThreadWithSocketServer { true };
