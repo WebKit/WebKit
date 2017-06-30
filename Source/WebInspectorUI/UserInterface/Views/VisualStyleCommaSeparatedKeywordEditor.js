@@ -68,7 +68,7 @@ WebInspector.VisualStyleCommaSeparatedKeywordEditor = class VisualStyleCommaSepa
 
     get value()
     {
-        if (!this._commaSeparatedKeywords.hasChildren)
+        if (!this._commaSeparatedKeywords.children.length)
             return "";
 
         let value = "";
