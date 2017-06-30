@@ -29,9 +29,9 @@
     JSCustomMarkFunction
 ] interface AudioTrack {
     readonly attribute DOMString id;
-    [CustomSetter] attribute DOMString kind;
+    [ConditionallyReadWrite=MEDIA_SOURCE] attribute DOMString kind;
     readonly attribute DOMString label;
-    [CustomSetter] attribute DOMString language;
+    [ConditionallyReadWrite=MEDIA_SOURCE] attribute DOMString language;
 
     attribute boolean enabled;
 };

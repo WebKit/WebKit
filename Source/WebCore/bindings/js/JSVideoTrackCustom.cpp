@@ -40,36 +40,6 @@ void JSVideoTrack::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(&wrapped()));
 }
 
-void JSVideoTrack::setKind(ExecState& state, JSValue value)
-{
-#if ENABLE(MEDIA_SOURCE)
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto string = value.toWTFString(&state);
-    RETURN_IF_EXCEPTION(scope, void());
-    wrapped().setKind(string);
-#else
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(value);
-#endif
-}
-
-void JSVideoTrack::setLanguage(ExecState& state, JSValue value)
-{
-#if ENABLE(MEDIA_SOURCE)
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto string = value.toWTFString(&state);
-    RETURN_IF_EXCEPTION(scope, void());
-    wrapped().setLanguage(string);
-#else
-    UNUSED_PARAM(state);
-    UNUSED_PARAM(value);
-#endif
-}
-
 } // namespace WebCore
 
 #endif

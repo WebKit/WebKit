@@ -1,3 +1,49 @@
+2017-06-30  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for conditionally read-write attributes
+        https://bugs.webkit.org/show_bug.cgi?id=173993
+
+        Reviewed by Alex Christensen.
+
+        The MEDIA_SOURCE feature/conditional requires changing a few readonly
+        attributes into read-write attributes. In the past we handled this with
+        custom bindings. This patch adds a new extended attribute, ConditionallyReadWrite
+        which achieves the same result.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Move a few custom binding to the "GC / Wrapping Only" group.
+
+        * bindings/js/JSAudioTrackCustom.cpp:
+        (WebCore::JSAudioTrack::setKind): Deleted.
+        (WebCore::JSAudioTrack::setLanguage): Deleted.
+        * bindings/js/JSTextTrackCustom.cpp:
+        (WebCore::JSTextTrack::setLanguage): Deleted.
+        * bindings/js/JSVideoTrackCustom.cpp:
+        (WebCore::JSVideoTrack::setKind): Deleted.
+        (WebCore::JSVideoTrack::setLanguage): Deleted.
+        Remove no longer needed custom bindings.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePropertiesHashTable):
+        (GenerateImplementation):
+        (GenerateAttributeSetterDefinition):
+        (GenerateCallbackImplementationContent):
+        (GenerateHashTableValueArray):
+        (GenerateHashTable):
+        Pipe ConditionallyReadWrite through the generator.
+
+        * bindings/scripts/IDLAttributes.json:
+        Add ConditionallyReadWrite.
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        Add tests for ConditionallyReadWrite.
+
+        * html/track/AudioTrack.idl:
+        * html/track/TextTrack.idl:
+        * html/track/VideoTrack.idl:
+        Replace [Custom] with [ConditionallyReadWrite].
+
 2017-06-30  Chris Dumez  <cdumez@apple.com>
 
         ResourceLoadObserver does not need a ResourceLoadStatisticsStore

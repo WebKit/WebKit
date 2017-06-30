@@ -1393,6 +1393,16 @@ JSC::EncodedJSValue jsTestObjPutForwardsNullableAttribute(JSC::ExecState*, JSC::
 bool setJSTestObjPutForwardsNullableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringifierAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjStringifierAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+JSC::EncodedJSValue jsTestObjConditionallyReadWriteAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+#if ENABLE(CONDITION)
+bool setJSTestObjConditionallyReadWriteAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#endif
+#if ENABLE(CONDITION2)
+JSC::EncodedJSValue jsTestObjConditionalAndConditionallyReadWriteAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+#if ENABLE(CONDITION)
+bool setJSTestObjConditionalAndConditionallyReadWriteAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#endif
+#endif
 
 class JSTestObjPrototype : public JSC::JSNonFinalObject {
 public:
@@ -1686,6 +1696,20 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "putForwardsAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsAttribute) } },
     { "putForwardsNullableAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjPutForwardsNullableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjPutForwardsNullableAttribute) } },
     { "stringifierAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringifierAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringifierAttribute) } },
+#if ENABLE(CONDITION)
+    { "conditionallyReadWriteAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionallyReadWriteAttribute) } },
+#else
+    { "conditionallyReadWriteAttribute", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+#endif
+#if ENABLE(CONDITION2)
+#if ENABLE(CONDITION)
+    { "conditionalAndConditionallyReadWriteAttribute", CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAndConditionallyReadWriteAttribute) } },
+#else
+    { "conditionalAndConditionallyReadWriteAttribute", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAndConditionallyReadWriteAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+#endif
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
 #if ENABLE(TEST_FEATURE)
     { "enabledAtRuntimeOperation", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionEnabledAtRuntimeOperation), (intptr_t) (1) } },
 #else
@@ -4876,6 +4900,78 @@ bool setJSTestObjStringifierAttribute(ExecState* state, EncodedJSValue thisValue
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringifierAttributeSetter>(*state, thisValue, encodedValue, "stringifierAttribute");
 }
+
+static inline JSValue jsTestObjConditionallyReadWriteAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), impl.conditionallyReadWriteAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestObjConditionallyReadWriteAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObjConditionallyReadWriteAttributeGetter>(*state, thisValue, "conditionallyReadWriteAttribute");
+}
+
+#if ENABLE(CONDITION)
+static inline bool setJSTestObjConditionallyReadWriteAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "conditionallyReadWriteAttribute", "Node"); });
+    RETURN_IF_EXCEPTION(throwScope, false);
+    impl.setConditionallyReadWriteAttribute(*nativeValue);
+    return true;
+}
+
+bool setJSTestObjConditionallyReadWriteAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObjConditionallyReadWriteAttributeSetter>(*state, thisValue, encodedValue, "conditionallyReadWriteAttribute");
+}
+
+#endif
+
+#if ENABLE(CONDITION2)
+static inline JSValue jsTestObjConditionalAndConditionallyReadWriteAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), impl.conditionalAndConditionallyReadWriteAttribute());
+    return result;
+}
+
+EncodedJSValue jsTestObjConditionalAndConditionallyReadWriteAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestObj>::get<jsTestObjConditionalAndConditionallyReadWriteAttributeGetter>(*state, thisValue, "conditionalAndConditionallyReadWriteAttribute");
+}
+
+#endif
+
+#if ENABLE(CONDITION2)
+#if ENABLE(CONDITION)
+static inline bool setJSTestObjConditionalAndConditionallyReadWriteAttributeSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "conditionalAndConditionallyReadWriteAttribute", "Node"); });
+    RETURN_IF_EXCEPTION(throwScope, false);
+    impl.setConditionalAndConditionallyReadWriteAttribute(*nativeValue);
+    return true;
+}
+
+bool setJSTestObjConditionalAndConditionallyReadWriteAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestObj>::set<setJSTestObjConditionalAndConditionallyReadWriteAttributeSetter>(*state, thisValue, encodedValue, "conditionalAndConditionallyReadWriteAttribute");
+}
+
+#endif
+
+#endif
 
 #if ENABLE(TEST_FEATURE)
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionEnabledAtRuntimeOperation1Body(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

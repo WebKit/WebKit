@@ -19752,6 +19752,7 @@
 			children = (
 				1221E0721C03E4C2006A1A00 /* JSAnimationTimelineCustom.cpp */,
 				BC2ED6BB0C6BD2F000920BFF /* JSAttrCustom.cpp */,
+				BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */,
 				BE6DF710171CA2DA00DD52B8 /* JSAudioTrackListCustom.cpp */,
 				8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */,
 				49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */,
@@ -19792,10 +19793,12 @@
 				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
 				838869EB1CE81E9E00D16A9E /* JSTextCustom.cpp */,
 				07E117061489EBEB00EC5ACE /* JSTextTrackCueCustom.cpp */,
+				07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */,
 				07B5A30C14687D7100A81ECE /* JSTextTrackListCustom.cpp */,
 				070334E8145A1F35008D8D45 /* JSTrackCustom.cpp */,
 				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
+				BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */,
 				BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */,
 				31A088C41E737B2C003B6609 /* JSWebGPURenderingContextCustom.cpp */,
 				31A088C51E737B2C003B6609 /* JSWebGPURenderPassAttachmentDescriptorCustom.cpp */,
@@ -23692,7 +23695,6 @@
 			isa = PBXGroup;
 			children = (
 				7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */,
-				BE6DF70E171CA2DA00DD52B8 /* JSAudioTrackCustom.cpp */,
 				A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
@@ -23720,8 +23722,6 @@
 				418C395D1C8F0AAB0051C8A3 /* JSReadableStreamSourceCustom.cpp */,
 				51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */,
 				57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */,
-				07E116B01489C9A100EC5ACE /* JSTextTrackCustom.cpp */,
-				BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */,
 				D3F3D3591A69A3B00059FC2B /* JSWebGL2RenderingContextCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				38850C521E964C1100C60753 /* JSWebGPUCommandBufferCustom.cpp */,

@@ -35,7 +35,7 @@ enum TextTrackKind { "subtitles", "captions", "descriptions", "chapters", "metad
     readonly attribute DOMString id;
     [ImplementedAs=kindForBindings] attribute TextTrackKind kind;
     readonly attribute DOMString label;
-    [CustomSetter] attribute DOMString language;
+    [ConditionallyReadWrite=MEDIA_SOURCE] attribute DOMString language;
     readonly attribute DOMString inBandMetadataTrackDispatchType;
 
     attribute TextTrackMode mode;

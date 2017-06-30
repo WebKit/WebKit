@@ -2978,7 +2978,7 @@ sub GenerateHeader
 
 sub GeneratePropertiesHashTable
 {
-    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $runtimeEnabledOperations, $runtimeEnabledAttributes, $settingsEnabledOperations, $settingsEnabledAttributes) = @_;
+    my ($object, $interface, $isInstance, $hashKeys, $hashSpecials, $hashValue1, $hashValue2, $conditionals, $readWriteConditionals, $runtimeEnabledOperations, $runtimeEnabledAttributes, $settingsEnabledOperations, $settingsEnabledAttributes) = @_;
 
     # FIXME: These should be functions on $interface.
     my $interfaceName = $interface->type->name;
@@ -3036,6 +3036,8 @@ sub GeneratePropertiesHashTable
 
         my $conditional = $attribute->extendedAttributes->{Conditional};
         $conditionals->{$name} = $conditional if $conditional;
+        my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
+        $readWriteConditionals->{$name} = $readWriteConditional if $readWriteConditional;
 
         if (NeedsRuntimeCheck($attribute)) {
             push(@$runtimeEnabledAttributes, $attribute);
@@ -3818,8 +3820,14 @@ sub GenerateImplementation
             my $getter = GetAttributeGetterName($interface, $className, $attribute);
             push(@implContent, "JSC::EncodedJSValue ${getter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);\n");
             if (!IsReadonly($attribute)) {
+                my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
+                if ($readWriteConditional) {
+                    my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
+                    push(@implContent, "#if ${readWriteConditionalString}\n");
+                }
                 my $setter = GetAttributeSetterName($interface, $className, $attribute);
                 push(@implContent, "bool ${setter}(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);\n");
+                push(@implContent, "#endif\n") if $readWriteConditional;
             }
             push(@implContent, "#endif\n") if $conditionalString;
         }
@@ -3868,6 +3876,7 @@ sub GenerateImplementation
     my @hashValue2 = ();
     my @hashSpecials = ();
     my %conditionals = ();
+    my %readWriteConditionals = ();
     my $hashName = $className . "Table";
     my @runtimeEnabledOperations = ();
     my @runtimeEnabledAttributes = ();
@@ -3875,17 +3884,8 @@ sub GenerateImplementation
     my @settingsEnabledAttributes = ();
 
     # Generate hash table for properties on the instance.
-    my $numInstanceProperties = GeneratePropertiesHashTable($object, $interface, 1,
-        \@hashKeys, \@hashSpecials,
-        \@hashValue1, \@hashValue2,
-        \%conditionals,
-        \@runtimeEnabledOperations, \@runtimeEnabledAttributes,
-        \@settingsEnabledOperations, \@settingsEnabledAttributes);
-
-    $object->GenerateHashTable($hashName, $numInstanceProperties,
-        \@hashKeys, \@hashSpecials,
-        \@hashValue1, \@hashValue2,
-        \%conditionals, 0) if $numInstanceProperties > 0;
+    my $numInstanceProperties = GeneratePropertiesHashTable($object, $interface, 1, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, \@runtimeEnabledOperations, \@runtimeEnabledAttributes, \@settingsEnabledOperations, \@settingsEnabledAttributes);
+    $object->GenerateHashTable($hashName, $numInstanceProperties, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, 0) if $numInstanceProperties > 0;
 
     # - Add all interface object (aka constructor) properties (constants, static attributes, static operations).
     if (NeedsConstructorProperty($interface)) {
@@ -3897,6 +3897,7 @@ sub GenerateImplementation
         my @hashValue2 = ();
         my @hashSpecials = ();
         my %conditionals = ();
+        my %readWriteConditionals = ();
 
         my $needsConstructorTable = 0;
 
@@ -3946,6 +3947,9 @@ sub GenerateImplementation
             my $conditional = $attribute->extendedAttributes->{Conditional};
             $conditionals{$name} = $conditional if $conditional;
 
+            my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
+            $readWriteConditionals{$name} = $readWriteConditional if $readWriteConditional;
+
             $hashSize++;
         }
 
@@ -3973,10 +3977,7 @@ sub GenerateImplementation
             $hashSize++;
         }
 
-        $object->GenerateHashTable($hashName, $hashSize,
-                                   \@hashKeys, \@hashSpecials,
-                                   \@hashValue1, \@hashValue2,
-                                   \%conditionals, 1) if $hashSize > 0;
+        $object->GenerateHashTable($hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, 1) if $hashSize > 0;
 
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
 
@@ -3996,6 +3997,7 @@ sub GenerateImplementation
     @hashValue2 = ();
     @hashSpecials = ();
     %conditionals = ();
+    %readWriteConditionals = ();
     @runtimeEnabledOperations = ();
     @runtimeEnabledAttributes = ();
     @settingsEnabledOperations = ();
@@ -4005,7 +4007,7 @@ sub GenerateImplementation
     my $numPrototypeProperties = GeneratePropertiesHashTable($object, $interface, 0,
         \@hashKeys, \@hashSpecials,
         \@hashValue1, \@hashValue2,
-        \%conditionals,
+        \%conditionals, \%readWriteConditionals,
         \@runtimeEnabledOperations, \@runtimeEnabledAttributes,
         \@settingsEnabledOperations, \@settingsEnabledAttributes);
 
@@ -4027,10 +4029,7 @@ sub GenerateImplementation
 
     my $justGenerateValueArray = !IsDOMGlobalObject($interface);
 
-    $object->GenerateHashTable($hashName, $hashSize,
-                               \@hashKeys, \@hashSpecials,
-                               \@hashValue1, \@hashValue2,
-                               \%conditionals, $justGenerateValueArray);
+    $object->GenerateHashTable($hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, $justGenerateValueArray);
 
     if ($justGenerateValueArray) {
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
@@ -4947,13 +4946,20 @@ sub GenerateAttributeSetterDefinition
         my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
         push(@$outputArray, "#if ${conditionalString}\n");;
     }
-    
+
+    my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
+    if ($readWriteConditional) {
+        my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
+        push(@$outputArray, "#if ${conditionalString}\n");;
+    }
+
     my $attributeSetterName = GetAttributeSetterName($interface, $className, $attribute);
     my $attributeSetterBodyName = $attributeSetterName . "Setter";
     
     GenerateAttributeSetterBodyDefinition($outputArray, $interface, $className, $attribute, $attributeSetterBodyName, $conditional);
     GenerateAttributeSetterTrampolineDefinition($outputArray, $interface, $className, $attribute, $attributeSetterName, $attributeSetterBodyName, $conditional);
-    
+
+    push(@$outputArray, "#endif\n\n") if $readWriteConditional;
     push(@$outputArray, "#endif\n\n") if $conditional;
 }
 
@@ -5880,6 +5886,7 @@ sub GenerateCallbackImplementationContent
         my @hashValue2 = ();
         my @hashSpecials = ();
         my %conditionals = ();
+        my %readWriteConditionals = ();
 
         foreach my $constant (@{$constants}) {
             my $name = $constant->name;
@@ -5896,7 +5903,7 @@ sub GenerateCallbackImplementationContent
 
             $hashSize++;
         }
-        $object->GenerateHashTable($hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, 1) if $hashSize > 0;
+        $object->GenerateHashTable($hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, 1) if $hashSize > 0;
 
         push(@$contentRef, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interfaceOrCallback));
 
@@ -6516,6 +6523,7 @@ sub GenerateHashTableValueArray
     my $value1 = shift;
     my $value2 = shift;
     my $conditionals = shift;
+    my $readWriteConditionals = shift;
     my $nameEntries = shift;
 
     my $packedSize = scalar @{$keys};
@@ -6525,9 +6533,9 @@ sub GenerateHashTableValueArray
 
     my $i = 0;
     foreach my $key (@{$keys}) {
-        my $conditional;
         my $firstTargetType;
         my $secondTargetType = "";
+        my $conditional;
 
         if ($conditionals) {
             $conditional = $conditionals->{$key};
@@ -6556,12 +6564,24 @@ sub GenerateHashTableValueArray
         if ("@$specials[$i]" =~ m/ConstantInteger/) {
             push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, { (long long)" . $firstTargetType . "(@$value1[$i]) } },\n");
         } else {
+            my $readWriteConditional = $readWriteConditionals ? $readWriteConditionals->{$key} : undef;
+            if ($readWriteConditional) {
+                my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
+                push(@implContent, "#if ${readWriteConditionalString}\n");
+            }
+
             push(@implContent, "    { \"$key\", @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) " . $secondTargetType . "(@$value2[$i]) } },\n");
+
+            if ($readWriteConditional) {
+                push(@implContent, "#else\n") ;
+                push(@implContent, "    { \"$key\", ReadOnly | @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },\n");
+                push(@implContent, "#endif\n");
+            }
         }
         if ($conditional) {
-            push(@implContent, "#else\n") ;
+            push(@implContent, "#else\n");
             push(@implContent, "    { 0, 0, NoIntrinsic, { 0, 0 } },\n");
-            push(@implContent, "#endif\n") ;
+            push(@implContent, "#endif\n");
         }
         ++$i;
     }
@@ -6583,6 +6603,7 @@ sub GenerateHashTable
     my $value1 = shift;
     my $value2 = shift;
     my $conditionals = shift;
+    my $readWriteConditionals = shift;
     my $justGenerateValueArray = shift;
 
     my $nameEntries = "${name}Values";
@@ -6608,7 +6629,7 @@ sub GenerateHashTable
     }
 
     if ($justGenerateValueArray) {
-        GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $nameEntries) if $size;
+        GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries) if $size;
         return;
     }
 
@@ -6657,7 +6678,7 @@ sub GenerateHashTable
     push(@implContent, "};\n\n");
 
     # Dump the hash table
-    my $hasSetter = GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $nameEntries);
+    my $hasSetter = GenerateHashTableValueArray($keys, $specials, $value1, $value2, $conditionals, $readWriteConditionals, $nameEntries);
     my $packedSize = scalar @{$keys};
 
     my $compactSizeMask = $numEntries - 1;

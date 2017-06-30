@@ -54,6 +54,10 @@
             "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function"],
             "values": ["*"]
         },
+        "ConditionallyReadWrite": {
+            "contextsAllowed": ["attribute"],
+            "values": ["*"]
+        },
         "ConstantsScope": {
             "contextsAllowed": ["interface"],
             "values": ["*"]

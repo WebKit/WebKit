@@ -450,6 +450,9 @@ enum TestConfidence { "high", "kinda-low" };
 
     Node testReturnValueOptimization([ReturnValue] Node a, Node b);
     [MayThrowException] Node testReturnValueOptimizationWithException([ReturnValue] Node a, Node b);
+
+    [ConditionallyReadWrite=CONDITION] attribute Node conditionallyReadWriteAttribute;
+    [Conditional=CONDITION2, ConditionallyReadWrite=CONDITION] attribute Node conditionalAndConditionallyReadWriteAttribute;
 };
 
 // The following comment should not generate any code.
