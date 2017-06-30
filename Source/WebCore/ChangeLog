@@ -1,3 +1,42 @@
+2017-06-30  Chris Dumez  <cdumez@apple.com>
+
+        ResourceLoadObserver does not need a ResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=174013
+
+        Reviewed by Brent Fulgham.
+
+        ResourceLoadObserver does not need a ResourceLoadStatisticsStore. ResourceLoadStatisticsStore is too complicated for its needs.
+        ResourceLoadStatisticsStore can then be moved to WebKit2/UIProcess in a follow-up.
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::UserGestureIndicator::UserGestureIndicator):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::shared):
+        (WebCore::ResourceLoadObserver::setNotificationCallback):
+        (WebCore::ResourceLoadObserver::shouldLog):
+        (WebCore::ResourceLoadObserver::logFrameNavigation):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain):
+        (WebCore::ResourceLoadObserver::takeResourceStatisticsForPrimaryDomain):
+        (WebCore::ResourceLoadObserver::isPrevalentResource):
+        (WebCore::ResourceLoadObserver::statisticsForOrigin):
+        (WebCore::ResourceLoadObserver::takeStatistics):
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatisticsStore.cpp:
+        * loader/ResourceLoadStatisticsStore.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        * testing/Internals.cpp:
+        (WebCore::Internals::resourceLoadStatisticsForOrigin):
+
 2017-06-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         ASSERTION FAILED: !canAnimate() && !m_currentFrame

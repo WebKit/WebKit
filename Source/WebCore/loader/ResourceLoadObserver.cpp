@@ -38,7 +38,6 @@
 #include "Settings.h"
 #include "URL.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
@@ -49,23 +48,16 @@ template<typename T> static inline String primaryDomain(const T& value)
 
 static Seconds timestampResolution { 1_h };
 
-ResourceLoadObserver& ResourceLoadObserver::sharedObserver()
+ResourceLoadObserver& ResourceLoadObserver::shared()
 {
     static NeverDestroyed<ResourceLoadObserver> resourceLoadObserver;
     return resourceLoadObserver;
 }
 
-void ResourceLoadObserver::setStatisticsStore(Ref<ResourceLoadStatisticsStore>&& store)
+void ResourceLoadObserver::setNotificationCallback(WTF::Function<void()>&& notificationCallback)
 {
-    if (m_store && m_queue)
-        m_queue = nullptr;
-    m_store = WTFMove(store);
-}
-    
-void ResourceLoadObserver::setStatisticsQueue(Ref<WTF::WorkQueue>&& queue)
-{
-    ASSERT(!m_queue);
-    m_queue = WTFMove(queue);
+    ASSERT(!m_notificationCallback);
+    m_notificationCallback = WTFMove(notificationCallback);
 }
 
 static inline bool is3xxRedirect(const ResourceResponse& response)
@@ -79,7 +71,7 @@ bool ResourceLoadObserver::shouldLog(Page* page) const
     if (!page)
         return false;
 
-    return Settings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_store;
+    return Settings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_notificationCallback;
 }
 
 void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
@@ -112,69 +104,61 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     
     if (targetPrimaryDomain == mainFramePrimaryDomain || targetPrimaryDomain == sourcePrimaryDomain)
         return;
-    
-    ASSERT(m_queue);
-    m_queue->dispatch([this, isMainFrame, isRedirect, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy()] {
-        bool shouldFireDataModificationHandler = false;
-        
-        {
-            auto locker = holdLock(m_store->statisticsLock());
-            auto targetStatistics = m_store->takeResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
-            // Always fire if we have previously removed data records for this domain
-            shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
+    auto targetStatistics = takeResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
+    // Always fire if we have previously removed data records for this domain
+    bool shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
+
+    if (isMainFrame)
+        targetStatistics.topFrameHasBeenNavigatedToBefore = true;
+    else {
+        targetStatistics.subframeHasBeenLoadedBefore = true;
+
+        auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+        if (subframeUnderTopFrameOriginsResult.isNewEntry)
+            shouldCallNotificationCallback = true;
+    }
+
+    if (isRedirect) {
+        auto& redirectingOriginResourceStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
+
+        if (isPrevalentResource(targetPrimaryDomain))
+            redirectingOriginResourceStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
+
+        if (isMainFrame) {
+            ++targetStatistics.topFrameHasBeenRedirectedTo;
+            ++redirectingOriginResourceStatistics.topFrameHasBeenRedirectedFrom;
+        } else {
+            ++targetStatistics.subframeHasBeenRedirectedTo;
+            ++redirectingOriginResourceStatistics.subframeHasBeenRedirectedFrom;
+            redirectingOriginResourceStatistics.subframeUniqueRedirectsTo.add(targetPrimaryDomain);
+
+            ++targetStatistics.subframeSubResourceCount;
+        }
+    } else {
+        if (sourcePrimaryDomain.isNull() || sourcePrimaryDomain.isEmpty() || sourcePrimaryDomain == "nullOrigin") {
             if (isMainFrame)
-                targetStatistics.topFrameHasBeenNavigatedToBefore = true;
-            else {
-                targetStatistics.subframeHasBeenLoadedBefore = true;
+                ++targetStatistics.topFrameInitialLoadCount;
+            else
+                ++targetStatistics.subframeSubResourceCount;
+        } else {
+            auto& sourceOriginResourceStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
 
-                auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-                if (subframeUnderTopFrameOriginsResult.isNewEntry)
-                    shouldFireDataModificationHandler = true;
-            }
-
-            if (isRedirect) {
-                auto& redirectingOriginResourceStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-
-                if (m_store->isPrevalentResource(targetPrimaryDomain))
-                    redirectingOriginResourceStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
-
-                if (isMainFrame) {
-                    ++targetStatistics.topFrameHasBeenRedirectedTo;
-                    ++redirectingOriginResourceStatistics.topFrameHasBeenRedirectedFrom;
-                } else {
-                    ++targetStatistics.subframeHasBeenRedirectedTo;
-                    ++redirectingOriginResourceStatistics.subframeHasBeenRedirectedFrom;
-                    redirectingOriginResourceStatistics.subframeUniqueRedirectsTo.add(targetPrimaryDomain);
-
-                    ++targetStatistics.subframeSubResourceCount;
-                }
+            if (isMainFrame) {
+                ++sourceOriginResourceStatistics.topFrameHasBeenNavigatedFrom;
+                ++targetStatistics.topFrameHasBeenNavigatedTo;
             } else {
-                if (sourcePrimaryDomain.isNull() || sourcePrimaryDomain.isEmpty() || sourcePrimaryDomain == "nullOrigin") {
-                    if (isMainFrame)
-                        ++targetStatistics.topFrameInitialLoadCount;
-                    else
-                        ++targetStatistics.subframeSubResourceCount;
-                } else {
-                    auto& sourceOriginResourceStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-
-                    if (isMainFrame) {
-                        ++sourceOriginResourceStatistics.topFrameHasBeenNavigatedFrom;
-                        ++targetStatistics.topFrameHasBeenNavigatedTo;
-                    } else {
-                        ++sourceOriginResourceStatistics.subframeHasBeenNavigatedFrom;
-                        ++targetStatistics.subframeHasBeenNavigatedTo;
-                    }
-                }
+                ++sourceOriginResourceStatistics.subframeHasBeenNavigatedFrom;
+                ++targetStatistics.subframeHasBeenNavigatedTo;
             }
+        }
+    }
 
-            m_store->setResourceStatisticsForPrimaryDomain(targetPrimaryDomain, WTFMove(targetStatistics));
-        } // Release lock
-        
-        if (shouldFireDataModificationHandler)
-            m_store->fireDataModificationHandler();
-    });
+    m_resourceStatisticsMap.set(targetPrimaryDomain, WTFMove(targetStatistics));
+
+    if (shouldCallNotificationCallback)
+        m_notificationCallback();
 }
     
 void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
@@ -201,55 +185,46 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     
     if (targetPrimaryDomain == mainFramePrimaryDomain || (isRedirect && targetPrimaryDomain == sourcePrimaryDomain))
         return;
-    
-    ASSERT(m_queue);
-    m_queue->dispatch([this, isRedirect, sourcePrimaryDomain = sourcePrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy(), targetPrimaryDomain = targetPrimaryDomain.isolatedCopy()] {
-        bool shouldFireDataModificationHandler = false;
-        
-        {
-        auto locker = holdLock(m_store->statisticsLock());
-        auto& targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
-        // Always fire if we have previously removed data records for this domain
-        shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
+    auto targetStatistics = takeResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
-        auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-        if (subresourceUnderTopFrameOriginsResult.isNewEntry)
-            shouldFireDataModificationHandler = true;
+    // Always fire if we have previously removed data records for this domain
+    bool shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
 
-        if (isRedirect) {
-            auto& redirectingOriginStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-            
-            // We just inserted to the store, so we need to reget 'targetStatistics'
-            auto& updatedTargetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+    if (subresourceUnderTopFrameOriginsResult.isNewEntry)
+        shouldCallNotificationCallback = true;
 
-            if (m_store->isPrevalentResource(targetPrimaryDomain))
-                redirectingOriginStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
-            
-            ++redirectingOriginStatistics.subresourceHasBeenRedirectedFrom;
-            ++updatedTargetStatistics.subresourceHasBeenRedirectedTo;
+    if (isRedirect) {
+        auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
 
-            auto subresourceUniqueRedirectsToResult = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain);
-            if (subresourceUniqueRedirectsToResult.isNewEntry)
-                shouldFireDataModificationHandler = true;
+        if (isPrevalentResource(targetPrimaryDomain))
+            redirectingOriginStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
 
-            ++updatedTargetStatistics.subresourceHasBeenSubresourceCount;
+        ++redirectingOriginStatistics.subresourceHasBeenRedirectedFrom;
+        ++targetStatistics.subresourceHasBeenRedirectedTo;
 
-            auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
-            
-            updatedTargetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(updatedTargetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
-        } else {
-            ++targetStatistics.subresourceHasBeenSubresourceCount;
+        auto subresourceUniqueRedirectsToResult = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain);
+        if (subresourceUniqueRedirectsToResult.isNewEntry)
+            shouldCallNotificationCallback = true;
 
-            auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
-            
-            targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
-        }
-        } // Release lock
-        
-        if (shouldFireDataModificationHandler)
-            m_store->fireDataModificationHandler();
-    });
+        ++targetStatistics.subresourceHasBeenSubresourceCount;
+
+        auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
+
+        targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
+    } else {
+        ++targetStatistics.subresourceHasBeenSubresourceCount;
+
+        auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
+
+        targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
+    }
+
+    m_resourceStatisticsMap.set(targetPrimaryDomain, WTFMove(targetStatistics));
+
+    if (shouldCallNotificationCallback)
+        m_notificationCallback();
 }
 
 void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& targetURL)
@@ -276,31 +251,23 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     if (targetPrimaryDomain == mainFramePrimaryDomain)
         return;
 
-    ASSERT(m_queue);
-    m_queue->dispatch([this, targetPrimaryDomain = targetPrimaryDomain.isolatedCopy(), mainFramePrimaryDomain = mainFramePrimaryDomain.isolatedCopy()] {
-        bool shouldFireDataModificationHandler = false;
-        
-        {
-        auto locker = holdLock(m_store->statisticsLock());
-        auto& targetStatistics = m_store->ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
-        // Always fire if we have previously removed data records for this domain
-        shouldFireDataModificationHandler = targetStatistics.dataRecordsRemoved > 0;
-        
-        auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-        if (subresourceUnderTopFrameOriginsResult.isNewEntry)
-            shouldFireDataModificationHandler = true;
+    // Always fire if we have previously removed data records for this domain
+    bool shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
 
-        ++targetStatistics.subresourceHasBeenSubresourceCount;
-        
-        auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
-        
-        targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
-        } // Release lock
-        
-        if (shouldFireDataModificationHandler)
-            m_store->fireDataModificationHandler();
-    });
+    auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+    if (subresourceUnderTopFrameOriginsResult.isNewEntry)
+        shouldCallNotificationCallback = true;
+
+    ++targetStatistics.subresourceHasBeenSubresourceCount;
+
+    auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
+
+    targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
+
+    if (shouldCallNotificationCallback)
+        m_notificationCallback();
 }
 
 static WallTime reduceTimeResolution(WallTime time)
@@ -319,26 +286,61 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    ASSERT(m_queue);
-    m_queue->dispatch([this, primaryDomainString = primaryDomain(url).isolatedCopy()] {
-        {
-        auto locker = holdLock(m_store->statisticsLock());
-        auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
-        WallTime newTime = reduceTimeResolution(WallTime::now());
-        if (newTime == statistics.mostRecentUserInteractionTime)
-            return;
+    auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    auto newTime = reduceTimeResolution(WallTime::now());
+    if (newTime == statistics.mostRecentUserInteractionTime)
+        return;
 
-        statistics.hadUserInteraction = true;
-        statistics.mostRecentUserInteractionTime = newTime;
-        }
-        
-        m_store->fireDataModificationHandler();
+    statistics.hadUserInteraction = true;
+    statistics.mostRecentUserInteractionTime = newTime;
+
+    m_notificationCallback();
+}
+
+ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
+{
+    auto addResult = m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {
+        return ResourceLoadStatistics(primaryDomain);
     });
+    return addResult.iterator->value;
+}
+
+ResourceLoadStatistics ResourceLoadObserver::takeResourceStatisticsForPrimaryDomain(const String& primaryDomain)
+{
+    auto statististics = m_resourceStatisticsMap.take(primaryDomain);
+    if (statististics.highLevelDomain.isNull())
+        statististics.highLevelDomain = primaryDomain;
+    ASSERT(statististics.highLevelDomain == primaryDomain);
+    return statististics;
+}
+
+bool ResourceLoadObserver::isPrevalentResource(const String& primaryDomain) const
+{
+    auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
+    if (mapEntry == m_resourceStatisticsMap.end())
+        return false;
+    return mapEntry->value.isPrevalentResource;
 }
 
 String ResourceLoadObserver::statisticsForOrigin(const String& origin)
 {
-    return m_store ? m_store->statisticsForOrigin(origin) : emptyString();
+    auto iter = m_resourceStatisticsMap.find(origin);
+    if (iter == m_resourceStatisticsMap.end())
+        return emptyString();
+
+    return "Statistics for " + origin + ":\n" + iter->value.toString();
+}
+
+Vector<ResourceLoadStatistics> ResourceLoadObserver::takeStatistics()
+{
+    Vector<ResourceLoadStatistics> statistics;
+    statistics.reserveInitialCapacity(m_resourceStatisticsMap.size());
+    for (auto& statistic : m_resourceStatisticsMap.values())
+        statistics.uncheckedAppend(WTFMove(statistic));
+
+    m_resourceStatisticsMap.clear();
+
+    return statistics;
 }
 
 } // namespace WebCore

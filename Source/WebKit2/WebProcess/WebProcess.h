@@ -64,7 +64,6 @@ class PageGroup;
 class ResourceRequest;
 class SessionID;
 class UserGestureToken;
-class ResourceLoadStatisticsStore;
 struct PluginInfo;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;
@@ -417,9 +416,6 @@ private:
 #if PLATFORM(IOS)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #endif
-
-    Ref<WebCore::ResourceLoadStatisticsStore> m_resourceLoadStatisticsStore;
-    Ref<WTF::WorkQueue> m_statisticsQueue;
 
     unsigned m_pagesMarkingLayersAsVolatile { 0 };
     bool m_suppressMemoryPressureHandler { false };

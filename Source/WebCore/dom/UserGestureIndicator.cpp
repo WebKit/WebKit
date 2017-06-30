@@ -57,7 +57,7 @@ UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureSt
 
     if (document && currentToken()->processingUserGesture()) {
         document->updateLastHandledUserGestureTimestamp(MonotonicTime::now());
-        ResourceLoadObserver::sharedObserver().logUserInteractionWithReducedTimeResolution(*document);
+        ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(*document);
         document->topDocument().setUserDidInteractWithPage(true);
     }
 }

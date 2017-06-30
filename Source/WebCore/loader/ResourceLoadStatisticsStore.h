@@ -51,6 +51,7 @@ struct PrevalentResourceTelemetry {
 
 struct ResourceLoadStatistics;
 
+// FIXME: This should be moved to WebKit2/UIProcess.
 class ResourceLoadStatisticsStore : public ThreadSafeRefCounted<ResourceLoadStatisticsStore> {
 public:
     WEBCORE_EXPORT static Ref<ResourceLoadStatisticsStore> create();
@@ -58,21 +59,17 @@ public:
     WEBCORE_EXPORT std::unique_ptr<KeyedEncoder> createEncoderFromData();
     WEBCORE_EXPORT void readDataFromDecoder(KeyedDecoder&);
 
-    WEBCORE_EXPORT String statisticsForOrigin(const String&);
-
     bool isEmpty() const { return m_resourceStatisticsMap.isEmpty(); }
     size_t size() const { return m_resourceStatisticsMap.size(); }
     WEBCORE_EXPORT void clearInMemory();
     WEBCORE_EXPORT void clearInMemoryAndPersistent();
 
     WEBCORE_EXPORT ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
-    WEBCORE_EXPORT ResourceLoadStatistics takeResourceStatisticsForPrimaryDomain(const String&);
     void setResourceStatisticsForPrimaryDomain(const String&, ResourceLoadStatistics&&);
 
     bool isPrevalentResource(const String&) const;
     
     WEBCORE_EXPORT void mergeStatistics(const Vector<ResourceLoadStatistics>&);
-    WEBCORE_EXPORT Vector<ResourceLoadStatistics> takeStatistics();
 
     WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void()>&&);
     WEBCORE_EXPORT void setShouldPartitionCookiesCallback(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&&);

@@ -102,7 +102,6 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceLoadObserver.h>
 #include <WebCore/ResourceLoadStatistics.h>
-#include <WebCore/ResourceLoadStatisticsStore.h>
 #include <WebCore/RuntimeApplicationChecks.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
@@ -175,8 +174,6 @@ WebProcess::WebProcess()
 #if PLATFORM(IOS)
     , m_webSQLiteDatabaseTracker(*this)
 #endif
-    , m_resourceLoadStatisticsStore(WebCore::ResourceLoadStatisticsStore::create())
-    , m_statisticsQueue(WorkQueue::create("ResourceLoadStatisticsStore Process Data Queue"))
 {
     // Initialize our platform strategies.
     WebPlatformStrategies::initialize();
@@ -202,9 +199,7 @@ WebProcess::WebProcess()
 
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 
-    ResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
-    ResourceLoadObserver::sharedObserver().setStatisticsQueue(m_statisticsQueue.copyRef());
-    m_resourceLoadStatisticsStore->setNotificationCallback([this] {
+    ResourceLoadObserver::shared().setNotificationCallback([this] {
         if (m_statisticsChangedTimer.isActive())
             return;
         m_statisticsChangedTimer.startOneShot(5_s);
@@ -1464,10 +1459,11 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
 
 void WebProcess::statisticsChangedTimerFired()
 {
-    if (m_resourceLoadStatisticsStore->isEmpty())
+    auto statistics = ResourceLoadObserver::shared().takeStatistics();
+    if (statistics.isEmpty())
         return;
 
-    parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(m_resourceLoadStatisticsStore->takeStatistics()), 0);
+    parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
 }
 
 void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)

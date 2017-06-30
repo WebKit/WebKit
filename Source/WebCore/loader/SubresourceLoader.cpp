@@ -176,7 +176,7 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest& newRequest, con
 
     if (newRequest.requester() != ResourceRequestBase::Requester::Main) {
         TracePoint(SubresourceLoadWillStart);
-        ResourceLoadObserver::sharedObserver().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
+        ResourceLoadObserver::shared().logSubresourceLoading(m_frame.get(), newRequest, redirectResponse);
     }
 
     ASSERT(!newRequest.isNull());

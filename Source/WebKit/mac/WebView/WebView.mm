@@ -274,7 +274,6 @@
 #import <WebCore/NetworkStateNotifier.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ResourceLoadStatistics.h>
-#import <WebCore/ResourceLoadStatisticsStore.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/TileControllerMemoryHandlerIOS.h>
@@ -764,8 +763,6 @@ enum { WebViewVersion = 4 };
 #define timedLayoutSize 4096
 
 static NSMutableSet *schemesWithRepresentationsSet;
-static WebCore::ResourceLoadStatisticsStore* resourceLoadStatisticsStore;
-static WTF::WorkQueue* statisticsQueue;
 
 #if !PLATFORM(IOS)
 NSString *_WebCanGoBackKey =            @"canGoBack";
@@ -1163,21 +1160,6 @@ static String webKitBundleVersionString()
     reportException(execState, toJS(execState, exception));
 }
 
-static void WebKitInitializeApplicationStatisticsStoragePathIfNecessary()
-{
-    static BOOL initialized = NO;
-    if (initialized)
-        return;
-    
-    resourceLoadStatisticsStore = &WebCore::ResourceLoadStatisticsStore::create().leakRef();
-    ResourceLoadObserver::sharedObserver().setStatisticsStore(*resourceLoadStatisticsStore);
-    
-    statisticsQueue = &WTF::WorkQueue::create("WebView ResourceLoadStatisticsStore Process Data Queue").leakRef();
-    ResourceLoadObserver::sharedObserver().setStatisticsQueue(*statisticsQueue);
-    
-    initialized = YES;
-}
-
 static bool shouldEnableLoadDeferring()
 {
 #if PLATFORM(IOS)
@@ -1426,8 +1408,6 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         if ([standardPreferences storageTrackerEnabled])
 #endif
         WebKitInitializeStorageIfNecessary();
-
-        WebKitInitializeApplicationStatisticsStoragePathIfNecessary();
 
 #if ENABLE(GAMEPAD)
         WebKitInitializeGamepadProviderIfNecessary();

@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ResourceLoadStatisticsStore.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,23 +47,26 @@ struct ResourceLoadStatistics;
 class ResourceLoadObserver {
     friend class NeverDestroyed<ResourceLoadObserver>;
 public:
-    WEBCORE_EXPORT static ResourceLoadObserver& sharedObserver();
+    WEBCORE_EXPORT static ResourceLoadObserver& shared();
     
     void logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
     void logWebSocketLoading(const Frame*, const URL&);
     void logUserInteractionWithReducedTimeResolution(const Document&);
 
-    WEBCORE_EXPORT void setStatisticsStore(Ref<ResourceLoadStatisticsStore>&&);
-    WEBCORE_EXPORT void setStatisticsQueue(Ref<WTF::WorkQueue>&&);
-
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
+
+    WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void()>&&);
+    WEBCORE_EXPORT Vector<ResourceLoadStatistics> takeStatistics();
 
 private:
     bool shouldLog(Page*) const;
+    ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
+    ResourceLoadStatistics takeResourceStatisticsForPrimaryDomain(const String& primaryDomain);
+    bool isPrevalentResource(const String& primaryDomain) const;
 
-    RefPtr<ResourceLoadStatisticsStore> m_store;
-    RefPtr<WTF::WorkQueue> m_queue;
+    HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
+    WTF::Function<void()> m_notificationCallback;
     HashMap<String, size_t> m_originsVisitedMap;
 };
     

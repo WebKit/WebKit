@@ -72,23 +72,6 @@ ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsFor
     return addResult.iterator->value;
 }
 
-ResourceLoadStatistics ResourceLoadStatisticsStore::takeResourceStatisticsForPrimaryDomain(const String& primaryDomain)
-{
-    ASSERT(m_statisticsLock.isLocked());
-    auto statististics = m_resourceStatisticsMap.take(primaryDomain);
-    if (statististics.highLevelDomain.isNull())
-        statististics.highLevelDomain = primaryDomain;
-    ASSERT(statististics.highLevelDomain == primaryDomain);
-    return statististics;
-}
-
-void ResourceLoadStatisticsStore::setResourceStatisticsForPrimaryDomain(const String& primaryDomain, ResourceLoadStatistics&& statistics)
-{
-    ASSERT(!isMainThread());
-    auto locker = holdLock(m_statisticsLock);
-    m_resourceStatisticsMap.set(primaryDomain, WTFMove(statistics));
-}
-
 typedef HashMap<String, ResourceLoadStatistics>::KeyValuePairType StatisticsValue;
 
 std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData()
@@ -171,32 +154,6 @@ void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
         m_deletePersistentStoreHandler();
     if (m_grandfatherExistingWebsiteDataHandler)
         m_grandfatherExistingWebsiteDataHandler();
-}
-
-String ResourceLoadStatisticsStore::statisticsForOrigin(const String& origin)
-{
-    auto locker = holdLock(m_statisticsLock);
-    auto iter = m_resourceStatisticsMap.find(origin);
-    if (iter == m_resourceStatisticsMap.end())
-        return emptyString();
-    
-    return "Statistics for " + origin + ":\n" + iter->value.toString();
-}
-
-Vector<ResourceLoadStatistics> ResourceLoadStatisticsStore::takeStatistics()
-{
-    Vector<ResourceLoadStatistics> statistics;
-    
-    {
-    auto locker = holdLock(m_statisticsLock);
-    statistics.reserveInitialCapacity(m_resourceStatisticsMap.size());
-    for (auto& statistic : m_resourceStatisticsMap.values())
-        statistics.uncheckedAppend(WTFMove(statistic));
-
-    m_resourceStatisticsMap.clear();
-    }
-    
-    return statistics;
 }
 
 void ResourceLoadStatisticsStore::mergeStatistics(const Vector<ResourceLoadStatistics>& statistics)

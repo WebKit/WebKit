@@ -321,7 +321,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 #endif
             return { };
         } else
-            ResourceLoadObserver::sharedObserver().logWebSocketLoading(document.frame(), m_url);
+            ResourceLoadObserver::shared().logWebSocketLoading(document.frame(), m_url);
     }
 
     String protocolString;
