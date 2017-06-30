@@ -4576,43 +4576,41 @@ END
     void* expectedVTablePointer = reinterpret_cast<void*>(${vtableRefWin});
 #else
     void* expectedVTablePointer = ${vtableRefGnu};
-#if COMPILER(CLANG)
-    // If this fails $implType does not have a vtable, so you need to add the
+#endif
+
+    // If this fails ${implType} does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    static_assert(__is_polymorphic($implType), "${implType} is not polymorphic");
-#endif
-#endif
+    static_assert(std::is_polymorphic<${implType}>::value, "${implType} is not polymorphic");
+
     // If you hit this assertion you either have a use after free bug, or
-    // $implType has subclasses. If $implType has subclasses that get passed
+    // ${implType} has subclasses. If ${implType} has subclasses that get passed
     // to toJS() we currently require $interfaceName you to opt out of binding hardening
     // by adding the SkipVTableValidation attribute to the interface IDL definition
     RELEASE_ASSERT(actualVTablePointer == expectedVTablePointer);
 #endif
 END
         push(@implContent, <<END) if $interface->extendedAttributes->{ImplementationLacksVTable};
-#if COMPILER(CLANG)
     // If you hit this failure the interface definition has the ImplementationLacksVTable
     // attribute. You should remove that attribute. If the class has subclasses
     // that may be passed through this toJS() function you should use the SkipVTableValidation
     // attribute to $interfaceName.
-    static_assert(!__is_polymorphic($implType), "${implType} is polymorphic but the IDL claims it is not");
-#endif
+    static_assert(!std::is_polymorphic<${implType}>::value, "${implType} is polymorphic but the IDL claims it is not");
 END
         push(@implContent, <<END) if $interface->extendedAttributes->{ReportExtraMemoryCost};
     globalObject->vm().heap.reportExtraMemoryAllocated(impl->memoryCost());
 END
 
-        push(@implContent, "    return createWrapper<$implType>(globalObject, WTFMove(impl));\n");
+        push(@implContent, "    return createWrapper<${implType}>(globalObject, WTFMove(impl));\n");
         push(@implContent, "}\n\n");
 
-        push(@implContent, "JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, $implType& impl)\n");
+        push(@implContent, "JSC::JSValue toJS(JSC::ExecState* state, JSDOMGlobalObject* globalObject, ${implType}& impl)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return wrap(state, globalObject, impl);\n");
         push(@implContent, "}\n\n");
     }
 
     if (ShouldGenerateToWrapped($hasParent, $interface) and !$interface->extendedAttributes->{JSCustomToNativeObject}) {
-        push(@implContent, "$implType* ${className}::toWrapped(JSC::VM& vm, JSC::JSValue value)\n");
+        push(@implContent, "${implType}* ${className}::toWrapped(JSC::VM& vm, JSC::JSValue value)\n");
         push(@implContent, "{\n");
         push(@implContent, "    if (auto* wrapper = " . GetCastingHelperForThisObject($interface) . "(vm, value))\n");
         push(@implContent, "        return &wrapper->wrapped();\n");

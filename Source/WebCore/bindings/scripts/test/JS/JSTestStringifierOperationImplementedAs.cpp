@@ -225,12 +225,12 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestStringifierOperationImplementedAs@WebCore@@6B@"));
 #else
     void* expectedVTablePointer = &_ZTVN7WebCore37TestStringifierOperationImplementedAsE[2];
-#if COMPILER(CLANG)
+#endif
+
     // If this fails TestStringifierOperationImplementedAs does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    static_assert(__is_polymorphic(TestStringifierOperationImplementedAs), "TestStringifierOperationImplementedAs is not polymorphic");
-#endif
-#endif
+    static_assert(std::is_polymorphic<TestStringifierOperationImplementedAs>::value, "TestStringifierOperationImplementedAs is not polymorphic");
+
     // If you hit this assertion you either have a use after free bug, or
     // TestStringifierOperationImplementedAs has subclasses. If TestStringifierOperationImplementedAs has subclasses that get passed
     // to toJS() we currently require TestStringifierOperationImplementedAs you to opt out of binding hardening

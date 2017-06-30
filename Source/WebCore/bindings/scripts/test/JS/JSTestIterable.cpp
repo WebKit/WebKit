@@ -261,12 +261,12 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestIterable@WebCore@@6B@"));
 #else
     void* expectedVTablePointer = &_ZTVN7WebCore12TestIterableE[2];
-#if COMPILER(CLANG)
+#endif
+
     // If this fails TestIterable does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    static_assert(__is_polymorphic(TestIterable), "TestIterable is not polymorphic");
-#endif
-#endif
+    static_assert(std::is_polymorphic<TestIterable>::value, "TestIterable is not polymorphic");
+
     // If you hit this assertion you either have a use after free bug, or
     // TestIterable has subclasses. If TestIterable has subclasses that get passed
     // to toJS() we currently require TestIterable you to opt out of binding hardening

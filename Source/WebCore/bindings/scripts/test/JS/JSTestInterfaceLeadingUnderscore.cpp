@@ -192,13 +192,11 @@ void JSTestInterfaceLeadingUnderscoreOwner::finalize(JSC::Handle<JSC::Unknown> h
 
 JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<TestInterfaceLeadingUnderscore>&& impl)
 {
-#if COMPILER(CLANG)
     // If you hit this failure the interface definition has the ImplementationLacksVTable
     // attribute. You should remove that attribute. If the class has subclasses
     // that may be passed through this toJS() function you should use the SkipVTableValidation
     // attribute to TestInterfaceLeadingUnderscore.
-    static_assert(!__is_polymorphic(TestInterfaceLeadingUnderscore), "TestInterfaceLeadingUnderscore is polymorphic but the IDL claims it is not");
-#endif
+    static_assert(!std::is_polymorphic<TestInterfaceLeadingUnderscore>::value, "TestInterfaceLeadingUnderscore is polymorphic but the IDL claims it is not");
     return createWrapper<TestInterfaceLeadingUnderscore>(globalObject, WTFMove(impl));
 }
 

@@ -263,12 +263,12 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestEventTarget@WebCore@@6B@"));
 #else
     void* expectedVTablePointer = &_ZTVN7WebCore15TestEventTargetE[2];
-#if COMPILER(CLANG)
+#endif
+
     // If this fails TestEventTarget does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    static_assert(__is_polymorphic(TestEventTarget), "TestEventTarget is not polymorphic");
-#endif
-#endif
+    static_assert(std::is_polymorphic<TestEventTarget>::value, "TestEventTarget is not polymorphic");
+
     // If you hit this assertion you either have a use after free bug, or
     // TestEventTarget has subclasses. If TestEventTarget has subclasses that get passed
     // to toJS() we currently require TestEventTarget you to opt out of binding hardening

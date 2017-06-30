@@ -249,12 +249,12 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestStringifierReadWriteAttribute@WebCore@@6B@"));
 #else
     void* expectedVTablePointer = &_ZTVN7WebCore33TestStringifierReadWriteAttributeE[2];
-#if COMPILER(CLANG)
+#endif
+
     // If this fails TestStringifierReadWriteAttribute does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    static_assert(__is_polymorphic(TestStringifierReadWriteAttribute), "TestStringifierReadWriteAttribute is not polymorphic");
-#endif
-#endif
+    static_assert(std::is_polymorphic<TestStringifierReadWriteAttribute>::value, "TestStringifierReadWriteAttribute is not polymorphic");
+
     // If you hit this assertion you either have a use after free bug, or
     // TestStringifierReadWriteAttribute has subclasses. If TestStringifierReadWriteAttribute has subclasses that get passed
     // to toJS() we currently require TestStringifierReadWriteAttribute you to opt out of binding hardening

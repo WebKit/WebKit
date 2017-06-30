@@ -284,12 +284,12 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestNamedSetterWithOverrideBuiltins@WebCore@@6B@"));
 #else
     void* expectedVTablePointer = &_ZTVN7WebCore35TestNamedSetterWithOverrideBuiltinsE[2];
-#if COMPILER(CLANG)
+#endif
+
     // If this fails TestNamedSetterWithOverrideBuiltins does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    static_assert(__is_polymorphic(TestNamedSetterWithOverrideBuiltins), "TestNamedSetterWithOverrideBuiltins is not polymorphic");
-#endif
-#endif
+    static_assert(std::is_polymorphic<TestNamedSetterWithOverrideBuiltins>::value, "TestNamedSetterWithOverrideBuiltins is not polymorphic");
+
     // If you hit this assertion you either have a use after free bug, or
     // TestNamedSetterWithOverrideBuiltins has subclasses. If TestNamedSetterWithOverrideBuiltins has subclasses that get passed
     // to toJS() we currently require TestNamedSetterWithOverrideBuiltins you to opt out of binding hardening

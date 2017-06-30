@@ -274,12 +274,12 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
     void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestNamedDeleterWithIndexedGetter@WebCore@@6B@"));
 #else
     void* expectedVTablePointer = &_ZTVN7WebCore33TestNamedDeleterWithIndexedGetterE[2];
-#if COMPILER(CLANG)
+#endif
+
     // If this fails TestNamedDeleterWithIndexedGetter does not have a vtable, so you need to add the
     // ImplementationLacksVTable attribute to the interface definition
-    static_assert(__is_polymorphic(TestNamedDeleterWithIndexedGetter), "TestNamedDeleterWithIndexedGetter is not polymorphic");
-#endif
-#endif
+    static_assert(std::is_polymorphic<TestNamedDeleterWithIndexedGetter>::value, "TestNamedDeleterWithIndexedGetter is not polymorphic");
+
     // If you hit this assertion you either have a use after free bug, or
     // TestNamedDeleterWithIndexedGetter has subclasses. If TestNamedDeleterWithIndexedGetter has subclasses that get passed
     // to toJS() we currently require TestNamedDeleterWithIndexedGetter you to opt out of binding hardening
