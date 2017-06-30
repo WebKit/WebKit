@@ -1,3 +1,27 @@
+2017-06-29  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r218954. rdar://problem/33065684
+
+    2017-06-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            REGRESSION(r218896): ASSERT in WebPageProxy::dataCallback
+            https://bugs.webkit.org/show_bug.cgi?id=173968
+
+            Reviewed by Michael Catanzaro.
+
+            The problem is that WebPageProxy::getLoadDecisionForIcon() sends 0 as callback ID when the decision is to not
+            load the icon. Since r218896 we always notify the client even when the decision is to not load the icon, in
+            which case the UI doesn't really expect a callback. When WebPageProxy::dataCallback is called with a 0 callback ID,
+            CallbackMap::take() crashes in RELEASE_ASSERT(callbackID).
+
+            Fixes several GTK+ unit tests that are crashing.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::didGetLoadDecisionForIcon): Return earlier if decision is false or frame is nullptr.
+            (WebCore::DocumentLoader::finishedLoadingIcon): Move RELEASE_ASSERT to notifyFinishedLoadingIcon().
+            (WebCore::DocumentLoader::notifyFinishedLoadingIcon): Assert if callbackIdentifier is 0 or m_frame is nullptr,
+            since it's no longer expected to happen.
+
 2017-06-29  Dean Jackson  <dino@apple.com>
 
         Disable some features on this release branch.
