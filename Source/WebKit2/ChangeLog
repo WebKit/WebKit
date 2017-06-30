@@ -1,19 +1,23 @@
 2017-06-29  Jason Marcell  <jmarcell@apple.com>
 
-        Revert r218727. rdar://problem/32873545
+        Revert r218757. rdar://problem/32911535
 
-     2017-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+    2017-06-29  Jason Marcell  <jmarcell@apple.com>
 
-            [iOS DnD] [WK2] Enable in-app dragging from WKWebView on the phone
-            https://bugs.webkit.org/show_bug.cgi?id=173736
-            <rdar://problem/32873545>
+            Revert r218727. rdar://problem/32873545
 
-            Reviewed by Tim Horton.
+         2017-06-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
-            Flip the drag interaction enabled switch on when initializing WKContentView's UIDragInteraction.
+                [iOS DnD] [WK2] Enable in-app dragging from WKWebView on the phone
+                https://bugs.webkit.org/show_bug.cgi?id=173736
+                <rdar://problem/32873545>
 
-            * UIProcess/ios/WKContentViewInteraction.mm:
-            (-[WKContentView setupDataInteractionDelegates]):
+                Reviewed by Tim Horton.
+
+                Flip the drag interaction enabled switch on when initializing WKContentView's UIDragInteraction.
+
+                * UIProcess/ios/WKContentViewInteraction.mm:
+                (-[WKContentView setupDataInteractionDelegates]):
 
 2017-06-29  Dean Jackson  <dino@apple.com>
 
@@ -948,97 +952,6 @@
         * UIProcess/WebProcessProxy.h:
         * UIProcess/WebResourceLoadStatisticsStore.cpp:
         (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
-
-2017-06-23  Jer Noble  <jer.noble@apple.com>
-
-        [WK2] Support -[WebAVPlayerController setMuted:]
-        https://bugs.webkit.org/show_bug.cgi?id=173777
-
-        Reviewed by Eric Carlson.
-
-        Add a SetMuted message to WebPlaybackSessionManager.
-
-        Drive-by refactoring: Because the new setMuted() method conflicts with the existing setMuted()
-        notification, do a giant rename of the notificiation methods from set(Value) -> (value)Changed.
-
-        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.h:
-        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.messages.in:
-        * UIProcess/Cocoa/WebPlaybackSessionManagerProxy.mm:
-        (WebKit::WebPlaybackSessionModelContext::setMuted):
-        (WebKit::WebPlaybackSessionModelContext::playbackStartedTimeChanged):
-        (WebKit::WebPlaybackSessionModelContext::durationChanged):
-        (WebKit::WebPlaybackSessionModelContext::currentTimeChanged):
-        (WebKit::WebPlaybackSessionModelContext::bufferedTimeChanged):
-        (WebKit::WebPlaybackSessionModelContext::rateChanged):
-        (WebKit::WebPlaybackSessionModelContext::seekableRangesChanged):
-        (WebKit::WebPlaybackSessionModelContext::canPlayFastReverseChanged):
-        (WebKit::WebPlaybackSessionModelContext::audioMediaSelectionOptionsChanged):
-        (WebKit::WebPlaybackSessionModelContext::legibleMediaSelectionOptionsChanged):
-        (WebKit::WebPlaybackSessionModelContext::audioMediaSelectionIndexChanged):
-        (WebKit::WebPlaybackSessionModelContext::legibleMediaSelectionIndexChanged):
-        (WebKit::WebPlaybackSessionModelContext::externalPlaybackChanged):
-        (WebKit::WebPlaybackSessionModelContext::wirelessVideoPlaybackDisabledChanged):
-        (WebKit::WebPlaybackSessionModelContext::mutedChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::currentTimeChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::bufferedTimeChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::seekableRangesVectorChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::canPlayFastReverseChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::audioMediaSelectionOptionsChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::legibleMediaSelectionOptionsChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::audioMediaSelectionIndexChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::legibleMediaSelectionIndexChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::externalPlaybackPropertiesChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::wirelessVideoPlaybackDisabledChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::mutedChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::durationChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::playbackStartedTimeChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::rateChanged):
-        (WebKit::WebPlaybackSessionManagerProxy::setMuted):
-        (WebKit::WebPlaybackSessionManagerProxy::controlsManagerInterface):
-        (WebKit::WebPlaybackSessionModelContext::setPlaybackStartedTime): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setDuration): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setCurrentTime): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setBufferedTime): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setRate): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setSeekableRanges): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setCanPlayFastReverse): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setAudioMediaSelectionOptions): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setLegibleMediaSelectionOptions): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setAudioMediaSelectionIndex): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setLegibleMediaSelectionIndex): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setExternalPlayback): Deleted.
-        (WebKit::WebPlaybackSessionModelContext::setWirelessVideoPlaybackDisabled): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setCurrentTime): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setBufferedTime): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setSeekableRangesVector): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setCanPlayFastReverse): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setAudioMediaSelectionOptions): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setLegibleMediaSelectionOptions): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setAudioMediaSelectionIndex): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setLegibleMediaSelectionIndex): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setExternalPlaybackProperties): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setWirelessVideoPlaybackDisabled): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setDuration): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setPlaybackStartedTime): Deleted.
-        (WebKit::WebPlaybackSessionManagerProxy::setRate): Deleted.
-        * WebProcess/cocoa/WebPlaybackSessionManager.h:
-        * WebProcess/cocoa/WebPlaybackSessionManager.messages.in:
-        * WebProcess/cocoa/WebPlaybackSessionManager.mm:
-        (WebKit::WebPlaybackSessionManager::durationChanged):
-        (WebKit::WebPlaybackSessionManager::currentTimeChanged):
-        (WebKit::WebPlaybackSessionManager::bufferedTimeChanged):
-        (WebKit::WebPlaybackSessionManager::playbackStartedTimeChanged):
-        (WebKit::WebPlaybackSessionManager::rateChanged):
-        (WebKit::WebPlaybackSessionManager::seekableRangesChanged):
-        (WebKit::WebPlaybackSessionManager::canPlayFastReverseChanged):
-        (WebKit::WebPlaybackSessionManager::audioMediaSelectionOptionsChanged):
-        (WebKit::WebPlaybackSessionManager::legibleMediaSelectionOptionsChanged):
-        (WebKit::WebPlaybackSessionManager::externalPlaybackChanged):
-        (WebKit::WebPlaybackSessionManager::audioMediaSelectionIndexChanged):
-        (WebKit::WebPlaybackSessionManager::legibleMediaSelectionIndexChanged):
-        (WebKit::WebPlaybackSessionManager::wirelessVideoPlaybackDisabledChanged):
-        (WebKit::WebPlaybackSessionManager::mutedChanged):
-        (WebKit::WebPlaybackSessionManager::setMuted):
 
 2017-06-23  Frederic Wang  <fwang@igalia.com>
 

@@ -40,7 +40,6 @@ class WebPlaybackSessionInterfaceAVKit;
     WebAVMediaSelectionOption *_currentAudioMediaSelectionOption;
     WebAVMediaSelectionOption *_currentLegibleMediaSelectionOption;
     BOOL _pictureInPictureInterrupted;
-    BOOL _muted;
 }
 
 @property (retain) AVPlayerController* playerControllerProxy;

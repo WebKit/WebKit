@@ -295,27 +295,27 @@ void WebPlaybackSessionManager::resetMediaState(uint64_t contextId)
 
 void WebPlaybackSessionManager::durationChanged(uint64_t contextId, double duration)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::DurationChanged(contextId, duration), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetDuration(contextId, duration), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::currentTimeChanged(uint64_t contextId, double currentTime, double anchorTime)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::CurrentTimeChanged(contextId, currentTime, anchorTime), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetCurrentTime(contextId, currentTime, anchorTime), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::bufferedTimeChanged(uint64_t contextId, double bufferedTime)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::BufferedTimeChanged(contextId, bufferedTime), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetBufferedTime(contextId, bufferedTime), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::playbackStartedTimeChanged(uint64_t contextId, double playbackStartedTime)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::PlaybackStartedTimeChanged(contextId, playbackStartedTime), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetPlaybackStartedTime(contextId, playbackStartedTime), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::rateChanged(uint64_t contextId, bool isPlaying, float playbackRate)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::RateChanged(contextId, isPlaying, playbackRate), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetRate(contextId, isPlaying, playbackRate), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::seekableRangesChanged(uint64_t contextId, const WebCore::TimeRanges& timeRanges, double lastModifiedTime, double liveUpdateInterval)
@@ -326,47 +326,47 @@ void WebPlaybackSessionManager::seekableRangesChanged(uint64_t contextId, const 
         double end = timeRanges.ranges().end(i).toDouble();
         rangesVector.append({ start, end });
     }
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::SeekableRangesVectorChanged(contextId, WTFMove(rangesVector), lastModifiedTime, liveUpdateInterval), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetSeekableRangesVector(contextId, WTFMove(rangesVector), lastModifiedTime, liveUpdateInterval), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::canPlayFastReverseChanged(uint64_t contextId, bool value)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::CanPlayFastReverseChanged(contextId, value), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetCanPlayFastReverse(contextId, value), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::audioMediaSelectionOptionsChanged(uint64_t contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::AudioMediaSelectionOptionsChanged(contextId, options, selectedIndex), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetAudioMediaSelectionOptions(contextId, options, selectedIndex), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::legibleMediaSelectionOptionsChanged(uint64_t contextId, const Vector<MediaSelectionOption>& options, uint64_t selectedIndex)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::LegibleMediaSelectionOptionsChanged(contextId, options, selectedIndex), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetLegibleMediaSelectionOptions(contextId, options, selectedIndex), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::externalPlaybackChanged(uint64_t contextId, bool enabled, WebPlaybackSessionModel::ExternalPlaybackTargetType targetType, String localizedDeviceName)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::ExternalPlaybackPropertiesChanged(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetExternalPlaybackProperties(contextId, enabled, static_cast<uint32_t>(targetType), localizedDeviceName), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::audioMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::AudioMediaSelectionIndexChanged(contextId, selectedIndex), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetAudioMediaSelectionIndex(contextId, selectedIndex), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::legibleMediaSelectionIndexChanged(uint64_t contextId, uint64_t selectedIndex)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::LegibleMediaSelectionIndexChanged(contextId, selectedIndex), m_page->pageID());
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetLegibleMediaSelectionIndex(contextId, selectedIndex), m_page->pageID());
 }
 
 void WebPlaybackSessionManager::wirelessVideoPlaybackDisabledChanged(uint64_t contextId, bool disabled)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::WirelessVideoPlaybackDisabledChanged(contextId, disabled));
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetWirelessVideoPlaybackDisabled(contextId, disabled));
 }
 
 void WebPlaybackSessionManager::mutedChanged(uint64_t contextId, bool muted)
 {
-    m_page->send(Messages::WebPlaybackSessionManagerProxy::MutedChanged(contextId, muted));
+    m_page->send(Messages::WebPlaybackSessionManagerProxy::SetMuted(contextId, muted));
 }
 
 #pragma mark Messages from WebPlaybackSessionManagerProxy:
@@ -460,12 +460,6 @@ void WebPlaybackSessionManager::toggleMuted(uint64_t contextId)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);
     ensureModel(contextId).toggleMuted();
-}
-
-void WebPlaybackSessionManager::setMuted(uint64_t contextId, bool muted)
-{
-    UserGestureIndicator indicator(ProcessingUserGesture);
-    ensureModel(contextId).setMuted(muted);
 }
 
 } // namespace WebKit

@@ -168,7 +168,6 @@ private:
     bool wirelessVideoPlaybackDisabled() const override;
     void togglePictureInPicture() override { }
     void toggleMuted() override;
-    void setMuted(bool) final;
 
     // WebPlaybackSessionModelClient
     void durationChanged(double) override;
@@ -603,15 +602,6 @@ void WebVideoFullscreenControllerContext::toggleMuted()
     WebThreadRun([protectedThis, this] {
         if (m_playbackModel)
             m_playbackModel->toggleMuted();
-    });
-}
-
-void WebVideoFullscreenControllerContext::setMuted(bool muted)
-{
-    ASSERT(isUIThread());
-    WebThreadRun([protectedThis = makeRefPtr(this), this, muted] {
-        if (m_playbackModel)
-            m_playbackModel->setMuted(muted);
     });
 }
 

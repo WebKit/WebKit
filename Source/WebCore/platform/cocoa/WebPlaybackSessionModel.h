@@ -57,7 +57,6 @@ public:
     virtual void selectLegibleMediaOption(uint64_t index) = 0;
     virtual void togglePictureInPicture() = 0;
     virtual void toggleMuted() = 0;
-    virtual void setMuted(bool) = 0;
 
     enum ExternalPlaybackTargetType { TargetTypeNone, TargetTypeAirPlay, TargetTypeTVOut };
 

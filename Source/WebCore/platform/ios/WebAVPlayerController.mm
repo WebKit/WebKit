@@ -465,21 +465,6 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     }
 }
 
-- (BOOL)isMuted
-{
-    return _muted;
-}
-
-- (void)setMuted:(BOOL)muted
-{
-    if (_muted == muted)
-        return;
-    _muted = muted;
-
-    if (self.delegate)
-        self.delegate->setMuted(muted);
-}
-
 - (void)toggleMuted:(id)sender
 {
     UNUSED_PARAM(sender);

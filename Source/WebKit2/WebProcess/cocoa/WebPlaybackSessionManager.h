@@ -154,7 +154,6 @@ protected:
     void handleControlledElementIDRequest(uint64_t contextId);
     void togglePictureInPicture(uint64_t contextId);
     void toggleMuted(uint64_t contextId);
-    void setMuted(uint64_t contextId, bool muted);
 
     WebPage* m_page;
     HashMap<WebCore::HTMLMediaElement*, uint64_t> m_mediaElements;

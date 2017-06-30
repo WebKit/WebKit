@@ -281,13 +281,8 @@ void WebPlaybackSessionModelMediaElement::togglePictureInPicture()
 
 void WebPlaybackSessionModelMediaElement::toggleMuted()
 {
-    setMuted(!isMuted());
-}
-
-void WebPlaybackSessionModelMediaElement::setMuted(bool muted)
-{
     if (m_mediaElement)
-        m_mediaElement->setMuted(muted);
+        m_mediaElement->setMuted(!m_mediaElement->muted());
 }
 
 void WebPlaybackSessionModelMediaElement::updateMediaSelectionOptions()

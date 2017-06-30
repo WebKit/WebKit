@@ -38,6 +38,5 @@ messages -> WebPlaybackSessionManager {
     HandleControlledElementIDRequest(uint64_t contextId)
     TogglePictureInPicture(uint64_t contextId)
     ToggleMuted(uint64_t contextId)
-    SetMuted(uint64_t contextId, bool muted)
 }
 #endif
