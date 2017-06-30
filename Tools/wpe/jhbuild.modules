@@ -116,6 +116,7 @@
             repo="freedesktop.org"
             hash="sha256:b6b066c7dce3f436fdc0dfbae9d36122b38094f4f53bd8dffd45e195b0540d8d"
             md5sum="e75e303b4f7756c2b16203a57ac87eba">
+        <patch file="fontconfig-avoid-conflicts-with-integer-width-macros-from-TS-18.patch" strip="1"/>
     </branch>
   </autotools>
 

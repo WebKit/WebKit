@@ -1,3 +1,15 @@
+2017-06-30  Jacobo Aragunde Pérez  <jaragunde@igalia.com>
+
+        Fontconfig build breaks with glibc 2.15+
+        https://bugs.webkit.org/show_bug.cgi?id=174019
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Apply patch by Khem Raj adapted to fontconfig 2.11.1.
+
+        * wpe/jhbuild.modules:
+        * wpe/patches/fontconfig-avoid-conflicts-with-integer-width-macros-from-TS-18.patch: Added.
+
 2017-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Web content process crashes when the selection is moved far offscreen in dragstart
