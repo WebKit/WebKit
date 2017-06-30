@@ -1743,16 +1743,15 @@ void AccessibilityRenderObject::setValue(const String& string)
     if (!m_renderer || !is<Element>(m_renderer->node()))
         return;
     Element& element = downcast<Element>(*m_renderer->node());
-
-    if (!is<RenderBoxModelObject>(*m_renderer))
-        return;
-    RenderBoxModelObject& renderer = downcast<RenderBoxModelObject>(*m_renderer);
-
+    RenderObject& renderer = *m_renderer;
+    
     // FIXME: Do we want to do anything here for ARIA textboxes?
     if (renderer.isTextField() && is<HTMLInputElement>(element))
         downcast<HTMLInputElement>(element).setValue(string);
     else if (renderer.isTextArea() && is<HTMLTextAreaElement>(element))
         downcast<HTMLTextAreaElement>(element).setValue(string);
+    else if (is<HTMLElement>(element) && contentEditableAttributeIsEnabled(&element))
+        downcast<HTMLElement>(element).setInnerText(string);
 }
 
 bool AccessibilityRenderObject::supportsARIAOwns() const

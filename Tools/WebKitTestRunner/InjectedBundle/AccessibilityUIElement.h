@@ -110,6 +110,7 @@ public:
     bool isPressActionSupported();
     bool isIncrementActionSupported();
     bool isDecrementActionSupported();
+    void setValue(JSStringRef);
     JSRetainPtr<JSStringRef> role();
     JSRetainPtr<JSStringRef> subrole();
     JSRetainPtr<JSStringRef> roleDescription();
