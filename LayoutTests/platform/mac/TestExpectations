@@ -1602,3 +1602,5 @@ webkit.org/b/313156 [ ElCapitan ] fast/text/system-font-japanese-synthetic-itali
 
 webkit.org/b/173565 [ ElCapitan Release ] media/media-source/media-source-paint-to-canvas.html [ Pass Failure ]
 
+webkit.org/b/173068 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html [ Pass Failure ]
+
