@@ -1,3 +1,13 @@
+2017-06-30  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the WPE build following <https://trac.webkit.org/changeset/219013>
+        (https://bugs.webkit.org/show_bug.cgi?id=165160)
+
+        Update the prototype of UIClient::createNewPage() to take a API::FrameInfo& instead of
+        a WebFrameProxy* and a const WebCore::SecurityOriginData&.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+
 2017-06-30  Alex Christensen  <achristensen@webkit.org>
 
         Stop soft linking with CFNetwork

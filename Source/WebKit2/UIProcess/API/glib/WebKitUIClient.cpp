@@ -46,7 +46,7 @@ public:
     }
 
 private:
-    RefPtr<WebPageProxy> createNewPage(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, const WebCore::ResourceRequest& resourceRequest, const WebCore::WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
+    RefPtr<WebPageProxy> createNewPage(WebPageProxy*, API::FrameInfo&, const WebCore::ResourceRequest& resourceRequest, const WebCore::WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
     {
         GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(resourceRequest));
         WebKitNavigationAction navigationAction(request.get(), navigationActionData);
