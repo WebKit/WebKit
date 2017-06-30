@@ -46,6 +46,8 @@
 		<true/>
 		<key>_AbandonCoalition</key>
 		<true/>
+		<key>_HighBitsASLR</key>
+		<true/>
 		<key>EnvironmentVariables</key>
 		<dict>
 			<key>NSStringDisableTagged</key>

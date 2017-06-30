@@ -48,6 +48,8 @@
 		<string>_NSApplicationMain</string>
 		<key>_MultipleInstances</key>
 		<true/>
+		<key>_HighBitsASLR</key>
+		<true/>
 	</dict>
 </dict>
 </plist>

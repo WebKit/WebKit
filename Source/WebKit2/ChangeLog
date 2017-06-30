@@ -1,3 +1,18 @@
+2017-06-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS][macOS] Update XPC services process launch dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=173995
+        <rdar://problem/32797264>
+
+        Reviewed by Alex Christensen.
+
+        Update the WebProcess and Plugin Process XPC launch dictionaries to activate
+        improved ALSR features when launching.
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist:
+
 2017-06-30  Chris Dumez  <cdumez@apple.com>
 
         Merge WebResourceLoadStatisticsManager and WebResourceLoadObserver
