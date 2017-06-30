@@ -1032,7 +1032,7 @@
 - path: ecma/Statements/12.6.3-19.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Statements/12.6.3-2.js
-  cmd: defaultRunMozillaTest :failDueToOutdatedOrBadTest, "../shell.js"
+  cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Statements/12.6.3-3.js
   cmd: defaultRunMozillaTest :normal, "../shell.js"
 - path: ecma/Statements/12.6.3-4.js
