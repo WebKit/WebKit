@@ -147,7 +147,7 @@ void TiledCoreAnimationDrawingArea::forceRepaint()
     [CATransaction synchronize];
 }
 
-bool TiledCoreAnimationDrawingArea::forceRepaintAsync(uint64_t callbackID)
+bool TiledCoreAnimationDrawingArea::forceRepaintAsync(CallbackID callbackID)
 {
     if (m_layerTreeStateIsFrozen)
         return false;
@@ -459,7 +459,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     }
 }
 
-void TiledCoreAnimationDrawingArea::activityStateDidChange(ActivityState::Flags changed, bool wantsDidUpdateActivityState, const Vector<uint64_t>& nextActivityStateChangeCallbackIDs)
+void TiledCoreAnimationDrawingArea::activityStateDidChange(ActivityState::Flags changed, bool wantsDidUpdateActivityState, const Vector<CallbackID>& nextActivityStateChangeCallbackIDs)
 {
     m_nextActivityStateChangeCallbackIDs.appendVector(nextActivityStateChangeCallbackIDs);
     m_wantsDidUpdateActivityState |= wantsDidUpdateActivityState;
@@ -482,7 +482,7 @@ void TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired()
     if (m_wantsDidUpdateActivityState)
         m_webPage.send(Messages::WebPageProxy::DidUpdateActivityState());
 
-    for (uint64_t callbackID : m_nextActivityStateChangeCallbackIDs)
+    for (auto callbackID : m_nextActivityStateChangeCallbackIDs)
         m_webPage.send(Messages::WebPageProxy::VoidCallback(callbackID));
 
     m_nextActivityStateChangeCallbackIDs.clear();

@@ -1,3 +1,254 @@
+2017-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assert that callback ID is not 0 or -1 during encoding and decoding
+        https://bugs.webkit.org/show_bug.cgi?id=173803
+
+        Reviewed by Brady Eidson.
+
+        To diagnosing the hang inside Safari (<rdar://problem/32841256>), add assertions for the callback ID
+        to be not 0 or -1 during encoding and decoding of IPC messages since the latest analysis seems to
+        indicate the hang is caused by the hash map getting corrupted by the insertion of 0 (empty value).
+
+        Wrapped the uint64_t in CallbackID and OptionalCallbackID to add assertions.
+
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * Shared/CallbackID.h: Added.
+        (WebKit::CallbackID::CallbackID):
+        (WebKit::CallbackID::operator==):
+        (WebKit::CallbackID::toInteger):
+        (WebKit::CallbackID::isValid):
+        (WebKit::CallbackID::isValidCallbackID): A callback ID is valid when it's neither 0 nor -1.
+        (WebKit::CallbackID::fromInteger): Create a CallbackID object from potentially unsafe value.
+        (WebKit::CallbackID::generateID): Generates the next callback ID. Moved from CallbackBase.
+        (WebKit::CallbackID::encode): Added. Assert that it's neither 0 nor -1.
+        (WebKit::CallbackID::decode): Ditto.
+        (WTF::CallbackIDHash::hash):
+        (WTF::CallbackIDHash::equal):
+        (WTF::HashTraits<WebKit::CallbackID>::emptyValue):
+        (WTF::HashTraits<WebKit::CallbackID>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::CallbackID>::isDeletedValue):
+        * Shared/OptionalCallbackID.h: Added. Unlike CallbackID, callback ID here can be 0.
+        (WebKit::OptionalCallbackID::OptionalCallbackID):
+        (WebKit::OptionalCallbackID::toInteger):
+        (WebKit::OptionalCallbackID::callbackID): Returns a valid CallbackID object. The caller of
+        this function must have verified that the ID is neither 0 or -1 before calling this function.
+        (WebKit::OptionalCallbackID::operator bool):
+        (WebKit::OptionalCallbackID::isValid):
+        (WebKit::OptionalCallbackID::isValidCallbackID):
+        (WebKit::OptionalCallbackID::encode): Since OptionalCallbackID can be 0, only assert that it's not -1.
+        (WebKit::OptionalCallbackID::decode): Ditto.
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * Shared/mac/RemoteLayerTreeTransaction.h:
+        * UIProcess/GenericCallback.h:
+        (WebKit::CallbackBase::callbackID): Returns a CallbackID object instead of uint64_t.
+        (WebKit::CallbackBase::CallbackBase):
+        (WebKit::CallbackBase::generateCallbackID): Deleted.
+        (WebKit::CallbackMap::put): Returns a callback ID. Also added a version that doesn't take activity token
+        as used in WebCookieManagerProxy
+        (WebKit::CallbackMap::take): Takes a callback ID.
+        * UIProcess/WebCookieManagerProxy.cpp: Updated the code as callback maps are merged.
+        (WebKit::WebCookieManagerProxy::processPoolDestroyed):
+        (WebKit::WebCookieManagerProxy::processDidClose):
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::didGetHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookie):
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManagerProxy::setCookie):
+        (WebKit::WebCookieManagerProxy::setCookies):
+        (WebKit::WebCookieManagerProxy::getAllCookies):
+        (WebKit::WebCookieManagerProxy::getCookies):
+        (WebKit::WebCookieManagerProxy::didSetCookies):
+        (WebKit::WebCookieManagerProxy::didGetCookies):
+        (WebKit::WebCookieManagerProxy::didDeleteCookies):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::didSetHTTPCookieAcceptPolicy):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebCookieManagerProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setInitialFocus):
+        (WebKit::WebPageProxy::validateCommand):
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getBytecodeProfile):
+        (WebKit::WebPageProxy::getSamplingProfilerOutput):
+        (WebKit::WebPageProxy::getContentsAsMHTMLData):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::getSelectionAsWebArchiveData):
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame):
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        (WebKit::WebPageProxy::getWebArchiveOfFrame):
+        (WebKit::WebPageProxy::forceRepaint):
+        (WebKit::WebPageProxy::clearLoadDependentCallbacks):
+        (WebKit::WebPageProxy::voidCallback):
+        (WebKit::WebPageProxy::dataCallback):
+        (WebKit::WebPageProxy::imageCallback):
+        (WebKit::WebPageProxy::stringCallback):
+        (WebKit::WebPageProxy::invalidateStringCallback):
+        (WebKit::WebPageProxy::scriptValueCallback):
+        (WebKit::WebPageProxy::computedPagesCallback):
+        (WebKit::WebPageProxy::validateCommandCallback):
+        (WebKit::WebPageProxy::unsignedCallback):
+        (WebKit::WebPageProxy::editingRangeCallback):
+        (WebKit::WebPageProxy::machSendRightCallback):
+        (WebKit::WebPageProxy::rectForCharacterRangeCallback):
+        (WebKit::WebPageProxy::printFinishedCallback):
+        (WebKit::WebPageProxy::computePagesForPrinting):
+        (WebKit::WebPageProxy::drawRectToImage):
+        (WebKit::WebPageProxy::drawPagesToPDF):
+        (WebKit::WebPageProxy::drawPagesForPrinting):
+        (WebKit::WebPageProxy::getMarkedRangeAsync):
+        (WebKit::WebPageProxy::getSelectedRangeAsync):
+        (WebKit::WebPageProxy::characterIndexForPointAsync):
+        (WebKit::WebPageProxy::firstRectForCharacterRangeAsync):
+        (WebKit::WebPageProxy::takeSnapshot):
+        (WebKit::WebPageProxy::installActivityStateChangeCompletionHandler):
+        (WebKit::WebPageProxy::getLoadDecisionForIcon):
+        (WebKit::WebPageProxy::finishedLoadingIcon):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::gestureCallback):
+        (WebKit::WebPageProxy::touchesCallback):
+        (WebKit::WebPageProxy::autocorrectionDataCallback):
+        (WebKit::WebPageProxy::selectionContextCallback):
+        (WebKit::WebPageProxy::autocorrectionContextCallback):
+        (WebKit::WebPageProxy::selectionRectsCallback):
+        (WebKit::WebPageProxy::selectWithGesture):
+        (WebKit::WebPageProxy::updateSelectionWithTouches):
+        (WebKit::WebPageProxy::requestAutocorrectionData):
+        (WebKit::WebPageProxy::applyAutocorrection):
+        (WebKit::WebPageProxy::executeEditCommand):
+        (WebKit::WebPageProxy::selectTextWithGranularityAtPoint):
+        (WebKit::WebPageProxy::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::moveSelectionAtBoundaryWithDirection):
+        (WebKit::WebPageProxy::selectPositionAtPoint):
+        (WebKit::WebPageProxy::beginSelectionInDirection):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPoint):
+        (WebKit::WebPageProxy::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPageProxy::requestDictationContext):
+        (WebKit::WebPageProxy::requestAutocorrectionContext):
+        (WebKit::WebPageProxy::getSelectionContext):
+        (WebKit::WebPageProxy::selectWithTwoTouches):
+        (WebKit::WebPageProxy::requestRectsForGranularityWithSelectionOffset):
+        (WebKit::WebPageProxy::requestRectsAtSelectionOffsetWithText):
+        (WebKit::WebPageProxy::moveSelectionByOffset):
+        (WebKit::WebPageProxy::focusNextAssistedNode):
+        (WebKit::WebPageProxy::computePagesForPrintingAndDrawToPDF):
+        (WebKit::WebPageProxy::drawToPDFCallback):
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _preparePDFDataForPrintingOnSecondaryThread]):
+        (-[WKPrintingView _askPageToComputePageRects]):
+        (-[WKPrintingView _drawPreview:]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::attributedSubstringForCharacterRangeAsync):
+        (WebKit::WebPageProxy::attributedStringForCharacterRangeCallback):
+        (WebKit::WebPageProxy::fontAtSelection):
+        (WebKit::WebPageProxy::fontAtSelectionCallback):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        (WebKit::WebCookieManager::deleteCookie):
+        (WebKit::WebCookieManager::deleteAllCookiesModifiedSince):
+        (WebKit::WebCookieManager::getAllCookies):
+        (WebKit::WebCookieManager::getCookies):
+        (WebKit::WebCookieManager::setCookie):
+        (WebKit::WebCookieManager::setCookies):
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy):
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::getLoadDecisionForIcon):
+        (WebKit::WebFrameLoaderClient::finishedLoadingIcon):
+        * WebProcess/WebPage/AcceleratedDrawingArea.cpp:
+        (WebKit::AcceleratedDrawingArea::forceRepaintAsync):
+        (WebKit::AcceleratedDrawingArea::activityStateDidChange):
+        * WebProcess/WebPage/AcceleratedDrawingArea.h:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::forceRepaintAsync):
+        (WebKit::CoordinatedLayerTreeHost::renderNextFrame):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::forceRepaintAsync):
+        (WebKit::DrawingArea::activityStateDidChange):
+        (WebKit::DrawingArea::addTransactionCallbackID):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::forceRepaintAsync):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::reinitializeWebPage):
+        (WebKit::WebPage::takeSnapshot):
+        (WebKit::WebPage::validateCommand):
+        (WebKit::WebPage::setInitialFocus):
+        (WebKit::WebPage::setActivityState):
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+        (WebKit::WebPage::getContentsAsString):
+        (WebKit::WebPage::getContentsAsMHTMLData):
+        (WebKit::WebPage::getRenderTreeExternalRepresentation):
+        (WebKit::WebPage::getSelectionAsWebArchiveData):
+        (WebKit::WebPage::getSelectionOrContentsAsString):
+        (WebKit::WebPage::getSourceForFrame):
+        (WebKit::WebPage::getMainResourceDataOfFrame):
+        (WebKit::WebPage::getResourceDataFromFrame):
+        (WebKit::WebPage::getWebArchiveOfFrame):
+        (WebKit::WebPage::forceRepaint):
+        (WebKit::WebPage::computePagesForPrinting):
+        (WebKit::WebPage::drawRectToImage):
+        (WebKit::WebPage::drawPagesToPDF):
+        (WebKit::WebPage::drawPagesForPrinting):
+        (WebKit::WebPage::didFinishPrintOperation):
+        (WebKit::WebPage::getMarkedRangeAsync):
+        (WebKit::WebPage::getSelectedRangeAsync):
+        (WebKit::WebPage::characterIndexForPointAsync):
+        (WebKit::WebPage::firstRectForCharacterRangeAsync):
+        (WebKit::WebPage::getBytecodeProfile):
+        (WebKit::WebPage::getSamplingProfilerOutput):
+        (WebKit::WebPage::didGetLoadDecisionForIcon):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::WebPrintOperationGtk):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getSelectionContext):
+        (WebKit::WebPage::selectWithGesture):
+        (WebKit::WebPage::updateSelectionWithTouches):
+        (WebKit::WebPage::selectWithTwoTouches):
+        (WebKit::WebPage::moveSelectionByOffset):
+        (WebKit::WebPage::getRectsForGranularityWithSelectionOffset):
+        (WebKit::WebPage::getRectsAtSelectionOffsetWithText):
+        (WebKit::WebPage::selectPositionAtPoint):
+        (WebKit::WebPage::selectPositionAtBoundaryWithDirection):
+        (WebKit::WebPage::moveSelectionAtBoundaryWithDirection):
+        (WebKit::WebPage::selectTextWithGranularityAtPoint):
+        (WebKit::WebPage::beginSelectionInDirection):
+        (WebKit::WebPage::updateSelectionWithExtentPointAndBoundary):
+        (WebKit::WebPage::updateSelectionWithExtentPoint):
+        (WebKit::WebPage::requestDictationContext):
+        (WebKit::WebPage::requestAutocorrectionData):
+        (WebKit::WebPage::applyAutocorrection):
+        (WebKit::WebPage::executeEditCommandWithCallback):
+        (WebKit::WebPage::requestAutocorrectionContext):
+        (WebKit::WebPage::focusNextAssistedNode):
+        (WebKit::WebPage::computePagesForPrintingAndDrawToPDF):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::activityStateDidChange):
+        (WebKit::RemoteLayerTreeDrawingArea::addTransactionCallbackID):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::forceRepaintAsync):
+        (WebKit::TiledCoreAnimationDrawingArea::activityStateDidChange):
+        (WebKit::TiledCoreAnimationDrawingArea::didUpdateActivityStateTimerFired):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::attributedSubstringForCharacterRangeAsync):
+        (WebKit::WebPage::fontAtSelection):
+
 2017-06-29  Andy Estes  <aestes@apple.com>
 
         [iOS] Don't confuse coordinate spaces when computing the size of PDF snapshots

@@ -487,7 +487,7 @@ void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush()
     m_connection->sendMessage(WTFMove(m_commitEncoder), { });
 }
 
-void RemoteLayerTreeDrawingArea::activityStateDidChange(ActivityState::Flags, bool wantsDidUpdateActivityState, const Vector<uint64_t>&)
+void RemoteLayerTreeDrawingArea::activityStateDidChange(ActivityState::Flags, bool wantsDidUpdateActivityState, const Vector<CallbackID>&)
 {
     // FIXME: Should we suspend painting while not visible, like TiledCoreAnimationDrawingArea? Probably.
 
@@ -497,7 +497,7 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(ActivityState::Flags, bo
     }
 }
 
-void RemoteLayerTreeDrawingArea::addTransactionCallbackID(uint64_t callbackID)
+void RemoteLayerTreeDrawingArea::addTransactionCallbackID(CallbackID callbackID)
 {
     m_pendingCallbackIDs.append(static_cast<RemoteLayerTreeTransaction::TransactionCallbackID>(callbackID));
     scheduleCompositingLayerFlush();

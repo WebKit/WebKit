@@ -62,7 +62,7 @@ private:
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
 
     void forceRepaint() override;
-    bool forceRepaintAsync(uint64_t callbackID) override;
+    bool forceRepaintAsync(CallbackID) override;
     void setLayerTreeStateIsFrozen(bool) override;
     bool layerTreeStateIsFrozen() const override;
     void setRootCompositingLayer(WebCore::GraphicsLayer*) override;
@@ -81,7 +81,7 @@ private:
 
     bool shouldUseTiledBackingForFrameView(const WebCore::FrameView&) override;
 
-    void activityStateDidChange(WebCore::ActivityState::Flags changed, bool wantsDidUpdateActivityState, const Vector<uint64_t>&) override;
+    void activityStateDidChange(WebCore::ActivityState::Flags changed, bool wantsDidUpdateActivityState, const Vector<CallbackID>&) override;
     void didUpdateActivityStateTimerFired();
 
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
@@ -149,7 +149,7 @@ private:
     WebCore::TransformationMatrix m_transform;
 
     RunLoop::Timer<TiledCoreAnimationDrawingArea> m_sendDidUpdateActivityStateTimer;
-    Vector<uint64_t> m_nextActivityStateChangeCallbackIDs;
+    Vector<CallbackID> m_nextActivityStateChangeCallbackIDs;
     bool m_wantsDidUpdateActivityState;
 
     WebCore::GraphicsLayer* m_viewOverlayRootLayer;

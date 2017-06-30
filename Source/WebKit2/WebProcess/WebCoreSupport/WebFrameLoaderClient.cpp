@@ -1815,16 +1815,17 @@ bool WebFrameLoaderClient::useIconLoadingClient()
 void WebFrameLoaderClient::getLoadDecisionForIcon(const LinkIcon& icon, uint64_t callbackID)
 {
     if (WebPage* webPage { m_frame->page() })
-        webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon, callbackID));
+        webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon, CallbackID::fromInteger(callbackID)));
 }
 
 void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer* data)
 {
+    auto callbackID = CallbackID::fromInteger(callbackIdentifier);
     if (WebPage* webPage { m_frame->page() }) {
         if (data)
-            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(callbackIdentifier, { reinterpret_cast<const uint8_t*>(data->data()), data->size() }));
+            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(callbackID, { reinterpret_cast<const uint8_t*>(data->data()), data->size() }));
         else
-            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(callbackIdentifier, { nullptr, 0 }));
+            webPage->send(Messages::WebPageProxy::FinishedLoadingIcon(callbackID, { nullptr, 0 }));
     }
 }
 

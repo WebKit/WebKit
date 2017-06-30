@@ -600,7 +600,7 @@ void WebPage::enableEnumeratingAllNetworkInterfaces()
 void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 {
     if (m_activityState != parameters.activityState)
-        setActivityState(parameters.activityState, false, Vector<uint64_t>());
+        setActivityState(parameters.activityState, false, Vector<CallbackID>());
     if (m_layerHostingMode != parameters.layerHostingMode)
         setLayerHostingMode(parameters.layerHostingMode);
 }
@@ -1915,7 +1915,7 @@ void WebPage::setFooterBannerHeightForTesting(int height)
 
 #endif // !PLATFORM(IOS)
 
-void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, uint64_t callbackID)
+void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CallbackID callbackID)
 {
     SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(options);
     snapshotOptions |= SnapshotOptionsShareable;
@@ -2416,7 +2416,7 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
 }
 
-void WebPage::validateCommand(const String& commandName, uint64_t callbackID)
+void WebPage::validateCommand(const String& commandName, CallbackID callbackID)
 {
     bool isEnabled = false;
     int32_t state = 0;
@@ -2619,7 +2619,7 @@ void WebPage::viewWillEndLiveResize()
         view->willEndLiveResize();
 }
 
-void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event, uint64_t callbackID)
+void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent& event, CallbackID callbackID)
 {
     if (!m_page)
         return;
@@ -2684,7 +2684,7 @@ void WebPage::visibilityDidChange()
     }
 }
 
-void WebPage::setActivityState(ActivityState::Flags activityState, bool wantsDidUpdateActivityState, const Vector<uint64_t>& callbackIDs)
+void WebPage::setActivityState(ActivityState::Flags activityState, bool wantsDidUpdateActivityState, const Vector<CallbackID>& callbackIDs)
 {
     ActivityState::Flags changed = m_activityState ^ activityState;
     m_activityState = activityState;
@@ -2835,7 +2835,7 @@ KeyboardUIMode WebPage::keyboardUIMode()
     return static_cast<KeyboardUIMode>((fullKeyboardAccessEnabled ? KeyboardAccessFull : KeyboardAccessDefault) | (m_tabToLinks ? KeyboardAccessTabsToLinks : 0));
 }
 
-void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID)
+void WebPage::runJavaScriptInMainFrame(const String& script, CallbackID callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
     // disappear during script execution.
@@ -2856,14 +2856,14 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     send(Messages::WebPageProxy::ScriptValueCallback(dataReference, hadException, details, callbackID));
 }
 
-void WebPage::getContentsAsString(uint64_t callbackID)
+void WebPage::getContentsAsString(CallbackID callbackID)
 {
     String resultString = m_mainFrame->contentsAsString();
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
 #if ENABLE(MHTML)
-void WebPage::getContentsAsMHTMLData(uint64_t callbackID)
+void WebPage::getContentsAsMHTMLData(CallbackID callbackID)
 {
     auto buffer = MHTMLArchive::generateMHTMLData(m_page.get());
 
@@ -2874,7 +2874,7 @@ void WebPage::getContentsAsMHTMLData(uint64_t callbackID)
 }
 #endif
 
-void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
+void WebPage::getRenderTreeExternalRepresentation(CallbackID callbackID)
 {
     String resultString = renderTreeExternalRepresentation();
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
@@ -2890,7 +2890,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void WebPage::getSelectionAsWebArchiveData(uint64_t callbackID)
+void WebPage::getSelectionAsWebArchiveData(CallbackID callbackID)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -2906,7 +2906,7 @@ void WebPage::getSelectionAsWebArchiveData(uint64_t callbackID)
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
-void WebPage::getSelectionOrContentsAsString(uint64_t callbackID)
+void WebPage::getSelectionOrContentsAsString(CallbackID callbackID)
 {
     WebFrame* focusedOrMainFrame = WebFrame::fromCoreFrame(m_page->focusController().focusedOrMainFrame());
     String resultString = focusedOrMainFrame->selectionAsString();
@@ -2915,7 +2915,7 @@ void WebPage::getSelectionOrContentsAsString(uint64_t callbackID)
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
-void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
+void WebPage::getSourceForFrame(uint64_t frameID, CallbackID callbackID)
 {
     String resultString;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID))
@@ -2924,7 +2924,7 @@ void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
-void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
+void WebPage::getMainResourceDataOfFrame(uint64_t frameID, CallbackID callbackID)
 {
     RefPtr<SharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -2956,7 +2956,7 @@ static RefPtr<SharedBuffer> resourceDataForFrame(Frame* frame, const URL& resour
     return &subresource->data();
 }
 
-void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURLString, uint64_t callbackID)
+void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceURLString, CallbackID callbackID)
 {
     RefPtr<SharedBuffer> buffer;
     if (WebFrame* frame = WebProcess::singleton().webFrame(frameID)) {
@@ -2975,7 +2975,7 @@ void WebPage::getResourceDataFromFrame(uint64_t frameID, const String& resourceU
     send(Messages::WebPageProxy::DataCallback(dataReference, callbackID));
 }
 
-void WebPage::getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
+void WebPage::getWebArchiveOfFrame(uint64_t frameID, CallbackID callbackID)
 {
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> data;
@@ -2998,7 +2998,7 @@ void WebPage::forceRepaintWithoutCallback()
     m_drawingArea->forceRepaint();
 }
 
-void WebPage::forceRepaint(uint64_t callbackID)
+void WebPage::forceRepaint(CallbackID callbackID)
 {
     if (m_drawingArea->forceRepaintAsync(callbackID))
         return;
@@ -4377,7 +4377,7 @@ void WebPage::endPrinting()
     m_printContext = nullptr;
 }
 
-void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID)
+void WebPage::computePagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, CallbackID callbackID)
 {
     Vector<IntRect> resultPageRects;
     double resultTotalScaleFactorForPrinting = 1;
@@ -4406,7 +4406,7 @@ void WebPage::computePagesForPrintingImpl(uint64_t frameID, const PrintInfo& pri
 }
 
 #if PLATFORM(COCOA)
-void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, uint64_t callbackID)
+void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CallbackID callbackID)
 {
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
@@ -4455,7 +4455,7 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
     send(Messages::WebPageProxy::ImageCallback(handle, callbackID));
 }
 
-void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, uint64_t callbackID)
+void WebPage::drawPagesToPDF(uint64_t frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CallbackID callbackID)
 {
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, first, count, pdfPageData);
@@ -4513,7 +4513,7 @@ void WebPage::drawPagesToPDFImpl(uint64_t frameID, const PrintInfo& printInfo, u
 }
 
 #elif PLATFORM(GTK)
-void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID)
+void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo, CallbackID callbackID)
 {
     beginPrinting(frameID, printInfo);
     if (m_printContext && m_printOperation) {
@@ -4524,7 +4524,7 @@ void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo,
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::didFinishPrintOperation(const WebCore::ResourceError& error, uint64_t callbackID)
+void WebPage::didFinishPrintOperation(const WebCore::ResourceError& error, CallbackID callbackID)
 {
     send(Messages::WebPageProxy::PrintFinishedCallback(error, callbackID));
     m_printOperation = nullptr;
@@ -4831,7 +4831,7 @@ void WebPage::insertTextAsync(const String& text, const EditingRange& replacemen
         frame.editor().confirmComposition(text);
 }
 
-void WebPage::getMarkedRangeAsync(uint64_t callbackID)
+void WebPage::getMarkedRangeAsync(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -4846,7 +4846,7 @@ void WebPage::getMarkedRangeAsync(uint64_t callbackID)
     send(Messages::WebPageProxy::EditingRangeCallback(EditingRange(location, length), callbackID));
 }
 
-void WebPage::getSelectedRangeAsync(uint64_t callbackID)
+void WebPage::getSelectedRangeAsync(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -4861,7 +4861,7 @@ void WebPage::getSelectedRangeAsync(uint64_t callbackID)
     send(Messages::WebPageProxy::EditingRangeCallback(EditingRange(location, length), callbackID));
 }
 
-void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, uint64_t callbackID)
+void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, CallbackID callbackID)
 {
     uint64_t index = notFound;
 
@@ -4879,7 +4879,7 @@ void WebPage::characterIndexForPointAsync(const WebCore::IntPoint& point, uint64
     send(Messages::WebPageProxy::UnsignedCallback(index, callbackID));
 }
 
-void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, uint64_t callbackID)
+void WebPage::firstRectForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     IntRect result(IntPoint(0, 0), IntSize(0, 0));
@@ -5686,7 +5686,7 @@ void WebPage::updateCachedDocumentLoader(WebDocumentLoader& documentLoader, Fram
     }
 }
 
-void WebPage::getBytecodeProfile(uint64_t callbackID)
+void WebPage::getBytecodeProfile(CallbackID callbackID)
 {
     if (!commonVM().m_perBytecodeProfiler) {
         send(Messages::WebPageProxy::StringCallback(String(), callbackID));
@@ -5698,7 +5698,7 @@ void WebPage::getBytecodeProfile(uint64_t callbackID)
     send(Messages::WebPageProxy::StringCallback(result, callbackID));
 }
 
-void WebPage::getSamplingProfilerOutput(uint64_t callbackID)
+void WebPage::getSamplingProfilerOutput(CallbackID callbackID)
 {
 #if ENABLE(SAMPLING_PROFILER)
     SamplingProfiler* samplingProfiler = commonVM().samplingProfiler();
@@ -5881,10 +5881,10 @@ void WebPage::didLosePointerLock()
 }
 #endif
 
-void WebPage::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID)
+void WebPage::didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier, OptionalCallbackID newCallbackID)
 {
     if (auto* documentLoader = corePage()->mainFrame().loader().documentLoader())
-        documentLoader->didGetLoadDecisionForIcon(decision, loadIdentifier, newCallbackID);
+        documentLoader->didGetLoadDecisionForIcon(decision, loadIdentifier.toInteger(), newCallbackID.toInteger());
 }
 
 void WebPage::setUseIconLoadingClient(bool useIconLoadingClient)

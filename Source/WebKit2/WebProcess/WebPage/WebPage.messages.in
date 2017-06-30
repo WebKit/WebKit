@@ -21,8 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebPage LegacyReceiver {
-    SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event, uint64_t callbackID)
-    SetActivityState(unsigned activityState, bool wantsDidUpdateActivityState, Vector<uint64_t> callbackIDs)
+    SetInitialFocus(bool forward, bool isKeyboardEventValid, WebKit::WebKeyboardEvent event, WebKit::CallbackID callbackID)
+    SetActivityState(unsigned activityState, bool wantsDidUpdateActivityState, Vector<WebKit::CallbackID> callbackIDs)
     SetLayerHostingMode(enum WebKit::LayerHostingMode layerHostingMode)
 
     SetDrawsBackground(bool drawsBackground)
@@ -54,34 +54,34 @@ messages -> WebPage LegacyReceiver {
     InspectorNodeSearchMovedToPosition(WebCore::FloatPoint point)
     InspectorNodeSearchEndedAtPosition(WebCore::FloatPoint point)
     BlurAssistedNode()
-    SelectWithGesture(WebCore::IntPoint point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, uint64_t callbackID)
-    UpdateSelectionWithTouches(WebCore::IntPoint point, uint32_t touches, bool baseIsStart, uint64_t callbackID)
+    SelectWithGesture(WebCore::IntPoint point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, WebKit::CallbackID callbackID)
+    UpdateSelectionWithTouches(WebCore::IntPoint point, uint32_t touches, bool baseIsStart, WebKit::CallbackID callbackID)
     UpdateBlockSelectionWithTouch(WebCore::IntPoint point, uint32_t touch, uint32_t handlePosition)
-    SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
+    SelectWithTwoTouches(WebCore::IntPoint from, WebCore::IntPoint to, uint32_t gestureType, uint32_t gestureState, WebKit::CallbackID callbackID)
     ExtendSelection(uint32_t granularity)
     SelectWordBackward()
-    MoveSelectionByOffset(int32_t offset, uint64_t callbackID)
-    SelectTextWithGranularityAtPoint(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID)
-    SelectPositionAtBoundaryWithDirection(WebCore::IntPoint point, uint32_t granularity, uint32_t direction, bool isInteractingWithAssistedNode, uint64_t callbackID)
-    MoveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, uint64_t callbackID)
-    SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithAssistedNode, uint64_t callbackID)
-    BeginSelectionInDirection(uint32_t direction, uint64_t callbackID)
-    UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithAssistedNode, uint64_t callbackID)
-    UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID)
-    RequestDictationContext(uint64_t callbackID)
+    MoveSelectionByOffset(int32_t offset, WebKit::CallbackID callbackID)
+    SelectTextWithGranularityAtPoint(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithAssistedNode, WebKit::CallbackID callbackID)
+    SelectPositionAtBoundaryWithDirection(WebCore::IntPoint point, uint32_t granularity, uint32_t direction, bool isInteractingWithAssistedNode, WebKit::CallbackID callbackID)
+    MoveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, WebKit::CallbackID callbackID)
+    SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithAssistedNode, WebKit::CallbackID callbackID)
+    BeginSelectionInDirection(uint32_t direction, WebKit::CallbackID callbackID)
+    UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithAssistedNode, WebKit::CallbackID callbackID)
+    UpdateSelectionWithExtentPointAndBoundary(WebCore::IntPoint point, uint32_t granularity, bool isInteractingWithAssistedNode, WebKit::CallbackID callbackID)
+    RequestDictationContext(WebKit::CallbackID callbackID)
     ReplaceDictatedText(String oldText, String newText)
     ReplaceSelectedText(String oldText, String newText)
-    RequestAutocorrectionData(String textForAutocorrection, uint64_t callbackID)
-    ApplyAutocorrection(String correction, String originalText, uint64_t callbackID)
+    RequestAutocorrectionData(String textForAutocorrection, WebKit::CallbackID callbackID)
+    ApplyAutocorrection(String correction, String originalText, WebKit::CallbackID callbackID)
     SyncApplyAutocorrection(String correction, String originalText) -> (bool autocorrectionApplied)
-    RequestAutocorrectionContext(uint64_t callbackID)
+    RequestAutocorrectionContext(WebKit::CallbackID callbackID)
     GetAutocorrectionContext() -> (String beforeContext, String markedText, String selectedText, String afterContext, uint64_t location, uint64_t length) 
     GetPositionInformation(struct WebKit::InteractionInformationRequest request) -> (struct WebKit::InteractionInformationAtPosition information)
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     StartInteractionWithElementAtPosition(WebCore::IntPoint point)
     StopInteraction()
     PerformActionOnElement(uint32_t action)
-    FocusNextAssistedNode(bool isForward, uint64_t callbackID)
+    FocusNextAssistedNode(bool isForward, WebKit::CallbackID callbackID)
     SetAssistedNodeValue(String value)
     SetAssistedNodeValueAsNumber(double value)
     SetAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
@@ -91,13 +91,13 @@ messages -> WebPage LegacyReceiver {
     ApplicationWillEnterForeground(bool isSuspendedUnderLock)
     ApplicationDidBecomeActive()
     ContentSizeCategoryDidChange(String contentSizeCategory)
-    ExecuteEditCommandWithCallback(String name, uint64_t callbackID)
-    GetSelectionContext(uint64_t callbackID)
+    ExecuteEditCommandWithCallback(String name, WebKit::CallbackID callbackID)
+    GetSelectionContext(WebKit::CallbackID callbackID)
     SetAllowsMediaDocumentInlinePlayback(bool allows)
     HandleTwoFingerTapAtPoint(WebCore::IntPoint point, uint64_t requestID)
     SetForceAlwaysUserScalable(bool userScalable)
-    GetRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, uint64_t callbackID);
-    GetRectsAtSelectionOffsetWithText(int32_t offset, String text, uint64_t callbackID);
+    GetRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, WebKit::CallbackID callbackID);
+    GetRectsAtSelectionOffsetWithText(int32_t offset, String text, WebKit::CallbackID callbackID);
 #endif
 
     SetControlledByAutomation(bool controlled)
@@ -156,19 +156,19 @@ messages -> WebPage LegacyReceiver {
     RestoreSelectionInFocusedEditableElement()
 
     # Callbacks.
-    GetContentsAsString(uint64_t callbackID)
+    GetContentsAsString(WebKit::CallbackID callbackID)
 #if ENABLE(MHTML)
-    GetContentsAsMHTMLData(uint64_t callbackID)
+    GetContentsAsMHTMLData(WebKit::CallbackID callbackID)
 #endif
-    GetMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
-    GetResourceDataFromFrame(uint64_t frameID, String resourceURL, uint64_t callbackID)
-    GetRenderTreeExternalRepresentation(uint64_t callbackID)
-    GetSelectionOrContentsAsString(uint64_t callbackID)
-    GetSelectionAsWebArchiveData(uint64_t callbackID)
-    GetSourceForFrame(uint64_t frameID, uint64_t callbackID)
-    GetWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID)
-    RunJavaScriptInMainFrame(String script, uint64_t callbackID)
-    ForceRepaint(uint64_t callbackID)
+    GetMainResourceDataOfFrame(uint64_t frameID, WebKit::CallbackID callbackID)
+    GetResourceDataFromFrame(uint64_t frameID, String resourceURL, WebKit::CallbackID callbackID)
+    GetRenderTreeExternalRepresentation(WebKit::CallbackID callbackID)
+    GetSelectionOrContentsAsString(WebKit::CallbackID callbackID)
+    GetSelectionAsWebArchiveData(WebKit::CallbackID callbackID)
+    GetSourceForFrame(uint64_t frameID, WebKit::CallbackID callbackID)
+    GetWebArchiveOfFrame(uint64_t frameID, WebKit::CallbackID callbackID)
+    RunJavaScriptInMainFrame(String script, WebKit::CallbackID callbackID)
+    ForceRepaint(WebKit::CallbackID callbackID)
 
 #if PLATFORM(COCOA)
     # Dictionary support.
@@ -192,7 +192,7 @@ messages -> WebPage LegacyReceiver {
     TryClose()
 
     SetEditable(bool editable)
-    ValidateCommand(String name, uint64_t callbackID)
+    ValidateCommand(String name, WebKit::CallbackID callbackID)
     ExecuteEditCommand(String name, String argument)
 
     DidRemoveEditCommand(uint64_t commandID)
@@ -322,16 +322,16 @@ messages -> WebPage LegacyReceiver {
     # Printing.
     BeginPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo)
     EndPrinting()
-    ComputePagesForPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo, uint64_t callbackID)
+    ComputePagesForPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
 #if PLATFORM(COCOA)
-    DrawRectToImage(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, uint64_t callbackID)
-    DrawPagesToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, uint64_t callbackID)
+    DrawRectToImage(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebCore::IntRect rect, WebCore::IntSize imageSize, WebKit::CallbackID callbackID)
+    DrawPagesToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, uint32_t first, uint32_t count, WebKit::CallbackID callbackID)
 #if PLATFORM(IOS)
-    ComputePagesForPrintingAndDrawToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, uint64_t callbackID) -> (uint32_t pageCount) Delayed
+    ComputePagesForPrintingAndDrawToPDF(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID) -> (uint32_t pageCount) Delayed
 #endif
 #endif
 #if PLATFORM(GTK)
-    DrawPagesForPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo, uint64_t callbackID)
+    DrawPagesForPrinting(uint64_t frameID, struct WebKit::PrintInfo printInfo, WebKit::CallbackID callbackID)
 #endif
 
     # Media
@@ -383,17 +383,17 @@ messages -> WebPage LegacyReceiver {
     AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
 
     InsertTextAsync(String text, struct WebKit::EditingRange replacementRange, bool registerUndoGroup, uint32_t editingRangeIsRelativeTo, bool suppressSelectionUpdate)
-    GetMarkedRangeAsync(uint64_t callbackID)
-    GetSelectedRangeAsync(uint64_t callbackID)
-    CharacterIndexForPointAsync(WebCore::IntPoint point, uint64_t callbackID);
-    FirstRectForCharacterRangeAsync(struct WebKit::EditingRange range, uint64_t callbackID);
+    GetMarkedRangeAsync(WebKit::CallbackID callbackID)
+    GetSelectedRangeAsync(WebKit::CallbackID callbackID)
+    CharacterIndexForPointAsync(WebCore::IntPoint point, WebKit::CallbackID callbackID);
+    FirstRectForCharacterRangeAsync(struct WebKit::EditingRange range, WebKit::CallbackID callbackID);
     SetCompositionAsync(String text, Vector<WebCore::CompositionUnderline> underlines, struct WebKit::EditingRange selectionRange, struct WebKit::EditingRange replacementRange)
     ConfirmCompositionAsync()
 #endif
 #if PLATFORM(MAC)
     InsertDictatedTextAsync(String text, struct WebKit::EditingRange replacementRange, Vector<WebCore::DictationAlternative> dictationAlternatives, bool registerUndoGroup)
-    AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range, uint64_t callbackID);
-    FontAtSelection(uint64_t callbackID);
+    AttributedSubstringForCharacterRangeAsync(struct WebKit::EditingRange range, WebKit::CallbackID callbackID);
+    FontAtSelection(WebKit::CallbackID callbackID);
 #endif
 
     SetMinimumLayoutSize(WebCore::IntSize minimumLayoutSize)
@@ -412,11 +412,11 @@ messages -> WebPage LegacyReceiver {
     SetScrollPinningBehavior(uint32_t pinning)
     SetScrollbarOverlayStyle(std::optional<uint32_t> scrollbarStyle)
 
-    GetBytecodeProfile(uint64_t callbackID)
+    GetBytecodeProfile(WebKit::CallbackID callbackID)
 
-    GetSamplingProfilerOutput(uint64_t callbackID)
+    GetSamplingProfilerOutput(WebKit::CallbackID callbackID)
     
-    TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID)
+    TakeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, WebKit::CallbackID callbackID)
 #if PLATFORM(MAC)
     PerformImmediateActionHitTestAtLocation(WebCore::FloatPoint location)
     ImmediateActionDidUpdate()
@@ -462,7 +462,7 @@ messages -> WebPage LegacyReceiver {
 
     SetUserInterfaceLayoutDirection(uint32_t direction)
 
-    DidGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID)
+    DidGetLoadDecisionForIcon(bool decision, WebKit::CallbackID loadIdentifier, WebKit::OptionalCallbackID newCallbackID)
     SetUseIconLoadingClient(bool useIconLoadingClient)
 
 #if ENABLE(GAMEPAD)

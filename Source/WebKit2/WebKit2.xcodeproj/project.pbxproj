@@ -3748,6 +3748,8 @@
 		99C81D561C20DFBE005C4C82 /* AutomationClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutomationClient.mm; sourceTree = "<group>"; };
 		99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationClient.h; sourceTree = "<group>"; };
 		99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationDelegate.h; sourceTree = "<group>"; };
+		9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackID.h; sourceTree = "<group>"; };
+		9BC59D6D1EFCDC6D001E8D09 /* OptionalCallbackID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionalCallbackID.h; sourceTree = "<group>"; };
 		9F54F88E16488E87007DF81A /* ChildProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessMac.mm; sourceTree = "<group>"; };
 		9F54F8941648AE0E007DF81A /* PluginProcessManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessManagerMac.mm; sourceTree = "<group>"; };
 		9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = mac/WKContextPrivateMac.mm; sourceTree = "<group>"; };
@@ -4935,6 +4937,8 @@
 				4F601430155C5A32001FBDE0 /* BlockingResponseMap.h */,
 				BCF18637167D071E00A1A85A /* CacheModel.cpp */,
 				BC3065F91259344E00E71278 /* CacheModel.h */,
+				9BC59D6C1EFCCCB6001E8D09 /* CallbackID.h */,
+				9BC59D6D1EFCDC6D001E8D09 /* OptionalCallbackID.h */,
 				1A2D956E12848564001EB962 /* ChildProcess.cpp */,
 				1A2D956D12848564001EB962 /* ChildProcess.h */,
 				5164C0941B05B757004F102A /* ChildProcess.messages.in */,

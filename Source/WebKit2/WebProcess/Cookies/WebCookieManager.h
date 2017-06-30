@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "CallbackID.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "MessageReceiver.h"
 #include "NetworkProcessSupplement.h"
+#include "OptionalCallbackID.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/SessionID.h>
 #include <chrono>
@@ -56,7 +58,7 @@ public:
 
     static const char* supplementName();
 
-    void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy, uint64_t callbackID);
+    void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy, OptionalCallbackID);
 
 #if USE(SOUP)
     void setCookiePersistentStorage(const String& storagePath, uint32_t storageType);
@@ -68,20 +70,20 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void getHostnamesWithCookies(WebCore::SessionID, uint64_t callbackID);
+    void getHostnamesWithCookies(WebCore::SessionID, CallbackID);
 
-    void deleteCookie(WebCore::SessionID, const WebCore::Cookie&, uint64_t callbackID);
+    void deleteCookie(WebCore::SessionID, const WebCore::Cookie&, CallbackID);
     void deleteCookiesForHostname(WebCore::SessionID, const String&);
     void deleteAllCookies(WebCore::SessionID);
-    void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point, uint64_t callbackID);
+    void deleteAllCookiesModifiedSince(WebCore::SessionID, std::chrono::system_clock::time_point, CallbackID);
 
-    void setCookie(WebCore::SessionID, const WebCore::Cookie&, uint64_t callbackID);
-    void setCookies(WebCore::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL, uint64_t callbackID);
-    void getAllCookies(WebCore::SessionID, uint64_t callbackID);
-    void getCookies(WebCore::SessionID, const WebCore::URL&, uint64_t callbackID);
+    void setCookie(WebCore::SessionID, const WebCore::Cookie&, CallbackID);
+    void setCookies(WebCore::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL, CallbackID);
+    void getAllCookies(WebCore::SessionID, CallbackID);
+    void getCookies(WebCore::SessionID, const WebCore::URL&, CallbackID);
 
     void platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
-    void getHTTPCookieAcceptPolicy(uint64_t callbackID);
+    void getHTTPCookieAcceptPolicy(CallbackID);
     HTTPCookieAcceptPolicy platformGetHTTPCookieAcceptPolicy();
 
     void startObservingCookieChanges(WebCore::SessionID);

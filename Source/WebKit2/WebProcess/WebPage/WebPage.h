@@ -32,6 +32,7 @@
 #include "APIInjectedBundlePageResourceLoadClient.h"
 #include "APIInjectedBundlePageUIClient.h"
 #include "APIObject.h"
+#include "CallbackID.h"
 #include "EditingRange.h"
 #include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageFullScreenClient.h"
@@ -39,6 +40,7 @@
 #include "LayerTreeContext.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "OptionalCallbackID.h"
 #include "Plugin.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
@@ -542,50 +544,50 @@ public:
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
 
     void blurAssistedNode();
-    void selectWithGesture(const WebCore::IntPoint&, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, uint64_t callbackID);
-    void updateSelectionWithTouches(const WebCore::IntPoint& point, uint32_t touches, bool baseIsStart, uint64_t callbackID);
+    void selectWithGesture(const WebCore::IntPoint&, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, CallbackID);
+    void updateSelectionWithTouches(const WebCore::IntPoint&, uint32_t touches, bool baseIsStart, CallbackID);
     void updateBlockSelectionWithTouch(const WebCore::IntPoint&, uint32_t touch, uint32_t handlePosition);
-    void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID);
+    void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, CallbackID);
     void extendSelection(uint32_t granularity);
     void selectWordBackward();
-    void moveSelectionByOffset(int32_t offset, uint64_t callbackID);
-    void selectTextWithGranularityAtPoint(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID);
-    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, uint32_t granularity, uint32_t direction, bool isInteractingWithAssistedNode, uint64_t callbackID);
-    void moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, uint64_t callbackID);
-    void selectPositionAtPoint(const WebCore::IntPoint&, bool isInteractingWithAssistedNode, uint64_t callbackID);
-    void beginSelectionInDirection(uint32_t direction, uint64_t callbackID);
-    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithAssistedNode, uint64_t callbackID);
-    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID);
+    void moveSelectionByOffset(int32_t offset, CallbackID);
+    void selectTextWithGranularityAtPoint(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithAssistedNode, CallbackID);
+    void selectPositionAtBoundaryWithDirection(const WebCore::IntPoint&, uint32_t granularity, uint32_t direction, bool isInteractingWithAssistedNode, CallbackID);
+    void moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, CallbackID);
+    void selectPositionAtPoint(const WebCore::IntPoint&, bool isInteractingWithAssistedNode, CallbackID);
+    void beginSelectionInDirection(uint32_t direction, CallbackID);
+    void updateSelectionWithExtentPoint(const WebCore::IntPoint&, bool isInteractingWithAssistedNode, CallbackID);
+    void updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&, uint32_t granularity, bool isInteractingWithAssistedNode, CallbackID);
 
-    void requestDictationContext(uint64_t callbackID);
+    void requestDictationContext(CallbackID);
     void replaceDictatedText(const String& oldText, const String& newText);
     void replaceSelectedText(const String& oldText, const String& newText);
-    void requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID);
-    void applyAutocorrection(const String& correction, const String& originalText, uint64_t callbackID);
+    void requestAutocorrectionData(const String& textForAutocorrection, CallbackID);
+    void applyAutocorrection(const String& correction, const String& originalText, CallbackID);
     void syncApplyAutocorrection(const String& correction, const String& originalText, bool& correctionApplied);
-    void requestAutocorrectionContext(uint64_t callbackID);
+    void requestAutocorrectionContext(CallbackID);
     void getAutocorrectionContext(String& beforeText, String& markedText, String& selectedText, String& afterText, uint64_t& location, uint64_t& length);
     void getPositionInformation(const InteractionInformationRequest&, InteractionInformationAtPosition&);
     void requestPositionInformation(const InteractionInformationRequest&);
     void startInteractionWithElementAtPosition(const WebCore::IntPoint&);
     void stopInteraction();
     void performActionOnElement(uint32_t action);
-    void focusNextAssistedNode(bool isForward, uint64_t callbackID);
+    void focusNextAssistedNode(bool isForward, CallbackID);
     void setAssistedNodeValue(const String&);
     void setAssistedNodeValueAsNumber(double);
     void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection);
     WebCore::IntRect rectForElementAtInteractionLocation();
     void updateSelectionAppearance();
-    void getSelectionContext(uint64_t callbackID);
+    void getSelectionContext(CallbackID);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, uint64_t requestID);
-    void getRectsForGranularityWithSelectionOffset(uint32_t, int32_t, uint64_t callbackID);
-    void getRectsAtSelectionOffsetWithText(int32_t, const String&, uint64_t callbackID);
+    void getRectsForGranularityWithSelectionOffset(uint32_t, int32_t, CallbackID);
+    void getRectsAtSelectionOffsetWithText(int32_t, const String&, CallbackID);
 #if ENABLE(IOS_TOUCH_EVENTS)
     void dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& queue);
 #endif
 
     void contentSizeCategoryDidChange(const String&);
-    void executeEditCommandWithCallback(const String&, uint64_t callbackID);
+    void executeEditCommandWithCallback(const String&, CallbackID);
 
     Seconds eventThrottlingDelay() const;
 
@@ -673,17 +675,17 @@ public:
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
     void insertTextAsync(const String& text, const EditingRange& replacementRange, bool registerUndoGroup = false, uint32_t editingRangeIsRelativeTo = (uint32_t)EditingRangeIsRelativeTo::EditableRoot, bool suppressSelectionUpdate = false);
-    void getMarkedRangeAsync(uint64_t callbackID);
-    void getSelectedRangeAsync(uint64_t callbackID);
-    void characterIndexForPointAsync(const WebCore::IntPoint&, uint64_t callbackID);
-    void firstRectForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
+    void getMarkedRangeAsync(CallbackID);
+    void getSelectedRangeAsync(CallbackID);
+    void characterIndexForPointAsync(const WebCore::IntPoint&, CallbackID);
+    void firstRectForCharacterRangeAsync(const EditingRange&, CallbackID);
     void setCompositionAsync(const String& text, const Vector<WebCore::CompositionUnderline>& underlines, const EditingRange& selectionRange, const EditingRange& replacementRange);
     void confirmCompositionAsync();
 
 #if PLATFORM(MAC)
     void insertDictatedTextAsync(const String& text, const EditingRange& replacementRange, const Vector<WebCore::DictationAlternative>& dictationAlternativeLocations, bool registerUndoGroup = false);
-    void attributedSubstringForCharacterRangeAsync(const EditingRange&, uint64_t callbackID);
-    void fontAtSelection(uint64_t callbackID);
+    void attributedSubstringForCharacterRangeAsync(const EditingRange&, CallbackID);
+    void fontAtSelection(CallbackID);
 #endif
 
     void readSelectionFromPasteboard(const WTF::String& pasteboardName, bool& result);
@@ -746,18 +748,18 @@ public:
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);
     void endPrinting();
-    void computePagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
+    void computePagesForPrinting(uint64_t frameID, const PrintInfo&, CallbackID);
     void computePagesForPrintingImpl(uint64_t frameID, const PrintInfo&, Vector<WebCore::IntRect>& pageRects, double& totalScaleFactor);
 #if PLATFORM(COCOA)
-    void drawRectToImage(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, uint64_t callbackID);
-    void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, uint64_t callbackID);
+    void drawRectToImage(uint64_t frameID, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CallbackID);
+    void drawPagesToPDF(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, CallbackID);
     void drawPagesToPDFImpl(uint64_t frameID, const PrintInfo&, uint32_t first, uint32_t count, RetainPtr<CFMutableDataRef>& pdfPageData);
 #if PLATFORM(IOS)
-    void computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo&, uint64_t callbackID, Ref<Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply>&&);
+    void computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo&, CallbackID, Ref<Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply>&&);
 #endif
 #elif PLATFORM(GTK)
-    void drawPagesForPrinting(uint64_t frameID, const PrintInfo&, uint64_t callbackID);
-    void didFinishPrintOperation(const WebCore::ResourceError&, uint64_t callbackID);
+    void drawPagesForPrinting(uint64_t frameID, const PrintInfo&, CallbackID);
+    void didFinishPrintOperation(const WebCore::ResourceError&, CallbackID);
 #endif
 
     void addResourceRequest(unsigned long, const WebCore::ResourceRequest&);
@@ -915,8 +917,8 @@ public:
     Ref<WebCore::DocumentLoader> createDocumentLoader(WebCore::Frame&, const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
     void updateCachedDocumentLoader(WebDocumentLoader&, WebCore::Frame&);
 
-    void getBytecodeProfile(uint64_t callbackID);
-    void getSamplingProfilerOutput(uint64_t callbackID);
+    void getBytecodeProfile(CallbackID);
+    void getSamplingProfilerOutput(CallbackID);
     
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
@@ -969,7 +971,7 @@ public:
     void didLosePointerLock();
 #endif
 
-    void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID);
+    void didGetLoadDecisionForIcon(bool decision, CallbackID loadIdentifier, OptionalCallbackID);
     void setUseIconLoadingClient(bool);
 
 #if ENABLE(DATA_INTERACTION)
@@ -1059,11 +1061,11 @@ private:
     void goBack(uint64_t navigationID, uint64_t);
     void goToBackForwardItem(uint64_t navigationID, uint64_t);
     void tryRestoreScrollPosition();
-    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, uint64_t callbackID);
+    void setInitialFocus(bool forward, bool isKeyboardEventValid, const WebKeyboardEvent&, CallbackID);
     void updateIsInWindow(bool isInitialState = false);
     void visibilityDidChange();
-    void setActivityState(WebCore::ActivityState::Flags, bool wantsDidUpdateActivityState, const Vector<uint64_t>& callbackIDs);
-    void validateCommand(const String&, uint64_t);
+    void setActivityState(WebCore::ActivityState::Flags, bool wantsDidUpdateActivityState, const Vector<CallbackID>& callbackIDs);
+    void validateCommand(const String&, CallbackID);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
 
@@ -1104,20 +1106,20 @@ private:
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
-    void getContentsAsString(uint64_t callbackID);
+    void getContentsAsString(CallbackID);
 #if ENABLE(MHTML)
-    void getContentsAsMHTMLData(uint64_t callbackID);
+    void getContentsAsMHTMLData(CallbackID);
 #endif
-    void getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID);
-    void getResourceDataFromFrame(uint64_t frameID, const String& resourceURL, uint64_t callbackID);
-    void getRenderTreeExternalRepresentation(uint64_t callbackID);
-    void getSelectionOrContentsAsString(uint64_t callbackID);
-    void getSelectionAsWebArchiveData(uint64_t callbackID);
-    void getSourceForFrame(uint64_t frameID, uint64_t callbackID);
-    void getWebArchiveOfFrame(uint64_t frameID, uint64_t callbackID);
-    void runJavaScriptInMainFrame(const String&, uint64_t callbackID);
-    void forceRepaint(uint64_t callbackID);
-    void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, uint64_t callbackID);
+    void getMainResourceDataOfFrame(uint64_t frameID, CallbackID);
+    void getResourceDataFromFrame(uint64_t frameID, const String& resourceURL, CallbackID);
+    void getRenderTreeExternalRepresentation(CallbackID);
+    void getSelectionOrContentsAsString(CallbackID);
+    void getSelectionAsWebArchiveData(CallbackID);
+    void getSourceForFrame(uint64_t frameID, CallbackID);
+    void getWebArchiveOfFrame(uint64_t frameID, CallbackID);
+    void runJavaScriptInMainFrame(const String&, CallbackID);
+    void forceRepaint(CallbackID);
+    void takeSnapshot(WebCore::IntRect snapshotRect, WebCore::IntSize bitmapSize, uint32_t options, CallbackID);
 
     void preferencesDidChange(const WebPreferencesStore&);
     void platformPreferencesDidChange(const WebPreferencesStore&);

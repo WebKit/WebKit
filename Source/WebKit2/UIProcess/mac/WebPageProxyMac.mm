@@ -182,12 +182,12 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
 
     process().send(Messages::WebPage::AttributedSubstringForCharacterRangeAsync(range, callbackID), m_pageID);
 }
 
-void WebPageProxy::attributedStringForCharacterRangeCallback(const AttributedString& string, const EditingRange& actualRange, uint64_t callbackID)
+void WebPageProxy::attributedStringForCharacterRangeCallback(const AttributedString& string, const EditingRange& actualRange, CallbackID callbackID)
 {
     MESSAGE_CHECK(actualRange.isValid());
 
@@ -208,12 +208,12 @@ void WebPageProxy::fontAtSelection(WTF::Function<void (const String&, double, bo
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     
     process().send(Messages::WebPage::FontAtSelection(callbackID), m_pageID);
 }
 
-void WebPageProxy::fontAtSelectionCallback(const String& fontName, double fontSize, bool selectionHasMultipleFonts, uint64_t callbackID)
+void WebPageProxy::fontAtSelectionCallback(const String& fontName, double fontSize, bool selectionHasMultipleFonts, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<FontAtSelectionCallback>(callbackID);
     if (!callback) {

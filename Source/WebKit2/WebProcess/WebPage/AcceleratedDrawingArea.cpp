@@ -138,7 +138,7 @@ void AcceleratedDrawingArea::forceRepaint()
     }
 }
 
-bool AcceleratedDrawingArea::forceRepaintAsync(uint64_t callbackID)
+bool AcceleratedDrawingArea::forceRepaintAsync(CallbackID callbackID)
 {
     return m_layerTreeHost && m_layerTreeHost->forceRepaintAsync(callbackID);
 }
@@ -457,7 +457,7 @@ void AcceleratedDrawingArea::deviceOrPageScaleFactorChanged()
 }
 #endif
 
-void AcceleratedDrawingArea::activityStateDidChange(ActivityState::Flags changed, bool, const Vector<uint64_t>&)
+void AcceleratedDrawingArea::activityStateDidChange(ActivityState::Flags changed, bool, const Vector<CallbackID>&)
 {
     if (changed & ActivityState::IsVisible) {
         if (m_webPage.isVisible())

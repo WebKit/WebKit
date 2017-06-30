@@ -25,6 +25,7 @@
 
 #include "CompositingCoordinator.h"
 #include "LayerTreeHost.h"
+#include "OptionalCallbackID.h"
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -51,7 +52,7 @@ protected:
     void invalidate() override;
 
     void forceRepaint() override;
-    bool forceRepaintAsync(uint64_t callbackID) override;
+    bool forceRepaintAsync(CallbackID) override;
     void sizeDidChange(const WebCore::IntSize& newSize) override;
 
     void deviceOrPageScaleFactorChanged() override;
@@ -85,7 +86,7 @@ private:
     bool m_isWaitingForRenderer { true };
     bool m_scheduledWhileWaitingForRenderer { false };
     struct {
-        uint64_t callbackID { 0 };
+        OptionalCallbackID callbackID;
         bool needsFreshFlush { false };
     } m_forceRepaintAsync;
     RunLoop::Timer<CoordinatedLayerTreeHost> m_layerFlushTimer;

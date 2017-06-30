@@ -334,7 +334,7 @@ void WebPage::insertDictatedTextAsync(const String& text, const EditingRange& re
     frame.editor().insertDictatedText(text, dictationAlternativeLocations, nullptr);
 }
 
-void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, uint64_t callbackID)
+void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& editingRange, CallbackID callbackID)
 {
     AttributedString result;
 
@@ -375,7 +375,7 @@ void WebPage::attributedSubstringForCharacterRangeAsync(const EditingRange& edit
     send(Messages::WebPageProxy::AttributedStringForCharacterRangeCallback(result, rangeToSend, callbackID));
 }
 
-void WebPage::fontAtSelection(uint64_t callbackID)
+void WebPage::fontAtSelection(CallbackID callbackID)
 {
     String fontName;
     double fontSize = 0;

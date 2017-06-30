@@ -281,10 +281,10 @@ static void pageDidDrawToImage(const ShareableBitmap::Handle& imageHandle, IPCCa
             view->_printingCallbackCondition.notifyOne();
         }
     });
-    _expectedPrintCallback = callback->callbackID();
+    _expectedPrintCallback = callback->callbackID().toInteger();
 
     context->view = self;
-    context->callbackID = callback->callbackID();
+    context->callbackID = callback->callbackID().toInteger();
 
     _webFrame->page()->drawPagesToPDF(_webFrame.get(), printInfo, firstPage - 1, lastPage - firstPage + 1, WTFMove(callback));
 }
@@ -344,7 +344,7 @@ static void pageDidComputePageRects(const Vector<WebCore::IntRect>& pageRects, d
         std::unique_ptr<IPCCallbackContext> contextDeleter(context);
         pageDidComputePageRects(pageRects, totalScaleFactorForPrinting, context);
     });
-    _expectedComputedPagesCallback = callback->callbackID();
+    _expectedComputedPagesCallback = callback->callbackID().toInteger();
     context->view = self;
     context->callbackID = _expectedComputedPagesCallback;
 
@@ -521,11 +521,11 @@ static CFStringRef linkDestinationName(PDFDocument *document, PDFDestination *de
                     std::unique_ptr<IPCCallbackContext> contextDeleter(context);
                     pageDidDrawToImage(imageHandle, context);
                 });
-                _latestExpectedPreviewCallback = callback->callbackID();
+                _latestExpectedPreviewCallback = callback->callbackID().toInteger();
                 _expectedPreviewCallbacks.add(_latestExpectedPreviewCallback, scaledPrintingRect);
 
                 context->view = self;
-                context->callbackID = callback->callbackID();
+                context->callbackID = callback->callbackID().toInteger();
 
                 _webFrame->page()->drawRectToImage(_webFrame.get(), PrintInfo([_printOperation printInfo]), scaledPrintingRect, imageSize, WTFMove(callback));
                 return;

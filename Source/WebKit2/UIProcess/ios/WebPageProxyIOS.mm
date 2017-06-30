@@ -131,7 +131,7 @@ void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint&)
     notImplemented();
 }
 
-void WebPageProxy::gestureCallback(const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, uint64_t callbackID)
+void WebPageProxy::gestureCallback(const WebCore::IntPoint& point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<GestureCallback>(callbackID);
     if (!callback) {
@@ -142,7 +142,7 @@ void WebPageProxy::gestureCallback(const WebCore::IntPoint& point, uint32_t gest
     callback->performCallbackWithReturnValue(point, gestureType, gestureState, flags);
 }
 
-void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, uint32_t touches, uint32_t flags, uint64_t callbackID)
+void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, uint32_t touches, uint32_t flags, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<TouchesCallback>(callbackID);
     if (!callback) {
@@ -153,7 +153,7 @@ void WebPageProxy::touchesCallback(const WebCore::IntPoint& point, uint32_t touc
     callback->performCallbackWithReturnValue(point, touches, flags);
 }
 
-void WebPageProxy::autocorrectionDataCallback(const Vector<WebCore::FloatRect>& rects, const String& fontName, float fontSize, uint64_t fontTraits, uint64_t callbackID)
+void WebPageProxy::autocorrectionDataCallback(const Vector<WebCore::FloatRect>& rects, const String& fontName, float fontSize, uint64_t fontTraits, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<AutocorrectionDataCallback>(callbackID);
     if (!callback) {
@@ -164,7 +164,7 @@ void WebPageProxy::autocorrectionDataCallback(const Vector<WebCore::FloatRect>& 
     callback->performCallbackWithReturnValue(rects, fontName, fontSize, fontTraits);
 }
 
-void WebPageProxy::selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, uint64_t callbackID)
+void WebPageProxy::selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<SelectionContextCallback>(callbackID);
     if (!callback) {
@@ -175,7 +175,7 @@ void WebPageProxy::selectionContextCallback(const String& selectedText, const St
     callback->performCallbackWithReturnValue(selectedText, beforeText, afterText);
 }
 
-void WebPageProxy::autocorrectionContextCallback(const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, uint64_t callbackID)
+void WebPageProxy::autocorrectionContextCallback(const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<AutocorrectionContextCallback>(callbackID);
     if (!callback) {
@@ -186,7 +186,7 @@ void WebPageProxy::autocorrectionContextCallback(const String& beforeText, const
     callback->performCallbackWithReturnValue(beforeText, markedText, selectedText, afterText, location, length);
 }
 
-void WebPageProxy::selectionRectsCallback(const Vector<WebCore::SelectionRect>& selectionRects, uint64_t callbackID)
+void WebPageProxy::selectionRectsCallback(const Vector<WebCore::SelectionRect>& selectionRects, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<SelectionRectsCallback>(callbackID);
     if (!callback) {
@@ -430,7 +430,7 @@ void WebPageProxy::selectWithGesture(const WebCore::IntPoint point, WebCore::Tex
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::SelectWithGesture(point, (uint32_t)granularity, gestureType, gestureState, isInteractingWithAssistedNode, callbackID), m_pageID);
 }
 
@@ -441,7 +441,7 @@ void WebPageProxy::updateSelectionWithTouches(const WebCore::IntPoint point, uin
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::UpdateSelectionWithTouches(point, touches, baseIsStart, callbackID), m_pageID);
 }
     
@@ -462,7 +462,7 @@ void WebPageProxy::requestAutocorrectionData(const String& textForAutocorrection
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::RequestAutocorrectionData(textForAutocorrection, callbackID), m_pageID);
 }
 
@@ -473,7 +473,7 @@ void WebPageProxy::applyAutocorrection(const String& correction, const String& o
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::ApplyAutocorrection(correction, originalText, callbackID), m_pageID);
 }
 
@@ -484,7 +484,7 @@ void WebPageProxy::executeEditCommand(const String& commandName, WTF::Function<v
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::ExecuteEditCommandWithCallback(commandName, callbackID), m_pageID);
 }
 
@@ -502,7 +502,7 @@ void WebPageProxy::selectTextWithGranularityAtPoint(const WebCore::IntPoint poin
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::SelectTextWithGranularityAtPoint(point, static_cast<uint32_t>(granularity), isInteractingWithAssistedNode, callbackID), m_pageID);
 }
 
@@ -513,7 +513,7 @@ void WebPageProxy::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::SelectPositionAtBoundaryWithDirection(point, static_cast<uint32_t>(granularity), static_cast<uint32_t>(direction), isInteractingWithAssistedNode, callbackID), m_pageID);
 }
 
@@ -524,7 +524,7 @@ void WebPageProxy::moveSelectionAtBoundaryWithDirection(WebCore::TextGranularity
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::MoveSelectionAtBoundaryWithDirection(static_cast<uint32_t>(granularity), static_cast<uint32_t>(direction), callbackID), m_pageID);
 }
     
@@ -535,7 +535,7 @@ void WebPageProxy::selectPositionAtPoint(const WebCore::IntPoint point, bool isI
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::SelectPositionAtPoint(point, isInteractingWithAssistedNode, callbackID), m_pageID);
 }
 
@@ -546,7 +546,7 @@ void WebPageProxy::beginSelectionInDirection(WebCore::SelectionDirection directi
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::BeginSelectionInDirection(direction, callbackID), m_pageID);
 }
 
@@ -557,7 +557,7 @@ void WebPageProxy::updateSelectionWithExtentPoint(const WebCore::IntPoint point,
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::UpdateSelectionWithExtentPoint(point, isInteractingWithAssistedNode, callbackID), m_pageID);
     
 }
@@ -569,7 +569,7 @@ void WebPageProxy::updateSelectionWithExtentPointAndBoundary(const WebCore::IntP
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::UpdateSelectionWithExtentPointAndBoundary(point, granularity, isInteractingWithAssistedNode, callbackID), m_pageID);
     
 }
@@ -581,7 +581,7 @@ void WebPageProxy::requestDictationContext(WTF::Function<void (const String&, co
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::RequestDictationContext(callbackID), m_pageID);
 }
 
@@ -592,7 +592,7 @@ void WebPageProxy::requestAutocorrectionContext(WTF::Function<void (const String
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::RequestAutocorrectionContext(callbackID), m_pageID);
 }
 
@@ -608,7 +608,7 @@ void WebPageProxy::getSelectionContext(WTF::Function<void(const String&, const S
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::GetSelectionContext(callbackID), m_pageID);
 }
 
@@ -624,7 +624,7 @@ void WebPageProxy::selectWithTwoTouches(const WebCore::IntPoint from, const WebC
         return;
     }
 
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::SelectWithTwoTouches(from, to, gestureType, gestureState, callbackID), m_pageID);
 }
 
@@ -720,7 +720,7 @@ void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGr
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::GetRectsForGranularityWithSelectionOffset(static_cast<uint32_t>(granularity), offset, callbackID), m_pageID);
 }
 
@@ -731,7 +731,7 @@ void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const S
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::GetRectsAtSelectionOffsetWithText(offset, text, callbackID), m_pageID);
 }
 
@@ -742,7 +742,7 @@ void WebPageProxy::moveSelectionByOffset(int32_t offset, WTF::Function<void (Cal
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     m_process->send(Messages::WebPage::MoveSelectionByOffset(offset, callbackID), m_pageID);
 }
 
@@ -959,7 +959,7 @@ void WebPageProxy::focusNextAssistedNode(bool isForward, WTF::Function<void (Cal
         return;
     }
     
-    uint64_t callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callbackFunction), m_process->throttler().backgroundActivityToken());
     process().send(Messages::WebPage::FocusNextAssistedNode(isForward, callbackID), m_pageID);
 }
 
@@ -1037,13 +1037,13 @@ uint32_t WebPageProxy::computePagesForPrintingAndDrawToPDF(uint64_t frameID, con
     }
 
     uint32_t pageCount = 0;
-    uint64_t callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
+    auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
     using Message = Messages::WebPage::ComputePagesForPrintingAndDrawToPDF;
     process().sendSync(Message(frameID, printInfo, callbackID), Message::Reply(pageCount), m_pageID);
     return pageCount;
 }
 
-void WebPageProxy::drawToPDFCallback(const IPC::DataReference& pdfData, uint64_t callbackID)
+void WebPageProxy::drawToPDFCallback(const IPC::DataReference& pdfData, CallbackID callbackID)
 {
     auto callback = m_callbacks.take<DrawToPDFCallback>(callbackID);
     RELEASE_ASSERT(callback);

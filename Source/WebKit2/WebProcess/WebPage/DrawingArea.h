@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallbackID.h"
 #include "DrawingAreaInfo.h"
 #include "LayerTreeContext.h"
 #include "MessageReceiver.h"
@@ -78,7 +79,7 @@ public:
     // FIXME: These should be pure virtual.
     virtual void pageBackgroundTransparencyChanged() { }
     virtual void forceRepaint() { }
-    virtual bool forceRepaintAsync(uint64_t /*callbackID*/) { return false; }
+    virtual bool forceRepaintAsync(CallbackID) { return false; }
     virtual void setLayerTreeStateIsFrozen(bool) { }
     virtual bool layerTreeStateIsFrozen() const { return false; }
     virtual LayerTreeHost* layerTreeHost() const { return 0; }
@@ -116,7 +117,7 @@ public:
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&);
 
-    virtual void activityStateDidChange(WebCore::ActivityState::Flags, bool /* wantsDidUpdateActivityState */, const Vector<uint64_t>& /* callbackIDs */) { }
+    virtual void activityStateDidChange(WebCore::ActivityState::Flags, bool /* wantsDidUpdateActivityState */, const Vector<CallbackID>&) { }
     virtual void setLayerHostingMode(LayerHostingMode) { }
 
     virtual bool markLayersVolatileImmediatelyIfPossible() { return true; }
@@ -174,7 +175,7 @@ private:
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
     virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
 
-    virtual void addTransactionCallbackID(uint64_t callbackID) { ASSERT_NOT_REACHED(); }
+    virtual void addTransactionCallbackID(WebKit::CallbackID) { ASSERT_NOT_REACHED(); }
 #endif
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)

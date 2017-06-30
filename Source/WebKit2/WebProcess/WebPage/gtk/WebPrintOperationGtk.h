@@ -26,6 +26,7 @@
 #ifndef WebPrintOperationGtk_h
 #define WebPrintOperationGtk_h
 
+#include "CallbackID.h"
 #include "PrintInfo.h"
 #include <WebCore/RefPtrCairo.h>
 #include <wtf/RefCounted.h>
@@ -75,7 +76,7 @@ public:
 
     void disconnectFromPage();
 
-    virtual void startPrint(WebCore::PrintContext*, uint64_t callbackID) = 0;
+    virtual void startPrint(WebCore::PrintContext*, CallbackID) = 0;
 
 protected:
     WebPrintOperationGtk(WebPage*, const PrintInfo&);
@@ -103,7 +104,7 @@ protected:
     GRefPtr<GtkPageSetup> m_pageSetup;
     PrintInfo::PrintMode m_printMode;
     WebCore::PrintContext* m_printContext;
-    uint64_t m_callbackID;
+    CallbackID m_callbackID;
     RefPtr<cairo_t> m_cairoContext;
     double m_xDPI;
     double m_yDPI;

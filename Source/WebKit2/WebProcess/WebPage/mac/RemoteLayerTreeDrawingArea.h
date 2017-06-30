@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CallbackID.h"
 #include "DrawingArea.h"
 #include "GraphicsLayerCARemote.h"
 #include "RemoteLayerTreeTransaction.h"
@@ -68,7 +69,7 @@ private:
     void scheduleCompositingLayerFlushImmediately() override;
     void attachViewOverlayGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*) override;
 
-    void addTransactionCallbackID(uint64_t callbackID) override;
+    void addTransactionCallbackID(CallbackID) override;
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
     void willDestroyDisplayRefreshMonitor(WebCore::DisplayRefreshMonitor*);
@@ -82,7 +83,7 @@ private:
     void setLayerTreeStateIsFrozen(bool) override;
 
     void forceRepaint() override;
-    bool forceRepaintAsync(uint64_t) override { return false; }
+    bool forceRepaintAsync(CallbackID) override { return false; }
 
     void setViewExposedRect(std::optional<WebCore::FloatRect>) override;
     std::optional<WebCore::FloatRect> viewExposedRect() const override { return m_scrolledViewExposedRect; }
@@ -103,7 +104,7 @@ private:
 
     void mainFrameContentSizeChanged(const WebCore::IntSize&) override;
 
-    void activityStateDidChange(WebCore::ActivityState::Flags changed, bool wantsDidUpdateActivityState, const Vector<uint64_t>& callbackIDs) override;
+    void activityStateDidChange(WebCore::ActivityState::Flags changed, bool wantsDidUpdateActivityState, const Vector<CallbackID>& callbackIDs) override;
 
     bool adjustLayerFlushThrottling(WebCore::LayerFlushThrottleState::Flags) override;
 

@@ -26,6 +26,7 @@
 #ifndef RemoteLayerTreeTransaction_h
 #define RemoteLayerTreeTransaction_h
 
+#include "GenericCallback.h"
 #include "PlatformCAAnimationRemote.h"
 #include "RemoteLayerBackingStore.h"
 #include <WebCore/Color.h>
@@ -261,7 +262,7 @@ public:
     uint64_t transactionID() const { return m_transactionID; }
     void setTransactionID(uint64_t transactionID) { m_transactionID = transactionID; }
 
-    typedef uint64_t TransactionCallbackID;
+    typedef CallbackID TransactionCallbackID;
     const Vector<TransactionCallbackID>& callbackIDs() const { return m_callbackIDs; }
     void setCallbackIDs(Vector<TransactionCallbackID>&& callbackIDs) { m_callbackIDs = WTFMove(callbackIDs); }
 

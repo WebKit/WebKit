@@ -62,7 +62,7 @@ public:
     {
     }
 
-    void startPrint(WebCore::PrintContext* printContext, uint64_t callbackID) override
+    void startPrint(WebCore::PrintContext* printContext, CallbackID callbackID) override
     {
         m_printContext = printContext;
         m_callbackID = callbackID;
@@ -177,7 +177,7 @@ public:
     {
     }
 
-    void startPrint(WebCore::PrintContext* printContext, uint64_t callbackID) override
+    void startPrint(WebCore::PrintContext* printContext, CallbackID callbackID) override
     {
         m_printContext = printContext;
         m_callbackID = callbackID;
@@ -398,7 +398,6 @@ WebPrintOperationGtk::WebPrintOperationGtk(WebPage* page, const PrintInfo& print
     , m_pageSetup(printInfo.pageSetup.get())
     , m_printMode(printInfo.printMode)
     , m_printContext(0)
-    , m_callbackID(0)
     , m_xDPI(1)
     , m_yDPI(1)
     , m_printPagesIdleId(0)

@@ -37,7 +37,7 @@ messages -> DrawingArea {
     AcceleratedAnimationDidStart(uint64_t layerID, String key, double startTime)
     AcceleratedAnimationDidEnd(uint64_t layerID, String key)
     
-    AddTransactionCallbackID(uint64_t callbackID)
+    AddTransactionCallbackID(WebKit::CallbackID callbackID)
 #endif
 
 #if USE(TEXTURE_MAPPER_GL) && PLATFORM(GTK) && PLATFORM(X11) && !USE(REDIRECTED_XCOMPOSITE_WINDOW)

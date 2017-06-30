@@ -936,7 +936,7 @@ public:
     void drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, Ref<DataCallback>&&);
 #if PLATFORM(IOS)
     uint32_t computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo&, DrawToPDFCallback::CallbackFunction&&);
-    void drawToPDFCallback(const IPC::DataReference& pdfData, uint64_t callbackID);
+    void drawToPDFCallback(const IPC::DataReference& pdfData, WebKit::CallbackID);
 #endif
 #elif PLATFORM(GTK)
     void drawPagesForPrinting(WebFrameProxy*, const PrintInfo&, Ref<PrintFinishedCallback>&&);
@@ -1159,8 +1159,8 @@ public:
 
     void didRestoreScrollPosition();
 
-    void getLoadDecisionForIcon(const WebCore::LinkIcon&, uint64_t callbackID);
-    void finishedLoadingIcon(uint64_t callbackIdentifier, const IPC::DataReference&);
+    void getLoadDecisionForIcon(const WebCore::LinkIcon&, WebKit::CallbackID);
+    void finishedLoadingIcon(WebKit::CallbackID, const IPC::DataReference&);
 
     void setFocus(bool focused);
     void setWindowFrame(const WebCore::FloatRect&);
@@ -1449,36 +1449,36 @@ private:
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 
-    void voidCallback(uint64_t);
-    void dataCallback(const IPC::DataReference&, uint64_t);
-    void imageCallback(const ShareableBitmap::Handle&, uint64_t);
-    void stringCallback(const String&, uint64_t);
-    void invalidateStringCallback(uint64_t);
-    void scriptValueCallback(const IPC::DataReference&, bool hadException, const WebCore::ExceptionDetails&, uint64_t);
-    void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, uint64_t);
-    void validateCommandCallback(const String&, bool, int, uint64_t);
-    void unsignedCallback(uint64_t, uint64_t);
-    void editingRangeCallback(const EditingRange&, uint64_t);
+    void voidCallback(CallbackID);
+    void dataCallback(const IPC::DataReference&, CallbackID);
+    void imageCallback(const ShareableBitmap::Handle&, CallbackID);
+    void stringCallback(const String&, CallbackID);
+    void invalidateStringCallback(CallbackID);
+    void scriptValueCallback(const IPC::DataReference&, bool hadException, const WebCore::ExceptionDetails&, CallbackID);
+    void computedPagesCallback(const Vector<WebCore::IntRect>&, double totalScaleFactorForPrinting, CallbackID);
+    void validateCommandCallback(const String&, bool, int, CallbackID);
+    void unsignedCallback(uint64_t, CallbackID);
+    void editingRangeCallback(const EditingRange&, CallbackID);
 #if PLATFORM(COCOA)
-    void machSendRightCallback(const WebCore::MachSendRight&, uint64_t);
+    void machSendRightCallback(const WebCore::MachSendRight&, CallbackID);
 #endif
-    void rectForCharacterRangeCallback(const WebCore::IntRect&, const EditingRange&, uint64_t);
+    void rectForCharacterRangeCallback(const WebCore::IntRect&, const EditingRange&, CallbackID);
 #if PLATFORM(MAC)
-    void attributedStringForCharacterRangeCallback(const AttributedString&, const EditingRange&, uint64_t);
-    void fontAtSelectionCallback(const String&, double, bool, uint64_t);
+    void attributedStringForCharacterRangeCallback(const AttributedString&, const EditingRange&, CallbackID);
+    void fontAtSelectionCallback(const String&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS)
-    void gestureCallback(const WebCore::IntPoint&, uint32_t, uint32_t, uint32_t, uint64_t);
-    void touchesCallback(const WebCore::IntPoint&, uint32_t, uint32_t, uint64_t);
-    void autocorrectionDataCallback(const Vector<WebCore::FloatRect>&, const String&, float, uint64_t, uint64_t);
-    void autocorrectionContextCallback(const String&, const String&, const String&, const String&, uint64_t, uint64_t, uint64_t);
-    void selectionContextCallback(const String&, const String&, const String&, uint64_t);
+    void gestureCallback(const WebCore::IntPoint&, uint32_t gestureType, uint32_t gestureState, uint32_t flags, CallbackID);
+    void touchesCallback(const WebCore::IntPoint&, uint32_t touches, uint32_t flags, CallbackID);
+    void autocorrectionDataCallback(const Vector<WebCore::FloatRect>&, const String& fontName, float fontSize, uint64_t fontTraits, CallbackID);
+    void autocorrectionContextCallback(const String& beforeText, const String& markedText, const String& selectedText, const String& afterText, uint64_t location, uint64_t length, CallbackID);
+    void selectionContextCallback(const String& selectedText, const String& beforeText, const String& afterText, CallbackID);
     void interpretKeyEvent(const EditorState&, bool isCharEvent, bool& handled);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect);
-    void selectionRectsCallback(const Vector<WebCore::SelectionRect>&, uint64_t);
+    void selectionRectsCallback(const Vector<WebCore::SelectionRect>&, CallbackID);
 #endif
 #if PLATFORM(GTK)
-    void printFinishedCallback(const WebCore::ResourceError&, uint64_t);
+    void printFinishedCallback(const WebCore::ResourceError&, CallbackID);
 #endif
 
     void focusedFrameChanged(uint64_t frameID);
@@ -1699,7 +1699,7 @@ private:
 #endif
 
     CallbackMap m_callbacks;
-    HashSet<uint64_t> m_loadDependentStringCallbackIDs;
+    HashSet<CallbackID> m_loadDependentStringCallbackIDs;
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 
@@ -1959,7 +1959,7 @@ private:
     WebPreferencesStore::ValueMap m_configurationPreferenceValues;
     WebCore::ActivityState::Flags m_potentiallyChangedActivityStateFlags { WebCore::ActivityState::NoFlags };
     bool m_activityStateChangeWantsSynchronousReply { false };
-    Vector<uint64_t> m_nextActivityStateChangeCallbacks;
+    Vector<CallbackID> m_nextActivityStateChangeCallbacks;
 
     WebCore::MediaProducer::MediaStateFlags m_mediaState { WebCore::MediaProducer::IsNotPlaying };
 

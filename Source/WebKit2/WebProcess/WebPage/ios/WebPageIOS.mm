@@ -396,7 +396,7 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
     return false;
 }
 
-void WebPage::getSelectionContext(uint64_t callbackID)
+void WebPage::getSelectionContext(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     if (!frame.selection().isRange()) {
@@ -1046,7 +1046,7 @@ RefPtr<Range> WebPage::rangeForBlockAtPoint(const IntPoint& point)
     return range;
 }
 
-void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, uint64_t callbackID)
+void WebPage::selectWithGesture(const IntPoint& point, uint32_t granularity, uint32_t gestureType, uint32_t gestureState, bool isInteractingWithAssistedNode, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
@@ -1722,7 +1722,7 @@ bool WebPage::shouldSwitchToBlockModeForHandle(const IntPoint& handlePoint, Sele
     }
 }
 
-void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches, bool baseIsStart, uint64_t callbackID)
+void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches, bool baseIsStart, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     IntPoint pointInDocument = frame.view()->rootViewToContents(point);
@@ -1783,7 +1783,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, uint32_t touches
     }
 }
 
-void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, uint64_t callbackID)
+void WebPage::selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, uint32_t gestureType, uint32_t gestureState, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition fromPosition = frame.visiblePositionForPoint(frame.view()->rootViewToContents(from));
@@ -1824,7 +1824,7 @@ void WebPage::selectWordBackward()
         frame.selection().setSelectedRange(Range::create(*frame.document(), startPosition, position).ptr(), position.affinity(), true, UserTriggered);
 }
 
-void WebPage::moveSelectionByOffset(int32_t offset, uint64_t callbackID)
+void WebPage::moveSelectionByOffset(int32_t offset, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
@@ -1850,7 +1850,7 @@ static VisiblePosition visiblePositionForPositionWithOffset(const VisiblePositio
     return visiblePositionForIndex(startIndex + offset, root.get());
 }
 
-void WebPage::getRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, uint64_t callbackID)
+void WebPage::getRectsForGranularityWithSelectionOffset(uint32_t granularity, int32_t offset, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisibleSelection selection = frame.selection().selection();
@@ -1883,7 +1883,7 @@ static RefPtr<Range> rangeNearPositionMatchesText(const VisiblePosition& positio
     return findClosestPlainText(*selectionRange.get(), matchText, 0, targetOffset);
 }
 
-void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, uint64_t callbackID)
+void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     uint32_t length = text.length();
@@ -1928,7 +1928,7 @@ VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame
     return frame.visiblePositionForPoint(constrainedPoint);
 }
 
-void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInteractingWithAssistedNode, uint64_t callbackID)
+void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInteractingWithAssistedNode, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
@@ -1938,7 +1938,7 @@ void WebPage::selectPositionAtPoint(const WebCore::IntPoint& point, bool isInter
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, uint32_t granularity, uint32_t direction, bool isInteractingWithAssistedNode, uint64_t callbackID)
+void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& point, uint32_t granularity, uint32_t direction, bool isInteractingWithAssistedNode, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
@@ -1951,7 +1951,7 @@ void WebPage::selectPositionAtBoundaryWithDirection(const WebCore::IntPoint& poi
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, uint64_t callbackID)
+void WebPage::moveSelectionAtBoundaryWithDirection(uint32_t granularity, uint32_t direction, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     
@@ -1995,7 +1995,7 @@ static inline bool rectIsTooBigForSelection(const IntRect& blockRect, const Fram
     return blockRect.height() > frame.view()->unobscuredContentRect().height() * factor;
 }
 
-void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID)
+void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     RefPtr<Range> range = rangeForGranularityAtPoint(frame, point, granularity, isInteractingWithAssistedNode);
@@ -2022,13 +2022,13 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, u
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::beginSelectionInDirection(uint32_t direction, uint64_t callbackID)
+void WebPage::beginSelectionInDirection(uint32_t direction, CallbackID callbackID)
 {
     m_selectionAnchor = (static_cast<SelectionDirection>(direction) == DirectionLeft) ? Start : End;
     send(Messages::WebPageProxy::UnsignedCallback(m_selectionAnchor == Start, callbackID));
 }
 
-void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode, uint64_t callbackID)
+void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, uint32_t granularity, bool isInteractingWithAssistedNode, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
@@ -2057,7 +2057,7 @@ void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint&
     send(Messages::WebPageProxy::UnsignedCallback(selectionStart == m_initialSelection->startPosition(), callbackID));
 }
 
-void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, bool isInteractingWithAssistedNode, uint64_t callbackID)
+void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, bool isInteractingWithAssistedNode, CallbackID callbackID)
 {
     auto& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition position = visiblePositionInFocusedNodeForPoint(frame, point, isInteractingWithAssistedNode);
@@ -2108,7 +2108,7 @@ void WebPage::convertSelectionRectsToRootView(FrameView* view, Vector<SelectionR
     }
 }
 
-void WebPage::requestDictationContext(uint64_t callbackID)
+void WebPage::requestDictationContext(CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     VisiblePosition startPosition = frame.selection().selection().start();
@@ -2190,7 +2190,7 @@ void WebPage::replaceDictatedText(const String& oldText, const String& newText)
     frame.editor().setIgnoreSelectionChanges(false);
 }
 
-void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uint64_t callbackID)
+void WebPage::requestAutocorrectionData(const String& textForAutocorrection, CallbackID callbackID)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     if (!frame.selection().isCaret()) {
@@ -2238,14 +2238,14 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, uin
     send(Messages::WebPageProxy::AutocorrectionDataCallback(rectsForText, fontName.get(), fontSize, fontTraits, callbackID));
 }
 
-void WebPage::applyAutocorrection(const String& correction, const String& originalText, uint64_t callbackID)
+void WebPage::applyAutocorrection(const String& correction, const String& originalText, CallbackID callbackID)
 {
     bool correctionApplied;
     syncApplyAutocorrection(correction, originalText, correctionApplied);
     send(Messages::WebPageProxy::StringCallback(correctionApplied ? correction : String(), callbackID));
 }
 
-void WebPage::executeEditCommandWithCallback(const String& commandName, uint64_t callbackID)
+void WebPage::executeEditCommandWithCallback(const String& commandName, CallbackID callbackID)
 {
     executeEditCommand(commandName, String());
     if (commandName == "toggleBold" || commandName == "toggleItalic" || commandName == "toggleUnderline")
@@ -2392,7 +2392,7 @@ static void computeAutocorrectionContext(Frame& frame, String& contextBefore, St
     }
 }
 
-void WebPage::requestAutocorrectionContext(uint64_t callbackID)
+void WebPage::requestAutocorrectionContext(CallbackID callbackID)
 {
     String contextBefore;
     String contextAfter;
@@ -2676,7 +2676,7 @@ static inline bool hasAssistableElement(Node* startNode, Page& page, bool isForw
     return nextAssistableElement(startNode, page, isForward);
 }
 
-void WebPage::focusNextAssistedNode(bool isForward, uint64_t callbackID)
+void WebPage::focusNextAssistedNode(bool isForward, CallbackID callbackID)
 {
     Element* nextElement = nextAssistableElement(m_assistedNode.get(), *m_page, isForward);
     m_userIsInteracting = true;
@@ -3300,7 +3300,7 @@ void WebPage::dispatchAsynchronousTouchEvents(const Vector<WebTouchEvent, 1>& qu
 }
 #endif
 
-void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, uint64_t callbackID, Ref<Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply>&& reply)
+void WebPage::computePagesForPrintingAndDrawToPDF(uint64_t frameID, const PrintInfo& printInfo, CallbackID callbackID, Ref<Messages::WebPage::ComputePagesForPrintingAndDrawToPDF::DelayedReply>&& reply)
 {
     if (printInfo.snapshotFirstPage) {
         reply->send(1);

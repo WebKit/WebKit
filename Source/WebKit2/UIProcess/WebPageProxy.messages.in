@@ -154,27 +154,27 @@ messages -> WebPageProxy {
     WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, Vector<std::pair<String, String>> textFieldValues, uint64_t listenerID, WebKit::UserData userData)
 
     # Callback messages
-    VoidCallback(uint64_t callbackID)
-    DataCallback(IPC::DataReference resultData, uint64_t callbackID)
-    ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, uint64_t callbackID)
-    StringCallback(String resultString, uint64_t callbackID)
-    InvalidateStringCallback(uint64_t callbackID)
-    ScriptValueCallback(IPC::DataReference resultData, bool hadException, struct WebCore::ExceptionDetails details, uint64_t callbackID)
-    ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
-    ValidateCommandCallback(String command, bool isEnabled, int32_t state, uint64_t callbackID)
-    EditingRangeCallback(struct WebKit::EditingRange range, uint64_t callbackID)
-    UnsignedCallback(uint64_t result, uint64_t callbackID)
-    RectForCharacterRangeCallback(WebCore::IntRect rect, struct WebKit::EditingRange actualRange, uint64_t callbackID)
+    VoidCallback(WebKit::CallbackID callbackID)
+    DataCallback(IPC::DataReference resultData, WebKit::CallbackID callbackID)
+    ImageCallback(WebKit::ShareableBitmap::Handle bitmapHandle, WebKit::CallbackID callbackID)
+    StringCallback(String resultString, WebKit::CallbackID callbackID)
+    InvalidateStringCallback(WebKit::CallbackID callbackID)
+    ScriptValueCallback(IPC::DataReference resultData, bool hadException, struct WebCore::ExceptionDetails details, WebKit::CallbackID callbackID)
+    ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, WebKit::CallbackID callbackID)
+    ValidateCommandCallback(String command, bool isEnabled, int32_t state, WebKit::CallbackID callbackID)
+    EditingRangeCallback(struct WebKit::EditingRange range, WebKit::CallbackID callbackID)
+    UnsignedCallback(uint64_t result, WebKit::CallbackID callbackID)
+    RectForCharacterRangeCallback(WebCore::IntRect rect, struct WebKit::EditingRange actualRange, WebKit::CallbackID callbackID)
 #if PLATFORM(MAC)
-    AttributedStringForCharacterRangeCallback(struct WebKit::AttributedString string, struct WebKit::EditingRange actualRange, uint64_t callbackID)
-    FontAtSelectionCallback(String fontName, double fontSize, bool selectioHasMultipleFonts, uint64_t callbackID)
+    AttributedStringForCharacterRangeCallback(struct WebKit::AttributedString string, struct WebKit::EditingRange actualRange, WebKit::CallbackID callbackID)
+    FontAtSelectionCallback(String fontName, double fontSize, bool selectioHasMultipleFonts, WebKit::CallbackID callbackID)
 #endif
 #if PLATFORM(IOS)
-    GestureCallback(WebCore::IntPoint point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, uint64_t callbackID)
-    TouchesCallback(WebCore::IntPoint point, uint32_t touches, uint32_t flags, uint64_t callbackID)
-    AutocorrectionDataCallback(Vector<WebCore::FloatRect> textRects, String fontName, double fontSize, uint64_t traits, uint64_t callbackID)
-    AutocorrectionContextCallback(String beforeText, String markedText, String selectedText, String afterText, uint64_t location, uint64_t length, uint64_t callbackID)
-    SelectionContextCallback(String selectedText, String beforeText, String afterText, uint64_t callbackID)
+    GestureCallback(WebCore::IntPoint point, uint32_t gestureType, uint32_t gestureState, uint32_t flags, WebKit::CallbackID callbackID)
+    TouchesCallback(WebCore::IntPoint point, uint32_t touches, uint32_t flags, WebKit::CallbackID callbackID)
+    AutocorrectionDataCallback(Vector<WebCore::FloatRect> textRects, String fontName, double fontSize, uint64_t traits, WebKit::CallbackID callbackID)
+    AutocorrectionContextCallback(String beforeText, String markedText, String selectedText, String afterText, uint64_t location, uint64_t length, WebKit::CallbackID callbackID)
+    SelectionContextCallback(String selectedText, String beforeText, String afterText, WebKit::CallbackID callbackID)
     InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled)
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information)
     SaveImageToLibrary(WebKit::SharedMemory::Handle handle, uint64_t size)
@@ -184,17 +184,17 @@ messages -> WebPageProxy {
     DidNotHandleTapAsClick(WebCore::IntPoint point)
     DidCompleteSyntheticClick()
     DisableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID)
-    DrawToPDFCallback(IPC::DataReference pdfData, uint64_t callbackID)
-    SelectionRectsCallback(Vector<WebCore::SelectionRect> selectionRects, uint64_t callbackID);
+    DrawToPDFCallback(IPC::DataReference pdfData, WebKit::CallbackID callbackID)
+    SelectionRectsCallback(Vector<WebCore::SelectionRect> selectionRects, WebKit::CallbackID callbackID);
 #endif
 #if ENABLE(DATA_DETECTION)
     SetDataDetectionResult(struct WebKit::DataDetectionResult dataDetectionResult)
 #endif
 #if PLATFORM(GTK)
-    PrintFinishedCallback(WebCore::ResourceError error, uint64_t callbackID)
+    PrintFinishedCallback(WebCore::ResourceError error, WebKit::CallbackID callbackID)
 #endif
 #if PLATFORM(COCOA)
-    MachSendRightCallback(WebCore::MachSendRight sendRight, uint64_t callbackID)
+    MachSendRightCallback(WebCore::MachSendRight sendRight, WebKit::CallbackID callbackID)
 #endif
 
     PageScaleFactorDidChange(double scaleFactor)
@@ -482,8 +482,8 @@ messages -> WebPageProxy {
 
     DidRestoreScrollPosition()
 
-    GetLoadDecisionForIcon(struct WebCore::LinkIcon icon, uint64_t callbackID)
-    FinishedLoadingIcon(uint64_t callbackIdentifier, IPC::DataReference data);
+    GetLoadDecisionForIcon(struct WebCore::LinkIcon icon, WebKit::CallbackID callbackID)
+    FinishedLoadingIcon(WebKit::CallbackID callbackID, IPC::DataReference data);
 
 #if PLATFORM(MAC)
     DidHandleAcceptedCandidate()

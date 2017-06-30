@@ -28,6 +28,7 @@
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 
+#include "CallbackID.h"
 #include "LayerTreeContext.h"
 #include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/PlatformScreen.h>
@@ -71,7 +72,7 @@ public:
     virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) { };
     virtual void scrollNonCompositedContents(const WebCore::IntRect&) { };
     virtual void forceRepaint() = 0;
-    virtual bool forceRepaintAsync(uint64_t /*callbackID*/) { return false; }
+    virtual bool forceRepaintAsync(CallbackID) { return false; }
     virtual void sizeDidChange(const WebCore::IntSize& newSize) = 0;
     virtual void pageBackgroundTransparencyChanged() = 0;
 
