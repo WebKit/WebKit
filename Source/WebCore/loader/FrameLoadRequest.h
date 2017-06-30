@@ -43,8 +43,8 @@ public:
 
     WEBCORE_EXPORT ~FrameLoadRequest();
 
-    FrameLoadRequest(FrameLoadRequest&&);
-    FrameLoadRequest& operator=(FrameLoadRequest&&);
+    WEBCORE_EXPORT FrameLoadRequest(FrameLoadRequest&&);
+    WEBCORE_EXPORT FrameLoadRequest& operator=(FrameLoadRequest&&);
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 

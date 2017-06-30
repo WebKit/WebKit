@@ -1,3 +1,13 @@
+2017-06-30  Daniel Bates  <dabates@apple.com>
+
+        Attempt to fix the build following <https://trac.webkit.org/changeset/219019>
+        (https://bugs.webkit.org/show_bug.cgi?id=165160)
+
+        Export the FrameLoadRequest move constructor and move operator so that they
+        can be used from WebKit.
+
+        * loader/FrameLoadRequest.h:
+
 2017-06-30  Don Olmstead  <don.olmstead@sony.com>
 
         [WebCore] Update AXObjectCache for !HAVE(ACCESSIBILITY)
