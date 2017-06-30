@@ -86,6 +86,7 @@
 #include "MainFrame.h"
 #include "MemoryCache.h"
 #include "MemoryRelease.h"
+#include "NavigationDisabler.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"
@@ -1214,7 +1215,7 @@ static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& s
 
 bool FrameLoader::isNavigationAllowed() const
 {
-    return m_pageDismissalEventBeingDispatched == PageDismissalType::None && NavigationDisabler::isNavigationAllowed();
+    return m_pageDismissalEventBeingDispatched == PageDismissalType::None && NavigationDisabler::isNavigationAllowed(m_frame);
 }
 
 void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, FormState* formState)
@@ -2917,7 +2918,7 @@ bool FrameLoader::shouldClose()
 
     bool shouldClose = false;
     {
-        NavigationDisabler navigationDisabler;
+        NavigationDisabler navigationDisabler(&m_frame);
         size_t i;
 
         for (i = 0; i < targetFrames.size(); i++) {

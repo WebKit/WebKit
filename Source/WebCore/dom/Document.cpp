@@ -120,6 +120,7 @@
 #include "MutationEvent.h"
 #include "NameNodeList.h"
 #include "NamedFlowCollection.h"
+#include "NavigationDisabler.h"
 #include "NestingLevelIncrementer.h"
 #include "NoEventDispatchAssertion.h"
 #include "NodeIterator.h"
@@ -2296,7 +2297,7 @@ void Document::prepareForDestruction()
 #endif
 
     {
-        NavigationDisabler navigationDisabler;
+        NavigationDisabler navigationDisabler(m_frame);
         disconnectDescendantFrames();
     }
 

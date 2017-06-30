@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests opening a new window during beforeunload event. The page load should succeed.</p>
+<div id="log">FAIL</div>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows()
+    testRunner.setPopupBlockingEnabled(false);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+}
+
+var opened;
+const frame = document.createElement('iframe');
+document.body.appendChild(frame);
+frame.contentDocument.open();
+frame.contentDocument.write(`<script> window.onbeforeunload = () => top.opened = window.open('resources/message-opener.html'); </` + `script>`);
+frame.contentDocument.close();
+
+frame.src = 'about:blank';
+
+window.onmessage = (event) => {
+    if (event.data == 'load') {
+        document.getElementById('log').textContent = 'PASS';
+        endTest();
+    }
+}
+
+function endTest() {
+    if (opened)
+        opened.close();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+setTimeout(endTest, 1000);
+
+</script>
+</body>
+</html>

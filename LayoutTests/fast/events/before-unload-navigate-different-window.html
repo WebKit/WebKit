@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests navigating a different window during beforeunload event. The page load should succeed.</p>
+<button onclick="startTest(); this.remove();">Start test</button>
+<div id="log"></div>
+<script>
+
+const frame = document.createElement('iframe');
+document.body.appendChild(frame);
+frame.contentDocument.open();
+frame.contentDocument.write(`<script> window.onbeforeunload = () => top.didFireBeforeUnload(); </` + `script>`);
+frame.contentDocument.close();
+
+let differentWindow;
+const log = document.getElementById('log');
+function startTest() {
+    differentWindow = window.open('about:blank');
+    setTimeout(endTest, 1000);
+    frame.src = 'about:blank';
+    log.textContent = 'FAIL';
+}
+
+function didFireBeforeUnload() {
+    differentWindow.location.href = 'resources/message-opener.html';
+}
+
+window.onmessage = (event) => {
+    if (event.data == 'load') {
+        log.textContent = 'PASS';
+        endTest();
+    }
+}
+
+function endTest() {
+    differentWindow.close();
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setCanOpenWindows()
+    testRunner.setPopupBlockingEnabled(false);
+    testRunner.setCloseRemainingWindowsWhenComplete(true);
+    startTest();
+    document.querySelector('button').remove();
+}
+
+</script>
+</body>
+</html>

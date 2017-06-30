@@ -12509,6 +12509,7 @@
 		9B714E1E1C91166900AC0E92 /* EventPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventPath.cpp; sourceTree = "<group>"; };
 		9B714E1F1C91166900AC0E92 /* EventPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventPath.h; sourceTree = "<group>"; };
 		9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicalSelectionOffsetCaches.h; sourceTree = "<group>"; };
+		9BA827781F06156500F71E75 /* NavigationDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationDisabler.h; sourceTree = "<group>"; };
 		9BAB6C6A12550631001626D4 /* EditingStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingStyle.h; sourceTree = "<group>"; };
 		9BAB6C6B12550631001626D4 /* EditingStyle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditingStyle.cpp; sourceTree = "<group>"; };
 		9BAF3B2312C1A39800014BF1 /* WritingDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritingDirection.h; sourceTree = "<group>"; };
@@ -23977,6 +23978,7 @@
 				93CCF0260AF6C52900018E89 /* NavigationAction.h */,
 				979F43D11075E44A0000F83B /* NavigationScheduler.cpp */,
 				979F43D21075E44A0000F83B /* NavigationScheduler.h */,
+				9BA827781F06156500F71E75 /* NavigationDisabler.h */,
 				93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */,
 				656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */,
 				D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */,

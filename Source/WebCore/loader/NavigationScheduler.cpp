@@ -47,6 +47,7 @@
 #include "HistoryItem.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "NavigationDisabler.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "UserGestureIndicator.h"
@@ -55,7 +56,7 @@
 
 namespace WebCore {
 
-unsigned NavigationDisabler::s_navigationDisableCount = 0;
+unsigned NavigationDisabler::s_globalNavigationDisableCount = 0;
 
 class ScheduledNavigation {
     WTF_MAKE_NONCOPYABLE(ScheduledNavigation); WTF_MAKE_FAST_ALLOCATED;
@@ -364,7 +365,7 @@ inline bool NavigationScheduler::shouldScheduleNavigation(const URL& url) const
         return false;
     if (protocolIsJavaScript(url))
         return true;
-    return NavigationDisabler::isNavigationAllowed();
+    return NavigationDisabler::isNavigationAllowed(m_frame);
 }
 
 void NavigationScheduler::scheduleRedirect(Document& initiatingDocument, double delay, const URL& url)

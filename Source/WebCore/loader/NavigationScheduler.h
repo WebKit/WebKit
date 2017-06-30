@@ -43,23 +43,6 @@ class ScheduledNavigation;
 class SecurityOrigin;
 class URL;
 
-class NavigationDisabler {
-public:
-    NavigationDisabler()
-    {
-        s_navigationDisableCount++;
-    }
-    ~NavigationDisabler()
-    {
-        ASSERT(s_navigationDisableCount);
-        s_navigationDisableCount--;
-    }
-    static bool isNavigationAllowed() { return !s_navigationDisableCount; }
-
-private:
-    static unsigned s_navigationDisableCount;
-};
-
 class NavigationScheduler {
 public:
     explicit NavigationScheduler(Frame&);

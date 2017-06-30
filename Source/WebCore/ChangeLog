@@ -1,3 +1,47 @@
+2017-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r214194): Safari leaves a popup window open opened during before unload
+        https://bugs.webkit.org/show_bug.cgi?id=174016
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by WebKit allowing the opening of a new window via window.open but disallowing
+        the initial navigation within the newly opened window while a beforeunload event is being dispatched.
+
+        Because some websites which opens a window during a beforeunload event relies on the opened page
+        to communicate back in order to close it. This resulted in a newly opened popup window with about:blank
+        being left out on those websites.
+
+        Fixed the bug by allowing the navigation of a new window as well as an existing another window.
+        More concretely, we disallow navigations within the same frame tree as the one in which a beforeunload
+        event is being dispatched, and allow navigations elsewhere (i.e. different window / page).
+        During the destruction of a frame-less document, disallow all the navigations.
+
+        Tests: fast/events/before-unload-navigate-different-window.html
+               fast/events/before-unload-open-window.html
+               fast/events/before-unload-sibling-frame.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::prepareForDestruction):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isNavigationAllowed):
+        (WebCore::FrameLoader::shouldClose):
+        * loader/NavigationDisabler.h: Added. Extracted from NavigationScheduler.h
+        (WebCore::NavigationDisabler::NavigationDisabler): Increment the newly added counter on MainFrame unless
+        the frame is null (during the destruction of a frameless document) in which case we increment the global
+        disable count.
+        (WebCore::NavigationDisabler::~NavigationDisabler): Ditto for decrementation.
+        (WebCore::NavigationDisabler::isNavigationAllowed): Only allow the navigation when there is no frameless
+        document in destruction, and none of the frame in the same frame tree as the one given is currently in
+        the process of dispatching a beforeunload event.
+        * loader/NavigationScheduler.cpp:
+        (WebCore::NavigationScheduler::shouldScheduleNavigation):
+        * loader/NavigationScheduler.h:
+        (WebCore::NavigationDisabler): Moved to NavigationDisabler.h.
+        * page/MainFrame.h:
+        (WebCore::MainFrame): Added s_globalNavigationDisableCount.
+
 2017-06-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Add support for conditionally read-write attributes
