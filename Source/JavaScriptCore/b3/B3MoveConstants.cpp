@@ -338,7 +338,7 @@ private:
 
     static ValueKey floatZero()
     {
-        return ValueKey(ConstFloat, Double, 0.0);
+        return ValueKey(ConstFloat, Float, 0.0);
     }
 
     Procedure& m_proc;
