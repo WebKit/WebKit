@@ -87,3 +87,13 @@ class IOSDeviceTest(ios_testcase.IOSTest):
         port = self.make_port(port_name=self.port_name)
         with self.assertRaises(RuntimeError):
             port._get_crash_log('DumpRenderTree', 1234, None, None, time.time(), wait_for_log=False)
+
+    # FIXME: https://bugs.webkit.org/show_bug.cgi?id=173775
+    def test_additional_platform_directory(self):
+        pass
+
+    def test_baseline_searchpath(self):
+        pass
+
+    def test_expectations_ordering(self):
+        pass

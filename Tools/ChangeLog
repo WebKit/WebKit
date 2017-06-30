@@ -1,3 +1,27 @@
+2017-06-30  Jonathan Bedard  <jbedard@apple.com>
+
+        Add support for different versions of iOS when loading test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=173774
+        <rdar://problem/32951132>
+
+        Rubber-stamped by Aakash Jain.
+
+        When running layout tests, we should support multiple version of iOS the same way we do Mac.
+
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.default_baseline_search_path): Add ios-<major version> test expectation.
+        (IOSPort.test_expectations_file_position): Added new file expectations, increment expected file position.
+        (IOSPort.ios_version): iOS ports must define a function to retrieve the iOS version.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.ios_version): Ask connected devices for implementation.
+        * Scripts/webkitpy/port/ios_device_unittest.py:
+        (IOSDeviceTest.test_additional_platform_directory): Skip test until bug 173775 is finished.
+        (IOSDeviceTest.test_baseline_searchpath): Ditto.
+        (IOSDeviceTest.test_expectations_ordering): Ditto.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.ios_version): If a runtime is specified, ask the runtime for the iOS version. Otherwise,
+        ask the platform.
+
 2017-06-30  Jacobo Aragunde Pérez  <jaragunde@igalia.com>
 
         Fontconfig build breaks with glibc 2.15+

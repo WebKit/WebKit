@@ -93,6 +93,7 @@ class IOSPort(DarwinPort):
         fallback_names = [
             '{}-{}'.format(self.port_name, wk_string),
             self.port_name,
+            '{}-{}'.format(IOSPort.port_name, self.ios_version().split('.')[0]),
             '{}-{}'.format(IOSPort.port_name, wk_string),
             IOSPort.port_name,
         ]
@@ -102,7 +103,10 @@ class IOSPort(DarwinPort):
         return map(self._webkit_baseline_path, fallback_names)
 
     def test_expectations_file_position(self):
-        return 3
+        return 4
+
+    def ios_version(self):
+        raise NotImplementedError
 
     def _create_devices(self, device_class):
         raise NotImplementedError

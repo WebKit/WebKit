@@ -91,6 +91,25 @@ class IOSDevicePort(IOSPort):
                 return (stderr, crashlog)
         return (stderr, None)
 
+    @memoized
+    def ios_version(self):
+        if not apple_additions():
+            raise RuntimeError(self.NO_ON_DEVICE_TESTING)
+
+        # FIXME: We should replace --runtime with something which makes sense for both Simulator and Device
+        # https://bugs.webkit.org/show_bug.cgi?id=173775
+        if len(self._device_for_worker_number_map()) == 0:
+            raise RuntimeError('No devices are available')
+        version = None
+        for device in self._device_for_worker_number_map():
+            if not version:
+                version = device.platform.os_version
+            else:
+                if device.platform.os_version != version:
+                    raise RuntimeError('Multiple connected devices have different iOS versions')
+
+        return version
+
     # FIXME: These need device implementations <rdar://problem/30497991>.
     def check_for_leaks(self, process_name, process_pid):
         pass

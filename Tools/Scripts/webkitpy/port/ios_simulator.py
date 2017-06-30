@@ -100,6 +100,14 @@ class IOSSimulatorPort(IOSPort):
             runtime = Runtime.from_version_string(self.host.platform.xcode_sdk_version('iphonesimulator'))
         return runtime
 
+    def ios_version(self):
+        # FIXME: We should replace --runtime with something which makes sense for both Simulator and Device
+        # https://bugs.webkit.org/show_bug.cgi?id=173775
+        runtime_identifier = self.get_option('runtime')
+        if runtime_identifier:
+            return '.'.join(str(i) for i in Runtime.from_identifier(runtime_identifier).version)
+        return self.host.platform.xcode_sdk_version('iphonesimulator')
+
     def simulator_device_type(self):
         device_type_identifier = self.get_option('device_type')
         if device_type_identifier:
