@@ -1,3 +1,22 @@
+2017-06-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        UploadedFile should include the file extension in its url
+        https://bugs.webkit.org/show_bug.cgi?id=174009
+
+        Reviewed by Chris Dumez.
+
+        Some command line tools such as darwinup use the file extension to determine the file type.
+        Include the file extension in the URL of an uploaded file to make it work with these tools.
+
+        * public/include/uploaded-file-helpers.php:
+        (format_uploaded_file): Include the file extension.
+        * public/v3/models/uploaded-file.js:
+        (UploadedFile):
+        (UploadedFile.prototype.url): Return the URL with hthe file extension specified. /api/uploaded-file
+        already supports having the file extension specified.
+        * server-tests/tools-sync-buildbot-integration-tests.js: Updated test cases.
+        * unit-tests/buildbot-syncer-tests.js: Ditto.
+
 2017-05-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't shouldn't create a request to build a patch if there is no patch to build

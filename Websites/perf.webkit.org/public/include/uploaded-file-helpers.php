@@ -10,6 +10,7 @@ function format_uploaded_file($file_row)
         'createdAt' => Database::to_js_time($file_row['file_created_at']),
         'mime' => $file_row['file_mime'],
         'filename' => $file_row['file_filename'],
+        'extension' => $file_row['file_extension'],
         'author' => $file_row['file_author'],
         'sha256' => $file_row['file_sha256']);
 }

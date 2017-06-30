@@ -7,6 +7,7 @@ class UploadedFile extends DataModelObject {
         this._createdAt = new Date(object.createdAt);
         this._deletedAt = object.deletedAt ? new Date(object.deletedAt) : null;
         this._filename = object.filename;
+        this._extension = object.extension;
         this._author = object.author;
         this._size = object.size;
         this._sha256 = object.sha256;
@@ -19,7 +20,7 @@ class UploadedFile extends DataModelObject {
     author() { return this._author; }
     size() { return this._size; }
     label() { return this.filename(); }
-    url() { return RemoteAPI.url(`/api/uploaded-file/${this.id()}`); }
+    url() { return RemoteAPI.url(`/api/uploaded-file/${this.id()}${this._extension}`); }
 
     static uploadFile(file, uploadProgressCallback = null)
     {

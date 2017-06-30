@@ -173,7 +173,7 @@ describe('sync-buildbot', function () {
         }).then(() => {
             assert.equal(requests.length, 7);
             assertAndResolveRequest(requests[6], 'POST', '/builders/some%20builder/force', 'OK');
-            assert.deepEqual(requests[6].data, {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1'),
+            assert.deepEqual(requests[6].data, {'wk': '191622', 'wk-patch': RemoteAPI.url('/api/uploaded-file/1.dat'),
                 'build-request-id': '1', 'forcescheduler': 'force-ab-builds'});
             return MockRemoteAPI.waitForRequest();
         }).then(() => {

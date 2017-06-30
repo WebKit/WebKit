@@ -229,10 +229,10 @@ function createSampleBuildRequestWithPatch(platform, test, order)
     const shared111237 = CommitLog.ensureSingleton('111237', {'id': '111237', 'time': 1456931874000, 'repository': MockModels.sharedRepository, 'revision': '80229'});
     const ios13A452 = CommitLog.ensureSingleton('88930', {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'});
 
-    const patch = new UploadedFile(453, {'createdAt': new Date('2017-05-01T19:16:53Z'), 'filename': 'patch.dat', 'author': 'some user',
+    const patch = new UploadedFile(453, {'createdAt': new Date('2017-05-01T19:16:53Z'), 'filename': 'patch.dat', 'extension': '.dat', 'author': 'some user',
         size: 534637, sha256: '169463c8125e07c577110fe144ecd63942eb9472d438fc0014f474245e5df8a1'});
 
-    const root = new UploadedFile(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'author': 'some user',
+    const root = new UploadedFile(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
         size: 16452234, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656d58d'});
 
     const commitSet = CommitSet.ensureSingleton('53246456', {customRoots: [root], revisionItems: [{commit: webkit197463, patch}, {commit: shared111237}, {commit: ios13A452}]});
@@ -975,7 +975,7 @@ describe('BuildbotSyncer', () => {
             const request = createSampleBuildRequestWithPatch(MockModels.iphone, null, -1);
             const properties = syncers[2]._propertiesForBuildRequest(request, [request]);
             assert.equal(properties['webkit'], '197463');
-            assert.equal(properties['webkit-patch'], 'http://build.webkit.org/api/uploaded-file/453');
+            assert.equal(properties['webkit-patch'], 'http://build.webkit.org/api/uploaded-file/453.dat');
         });
 
         it('should resolve "ifBuilt"', () => {
@@ -996,16 +996,16 @@ describe('BuildbotSyncer', () => {
             const requestToBuild = createSampleBuildRequestWithPatch(MockModels.iphone, null, -1);
             const requestToTest = createSampleBuildRequestWithPatch(MockModels.iphone, MockModels.speedometer, 0);
             const otherRequestToTest = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
-    
+
             let properties = syncers[0]._propertiesForBuildRequest(requestToTest, [requestToTest]);
             assert.equal(properties['webkit'], '197463');
-            assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456"}]');
+            assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456.dat"}]');
             assert.equal(properties['test-custom-build'], undefined);
             assert.equal(properties['has-built-patch'], undefined);
 
             properties = syncers[0]._propertiesForBuildRequest(requestToTest, [requestToBuild, requestToTest]);
             assert.equal(properties['webkit'], '197463');
-            assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456"}]');
+            assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456.dat"}]');
             assert.equal(properties['test-custom-build'], '');
             assert.equal(properties['has-built-patch'], 'true');
 
