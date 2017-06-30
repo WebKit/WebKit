@@ -39,8 +39,10 @@ const Icons = {
     SkipForward     : { name: "SkipForward15", type: "svg", label: UIString("Skip Forward 15 seconds") },
     Tracks          : { name: "MediaSelector", type: "svg", label: UIString("Media Selection") },
     Volume          : { name: "VolumeHi", type: "svg", label: UIString("Mute") },
+    VolumeRTL       : { name: "VolumeHi-RTL", type: "svg", label: UIString("Mute") },
     VolumeDown      : { name: "VolumeLo", type: "svg", label: UIString("Volume Down") },
     VolumeMuted     : { name: "Mute", type: "svg", label: UIString("Unmute") },
+    VolumeMutedRTL  : { name: "Mute-RTL", type: "svg", label: UIString("Unmute") },
     VolumeUp        : { name: "VolumeHi", type: "svg", label: UIString("Volume Up") }
 };
 

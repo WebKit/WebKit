@@ -38,6 +38,7 @@ class MediaController
         this.container.className = "media-controls-container";
 
         this._updateControlsIfNeeded();
+        this._usesLTRUserInterfaceLayoutDirection = false;
 
         if (host) {
             host.controlsDependOnPageScaleFactor = this.layoutTraits & LayoutTraits.iOS;
@@ -115,6 +116,10 @@ class MediaController
 
     set usesLTRUserInterfaceLayoutDirection(flag)
     {
+        if (this._usesLTRUserInterfaceLayoutDirection === flag)
+            return;
+
+        this._usesLTRUserInterfaceLayoutDirection = flag;
         this.controls.usesLTRUserInterfaceLayoutDirection = flag;
     }
 

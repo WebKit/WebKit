@@ -164,6 +164,7 @@ class InlineMediaControls extends MediaControls
         this.rightContainer.buttons = this._rightContainerButtons();
         this.rightContainer.buttons.concat(this.leftContainer.buttons).forEach(button => delete button.dropped);
         this.muteButton.style = this.preferredMuteButtonStyle;
+        this.muteButton.usesRTLIconVariant = false;
 
         for (let button of this._droppableButtons()) {
             // If the button is not enabled, we can skip it.
@@ -239,7 +240,9 @@ class InlineMediaControls extends MediaControls
     {
         if (this._shouldUseSingleBarLayout)
             return [];
-        return [this.fullscreenButton, this.pipButton];
+        if (this.usesLTRUserInterfaceLayoutDirection)
+            return [this.fullscreenButton, this.pipButton];
+        return [this.pipButton, this.fullscreenButton];
     }
 
     _leftContainerButtons()
@@ -280,6 +283,7 @@ class InlineMediaControls extends MediaControls
 
         delete this.muteButton.dropped;
         this.muteButton.style = Button.Styles.Bar;
+        this.muteButton.usesRTLIconVariant = !this.usesLTRUserInterfaceLayoutDirection;
         this._topRightControlsBarContainer.buttons = [this.muteButton];
         this._topRightControlsBarContainer.layout();
         this.topRightControlsBar.width = this._topRightControlsBarContainer.width;

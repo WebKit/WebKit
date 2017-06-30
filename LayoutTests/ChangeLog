@@ -1,3 +1,20 @@
+2017-06-30  Antoine Quint  <graouts@apple.com>
+
+        Top controls bars should invert with right-to-left user interface layout direction locale
+        https://bugs.webkit.org/show_bug.cgi?id=173989
+        <rdar://problem/32863552>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test to check we correctly layout the top controls bars in RTL and rebaseline a
+        test that now requires an asynchronous assertion.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html: Added.
+        * media/modern-media-controls/mute-button/mute-button-expected.txt:
+        * media/modern-media-controls/mute-button/mute-button.html:
+        * platform/mac/TestExpectations:
+
 2017-06-30  Dean Jackson  <dino@apple.com>
 
         REGRESSION (High Sierra): Gradient LayoutTests are failing

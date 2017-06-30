@@ -18,10 +18,10 @@ shouldBeFalse("muteButton.muted");
 const mutedButton = new MuteButton({ layoutTraits: LayoutTraits.macOS });
 mutedButton.muted = true;
 shouldBeTrue("mutedButton.muted");
-shouldBe("mutedButton.iconName", "Icons.VolumeMuted");
-
-shouldBecomeEqual('muteButton.image.element.style.webkitMaskImage.includes("macOS/VolumeHi.svg")', "true", () => {
-    shouldBecomeEqual('mutedButton.image.element.style.webkitMaskImage.includes("macOS/Mute.svg")', "true", finishJSTest);
+shouldBecomeEqual("mutedButton.iconName", "Icons.VolumeMuted", () => {
+    shouldBecomeEqual('muteButton.image.element.style.webkitMaskImage.includes("macOS/VolumeHi.svg")', "true", () => {
+        shouldBecomeEqual('mutedButton.image.element.style.webkitMaskImage.includes("macOS/Mute.svg")', "true", finishJSTest);
+    });
 });
 
 </script>

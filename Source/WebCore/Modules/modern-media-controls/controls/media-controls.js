@@ -113,6 +113,7 @@ class MediaControls extends LayoutNode
 
     set usesLTRUserInterfaceLayoutDirection(flag)
     {
+        this.needsLayout = this.usesLTRUserInterfaceLayoutDirection !== flag;
         this.element.classList.toggle("uses-ltr-user-interface-layout-direction", flag);
     }
 

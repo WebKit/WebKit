@@ -1,3 +1,54 @@
+2017-06-30  Antoine Quint  <graouts@apple.com>
+
+        Top controls bars should invert with right-to-left user interface layout direction locale
+        https://bugs.webkit.org/show_bug.cgi?id=173989
+        <rdar://problem/32863552>
+
+        Reviewed by Dean Jackson.
+
+        When the user interface layout direction is set by the locale to be right-to-left, we now:
+
+            - invert the two top controls bars
+            - invert the layout order for the fullscreen / PiP controls bar
+            - orient the volume button the opposite direction when presented in a top controls bar
+
+        Test: media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html
+
+        * Modules/modern-media-controls/controls/icon-service.js: Add new RTL variants for the mute and unmute icons.
+        * Modules/modern-media-controls/controls/inline-media-controls.css: Invert the position of the two top controls
+        bars when we switch user interface layout direction.
+        (.media-controls.inline.uses-ltr-user-interface-layout-direction > .controls-bar.top-left,):
+        (.media-controls.inline.uses-ltr-user-interface-layout-direction > .controls-bar.top-right,):
+        (.media-controls.inline > .controls-bar.top-left): Deleted.
+        (.media-controls.inline > .controls-bar.top-right): Deleted.
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls.prototype.layout): Default to using the LTR variant for the mute button icon since
+        it should only use the RTL variant in case the locale requires it *and* we display the mute button in a
+        top controls bar rather than the bottom controls bar (ie. when width becomes constrained).
+        (InlineMediaControls.prototype._topLeftContainerButtons): Invert the order of the fullscreen and PiP
+        buttons based on the user interface layout direction.
+        (InlineMediaControls.prototype._addTopRightBarWithMuteButtonToChildren):
+        (InlineMediaControls):
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.set usesLTRUserInterfaceLayoutDirection): Schedule a layout when the user interface
+        layout direction changes.
+        * Modules/modern-media-controls/controls/mute-button.js: Add a new "usesRTLIconVariant" property, false by
+        default, to indicate we want to use the RTL variant of the button's icon.
+        (MuteButton):
+        (MuteButton.prototype.get muted):
+        (MuteButton.prototype.set muted):
+        (MuteButton.prototype.set usesRTLIconVariant):
+        (MuteButton.prototype.layout):
+        * Modules/modern-media-controls/images/iOS/Mute-RTL.svg: Added.
+        * Modules/modern-media-controls/images/iOS/VolumeHi-RTL.svg: Added.
+        * Modules/modern-media-controls/images/macOS/Mute-RTL.svg: Added.
+        * Modules/modern-media-controls/images/macOS/VolumeHi-RTL.svg: Added.
+        * Modules/modern-media-controls/media/media-controller.js: Use an ivar to track when it's worth notifying the
+        media controls that the user interface layout direction has changed. This means we won't need to schedule a
+        layout in case it's set to the current value.
+        (MediaController):
+        (MediaController.prototype.set usesLTRUserInterfaceLayoutDirection):
+
 2017-06-29  Zalan Bujtas  <zalan@apple.com>
 
         BreakingContext::handleReplaced() should use replacedBox instead of m_current.renderer().

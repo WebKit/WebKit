@@ -30,11 +30,13 @@
     height: var(--inline-controls-bar-height);
 }
 
-.media-controls.inline > .controls-bar.top-left {
+.media-controls.inline.uses-ltr-user-interface-layout-direction > .controls-bar.top-left,
+.media-controls.inline:not(.uses-ltr-user-interface-layout-direction) > .controls-bar.top-right {
     top: var(--inline-controls-inside-margin);
 }
 
-.media-controls.inline > .controls-bar.top-right {
+.media-controls.inline.uses-ltr-user-interface-layout-direction > .controls-bar.top-right,
+.media-controls.inline:not(.uses-ltr-user-interface-layout-direction) > .controls-bar.top-left {
     left: auto;
     right: var(--inline-controls-inside-margin);
     top: var(--inline-controls-inside-margin);
