@@ -1,3 +1,75 @@
+2017-06-30  Chris Dumez  <cdumez@apple.com>
+
+        Merge WebResourceLoadStatisticsManager and WebResourceLoadObserver
+        https://bugs.webkit.org/show_bug.cgi?id=174008
+
+        Reviewed by Brent Fulgham.
+
+        Merge WebResourceLoadStatisticsManager and WebResourceLoadObserver. One was basically
+        a proxy to the other.
+
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.cpp:
+        (WKResourceLoadStatisticsManagerSetPrevalentResource):
+        (WKResourceLoadStatisticsManagerIsPrevalentResource):
+        (WKResourceLoadStatisticsManagerSetHasHadUserInteraction):
+        (WKResourceLoadStatisticsManagerIsHasHadUserInteraction):
+        (WKResourceLoadStatisticsManagerSetGrandfathered):
+        (WKResourceLoadStatisticsManagerIsGrandfathered):
+        (WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin):
+        (WKResourceLoadStatisticsManagerSetSubresourceUnderTopFrameOrigin):
+        (WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo):
+        (WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction):
+        (WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree):
+        (WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval):
+        (WKResourceLoadStatisticsManagerSetGrandfatheringTime):
+        (WKResourceLoadStatisticsManagerFireDataModificationHandler):
+        (WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler):
+        (WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomain):
+        (WKResourceLoadStatisticsManagerFireTelemetryHandler):
+        (WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned):
+        (WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval):
+        (WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured):
+        (WKResourceLoadStatisticsManagerSetShouldSubmitTelemetry):
+        (WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore):
+        (WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WKResourceLoadStatisticsManagerResetToConsistentState):
+        * UIProcess/API/C/WKResourceLoadStatisticsManager.h:
+        * UIProcess/Cocoa/WebResourceLoadStatisticsManagerCocoa.mm:
+        (WebKit::WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded):
+        * UIProcess/WebResourceLoadObserver.cpp: Removed.
+        * UIProcess/WebResourceLoadObserver.h: Removed.
+        * UIProcess/WebResourceLoadStatisticsManager.cpp:
+        (WebKit::primaryDomain):
+        (WebKit::WebResourceLoadStatisticsManager::shared):
+        (WebKit::WebResourceLoadStatisticsManager::setStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsManager::setStatisticsQueue):
+        (WebKit::WebResourceLoadStatisticsManager::clearInMemoryStore):
+        (WebKit::WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore):
+        (WebKit::WebResourceLoadStatisticsManager::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsManager::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsManager::clearPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsManager::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsManager::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo):
+        (WebKit::WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction):
+        (WebKit::WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree):
+        (WebKit::WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval):
+        (WebKit::WebResourceLoadStatisticsManager::setGrandfatheringTime):
+        (WebKit::WebResourceLoadStatisticsManager::fireDataModificationHandler):
+        (WebKit::WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler):
+        (WebKit::WebResourceLoadStatisticsManager::fireTelemetryHandler):
+        * UIProcess/WebResourceLoadStatisticsManager.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Drag caret rect is incorrectly computed when dropping in editable content in iframes

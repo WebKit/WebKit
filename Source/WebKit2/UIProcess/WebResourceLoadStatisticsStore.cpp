@@ -30,7 +30,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
-#include "WebResourceLoadObserver.h"
 #include "WebResourceLoadStatisticsManager.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteDataFetchOption.h"
@@ -210,8 +209,8 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
 {
     ASSERT(RunLoop::isMain());
     
-    WebResourceLoadObserver::sharedObserver().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
-    WebResourceLoadObserver::sharedObserver().setStatisticsQueue(m_statisticsQueue.copyRef());
+    WebResourceLoadStatisticsManager::shared().setStatisticsStore(m_resourceLoadStatisticsStore.copyRef());
+    WebResourceLoadStatisticsManager::shared().setStatisticsQueue(m_statisticsQueue.copyRef());
     m_resourceLoadStatisticsStore->setNotificationCallback([this, protectedThis = makeRef(*this)] {
         if (m_resourceLoadStatisticsStore->isEmpty())
             return;
@@ -234,7 +233,7 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
         submitTelemetry();
     });
 #if PLATFORM(COCOA)
-    WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded();
+    WebResourceLoadStatisticsManager::shared().registerUserDefaultsIfNeeded();
 #endif
 }
     

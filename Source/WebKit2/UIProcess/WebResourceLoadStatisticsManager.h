@@ -25,50 +25,61 @@
 
 #pragma once
 
-#include "APIObject.h"
-
-#include <wtf/RefPtr.h>
-#include <wtf/Seconds.h>
+#include <WebCore/ResourceLoadStatisticsStore.h>
 #include <wtf/text/WTFString.h>
+
+namespace WTF {
+class WorkQueue;
+}
+
+namespace WebCore {
+class URL;
+}
 
 namespace WebKit {
 
-class WebResourceLoadStatisticsManager : public API::ObjectImpl<API::Object::Type::WebResourceLoadStatisticsManager> {
+class WebResourceLoadStatisticsManager {
+    friend class NeverDestroyed<WebResourceLoadStatisticsManager>;
 public:
-    static Ref<WebResourceLoadStatisticsManager> create()
-    {
-        return adoptRef(*new WebResourceLoadStatisticsManager());
-    }
-    static void setPrevalentResource(const String& hostName, bool value);
-    static bool isPrevalentResource(const String& hostName);
-    static void setHasHadUserInteraction(const String& hostName, bool value);
-    static bool hasHadUserInteraction(const String& hostName);
-    static void setGrandfathered(const String& hostName, bool value);
-    static bool isGrandfathered(const String& hostName);
-    static void setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName);
-    static void setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo);
-    static void setTimeToLiveUserInteraction(Seconds);
-    static void setTimeToLiveCookiePartitionFree(Seconds);
-    static void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
-    static void setGrandfatheringTime(Seconds);
-    static void setReducedTimestampResolution(Seconds);
-    static void fireDataModificationHandler();
-    static void fireShouldPartitionCookiesHandler();
-    static void fireShouldPartitionCookiesHandlerForOneDomain(const String& hostName, bool value);
-    static void fireTelemetryHandler();
-    static void setNotifyPagesWhenDataRecordsWereScanned(bool);
-    static void setNotifyPagesWhenTelemetryWasCaptured(bool value);
-    static void setShouldSubmitTelemetry(bool value);
-    static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value);
-    static void clearInMemoryAndPersistentStore();
-    static void clearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
-    static void resetToConsistentState();
+    static WebResourceLoadStatisticsManager& shared();
+
+    void logUserInteraction(const WebCore::URL&);
+    bool hasHadUserInteraction(const WebCore::URL&);
+    void clearUserInteraction(const WebCore::URL&);
+
+    void setPrevalentResource(const WebCore::URL&);
+    bool isPrevalentResource(const WebCore::URL&);
+    void clearPrevalentResource(const WebCore::URL&);
+    void setGrandfathered(const WebCore::URL&, bool value);
+    bool isGrandfathered(const WebCore::URL&);
+
+    void setSubframeUnderTopFrameOrigin(const WebCore::URL& subframe, const WebCore::URL& topFrame);
+    void setSubresourceUnderTopFrameOrigin(const WebCore::URL& subresource, const WebCore::URL& topFrame);
+    void setSubresourceUniqueRedirectTo(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedTo);
+
+    void setTimeToLiveUserInteraction(Seconds);
+    void setTimeToLiveCookiePartitionFree(Seconds);
+    void setMinimumTimeBetweeenDataRecordsRemoval(Seconds);
+    void setGrandfatheringTime(Seconds);
+
+    void fireDataModificationHandler();
+    void fireShouldPartitionCookiesHandler();
+    void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
+    void fireTelemetryHandler();
+
+    void setStatisticsStore(Ref<WebCore::ResourceLoadStatisticsStore>&&);
+    void setStatisticsQueue(Ref<WTF::WorkQueue>&&);
+    void clearInMemoryStore();
+    void clearInMemoryAndPersistentStore();
+    void clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince);
+
 #if PLATFORM(COCOA)
-    static void registerUserDefaultsIfNeeded();
+    void registerUserDefaultsIfNeeded();
 #endif
 
 private:
+    RefPtr<WebCore::ResourceLoadStatisticsStore> m_store;
+    RefPtr<WTF::WorkQueue> m_queue;
 };
 
 } // namespace WebKit

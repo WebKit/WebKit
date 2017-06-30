@@ -31,8 +31,6 @@
 extern "C" {
 #endif
     
-    WK_EXPORT WKTypeID WKResourceLoadStatisticsManagerGetTypeID();
-    
     WK_EXPORT void WKResourceLoadStatisticsManagerSetPrevalentResource(WKStringRef hostName, bool value);
     WK_EXPORT bool WKResourceLoadStatisticsManagerIsPrevalentResource(WKStringRef hostName);
     WK_EXPORT void WKResourceLoadStatisticsManagerSetHasHadUserInteraction(WKStringRef hostName, bool value);

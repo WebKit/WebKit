@@ -28,131 +28,145 @@
 
 #include "WKAPICast.h"
 #include "WebResourceLoadStatisticsManager.h"
+#include "WebResourceLoadStatisticsStore.h"
 #include <wtf/Seconds.h>
 
+using namespace WebCore;
 using namespace WebKit;
-
-WKTypeID WKResourceLoadStatisticsManagerGetTypeID()
-{
-    return toAPI(WebResourceLoadStatisticsManager::APIType);
-}
 
 void WKResourceLoadStatisticsManagerSetPrevalentResource(WKStringRef hostName, bool value)
 {
-    WebResourceLoadStatisticsManager::setPrevalentResource(toWTFString(hostName), value);
+    if (value)
+        WebResourceLoadStatisticsManager::shared().setPrevalentResource(URL(URL(), toWTFString(hostName)));
+    else
+        WebResourceLoadStatisticsManager::shared().clearPrevalentResource(URL(URL(), toWTFString(hostName)));
 }
 
 bool WKResourceLoadStatisticsManagerIsPrevalentResource(WKStringRef hostName)
 {
-    return WebResourceLoadStatisticsManager::isPrevalentResource(toWTFString(hostName));
+    return WebResourceLoadStatisticsManager::shared().isPrevalentResource(URL(URL(), toWTFString(hostName)));
 }
 
 void WKResourceLoadStatisticsManagerSetHasHadUserInteraction(WKStringRef hostName, bool value)
 {
-    WebResourceLoadStatisticsManager::setHasHadUserInteraction(toWTFString(hostName), value);
+    if (value)
+        WebResourceLoadStatisticsManager::shared().logUserInteraction(URL(URL(), toWTFString(hostName)));
+    else
+        WebResourceLoadStatisticsManager::shared().clearUserInteraction(URL(URL(), toWTFString(hostName)));
 }
 
+// FIXME: This API name is wrong.
 bool WKResourceLoadStatisticsManagerIsHasHadUserInteraction(WKStringRef hostName)
 {
-    return WebResourceLoadStatisticsManager::hasHadUserInteraction(toWTFString(hostName));
+    return WebResourceLoadStatisticsManager::shared().hasHadUserInteraction(URL(URL(), toWTFString(hostName)));
 }
 
 void WKResourceLoadStatisticsManagerSetGrandfathered(WKStringRef hostName, bool value)
 {
-    WebResourceLoadStatisticsManager::setGrandfathered(toWTFString(hostName), value);
+    WebResourceLoadStatisticsManager::shared().setGrandfathered(URL(URL(), toWTFString(hostName)), value);
 }
 
 bool WKResourceLoadStatisticsManagerIsGrandfathered(WKStringRef hostName)
 {
-    return WebResourceLoadStatisticsManager::isGrandfathered(toWTFString(hostName));
+    return WebResourceLoadStatisticsManager::shared().isGrandfathered(URL(URL(), toWTFString(hostName)));
 }
 
 void WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
 {
-    WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin(toWTFString(hostName), toWTFString(topFrameHostName));
+    WebResourceLoadStatisticsManager::shared().setSubframeUnderTopFrameOrigin(URL(URL(), toWTFString(hostName)), URL(URL(), toWTFString(topFrameHostName)));
 }
 
 void WKResourceLoadStatisticsManagerSetSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
 {
-    WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin(toWTFString(hostName), toWTFString(topFrameHostName));
+    WebResourceLoadStatisticsManager::shared().setSubresourceUnderTopFrameOrigin(URL(URL(), toWTFString(hostName)), URL(URL(), toWTFString(topFrameHostName)));
 }
 
 void WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo)
 {
-    WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo(toWTFString(hostName), toWTFString(hostNameRedirectedTo));
+    WebResourceLoadStatisticsManager::shared().setSubresourceUniqueRedirectTo(URL(URL(), toWTFString(hostName)), URL(URL(), toWTFString(hostNameRedirectedTo)));
 }
 
 void WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(double seconds)
 {
-    WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(Seconds { seconds });
+    WebResourceLoadStatisticsManager::shared().setTimeToLiveUserInteraction(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(double seconds)
 {
-    WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(Seconds { seconds });
+    WebResourceLoadStatisticsManager::shared().setTimeToLiveCookiePartitionFree(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerSetMinimumTimeBetweeenDataRecordsRemoval(double seconds)
 {
-    WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(Seconds { seconds });
+    WebResourceLoadStatisticsManager::shared().setMinimumTimeBetweeenDataRecordsRemoval(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerSetGrandfatheringTime(double seconds)
 {
-    WebResourceLoadStatisticsManager::setGrandfatheringTime(Seconds { seconds });
+    WebResourceLoadStatisticsManager::shared().setGrandfatheringTime(Seconds { seconds });
 }
 
 void WKResourceLoadStatisticsManagerFireDataModificationHandler()
 {
-    WebResourceLoadStatisticsManager::fireDataModificationHandler();
+    WebResourceLoadStatisticsManager::shared().fireDataModificationHandler();
 }
 
 void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler()
 {
-    WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler();
+    WebResourceLoadStatisticsManager::shared().fireShouldPartitionCookiesHandler();
 }
 
 void WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef hostName, bool value)
 {
-    WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandlerForOneDomain(toWTFString(hostName), value);
+    if (value)
+        WebResourceLoadStatisticsManager::shared().fireShouldPartitionCookiesHandler({ }, { toWTFString(hostName) }, false);
+    else
+        WebResourceLoadStatisticsManager::shared().fireShouldPartitionCookiesHandler({ toWTFString(hostName) }, { }, false);
 }
 
 void WKResourceLoadStatisticsManagerFireTelemetryHandler()
 {
-    WebResourceLoadStatisticsManager::fireTelemetryHandler();
+    WebResourceLoadStatisticsManager::shared().fireTelemetryHandler();
 }
 
 void WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(bool value)
 {
-    WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned(value);
+    WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(value);
 }
 
 void WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
 {
-    WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
+    WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
 }
 
 void WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(bool value)
 {
-    WebResourceLoadStatisticsManager::setNotifyPagesWhenTelemetryWasCaptured(value);
+    WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(value);
 }
 
 void WKResourceLoadStatisticsManagerSetShouldSubmitTelemetry(bool value)
 {
-    WebResourceLoadStatisticsManager::setShouldSubmitTelemetry(value);
+    WebResourceLoadStatisticsStore::setShouldSubmitTelemetry(value);
 }
 
 void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore()
 {
-    WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore();
+    WebResourceLoadStatisticsManager::shared().clearInMemoryAndPersistentStore();
 }
 
 void WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
 {
-    WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStoreModifiedSinceHours(hours);
+    WebResourceLoadStatisticsManager::shared().clearInMemoryAndPersistentStore(std::chrono::system_clock::now() - std::chrono::hours(hours));
 }
 
 void WKResourceLoadStatisticsManagerResetToConsistentState()
 {
-    WebResourceLoadStatisticsManager::resetToConsistentState();
+    WebResourceLoadStatisticsManager::shared().setTimeToLiveUserInteraction(24_h * 30.);
+    WebResourceLoadStatisticsManager::shared().setTimeToLiveCookiePartitionFree(24_h);
+    WebResourceLoadStatisticsManager::shared().setMinimumTimeBetweeenDataRecordsRemoval(1_h);
+    WebResourceLoadStatisticsManager::shared().setGrandfatheringTime(1_h);
+    WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
+    WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
+    WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
+    WebResourceLoadStatisticsManager::shared().clearInMemoryStore();
 }

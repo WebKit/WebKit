@@ -34,7 +34,7 @@
 #include "WebCookieManagerProxy.h"
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
-#include "WebResourceLoadObserver.h"
+#include "WebResourceLoadStatisticsManager.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteData.h"
@@ -816,7 +816,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
 #endif
 
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
-        WebResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(modifiedSince);
+        WebResourceLoadStatisticsManager::shared().clearInMemoryAndPersistentStore(modifiedSince);
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
@@ -1085,7 +1085,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 #endif
 
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
-        WebResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
+        WebResourceLoadStatisticsManager::shared().clearInMemoryAndPersistentStore();
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();

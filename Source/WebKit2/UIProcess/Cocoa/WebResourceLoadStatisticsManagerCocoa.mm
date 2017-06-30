@@ -27,7 +27,6 @@
 #import "WebResourceLoadStatisticsManager.h"
 
 #import "WebPreferencesKeys.h"
-#import "WebResourceLoadObserver.h"
 
 using namespace WebCore;
 
@@ -43,16 +42,16 @@ void WebResourceLoadStatisticsManager::registerUserDefaultsIfNeeded()
         
         double timeToLiveUserInteraction = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveUserInteractionKey()];
         if (timeToLiveUserInteraction > 0 && timeToLiveUserInteraction <= 30 * dayInSeconds)
-            WebResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(Seconds { timeToLiveUserInteraction });
+            setTimeToLiveUserInteraction(Seconds { timeToLiveUserInteraction });
         
         double timeToLiveCookiePartitionFree = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveCookiePartitionFreeKey()];
         if (timeToLiveCookiePartitionFree > 0 && timeToLiveCookiePartitionFree <= dayInSeconds)
-            WebResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(Seconds { timeToLiveCookiePartitionFree });
+            setTimeToLiveCookiePartitionFree(Seconds { timeToLiveCookiePartitionFree });
 
         double grandfatheringTime = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsGrandfatheringTimeKey()];
         if (grandfatheringTime > 0 && grandfatheringTime <= 7 * dayInSeconds)
-            WebResourceLoadObserver::sharedObserver().setGrandfatheringTime(Seconds { grandfatheringTime });
+            setGrandfatheringTime(Seconds { grandfatheringTime });
     });
 }
 
-};
+}

@@ -26,149 +26,257 @@
 #include "config.h"
 #include "WebResourceLoadStatisticsManager.h"
 
-#include "Logging.h"
-#include "WebResourceLoadObserver.h"
-#include "WebResourceLoadStatisticsStore.h"
+#include <WebCore/ResourceLoadStatisticsStore.h>
 #include <WebCore/URL.h>
-
-using namespace WebCore;
+#include <wtf/CrossThreadCopier.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RunLoop.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
-void WebResourceLoadStatisticsManager::setPrevalentResource(const String& hostName, bool value)
+using namespace WebCore;
+
+template<typename T> static inline String primaryDomain(const T& value)
 {
-    if (value)
-        WebResourceLoadObserver::sharedObserver().setPrevalentResource(URL(URL(), hostName));
-    else
-        WebResourceLoadObserver::sharedObserver().clearPrevalentResource(URL(URL(), hostName));
+    return ResourceLoadStatisticsStore::primaryDomain(value);
 }
 
-bool WebResourceLoadStatisticsManager::isPrevalentResource(const String& hostName)
+WebResourceLoadStatisticsManager& WebResourceLoadStatisticsManager::shared()
 {
-    return WebResourceLoadObserver::sharedObserver().isPrevalentResource(URL(URL(), hostName));
-}
-    
-void WebResourceLoadStatisticsManager::setHasHadUserInteraction(const String& hostName, bool value)
-{
-    if (value)
-        WebResourceLoadObserver::sharedObserver().logUserInteraction(URL(URL(), hostName));
-    else
-        WebResourceLoadObserver::sharedObserver().clearUserInteraction(URL(URL(), hostName));
+    static NeverDestroyed<WebResourceLoadStatisticsManager> webResourceLoadStatisticsManager;
+    return webResourceLoadStatisticsManager;
 }
 
-bool WebResourceLoadStatisticsManager::hasHadUserInteraction(const String& hostName)
+void WebResourceLoadStatisticsManager::setStatisticsStore(Ref<ResourceLoadStatisticsStore>&& store)
 {
-    return WebResourceLoadObserver::sharedObserver().hasHadUserInteraction(URL(URL(), hostName));
+    if (m_store && m_queue)
+        m_queue = nullptr;
+    m_store = WTFMove(store);
 }
 
-void WebResourceLoadStatisticsManager::setGrandfathered(const String& hostName, bool value)
+void WebResourceLoadStatisticsManager::setStatisticsQueue(Ref<WTF::WorkQueue>&& queue)
 {
-    WebResourceLoadObserver::sharedObserver().setGrandfathered(URL(URL(), hostName), value);
+    ASSERT(!m_queue);
+    m_queue = WTFMove(queue);
 }
 
-bool WebResourceLoadStatisticsManager::isGrandfathered(const String& hostName)
+void WebResourceLoadStatisticsManager::clearInMemoryStore()
 {
-    return WebResourceLoadObserver::sharedObserver().isGrandfathered(URL(URL(), hostName));
-}
+    if (!m_store)
+        return;
 
-void WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName)
-{
-    WebResourceLoadObserver::sharedObserver().setSubframeUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
-}
-
-void WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin(const String& hostName, const String& topFrameHostName)
-{
-    WebResourceLoadObserver::sharedObserver().setSubresourceUnderTopFrameOrigin(URL(URL(), hostName), URL(URL(), topFrameHostName));
-}
-
-void WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo(const String& hostName, const String& hostNameRedirectedTo)
-{
-    WebResourceLoadObserver::sharedObserver().setSubresourceUniqueRedirectTo(URL(URL(), hostName), URL(URL(), hostNameRedirectedTo));
-}
-
-void WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(Seconds seconds)
-{
-    WebResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(seconds);
-}
-
-void WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(Seconds seconds)
-{
-    WebResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(seconds);
-}
-
-void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(Seconds seconds)
-{
-    WebResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(seconds);
-}
-
-void WebResourceLoadStatisticsManager::setGrandfatheringTime(Seconds seconds)
-{
-    WebResourceLoadObserver::sharedObserver().setGrandfatheringTime(seconds);
-}
-
-void WebResourceLoadStatisticsManager::fireDataModificationHandler()
-{
-    WebResourceLoadObserver::sharedObserver().fireDataModificationHandler();
-}
-
-void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler()
-{
-    WebResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler();
-}
-
-void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandlerForOneDomain(const String& hostName, bool value)
-{
-    if (value)
-        WebResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({ }, {hostName}, false);
-    else
-        WebResourceLoadObserver::sharedObserver().fireShouldPartitionCookiesHandler({hostName}, { }, false);
-}
-
-void WebResourceLoadStatisticsManager::fireTelemetryHandler()
-{
-    WebResourceLoadObserver::sharedObserver().fireTelemetryHandler();
-}
-    
-void WebResourceLoadStatisticsManager::setNotifyPagesWhenDataRecordsWereScanned(bool value)
-{
-    WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(value);
-}
-
-void WebResourceLoadStatisticsManager::setNotifyPagesWhenTelemetryWasCaptured(bool value)
-{
-    WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(value);
-}
-    
-void WebResourceLoadStatisticsManager::setShouldSubmitTelemetry(bool value)
-{
-    WebResourceLoadStatisticsStore::setShouldSubmitTelemetry(value);
-}
-    
-void WebResourceLoadStatisticsManager::setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
-{
-    WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
+    ASSERT(m_queue);
+    m_queue->dispatch([this] {
+        m_store->clearInMemory();
+    });
 }
 
 void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore()
 {
-    WebResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore();
+    if (!m_store)
+        return;
+
+    ASSERT(m_queue);
+    m_queue->dispatch([this] {
+        m_store->clearInMemoryAndPersistent();
+    });
 }
 
-void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
+void WebResourceLoadStatisticsManager::clearInMemoryAndPersistentStore(std::chrono::system_clock::time_point modifiedSince)
 {
-    WebResourceLoadObserver::sharedObserver().clearInMemoryAndPersistentStore(std::chrono::system_clock::now() - std::chrono::hours(hours));
+    // For now, be conservative and clear everything regardless of modifiedSince
+    UNUSED_PARAM(modifiedSince);
+    clearInMemoryAndPersistentStore();
 }
-    
-void WebResourceLoadStatisticsManager::resetToConsistentState()
+
+void WebResourceLoadStatisticsManager::logUserInteraction(const URL& url)
 {
-    WebResourceLoadObserver::sharedObserver().setTimeToLiveUserInteraction(24_h * 30.);
-    WebResourceLoadObserver::sharedObserver().setTimeToLiveCookiePartitionFree(24_h);
-    WebResourceLoadObserver::sharedObserver().setMinimumTimeBetweeenDataRecordsRemoval(1_h);
-    WebResourceLoadObserver::sharedObserver().setGrandfatheringTime(1_h);
-    WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(false);
-    WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
-    WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
-    WebResourceLoadObserver::sharedObserver().clearInMemoryStore();
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    ASSERT(m_queue);
+    m_queue->dispatch([this, primaryDomainString = primaryDomain(url).isolatedCopy()] {
+        {
+            auto locker = holdLock(m_store->statisticsLock());
+            auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
+            statistics.hadUserInteraction = true;
+            statistics.mostRecentUserInteractionTime = WallTime::now();
+        }
+
+        m_store->fireShouldPartitionCookiesHandler({ primaryDomainString }, { }, false);
+    });
 }
-    
+
+void WebResourceLoadStatisticsManager::clearUserInteraction(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto locker = holdLock(m_store->statisticsLock());
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+
+    statistics.hadUserInteraction = false;
+    statistics.mostRecentUserInteractionTime = { };
+}
+
+bool WebResourceLoadStatisticsManager::hasHadUserInteraction(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return false;
+
+    auto locker = holdLock(m_store->statisticsLock());
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+
+    return m_store->hasHadRecentUserInteraction(statistics);
+}
+
+void WebResourceLoadStatisticsManager::setPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto locker = holdLock(m_store->statisticsLock());
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+
+    statistics.isPrevalentResource = true;
+}
+
+bool WebResourceLoadStatisticsManager::isPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return false;
+
+    auto locker = holdLock(m_store->statisticsLock());
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+
+    return statistics.isPrevalentResource;
+}
+
+void WebResourceLoadStatisticsManager::clearPrevalentResource(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto locker = holdLock(m_store->statisticsLock());
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+
+    statistics.isPrevalentResource = false;
+}
+
+void WebResourceLoadStatisticsManager::setGrandfathered(const URL& url, bool value)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+
+    auto locker = holdLock(m_store->statisticsLock());
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+
+    statistics.grandfathered = value;
+}
+
+bool WebResourceLoadStatisticsManager::isGrandfathered(const URL& url)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return false;
+
+    auto locker = holdLock(m_store->statisticsLock());
+    auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+
+    return statistics.grandfathered;
+}
+
+void WebResourceLoadStatisticsManager::setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame)
+{
+    if (subframe.isBlankURL() || subframe.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
+        return;
+
+    ASSERT(m_queue);
+    m_queue->dispatch([this, primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubFrameDomainString = primaryDomain(subframe).isolatedCopy()] {
+        auto locker = holdLock(m_store->statisticsLock());
+        auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primarySubFrameDomainString);
+        statistics.subframeUnderTopFrameOrigins.add(primaryTopFrameDomainString);
+    });
+}
+
+void WebResourceLoadStatisticsManager::setSubresourceUnderTopFrameOrigin(const URL& subresource, const URL& topFrame)
+{
+    if (subresource.isBlankURL() || subresource.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
+        return;
+
+    ASSERT(m_queue);
+    m_queue->dispatch([this, primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
+        auto locker = holdLock(m_store->statisticsLock());
+        auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
+        statistics.subresourceUnderTopFrameOrigins.add(primaryTopFrameDomainString);
+    });
+}
+
+void WebResourceLoadStatisticsManager::setSubresourceUniqueRedirectTo(const URL& subresource, const URL& hostNameRedirectedTo)
+{
+    if (subresource.isBlankURL() || subresource.isEmpty() || hostNameRedirectedTo.isBlankURL() || hostNameRedirectedTo.isEmpty())
+        return;
+
+    ASSERT(m_queue);
+    m_queue->dispatch([this, primaryRedirectDomainString = primaryDomain(hostNameRedirectedTo).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
+        auto locker = holdLock(m_store->statisticsLock());
+        auto& statistics = m_store->ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
+        statistics.subresourceUniqueRedirectsTo.add(primaryRedirectDomainString);
+    });
+}
+
+void WebResourceLoadStatisticsManager::setTimeToLiveUserInteraction(Seconds seconds)
+{
+    m_store->setTimeToLiveUserInteraction(seconds);
+}
+
+void WebResourceLoadStatisticsManager::setTimeToLiveCookiePartitionFree(Seconds seconds)
+{
+    m_store->setTimeToLiveCookiePartitionFree(seconds);
+}
+
+void WebResourceLoadStatisticsManager::setMinimumTimeBetweeenDataRecordsRemoval(Seconds seconds)
+{
+    m_store->setMinimumTimeBetweeenDataRecordsRemoval(seconds);
+}
+
+void WebResourceLoadStatisticsManager::setGrandfatheringTime(Seconds seconds)
+{
+    m_store->setMinimumTimeBetweeenDataRecordsRemoval(seconds);
+}
+
+void WebResourceLoadStatisticsManager::fireDataModificationHandler()
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    m_queue->dispatch([this] {
+        m_store->fireDataModificationHandler();
+    });
+}
+
+void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler()
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    m_queue->dispatch([this] {
+        m_store->fireShouldPartitionCookiesHandler();
+    });
+}
+
+void WebResourceLoadStatisticsManager::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    m_queue->dispatch([this, domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd), clearFirst] {
+        m_store->fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd, clearFirst);
+    });
+}
+
+void WebResourceLoadStatisticsManager::fireTelemetryHandler()
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    m_store->fireTelemetryHandler();
+}
+
 } // namespace WebKit
