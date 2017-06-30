@@ -1,5 +1,35 @@
 2017-06-29  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Provide a way for creating a new tab but not making it immediately selected
+        https://bugs.webkit.org/show_bug.cgi?id=173983
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TabBar.js:
+        (WebInspector.TabBar):
+        (WebInspector.TabBar.prototype.addTabBarItem):
+        (WebInspector.TabBar.prototype.insertTabBarItem):
+        (WebInspector.TabBar.prototype.removeTabBarItem):
+        (WebInspector.TabBar.prototype._handleClick):
+        (WebInspector.TabBar.prototype._handleNewTabClick):
+        * UserInterface/Views/TabBrowser.js:
+        (WebInspector.TabBrowser.prototype.addTabForContentView):
+        (WebInspector.TabBrowser.prototype.showTabForContentView):
+        (WebInspector.TabBrowser.prototype.closeTabForContentView):
+        * UserInterface/Base/Main.js:
+        (WebInspector.contentLoaded):
+        (WebInspector._openDefaultTab):
+        (WebInspector._tryToRestorePendingTabs):
+        (WebInspector.showNewTabTab):
+        (WebInspector.createNewTabWithType):
+        Add `options` dictionaries instead of optional parameters.
+
+        (WebInspector.tabContentViewClassForRepresentedObject):
+        Drive-by fix: remove incorrect placement of WebInspector.Collection check. This function
+        determines TabContentView classes, not ContentView.
+
+2017-06-29  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Remove unnecessary hasChildren from TreeOutline
         https://bugs.webkit.org/show_bug.cgi?id=173986
 

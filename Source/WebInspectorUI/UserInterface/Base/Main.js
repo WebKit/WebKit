@@ -474,7 +474,7 @@ WebInspector.contentLoaded = function()
         let tabContentView = this._createTabContentViewForType(tabType);
         if (!tabContentView)
             continue;
-        this.tabBrowser.addTabForContentView(tabContentView, true);
+        this.tabBrowser.addTabForContentView(tabContentView, {suppressAnimations: true});
     }
 
     this._restoreCookieForOpenTabs(WebInspector.StateRestorationType.Load);
@@ -485,7 +485,7 @@ WebInspector.contentLoaded = function()
         this.tabBar.selectedTabBarItem = 0;
 
     if (!this.tabBar.normalTabCount)
-        this.showNewTabTab();
+        this.showNewTabTab({suppressAnimations: true});
 
     // Listen to the events after restoring the saved tabs to avoid recursion.
     this.tabBar.addEventListener(WebInspector.TabBar.Event.TabBarItemAdded, this._rememberOpenTabs, this);
@@ -589,7 +589,7 @@ WebInspector._rememberOpenTabs = function()
 
 WebInspector._openDefaultTab = function(event)
 {
-    this.showNewTabTab();
+    this.showNewTabTab({suppressAnimations: true});
 };
 
 WebInspector._showSettingsTab = function(event)
@@ -610,7 +610,10 @@ WebInspector._tryToRestorePendingTabs = function()
         if (!tabContentView)
             continue;
 
-        this.tabBrowser.addTabForContentView(tabContentView, true, index);
+        this.tabBrowser.addTabForContentView(tabContentView, {
+            suppressAnimations: true,
+            insertionIndex: index,
+        });
 
         tabContentView.restoreStateFromCookie(WebInspector.StateRestorationType.Load);
     }
@@ -620,7 +623,7 @@ WebInspector._tryToRestorePendingTabs = function()
     this.tabBrowser.tabBar.updateNewTabTabBarItemState();
 };
 
-WebInspector.showNewTabTab = function(shouldAnimate)
+WebInspector.showNewTabTab = function(options)
 {
     if (!this.isNewTabWithTypeAllowed(WebInspector.NewTabContentView.Type))
         return;
@@ -628,7 +631,7 @@ WebInspector.showNewTabTab = function(shouldAnimate)
     let tabContentView = this.tabBrowser.bestTabContentViewForClass(WebInspector.NewTabContentView);
     if (!tabContentView)
         tabContentView = new WebInspector.NewTabContentView;
-    this.tabBrowser.showTabForContentView(tabContentView, !shouldAnimate);
+    this.tabBrowser.showTabForContentView(tabContentView, options);
 };
 
 WebInspector.isNewTabWithTypeAllowed = function(tabType)
@@ -666,11 +669,13 @@ WebInspector.createNewTabWithType = function(tabType, options = {})
 
     let tabContentView = this._createTabContentViewForType(tabType);
     const suppressAnimations = true;
-    let insertionIndex = referencedView ? this.tabBar.tabBarItems.indexOf(referencedView.tabBarItem) : undefined;
-    this.tabBrowser.addTabForContentView(tabContentView, suppressAnimations, insertionIndex);
+    this.tabBrowser.addTabForContentView(tabContentView, {
+        suppressAnimations,
+        insertionIndex: referencedView ? this.tabBar.tabBarItems.indexOf(referencedView.tabBarItem) : undefined,
+    });
 
     if (shouldReplaceTab)
-        this.tabBrowser.closeTabForContentView(referencedView, suppressAnimations);
+        this.tabBrowser.closeTabForContentView(referencedView, {suppressAnimations});
 
     if (shouldShowNewTab)
         this.tabBrowser.showTabForContentView(tabContentView);
@@ -1119,9 +1124,6 @@ WebInspector.tabContentViewClassForRepresentedObject = function(representedObjec
         representedObject instanceof WebInspector.IndexedDatabaseObjectStoreIndex)
         return WebInspector.ResourcesTabContentView;
 
-    if (representedObject instanceof WebInspector.Collection)
-        return WebInspector.CollectionContentView;
-
     return null;
 };
 
@@ -1151,7 +1153,7 @@ WebInspector.showRepresentedObject = function(representedObject, cookie, options
     if (!tabContentView)
         return;
 
-    this.tabBrowser.showTabForContentView(tabContentView);
+    this.tabBrowser.showTabForContentView(tabContentView, options);
     tabContentView.showRepresentedObject(representedObject, cookie);
 };
 

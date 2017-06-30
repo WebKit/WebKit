@@ -136,7 +136,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         return null;
     }
 
-    addTabForContentView(tabContentView, doNotAnimate, insertionIndex)
+    addTabForContentView(tabContentView, options = {})
     {
         console.assert(tabContentView instanceof WebInspector.TabContentView);
         if (!(tabContentView instanceof WebInspector.TabContentView))
@@ -163,10 +163,10 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         else
             this._recentTabContentViews.push(tabContentView);
 
-        if (typeof insertionIndex === "number")
-            this._tabBar.insertTabBarItem(tabBarItem, insertionIndex, doNotAnimate);
+        if (typeof options.insertionIndex === "number")
+            this._tabBar.insertTabBarItem(tabBarItem, options.insertionIndex, options);
         else
-            this._tabBar.addTabBarItem(tabBarItem, doNotAnimate);
+            this._tabBar.addTabBarItem(tabBarItem, options);
 
         console.assert(this._recentTabContentViews.length === this._tabBar.normalTabCount);
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
@@ -174,12 +174,13 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         return true;
     }
 
-    showTabForContentView(tabContentView, doNotAnimate, insertionIndex)
+    showTabForContentView(tabContentView, options = {})
     {
-        if (!this.addTabForContentView(tabContentView, doNotAnimate, insertionIndex))
+        if (!this.addTabForContentView(tabContentView, options))
             return false;
 
-        this._tabBar.selectedTabBarItem = tabContentView.tabBarItem;
+        if (!options.suppressSelection)
+            this._tabBar.selectedTabBarItem = tabContentView.tabBarItem;
 
         // FIXME: this is a workaround for <https://webkit.org/b/151876>.
         // Without this extra call, we might never lay out the child tab
@@ -191,7 +192,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         return true;
     }
 
-    closeTabForContentView(tabContentView, doNotAnimate)
+    closeTabForContentView(tabContentView, options = {})
     {
         console.assert(tabContentView instanceof WebInspector.TabContentView);
         if (!(tabContentView instanceof WebInspector.TabContentView))
@@ -204,7 +205,7 @@ WebInspector.TabBrowser = class TabBrowser extends WebInspector.View
         if (tabContentView.tabBarItem.parentTabBar !== this._tabBar)
             return false;
 
-        this._tabBar.removeTabBarItem(tabContentView.tabBarItem, doNotAnimate);
+        this._tabBar.removeTabBarItem(tabContentView.tabBarItem, options);
 
         console.assert(this._recentTabContentViews.length === this._tabBar.normalTabCount);
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
