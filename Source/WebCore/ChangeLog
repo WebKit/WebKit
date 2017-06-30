@@ -1,3 +1,25 @@
+2017-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Drag caret rect is incorrectly computed when dropping in editable content in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=174017
+        <rdar://problem/32959782>
+
+        Reviewed by Simon Fraser.
+
+        We're currenly computing the drag caret rect (for the purposes of presentation at the client layers)
+        incorrectly, in per-frame document coordinates instead of root view coordinates in the mainframe. This means
+        drag caret geometry from embedded iframes in the document will show up in the content view with a rect in the
+        coordinate space of the iframe.
+
+        To fix this, we need to convert the drag caret rect to root view coordinates. This patch teaches
+        DragCaretController to do this, and tweaks WebKit/WebKit2 to use caretRectInRootViewCoordinates.
+
+        Test: DataInteractionTests.ExternalSourcePlainTextToIFrame
+
+        * editing/FrameSelection.cpp:
+        (WebCore::DragCaretController::caretRectInRootViewCoordinates):
+        * editing/FrameSelection.h:
+
 2017-06-30  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Replace use of __is_polymorphic with standard std::is_polymorphic<>::value

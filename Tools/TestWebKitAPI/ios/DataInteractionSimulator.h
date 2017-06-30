@@ -60,6 +60,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     RetainPtr<NSArray *> _finalSelectionRects;
     CGPoint _startLocation;
     CGPoint _endLocation;
+    CGRect _lastKnownDragCaretRect;
 
     bool _isDoneWaitingForInputSession;
     BOOL _shouldPerformOperation;
@@ -85,6 +86,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 @property (nonatomic, readonly) NSArray *observedEventNames;
 @property (nonatomic, readonly) NSArray *finalSelectionRects;
 @property (nonatomic, readonly) DataInteractionPhase phase;
+@property (nonatomic, readonly) CGRect lastKnownDragCaretRect;
 
 @end
 

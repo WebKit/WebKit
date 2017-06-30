@@ -5650,6 +5650,15 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #endif
 }
 
+- (CGRect)_dragCaretRect
+{
+#if ENABLE(DRAG_SUPPORT)
+    return _page->currentDragCaretRect();
+#else
+    return CGRectZero;
+#endif
+}
+
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location
 {
     [_contentView _simulateLongPressActionAtLocation:location];

@@ -291,6 +291,7 @@ static NSArray *dataInteractionEventNames()
     _dataInteractionSession = nil;
     _dataOperationSession = nil;
     _shouldPerformOperation = NO;
+    _lastKnownDragCaretRect = CGRectZero;
 }
 
 - (NSArray *)observedEventNames
@@ -360,6 +361,7 @@ static NSArray *dataInteractionEventNames()
 
 - (void)_concludeDataInteractionAndPerformOperationIfNecessary
 {
+    _lastKnownDragCaretRect = [_webView _dragCaretRect];
     if (_shouldPerformOperation) {
         [_webView _simulateDataInteractionPerformOperation:_dataOperationSession.get()];
         _phase = DataInteractionPerforming;
@@ -376,6 +378,7 @@ static NSArray *dataInteractionEventNames()
 
 - (void)_advanceProgress
 {
+    _lastKnownDragCaretRect = [_webView _dragCaretRect];
     _currentProgress += progressIncrementStep;
     CGPoint locationInWindow = self._currentLocation;
     [_dataInteractionSession setMockLocationInWindow:locationInWindow];
@@ -466,6 +469,11 @@ static NSArray *dataInteractionEventNames()
 - (DataInteractionPhase)phase
 {
     return _phase;
+}
+
+- (CGRect)lastKnownDragCaretRect
+{
+    return _lastKnownDragCaretRect;
 }
 
 - (void)waitForInputSession

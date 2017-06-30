@@ -1,3 +1,22 @@
+2017-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Drag caret rect is incorrectly computed when dropping in editable content in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=174017
+        <rdar://problem/32959782>
+
+        Reviewed by Simon Fraser.
+
+        Send the drag caret rect in root view coordinates over to the UI process.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _dragCaretRect]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Add basic test plumbing to fetch the current drag caret rect.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2017-06-30  Youenn Fablet  <youenn@apple.com>
 
         Support PeerConnectionStates::BundlePolicy::MaxBundle when setting rtc configuration

@@ -1849,7 +1849,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 - (CGRect)_dataInteractionCaretRect
 {
     if (auto* page = _private->page)
-        return page->dragCaretController().caretPosition().absoluteCaretBounds();
+        return page->dragCaretController().caretRectInRootViewCoordinates();
 
     return { };
 }
