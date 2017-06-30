@@ -255,6 +255,17 @@ private:
         if (!canBeTransformedToFloat(left) || !canBeTransformedToFloat(right))
             return false;
 
+        if (left->hasDouble() && right->hasDouble()) {
+            // If both inputs are constants, converting them to floats and performing
+            // the same operation is incorrect. It may produce a different value
+            // depending on the operation and the inputs. There are inputs where
+            // casting to float and performing the operation would result in the
+            // same value. Regardless, we don't prove when that is legal here since
+            // it isn't profitable to do. We leave it to strength reduction to handle
+            // reduce these cases.
+            return false;
+        }
+
         m_convertedValue.add(candidate);
         candidate->child(0) = transformToFloat(left, candidateIndex, insertionSet);
         candidate->child(1) = transformToFloat(right, candidateIndex, insertionSet);

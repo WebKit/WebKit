@@ -67,6 +67,7 @@
 #include "LinkBuffer.h"
 #include "PureNaN.h"
 #include <cmath>
+#include <list>
 #include <string>
 #include <wtf/FastTLS.h>
 #include <wtf/ListDump.h>
@@ -15432,6 +15433,46 @@ void testFastTLSStore()
 #endif
 }
 
+NEVER_INLINE bool doubleEq(double a, double b) { return a == b; }
+NEVER_INLINE bool doubleNeq(double a, double b) { return a != b; }
+NEVER_INLINE bool doubleGt(double a, double b) { return a > b; }
+NEVER_INLINE bool doubleGte(double a, double b) { return a >= b; }
+NEVER_INLINE bool doubleLt(double a, double b) { return a < b; }
+NEVER_INLINE bool doubleLte(double a, double b) { return a <= b; }
+
+void testDoubleLiteralComparison(double a, double b)
+{
+    using Test = std::tuple<B3::Opcode, bool (*)(double, double)>;
+    std::list<Test> tests = {
+        { NotEqual, doubleNeq },
+        { Equal, doubleEq },
+        { EqualOrUnordered, doubleEq },
+        { GreaterThan, doubleGt },
+        { GreaterEqual, doubleGte },
+        { LessThan, doubleLt },
+        { LessEqual, doubleLte },
+    };
+
+    for (const Test& test : tests) {
+        Procedure proc;
+        BasicBlock* root = proc.addBlock();
+        Value* valueA = root->appendNew<ConstDoubleValue>(proc, Origin(), a);
+        Value* valueB = root->appendNew<ConstDoubleValue>(proc, Origin(), b);
+
+        // This is here just to make reduceDoubleToFloat do things.
+        Value* valueC = root->appendNew<ConstDoubleValue>(proc, Origin(), 0.0);
+        Value* valueAsFloat = root->appendNew<Value>(proc, DoubleToFloat, Origin(), valueC);
+
+        root->appendNewControlValue(
+            proc, Return, Origin(),
+                root->appendNew<Value>(proc, BitAnd, Origin(),
+                    root->appendNew<Value>(proc, std::get<0>(test), Origin(), valueA, valueB),
+                    root->appendNew<Value>(proc, Equal, Origin(), valueAsFloat, valueAsFloat)));
+
+        CHECK(!!compileAndRun<int32_t>(proc) == std::get<1>(test)(a, b));
+    }
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -16965,6 +17006,11 @@ void run(const char* filter)
     
     RUN(testFastTLSLoad());
     RUN(testFastTLSStore());
+
+    RUN(testDoubleLiteralComparison(bitwise_cast<double>(0x8000000000000001ull), bitwise_cast<double>(0x0000000000000000ull)));
+    RUN(testDoubleLiteralComparison(bitwise_cast<double>(0x0000000000000000ull), bitwise_cast<double>(0x8000000000000001ull)));
+    RUN(testDoubleLiteralComparison(125.3144446948241, 125.3144446948242));
+    RUN(testDoubleLiteralComparison(125.3144446948242, 125.3144446948241));
 
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));

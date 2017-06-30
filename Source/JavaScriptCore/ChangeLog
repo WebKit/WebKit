@@ -1,3 +1,39 @@
+2017-06-30  Saam Barati  <sbarati@apple.com>
+
+        B3ReduceDoubleToFloat incorrectly reduces operations over two double constants
+        https://bugs.webkit.org/show_bug.cgi?id=174034
+        <rdar://problem/30793007>
+
+        Reviewed by Filip Pizlo.
+
+        B3ReduceDoubleToFloat had a bug in it where it would incorrectly
+        reduce binary operations over double constants into the same binary
+        operation over the double constants casted to floats. This is clearly
+        incorrect as these two things will produce different values. For example:
+        
+        a = DoubleConst(bitwise_cast<double>(0x8000000000000001ull))
+        b = DoubleConst(bitwise_cast<double>(0x0000000000000000ull))
+        c = EqualOrUnordered(@a, @b) // produces 0
+        
+        into:
+        
+        a = FloatConst(static_cast<float>(bitwise_cast<double>(0x8000000000000001ull)))
+        b = FloatConst(static_cast<float>(bitwise_cast<double>(0x0000000000000000ull)))
+        c = EqualOrUnordered(@a, @b) // produces 1
+        
+        Which produces a different value for @c.
+
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::doubleEq):
+        (JSC::B3::doubleNeq):
+        (JSC::B3::doubleGt):
+        (JSC::B3::doubleGte):
+        (JSC::B3::doubleLt):
+        (JSC::B3::doubleLte):
+        (JSC::B3::testDoubleLiteralComparison):
+        (JSC::B3::run):
+
 2017-06-29  Jer Noble  <jer.noble@apple.com>
 
         Make Legacy EME API controlled by RuntimeEnabled setting.
