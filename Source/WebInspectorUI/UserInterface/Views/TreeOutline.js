@@ -44,6 +44,7 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         this._treeElementsExpandedState = [];
         this.allowsRepeatSelection = false;
         this.root = true;
+        this.hasChildren = false;
         this.expanded = true;
         this.selected = false;
         this.treeOutline = this;
@@ -155,6 +156,7 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         var isFirstChild = !this.children.length;
 
         this.children.push(child);
+        this.hasChildren = true;
         child.parent = this;
         child.treeOutline = this.treeOutline;
         child.treeOutline._rememberTreeElement(child);
@@ -204,6 +206,7 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         var isFirstChild = !this.children.length;
 
         this.children.splice(index, 0, child);
+        this.hasChildren = true;
         child.parent = this;
         child.treeOutline = this.treeOutline;
         child.treeOutline._rememberTreeElement(child);
@@ -264,9 +267,6 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
         child.nextSibling = null;
         child.previousSibling = null;
 
-        if (!this.children.length && this._listItemNode)
-            this._listItemNode.classList.remove("parent");
-
         if (treeOutline)
             treeOutline.dispatchEventToListeners(WebInspector.TreeOutline.Event.ElementRemoved, {element: child});
     }
@@ -283,6 +283,12 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
             return;
 
         this.removeChildAtIndex(childIndex, suppressOnDeselect, suppressSelectSibling);
+
+        if (!this.children.length) {
+            if (this._listItemNode)
+                this._listItemNode.classList.remove("parent");
+            this.hasChildren = false;
+        }
     }
 
     removeChildren(suppressOnDeselect)
@@ -616,7 +622,7 @@ WebInspector.TreeOutline = class TreeOutline extends WebInspector.Object
 
     get selectedTreeElementIndex()
     {
-        if (!this.children.length || !this.selectedTreeElement)
+        if (!this.hasChildren || !this.selectedTreeElement)
             return;
 
         for (var i = 0; i < this.children.length; ++i) {

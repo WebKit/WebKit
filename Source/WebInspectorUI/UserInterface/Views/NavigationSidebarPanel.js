@@ -645,7 +645,7 @@ WebInspector.NavigationSidebarPanel = class NavigationSidebarPanel extends WebIn
 
         var visibleTreeElements = [];
         this.contentTreeOutlines.forEach(function(outline) {
-            var currentTreeElement = outline.children.length ? outline.children[0] : null;
+            var currentTreeElement = outline.hasChildren ? outline.children[0] : null;
             while (currentTreeElement) {
                 visibleTreeElements.push(currentTreeElement);
                 currentTreeElement = currentTreeElement.traverseNextTreeElement(false, null, false);
