@@ -220,6 +220,8 @@ CFArrayRef _CFHTTPCookieStorageCopyCookiesForURLWithMainDocumentURL(CFHTTPCookie
 CFStringRef CFURLResponseGetTextEncodingName(CFURLResponseRef);
 SInt64 CFURLResponseGetExpectedContentLength(CFURLResponseRef);
 CFTypeID CFURLResponseGetTypeID();
+Boolean CFURLRequestShouldHandleHTTPCookies(CFURLRequestRef);
+CFURLRef CFURLRequestGetURL(CFURLRequestRef);
 CFURLResponseRef CFURLResponseCreate(CFAllocatorRef, CFURLRef, CFStringRef mimeType, SInt64 expectedContentLength, CFStringRef textEncodingName, CFURLCacheStoragePolicy);
 void CFURLResponseSetExpectedContentLength(CFURLResponseRef, SInt64 length);
 CFURLResponseRef CFURLResponseCreateWithHTTPResponse(CFAllocatorRef, CFURLRef, CFHTTPMessageRef, CFURLCacheStoragePolicy);

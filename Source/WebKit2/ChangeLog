@@ -1,3 +1,12 @@
+2017-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        Stop soft linking with CFNetwork
+        https://bugs.webkit.org/show_bug.cgi?id=174029
+
+        Reviewed by Jer Noble.
+
+        * Shared/mac/CookieStorageShim.mm:
+
 2017-06-30  Daniel Bates  <dabates@apple.com>
 
         API::FrameInfo should know the web page that contains the frame; add API property webView to WKFrameInfo
