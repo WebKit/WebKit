@@ -1,3 +1,18 @@
+2017-06-29  Zalan Bujtas  <zalan@apple.com>
+
+        BreakingContext::handleReplaced() should use replacedBox instead of m_current.renderer().
+        https://bugs.webkit.org/show_bug.cgi?id=174011
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleReplaced):
+        * rendering/line/LineWidth.cpp:
+        (WebCore::LineWidth::applyOverhang):
+        * rendering/line/LineWidth.h:
+
 2017-06-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Web content process crashes when the selection is moved far offscreen in dragstart

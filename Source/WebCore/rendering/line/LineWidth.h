@@ -73,7 +73,7 @@ public:
         m_hasUncommittedReplaced = true;
     }
     void commit();
-    void applyOverhang(RenderRubyRun*, RenderObject* startRenderer, RenderObject* endRenderer);
+    void applyOverhang(const RenderRubyRun&, RenderObject* startRenderer, RenderObject* endRenderer);
     void fitBelowFloats(bool isFirstLine = false);
     void setTrailingWhitespaceWidth(float collapsedWhitespace, float borderPaddingMargin = 0);
     IndentTextOrNot shouldIndentText() const { return m_shouldIndentText; }
