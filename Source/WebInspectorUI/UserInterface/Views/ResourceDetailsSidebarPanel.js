@@ -27,7 +27,7 @@ WebInspector.ResourceDetailsSidebarPanel = class ResourceDetailsSidebarPanel ext
 {
     constructor()
     {
-        super("resource-details", WebInspector.UIString("Resource"), WebInspector.UIString("Resource"));
+        super("resource-details", WebInspector.UIString("Resource"));
 
         this.element.classList.add("resource");
 

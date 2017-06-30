@@ -27,7 +27,7 @@ WebInspector.IndexedDatabaseDetailsSidebarPanel = class IndexedDatabaseDetailsSi
 {
     constructor()
     {
-        super("indexed-database-details", WebInspector.UIString("Storage"), WebInspector.UIString("Storage"));
+        super("indexed-database-details", WebInspector.UIString("Storage"));
 
         this.element.classList.add("indexed-database");
 

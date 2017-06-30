@@ -27,7 +27,7 @@ WebInspector.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel e
 {
     constructor()
     {
-        super("layer-tree", WebInspector.UIString("Layers"), WebInspector.UIString("Layer"));
+        super("layer-tree", WebInspector.UIString("Layers"));
 
         this._dataGridNodesByLayerId = new Map;
 

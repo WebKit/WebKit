@@ -27,7 +27,8 @@ WebInspector.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel ext
 {
     constructor()
     {
-        super("css-style", WebInspector.UIString("Styles"), WebInspector.UIString("Style"), null, true);
+        const dontCreateNavigationItem = true;
+        super("css-style", WebInspector.UIString("Styles"), dontCreateNavigationItem);
 
         this._selectedPanel = null;
         this._computedStyleDetailsPanel = new WebInspector.ComputedStyleDetailsPanel(this);

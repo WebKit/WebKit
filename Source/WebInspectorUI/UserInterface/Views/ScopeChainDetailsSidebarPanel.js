@@ -27,7 +27,7 @@ WebInspector.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel
 {
     constructor()
     {
-        super("scope-chain", WebInspector.UIString("Scope Chain"), WebInspector.UIString("Scope Chain"));
+        super("scope-chain", WebInspector.UIString("Scope Chain"));
 
         this._callFrame = null;
 

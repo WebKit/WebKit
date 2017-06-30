@@ -25,9 +25,9 @@
 
 WebInspector.DOMDetailsSidebarPanel = class DOMDetailsSidebarPanel extends WebInspector.DetailsSidebarPanel
 {
-    constructor(identifier, displayName, singularDisplayName, element, dontCreateNavigationItem)
+    constructor(identifier, displayName, dontCreateNavigationItem)
     {
-        super(identifier, displayName, singularDisplayName, element, dontCreateNavigationItem);
+        super(identifier, displayName, dontCreateNavigationItem);
 
         this.element.addEventListener("click", this._mouseWasClicked.bind(this), true);
 

@@ -25,9 +25,9 @@
 
 WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
 {
-    constructor(identifier, displayName, element, role, label)
+    constructor(identifier, displayName)
     {
-        super(element);
+        super();
 
         this._identifier = identifier;
         this._displayName = displayName;
@@ -37,8 +37,8 @@ WebInspector.SidebarPanel = class SidebarPanel extends WebInspector.View
 
         this.element.classList.add("panel", identifier);
 
-        this.element.setAttribute("role", role || "group");
-        this.element.setAttribute("aria-label", label || displayName);
+        this.element.setAttribute("role", "group");
+        this.element.setAttribute("aria-label", displayName);
 
         this._contentView = new WebInspector.View;
         this._contentView.element.classList.add("content");

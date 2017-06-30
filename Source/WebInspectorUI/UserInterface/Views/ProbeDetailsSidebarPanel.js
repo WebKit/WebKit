@@ -28,7 +28,7 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
 {
     constructor()
     {
-        super("probe", WebInspector.UIString("Probes"), WebInspector.UIString("Probes"));
+        super("probe", WebInspector.UIString("Probes"));
 
         this._probeSetSections = new Map;
         this._inspectedProbeSets = [];

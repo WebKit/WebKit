@@ -27,7 +27,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
 {
     constructor()
     {
-        super("dom-node-details", WebInspector.UIString("Node"), WebInspector.UIString("Node"));
+        super("dom-node-details", WebInspector.UIString("Node"));
 
         this._eventListenerGroupingMethodSetting = new WebInspector.Setting("dom-node-event-listener-grouping-method", WebInspector.DOMNodeDetailsSidebarPanel.EventListenerGroupingMethod.Event);
 

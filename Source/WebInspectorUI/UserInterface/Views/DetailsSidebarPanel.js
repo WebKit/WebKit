@@ -25,9 +25,9 @@
 
 WebInspector.DetailsSidebarPanel = class DetailsSidebarPanel extends WebInspector.SidebarPanel
 {
-    constructor(identifier, displayName, singularDisplayName, element, dontCreateNavigationItem)
+    constructor(identifier, displayName, dontCreateNavigationItem)
     {
-        super(identifier, displayName, element);
+        super(identifier, displayName);
 
         this.element.classList.add("details");
 

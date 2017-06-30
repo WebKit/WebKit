@@ -48,11 +48,6 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.sidebar > .panel.navigation > .overflow-shadow.top {
-    top: calc(var(--navigation-bar-height) - 1px);
-    bottom: initial;
-}
-
 .sidebar > .panel.navigation > .content .empty-content-placeholder {
     left: 0;
     right: 0;
