@@ -1162,7 +1162,7 @@ Ref<DOMRectList> Element::getClientRects()
     return DOMRectList::create(quads);
 }
 
-Ref<DOMRect> Element::getBoundingClientRect()
+FloatRect Element::boundingClientRect()
 {
     document().updateLayoutIgnorePendingStylesheets();
 
@@ -1180,14 +1180,19 @@ Ref<DOMRect> Element::getBoundingClientRect()
     }
 
     if (quads.isEmpty())
-        return DOMRect::create();
+        return { };
 
     FloatRect result = quads[0].boundingBox();
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].boundingBox());
 
     document().convertAbsoluteToClientRect(result, renderer()->style());
-    return DOMRect::create(result);
+    return result;
+}
+
+Ref<DOMRect> Element::getBoundingClientRect()
+{
+    return DOMRect::create(boundingClientRect());
 }
 
 // Note that this is not web-exposed, and does not use the same coordinate system as getBoundingClientRect() and friends.

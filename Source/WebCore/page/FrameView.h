@@ -259,7 +259,7 @@ public:
     // Used with delegated scrolling (i.e. iOS).
     WEBCORE_EXPORT void setLayoutViewportOverrideRect(std::optional<LayoutRect>);
 
-    // These are in document coordinates, unaffected by zooming.
+    // These are in document coordinates, unaffected by page scale (but affected by zooming).
     WEBCORE_EXPORT LayoutRect layoutViewportRect() const;
     WEBCORE_EXPORT LayoutRect visualViewportRect() const;
     
@@ -445,6 +445,7 @@ public:
     //
     // "Document"
     //    Relative to the document's scroll origin, but not affected by page zoom or page scale. Size is equivalent to CSS pixel dimensions.
+    //    FIXME: some uses are affected by page zoom (e.g. layout and visual viewports).
     //
     // "Client"
     //    Relative to the visible part of the document (or, more strictly, the layout viewport rect), and with the same scaling
@@ -463,7 +464,9 @@ public:
     IntPoint convertToContainingView(const IntPoint&) const final;
     IntPoint convertFromContainingView(const IntPoint&) const final;
 
+    float documentToAbsoluteScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
     float absoluteToDocumentScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
+
     FloatRect absoluteToDocumentRect(FloatRect, std::optional<float> effectiveZoom = std::nullopt) const;
     FloatPoint absoluteToDocumentPoint(FloatPoint, std::optional<float> effectiveZoom = std::nullopt) const;
 

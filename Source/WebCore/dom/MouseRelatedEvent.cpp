@@ -59,9 +59,8 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, const MouseR
 
 void MouseRelatedEvent::init(bool isSimulated, const IntPoint& windowLocation)
 {
-    auto* frame = view() ? view()->frame() : nullptr;
-    if (frame && !isSimulated) {
-        if (FrameView* frameView = frame->view()) {
+    if (!isSimulated) {
+        if (auto* frameView = this->frameView()) {
             FloatPoint absolutePoint = frameView->windowToContents(windowLocation);
             FloatPoint documentPoint = frameView->absoluteToDocumentPoint(absolutePoint);
             m_pageLocation = flooredLayoutPoint(documentPoint);
@@ -88,11 +87,8 @@ void MouseRelatedEvent::initCoordinates(const LayoutPoint& clientLocation)
     // Set up initial values for coordinates.
     // Correct values are computed lazily, see computeRelativePosition.
     FloatSize documentToClientOffset;
-    auto* frame = view() ? view()->frame() : nullptr;
-    if (frame) {
-        if (FrameView* frameView = frame->view())
-            documentToClientOffset = frameView->documentToClientOffset();
-    }
+    if (auto* frameView = this->frameView())
+        documentToClientOffset = frameView->documentToClientOffset();
 
     m_clientLocation = clientLocation;
     m_pageLocation = clientLocation - LayoutSize(documentToClientOffset);
@@ -104,32 +100,26 @@ void MouseRelatedEvent::initCoordinates(const LayoutPoint& clientLocation)
     m_hasCachedRelativePosition = false;
 }
 
-static float pageZoomFactor(const UIEvent* event)
+FrameView* MouseRelatedEvent::frameView() const
 {
-    DOMWindow* window = event->view();
-    if (!window)
-        return 1;
-    Frame* frame = window->frame();
+    auto* frame = view() ? view()->frame() : nullptr;
     if (!frame)
-        return 1;
-    return frame->pageZoomFactor();
+        return nullptr;
+
+    return frame->view();
 }
 
-static float frameScaleFactor(const UIEvent* event)
+float MouseRelatedEvent::documentToAbsoluteScaleFactor() const
 {
-    DOMWindow* window = event->view();
-    if (!window)
-        return 1;
-    Frame* frame = window->frame();
-    if (!frame)
-        return 1;
-    return frame->frameScaleFactor();
+    if (auto* frameView = this->frameView())
+        return frameView->documentToAbsoluteScaleFactor();
+
+    return 1;
 }
 
 void MouseRelatedEvent::computePageLocation()
 {
-    float scaleFactor = pageZoomFactor(this) * frameScaleFactor(this);
-    setAbsoluteLocation(LayoutPoint(pageX() * scaleFactor, pageY() * scaleFactor));
+    m_absoluteLocation = m_pageLocation.scaled(documentToAbsoluteScaleFactor());
 }
 
 void MouseRelatedEvent::receivedTarget()
@@ -153,7 +143,7 @@ void MouseRelatedEvent::computeRelativePosition()
     // Adjust offsetLocation to be relative to the target's position.
     if (RenderObject* r = targetNode->renderer()) {
         m_offsetLocation = LayoutPoint(r->absoluteToLocal(absoluteLocation(), UseTransforms));
-        float scaleFactor = 1 / (pageZoomFactor(this) * frameScaleFactor(this));
+        float scaleFactor = 1 / documentToAbsoluteScaleFactor();
         if (scaleFactor != 1.0f)
             m_offsetLocation.scale(scaleFactor);
     }

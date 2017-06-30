@@ -1,3 +1,56 @@
+2017-06-28  Simon Fraser  <simon.fraser@apple.com>
+
+        getBoundingClientRect returns wrong value for combination of page zoom and scroll
+        https://bugs.webkit.org/show_bug.cgi?id=173841
+        rdar://problem/32983841
+
+        Reviewed by Dean Jackson.
+
+        The layout viewport returned by FrameView::layoutViewportRect() is affected by page (Command-+) zooming,
+        since it's computed using scroll positions, so when we use its origin to convert into client coordinates
+        (which are zoom-agnostic), we need to account for page zoom, so fix FrameView::documentToClientOffset()
+        to do this.
+
+        Callers of documentToClientOffset() were checked, revealing that event client coordinates were also
+        wrong with page zoom and are fixed in the same way. It was found that SimulatedClick was using an
+        entirely wrong rect to compute its location: Element::clientRect() is NOT in client coordinates,
+        so change this code to use getBoundingClientRect() instead.
+
+        Minor refactoring in MouseRelatedEvent to make getting to the FrameView cleaner.
+
+        Some geometry types enhanced to have non-mutating scale functions.
+
+        Tests: fast/events/simulated-click-zoomed.html
+               fast/visual-viewport/client-rects-relative-to-layout-viewport-zoomed.html
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::init):
+        (WebCore::MouseRelatedEvent::initCoordinates):
+        (WebCore::MouseRelatedEvent::frameView):
+        (WebCore::MouseRelatedEvent::documentToAbsoluteScaleFactor):
+        (WebCore::MouseRelatedEvent::computePageLocation):
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        (WebCore::pageZoomFactor): Deleted.
+        (WebCore::frameScaleFactor): Deleted.
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::absoluteLocation):
+        (WebCore::MouseRelatedEvent::setAbsoluteLocation): Deleted.
+        * dom/SimulatedClick.cpp:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutViewportRect): baseLayoutViewportSize() is the same as the old code.
+        (WebCore::FrameView::documentToAbsoluteScaleFactor):
+        (WebCore::FrameView::absoluteToDocumentScaleFactor):
+        (WebCore::FrameView::absoluteToDocumentPoint):
+        (WebCore::FrameView::documentToClientOffset):
+        * page/FrameView.h:
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::scale):
+        (WebCore::FloatPoint::scaled):
+        * platform/graphics/FloatSize.h:
+        (WebCore::FloatSize::scaled):
+        * platform/graphics/LayoutPoint.h:
+        (WebCore::LayoutPoint::scaled):
+
 2017-06-29  Megan Gardner  <megan_gardner@apple.com>
 
         Unreviewed, fixing Window's build after r218976

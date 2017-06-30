@@ -199,7 +199,11 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (![self canZoomIn])
         return;
 
-    [_webView makeTextLarger:sender];
+    if (_zoomTextOnly)
+        [_webView makeTextLarger:sender];
+    else
+        [_webView zoomPageIn:sender];
+
 }
 
 - (BOOL)canZoomOut
@@ -212,12 +216,15 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (![self canZoomIn])
         return;
 
-    [_webView makeTextSmaller:sender];
+    if (_zoomTextOnly)
+        [_webView makeTextSmaller:sender];
+    else
+        [_webView zoomPageOut:sender];
 }
 
 - (BOOL)canResetZoom
 {
-    return [_webView canMakeTextStandardSize];
+    return _zoomTextOnly ? [_webView canMakeTextStandardSize] : [_webView canResetPageZoom];
 }
 
 - (void)resetZoom:(id)sender
@@ -225,7 +232,10 @@ static BOOL areEssentiallyEqual(double a, double b)
     if (![self canResetZoom])
         return;
 
-    [_webView makeTextStandardSize:sender];
+    if (_zoomTextOnly)
+        [_webView makeTextStandardSize:sender];
+    else
+        [_webView resetPageZoom:sender];
 }
 
 - (IBAction)toggleZoomMode:(id)sender

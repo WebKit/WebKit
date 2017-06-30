@@ -327,6 +327,7 @@ fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html [ Skip ]
 fast/scrolling/scroll-animator-overlay-scrollbars-hovered.html [ Skip ]
 fast/scrolling/scroll-animator-select-list-events.html [ Skip ]
 fast/events/prevent-default-prevents-interaction-with-scrollbars.html [ Skip ]
+fast/events/simulated-click-zoomed.html [ Skip ]
 fast/text/text-disappear-on-deselect.html [ ImageOnlyFailure ]
 fast/css/pseudo-active-on-labeled-control-without-renderer.html [ Skip ]
 fast/css/pseudo-active-on-labeled-element-not-canceled-by-focus.html [ Skip ]
@@ -2726,6 +2727,7 @@ fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html [ Skip ]
 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ]
 fast/scrolling/scroll-to-anchor-zoomed-header.html [ Skip ]
 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Skip ]
+fast/visual-viewport/client-rects-relative-to-layout-viewport-zoomed.html [ Skip ]
 
 # On iOS we do not visually highlight a programmatic selection
 fast/selectors/040.html

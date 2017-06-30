@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SimulatedClick.h"
 
+#include "DOMRect.h"
 #include "DataTransfer.h"
 #include "Element.h"
 #include "EventDispatcher.h"
@@ -72,7 +73,7 @@ private:
             // (element.click()), the coordinates will be 0, similarly to Firefox and Chrome.
             // Note that the call to screenRect() causes a synchronous IPC with the UI process.
             m_screenLocation = target.screenRect().center();
-            initCoordinates(LayoutPoint(target.clientRect().center()));
+            initCoordinates(LayoutPoint(target.boundingClientRect().center()));
         }
     }
 

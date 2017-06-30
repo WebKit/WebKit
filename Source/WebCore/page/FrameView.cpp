@@ -1978,7 +1978,7 @@ LayoutRect FrameView::layoutViewportRect() const
         return m_layoutViewportOverrideRect.value();
 
     // Size of initial containing block, anchored at scroll position, in document coordinates (unchanged by scale factor).
-    return LayoutRect(m_layoutViewportOrigin, renderView() ? renderView()->size() : size());
+    return LayoutRect(m_layoutViewportOrigin, baseLayoutViewportSize());
 }
 
 // visibleContentRect is in the bounds of the scroll view content. That consists of an
@@ -4882,11 +4882,16 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
     return parentPoint;
 }
 
+float FrameView::documentToAbsoluteScaleFactor(std::optional<float> effectiveZoom) const
+{
+    // If effectiveZoom is passed, it already factors in pageZoomFactor(). 
+    return effectiveZoom.value_or(frame().pageZoomFactor()) * frame().frameScaleFactor();
+}
+
 float FrameView::absoluteToDocumentScaleFactor(std::optional<float> effectiveZoom) const
 {
     // If effectiveZoom is passed, it already factors in pageZoomFactor(). 
-    float cssZoom = effectiveZoom.value_or(frame().pageZoomFactor()); 
-    return 1 / (cssZoom * frame().frameScaleFactor());
+    return 1 / documentToAbsoluteScaleFactor(effectiveZoom);
 }
 
 FloatRect FrameView::absoluteToDocumentRect(FloatRect rect, std::optional<float> effectiveZoom) const
@@ -4897,13 +4902,15 @@ FloatRect FrameView::absoluteToDocumentRect(FloatRect rect, std::optional<float>
 
 FloatPoint FrameView::absoluteToDocumentPoint(FloatPoint p, std::optional<float> effectiveZoom) const
 {
-    p.scale(absoluteToDocumentScaleFactor(effectiveZoom));
-    return p;
+    return p.scaled(absoluteToDocumentScaleFactor(effectiveZoom));
 }
 
 FloatSize FrameView::documentToClientOffset() const
 {
-    return frame().settings().visualViewportEnabled() ? -toFloatSize(layoutViewportRect().location()) : -toFloatSize(visibleContentRect().location());
+    FloatSize clientOrigin = frame().settings().visualViewportEnabled() ? -toFloatSize(layoutViewportRect().location()) : -toFloatSize(visibleContentRect().location());
+
+    // Layout and visual viewports are affected by page zoom, so we need to factor that out.
+    return clientOrigin.scaled(1 / frame().pageZoomFactor());
 }
 
 FloatRect FrameView::documentToClientRect(FloatRect rect) const

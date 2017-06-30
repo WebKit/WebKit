@@ -94,6 +94,16 @@ public:
         m_height *= scaleY;
     }
 
+    FloatSize scaled(float s) const
+    {
+        return { m_width * s, m_height * s };
+    }
+
+    FloatSize scaled(float scaleX, float scaleY) const
+    {
+        return { m_width * scaleX, m_height * scaleY };
+    }
+
     WEBCORE_EXPORT FloatSize constrainedBetween(const FloatSize& min, const FloatSize& max) const;
 
     FloatSize expandedTo(const FloatSize& other) const

@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+class FrameView;
+
 struct MouseRelatedEventInit : public EventModifierInit {
     int screenX { 0 };
     int screenY { 0 };
@@ -62,7 +64,6 @@ public:
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
     // usable with RenderObject::absoluteToLocal).
     const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
-    void setAbsoluteLocation(const LayoutPoint& p) { m_absoluteLocation = p; }
 
 protected:
     MouseRelatedEvent() = default;
@@ -80,6 +81,9 @@ protected:
 
     void computePageLocation();
     void computeRelativePosition();
+
+    float documentToAbsoluteScaleFactor() const;
+    FrameView* frameView() const;
 
     // Expose these so MouseEvent::initMouseEvent can set them.
     IntPoint m_screenLocation;

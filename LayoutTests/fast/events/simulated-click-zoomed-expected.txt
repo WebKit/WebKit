@@ -1,0 +1,6 @@
+PASS event.clientX is 120
+PASS event.clientY is 200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me
