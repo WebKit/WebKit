@@ -198,9 +198,9 @@ WebInspector.NetworkTimelineView = class NetworkTimelineView extends WebInspecto
             let displayName2 = node2.displayName();
 
             if (displayName1 !== displayName2)
-                return displayName1.localeCompare(displayName2) * sortDirection;
+                return displayName1.extendedLocaleCompare(displayName2) * sortDirection;
 
-            return node1.resource.url.localeCompare(node2.resource.url) * sortDirection;
+            return node1.resource.url.extendedLocaleCompare(node2.resource.url) * sortDirection;
         }
 
         return null;

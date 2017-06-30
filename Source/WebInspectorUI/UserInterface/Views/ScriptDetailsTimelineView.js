@@ -156,9 +156,9 @@ WebInspector.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends
         let displayName1 = node1.displayName();
         let displayName2 = node2.displayName();
         if (displayName1 !== displayName2)
-            return displayName1.localeCompare(displayName2) * sortDirection;
+            return displayName1.extendedLocaleCompare(displayName2) * sortDirection;
 
-        return node1.subtitle.localeCompare(node2.subtitle) * sortDirection;
+        return node1.subtitle.extendedLocaleCompare(node2.subtitle) * sortDirection;
     }
 
     // Protected

@@ -68,7 +68,7 @@ WebInspector.ProbeDetailsSidebarPanel = class ProbeDetailsSidebarPanel extends W
         inspectedProbeSets.sort(function sortBySourceLocation(aProbeSet, bProbeSet) {
             var aLocation = aProbeSet.breakpoint.sourceCodeLocation;
             var bLocation = bProbeSet.breakpoint.sourceCodeLocation;
-            var comparisonResult = aLocation.sourceCode.displayName.localeCompare(bLocation.sourceCode.displayName);
+            var comparisonResult = aLocation.sourceCode.displayName.extendedLocaleCompare(bLocation.sourceCode.displayName);
             if (comparisonResult !== 0)
                 return comparisonResult;
 

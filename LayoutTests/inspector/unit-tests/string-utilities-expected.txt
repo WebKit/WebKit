@@ -20,3 +20,17 @@ PASS: integer format specifier with string argument should attempt conversion to
 PASS: integer format specifier with Infinity argument should show "NaN"
 PASS: integer format specifier with NaN argument should show "NaN"
 
+-- Running test case: String.prototype.extendedLocaleCompare
+PASS: "1" < "2"
+PASS: "2" > "1"
+PASS: "2" < "10"
+PASS: "10" > "2"
+PASS: "1" < "10"
+PASS: "10" > "1"
+PASS: "a1" < "a2"
+PASS: "a2" > "a1"
+PASS: "a2" < "a10"
+PASS: "a10" > "a2"
+PASS: "a1" < "a10"
+PASS: "a10" > "a1"
+

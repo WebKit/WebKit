@@ -187,7 +187,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         dataGrid.removeChildren();
 
         let attributes = domNode.attributes();
-        attributes.sort((a, b) => a.name.localeCompare(b.name));
+        attributes.sort((a, b) => a.name.extendedLocaleCompare(b.name));
         for (let attribute of attributes) {
             let dataGridNode = new WebInspector.EditableDataGridNode(attribute);
             dataGridNode.addEventListener(WebInspector.EditableDataGridNode.Event.ValueChanged, this._attributeNodeValueChanged, this);
@@ -355,7 +355,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
                 if (!eventListenersForNode)
                     continue;
 
-                eventListenersForNode.sort((a, b) => a.type.toLowerCase().localeCompare(b.type.toLowerCase()));
+                eventListenersForNode.sort((a, b) => a.type.toLowerCase().extendedLocaleCompare(b.type.toLowerCase()));
 
                 rows.push(createEventListenerSection(currentNode.displayName, eventListenersForNode, {hideNode: true}));
             } while (currentNode = currentNode.parentNode);

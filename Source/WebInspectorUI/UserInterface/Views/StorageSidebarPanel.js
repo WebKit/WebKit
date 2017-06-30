@@ -50,7 +50,7 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
             {identifier: "session-storage", title: WebInspector.UIString("Session Storage"), classes: [WebInspector.DOMStorageTreeElement], localStorage: false}
         ];
 
-        storageTypes.sort(function(a, b) { return a.title.localeCompare(b.title); });
+        storageTypes.sort(function(a, b) { return a.title.extendedLocaleCompare(b.title); });
 
         for (var info of storageTypes) {
             var scopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + info.identifier, info.title);
@@ -305,7 +305,7 @@ WebInspector.StorageSidebarPanel = class StorageSidebarPanel extends WebInspecto
         console.assert(a.mainTitle);
         console.assert(b.mainTitle);
 
-        return (a.mainTitle || "").localeCompare(b.mainTitle || "");
+        return (a.mainTitle || "").extendedLocaleCompare(b.mainTitle || "");
     }
 
     _addStorageChild(childElement, parentElement, folderName)

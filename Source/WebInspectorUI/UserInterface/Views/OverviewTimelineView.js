@@ -178,7 +178,7 @@ WebInspector.OverviewTimelineView = class OverviewTimelineView extends WebInspec
             return result;
 
         // Fallback to comparing titles.
-        return a.displayName().localeCompare(b.displayName());
+        return a.displayName().extendedLocaleCompare(b.displayName());
     }
 
     _insertDataGridNode(dataGridNode, parentDataGridNode)

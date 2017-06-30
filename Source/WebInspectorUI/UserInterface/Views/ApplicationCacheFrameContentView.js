@@ -182,7 +182,7 @@ WebInspector.ApplicationCacheFrameContentView = class ApplicationCacheFrameConte
         }
         function localeCompare(columnIdentifier, nodeA, nodeB)
         {
-             return (nodeA.data[columnIdentifier] + "").localeCompare(nodeB.data[columnIdentifier] + "");
+             return (nodeA.data[columnIdentifier] + "").extendedLocaleCompare(nodeB.data[columnIdentifier] + "");
         }
 
         var comparator;

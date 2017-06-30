@@ -282,7 +282,7 @@ WebInspector.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeComple
                     return -1;
 
                 // Not numbers, sort as strings.
-                return a.localeCompare(b);
+                return a.extendedLocaleCompare(b);
             }
 
             completions.sort(compare);

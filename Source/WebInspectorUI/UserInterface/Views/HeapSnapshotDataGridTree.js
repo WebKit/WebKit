@@ -58,13 +58,13 @@ WebInspector.HeapSnapshotDataGridTree = class HeapSnapshotDataGridTree extends W
                     return multiplier * -1;
                 if (!a.propertyName && b.propertyName)
                     return multiplier * 1;
-                let propertyNameCompare = a.propertyName.localeCompare(b.propertyName);
+                let propertyNameCompare = a.propertyName.extendedLocaleCompare(b.propertyName);
                 console.assert(propertyNameCompare !== 0, "Property names should be unique, we shouldn't have equal property names.");
                 return multiplier * propertyNameCompare;
             }
 
             // Sort by class name and object id if no property name.
-            let classNameCompare = a.data.className.localeCompare(b.data.className);
+            let classNameCompare = a.data.className.extendedLocaleCompare(b.data.className);
             if (classNameCompare)
                 return multiplier * classNameCompare;
             if (a.data.id || b.data.id)

@@ -177,7 +177,7 @@ WebInspector.CookieStorageContentView = class CookieStorageContentView extends W
     {
         function localeCompare(field, nodeA, nodeB)
         {
-            return (nodeA.data[field] + "").localeCompare(nodeB.data[field] + "");
+            return (nodeA.data[field] + "").extendedLocaleCompare(nodeB.data[field] + "");
         }
 
         function numberCompare(field, nodeA, nodeB)

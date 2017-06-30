@@ -82,7 +82,7 @@ WebInspector.ResourceQueryController = class ResourceQueryController extends Web
         // rank are sorted by display name.
         return results.sort((a, b) => {
             if (a.rank === b.rank)
-                return a.resource.displayName.localeCompare(b.resource.displayName);
+                return a.resource.displayName.extendedLocaleCompare(b.resource.displayName);
             return b.rank - a.rank;
         });
     }

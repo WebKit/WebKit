@@ -1303,7 +1303,7 @@ WebInspector.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor
 
         properties = properties.filter(filterFunction);
         if (this._sortProperties)
-            properties.sort((a, b) => a.name.localeCompare(b.name));
+            properties.sort((a, b) => a.name.extendedLocaleCompare(b.name));
 
         this._shownProperties = properties;
 

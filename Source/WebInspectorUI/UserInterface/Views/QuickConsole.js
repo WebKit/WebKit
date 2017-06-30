@@ -210,7 +210,7 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         if (bNonMainTarget && !aNonMainTarget)
             return 1;
         if (aNonMainTarget && bNonMainTarget)
-            return a.displayName.localeCompare(b.displayName);
+            return a.displayName.extendedLocaleCompare(b.displayName);
 
         // "Main Frame" follows.
         if (aExecutionContext === WebInspector.mainTarget.executionContext)
@@ -228,7 +228,7 @@ WebInspector.QuickConsole = class QuickConsole extends WebInspector.View
         if (!aExecutionContext.frame.name && bExecutionContext.frame.name)
             return 1;
 
-        return a.displayName.localeCompare(b.displayName);
+        return a.displayName.extendedLocaleCompare(b.displayName);
     }
 
     _insertOtherExecutionContextPathComponent(executionContextPathComponent, skipRebuild)

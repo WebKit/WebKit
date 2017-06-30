@@ -237,7 +237,7 @@ WebInspector.FolderizedTreeElement = class FolderizedTreeElement extends WebInsp
             return 1;
 
         // Then sort by title.
-        return a.mainTitle.localeCompare(b.mainTitle, undefined, {numeric: true});
+        return a.mainTitle.extendedLocaleCompare(b.mainTitle);
     }
 
     _insertFolderTreeElement(folderTreeElement)

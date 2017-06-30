@@ -39,7 +39,7 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
     static compareResourceTreeElements(a, b)
     {
         // Compare by type first to keep resources grouped by type when not sorted into folders.
-        var comparisonResult = a.resource.type.localeCompare(b.resource.type);
+        var comparisonResult = a.resource.type.extendedLocaleCompare(b.resource.type);
         if (comparisonResult !== 0)
             return comparisonResult;
 
@@ -53,12 +53,12 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
         // domain of the resource. This causes resources to group by domain. If the resource
         // is on the same domain as the frame it will have an empty subtitle. This is good
         // because empty string sorts first, so those will appear before external resources.
-        comparisonResult = a.subtitle.localeCompare(b.subtitle);
+        comparisonResult = a.subtitle.extendedLocaleCompare(b.subtitle);
         if (comparisonResult !== 0)
             return comparisonResult;
 
         // Compare by title when the subtitles are the same.
-        return a.mainTitle.localeCompare(b.mainTitle);
+        return a.mainTitle.extendedLocaleCompare(b.mainTitle);
     }
 
     static compareFolderAndResourceTreeElements(a, b)
@@ -71,7 +71,7 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
         if (!aIsFolder && bIsFolder)
             return 1;
         if (aIsFolder && bIsFolder)
-            return a.mainTitle.localeCompare(b.mainTitle);
+            return a.mainTitle.extendedLocaleCompare(b.mainTitle);
 
         return WebInspector.ResourceTreeElement.compareResourceTreeElements(a, b);
     }

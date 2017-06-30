@@ -33,6 +33,26 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "String.prototype.extendedLocaleCompare",
+        test() {
+            InspectorTest.expectEqual("1".extendedLocaleCompare("2"), -1, `"1" < "2"`);
+            InspectorTest.expectEqual("2".extendedLocaleCompare("1"), 1, `"2" > "1"`);
+            InspectorTest.expectEqual("2".extendedLocaleCompare("10"), -1, `"2" < "10"`);
+            InspectorTest.expectEqual("10".extendedLocaleCompare("2"), 1, `"10" > "2"`);
+            InspectorTest.expectEqual("1".extendedLocaleCompare("10"), -1, `"1" < "10"`);
+            InspectorTest.expectEqual("10".extendedLocaleCompare("1"), 1, `"10" > "1"`);
+
+            InspectorTest.expectEqual("a1".extendedLocaleCompare("a2"), -1, `"a1" < "a2"`);
+            InspectorTest.expectEqual("a2".extendedLocaleCompare("a1"), 1, `"a2" > "a1"`);
+            InspectorTest.expectEqual("a2".extendedLocaleCompare("a10"), -1, `"a2" < "a10"`);
+            InspectorTest.expectEqual("a10".extendedLocaleCompare("a2"), 1, `"a10" > "a2"`);
+            InspectorTest.expectEqual("a1".extendedLocaleCompare("a10"), -1, `"a1" < "a10"`);
+            InspectorTest.expectEqual("a10".extendedLocaleCompare("a1"), 1, `"a10" > "a1"`);
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

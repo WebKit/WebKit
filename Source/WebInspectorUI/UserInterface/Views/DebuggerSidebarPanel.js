@@ -897,7 +897,7 @@ WebInspector.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WebInspec
         if (isSpecialBreakpoint(b))
             return 1;
 
-        return a.mainTitle.localeCompare(b.mainTitle);
+        return a.mainTitle.extendedLocaleCompare(b.mainTitle);
     }
 
     _compareTreeElements(a, b)

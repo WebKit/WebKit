@@ -380,7 +380,7 @@ WebInspector.TimelineDataGrid = class TimelineDataGrid extends WebInspector.Data
         }
 
         if (typeof value1 === "string" && typeof value2 === "string")
-            return value1.localeCompare(value2) * sortDirection;
+            return value1.extendedLocaleCompare(value2) * sortDirection;
 
         if (value1 instanceof WebInspector.CallFrame || value2 instanceof WebInspector.CallFrame) {
             // Sort by function name if available, then fall back to the source code object.

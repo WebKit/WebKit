@@ -153,7 +153,7 @@ WebInspector.DOMStorageContentView = class DOMStorageContentView extends WebInsp
 
         function comparator(a, b)
         {
-            return a.data[sortColumnIdentifier].localeCompare(b.data[sortColumnIdentifier]);
+            return a.data[sortColumnIdentifier].extendedLocaleCompare(b.data[sortColumnIdentifier]);
         }
 
         this._dataGrid.sortNodesImmediately(comparator);

@@ -671,6 +671,14 @@ Object.defineProperty(String.prototype, "capitalize",
     }
 });
 
+Object.defineProperty(String.prototype, "extendedLocaleCompare",
+{
+    value(other)
+    {
+        return this.localeCompare(other, undefined, {numeric: true});
+    }
+});
+
 Object.defineProperty(String, "tokenizeFormatString",
 {
     value: function(format)
