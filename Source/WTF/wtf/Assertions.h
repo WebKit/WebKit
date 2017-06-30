@@ -465,5 +465,102 @@ static inline void UNREACHABLE_FOR_PLATFORM()
 #define UNREACHABLE_FOR_PLATFORM() RELEASE_ASSERT_NOT_REACHED()
 #endif
 
+#ifndef INLINE_CRASH_WITH_SECURITY_IMPLICATION
+// This is useful if you are going to stuff data into registers before crashing. Like the CRASH_WITH_INFO functions below...
+#define INLINE_CRASH_WITH_SECURITY_IMPLICATION() CRASH()
+#endif
+
+#ifdef __cplusplus
+
+#if OS(DARWIN) && (CPU(X64_64) || CPU(ARM64))
+#if CPU(X86_64)
+#define STUFF_REGISTER_FOR_CRASH(reg, value) \
+    static_assert(std::is_integral<decltype(value)>::value, "STUFF_REGISTERS_FOR_CRASH expects an integral input"); \
+    __asm__ volatile ("movq %0, %%" reg : : "r" (static_cast<uint64_t>(value)) : reg)
+
+// This ordering was chosen to be consistant with JSC's JIT asserts. We probably shouldn't change this ordering
+// since it would make tooling crash reports much harder. If, for whatever reason, we decide to change the ordering
+// here we should update the abortWithReason functions.
+#define STUFF_FOR_CRASH_REGISTER1 "r11"
+#define STUFF_FOR_CRASH_REGISTER2 "r10"
+#define STUFF_FOR_CRASH_REGISTER3 "r9"
+#define STUFF_FOR_CRASH_REGISTER4 "r8"
+#define STUFF_FOR_CRASH_REGISTER5 "r15"
+
+#elif CPU(ARM64) // CPU(X86_64)
+#define STUFF_REGISTER_FOR_CRASH(reg, value) \
+    static_assert(std::is_integral<decltype(value)>::value, "STUFF_REGISTERS_FOR_CRASH expects an integral input"); \
+    __asm__ volatile ("mov " reg ", %0" : : "r" (static_cast<uint64_t>(value)) : reg)
+
+// See comment above on the ordering.
+#define STUFF_FOR_CRASH_REGISTER1 "x16"
+#define STUFF_FOR_CRASH_REGISTER2 "x17"
+#define STUFF_FOR_CRASH_REGISTER3 "x18"
+#define STUFF_FOR_CRASH_REGISTER4 "x19"
+#define STUFF_FOR_CRASH_REGISTER5 "x20"
+
+#endif // CPU(ARM64)
+
+template<typename Reason, typename A, typename B, typename C, typename D>
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO(Reason reason, A misc1, B misc2, C misc3, D misc4)
+{
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER1, reason);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER2, misc1);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER3, misc2);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER4, misc3);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER5, misc4);
+    INLINE_CRASH_WITH_SECURITY_IMPLICATION();
+}
+
+template<typename Reason, typename A, typename B, typename C>
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO(Reason reason, A misc1, B misc2, C misc3)
+{
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER1, reason);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER2, misc1);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER3, misc2);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER4, misc3);
+    INLINE_CRASH_WITH_SECURITY_IMPLICATION();
+}
+
+template<typename Reason, typename A, typename B>
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO(Reason reason, A misc1, B misc2)
+{
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER1, reason);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER2, misc1);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER3, misc2);
+    INLINE_CRASH_WITH_SECURITY_IMPLICATION();
+}
+
+template<typename Reason, typename A>
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO(Reason reason, A misc1)
+{
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER1, reason);
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER2, misc1);
+    INLINE_CRASH_WITH_SECURITY_IMPLICATION();
+}
+
+template<typename Reason>
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO(Reason reason)
+{
+    STUFF_REGISTER_FOR_CRASH(STUFF_FOR_CRASH_REGISTER1, reason);
+    INLINE_CRASH_WITH_SECURITY_IMPLICATION();
+}
+
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO()
+{
+    INLINE_CRASH_WITH_SECURITY_IMPLICATION();
+}
+
+#else // OS(DARWIN) && (CPU(X64_64) || CPU(ARM64))
+
+template<typename... Types>
+ALWAYS_INLINE NO_RETURN_DUE_TO_CRASH void CRASH_WITH_INFO(Types...)
+{
+    INLINE_CRASH_WITH_SECURITY_IMPLICATION();
+}
+
+#endif // OS(DARWIN) && (CPU(X64_64) || CPU(ARM64))
+
+#endif // __cplusplus
 
 #endif /* WTF_Assertions_h */

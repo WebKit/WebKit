@@ -93,16 +93,18 @@ template<typename> class FlowMap;
         }                                                               \
     } while (false)
 
-#define DFG_ASSERT(graph, node, assertion) do {                         \
+#define DFG_ASSERT(graph, node, assertion, ...) do {                    \
         if (!!(assertion))                                              \
             break;                                                      \
-        (graph).handleAssertionFailure(                                 \
+        (graph).logAssertionFailure(                                 \
             (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        CRASH_WITH_INFO(__VA_ARGS__);                                       \
     } while (false)
 
-#define DFG_CRASH(graph, node, reason) do {                             \
-        (graph).handleAssertionFailure(                                 \
+#define DFG_CRASH(graph, node, reason, ...) do {                        \
+        (graph).logAssertionFailure(                                 \
             (node), __FILE__, __LINE__, WTF_PRETTY_FUNCTION, (reason)); \
+        CRASH_WITH_INFO(__VA_ARGS__);                                       \
     } while (false)
 
 struct InlineVariableData {
@@ -886,14 +888,15 @@ public:
     void registerFrozenValues();
     
     void visitChildren(SlotVisitor&) override;
-    
-    NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
+
+    // These should not be called directly. Instead they should be called through the DFG_CRASH/DFG_ASSERT macros.
+    void logAssertionFailure(
         std::nullptr_t, const char* file, int line, const char* function,
         const char* assertion);
-    NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
+    void logAssertionFailure(
         Node*, const char* file, int line, const char* function,
         const char* assertion);
-    NO_RETURN_DUE_TO_CRASH void handleAssertionFailure(
+    void logAssertionFailure(
         BasicBlock*, const char* file, int line, const char* function,
         const char* assertion);
 

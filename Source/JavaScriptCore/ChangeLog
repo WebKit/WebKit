@@ -1,3 +1,27 @@
+2017-06-30  Keith Miller  <keith_miller@apple.com>
+
+        DFG_ASSERT should allow stuffing registers before trapping.
+        https://bugs.webkit.org/show_bug.cgi?id=174005
+
+        Reviewed by Mark Lam.
+
+        DFG_ASSERT currently prints error data to stderr before crashing,
+        which is nice for local development. In the wild, however, we
+        can't see this information in crash logs. This patch enables
+        stuffing some of the most useful information from DFG_ASSERTS into
+        up to five registers right before crashing. The values stuffed
+        should not impact any logging during local development.
+
+        * assembler/AbortReason.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::verifyEdge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::logForCrash):
+        (JSC::DFG::Graph::logAssertionFailure):
+        (JSC::DFG::crash): Deleted.
+        (JSC::DFG::Graph::handleAssertionFailure): Deleted.
+        * dfg/DFGGraph.h:
+
 2017-06-29  Saam Barati  <sbarati@apple.com>
 
         Calculating postCapacity in unshiftCountSlowCase is wrong

@@ -1,3 +1,16 @@
+2017-06-30  Keith Miller  <keith_miller@apple.com>
+
+        DFG_ASSERT should allow stuffing registers before trapping.
+        https://bugs.webkit.org/show_bug.cgi?id=174005
+
+        Reviewed by Mark Lam.
+
+        Add new template functions that enable stuffing up to five values
+        into registers before crashing.
+
+        * wtf/Assertions.h:
+        (CRASH_WITH_INFO):
+
 2017-06-28  Brent Fulgham  <bfulgham@apple.com>
 
         Teach ResourceLoadStatistics to recognize changes in the file system
