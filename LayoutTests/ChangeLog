@@ -1,3 +1,14 @@
+2017-06-30  John Wilander  <wilander@apple.com>
+
+        Update expectations for layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=173940
+
+        Unreviewed test gardening, update test expectations for failing tests.
+
+        * platform/wk2/TestExpectations:
+            http/tests/loading/resourceLoadStatistics/telemetry-generation.html
+            is still failing.
+
 2017-06-30  Antoine Quint  <graouts@apple.com>
 
         Top controls bars should invert with right-to-left user interface layout direction locale
