@@ -29,12 +29,13 @@
 #include "APIFrameHandle.h"
 #include "FrameInfoData.h"
 #include "WebFrameProxy.h"
+#include "WebPageProxy.h"
 
 namespace API {
 
-Ref<FrameInfo> FrameInfo::create(const WebKit::FrameInfoData& frameInfoData)
+Ref<FrameInfo> FrameInfo::create(const WebKit::FrameInfoData& frameInfoData, WebKit::WebPageProxy* page)
 {
-    return adoptRef(*new FrameInfo(frameInfoData));
+    return adoptRef(*new FrameInfo(frameInfoData, page));
 }
 
 Ref<FrameInfo> FrameInfo::create(const WebKit::WebFrameProxy& frame, const WebCore::SecurityOrigin& securityOrigin)
@@ -47,19 +48,25 @@ Ref<FrameInfo> FrameInfo::create(const WebKit::WebFrameProxy& frame, const WebCo
     frameInfoData.securityOrigin = WebCore::SecurityOriginData::fromSecurityOrigin(securityOrigin);
     frameInfoData.frameID = frame.frameID();
 
-    return create(frameInfoData);
+    return create(frameInfoData, frame.page());
 }
 
-FrameInfo::FrameInfo(const WebKit::FrameInfoData& frameInfoData)
-    : m_isMainFrame(frameInfoData.isMainFrame)
-    , m_request(frameInfoData.request)
-    , m_securityOrigin(SecurityOrigin::create(frameInfoData.securityOrigin.securityOrigin()))
-    , m_handle(API::FrameHandle::create(frameInfoData.frameID))
+FrameInfo::FrameInfo(const WebKit::FrameInfoData& frameInfoData, WebKit::WebPageProxy* page)
+    : m_isMainFrame { frameInfoData.isMainFrame }
+    , m_request { frameInfoData.request }
+    , m_securityOrigin { SecurityOrigin::create(frameInfoData.securityOrigin.securityOrigin()) }
+    , m_handle { API::FrameHandle::create(frameInfoData.frameID) }
+    , m_page { makeRefPtr(page) }
 {
 }
 
 FrameInfo::~FrameInfo()
 {
+}
+
+void FrameInfo::clearPage()
+{
+    m_page = nullptr;
 }
 
 } // namespace API

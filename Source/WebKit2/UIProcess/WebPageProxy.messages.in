@@ -22,7 +22,7 @@
 
 messages -> WebPageProxy {
     # UI messages
-    CreateNewPage(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, WebCore::ResourceRequest request, struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (uint64_t newPageID, struct WebKit::WebPageCreationParameters newPageParameters) Delayed
+    CreateNewPage(struct WebKit::FrameInfoData originatingFrameInfoData, uint64_t originatingPageID, WebCore::ResourceRequest request, struct WebCore::WindowFeatures windowFeatures, struct WebKit::NavigationActionData navigationActionData) -> (uint64_t newPageID, struct WebKit::WebPageCreationParameters newPageParameters) Delayed
     ShowPage()
     ClosePage(bool stopResponsivenessTimer)
     RunJavaScriptAlert(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, String message) -> () Delayed
@@ -100,7 +100,7 @@ messages -> WebPageProxy {
 
     # Policy messages
     DecidePolicyForResponseSync(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, uint64_t listenerID, WebKit::UserData userData) -> (uint64_t policyAction, WebKit::DownloadID downloadID) Delayed
-    DecidePolicyForNavigationAction(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, uint64_t originatingFrameID, struct WebCore::SecurityOriginData originatingFrameSecurityOrigin, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::UserData userData) -> (uint64_t newNavigationID, uint64_t policyAction, WebKit::DownloadID downloadID, struct WebKit::WebsitePolicies websitePolicies) Delayed
+    DecidePolicyForNavigationAction(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, uint64_t navigationID, struct WebKit::NavigationActionData navigationActionData, struct WebKit::FrameInfoData originatingFrameInfoData, uint64_t originatingPageID, WebCore::ResourceRequest originalRequest, WebCore::ResourceRequest request, uint64_t listenerID, WebKit::UserData userData) -> (uint64_t newNavigationID, uint64_t policyAction, WebKit::DownloadID downloadID, struct WebKit::WebsitePolicies websitePolicies) Delayed
     DecidePolicyForNewWindowAction(uint64_t frameID, struct WebCore::SecurityOriginData frameSecurityOrigin, struct WebKit::NavigationActionData navigationActionData, WebCore::ResourceRequest request, String frameName, uint64_t listenerID, WebKit::UserData userData)
     UnableToImplementPolicy(uint64_t frameID, WebCore::ResourceError error, WebKit::UserData userData)
 

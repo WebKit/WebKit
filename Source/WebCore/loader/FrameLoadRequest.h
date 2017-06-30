@@ -27,37 +27,29 @@
 
 #include "FrameLoaderTypes.h"
 #include "ResourceRequest.h"
-#include "SecurityOrigin.h"
 #include "SubstituteData.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
+class Document;
 class Frame;
+class SecurityOrigin;
 
 class FrameLoadRequest {
 public:
-    FrameLoadRequest(SecurityOrigin& requester, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute = { })
-        : m_requester { makeRef(requester) }
-        , m_resourceRequest { resourceRequest }
-        , m_frameName { frameName }
-        , m_lockHistory { lockHistory }
-        , m_lockBackForwardList { lockBackForwardList }
-        , m_shouldSendReferrer { shouldSendReferrer }
-        , m_allowNavigationToInvalidURL { allowNavigationToInvalidURL }
-        , m_newFrameOpenerPolicy { newFrameOpenerPolicy }
-        , m_shouldReplaceDocumentIfJavaScriptURL { shouldReplaceDocumentIfJavaScriptURL }
-        , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
-        , m_downloadAttribute { downloadAttribute }
-    {
-    }
+    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, const ResourceRequest&, const String& frameName, LockHistory, LockBackForwardList, ShouldSendReferrer, AllowNavigationToInvalidURL, NewFrameOpenerPolicy, ShouldOpenExternalURLsPolicy, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute = { });
     WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, ShouldOpenExternalURLsPolicy, const SubstituteData& = SubstituteData());
+
+    WEBCORE_EXPORT ~FrameLoadRequest();
 
     FrameLoadRequest(FrameLoadRequest&&) = default;
     FrameLoadRequest& operator=(FrameLoadRequest&&) = default;
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 
-    const SecurityOrigin& requester() const { return m_requester.get(); }
+    Document& requester();
+    const SecurityOrigin& requesterSecurityOrigin() const;
 
     ResourceRequest& resourceRequest() { return m_resourceRequest; }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
@@ -88,7 +80,8 @@ public:
     const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
 
 private:
-    Ref<SecurityOrigin> m_requester;
+    Ref<Document> m_requester;
+    Ref<SecurityOrigin> m_requesterSecurityOrigin;
     ResourceRequest m_resourceRequest;
     String m_frameName;
     SubstituteData m_substituteData;

@@ -1,3 +1,65 @@
+2017-06-30  Daniel Bates  <dabates@apple.com>
+
+        API::FrameInfo should know the web page that contains the frame; add API property webView to WKFrameInfo
+        https://bugs.webkit.org/show_bug.cgi?id=165160
+        <rdar://problem/29451999>
+
+        Reviewed by Brady Eidson.
+
+        Pass the document that is requesting the load to the loader.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab): Pass the document when instantiating the FrameLoadRequest.
+        Also use C++11 brace initialization to instantiate ResourceRequest.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::navigate): Pass the document when instantiating the FrameLoadRequest.
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest): Moved from FrameLoadRequest.h.
+        (WebCore::FrameLoadRequest::requester): Added.
+        (WebCore::FrameLoadRequest::requesterSecurityOrigin): Added.
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest): Marked as WEBCORE_EXPORT and modified to take
+        the document that requested the load.
+        (WebCore::FrameLoadRequest::requester): Deleted; made out-of-line/moved to FrameLoadRequest.cpp.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected): Pass the document when instantiating the FrameLoadRequest. Also use C++11
+        brace initialization to instantiate ResourceRequest.
+        (WebCore::FrameLoader::loadURLIntoChildFrame): Pass the document when instantiating the FrameLoadRequest.
+        (WebCore::FrameLoader::loadFrameRequest): Substitute FrameLoadRequest::requesterSecurityOrigin() for
+        FrameLoadRequest::requester() as the former replaces the latter.
+        (WebCore::FrameLoader::loadURL): Pass the document when instantiating the NavigationAction.
+        (WebCore::FrameLoader::load): Ditto.
+        (WebCore::FrameLoader::loadWithDocumentLoader): Pass the document when instantiating the NavigationAction.
+        Also use C++11 brace initialization syntax to instantiate the NavigationAction.
+        (WebCore::FrameLoader::reload): Ditto.
+        (WebCore::FrameLoader::loadPostRequest): Ditto.
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy): Pass the document when instantiating the NavigationAction.
+        (WebCore::FrameLoader::loadDifferentDocumentItem): Pass the document when instantiating the NavigationAction.
+        Also use C++11 brace initialization syntax to instantiate the NavigationAction.
+        (WebCore::createWindow): Pass the document when instantiating the NavigationAction.
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::NavigationAction): Modified to take the source document.
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::isEmpty): Consider a NavigationAction empty if does not have a source document
+        or the associated ResourceRequest has an empty URL.
+        (WebCore::NavigationAction::sourceDocument): Added.
+        (WebCore::NavigationAction::NavigationAction): Deleted; made out-of-line/moved to NavigationAction.cpp to
+        avoid the need to include the header Document.h.
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledURLNavigation::ScheduledURLNavigation): Store the document that scheduled the navigation.
+        Also use C++11 brace initialization to instantiate in the member initialization list.
+        (WebCore::ScheduledURLNavigation::initiatingDocument): Added. Retrieves the document that scheduled the navigation.
+        (WebCore::NavigationScheduler::scheduleLocationChange): Pass the document when instantiating the FrameLoadRequest.
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy): Pass the document when instantiating the NavigationAction.
+        Also use C++11 brace initialization syntax to instantiate the NavigationAction.
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        (WebCore::ContextMenuController::contextMenuItemSelected): Pass the document when instantiating the FrameLoadRequest.
+        Also use C++11 brace initialization syntax to instantiate the FrameLoadRequest.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow): Pass the document when instantiating the FrameLoadRequest.
+
 2017-06-29  Jer Noble  <jer.noble@apple.com>
 
         Make Legacy EME API controlled by RuntimeEnabled setting.

@@ -30,6 +30,7 @@
 #include "DataReference.h"
 #include "DrawingArea.h"
 #include "FindController.h"
+#include "FrameInfoData.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleBackForwardListItem.h"
 #include "InjectedBundleDOMWindowExtension.h"
@@ -657,7 +658,7 @@ Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigati
         return nullptr;
 
     // Just call through to the chrome client.
-    FrameLoadRequest frameLoadRequest { m_frame->coreFrame()->document()->securityOrigin(), navigationAction.resourceRequest(), { }, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, navigationAction.shouldOpenExternalURLsPolicy() };
+    FrameLoadRequest frameLoadRequest { *m_frame->coreFrame()->document(), m_frame->coreFrame()->document()->securityOrigin(), navigationAction.resourceRequest(), { }, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, navigationAction.shouldOpenExternalURLsPolicy() };
     Page* newPage = webPage->corePage()->chrome().createWindow(*m_frame->coreFrame(), frameLoadRequest, { }, navigationAction);
     if (!newPage)
         return nullptr;
@@ -779,26 +780,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     uint64_t policyAction;
     DownloadID downloadID;
 
-    RefPtr<WebFrame> originatingFrame;
-    switch (action->navigationType()) {
-    case NavigationType::LinkClicked:
-        if (EventTarget* target = navigationAction.event()->target()) {
-            if (Node* node = target->toNode()) {
-                if (Frame* frame = node->document().frame())
-                    originatingFrame = WebFrame::fromCoreFrame(*frame);
-            }
-        }
-        break;
-    case NavigationType::FormSubmitted:
-    case NavigationType::FormResubmitted:
-        if (formState)
-            originatingFrame = WebFrame::fromCoreFrame(*formState->sourceDocument().frame());
-        break;
-    case NavigationType::BackForward:
-    case NavigationType::Reload:
-    case NavigationType::Other:
-        break;
-    }
+    ASSERT(navigationAction.sourceDocument());
+    RefPtr<WebFrame> originatingFrame = WebFrame::fromCoreFrame(*navigationAction.sourceDocument()->frame());
 
     NavigationActionData navigationActionData;
     navigationActionData.navigationType = action->navigationType();
@@ -822,9 +805,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     // Notify the UIProcess.
     Ref<WebFrame> protect(*m_frame);
-    WebCore::Frame* originatingCoreFrame = originatingFrame ? originatingFrame->coreFrame() : nullptr;
     WebsitePolicies websitePolicies;
-    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), documentLoader->navigationID(), navigationActionData, originatingFrame ? originatingFrame->frameID() : 0, SecurityOriginData::fromFrame(originatingCoreFrame), navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(newNavigationID, policyAction, downloadID, websitePolicies))) {
+    if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), documentLoader->navigationID(), navigationActionData, originatingFrame ? originatingFrame->info() : FrameInfoData(), originatingFrame && originatingFrame->page() ? originatingFrame->page()->pageID() : 0, navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(newNavigationID, policyAction, downloadID, websitePolicies))) {
         m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { });
         return;
     }

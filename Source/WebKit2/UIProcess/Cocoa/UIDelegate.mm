@@ -28,6 +28,7 @@
 
 #if WK_API_ENABLED
 
+#import "APIFrameInfo.h"
 #import "CompletionHandlerCallChecker.h"
 #import "NavigationActionData.h"
 #import "UserMediaPermissionCheckProxy.h"
@@ -173,7 +174,7 @@ UIDelegate::UIClient::~UIClient()
 {
 }
 
-RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPageCommon(WebKit::WebPageProxy* page, WebKit::WebFrameProxy* initiatingFrame, const WebCore::SecurityOriginData& securityOriginData, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData, WTF::Function<void (RefPtr<WebKit::WebPageProxy>)>&& completionHandler)
+RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPageCommon(WebKit::WebPageProxy* page, API::FrameInfo& sourceFrameInfo, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData, WTF::Function<void (RefPtr<WebKit::WebPageProxy>)>&& completionHandler)
 {
     auto delegate = m_uiDelegate.m_delegate.get();
     ASSERT(delegate);
@@ -181,11 +182,9 @@ RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPageCommon(WebKit::W
     auto configuration = adoptNS([m_uiDelegate.m_webView->_configuration copy]);
     [configuration _setRelatedWebView:m_uiDelegate.m_webView];
 
-    auto sourceFrameInfo = API::FrameInfo::create(*initiatingFrame, securityOriginData.securityOrigin());
-
     auto userInitiatedActivity = page->process().userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-    bool shouldOpenAppLinks = !hostsAreEqual(WebCore::URL(WebCore::ParsedURLString, initiatingFrame->url()), request.url());
-    auto apiNavigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.ptr(), nullptr, request, WebCore::URL(), shouldOpenAppLinks, userInitiatedActivity);
+    bool shouldOpenAppLinks = !hostsAreEqual(sourceFrameInfo.request().url(), request.url());
+    auto apiNavigationAction = API::NavigationAction::create(navigationActionData, &sourceFrameInfo, nullptr, request, WebCore::URL(), shouldOpenAppLinks, userInitiatedActivity);
 
     auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
 
@@ -222,7 +221,7 @@ RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPageCommon(WebKit::W
     return webView->_page.get();
 }
 
-RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy* page, WebKit::WebFrameProxy* initiatingFrame, const WebCore::SecurityOriginData& securityOriginData, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData)
+RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy* page, API::FrameInfo& originatingFrameInfo, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeatures)
         return nullptr;
@@ -231,10 +230,10 @@ RefPtr<WebKit::WebPageProxy> UIDelegate::UIClient::createNewPage(WebKit::WebPage
     if (!delegate)
         return nullptr;
 
-    return createNewPageCommon(page, initiatingFrame, securityOriginData, request, windowFeatures, navigationActionData, nullptr);
+    return createNewPageCommon(page, originatingFrameInfo, request, windowFeatures, navigationActionData, nullptr);
 }
 
-bool UIDelegate::UIClient::createNewPageAsync(WebKit::WebPageProxy* page, WebKit::WebFrameProxy* initiatingFrame, const WebCore::SecurityOriginData& securityOriginData, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData, WTF::Function<void (RefPtr<WebKit::WebPageProxy>)>&& completionHandler)
+bool UIDelegate::UIClient::createNewPageAsync(WebKit::WebPageProxy* page, API::FrameInfo& originatingFrameInfo, const WebCore::ResourceRequest& request, const WebCore::WindowFeatures& windowFeatures, const WebKit::NavigationActionData& navigationActionData, WTF::Function<void (RefPtr<WebKit::WebPageProxy>)>&& completionHandler)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewCreateWebViewWithConfigurationForNavigationActionWindowFeaturesAsync)
         return false;
@@ -243,7 +242,7 @@ bool UIDelegate::UIClient::createNewPageAsync(WebKit::WebPageProxy* page, WebKit
     if (!delegate)
         return false;
 
-    createNewPageCommon(page, initiatingFrame, securityOriginData, request, windowFeatures, navigationActionData, WTFMove(completionHandler));
+    createNewPageCommon(page, originatingFrameInfo, request, windowFeatures, navigationActionData, WTFMove(completionHandler));
 
     return true;
 }

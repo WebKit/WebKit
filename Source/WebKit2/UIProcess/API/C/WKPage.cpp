@@ -1704,17 +1704,15 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
     private:
-        RefPtr<WebPageProxy> createNewPage(WebPageProxy* page, WebFrameProxy* initiatingFrame, const SecurityOriginData& securityOriginData, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
+        RefPtr<WebPageProxy> createNewPage(WebPageProxy* page, API::FrameInfo& sourceFrameInfo, const ResourceRequest& resourceRequest, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData) override
         {
             if (m_client.createNewPage) {
                 auto configuration = page->configuration().copy();
                 configuration->setRelatedPage(page);
 
-                auto sourceFrameInfo = API::FrameInfo::create(*initiatingFrame, securityOriginData.securityOrigin());
-
                 auto userInitiatedActivity = page->process().userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-                bool shouldOpenAppLinks = !hostsAreEqual(WebCore::URL(WebCore::ParsedURLString, initiatingFrame->url()), resourceRequest.url());
-                auto apiNavigationAction = API::NavigationAction::create(navigationActionData, sourceFrameInfo.ptr(), nullptr, resourceRequest, WebCore::URL(), shouldOpenAppLinks, userInitiatedActivity);
+                bool shouldOpenAppLinks = !hostsAreEqual(sourceFrameInfo.request().url(), resourceRequest.url());
+                auto apiNavigationAction = API::NavigationAction::create(navigationActionData, &sourceFrameInfo, nullptr, resourceRequest, WebCore::URL(), shouldOpenAppLinks, userInitiatedActivity);
 
                 auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
 

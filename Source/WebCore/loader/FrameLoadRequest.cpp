@@ -33,11 +33,29 @@
 
 #include "Document.h"
 #include "Frame.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 
+FrameLoadRequest::FrameLoadRequest(Document& requester, SecurityOrigin& requesterSecurityOrigin, const ResourceRequest& resourceRequest, const String& frameName, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NewFrameOpenerPolicy newFrameOpenerPolicy, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, ShouldReplaceDocumentIfJavaScriptURL shouldReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute)
+    : m_requester { makeRef(requester) }
+    , m_requesterSecurityOrigin { makeRef(requesterSecurityOrigin) }
+    , m_resourceRequest { resourceRequest }
+    , m_frameName { frameName }
+    , m_lockHistory { lockHistory }
+    , m_lockBackForwardList { lockBackForwardList }
+    , m_shouldSendReferrer { shouldSendReferrer }
+    , m_allowNavigationToInvalidURL { allowNavigationToInvalidURL }
+    , m_newFrameOpenerPolicy { newFrameOpenerPolicy }
+    , m_shouldReplaceDocumentIfJavaScriptURL { shouldReplaceDocumentIfJavaScriptURL }
+    , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
+    , m_downloadAttribute { downloadAttribute }
+{
+}
+
 FrameLoadRequest::FrameLoadRequest(Frame& frame, const ResourceRequest& resourceRequest, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const SubstituteData& substituteData)
-    : m_requester { makeRef(frame.document()->securityOrigin()) }
+    : m_requester { makeRef(*frame.document()) }
+    , m_requesterSecurityOrigin { makeRef(frame.document()->securityOrigin()) }
     , m_resourceRequest { resourceRequest }
     , m_substituteData { substituteData }
     , m_lockHistory { LockHistory::No }
@@ -48,6 +66,18 @@ FrameLoadRequest::FrameLoadRequest(Frame& frame, const ResourceRequest& resource
     , m_shouldReplaceDocumentIfJavaScriptURL { ReplaceDocumentIfJavaScriptURL }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
 {
+}
+
+FrameLoadRequest::~FrameLoadRequest() = default;
+
+Document& FrameLoadRequest::requester()
+{
+    return m_requester.get();
+}
+
+const SecurityOrigin& FrameLoadRequest::requesterSecurityOrigin() const
+{
+    return m_requesterSecurityOrigin.get();
 }
 
 } // namespace WebCore

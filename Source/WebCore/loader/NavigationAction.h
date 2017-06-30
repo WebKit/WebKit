@@ -35,30 +35,34 @@
 
 namespace WebCore {
 
+class Document;
 class Event;
 
 class NavigationAction {
 public:
-    WEBCORE_EXPORT explicit NavigationAction(const ResourceRequest& = { }, NavigationType = NavigationType::Other, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, Event* = nullptr, const AtomicString& downloadAttribute = nullAtom);
-    NavigationAction(const ResourceRequest&, FrameLoadType, bool isFormSubmission, Event* = nullptr, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, const AtomicString& downloadAttribute = nullAtom);
+    NavigationAction();
+    WEBCORE_EXPORT NavigationAction(Document&, const ResourceRequest&, NavigationType = NavigationType::Other, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, Event* = nullptr, const AtomicString& downloadAttribute = nullAtom);
+    NavigationAction(Document&, const ResourceRequest&, FrameLoadType, bool isFormSubmission, Event* = nullptr, ShouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow, const AtomicString& downloadAttribute = nullAtom);
 
     WEBCORE_EXPORT ~NavigationAction();
 
     WEBCORE_EXPORT NavigationAction(const NavigationAction&);
-    NavigationAction(NavigationAction&&);
-
     NavigationAction& operator=(const NavigationAction&);
+
+    NavigationAction(NavigationAction&&);
     NavigationAction& operator=(NavigationAction&&);
 
     NavigationAction copyWithShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy) const;
 
-    bool isEmpty() const { return m_resourceRequest.url().isEmpty(); }
+    bool isEmpty() const { return !m_sourceDocument || m_resourceRequest.url().isEmpty(); }
 
     URL url() const { return m_resourceRequest.url(); }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }
 
     NavigationType type() const { return m_type; }
     const Event* event() const { return m_event.get(); }
+
+    const Document* sourceDocument() const { return m_sourceDocument.get(); }
 
     bool processingUserGesture() const { return m_userGestureToken ? m_userGestureToken->processingUserGesture() : false; }
     RefPtr<UserGestureToken> userGestureToken() const { return m_userGestureToken; }
@@ -68,6 +72,7 @@ public:
     const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
 
 private:
+    RefPtr<Document> m_sourceDocument;
     ResourceRequest m_resourceRequest;
     NavigationType m_type;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit/WKSecurityOrigin.h>
+#import <WebKit/WKWebView.h>
 
 /*! A WKFrameInfo object contains information about a frame on a webpage.
  @discussion An instance of this class is a transient, data-only object;
@@ -52,6 +53,10 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 /*! @abstract The frame's current security origin.
  */
 @property (nonatomic, readonly) WKSecurityOrigin *securityOrigin WK_API_AVAILABLE(macosx(10.11), ios(9.0));
+
+/*! @abstract The web view of the webpage that contains this frame.
+ */
+@property (nonatomic, readonly, weak) WKWebView *webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

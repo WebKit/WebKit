@@ -57,6 +57,7 @@
 #include "DrawingAreaProxy.h"
 #include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
+#include "FrameInfoData.h"
 #include "LoadParameters.h"
 #include "Logging.h"
 #include "NativeWebGestureEvent.h"
@@ -3598,21 +3599,20 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
         m_frameSetLargestFrame = value ? m_mainFrame : 0;
 }
 
-void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const NavigationActionData& navigationActionData, uint64_t originatingFrameID, const SecurityOriginData& originatingFrameSecurityOrigin, const WebCore::ResourceRequest& originalRequest, const ResourceRequest& request, uint64_t listenerID, const UserData& userData, Ref<Messages::WebPageProxy::DecidePolicyForNavigationAction::DelayedReply>&& reply)
+void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const SecurityOriginData& frameSecurityOrigin, uint64_t navigationID, const NavigationActionData& navigationActionData, const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const WebCore::ResourceRequest& originalRequest, const ResourceRequest& request, uint64_t listenerID, const UserData& userData, Ref<Messages::WebPageProxy::DecidePolicyForNavigationAction::DelayedReply>&& reply)
 {
     PageClientProtector protector(m_pageClient);
 
     auto transaction = m_pageLoadState.transaction();
 
-    if (request.url() != m_pageLoadState.pendingAPIRequestURL())
+    bool fromAPI = request.url() == m_pageLoadState.pendingAPIRequestURL();
+    if (!fromAPI)
         m_pageLoadState.clearPendingAPIRequestURL(transaction);
 
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK_URL(request.url());
     MESSAGE_CHECK_URL(originalRequest.url());
-
-    WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameID);
     
     m_newNavigationID = 0;
     Ref<WebFramePolicyListenerProxy> listener = frame->setUpPolicyListenerProxy(listenerID);
@@ -3635,17 +3635,19 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
 #endif
     m_navigationActionPolicyReply = WTFMove(reply);
 
+    WebFrameProxy* originatingFrame = m_process->webFrame(originatingFrameInfoData.frameID);
+
     if (m_navigationClient) {
-        RefPtr<API::FrameInfo> destinationFrameInfo;
+        RefPtr<API::FrameInfo> destinationFrameInfo = API::FrameInfo::create(*frame, frameSecurityOrigin.securityOrigin());
         RefPtr<API::FrameInfo> sourceFrameInfo;
-
-        if (frame)
-            destinationFrameInfo = API::FrameInfo::create(*frame, frameSecurityOrigin.securityOrigin());
-
         if (originatingFrame == frame)
             sourceFrameInfo = destinationFrameInfo;
-        else if (originatingFrame)
-            sourceFrameInfo = API::FrameInfo::create(*originatingFrame, originatingFrameSecurityOrigin.securityOrigin());
+        else
+            sourceFrameInfo = API::FrameInfo::create(originatingFrameInfoData, m_process->webPage(originatingPageID));
+        if (fromAPI) {
+            sourceFrameInfo->clearPage();
+            destinationFrameInfo->clearPage();
+        }
 
         auto userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
         bool shouldOpenAppLinks = !m_shouldSuppressAppLinksInNextNavigationPolicyDecision && (!destinationFrameInfo || destinationFrameInfo->isMainFrame()) && !hostsAreEqual(URL(ParsedURLString, m_mainFrame->url()), request.url()) && navigationActionData.navigationType != WebCore::NavigationType::BackForward;
@@ -3816,10 +3818,10 @@ void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url,
 
 // UIClient
 
-void WebPageProxy::createNewPage(uint64_t frameID, const SecurityOriginData& securityOriginData, const ResourceRequest& request, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData, RefPtr<Messages::WebPageProxy::CreateNewPage::DelayedReply> reply)
+void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, const ResourceRequest& request, const WindowFeatures& windowFeatures, const NavigationActionData& navigationActionData, RefPtr<Messages::WebPageProxy::CreateNewPage::DelayedReply> reply)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(m_process->webFrame(originatingFrameInfoData.frameID));
+    auto originatingFrameInfo = API::FrameInfo::create(originatingFrameInfoData, m_process->webPage(originatingPageID));
 
     auto mainFrameURL = m_mainFrame->url();
 
@@ -3836,10 +3838,10 @@ void WebPageProxy::createNewPage(uint64_t frameID, const SecurityOriginData& sec
 
     };
 
-    if (m_uiClient->createNewPageAsync(this, frame, securityOriginData, request, windowFeatures, navigationActionData, [completionHandler](RefPtr<WebPageProxy> newPage) { completionHandler(newPage); }))
+    if (m_uiClient->createNewPageAsync(this, originatingFrameInfo, request, windowFeatures, navigationActionData, [completionHandler](RefPtr<WebPageProxy> newPage) { completionHandler(newPage); }))
         return;
 
-    RefPtr<WebPageProxy> newPage = m_uiClient->createNewPage(this, frame, securityOriginData, request, windowFeatures, navigationActionData);
+    RefPtr<WebPageProxy> newPage = m_uiClient->createNewPage(this, originatingFrameInfo, request, windowFeatures, navigationActionData);
     completionHandler(WTFMove(newPage));
 }
     

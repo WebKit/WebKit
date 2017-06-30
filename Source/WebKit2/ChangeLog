@@ -1,3 +1,74 @@
+2017-06-30  Daniel Bates  <dabates@apple.com>
+
+        API::FrameInfo should know the web page that contains the frame; add API property webView to WKFrameInfo
+        https://bugs.webkit.org/show_bug.cgi?id=165160
+        <rdar://problem/29451999>
+
+        Reviewed by Brady Eidson.
+
+        Expose a property on WKFrameInfo to retrieve the WKWebView of the web page that contains the
+        frame. This will allow an embedding client to know the web view that initiated the navigation
+        request as well as differentiate between a navigation initiated by web content from one
+        initiated via API.
+
+        The majority of this change is passing the document D that initiated the targeted navigation
+        or called window.open() through the loading machinery to the FrameLoaderClient. The changes
+        to pass this information to the FrameLoaderClient when creating a new window are straightforward.
+        For targeted navigation, the WebKit2 FrameLoaderClient implementation now computes the info
+        for the originating frame regardless of the navigation type (NavigationAction::type()).
+        (Currently we only compute the originating frame for hyperlink activated navigations,
+        form submissions, and form resubmissions). The WebProcess computes the page ID of the page
+        that contains the originating frame and sends that to the UIProcess so that it can create
+        an API::FrameInfo for the originating frame and associate the page that contains the frame,
+        if the navigation was triggered by web content. If the navigation was triggered by API
+        (e.g. -[WKWebView goBack]) then the created API::FrameInfo does not have an associated page
+        so that an embedding client can distinguish between a navigation initiated by web content
+        from a navigation that it initiated via API depending on whether API::FrameInfo::page() is
+        nullptr. We expose property webView on the Mac and iOS API class WKFrameInfo to return the
+        WKWebView corresponding to API::FrameInfo::page().
+
+        A small change that this patch makes is to have the WebProcess compute the originating frame
+        info (call WebFrame::info()) and send it over to the UIProcess as opposed to sending the frame
+        ID of the originating frame and having the UIProcess compute the frame info from it. We do this
+        because the UIProcess may not be able to compute the frame info for the originating frame if
+        the window that it was contained in was closed between the time the WebProcess sent the frame
+        ID to the UIProcess and the UIProcess received it.
+
+        * UIProcess/API/APIFrameInfo.cpp:
+        (API::FrameInfo::create):
+        (API::FrameInfo::FrameInfo):
+        (API::FrameInfo::clearPage):
+        * UIProcess/API/APIFrameInfo.h:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::createNewPage):
+        (API::UIClient::createNewPageAsync):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.mm:
+        (-[WKFrameInfo description]):
+        (-[WKFrameInfo webView]):
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPageCommon):
+        (WebKit::UIDelegate::UIClient::createNewPage):
+        (WebKit::UIDelegate::UIClient::createNewPageAsync):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab):
+
 2017-06-29  Jer Noble  <jer.noble@apple.com>
 
         Make Legacy EME API controlled by RuntimeEnabled setting.

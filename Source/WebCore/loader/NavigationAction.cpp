@@ -29,11 +29,13 @@
 #include "config.h"
 #include "NavigationAction.h"
 
+#include "Document.h"
 #include "Event.h"
 #include "FrameLoader.h"
 
 namespace WebCore {
 
+NavigationAction::NavigationAction() = default;
 NavigationAction::~NavigationAction() = default;
 
 NavigationAction::NavigationAction(const NavigationAction&) = default;
@@ -42,8 +44,9 @@ NavigationAction::NavigationAction(NavigationAction&&) = default;
 NavigationAction& NavigationAction::operator=(const NavigationAction&) = default;
 NavigationAction& NavigationAction::operator=(NavigationAction&&) = default;
 
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomicString& downloadAttribute)
-    : m_resourceRequest { resourceRequest }
+NavigationAction::NavigationAction(Document& source, const ResourceRequest& resourceRequest, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomicString& downloadAttribute)
+    : m_sourceDocument { makeRefPtr(source) }
+    , m_resourceRequest { resourceRequest }
     , m_type { type }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_event { event }
@@ -64,8 +67,9 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction(const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
-    : m_resourceRequest { resourceRequest }
+NavigationAction::NavigationAction(Document& source, const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
+    : m_sourceDocument { makeRefPtr(source) }
+    , m_resourceRequest { resourceRequest }
     , m_type { navigationType(frameLoadType, isFormSubmission, !!event) }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_event { event }

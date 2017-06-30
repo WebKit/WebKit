@@ -189,9 +189,9 @@ static void openNewWindow(const URL& urlToLoad, Frame& frame, ShouldOpenExternal
     if (!oldPage)
         return;
 
-    FrameLoadRequest frameLoadRequest { frame.document()->securityOrigin(), ResourceRequest(urlToLoad, frame.loader().outgoingReferrer()), { }, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, shouldOpenExternalURLsPolicy };
+    FrameLoadRequest frameLoadRequest { *frame.document(), frame.document()->securityOrigin(), ResourceRequest(urlToLoad, frame.loader().outgoingReferrer()), { }, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, shouldOpenExternalURLsPolicy };
 
-    Page* newPage = oldPage->chrome().createWindow(frame, frameLoadRequest, { }, NavigationAction(frameLoadRequest.resourceRequest()));
+    Page* newPage = oldPage->chrome().createWindow(frame, frameLoadRequest, { }, { *frame.document(), frameLoadRequest.resourceRequest() });
     if (!newPage)
         return;
     newPage->chrome().show();
@@ -395,7 +395,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagOpenLink:
         if (Frame* targetFrame = m_context.hitTestResult().targetFrame()) {
             ResourceRequest resourceRequest { m_context.hitTestResult().absoluteLinkURL(), frame->loader().outgoingReferrer() };
-            FrameLoadRequest frameLoadRequest { frame->document()->securityOrigin(), resourceRequest, { }, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, targetFrame->isMainFrame() ? ShouldOpenExternalURLsPolicy::ShouldAllow : ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+            FrameLoadRequest frameLoadRequest { *frame->document(), frame->document()->securityOrigin(), resourceRequest, { }, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, targetFrame->isMainFrame() ? ShouldOpenExternalURLsPolicy::ShouldAllow : ShouldOpenExternalURLsPolicy::ShouldNotAllow };
             targetFrame->loader().loadFrameRequest(WTFMove(frameLoadRequest), nullptr, nullptr);
         } else
             openNewWindow(m_context.hitTestResult().absoluteLinkURL(), *frame, ShouldOpenExternalURLsPolicy::ShouldAllow);

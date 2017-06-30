@@ -31,6 +31,7 @@
 #include "APISecurityOrigin.h"
 #include "DrawingArea.h"
 #include "FindController.h"
+#include "FrameInfoData.h"
 #include "HangDetectionDisabler.h"
 #include "InjectedBundleNavigationAction.h"
 #include "InjectedBundleNodeHandle.h"
@@ -234,8 +235,6 @@ Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& reques
 
     auto& webProcess = WebProcess::singleton();
 
-    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
-
     NavigationActionData navigationActionData;
     navigationActionData.navigationType = navigationAction.type();
     navigationActionData.modifiers = InjectedBundleNavigationAction::modifiersForNavigationAction(navigationAction);
@@ -246,9 +245,11 @@ Page* WebChromeClient::createWindow(Frame& frame, const FrameLoadRequest& reques
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
     navigationActionData.downloadAttribute = navigationAction.downloadAttribute();
 
+    WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
+
     uint64_t newPageID = 0;
     WebPageCreationParameters parameters;
-    if (!webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->frameID(), SecurityOriginData::fromFrame(&frame), request.resourceRequest(), windowFeatures, navigationActionData), Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters), m_page.pageID()))
+    if (!webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->pageID(), request.resourceRequest(), windowFeatures, navigationActionData), Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters), m_page.pageID()))
         return nullptr;
 
     if (!newPageID)

@@ -1,3 +1,16 @@
+2017-06-30  Daniel Bates  <dabates@apple.com>
+
+        API::FrameInfo should know the web page that contains the frame; add API property webView to WKFrameInfo
+        https://bugs.webkit.org/show_bug.cgi?id=165160
+        <rdar://problem/29451999>
+
+        Reviewed by Brady Eidson.
+
+        Pass the document that is requesting the load to the loader.
+
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2017-06-29  Jer Noble  <jer.noble@apple.com>
 
         Make Legacy EME API controlled by RuntimeEnabled setting.

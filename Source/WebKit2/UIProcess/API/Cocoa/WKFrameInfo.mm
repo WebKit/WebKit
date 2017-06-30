@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "WKSecurityOriginInternal.h"
+#import "WKWebViewInternal.h"
 #import "_WKFrameHandleInternal.h"
 
 @implementation WKFrameInfo
@@ -42,7 +43,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; isMainFrame = %s; request = %@>", NSStringFromClass(self.class), self, self.mainFrame ? "YES" : "NO", self.request];
+    return [NSString stringWithFormat:@"<%@: %p; webView = %p; isMainFrame = %s; request = %@>", NSStringFromClass(self.class), self, self.webView, self.mainFrame ? "YES" : "NO", self.request];
 }
 
 - (BOOL)isMainFrame
@@ -58,6 +59,13 @@
 - (WKSecurityOrigin *)securityOrigin
 {
     return wrapper(_frameInfo->securityOrigin());
+}
+
+- (WKWebView *)webView
+{
+    if (WebKit::WebPageProxy* page = _frameInfo->page())
+        return [[fromWebPageProxy(*page) retain] autorelease];
+    return nil;
 }
 
 - (id)copyWithZone:(NSZone *)zone

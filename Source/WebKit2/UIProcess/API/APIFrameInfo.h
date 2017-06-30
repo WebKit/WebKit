@@ -34,6 +34,7 @@ class SecurityOrigin;
 
 namespace WebKit {
 class WebFrameProxy;
+class WebPageProxy;
 struct FrameInfoData;
 }
 
@@ -44,7 +45,7 @@ class SecurityOrigin;
 
 class FrameInfo final : public ObjectImpl<Object::Type::FrameInfo> {
 public:
-    static Ref<FrameInfo> create(const WebKit::FrameInfoData&);
+    static Ref<FrameInfo> create(const WebKit::FrameInfoData&, WebKit::WebPageProxy*);
     static Ref<FrameInfo> create(const WebKit::WebFrameProxy&, const WebCore::SecurityOrigin&);
     virtual ~FrameInfo();
 
@@ -52,14 +53,18 @@ public:
     const WebCore::ResourceRequest& request() const { return m_request; }
     SecurityOrigin& securityOrigin() { return m_securityOrigin.get(); }
     API::FrameHandle& handle() { return m_handle.get(); }
+    WebKit::WebPageProxy* page() { return m_page.get(); }
+
+    void clearPage();
 
 private:
-    FrameInfo(const WebKit::FrameInfoData&);
+    FrameInfo(const WebKit::FrameInfoData&, WebKit::WebPageProxy*);
 
     bool m_isMainFrame;
     WebCore::ResourceRequest m_request;
     Ref<SecurityOrigin> m_securityOrigin;
     Ref<FrameHandle> m_handle;
+    RefPtr<WebKit::WebPageProxy> m_page;
 };
 
 } // namespace API

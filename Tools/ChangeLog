@@ -1,3 +1,21 @@
+2017-06-30  Daniel Bates  <dabates@apple.com>
+
+        API::FrameInfo should know the web page that contains the frame; add API property webView to WKFrameInfo
+        https://bugs.webkit.org/show_bug.cgi?id=165160
+        <rdar://problem/29451999>
+
+        Reviewed by Brady Eidson.
+
+        Add tests to ensure that -[WKFrameInfo webView] is computed correctly for the source and target frame
+        for navigations and window creation.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/DecidePolicyForNavigationAction.mm: Added. Derived from file ShouldOpenExternalURLsInNewWindowActions.mm.
+        (-[DecidePolicyForNavigationActionController webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[DecidePolicyForNavigationActionController webView:didFinishNavigation:]):
+        (-[DecidePolicyForNavigationActionController webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TEST):
+
 2017-06-29  Jer Noble  <jer.noble@apple.com>
 
         Make Legacy EME API controlled by RuntimeEnabled setting.
