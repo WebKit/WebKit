@@ -97,7 +97,7 @@ ExceptionOr<void> RTCPeerConnection::initializeWith(Document& document, RTCConfi
     if (!m_backend)
         return Exception { NOT_SUPPORTED_ERR };
 
-    return initializeConfiguration(WTFMove(configuration));
+    return setConfiguration(WTFMove(configuration));
 }
 
 ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<std::reference_wrapper<MediaStream>>& streams)
@@ -298,57 +298,36 @@ void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOM
     m_backend->addIceCandidate(rtcCandidate, WTFMove(promise));
 }
 
-static inline std::optional<Vector<MediaEndpointConfiguration::IceServerInfo>> iceServersFromConfiguration(RTCConfiguration& configuration)
-{
-    Vector<MediaEndpointConfiguration::IceServerInfo> servers;
-    if (configuration.iceServers) {
-        servers.reserveInitialCapacity(configuration.iceServers->size());
-        for (auto& server : configuration.iceServers.value()) {
-            Vector<URL> serverURLs;
-            WTF::switchOn(server.urls, [&serverURLs] (const String& string) {
-                serverURLs.reserveInitialCapacity(1);
-                serverURLs.uncheckedAppend(URL { URL { }, string });
-            }, [&serverURLs] (const Vector<String>& vector) {
-                serverURLs.reserveInitialCapacity(vector.size());
-                for (auto& string : vector)
-                    serverURLs.uncheckedAppend(URL { URL { }, string });
-            });
-            for (auto& serverURL : serverURLs) {
-                if (!(serverURL.protocolIs("turn") || serverURL.protocolIs("turns") || serverURL.protocolIs("stun")))
-                    return std::nullopt;
-            }
-            servers.uncheckedAppend({ WTFMove(serverURLs), server.credential, server.username });
-        }
-    }
-    return servers;
-}
-
-ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& configuration)
-{
-    auto servers = iceServersFromConfiguration(configuration);
-    if (!servers)
-        return Exception { INVALID_ACCESS_ERR };
-
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=173938
-    // Also decide whether to report an exception or output a message in the console log if setting configuration fails.
-    m_backend->setConfiguration({ WTFMove(servers.value()), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize });
-
-    m_configuration = WTFMove(configuration);
-    return { };
-}
-
 ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configuration)
 {
     if (isClosed())
         return Exception { INVALID_STATE_ERR };
 
-    auto servers = iceServersFromConfiguration(configuration);
-    if (!servers)
-        return Exception { INVALID_ACCESS_ERR };
+    Vector<MediaEndpointConfiguration::IceServerInfo> servers;
+    if (configuration.iceServers) {
+        servers.reserveInitialCapacity(configuration.iceServers->size());
+        for (auto& server : configuration.iceServers.value()) {
+            Vector<URL> serverURLs;
+            WTF::switchOn(server.urls,
+                [&serverURLs] (const String& string) {
+                    serverURLs.reserveInitialCapacity(1);
+                    serverURLs.uncheckedAppend(URL { URL { }, string });
+                },
+                [&serverURLs] (const Vector<String>& vector) {
+                    serverURLs.reserveInitialCapacity(vector.size());
+                    for (auto& string : vector)
+                        serverURLs.uncheckedAppend(URL { URL { }, string });
+                }
+            );
+            for (auto& serverURL : serverURLs) {
+                if (!(serverURL.protocolIs("turn") || serverURL.protocolIs("turns") || serverURL.protocolIs("stun")))
+                    return Exception { INVALID_ACCESS_ERR };
+            }
+            servers.uncheckedAppend({ WTFMove(serverURLs), server.credential, server.username });
+        }
+    }
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=173938
-    // Also decide whether to report an exception or output a message in the console log if setting configuration fails.
-    m_backend->setConfiguration({ WTFMove(servers.value()), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize });
+    m_backend->setConfiguration({ WTFMove(servers), configuration.iceTransportPolicy, configuration.bundlePolicy, configuration.iceCandidatePoolSize });
     m_configuration = WTFMove(configuration);
     return { };
 }

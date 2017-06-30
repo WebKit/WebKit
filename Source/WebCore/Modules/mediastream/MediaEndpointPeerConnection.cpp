@@ -602,10 +602,9 @@ RefPtr<RTCSessionDescription> MediaEndpointPeerConnection::pendingRemoteDescript
     return createRTCSessionDescription(m_pendingRemoteDescription.get());
 }
 
-bool MediaEndpointPeerConnection::setConfiguration(MediaEndpointConfiguration&& configuration)
+void MediaEndpointPeerConnection::setConfiguration(MediaEndpointConfiguration&& configuration)
 {
     m_mediaEndpoint->setConfiguration(WTFMove(configuration));
-    return true;
 }
 
 void MediaEndpointPeerConnection::doAddIceCandidate(RTCIceCandidate& rtcCandidate)

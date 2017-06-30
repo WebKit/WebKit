@@ -168,14 +168,16 @@ void LibWebRTCProvider::setPeerConnectionFactory(rtc::scoped_refptr<webrtc::Peer
     staticFactoryAndThreads().factory = webrtc::PeerConnectionFactoryProxy::Create(staticFactoryAndThreads().signalingThread.get(), WTFMove(factory));
 }
 
-static rtc::scoped_refptr<webrtc::PeerConnectionInterface> createActualPeerConnection(webrtc::PeerConnectionObserver& observer, std::unique_ptr<cricket::BasicPortAllocator>&& portAllocator, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+static rtc::scoped_refptr<webrtc::PeerConnectionInterface> createActualPeerConnection(webrtc::PeerConnectionObserver& observer, std::unique_ptr<cricket::BasicPortAllocator>&& portAllocator)
 {
     ASSERT(staticFactoryAndThreads().factory);
 
-    return staticFactoryAndThreads().factory->CreatePeerConnection(configuration, WTFMove(portAllocator), nullptr, &observer);
+    webrtc::PeerConnectionInterface::RTCConfiguration config;
+    // FIXME: Add a default configuration.
+    return staticFactoryAndThreads().factory->CreatePeerConnection(config, WTFMove(portAllocator), nullptr, &observer);
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer)
 {
     // Default WK1 implementation.
     auto& factoryAndThreads = staticFactoryAndThreads();
@@ -185,10 +187,10 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     }
     ASSERT(staticFactoryAndThreads().networkThreadWithSocketServer);
 
-    return createActualPeerConnection(observer, nullptr, WTFMove(configuration));
+    return createActualPeerConnection(observer, nullptr);
 }
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::NetworkManager& networkManager, rtc::PacketSocketFactory& packetSocketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::NetworkManager& networkManager, rtc::PacketSocketFactory& packetSocketFactory)
 {
     ASSERT(!staticFactoryAndThreads().networkThreadWithSocketServer);
 
@@ -204,7 +206,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
         portAllocator = WTFMove(basicPortAllocator);
     });
 
-    return createActualPeerConnection(observer, WTFMove(portAllocator), WTFMove(configuration));
+    return createActualPeerConnection(observer, WTFMove(portAllocator));
 }
 
 #endif // USE(LIBWEBRTC)

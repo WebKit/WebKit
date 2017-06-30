@@ -34,9 +34,9 @@
 
 namespace WebKit {
 
-rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
+rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer)
 {
-    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), WebProcess::singleton().libWebRTCNetwork().socketFactory(), WTFMove(configuration));
+    return WebCore::LibWebRTCProvider::createPeerConnection(observer, WebProcess::singleton().libWebRTCNetwork().monitor(), WebProcess::singleton().libWebRTCNetwork().socketFactory());
 }
 
 } // namespace WebKit

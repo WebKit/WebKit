@@ -59,21 +59,14 @@ namespace WebCore {
 LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& peerConnection, LibWebRTCProvider& client)
     : m_peerConnectionBackend(peerConnection)
     , m_peerConnectionFactory(*client.factory())
+    , m_backend(client.createPeerConnection(*this))
     , m_createSessionDescriptionObserver(*this)
     , m_setLocalSessionDescriptionObserver(*this)
     , m_setRemoteSessionDescriptionObserver(*this)
     , m_statsLogTimer(*this, &LibWebRTCMediaEndpoint::gatherStatsForLogging)
 {
+    ASSERT(m_backend);
     ASSERT(client.factory());
-}
-
-bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration)
-{
-    if (!m_backend) {
-        m_backend = client.createPeerConnection(*this, WTFMove(configuration));
-        return !!m_backend;
-    }
-    return m_backend->SetConfiguration(WTFMove(configuration));
 }
 
 // FIXME: unify with MediaEndpointSessionDescription::typeString()
@@ -773,11 +766,9 @@ void LibWebRTCMediaEndpoint::OnDataChannel(rtc::scoped_refptr<webrtc::DataChanne
 
 void LibWebRTCMediaEndpoint::stop()
 {
-    if (!m_backend)
-        return;
-
     stopLoggingStats();
 
+    ASSERT(m_backend);
     m_backend->Close();
     m_backend = nullptr;
     m_streams.clear();

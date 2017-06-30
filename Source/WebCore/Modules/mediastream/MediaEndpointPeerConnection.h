@@ -56,7 +56,7 @@ private:
     RefPtr<RTCSessionDescription> currentRemoteDescription() const final;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const final;
 
-    bool setConfiguration(MediaEndpointConfiguration&&) final;
+    void setConfiguration(MediaEndpointConfiguration&&) final;
 
     void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) final;
 

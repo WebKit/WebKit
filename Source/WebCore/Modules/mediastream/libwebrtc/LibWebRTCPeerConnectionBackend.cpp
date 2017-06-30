@@ -71,34 +71,19 @@ LibWebRTCPeerConnectionBackend::~LibWebRTCPeerConnectionBackend()
 {
 }
 
-static inline webrtc::PeerConnectionInterface::BundlePolicy bundlePolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
-{
-    switch (configuration.bundlePolicy) {
-    case RTCBundlePolicy::MaxCompat:
-        return webrtc::PeerConnectionInterface::kBundlePolicyMaxCompat;
-    case RTCBundlePolicy::MaxBundle:
-        return webrtc::PeerConnectionInterface::kBundlePolicyMaxBundle;
-    case RTCBundlePolicy::Balanced:
-        return webrtc::PeerConnectionInterface::kBundlePolicyBalanced;
-    }
-}
-
-static inline webrtc::PeerConnectionInterface::IceTransportsType iceTransportPolicyfromConfiguration(const MediaEndpointConfiguration& configuration)
-{
-    switch (configuration.iceTransportPolicy) {
-    case RTCIceTransportPolicy::Relay:
-        return webrtc::PeerConnectionInterface::kRelay;
-    case RTCIceTransportPolicy::All:
-        return webrtc::PeerConnectionInterface::kAll;
-    }
-}
-
 static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaEndpointConfiguration(MediaEndpointConfiguration&& configuration)
 {
     webrtc::PeerConnectionInterface::RTCConfiguration rtcConfiguration;
 
-    rtcConfiguration.type = iceTransportPolicyfromConfiguration(configuration);
-    rtcConfiguration.bundle_policy = bundlePolicyfromConfiguration(configuration);
+    if (configuration.iceTransportPolicy == RTCIceTransportPolicy::Relay)
+        rtcConfiguration.type = webrtc::PeerConnectionInterface::kRelay;
+
+    // FIXME: Support PeerConnectionStates::BundlePolicy::MaxBundle.
+    // LibWebRTC does not like it and will fail to set any configuration field otherwise.
+    // See https://bugs.webkit.org/show_bug.cgi?id=169389.
+
+    if (configuration.bundlePolicy == RTCBundlePolicy::MaxCompat)
+        rtcConfiguration.bundle_policy = webrtc::PeerConnectionInterface::kBundlePolicyMaxCompat;
 
     for (auto& server : configuration.iceServers) {
         webrtc::PeerConnectionInterface::IceServer iceServer;
@@ -115,9 +100,9 @@ static webrtc::PeerConnectionInterface::RTCConfiguration configurationFromMediaE
     return rtcConfiguration;
 }
 
-bool LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration&& configuration)
+void LibWebRTCPeerConnectionBackend::setConfiguration(MediaEndpointConfiguration&& configuration)
 {
-    return m_endpoint->setConfiguration(libWebRTCProvider(m_peerConnection), configurationFromMediaEndpointConfiguration(WTFMove(configuration)));
+    m_endpoint->backend().SetConfiguration(configurationFromMediaEndpointConfiguration(WTFMove(configuration)));
 }
 
 void LibWebRTCPeerConnectionBackend::getStats(MediaStreamTrack* track, Ref<DeferredPromise>&& promise)

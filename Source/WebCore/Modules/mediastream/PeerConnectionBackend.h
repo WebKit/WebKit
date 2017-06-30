@@ -88,7 +88,7 @@ public:
     virtual RefPtr<RTCSessionDescription> currentRemoteDescription() const = 0;
     virtual RefPtr<RTCSessionDescription> pendingRemoteDescription() const = 0;
 
-    virtual bool setConfiguration(MediaEndpointConfiguration&&) = 0;
+    virtual void setConfiguration(MediaEndpointConfiguration&&) = 0;
 
     virtual void getStats(MediaStreamTrack*, Ref<DeferredPromise>&&) = 0;
 
