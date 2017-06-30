@@ -100,6 +100,7 @@ class IOSSimulatorPort(IOSPort):
             runtime = Runtime.from_version_string(self.host.platform.xcode_sdk_version('iphonesimulator'))
         return runtime
 
+    @memoized
     def ios_version(self):
         # FIXME: We should replace --runtime with something which makes sense for both Simulator and Device
         # https://bugs.webkit.org/show_bug.cgi?id=173775

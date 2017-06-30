@@ -1,3 +1,14 @@
+2017-06-30  Jonathan Bedard  <jbedard@apple.com>
+
+        Follow-up fix for r218996
+
+        Unreviewed infrastructure fix.
+
+        Repeated calls to 'ios_version' make the log noisy, memoize the function.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): Memoize ios_version().
+
 2017-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Drag caret rect is incorrectly computed when dropping in editable content in iframes
