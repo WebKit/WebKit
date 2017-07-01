@@ -1,3 +1,35 @@
+2017-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r218371): Reeder's default font is Times instead of San Francisco
+        https://bugs.webkit.org/show_bug.cgi?id=173617
+        <rdar://problem/32969819>
+
+        Reviewed by Simon Fraser.
+
+        On systems where USE_PLATFORM_SYSTEM_FALLBACK_LIST is set to true, the code in
+        platformFontWithFamilySpecialCase() is still used when @font-face blocks specify
+        src:local(system-ui), which made the assertion erroneously fire.
+
+        Unfortunately, our architecture is such that an @font-face block represents a
+        single entry in the font-family fallback list, which means it would be quite
+        difficult to make local(system-ui) in an @font-face block expand at the level
+        of the font cascade. So, this patch simply reverts to the previous behavior for
+        local(system-ui) (which doesn't include the entire Core Text cascade list).
+        This means that "font-family: system-ui" and "src: local(system-ui)" have
+        different behavior, which is undesirable, but architecturally difficult to
+        solve. I've added some FIXMEs to the code in the relevant places and filed
+        https://bugs.webkit.org/show_bug.cgi?id=174023.
+
+        Test: fast/text/font-face-local-system.html
+
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontCascadeDescription::effectiveFamilyAt):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::systemFontDescriptor):
+        (WebCore::platformFontWithFamilySpecialCase):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformFontWithFamilySpecialCase):
+
 2017-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Frame.h doesn't need to include FrameLoader.h, IntRect.h, and NavigationScheduler.h

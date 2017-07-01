@@ -1,3 +1,14 @@
+2017-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r218371): Reeder's default font is Times instead of San Francisco
+        https://bugs.webkit.org/show_bug.cgi?id=173617
+        <rdar://problem/32969819>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/font-face-local-system-expected.html: Added.
+        * fast/text/font-face-local-system.html: Added.
+
 2017-06-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         If an image appears more than once on a page, decoding for painting one instance repaints them all

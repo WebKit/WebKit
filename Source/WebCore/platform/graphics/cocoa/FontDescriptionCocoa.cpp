@@ -315,6 +315,13 @@ unsigned FontCascadeDescription::effectiveFamilyCount() const
 
 FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index) const
 {
+    // The special cases in this function need to match the behavior in FontCacheIOS.mm and FontCacheMac.mm. On systems
+    // where USE_PLATFORM_SYSTEM_FALLBACK_LIST is set to true, this code is used for regular (element style) lookups,
+    // and the code in FontDescriptionCocoa.cpp is used when src:local(special-cased-name) is specified inside an
+    // @font-face block.
+    // FIXME: Currently, an @font-face block corresponds to a single item in the font-family: fallback list, which
+    // means that "src:local(system-ui)" can't follow the Core Text cascade list (the way it does for regular lookups).
+    // These two behaviors should be unified, which would hopefully allow us to delete this duplicate code.
     for (unsigned i = 0; i < familyCount(); ++i) {
         const auto& cssFamily = familyAt(i);
         if (isSystemFontString(cssFamily)) {
