@@ -33,7 +33,7 @@
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <wtf/RetainPtr.h>
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(IOS)
 
 namespace TestWebKitAPI {
     
@@ -50,7 +50,7 @@ TEST(WebKit2, ReqestActivatedElementInfoForLink)
         EXPECT_WK_STREQ(elementInfo.URL.absoluteString, "testURL.test");
         EXPECT_WK_STREQ(elementInfo.title, "HitTestLinkTitle");
         EXPECT_WK_STREQ(elementInfo.ID, @"testID");
-        EXPECT_TRUE(elementInfo.image != nil);
+        EXPECT_NOT_NULL(elementInfo.image);
         EXPECT_EQ(elementInfo.boundingRect.size.width, 320);
         EXPECT_EQ(elementInfo.boundingRect.size.height, 500);
         EXPECT_EQ(elementInfo.image.size.width, 320);
