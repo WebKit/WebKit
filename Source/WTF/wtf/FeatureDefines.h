@@ -766,4 +766,8 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #error "ENABLE(WEBGL) requires ENABLE(GRAPHICS_CONTEXT_3D)"
 #endif
 
+#if ENABLE(WEBGL2) && !ENABLE(WEBGL)
+#error "ENABLE(WEBGL2) requires ENABLE(WEBGL)"
+#endif
+
 #endif /* WTF_FeatureDefines_h */
