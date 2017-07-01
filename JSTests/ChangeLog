@@ -1,3 +1,16 @@
+2017-06-30  Michael Saboff  <msaboff@apple.com>
+
+        RegExp's  anchored with .* with \g flag can return wrong match start for strings with multiple matches
+        https://bugs.webkit.org/show_bug.cgi?id=174044
+
+        Reviewed by Oliver Hunt.
+
+        New regression test.
+
+        * stress/regress-174044.js: Added.
+        (test1):
+        (test2):
+
 2017-06-30  Filip Pizlo  <fpizlo@apple.com>
 
         RegExpCachedResult::setInput should reify left and right contexts

@@ -675,8 +675,12 @@ public:
                 break;
 
             case PatternTerm::TypeDotStarEnclosure:
+                ASSERT(!m_pattern.m_saveInitialStartValue);
                 alternative->m_hasFixedSize = false;
                 term.inputPosition = initialInputPosition;
+                m_pattern.m_initialStartValueFrameLocation = currentCallFrameSize;
+                currentCallFrameSize += YarrStackSpaceForDotStarEnclosure;
+                m_pattern.m_saveInitialStartValue = true;
                 break;
             }
             if (currentInputPosition.hasOverflowed())
@@ -962,6 +966,7 @@ YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, const char** 
     , m_containsBOL(false)
     , m_containsUnsignedLengthPattern(false)
     , m_hasCopiedParenSubexpressions(false)
+    , m_saveInitialStartValue(false)
     , m_flags(flags)
     , m_numSubpatterns(0)
     , m_maxBackReference(0)

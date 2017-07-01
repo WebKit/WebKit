@@ -343,11 +343,13 @@ struct YarrPattern {
     {
         m_numSubpatterns = 0;
         m_maxBackReference = 0;
+        m_initialStartValueFrameLocation = 0;
 
         m_containsBackreferences = false;
         m_containsBOL = false;
         m_containsUnsignedLengthPattern = false;
         m_hasCopiedParenSubexpressions = false;
+        m_saveInitialStartValue = false;
 
         newlineCached = 0;
         digitsCached = 0;
@@ -455,9 +457,11 @@ struct YarrPattern {
     bool m_containsBOL : 1;
     bool m_containsUnsignedLengthPattern : 1;
     bool m_hasCopiedParenSubexpressions : 1;
+    bool m_saveInitialStartValue : 1;
     RegExpFlags m_flags;
     unsigned m_numSubpatterns;
     unsigned m_maxBackReference;
+    unsigned m_initialStartValueFrameLocation;
     PatternDisjunction* m_body;
     Vector<std::unique_ptr<PatternDisjunction>, 4> m_disjunctions;
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;

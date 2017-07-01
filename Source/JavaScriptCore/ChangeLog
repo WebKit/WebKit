@@ -1,3 +1,32 @@
+2017-06-30  Michael Saboff  <msaboff@apple.com>
+
+        RegExp's  anchored with .* with \g flag can return wrong match start for strings with multiple matches
+        https://bugs.webkit.org/show_bug.cgi?id=174044
+
+        Reviewed by Oliver Hunt.
+
+        The .* enclosure optimization didn't respect that we can start matching from a non-zero
+        index.  This optimization treats /.*<some-terms>.*/ by first matching the <some-terms> and
+        then finding the extent of the match by going back to the beginning of the line and going
+        forward to the end of the line.  The code that went back to the beginning of the line
+        checked for an index of 0 instead of comparing the index to the start position.  This start
+        position is passed as the initial index.
+
+        Added another temporary register to the YARR JIT to contain the start position for
+        platforms that have spare registers.
+
+        * yarr/Yarr.h:
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchDotStarEnclosure):
+        (JSC::Yarr::Interpreter::Interpreter):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateDotStarEnclosure):
+        (JSC::Yarr::YarrGenerator::compile):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::reset):
+
 2017-06-30  Saam Barati  <sbarati@apple.com>
 
         B3MoveConstants floatZero() returns the wrong ValueKey

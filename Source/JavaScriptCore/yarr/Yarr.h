@@ -39,6 +39,7 @@ namespace JSC { namespace Yarr {
 #define YarrStackSpaceForBackTrackInfoParenthesesOnce 1 // Only for !fixed quantifiers.
 #define YarrStackSpaceForBackTrackInfoParenthesesTerminal 1
 #define YarrStackSpaceForBackTrackInfoParentheses 2
+#define YarrStackSpaceForDotStarEnclosure 1
 
 static const unsigned quantifyInfinite = UINT_MAX;
 static const unsigned offsetNoMatch = std::numeric_limits<unsigned>::max();
