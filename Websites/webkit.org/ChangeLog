@@ -1,3 +1,21 @@
+2017-06-30  Jon Lee  <jonlee@apple.com>
+
+        Add a WebRTC example for a blog post
+        https://bugs.webkit.org/show_bug.cgi?id=174049
+
+        Reviewed by Youenn Fablet.
+
+        Example does a typical WebRTC video call, but uses canvas to do some image effects.
+        Image effects will last for 30 seconds.
+        After that time, the video stream is directly sent.
+        This illustrates using RTCPeerConnection, replaceTrack and canvas capture.
+
+        * blog-files/webrtc/pc-with-effects/LICENSE: Added.
+        * blog-files/webrtc/pc-with-effects/glfx.js: Added.
+        * blog-files/webrtc/pc-with-effects/index.html: Added.
+        * blog-files/webrtc/pc-with-effects/main.css: Added.
+        * blog-files/webrtc/pc-with-effects/main.js: Added.
+
 2017-06-28  Saam Barati  <sbarati@apple.com>
 
         Add a Object rest/spread test to the experimental features test page
