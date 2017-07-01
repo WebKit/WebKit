@@ -28,6 +28,7 @@
 #include "DocumentLoader.h"
 #include "Event.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "GCController.h"
 #include "HTMLPlugInElement.h"

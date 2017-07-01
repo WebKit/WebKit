@@ -38,6 +38,7 @@
 #include "HTMLUnknownElement.h"
 #include "JSCustomElementInterface.h"
 #include "LinkLoader.h"
+#include "NavigationScheduler.h"
 #include "ScriptElement.h"
 
 namespace WebCore {

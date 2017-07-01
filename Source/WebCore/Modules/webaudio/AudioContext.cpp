@@ -50,6 +50,7 @@
 #include "ExceptionCode.h"
 #include "FFTFrame.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "GainNode.h"
 #include "GenericEventQueue.h"
 #include "HRTFDatabaseLoader.h"

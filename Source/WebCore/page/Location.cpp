@@ -34,6 +34,7 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "NavigationScheduler.h"
 #include "URL.h"
 #include "SecurityOrigin.h"
 

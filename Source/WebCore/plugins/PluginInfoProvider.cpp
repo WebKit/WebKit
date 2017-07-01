@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PluginInfoProvider.h"
 
+#include "FrameLoader.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "SubframeLoader.h"

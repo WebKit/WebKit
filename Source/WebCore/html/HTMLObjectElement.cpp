@@ -30,6 +30,7 @@
 #include "ElementIterator.h"
 #include "FormDataList.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"

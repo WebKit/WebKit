@@ -1,3 +1,66 @@
+2017-07-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Frame.h doesn't need to include FrameLoader.h, IntRect.h, and NavigationScheduler.h
+        https://bugs.webkit.org/show_bug.cgi?id=174004
+
+        Reviewed by Simon Fraser.
+
+        Made FrameLoader and NavigationScheduler UniqueRef in Frame so that we can forward declare them,
+        and forward declared IntPoint and IntRect to avoid including FrameLoader.h, IntRect.h,
+        and NavigationScheduler.h in Frame.h
+
+        * Modules/mediastream/MediaStream.cpp:
+        * Modules/webaudio/AudioContext.cpp:
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect): Avoid calling loader().mixedContentChecker().canRunInsecureContent(~)
+        on a nullptr even though this used to work because we weren't de-referencing it.
+        * bindings/js/ScriptController.cpp:
+        * dom/Document.cpp:
+        * dom/EventDispatcher.cpp:
+        * editing/Editor.cpp:
+        * editing/cocoa/EditorCocoa.mm:
+        * editing/ios/EditorIOS.mm:
+        * editing/mac/EditorMac.mm:
+        * history/CachedPage.cpp:
+        * html/HTMLObjectElement.cpp:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::DocumentLoader::~DocumentLoader): Check !isLoading() before accessing frameLoader to avoid
+        accessing m_frame->loader() inside ~FrameLoader.
+        * html/parser/XSSAuditor.cpp:
+        * html/parser/XSSAuditorDelegate.cpp:
+        * inspector/InspectorInstrumentation.h:
+        * loader/CrossOriginPreflightChecker.cpp:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setOpener): Avoid accessing this FrameLoader via m_opener->loader() when it's
+        this FrameLoader inside ~FrameLoader since UniqueRef<FrameLoader> is clears itself before calling
+        the destructor of FrameLoader.
+        * loader/ImageLoader.cpp:
+        * loader/LinkLoader.cpp:
+        * loader/SubframeLoader.cpp:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * loader/appcache/DOMApplicationCache.cpp:
+        * mathml/MathMLElement.cpp:
+        * page/DOMWindow.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::init): Moved here from Frame.h
+        (WebCore::Frame::setDocument):
+        * page/Frame.h:
+        (WebCore::Frame::loader):
+        (WebCore::Frame::navigationScheduler):
+        * page/History.cpp:
+        * page/Location.cpp:
+        * page/PerformanceLogging.cpp:
+        * page/PerformanceNavigation.cpp:
+        * page/UserContentProvider.cpp:
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::initWithSimpleHTMLDocument):
+        * plugins/PluginInfoProvider.cpp:
+        * replay/ReplayInputCreationMethods.cpp:
+        * replay/UserInputBridge.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         [macOS] Remove code only needed when building for OS X Yosemite

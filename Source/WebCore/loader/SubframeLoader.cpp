@@ -46,6 +46,7 @@
 #include "HTMLObjectElement.h"
 #include "MIMETypeRegistry.h"
 #include "MainFrame.h"
+#include "NavigationScheduler.h"
 #include "Page.h"
 #include "PluginData.h"
 #include "PluginDocument.h"

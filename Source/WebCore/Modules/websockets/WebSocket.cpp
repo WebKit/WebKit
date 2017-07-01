@@ -45,6 +45,7 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "ResourceLoadObserver.h"
@@ -296,7 +297,8 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
 
     if (is<Document>(context)) {
         Document& document = downcast<Document>(context);
-        if (!document.frame()->loader().mixedContentChecker().canRunInsecureContent(document.securityOrigin(), m_url)) {
+        RefPtr<Frame> frame = document.frame();
+        if (!frame || !frame->loader().mixedContentChecker().canRunInsecureContent(document.securityOrigin(), m_url)) {
             // Balanced by the call to ActiveDOMObject::unsetPendingActivity() in WebSocket::stop().
             ActiveDOMObject::setPendingActivity(this);
 
@@ -320,8 +322,8 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
             });
 #endif
             return { };
-        } else
-            ResourceLoadObserver::shared().logWebSocketLoading(document.frame(), m_url);
+        }
+        ResourceLoadObserver::shared().logWebSocketLoading(frame.get(), m_url);
     }
 
     String protocolString;

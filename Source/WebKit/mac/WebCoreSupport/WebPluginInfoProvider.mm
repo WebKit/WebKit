@@ -27,6 +27,7 @@
 
 #import "WebPluginDatabase.h"
 #import "WebPluginPackage.h"
+#import <WebCore/FrameLoader.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/Page.h>
 #import <WebCore/SubframeLoader.h>

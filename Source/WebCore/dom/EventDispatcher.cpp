@@ -30,6 +30,7 @@
 #include "EventContext.h"
 #include "EventPath.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "InputEvent.h"

@@ -31,6 +31,7 @@
 #include "SessionTracker.h"
 #include "WebFrame.h"
 #include "WebPage.h"
+#include <WebCore/FrameLoader.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SessionID.h>
 #include <WebCore/Settings.h>

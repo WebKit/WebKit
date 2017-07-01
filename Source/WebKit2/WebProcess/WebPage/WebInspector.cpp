@@ -35,6 +35,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/Document.h>
 #include <WebCore/FrameLoadRequest.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/InspectorFrontendClient.h>

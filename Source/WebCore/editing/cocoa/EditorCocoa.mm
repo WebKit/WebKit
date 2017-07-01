@@ -38,6 +38,7 @@
 #import "EditorClient.h"
 #import "FontCascade.h"
 #import "Frame.h"
+#import "FrameLoader.h"
 #import "FrameSelection.h"
 #import "HTMLConverter.h"
 #import "HTMLImageElement.h"

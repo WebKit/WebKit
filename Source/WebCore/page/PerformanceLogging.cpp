@@ -29,6 +29,7 @@
 #include "CommonVM.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "JSDOMWindow.h"
 #include "Logging.h"

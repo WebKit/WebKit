@@ -29,6 +29,7 @@
 #if ENABLE(WEB_REPLAY)
 
 #include "Document.h"
+#include "FrameLoader.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "SecurityOrigin.h"

@@ -77,6 +77,7 @@ class Node;
 class PseudoElement;
 class RenderLayer;
 class RenderObject;
+class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;

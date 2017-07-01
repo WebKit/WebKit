@@ -31,6 +31,7 @@
 #include "DocumentLoader.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 
 namespace WebCore {
 

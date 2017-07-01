@@ -32,6 +32,7 @@
 #include "EventNames.h"
 #include "EventSender.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"

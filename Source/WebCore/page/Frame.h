@@ -28,16 +28,15 @@
 #pragma once
 
 #include "AdjustViewSizeOrNot.h"
-#include "FrameLoader.h"
 #include "FrameTree.h"
-#include "IntRect.h"
-#include "NavigationScheduler.h"
 #include "ScrollTypes.h"
 #include "UserScriptTypes.h"
+#include <wtf/HashSet.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 
 #if PLATFORM(IOS)
+#include "Timer.h"
 #include "ViewportArguments.h"
 #include "VisibleSelection.h"
 #endif
@@ -68,21 +67,28 @@ class Element;
 class EventHandler;
 class FloatSize;
 class FrameDestructionObserver;
+class FrameLoader;
+class FrameLoaderClient;
 class FrameSelection;
 class FrameView;
 class HTMLFrameOwnerElement;
 class HTMLTableCellElement;
 class HitTestResult;
 class ImageBuffer;
+class IntPoint;
 class IntRect;
+class IntSize;
 class MainFrame;
+class NavigationScheduler;
 class Node;
+class Page;
 class Range;
 class RenderLayer;
 class RenderView;
 class RenderWidget;
 class ScriptController;
 class Settings;
+class URL;
 class VisiblePosition;
 class Widget;
 
@@ -115,14 +121,14 @@ class Frame : public ThreadSafeRefCounted<Frame> {
 public:
     WEBCORE_EXPORT static Ref<Frame> create(Page*, HTMLFrameOwnerElement*, FrameLoaderClient*);
 
-    void init();
+    WEBCORE_EXPORT void init();
 #if PLATFORM(IOS)
     // Creates <html><body style="..."></body></html> doing minimal amount of work.
     WEBCORE_EXPORT void initWithSimpleHTMLDocument(const String& style, const URL&);
 #endif
     WEBCORE_EXPORT void setView(RefPtr<FrameView>&&);
-    WEBCORE_EXPORT void createView(const IntSize&, const Color&, bool,
-        const IntSize& fixedLayoutSize = IntSize(), const IntRect& fixedVisibleContentRect = IntRect(),
+    WEBCORE_EXPORT void createView(const IntSize&, const Color& backgroundColor, bool transparent,
+        const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect,
         bool useFixedLayout = false, ScrollbarMode = ScrollbarAuto, bool horizontalLock = false,
         ScrollbarMode = ScrollbarAuto, bool verticalLock = false);
 
@@ -286,8 +292,8 @@ private:
     Page* m_page;
     const RefPtr<Settings> m_settings;
     mutable FrameTree m_treeNode;
-    mutable FrameLoader m_loader;
-    mutable NavigationScheduler m_navigationScheduler;
+    mutable UniqueRef<FrameLoader> m_loader;
+    mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
 
     HTMLFrameOwnerElement* m_ownerElement;
     RefPtr<FrameView> m_view;
@@ -332,19 +338,14 @@ protected:
     UniqueRef<EventHandler> m_eventHandler;
 };
 
-inline void Frame::init()
-{
-    m_loader.init();
-}
-
 inline FrameLoader& Frame::loader() const
 {
-    return m_loader;
+    return m_loader.get();
 }
 
 inline NavigationScheduler& Frame::navigationScheduler() const
 {
-    return m_navigationScheduler;
+    return m_navigationScheduler.get();
 }
 
 inline FrameView* Frame::view() const

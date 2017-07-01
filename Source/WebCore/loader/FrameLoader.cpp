@@ -87,6 +87,7 @@
 #include "MemoryCache.h"
 #include "MemoryRelease.h"
 #include "NavigationDisabler.h"
+#include "NavigationScheduler.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"
@@ -988,8 +989,11 @@ void FrameLoader::setOpener(Frame* opener)
     if (m_opener && !opener)
         m_client.didDisownOpener();
 
-    if (m_opener)
-        m_opener->loader().m_openedFrames.remove(&m_frame);
+    if (m_opener) {
+        // When setOpener is called in ~FrameLoader, opener's m_frameLoader is already cleared.
+        auto& openerFrameLoader = m_opener == &m_frame ? *this : m_opener->loader();
+        openerFrameLoader.m_openedFrames.remove(&m_frame);
+    }
     if (opener)
         opener->loader().m_openedFrames.add(&m_frame);
     m_opener = opener;

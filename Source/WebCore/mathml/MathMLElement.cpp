@@ -32,6 +32,7 @@
 #if ENABLE(MATHML)
 
 #include "EventHandler.h"
+#include "FrameLoader.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLParserIdioms.h"
 #include "MathMLNames.h"

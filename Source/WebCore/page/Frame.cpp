@@ -71,6 +71,7 @@
 #include "MainFrame.h"
 #include "MathMLNames.h"
 #include "MediaFeatureNames.h"
+#include "NavigationScheduler.h"
 #include "Navigator.h"
 #include "NodeList.h"
 #include "NodeTraversal.h"
@@ -154,8 +155,8 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     , m_page(&page)
     , m_settings(&page.settings())
     , m_treeNode(*this, parentFromOwnerElement(ownerElement))
-    , m_loader(*this, frameLoaderClient)
-    , m_navigationScheduler(*this)
+    , m_loader(makeUniqueRef<FrameLoader>(*this, frameLoaderClient))
+    , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
     , m_ownerElement(ownerElement)
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_editor(makeUniqueRef<Editor>(*this))
@@ -195,6 +196,11 @@ Frame::Frame(Page& page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient&
     Frame* parent = parentFromOwnerElement(ownerElement);
     if (parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
+}
+
+void Frame::init()
+{
+    m_loader->init();
 }
 
 Ref<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* client)
@@ -273,7 +279,7 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
     m_documentIsBeingReplaced = true;
 
     if (isMainFrame())
-        m_loader.client().dispatchDidChangeMainDocument();
+        m_loader->client().dispatchDidChangeMainDocument();
 
     if (m_doc && m_doc->pageCacheState() != Document::InPageCache)
         m_doc->prepareForDestruction();

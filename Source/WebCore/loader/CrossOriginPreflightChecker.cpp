@@ -38,6 +38,7 @@
 #include "CrossOriginAccessControl.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "DocumentThreadableLoader.h"
+#include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "NetworkLoadMetrics.h"
 #include "RuntimeEnabledFeatures.h"

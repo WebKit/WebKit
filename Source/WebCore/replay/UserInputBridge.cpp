@@ -32,6 +32,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
+#include "FrameLoader.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"

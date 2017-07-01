@@ -33,6 +33,7 @@
 #include "DocumentLoader.h"
 #include "FormData.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "HTMLParamElement.h"

@@ -45,6 +45,7 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameDestructionObserver.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/MainFrame.h>
 #include <glib/gi18n-lib.h>

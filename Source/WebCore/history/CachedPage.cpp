@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "FocusController.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"

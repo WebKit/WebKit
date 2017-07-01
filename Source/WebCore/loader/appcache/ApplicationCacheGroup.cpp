@@ -41,6 +41,7 @@
 #include "HTTPHeaderNames.h"
 #include "InspectorInstrumentation.h"
 #include "ManifestParser.h"
+#include "NavigationScheduler.h"
 #include "NetworkLoadMetrics.h"
 #include "Page.h"
 #include "ProgressTracker.h"

@@ -39,6 +39,7 @@
 #import "File.h"
 #import "FontCascade.h"
 #import "Frame.h"
+#import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "FrameView.h"
 #import "HTMLAnchorElement.h"

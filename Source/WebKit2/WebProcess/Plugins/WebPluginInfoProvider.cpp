@@ -32,6 +32,7 @@
 #include "WebProcessProxyMessages.h"
 #include <WebCore/Document.h>
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SecurityOrigin.h>

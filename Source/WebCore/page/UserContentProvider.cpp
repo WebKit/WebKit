@@ -28,6 +28,7 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "FrameLoader.h"
 #include "MainFrame.h"
 #include "Page.h"
 
