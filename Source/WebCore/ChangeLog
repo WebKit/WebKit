@@ -1,3 +1,16 @@
+2017-06-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r214194): Safari leaves a popup window open opened during before unload
+        https://bugs.webkit.org/show_bug.cgi?id=174016
+
+        Reviewed by Chris Dumez.
+
+        Address Dan's review comments.
+
+        * loader/NavigationDisabler.h:
+        (WebCore::NavigationDisabler::NavigationDisabler):
+        (WebCore::NavigationDisabler::~NavigationDisabler):
+
 2017-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Text indicators for dragged links should always be legible if the link is legible

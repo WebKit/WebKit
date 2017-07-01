@@ -35,9 +35,9 @@ public:
         : m_frame(frame)
     {
         if (frame)
-            m_frame->mainFrame().m_navigationDisableCount++;
+            ++frame->mainFrame().m_navigationDisableCount;
         else // Disable all navigations when destructing a frame-less document.
-            s_globalNavigationDisableCount++;
+            ++s_globalNavigationDisableCount;
     }
 
     ~NavigationDisabler()
@@ -45,10 +45,10 @@ public:
         if (m_frame) {
             auto& mainFrame = m_frame->mainFrame();
             ASSERT(mainFrame.m_navigationDisableCount);
-            mainFrame.m_navigationDisableCount--;
+            --mainFrame.m_navigationDisableCount;
         } else {
             ASSERT(s_globalNavigationDisableCount);
-            s_globalNavigationDisableCount--;
+            --s_globalNavigationDisableCount;
         }
     }
 
