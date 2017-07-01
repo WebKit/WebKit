@@ -1,5 +1,13 @@
 2017-06-30  Michael Saboff  <msaboff@apple.com>
 
+        Skip a test on ARM64 platform since we run out of address space.
+
+        Rubber stamped by Saam Barati.
+
+        * stress/dont-reserve-huge-capacity-lexer.js:
+
+2017-06-30  Michael Saboff  <msaboff@apple.com>
+
         RegExp's  anchored with .* with \g flag can return wrong match start for strings with multiple matches
         https://bugs.webkit.org/show_bug.cgi?id=174044
 

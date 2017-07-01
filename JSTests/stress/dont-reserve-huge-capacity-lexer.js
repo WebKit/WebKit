@@ -1,4 +1,4 @@
-//@ skip if ($architecture != "arm64" and $architecture != "x86-64")
+//@ skip if ($architecture != "x86-64")
 
 var fe="f";                                                                         
 try
