@@ -428,7 +428,6 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
             m_viewOverlayRootLayer->flushCompositingState(visibleRect);
 
         RefPtr<WebPage> retainedPage = &m_webPage;
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
         [CATransaction addCommitHandler:[retainedPage] {
             if (Page* corePage = retainedPage->corePage()) {
                 if (Frame* coreFrame = retainedPage->mainFrame())
@@ -437,12 +436,6 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
             if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
                 drawingArea->sendPendingNewlyReachedLayoutMilestones();
         } forPhase:kCATransactionPhasePostCommit];
-#else
-        dispatch_async(dispatch_get_main_queue(), [retainedPage] {
-            if (auto drawingArea = static_cast<TiledCoreAnimationDrawingArea*>(retainedPage->drawingArea()))
-                drawingArea->sendPendingNewlyReachedLayoutMilestones();
-        });
-#endif
 
         bool returnValue = m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 #if ENABLE(ASYNC_SCROLLING)
@@ -567,21 +560,14 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
 
     [CATransaction commit];
 
-    if (flushSynchronously) {
+    if (flushSynchronously)
         [CATransaction flush];
-#if !HAVE(COREANIMATION_FENCES)
-        // We can't synchronize here if we're using fences or we'll blow the fence every time (and we don't need to).
-        [CATransaction synchronize];
-#endif
-    }
 
     m_webPage.send(Messages::DrawingAreaProxy::DidUpdateGeometry());
 
     m_inUpdateGeometry = false;
 
-#if HAVE(COREANIMATION_FENCES)
     m_layerHostingContext->setFencePort(fencePort.sendRight());
-#endif
 }
 
 void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)

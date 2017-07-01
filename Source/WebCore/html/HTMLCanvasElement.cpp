@@ -88,8 +88,6 @@ const int defaultHeight = 150;
 // in exchange for a smaller maximum canvas size. The maximum canvas size is in device pixels.
 #if PLATFORM(IOS)
 const unsigned maxCanvasArea = 4096 * 4096;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
-const unsigned maxCanvasArea = 8192 * 8192;
 #else
 const unsigned maxCanvasArea = 16384 * 16384;
 #endif

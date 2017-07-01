@@ -144,15 +144,6 @@ void Connection::platformInvalidate()
     dispatch_release(m_receiveSource);
     m_receiveSource = nullptr;
     m_receivePort = MACH_PORT_NULL;
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    if (m_exceptionPort) {
-        dispatch_source_cancel(m_exceptionPortDataAvailableSource);
-        dispatch_release(m_exceptionPortDataAvailableSource);
-        m_exceptionPortDataAvailableSource = 0;
-        m_exceptionPort = MACH_PORT_NULL;
-    }
-#endif
 }
     
 void Connection::terminateSoon(Seconds interval)
@@ -163,11 +154,6 @@ void Connection::terminateSoon(Seconds interval)
     
 void Connection::platformInitialize(Identifier identifier)
 {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    m_exceptionPort = MACH_PORT_NULL;
-    m_exceptionPortDataAvailableSource = nullptr;
-#endif
-
     if (m_isServer) {
         m_receivePort = identifier.port;
         m_sendPort = MACH_PORT_NULL;
@@ -225,33 +211,12 @@ bool Connection::open()
         mach_port_mod_refs(mach_task_self(), receivePort, MACH_PORT_RIGHT_RECEIVE, -1);
     });
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    if (m_exceptionPort) {
-        m_exceptionPortDataAvailableSource = dispatch_source_create(DISPATCH_SOURCE_TYPE_MACH_RECV, m_exceptionPort, 0, m_connectionQueue->dispatchQueue());
-        dispatch_source_set_event_handler(m_exceptionPortDataAvailableSource, [connection] {
-            connection->exceptionSourceEventHandler();
-        });
-        dispatch_source_set_cancel_handler(m_exceptionPortDataAvailableSource, [connection, exceptionPort = m_exceptionPort] {
-            mach_port_mod_refs(mach_task_self(), exceptionPort, MACH_PORT_RIGHT_RECEIVE, -1);
-        });
-
-        auto encoder = std::make_unique<Encoder>("IPC", "SetExceptionPort", 0);
-        encoder->encode(MachPort(m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND));
-
-        sendMessage(WTFMove(encoder), { });
-    }
-#endif
-
     ref();
     dispatch_async(m_connectionQueue->dispatchQueue(), ^{
         dispatch_resume(m_receiveSource);
 
         if (m_sendSource)
             dispatch_resume(m_sendSource);
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-        if (m_exceptionPortDataAvailableSource)
-            dispatch_resume(m_exceptionPortDataAvailableSource);
-#endif
 
         deref();
     });
@@ -591,51 +556,6 @@ void Connection::receiveSourceEventHandler()
 
     processIncomingMessage(WTFMove(decoder));
 }    
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-void Connection::exceptionSourceEventHandler()
-{
-    ReceiveBuffer buffer;
-
-    mach_msg_header_t* header = readFromMachPort(m_exceptionPort, buffer);
-    if (!header)
-        return;
-
-    // We've read the exception message. Now send it on to the real exception port.
-
-    // The remote port should have a send once right.
-    ASSERT(MACH_MSGH_BITS_REMOTE(header->msgh_bits) == MACH_MSG_TYPE_MOVE_SEND_ONCE);
-
-    // Now get the real exception port.
-    mach_port_t exceptionPort = machExceptionPort();
-
-    // First, get the complex bit from the source message.
-    mach_msg_bits_t messageBits = header->msgh_bits & MACH_MSGH_BITS_COMPLEX;
-    messageBits |= MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, MACH_MSG_TYPE_MOVE_SEND_ONCE);
-
-    header->msgh_bits = messageBits;
-    header->msgh_local_port = header->msgh_remote_port;
-    header->msgh_remote_port = exceptionPort;
-
-    // Now send along the message.
-    kern_return_t kr = mach_msg(header, MACH_SEND_MSG, header->msgh_size, 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
-    if (kr != KERN_SUCCESS)
-        LOG_ERROR("Failed to send message to real exception port. %s (%x)", mach_error_string(kr), kr);
-
-    connectionDidClose();
-}
-
-void Connection::setShouldCloseConnectionOnMachExceptions()
-{
-    ASSERT(m_exceptionPort == MACH_PORT_NULL);
-
-    if (mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &m_exceptionPort) != KERN_SUCCESS)
-        ASSERT_NOT_REACHED();
-
-    if (mach_port_insert_right(mach_task_self(), m_exceptionPort, m_exceptionPort, MACH_MSG_TYPE_MAKE_SEND) != KERN_SUCCESS)
-        ASSERT_NOT_REACHED();
-}
-#endif
 
 IPC::Connection::Identifier Connection::identifier() const
 {

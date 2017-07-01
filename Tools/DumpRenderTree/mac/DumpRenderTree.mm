@@ -1023,7 +1023,7 @@ static void setDefaultsToConsistentValuesForTesting()
         @"NSOverlayScrollersEnabled": @NO,
         @"AppleShowScrollBars": @"Always",
         @"NSButtonAnimationsEnabled": @NO, // Ideally, we should find a way to test animations, but for now, make sure that the dumped snapshot matches actual state.
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
         @"AppleSystemFontOSSubversion": @(10),
 #endif
         @"NSWindowDisplayWithRunLoopObserver": @YES, // Temporary workaround, see <rdar://problem/20351297>.
@@ -1043,7 +1043,7 @@ static void setDefaultsToConsistentValuesForTesting()
         WebStorageDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
         WebKitLocalCacheDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalCache"],
         WebKitResourceLoadStatisticsDirectoryDefaultsKey: [libraryPath stringByAppendingPathComponent:@"LocalStorage"],
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
         // This needs to also be added to argument domain because of <rdar://problem/20210002>.
         @"AppleSystemFontOSSubversion": @(10),
 #endif

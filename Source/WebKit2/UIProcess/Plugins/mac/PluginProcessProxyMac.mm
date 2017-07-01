@@ -59,42 +59,6 @@ using namespace WebCore;
 
 namespace WebKit {
     
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
-{
-    CString pluginPathString = fileSystemRepresentation(plugin.path);
-
-    posix_spawnattr_t attr;
-    posix_spawnattr_init(&attr);
-
-    cpu_type_t cpuTypes[] = { plugin.pluginArchitecture };    
-    size_t outCount = 0;
-    posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
-
-    posix_spawnattr_setflags(&attr, POSIX_SPAWN_CLOEXEC_DEFAULT);
-
-    const char* args[] = { "/System/Library/Frameworks/WebKit.framework/PluginProcess.app/Contents/MacOS/PluginProcess", "/System/Library/Frameworks/WebKit.framework/WebKit", "-type", "pluginprocess", "-createPluginMIMETypesPreferences", pluginPathString.data(), 0 };
-
-    pid_t pid;
-    int result = posix_spawn(&pid, args[0], 0, &attr, const_cast<char* const*>(args), nullptr);
-    posix_spawnattr_destroy(&attr);
-
-    if (result)
-        return false;
-    int status;
-    if (waitpid(pid, &status, 0) < 0)
-        return false;
-
-    if (!WIFEXITED(status))
-        return false;
-
-    if (WEXITSTATUS(status) != EXIT_SUCCESS)
-        return false;
-
-    return true;
-}
-#endif
-
 void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginProcessAttributes& pluginProcessAttributes)
 {
     if (pluginProcessAttributes.moduleInfo.pluginArchitecture == CPU_TYPE_X86)
@@ -120,9 +84,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 #if HAVE(HOSTED_CORE_ANIMATION)
     parameters.acceleratedCompositingPort = MachSendRight::create([CARemoteLayerServer sharedServer].serverPort);
 #endif
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
-#endif
 }
 
 bool PluginProcessProxy::getPluginProcessSerialNumber(ProcessSerialNumber& pluginProcessSerialNumber)

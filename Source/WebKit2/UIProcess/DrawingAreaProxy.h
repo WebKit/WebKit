@@ -72,8 +72,6 @@ public:
     // The timeout we use when waiting for a DidUpdateGeometry message.
     static constexpr Seconds didUpdateBackingStoreStateTimeout() { return Seconds::fromMilliseconds(500); }
 
-    virtual void waitForPossibleGeometryUpdate(Seconds = didUpdateBackingStoreStateTimeout()) { }
-
     virtual void colorSpaceDidChange() { }
     virtual void minimumLayoutSizeDidChange() { }
 

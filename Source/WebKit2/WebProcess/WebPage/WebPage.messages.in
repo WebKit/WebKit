@@ -27,7 +27,7 @@ messages -> WebPage LegacyReceiver {
 
     SetDrawsBackground(bool drawsBackground)
 
-#if HAVE(COREANIMATION_FENCES)
+#if PLATFORM(COCOA)
     SetTopContentInsetFenced(float contentInset, IPC::Attachment fencePort)
 #endif
     SetTopContentInset(float contentInset)

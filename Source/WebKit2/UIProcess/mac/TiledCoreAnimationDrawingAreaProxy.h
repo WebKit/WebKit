@@ -40,7 +40,6 @@ private:
     // DrawingAreaProxy
     void deviceScaleFactorDidChange() override;
     void sizeDidChange() override;
-    void waitForPossibleGeometryUpdate(Seconds timeout = didUpdateBackingStoreStateTimeout()) override;
     void colorSpaceDidChange() override;
     void minimumLayoutSizeDidChange() override;
 

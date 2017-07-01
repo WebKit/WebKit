@@ -124,7 +124,6 @@ typedef struct CAColorMatrix CAColorMatrix;
 @property (copy) NSString *name;
 @end
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
 typedef enum {
     kCATransactionPhasePreLayout,
     kCATransactionPhasePreCommit,
@@ -134,26 +133,15 @@ typedef enum {
 @interface CATransaction ()
 + (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
 @end
-#endif
 
 @interface CALayerHost : CALayer
 @property uint32_t contextId;
 @property BOOL inheritsSecurity;
 @end
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED < 101100
-@interface CASpringAnimation : CABasicAnimation 
-@property CGFloat mass;
-@property CGFloat stiffness;
-@property CGFloat damping;
-@property CGFloat velocity;
-@property CGFloat initialVelocity;
-@end
-#else
 @interface CASpringAnimation (Private)
 @property CGFloat velocity;
 @end
-#endif
 
 #endif // __OBJC__
 

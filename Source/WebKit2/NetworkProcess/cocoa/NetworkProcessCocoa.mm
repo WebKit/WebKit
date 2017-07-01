@@ -75,9 +75,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #endif
     m_diskCacheDirectory = parameters.diskCacheDirectory;
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
-#endif
 
     SessionTracker::setIdentifierBase(parameters.uiProcessBundleIdentifier);
 
@@ -93,7 +91,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 
     initializeNetworkSettings();
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);
 #endif
 

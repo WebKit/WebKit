@@ -63,7 +63,7 @@ struct NetworkProcessCreationParameters {
     bool shouldEnableNetworkCacheSpeculativeRevalidation { false };
 #endif
 #endif
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
 #if PLATFORM(IOS)
@@ -91,7 +91,7 @@ struct NetworkProcessCreationParameters {
 #endif
     String httpProxy;
     String httpsProxy;
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if PLATFORM(COCOA)
     RetainPtr<CFDataRef> networkATSContext;
 #endif
     bool cookieStoragePartitioningEnabled;

@@ -78,7 +78,7 @@ struct WebProcessCreationParameters {
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     String javaScriptConfigurationDirectory;
     SandboxExtension::Handle javaScriptConfigurationDirectoryExtensionHandle;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     Vector<uint8_t> uiProcessCookieStorageIdentifier;
 #endif
 #if PLATFORM(IOS)
@@ -161,7 +161,7 @@ struct WebProcessCreationParameters {
     HashMap<String, HashMap<String, HashMap<String, uint8_t>>> pluginLoadClientPolicies;
 #endif
 
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if PLATFORM(COCOA)
     RetainPtr<CFDataRef> networkATSContext;
 #endif
 

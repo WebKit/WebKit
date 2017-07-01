@@ -1294,7 +1294,7 @@ void WebPageProxy::setTopContentInset(float contentInset)
 
     if (!isValid())
         return;
-#if HAVE(COREANIMATION_FENCES)
+#if PLATFORM(COCOA)
     MachSendRight fence = m_drawingArea->createFence();
 
     auto fenceAttachment = IPC::Attachment(fence.leakSendRight(), MACH_MSG_TYPE_MOVE_SEND);

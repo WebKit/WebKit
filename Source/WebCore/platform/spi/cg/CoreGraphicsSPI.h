@@ -104,7 +104,7 @@ typedef uint32_t CGFontRenderingStyle;
 enum {
     kCGFontAntialiasingStyleUnfiltered = 0 << 7,
     kCGFontAntialiasingStyleFilterLight = 1 << 7,
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     kCGFontAntialiasingStyleUnfilteredCustomDilation = (8 << 7),
 #endif
 };

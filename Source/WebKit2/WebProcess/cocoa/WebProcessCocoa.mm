@@ -137,7 +137,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
         JSC::processConfigFile(javaScriptConfigFile.latin1().data(), "com.apple.WebKit.WebContent", parameters.uiProcessBundleIdentifier.latin1().data());
     }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);
 #endif
 
@@ -163,9 +163,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 #endif
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
-#endif
 
 #if TARGET_OS_IPHONE
     // Priority decay on iOS 9 is impacting page load time so we fix the priority of the WebProcess' main thread (rdar://problem/22003112).

@@ -117,7 +117,6 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 - (CFHTTPCookieRef)_CFHTTPCookie;
 @end
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000)
 @interface NSURLSessionConfiguration ()
 @property (assign) _TimingDataOptions _timingDataOptions;
 @property (copy) NSData *_sourceApplicationAuditTokenData;
@@ -128,7 +127,6 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @property (nullable, copy) NSString *_CTDataConnectionServiceType;
 #endif
 @end
-#endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 @interface NSURLSessionTaskTransactionMetrics ()
@@ -245,27 +243,23 @@ enum : NSUInteger {
 
 WTF_EXTERN_C_BEGIN
 
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
 CFDataRef _CFNetworkCopyATSContext(void);
 Boolean _CFNetworkSetATSContext(CFDataRef);
-#endif
 
 #if PLATFORM(COCOA)
 void _CFNetworkResetHSTSHostsSinceDate(CFURLStorageSessionRef, CFDateRef);
 #endif
 
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
 CFDataRef CFHTTPCookieStorageCreateIdentifyingData(CFAllocatorRef inAllocator, CFHTTPCookieStorageRef inStorage);
 CFHTTPCookieStorageRef CFHTTPCookieStorageCreateFromIdentifyingData(CFAllocatorRef inAllocator, CFDataRef inData);
 CFArrayRef _CFHTTPParsedCookiesWithResponseHeaderFields(CFAllocatorRef inAllocator, CFDictionaryRef headerFields, CFURLRef inURL);
-#endif
 
 WTF_EXTERN_C_END
 
 #if defined(__OBJC__)
 
 @interface NSHTTPCookie ()
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
 + (NSArray *)_parsedCookiesWithResponseHeaderFields:(NSDictionary *)headerFields forURL:(NSURL *)aURL;
 #endif
 + (NSArray *)_cf2nsCookies:(CFArrayRef)cfCookies;
@@ -281,11 +275,9 @@ WTF_EXTERN_C_END
 #endif
 
 // FIXME: Move +_setSharedHTTPCookieStorage: into the above section under !USE(APPLE_INTERNAL_SDK) when possible (soon).
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
 @interface NSHTTPCookieStorage ()
 + (void)_setSharedHTTPCookieStorage:(NSHTTPCookieStorage *)storage;
 @end
-#endif
 
 @interface NSURLResponse ()
 - (void)_setMIMEType:(NSString *)type;

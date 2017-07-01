@@ -142,32 +142,9 @@ using namespace WebCore;
     if (!cfBundle)
         return NO;
     
-    NSDictionary *MIMETypes = nil;
-
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    NSString *pListFilename = [self _objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
-    
-    // Check if the MIME types are claimed in a plist in the user's preferences directory.
-    if (pListFilename) {
-        NSString *pListPath = [NSString stringWithFormat:@"%@/Library/Preferences/%@", NSHomeDirectory(), pListFilename];
-        NSDictionary *pList = [self pListForPath:pListPath createFile:NO];
-        if (pList) {
-            // If the plist isn't localized, have the plug-in recreate it in the preferred language.
-            NSString *localizationName = [pList objectForKey:WebPluginLocalizationNameKey];
-            if (![localizationName isEqualToString:preferredBundleLocalizationName()])
-                pList = [self pListForPath:pListPath createFile:YES];
-            MIMETypes = [pList objectForKey:WebPluginMIMETypesKey];
-        } else
-            // Plist doesn't exist, ask the plug-in to create it.
-            MIMETypes = [[self pListForPath:pListPath createFile:YES] objectForKey:WebPluginMIMETypesKey];
-    }
-#endif
-
-    if (!MIMETypes) {
-        MIMETypes = [self _objectForInfoDictionaryKey:WebPluginMIMETypesKey];
-        if (!MIMETypes)
-            return NO;
-    }
+    NSDictionary *MIMETypes = [self _objectForInfoDictionaryKey:WebPluginMIMETypesKey];
+    if (!MIMETypes)
+        return NO;
 
     NSEnumerator *keyEnumerator = [MIMETypes keyEnumerator];
     NSDictionary *MIMEDictionary;

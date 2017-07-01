@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if HAVE(NSSCROLLING_FILTERS)
+#if PLATFORM(MAC)
 
 #include "WheelEventDeltaFilterMac.h"
 #include "FloatPoint.h"
@@ -69,4 +69,4 @@ void WheelEventDeltaFilterMac::endFilteringDeltas()
 
 }
 
-#endif /* HAVE(NSSCROLLING_FILTERS) */
+#endif /* PLATFORM(MAC) */

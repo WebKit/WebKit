@@ -50,10 +50,7 @@ using namespace WebCore;
 
 #if PLATFORM(MAC)
     self.contentsScale = _devicePixelRatio;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-    if ([self respondsToSelector:@selector(setColorspace:)])
-        [self setColorspace:sRGBColorSpaceRef()];
-#endif
+    self.colorspace = sRGBColorSpaceRef();
 #endif
     return self;
 }

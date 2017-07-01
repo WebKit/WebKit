@@ -1,3 +1,13 @@
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [macOS] Remove code only needed when building for OS X Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=174067
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
 2017-06-27  Youenn Fablet  <youenn@apple.com>
 
         Update boringssl to c8ff30cbe716c72279a6f6a9d7d7d0d4091220fa

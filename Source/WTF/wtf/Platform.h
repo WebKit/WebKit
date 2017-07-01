@@ -573,12 +573,6 @@
 #define USE_PLUGIN_HOST_PROCESS 1
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-#define HAVE_NSSCROLLING_FILTERS 1
-#else
-#define HAVE_NSSCROLLING_FILTERS 0
-#endif
-
 /* OS X defines a series of platform macros for debugging. */
 /* Some of them are really annoying because they use common names (e.g. check()). */
 /* Disable those macros so that we are not limited in how we name methods and functions. */
@@ -1145,7 +1139,7 @@
 #define USE_INSERTION_UNDO_GROUPING 1
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || PLATFORM(IOS)
+#if PLATFORM(COCOA)
 #define HAVE_TIMINGDATAOPTIONS 1
 #endif
 
@@ -1199,11 +1193,6 @@
 
 #if PLATFORM(COCOA)
 #define USE_MEDIATOOLBOX 1
-#endif
-
-/* While 10.10 has support for fences, it is missing some API important for our integration of them. */
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
-#define HAVE_COREANIMATION_FENCES 1
 #endif
 
 /* FIXME: Enable USE_OS_LOG when building with the public iOS 10 SDK once we fix <rdar://problem/27758343>. */

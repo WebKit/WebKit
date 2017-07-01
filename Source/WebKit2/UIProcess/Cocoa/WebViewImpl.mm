@@ -1607,9 +1607,6 @@ void WebViewImpl::updateLayer()
     // udpate response if setFrameSize is called.
     if (frameSizeUpdatesDisabled())
         return;
-
-    if (DrawingAreaProxy* drawingArea = m_page->drawingArea())
-        drawingArea->waitForPossibleGeometryUpdate();
 }
 
 void WebViewImpl::drawRect(CGRect rect)
@@ -3767,12 +3764,10 @@ void WebViewImpl::registerDraggedTypes()
 }
 #endif // ENABLE(DRAG_SUPPORT)
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 void WebViewImpl::startWindowDrag()
 {
     [m_view.window performWindowDragWithEvent:m_lastMouseDownEvent.get()];
 }
-#endif
 
 void WebViewImpl::dragImageForView(NSView *view, NSImage *image, CGPoint clientPoint, bool)
 {

@@ -2470,8 +2470,6 @@
 		1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebViewInternal.h; sourceTree = "<group>"; };
 		1A67CD2D1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersInternal.h; sourceTree = "<group>"; };
 		1A698F171E4910220064E881 /* ChildProcessCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessCocoa.mm; sourceTree = "<group>"; };
-		1A6D141F1B0167D500785FF0 /* Info-OSX-10.9-10.10.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-OSX-10.9-10.10.plist"; sourceTree = "<group>"; };
-		1A6D14211B01681600785FF0 /* PluginService.32-64-10.9-10.10.Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PluginService.32-64-10.9-10.10.Info.plist"; path = "PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64-10.9-10.10.Info.plist"; sourceTree = SOURCE_ROOT; };
 		1A6D86BF1DF75265007745E8 /* MachMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachMessage.cpp; sourceTree = "<group>"; };
 		1A6D86C01DF75265007745E8 /* MachMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachMessage.h; sourceTree = "<group>"; };
 		1A6FA21D1BD0435B00AAA650 /* WKFrameInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKFrameInfoPrivate.h; sourceTree = "<group>"; };
@@ -2490,7 +2488,6 @@
 		1A7865B816CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnectionManagerMessages.h; sourceTree = "<group>"; };
 		1A7C0DF41B7D1F1000A9B848 /* WKWindowFeaturesRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWindowFeaturesRef.cpp; sourceTree = "<group>"; };
 		1A7C0DF51B7D1F1000A9B848 /* WKWindowFeaturesRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWindowFeaturesRef.h; sourceTree = "<group>"; };
-		1A7DA54D1AFD8B380018239D /* Info-OSX-10.9-10.10.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-OSX-10.9-10.10.plist"; sourceTree = "<group>"; };
 		1A7E377418E4A33A003D0FFF /* WKScriptMessageHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKScriptMessageHandler.h; sourceTree = "<group>"; };
 		1A7E377618E4A4FE003D0FFF /* WKScriptMessage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKScriptMessage.mm; sourceTree = "<group>"; };
 		1A7E377718E4A4FE003D0FFF /* WKScriptMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKScriptMessage.h; sourceTree = "<group>"; };
@@ -7449,7 +7446,6 @@
 			isa = PBXGroup;
 			children = (
 				26659AA0185FAAED004303DD /* Info-iOS.plist */,
-				1A6D141F1B0167D500785FF0 /* Info-OSX-10.9-10.10.plist */,
 				BC8283A316B4BD9100A278FE /* Info-OSX.plist */,
 			);
 			path = NetworkService;
@@ -7468,7 +7464,6 @@
 		BC8283E916B4F8E200A278FE /* PluginService */ = {
 			isa = PBXGroup;
 			children = (
-				1A6D14211B01681600785FF0 /* PluginService.32-64-10.9-10.10.Info.plist */,
 				BCFCA89516DE96CB00074069 /* PluginService.32-64.Info.plist */,
 			);
 			name = PluginService;
@@ -7551,7 +7546,6 @@
 			isa = PBXGroup;
 			children = (
 				375FB4731883415600BE34D4 /* Info-iOS.plist */,
-				1A7DA54D1AFD8B380018239D /* Info-OSX-10.9-10.10.plist */,
 				BCACC44016B24CAA00B6E092 /* Info-OSX.plist */,
 			);
 			path = WebContentService;

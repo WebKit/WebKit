@@ -35,7 +35,6 @@
 (allow process-codesigning-status*)
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
@@ -184,7 +183,6 @@
     (iokit-property "startup-timing")
     (iokit-property "touch-size-id")
 )
-#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 (deny mach-lookup (xpc-service-name-prefix ""))
@@ -389,9 +387,6 @@
        (global-name "com.apple.SystemConfiguration.configd")
        (global-name "com.apple.SystemConfiguration.PPPController")
        (global-name "com.apple.audio.SystemSoundServer-OSX")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
-       (global-name "com.apple.audio.VDCAssistant")
-#endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
        (global-name "com.apple.analyticsd")
 #endif
@@ -408,10 +403,8 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
        (global-name "com.apple.mediaremoted.xpc")
 #endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
        (global-name "com.apple.lsd.mapdb")
        (global-name "com.apple.nesessionmanager.flow-divert-token")
-#endif
        (global-name "com.apple.speech.speechsynthesisd")
        (global-name "com.apple.speech.synthesis.console")
        (global-name "com.apple.system.opendirectoryd.api")

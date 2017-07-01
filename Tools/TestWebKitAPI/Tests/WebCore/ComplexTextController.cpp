@@ -53,13 +53,8 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
     font.update();
     auto spaceWidth = font.primaryFont().spaceWidth();
 
-#if USE_LAYOUT_SPECIFIC_ADVANCES
     Vector<FloatSize> advances = { FloatSize(), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
     Vector<FloatPoint> origins = { FloatPoint(-15.15625, 18.046875), FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint() };
-#else
-    Vector<FloatSize> advances = { FloatSize(15.15625, -18.046875), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
-    Vector<FloatPoint> origins = { };
-#endif
 
     FloatSize initialAdvance = FloatSize(-15.15625, 18.046875);
 
@@ -104,13 +99,8 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTL)
     FontCascade font(description);
     font.update();
 
-#if USE_LAYOUT_SPECIFIC_ADVANCES
     Vector<FloatSize> advances = { FloatSize(), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
     Vector<FloatPoint> origins = { FloatPoint(-15.15625, 18.046875), FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint() };
-#else
-    Vector<FloatSize> advances = { FloatSize(15.15625, -18.046875), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
-    Vector<FloatPoint> origins = { };
-#endif
 
     FloatSize initialAdvance = FloatSize(-15.15625, 18.046875);
 
@@ -154,13 +144,8 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
     font.update();
     auto spaceWidth = font.primaryFont().spaceWidth();
 
-#if USE_LAYOUT_SPECIFIC_ADVANCES
     Vector<FloatSize> advances = { FloatSize(76.347656, 0.000000), FloatSize(0.000000, 0.000000) };
     Vector<FloatPoint> origins = { FloatPoint(), FloatPoint(-23.281250, -8.398438) };
-#else
-    Vector<FloatSize> advances = { FloatSize(53.066406, -8.398438), FloatSize(23.281250, 8.398438) };
-    Vector<FloatPoint> origins = { };
-#endif
 
     FloatSize initialAdvance = FloatSize(28.144531, 0);
 
@@ -201,13 +186,8 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInLTR)
     FontCascade font(description);
     font.update();
 
-#if USE_LAYOUT_SPECIFIC_ADVANCES
     Vector<FloatSize> advances = { FloatSize(76.347656, 0.000000), FloatSize(0.000000, 0.000000) };
     Vector<FloatPoint> origins = { FloatPoint(), FloatPoint(-23.281250, -8.398438) };
-#else
-    Vector<FloatSize> advances = { FloatSize(53.066406, -8.398438), FloatSize(23.281250, 8.398438) };
-    Vector<FloatPoint> origins = { };
-#endif
 
     FloatSize initialAdvance = FloatSize(28.144531, 0);
 
@@ -364,11 +344,7 @@ TEST_F(ComplexTextControllerTest, TotalWidthWithJustification)
     font.update();
 
     Vector<FloatSize> advances = { FloatSize(1, 0), FloatSize(2, 0), FloatSize(4, 0), FloatSize(8, 0), FloatSize(16, 0) };
-#if USE_LAYOUT_SPECIFIC_ADVANCES
     Vector<FloatPoint> origins = { FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint() };
-#else
-    Vector<FloatPoint> origins = { };
-#endif
 
     FloatSize initialAdvance = FloatSize();
 

@@ -32,7 +32,6 @@
 (allow process-info-pidinfo)
 (allow process-info-setcontrol (target self))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
@@ -43,7 +42,6 @@
         "vm.footprint_suspend"))
 
 (deny iokit-get-properties)
-#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 (deny mach-lookup (xpc-service-name-prefix ""))
@@ -111,9 +109,7 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     (global-name "com.apple.analyticsd")
 #endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     (global-name "com.apple.lsd.mapdb")
-#endif
 )
 
 ;; Sandbox extensions

@@ -57,7 +57,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << mediaCacheDirectoryExtensionHandle;
     encoder << javaScriptConfigurationDirectory;
     encoder << javaScriptConfigurationDirectoryExtensionHandle;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     encoder << uiProcessCookieStorageIdentifier;
 #endif
 #if PLATFORM(IOS)
@@ -129,7 +129,7 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << pluginLoadClientPolicies;
 #endif
 
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if PLATFORM(COCOA)
     IPC::encode(encoder, networkATSContext.get());
 #endif
 
@@ -174,7 +174,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
     if (!decoder.decode(parameters.javaScriptConfigurationDirectoryExtensionHandle))
         return false;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     if (!decoder.decode(parameters.uiProcessCookieStorageIdentifier))
         return false;
 #endif
@@ -303,7 +303,7 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
         return false;
 #endif
 
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if PLATFORM(COCOA)
     if (!IPC::decode(decoder, parameters.networkATSContext))
         return false;
 #endif

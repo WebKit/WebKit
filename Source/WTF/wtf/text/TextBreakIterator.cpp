@@ -31,9 +31,6 @@
 #include <unicode/ubrk.h>
 #include <wtf/text/StringBuilder.h>
 
-// FIXME: This needs a better name
-#define ADDITIONAL_EMOJI_SUPPORT (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100))
-
 namespace WTF {
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)

@@ -54,7 +54,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << shouldEnableNetworkCacheSpeculativeRevalidation;
 #endif
 #endif
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     encoder << uiProcessCookieStorageIdentifier;
 #endif
 #if PLATFORM(IOS)
@@ -80,7 +80,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
     encoder << httpProxy;
     encoder << httpsProxy;
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if PLATFORM(COCOA)
     IPC::encode(encoder, networkATSContext.get());
 #endif
     encoder << cookieStoragePartitioningEnabled;
@@ -126,7 +126,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
 #endif
 #endif
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     if (!decoder.decode(result.uiProcessCookieStorageIdentifier))
         return false;
 #endif
@@ -171,7 +171,7 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.httpsProxy))
         return false;
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
+#if PLATFORM(COCOA)
     if (!IPC::decode(decoder, result.networkATSContext))
         return false;
 #endif

@@ -28,8 +28,6 @@
 #include "ScrollingMomentumCalculator.h"
 #include <wtf/RetainPtr.h>
 
-#if HAVE(NSSCROLLING_FILTERS)
-
 @class _NSScrollingMomentumCalculator;
 
 namespace WebCore {
@@ -52,5 +50,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // HAVE(NSSCROLLING_FILTERS)

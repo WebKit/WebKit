@@ -1357,13 +1357,8 @@ const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& f
 
     static NeverDestroyed<AtomicString> songtiSC("Songti SC", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> songtiTC("Songti TC", AtomicString::ConstructFromLiteral);
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
-    static NeverDestroyed<AtomicString> heitiSCReplacement("Heiti SC", AtomicString::ConstructFromLiteral);
-    static NeverDestroyed<AtomicString> heitiTCReplacement("Heiti TC", AtomicString::ConstructFromLiteral);
-#else
     static NeverDestroyed<AtomicString> heitiSCReplacement("PingFang SC", AtomicString::ConstructFromLiteral);
     static NeverDestroyed<AtomicString> heitiTCReplacement("PingFang TC", AtomicString::ConstructFromLiteral);
-#endif
 
     switch (familyName.length()) {
     case 2:
@@ -1392,12 +1387,6 @@ const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& f
         if (equalIgnoringASCIICase(familyName, "\\5b8b\\4f53"))
             return songtiSC;
         break;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
-    case 15:
-        if (equalLettersIgnoringASCIICase(familyName, "microsoft yahei"))
-            return heitiSCReplacement;
-        break;
-#endif
     case 18:
         if (equalLettersIgnoringASCIICase(familyName, "microsoft jhenghei"))
             return heitiTCReplacement;

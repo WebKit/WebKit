@@ -32,8 +32,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#define USE_LAYOUT_SPECIFIC_ADVANCES ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 90000))
-
 typedef unsigned short CGGlyph;
 
 typedef const struct __CTRun * CTRunRef;

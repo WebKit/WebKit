@@ -123,13 +123,6 @@ void Font::platformInit()
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
-    // Work around <rdar://problem/19433490>
-    CGGlyph dummyGlyphs[] = {0, 0};
-    CGSize dummySize[] = { CGSizeMake(0, 0), CGSizeMake(0, 0) };
-    CTFontTransformGlyphs(m_platformData.ctFont(), dummyGlyphs, dummySize, 2, kCTFontTransformApplyPositioning | kCTFontTransformApplyShaping);
-#endif
-
     unsigned unitsPerEm = CTFontGetUnitsPerEm(m_platformData.font());
     float pointSize = m_platformData.size();
     CGFloat capHeight = pointSize ? CTFontGetCapHeight(m_platformData.font()) : 0;

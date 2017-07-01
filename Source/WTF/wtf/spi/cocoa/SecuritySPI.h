@@ -37,7 +37,6 @@
 
 #else
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || PLATFORM(IOS)
 typedef uint32_t SecSignatureHashAlgorithm;
 enum {
     kSecSignatureHashAlgorithmUnknown = 0,
@@ -56,7 +55,6 @@ WTF_EXTERN_C_BEGIN
 SecSignatureHashAlgorithm SecCertificateGetSignatureHashAlgorithm(SecCertificateRef);
 
 WTF_EXTERN_C_END
-#endif
 
 #endif
 

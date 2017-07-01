@@ -402,9 +402,7 @@ public:
     void registerDraggedTypes();
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     void startWindowDrag();
-#endif
 
     void dragImageForView(NSView *, NSImage *, CGPoint clientPoint, bool linkDrag);
     void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);

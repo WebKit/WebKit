@@ -218,9 +218,6 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::I
     }
 
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier, *this);
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    m_connection->setShouldCloseConnectionOnMachExceptions();
-#endif
 
     m_connection->open();
     

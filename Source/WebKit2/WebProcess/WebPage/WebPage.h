@@ -1098,7 +1098,7 @@ private:
 
     void setDrawsBackground(bool);
 
-#if HAVE(COREANIMATION_FENCES)
+#if PLATFORM(COCOA)
     void setTopContentInsetFenced(float, IPC::Attachment);
 #endif
     void setTopContentInset(float);

@@ -9382,7 +9382,6 @@ bool LayerFlushController::flushLayers()
 }
 
 #if PLATFORM(MAC)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 - (WebImmediateActionController *)_immediateActionController
 {
     return _private->immediateActionController;
@@ -9401,7 +9400,6 @@ bool LayerFlushController::flushLayers()
         return [self _convertRectFromRootView:rectInRootViewCoordinates];
     });
 }
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
 
 - (NSEvent *)_pressureEvent
 {

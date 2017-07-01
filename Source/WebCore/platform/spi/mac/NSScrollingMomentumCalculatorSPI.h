@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if HAVE(NSSCROLLING_FILTERS)
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSScrollingMomentumCalculator_Private.h>
@@ -45,5 +43,3 @@
 @end
 
 #endif /* USE(APPLE_INTERNAL_SDK) */
-
-#endif /* HAVE(NSSCROLLING_FILTERS) */

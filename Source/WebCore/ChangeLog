@@ -1,3 +1,74 @@
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [macOS] Remove code only needed when building for OS X Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=174067
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/Version.xcconfig:
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility):
+        * html/HTMLCanvasElement.cpp:
+        * page/WheelEventDeltaFilter.cpp:
+        (WebCore::WheelEventDeltaFilter::create):
+        * page/mac/WheelEventDeltaFilterMac.h:
+        * page/mac/WheelEventDeltaFilterMac.mm:
+        * page/scrolling/ScrollingMomentumCalculator.cpp:
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.h:
+        * page/scrolling/mac/ScrollingMomentumCalculatorMac.mm:
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        (replacementDataFromDecisionInfo):
+        (WebCore::NetworkExtensionContentFilter::initialize):
+        (WebCore::NetworkExtensionContentFilter::willSendRequest):
+        (WebCore::NetworkExtensionContentFilter::responseReceived):
+        (WebCore::NetworkExtensionContentFilter::addData):
+        (WebCore::NetworkExtensionContentFilter::finishedAddingData):
+        (WebCore::NetworkExtensionContentFilter::unblockHandler):
+        * platform/graphics/ComplexTextController.h:
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (PlatformCAAnimationCocoa::setTimingFunction):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::platformAlternateFamilyName):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::platformInit):
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::sinkIntoImage):
+        * platform/graphics/cocoa/WebGPULayer.mm:
+        (-[WebGPULayer initWithGPUDevice:]):
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun):
+        * platform/graphics/mac/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]):
+        * platform/mac/BlacklistUpdater.mm:
+        * platform/mac/PlatformScreenMac.mm:
+        (WebCore::screenSupportsExtendedColor):
+        * platform/mac/ValidationBubbleMac.mm:
+        (WebCore::ValidationBubble::ValidationBubble):
+        * platform/mac/WebGLBlacklist.mm:
+        (WebCore::WebGLBlacklist::create):
+        * platform/network/cocoa/WebCoreNSURLSession.h:
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        * platform/network/mac/CertificateInfoMac.mm:
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate):
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::setCookiesFromDOM):
+        * platform/spi/cf/CFNetworkSPI.h:
+        * platform/spi/cg/CoreGraphicsSPI.h:
+        * platform/spi/cocoa/NEFilterSourceSPI.h:
+        * platform/spi/cocoa/NSURLConnectionSPI.h:
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        * platform/spi/mac/NSScrollingInputFilterSPI.h:
+        * platform/spi/mac/NSScrollingMomentumCalculatorSPI.h:
+        * platform/spi/mac/TUCallSPI.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+        * svg/SVGToOTFFontConversion.cpp:
+        (WebCore::SVGToOTFFontConverter::appendKERNTable):
+        (WebCore::SVGToOTFFontConverter::SVGToOTFFontConverter):
+
 2017-06-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         If an image appears more than once on a page, decoding for painting one instance repaints them all

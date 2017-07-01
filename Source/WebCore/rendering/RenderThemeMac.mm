@@ -1074,12 +1074,7 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter& rende
     }
 
     [cell setLevelIndicatorStyle:levelIndicatorStyleFor(style.appearance())];
-    // FIXME: Remove the call to setBaseWritingDirection once __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 is always true.
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-    [cell setUserInterfaceLayoutDirection: style.isLeftToRightDirection() ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
-#else
-    [cell setBaseWritingDirection:style.isLeftToRightDirection() ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft];
-#endif
+    [cell setUserInterfaceLayoutDirection:style.isLeftToRightDirection() ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
     [cell setMinValue:element->min()];
     [cell setMaxValue:element->max()];
     [cell setObjectValue:@(value)];

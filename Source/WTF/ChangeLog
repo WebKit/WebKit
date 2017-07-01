@@ -1,3 +1,17 @@
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [macOS] Remove code only needed when building for OS X Yosemite
+        https://bugs.webkit.org/show_bug.cgi?id=174067
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * wtf/Platform.h:
+        * wtf/mac/AppKitCompatibilityDeclarations.h:
+        * wtf/spi/cocoa/SecuritySPI.h:
+        * wtf/text/TextBreakIterator.cpp:
+
 2017-07-01  Joseph Pecoraro  <pecoraro@apple.com>
 
         Add a warning if WEBGL2 is enabled without WEBGL

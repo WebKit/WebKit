@@ -200,9 +200,7 @@ std::unique_ptr<WebGLBlacklist> WebGLBlacklist::create(NSDictionary *propertyLis
     GLint rendererId = 0;
     CGLGetParameter(ctx, kCGLCPCurrentRendererID, &rendererId);
     GLint supportsSeparateAddressSpace = 0;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101000
     CGLGetParameter(ctx, kCGLCPSupportSeparateAddressSpace, &supportsSeparateAddressSpace);
-#endif
     CGLDestroyContext(ctx);
     CGLReleasePixelFormat(pix);
 

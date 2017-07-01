@@ -76,7 +76,7 @@ void InjectedBundle::platformInitialize(WKTypeRef initializationUserData)
             @"wellcome": @"welcome",
             @"hellolfworld": @"hello\nworld"
         },
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100 && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
         @"AppleSystemFontOSSubversion": @(10),
 #endif
         @"AppleEnableSwipeNavigateWithScrolls": @YES,

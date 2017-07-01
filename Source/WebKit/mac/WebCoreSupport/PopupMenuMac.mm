@@ -149,9 +149,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
     [m_popup setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     NSMenu *menu = [m_popup menu];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     [menu setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
-#endif
 
     NSPoint location;
     CTFontRef font = m_client->menuStyle().font().primaryFont().getCTFont();

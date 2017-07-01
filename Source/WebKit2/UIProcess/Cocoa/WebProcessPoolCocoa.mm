@@ -236,11 +236,9 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
             [(NSData *)data release];
         }, data.leakRef());
     }
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
-#endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, [[NSHTTPCookieStorage sharedHTTPCookieStorage] _cookieStorage]));
     ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
     parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
@@ -280,9 +278,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.httpProxy = [defaults stringForKey:WebKit2HTTPProxyDefaultsKey];
     parameters.httpsProxy = [defaults stringForKey:WebKit2HTTPSProxyDefaultsKey];
-#if TARGET_OS_IPHONE || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
-#endif
 
 #if ENABLE(NETWORK_CACHE)
     parameters.shouldEnableNetworkCache = isNetworkCacheEnabled();
@@ -298,7 +294,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     parameters.shouldSuppressMemoryPressureHandler = [defaults boolForKey:WebKitSuppressMemoryPressureHandlerDefaultsKey];
     parameters.loadThrottleLatency = Seconds { [defaults integerForKey:WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey] / 1000. };
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
     RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, [[NSHTTPCookieStorage sharedHTTPCookieStorage] _cookieStorage]));
     ASSERT(parameters.uiProcessCookieStorageIdentifier.isEmpty());
     parameters.uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cookieStorageData.get()), CFDataGetLength(cookieStorageData.get()));
@@ -599,9 +595,7 @@ void WebProcessPool::resetHSTSHostsAddedAfterDate(double startDateIntervalSince1
 {
     NSDate *startDate = [NSDate dateWithTimeIntervalSince1970:startDateIntervalSince1970];
     _CFNetworkResetHSTSHostsSinceDate(nullptr, (__bridge CFDateRef)startDate);
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     _CFNetworkResetHSTSHostsSinceDate(privateBrowsingSession(), (__bridge CFDateRef)startDate);
-#endif
 }
 
 void WebProcessPool::setCookieStoragePartitioningEnabled(bool enabled)

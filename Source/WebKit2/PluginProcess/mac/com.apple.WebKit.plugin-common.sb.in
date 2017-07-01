@@ -32,7 +32,6 @@
 (allow process-info-pidinfo)
 (allow process-info-setcontrol (target self))
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 (deny sysctl*)
 (allow sysctl-read
     (sysctl-name
@@ -122,7 +121,6 @@
     (iokit-property "startup-timing")
     (iokit-property "touch-size-id")
 )
-#endif
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
 (deny mach-lookup (xpc-service-name-prefix ""))
@@ -351,9 +349,6 @@
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
     (global-name "com.apple.analyticsd")
 #endif
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
-    (global-name "com.apple.audio.VDCAssistant")
-#endif
     (global-name "com.apple.audio.audiohald")
     (global-name "com.apple.audio.coreaudiod")
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
@@ -361,9 +356,7 @@
     (global-name "com.apple.cookied") ;; FIXME: <rdar://problem/10790768> Limit access to cookies.
     (global-name "com.apple.coreservices.launchservicesd")
     (global-name "com.apple.fonts")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     (global-name "com.apple.lsd.mapdb")
-#endif
     (global-name "com.apple.ocspd")
     (global-name "com.apple.pasteboard.1")
     (global-name "com.apple.pbs.fetch_services")

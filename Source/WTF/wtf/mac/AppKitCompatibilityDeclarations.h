@@ -107,18 +107,6 @@ static const NSEventType NSEventTypeRightMouseUp = NSRightMouseUp;
 static const NSEventType NSEventTypeScrollWheel = NSScrollWheel;
 static const NSEventType NSEventTypeSystemDefined = NSSystemDefined;
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101100
-static const NSTextAlignment NSTextAlignmentRight = NSRightTextAlignment;
-static const NSTextAlignment NSTextAlignmentCenter = NSCenterTextAlignment;
-static const NSTextAlignment NSTextAlignmentLeft = NSLeftTextAlignment;
-static const NSTextAlignment NSTextAlignmentNatural = NSNaturalTextAlignment;
-static const NSTextAlignment NSTextAlignmentJustified = NSJustifiedTextAlignment;
-
-typedef NSInteger NSWritingDirectionFormatType;
-static const NSWritingDirectionFormatType = NSTextWritingDirectionOverride;
-static const NSWritingDirectionEmbedding = NSTextWritingDirectionEmbedding;
-#endif
-
 typedef NSUInteger NSWindowStyleMask;
 static const NSWindowStyleMask NSWindowStyleMaskBorderless = NSBorderlessWindowMask;
 static const NSWindowStyleMask NSWindowStyleMaskClosable = NSClosableWindowMask;

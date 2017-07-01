@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ScrollingMomentumCalculatorMac.h"
 
-#if HAVE(NSSCROLLING_FILTERS)
+#if PLATFORM(MAC)
 
 #include "NSScrollingMomentumCalculatorSPI.h"
 
@@ -105,4 +105,4 @@ _NSScrollingMomentumCalculator *ScrollingMomentumCalculatorMac::ensurePlatformMo
 
 } // namespace WebCore
 
-#endif // HAVE(NSSCROLLING_FILTERS)
+#endif // PLATFORM(MAC)

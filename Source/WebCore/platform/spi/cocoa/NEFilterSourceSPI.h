@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define HAVE_MODERN_NE_FILTER_SOURCE (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100) || PLATFORM(IOS)
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <NetworkExtension/NEFilterSource.h>
@@ -59,8 +57,6 @@ typedef NS_ENUM(NSInteger, NEFilterSourceDirection) {
 @property (readonly) uint64_t socketIdentifier;
 @end
 
-#if HAVE(MODERN_NE_FILTER_SOURCE)
-
 #define NEFilterSourceOptionsPageData @"PageData"
 #define NEFilterSourceOptionsRedirectURL @"RedirectURL"
 
@@ -78,7 +74,5 @@ typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary
 @property (assign) pid_t sourceAppPid;
 #endif
 @end
-
-#endif
 
 #endif // !USE(APPLE_INTERNAL_SDK)

@@ -132,7 +132,6 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
     for (unsigned i = 0; i < m_glyphCount; ++i)
         m_glyphs.uncheckedAppend(glyphsPtr[i]);
 
-#if USE_LAYOUT_SPECIFIC_ADVANCES
     if (CTRunGetStatus(ctRun) & kCTRunStatusHasOrigins) {
         Vector<CGSize> baseAdvances(m_glyphCount);
         Vector<CGPoint> glyphOrigins(m_glyphCount);
@@ -143,9 +142,7 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
             m_baseAdvances.uncheckedAppend(baseAdvances[i]);
             m_glyphOrigins.uncheckedAppend(glyphOrigins[i]);
         }
-    } else
-#endif
-    {
+    } else {
         const CGSize* baseAdvances = CTRunGetAdvancesPtr(ctRun);
         Vector<CGSize> baseAdvancesVector;
         if (!baseAdvances) {

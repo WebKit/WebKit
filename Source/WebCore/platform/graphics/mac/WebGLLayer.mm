@@ -55,9 +55,7 @@ using namespace WebCore;
     _devicePixelRatio = context->getContextAttributes().devicePixelRatio;
 #if PLATFORM(MAC)
     self.contentsScale = _devicePixelRatio;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     self.colorspace = sRGBColorSpaceRef();
-#endif
 #endif
     return self;
 }

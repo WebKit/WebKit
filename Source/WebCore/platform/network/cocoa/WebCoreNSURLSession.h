@@ -26,8 +26,6 @@
 #ifndef WebCoreNSURLSession_h
 #define WebCoreNSURLSession_h
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
-
 #import <Foundation/NSURLSession.h>
 #import <wtf/HashSet.h>
 #import <wtf/Lock.h>
@@ -141,7 +139,5 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 @end
 
 NS_ASSUME_NONNULL_END
-
-#endif // PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
 
 #endif

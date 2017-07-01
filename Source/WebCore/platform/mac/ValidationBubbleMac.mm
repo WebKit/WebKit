@@ -66,9 +66,7 @@ ValidationBubble::ValidationBubble(NSView* view, const String& message, const Se
     [label setStringValue:message];
     m_fontSize = std::max(settings.minimumFontSize, 13.0);
     [label setFont:[NSFont systemFontOfSize:m_fontSize]];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     [label setMaximumNumberOfLines:4];
-#endif
     [[label cell] setTruncatesLastVisibleLine:YES];
     [popoverView addSubview:label.get()];
     NSSize labelSize = [label sizeThatFits:NSMakeSize(maxLabelWidth, CGFLOAT_MAX)];

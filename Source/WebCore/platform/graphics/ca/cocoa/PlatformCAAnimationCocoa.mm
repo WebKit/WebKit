@@ -329,11 +329,7 @@ void PlatformCAAnimationCocoa::setTimingFunction(const TimingFunction* value, bo
             springAnimation.mass = function.mass();
             springAnimation.stiffness = function.stiffness();
             springAnimation.damping = function.damping();
-#if PLATFORM(IOS) || PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
             springAnimation.initialVelocity = function.initialVelocity();
-#else
-            springAnimation.velocity = function.initialVelocity();
-#endif
         }
         break;
     }

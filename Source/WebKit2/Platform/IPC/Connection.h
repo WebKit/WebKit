@@ -143,10 +143,6 @@ public:
 
     Client& client() const { return m_client; }
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    void setShouldCloseConnectionOnMachExceptions();
-#endif
-
     void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
     void setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMessageSendFailure);
 
@@ -332,14 +328,6 @@ private:
     dispatch_source_t m_receiveSource;
 
     std::unique_ptr<MachMessage> m_pendingOutgoingMachMessage;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    void exceptionSourceEventHandler();
-
-    // If setShouldCloseConnectionOnMachExceptions has been called, this has
-    // the exception port that exceptions from the other end will be sent on.
-    mach_port_t m_exceptionPort;
-    dispatch_source_t m_exceptionPortDataAvailableSource;
-#endif
 
     OSObjectPtr<xpc_connection_t> m_xpcConnection;
 #endif

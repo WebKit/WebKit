@@ -71,19 +71,6 @@ void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
     sendUpdateGeometry();
 }
 
-void TiledCoreAnimationDrawingAreaProxy::waitForPossibleGeometryUpdate(Seconds timeout)
-{
-#if !HAVE(COREANIMATION_FENCES)
-    if (!m_isWaitingForDidUpdateGeometry)
-        return;
-
-    if (m_webPageProxy.process().state() != WebProcessProxy::State::Running)
-        return;
-
-    m_webPageProxy.process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::DidUpdateGeometry>(m_webPageProxy.pageID(), timeout, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
-#endif
-}
-
 void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
 {
     m_webPageProxy.process().send(Messages::DrawingArea::SetColorSpace(m_webPageProxy.colorSpace()), m_webPageProxy.pageID());
@@ -153,7 +140,6 @@ void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 
 MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
 {
-#if HAVE(COREANIMATION_FENCES)
     if (!m_webPageProxy.isValid())
         return MachSendRight();
 
@@ -189,9 +175,6 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     } forPhase:kCATransactionPhasePostCommit];
 
     return fencePort;
-#else
-    return MachSendRight();
-#endif
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()

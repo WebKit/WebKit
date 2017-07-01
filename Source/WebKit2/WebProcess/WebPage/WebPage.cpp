@@ -2575,7 +2575,7 @@ void WebPage::setDrawsBackground(bool drawsBackground)
     m_drawingArea->setNeedsDisplay();
 }
 
-#if HAVE(COREANIMATION_FENCES)
+#if PLATFORM(COCOA)
 void WebPage::setTopContentInsetFenced(float contentInset, IPC::Attachment fencePort)
 {
     m_drawingArea->addFence(MachSendRight::create(fencePort.port()));

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#if PLATFORM(MAC)
 
 #include "WheelEventDeltaFilter.h"
 #include <wtf/RetainPtr.h>
@@ -49,4 +49,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
+#endif // PLATFORM(MAC)

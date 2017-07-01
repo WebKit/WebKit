@@ -346,7 +346,6 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     if (m_scrolledViewExposedRect)
         visibleRect.intersect(m_scrolledViewExposedRect.value());
 
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100)
     RefPtr<WebPage> retainedPage = &m_webPage;
     [CATransaction addCommitHandler:[retainedPage] {
         if (Page* corePage = retainedPage->corePage()) {
@@ -354,7 +353,6 @@ void RemoteLayerTreeDrawingArea::flushLayers()
                 corePage->inspectorController().didComposite(*coreFrame);
         }
     } forPhase:kCATransactionPhasePostCommit];
-#endif
 
     m_webPage.mainFrameView()->flushCompositingStateIncludingSubframes();
 

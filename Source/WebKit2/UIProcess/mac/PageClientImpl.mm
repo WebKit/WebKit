@@ -416,14 +416,12 @@ IntRect PageClientImpl::rootViewToScreen(const IntRect& rect)
     return enclosingIntRect(tempRect);
 }
 
-#if PLATFORM(MAC)
 IntRect PageClientImpl::rootViewToWindow(const WebCore::IntRect& rect)
 {
     NSRect tempRect = rect;
     tempRect = [m_view convertRect:tempRect toView:nil];
     return enclosingIntRect(tempRect);
 }
-#endif
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool eventWasHandled)
 {
@@ -841,9 +839,7 @@ void PageClientImpl::derefView()
 
 void PageClientImpl::startWindowDrag()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     m_impl->startWindowDrag();
-#endif
 }
 
 NSWindow *PageClientImpl::platformWindow()

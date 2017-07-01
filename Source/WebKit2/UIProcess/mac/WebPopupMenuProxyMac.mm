@@ -112,9 +112,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     [m_popup setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
 
     NSMenu *menu = [m_popup menu];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101100
     [menu setUserInterfaceLayoutDirection:textDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
-#endif
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -13;

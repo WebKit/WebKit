@@ -87,11 +87,6 @@ public:
 #if PLATFORM(COCOA)
     void setProcessSuppressionEnabled(bool);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 101000
-    // Creates a property list in ~/Library/Preferences that contains all the MIME types supported by the plug-in.
-    static bool createPropertyListFile(const PluginModuleInfo&);
-#endif
-
 #endif
 
 #if PLUGIN_ARCHITECTURE(X11)

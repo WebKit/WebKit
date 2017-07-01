@@ -136,10 +136,6 @@ NSScreen *screen(PlatformDisplayID displayID)
 
 bool screenSupportsExtendedColor(Widget* widget)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101100
-    UNUSED_PARAM(widget);
-    return false;
-#else
     if (!widget)
         return false;
 
@@ -150,7 +146,6 @@ bool screenSupportsExtendedColor(Widget* widget)
     auto iccData = adoptCF(CGColorSpaceCopyICCProfile(colorSpace));
     auto profile = adoptCF(ColorSyncProfileCreate(iccData.get(), nullptr));
     return profile && ColorSyncProfileIsWideGamut(profile.get());
-#endif
 #endif
 }
 
