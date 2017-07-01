@@ -1,3 +1,19 @@
+2017-06-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Drop SymbolRegistry::keyForSymbol
+        https://bugs.webkit.org/show_bug.cgi?id=174052
+
+        Reviewed by Sam Weinig.
+
+        Since we can know whether a given symbol is registered by checking RegisteredSymbolImpl,
+        we do not need to query key string for a given symbol by using SymbolRegistry::keyForSymbol.
+
+        * wtf/text/SymbolImpl.h:
+        (WTF::SymbolImpl::extractFoldedString): Deleted.
+        * wtf/text/SymbolRegistry.cpp:
+        (WTF::SymbolRegistry::keyForSymbol): Deleted.
+        * wtf/text/SymbolRegistry.h:
+
 2017-06-29  Jer Noble  <jer.noble@apple.com>
 
         Make Legacy EME API controlled by RuntimeEnabled setting.

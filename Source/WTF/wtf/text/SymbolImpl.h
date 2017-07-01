@@ -51,14 +51,6 @@ public:
     WTF_EXPORT_STRING_API static Ref<SymbolImpl> createNullSymbol();
     WTF_EXPORT_STRING_API static Ref<SymbolImpl> create(StringImpl& rep);
 
-    Ref<StringImpl> extractFoldedString()
-    {
-        ASSERT(substringBuffer());
-        ASSERT(substringBuffer() == m_owner);
-        ASSERT(!substringBuffer()->isSymbol());
-        return createSubstringSharingImpl(*this, 0, length());
-    }
-
 protected:
     WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
 

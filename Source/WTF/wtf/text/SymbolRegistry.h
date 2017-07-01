@@ -83,7 +83,6 @@ public:
     WTF_EXPORT_PRIVATE ~SymbolRegistry();
 
     WTF_EXPORT_PRIVATE Ref<RegisteredSymbolImpl> symbolForKey(const String&);
-    WTF_EXPORT_PRIVATE String keyForSymbol(RegisteredSymbolImpl&);
 
     void remove(RegisteredSymbolImpl&);
 

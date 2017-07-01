@@ -49,12 +49,6 @@ Ref<RegisteredSymbolImpl> SymbolRegistry::symbolForKey(const String& rep)
     return symbol;
 }
 
-String SymbolRegistry::keyForSymbol(RegisteredSymbolImpl& uid)
-{
-    ASSERT(uid.symbolRegistry() == this);
-    return uid.extractFoldedString();
-}
-
 void SymbolRegistry::remove(RegisteredSymbolImpl& uid)
 {
     ASSERT(uid.symbolRegistry() == this);
