@@ -1,3 +1,15 @@
+2017-06-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        If an image appears more than once on a page, decoding for painting one instance repaints them all
+        https://bugs.webkit.org/show_bug.cgi?id=169944
+
+        Reviewed by Simon Fraser.
+
+        * fast/images/async-image-multiple-clients-repaint-expected.txt: Added.
+        * fast/images/async-image-multiple-clients-repaint.html: Added.
+        * platform/ios-simulator/fast/images: Added.
+        * platform/ios-simulator/fast/images/async-image-multiple-clients-repaint-expected.txt: Added.
+
 2017-06-30  Jonathan Bedard  <jbedard@apple.com>
 
         Run webgl tests on iOS ports

@@ -34,10 +34,10 @@ FloatSize SVGImageForContainer::size() const
     return FloatSize(roundedIntSize(scaledContainerSize));
 }
 
-void SVGImageForContainer::draw(GraphicsContext& context, const FloatRect& dstRect,
+ImageDrawResult SVGImageForContainer::draw(GraphicsContext& context, const FloatRect& dstRect,
     const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
 {
-    m_image->drawForContainer(context, m_containerSize, m_zoom, dstRect, srcRect, compositeOp, blendMode);
+    return m_image->drawForContainer(context, m_containerSize, m_zoom, dstRect, srcRect, compositeOp, blendMode);
 }
 
 void SVGImageForContainer::drawPattern(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, const AffineTransform& patternTransform,

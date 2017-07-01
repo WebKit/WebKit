@@ -129,6 +129,7 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
 
     m_pendingContainerSizeRequests.remove(&static_cast<CachedImageClient&>(client));
+    m_pendingImageDrawingClients.remove(&static_cast<CachedImageClient&>(client));
 
     if (m_svgImageCache)
         m_svgImageCache->removeClientFromCache(&static_cast<CachedImageClient&>(client));
@@ -136,6 +137,12 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
     CachedResource::didRemoveClient(client);
 
     static_cast<CachedImageClient&>(client).didRemoveCachedImageClient(*this);
+}
+
+void CachedImage::addPendingImageDrawingClient(CachedImageClient& client)
+{
+    ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
+    m_pendingImageDrawingClients.add(&client);
 }
 
 void CachedImage::switchClientsToRevalidatedResource()
@@ -160,6 +167,7 @@ void CachedImage::switchClientsToRevalidatedResource()
 void CachedImage::allClientsRemoved()
 {
     m_pendingContainerSizeRequests.clear();
+    m_pendingImageDrawingClients.clear();
     if (m_image && !errorOccurred())
         m_image->resetAnimation();
 }
@@ -292,6 +300,7 @@ void CachedImage::clear()
     destroyDecodedData();
     clearImage();
     m_pendingContainerSizeRequests.clear();
+    m_pendingImageDrawingClients.clear();
     setEncodedSize(0);
 }
 
@@ -321,6 +330,7 @@ inline void CachedImage::createImage()
                 setContainerSizeForRenderer(request.key, request.value.first, request.value.second);
         }
         m_pendingContainerSizeRequests.clear();
+        m_pendingImageDrawingClients.clear();
     }
 }
 
@@ -540,12 +550,17 @@ void CachedImage::imageFrameAvailable(const Image& image, ImageAnimatingState an
     VisibleInViewportState visibleState = VisibleInViewportState::No;
 
     while (CachedImageClient* client = clientWalker.next()) {
+        // All the clients of animated images have to be notified. The new frame has to be drawn in all of them.
+        if (animatingState == ImageAnimatingState::No && !m_pendingImageDrawingClients.contains(client))
+            continue;
         if (client->imageFrameAvailable(*this, animatingState, changeRect) == VisibleInViewportState::Yes)
             visibleState = VisibleInViewportState::Yes;
     }
 
     if (visibleState == VisibleInViewportState::No && animatingState == ImageAnimatingState::Yes)
         m_image->stopAnimation();
+
+    m_pendingImageDrawingClients.clear();
 }
 
 void CachedImage::changedInRect(const Image& image, const IntRect* rect)

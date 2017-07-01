@@ -28,6 +28,7 @@
 
 #include "BitmapImage.h"
 #include "BorderEdge.h"
+#include "CachedImage.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -883,7 +884,11 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
             auto interpolation = chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize());
             auto decodingMode = (paintInfo.paintBehavior & (PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting)) ? DecodingMode::Synchronous : DecodingMode::Asynchronous;
-            context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), decodingMode, ImageOrientationDescription(), interpolation));
+            auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), decodingMode, ImageOrientationDescription(), interpolation));
+            if (drawResult == ImageDrawResult::DidRequestDecoding) {
+                ASSERT(bgImage->isCachedImage());
+                bgImage->cachedImage()->addPendingImageDrawingClient(*this);
+            }
         }
     }
 

@@ -263,10 +263,10 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     decodedSizeChanged(internalSize.unclampedArea() * 4);
 }
 
-void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, DecodingMode, ImageOrientationDescription)
+ImageDrawResult PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator op, BlendMode, DecodingMode, ImageOrientationDescription)
 {
     if (!m_document || !m_hasPage)
-        return;
+        return ImageDrawResult::DidNothing;
 
     updateCachedImageIfNeeded(context, dstRect, srcRect);
 
@@ -289,6 +289,8 @@ void PDFDocumentImage::draw(GraphicsContext& context, const FloatRect& dstRect, 
 
     if (imageObserver())
         imageObserver()->didDraw(*this);
+
+    return ImageDrawResult::DidDraw;
 }
 
 void PDFDocumentImage::destroyDecodedData(bool)

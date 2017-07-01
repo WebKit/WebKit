@@ -85,6 +85,8 @@ public:
 
     bool isOriginClean(SecurityOrigin*);
 
+    void addPendingImageDrawingClient(CachedImageClient&);
+
 private:
     void clear();
 
@@ -151,6 +153,8 @@ private:
     typedef std::pair<LayoutSize, float> SizeAndZoom;
     typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;
     ContainerSizeRequests m_pendingContainerSizeRequests;
+
+    HashSet<CachedImageClient*> m_pendingImageDrawingClients;
 
     RefPtr<CachedImageObserver> m_imageObserver;
     RefPtr<Image> m_image;

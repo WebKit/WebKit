@@ -178,13 +178,14 @@ bool BitmapImage::notSolidColor()
 }
 #endif
 
-void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode mode, DecodingMode decodingMode, ImageOrientationDescription description)
+ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode mode, DecodingMode decodingMode, ImageOrientationDescription description)
 {
     if (destRect.isEmpty() || srcRect.isEmpty())
-        return;
+        return ImageDrawResult::DidNothing;
 
     FloatSize scaleFactorForDrawing = context.scaleFactorForDrawing(destRect, srcRect);
     IntSize sizeForDrawing = expandedIntSize(size() * scaleFactorForDrawing);
+    ImageDrawResult result = ImageDrawResult::DidDraw;
 
     m_currentSubsamplingLevel = m_allowSubsampling ? m_source.subsamplingLevelForScaleFactor(context, scaleFactorForDrawing) : SubsamplingLevel::Default;
     LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scaleFactorForDrawing = (%.4f, %.4f)]", __FUNCTION__, this, sourceURL().string().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scaleFactorForDrawing.width(), scaleFactorForDrawing.height());
@@ -205,10 +206,13 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
             m_currentFrameDecodingStatus = ImageFrame::DecodingStatus::Decoding;
         }
 
+        if (m_currentFrameDecodingStatus == ImageFrame::DecodingStatus::Decoding)
+            result = ImageDrawResult::DidRequestDecoding;
+
         if (!frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingMode::Asynchronous)) {
             if (m_showDebugBackground)
                 fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
-            return;
+            return result;
         }
 
         image = frameImageAtIndex(m_currentFrame);
@@ -219,21 +223,21 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
 
         if (status == StartAnimationStatus::DecodingActive && m_showDebugBackground) {
             fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
-            return;
+            return result;
         }
 
         if (frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingMode::Asynchronous)) {
-            // FIXME: instead of showing the yellow rectangle and returning we need to wait for this the frame to finish decoding.
+            // FIXME: instead of showing the yellow rectangle and returning we need to wait for this frame to finish decoding.
             if (m_showDebugBackground) {
                 fillWithSolidColor(context, destRect, Color(Color::yellow).colorWithAlpha(0.5), op);
                 LOG(Images, "BitmapImage::%s - %p - url: %s [waiting for async decoding to finish]", __FUNCTION__, this, sourceURL().string().utf8().data());
             }
-            return;
+            return ImageDrawResult::DidRequestDecoding;
         }
 
         image = frameImageAtIndexCacheIfNeeded(m_currentFrame, m_currentSubsamplingLevel, &context);
         if (!image) // If it's too early we won't have an image yet.
-            return;
+            return ImageDrawResult::DidNothing;
 
         if (m_currentFrameDecodingStatus != ImageFrame::DecodingStatus::Complete)
             ++m_decodeCountForTesting;
@@ -243,7 +247,7 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
     Color color = singlePixelSolidColor();
     if (color.isValid()) {
         fillWithSolidColor(context, destRect, color, op);
-        return;
+        return result;
     }
 
     ImageOrientation orientation(description.imageOrientation());
@@ -255,6 +259,8 @@ void BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, cons
 
     if (imageObserver())
         imageObserver()->didDraw(*this);
+
+    return result;
 }
 
 void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& transform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)

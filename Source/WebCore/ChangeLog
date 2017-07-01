@@ -1,3 +1,68 @@
+2017-06-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        If an image appears more than once on a page, decoding for painting one instance repaints them all
+        https://bugs.webkit.org/show_bug.cgi?id=169944
+
+        Reviewed by Simon Fraser.
+
+        Make the Image::draw*() and GraphicsContext::draw*() functions return an
+        ImageDrawResult which indicates whether the image is drawn or has requested
+        an asynchronous image decoding.
+
+        If the image requested an asynchronous image decoding, the issuer of the
+        Image::draw(), which is of type CachedImageClient, will add itself to a
+        set of m_pendingImageDrawingClients, which owned by CachedImage.
+
+        When receiving the imageFrameAvailable() notification for a lrage image 
+        from the decoding thread, CachedImage will loop through the clients that
+        are only in m_pendingImageDrawingClients to ask them to repaint their
+        rectangles.
+
+        Test: fast/images/async-image-multiple-clients-repaint.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didRemoveClient):
+        (WebCore::CachedImage::addPendingImageDrawingClient):
+        (WebCore::CachedImage::allClientsRemoved):
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::imageFrameAvailable):
+        * loader/cache/CachedImage.h:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::draw):
+        * platform/graphics/CrossfadeGeneratedImage.h:
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::draw):
+        * platform/graphics/GradientImage.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageTypes.h:
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::draw):
+        * platform/graphics/NamedImageGeneratedImage.h:
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::draw):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawForContainer):
+        (WebCore::SVGImage::draw):
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::draw):
+        * svg/graphics/SVGImageForContainer.h:
+
 2017-06-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r214194): Safari leaves a popup window open opened during before unload

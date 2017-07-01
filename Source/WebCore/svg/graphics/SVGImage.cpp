@@ -165,11 +165,11 @@ IntSize SVGImage::containerSize() const
     return IntSize(300, 150);
 }
 
-void SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float zoom, const FloatRect& dstRect,
+ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float zoom, const FloatRect& dstRect,
     const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode)
 {
     if (!m_page)
-        return;
+        return ImageDrawResult::DidNothing;
 
     ImageObserver* observer = imageObserver();
     ASSERT(observer);
@@ -188,9 +188,10 @@ void SVGImage::drawForContainer(GraphicsContext& context, const FloatSize contai
     adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
     scaledSrc.setSize(adjustedSrcSize);
 
-    draw(context, dstRect, scaledSrc, compositeOp, blendMode, DecodingMode::Synchronous, ImageOrientationDescription());
+    ImageDrawResult result = draw(context, dstRect, scaledSrc, compositeOp, blendMode, DecodingMode::Synchronous, ImageOrientationDescription());
 
     setImageObserver(observer);
+    return result;
 }
 
 #if USE(CAIRO)
@@ -276,10 +277,10 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     image->drawPattern(context, dstRect, scaledSrcRect, unscaledPatternTransform, phase, spacing, compositeOp, blendMode);
 }
 
-void SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
+ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
 {
     if (!m_page)
-        return;
+        return ImageDrawResult::DidNothing;
 
     FrameView* view = frameView();
     ASSERT(view);
@@ -322,6 +323,8 @@ void SVGImage::draw(GraphicsContext& context, const FloatRect& dstRect, const Fl
 
     if (imageObserver())
         imageObserver()->didDraw(*this);
+
+    return ImageDrawResult::DidDraw;
 }
 
 RenderBox* SVGImage::embeddedContentBox() const

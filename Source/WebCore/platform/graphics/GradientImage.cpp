@@ -41,7 +41,7 @@ GradientImage::~GradientImage()
 {
 }
 
-void GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
+ImageDrawResult GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode, DecodingMode, ImageOrientationDescription)
 {
     GraphicsContextStateSaver stateSaver(destContext);
     destContext.setCompositeOperation(compositeOp, blendMode);
@@ -51,6 +51,7 @@ void GradientImage::draw(GraphicsContext& destContext, const FloatRect& destRect
         destContext.scale(FloatSize(destRect.width() / srcRect.width(), destRect.height() / srcRect.height()));
     destContext.translate(-srcRect.x(), -srcRect.y());
     destContext.fillRect(FloatRect(FloatPoint(), size()), m_gradient.get());
+    return ImageDrawResult::DidDraw;
 }
 
 void GradientImage::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform,
