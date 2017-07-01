@@ -58,8 +58,12 @@ StackTrace* StackTrace::captureStackTrace(int maxFrames, int framesToSkip)
     int numberOfFrames = maxFrames + framesToSkip;
 
     WTFGetBacktrace(&trace->m_skippedFrame0, &numberOfFrames);
-    RELEASE_ASSERT(numberOfFrames >= framesToSkip);
-    trace->m_size = numberOfFrames - framesToSkip;
+    if (numberOfFrames) {
+        RELEASE_ASSERT(numberOfFrames >= framesToSkip);
+        trace->m_size = numberOfFrames - framesToSkip;
+    } else
+        trace->m_size = 0;
+
     trace->m_capacity = maxFrames;
 
     return trace;

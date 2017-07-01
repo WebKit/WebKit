@@ -1,3 +1,20 @@
+2017-07-01  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] WTFGetBacktrace can return numberOfFrames == 0 in some architectures
+        https://bugs.webkit.org/show_bug.cgi?id=172768
+
+        Reviewed by Mark Lam.
+
+        In some architectures, like ARMv6 running on a Raspberry pi, the
+        backtrace function from "execinfo.h" is returning 0. In
+        that case, the RELEASE_ASSERT in StackTrace::captureStackTrace
+        fails causing a runtime crash.
+        This patch is adding a guard for the case described above to
+        avoid a runtime crash in such case.
+
+        * wtf/StackTrace.cpp:
+        (WTF::StackTrace::captureStackTrace):
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         [macOS] Remove code only needed when building for OS X Yosemite
