@@ -328,7 +328,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
                 break;
 
             case ProcessAccessType::Launch:
-                processPool->ensureNetworkProcess();
+                processPool->ensureNetworkProcess(this);
                 break;
 
             case ProcessAccessType::None:
@@ -647,7 +647,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
                 break;
 
             case ProcessAccessType::Launch:
-                processPool->ensureNetworkProcess();
+                processPool->ensureNetworkProcess(this);
                 break;
 
             case ProcessAccessType::None:
@@ -896,7 +896,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
                 break;
 
             case ProcessAccessType::Launch:
-                processPool->ensureNetworkProcess();
+                processPool->ensureNetworkProcess(this);
                 break;
 
             case ProcessAccessType::None:

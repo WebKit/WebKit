@@ -51,8 +51,9 @@ static Vector<WebsiteDataStore*>& dataStoresWithStorageManagers()
 
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {
-    WebsiteDataStoreParameters parameters;
+    resolveDirectoriesIfNecessary();
 
+    WebsiteDataStoreParameters parameters;
     parameters.sessionID = m_sessionID;
 
     auto cookieFile = resolvedCookieStorageFile();

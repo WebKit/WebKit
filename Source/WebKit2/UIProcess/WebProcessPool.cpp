@@ -415,10 +415,13 @@ void WebProcessPool::textCheckerStateChanged()
     sendToAllProcesses(Messages::WebProcess::SetTextCheckerState(TextChecker::state()));
 }
 
-NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
+NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* withWebsiteDataStore)
 {
-    if (m_networkProcess)
+    if (m_networkProcess) {
+        if (withWebsiteDataStore)
+            m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(withWebsiteDataStore->parameters()), 0);
         return *m_networkProcess;
+    }
 
     m_networkProcess = NetworkProcessProxy::create(*this);
 
@@ -480,6 +483,9 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess()
         for (auto& process : m_processes)
             process->reinstateNetworkProcessAssertionState(*m_networkProcess);
     }
+
+    if (withWebsiteDataStore)
+        m_networkProcess->send(Messages::NetworkProcess::AddWebsiteDataStore(withWebsiteDataStore->parameters()), 0);
 
     return *m_networkProcess;
 }

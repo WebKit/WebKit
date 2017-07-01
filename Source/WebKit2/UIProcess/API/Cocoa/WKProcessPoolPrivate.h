@@ -73,6 +73,7 @@
 
 // Test only. Should be called only while no web content processes are running.
 - (void)_terminateDatabaseProcess;
+- (void)_terminateNetworkProcess;
 
 // Test only.
 - (size_t)_webProcessCount WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

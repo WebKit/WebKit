@@ -389,6 +389,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->terminateDatabaseProcess();
 }
 
+- (void)_terminateNetworkProcess
+{
+    _processPool->terminateNetworkProcess();
+}
+
 - (void)_syncNetworkProcessCookies
 {
     _processPool->syncNetworkProcessCookies();

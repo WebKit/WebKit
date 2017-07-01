@@ -313,7 +313,7 @@ public:
     void setPlugInAutoStartOriginsFilteringOutEntriesAddedAfterTime(API::Dictionary&, double time);
 
     // Network Process Management
-    NetworkProcessProxy& ensureNetworkProcess();
+    NetworkProcessProxy& ensureNetworkProcess(WebsiteDataStore* withWebsiteDataStore = nullptr);
     NetworkProcessProxy* networkProcess() { return m_networkProcess.get(); }
     void networkProcessCrashed(NetworkProcessProxy*);
 

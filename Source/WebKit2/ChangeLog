@@ -1,3 +1,26 @@
+2017-07-01  Brady Eidson  <beidson@apple.com>
+
+        When setting a custom cookie storage location on a WKWebsiteDataStore, cookies aren't actually removed.
+        <rdar://problem/32410662> and https://bugs.webkit.org/show_bug.cgi?id=174035
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _terminateNetworkProcess]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess): Take an optional WebsiteDataStore. If one is passed in,
+          send it to either the existing or new network process.
+        * UIProcess/WebProcessPool.h:
+        
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::parameters): Resolve paths first.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        (WebKit::WebsiteDataStore::removeData):
+
 2017-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Frame.h doesn't need to include FrameLoader.h, IntRect.h, and NavigationScheduler.h

@@ -170,6 +170,42 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
 
     EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:fileIDBPath.get().path]);
+
+    // Now, with brand new WKWebsiteDataStores pointing at the same custom cookie storage location,
+    // in newly fired up NetworkProcesses, verify that the fetch and delete APIs work as expected.
+
+    [processPool _terminateNetworkProcess];
+    auto newCustomDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    [newCustomDataStore fetchDataRecordsOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, nil] completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        EXPECT_GT([records count], (unsigned long)0);
+        receivedScriptMessage = true;
+    }];
+
+    receivedScriptMessage = false;
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+
+    [processPool _terminateNetworkProcess];
+    newCustomDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    [newCustomDataStore removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, nil] modifiedSince:[NSDate distantPast] completionHandler:^ {
+        receivedScriptMessage = true;
+    }];
+
+    receivedScriptMessage = false;
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+
+    // This time, reuse the same network process but still do a new websitedatastore, to make sure even an existing network process
+    // gets the new datastore.
+    newCustomDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+
+    [newCustomDataStore fetchDataRecordsOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeCookies, nil] completionHandler:^(NSArray<WKWebsiteDataRecord *> * records) {
+        EXPECT_EQ([records count], (unsigned long)0);
+        receivedScriptMessage = true;
+    }];
+
+    receivedScriptMessage = false;
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
 }
 
 #endif
