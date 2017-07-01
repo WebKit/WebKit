@@ -1,3 +1,12 @@
+2017-06-30  Jonathan Bedard  <jbedard@apple.com>
+
+        Run webgl tests on iOS ports
+        https://bugs.webkit.org/show_bug.cgi?id=173000
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations: Enable webgl, fast/canvas/webgl and http/tests/webgl.
+
 2017-06-30  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: AsyncStackTrace nodes can be corrupted when truncating

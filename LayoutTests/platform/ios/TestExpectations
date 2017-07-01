@@ -33,11 +33,6 @@ perf/accessibility-title-ui-element.html
 fullscreen
 http/tests/fullscreen
 
-# Skip WebGL tests in iOS Simulator
-webgl
-fast/canvas/webgl
-http/tests/webgl
-
 # WebGPU is not enabled on iOS Simulator.
 fast/canvas/webgpu
 
