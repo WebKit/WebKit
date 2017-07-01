@@ -55,6 +55,7 @@ struct TextPaintStyle {
     float miterLimit { defaultMiterLimit };
 };
 
+bool textColorIsLegibleAgainstBackgroundColor(const Color& textColor, const Color& backgroundColor);
 TextPaintStyle computeTextPaintStyle(const Frame&, const RenderStyle&, const PaintInfo&);
 TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle&, const RenderText&, const RenderStyle&, const PaintInfo&, bool& paintSelectedTextOnly, bool& paintSelectedTextSeparately, bool& paintNonSelectedTextOnly, const ShadowData*& selectionShadow);
 

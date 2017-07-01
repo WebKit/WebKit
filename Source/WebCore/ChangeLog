@@ -1,3 +1,43 @@
+2017-06-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Text indicators for dragged links should always be legible if the link is legible
+        https://bugs.webkit.org/show_bug.cgi?id=173860
+        <rdar://problem/32974385>
+
+        Reviewed by Tim Horton.
+
+        Currently, TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges ensures that links backed by a
+        RenderReplaced element don't render blank text indicators by additionally forcing the
+        TextIndicatorOptionPaintAllContent option in order to capture the RenderReplaced content. If estimated
+        background color is requested, this patch adds an additional path for "upgrading" the text indicator to paint
+        all content: if the text color is not legible against the estimated background color, then it is likely that the
+        background color estimate failed or the link itself was not legible in the first place; in the former case, to
+        ensure that the link is still legible, we upgrade the given TextIndicatorOptions to paint all contents in the
+        range.
+
+        There is currently no way to test this, and also no simple way to introduce infrastructure to test text
+        indicators.
+
+        * page/TextIndicator.cpp:
+        (WebCore::estimatedTextColorsForRange):
+
+        Estimates all text colors that appear in a range by iterating over the text node renderers and consulting their
+        render styles.
+
+        (WebCore::adjustTextIndicatorDataOptionsForEstimatedColorsIfNecessary):
+
+        If foreground text color is deemed not legible, force TextIndicatorOptionPaintAllContent instead of
+        TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges.
+
+        (WebCore::initializeIndicator):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::textColorIsLegibleAgainstBackgroundColor):
+        (WebCore::adjustColorForVisibilityOnBackground):
+
+        Allow other parts of WebCore to check the legibility of text against a background color.
+
+        * rendering/TextPaintStyle.h:
+
 2017-06-30  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r215096) Queries of URLs with non-special schemes should not percent-encode single quotes

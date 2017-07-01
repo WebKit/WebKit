@@ -41,6 +41,9 @@
 #include "Range.h"
 #include "RenderElement.h"
 #include "RenderObject.h"
+#include "RenderText.h"
+#include "TextIterator.h"
+#include "TextPaintStyle.h"
 
 #if PLATFORM(IOS)
 #include "SelectionRect.h"
@@ -215,6 +218,25 @@ static bool styleContainsComplexBackground(const RenderStyle& style)
     return false;
 }
 
+static Vector<Color> estimatedTextColorsForRange(const Range& range)
+{
+    Vector<Color> colors;
+    HashSet<RGBA32> uniqueRGBValues;
+    for (TextIterator iterator(&range); !iterator.atEnd(); iterator.advance()) {
+        auto* node = iterator.node();
+        if (!is<Text>(node) || !is<RenderText>(node->renderer()))
+            continue;
+
+        auto& color = node->renderer()->style().color();
+        if (uniqueRGBValues.contains(color.rgb()))
+            continue;
+
+        uniqueRGBValues.add(color.rgb());
+        colors.append(color);
+    }
+    return colors;
+}
+
 static Color estimatedBackgroundColorForRange(const Range& range, const Frame& frame)
 {
     auto estimatedBackgroundColor = frame.view() ? frame.view()->documentBackgroundColor() : Color::transparent;
@@ -251,10 +273,40 @@ static Color estimatedBackgroundColorForRange(const Range& range, const Frame& f
     return estimatedBackgroundColor;
 }
 
+static void adjustTextIndicatorDataOptionsForEstimatedColorsIfNecessary(TextIndicatorData& data, const Color& backgroundColor, Vector<Color>&& textColors)
+{
+    if (data.options & TextIndicatorOptionPaintAllContent)
+        return;
+
+    if (!(data.options & TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges))
+        return;
+
+    bool hasOnlyLegibleTextColors = true;
+    if (data.options & TextIndicatorOptionRespectTextColor) {
+        for (auto& textColor : textColors) {
+            hasOnlyLegibleTextColors = textColorIsLegibleAgainstBackgroundColor(textColor, backgroundColor);
+            if (!hasOnlyLegibleTextColors)
+                break;
+        }
+    } else
+        hasOnlyLegibleTextColors = textColorIsLegibleAgainstBackgroundColor(Color::black, backgroundColor);
+
+    if (!hasOnlyLegibleTextColors || !textColors.size()) {
+        // If the text color is not legible against the estimated color, force all content to be painted.
+        data.options &= ~TextIndicatorOptionUseBoundingRectAndPaintAllContentForComplexRanges;
+        data.options |= TextIndicatorOptionPaintAllContent;
+    }
+}
+
 static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Range& range, FloatSize margin, bool indicatesCurrentSelection)
 {
-    if (data.options & TextIndicatorOptionComputeEstimatedBackgroundColor)
+    if (auto* document = frame.document())
+        document->updateLayoutIgnorePendingStylesheets();
+
+    if (data.options & TextIndicatorOptionComputeEstimatedBackgroundColor) {
         data.estimatedBackgroundColor = estimatedBackgroundColorForRange(range, frame);
+        adjustTextIndicatorDataOptionsForEstimatedColorsIfNecessary(data, data.estimatedBackgroundColor, estimatedTextColorsForRange(range));
+    }
 
     Vector<FloatRect> textRects;
 
