@@ -54,6 +54,7 @@
 #endif
 }
 
+#if PLATFORM(IOS)
 + (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information
 {
     return [[[self alloc] _initWithInteractionInformationAtPosition:information] autorelease];
@@ -83,6 +84,7 @@
     
     return self;
 }
+#endif
 
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
 {

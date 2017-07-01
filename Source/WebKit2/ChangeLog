@@ -1,5 +1,12 @@
 2017-06-30  Megan Gardner  <megan_gardner@apple.com>
 
+        Unreviewed mac build fix.
+
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+
+2017-06-30  Megan Gardner  <megan_gardner@apple.com>
+
         Add API to get WKActivatedElementInfo
         https://bugs.webkit.org/show_bug.cgi?id=174001
         <rdar://problem/29165518>

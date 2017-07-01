@@ -23,7 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(IOS)
 #import "InteractionInformationAtPosition.h"
+#endif
 #import "_WKActivatedElementInfo.h"
 
 #if WK_API_ENABLED
@@ -34,8 +36,10 @@ namespace WebKit {
 
 @interface _WKActivatedElementInfo ()
 
+#if PLATFORM(IOS)
 + (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information;
 - (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information;
+#endif
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image;
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image userInfo:(NSDictionary *)userInfo;
 
