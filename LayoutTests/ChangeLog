@@ -1,3 +1,16 @@
+2017-06-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: AsyncStackTrace nodes can be corrupted when truncating
+        https://bugs.webkit.org/show_bug.cgi?id=173840
+        <rdar://problem/30840820>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a test for truncating a branching asynchronous stack trace.
+
+        * inspector/debugger/truncate-async-stack-trace-expected.txt: Added.
+        * inspector/debugger/truncate-async-stack-trace.html: Added.
+
 2017-06-30  Alex Christensen  <achristensen@webkit.org>
 
         Rebase test after r219024

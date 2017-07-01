@@ -163,22 +163,25 @@ void AsyncStackTrace::truncate(size_t maxDepth)
     // cloning the locked portion of the trace (the path from the locked node
     // to the new root). The subtree rooted at the last unlocked ancestor is
     // then appended to the new tree.
-    auto* currentNode = lastUnlockedAncestor;
-    while (currentNode->m_parent) {
-        auto& parentNode = currentNode->m_parent;
-        currentNode->m_parent = AsyncStackTrace::create(parentNode->m_callStack.copyRef(), true, parentNode->m_parent);
-        currentNode = currentNode->m_parent.get();
+    auto* previousNode = lastUnlockedAncestor;
 
-        if (parentNode.get() == newStackTraceRoot)
+    // The subtree being truncated must be removed from it's parent before
+    // updating its parent pointer chain.
+    auto* sourceNode = lastUnlockedAncestor->m_parent.get();
+    lastUnlockedAncestor->remove();
+
+    while (sourceNode) {
+        previousNode->m_parent = AsyncStackTrace::create(sourceNode->m_callStack.copyRef(), true, nullptr);
+        previousNode->m_parent->m_childCount = 1;
+        previousNode = previousNode->m_parent.get();
+
+        if (sourceNode == newStackTraceRoot)
             break;
+
+        sourceNode = sourceNode->m_parent.get();
     }
 
-    currentNode->m_truncated = true;
-    currentNode->remove();
-
-    // Decrement the child count of the first locked ancestor after removing its subtree.
-    auto& firstLockedAncestor = lastUnlockedAncestor->m_parent;
-    firstLockedAncestor->m_childCount--;
+    previousNode->m_truncated = true;
 }
 
 void AsyncStackTrace::remove()

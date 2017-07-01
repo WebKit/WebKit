@@ -1,3 +1,24 @@
+2017-06-30  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: AsyncStackTrace nodes can be corrupted when truncating
+        https://bugs.webkit.org/show_bug.cgi?id=173840
+        <rdar://problem/30840820>
+
+        Reviewed by Joseph Pecoraro.
+
+        When truncating an asynchronous stack trace, the parent chain is traversed
+        until a locked node is found. The path from this node to the root is shared
+        by more than one stack trace, and cannot be safely modified. Starting at
+        the first locked node, the path is cloned and becomes a new stack trace tree.
+
+        However, the clone operation initialized each new AsyncStackTrace node with
+        the original node's parent. This would increment the child count of the original
+        node. When cloning nodes, new nodes should not have their parent set until the
+        next node up the parent chain is cloned.
+
+        * inspector/AsyncStackTrace.cpp:
+        (Inspector::AsyncStackTrace::truncate):
+
 2017-06-30  Michael Saboff  <msaboff@apple.com>
 
         RegExp's  anchored with .* with \g flag can return wrong match start for strings with multiple matches
