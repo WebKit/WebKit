@@ -1,3 +1,11 @@
+2017-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        Rebase test after r219024
+        https://bugs.webkit.org/show_bug.cgi?id=174051
+
+        * fast/events/popup-blocked-from-unique-frame-via-window-open-named-sibling-frame-expected.txt:
+        This was an intentional change making URL parsing how it was before r215096 for URLs with non-special schemes.
+
 2017-06-30  Matt Lewis  <jlewis3@apple.com>
 
         Marked test imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html as flaky.
