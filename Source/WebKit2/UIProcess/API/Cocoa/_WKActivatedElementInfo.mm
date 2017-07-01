@@ -54,6 +54,36 @@
 #endif
 }
 
++ (instancetype)activatedElementInfoWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information
+{
+    return [[[self alloc] _initWithInteractionInformationAtPosition:information] autorelease];
+}
+
+- (instancetype)_initWithInteractionInformationAtPosition:(const WebKit::InteractionInformationAtPosition&)information
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    _URL = information.url;
+    _interactionLocation = information.request.point;
+    _title = information.title;
+    _boundingRect = information.bounds;
+    
+    if (information.isAttachment)
+        _type = _WKActivatedElementTypeAttachment;
+    else if (information.isImage)
+        _type = _WKActivatedElementTypeImage;
+    else if (information.isLink)
+        _type = _WKActivatedElementTypeLink;
+    else
+        _type = _WKActivatedElementTypeUnspecified;
+    
+    _image = information.image;
+    _ID = information.idAttribute;
+    
+    return self;
+}
+
 - (instancetype)_initWithType:(_WKActivatedElementType)type URL:(NSURL *)url location:(CGPoint)location title:(NSString *)title ID:(NSString *)ID rect:(CGRect)rect image:(WebKit::ShareableBitmap*)image
 {
     return [self _initWithType:type URL:url location:location title:title ID:ID rect:rect image:image userInfo:nil];

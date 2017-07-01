@@ -81,6 +81,7 @@
 #import "WebProcessProxy.h"
 #import "WebURLSchemeHandlerCocoa.h"
 #import "WebViewImpl.h"
+#import "_WKActivatedElementInfoInternal.h"
 #import "_WKDiagnosticLoggingDelegate.h"
 #import "_WKFindDelegate.h"
 #import "_WKFrameHandleInternal.h"
@@ -5252,6 +5253,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     [_contentView doAfterPositionInformationUpdate:[capturedBlock = makeBlockPtr(block)] (WebKit::InteractionInformationAtPosition information) {
         capturedBlock([_WKDraggableElementInfo infoWithInteractionInformationAtPosition:information]);
     } forRequest:WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(position))];
+}
+
+- (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block
+{
+    auto infoRequest = WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(position));
+    infoRequest.includeSnapshot = true;
+    
+    [_contentView doAfterPositionInformationUpdate:[capturedBlock = makeBlockPtr(block)] (WebKit::InteractionInformationAtPosition information) {
+        capturedBlock([_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:information]);
+    } forRequest:infoRequest];
 }
 
 - (CGRect)_contentVisibleRect

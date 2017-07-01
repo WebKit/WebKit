@@ -1,3 +1,21 @@
+2017-06-30  Megan Gardner  <megan_gardner@apple.com>
+
+        Add API to get WKActivatedElementInfo
+        https://bugs.webkit.org/show_bug.cgi?id=174001
+        <rdar://problem/29165518>
+        
+        Adding a way to get a WKActivatedElementInfo for a point on a WKWebView.
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView requestActivatedElementAtPosition:completionBlock:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.mm:
+        (+[_WKActivatedElementInfo infoWithType:withInteractionInformationAtPosition:]):
+        (-[_WKActivatedElementInfo infoWithType:withInteractionInformationAtPosition:]):
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+
 2017-06-30  Tim Horton  <timothy_horton@apple.com>
 
         Use API instead of SPI for content inset adjustment behavior
