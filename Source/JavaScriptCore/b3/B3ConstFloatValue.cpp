@@ -172,6 +172,17 @@ TriState ConstFloatValue::greaterEqualConstant(const Value* other) const
     return triState(m_value >= other->asFloat());
 }
 
+TriState ConstFloatValue::equalOrUnorderedConstant(const Value* other) const
+{
+    if (std::isnan(m_value))
+        return TrueTriState;
+
+    if (!other->hasFloat())
+        return MixedTriState;
+    float otherValue = other->asFloat();
+    return triState(std::isunordered(m_value, otherValue) || m_value == otherValue);
+}
+
 void ConstFloatValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(comma);
