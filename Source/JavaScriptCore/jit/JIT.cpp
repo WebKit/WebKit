@@ -89,7 +89,6 @@ JIT::JIT(VM* vm, CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
     , m_putByIdIndex(UINT_MAX)
     , m_byValInstructionIndex(UINT_MAX)
     , m_callLinkInfoIndex(UINT_MAX)
-    , m_randomGenerator(cryptographicallyRandomNumber())
     , m_pcToCodeOriginMapBuilder(*vm)
     , m_canBeOptimized(false)
     , m_shouldEmitProfiling(false)
@@ -628,7 +627,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         m_disassembler->setStartOfCode(label());
 
     // Just add a little bit of randomness to the codegen
-    if (m_randomGenerator.getUint32() & 1)
+    if (random() & 1)
         nop();
 
     emitFunctionPrologue();
