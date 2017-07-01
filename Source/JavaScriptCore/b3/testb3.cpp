@@ -15444,13 +15444,13 @@ void testDoubleLiteralComparison(double a, double b)
 {
     using Test = std::tuple<B3::Opcode, bool (*)(double, double)>;
     std::list<Test> tests = {
-        { NotEqual, doubleNeq },
-        { Equal, doubleEq },
-        { EqualOrUnordered, doubleEq },
-        { GreaterThan, doubleGt },
-        { GreaterEqual, doubleGte },
-        { LessThan, doubleLt },
-        { LessEqual, doubleLte },
+        Test { NotEqual, doubleNeq },
+        Test { Equal, doubleEq },
+        Test { EqualOrUnordered, doubleEq },
+        Test { GreaterThan, doubleGt },
+        Test { GreaterEqual, doubleGte },
+        Test { LessThan, doubleLt },
+        Test { LessEqual, doubleLte },
     };
 
     for (const Test& test : tests) {
