@@ -309,13 +309,6 @@ typedef enum {
 @end
 #endif
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
-typedef NS_ENUM(NSInteger, UIScrollViewContentInsetAdjustmentBehavior) {
-    UIScrollViewContentInsetAdjustmentAutomatic = 0,
-    UIScrollViewContentInsetAdjustmentAlways = 3,
-};
-#endif
-
 @interface UIScrollView ()
 - (void)_stopScrollingAndZoomingAnimations;
 - (void)_zoomToCenter:(CGPoint)center scale:(CGFloat)scale duration:(CFTimeInterval)duration force:(BOOL)force;
@@ -328,7 +321,6 @@ typedef NS_ENUM(NSInteger, UIScrollViewContentInsetAdjustmentBehavior) {
 @property (nonatomic, readonly) BOOL _isInterruptingDeceleration;
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
-@property (nonatomic, setter=_setContentInsetAdjustmentBehavior:, getter=_contentInsetAdjustmentBehavior) UIScrollViewContentInsetAdjustmentBehavior contentInsetAdjustmentBehavior;
 #endif
 @end
 

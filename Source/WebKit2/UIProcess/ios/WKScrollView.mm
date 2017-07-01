@@ -131,7 +131,7 @@ using namespace WebKit;
     self.directionalLockEnabled = YES;
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-    _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self._contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
+    _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
 #endif
     
     return self;
@@ -242,23 +242,23 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     return _contentInsetAdjustmentBehaviorWasExternallyOverridden;
 }
 
-- (void)_setContentInsetAdjustmentBehavior:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior
+- (void)setContentInsetAdjustmentBehavior:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior
 {
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = YES;
 
-    if ([self _contentInsetAdjustmentBehavior] == insetAdjustmentBehavior)
+    if ([self contentInsetAdjustmentBehavior] == insetAdjustmentBehavior)
         return;
 
-    [super _setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
+    [super setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
     [_internalDelegate _scheduleVisibleContentRectUpdate];
 }
 
 - (void)_setContentInsetAdjustmentBehaviorInternal:(UIScrollViewContentInsetAdjustmentBehavior)insetAdjustmentBehavior
 {
-    if ([self _contentInsetAdjustmentBehavior] == insetAdjustmentBehavior)
+    if ([self contentInsetAdjustmentBehavior] == insetAdjustmentBehavior)
         return;
 
-    [super _setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
+    [super setContentInsetAdjustmentBehavior:insetAdjustmentBehavior];
 }
 
 #endif

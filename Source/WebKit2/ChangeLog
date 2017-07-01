@@ -1,3 +1,19 @@
+2017-06-30  Tim Horton  <timothy_horton@apple.com>
+
+        Use API instead of SPI for content inset adjustment behavior
+        https://bugs.webkit.org/show_bug.cgi?id=174050
+
+        Reviewed by Sam Weinig.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]):
+        (-[WKScrollView setContentInsetAdjustmentBehavior:]):
+        (-[WKScrollView _setContentInsetAdjustmentBehaviorInternal:]):
+        (-[WKScrollView _setContentInsetAdjustmentBehavior:]): Deleted.
+        Switch over to the API. The old SPI calls the API internally, so our
+        override will now cover all callers.
+
 2017-06-30  Chris Dumez  <cdumez@apple.com>
 
         Move store logic from WebResourceLoadStatisticsManager to WebResourceLoadStatisticsStore
