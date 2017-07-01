@@ -1,3 +1,19 @@
+2017-06-30  Keith Miller  <keith_miller@apple.com>
+
+        Force crashWithInfo to be out of line.
+        https://bugs.webkit.org/show_bug.cgi?id=174028
+
+        Reviewed by Filip Pizlo.
+
+        Update DFG_ASSERT macro to call CRASH_WITH_SECURITY_IMPLICATION_AND_INFO.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::logDFGAssertionFailure):
+        (JSC::DFG::Graph::logAssertionFailure):
+        (JSC::DFG::crash): Deleted.
+        (JSC::DFG::Graph::handleAssertionFailure): Deleted.
+        * dfg/DFGGraph.h:
+
 2017-06-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use AbstractMacroAssembler::random instead of holding WeakRandom in JIT

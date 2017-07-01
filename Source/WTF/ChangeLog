@@ -1,3 +1,21 @@
+2017-06-30  Keith Miller  <keith_miller@apple.com>
+
+        Force crashWithInfo to be out of line.
+        https://bugs.webkit.org/show_bug.cgi?id=174028
+
+        Reviewed by Filip Pizlo.
+
+        The first pass at making crashes hold information about why they
+        were crashing had the problem that it would inline the assertion.
+        This meant that clang could coalesce DFG_ASSERTS with other
+        assertion failures in the same function. This patch moves it out
+        of line to help fix that issue.
+
+        * wtf/Assertions.cpp:
+        (WTFCrashWithInfo):
+        * wtf/Assertions.h:
+        (WTF::isIntegralType):
+
 2017-06-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Drop SymbolRegistry::keyForSymbol
