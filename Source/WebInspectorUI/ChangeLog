@@ -1,5 +1,18 @@
 2017-06-30  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Type token background color in debugger looks poor
+        https://bugs.webkit.org/show_bug.cgi?id=174063
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/TextEditor.css:
+        CodeMirror widgets do not get range styles like our (.execution-range-highlight).
+        Make a best effort to carry over the styles to widgets. It isn't perfect, but it
+        covers all common situations unless a selection ends inside the widget. The
+        ultimate solution would be to get the expected range styles.
+
+2017-06-30  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Initial search is sometimes performed twice, produces duplicate results
         https://bugs.webkit.org/show_bug.cgi?id=174047
 
