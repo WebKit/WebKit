@@ -30,7 +30,6 @@
 #include "WebProcessMessages.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
-#include "WebResourceLoadStatisticsManager.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataType.h"
@@ -214,7 +213,6 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
 {
     ASSERT(RunLoop::isMain());
     
-    WebResourceLoadStatisticsManager::shared().setStatisticsStore(*this);
     m_resourceLoadStatisticsStore->setNotificationCallback([this, protectedThis = makeRef(*this)] {
         if (m_resourceLoadStatisticsStore->isEmpty())
             return;

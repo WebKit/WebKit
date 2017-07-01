@@ -54,7 +54,6 @@
 #include <WebKit/WKPluginInformation.h>
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKProtectionSpace.h>
-#include <WebKit/WKResourceLoadStatisticsManager.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKTextChecker.h>
@@ -388,8 +387,6 @@ void TestController::initialize(int argc, const char* argv[])
 #if PLATFORM(MAC)
     WebCoreTestSupport::installMockGamepadProvider();
 #endif
-    
-    WKResourceLoadStatisticsManagerSetShouldSubmitTelemetry(false);
 
     WKRetainPtr<WKStringRef> pageGroupIdentifier(AdoptWK, WKStringCreateWithUTF8CString("WebKitTestRunnerPageGroup"));
     m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(pageGroupIdentifier.get()));
@@ -2209,121 +2206,6 @@ void TestController::setIgnoresViewportScaleLimits(bool ignoresViewportScaleLimi
     WKPageSetIgnoresViewportScaleLimits(m_mainWebView->page(), ignoresViewportScaleLimits);
 }
 
-void TestController::setStatisticsPrevalentResource(WKStringRef hostName, bool value)
-{
-    WKResourceLoadStatisticsManagerSetPrevalentResource(hostName, value);
-}
-
-bool TestController::isStatisticsPrevalentResource(WKStringRef hostName)
-{
-    return WKResourceLoadStatisticsManagerIsPrevalentResource(hostName);
-}
-
-void TestController::setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value)
-{
-    WKResourceLoadStatisticsManagerSetHasHadUserInteraction(hostName, value);
-}
-
-bool TestController::isStatisticsHasHadUserInteraction(WKStringRef hostName)
-{
-    return WKResourceLoadStatisticsManagerIsHasHadUserInteraction(hostName);
-}
-
-void TestController::setStatisticsGrandfathered(WKStringRef hostName, bool value)
-{
-    WKResourceLoadStatisticsManagerSetGrandfathered(hostName, value);
-}
-
-bool TestController::isStatisticsGrandfathered(WKStringRef hostName)
-{
-    return WKResourceLoadStatisticsManagerIsGrandfathered(hostName);
-}
-
-void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
-{
-    WKResourceLoadStatisticsManagerSetSubframeUnderTopFrameOrigin(hostName, topFrameHostName);
-}
-
-void TestController::setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
-{
-    WKResourceLoadStatisticsManagerSetSubresourceUnderTopFrameOrigin(hostName, topFrameHostName);
-}
-    
-void TestController::setStatisticsSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo)
-{
-    WKResourceLoadStatisticsManagerSetSubresourceUniqueRedirectTo(hostName, hostNameRedirectedTo);
-}
-
-void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
-{
-    WKResourceLoadStatisticsManagerSetTimeToLiveUserInteraction(seconds);
-}
-
-void TestController::setStatisticsTimeToLiveCookiePartitionFree(double seconds)
-{
-    WKResourceLoadStatisticsManagerSetTimeToLiveCookiePartitionFree(seconds);
-}
-
-void TestController::statisticsFireDataModificationHandler()
-{
-    WKResourceLoadStatisticsManagerFireDataModificationHandler();
-}
-    
-void TestController::statisticsFireShouldPartitionCookiesHandler()
-{
-    WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandler();
-}
-
-void TestController::statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef hostName, bool value)
-{
-    WKResourceLoadStatisticsManagerFireShouldPartitionCookiesHandlerForOneDomain(hostName, value);
-}
-
-void TestController::statisticsFireTelemetryHandler()
-{
-    WKResourceLoadStatisticsManagerFireTelemetryHandler();
-}
-    
-void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
-{
-    WKResourceLoadStatisticsManagerSetNotifyPagesWhenDataRecordsWereScanned(value);
-}
-    
-void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
-{
-    WKResourceLoadStatisticsManagerSetShouldClassifyResourcesBeforeDataRecordsRemoval(value);
-}
-
-void TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value)
-{
-    WKResourceLoadStatisticsManagerSetNotifyPagesWhenTelemetryWasCaptured(value);
-}
-    
-void TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds)
-{
-    WKResourceLoadStatisticsManagerSetMinimumTimeBetweenDataRecordsRemoval(seconds);
-}
-
-void TestController::setStatisticsGrandfatheringTime(double seconds)
-{
-    WKResourceLoadStatisticsManagerSetGrandfatheringTime(seconds);
-}
-
-void TestController::statisticsClearInMemoryAndPersistentStore()
-{
-    WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStore();
-}
-
-void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
-{
-    WKResourceLoadStatisticsManagerClearInMemoryAndPersistentStoreModifiedSinceHours(hours);
-}
-    
-void TestController::statisticsResetToConsistentState()
-{
-    WKResourceLoadStatisticsManagerResetToConsistentState();
-}
-
 void TestController::terminateNetworkProcess()
 {
     WKContextTerminateNetworkProcess(platformContext());
@@ -2360,6 +2242,105 @@ unsigned TestController::imageCountInGeneralPasteboard() const
 }
 
 void TestController::removeAllSessionCredentials()
+{
+}
+
+#endif
+
+#if !PLATFORM(COCOA) || !WK_API_ENABLED
+
+void TestController::setStatisticsPrevalentResource(WKStringRef, bool)
+{
+}
+
+bool TestController::isStatisticsPrevalentResource(WKStringRef)
+{
+    return false;
+}
+
+void TestController::setStatisticsHasHadUserInteraction(WKStringRef, bool)
+{
+}
+
+bool TestController::isStatisticsHasHadUserInteraction(WKStringRef)
+{
+    return false;
+}
+
+void TestController::setStatisticsGrandfathered(WKStringRef, bool)
+{
+}
+
+bool TestController::isStatisticsGrandfathered(WKStringRef)
+{
+    return false;
+}
+
+void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef, WKStringRef)
+{
+}
+
+void TestController::setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef, WKStringRef)
+{
+}
+
+void TestController::setStatisticsSubresourceUniqueRedirectTo(WKStringRef, WKStringRef)
+{
+}
+
+void TestController::setStatisticsTimeToLiveUserInteraction(double)
+{
+}
+
+void TestController::setStatisticsTimeToLiveCookiePartitionFree(double)
+{
+}
+
+void TestController::statisticsFireDataModificationHandler()
+{
+}
+
+void TestController::statisticsFireShouldPartitionCookiesHandler()
+{
+}
+
+void TestController::statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef, bool)
+{
+}
+
+void TestController::statisticsFireTelemetryHandler()
+{
+}
+
+void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool)
+{
+}
+
+void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool)
+{
+}
+
+void TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool)
+{
+}
+
+void TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval(double)
+{
+}
+
+void TestController::setStatisticsGrandfatheringTime(double)
+{
+}
+
+void TestController::statisticsClearInMemoryAndPersistentStore()
+{
+}
+
+void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned)
+{
+}
+
+void TestController::statisticsResetToConsistentState()
 {
 }
 

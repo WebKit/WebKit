@@ -31,9 +31,14 @@
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
 #import "WKWebsiteDataRecordInternal.h"
+#import "WebResourceLoadStatisticsStore.h"
+#import "WebResourceLoadStatisticsTelemetry.h"
 #import "WebsiteDataFetchOption.h"
 #import "_WKWebsiteDataStoreConfiguration.h"
+#import <WebCore/URL.h>
 #import <wtf/BlockPtr.h>
+
+using namespace WebCore;
 
 @implementation WKWebsiteDataStore
 
@@ -200,6 +205,234 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (void)_setResourceLoadStatisticsEnabled:(BOOL)enabled
 {
     _websiteDataStore->websiteDataStore().setResourceLoadStatisticsEnabled(enabled);
+}
+
+- (void)_resourceLoadStatisticsSetIsPrevalentResource:(BOOL)value forHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    if (value)
+        store->setPrevalentResource(URL(URL(), host));
+    else
+        store->clearPrevalentResource(URL(URL(), host));
+}
+
+- (BOOL)_resourceLoadStatisticsIsPrevalentResource:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return NO;
+
+    return store->isPrevalentResource(URL(URL(), host));
+}
+
+- (void)_resourceLoadStatisticsSetHadUserInteraction:(BOOL)value forHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    if (value)
+        store->logUserInteraction(URL(URL(), host));
+    else
+        store->clearUserInteraction(URL(URL(), host));
+}
+
+- (BOOL)_resourceLoadStatisticsHadUserInteraction:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return NO;
+
+    return store->hasHadUserInteraction(URL(URL(), host));
+}
+
+- (void)_resourceLoadStatisticsSetIsGrandfathered:(BOOL)value forHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setGrandfathered(URL(URL(), host), value);
+}
+
+- (BOOL)_resourceLoadStatisticsIsGrandfathered:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return NO;
+
+    return store->isGrandfathered(URL(URL(), host));
+}
+
+- (void)_resourceLoadStatisticsSetSubframeUnderTopFrameOrigin:(NSString *)topFrameHostName forHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setSubframeUnderTopFrameOrigin(URL(URL(), host), URL(URL(), topFrameHostName));
+}
+
+- (void)_resourceLoadStatisticsSetSubresourceUnderTopFrameOrigin:(NSString *)topFrameHostName forHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setSubresourceUnderTopFrameOrigin(URL(URL(), host), URL(URL(), topFrameHostName));
+}
+
+- (void)_resourceLoadStatisticsSetSubresourceUniqueRedirectTo:(NSString *)hostNameRedirectedTo forHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setSubresourceUniqueRedirectTo(URL(URL(), host), URL(URL(), hostNameRedirectedTo));
+}
+
+- (void)_resourceLoadStatisticsSetTimeToLiveUserInteraction:(double)seconds
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setTimeToLiveUserInteraction(Seconds { seconds });
+}
+
+- (void)_resourceLoadStatisticsSetTimeToLiveCookiePartitionFree:(double)seconds
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setTimeToLiveCookiePartitionFree(Seconds { seconds });
+}
+
+- (void)_resourceLoadStatisticsSetMinimumTimeBetweenDataRecordsRemoval:(double)seconds
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setMinimumTimeBetweenDataRecordsRemoval(Seconds { seconds });
+}
+
+- (void)_resourceLoadStatisticsSetGrandfatheringTime:(double)seconds
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setGrandfatheringTime(Seconds {seconds });
+}
+
+- (void)_resourceLoadStatisticsFireDataModificationHandler
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->fireDataModificationHandler();
+}
+
+- (void)_resourceLoadStatisticsFireShouldPartitionCookiesHandler
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->fireShouldPartitionCookiesHandler();
+}
+
+- (void)_resourceLoadStatisticsFireShouldPartitionCookiesHandlerForOneDomain:(BOOL)value forHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    if (value)
+        store->fireShouldPartitionCookiesHandler({ }, { host }, false);
+    else
+        store->fireShouldPartitionCookiesHandler({ host }, { }, false);
+}
+
+- (void)_resourceLoadStatisticsFireTelemetryHandler
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->fireTelemetryHandler();
+}
+
+- (void)_resourceLoadStatisticsSetNotifyPagesWhenDataRecordsWereScanned:(BOOL)value
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setNotifyPagesWhenDataRecordsWereScanned(value);
+}
+
+- (void)_resourceLoadStatisticsSetShouldClassifyResourcesBeforeDataRecordsRemoval:(BOOL)value
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setShouldClassifyResourcesBeforeDataRecordsRemoval(value);
+}
+
+- (void)_resourceLoadStatisticsSetNotifyPagesWhenTelemetryWasCaptured:(BOOL)value
+{
+    WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(value);
+}
+
+- (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setShouldSubmitTelemetry(value);
+}
+
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStore
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->clearInMemoryAndPersistent();
+}
+
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->clearInMemoryAndPersistent(std::chrono::system_clock::now() - std::chrono::hours(hours));
+}
+
+- (void)_resourceLoadStatisticsResetToConsistentState
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setTimeToLiveUserInteraction(24_h * 30.);
+    store->setTimeToLiveCookiePartitionFree(24_h);
+    store->setMinimumTimeBetweenDataRecordsRemoval(1_h);
+    store->setGrandfatheringTime(1_h);
+    store->setNotifyPagesWhenDataRecordsWereScanned(false);
+    WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
+    store->setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
+    store->clearInMemory();
 }
 
 @end

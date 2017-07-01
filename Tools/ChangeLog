@@ -1,3 +1,22 @@
+2017-07-01  Chris Dumez  <cdumez@apple.com>
+
+        Replace ResourceLoadStatisticsStore C API with Cocoa SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174060
+
+        Reviewed by Brent Fulgham.
+
+        Port WebKitTestRunner over to the new Cocoa SPI.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsNotifyPagesWhenDataRecordsWereScanned):
+        (WTR::TestRunner::setStatisticsNotifyPagesWhenTelemetryWasCaptured):
+        Drop calls to the WKResourceLoadStatisticsStore C API here. Those were
+        no-ops since this code runs in the WebContent process, not the
+        UIProcess.
+
+        * WebKitTestRunner/TestController.cpp:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+
 2017-06-30  Megan Gardner  <megan_gardner@apple.com>
 
         Unreviewed mac build fix.

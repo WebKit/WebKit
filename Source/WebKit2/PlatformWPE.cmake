@@ -125,12 +125,10 @@ list(APPEND WebKit2_SOURCES
     UIProcess/BackingStore.cpp
     UIProcess/DefaultUndoController.cpp
     UIProcess/LegacySessionStateCodingNone.cpp
-    UIProcess/WebResourceLoadStatisticsManager.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
     UIProcess/WebResourceLoadStatisticsTelemetry.cpp
 
     UIProcess/API/C/WKGrammarDetail.cpp
-    UIProcess/API/C/WKResourceLoadStatisticsManager.cpp
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 
