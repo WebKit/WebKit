@@ -35,6 +35,7 @@
 #include <webrtc/api/video/i420_buffer.h>
 #include <webrtc/common_video/libyuv/include/webrtc_libyuv.h>
 #include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 #include "CoreMediaSoftLink.h"
@@ -185,7 +186,8 @@ void RealtimeOutgoingVideoSource::sendOneBlackFrame()
 
 void RealtimeOutgoingVideoSource::sendFrame(rtc::scoped_refptr<webrtc::VideoFrameBuffer>&& buffer)
 {
-    webrtc::VideoFrame frame(buffer, 0, 0, m_shouldApplyRotation ? webrtc::kVideoRotation_0 : m_currentRotation);
+    int64_t timestampMicroSeconds = monotonicallyIncreasingTimeMS() * 1000;
+    webrtc::VideoFrame frame(buffer, m_shouldApplyRotation ? webrtc::kVideoRotation_0 : m_currentRotation, timestampMicroSeconds);
     for (auto* sink : m_sinks)
         sink->OnFrame(frame);
 }

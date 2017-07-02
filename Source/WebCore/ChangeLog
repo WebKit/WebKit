@@ -1,3 +1,15 @@
+2017-07-02  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingVideoSource should pass frame timestamp
+        https://bugs.webkit.org/show_bug.cgi?id=174055
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing since this only affects video encoding quality.
+
+        * platform/mediastream/mac/RealtimeOutgoingVideoSource.cpp:
+        (WebCore::RealtimeOutgoingVideoSource::sendFrame):
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/33096441> r219055 broke non-iOS builds.
