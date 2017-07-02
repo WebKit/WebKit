@@ -1,5 +1,17 @@
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
+        [iOS] Remove code only needed when building for iOS 9.x
+        https://bugs.webkit.org/show_bug.cgi?id=174068
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * jit/ExecutableAllocator.cpp:
+        * runtime/Options.cpp:
+        (JSC::recomputeDependentOptions):
+
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
         [macOS] Remove code only needed when building for OS X Yosemite
         https://bugs.webkit.org/show_bug.cgi?id=174067
 

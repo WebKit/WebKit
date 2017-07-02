@@ -38,7 +38,7 @@
 
 namespace WTF {
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 100000)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
 WTF_EXPORT_PRIVATE void callOnMainThread(void (*function)(void*), void* context);
 WTF_EXPORT_PRIVATE void cancelCallOnMainThread(void (*function)(void*), void* context);
 

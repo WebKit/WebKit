@@ -77,7 +77,7 @@ void WebCoreDecompressionSession::setTimebase(CMTimebaseRef timebase)
             dispatch_source_set_event_handler(m_timerSource.get(), [this] {
                 automaticDequeue();
             });
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || PLATFORM(IOS)
             dispatch_activate(m_timerSource.get());
 #endif
         }

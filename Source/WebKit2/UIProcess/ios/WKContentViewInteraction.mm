@@ -394,19 +394,15 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 
 - (void)setSuggestions:(NSArray<UITextSuggestion *> *)suggestions
 {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)_contentView.inputDelegate;
     _suggestions = adoptNS([suggestions copy]);
     [suggestionDelegate setSuggestions:suggestions];
-#endif
 }
 
 - (void)invalidate
 {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)_contentView.inputDelegate;
     [suggestionDelegate setSuggestions:nil];
-#endif
     _contentView = nil;
 }
 
@@ -2979,14 +2975,12 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [self.inputDelegate selectionDidChange:self];
 }
     
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
 - (void)insertTextSuggestion:(UITextSuggestion *)textSuggestion
 {
     id <_WKInputDelegate> inputDelegate = [_webView _inputDelegate];
     if ([inputDelegate respondsToSelector:@selector(_webView:insertTextSuggestion:inInputSession:)])
         [inputDelegate _webView:_webView insertTextSuggestion:textSuggestion inInputSession:_formInputSession.get()];
 }
-#endif
 
 - (NSString *)textInRange:(UITextRange *)range
 {
@@ -3202,7 +3196,6 @@ static UITextAutocapitalizationType toUITextAutocapitalize(AutocapitalizeType we
     return UITextAutocapitalizationTypeSentences;
 }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
 static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 {
     switch (fieldName) {
@@ -3285,7 +3278,6 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 
     return nil;
 }
-#endif
 
 // UITextInputPrivate protocol
 // Direct access to the (private) UITextInputTraits object.
@@ -3328,9 +3320,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         [_traits setKeyboardType:UIKeyboardTypeDefault];
     }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     [_traits setTextContentType:contentTypeFromFieldName(_assistedNodeInformation.autofillFieldName)];
-#endif
 
     return _traits.get();
 }
@@ -5008,7 +4998,6 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         *type = UIPreviewItemTypeImage;
         dataForPreview[UIPreviewDataLink] = (NSURL *)_positionInformation.imageURL;
     } else if (canShowAttachmentPreview) {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
         *type = UIPreviewItemTypeAttachment;
         auto element = adoptNS([[_WKActivatedElementInfo alloc] _initWithType:_WKActivatedElementTypeAttachment URL:(NSURL *)linkURL location:_positionInformation.request.point title:_positionInformation.title ID:_positionInformation.idAttribute rect:_positionInformation.bounds image:nil]);
         NSUInteger index = [uiDelegate _webView:_webView indexIntoAttachmentListForElement:element.get()];
@@ -5023,7 +5012,6 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
             // FIXME: Replace the following NSString literal with a UIKit NSString constant.
             dataForPreview[@"UIPreviewDataAttachmentListSourceIsManaged"] = [NSNumber numberWithBool:sourceIsManaged];
         }
-#endif
     }
     
     return dataForPreview;

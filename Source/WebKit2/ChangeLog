@@ -1,3 +1,26 @@
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Remove code only needed when building for iOS 9.x
+        https://bugs.webkit.org/show_bug.cgi?id=174068
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Configurations/WebKit.xcconfig:
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView dealloc]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession setSuggestions:]):
+        (-[WKFormInputSession invalidate]):
+        (-[WKContentView insertTextSuggestion:]):
+        (contentTypeFromFieldName):
+        (-[WKContentView textInputTraits]):
+        (-[WKContentView _dataForPreviewItemController:atPosition:type:]):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+        * config.h:
+
 2017-07-01  Brady Eidson  <beidson@apple.com>
 
         When setting a custom cookie storage location on a WKWebsiteDataStore, cookies aren't actually removed.

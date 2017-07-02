@@ -393,15 +393,9 @@ static InterpolationType interpolationFromString(NSString *string)
         RetainPtr<IOHIDEventRef> subEvent;
         if (pointInfo->isStylus) {
             if (eventType == StylusEventTouched) {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
                 eventMask |= kIOHIDDigitizerEventEstimatedAltitude;
                 eventMask |= kIOHIDDigitizerEventEstimatedAzimuth;
                 eventMask |= kIOHIDDigitizerEventEstimatedPressure;
-#else
-                eventMask |= kIOHIDDigitizerEventUpdateAltitudeMask;
-                eventMask |= kIOHIDDigitizerEventUpdateAzimuthMask;
-                eventMask |= kIOHIDDigitizerEventUpdatePressureMask;
-#endif
             } else if (eventType == StylusEventMoved)
                 eventMask = kIOHIDDigitizerEventPosition;
 

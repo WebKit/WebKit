@@ -1,3 +1,12 @@
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Remove code only needed when building for iOS 9.x
+        https://bugs.webkit.org/show_bug.cgi?id=174068
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-07-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Frame.h doesn't need to include FrameLoader.h, IntRect.h, and NavigationScheduler.h

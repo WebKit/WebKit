@@ -1,3 +1,61 @@
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Remove code only needed when building for iOS 9.x
+        https://bugs.webkit.org/show_bug.cgi?id=174068
+
+        Reviewed by Tim Horton.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::isDataDetectorLink):
+        (WebCore::DataDetection::shouldCancelDefaultAction):
+        (WebCore::constructURLStringForResult):
+        (WebCore::DataDetection::detectContentInRange):
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::vmPageSize):
+        * platform/cocoa/DataDetectorsCoreSoftLink.h:
+        * platform/cocoa/DataDetectorsCoreSoftLink.mm:
+        * platform/graphics/FontPlatformData.cpp:
+        * platform/graphics/FontPlatformData.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (layerContentsFormat):
+        (PlatformCALayerCocoa::updateContentsFormat):
+        (PlatformCALayerCocoa::backingStoreBytesPerPixel):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::extendedSRGBColorSpaceRef):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::lookupFallbackFont):
+        * platform/graphics/cocoa/FontCocoa.mm:
+        (WebCore::Font::variantCapsSupportsCharacterForSynthesis):
+        (WebCore::Font::platformWidthForGlyph):
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::ctFont):
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::sinkIntoImage):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::setTimebase):
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::systemFontModificationAttributes):
+        (WebCore::systemFontDescriptor):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::supportsFormat):
+        * platform/ios/LegacyTileGridTile.mm:
+        (WebCore::LegacyTileGridTile::LegacyTileGridTile):
+        * platform/ios/PlatformScreenIOS.mm:
+        (WebCore::screenSupportsExtendedColor):
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        (WebCore::RemoteCommandListenerIOS::RemoteCommandListenerIOS):
+        (WebCore::RemoteCommandListenerIOS::~RemoteCommandListenerIOS):
+        (WebCore::RemoteCommandListenerIOS::updateSupportedCommands):
+        * platform/spi/cf/CFNetworkSPI.h:
+        * platform/spi/cg/CoreGraphicsSPI.h:
+        * platform/spi/cocoa/DataDetectorsCoreSPI.h:
+        * platform/spi/cocoa/QuartzCoreSPI.h:
+        * platform/spi/mac/AVFoundationSPI.h:
+
 2017-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r218371): Reeder's default font is Times instead of San Francisco

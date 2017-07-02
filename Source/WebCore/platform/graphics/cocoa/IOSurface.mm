@@ -253,11 +253,7 @@ RetainPtr<CGImageRef> WebCore::IOSurface::createImage()
 
 RetainPtr<CGImageRef> WebCore::IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surface)
 {
-#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000) || PLATFORM(MAC)
     return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
-#else
-    return surface->createImage();
-#endif
 }
 
 void WebCore::IOSurface::setContextSize(IntSize contextSize)

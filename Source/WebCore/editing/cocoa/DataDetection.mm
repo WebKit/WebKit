@@ -157,14 +157,7 @@ bool DataDetection::isDataDetectorLink(Element& element)
     if (!is<HTMLAnchorElement>(element))
         return false;
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     return [softLink_DataDetectorsCore_DDURLTapAndHoldSchemes() containsObject:(NSString *)downcast<HTMLAnchorElement>(element).href().protocol().toStringWithoutCopying().convertToASCIILowercase()];
-#else
-    if (equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
-        return true;
-    URL url = downcast<HTMLAnchorElement>(element).href();
-    return url.protocolIs("mailto") || url.protocolIs("tel");
-#endif
 }
 
 bool DataDetection::requiresExtendedContext(Element& element)
@@ -179,7 +172,6 @@ String DataDetection::dataDetectorIdentifier(Element& element)
 
 bool DataDetection::shouldCancelDefaultAction(Element& element)
 {
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     if (!isDataDetectorLink(element))
         return false;
     
@@ -201,16 +193,6 @@ bool DataDetection::shouldCancelDefaultAction(Element& element)
         result = (DDResultRef)[results objectAtIndex:resultIndices[i].toInt()];
     }
     return softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForResult(result);
-#else
-    if (!is<HTMLAnchorElement>(element))
-        return false;
-    if (!equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true"))
-        return false;
-    auto& type = element.attributeWithoutSynchronization(x_apple_data_detectors_typeAttr);
-    if (equalLettersIgnoringASCIICase(type, "misc") || equalLettersIgnoringASCIICase(type, "calendar-event") || equalLettersIgnoringASCIICase(type, "telephone"))
-        return true;
-    return false;
-#endif
 }
 
 static BOOL resultIsURL(DDResultRef result)
@@ -234,9 +216,7 @@ static NSString *constructURLStringForResult(DDResultRef currentResult, NSString
     if (((detectionTypes & DataDetectorTypeAddress) && (DDResultCategoryAddress == category))
         || ((detectionTypes & DataDetectorTypeTrackingNumber) && (CFStringCompare(get_DataDetectorsCore_DDBinderTrackingNumberKey(), type, 0) == kCFCompareEqualTo))
         || ((detectionTypes & DataDetectorTypeFlightNumber) && (CFStringCompare(get_DataDetectorsCore_DDBinderFlightInformationKey(), type, 0) == kCFCompareEqualTo))
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
         || ((detectionTypes & DataDetectorTypeLookupSuggestion) && (CFStringCompare(get_DataDetectorsCore_DDBinderParsecSourceKey(), type, 0) == kCFCompareEqualTo))
-#endif
         || ((detectionTypes & DataDetectorTypePhoneNumber) && (DDResultCategoryPhoneNumber == category))
         || ((detectionTypes & DataDetectorTypeLink) && resultIsURL(currentResult))) {
         
@@ -438,11 +418,9 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
     RetainPtr<DDScanQueryRef> scanQuery = adoptCF(softLink_DataDetectorsCore_DDScanQueryCreate(NULL));
     buildQuery(scanQuery.get(), contextRange.get());
     
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     if (types & DataDetectorTypeLookupSuggestion)
         softLink_DataDetectorsCore_DDScannerEnableOptionalSource(scanner.get(), DDScannerSourceSpotlight, true);
-#endif
-    
+
     // FIXME: we should add a timeout to this call to make sure it doesn't take too much time.
     if (!softLink_DataDetectorsCore_DDScannerScanQuery(scanner.get(), scanQuery.get()))
         return nil;
@@ -569,11 +547,7 @@ NSArray *DataDetection::detectContentInRange(RefPtr<Range>& contextRange, DataDe
         }
         
         lastModifiedQueryOffset = queryRange.end;
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
         BOOL shouldUseLightLinks = softLink_DataDetectorsCore_DDShouldUseLightLinksForResult(coreResult, [indexPaths[resultIndex] length] > 1);
-#else
-        BOOL shouldUseLightLinks = NO;
-#endif
 
         for (auto& range : resultRanges) {
             auto* parentNode = range->startContainer().parentNode();

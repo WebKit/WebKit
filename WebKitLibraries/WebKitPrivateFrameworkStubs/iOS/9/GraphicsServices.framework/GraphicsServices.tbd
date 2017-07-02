@@ -1,9 +1,0 @@
----
-archs: [ armv7, armv7s, arm64 ]
-platform: ios
-install-name: /System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices
-objc-constraint: none
-exports:
-  - archs: [ armv7, armv7s, arm64 ]
-    symbols: [ _GSCurrentEventTimestamp, _GSInitialize, _GSSystemRootDirectory ]
-...

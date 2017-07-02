@@ -1,3 +1,22 @@
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
+        [iOS] Remove code only needed when building for iOS 9.x
+        https://bugs.webkit.org/show_bug.cgi?id=174068
+
+        Reviewed by Tim Horton.
+
+        * WebKitPrivateFrameworkStubs/iOS/9: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/AppSupport.framework: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/AppSupport.framework/AppSupport.tbd: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/AssertionServices.framework: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/AssertionServices.framework/AssertionServices.tbd: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/CorePDF.framework: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/CorePDF.framework/CorePDF.tbd: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/GraphicsServices.framework: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/GraphicsServices.framework/GraphicsServices.tbd: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/IOSurface.framework: Removed.
+        * WebKitPrivateFrameworkStubs/iOS/9/IOSurface.framework/IOSurface.tbd: Removed.
+
 2017-06-29  Jonathan Bedard  <jbedard@apple.com>
 
         Add WebKitSystemInterface for iOS 11

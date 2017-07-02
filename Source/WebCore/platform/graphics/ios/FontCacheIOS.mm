@@ -95,7 +95,6 @@ static RetainPtr<CTFontDescriptorRef> baseSystemFontDescriptor(FontSelectionValu
     return adoptCF(CTFontDescriptorCreateForUIType(fontType, size, nullptr));
 }
 
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
 static RetainPtr<NSDictionary> systemFontModificationAttributes(FontSelectionValue weight, bool italic)
 {
     RetainPtr<NSMutableDictionary> traitsDictionary = adoptNS([[NSMutableDictionary alloc] init]);
@@ -128,19 +127,12 @@ static RetainPtr<NSDictionary> systemFontModificationAttributes(FontSelectionVal
 
     return @{ static_cast<NSString *>(kCTFontTraitsAttribute) : traitsDictionary.get() };
 }
-#endif
 
 static RetainPtr<CTFontDescriptorRef> systemFontDescriptor(FontSelectionValue weight, bool bold, bool italic, float size)
 {
     RetainPtr<CTFontDescriptorRef> fontDescriptor = baseSystemFontDescriptor(weight, bold, size);
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
     RetainPtr<NSDictionary> attributes = systemFontModificationAttributes(weight, italic);
     return adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), static_cast<CFDictionaryRef>(attributes.get())));
-#else
-    if (italic)
-        return adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), kCTFontItalicTrait, kCTFontItalicTrait));
-    return fontDescriptor;
-#endif
 }
 
 RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& family, FontSelectionRequest request, float size)

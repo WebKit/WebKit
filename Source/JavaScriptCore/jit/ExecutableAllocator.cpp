@@ -41,12 +41,12 @@
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 
-#if PLATFORM(MAC) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000)
+#if PLATFORM(COCOA)
 #define HAVE_REMAP_JIT 1
 #endif
 
 #if HAVE(REMAP_JIT)
-#if CPU(ARM64) && PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 100000
+#if CPU(ARM64) && PLATFORM(IOS)
 #define USE_EXECUTE_ONLY_JIT_WRITE_FUNCTION 1
 #endif
 #endif
