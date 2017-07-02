@@ -1,5 +1,12 @@
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
+        <rdar://problem/33096441> r219055 broke non-iOS builds.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::lookupFallbackFont):
+
+2017-07-01  Dan Bernstein  <mitz@apple.com>
+
         [iOS] Remove code only needed when building for iOS 9.x
         https://bugs.webkit.org/show_bug.cgi?id=174068
 
