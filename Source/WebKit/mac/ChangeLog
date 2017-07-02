@@ -1,3 +1,15 @@
+2017-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Expose viewport-fit value to UIKit via viewport arguments dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=174071
+        <rdar://problem/33096620>
+
+        Reviewed by Wenson Hsieh.
+
+        * History/WebHistoryItem.mm:
+        * History/WebHistoryItemPrivate.h:
+        Add another dictionary key and three values.
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove code only needed when building for iOS 9.x

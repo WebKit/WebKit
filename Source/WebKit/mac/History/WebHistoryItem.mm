@@ -64,8 +64,13 @@ NSString *WebViewportMinimumScaleKey = @"minimum-scale";
 NSString *WebViewportMaximumScaleKey = @"maximum-scale";
 NSString *WebViewportUserScalableKey = @"user-scalable";
 NSString *WebViewportShrinkToFitKey  = @"shrink-to-fit";
+NSString *WebViewportFitKey          = @"viewport-fit";
 NSString *WebViewportWidthKey        = @"width";
 NSString *WebViewportHeightKey       = @"height";
+
+NSString *WebViewportFitAutoValue    = @"auto";
+NSString *WebViewportFitContainValue = @"contain";
+NSString *WebViewportFitCoverValue   = @"cover";
 
 static NSString *scaleKey = @"scale";
 static NSString *scaleIsInitialKey = @"scaleIsInitial";

@@ -36,6 +36,7 @@
 #import "WebFormDelegate.h"
 #import "WebFrameIOS.h"
 #import "WebFrameInternal.h"
+#import "WebHistoryItemInternal.h"
 #import "WebKitSystemInterface.h"
 #import "WebOpenPanelResultListener.h"
 #import "WebUIDelegate.h"
@@ -190,15 +191,29 @@ void WebChromeClientIOS::clearContentChangeObservers(WebCore::Frame& frame)
     }
 }
 
+static inline NSString *nameForViewportFitValue(ViewportFit value)
+{
+    switch (value) {
+    case ViewportFit::Auto:
+        return WebViewportFitAutoValue;
+    case ViewportFit::Contain:
+        return WebViewportFitContainValue;
+    case ViewportFit::Cover:
+        return WebViewportFitCoverValue;
+    }
+    return WebViewportFitAutoValue;
+}
+
 static inline NSDictionary *dictionaryForViewportArguments(const WebCore::ViewportArguments& arguments)
 {
-    return @{ @"initial-scale":@(arguments.zoom),
-              @"minimum-scale":@(arguments.minZoom),
-              @"maximum-scale":@(arguments.maxZoom),
-              @"user-scalable":@(arguments.userZoom),
-              @"shrink-to-fit":@(0),
-              @"width":@(arguments.width),
-              @"height":@(arguments.height) };
+    return @{ WebViewportInitialScaleKey: @(arguments.zoom),
+              WebViewportMinimumScaleKey: @(arguments.minZoom),
+              WebViewportMaximumScaleKey: @(arguments.maxZoom),
+              WebViewportUserScalableKey: @(arguments.userZoom),
+              WebViewportShrinkToFitKey: @(0),
+              WebViewportFitKey: nameForViewportFitValue(arguments.viewportFit),
+              WebViewportWidthKey: @(arguments.width),
+              WebViewportHeightKey: @(arguments.height) };
 }
 
 FloatSize WebChromeClientIOS::screenSize() const

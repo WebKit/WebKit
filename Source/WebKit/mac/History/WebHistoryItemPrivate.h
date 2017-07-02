@@ -34,8 +34,13 @@ extern NSString *WebViewportMinimumScaleKey;
 extern NSString *WebViewportMaximumScaleKey;
 extern NSString *WebViewportUserScalableKey;
 extern NSString *WebViewportShrinkToFitKey;
+extern NSString *WebViewportFitKey;
 extern NSString *WebViewportWidthKey;
 extern NSString *WebViewportHeightKey;
+
+extern NSString *WebViewportFitAutoValue;
+extern NSString *WebViewportFitContainValue;
+extern NSString *WebViewportFitCoverValue;
 #endif
 
 @interface WebHistoryItem (WebPrivate)

@@ -1,3 +1,21 @@
+2017-07-01  Tim Horton  <timothy_horton@apple.com>
+
+        Expose viewport-fit value to UIKit via viewport arguments dictionary
+        https://bugs.webkit.org/show_bug.cgi?id=174071
+        <rdar://problem/33096620>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebCoreSupport/WebChromeClientIOS.mm:
+        (nameForViewportFitValue):
+        (dictionaryForViewportArguments):
+        Make use of the named constants we already have for these; the code
+        that reads this dictionary uses them, so we might as well!
+
+        Add viewport-fit -> { auto, contain, cover } to the dictionary.
+
+        * WebKit.iOS.exp:
+
 2017-06-30  Daniel Bates  <dabates@apple.com>
 
         API::FrameInfo should know the web page that contains the frame; add API property webView to WKFrameInfo
