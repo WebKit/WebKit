@@ -1,3 +1,26 @@
+2017-07-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Prune unused uploaded files when the file quota is reached
+        https://bugs.webkit.org/show_bug.cgi?id=174086
+
+        Reviewed by Andreas Kling.
+
+        Made /privileged-api/uploaded-file and /api/upload-root automatically delete old uploaded files when
+        uploading a new file results in the file quota to be exceeded. Also added the notion of the total quota
+        to avoid running out of a disk when there are hundreds of users each uploading near their quota.
+
+        * config.json: Added a sample total disk quota of 100GB.
+        * public/include/uploaded-file-helpers.php:
+        (query_file_usage_for_user): Renamed from query_total_file_size.
+        (query_total_file_usage): Added.
+        (upload_file_in_transaction):
+        (delete_file): Added.
+        (prune_old_files): Added.
+        * server-tests/privileged-api-upload-file-tests.js: Added tests for deleting old uploaded files as well as
+        tests for the total quota.
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype.testConfig): Added uploadTotalQuotaInMB to the test configuration.
+
 2017-06-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         UploadedFile should include the file extension in its url

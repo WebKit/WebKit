@@ -78,6 +78,7 @@ class TestServer {
             },
             'uploadFileLimitInMB': 2,
             'uploadUserQuotaInMB': 5,
+            'uploadTotalQuotaInMB': 6,
             'uploadDirectory': Config.value('dataDirectory') + '/uploaded',
             'universalSlavePassword': null,
             'maintenanceMode': false,

@@ -5,13 +5,13 @@ require('../tools/js/v3-models.js');
 const assert = require('assert');
 global.FormData = require('form-data');
 
+const MockData = require('./resources/mock-data.js');
 const TestServer = require('./resources/test-server.js');
 const TemporaryFile = require('./resources/temporary-file.js').TemporaryFile;
+const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
 
 describe('/privileged-api/upload-file', function () {
-    this.timeout(5000);
-    TestServer.inject();
-
+    prepareServerTest(this);
     TemporaryFile.inject();
 
     it('should return "NotFileSpecified" when newFile not is specified', () => {
@@ -40,7 +40,7 @@ describe('/privileged-api/upload-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             uploadedFile = response['uploadedFile'];
-            return db.connect().then(() => db.selectAll('uploaded_files', 'id'));
+            return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
             assert.equal(rows.length, 1);
             assert.equal(rows[0].id, uploadedFile.id);
@@ -68,7 +68,7 @@ describe('/privileged-api/upload-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             uploadedFile2 = response['uploadedFile'];
-            return db.connect().then(() => db.selectAll('uploaded_files', 'id'));
+            return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
             assert.deepEqual(uploadedFile1, uploadedFile2);
             assert.equal(rows.length, 1);
@@ -97,7 +97,7 @@ describe('/privileged-api/upload-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             uploadedFile2 = response['uploadedFile'];
-            return db.connect().then(() => db.selectAll('uploaded_files', 'id'));
+            return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
             assert.deepEqual(uploadedFile1, uploadedFile2);
             assert.equal(rows.length, 1);
@@ -121,14 +121,14 @@ describe('/privileged-api/upload-file', function () {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             uploadedFile1 = response['uploadedFile'];
-            return db.connect().then(() => db.query(`UPDATE uploaded_files SET file_deleted_at = now() at time zone 'utc'`));
+            return db.query(`UPDATE uploaded_files SET file_deleted_at = now() at time zone 'utc'`);
         }).then(() => {
             return TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB);
         }).then((stream) => {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then((response) => {
             uploadedFile2 = response['uploadedFile'];
-            return db.connect().then(() => db.selectAll('uploaded_files', 'id'));
+            return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
             assert.notEqual(uploadedFile1.id, uploadedFile2.id);
             assert.equal(rows.length, 2);
@@ -159,7 +159,7 @@ describe('/privileged-api/upload-file', function () {
         return TemporaryFile.makeTemporaryFileOfSizeInMB('some.other.tar.gz', limitInMB).then((stream) => {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
         }).then(() => {
-            return db.connect().then(() => db.selectAll('uploaded_files', 'id'))
+            return db.selectAll('uploaded_files', 'id');
         }).then((rows) => {
             assert.equal(rows.length, 1);
             assert.equal(rows[0].size, limitInMB * 1024 * 1024);
@@ -170,7 +170,7 @@ describe('/privileged-api/upload-file', function () {
         });
     });
 
-    it('should return "FileSizeQuotaExceeded" when the total file size exceeds the quota allowed per user', () => {
+    it('should delete an old file when uploading the file would result in the quota being exceeded', () => {
         const db = TestServer.database();
         const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
         return TemporaryFile.makeTemporaryFileOfSizeInMB('some.dat', limitInMB, 'a').then((stream) => {
@@ -179,6 +179,143 @@ describe('/privileged-api/upload-file', function () {
             return TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB, 'b');
         }).then((stream) => {
             return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('another.dat', limitInMB, 'c');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then(() => {
+            return db.selectAll('uploaded_files', 'id');
+        }).then((rows) => {
+            assert.equal(rows.length, 3);
+            assert.equal(rows[0].filename, 'some.dat');
+            assert.notEqual(rows[0].deleted_at, null);
+            assert.equal(rows[1].filename, 'other.dat');
+            assert.equal(rows[1].deleted_at, null);
+            assert.equal(rows[2].filename, 'another.dat');
+            assert.equal(rows[2].deleted_at, null);
+        })
+    });
+
+    it('should return "FileSizeQuotaExceeded" when there is no file to delete', () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        let fileA;
+        return MockData.addMockData(db).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('some.patch', limitInMB, 'a');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((result) => {
+            fileA = result.uploadedFile;
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('other.patch', limitInMB, 'b');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((result) => {
+            const fileB = result.uploadedFile;
+            return Promise.all([
+                db.query('UPDATE commit_set_items SET commitset_patch_file = $1 WHERE commitset_set = 402 AND commitset_commit = 87832', [fileA.id]),
+                db.query('UPDATE commit_set_items SET commitset_patch_file = $1 WHERE commitset_set = 402 AND commitset_commit = 96336', [fileB.id])
+            ]);
+        }).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB, 'c');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true}).then(() => {
+                assert(false, 'should never be reached');
+            }, (error) => {
+                assert.equal(error, 'FileSizeQuotaExceeded');
+            });
+        });
+    });
+
+    it('should delete old patches that belong to finished build requests', () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        let fileA;
+        return MockData.addMockData(db, ['completed', 'completed', 'failed', 'canceled']).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('some.patch', limitInMB, 'a');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((result) => {
+            fileA = result.uploadedFile;
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('other.patch', limitInMB, 'b');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((result) => {
+            const fileB = result.uploadedFile;
+            return Promise.all([
+                db.query('UPDATE commit_set_items SET commitset_patch_file = $1 WHERE commitset_set = 402 AND commitset_commit = 87832', [fileA.id]),
+                db.query('UPDATE commit_set_items SET commitset_patch_file = $1 WHERE commitset_set = 402 AND commitset_commit = 96336', [fileB.id])
+            ]);
+        }).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('another.dat', limitInMB, 'c');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then(() => {
+            return db.selectAll('uploaded_files', 'id');
+        }).then((rows) => {
+            assert.equal(rows.length, 3);
+            assert.equal(rows[0].filename, 'some.patch');
+            assert.notEqual(rows[0].deleted_at, null);
+            assert.equal(rows[1].filename, 'other.patch');
+            assert.equal(rows[1].deleted_at, null);
+            assert.equal(rows[2].filename, 'another.dat');
+            assert.equal(rows[2].deleted_at, null);
+        });
+    });
+
+    it('should delete old build products that belong to finished build requests before deleting patches', () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        let fileA;
+        return MockData.addMockData(db, ['completed', 'completed', 'failed', 'canceled']).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('some.patch', limitInMB, 'a');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((result) => {
+            fileA = result.uploadedFile;
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('root.tar.gz', limitInMB, 'b');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((result) => {
+            const fileB = result.uploadedFile;
+            return db.query(`UPDATE commit_set_items SET (commitset_patch_file, commitset_root_file) = ($1, $2)
+                WHERE commitset_set = 402 AND commitset_commit = 87832`, [fileA.id, fileB.id]);
+        }).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('another.dat', limitInMB, 'c');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then(() => {
+            return db.selectAll('uploaded_files', 'id');
+        }).then((rows) => {
+            assert.equal(rows.length, 3);
+            assert.equal(rows[0].filename, 'some.patch');
+            assert.equal(rows[0].deleted_at, null);
+            assert.equal(rows[1].filename, 'root.tar.gz');
+            assert.notEqual(rows[1].deleted_at, null);
+            assert.equal(rows[2].filename, 'another.dat');
+            assert.equal(rows[2].deleted_at, null);
+        });
+    });
+
+    it('should return "FileSizeQuotaExceeded" when the total quota is exceeded due to files uploaded by other users', () => {
+        const db = TestServer.database();
+        const limitInMB = TestServer.testConfig().uploadFileLimitInMB;
+        let fileA;
+        return MockData.addMockData(db).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('some.dat', limitInMB, 'a');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB, 'b');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then(() => {
+            return db.query('UPDATE uploaded_files SET file_author = $1', ['someUser']);
+        }).then(() => {
+            return TemporaryFile.makeTemporaryFileOfSizeInMB('another.dat', limitInMB, 'c');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then(() => {
+            return db.query('UPDATE uploaded_files SET file_author = $1 WHERE file_author IS NULL', ['anotherUser']);
         }).then(() => {
             return TemporaryFile.makeTemporaryFileOfSizeInMB('other.dat', limitInMB, 'c');
         }).then((stream) => {
