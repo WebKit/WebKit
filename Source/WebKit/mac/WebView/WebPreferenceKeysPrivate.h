@@ -187,6 +187,8 @@
 #define WebKitCredentialManagementEnabledPreferenceKey @"WebKitCredentialManagementEnabled"
 #define WebKitMediaUserGestureInheritsFromDocument @"WebKitMediaUserGestureInheritsFromDocument"
 #define WebKitIsSecureContextAttributeEnabledPreferenceKey @"WebKitIsSecureContextAttributeEnabled"
+#define WebKitViewportFitEnabledPreferenceKey @"WebKitViewportFitEnabled"
+#define WebKitConstantPropertiesEnabledPreferenceKey @"WebKitConstantPropertiesEnabled"
 
 #if !TARGET_OS_IPHONE
 // These are private both because callers should be using the cover methods and because the

@@ -2986,6 +2986,9 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings.setResourceLoadStatisticsEnabled([preferences resourceLoadStatisticsEnabled]);
 
+    settings.setViewportFitEnabled([preferences viewportFitEnabled]);
+    settings.setConstantPropertiesEnabled([preferences constantPropertiesEnabled]);
+
 #if ENABLE(GAMEPAD)
     RuntimeEnabledFeatures::sharedFeatures().setGamepadsEnabled([preferences gamepadsEnabled]);
 #endif
