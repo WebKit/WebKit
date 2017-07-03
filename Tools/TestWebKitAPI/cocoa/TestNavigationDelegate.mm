@@ -45,6 +45,12 @@
         _didFinishNavigation(webView, navigation);
 }
 
+- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView
+{
+    if (_webContentProcessDidTerminate)
+        _webContentProcessDidTerminate(webView);
+}
+
 - (void)_webView:(WKWebView *)webView renderingProgressDidChange:(_WKRenderingProgressEvents)progressEvents
 {
     if (_renderingProgressDidChange)

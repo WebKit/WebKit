@@ -164,7 +164,20 @@ void NetworkProcessProxy::deleteWebsiteDataForOrigins(SessionID sessionID, Optio
     send(Messages::NetworkProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins, cookieHostNames, callbackID), 0);
 }
 
-void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
+void NetworkProcessProxy::networkProcessCrashed()
+{
+    clearCallbackStates();
+
+    Vector<Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>> pendingReplies;
+    pendingReplies.reserveInitialCapacity(m_pendingConnectionReplies.size());
+    for (auto& reply : m_pendingConnectionReplies)
+        pendingReplies.append(WTFMove(reply));
+
+    // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
+    m_processPool.networkProcessCrashed(*this, WTFMove(pendingReplies));
+}
+
+void NetworkProcessProxy::networkProcessFailedToLaunch()
 {
     // The network process must have crashed or exited, send any pending sync replies we might have.
     while (!m_pendingConnectionReplies.isEmpty()) {
@@ -178,7 +191,13 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
         notImplemented();
 #endif
     }
+    clearCallbackStates();
+    // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
+    m_processPool.networkProcessFailedToLaunch(*this);
+}
 
+void NetworkProcessProxy::clearCallbackStates()
+{
     for (const auto& callback : m_pendingFetchWebsiteDataCallbacks.values())
         callback(WebsiteData());
     m_pendingFetchWebsiteDataCallbacks.clear();
@@ -190,9 +209,6 @@ void NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch()
     for (const auto& callback : m_pendingDeleteWebsiteDataForOriginsCallbacks.values())
         callback();
     m_pendingDeleteWebsiteDataForOriginsCallbacks.clear();
-
-    // Tell the network process manager to forget about this network process proxy. This may cause us to be deleted.
-    m_processPool.networkProcessCrashed(this);
 }
 
 void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -223,7 +239,7 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
     m_tokenForHoldingLockedFiles = nullptr;
 
     // This may cause us to be deleted.
-    networkProcessCrashedOrFailedToLaunch();
+    networkProcessCrashed();
 }
 
 void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference, IPC::StringReference)
@@ -302,7 +318,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (IPC::Connection::identifierIsNull(connectionIdentifier)) {
-        networkProcessCrashedOrFailedToLaunch();
+        networkProcessFailedToLaunch();
         return;
     }
 

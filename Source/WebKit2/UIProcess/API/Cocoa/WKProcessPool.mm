@@ -394,6 +394,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     _processPool->terminateNetworkProcess();
 }
 
+- (pid_t)_networkProcessIdentifier
+{
+    return _processPool->networkProcessIdentifier();
+}
+
 - (void)_syncNetworkProcessCookies
 {
     _processPool->syncNetworkProcessCookies();

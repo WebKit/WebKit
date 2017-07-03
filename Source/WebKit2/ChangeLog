@@ -1,3 +1,37 @@
+2017-07-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebContent processes crash when the network process crashes with pending connection requests
+        https://bugs.webkit.org/show_bug.cgi?id=174065
+        <rdar://problem/30359835>
+
+        Reviewed by Tim Horton.
+
+        The bug was caused by the UI process clearing away pending network connection requests whenever the existing
+        network process crashed. This resulted in WebContent process killing itself inside ensureNetworkProcessConnection.
+
+        Fixed the bug by re-launching a new network process when this happens. We don't try to re-launch a new process
+        if the previous attempt to launch a network process had failed.
+
+        This patch splits NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch into networkProcessFailedToLaunch
+        and networkProcessCrashed to differentiate those two cases, and invoke the respective callbacks in WebProcessPool.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _networkProcessIdentifier]): Added.
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessCrashed): Added.
+        (WebKit::NetworkProcessProxy::networkProcessCrashedOrFailedToLaunch): Split into the two following functions.
+        (WebKit::NetworkProcessProxy::networkProcessFailedToLaunch): Extracted from networkProcessCrashedOrFailedToLaunch.
+        (WebKit::NetworkProcessProxy::clearCallbackStates): Extracted from networkProcessCrashedOrFailedToLaunch
+        (WebKit::NetworkProcessProxy::didClose): Call networkProcessCrashed.
+        (WebKit::NetworkProcessProxy::didFinishLaunching): Call networkProcessFailedToLaunch.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessCrashed): Start a new network process when there are pending connection
+        requests the crached network failed to fullfil.
+        (WebKit::WebProcessPool::networkProcessFailedToLaunch):
+        * UIProcess/WebProcessPool.h:
+
 2017-07-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Protect request and web view during gUM client callback

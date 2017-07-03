@@ -490,14 +490,25 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     return *m_networkProcess;
 }
 
-void WebProcessPool::networkProcessCrashed(NetworkProcessProxy* networkProcessProxy)
+void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessProxy, Vector<Ref<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>>&& pendingReplies)
+{
+    networkProcessFailedToLaunch(networkProcessProxy);
+    ASSERT(!m_networkProcess);
+    if (pendingReplies.isEmpty())
+        return;
+    auto& newNetworkProcess = ensureNetworkProcess();
+    for (auto& reply : pendingReplies)
+        newNetworkProcess.getNetworkProcessConnection(WTFMove(reply));
+}
+
+void WebProcessPool::networkProcessFailedToLaunch(NetworkProcessProxy& networkProcessProxy)
 {
     ASSERT(m_networkProcess);
-    ASSERT(networkProcessProxy == m_networkProcess.get());
+    ASSERT(&networkProcessProxy == m_networkProcess.get());
     m_didNetworkProcessCrash = true;
 
     for (auto& supplement : m_supplements.values())
-        supplement->processDidClose(networkProcessProxy);
+        supplement->processDidClose(&networkProcessProxy);
 
     m_client.networkProcessDidCrash(this);
 

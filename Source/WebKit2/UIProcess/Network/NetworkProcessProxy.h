@@ -86,7 +86,9 @@ private:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
 
-    void networkProcessCrashedOrFailedToLaunch();
+    void networkProcessFailedToLaunch();
+    void networkProcessCrashed();
+    void clearCallbackStates();
 
     // ProcessThrottlerClient
     void sendProcessWillSuspendImminently() override;

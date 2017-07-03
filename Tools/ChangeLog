@@ -1,3 +1,20 @@
+2017-07-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebContent processes crash when the network process crashes with pending connection requests
+        https://bugs.webkit.org/show_bug.cgi?id=174065
+        <rdar://problem/30359835>
+
+        Reviewed by Tim Horton.
+
+        Add a API to ensure UI process tries to relaunch a new network process when the network process
+        crashes with pending network connection requests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/NetworkProcessCrashWithPendingConnection.mm: Added.
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h:
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate webViewWebContentProcessDidTerminate:]): Added.
+
 2017-07-03  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Protect request and web view during gUM client callback
