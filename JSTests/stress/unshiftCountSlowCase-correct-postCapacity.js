@@ -1,4 +1,4 @@
-//@ runDefault
+//@ if $buildType == "release" then runDefault else skip end
 
 function temp(i) {
     let a1 = [{}];
