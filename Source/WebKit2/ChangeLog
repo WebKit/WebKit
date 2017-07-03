@@ -1,3 +1,20 @@
+2017-07-03  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Protect request and web view during gUM client callback
+        https://bugs.webkit.org/show_bug.cgi?id=174096
+        <rdar://problem/32833102>
+
+        Reviewed by Youenn Fablet.
+
+        Retain the message and WebView during asynchronous calls so they won't be 
+        released if a navigation happens during a call to the UA for getUserMedia 
+        or enumerateMediaDevices.
+
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::requestUserMediaAuthorizationForDevices):
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin):
+
 2017-07-03  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add an experimental setting to build with ccache
