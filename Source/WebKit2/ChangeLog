@@ -1,3 +1,17 @@
+2017-07-03  Brady Eidson  <beidson@apple.com>
+
+        Switch all WebKit API related to favicons from WebIconDatabase over to new WebCore::IconLoader mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=174073
+
+        Reviewed by Andy Estes.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::getLoadDecisionForIcons):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveIcon): Deleted.
+        (WebKit::WebFrameLoaderClient::registerForIconNotification): Deleted.
+        (WebKit::WebFrameLoaderClient::getLoadDecisionForIcon): Deleted.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2017-07-03  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove more unnecessary uses of the preprocessor in idl files

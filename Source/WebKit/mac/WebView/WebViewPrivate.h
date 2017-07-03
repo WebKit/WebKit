@@ -320,6 +320,9 @@ typedef enum {
 
 @interface WebView (WebPrivate)
 
++ (void)_setIconLoadingEnabled:(BOOL)enabled;
++ (BOOL)_isIconLoadingEnabled;
+
 - (WebInspector *)inspector;
 
 #if ENABLE_REMOTE_INSPECTOR

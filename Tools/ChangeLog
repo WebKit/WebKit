@@ -1,3 +1,16 @@
+2017-07-03  Brady Eidson  <beidson@apple.com>
+
+        Switch all WebKit API related to favicons from WebIconDatabase over to new WebCore::IconLoader mechanism.
+        https://bugs.webkit.org/show_bug.cgi?id=174073
+
+        Reviewed by Andy Estes.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setIconDatabaseEnabled): Call new SPI for this setting instead of WebIconDatabase stuff.
+
+        * TestWebKitAPI/Tests/mac/WebViewIconLoading.mm:
+        (-[MainFrameIconKVO observeValueForKeyPath:ofObject:change:context:]):
+
 2017-07-03  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219083.

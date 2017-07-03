@@ -146,12 +146,9 @@ static NSImage *imageFromData(NSData *data)
     ASSERT([keyPath isEqualToString:MainFrameIconKeyPath]);
     ASSERT([[object class] isEqual:[WebView class]]);
 
-    // FIXME: As mentioned in a FIXME in WebKit1 code when sending these KVO events, the old icon is already lost by the time we send the event.
-    // The below line should actually be "EXPECT_TRUE" once that bug is fixed.
-    EXPECT_FALSE([[[change objectForKey:NSKeyValueChangeOldKey] TIFFRepresentation] isEqual:[oldImage TIFFRepresentation]]);
+    EXPECT_TRUE([[[change objectForKey:NSKeyValueChangeOldKey] TIFFRepresentation] isEqual:[oldImage TIFFRepresentation]]);
     EXPECT_TRUE([[[change objectForKey:NSKeyValueChangeNewKey] TIFFRepresentation] isEqual:[expectedImage TIFFRepresentation]]);
     EXPECT_TRUE([[((WebView *)object).mainFrameIcon TIFFRepresentation] isEqual:[expectedImage TIFFRepresentation]]);
-
 }
 
 @end

@@ -328,6 +328,7 @@ private:
 
 #if !PLATFORM(IOS)
     NSPasteboard *insertionPasteboard;
+    RetainPtr<NSImage> _mainFrameIcon;
 #endif
             
     NSSize lastLayoutSize;

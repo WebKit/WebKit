@@ -106,7 +106,6 @@ private:
     void dispatchDidPopStateWithinPage() final;
     
     void dispatchWillClose() final;
-    void dispatchDidReceiveIcon() final;
     void dispatchDidStartProvisionalLoad() final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
     void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>) final;
@@ -221,8 +220,6 @@ private:
     
     void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld&) final;
 
-    void registerForIconNotification(bool listen) final;
-
 #if PLATFORM(IOS)
     bool shouldLoadMediaElementURL(const WebCore::URL&) const final;
 #endif
@@ -252,6 +249,12 @@ private:
 #endif
 
     void prefetchDNS(const String&) final;
+
+    bool useIconLoadingClient() final { return true; }
+    void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
+    void finishedLoadingIcon(uint64_t, WebCore::SharedBuffer*) final;
+
+    uint64_t m_activeIconLoadCallbackID { 0 };
 
     RetainPtr<WebFrame> m_webFrame;
 

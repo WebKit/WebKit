@@ -96,7 +96,6 @@ private:
     void dispatchDidReplaceStateWithinPage() final;
     void dispatchDidPopStateWithinPage() final;
     void dispatchWillClose() final;
-    void dispatchDidReceiveIcon() final;
     void dispatchDidStartProvisionalLoad() final;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) final;
     void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>) final;
@@ -220,8 +219,6 @@ private:
     void dispatchWillDisconnectDOMWindowExtensionFromGlobalObject(WebCore::DOMWindowExtension*) final;
     void dispatchDidReconnectDOMWindowExtensionToGlobalObject(WebCore::DOMWindowExtension*) final;
     void dispatchWillDestroyGlobalObjectForDOMWindowExtension(WebCore::DOMWindowExtension*) final;
-
-    void registerForIconNotification(bool listen = true) final;
     
 #if PLATFORM(COCOA)
     RemoteAXObjectRef accessibilityRemoteObject() final;
@@ -260,7 +257,7 @@ private:
     void didRestoreScrollPosition() final;
 
     bool useIconLoadingClient() final;
-    void getLoadDecisionForIcon(const WebCore::LinkIcon&, uint64_t callbackID) final;
+    void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
     void finishedLoadingIcon(uint64_t callbackIdentifier, WebCore::SharedBuffer*) final;
 
     WebFrame* m_frame;

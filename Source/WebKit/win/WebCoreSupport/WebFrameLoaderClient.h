@@ -87,7 +87,6 @@ public:
     void dispatchDidReplaceStateWithinPage() override;
     void dispatchDidPopStateWithinPage() override;
     void dispatchWillClose() override;
-    void dispatchDidReceiveIcon() override;
     void dispatchDidStartProvisionalLoad() override;
     void dispatchDidReceiveTitle(const WebCore::StringWithDirection&) override;
     void dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>) override;
@@ -197,8 +196,6 @@ public:
 
     COMPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction&&);
     void receivedPolicyDecision(WebCore::PolicyAction);
-
-    void registerForIconNotification(bool listen) override;
 
     bool shouldAlwaysUsePluginDocument(const WTF::String& mimeType) const override;
 

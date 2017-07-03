@@ -126,11 +126,6 @@ OBJC_CLASS NSTextAlternatives;
 
 - (BOOL)_becomingFirstResponderFromOutside;
 
-#if ENABLE(ICONDATABASE)
-- (void)_registerForIconNotification:(BOOL)listen;
-- (void)_dispatchDidReceiveIconFromWebFrame:(WebFrame *)webFrame;
-#endif
-
 - (BOOL)_needsOneShotDrawingSynchronization;
 - (void)_setNeedsOneShotDrawingSynchronization:(BOOL)needsSynchronization;
 - (void)_scheduleCompositingLayerFlush;
@@ -326,4 +321,7 @@ OBJC_CLASS NSTextAlternatives;
 - (void)showFormValidationMessage:(NSString *)message withAnchorRect:(NSRect)anchorRect;
 - (void)hideFormValidationMessage;
 
+#if !PLATFORM(IOS)
+- (void)_setMainFrameIcon:(NSImage *)icon;
+#endif
 @end

@@ -1673,10 +1673,14 @@ void DocumentLoader::startIconLoading()
     if (!hasFavicon)
         icons.append({ m_frame->document()->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt });
 
+    Vector<std::pair<WebCore::LinkIcon&, uint64_t>> iconDecisions;
+    iconDecisions.reserveInitialCapacity(icons.size());
     for (auto& icon : icons) {
         auto result = m_iconsPendingLoadDecision.add(nextIconCallbackID++, icon);
-        m_frame->loader().client().getLoadDecisionForIcon(icon, result.iterator->key);
+        iconDecisions.uncheckedAppend({ icon, result.iterator->key });
     }
+
+    m_frame->loader().client().getLoadDecisionForIcons(iconDecisions);
 }
 
 void DocumentLoader::didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID)

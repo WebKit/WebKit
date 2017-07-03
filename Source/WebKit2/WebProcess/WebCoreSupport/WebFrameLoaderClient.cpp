@@ -402,11 +402,6 @@ void WebFrameLoaderClient::dispatchWillClose()
     notImplemented();
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveIcon()
-{
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebIconDatabase::DidReceiveIconForPageURL(m_frame->url()), 0);
-}
-
 void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
 {
     WebPage* webPage = m_frame->page();
@@ -1666,11 +1661,6 @@ void WebFrameLoaderClient::dispatchWillDestroyGlobalObjectForDOMWindowExtension(
     webPage->injectedBundleLoaderClient().willDestroyGlobalObjectForDOMWindowExtension(*webPage, extension);
 }
 
-void WebFrameLoaderClient::registerForIconNotification(bool /*listen*/)
-{
-    notImplemented();
-}
-
 #if PLATFORM(COCOA)
     
 RemoteAXObjectRef WebFrameLoaderClient::accessibilityRemoteObject() 
@@ -1794,10 +1784,14 @@ bool WebFrameLoaderClient::useIconLoadingClient()
     return m_useIconLoadingClient;
 }
 
-void WebFrameLoaderClient::getLoadDecisionForIcon(const LinkIcon& icon, uint64_t callbackID)
+void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>& icons)
 {
-    if (WebPage* webPage { m_frame->page() })
-        webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon, CallbackID::fromInteger(callbackID)));
+    auto* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    for (auto& icon : icons)
+        webPage->send(Messages::WebPageProxy::GetLoadDecisionForIcon(icon.first, CallbackID::fromInteger(icon.second)));
 }
 
 void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer* data)

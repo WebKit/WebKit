@@ -158,7 +158,7 @@ public:
     virtual void dispatchDidReplaceStateWithinPage() = 0;
     virtual void dispatchDidPopStateWithinPage() = 0;
     virtual void dispatchWillClose() = 0;
-    virtual void dispatchDidReceiveIcon() = 0;
+    virtual void dispatchDidReceiveIcon() { }
     virtual void dispatchDidStartProvisionalLoad() = 0;
     virtual void dispatchDidReceiveTitle(const StringWithDirection&) = 0;
     virtual void dispatchDidCommitLoad(std::optional<HasInsecureContent>) = 0;
@@ -286,7 +286,7 @@ public:
 
     virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&) = 0;
 
-    virtual void registerForIconNotification(bool listen = true) = 0;
+    virtual void registerForIconNotification() { }
 
 #if PLATFORM(COCOA)
     // Allow an accessibility object to retrieve a Frame parent if there's no PlatformWidget.
@@ -354,7 +354,7 @@ public:
     virtual void didRestoreScrollPosition() { }
 
     virtual bool useIconLoadingClient() { return false; }
-    virtual void getLoadDecisionForIcon(const LinkIcon&, uint64_t) { }
+    virtual void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) { }
     virtual void finishedLoadingIcon(uint64_t, SharedBuffer*) { }
 };
 
