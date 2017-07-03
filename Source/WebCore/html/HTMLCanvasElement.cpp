@@ -333,6 +333,8 @@ CanvasRenderingContext* HTMLCanvasElement::getContextWebGPU(const String& type)
         if (m_context) {
             // Need to make sure a RenderLayer and compositing layer get created for the Canvas
             invalidateStyleAndLayerComposition();
+
+            InspectorInstrumentation::didCreateCanvasRenderingContext(*this);
         }
     }
 

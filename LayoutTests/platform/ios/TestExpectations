@@ -35,6 +35,7 @@ http/tests/fullscreen
 
 # WebGPU is not enabled on iOS Simulator.
 fast/canvas/webgpu
+inspector/canvas/create-context-webgpu.html [ Skip ]
 
 # Encrypted Media Extensions are not enabled
 media/encrypted-media/

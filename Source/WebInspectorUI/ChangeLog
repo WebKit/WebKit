@@ -1,3 +1,14 @@
+2017-07-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Support listing WebGL2 and WebGPU contexts
+        https://bugs.webkit.org/show_bug.cgi?id=173396
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Canvas.js:
+        (WebInspector.Canvas.fromPayload):
+        (WebInspector.Canvas.displayNameForContextType):
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         [macOS] Remove code only needed when building for OS X Yosemite

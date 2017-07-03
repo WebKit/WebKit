@@ -1,3 +1,39 @@
+2017-07-03  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Support listing WebGL2 and WebGPU contexts
+        https://bugs.webkit.org/show_bug.cgi?id=173396
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/create-canvas-contexts-expected.txt: Removed.
+        * inspector/canvas/create-canvas-contexts.html: Removed.
+        * inspector/canvas/create-context-2d-expected.txt: Added.
+        * inspector/canvas/create-context-2d.html: Added.
+        * inspector/canvas/create-context-webgl-expected.txt: Added.
+        * inspector/canvas/create-context-webgl.html: Added.
+        * inspector/canvas/create-context-webgl2-expected.txt: Added.
+        * inspector/canvas/create-context-webgl2.html: Added.
+        * inspector/canvas/create-context-webgpu-expected.txt: Added.
+        * inspector/canvas/create-context-webgpu.html: Added.
+        * inspector/canvas/resources/create-context-utilities.css: Added.
+        (.canvas):
+        * inspector/canvas/resources/create-context-utilities.js: Added.
+        (createAttachedCanvas):
+        (createDetachedCanvas):
+        (createCSSCanvas):
+        (destroyCanvases):
+        (TestPage.registerInitializer.awaitCanvasAdded):
+        (TestPage.registerInitializer.awaitCanvasRemoved):
+        (TestPage.registerInitializer.window.initializeTestSuite):
+        (TestPage.registerInitializer.window.addSimpleTestCase):
+        (TestPage.registerInitializer.window.addCSSCanvasTestCase):
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        Split the existing canvas lifecycle tests into one for each context type. This allows
+        platforms that don't support certain context types to ignore just those tests (e.g. WebGPU).
+
 2017-07-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: role="none" (or presentation) does not work on iframes

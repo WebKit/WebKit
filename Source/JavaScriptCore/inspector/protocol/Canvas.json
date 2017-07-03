@@ -1,7 +1,7 @@
 {
     "domain": "Canvas",
     "availability": "web",
-    "description": "Canvas domain allows tracking of 2D and WebGL canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
+    "description": "Canvas domain allows tracking of canvases that have an associated graphics context. Tracks canvases in the DOM and CSS canvases created with -webkit-canvas.",
     "types": [
         {
             "id": "CanvasId",
@@ -11,7 +11,7 @@
         {
             "id": "ContextType",
             "type": "string",
-            "enum": ["canvas-2d", "webgl"],
+            "enum": ["canvas-2d", "webgl", "webgl2", "webgpu"],
             "description": "The type of rendering context backing the canvas element."
         },
         {
@@ -31,7 +31,7 @@
         {
             "id": "Canvas",
             "type": "object",
-            "description": "Information about a 2D/WebGL canvas for which a rendering context has been created.",
+            "description": "Information about a canvas for which a rendering context has been created.",
             "properties": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
                 { "name": "contextType", "$ref": "ContextType", "description": "The type of rendering context backing the canvas." },

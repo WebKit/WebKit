@@ -54,6 +54,12 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         case CanvasAgent.ContextType.WebGL:
             contextType = WebInspector.Canvas.ContextType.WebGL;
             break;
+        case CanvasAgent.ContextType.WebGL2:
+            contextType = WebInspector.Canvas.ContextType.WebGL2;
+            break;
+        case CanvasAgent.ContextType.WebGPU:
+            contextType = WebInspector.Canvas.ContextType.WebGPU;
+            break;
         default:
             console.error("Invalid canvas context type", payload.contextType);
         }
@@ -74,6 +80,10 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
             return WebInspector.UIString("2D");
         case WebInspector.Canvas.ContextType.WebGL:
             return WebInspector.unlocalizedString("WebGL");
+        case WebInspector.Canvas.ContextType.WebGL2:
+            return WebInspector.unlocalizedString("WebGL2");
+        case WebInspector.Canvas.ContextType.WebGPU:
+            return WebInspector.unlocalizedString("WebGPU");
         default:
             console.error("Invalid canvas context type", contextType);
         }
@@ -175,6 +185,8 @@ WebInspector.Canvas.CSSCanvasNameCookieKey = "canvas-css-canvas-name";
 WebInspector.Canvas.ContextType = {
     Canvas2D: "canvas-2d",
     WebGL: "webgl",
+    WebGL2: "webgl2",
+    WebGPU: "webgpu",
 };
 
 WebInspector.Canvas.ResourceSidebarType = "resource-type-canvas";

@@ -43,6 +43,8 @@ _ALWAYS_SPECIALCASED_ENUM_VALUE_LOOKUP_TABLE = dict([(s.upper(), s) for s in _AL
 
 _ENUM_IDENTIFIER_RENAME_MAP = {
     'webgl': 'WebGL',  # Canvas.ContextType.webgl
+    'webgl2': 'WebGL2',  # Canvas.ContextType.webgl2
+    'webgpu': 'WebGPU',  # Canvas.ContextType.webgpu
 }
 
 # These objects are built manually by creating and setting InspectorValues.

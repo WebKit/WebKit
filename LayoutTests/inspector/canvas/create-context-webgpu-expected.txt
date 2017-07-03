@@ -1,0 +1,20 @@
+Test that CanvasManager tracks creation and destruction of WebGPU canvases.
+
+
+== Running test suite: Canvas.CreateContextWebGPU
+-- Running test case: Canvas.CreateContextWebGPU.NoCanvases
+PASS: CanvasManager should have no canvases.
+
+-- Running test case: Canvas.CreateContextWebGPU.Attached
+PASS: Canvas context should be WebGPU.
+PASS: Removed canvas has expected ID.
+
+-- Running test case: Canvas.CreateContextWebGPU.Detached
+PASS: Canvas context should be WebGPU.
+PASS: Removed canvas has expected ID.
+
+-- Running test case: Canvas.CreateContextWebGPU.CSSCanvas
+Create CSS canvas from -webkit-canvas(css-canvas).
+PASS: Canvas context should be WebGPU.
+PASS: Canvas name should equal the identifier passed to -webkit-canvas.
+

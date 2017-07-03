@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="resources/create-context-utilities.css">
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/create-context-utilities.js"></script>
+<script>
+function test() {
+    let suite = initializeTestSuite("Canvas.CreateContext2D");
+
+    addSimpleTestCase({
+        name: "Attached",
+        expression: `createAttachedCanvas("2d")`,
+        contextType: WebInspector.Canvas.ContextType.Canvas2D,
+    });
+
+    addSimpleTestCase({
+        name: "Detached",
+        expression: `createDetachedCanvas("2d")`,
+        contextType: WebInspector.Canvas.ContextType.Canvas2D,
+    });
+
+    addCSSCanvasTestCase(WebInspector.Canvas.ContextType.Canvas2D);
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Test that CanvasManager tracks creation and destruction of 2D canvases.</p>
+</body>
+</html>

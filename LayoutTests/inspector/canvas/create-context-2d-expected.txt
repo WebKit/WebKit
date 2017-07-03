@@ -1,0 +1,20 @@
+Test that CanvasManager tracks creation and destruction of 2D canvases.
+
+
+== Running test suite: Canvas.CreateContext2D
+-- Running test case: Canvas.CreateContext2D.NoCanvases
+PASS: CanvasManager should have no canvases.
+
+-- Running test case: Canvas.CreateContext2D.Attached
+PASS: Canvas context should be 2D.
+PASS: Removed canvas has expected ID.
+
+-- Running test case: Canvas.CreateContext2D.Detached
+PASS: Canvas context should be 2D.
+PASS: Removed canvas has expected ID.
+
+-- Running test case: Canvas.CreateContext2D.CSSCanvas
+Create CSS canvas from -webkit-canvas(css-canvas).
+PASS: Canvas context should be 2D.
+PASS: Canvas name should equal the identifier passed to -webkit-canvas.
+

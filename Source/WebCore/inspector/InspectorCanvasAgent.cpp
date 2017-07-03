@@ -34,10 +34,22 @@
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "MainFrame.h"
-#include "WebGLContextAttributes.h"
-#include "WebGLRenderingContextBase.h"
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InspectorProtocolObjects.h>
+
+#if ENABLE(WEBGL)
+#include "WebGLContextAttributes.h"
+#include "WebGLRenderingContext.h"
+#include "WebGLRenderingContextBase.h"
+#endif
+
+#if ENABLE(WEBGL2)
+#include "WebGL2RenderingContext.h"
+#endif
+
+#if ENABLE(WEBGPU)
+#include "WebGPURenderingContext.h"
+#endif
 
 using namespace Inspector;
 
@@ -259,11 +271,23 @@ Ref<Inspector::Protocol::Canvas::Canvas> InspectorCanvasAgent::buildObjectForCan
     CanvasRenderingContext* context = canvasElement.renderingContext();
 
     Inspector::Protocol::Canvas::ContextType contextType;
-    if (context->is2d())
+    if (is<CanvasRenderingContext2D>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::Canvas2D;
-    else {
-        ASSERT(context->isWebGL());
+#if ENABLE(WEBGL)
+    else if (is<WebGLRenderingContext>(context))
         contextType = Inspector::Protocol::Canvas::ContextType::WebGL;
+#endif
+#if ENABLE(WEBGL2)
+    else if (is<WebGL2RenderingContext>(context))
+        contextType = Inspector::Protocol::Canvas::ContextType::WebGL2;
+#endif
+#if ENABLE(WEBGPU)
+    else if (is<WebGPURenderingContext>(context))
+        contextType = Inspector::Protocol::Canvas::ContextType::WebGPU;
+#endif
+    else {
+        ASSERT_NOT_REACHED();
+        contextType = Inspector::Protocol::Canvas::ContextType::Canvas2D;
     }
 
     auto canvas = Inspector::Protocol::Canvas::Canvas::create()
