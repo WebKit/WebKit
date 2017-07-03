@@ -1,5 +1,24 @@
 2017-07-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Roots uploaded by bots don't get author specified properly
+        https://bugs.webkit.org/show_bug.cgi?id=174087
+
+        Reviewed by Andreas Kling.
+
+        When a root file is uploaded from the bot, we manually specify the remote user to upload_file_in_transaction.
+        However, this was getting ignored by create_uploaded_file_from_form_data since it was always calling
+        remote_user_name to get the user name off of $_SERVER.
+
+        Fixed the bug by passing in the user name from upload_file_in_transaction to create_uploaded_file_from_form_data.
+
+        * public/include/uploaded-file-helpers.php:
+        (create_uploaded_file_from_form_data): Take the remote user as an argument instead of calling remote_user_name.
+        (upload_file_in_transaction):
+        * server-tests/api-upload-root-tests.js: Updated an existing test cases to make sure root files' author is set.
+        (createTestGroupWihPatch): Manually override the author of a test group for testing.
+
+2017-07-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Prune unused uploaded files when the file quota is reached
         https://bugs.webkit.org/show_bug.cgi?id=174086
 

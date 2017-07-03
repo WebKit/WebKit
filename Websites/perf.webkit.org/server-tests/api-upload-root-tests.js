@@ -48,7 +48,8 @@ function createTestGroupWihPatch()
         ]
     };
 
-    return MockData.addMockData(TestServer.database()).then(() => {
+    const db = TestServer.database();
+    return MockData.addMockData(db).then(() => {
         return Promise.all([TemporaryFile.makeTemporaryFile('patch.dat', 'patch file'), Manifest.fetch()]);
     }).then((result) => {
         const patchFile = result[0];
@@ -67,7 +68,9 @@ function createTestGroupWihPatch()
         return TestGroup.createWithTask('custom task', Platform.findById(MockData.somePlatformId()), someTest, 'some group', 2, [set1, set2]);
     }).then((task) => {
         return TestGroup.findAllByTask(task.id())[0];
-    })
+    }).then((group) => {
+        return db.query('UPDATE analysis_test_groups SET testgroup_author = $1', ['someUser']).then(() => group);
+    });
 }
 
 describe('/api/upload-root/', function () {
@@ -247,6 +250,7 @@ describe('/api/upload-root/', function () {
             const uploadedRootRawData = response['uploadedFile'];
             uploadedRoot = UploadedFile.ensureSingleton(uploadedRootRawData.id, uploadedRootRawData);
             assert.equal(uploadedRoot.filename(), 'some.dat');
+            assert.equal(uploadedRoot.author(), 'someUser');
             return TestGroup.fetchForTask(buildRequest.testGroup().task().id(), true);
         }).then((testGroups) => {
 
@@ -382,6 +386,7 @@ describe('/api/upload-root/', function () {
             const uploadedRootRawData = response['uploadedFile'];
             uploadedRoot = UploadedFile.ensureSingleton(uploadedRootRawData.id, uploadedRootRawData);
             assert.equal(uploadedRoot.filename(), 'some.dat');
+            assert.equal(uploadedRoot.author(), 'someUser');
             return TestGroup.fetchForTask(buildRequest.testGroup().task().id(), true);
         }).then((testGroups) => {
 

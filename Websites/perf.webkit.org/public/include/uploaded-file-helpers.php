@@ -63,7 +63,7 @@ function query_total_file_usage($db)
     return intval($count_result[0]["sum"]);
 }
 
-function create_uploaded_file_from_form_data($input_file)
+function create_uploaded_file_from_form_data($input_file, $remote_user)
 {
     $file_sha256 = hash_file('sha256', $input_file['tmp_name']);
     if (!$file_sha256)
@@ -77,7 +77,7 @@ function create_uploaded_file_from_form_data($input_file)
     }
 
     return array(
-        'author' => remote_user_name(),
+        'author' => $remote_user,
         'filename' => $input_file['name'],
         'extension' => $file_extension,
         'mime' => $input_file['type'], // Sanitize MIME types.
@@ -97,7 +97,7 @@ function upload_file_in_transaction($db, $input_file, $remote_user, $additional_
             exit_with_error('FileSizeQuotaExceeded');
     }
 
-    $uploaded_file = create_uploaded_file_from_form_data($input_file);
+    $uploaded_file = create_uploaded_file_from_form_data($input_file, $remote_user);
 
     $db->begin_transaction();
     $file_row = $db->select_or_insert_row('uploaded_files', 'file',
