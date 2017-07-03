@@ -1,3 +1,17 @@
+2017-07-03  Jonathan Bedard  <jbedard@apple.com>
+
+        Run webgl tests on iOS ports
+        https://bugs.webkit.org/show_bug.cgi?id=173000
+
+        Unreviewed test gardening.
+
+        * platform/ios-device/TestExpectations: Garden webgl tests.
+        * platform/ios-simulator/TestExpectations: Ditto.
+        * platform/ios/TestExpectations: Ditto.
+        * platform/ios/fast/canvas/webgl: Added.
+        * platform/ios/fast/canvas/webgl/css-webkit-canvas-expected.txt: Added.
+        * platform/ios/fast/canvas/webgl/css-webkit-canvas-repaint-expected.txt: Added.
+
 2017-07-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r218910): Crash inside textMarkerDataForFirstPositionInTextControl
