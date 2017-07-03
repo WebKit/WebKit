@@ -65,7 +65,6 @@ public:
     // Returns nullptr if thread creation failed.
     // The thread name must be a literal since on some platforms it's passed in to the thread.
     WTF_EXPORT_PRIVATE static RefPtr<Thread> create(const char* threadName, Function<void()>&&);
-    WTF_EXPORT_PRIVATE static RefPtr<Thread> create(ThreadFunction entryPoint, void* data, const char* name);
 
     // Returns Thread object.
     WTF_EXPORT_PRIVATE static Thread& current();

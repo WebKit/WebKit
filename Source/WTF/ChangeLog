@@ -1,3 +1,12 @@
+2017-07-03  Daewoong Jang  <daewoong.jang@navercorp.com>
+
+        Remove an unused function export
+        https://bugs.webkit.org/show_bug.cgi?id=174084
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/Threading.h:
+
 2017-07-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WTF::Thread should have the threads stack bounds.
