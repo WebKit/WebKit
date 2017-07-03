@@ -121,6 +121,7 @@ struct FontDescriptionKey {
 private:
     static std::array<unsigned, 2> makeFlagsKey(const FontDescription& description)
     {
+        static_assert(USCRIPT_CODE_LIMIT < 0x1000, "Script code must fit in an unsigned along with the other flags");
         unsigned first = static_cast<unsigned>(description.script()) << 13
             | static_cast<unsigned>(description.fontStyleAxis() == FontStyleAxis::slnt) << 12
             | static_cast<unsigned>(description.opticalSizing()) << 11

@@ -1,3 +1,15 @@
+2017-07-03  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r219103.
+
+        Caused multiple build failures.
+
+        Reverted changeset:
+
+        "Remove copy of ICU headers from WebKit"
+        https://bugs.webkit.org/show_bug.cgi?id=116407
+        http://trac.webkit.org/changeset/219103
+
 2017-07-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove copy of ICU headers from WebKit
