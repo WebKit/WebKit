@@ -44,12 +44,11 @@ WTFThreadData::WTFThreadData()
     , m_currentAtomicStringTable(0)
     , m_defaultAtomicStringTable(0)
     , m_atomicStringTableDestructor(0)
-    , m_stackBounds(StackBounds::currentThreadStackBounds())
 #if ENABLE(STACK_STATS)
     , m_stackStats()
 #endif
     , m_savedStackPointerAtVMEntry(0)
-    , m_savedLastStackTop(stack().origin())
+    , m_savedLastStackTop(Thread::current().stack().origin())
 {
     AtomicStringTable::create(*this);
     m_currentAtomicStringTable = m_defaultAtomicStringTable;

@@ -1,3 +1,43 @@
+2017-07-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF::Thread should have the threads stack bounds.
+        https://bugs.webkit.org/show_bug.cgi?id=173975
+
+        Reviewed by Mark Lam.
+
+        We move StackBounds from WTFThreadData to WTF::Thread.
+        One important thing is that we should make valid StackBounds
+        visible to Thread::create() caller. When the caller get
+        WTF::Thread from Thread::create(), this WTF::Thread should
+        have a valid StackBounds. But StackBounds information can be
+        retrived only in the WTF::Thread's thread itself.
+
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::emptyBounds):
+        (WTF::StackBounds::StackBounds):
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::PerThreadStats::PerThreadStats):
+        * wtf/Threading.cpp:
+        (WTF::threadEntryPoint):
+        (WTF::Thread::create):
+        (WTF::Thread::currentMayBeNull):
+        (WTF::Thread::initialize):
+        * wtf/Threading.h:
+        (WTF::Thread::stack):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::Thread::current):
+        (WTF::initializeCurrentThreadEvenIfNonWTFCreated): Deleted.
+        (WTF::Thread::currentMayBeNull): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::Thread::initializeCurrentThreadInternal):
+        (WTF::Thread::current):
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::stack): Deleted.
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove code only needed when building for iOS 9.x

@@ -40,7 +40,7 @@ class StackBounds {
     const static size_t s_defaultAvailabilityDelta = 64 * 1024;
 
 public:
-    static StackBounds emptyBounds() { return StackBounds(); }
+    static constexpr StackBounds emptyBounds() { return StackBounds(); }
 
     static StackBounds currentThreadStackBounds()
     {
@@ -127,9 +127,9 @@ public:
     }
 
 private:
-    StackBounds()
-        : m_origin(0)
-        , m_bound(0)
+    constexpr StackBounds()
+        : m_origin(nullptr)
+        , m_bound(nullptr)
     {
     }
 

@@ -38,6 +38,7 @@
 #include <wtf/Function.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StackBounds.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
@@ -68,7 +69,7 @@ public:
 
     // Returns Thread object.
     WTF_EXPORT_PRIVATE static Thread& current();
-    WTF_EXPORT_PRIVATE static Thread* currentMayBeNull();
+    static Thread* currentMayBeNull();
 
     // Returns ThreadIdentifier directly. It is useful if the user only cares about identity
     // of threads. At that time, users should know that holding this ThreadIdentifier does not ensure
@@ -109,6 +110,7 @@ public:
     // Called in the thread during initialization.
     // Helpful for platforms where the thread name must be set from within the thread.
     static void initializeCurrentThreadInternal(const char* threadName);
+    static void initializeCurrentThreadEvenIfNonWTFCreated();
 
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
@@ -126,6 +128,11 @@ public:
 
     static void initializePlatformThreading();
 
+    const StackBounds& stack() const
+    {
+        return m_stack;
+    }
+
 #if OS(DARWIN)
     mach_port_t machThread() { return m_platformThread; }
 #endif
@@ -141,6 +148,7 @@ protected:
 #else
     void establish(HANDLE, ThreadIdentifier);
 #endif
+    void initialize();
 
 #if USE(PTHREADS) && !OS(DARWIN)
     static void signalHandlerSuspendResume(int, siginfo_t*, void* ucontext);
@@ -172,6 +180,7 @@ protected:
     std::mutex m_mutex;
     ThreadIdentifier m_id { 0 };
     JoinableState m_joinableState { Joinable };
+    StackBounds m_stack { StackBounds::emptyBounds() };
     bool m_didExit { false };
 #if USE(PTHREADS)
     pthread_t m_handle;
