@@ -13,6 +13,10 @@
                 });
             }
 
+            function pauseVideo() {
+                document.getElementById("video").pause();
+            }
+
             function videoDidPause() {
                 try {
                     window.webkit.messageHandlers.testHandler.postMessage("on-pause");

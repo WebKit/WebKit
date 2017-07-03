@@ -2835,7 +2835,7 @@ KeyboardUIMode WebPage::keyboardUIMode()
     return static_cast<KeyboardUIMode>((fullKeyboardAccessEnabled ? KeyboardAccessFull : KeyboardAccessDefault) | (m_tabToLinks ? KeyboardAccessTabsToLinks : 0));
 }
 
-void WebPage::runJavaScriptInMainFrame(const String& script, CallbackID callbackID)
+void WebPage::runJavaScriptInMainFrame(const String& script, bool forceUserGesture, CallbackID callbackID)
 {
     // NOTE: We need to be careful when running scripts that the objects we depend on don't
     // disappear during script execution.
@@ -2844,7 +2844,7 @@ void WebPage::runJavaScriptInMainFrame(const String& script, CallbackID callback
     JSLockHolder lock(commonVM());
     bool hadException = true;
     ExceptionDetails details;
-    if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, true, &details)) {
+    if (JSValue resultValue = m_mainFrame->coreFrame()->script().executeScript(script, forceUserGesture, &details)) {
         hadException = false;
         serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContext(),
             toRef(m_mainFrame->coreFrame()->script().globalObject(mainThreadNormalWorld())->globalExec(), resultValue), nullptr);
@@ -5615,20 +5615,26 @@ void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
 
     documentLoader->setAllowedAutoplayQuirks(quirks);
 
+    AutoplayPolicy autoplayPolicy = AutoplayPolicy::Default;
     switch (websitePolicies.autoplayPolicy) {
     case WebsiteAutoplayPolicy::Default:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Default);
         break;
     case WebsiteAutoplayPolicy::Allow:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Allow);
+        autoplayPolicy = AutoplayPolicy::Allow;
         break;
     case WebsiteAutoplayPolicy::AllowWithoutSound:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::AllowWithoutSound);
+        autoplayPolicy = AutoplayPolicy::AllowWithoutSound;
         break;
     case WebsiteAutoplayPolicy::Deny:
-        documentLoader->setAutoplayPolicy(AutoplayPolicy::Deny);
+        autoplayPolicy = AutoplayPolicy::Deny;
         break;
     }
+
+    if (documentLoader->autoplayPolicy() == autoplayPolicy)
+        return;
+
+    documentLoader->setAutoplayPolicy(autoplayPolicy);
+    m_page->updateMediaElementRateChangeRestrictions();
 }
 
 unsigned WebPage::extendIncrementalRenderingSuppression()

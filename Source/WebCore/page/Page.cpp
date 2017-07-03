@@ -53,6 +53,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
+#include "HTMLMediaElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "InspectorController.h"
@@ -990,6 +991,12 @@ void Page::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInte
         frame->document()->userInterfaceLayoutDirectionChanged();
     }
 #endif
+}
+
+void Page::updateMediaElementRateChangeRestrictions()
+{
+    for (auto* mediaElement : HTMLMediaElement::allMediaElements())
+        mediaElement->updateRateChangeRestrictions();
 }
 
 void Page::didStartProvisionalLoad()

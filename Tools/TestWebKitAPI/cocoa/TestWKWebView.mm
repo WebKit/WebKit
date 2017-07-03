@@ -233,7 +233,7 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 {
     __block bool isWaitingForJavaScript = false;
     __block NSString *evalResult = nil;
-    [self evaluateJavaScript:script completionHandler:^(id result, NSError *error)
+    [self _evaluateJavaScriptWithoutUserGesture:script completionHandler:^(id result, NSError *error)
     {
         evalResult = [[NSString alloc] initWithFormat:@"%@", result];
         isWaitingForJavaScript = true;

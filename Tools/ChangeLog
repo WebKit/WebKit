@@ -1,3 +1,19 @@
+2017-07-03  Matt Rajca  <mrajca@apple.com>
+
+        Add/remove appropriate media element behavior restrictions when updateWebsitePolicies is called
+        https://bugs.webkit.org/show_bug.cgi?id=174103
+
+        Reviewed by Alex Christensen.
+
+        Added an API test.
+
+        * TestWebKitAPI/Tests/WebKit2/autoplay-check.html: Expose a pause method.
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsitePolicies.mm:
+        (TEST): Added test.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView stringByEvaluatingJavaScript:]): Don't simulate a user gesture when invoking the script.
+
 2017-07-03  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219103.

@@ -1,3 +1,30 @@
+2017-07-03  Matt Rajca  <mrajca@apple.com>
+
+        Add/remove appropriate media element behavior restrictions when updateWebsitePolicies is called
+        https://bugs.webkit.org/show_bug.cgi?id=174103
+
+        Reviewed by Alex Christensen.
+
+        Currently, when -[WKWebView evaluateJavaScript:completionHandler:] is invoked, we end up simulating
+        a user gesture unconditionally. This is not desireable for some tests, so I added a private variant
+        of this method that takes a boolean that is ultimately passed to `executeScript` for the
+        `forceUserGesture` parameter (instead of unconditionally passing `true`).
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRunJavaScriptInMainFrame):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView evaluateJavaScript:completionHandler:]):
+        (-[WKWebView _evaluateJavaScript:forceUserGesture:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+        (WebKit::WebPage::updateWebsitePolicies): Update behavior restrictions on any existing media elements.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-07-03  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219103.

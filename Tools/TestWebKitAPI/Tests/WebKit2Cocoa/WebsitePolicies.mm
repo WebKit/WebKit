@@ -552,6 +552,50 @@ TEST(WebKit2, WebsitePoliciesDuringRedirect)
     [webView waitForMessage:@"autoplayed"];
 }
 
+TEST(WebKit2, WebsitePoliciesUpdates)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    WKPageUIClientV9 uiClient;
+    memset(&uiClient, 0, sizeof(uiClient));
+
+    uiClient.base.version = 9;
+    uiClient.handleAutoplayEvent = handleAutoplayEvent;
+
+    WKPageSetPageUIClient([webView _pageForTesting], &uiClient.base);
+
+    auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *requestWithAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [delegate setAutoplayPolicyForURL:^(NSURL *) {
+        return _WKWebsiteAutoplayPolicyDeny;
+    }];
+    [webView loadRequest:requestWithAudio];
+    [webView waitForMessage:@"did-not-play"];
+
+    _WKWebsitePolicies *policies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    policies.autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
+    [webView _updateWebsitePolicies:policies];
+
+    // Now that we updated our policies, a script should be able to autoplay media.
+    [webView stringByEvaluatingJavaScript:@"playVideo()"];
+    [webView waitForMessage:@"autoplayed"];
+
+    [webView stringByEvaluatingJavaScript:@"pauseVideo()"];
+
+    policies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    policies.autoplayPolicy = _WKWebsiteAutoplayPolicyDeny;
+    [webView _updateWebsitePolicies:policies];
+
+    // A script should no longer be able to autoplay media.
+    receivedAutoplayEvent = std::nullopt;
+    [webView stringByEvaluatingJavaScript:@"playVideo()"];
+    runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPreventFromAutoplaying);
+}
+
 TEST(WebKit2, WebsitePoliciesAutoplayQuirks)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -585,7 +629,7 @@ TEST(WebKit2, WebsitePoliciesAutoplayQuirks)
         if ([url.lastPathComponent isEqualToString:@"autoplay-check-frame.html"])
             return _WKWebsiteAutoplayQuirkInheritedUserGestures;
         
-        return _WKWebsiteAutoplayQuirkSynthesizedPauseEvents;
+        return _WKWebsiteAutoplayQuirkSynthesizedPauseEvents | _WKWebsiteAutoplayQuirkInheritedUserGestures;
     }];
     [delegate setAutoplayPolicyForURL:^(NSURL *) {
         return _WKWebsiteAutoplayPolicyDeny;

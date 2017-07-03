@@ -167,7 +167,7 @@ messages -> WebPage LegacyReceiver {
     GetSelectionAsWebArchiveData(WebKit::CallbackID callbackID)
     GetSourceForFrame(uint64_t frameID, WebKit::CallbackID callbackID)
     GetWebArchiveOfFrame(uint64_t frameID, WebKit::CallbackID callbackID)
-    RunJavaScriptInMainFrame(String script, WebKit::CallbackID callbackID)
+    RunJavaScriptInMainFrame(String script, bool forceUserGesture, WebKit::CallbackID callbackID)
     ForceRepaint(WebKit::CallbackID callbackID)
 
 #if PLATFORM(COCOA)
