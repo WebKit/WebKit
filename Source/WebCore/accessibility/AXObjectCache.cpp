@@ -2158,6 +2158,8 @@ std::optional<TextMarkerData> AXObjectCache::textMarkerDataForFirstPositionInTex
     if (!firstChild)
         firstChild = innerTextElement;
     ContainerNode* editingHost = highestEditableRoot(firstPosition);
+    if (!editingHost) // textControl is no longer editable. e.g. readonly or disabled.
+        return std::nullopt;
 
     AXObjectCache* cache = textControl.document().axObjectCache();
     RefPtr<AccessibilityObject> obj = cache->getOrCreate(editingHost);
