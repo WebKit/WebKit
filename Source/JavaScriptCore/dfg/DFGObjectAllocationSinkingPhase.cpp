@@ -48,6 +48,19 @@ namespace JSC { namespace DFG {
 
 namespace {
 
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crash(const char*, int line, int)
+{
+    CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(line);
+}
+
+#undef RELEASE_ASSERT
+#define RELEASE_ASSERT(assertion) do { \
+    if (!(assertion)) { \
+        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        crash(__FILE__, __LINE__, __COUNTER__); \
+    } \
+} while (0)
+
 bool verbose = false;
 
 // In order to sink object cycles, we use a points-to analysis coupled
@@ -1906,7 +1919,7 @@ private:
         }
     }
 
-    Node* resolve(BasicBlock* block, PromotedHeapLocation location)
+    NEVER_INLINE Node* resolve(BasicBlock* block, PromotedHeapLocation location)
     {
         // If we are currently pointing to a single local allocation,
         // simply return the associated materialization.
@@ -1931,7 +1944,7 @@ private:
         return result;
     }
 
-    Node* resolve(BasicBlock* block, Node* node)
+    NEVER_INLINE Node* resolve(BasicBlock* block, Node* node)
     {
         // If we are currently pointing to a single local allocation,
         // simply return the associated materialization.
@@ -1945,7 +1958,7 @@ private:
         return node;
     }
 
-    Node* getMaterialization(BasicBlock* block, Node* identifier)
+    NEVER_INLINE Node* getMaterialization(BasicBlock* block, Node* identifier)
     {
         ASSERT(m_heap.isAllocation(identifier));
         if (!m_sinkCandidates.contains(identifier))

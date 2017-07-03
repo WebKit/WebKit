@@ -1,3 +1,19 @@
+2017-07-03  Saam Barati  <sbarati@apple.com>
+
+        Add better crash logging for allocation sinking phase
+        https://bugs.webkit.org/show_bug.cgi?id=174102
+        <rdar://problem/33112092>
+
+        Rubber stamped by Filip Pizlo.
+
+        I'm trying to gather better information from crashlogs about why
+        we're crashing in the allocation sinking phase. I'm adding a allocation
+        sinking specific RELEASE_ASSERT as well as marking a few functions as
+        NEVER_INLINE to have the stack traces in the crash trace contain more
+        actionable information.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2017-07-03  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove more unnecessary uses of the preprocessor in idl files
