@@ -191,7 +191,7 @@ static const uint8_t characterClassTable[256] = {
     0, // '$'
     ForbiddenHost, // '%'
     0, // '&'
-    0, // '''
+    QueryPercent, // '''
     0, // '('
     0, // ')'
     0, // '*'
@@ -420,14 +420,7 @@ template<typename CharacterType> ALWAYS_INLINE static bool isPercentOrNonASCII(C
 template<typename CharacterType> ALWAYS_INLINE static bool isSlashQuestionOrHash(CharacterType character) { return character <= '\\' && characterClassTable[character] & SlashQuestionOrHash; }
 template<typename CharacterType> ALWAYS_INLINE static bool isValidSchemeCharacter(CharacterType character) { return character <= 'z' && characterClassTable[character] & ValidScheme; }
 template<typename CharacterType> ALWAYS_INLINE static bool isForbiddenHostCodePoint(CharacterType character) { return character <= ']' && characterClassTable[character] & ForbiddenHost; }
-ALWAYS_INLINE static bool shouldPercentEncodeQueryByte(uint8_t byte, const bool& urlIsSpecial)
-{
-    if (characterClassTable[byte] & QueryPercent)
-        return true;
-    if (byte == '\'' && urlIsSpecial)
-        return true;
-    return false;
-}
+static bool shouldPercentEncodeQueryByte(uint8_t byte) { return characterClassTable[byte] & QueryPercent; }
 
 template<typename CharacterType, URLParser::ReportSyntaxViolation reportSyntaxViolation>
 ALWAYS_INLINE void URLParser::advance(CodePointIterator<CharacterType>& iterator, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
@@ -585,7 +578,7 @@ ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterT
     ASSERT(!iterator.atEnd());
     UChar32 codePoint = *iterator;
     if (LIKELY(isASCII(codePoint))) {
-        if (UNLIKELY(shouldPercentEncodeQueryByte(codePoint, m_urlIsSpecial))) {
+        if (UNLIKELY(shouldPercentEncodeQueryByte(codePoint))) {
             syntaxViolation(iterator);
             percentEncodeByte(codePoint);
         } else
@@ -605,7 +598,7 @@ ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterT
     U8_APPEND_UNSAFE(buffer, offset, codePoint);
     for (int32_t i = 0; i < offset; ++i) {
         auto byte = buffer[i];
-        if (shouldPercentEncodeQueryByte(byte, m_urlIsSpecial))
+        if (shouldPercentEncodeQueryByte(byte))
             percentEncodeByte(byte);
         else
             appendToASCIIBuffer(byte);
@@ -633,7 +626,7 @@ void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& enc
             syntaxViolation(iterator);
             break;
         }
-        if (UNLIKELY(shouldPercentEncodeQueryByte(byte, m_urlIsSpecial))) {
+        if (UNLIKELY(shouldPercentEncodeQueryByte(byte))) {
             syntaxViolation(iterator);
             break;
         }
@@ -646,7 +639,7 @@ void URLParser::encodeQuery(const Vector<UChar>& source, const TextEncoding& enc
     for (; i < length; ++i) {
         ASSERT(m_didSeeSyntaxViolation);
         uint8_t byte = data[i];
-        if (shouldPercentEncodeQueryByte(byte, m_urlIsSpecial))
+        if (shouldPercentEncodeQueryByte(byte))
             percentEncodeByte(byte);
         else
             appendToASCIIBuffer(byte);
