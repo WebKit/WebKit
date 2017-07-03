@@ -142,3 +142,5 @@ tiled-drawing/ios/iphone7
 
 # <rdar://problem/32575766>, need to handle media sandbox correctly
 webrtc
+
+workers/bomb.html [ Skip ]

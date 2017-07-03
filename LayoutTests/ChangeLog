@@ -1,3 +1,11 @@
+2017-07-03  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Mark workers/bomb.html as flaky.
+
+        * platform/ios-device/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-07-03  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Support listing WebGL2 and WebGPU contexts
