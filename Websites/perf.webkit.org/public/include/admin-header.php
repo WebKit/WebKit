@@ -22,6 +22,7 @@ require_once('manifest-generator.php');
     <li><a href="/admin/triggerables">Triggerables</a></li>
     <li><a href="/admin/repositories">Repositories</a></li>
     <li><a href="/admin/bug-trackers">Bug Trackers</a></li>
+    <li><a href="/admin/files">Files</a></li>
 </ul>
 </header>
 
