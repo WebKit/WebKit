@@ -1,3 +1,16 @@
+2017-07-03  Keith Miller  <keith_miller@apple.com>
+
+        Fix ifndef in Assertions.h
+        https://bugs.webkit.org/show_bug.cgi?id=174104
+
+        Reviewed by Saam Barati.
+
+        The ifndef should have been checking for
+        CRASH_WITH_SECURITY_IMPLICATION_AND_INFO since that is what the
+        ifndef defines.
+
+        * wtf/Assertions.h:
+
 2017-07-03  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add an experimental setting to build with ccache

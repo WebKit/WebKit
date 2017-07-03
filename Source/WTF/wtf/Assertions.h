@@ -492,7 +492,7 @@ void isIntegralType(T, Types... types)
 }
 }
 
-#ifndef INLINE_CRASH_WITH_SECURITY_IMPLICATION_AND_INFO
+#ifndef CRASH_WITH_SECURITY_IMPLICATION_AND_INFO
 // This is useful if you are going to stuff data into registers before crashing. Like the crashWithInfo functions below...
 // GCC doesn't like the ##__VA_ARGS__ here since this macro is called from another macro so we just CRASH instead there.
 #if COMPILER(CLANG) || COMPILER(MSVC)
@@ -503,7 +503,7 @@ void isIntegralType(T, Types... types)
 #else
 #define CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(...) CRASH()
 #endif
-#endif // INLINE_CRASH_WITH_SECURITY_IMPLICATION_AND_INFO
+#endif // CRASH_WITH_SECURITY_IMPLICATION_AND_INFO
 
 #endif // __cplusplus
 
