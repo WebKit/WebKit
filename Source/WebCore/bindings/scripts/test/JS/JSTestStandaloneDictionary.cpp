@@ -46,10 +46,6 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
         throwTypeError(&state, throwScope);
         return { };
     }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
     DictionaryImplName result;
     JSValue boolMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "boolMember"));
     if (!boolMemberValue.isUndefined()) {

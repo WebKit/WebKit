@@ -1,3 +1,16 @@
+2017-07-02  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove special casing for RegExp which is no longer required by the spec
+        https://bugs.webkit.org/show_bug.cgi?id=174025
+
+        Reviewed by Chris Dumez.
+
+        * fast/files/blob-constructor-expected.txt:
+        * fast/files/blob-constructor.html:
+        * fast/files/file-constructor-expected.txt:
+        * fast/files/file-constructor.html:
+        Update tests/results for change in conversions of RegExp.
+
 2017-07-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r218371): Reeder's default font is Times instead of San Francisco

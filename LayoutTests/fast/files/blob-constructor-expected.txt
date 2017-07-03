@@ -37,7 +37,7 @@ PASS (new Blob([], 123.4)) instanceof window.Blob threw exception TypeError: Typ
 PASS (new Blob([], true)) instanceof window.Blob threw exception TypeError: Type error.
 PASS (new Blob([], 'abc')) instanceof window.Blob threw exception TypeError: Type error.
 PASS (new Blob([], [])) instanceof window.Blob is true
-PASS (new Blob([], /abc/)) threw exception TypeError: Type error.
+PASS (new Blob([], /abc/)) instanceof window.Blob is true
 PASS (new Blob([], function () {})) instanceof window.Blob is true
 PASS (new Blob([], {type:'text/html'})).type is 'text/html'
 PASS (new Blob([], {type:'text/html'})).size is 0

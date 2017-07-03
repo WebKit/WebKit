@@ -84,7 +84,7 @@ shouldThrow("(new File([], 'world.html', 123.4)) instanceof window.File", "'Type
 shouldThrow("(new File([], 'world.html', true)) instanceof window.File", "'TypeError: Type error'");
 shouldThrow("(new File([], 'world.html', 'abc')) instanceof window.File", "'TypeError: Type error'");
 shouldBeTrue("(new File([], 'world.html', [])) instanceof window.File");
-shouldThrow("(new File([], 'world.html', /abc/)) instanceof window.File", "'TypeError: Type error'");
+shouldBeTrue("(new File([], 'world.html', /abc/)) instanceof window.File");
 shouldBeTrue("(new File([], 'world.html', function () {})) instanceof window.File");
 
 // Test that the name/type/size are correctly added to the File.

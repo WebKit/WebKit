@@ -380,10 +380,6 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
         throwTypeError(&state, throwScope);
         return { };
     }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
     TestObj::Dictionary result;
     JSValue annotatedTypeInSequenceMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "annotatedTypeInSequenceMember"));
     if (!annotatedTypeInSequenceMemberValue.isUndefined()) {
@@ -782,10 +778,6 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
         throwTypeError(&state, throwScope);
         return { };
     }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
     TestObj::DictionaryThatShouldNotTolerateNull result;
     JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -829,10 +821,6 @@ template<> TestObj::DictionaryThatShouldTolerateNull convertDictionary<TestObj::
         throwTypeError(&state, throwScope);
         return { };
     }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
     TestObj::DictionaryThatShouldTolerateNull result;
     JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
     if (!booleanWithoutDefaultValue.isUndefined()) {
@@ -854,10 +842,6 @@ template<> AlternateDictionaryName convertDictionary<AlternateDictionaryName>(Ex
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
         throwTypeError(&state, throwScope);
         return { };
     }
@@ -885,10 +869,6 @@ template<> TestObj::ParentDictionary convertDictionary<TestObj::ParentDictionary
         throwTypeError(&state, throwScope);
         return { };
     }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
     TestObj::ParentDictionary result;
     JSValue parentMember1Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember1"));
     if (!parentMember1Value.isUndefined()) {
@@ -910,10 +890,6 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
         throwTypeError(&state, throwScope);
         return { };
     }
@@ -953,10 +929,6 @@ template<> TestObj::ConditionalDictionaryA convertDictionary<TestObj::Conditiona
         throwTypeError(&state, throwScope);
         return { };
     }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
     TestObj::ConditionalDictionaryA result;
     JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -980,10 +952,6 @@ template<> TestObj::ConditionalDictionaryB convertDictionary<TestObj::Conditiona
         throwTypeError(&state, throwScope);
         return { };
     }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
     TestObj::ConditionalDictionaryB result;
     JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
     if (!stringWithoutDefaultValue.isUndefined()) {
@@ -1004,10 +972,6 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
     bool isNullOrUndefined = value.isUndefinedOrNull();
     auto* object = isNullOrUndefined ? nullptr : value.getObject();
     if (UNLIKELY(!isNullOrUndefined && !object)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
         throwTypeError(&state, throwScope);
         return { };
     }
@@ -6807,7 +6771,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethodOver
             return jsTestObjPrototypeFunctionOverloadedMethod13Body(state, castedThis, throwScope);
         if (hasIteratorMethod(*state, distinguishingArg))
             return jsTestObjPrototypeFunctionOverloadedMethod7Body(state, castedThis, throwScope);
-        if (distinguishingArg.isObject() && asObject(distinguishingArg)->type() != RegExpObjectType)
+        if (distinguishingArg.isObject())
             return jsTestObjPrototypeFunctionOverloadedMethod5Body(state, castedThis, throwScope);
         if (distinguishingArg.isNumber())
             return jsTestObjPrototypeFunctionOverloadedMethod4Body(state, castedThis, throwScope);

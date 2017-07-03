@@ -60,7 +60,7 @@ shouldThrow("(new Blob([], 123.4)) instanceof window.Blob", "'TypeError: Type er
 shouldThrow("(new Blob([], true)) instanceof window.Blob", "'TypeError: Type error'");
 shouldThrow("(new Blob([], 'abc')) instanceof window.Blob", "'TypeError: Type error'");
 shouldBeTrue("(new Blob([], [])) instanceof window.Blob");
-shouldThrow("(new Blob([], /abc/))", "'TypeError: Type error'");
+shouldBeTrue("(new Blob([], /abc/)) instanceof window.Blob");
 shouldBeTrue("(new Blob([], function () {})) instanceof window.Blob");
 
 // Test that the type/size is correctly added to the Blob

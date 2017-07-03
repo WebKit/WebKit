@@ -38,8 +38,8 @@ PASS Passing object "[object Object]" (index 2) for options should use the defau
 PASS Passing object "[object Object]" (index 2) for options should use the defaults (with newlines). 
 PASS Passing object "[object Object]" (index 3) for options should use the defaults. 
 PASS Passing object "[object Object]" (index 3) for options should use the defaults (with newlines). 
-FAIL Passing object "/regex/" (index 4) for options should use the defaults. Type error
-FAIL Passing object "/regex/" (index 4) for options should use the defaults (with newlines). Type error
+PASS Passing object "/regex/" (index 4) for options should use the defaults. 
+PASS Passing object "/regex/" (index 4) for options should use the defaults (with newlines). 
 PASS Passing function "function () {}" (index 5) for options should use the defaults. 
 PASS Passing function "function () {}" (index 5) for options should use the defaults (with newlines). 
 PASS Newlines should not change when endings is 'transparent'. 

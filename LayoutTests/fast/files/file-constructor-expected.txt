@@ -54,7 +54,7 @@ PASS (new File([], 'world.html', 123.4)) instanceof window.File threw exception 
 PASS (new File([], 'world.html', true)) instanceof window.File threw exception TypeError: Type error.
 PASS (new File([], 'world.html', 'abc')) instanceof window.File threw exception TypeError: Type error.
 PASS (new File([], 'world.html', [])) instanceof window.File is true
-PASS (new File([], 'world.html', /abc/)) instanceof window.File threw exception TypeError: Type error.
+PASS (new File([], 'world.html', /abc/)) instanceof window.File is true
 PASS (new File([], 'world.html', function () {})) instanceof window.File is true
 PASS (new File([], 'world.html')).name is 'world.html'
 PASS (new File([], 'w/orld/ht/m.l')).name is 'w/orld/ht/m.l'

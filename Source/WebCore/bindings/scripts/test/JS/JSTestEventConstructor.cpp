@@ -46,10 +46,6 @@ template<> TestEventConstructor::Init convertDictionary<TestEventConstructor::In
         throwTypeError(&state, throwScope);
         return { };
     }
-    if (UNLIKELY(object && object->type() == RegExpObjectType)) {
-        throwTypeError(&state, throwScope);
-        return { };
-    }
     TestEventConstructor::Init result;
     JSValue bubblesValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "bubbles"));
     if (!bubblesValue.isUndefined()) {

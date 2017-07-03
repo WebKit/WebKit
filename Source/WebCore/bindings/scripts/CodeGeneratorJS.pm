@@ -2232,16 +2232,9 @@ sub GenerateDictionaryImplementationContent
     $result .= "        return { };\n";
     $result .= "    }\n";
 
-    # 2. If V is a native RegExp object, then throw a TypeError.
-    # FIXME: This RegExp special handling is likely to go away in the specification.
-    $result .= "    if (UNLIKELY(object && object->type() == RegExpObjectType)) {\n";
-    $result .= "        throwTypeError(&state, throwScope);\n";
-    $result .= "        return { };\n";
-    $result .= "    }\n";
+    # 2. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
 
-    # 3. Let dict be an empty dictionary value of type D; every dictionary member is initially considered to be not present.
-
-    # 4. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
+    # 3. Let dictionaries be a list consisting of D and all of D’s inherited dictionaries, in order from least to most derived.
     my @dictionaries;
     push(@dictionaries, $dictionary);
     my $parentType = $dictionary->parentType;
@@ -2257,7 +2250,7 @@ sub GenerateDictionaryImplementationContent
 
     $result .= "    $className result;\n";
 
-    # 5. For each dictionary dictionary in dictionaries, in order:
+    # 4. For each dictionary dictionary in dictionaries, in order:
     foreach my $dictionary (@dictionaries) {
         # For each dictionary member member declared on dictionary, in lexicographical order:
         my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
@@ -2267,16 +2260,16 @@ sub GenerateDictionaryImplementationContent
             my $type = $member->type;
             AddToImplIncludesForIDLType($type);
 
-            # 5.1. Let key be the identifier of member.
+            # 4.1. Let key be the identifier of member.
             my $key = $member->name;
             my $implementedAsKey = $member->extendedAttributes->{ImplementedAs} || $key;
 
-            # 5.2. Let value be an ECMAScript value, depending on Type(V):
+            # 4.2. Let value be an ECMAScript value, depending on Type(V):
             $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
 
             my $IDLType = GetIDLType($typeScope, $type);
 
-            # 5.3. If value is not undefined, then:
+            # 4.3. If value is not undefined, then:
             $result .= "    if (!${key}Value.isUndefined()) {\n";
 
             my $nativeValue = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&state", "state");
@@ -2284,12 +2277,12 @@ sub GenerateDictionaryImplementationContent
             $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
 
             # Value is undefined.
-            # 5.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
+            # 4.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
             if (!$member->isRequired && defined $member->default) {
                 $result .= "    } else\n";
                 $result .= "        result.$implementedAsKey = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
             } elsif ($member->isRequired) {
-                # 5.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
+                # 4.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
                 $result .= "    } else {\n";
                 $result .= "        throwRequiredMemberTypeError(state, throwScope, \"". $member->name ."\", \"$name\", \"". GetTypeNameForDisplayInException($type) ."\");\n";
                 $result .= "        return { };\n";
@@ -2300,6 +2293,7 @@ sub GenerateDictionaryImplementationContent
         }
     }
 
+    # 5. Return dict.
     $result .= "    return result;\n";
     $result .= "}\n\n";
 
@@ -3307,10 +3301,6 @@ sub GenerateOverloadDispatcher
             return &$isDictionaryOrRecordParameter($type, $optionality);
         }
     };
-    my $isRegExpOrObjectParameter = sub {
-        my ($type, $optionality) = @_;
-        return $type->name eq "RegExp" || $type->name eq "object";
-    };
     my $isObjectOrErrorParameter = sub {
         my ($type, $optionality) = @_;
         return $type->name eq "object" || $type->name eq "Error";
@@ -3387,9 +3377,6 @@ sub GenerateOverloadDispatcher
                 }
             }
 
-            $overload = GetOverloadThatMatches($S, $d, \&$isRegExpOrObjectParameter);
-            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->type() == RegExpObjectType");
-
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrErrorOrDOMExceptionParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSDOMCoreException::info())");
 
@@ -3404,7 +3391,7 @@ sub GenerateOverloadDispatcher
             &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(*state, distinguishingArg)", "<runtime/IteratorOperations.h>");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isDictionaryOrRecordOrObjectOrCallbackInterfaceParameter);
-            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->type() != RegExpObjectType");
+            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject()");
 
             my $booleanOverload = GetOverloadThatMatches($S, $d, \&$isBooleanParameter);
             &$generateOverloadCallIfNecessary($booleanOverload, "distinguishingArg.isBoolean()");

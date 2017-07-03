@@ -2548,12 +2548,6 @@ sub parseNonAnyType
         $type->name("object");
         return $type;
     }
-    if ($next->value() eq "RegExp") {
-        $self->assertTokenValue($self->getToken(), "RegExp", __LINE__);
-
-        $type->name("RegExp");
-        return $type;
-    }
     if ($next->value() eq "Error") {
         $self->assertTokenValue($self->getToken(), "Error", __LINE__);
 
