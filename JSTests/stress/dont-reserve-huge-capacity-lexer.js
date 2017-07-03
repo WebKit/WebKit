@@ -1,4 +1,4 @@
-//@ skip if ($architecture != "x86-64")
+//@ skip if ($architecture != "x86-64") or $memoryLimited
 
 var fe="f";                                                                         
 try
