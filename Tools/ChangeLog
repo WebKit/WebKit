@@ -1,3 +1,18 @@
+2017-07-03  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Properly number duplicated crashlogs
+        https://bugs.webkit.org/show_bug.cgi?id=172002
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/common/system/crashlogs.py:
+        (CrashLogs._find_all_logs_darwin): Number multiple crash logs for a single process with
+        an increasing integer.
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+        (CrashLogsTest.create_crash_logs_darwin): Create duplicated crashlog for testing.
+        (CrashLogsTest.test_find_all_log_darwin): Now 7 Darwin logs instead of 5.
+        (CrashLogsTest.test_duplicate_log_darwin): Test that duplicated logs are correctly numbered.
+
 2017-07-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         WebContent processes crash when the network process crashes with pending connection requests

@@ -248,7 +248,9 @@ class CrashLogsTest(unittest.TestCase):
         self.other_process_mock_crash_report = make_mock_crash_report_darwin('FooProcess', 28527)
         self.misformatted_mock_crash_report = 'Junk that should not appear in a crash report' + make_mock_crash_report_darwin('DumpRenderTree', 28526)[200:]
         self.files = {}
-        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150718_quadzen.crash'] = self.older_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150716_quadzen.crash'] = self.older_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150717_quadzen_1.crash'] = self.older_mock_crash_report
+        self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150718_quadzen_2.crash'] = self.older_mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash'] = self.mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150720_quadzen.crash'] = self.newer_mock_crash_report
         self.files['/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150721_quadzen.crash'] = None
@@ -267,11 +269,25 @@ class CrashLogsTest(unittest.TestCase):
 
         crash_logs = self.create_crash_logs_darwin()
         all_logs = crash_logs.find_all_logs()
-        self.assertEqual(len(all_logs), 5)
+        self.assertEqual(len(all_logs), 7)
 
         for test, crash_log in all_logs.iteritems():
             self.assertTrue(crash_log in self.files.values())
             self.assertTrue(test == "Unknown" or int(test.split("-")[1]) in range(28527, 28531))
+
+    def test_duplicate_log_darwin(self):
+        if not SystemHost().platform.is_mac():
+            return
+
+        crash_logs = self.create_crash_logs_darwin()
+        all_logs = crash_logs.find_all_logs()
+        expected_logs = ['DumpRenderTree-28528', 'DumpRenderTree-28528-1', 'DumpRenderTree-28528-2',
+                         'DumpRenderTree-28529', 'DumpRenderTree-28530', 'FooProcess-28527', 'Unknown']
+
+        for log in expected_logs:
+            self.assertIn(log, all_logs)
+        for log in all_logs:
+            self.assertIn(log, expected_logs)
 
     def test_find_log_darwin(self):
         if not SystemHost().platform.is_mac():

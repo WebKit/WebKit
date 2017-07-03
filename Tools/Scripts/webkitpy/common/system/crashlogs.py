@@ -161,9 +161,16 @@ class CrashLogs(object):
                     if parsed_name:
                         result_name = parsed_name + "-" + str(parsed_pid)
 
-                    while result_name in crash_logs:
-                        result_name = result_name + "-1"
-                    crash_logs[result_name] = errors + log_contents
+                    # Processes can remain running after Sandbox violations, which generate crash logs.
+                    # This means that we can have mutliple crash logs attributed to the same process.
+                    # The unique_name must be named in the format PROCESS_NAME-PID-#, where '-#' is optional.
+                    # This is because of how DarwinPort._merge_crash_logs parses the crash name.
+                    count = 1
+                    unique_name = result_name
+                    while unique_name in crash_logs:
+                        unique_name = result_name + '-' + str(count)
+                        count += 1
+                    crash_logs[unique_name] = errors + log_contents
             except IOError, e:
                 if include_errors:
                     errors += "ERROR: Failed to read '%s': %s\n" % (path, str(e))
