@@ -1606,4 +1606,3 @@ webkit.org/b/173565 [ ElCapitan Release ] media/media-source/media-source-paint-
 
 webkit.org/b/173068 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getKey.html [ Pass Failure ]
 
-webkit.org/b/171985 [ Sierra Release ] workers/bomb.html [ Pass Timeout ]

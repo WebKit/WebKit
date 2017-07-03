@@ -706,3 +706,5 @@ webkit.org/b/172201 webaudio/silent-audio-interrupted-in-background.html [ Pass 
 
 webkit.org/b/173608 webrtc/video-replace-muted-track.html [ Pass Failure ]
 
+webkit.org/b/167757 workers/bomb.html [ Skip ]
+
