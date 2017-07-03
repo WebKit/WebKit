@@ -1,3 +1,25 @@
+2017-06-30  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using dispatch_async in ResourceHandleCFURLConnectionDelegateWithOperationQueue
+        https://bugs.webkit.org/show_bug.cgi?id=174059
+
+        Reviewed by Andy Estes.
+
+        Use dispatch_async_f and callOnMainThread instead.
+        No change in behavior.
+        This will allow me to use this code on Windows.
+
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSendRequest):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveData):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFinishLoading):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didFail):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::willCacheResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveChallenge):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didSendBodyData):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace):
+
 2017-07-03  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add an experimental setting to build with ccache
