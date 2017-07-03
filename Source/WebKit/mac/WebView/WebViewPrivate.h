@@ -917,6 +917,15 @@ Could be worth adding to the API.
 - (void)forceRequestCandidatesForTesting;
 - (BOOL)shouldRequestCandidates;
 
+typedef struct WebEdgeInsets {
+    CGFloat top;
+    CGFloat left;
+    CGFloat bottom;
+    CGFloat right;
+} WebEdgeInsets;
+
+@property (nonatomic, assign, setter=_setUnobscuredSafeAreaInsets:) WebEdgeInsets _unobscuredSafeAreaInsets;
+
 @end
 
 #if !TARGET_OS_IPHONE

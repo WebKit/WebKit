@@ -5160,6 +5160,27 @@ static Vector<String> toStringVector(NSArray* patterns)
 }
 #endif // PLATFORM(IOS)
 
+- (void)_setUnobscuredSafeAreaInsets:(WebEdgeInsets)insets
+{
+    if (auto page = _private->page)
+        page->setUnobscuredSafeAreaInsets(WebCore::FloatBoxExtent(insets.top, insets.right, insets.bottom, insets.left));
+}
+
+- (WebEdgeInsets)_unobscuredSafeAreaInsets
+{
+    WebEdgeInsets insets({ 0, 0, 0, 0 });
+
+    if (auto page = _private->page) {
+        auto unobscuredSafeAreaInsets = page->unobscuredSafeAreaInsets();
+        insets.top = unobscuredSafeAreaInsets.top();
+        insets.left = unobscuredSafeAreaInsets.left();
+        insets.bottom = unobscuredSafeAreaInsets.bottom();
+        insets.right = unobscuredSafeAreaInsets.right();
+    }
+
+    return insets;
+}
+
 - (void)_setSourceApplicationAuditData:(NSData *)sourceApplicationAuditData
 {
     if (_private->sourceApplicationAuditData == sourceApplicationAuditData)

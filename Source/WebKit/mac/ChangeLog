@@ -1,3 +1,18 @@
+2017-07-03  Tim Horton  <timothy_horton@apple.com>
+
+        Expose unobscuredSafeAreaInsets on WebView
+        https://bugs.webkit.org/show_bug.cgi?id=174075
+        <rdar://problem/33096997>
+
+        Reviewed by Beth Dakin.
+
+        * WebView/WebView.mm:
+        (-[WebView _setUnobscuredSafeAreaInsets:]):
+        (-[WebView _unobscuredSafeAreaInsets]):
+        * WebView/WebViewPrivate.h:
+        Expose unobscuredSafeAreaInsets as a new private property on WebView,
+        similar to how it is exposed in WebKit2.
+
 2017-07-03  Andy Estes  <aestes@apple.com>
 
         [Xcode] Add an experimental setting to build with ccache
