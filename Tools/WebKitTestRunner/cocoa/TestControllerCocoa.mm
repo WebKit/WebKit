@@ -229,7 +229,15 @@ void TestController::setStatisticsPrevalentResource(WKStringRef hostName, bool v
 
 bool TestController::isStatisticsPrevalentResource(WKStringRef hostName)
 {
-    return [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsPrevalentResource:toNSString(hostName)];
+    __block bool isDataReady = false;
+    __block bool isPrevalentResource = false;
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsPrevalentResource:toNSString(hostName) completionHandler:^(BOOL _isPrevalentResource) {
+        isPrevalentResource = _isPrevalentResource;
+        isDataReady = true;
+    }];
+    platformRunUntil(isDataReady, 0);
+
+    return isPrevalentResource;
 }
 
 void TestController::setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value)
@@ -239,7 +247,15 @@ void TestController::setStatisticsHasHadUserInteraction(WKStringRef hostName, bo
 
 bool TestController::isStatisticsHasHadUserInteraction(WKStringRef hostName)
 {
-    return [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsHadUserInteraction:toNSString(hostName)];
+    __block bool isDataReady = false;
+    __block bool hasHadUserInteraction = false;
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsHadUserInteraction:toNSString(hostName) completionHandler:^(BOOL _hasHadUserInteraction) {
+        hasHadUserInteraction = _hasHadUserInteraction;
+        isDataReady = true;
+    }];
+    platformRunUntil(isDataReady, 0);
+
+    return hasHadUserInteraction;
 }
 
 void TestController::setStatisticsGrandfathered(WKStringRef hostName, bool value)
@@ -249,7 +265,15 @@ void TestController::setStatisticsGrandfathered(WKStringRef hostName, bool value
 
 bool TestController::isStatisticsGrandfathered(WKStringRef hostName)
 {
-    return [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsGrandfathered:toNSString(hostName)];
+    __block bool isDataReady = false;
+    __block bool isGrandfathered = false;
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsGrandfathered:toNSString(hostName) completionHandler:^(BOOL _isGrandfathered) {
+        isGrandfathered = _isGrandfathered;
+        isDataReady = true;
+    }];
+    platformRunUntil(isDataReady, 0);
+
+    return isGrandfathered;
 }
 
 void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)

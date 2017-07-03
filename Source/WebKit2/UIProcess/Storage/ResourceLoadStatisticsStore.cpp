@@ -52,17 +52,27 @@ Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
     
 bool ResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDomain) const
 {
-    auto locker = holdLock(m_statisticsLock);
+    ASSERT(!RunLoop::isMain());
     auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
     if (mapEntry == m_resourceStatisticsMap.end())
         return false;
 
     return mapEntry->value.isPrevalentResource;
 }
+
+bool ResourceLoadStatisticsStore::isGrandFathered(const String& primaryDomain) const
+{
+    ASSERT(!RunLoop::isMain());
+    auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
+    if (mapEntry == m_resourceStatisticsMap.end())
+        return false;
+
+    return mapEntry->value.grandfathered;
+}
     
 ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
 {
-    ASSERT(m_statisticsLock.isLocked());
+    ASSERT(!RunLoop::isMain());
     auto addResult = m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {
         return ResourceLoadStatistics(primaryDomain);
     });
@@ -76,8 +86,6 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
 {
     ASSERT(!RunLoop::isMain());
     auto encoder = KeyedEncoder::encoder();
-
-    auto locker = holdLock(m_statisticsLock);
     encoder->encodeUInt32("version", statisticsModelVersion);
     encoder->encodeDouble("endOfGrandfatheringTimestamp", m_endOfGrandfatheringTimestamp.secondsSinceEpoch().value());
     
@@ -91,7 +99,6 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
 void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 {
     ASSERT(!RunLoop::isMain());
-    ASSERT(m_statisticsLock.isLocked());
     if (m_resourceStatisticsMap.size())
         return;
 
@@ -118,16 +125,12 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 
     Vector<String> prevalentResourceDomainsWithoutUserInteraction;
     prevalentResourceDomainsWithoutUserInteraction.reserveInitialCapacity(loadedStatistics.size());
-    
-    {
-        auto locker = holdLock(m_statisticsLock);
-        for (auto& statistics : loadedStatistics) {
-            if (statistics.isPrevalentResource && !statistics.hadUserInteraction) {
-                prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
-                statistics.isMarkedForCookiePartitioning = true;
-            }
-            m_resourceStatisticsMap.set(statistics.highLevelDomain, WTFMove(statistics));
+    for (auto& statistics : loadedStatistics) {
+        if (statistics.isPrevalentResource && !statistics.hadUserInteraction) {
+            prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
+            statistics.isMarkedForCookiePartitioning = true;
         }
+        m_resourceStatisticsMap.set(statistics.highLevelDomain, WTFMove(statistics));
     }
     
     fireShouldPartitionCookiesHandler({ }, prevalentResourceDomainsWithoutUserInteraction, true);
@@ -136,10 +139,7 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 void ResourceLoadStatisticsStore::clearInMemory()
 {
     ASSERT(!RunLoop::isMain());
-    {
-    auto locker = holdLock(m_statisticsLock);
     m_resourceStatisticsMap.clear();
-    }
     
     fireShouldPartitionCookiesHandler({ }, { }, true);
 }
@@ -157,7 +157,6 @@ void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 void ResourceLoadStatisticsStore::mergeStatistics(const Vector<ResourceLoadStatistics>& statistics)
 {
     ASSERT(!RunLoop::isMain());
-    auto locker = holdLock(m_statisticsLock);
     for (auto& statistic : statistics) {
         auto result = m_resourceStatisticsMap.ensure(statistic.highLevelDomain, [&statistic] {
             return ResourceLoadStatistics(statistic.highLevelDomain);
@@ -224,7 +223,6 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
     Vector<String> domainsToRemove;
     Vector<String> domainsToAdd;
     
-    auto locker = holdLock(m_statisticsLock);
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
         bool shouldPartition = shouldPartitionCookies(resourceStatistic);
         if (resourceStatistic.isMarkedForCookiePartitioning && !shouldPartition) {
@@ -256,7 +254,6 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector
             m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
     });
     
-    auto locker = holdLock(m_statisticsLock);
     if (clearFirst) {
         for (auto& resourceStatistic : m_resourceStatisticsMap.values())
             resourceStatistic.isMarkedForCookiePartitioning = false;
@@ -296,7 +293,6 @@ void ResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
 void ResourceLoadStatisticsStore::processStatistics(WTF::Function<void(ResourceLoadStatistics&)>&& processFunction)
 {
     ASSERT(!RunLoop::isMain());
-    auto locker = holdLock(m_statisticsLock);
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
         processFunction(resourceStatistic);
 }
@@ -321,6 +317,8 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
 
 Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor()
 {
+    ASSERT(!RunLoop::isMain());
+
     bool shouldCheckForGrandfathering = m_endOfGrandfatheringTimestamp > WallTime::now();
     bool shouldClearGrandfathering = !shouldCheckForGrandfathering && m_endOfGrandfatheringTimestamp;
 
@@ -328,7 +326,6 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
         m_endOfGrandfatheringTimestamp = { };
 
     Vector<String> prevalentResources;
-    auto locker = holdLock(m_statisticsLock);
     for (auto& statistic : m_resourceStatisticsMap.values()) {
         if (statistic.isPrevalentResource
             && !hasHadRecentUserInteraction(statistic)
@@ -345,7 +342,6 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
 Vector<PrevalentResourceTelemetry> ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry() const
 {
     ASSERT(!RunLoop::isMain());
-    auto locker = holdLock(m_statisticsLock);
     Vector<PrevalentResourceTelemetry> sorted;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
         if (!statistic.isPrevalentResource)
@@ -375,7 +371,7 @@ Vector<PrevalentResourceTelemetry> ResourceLoadStatisticsStore::sortedPrevalentR
 
 void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const HashSet<String>& prevalentResourceDomains)
 {
-    auto locker = holdLock(m_statisticsLock);
+    ASSERT(!RunLoop::isMain());
     for (auto& prevalentResourceDomain : prevalentResourceDomains) {
         ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
         ++statistic.dataRecordsRemoved;
@@ -384,7 +380,7 @@ void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const Ha
 
 void ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore(HashSet<String>&& topPrivatelyControlledDomainsToGrandfather)
 {
-    auto locker = holdLock(m_statisticsLock);
+    ASSERT(!RunLoop::isMain());
     for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomainsToGrandfather) {
         ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
         statistic.grandfathered = true;
@@ -415,11 +411,6 @@ void ResourceLoadStatisticsStore::dataRecordsWereRemoved()
 {
     ASSERT(!RunLoop::isMain());
     m_dataRecordsRemovalPending = false;
-}
-    
-WTF::RecursiveLockAdapter<Lock>& ResourceLoadStatisticsStore::statisticsLock()
-{
-    return m_statisticsLock;
 }
     
 }

@@ -29,7 +29,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/RecursiveLockAdapter.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
@@ -69,6 +68,7 @@ public:
     void setResourceStatisticsForPrimaryDomain(const String&, WebCore::ResourceLoadStatistics&&);
 
     bool isPrevalentResource(const String&) const;
+    bool isGrandFathered(const String&) const;
     
     void mergeStatistics(const Vector<WebCore::ResourceLoadStatistics>&);
 
@@ -99,14 +99,11 @@ public:
     bool shouldRemoveDataRecords() const;
     void dataRecordsBeingRemoved();
     void dataRecordsWereRemoved();
-    
-    WTF::RecursiveLockAdapter<Lock>& statisticsLock();
 
 private:
     ResourceLoadStatisticsStore() = default;
 
     HashMap<String, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
-    mutable WTF::RecursiveLockAdapter<Lock> m_statisticsLock;
 
     WTF::Function<void()> m_dataAddedHandler;
     WTF::Function<void(const Vector<String>&, const Vector<String>&, bool clearFirst)> m_shouldPartitionCookiesForDomainsHandler;

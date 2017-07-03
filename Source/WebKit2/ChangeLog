@@ -1,3 +1,54 @@
+2017-07-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop ResourceLoadStatisticsStore's statisticsLock
+        https://bugs.webkit.org/show_bug.cgi?id=174080
+
+        Reviewed by Brent Fulgham.
+
+        Drop ResourceLoadStatisticsStore's statisticsLock. It added complexity and was only needed
+        do that the SPI exposed to WebKitTestRunner would query the store synchronously from the
+        main thread. Instead, I made the SPI asynchronous and make sure we always access the store
+        from the same background thread. As a result, there is no longer any need for locking.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsIsPrevalentResource:completionHandler:]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsHadUserInteraction:completionHandler:]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsIsGrandfathered:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Storage/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::isPrevalentResource):
+        (WebKit::ResourceLoadStatisticsStore::isGrandFathered):
+        (WebKit::ResourceLoadStatisticsStore::ensureResourceStatisticsForPrimaryDomain):
+        (WebKit::ResourceLoadStatisticsStore::createEncoderFromData):
+        (WebKit::ResourceLoadStatisticsStore::readDataFromDecoder):
+        (WebKit::ResourceLoadStatisticsStore::clearInMemory):
+        (WebKit::ResourceLoadStatisticsStore::mergeStatistics):
+        (WebKit::ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler):
+        (WebKit::ResourceLoadStatisticsStore::processStatistics):
+        (WebKit::ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor):
+        (WebKit::ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry):
+        (WebKit::ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore):
+        * UIProcess/Storage/ResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded):
+        (WebKit::WebResourceLoadStatisticsStore::refreshFromDisk):
+        (WebKit::WebResourceLoadStatisticsStore::clearInMemoryData):
+        (WebKit::WebResourceLoadStatisticsStore::submitTelemetry):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::clearUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::setPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::isPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::clearPrevalentResource):
+        (WebKit::WebResourceLoadStatisticsStore::setGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::isGrandfathered):
+        (WebKit::WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin):
+        (WebKit::WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2017-07-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Pasting single words copied to UIPasteboard inserts URLs in editable areas

@@ -155,7 +155,6 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 {
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] () {
-        auto locker = holdLock(coreStore().statisticsLock());
         if (shouldClassifyResourcesBeforeDataRecordsRemoval) {
             coreStore().processStatistics([this] (ResourceLoadStatistics& resourceStatistic) {
                 classifyResource(resourceStatistic);
@@ -275,7 +274,6 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
             return;
         }
         
-        auto locker = holdLock(coreStore().statisticsLock());
         coreStore().clearInMemory();
         coreStore().readDataFromDecoder(*decoder);
 
@@ -291,7 +289,6 @@ void WebResourceLoadStatisticsStore::refreshFromDisk()
     if (!decoder)
         return;
 
-    auto locker = holdLock(coreStore().statisticsLock());
     coreStore().readDataFromDecoder(*decoder);
 }
     
@@ -402,7 +399,7 @@ void WebResourceLoadStatisticsStore::deleteStoreFromDisk()
 
 void WebResourceLoadStatisticsStore::clearInMemoryData()
 {
-    auto locker = holdLock(coreStore().statisticsLock());
+    ASSERT(!RunLoop::isMain());
     coreStore().clearInMemory();
 }
 
@@ -504,7 +501,6 @@ void WebResourceLoadStatisticsStore::telemetryTimerFired()
 void WebResourceLoadStatisticsStore::submitTelemetry()
 {
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
-        auto locker = holdLock(coreStore().statisticsLock());
         WebResourceLoadStatisticsTelemetry::calculateAndSubmit(coreStore());
     });
 }
@@ -515,12 +511,9 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
         return;
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomainString = primaryDomain(url).isolatedCopy()] {
-        {
-            auto locker = holdLock(coreStore().statisticsLock());
-            auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
-            statistics.hadUserInteraction = true;
-            statistics.mostRecentUserInteractionTime = WallTime::now();
-        }
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
+        statistics.hadUserInteraction = true;
+        statistics.mostRecentUserInteractionTime = WallTime::now();
 
         coreStore().fireShouldPartitionCookiesHandler({ primaryDomainString }, { }, false);
     });
@@ -531,21 +524,27 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const URL& url)
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    auto locker = holdLock(coreStore().statisticsLock());
-    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    statistics.hadUserInteraction = false;
-    statistics.mostRecentUserInteractionTime = { };
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy()] {
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+        statistics.hadUserInteraction = false;
+        statistics.mostRecentUserInteractionTime = { };
+    });
 }
 
-bool WebResourceLoadStatisticsStore::hasHadUserInteraction(const URL& url)
+void WebResourceLoadStatisticsStore::hasHadUserInteraction(const URL& url, WTF::Function<void (bool)>&& completionHandler)
 {
-    if (url.isBlankURL() || url.isEmpty())
-        return false;
+    if (url.isBlankURL() || url.isEmpty()) {
+        completionHandler(false);
+        return;
+    }
 
-    auto locker = holdLock(coreStore().statisticsLock());
-    // FIXME: Why is this potentially creating a store entry just for querying?
-    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    return coreStore().hasHadRecentUserInteraction(statistics);
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+        // FIXME: Why is this potentially creating a store entry just for querying?
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+        RunLoop::main().dispatch([hasHadUserInteraction = coreStore().hasHadRecentUserInteraction(statistics), completionHandler = WTFMove(completionHandler)] {
+            completionHandler(hasHadUserInteraction);
+        });
+    });
 }
 
 void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url)
@@ -553,20 +552,25 @@ void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url)
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    auto locker = holdLock(coreStore().statisticsLock());
-    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    statistics.isPrevalentResource = true;
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy()] {
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+        statistics.isPrevalentResource = true;
+    });
 }
 
-bool WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url)
+void WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url, WTF::Function<void (bool)>&& completionHandler)
 {
-    if (url.isBlankURL() || url.isEmpty())
-        return false;
+    if (url.isBlankURL() || url.isEmpty()) {
+        completionHandler(false);
+        return;
+    }
 
-    auto locker = holdLock(coreStore().statisticsLock());
-    // FIXME: Why is this potentially creating a store entry just for querying?
-    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    return statistics.isPrevalentResource;
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+        bool prevalentResource = coreStore().isPrevalentResource(primaryDomain(url));
+        RunLoop::main().dispatch([prevalentResource, completionHandler = WTFMove(completionHandler)] {
+            completionHandler(prevalentResource);
+        });
+    });
 }
 
 void WebResourceLoadStatisticsStore::clearPrevalentResource(const URL& url)
@@ -574,9 +578,10 @@ void WebResourceLoadStatisticsStore::clearPrevalentResource(const URL& url)
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    auto locker = holdLock(coreStore().statisticsLock());
-    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    statistics.isPrevalentResource = false;
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy()] {
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+        statistics.isPrevalentResource = false;
+    });
 }
 
 void WebResourceLoadStatisticsStore::setGrandfathered(const URL& url, bool value)
@@ -584,20 +589,25 @@ void WebResourceLoadStatisticsStore::setGrandfathered(const URL& url, bool value
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    auto locker = holdLock(coreStore().statisticsLock());
-    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    statistics.grandfathered = value;
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), value] {
+        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+        statistics.grandfathered = value;
+    });
 }
 
-bool WebResourceLoadStatisticsStore::isGrandfathered(const URL& url)
+void WebResourceLoadStatisticsStore::isGrandfathered(const URL& url, WTF::Function<void (bool)>&& completionHandler)
 {
-    if (url.isBlankURL() || url.isEmpty())
-        return false;
+    if (url.isBlankURL() || url.isEmpty()) {
+        completionHandler(false);
+        return;
+    }
 
-    auto locker = holdLock(coreStore().statisticsLock());
-    // FIXME: Why is this potentially creating a store entry just for querying?
-    auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    return statistics.grandfathered;
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), url = url.isolatedCopy()] () mutable {
+        bool grandFathered = coreStore().isGrandFathered(primaryDomain(url));
+        RunLoop::main().dispatch([grandFathered, completionHandler = WTFMove(completionHandler)] {
+            completionHandler(grandFathered);
+        });
+    });
 }
 
 void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const URL& subframe, const URL& topFrame)
@@ -606,7 +616,6 @@ void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const URL& s
         return;
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubFrameDomainString = primaryDomain(subframe).isolatedCopy()] {
-        auto locker = holdLock(coreStore().statisticsLock());
         auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primarySubFrameDomainString);
         statistics.subframeUnderTopFrameOrigins.add(primaryTopFrameDomainString);
     });
@@ -618,7 +627,6 @@ void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const URL
         return;
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
-        auto locker = holdLock(coreStore().statisticsLock());
         auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
         statistics.subresourceUnderTopFrameOrigins.add(primaryTopFrameDomainString);
     });
@@ -630,7 +638,6 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const URL& s
         return;
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryRedirectDomainString = primaryDomain(hostNameRedirectedTo).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
-        auto locker = holdLock(coreStore().statisticsLock());
         auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
         statistics.subresourceUniqueRedirectsTo.add(primaryRedirectDomainString);
     });

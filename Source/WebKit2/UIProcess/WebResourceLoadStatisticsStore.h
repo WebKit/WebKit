@@ -77,12 +77,12 @@ public:
 
     void logUserInteraction(const WebCore::URL&);
     void clearUserInteraction(const WebCore::URL&);
-    bool hasHadUserInteraction(const WebCore::URL&);
+    void hasHadUserInteraction(const WebCore::URL&, WTF::Function<void (bool)>&&);
     void setPrevalentResource(const WebCore::URL&);
-    bool isPrevalentResource(const WebCore::URL&);
+    void isPrevalentResource(const WebCore::URL&, WTF::Function<void (bool)>&&);
     void clearPrevalentResource(const WebCore::URL&);
     void setGrandfathered(const WebCore::URL&, bool);
-    bool isGrandfathered(const WebCore::URL&);
+    void isGrandfathered(const WebCore::URL&, WTF::Function<void (bool)>&&);
     void setSubframeUnderTopFrameOrigin(const WebCore::URL& subframe, const WebCore::URL& topFrame);
     void setSubresourceUnderTopFrameOrigin(const WebCore::URL& subresource, const WebCore::URL& topFrame);
     void setSubresourceUniqueRedirectTo(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedTo);

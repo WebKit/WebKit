@@ -219,13 +219,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         store->clearPrevalentResource(URL(URL(), host));
 }
 
-- (BOOL)_resourceLoadStatisticsIsPrevalentResource:(NSString *)host
+- (void)_resourceLoadStatisticsIsPrevalentResource:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
-    if (!store)
-        return NO;
+    if (!store) {
+        completionHandler(NO);
+        return;
+    }
 
-    return store->isPrevalentResource(URL(URL(), host));
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    store->isPrevalentResource(URL(URL(), host), [completionHandlerCopy](bool isPrevalentResource) {
+        completionHandlerCopy(isPrevalentResource);
+    });
 }
 
 - (void)_resourceLoadStatisticsSetHadUserInteraction:(BOOL)value forHost:(NSString *)host
@@ -240,13 +245,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         store->clearUserInteraction(URL(URL(), host));
 }
 
-- (BOOL)_resourceLoadStatisticsHadUserInteraction:(NSString *)host
+- (void)_resourceLoadStatisticsHadUserInteraction:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
-    if (!store)
-        return NO;
+    if (!store) {
+        completionHandler(NO);
+        return;
+    }
 
-    return store->hasHadUserInteraction(URL(URL(), host));
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    store->hasHadUserInteraction(URL(URL(), host), [completionHandlerCopy](bool hasHadUserInteraction) {
+        completionHandlerCopy(hasHadUserInteraction);
+    });
 }
 
 - (void)_resourceLoadStatisticsSetIsGrandfathered:(BOOL)value forHost:(NSString *)host
@@ -258,13 +268,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     store->setGrandfathered(URL(URL(), host), value);
 }
 
-- (BOOL)_resourceLoadStatisticsIsGrandfathered:(NSString *)host
+- (void)_resourceLoadStatisticsIsGrandfathered:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
-    if (!store)
-        return NO;
+    if (!store) {
+        completionHandler(NO);
+        return;
+    }
 
-    return store->isGrandfathered(URL(URL(), host));
+    auto completionHandlerCopy = makeBlockPtr(completionHandler);
+    store->isGrandfathered(URL(URL(), host), [completionHandlerCopy](bool isGrandfathered) {
+        completionHandlerCopy(isGrandfathered);
+    });
 }
 
 - (void)_resourceLoadStatisticsSetSubframeUnderTopFrameOrigin:(NSString *)topFrameHostName forHost:(NSString *)host
