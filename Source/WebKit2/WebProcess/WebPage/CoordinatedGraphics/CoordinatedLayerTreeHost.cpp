@@ -168,9 +168,9 @@ void CoordinatedLayerTreeHost::renderNextFrame()
         // is called after the next update.
         if (!m_forceRepaintAsync.needsFreshFlush) {
             m_webPage.send(Messages::WebPageProxy::VoidCallback(m_forceRepaintAsync.callbackID.callbackID()));
-            m_forceRepaintAsync = { OptionalCallbackID() , false };
-        } else
-            m_forceRepaintAsync.needsFreshFlush = false;
+            m_forceRepaintAsync.callbackID = OptionalCallbackID();
+        }
+        m_forceRepaintAsync.needsFreshFlush = false;
     }
 
     if (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive()) {
