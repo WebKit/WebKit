@@ -689,7 +689,7 @@ private:
 
     bool isSafeToRecurse(void* stackLimit) const
     {
-        ASSERT(Thread::current().stack().isGrowingDownward());
+        ASSERT(wtfThreadData().stack().isGrowingDownward());
         void* curr = reinterpret_cast<void*>(&curr);
         return curr >= stackLimit;
     }

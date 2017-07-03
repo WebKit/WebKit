@@ -269,7 +269,25 @@ protected:
                     return;
 
                 Thread& thread = *ownerThread->get();
-                vm.traps().tryInstallTrapBreakpoints(context, thread.stack());
+                StackBounds stackBounds = StackBounds::emptyBounds();
+                {
+                    // FIXME: We need to use the machine threads because it is the only non-TLS source
+                    // for the stack bounds of this thread. We should keep in on the WTF::Thread instead.
+                    // see: https://bugs.webkit.org/show_bug.cgi?id=173975
+                    MachineThreads& machineThreads = vm.heap.machineThreads();
+                    auto machineThreadsLock = tryHoldLock(machineThreads.getLock());
+                    if (!machineThreadsLock)
+                        return; // Try again later.
+
+                    auto& threadList = machineThreads.threadsListHead(machineThreadsLock);
+                    for (MachineThreads::MachineThread* machineThread = threadList.head(); machineThread; machineThread = machineThread->next()) {
+                        if (machineThread->m_thread.get() == thread)
+                            stackBounds = StackBounds(machineThread->stackBase(), machineThread->stackEnd());
+                    }
+                    RELEASE_ASSERT(!stackBounds.isEmpty());
+                }
+
+                vm.traps().tryInstallTrapBreakpoints(context, stackBounds);
             });
         }
 
