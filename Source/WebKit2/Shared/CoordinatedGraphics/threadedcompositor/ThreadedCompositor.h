@@ -112,17 +112,21 @@ private:
     RefPtr<CoordinatedGraphicsScene> m_scene;
     std::unique_ptr<WebCore::GLContext> m_context;
 
-    WebCore::IntSize m_viewportSize;
-    WebCore::IntPoint m_scrollPosition;
-    float m_scaleFactor { 1 };
-    bool m_drawsBackground { true };
     uint64_t m_nativeSurfaceHandle;
     ShouldDoFrameSync m_doFrameSync;
     WebCore::TextureMapper::PaintFlags m_paintFlags { 0 };
-    bool m_needsResize { false };
     bool m_inForceRepaint { false };
 
     std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;
+
+    struct {
+        Lock lock;
+        WebCore::IntSize viewportSize;
+        WebCore::IntPoint scrollPosition;
+        float scaleFactor { 1 };
+        bool drawsBackground { true };
+        bool needsResize { false };
+    } m_attributes;
 
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     Ref<ThreadedDisplayRefreshMonitor> m_displayRefreshMonitor;

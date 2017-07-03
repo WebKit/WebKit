@@ -1,3 +1,32 @@
+2017-07-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [ThreadedCompositor] Update and retrieve scene attributes under a Lock
+        https://bugs.webkit.org/show_bug.cgi?id=173762
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of dispatching separate tasks on the composition run loop, update
+        various scene attributes by locking a common lock object and updating the
+        appropriate attribute.
+
+        In ThreadedCompositor::renderLayerTree(), where these attributes are used
+        in scene composition, the lock is again obtained and the attributes copied
+        into local variables, releasing the lock afterwards. The attribute values
+        in local copies are then used for that renderLayerTree() invocation.
+
+        This approach is more efficient than dispatching separate tasks that can
+        race against renderLayerTree() dispatches.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        (WebKit::ThreadedCompositor::ThreadedCompositor):
+        (WebKit::m_displayRefreshMonitor):
+        (WebKit::ThreadedCompositor::setScaleFactor):
+        (WebKit::ThreadedCompositor::setScrollPosition):
+        (WebKit::ThreadedCompositor::setViewportSize):
+        (WebKit::ThreadedCompositor::setDrawsBackground):
+        (WebKit::ThreadedCompositor::renderLayerTree):
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.h:
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove code only needed when building for iOS 9.x

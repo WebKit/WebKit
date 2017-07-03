@@ -51,16 +51,21 @@ Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, WebPage& webP
 
 ThreadedCompositor::ThreadedCompositor(Client& client, WebPage& webPage, const IntSize& viewportSize, float scaleFactor, ShouldDoFrameSync doFrameSync, TextureMapper::PaintFlags paintFlags)
     : m_client(client)
-    , m_viewportSize(viewportSize)
-    , m_scaleFactor(scaleFactor)
     , m_doFrameSync(doFrameSync)
     , m_paintFlags(paintFlags)
-    , m_needsResize(!viewportSize.isEmpty())
     , m_compositingRunLoop(std::make_unique<CompositingRunLoop>([this] { renderLayerTree(); }))
 #if USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     , m_displayRefreshMonitor(ThreadedDisplayRefreshMonitor::create(*this))
 #endif
 {
+    {
+        // Locking isn't really necessary here, but it's done for consistency.
+        LockHolder locker(m_attributes.lock);
+        m_attributes.viewportSize = viewportSize;
+        m_attributes.scaleFactor = scaleFactor;
+        m_attributes.needsResize = !viewportSize.isEmpty();
+    }
+
     m_clientRendersNextFrame.store(false);
     m_coordinateUpdateCompletionWithClient.store(false);
 
@@ -130,37 +135,33 @@ void ThreadedCompositor::setNativeSurfaceHandleForCompositing(uint64_t handle)
 
 void ThreadedCompositor::setScaleFactor(float scale)
 {
-    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), scale] {
-        m_scaleFactor = scale;
-        m_compositingRunLoop->scheduleUpdate();
-    });
+    LockHolder locker(m_attributes.lock);
+    m_attributes.scaleFactor = scale;
+    m_compositingRunLoop->scheduleUpdate();
 }
 
 void ThreadedCompositor::setScrollPosition(const IntPoint& scrollPosition, float scale)
 {
-    m_compositingRunLoop->performTask([this, protectedThis = makeRef(*this), scrollPosition, scale] {
-        m_scrollPosition = scrollPosition;
-        m_scaleFactor = scale;
-        m_compositingRunLoop->scheduleUpdate();
-    });
+    LockHolder locker(m_attributes.lock);
+    m_attributes.scrollPosition = scrollPosition;
+    m_attributes.scaleFactor = scale;
+    m_compositingRunLoop->scheduleUpdate();
 }
 
 void ThreadedCompositor::setViewportSize(const IntSize& viewportSize, float scale)
 {
-    m_compositingRunLoop->performTaskSync([this, protectedThis = makeRef(*this), viewportSize, scale] {
-        m_viewportSize = viewportSize;
-        m_scaleFactor = scale;
-        m_needsResize = true;
-        m_compositingRunLoop->scheduleUpdate();
-    });
+    LockHolder locker(m_attributes.lock);
+    m_attributes.viewportSize = viewportSize;
+    m_attributes.scaleFactor = scale;
+    m_attributes.needsResize = true;
+    m_compositingRunLoop->scheduleUpdate();
 }
 
 void ThreadedCompositor::setDrawsBackground(bool drawsBackground)
 {
-    m_compositingRunLoop->performTask([this, protectedThis = Ref<ThreadedCompositor>(*this), drawsBackground] {
-        m_drawsBackground = drawsBackground;
-        m_compositingRunLoop->scheduleUpdate();
-    });
+    LockHolder locker(m_attributes.lock);
+    m_attributes.drawsBackground = drawsBackground;
+    m_compositingRunLoop->scheduleUpdate();
 }
 
 void ThreadedCompositor::renderNextFrame()
@@ -202,22 +203,38 @@ void ThreadedCompositor::renderLayerTree()
 
     m_client.willRenderFrame();
 
-    if (m_needsResize) {
-        glViewport(0, 0, m_viewportSize.width(), m_viewportSize.height());
-        m_needsResize = false;
+    // Retrieve the scene attributes in a thread-safe manner.
+    WebCore::IntSize viewportSize;
+    WebCore::IntPoint scrollPosition;
+    float scaleFactor;
+    bool drawsBackground;
+    bool needsResize;
+    {
+        LockHolder locker(m_attributes.lock);
+        viewportSize = m_attributes.viewportSize;
+        scrollPosition = m_attributes.scrollPosition;
+        scaleFactor = m_attributes.scaleFactor;
+        drawsBackground = m_attributes.drawsBackground;
+        needsResize = m_attributes.needsResize;
+
+        // Reset the needsResize attribute to false.
+        m_attributes.needsResize = false;
     }
-    FloatRect clipRect(0, 0, m_viewportSize.width(), m_viewportSize.height());
+
+    if (needsResize)
+        glViewport(0, 0, viewportSize.width(), viewportSize.height());
 
     TransformationMatrix viewportTransform;
-    viewportTransform.scale(m_scaleFactor);
-    viewportTransform.translate(-m_scrollPosition.x(), -m_scrollPosition.y());
+    viewportTransform.scale(scaleFactor);
+    viewportTransform.translate(-scrollPosition.x(), -scrollPosition.y());
 
-    if (!m_drawsBackground) {
+    if (!drawsBackground) {
         glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    m_scene->paintToCurrentGLContext(viewportTransform, 1, clipRect, Color::transparent, !m_drawsBackground, m_scrollPosition, m_paintFlags);
+    m_scene->paintToCurrentGLContext(viewportTransform, 1, FloatRect { FloatPoint { }, viewportSize },
+        Color::transparent, !drawsBackground, scrollPosition, m_paintFlags);
 
     m_context->swapBuffers();
 
