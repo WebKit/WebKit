@@ -102,14 +102,19 @@ static asn1_node asn1Definitions()
     return s_definitions;
 }
 
-bool decodeStructure(asn1_node* root, const char* elementName, const Vector<uint8_t>& data)
+bool createStructure(const char* elementName, asn1_node* root)
 {
     int ret = asn1_create_element(asn1Definitions(), elementName, root);
-    if (ret != ASN1_SUCCESS)
+    return ret == ASN1_SUCCESS;
+}
+
+bool decodeStructure(asn1_node* root, const char* elementName, const Vector<uint8_t>& data)
+{
+    if (!createStructure(elementName, root))
         return false;
 
     int dataSize = data.size();
-    ret = asn1_der_decoding2(root, data.data(), &dataSize, ASN1_DECODE_FLAG_STRICT_DER, nullptr);
+    int ret = asn1_der_decoding2(root, data.data(), &dataSize, ASN1_DECODE_FLAG_STRICT_DER, nullptr);
     return ret == ASN1_SUCCESS;
 }
 
@@ -133,6 +138,27 @@ std::optional<Vector<uint8_t>> elementData(asn1_node root, const char* elementNa
         return std::nullopt;
 
     return data;
+}
+
+std::optional<Vector<uint8_t>> encodedData(asn1_node root, const char* elementName)
+{
+    int length = 0;
+    int ret = asn1_der_coding(root, elementName, nullptr, &length, nullptr);
+    if (ret != ASN1_MEM_ERROR)
+        return std::nullopt;
+
+    Vector<uint8_t> data(length);
+    ret = asn1_der_coding(root, elementName, data.data(), &length, nullptr);
+    if (ret != ASN1_SUCCESS)
+        return std::nullopt;
+
+    return data;
+}
+
+bool writeElement(asn1_node root, const char* elementName, const void* data, size_t dataSize)
+{
+    int ret = asn1_write_value(root, elementName, data, dataSize);
+    return ret == ASN1_SUCCESS;
 }
 
 } // namespace TASN1

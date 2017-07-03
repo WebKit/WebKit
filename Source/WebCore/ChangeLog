@@ -1,3 +1,38 @@
+2017-07-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyEC SPKI exports
+        https://bugs.webkit.org/show_bug.cgi?id=173646
+
+        Reviewed by Jiewen Tan.
+
+        No new tests -- affected tests are now passing and are unskipped.
+
+        Implement libgcrypt-based support for SPKI exports of EC keys.
+
+        Initially, the ECParameters structure is created so that it will be later embedded
+        into the SubjectPublicKeyInfo structure. First the root element of this structure
+        is written into, specifying namedCurve as the chosen member (even if other choices
+        are not really available). We then write out the object identifier into this
+        namedCurve member that properly represents this key's curve type.
+
+        The SubjectPublicKeyInfo structure is created next. We write out id-ecPublicKey
+        identifier as the chosen algorithm identifier. Web Crypto specification demands
+        that the id-ecDH identifier is used in case of ECDH keys, but no existing test in
+        the W3C test suite expects this, so this should be revisited later. Data of the
+        previously-constructed ECParameters structure is written out into the
+        AlgorithmIdentifier's parameters member.
+
+        The `q` MPI data is then retrieved. Its size is validated, as well as the first
+        byte of data in order to ensure the MPI represents an uncompressed EC point.
+        The data is then written into the subjectPublicKey member.
+
+        Finally the encoded SubjectPublicKeyInfo structure data is extracted and returned
+        from the platformExportSpki() function, completion the export operation.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::curveIdentifier):
+        (WebCore::CryptoKeyEC::platformExportSpki):
+
 2017-07-02  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove special casing for RegExp which is no longer required by the spec

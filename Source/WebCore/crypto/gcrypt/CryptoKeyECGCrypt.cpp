@@ -66,6 +66,19 @@ static const char* curveName(CryptoKeyEC::NamedCurve curve)
     return nullptr;
 }
 
+static const char* curveIdentifier(CryptoKeyEC::NamedCurve curve)
+{
+    switch (curve) {
+    case CryptoKeyEC::NamedCurve::P256:
+        return "1.2.840.10045.3.1.7";
+    case CryptoKeyEC::NamedCurve::P384:
+        return "1.3.132.0.34";
+    }
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 static unsigned uncompressedPointSizeForCurve(CryptoKeyEC::NamedCurve curve)
 {
     switch (curve) {
@@ -402,9 +415,63 @@ void CryptoKeyEC::platformAddFieldElements(JsonWebKey& jwk) const
 
 Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
 {
-    notImplemented();
+    PAL::TASN1::Structure ecParameters;
+    {
+        // Create the `ECParameters` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.ECParameters", &ecParameters))
+            return { };
 
-    return { };
+        // Select the `namedCurve` object identifier as the target `ECParameters` choice.
+        if (!PAL::TASN1::writeElement(ecParameters, "", "namedCurve", 1))
+            return { };
+
+        // Write out the EC curve identifier under `namedCurve`.
+        if (!PAL::TASN1::writeElement(ecParameters, "namedCurve", curveIdentifier(m_curve), 1))
+            return { };
+    }
+
+    PAL::TASN1::Structure spki;
+    {
+        // Create the `SubjectPublicKeyInfo` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.SubjectPublicKeyInfo", &spki))
+            return { };
+
+        // Write out the id-ecPublicKey identifier under `algorithm.algorithm`.
+        // FIXME: Per specification this should write out id-ecDH when the ECDH algorithm
+        // is specified for this CryptoKeyEC object, but not even the W3C tests expect that.
+        if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", "1.2.840.10045.2.1", 1))
+            return { };
+
+        // Write out the `ECParameters` data under `algorithm.parameters`.
+        {
+            auto data = PAL::TASN1::encodedData(ecParameters, "");
+            if (!data || !PAL::TASN1::writeElement(spki, "algorithm.parameters", data->data(), data->size()))
+                return { };
+        }
+
+        // Retrieve the `q` s-expression, which should contain the public key data.
+        PAL::GCrypt::Handle<gcry_sexp_t> qSexp(gcry_sexp_find_token(m_platformKey, "q", 0));
+        if (!qSexp)
+            return { };
+
+        // Retrieve the `q` data, which should be in the uncompressed point format.
+        // Validate the data size and the first byte (which should be 0x04).
+        auto qData = mpiData(qSexp);
+        if (!qData || qData->size() != uncompressedPointSizeForCurve(m_curve) || qData->at(0) != 0x04)
+            return { };
+
+        // Write out the public key data under `subjectPublicKey`. Because this is a
+        // bit string parameter, the data size has to be multiplied by 8.
+        if (!PAL::TASN1::writeElement(spki, "subjectPublicKey", qData->data(), qData->size() * 8))
+            return { };
+    }
+
+    // Retrieve the encoded `SubjectPublicKeyInfo` data and return it.
+    auto result = PAL::TASN1::encodedData(spki, "");
+    if (!result)
+        return { };
+
+    return WTFMove(result.value());
 }
 
 Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const

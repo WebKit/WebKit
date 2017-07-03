@@ -1,3 +1,33 @@
+2017-07-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyEC SPKI exports
+        https://bugs.webkit.org/show_bug.cgi?id=173646
+
+        Reviewed by Jiewen Tan.
+
+        No new tests -- covered by existing Web Crypto tests.
+
+        Add three new libtasn1 utility functions.
+
+        createStructure() is a simple wrapper around asn1_create_element(), creating a new
+        ASN.1 structure for the specified definition that's listed in WebCrypto.asn. The
+        existing decodeStructure() is modified to use this new addition.
+
+        encodedData() retrieves the ASN.1-encoded data of the specified element that's
+        located in the passed-in asn1_node. This is used when retrieving SPKI or PKCS#8
+        data from filled-out ASN.1 structures.
+
+        writeElement() writes the provided data to the given asn1_node object under the
+        specified element, using the given size. True is returned if this operation was
+        successful.
+
+        * pal/crypto/tasn1/Utilities.cpp:
+        (PAL::TASN1::createStructure):
+        (PAL::TASN1::decodeStructure):
+        (PAL::TASN1::encodedData):
+        (PAL::TASN1::writeElement):
+        * pal/crypto/tasn1/Utilities.h:
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove code only needed when building for iOS 9.x
