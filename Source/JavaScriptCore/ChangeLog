@@ -1,3 +1,46 @@
+2017-07-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove copy of ICU headers from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=116407
+
+        Reviewed by Alex Christensen.
+
+        Use WTF's copy of ICU headers.
+
+        * Configurations/Base.xcconfig:
+        * icu/unicode/localpointer.h: Removed.
+        * icu/unicode/parseerr.h: Removed.
+        * icu/unicode/platform.h: Removed.
+        * icu/unicode/ptypes.h: Removed.
+        * icu/unicode/putil.h: Removed.
+        * icu/unicode/uchar.h: Removed.
+        * icu/unicode/ucnv.h: Removed.
+        * icu/unicode/ucnv_err.h: Removed.
+        * icu/unicode/ucol.h: Removed.
+        * icu/unicode/uconfig.h: Removed.
+        * icu/unicode/ucurr.h: Removed.
+        * icu/unicode/uenum.h: Removed.
+        * icu/unicode/uiter.h: Removed.
+        * icu/unicode/uloc.h: Removed.
+        * icu/unicode/umachine.h: Removed.
+        * icu/unicode/unorm.h: Removed.
+        * icu/unicode/unorm2.h: Removed.
+        * icu/unicode/urename.h: Removed.
+        * icu/unicode/uscript.h: Removed.
+        * icu/unicode/uset.h: Removed.
+        * icu/unicode/ustring.h: Removed.
+        * icu/unicode/utf.h: Removed.
+        * icu/unicode/utf16.h: Removed.
+        * icu/unicode/utf8.h: Removed.
+        * icu/unicode/utf_old.h: Removed.
+        * icu/unicode/utypes.h: Removed.
+        * icu/unicode/uvernum.h: Removed.
+        * icu/unicode/uversion.h: Removed.
+        * runtime/IntlCollator.cpp:
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/StringPrototype.cpp:
+
 2017-07-03  Saam Barati  <sbarati@apple.com>
 
         Add better crash logging for allocation sinking phase

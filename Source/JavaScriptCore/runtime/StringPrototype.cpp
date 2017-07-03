@@ -46,7 +46,10 @@
 #include "SuperSampler.h"
 #include <algorithm>
 #include <unicode/uconfig.h>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
 #include <unicode/unorm.h>
+#pragma clang diagnostic pop
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>
@@ -1750,7 +1753,30 @@ static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLeng
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     UErrorCode status = U_ZERO_ERROR;
-    int32_t normalizedStringLength = unorm_normalize(source, sourceLength, form, 0, nullptr, 0, &status);
+    // unorm2_get*Instance() documentation says: "Returns an unmodifiable singleton instance. Do not delete it."
+    const UNormalizer2* normalizer = nullptr;
+    switch (form) {
+    case UNORM_NFC:
+        normalizer = unorm2_getNFCInstance(&status);
+        break;
+    case UNORM_NFD:
+        normalizer = unorm2_getNFDInstance(&status);
+        break;
+    case UNORM_NFKC:
+        normalizer = unorm2_getNFKCInstance(&status);
+        break;
+    case UNORM_NFKD:
+        normalizer = unorm2_getNFKDInstance(&status);
+        break;
+    default:
+        return throwTypeError(exec, scope);
+    }
+    ASSERT(normalizer);
+
+    if (U_FAILURE(status))
+        return throwTypeError(exec, scope);
+
+    int32_t normalizedStringLength = unorm2_normalize(normalizer, source, sourceLength, nullptr, 0, &status);
 
     if (U_FAILURE(status) && status != U_BUFFER_OVERFLOW_ERROR) {
         // The behavior is not specified when normalize fails.
@@ -1764,7 +1790,7 @@ static JSValue normalize(ExecState* exec, const UChar* source, size_t sourceLeng
         return throwOutOfMemoryError(exec, scope);
 
     status = U_ZERO_ERROR;
-    unorm_normalize(source, sourceLength, form, 0, buffer, normalizedStringLength, &status);
+    unorm2_normalize(normalizer, source, sourceLength, buffer, normalizedStringLength, &status);
     if (U_FAILURE(status))
         return throwTypeError(exec, scope);
 
