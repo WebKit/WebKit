@@ -1,3 +1,32 @@
+2017-07-03  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove more unnecessary uses of the preprocessor in idl files
+        https://bugs.webkit.org/show_bug.cgi?id=174083
+
+        Reviewed by Alex Christensen.
+
+        Purge as much preprocessor use as possible.
+
+        * Configurations/FeatureDefines.xcconfig:
+        Add ENABLE_NAVIGATOR_STANDALONE.
+
+        * animation/Animatable.idl:
+        Remove unnecessary check for LANGUAGE_OBJECTIVE_C. We no longer generate those bindings.
+
+        * html/MediaError.idl:
+        Use [Conditional] rather than the preprocessor.
+
+        * page/Navigator.idl:
+        Use [Conditional] rather than the preprocessor with the new ENABLE_NAVIGATOR_STANDALONE.
+
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        Expose setQuickLookPassword on all platforms, as it doesn't hurt since it is only for testing,
+        but make the implementation do nothing.
+
+        * testing/Internals.idl:
+        Use [Conditional] rather than the preprocessor.
+
 2017-07-03  Daewoong Jang  <daewoong.jang@navercorp.com>
 
         [Curl] Fix compilation errors

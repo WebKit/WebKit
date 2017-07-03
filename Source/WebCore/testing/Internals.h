@@ -568,9 +568,7 @@ public:
 
     Vector<String> accessKeyModifiers() const;
 
-#if PLATFORM(IOS)
     void setQuickLookPassword(const String&);
-#endif
 
     void setAsRunningUserScripts(Document&);
 
