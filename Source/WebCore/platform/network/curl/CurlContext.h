@@ -28,8 +28,8 @@
 
 #include "URL.h"
 
-#include <WTF/Noncopyable.h>
 #include <wtf/Lock.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 
 #if OS(WINDOWS)

@@ -151,8 +151,8 @@ void CurlContext::initCookieSession()
     curl_easy_setopt(curl, CURLOPT_SHARE, curlShareHandle());
 
     if (!m_cookieJarFileName.isNull()) {
-        curl_easy_setopt(curl, CURLOPT_COOKIEFILE, m_cookieJarFileName);
-        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, m_cookieJarFileName);
+        curl_easy_setopt(curl, CURLOPT_COOKIEFILE, m_cookieJarFileName.data());
+        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, m_cookieJarFileName.data());
     }
 
     curl_easy_setopt(curl, CURLOPT_COOKIESESSION, 1);
