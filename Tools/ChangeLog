@@ -1,3 +1,16 @@
+2017-07-03  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r219083.
+
+        The revision caused an API failure on all testing platforms.
+
+        Reverted changeset:
+
+        "[MediaStream] Protect request and web view during gUM client
+        callback"
+        https://bugs.webkit.org/show_bug.cgi?id=174096
+        http://trac.webkit.org/changeset/219083
+
 2017-07-03  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Properly number duplicated crashlogs

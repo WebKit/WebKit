@@ -28,7 +28,6 @@
 		0799C3491EBA2D7B003B7532 /* UserMediaDisabled.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07EDEFAC1EB9400C00D43292 /* UserMediaDisabled.mm */; };
 		0799C34B1EBA3301003B7532 /* disableGetUserMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */; };
 		07C046CA1E4262A8007201E7 /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C046C91E42573E007201E7 /* CARingBuffer.cpp */; };
-		07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */; };
 		0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */; };
 		0F139E781A423A6B00F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		0F139E791A42457000F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
@@ -961,7 +960,6 @@
 		0766DD1F1A5AD5200023E3BB /* PendingAPIRequestURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PendingAPIRequestURL.cpp; sourceTree = "<group>"; };
 		0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = disableGetUserMedia.html; sourceTree = "<group>"; };
 		07C046C91E42573E007201E7 /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBuffer.cpp; sourceTree = "<group>"; };
-		07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GetUserMediaNavigation.mm; sourceTree = "<group>"; };
 		07EDEFAC1EB9400C00D43292 /* UserMediaDisabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaDisabled.mm; sourceTree = "<group>"; };
 		0BCD833414857CE400EA2003 /* HashMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMap.cpp; sourceTree = "<group>"; };
 		0BCD85691485C98B00EA2003 /* SetForScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetForScope.cpp; sourceTree = "<group>"; };
@@ -2242,7 +2240,6 @@
 				26F52EAA182872600023D412 /* Geolocation.cpp */,
 				F660AA0C15A5F061003A1243 /* GetInjectedBundleInitializationUserDataCallback.cpp */,
 				F660AA0F15A5F624003A1243 /* GetInjectedBundleInitializationUserDataCallback_Bundle.cpp */,
-				07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */,
 				4BFDFFA8131477770061F24B /* HitTestResultNodeHandle.cpp */,
 				4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */,
 				BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */,
@@ -3112,7 +3109,6 @@
 				7A6A2C701DCCFA8C00C0D085 /* LocalStorageQuirkTest.mm in Sources */,
 				7CCE7EB21A411A5100447C4C /* MemoryCacheAddImageToCacheIOS.mm in Sources */,
 				7CCE7EC51A411A7E00447C4C /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */,
-				07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */,
 				7CCE7EC61A411A7E00447C4C /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */,
 				CDA315981ED53651009F60D3 /* MediaPlaybackSleepAssertion.mm in Sources */,
 				5C0BF88D1DD5964D00B00328 /* MemoryPressureHandler.mm in Sources */,

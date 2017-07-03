@@ -403,32 +403,6 @@ bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFramePr
 }
 #endif
 
-static void requestUserMediaAuthorizationForDevices(const WebKit::WebFrameProxy& frame, WebKit::UserMediaPermissionRequestProxy& request, id <WKUIDelegatePrivate> delegate, WKWebView& webView)
-{
-    auto decisionHandler = BlockPtr<void(BOOL)>::fromCallable([protectedRequest = makeRef(request)](BOOL authorized) {
-        if (!authorized) {
-            protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        }
-        const String& videoDeviceUID = protectedRequest->requiresVideo() ? protectedRequest->videoDeviceUIDs().first() : String();
-        const String& audioDeviceUID = protectedRequest->requiresAudio() ? protectedRequest->audioDeviceUIDs().first() : String();
-        protectedRequest->allow(audioDeviceUID, videoDeviceUID);
-    });
-
-    const WebFrameProxy* mainFrame = frame.page()->mainFrame();
-    WebCore::URL requestFrameURL(WebCore::URL(), frame.url());
-    WebCore::URL mainFrameURL(WebCore::URL(), mainFrame->url());
-
-    _WKCaptureDevices devices = 0;
-    if (request.requiresAudio())
-        devices |= _WKCaptureDeviceMicrophone;
-    if (request.requiresVideo())
-        devices |= _WKCaptureDeviceCamera;
-
-    auto protectedWebView = RetainPtr<WKWebView>(&webView);
-    [delegate _webView:protectedWebView.get() requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
-}
-
 bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebKit::WebPageProxy& page, WebKit::WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, WebKit::UserMediaPermissionRequestProxy& request)
 {
     auto delegate = m_uiDelegate.m_delegate.get();
@@ -444,62 +418,77 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebKit::Web
         return true;
     }
 
+    __block WKWebView *webView = m_uiDelegate.m_webView;
+    void (^uiDelegateAuthorizationBlock)(void) = ^ {
+        const WebFrameProxy* mainFrame = frame.page()->mainFrame();
+        WebCore::URL requestFrameURL(WebCore::URL(), frame.url());
+        WebCore::URL mainFrameURL(WebCore::URL(), mainFrame->url());
+
+        _WKCaptureDevices devices = 0;
+        if (requiresAudio)
+            devices |= _WKCaptureDeviceMicrophone;
+        if (requiresVideo)
+            devices |= _WKCaptureDeviceCamera;
+
+        [(id <WKUIDelegatePrivate>)delegate _webView:webView requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:^(BOOL authorized) {
+            if (!authorized) {
+                request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                return;
+            }
+            const String& videoDeviceUID = requiresVideo ? request.videoDeviceUIDs().first() : String();
+            const String& audioDeviceUID = requiresAudio ? request.audioDeviceUIDs().first() : String();
+            request.allow(audioDeviceUID, videoDeviceUID);
+        }];
+    };
+
 #if PLATFORM(IOS)
-    auto requestCameraAuthorization = BlockPtr<void()>::fromCallable([this, &frame, protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView)]() {
-
-        if (!protectedRequest->requiresVideo()) {
-            requestUserMediaAuthorizationForDevices(frame, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
-            return;
-        }
-        AVAuthorizationStatus cameraAuthorizationStatus = [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeVideo()];
-        switch (cameraAuthorizationStatus) {
-        case AVAuthorizationStatusAuthorized:
-            requestUserMediaAuthorizationForDevices(frame, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
-            break;
-        case AVAuthorizationStatusDenied:
-        case AVAuthorizationStatusRestricted:
-            protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-            return;
-        case AVAuthorizationStatusNotDetermined:
-            auto decisionHandler = BlockPtr<void(BOOL)>::fromCallable([this, &frame, protectedRequest = makeRef(protectedRequest.get()), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView)](BOOL authorized) {
-                if (!authorized) {
-                    protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
-                    return;
-                }
-                requestUserMediaAuthorizationForDevices(frame, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
-            });
-
-            [getAVCaptureDeviceClass() requestAccessForMediaType:getAVMediaTypeVideo() completionHandler:decisionHandler.get()];
-            break;
-        }
-    });
+    void (^cameraAuthorizationBlock)(void) = ^ {
+        if (requiresVideo) {
+            AVAuthorizationStatus cameraAuthorizationStatus = [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeVideo()];
+            switch (cameraAuthorizationStatus) {
+            case AVAuthorizationStatusDenied:
+            case AVAuthorizationStatusRestricted:
+                request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                return;
+            case AVAuthorizationStatusNotDetermined:
+                [getAVCaptureDeviceClass() requestAccessForMediaType:getAVMediaTypeVideo() completionHandler:^(BOOL authorized) {
+                    if (!authorized) {
+                        request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                        return;
+                    }
+                    uiDelegateAuthorizationBlock();
+                }];
+                break;
+            default:
+                uiDelegateAuthorizationBlock();
+            }
+        } else
+            uiDelegateAuthorizationBlock();
+    };
 
     if (requiresAudio) {
         AVAuthorizationStatus microphoneAuthorizationStatus = [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeAudio()];
         switch (microphoneAuthorizationStatus) {
-        case AVAuthorizationStatusAuthorized:
-            requestCameraAuthorization();
-            break;
         case AVAuthorizationStatusDenied:
         case AVAuthorizationStatusRestricted:
             request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
             return true;
         case AVAuthorizationStatusNotDetermined:
-            auto decisionHandler = BlockPtr<void(BOOL)>::fromCallable([protectedRequest = makeRef(request), requestCameraAuthorization](BOOL authorized) {
+            [getAVCaptureDeviceClass() requestAccessForMediaType:getAVMediaTypeAudio() completionHandler:^(BOOL authorized) {
                 if (!authorized) {
-                    protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
+                    request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
                     return;
                 }
-                requestCameraAuthorization();
-            });
-
-            [getAVCaptureDeviceClass() requestAccessForMediaType:getAVMediaTypeAudio() completionHandler:decisionHandler.get()];
+                cameraAuthorizationBlock();
+            }];
             break;
+        default:
+            cameraAuthorizationBlock();
         }
     } else
-        requestCameraAuthorization();
+        cameraAuthorizationBlock();
 #else
-    requestUserMediaAuthorizationForDevices(frame, request, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *m_uiDelegate.m_webView);
+    uiDelegateAuthorizationBlock();
 #endif
 
     return true;
@@ -518,11 +507,9 @@ bool UIDelegate::UIClient::checkUserMediaPermissionForOrigin(WebKit::WebPageProx
     WebCore::URL requestFrameURL(WebCore::URL(), frame.url());
     WebCore::URL mainFrameURL(WebCore::URL(), mainFrame->url());
 
-    auto decisionHandler = BlockPtr<void(NSString *, BOOL)>::fromCallable([protectedRequest = makeRef(request)](NSString *salt, BOOL authorized) {
-        protectedRequest->setUserMediaAccessInfo(String(salt), authorized);
-    });
-
-    [(id <WKUIDelegatePrivate>)delegate _webView:webView checkUserMediaPermissionForURL:requestFrameURL mainFrameURL:mainFrameURL frameIdentifier:frame.frameID() decisionHandler:decisionHandler.get()];
+    [(id <WKUIDelegatePrivate>)delegate _webView:webView checkUserMediaPermissionForURL:requestFrameURL mainFrameURL:mainFrameURL frameIdentifier:frame.frameID() decisionHandler:^(NSString *salt, BOOL authorized) {
+        request.setUserMediaAccessInfo(String(salt), authorized);
+    }];
 
     return true;
 }
