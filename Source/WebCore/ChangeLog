@@ -1,3 +1,19 @@
+2017-07-03  Andreas Kling  <akling@apple.com>
+
+        Null RenderLayer* deref in FrameView::adjustTiledBackingCoverage()
+        https://bugs.webkit.org/show_bug.cgi?id=174106
+        <rdar://problem/33085838>
+
+        Reviewed by Tim Horton.
+
+        I haven't been able to reproduce this crash locally, but I have seen
+        video of someone who can, so here's a null check for the RenderView::layer()
+        which could be null if we're called between RenderView construction
+        and the first callback to RenderLayerModelObject::styleDidChange().
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustTiledBackingCoverage):
+
 2017-07-03  Matt Rajca  <mrajca@apple.com>
 
         Add/remove appropriate media element behavior restrictions when updateWebsitePolicies is called

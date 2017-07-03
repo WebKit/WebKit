@@ -2937,7 +2937,7 @@ void FrameView::adjustTiledBackingCoverage()
         enableSpeculativeTilingIfNeeded();
 
     RenderView* renderView = this->renderView();
-    if (renderView && renderView->layer()->backing())
+    if (renderView && renderView->layer() && renderView->layer()->backing())
         renderView->layer()->backing()->adjustTiledBackingCoverage();
 #if PLATFORM(IOS)
     if (LegacyTileCache* tileCache = legacyTileCache())
