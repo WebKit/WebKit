@@ -215,6 +215,24 @@ static void addRepresentationsForPlainText(WebItemProviderRegistrationInfoList *
     [itemsToRegister addData:[(NSString *)plainText dataUsingEncoding:NSUTF8StringEncoding] forType:(NSString *)kUTTypeUTF8PlainText];
 }
 
+bool PlatformPasteboard::allowReadingURLAtIndex(const URL& url, int index) const
+{
+    NSItemProvider *itemProvider = (NSUInteger)index < [m_pasteboard itemProviders].count ? [[m_pasteboard itemProviders] objectAtIndex:index] : nil;
+    for (NSString *type in itemProvider.registeredTypeIdentifiers) {
+        if (UTTypeConformsTo((CFStringRef)type, kUTTypeURL))
+            return true;
+    }
+
+    return url.isValid();
+}
+
+#else
+
+bool PlatformPasteboard::allowReadingURLAtIndex(const URL&, int) const
+{
+    return true;
+}
+
 #endif
 
 void PlatformPasteboard::writeObjectRepresentations(const PasteboardWebContent& content)
@@ -426,7 +444,7 @@ String PlatformPasteboard::readString(int index, const String& type)
             return [(NSAttributedString *)value string];
     } else if (type == String(kUTTypeURL)) {
         ASSERT([value isKindOfClass:[NSURL class]]);
-        if ([value isKindOfClass:[NSURL class]])
+        if ([value isKindOfClass:[NSURL class]] && allowReadingURLAtIndex((NSURL *)value, index))
             return [(NSURL *)value absoluteString];
     }
 
@@ -446,6 +464,9 @@ URL PlatformPasteboard::readURL(int index, const String& type, String& title)
     ASSERT([value isKindOfClass:[NSURL class]]);
     if (![value isKindOfClass:[NSURL class]])
         return URL();
+
+    if (!allowReadingURLAtIndex((NSURL *)value, index))
+        return { };
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     title = [value _title];

@@ -1,3 +1,18 @@
+2017-07-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Pasting single words copied to UIPasteboard inserts URLs in editable areas
+        https://bugs.webkit.org/show_bug.cgi?id=174082
+        <rdar://problem/33046992>
+
+        Reviewed by Tim Horton.
+
+        Add a hook to WKPreferences to allow programatic pasting.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setDOMPasteAllowed:]):
+        (-[WKPreferences _domPasteAllowed]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-07-03  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ and WPE build fix when building with GCC 4.9.

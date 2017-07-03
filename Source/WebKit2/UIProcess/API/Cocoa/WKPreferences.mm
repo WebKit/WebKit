@@ -627,6 +627,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     return _preferences->javaScriptCanAccessClipboard();
 }
 
+- (void)_setDOMPasteAllowed:(BOOL)domPasteAllowed
+{
+    _preferences->setDOMPasteAllowed(domPasteAllowed);
+}
+
+- (BOOL)_domPasteAllowed
+{
+    return _preferences->domPasteAllowed();
+}
+
 - (void)_setMediaDocumentEntersFullscreenAutomatically:(BOOL)mediaDocumentEntersFullscreenAutomatically
 {
     _preferences->setMediaDocumentEntersFullscreenAutomatically(mediaDocumentEntersFullscreenAutomatically);

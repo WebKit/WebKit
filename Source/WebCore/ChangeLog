@@ -1,3 +1,50 @@
+2017-07-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Pasting single words copied to UIPasteboard inserts URLs in editable areas
+        https://bugs.webkit.org/show_bug.cgi?id=174082
+        <rdar://problem/33046992>
+
+        Reviewed by Tim Horton.
+
+        Currently, our heuristics for coercing plain text to URLs when reading URLs off of the UIPasteboard allows URLs
+        to be created as long as -[UIPasteboard valuesForPasteboardType:inItemSet:] returns a non-null NSURL. However,
+        UIPasteboard automatically coerces any NSString into an NSURL if it initializes an NSURL via +URLWithString:.
+        Thus, single-word strings such as "hello" that are written to the pasteboard as "public.utf8-plain-text" can
+        be read back as NSURLs for "public.url". This currently causes bugs in shipping software: e.g. copying and
+        pasting a single word from an editable input or textarea and pasting into a rich contenteditable area using
+        WebKit1 inserts a link. However, when combined with another change in WebKit that attempts to read "public.url"
+        before "public.text" when reading plain text from the pasteboard, this now also affects pasting in plain text
+        areas, where pasted plain-text strings that are not URLs will paste as URL-encoded strings anyways (for
+        instance, replacing "[hello]" with "%5Bhello%5D").
+
+        To fix this, and existing issues with pasting single words in contenteditables, we make
+        PlatformPasteboard::readString and PlatformPasteboard::readURL only accept a coerced NSURL as an URL if it also
+        parses as a valid URL in WebKit (otherwise, we return an empty string).
+
+        Tests:
+            UIPasteboardTests.DoNotPastePlainTextAsURL
+            UIPasteboardTests.PastePlainTextAsURL
+            UIPasteboardTests.PasteURLWithPlainTextAsURL
+
+        * platform/PlatformPasteboard.h:
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::allowReadingURLAtIndex):
+
+        Allow an URL to be read if either (1) an URL was explicitly specified in the UIPasteboard, or (2) the "proposed"
+        URL returned from -valuesForPasteboardType: is valid.
+
+        (WebCore::PlatformPasteboard::readString):
+        (WebCore::PlatformPasteboard::readURL):
+
+        Consult allowReadingURLAtIndex here (in the case of ::readString, only if the given pasteboard type is
+        "public.url").
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard itemProviders]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+
 2017-07-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Implement CryptoKeyEC SPKI exports
