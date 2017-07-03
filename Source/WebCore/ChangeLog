@@ -1,3 +1,12 @@
+2017-07-03  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Add an experimental setting to build with ccache
+        https://bugs.webkit.org/show_bug.cgi?id=173875
+
+        Reviewed by Tim Horton.
+
+        * Configurations/DebugRelease.xcconfig: Included ccache.xcconfig.
+
 2017-07-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r218910): Crash inside textMarkerDataForFirstPositionInTextControl

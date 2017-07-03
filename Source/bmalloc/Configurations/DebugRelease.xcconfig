@@ -40,3 +40,6 @@ DEBUG_INFORMATION_FORMAT = dwarf;
 SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
 SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;
+
+WK_CCACHE_DIR = $(SRCROOT)/../../Tools/ccache;
+#include "../../../Tools/ccache/ccache.xcconfig"

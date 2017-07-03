@@ -46,3 +46,6 @@ WEBKIT_SYSTEM_INTERFACE_LIBRARY_macosx_101400 = $(WEBKIT_SYSTEM_INTERFACE_LIBRAR
 SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
 SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;
+
+WK_CCACHE_DIR = $(SRCROOT)/../ccache;
+#include "../../../ccache/ccache.xcconfig"

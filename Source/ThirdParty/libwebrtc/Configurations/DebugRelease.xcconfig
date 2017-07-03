@@ -20,3 +20,6 @@ SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;
 
 WK_RELOCATABLE_FRAMEWORKS = YES;
+
+WK_CCACHE_DIR = $(SRCROOT)/../../../Tools/ccache;
+#include "../../../../Tools/ccache/ccache.xcconfig"

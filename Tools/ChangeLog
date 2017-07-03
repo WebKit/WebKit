@@ -1,3 +1,37 @@
+2017-07-03  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Add an experimental setting to build with ccache
+        https://bugs.webkit.org/show_bug.cgi?id=173875
+
+        Reviewed by Tim Horton.
+
+        On systems that already have ccache(1) installed, this patch adds experimental support for
+        it to Xcode builds. It can be enabled with the WK_USE_CCACHE build setting.
+
+        When ccache is enabled, CC is overridden to invoke Tools/ccache/ccache-clang. This script
+        finds the "-isysroot" argument to determine the active SDK, uses xcrun(1) and the SDK to
+        find the toolchain from which to run clang, and then invokes ccache with the required
+        arguments.
+
+        ccache is invoked with CCACHE_SLOPPINESS="pch_defines,time_macros", which is required for
+        precompiled headers to work properly [1].
+
+        LDPLUSPLUS is overridden to invoke Tools/ccache/ccache-clang++. It behaves the same as
+        ccache-clang, except it tells ccache to execute clang++ instead of clang. This is important
+        during linking.
+        
+        [1] https://ccache.samba.org/manual.html#_precompiled_headers
+
+        * DumpRenderTree/mac/Configurations/DebugRelease.xcconfig: Included ccache.xcconfig.
+        * MiniBrowser/Configurations/DebugRelease.xcconfig: Ditto.
+        * MobileMiniBrowser/Configurations/DebugRelease.xcconfig: Ditto.
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig: Ditto.
+        * WebKitTestRunner/Configurations/DebugRelease.xcconfig: Ditto.
+        * ccache/README.md: Added.
+        * ccache/ccache-clang: Added.
+        * ccache/ccache-clang++: Added.
+        * ccache/ccache.xcconfig: Added. Overrides CC and LDPLUSPLUS when WK_USE_CACHE=YES.
+
 2017-07-03  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r215096) Queries of URLs with non-special schemes should not percent-encode single quotes
