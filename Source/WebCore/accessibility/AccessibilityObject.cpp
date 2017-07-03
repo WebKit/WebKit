@@ -88,6 +88,8 @@ AccessibilityObject::AccessibilityObject()
     , m_role(UnknownRole)
     , m_lastKnownIsIgnoredValue(DefaultBehavior)
     , m_isIgnoredFromParentData(AccessibilityIsIgnoredFromParentData())
+    , m_childrenDirty(false)
+    , m_subtreeDirty(false)
 #if PLATFORM(GTK)
     , m_wrapper(nullptr)
 #endif
@@ -549,6 +551,51 @@ static void appendAccessibilityObject(AccessibilityObject* object, Accessibility
 
     if (object)
         results.append(object);
+}
+    
+void AccessibilityObject::insertChild(AccessibilityObject* child, unsigned index)
+{
+    if (!child)
+        return;
+    
+    // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op),
+    // or its visibility has changed. In the latter case, this child may have a stale child cached.
+    // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
+    // Only clear the child's children when we know it's in the updating chain in order to avoid unnecessary work.
+    if (child->needsToUpdateChildren() || m_subtreeDirty) {
+        child->clearChildren();
+        // Pass m_subtreeDirty flag down to the child so that children cache gets reset properly.
+        if (m_subtreeDirty)
+            child->setNeedsToUpdateSubtree();
+    } else {
+        // For some reason the grand children might be detached so that we need to regenerate the
+        // children list of this child.
+        for (const auto& grandChild : child->children(false)) {
+            if (grandChild->isDetachedFromParent()) {
+                child->clearChildren();
+                break;
+            }
+        }
+    }
+    
+    setIsIgnoredFromParentDataForChild(child);
+    if (child->accessibilityIsIgnored()) {
+        const auto& children = child->children();
+        size_t length = children.size();
+        for (size_t i = 0; i < length; ++i)
+            m_children.insert(index + i, children[i]);
+    } else {
+        ASSERT(child->parentObject() == this);
+        m_children.insert(index, child);
+    }
+    
+    // Reset the child's m_isIgnoredFromParentData since we are done adding that child and its children.
+    child->clearIsIgnoredFromParentData();
+}
+    
+void AccessibilityObject::addChild(AccessibilityObject* child)
+{
+    insertChild(child, m_children.size());
 }
     
 static void appendChildrenToArray(AccessibilityObject* object, bool isForward, AccessibilityObject* startObject, AccessibilityObject::AccessibilityChildrenVector& results)
@@ -2335,7 +2382,7 @@ String AccessibilityObject::roleDescription() const
     return stripLeadingAndTrailingHTMLSpaces(getAttribute(aria_roledescriptionAttr));
 }
     
-static bool nodeHasPresentationRole(Node* node)
+bool nodeHasPresentationRole(Node* node)
 {
     return nodeHasRole(node, "presentation") || nodeHasRole(node, "none");
 }

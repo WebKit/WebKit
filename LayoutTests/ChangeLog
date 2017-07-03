@@ -1,3 +1,14 @@
+2017-07-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: role="none" (or presentation) does not work on iframes
+        https://bugs.webkit.org/show_bug.cgi?id=173930
+        <rdar://problem/33034347>
+
+        Reviewed by Ryosuke Niwa.
+
+        * accessibility/presentation-role-iframe-expected.txt: Added.
+        * accessibility/presentation-role-iframe.html: Added.
+
 2017-07-03  Alex Christensen  <achristensen@webkit.org>
 
         Rebase test after r219024

@@ -84,8 +84,6 @@ static String accessibleNameForNode(Node* node, Node* labelledbyNode = nullptr);
 AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
     : AccessibilityObject()
     , m_ariaRole(UnknownRole)
-    , m_childrenDirty(false)
-    , m_subtreeDirty(false)
     , m_roleForMSAA(UnknownRole)
 #ifndef NDEBUG
     , m_initialized(false)
@@ -335,51 +333,6 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
         return GroupRole;
     
     return UnknownRole;
-}
-
-void AccessibilityNodeObject::insertChild(AccessibilityObject* child, unsigned index)
-{
-    if (!child)
-        return;
-    
-    // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op),
-    // or its visibility has changed. In the latter case, this child may have a stale child cached.
-    // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
-    // Only clear the child's children when we know it's in the updating chain in order to avoid unnecessary work.
-    if (child->needsToUpdateChildren() || m_subtreeDirty) {
-        child->clearChildren();
-        // Pass m_subtreeDirty flag down to the child so that children cache gets reset properly.
-        if (m_subtreeDirty)
-            child->setNeedsToUpdateSubtree();
-    } else {
-        // For some reason the grand children might be detached so that we need to regenerate the
-        // children list of this child.
-        for (const auto& grandChild : child->children(false)) {
-            if (grandChild->isDetachedFromParent()) {
-                child->clearChildren();
-                break;
-            }
-        }
-    }
-    
-    setIsIgnoredFromParentDataForChild(child);
-    if (child->accessibilityIsIgnored()) {
-        const auto& children = child->children();
-        size_t length = children.size();
-        for (size_t i = 0; i < length; ++i)
-            m_children.insert(index + i, children[i]);
-    } else {
-        ASSERT(child->parentObject() == this);
-        m_children.insert(index, child);
-    }
-    
-    // Reset the child's m_isIgnoredFromParentData since we are done adding that child and its children.
-    child->clearIsIgnoredFromParentData();
-}
-
-void AccessibilityNodeObject::addChild(AccessibilityObject* child)
-{
-    insertChild(child, m_children.size());
 }
 
 void AccessibilityNodeObject::addChildren()

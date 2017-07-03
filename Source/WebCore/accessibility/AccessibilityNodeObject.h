@@ -145,8 +145,6 @@ protected:
     explicit AccessibilityNodeObject(Node*);
 
     AccessibilityRole m_ariaRole;
-    bool m_childrenDirty;
-    bool m_subtreeDirty;
     mutable AccessibilityRole m_roleForMSAA;
 #ifndef NDEBUG
     bool m_initialized;
@@ -156,8 +154,6 @@ protected:
 
     virtual AccessibilityRole determineAccessibilityRole();
     void addChildren() override;
-    void addChild(AccessibilityObject*) override;
-    void insertChild(AccessibilityObject*, unsigned index) override;
 
     bool canHaveChildren() const override;
     AccessibilityRole ariaRoleAttribute() const override;

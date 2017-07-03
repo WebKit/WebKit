@@ -480,7 +480,9 @@ enum AccessibilityMathScriptObjectType { Subscript, Superscript };
 enum AccessibilityMathMultiscriptObjectType { PreSubscript, PreSuperscript, PostSubscript, PostSuperscript };
 
 enum AccessibilityARIACurrentState { ARIACurrentFalse, ARIACurrentTrue, ARIACurrentPage, ARIACurrentStep, ARIACurrentLocation, ARIACurrentDate, ARIACurrentTime };
-
+    
+bool nodeHasPresentationRole(Node*);
+    
 class AccessibilityObject : public RefCounted<AccessibilityObject> {
 protected:
     AccessibilityObject();
@@ -850,8 +852,8 @@ public:
     virtual void updateAccessibilityRole() { }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true);
     virtual void addChildren() { }
-    virtual void addChild(AccessibilityObject*) { }
-    virtual void insertChild(AccessibilityObject*, unsigned) { }
+    virtual void addChild(AccessibilityObject*);
+    virtual void insertChild(AccessibilityObject*, unsigned);
 
     virtual bool shouldIgnoreAttributeRole() const { return false; }
     
@@ -1130,7 +1132,9 @@ protected:
     AccessibilityRole m_role;
     AccessibilityObjectInclusion m_lastKnownIsIgnoredValue;
     AccessibilityIsIgnoredFromParentData m_isIgnoredFromParentData;
-    
+    bool m_childrenDirty;
+    bool m_subtreeDirty;
+
     void setIsIgnoredFromParentData(AccessibilityIsIgnoredFromParentData& data) { m_isIgnoredFromParentData = data; }
 
     virtual bool computeAccessibilityIsIgnored() const { return true; }

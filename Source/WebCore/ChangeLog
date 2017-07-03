@@ -1,3 +1,37 @@
+2017-07-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: role="none" (or presentation) does not work on iframes
+        https://bugs.webkit.org/show_bug.cgi?id=173930
+        <rdar://problem/33034347>
+
+        Reviewed by Ryosuke Niwa.
+
+        Support setting a presentational role on an iframe so that the AXWebArea disappears from the hierarchy.
+        Accomplish this by adding children for attachment and scroll view elements the way other children are added.
+        That is, only add the non-ignored children directly (which means move the addChild logic into AccessibilityObject.)
+
+        Test: accessibility/presentation-role-iframe.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::AccessibilityNodeObject):
+        (WebCore::AccessibilityNodeObject::insertChild): Deleted.
+        (WebCore::AccessibilityNodeObject::addChild): Deleted.
+        * accessibility/AccessibilityNodeObject.h:
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        (WebCore::AccessibilityObject::insertChild):
+        (WebCore::AccessibilityObject::addChild):
+        (WebCore::nodeHasPresentationRole):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::addChild): Deleted.
+        (WebCore::AccessibilityObject::insertChild): Deleted.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::webAreaIsPresentational):
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::addAttachmentChildren):
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::addChildren):
+
 2017-07-03  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219024.
