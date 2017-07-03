@@ -513,7 +513,7 @@ struct FontType {
     bool aatShaping { false };
 };
 
-RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size)
+RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescription& fontDescription, const FontFeatureSettings* fontFaceFeatures, const FontVariantSettings* fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities, float size, bool applyWeightWidthSlopeVariations)
 {
     bool alwaysAddVariations = false;
 
@@ -528,6 +528,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
 #else
     UNUSED_PARAM(fontFaceCapabilities);
     UNUSED_PARAM(size);
+    UNUSED_PARAM(applyWeightWidthSlopeVariations);
 #endif
 
     const auto& features = fontDescription.featureSettings();
@@ -587,7 +588,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     };
 
     // The system font is somewhat magical. Don't mess with its variations.
-    if (!fontIsSystemFont(originalFont)) {
+    if (applyWeightWidthSlopeVariations && !fontIsSystemFont(originalFont)) {
         float weight = fontSelectionRequest.weight;
         float width = fontSelectionRequest.width;
         float slope = fontSelectionRequest.slope;
@@ -1115,15 +1116,20 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
     return result;
 }
 
-static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& family, FontSelectionRequest request, float size)
+struct FontLookup {
+    RetainPtr<CTFontRef> result;
+    bool createdFromPostScriptName { false };
+};
+
+static FontLookup platformFontLookupWithFamily(const AtomicString& family, FontSelectionRequest request, float size)
 {
     const auto& whitelist = fontWhitelist();
     if (!isSystemFont(family) && whitelist.size() && !whitelist.contains(family))
-        return nullptr;
+        return { nullptr };
 
 #if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
     CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
-    return adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), static_cast<float>(request.weight), traits, size));
+    return { adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), static_cast<float>(request.weight), traits, size)) };
 #else
     const auto& familyFonts = FontDatabase::singleton().collectionForFamily(family.string());
     if (familyFonts.isEmpty()) {
@@ -1136,29 +1142,29 @@ static RetainPtr<CTFontRef> platformFontLookupWithFamily(const AtomicString& fam
         // but if a <b> appears as a descendent element, it will be honored too.
         const auto& postScriptFont = FontDatabase::singleton().fontForPostScriptName(family);
         if (!postScriptFont.fontDescriptor)
-            return nullptr;
+            return { nullptr };
         if ((isItalic(request.slope) && !isItalic(postScriptFont.capabilities.slope.maximum))
             || (isFontWeightBold(request.weight) && !isFontWeightBold(postScriptFont.capabilities.weight.maximum))) {
             auto postScriptFamilyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(postScriptFont.fontDescriptor.get(), kCTFontFamilyNameAttribute)));
             if (!postScriptFamilyName)
-                return nullptr;
+                return { nullptr };
             const auto& familyFonts = FontDatabase::singleton().collectionForFamily(String(postScriptFamilyName.get()));
             if (familyFonts.isEmpty())
-                return nullptr;
+                return { nullptr };
             if (const auto* installedFont = findClosestFont(familyFonts, request)) {
                 if (!installedFont->fontDescriptor)
-                    return nullptr;
-                return adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr));
+                    return { nullptr };
+                return { adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr)), true };
             }
-            return nullptr;
+            return { nullptr };
         }
-        return adoptCF(CTFontCreateWithFontDescriptor(postScriptFont.fontDescriptor.get(), size, nullptr));
+        return { adoptCF(CTFontCreateWithFontDescriptor(postScriptFont.fontDescriptor.get(), size, nullptr)), true };
     }
 
     if (const auto* installedFont = findClosestFont(familyFonts, request))
-        return adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr));
+        return { adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr)), false };
 
-    return nullptr;
+    return { nullptr };
 #endif
 }
 
@@ -1184,10 +1190,11 @@ static RetainPtr<CTFontRef> fontWithFamily(const AtomicString& family, const Fon
         return nullptr;
 
     const auto& request = fontDescription.fontSelectionRequest();
-    auto foundFont = platformFontWithFamilySpecialCase(family, request, size);
-    if (!foundFont)
-        foundFont = platformFontLookupWithFamily(family, request, size);
-    return preparePlatformFont(foundFont.get(), fontDescription, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities, size);
+    FontLookup fontLookup;
+    fontLookup.result = platformFontWithFamilySpecialCase(family, request, size);
+    if (!fontLookup.result)
+        fontLookup = platformFontLookupWithFamily(family, request, size);
+    return preparePlatformFont(fontLookup.result.get(), fontDescription, fontFaceFeatures, fontFaceVariantSettings, fontFaceCapabilities, size, !fontLookup.createdFromPostScriptName);
 }
 
 #if PLATFORM(MAC)
