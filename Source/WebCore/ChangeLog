@@ -1,3 +1,26 @@
+2017-07-03  Youenn Fablet  <youenn@apple.com>
+
+        WebAudioSourceProviderAVFObjC should not reconfigure for each data call
+        https://bugs.webkit.org/show_bug.cgi?id=174101
+
+        Reviewed by Eric Carlson.
+
+        Covered by manual testing, in particular
+        https://webrtc.github.io/samples/src/content/peerconnection/webaudio-output/
+        and https://webrtc.github.io/samples/src/content/getusermedia/volume/.
+        Also improved LayoutTests web audio peer connection tests to make them more robust.
+
+        Before the patch, reconfiguration of the web audio provider was happening for every audioSamplesAvailable call.
+        It is now happening only when the format of the audio samples is changing.
+        Changed some member fields from uinque_ptr to optional as a minor improvement.
+
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.h:
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+        (WebCore::WebAudioSourceProviderAVFObjC::provideInput):
+        (WebCore::WebAudioSourceProviderAVFObjC::prepare):
+        (WebCore::WebAudioSourceProviderAVFObjC::unprepare):
+        (WebCore::WebAudioSourceProviderAVFObjC::audioSamplesAvailable):
+
 2017-06-30  Alex Christensen  <achristensen@webkit.org>
 
         Stop using dispatch_async in ResourceHandleCFURLConnectionDelegateWithOperationQueue

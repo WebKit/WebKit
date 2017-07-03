@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Testing local audio capture playback causes "playing" event to fire</title>
+    <title>Testing web audio on peer connection audio tracks</title>
     <script src="../resources/testharness.js"></script>
     <script src="../resources/testharnessreport.js"></script>
 </head>
@@ -11,9 +11,6 @@
     <script>
     var context = new webkitAudioContext();
     promise_test((test) => {
-        if (window.testRunner)
-            testRunner.setUserMediaPermission(true);
-
         var localTrack;
         return navigator.mediaDevices.getUserMedia({audio: true}).then((localStream) => {
             localTrack = localStream.getAudioTracks()[0];
@@ -28,25 +25,19 @@
                     };
                 });
             }).then(() => {
-                return waitFor(500);
-            }).then(() => {
-                return analyseAudio(remoteStream, 500, context).then((results) => {
-                    assert_true(results.heardHum, "heard hum from remote enabled track");
-                });
+                return doHumAnalysis(remoteStream, true);
+            }).then((value) => {
+                assert_true(value, "heard hum from remote enabled track");
             }).then(() => {
                 localTrack.enabled = false;
-                return waitFor(500);
-            }).then(() => {
-                return analyseAudio(remoteStream, 500, context).then((results) => {
-                    assert_false(results.heardHum, "not heard hum from remote disabled track");
-                });
+                return doHumAnalysis(remoteStream, false);
+            }).then((value) => {
+                assert_true(value, "not heard hum from remote disabled track");
             }).then(() => {
                 localTrack.enabled = true;
-                return waitFor(500);
-            }).then(() => {
-                return analyseAudio(remoteStream, 500, context).then((results) => {
-                    assert_true(results.heardHum, "heard hum from remote reenabled track");
-                });
+                return doHumAnalysis(remoteStream, true);
+            }).then((value) => {
+                assert_true(value, "heard hum from remote reenabled track");
             }).then(() => {
                 return context.close();
             });

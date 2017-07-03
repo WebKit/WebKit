@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_AUDIO) && ENABLE(MEDIA_STREAM)
 
+#include "CAAudioStreamDescription.h"
 #include "MediaStreamTrackPrivate.h"
 #include "WebAudioSourceProvider.h"
 #include <CoreAudio/CoreAudioTypes.h>
@@ -50,7 +51,7 @@ public:
     static Ref<WebAudioSourceProviderAVFObjC> create(MediaStreamTrackPrivate&);
     virtual ~WebAudioSourceProviderAVFObjC();
 
-    void prepare(const AudioStreamBasicDescription*);
+    void prepare(const AudioStreamBasicDescription&);
     void unprepare();
 
 private:
@@ -68,8 +69,8 @@ private:
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { }
 
     size_t m_listBufferSize { 0 };
-    std::unique_ptr<CAAudioStreamDescription> m_inputDescription;
-    std::unique_ptr<CAAudioStreamDescription> m_outputDescription;
+    std::optional<CAAudioStreamDescription> m_inputDescription;
+    std::optional<CAAudioStreamDescription> m_outputDescription;
     RefPtr<AudioSampleDataSource> m_dataSource;
 
     uint64_t m_writeCount { 0 };
@@ -78,7 +79,6 @@ private:
     MediaStreamTrackPrivate* m_captureSource { nullptr };
     Lock m_mutex;
     bool m_connected { false };
-    AudioStreamBasicDescription m_streamFormat;
 };
 
 }

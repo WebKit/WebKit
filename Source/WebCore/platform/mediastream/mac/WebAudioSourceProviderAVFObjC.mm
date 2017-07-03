@@ -79,7 +79,7 @@ void WebAudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToP
         return;
     }
 
-    WebAudioBufferList list { *m_outputDescription };
+    WebAudioBufferList list { m_outputDescription.value() };
     for (unsigned i = 0; i < bus->numberOfChannels(); ++i) {
         AudioChannel& channel = *bus->channel(i);
         if (i >= list.bufferCount()) {
@@ -115,15 +115,15 @@ void WebAudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
     }
 }
 
-void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* format)
+void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription& format)
 {
     std::lock_guard<Lock> lock(m_mutex);
 
     LOG(Media, "WebAudioSourceProviderAVFObjC::prepare(%p)", this);
 
-    m_inputDescription = std::make_unique<CAAudioStreamDescription>(*format);
-    int numberOfChannels = format->mChannelsPerFrame;
-    double sampleRate = format->mSampleRate;
+    m_inputDescription = CAAudioStreamDescription(format);
+    int numberOfChannels = format.mChannelsPerFrame;
+    double sampleRate = format.mSampleRate;
     ASSERT(sampleRate >= 0);
 
     const int bytesPerFloat = sizeof(Float32);
@@ -133,12 +133,12 @@ void WebAudioSourceProviderAVFObjC::prepare(const AudioStreamBasicDescription* f
     const bool isNonInterleaved = true;
     AudioStreamBasicDescription outputDescription { };
     FillOutASBDForLPCM(outputDescription, sampleRate, numberOfChannels, bitsPerByte * bytesPerFloat, bitsPerByte * bytesPerFloat, isFloat, isBigEndian, isNonInterleaved);
-    m_outputDescription = std::make_unique<CAAudioStreamDescription>(outputDescription);
+    m_outputDescription = CAAudioStreamDescription(outputDescription);
 
     if (!m_dataSource)
         m_dataSource = AudioSampleDataSource::create(kRingBufferDuration * sampleRate);
-    m_dataSource->setInputFormat(*m_inputDescription);
-    m_dataSource->setOutputFormat(*m_outputDescription);
+    m_dataSource->setInputFormat(m_inputDescription.value());
+    m_dataSource->setOutputFormat(m_outputDescription.value());
 
     callOnMainThread([protectedThis = makeRef(*this), numberOfChannels, sampleRate] {
         if (protectedThis->m_client)
@@ -150,8 +150,8 @@ void WebAudioSourceProviderAVFObjC::unprepare()
 {
     std::lock_guard<Lock> lock(m_mutex);
 
-    m_inputDescription = nullptr;
-    m_outputDescription = nullptr;
+    m_inputDescription = std::nullopt;
+    m_outputDescription = std::nullopt;
     m_dataSource = nullptr;
     m_listBufferSize = 0;
     if (m_captureSource) {
@@ -162,11 +162,10 @@ void WebAudioSourceProviderAVFObjC::unprepare()
 
 void WebAudioSourceProviderAVFObjC::audioSamplesAvailable(MediaStreamTrackPrivate&, const MediaTime&, const PlatformAudioData& data, const AudioStreamDescription& description, size_t frameCount)
 {
-    // FIXME: We should try to call prepare based on trackSettingsChanged callback.
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
     auto& basicDescription = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
-    if (m_streamFormat != basicDescription)
-        prepare(&basicDescription);
+    if (!m_inputDescription || m_inputDescription->streamDescription() != basicDescription)
+        prepare(basicDescription);
 
     if (!m_dataSource)
         return;
