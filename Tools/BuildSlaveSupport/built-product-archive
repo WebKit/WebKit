@@ -42,7 +42,9 @@ def main():
     parser.add_option("--platform", dest="platform")
     parser.add_option("--debug", action="store_const", const="debug", dest="configuration")
     parser.add_option("--release", action="store_const", const="release", dest="configuration")
-
+    parser.add_option("--minify", action="store_true", dest="minify", default=False,
+                      help="Create a minified archive")
+                      
     options, (action, ) = parser.parse_args()
     if not options.platform:
         parser.error("Platform is required")
@@ -64,7 +66,7 @@ def main():
         return 1
 
     if action == 'archive':
-        return archiveBuiltProduct(options.configuration, genericPlatform, options.platform)
+        return archiveBuiltProduct(options.configuration, genericPlatform, options.platform, options.minify)
     else:
         return extractBuiltProduct(options.configuration, genericPlatform)
 
@@ -135,8 +137,10 @@ def createZipManually(directoryToZip, archiveFile):
     archiveZip.close()
 
 
-def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=False):
+def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=False, minify=False):
     archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
+    if minify:
+        configuration = 'minified-' + configuration
     archiveFile = os.path.join(archiveDir, configuration + ".zip")
 
     try:
@@ -169,7 +173,21 @@ def dirContainsdwo(directory):
     return False
 
 
-def archiveBuiltProduct(configuration, platform, fullPlatform):
+def minifySource(platform):
+    if platform == 'mac':
+        dir_patterns = ('.dSYM', 'DerivedSources')
+        file_patterns = ('.a',)
+        for root, dirs, files in os.walk(_configurationBuildDirectory):
+            if any(root.endswith(pattern) for pattern in dir_patterns):
+                print 'Removing: {}'.format(root)
+                shutil.rmtree(root)
+            for name in files:
+                if any(name.endswith(pattern) for pattern in file_patterns):
+                    print 'Removing: {}'.format(os.path.join(root, name))
+                    os.remove(os.path.join(root, name))
+
+
+def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
     assert platform in ('mac', 'win', 'gtk', 'ios', 'wpe')
 
     if platform == 'ios':
@@ -184,7 +202,9 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
 
         return createZip(combinedDirectory, configuration)
     elif platform == 'mac':
-        return createZip(_configurationBuildDirectory, configuration, embedParentDirectoryNameOnDarwin=True)
+        if minify:
+            minifySource(platform)
+        return createZip(_configurationBuildDirectory, configuration, embedParentDirectoryNameOnDarwin=True, minify=minify)
     elif platform == 'win':
         # FIXME: We shouldn't hardcode the assumption of a 32-bit build. See <https://bugs.webkit.org/show_bug.cgi?id=149715>.
         binDirectory = os.path.join(_configurationBuildDirectory, 'bin32')

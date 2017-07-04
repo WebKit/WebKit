@@ -1,3 +1,14 @@
+2017-07-03  Lucas Forschler  <lforschler@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=174105
+        
+        Reviewed by Stephanie Lewis.
+
+        * BuildSlaveSupport/built-product-archive:
+        (main): Add a -minify parser option
+        (createZip): Pass along the optional Minify argument if requested
+        (minifySource): This will trim down archives, logic limited to Mac platform.
+
 2017-07-03  Matt Rajca  <mrajca@apple.com>
 
         Add/remove appropriate media element behavior restrictions when updateWebsitePolicies is called
