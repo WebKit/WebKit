@@ -1,3 +1,15 @@
+2017-07-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Initialize srandom and srand with cryptographically random number
+        https://bugs.webkit.org/show_bug.cgi?id=174123
+
+        Reviewed by Mark Lam.
+
+        Use cryptographically random number instead of current time as a seed.
+
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator):
+
 2017-07-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Xcode duplicate UUID for DisallowCType.h and DispatchPtr.h
