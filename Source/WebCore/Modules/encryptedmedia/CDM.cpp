@@ -181,6 +181,9 @@ bool CDM::isPersistentType(MediaKeySessionType sessionType)
         // ↳ "persistent-license"
         return true;
     }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 std::optional<MediaKeySystemConfiguration> CDM::getSupportedConfiguration(const MediaKeySystemConfiguration& candidateConfiguration, MediaKeysRestrictions& restrictions)

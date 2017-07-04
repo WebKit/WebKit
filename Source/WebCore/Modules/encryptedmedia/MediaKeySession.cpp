@@ -632,8 +632,10 @@ void MediaKeySession::updateKeyStatuses(CDMInstance::KeyStatusVector&& inputStat
         case CDMInstance::KeyStatus::StatusPending:
             return MediaKeyStatus::StatusPending;
         case CDMInstance::KeyStatus::InternalError:
-            break;
+            return MediaKeyStatus::InternalError;
         };
+
+        ASSERT_NOT_REACHED();
         return MediaKeyStatus::InternalError;
     };
 
