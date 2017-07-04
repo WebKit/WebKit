@@ -81,6 +81,11 @@ void AutomaticThreadCondition::wait(Lock& lock)
     m_condition.wait(lock);
 }
 
+bool AutomaticThreadCondition::waitFor(Lock& lock, Seconds time)
+{
+    return m_condition.waitFor(lock, time);
+}
+
 void AutomaticThreadCondition::add(const AbstractLocker&, AutomaticThread* thread)
 {
     ASSERT(!m_threads.contains(thread));

@@ -254,8 +254,6 @@ protected:
 
     WorkResult work() override
     {
-
-        // We need a nested scope so that we'll release the lock before we sleep below.
         VM& vm = m_vm;
 
         auto optionalOwnerThread = vm.ownerThread();
@@ -291,7 +289,12 @@ protected:
             });
         }
 
-        sleepMS(1);
+        {
+            auto locker = holdLock(*traps().m_lock);
+            if (traps().m_isShuttingDown)
+                return WorkResult::Stop;
+            traps().m_trapSet->waitFor(*traps().m_lock, 1_ms);
+        }
         return WorkResult::Continue;
     }
     
@@ -305,7 +308,6 @@ private:
 void VMTraps::willDestroyVM()
 {
     m_isShuttingDown = true;
-    WTF::storeStoreFence();
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     if (m_signalSender) {
         {
@@ -313,8 +315,7 @@ void VMTraps::willDestroyVM()
             if (!m_signalSender->tryStop(locker))
                 m_trapSet->notifyAll(locker);
         }
-        if (!ASSERT_DISABLED)
-            m_signalSender->join();
+        m_signalSender->join();
         m_signalSender = nullptr;
     }
 #endif

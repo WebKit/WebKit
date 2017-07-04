@@ -82,6 +82,7 @@ public:
     // threads. In such cases, the thread doing the notifyAll() can wake up at most one thread -
     // its partner.
     WTF_EXPORT_PRIVATE void wait(Lock&);
+    WTF_EXPORT_PRIVATE bool waitFor(Lock&, Seconds);
     
 private:
     friend class AutomaticThread;

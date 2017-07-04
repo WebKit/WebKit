@@ -1,3 +1,13 @@
+2017-07-03  Saam Barati  <sbarati@apple.com>
+
+        LayoutTest workers/bomb.html is a Crash
+        https://bugs.webkit.org/show_bug.cgi?id=167757
+        <rdar://problem/33086462>
+
+        Reviewed by Keith Miller.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-07-03  Matt Lewis  <jlewis3@apple.com>
 
         Removed expectations and skipped workers/bomb.html on mac.
