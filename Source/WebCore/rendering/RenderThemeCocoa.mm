@@ -117,12 +117,14 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
     if (!std::isfinite(durationInSeconds))
         return WEB_UI_STRING("indefinite time", "accessibility help text for an indefinite media controller time value");
 
-    NSDateComponentsFormatter *durationFormatter = [NSDateComponentsFormatter new];
-    durationFormatter.unitsStyle = NSDateComponentsFormatterUnitsStyleFull;
-    durationFormatter.allowedUnits = NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
-    durationFormatter.formattingContext = NSFormattingContextStandalone;
-    durationFormatter.maximumUnitCount = 2;
-    return [durationFormatter stringFromTimeInterval:durationInSeconds];
+    if (!m_durationFormatter) {
+        m_durationFormatter = adoptNS([NSDateComponentsFormatter new]);
+        m_durationFormatter.get().unitsStyle = NSDateComponentsFormatterUnitsStyleFull;
+        m_durationFormatter.get().allowedUnits = NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond;
+        m_durationFormatter.get().formattingContext = NSFormattingContextStandalone;
+        m_durationFormatter.get().maximumUnitCount = 2;
+    }
+    return [m_durationFormatter.get() stringFromTimeInterval:durationInSeconds];
 #else
     return emptyString();
 #endif

@@ -26,6 +26,11 @@
 #pragma once
 
 #include "RenderTheme.h"
+#include <wtf/RetainPtr.h>
+
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+OBJC_CLASS NSDateComponentsFormatter;
+#endif
 
 namespace WebCore {
 
@@ -38,6 +43,9 @@ private:
 protected:
 #if ENABLE(VIDEO)
     String mediaControlsFormattedStringForDuration(double) override;
+#endif
+#if ENABLE(MEDIA_CONTROLS_SCRIPT)
+    RetainPtr<NSDateComponentsFormatter> m_durationFormatter;
 #endif
 };
 
