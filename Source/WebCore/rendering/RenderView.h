@@ -141,14 +141,7 @@ public:
 
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
 
-    LayoutUnit pageLogicalHeight() const { return m_pageLogicalHeight; }
-    void setPageLogicalHeight(LayoutUnit height)
-    {
-        if (m_pageLogicalHeight != height) {
-            m_pageLogicalHeight = height;
-            m_pageLogicalHeightChanged = true;
-        }
-    }
+    void setPageLogicalSize(LayoutSize);
     LayoutUnit pageOrViewLogicalHeight() const;
 
     // This method is used to assign a page number only when pagination modes have
@@ -371,7 +364,7 @@ private:
     HashSet<RenderBox*> m_renderersNeedingLazyRepaint;
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;
-    LayoutUnit m_pageLogicalHeight;
+    std::optional<LayoutSize> m_pageLogicalSize;
     bool m_pageLogicalHeightChanged { false };
     std::unique_ptr<LayoutState> m_layoutState;
     unsigned m_layoutStateDisableCount { 0 };

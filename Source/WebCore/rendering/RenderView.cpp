@@ -217,8 +217,7 @@ RenderBox::LogicalExtentComputedValues RenderView::computeLogicalHeight(LayoutUn
 
 void RenderView::updateLogicalWidth()
 {
-    if (!shouldUsePrintingLayout())
-        setLogicalWidth(viewLogicalWidth());
+    setLogicalWidth(shouldUsePrintingLayout() ? m_pageLogicalSize->width() : LayoutUnit(viewLogicalWidth()));
 }
 
 LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
@@ -268,7 +267,7 @@ void RenderView::initializeLayoutState(LayoutState& state)
     // FIXME: May be better to push a clip and avoid issuing offscreen repaints.
     state.m_clipped = false;
 
-    state.m_pageLogicalHeight = m_pageLogicalHeight;
+    state.m_pageLogicalHeight = m_pageLogicalSize ? m_pageLogicalSize->height() : LayoutUnit(0);
     state.m_pageLogicalHeightChanged = m_pageLogicalHeightChanged;
     ASSERT(state.m_pageLogicalHeight >= 0);
     state.m_isPaginated = state.m_pageLogicalHeight > 0;
@@ -339,10 +338,13 @@ void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
     if (!document().paginated())
-        setPageLogicalHeight(0);
+        m_pageLogicalSize = { };
 
-    if (shouldUsePrintingLayout())
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = logicalWidth();
+    if (shouldUsePrintingLayout()) {
+        ASSERT(m_pageLogicalSize);
+        m_minPreferredLogicalWidth = m_pageLogicalSize->width();
+        m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
+    }
 
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
     bool relayoutChildren = !shouldUsePrintingLayout() && (width() != viewWidth() || height() != viewHeight());
@@ -386,7 +388,7 @@ void RenderView::layout()
 LayoutUnit RenderView::pageOrViewLogicalHeight() const
 {
     if (document().printing())
-        return pageLogicalHeight();
+        return m_pageLogicalSize->height();
     
     if (multiColumnFlowThread() && !style().hasInlineColumnAxis()) {
         if (int pageLength = frameView().pagination().pageLength)
@@ -1217,6 +1219,14 @@ int RenderView::viewLogicalHeight() const
 {
     int height = style().isHorizontalWritingMode() ? viewHeight() : viewWidth();
     return height;
+}
+
+void RenderView::setPageLogicalSize(LayoutSize size)
+{
+    if (!m_pageLogicalSize || m_pageLogicalSize->height() != size.height())
+        m_pageLogicalHeightChanged = true;
+
+    m_pageLogicalSize = size;
 }
 
 float RenderView::zoomFactor() const

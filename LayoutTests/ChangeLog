@@ -1,3 +1,15 @@
+2017-07-04  Antti Koivisto  <antti@apple.com>
+
+        FrameView should not set RenderView::logicalWidth directly for printing
+        https://bugs.webkit.org/show_bug.cgi?id=174135
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/mac/printing/width-overflow-expected.txt:
+
+            This is a progression, view and root element sizes now match.
+            Printing output is not affected.
+
 2017-07-03  Saam Barati  <sbarati@apple.com>
 
         LayoutTest workers/bomb.html is a Crash

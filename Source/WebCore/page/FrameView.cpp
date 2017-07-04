@@ -4676,8 +4676,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, const FloatS
         float pageLogicalWidth = renderView->style().isHorizontalWritingMode() ? pageSize.width() : pageSize.height();
         float pageLogicalHeight = renderView->style().isHorizontalWritingMode() ? pageSize.height() : pageSize.width();
 
-        renderView->setLogicalWidth(floor(pageLogicalWidth));
-        renderView->setPageLogicalHeight(floor(pageLogicalHeight));
+        renderView->setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
         renderView->setNeedsLayoutAndPrefWidthsRecalc();
         forceLayout();
 
@@ -4695,8 +4694,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, const FloatS
             pageLogicalWidth = horizontalWritingMode ? maxPageSize.width() : maxPageSize.height();
             pageLogicalHeight = horizontalWritingMode ? maxPageSize.height() : maxPageSize.width();
 
-            renderView->setLogicalWidth(floor(pageLogicalWidth));
-            renderView->setPageLogicalHeight(floor(pageLogicalHeight));
+            renderView->setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
             renderView->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
 
