@@ -1,3 +1,13 @@
+2017-07-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Xcode duplicate UUID for DisallowCType.h and DispatchPtr.h
+        https://bugs.webkit.org/show_bug.cgi?id=174117
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WTF.xcodeproj/project.pbxproj:
+        Give DisallowCType.h and DispatchPtr.h different UUIDs.
+
 2017-07-03  Saam Barati  <sbarati@apple.com>
 
         LayoutTest workers/bomb.html is a Crash
