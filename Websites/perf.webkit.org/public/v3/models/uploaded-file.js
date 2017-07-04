@@ -31,7 +31,7 @@ class UploadedFile extends DataModelObject {
         });
     }
 
-    static fetchUnloadedFileWithIdenticalHash(file)
+    static fetchUploadedFileWithIdenticalHash(file)
     {
         if (file.size > UploadedFile.fileUploadSizeLimit)
             return Promise.reject('FileSizeLimitExceeded');

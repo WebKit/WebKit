@@ -162,7 +162,7 @@ class InstantFileUploader extends ComponentBase {
 
         const uploadProgress = this._uploadProgress;
         for (let file of files) {
-            UploadedFile.fetchUnloadedFileWithIdenticalHash(file).then((uploadedFile) => {
+            UploadedFile.fetchUploadedFileWithIdenticalHash(file).then((uploadedFile) => {
                 if (uploadedFile) {
                     this._didUploadFile(file, uploadedFile);
                     return;
