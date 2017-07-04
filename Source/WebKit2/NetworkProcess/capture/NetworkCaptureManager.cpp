@@ -409,7 +409,7 @@ String Manager::hashToPath(const String& hash)
 
     StringBuilder fileName;
     fileName.append(hashTail);
-    fileName.append(".data");
+    fileName.appendLiteral(".data");
 
     auto path = WebCore::pathByAppendingComponent(m_recordReplayCacheLocation, kDirNameResources);
     path = WebCore::pathByAppendingComponent(path, hashHead);

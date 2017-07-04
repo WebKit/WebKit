@@ -30,7 +30,6 @@
 
 #include "WasmFunctionParser.h"
 #include <wtf/CommaPrinter.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace Wasm {
 

@@ -44,7 +44,6 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadMessage.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace JSC { namespace Wasm {
 

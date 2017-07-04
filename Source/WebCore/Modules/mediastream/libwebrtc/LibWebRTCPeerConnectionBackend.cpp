@@ -41,7 +41,6 @@
 #include "RTCSessionDescription.h"
 #include "RealtimeIncomingAudioSource.h"
 #include "RealtimeIncomingVideoSource.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

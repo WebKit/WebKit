@@ -323,7 +323,7 @@ static String filterICECandidate(String&& sdp)
         if (isFirst)
             isFirst = false;
         else
-            filteredSDP.append(" ");
+            filteredSDP.append(' ');
         filteredSDP.append(item);
     });
     return filteredSDP.toString();

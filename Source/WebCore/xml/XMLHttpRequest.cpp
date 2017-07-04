@@ -938,9 +938,9 @@ String XMLHttpRequest::getAllResponseHeaders() const
         for (auto& header : m_response.httpHeaderFields()) {
             StringBuilder stringBuilder;
             stringBuilder.append(header.key.convertToASCIILowercase());
-            stringBuilder.append(": ");
+            stringBuilder.appendLiteral(": ");
             stringBuilder.append(header.value);
-            stringBuilder.append("\r\n");
+            stringBuilder.appendLiteral("\r\n");
             headers.uncheckedAppend(stringBuilder.toString());
         }
         std::sort(headers.begin(), headers.end(), WTF::codePointCompareLessThan);

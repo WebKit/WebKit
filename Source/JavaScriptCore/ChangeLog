@@ -1,3 +1,18 @@
+2017-07-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup some StringBuilder use
+        https://bugs.webkit.org/show_bug.cgi?id=174118
+
+        Reviewed by Andreas Kling.
+
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunctionSkippingEvalEnabledCheck):
+        * tools/FunctionOverrides.cpp:
+        (JSC::parseClause):
+        * wasm/WasmOMGPlan.cpp:
+        * wasm/WasmPlan.cpp:
+        * wasm/WasmValidate.cpp:
+
 2017-07-03  Saam Barati  <sbarati@apple.com>
 
         LayoutTest workers/bomb.html is a Crash

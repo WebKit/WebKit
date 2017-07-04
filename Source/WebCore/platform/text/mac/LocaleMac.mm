@@ -37,7 +37,6 @@
 #include "LocalizedStrings.h"
 #include <wtf/DateMath.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS)
 #import "LocalizedDateCache.h"

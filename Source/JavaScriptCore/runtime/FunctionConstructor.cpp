@@ -137,7 +137,7 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(
         program = makeString("{", prefix, functionName.string(), "() {\n", body, "\n}}");
     } else {
         StringBuilder builder;
-        builder.append("{");
+        builder.append('{');
         builder.append(prefix);
         builder.append(functionName.string());
         builder.append('(');

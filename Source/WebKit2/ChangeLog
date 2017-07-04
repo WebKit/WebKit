@@ -1,3 +1,14 @@
+2017-07-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Cleanup some StringBuilder use
+        https://bugs.webkit.org/show_bug.cgi?id=174118
+
+        Reviewed by Andreas Kling.
+
+        * NetworkProcess/capture/NetworkCaptureManager.cpp:
+        (WebKit::NetworkCapture::Manager::hashToPath):
+        * UIProcess/WebPageProxy.cpp:
+
 2017-07-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] Callout bar should reappear after dragging ends for a text selection

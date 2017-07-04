@@ -103,9 +103,9 @@ void ContentExtension::compileGlobalDisplayNoneStyleSheet()
     }
     if (css.isEmpty())
         return;
-    css.append("{");
+    css.append('{');
     css.append(ContentExtensionsBackend::displayNoneCSSRule());
-    css.append("}");
+    css.append('}');
 
     m_globalDisplayNoneStyleSheet = StyleSheetContents::create();
     m_globalDisplayNoneStyleSheet->setIsUserStyleSheet(true);

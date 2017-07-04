@@ -26,8 +26,6 @@
 #import "config.h"
 #import "Cookie.h"
 
-#import <wtf/text/StringBuilder.h>
-
 namespace WebCore {
 
 static Vector<uint16_t> portVectorFromList(NSArray<NSNumber *> *portList)

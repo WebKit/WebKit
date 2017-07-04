@@ -32,7 +32,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/dtoa.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

@@ -33,7 +33,6 @@
 #include "TextNodeTraversal.h"
 #include "XMLNSNames.h"
 #include <wtf/text/AtomicString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

@@ -37,7 +37,7 @@ String CSSFontStyleValue::customCSSText() const
 
     StringBuilder builder;
     builder.append(fontStyleValue->cssText());
-    builder.append(" ");
+    builder.append(' ');
     builder.append(obliqueValue->cssText());
     return builder.toString();
 }

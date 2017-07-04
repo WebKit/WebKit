@@ -33,7 +33,6 @@
 #include "ParsedContentType.h"
 
 #include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
