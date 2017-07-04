@@ -35,7 +35,8 @@ Dashboard = {
         Windows8: { name: "windows-8", readableName: "Windows 8", order: 50 },
         Windows7: { name: "windows-7", readableName: "Windows 7", order: 60 },
         WindowsXP: { name: "windows-xp", readableName: "Windows XP", order: 70 },
-        LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 90 }
+        LinuxGTK: { name : "linux-gtk", readableName: "Linux GTK", order: 90 },
+        LinuxWPE: { name : "linux-wpe", readableName: "Linux WPE", order: 91 }
     },
     Branch: {},
     Repository: {

@@ -1,3 +1,19 @@
+2017-07-04  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Add WPE to bot watcher dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=174119
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/CREDIT: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WPE.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Images/WPE@2x.png: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/Dashboard.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js:
+        (WebKitBuildbot):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Styles/Main.css:
+        (table.queue-grid tr.platform.linux-wpe img.logo):
+
 2017-07-03  Lucas Forschler  <lforschler@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=174105
