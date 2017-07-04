@@ -1,5 +1,15 @@
 2017-07-03  Saam Barati  <sbarati@apple.com>
 
+        DFGBytecodeParser op_to_this does not access the correct instruction offset for to this status
+        https://bugs.webkit.org/show_bug.cgi?id=174110
+
+        Reviewed by Michael Saboff.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2017-07-03  Saam Barati  <sbarati@apple.com>
+
         Add a new assertion to object allocation sinking phase
         https://bugs.webkit.org/show_bug.cgi?id=174107
 

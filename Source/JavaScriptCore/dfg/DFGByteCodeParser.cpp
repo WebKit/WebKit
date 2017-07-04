@@ -4140,7 +4140,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* op1 = getThis();
             if (op1->op() != ToThis) {
                 Structure* cachedStructure = currentInstruction[2].u.structure.get();
-                if (currentInstruction[2].u.toThisStatus != ToThisOK
+                if (currentInstruction[3].u.toThisStatus != ToThisOK
                     || !cachedStructure
                     || cachedStructure->classInfo()->methodTable.toThis != JSObject::info()->methodTable.toThis
                     || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
