@@ -2181,6 +2181,7 @@ private:
                     return a->getConcurrently(uid) < b->getConcurrently(uid);
                 });
 
+            RELEASE_ASSERT(structures.size());
             PropertyOffset firstOffset = structures[0]->getConcurrently(uid);
 
             if (firstOffset == structures.last()->getConcurrently(uid)) {
