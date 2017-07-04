@@ -4376,6 +4376,7 @@ static UIDropOperation dropOperationForWebCoreDragOperation(DragOperation operat
         completionBlock();
     }
 
+    [self _restoreCalloutBarIfNeeded];
     [_dataInteractionState.caretView remove];
     [_dataInteractionState.visibleContentViewSnapshot removeFromSuperview];
 
@@ -4506,6 +4507,17 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return _dataInteractionState.dragSession.get();
 }
 
+- (void)_restoreCalloutBarIfNeeded
+{
+    if (!_dataInteractionState.shouldRestoreCalloutBar)
+        return;
+
+    // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of revealing hidden interaction assistant controls.
+    [_webSelectionAssistant didEndScrollingOverflow];
+    [_textSelectionAssistant didEndScrollingOverflow];
+    _dataInteractionState.shouldRestoreCalloutBar = NO;
+}
+
 #pragma mark - UIDragInteractionDelegate
 
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
@@ -4551,8 +4563,6 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
         _page->dragCancelled();
         return @[ ];
     }
-
-    [UICalloutBar fadeSharedCalloutBar];
 
     // Give internal clients such as Mail one final chance to augment the contents of each UIItemProvider before sending the drag items off to UIKit.
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
@@ -4600,6 +4610,13 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 - (void)dragInteraction:(UIDragInteraction *)interaction willAnimateLiftWithAnimator:(id <UIDragAnimating>)animator session:(id <UIDragSession>)session
 {
+    if (!_dataInteractionState.shouldRestoreCalloutBar && (_dataInteractionState.sourceAction & DragSourceActionSelection)) {
+        // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of hiding interaction assistant controls.
+        [_webSelectionAssistant willStartScrollingOverflow];
+        [_textSelectionAssistant willStartScrollingOverflow];
+        _dataInteractionState.shouldRestoreCalloutBar = YES;
+    }
+
     auto adjustedOrigin = _dataInteractionState.adjustedOrigin;
     RetainPtr<WKContentView> protectedSelf(self);
     [animator addCompletion:[session, adjustedOrigin, protectedSelf, page = _page] (UIViewAnimatingPosition finalPosition) {
@@ -4631,6 +4648,9 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 - (void)dragInteraction:(UIDragInteraction *)interaction session:(id <UIDragSession>)session didEndWithOperation:(UIDropOperation)operation
 {
     RELEASE_LOG(DragAndDrop, "Drag session ended: %p (with operation: %tu, performing operation: %d, began dragging: %d)", session, operation, _dataInteractionState.isPerformingOperation, _dataInteractionState.didBeginDragging);
+
+    [self _restoreCalloutBarIfNeeded];
+
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:session:didEndWithOperation:)])
         [uiDelegate _webView:_webView dataInteraction:interaction session:session didEndWithOperation:operation];

@@ -1,3 +1,31 @@
+2017-07-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Callout bar should reappear after dragging ends for a text selection
+        https://bugs.webkit.org/show_bug.cgi?id=174116
+        <rdar://problem/33017845>
+
+        Reviewed by Ryosuke Niwa.
+
+        -willStartScrollingOverflow -didEndScrollingOverflow are helper methods on both the UIWKTextInteractionAssistant
+        and UIWebSelectionAssistant that handle hiding selection and callout bar UI during overflow scrolling and making
+        it reappear after scrolling ends. However, these hooks do not contain logic specific to scrolling, and simply
+        tell the inner UIWebSelectionView to either show or hide and are safe to invoke outside of the context of
+        scrolling.
+
+        This patch invokes these hooks when beginning a drag on a selection, and when a dragging ends, if it called
+        -willStartScrollingOverflow to begin with. We should rename these in the future to be something along the lines
+        of -hideSelectionViewAndControls and -showSelectionViewAndControls, respectively, and adopt these new names in
+        WebKit. We also move logic to hide the callout out of -itemsForBeginningSession: and into
+        -willAnimateLiftWithAnimator:, when the lift actually begins.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanUpDragSourceSessionState]):
+        (-[WKContentView _restoreCalloutBarIfNeeded]):
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        (-[WKContentView dragInteraction:session:didEndWithOperation:]):
+
 2017-07-03  Matt Rajca  <mrajca@apple.com>
 
         Add/remove appropriate media element behavior restrictions when updateWebsitePolicies is called

@@ -125,6 +125,7 @@ struct WKDataInteractionState {
     BOOL didBeginDragging { NO };
     BOOL isPerformingOperation { NO };
     BOOL isAnimatingConcludeEditDrag { NO };
+    BOOL shouldRestoreCalloutBar { NO };
     RetainPtr<id <UIDragSession>> dragSession;
     RetainPtr<id <UIDropSession>> dropSession;
     BlockPtr<void()> dragStartCompletionBlock;
