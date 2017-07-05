@@ -1,3 +1,13 @@
+2017-07-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Add WebKitPrivateFrameworkStubs for iOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=173988
+
+        Reviewed by David Kilzer.
+
+        * Configurations/PAL.xcconfig: iphoneos and iphonesimulator should use the
+        same directory for private framework stubs.
+
 2017-07-03  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove more unnecessary uses of the preprocessor in idl files

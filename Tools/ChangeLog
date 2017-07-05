@@ -1,3 +1,14 @@
+2017-07-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Add WebKitPrivateFrameworkStubs for iOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=173988
+
+        Reviewed by David Kilzer.
+
+        * DumpRenderTree/mac/Configurations/Base.xcconfig: iphoneos and iphonesimulator
+        should use the same directory for private framework stubs.
+        * WebKitTestRunner/Configurations/Base.xcconfig: Ditto.
+
 2017-07-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Protect request and web view during gUM client callback

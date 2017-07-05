@@ -1,3 +1,14 @@
+2017-07-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Add WebKitPrivateFrameworkStubs for iOS 11
+        https://bugs.webkit.org/show_bug.cgi?id=173988
+
+        Reviewed by David Kilzer.
+
+        * WebKitPrivateFrameworkStubs/iOS/9: Add Mac architecture for Simulator.
+        * WebKitPrivateFrameworkStubs/iOS/10: Ditto..
+        * WebKitPrivateFrameworkStubs/iOS/11: Added.
+
 2017-07-01  Dan Bernstein  <mitz@apple.com>
 
         [iOS] Remove code only needed when building for iOS 9.x
