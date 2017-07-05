@@ -86,6 +86,8 @@ TEST(UIPasteboardTests, CopyRichTextWritesConcreteTypes)
     EXPECT_WK_STREQ("Hello world", [utf16Result UTF8String]);
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
 TEST(UIPasteboardTests, DoNotPastePlainTextAsURL)
 {
     auto webView = setUpWebViewForPasteboardTests();
@@ -136,6 +138,8 @@ TEST(UIPasteboardTests, PasteURLWithPlainTextAsURL)
     EXPECT_WK_STREQ(testString, [webView stringByEvaluatingJavaScript:@"rich.textContent"]);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!rich.querySelector('a')"].boolValue);
 }
+
+#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
 
 } // namespace TestWebKitAPI
 

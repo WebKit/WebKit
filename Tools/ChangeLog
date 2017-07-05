@@ -1,3 +1,9 @@
+2017-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, guard iOS 11-dependent UIPasteboardTests to be iOS 11+ only
+
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+
 2017-07-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219128.
