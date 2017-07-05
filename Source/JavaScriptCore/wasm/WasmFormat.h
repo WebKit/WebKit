@@ -236,6 +236,7 @@ struct CustomSection {
 };
 
 enum class NameType : uint8_t {
+    Module = 0,
     Function = 1,
     Local = 2,
 };
@@ -244,6 +245,7 @@ template<typename Int>
 inline bool isValidNameType(Int val)
 {
     switch (val) {
+    case static_cast<Int>(NameType::Module):
     case static_cast<Int>(NameType::Function):
     case static_cast<Int>(NameType::Local):
         return true;
@@ -252,6 +254,7 @@ inline bool isValidNameType(Int val)
 }
     
 struct NameSection {
+    Name moduleName;
     Vector<Name> functionNames;
     const Name* get(size_t functionIndexSpace)
     {

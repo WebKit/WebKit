@@ -1,3 +1,38 @@
+2017-07-05  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: implement name section's module name, skip unknown sections
+        https://bugs.webkit.org/show_bug.cgi?id=172008
+
+        Reviewed by Keith Miller.
+
+        Parse the WebAssembly module name properly, and skip unknown
+        sections. This is useful because as toolchains support new types
+        of names we want to keep displaying the information we know about
+        and simply ignore new information. That capability was designed
+        into WebAssembly's name section.
+
+        Failure to commit this patch would mean that WebKit won't display
+        stack trace information, which would make developers sad.
+
+        Module names were added here: https://github.com/WebAssembly/design/pull/1055
+
+        Note that this patch doesn't do anything with the parsed name! Two
+        reasons for this: module names aren't supported in binaryen yet,
+        so I can't write a simple binary test; and using the name is a
+        slightly riskier change because it requires changing StackVisitor
+        + StackFrame (where they print "[wasm code]") which requires
+        figuring out the frame's Module. The latter bit isn't trivial
+        because we only know wasm frames from their tag bits, and
+        CodeBlocks are always nullptr.
+
+        Binaryen bug: https://github.com/WebAssembly/binaryen/issues/1010
+
+        I filed #174098 to use the module name.
+
+        * wasm/WasmFormat.h:
+        (JSC::Wasm::isValidNameType):
+        * wasm/WasmNameSectionParser.cpp:
+
 2017-07-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Cleanup some StringBuilder use
