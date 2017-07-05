@@ -1,3 +1,14 @@
+2017-07-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Protect request and web view during gUM client callback
+        https://bugs.webkit.org/show_bug.cgi?id=174096
+        <rdar://problem/32833102>
+
+        Reviewed by Youenn Fablet.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/GetUserMediaNavigation.mm: New test.
+
 2017-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, guard iOS 11-dependent UIPasteboardTests to be iOS 11+ only
