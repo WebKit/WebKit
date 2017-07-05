@@ -26,11 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/NSObjCRuntime.h>
+
 @class WebView;
 @class WebDataSource;
+@class NSError;
 @class NSURLAuthenticationChallenge;
 @class NSURLResponse;
 @class NSURLRequest;
+
+@protocol NSObject;
 
 /*!
     @category  WebResourceLoadDelegate

@@ -27,6 +27,11 @@
 
 #if WK_API_ENABLED
 
+#import <Foundation/Foundation.h>
+
+@class NSURL;
+@class NSError;
+@class NSArray;
 @class WKContentRuleList;
 
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))

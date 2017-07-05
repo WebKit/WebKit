@@ -42,6 +42,7 @@
 #import <WebKitLegacy/WAKAppKitStubs.h>
 #endif
 
+@class NSWindow;
 @class WebDownloadInternal;
 
 /*!

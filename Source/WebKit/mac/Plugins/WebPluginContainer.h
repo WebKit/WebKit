@@ -30,6 +30,7 @@
 
 #if !TARGET_OS_IPHONE
 #import <AppKit/AppKit.h>
+@class WebFrame;
 #endif
 
 /*!

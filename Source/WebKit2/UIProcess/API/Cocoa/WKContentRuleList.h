@@ -27,6 +27,8 @@
 
 #if WK_API_ENABLED
 
+#import <Foundation/Foundation.h>
+
 WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface WKContentRuleList : NSObject
 
