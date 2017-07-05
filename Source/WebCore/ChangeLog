@@ -1,3 +1,9 @@
+2017-07-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Try to fix iOS 10.3 public SDK builds.
+
+        * platform/spi/cocoa/IOSurfaceSPI.h:
+
 2017-07-05  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r217522): "Show My Relationship" link in familysearch.org does not work.
