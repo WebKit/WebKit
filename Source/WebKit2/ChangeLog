@@ -1,3 +1,14 @@
+2017-07-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GLib] Incorrect <glib/gi18n.h> include in WebKitWebsiteData
+        https://bugs.webkit.org/show_bug.cgi?id=174093
+
+        Reviewed by Michael Catanzaro.
+
+        * UIProcess/API/glib/WebKitWebsiteData.cpp: Include <glib/gi18n-lib.h>
+        rather than <glib/gi18n.h>, since the former has to be included in a
+        library while the latter should only be included in a standalone application.
+
 2017-07-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Cleanup some StringBuilder use

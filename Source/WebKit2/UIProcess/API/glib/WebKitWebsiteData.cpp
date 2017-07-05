@@ -22,7 +22,7 @@
 
 #include "WebKitSecurityOriginPrivate.h"
 #include "WebKitWebsiteDataPrivate.h"
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 #include <wtf/HashTable.h>
 #include <wtf/Vector.h>
 
