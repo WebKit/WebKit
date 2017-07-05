@@ -4204,12 +4204,20 @@ static inline WebCore::LayoutMilestones layoutMilestones(_WKRenderingProgressEve
 
 - (id <_WKDiagnosticLoggingDelegate>)_diagnosticLoggingDelegate
 {
-    return [static_cast<WebKit::DiagnosticLoggingClient&>(_page->diagnosticLoggingClient()).delegate().leakRef() autorelease];
+    auto* diagnosticLoggingClient = _page->diagnosticLoggingClient();
+    if (!diagnosticLoggingClient)
+        return nil;
+
+    return [static_cast<WebKit::DiagnosticLoggingClient&>(*diagnosticLoggingClient).delegate().leakRef() autorelease];
 }
 
 - (void)_setDiagnosticLoggingDelegate:(id<_WKDiagnosticLoggingDelegate>)diagnosticLoggingDelegate
 {
-    static_cast<WebKit::DiagnosticLoggingClient&>(_page->diagnosticLoggingClient()).setDelegate(diagnosticLoggingDelegate);
+    auto* diagnosticLoggingClient = _page->diagnosticLoggingClient();
+    if (!diagnosticLoggingClient)
+        return;
+
+    static_cast<WebKit::DiagnosticLoggingClient&>(*diagnosticLoggingClient).setDelegate(diagnosticLoggingDelegate);
 }
 
 - (id <_WKFindDelegate>)_findDelegate

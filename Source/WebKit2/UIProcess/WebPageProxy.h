@@ -359,7 +359,7 @@ public:
     void setFindClient(std::unique_ptr<API::FindClient>&&);
     API::FindMatchesClient& findMatchesClient() { return *m_findMatchesClient; }
     void setFindMatchesClient(std::unique_ptr<API::FindMatchesClient>&&);
-    API::DiagnosticLoggingClient& diagnosticLoggingClient() { return *m_diagnosticLoggingClient; }
+    API::DiagnosticLoggingClient* diagnosticLoggingClient() { return m_diagnosticLoggingClient.get(); }
     void setDiagnosticLoggingClient(std::unique_ptr<API::DiagnosticLoggingClient>&&);
     void setFormClient(std::unique_ptr<API::FormClient>&&);
     void setNavigationClient(std::unique_ptr<API::NavigationClient>&&);
@@ -1587,6 +1587,7 @@ private:
 #endif
 
     uint64_t generateNavigationID();
+    API::DiagnosticLoggingClient* effectiveDiagnosticLoggingClient(WebCore::ShouldSample);
 
     WebPreferencesStore preferencesStore() const;
 

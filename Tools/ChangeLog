@@ -1,3 +1,17 @@
+2017-07-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r218821): Bad cast to WebKit::DiagnosticLoggingClient in WKWebView's _setDiagnosticLoggingDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=174163
+        <rdar://problem/33067518>
+
+        Reviewed by Alex Christensen.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKWebViewDiagnosticLogging.mm: Added.
+        (TEST):
+
 2017-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         When dragging a selection, clearing the selection in dragstart should not crash the web process

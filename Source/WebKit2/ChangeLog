@@ -1,3 +1,43 @@
+2017-07-05  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r218821): Bad cast to WebKit::DiagnosticLoggingClient in WKWebView's _setDiagnosticLoggingDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=174163
+        <rdar://problem/33067518>
+
+        Reviewed by Alex Christensen.
+
+        After r218821, WebPageProxy::setDiagnosticLoggingClient() would no longer set the client in
+        private session. This is an issue because there is code in WKWebView which expects the
+        DiagnosticLoggingClient to be set and of a specific type. This would lead to bad casts in
+        WKWebView's _diagnosticLoggingDelegate / _setDiagnosticLoggingDelegate.
+
+        To avoid the issue, we now unconditionally update the client in
+        WebPageProxy::setDiagnosticLoggingClient(). Instead, we implement the logic for disabling
+        logging in private session in the logging methods themselves, via the
+        WebPageProxy::effectiveDiagnosticLoggingClient() helper instead.
+
+        I also added null checks in WKWebView's _diagnosticLoggingDelegate /
+        _setDiagnosticLoggingDelegate. Even though the WKWebView sets itself as the diagnostic
+        logging client, WebPageProxy::diagnosticLoggingClient() can still return null after
+        calling WebPageProxy::close(). Previously, we would have done a bad cast if the WKWebView's
+        client would have used this API after calling 'close' as well.
+
+        * UIProcess/API/APIDiagnosticLoggingClient.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _diagnosticLoggingDelegate]):
+        (-[WKWebView _setDiagnosticLoggingDelegate:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::setDiagnosticLoggingClient):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::effectiveDiagnosticLoggingClient):
+        (WebKit::WebPageProxy::logDiagnosticMessage):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithResult):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithValue):
+        (WebKit::WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::diagnosticLoggingClient):
+
 2017-07-05  Daniel Bates  <dabates@apple.com>
 
         Do not pass API::FrameInfo for source frame or clear out page of target frame on
