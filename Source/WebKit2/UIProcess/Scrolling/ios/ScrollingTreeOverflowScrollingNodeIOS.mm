@@ -172,7 +172,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebC
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::ScrollLayer))
         m_scrollLayer = scrollingStateNode.layer();
 
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
         m_scrolledContentsLayer = scrollingStateNode.scrolledContentsLayer();
 }
 

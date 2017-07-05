@@ -46,8 +46,6 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(Scrolli
 ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(const ScrollingStateOverflowScrollingNode& stateNode, ScrollingStateTree& adoptiveTree)
     : ScrollingStateScrollingNode(stateNode, adoptiveTree)
 {
-    if (hasChangedProperty(ScrolledContentsLayer))
-        setScrolledContentsLayer(stateNode.scrolledContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 }
 
 ScrollingStateOverflowScrollingNode::~ScrollingStateOverflowScrollingNode()
@@ -59,23 +57,11 @@ Ref<ScrollingStateNode> ScrollingStateOverflowScrollingNode::clone(ScrollingStat
     return adoptRef(*new ScrollingStateOverflowScrollingNode(*this, adoptiveTree));
 }
     
-void ScrollingStateOverflowScrollingNode::setScrolledContentsLayer(const LayerRepresentation& layerRepresentation)
-{
-    if (layerRepresentation == m_scrolledContentsLayer)
-        return;
-    
-    m_scrolledContentsLayer = layerRepresentation;
-    setPropertyChanged(ScrolledContentsLayer);
-}
-
 void ScrollingStateOverflowScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ts << "Overflow scrolling node";
     
     ScrollingStateScrollingNode::dumpProperties(ts, behavior);
-    
-    if ((behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerIDs) && m_scrolledContentsLayer.layerID())
-        ts.dumpProperty("scrolled contents layer", m_scrolledContentsLayer.layerID());
 }
 
 } // namespace WebCore

@@ -1,3 +1,41 @@
+2017-07-05  Frederic Wang  <fwang@igalia.com>
+
+        Move ScrolledContentsLayer property to ScrollingStateScrollingNode
+        https://bugs.webkit.org/show_bug.cgi?id=174134
+
+        Reviewed by Simon Fraser.
+
+        ScrollingStateFrameScrollingNode and ScrollingStateOverflowScrollingNode both use a
+        ScrolledContentsLayer property for the same purpose. This commit moves that property into
+        their parent class ScrollingStateScrollingNode, so that more code is shared between the two
+        classes. This will also help the refactoring in bug 174130.
+
+        No new tests, only dumped tree may change a bit.
+
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp: Remove scrolled contents layer.
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties):
+        (WebCore::ScrollingStateFrameScrollingNode::setScrolledContentsLayer): Deleted.
+        * page/scrolling/ScrollingStateFrameScrollingNode.h: Ditto.
+        * page/scrolling/ScrollingStateOverflowScrollingNode.cpp: Ditto.
+        (WebCore::ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode):
+        (WebCore::ScrollingStateOverflowScrollingNode::dumpProperties):
+        (WebCore::ScrollingStateOverflowScrollingNode::setScrolledContentsLayer): Deleted.
+        * page/scrolling/ScrollingStateOverflowScrollingNode.h: Ditto.
+        (): Deleted.
+        (WebCore::ScrollingStateOverflowScrollingNode::scrolledContentsLayer): Deleted.
+        * page/scrolling/ScrollingStateScrollingNode.cpp: Add scrolled contents layer.
+        (WebCore::ScrollingStateScrollingNode::ScrollingStateScrollingNode):
+        (WebCore::ScrollingStateScrollingNode::setScrolledContentsLayer):
+        (WebCore::ScrollingStateScrollingNode::dumpProperties): Use the label from the overflow class
+        which is different from the frame class. The dumping order may change a bit too.
+        * page/scrolling/ScrollingStateScrollingNode.h: Add ScrolledContentsLayer to the enum and
+        scrolled contents layer.
+        (WebCore::ScrollingStateScrollingNode::scrolledContentsLayer):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm:
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren): Adjust enum value
+        to use ScrollingStateScrollingNode::ScrolledContentsLayer.
+
 2017-07-05  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         ProcessingInstruction::clearExistingCachedSheet doesn't really exist.

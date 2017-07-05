@@ -53,6 +53,8 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_requestedScrollPositionRepresentsProgrammaticScroll(stateNode.requestedScrollPositionRepresentsProgrammaticScroll())
     , m_expectsWheelEventTestTrigger(stateNode.expectsWheelEventTestTrigger())
 {
+    if (hasChangedProperty(ScrolledContentsLayer))
+        setScrolledContentsLayer(stateNode.scrolledContentsLayer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
 }
 
 ScrollingStateScrollingNode::~ScrollingStateScrollingNode()
@@ -185,6 +187,15 @@ void ScrollingStateScrollingNode::setExpectsWheelEventTestTrigger(bool expectsTe
     setPropertyChanged(ExpectsWheelEventTestTrigger);
 }
 
+void ScrollingStateScrollingNode::setScrolledContentsLayer(const LayerRepresentation& layerRepresentation)
+{
+    if (layerRepresentation == m_scrolledContentsLayer)
+        return;
+
+    m_scrolledContentsLayer = layerRepresentation;
+    setPropertyChanged(ScrolledContentsLayer);
+}
+
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTreeAsTextBehavior behavior) const
 {
     ScrollingStateNode::dumpProperties(ts, behavior);
@@ -243,6 +254,9 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, ScrollingStateT
 
     if (m_expectsWheelEventTestTrigger)
         ts.dumpProperty("expects wheel event test trigger", m_expectsWheelEventTestTrigger);
+
+    if ((behavior & ScrollingStateTreeAsTextBehaviorIncludeLayerIDs) && m_scrolledContentsLayer.layerID())
+        ts.dumpProperty("scrolled contents layer", m_scrolledContentsLayer.layerID());
 }
 
 } // namespace WebCore

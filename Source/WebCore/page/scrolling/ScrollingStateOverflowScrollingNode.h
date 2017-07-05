@@ -39,21 +39,11 @@ public:
 
     virtual ~ScrollingStateOverflowScrollingNode();
 
-    enum ChangedProperty {
-        ScrolledContentsLayer = NumScrollingStateNodeBits
-    };
-
-    // This is a layer with the contents that move.
-    const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
-    WEBCORE_EXPORT void setScrolledContentsLayer(const LayerRepresentation&);
-    
     void dumpProperties(TextStream&, ScrollingStateTreeAsTextBehavior) const override;
 
 private:
     ScrollingStateOverflowScrollingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollingNode(const ScrollingStateOverflowScrollingNode&, ScrollingStateTree&);
-    
-    LayerRepresentation m_scrolledContentsLayer;    
 };
 
 } // namespace WebCore

@@ -135,6 +135,9 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::ScrollableAreaParams, scrollableAreaParameters)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::RequestedScrollPosition, requestedScrollPosition)
     SCROLLING_NODE_ENCODE(ScrollingStateScrollingNode::RequestedScrollPosition, requestedScrollPositionRepresentsProgrammaticScroll)
+
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
+        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer());
 }
 
 void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, const ScrollingStateFrameScrollingNode& node)
@@ -154,9 +157,6 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::MinLayoutViewportOrigin, minLayoutViewportOrigin)
     SCROLLING_NODE_ENCODE(ScrollingStateFrameScrollingNode::MaxLayoutViewportOrigin, maxLayoutViewportOrigin)
 
-    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer());
-
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer))
         encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.counterScrollingLayer());
 
@@ -170,9 +170,6 @@ void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, c
 void ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode(Encoder& encoder, const ScrollingStateOverflowScrollingNode& node)
 {
     encoder << static_cast<const ScrollingStateScrollingNode&>(node);
-    
-    if (node.hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
-        encoder << static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer());
 }
 
 #define SCROLLING_NODE_DECODE(property, type, setter) \
@@ -223,6 +220,13 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
         node.setRequestedScrollPosition(scrollPosition, representsProgrammaticScroll);
     }
 
+    if (node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer)) {
+        GraphicsLayer::PlatformLayerID layerID;
+        if (!decoder.decode(layerID))
+            return false;
+        node.setScrolledContentsLayer(layerID);
+    }
+
     return true;
 }
 
@@ -244,13 +248,6 @@ bool ArgumentCoder<ScrollingStateFrameScrollingNode>::decode(Decoder& decoder, S
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::LayoutViewport, FloatRect, setLayoutViewport)
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::MinLayoutViewportOrigin, FloatPoint, setMinLayoutViewportOrigin)
     SCROLLING_NODE_DECODE(ScrollingStateFrameScrollingNode::MaxLayoutViewportOrigin, FloatPoint, setMaxLayoutViewportOrigin)
-
-    if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
-        if (!decoder.decode(layerID))
-            return false;
-        node.setScrolledContentsLayer(layerID);
-    }
 
     if (node.hasChangedProperty(ScrollingStateFrameScrollingNode::CounterScrollingLayer)) {
         GraphicsLayer::PlatformLayerID layerID;
@@ -280,13 +277,6 @@ bool ArgumentCoder<ScrollingStateOverflowScrollingNode>::decode(Decoder& decoder
 {
     if (!decoder.decode(static_cast<ScrollingStateScrollingNode&>(node)))
         return false;
-
-    if (node.hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer)) {
-        GraphicsLayer::PlatformLayerID layerID;
-        if (!decoder.decode(layerID))
-            return false;
-        node.setScrolledContentsLayer(layerID);
-    }
 
     return true;
 }
@@ -483,6 +473,9 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
         ts.dumpProperty("requested-scroll-position", node.requestedScrollPosition());
         ts.dumpProperty("requested-scroll-position-is-programatic", node.requestedScrollPositionRepresentsProgrammaticScroll());
     }
+
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))
+        ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
 }
     
 static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, bool changedPropertiesOnly)
@@ -530,9 +523,6 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::FrameScaleFactor))
         ts.dumpProperty("frame-scale-factor", node.frameScaleFactor());
 
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::ScrolledContentsLayer))
-        ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
-
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateFrameScrollingNode::InsetClipLayer))
         ts.dumpProperty("clip-inset-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.insetClipLayer()));
 
@@ -549,9 +539,6 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
 static void dump(TextStream& ts, const ScrollingStateOverflowScrollingNode& node, bool changedPropertiesOnly)
 {
     dump(ts, static_cast<const ScrollingStateScrollingNode&>(node), changedPropertiesOnly);
-    
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateOverflowScrollingNode::ScrolledContentsLayer))
-        ts.dumpProperty("scrolled-contents-layer", static_cast<GraphicsLayer::PlatformLayerID>(node.scrolledContentsLayer()));
 }
 
 static void dump(TextStream& ts, const ScrollingStateFixedNode& node, bool changedPropertiesOnly)

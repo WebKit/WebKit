@@ -97,9 +97,6 @@ public:
     float topContentInset() const { return m_topContentInset; }
     WEBCORE_EXPORT void setTopContentInset(float);
 
-    const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
-    WEBCORE_EXPORT void setScrolledContentsLayer(const LayerRepresentation&);
-
     // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
     const LayerRepresentation& counterScrollingLayer() const { return m_counterScrollingLayer; }
     WEBCORE_EXPORT void setCounterScrollingLayer(const LayerRepresentation&);
@@ -142,7 +139,6 @@ private:
 
     LayerRepresentation m_counterScrollingLayer;
     LayerRepresentation m_insetClipLayer;
-    LayerRepresentation m_scrolledContentsLayer;
     LayerRepresentation m_contentShadowLayer;
     LayerRepresentation m_headerLayer;
     LayerRepresentation m_footerLayer;

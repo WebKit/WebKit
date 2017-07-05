@@ -1,3 +1,31 @@
+2017-07-05  Frederic Wang  <fwang@igalia.com>
+
+        Move ScrolledContentsLayer property to ScrollingStateScrollingNode
+        https://bugs.webkit.org/show_bug.cgi?id=174134
+
+        Reviewed by Simon Fraser.
+
+        * Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::encode): Add encoding for scrolled contents
+        layer.
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::encode): Remove encoding for scrolled
+        contents layer.
+        (ArgumentCoder<ScrollingStateOverflowScrollingNode>::encode): Ditto.
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode): Add decoding for scrolled contents
+        layer.
+        (ArgumentCoder<ScrollingStateFrameScrollingNode>::decode): Remove decoding for scrolled
+        contents layer.
+        (ArgumentCoder<ScrollingStateOverflowScrollingNode>::decode): Ditto.
+        (WebKit::dump): Move dumping of scrolled contents layer from overflow/frame nodes to
+        scrolling node.
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers): Adjust enum value to use
+        ScrollingStateScrollingNode::ScrolledContentsLayer.
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren): Ditto.
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers): Ditto.
+
 2017-07-05  Ada Chan  <adachan@apple.com>
 
         Fix crash in UIKit: +[UIViewController _viewControllerForFullScreenPresentationFromView:]
