@@ -1,3 +1,15 @@
+2017-07-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Consolidate CMake code related to CURL
+        https://bugs.webkit.org/show_bug.cgi?id=170860
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in functionality.
+
+        * PlatformWinCairo.cmake:
+        * platform/Curl.cmake: Added.
+
 2017-07-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove copy of ICU headers from WebKit

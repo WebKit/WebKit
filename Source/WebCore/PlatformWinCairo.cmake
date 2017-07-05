@@ -1,4 +1,5 @@
 include(platform/Cairo.cmake)
+include(platform/Curl.cmake)
 include(platform/ImageDecoders.cmake)
 include(platform/TextureMapper.cmake)
 
@@ -10,7 +11,6 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBKIT_LIBRARIES_DIR}/include/zlib"
     "${WEBCORE_DIR}/loader/archive/cf"
     "${WEBCORE_DIR}/platform/cf"
-    "${WEBCORE_DIR}/platform/network/curl"
 )
 
 list(APPEND WebCore_SOURCES
@@ -28,23 +28,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/SimpleFontDataCairoWin.cpp
 
     platform/network/NetworkStorageSessionStub.cpp
-
-    platform/network/curl/CookieJarCurl.cpp
-    platform/network/curl/CredentialStorageCurl.cpp
-    platform/network/curl/CurlCacheEntry.cpp
-    platform/network/curl/CurlCacheManager.cpp
-    platform/network/curl/CurlContext.cpp
-    platform/network/curl/CurlDownload.cpp
-    platform/network/curl/CurlJobManager.cpp
-    platform/network/curl/DNSCurl.cpp
-    platform/network/curl/FormDataStreamCurl.cpp
-    platform/network/curl/MultipartHandle.cpp
-    platform/network/curl/ProxyServerCurl.cpp
-    platform/network/curl/ResourceHandleCurl.cpp
-    platform/network/curl/ResourceHandleManager.cpp
-    platform/network/curl/SSLHandle.cpp
-    platform/network/curl/SocketStreamHandleImplCurl.cpp
-    platform/network/curl/SynchronousLoaderClientCurl.cpp
 
     platform/text/win/LocaleWin.cpp
 

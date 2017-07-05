@@ -11,9 +11,8 @@ if (${WTF_PLATFORM_WIN_CAIRO})
         win/WebURLAuthenticationChallengeSenderCURL.cpp
     )
     list(APPEND WebKit_LIBRARIES
-        PRIVATE libeay32.lib
+        ${OPENSSL_LIBRARIES}
         PRIVATE mfuuid.lib
-        PRIVATE ssleay32.lib
         PRIVATE strmiids.lib
     )
 else ()
