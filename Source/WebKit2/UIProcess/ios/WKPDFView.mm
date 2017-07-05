@@ -142,6 +142,7 @@ typedef struct {
     [self _clearPages];
     [_pageNumberIndicator removeFromSuperview];
     dispatch_release(_findQueue);
+    [_actionSheetAssistant cleanupSheet];
     [super dealloc];
 }
 

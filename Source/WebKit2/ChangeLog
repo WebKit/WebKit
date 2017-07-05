@@ -1,3 +1,35 @@
+2017-07-05  Andy Estes  <aestes@apple.com>
+
+        [iOS] WKActionSheetAssistants can outlive their host views
+        https://bugs.webkit.org/show_bug.cgi?id=174160
+        <rdar://problem/20638607>
+
+        Reviewed by Tim Horton.
+
+        WKActionSheetAssistant keeps a raw pointer to its host UIView, and nothing clears it when
+        the host view is deallocated. If the assistant outlives the view, we can end up accessing a
+        pointer to a deallocated UIView and crashing.
+
+        I don't know how to reproduce such a crash, but this patch guards against it by doing the
+        following:
+
+        1. Make _view a WeakObjCPtr in WKActionSheetAssistant to ensure it gets set to nil when the
+           UIView is deallocated.
+        2. Call -[WKActionSheetAssistant cleanupSheet] when a WKContentView or WKPDFView is
+           deallocated, or when the Web process crashes. This will ensure the action sheet is
+           dismissed and prevent the user from tapping on an action that's no longer valid.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant superviewForSheet]):
+        (-[WKActionSheetAssistant _presentationRectForSheetGivenPoint:inHostView:]):
+        (-[WKActionSheetAssistant presentationRectForElementUsingClosestIndicatedRect]):
+        (-[WKActionSheetAssistant presentationRectForIndicatedElement]):
+        (-[WKActionSheetAssistant _shouldPresentAtTouchLocationForElementRect:]):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView cleanupInteraction]):
+        * UIProcess/ios/WKPDFView.mm:
+        (-[WKPDFView dealloc]):
+
 2017-07-05  Frederic Wang  <fwang@igalia.com>
 
         Move ScrolledContentsLayer property to ScrollingStateScrollingNode

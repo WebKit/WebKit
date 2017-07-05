@@ -89,7 +89,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     RetainPtr<WKActionSheet> _interactionSheet;
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
     std::optional<WebKit::InteractionInformationAtPosition> _positionInformation;
-    UIView *_view;
+    WeakObjCPtr<UIView> _view;
     BOOL _needsLinkIndicator;
     BOOL _isPresentingDDUserInterface;
     BOOL _hasPendingActionSheet;
@@ -130,14 +130,15 @@ static LSAppLink *appLinkForURL(NSURL *url)
 
 - (UIView *)superviewForSheet
 {
-    UIView *view = [_view window];
+    UIView *view = _view.getAutoreleased();
+    UIView *superview = [view window];
 
     // FIXME: WebKit has a delegate to retrieve the superview for the image sheet (superviewForImageSheetForWebView)
     // Do we need it in WK2?
 
     // Find the top most view with a view controller
     UIViewController *controller = nil;
-    UIView *currentView = _view;
+    UIView *currentView = view;
     while (currentView) {
         UIViewController *aController = [UIViewController viewControllerForView:currentView];
         if (aController)
@@ -146,14 +147,14 @@ static LSAppLink *appLinkForURL(NSURL *url)
         currentView = [currentView superview];
     }
     if (controller)
-        view = controller.view;
+        superview = controller.view;
 
-    return view;
+    return superview;
 }
 
 - (CGRect)_presentationRectForSheetGivenPoint:(CGPoint)point inHostView:(UIView *)hostView
 {
-    CGPoint presentationPoint = [hostView convertPoint:point fromView:_view];
+    CGPoint presentationPoint = [hostView convertPoint:point fromView:_view.getAutoreleased()];
     CGRect presentationRect = CGRectMake(presentationPoint.x, presentationPoint.y, 1.0, 1.0);
 
     return CGRectInset(presentationRect, -22.0, -22.0);
@@ -189,7 +190,7 @@ static const CGFloat presentationElementRectPadding = 15;
     for (auto path : WebCore::PathUtilities::pathsWithShrinkWrappedRects(indicatedRects, 0)) {
         auto boundingRect = path.fastBoundingRect();
         if (boundingRect.contains(touchLocation))
-            return CGRectInset([view convertRect:(CGRect)boundingRect fromView:_view], -presentationElementRectPadding, -presentationElementRectPadding);
+            return CGRectInset([view convertRect:(CGRect)boundingRect fromView:_view.getAutoreleased()], -presentationElementRectPadding, -presentationElementRectPadding);
     }
 
     return CGRectZero;
@@ -203,7 +204,7 @@ static const CGFloat presentationElementRectPadding = 15;
         return CGRectZero;
 
     auto elementBounds = _positionInformation->bounds;
-    return CGRectInset([view convertRect:elementBounds fromView:_view], -presentationElementRectPadding, -presentationElementRectPadding);
+    return CGRectInset([view convertRect:elementBounds fromView:_view.getAutoreleased()], -presentationElementRectPadding, -presentationElementRectPadding);
 }
 
 - (CGRect)initialPresentationRectInHostViewForSheet
@@ -394,8 +395,9 @@ static const CGFloat presentationElementRectPadding = 15;
 
 - (BOOL)_shouldPresentAtTouchLocationForElementRect:(CGRect)elementRect
 {
-    auto apparentElementRect = [_view convertRect:elementRect toView:_view.window];
-    auto windowRect = _view.window.bounds;
+    UIView *view = _view.getAutoreleased();
+    auto apparentElementRect = [view convertRect:elementRect toView:view.window];
+    auto windowRect = view.window.bounds;
     apparentElementRect = CGRectIntersection(apparentElementRect, windowRect);
 
     auto leftInset = CGRectGetMinX(apparentElementRect) - CGRectGetMinX(windowRect);

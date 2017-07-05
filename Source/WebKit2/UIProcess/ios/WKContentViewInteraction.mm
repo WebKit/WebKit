@@ -602,7 +602,10 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 {
     _webSelectionAssistant = nil;
     _textSelectionAssistant = nil;
+    
+    [_actionSheetAssistant cleanupSheet];
     _actionSheetAssistant = nil;
+    
     _smartMagnificationController = nil;
     _didAccessoryTabInitiateFocus = NO;
     _isExpectingFastSingleTapCommit = NO;
