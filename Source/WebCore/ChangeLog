@@ -1,3 +1,19 @@
+2017-07-05  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Don't resolve an extra computed style for getComputedStyle in a display: none subtree.
+        https://bugs.webkit.org/show_bug.cgi?id=174145
+
+        Before this, we were also resolving the first ancestor's style as
+        inheriting from itself, which felt pretty wrong (though I think it's
+        not observable).
+
+        Reviewed by Antti Koivisto.
+
+        No new tests (non-observable behavior).
+
+        * dom/Element.cpp:
+        (WebCore::Element::resolveComputedStyle):
+
 2017-07-05  Frederic Wang  <fwang@igalia.com>
 
         Move ScrolledContentsLayer property to ScrollingStateScrollingNode
