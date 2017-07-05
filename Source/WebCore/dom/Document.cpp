@@ -1838,6 +1838,8 @@ void Document::resolveStyle(ResolveStyleType type)
 
             RenderTreeUpdater updater(*this);
             updater.commit(WTFMove(styleUpdate));
+
+            frameView.styleDidChange();
         }
 
         updatedCompositingLayers = frameView.updateCompositingLayersAfterStyleChange();
@@ -2148,8 +2150,6 @@ void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()
 void Document::didClearStyleResolver()
 {
     m_userAgentShadowTreeStyleResolver = nullptr;
-
-    m_fontSelector->buildStarted();
 }
 
 void Document::createRenderTree()

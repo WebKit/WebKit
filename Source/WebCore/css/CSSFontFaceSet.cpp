@@ -268,6 +268,11 @@ void CSSFontFaceSet::purge()
         remove(item.get());
 }
 
+void CSSFontFaceSet::emptyCaches()
+{
+    m_cache.clear();
+}
+
 void CSSFontFaceSet::clear()
 {
     for (auto& face : m_faces)

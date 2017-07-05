@@ -28,6 +28,7 @@
 #include "config.h"
 #include "StyleScope.h"
 
+#include "CSSFontSelector.h"
 #include "CSSStyleSheet.h"
 #include "Element.h"
 #include "ElementChildIterator.h"
@@ -95,14 +96,20 @@ StyleResolver& Scope::resolver()
 
     if (!m_resolver) {
         SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+
         m_resolver = std::make_unique<StyleResolver>(m_document);
 
-        if (!m_shadowRoot)
+        if (!m_shadowRoot) {
+            m_document.fontSelector().buildStarted();
             m_resolver->ruleSets().initializeUserStyle();
-        else
+        } else
             m_resolver->ruleSets().setUsesSharedUserStyle(m_shadowRoot->mode() != ShadowRootMode::UserAgent);
 
+        m_resolver->addCurrentSVGFontFaceRules();
         m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
+
+        if (!m_shadowRoot)
+            m_document.fontSelector().buildCompleted();
     }
     ASSERT(!m_shadowRoot || &m_document == &m_shadowRoot->document());
     ASSERT(&m_resolver->document() == &m_document);

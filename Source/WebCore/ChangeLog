@@ -1,3 +1,75 @@
+2017-07-05  Antti Koivisto  <antti@apple.com>
+
+        Low memory notification shouldn't cause style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=173574
+        <rdar://problem/32616997>
+
+        Reviewed by Andreas Kling.
+
+        Patch mostly by Myles.
+
+        When we receive a low memory warning, we clear the style resolver. Previously, we were using
+        this as an opportunity to also purge the CSSFontSelector. However, purging the font selector
+        is wasteful, since the exact same set of CSSFontFace objects will be recreated as soon as the
+        CSSFontSelector is recreated. It's also harmful because this purge operation causes fonts to
+        be removed from the document's working set, and therefore triggers a relayout. Instead, this
+        call should be softened to only delete any transitory caches the CSSFontSelector owns.
+
+        We can simply delay the rebuild of the CSSFontSelector to
+        StyleResolver::appendAuthorStyleSheets(), when it's really needed. This way, we can sidestep
+        this whole problem.
+
+        There's also an added benefit: Now, buildStarted() doesn't have to be idempotent, so we can
+        enforce a stricter calling sequence with ASSERT()s.
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::emptyCaches):
+        * css/CSSFontFaceSet.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::emptyCaches):
+
+            Add a separate function to clear font selector caches.
+
+        (WebCore::CSSFontSelector::buildStarted):
+        (WebCore::CSSFontSelector::buildCompleted):
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::CSSFontSelector::fontModified):
+
+            No need to invalidate while building.
+
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        * css/CSSFontSelector.h:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::addCurrentSVGFontFaceRules):
+
+            Factor into a function from the constructor.
+
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+
+            Font selector build is now started and finished by StyleScope.
+
+        * css/StyleResolver.h:
+        * dom/Document.cpp:
+        (WebCore::Document::resolveStyle):
+
+            Call FrameView::styleDidChange() to update any custom scrollbars.
+            This bug was hidden by spurious style recalcs, tested by fast/css/scrollbar-dynamic-style-change.html
+
+        (WebCore::Document::userAgentShadowTreeStyleResolver):
+        (WebCore::Document::didClearStyleResolver):
+
+            Don't start the font selector rebuild after clearing the resolver. It would cause style recalc trashing.
+            Instead the build starts when the new resolver is constructed.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseCriticalMemory):
+
+            Release font selector caches.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::resolver):
+
 2017-07-05  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Prevent ResourceLoadStatistics from triggering a cascade of read/write events

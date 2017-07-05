@@ -1,3 +1,15 @@
+2017-07-05  Antti Koivisto  <antti@apple.com>
+
+        Low memory notification shouldn't cause style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=173574
+        <rdar://problem/32616997>
+
+        Reviewed by Andreas Kling.
+
+        * platform/mac/printing/width-overflow-expected.txt:
+
+            1px width change that doesn't affect what is being tested.
+
 2017-07-05  Jonathan Bedard  <jbedard@apple.com>
 
         Move internal iOS 11 TestExpectations to OpenSource

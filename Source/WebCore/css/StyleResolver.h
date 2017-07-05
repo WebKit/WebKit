@@ -157,6 +157,8 @@ public:
 
     void setOverrideDocumentElementStyle(RenderStyle* style) { m_overrideDocumentElementStyle = style; }
 
+    void addCurrentSVGFontFaceRules();
+
 private:
     std::unique_ptr<RenderStyle> styleForKeyframe(const RenderStyle*, const StyleRuleKeyframe*, KeyframeValue&);
 

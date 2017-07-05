@@ -60,6 +60,7 @@ public:
     void add(CSSFontFace&);
     void remove(const CSSFontFace&);
     void purge();
+    void emptyCaches();
     void clear();
     CSSFontFace& operator[](size_t i);
 

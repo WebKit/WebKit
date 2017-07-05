@@ -51,6 +51,7 @@
 #include "StyleRule.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -91,15 +92,20 @@ bool CSSFontSelector::isEmpty() const
     return !m_cssFontFaceSet->faceCount();
 }
 
+void CSSFontSelector::emptyCaches()
+{
+    m_cssFontFaceSet->emptyCaches();
+}
+
 void CSSFontSelector::buildStarted()
 {
     m_buildIsUnderway = true;
-    m_stagingArea.clear();
     m_cssFontFaceSet->purge();
     ++m_version;
 
-    m_cssConnectionsPossiblyToRemove.clear();
-    m_cssConnectionsEncounteredDuringBuild.clear();
+    ASSERT(m_cssConnectionsPossiblyToRemove.isEmpty());
+    ASSERT(m_cssConnectionsEncounteredDuringBuild.isEmpty());
+    ASSERT(m_stagingArea.isEmpty());
     for (size_t i = 0; i < m_cssFontFaceSet->faceCount(); ++i) {
         CSSFontFace& face = m_cssFontFaceSet.get()[i];
         if (face.cssConnection())
@@ -124,7 +130,9 @@ void CSSFontSelector::buildCompleted()
 
     for (auto& item : m_stagingArea)
         addFontFaceRule(item.styleRuleFontFace, item.isInitiatingElementInUserAgentShadowTree);
+    m_cssConnectionsEncounteredDuringBuild.clear();
     m_stagingArea.clear();
+    m_cssConnectionsPossiblyToRemove.clear();
 }
 
 void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isInitiatingElementInUserAgentShadowTree)
@@ -162,7 +170,7 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     if (!srcList.length())
         return;
 
-    m_creatingFont = true;
+    SetForScope<bool> creatingFont(m_creatingFont, true);
     Ref<CSSFontFace> fontFace = CSSFontFace::create(this, &fontFaceRule);
 
     if (!fontFace->setFamilies(*fontFamily))
@@ -211,7 +219,6 @@ void CSSFontSelector::addFontFaceRule(StyleRuleFontFace& fontFaceRule, bool isIn
     }
 
     m_cssFontFaceSet->add(fontFace.get());
-    m_creatingFont = false;
     ++m_version;
 }
 
@@ -242,7 +249,7 @@ void CSSFontSelector::fontLoaded()
 
 void CSSFontSelector::fontModified()
 {
-    if (!m_creatingFont)
+    if (!m_creatingFont && !m_buildIsUnderway)
         dispatchInvalidationCallbacks();
 }
 
@@ -280,7 +287,7 @@ static const AtomicString& resolveGenericFamily(Document* document, const FontDe
 FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomicString& familyName)
 {
     // If this ASSERT() fires, it usually means you forgot a document.updateStyleIfNeeded() somewhere.
-    ASSERT(!m_buildIsUnderway || m_isComputingRootStyleFont);
+    ASSERT(!m_buildIsUnderway || m_computingRootStyleFontCount);
 
     // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
     bool resolveGenericFamilyFirst = familyName == standardFamily;

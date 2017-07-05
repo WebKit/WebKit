@@ -26,6 +26,7 @@
 #include "config.h"
 #include "MemoryRelease.h"
 
+#include "CSSFontSelector.h"
 #include "CSSValuePool.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -84,8 +85,10 @@ static void releaseCriticalMemory(Synchronous synchronous)
 
     Vector<RefPtr<Document>> documents;
     copyToVector(Document::allDocuments(), documents);
-    for (auto& document : documents)
+    for (auto& document : documents) {
         document->styleScope().clearResolver();
+        document->fontSelector().emptyCaches();
+    }
 
     GCController::singleton().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
 
