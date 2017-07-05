@@ -1,3 +1,14 @@
+2017-07-05  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        ProcessingInstruction::clearExistingCachedSheet doesn't really exist.
+        https://bugs.webkit.org/show_bug.cgi?id=174146
+
+        Reviewed by Chris Dumez.
+
+        No new tests (no functionality change).
+
+        * dom/ProcessingInstruction.h: Remove dead declaration.
+
 2017-07-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219128.

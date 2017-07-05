@@ -74,8 +74,6 @@ private:
 
     void parseStyleSheet(const String& sheet);
 
-    void clearExistingCachedSheet();
-
     String m_target;
     String m_localHref;
     String m_title;
