@@ -59,7 +59,7 @@
  */
 #ifdef __cplusplus
 #   ifndef U_SHOW_CPLUSPLUS_API
-#       define U_SHOW_CPLUSPLUS_API 0
+#       define U_SHOW_CPLUSPLUS_API 1
 #   endif
 #else
 #   undef U_SHOW_CPLUSPLUS_API

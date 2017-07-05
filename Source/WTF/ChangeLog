@@ -1,3 +1,263 @@
+2017-07-03  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Remove copy of ICU headers from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=116407
+
+        Reviewed by Alex Christensen.
+
+        Add an extra rsync command to CopyWTFHeaders which copies the ICU headers
+        to DSTROOT/usr/local/include/. These headers already live inside a
+        "unicode" folder, so an example path of a header is
+        DSTROOT/usr/local/include/unicode/uchar.h. This is already in the search
+        path of the other WebKit projects, so those other projects can remove
+        their explicit listing of the old place these headers lived.
+
+        Also add the remaining ICU 55.1 headers which the other projects (like
+        WebCore) need. Revert any local changes to these headers in favor of
+        using the GCC_PREPROCESSOR_DEFINITIONS build setting. This is so we can
+        compile the same way against unmodified headers.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/CopyWTFHeaders.xcconfig:
+        * WTF.xcodeproj/project.pbxproj:
+        * icu/unicode/alphaindex.h: Added.
+        * icu/unicode/appendable.h: Added.
+        * icu/unicode/basictz.h: Added.
+        * icu/unicode/brkiter.h: Added.
+        (BreakIterator::isBufferClone):
+        * icu/unicode/bytestrie.h: Added.
+        * icu/unicode/bytestriebuilder.h: Added.
+        * icu/unicode/calendar.h: Added.
+        (Calendar::createInstance):
+        (Calendar::roll):
+        (Calendar::internalSet):
+        (Calendar::weekNumber):
+        * icu/unicode/caniter.h: Added.
+        * icu/unicode/chariter.h: Renamed from Source/WebCore/icu/unicode/chariter.h.
+        * icu/unicode/choicfmt.h: Added.
+        * icu/unicode/coleitr.h: Added.
+        (CollationElementIterator::primaryOrder):
+        (CollationElementIterator::secondaryOrder):
+        (CollationElementIterator::tertiaryOrder):
+        (CollationElementIterator::isIgnorable):
+        * icu/unicode/coll.h: Added.
+        * icu/unicode/compactdecimalformat.h: Added.
+        * icu/unicode/curramt.h: Added.
+        (CurrencyAmount::getCurrency):
+        (CurrencyAmount::getISOCurrency):
+        * icu/unicode/currpinf.h: Added.
+        (CurrencyPluralInfo::operator!=):
+        * icu/unicode/currunit.h: Added.
+        (CurrencyUnit::getISOCurrency):
+        * icu/unicode/datefmt.h: Added.
+        * icu/unicode/dbbi.h: Added.
+        * icu/unicode/dcfmtsym.h: Added.
+        (DecimalFormatSymbols::getSymbol):
+        (DecimalFormatSymbols::getConstSymbol):
+        (DecimalFormatSymbols::setSymbol):
+        (DecimalFormatSymbols::getLocale):
+        (DecimalFormatSymbols::getCurrencyPattern):
+        * icu/unicode/decimfmt.h: Added.
+        (DecimalFormat::getConstSymbol):
+        * icu/unicode/docmain.h: Added.
+        * icu/unicode/dtfmtsym.h: Added.
+        * icu/unicode/dtintrv.h: Added.
+        (DateInterval::getFromDate):
+        (DateInterval::getToDate):
+        (DateInterval::operator!=):
+        * icu/unicode/dtitvfmt.h: Added.
+        (DateIntervalFormat::operator!=):
+        * icu/unicode/dtitvinf.h: Added.
+        (DateIntervalInfo::operator!=):
+        * icu/unicode/dtptngen.h: Added.
+        * icu/unicode/dtrule.h: Added.
+        * icu/unicode/enumset.h: Added.
+        (EnumSet::EnumSet):
+        (EnumSet::~EnumSet):
+        (EnumSet::clear):
+        (EnumSet::add):
+        (EnumSet::remove):
+        (EnumSet::contains):
+        (EnumSet::set):
+        (EnumSet::get):
+        (EnumSet::isValidEnum):
+        (EnumSet::isValidValue):
+        (EnumSet::operator=):
+        (EnumSet::getAll):
+        (EnumSet::flag):
+        * icu/unicode/errorcode.h: Added.
+        * icu/unicode/fieldpos.h: Added.
+        (FieldPosition::operator=):
+        (FieldPosition::operator==):
+        (FieldPosition::operator!=):
+        * icu/unicode/filteredbrk.h: Added.
+        * icu/unicode/fmtable.h: Added.
+        (Formattable::getDate):
+        (Formattable::getString):
+        (Formattable::getLong):
+        (Formattable::toUFormattable):
+        (Formattable::fromUFormattable):
+        * icu/unicode/format.h: Added.
+        * icu/unicode/fpositer.h: Added.
+        * icu/unicode/gender.h: Added.
+        * icu/unicode/gregocal.h: Added.
+        * icu/unicode/icudataver.h: Added.
+        * icu/unicode/icuplug.h: Added.
+        * icu/unicode/idna.h: Added.
+        * icu/unicode/listformatter.h: Added.
+        (ListFormatData::ListFormatData):
+        * icu/unicode/locdspnm.h: Added.
+        (LocaleDisplayNames::createInstance):
+        * icu/unicode/locid.h: Added.
+        (Locale::operator!=):
+        (Locale::getCountry):
+        (Locale::getLanguage):
+        (Locale::getScript):
+        (Locale::getVariant):
+        (Locale::getName):
+        (Locale::isBogus):
+        * icu/unicode/measfmt.h: Added.
+        * icu/unicode/measunit.h: Added.
+        * icu/unicode/measure.h: Added.
+        (Measure::getNumber):
+        (Measure::getUnit):
+        * icu/unicode/messagepattern.h: Added.
+        * icu/unicode/msgfmt.h: Added.
+        * icu/unicode/normalizer2.h: Added.
+        * icu/unicode/normlzr.h: Added.
+        (Normalizer::operator!= ):
+        (Normalizer::quickCheck):
+        (Normalizer::isNormalized):
+        (Normalizer::compare):
+        * icu/unicode/numfmt.h: Added.
+        (NumberFormat::isParseIntegerOnly):
+        (NumberFormat::isLenient):
+        * icu/unicode/numsys.h: Added.
+        * icu/unicode/parsepos.h: Added.
+        (ParsePosition::operator=):
+        (ParsePosition::operator==):
+        (ParsePosition::operator!=):
+        (ParsePosition::getIndex):
+        (ParsePosition::setIndex):
+        (ParsePosition::getErrorIndex):
+        (ParsePosition::setErrorIndex):
+        * icu/unicode/plurfmt.h: Added.
+        * icu/unicode/plurrule.h: Added.
+        * icu/unicode/rbbi.h: Added.
+        (RuleBasedBreakIterator::operator!=):
+        * icu/unicode/rbnf.h: Added.
+        (RuleBasedNumberFormat::isLenient):
+        (RuleBasedNumberFormat::getDefaultRuleSet):
+        * icu/unicode/rbtz.h: Added.
+        * icu/unicode/regex.h: Added.
+        * icu/unicode/region.h: Added.
+        * icu/unicode/reldatefmt.h: Added.
+        * icu/unicode/resbund.h: Added.
+        * icu/unicode/schriter.h: Added.
+        * icu/unicode/scientificnumberformatter.h: Added.
+        * icu/unicode/search.h: Added.
+        (SearchIterator::operator!=):
+        * icu/unicode/selfmt.h: Added.
+        * icu/unicode/simpletz.h: Added.
+        (SimpleTimeZone::setStartRule):
+        (SimpleTimeZone::setEndRule):
+        (SimpleTimeZone::getOffset):
+        * icu/unicode/smpdtfmt.h: Added.
+        (SimpleDateFormat::get2DigitYearStart):
+        * icu/unicode/sortkey.h: Added.
+        (CollationKey::operator!=):
+        (CollationKey::isBogus):
+        (CollationKey::getByteArray):
+        * icu/unicode/stringtriebuilder.h: Added.
+        * icu/unicode/stsearch.h: Added.
+        * icu/unicode/symtable.h: Added.
+        * icu/unicode/tblcoll.h: Added.
+        * icu/unicode/timezone.h: Added.
+        (TimeZone::getID):
+        (TimeZone::setID):
+        * icu/unicode/tmunit.h: Added.
+        * icu/unicode/tmutamt.h: Added.
+        (TimeUnitAmount::operator!=):
+        * icu/unicode/tmutfmt.h: Added.
+        (TimeUnitFormat::operator!=):
+        * icu/unicode/translit.h: Added.
+        (Transliterator::getMaximumContextLength):
+        (Transliterator::setID):
+        (Transliterator::integerToken):
+        (Transliterator::pointerToken):
+        * icu/unicode/tzfmt.h: Added.
+        * icu/unicode/tznames.h: Added.
+        * icu/unicode/tzrule.h: Added.
+        * icu/unicode/tztrans.h: Added.
+        * icu/unicode/ubidi.h: Added.
+        * icu/unicode/ucal.h: Renamed from Source/JavaScriptCore/icu/unicode/ucal.h.
+        * icu/unicode/ucasemap.h: Added.
+        * icu/unicode/ucat.h: Added.
+        * icu/unicode/ucharstrie.h: Added.
+        * icu/unicode/ucharstriebuilder.h: Added.
+        * icu/unicode/uchriter.h: Added.
+        * icu/unicode/uclean.h: Added.
+        * icu/unicode/ucnv_cb.h: Renamed from Source/WebCore/icu/unicode/ucnv_cb.h.
+        * icu/unicode/ucnvsel.h: Added.
+        * icu/unicode/ucoleitr.h: Renamed from Source/WebCore/icu/unicode/ucoleitr.h.
+        * icu/unicode/uconfig.h:
+        * icu/unicode/ucsdet.h: Renamed from Source/WebCore/icu/unicode/ucsdet.h.
+        * icu/unicode/udat.h: Renamed from Source/JavaScriptCore/icu/unicode/udat.h.
+        * icu/unicode/udata.h: Added.
+        * icu/unicode/udateintervalformat.h: Added.
+        * icu/unicode/udatpg.h: Renamed from Source/JavaScriptCore/icu/unicode/udatpg.h.
+        * icu/unicode/udisplaycontext.h: Renamed from Source/JavaScriptCore/icu/unicode/udisplaycontext.h.
+        * icu/unicode/ufieldpositer.h: Renamed from Source/JavaScriptCore/icu/unicode/ufieldpositer.h.
+        * icu/unicode/uformattable.h: Renamed from Source/JavaScriptCore/icu/unicode/uformattable.h.
+        * icu/unicode/ugender.h: Added.
+        * icu/unicode/uidna.h: Renamed from Source/WebCore/icu/unicode/uidna.h.
+        * icu/unicode/uldnames.h: Added.
+        * icu/unicode/ulistformatter.h: Added.
+        * icu/unicode/ulocdata.h: Added.
+        * icu/unicode/umisc.h: Renamed from Source/JavaScriptCore/icu/unicode/umisc.h.
+        * icu/unicode/umsg.h: Added.
+        * icu/unicode/unifilt.h: Added.
+        * icu/unicode/unifunct.h: Added.
+        * icu/unicode/unimatch.h: Added.
+        * icu/unicode/unirepl.h: Added.
+        * icu/unicode/uniset.h: Added.
+        (UnicodeSet::operator!=):
+        (UnicodeSet::isFrozen):
+        (UnicodeSet::containsSome):
+        (UnicodeSet::isBogus):
+        (UnicodeSet::fromUSet):
+        (UnicodeSet::toUSet):
+        (UnicodeSet::span):
+        (UnicodeSet::spanBack):
+        * icu/unicode/unum.h: Renamed from Source/JavaScriptCore/icu/unicode/unum.h.
+        * icu/unicode/unumsys.h: Renamed from Source/JavaScriptCore/icu/unicode/unumsys.h.
+        * icu/unicode/upluralrules.h: Added.
+        * icu/unicode/uregex.h: Added.
+        * icu/unicode/uregion.h: Added.
+        * icu/unicode/urep.h: Added.
+        * icu/unicode/ures.h: Added.
+        (ures_getUnicodeString):
+        (ures_getNextUnicodeString):
+        (ures_getUnicodeStringByIndex):
+        (ures_getUnicodeStringByKey):
+        * icu/unicode/usearch.h: Renamed from Source/WebCore/icu/unicode/usearch.h.
+        * icu/unicode/usetiter.h: Added.
+        (UnicodeSetIterator::isString):
+        (UnicodeSetIterator::getCodepoint):
+        (UnicodeSetIterator::getCodepointEnd):
+        * icu/unicode/ushape.h: Renamed from Source/WebCore/icu/unicode/ushape.h.
+        * icu/unicode/uspoof.h: Added.
+        * icu/unicode/usprep.h: Added.
+        * icu/unicode/ustdio.h: Added.
+        * icu/unicode/ustream.h: Added.
+        * icu/unicode/ustringtrie.h: Added.
+        * icu/unicode/utf32.h: Added.
+        * icu/unicode/utmscale.h: Added.
+        * icu/unicode/utrace.h: Added.
+        * icu/unicode/utrans.h: Added.
+        * icu/unicode/utypes.h:
+        * icu/unicode/vtzone.h: Added.
+
 2017-07-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Make double-conversion's cache data constant and drop double_conversion::initialize()
