@@ -39,10 +39,10 @@ namespace double_conversion {
         
         // Not all powers of ten are cached. The decimal exponent of two neighboring
         // cached numbers will differ by kDecimalExponentDistance.
-        static int kDecimalExponentDistance;
+        static const int kDecimalExponentDistance;
         
-        static int kMinDecimalExponent;
-        static int kMaxDecimalExponent;
+        static const int kMinDecimalExponent;
+        static const int kMaxDecimalExponent;
         
         // Returns a cached power-of-ten with a binary exponent in the range
         // [min_exponent; max_exponent] (boundaries included).
@@ -60,10 +60,6 @@ namespace double_conversion {
                                                      DiyFp* power,
                                                      int* found_exponent);
     };
-    
-    // Initializes the table of cached powers used by the dtoa algorithm.
-    // This needs to be called when JSC is being initialized.
-    WTF_EXPORT_PRIVATE void initialize();
     
 }  // namespace double_conversion
 

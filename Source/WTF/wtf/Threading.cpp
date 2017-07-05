@@ -165,7 +165,6 @@ void initializeThreading()
 {
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
-        WTF::double_conversion::initialize();
         ThreadHolder::initializeOnce();
         // StringImpl::empty() does not construct its static string in a threadsafe fashion,
         // so ensure it has been initialized from here.

@@ -1,5 +1,23 @@
 2017-07-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Make double-conversion's cache data constant and drop double_conversion::initialize()
+        https://bugs.webkit.org/show_bug.cgi?id=174124
+
+        Reviewed by Saam Barati.
+
+        We annotate double-conversion's cache data as const and constexpr. And move it out of function.
+        Since they are not involving global constructors, they are compiled as rodata and initialized
+        without calling double_conversion::initialize().
+
+        And we drop double_conversion::initialize() function since it is no longer necessary.
+
+        * wtf/Threading.cpp:
+        (WTF::initializeThreading):
+        * wtf/dtoa/cached-powers.cc:
+        * wtf/dtoa/cached-powers.h:
+
+2017-07-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Initialize srandom and srand with cryptographically random number
         https://bugs.webkit.org/show_bug.cgi?id=174123
 
