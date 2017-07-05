@@ -43,6 +43,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/WallTime.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 #if PLATFORM(COCOA)
@@ -93,7 +94,7 @@ Ref<WebResourceLoadStatisticsStore> WebResourceLoadStatisticsStore::create(const
 
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory)
     : m_resourceLoadStatisticsStore(ResourceLoadStatisticsStore::create())
-    , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue"))
+    , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_statisticsStoragePath(resourceLoadStatisticsDirectory)
     , m_telemetryOneShotTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::telemetryTimerFired)
     , m_telemetryRepeatedTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::telemetryTimerFired)
@@ -219,7 +220,9 @@ void WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver()
     });
     m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this, protectedThis = makeRef(*this)] {
         m_statisticsQueue->dispatch([this, protectedThis = protectedThis.copyRef()] {
+            stopMonitoringStatisticsStorage();
             writeStoreToDisk();
+            startMonitoringStatisticsStorage();
         });
     });
     m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this, protectedThis = makeRef(*this)] {
@@ -262,13 +265,41 @@ void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
     });
 }
 
+WallTime WebResourceLoadStatisticsStore::statisticsFileModificationTime(const String& path) const
+{
+    ASSERT(!RunLoop::isMain());
+    time_t modificationTime;
+    if (!getFileModificationTime(path, modificationTime))
+        return { };
+
+    return WallTime::fromRawSeconds(modificationTime);
+}
+
+bool WebResourceLoadStatisticsStore::hasStatisticsFileChangedSinceLastSync(const String& path)
+{
+    return statisticsFileModificationTime(path) > m_lastStatisticsFileSyncTime;
+}
+
 void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
 {
     if (!m_resourceLoadStatisticsEnabled)
         return;
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
-        auto decoder = createDecoderFromDisk(ASCIILiteral("full_browsing_session"));
+        String resourceLog = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+        if (resourceLog.isEmpty() || !fileExists(resourceLog)) {
+            grandfatherExistingWebsiteData();
+            return;
+        }
+
+        if (!hasStatisticsFileChangedSinceLastSync(resourceLog)) {
+            // No need to grandfather in this case.
+            return;
+        }
+
+        WallTime readTime = WallTime::now();
+
+        auto decoder = createDecoderFromDisk(resourceLog);
         if (!decoder) {
             grandfatherExistingWebsiteData();
             return;
@@ -276,6 +307,8 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
         
         coreStore().clearInMemory();
         coreStore().readDataFromDecoder(*decoder);
+
+        m_lastStatisticsFileSyncTime = readTime;
 
         if (coreStore().isEmpty())
             grandfatherExistingWebsiteData();
@@ -285,11 +318,25 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
 void WebResourceLoadStatisticsStore::refreshFromDisk()
 {
     ASSERT(!RunLoop::isMain());
-    auto decoder = createDecoderFromDisk(ASCIILiteral("full_browsing_session"));
+
+    String resourceLog = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    if (resourceLog.isEmpty())
+        return;
+
+    // We sometimes see file changed events from before our load completed (we start
+    // reading at the first change event, but we might receive a series of events related
+    // to the same file operation). Catch this case to avoid reading overly often.
+    if (!hasStatisticsFileChangedSinceLastSync(resourceLog))
+        return;
+
+    WallTime readTime = WallTime::now();
+
+    auto decoder = createDecoderFromDisk(resourceLog);
     if (!decoder)
         return;
 
     coreStore().readDataFromDecoder(*decoder);
+    m_lastStatisticsFileSyncTime = readTime;
 }
     
 void WebResourceLoadStatisticsStore::processWillOpenConnection(WebProcessProxy&, IPC::Connection& connection)
@@ -328,7 +375,11 @@ void WebResourceLoadStatisticsStore::writeStoreToDisk()
     syncWithExistingStatisticsStorageIfNeeded();
 
     auto encoder = coreStore().createEncoderFromData();
-    writeEncoderToDisk(*encoder.get(), "full_browsing_session");
+
+    String resourceLog = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    writeEncoderToDisk(*encoder.get(), resourceLog);
+
+    m_lastStatisticsFileSyncTime = WallTime::now();
 }
 
 static PlatformFileHandle openAndLockFile(const String& path, FileOpenMode mode)
@@ -356,7 +407,7 @@ static void closeAndUnlockFile(PlatformFileHandle handle)
     closeFile(handle);
 }
 
-void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, const String& label) const
+void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, const String& path) const
 {
     ASSERT(!RunLoop::isMain());
     
@@ -364,16 +415,12 @@ void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, c
     if (!rawData)
         return;
 
-    String resourceLog = persistentStoragePath(label);
-    if (resourceLog.isEmpty())
-        return;
-
     if (!m_statisticsStoragePath.isEmpty()) {
         makeAllDirectories(m_statisticsStoragePath);
         platformExcludeFromBackup();
     }
 
-    auto handle = openAndLockFile(resourceLog, OpenForWrite);
+    auto handle = openAndLockFile(path, OpenForWrite);
     if (handle == invalidPlatformFileHandle)
         return;
     
@@ -432,6 +479,12 @@ void WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage()
 void WebResourceLoadStatisticsStore::stopMonitoringStatisticsStorage()
 {
     ASSERT(!RunLoop::isMain());
+    if (!m_statisticsStorageMonitor)
+        return;
+
+    // FIXME(174166): The FileMonitor captures itself, incrementing its refcount. Manually stopping the monitor shuts down the lambda holding the extra
+    // reference, so the object will be cleaned up properly.
+    m_statisticsStorageMonitor->stopMonitoring();
     m_statisticsStorageMonitor = nullptr;
 }
 
@@ -440,10 +493,12 @@ void WebResourceLoadStatisticsStore::syncWithExistingStatisticsStorageIfNeeded()
     ASSERT(!RunLoop::isMain());
     if (m_statisticsStorageMonitor)
         return;
-    
+
+    String resourceLog = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    if (resourceLog.isEmpty() || !fileExists(resourceLog))
+        return;
+
     refreshFromDisk();
-    
-    startMonitoringStatisticsStorage();
 }
     
     
@@ -454,14 +509,10 @@ void WebResourceLoadStatisticsStore::platformExcludeFromBackup() const
 }
 #endif
 
-std::unique_ptr<KeyedDecoder> WebResourceLoadStatisticsStore::createDecoderFromDisk(const String& label) const
+std::unique_ptr<KeyedDecoder> WebResourceLoadStatisticsStore::createDecoderFromDisk(const String& path) const
 {
     ASSERT(!RunLoop::isMain());
-    String resourceLog = persistentStoragePath(label);
-    if (resourceLog.isEmpty())
-        return nullptr;
-
-    auto handle = openAndLockFile(resourceLog, OpenForRead);
+    auto handle = openAndLockFile(path, OpenForRead);
     if (handle == invalidPlatformFileHandle)
         return nullptr;
     

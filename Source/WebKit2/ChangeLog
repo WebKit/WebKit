@@ -1,3 +1,48 @@
+2017-07-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Prevent ResourceLoadStatistics from triggering a cascade of read/write events
+        https://bugs.webkit.org/show_bug.cgi?id=174062\
+        <rdar://problem/33086744>
+
+        Reviewed by Chris Dumez.
+
+        ResourceLoadStatistics was triggering periods of high CPU use due to a cascade of read/write
+        operations:
+        (1) The 'makeRefPtr' call in FileMonitor::startMonitoring was capturing a reference to itself, preventing
+            the FileMonitor from being destroyed. This caused the file modification handler to fire in response
+            to our own write events, creating a ridiculous read/write cycle. This problem was addressed in
+            the short term by stopping the file monitor in WebResourceLoadStatisticsStore::stopMonitoringStatisticsStorage,
+            rather than relying on the destructor to shut things down. This will be improved in a
+            subsequent patch.
+        (2) 'syncWithExistingStatisticsStorageIfNeeded' was creating a FileMonitor during the write operation,
+            which exacerbated the chain of read/writes already present due to the self-reference described above.
+        (3) Because VNODE dispatch sources are low level, they do not offer a means of filtering out operations
+            triggered by the current process. To avoid this, I added code to track the file modification time, so
+            that we don't bother reading a file that holds data that is older than the in-memory data, even though
+            we receive a file modification dispatch. Writes seem to trigger a chain of notification events in rapid
+            succession. Once we've responded to the first of these events, we don't need to to further reads until
+            the data on disk changes again.    
+
+        We also shouldn't allow the ResourceLoadStatistics worker thread to consume high CPU resources. Run it
+        as utility QoS, avoiding using the CPU when other work is going on.
+
+        Drive-by fix: The closure in setWritePersistentStoreCallback() should stop monitoring before writing
+        data, and should start monitoring after the write completes.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore): Run our worker queue
+        as a utility-level process.
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver): Stop checking for
+        updates before writing, and begin checking again once the write is complete.
+        (WebKit::WebResourceLoadStatisticsStore::statisticsFileModificationTime): Added.
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded): Avoid reading the file if it
+        was last modified on (or before) the time we last read the file.
+        (WebKit::WebResourceLoadStatisticsStore::refreshFromDisk): Ditto.
+        (WebKit::WebResourceLoadStatisticsStore::stopMonitoringStatisticsStorage): Explicitly stop file
+        monitoring so that the active file modification handler will terminate.
+        (WebKit::WebResourceLoadStatisticsStore::syncWithExistingStatisticsStorageIfNeeded): Do not begin
+        monitoring the file after syncing, since this is only used as part of an ongoing write operation.
+
 2017-07-05  Jonathan Bedard  <jbedard@apple.com>
 
         Add WebKitPrivateFrameworkStubs for iOS 11

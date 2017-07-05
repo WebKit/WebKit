@@ -33,8 +33,9 @@
 
 namespace WebCore {
     
-constexpr unsigned monitorMask = DISPATCH_VNODE_DELETE | DISPATCH_VNODE_WRITE | DISPATCH_VNODE_EXTEND | DISPATCH_VNODE_RENAME | DISPATCH_VNODE_REVOKE;
-    
+constexpr unsigned monitorMask = DISPATCH_VNODE_DELETE | DISPATCH_VNODE_WRITE | DISPATCH_VNODE_RENAME | DISPATCH_VNODE_REVOKE;
+constexpr unsigned fileUnavailableMask = DISPATCH_VNODE_DELETE | DISPATCH_VNODE_RENAME | DISPATCH_VNODE_REVOKE;
+
 void FileMonitor::startMonitoring()
 {
     if (m_platformMonitor)
@@ -53,18 +54,23 @@ void FileMonitor::startMonitoring()
     }
 
     m_platformMonitor = adoptDispatch(dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, handle, monitorMask, m_handlerQueue->dispatchQueue()));
-    
+
+    LOG(ResourceLoadStatistics, "Creating monitor %p", m_platformMonitor.get());
+
     dispatch_source_set_event_handler(m_platformMonitor.get(), [this, protectedThis = makeRefPtr(this), fileMonitor = m_platformMonitor.get()] () mutable {
         // If this is getting called after the monitor was cancelled, just drop the notification.
         if (dispatch_source_testcancel(fileMonitor))
             return;
 
         unsigned flag = dispatch_source_get_data(fileMonitor);
-        if (flag & DISPATCH_VNODE_DELETE) {
+        LOG(ResourceLoadStatistics, "File event %#X for monitor %p", flag, fileMonitor);
+        if (flag & fileUnavailableMask) {
             m_modificationHandler(FileChangeType::Removal);
             dispatch_source_cancel(fileMonitor);
-        } else
+        } else {
+            ASSERT(flag & DISPATCH_VNODE_WRITE);
             m_modificationHandler(FileChangeType::Modification);
+        }
     });
     
     dispatch_source_set_cancel_handler(m_platformMonitor.get(), [fileMonitor = m_platformMonitor.get()] {
@@ -79,7 +85,9 @@ void FileMonitor::stopMonitoring()
 {
     if (!m_platformMonitor)
         return;
-    
+
+    LOG(ResourceLoadStatistics, "Stopping monitor %p", m_platformMonitor.get());
+
     dispatch_source_cancel(m_platformMonitor.get());
     m_platformMonitor = nullptr;
 }

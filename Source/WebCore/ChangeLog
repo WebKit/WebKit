@@ -1,3 +1,24 @@
+2017-07-05  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Prevent ResourceLoadStatistics from triggering a cascade of read/write events
+        https://bugs.webkit.org/show_bug.cgi?id=174062\
+        <rdar://problem/33086744>
+
+        Reviewed by Chris Dumez.
+
+        Treat DISPATCH_VNODE_DELETE, DISPATCH_VNODE_RENAME, and DISPATCH_VNODE_REVOKE as equivalent
+        "file is unavailable" events, and act as though the file was deleted. Don't listen for
+        DISPATCH_VNODE_EXTEND, since we always get a DISPATCH_VNODE_WRITE as well, and we only
+        want to read once.
+
+        Finally, add some logging to support future investigations.
+
+        * platform/FileMonitor.h:
+        (WebCore::FileMonitor::platformMonitor): Expose dispatch_source_t for logging purposes.
+        * platform/cocoa/FileMonitorCocoa.mm:
+        (WebCore::FileMonitor::startMonitoring): Add logging.
+        (WebCore::FileMonitor::stopMonitoring): Ditto.
+
 2017-07-05  Jonathan Bedard  <jbedard@apple.com>
 
         Add WebKitPrivateFrameworkStubs for iOS 11

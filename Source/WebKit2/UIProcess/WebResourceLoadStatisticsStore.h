@@ -40,6 +40,7 @@
 #endif
 
 namespace WTF {
+class WallTime;
 class WorkQueue;
 }
 
@@ -121,8 +122,9 @@ private:
     void grandfatherExistingWebsiteData();
 
     void writeStoreToDisk();
-    void writeEncoderToDisk(WebCore::KeyedEncoder&, const String& label) const;
-    std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& label) const;
+    void writeEncoderToDisk(WebCore::KeyedEncoder&, const String& path) const;
+    std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& path) const;
+    WallTime statisticsFileModificationTime(const String& label) const;
     void platformExcludeFromBackup() const;
     void deleteStoreFromDisk();
     void clearInMemoryData();
@@ -130,6 +132,7 @@ private:
     void refreshFromDisk();
     void telemetryTimerFired();
     void submitTelemetry();
+    bool hasStatisticsFileChangedSinceLastSync(const String& path);
 
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();
@@ -144,6 +147,7 @@ private:
     Ref<WTF::WorkQueue> m_statisticsQueue;
     RefPtr<WebCore::FileMonitor> m_statisticsStorageMonitor;
     String m_statisticsStoragePath;
+    WTF::WallTime m_lastStatisticsFileSyncTime;
     bool m_resourceLoadStatisticsEnabled { false };
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryOneShotTimer;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryRepeatedTimer;
