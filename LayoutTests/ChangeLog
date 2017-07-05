@@ -1,3 +1,12 @@
+2017-07-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Move internal iOS 11 TestExpectations to OpenSource
+        <rdar://problem/32717028>
+
+        Unreviewed test gardening.
+
+        * platform/ios-11: Added.
+
 2017-07-05  Matt Lewis  <jlewis3@apple.com>
 
         Adjusted test expectations for tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html.

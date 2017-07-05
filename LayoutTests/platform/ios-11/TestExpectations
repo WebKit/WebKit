@@ -1,0 +1,120 @@
+# These tests require iOS 10.3+
+fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text.html [ Pass ]
+fast/events/touch/ios/long-press-then-drag-left-to-change-selected-text.html [ Pass ]
+fast/events/touch/ios/long-press-then-drag-right-to-change-selected-text.html [ Pass ]
+fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text.html [ Pass ]
+fast/events/touch/ios/touch-event-radius.html [ Pass ]
+
+fast/events/touch/ios/long-press-to-select-text.html [ Pass ]
+
+# Run webrtc tests on iOS 11
+webrtc [ Pass ]
+imported/w3c/web-platform-tests/webrtc [ Pass ]
+fast/events/constructors/media-stream-event-constructor.html [ Pass ]
+fast/mediastream/RTCIceCandidate.html [ Pass ]
+fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Pass ]
+fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Pass ]
+fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Pass ]
+fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Pass ]
+fast/mediastream/RTCPeerConnection-addTransceiver.html [ Pass ]
+fast/mediastream/RTCPeerConnection-createAnswer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-createOffer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-datachannel.html [ Pass ]
+fast/mediastream/RTCPeerConnection-getConfiguration.html [ Pass ]
+fast/mediastream/RTCPeerConnection-have-local-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-inspect-answer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-inspect-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html [ Pass ]
+fast/mediastream/RTCPeerConnection-localDescription.html [ Pass ]
+fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html [ Pass ]
+fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass ]
+fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Pass ]
+fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass ]
+fast/mediastream/RTCPeerConnection-remoteDescription.html [ Pass ]
+fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass ]
+fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-stable.html [ Pass ]
+fast/mediastream/RTCPeerConnection-statsSelector.html [ Pass ]
+fast/mediastream/RTCPeerConnection.html [ Pass ]
+fast/mediastream/RTCSessionDescription.html [ Pass ]
+fast/mediastream/RTCTrackEvent-constructor.html [ Pass ]
+
+# WebCryptoAPI features that enabled only for iOS 11/High Sierra+
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-pkcs8.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-spki.html [ Pass ]
+crypto/subtle/rsa-pss-generate-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign-large-salt.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-verify.html [ Pass ]
+crypto/subtle/rsa-pss-import-pkcs8-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
+
+# Depend on iOS 11 API.
+fast/viewport/ios/viewport-fit-contain.html [ Pass ]
+fast/viewport/ios/viewport-fit-cover.html [ Pass ]
+fast/viewport/ios/viewport-fit-auto.html [ Pass ]
+fast/css/variables/constants/ios [ Pass ]
+
+# <rdar://problem/32542437> REGRESSION (iOS 11): LayoutTest fast/events/ios/before-input-events-prevent-candidate-insertion.html is timing out
+fast/events/ios/before-input-events-prevent-candidate-insertion.html [ Timeout ]
+
+# <rdar://problem/32542300> REGRESSION (iOS 11): LayoutTest fast/events/ios/contenteditable-autocapitalize.html is failing
+fast/events/ios/contenteditable-autocapitalize.html [ Failure ]
+
+# <rdar://problem/32627945> PROGRESSION? (iOS 11): 4 mathml tests are failing
+mathml/presentation/mo-stretch.html [ ImageOnlyFailure ]
+mathml/presentation/multiscripts-equivalence.html [ ImageOnlyFailure ]
+mathml/presentation/roots.xhtml [ ImageOnlyFailure ]
+mathml/radical-fallback.html [ Failure ]
+
+# <rdar://problem/32632415> REGRESSION (ImageIO-1666): LayoutTests fast/images are failing together.
+canvas/philip/tests/2d.drawImage.animated.gif.html [ Failure ]
+canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
+fast/images/slower-animation-than-decoding-image.html [ Failure ]
+fast/images/slower-decoding-than-animation-image.html [ Failure ]
+fast/images/reset-image-animation.html [ Failure ]
+fast/images/animated-image-loop-count.html [ ImageOnlyFailure ]
+fast/images/animated-image-different-dest-size.html [ ImageOnlyFailure ]
+
+# <rdar://problem/32659595> iOS 11: LayoutTest fast/text/international/system-language/arabic-glyph-cache-fill-combine.html is failing
+fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+
+# <rdar://problem/32626498> REGRESSION (iOS 11/High Sierra): media/remote-control-command-seek.html is timing out
+media/remote-control-command-seek.html [ Timeout ]
+
+# <rdar://problem/32714935> iOS 11: LayoutTest security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html is timing out
+security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Timeout ]
+
+# <rdar://problem/32714919> iOS 11: http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html and allow-video.html are timing out
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Timeout ]
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Timeout ]
+
+# <rdar://problem/32715903> iOS 11: LayoutTest media/sources-fallback-codecs.html is failing
+media/sources-fallback-codecs.html [ Failure ]
+
+# <rdar://problem/32715902> iOS 11: LayoutTest media/video-src-blob-using-open-panel.html is failing
+media/video-src-blob-using-open-panel.html [ Failure ]
+
+# <rdar://problem/32799573> REGRESSION: LayoutTest fast/text/ipa-tone-letters.html is failing
+fast/text/ipa-tone-letters.html [ Failure ]
