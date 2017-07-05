@@ -365,7 +365,11 @@ IOSurface::Format IOSurface::format() const
 
 IOSurfaceID IOSurface::surfaceID() const
 {
+#if __IPHONE_OS_VERSION_MIN_REQUIRED < 110000
+    return 0;
+#else
     return IOSurfaceGetID(m_surface.get());
+#endif
 }
 
 bool IOSurface::isInUse() const
