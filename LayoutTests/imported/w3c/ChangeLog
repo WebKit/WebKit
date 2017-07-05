@@ -1,3 +1,13 @@
+2017-07-05  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r217522): "Show My Relationship" link in familysearch.org does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=174070
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css-timing-1/frames-timing-functions-output-expected.txt:
+        * web-platform-tests/html/semantics/interactive-elements/the-dialog-element/centering-expected.txt:
+
 2017-07-03  Alex Christensen  <achristensen@webkit.org>
 
         Rebase test after r219024

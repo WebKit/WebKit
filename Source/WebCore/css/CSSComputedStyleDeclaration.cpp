@@ -755,9 +755,9 @@ static LayoutUnit getOffsetUsedStyleRelative(RenderBox& box, CSSPropertyID prope
     return 0;
 }
 
-static LayoutUnit getOffsetUsedStyleAbsolute(RenderBlock& container, RenderBox& box, CSSPropertyID propertyID)
+static LayoutUnit getOffsetUsedStyleOutOfFlowPositioned(RenderBlock& container, RenderBox& box, CSSPropertyID propertyID)
 {
-    // For absoultely positioned boxes, the offset is how far an box's margin
+    // For out-of-flow positioned boxes, the offset is how far an box's margin
     // edge is offset below the edge of the box's containing block.
     // See http://www.w3.org/TR/CSS2/visuren.html#position-props
 
@@ -785,15 +785,17 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
         return zoomAdjustedPixelValueForLength(getOffsetComputedLength(style, propertyID), style);
 
     // We should return the "used value".
-    LayoutUnit length = 0;
     auto& box = downcast<RenderBox>(*renderer);
-    RenderBlock* containingBlock = box.containingBlock();
+    auto* containingBlock = box.containingBlock();
     if (box.isRelPositioned() || !containingBlock)
-        length = getOffsetUsedStyleRelative(box, propertyID);
-    else
-        length = getOffsetUsedStyleAbsolute(*containingBlock, box, propertyID);
-        
-    return zoomAdjustedPixelValue(length, style);
+        return zoomAdjustedPixelValue(getOffsetUsedStyleRelative(box, propertyID), style);
+    if (renderer->isOutOfFlowPositioned())
+        return zoomAdjustedPixelValue(getOffsetUsedStyleOutOfFlowPositioned(*containingBlock, box, propertyID), style);
+    // In-flow element.
+    auto offset = getOffsetComputedLength(style, propertyID);
+    if (offset.isAuto())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+    return zoomAdjustedPixelValueForLength(offset, style);
 }
 
 RefPtr<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle* style, const Color& color) const
