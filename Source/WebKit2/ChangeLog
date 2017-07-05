@@ -1,5 +1,18 @@
 2017-07-05  Matt Lewis  <jlewis3@apple.com>
 
+        Unreviewed, rolling out r219128.
+
+        Spoke with engineer who originally submitted, Patch for APi
+        test to follow.
+
+        Reverted changeset:
+
+        "Unreviewed, rolling out r219070."
+        https://bugs.webkit.org/show_bug.cgi?id=174082
+        http://trac.webkit.org/changeset/219128
+
+2017-07-05  Matt Lewis  <jlewis3@apple.com>
+
         Unreviewed, rolling out r219070.
 
         This revision caused consistent failures of the API test
