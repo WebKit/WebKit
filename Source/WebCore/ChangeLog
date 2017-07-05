@@ -1,3 +1,10 @@
+2017-07-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Unreviewed, review follow-up after r218961
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::updateFromSettings):
+
 2017-07-04  Antti Koivisto  <antti@apple.com>
 
         RenderThemeCocoa::mediaControlsFormattedStringForDuration is leaking NSDateComponentsFormatters

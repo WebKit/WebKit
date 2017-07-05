@@ -70,7 +70,9 @@ void BitmapImage::updateFromSettings(const Settings& settings)
 {
     m_allowSubsampling = settings.imageSubsamplingEnabled();
 #if PLATFORM(IOS)
-    if (!IOSApplication::isIBooks())
+    if (IOSApplication::isIBooks())
+        m_allowLargeImageAsyncDecoding = false;
+    else
 #endif
         m_allowLargeImageAsyncDecoding = settings.largeImageAsyncDecodingEnabled();
     m_allowAnimatedImageAsyncDecoding = settings.animatedImageAsyncDecodingEnabled();
