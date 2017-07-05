@@ -1,3 +1,21 @@
+2017-07-05  Youenn Fablet  <youenn@apple.com>
+
+        Receiving tracks should be ended when peer connection is being closed
+        https://bugs.webkit.org/show_bug.cgi?id=174109
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/peer-connection-track-end.html
+
+        As per https://www.w3.org/TR/webrtc/#dom-rtcpeerconnection-close, tracks should be ended when peer connection is closed.
+        Also updating transceiver stopped state.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::doClose):
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        (WebCore::RTCRtpReceiver::stop):
+        * Modules/mediastream/RTCRtpReceiver.h:
+
 2017-07-04  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Unreviewed, review follow-up after r218961

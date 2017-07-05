@@ -51,7 +51,8 @@ public:
         return adoptRef(*new RTCRtpReceiver(WTFMove(track), backend));
     }
 
-    void stop() { m_backend = nullptr; }
+    void stop();
+
     // FIXME: We should pass a UniqueRef here.
     void setBackend(std::unique_ptr<Backend>&& backend) { m_backend = WTFMove(backend); }
 

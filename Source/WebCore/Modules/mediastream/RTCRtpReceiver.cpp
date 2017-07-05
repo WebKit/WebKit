@@ -43,6 +43,14 @@ RTCRtpReceiver::RTCRtpReceiver(Ref<MediaStreamTrack>&& track, Backend* backend)
 {
 }
 
+void RTCRtpReceiver::stop()
+{
+    m_backend = nullptr;
+
+    if (m_track)
+        m_track->stopTrack(MediaStreamTrack::StopMode::PostEvent);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

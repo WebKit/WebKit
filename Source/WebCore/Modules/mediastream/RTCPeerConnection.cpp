@@ -387,11 +387,11 @@ bool RTCPeerConnection::doClose()
     m_connectionState = RTCPeerConnectionState::Closed;
     m_iceConnectionState = RTCIceConnectionState::Closed;
 
-    for (RTCRtpReceiver& receiver : m_transceiverSet->receivers())
-        receiver.stop();
-
-    for (RTCRtpSender& sender : m_transceiverSet->senders())
-        sender.stop();
+    for (auto& transceiver : m_transceiverSet->list()) {
+        transceiver->stop();
+        transceiver->sender().stop();
+        transceiver->receiver().stop();
+    }
 
     return true;
 }
