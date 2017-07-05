@@ -924,17 +924,15 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         PasteboardWriterData pasteboardWriterData;
 
         if (!dataTransfer.pasteboard().hasData()) {
+            if (src.selection().selection().isNone()) {
+                // The page may have cleared out the selection in the dragstart handler, in which case we should bail
+                // out of the drag, since there is no content to write to the pasteboard.
+                return false;
+            }
+
             // FIXME: This entire block is almost identical to the code in Editor::copy, and the code should be shared.
             RefPtr<Range> selectionRange = src.selection().toNormalizedRange();
             ASSERT(selectionRange);
-
-#if ENABLE(DATA_INTERACTION)
-            Vector<SelectionRect> selectionRects;
-            selectionRange->collectSelectionRects(selectionRects);
-            for (auto selectionRect : selectionRects)
-                dragImageBounds.unite(selectionRect.rect());
-            dragImageBounds.inflate(SelectionDragImagePadding);
-#endif
 
             src.editor().willWriteSelectionToPasteboard(selectionRange.get());
 

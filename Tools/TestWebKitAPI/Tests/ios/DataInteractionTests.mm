@@ -1006,6 +1006,17 @@ TEST(DataInteractionTests, CancelledLiftDoesNotCauseSubsequentDragsToFail)
     checkStringArraysAreEqual(@[@"dragstart", @"dragend"], [outputText componentsSeparatedByString:@" "]);
 }
 
+TEST(DataInteractionTests, DoNotCrashWhenSelectionIsClearedInDragStart)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dragstart-clear-selection"];
+
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 100)];
+
+    EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"paragraph.textContent"]);
+}
+
 TEST(DataInteractionTests, CustomActionSheetPopover)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
