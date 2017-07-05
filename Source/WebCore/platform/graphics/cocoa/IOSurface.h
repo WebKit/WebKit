@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IOSurface_h
-#define IOSurface_h
+#pragma once
 
 #if USE(IOSURFACE)
 
@@ -34,6 +33,7 @@
 namespace WebCore {
 
 class MachSendRight;
+class TextStream;
 
 class IOSurface final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -87,6 +87,7 @@ public:
     size_t totalBytes() const { return m_totalBytes; }
     CGColorSpaceRef colorSpace() const { return m_colorSpace.get(); }
     WEBCORE_EXPORT Format format() const;
+    IOSurfaceID surfaceID() const;
 
     WEBCORE_EXPORT bool isInUse() const;
 
@@ -118,8 +119,9 @@ private:
     RetainPtr<IOSurfaceRef> m_surface;
 };
 
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const WebCore::IOSurface&);
+
 } // namespace WebCore
 
 #endif // USE(IOSURFACE)
 
-#endif // IOSurface_h

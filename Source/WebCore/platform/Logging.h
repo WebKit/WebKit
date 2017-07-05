@@ -52,6 +52,7 @@ namespace WebCore {
     M(Fullscreen) \
     M(Gamepad) \
     M(History) \
+    M(IOSurface) \
     M(IconDatabase) \
     M(Images) \
     M(IndexedDB) \
