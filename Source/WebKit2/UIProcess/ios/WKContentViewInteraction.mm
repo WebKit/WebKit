@@ -4523,6 +4523,18 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
 #pragma mark - UIDragInteractionDelegate
 
+- (BOOL)_dragInteraction:(UIDragInteraction *)interaction shouldDelayCompetingGestureRecognizer:(UIGestureRecognizer *)competingGestureRecognizer
+{
+    if (_highlightLongPressGestureRecognizer == competingGestureRecognizer) {
+        // Since 3D touch still recognizes alongside the drag lift, and also requires the highlight long press
+        // gesture to be active to support cancelling when `touchstart` is prevented, we should also allow the
+        // highlight long press to recognize simultaneously, and manually cancel it when the drag lift is
+        // recognized (see _dragInteraction:prepareForSession:completion:).
+        return NO;
+    }
+    return [competingGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]];
+}
+
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
 {
     [self _cancelLongPressGestureRecognizer];

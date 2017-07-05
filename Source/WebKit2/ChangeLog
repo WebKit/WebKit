@@ -1,3 +1,21 @@
+2017-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] 3D touch fails to recognize when UIDragInteraction is enabled on phone
+        https://bugs.webkit.org/show_bug.cgi?id=174171
+        <rdar://problem/32956929>
+
+        Reviewed by Tim Horton.
+
+        By default, UIKit defers all competing long press gesture recognizers if dragging is enabled. However, this
+        would cause 3D touch to be prevented, due to UIKit asking us whether or not we can proceed with the 3D touch
+        gesture in -_interactionShouldBeginFromPreviewItemController:forPosition:, while the highlight long press
+        gesture recognizer is being deferred. To address this, we use SPI on UIDragInteraction to allow the highlight
+        long press gesture recognizer to recognize alongside the drag lift gesture. We then (already) manually cancel
+        the highlight long press gesture in _dragInteraction:prepareForSession:completion:.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dragInteraction:shouldDelayCompetingGestureRecognizer:]):
+
 2017-07-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove copy of ICU headers from WebKit
