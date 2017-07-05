@@ -1,5 +1,12 @@
 2017-07-05  Simon Fraser  <simon.fraser@apple.com>
 
+        Another build fix, for Mac.
+
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::surfaceID):
+
+2017-07-05  Simon Fraser  <simon.fraser@apple.com>
+
         Further attempts to fix the iOS public SDK build.
 
         * platform/graphics/cocoa/IOSurface.mm:
