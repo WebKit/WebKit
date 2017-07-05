@@ -102,7 +102,6 @@ private:
     WEBCORE_EXPORT void writeObjectRepresentations(const PasteboardImage&);
     WEBCORE_EXPORT void writeObjectRepresentations(const String& pasteboardType, const String& text);
     WEBCORE_EXPORT void writeObjectRepresentations(const PasteboardURL&);
-    bool allowReadingURLAtIndex(const URL&, int index) const;
 #endif
 
 #if PLATFORM(MAC)

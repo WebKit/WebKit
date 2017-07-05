@@ -79,7 +79,7 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 - (WebItemProviderRegistrationInfoList *)registrationInfoAtIndex:(NSUInteger)index;
 - (UIItemProvider *)itemProviderAtIndex:(NSUInteger)index;
 
-@property (copy, nonatomic, nullable) NSArray<__kindof NSItemProvider *> *itemProviders;
+@property (copy, nonatomic, nullable) NSArray<UIItemProvider *> *itemProviders;
 @property (readonly, nonatomic) NSInteger numberOfItems;
 @property (readonly, nonatomic) NSInteger changeCount;
 

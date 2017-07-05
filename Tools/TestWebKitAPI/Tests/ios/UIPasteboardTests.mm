@@ -31,12 +31,8 @@
 #import "TestWKWebView.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIPasteboard.h>
-#import <WebCore/SoftLinking.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
-
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK(UIKit, UIApplicationInitialize, void, (void), ())
 
 namespace TestWebKitAPI {
 
@@ -47,17 +43,12 @@ NSData *dataForPasteboardType(CFStringRef type)
 
 RetainPtr<TestWKWebView> setUpWebViewForPasteboardTests()
 {
-    // UIPasteboard's type coercion codepaths only take effect when the UIApplication has been initialized.
-    UIApplicationInitialize();
-
     [UIPasteboard generalPasteboard].items = @[];
     EXPECT_TRUE(!dataForPasteboardType(kUTTypeUTF8PlainText).length);
     EXPECT_TRUE(!dataForPasteboardType(kUTTypeUTF16PlainText).length);
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    WKPreferences *preferences = [webView configuration].preferences;
-    preferences._javaScriptCanAccessClipboard = YES;
-    preferences._domPasteAllowed = YES;
+    [webView configuration].preferences._javaScriptCanAccessClipboard = YES;
     [webView synchronouslyLoadTestPageNamed:@"rich-and-plain-text"];
     return webView;
 }
@@ -84,57 +75,6 @@ TEST(UIPasteboardTests, CopyRichTextWritesConcreteTypes)
     auto utf16Result = adoptNS([[NSString alloc] initWithData:dataForPasteboardType(kUTTypeUTF16PlainText) encoding:NSUTF16StringEncoding]);
     EXPECT_WK_STREQ("Hello world", [utf8Result UTF8String]);
     EXPECT_WK_STREQ("Hello world", [utf16Result UTF8String]);
-}
-
-TEST(UIPasteboardTests, DoNotPastePlainTextAsURL)
-{
-    auto webView = setUpWebViewForPasteboardTests();
-
-    NSString *testString = @"[helloworld]";
-    [UIPasteboard generalPasteboard].string = testString;
-
-    [webView stringByEvaluatingJavaScript:@"selectPlainText()"];
-    [webView stringByEvaluatingJavaScript:@"document.execCommand('paste')"];
-    EXPECT_WK_STREQ(testString, [webView stringByEvaluatingJavaScript:@"plain.value"]);
-
-    [webView stringByEvaluatingJavaScript:@"selectRichText()"];
-    [webView stringByEvaluatingJavaScript:@"document.execCommand('paste')"];
-    EXPECT_WK_STREQ(testString, [webView stringByEvaluatingJavaScript:@"rich.textContent"]);
-    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"!!rich.querySelector('a')"].boolValue);
-}
-
-TEST(UIPasteboardTests, PastePlainTextAsURL)
-{
-    auto webView = setUpWebViewForPasteboardTests();
-
-    NSString *testString = @"https://www.apple.com/iphone";
-    [UIPasteboard generalPasteboard].string = testString;
-
-    [webView stringByEvaluatingJavaScript:@"selectPlainText()"];
-    [webView stringByEvaluatingJavaScript:@"document.execCommand('paste')"];
-    EXPECT_WK_STREQ(testString, [webView stringByEvaluatingJavaScript:@"plain.value"]);
-
-    [webView stringByEvaluatingJavaScript:@"selectRichText()"];
-    [webView stringByEvaluatingJavaScript:@"document.execCommand('paste')"];
-    EXPECT_WK_STREQ(testString, [webView stringByEvaluatingJavaScript:@"rich.textContent"]);
-    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!rich.querySelector('a')"].boolValue);
-}
-
-TEST(UIPasteboardTests, PasteURLWithPlainTextAsURL)
-{
-    auto webView = setUpWebViewForPasteboardTests();
-
-    NSString *testString = @"thisisdefinitelyaurl";
-    [UIPasteboard generalPasteboard].URL = [NSURL URLWithString:testString];
-
-    [webView stringByEvaluatingJavaScript:@"selectPlainText()"];
-    [webView stringByEvaluatingJavaScript:@"document.execCommand('paste')"];
-    EXPECT_WK_STREQ(testString, [webView stringByEvaluatingJavaScript:@"plain.value"]);
-
-    [webView stringByEvaluatingJavaScript:@"selectRichText()"];
-    [webView stringByEvaluatingJavaScript:@"document.execCommand('paste')"];
-    EXPECT_WK_STREQ(testString, [webView stringByEvaluatingJavaScript:@"rich.textContent"]);
-    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!rich.querySelector('a')"].boolValue);
 }
 
 } // namespace TestWebKitAPI

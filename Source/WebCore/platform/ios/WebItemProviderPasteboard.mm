@@ -222,12 +222,12 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     return _cachedTypeIdentifiers.get();
 }
 
-- (NSArray<__kindof NSItemProvider *> *)itemProviders
+- (NSArray<UIItemProvider *> *)itemProviders
 {
     return _itemProviders.get();
 }
 
-- (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders
+- (void)setItemProviders:(NSArray<UIItemProvider *> *)itemProviders
 {
     itemProviders = itemProviders ?: [NSArray array];
     if (_itemProviders == itemProviders || [_itemProviders isEqualToArray:itemProviders])
