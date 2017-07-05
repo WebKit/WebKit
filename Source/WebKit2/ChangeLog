@@ -1,3 +1,25 @@
+2017-07-05  Tim Horton  <timothy_horton@apple.com>
+
+        Async Image Decoding: Image flashes away briefly when tapping on tab in iPad tab picker
+        https://bugs.webkit.org/show_bug.cgi?id=174173
+        <rdar://problem/32431952>
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::addTransactionCallbackID):
+        When a client uses e.g. doAfterNextPresentationUpdate (or internally,
+        dispatchAfterEnsuringDrawing), they're doing so in the hopes that the
+        callback is called after the page is well-painted -- for example, to
+        remove a snapshot (in the tab picker case, as well as for navigation
+        gestures), or to *take* a snapshot. In all of these cases, it is
+        preferable to do a synchronous decode, to ensure that the image does
+        not flash away temporarily.
+
+        Use the existing mechanism that was implemented for the synchronous
+        activity state change flush to also force synchronous image decoding
+        any time there is a post-commit transaction callback.
+
 2017-07-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] 3D touch fails to recognize when UIDragInteraction is enabled on phone

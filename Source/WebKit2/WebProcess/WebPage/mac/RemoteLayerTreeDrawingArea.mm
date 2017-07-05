@@ -497,6 +497,10 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(ActivityState::Flags, bo
 
 void RemoteLayerTreeDrawingArea::addTransactionCallbackID(CallbackID callbackID)
 {
+    // Assume that if someone is listening for this transaction's completion, that they want it to
+    // be a "complete" paint (including images that would normally be asynchronously decoding).
+    m_nextFlushIsForImmediatePaint = true;
+
     m_pendingCallbackIDs.append(static_cast<RemoteLayerTreeTransaction::TransactionCallbackID>(callbackID));
     scheduleCompositingLayerFlush();
 }
