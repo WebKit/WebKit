@@ -292,7 +292,7 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
         return false;
 
 #if ENABLE(FULLSCREEN_API)
-    if (&element == m_document.webkitCurrentFullScreenElement() || &element == m_document.webkitCurrentFullScreenElement())
+    if (&candidateElement == m_document.webkitCurrentFullScreenElement() || &element == m_document.webkitCurrentFullScreenElement())
         return false;
 #endif
     return true;
