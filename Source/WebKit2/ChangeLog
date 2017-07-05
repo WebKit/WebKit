@@ -1,3 +1,26 @@
+2017-07-05  Daniel Bates  <dabates@apple.com>
+
+        Do not pass API::FrameInfo for source frame or clear out page of target frame on
+        API navigation
+        https://bugs.webkit.org/show_bug.cgi?id=174170
+        <rdar://problem/33140328>
+
+        Reviewed by Brady Eidson.
+
+        As a step towards making it straightforward for an embedding client to determine whether
+        a WebPageProxy::decidePolicyForNavigationAction() callback was initiated from API we
+        should not pass frame info for the source frame and should not nullify the page pointer
+        in the target frame info.
+
+        Currently we always pass frame info for the source frame and nullify the page pointer
+        in both the source frame info and target frame info if the navigation was initiated from
+        API. This seems subtle and error prone. Instead we should not pass frame info for
+        the source frame and not nullify the page pointer in the target frame info as a step
+        towards making using this API less error-prone.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+
 2017-07-05  Chris Dumez  <cdumez@apple.com>
 
         Add a few more WebKit2 owners

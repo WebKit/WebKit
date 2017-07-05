@@ -3639,14 +3639,10 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
     if (m_navigationClient) {
         RefPtr<API::FrameInfo> destinationFrameInfo = API::FrameInfo::create(*frame, frameSecurityOrigin.securityOrigin());
         RefPtr<API::FrameInfo> sourceFrameInfo;
-        if (originatingFrame == frame)
+        if (!fromAPI && originatingFrame == frame)
             sourceFrameInfo = destinationFrameInfo;
-        else
+        else if (!fromAPI)
             sourceFrameInfo = API::FrameInfo::create(originatingFrameInfoData, m_process->webPage(originatingPageID));
-        if (fromAPI) {
-            sourceFrameInfo->clearPage();
-            destinationFrameInfo->clearPage();
-        }
 
         auto userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
         bool shouldOpenAppLinks = !m_shouldSuppressAppLinksInNextNavigationPolicyDecision && (!destinationFrameInfo || destinationFrameInfo->isMainFrame()) && !hostsAreEqual(URL(ParsedURLString, m_mainFrame->url()), request.url()) && navigationActionData.navigationType != WebCore::NavigationType::BackForward;

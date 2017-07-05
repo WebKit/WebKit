@@ -91,10 +91,11 @@ TEST(WebKit2, DecidePolicyForNavigationActionReload)
     TestWebKitAPI::Util::run(&decidedPolicy);
 
     EXPECT_EQ(WKNavigationTypeReload, [action navigationType]);
-    EXPECT_TRUE([action sourceFrame] == [action targetFrame]);
+    EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
+    EXPECT_EQ(nil, [action sourceFrame]);
     EXPECT_WK_STREQ(firstURL, [[[action request] URL] absoluteString]);
-    EXPECT_WK_STREQ(firstURL, [[[[action sourceFrame] request] URL] absoluteString]);
-    EXPECT_EQ(nil, [[action sourceFrame] webView]);
+    EXPECT_WK_STREQ(firstURL, [[[[action targetFrame] request] URL] absoluteString]);
+    EXPECT_EQ(webView.get(), [[action targetFrame] webView]);
 
     newWebView = nullptr;
     action = nullptr;
@@ -120,10 +121,11 @@ TEST(WebKit2, DecidePolicyForNavigationActionReloadFromOrigin)
     TestWebKitAPI::Util::run(&decidedPolicy);
 
     EXPECT_EQ(WKNavigationTypeReload, [action navigationType]);
-    EXPECT_TRUE([action sourceFrame] == [action targetFrame]);
+    EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
+    EXPECT_EQ(nil, [action sourceFrame]);
     EXPECT_WK_STREQ(firstURL, [[[action request] URL] absoluteString]);
-    EXPECT_WK_STREQ(firstURL, [[[[action sourceFrame] request] URL] absoluteString]);
-    EXPECT_EQ(nil, [[action sourceFrame] webView]);
+    EXPECT_WK_STREQ(firstURL, [[[[action targetFrame] request] URL] absoluteString]);
+    EXPECT_EQ(webView.get(), [[action targetFrame] webView]);
 
     newWebView = nullptr;
     action = nullptr;
@@ -153,10 +155,11 @@ TEST(WebKit2, DecidePolicyForNavigationActionGoBack)
     TestWebKitAPI::Util::run(&decidedPolicy);
 
     EXPECT_EQ(WKNavigationTypeBackForward, [action navigationType]);
-    EXPECT_TRUE([action sourceFrame] == [action targetFrame]);
+    EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
+    EXPECT_EQ(nil, [action sourceFrame]);
     EXPECT_WK_STREQ(firstURL, [[[action request] URL] absoluteString]);
-    EXPECT_WK_STREQ(secondURL, [[[[action sourceFrame] request] URL] absoluteString]);
-    EXPECT_EQ(nil, [[action sourceFrame] webView]);
+    EXPECT_WK_STREQ(secondURL, [[[[action targetFrame] request] URL] absoluteString]);
+    EXPECT_EQ(webView.get(), [[action targetFrame] webView]);
 
     newWebView = nullptr;
     action = nullptr;
@@ -190,10 +193,11 @@ TEST(WebKit2, DecidePolicyForNavigationActionGoForward)
     TestWebKitAPI::Util::run(&decidedPolicy);
 
     EXPECT_EQ(WKNavigationTypeBackForward, [action navigationType]);
-    EXPECT_TRUE([action sourceFrame] == [action targetFrame]);
+    EXPECT_TRUE([action sourceFrame] != [action targetFrame]);
+    EXPECT_EQ(nil, [action sourceFrame]);
     EXPECT_WK_STREQ(secondURL, [[[action request] URL] absoluteString]);
-    EXPECT_WK_STREQ(firstURL, [[[[action sourceFrame] request] URL] absoluteString]);
-    EXPECT_EQ(nil, [[action sourceFrame] webView]);
+    EXPECT_WK_STREQ(firstURL, [[[[action targetFrame] request] URL] absoluteString]);
+    EXPECT_EQ(webView.get(), [[action targetFrame] webView]);
 
     newWebView = nullptr;
     action = nullptr;
