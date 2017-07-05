@@ -83,6 +83,6 @@ messages -> NetworkProcess LegacyReceiver {
     DidGrantSandboxExtensionsToDatabaseProcessForBlobs(uint64_t requestID)
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    ShouldPartitionCookiesForTopPrivatelyOwnedDomains(Vector<String> domainsToRemove, Vector<String> domainsToAdd, bool clearFirst)
+    UpdateCookiePartitioningForTopPrivatelyOwnedDomains(Vector<String> domainsToRemove, Vector<String> domainsToAdd, bool shouldClearFirst)
 #endif
 }

@@ -1100,10 +1100,10 @@ void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<Webs
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void WebsiteDataStore::shouldPartitionCookiesForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
+void WebsiteDataStore::updateCookiePartitioningForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst)
 {
-    for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->sendToNetworkingProcess(Messages::NetworkProcess::ShouldPartitionCookiesForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, clearFirst));
+    for (auto& processPool : processPools())
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst));
 }
 #endif
 
@@ -1265,12 +1265,11 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
     if (enabled == resourceLoadStatisticsEnabled())
         return;
 
+    // FIXME: We should probably only initialize m_resourceLoadStatistics when resource load statistics get enabled.
     m_resourceLoadStatistics->setResourceLoadStatisticsEnabled(enabled);
 
-    for (auto& processPool : WebProcessPool::allProcessPools()) {
+    for (auto& processPool : processPools())
         processPool->setResourceLoadStatisticsEnabled(enabled);
-        processPool->sendToAllProcesses(Messages::WebProcess::SetResourceLoadStatisticsEnabled(enabled));
-    }
 }
 
 void WebsiteDataStore::registerSharedResourceLoadObserver()
@@ -1279,10 +1278,9 @@ void WebsiteDataStore::registerSharedResourceLoadObserver()
         return;
     
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    m_resourceLoadStatistics->registerSharedResourceLoadObserver(
-        [this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst) {
-            this->shouldPartitionCookiesForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, clearFirst);
-        });
+    m_resourceLoadStatistics->registerSharedResourceLoadObserver([this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst) {
+        updateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst);
+    });
 #else
     m_resourceLoadStatistics->registerSharedResourceLoadObserver();
 #endif

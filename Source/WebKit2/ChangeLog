@@ -1,3 +1,38 @@
+2017-07-05  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] WebsiteDataStore::setResourceLoadStatisticsEnabled() updates processPools the store is not associated with
+        https://bugs.webkit.org/show_bug.cgi?id=174174
+
+        Reviewed by Brent Fulgham.
+
+        WebsiteDataStore::setResourceLoadStatisticsEnabled() updates processPools the store is not associated with.
+        Fix this by iterating over WebsiteDataStore::processPools() instead of WebProcessPool::allProcessPools().
+
+        Also rename shouldPartitionCookiesForTopPrivatelyOwnedDomains methods / IPC messages to
+        updateCookiePartitioningForTopPrivatelyOwnedDomains since this is a setter, not a getter.
+
+        Finally, drop ShouldPartitionCookiesForTopPrivatelyOwnedDomains IPC message to the NetworkProcessProxy
+        as well as corresponding methods as those appear to be unused.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updateCookiePartitioningForTopPrivatelyOwnedDomains):
+        (WebKit::NetworkProcess::shouldPartitionCookiesForTopPrivatelyOwnedDomains): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::shouldPartitionCookiesForTopPrivatelyOwnedDomains): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::setResourceLoadStatisticsEnabled):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updateCookiePartitioningForTopPrivatelyOwnedDomains):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        (WebKit::WebsiteDataStore::registerSharedResourceLoadObserver):
+        (WebKit::WebsiteDataStore::shouldPartitionCookiesForTopPrivatelyOwnedDomains): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-07-05  Tim Horton  <timothy_horton@apple.com>
 
         Async Image Decoding: Image flashes away briefly when tapping on tab in iPad tab picker
