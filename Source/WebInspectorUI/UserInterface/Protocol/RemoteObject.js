@@ -150,6 +150,18 @@ WebInspector.RemoteObject = class RemoteObject
         });
     }
 
+    static resolveCanvasContext(canvas, objectGroup, callback)
+    {
+        console.assert(typeof callback === "function");
+
+        CanvasAgent.resolveCanvasContext(canvas.identifier, objectGroup, (error, object) => {
+            if (error || !object)
+                callback(null);
+            else
+                callback(WebInspector.RemoteObject.fromPayload(object, WebInspector.mainTarget));
+        });
+    }
+
     static type(remoteObject)
     {
         if (remoteObject === null)

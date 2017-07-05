@@ -1913,6 +1913,8 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 inspector/canvas/create-context-webgl.html [ Skip ]
 inspector/canvas/create-context-webgl2.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webgl.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
 ################################################################################
 #################          End WebGL Issues              #######################
 ################################################################################
@@ -2382,6 +2384,7 @@ inspector/memory [ Skip ]
 # inspector/debugger/searchInContent-linebreaks.html [ Pass Crash ] # Flaky
 
 inspector/canvas/create-context-webgpu.html [ Skip ]
+inspector/canvas/resolveCanvasContext-webgpu.html [ Skip ]
 
 ################################################################################
 #################        End Inspector Issues               ####################

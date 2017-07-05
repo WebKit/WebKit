@@ -32,4 +32,24 @@ WebInspector.CanvasTreeElement = class CanvasTreeElement extends WebInspector.Ge
         const subtitle = null;
         super(["canvas", representedObject.contextType], representedObject.displayName, subtitle, representedObject);
     }
+
+    // Protected
+
+    populateContextMenu(contextMenu, event)
+    {
+        super.populateContextMenu(contextMenu, event);
+
+        contextMenu.appendItem(WebInspector.UIString("Log Canvas Context"), () => {
+            WebInspector.RemoteObject.resolveCanvasContext(this.representedObject, WebInspector.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
+                if (!remoteObject)
+                    return;
+
+                const text = WebInspector.UIString("Selected Canvas Context");
+                const addSpecialUserLogClass = true;
+                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+            });
+        });
+
+        contextMenu.appendSeparator();
+    }
 };

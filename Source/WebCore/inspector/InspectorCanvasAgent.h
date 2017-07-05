@@ -36,6 +36,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace Inspector {
+class InjectedScriptManager;
+}
+
 namespace WebCore {
 
 class InspectorPageAgent;
@@ -59,6 +63,7 @@ public:
     void disable(ErrorString&) override;
     void requestNode(ErrorString&, const String& canvasId, int* nodeId) override;
     void requestContent(ErrorString&, const String& canvasId, String* content) override;
+    void resolveCanvasContext(ErrorString&, const String& canvasId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);
@@ -94,6 +99,7 @@ private:
 
     std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
+    Inspector::InjectedScriptManager& m_injectedScriptManager;
     InspectorPageAgent* m_pageAgent;
 
     HashMap<HTMLCanvasElement*, CanvasEntry> m_canvasEntries;

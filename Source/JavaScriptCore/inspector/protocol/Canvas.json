@@ -71,6 +71,17 @@
             "returns": [
                 { "name": "content", "type": "string", "description": "Base64-encoded data of the canvas' contents." }
             ]
+        },
+        {
+            "name": "resolveCanvasContext",
+            "description": "Resolves JavaScript canvas context object for given canvasId.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Canvas identifier." },
+                { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
+            ],
+            "returns": [
+                { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given canvas context." }
+            ]
         }
     ],
     "events": [
