@@ -1,3 +1,18 @@
+2017-07-05  Ada Chan  <adachan@apple.com>
+
+        Fix crash in UIKit: +[UIViewController _viewControllerForFullScreenPresentationFromView:]
+        https://bugs.webkit.org/show_bug.cgi?id=174143
+        <rdar://problem/28384582>
+
+        Reviewed by Wenson Hsieh.
+
+        In -[WKActionSheet willRotate], we can't guarantee that the action sheet belongs
+        in a window, and passing nil to +[UIViewController _viewControllerForFullScreenPresentationFromView:]
+        throws an exception. To fix this, bail early if the result from -hostViewForSheet is nil.
+
+        * UIProcess/ios/WKActionSheet.mm:
+        (-[WKActionSheet willRotate]):
+
 2017-07-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Protect request and web view during gUM client callback

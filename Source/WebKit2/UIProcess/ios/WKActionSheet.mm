@@ -153,6 +153,9 @@
     //    view controller, without re-presenting the alert controller.
 
     UIView *view = [_sheetDelegate hostViewForSheet];
+    if (!view)
+        return;
+
     UIViewController *presentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:view];
 
     // topPresentedViewController is either self (cases (a) and (b) above) or an action's view controller
