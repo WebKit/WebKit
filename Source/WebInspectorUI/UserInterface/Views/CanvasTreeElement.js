@@ -35,6 +35,14 @@ WebInspector.CanvasTreeElement = class CanvasTreeElement extends WebInspector.Ge
 
     // Protected
 
+    onattach()
+    {
+        super.onattach();
+
+        this.element.addEventListener("mouseover", this._handleMouseOver.bind(this));
+        this.element.addEventListener("mouseout", this._handleMouseOut.bind(this));
+    }
+
     populateContextMenu(contextMenu, event)
     {
         super.populateContextMenu(contextMenu, event);
@@ -51,5 +59,22 @@ WebInspector.CanvasTreeElement = class CanvasTreeElement extends WebInspector.Ge
         });
 
         contextMenu.appendSeparator();
+    }
+
+    // Private
+
+    _handleMouseOver(event)
+    {
+        this.representedObject.requestNode((node) => {
+            if (!node || !node.ownerDocument)
+                return;
+
+            WebInspector.domTreeManager.highlightDOMNode(node.id, "all");
+        });
+    }
+
+    _handleMouseOut(event)
+    {
+        WebInspector.domTreeManager.hideDOMNodeHighlight();
     }
 };
