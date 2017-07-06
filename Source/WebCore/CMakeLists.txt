@@ -4036,12 +4036,6 @@ if (SHARED_CORE)
     install(TARGETS WebCore DESTINATION "${LIB_INSTALL_DIR}")
 endif ()
 
-# [ARM] Build SVGPathElement.cpp with -O2 due to a GCC bug
-# https://bugs.webkit.org/show_bug.cgi?id=145377
-if ((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND WTF_CPU_ARM AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.9") AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9.3"))
-    set_source_files_properties(svg/SVGPathElement.cpp PROPERTIES COMPILE_FLAGS "-O2")
-endif ()
-
 if (MSVC)
     set_target_properties(WebCore PROPERTIES
         COMPILE_PDB_NAME ${WebCore_OUTPUT_NAME}
