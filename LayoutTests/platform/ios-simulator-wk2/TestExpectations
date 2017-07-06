@@ -32,3 +32,5 @@ http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure
 
 webkit.org/b/172879 webrtc/video-unmute.html [ Pass Timeout ]
 
+webkit.org/b/174100 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Skip ]
+
