@@ -559,7 +559,7 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
 
 } // extern "C"
 
-#if OS(DARWIN) && (CPU(X64_64) || CPU(ARM64))
+#if OS(DARWIN) && (CPU(X86_64) || CPU(ARM64))
 #if CPU(X86_64)
 #define STUFF_REGISTER_FOR_CRASH(reg, info) __asm__ volatile ("movq %0, %%" reg : : "r" (static_cast<uint64_t>(info)) : reg)
 

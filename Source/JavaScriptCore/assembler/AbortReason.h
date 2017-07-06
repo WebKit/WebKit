@@ -76,4 +76,12 @@ enum AbortReason {
     YARRNoInputConsumed                               = 340,
 };
 
+// This enum is for CRASH_WITH_SECURITY_IMPLICATION_AND_INFO so we can easily identify which assertion
+// we are looking at even if the calls to crash get coalesed. The same numbering rules above for
+// AbortReason apply here.
+enum CompilerAbortReason {
+    AbstractInterpreterInvalidType                =  10,
+    ObjectAllocationSinkingAssertionFailure       = 100,
+};
+
 } // namespace JSC

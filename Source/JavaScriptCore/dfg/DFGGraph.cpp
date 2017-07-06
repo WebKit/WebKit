@@ -1452,7 +1452,6 @@ static void logDFGAssertionFailure(
     dataLog("\n");
     dataLog("DFG ASSERTION FAILED: ", assertion, "\n");
     dataLog(file, "(", line, ") : ", function, "\n");
-    WTFReportBacktrace();
 }
 
 void Graph::logAssertionFailure(

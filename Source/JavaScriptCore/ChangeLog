@@ -1,3 +1,20 @@
+2017-07-05  Keith Miller  <keith_miller@apple.com>
+
+        Crashing with information should have an abort reason
+        https://bugs.webkit.org/show_bug.cgi?id=174185
+
+        Reviewed by Saam Barati.
+
+        Add crash information for the abstract interpreter and add an enum
+        value for object allocation sinking.
+
+        * assembler/AbortReason.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::verifyEdge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::logDFGAssertionFailure):
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2017-07-03  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Remove copy of ICU headers from WebKit

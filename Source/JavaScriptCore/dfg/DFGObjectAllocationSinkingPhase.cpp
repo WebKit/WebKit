@@ -50,7 +50,7 @@ namespace {
 
 NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crash(const char*, int line, int)
 {
-    CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(line);
+    CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(ObjectAllocationSinkingAssertionFailure, line);
 }
 
 #undef RELEASE_ASSERT

@@ -131,7 +131,7 @@ void AbstractInterpreter<AbstractStateType>::verifyEdge(Node* node, Edge edge)
     if (!(forNode(edge).m_type & ~typeFilterFor(edge.useKind())))
         return;
     
-    DFG_CRASH(m_graph, node, toCString("Edge verification error: ", node, "->", edge, " was expected to have type ", SpeculationDump(typeFilterFor(edge.useKind())), " but has type ", SpeculationDump(forNode(edge).m_type), " (", forNode(edge).m_type, ")").data());
+    DFG_CRASH(m_graph, node, toCString("Edge verification error: ", node, "->", edge, " was expected to have type ", SpeculationDump(typeFilterFor(edge.useKind())), " but has type ", SpeculationDump(forNode(edge).m_type), " (", forNode(edge).m_type, ")").data(), AbstractInterpreterInvalidType, node->op(), edge->op(), edge.useKind(), forNode(edge).m_type);
 }
 
 template<typename AbstractStateType>
