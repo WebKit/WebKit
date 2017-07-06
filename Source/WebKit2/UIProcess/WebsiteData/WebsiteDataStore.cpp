@@ -76,7 +76,6 @@ WebsiteDataStore::WebsiteDataStore(Configuration configuration, WebCore::Session
     , m_sessionID(sessionID)
     , m_configuration(WTFMove(configuration))
     , m_storageManager(StorageManager::create(m_configuration.localStorageDirectory))
-    , m_resourceLoadStatistics(WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory))
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 {
     platformInitialize();
@@ -1254,36 +1253,27 @@ void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, 
 
 bool WebsiteDataStore::resourceLoadStatisticsEnabled() const
 {
-    return m_resourceLoadStatistics ? m_resourceLoadStatistics->resourceLoadStatisticsEnabled() : false;
+    return !!m_resourceLoadStatistics;
 }
 
 void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
 {
-    if (!m_resourceLoadStatistics)
-        return;
-
     if (enabled == resourceLoadStatisticsEnabled())
         return;
 
-    // FIXME: We should probably only initialize m_resourceLoadStatistics when resource load statistics get enabled.
-    m_resourceLoadStatistics->setResourceLoadStatisticsEnabled(enabled);
+    if (enabled) {
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+        m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, [this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst) {
+            updateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst);
+        });
+#else
+        m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory);
+#endif
+    } else
+        m_resourceLoadStatistics = nullptr;
 
     for (auto& processPool : processPools())
         processPool->setResourceLoadStatisticsEnabled(enabled);
-}
-
-void WebsiteDataStore::registerSharedResourceLoadObserver()
-{
-    if (!m_resourceLoadStatistics)
-        return;
-    
-#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    m_resourceLoadStatistics->registerSharedResourceLoadObserver([this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst) {
-        updateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst);
-    });
-#else
-    m_resourceLoadStatistics->registerSharedResourceLoadObserver();
-#endif
 }
 
 DatabaseProcessCreationParameters WebsiteDataStore::databaseProcessParameters()

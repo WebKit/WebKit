@@ -90,7 +90,6 @@ public:
     bool resourceLoadStatisticsEnabled() const;
     void setResourceLoadStatisticsEnabled(bool);
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
-    void registerSharedResourceLoadObserver();
 
     static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
 
@@ -161,7 +160,7 @@ private:
     bool m_hasResolvedDirectories { false };
 
     const RefPtr<StorageManager> m_storageManager;
-    const RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
+    RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
 
     Ref<WorkQueue> m_queue;
 

@@ -103,8 +103,6 @@ void WebsiteDataStore::platformInitialize()
 
     ASSERT(!dataStoresWithStorageManagers().contains(this));
     dataStoresWithStorageManagers().append(this);
-    if (m_resourceLoadStatistics)
-        m_resourceLoadStatistics->readDataFromDiskIfNeeded();
 }
 
 void WebsiteDataStore::platformDestroy()

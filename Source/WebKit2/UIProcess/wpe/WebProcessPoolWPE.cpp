@@ -75,7 +75,6 @@ void WebProcessPool::platformInitialize()
             g_unsetenv("WEBKIT_INSPECTOR_SERVER");
     }
 #endif
-    m_websiteDataStore->websiteDataStore().registerSharedResourceLoadObserver();
 }
 
 WTF::String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()

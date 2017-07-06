@@ -57,24 +57,22 @@ class WebProcessProxy;
 
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    static Ref<WebResourceLoadStatisticsStore> create(const String&);
+    using UpdatePartitionCookiesForDomainsHandler = WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst)>;
+    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, UpdatePartitionCookiesForDomainsHandler&& updatePartitionCookiesForDomainsHandler = { })
+    {
+        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(updatePartitionCookiesForDomainsHandler)));
+    }
+
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     static void setShouldSubmitTelemetry(bool);
     virtual ~WebResourceLoadStatisticsStore();
-    
-    void setResourceLoadStatisticsEnabled(bool);
-    bool resourceLoadStatisticsEnabled() const;
-    void registerSharedResourceLoadObserver();
-    void registerSharedResourceLoadObserver(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& shouldPartitionCookiesForDomainsHandler);
-    
+
     void resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
     void applicationWillTerminate();
-
-    void readDataFromDiskIfNeeded();
 
     void logUserInteraction(const WebCore::URL&);
     void clearUserInteraction(const WebCore::URL&);
@@ -102,12 +100,13 @@ public:
     void setGrandfatheringTime(Seconds);
 
 private:
-    explicit WebResourceLoadStatisticsStore(const String&);
+    WebResourceLoadStatisticsStore(const String&, UpdatePartitionCookiesForDomainsHandler&&);
 
     ResourceLoadStatisticsStore& coreStore() { return m_resourceLoadStatisticsStore.get(); }
     const ResourceLoadStatisticsStore& coreStore() const { return m_resourceLoadStatisticsStore.get(); }
 
     void processStatisticsAndDataRecords();
+    void readDataFromDiskIfNeeded();
 
     void classifyResource(WebCore::ResourceLoadStatistics&);
     void removeDataRecords();
@@ -148,7 +147,6 @@ private:
     RefPtr<WebCore::FileMonitor> m_statisticsStorageMonitor;
     String m_statisticsStoragePath;
     WTF::WallTime m_lastStatisticsFileSyncTime;
-    bool m_resourceLoadStatisticsEnabled { false };
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryOneShotTimer;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryRepeatedTimer;
 };
