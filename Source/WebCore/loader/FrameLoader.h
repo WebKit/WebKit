@@ -358,7 +358,7 @@ private:
     void loadWithDocumentLoader(DocumentLoader*, FrameLoadType, FormState*, AllowNavigationToInvalidURL); // Calls continueLoadAfterNavigationPolicy
     void load(DocumentLoader*); // Calls loadWithDocumentLoader
 
-    void loadWithNavigationAction(const ResourceRequest&, const NavigationAction&, LockHistory, FrameLoadType, FormState*, AllowNavigationToInvalidURL); // Calls loadWithDocumentLoader
+    void loadWithNavigationAction(const ResourceRequest&, const NavigationAction&, LockHistory, FrameLoadType, FormState*, AllowNavigationToInvalidURL, NavigationInitiatedByMainFrame); // Calls loadWithDocumentLoader
 
     void loadPostRequest(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, FormState*);
     void loadURL(FrameLoadRequest&&, const String& referrer, FrameLoadType, Event*, FormState*);
@@ -385,8 +385,6 @@ private:
     bool shouldTreatURLAsSameAsCurrent(const URL&) const;
 
     void dispatchGlobalObjectAvailableInAllWorlds();
-
-    void applyShouldOpenExternalURLsPolicyToNewDocumentLoader(DocumentLoader&, ShouldOpenExternalURLsPolicy propagatedPolicy);
 
     bool isNavigationAllowed() const;
 

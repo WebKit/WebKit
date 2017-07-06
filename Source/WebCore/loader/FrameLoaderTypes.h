@@ -83,6 +83,11 @@ enum class ShouldOpenExternalURLsPolicy {
     ShouldAllow,
 };
 
+enum class NavigationInitiatedByMainFrame {
+    Yes,
+    Unknown,
+};
+
 enum ClearProvisionalItemPolicy {
     ShouldClearProvisionalItem,
     ShouldNotClearProvisionalItem

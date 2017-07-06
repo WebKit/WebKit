@@ -2197,10 +2197,11 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
 
     // For whatever reason, Firefox uses the first frame to determine the outgoingReferrer. We replicate that behavior here.
     String referrer = SecurityPolicy::generateReferrerHeader(firstFrame.document()->referrerPolicy(), completedURL, firstFrame.loader().outgoingReferrer());
+    auto initiatedByMainFrame = activeFrame->isMainFrame() ? NavigationInitiatedByMainFrame::Yes : NavigationInitiatedByMainFrame::Unknown;
 
     ResourceRequest resourceRequest { completedURL, referrer };
     FrameLoader::addHTTPOriginIfNeeded(resourceRequest, firstFrame.loader().outgoingOrigin());
-    FrameLoadRequest frameLoadRequest { *activeDocument, activeDocument->securityOrigin(), resourceRequest, frameName, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, activeDocument->shouldOpenExternalURLsPolicyToPropagate() };
+    FrameLoadRequest frameLoadRequest { *activeDocument, activeDocument->securityOrigin(), resourceRequest, frameName, LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, activeDocument->shouldOpenExternalURLsPolicyToPropagate(), initiatedByMainFrame };
 
     // We pass the opener frame for the lookupFrame in case the active frame is different from
     // the opener frame, and the name references a frame relative to the opener frame.
@@ -2221,7 +2222,7 @@ RefPtr<Frame> DOMWindow::createWindow(const String& urlString, const AtomicStrin
 
     if (created) {
         ResourceRequest resourceRequest { completedURL, referrer, UseProtocolCachePolicy };
-        FrameLoadRequest frameLoadRequest { *activeWindow.document(), activeWindow.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, activeDocument->shouldOpenExternalURLsPolicyToPropagate() };
+        FrameLoadRequest frameLoadRequest { *activeWindow.document(), activeWindow.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Allow, activeDocument->shouldOpenExternalURLsPolicyToPropagate(), initiatedByMainFrame };
         newFrame->loader().changeLocation(WTFMove(frameLoadRequest));
     } else if (!urlString.isEmpty()) {
         LockHistory lockHistory = ScriptController::processingUserGesture() ? LockHistory::No : LockHistory::Yes;

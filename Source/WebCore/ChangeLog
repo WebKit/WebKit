@@ -1,3 +1,70 @@
+2017-07-05  Brady Eidson  <beidson@apple.com>
+
+        Allow navigations in subframes to get a ShouldOpenExternalURLsPolicy of "ShouldAllow".
+        <rdar://problem/22485589> and https://bugs.webkit.org/show_bug.cgi?id=174178
+
+        Reviewed by Alex Christensen.
+
+        Test: loader/navigation-policy/should-open-external-urls/subframe-navigated-programatically-by-main-frame.html
+
+        This patch introduces a new flag to FrameLoadRequest to track when it is known with certainty that a 
+        FrameLoadRequest originates from the main frame.
+        
+        Later, when calculating the final ShouldOpenExternalURLsPolicy, main frames navigating iframes get to propagate
+        their permissions to the iframe.
+        
+        * bindings/js/CommonVM.cpp:
+        (WebCore::lexicalFrameFromCommonVM): Helper to grab the current frame associated with the current JS callstack.
+        * bindings/js/CommonVM.h:
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::navigate):
+
+        Add the new flag to FrameLoadRequest (and force almost everybody to explicitly include the flag):
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::navigationInitiatedByMainFrame):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::shouldOpenExternalURLsPolicyToApply): Helper that takes the new flag into account when deciding
+          what the final ShouldOpenExternalURLsPolicy will be.
+        (WebCore::applyShouldOpenExternalURLsPolicyToNewDocumentLoader):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::createWindow):
+        (WebCore::FrameLoader::applyShouldOpenExternalURLsPolicyToNewDocumentLoader): Deleted.
+        * loader/FrameLoader.h:
+
+        * loader/FrameLoaderTypes.h:
+
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::navigationInitiatedByMainFrame):
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledNavigation::ScheduledNavigation): Grab the "initiating frame" at the time the 
+          ScheduledNavigation is created, as it dictates the policy we decide later.
+        (WebCore::ScheduledNavigation::navigationInitiatedByMainFrame):
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+
 2017-07-05  Simon Fraser  <simon.fraser@apple.com>
 
         Another build fix, for Mac.

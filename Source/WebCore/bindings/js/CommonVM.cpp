@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CommonVM.h"
 
+#include "Frame.h"
 #include "ScriptController.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
@@ -63,6 +64,20 @@ VM& commonVMSlow()
     JSVMClientData::initNormalWorld(g_commonVMOrNull);
     
     return *g_commonVMOrNull;
+}
+
+Frame* lexicalFrameFromCommonVM()
+{
+    if (auto* topCallFrame = commonVM().topCallFrame) {
+        if (auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(topCallFrame->lexicalGlobalObject())) {
+            if (auto* window = jsDynamicDowncast<JSDOMWindow*>(commonVM(), globalObject)) {
+                if (auto* frame = window->wrapped().frame())
+                    return frame;
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 void addImpureProperty(const AtomicString& propertyName)

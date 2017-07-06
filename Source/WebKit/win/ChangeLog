@@ -1,3 +1,18 @@
+2017-07-05  Brady Eidson  <beidson@apple.com>
+
+        Allow navigations in subframes to get a ShouldOpenExternalURLsPolicy of "ShouldAllow".
+        <rdar://problem/22485589> and https://bugs.webkit.org/show_bug.cgi?id=174178
+
+        Reviewed by Alex Christensen.
+
+        Adopt to the new constructor for FrameLoadRequest.
+
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        (WebCore::PluginView::getURLNotify):
+        (WebCore::PluginView::getURL):
+        (WebCore::PluginView::handlePost):
+
 2017-07-03  Brady Eidson  <beidson@apple.com>
 
         Switch all WebKit API related to favicons from WebIconDatabase over to new WebCore::IconLoader mechanism.

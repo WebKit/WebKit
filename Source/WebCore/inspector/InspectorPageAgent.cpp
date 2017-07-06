@@ -423,7 +423,7 @@ void InspectorPageAgent::navigate(ErrorString&, const String& url)
     Frame& frame = m_page.mainFrame();
 
     ResourceRequest resourceRequest { frame.document()->completeURL(url) };
-    FrameLoadRequest frameLoadRequest { *frame.document(), frame.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+    FrameLoadRequest frameLoadRequest { *frame.document(), frame.document()->securityOrigin(), resourceRequest, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::No, MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, ShouldOpenExternalURLsPolicy::ShouldNotAllow, NavigationInitiatedByMainFrame::Unknown };
     frame.loader().changeLocation(WTFMove(frameLoadRequest));
 }
 

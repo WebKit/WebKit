@@ -1,3 +1,19 @@
+2017-07-05  Brady Eidson  <beidson@apple.com>
+
+        Allow navigations in subframes to get a ShouldOpenExternalURLsPolicy of "ShouldAllow".
+        <rdar://problem/22485589> and https://bugs.webkit.org/show_bug.cgi?id=174178
+
+        Reviewed by Alex Christensen.
+
+        Adopt to the new constructor for FrameLoadRequest.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::openInNewTab):
+
 2017-07-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove unnecessary forward declartions now that we include Foundation.h

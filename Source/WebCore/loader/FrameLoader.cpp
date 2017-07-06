@@ -43,6 +43,7 @@
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CommonVM.h"
 #include "ContentFilter.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
@@ -363,8 +364,11 @@ void FrameLoader::changeLocation(FrameLoadRequest&& request)
 
 void FrameLoader::urlSelected(const URL& url, const String& passedTarget, Event* triggeringEvent, LockHistory lockHistory, LockBackForwardList lockBackForwardList, ShouldSendReferrer shouldSendReferrer, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> openerPolicy, const AtomicString& downloadAttribute)
 {
+    auto* frame = lexicalFrameFromCommonVM();
+    auto navigationInitiatedByMainFrame = frame && frame->isMainFrame() ? NavigationInitiatedByMainFrame::Yes : NavigationInitiatedByMainFrame::Unknown;
+
     NewFrameOpenerPolicy newFrameOpenerPolicy = openerPolicy.value_or(shouldSendReferrer == NeverSendReferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
-    urlSelected(FrameLoadRequest(*m_frame.document(), m_frame.document()->securityOrigin(), { url }, passedTarget, lockHistory, lockBackForwardList, shouldSendReferrer, AllowNavigationToInvalidURL::Yes, newFrameOpenerPolicy, shouldOpenExternalURLsPolicy, DoNotReplaceDocumentIfJavaScriptURL, downloadAttribute), triggeringEvent);
+    urlSelected(FrameLoadRequest(*m_frame.document(), m_frame.document()->securityOrigin(), { url }, passedTarget, lockHistory, lockBackForwardList, shouldSendReferrer, AllowNavigationToInvalidURL::Yes, newFrameOpenerPolicy, shouldOpenExternalURLsPolicy, navigationInitiatedByMainFrame, DoNotReplaceDocumentIfJavaScriptURL, downloadAttribute), triggeringEvent);
 }
 
 void FrameLoader::urlSelected(FrameLoadRequest&& frameRequest, Event* triggeringEvent)
@@ -924,7 +928,10 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, F
         }
     }
 
-    FrameLoadRequest frameLoadRequest { *m_frame.document(), m_frame.document()->securityOrigin(), { url }, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::Yes, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, ShouldOpenExternalURLsPolicy::ShouldNotAllow };
+    auto* lexicalFrame = lexicalFrameFromCommonVM();
+    auto navigationInitiatedByMainFrame = lexicalFrame && lexicalFrame->isMainFrame() ? NavigationInitiatedByMainFrame::Yes : NavigationInitiatedByMainFrame::Unknown;
+
+    FrameLoadRequest frameLoadRequest { *m_frame.document(), m_frame.document()->securityOrigin(), { url }, ASCIILiteral("_self"), LockHistory::No, LockBackForwardList::Yes, ShouldSendReferrer::MaybeSendReferrer, AllowNavigationToInvalidURL::Yes, NewFrameOpenerPolicy::Suppress, ShouldOpenExternalURLsPolicy::ShouldNotAllow, navigationInitiatedByMainFrame };
     childFrame->loader().loadURL(WTFMove(frameLoadRequest), referer, FrameLoadType::RedirectWithLockedBackForwardList, nullptr, nullptr);
 }
 
@@ -1208,13 +1215,33 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, For
     }
 }
 
-static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& sourceFrame, ShouldOpenExternalURLsPolicy propagatedPolicy)
+static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& currentFrame, NavigationInitiatedByMainFrame navigationInitiatedByMainFrame, ShouldOpenExternalURLsPolicy propagatedPolicy)
 {
-    if (!sourceFrame.isMainFrame())
-        return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
     if (ScriptController::processingUserGesture())
         return ShouldOpenExternalURLsPolicy::ShouldAllow;
+
+    if (navigationInitiatedByMainFrame == NavigationInitiatedByMainFrame::Yes)
+        return propagatedPolicy;
+
+    if (!currentFrame.isMainFrame())
+        return ShouldOpenExternalURLsPolicy::ShouldNotAllow;
+
     return propagatedPolicy;
+}
+
+static ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToApply(Frame& currentFrame, const FrameLoadRequest& frameLoadRequest)
+{
+    return shouldOpenExternalURLsPolicyToApply(currentFrame, frameLoadRequest.navigationInitiatedByMainFrame(), frameLoadRequest.shouldOpenExternalURLsPolicy());
+}
+
+static void applyShouldOpenExternalURLsPolicyToNewDocumentLoader(Frame& frame, DocumentLoader& documentLoader, NavigationInitiatedByMainFrame navigationInitiatedByMainFrame, ShouldOpenExternalURLsPolicy propagatedPolicy)
+{
+    documentLoader.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(frame, navigationInitiatedByMainFrame, propagatedPolicy));
+}
+
+static void applyShouldOpenExternalURLsPolicyToNewDocumentLoader(Frame& frame, DocumentLoader& documentLoader, const FrameLoadRequest& frameLoadRequest)
+{
+    documentLoader.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(frame, frameLoadRequest));
 }
 
 bool FrameLoader::isNavigationAllowed() const
@@ -1265,7 +1292,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     NavigationAction action { frameLoadRequest.requester(), request, newLoadType, isFormSubmission, event, frameLoadRequest.shouldOpenExternalURLsPolicy(), frameLoadRequest.downloadAttribute() };
 
     if (!targetFrame && !frameName.isEmpty()) {
-        action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest.shouldOpenExternalURLsPolicy()));
+        action = action.copyWithShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, frameLoadRequest));
         policyChecker().checkNewWindowPolicy(action, request, formState, frameName, [this, allowNavigationToInvalidURL, openerPolicy] (const ResourceRequest& request, FormState* formState, const String& frameName, const NavigationAction& action, bool shouldContinue) {
             continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue, allowNavigationToInvalidURL, openerPolicy);
         });
@@ -1293,7 +1320,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     // must grab this now, since this load may stop the previous load and clear this flag
     bool isRedirect = m_quickRedirectComing;
-    loadWithNavigationAction(request, action, lockHistory, newLoadType, formState, allowNavigationToInvalidURL);
+    loadWithNavigationAction(request, action, lockHistory, newLoadType, formState, allowNavigationToInvalidURL, frameLoadRequest.navigationInitiatedByMainFrame());
     if (isRedirect) {
         m_quickRedirectComing = false;
         if (m_provisionalDocumentLoader)
@@ -1347,15 +1374,15 @@ void FrameLoader::load(FrameLoadRequest&& request)
         request.setSubstituteData(defaultSubstituteDataForURL(request.resourceRequest().url()));
 
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(request.resourceRequest(), request.substituteData());
-    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(loader, request.shouldOpenExternalURLsPolicy());
+    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, request);
 
     load(loader.ptr());
 }
 
-void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const NavigationAction& action, LockHistory lockHistory, FrameLoadType type, FormState* formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
+void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const NavigationAction& action, LockHistory lockHistory, FrameLoadType type, FormState* formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, NavigationInitiatedByMainFrame navigationInitiatedByMainFrame)
 {
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(request, defaultSubstituteDataForURL(request.url()));
-    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(loader, action.shouldOpenExternalURLsPolicy());
+    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, navigationInitiatedByMainFrame, action.shouldOpenExternalURLsPolicy());
 
     if (lockHistory == LockHistory::Yes && m_documentLoader)
         loader->setClientRedirectSourceForHistory(m_documentLoader->didCreateGlobalHistoryEntry() ? m_documentLoader->urlForHistory().string() : m_documentLoader->clientRedirectSourceForHistory());
@@ -1557,7 +1584,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
     request.setCachePolicy(ReturnCacheDataElseLoad);
 
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(request, defaultSubstituteDataForURL(request.url()));
-    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(loader, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
+    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, NavigationInitiatedByMainFrame::Unknown, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
     setPolicyDocumentLoader(loader.ptr());
 
@@ -1585,7 +1612,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
     // Create a new document loader for the reload, this will become m_documentLoader eventually,
     // but first it has to be the "policy" document loader, and then the "provisional" document loader.
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(initialRequest, defaultSubstituteDataForURL(initialRequest.url()));
-    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(loader, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
+    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, NavigationInitiatedByMainFrame::Unknown, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
     loader->setUserContentExtensionsEnabled(!options.contains(ReloadOption::DisableContentBlockers));
     
@@ -2725,7 +2752,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     if (!frameName.isEmpty()) {
         // The search for a target frame is done earlier in the case of form submission.
         if (Frame* targetFrame = formState ? 0 : findFrameForNavigation(frameName)) {
-            targetFrame->loader().loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL);
+            targetFrame->loader().loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL, request.navigationInitiatedByMainFrame());
             return;
         }
 
@@ -2737,7 +2764,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     // must grab this now, since this load may stop the previous load and clear this flag
     bool isRedirect = m_quickRedirectComing;
-    loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL);
+    loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL, request.navigationInitiatedByMainFrame());
     if (isRedirect) {
         m_quickRedirectComing = false;
         if (m_provisionalDocumentLoader)
@@ -3177,7 +3204,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     }
 
     NavigationAction newAction { *frame->document(), request, NavigationType::Other, action.shouldOpenExternalURLsPolicy() };
-    mainFrame->loader().loadWithNavigationAction(request, newAction, LockHistory::No, FrameLoadType::Standard, formState, allowNavigationToInvalidURL);
+    mainFrame->loader().loadWithNavigationAction(request, newAction, LockHistory::No, FrameLoadType::Standard, formState, allowNavigationToInvalidURL, NavigationInitiatedByMainFrame::Unknown);
 }
 
 void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& identifier, ResourceError& error)
@@ -3380,7 +3407,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
     if (!item.referrer().isNull())
         request.setHTTPReferrer(item.referrer());
 
-    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(m_frame, item.shouldOpenExternalURLsPolicy());
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(m_frame, NavigationInitiatedByMainFrame::Unknown, item.shouldOpenExternalURLsPolicy());
     bool isFormSubmission = false;
     Event* event = nullptr;
 
@@ -3450,7 +3477,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
         action = { *m_frame.document(), requestForOriginalURL, loadType, isFormSubmission, event, shouldOpenExternalURLsPolicy };
     }
 
-    loadWithNavigationAction(request, action, LockHistory::No, loadType, 0, AllowNavigationToInvalidURL::Yes);
+    loadWithNavigationAction(request, action, LockHistory::No, loadType, 0, AllowNavigationToInvalidURL::Yes, NavigationInitiatedByMainFrame::Unknown);
 }
 
 // Loads content into this frame, as specified by history item
@@ -3651,11 +3678,6 @@ void FrameLoader::clearTestingOverrides()
     m_isStrictRawResourceValidationPolicyDisabledForTesting = false;
 }
 
-void FrameLoader::applyShouldOpenExternalURLsPolicyToNewDocumentLoader(DocumentLoader& documentLoader, ShouldOpenExternalURLsPolicy propagatedPolicy)
-{
-    documentLoader.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicyToApply(m_frame, propagatedPolicy));
-}
-
 bool FrameLoader::isAlwaysOnLoggingAllowed() const
 {
     return frame().isAlwaysOnLoggingAllowed();
@@ -3700,7 +3722,7 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
     if (!oldPage)
         return nullptr;
 
-    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(openerFrame, request.shouldOpenExternalURLsPolicy());
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(openerFrame, request);
     NavigationAction action { request.requester(), request.resourceRequest(), NavigationType::Other, shouldOpenExternalURLsPolicy };
     Page* page = oldPage->chrome().createWindow(openerFrame, request, features, action);
     if (!page)
