@@ -1,5 +1,19 @@
 2017-07-05  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Split Canvas.svg into icons for 2D and 3D
+        https://bugs.webkit.org/show_bug.cgi?id=174057
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Images/Canvas2D.svg: Added.
+        * UserInterface/Images/Canvas3D.svg: Renamed from Source/WebInspectorUI/UserInterface/Images/Canvas.svg.
+        * UserInterface/Views/ResourceIcons.css:
+        (.canvas.canvas-2d .icon):
+        (.canvas:matches(.webgl, .webgl2, .webgpu) .icon):
+        (.canvas .icon): Deleted.
+
+2017-07-05  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Allow users to log any tracked canvas context
         https://bugs.webkit.org/show_bug.cgi?id=173397
         <rdar://problem/33111581>

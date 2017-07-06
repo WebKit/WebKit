@@ -71,8 +71,12 @@
     content: image-set(url(../Images/WebSocket.png) 1x, url(../Images/WebSocket@2x.png) 2x);
 }
 
-.canvas .icon {
-    content: url(../Images/Canvas.svg);
+.canvas.canvas-2d .icon {
+    content: url(../Images/Canvas2D.svg);
+}
+
+.canvas:matches(.webgl, .webgl2, .webgpu) .icon {
+    content: url(../Images/Canvas3D.svg);
 }
 
 .large .resource-icon .icon {

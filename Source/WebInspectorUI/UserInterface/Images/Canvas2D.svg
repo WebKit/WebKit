@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2017 Apple Inc. All rights reserved. -->
+<svg viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <polygon fill="rgb(242, 97, 97)" stroke="white" stroke-width="0.5" points="9,5.226497308103743 14,13.88675134594813 4,13.88675134594813" />
+    <circle fill="rgb(97, 242, 97)" stroke="white" stroke-width="0.5" cx="10" cy="5" r="4" />
+    <rect fill="rgb(92, 140, 229)" stroke="white" stroke-width="0.5" x="1.5" y="3" width="8" height="8" />
+</svg>
