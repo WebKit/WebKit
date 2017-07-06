@@ -45,9 +45,9 @@
 #import <CoreMedia/CoreMedia.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/SoftLinking.h>
 #import <WebKit/WebNSFileManagerExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 using namespace WebKit;
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#import "SoftLinking.h"
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

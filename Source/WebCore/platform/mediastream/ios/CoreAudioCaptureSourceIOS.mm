@@ -29,9 +29,9 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
 
 #import "Logging.h"
-#import "SoftLinking.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <wtf/MainThread.h>
+#import <wtf/SoftLinking.h>
 
 typedef AVAudioSession AVAudioSessionType;
 

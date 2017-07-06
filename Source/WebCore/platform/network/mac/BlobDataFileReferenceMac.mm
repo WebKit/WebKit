@@ -29,7 +29,7 @@
 #if ENABLE(FILE_REPLACEMENT)
 
 #include "FileMetadata.h"
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 #include <wtf/text/CString.h>
 
 #if USE(APPLE_INTERNAL_SDK)

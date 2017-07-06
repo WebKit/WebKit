@@ -48,8 +48,8 @@
 #import "PageOverlayController.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "Settings.h"
-#import "SoftLinking.h"
 #import <QuartzCore/QuartzCore.h>
+#import <wtf/SoftLinking.h>
 
 const float highlightFadeAnimationDuration = 0.3;
 

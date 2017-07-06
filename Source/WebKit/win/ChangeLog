@@ -1,3 +1,13 @@
+2017-07-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [WTF] Move SoftLinking.h into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=174000
+
+        Reviewed by Alex Christensen.
+
+        * WebKitClassFactory.cpp:
+        * WebView.cpp:
+
 2017-07-05  Brady Eidson  <beidson@apple.com>
 
         Allow navigations in subframes to get a ShouldOpenExternalURLsPolicy of "ShouldAllow".

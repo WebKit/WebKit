@@ -30,8 +30,8 @@
 
 #if PLATFORM(IOS)
 #include "Device.h"
-#include "SoftLinking.h"
 #include "UIKitSPI.h"
+#include <wtf/SoftLinking.h>
 #endif
 
 #if PLATFORM(IOS)

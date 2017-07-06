@@ -30,7 +30,7 @@
 #import <JavaScriptCore/JSStringRefCF.h>
 
 #if !PLATFORM(IOS)
-#import <WebCore/SoftLinking.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)
 #endif

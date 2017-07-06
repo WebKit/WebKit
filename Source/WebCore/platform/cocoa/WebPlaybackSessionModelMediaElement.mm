@@ -39,11 +39,11 @@
 #import "MediaSelectionOption.h"
 #import "Page.h"
 #import "PageGroup.h"
-#import "SoftLinking.h"
 #import "TextTrackList.h"
 #import "TimeRanges.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/SoftLinking.h>
 
 namespace WebCore {
 

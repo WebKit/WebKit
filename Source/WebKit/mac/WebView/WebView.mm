@@ -194,7 +194,6 @@
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SocketProvider.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebCore/ThreadCheck.h>
@@ -228,6 +227,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SetForScope.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/WorkQueue.h>
 #import <wtf/spi/darwin/dyldSPI.h>

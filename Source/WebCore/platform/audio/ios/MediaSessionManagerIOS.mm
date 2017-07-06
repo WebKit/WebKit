@@ -32,7 +32,6 @@
 #import "MediaPlayer.h"
 #import "MediaPlayerSPI.h"
 #import "PlatformMediaSession.h"
-#import "SoftLinking.h"
 #import "SystemMemory.h"
 #import "WebCoreThreadRun.h"
 #import <AVFoundation/AVAudioSession.h>
@@ -44,6 +43,7 @@
 #import <wtf/MainThread.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)

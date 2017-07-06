@@ -35,7 +35,6 @@
 #include "PluginDatabase.h"
 #include "PluginView.h"
 #include "SocketProvider.h"
-#include "SoftLinking.h"
 #include "SubframeLoader.h"
 #include "TextIterator.h"
 #include "WebApplicationCache.h"
@@ -170,6 +169,7 @@
 #include <d2d1.h>
 #include <wtf/MainThread.h>
 #include <wtf/RAMSize.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/UniqueRef.h>
 
 #if USE(CG)

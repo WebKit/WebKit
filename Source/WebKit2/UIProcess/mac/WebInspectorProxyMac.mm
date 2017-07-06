@@ -40,7 +40,7 @@
 #import "WebPageProxy.h"
 #import <WebCore/InspectorFrontendClientLocal.h>
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/SoftLinking.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/Base64.h>
 
 SOFT_LINK_STAGED_FRAMEWORK(WebInspectorUI, PrivateFrameworks, A)

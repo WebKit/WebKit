@@ -38,7 +38,7 @@
 #include <wtf/CheckedArithmetic.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 #endif
 
 #if OS(DARWIN) && !PLATFORM(GTK)

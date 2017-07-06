@@ -34,10 +34,10 @@
 
 #include "AudioBus.h"
 #include "AudioFileReader.h"
-#include "SoftLinking.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(AudioToolbox)
 SOFT_LINK(AudioToolbox, AudioFileClose, OSStatus, (AudioFileID inAudioFile), (inAudioFile))

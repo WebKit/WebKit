@@ -28,9 +28,9 @@
 
 #if ENABLE(APPLE_PAY)
 
-#import "SoftLinking.h"
 #import "PassKitSPI.h"
 #import <runtime/JSONObject.h>
+#import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)
 SOFT_LINK_PRIVATE_FRAMEWORK(PassKit)

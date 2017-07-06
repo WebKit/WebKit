@@ -41,8 +41,8 @@
 #import "WebCoreThreadRun.h"
 
 #if HAVE(PARENTAL_CONTROLS)
-#import "SoftLinking.h"
 #import "WebFilterEvaluatorSPI.h"
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);

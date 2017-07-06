@@ -30,8 +30,8 @@
 
 #import "ApplePayPaymentContact.h"
 #import "PassKitSPI.h"
-#import "SoftLinking.h"
 #import <Contacts/Contacts.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 
 SOFT_LINK_FRAMEWORK(Contacts)

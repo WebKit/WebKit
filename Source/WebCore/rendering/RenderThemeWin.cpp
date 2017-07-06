@@ -34,10 +34,10 @@
 #include "RenderMeter.h"
 #include "RenderSlider.h"
 #include "Settings.h"
-#include "SoftLinking.h"
 #include "SystemInfo.h"
 #include "UserAgentStyleSheets.h"
 #include "WebCoreBundleWin.h"
+#include <wtf/SoftLinking.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/win/GDIObject.h>
 

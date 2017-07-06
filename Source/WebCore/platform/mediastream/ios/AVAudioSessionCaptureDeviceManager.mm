@@ -29,8 +29,8 @@
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
 
 #include "AVAudioSessionCaptureDevice.h"
-#include "SoftLinking.h"
 #include <AVFoundation/AVAudioSession.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/Vector.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)

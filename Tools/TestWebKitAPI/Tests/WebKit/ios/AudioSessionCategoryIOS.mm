@@ -31,9 +31,9 @@
 #import <AVFoundation/AVAudioSession.h>
 #import <UIKit/UIKit.h>
 #import <WebCore/Settings.h>
-#import <WebCore/SoftLinking.h>
 #import <WebKit/WebKitLegacy.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVAudioSession)

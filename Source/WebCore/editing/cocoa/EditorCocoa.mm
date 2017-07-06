@@ -48,9 +48,9 @@
 #import "Pasteboard.h"
 #import "RenderElement.h"
 #import "RenderStyle.h"
-#import "SoftLinking.h"
 #import "Text.h"
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS)
 SOFT_LINK_PRIVATE_FRAMEWORK(WebKitLegacy)

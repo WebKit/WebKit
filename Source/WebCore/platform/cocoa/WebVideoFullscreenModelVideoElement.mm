@@ -40,11 +40,10 @@
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/Page.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/TextTrackList.h>
 #import <WebCore/TimeRanges.h>
 #import <wtf/NeverDestroyed.h>
-
+#import <wtf/SoftLinking.h>
 
 using namespace WebCore;
 

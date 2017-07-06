@@ -33,12 +33,12 @@
 #include "WebProcess.h"
 #include <WebCore/CFNetworkSPI.h>
 #include <WebCore/SessionID.h>
-#include <WebCore/SoftLinking.h>
 #include <WebCore/URL.h>
 #include <dlfcn.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/text/WTFString.h>
 
 typedef const struct _CFURLRequest* CFURLRequestRef;

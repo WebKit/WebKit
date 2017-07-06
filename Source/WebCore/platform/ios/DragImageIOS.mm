@@ -39,7 +39,6 @@
 #import "NotImplemented.h"
 #import "Page.h"
 #import "Range.h"
-#import "SoftLinking.h"
 #import "StringTruncator.h"
 #import "TextIndicator.h"
 #import "TextRun.h"
@@ -50,6 +49,7 @@
 #import <UIKit/UIGraphicsImageRenderer.h>
 #import <UIKit/UIImage.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/SoftLinking.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wnullability-completeness"

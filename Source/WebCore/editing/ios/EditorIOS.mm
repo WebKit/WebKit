@@ -56,13 +56,13 @@
 #import "RenderBlock.h"
 #import "RenderImage.h"
 #import "SharedBuffer.h"
-#import "SoftLinking.h"
 #import "StyleProperties.h"
 #import "Text.h"
 #import "TypingCommand.h"
 #import "WAKAppKitStubs.h"
 #import "markup.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 
 namespace WebCore {

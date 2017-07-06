@@ -1,3 +1,15 @@
+2017-07-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [WTF] Move SoftLinking.h into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=174000
+
+        Reviewed by Alex Christensen.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/SoftLinking.h: Copied from Source/WebCore/platform/ios/QuickLookSoftLink.mm.
+        * wtf/cocoa/SoftLinking.h: Renamed from Source/WebCore/platform/cocoa/SoftLinking.h.
+        * wtf/win/SoftLinking.h: Renamed from Source/WebCore/platform/win/SoftLinking.h.
+
 2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Upgrade GCC baseline

@@ -40,7 +40,7 @@
 
 #if ENABLE(LETTERPRESS)
 #import "CoreUISPI.h"
-#import "SoftLinking.h"
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(CoreUI)
 SOFT_LINK_CLASS(CoreUI, CUICatalog)

@@ -27,8 +27,8 @@
 #include "H264VideoToolBoxEncoder.h"
 
 #include "Logging.h"
-#include "SoftLinking.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(VideoToolBox)
 SOFT_LINK_POINTER_OPTIONAL(VideoToolBox, kVTVideoEncoderSpecification_Usage, NSString *)

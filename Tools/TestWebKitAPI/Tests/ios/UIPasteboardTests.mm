@@ -31,9 +31,9 @@
 #import "TestWKWebView.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIPasteboard.h>
-#import <WebCore/SoftLinking.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK(UIKit, UIApplicationInitialize, void, (void), ())

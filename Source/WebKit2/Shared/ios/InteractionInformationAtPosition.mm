@@ -29,7 +29,7 @@
 #import "ArgumentCodersCF.h"
 #import "WebCoreArgumentCoders.h"
 #import <WebCore/DataDetectorsCoreSPI.h>
-#import <WebCore/SoftLinking.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)
 SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)

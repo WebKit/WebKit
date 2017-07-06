@@ -26,12 +26,12 @@
 #import "config.h"
 #import "WebCoreMotionManager.h"
 
-#import "SoftLinking.h"
 #import "WebCoreObjCExtras.h"
 #import <CoreLocation/CoreLocation.h>
 #import <objc/objc-runtime.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS)
 

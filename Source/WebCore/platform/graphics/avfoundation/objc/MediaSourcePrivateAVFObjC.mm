@@ -33,8 +33,8 @@
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
 #import "SourceBufferPrivateAVFObjC.h"
-#import "SoftLinking.h"
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/AtomicString.h>
 
 namespace WebCore {

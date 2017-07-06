@@ -34,7 +34,7 @@
 #include "MediaPlayer.h"
 
 #if PLATFORM(IOS)
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 #endif
 
 namespace WebCore {

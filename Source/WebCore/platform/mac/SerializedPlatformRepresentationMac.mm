@@ -29,7 +29,6 @@
 #include "SerializedPlatformRepresentationMac.h"
 
 #import "JSDOMConvertBufferSource.h"
-#import "SoftLinking.h"
 #import <AVFoundation/AVMetadataItem.h>
 #import <Foundation/NSString.h>
 #import <JavaScriptCore/APICast.h>
@@ -39,6 +38,7 @@
 #import <objc/runtime.h>
 #import <runtime/ArrayBuffer.h>
 #import <runtime/JSArrayBuffer.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/Base64.h>
 
 typedef AVMetadataItem AVMetadataItemType;

@@ -35,9 +35,9 @@
 #include "NotImplemented.h"
 #include "ResourceLoaderOptions.h"
 #include "SharedBuffer.h"
-#include "SoftLinking.h"
-#include <AVFoundationCF/AVFoundationCF.h>
 #include <AVFoundationCF/AVCFAssetResourceLoader.h>
+#include <AVFoundationCF/AVFoundationCF.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/text/CString.h>
 
 // The softlink header files must be included after the AVCF and CoreMedia header files.

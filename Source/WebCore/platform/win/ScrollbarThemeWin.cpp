@@ -32,8 +32,8 @@
 #include "LocalWindowsContext.h"
 #include "PlatformMouseEvent.h"
 #include "Scrollbar.h"
-#include "SoftLinking.h"
 #include "SystemInfo.h"
+#include <wtf/SoftLinking.h>
 #include <wtf/win/GDIObject.h>
 
 // Generic state constants

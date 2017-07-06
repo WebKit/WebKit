@@ -42,9 +42,9 @@
 #import <WebCore/NSMenuSPI.h>
 #import <WebCore/NSPopoverSPI.h>
 #import <WebCore/QuickLookMacSPI.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/URL.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(Quartz, QuickLookUI)
 SOFT_LINK_CLASS(QuickLookUI, QLPreviewMenuItem)

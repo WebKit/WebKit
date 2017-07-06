@@ -26,8 +26,8 @@
 #ifndef CoreVideoSoftLink_h
 #define CoreVideoSoftLink_h
 
-#include "SoftLinking.h"
 #include <CoreVideo/CoreVideo.h>
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, CoreVideo)
 

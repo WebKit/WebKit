@@ -30,10 +30,10 @@
 
 #import "LocalCurrentGraphicsContext.h"
 #import "SharedBuffer.h"
-#import "SoftLinking.h"
 #import <Quartz/Quartz.h>
 #import <objc/objc-class.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <ApplicationServices/ApplicationServicesPriv.h>

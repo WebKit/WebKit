@@ -29,9 +29,9 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 
 #import "MediaSelectionOption.h"
-#import "SoftLinking.h"
 #import "WebPlaybackSessionInterfaceMac.h"
 #import "WebPlaybackSessionModel.h"
+#import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;

@@ -36,7 +36,7 @@
 #if USE(CAIRO)
 #include "PlatformContextCairo.h"
 #endif
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 #if USE(MEDIA_FOUNDATION)
 

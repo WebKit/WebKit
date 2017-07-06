@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SoftLinking_h
-#define SoftLinking_h
+#pragma once
 
 #include <windows.h>
 #include <wtf/Assertions.h>
@@ -302,5 +301,3 @@
         return softLink##framework##functionName parameterNames; \
     } \
     }
-
-#endif // SoftLinking_h

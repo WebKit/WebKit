@@ -31,10 +31,10 @@
 
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "PlatformSpeechSynthesisVoice.h"
-#include "SoftLinking.h"
 #include <AVFoundation/AVSpeechSynthesis.h>
 #include <wtf/BlockObjCExceptions.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVSpeechSynthesizer)

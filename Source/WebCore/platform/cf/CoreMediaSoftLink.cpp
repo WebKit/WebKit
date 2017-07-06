@@ -28,7 +28,7 @@
 // FIXME: Should be USE(COREMEDIA), but this isn't currently defined on Windows.
 
 #include "CoreMediaSPI.h"
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 #if PLATFORM(COCOA)
 #include <CoreVideo/CoreVideo.h>

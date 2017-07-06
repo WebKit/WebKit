@@ -37,19 +37,19 @@
 #endif
 #include "FloatConversion.h"
 #include "HTMLMediaElement.h"
-#include "URL.h"
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControlElements.h"
-#include "SoftLinking.h"
 #include "TextTrackList.h"
+#include "URL.h"
 #include "UserStyleSheetTypes.h"
 #include "VTTCue.h"
 #include <algorithm>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/PlatformUserPreferredLanguages.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

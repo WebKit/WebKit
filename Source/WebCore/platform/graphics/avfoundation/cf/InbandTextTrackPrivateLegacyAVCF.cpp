@@ -32,7 +32,7 @@
 #include "InbandTextTrackPrivateAVF.h"
 #include "Logging.h"
 #include "MediaPlayerPrivateAVFoundationCF.h"
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 #include <AVFoundationCF/AVFoundationCF.h>
 

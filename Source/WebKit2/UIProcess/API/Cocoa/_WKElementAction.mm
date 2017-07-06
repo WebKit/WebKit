@@ -36,8 +36,8 @@
 #import "WeakObjCPtr.h"
 #import "_WKActivatedElementInfoInternal.h"
 #import <WebCore/LocalizedStrings.h>
-#import <WebCore/SoftLinking.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)

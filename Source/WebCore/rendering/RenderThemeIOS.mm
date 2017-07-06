@@ -63,7 +63,6 @@
 #import "RenderThemeIOS.h"
 #import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
-#import "SoftLinking.h"
 #import "UIKitSPI.h"
 #import "UTIUtilities.h"
 #import "UserAgentScripts.h"
@@ -73,6 +72,7 @@
 #import <objc/runtime.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RefPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/StdLibExtras.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)

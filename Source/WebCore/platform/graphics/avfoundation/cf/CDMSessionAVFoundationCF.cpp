@@ -28,14 +28,14 @@
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#include "ExceptionCode.h"
 #include "LegacyCDM.h"
 #include "LegacyCDMSession.h"
-#include "ExceptionCode.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerPrivateAVFoundationCF.h"
 #include "NotImplemented.h"
-#include "SoftLinking.h"
 #include <AVFoundationCF/AVFoundationCF.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/UUID.h>
 #include <wtf/text/CString.h>
 

@@ -29,13 +29,13 @@
 #if ENABLE(VIDEO_TRACK)
 
 #import "MediaSelectionGroupAVFObjC.h"
-#import "SoftLinking.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>
 #import <AVFoundation/AVMetadataItem.h>
 #import <AVFoundation/AVPlayerItem.h>
 #import <AVFoundation/AVPlayerItemTrack.h>
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 
 @class AVMediaSelectionOption;
 @interface AVMediaSelectionOption (WebKitInternal)

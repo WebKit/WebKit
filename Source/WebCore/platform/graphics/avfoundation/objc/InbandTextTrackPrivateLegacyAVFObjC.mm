@@ -32,8 +32,8 @@
 #import "InbandTextTrackPrivateAVF.h"
 #import "Logging.h"
 #import "MediaPlayerPrivateAVFoundationObjC.h"
-#import "SoftLinking.h"
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 

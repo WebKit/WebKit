@@ -28,11 +28,11 @@
 
 #import "Device.h"
 #import "MobileGestaltSPI.h"
-#import "SoftLinking.h"
 #import "SystemVersion.h"
 #import "UIKitSPI.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(UIKit);
 SOFT_LINK_CLASS(UIKit, UIApplication);

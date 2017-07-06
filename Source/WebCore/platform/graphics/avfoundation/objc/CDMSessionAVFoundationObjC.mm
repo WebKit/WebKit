@@ -32,13 +32,13 @@
 #import "LegacyCDMSession.h"
 #import "MediaPlayer.h"
 #import "MediaPlayerPrivateAVFoundationObjC.h"
-#import "SoftLinking.h"
 #import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <objc/objc-runtime.h>
 #import <runtime/TypedArrayInlines.h>
 #import <wtf/MainThread.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)

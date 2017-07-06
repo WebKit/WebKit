@@ -42,7 +42,6 @@
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaTimeAVFoundation.h"
 #import "NotImplemented.h"
-#import "SoftLinking.h"
 #import "SourceBufferPrivateClient.h"
 #import "TimeRanges.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
@@ -55,6 +54,7 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/MainThread.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/text/AtomicString.h>
 #import <wtf/text/CString.h>

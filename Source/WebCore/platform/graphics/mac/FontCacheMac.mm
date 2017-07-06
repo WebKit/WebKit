@@ -48,7 +48,7 @@
 #import <wtf/text/AtomicStringHash.h>
 #endif
 
-#import "SoftLinking.h"
+#import <wtf/SoftLinking.h>
 
 namespace WebCore {
 

@@ -28,8 +28,8 @@
 
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
-#import <WebCore/SoftLinking.h>
 #import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 #import <yarr/RegularExpression.h>
 

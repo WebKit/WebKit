@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "SoftLinking.h"
 #include <VideoToolbox/VideoToolbox.h>
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, VideoToolbox)
 

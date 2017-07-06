@@ -27,9 +27,9 @@
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
-#include "SoftLinking.h"
 #include <CoreText/CoreText.h>
 #include <MediaAccessibility/MediaAccessibility.h>
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, MediaAccessibility)
 

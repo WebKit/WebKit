@@ -31,11 +31,11 @@
 #import <CoreLocation/CLLocationManagerDelegate.h>
 #import <CoreLocation/CoreLocation.h>
 #import <WebCore/GeolocationPosition.h>
-#import <WebCore/SoftLinking.h>
 #import <WebKitLogging.h>
 #import <objc/objc-runtime.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(CoreLocation)
 

@@ -35,11 +35,11 @@
 #import <UIKit/UIDragSession.h>
 #import <UIKit/UIDragging.h>
 #import <UIKit/UIItemProvider_Private.h>
-#import <WebCore/SoftLinking.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFocusedElementInfo.h>
 #import <WebKit/_WKFormInputSession.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK(UIKit, UIApplicationInstantiateSingleton, void, (Class singletonClass), (singletonClass))

@@ -30,8 +30,8 @@
 #import "GameControllerGamepad.h"
 #import "GamepadProviderClient.h"
 #import "Logging.h"
-#import "SoftLinking.h"
 #import <GameController/GameController.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(GameController)
 SOFT_LINK_CLASS_OPTIONAL(GameController, GCController);

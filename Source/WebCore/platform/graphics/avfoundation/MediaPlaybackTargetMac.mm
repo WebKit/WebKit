@@ -29,8 +29,8 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
 #import <WebCore/AVFoundationSPI.h>
-#import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVOutputContext)

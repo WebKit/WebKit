@@ -28,8 +28,8 @@
 
 #include "FontCache.h"
 #include "FontSelector.h"
-#include "SoftLinking.h"
 #include <CoreText/CoreText.h>
+#include <wtf/SoftLinking.h>
 
 #if USE_PLATFORM_SYSTEM_FALLBACK_LIST
 SOFT_LINK_FRAMEWORK(CoreText);

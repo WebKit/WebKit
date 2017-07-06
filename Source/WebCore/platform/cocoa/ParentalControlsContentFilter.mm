@@ -32,9 +32,9 @@
 #import "Logging.h"
 #import "ResourceResponse.h"
 #import "SharedBuffer.h"
-#import "SoftLinking.h"
 #import "WebFilterEvaluatorSPI.h"
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(WebContentAnalysis);
 SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);

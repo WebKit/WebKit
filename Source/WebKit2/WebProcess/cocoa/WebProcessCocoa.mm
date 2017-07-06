@@ -70,7 +70,7 @@
 #if PLATFORM(IOS)
 #import "CelestialSPI.h"
 #import <WebCore/GraphicsServicesSPI.h>
-#import <WebCore/SoftLinking.h>
+#import <wtf/SoftLinking.h>
 #endif
 
 #if USE(OS_STATE)

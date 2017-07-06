@@ -34,12 +34,12 @@
 #import "PlatformCAFilters.h"
 #import "QuartzCoreSPI.h"
 #import "ScrollbarThemeMac.h"
-#import "SoftLinking.h"
 #import "TileController.h"
 #import "TiledBacking.h"
 #import "WebActionDisablingCALayerDelegate.h"
 #import "WebCoreCALayerExtras.h"
 #import "WebGLLayer.h"
+#import <wtf/SoftLinking.h>
 #if ENABLE(WEBGPU)
 #import "WebGPULayer.h"
 #endif

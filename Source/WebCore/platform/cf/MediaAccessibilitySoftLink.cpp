@@ -26,9 +26,9 @@
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
-#include "SoftLinking.h"
 #include <CoreText/CoreText.h>
 #include <MediaAccessibility/MediaAccessibility.h>
+#include <wtf/SoftLinking.h>
 
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/35bhkfb6.aspx

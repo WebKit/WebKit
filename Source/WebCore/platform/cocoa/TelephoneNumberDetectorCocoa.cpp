@@ -28,7 +28,7 @@
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <DataDetectorsCore/DDDFAScanner.h>

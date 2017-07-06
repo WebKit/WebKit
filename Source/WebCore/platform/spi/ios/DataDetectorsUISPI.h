@@ -26,7 +26,7 @@
 #if PLATFORM(IOS) && ENABLE(DATA_DETECTION)
 
 #import <UIKit/UIKit.h>
-#import <WebCore/SoftLinking.h>
+#import <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 

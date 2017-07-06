@@ -33,8 +33,8 @@
 #import "WKContentViewInteraction.h"
 #import "WebPageProxy.h"
 #import <WebCore/MediaPlayerSPI.h>
-#import <WebCore/SoftLinking.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

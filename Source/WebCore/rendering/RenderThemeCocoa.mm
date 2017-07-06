@@ -31,8 +31,8 @@
 #include "PassKitSPI.h"
 #include "RenderElement.h"
 #include "RenderStyle.h"
-#include "SoftLinking.h"
 #include "TranslateTransformOperation.h"
+#include <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)
 SOFT_LINK_PRIVATE_FRAMEWORK(PassKit);

@@ -57,8 +57,8 @@
 #include "WebView.h"
 #include "WebWorkersPrivate.h"
 #include <JavaScriptCore/InitializeThreading.h>
-#include <WebCore/SoftLinking.h>
 #include <wtf/MainThread.h>
+#include <wtf/SoftLinking.h>
 
 // WebKitClassFactory ---------------------------------------------------------
 WebKitClassFactory::WebKitClassFactory(CLSID targetClass)

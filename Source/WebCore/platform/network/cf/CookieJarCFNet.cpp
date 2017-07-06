@@ -30,12 +30,12 @@
 
 #include "CFNetworkSPI.h"
 #include "Cookie.h"
-#include "URL.h"
 #include "NetworkStorageSession.h"
 #include "NotImplemented.h"
-#include "SoftLinking.h"
+#include "URL.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(WIN)

@@ -34,7 +34,7 @@
 #import <PassKit/PassKit.h>
 #import <UIKit/UIViewController.h>
 #import <WebCore/PaymentAuthorizationStatus.h>
-#import <WebCore/SoftLinking.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(PassKit)
 SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationViewController);

@@ -33,7 +33,7 @@
 #import "QuickDrawCompatibility.h"
 #import "WebDataSourceInternal.h"
 #import "WebDefaultUIDelegate.h"
-#import "WebFrameInternal.h" 
+#import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
@@ -57,8 +57,8 @@
 #import <WebCore/CookieJar.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Element.h>
-#import <WebCore/Frame.h> 
-#import <WebCore/FrameLoader.h> 
+#import <WebCore/Frame.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLPlugInElement.h>
@@ -67,7 +67,6 @@
 #import <WebCore/ProxyServer.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
-#import <WebCore/SoftLinking.h> 
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
@@ -81,6 +80,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/CString.h>
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"

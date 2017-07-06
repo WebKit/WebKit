@@ -27,7 +27,7 @@
 #include "PixelBufferConformerCV.h"
 
 #include "GraphicsContextCG.h"
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 #include "CoreVideoSoftLink.h"
 

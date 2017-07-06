@@ -77,7 +77,6 @@
 #import <WebCore/PathUtilities.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Scrollbar.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextStream.h>
 #import <WebCore/VisibleSelection.h>
@@ -87,6 +86,7 @@
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SetForScope.h>
+#import <wtf/SoftLinking.h>
 
 #if ENABLE(DRAG_SUPPORT)
 // FIXME: Move private headers to UIKitSPI.h and add declarations as needed for building on OpenSource against the iOS 11 SDK.

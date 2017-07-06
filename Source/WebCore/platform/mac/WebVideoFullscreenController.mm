@@ -35,9 +35,9 @@
 #import <Carbon/Carbon.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCore/SleepDisabler.h>
-#import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 #if USE(QTKIT)
 #import "QTKitSPI.h"

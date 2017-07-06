@@ -41,11 +41,11 @@
 #import <WebCore/RenderLayerBacking.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderView.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/WebWindowAnimation.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 using namespace WebCore;
 

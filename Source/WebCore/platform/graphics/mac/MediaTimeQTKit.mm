@@ -28,7 +28,7 @@
 
 #if PLATFORM(MAC) && USE(QTKIT)
 
-#import "SoftLinking.h"
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(QTKit)
 SOFT_LINK_CONSTANT(QTKit, QTIndefiniteTime, QTTime)

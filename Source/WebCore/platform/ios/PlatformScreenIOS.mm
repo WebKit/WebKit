@@ -33,11 +33,11 @@
 #import "HostWindow.h"
 #import "IntRect.h"
 #import "MobileGestaltSPI.h"
-#import "SoftLinking.h"
 #import "UIKitSPI.h"
 #import "WAKWindow.h"
 #import "WebCoreSystemInterface.h"
 #import "Widget.h"
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, UIKit)
 SOFT_LINK_CLASS_FOR_SOURCE(WebCore, UIKit, UIApplication)

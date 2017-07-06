@@ -28,9 +28,9 @@
 #if PLATFORM(IOS)
 #import "ValidationBubble.h"
 
-#import "SoftLinking.h"
 #import "UIKitSPI.h"
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
 SOFT_LINK_FRAMEWORK(UIKit);

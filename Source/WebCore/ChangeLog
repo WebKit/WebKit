@@ -1,3 +1,118 @@
+2017-07-05  Don Olmstead  <don.olmstead@sony.com>
+
+        [WTF] Move SoftLinking.h into WTF
+        https://bugs.webkit.org/show_bug.cgi?id=174000
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in functionality
+
+        * Modules/applepay/PaymentRequest.cpp:
+        * Modules/applepay/cocoa/PaymentContactCocoa.mm:
+        * Modules/applepay/cocoa/PaymentMerchantSessionCocoa.mm:
+        * Modules/encryptedmedia/legacy/LegacyCDMPrivateMediaPlayer.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa/EditorCocoa.mm:
+        * editing/cocoa/HTMLConverter.mm:
+        * editing/ios/EditorIOS.mm:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/cocoa/SettingsCocoa.mm:
+        * page/ios/UserAgentIOS.mm:
+        * page/mac/ServicesOverlayController.mm:
+        * platform/audio/ios/AudioDestinationIOS.cpp:
+        * platform/audio/ios/AudioFileReaderIOS.cpp:
+        * platform/audio/ios/AudioSessionIOS.mm:
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        * platform/cf/MediaAccessibilitySoftLink.cpp:
+        * platform/cf/MediaAccessibilitySoftLink.h:
+        * platform/cocoa/ContentFilterUnblockHandlerCocoa.mm:
+        * platform/cocoa/CoreVideoSoftLink.cpp:
+        * platform/cocoa/CoreVideoSoftLink.h:
+        * platform/cocoa/DataDetectorsCoreSoftLink.h:
+        * platform/cocoa/NetworkExtensionContentFilter.mm:
+        * platform/cocoa/ParentalControlsContentFilter.mm:
+        * platform/cocoa/TelephoneNumberDetectorCocoa.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        * platform/graphics/avfoundation/MediaPlaybackTargetMac.mm:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h:
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp:
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.cpp:
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        * platform/graphics/avfoundation/objc/CDMSessionAVContentKeySession.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        * platform/graphics/cocoa/FontCascadeCocoa.mm:
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        * platform/graphics/cv/PixelBufferConformerCV.cpp:
+        * platform/graphics/ios/FontCacheIOS.mm:
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        * platform/graphics/mac/FontCacheMac.mm:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/mac/MediaTimeQTKit.mm:
+        * platform/graphics/mac/PDFDocumentImageMac.mm:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        * platform/ios/DragImageIOS.mm:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        * platform/ios/PlatformScreenIOS.mm:
+        * platform/ios/PlatformSpeechSynthesizerIOS.mm:
+        * platform/ios/QuickLookSoftLink.h:
+        * platform/ios/QuickLookSoftLink.mm:
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        * platform/ios/ThemeIOS.mm:
+        * platform/ios/ValidationBubbleIOS.mm:
+        * platform/ios/WebCoreMotionManager.mm:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        * platform/mac/DragImageMac.mm:
+        * platform/mac/MediaRemoteSoftLink.cpp:
+        * platform/mac/MediaRemoteSoftLink.h:
+        * platform/mac/SerializedPlatformRepresentationMac.mm:
+        * platform/mac/WebPlaybackControlsManager.mm:
+        * platform/mac/WebVideoFullscreenController.mm:
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.mm:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm:
+        * platform/mediastream/libwebrtc/H264VideoToolBoxEncoder.mm:
+        * platform/mediastream/mac/AVCaptureDeviceManager.mm:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        * platform/network/ios/NetworkStateNotifierIOS.mm:
+        * platform/network/ios/PreviewConverter.mm:
+        * platform/network/mac/BlobDataFileReferenceMac.mm:
+        * platform/spi/cocoa/AVKitSPI.h:
+        (-[AVTouchBarPlaybackControlsControlling NS_ENUM]): Deleted.
+        * platform/spi/cocoa/NSAttributedStringSPI.h:
+        * platform/spi/ios/DataDetectorsUISPI.h:
+        * platform/spi/mac/AVFoundationSPI.h:
+        * platform/spi/mac/DataDetectorsSPI.h:
+        * platform/spi/mac/LookupSPI.h:
+        * platform/spi/mac/TUCallSPI.h:
+        * platform/win/ScrollbarThemeWin.cpp:
+        * rendering/RenderThemeCocoa.mm:
+        * rendering/RenderThemeIOS.mm:
+        * rendering/RenderThemeWin.cpp:
+        * testing/Internals.mm:
+        * xml/XSLStyleSheetLibxslt.cpp:
+        * xml/XSLTExtensions.cpp:
+        * xml/XSLTProcessorLibxslt.cpp:
+        * xml/XSLTUnicodeSort.cpp:
+
 2017-07-05  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION: Stack overflow in RenderBlockFlow::layoutBlock after increasing the font size to max in some RTL vertical books.

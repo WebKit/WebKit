@@ -28,7 +28,7 @@
 #if USE(MEDIAREMOTE)
 
 #include "MediaRemoteSPI.h"
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(WebCore, MediaRemote)
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaRemote, MRMediaRemoteGetLocalOrigin, MROriginRef, (), ())

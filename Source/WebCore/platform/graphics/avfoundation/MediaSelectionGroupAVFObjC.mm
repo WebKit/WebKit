@@ -29,11 +29,11 @@
 #if ENABLE(VIDEO_TRACK)
 
 #import "Language.h"
-#import "SoftLinking.h"
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVMediaSelectionGroup.h>
 #import <AVFoundation/AVPlayerItem.h>
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)

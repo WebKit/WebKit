@@ -34,10 +34,10 @@
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 #import "ResourceLoaderOptions.h"
 #import "SharedBuffer.h"
-#import "SoftLinking.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {

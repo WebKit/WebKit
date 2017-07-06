@@ -28,8 +28,8 @@
 
 #import "GraphicsContext.h"
 #import "ScrollView.h"
-#import "SoftLinking.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/StdLibExtras.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)

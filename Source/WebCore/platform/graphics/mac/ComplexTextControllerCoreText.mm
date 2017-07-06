@@ -28,9 +28,9 @@
 #include "CoreTextSPI.h"
 #include "FontCache.h"
 #include "FontCascade.h"
-#include "SoftLinking.h"
 #include "TextRun.h"
 #include "WebCoreSystemInterface.h"
+#include <wtf/SoftLinking.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(IOS)

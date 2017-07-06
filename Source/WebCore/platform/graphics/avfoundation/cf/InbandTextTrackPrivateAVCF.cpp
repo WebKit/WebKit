@@ -35,8 +35,8 @@
 #include "InbandTextTrackPrivateAVF.h"
 #include "Logging.h"
 #include "MediaTimeAVFoundation.h"
-#include "SoftLinking.h"
 #include <JavaScriptCore/ArrayBuffer.h>
+#include <wtf/SoftLinking.h>
 
 #include <AVFoundationCF/AVCFPlayerItemLegibleOutput.h>
 #include <AVFoundationCF/AVFoundationCF.h>

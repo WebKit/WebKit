@@ -58,12 +58,12 @@
 #import "RGBColor.h"
 #import "RenderImage.h"
 #import "RenderText.h"
-#import "SoftLinking.h"
 #import "StyleProperties.h"
 #import "StyledElement.h"
 #import "TextIterator.h"
 #import <objc/runtime.h>
 #import <wtf/ASCIICType.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS)

@@ -31,7 +31,7 @@
 #import "QuickLookSPI.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
-#import "SoftLinking.h"
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(QuickLook);
 SOFT_LINK_CLASS(QuickLook, QLPreviewConverter);

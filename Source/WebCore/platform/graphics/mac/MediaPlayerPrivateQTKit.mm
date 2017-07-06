@@ -31,7 +31,6 @@
 
 #import "DocumentLoader.h"
 #import "GraphicsContext.h"
-#import "URL.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
 #import "MediaTimeQTKit.h"
@@ -39,11 +38,12 @@
 #import "PlatformTimeRanges.h"
 #import "QTKitSPI.h"
 #import "SecurityOrigin.h"
-#import "SoftLinking.h"
+#import "URL.h"
 #import "WebCoreSystemInterface.h"
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(QTKit)
 

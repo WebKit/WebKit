@@ -31,7 +31,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Frame.h"
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS)
 SOFT_LINK_FRAMEWORK(UIKit)

@@ -26,8 +26,8 @@
 #import "config.h"
 #import "NetworkStateNotifier.h"
 
-#import "SoftLinking.h"
 #import "WebCoreThreadRun.h"
+#import <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <AppSupport/CPNetworkObserver.h>

@@ -29,7 +29,7 @@
 #if ENABLE(APPLE_PAY)
 
 #include "PaymentAuthorizationStatus.h"
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 namespace WebCore {
 

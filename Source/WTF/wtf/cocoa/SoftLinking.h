@@ -22,8 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SoftLinking_h
-#define SoftLinking_h
+#pragma once
 
 #import <wtf/Assertions.h>
 #import <dlfcn.h>
@@ -540,5 +539,3 @@
         return pointer##framework##variableName; \
     } \
     }
-
-#endif // SoftLinking_h

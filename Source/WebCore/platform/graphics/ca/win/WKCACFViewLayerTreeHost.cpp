@@ -30,10 +30,10 @@
 
 #include "GDIUtilities.h"
 #include "PlatformCALayer.h"
-#include "SoftLinking.h"
 #include <QuartzCore/CACFLayer.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
+#include <wtf/SoftLinking.h>
 
 typedef struct _CACFLayer* CACFLayerRef;
 

@@ -51,7 +51,7 @@
 #include <wtf/unicode/UTF8.h>
 
 #if OS(DARWIN) && !PLATFORM(GTK)
-#include "SoftLinking.h"
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_LIBRARY(libxslt);
 SOFT_LINK(libxslt, xsltFreeStylesheet, void, (xsltStylesheetPtr sheet), (sheet))

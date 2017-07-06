@@ -42,8 +42,8 @@
 #import <UIKit/UIView.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/PathUtilities.h>
-#import <WebCore/SoftLinking.h>
 #import <WebCore/WebCoreNSURLExtras.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
 #if HAVE(APP_LINKS)

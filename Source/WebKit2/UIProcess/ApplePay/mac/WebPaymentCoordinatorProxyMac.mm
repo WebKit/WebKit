@@ -31,8 +31,8 @@
 #import "WebPageProxy.h"
 #import "WebPaymentCoordinatorProxyCocoa.h"
 #import <WebCore/PassKitSPI.h>
-#import <WebCore/SoftLinking.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK(PassKit)
 

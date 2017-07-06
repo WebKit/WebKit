@@ -29,10 +29,10 @@
 #if USE(AUDIO_SESSION) && PLATFORM(IOS)
 
 #import "Logging.h"
-#import "SoftLinking.h"
 #import <AVFoundation/AVAudioSession.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 
 typedef AVAudioSession AVAudioSessionType;
 

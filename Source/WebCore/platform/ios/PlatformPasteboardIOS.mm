@@ -27,15 +27,15 @@
 #import "PlatformPasteboard.h"
 
 #import "Color.h"
-#import "URL.h"
 #import "Image.h"
 #import "Pasteboard.h"
 #import "SharedBuffer.h"
-#import "SoftLinking.h"
+#import "URL.h"
 #import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
+#import <wtf/SoftLinking.h>
 
 #if ENABLE(DATA_INTERACTION)
 #import <UIKit/NSAttributedString+UIItemProvider.h>

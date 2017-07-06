@@ -33,10 +33,10 @@
 #import "CoreTextSPI.h"
 #import "FontCascade.h"
 #import "RenderThemeIOS.h"
-#import "SoftLinking.h"
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SoftLinking.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,20 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#pragma once
 
-#if USE(QUICK_LOOK)
-
-#import "QuickLookSPI.h"
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, QuickLook)
-
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLPreviewGetSupportedMIMETypes, NSSet *, (), ())
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyBestMimeTypeForFileNameAndMimeType, NSString *, (NSString *fileName, NSString *mimeType), (fileName, mimeType))
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyBestMimeTypeForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, QuickLook, QLTypeCopyUTIForURLAndMimeType, NSString *, (NSURL *url, NSString *mimeType), (url, mimeType))
-
-SOFT_LINK_POINTER_FOR_SOURCE(WebCore, QuickLook, QLPreviewScheme, NSString *)
-
-#endif // USE(QUICK_LOOK)
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/SoftLinking.h>
+#elif OS(WINDOWS)
+#include <wtf/win/SoftLinking.h>
+#else
+#error "SoftLinking not defined for platform"
+#endif

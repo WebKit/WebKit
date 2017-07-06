@@ -35,9 +35,9 @@
 #import "ResourceResponse.h"
 #import "RuntimeApplicationChecks.h"
 #import "SharedBuffer.h"
-#import "SoftLinking.h"
 #import "URL.h"
 #import <objc/runtime.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(NetworkExtension);
 SOFT_LINK_CLASS_OPTIONAL(NetworkExtension, NEFilterSource);

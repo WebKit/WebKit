@@ -34,12 +34,11 @@
 #include "GraphicsContext.h"
 #include "InbandTextTrackPrivateAVF.h"
 #include "InbandTextTrackPrivateClient.h"
-#include "URL.h"
 #include "Logging.h"
 #include "PlatformLayer.h"
 #include "PlatformTimeRanges.h"
 #include "Settings.h"
-#include "SoftLinking.h"
+#include "URL.h"
 #include <CoreMedia/CoreMedia.h>
 #include <heap/HeapInlines.h>
 #include <runtime/DataView.h>
@@ -47,8 +46,9 @@
 #include <runtime/Uint16Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/text/CString.h>
+#include <wtf/SoftLinking.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

@@ -26,7 +26,7 @@
 #ifndef NSAttributedStringSPI_h
 #define NSAttributedStringSPI_h
 
-#import "SoftLinking.h"
+#import <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS)
 

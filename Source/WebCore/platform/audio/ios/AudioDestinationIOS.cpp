@@ -38,10 +38,10 @@
 #include "FloatConversion.h"
 #include "Logging.h"
 #include "RuntimeApplicationChecks.h"
-#include "SoftLinking.h"
 #include <AudioToolbox/AudioServices.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK(AudioToolbox)
 SOFT_LINK(AudioToolbox, AudioComponentFindNext, AudioComponent, (AudioComponent inComponent, const AudioComponentDescription *inDesc), (inComponent, inDesc))

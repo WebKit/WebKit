@@ -33,9 +33,9 @@
 #import <WebCore/AVKitSPI.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/MediaPlaybackTargetMac.h>
-#import <WebCore/SoftLinking.h>
 #import <objc/runtime.h>
 #import <wtf/MainThread.h>
+#import <wtf/SoftLinking.h>
 
 typedef AVOutputContext AVOutputContextType;
 typedef AVOutputDeviceMenuController AVOutputDeviceMenuControllerType;
