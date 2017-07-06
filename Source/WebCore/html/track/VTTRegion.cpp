@@ -135,7 +135,7 @@ static const AtomicString& upKeyword()
 
 const AtomicString& VTTRegion::scroll() const
 {
-    return m_scroll ? upKeyword() : emptyAtom;
+    return m_scroll ? upKeyword() : emptyAtom();
 }
 
 ExceptionOr<void> VTTRegion::setScroll(const AtomicString& value)

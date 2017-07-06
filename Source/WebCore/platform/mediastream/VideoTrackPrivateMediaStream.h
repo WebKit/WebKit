@@ -59,7 +59,7 @@ private:
     Kind kind() const final { return Kind::Main; }
     AtomicString id() const final { return m_id; }
     AtomicString label() const final { return m_label; }
-    AtomicString language() const final { return emptyAtom; }
+    AtomicString language() const final { return emptyAtom(); }
     int trackIndex() const final { return m_index; }
 
     Ref<MediaStreamTrackPrivate> m_streamTrack;

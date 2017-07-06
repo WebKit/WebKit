@@ -74,10 +74,10 @@ ExceptionOr<void> Attr::setPrefix(const AtomicString& prefix)
     if (result.hasException())
         return result.releaseException();
 
-    if ((prefix == xmlnsAtom && namespaceURI() != XMLNSNames::xmlnsNamespaceURI) || qualifiedName() == xmlnsAtom)
+    if ((prefix == xmlnsAtom() && namespaceURI() != XMLNSNames::xmlnsNamespaceURI) || qualifiedName() == xmlnsAtom())
         return Exception { NAMESPACE_ERR };
 
-    const AtomicString& newPrefix = prefix.isEmpty() ? nullAtom : prefix;
+    const AtomicString& newPrefix = prefix.isEmpty() ? nullAtom() : prefix;
     if (m_element)
         elementAttribute().setPrefix(newPrefix);
     m_name.setPrefix(newPrefix);
@@ -141,7 +141,7 @@ void Attr::attachToElement(Element& element)
 {
     ASSERT(!m_element);
     m_element = &element;
-    m_standaloneValue = nullAtom;
+    m_standaloneValue = nullAtom();
     setTreeScopeRecursively(element.treeScope());
 }
 

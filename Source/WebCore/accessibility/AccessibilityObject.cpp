@@ -1053,7 +1053,7 @@ String AccessibilityObject::language() const
         Document* doc = document();
         if (doc)
             return doc->contentLanguage();
-        return nullAtom;
+        return nullAtom();
     }
     
     return parent->language();
@@ -1933,7 +1933,7 @@ const String AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityRo
     case ApplicationMarqueeRole:
         return ASCIILiteral("off");
     default:
-        return nullAtom;
+        return nullAtom();
     }
 }
     
@@ -1974,10 +1974,10 @@ const String& AccessibilityObject::actionVerb() const
     case ListItemRole:
         return listItemAction;
     default:
-        return nullAtom;
+        return nullAtom();
     }
 #else
-    return nullAtom;
+    return nullAtom();
 #endif
 }
 #endif
@@ -2138,7 +2138,7 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
 {
     if (Element* element = this->element())
         return element->attributeWithoutSynchronization(attribute);
-    return nullAtom;
+    return nullAtom();
 }
     
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;
@@ -2477,7 +2477,7 @@ const AtomicString& AccessibilityObject::placeholderValue() const
     if (!ariaPlaceholder.isEmpty())
         return ariaPlaceholder;
     
-    return nullAtom;
+    return nullAtom();
 }
     
 bool AccessibilityObject::isInsideARIALiveRegion() const

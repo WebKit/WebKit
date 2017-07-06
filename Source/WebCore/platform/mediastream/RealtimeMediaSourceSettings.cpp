@@ -72,11 +72,11 @@ const AtomicString& RealtimeMediaSourceSettings::facingMode(RealtimeMediaSourceS
     case RealtimeMediaSourceSettings::Right:
         return rightFacing();
     case RealtimeMediaSourceSettings::Unknown:
-        return emptyAtom;
+        return emptyAtom();
     }
     
     ASSERT_NOT_REACHED();
-    return emptyAtom;
+    return emptyAtom();
 }
 
 RealtimeMediaSourceSettings::VideoFacingMode RealtimeMediaSourceSettings::videoFacingModeEnum(const String& mode)

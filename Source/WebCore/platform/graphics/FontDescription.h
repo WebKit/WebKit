@@ -303,7 +303,7 @@ public:
     static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }
     static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal; }
     static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
-    static const AtomicString& initialLocale() { return nullAtom; }
+    static const AtomicString& initialLocale() { return nullAtom(); }
 
 private:
     RefCountedArray<AtomicString> m_families { 1 };

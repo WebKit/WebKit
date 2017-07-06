@@ -53,7 +53,7 @@ const AtomicString& stringForAutocapitalizeType(AutocapitalizeType type)
 {
     switch (type) {
     case AutocapitalizeTypeDefault:
-        return nullAtom;
+        return nullAtom();
     case AutocapitalizeTypeNone: {
         static NeverDestroyed<const AtomicString> valueNone("none", AtomicString::ConstructFromLiteral);
         return valueNone;
@@ -73,7 +73,7 @@ const AtomicString& stringForAutocapitalizeType(AutocapitalizeType type)
     }
 
     ASSERT_NOT_REACHED();
-    return nullAtom;
+    return nullAtom();
 }
 
 } // namespace WebCore

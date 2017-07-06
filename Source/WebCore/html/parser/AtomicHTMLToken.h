@@ -206,7 +206,7 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
 
         // FIXME: This is N^2 for the number of attributes.
         if (!hasAttribute(m_attributes, localName))
-            m_attributes.uncheckedAppend(Attribute(QualifiedName(nullAtom, localName, nullAtom), AtomicString(attribute.value)));
+            m_attributes.uncheckedAppend(Attribute(QualifiedName(nullAtom(), localName, nullAtom()), AtomicString(attribute.value)));
     }
 }
 

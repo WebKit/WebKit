@@ -37,7 +37,7 @@ using namespace HTMLNames;
 
 static const AtomicString& slotNameFromAttributeValue(const AtomicString& value)
 {
-    return value == nullAtom ? SlotAssignment::defaultSlotName() : value;
+    return value == nullAtom() ? SlotAssignment::defaultSlotName() : value;
 }
 
 static const AtomicString& slotNameFromSlotAttribute(const Node& child)

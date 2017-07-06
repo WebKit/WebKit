@@ -84,7 +84,7 @@ inline unsigned DOMTokenList::length() const
 inline const AtomicString& DOMTokenList::item(unsigned index) const
 {
     auto& tokens = this->tokens();
-    return index < tokens.size() ? tokens[index] : nullAtom;
+    return index < tokens.size() ? tokens[index] : nullAtom();
 }
 
 } // namespace WebCore

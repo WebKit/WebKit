@@ -45,7 +45,7 @@ TagCollection::TagCollection(ContainerNode& rootNode, const AtomicString& qualif
     : CachedHTMLCollection<TagCollection, CollectionTypeTraits<ByTag>::traversalType>(rootNode, ByTag)
     , m_qualifiedName(qualifiedName)
 {
-    ASSERT(qualifiedName != starAtom);
+    ASSERT(qualifiedName != starAtom());
 }
 
 TagCollection::~TagCollection()
@@ -58,7 +58,7 @@ HTMLTagCollection::HTMLTagCollection(ContainerNode& rootNode, const AtomicString
     , m_qualifiedName(qualifiedName)
     , m_loweredQualifiedName(qualifiedName.convertToASCIILowercase())
 {
-    ASSERT(qualifiedName != starAtom);
+    ASSERT(qualifiedName != starAtom());
 }
 
 HTMLTagCollection::~HTMLTagCollection()

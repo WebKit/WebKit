@@ -51,7 +51,7 @@ Ref<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext& context, Te
 }
 
 InbandTextTrack::InbandTextTrack(ScriptExecutionContext& context, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
-    : TextTrack(&context, &client, emptyAtom, trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
+    : TextTrack(&context, &client, emptyAtom(), trackPrivate.id(), trackPrivate.label(), trackPrivate.language(), InBand)
     , m_private(trackPrivate)
 {
     m_private->setClient(this);

@@ -83,7 +83,7 @@ ExceptionOr<Ref<Attr>> NamedNodeMap::removeNamedItemNS(const AtomicString& names
 {
     if (!m_element.hasAttributes())
         return Exception { NOT_FOUND_ERR };
-    auto index = m_element.findAttributeIndexByName(QualifiedName { nullAtom, localName, namespaceURI });
+    auto index = m_element.findAttributeIndexByName(QualifiedName { nullAtom(), localName, namespaceURI });
     if (index == ElementData::attributeNotFound)
         return Exception { NOT_FOUND_ERR };
     return m_element.detachAttribute(index);

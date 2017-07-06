@@ -97,7 +97,7 @@ bool InbandTextTrackPrivateLegacyAVFObjC::isEasyToRead() const
 AtomicString InbandTextTrackPrivateLegacyAVFObjC::label() const
 {
     if (!m_playerItemTrack)
-        return emptyAtom;
+        return emptyAtom();
 
     NSString *title = 0;
 
@@ -112,13 +112,13 @@ AtomicString InbandTextTrackPrivateLegacyAVFObjC::label() const
             title = [[titles objectAtIndex:0] stringValue];
     }
 
-    return title ? AtomicString(title) : emptyAtom;
+    return title ? AtomicString(title) : emptyAtom();
 }
 
 AtomicString InbandTextTrackPrivateLegacyAVFObjC::language() const
 {
     if (!m_playerItemTrack)
-        return emptyAtom;
+        return emptyAtom();
 
     NSString *languageCode = [[m_playerItemTrack assetTrack] languageCode];
     RetainPtr<NSLocale> locale = adoptNS([[NSLocale alloc] initWithLocaleIdentifier:languageCode]);

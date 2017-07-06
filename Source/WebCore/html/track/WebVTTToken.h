@@ -58,7 +58,7 @@ public:
         return WebVTTToken(Type::Character, characterData);
     }
 
-    static WebVTTToken StartTag(const String& tagName, const AtomicString& classes = emptyAtom, const AtomicString& annotation = emptyAtom)
+    static WebVTTToken StartTag(const String& tagName, const AtomicString& classes = emptyAtom(), const AtomicString& annotation = emptyAtom())
     {
         WebVTTToken token(Type::StartTag, tagName);
         token.m_classes = classes;

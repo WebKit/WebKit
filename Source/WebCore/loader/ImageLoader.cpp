@@ -471,7 +471,7 @@ void ImageLoader::elementDidMoveToNewDocument()
 
 inline void ImageLoader::clearFailedLoadURL()
 {
-    m_failedLoadURL = nullAtom;
+    m_failedLoadURL = nullAtom();
 }
 
 }

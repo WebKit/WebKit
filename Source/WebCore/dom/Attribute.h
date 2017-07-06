@@ -78,7 +78,7 @@ inline bool Attribute::nameMatchesFilter(const QualifiedName& name, const Atomic
 {
     if (filterLocalName != name.localName())
         return false;
-    return filterPrefix == starAtom || filterNamespaceURI == name.namespaceURI();
+    return filterPrefix == starAtom() || filterNamespaceURI == name.namespaceURI();
 }
 
 inline bool Attribute::matches(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI) const

@@ -458,7 +458,7 @@ const String& RenderListItem::markerText() const
 {
     if (m_marker)
         return m_marker->text();
-    return nullAtom.string();
+    return nullAtom().string();
 }
 
 String RenderListItem::markerTextWithSuffix() const

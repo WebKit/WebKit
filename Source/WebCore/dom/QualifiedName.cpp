@@ -45,7 +45,7 @@ QualifiedName::QualifiedNameImpl::~QualifiedNameImpl()
 }
 
 // Global init routines
-DEFINE_GLOBAL(QualifiedName, anyName, nullAtom, starAtom, starAtom)
+DEFINE_GLOBAL(QualifiedName, anyName, nullAtom(), starAtom(), starAtom())
 
 void QualifiedName::init()
 {
@@ -55,13 +55,13 @@ void QualifiedName::init()
 
     // Use placement new to initialize the globals.
     AtomicString::init();
-    new (NotNull, (void*)&anyName) QualifiedName(nullAtom, starAtom, starAtom);
+    new (NotNull, (void*)&anyName) QualifiedName(nullAtom(), starAtom(), starAtom());
     initialized = true;
 }
 
 const QualifiedName& nullQName()
 {
-    static NeverDestroyed<QualifiedName> nullName(nullAtom, nullAtom, nullAtom);
+    static NeverDestroyed<QualifiedName> nullName(nullAtom(), nullAtom(), nullAtom());
     return nullName;
 }
 
@@ -80,12 +80,12 @@ unsigned QualifiedName::QualifiedNameImpl::computeHash() const
 
 void createQualifiedName(void* targetAddress, StringImpl* name, const AtomicString& nameNamespace)
 {
-    new (NotNull, reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, AtomicString(name), nameNamespace);
+    new (NotNull, reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom(), AtomicString(name), nameNamespace);
 }
 
 void createQualifiedName(void* targetAddress, StringImpl* name)
 {
-    new (NotNull, reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, AtomicString(name), nullAtom);
+    new (NotNull, reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom(), AtomicString(name), nullAtom());
 }
 
 }

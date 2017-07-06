@@ -1032,7 +1032,7 @@ RefPtr<DeprecatedCSSOMValue> SVGElement::getPresentationAttribute(const String& 
     if (!hasAttributesWithoutUpdate())
         return 0;
 
-    QualifiedName attributeName(nullAtom, name, nullAtom);
+    QualifiedName attributeName(nullAtom(), name, nullAtom());
     const Attribute* attribute = findAttributeByName(attributeName);
     if (!attribute)
         return 0;

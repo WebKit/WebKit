@@ -332,7 +332,7 @@ void Scope::collectActiveStyleSheets(Vector<RefPtr<StyleSheet>>& sheets)
                     continue;
                 }
                 if (!linkElement.sheet())
-                    title = nullAtom;
+                    title = nullAtom();
             }
             // Get the current preferred styleset. This is the
             // set of sheets that will be enabled.

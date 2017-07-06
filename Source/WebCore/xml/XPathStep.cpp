@@ -184,7 +184,7 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
                 if (node.namespaceURI() == XMLNSNames::xmlnsNamespaceURI)
                     return false;
 
-                if (name == starAtom)
+                if (name == starAtom())
                     return namespaceURI.isEmpty() || node.namespaceURI() == namespaceURI;
 
                 return node.localName() == name && node.namespaceURI() == namespaceURI;
@@ -198,7 +198,7 @@ inline bool nodeMatchesBasicTest(Node& node, Step::Axis axis, const Step::NodeTe
             if (!is<Element>(node))
                 return false;
 
-            if (name == starAtom)
+            if (name == starAtom())
                 return namespaceURI.isEmpty() || namespaceURI == node.namespaceURI();
 
             if (is<HTMLDocument>(node.document())) {
@@ -342,7 +342,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
             Element& contextElement = downcast<Element>(context);
 
             // Avoid lazily creating attribute nodes for attributes that we do not need anyway.
-            if (m_nodeTest.m_kind == NodeTest::NameTest && m_nodeTest.m_data != starAtom) {
+            if (m_nodeTest.m_kind == NodeTest::NameTest && m_nodeTest.m_data != starAtom()) {
                 auto attr = contextElement.getAttributeNodeNS(m_nodeTest.m_namespaceURI, m_nodeTest.m_data);
                 if (attr && attr->namespaceURI() != XMLNSNames::xmlnsNamespaceURI) { // In XPath land, namespace nodes are not accessible on the attribute axis.
                     if (nodeMatches(*attr, AttributeAxis, m_nodeTest)) // Still need to check merged predicates.

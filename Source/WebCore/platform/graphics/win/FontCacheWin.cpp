@@ -677,7 +677,7 @@ const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& f
             return microsoftSansSerif;
         break;
     }
-    return nullAtom;
+    return nullAtom();
 }
 
 }

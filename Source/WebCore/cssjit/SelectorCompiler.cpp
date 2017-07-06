@@ -1046,7 +1046,7 @@ static FunctionType constructFragments(const CSSSelector* rootSelector, Selector
 
 static inline bool attributeNameTestingRequiresNamespaceRegister(const CSSSelector& attributeSelector)
 {
-    return attributeSelector.attribute().prefix() != starAtom && !attributeSelector.attribute().namespaceURI().isNull();
+    return attributeSelector.attribute().prefix() != starAtom() && !attributeSelector.attribute().namespaceURI().isNull();
 }
 
 static inline bool attributeValueTestingRequiresExtraRegister(const AttributeMatchingInfo& attributeInfo)
@@ -1386,7 +1386,7 @@ static inline TagNameEquality equalTagNames(const CSSSelector* lhs, const CSSSel
 
     const AtomicString& lhsLocalName = lhsQualifiedName.localName();
     const AtomicString& rhsLocalName = rhsQualifiedName.localName();
-    if (lhsLocalName != starAtom && rhsLocalName != starAtom) {
+    if (lhsLocalName != starAtom() && rhsLocalName != starAtom()) {
         const AtomicString& lhsLowercaseLocalName = lhs->tagLowercaseLocalName();
         const AtomicString& rhsLowercaseLocalName = rhs->tagLowercaseLocalName();
 
@@ -1400,7 +1400,7 @@ static inline TagNameEquality equalTagNames(const CSSSelector* lhs, const CSSSel
 
     const AtomicString& lhsNamespaceURI = lhsQualifiedName.namespaceURI();
     const AtomicString& rhsNamespaceURI = rhsQualifiedName.namespaceURI();
-    if (lhsNamespaceURI != starAtom && rhsNamespaceURI != starAtom) {
+    if (lhsNamespaceURI != starAtom() && rhsNamespaceURI != starAtom()) {
         if (lhsNamespaceURI != rhsNamespaceURI)
             return TagNameEquality::StrictlyNotEqual;
         return TagNameEquality::StrictlyEqual;
@@ -2800,7 +2800,7 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
         LocalRegister qualifiedNameImpl(m_registerAllocator);
         m_assembler.loadPtr(Assembler::Address(currentAttributeAddress, Attribute::nameMemoryOffset()), qualifiedNameImpl);
 
-        bool shouldCheckNamespace = attributeSelector.attribute().prefix() != starAtom;
+        bool shouldCheckNamespace = attributeSelector.attribute().prefix() != starAtom();
         if (shouldCheckNamespace) {
             Assembler::Jump nameDoesNotMatch = m_assembler.branchPtr(Assembler::NotEqual, Assembler::Address(qualifiedNameImpl, QualifiedName::QualifiedNameImpl::localNameMemoryOffset()), localNameToMatch);
 
@@ -3391,7 +3391,7 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
     m_assembler.loadPtr(Assembler::Address(elementAddressRegister, Element::tagQNameMemoryOffset() + QualifiedName::implMemoryOffset()), qualifiedNameImpl);
 
     const AtomicString& selectorLocalName = nameToMatch.localName();
-    if (selectorLocalName != starAtom) {
+    if (selectorLocalName != starAtom()) {
         const AtomicString& lowercaseLocalName = tagMatchingSelector.tagLowercaseLocalName();
 
         if (selectorLocalName == lowercaseLocalName) {
@@ -3421,7 +3421,7 @@ inline void SelectorCodeGenerator::generateElementHasTagName(Assembler::JumpList
     }
 
     const AtomicString& selectorNamespaceURI = nameToMatch.namespaceURI();
-    if (selectorNamespaceURI != starAtom) {
+    if (selectorNamespaceURI != starAtom()) {
         // Generate namespaceURI == element->namespaceURI().
         LocalRegister constantRegister(m_registerAllocator);
         m_assembler.move(Assembler::TrustedImmPtr(selectorNamespaceURI.impl()), constantRegister);

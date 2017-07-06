@@ -61,8 +61,8 @@ public:
     virtual Node* previousSibling() { return 0; }
     virtual Node* nextSibling() { return 0; }
 
-    virtual const AtomicString& attributeName() { return nullAtom; }
-    virtual const AtomicString& attributeNamespace() { return nullAtom; }
+    virtual const AtomicString& attributeName() { return nullAtom(); }
+    virtual const AtomicString& attributeNamespace() { return nullAtom(); }
 
     virtual String oldValue() { return String(); }
 };

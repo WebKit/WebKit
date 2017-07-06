@@ -164,7 +164,7 @@ static Class lookupElementClass(const QualifiedName& tag)
 {
     // Do a special lookup to ignore element prefixes
     if (tag.hasPrefix())
-        return elementClassMap->get(QualifiedName(nullAtom, tag.localName(), tag.namespaceURI()).impl());
+        return elementClassMap->get(QualifiedName(nullAtom(), tag.localName(), tag.namespaceURI()).impl());
     
     return elementClassMap->get(tag.impl());
 }

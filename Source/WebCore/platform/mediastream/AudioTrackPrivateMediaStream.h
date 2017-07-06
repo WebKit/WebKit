@@ -43,7 +43,7 @@ public:
     Kind kind() const override { return Kind::Main; }
     AtomicString id() const override { return m_id; }
     AtomicString label() const override { return m_label; }
-    AtomicString language() const override { return emptyAtom; }
+    AtomicString language() const override { return emptyAtom(); }
     int trackIndex() const override { return m_index; }
 
     void setTrackIndex(int index) { m_index = index; }

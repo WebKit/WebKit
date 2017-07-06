@@ -103,7 +103,7 @@ static const AtomicString& elementURL(Element& element)
         return element.attributeWithoutSynchronization(XLinkNames::hrefAttr);
     if (is<HTMLEmbedElement>(element) || is<HTMLObjectElement>(element))
         return element.imageSourceURL();
-    return nullAtom;
+    return nullAtom();
 }
 
 static bool getImageForElement(Element& element, RefPtr<Image>& image)
