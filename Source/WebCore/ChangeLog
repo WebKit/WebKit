@@ -1,3 +1,45 @@
+2017-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r216944): Font loads can cause Chinese characters to draw as .notdef
+        https://bugs.webkit.org/show_bug.cgi?id=173962
+        <rdar://problem/32925318>
+
+        Reviewed by Simon Fraser.
+
+        Previously, there was no signalling between our font loading code
+        which determined whether or not a font should be invisible (because
+        its in the middle of loading) and our system fallback code which
+        created fonts when we fall off the end of the fallback list. Because
+        of this, we were doing two things wrong:
+
+        1. When we started downloading a font, we would try to use a fallback
+        font. However, if the fallback font didn't suppor the character we're
+        trying to render, we would just bail and draw .notdef
+        2. Even if we continued down the fallback list, and fell of the end,
+        we wouldn't realize that the system fallback font should also be drawn
+        as invisible.
+
+        This patch solves these two problems by:
+        1. Performing a search to find the best (local) fallback font with
+        which to fall systemFallbackFontForCharacter(). This way, if you say
+        "font-family: 'RemoteFont', 'Helvetica'" we will use Helvetica as
+        the lookup to ask the system to search for.
+        2. Give the Font class an accessor which can create a duplicate, but
+        invisible font. Give FontCascadeFonts::glyphDataForVariant() the
+        correct tracking to know when to use this invisible duplicate.
+
+        Tests: fast/text/font-loading-system-fallback.html
+               http/tests/webfont/font-loading-system-fallback-visibility.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::invisibleFont):
+        * platform/graphics/Font.h:
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::findBestFallbackFont):
+        (WebCore::FontCascadeFonts::glyphDataForSystemFallback):
+        (WebCore::FontCascadeFonts::glyphDataForVariant):
+        * platform/graphics/FontCascadeFonts.h:
+
 2017-07-06  Chris Dumez  <cdumez@apple.com>
 
         FileMonitor should not be ref counted

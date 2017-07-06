@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.internals) {
+    internals.settings.setWebFontsAlwaysFallBack(true);
+    internals.clearMemoryCache();
+    internals.invalidateFontCache();
+}
+</script>
+<style>
+@font-face {
+    font-family: "WebFont";
+    src: url("../../resources/Ahem.ttf") format("truetype");
+}
+</style>
+</head>
+<body>
+This test makes sure that system fallback fonts (occuring when falling off the end of the fallback list) during loading are chosen from the best local font possible. The test passes if the Japanese character below is drawn in a font which matches with Helvetica's design.
+<div style="font: 48px 'WebFont', 'Helvetica';">&#x306E;<div style="display: inline-block; width: 1px; height: 200px;"></div></div>
+</body>
+</html>

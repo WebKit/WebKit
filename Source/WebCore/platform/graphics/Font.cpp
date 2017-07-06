@@ -261,47 +261,59 @@ GlyphData Font::glyphDataForCharacter(UChar32 character) const
     return page->glyphDataForCharacter(character);
 }
 
-const Font& Font::verticalRightOrientationFont() const
+auto Font::ensureDerivedFontData() const -> DerivedFonts&
 {
     if (!m_derivedFontData)
         m_derivedFontData = std::make_unique<DerivedFonts>();
-    if (!m_derivedFontData->verticalRightOrientation) {
+    return *m_derivedFontData;
+}
+
+const Font& Font::verticalRightOrientationFont() const
+{
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.verticalRightOrientationFont) {
         auto verticalRightPlatformData = FontPlatformData::cloneWithOrientation(m_platformData, Horizontal);
-        m_derivedFontData->verticalRightOrientation = create(verticalRightPlatformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
+        derivedFontData.verticalRightOrientationFont = create(verticalRightPlatformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
     }
-    ASSERT(m_derivedFontData->verticalRightOrientation != this);
-    return *m_derivedFontData->verticalRightOrientation;
+    ASSERT(derivedFontData.verticalRightOrientationFont != this);
+    return *derivedFontData.verticalRightOrientationFont;
 }
 
 const Font& Font::uprightOrientationFont() const
 {
-    if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>();
-    if (!m_derivedFontData->uprightOrientation)
-        m_derivedFontData->uprightOrientation = create(m_platformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
-    ASSERT(m_derivedFontData->uprightOrientation != this);
-    return *m_derivedFontData->uprightOrientation;
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.uprightOrientationFont)
+        derivedFontData.uprightOrientationFont = create(m_platformData, origin(), Interstitial::No, Visibility::Visible, OrientationFallback::Yes);
+    ASSERT(derivedFontData.uprightOrientationFont != this);
+    return *derivedFontData.uprightOrientationFont;
+}
+
+const Font& Font::invisibleFont() const
+{
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.invisibleFont)
+        derivedFontData.invisibleFont = create(m_platformData, origin(), Interstitial::Yes, Visibility::Invisible);
+    ASSERT(derivedFontData.invisibleFont != this);
+    return *derivedFontData.invisibleFont;
 }
 
 const Font* Font::smallCapsFont(const FontDescription& fontDescription) const
 {
-    if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>();
-    if (!m_derivedFontData->smallCaps)
-        m_derivedFontData->smallCaps = createScaledFont(fontDescription, smallCapsFontSizeMultiplier);
-    ASSERT(m_derivedFontData->smallCaps != this);
-    return m_derivedFontData->smallCaps.get();
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.smallCapsFont)
+        derivedFontData.smallCapsFont = createScaledFont(fontDescription, smallCapsFontSizeMultiplier);
+    ASSERT(derivedFontData.smallCapsFont != this);
+    return derivedFontData.smallCapsFont.get();
 }
 
 const Font& Font::noSynthesizableFeaturesFont() const
 {
 #if PLATFORM(COCOA)
-    if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>();
-    if (!m_derivedFontData->noSynthesizableFeatures)
-        m_derivedFontData->noSynthesizableFeatures = createFontWithoutSynthesizableFeatures();
-    ASSERT(m_derivedFontData->noSynthesizableFeatures != this);
-    return *m_derivedFontData->noSynthesizableFeatures;
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.noSynthesizableFeaturesFont)
+        derivedFontData.noSynthesizableFeaturesFont = createFontWithoutSynthesizableFeatures();
+    ASSERT(derivedFontData.noSynthesizableFeaturesFont != this);
+    return *derivedFontData.noSynthesizableFeaturesFont;
 #else
     return *this;
 #endif
@@ -309,24 +321,22 @@ const Font& Font::noSynthesizableFeaturesFont() const
 
 const Font* Font::emphasisMarkFont(const FontDescription& fontDescription) const
 {
-    if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>();
-    if (!m_derivedFontData->emphasisMark)
-        m_derivedFontData->emphasisMark = createScaledFont(fontDescription, emphasisMarkFontSizeMultiplier);
-    ASSERT(m_derivedFontData->emphasisMark != this);
-    return m_derivedFontData->emphasisMark.get();
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.emphasisMarkFont)
+        derivedFontData.emphasisMarkFont = createScaledFont(fontDescription, emphasisMarkFontSizeMultiplier);
+    ASSERT(derivedFontData.emphasisMarkFont != this);
+    return derivedFontData.emphasisMarkFont.get();
 }
 
 const Font& Font::brokenIdeographFont() const
 {
-    if (!m_derivedFontData)
-        m_derivedFontData = std::make_unique<DerivedFonts>();
-    if (!m_derivedFontData->brokenIdeograph) {
-        m_derivedFontData->brokenIdeograph = create(m_platformData, origin(), Interstitial::No);
-        m_derivedFontData->brokenIdeograph->m_isBrokenIdeographFallback = true;
+    DerivedFonts& derivedFontData = ensureDerivedFontData();
+    if (!derivedFontData.brokenIdeographFont) {
+        derivedFontData.brokenIdeographFont = create(m_platformData, origin(), Interstitial::No);
+        derivedFontData.brokenIdeographFont->m_isBrokenIdeographFallback = true;
     }
-    ASSERT(m_derivedFontData->brokenIdeograph != this);
-    return *m_derivedFontData->brokenIdeograph;
+    ASSERT(derivedFontData.brokenIdeographFont != this);
+    return *derivedFontData.brokenIdeographFont;
 }
 
 #ifndef NDEBUG
