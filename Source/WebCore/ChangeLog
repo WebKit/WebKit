@@ -1,3 +1,16 @@
+2017-07-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSFontStyleValue::isItalic seems a bit bogus.
+        https://bugs.webkit.org/show_bug.cgi?id=174149
+
+        Reviewed by Tim Horton.
+
+        Simple typo.
+
+        Test: editing/execCommand/italicizeByCharacter-normal.html
+
+        * css/CSSFontStyleValue.h:
+
 2017-07-05  Brady Eidson  <beidson@apple.com>
 
         Allow navigations in subframes to get a ShouldOpenExternalURLsPolicy of "ShouldAllow".

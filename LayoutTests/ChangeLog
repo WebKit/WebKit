@@ -1,3 +1,13 @@
+2017-07-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        CSSFontStyleValue::isItalic seems a bit bogus.
+        https://bugs.webkit.org/show_bug.cgi?id=174149
+
+        Reviewed by Tim Horton.
+
+        * editing/execCommand/italicizeByCharacter-normal-expected.txt: Added.
+        * editing/execCommand/italicizeByCharacter-normal.html: Added.
+
 2017-07-05  Matt Lewis  <jlewis3@apple.com>
 
         Skipped webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html.
