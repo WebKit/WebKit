@@ -1,3 +1,16 @@
+2017-07-06  David Kilzer  <ddkilzer@apple.com>
+
+        Add release assert to explore crash for <rdar://problem/32908525>
+
+        Reviewed by Brady Eidson.
+
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase): Add
+        release assert to catch cases when the IDBBackingStore is not
+        deleted before the UniqueIDBDatabase is destroyed.  The
+        IDBBackingStore should always be released on the database
+        thread.
+
 2017-07-06  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219178.

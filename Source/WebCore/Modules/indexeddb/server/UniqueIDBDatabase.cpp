@@ -66,6 +66,7 @@ UniqueIDBDatabase::UniqueIDBDatabase(IDBServer& server, const IDBDatabaseIdentif
 UniqueIDBDatabase::~UniqueIDBDatabase()
 {
     LOG(IndexedDB, "UniqueIDBDatabase::~UniqueIDBDatabase() (%p) %s", this, m_identifier.debugString().utf8().data());
+    RELEASE_ASSERT(!m_backingStore);
     ASSERT(isMainThread());
     ASSERT(!hasAnyPendingCallbacks());
     ASSERT(!hasUnfinishedTransactions());
