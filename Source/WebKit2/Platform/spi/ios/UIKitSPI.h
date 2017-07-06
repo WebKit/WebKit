@@ -125,15 +125,6 @@ typedef NS_ENUM(NSInteger, UIPreviewItemType) {
 @end
 #endif
 
-#if ENABLE(DRAG_SUPPORT)
-typedef NS_ENUM(NSInteger, _UIDataOwner) {
-    _UIDataOwnerUndefined,
-    _UIDataOwnerUser,
-    _UIDataOwnerEnterprise,
-    _UIDataOwnerShared,
-};
-#endif
-
 @interface UIAlertController ()
 - (void)_addActionWithTitle:(NSString *)title style:(UIAlertActionStyle)style handler:(void (^)(void))handler;
 - (void)_addActionWithTitle:(NSString *)title style:(UIAlertActionStyle)style handler:(void (^)(void))handler shouldDismissHandler:(BOOL (^)(void))shouldDismissHandler;
