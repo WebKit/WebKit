@@ -1,3 +1,24 @@
+2017-07-05  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION: Stack overflow in RenderBlockFlow::layoutBlock after increasing the font size to max in some RTL vertical books.
+        https://bugs.webkit.org/show_bug.cgi?id=174144
+        <rdar://problem/32781038>
+
+        Reviewed by Simon Fraser.
+
+        We set the start/end margin on the ruby renderer to support overhanging content. The margins ensure that
+        adjacent boxes on the line are placed properly respecting the overhanging content.
+        The line breaking algorithm also takes this value into account as it affects the line's available width.
+        We need to reset this value before laying out the lines, otherwise we might end up using this value on the line twice;
+        first as the renderer's margins (as the result of the previous layout) and second as the renderer's overhanging value.
+        Since this is not strictly part of the renderer's layout context (i.e. we set them during the line layout and not at
+        RenderRubyRun::layout) we can't rely on the ruby's layout logic to reset them.
+
+        Test: fast/ruby/ruby-overhang-margin-crash.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+
 2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Upgrade GCC baseline

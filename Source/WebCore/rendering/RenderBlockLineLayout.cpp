@@ -1728,6 +1728,12 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
                     layoutState.floatList().append(FloatWithRect::create(box));
                 else if (isFullLayout || box.needsLayout()) {
                     // Replaced element.
+                    if (isFullLayout && is<RenderRubyRun>(box)) {
+                        // FIXME: This resets the overhanging margins that we set during line layout (see computeInlineDirectionPositionsForSegment)
+                        // Find a more suitable place for this.
+                        setMarginStartForChild(box, 0);
+                        setMarginEndForChild(box, 0);
+                    }
                     box.dirtyLineBoxes(isFullLayout);
                     if (!o.isAnonymousInlineBlock()) {
                         if (isFullLayout)
