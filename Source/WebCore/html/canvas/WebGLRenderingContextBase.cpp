@@ -731,7 +731,8 @@ bool WebGLRenderingContextBase::clearIfComposited(GC3Dbitfield mask)
         return false;
 
     if (!m_context->layerComposited() || m_layerCleared
-        || m_attributes.preserveDrawingBuffer || (mask && m_framebufferBinding))
+        || m_attributes.preserveDrawingBuffer || (mask && m_framebufferBinding)
+        || m_preventBufferClearForInspector)
         return false;
 
     auto contextAttributes = getContextAttributes();

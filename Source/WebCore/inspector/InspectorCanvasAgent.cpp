@@ -149,10 +149,25 @@ void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String
             return;
         }
         *content = result.releaseReturnValue();
-    } else {
-        // FIXME: <https://webkit.org/b/173569> Web Inspector: Support getting the content of WebGL/WebGL2/WebGPU contexts
-        errorString = ASCIILiteral("Unsupported canvas context type");
     }
+#if ENABLE(WEBGL)
+    else if (is<WebGLRenderingContextBase>(context)) {
+        WebGLRenderingContextBase* gl = downcast<WebGLRenderingContextBase>(context);
+
+        gl->setPreventBufferClearForInspector(true);
+        ExceptionOr<String> result = canvasEntry->element->toDataURL(ASCIILiteral("image/png"));
+        gl->setPreventBufferClearForInspector(false);
+
+        if (result.hasException()) {
+            errorString = result.releaseException().releaseMessage();
+            return;
+        }
+        *content = result.releaseReturnValue();
+    }
+#endif
+    // FIXME: <https://webkit.org/b/173621> Web Inspector: Support getting the content of WebGPU contexts
+    else
+        errorString = ASCIILiteral("Unsupported canvas context type");
 }
 
 static JSC::JSValue contextAsScriptValue(JSC::ExecState& state, CanvasRenderingContext* context)

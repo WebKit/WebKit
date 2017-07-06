@@ -210,6 +210,9 @@ public:
     bool isPreservingDrawingBuffer() const { return m_attributes.preserveDrawingBuffer; }
     void setPreserveDrawingBuffer(bool value) { m_attributes.preserveDrawingBuffer = value; }
 
+    bool preventBufferClearForInspector() const { return m_preventBufferClearForInspector; }
+    void setPreventBufferClearForInspector(bool value) { m_preventBufferClearForInspector = value; }
+
     virtual void hint(GC3Denum target, GC3Denum mode) = 0;
     GC3Dboolean isBuffer(WebGLBuffer*);
     bool isContextLost() const;
@@ -569,6 +572,8 @@ protected:
 
     bool m_synthesizedErrorsToConsole { true };
     int m_numGLErrorsToConsoleAllowed;
+
+    bool m_preventBufferClearForInspector { false };
 
     // A WebGLRenderingContext can be created in a state where it appears as
     // a valid and active context, but will not execute any important operations

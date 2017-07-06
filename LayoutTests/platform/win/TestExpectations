@@ -1913,6 +1913,8 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 inspector/canvas/create-context-webgl.html [ Skip ]
 inspector/canvas/create-context-webgl2.html [ Skip ]
+inspector/canvas/requestContent-webgl.html [ Skip ]
+inspector/canvas/requestContent-webgl2.html [ Skip ]
 inspector/canvas/resolveCanvasContext-webgl.html [ Skip ]
 inspector/canvas/resolveCanvasContext-webgl2.html [ Skip ]
 ################################################################################

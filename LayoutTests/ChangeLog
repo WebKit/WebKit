@@ -1,3 +1,24 @@
+2017-07-06  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Support getting the content of WebGL/WebGL2 contexts
+        https://bugs.webkit.org/show_bug.cgi?id=173569
+        <rdar://problem/33112420>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/requestContent-2d-expected.txt: Added.
+        * inspector/canvas/requestContent-2d.html: Added.
+        * inspector/canvas/requestContent-webgl-expected.txt: Added.
+        * inspector/canvas/requestContent-webgl.html: Added.
+        * inspector/canvas/requestContent-webgl2-expected.txt: Added.
+        * inspector/canvas/requestContent-webgl2.html: Added.
+        * inspector/canvas/requestContent-expected.txt: Removed.
+        * inspector/canvas/requestContent.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        Split the existing canvas content tests into one for each context type. This allows
+        platforms that don't support certain context types to ignore just those tests (e.g. WebGL2).
+
 2017-07-06  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Layout test gardening.
