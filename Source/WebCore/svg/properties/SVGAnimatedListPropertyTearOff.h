@@ -73,8 +73,6 @@ public:
             m_baseVal = nullptr;
         else if (&property == m_animVal)
             m_animVal = nullptr;
-        if (!m_baseVal && !m_animVal)
-            detachListWrappers(m_values.size());
     }
 
     int findItem(SVGProperty* property)

@@ -1,5 +1,18 @@
 2017-07-06  Matt Lewis  <jlewis3@apple.com>
 
+        Unreviewed, rolling out r219193.
+
+        The tests added with this revision were extreamly flaky on all
+        platforms.
+
+        Reverted changeset:
+
+        "[SVG] Leak in SVGAnimatedListPropertyTearOff"
+        https://bugs.webkit.org/show_bug.cgi?id=172545
+        http://trac.webkit.org/changeset/219193
+
+2017-07-06  Matt Lewis  <jlewis3@apple.com>
+
         Marked js/slow-stress/Int32Array-alloc-huge.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=173010
 
