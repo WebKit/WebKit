@@ -253,7 +253,7 @@ NEVER_INLINE void WordLockBase::unlockSlow()
     // We do this carefully because this may run either before or during the parkingLock critical
     // section in lockSlow().
     {
-        std::unique_lock<std::mutex> locker(queueHead->parkingLock);
+        std::lock_guard<std::mutex> locker(queueHead->parkingLock);
         queueHead->shouldPark = false;
     }
     // Doesn't matter if we notify_all() or notify_one() here since the only thread that could be

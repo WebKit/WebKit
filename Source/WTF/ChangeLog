@@ -1,5 +1,37 @@
 2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Use std::lock_guard instead of std::unique_lock if move semantics and try_lock is not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=174148
+
+        Reviewed by Mark Lam.
+
+        It is not necessary to use std::unique_lock if we do not use additional features compared to std::lock_guard.
+
+        (WTF::ThreadHolder::get):
+        (WTF::ThreadHolder::initialize):
+        (WTF::ThreadHolder::destruct):
+        * wtf/Threading.cpp:
+        (WTF::Thread::didExit):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::signal):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        (WTF::Thread::establish):
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::changePriority):
+        (WTF::Thread::waitForCompletion):
+        (WTF::Thread::detach):
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        (WTF::Thread::establish):
+        * wtf/WordLock.cpp:
+        (WTF::WordLockBase::unlockSlow):
+
+2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Clean up StringStatics.cpp by using LazyNeverDestroyed<> for Atoms
         https://bugs.webkit.org/show_bug.cgi?id=174150
 

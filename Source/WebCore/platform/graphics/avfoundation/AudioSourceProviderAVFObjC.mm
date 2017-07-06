@@ -93,7 +93,7 @@ AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
 {
     setClient(nullptr);
     if (m_tapStorage) {
-        std::unique_lock<Lock> lock(m_tapStorage->mutex);
+        std::lock_guard<Lock> lock(m_tapStorage->mutex);
         m_tapStorage->_this = nullptr;
         m_tapStorage = nullptr;
     }

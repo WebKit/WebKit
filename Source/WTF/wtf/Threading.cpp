@@ -132,7 +132,7 @@ void Thread::initialize()
 
 void Thread::didExit()
 {
-    std::unique_lock<std::mutex> locker(m_mutex);
+    std::lock_guard<std::mutex> locker(m_mutex);
     m_didExit = true;
 }
 

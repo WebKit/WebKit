@@ -66,14 +66,14 @@ ThreadHolder* ThreadHolder::current()
     }
 
     // After FLS is destroyed, this map offers the value until the second thread exit callback is called.
-    std::unique_lock<std::mutex> locker(threadMapMutex());
+    std::lock_guard<std::mutex> locker(threadMapMutex());
     return threadMap().get(currentThread());
 }
 
 // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
 RefPtr<Thread> ThreadHolder::get(ThreadIdentifier id)
 {
-    std::unique_lock<std::mutex> locker(threadMapMutex());
+    std::lock_guard<std::mutex> locker(threadMapMutex());
     ThreadHolder* holder = threadMap().get(id);
     if (holder)
         return &holder->thread();
@@ -93,7 +93,7 @@ void ThreadHolder::initialize(Thread& thread, ThreadIdentifier id)
 
         // Since Thread is not established yet, we use the given id instead of thread->id().
         {
-            std::unique_lock<std::mutex> locker(threadMapMutex());
+            std::lock_guard<std::mutex> locker(threadMapMutex());
             threadMap().add(id, holder);
         }
     }
@@ -127,7 +127,7 @@ void ThreadHolder::destruct(void* data)
 
     if (holder->m_isDestroyedOnce) {
         {
-            std::unique_lock<std::mutex> locker(threadMapMutex());
+            std::lock_guard<std::mutex> locker(threadMapMutex());
             ASSERT(threadMap().contains(holder->m_thread->id()));
             threadMap().remove(holder->m_thread->id());
         }
