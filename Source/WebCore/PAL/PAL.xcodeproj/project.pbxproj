@@ -25,6 +25,9 @@
 		1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0521E31C44100725F18 /* CryptoDigest.h */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
+		A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = A30D411E1F0DD0EA00B71954 /* KillRing.h */; };
+		A30D41221F0DD0EA00B71954 /* KillRingNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */; };
+		A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A30D41241F0DD12D00B71954 /* KillRingMac.mm */; };
 		A3788E981F05B6CE00679425 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = A3788E971F05B6CE00679425 /* Sound.h */; };
 		A3788E9C1F05B78200679425 /* SoundNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3788E9B1F05B78200679425 /* SoundNone.cpp */; };
 		A3788E9E1F05B78E00679425 /* SoundMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3788E9D1F05B78E00679425 /* SoundMac.mm */; };
@@ -51,6 +54,9 @@
 		1C09D0631E31EC3100725F18 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		1C67CEA11E32EDA800F80F2E /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		1C67CEA21E32EE2600F80F2E /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KillRing.h; path = text/KillRing.h; sourceTree = "<group>"; };
+		A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KillRingNone.cpp; path = text/KillRingNone.cpp; sourceTree = "<group>"; };
+		A30D41241F0DD12D00B71954 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = KillRingMac.mm; path = text/mac/KillRingMac.mm; sourceTree = "<group>"; };
 		A3788E971F05B6CE00679425 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sound.h; path = system/Sound.h; sourceTree = "<group>"; };
 		A3788E9B1F05B78200679425 /* SoundNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundNone.cpp; path = system/SoundNone.cpp; sourceTree = "<group>"; };
 		A3788E9D1F05B78E00679425 /* SoundMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SoundMac.mm; path = system/mac/SoundMac.mm; sourceTree = "<group>"; };
@@ -91,6 +97,7 @@
 			children = (
 				1C09D0511E31C41200725F18 /* crypto */,
 				A3788E9F1F05B7CE00679425 /* system */,
+				A30D411D1F0DD0AC00B71954 /* text */,
 				0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */,
 			);
 			path = pal;
@@ -126,6 +133,24 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		A30D411D1F0DD0AC00B71954 /* text */ = {
+			isa = PBXGroup;
+			children = (
+				A30D41231F0DD10500B71954 /* mac */,
+				A30D411E1F0DD0EA00B71954 /* KillRing.h */,
+				A30D411F1F0DD0EA00B71954 /* KillRingNone.cpp */,
+			);
+			name = text;
+			sourceTree = "<group>";
+		};
+		A30D41231F0DD10500B71954 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				A30D41241F0DD12D00B71954 /* KillRingMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
 		A3788E9F1F05B7CE00679425 /* system */ = {
 			isa = PBXGroup;
 			children = (
@@ -155,6 +180,7 @@
 				1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */,
 				A3788E981F05B6CE00679425 /* Sound.h in Headers */,
 				0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */,
+				A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,8 +270,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
+				A30D41221F0DD0EA00B71954 /* KillRingNone.cpp in Sources */,
 				A3788E9E1F05B78E00679425 /* SoundMac.mm in Sources */,
 				A3788E9C1F05B78200679425 /* SoundNone.cpp in Sources */,
+				A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

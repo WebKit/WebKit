@@ -63,7 +63,6 @@ list(APPEND WebCore_SOURCES
     page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
 
     platform/Cursor.cpp
-    platform/KillRingNone.cpp
     platform/PlatformStrategies.cpp
     platform/Theme.cpp
 

@@ -23,67 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "KillRing.h"
+#include "config.h"
+#include "KillRing.h"
 
-namespace WebCore {
+namespace PAL {
 
-extern "C" {
-
-// Kill ring calls. Would be better to use NSKillRing.h, but that's not available as API or SPI.
-
-void _NSInitializeKillRing();
-void _NSAppendToKillRing(NSString *);
-void _NSPrependToKillRing(NSString *);
-NSString *_NSYankFromKillRing();
-void _NSNewKillRingSequence();
-void _NSSetKillRingToYankedState();
-void _NSResetKillRingOperationFlag();
-
+void KillRing::append(const String&)
+{
 }
 
-static void initializeKillRingIfNeeded()
+void KillRing::prepend(const String&)
 {
-    static bool initializedKillRing = false;
-    if (!initializedKillRing) {
-        initializedKillRing = true;
-        _NSInitializeKillRing();
-    }
-}
-
-void KillRing::append(const String& string)
-{
-    initializeKillRingIfNeeded();
-    // Necessary to prevent an implicit new sequence if the previous command was NSPrependToKillRing.
-    _NSResetKillRingOperationFlag();
-    _NSAppendToKillRing(string);
-}
-
-void KillRing::prepend(const String& string)
-{
-    initializeKillRingIfNeeded();
-    // Necessary to prevent an implicit new sequence if the previous command was NSAppendToKillRing.
-    _NSResetKillRingOperationFlag();
-    _NSPrependToKillRing(string);
 }
 
 String KillRing::yank()
 {
-    initializeKillRingIfNeeded();
-    return _NSYankFromKillRing();
+    return String();
 }
 
 void KillRing::startNewSequence()
 {
-    initializeKillRingIfNeeded();
-    _NSNewKillRingSequence();
 }
 
 void KillRing::setToYankedState()
 {
-    initializeKillRingIfNeeded();
-    _NSSetKillRingToYankedState();
 }
 
-} // namespace WebCore
-
+} // namespace PAL

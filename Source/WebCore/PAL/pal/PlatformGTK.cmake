@@ -4,6 +4,8 @@ list(APPEND PAL_SOURCES
     crypto/tasn1/Utilities.cpp
 
     system/gtk/SoundGtk.cpp
+
+    text/KillRingNone.cpp
 )
 
 list(APPEND PAL_SYSTEM_INCLUDE_DIRECTORIES

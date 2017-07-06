@@ -1,3 +1,23 @@
+2017-07-06  Don Olmstead  <don.olmstead@sony.com>
+
+        [PAL] Move KillRing into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=173900
+
+        Reviewed by Myles C. Maxfield.
+
+        No new tests. No change in functionality.
+
+        * Configurations/PAL.xcconfig:
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/CMakeLists.txt:
+        * pal/PlatformGTK.cmake:
+        * pal/PlatformMac.cmake:
+        * pal/PlatformWPE.cmake:
+        * pal/PlatformWin.cmake:
+        * pal/text/KillRing.h: Renamed from Source/WebCore/platform/KillRing.h.
+        * pal/text/KillRingNone.cpp: Renamed from Source/WebCore/platform/KillRingNone.cpp.
+        * pal/text/mac/KillRingMac.mm: Renamed from Source/WebCore/platform/mac/KillRingMac.mm.
+
 2017-07-05  Jonathan Bedard  <jbedard@apple.com>
 
         Add WebKitPrivateFrameworkStubs for iOS 11

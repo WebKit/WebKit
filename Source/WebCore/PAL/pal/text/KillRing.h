@@ -23,23 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KillRing_h
-#define KillRing_h
+#pragma once
 
 #include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace PAL {
 
 class KillRing {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void append(const String&);
-    void prepend(const String&);
-    String yank();
-    void startNewSequence();
-    void setToYankedState();
+    PAL_EXPORT void append(const String&);
+    PAL_EXPORT void prepend(const String&);
+    PAL_EXPORT String yank();
+    PAL_EXPORT void startNewSequence();
+    PAL_EXPORT void setToYankedState();
 };
 
-} // namespace WebCore
-
-#endif // KillRing_h
+} // namespace PAL

@@ -517,7 +517,6 @@ list(APPEND WebCore_SOURCES
     platform/mac/EventLoopMac.mm
     platform/mac/FileSystemMac.mm
     platform/mac/KeyEventMac.mm
-    platform/mac/KillRingMac.mm
     platform/mac/LocalCurrentGraphicsContext.mm
     platform/mac/LoggingMac.mm
     platform/mac/MediaRemoteSoftLink.cpp

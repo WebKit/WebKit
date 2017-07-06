@@ -65,7 +65,6 @@
 #include "InsertListCommand.h"
 #include "InsertTextCommand.h"
 #include "KeyboardEvent.h"
-#include "KillRing.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "ModifySelectionListLevel.h"
@@ -98,6 +97,7 @@
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <pal/system/Sound.h>
+#include <pal/text/KillRing.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)
@@ -1043,7 +1043,7 @@ void Editor::reappliedEditing(EditCommandComposition& composition)
 
 Editor::Editor(Frame& frame)
     : m_frame(frame)
-    , m_killRing(std::make_unique<KillRing>())
+    , m_killRing(std::make_unique<PAL::KillRing>())
     , m_spellChecker(std::make_unique<SpellChecker>(frame))
     , m_alternativeTextController(std::make_unique<AlternativeTextController>(frame))
     , m_editorUIUpdateTimer(*this, &Editor::editorUIUpdateTimerFired)

@@ -46,7 +46,6 @@
 #include "HTMLNames.h"
 #include "IndentOutdentCommand.h"
 #include "InsertListCommand.h"
-#include "KillRing.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "RenderBox.h"
@@ -60,6 +59,7 @@
 #include "UserTypingGestureIndicator.h"
 #include "markup.h"
 #include <pal/system/Sound.h>
+#include <pal/text/KillRing.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

@@ -1813,7 +1813,6 @@
 		41F54F8E1C50C50C00338488 /* FetchRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F54F871C50C4F600338488 /* FetchRequest.cpp */; };
 		41FA303E1316C29C00C0BFC5 /* RenderMediaControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */; };
 		41FA303F1316C29C00C0BFC5 /* RenderMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */; };
-		4306E4E614955543007F17AC /* KillRingNone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4306E4E514955543007F17AC /* KillRingNone.cpp */; };
 		43107BE218CC19DE00CC18E8 /* SelectorPseudoTypeMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 43107BE118CC19DE00CC18E8 /* SelectorPseudoTypeMap.h */; };
 		43142E7A13B1E97700F1C871 /* SVGAnimatedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 43142E7913B1E97700F1C871 /* SVGAnimatedRect.cpp */; };
 		431A2F9C13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 431A2F9A13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h */; };
@@ -2477,8 +2476,6 @@
 		51FB67DB1AE6B82B00D06C5A /* ContentExtensionStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FB67D91AE6B5E400D06C5A /* ContentExtensionStyleSheet.cpp */; };
 		51FB67DC1AE6B82F00D06C5A /* ContentExtensionStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 51FB67DA1AE6B5E400D06C5A /* ContentExtensionStyleSheet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52131E5B1C4F15760033F802 /* WebVideoFullscreenInterfaceMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52131E5A1C4F15610033F802 /* WebVideoFullscreenInterfaceMac.mm */; };
-		521D46F611AEC98100514613 /* KillRingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 521D46F511AEC98100514613 /* KillRingMac.mm */; };
-		521D46F811AEC9B100514613 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = 521D46F711AEC9B100514613 /* KillRing.h */; };
 		526724F31CB2FEAD0075974D /* TextTrackRepresentationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */; };
 		52B0D4BE1C57FD1E0077CE53 /* PlatformView.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B0D4C01C57FD660077CE53 /* WebVideoFullscreenChangeObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B0D4BF1C57FD660077CE53 /* WebVideoFullscreenChangeObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9522,7 +9519,6 @@
 		41F54F891C50C4F600338488 /* FetchRequest.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FetchRequest.idl; sourceTree = "<group>"; };
 		41FA303C1316C29C00C0BFC5 /* RenderMediaControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMediaControls.cpp; sourceTree = "<group>"; };
 		41FA303D1316C29C00C0BFC5 /* RenderMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMediaControls.h; sourceTree = "<group>"; };
-		4306E4E514955543007F17AC /* KillRingNone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KillRingNone.cpp; sourceTree = "<group>"; };
 		43107BE118CC19DE00CC18E8 /* SelectorPseudoTypeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorPseudoTypeMap.h; sourceTree = "<group>"; };
 		43142E7913B1E97700F1C871 /* SVGAnimatedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedRect.cpp; sourceTree = "<group>"; };
 		431A2F9A13B6F2B0007791E4 /* SVGAnimatedNumberOptionalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedNumberOptionalNumber.h; sourceTree = "<group>"; };
@@ -10265,8 +10261,6 @@
 		51FB67D91AE6B5E400D06C5A /* ContentExtensionStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionStyleSheet.cpp; sourceTree = "<group>"; };
 		51FB67DA1AE6B5E400D06C5A /* ContentExtensionStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionStyleSheet.h; sourceTree = "<group>"; };
 		52131E5A1C4F15610033F802 /* WebVideoFullscreenInterfaceMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenInterfaceMac.mm; sourceTree = "<group>"; };
-		521D46F511AEC98100514613 /* KillRingMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KillRingMac.mm; sourceTree = "<group>"; };
-		521D46F711AEC9B100514613 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
 		526724F11CB2FDF60075974D /* TextTrackRepresentationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextTrackRepresentationCocoa.mm; sourceTree = "<group>"; };
 		526724F21CB2FDF60075974D /* TextTrackRepresentationCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationCocoa.h; sourceTree = "<group>"; };
 		52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformView.h; sourceTree = "<group>"; };
@@ -19145,7 +19139,6 @@
 				1CA19E030DC255950065A994 /* EventLoopMac.mm */,
 				A1CC11621E493D0100EFA69C /* FileSystemMac.mm */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
-				521D46F511AEC98100514613 /* KillRingMac.mm */,
 				06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */,
 				06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */,
 				1402645D0AFDC19B005919E2 /* LoggingMac.mm */,
@@ -24142,8 +24135,6 @@
 				862F129F18C1DCE4005C54AF /* HysteresisActivity.h */,
 				1AE00D57182DAC8D00087DD7 /* KeyedCoding.h */,
 				E15FF7D418C9553800FE4C87 /* KeypressCommand.h */,
-				521D46F711AEC9B100514613 /* KillRing.h */,
-				4306E4E514955543007F17AC /* KillRingNone.cpp */,
 				E18772F0126E2629003DD586 /* Language.cpp */,
 				85EC9AF90A71A2C600EEEAED /* Language.h */,
 				141DC0471648348F00371E5A /* LayoutUnit.h */,
@@ -28604,7 +28595,6 @@
 				316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */,
 				BC5EBA110E823E4700B25965 /* KeyframeList.h in Headers */,
 				E15FF7D518C9553800FE4C87 /* KeypressCommand.h in Headers */,
-				521D46F811AEC9B100514613 /* KillRing.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
 				A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */,
 				85EC9AFB0A71A2C600EEEAED /* Language.h in Headers */,
@@ -32656,8 +32646,6 @@
 				316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */,
 				12A253DB1C8FF7DC00C22295 /* KeyframeEffect.cpp in Sources */,
 				BC5EBA100E823E4700B25965 /* KeyframeList.cpp in Sources */,
-				521D46F611AEC98100514613 /* KillRingMac.mm in Sources */,
-				4306E4E614955543007F17AC /* KillRingNone.cpp in Sources */,
 				450CEBF015073BBE002BB149 /* LabelableElement.cpp in Sources */,
 				A456FA2611AD4A830020B420 /* LabelsNodeList.cpp in Sources */,
 				E18772F1126E2629003DD586 /* Language.cpp in Sources */,

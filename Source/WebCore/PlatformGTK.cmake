@@ -62,7 +62,6 @@ list(APPEND WebCore_SOURCES
     page/linux/ResourceUsageOverlayLinux.cpp
     page/linux/ResourceUsageThreadLinux.cpp
 
-    platform/KillRingNone.cpp
     platform/ScrollAnimationKinetic.cpp
     platform/StaticPasteboard.cpp
     platform/UserAgentQuirks.cpp

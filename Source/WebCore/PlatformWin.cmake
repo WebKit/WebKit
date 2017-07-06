@@ -58,7 +58,6 @@ list(APPEND WebCore_SOURCES
     page/win/FrameWin.cpp
 
     platform/Cursor.cpp
-    platform/KillRingNone.cpp
     platform/LocalizedStrings.cpp
     platform/StaticPasteboard.cpp
 

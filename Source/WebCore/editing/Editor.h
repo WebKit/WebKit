@@ -49,6 +49,10 @@ OBJC_CLASS NSDictionary;
 OBJC_CLASS NSMutableDictionary;
 #endif
 
+namespace PAL {
+class KillRing;
+}
+
 namespace WebCore {
 
 class AlternativeTextController;
@@ -332,7 +336,7 @@ public:
 
     VisibleSelection selectionForCommand(Event*);
 
-    KillRing& killRing() const { return *m_killRing; }
+    PAL::KillRing& killRing() const { return *m_killRing; }
     SpellChecker& spellChecker() const { return *m_spellChecker; }
 
     EditingBehavior behavior() const;
@@ -536,7 +540,7 @@ private:
     bool m_ignoreSelectionChanges { false };
     bool m_shouldStartNewKillRingSequence { false };
     bool m_shouldStyleWithCSS { false };
-    const std::unique_ptr<KillRing> m_killRing;
+    const std::unique_ptr<PAL::KillRing> m_killRing;
     const std::unique_ptr<SpellChecker> m_spellChecker;
     const std::unique_ptr<AlternativeTextController> m_alternativeTextController;
     VisibleSelection m_mark;
