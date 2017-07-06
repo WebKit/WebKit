@@ -33,6 +33,7 @@
 #import "UIKitSPI.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
+#import <UIKit/UIApplicationSceneConstants.h>
 
 SOFT_LINK_FRAMEWORK(UIKit);
 SOFT_LINK_CLASS(UIKit, UIApplication);

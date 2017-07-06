@@ -1,3 +1,10 @@
+2017-07-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix iOS build after r219177.
+
+        * page/ios/UserAgentIOS.mm:
+        * platform/spi/ios/UIKitSPI.h:
+
 2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use std::lock_guard instead of std::unique_lock if move semantics and try_lock is not necessary

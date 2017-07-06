@@ -34,6 +34,10 @@
 #import <UIKit/UIItemProvider_Private.h>
 #endif
 
+@interface UIApplication ()
++ (UIApplicationSceneClassicMode)_classicMode;
+@end
+
 #else
 
 #import <UIKit/UIKit.h>
