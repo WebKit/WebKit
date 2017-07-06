@@ -25,6 +25,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <UIKit/UIApplicationSceneConstants.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIInterface_Private.h>
 #import <UIKit/UIScreen_Private.h>
