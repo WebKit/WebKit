@@ -1,3 +1,15 @@
+2017-07-06  Charlie Turner  <cturner@igalia.com>
+        [GStreamer] vid.me videos do not play
+        https://bugs.webkit.org/show_bug.cgi?id=172240
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Build httpsoupsrc again for use in adaptive streaming pipelines, and
+        have the existing libsoup build against GNOME to avoid header drift
+        against GStreamer's linked Soup library.
+
+        * gtk/jhbuild.modules:
+
 2017-07-05  Don Olmstead  <don.olmstead@sony.com>
 
         [WTF] Move SoftLinking.h into WTF
