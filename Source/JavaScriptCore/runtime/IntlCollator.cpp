@@ -39,10 +39,14 @@
 #include "ObjectConstructor.h"
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
+#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
+#endif
 #include <unicode/ucol.h>
+#if COMPILER(CLANG)
 #pragma clang diagnostic pop
+#endif
 #include <wtf/unicode/Collator.h>
 
 namespace JSC {

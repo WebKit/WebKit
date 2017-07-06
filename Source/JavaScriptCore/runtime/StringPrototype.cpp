@@ -46,10 +46,14 @@
 #include "SuperSampler.h"
 #include <algorithm>
 #include <unicode/uconfig.h>
+#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
+#endif
 #include <unicode/unorm.h>
+#if COMPILER(CLANG)
 #pragma clang diagnostic pop
+#endif
 #include <unicode/ustring.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/MathExtras.h>

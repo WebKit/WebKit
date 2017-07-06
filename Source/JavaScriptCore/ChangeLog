@@ -1,3 +1,13 @@
+2017-07-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, suppress warnings in GCC environment
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * runtime/IntlCollator.cpp:
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/StringPrototype.cpp:
+
 2017-07-05  Saam Barati  <sbarati@apple.com>
 
         NewArray in FTLLowerDFGToB3 does not handle speculating on doubles when having a bad time

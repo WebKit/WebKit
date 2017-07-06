@@ -169,10 +169,14 @@
 
 #if ENABLE(INTL)
 #include "IntlObject.h"
+#if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
+#endif
 #include <unicode/ucol.h>
+#if COMPILER(CLANG)
 #pragma clang diagnostic pop
+#endif
 #include <unicode/udat.h>
 #include <unicode/unum.h>
 #endif // ENABLE(INTL)
