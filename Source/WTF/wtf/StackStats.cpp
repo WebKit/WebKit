@@ -59,7 +59,7 @@ int StackStats::s_maxLayoutReentryDepth = 0;
 
 StackStats::PerThreadStats::PerThreadStats()
 {
-    const StackBounds& stack = wtfThreadData().stack();
+    const StackBounds& stack = Thread::current().stack();
     m_reentryDepth = 0;
     m_stackStart = (char*)stack.origin();
     m_currentCheckPoint = 0;

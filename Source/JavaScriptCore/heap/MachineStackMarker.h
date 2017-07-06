@@ -72,12 +72,10 @@ public:
         std::pair<void*, size_t> captureStack(void* stackTop);
 
         WTF::ThreadIdentifier threadID() const { return m_thread->id(); }
-        void* stackBase() const { return m_stackBase; }
-        void* stackEnd() const { return m_stackEnd; }
+        void* stackBase() const { return m_thread->stack().origin(); }
+        void* stackEnd() const { return m_thread->stack().end(); }
 
         Ref<WTF::Thread> m_thread;
-        void* m_stackBase;
-        void* m_stackEnd;
         MachineThread* m_next { nullptr };
         MachineThread* m_prev { nullptr };
     };
@@ -104,7 +102,7 @@ private:
 #define DECLARE_AND_COMPUTE_CURRENT_THREAD_STATE(stateName) \
     CurrentThreadState stateName; \
     stateName.stackTop = &stateName; \
-    stateName.stackOrigin = wtfThreadData().stack().origin(); \
+    stateName.stackOrigin = Thread::current().stack().origin(); \
     ALLOCATE_AND_GET_REGISTER_STATE(stateName ## _registerState); \
     stateName.registerState = &stateName ## _registerState
 

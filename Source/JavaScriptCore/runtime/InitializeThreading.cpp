@@ -75,8 +75,7 @@ void initializeThreading()
         DisallowVMReentry::initialize();
 #endif
         initializeSuperSampler();
-        WTFThreadData& threadData = wtfThreadData();
-        threadData.setSavedLastStackTop(threadData.stack().origin());
+        wtfThreadData().setSavedLastStackTop(Thread::current().stack().origin());
 
 #if ENABLE(WEBASSEMBLY)
         Wasm::Thunks::initialize();

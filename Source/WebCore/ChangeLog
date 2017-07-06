@@ -1,3 +1,28 @@
+2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF::Thread should have the threads stack bounds.
+        https://bugs.webkit.org/show_bug.cgi?id=173975
+
+        Reviewed by Keith Miller.
+
+        When creating WebThread, we first allocate WebCore::ThreadGlobalData in UI thread
+        and share it with WebThread.
+        The problem is that WebCore::ThreadGlobalData has CachedResourceRequestInitiators.
+        It allocates AtomicString, which requires WTFThreadData.
+
+        Before this patch, it was OK because WTFThreadData does not touch threading related
+        things except for ThreadSpecific<>. However, after this patch, it touches
+        WTF::Thread::current() which requires WTF::initializeThreading().
+
+        In this patch, we call WTF::initializeThreading() before allocating WebCore::ThreadGlobalData.
+        And we also call AtomicString::init() before calling WebCore::ThreadGlobalData since
+        WebCore::ThreadGlobalData allocates AtomicString.
+
+        This fixes crashes in the iOS web threading environment (UIWebView).
+
+        * platform/ios/wak/WebCoreThread.mm:
+        (StartWebThread):
+
 2017-07-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSFontStyleValue::isItalic seems a bit bogus.

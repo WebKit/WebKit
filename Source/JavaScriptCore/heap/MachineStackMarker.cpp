@@ -239,9 +239,6 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
 MachineThreads::MachineThread::MachineThread()
     : m_thread(WTF::Thread::current())
 {
-    auto stackBounds = wtfThreadData().stack();
-    m_stackBase = stackBounds.origin();
-    m_stackEnd = stackBounds.end();
 }
 
 size_t MachineThreads::MachineThread::getRegisters(MachineThread::Registers& registers)
@@ -302,15 +299,15 @@ static inline int osRedZoneAdjustment()
 
 std::pair<void*, size_t> MachineThreads::MachineThread::captureStack(void* stackTop)
 {
-    char* begin = reinterpret_cast_ptr<char*>(m_stackBase);
+    char* begin = reinterpret_cast_ptr<char*>(stackBase());
     char* end = bitwise_cast<char*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackTop)));
     ASSERT(begin >= end);
 
     char* endWithRedZone = end + osRedZoneAdjustment();
     ASSERT(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(endWithRedZone)) == reinterpret_cast<uintptr_t>(endWithRedZone));
 
-    if (endWithRedZone < m_stackEnd)
-        endWithRedZone = reinterpret_cast_ptr<char*>(m_stackEnd);
+    if (endWithRedZone < stackEnd())
+        endWithRedZone = reinterpret_cast_ptr<char*>(stackEnd());
 
     std::swap(begin, endWithRedZone);
     return std::make_pair(begin, endWithRedZone - begin);

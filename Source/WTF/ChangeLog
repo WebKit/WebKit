@@ -1,3 +1,52 @@
+2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF::Thread should have the threads stack bounds.
+        https://bugs.webkit.org/show_bug.cgi?id=173975
+
+        Reviewed by Keith Miller.
+
+        We move StackBounds from WTFThreadData to WTF::Thread.
+        One important thing is that we should make valid StackBounds
+        visible to Thread::create() caller. When the caller get
+        WTF::Thread from Thread::create(), this WTF::Thread should
+        have a valid StackBounds. But StackBounds information can be
+        retrived only in the WTF::Thread's thread itself.
+
+        We also clean up WTF::initializeThreading. StringImpl::empty()
+        is now statically initialized by using constexpr constructor.
+        Thus we do not need to call StringImpl::empty() explicitly here.
+        And WTF::initializeThreading() does not have any main thread
+        affinity right now in all the platforms. So we fix the comment
+        in Threading.h. Then, now, WTF::initializeThreading() is called
+        in UI thread when using Web thread in iOS.
+
+        * wtf/StackBounds.h:
+        (WTF::StackBounds::emptyBounds):
+        (WTF::StackBounds::StackBounds):
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::PerThreadStats::PerThreadStats):
+        * wtf/Threading.cpp:
+        (WTF::threadEntryPoint):
+        (WTF::Thread::create):
+        (WTF::Thread::currentMayBeNull):
+        (WTF::Thread::initialize):
+        (WTF::initializeThreading):
+        * wtf/Threading.h:
+        (WTF::Thread::stack):
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::Thread::current):
+        (WTF::initializeCurrentThreadEvenIfNonWTFCreated): Deleted.
+        (WTF::Thread::currentMayBeNull): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::Thread::initializeCurrentThreadInternal):
+        (WTF::Thread::current):
+        * wtf/WTFThreadData.cpp:
+        (WTF::WTFThreadData::WTFThreadData):
+        * wtf/WTFThreadData.h:
+        (WTF::WTFThreadData::stack): Deleted.
+
 2017-07-05  Keith Miller  <keith_miller@apple.com>
 
         Crashing with information should have an abort reason

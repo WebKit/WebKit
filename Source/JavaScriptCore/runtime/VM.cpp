@@ -211,7 +211,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , m_shadowChicken(std::make_unique<ShadowChicken>())
 {
     interpreter = new Interpreter(*this);
-    StackBounds stack = wtfThreadData().stack();
+    StackBounds stack = Thread::current().stack();
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(stack.origin());
 
@@ -671,7 +671,7 @@ inline void VM::updateStackLimits()
     void* lastSoftStackLimit = m_softStackLimit;
 #endif
 
-    const StackBounds& stack = wtfThreadData().stack();
+    const StackBounds& stack = Thread::current().stack();
     size_t reservedZoneSize = Options::reservedZoneSize();
     // We should have already ensured that Options::reservedZoneSize() >= minimumReserveZoneSize at
     // options initialization time, and the option value should not have been changed thereafter.
@@ -885,9 +885,9 @@ size_t VM::committedStackByteCount()
 #if ENABLE(JIT)
     // When using the C stack, we don't know how many stack pages are actually
     // committed. So, we use the current stack usage as an estimate.
-    ASSERT(wtfThreadData().stack().isGrowingDownward());
+    ASSERT(Thread::current().stack().isGrowingDownward());
     int8_t* current = reinterpret_cast<int8_t*>(&current);
-    int8_t* high = reinterpret_cast<int8_t*>(wtfThreadData().stack().origin());
+    int8_t* high = reinterpret_cast<int8_t*>(Thread::current().stack().origin());
     return high - current;
 #else
     return CLoopStack::committedByteCount();
