@@ -910,7 +910,12 @@ public:
         auto folded = postScriptName.string().foldCase();
         return m_postScriptNameToFontDescriptors.ensure(folded, [&] {
             auto postScriptNameString = folded.createCFString();
-            CFTypeRef keys[] = { kCTFontEnabledAttribute, kCTFontNameAttribute };
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+            CFStringRef nameAttribute = kCTFontPostScriptNameAttribute;
+#else
+            CFStringRef nameAttribute = kCTFontNameAttribute;
+#endif
+            CFTypeRef keys[] = { kCTFontEnabledAttribute, nameAttribute };
             CFTypeRef values[] = { kCFBooleanTrue, postScriptNameString.get() };
             auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));

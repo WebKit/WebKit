@@ -67,6 +67,7 @@ typedef void (*CTUniCharDisposeCallback)(const UniChar* chars, void* refCon);
 
 extern const CFStringRef kCTFontReferenceURLAttribute;
 extern const CFStringRef kCTFontOpticalSizeAttribute;
+extern const CFStringRef kCTFontPostScriptNameAttribute;
 
 bool CTFontTransformGlyphs(CTFontRef, CGGlyph glyphs[], CGSize advances[], CFIndex count, CTFontTransformOptions);
 

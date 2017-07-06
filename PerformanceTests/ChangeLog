@@ -1,3 +1,14 @@
+2017-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Improve performance of font lookups
+        https://bugs.webkit.org/show_bug.cgi?id=173960
+        <rdar://problem/31996891>
+
+        Reviewed by Darin Adler.
+
+        * Layout/font-fallback-font-family.html: Added.
+        * Layout/resources/font-fallback-font-family.html: Added.
+
 2017-06-10  Dan Bernstein  <mitz@apple.com>
 
         Reverted r218056 because it made the IDE reindex constantly.

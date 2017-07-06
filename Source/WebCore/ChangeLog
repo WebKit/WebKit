@@ -1,5 +1,21 @@
 2017-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        [Cocoa] Improve performance of font lookups
+        https://bugs.webkit.org/show_bug.cgi?id=173960
+        <rdar://problem/31996891>
+
+        Reviewed by Darin Adler.
+
+        Looking up kCTFontPostScriptNameAttribute is faster than kCTFontNameAttribute.
+
+        No new tests because there is no behavior change.
+
+        * platform/spi/cocoa/CoreTextSPI.h:
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::fontForPostScriptName):
+
+2017-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
         REGRESSION(r216944): Font loads can cause Chinese characters to draw as .notdef
         https://bugs.webkit.org/show_bug.cgi?id=173962
         <rdar://problem/32925318>
