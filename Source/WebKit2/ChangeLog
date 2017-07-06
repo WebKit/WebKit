@@ -1,3 +1,26 @@
+2017-07-06  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] It should process MouseMoved events when the parent window is not active
+        https://bugs.webkit.org/show_bug.cgi?id=116691
+
+        Reviewed by Michael Catanzaro.
+
+        From reading the comments in the related code, only in Safari it
+        is desired that MouseMoved events are not processed when the
+        parent window is not active. In other ports, in particular those
+        targeting Linux, these events should be processed for consistency
+        with other browsers.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setCursor):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setCursor):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleMouseEvent):
+        (WebKit::WebPage::mouseEvent):  No need to always pass a boolean
+        parameter that is only checked for one type of event. Do the check
+        internally in handleMouseEvent() only when needed and only in Cocoa.
+
 2017-07-05  Don Olmstead  <don.olmstead@sony.com>
 
         [WTF] Move SoftLinking.h into WTF

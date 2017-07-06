@@ -290,6 +290,11 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
     // FIXME: Would be nice to share this code with WebKit1's WebChromeClient.
 
+    // The Web process may have asked to change the cursor when the view was in an active window, but
+    // if it is no longer in a window or the window is not active, then the cursor should not change.
+    if (!isViewWindowActive())
+        return;
+
     if ([NSApp _cursorRectCursor])
         return;
 
