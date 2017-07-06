@@ -205,9 +205,9 @@ public:
     void showRenderTreeForThis() const;
     void showLineTreeForThis() const;
 
-    void showRenderObject(bool mark, int depth) const;
-    void showRenderSubTreeAndMark(const RenderObject* markedObject, int depth) const;
-    void showRegionsInformation() const;
+    void outputRenderObject(TextStream&, bool mark, int depth) const;
+    void outputRenderSubTreeAndMark(TextStream&, const RenderObject* markedObject, int depth) const;
+    void outputRegionsInformation(TextStream&) const;
 #endif
 
     bool isPseudoElement() const { return node() && node()->isPseudoElement(); }

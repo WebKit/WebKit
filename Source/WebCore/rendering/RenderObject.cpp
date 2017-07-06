@@ -69,6 +69,7 @@
 #include "RenderWidget.h"
 #include "SVGRenderSupport.h"
 #include "StyleResolver.h"
+#include "TextStream.h"
 #include "TransformState.h"
 #include <algorithm>
 #include <stdio.h>
@@ -1007,9 +1008,11 @@ FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect&, const Rende
 
 #if ENABLE(TREE_DEBUGGING)
 
-static void showRenderTreeLegend()
+static void outputRenderTreeLegend(TextStream& stream)
 {
-    fprintf(stderr, "\n(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, (C)omposited, (+)Dirty style, (+)Dirty layout\n");
+    stream.nextLine();
+    stream << "(B)lock/(I)nline/I(N)line-block, (A)bsolute/Fi(X)ed/(R)elative/Stic(K)y, (F)loating, (O)verflow clip, Anon(Y)mous, (G)enerated, has(L)ayer, (C)omposited, (+)Dirty style, (+)Dirty layout";
+    stream.nextLine();
 }
 
 void RenderObject::showNodeTreeForThis() const
@@ -1024,17 +1027,21 @@ void RenderObject::showRenderTreeForThis() const
     const WebCore::RenderObject* root = this;
     while (root->parent())
         root = root->parent();
-    showRenderTreeLegend();
-    root->showRenderSubTreeAndMark(this, 1);
+    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
+    outputRenderTreeLegend(stream);
+    root->outputRenderSubTreeAndMark(stream, this, 1);
+    WTFLogAlways("%s", stream.release().utf8().data());
 }
 
 void RenderObject::showLineTreeForThis() const
 {
     if (!is<RenderBlockFlow>(*this))
         return;
-    showRenderTreeLegend();
-    showRenderObject(false, 1);
-    downcast<RenderBlockFlow>(*this).showLineTreeAndMark(nullptr, 2);
+    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
+    outputRenderTreeLegend(stream);
+    outputRenderObject(stream, false, 1);
+    downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, 2);
+    WTFLogAlways("%s", stream.release().utf8().data());
 }
 
 static const RenderFlowThread* flowThreadContainingBlockFromRenderer(const RenderObject* renderer)
@@ -1054,7 +1061,7 @@ static const RenderFlowThread* flowThreadContainingBlockFromRenderer(const Rende
     return nullptr;
 }
 
-void RenderObject::showRegionsInformation() const
+void RenderObject::outputRegionsInformation(TextStream& stream) const
 {
     const RenderFlowThread* ftcb = flowThreadContainingBlockFromRenderer(this);
 
@@ -1072,111 +1079,111 @@ void RenderObject::showRegionsInformation() const
     RenderRegion* startRegion = nullptr;
     RenderRegion* endRegion = nullptr;
     ftcb->getRegionRangeForBox(downcast<RenderBox>(this), startRegion, endRegion);
-    fprintf(stderr, " [Rs:%p Re:%p]", startRegion, endRegion);
+    stream << " [Rs:" << startRegion << " Re:" << endRegion << "]";
 }
 
-void RenderObject::showRenderObject(bool mark, int depth) const
+void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) const
 {
     if (isInlineBlockOrInlineTable())
-        fputc('N', stderr);
+        stream << "N";
     else if (isInline())
-        fputc('I', stderr);
+        stream << "I";
     else
-        fputc('B', stderr);
-    
+        stream << "B";
+
     if (isPositioned()) {
         if (isRelPositioned())
-            fputc('R', stderr);
+            stream << "R";
         else if (isStickyPositioned())
-            fputc('K', stderr);
+            stream << "K";
         else if (isOutOfFlowPositioned()) {
             if (style().position() == AbsolutePosition)
-                fputc('A', stderr);
+                stream << "A";
             else
-                fputc('X', stderr);
+                stream << "X";
         }
     } else
-        fputc('-', stderr);
+        stream << "-";
 
     if (isFloating())
-        fputc('F', stderr);
+        stream << "F";
     else
-        fputc('-', stderr);
+        stream << "-";
 
     if (hasOverflowClip())
-        fputc('O', stderr);
+        stream << "O";
     else
-        fputc('-', stderr);
+        stream << "-";
 
     if (isAnonymous())
-        fputc('Y', stderr);
+        stream << "Y";
     else
-        fputc('-', stderr);
+        stream << "-";
 
     if (isPseudoElement() || isAnonymous())
-        fputc('G', stderr);
+        stream << "G";
     else
-        fputc('-', stderr);
+        stream << "-";
 
     if (hasLayer())
-        fputc('L', stderr);
+        stream << "L";
     else
-        fputc('-', stderr);
+        stream << "-";
 
     if (isComposited())
-        fputc('C', stderr);
+        stream << "C";
     else
-        fputc('-', stderr);
+        stream << "-";
 
-    fputc(' ', stderr);
+    stream << " ";
 
     if (node() && node()->needsStyleRecalc())
-        fputc('+', stderr);
+        stream << "+";
     else
-        fputc('-', stderr);
+        stream << "-";
 
     if (needsLayout())
-        fputc('+', stderr);
+        stream << "+";
     else
-        fputc('-', stderr);
+        stream << "-";
 
     int printedCharacters = 0;
     if (mark) {
-        fprintf(stderr, "*");
+        stream << "*";
         ++printedCharacters;
     }
 
     while (++printedCharacters <= depth * 2)
-        fputc(' ', stderr);
+        stream << " ";
 
     if (node())
-        fprintf(stderr, "%s ", node()->nodeName().utf8().data());
+        stream << node()->nodeName().utf8().data() << " ";
 
     String name = renderName();
     // FIXME: Renderer's name should not include property value listing.
     int pos = name.find('(');
     if (pos > 0)
-        fprintf(stderr, "%s", name.left(pos - 1).utf8().data());
+        stream << name.left(pos - 1).utf8().data();
     else
-        fprintf(stderr, "%s", name.utf8().data());
+        stream << name.utf8().data();
 
     if (is<RenderBox>(*this)) {
         auto& renderBox = downcast<RenderBox>(*this);
         FloatRect boxRect = renderBox.frameRect();
         if (renderBox.isInFlowPositioned())
             boxRect.move(renderBox.offsetForInFlowPosition());
-        fprintf(stderr, "  (%.2f, %.2f) (%.2f, %.2f)", boxRect.x(), boxRect.y(), boxRect.width(), boxRect.height());
+        stream << " " << boxRect;
     } else if (is<RenderInline>(*this) && isInFlowPositioned()) {
         FloatSize inlineOffset = downcast<RenderInline>(*this).offsetForInFlowPosition();
-        fprintf(stderr, "  (%.2f, %.2f)", inlineOffset.width(), inlineOffset.height());
+        stream << "  (" << inlineOffset.width() << ", " << inlineOffset.height() << ")";
     }
 
-    fprintf(stderr, " renderer->(%p)", this);
+    stream << " renderer->(" << this << ")";
     if (node()) {
-        fprintf(stderr, " node->(%p)", node());
+        stream << " node->(" << node() << ")";
         if (node()->isTextNode()) {
             String value = node()->nodeValue();
-            fprintf(stderr, " length->(%u)", value.length());
+            stream << " length->(" << value.length() << ")";
 
             value.replaceWithLiteral('\\', "\\\\");
             value.replaceWithLiteral('\n', "\\n");
@@ -1184,41 +1191,41 @@ void RenderObject::showRenderObject(bool mark, int depth) const
             const int maxPrintedLength = 80;
             if (value.length() > maxPrintedLength) {
                 String substring = value.substring(0, maxPrintedLength);
-                fprintf(stderr, " \"%s\"...", substring.utf8().data());
+                stream << " \"" << substring.utf8().data() << "\"...";
             } else
-                fprintf(stderr, " \"%s\"", value.utf8().data());
+                stream << " \"" << value.utf8().data() << "\"";
         }
     }
     if (is<RenderBoxModelObject>(*this)) {
         auto& renderer = downcast<RenderBoxModelObject>(*this);
         if (renderer.hasContinuation())
-            fprintf(stderr, " continuation->(%p)", renderer.continuation());
+            stream << " continuation->(" << renderer.continuation() << ")";
     }
-    showRegionsInformation();
+    outputRegionsInformation(stream);
     if (needsLayout()) {
-        fprintf(stderr, " layout->");
+        stream << " layout->";
         if (selfNeedsLayout())
-            fprintf(stderr, "[self]");
+            stream << "[self]";
         if (normalChildNeedsLayout())
-            fprintf(stderr, "[normal child]");
+            stream << "[normal child]";
         if (posChildNeedsLayout())
-            fprintf(stderr, "[positioned child]");
+            stream << "[positioned child]";
         if (needsSimplifiedNormalFlowLayout())
-            fprintf(stderr, "[simplified]");
+            stream << "[simplified]";
         if (needsPositionedMovementLayout())
-            fprintf(stderr, "[positioned movement]");
+            stream << "[positioned movement]";
     }
-    fprintf(stderr, "\n");
+    stream.nextLine();
 }
 
-void RenderObject::showRenderSubTreeAndMark(const RenderObject* markedObject, int depth) const
+void RenderObject::outputRenderSubTreeAndMark(TextStream& stream, const RenderObject* markedObject, int depth) const
 {
-    showRenderObject(markedObject == this, depth);
+    outputRenderObject(stream, markedObject == this, depth);
     if (is<RenderBlockFlow>(*this))
-        downcast<RenderBlockFlow>(*this).showLineTreeAndMark(nullptr, depth + 1);
+        downcast<RenderBlockFlow>(*this).outputLineTreeAndMark(stream, nullptr, depth + 1);
 
-    for (const RenderObject* child = firstChildSlow(); child; child = child->nextSibling())
-        child->showRenderSubTreeAndMark(markedObject, depth + 1);
+    for (auto* child = firstChildSlow(); child; child = child->nextSibling())
+        child->outputRenderSubTreeAndMark(stream, markedObject, depth + 1);
 }
 
 #endif // NDEBUG

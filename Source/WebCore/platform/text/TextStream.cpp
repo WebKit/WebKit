@@ -186,7 +186,7 @@ void TextStream::writeIndent()
 
 void writeIndent(TextStream& ts, int indent)
 {
-    for (int i = 0; i != indent; ++i)
+    for (int i = 0; i < indent; ++i)
         ts << "  ";
 }
 

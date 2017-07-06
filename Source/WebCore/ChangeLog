@@ -1,3 +1,41 @@
+2017-07-06  Zalan Bujtas  <zalan@apple.com>
+
+        Use WTFLogAlways for debug logging so that it shows up in device system logs
+        https://bugs.webkit.org/show_bug.cgi?id=173450
+
+        Reviewed by Simon Fraser.
+
+        If you want to showRenderTree() on-device, the result doesn't show in system log so you can't see it.
+        Switch to WTFLogAlways to fix this, for showRenderTree and its dependencies.
+        
+        * platform/text/TextStream.cpp:
+        (WebCore::writeIndent):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::showLineTreeAndMark):
+        (WebCore::InlineBox::showLineBox):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::showLineTreeAndMark):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::showLineBox):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::showLineTreeAndMark):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::showRenderTreeLegend):
+        (WebCore::RenderObject::showRenderTreeForThis):
+        (WebCore::RenderObject::showLineTreeForThis):
+        (WebCore::RenderObject::showRegionsInformation):
+        (WebCore::RenderObject::showRenderObject):
+        (WebCore::RenderObject::showRenderSubTreeAndMark):
+        * rendering/RenderObject.h:
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::printPrefix):
+        (WebCore::SimpleLineLayout::showLineLayoutForFlow):
+        * rendering/SimpleLineLayoutFunctions.h:
+
 2017-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unify FontCascadeFonts::glyphDataForVariant() and FontCascadeFonts::glyphDataForNormalVariant()

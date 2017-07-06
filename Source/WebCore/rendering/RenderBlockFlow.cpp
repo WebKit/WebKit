@@ -3769,13 +3769,13 @@ void RenderBlockFlow::ensureLineBoxes()
 }
 
 #if ENABLE(TREE_DEBUGGING)
-void RenderBlockFlow::showLineTreeAndMark(const InlineBox* markedBox, int depth) const
+void RenderBlockFlow::outputLineTreeAndMark(TextStream& stream, const InlineBox* markedBox, int depth) const
 {
     for (const RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
-        root->showLineTreeAndMark(markedBox, depth);
+        root->outputLineTreeAndMark(stream, markedBox, depth);
 
     if (auto simpleLineLayout = this->simpleLineLayout())
-        SimpleLineLayout::showLineLayoutForFlow(*this, *simpleLineLayout, depth);
+        SimpleLineLayout::outputLineLayoutForFlow(stream, *this, *simpleLineLayout, depth);
 }
 #endif
 

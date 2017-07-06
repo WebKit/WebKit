@@ -1735,11 +1735,11 @@ const char* InlineFlowBox::boxName() const
     return "InlineFlowBox";
 }
 
-void InlineFlowBox::showLineTreeAndMark(const InlineBox* markedBox, int depth) const
+void InlineFlowBox::outputLineTreeAndMark(TextStream& stream, const InlineBox* markedBox, int depth) const
 {
-    InlineBox::showLineTreeAndMark(markedBox, depth);
+    InlineBox::outputLineTreeAndMark(stream, markedBox, depth);
     for (const InlineBox* box = firstChild(); box; box = box->nextOnLine())
-        box->showLineTreeAndMark(markedBox, depth + 1);
+        box->outputLineTreeAndMark(stream, markedBox, depth + 1);
 }
 
 #endif

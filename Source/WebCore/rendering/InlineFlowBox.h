@@ -71,7 +71,7 @@ public:
 #endif
 
 #if ENABLE(TREE_DEBUGGING)
-    void showLineTreeAndMark(const InlineBox* markedBox, int depth) const override;
+    void outputLineTreeAndMark(TextStream&, const InlineBox* markedBox, int depth) const override;
     const char* boxName() const override;
 #endif
 

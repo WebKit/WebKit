@@ -48,6 +48,7 @@
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
+#include "TextStream.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
 
@@ -1123,23 +1124,24 @@ const char* InlineTextBox::boxName() const
     return "InlineTextBox";
 }
 
-void InlineTextBox::showLineBox(bool mark, int depth) const
+void InlineTextBox::outputLineBox(TextStream& stream, bool mark, int depth) const
 {
-    fprintf(stderr, "-------- %c-", isDirty() ? 'D' : '-');
+    stream << "-------- " << (isDirty() ? "D" : "-") << "-";
 
     int printedCharacters = 0;
     if (mark) {
-        fprintf(stderr, "*");
+        stream << "*";
         ++printedCharacters;
     }
     while (++printedCharacters <= depth * 2)
-        fputc(' ', stderr);
+        stream << " ";
 
     String value = renderer().text();
     value = value.substring(start(), len());
     value.replaceWithLiteral('\\', "\\\\");
     value.replaceWithLiteral('\n', "\\n");
-    fprintf(stderr, "%s  (%.2f, %.2f) (%.2f, %.2f) (%p) renderer->(%p) run(%d, %d) \"%s\"\n", boxName(), x(), y(), width(), height(), this, &renderer(), start(), start() + len(), value.utf8().data());
+    stream << boxName() << " " << FloatRect(x(), y(), width(), height()) << " (" << this << ") renderer->(" << &renderer() << ") run(" << start() << ", " << start() + len() << ") \"" << value.utf8().data() << "\"";
+    stream.nextLine();
 }
 
 #endif

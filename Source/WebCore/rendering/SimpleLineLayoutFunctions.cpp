@@ -46,6 +46,7 @@
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
+#include "TextStream.h"
 
 #if ENABLE(TREE_DEBUGGING)
 #include <stdio.h>
@@ -261,33 +262,34 @@ const RenderObject& rendererForPosition(const FlowContents& flowContents, unsign
 }
 
 #if ENABLE(TREE_DEBUGGING)
-static void printPrefix(int& printedCharacters, int depth)
+static void printPrefix(TextStream& stream, int& printedCharacters, int depth)
 {
-    fprintf(stderr, "-------- --");
+    stream << "-------- --";
     printedCharacters = 0;
     while (++printedCharacters <= depth * 2)
-        fputc(' ', stderr);
+        stream << " ";
 }
 
-void showLineLayoutForFlow(const RenderBlockFlow& flow, const Layout& layout, int depth)
+void outputLineLayoutForFlow(TextStream& stream, const RenderBlockFlow& flow, const Layout& layout, int depth)
 {
     int printedCharacters = 0;
-    printPrefix(printedCharacters, depth);
+    printPrefix(stream, printedCharacters, depth);
 
-    fprintf(stderr, "SimpleLineLayout (%u lines, %u runs) (%p)\n", layout.lineCount(), layout.runCount(), &layout);
+    stream << "SimpleLineLayout (" << layout.lineCount() << " lines, " << layout.runCount() << " runs) (" << &layout << ")";
+    stream.nextLine();
     ++depth;
 
     for (auto run : runResolver(flow, layout)) {
         FloatRect rect = run.rect();
-        printPrefix(printedCharacters, depth);
+        printPrefix(stream, printedCharacters, depth);
         if (run.start() < run.end()) {
-            fprintf(stderr, "line %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f) \"%s\"\n", run.lineIndex(), run.start(), run.end(),
-                rect.x(), rect.y(), rect.width(), rect.height(), run.text().toStringWithoutCopying().utf8().data());
+            stream << "line " << run.lineIndex() << " run(" << run.start() << ", " << run.end() << ") " << rect << " \"" << run.text().toStringWithoutCopying().utf8().data() << "\"";
         } else {
             ASSERT(run.start() == run.end());
-            fprintf(stderr, "line break %u run(%u, %u) (%.2f, %.2f) (%.2f, %.2f)\n", run.lineIndex(), run.start(), run.end(), rect.x(), rect.y(), rect.width(), rect.height());
+            stream << "line break " << run.lineIndex() << " run(" << run.start() << ", " << run.end() << ") " << rect;
         }
     }
+    stream.nextLine();
 }
 #endif
 
