@@ -170,7 +170,6 @@ WebProcess::WebProcess()
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #endif
     , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
-    , m_statisticsChangedTimer(*this, &WebProcess::statisticsChangedTimerFired)
 #if PLATFORM(IOS)
     , m_webSQLiteDatabaseTracker(*this)
 #endif
@@ -199,10 +198,9 @@ WebProcess::WebProcess()
 
     m_plugInAutoStartOriginHashes.add(SessionID::defaultSessionID(), HashMap<unsigned, double>());
 
-    ResourceLoadObserver::shared().setNotificationCallback([this] {
-        if (m_statisticsChangedTimer.isActive())
-            return;
-        m_statisticsChangedTimer.startOneShot(5_s);
+    ResourceLoadObserver::shared().setNotificationCallback([this] (Vector<ResourceLoadStatistics>&& statistics) {
+        ASSERT(!statistics.isEmpty());
+        parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
     });
 }
 
@@ -1455,15 +1453,6 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
 #if PLATFORM(COCOA)
     destroyRenderingResources();
 #endif
-}
-
-void WebProcess::statisticsChangedTimerFired()
-{
-    auto statistics = ResourceLoadObserver::shared().takeStatistics();
-    if (statistics.isEmpty())
-        return;
-
-    parentProcessConnection()->send(Messages::WebResourceLoadStatisticsStore::ResourceLoadStatisticsUpdated(WTFMove(statistics)), 0);
 }
 
 void WebProcess::setResourceLoadStatisticsEnabled(bool enabled)

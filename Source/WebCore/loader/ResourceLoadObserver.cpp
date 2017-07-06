@@ -37,7 +37,6 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "URL.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -47,6 +46,7 @@ template<typename T> static inline String primaryDomain(const T& value)
 }
 
 static Seconds timestampResolution { 1_h };
+static const Seconds minimumNotificationInterval { 5_s };
 
 ResourceLoadObserver& ResourceLoadObserver::shared()
 {
@@ -54,10 +54,15 @@ ResourceLoadObserver& ResourceLoadObserver::shared()
     return resourceLoadObserver;
 }
 
-void ResourceLoadObserver::setNotificationCallback(WTF::Function<void()>&& notificationCallback)
+void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&& notificationCallback)
 {
     ASSERT(!m_notificationCallback);
     m_notificationCallback = WTFMove(notificationCallback);
+}
+
+ResourceLoadObserver::ResourceLoadObserver()
+    : m_notificationTimer(*this, &ResourceLoadObserver::notificationTimerFired)
+{
 }
 
 static inline bool is3xxRedirect(const ResourceResponse& response)
@@ -158,7 +163,7 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     m_resourceStatisticsMap.set(targetPrimaryDomain, WTFMove(targetStatistics));
 
     if (shouldCallNotificationCallback)
-        m_notificationCallback();
+        scheduleNotificationIfNeeded();
 }
     
 void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
@@ -224,7 +229,7 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     m_resourceStatisticsMap.set(targetPrimaryDomain, WTFMove(targetStatistics));
 
     if (shouldCallNotificationCallback)
-        m_notificationCallback();
+        scheduleNotificationIfNeeded();
 }
 
 void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& targetURL)
@@ -267,7 +272,7 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
 
     if (shouldCallNotificationCallback)
-        m_notificationCallback();
+        scheduleNotificationIfNeeded();
 }
 
 static WallTime reduceTimeResolution(WallTime time)
@@ -294,7 +299,7 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
     statistics.hadUserInteraction = true;
     statistics.mostRecentUserInteractionTime = newTime;
 
-    m_notificationCallback();
+    scheduleNotificationIfNeeded();
 }
 
 ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
@@ -320,6 +325,24 @@ bool ResourceLoadObserver::isPrevalentResource(const String& primaryDomain) cons
     if (mapEntry == m_resourceStatisticsMap.end())
         return false;
     return mapEntry->value.isPrevalentResource;
+}
+
+void ResourceLoadObserver::scheduleNotificationIfNeeded()
+{
+    ASSERT(m_notificationCallback);
+    if (m_resourceStatisticsMap.isEmpty()) {
+        m_notificationTimer.stop();
+        return;
+    }
+
+    if (!m_notificationTimer.isActive())
+        m_notificationTimer.startOneShot(minimumNotificationInterval);
+}
+
+void ResourceLoadObserver::notificationTimerFired()
+{
+    ASSERT(m_notificationCallback);
+    m_notificationCallback(takeStatistics());
 }
 
 String ResourceLoadObserver::statisticsForOrigin(const String& origin)

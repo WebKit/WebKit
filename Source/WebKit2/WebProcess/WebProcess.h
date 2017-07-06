@@ -184,7 +184,6 @@ public:
     void pageWillLeaveWindow(uint64_t pageID);
 
     void nonVisibleProcessCleanupTimerFired();
-    void statisticsChangedTimerFired();
 
 #if PLATFORM(COCOA)
     RetainPtr<CFDataRef> sourceApplicationAuditData() const;
@@ -409,7 +408,6 @@ private:
 
     HashSet<uint64_t> m_pagesInWindows;
     WebCore::Timer m_nonVisibleProcessCleanupTimer;
-    WebCore::Timer m_statisticsChangedTimer;
 
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 

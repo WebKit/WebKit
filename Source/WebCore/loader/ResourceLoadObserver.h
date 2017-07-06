@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "Timer.h"
 #include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -45,7 +47,7 @@ class URL;
 struct ResourceLoadStatistics;
 
 class ResourceLoadObserver {
-    friend class NeverDestroyed<ResourceLoadObserver>;
+    friend class WTF::NeverDestroyed<ResourceLoadObserver>;
 public:
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
     
@@ -56,17 +58,23 @@ public:
 
     WEBCORE_EXPORT String statisticsForOrigin(const String&);
 
-    WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void()>&&);
-    WEBCORE_EXPORT Vector<ResourceLoadStatistics> takeStatistics();
+    WEBCORE_EXPORT void setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&&);
 
 private:
+    ResourceLoadObserver();
+
     bool shouldLog(Page*) const;
     ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
     ResourceLoadStatistics takeResourceStatisticsForPrimaryDomain(const String& primaryDomain);
     bool isPrevalentResource(const String& primaryDomain) const;
 
+    void scheduleNotificationIfNeeded();
+    void notificationTimerFired();
+    Vector<ResourceLoadStatistics> takeStatistics();
+
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
-    WTF::Function<void()> m_notificationCallback;
+    WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
+    Timer m_notificationTimer;
     HashMap<String, size_t> m_originsVisitedMap;
 };
     
