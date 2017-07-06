@@ -28,32 +28,14 @@
 
 namespace WebCore {
 
-Ref<FileMonitor> FileMonitor::create(const String& path, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler)
-{
-    return adoptRef(*new FileMonitor(path, WTFMove(handlerQueue), WTFMove(modificationHandler)));
-}
-    
-FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler)
-    : m_path(path)
-    , m_modificationHandler(WTFMove(modificationHandler))
-    , m_handlerQueue(WTFMove(handlerQueue))
+#if !PLATFORM(COCOA)
+
+FileMonitor::FileMonitor(const String&, Ref<WorkQueue>&&, WTF::Function<void(FileChangeType)>&&)
 {
 }
-    
+
 FileMonitor::~FileMonitor()
 {
-    stopMonitoring();
-}
-    
-#if !PLATFORM(COCOA)
-void FileMonitor::startMonitoring()
-{
-    // Do Nothing
-}
-    
-void FileMonitor::stopMonitoring()
-{
-    // Do Nothing
 }
 
 #endif

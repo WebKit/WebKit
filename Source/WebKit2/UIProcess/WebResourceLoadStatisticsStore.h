@@ -145,7 +145,7 @@ private:
     ResourceLoadStatisticsClassifier m_resourceLoadStatisticsClassifier;
 #endif
     Ref<WTF::WorkQueue> m_statisticsQueue;
-    RefPtr<WebCore::FileMonitor> m_statisticsStorageMonitor;
+    std::unique_ptr<WebCore::FileMonitor> m_statisticsStorageMonitor;
     const String m_statisticsStoragePath;
     WTF::WallTime m_lastStatisticsFileSyncTime;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryOneShotTimer;

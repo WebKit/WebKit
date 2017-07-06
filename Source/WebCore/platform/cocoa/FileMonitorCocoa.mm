@@ -28,60 +28,56 @@
 
 #import "FileSystem.h"
 #import "Logging.h"
-#import <dispatch/dispatch.h>
-#import <wtf/DispatchPtr.h>
+#import <wtf/BlockPtr.h>
 
 namespace WebCore {
     
 constexpr unsigned monitorMask = DISPATCH_VNODE_DELETE | DISPATCH_VNODE_WRITE | DISPATCH_VNODE_RENAME | DISPATCH_VNODE_REVOKE;
 constexpr unsigned fileUnavailableMask = DISPATCH_VNODE_DELETE | DISPATCH_VNODE_RENAME | DISPATCH_VNODE_REVOKE;
 
-void FileMonitor::startMonitoring()
+FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler)
 {
-    if (m_platformMonitor)
+    if (path.isEmpty())
         return;
 
-    if (m_path.isEmpty())
+    if (!modificationHandler)
         return;
 
-    if (!m_modificationHandler)
-        return;
-
-    auto handle = openFile(m_path, OpenForEventsOnly);
+    auto handle = openFile(path, OpenForEventsOnly);
     if (handle == invalidPlatformFileHandle) {
-        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to open statistics file for monitoring: %s", m_path.utf8().data());
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to open statistics file for monitoring: %s", path.utf8().data());
         return;
     }
 
-    m_platformMonitor = adoptDispatch(dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, handle, monitorMask, m_handlerQueue->dispatchQueue()));
+    // The source (platformMonitor) retains the dispatch queue.
+    m_platformMonitor = adoptDispatch(dispatch_source_create(DISPATCH_SOURCE_TYPE_VNODE, handle, monitorMask, handlerQueue->dispatchQueue()));
 
     LOG(ResourceLoadStatistics, "Creating monitor %p", m_platformMonitor.get());
 
-    dispatch_source_set_event_handler(m_platformMonitor.get(), [this, protectedThis = makeRefPtr(this), fileMonitor = m_platformMonitor.get()] () mutable {
+    dispatch_source_set_event_handler(m_platformMonitor.get(), BlockPtr<void()>::fromCallable([modificationHandler = WTFMove(modificationHandler), fileMonitor = m_platformMonitor] {
         // If this is getting called after the monitor was cancelled, just drop the notification.
-        if (dispatch_source_testcancel(fileMonitor))
+        if (dispatch_source_testcancel(fileMonitor.get()))
             return;
 
-        unsigned flag = dispatch_source_get_data(fileMonitor);
-        LOG(ResourceLoadStatistics, "File event %#X for monitor %p", flag, fileMonitor);
+        unsigned flag = dispatch_source_get_data(fileMonitor.get());
+        LOG(ResourceLoadStatistics, "File event %#X for monitor %p", flag, fileMonitor.get());
         if (flag & fileUnavailableMask) {
-            m_modificationHandler(FileChangeType::Removal);
-            dispatch_source_cancel(fileMonitor);
+            modificationHandler(FileChangeType::Removal);
+            dispatch_source_cancel(fileMonitor.get());
         } else {
             ASSERT(flag & DISPATCH_VNODE_WRITE);
-            m_modificationHandler(FileChangeType::Modification);
+            modificationHandler(FileChangeType::Modification);
         }
-    });
+    }).get());
     
-    dispatch_source_set_cancel_handler(m_platformMonitor.get(), [fileMonitor = m_platformMonitor.get()] {
-        auto handle = static_cast<PlatformFileHandle>(dispatch_source_get_handle(fileMonitor));
+    dispatch_source_set_cancel_handler(m_platformMonitor.get(), [handle] () mutable {
         closeFile(handle);
     });
     
     dispatch_resume(m_platformMonitor.get());
 }
-    
-void FileMonitor::stopMonitoring()
+
+FileMonitor::~FileMonitor()
 {
     if (!m_platformMonitor)
         return;
@@ -89,7 +85,6 @@ void FileMonitor::stopMonitoring()
     LOG(ResourceLoadStatistics, "Stopping monitor %p", m_platformMonitor.get());
 
     dispatch_source_cancel(m_platformMonitor.get());
-    m_platformMonitor = nullptr;
 }
 
 } // namespace WebCore

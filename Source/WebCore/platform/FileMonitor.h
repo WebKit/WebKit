@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/Function.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
@@ -37,26 +36,17 @@
 
 namespace WebCore {
 
-class FileMonitor : public ThreadSafeRefCounted<FileMonitor> {
+class FileMonitor {
 public:
     enum class FileChangeType {
         Modification,
         Removal
     };
 
-    WEBCORE_EXPORT static Ref<FileMonitor> create(const String&, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler);
+    WEBCORE_EXPORT FileMonitor(const String&, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler);
     WEBCORE_EXPORT ~FileMonitor();
 
-    WEBCORE_EXPORT void startMonitoring();
-    WEBCORE_EXPORT void stopMonitoring();
-
 private:
-    FileMonitor(const String&, Ref<WorkQueue>&& handlerQueue, WTF::Function<void(FileChangeType)>&& modificationHandler);
-
-    String m_path;
-    WTF::Function<void(FileChangeType)> m_modificationHandler;
-    Ref<WTF::WorkQueue> m_handlerQueue;
-
 #if USE(COCOA_EVENT_LOOP)
     DispatchPtr<dispatch_source_t> m_platformMonitor;
 #endif

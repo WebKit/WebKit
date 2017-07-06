@@ -149,7 +149,7 @@ TEST_F(FileMonitorTest, DetectChange)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = WebCore::FileMonitor::create(tempFilePath(), testQueue.copyRef(), [this] (WebCore::FileMonitor::FileChangeType type) {
+    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [this] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
         case FileMonitor::FileChangeType::Modification:
@@ -160,7 +160,6 @@ TEST_F(FileMonitorTest, DetectChange)
             break;
         }
     });
-    monitor->startMonitoring();
 
     testQueue->dispatch([this] () mutable {
         String fileContents = readContentsOfFile(tempFilePath());
@@ -192,7 +191,7 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = WebCore::FileMonitor::create(tempFilePath(), testQueue.copyRef(), [this] (WebCore::FileMonitor::FileChangeType type) {
+    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [this] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
         case FileMonitor::FileChangeType::Modification:
@@ -203,7 +202,6 @@ TEST_F(FileMonitorTest, DetectMultipleChanges)
             break;
         }
     });
-    monitor->startMonitoring();
     
     testQueue->dispatch([this] () mutable {
         String fileContents = readContentsOfFile(tempFilePath());
@@ -253,7 +251,7 @@ TEST_F(FileMonitorTest, DetectDeletion)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = WebCore::FileMonitor::create(tempFilePath(), testQueue.copyRef(), [this] (WebCore::FileMonitor::FileChangeType type) {
+    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [this] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
         case FileMonitor::FileChangeType::Modification:
@@ -264,7 +262,6 @@ TEST_F(FileMonitorTest, DetectDeletion)
             break;
         }
     });
-    monitor->startMonitoring();
 
     testQueue->dispatch([this] () mutable {
         StringBuilder command;
@@ -293,7 +290,7 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = WebCore::FileMonitor::create(tempFilePath(), testQueue.copyRef(), [this] (WebCore::FileMonitor::FileChangeType type) {
+    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [this] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
             case FileMonitor::FileChangeType::Modification:
@@ -304,7 +301,6 @@ TEST_F(FileMonitorTest, DetectChangeAndThenDelete)
                 break;
         }
     });
-    monitor->startMonitoring();
 
     testQueue->dispatch([this] () mutable {
         String fileContents = readContentsOfFile(tempFilePath());
@@ -351,7 +347,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
 
     auto testQueue = WorkQueue::create("Test Work Queue");
 
-    auto monitor = WebCore::FileMonitor::create(tempFilePath(), testQueue.copyRef(), [this] (WebCore::FileMonitor::FileChangeType type) {
+    auto monitor = std::make_unique<FileMonitor>(tempFilePath(), testQueue.copyRef(), [this] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
             case FileMonitor::FileChangeType::Modification:
@@ -362,7 +358,6 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
                 break;
         }
     });
-    monitor->startMonitoring();
 
     testQueue->dispatch([this] () mutable {
         StringBuilder command;

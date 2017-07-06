@@ -1,3 +1,32 @@
+2017-07-06  Chris Dumez  <cdumez@apple.com>
+
+        FileMonitor should not be ref counted
+        https://bugs.webkit.org/show_bug.cgi?id=174166
+
+        Reviewed by Brent Fulgham.
+
+        Update FileMonitor to no longer be refcounted. It was previously easy to leak it
+        because the object would ref itself in various lambdas. The client would have to
+        explicitely call FileMonitor::stopMonitoring() which was fragile.
+
+        This patch also simplifies the code and API a bit since no longer actually
+        requires startMonitoring() / stopMonitoring() API.
+
+        No new tests, covered by API tests.
+
+        * platform/FileMonitor.cpp:
+        (WebCore::FileMonitor::FileMonitor):
+        (WebCore::FileMonitor::~FileMonitor):
+        (WebCore::FileMonitor::create): Deleted.
+        (WebCore::FileMonitor::startMonitoring): Deleted.
+        (WebCore::FileMonitor::stopMonitoring): Deleted.
+        * platform/FileMonitor.h:
+        * platform/cocoa/FileMonitorCocoa.mm:
+        (WebCore::FileMonitor::FileMonitor):
+        (WebCore::FileMonitor::~FileMonitor):
+        (WebCore::FileMonitor::startMonitoring): Deleted.
+        (WebCore::FileMonitor::stopMonitoring): Deleted.
+
 2017-07-06  Matt Rajca  <mrajca@apple.com>
 
         Fix build with VIDEO support disabled.

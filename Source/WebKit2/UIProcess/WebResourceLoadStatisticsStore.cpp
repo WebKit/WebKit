@@ -434,7 +434,7 @@ void WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage()
     if (resourceLogPath.isEmpty())
         return;
     
-    m_statisticsStorageMonitor = FileMonitor::create(resourceLogPath, m_statisticsQueue.copyRef(), [this] (FileMonitor::FileChangeType type) {
+    m_statisticsStorageMonitor = std::make_unique<FileMonitor>(resourceLogPath, m_statisticsQueue.copyRef(), [this] (FileMonitor::FileChangeType type) {
         ASSERT(!RunLoop::isMain());
         switch (type) {
         case FileMonitor::FileChangeType::Modification:
@@ -446,19 +446,11 @@ void WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage()
             break;
         }
     });
-
-    m_statisticsStorageMonitor->startMonitoring();
 }
 
 void WebResourceLoadStatisticsStore::stopMonitoringStatisticsStorage()
 {
     ASSERT(!RunLoop::isMain());
-    if (!m_statisticsStorageMonitor)
-        return;
-
-    // FIXME(174166): The FileMonitor captures itself, incrementing its refcount. Manually stopping the monitor shuts down the lambda holding the extra
-    // reference, so the object will be cleaned up properly.
-    m_statisticsStorageMonitor->stopMonitoring();
     m_statisticsStorageMonitor = nullptr;
 }
 
