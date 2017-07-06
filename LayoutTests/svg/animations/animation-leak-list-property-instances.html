@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<script>
+ function log(message) {
+     var logDiv = document.getElementById('log');
+     logDiv.appendChild(document.createTextNode(message));
+ }
+ var originalLiveElements = 0;
+
+ function finishTest() {
+     GCController.collect();
+     var liveDelta = originalLiveElements - window.internals.numberOfLiveNodes();
+     if (liveDelta == 4)
+         log("PASS");
+     else
+         log("FAIL: not enough live nodes freed: " + liveDelta + " vs 4 expected");
+
+     testRunner.notifyDone();
+ }
+
+ function continueTest() {
+     GCController.collect();
+     originalLiveElements = window.internals.numberOfLiveNodes();
+     document.getElementById("container").removeChild(document.getElementById("rootSVG"));
+ }
+
+ function applyTransform(root, id) {
+     var svgroot = document.getElementById(root);
+     var transformList = document.getElementById(id).transform.baseVal;
+     var rotate = svgroot.createSVGTransform();
+     rotate.setRotate(10,0,0);
+     transformList.appendItem(rotate);
+ }
+
+ function load() {
+     testRunner.dumpAsText();
+     testRunner.waitUntilDone();
+
+     applyTransform("rootSVG", "rect");
+     continueTest();
+     finishTest();
+ }
+</script>
+
+<body onload="load()">
+    <p>This test checks that transform animations in SVG elements do not cause the whole SVGDocument to leak.</p>
+    <div id="container">
+        <svg id="rootSVG" width="300" height="300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+            <rect id="rect" x="100" y="100" width="100" height="100" fill="yellow"/>
+        </svg>
+    </div>
+    <div id="log"></div>
+</body>
+

@@ -1,0 +1,3 @@
+This test checks that transform animations in SVG elements do not cause the whole SVGDocument to leak.
+
+PASS
