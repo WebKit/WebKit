@@ -81,11 +81,11 @@ class SetupGitClone(Command):
             original_path = tool.filesystem.abspath(".")
 
             tool.filesystem.chdir("Tools/Scripts/")
-            username = tool.executive.run_and_throw_if_fail(["perl", "-e", "use VCSUtils; print STDOUT changeLogName();"], quiet=True)
+            username = tool.executive.run_and_throw_if_fail(["perl", "-e", "use lib '.'; use VCSUtils; print STDOUT changeLogName();"], quiet=True)
             if not username:
                 username = tool.user.prompt("Your name:")
 
-            email = tool.executive.run_and_throw_if_fail(["perl", "-e", "use VCSUtils; print STDOUT changeLogEmailAddress();"], quiet=True)
+            email = tool.executive.run_and_throw_if_fail(["perl", "-e", "use lib '.'; use VCSUtils; print STDOUT changeLogEmailAddress();"], quiet=True)
             if not email:
                 email = tool.user.prompt("Your email address:")
 
