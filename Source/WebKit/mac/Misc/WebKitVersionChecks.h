@@ -84,7 +84,8 @@ enum class SDKVersion : uint32_t {
 #if PLATFORM(IOS)
     FirstToExcludeLocalStorageFromBackup = DYLD_IOS_VERSION_11_0,
 #else
-    FirstWithDropToNavigateDisallowedByDefault = DYLD_MACOSX_VERSION_10_13
+    FirstWithDropToNavigateDisallowedByDefault = DYLD_MACOSX_VERSION_10_13,
+    FirstWithWebIconDatabaseWarning = DYLD_MACOSX_VERSION_10_13,
 #endif
 };
 

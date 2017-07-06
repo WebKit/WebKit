@@ -34,6 +34,7 @@
 #import "WebIconDatabaseDelegate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebKitVersionChecks.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebPreferencesPrivate.h"
@@ -97,9 +98,15 @@ static WebIconDatabaseClient* defaultClient()
 
 + (WebIconDatabase *)sharedIconDatabase
 {
-    static WebIconDatabase *database = nil;
-    if (!database)
+    static WebIconDatabase *database;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^ {
+        if (linkedOnOrAfter(SDKVersion::FirstWithWebIconDatabaseWarning))
+            NSLog(@"+[WebIconDatabase sharedIconDatabase] is not API and should not be used. WebIconDatabase no longer handles icon loading and it will be removed in a future release.");
+
         database = [[WebIconDatabase alloc] init];
+    });
+
     return database;
 }
 
