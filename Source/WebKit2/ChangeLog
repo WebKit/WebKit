@@ -1,3 +1,19 @@
+2017-07-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Add delegate hooks for specifying the data owner for a drag or drop session
+        https://bugs.webkit.org/show_bug.cgi?id=174139
+        <rdar://problem/33126212>
+
+        Reviewed by Beth Dakin.
+
+        Add hooks to query the UI delegate for a _UIDataOwner on both drag and drop sides.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _dragInteraction:dataOwnerForSession:]):
+        (-[WKContentView _dropInteraction:dataOwnerForSession:]):
+
 2017-07-06  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] ResourceLoadStatistics should batch its writes

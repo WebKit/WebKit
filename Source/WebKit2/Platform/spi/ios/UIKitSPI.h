@@ -81,7 +81,8 @@
 #import <UIKit/UIPreviewItemController.h>
 #endif
 
-#if ENABLE(DATA_INTERACTION)
+#if ENABLE(DRAG_SUPPORT)
+#import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
 #import <UIKit/UIItemProvider_Private.h>
 #endif
 
@@ -122,6 +123,15 @@ typedef NS_ENUM(NSInteger, UIPreviewItemType) {
 @property (strong, nonatomic, readonly) UIGestureRecognizer *presentationGestureRecognizer;
 @property (strong, nonatomic, readonly) UIGestureRecognizer *presentationSecondaryGestureRecognizer;
 @end
+#endif
+
+#if ENABLE(DRAG_SUPPORT)
+typedef NS_ENUM(NSInteger, _UIDataOwner) {
+    _UIDataOwnerUndefined,
+    _UIDataOwnerUser,
+    _UIDataOwnerEnterprise,
+    _UIDataOwnerShared,
+};
 #endif
 
 @interface UIAlertController ()

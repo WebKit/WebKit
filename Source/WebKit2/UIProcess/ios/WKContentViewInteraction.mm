@@ -4535,6 +4535,15 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return [competingGestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]];
 }
 
+- (_UIDataOwner)_dragInteraction:(UIDragInteraction *)interaction dataOwnerForSession:(id <UIDragSession>)session
+{
+    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    _UIDataOwner dataOwner = _UIDataOwnerUndefined;
+    if ([uiDelegate respondsToSelector:@selector(_webView:dataOwnerForDragSession:)])
+        dataOwner = (_UIDataOwner)[uiDelegate _webView:_webView dataOwnerForDragSession:session];
+    return dataOwner;
+}
+
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
 {
     [self _cancelLongPressGestureRecognizer];
@@ -4708,6 +4717,15 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 }
 
 #pragma mark - UIDropInteractionDelegate
+
+- (_UIDataOwner)_dropInteraction:(UIDropInteraction *)interaction dataOwnerForSession:(id <UIDropSession>)session
+{
+    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    _UIDataOwner dataOwner = _UIDataOwnerUndefined;
+    if ([uiDelegate respondsToSelector:@selector(_webView:dataOwnerForDropSession:)])
+        dataOwner = (_UIDataOwner)[uiDelegate _webView:_webView dataOwnerForDropSession:session];
+    return dataOwner;
+}
 
 - (BOOL)dropInteraction:(UIDropInteraction *)interaction canHandleSession:(id<UIDropSession>)session
 {
