@@ -66,9 +66,7 @@ void RenderImageResourceStyleImage::shutdown()
 RefPtr<Image> RenderImageResourceStyleImage::image(const IntSize& size) const
 {
     // Generated content may trigger calls to image() while we're still pending, don't assert but gracefully exit.
-    if (m_styleImage->isPending())
-        return nullptr;
-    return m_styleImage->image(m_renderer, size);
+    return !m_styleImage->isPending() ? m_styleImage->image(m_renderer, size) : &Image::nullImage();
 }
 
 void RenderImageResourceStyleImage::setContainerSizeForRenderer(const IntSize& size)
