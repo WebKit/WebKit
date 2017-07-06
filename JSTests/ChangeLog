@@ -1,3 +1,13 @@
+2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF::StringImpl::copyChars segfaults when built with GCC 7
+        https://bugs.webkit.org/show_bug.cgi?id=173407
+
+        Reviewed by Andreas Kling.
+
+        * stress/string-repeat-copy-chars-crash.js: Added.
+        (shouldBe):
+
 2017-07-03  Saam Barati  <sbarati@apple.com>
 
         Skip unshiftCountSlowCase-correct-postCapacity.js on debug builds since it takes a long time to run.

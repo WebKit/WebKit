@@ -1,5 +1,31 @@
 2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        WTF::StringImpl::copyChars segfaults when built with GCC 7
+        https://bugs.webkit.org/show_bug.cgi?id=173407
+
+        Reviewed by Andreas Kling.
+
+        With GCC 7, StringImpl::copyChars() behaves as unexpected.
+        This function violates strict aliasing rule.
+
+        This optimization is originally introduced to improve performance
+        in SunSpider's string tests in 2008. When running it in my Linux
+        box, it no longer causes any observable difference. So, we just
+        remove this optimization.
+
+                                        baseline                  patched
+
+        string-base64                7.7544+-0.1761            7.6138+-0.2071          might be 1.0185x faster
+        string-fasta                10.5429+-0.2746     ?     10.7500+-0.2669        ? might be 1.0196x slower
+        string-tagcloud             14.8588+-0.2828           14.8039+-0.3039
+        string-unpack-code          36.1769+-0.4251           35.3397+-0.5398          might be 1.0237x faster
+        string-validate-input        8.5182+-0.2206            8.3514+-0.2179          might be 1.0200x faster
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::copyChars):
+
+2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Use std::lock_guard instead of std::unique_lock if move semantics and try_lock is not necessary
         https://bugs.webkit.org/show_bug.cgi?id=174148
 
