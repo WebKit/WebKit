@@ -1,3 +1,14 @@
+2017-07-05  Jonathan Bedard  <jbedard@apple.com>
+
+        Move internal iOS 11 TestExpectations to OpenSource
+        <rdar://problem/32717028>
+
+        Unreviewed test gardening.
+
+        * platform/ios-11/platform/ios/ios/fast/text/opticalFont-expected.txt: Added.
+        * platform/ios-11/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Added.
+        * platform/ios-11/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt: Added.
+
 2017-07-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         CSSFontStyleValue::isItalic seems a bit bogus.
