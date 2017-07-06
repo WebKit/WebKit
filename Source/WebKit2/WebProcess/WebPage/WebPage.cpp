@@ -5634,7 +5634,10 @@ void WebPage::updateWebsitePolicies(const WebsitePolicies& websitePolicies)
         return;
 
     documentLoader->setAutoplayPolicy(autoplayPolicy);
+    
+#if ENABLE(VIDEO)
     m_page->updateMediaElementRateChangeRestrictions();
+#endif
 }
 
 unsigned WebPage::extendIncrementalRenderingSuppression()

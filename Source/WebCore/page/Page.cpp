@@ -993,11 +993,13 @@ void Page::setUserInterfaceLayoutDirection(UserInterfaceLayoutDirection userInte
 #endif
 }
 
+#if ENABLE(VIDEO)
 void Page::updateMediaElementRateChangeRestrictions()
 {
     for (auto* mediaElement : HTMLMediaElement::allMediaElements())
         mediaElement->updateRateChangeRestrictions();
 }
+#endif
 
 void Page::didStartProvisionalLoad()
 {
