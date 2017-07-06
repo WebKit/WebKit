@@ -859,7 +859,7 @@ def runFTLNoCJIT(*optionalTestSpecificOptions)
 end
 
 def runFTLNoCJITB3O1(*optionalTestSpecificOptions)
-    run("ftl-no-cjit-b3o1", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
+    run("ftl-no-cjit-b3o1", "--useArrayAllocationProfiling=false", *(FTL_OPTIONS + NO_CJIT_OPTIONS + B3O1_OPTIONS + optionalTestSpecificOptions))
 end
 
 def runFTLNoCJITValidate(*optionalTestSpecificOptions)

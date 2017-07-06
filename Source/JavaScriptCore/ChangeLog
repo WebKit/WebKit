@@ -1,3 +1,27 @@
+2017-07-05  Saam Barati  <sbarati@apple.com>
+
+        NewArray in FTLLowerDFGToB3 does not handle speculating on doubles when having a bad time
+        https://bugs.webkit.org/show_bug.cgi?id=174188
+        <rdar://problem/30581423>
+
+        Reviewed by Mark Lam.
+
+        We were calling lowJSValue(edge) when we were speculating the
+        edge as double. This isn't allowed. We should have been using
+        lowDouble.
+        
+        This patch also adds a new option, called useArrayAllocationProfiling,
+        which defaults to true. When false, it will make the array allocation
+        profile not actually sample seen arrays. It'll force the allocation
+        profile's predicted indexing type to be ArrayWithUndecided. Adding
+        this option made it trivial to write a test for this bug.
+
+        * bytecode/ArrayAllocationProfile.cpp:
+        (JSC::ArrayAllocationProfile::updateIndexingType):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArray):
+        * runtime/Options.h:
+
 2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         WTF::Thread should have the threads stack bounds.

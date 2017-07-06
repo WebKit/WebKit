@@ -4648,9 +4648,16 @@ private:
         
         for (unsigned operandIndex = 0; operandIndex < m_node->numChildren(); ++operandIndex) {
             Edge edge = m_graph.varArgChild(m_node, operandIndex);
-            m_out.store64(
-                lowJSValue(edge, ManualOperandSpeculation),
-                m_out.absolute(buffer + operandIndex));
+            LValue valueToStore;
+            switch (m_node->indexingType()) {
+            case ALL_DOUBLE_INDEXING_TYPES:
+                valueToStore = boxDouble(lowDouble(edge));
+                break;
+            default:
+                valueToStore = lowJSValue(edge, ManualOperandSpeculation);
+                break;
+            }
+            m_out.store64(valueToStore, m_out.absolute(buffer + operandIndex));
         }
         
         m_out.storePtr(
