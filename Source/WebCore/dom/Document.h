@@ -1246,7 +1246,7 @@ public:
     bool inRenderTreeUpdate() const { return m_inRenderTreeUpdate; }
 
     // Return a Locale for the default locale if the argument is null or empty.
-    Locale& getCachedLocale(const AtomicString& locale = nullAtom());
+    Locale& getCachedLocale(const AtomicString& locale = nullAtom);
 
     const Document* templateDocument() const;
     Document& ensureTemplateDocument();

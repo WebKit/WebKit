@@ -68,7 +68,7 @@ unsigned StyleSheetContents::estimatedSizeInBytes() const
 StyleSheetContents::StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext& context)
     : m_ownerRule(ownerRule)
     , m_originalURL(originalURL)
-    , m_defaultNamespace(starAtom())
+    , m_defaultNamespace(starAtom)
     , m_isUserStyleSheet(ownerRule && ownerRule->parentStyleSheet() && ownerRule->parentStyleSheet()->isUserStyleSheet())
     , m_parserContext(context)
 {
@@ -311,7 +311,7 @@ const AtomicString& StyleSheetContents::namespaceURIFromPrefix(const AtomicStrin
 {
     PrefixNamespaceURIMap::const_iterator it = m_namespaces.find(prefix);
     if (it == m_namespaces.end())
-        return nullAtom();
+        return nullAtom;
     return it->value;
 }
 

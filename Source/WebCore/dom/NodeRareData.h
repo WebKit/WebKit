@@ -122,7 +122,7 @@ public:
 
     ALWAYS_INLINE Ref<TagCollectionNS> addCachedTagCollectionNS(ContainerNode& node, const AtomicString& namespaceURI, const AtomicString& localName)
     {
-        QualifiedName name(nullAtom(), localName, namespaceURI);
+        QualifiedName name(nullAtom, localName, namespaceURI);
         TagCollectionNSCache::AddResult result = m_tagCollectionNSCache.fastAdd(name, nullptr);
         if (!result.isNewEntry)
             return *result.iterator->value;
@@ -147,7 +147,7 @@ public:
     template<typename T, typename ContainerType>
     ALWAYS_INLINE Ref<T> addCachedCollection(ContainerType& container, CollectionType collectionType)
     {
-        CollectionCacheMap::AddResult result = m_cachedCollections.fastAdd(namedCollectionKey(collectionType, starAtom()), nullptr);
+        CollectionCacheMap::AddResult result = m_cachedCollections.fastAdd(namedCollectionKey(collectionType, starAtom), nullptr);
         if (!result.isNewEntry)
             return static_cast<T&>(*result.iterator->value);
 
@@ -159,11 +159,11 @@ public:
     template<typename T>
     T* cachedCollection(CollectionType collectionType)
     {
-        return static_cast<T*>(m_cachedCollections.get(namedCollectionKey(collectionType, starAtom())));
+        return static_cast<T*>(m_cachedCollections.get(namedCollectionKey(collectionType, starAtom)));
     }
 
     template <class NodeListType>
-    void removeCacheWithAtomicName(NodeListType* list, const AtomicString& name = starAtom())
+    void removeCacheWithAtomicName(NodeListType* list, const AtomicString& name = starAtom)
     {
         ASSERT(list == m_atomicNameCaches.get(namedNodeListKey<NodeListType>(name)));
         if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(list->ownerNode()))
@@ -173,14 +173,14 @@ public:
 
     void removeCachedTagCollectionNS(HTMLCollection& collection, const AtomicString& namespaceURI, const AtomicString& localName)
     {
-        QualifiedName name(nullAtom(), localName, namespaceURI);
+        QualifiedName name(nullAtom, localName, namespaceURI);
         ASSERT(&collection == m_tagCollectionNSCache.get(name));
         if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(collection.ownerNode()))
             return;
         m_tagCollectionNSCache.remove(name);
     }
 
-    void removeCachedCollection(HTMLCollection* collection, const AtomicString& name = starAtom())
+    void removeCachedCollection(HTMLCollection* collection, const AtomicString& name = starAtom)
     {
         ASSERT(collection == m_cachedCollections.get(namedCollectionKey(collection->type(), name)));
         if (deleteThisAndUpdateNodeRareDataIfAboutToRemoveLastList(collection->ownerNode()))

@@ -187,7 +187,7 @@ void CustomElementReactionQueue::enqueuePostUpgradeReactions(Element& element)
     if (element.hasAttributes()) {
         for (auto& attribute : element.attributesIterator()) {
             if (queue->m_interface->observesAttribute(attribute.localName()))
-                queue->m_items.append({attribute.name(), nullAtom(), attribute.value()});
+                queue->m_items.append({attribute.name(), nullAtom, attribute.value()});
         }
     }
 

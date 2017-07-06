@@ -3944,7 +3944,7 @@ static const AtomicString& eventNameForTouchPointState(PlatformTouchPoint::State
         // TouchStationary state is not converted to touch events, so fall through to assert.
     default:
         ASSERT_NOT_REACHED();
-        return emptyAtom();
+        return emptyAtom;
     }
 }
 

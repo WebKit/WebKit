@@ -1522,7 +1522,7 @@ public:
     static short initialHyphenationLimitBefore() { return -1; }
     static short initialHyphenationLimitAfter() { return -1; }
     static short initialHyphenationLimitLines() { return -1; }
-    static const AtomicString& initialHyphenationString() { return nullAtom(); }
+    static const AtomicString& initialHyphenationString() { return nullAtom; }
     static EBorderFit initialBorderFit() { return BorderFitBorder; }
     static EResize initialResize() { return RESIZE_NONE; }
     static ControlPart initialAppearance() { return NoControlPart; }
@@ -1549,7 +1549,7 @@ public:
     static Color initialTextEmphasisColor() { return TextEmphasisFillFilled; }
     static TextEmphasisFill initialTextEmphasisFill() { return TextEmphasisFillFilled; }
     static TextEmphasisMark initialTextEmphasisMark() { return TextEmphasisMarkNone; }
-    static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom(); }
+    static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom; }
     static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver | TextEmphasisPositionRight; }
     static RubyPosition initialRubyPosition() { return RubyPositionBefore; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
@@ -1562,7 +1562,7 @@ public:
     static StyleImage* initialMaskBoxImageSource() { return nullptr; }
     static PrintColorAdjust initialPrintColorAdjust() { return PrintColorAdjustEconomy; }
     static QuotesData* initialQuotes() { return nullptr; }
-    static const AtomicString& initialContentAltText() { return emptyAtom(); }
+    static const AtomicString& initialContentAltText() { return emptyAtom; }
 
 #if ENABLE(CSS3_TEXT)
     static TextIndentLine initialTextIndentLine() { return TextIndentFirstLine; }
@@ -1637,12 +1637,12 @@ public:
 
     static unsigned initialTabSize() { return 8; }
 
-    static const AtomicString& initialLineGrid() { return nullAtom(); }
+    static const AtomicString& initialLineGrid() { return nullAtom; }
     static LineSnap initialLineSnap() { return LineSnapNone; }
     static LineAlign initialLineAlign() { return LineAlignNone; }
 
-    static const AtomicString& initialFlowThread() { return nullAtom(); }
-    static const AtomicString& initialRegionThread() { return nullAtom(); }
+    static const AtomicString& initialFlowThread() { return nullAtom; }
+    static const AtomicString& initialRegionThread() { return nullAtom; }
     static RegionFragment initialRegionFragment() { return AutoRegionFragment; }
 
     static IntSize initialInitialLetter() { return IntSize(); }

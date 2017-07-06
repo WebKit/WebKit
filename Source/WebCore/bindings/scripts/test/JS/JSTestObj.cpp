@@ -6011,7 +6011,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAt
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto str = state->argument(0).isUndefined() ? nullAtom() : convert<IDLAtomicStringAdaptor<IDLDOMString>>(*state, state->uncheckedArgument(0));
+    auto str = state->argument(0).isUndefined() ? nullAtom : convert<IDLAtomicStringAdaptor<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.methodWithOptionalAtomicString(WTFMove(str));
     return JSValue::encode(jsUndefined());
@@ -6091,7 +6091,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAt
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto str = state->argument(0).isUndefined() ? nullAtom() : convert<IDLAtomicStringAdaptor<IDLDOMString>>(*state, state->uncheckedArgument(0));
+    auto str = state->argument(0).isUndefined() ? nullAtom : convert<IDLAtomicStringAdaptor<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.methodWithOptionalAtomicStringIsNull(WTFMove(str));
     return JSValue::encode(jsUndefined());
@@ -6139,7 +6139,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalAt
     UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto str = state->argument(0).isUndefined() ? emptyAtom() : convert<IDLAtomicStringAdaptor<IDLDOMString>>(*state, state->uncheckedArgument(0));
+    auto str = state->argument(0).isUndefined() ? emptyAtom : convert<IDLAtomicStringAdaptor<IDLDOMString>>(*state, state->uncheckedArgument(0));
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     impl.methodWithOptionalAtomicStringIsEmptyString(WTFMove(str));
     return JSValue::encode(jsUndefined());

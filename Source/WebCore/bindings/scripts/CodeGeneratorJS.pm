@@ -2125,9 +2125,9 @@ sub GenerateDefaultValue
     if ($codeGenerator->IsStringType($type)) {
         my $useAtomicString = $type->extendedAttributes->{AtomicString};
         if ($defaultValue eq "null") {
-            return $useAtomicString ? "nullAtom()" : "String()";
+            return $useAtomicString ? "nullAtom" : "String()";
         } elsif ($defaultValue eq "\"\"") {
-            return $useAtomicString ? "emptyAtom()" : "emptyString()";
+            return $useAtomicString ? "emptyAtom" : "emptyString()";
         } else {
             return $useAtomicString ? "AtomicString(${defaultValue}, AtomicString::ConstructFromLiteral)" : "ASCIILiteral(${defaultValue})";
         }

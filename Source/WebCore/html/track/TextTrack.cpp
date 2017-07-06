@@ -84,13 +84,13 @@ static const AtomicString& forcedKeyword()
 
 TextTrack* TextTrack::captionMenuOffItem()
 {
-    static TextTrack& off = TextTrack::create(nullptr, nullptr, "off menu item", emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
+    static TextTrack& off = TextTrack::create(nullptr, nullptr, "off menu item", emptyAtom, emptyAtom, emptyAtom).leakRef();
     return &off;
 }
 
 TextTrack* TextTrack::captionMenuAutomaticItem()
 {
-    static TextTrack& automatic = TextTrack::create(nullptr, nullptr, "automatic menu item", emptyAtom(), emptyAtom(), emptyAtom()).leakRef();
+    static TextTrack& automatic = TextTrack::create(nullptr, nullptr, "automatic menu item", emptyAtom, emptyAtom, emptyAtom).leakRef();
     return &automatic;
 }
 

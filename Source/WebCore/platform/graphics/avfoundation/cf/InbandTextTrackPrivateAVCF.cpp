@@ -140,18 +140,18 @@ bool InbandTextTrackPrivateAVCF::isEasyToRead() const
 AtomicString InbandTextTrackPrivateAVCF::label() const
 {
     if (!m_mediaSelectionOption)
-        return emptyAtom();
+        return emptyAtom;
 
     RetainPtr<CFStringRef> title;
 
     RetainPtr<CFArrayRef> commonMetaData = adoptCF(AVCFMediaSelectionOptionCopyCommonMetadata(mediaSelectionOption()));
     RetainPtr<CFArrayRef> titles = adoptCF(AVCFMetadataItemCopyItemsWithKeyAndKeySpace(commonMetaData.get(), AVCFMetadataCommonKeyTitle, AVCFMetadataKeySpaceCommon));
     if (!titles)
-        return emptyAtom();
+        return emptyAtom;
 
     CFIndex titlesCount = CFArrayGetCount(titles.get());
     if (!titlesCount)
-        return emptyAtom();
+        return emptyAtom;
 
     // If possible, return a title in one of the user's preferred languages.
     RetainPtr<CFArrayRef> preferredLanguages = adoptCF(CFLocaleCopyPreferredLanguages());
@@ -167,17 +167,17 @@ AtomicString InbandTextTrackPrivateAVCF::label() const
         title = adoptCF(AVCFMetadataItemCopyStringValue(titleMetadata));
     }
 
-    return title ? AtomicString(title.get()) : emptyAtom();
+    return title ? AtomicString(title.get()) : emptyAtom;
 }
 
 AtomicString InbandTextTrackPrivateAVCF::language() const
 {
     if (!m_mediaSelectionOption)
-        return emptyAtom();
+        return emptyAtom;
 
     RetainPtr<CFLocaleRef> locale = adoptCF(AVCFMediaSelectionOptionCopyLocale(mediaSelectionOption()));
     if (!locale)
-        return emptyAtom();
+        return emptyAtom;
 
     return CFLocaleGetIdentifier(locale.get());
 }

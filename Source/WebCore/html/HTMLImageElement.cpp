@@ -176,7 +176,7 @@ ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()
             continue;
 
         auto sourceSize = SizesAttributeParser(source.attributeWithoutSynchronization(sizesAttr).string(), document()).length();
-        auto candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom(), srcset, sourceSize);
+        auto candidate = bestFitSourceForImageAttributes(document().deviceScaleFactor(), nullAtom, srcset, sourceSize);
         if (!candidate.isEmpty())
             return candidate;
     }

@@ -62,7 +62,7 @@ static inline MatchBasedOnRuleHash computeMatchBasedOnRuleHash(const CSSSelector
     if (selector.match() == CSSSelector::Tag) {
         const QualifiedName& tagQualifiedName = selector.tagQName();
         const AtomicString& selectorNamespace = tagQualifiedName.namespaceURI();
-        if (selectorNamespace == starAtom() || selectorNamespace == xhtmlNamespaceURI) {
+        if (selectorNamespace == starAtom || selectorNamespace == xhtmlNamespaceURI) {
             if (tagQualifiedName == anyQName())
                 return MatchBasedOnRuleHash::Universal;
             return MatchBasedOnRuleHash::ClassC;
@@ -246,7 +246,7 @@ void RuleSet::addRule(StyleRule* rule, unsigned selectorIndex, AddRuleFlags addR
             break;
         }
         case CSSSelector::Tag:
-            if (selector->tagQName().localName() != starAtom())
+            if (selector->tagQName().localName() != starAtom)
                 tagSelector = selector;
             break;
         case CSSSelector::PseudoElement:

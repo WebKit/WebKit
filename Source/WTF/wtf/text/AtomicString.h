@@ -22,7 +22,6 @@
 #define AtomicString_h
 
 #include <utility>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicStringImpl.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/WTFString.h>
@@ -305,35 +304,31 @@ inline AtomicString::AtomicString(NSString* s)
 
 // Define external global variables for the commonly used atomic strings.
 // These are only usable from the main thread.
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> nullAtomData;
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> emptyAtomData;
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> starAtomData;
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> xmlAtomData;
-extern WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> xmlnsAtomData;
-
-inline const AtomicString& nullAtom() { return nullAtomData.get(); }
-inline const AtomicString& emptyAtom() { return emptyAtomData.get(); }
-inline const AtomicString& starAtom() { return starAtomData.get(); }
-inline const AtomicString& xmlAtom() { return xmlAtomData.get(); }
-inline const AtomicString& xmlnsAtom() { return xmlnsAtomData.get(); }
+#ifndef ATOMICSTRING_HIDE_GLOBALS
+extern const WTF_EXPORTDATA AtomicString nullAtom;
+extern const WTF_EXPORTDATA AtomicString emptyAtom;
+extern const WTF_EXPORTDATA AtomicString starAtom;
+extern const WTF_EXPORTDATA AtomicString xmlAtom;
+extern const WTF_EXPORTDATA AtomicString xmlnsAtom;
 
 inline AtomicString AtomicString::fromUTF8(const char* characters, size_t length)
 {
     if (!characters)
-        return nullAtom();
+        return nullAtom;
     if (!length)
-        return emptyAtom();
+        return emptyAtom;
     return fromUTF8Internal(characters, characters + length);
 }
 
 inline AtomicString AtomicString::fromUTF8(const char* characters)
 {
     if (!characters)
-        return nullAtom();
+        return nullAtom;
     if (!*characters)
-        return emptyAtom();
+        return emptyAtom;
     return fromUTF8Internal(characters, nullptr);
 }
+#endif
 
 // AtomicStringHash is the default hash for AtomicString
 template<typename T> struct DefaultHash;

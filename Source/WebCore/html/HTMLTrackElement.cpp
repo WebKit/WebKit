@@ -279,7 +279,7 @@ const AtomicString& HTMLTrackElement::mediaElementCrossOriginAttribute() const
 {
     if (HTMLMediaElement* parent = mediaElement())
         return parent->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
-    return nullAtom();
+    return nullAtom;
 }
 
 void HTMLTrackElement::textTrackKindChanged(TextTrack& track)

@@ -282,7 +282,7 @@ static const AtomicString& valueName(CSSValueID valueID)
     ASSERT_ARG(valueID, valueID < numCSSValueKeywords);
 
     if (valueID < 0)
-        return nullAtom();
+        return nullAtom;
 
     static AtomicString* keywordStrings = new AtomicString[numCSSValueKeywords]; // Leaked intentionally.
     AtomicString& keywordString = keywordStrings[valueID];

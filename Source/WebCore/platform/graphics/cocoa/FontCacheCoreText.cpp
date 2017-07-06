@@ -1400,7 +1400,7 @@ const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& f
         break;
     }
 
-    return nullAtom();
+    return nullAtom;
 }
 
 }

@@ -78,7 +78,7 @@ ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForJSConstructor(Do
     if (!value.isNull())
         element->setValue(value);
     if (defaultSelected)
-        element->setAttributeWithoutSynchronization(selectedAttr, emptyAtom());
+        element->setAttributeWithoutSynchronization(selectedAttr, emptyAtom);
     element->setSelected(selected);
 
     return WTFMove(element);

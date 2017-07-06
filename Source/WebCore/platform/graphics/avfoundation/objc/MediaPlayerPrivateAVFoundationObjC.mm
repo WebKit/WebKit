@@ -3113,7 +3113,7 @@ static const AtomicString& metadataType(NSString *avMetadataKeySpace)
     if ([avMetadataKeySpace isEqualToString:AVMetadataKeySpaceID3])
         return id3Metadata;
 
-    return emptyAtom();
+    return emptyAtom;
 }
 
 #endif
@@ -3151,7 +3151,7 @@ void MediaPlayerPrivateAVFoundationObjC::metadataDidArrive(RetainPtr<NSArray> me
         if (CMTIME_IS_VALID(item.duration))
             end = start + toMediaTime(item.duration);
 
-        AtomicString type = nullAtom();
+        AtomicString type = nullAtom;
         if (item.keySpace)
             type = metadataType(item.keySpace);
 

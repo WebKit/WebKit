@@ -1505,7 +1505,7 @@ const AtomicString& AccessibilityRenderObject::accessKey() const
 {
     Node* node = m_renderer->node();
     if (!is<Element>(node))
-        return nullAtom();
+        return nullAtom;
     return downcast<Element>(*node).getAttribute(accesskeyAttr);
 }
 
@@ -3464,10 +3464,10 @@ const String& AccessibilityRenderObject::actionVerb() const
     case WebCoreLinkRole:
         return linkAction;
     default:
-        return nullAtom();
+        return nullAtom;
     }
 #else
-    return nullAtom();
+    return nullAtom;
 #endif
 }
     

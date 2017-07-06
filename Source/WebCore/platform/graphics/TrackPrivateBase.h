@@ -52,9 +52,9 @@ public:
 
     virtual TrackPrivateBaseClient* client() const = 0;
 
-    virtual AtomicString id() const { return emptyAtom(); }
-    virtual AtomicString label() const { return emptyAtom(); }
-    virtual AtomicString language() const { return emptyAtom(); }
+    virtual AtomicString id() const { return emptyAtom; }
+    virtual AtomicString label() const { return emptyAtom; }
+    virtual AtomicString language() const { return emptyAtom; }
 
     virtual int trackIndex() const { return 0; }
 

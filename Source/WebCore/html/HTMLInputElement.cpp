@@ -166,7 +166,7 @@ HTMLInputElement::~HTMLInputElement()
 
 const AtomicString& HTMLInputElement::name() const
 {
-    return m_name.isNull() ? emptyAtom() : m_name;
+    return m_name.isNull() ? emptyAtom : m_name;
 }
 
 Vector<FileChooserFileInfo> HTMLInputElement::filesFromFileInputFormControlState(const FormControlState& state)
@@ -526,11 +526,11 @@ void HTMLInputElement::updateType()
         ASSERT(elementData());
         // FIXME: We don't have the old attribute values so we pretend that we didn't have the old values.
         if (const Attribute* height = findAttributeByName(heightAttr))
-            attributeChanged(heightAttr, nullAtom(), height->value());
+            attributeChanged(heightAttr, nullAtom, height->value());
         if (const Attribute* width = findAttributeByName(widthAttr))
-            attributeChanged(widthAttr, nullAtom(), width->value());
+            attributeChanged(widthAttr, nullAtom, width->value());
         if (const Attribute* align = findAttributeByName(alignAttr))
-            attributeChanged(alignAttr, nullAtom(), align->value());
+            attributeChanged(alignAttr, nullAtom, align->value());
     }
 
     if (form() && wasSuccessfulSubmitButtonCandidate != m_inputType->canBeSuccessfulSubmitButton())

@@ -24,9 +24,11 @@
 #include "AtomicString.h"
 
 #include "IntegerToStringConversion.h"
-#include "MainThread.h"
-#include "NeverDestroyed.h"
 #include "dtoa.h"
+
+#if USE(WEB_THREAD)
+#include "Lock.h"
+#endif
 
 namespace WTF {
 
@@ -35,7 +37,7 @@ ALWAYS_INLINE AtomicString AtomicString::convertASCIICase() const
 {
     StringImpl* impl = this->impl();
     if (UNLIKELY(!impl))
-        return nullAtom();
+        return nullAtom;
 
     // Convert short strings without allocating a new StringImpl, since
     // there's a good chance these strings are already in the atomic
@@ -110,7 +112,7 @@ AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const c
 {
     auto impl = AtomicStringImpl::addUTF8(charactersStart, charactersEnd);
     if (!impl)
-        return nullAtom();
+        return nullAtom;
     return impl.get();
 }
 
@@ -120,26 +122,5 @@ void AtomicString::show() const
     m_string.show();
 }
 #endif
-
-WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> nullAtomData;
-WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> emptyAtomData;
-WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> starAtomData;
-WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> xmlAtomData;
-WTF_EXPORTDATA LazyNeverDestroyed<AtomicString> xmlnsAtomData;
-
-void AtomicString::init()
-{
-    static std::once_flag initializeKey;
-    std::call_once(initializeKey, [] {
-        // Initialization is not thread safe, so this function must be called from the main thread first.
-        ASSERT(isUIThread());
-
-        nullAtomData.construct();
-        emptyAtomData.construct("");
-        starAtomData.construct("*", AtomicString::ConstructFromLiteral);
-        xmlAtomData.construct("xml", AtomicString::ConstructFromLiteral);
-        xmlnsAtomData.construct("xmlns", AtomicString::ConstructFromLiteral);
-    });
-}
 
 } // namespace WTF

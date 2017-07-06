@@ -276,6 +276,7 @@ set(WTF_SOURCES
     text/CString.cpp
     text/StringBuilder.cpp
     text/StringImpl.cpp
+    text/StringStatics.cpp
     text/StringView.cpp
     text/SymbolImpl.cpp
     text/SymbolRegistry.cpp

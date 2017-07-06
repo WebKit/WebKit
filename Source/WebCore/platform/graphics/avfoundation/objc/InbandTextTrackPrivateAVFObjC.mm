@@ -166,7 +166,7 @@ bool InbandTextTrackPrivateAVFObjC::isEasyToRead() const
 AtomicString InbandTextTrackPrivateAVFObjC::label() const
 {
     if (!m_mediaSelectionOption)
-        return emptyAtom();
+        return emptyAtom;
 
     NSString *title = 0;
 
@@ -181,13 +181,13 @@ AtomicString InbandTextTrackPrivateAVFObjC::label() const
             title = [[titles objectAtIndex:0] stringValue];
     }
 
-    return title ? AtomicString(title) : emptyAtom();
+    return title ? AtomicString(title) : emptyAtom;
 }
 
 AtomicString InbandTextTrackPrivateAVFObjC::language() const
 {
     if (!m_mediaSelectionOption)
-        return emptyAtom();
+        return emptyAtom;
 
     return [[m_mediaSelectionOption.get() locale] localeIdentifier];
 }

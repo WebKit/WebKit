@@ -854,7 +854,7 @@ static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& do
 
 static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, const AtomicString& localName)
 {
-    return createUpgradeCandidateElement(document, QualifiedName { nullAtom(), localName, xhtmlNamespaceURI });
+    return createUpgradeCandidateElement(document, QualifiedName { nullAtom, localName, xhtmlNamespaceURI });
 }
 
 static inline bool isValidHTMLElementName(const AtomicString& localName)
@@ -899,7 +899,7 @@ ExceptionOr<Ref<Element>> Document::createElementForBindings(const AtomicString&
     if (!isValidName(name))
         return Exception { INVALID_CHARACTER_ERR };
 
-    return createElement(QualifiedName(nullAtom(), name, nullAtom()), false);
+    return createElement(QualifiedName(nullAtom, name, nullAtom), false);
 }
 
 Ref<DocumentFragment> Document::createDocumentFragment()
@@ -962,7 +962,7 @@ ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, bool deep)
 
     case ATTRIBUTE_NODE:
         // FIXME: This will "Attr::normalize" child nodes of Attr.
-        return Ref<Node> { Attr::create(*this, QualifiedName(nullAtom(), downcast<Attr>(nodeToImport).name(), nullAtom()), downcast<Attr>(nodeToImport).value()) };
+        return Ref<Node> { Attr::create(*this, QualifiedName(nullAtom, downcast<Attr>(nodeToImport).name(), nullAtom), downcast<Attr>(nodeToImport).value()) };
 
     case DOCUMENT_NODE: // Can't import a document into another document.
     case DOCUMENT_TYPE_NODE: // FIXME: Support cloning a DocumentType node per DOM4.
@@ -1017,13 +1017,13 @@ bool Document::hasValidNamespaceForElements(const QualifiedName& qName)
     // http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrElNS
     if (!qName.prefix().isEmpty() && qName.namespaceURI().isNull()) // createElementNS(null, "html:div")
         return false;
-    if (qName.prefix() == xmlAtom() && qName.namespaceURI() != XMLNames::xmlNamespaceURI) // createElementNS("http://www.example.com", "xml:lang")
+    if (qName.prefix() == xmlAtom && qName.namespaceURI() != XMLNames::xmlNamespaceURI) // createElementNS("http://www.example.com", "xml:lang")
         return false;
 
     // Required by DOM Level 3 Core and unspecified by DOM Level 2 Core:
     // http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/core.html#ID-DocCrElNS
     // createElementNS("http://www.w3.org/2000/xmlns/", "foo:bar"), createElementNS(null, "xmlns:bar"), createElementNS(null, "xmlns")
-    if (qName.prefix() == xmlnsAtom() || (qName.prefix().isEmpty() && qName.localName() == xmlnsAtom()))
+    if (qName.prefix() == xmlnsAtom || (qName.prefix().isEmpty() && qName.localName() == xmlnsAtom))
         return qName.namespaceURI() == XMLNSNames::xmlnsNamespaceURI;
     return qName.namespaceURI() != XMLNSNames::xmlnsNamespaceURI;
 }
@@ -3052,7 +3052,7 @@ void Document::processBaseElement()
         updateBaseURL();
     }
 
-    m_baseTarget = target ? *target : nullAtom();
+    m_baseTarget = target ? *target : nullAtom;
 }
 
 String Document::userAgent(const URL& url) const
@@ -7085,7 +7085,7 @@ const AtomicString& Document::dir() const
 {
     auto* documentElement = this->documentElement();
     if (!is<HTMLHtmlElement>(documentElement))
-        return nullAtom();
+        return nullAtom;
     return downcast<HTMLHtmlElement>(*documentElement).dir();
 }
 
@@ -7164,7 +7164,7 @@ const AtomicString& Document::bgColor() const
 {
     auto* bodyElement = body();
     if (!bodyElement)
-        return emptyAtom();
+        return emptyAtom;
     return bodyElement->attributeWithoutSynchronization(bgcolorAttr);
 }
 
@@ -7178,7 +7178,7 @@ const AtomicString& Document::fgColor() const
 {
     auto* bodyElement = body();
     if (!bodyElement)
-        return emptyAtom();
+        return emptyAtom;
     return bodyElement->attributeWithoutSynchronization(textAttr);
 }
 
@@ -7192,7 +7192,7 @@ const AtomicString& Document::alinkColor() const
 {
     auto* bodyElement = body();
     if (!bodyElement)
-        return emptyAtom();
+        return emptyAtom;
     return bodyElement->attributeWithoutSynchronization(alinkAttr);
 }
 
@@ -7206,7 +7206,7 @@ const AtomicString& Document::linkColorForBindings() const
 {
     auto* bodyElement = body();
     if (!bodyElement)
-        return emptyAtom();
+        return emptyAtom;
     return bodyElement->attributeWithoutSynchronization(linkAttr);
 }
 
@@ -7220,7 +7220,7 @@ const AtomicString& Document::vlinkColor() const
 {
     auto* bodyElement = body();
     if (!bodyElement)
-        return emptyAtom();
+        return emptyAtom;
     return bodyElement->attributeWithoutSynchronization(vlinkAttr);
 }
 

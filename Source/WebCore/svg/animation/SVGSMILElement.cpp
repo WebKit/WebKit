@@ -216,13 +216,13 @@ inline QualifiedName SVGSMILElement::constructAttributeName() const
     std::tie(prefix, localName) = parseResult.releaseReturnValue();
 
     if (prefix.isNull())
-        return { nullAtom(), localName, nullAtom() };
+        return { nullAtom, localName, nullAtom };
 
     auto namespaceURI = lookupNamespaceURI(prefix);
     if (namespaceURI.isEmpty())
         return anyQName();
 
-    return { nullAtom(), localName, namespaceURI };
+    return { nullAtom, localName, namespaceURI };
 }
 
 inline void SVGSMILElement::updateAttributeName()

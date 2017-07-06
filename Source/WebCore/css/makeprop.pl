@@ -336,10 +336,10 @@ const char* getPropertyName(CSSPropertyID id)
 const AtomicString& getPropertyNameAtomicString(CSSPropertyID id)
 {
     if (id < firstCSSProperty)
-        return nullAtom();
+        return nullAtom;
     int index = id - firstCSSProperty;
     if (index >= numCSSProperties)
-        return nullAtom();
+        return nullAtom;
 
     static AtomicString* propertyStrings = new AtomicString[numCSSProperties]; // Intentionally never destroyed.
     AtomicString& propertyString = propertyStrings[index];

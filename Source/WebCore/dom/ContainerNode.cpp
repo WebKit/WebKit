@@ -897,7 +897,7 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& qual
 {
     ASSERT(!qualifiedName.isNull());
 
-    if (qualifiedName == starAtom())
+    if (qualifiedName == starAtom)
         return ensureRareData().ensureNodeLists().addCachedCollection<AllDescendantsCollection>(*this, AllDescendants);
 
     if (document().isHTMLDocument())
@@ -908,7 +908,7 @@ Ref<HTMLCollection> ContainerNode::getElementsByTagName(const AtomicString& qual
 Ref<HTMLCollection> ContainerNode::getElementsByTagNameNS(const AtomicString& namespaceURI, const AtomicString& localName)
 {
     ASSERT(!localName.isNull());
-    return ensureRareData().ensureNodeLists().addCachedTagCollectionNS(*this, namespaceURI.isEmpty() ? nullAtom() : namespaceURI, localName);
+    return ensureRareData().ensureNodeLists().addCachedTagCollectionNS(*this, namespaceURI.isEmpty() ? nullAtom : namespaceURI, localName);
 }
 
 Ref<NodeList> ContainerNode::getElementsByName(const String& elementName)

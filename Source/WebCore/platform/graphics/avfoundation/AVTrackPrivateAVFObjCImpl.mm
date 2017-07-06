@@ -184,7 +184,7 @@ AtomicString AVTrackPrivateAVFObjCImpl::id() const
     if (m_mediaSelectionOption)
         return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] stringValue];
     ASSERT_NOT_REACHED();
-    return emptyAtom();
+    return emptyAtom;
 }
 
 AtomicString AVTrackPrivateAVFObjCImpl::label() const
@@ -199,7 +199,7 @@ AtomicString AVTrackPrivateAVFObjCImpl::label() const
 
     NSArray *titles = [AVMetadataItem metadataItemsFromArray:commonMetadata withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if (![titles count])
-        return emptyAtom();
+        return emptyAtom;
 
     // If possible, return a title in one of the user's preferred languages.
     NSArray *titlesForPreferredLanguages = [AVMetadataItem metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
@@ -216,7 +216,7 @@ AtomicString AVTrackPrivateAVFObjCImpl::language() const
         return languageForAVMediaSelectionOption(m_mediaSelectionOption->avMediaSelectionOption());
 
     ASSERT_NOT_REACHED();
-    return emptyAtom();
+    return emptyAtom;
 }
 
 String AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(AVAssetTrack* track)

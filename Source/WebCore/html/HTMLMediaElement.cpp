@@ -7312,7 +7312,7 @@ bool HTMLMediaElement::effectiveMuted() const
 
 bool HTMLMediaElement::doesHaveAttribute(const AtomicString& attribute, AtomicString* value) const
 {
-    QualifiedName attributeName(nullAtom(), attribute, nullAtom());
+    QualifiedName attributeName(nullAtom, attribute, nullAtom);
 
     auto& elementValue = attributeWithoutSynchronization(attributeName);
     if (elementValue.isNull())

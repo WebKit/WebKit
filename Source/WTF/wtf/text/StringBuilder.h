@@ -205,7 +205,7 @@ public:
     AtomicString toAtomicString() const
     {
         if (!m_length)
-            return emptyAtom();
+            return emptyAtom;
 
         // If the buffer is sufficiently over-allocated, make a new AtomicString from a copy so its buffer is not so large.
         if (canShrink()) {

@@ -556,7 +556,7 @@ void Page::setGroupName(const String& name)
 
 const String& Page::groupName() const
 {
-    return m_group ? m_group->name() : nullAtom().string();
+    return m_group ? m_group->name() : nullAtom.string();
 }
 
 void Page::initGroup()

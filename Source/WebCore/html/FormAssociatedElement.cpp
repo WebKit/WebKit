@@ -282,7 +282,7 @@ void FormAssociatedElement::formAttributeTargetChanged()
 const AtomicString& FormAssociatedElement::name() const
 {
     const AtomicString& name = asHTMLElement().getNameAttribute();
-    return name.isNull() ? emptyAtom() : name;
+    return name.isNull() ? emptyAtom : name;
 }
 
 bool FormAssociatedElement::isFormControlElementWithState() const

@@ -135,7 +135,7 @@ const String& AccessibilityMediaControl::controlTypeName() const
         break;
     }
 
-    return nullAtom();
+    return nullAtom;
 }
 
 void AccessibilityMediaControl::accessibilityText(Vector<AccessibilityText>& textOrder)

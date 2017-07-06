@@ -387,7 +387,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
 const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString&)
 {
-    return nullAtom();
+    return nullAtom;
 }
 
 }

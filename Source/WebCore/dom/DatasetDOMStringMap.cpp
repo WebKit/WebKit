@@ -133,7 +133,7 @@ static inline AtomicString convertPropertyNameToAttributeName(const StringImpl& 
 static AtomicString convertPropertyNameToAttributeName(const String& name)
 {
     if (name.isNull())
-        return nullAtom();
+        return nullAtom;
 
     StringImpl* nameImpl = name.impl();
     if (nameImpl->is8Bit())

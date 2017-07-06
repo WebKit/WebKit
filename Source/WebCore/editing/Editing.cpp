@@ -890,7 +890,7 @@ Ref<HTMLElement> createHTMLElement(Document& document, const QualifiedName& name
 
 Ref<HTMLElement> createHTMLElement(Document& document, const AtomicString& tagName)
 {
-    return createHTMLElement(document, QualifiedName(nullAtom(), tagName, xhtmlNamespaceURI));
+    return createHTMLElement(document, QualifiedName(nullAtom, tagName, xhtmlNamespaceURI));
 }
 
 bool isTabSpanNode(const Node* node)

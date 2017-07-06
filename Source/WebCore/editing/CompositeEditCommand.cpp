@@ -837,7 +837,7 @@ void CompositeEditCommand::deleteSelection(const VisibleSelection &selection, bo
 
 void CompositeEditCommand::removeNodeAttribute(Element& element, const QualifiedName& attribute)
 {
-    setNodeAttribute(element, attribute, nullAtom());
+    setNodeAttribute(element, attribute, nullAtom);
 }
 
 void CompositeEditCommand::setNodeAttribute(Element& element, const QualifiedName& attribute, const AtomicString& value)

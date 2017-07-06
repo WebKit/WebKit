@@ -191,7 +191,7 @@ static const AtomicString& legacyType(const Event& event)
     if (event.type() == eventNames().wheelEvent)
         return eventNames().mousewheelEvent;
 
-    return nullAtom();
+    return nullAtom;
 }
 
 bool EventTarget::fireEventListeners(Event& event)

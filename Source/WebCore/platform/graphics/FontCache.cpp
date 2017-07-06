@@ -225,7 +225,7 @@ const AtomicString& FontCache::alternateFamilyName(const AtomicString& familyNam
         break;
     }
 
-    return nullAtom();
+    return nullAtom;
 }
 
 FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const AtomicString& passedFamilyName,

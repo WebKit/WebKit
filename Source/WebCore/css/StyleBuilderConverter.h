@@ -457,14 +457,14 @@ inline String StyleBuilderConverter::convertString(StyleResolver&, const CSSValu
 inline String StyleBuilderConverter::convertStringOrAuto(StyleResolver& styleResolver, const CSSValue& value)
 {
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueAuto)
-        return nullAtom();
+        return nullAtom;
     return convertString(styleResolver, value);
 }
 
 inline String StyleBuilderConverter::convertStringOrNone(StyleResolver& styleResolver, const CSSValue& value)
 {
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
-        return nullAtom();
+        return nullAtom;
     return convertString(styleResolver, value);
 }
 

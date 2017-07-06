@@ -344,7 +344,7 @@ FontFamilySpecification FontCascadeDescription::effectiveFamilyAt(unsigned index
             --index;
     }
     ASSERT_NOT_REACHED();
-    return nullAtom();
+    return nullAtom;
 }
 
 }

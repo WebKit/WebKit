@@ -1534,7 +1534,7 @@ int RenderText::previousOffset(int current) const
         return current - 1;
 
     StringImpl* textImpl = m_text.impl();
-    CachedTextBreakIterator iterator(StringView(textImpl->characters16(), textImpl->length()), TextBreakIterator::Mode::Caret, nullAtom());
+    CachedTextBreakIterator iterator(StringView(textImpl->characters16(), textImpl->length()), TextBreakIterator::Mode::Caret, nullAtom);
     auto result = iterator.preceding(current).value_or(current - 1);
     return result;
 }
@@ -1707,7 +1707,7 @@ int RenderText::nextOffset(int current) const
         return current + 1;
 
     StringImpl* textImpl = m_text.impl();
-    CachedTextBreakIterator iterator(StringView(textImpl->characters16(), textImpl->length()), TextBreakIterator::Mode::Caret, nullAtom());
+    CachedTextBreakIterator iterator(StringView(textImpl->characters16(), textImpl->length()), TextBreakIterator::Mode::Caret, nullAtom);
     auto result = iterator.following(current).value_or(current + 1);
     return result;
 }
