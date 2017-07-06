@@ -4710,10 +4710,8 @@ void BytecodeGenerator::invalidateForInContextForLocal(RegisterID* localRegister
     // reassigned from its original value.
     for (size_t i = m_forInContextStack.size(); i--; ) {
         ForInContext& context = m_forInContextStack[i].get();
-        if (context.local() != localRegister)
-            continue;
-        context.invalidate();
-        break;
+        if (context.local() == localRegister)
+            context.invalidate();
     }
 }
 

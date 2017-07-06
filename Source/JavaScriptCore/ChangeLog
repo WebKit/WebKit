@@ -1,3 +1,18 @@
+2017-07-06  Saam Barati  <sbarati@apple.com>
+
+        We are missing places where we invalidate the for-in context
+        https://bugs.webkit.org/show_bug.cgi?id=174184
+
+        Reviewed by Geoffrey Garen.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::invalidateForInContextForLocal):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::EmptyLetExpression::emitBytecode):
+        (JSC::ForInNode::emitLoopHeader):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::BindingNode::bindValue):
+
 2017-07-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, suppress warnings in GCC environment
