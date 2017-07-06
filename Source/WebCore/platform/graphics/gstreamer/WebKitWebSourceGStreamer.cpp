@@ -727,16 +727,8 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static const char* protocols[] = {"webkit+http", "webkit+https", "blob", nullptr };
+    static const char* protocols[] = {"http", "https", "blob", nullptr };
     return protocols;
-}
-
-static URL convertPlaybinURI(const char* uriString)
-{
-    URL url(URL(), uriString);
-    ASSERT(url.protocol().substring(0, 7) == "webkit+");
-    url.setProtocol(url.protocol().substring(7).toString());
-    return url;
 }
 
 static gchar* webKitWebSrcGetUri(GstURIHandler* handler)
@@ -766,7 +758,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
     if (!uri)
         return TRUE;
 
-    URL url = convertPlaybinURI(uri);
+    URL url(URL(), uri);
     if (!urlHasSupportedProtocol(url)) {
         g_set_error(error, GST_URI_ERROR, GST_URI_ERROR_BAD_URI, "Invalid URI '%s'", uri);
         return FALSE;

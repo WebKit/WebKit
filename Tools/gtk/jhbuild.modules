@@ -217,7 +217,7 @@
   </autotools>
 
   <autotools id="libsoup"
-             autogenargs="--disable-introspection">
+             autogenargs="--without-gnome --disable-introspection">
     <if condition-set="macos">
       <autogenargs value="--disable-tls-check"/>
     </if>
@@ -338,7 +338,7 @@
             hash="sha256:f6d245b6b3d4cb733f81ebb021074c525ece83db0c10e932794b339b8d935eb7"/>
   </autotools>
 
-  <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc">
+  <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
     <if condition-set="macos">
       <autogenargs value="--disable-introspection"/>
     </if>

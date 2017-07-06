@@ -173,8 +173,6 @@ private:
     static void uriDecodeBinElementAddedCallback(GstBin*, GstElement*, MediaPlayerPrivateGStreamer*);
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
-    void setPlaybinURL(const URL& urlString);
-
 protected:
     void cacheDuration();
 
