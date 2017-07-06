@@ -38,9 +38,14 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
+    UIApplicationSceneClassicModeOriginalPad = 4,
+};
+
 @interface UIApplication ()
 
 - (BOOL)_isClassic;
++ (UIApplicationSceneClassicMode)_classicMode;
 
 @end
 

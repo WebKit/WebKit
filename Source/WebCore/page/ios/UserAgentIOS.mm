@@ -44,18 +44,31 @@ static inline bool isClassic()
     return [[getUIApplicationClass() sharedApplication] _isClassic];
 }
 
+static inline bool isClassicPad()
+{
+    return [getUIApplicationClass() _classicMode] == UIApplicationSceneClassicModeOriginalPad;
+}
+
+static inline bool isClassicPhone()
+{
+    return isClassic() && [getUIApplicationClass() _classicMode] != UIApplicationSceneClassicModeOriginalPad;
+}
+
 static inline NSString *osNameForUserAgent()
 {
-    if (deviceHasIPadCapability() && !isClassic())
+    if (deviceHasIPadCapability() && !isClassicPhone())
         return @"OS";
     return @"iPhone OS";
 }
 
 static inline NSString *deviceNameForUserAgent()
 {
-    if (isClassic())
+    if (isClassic()) {
+        if (isClassicPad())
+            return @"iPad";
         return @"iPhone";
-    
+    }
+
     auto name = retainPtr((NSString *)deviceName());
 #if PLATFORM(IOS_SIMULATOR)
     NSUInteger location = [name rangeOfString:@" Simulator" options:NSBackwardsSearch].location;
