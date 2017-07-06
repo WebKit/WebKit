@@ -176,11 +176,6 @@ void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(WTF::Functio
     m_shouldPartitionCookiesForDomainsHandler = WTFMove(handler);
 }
     
-void ResourceLoadStatisticsStore::setWritePersistentStoreCallback(WTF::Function<void()>&& handler)
-{
-    m_writePersistentStoreHandler = WTFMove(handler);
-}
-
 void ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback(WTF::Function<void()>&& handler)
 {
     m_grandfatherExistingWebsiteDataHandler = WTFMove(handler);

@@ -1,3 +1,32 @@
+2017-07-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] ResourceLoadStatistics should batch its writes
+        https://bugs.webkit.org/show_bug.cgi?id=174111
+        <rdar://problem/33115894>
+
+        Reviewed by Chris Dumez.
+
+        Revise the data writing operation to only write on a specific interval (currently
+        set to 5 minutes).
+
+        Also make 'writeStoreToDisk' simpler to use by moving the deleting (before write) and
+        creating (after write) of the FileMonitor into the method, rather than requiring this
+        knowledge in multiple places.
+
+        Make sure that we write our statistics file out before exiting so that we do not
+        lose any data if we exit before the five-minute window has elapsed.
+
+        * UIProcess/Storage/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::setWritePersistentStoreCallback): Deleted.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords): Remove the stop
+        and start monitoring into 'writeStoreToDisk'. Also check if enough time has elapsed since
+        the last write to commit to disk.
+        (WebKit::WebResourceLoadStatisticsStore::registerSharedResourceLoadObserver): Remove the
+        stop and start monitoring into 'writeStoreToDisk'.
+        (WebKit::WebResourceLoadStatisticsStore::writeStoreToDisk): Add the stop and start monitoring
+        commands here, so callers don't have to know to do so.
+
 2017-07-06  Chris Dumez  <cdumez@apple.com>
 
         FileMonitor should not be ref counted

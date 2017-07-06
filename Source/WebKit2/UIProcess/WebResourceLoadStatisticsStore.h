@@ -40,14 +40,15 @@
 #endif
 
 namespace WTF {
+class MonotonicTime;
 class WallTime;
 class WorkQueue;
 }
 
 namespace WebCore {
+class FileMonitor;
 class KeyedDecoder;
 class KeyedEncoder;
-class FileMonitor;
 struct ResourceLoadStatistics;
 }
 
@@ -122,6 +123,7 @@ private:
     void grandfatherExistingWebsiteData();
 
     void writeStoreToDisk();
+    void scheduleOrWriteStoreToDisk();
     void writeEncoderToDisk(WebCore::KeyedEncoder&, const String& path) const;
     std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& path) const;
     WallTime statisticsFileModificationTime(const String& label) const;
@@ -148,8 +150,10 @@ private:
     std::unique_ptr<WebCore::FileMonitor> m_statisticsStorageMonitor;
     const String m_statisticsStoragePath;
     WTF::WallTime m_lastStatisticsFileSyncTime;
+    WTF::MonotonicTime m_lastStatisticsWriteTime;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryOneShotTimer;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryRepeatedTimer;
+    bool m_didScheduleWrite { false };
 };
 
 } // namespace WebKit

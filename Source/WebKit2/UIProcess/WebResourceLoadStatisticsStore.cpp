@@ -40,6 +40,7 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
@@ -58,6 +59,8 @@ template<typename T> static inline String primaryDomain(const T& value)
 {
     return ResourceLoadStatistics::primaryDomain(value);
 }
+
+constexpr Seconds minimumStatisticsFileWriteInterval { 5_min };
 
 static bool notifyPagesWhenDataRecordsWereScanned = false;
 static bool shouldClassifyResourcesBeforeDataRecordsRemoval = true;
@@ -104,13 +107,6 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
         if (m_resourceLoadStatisticsStore->isEmpty())
             return;
         processStatisticsAndDataRecords();
-    });
-    m_resourceLoadStatisticsStore->setWritePersistentStoreCallback([this, protectedThis = makeRef(*this)] {
-        m_statisticsQueue->dispatch([this, protectedThis = protectedThis.copyRef()] {
-            stopMonitoringStatisticsStorage();
-            writeStoreToDisk();
-            startMonitoringStatisticsStorage();
-        });
     });
     m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this, protectedThis = makeRef(*this)] {
         grandfatherExistingWebsiteData();
@@ -205,11 +201,7 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
             });
         }
 
-        stopMonitoringStatisticsStorage();
-
-        writeStoreToDisk();
-
-        startMonitoringStatisticsStorage();
+        scheduleOrWriteStoreToDisk();
     });
 }
 
@@ -319,7 +311,11 @@ void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy&,
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
 {
     BinarySemaphore semaphore;
-    m_statisticsQueue->dispatch([&semaphore] {
+    m_statisticsQueue->dispatch([&semaphore, this, protectedThis = makeRef(*this)] {
+        // Write final file state to disk.
+        if (m_didScheduleWrite)
+            writeStoreToDisk();
+
         // Make sure any ongoing work in our queue is finished before we terminate.
         semaphore.signal();
     });
@@ -345,6 +341,8 @@ void WebResourceLoadStatisticsStore::writeStoreToDisk()
 {
     ASSERT(!RunLoop::isMain());
     
+    stopMonitoringStatisticsStorage();
+
     syncWithExistingStatisticsStorageIfNeeded();
 
     auto encoder = coreStore().createEncoderFromData();
@@ -353,6 +351,29 @@ void WebResourceLoadStatisticsStore::writeStoreToDisk()
     writeEncoderToDisk(*encoder.get(), resourceLog);
 
     m_lastStatisticsFileSyncTime = WallTime::now();
+    m_lastStatisticsWriteTime = MonotonicTime::now();
+
+    startMonitoringStatisticsStorage();
+    m_didScheduleWrite = false;
+}
+
+void WebResourceLoadStatisticsStore::scheduleOrWriteStoreToDisk()
+{
+    ASSERT(!RunLoop::isMain());
+
+    auto timeSinceLastWrite = MonotonicTime::now() - m_lastStatisticsWriteTime;
+    if (timeSinceLastWrite < minimumStatisticsFileWriteInterval) {
+        if (!m_didScheduleWrite) {
+            m_didScheduleWrite = true;
+            Seconds delayUntil = minimumStatisticsFileWriteInterval - timeSinceLastWrite + 1_s;
+            m_statisticsQueue->dispatchAfter(delayUntil, [this, protectedThis = makeRef(*this)] {
+                writeStoreToDisk();
+            });
+        }
+        return;
+    }
+
+    writeStoreToDisk();
 }
 
 static PlatformFileHandle openAndLockFile(const String& path, FileOpenMode mode)
