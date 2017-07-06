@@ -254,7 +254,7 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
 {
     ASSERT(!RunLoop::isMain());
 
-    String resourceLog = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    String resourceLog = resourceLogFilePath();
     if (resourceLog.isEmpty() || !fileExists(resourceLog)) {
         grandfatherExistingWebsiteData();
         return;
@@ -286,7 +286,7 @@ void WebResourceLoadStatisticsStore::refreshFromDisk()
 {
     ASSERT(!RunLoop::isMain());
 
-    String resourceLog = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    String resourceLog = resourceLogFilePath();
     if (resourceLog.isEmpty())
         return;
 
@@ -326,13 +326,19 @@ void WebResourceLoadStatisticsStore::applicationWillTerminate()
     semaphore.wait(WallTime::infinity());
 }
 
-String WebResourceLoadStatisticsStore::persistentStoragePath(const String& label) const
+String WebResourceLoadStatisticsStore::statisticsStoragePath() const
 {
-    if (m_statisticsStoragePath.isEmpty())
+    return m_statisticsStoragePath.isolatedCopy();
+}
+
+String WebResourceLoadStatisticsStore::resourceLogFilePath() const
+{
+    String statisticsStoragePath = this->statisticsStoragePath();
+    if (statisticsStoragePath.isEmpty())
         return emptyString();
 
     // TODO Decide what to call this file
-    return pathByAppendingComponent(m_statisticsStoragePath, label + "_resourceLog.plist");
+    return pathByAppendingComponent(statisticsStoragePath, "full_browsing_session_resourceLog.plist");
 }
 
 void WebResourceLoadStatisticsStore::writeStoreToDisk()
@@ -343,7 +349,7 @@ void WebResourceLoadStatisticsStore::writeStoreToDisk()
 
     auto encoder = coreStore().createEncoderFromData();
 
-    String resourceLog = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    String resourceLog = resourceLogFilePath();
     writeEncoderToDisk(*encoder.get(), resourceLog);
 
     m_lastStatisticsFileSyncTime = WallTime::now();
@@ -382,8 +388,9 @@ void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, c
     if (!rawData)
         return;
 
-    if (!m_statisticsStoragePath.isEmpty()) {
-        makeAllDirectories(m_statisticsStoragePath);
+    auto statisticsStoragePath = this->statisticsStoragePath();
+    if (!statisticsStoragePath.isEmpty()) {
+        makeAllDirectories(statisticsStoragePath);
         platformExcludeFromBackup();
     }
 
@@ -401,7 +408,7 @@ void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, c
 void WebResourceLoadStatisticsStore::deleteStoreFromDisk()
 {
     ASSERT(!RunLoop::isMain());
-    String resourceLogPath = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    String resourceLogPath = resourceLogFilePath();
     if (resourceLogPath.isEmpty())
         return;
 
@@ -423,7 +430,7 @@ void WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage()
     if (m_statisticsStorageMonitor)
         return;
     
-    String resourceLogPath = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    String resourceLogPath = resourceLogFilePath();
     if (resourceLogPath.isEmpty())
         return;
     
@@ -461,7 +468,7 @@ void WebResourceLoadStatisticsStore::syncWithExistingStatisticsStorageIfNeeded()
     if (m_statisticsStorageMonitor)
         return;
 
-    String resourceLog = persistentStoragePath(ASCIILiteral("full_browsing_session"));
+    String resourceLog = resourceLogFilePath();
     if (resourceLog.isEmpty() || !fileExists(resourceLog))
         return;
 

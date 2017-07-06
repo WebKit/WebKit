@@ -113,7 +113,8 @@ private:
     void startMonitoringStatisticsStorage();
     void stopMonitoringStatisticsStorage();
 
-    String persistentStoragePath(const String& label) const;
+    String statisticsStoragePath() const;
+    String resourceLogFilePath() const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -145,7 +146,7 @@ private:
 #endif
     Ref<WTF::WorkQueue> m_statisticsQueue;
     RefPtr<WebCore::FileMonitor> m_statisticsStorageMonitor;
-    String m_statisticsStoragePath;
+    const String m_statisticsStoragePath;
     WTF::WallTime m_lastStatisticsFileSyncTime;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryOneShotTimer;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryRepeatedTimer;

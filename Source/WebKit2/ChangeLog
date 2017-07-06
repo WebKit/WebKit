@@ -1,3 +1,27 @@
+2017-07-06  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebResourceLoadStatisticsStore::persistentStoragePath(WTF::String const&)
+        https://bugs.webkit.org/show_bug.cgi?id=174205
+        <rdar://problem/33093552>
+
+        Reviewed by Brent Fulgham.
+
+        Make sure we isolateCopy() m_statisticsStoragePath before using it from the background
+        thread.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded):
+        (WebKit::WebResourceLoadStatisticsStore::refreshFromDisk):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLogFilePath):
+        (WebKit::WebResourceLoadStatisticsStore::statisticsFilePath):
+        (WebKit::WebResourceLoadStatisticsStore::writeStoreToDisk):
+        (WebKit::WebResourceLoadStatisticsStore::writeEncoderToDisk):
+        (WebKit::WebResourceLoadStatisticsStore::deleteStoreFromDisk):
+        (WebKit::WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage):
+        (WebKit::WebResourceLoadStatisticsStore::syncWithExistingStatisticsStorageIfNeeded):
+        (WebKit::WebResourceLoadStatisticsStore::persistentStoragePath): Deleted.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2017-07-06  Alex Christensen  <achristensen@webkit.org>
 
         Fix CFURLRequestRef serialization after r207330
