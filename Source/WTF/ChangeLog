@@ -1,3 +1,10 @@
+2017-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, Windows build fix after r219233 part 4
+        https://bugs.webkit.org/show_bug.cgi?id=174231
+
+        * wtf/Assertions.h:
+
 2017-07-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, Windows build fix after r219233 part 3

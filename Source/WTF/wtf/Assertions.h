@@ -53,6 +53,14 @@
 
 #ifdef __cplusplus
 #include <type_traits>
+
+#if OS(WINDOWS)
+#if !COMPILER(GCC_OR_CLANG)
+extern "C" void _ReadWriteBarrier(void);
+#pragma intrinsic(_ReadWriteBarrier)
+#endif
+#include <intrin.h>
+#endif
 #endif
 
 #ifdef NDEBUG
