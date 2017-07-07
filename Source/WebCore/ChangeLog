@@ -1,3 +1,16 @@
+2017-07-06  Youenn Fablet  <youenn@apple.com>
+
+        Rendering of WebRTC audio in AudioSampleDataSource may trigger crackles
+        https://bugs.webkit.org/show_bug.cgi?id=174223
+
+        Reviewed by Eric Carlson.
+
+        We try reading too quickly and need to back off a little bit if we do not enough data.
+        This only affects real audio and not web audio, hence validated through manual testing only.
+
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+
 2017-07-06  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for WebGL code dealing with WebGL extensions

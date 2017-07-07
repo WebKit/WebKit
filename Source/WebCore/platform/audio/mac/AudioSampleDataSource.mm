@@ -269,12 +269,7 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t&
 #endif
 
         if (framesAvailable < sampleCount) {
-            int64_t delta = static_cast<int64_t>(timeStamp) - static_cast<int64_t>(endFrame);
-            if (delta > 0)
-                m_outputSampleOffset -= std::min<int64_t>(delta, sampleCount);
-        }
-
-        if (!framesAvailable) {
+            m_outputSampleOffset -= sampleCount - framesAvailable;
             AudioSampleBufferList::zeroABL(buffer, byteCount);
             return false;
         }
