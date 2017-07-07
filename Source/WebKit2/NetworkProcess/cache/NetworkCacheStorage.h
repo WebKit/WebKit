@@ -68,6 +68,7 @@ public:
     void store(const Record&, MappedBodyHandler&&);
 
     void remove(const Key&);
+    void remove(const Vector<Key>&, Function<void ()>&&);
     void clear(const String& type, std::chrono::system_clock::time_point modifiedSinceTime, Function<void ()>&& completionHandler);
 
     struct RecordInfo {
@@ -143,6 +144,7 @@ private:
     bool mayContainBlob(const Key&) const;
 
     void addToRecordFilter(const Key&);
+    void deleteFiles(const Key&);
 
     const String m_basePath;
     const String m_recordsPath;

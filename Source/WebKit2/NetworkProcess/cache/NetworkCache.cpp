@@ -505,6 +505,13 @@ void Cache::remove(const WebCore::ResourceRequest& request)
     remove(makeCacheKey(request));
 }
 
+void Cache::remove(const Vector<Key>& keys, Function<void ()>&& completionHandler)
+{
+    ASSERT(isEnabled());
+
+    m_storage->remove(keys, WTFMove(completionHandler));
+}
+
 void Cache::traverse(Function<void (const TraversalEntry*)>&& traverseHandler)
 {
     ASSERT(isEnabled());

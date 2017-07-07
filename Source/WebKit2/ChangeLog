@@ -1,3 +1,37 @@
+2017-07-07  Antti Koivisto  <antti@apple.com>
+
+        WKWebSiteDataStore.removeDataOfTypes should wait until disk cache files are actually removed before invoking completion handler
+        https://bugs.webkit.org/show_bug.cgi?id=174224
+        <rdar://problem/33067545>
+
+        Reviewed by Sam Weinig.
+
+        Currently we dispatch file deletion operations to a background queue and call the completion
+        handler without waiting for the I/O to complete.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::clearDiskCacheEntries):
+
+            Call a new version of NetworkCache::remove() for bulk deletion.
+            Note that it is fine to call this with an empty vector.
+
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::Cache::remove):
+
+            Bulk deletion with a completion handler.
+
+        (WebKit::NetworkCache::Cache::deleteFiles): Added.
+
+            Factor to a helper function.
+
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::remove):
+
+            Remove files for all the provided keys in a queue and invoke the completion handler in the main thread when done.
+
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+
 2017-07-06  Chris Dumez  <cdumez@apple.com>
 
         Fix bad usage of static variables in ResourceLoadStatisticsStore

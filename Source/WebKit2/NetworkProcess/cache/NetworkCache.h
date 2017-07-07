@@ -121,6 +121,7 @@ public:
     void traverse(Function<void (const TraversalEntry*)>&&);
     void remove(const Key&);
     void remove(const WebCore::ResourceRequest&);
+    void remove(const Vector<Key>&, Function<void ()>&&);
 
     void clear();
     void clear(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler);

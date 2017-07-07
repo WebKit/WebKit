@@ -555,9 +555,39 @@ void Storage::remove(const Key& key)
     removeFromPendingWriteOperations(key);
 
     serialBackgroundIOQueue().dispatch([this, key] {
-        WebCore::deleteFile(recordPathForKey(key));
-        m_blobStorage.remove(blobPathForKey(key));
+        deleteFiles(key);
     });
+}
+
+void Storage::remove(const Vector<Key>& keys, Function<void ()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    Vector<Key> keysToRemove;
+    keysToRemove.reserveInitialCapacity(keys.size());
+
+    for (auto& key : keys) {
+        if (!mayContain(key))
+            continue;
+        removeFromPendingWriteOperations(key);
+        keysToRemove.uncheckedAppend(key);
+    }
+
+    serialBackgroundIOQueue().dispatch([this, keysToRemove = WTFMove(keysToRemove), completionHandler = WTFMove(completionHandler)] () mutable {
+        for (auto& key : keysToRemove)
+            deleteFiles(key);
+
+        if (completionHandler)
+            RunLoop::main().dispatch(WTFMove(completionHandler));
+    });
+}
+
+void Storage::deleteFiles(const Key& key)
+{
+    ASSERT(!RunLoop::isMain());
+
+    WebCore::deleteFile(recordPathForKey(key));
+    m_blobStorage.remove(blobPathForKey(key));
 }
 
 void Storage::updateFileModificationTime(const String& path)

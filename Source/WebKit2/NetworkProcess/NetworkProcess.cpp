@@ -449,10 +449,7 @@ static void clearDiskCacheEntries(const Vector<SecurityOriginData>& origins, Fun
                 return;
             }
 
-            for (auto& key : cacheKeysToDelete)
-                NetworkCache::singleton().remove(key);
-
-            RunLoop::main().dispatch(WTFMove(completionHandler));
+            NetworkCache::singleton().remove(cacheKeysToDelete, WTFMove(completionHandler));
             return;
         });
 
