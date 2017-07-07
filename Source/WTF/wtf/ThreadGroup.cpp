@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,46 +24,47 @@
  */
 
 #include "config.h"
-#include "WasmMachineThreads.h"
+#include "ThreadGroup.h"
 
-#if ENABLE(WEBASSEMBLY)
-
-#include "MachineStackMarker.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadMessage.h>
-#include <wtf/threads/Signals.h>
 
-namespace JSC { namespace Wasm {
+namespace WTF {
 
-
-inline MachineThreads& wasmThreads()
+std::mutex& ThreadGroup::destructionMutex()
 {
-    static LazyNeverDestroyed<MachineThreads> threads;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        threads.construct();
-    });
-
-    return threads;
+    static NeverDestroyed<std::mutex> mutex;
+    return mutex.get();
 }
 
-void startTrackingCurrentThread()
+ThreadGroup::~ThreadGroup()
 {
-    wasmThreads().addCurrentThread();
+    auto destructionMutexLocker = holdLock(destructionMutex());
+    auto locker = holdLock(m_lock);
+    for (auto* thread : m_threads)
+        thread->removeFromThreadGroup(destructionMutexLocker, *this);
 }
 
-void resetInstructionCacheOnAllThreads()
+bool ThreadGroup::add(Thread& thread)
 {
-    auto locker = holdLock(wasmThreads().getLock());
-    for (auto* thread : wasmThreads().threads(locker)) {
-        sendMessage(*thread, [] (const PlatformRegisters&) {
-            // It's likely that the signal handler will already reset the instruction cache but we might as well be sure.
-            WTF::crossModifyingCodeFence();
-        });
-    }
+    auto destructionMutexLocker = holdLock(destructionMutex());
+    auto locker = holdLock(m_lock);
+    if (!thread.canAddToThreadGroup(destructionMutexLocker))
+        return false;
+    if (m_threads.add(&thread).isNewEntry)
+        thread.addToThreadGroup(destructionMutexLocker, *this);
+    return true;
 }
 
-    
-} } // namespace JSC::Wasm
+void ThreadGroup::addCurrentThread()
+{
+    bool isAdded = add(Thread::current());
+    ASSERT_UNUSED(isAdded, isAdded);
+}
 
-#endif // ENABLE(WEBASSEMBLY)
+void ThreadGroup::removeCurrentThread(const AbstractLocker&, Thread& thread)
+{
+    auto locker = holdLock(m_lock);
+    m_threads.remove(&thread);
+}
+
+} // namespace WTF

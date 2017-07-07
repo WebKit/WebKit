@@ -27,6 +27,7 @@
 #ifndef AsyncRequest_h
 #define AsyncRequest_h
 
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>

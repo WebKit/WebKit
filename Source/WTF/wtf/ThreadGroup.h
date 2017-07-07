@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WasmMachineThreads.h"
+#pragma once
 
-#if ENABLE(WEBASSEMBLY)
+#include <wtf/ListHashSet.h>
+#include <wtf/Lock.h>
+#include <wtf/Threading.h>
 
-#include "MachineStackMarker.h"
-#include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadMessage.h>
-#include <wtf/threads/Signals.h>
+namespace WTF {
 
-namespace JSC { namespace Wasm {
+class ThreadGroup : public ThreadSafeRefCounted<ThreadGroup> {
+public:
+    friend class Thread;
 
-
-inline MachineThreads& wasmThreads()
-{
-    static LazyNeverDestroyed<MachineThreads> threads;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        threads.construct();
-    });
-
-    return threads;
-}
-
-void startTrackingCurrentThread()
-{
-    wasmThreads().addCurrentThread();
-}
-
-void resetInstructionCacheOnAllThreads()
-{
-    auto locker = holdLock(wasmThreads().getLock());
-    for (auto* thread : wasmThreads().threads(locker)) {
-        sendMessage(*thread, [] (const PlatformRegisters&) {
-            // It's likely that the signal handler will already reset the instruction cache but we might as well be sure.
-            WTF::crossModifyingCodeFence();
-        });
+    static Ref<ThreadGroup> create()
+    {
+        return adoptRef(*new ThreadGroup());
     }
+
+    WTF_EXPORT_PRIVATE bool add(Thread&);
+    WTF_EXPORT_PRIVATE void addCurrentThread();
+
+    const ListHashSet<Thread*>& threads(const AbstractLocker&) const { return m_threads; }
+
+    std::mutex& getLock() { return m_lock; }
+
+    WTF_EXPORT_PRIVATE ~ThreadGroup();
+
+private:
+    ThreadGroup() = default;
+
+    static std::mutex& destructionMutex();
+    void removeCurrentThread(const AbstractLocker& destructionMutexLocker, Thread&);
+
+    // We use std::mutex since it can be used when deallocating TLS.
+    std::mutex m_lock;
+    ListHashSet<Thread*> m_threads;
+};
+
 }
 
-    
-} } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY)
+using WTF::ThreadGroup;

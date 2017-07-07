@@ -132,6 +132,7 @@ set(WTF_HEADERS
     StringPrintStream.h
     SystemFree.h
     SystemTracing.h
+    ThreadGroup.h
     ThreadHolder.cpp
     ThreadMessage.h
     ThreadSafeRefCounted.h
@@ -246,6 +247,7 @@ set(WTF_SOURCES
     StackStats.cpp
     StackTrace.cpp
     StringPrintStream.cpp
+    ThreadGroup.cpp
     ThreadMessage.cpp
     Threading.cpp
     TimeWithDynamicClockType.cpp

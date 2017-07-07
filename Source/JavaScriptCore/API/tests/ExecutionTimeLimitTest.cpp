@@ -36,6 +36,7 @@
 #include <wtf/Condition.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Lock.h>
+#include <wtf/Threading.h>
 #include <wtf/text/StringBuilder.h>
 
 #if HAVE(MACH_EXCEPTIONS)
