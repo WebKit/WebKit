@@ -84,6 +84,9 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     ASSERT(frame.document());
     ASSERT(topFrame.document());
     ASSERT(topFrame.page());
+
+    if (frame.isMainFrame())
+        return;
     
     if (!shouldLog(topFrame.page()))
         return;
@@ -109,18 +112,8 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-
-    // Always fire if we have previously removed data records for this domain
-    // FIXME: targetStatistics.dataRecordsRemoved is always 0 in WebCore as it gets populated in the UIProcess.
-    bool shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
-
-    if (!frame.isMainFrame()) {
-        auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-        if (subframeUnderTopFrameOriginsResult.isNewEntry)
-            shouldCallNotificationCallback = true;
-    }
-
-    if (shouldCallNotificationCallback)
+    auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+    if (subframeUnderTopFrameOriginsResult.isNewEntry)
         scheduleNotificationIfNeeded();
 }
     
@@ -150,23 +143,15 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
         return;
 
     bool shouldCallNotificationCallback = false;
-
     {
         auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-
-        // Always fire if we have previously removed data records for this domain
-        // FIXME: targetStatistics.dataRecordsRemoved is always 0 in WebCore as it gets populated in the UIProcess.
-        shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
-
-        auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-        if (subresourceUnderTopFrameOriginsResult.isNewEntry)
+        if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
             shouldCallNotificationCallback = true;
     }
 
     if (isRedirect) {
         auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-        auto subresourceUniqueRedirectsToResult = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain);
-        if (subresourceUniqueRedirectsToResult.isNewEntry)
+        if (redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain).isNewEntry)
             shouldCallNotificationCallback = true;
     }
 
@@ -199,16 +184,7 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
-
-    // Always fire if we have previously removed data records for this domain
-    // FIXME: targetStatistics.dataRecordsRemoved is always 0 in WebCore as it gets populated in the UIProcess.
-    bool shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
-
-    auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-    if (subresourceUnderTopFrameOriginsResult.isNewEntry)
-        shouldCallNotificationCallback = true;
-
-    if (shouldCallNotificationCallback)
+    if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
         scheduleNotificationIfNeeded();
 }
 
