@@ -26,13 +26,14 @@
 #include "config.h"
 #include "Threading.h"
 
+#include "dtoa.h"
+#include "dtoa/cached-powers.h"
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <wtf/DateMath.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RandomNumberSeed.h>
-#include <wtf/ThreadGroup.h>
 #include <wtf/ThreadHolder.h>
 #include <wtf/ThreadMessage.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -129,46 +130,10 @@ void Thread::initialize()
     m_stack = StackBounds::currentThreadStackBounds();
 }
 
-static bool shouldRemoveThreadFromThreadGroup()
-{
-#if OS(WINDOWS)
-    // On Windows the thread specific destructor is also called when the
-    // main thread is exiting. This may lead to the main thread waiting
-    // forever for the thread group lock when exiting, if the sampling
-    // profiler thread was terminated by the system while holding the
-    // thread group lock.
-    if (WTF::isMainThread())
-        return false;
-#endif
-    return true;
-}
-
-bool Thread::canAddToThreadGroup(const AbstractLocker&)
-{
-    std::lock_guard<std::mutex> locker(m_mutex);
-    return !m_didExit;
-}
-
 void Thread::didExit()
 {
-    auto destructionMutexLocker = holdLock(ThreadGroup::destructionMutex());
-    if (shouldRemoveThreadFromThreadGroup()) {
-        for (auto* threadGroup : m_threadGroups)
-            threadGroup->removeCurrentThread(destructionMutexLocker, *this);
-    }
     std::lock_guard<std::mutex> locker(m_mutex);
     m_didExit = true;
-}
-
-void Thread::addToThreadGroup(const AbstractLocker& destructionMutexLocker, ThreadGroup& threadGroup)
-{
-    ASSERT_UNUSED(destructionMutexLocker, canAddToThreadGroup(destructionMutexLocker));
-    m_threadGroups.add(&threadGroup);
-}
-
-void Thread::removeFromThreadGroup(const AbstractLocker&, ThreadGroup& threadGroup)
-{
-    m_threadGroups.remove(&threadGroup);
 }
 
 void Thread::setCurrentThreadIsUserInteractive(int relativePriority)

@@ -27,7 +27,6 @@
 #include "AutomaticThread.h"
 
 #include "DataLog.h"
-#include "Threading.h"
 
 namespace WTF {
 

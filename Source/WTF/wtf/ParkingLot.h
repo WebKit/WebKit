@@ -28,11 +28,10 @@
 
 #include <wtf/Atomics.h>
 #include <wtf/ScopedLambda.h>
+#include <wtf/Threading.h>
 #include <wtf/TimeWithDynamicClockType.h>
 
 namespace WTF {
-
-class Thread;
 
 class ParkingLot {
     ParkingLot() = delete;

@@ -39,7 +39,6 @@
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "LLIntPCRanges.h"
-#include "MachineContext.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include "MarkedSpaceInlines.h"
@@ -166,9 +165,10 @@ protected:
     bool isValidFramePointer(void* exec)
     {
         uint8_t* fpCast = bitwise_cast<uint8_t*>(exec);
-        for (auto* thread : m_vm.heap.machineThreads().threads(m_machineThreadsLocker)) {
-            uint8_t* stackBase = static_cast<uint8_t*>(thread->stack().origin());
-            uint8_t* stackLimit = static_cast<uint8_t*>(thread->stack().end());
+        const auto& threadList = m_vm.heap.machineThreads().threadsListHead(m_machineThreadsLocker);
+        for (MachineThreads::MachineThread* thread = threadList.head(); thread; thread = thread->next()) {
+            uint8_t* stackBase = static_cast<uint8_t*>(thread->stackBase());
+            uint8_t* stackLimit = static_cast<uint8_t*>(thread->stackEnd());
             RELEASE_ASSERT(stackBase);
             RELEASE_ASSERT(stackLimit);
             if (fpCast <= stackBase && fpCast >= stackLimit)
@@ -278,6 +278,7 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     , m_weakRandom()
     , m_stopwatch(WTFMove(stopwatch))
     , m_timingInterval(std::chrono::microseconds(Options::sampleInterval()))
+    , m_jscExecutionThread(nullptr)
     , m_isPaused(false)
     , m_isShutDown(false)
 {
@@ -337,7 +338,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microsecon
     if (m_vm.entryScope) {
         double nowTime = m_stopwatch->elapsedTime();
 
-        auto machineThreadsLocker = holdLock(m_vm.heap.machineThreads().getLock());
+        LockHolder machineThreadsLocker(m_vm.heap.machineThreads().getLock());
         LockHolder codeBlockSetLocker(m_vm.heap.codeBlockSet().getLock());
         LockHolder executableAllocatorLocker(ExecutableAllocator::singleton().getLock());
 
@@ -351,12 +352,12 @@ void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microsecon
             bool topFrameIsLLInt = false;
             void* llintPC;
             {
-                PlatformRegisters registers;
+                MachineThreads::MachineThread::Registers registers;
                 m_jscExecutionThread->getRegisters(registers);
-                machineFrame = MachineContext::framePointer(registers);
+                machineFrame = registers.framePointer();
                 callFrame = static_cast<ExecState*>(machineFrame);
-                machinePC = MachineContext::instructionPointer(registers);
-                llintPC = MachineContext::llintInstructionPointer(registers);
+                machinePC = registers.instructionPointer();
+                llintPC = registers.llintPC();
             }
             // FIXME: Lets have a way of detecting when we're parsing code.
             // https://bugs.webkit.org/show_bug.cgi?id=152761
@@ -677,7 +678,7 @@ void SamplingProfiler::pause(const AbstractLocker&)
 void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread(const AbstractLocker&)
 {
     ASSERT(m_lock.isLocked());
-    m_jscExecutionThread = &Thread::current();
+    m_jscExecutionThread = m_vm.heap.machineThreads().machineThreadForCurrentThread();
 }
 
 void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread()

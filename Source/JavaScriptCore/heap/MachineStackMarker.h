@@ -21,10 +21,12 @@
 
 #pragma once
 
+#include "MachineContext.h"
 #include "RegisterState.h"
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/Lock.h>
 #include <wtf/ScopedLambda.h>
-#include <wtf/ThreadGroup.h>
+#include <wtf/ThreadSpecific.h>
 
 namespace JSC {
 
@@ -43,22 +45,58 @@ class MachineThreads {
     WTF_MAKE_NONCOPYABLE(MachineThreads);
 public:
     MachineThreads();
+    ~MachineThreads();
 
     void gatherConservativeRoots(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState*);
 
-    // Only needs to be called by clients that can use the same heap from multiple threads.
-    void addCurrentThread() { m_threadGroup->addCurrentThread(); }
+    JS_EXPORT_PRIVATE void addCurrentThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
-    std::mutex& getLock() { return m_threadGroup->getLock(); }
-    const ListHashSet<Thread*>& threads(const AbstractLocker& locker) const { return m_threadGroup->threads(locker); }
+    class MachineThread : public DoublyLinkedListNode<MachineThread> {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        MachineThread();
+
+        struct Registers {
+            void* stackPointer() const;
+#if ENABLE(SAMPLING_PROFILER)
+            void* framePointer() const;
+            void* instructionPointer() const;
+            void* llintPC() const;
+#endif // ENABLE(SAMPLING_PROFILER)
+            PlatformRegisters regs;
+        };
+
+        Expected<void, Thread::PlatformSuspendError> suspend() { return m_thread->suspend(); }
+        void resume() { m_thread->resume(); }
+        size_t getRegisters(Registers& regs);
+        std::pair<void*, size_t> captureStack(void* stackTop);
+
+        WTF::ThreadIdentifier threadID() const { return m_thread->id(); }
+        void* stackBase() const { return m_thread->stack().origin(); }
+        void* stackEnd() const { return m_thread->stack().end(); }
+
+        Ref<WTF::Thread> m_thread;
+        MachineThread* m_next { nullptr };
+        MachineThread* m_prev { nullptr };
+    };
+
+    Lock& getLock() { return m_registeredThreadsMutex; }
+    const DoublyLinkedList<MachineThread>& threadsListHead(const AbstractLocker&) const { ASSERT(m_registeredThreadsMutex.isLocked()); return m_registeredThreads; }
+    MachineThread* machineThreadForCurrentThread();
 
 private:
     void gatherFromCurrentThread(ConservativeRoots&, JITStubRoutineSet&, CodeBlockSet&, CurrentThreadState&);
 
-    void tryCopyOtherThreadStack(Thread&, void*, size_t capacity, size_t*);
+    void tryCopyOtherThreadStack(MachineThread*, void*, size_t capacity, size_t*);
     bool tryCopyOtherThreadStacks(const AbstractLocker&, void*, size_t capacity, size_t*);
 
-    Ref<ThreadGroup> m_threadGroup;
+    static void THREAD_SPECIFIC_CALL removeThread(void*);
+
+    void removeThreadIfFound(ThreadIdentifier);
+
+    Lock m_registeredThreadsMutex;
+    DoublyLinkedList<MachineThread> m_registeredThreads;
+    WTF::ThreadSpecificKey m_threadSpecificForMachineThreads;
 };
 
 #define DECLARE_AND_COMPUTE_CURRENT_THREAD_STATE(stateName) \

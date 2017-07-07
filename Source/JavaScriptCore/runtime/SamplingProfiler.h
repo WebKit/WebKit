@@ -196,7 +196,7 @@ private:
     double m_lastTime;
     Lock m_lock;
     RefPtr<Thread> m_thread;
-    RefPtr<Thread> m_jscExecutionThread;
+    MachineThreads::MachineThread* m_jscExecutionThread;
     bool m_isPaused;
     bool m_isShutDown;
     bool m_needsReportAtExit { false };
