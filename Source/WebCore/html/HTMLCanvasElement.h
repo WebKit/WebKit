@@ -32,6 +32,7 @@
 #include "IntSize.h"
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 
 #if ENABLE(WEBGL)
 #include "WebGLContextAttributes.h"
@@ -58,6 +59,8 @@ class CanvasObserver {
 public:
     virtual ~CanvasObserver() { }
 
+    virtual bool isCanvasObserverProxy() const { return false; }
+
     virtual void canvasChanged(HTMLCanvasElement&, const FloatRect& changedRect) = 0;
     virtual void canvasResized(HTMLCanvasElement&) = 0;
     virtual void canvasDestroyed(HTMLCanvasElement&) = 0;
@@ -71,6 +74,7 @@ public:
 
     void addObserver(CanvasObserver&);
     void removeObserver(CanvasObserver&);
+    HashSet<Element*> cssCanvasClients() const;
 
     unsigned width() const { return size().width(); }
     unsigned height() const { return size().height(); }

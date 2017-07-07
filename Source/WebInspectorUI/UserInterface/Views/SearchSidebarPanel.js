@@ -278,7 +278,7 @@ WebInspector.SearchSidebarPanel = class SearchSidebarPanel extends WebInspector.
         }
 
         if (window.DOMAgent)
-            WebInspector.domTreeManager.requestDocument(function(){});
+            WebInspector.domTreeManager.ensureDocument();
 
         if (window.PageAgent)
             PageAgent.searchInResources(searchQuery, isCaseSensitive, isRegex, resourcesCallback.bind(this));

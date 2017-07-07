@@ -23,27 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CanvasObserver = class CanvasObserver
-{
-    // Events defined by the "Canvas" domain.
-
-    canvasAdded(canvas)
-    {
-        WebInspector.canvasManager.canvasAdded(canvas);
-    }
-
-    canvasRemoved(canvasId)
-    {
-        WebInspector.canvasManager.canvasRemoved(canvasId);
-    }
-
-    canvasMemoryChanged(canvasId, memoryCost)
-    {
-        WebInspector.canvasManager.canvasMemoryChanged(canvasId, memoryCost);
-    }
-
-    cssCanvasClientNodesChanged(canvasId)
-    {
-        WebInspector.canvasManager.cssCanvasClientNodesChanged(canvasId);
-    }
-};
+.sidebar > .panel.details.canvas .details-section > .content .row.simple > .value > .node-link {
+    display: block;
+}

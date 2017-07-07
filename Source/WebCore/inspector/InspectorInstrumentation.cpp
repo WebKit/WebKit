@@ -999,6 +999,12 @@ void InspectorInstrumentation::didCreateCSSCanvasImpl(InstrumentingAgents* instr
         canvasAgent->didCreateCSSCanvas(canvasElement, name);
 }
 
+void InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement)
+{
+    if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())
+        canvasAgent->didChangeCSSCanvasClientNodes(canvasElement);
+}
+
 void InspectorInstrumentation::didCreateCanvasRenderingContextImpl(InstrumentingAgents* instrumentingAgents, HTMLCanvasElement& canvasElement)
 {
     if (InspectorCanvasAgent* canvasAgent = instrumentingAgents->inspectorCanvasAgent())

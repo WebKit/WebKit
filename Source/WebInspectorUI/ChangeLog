@@ -1,3 +1,43 @@
+2017-07-07  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Show all elements currently using a given CSS Canvas
+        https://bugs.webkit.org/show_bug.cgi?id=173965
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WebInspector.CanvasManager.prototype.cssCanvasClientNodesChanged):
+        * UserInterface/Models/Canvas.js:
+        (WebInspector.Canvas.prototype.requestCSSCanvasClientNodes):
+        (WebInspector.Canvas.prototype.cssCanvasClientNodesChanged):
+        * UserInterface/Protocol/CanvasObserver.js:
+        (WebInspector.CanvasObserver.prototype.cssCanvasClientNodesChanged):
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WebInspector.CanvasDetailsSidebarPanel):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.set canvas):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.initialLayout):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype.layout):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._refreshCSSCanvasSection):
+        (WebInspector.CanvasDetailsSidebarPanel.prototype._formatMemoryRow):
+        Add CSS section for CSS canvases. Currently displays a list of node links, each of which is
+        using the selected canvas via -webkit-canvas.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/CanvasDetailsSidebarPanel.css: Added.
+        (.sidebar > .panel.details.canvas .details-section > .content .row.simple > .value > .node-link):
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WebInspector.DOMTreeManager.prototype.ensureDocument):
+        * UserInterface/Models/Canvas.js:
+        (WebInspector.Canvas.prototype.requestNode):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WebInspector.SearchSidebarPanel.prototype.performSearch):
+        Add convenience function that will call DOMAgent.getDocument with an empty function. Should
+        be used when it is necessary that the document has been sent to the frontend, but the
+        document node itself is not needed.
+
 2017-07-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Clean up some unnecessary constructors

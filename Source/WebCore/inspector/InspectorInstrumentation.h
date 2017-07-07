@@ -247,6 +247,7 @@ public:
 #endif
 
     static void didCreateCSSCanvas(HTMLCanvasElement&, const String&);
+    static void didChangeCSSCanvasClientNodes(HTMLCanvasElement&);
     static void didCreateCanvasRenderingContext(HTMLCanvasElement&);
     static void didChangeCanvasMemory(HTMLCanvasElement&);
 
@@ -423,6 +424,7 @@ private:
     static void updateApplicationCacheStatusImpl(InstrumentingAgents&, Frame&);
 
     static void didCreateCSSCanvasImpl(InstrumentingAgents*, HTMLCanvasElement&, const String&);
+    static void didChangeCSSCanvasClientNodesImpl(InstrumentingAgents*, HTMLCanvasElement&);
     static void didCreateCanvasRenderingContextImpl(InstrumentingAgents*, HTMLCanvasElement&);
     static void didChangeCanvasMemoryImpl(InstrumentingAgents*, HTMLCanvasElement&);
 
@@ -1189,7 +1191,14 @@ inline void InspectorInstrumentation::didCreateCSSCanvas(HTMLCanvasElement& canv
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
         didCreateCSSCanvasImpl(instrumentingAgents, canvasElement, name);
 }
-    
+
+inline void InspectorInstrumentation::didChangeCSSCanvasClientNodes(HTMLCanvasElement& canvasElement)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))
+        didChangeCSSCanvasClientNodesImpl(instrumentingAgents, canvasElement);
+}
+
 inline void InspectorInstrumentation::didCreateCanvasRenderingContext(HTMLCanvasElement& canvasElement)
 {
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(&canvasElement.document()))

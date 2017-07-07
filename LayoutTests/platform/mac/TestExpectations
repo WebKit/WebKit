@@ -1141,6 +1141,7 @@ webkit.org/b/148119 [ Yosemite ] fast/text/trak-optimizeLegibility.html [ Failur
 
 webkit.org/b/174066 inspector/canvas/create-context-webgl2.html [ Pass Timeout ]
 webkit.org/b/174066 inspector/canvas/create-context-webgpu.html [ Pass Timeout ]
+webkit.org/b/174272 inspector/canvas/css-canvas-clients.html [ Pass Timeout ]
 webkit.org/b/170615 inspector/codemirror/prettyprinting-css.html [ Pass Timeout ]
 webkit.org/b/153460 inspector/codemirror/prettyprinting-css-rules.html [ Pass Timeout ]
 webkit.org/b/160048 [ Debug ] inspector/codemirror/prettyprinting-javascript.html [ Pass Timeout ]

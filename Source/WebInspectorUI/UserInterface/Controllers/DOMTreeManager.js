@@ -85,6 +85,11 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
         DOMAgent.getDocument(onDocumentAvailable.bind(this));
     }
 
+    ensureDocument()
+    {
+        this.requestDocument(function(){});
+    }
+
     pushNodeToFrontend(objectId, callback)
     {
         this._dispatchWhenDocumentAvailable(DOMAgent.requestNode.bind(DOMAgent, objectId), callback);

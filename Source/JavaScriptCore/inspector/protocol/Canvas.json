@@ -73,6 +73,16 @@
             ]
         },
         {
+            "name": "requestCSSCanvasClientNodes",
+            "description": "Gets all the nodes that are using this canvas via -webkit-canvas.",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId" }
+            ],
+            "returns": [
+                { "name": "clientNodeIds", "type": "array", "items": { "$ref": "DOM.NodeId" } }
+            ]
+        },
+        {
             "name": "resolveCanvasContext",
             "description": "Resolves JavaScript canvas context object for given canvasId.",
             "parameters": [
@@ -102,6 +112,12 @@
             "parameters": [
                 { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." },
                 { "name": "memoryCost", "type": "number", "description": "New memory cost value for the canvas in bytes." }
+            ]
+        },
+        {
+            "name": "cssCanvasClientNodesChanged",
+            "parameters": [
+                { "name": "canvasId", "$ref": "CanvasId", "description": "Identifier of canvas that changed." }
             ]
         }
     ]

@@ -63,11 +63,13 @@ public:
     void disable(ErrorString&) override;
     void requestNode(ErrorString&, const String& canvasId, int* nodeId) override;
     void requestContent(ErrorString&, const String& canvasId, String* content) override;
+    void requestCSSCanvasClientNodes(ErrorString&, const String& canvasId, RefPtr<Inspector::Protocol::Array<int>>&) override;
     void resolveCanvasContext(ErrorString&, const String& canvasId, const String* const objectGroup, RefPtr<Inspector::Protocol::Runtime::RemoteObject>&) override;
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);
     void didCreateCSSCanvas(HTMLCanvasElement&, const String&);
+    void didChangeCSSCanvasClientNodes(HTMLCanvasElement&);
     void didCreateCanvasRenderingContext(HTMLCanvasElement&);
     void didChangeCanvasMemory(HTMLCanvasElement&);
 

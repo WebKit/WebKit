@@ -29,6 +29,7 @@
 #include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorPageAgent.h"
@@ -170,6 +171,21 @@ void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String
         errorString = ASCIILiteral("Unsupported canvas context type");
 }
 
+void InspectorCanvasAgent::requestCSSCanvasClientNodes(ErrorString& errorString, const String& canvasId, RefPtr<Inspector::Protocol::Array<int>>& result)
+{
+    const CanvasEntry* canvasEntry = getCanvasEntry(canvasId);
+    if (!canvasEntry) {
+        errorString = ASCIILiteral("Invalid canvas identifier");
+        return;
+    }
+
+    result = Inspector::Protocol::Array<int>::create();
+    for (Element* element : canvasEntry->element->cssCanvasClients()) {
+        if (int documentNodeId = m_instrumentingAgents.inspectorDOMAgent()->boundNodeId(&element->document()))
+            result->addItem(m_instrumentingAgents.inspectorDOMAgent()->pushNodeToFrontend(errorString, documentNodeId, element));
+    }
+}
+
 static JSC::JSValue contextAsScriptValue(JSC::ExecState& state, CanvasRenderingContext* context)
 {
     JSC::JSLockHolder lock(&state);
@@ -248,6 +264,15 @@ void InspectorCanvasAgent::didCreateCSSCanvas(HTMLCanvasElement& canvasElement, 
     ASSERT(!m_canvasEntries.contains(&canvasElement));
 
     m_canvasToCSSCanvasId.set(&canvasElement, name);
+}
+
+void InspectorCanvasAgent::didChangeCSSCanvasClientNodes(HTMLCanvasElement& canvasElement)
+{
+    const CanvasEntry* canvasEntry = getCanvasEntry(canvasElement);
+    if (!canvasEntry)
+        return;
+
+    m_frontendDispatcher->cssCanvasClientNodesChanged(canvasEntry->identifier);
 }
 
 void InspectorCanvasAgent::didCreateCanvasRenderingContext(HTMLCanvasElement& canvasElement)

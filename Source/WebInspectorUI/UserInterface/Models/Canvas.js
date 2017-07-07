@@ -40,6 +40,8 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         this._cssCanvasName = cssCanvasName || "";
         this._contextAttributes = contextAttributes || {};
         this._memoryCost = memoryCost || NaN;
+
+        this._cssCanvasClientNodes = null;
     }
 
     // Static
@@ -140,16 +142,16 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
             return;
         }
 
-        WebInspector.domTreeManager.requestDocument((document) => {
-            CanvasAgent.requestNode(this._identifier, (error, nodeId) => {
-                if (error) {
-                    callback(null);
-                    return;
-                }
+        WebInspector.domTreeManager.ensureDocument();
 
-                this._domNode = WebInspector.domTreeManager.nodeForId(nodeId);
-                callback(this._domNode);
-            });
+        CanvasAgent.requestNode(this._identifier, (error, nodeId) => {
+            if (error) {
+                callback(null);
+                return;
+            }
+
+            this._domNode = WebInspector.domTreeManager.nodeForId(nodeId);
+            callback(this._domNode);
         });
     }
 
@@ -165,6 +167,33 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         });
     }
 
+    requestCSSCanvasClientNodes(callback)
+    {
+        if (!this._cssCanvasName) {
+            callback([]);
+            return;
+        }
+
+        if (this._cssCanvasClientNodes) {
+            callback(this._cssCanvasClientNodes);
+            return;
+        }
+
+        WebInspector.domTreeManager.ensureDocument();
+
+        CanvasAgent.requestCSSCanvasClientNodes(this._identifier, (error, clientNodeIds) => {
+            if (error) {
+                callback([]);
+                return;
+            }
+
+            clientNodeIds = Array.isArray(clientNodeIds) ? clientNodeIds : [];
+            this._cssCanvasClientNodes = clientNodeIds.map((clientNodeId) => WebInspector.domTreeManager.nodeForId(clientNodeId));
+
+            callback(this._cssCanvasClientNodes);
+        });
+    }
+
     saveIdentityToCookie(cookie)
     {
         cookie[WebInspector.Canvas.FrameURLCookieKey] = this._frame.url.hash;
@@ -174,6 +203,18 @@ WebInspector.Canvas = class Canvas extends WebInspector.Object
         else if (this._domNode)
             cookie[WebInspector.Canvas.NodePathCookieKey] = this._domNode.path;
 
+    }
+
+    cssCanvasClientNodesChanged()
+    {
+        // Called from WebInspector.CanvasManager.
+
+        if (!this._cssCanvasName)
+            return;
+
+        this._cssCanvasClientNodes = null;
+
+        this.dispatchEventToListeners(WebInspector.Canvas.Event.CSSCanvasClientNodesChanged);
     }
 };
 
@@ -193,4 +234,5 @@ WebInspector.Canvas.ResourceSidebarType = "resource-type-canvas";
 
 WebInspector.Canvas.Event = {
     MemoryChanged: "canvas-memory-changed",
+    CSSCanvasClientNodesChanged: "canvas-css-canvas-client-nodes-changed",
 };

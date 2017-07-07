@@ -30,6 +30,7 @@
 
 #include "Blob.h"
 #include "BlobCallback.h"
+#include "CSSCanvasValue.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
@@ -45,6 +46,7 @@
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
 #include "MIMETypeRegistry.h"
+#include "RenderElement.h"
 #include "RenderHTMLCanvas.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
@@ -168,11 +170,33 @@ bool HTMLCanvasElement::canStartSelection() const
 void HTMLCanvasElement::addObserver(CanvasObserver& observer)
 {
     m_observers.add(&observer);
+
+    if (is<CSSCanvasValue::CanvasObserverProxy>(observer))
+        InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
 }
 
 void HTMLCanvasElement::removeObserver(CanvasObserver& observer)
 {
     m_observers.remove(&observer);
+
+    if (is<CSSCanvasValue::CanvasObserverProxy>(observer))
+        InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
+}
+
+HashSet<Element*> HTMLCanvasElement::cssCanvasClients() const
+{
+    HashSet<Element*> cssCanvasClients;
+    for (auto& observer : m_observers) {
+        if (!is<CSSCanvasValue::CanvasObserverProxy>(observer))
+            continue;
+
+        auto clients = downcast<CSSCanvasValue::CanvasObserverProxy>(observer)->ownerValue().clients();
+        for (auto& entry : clients) {
+            if (Element* element = entry.key->element())
+                cssCanvasClients.add(element);
+        }
+    }
+    return cssCanvasClients;
 }
 
 void HTMLCanvasElement::setHeight(unsigned value)
