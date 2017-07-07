@@ -1,3 +1,24 @@
+2017-05-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [SVG] Leak in SVGAnimatedListPropertyTearOff
+        https://bugs.webkit.org/show_bug.cgi?id=172545
+
+        Reviewed by Said Abou-Hallawa.
+
+        SVGAnimatedListPropertyTearOff maintains a vector m_wrappers with references to
+        SVGPropertyTraits<PropertyType>::ListItemTearOff. Apart from that SVGPropertyTearOff has a
+        reference to SVGAnimatedProperty.
+
+        When SVGListProperty::getItemValuesAndWrappers() is called, it creates a
+        SVGPropertyTraits<PropertyType>::ListItemTearOff pointing to the same SVGAnimatedProperty (a
+        SVGAnimatedListPropertyTearOff) which stores the m_wrappers vector where the ListItemTearOff
+        is going to be added to. This effectively creates a reference cycle between the
+        SVGAnimatedListPropertyTearOff and all the ListItemTearOff it stores in m_wrappers.
+
+        We should detach those wrappers in propertyWillBeDeleted() in order to break the cycle.
+
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+
 2017-07-07  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] vid.me videos do not play
