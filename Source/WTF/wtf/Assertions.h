@@ -53,7 +53,6 @@
 
 #ifdef __cplusplus
 #include <type_traits>
-#include <wtf/Atomics.h>
 #endif
 
 #ifdef NDEBUG
@@ -493,13 +492,22 @@ void isIntegralType(T, Types... types)
 }
 }
 
+inline void compilerFenceForCrash()
+{
+#if OS(WINDOWS) && !COMPILER(GCC_OR_CLANG)
+    _ReadWriteBarrier();
+#else
+    asm volatile("" ::: "memory");
+#endif
+}
+
 #ifndef CRASH_WITH_SECURITY_IMPLICATION_AND_INFO
 // This is useful if you are going to stuff data into registers before crashing. Like the crashWithInfo functions below...
 // GCC doesn't like the ##__VA_ARGS__ here since this macro is called from another macro so we just CRASH instead there.
 #if COMPILER(CLANG) || COMPILER(MSVC)
 #define CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(...) do { \
         WTF::isIntegralType(__VA_ARGS__); \
-        compilerFence(); \
+        compilerFenceForCrash(); \
         WTFCrashWithInfo(__LINE__, __FILE__, WTF_PRETTY_FUNCTION, __COUNTER__, ##__VA_ARGS__); \
     } while (false)
 #else
