@@ -1,5 +1,16 @@
 2017-07-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed GTK and WPE test gardening
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_hkdf.https-expected.txt:
+
+2017-07-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Follow-up to "REGRESSION(r209495): materiauxlaverdure.com fails to load"
         https://bugs.webkit.org/show_bug.cgi?id=173301
         <rdar://problem/32624850>

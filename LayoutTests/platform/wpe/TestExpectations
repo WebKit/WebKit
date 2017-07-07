@@ -610,3 +610,6 @@ imported/w3c/web-platform-tests/encrypted-media/drm-mp4-unique-origin.html [ Ski
 imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.html [ Skip ]
 imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.html [ Skip ]
 imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.html [ Skip ]
+
+# No support for resource load statistics in test controller.
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout Pass ]
