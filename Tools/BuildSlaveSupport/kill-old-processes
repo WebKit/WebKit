@@ -25,6 +25,14 @@
 
 import os, sys
 
+def listAllWebKitPrograms(builddir_bin):
+    foundWebKitPrograms = []
+    for root, dirs, files in os.walk(builddir_bin):
+        for file in files:
+            if os.access(os.path.join(root, file), os.X_OK):
+                foundWebKitPrograms.append(file)
+    return foundWebKitPrograms
+
 
 def main(user=None):
     tasksToKillWin = [
@@ -93,18 +101,20 @@ def main(user=None):
     ]
 
     taskToKillUnix = [
-        "apache2",
+        # System process that are executed as part of the build process
         "cc1plus",
-        "DumpRenderTree",
-        "gold",
-        "httpd",
+        "ld.gold",
         "ld",
         "make",
-        "ruby",
+        "cmake",
         "svn",
-        "webkit_unit_tests",
-        "WebKitTestRunner",
+        # System process that are executed as part of the test steps
         "Xvfb",
+        "gdb",
+        "ruby",
+        "apache2",
+        "httpd",
+        # WebKit related process names are automatically generated for GTK+/WPE/JSCOnly
     ]
 
     # This allows to specify on the environment of the bot a list of process that should be killed.
@@ -123,7 +133,8 @@ def main(user=None):
         for task in tasksToKill + tasksToKillWin:
             os.system("taskkill /t /f /im " + task)
     elif sys.platform.startswith('linux'):
-        for task in tasksToKill + taskToKillUnix:
+        builddir_bin = "WebKitBuild/Release/bin" if os.path.isdir("WebKitBuild/Release/bin") else "WebKitBuild/Debug/bin"
+        for task in tasksToKill + taskToKillUnix + listAllWebKitPrograms(builddir_bin):
             os.system("killall -9 -v " + task)
         os.system("ps aux | grep -P '.+/python .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
     else:
