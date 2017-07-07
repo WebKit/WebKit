@@ -1,3 +1,10 @@
+2017-07-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, CLoop build fix after r219238
+        https://bugs.webkit.org/show_bug.cgi?id=174081
+
+        * heap/MachineStackMarker.cpp:
+
 2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Implement WTF::ThreadGroup

@@ -27,6 +27,7 @@
 #include <setjmp.h>
 #include <stdlib.h>
 #include <wtf/BitVector.h>
+#include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WTF;
