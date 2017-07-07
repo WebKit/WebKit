@@ -713,7 +713,7 @@ void ApplicationCacheGroup::didFinishLoadingManifest()
     }
     
     Manifest manifest;
-    if (!parseManifest(m_manifestURL, m_manifestResource->data().data(), m_manifestResource->data().size(), manifest)) {
+    if (!parseManifest(m_manifestURL, m_manifestResource->response().mimeType(), m_manifestResource->data().data(), m_manifestResource->data().size(), manifest)) {
         // At the time of this writing, lack of "CACHE MANIFEST" signature is the only reason for parseManifest to fail.
         m_frame->document()->addConsoleMessage(MessageSource::AppCache, MessageLevel::Error, ASCIILiteral("Application Cache manifest could not be parsed. Does it start with CACHE MANIFEST?"));
         cacheUpdateFailed();

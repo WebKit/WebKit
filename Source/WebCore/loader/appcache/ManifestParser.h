@@ -39,6 +39,6 @@ struct Manifest {
     bool allowAllNetworkRequests; // Wildcard found in NETWORK section.
 };
 
-bool parseManifest(const URL& manifestURL, const char* data, int length, Manifest&);
+bool parseManifest(const URL& manifestURL, const String& manifestMIMEType, const char* data, int length, Manifest&);
 
 } // namespace WebCore

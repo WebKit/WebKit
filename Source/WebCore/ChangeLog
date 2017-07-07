@@ -1,3 +1,30 @@
+2017-07-07  Daniel Bates  <dabates@apple.com>
+
+        [AppCache] Ignore fallback entries whose namespace is not prefixed with manifest path
+        https://bugs.webkit.org/show_bug.cgi?id=174273
+        <rdar://problem/33011682>
+
+        Reviewed by Brent Fulgham.
+
+        As per <https://html.spec.whatwg.org/multipage/offline.html#parsing-cache-manifests> (07/06/2017)
+        we should ignore fallback entires whose fallback namespace URL is not prefixed with
+        the manifest path. For now we only apply this policy when the manifest is served with
+        a non-standard Content-Type to minimize web compatibility risk.
+
+        Test: http/tests/appcache/fallback-namespace-outside-manifest-path.html
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest): Pass the MIME type of the manifest.
+        * loader/appcache/ManifestParser.cpp:
+        (WebCore::manifestPath): Computes the manifest path from a manifest URL.
+        (WebCore::parseManifest): Modified to take the MIME type of the manifest. If the MIME type is
+        non-standard (i.e. not text/cached-manifest) then skip fallback entries whose namespace is not
+        prefixed with the manifest path. Otherwise, process fallback entries as we do now. Also cleaned
+        up the code a bit while I was here, including renaming a local variable to be more descriptive
+        and using a const character array for the manifest signature to avoid the need to document the
+        length of the manifest signature in a comment.
+        * loader/appcache/ManifestParser.h:
+
 2017-07-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] For cross-app drags, 'drop' event handlers are never invoked if dataTransfer.dropEffect is not set while dragging
