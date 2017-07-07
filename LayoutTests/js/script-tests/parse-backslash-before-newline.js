@@ -1,8 +1,8 @@
 shouldBe('"test\
 string with CR LF"', '"teststring with CR LF"');
 
-shouldBe('"test\
-string with LF CR"', '"teststring with LF CR"');
+shouldThrow(`"test\
+string with LF CR"`, '"SyntaxError: Unexpected EOF"');
 
 shouldBe('"test\string with CR"', '"teststring with CR"');
 

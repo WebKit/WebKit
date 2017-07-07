@@ -1,7 +1,7 @@
 
 function test(actual, expected) {
     if (actual !== expected)
-        throw new Error("bad value: " + actual);
+        throw new Error("bad value: actual: " + actual + ", expected: " + expected);
 }
 
 function testEval(script, expected) {
@@ -36,20 +36,20 @@ testEvalLineNumber("`Hello\nWorld`", "Hello\nWorld", 2);
 testEvalLineNumber("`Hello\r\rWorld`", "Hello\n\nWorld", 3);
 testEvalLineNumber("`Hello\r\nWorld`", "Hello\nWorld", 2);
 testEvalLineNumber("`Hello\n\nWorld`", "Hello\n\nWorld", 3);
-testEvalLineNumber("`Hello\n\rWorld`", "Hello\n\nWorld", 2);
+testEvalLineNumber("`Hello\n\rWorld`", "Hello\n\nWorld", 3);
 
 testEvalLineNumber("`Hello\n\r\nWorld`", "Hello\n\nWorld", 3);
 testEvalLineNumber("`Hello\r\n\rWorld`", "Hello\n\nWorld", 3);
 testEvalLineNumber("`Hello\n\n\nWorld`", "Hello\n\n\nWorld", 4);
 
-testEvalLineNumber("`Hello\n\r\n\rWorld`", "Hello\n\n\nWorld", 3);
+testEvalLineNumber("`Hello\n\r\n\rWorld`", "Hello\n\n\nWorld", 4);
 testEvalLineNumber("`Hello\n\r\n\nWorld`", "Hello\n\n\nWorld", 4);
 testEvalLineNumber("`Hello\r\n\n\nWorld`", "Hello\n\n\nWorld", 4);
 
-testEvalLineNumber("`Hello\\\n\r\rWorld`", "Hello\n\nWorld", 3);
+testEvalLineNumber("`Hello\\\n\r\rWorld`", "Hello\n\nWorld", 4);
 testEvalLineNumber("`Hello\\\r\n\n\nWorld`", "Hello\n\nWorld", 4);
 testEvalLineNumber("`Hello\\\n\r\n\nWorld`", "Hello\n\nWorld", 4);
-testEvalLineNumber("`Hello\\\n\r\r\nWorld`", "Hello\n\nWorld", 3);
+testEvalLineNumber("`Hello\\\n\r\r\nWorld`", "Hello\n\nWorld", 4);
 
 testEvalLineNumber("`\u2028`", "\u2028", 2);
 testEvalLineNumber("`\u2029`", "\u2029", 2);

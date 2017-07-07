@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006-2009, 2011-2013, 2016 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2006-2017 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *  Copyright (C) 2012 Mathias Bynens (mathias@qiwi.be)
@@ -705,8 +705,7 @@ void Lexer<T>::shiftLineTerminator()
     T prev = m_current;
     shift();
 
-    // Allow both CRLF and LFCR.
-    if (prev + m_current == '\n' + '\r')
+    if (prev == '\r' && m_current == '\n')
         shift();
 
     ++m_lineNumber;
@@ -1411,7 +1410,7 @@ public:
     void add(CharacterType character)
     {
         ASSERT(Lexer<CharacterType>::isLineTerminator(character));
-        if ((character + m_previous) == ('\n' + '\r'))
+        if (m_previous == '\r' && character == '\n')
             m_previous = 0;
         else {
             ++m_lineNumber;

@@ -1,3 +1,13 @@
+2017-07-07  Mark Lam  <mark.lam@apple.com>
+
+        \n\r is not the same as \r\n.
+        https://bugs.webkit.org/show_bug.cgi?id=173053
+
+        Reviewed by Keith Miller.
+
+        * js/parse-backslash-before-newline-expected.txt:
+        * js/script-tests/parse-backslash-before-newline.js:
+
 2017-07-07  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219256.
