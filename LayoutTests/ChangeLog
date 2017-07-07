@@ -1,5 +1,12 @@
 2017-07-07  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE] New baseline after r218740
+
+        Unreviewed gardening.
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
+2017-07-07  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Unreviewed gardening
 
         resourceLoadingStatistics tests are timing out and failing.
