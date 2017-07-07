@@ -600,9 +600,9 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, Element* parent
         Element* element = elemStack.last();
         if (element->hasAttributes()) {
             for (const Attribute& attribute : element->attributesIterator()) {
-                if (attribute.localName() == xmlnsAtom)
+                if (attribute.localName() == xmlnsAtom())
                     m_defaultNamespaceURI = attribute.value();
-                else if (attribute.prefix() == xmlnsAtom)
+                else if (attribute.prefix() == xmlnsAtom())
                     m_prefixToNamespaceMap.set(attribute.localName(), attribute.value());
             }
         }
@@ -695,7 +695,7 @@ static inline bool handleNamespaceAttributes(Vector<Attribute>& prefixedAttribut
 {
     xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
     for (int i = 0; i < numNamespaces; i++) {
-        AtomicString namespaceQName = xmlnsAtom;
+        AtomicString namespaceQName = xmlnsAtom();
         AtomicString namespaceURI = toAtomicString(namespaces[i].uri);
         if (namespaces[i].prefix)
             namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
@@ -725,7 +725,7 @@ static inline bool handleElementAttributes(Vector<Attribute>& prefixedAttributes
         int valueLength = static_cast<int>(attributes[i].end - attributes[i].value);
         AtomicString attrValue = toAtomicString(attributes[i].value, valueLength);
         String attrPrefix = toString(attributes[i].prefix);
-        AtomicString attrURI = attrPrefix.isEmpty() ? nullAtom : toAtomicString(attributes[i].uri);
+        AtomicString attrURI = attrPrefix.isEmpty() ? nullAtom() : toAtomicString(attributes[i].uri);
         AtomicString attrQName = attrPrefix.isEmpty() ? toAtomicString(attributes[i].localname) : attrPrefix + ":" + toString(attributes[i].localname);
 
         auto result = Element::parseAttributeName(attrURI, attrQName);

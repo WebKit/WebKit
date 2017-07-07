@@ -2140,6 +2140,26 @@ CString StringImpl::utf8(ConversionMode mode) const
     return utf8ForRange(0, length(), mode);
 }
 
+NEVER_INLINE unsigned StringImpl::hashSlowCase() const
+{
+    if (is8Bit())
+        setHash(StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length));
+    else
+        setHash(StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length));
+    return existingHash();
+}
+
+unsigned StringImpl::concurrentHash() const
+{
+    unsigned hash;
+    if (is8Bit())
+        hash = StringHasher::computeHashAndMaskTop8Bits(m_data8, m_length);
+    else
+        hash = StringHasher::computeHashAndMaskTop8Bits(m_data16, m_length);
+    ASSERT(((hash << s_flagCount) >> s_flagCount) == hash);
+    return hash;
+}
+
 bool equalIgnoringNullity(const UChar* a, size_t aLength, StringImpl* b)
 {
     if (!b)

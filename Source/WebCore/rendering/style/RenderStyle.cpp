@@ -1330,7 +1330,7 @@ const AtomicString& RenderStyle::textEmphasisMarkString() const
 {
     switch (textEmphasisMark()) {
     case TextEmphasisMarkNone:
-        return nullAtom;
+        return nullAtom();
     case TextEmphasisMarkCustom:
         return textEmphasisCustomMark();
     case TextEmphasisMarkDot: {
@@ -1360,11 +1360,11 @@ const AtomicString& RenderStyle::textEmphasisMarkString() const
     }
     case TextEmphasisMarkAuto:
         ASSERT_NOT_REACHED();
-        return nullAtom;
+        return nullAtom();
     }
 
     ASSERT_NOT_REACHED();
-    return nullAtom;
+    return nullAtom();
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)

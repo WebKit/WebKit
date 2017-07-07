@@ -816,7 +816,7 @@ public:
     virtual URL url() const { return URL(); }
     virtual VisibleSelection selection() const { return VisibleSelection(); }
     virtual String selectedText() const { return String(); }
-    virtual const AtomicString& accessKey() const { return nullAtom; }
+    virtual const AtomicString& accessKey() const { return nullAtom(); }
     const String& actionVerb() const;
     virtual Widget* widget() const { return nullptr; }
     virtual Widget* widgetForAttachmentView() const { return nullptr; }
@@ -973,7 +973,7 @@ public:
     bool supportsARIALiveRegion() const;
     bool isInsideARIALiveRegion() const;
     virtual const String ariaLiveRegionStatus() const { return String(); }
-    virtual const AtomicString& ariaLiveRegionRelevant() const { return nullAtom; }
+    virtual const AtomicString& ariaLiveRegionRelevant() const { return nullAtom(); }
     virtual bool ariaLiveRegionAtomic() const { return false; }
     virtual bool isBusy() const { return false; }
     static const String defaultLiveRegionStatusForRole(AccessibilityRole);

@@ -127,7 +127,7 @@ void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
 AtomicString LoadableTextTrack::id() const
 {
     if (!m_trackElement)
-        return emptyAtom;
+        return emptyAtom();
     return m_trackElement->attributeWithoutSynchronization(idAttr);
 }
 

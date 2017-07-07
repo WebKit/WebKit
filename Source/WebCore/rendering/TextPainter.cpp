@@ -125,7 +125,7 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
 {
     if (paintStyle.paintOrder == PaintOrder::Normal) {
         // FIXME: Truncate right-to-left text correctly.
-        paintTextWithShadows(shadow, *m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom, 0, paintStyle.strokeWidth > 0);
+        paintTextWithShadows(shadow, *m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom(), 0, paintStyle.strokeWidth > 0);
     } else {
         bool paintShadow = true;
         auto textDrawingMode = m_context.textDrawingMode();
@@ -134,13 +134,13 @@ void TextPainter::paintTextAndEmphasisMarksIfNeeded(const TextRun& textRun, cons
             switch (order) {
             case PaintType::Fill:
                 m_context.setTextDrawingMode(textDrawingMode & ~TextModeStroke);
-                paintTextWithShadows(paintShadow ? shadow : nullptr, *m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom, 0, false);
+                paintTextWithShadows(paintShadow ? shadow : nullptr, *m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom(), 0, false);
                 paintShadow = false;
                 m_context.setTextDrawingMode(textDrawingMode);
                 break;
             case PaintType::Stroke:
                 m_context.setTextDrawingMode(textDrawingMode & ~TextModeFill);
-                paintTextWithShadows(paintShadow ? shadow : nullptr, *m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom, 0, paintStyle.strokeWidth > 0);
+                paintTextWithShadows(paintShadow ? shadow : nullptr, *m_font, textRun, boxRect, textOrigin, startOffset, endOffset, nullAtom(), 0, paintStyle.strokeWidth > 0);
                 paintShadow = false;
                 m_context.setTextDrawingMode(textDrawingMode);
                 break;

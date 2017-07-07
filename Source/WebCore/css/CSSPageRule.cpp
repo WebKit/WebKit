@@ -59,7 +59,7 @@ String CSSPageRule::selectorText() const
     const CSSSelector* selector = m_pageRule->selector();
     if (selector) {
         String pageSpecification = selector->selectorText();
-        if (!pageSpecification.isEmpty() && pageSpecification != starAtom) {
+        if (!pageSpecification.isEmpty() && pageSpecification != starAtom()) {
             text.append(' ');
             text.append(pageSpecification);
         }

@@ -627,7 +627,7 @@ void FrameLoader::clear(Document* newDocument, bool clearWindowProperties, bool 
         m_frame.script().clearWindowProxiesNotMatchingDOMWindow(newDocument->domWindow(), m_frame.document()->pageCacheState() == Document::AboutToEnterPageCache);
 
         if (shouldClearWindowName(m_frame, *newDocument))
-            m_frame.tree().setName(nullAtom);
+            m_frame.tree().setName(nullAtom());
     }
 
     m_frame.selection().prepareForDestruction();

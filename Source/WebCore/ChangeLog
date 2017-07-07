@@ -1,3 +1,383 @@
+2017-07-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Clean up StringStatics.cpp by using LazyNeverDestroyed<> for Atoms
+        https://bugs.webkit.org/show_bug.cgi?id=174150
+
+        Reviewed by Mark Lam.
+
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::captionDisplayMode):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::binaryType):
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::createFromRenderer):
+        * accessibility/AccessibilityMediaControls.cpp:
+        (WebCore::AccessibilityMediaControl::controlTypeName):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::language):
+        (WebCore::AccessibilityObject::defaultLiveRegionStatusForRole):
+        (WebCore::AccessibilityObject::actionVerb):
+        (WebCore::AccessibilityObject::getAttribute):
+        (WebCore::AccessibilityObject::placeholderValue):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::accessKey):
+        (WebCore::AccessibilityObject::ariaLiveRegionRelevant):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessKey):
+        (WebCore::AccessibilityRenderObject::actionVerb):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::constructElementWithFallback):
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::JSCustomElementRegistry::define):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringBody):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsNullBody):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalAtomicStringIsEmptyStringBody):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::selectorText):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::valueName):
+        * css/CSSSelector.cpp:
+        (WebCore::simpleSelectorSpecificityInternal):
+        (WebCore::CSSSelector::specificityForPage):
+        (WebCore::CSSSelector::RareData::RareData):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::argument):
+        * css/CSSSelectorList.cpp:
+        (WebCore::SelectorNeedsNamespaceResolutionFunctor::operator()):
+        * css/PageRuleCollector.cpp:
+        (WebCore::checkPageSelectorComponents):
+        * css/RuleSet.cpp:
+        (WebCore::computeMatchBasedOnRuleHash):
+        (WebCore::RuleSet::addRule):
+        * css/SelectorChecker.cpp:
+        (WebCore::tagMatches):
+        * css/SelectorFilter.cpp:
+        (WebCore::collectDescendantSelectorIdentifierHashes):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertStringOrAuto):
+        (WebCore::StyleBuilderConverter::convertStringOrNone):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueWebkitLocale):
+        (WebCore::StyleBuilderCustom::applyValueWebkitTextEmphasisStyle):
+        (WebCore::StyleBuilderCustom::applyValueContent):
+        (WebCore::StyleBuilderCustom::applyValueAlt):
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::StyleSheetContents):
+        (WebCore::StyleSheetContents::namespaceURIFromPrefix):
+        * css/makeprop.pl:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parsePageSelector):
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::CSSSelectorParser::consumeCompoundSelector):
+        (WebCore::CSSSelectorParser::consumeName):
+        (WebCore::CSSSelectorParser::consumeAttribute):
+        (WebCore::CSSSelectorParser::defaultNamespace):
+        (WebCore::CSSSelectorParser::determineNamespace):
+        (WebCore::CSSSelectorParser::prependTypeSelectorIfNeeded):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::attributeNameTestingRequiresNamespaceRegister):
+        (WebCore::SelectorCompiler::equalTagNames):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementAttributeMatching):
+        (WebCore::SelectorCompiler::SelectorCodeGenerator::generateElementHasTagName):
+        * dom/Attr.cpp:
+        (WebCore::Attr::setPrefix):
+        (WebCore::Attr::attachToElement):
+        * dom/Attribute.h:
+        (WebCore::Attribute::nameMatchesFilter):
+        * dom/ConstantPropertyMap.cpp:
+        (WebCore::ConstantPropertyMap::nameForProperty):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getElementsByTagName):
+        (WebCore::ContainerNode::getElementsByTagNameNS):
+        * dom/CustomElementReactionQueue.cpp:
+        (WebCore::CustomElementReactionQueue::enqueuePostUpgradeReactions):
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::convertPropertyNameToAttributeName):
+        * dom/Document.cpp:
+        (WebCore::createUpgradeCandidateElement):
+        (WebCore::Document::createElementForBindings):
+        (WebCore::Document::importNode):
+        (WebCore::Document::hasValidNamespaceForElements):
+        (WebCore::Document::processBaseElement):
+        (WebCore::Document::dir):
+        (WebCore::Document::bgColor):
+        (WebCore::Document::fgColor):
+        (WebCore::Document::alinkColor):
+        (WebCore::Document::linkColorForBindings):
+        (WebCore::Document::vlinkColor):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::setBooleanAttribute):
+        (WebCore::Element::synchronizeAttribute):
+        (WebCore::Element::getAttribute):
+        (WebCore::Element::getAttributeNS):
+        (WebCore::Element::setAttribute):
+        (WebCore::Element::parserSetAttributes):
+        (WebCore::Element::didMoveToNewDocument):
+        (WebCore::Element::setPrefix):
+        (WebCore::Element::insertedInto):
+        (WebCore::Element::removedFrom):
+        (WebCore::Element::removeAttributeInternal):
+        (WebCore::Element::addAttributeInternal):
+        (WebCore::Element::removeAttributeNS):
+        (WebCore::Element::getAttributeNodeNS):
+        (WebCore::Element::hasAttributeNS):
+        (WebCore::Element::computeInheritedLanguage):
+        (WebCore::Element::updateNameForDocument):
+        (WebCore::Element::updateIdForDocument):
+        (WebCore::Element::didAddAttribute):
+        (WebCore::Element::didRemoveAttribute):
+        (WebCore::Element::cloneAttributesFromElement):
+        * dom/Element.h:
+        (WebCore::Element::attributeWithoutSynchronization):
+        (WebCore::Element::idForStyleResolution):
+        (WebCore::Element::getIdAttribute):
+        (WebCore::Element::getNameAttribute):
+        * dom/EventTarget.cpp:
+        (WebCore::legacyType):
+        * dom/MutationRecord.h:
+        (WebCore::MutationRecord::attributeName):
+        (WebCore::MutationRecord::attributeNamespace):
+        * dom/NamedNodeMap.cpp:
+        (WebCore::NamedNodeMap::removeNamedItemNS):
+        * dom/Node.cpp:
+        (WebCore::Node::prefix):
+        (WebCore::Node::localName):
+        (WebCore::Node::namespaceURI):
+        (WebCore::Node::checkSetPrefix):
+        (WebCore::locateDefaultNamespace):
+        (WebCore::Node::isDefaultNamespace):
+        (WebCore::Node::lookupNamespaceURI):
+        (WebCore::locateNamespacePrefix):
+        (WebCore::Node::lookupPrefix):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::addCachedTagCollectionNS):
+        (WebCore::NodeListsNodeData::addCachedCollection):
+        (WebCore::NodeListsNodeData::cachedCollection):
+        (WebCore::NodeListsNodeData::removeCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::removeCachedTagCollectionNS):
+        (WebCore::NodeListsNodeData::removeCachedCollection):
+        * dom/PseudoElement.cpp:
+        (WebCore::pseudoElementTagName):
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::init):
+        (WebCore::nullQName):
+        (WebCore::createQualifiedName):
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::hasPrefix):
+        * dom/SelectorQuery.cpp:
+        (WebCore::SelectorDataList::executeSingleTagNameSelectorData):
+        * dom/SlotAssignment.cpp:
+        (WebCore::slotNameFromAttributeValue):
+        * dom/SlotAssignment.h:
+        (WebCore::SlotAssignment::defaultSlotName):
+        (WebCore::ShadowRoot::didRemoveAllChildrenOfShadowHost):
+        (WebCore::ShadowRoot::didChangeDefaultSlot):
+        * dom/TagCollection.cpp:
+        (WebCore::TagCollection::TagCollection):
+        (WebCore::HTMLTagCollection::HTMLTagCollection):
+        * dom/TagCollection.h:
+        (WebCore::TagCollectionNS::elementMatches):
+        * dom/make_names.pl:
+        (printNamesCppFile):
+        (printDefinitions):
+        (printFactoryCppFile):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::removeNodeAttribute):
+        * editing/Editing.cpp:
+        (WebCore::createHTMLElement):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces):
+        (WebCore::MarkupAccumulator::shouldAddNamespaceElement):
+        (WebCore::MarkupAccumulator::shouldAddNamespaceAttribute):
+        (WebCore::MarkupAccumulator::appendNamespace):
+        (WebCore::MarkupAccumulator::appendOpenTag):
+        (WebCore::MarkupAccumulator::appendAttribute):
+        * editing/gtk/EditorGtk.cpp:
+        (WebCore::elementURL):
+        * editing/markup.cpp:
+        (WebCore::AttributeChange::AttributeChange):
+        * html/Autocapitalize.cpp:
+        (WebCore::stringForAutocapitalizeType):
+        * html/Autofill.cpp:
+        (WebCore::AutofillData::createFromHTMLFormControlElement):
+        * html/DOMTokenList.h:
+        (WebCore::DOMTokenList::item):
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::name):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::formControlType):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::toggleOpen):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::isCaseSensitiveAttribute):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::eventNameForEventHandlerAttribute):
+        (WebCore::toValidDirValue):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::bestFitSourceFromPictureElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::name):
+        (WebCore::HTMLInputElement::updateType):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::doesHaveAttribute):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::createForJSConstructor):
+        * html/HTMLParamElement.cpp:
+        (WebCore::HTMLParamElement::name):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setMultiple):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::scope):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::mediaElementCrossOriginAttribute):
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        * html/MediaController.cpp:
+        (MediaController::playbackState):
+        (eventNameForReadyState):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/parser/AtomicHTMLToken.h:
+        (WebCore::AtomicHTMLToken::initializeAttributes):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface):
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripLeadingAndTrailingHTMLSpaces):
+        (WebCore::parseHTMLHashNameReference):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::createForeignAttributesMap):
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::InbandTextTrack):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::id):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::captionMenuOffItem):
+        (WebCore::TextTrack::captionMenuAutomaticItem):
+        * html/track/TrackBase.cpp:
+        (WebCore::MediaTrackBase::setKindInternal):
+        * html/track/VTTRegion.cpp:
+        (WebCore::VTTRegion::scroll):
+        * html/track/WebVTTElement.cpp:
+        (WebCore::nodeTypeToTagName):
+        * html/track/WebVTTElement.h:
+        * html/track/WebVTTToken.h:
+        (WebCore::WebVTTToken::StartTag):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        * loader/FrameLoader.h:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::clearFailedLoadURL):
+        * loader/NavigationAction.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::showModalDialog):
+        * page/EventHandler.cpp:
+        (WebCore::eventNameForTouchPointState):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::setName):
+        (WebCore::FrameTree::clearName):
+        * page/Page.cpp:
+        (WebCore::Page::groupName):
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::offsetForPosition):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::alternateFamilyName):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontCascadeDescription::initialLocale):
+        * platform/graphics/FontGenericFamilies.cpp:
+        (WebCore::genericFontFamilyForScript):
+        * platform/graphics/InbandTextTrackPrivate.h:
+        (WebCore::InbandTextTrackPrivate::inBandMetadataTrackDispatchType):
+        * platform/graphics/TrackPrivateBase.h:
+        (WebCore::TrackPrivateBase::id):
+        (WebCore::TrackPrivateBase::label):
+        (WebCore::TrackPrivateBase::language):
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        (WebCore::AVTrackPrivateAVFObjCImpl::id):
+        (WebCore::AVTrackPrivateAVFObjCImpl::label):
+        (WebCore::AVTrackPrivateAVFObjCImpl::language):
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp:
+        (WebCore::InbandTextTrackPrivateAVCF::label):
+        (WebCore::InbandTextTrackPrivateAVCF::language):
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateLegacyAVCF.cpp:
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::label):
+        (WebCore::InbandTextTrackPrivateLegacyAVCF::language):
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateAVFObjC::label):
+        (WebCore::InbandTextTrackPrivateAVFObjC::language):
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateLegacyAVFObjC.mm:
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::label):
+        (WebCore::InbandTextTrackPrivateLegacyAVFObjC::language):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::metadataType):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::platformAlternateFamilyName):
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::FontCascadeDescription::effectiveFamilyAt):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::platformAlternateFamilyName):
+        * platform/graphics/gstreamer/InbandMetadataTextTrackPrivateGStreamer.h:
+        (WebCore::InbandMetadataTextTrackPrivateGStreamer::create):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::platformAlternateFamilyName):
+        * platform/mediastream/AudioTrackPrivateMediaStream.h:
+        * platform/mediastream/RealtimeMediaSourceSettings.cpp:
+        (WebCore::RealtimeMediaSourceSettings::facingMode):
+        * platform/mediastream/VideoTrackPrivateMediaStream.h:
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::linkSuggestedFilename):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::markerText):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::previousOffset):
+        (WebCore::RenderText::nextOffset):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paintTextAndEmphasisMarksIfNeeded):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::textEmphasisMarkString):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialHyphenationString):
+        (WebCore::RenderStyle::initialTextEmphasisCustomMark):
+        (WebCore::RenderStyle::initialContentAltText):
+        (WebCore::RenderStyle::initialLineGrid):
+        (WebCore::RenderStyle::initialFlowThread):
+        (WebCore::RenderStyle::initialRegionThread):
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::collectActiveStyleSheets):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::getPresentationAttribute):
+        * svg/SVGElement.h:
+        (WebCore::SVGAttributeHashTranslator::hash):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::transferSizeAttributesToTargetClone):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::constructAttributeName):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMInstance::requestLicense):
+        * xml/XMLErrors.cpp:
+        (WebCore::createXHTMLParserErrorHeader):
+        * xml/XPathStep.cpp:
+        (WebCore::XPath::nodeMatchesBasicTest):
+        (WebCore::XPath::Step::nodesInAxis):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+        (WebCore::handleNamespaceAttributes):
+        (WebCore::handleElementAttributes):
+
 2017-07-06  Chris Dumez  <cdumez@apple.com>
 
         Drop unnecessary uses of targetStatistics.dataRecordsRemoved in ResourceLoadObserver

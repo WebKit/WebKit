@@ -1,3 +1,57 @@
+2017-07-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Clean up StringStatics.cpp by using LazyNeverDestroyed<> for Atoms
+        https://bugs.webkit.org/show_bug.cgi?id=174150
+
+        Reviewed by Mark Lam.
+
+        This patch cleans up StringStatics.cpp and remove it from the tree.
+
+        1. Move StringImpl methods to appropriate place, "StringImpl.cpp".
+
+        StringImpl::hashSlowCase() and StringImpl::concurrentHash() are defined in
+        StringStatics.cpp. But they should be defined in StringImpl.cpp.
+        This patch just moves them to StringImpl.cpp.
+
+        2. Use LazyNeverDestroyed to initialize AtomicString atoms like emptyAtom.
+
+        Previously, we initialized AtomicString atoms like emptyAtom in a hacky way.
+        We first define them as extern global variables. However, AtomicString has
+        a non-trivial constructor. Thus, we cannot do this because it requires global
+        constructor calls. This is why we have StringStatics.cpp. In this file, we
+        include "StaticConstructors.h". After including this file, all the global
+        constructor call disabled in Windows. And in GCC environment, we allocate
+        void* storage for that variable. And we use placement new in AtomicString::init()
+        to initialize these storage.
+        However, we already have better way for that: LazyNeverDestroyed. It just allocates
+        storage like the above. And it does not have any global constructors. Thus
+        we can just declare it as a global variable. And we initialize them lazily in
+        AtomicString::init(). This way effectively avoids "StaticConstructors.h" hacky way.
+        And it makes "StringStatics.cpp" unnecessary.
+        Then, we just move these variables and AtomicString::init() to AtomicString.cpp.
+
+        And we also change emptyAtom to emptyAtom() to get the value from LazyNeverDestroyed<>.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::convertASCIICase):
+        (WTF::AtomicString::fromUTF8Internal):
+        (WTF::AtomicString::init):
+        * wtf/text/AtomicString.h:
+        (WTF::nullAtom):
+        (WTF::emptyAtom):
+        (WTF::starAtom):
+        (WTF::xmlAtom):
+        (WTF::xmlnsAtom):
+        (WTF::AtomicString::fromUTF8):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::toAtomicString):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::hashSlowCase):
+        (WTF::StringImpl::concurrentHash):
+        * wtf/text/StringStatics.cpp: Removed.
+
 2017-07-06  Keith Miller  <keith_miller@apple.com>
 
         Add extra insurance to prevent clang from making crash traces sad

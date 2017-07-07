@@ -722,7 +722,7 @@ inline const AtomicString& Element::attributeWithoutSynchronization(const Qualif
         if (const Attribute* attribute = findAttributeByName(name))
             return attribute->value();
     }
-    return nullAtom;
+    return nullAtom();
 }
 
 inline bool Element::hasAttributesWithoutUpdate() const
@@ -732,21 +732,21 @@ inline bool Element::hasAttributesWithoutUpdate() const
 
 inline const AtomicString& Element::idForStyleResolution() const
 {
-    return hasID() ? elementData()->idForStyleResolution() : nullAtom;
+    return hasID() ? elementData()->idForStyleResolution() : nullAtom();
 }
 
 inline const AtomicString& Element::getIdAttribute() const
 {
     if (hasID())
         return elementData()->findAttributeByName(HTMLNames::idAttr)->value();
-    return nullAtom;
+    return nullAtom();
 }
 
 inline const AtomicString& Element::getNameAttribute() const
 {
     if (hasName())
         return elementData()->findAttributeByName(HTMLNames::nameAttr)->value();
-    return nullAtom;
+    return nullAtom();
 }
 
 inline void Element::setIdAttribute(const AtomicString& value)

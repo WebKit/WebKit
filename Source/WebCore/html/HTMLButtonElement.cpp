@@ -79,7 +79,7 @@ const AtomicString& HTMLButtonElement::formControlType() const
     }
 
     ASSERT_NOT_REACHED();
-    return emptyAtom;
+    return emptyAtom();
 }
 
 bool HTMLButtonElement::isPresentationAttribute(const QualifiedName& name) const

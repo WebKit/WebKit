@@ -86,7 +86,7 @@ bool InbandTextTrackPrivateLegacyAVCF::isEasyToRead() const
 AtomicString InbandTextTrackPrivateLegacyAVCF::label() const
 {
     if (!m_playerItemTrack)
-        return emptyAtom;
+        return emptyAtom();
 
     RetainPtr<CFStringRef> title;
 
@@ -109,13 +109,13 @@ AtomicString InbandTextTrackPrivateLegacyAVCF::label() const
         }
     }
 
-    return title ? AtomicString(title.get()) : emptyAtom;
+    return title ? AtomicString(title.get()) : emptyAtom();
 }
 
 AtomicString InbandTextTrackPrivateLegacyAVCF::language() const
 {
     if (!m_playerItemTrack)
-        return emptyAtom;
+        return emptyAtom();
 
     RetainPtr<AVCFAssetTrackRef> assetTrack = adoptCF(AVCFPlayerItemTrackCopyAssetTrack(m_playerItemTrack.get()));
     RetainPtr<CFStringRef> languageCode = adoptCF(AVCFAssetTrackCopyLanguageCode(assetTrack.get()));

@@ -45,7 +45,7 @@ String HTMLParamElement::name() const
 {
     if (hasName())
         return getNameAttribute();
-    return document().isHTMLDocument() ? emptyAtom : getIdAttribute();
+    return document().isHTMLDocument() ? emptyAtom() : getIdAttribute();
 }
 
 String HTMLParamElement::value() const

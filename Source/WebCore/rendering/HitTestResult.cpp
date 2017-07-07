@@ -788,7 +788,7 @@ String HitTestResult::linkSuggestedFilename() const
 {
     auto* urlElement = URLElement();
     if (!is<HTMLAnchorElement>(urlElement))
-        return nullAtom;
+        return nullAtom();
     return ResourceResponse::sanitizeSuggestedFilename(urlElement->attributeWithoutSynchronization(HTMLNames::downloadAttr));
 }
 

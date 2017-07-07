@@ -400,7 +400,7 @@ AccessibilityObject* AXObjectCache::get(Node* node)
 }
 
 // FIXME: This probably belongs on Node.
-// FIXME: This should take a const char*, but one caller passes nullAtom.
+// FIXME: This should take a const char*, but one caller passes nullAtom().
 bool nodeHasRole(Node* node, const String& role)
 {
     if (!node || !is<Element>(node))
@@ -423,7 +423,7 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
     // If the node is aria role="list" or the aria role is empty and its a
     // ul/ol/dl type (it shouldn't be a list if aria says otherwise).
     if (node && ((nodeHasRole(node, "list") || nodeHasRole(node, "directory"))
-                      || (nodeHasRole(node, nullAtom) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
+                      || (nodeHasRole(node, nullAtom()) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
         return AccessibilityList::create(renderer);
 
     // aria tables
@@ -440,7 +440,7 @@ static Ref<AccessibilityObject> createFromRenderer(RenderObject* renderer)
     if (nodeHasRole(node, "treeitem"))
         return AccessibilityTreeItem::create(renderer);
 
-    if (node && is<HTMLLabelElement>(node) && nodeHasRole(node, nullAtom))
+    if (node && is<HTMLLabelElement>(node) && nodeHasRole(node, nullAtom()))
         return AccessibilityLabel::create(renderer);
 
 #if ENABLE(VIDEO)

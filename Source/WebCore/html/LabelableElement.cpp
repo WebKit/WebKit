@@ -45,7 +45,7 @@ RefPtr<NodeList> LabelableElement::labels()
     if (!supportLabels())
         return nullptr;
 
-    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<LabelsNodeList>(*this, starAtom);
+    return ensureRareData().ensureNodeLists().addCacheWithAtomicName<LabelsNodeList>(*this, starAtom());
 }
 
 } // namespace Webcore

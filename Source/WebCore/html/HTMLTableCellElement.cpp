@@ -181,7 +181,7 @@ const AtomicString& HTMLTableCellElement::scope() const
         return rowgroup;
     if (equalIgnoringASCIICase(value, colgroup))
         return colgroup;
-    return emptyAtom;
+    return emptyAtom();
 }
 
 void HTMLTableCellElement::setScope(const AtomicString& scope)

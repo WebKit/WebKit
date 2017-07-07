@@ -45,7 +45,7 @@ public:
     SlotAssignment();
     virtual ~SlotAssignment();
 
-    static const AtomicString& defaultSlotName() { return emptyAtom; }
+    static const AtomicString& defaultSlotName() { return emptyAtom(); }
 
     HTMLSlotElement* findAssignedSlot(const Node&, ShadowRoot&);
 
@@ -99,13 +99,13 @@ private:
 inline void ShadowRoot::didRemoveAllChildrenOfShadowHost()
 {
     if (m_slotAssignment) // FIXME: This is incorrect when there were no elements or text nodes removed.
-        m_slotAssignment->didChangeSlot(nullAtom, *this);
+        m_slotAssignment->didChangeSlot(nullAtom(), *this);
 }
 
 inline void ShadowRoot::didChangeDefaultSlot()
 {
     if (m_slotAssignment)
-        m_slotAssignment->didChangeSlot(nullAtom, *this);
+        m_slotAssignment->didChangeSlot(nullAtom(), *this);
 }
 
 inline void ShadowRoot::hostChildElementDidChange(const Element& childElement)

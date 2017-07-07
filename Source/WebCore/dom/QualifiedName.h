@@ -81,7 +81,7 @@ public:
 
     bool matches(const QualifiedName& other) const { return m_impl == other.m_impl || (localName() == other.localName() && namespaceURI() == other.namespaceURI()); }
 
-    bool hasPrefix() const { return m_impl->m_prefix != nullAtom; }
+    bool hasPrefix() const { return m_impl->m_prefix != nullAtom(); }
     void setPrefix(const AtomicString& prefix) { *this = QualifiedName(prefix, localName(), namespaceURI()); }
 
     const AtomicString& prefix() const { return m_impl->m_prefix; }

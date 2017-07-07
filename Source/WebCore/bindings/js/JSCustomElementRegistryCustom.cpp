@@ -126,7 +126,7 @@ JSValue JSCustomElementRegistry::define(ExecState& state)
         return throwTypeError(&state, scope, ASCIILiteral("Custom element constructor's prototype must be an object"));
     JSObject& prototypeObject = *asObject(prototypeValue);
 
-    QualifiedName name(nullAtom, localName, HTMLNames::xhtmlNamespaceURI);
+    QualifiedName name(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI);
     auto elementInterface = JSCustomElementInterface::create(name, constructor, globalObject());
 
     auto* connectedCallback = getCustomElementCallback(state, prototypeObject, Identifier::fromString(&vm, "connectedCallback"));

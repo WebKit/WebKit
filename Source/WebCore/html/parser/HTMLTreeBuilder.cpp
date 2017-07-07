@@ -541,10 +541,10 @@ static HashMap<AtomicString, QualifiedName> createForeignAttributesMap()
 
     AtomicString xlinkName("xlink", AtomicString::ConstructFromLiteral);
     addNamesWithPrefix(map, xlinkName, XLinkNames::getXLinkAttrs(), XLinkNames::XLinkAttrsCount);
-    addNamesWithPrefix(map, xmlAtom, XMLNames::getXMLAttrs(), XMLNames::XMLAttrsCount);
+    addNamesWithPrefix(map, xmlAtom(), XMLNames::getXMLAttrs(), XMLNames::XMLAttrsCount);
 
-    map.add(WTF::xmlnsAtom, XMLNSNames::xmlnsAttr);
-    map.add("xmlns:xlink", QualifiedName(xmlnsAtom, xlinkName, XMLNSNames::xmlnsNamespaceURI));
+    map.add(WTF::xmlnsAtom(), XMLNSNames::xmlnsAttr);
+    map.add("xmlns:xlink", QualifiedName(xmlnsAtom(), xlinkName, XMLNSNames::xmlnsNamespaceURI));
 
     return map;
 }

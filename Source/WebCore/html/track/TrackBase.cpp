@@ -149,7 +149,7 @@ void MediaTrackBase::setKindInternal(const AtomicString& kind)
     if (isValidKind(kind))
         m_kind = kind;
     else
-        m_kind = emptyAtom;
+        m_kind = emptyAtom();
 }
 
 } // namespace WebCore

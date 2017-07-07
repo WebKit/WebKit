@@ -109,7 +109,7 @@ static inline void collectDescendantSelectorIdentifierHashes(const CSSSelector* 
         break;
     case CSSSelector::Tag: {
         const AtomicString& tagLowercaseLocalName = selector->tagLowercaseLocalName();
-        if (tagLowercaseLocalName != starAtom)
+        if (tagLowercaseLocalName != starAtom())
             (*hash++) = tagLowercaseLocalName.impl()->existingHash() * TagNameSalt;
         break;
     }

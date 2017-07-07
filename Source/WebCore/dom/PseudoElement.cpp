@@ -39,7 +39,7 @@ namespace WebCore {
 
 const QualifiedName& pseudoElementTagName()
 {
-    static NeverDestroyed<QualifiedName> name(nullAtom, "<pseudo>", nullAtom);
+    static NeverDestroyed<QualifiedName> name(nullAtom(), "<pseudo>", nullAtom());
     return name;
 }
 

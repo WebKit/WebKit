@@ -89,7 +89,7 @@ void XMLErrors::appendErrorMessage(const String& typeString, TextPosition positi
 
 static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, const String& errorMessages)
 {
-    Ref<Element> reportElement = document.createElement(QualifiedName(nullAtom, "parsererror", xhtmlNamespaceURI), true);
+    Ref<Element> reportElement = document.createElement(QualifiedName(nullAtom(), "parsererror", xhtmlNamespaceURI), true);
 
     Vector<Attribute> reportAttributes;
     reportAttributes.append(Attribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"));

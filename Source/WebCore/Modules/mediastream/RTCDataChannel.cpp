@@ -90,7 +90,7 @@ const AtomicString& RTCDataChannel::binaryType() const
     }
 
     ASSERT_NOT_REACHED();
-    return emptyAtom;
+    return emptyAtom();
 }
 
 ExceptionOr<void> RTCDataChannel::setBinaryType(const AtomicString& binaryType)

@@ -47,7 +47,7 @@ static String stripLeadingAndTrailingHTMLSpaces(String string, CharType characte
     }
 
     if (numLeadingSpaces == length)
-        return string.isNull() ? string : emptyAtom.string();
+        return string.isNull() ? string : emptyAtom().string();
 
     for (; numTrailingSpaces < length; ++numTrailingSpaces) {
         if (isNotHTMLSpace(characters[length - numTrailingSpaces - 1]))
@@ -67,7 +67,7 @@ String stripLeadingAndTrailingHTMLSpaces(const String& string)
     unsigned length = string.length();
 
     if (!length)
-        return string.isNull() ? string : emptyAtom.string();
+        return string.isNull() ? string : emptyAtom().string();
 
     if (string.is8Bit())
         return stripLeadingAndTrailingHTMLSpaces(string, string.characters8(), length);
@@ -462,7 +462,7 @@ AtomicString parseHTMLHashNameReference(StringView usemap)
 {
     size_t numberSignIndex = usemap.find('#');
     if (numberSignIndex == notFound)
-        return nullAtom;
+        return nullAtom();
     return usemap.substring(numberSignIndex + 1).toAtomicString();
 }
 

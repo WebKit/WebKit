@@ -65,7 +65,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
     if (auto element = tryToConstructCustomElement(document, localName))
         return element.releaseNonNull();
 
-    auto element = HTMLUnknownElement::create(QualifiedName(nullAtom, localName, HTMLNames::xhtmlNamespaceURI), document);
+    auto element = HTMLUnknownElement::create(QualifiedName(nullAtom(), localName, HTMLNames::xhtmlNamespaceURI), document);
     element->setIsCustomElementUpgradeCandidate();
     element->setIsFailedCustomElement(*this);
 
@@ -75,7 +75,7 @@ Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& do
 Ref<Element> JSCustomElementInterface::constructElementWithFallback(Document& document, const QualifiedName& name)
 {
     if (auto element = tryToConstructCustomElement(document, name.localName())) {
-        if (name.prefix() != nullAtom)
+        if (name.prefix() != nullAtom())
             element->setPrefix(name.prefix());
         return element.releaseNonNull();
     }

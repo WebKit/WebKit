@@ -66,7 +66,7 @@ const AtomicString& ConstantPropertyMap::nameForProperty(ConstantProperty proper
         return safeAreaInsetLeftName;
     }
 
-    return nullAtom;
+    return nullAtom();
 }
 
 void ConstantPropertyMap::setValueForProperty(ConstantProperty property, Ref<CSSVariableData>&& data)

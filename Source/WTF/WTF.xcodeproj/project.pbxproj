@@ -115,7 +115,6 @@
 		A8A47439151A825B004123FF /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47321151A825B004123FF /* CString.cpp */; };
 		A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47324151A825B004123FF /* StringBuilder.cpp */; };
 		A8A47440151A825B004123FF /* StringImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47328151A825B004123FF /* StringImpl.cpp */; };
-		A8A47443151A825B004123FF /* StringStatics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4732B151A825B004123FF /* StringStatics.cpp */; };
 		A8A47445151A825B004123FF /* WTFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4732D151A825B004123FF /* WTFString.cpp */; };
 		A8A47448151A825B004123FF /* ThreadHolderPthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47330151A825B004123FF /* ThreadHolderPthreads.cpp */; };
 		A8A4744A151A825B004123FF /* Threading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A47332151A825B004123FF /* Threading.cpp */; };
@@ -489,7 +488,6 @@
 		A8A47328151A825B004123FF /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringImpl.cpp; sourceTree = "<group>"; };
 		A8A47329151A825B004123FF /* StringImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringImpl.h; sourceTree = "<group>"; };
 		A8A4732A151A825B004123FF /* StringOperators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringOperators.h; sourceTree = "<group>"; };
-		A8A4732B151A825B004123FF /* StringStatics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringStatics.cpp; sourceTree = "<group>"; };
 		A8A4732C151A825B004123FF /* TextPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextPosition.h; sourceTree = "<group>"; };
 		A8A4732D151A825B004123FF /* WTFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFString.cpp; sourceTree = "<group>"; };
 		A8A4732E151A825B004123FF /* WTFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFString.h; sourceTree = "<group>"; };
@@ -1070,7 +1068,6 @@
 				A8A47328151A825B004123FF /* StringImpl.cpp */,
 				A8A47329151A825B004123FF /* StringImpl.h */,
 				A8A4732A151A825B004123FF /* StringOperators.h */,
-				A8A4732B151A825B004123FF /* StringStatics.cpp */,
 				93F1993D19D7958D00C2390B /* StringView.cpp */,
 				1A6EB1DF187D0BD30030126F /* StringView.h */,
 				F72BBDB107FA424886178B9E /* SymbolImpl.cpp */,
@@ -1379,7 +1376,6 @@
 				A5BA15F51824348000A82E69 /* StringImplMac.mm in Sources */,
 				A5BA15F3182433A900A82E69 /* StringMac.mm in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
-				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
 				93F1993E19D7958D00C2390B /* StringView.cpp in Sources */,
 				93934BD518A1F16900D0D6A1 /* StringViewCF.cpp in Sources */,
 				93934BD318A1E8C300D0D6A1 /* StringViewObjC.mm in Sources */,

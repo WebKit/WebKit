@@ -140,7 +140,7 @@ static unsigned simpleSelectorSpecificityInternal(const CSSSelector& simpleSelec
     case CSSSelector::End:
         return static_cast<unsigned>(SelectorSpecificityIncrement::ClassB);
     case CSSSelector::Tag:
-        return (simpleSelector.tagQName().localName() != starAtom) ? static_cast<unsigned>(SelectorSpecificityIncrement::ClassC) : 0;
+        return (simpleSelector.tagQName().localName() != starAtom()) ? static_cast<unsigned>(SelectorSpecificityIncrement::ClassC) : 0;
     case CSSSelector::PseudoElement:
         return static_cast<unsigned>(SelectorSpecificityIncrement::ClassC);
     case CSSSelector::Unknown:
@@ -246,7 +246,7 @@ unsigned CSSSelector::specificityForPage() const
     for (const CSSSelector* component = this; component; component = component->tagHistory()) {
         switch (component->match()) {
         case Tag:
-            s += tagQName().localName() == starAtom ? 0 : 4;
+            s += tagQName().localName() == starAtom() ? 0 : 4;
             break;
         case PagePseudoClass:
             switch (component->pagePseudoClassType()) {
@@ -826,7 +826,7 @@ CSSSelector::RareData::RareData(AtomicString&& value)
     , m_a(0)
     , m_b(0)
     , m_attribute(anyQName())
-    , m_argument(nullAtom)
+    , m_argument(nullAtom())
 {
 }
 

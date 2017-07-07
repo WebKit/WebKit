@@ -88,9 +88,9 @@ inline bool TagCollection::elementMatches(Element& element) const
 
 inline bool TagCollectionNS::elementMatches(Element& element) const
 {
-    if (m_localName != starAtom && m_localName != element.localName())
+    if (m_localName != starAtom() && m_localName != element.localName())
         return false;
-    return m_namespaceURI == starAtom || m_namespaceURI == element.namespaceURI();
+    return m_namespaceURI == starAtom() || m_namespaceURI == element.namespaceURI();
 }
 
 inline bool HTMLTagCollection::elementMatches(Element& element) const
