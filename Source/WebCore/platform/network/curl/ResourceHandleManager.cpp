@@ -224,14 +224,6 @@ bool ResourceHandleManager::startScheduledJobs()
 
 void ResourceHandleManager::startJob(ResourceHandle* job)
 {
-    URL url = job->firstRequest().url();
-
-    if (url.protocolIsData()) {
-        job->handleDataURL();
-        job->deref();
-        return;
-    }
-
     job->initialize();
 
     m_runningJobs++;
