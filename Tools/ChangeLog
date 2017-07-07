@@ -1,5 +1,16 @@
 2017-07-06  Lucas Forschler  <lforschler@apple.com>
 
+        Write a support script to enable buildbot to upload to S3
+        https://bugs.webkit.org/show_bug.cgi?id=174196
+        
+        Reviewed by Stephanie Lewis.
+
+        * BuildSlaveSupport/build.webkit.org-config/transfer-archive-to-s3: Added.
+        (uploadToS3):
+        (archiveExists):
+
+2017-07-06  Lucas Forschler  <lforschler@apple.com>
+
         Enabling uploading archives to S3.
         https://bugs.webkit.org/show_bug.cgi?id=174198
         
