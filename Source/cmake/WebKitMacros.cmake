@@ -34,9 +34,16 @@ macro(ADD_PRECOMPILED_HEADER _header _cpp _source)
         set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${_source}/${PrecompiledBasename}.pch")
         set(_sources ${${_source}})
 
-        set_source_files_properties(${_cpp}
-            PROPERTIES COMPILE_FLAGS "/Yc\"${_header}\" /Fp\"${PrecompiledBinary}\""
-            OBJECT_OUTPUTS "${PrecompiledBinary}")
+        # clang-cl requires /FI with /Yc
+        if (COMPILER_IS_CLANG_CL)
+            set_source_files_properties(${_cpp}
+                PROPERTIES COMPILE_FLAGS "/Yc\"${_header}\" /Fp\"${PrecompiledBinary}\" /FI\"${_header}\""
+                OBJECT_OUTPUTS "${PrecompiledBinary}")
+        else ()
+            set_source_files_properties(${_cpp}
+                PROPERTIES COMPILE_FLAGS "/Yc\"${_header}\" /Fp\"${PrecompiledBinary}\""
+                OBJECT_OUTPUTS "${PrecompiledBinary}")
+        endif ()
         set_source_files_properties(${_sources}
             PROPERTIES COMPILE_FLAGS "/Yu\"${_header}\" /FI\"${_header}\" /Fp\"${PrecompiledBinary}\"")
 
