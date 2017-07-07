@@ -28,8 +28,19 @@
 #if ENABLE(WEBGL)
 
 #include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
 
 namespace WebCore {
+
+JSC::JSValue convertToJSValue(JSC::ExecState&, JSDOMGlobalObject&, const WebGLAny&);
+JSC::JSValue convertToJSValue(JSC::ExecState&, JSDOMGlobalObject&, WebGLExtension&);
+
+inline JSC::JSValue convertToJSValue(JSC::ExecState& state, JSDOMGlobalObject& globalObject, WebGLExtension* extension)
+{
+    if (!extension)
+        return JSC::jsNull();
+    return convertToJSValue(state, globalObject, *extension);
+}
 
 template<> struct JSConverter<IDLWebGLAny> {
     static constexpr bool needsState = true;
@@ -38,6 +49,17 @@ template<> struct JSConverter<IDLWebGLAny> {
     static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const WebGLAny& value)
     {
         return convertToJSValue(state, globalObject, value);
+    }
+};
+
+template<> struct JSConverter<IDLWebGLExtension> {
+    static constexpr bool needsState = true;
+    static constexpr bool needsGlobalObject = true;
+
+    template <typename T>
+    static JSC::JSValue convert(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const T& value)
+    {
+        return convertToJSValue(state, globalObject, Detail::getPtrOrRef(value));
     }
 };
 

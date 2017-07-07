@@ -560,7 +560,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     GLenum getError();
 
     sequence<DOMString>? getSupportedExtensions();
-    [Custom] object? getExtension(DOMString name);
+    [OverrideIDLType=IDLWebGLExtension] object? getExtension(DOMString name);
 
     [OverrideIDLType=IDLWebGLAny] any getFramebufferAttachmentParameter(GLenum target, GLenum attachment, GLenum pname);
     [OverrideIDLType=IDLWebGLAny] any getParameter(GLenum pname);

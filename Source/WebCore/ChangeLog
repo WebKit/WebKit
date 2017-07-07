@@ -1,3 +1,52 @@
+2017-07-06  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for WebGL code dealing with WebGL extensions
+        https://bugs.webkit.org/show_bug.cgi?id=174186
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Update files. Categorize some of the remaining custom bindings into groups.
+
+        * bindings/IDLTypes.h:
+        Add a IDLWebGLExtension type, to model the special WebGLExtension type. In
+        the future, WebGLExtension can probably be replaced by a Variant.
+        
+        * bindings/js/JSDOMConvertWebGL.cpp: Added.
+        Move WebGLAny's convertToJSValue and add a convertToJSValue for WebGLExtension.
+
+        * bindings/js/JSDOMConvertWebGL.h:
+        (WebCore::convertToJSValue):
+        Since WebGLExtension is a wrapper type, we need both a pointer and reference variant
+        of the conversion.
+
+        (WebCore::JSConverter<IDLWebGLExtension>::convert):
+        Added.
+
+        * bindings/js/JSWebGL2RenderingContextCustom.cpp:
+        (WebCore::toJS): Deleted.
+        (WebCore::JSWebGL2RenderingContext::getExtension): Deleted.
+        Remove custom operation and converter.
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toJS): Deleted.
+        (WebCore::JSWebGLRenderingContext::getExtension): Deleted.
+        Remove custom operation and converter.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        (NativeToJSValueDOMConvertNeedsState):
+        (NativeToJSValueDOMConvertNeedsGlobalObject):
+        Add support for IDLWebGLExtension.
+
+        * html/canvas/WebGLAny.cpp: Removed.
+        * html/canvas/WebGLAny.h:
+        Moved convertToJSValue to the bindings where it belongs.
+
+        * html/canvas/WebGLRenderingContextBase.idl:
+        Annotate getExtension with [OverrideIDLType=IDLWebGLExtension].
+
 2017-07-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] CTParagraphStyle leak under WebCore::LinkImageLayout::LinkImageLayout

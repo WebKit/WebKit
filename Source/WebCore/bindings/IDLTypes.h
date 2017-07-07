@@ -51,6 +51,10 @@ class IDBKeyData;
 class IDBValue;
 class DOMPromise;
 
+#if ENABLE(WEBGL)
+class WebGLExtension;
+#endif
+
 template<typename T>
 struct IDLType {
     using ImplementationType = T;
@@ -258,6 +262,7 @@ struct IDLIDBValue : IDLWrapper<IDBValue> { };
 
 #if ENABLE(WEBGL)
 struct IDLWebGLAny : IDLType<WebGLAny> { };
+struct IDLWebGLExtension : IDLWrapper<WebGLExtension> { };
 #endif
 
 // Helper predicates

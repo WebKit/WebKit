@@ -72,8 +72,6 @@ using WebGLAny = Variant<
 #endif
 >;
 
-JSC::JSValue convertToJSValue(JSC::ExecState&, JSDOMGlobalObject&, const WebGLAny&);
-
 } // namespace WebCore
 
 #endif
