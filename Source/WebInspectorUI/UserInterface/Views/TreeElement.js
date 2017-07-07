@@ -376,6 +376,10 @@ WebInspector.TreeElement = class TreeElement extends WebInspector.Object
 
             this.onpopulate();
 
+            // It is necessary to set expanded to true again here because some subclasses will call
+            // collapse in onpopulate (via removeChildren), which sets it back to false.
+            this.expanded = true;
+
             for (var i = 0; i < this.children.length; ++i)
                 this.children[i]._attach();
 
