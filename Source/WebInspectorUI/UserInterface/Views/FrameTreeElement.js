@@ -69,7 +69,7 @@ WebInspector.FrameTreeElement = class FrameTreeElement extends WebInspector.Reso
             if (value === WebInspector.Resource.Type.WebSocket)
                 treeElementConstructor = WebInspector.WebSocketResourceTreeElement;
 
-            this.registerFolderizeSettings(key, folderName, this._frame.resourceCollectionForType(value), forwardingConstructor);
+            this.registerFolderizeSettings(key, folderName, this._frame.resourceCollectionForType(value), treeElementConstructor);
         }
 
         this.updateParentStatus();

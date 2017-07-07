@@ -161,21 +161,6 @@ WebInspector.ResourceTreeElement = class ResourceTreeElement extends WebInspecto
 
     populateContextMenu(contextMenu, event)
     {
-        if (this._resource.type === WebInspector.Resource.Type.WebSocket) {
-            contextMenu.appendItem(WebInspector.UIString("Log WebSocket"), () => {
-                WebInspector.RemoteObject.resolveWebSocket(this._resource, WebInspector.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
-                    if (!remoteObject)
-                        return;
-
-                    const text = WebInspector.UIString("Selected WebSocket");
-                    const addSpecialUserLogClass = true;
-                    WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
-                });
-            });
-
-            contextMenu.appendSeparator();
-        }
-
         WebInspector.appendContextMenuItemsForSourceCode(contextMenu, this._resource);
 
         super.populateContextMenu(contextMenu, event);

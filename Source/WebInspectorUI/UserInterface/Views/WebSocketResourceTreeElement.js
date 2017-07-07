@@ -43,6 +43,24 @@ WebInspector.WebSocketResourceTreeElement = class WebSocketResourceTreeElement e
         this.resource.removeEventListener(WebInspector.WebSocketResource.Event.ReadyStateChanged, this._updateConnectionStatus, this);
     }
 
+    populateContextMenu(contextMenu, event)
+    {
+        contextMenu.appendItem(WebInspector.UIString("Log WebSocket"), () => {
+            WebInspector.RemoteObject.resolveWebSocket(this._resource, WebInspector.RuntimeManager.ConsoleObjectGroup, (remoteObject) => {
+                if (!remoteObject)
+                    return;
+
+                const text = WebInspector.UIString("Selected WebSocket");
+                const addSpecialUserLogClass = true;
+                WebInspector.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+            });
+        });
+
+        contextMenu.appendSeparator();
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
     // Private
 
     _updateConnectionStatus()
