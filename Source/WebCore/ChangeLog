@@ -1,3 +1,18 @@
+2017-07-07  Jer Noble  <jer.noble@apple.com>
+
+        AVPlayer can continue to be active after released by MediaPlayerPrivateAVFoundationObjC.
+        https://bugs.webkit.org/show_bug.cgi?id=174264
+
+        Reviewed by Eric Carlson.
+
+        If the AVPlayer is retained (by an autorelease pool, or internally by other objects in
+        AVFoundation), releasing the AVPlayer is not enough to cancel loading or playback. So before
+        releasing the AVPlayer, make sure to disassociate the current AVPlayerItem, which should
+        cancel all activity in the AVPlayer.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+
 2017-07-07  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Remove data url handler for async load

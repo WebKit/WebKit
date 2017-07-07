@@ -629,6 +629,8 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
 
         for (NSString *keyName in playerKVOProperties())
             [m_avPlayer.get() removeObserver:m_objcObserver.get() forKeyPath:keyName];
+
+        [m_avPlayer replaceCurrentItemWithPlayerItem:nil];
         m_avPlayer = nil;
     }
 
