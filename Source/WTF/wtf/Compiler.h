@@ -258,8 +258,10 @@
 
 /* NOT_TAIL_CALLED */
 
-#if !defined(NOT_TAIL_CALLED) && defined(__has_attribute) && __has_attribute(not_tail_called)
+#if !defined(NOT_TAIL_CALLED) && defined(__has_attribute)
+#if __has_attribute(not_tail_called)
 #define NOT_TAIL_CALLED __attribute__((not_tail_called))
+#endif
 #endif
 
 #if !defined(NOT_TAIL_CALLED)
