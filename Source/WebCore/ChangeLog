@@ -1,3 +1,67 @@
+2017-07-07  Charlie Turner  <cturner@igalia.com>
+
+        [GStreamer] vid.me videos do not play
+        https://bugs.webkit.org/show_bug.cgi?id=172240
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In r142251, code to hide the WK HTTP source elements from elsewhere in
+        the pipeline was removed. This has the nasty side-effect of
+        auto-plugging the WK HTTP source into things it really should not be
+        used in, especially the adaptive streaming demuxers. The reasons this
+        is bad are documented in several places on Bugzilla, see the parent
+        bug report for more details. The high-level issue is that the WK HTTP
+        source and its use of WebCore is not thread-safe. Although work has
+        been recently done to improve this situation, it's still not perfect.
+
+        Another issue is the interface hlsdemux expects its HTTP source to
+        implement, specifically seeking in READY.
+
+        This does rely on HTTP context sharing being available in GStreamer,
+        upstream bug is here:
+        https://bugzilla.gnome.org/show_bug.cgi?id=761099. The failing case
+        can be demonstrated with
+        https://github.com/thiagoss/adaptive-test-server but manual testing on
+        popular video hosting sites, including vid.me, shows that this doesn't
+        bite us at the moment, just something else to fix in the future.
+
+        There are some QoS issues with the adaptive streaming code in
+        GStreamer, but it seems much better to offer a below par QoS in lieu
+        of crashing/livelocking when playing certain streams, and issues can be
+        raised upstream when they arise.
+
+        This patch does take us further away from the future goal of having all
+        networking operations go through the network process, but in return it
+        solves some nasty crashes and livelocks that have been irritating
+        users for some time. With the pressure off on this issue, work can be
+        planned to consider how to make the WK HTTP source a better citizen
+        inside the GStreamer pipeline when we migrate the netcode to go
+        through the network process.
+
+        A new test is added to check that the single file HLS playlists
+        (new in version 4) can be played, which was the primary cause of
+        this bug report.
+
+        Test: http/tests/media/hls/range-request.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::setPlaybinURL): Perform
+        some trickery to make sure that we only ever fetch URLs handed to
+        us by WebCore. Any further URLs discovered inside the pipeline
+        will not get WKWS auto-plugged, since they'll be plain https?
+        schemas.
+        (WebCore::MediaPlayerPrivateGStreamer::load): Refactor to use the
+        setPlaybinURL helper method.
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Add
+        the setPlaybinURL helper method.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcGetProtocols): Only advertise webkit+https?, this
+        ensures we won't get auto-plugged by pipeline elements asking for
+        an element to fetch https? resources (like adaptive demuxers).
+        (convertPlaybinURI): Undo the trick when another element asks us
+        for our URI.
+
 2017-07-05  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Implement WTF::ThreadGroup
