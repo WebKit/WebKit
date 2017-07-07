@@ -1,3 +1,15 @@
+2017-07-06  Yoav Weiss  <yoav@yoav.ws>
+
+        [preload] Avoid reflecting "video" and "audio" when they are not supported `as` value
+        https://bugs.webkit.org/show_bug.cgi?id=174199
+
+        Reviewed by Youenn Fablet.
+
+        No new tests as video/audio is supported in tests. I tested this manually.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::as): Make sure "video" and "audio" will not be reflected when they are not supported.
+
 2017-07-06  Chris Dumez  <cdumez@apple.com>
 
         Drop unused ResourceLoadStatistics members

@@ -48,6 +48,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MouseEvent.h"
 #include "RenderStyle.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StyleInheritedData.h"
@@ -231,8 +232,9 @@ String HTMLLinkElement::as() const
         || equalLettersIgnoringASCIICase(as, "image")
         || equalLettersIgnoringASCIICase(as, "script")
         || equalLettersIgnoringASCIICase(as, "style")
-        || equalLettersIgnoringASCIICase(as, "video")
-        || equalLettersIgnoringASCIICase(as, "audio")
+        || (RuntimeEnabledFeatures::sharedFeatures().mediaPreloadingEnabled()
+            && (equalLettersIgnoringASCIICase(as, "video")
+                || equalLettersIgnoringASCIICase(as, "audio")))
 #if ENABLE(VIDEO_TRACK)
         || equalLettersIgnoringASCIICase(as, "track")
 #endif
