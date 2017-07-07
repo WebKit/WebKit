@@ -327,7 +327,7 @@ my @features = (
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => (!isIOSWebKit() && !isWPE()), value => \$netscapePluginAPISupport },
 
     { option => "nosniff", desc => "Toggle support for 'X-Content-Type-Options: nosniff'",
-      define => "ENABLE_NOSNIFF", default => (isAppleCocoaWebKit() || isAppleWinWebKit()), value => \$nosniffSupport },
+      define => "ENABLE_NOSNIFF", default => 1, value => \$nosniffSupport },
 
     { option => "notifications", desc => "Toggle Notifications support",
       define => "ENABLE_NOTIFICATIONS", default => isGtk(), value => \$notificationsSupport },

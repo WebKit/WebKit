@@ -1,3 +1,12 @@
+2017-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [GTK][WPE] Enable X-Content-Type-Options: nosniff
+        https://bugs.webkit.org/show_bug.cgi?id=174250
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2017-07-07  Charlie Turner  <cturner@igalia.com>
         [GStreamer] vid.me videos do not play
         https://bugs.webkit.org/show_bug.cgi?id=172240

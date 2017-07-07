@@ -85,11 +85,6 @@ Bug(GTK) media/unsupported-rtsp.html [ WontFix Skip ]
 # ENABLE(DRAGGABLE_REGION) is disabled
 Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
 
-# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
-webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
-imported/w3c/web-platform-tests/fetch/nosniff [ Skip ]
-
-
 # Accelerated overflow scrolling (ENABLE_ACCELERATED_OVERFLOW_SCROLLING) is not enabled.
 Bug(GTK) fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 
