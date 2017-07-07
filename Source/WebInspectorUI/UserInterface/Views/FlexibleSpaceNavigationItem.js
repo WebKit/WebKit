@@ -25,11 +25,6 @@
 
 WebInspector.FlexibleSpaceNavigationItem = class FlexibleSpaceNavigationItem extends WebInspector.NavigationItem
 {
-    constructor(identifier)
-    {
-        super(identifier);
-    }
-
     // Protected
 
     get additionalClassNames()

@@ -25,7 +25,7 @@
 
 WebInspector.IdleTreeElement = class IdleTreeElement extends WebInspector.GeneralTreeElement
 {
-    constructor(target)
+    constructor()
     {
         super("idle", WebInspector.UIString("Idle"));
     }

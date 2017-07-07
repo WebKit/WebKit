@@ -25,11 +25,6 @@
 
 WebInspector.DividerNavigationItem = class DividerNavigationItem extends WebInspector.NavigationItem
 {
-    constructor(identifier)
-    {
-        super(identifier);
-    }
-
     // Protected
 
     get additionalClassNames()

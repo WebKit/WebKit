@@ -25,11 +25,6 @@
 
 WebInspector.CodeMirrorGradientEditingController = class CodeMirrorGradientEditingController extends WebInspector.CodeMirrorEditingController
 {
-    constructor(codeMirror, marker)
-    {
-        super(codeMirror, marker);
-    }
-
     // Public
 
     get initialValue()

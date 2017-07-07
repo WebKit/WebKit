@@ -25,11 +25,6 @@
 
 WebInspector.CodeMirrorBezierEditingController = class CodeMirrorBezierEditingController extends WebInspector.CodeMirrorEditingController
 {
-    constructor(codeMirror, marker)
-    {
-        super(codeMirror, marker);
-    }
-
     // Public
 
     get initialValue()
