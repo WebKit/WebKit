@@ -226,7 +226,7 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
         paragraphStyleSettings[0].spec = kCTParagraphStyleSpecifierLineBreakMode;
         paragraphStyleSettings[0].valueSize = sizeof(CTLineBreakMode);
         paragraphStyleSettings[0].value = &lineBreakMode;
-        RetainPtr<CTParagraphStyleRef> paragraphStyle = CTParagraphStyleCreate(paragraphStyleSettings, 1);
+        RetainPtr<CTParagraphStyleRef> paragraphStyle = adoptCF(CTParagraphStyleCreate(paragraphStyleSettings, 1));
 
         NSDictionary *textAttributes = @{
             (id)kCTFontAttributeName: font,
