@@ -471,14 +471,14 @@ static inline void UNREACHABLE_FOR_PLATFORM()
 
 #ifdef __cplusplus
 
-// The combination of line, file, function, and counter should be a unique number per call to this crash. This forces the compiler to not coalesce calls to WTFCrashWithInfo.
+// The combination of line, file, function, and counter should be a unique number per call to this crash. This tricks the compiler into not coalescing calls to WTFCrashWithInfo.
 // The easiest way to fill these values per translation unit is to pass __LINE__, __FILE__, WTF_PRETTY_FUNCTION, and __COUNTER__.
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4);
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3);
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1, uint64_t misc2);
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1);
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason);
-WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH void WTFCrashWithInfo(int line, const char* file, const char* function, int counter);
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3, uint64_t misc4);
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1, uint64_t misc2, uint64_t misc3);
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1, uint64_t misc2);
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason, uint64_t misc1);
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfo(int line, const char* file, const char* function, int counter, uint64_t reason);
+WTF_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void WTFCrashWithInfo(int line, const char* file, const char* function, int counter);
 
 
 namespace WTF {
@@ -498,6 +498,7 @@ void isIntegralType(T, Types... types)
 #if COMPILER(CLANG) || COMPILER(MSVC)
 #define CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(...) do { \
         WTF::isIntegralType(__VA_ARGS__); \
+        asm volatile("" ::: "memory"); \
         WTFCrashWithInfo(__LINE__, __FILE__, WTF_PRETTY_FUNCTION, __COUNTER__, ##__VA_ARGS__); \
     } while (false)
 #else

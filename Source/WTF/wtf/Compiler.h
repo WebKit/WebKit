@@ -256,6 +256,16 @@
 #define NO_RETURN
 #endif
 
+/* NOT_TAIL_CALLED */
+
+#if !defined(NOT_TAIL_CALLED) && defined(__has_attribute) && __has_attribute(not_tail_called)
+#define NOT_TAIL_CALLED __attribute__((not_tail_called))
+#endif
+
+#if !defined(NOT_TAIL_CALLED)
+#define NOT_TAIL_CALLED
+#endif
+
 /* RETURNS_NONNULL */
 #if !defined(RETURNS_NONNULL) && COMPILER(GCC_OR_CLANG)
 #define RETURNS_NONNULL __attribute__((returns_nonnull))

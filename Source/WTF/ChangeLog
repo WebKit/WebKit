@@ -1,3 +1,17 @@
+2017-07-06  Keith Miller  <keith_miller@apple.com>
+
+        Add extra insurance to prevent clang from making crash traces sad
+        https://bugs.webkit.org/show_bug.cgi?id=174231
+
+        Reviewed by Saam Barati.
+
+        This patch makes it slightly harder for Clang to coalesce our crash calls.
+        Additionally, it also makes Clang never tail call the WTFCrashWithInfo so
+        our stack trace should always be "reasonable".
+
+        * wtf/Assertions.h:
+        * wtf/Compiler.h:
+
 2017-07-06  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219178.
