@@ -1,3 +1,21 @@
+2017-07-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] For cross-app drags, 'drop' event handlers are never invoked if dataTransfer.dropEffect is not set while dragging
+        https://bugs.webkit.org/show_bug.cgi?id=174219
+        <rdar://problem/32083177>
+
+        Reviewed by Ryosuke Niwa.
+
+        Tweak some testing SPI to return a drop operation flag instead of whether or not the drop operation was not
+        UIDropOperationCancel.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _simulateDataInteractionUpdated:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _simulateDataInteractionUpdated:]):
+
 2017-07-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r219238, r219239, and r219241.

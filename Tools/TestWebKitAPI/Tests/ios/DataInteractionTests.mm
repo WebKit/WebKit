@@ -496,19 +496,38 @@ TEST(DataInteractionTests, ExternalSourceImageToFileInput)
 
 TEST(DataInteractionTests, ExternalSourceHTMLToUploadArea)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
-    RetainPtr<UIItemProvider> simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setShouldAllowMoveOperation:NO];
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get() ]];
     [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
+}
+
+TEST(DataInteractionTests, ExternalSourceMoveOperationNotAllowed)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+    [webView stringByEvaluatingJavaScript:@"upload.dropEffect = 'move'"];
+
+    auto simulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSData *htmlData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
+    [simulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:htmlData];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setShouldAllowMoveOperation:NO];
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedHTMLItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
 
 TEST(DataInteractionTests, ExternalSourceZIPArchiveAndURLToSingleFileInput)
@@ -591,22 +610,23 @@ TEST(DataInteractionTests, ExternalSourceImageAndHTMLToMultipleFileInput)
 
 TEST(DataInteractionTests, ExternalSourceImageAndHTMLToUploadArea)
 {
-    RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
 
-    RetainPtr<UIItemProvider> simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto simulatedImageItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *imageData = UIImageJPEGRepresentation(testIconImage(), 0.5);
     [simulatedImageItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeJPEG withData:imageData];
 
-    RetainPtr<UIItemProvider> firstSimulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto firstSimulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *firstHTMLData = [@"<body contenteditable></body>" dataUsingEncoding:NSUTF8StringEncoding];
     [firstSimulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:firstHTMLData];
 
-    RetainPtr<UIItemProvider> secondSimulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    auto secondSimulatedHTMLItemProvider = adoptNS([[UIItemProvider alloc] init]);
     NSData *secondHTMLData = [@"<html><body>hello world</body></html>" dataUsingEncoding:NSUTF8StringEncoding];
     [secondSimulatedHTMLItemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML withData:secondHTMLData];
 
-    RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setShouldAllowMoveOperation:NO];
     [dataInteractionSimulator setExternalItemProviders:@[ simulatedImageItemProvider.get(), firstSimulatedHTMLItemProvider.get(), secondSimulatedHTMLItemProvider.get() ]];
     [dataInteractionSimulator runFrom:CGPointMake(200, 300) to:CGPointMake(100, 300)];
 

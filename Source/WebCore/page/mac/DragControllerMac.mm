@@ -106,6 +106,13 @@ void DragController::cleanupAfterSystemDrag()
 
 #if ENABLE(DATA_INTERACTION)
 
+DragOperation DragController::platformGenericDragOperation()
+{
+    // On iOS, UIKit skips the -performDrop invocation altogether if MOVE is forbidden.
+    // Thus, if MOVE is not allowed in the drag source operation mask, fall back to only other allowable action, COPY.
+    return DragOperationCopy;
+}
+
 void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHandlingMethod dragHandlingMethod, const DragData& dragData) const
 {
     Vector<String> supportedTypes;

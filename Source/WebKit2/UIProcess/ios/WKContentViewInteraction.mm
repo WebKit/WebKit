@@ -4858,9 +4858,9 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     [self dropInteraction:_dataOperation.get() sessionDidEnter:session];
 }
 
-- (BOOL)_simulateDataInteractionUpdated:(id)session
+- (NSUInteger)_simulateDataInteractionUpdated:(id)session
 {
-    return [self dropInteraction:_dataOperation.get() sessionDidUpdate:session].operation != UIDropOperationCancel;
+    return [self dropInteraction:_dataOperation.get() sessionDidUpdate:session].operation;
 }
 
 - (void)_simulateDataInteractionEnded:(id)session

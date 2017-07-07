@@ -75,6 +75,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 
 @property (nonatomic) BOOL allowsFocusToStartInputSession;
 @property (nonatomic) BOOL shouldEnsureUIApplication;
+@property (nonatomic) BOOL shouldAllowMoveOperation;
 @property (nonatomic) BlockPtr<BOOL(_WKActivatedElementInfo *)> showCustomActionSheetBlock;
 @property (nonatomic) BlockPtr<NSArray *(UIItemProvider *, NSArray *, NSDictionary *)> convertItemProvidersBlock;
 @property (nonatomic) BlockPtr<NSArray *(id <UIDropSession>)> overridePerformDropBlock;

@@ -1,3 +1,36 @@
+2017-07-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] For cross-app drags, 'drop' event handlers are never invoked if dataTransfer.dropEffect is not set while dragging
+        https://bugs.webkit.org/show_bug.cgi?id=174219
+        <rdar://problem/32083177>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add plumbing and support to mock the value of -allowsMoveOperation on the simulated UIDragDropSession objects.
+        Setting the DataInteractionSimulator's shouldAllowMoveOperation property to NO simulates a drag operation coming
+        in from another app out-of-process, for which move operations won't cause a drop to be performed in the first
+        place.
+
+        Also tweaks 2 existing unit tests regarding file uploads via JavaScript to simulate items coming in from a
+        different application, and adds a new test to check that if a drop area specifically requests a MOVE operation,
+        no action is taken when dropping.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/file-uploading.html:
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[MockDragDropSession initWithItems:location:window:allowMove:]):
+        (-[MockDragDropSession allowsMoveOperation]):
+        (-[MockDataOperationSession initWithProviders:location:window:allowMove:]):
+        (-[MockDataInteractionSession initWithWindow:allowMove:]):
+        (-[DataInteractionSimulator initWithWebView:]):
+        (-[DataInteractionSimulator runFrom:to:]):
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[MockDragDropSession initWithItems:location:window:]): Deleted.
+        (-[MockDataOperationSession initWithProviders:location:window:]): Deleted.
+        (-[MockDataInteractionSession initWithWindow:]): Deleted.
+
 2017-07-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r219238, r219239, and r219241.

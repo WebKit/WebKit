@@ -55,6 +55,7 @@ struct DragState;
         ~DragController();
 
         static std::unique_ptr<DragController> create(Page&, DragClient&);
+        static DragOperation platformGenericDragOperation();
 
         DragClient& client() const { return m_client; }
 

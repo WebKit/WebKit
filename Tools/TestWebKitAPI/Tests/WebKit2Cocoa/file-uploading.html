@@ -31,8 +31,18 @@
         sendUploadedFileTypesToApp(input.files);
     });
 
-    upload.addEventListener("dragenter", event => event.preventDefault());
-    upload.addEventListener("dragover", event => event.preventDefault());
+    upload.addEventListener("dragenter", event => {
+        event.preventDefault();
+        if (upload.dropEffect)
+            event.dataTransfer.dropEffect = upload.dropEffect;
+    });
+
+    upload.addEventListener("dragover", event => {
+        event.preventDefault();
+        if (upload.dropEffect)
+            event.dataTransfer.dropEffect = upload.dropEffect;
+    });
+
     upload.addEventListener("drop", event => {
         sendUploadedFileTypesToApp(event.dataTransfer.files);
         event.preventDefault();

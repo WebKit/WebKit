@@ -52,23 +52,25 @@ using namespace TestWebKitAPI;
     RetainPtr<UIWindow> _window;
 }
 @property (nonatomic) CGPoint mockLocationInWindow;
+@property (nonatomic) BOOL allowMove;
 @end
 
 @implementation MockDragDropSession
 
-- (instancetype)initWithItems:(NSArray <UIDragItem *>*)items location:(CGPoint)locationInWindow window:(UIWindow *)window
+- (instancetype)initWithItems:(NSArray <UIDragItem *>*)items location:(CGPoint)locationInWindow window:(UIWindow *)window allowMove:(BOOL)allowMove
 {
     if (self = [super init]) {
         _mockItems = items;
         _mockLocationInWindow = locationInWindow;
         _window = window;
+        _allowMove = allowMove;
     }
     return self;
 }
 
 - (BOOL)allowsMoveOperation
 {
-    return YES;
+    return _allowMove;
 }
 
 - (BOOL)isRestrictedToDraggingApplication
@@ -138,13 +140,13 @@ NSString * const DataInteractionStartEventName = @"dragstart";
 
 @implementation MockDataOperationSession
 
-- (instancetype)initWithProviders:(NSArray<UIItemProvider *> *)providers location:(CGPoint)locationInWindow window:(UIWindow *)window
+- (instancetype)initWithProviders:(NSArray<UIItemProvider *> *)providers location:(CGPoint)locationInWindow window:(UIWindow *)window allowMove:(BOOL)allowMove
 {
     auto items = adoptNS([[NSMutableArray alloc] init]);
     for (UIItemProvider *itemProvider in providers)
         [items addObject:[[[UIDragItem alloc] initWithItemProvider:itemProvider] autorelease]];
 
-    return [super initWithItems:items.get() location:locationInWindow window:window];
+    return [super initWithItems:items.get() location:locationInWindow window:window allowMove:allowMove];
 }
 
 - (UIDraggingSession *)session
@@ -208,9 +210,9 @@ NSString * const DataInteractionStartEventName = @"dragstart";
 
 @implementation MockDataInteractionSession
 
-- (instancetype)initWithWindow:(UIWindow *)window
+- (instancetype)initWithWindow:(UIWindow *)window allowMove:(BOOL)allowMove
 {
-    return [super initWithItems:@[ ] location:CGPointZero window:window];
+    return [super initWithItems:@[ ] location:CGPointZero window:window allowMove:allowMove];
 }
 
 - (NSUInteger)localOperationMask
@@ -263,6 +265,7 @@ static NSArray *dataInteractionEventNames()
     if (self = [super init]) {
         _webView = webView;
         _shouldEnsureUIApplication = NO;
+        _shouldAllowMoveOperation = YES;
         _isDoneWaitingForInputSession = true;
         [_webView setUIDelegate:self];
         [_webView _setInputDelegate:self];
@@ -331,11 +334,11 @@ static NSArray *dataInteractionEventNames()
     _endLocation = endLocation;
 
     if (self.externalItemProviders.count) {
-        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:self.externalItemProviders location:_startLocation window:[_webView window]]);
+        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:self.externalItemProviders location:_startLocation window:[_webView window] allowMove:self.shouldAllowMoveOperation]);
         _phase = DataInteractionBegan;
         [self _advanceProgress];
     } else {
-        _dataInteractionSession = adoptNS([[MockDataInteractionSession alloc] initWithWindow:[_webView window]]);
+        _dataInteractionSession = adoptNS([[MockDataInteractionSession alloc] initWithWindow:[_webView window] allowMove:self.shouldAllowMoveOperation]);
         [_dataInteractionSession setMockLocationInWindow:_startLocation];
         [_webView _simulatePrepareForDataInteractionSession:_dataInteractionSession.get() completion:^() {
             DataInteractionSimulator *weakSelf = strongSelf.get();
@@ -404,7 +407,7 @@ static NSArray *dataInteractionEventNames()
         for (UIDragItem *item in items)
             [itemProviders addObject:item.itemProvider];
 
-        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:itemProviders location:self._currentLocation window:[_webView window]]);
+        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:itemProviders location:self._currentLocation window:[_webView window] allowMove:self.shouldAllowMoveOperation]);
         [_dataInteractionSession setItems:items];
         _sourceItemProviders = itemProviders;
         if (self.showCustomActionSheetBlock) {
@@ -428,9 +431,11 @@ static NSArray *dataInteractionEventNames()
         [_webView _simulateDataInteractionEntered:_dataOperationSession.get()];
         _phase = DataInteractionEntered;
         break;
-    case DataInteractionEntered:
-        _shouldPerformOperation = [_webView _simulateDataInteractionUpdated:_dataOperationSession.get()];
+    case DataInteractionEntered: {
+        auto operation = static_cast<UIDropOperation>([_webView _simulateDataInteractionUpdated:_dataOperationSession.get()]);
+        _shouldPerformOperation = operation == UIDropOperationCopy || ([_dataOperationSession allowsMoveOperation] && operation != UIDropOperationCancel);
         break;
+    }
     default:
         break;
     }

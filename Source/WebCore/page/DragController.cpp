@@ -184,6 +184,15 @@ static RefPtr<DocumentFragment> documentFragmentFromDragData(const DragData& dra
     return nullptr;
 }
 
+#if !PLATFORM(IOS)
+
+DragOperation DragController::platformGenericDragOperation()
+{
+    return DragOperationMove;
+}
+
+#endif
+
 bool DragController::dragIsMove(FrameSelection& selection, const DragData& dragData)
 {
     const VisibleSelection& visibleSelection = selection.selection();
@@ -666,8 +675,10 @@ static DragOperation defaultOperationForDrag(DragOperation srcOpMask)
         return DragOperationCopy;
     if (srcOpMask == DragOperationNone)
         return DragOperationNone;
-    if (srcOpMask & DragOperationMove || srcOpMask & DragOperationGeneric)
+    if (srcOpMask & DragOperationMove)
         return DragOperationMove;
+    if (srcOpMask & DragOperationGeneric)
+        return DragController::platformGenericDragOperation();
     if (srcOpMask & DragOperationCopy)
         return DragOperationCopy;
     if (srcOpMask & DragOperationLink)
