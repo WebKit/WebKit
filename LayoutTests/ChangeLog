@@ -1,5 +1,11 @@
 2017-07-07  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Unreviewed gardening, fix WK2 expectations after my previous commit
+
+        * platform/wk2/TestExpectations:
+
+2017-07-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [WPE] Unreviewed gardening
 
         * platform/wk2/TestExpectations: Do not mark individual resourceLoadStatistics tests as
