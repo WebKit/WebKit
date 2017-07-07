@@ -58,7 +58,7 @@ class UploadedFile extends DataModelObject {
 
     static _computeSHA256Hash(content)
     {
-        return crypto.subtle.digest('SHA-256', content).then((digest) => {
+        return (crypto.subtle || crypto.webkitSubtle).digest('SHA-256', content).then((digest) => {
             return Array.from(new Uint8Array(digest)).map((byte) => {
                 if (byte < 0x10)
                     return '0' + byte.toString(16);

@@ -1,3 +1,17 @@
+2017-07-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Safari 10.1 fails to upload a patch on perf try bots page
+        https://bugs.webkit.org/show_bug.cgi?id=174214
+
+        Reviewed by Chris Dumez.
+
+        Added the workaround to make the analysis task page work on Safari 10.1
+
+        * public/v3/components/instant-file-uploader.js:
+        (InstantFileUploader.prototype._uploadFiles): Convert files to an array since for-of doesn't work otherwise on Safari 10.1.
+        * public/v3/models/uploaded-file.js:
+        (UploadedFile._computeSHA256Hash): Fallback to crypto.webkitSubtle since crypto.subtle isn't available on Safari 10.1 or 11.
+
 2017-07-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a typo pointed out by Andreas Kling.
