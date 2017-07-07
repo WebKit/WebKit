@@ -1,3 +1,18 @@
+2017-07-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Follow-up to "REGRESSION(r209495): materiauxlaverdure.com fails to load"
+        https://bugs.webkit.org/show_bug.cgi?id=173301
+        <rdar://problem/32624850>
+
+        Unreviewed gardening. Attempt to fix this test by updating it to expect double quotes. It
+        was missed because it is marked as flaky on Mac, so no way to automatically detect the
+        failure there.
+
+        This doesn't actually fix the test for me due to some floating point issues, but it's a step
+        in the right direction, and I speculate this will fix the test on the GTK and WPE bots.
+
+        * transitions/clip-path-path-transitions.html:
+
 2017-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r216944): Font loads can cause Chinese characters to draw as .notdef
