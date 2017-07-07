@@ -1,3 +1,17 @@
+2017-07-07  Mathias Bynens  <mathias@qiwi.be>
+
+        Speedometer 2.0: Fix vanilla JS example
+        https://bugs.webkit.org/show_bug.cgi?id=174246
+
+        Reviewed by Ryosuke Niwa.
+
+        Previously, all TODO items were assigned an ID of `null`. This patch
+        fixes that bug. Manually deleting items now works again.
+
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/index.html: Made title consistent.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/js/store.js: Fixed bug with deleting items.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/readme.md: Added docs.
+
 2017-07-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Improve performance of font lookups

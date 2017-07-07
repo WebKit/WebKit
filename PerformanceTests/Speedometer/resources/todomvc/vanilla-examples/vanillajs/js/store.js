@@ -3,7 +3,7 @@
     'use strict';
 
     var MemoryStorage = {};
-    var id = 1;
+    var ID = 1;
 
     /**
      * Creates a new client side storage object and will create an empty
@@ -98,7 +98,7 @@
             callback.call(this, todos);
         } else {
             // Generate an ID
-            updateData.id = id++;
+            updateData.id = ID++;
 
             todos.push(updateData);
             MemoryStorage[this._dbName] = JSON.stringify(data);
