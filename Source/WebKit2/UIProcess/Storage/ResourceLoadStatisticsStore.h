@@ -103,6 +103,8 @@ public:
 private:
     ResourceLoadStatisticsStore() = default;
 
+    bool shouldPartitionCookies(const WebCore::ResourceLoadStatistics&) const;
+
     HashMap<String, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
 
     WTF::Function<void()> m_dataAddedHandler;
@@ -110,6 +112,11 @@ private:
     WTF::Function<void()> m_grandfatherExistingWebsiteDataHandler;
     WTF::Function<void()> m_deletePersistentStoreHandler;
     WTF::Function<void()> m_fireTelemetryHandler;
+
+    Seconds m_timeToLiveUserInteraction { 24_h * 30. };
+    Seconds m_timeToLiveCookiePartitionFree { 24_h };
+    Seconds m_grandfatheringTime { 1_h };
+    Seconds m_minimumTimeBetweenDataRecordsRemoval { 1_h };
 
     WallTime m_endOfGrandfatheringTimestamp;
     MonotonicTime m_lastTimeDataRecordsWereRemoved;

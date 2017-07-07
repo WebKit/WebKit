@@ -39,11 +39,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static const auto statisticsModelVersion = 5;
-static Seconds timeToLiveUserInteraction { 24_h * 30. };
-static Seconds timeToLiveCookiePartitionFree { 24_h };
-static Seconds grandfatheringTime { 1_h };
-static Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
+const unsigned statisticsModelVersion { 5 };
 
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
@@ -207,9 +203,9 @@ void ResourceLoadStatisticsStore::fireTelemetryHandler()
         m_fireTelemetryHandler();
 }
     
-static inline bool shouldPartitionCookies(const ResourceLoadStatistics& statistic)
+inline bool ResourceLoadStatisticsStore::shouldPartitionCookies(const ResourceLoadStatistics& statistic) const
 {
-    return statistic.isPrevalentResource && (!statistic.hadUserInteraction || WallTime::now() > statistic.mostRecentUserInteractionTime + timeToLiveCookiePartitionFree);
+    return statistic.isPrevalentResource && (!statistic.hadUserInteraction || WallTime::now() > statistic.mostRecentUserInteractionTime + m_timeToLiveCookiePartitionFree);
 }
 
 void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
@@ -263,26 +259,26 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector
 
 void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds seconds)
 {
-    if (seconds >= 0_s)
-        timeToLiveUserInteraction = seconds;
+    ASSERT(seconds >= 0_s);
+    m_timeToLiveUserInteraction = seconds;
 }
 
 void ResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(Seconds seconds)
 {
-    if (seconds >= 0_s)
-        timeToLiveCookiePartitionFree = seconds;
+    ASSERT(seconds >= 0_s);
+    m_timeToLiveCookiePartitionFree = seconds;
 }
 
 void ResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds)
 {
-    if (seconds >= 0_s)
-        minimumTimeBetweenDataRecordsRemoval = seconds;
+    ASSERT(seconds >= 0_s);
+    m_minimumTimeBetweenDataRecordsRemoval = seconds;
 }
 
 void ResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
 {
-    if (seconds >= 0_s)
-        grandfatheringTime = seconds;
+    ASSERT(seconds >= 0_s);
+    m_grandfatheringTime = seconds;
 }
 
 void ResourceLoadStatisticsStore::processStatistics(WTF::Function<void(ResourceLoadStatistics&)>&& processFunction)
@@ -297,7 +293,7 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
     if (!resourceStatistic.hadUserInteraction)
         return false;
 
-    if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime + timeToLiveUserInteraction) {
+    if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime + m_timeToLiveUserInteraction) {
         // Drop privacy sensitive data because we no longer need it.
         // Set timestamp to 0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
@@ -380,7 +376,7 @@ void ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore(HashSet<Str
         ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
         statistic.grandfathered = true;
     }
-    m_endOfGrandfatheringTimestamp = WallTime::now() + grandfatheringTime;
+    m_endOfGrandfatheringTimestamp = WallTime::now() + m_grandfatheringTime;
 }
 
 bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
@@ -389,7 +385,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
     if (m_dataRecordsRemovalPending)
         return false;
 
-    if (m_lastTimeDataRecordsWereRemoved && MonotonicTime::now() < (m_lastTimeDataRecordsWereRemoved + minimumTimeBetweenDataRecordsRemoval))
+    if (m_lastTimeDataRecordsWereRemoved && MonotonicTime::now() < (m_lastTimeDataRecordsWereRemoved + m_minimumTimeBetweenDataRecordsRemoval))
         return false;
 
     return true;
