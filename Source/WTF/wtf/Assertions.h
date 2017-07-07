@@ -53,6 +53,7 @@
 
 #ifdef __cplusplus
 #include <type_traits>
+#include <wtf/Atomics.h>
 #endif
 
 #ifdef NDEBUG
@@ -498,7 +499,7 @@ void isIntegralType(T, Types... types)
 #if COMPILER(CLANG) || COMPILER(MSVC)
 #define CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(...) do { \
         WTF::isIntegralType(__VA_ARGS__); \
-        asm volatile("" ::: "memory"); \
+        compilerFence(); \
         WTFCrashWithInfo(__LINE__, __FILE__, WTF_PRETTY_FUNCTION, __COUNTER__, ##__VA_ARGS__); \
     } while (false)
 #else
