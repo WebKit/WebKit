@@ -162,7 +162,7 @@ void Thread::didExit()
 
 void Thread::addToThreadGroup(const AbstractLocker& destructionMutexLocker, ThreadGroup& threadGroup)
 {
-    ASSERT(canAddToThreadGroup(destructionMutexLocker));
+    ASSERT_UNUSED(destructionMutexLocker, canAddToThreadGroup(destructionMutexLocker));
     m_threadGroups.add(&threadGroup);
 }
 
