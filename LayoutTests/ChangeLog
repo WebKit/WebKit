@@ -1,3 +1,12 @@
+2017-07-07  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] Unreviewed gardening
+
+        * platform/wk2/TestExpectations: Do not mark individual resourceLoadStatistics tests as
+        passing. Instead, mark the entire directory, so we don't have to override the expectations
+        for every single test individually in the WPE expectations file.
+        * platform/wpe/TestExpectations: Update resourceLoadStatistics expectations.
+
 2017-07-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [GTK][WPE] Enable X-Content-Type-Options: nosniff

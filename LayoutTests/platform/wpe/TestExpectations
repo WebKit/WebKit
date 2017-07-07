@@ -613,3 +613,7 @@ imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.html 
 
 # No support for resource load statistics in test controller.
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html [ Timeout ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/prevalent-resource-without-user-interaction.html [ Timeout ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Timeout ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics/telemetry-generation.html [ Timeout ]
