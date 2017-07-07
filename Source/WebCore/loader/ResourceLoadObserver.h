@@ -51,7 +51,7 @@ class ResourceLoadObserver {
 public:
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
     
-    void logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
+    void logFrameNavigation(const Frame&, const Frame& topFrame, const ResourceRequest& newRequest);
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
     void logWebSocketLoading(const Frame*, const URL&);
     void logUserInteractionWithReducedTimeResolution(const Document&);
@@ -65,8 +65,6 @@ private:
 
     bool shouldLog(Page*) const;
     ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
-    ResourceLoadStatistics takeResourceStatisticsForPrimaryDomain(const String& primaryDomain);
-    bool isPrevalentResource(const String& primaryDomain) const;
 
     void scheduleNotificationIfNeeded();
     void notificationTimerFired();
@@ -75,7 +73,6 @@ private:
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
     Timer m_notificationTimer;
-    HashMap<String, size_t> m_originsVisitedMap;
 };
     
 } // namespace WebCore

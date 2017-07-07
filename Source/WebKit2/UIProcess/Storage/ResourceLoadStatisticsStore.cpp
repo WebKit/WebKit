@@ -39,7 +39,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static const auto statisticsModelVersion = 4;
+static const auto statisticsModelVersion = 5;
 static Seconds timeToLiveUserInteraction { 24_h * 30. };
 static Seconds timeToLiveCookiePartitionFree { 24_h };
 static Seconds grandfatheringTime { 1_h };
@@ -102,22 +102,22 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     if (m_resourceStatisticsMap.size())
         return;
 
-    unsigned version;
-    if (!decoder.decodeUInt32("version", version))
-        version = 1;
+    unsigned versionOnDisk;
+    if (!decoder.decodeUInt32("version", versionOnDisk))
+        return;
 
-    static const auto minimumVersionWithGrandfathering = 3;
-    if (version > minimumVersionWithGrandfathering) {
-        double endOfGrandfatheringTimestamp;
-        if (decoder.decodeDouble("endOfGrandfatheringTimestamp", endOfGrandfatheringTimestamp))
-            m_endOfGrandfatheringTimestamp = WallTime::fromRawSeconds(endOfGrandfatheringTimestamp);
-        else
-            m_endOfGrandfatheringTimestamp = { };
-    }
+    if (versionOnDisk != statisticsModelVersion)
+        return;
+
+    double endOfGrandfatheringTimestamp;
+    if (decoder.decodeDouble("endOfGrandfatheringTimestamp", endOfGrandfatheringTimestamp))
+        m_endOfGrandfatheringTimestamp = WallTime::fromRawSeconds(endOfGrandfatheringTimestamp);
+    else
+        m_endOfGrandfatheringTimestamp = { };
 
     Vector<ResourceLoadStatistics> loadedStatistics;
-    bool succeeded = decoder.decodeObjects("browsingStatistics", loadedStatistics, [version](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
-        return statistics.decode(decoderInner, version);
+    bool succeeded = decoder.decodeObjects("browsingStatistics", loadedStatistics, [](KeyedDecoder& decoderInner, ResourceLoadStatistics& statistics) {
+        return statistics.decode(decoderInner);
     });
 
     if (!succeeded)

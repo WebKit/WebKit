@@ -2247,34 +2247,14 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
     encoder << statistics.mostRecentUserInteractionTime.secondsSinceEpoch().value();
     encoder << statistics.grandfathered;
     
-    // Top frame stats
-    encoder << statistics.topFrameHasBeenNavigatedToBefore;
-    encoder << statistics.topFrameHasBeenRedirectedTo;
-    encoder << statistics.topFrameHasBeenRedirectedFrom;
-    encoder << statistics.topFrameInitialLoadCount;
-    encoder << statistics.topFrameHasBeenNavigatedTo;
-    encoder << statistics.topFrameHasBeenNavigatedFrom;
-    
     // Subframe stats
-    encoder << statistics.subframeHasBeenLoadedBefore;
-    encoder << statistics.subframeHasBeenRedirectedTo;
-    encoder << statistics.subframeHasBeenRedirectedFrom;
-    encoder << statistics.subframeSubResourceCount;
     encoder << statistics.subframeUnderTopFrameOrigins;
-    encoder << statistics.subframeUniqueRedirectsTo;
-    encoder << statistics.subframeHasBeenNavigatedTo;
-    encoder << statistics.subframeHasBeenNavigatedFrom;
     
     // Subresource stats
-    encoder << statistics.subresourceHasBeenRedirectedFrom;
-    encoder << statistics.subresourceHasBeenRedirectedTo;
-    encoder << statistics.subresourceHasBeenSubresourceCount;
-    encoder << statistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited;
     encoder << statistics.subresourceUnderTopFrameOrigins;
     encoder << statistics.subresourceUniqueRedirectsTo;
     
     // Prevalent Resource
-    encoder << statistics.redirectedToOtherPrevalentResourceOrigins;
     encoder << statistics.isPrevalentResource;
     encoder << statistics.dataRecordsRemoved;
 }
@@ -2296,63 +2276,11 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
     if (!decoder.decode(statistics.grandfathered))
         return false;
     
-    // Top frame stats
-    if (!decoder.decode(statistics.topFrameHasBeenNavigatedToBefore))
-        return false;
-    
-    if (!decoder.decode(statistics.topFrameHasBeenRedirectedTo))
-        return false;
-    
-    if (!decoder.decode(statistics.topFrameHasBeenRedirectedFrom))
-        return false;
-    
-    if (!decoder.decode(statistics.topFrameInitialLoadCount))
-        return false;
-    
-    if (!decoder.decode(statistics.topFrameHasBeenNavigatedTo))
-        return false;
-    
-    if (!decoder.decode(statistics.topFrameHasBeenNavigatedFrom))
-        return false;
-    
     // Subframe stats
-    if (!decoder.decode(statistics.subframeHasBeenLoadedBefore))
-        return false;
-    
-    if (!decoder.decode(statistics.subframeHasBeenRedirectedTo))
-        return false;
-    
-    if (!decoder.decode(statistics.subframeHasBeenRedirectedFrom))
-        return false;
-    
-    if (!decoder.decode(statistics.subframeSubResourceCount))
-        return false;
-    
     if (!decoder.decode(statistics.subframeUnderTopFrameOrigins))
-        return false;
-
-    if (!decoder.decode(statistics.subframeUniqueRedirectsTo))
-        return false;
-    
-    if (!decoder.decode(statistics.subframeHasBeenNavigatedTo))
-        return false;
-    
-    if (!decoder.decode(statistics.subframeHasBeenNavigatedFrom))
         return false;
     
     // Subresource stats
-    if (!decoder.decode(statistics.subresourceHasBeenRedirectedFrom))
-        return false;
-    
-    if (!decoder.decode(statistics.subresourceHasBeenRedirectedTo))
-        return false;
-    
-    if (!decoder.decode(statistics.subresourceHasBeenSubresourceCount))
-        return false;
-    
-    if (!decoder.decode(statistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited))
-        return false;
-    
     if (!decoder.decode(statistics.subresourceUnderTopFrameOrigins))
         return false;
 
@@ -2360,9 +2288,6 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
         return false;
     
     // Prevalent Resource
-    if (!decoder.decode(statistics.redirectedToOtherPrevalentResourceOrigins))
-        return false;
-    
     if (!decoder.decode(statistics.isPrevalentResource))
         return false;
 

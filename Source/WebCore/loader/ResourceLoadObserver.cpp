@@ -79,7 +79,7 @@ bool ResourceLoadObserver::shouldLog(Page* page) const
     return Settings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_notificationCallback;
 }
 
-void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
+void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest)
 {
     ASSERT(frame.document());
     ASSERT(topFrame.document());
@@ -88,8 +88,6 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     if (!shouldLog(topFrame.page()))
         return;
 
-    bool isRedirect = is3xxRedirect(redirectResponse);
-    bool isMainFrame = frame.isMainFrame();
     auto& sourceURL = frame.document()->url();
     auto& targetURL = newRequest.url();
     auto& mainFrameURL = topFrame.document()->url();
@@ -110,57 +108,17 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     if (targetPrimaryDomain == mainFramePrimaryDomain || targetPrimaryDomain == sourcePrimaryDomain)
         return;
 
-    auto targetStatistics = takeResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
     // Always fire if we have previously removed data records for this domain
+    // FIXME: targetStatistics.dataRecordsRemoved is always 0 in WebCore as it gets populated in the UIProcess.
     bool shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
 
-    if (isMainFrame)
-        targetStatistics.topFrameHasBeenNavigatedToBefore = true;
-    else {
-        targetStatistics.subframeHasBeenLoadedBefore = true;
-
+    if (!frame.isMainFrame()) {
         auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
         if (subframeUnderTopFrameOriginsResult.isNewEntry)
             shouldCallNotificationCallback = true;
     }
-
-    if (isRedirect) {
-        auto& redirectingOriginResourceStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-
-        if (isPrevalentResource(targetPrimaryDomain))
-            redirectingOriginResourceStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
-
-        if (isMainFrame) {
-            ++targetStatistics.topFrameHasBeenRedirectedTo;
-            ++redirectingOriginResourceStatistics.topFrameHasBeenRedirectedFrom;
-        } else {
-            ++targetStatistics.subframeHasBeenRedirectedTo;
-            ++redirectingOriginResourceStatistics.subframeHasBeenRedirectedFrom;
-            redirectingOriginResourceStatistics.subframeUniqueRedirectsTo.add(targetPrimaryDomain);
-
-            ++targetStatistics.subframeSubResourceCount;
-        }
-    } else {
-        if (sourcePrimaryDomain.isNull() || sourcePrimaryDomain.isEmpty() || sourcePrimaryDomain == "nullOrigin") {
-            if (isMainFrame)
-                ++targetStatistics.topFrameInitialLoadCount;
-            else
-                ++targetStatistics.subframeSubResourceCount;
-        } else {
-            auto& sourceOriginResourceStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-
-            if (isMainFrame) {
-                ++sourceOriginResourceStatistics.topFrameHasBeenNavigatedFrom;
-                ++targetStatistics.topFrameHasBeenNavigatedTo;
-            } else {
-                ++sourceOriginResourceStatistics.subframeHasBeenNavigatedFrom;
-                ++targetStatistics.subframeHasBeenNavigatedTo;
-            }
-        }
-    }
-
-    m_resourceStatisticsMap.set(targetPrimaryDomain, WTFMove(targetStatistics));
 
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
@@ -191,42 +149,26 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     if (targetPrimaryDomain == mainFramePrimaryDomain || (isRedirect && targetPrimaryDomain == sourcePrimaryDomain))
         return;
 
-    auto targetStatistics = takeResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    bool shouldCallNotificationCallback = false;
 
-    // Always fire if we have previously removed data records for this domain
-    bool shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
+    {
+        auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
-    auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
-    if (subresourceUnderTopFrameOriginsResult.isNewEntry)
-        shouldCallNotificationCallback = true;
+        // Always fire if we have previously removed data records for this domain
+        // FIXME: targetStatistics.dataRecordsRemoved is always 0 in WebCore as it gets populated in the UIProcess.
+        shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
+
+        auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
+        if (subresourceUnderTopFrameOriginsResult.isNewEntry)
+            shouldCallNotificationCallback = true;
+    }
 
     if (isRedirect) {
         auto& redirectingOriginStatistics = ensureResourceStatisticsForPrimaryDomain(sourcePrimaryDomain);
-
-        if (isPrevalentResource(targetPrimaryDomain))
-            redirectingOriginStatistics.redirectedToOtherPrevalentResourceOrigins.add(targetPrimaryDomain);
-
-        ++redirectingOriginStatistics.subresourceHasBeenRedirectedFrom;
-        ++targetStatistics.subresourceHasBeenRedirectedTo;
-
         auto subresourceUniqueRedirectsToResult = redirectingOriginStatistics.subresourceUniqueRedirectsTo.add(targetPrimaryDomain);
         if (subresourceUniqueRedirectsToResult.isNewEntry)
             shouldCallNotificationCallback = true;
-
-        ++targetStatistics.subresourceHasBeenSubresourceCount;
-
-        auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
-
-        targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
-    } else {
-        ++targetStatistics.subresourceHasBeenSubresourceCount;
-
-        auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
-
-        targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
     }
-
-    m_resourceStatisticsMap.set(targetPrimaryDomain, WTFMove(targetStatistics));
 
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
@@ -259,17 +201,12 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
 
     // Always fire if we have previously removed data records for this domain
+    // FIXME: targetStatistics.dataRecordsRemoved is always 0 in WebCore as it gets populated in the UIProcess.
     bool shouldCallNotificationCallback = targetStatistics.dataRecordsRemoved > 0;
 
     auto subresourceUnderTopFrameOriginsResult = targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain);
     if (subresourceUnderTopFrameOriginsResult.isNewEntry)
         shouldCallNotificationCallback = true;
-
-    ++targetStatistics.subresourceHasBeenSubresourceCount;
-
-    auto totalVisited = std::max(m_originsVisitedMap.size(), 1U);
-
-    targetStatistics.subresourceHasBeenSubresourceCountDividedByTotalNumberOfOriginsVisited = static_cast<double>(targetStatistics.subresourceHasBeenSubresourceCount) / totalVisited;
 
     if (shouldCallNotificationCallback)
         scheduleNotificationIfNeeded();
@@ -308,23 +245,6 @@ ResourceLoadStatistics& ResourceLoadObserver::ensureResourceStatisticsForPrimary
         return ResourceLoadStatistics(primaryDomain);
     });
     return addResult.iterator->value;
-}
-
-ResourceLoadStatistics ResourceLoadObserver::takeResourceStatisticsForPrimaryDomain(const String& primaryDomain)
-{
-    auto statististics = m_resourceStatisticsMap.take(primaryDomain);
-    if (statististics.highLevelDomain.isNull())
-        statististics.highLevelDomain = primaryDomain;
-    ASSERT(statististics.highLevelDomain == primaryDomain);
-    return statististics;
-}
-
-bool ResourceLoadObserver::isPrevalentResource(const String& primaryDomain) const
-{
-    auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
-    if (mapEntry == m_resourceStatisticsMap.end())
-        return false;
-    return mapEntry->value.isPrevalentResource;
 }
 
 void ResourceLoadObserver::scheduleNotificationIfNeeded()
