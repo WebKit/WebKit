@@ -43,9 +43,7 @@ public:
     RefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&, CachePolicy, FrameLoader&);
     void saveParsedStyleSheet(Ref<StyleSheetContents>&&);
 
-#if ENABLE(NOSNIFF)
     bool mimeTypeAllowedByNosniff() const;
-#endif
 
 private:
     String responseMIMEType() const;

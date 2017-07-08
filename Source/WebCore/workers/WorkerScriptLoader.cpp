@@ -118,12 +118,10 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const Reso
         return;
     }
 
-#if ENABLE(NOSNIFF)
     if (!isScriptAllowedByNosniff(response)) {
         m_failed = true;
         return;
     }
-#endif
 
     m_responseURL = response.url();
     m_responseEncoding = response.textEncodingName();

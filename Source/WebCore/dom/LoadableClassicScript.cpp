@@ -84,7 +84,6 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
         };
     }
 
-#if ENABLE(NOSNIFF)
     if (!m_error && !isScriptAllowedByNosniff(m_cachedScript->response())) {
         m_error = Error {
             ErrorType::Nosniff,
@@ -95,7 +94,6 @@ void LoadableClassicScript::notifyFinished(CachedResource& resource)
             }
         };
     }
-#endif
 
     if (!m_error && !resource.errorOccurred() && !matchIntegrityMetadata(resource, m_integrity)) {
         m_error = Error {

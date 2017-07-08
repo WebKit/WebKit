@@ -38,9 +38,7 @@ namespace WebCore {
 
 class ResourceResponse;
 
-#if ENABLE(NOSNIFF)
 bool isScriptAllowedByNosniff(const ResourceResponse&);
-#endif
 
 // Do not use this class directly, use the class ResponseResponse instead
 class ResourceResponseBase {

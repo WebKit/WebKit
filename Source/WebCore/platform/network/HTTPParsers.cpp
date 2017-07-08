@@ -471,14 +471,12 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
     }
 }
 
-#if ENABLE(NOSNIFF)
 ContentTypeOptionsDisposition parseContentTypeOptionsHeader(const String& header)
 {
     if (equalLettersIgnoringASCIICase(header.stripWhiteSpace(), "nosniff"))
         return ContentTypeOptionsNosniff;
     return ContentTypeOptionsNone;
 }
-#endif
 
 AtomicString extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
 {

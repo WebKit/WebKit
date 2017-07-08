@@ -40,7 +40,6 @@
 
 namespace WebCore {
 
-#if ENABLE(NOSNIFF)
 bool isScriptAllowedByNosniff(const ResourceResponse& response)
 {
     if (parseContentTypeOptionsHeader(response.httpHeaderField(HTTPHeaderName::XContentTypeOptions)) != ContentTypeOptionsNosniff)
@@ -48,7 +47,6 @@ bool isScriptAllowedByNosniff(const ResourceResponse& response)
     String mimeType = extractMIMETypeFromMediaType(response.httpHeaderField(HTTPHeaderName::ContentType));
     return MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType);
 }
-#endif
 
 ResourceResponseBase::ResourceResponseBase()
     : m_isNull(true)

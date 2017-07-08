@@ -125,25 +125,21 @@ String CachedCSSStyleSheet::responseMIMEType() const
     return extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType));
 }
 
-#if ENABLE(NOSNIFF)
 bool CachedCSSStyleSheet::mimeTypeAllowedByNosniff() const
 {
     return parseContentTypeOptionsHeader(m_response.httpHeaderField(HTTPHeaderName::XContentTypeOptions)) != ContentTypeOptionsNosniff || equalLettersIgnoringASCIICase(responseMIMEType(), "text/css");
 }
-#endif
 
 bool CachedCSSStyleSheet::canUseSheet(MIMETypeCheckHint mimeTypeCheckHint, bool* hasValidMIMEType) const
 {
     if (errorOccurred())
         return false;
 
-#if ENABLE(NOSNIFF)
     if (!mimeTypeAllowedByNosniff()) {
         if (hasValidMIMEType)
             *hasValidMIMEType = false;
         return false;
     }
-#endif
 
     if (mimeTypeCheckHint == MIMETypeCheckHint::Lax)
         return true;

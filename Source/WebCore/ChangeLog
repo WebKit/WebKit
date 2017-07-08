@@ -1,3 +1,29 @@
+2017-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Drop NOSNIFF compile flag
+        https://bugs.webkit.org/show_bug.cgi?id=174289
+
+        Reviewed by Michael Catanzaro.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/StyleSheetContents.cpp:
+        (WebCore::StyleSheetContents::parseAuthorStyleSheet):
+        (WebCore::StyleSheetContents::notifyLoadedSheet):
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::notifyFinished):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::mimeTypeAllowedByNosniff):
+        (WebCore::CachedCSSStyleSheet::canUseSheet):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseContentTypeOptionsHeader):
+        * platform/network/HTTPParsers.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::isScriptAllowedByNosniff):
+        * platform/network/ResourceResponseBase.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+
 2017-07-07  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Use a rolling 30-day uptime for processing statistics

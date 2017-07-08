@@ -110,7 +110,6 @@ my (
     $mhtmlSupport,
     $mouseCursorScaleSupport,
     $netscapePluginAPISupport,
-    $nosniffSupport,
     $notificationsSupport,
     $orientationEventsSupport,
     $performanceTimelineSupport,
@@ -325,9 +324,6 @@ my @features = (
 
     { option => "netscape-plugin-api", desc => "Toggle Netscape Plugin API support",
       define => "ENABLE_NETSCAPE_PLUGIN_API", default => (!isIOSWebKit() && !isWPE()), value => \$netscapePluginAPISupport },
-
-    { option => "nosniff", desc => "Toggle support for 'X-Content-Type-Options: nosniff'",
-      define => "ENABLE_NOSNIFF", default => 1, value => \$nosniffSupport },
 
     { option => "notifications", desc => "Toggle Notifications support",
       define => "ENABLE_NOTIFICATIONS", default => isGtk(), value => \$notificationsSupport },
