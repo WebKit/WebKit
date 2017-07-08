@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -440,7 +440,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!store)
         return;
 
-    store->setTimeToLiveUserInteraction(24_h * 30.);
+    store->setTimeToLiveUserInteraction(0_s);
     store->setTimeToLiveCookiePartitionFree(24_h);
     store->setMinimumTimeBetweenDataRecordsRemoval(1_h);
     store->setGrandfatheringTime(1_h);

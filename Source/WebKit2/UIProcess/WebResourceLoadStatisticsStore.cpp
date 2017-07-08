@@ -94,8 +94,8 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
     : m_resourceLoadStatisticsStore(ResourceLoadStatisticsStore::create())
     , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_statisticsStoragePath(resourceLoadStatisticsDirectory)
-    , m_telemetryOneShotTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::telemetryTimerFired)
-    , m_telemetryRepeatedTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::telemetryTimerFired)
+    , m_telemetryOneShotTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::submitTelemetryIfNecessary)
+    , m_telemetryRepeatedTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
 {
     ASSERT(RunLoop::isMain());
 
@@ -272,6 +272,8 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
 
     if (coreStore().isEmpty())
         grandfatherExistingWebsiteData();
+
+    coreStore().includeTodayAsOperatingDateIfNecessary();
 }
     
 void WebResourceLoadStatisticsStore::refreshFromDisk()
@@ -526,7 +528,16 @@ std::unique_ptr<KeyedDecoder> WebResourceLoadStatisticsStore::createDecoderFromD
     return KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size());
 }
 
-void WebResourceLoadStatisticsStore::telemetryTimerFired()
+void WebResourceLoadStatisticsStore::performDailyTasks()
+{
+    ASSERT(RunLoop::isMain());
+
+    coreStore().includeTodayAsOperatingDateIfNecessary();
+
+    submitTelemetryIfNecessary();
+}
+
+void WebResourceLoadStatisticsStore::submitTelemetryIfNecessary()
 {
     ASSERT(RunLoop::isMain());
     

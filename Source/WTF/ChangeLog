@@ -1,3 +1,15 @@
+2017-07-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Use a rolling 30-day uptime for processing statistics
+        https://bugs.webkit.org/show_bug.cgi?id=174235
+        <rdar://problem/33164381>
+
+        Reviewed by Chris Dumez.
+
+        Modify Deque to allow it to be used in a template specialization in KeyedDecoder.
+
+        * wtf/Deque.h:
+
 2017-07-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r219238, r219239, and r219241.

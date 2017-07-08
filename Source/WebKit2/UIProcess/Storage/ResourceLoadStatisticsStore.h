@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -99,12 +100,16 @@ public:
     void dataRecordsBeingRemoved();
     void dataRecordsWereRemoved();
 
+    void includeTodayAsOperatingDateIfNecessary();
+
 private:
     ResourceLoadStatisticsStore() = default;
 
     bool shouldPartitionCookies(const WebCore::ResourceLoadStatistics&) const;
+    bool hasStatisticsExpired(const WebCore::ResourceLoadStatistics&) const;
 
     HashMap<String, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
+    Deque<WTF::WallTime> m_operatingDates;
 
     WTF::Function<void()> m_dataAddedHandler;
     WTF::Function<void(const Vector<String>&, const Vector<String>&, bool clearFirst)> m_shouldPartitionCookiesForDomainsHandler;
@@ -112,7 +117,7 @@ private:
     WTF::Function<void()> m_deletePersistentStoreHandler;
     WTF::Function<void()> m_fireTelemetryHandler;
 
-    Seconds m_timeToLiveUserInteraction { 24_h * 30. };
+    Seconds m_timeToLiveUserInteraction { 0_s };
     Seconds m_timeToLiveCookiePartitionFree { 24_h };
     Seconds m_grandfatheringTime { 1_h };
     Seconds m_minimumTimeBetweenDataRecordsRemoval { 1_h };

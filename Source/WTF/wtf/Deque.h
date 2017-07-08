@@ -46,6 +46,8 @@ template<typename T, size_t inlineCapacity = 0>
 class Deque {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    typedef T ValueType;
+
     typedef DequeIterator<T, inlineCapacity> iterator;
     typedef DequeConstIterator<T, inlineCapacity> const_iterator;
     typedef std::reverse_iterator<iterator> reverse_iterator;

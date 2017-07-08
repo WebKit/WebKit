@@ -1,3 +1,30 @@
+2017-07-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Use a rolling 30-day uptime for processing statistics
+        https://bugs.webkit.org/show_bug.cgi?id=174235
+        <rdar://problem/33164381>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.cpp:
+        (WebKit::WKWebsiteDataStore::_resourceLoadStatisticsResetToConsistentState): Initialize time-to-live to zero by default.
+        * UIProcess/Storage/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::createEncoderFromData): Write out vector
+        of operating dates.
+        (WebKit::ResourceLoadStatisticsStore::readDataFromDecoder): Read in vector of
+        operating dates.
+        (WebKit::ResourceLoadStatisticsStore::hasHadRecentUserInteraction): Check new
+        convenience method.
+        (WebKit::ResourceLoadStatisticsStore::markTodayAsOperatingDate): Added.
+        (WebKit::ResourceLoadStatisticsStore::hasStatisticsExpired): Added.
+        * UIProcess/Storage/ResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded): When reading
+        a new data file, update the current operating date (if needed).
+        (WebKit::WebResourceLoadStatisticsStore::handleDailyTasks): Roll uptime dates as
+        needed, then handle telemetry.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2017-07-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] For cross-app drags, 'drop' event handlers are never invoked if dataTransfer.dropEffect is not set while dragging

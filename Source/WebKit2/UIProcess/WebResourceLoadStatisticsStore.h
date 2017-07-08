@@ -132,9 +132,10 @@ private:
     void clearInMemoryData();
     void syncWithExistingStatisticsStorageIfNeeded();
     void refreshFromDisk();
-    void telemetryTimerFired();
+    void submitTelemetryIfNecessary();
     void submitTelemetry();
     bool hasStatisticsFileChangedSinceLastSync(const String& path);
+    void performDailyTasks();
 
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();

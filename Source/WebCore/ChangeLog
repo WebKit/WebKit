@@ -1,3 +1,16 @@
+2017-07-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2] Use a rolling 30-day uptime for processing statistics
+        https://bugs.webkit.org/show_bug.cgi?id=174235
+        <rdar://problem/33164381>
+
+        Reviewed by Chris Dumez.
+
+        Add a KeyedDecoder specialization for Deque.
+
+        * platform/KeyedCoding.h:
+        (WebCore::KeyedDecoder::decodeObjects):
+
 2017-07-07  Daniel Bates  <dabates@apple.com>
 
         [AppCache] Ignore fallback entries whose namespace is not prefixed with manifest path

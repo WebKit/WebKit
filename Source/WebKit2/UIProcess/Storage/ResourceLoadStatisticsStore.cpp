@@ -39,8 +39,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-const unsigned statisticsModelVersion { 5 };
-
+const unsigned statisticsModelVersion { 6 };
+const unsigned operatingDatesWindow { 30 };
+    
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
     return adoptRef(*new ResourceLoadStatisticsStore());
@@ -89,6 +90,10 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
         origin.value.encode(encoderInner);
     });
 
+    encoder->encodeObjects("operatingDates", m_operatingDates.begin(), m_operatingDates.end(), [](KeyedEncoder& encoderInner, WallTime date) {
+        encoderInner.encodeDouble("date", date.secondsSinceEpoch().value());
+    });
+    
     return encoder;
 }
 
@@ -128,6 +133,18 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
         }
         m_resourceStatisticsMap.set(statistics.highLevelDomain, WTFMove(statistics));
     }
+
+    succeeded = decoder.decodeObjects("operatingDates", m_operatingDates, [](KeyedDecoder& decoder, WallTime& wallTime) {
+        double value;
+        if (!decoder.decodeDouble("date", value))
+            return false;
+        
+        wallTime = WallTime::fromRawSeconds(value);
+        return true;
+    });
+
+    if (!succeeded)
+        return;
     
     fireShouldPartitionCookiesHandler({ }, prevalentResourceDomainsWithoutUserInteraction, true);
 }
@@ -136,7 +153,8 @@ void ResourceLoadStatisticsStore::clearInMemory()
 {
     ASSERT(!RunLoop::isMain());
     m_resourceStatisticsMap.clear();
-    
+    m_operatingDates.clear();
+
     fireShouldPartitionCookiesHandler({ }, { }, true);
 }
 
@@ -293,7 +311,7 @@ bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatis
     if (!resourceStatistic.hadUserInteraction)
         return false;
 
-    if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime + m_timeToLiveUserInteraction) {
+    if (hasStatisticsExpired(resourceStatistic)) {
         // Drop privacy sensitive data because we no longer need it.
         // Set timestamp to 0 so that statistics merge will know
         // it has been reset as opposed to its default -1.
@@ -402,6 +420,34 @@ void ResourceLoadStatisticsStore::dataRecordsWereRemoved()
 {
     ASSERT(!RunLoop::isMain());
     m_dataRecordsRemovalPending = false;
+}
+
+void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
+{
+    if (!m_operatingDates.isEmpty() && (WallTime::now() - m_operatingDates.last() < 24_h))
+        return;
+
+    while (m_operatingDates.size() >= operatingDatesWindow)
+        m_operatingDates.removeFirst();
+
+    m_operatingDates.append(WallTime::now());
+}
+    
+bool ResourceLoadStatisticsStore::hasStatisticsExpired(const ResourceLoadStatistics& resourceStatistic) const
+{
+    if (m_operatingDates.size() >= operatingDatesWindow) {
+        if (resourceStatistic.mostRecentUserInteractionTime < m_operatingDates.first())
+            return true;
+    }
+
+    // If we don't meet the real criteria for an expired statistic, check the user
+    // setting for a tighter restriction (mainly for testing).
+    if (m_timeToLiveUserInteraction) {
+        if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime + m_timeToLiveUserInteraction)
+            return true;
+    }
+    
+    return false;
 }
     
 }

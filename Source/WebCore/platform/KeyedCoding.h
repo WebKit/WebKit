@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include <functional>
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -104,15 +105,15 @@ public:
         return result;
     }
 
-    template<typename T, typename F>
-    bool decodeObjects(const String& key, Vector<T>& objects, F&& function)
+    template<typename ContainerType, typename F>
+    bool decodeObjects(const String& key, ContainerType& objects, F&& function)
     {
         if (!beginArray(key))
             return false;
 
         bool result = true;
         while (beginArrayElement()) {
-            T element;
+            typename ContainerType::ValueType element;
             if (!function(*this, element)) {
                 result = false;
                 break;
