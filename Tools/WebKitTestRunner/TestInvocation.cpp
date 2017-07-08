@@ -1037,8 +1037,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireDataModificationHandler")) {
-        TestController::singleton().statisticsFireDataModificationHandler();
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsProcessStatisticsAndDataRecords")) {
+        TestController::singleton().statisticsProcessStatisticsAndDataRecords();
         return nullptr;
     }
     
@@ -1061,8 +1061,8 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireTelemetryHandler")) {
-        TestController::singleton().statisticsFireTelemetryHandler();
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSubmitTelemetry")) {
+        TestController::singleton().statisticsSubmitTelemetry();
         return nullptr;
     }
     

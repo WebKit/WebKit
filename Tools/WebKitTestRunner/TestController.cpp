@@ -2296,7 +2296,7 @@ void TestController::setStatisticsTimeToLiveCookiePartitionFree(double)
 {
 }
 
-void TestController::statisticsFireDataModificationHandler()
+void TestController::statisticsProcessStatisticsAndDataRecords()
 {
 }
 
@@ -2308,7 +2308,7 @@ void TestController::statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKS
 {
 }
 
-void TestController::statisticsFireTelemetryHandler()
+void TestController::statisticsSubmitTelemetry()
 {
 }
 

@@ -27,24 +27,21 @@
 #include "WebResourceLoadStatisticsStore.h"
 
 #include "Logging.h"
+#include "ResourceLoadStatisticsStore.h"
 #include "WebProcessMessages.h"
-#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include "WebResourceLoadStatisticsStoreMessages.h"
+#include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataType.h"
 #include <WebCore/FileMonitor.h>
 #include <WebCore/FileSystem.h>
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/ResourceLoadStatistics.h>
+#include <WebCore/SharedBuffer.h>
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
-#include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/RunLoop.h>
-#include <wtf/Seconds.h>
-#include <wtf/WallTime.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 #if PLATFORM(COCOA)
@@ -103,23 +100,6 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
     registerUserDefaultsIfNeeded();
 #endif
 
-    m_resourceLoadStatisticsStore->setNotificationCallback([this, protectedThis = makeRef(*this)] {
-        if (m_resourceLoadStatisticsStore->isEmpty())
-            return;
-        processStatisticsAndDataRecords();
-    });
-    m_resourceLoadStatisticsStore->setGrandfatherExistingWebsiteDataCallback([this, protectedThis = makeRef(*this)] {
-        grandfatherExistingWebsiteData();
-    });
-    m_resourceLoadStatisticsStore->setDeletePersistentStoreCallback([this, protectedThis = makeRef(*this)] {
-        m_statisticsQueue->dispatch([this, protectedThis = protectedThis.copyRef()] {
-            deleteStoreFromDisk();
-        });
-    });
-    m_resourceLoadStatisticsStore->setFireTelemetryCallback([this, protectedThis = makeRef(*this)] {
-        submitTelemetry();
-    });
-
     if (updatePartitionCookiesForDomainsHandler) {
         m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([updatePartitionCookiesForDomainsHandler = WTFMove(updatePartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst) {
             updatePartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, shouldClearFirst);
@@ -164,22 +144,22 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 {
     ASSERT(!RunLoop::isMain());
     
-    if (!coreStore().shouldRemoveDataRecords())
+    if (!shouldRemoveDataRecords())
         return;
 
     auto prevalentResourceDomains = coreStore().topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
     if (prevalentResourceDomains.isEmpty())
         return;
     
-    coreStore().dataRecordsBeingRemoved();
+    dataRecordsBeingRemoved();
 
     // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = CrossThreadCopier<Vector<String>>::copy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
         WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove(), WTFMove(prevalentResourceDomains), notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
             // But always touch the ResourceLoadStatistics store on the worker queue.
-            m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
-                protectedThis->coreStore().updateStatisticsForRemovedDataRecords(topDomains);
-                protectedThis->coreStore().dataRecordsWereRemoved();
+            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
+                coreStore().updateStatisticsForRemovedDataRecords(topDomains);
+                dataRecordsWereRemoved();
             });
         });
     });
@@ -196,7 +176,7 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
         removeDataRecords();
         
         if (notifyPagesWhenDataRecordsWereScanned) {
-            RunLoop::main().dispatch([] () mutable {
+            RunLoop::main().dispatch([] {
                 WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
             });
         }
@@ -205,9 +185,11 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
     });
 }
 
-void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins)
+void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins)
 {
-    coreStore().mergeStatistics(origins);
+    ASSERT(!RunLoop::isMain());
+
+    coreStore().mergeStatistics(WTFMove(origins));
     // Fire before processing statistics to propagate user
     // interaction as fast as possible to the network process.
     coreStore().fireShouldPartitionCookiesHandler();
@@ -237,7 +219,7 @@ WallTime WebResourceLoadStatisticsStore::statisticsFileModificationTime(const St
     return WallTime::fromRawSeconds(modificationTime);
 }
 
-bool WebResourceLoadStatisticsStore::hasStatisticsFileChangedSinceLastSync(const String& path)
+bool WebResourceLoadStatisticsStore::hasStatisticsFileChangedSinceLastSync(const String& path) const
 {
     return statisticsFileModificationTime(path) > m_lastStatisticsFileSyncTime;
 }
@@ -549,6 +531,7 @@ void WebResourceLoadStatisticsStore::submitTelemetryIfNecessary()
 
 void WebResourceLoadStatisticsStore::submitTelemetry()
 {
+    ASSERT(RunLoop::isMain());
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
         WebResourceLoadStatisticsTelemetry::calculateAndSubmit(coreStore());
     });
@@ -692,19 +675,11 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const URL& s
     });
 }
 
-void WebResourceLoadStatisticsStore::fireDataModificationHandler()
-{
-    // Helper function used by testing system. Should only be called from the main thread.
-    ASSERT(RunLoop::isMain());
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
-        coreStore().fireDataModificationHandler();
-    });
-}
-
 void WebResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
 {
     // Helper function used by testing system. Should only be called from the main thread.
     ASSERT(RunLoop::isMain());
+
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
         coreStore().fireShouldPartitionCookiesHandler();
     });
@@ -719,13 +694,6 @@ void WebResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vec
     });
 }
 
-void WebResourceLoadStatisticsStore::fireTelemetryHandler()
-{
-    // Helper function used by testing system. Should only be called from the main thread.
-    ASSERT(RunLoop::isMain());
-    coreStore().fireTelemetryHandler();
-}
-
 void WebResourceLoadStatisticsStore::clearInMemory()
 {
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
@@ -736,7 +704,9 @@ void WebResourceLoadStatisticsStore::clearInMemory()
 void WebResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 {
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
-        coreStore().clearInMemoryAndPersistent();
+        coreStore().clearInMemory();
+        deleteStoreFromDisk();
+        grandfatherExistingWebsiteData();
     });
 }
 
@@ -759,12 +729,38 @@ void WebResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(Seconds se
 
 void WebResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds)
 {
-    coreStore().setMinimumTimeBetweenDataRecordsRemoval(seconds);
+    ASSERT(seconds >= 0_s);
+    m_minimumTimeBetweenDataRecordsRemoval = seconds;
 }
 
 void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
 {
     coreStore().setGrandfatheringTime(seconds);
+}
+
+bool WebResourceLoadStatisticsStore::shouldRemoveDataRecords() const
+{
+    ASSERT(!RunLoop::isMain());
+    if (m_dataRecordsRemovalPending)
+        return false;
+
+    if (m_lastTimeDataRecordsWereRemoved && MonotonicTime::now() < (m_lastTimeDataRecordsWereRemoved + m_minimumTimeBetweenDataRecordsRemoval))
+        return false;
+
+    return true;
+}
+
+void WebResourceLoadStatisticsStore::dataRecordsBeingRemoved()
+{
+    ASSERT(!RunLoop::isMain());
+    m_lastTimeDataRecordsWereRemoved = MonotonicTime::now();
+    m_dataRecordsRemovalPending = true;
+}
+
+void WebResourceLoadStatisticsStore::dataRecordsWereRemoved()
+{
+    ASSERT(!RunLoop::isMain());
+    m_dataRecordsRemovalPending = false;
 }
     
 } // namespace WebKit

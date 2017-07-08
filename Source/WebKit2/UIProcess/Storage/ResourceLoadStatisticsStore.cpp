@@ -26,27 +26,24 @@
 #include "config.h"
 #include "ResourceLoadStatisticsStore.h"
 
-#include "Logging.h"
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/ResourceLoadStatistics.h>
-#include <WebCore/SharedBuffer.h>
-#include <WebCore/URL.h>
 #include <wtf/CrossThreadCopier.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
 
 using namespace WebCore;
 
-const unsigned statisticsModelVersion { 6 };
+const unsigned minimumPrevalentResourcesForTelemetry = 3;
 const unsigned operatingDatesWindow { 30 };
-    
+const unsigned statisticsModelVersion { 6 };
+
 Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
 {
-    return adoptRef(*new ResourceLoadStatisticsStore());
+    return adoptRef(*new ResourceLoadStatisticsStore);
 }
-    
+
 bool ResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDomain) const
 {
     ASSERT(!RunLoop::isMain());
@@ -70,16 +67,14 @@ bool ResourceLoadStatisticsStore::isGrandFathered(const String& primaryDomain) c
 ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
 {
     ASSERT(!RunLoop::isMain());
-    auto addResult = m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {
+    return m_resourceStatisticsMap.ensure(primaryDomain, [&primaryDomain] {
         return ResourceLoadStatistics(primaryDomain);
-    });
-
-    return addResult.iterator->value;
+    }).iterator->value;
 }
 
 typedef HashMap<String, ResourceLoadStatistics>::KeyValuePairType StatisticsValue;
 
-std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData()
+std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData() const
 {
     ASSERT(!RunLoop::isMain());
     auto encoder = KeyedEncoder::encoder();
@@ -100,7 +95,7 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
 void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
 {
     ASSERT(!RunLoop::isMain());
-    if (m_resourceStatisticsMap.size())
+    if (!m_resourceStatisticsMap.isEmpty())
         return;
 
     unsigned versionOnDisk;
@@ -131,7 +126,7 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
             prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
             statistics.isMarkedForCookiePartitioning = true;
         }
-        m_resourceStatisticsMap.set(statistics.highLevelDomain, WTFMove(statistics));
+        m_resourceStatisticsMap.add(statistics.highLevelDomain, WTFMove(statistics));
     }
 
     succeeded = decoder.decodeObjects("operatingDates", m_operatingDates, [](KeyedDecoder& decoder, WallTime& wallTime) {
@@ -158,20 +153,12 @@ void ResourceLoadStatisticsStore::clearInMemory()
     fireShouldPartitionCookiesHandler({ }, { }, true);
 }
 
-void ResourceLoadStatisticsStore::clearInMemoryAndPersistent()
-{
-    ASSERT(!RunLoop::isMain());
-    clearInMemory();
-    if (m_deletePersistentStoreHandler)
-        m_deletePersistentStoreHandler();
-    if (m_grandfatherExistingWebsiteDataHandler)
-        m_grandfatherExistingWebsiteDataHandler();
-}
-
-void ResourceLoadStatisticsStore::mergeStatistics(const Vector<ResourceLoadStatistics>& statistics)
+void ResourceLoadStatisticsStore::mergeStatistics(Vector<ResourceLoadStatistics>&& statistics)
 {
     ASSERT(!RunLoop::isMain());
     for (auto& statistic : statistics) {
+        // FIXME: In the case where the statistics does not already exist, it seems inefficient to create
+        // an empty one just to merge the new one into it.
         auto result = m_resourceStatisticsMap.ensure(statistic.highLevelDomain, [&statistic] {
             return ResourceLoadStatistics(statistic.highLevelDomain);
         });
@@ -180,47 +167,11 @@ void ResourceLoadStatisticsStore::mergeStatistics(const Vector<ResourceLoadStati
     }
 }
 
-void ResourceLoadStatisticsStore::setNotificationCallback(WTF::Function<void()>&& handler)
-{
-    m_dataAddedHandler = WTFMove(handler);
-}
-
 void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& handler)
 {
     m_shouldPartitionCookiesForDomainsHandler = WTFMove(handler);
 }
-    
-void ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback(WTF::Function<void()>&& handler)
-{
-    m_grandfatherExistingWebsiteDataHandler = WTFMove(handler);
-}
 
-void ResourceLoadStatisticsStore::setDeletePersistentStoreCallback(WTF::Function<void()>&& handler)
-{
-    m_deletePersistentStoreHandler = WTFMove(handler);
-}
-
-void ResourceLoadStatisticsStore::setFireTelemetryCallback(WTF::Function<void()>&& handler)
-{
-    m_fireTelemetryHandler = WTFMove(handler);
-}
-    
-void ResourceLoadStatisticsStore::fireDataModificationHandler()
-{
-    ASSERT(!RunLoop::isMain());
-    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () {
-        if (m_dataAddedHandler)
-            m_dataAddedHandler();
-    });
-}
-
-void ResourceLoadStatisticsStore::fireTelemetryHandler()
-{
-    ASSERT(RunLoop::isMain());
-    if (m_fireTelemetryHandler)
-        m_fireTelemetryHandler();
-}
-    
 inline bool ResourceLoadStatisticsStore::shouldPartitionCookies(const ResourceLoadStatistics& statistic) const
 {
     return statistic.isPrevalentResource && (!statistic.hadUserInteraction || WallTime::now() > statistic.mostRecentUserInteractionTime + m_timeToLiveCookiePartitionFree);
@@ -287,19 +238,13 @@ void ResourceLoadStatisticsStore::setTimeToLiveCookiePartitionFree(Seconds secon
     m_timeToLiveCookiePartitionFree = seconds;
 }
 
-void ResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval(Seconds seconds)
-{
-    ASSERT(seconds >= 0_s);
-    m_minimumTimeBetweenDataRecordsRemoval = seconds;
-}
-
 void ResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
 {
     ASSERT(seconds >= 0_s);
     m_grandfatheringTime = seconds;
 }
 
-void ResourceLoadStatisticsStore::processStatistics(WTF::Function<void(ResourceLoadStatistics&)>&& processFunction)
+void ResourceLoadStatisticsStore::processStatistics(const WTF::Function<void(ResourceLoadStatistics&)>& processFunction)
 {
     ASSERT(!RunLoop::isMain());
     for (auto& resourceStatistic : m_resourceStatisticsMap.values())
@@ -336,9 +281,7 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
 
     Vector<String> prevalentResources;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (statistic.isPrevalentResource
-            && !hasHadRecentUserInteraction(statistic)
-            && (!shouldCheckForGrandfathering || !statistic.grandfathered))
+        if (statistic.isPrevalentResource && !hasHadRecentUserInteraction(statistic) && (!shouldCheckForGrandfathering || !statistic.grandfathered))
             prevalentResources.append(statistic.highLevelDomain);
 
         if (shouldClearGrandfathering && statistic.grandfathered)
@@ -382,7 +325,7 @@ void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const Ha
 {
     ASSERT(!RunLoop::isMain());
     for (auto& prevalentResourceDomain : prevalentResourceDomains) {
-        ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
+        auto& statistic = ensureResourceStatisticsForPrimaryDomain(prevalentResourceDomain);
         ++statistic.dataRecordsRemoved;
     }
 }
@@ -391,35 +334,10 @@ void ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore(HashSet<Str
 {
     ASSERT(!RunLoop::isMain());
     for (auto& topPrivatelyControlledDomain : topPrivatelyControlledDomainsToGrandfather) {
-        ResourceLoadStatistics& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
+        auto& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
         statistic.grandfathered = true;
     }
     m_endOfGrandfatheringTimestamp = WallTime::now() + m_grandfatheringTime;
-}
-
-bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
-{
-    ASSERT(!RunLoop::isMain());
-    if (m_dataRecordsRemovalPending)
-        return false;
-
-    if (m_lastTimeDataRecordsWereRemoved && MonotonicTime::now() < (m_lastTimeDataRecordsWereRemoved + m_minimumTimeBetweenDataRecordsRemoval))
-        return false;
-
-    return true;
-}
-
-void ResourceLoadStatisticsStore::dataRecordsBeingRemoved()
-{
-    ASSERT(!RunLoop::isMain());
-    m_lastTimeDataRecordsWereRemoved = MonotonicTime::now();
-    m_dataRecordsRemovalPending = true;
-}
-
-void ResourceLoadStatisticsStore::dataRecordsWereRemoved()
-{
-    ASSERT(!RunLoop::isMain());
-    m_dataRecordsRemovalPending = false;
 }
 
 void ResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()

@@ -345,13 +345,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     store->setGrandfatheringTime(Seconds {seconds });
 }
 
-- (void)_resourceLoadStatisticsFireDataModificationHandler
+- (void)_resourceLoadStatisticsProcessStatisticsAndDataRecords
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
     if (!store)
         return;
 
-    store->fireDataModificationHandler();
+    store->processStatisticsAndDataRecords();
 }
 
 - (void)_resourceLoadStatisticsFireShouldPartitionCookiesHandler
@@ -375,13 +375,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         store->fireShouldPartitionCookiesHandler({ host }, { }, false);
 }
 
-- (void)_resourceLoadStatisticsFireTelemetryHandler
+- (void)_resourceLoadStatisticsSubmitTelemetry
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
     if (!store)
         return;
 
-    store->fireTelemetryHandler();
+    store->submitTelemetry();
 }
 
 - (void)_resourceLoadStatisticsSetNotifyPagesWhenDataRecordsWereScanned:(BOOL)value

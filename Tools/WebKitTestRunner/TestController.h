@@ -161,10 +161,10 @@ public:
     void setStatisticsSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsTimeToLiveCookiePartitionFree(double seconds);
-    void statisticsFireDataModificationHandler();
+    void statisticsProcessStatisticsAndDataRecords();
     void statisticsFireShouldPartitionCookiesHandler();
     void statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef hostName, bool value);
-    void statisticsFireTelemetryHandler();
+    void statisticsSubmitTelemetry();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     void setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value);

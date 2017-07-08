@@ -301,9 +301,9 @@ void TestController::setStatisticsTimeToLiveCookiePartitionFree(double seconds)
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetTimeToLiveCookiePartitionFree:seconds];
 }
 
-void TestController::statisticsFireDataModificationHandler()
+void TestController::statisticsProcessStatisticsAndDataRecords()
 {
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsFireDataModificationHandler];
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsProcessStatisticsAndDataRecords];
 }
 
 void TestController::statisticsFireShouldPartitionCookiesHandler()
@@ -316,9 +316,9 @@ void TestController::statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKS
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsFireShouldPartitionCookiesHandlerForOneDomain:value forHost:toNSString(hostName)];
 }
 
-void TestController::statisticsFireTelemetryHandler()
+void TestController::statisticsSubmitTelemetry()
 {
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsFireTelemetryHandler];
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSubmitTelemetry];
 }
 
 void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)

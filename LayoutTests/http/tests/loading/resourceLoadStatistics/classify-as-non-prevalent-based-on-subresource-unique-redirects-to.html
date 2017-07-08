@@ -35,7 +35,7 @@
 
         testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
 
-        testRunner.statisticsFireDataModificationHandler();
+        testRunner.statisticsProcessStatisticsAndDataRecords();
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

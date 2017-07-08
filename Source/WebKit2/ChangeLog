@@ -1,3 +1,131 @@
+2017-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Simplify WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=174290
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsProcessStatisticsAndDataRecords]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSubmitTelemetry]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        Rename a couple of functions in the Cocoa SPI for clarity and to match the name
+        of their internal implementation.
+
+        * UIProcess/Storage/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::create):
+        (WebKit::ResourceLoadStatisticsStore::ensureResourceStatisticsForPrimaryDomain):
+        Stylistic changes.
+
+        (WebKit::ResourceLoadStatisticsStore::createEncoderFromData):
+        Make const.
+
+        (WebKit::ResourceLoadStatisticsStore::readDataFromDecoder):
+        Use HashMap::add() instead of HashMap::set(). There is not supposed to have any duplicate
+        keys so add() is sufficient and more efficient.
+
+        (WebKit::ResourceLoadStatisticsStore::clearInMemoryAndPersistent): Removed.
+        clearInMemoryAndPersistent() was only called from WebResourceLoadStatisticsStore and
+        the m_deletePersistentStoreHandler / m_grandfatherExistingWebsiteDataHandler were both
+        set by the WebResourceLoadStatisticsStore as well. Therefore, we don't really need this
+        function, WebResourceLoadStatisticsStore now calls ResourceLoadStatisticsStore::clearInMemory()
+        instead and takes care of doing what the m_deletePersistentStoreHandler /
+        m_grandfatherExistingWebsiteDataHandler handlers were doing on its side.
+
+        (WebKit::ResourceLoadStatisticsStore::mergeStatistics):
+        Pass Vector as rvalue reference, as a preparation for a future optimization. Added FIXME
+        comment about the optimization.
+
+        (WebKit::ResourceLoadStatisticsStore::setNotificationCallback): Removed.
+        (WebKit::ResourceLoadStatisticsStore::setGrandfatherExistingWebsiteDataCallback): Removed.
+        (WebKit::ResourceLoadStatisticsStore::setDeletePersistentStoreCallback): Removed.
+        (WebKit::ResourceLoadStatisticsStore::setFireTelemetryCallback): Removed.
+        Drop those callback setters. WebResourceLoadStatisticsStore is the only client of
+        ResourceLoadStatisticsStore and those callbacks were always called as a result of
+        an operation requested by the WebResourceLoadStatisticsStore. Therefore, those are
+        not needed. WebResourceLoadStatisticsStore can take care of doing what those
+        callbacks were doing on its side.
+
+        (WebKit::ResourceLoadStatisticsStore::processStatistics):
+        Pass parameter by const reference since we clearly do not intend to transfer ownership of it.
+
+        (WebKit::ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor):
+        (WebKit::ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords):
+        (WebKit::ResourceLoadStatisticsStore::handleFreshStartWithEmptyOrNoStore):
+        Stylistic changes.
+
+        (WebKit::ResourceLoadStatisticsStore::shouldRemoveDataRecords): Removed.
+        (WebKit::ResourceLoadStatisticsStore::dataRecordsBeingRemoved): Removed.
+        (WebKit::ResourceLoadStatisticsStore::dataRecordsWereRemoved): Removed.
+        Those were moved to WebResourceLoadStatisticsStore since they do not require
+        any access to the statistics, and are only used by WebResourceLoadStatisticsStore.
+
+        * UIProcess/Storage/ResourceLoadStatisticsStore.h:
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        Store registering most callbacks on the coreStore. Instead, the logic of those
+        callbacks is now inlined in the few methods in WebResourceLoadStatisticsStore
+        that were causing these callbacks to be called.
+
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+        Access some methods on WebResourceLoadStatisticsStore instead of the coreStore
+        since those were moved.
+
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        Drop unnecessary mutable for lambda.
+
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        Pass parameter as rvalue reference as a preparation for a future optimization.
+
+        (WebKit::WebResourceLoadStatisticsStore::hasStatisticsFileChangedSinceLastSync):
+        Make const.
+
+        (WebKit::WebResourceLoadStatisticsStore::submitTelemetry):
+        Add assertion to make sure this is called on the main thread.
+
+        (WebKit::WebResourceLoadStatisticsStore::fireDataModificationHandler): Removed.
+        This was dispatching to a background queue to call fireDataModificationHandler()
+        on the ResourceLoadStatisticsStore. The coreStore would then dispatch back on the
+        main thread to call the WebResourceLoadStatisticsStore's modification handler.
+        This modification handler was merely calling processStatisticsAndDataRecords().
+        Therefore, callers of WebResourceLoadStatisticsStore::fireDataModificationHandler()
+        can call WebResourceLoadStatisticsStore::processStatisticsAndDataRecords() directly
+        instead.
+
+        (WebKit::WebResourceLoadStatisticsStore::fireTelemetryHandler): Removed.
+        This was calling ResourceLoadStatisticsStore::fireTelemetryHandler(), which was
+        calling back WebResourceLoadStatisticsStore's fireTelemetryHandler. The handler
+        in question was merely calling submitTelemetry(). Therefore, callers of
+        WebResourceLoadStatisticsStore::fireTelemetryHandler() can call
+        WebResourceLoadStatisticsStore::submitTelemetry() directly instead.
+
+        (WebKit::WebResourceLoadStatisticsStore::clearInMemoryAndPersistent):
+        Call ResourceLoadStatisticsStore::clearInMemory() instead of clearInMemoryAndPersistent(),
+        which was removed. ResourceLoadStatisticsStore::clearInMemoryAndPersistent() was calling
+        clearInMemory() and then 2 of WebResourceLoadStatisticsStore's handlers. Instead, we now
+        call the functions that those handlers were calling directly, thus eliminating the need
+        for those handlers.
+
+        (WebKit::WebResourceLoadStatisticsStore::setMinimumTimeBetweenDataRecordsRemoval):
+        Set m_minimumTimeBetweenDataRecordsRemoval directly as it is now store on this class
+        instead of the coreStore.
+
+        (WebKit::WebResourceLoadStatisticsStore::shouldRemoveDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::dataRecordsBeingRemoved):
+        (WebKit::WebResourceLoadStatisticsStore::dataRecordsWereRemoved):
+        Those were merely moved from the ResourceLoadStatisticsStore.
+
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+        Check for sortedPrevalentResources.isEmpty() instead of checking if the size
+        if less than minimumPrevalentResourcesForTelemetry.
+        ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry() either returns
+        an empty vector or a vector with more than minimumPrevalentResourcesForTelemetry
+        items. Therefore, there is no need to expose minimumPrevalentResourcesForTelemetry.
+
 2017-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Drop NOSNIFF compile flag

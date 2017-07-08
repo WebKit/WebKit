@@ -353,10 +353,10 @@ public:
     void statisticsDidModifyDataRecordsCallback();
     void statisticsDidScanDataRecordsCallback();
     void statisticsDidRunTelemetryCallback(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
-    void statisticsFireDataModificationHandler();
+    void statisticsProcessStatisticsAndDataRecords();
     void statisticsFireShouldPartitionCookiesHandler();
     void statisticsFireShouldPartitionCookiesHandlerForOneDomain(JSStringRef hostName, bool value);
-    void statisticsFireTelemetryHandler();
+    void statisticsSubmitTelemetry();
     void setStatisticsPrevalentResource(JSStringRef hostName, bool value);
     bool isStatisticsPrevalentResource(JSStringRef hostName);
     void setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value);

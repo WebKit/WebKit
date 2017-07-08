@@ -37,7 +37,7 @@
         testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
         testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
         testRunner.setStatisticsTimeToLiveUserInteraction(0);
-        setTimeout("testRunner.statisticsFireDataModificationHandler()", 1000);
+        setTimeout("testRunner.statisticsProcessStatisticsAndDataRecords()", 1000);
     }
 
     if (document.location.host === hostUnderTest && window.testRunner && window.internals) {

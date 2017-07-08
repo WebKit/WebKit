@@ -265,10 +265,10 @@ interface TestRunner {
     void setStatisticsSubresourceUniqueRedirectTo(DOMString hostName, DOMString hostNameRedirectedTo);
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsTimeToLiveCookiePartitionFree(double seconds);
-    void statisticsFireDataModificationHandler();
+    void statisticsProcessStatisticsAndDataRecords();
     void statisticsFireShouldPartitionCookiesHandler();
     void statisticsFireShouldPartitionCookiesHandlerForOneDomain(DOMString hostName, boolean value);
-    void statisticsFireTelemetryHandler();
+    void statisticsSubmitTelemetry();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(boolean value);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);
     void setStatisticsNotifyPagesWhenTelemetryWasCaptured(boolean value);

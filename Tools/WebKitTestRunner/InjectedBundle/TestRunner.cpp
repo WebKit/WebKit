@@ -1413,9 +1413,9 @@ void TestRunner::statisticsDidRunTelemetryCallback(unsigned totalPrevalentResour
     callTestRunnerCallback(StatisticsDidRunTelemetryCallbackID, 1, &result);
 }
     
-void TestRunner::statisticsFireDataModificationHandler()
+void TestRunner::statisticsProcessStatisticsAndDataRecords()
 {
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireDataModificationHandler"));
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsProcessStatisticsAndDataRecords"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
 
@@ -1450,9 +1450,9 @@ void TestRunner::statisticsFireShouldPartitionCookiesHandlerForOneDomain(JSStrin
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
-void TestRunner::statisticsFireTelemetryHandler()
+void TestRunner::statisticsSubmitTelemetry()
 {
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireTelemetryHandler"));
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsSubmitTelemetry"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
 

@@ -25,14 +25,12 @@
 
 #pragma once
 
-#include "APIObject.h"
 #include "Connection.h"
 #include "ResourceLoadStatisticsClassifier.h"
-#include "ResourceLoadStatisticsStore.h"
-#include "WebResourceLoadStatisticsTelemetry.h"
-#include "WebsiteDataRecord.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(CORE_PREDICTION)
@@ -40,8 +38,6 @@
 #endif
 
 namespace WTF {
-class MonotonicTime;
-class WallTime;
 class WorkQueue;
 }
 
@@ -49,11 +45,13 @@ namespace WebCore {
 class FileMonitor;
 class KeyedDecoder;
 class KeyedEncoder;
+class URL;
 struct ResourceLoadStatistics;
 }
 
 namespace WebKit {
 
+class ResourceLoadStatisticsStore;
 class WebProcessProxy;
 
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
@@ -64,12 +62,13 @@ public:
         return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(updatePartitionCookiesForDomainsHandler)));
     }
 
+    ~WebResourceLoadStatisticsStore();
+
     static void setNotifyPagesWhenDataRecordsWereScanned(bool);
     static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
     static void setShouldSubmitTelemetry(bool);
-    virtual ~WebResourceLoadStatisticsStore();
 
-    void resourceLoadStatisticsUpdated(const Vector<WebCore::ResourceLoadStatistics>& origins);
+    void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins);
 
     void processWillOpenConnection(WebProcessProxy&, IPC::Connection&);
     void processDidCloseConnection(WebProcessProxy&, IPC::Connection&);
@@ -86,11 +85,11 @@ public:
     void setSubframeUnderTopFrameOrigin(const WebCore::URL& subframe, const WebCore::URL& topFrame);
     void setSubresourceUnderTopFrameOrigin(const WebCore::URL& subresource, const WebCore::URL& topFrame);
     void setSubresourceUniqueRedirectTo(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedTo);
-    void fireDataModificationHandler();
     void fireShouldPartitionCookiesHandler();
     void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
+    void processStatisticsAndDataRecords();
+    void submitTelemetry();
 
-    void fireTelemetryHandler();
     void clearInMemory();
     void clearInMemoryAndPersistent();
     void clearInMemoryAndPersistent(std::chrono::system_clock::time_point modifiedSince);
@@ -106,7 +105,6 @@ private:
     ResourceLoadStatisticsStore& coreStore() { return m_resourceLoadStatisticsStore.get(); }
     const ResourceLoadStatisticsStore& coreStore() const { return m_resourceLoadStatisticsStore.get(); }
 
-    void processStatisticsAndDataRecords();
     void readDataFromDiskIfNeeded();
 
     void classifyResource(WebCore::ResourceLoadStatistics&);
@@ -133,9 +131,11 @@ private:
     void syncWithExistingStatisticsStorageIfNeeded();
     void refreshFromDisk();
     void submitTelemetryIfNecessary();
-    void submitTelemetry();
-    bool hasStatisticsFileChangedSinceLastSync(const String& path);
+    bool hasStatisticsFileChangedSinceLastSync(const String& path) const;
     void performDailyTasks();
+    bool shouldRemoveDataRecords() const;
+    void dataRecordsBeingRemoved();
+    void dataRecordsWereRemoved();
 
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();
@@ -150,10 +150,13 @@ private:
     Ref<WTF::WorkQueue> m_statisticsQueue;
     std::unique_ptr<WebCore::FileMonitor> m_statisticsStorageMonitor;
     const String m_statisticsStoragePath;
-    WTF::WallTime m_lastStatisticsFileSyncTime;
-    WTF::MonotonicTime m_lastStatisticsWriteTime;
+    WallTime m_lastStatisticsFileSyncTime;
+    MonotonicTime m_lastStatisticsWriteTime;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryOneShotTimer;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryRepeatedTimer;
+    MonotonicTime m_lastTimeDataRecordsWereRemoved;
+    Seconds m_minimumTimeBetweenDataRecordsRemoval { 1_h };
+    bool m_dataRecordsRemovalPending { false };
     bool m_didScheduleWrite { false };
 };
 

@@ -1,3 +1,27 @@
+2017-07-08  Chris Dumez  <cdumez@apple.com>
+
+        Simplify WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore
+        https://bugs.webkit.org/show_bug.cgi?id=174290
+
+        Reviewed by Brent Fulgham.
+
+        Rename testRunner API to match the new internal API names.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::statisticsProcessStatisticsAndDataRecords):
+        (WTR::TestRunner::statisticsSubmitTelemetry):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::statisticsProcessStatisticsAndDataRecords):
+        (WTR::TestController::statisticsSubmitTelemetry):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::statisticsProcessStatisticsAndDataRecords):
+        (WTR::TestController::statisticsSubmitTelemetry):
+
 2017-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Drop NOSNIFF compile flag
