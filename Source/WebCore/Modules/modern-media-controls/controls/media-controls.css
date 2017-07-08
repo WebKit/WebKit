@@ -53,6 +53,7 @@
 .media-controls-container {
     all: initial;
     display: block;
+    visibility: inherit;
     position: relative;
     will-change: z-index;
 }

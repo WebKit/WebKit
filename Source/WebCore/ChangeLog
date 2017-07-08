@@ -1,3 +1,21 @@
+2017-07-08  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: "visibility:hidden" does not hide play button for video elements
+        https://bugs.webkit.org/show_bug.cgi?id=174258
+        <rdar://problem/33181452>
+
+        Reviewed by Dean Jackson.
+
+        In order to not have most styles from the page affect the shadow root, we set "all: initial" on the
+        media controls container. However, we need to still make the "visibility" property inherit from its
+        host such that "visibility: hidden" on the host won't be overridden by setting the property back to
+        its initial value, which is "visible".
+
+        Test: media/modern-media-controls/css/visibility-hidden.html
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls-container):
+
 2017-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Drop NOSNIFF compile flag
