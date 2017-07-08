@@ -275,9 +275,9 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector
         ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = true;
 }
 
-void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds seconds)
+void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(std::optional<Seconds> seconds)
 {
-    ASSERT(seconds >= 0_s);
+    ASSERT(!seconds || seconds.value() >= 0_s);
     m_timeToLiveUserInteraction = seconds;
 }
 
@@ -443,7 +443,7 @@ bool ResourceLoadStatisticsStore::hasStatisticsExpired(const ResourceLoadStatist
     // If we don't meet the real criteria for an expired statistic, check the user
     // setting for a tighter restriction (mainly for testing).
     if (m_timeToLiveUserInteraction) {
-        if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime + m_timeToLiveUserInteraction)
+        if (WallTime::now() > resourceStatistic.mostRecentUserInteractionTime + m_timeToLiveUserInteraction.value())
             return true;
     }
     

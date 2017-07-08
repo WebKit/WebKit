@@ -81,7 +81,7 @@ public:
 
     void fireDataModificationHandler();
     void fireTelemetryHandler();
-    void setTimeToLiveUserInteraction(Seconds);
+    void setTimeToLiveUserInteraction(std::optional<Seconds>);
     void setTimeToLiveCookiePartitionFree(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
@@ -117,7 +117,7 @@ private:
     WTF::Function<void()> m_deletePersistentStoreHandler;
     WTF::Function<void()> m_fireTelemetryHandler;
 
-    Seconds m_timeToLiveUserInteraction { 0_s };
+    std::optional<Seconds> m_timeToLiveUserInteraction;
     Seconds m_timeToLiveCookiePartitionFree { 24_h };
     Seconds m_grandfatheringTime { 1_h };
     Seconds m_minimumTimeBetweenDataRecordsRemoval { 1_h };

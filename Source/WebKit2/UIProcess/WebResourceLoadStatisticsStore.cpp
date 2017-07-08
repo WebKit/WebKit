@@ -747,7 +747,7 @@ void WebResourceLoadStatisticsStore::clearInMemoryAndPersistent(std::chrono::sys
     clearInMemoryAndPersistent();
 }
 
-void WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds seconds)
+void WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction(std::optional<Seconds> seconds)
 {
     coreStore().setTimeToLiveUserInteraction(seconds);
 }

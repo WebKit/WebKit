@@ -1,3 +1,27 @@
+2017-07-07  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Use a rolling 30-day uptime for processing statistics
+        https://bugs.webkit.org/show_bug.cgi?id=174235
+        <rdar://problem/33164381>
+
+        Reviewed by Brent Fulgham.
+
+        Follow-up fix for r219274 because it caused this test to time out:
+        http/tests/loading/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html
+
+        The test sets TimeToLiveUserInteraction to 0 so our implementation cannot use
+        0 as magic value to see if it was set. Instead, use std::optional.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsResetToConsistentState]):
+        * UIProcess/Storage/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+        (WebKit::ResourceLoadStatisticsStore::hasStatisticsExpired):
+        * UIProcess/Storage/ResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2017-07-07  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2] Use a rolling 30-day uptime for processing statistics

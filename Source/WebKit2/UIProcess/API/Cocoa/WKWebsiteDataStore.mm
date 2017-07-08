@@ -440,7 +440,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!store)
         return;
 
-    store->setTimeToLiveUserInteraction(0_s);
+    // FIXME: These needs to match the default data member values in ResourceLoadStatistics, which is fragile.
+    store->setTimeToLiveUserInteraction(std::nullopt);
     store->setTimeToLiveCookiePartitionFree(24_h);
     store->setMinimumTimeBetweenDataRecordsRemoval(1_h);
     store->setGrandfatheringTime(1_h);

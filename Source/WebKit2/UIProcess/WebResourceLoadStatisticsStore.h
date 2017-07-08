@@ -95,7 +95,7 @@ public:
     void clearInMemoryAndPersistent();
     void clearInMemoryAndPersistent(std::chrono::system_clock::time_point modifiedSince);
 
-    void setTimeToLiveUserInteraction(Seconds);
+    void setTimeToLiveUserInteraction(std::optional<Seconds>);
     void setTimeToLiveCookiePartitionFree(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
