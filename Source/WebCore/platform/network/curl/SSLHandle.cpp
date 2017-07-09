@@ -75,9 +75,10 @@ void setSSLClientCertificate(ResourceHandle* handle)
 
     ResourceHandleInternal* d = handle->getInternal();
     clientCertificate clientInfo = it->value;
-    curl_easy_setopt(d->m_handle, CURLOPT_SSLCERT, std::get<0>(clientInfo).utf8().data());
-    curl_easy_setopt(d->m_handle, CURLOPT_SSLCERTTYPE, "P12");
-    curl_easy_setopt(d->m_handle, CURLOPT_SSLCERTPASSWD, std::get<1>(clientInfo).utf8().data());
+
+    d->m_curlHandle.setSslCert(std::get<0>(clientInfo).utf8().data());
+    d->m_curlHandle.setSslCertType("P12");
+    d->m_curlHandle.setSslKeyPassword(std::get<1>(clientInfo).utf8().data());
 }
 
 bool sslIgnoreHTTPSCertificate(const String& host, const ListHashSet<String>& certificates)
@@ -221,7 +222,7 @@ static int certVerifyCallback(int ok, X509_STORE_CTX* ctx)
     if (ok) {
         // if the host and the certificate are stored for the current handle that means is enabled,
         // so don't need to curl verifies the authenticity of the peer's certificate
-        curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, false);
+        d->m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
     }
     return ok;
 }
@@ -236,8 +237,8 @@ static CURLcode sslctxfun(CURL* curl, void* sslctx, void* parm)
 void setSSLVerifyOptions(ResourceHandle* handle)
 {
     ResourceHandleInternal* d = handle->getInternal();
-    curl_easy_setopt(d->m_handle, CURLOPT_SSL_CTX_DATA, handle);
-    curl_easy_setopt(d->m_handle, CURLOPT_SSL_CTX_FUNCTION, sslctxfun);
+
+    d->m_curlHandle.setSslCtxCallbackFunction(sslctxfun, handle);
 }
 
 }

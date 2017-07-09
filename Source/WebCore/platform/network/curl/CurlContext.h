@@ -29,6 +29,7 @@
 #include "URL.h"
 
 #include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 
@@ -50,7 +51,44 @@ enum class CurlProxyType {
     Socks5Hostname = CURLPROXY_SOCKS5_HOSTNAME
 };
 
-class CurlContext {
+// CurlGlobal --------------------------------------------
+// to make the initialization of libcurl happen before other initialization of CurlContext
+
+class CurlGlobal {
+protected:
+    CurlGlobal()
+    {
+        curl_global_init(CURL_GLOBAL_ALL);
+    }
+    
+    virtual ~CurlGlobal()
+    {
+        curl_global_cleanup();
+    }
+};
+
+// CurlShareHandle --------------------------------------------
+
+class CurlShareHandle {
+    WTF_MAKE_NONCOPYABLE(CurlShareHandle);
+
+public:
+    CurlShareHandle();
+    ~CurlShareHandle();
+
+    CURLSH* handle() const { return m_shareHandle; }
+
+private:
+    static void lockCallback(CURL*, curl_lock_data, curl_lock_access, void*);
+    static void unlockCallback(CURL*, curl_lock_data, void*);
+    static Lock* mutexFor(curl_lock_data);
+
+    CURLSH* m_shareHandle { nullptr };
+};
+
+// CurlContext --------------------------------------------
+
+class CurlContext : public CurlGlobal {
     WTF_MAKE_NONCOPYABLE(CurlContext);
 
 public:
@@ -70,11 +108,9 @@ public:
         return shared;
     }
 
-    ~CurlContext();
+    virtual ~CurlContext();
 
-    CURLSH* curlShareHandle() const { return m_curlShareHandle; }
-
-    CURLM* createMultiHandle();
+    const CurlShareHandle& shareHandle() { return m_shareHandle; }
 
     // Cookie
     const char* getCookieJarFileName() const { return m_cookieJarFileName.data(); }
@@ -89,36 +125,151 @@ public:
     void setProxyInfo(const ProxyInfo& info) { m_proxy = info;  }
     void setProxyInfo(const String& host = emptyString(), unsigned long port = 0, CurlProxyType = CurlProxyType::HTTP, const String& username = emptyString(), const String& password = emptyString());
 
-    // Utilities
-    URL getEffectiveURL(CURL* handle);
-
 #ifndef NDEBUG
     FILE* getLogFile() const { return m_logFile; }
     bool isVerbose() const { return m_verbose; }
 #endif
 
 private:
-
-    CURLSH* m_curlShareHandle { nullptr };
-
-    CString m_cookieJarFileName;
-
-    CString m_certificatePath;
-    bool m_ignoreSSLErrors { false };
-
     ProxyInfo m_proxy;
+    CString m_cookieJarFileName;
+    CString m_certificatePath;
+    CurlShareHandle m_shareHandle;
+    bool m_ignoreSSLErrors { false };
 
     CurlContext();
     void initCookieSession();
 
-    static void lock(CURL*, curl_lock_data, curl_lock_access, void*);
-    static void unlock(CURL*, curl_lock_data, void*);
-    static Lock* mutexFor(curl_lock_data);
 
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };
     bool m_verbose { false };
 #endif
+};
+
+// CurlMultiHandle --------------------------------------------
+
+class CurlMultiHandle {
+    WTF_MAKE_NONCOPYABLE(CurlMultiHandle);
+
+public:
+    CurlMultiHandle();
+    ~CurlMultiHandle();
+
+    CURLMcode addHandle(CURL*);
+    CURLMcode removeHandle(CURL*);
+
+    CURLMcode getFdSet(fd_set&, fd_set&, fd_set&, int&);
+    CURLMcode perform(int&);
+    CURLMsg* readInfo(int&);
+
+private:
+    CURLM* m_multiHandle { nullptr };
+};
+
+
+
+// CurlHandle -------------------------------------------------
+
+class CurlHandle {
+    WTF_MAKE_NONCOPYABLE(CurlHandle);
+
+public:
+    enum VerifyPeer {
+        VerifyPeerDisable = 0L,
+        VerifyPeerEnable = 1L
+    };
+
+    enum VerifyHost {
+        VerifyHostLooseNameCheck = 0,
+        VerifyHostStrictNameCheck = 2
+    };
+
+    CurlHandle();
+    ~CurlHandle();
+
+    CURL* handle() const { return m_handle; }
+
+    CURLcode perform();
+    CURLcode pause(int);
+
+    void enableShareHandle();
+    void setPrivateData(void* userData);
+
+    void setUrl(const String&);
+    const char* url() const { return m_url; }
+
+    void clearRequestHeaders();
+    void appendRequestHeader(const String&, const String&);
+    void appendRequestHeader(const String&);
+    void enableRequestHeaders();
+
+    void enableHttpGetRequest();
+    void enableHttpHeadRequest();
+    void enableHttpPostRequest();
+    void setPostFields(const char*, long);
+    void setPostFieldLarge(curl_off_t);
+    void enableHttpPutRequest();
+    void setInFileSizeLarge(curl_off_t);
+    void setHttpCustomRequest(const String&);
+
+    void enableAcceptEncoding();
+    void enableAllowedProtocols();
+
+    void enableFollowLocation();
+    void enableAutoReferer();
+
+    void enableHttpAuthentication(long);
+    void setHttpAuthUserPass(const String&, const String&);
+
+    void enableCAInfoIfExists();
+    void setSslVerifyPeer(VerifyPeer);
+    void setSslVerifyHost(VerifyHost);
+    void setSslCert(const char*);
+    void setSslCertType(const char*);
+    void setSslKeyPassword(const char*);
+
+    void enableCookieJarIfExists();
+    void setCookieList(const char*);
+    struct curl_slist* getCookieList();
+
+    void enableProxyIfExists();
+
+    void enableTimeout();
+
+    // Callback function
+    void setHeaderCallbackFunction(curl_write_callback, void*);
+    void setWriteCallbackFunction(curl_write_callback, void*);
+    void setReadCallbackFunction(curl_read_callback, void*);
+    void setSslCtxCallbackFunction(curl_ssl_ctx_callback, void*);
+
+    // Status
+    URL getEffectiveURL();
+    CURLcode getPrimaryPort(long&);
+    CURLcode getResponseCode(long&);
+    CURLcode getContentLenghtDownload(long long&);
+    CURLcode getHttpAuthAvail(long&);
+    CURLcode getTimes(double&, double&, double&, double&);
+
+    static long long maxCurlOffT();
+
+#ifndef NDEBUG
+    void enableVerboseIfUsed();
+    void enableStdErrIfUsed();
+#endif
+
+private:
+    void clearUrl();
+    void clearCookieList();
+
+    static int expectedSizeOfCurlOffT();
+
+    CURL* m_handle { nullptr };
+    char m_errorBuffer[CURL_ERROR_SIZE] { };
+
+    char* m_url { nullptr };
+    struct curl_slist* m_requestHeaders { nullptr };
+    struct curl_slist* m_cookieList { nullptr };
 };
 
 }

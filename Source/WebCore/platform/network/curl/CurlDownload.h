@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +37,7 @@
 #include <winsock2.h>
 #endif
 
+#include "CurlContext.h"
 #include "CurlJobManager.h"
 
 namespace WebCore {
@@ -89,7 +91,7 @@ private:
     void didFinish();
     void didFail();
 
-    static size_t writeCallback(void* ptr, size_t, size_t nmemb, void* data);
+    static size_t writeCallback(char* ptr, size_t, size_t nmemb, void* data);
     static size_t headerCallback(char* ptr, size_t, size_t nmemb, void* data);
 
     static void downloadFinishedCallback(CurlDownload*);
@@ -97,9 +99,8 @@ private:
     static void receivedDataCallback(CurlDownload*, int size);
     static void receivedResponseCallback(CurlDownload*);
 
-    CURL* m_curlHandle { nullptr };
-    struct curl_slist* m_customHeaders { nullptr };
-    char* m_url { nullptr };
+    CurlHandle m_curlHandle;
+
     String m_tempPath;
     String m_destination;
     WebCore::PlatformFileHandle m_tempHandle { invalidPlatformFileHandle };

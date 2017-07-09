@@ -1,3 +1,145 @@
+2017-07-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Safe access and life cycle management of bare Curl handle
+        by wrapping with C++ class
+        https://bugs.webkit.org/show_bug.cgi?id=174002
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::setCookiesFromDOM):
+        (WebCore::cookiesForSession):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlContext::CurlContext):
+        (WebCore::CurlContext::~CurlContext):
+        (WebCore::CurlContext::initCookieSession):
+        (WebCore::CurlShareHandle::CurlShareHandle):
+        (WebCore::CurlShareHandle::~CurlShareHandle):
+        (WebCore::CurlShareHandle::lockCallback):
+        (WebCore::CurlShareHandle::unlockCallback):
+        (WebCore::CurlShareHandle::mutexFor):
+        (WebCore::CurlMultiHandle::CurlMultiHandle):
+        (WebCore::CurlMultiHandle::~CurlMultiHandle):
+        (WebCore::CurlMultiHandle::addHandle):
+        (WebCore::CurlMultiHandle::removeHandle):
+        (WebCore::CurlMultiHandle::getFdSet):
+        (WebCore::CurlMultiHandle::perform):
+        (WebCore::CurlMultiHandle::readInfo):
+        (WebCore::CurlHandle::CurlHandle):
+        (WebCore::CurlHandle::~CurlHandle):
+        (WebCore::CurlHandle::perform):
+        (WebCore::CurlHandle::pause):
+        (WebCore::CurlHandle::enableShareHandle):
+        (WebCore::CurlHandle::setPrivateData):
+        (WebCore::CurlHandle::setUrl):
+        (WebCore::CurlHandle::clearUrl):
+        (WebCore::CurlHandle::clearRequestHeaders):
+        (WebCore::CurlHandle::appendRequestHeader):
+        (WebCore::CurlHandle::enableRequestHeaders):
+        (WebCore::CurlHandle::enableHttpGetRequest):
+        (WebCore::CurlHandle::enableHttpHeadRequest):
+        (WebCore::CurlHandle::enableHttpPostRequest):
+        (WebCore::CurlHandle::setPostFields):
+        (WebCore::CurlHandle::setPostFieldLarge):
+        (WebCore::CurlHandle::enableHttpPutRequest):
+        (WebCore::CurlHandle::setInFileSizeLarge):
+        (WebCore::CurlHandle::setHttpCustomRequest):
+        (WebCore::CurlHandle::enableAcceptEncoding):
+        (WebCore::CurlHandle::enableAllowedProtocols):
+        (WebCore::CurlHandle::enableFollowLocation):
+        (WebCore::CurlHandle::enableAutoReferer):
+        (WebCore::CurlHandle::enableHttpAuthentication):
+        (WebCore::CurlHandle::setHttpAuthUserPass):
+        (WebCore::CurlHandle::enableCAInfoIfExists):
+        (WebCore::CurlHandle::setSslVerifyPeer):
+        (WebCore::CurlHandle::setSslVerifyHost):
+        (WebCore::CurlHandle::setSslCert):
+        (WebCore::CurlHandle::setSslCertType):
+        (WebCore::CurlHandle::setSslKeyPassword):
+        (WebCore::CurlHandle::enableCookieJarIfExists):
+        (WebCore::CurlHandle::setCookieList):
+        (WebCore::CurlHandle::getCookieList):
+        (WebCore::CurlHandle::clearCookieList):
+        (WebCore::CurlHandle::enableProxyIfExists):
+        (WebCore::CurlHandle::enableTimeout):
+        (WebCore::CurlHandle::setHeaderCallbackFunction):
+        (WebCore::CurlHandle::setWriteCallbackFunction):
+        (WebCore::CurlHandle::setReadCallbackFunction):
+        (WebCore::CurlHandle::setSslCtxCallbackFunction):
+        (WebCore::CurlHandle::getEffectiveURL):
+        (WebCore::CurlHandle::getPrimaryPort):
+        (WebCore::CurlHandle::getResponseCode):
+        (WebCore::CurlHandle::getContentLenghtDownload):
+        (WebCore::CurlHandle::getHttpAuthAvail):
+        (WebCore::CurlHandle::getTimes):
+        (WebCore::CurlHandle::maxCurlOffT):
+        (WebCore::CurlHandle::expectedSizeOfCurlOffT):
+        (WebCore::CurlHandle::enableVerboseIfUsed):
+        (WebCore::CurlHandle::enableStdErrIfUsed):
+        (WebCore::CurlContext::getEffectiveURL): Deleted.
+        (WebCore::CurlContext::createMultiHandle): Deleted.
+        (WebCore::CurlContext::mutexFor): Deleted.
+        (WebCore::CurlContext::lock): Deleted.
+        (WebCore::CurlContext::unlock): Deleted.
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlGlobal::CurlGlobal):
+        (WebCore::CurlGlobal::~CurlGlobal):
+        (WebCore::CurlShareHandle::handle):
+        (WebCore::CurlContext::shareHandle):
+        (WebCore::CurlHandle::handle):
+        (WebCore::CurlHandle::url):
+        (WebCore::CurlContext::curlShareHandle): Deleted.
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::~CurlDownload):
+        (WebCore::CurlDownload::init):
+        (WebCore::CurlDownload::start):
+        (WebCore::CurlDownload::cancel):
+        (WebCore::CurlDownload::getUrl):
+        (WebCore::CurlDownload::addHeaders):
+        (WebCore::CurlDownload::didReceiveHeader):
+        (WebCore::CurlDownload::writeCallback):
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/CurlJobManager.cpp:
+        (WebCore::CurlJobManager::CurlJobManager):
+        (WebCore::CurlJobManager::~CurlJobManager):
+        (WebCore::CurlJobManager::addToCurl):
+        (WebCore::CurlJobManager::removeFromCurl):
+        (WebCore::CurlJobManager::workerThread):
+        * platform/network/curl/CurlJobManager.h:
+        (WebCore::CurlJobManager::getMultiHandle): Deleted.
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::calculateWebTimingInformations):
+        (WebCore::handleLocalReceiveResponse):
+        (WebCore::writeCallback):
+        (WebCore::getProtectionSpace):
+        (WebCore::headerCallback):
+        (WebCore::readCallback):
+        (WebCore::setupFormData):
+        (WebCore::ResourceHandle::setupPUT):
+        (WebCore::ResourceHandle::setupPOST):
+        (WebCore::ResourceHandle::dispatchSynchronousJob):
+        (WebCore::ResourceHandle::applyAuthentication):
+        (WebCore::ResourceHandle::initialize):
+        (WebCore::ResourceHandle::handleCurlMsg):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::ResourceHandleManager):
+        (WebCore::ResourceHandleManager::~ResourceHandleManager):
+        (WebCore::ResourceHandleManager::downloadTimerCallback):
+        (WebCore::ResourceHandleManager::removeFromCurl):
+        (WebCore::ResourceHandleManager::startJob):
+        * platform/network/curl/ResourceHandleManager.h:
+        * platform/network/curl/SSLHandle.cpp:
+        (WebCore::setSSLClientCertificate):
+        (WebCore::certVerifyCallback):
+        (WebCore::setSSLVerifyOptions):
+
 2017-07-08  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: "visibility:hidden" does not hide play button for video elements

@@ -43,7 +43,7 @@
 #endif
 
 #if USE(CURL)
-#include <curl/curl.h>
+#include "CurlContext.h"
 #include "FormDataStreamCurl.h"
 #include "MultipartHandle.h"
 #endif
@@ -137,9 +137,8 @@ public:
     RetainPtr<CFURLStorageSessionRef> m_storageSession;
 #endif
 #if USE(CURL)
-    CURL* m_handle { nullptr };
-    char* m_url { nullptr };
-    struct curl_slist* m_customHeaders { nullptr };
+    CurlHandle m_curlHandle;
+
     ResourceResponse m_response;
     bool m_cancelled { false };
     unsigned short m_authFailureCount { 0 };

@@ -29,8 +29,6 @@
 #if USE(CURL)
 #include "CurlJobManager.h"
 
-#include "CurlContext.h"
-
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
@@ -40,13 +38,12 @@ namespace WebCore {
 
 CurlJobManager::CurlJobManager()
 {
-    m_curlMultiHandle = CurlContext::singleton().createMultiHandle();
+
 }
 
 CurlJobManager::~CurlJobManager()
 {
     stopThread();
-    curl_multi_cleanup(m_curlMultiHandle);
 }
 
 bool CurlJobManager::add(CURL* curlHandle)
@@ -135,7 +132,7 @@ void CurlJobManager::updateHandleList()
 
 bool CurlJobManager::addToCurl(CURL* curlHandle)
 {
-    CURLMcode retval = curl_multi_add_handle(m_curlMultiHandle, curlHandle);
+    CURLMcode retval = m_curlMultiHandle.addHandle(curlHandle);
     if (retval == CURLM_OK) {
         m_activeHandleList.append(curlHandle);
         return true;
@@ -149,11 +146,10 @@ bool CurlJobManager::removeFromCurl(CURL* curlHandle)
 
     if (handlePos < 0)
         return true;
-    
-    CURLMcode retval = curl_multi_remove_handle(m_curlMultiHandle, curlHandle);
+
+    CURLMcode retval = m_curlMultiHandle.removeHandle(curlHandle);
     if (retval == CURLM_OK) {
         m_activeHandleList.remove(handlePos);
-        curl_easy_cleanup(curlHandle);
         return true;
     }
     return false;
@@ -173,7 +169,6 @@ void CurlJobManager::workerThread()
             fd_set fdread;
             fd_set fdwrite;
             fd_set fdexcep;
-
             int maxfd = 0;
 
             const int selectTimeoutMS = 5;
@@ -182,10 +177,8 @@ void CurlJobManager::workerThread()
             timeout.tv_sec = 0;
             timeout.tv_usec = selectTimeoutMS * 1000; // select waits microseconds
 
-            FD_ZERO(&fdread);
-            FD_ZERO(&fdwrite);
-            FD_ZERO(&fdexcep);
-            curl_multi_fdset(getMultiHandle(), &fdread, &fdwrite, &fdexcep, &maxfd);
+            m_curlMultiHandle.getFdSet(fdread, fdwrite, fdexcep, maxfd);
+
             // When the 3 file descriptors are empty, winsock will return -1
             // and bail out, stopping the file download. So make sure we
             // have valid file descriptors before calling select.
@@ -193,12 +186,11 @@ void CurlJobManager::workerThread()
                 rc = ::select(maxfd + 1, &fdread, &fdwrite, &fdexcep, &timeout);
         } while (rc == -1 && errno == EINTR);
 
-        int activeCount = 0;
-        while (curl_multi_perform(getMultiHandle(), &activeCount) == CURLM_CALL_MULTI_PERFORM) { }
+        int runningHandles = 0;
+        while (m_curlMultiHandle.perform(runningHandles) == CURLM_CALL_MULTI_PERFORM) { }
 
         int messagesInQueue = 0;
-        CURLMsg* msg = curl_multi_info_read(getMultiHandle(), &messagesInQueue);
-
+        CURLMsg* msg = m_curlMultiHandle.readInfo(messagesInQueue);
         if (!msg)
             continue;
 

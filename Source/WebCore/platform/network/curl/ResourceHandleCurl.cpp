@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2005, 2006 Michael Emmel mike.emmel@gmail.com
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,9 +50,7 @@ namespace WebCore {
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
-    fastFree(m_url);
-    if (m_customHeaders)
-        curl_slist_free_all(m_customHeaders);
+
 }
 
 ResourceHandle::~ResourceHandle()
@@ -105,16 +104,16 @@ void ResourceHandle::setClientCertificate(const String&, CFDataRef)
 
 void ResourceHandle::platformSetDefersLoading(bool defers)
 {
-    if (!d->m_handle)
+    if (!d->m_curlHandle.handle())
         return;
 
     if (defers) {
-        CURLcode error = curl_easy_pause(d->m_handle, CURLPAUSE_ALL);
+        CURLcode error = d->m_curlHandle.pause(CURLPAUSE_ALL);
         // If we could not defer the handle, so don't do it.
         if (error != CURLE_OK)
             return;
     } else {
-        CURLcode error = curl_easy_pause(d->m_handle, CURLPAUSE_CONT);
+        CURLcode error = d->m_curlHandle.pause(CURLPAUSE_CONT);
         if (error != CURLE_OK)
             // Restarting the handle has failed so just cancel it.
             cancel();
@@ -150,8 +149,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
             urlToStore = challenge.failureResponse().url();
         CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), urlToStore);
         
-        String userpass = credential.user() + ":" + credential.password();
-        curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
+        d->m_curlHandle.setHttpAuthUserPass(credential.user(), credential.password());
 
         d->m_user = String();
         d->m_pass = String();
@@ -175,8 +173,8 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
                     // Store the credential back, possibly adding it as a default for this directory.
                     CredentialStorage::defaultCredentialStorage().set(partition, credential, challenge.protectionSpace(), challenge.failureResponse().url());
                 }
-                String userpass = credential.user() + ":" + credential.password();
-                curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
+
+                d->m_curlHandle.setHttpAuthUserPass(credential.user(), credential.password());
                 return;
             }
         }
@@ -207,9 +205,7 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         }
     }
 
-    String userpass = credential.user() + ":" + credential.password();
-    curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
-
+    d->m_curlHandle.setHttpAuthUserPass(credential.user(), credential.password());
     clearAuthentication();
 }
 
@@ -218,9 +214,7 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
     if (challenge != d->m_currentWebChallenge)
         return;
 
-    String userpass = emptyString();
-    curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
-
+    d->m_curlHandle.setHttpAuthUserPass("", "");
     clearAuthentication();
 }
 
@@ -253,10 +247,7 @@ static void calculateWebTimingInformations(ResourceHandleInternal* d)
     double connectTime = 0;
     double appConnectTime = 0;
 
-    curl_easy_getinfo(d->m_handle, CURLINFO_NAMELOOKUP_TIME, &dnslookupTime);
-    curl_easy_getinfo(d->m_handle, CURLINFO_CONNECT_TIME, &connectTime);
-    curl_easy_getinfo(d->m_handle, CURLINFO_APPCONNECT_TIME, &appConnectTime);
-    curl_easy_getinfo(d->m_handle, CURLINFO_PRETRANSFER_TIME, &preTransferTime);
+    d->m_curlHandle.getTimes(preTransferTime, dnslookupTime, connectTime, appConnectTime);
 
     d->m_response.deprecatedNetworkLoadMetrics().domainLookupStart = Seconds(0);
     d->m_response.deprecatedNetworkLoadMetrics().domainLookupEnd = Seconds(dnslookupTime);
@@ -272,14 +263,14 @@ static void calculateWebTimingInformations(ResourceHandleInternal* d)
 }
 #endif
 
-static void handleLocalReceiveResponse(CURL* handle, ResourceHandle* job, ResourceHandleInternal* d)
+static void handleLocalReceiveResponse(ResourceHandle* job, ResourceHandleInternal* d)
 {
     // since the code in headerCallback will not have run for local files
     // the code to set the URL and fire didReceiveResponse is never run,
     // which means the ResourceLoader's response does not contain the URL.
     // Run the code here for local files to resolve the issue.
     // TODO: See if there is a better approach for handling this.
-    URL url = CurlContext::singleton().getEffectiveURL(handle);
+    URL url = d->m_curlHandle.getEffectiveURL();
     ASSERT(url.isValid());
     d->m_response.setURL(url);
     if (d->client())
@@ -287,9 +278,8 @@ static void handleLocalReceiveResponse(CURL* handle, ResourceHandle* job, Resour
     d->m_response.setResponseFired(true);
 }
 
-
 // called with data after all headers have been processed via headerCallback
-static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
+static size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* data)
 {
     ResourceHandle* job = static_cast<ResourceHandle*>(data);
     ResourceHandleInternal* d = job->getInternal();
@@ -304,14 +294,13 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     // this shouldn't be necessary but apparently is. CURL writes the data
     // of html page even if it is a redirect that was handled internally
     // can be observed e.g. on gmail.com
-    CURL* h = d->m_handle;
     long httpCode = 0;
-    CURLcode err = curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE, &httpCode);
-    if (CURLE_OK == err && httpCode >= 300 && httpCode < 400)
+    CURLcode errCd = d->m_curlHandle.getResponseCode(httpCode);
+    if (CURLE_OK == errCd && httpCode >= 300 && httpCode < 400)
         return totalSize;
 
     if (!d->m_response.responseFired()) {
-        handleLocalReceiveResponse(h, job, d);
+        handleLocalReceiveResponse(job, d);
         if (d->m_cancelled)
             return 0;
     }
@@ -319,8 +308,8 @@ static size_t writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
     if (d->m_multipartHandle)
         d->m_multipartHandle->contentReceived(static_cast<const char*>(ptr), totalSize);
     else if (d->client()) {
-        d->client()->didReceiveData(job, static_cast<char*>(ptr), totalSize, 0);
-        CurlCacheManager::getInstance().didReceiveData(*job, static_cast<char*>(ptr), totalSize);
+        d->client()->didReceiveData(job, ptr, totalSize, 0);
+        CurlCacheManager::getInstance().didReceiveData(*job, ptr, totalSize);
     }
 
     return totalSize;
@@ -396,21 +385,23 @@ static void removeLeadingAndTrailingQuotes(String& value)
         value = value.substring(1, length - 2);
 }
 
-static bool getProtectionSpace(CURL* h, const ResourceResponse& response, ProtectionSpace& protectionSpace)
+static bool getProtectionSpace(ResourceHandle* job, const ResourceResponse& response, ProtectionSpace& protectionSpace)
 {
+    ResourceHandleInternal* d = job->getInternal();
+
     CURLcode err;
 
     long port = 0;
-    err = curl_easy_getinfo(h, CURLINFO_PRIMARY_PORT, &port);
+    err = d->m_curlHandle.getPrimaryPort(port);
     if (err != CURLE_OK)
         return false;
 
     long availableAuth = CURLAUTH_NONE;
-    err = curl_easy_getinfo(h, CURLINFO_HTTPAUTH_AVAIL, &availableAuth);
+    err = d->m_curlHandle.getHttpAuthAvail(availableAuth);
     if (err != CURLE_OK)
         return false;
 
-    URL url = CurlContext::singleton().getEffectiveURL(h);
+    URL url = d->m_curlHandle.getEffectiveURL();
     if (!url.isValid())
         return false;
 
@@ -480,10 +471,8 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
     * accept also \n.
     */
     if (header == String("\r\n") || header == String("\n")) {
-        CURL* h = d->m_handle;
-
         long httpCode = 0;
-        curl_easy_getinfo(h, CURLINFO_RESPONSE_CODE, &httpCode);
+        d->m_curlHandle.getResponseCode(httpCode);
 
         if (!httpCode) {
             // Comes here when receiving 200 Connection Established. Just return.
@@ -495,11 +484,11 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
             return totalSize;
         }
 
-        double contentLength = 0;
-        curl_easy_getinfo(h, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
-        d->m_response.setExpectedContentLength(static_cast<long long int>(contentLength));
+        long long contentLength = 0;
+        d->m_curlHandle.getContentLenghtDownload(contentLength);
+        d->m_response.setExpectedContentLength(contentLength);
 
-        d->m_response.setURL(CurlContext::singleton().getEffectiveURL(h));
+        d->m_response.setURL(d->m_curlHandle.getEffectiveURL());
 
         d->m_response.setHTTPStatusCode(httpCode);
         d->m_response.setMimeType(extractMIMETypeFromMediaType(d->m_response.httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
@@ -530,7 +519,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
             }
         } else if (isHttpAuthentication(httpCode)) {
             ProtectionSpace protectionSpace;
-            if (getProtectionSpace(d->m_handle, d->m_response, protectionSpace)) {
+            if (getProtectionSpace(job, d->m_response, protectionSpace)) {
                 Credential credential;
                 AuthenticationChallenge challenge(protectionSpace, credential, d->m_authFailureCount, d->m_response, ResourceError());
                 challenge.setAuthenticationClient(job);
@@ -573,7 +562,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
             // curl will follow the redirections internally. Thus this header callback
             // will be called more than one time with the line starting "HTTP" for one job.
             long httpCode = 0;
-            curl_easy_getinfo(d->m_handle, CURLINFO_RESPONSE_CODE, &httpCode);
+            d->m_curlHandle.getResponseCode(httpCode);
 
             String httpCodeString = String::number(httpCode);
             int statusCodePos = header.find(httpCodeString);
@@ -594,7 +583,7 @@ static size_t headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 Iterate through FormData elements and upload files.
 Carefully respect the given buffer size and fill the rest of the data at the next calls.
 */
-size_t readCallback(void* ptr, size_t size, size_t nmemb, void* data)
+size_t readCallback(char* ptr, size_t size, size_t nmemb, void* data)
 {
     ResourceHandle* job = static_cast<ResourceHandle*>(data);
     ResourceHandleInternal* d = job->getInternal();
@@ -635,24 +624,14 @@ static inline size_t getFormElementsCount(ResourceHandle* job)
     return size;
 }
 
-static void setupFormData(ResourceHandle* job, CURLoption sizeOption, struct curl_slist** headers)
+static void setupFormData(ResourceHandle* job, bool isPostRequest)
 {
     ResourceHandleInternal* d = job->getInternal();
     Vector<FormDataElement> elements = job->firstRequest().httpBody()->elements();
     size_t numElements = elements.size();
 
-    // The size of a curl_off_t could be different in WebKit and in cURL depending on
-    // compilation flags of both.
-    static int expectedSizeOfCurlOffT = 0;
-    if (!expectedSizeOfCurlOffT) {
-        curl_version_info_data* infoData = curl_version_info(CURLVERSION_NOW);
-        if (infoData->features & CURL_VERSION_LARGEFILE)
-            expectedSizeOfCurlOffT = sizeof(long long);
-        else
-            expectedSizeOfCurlOffT = sizeof(int);
-    }
+    static const long long maxCurlOffT = d->m_curlHandle.maxCurlOffT();
 
-    static const long long maxCurlOffT = (1LL << (expectedSizeOfCurlOffT * 8 - 1)) - 1;
     // Obtain the total size of the form data
     curl_off_t size = 0;
     bool chunkedTransfer = false;
@@ -677,39 +656,36 @@ static void setupFormData(ResourceHandle* job, CURLoption sizeOption, struct cur
 
     // cURL guesses that we want chunked encoding as long as we specify the header
     if (chunkedTransfer)
-        *headers = curl_slist_append(*headers, "Transfer-Encoding: chunked");
+        d->m_curlHandle.appendRequestHeader("Transfer-Encoding: chunked");
     else {
-        if (sizeof(long long) == expectedSizeOfCurlOffT)
-            curl_easy_setopt(d->m_handle, sizeOption, (long long)size);
+        if (isPostRequest)
+            d->m_curlHandle.setPostFieldLarge(size);
         else
-            curl_easy_setopt(d->m_handle, sizeOption, (int)size);
+            d->m_curlHandle.setInFileSizeLarge(size);
     }
 
-    curl_easy_setopt(d->m_handle, CURLOPT_READFUNCTION, readCallback);
-    curl_easy_setopt(d->m_handle, CURLOPT_READDATA, job);
+    d->m_curlHandle.setReadCallbackFunction(readCallback, job);
 }
 
-void ResourceHandle::setupPUT(struct curl_slist** headers)
+void ResourceHandle::setupPUT()
 {
     ResourceHandleInternal* d = getInternal();
-    curl_easy_setopt(d->m_handle, CURLOPT_UPLOAD, TRUE);
-    curl_easy_setopt(d->m_handle, CURLOPT_INFILESIZE, 0);
+    d->m_curlHandle.enableHttpPutRequest();
 
     // Disable the Expect: 100 continue header
-    *headers = curl_slist_append(*headers, "Expect:");
+    d->m_curlHandle.appendRequestHeader("Expect:");
 
     size_t numElements = getFormElementsCount(this);
     if (!numElements)
         return;
 
-    setupFormData(this, CURLOPT_INFILESIZE_LARGE, headers);
+    setupFormData(this, false);
 }
 
-void ResourceHandle::setupPOST(struct curl_slist** headers)
+void ResourceHandle::setupPOST()
 {
     ResourceHandleInternal* d = getInternal();
-    curl_easy_setopt(d->m_handle, CURLOPT_POST, TRUE);
-    curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, 0);
+    d->m_curlHandle.enableHttpPostRequest();
 
     size_t numElements = getFormElementsCount(this);
     if (!numElements)
@@ -718,14 +694,12 @@ void ResourceHandle::setupPOST(struct curl_slist** headers)
     // Do not stream for simple POST data
     if (numElements == 1) {
         firstRequest().httpBody()->flatten(d->m_postBytes);
-        if (d->m_postBytes.size()) {
-            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDSIZE, d->m_postBytes.size());
-            curl_easy_setopt(d->m_handle, CURLOPT_POSTFIELDS, d->m_postBytes.data());
-        }
+        if (d->m_postBytes.size())
+            d->m_curlHandle.setPostFields(d->m_postBytes.data(), d->m_postBytes.size());
         return;
     }
 
-    setupFormData(this, CURLOPT_POSTFIELDSIZE_LARGE, headers);
+    setupFormData(this, true);
 }
 
 void ResourceHandle::handleDataURL()
@@ -808,7 +782,7 @@ void ResourceHandle::dispatchSynchronousJob()
     initialize();
 
     // curl_easy_perform blocks until the transfert is finished.
-    CURLcode ret = curl_easy_perform(d->m_handle);
+    CURLcode ret = d->m_curlHandle.perform();
 
     if (ret != CURLE_OK) {
         ResourceError error(ASCIILiteral(errorDomainCurl), ret, kurl, String(curl_easy_strerror(ret)));
@@ -822,8 +796,6 @@ void ResourceHandle::dispatchSynchronousJob()
 #if ENABLE(WEB_TIMING)
     calculateWebTimingInformations(d);
 #endif
-
-    curl_easy_cleanup(d->m_handle);
 }
 
 void ResourceHandle::applyAuthentication()
@@ -854,22 +826,20 @@ void ResourceHandle::applyAuthentication()
     if (!d->m_initialCredential.isEmpty()) {
         user = d->m_initialCredential.user();
         password = d->m_initialCredential.password();
-        curl_easy_setopt(d->m_handle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        d->m_curlHandle.enableHttpAuthentication(CURLAUTH_BASIC);
     }
 
     // It seems we need to set CURLOPT_USERPWD even if username and password is empty.
     // Otherwise cURL will not automatically continue with a new request after a 401 response.
 
     // curl CURLOPT_USERPWD expects username:password
-    String userpass = user + ":" + password;
-    curl_easy_setopt(d->m_handle, CURLOPT_USERPWD, userpass.utf8().data());
+    d->m_curlHandle.setHttpAuthUserPass(user, password);
 }
 
 void ResourceHandle::initialize()
 {
     CurlContext& context = CurlContext::singleton();
 
-    static const int allowedProtocols = CURLPROTO_FILE | CURLPROTO_FTP | CURLPROTO_FTPS | CURLPROTO_HTTP | CURLPROTO_HTTPS;
     URL url = firstRequest().url();
 
     // Remove any fragment part, otherwise curl will send it as part of the request.
@@ -889,62 +859,44 @@ void ResourceHandle::initialize()
         d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(url));
     }
 
-    d->m_handle = curl_easy_init();
-
     if (d->m_defersLoading) {
-        CURLcode error = curl_easy_pause(d->m_handle, CURLPAUSE_ALL);
+        CURLcode error = d->m_curlHandle.pause(CURLPAUSE_ALL);
         // If we did not pause the handle, we would ASSERT in the
         // header callback. So just assert here.
         ASSERT_UNUSED(error, error == CURLE_OK);
     }
+
 #ifndef NDEBUG
-    if (context.isVerbose())
-        curl_easy_setopt(d->m_handle, CURLOPT_VERBOSE, 1);
-    if (context.getLogFile())
-        curl_easy_setopt(d->m_handle, CURLOPT_STDERR, context.getLogFile());
+    d->m_curlHandle.enableVerboseIfUsed();
+    d->m_curlHandle.enableStdErrIfUsed();
 #endif
-    curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, 1L);
-    curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYHOST, 2L);
-    curl_easy_setopt(d->m_handle, CURLOPT_PRIVATE, this);
-    curl_easy_setopt(d->m_handle, CURLOPT_ERRORBUFFER, m_curlErrorBuffer);
-    curl_easy_setopt(d->m_handle, CURLOPT_WRITEFUNCTION, writeCallback);
-    curl_easy_setopt(d->m_handle, CURLOPT_WRITEDATA, this);
-    curl_easy_setopt(d->m_handle, CURLOPT_HEADERFUNCTION, headerCallback);
-    curl_easy_setopt(d->m_handle, CURLOPT_WRITEHEADER, this);
-    curl_easy_setopt(d->m_handle, CURLOPT_AUTOREFERER, 1);
-    curl_easy_setopt(d->m_handle, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(d->m_handle, CURLOPT_MAXREDIRS, 10);
-    curl_easy_setopt(d->m_handle, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-    curl_easy_setopt(d->m_handle, CURLOPT_SHARE, CurlContext::singleton().curlShareHandle());
-    curl_easy_setopt(d->m_handle, CURLOPT_DNS_CACHE_TIMEOUT, 60 * 5); // 5 minutes
-    curl_easy_setopt(d->m_handle, CURLOPT_PROTOCOLS, allowedProtocols);
-    curl_easy_setopt(d->m_handle, CURLOPT_REDIR_PROTOCOLS, allowedProtocols);
+
+    d->m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerEnable);
+    d->m_curlHandle.setSslVerifyHost(CurlHandle::VerifyHostStrictNameCheck);
+    d->m_curlHandle.setPrivateData(this);
+    d->m_curlHandle.setWriteCallbackFunction(writeCallback, this);
+    d->m_curlHandle.setHeaderCallbackFunction(headerCallback, this);
+    d->m_curlHandle.enableAutoReferer();
+    d->m_curlHandle.enableFollowLocation();
+    d->m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
+    d->m_curlHandle.enableShareHandle();
+    d->m_curlHandle.enableTimeout();
+    d->m_curlHandle.enableAllowedProtocols();
     setSSLClientCertificate(this);
 
-    if (context.shouldIgnoreSSLErrors())
-        curl_easy_setopt(d->m_handle, CURLOPT_SSL_VERIFYPEER, false);
+    if (CurlContext::singleton().shouldIgnoreSSLErrors())
+        d->m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
     else
         setSSLVerifyOptions(this);
 
-    const char* certificate = context.getCertificatePath();
-    if (certificate)
-        curl_easy_setopt(d->m_handle, CURLOPT_CAINFO, certificate);
+    d->m_curlHandle.enableCAInfoIfExists();
 
-    // enable gzip and deflate through Accept-Encoding:
-    curl_easy_setopt(d->m_handle, CURLOPT_ENCODING, "");
+    d->m_curlHandle.enableAcceptEncoding();
+    d->m_curlHandle.setUrl(urlString);
+    d->m_curlHandle.enableCookieJarIfExists();
 
-    // url must remain valid through the request
-    ASSERT(!d->m_url);
+    d->m_curlHandle.clearRequestHeaders();
 
-    // url is in ASCII so latin1() will only convert it to char* without character translation.
-    d->m_url = fastStrDup(urlString.latin1().data());
-    curl_easy_setopt(d->m_handle, CURLOPT_URL, d->m_url);
-
-    const char* cookieJar = context.getCookieJarFileName();
-    if (cookieJar)
-        curl_easy_setopt(d->m_handle, CURLOPT_COOKIEJAR, cookieJar);
-
-    struct curl_slist* headers = 0;
     if (firstRequest().httpHeaderFields().size() > 0) {
         HTTPHeaderMap customHeaders = firstRequest().httpHeaderFields();
 
@@ -963,50 +915,29 @@ void ResourceHandle::initialize()
             d->m_addedCacheValidationHeaders = true;
         }
 
-        HTTPHeaderMap::const_iterator end = customHeaders.end();
-        for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
-            String key = it->key;
-            String value = it->value;
-            String headerString(key);
-            if (value.isEmpty()) {
-                // Insert the ; to tell curl that this header has an empty value.
-                headerString.append(";");
-            } else {
-                headerString.append(": ");
-                headerString.append(value);
-            }
-            CString headerLatin1 = headerString.latin1();
-            headers = curl_slist_append(headers, headerLatin1.data());
-        }
+        for (auto customHeader : customHeaders)
+            d->m_curlHandle.appendRequestHeader(customHeader.key, customHeader.value);
     }
 
     String method = firstRequest().httpMethod();
     if ("GET" == method)
-        curl_easy_setopt(d->m_handle, CURLOPT_HTTPGET, TRUE);
+        d->m_curlHandle.enableHttpGetRequest();
     else if ("POST" == method)
-        setupPOST(&headers);
+        setupPOST();
     else if ("PUT" == method)
-        setupPUT(&headers);
+        setupPUT();
     else if ("HEAD" == method)
-        curl_easy_setopt(d->m_handle, CURLOPT_NOBODY, TRUE);
+        d->m_curlHandle.enableHttpHeadRequest();
     else {
-        curl_easy_setopt(d->m_handle, CURLOPT_CUSTOMREQUEST, method.ascii().data());
-        setupPUT(&headers);
+        d->m_curlHandle.setHttpCustomRequest(method);
+        setupPUT();
     }
 
-    if (headers) {
-        curl_easy_setopt(d->m_handle, CURLOPT_HTTPHEADER, headers);
-        d->m_customHeaders = headers;
-    }
+    d->m_curlHandle.enableRequestHeaders();
 
     applyAuthentication();
 
-    // Set proxy options if we have them.
-    auto& proxy = CurlContext::singleton().proxyInfo();
-    if (proxy.type != CurlProxyType::Invalid) {
-        curl_easy_setopt(d->m_handle, CURLOPT_PROXY, proxy.url().utf8().data());
-        curl_easy_setopt(d->m_handle, CURLOPT_PROXYTYPE, proxy.type);
-    }
+    d->m_curlHandle.enableProxyIfExists();
 }
 
 void ResourceHandle::handleCurlMsg(CURLMsg* msg)
@@ -1018,7 +949,7 @@ void ResourceHandle::handleCurlMsg(CURLMsg* msg)
         calculateWebTimingInformations(d);
 #endif
         if (!d->m_response.responseFired()) {
-            handleLocalReceiveResponse(d->m_handle, this, d);
+            handleLocalReceiveResponse(this, d);
             if (d->m_cancelled)
                 return;
         }
@@ -1031,7 +962,7 @@ void ResourceHandle::handleCurlMsg(CURLMsg* msg)
             CurlCacheManager::getInstance().didFinishLoading(*this);
         }
     } else {
-        URL url = CurlContext::singleton().getEffectiveURL(d->m_handle);
+        URL url = d->m_curlHandle.getEffectiveURL();
 #ifndef NDEBUG
         fprintf(stderr, "Curl ERROR for url='%s', error: '%s'\n", url.string().utf8().data(), curl_easy_strerror(msg->data.result));
 #endif

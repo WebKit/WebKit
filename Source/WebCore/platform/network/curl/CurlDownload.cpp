@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,16 +48,6 @@ CurlDownload::CurlDownload() = default;
 
 CurlDownload::~CurlDownload()
 {
-    {
-        LockHolder locker(m_mutex);
-
-        if (m_url)
-            fastFree(m_url);
-
-        if (m_customHeaders)
-            curl_slist_free_all(m_customHeaders);
-    }
-
     closeFile();
     moveFileToDestination();
 }
@@ -68,28 +59,15 @@ void CurlDownload::init(CurlDownloadListener* listener, const URL& url)
 
     LockHolder locker(m_mutex);
 
-    m_curlHandle = curl_easy_init();
+    m_curlHandle.enableShareHandle();
 
-    String urlStr = url.string();
-    m_url = fastStrDup(urlStr.latin1().data());
-
-    curl_easy_setopt(m_curlHandle, CURLOPT_URL, m_url);
-    curl_easy_setopt(m_curlHandle, CURLOPT_PRIVATE, this);
-    curl_easy_setopt(m_curlHandle, CURLOPT_WRITEFUNCTION, writeCallback);
-    curl_easy_setopt(m_curlHandle, CURLOPT_WRITEDATA, this);
-    curl_easy_setopt(m_curlHandle, CURLOPT_HEADERFUNCTION, headerCallback);
-    curl_easy_setopt(m_curlHandle, CURLOPT_WRITEHEADER, this);
-    curl_easy_setopt(m_curlHandle, CURLOPT_FOLLOWLOCATION, 1);
-    curl_easy_setopt(m_curlHandle, CURLOPT_MAXREDIRS, 10);
-    curl_easy_setopt(m_curlHandle, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
-
-    const char* certPath = getenv("CURL_CA_BUNDLE_PATH");
-    if (certPath)
-        curl_easy_setopt(m_curlHandle, CURLOPT_CAINFO, certPath);
-
-    CURLSH* curlsh = CurlContext::singleton().curlShareHandle();
-    if (curlsh)
-        curl_easy_setopt(m_curlHandle, CURLOPT_SHARE, curlsh);
+    m_curlHandle.setUrl(url);
+    m_curlHandle.setPrivateData(this);
+    m_curlHandle.setHeaderCallbackFunction(headerCallback, this);
+    m_curlHandle.setWriteCallbackFunction(writeCallback, this);
+    m_curlHandle.enableFollowLocation();
+    m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
+    m_curlHandle.enableCAInfoIfExists();
 
     m_listener = listener;
 }
@@ -109,12 +87,12 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
 bool CurlDownload::start()
 {
     ref(); // CurlJobManager will call deref when the download has finished.
-    return CurlJobManager::singleton().add(m_curlHandle);
+    return CurlJobManager::singleton().add(m_curlHandle.handle());
 }
 
 bool CurlDownload::cancel()
 {
-    return CurlJobManager::singleton().remove(m_curlHandle);
+    return CurlJobManager::singleton().remove(m_curlHandle.handle());
 }
 
 String CurlDownload::getTempPath() const
@@ -126,7 +104,7 @@ String CurlDownload::getTempPath() const
 String CurlDownload::getUrl() const
 {
     LockHolder locker(m_mutex);
-    return String(m_url);
+    return String(m_curlHandle.url());
 }
 
 ResourceResponse CurlDownload::getResponse() const
@@ -168,9 +146,9 @@ void CurlDownload::addHeaders(const ResourceRequest& request)
 {
     LockHolder locker(m_mutex);
 
-    if (request.httpHeaderFields().size() > 0) {
-        struct curl_slist* headers = 0;
+    m_curlHandle.clearRequestHeaders();
 
+    if (request.httpHeaderFields().size() > 0) {
         HTTPHeaderMap customHeaders = request.httpHeaderFields();
         HTTPHeaderMap::const_iterator end = customHeaders.end();
         for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
@@ -183,14 +161,11 @@ void CurlDownload::addHeaders(const ResourceRequest& request)
                 headerString.append(": ");
                 headerString.append(value);
             }
-            CString headerLatin1 = headerString.latin1();
-            headers = curl_slist_append(headers, headerLatin1.data());
+
+            m_curlHandle.appendRequestHeader(headerString);
         }
 
-        if (headers) {
-            curl_easy_setopt(m_curlHandle, CURLOPT_HTTPHEADER, headers);
-            m_customHeaders = headers;
-        }
+        m_curlHandle.enableRequestHeaders();
     }
 }
 
@@ -201,11 +176,10 @@ void CurlDownload::didReceiveHeader(const String& header)
     if (header == "\r\n" || header == "\n") {
 
         long httpCode = 0;
-        CURLcode err = curl_easy_getinfo(m_curlHandle, CURLINFO_RESPONSE_CODE, &httpCode);
-        UNUSED_PARAM(err);
+        m_curlHandle.getResponseCode(httpCode);
 
         if (httpCode >= 200 && httpCode < 300) {
-            URL url = CurlContext::singleton().getEffectiveURL(m_curlHandle);
+            URL url = m_curlHandle.getEffectiveURL();
             callOnMainThread([this, url = url.isolatedCopy(), protectedThis = makeRef(*this)] {
                 m_response.setURL(url);
                 m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
@@ -270,13 +244,13 @@ void CurlDownload::didFail()
         m_listener->didFail();
 }
 
-size_t CurlDownload::writeCallback(void* ptr, size_t size, size_t nmemb, void* data)
+size_t CurlDownload::writeCallback(char* ptr, size_t size, size_t nmemb, void* data)
 {
     size_t totalSize = size * nmemb;
     CurlDownload* download = reinterpret_cast<CurlDownload*>(data);
 
     if (download)
-        download->didReceiveData(ptr, totalSize);
+        download->didReceiveData(static_cast<void*>(ptr), totalSize);
 
     return totalSize;
 }

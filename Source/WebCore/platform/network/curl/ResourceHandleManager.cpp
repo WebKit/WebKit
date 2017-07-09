@@ -41,7 +41,6 @@
 #if USE(CURL)
 
 #include "CredentialStorage.h"
-#include "CurlContext.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MultipartHandle.h"
@@ -81,12 +80,12 @@ ResourceHandleManager::ResourceHandleManager()
     : m_downloadTimer(*this, &ResourceHandleManager::downloadTimerCallback)
     , m_runningJobs(0)
 {
-    m_curlMultiHandle = CurlContext::singleton().createMultiHandle();
+
 }
 
 ResourceHandleManager::~ResourceHandleManager()
 {
-    curl_multi_cleanup(m_curlMultiHandle);
+
 }
 
 ResourceHandleManager* ResourceHandleManager::sharedInstance()
@@ -113,10 +112,8 @@ void ResourceHandleManager::downloadTimerCallback()
     // Retry 'select' if it was interrupted by a process signal.
     int rc = 0;
     do {
-        FD_ZERO(&fdread);
-        FD_ZERO(&fdwrite);
-        FD_ZERO(&fdexcep);
-        curl_multi_fdset(m_curlMultiHandle, &fdread, &fdwrite, &fdexcep, &maxfd);
+        m_curlMultiHandle.getFdSet(fdread, fdwrite, fdexcep, maxfd);
+
         // When the 3 file descriptors are empty, winsock will return -1
         // and bail out, stopping the file download. So make sure we
         // have valid file descriptors before calling select.
@@ -132,13 +129,13 @@ void ResourceHandleManager::downloadTimerCallback()
     }
 
     int runningHandles = 0;
-    while (curl_multi_perform(m_curlMultiHandle, &runningHandles) == CURLM_CALL_MULTI_PERFORM) { }
+    while (m_curlMultiHandle.perform(runningHandles) == CURLM_CALL_MULTI_PERFORM) { }
 
     // check the curl messages indicating completed transfers
     // and free their resources
     while (true) {
-        int messagesInQueue;
-        CURLMsg* msg = curl_multi_info_read(m_curlMultiHandle, &messagesInQueue);
+        int messagesInQueue = 0;
+        CURLMsg* msg = m_curlMultiHandle.readInfo(messagesInQueue);
         if (!msg)
             break;
 
@@ -152,7 +149,6 @@ void ResourceHandleManager::downloadTimerCallback()
         if (!job)
             continue;
         ResourceHandleInternal* d = job->getInternal();
-        ASSERT(d->m_handle == handle);
 
         if (d->m_cancelled) {
             removeFromCurl(job);
@@ -175,13 +171,12 @@ void ResourceHandleManager::downloadTimerCallback()
 void ResourceHandleManager::removeFromCurl(ResourceHandle* job)
 {
     ResourceHandleInternal* d = job->getInternal();
-    ASSERT(d->m_handle);
-    if (!d->m_handle)
+    ASSERT(d->m_curlHandle.handle());
+    if (!d->m_curlHandle.handle())
         return;
     m_runningJobs--;
-    curl_multi_remove_handle(m_curlMultiHandle, d->m_handle);
-    curl_easy_cleanup(d->m_handle);
-    d->m_handle = 0;
+
+    m_curlMultiHandle.removeHandle(d->m_curlHandle.handle());
     job->deref();
 }
 
@@ -227,7 +222,9 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     job->initialize();
 
     m_runningJobs++;
-    CURLMcode ret = curl_multi_add_handle(m_curlMultiHandle, job->getInternal()->m_handle);
+
+    CURLMcode ret = m_curlMultiHandle.addHandle(job->getInternal()->m_curlHandle.handle());
+
     // don't call perform, because events must be async
     // timeout will occur and do curl_multi_perform
     if (ret && ret != CURLM_CALL_MULTI_PERFORM) {

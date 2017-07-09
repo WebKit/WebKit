@@ -28,6 +28,7 @@
 #ifndef ResourceHandleManager_h
 #define ResourceHandleManager_h
 
+#include "CurlContext.h"
 #include "Frame.h"
 #include "Timer.h"
 #include "ResourceHandleClient.h"
@@ -37,7 +38,6 @@
 #include <windows.h>
 #endif
 
-#include <curl/curl.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -60,9 +60,10 @@ private:
     bool startScheduledJobs();
 
     Timer m_downloadTimer;
-    CURLM* m_curlMultiHandle;
     Vector<ResourceHandle*> m_resourceHandleList;
     int m_runningJobs;
+
+    CurlMultiHandle m_curlMultiHandle;
 };
 
 }

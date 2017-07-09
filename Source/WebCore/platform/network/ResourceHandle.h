@@ -295,12 +295,10 @@ private:
 #if USE(CURL)
     void dispatchSynchronousJob();
 
-    void setupPOST(struct curl_slist**);
-    void setupPUT(struct curl_slist**);
+    void setupPOST();
+    void setupPUT();
 
     void applyAuthentication();
-
-    char m_curlErrorBuffer[CURL_ERROR_SIZE];
 #endif
 
     friend class ResourceHandleInternal;

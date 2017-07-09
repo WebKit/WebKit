@@ -242,18 +242,10 @@ static String getNetscapeCookieFormat(const URL& url, const String& value)
 
 void setCookiesFromDOM(const NetworkStorageSession&, const URL&, const URL& url, const String& value)
 {
-    const CurlContext& context = CurlContext::singleton();
+    CurlHandle curlHandle;
 
-    CURL* curl = curl_easy_init();
-
-    if (!curl)
-        return;
-
-    const char* cookieJarFileName = context.getCookieJarFileName();
-    CURLSH* curlsh = context.curlShareHandle();
-
-    curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookieJarFileName);
-    curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
+    curlHandle.enableShareHandle();
+    curlHandle.enableCookieJarIfExists();
 
     // CURL accepts cookies in either Set-Cookie or Netscape file format.
     // However with Set-Cookie format, there is no way to specify that we
@@ -266,26 +258,17 @@ void setCookiesFromDOM(const NetworkStorageSession&, const URL&, const URL& url,
 
     CString strCookie(reinterpret_cast<const char*>(cookie.characters8()), cookie.length());
 
-    curl_easy_setopt(curl, CURLOPT_COOKIELIST, strCookie.data());
-
-    curl_easy_cleanup(curl);
+    curlHandle.setCookieList(strCookie.data());
 }
 
 static String cookiesForSession(const NetworkStorageSession&, const URL&, const URL& url, bool httponly)
 {
     String cookies;
-    CURL* curl = curl_easy_init();
 
-    if (!curl)
-        return cookies;
+    CurlHandle curlHandle;
+    curlHandle.enableShareHandle();
 
-    CURLSH* curlsh = CurlContext::singleton().curlShareHandle();
-
-    curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
-
-    struct curl_slist* list = 0;
-    curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &list);
-
+    struct curl_slist* list = curlHandle.getCookieList();
     if (list) {
         String domain = url.host();
         String path = url.path();
@@ -299,10 +282,7 @@ static String cookiesForSession(const NetworkStorageSession&, const URL&, const 
         }
 
         cookies = cookiesBuilder.toString();
-        curl_slist_free_all(list);
     }
-
-    curl_easy_cleanup(curl);
 
     return cookies;
 }

@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include "CurlContext.h"
+
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -35,7 +37,6 @@
 #include <winsock2.h>
 #endif
 
-#include <curl/curl.h>
 
 namespace WebCore {
 
@@ -74,8 +75,6 @@ private:
 
     void updateHandleList();
 
-    CURLM* getMultiHandle() const { return m_curlMultiHandle; }
-
     bool runThread() const { LockHolder locker(m_mutex); return m_runThread; }
     void setRunThread(bool runThread) { LockHolder locker(m_mutex); m_runThread = runThread; }
 
@@ -85,12 +84,13 @@ private:
     void workerThread();
 
     RefPtr<Thread> m_thread;
-    CURLM* m_curlMultiHandle { nullptr };
     Vector<CURL*> m_pendingHandleList;
     Vector<CURL*> m_activeHandleList;
     Vector<CURL*> m_removedHandleList;
     mutable Lock m_mutex;
     bool m_runThread { false };
+
+    CurlMultiHandle m_curlMultiHandle;
 
     friend class CurlJob;
 };
