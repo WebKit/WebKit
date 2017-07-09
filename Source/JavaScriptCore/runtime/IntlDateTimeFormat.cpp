@@ -37,14 +37,7 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include <unicode/ucal.h>
-#if COMPILER(CLANG)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation"
-#endif
 #include <unicode/udatpg.h>
-#if COMPILER(CLANG)
-#pragma clang diagnostic pop
-#endif
 #include <unicode/uenum.h>
 #include <wtf/text/StringBuilder.h>
 

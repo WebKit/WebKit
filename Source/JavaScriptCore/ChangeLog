@@ -1,3 +1,18 @@
+2017-07-09  Dan Bernstein  <mitz@apple.com>
+
+        [Xcode] ICU headers aren’t treated as system headers after r219155
+        https://bugs.webkit.org/show_bug.cgi?id=174299
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/JavaScriptCore.xcconfig: Pass --system-header-prefix=unicode/ to the C and
+          C++ compilers.
+
+* runtime/IntlCollator.cpp: Removed documentation warning suppression.
+        * runtime/IntlDateTimeFormat.cpp: Ditto.
+        * runtime/JSGlobalObject.cpp: Ditto.
+        * runtime/StringPrototype.cpp: Ditto.
+
 2017-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use fastMalloc / fastFree for STL containers
