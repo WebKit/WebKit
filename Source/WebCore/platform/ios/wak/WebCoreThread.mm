@@ -145,8 +145,6 @@ static void WebCoreObjCDeallocWithWebThreadLockImpl(id self, SEL _cmd);
 
 static NSMutableArray *sAsyncDelegates = nil;
 
-static CFStringRef delegateSourceRunLoopMode;
-
 static inline void SendMessage(NSInvocation *invocation)
 {
     [invocation invoke];
@@ -736,12 +734,11 @@ static void StartWebThread()
     CFRunLoopRef runLoop = CFRunLoopGetCurrent();
     CFRunLoopSourceContext delegateSourceContext = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, HandleDelegateSource};
     delegateSource = CFRunLoopSourceCreate(NULL, 0, &delegateSourceContext);
+
     // We shouldn't get delegate callbacks while scrolling, but there might be
     // one outstanding when we start.  Add the source for all common run loop
     // modes so we don't block the web thread while scrolling.
-    if (!delegateSourceRunLoopMode)
-        delegateSourceRunLoopMode = kCFRunLoopCommonModes;
-    CFRunLoopAddSource(runLoop, delegateSource, delegateSourceRunLoopMode);
+    CFRunLoopAddSource(runLoop, delegateSource, kCFRunLoopCommonModes);
 
     sAsyncDelegates = [[NSMutableArray alloc] init];
 
@@ -993,12 +990,6 @@ NSRunLoop* WebThreadNSRunLoop(void)
 WebThreadContext *WebThreadCurrentContext(void)
 {
     return CurrentThreadContext();
-}
-
-void WebThreadSetDelegateSourceRunLoopMode(CFStringRef mode)
-{
-    ASSERT(!webThreadStarted);
-    delegateSourceRunLoopMode = mode;
 }
 
 void WebThreadEnable(void)

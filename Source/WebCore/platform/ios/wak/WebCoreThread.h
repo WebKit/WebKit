@@ -87,8 +87,6 @@ static inline void WebThreadSetShouldYield() { webThreadShouldYield = true; }
 
 WEBCORE_EXPORT NSRunLoop* WebThreadNSRunLoop(void);
 
-WEBCORE_EXPORT void WebThreadSetDelegateSourceRunLoopMode(CFStringRef mode);
-
 #if defined(__cplusplus)
 }
 #endif

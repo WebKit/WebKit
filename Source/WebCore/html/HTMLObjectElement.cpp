@@ -152,14 +152,6 @@ static void mapDataParamToSrc(Vector<String>& paramNames, Vector<String>& paramV
     }
 }
 
-#if PLATFORM(IOS)
-static bool shouldNotPerformURLAdjustment()
-{
-    static bool shouldNotPerformURLAdjustment = IOSApplication::isNASAHD() && dyld_get_program_sdk_version() < DYLD_IOS_VERSION_5_0;
-    return shouldNotPerformURLAdjustment;
-}
-#endif
-
 // FIXME: This function should not deal with url or serviceType!
 void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues, String& url, String& serviceType)
 {
@@ -217,10 +209,6 @@ void HTMLObjectElement::parametersForPlugin(Vector<String>& paramNames, Vector<S
     // attribute, not by a param element. However, for compatibility, allow the
     // resource's URL to be given by a param named "src", "movie", "code" or "url"
     // if we know that resource points to a plug-in.
-#if PLATFORM(IOS)
-    if (shouldNotPerformURLAdjustment())
-        return;
-#endif
 
     if (url.isEmpty() && !urlParameter.isEmpty()) {
         SubframeLoader& loader = document().frame()->loader().subframeLoader();
