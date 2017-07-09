@@ -1924,21 +1924,7 @@ static BOOL isQuickLookEvent(NSEvent *event)
     if (_private->closed)
         return nil;
 
-#if PLATFORM(IOS)
-    // Preserve <rdar://problem/7992472> behavior for third party applications. See <rdar://problem/8463725>.
-    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_MULTIPLE_IFRAME_TOUCH_EVENT_DISPATCH)) {
-        WebEvent *event = [WAKWindow currentEvent];
-        if (event != NULL && event.type == WebEventMouseDown && [self mouse:point inRect:[self frame]])
-            return self;
-        NSView *view = [super hitTest:point];
-        
-        // Find the clicked document view
-        while (view && ![view conformsToProtocol:@protocol(WebDocumentView)])
-            view = [view superview];
-            
-        return view;
-    }
-#else
+#if !PLATFORM(IOS)
     BOOL captureHitsOnSubviews;
     if (forceNSViewHitTest)
         captureHitsOnSubviews = NO;

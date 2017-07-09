@@ -3271,8 +3271,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
     settings.setEnableInheritURIQueryComponent(store.getBoolValueForKey(WebPreferencesKey::enableInheritURIQueryComponentKey()));
 
-    settings.setShouldDispatchJavaScriptWindowOnErrorEvents(true);
-
     auto userInterfaceDirectionPolicyCandidate = static_cast<WebCore::UserInterfaceDirectionPolicy>(store.getUInt32ValueForKey(WebPreferencesKey::userInterfaceDirectionPolicyKey()));
     if (userInterfaceDirectionPolicyCandidate == WebCore::UserInterfaceDirectionPolicy::Content || userInterfaceDirectionPolicyCandidate == WebCore::UserInterfaceDirectionPolicy::System)
         settings.setUserInterfaceDirectionPolicy(userInterfaceDirectionPolicyCandidate);

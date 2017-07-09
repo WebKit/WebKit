@@ -1222,9 +1222,7 @@ static NSString *leakOutlookQuirksUserScriptContents()
 static bool shouldRespectPriorityInCSSAttributeSetters()
 {
 #if PLATFORM(IOS)
-    static bool isStanzaNeedingAttributeSetterQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CSS_ATTRIBUTE_SETTERS_IGNORING_PRIORITY)
-        && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.lexcycle.stanza"];
-    return isStanzaNeedingAttributeSetterQuirk;
+    return false;
 #else
     static bool isIAdProducerNeedingAttributeSetterQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CSS_ATTRIBUTE_SETTERS_IGNORING_PRIORITY)
         && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.iAdProducer"];
@@ -1233,18 +1231,6 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
 }
 
 #if PLATFORM(IOS)
-static bool shouldTransformsAffectOverflow()
-{
-    static bool shouldTransformsAffectOverflow = !IOSApplication::isOkCupid() || WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_CSS_TRANSFORMS_AFFECTING_OVERFLOW);
-    return shouldTransformsAffectOverflow;
-}
-
-static bool shouldDispatchJavaScriptWindowOnErrorEvents()
-{
-    static bool shouldDispatchJavaScriptWindowOnErrorEvents = !IOSApplication::isFacebook() || WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_WINDOW_ON_ERROR);
-    return shouldDispatchJavaScriptWindowOnErrorEvents;
-}
-
 static bool isInternalInstall()
 {
     static bool isInternal = MGGetBoolAnswer(kMGQAppleInternalInstallCapability);
@@ -1562,6 +1548,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
     WebInstallMemoryPressureHandler();
 
+#if !PLATFORM(IOS)
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
         // Originally, we allowed all local loads.
         SecurityPolicy::setLocalLoadPolicy(SecurityPolicy::AllowLocalLoadsForAll);
@@ -1570,6 +1557,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
         // with substitute data.
         SecurityPolicy::setLocalLoadPolicy(SecurityPolicy::AllowLocalLoadsForLocalAndSubstituteData);
     }
+#endif
 
 #if PLATFORM(MAC)
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_CONTENT_SNIFFING_FOR_FILE_URLS))
@@ -2910,8 +2898,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if HAVE(AVKIT)
     settings.setAVKitEnabled([preferences avKitEnabled]);
 #endif
-    settings.setShouldTransformsAffectOverflow(shouldTransformsAffectOverflow());
-    settings.setShouldDispatchJavaScriptWindowOnErrorEvents(shouldDispatchJavaScriptWindowOnErrorEvents());
 
     settings.setPasswordEchoEnabled([preferences _allowPasswordEcho]);
     settings.setPasswordEchoDurationInSeconds([preferences _passwordEchoDuration]);

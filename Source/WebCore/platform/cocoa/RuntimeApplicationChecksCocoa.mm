@@ -204,18 +204,6 @@ bool IOSApplication::isWebApp()
     return isWebApp;
 }
 
-bool IOSApplication::isOkCupid()
-{
-    static bool isOkCupid = applicationBundleIsEqualTo("com.okcupid.app");
-    return isOkCupid;
-}
-
-bool IOSApplication::isFacebook()
-{
-    static bool isFacebook = applicationBundleIsEqualTo("com.facebook.Facebook");
-    return isFacebook;
-}
-
 // FIXME: this needs to be changed when the WebProcess is changed to an XPC service.
 bool IOSApplication::isWebProcess()
 {

@@ -417,13 +417,6 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
     if (!target)
         return false;
 
-#if PLATFORM(IOS)
-    if (target->toDOMWindow() && is<Document>(*this)) {
-        if (!downcast<Document>(*this).settings().shouldDispatchJavaScriptWindowOnErrorEvents())
-            return false;
-    }
-#endif
-
     String message = errorMessage;
     int line = lineNumber;
     int column = columnNumber;

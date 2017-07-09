@@ -71,8 +71,6 @@ WEBCORE_EXPORT bool isWebBookmarksD();
 bool isDumpRenderTree();
 bool isMobileStore();
 WEBCORE_EXPORT bool isWebApp();
-WEBCORE_EXPORT bool isOkCupid();
-WEBCORE_EXPORT bool isFacebook();
 WEBCORE_EXPORT bool isWebProcess();
 bool isIBooks();
 WEBCORE_EXPORT bool isTheSecretSocietyHiddenMystery();

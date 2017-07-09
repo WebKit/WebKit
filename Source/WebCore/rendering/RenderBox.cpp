@@ -4841,11 +4841,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
         rect.unite(layoutOverflowRect());
 
     bool hasTransform = this->hasTransform();
-#if PLATFORM(IOS)
-    if (isInFlowPositioned() || (hasTransform && settings().shouldTransformsAffectOverflow())) {
-#else
     if (isInFlowPositioned() || hasTransform) {
-#endif
         // If we are relatively positioned or if we have a transform, then we have to convert
         // this rectangle into physical coordinates, apply relative positioning and transforms
         // to it, and then convert it back.
