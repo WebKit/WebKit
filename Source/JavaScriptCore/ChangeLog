@@ -1,3 +1,28 @@
+2017-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use fastMalloc / fastFree for STL containers
+        https://bugs.webkit.org/show_bug.cgi?id=174297
+
+        Reviewed by Sam Weinig.
+
+        In some places, we intentionally use STL containers over WTF containers.
+        For example, we sometimes use std::unordered_{set,map} instead of WTF::Hash{Set,Map}
+        because we do not have effective empty / deleted representations in the space of key's value.
+        But just using STL container means using libc's malloc instead of our fast malloc (bmalloc if it is enabled).
+
+        We introduce WTF::FastAllocator. This is C++ allocator implementation using fastMalloc and fastFree.
+        We specify this allocator to STL containers' template parameter to allocate memory from fastMalloc.
+
+        This WTF::FastAllocator gives us a chance to use STL containers if it is necessary
+        without compromising memory allocation throughput.
+
+        * dfg/DFGGraph.h:
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringSlow):
+        * runtime/FunctionHasExecutedCache.h:
+        * runtime/TypeLocationCache.h:
+
 2017-07-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Drop NOSNIFF compile flag

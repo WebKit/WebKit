@@ -396,7 +396,7 @@ private:
                 nodeIndex, origin, jsNumber(addend), source.useKind()));
     }
     
-    typedef std::unordered_map<RangeKey, Range, HashMethod<RangeKey>> RangeMap;
+    using RangeMap = std::unordered_map<RangeKey, Range, HashMethod<RangeKey>, std::equal_to<RangeKey>, FastAllocator<std::pair<const RangeKey, Range>>>;
     RangeMap m_map;
     
     InsertionSet m_insertionSet;

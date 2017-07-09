@@ -11849,7 +11849,8 @@ private:
         StringJumpTable& table = codeBlock()->stringSwitchJumpTable(data->switchTableIndex);
         
         Vector<SwitchCase> cases;
-        std::unordered_set<int32_t> alreadyHandled; // These may be negative, or zero, or probably other stuff, too. We don't want to mess with HashSet's corner cases and we don't really care about throughput here.
+        // These may be negative, or zero, or probably other stuff, too. We don't want to mess with HashSet's corner cases and we don't really care about throughput here.
+        std::unordered_set<int32_t, std::hash<int32_t>, std::equal_to<int32_t>, FastAllocator<int32_t>> alreadyHandled;
         for (unsigned i = 0; i < data->cases.size(); ++i) {
             // FIXME: The fact that we're using the bytecode's switch table means that the
             // following DFG IR transformation would be invalid.

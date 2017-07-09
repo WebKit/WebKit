@@ -997,7 +997,7 @@ public:
     HashMap<const StringImpl*, String> m_copiedStrings;
 
 #if USE(JSVALUE32_64)
-    std::unordered_map<int64_t, double*> m_doubleConstantsMap;
+    std::unordered_map<int64_t, double*, std::hash<int64_t>, std::equal_to<int64_t>, FastAllocator<std::pair<const int64_t, double*>>> m_doubleConstantsMap;
     std::unique_ptr<Bag<double>> m_doubleConstants;
 #endif
     

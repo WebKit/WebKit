@@ -104,6 +104,32 @@ template<typename T> inline bool TryMallocReturnValue::getValue(T*& data)
     return data;
 }
 
+// C++ STL allocator implementation. You can integrate fastMalloc into STL containers.
+// e.g. std::unordered_map<Key, Value, std::hash<Key>, std::equal_to<Key>, FastAllocator<std::pair<const Key, Value>>>.
+template<typename T>
+class FastAllocator {
+public:
+    using value_type = T;
+
+    FastAllocator() = default;
+
+    template<typename U> FastAllocator(const FastAllocator<U>&) { }
+
+    T* allocate(size_t count)
+    {
+        return reinterpret_cast<T*>(fastMalloc(sizeof(T) * count));
+    }
+
+    void deallocate(T* pointer, size_t)
+    {
+        fastFree(pointer);
+    }
+
+    template<typename U> bool operator==(const FastAllocator<U>&) { return true; }
+
+    template<typename U> bool operator!=(const FastAllocator<U>&) { return false; }
+};
+
 } // namespace WTF
 
 #if !defined(NDEBUG)
@@ -125,6 +151,7 @@ using WTF::tryFastMalloc;
 using WTF::tryFastZeroedMalloc;
 using WTF::fastAlignedMalloc;
 using WTF::fastAlignedFree;
+using WTF::FastAllocator;
 
 #if COMPILER(GCC_OR_CLANG) && OS(DARWIN)
 #define WTF_PRIVATE_INLINE __private_extern__ inline __attribute__((always_inline))
