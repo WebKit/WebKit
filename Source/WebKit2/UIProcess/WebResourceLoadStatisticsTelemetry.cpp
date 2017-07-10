@@ -39,9 +39,49 @@
 using namespace WebCore;
 
 namespace WebKit {
-    
-static auto notifyPagesWhenTelemetryWasCaptured = false;
-    
+
+const unsigned minimumPrevalentResourcesForTelemetry = 3;
+static bool notifyPagesWhenTelemetryWasCaptured = false;
+
+struct PrevalentResourceTelemetry {
+    unsigned numberOfTimesDataRecordsRemoved;
+    bool hasHadUserInteraction;
+    unsigned daysSinceUserInteraction;
+    unsigned subframeUnderTopFrameOrigins;
+    unsigned subresourceUnderTopFrameOrigins;
+    unsigned subresourceUniqueRedirectsTo;
+};
+
+static Vector<PrevalentResourceTelemetry> sortedPrevalentResourceTelemetry(const ResourceLoadStatisticsStore& store)
+{
+    ASSERT(!RunLoop::isMain());
+    Vector<PrevalentResourceTelemetry> sorted;
+    store.processStatistics([&sorted] (auto& statistic) {
+        if (!statistic.isPrevalentResource)
+            return;
+
+        unsigned daysSinceUserInteraction = statistic.mostRecentUserInteractionTime <= WallTime() ? 0 : std::floor((WallTime::now() - statistic.mostRecentUserInteractionTime) / 24_h);
+        sorted.append(PrevalentResourceTelemetry {
+            statistic.dataRecordsRemoved,
+            statistic.hadUserInteraction,
+            daysSinceUserInteraction,
+            statistic.subframeUnderTopFrameOrigins.size(),
+            statistic.subresourceUnderTopFrameOrigins.size(),
+            statistic.subresourceUniqueRedirectsTo.size()
+        });
+    });
+
+    if (sorted.size() < minimumPrevalentResourcesForTelemetry)
+        return { };
+
+    std::sort(sorted.begin(), sorted.end(), [](const PrevalentResourceTelemetry& a, const PrevalentResourceTelemetry& b) {
+        return a.subframeUnderTopFrameOrigins + a.subresourceUnderTopFrameOrigins + a.subresourceUniqueRedirectsTo >
+        b.subframeUnderTopFrameOrigins + b.subresourceUnderTopFrameOrigins + b.subresourceUniqueRedirectsTo;
+    });
+
+    return sorted;
+}
+
 static unsigned numberOfResourcesWithUserInteraction(const Vector<PrevalentResourceTelemetry>& resources, size_t begin, size_t end)
 {
     if (resources.isEmpty() || resources.size() < begin + 1 || resources.size() < end + 1)
@@ -188,7 +228,7 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadSt
 {
     ASSERT(!RunLoop::isMain());
     
-    auto sortedPrevalentResources = resourceLoadStatisticsStore.sortedPrevalentResourceTelemetry();
+    auto sortedPrevalentResources = sortedPrevalentResourceTelemetry(resourceLoadStatisticsStore);
     if (notifyPagesWhenTelemetryWasCaptured && sortedPrevalentResources.isEmpty()) {
         notifyPages(0, 0, 0);
         return;

@@ -266,8 +266,8 @@ interface TestRunner {
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsTimeToLiveCookiePartitionFree(double seconds);
     void statisticsProcessStatisticsAndDataRecords();
-    void statisticsFireShouldPartitionCookiesHandler();
-    void statisticsFireShouldPartitionCookiesHandlerForOneDomain(DOMString hostName, boolean value);
+    void statisticsUpdateCookiePartitioning();
+    void statisticsSetShouldPartitionCookiesForHost(DOMString hostName, boolean value);
     void statisticsSubmitTelemetry();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(boolean value);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(boolean value);

@@ -54,19 +54,22 @@ namespace WebKit {
 class ResourceLoadStatisticsStore;
 class WebProcessProxy;
 
+enum class ShouldClearFirst;
+
+// FIXME: We should consider moving FileSystem I/O to a separate class.
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    using UpdatePartitionCookiesForDomainsHandler = WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst)>;
-    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, UpdatePartitionCookiesForDomainsHandler&& updatePartitionCookiesForDomainsHandler = { })
+    using UpdateCookiePartitioningForDomainsHandler = WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst)>;
+    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler = { })
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(updatePartitionCookiesForDomainsHandler)));
+        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(updateCookiePartitioningForDomainsHandler)));
     }
 
     ~WebResourceLoadStatisticsStore();
 
-    static void setNotifyPagesWhenDataRecordsWereScanned(bool);
-    static void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool);
-    static void setShouldSubmitTelemetry(bool);
+    void setNotifyPagesWhenDataRecordsWereScanned(bool value) { m_shouldNotifyPagesWhenDataRecordsWereScanned = value; }
+    void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value) { m_shouldClassifyResourcesBeforeDataRecordsRemoval = value; }
+    void setShouldSubmitTelemetry(bool value) { m_shouldSubmitTelemetry = value; }
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins);
 
@@ -85,8 +88,8 @@ public:
     void setSubframeUnderTopFrameOrigin(const WebCore::URL& subframe, const WebCore::URL& topFrame);
     void setSubresourceUnderTopFrameOrigin(const WebCore::URL& subresource, const WebCore::URL& topFrame);
     void setSubresourceUniqueRedirectTo(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedTo);
-    void fireShouldPartitionCookiesHandler();
-    void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
+    void updateCookiePartitioning();
+    void updateCookiePartitioningForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst);
     void processStatisticsAndDataRecords();
     void submitTelemetry();
 
@@ -100,7 +103,7 @@ public:
     void setGrandfatheringTime(Seconds);
 
 private:
-    WebResourceLoadStatisticsStore(const String&, UpdatePartitionCookiesForDomainsHandler&&);
+    WebResourceLoadStatisticsStore(const String&, UpdateCookiePartitioningForDomainsHandler&&);
 
     ResourceLoadStatisticsStore& coreStore() { return m_resourceLoadStatisticsStore.get(); }
     const ResourceLoadStatisticsStore& coreStore() const { return m_resourceLoadStatisticsStore.get(); }
@@ -127,15 +130,12 @@ private:
     WallTime statisticsFileModificationTime(const String& label) const;
     void platformExcludeFromBackup() const;
     void deleteStoreFromDisk();
-    void clearInMemoryData();
     void syncWithExistingStatisticsStorageIfNeeded();
     void refreshFromDisk();
-    void submitTelemetryIfNecessary();
     bool hasStatisticsFileChangedSinceLastSync(const String& path) const;
     void performDailyTasks();
     bool shouldRemoveDataRecords() const;
-    void dataRecordsBeingRemoved();
-    void dataRecordsWereRemoved();
+    void setDataRecordsBeingRemoved(bool);
 
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();
@@ -152,12 +152,14 @@ private:
     const String m_statisticsStoragePath;
     WallTime m_lastStatisticsFileSyncTime;
     MonotonicTime m_lastStatisticsWriteTime;
-    RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryOneShotTimer;
-    RunLoop::Timer<WebResourceLoadStatisticsStore> m_telemetryRepeatedTimer;
+    RunLoop::Timer<WebResourceLoadStatisticsStore> m_dailyTasksTimer;
     MonotonicTime m_lastTimeDataRecordsWereRemoved;
     Seconds m_minimumTimeBetweenDataRecordsRemoval { 1_h };
-    bool m_dataRecordsRemovalPending { false };
+    bool m_dataRecordsBeingRemoved { false };
     bool m_didScheduleWrite { false };
+    bool m_shouldNotifyPagesWhenDataRecordsWereScanned { false };
+    bool m_shouldClassifyResourcesBeforeDataRecordsRemoval { true };
+    bool m_shouldSubmitTelemetry { true };
 };
 
 } // namespace WebKit

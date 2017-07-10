@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceLoadStatisticsStore.h"
 
+#include "WebsiteDataStore.h"
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <wtf/CrossThreadCopier.h>
@@ -35,13 +36,17 @@ namespace WebKit {
 
 using namespace WebCore;
 
-const unsigned minimumPrevalentResourcesForTelemetry = 3;
 const unsigned operatingDatesWindow { 30 };
 const unsigned statisticsModelVersion { 6 };
 
-Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create()
+Ref<ResourceLoadStatisticsStore> ResourceLoadStatisticsStore::create(UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler)
 {
-    return adoptRef(*new ResourceLoadStatisticsStore);
+    return adoptRef(*new ResourceLoadStatisticsStore(WTFMove(updateCookiePartitioningForDomainsHandler)));
+}
+
+ResourceLoadStatisticsStore::ResourceLoadStatisticsStore(UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler)
+    : m_updateCookiePartitioningForDomainsHandler(WTFMove(updateCookiePartitioningForDomainsHandler))
+{
 }
 
 bool ResourceLoadStatisticsStore::isPrevalentResource(const String& primaryDomain) const
@@ -63,6 +68,15 @@ bool ResourceLoadStatisticsStore::isGrandFathered(const String& primaryDomain) c
 
     return mapEntry->value.grandfathered;
 }
+
+bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(const String& primaryDomain)
+{
+    auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
+    if (mapEntry == m_resourceStatisticsMap.end())
+        return false;
+
+    return hasHadUnexpiredRecentUserInteraction(mapEntry->value);
+}
     
 ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsForPrimaryDomain(const String& primaryDomain)
 {
@@ -72,8 +86,6 @@ ResourceLoadStatistics& ResourceLoadStatisticsStore::ensureResourceStatisticsFor
     }).iterator->value;
 }
 
-typedef HashMap<String, ResourceLoadStatistics>::KeyValuePairType StatisticsValue;
-
 std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData() const
 {
     ASSERT(!RunLoop::isMain());
@@ -81,7 +93,7 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
     encoder->encodeUInt32("version", statisticsModelVersion);
     encoder->encodeDouble("endOfGrandfatheringTimestamp", m_endOfGrandfatheringTimestamp.secondsSinceEpoch().value());
     
-    encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [](KeyedEncoder& encoderInner, const StatisticsValue& origin) {
+    encoder->encodeObjects("browsingStatistics", m_resourceStatisticsMap.begin(), m_resourceStatisticsMap.end(), [](KeyedEncoder& encoderInner, const auto& origin) {
         origin.value.encode(encoderInner);
     });
 
@@ -92,7 +104,7 @@ std::unique_ptr<KeyedEncoder> ResourceLoadStatisticsStore::createEncoderFromData
     return encoder;
 }
 
-void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
+void ResourceLoadStatisticsStore::populateFromDecoder(KeyedDecoder& decoder)
 {
     ASSERT(!RunLoop::isMain());
     if (!m_resourceStatisticsMap.isEmpty())
@@ -141,7 +153,7 @@ void ResourceLoadStatisticsStore::readDataFromDecoder(KeyedDecoder& decoder)
     if (!succeeded)
         return;
     
-    fireShouldPartitionCookiesHandler({ }, prevalentResourceDomainsWithoutUserInteraction, true);
+    updateCookiePartitioningForDomains({ }, prevalentResourceDomainsWithoutUserInteraction, ShouldClearFirst::Yes);
 }
 
 void ResourceLoadStatisticsStore::clearInMemory()
@@ -150,26 +162,19 @@ void ResourceLoadStatisticsStore::clearInMemory()
     m_resourceStatisticsMap.clear();
     m_operatingDates.clear();
 
-    fireShouldPartitionCookiesHandler({ }, { }, true);
+    updateCookiePartitioningForDomains({ }, { }, ShouldClearFirst::Yes);
 }
 
 void ResourceLoadStatisticsStore::mergeStatistics(Vector<ResourceLoadStatistics>&& statistics)
 {
     ASSERT(!RunLoop::isMain());
     for (auto& statistic : statistics) {
-        // FIXME: In the case where the statistics does not already exist, it seems inefficient to create
-        // an empty one just to merge the new one into it.
         auto result = m_resourceStatisticsMap.ensure(statistic.highLevelDomain, [&statistic] {
-            return ResourceLoadStatistics(statistic.highLevelDomain);
+            return WTFMove(statistic);
         });
-        
-        result.iterator->value.merge(statistic);
+        if (!result.isNewEntry)
+            result.iterator->value.merge(statistic);
     }
-}
-
-void ResourceLoadStatisticsStore::setShouldPartitionCookiesCallback(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&& handler)
-{
-    m_shouldPartitionCookiesForDomainsHandler = WTFMove(handler);
 }
 
 inline bool ResourceLoadStatisticsStore::shouldPartitionCookies(const ResourceLoadStatistics& statistic) const
@@ -177,12 +182,12 @@ inline bool ResourceLoadStatisticsStore::shouldPartitionCookies(const ResourceLo
     return statistic.isPrevalentResource && (!statistic.hadUserInteraction || WallTime::now() > statistic.mostRecentUserInteractionTime + m_timeToLiveCookiePartitionFree);
 }
 
-void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
+void ResourceLoadStatisticsStore::updateCookiePartitioning()
 {
     ASSERT(!RunLoop::isMain());
+
     Vector<String> domainsToRemove;
     Vector<String> domainsToAdd;
-    
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
         bool shouldPartition = shouldPartitionCookies(resourceStatistic);
         if (resourceStatistic.isMarkedForCookiePartitioning && !shouldPartition) {
@@ -198,23 +203,21 @@ void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
         return;
 
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd)] () {
-        if (m_shouldPartitionCookiesForDomainsHandler)
-            m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, false);
+        m_updateCookiePartitioningForDomainsHandler(domainsToRemove, domainsToAdd, ShouldClearFirst::No);
     });
 }
 
-void ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
+void ResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst shouldClearFirst)
 {
     ASSERT(!RunLoop::isMain());
     if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
         return;
     
-    RunLoop::main().dispatch([this, clearFirst, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd)] () {
-        if (m_shouldPartitionCookiesForDomainsHandler)
-            m_shouldPartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, clearFirst);
+    RunLoop::main().dispatch([this, shouldClearFirst, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd)] () {
+        m_updateCookiePartitioningForDomainsHandler(domainsToRemove, domainsToAdd, shouldClearFirst);
     });
     
-    if (clearFirst) {
+    if (shouldClearFirst == ShouldClearFirst::Yes) {
         for (auto& resourceStatistic : m_resourceStatisticsMap.values())
             resourceStatistic.isMarkedForCookiePartitioning = false;
     } else {
@@ -251,7 +254,14 @@ void ResourceLoadStatisticsStore::processStatistics(const WTF::Function<void(Res
         processFunction(resourceStatistic);
 }
 
-bool ResourceLoadStatisticsStore::hasHadRecentUserInteraction(ResourceLoadStatistics& resourceStatistic) const
+void ResourceLoadStatisticsStore::processStatistics(const WTF::Function<void (const ResourceLoadStatistics&)>& processFunction) const
+{
+    ASSERT(!RunLoop::isMain());
+    for (auto& resourceStatistic : m_resourceStatisticsMap.values())
+        processFunction(resourceStatistic);
+}
+
+bool ResourceLoadStatisticsStore::hasHadUnexpiredRecentUserInteraction(ResourceLoadStatistics& resourceStatistic) const
 {
     if (!resourceStatistic.hadUserInteraction)
         return false;
@@ -281,7 +291,7 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
 
     Vector<String> prevalentResources;
     for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (statistic.isPrevalentResource && !hasHadRecentUserInteraction(statistic) && (!shouldCheckForGrandfathering || !statistic.grandfathered))
+        if (statistic.isPrevalentResource && !hasHadUnexpiredRecentUserInteraction(statistic) && (!shouldCheckForGrandfathering || !statistic.grandfathered))
             prevalentResources.append(statistic.highLevelDomain);
 
         if (shouldClearGrandfathering && statistic.grandfathered)
@@ -289,36 +299,6 @@ Vector<String> ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemov
     }
 
     return prevalentResources;
-}
-    
-Vector<PrevalentResourceTelemetry> ResourceLoadStatisticsStore::sortedPrevalentResourceTelemetry() const
-{
-    ASSERT(!RunLoop::isMain());
-    Vector<PrevalentResourceTelemetry> sorted;
-    for (auto& statistic : m_resourceStatisticsMap.values()) {
-        if (!statistic.isPrevalentResource)
-            continue;
-
-        unsigned daysSinceUserInteraction = statistic.mostRecentUserInteractionTime <= WallTime() ? 0 : std::floor((WallTime::now() - statistic.mostRecentUserInteractionTime) / 24_h);
-        sorted.append(PrevalentResourceTelemetry {
-            statistic.dataRecordsRemoved,
-            statistic.hadUserInteraction,
-            daysSinceUserInteraction,
-            statistic.subframeUnderTopFrameOrigins.size(),
-            statistic.subresourceUnderTopFrameOrigins.size(),
-            statistic.subresourceUniqueRedirectsTo.size()
-        });
-    }
-    
-    if (sorted.size() < minimumPrevalentResourcesForTelemetry)
-        return { };
-
-    std::sort(sorted.begin(), sorted.end(), [](const PrevalentResourceTelemetry& a, const PrevalentResourceTelemetry& b) {
-        return a.subframeUnderTopFrameOrigins + a.subresourceUnderTopFrameOrigins + a.subresourceUniqueRedirectsTo >
-        b.subframeUnderTopFrameOrigins + b.subresourceUnderTopFrameOrigins + b.subresourceUniqueRedirectsTo;
-    });
-    
-    return sorted;
 }
 
 void ResourceLoadStatisticsStore::updateStatisticsForRemovedDataRecords(const HashSet<String>& prevalentResourceDomains)

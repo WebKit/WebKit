@@ -1419,13 +1419,13 @@ void TestRunner::statisticsProcessStatisticsAndDataRecords()
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
 
-void TestRunner::statisticsFireShouldPartitionCookiesHandler()
+void TestRunner::statisticsUpdateCookiePartitioning()
 {
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireShouldPartitionCookiesHandler"));
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsUpdateCookiePartitioning"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
 
-void TestRunner::statisticsFireShouldPartitionCookiesHandlerForOneDomain(JSStringRef hostName, bool value)
+void TestRunner::statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value)
 {
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
@@ -1444,7 +1444,7 @@ void TestRunner::statisticsFireShouldPartitionCookiesHandlerForOneDomain(JSStrin
         rawValues[i] = values[i].get();
     }
     
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsFireShouldPartitionCookiesHandlerForOneDomain"));
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsSetShouldPartitionCookiesForHost"));
     WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
     
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);

@@ -354,25 +354,25 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     store->processStatisticsAndDataRecords();
 }
 
-- (void)_resourceLoadStatisticsFireShouldPartitionCookiesHandler
+- (void)_resourceLoadStatisticsUpdateCookiePartitioning
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
     if (!store)
         return;
 
-    store->fireShouldPartitionCookiesHandler();
+    store->updateCookiePartitioning();
 }
 
-- (void)_resourceLoadStatisticsFireShouldPartitionCookiesHandlerForOneDomain:(BOOL)value forHost:(NSString *)host
+- (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
     if (!store)
         return;
 
     if (value)
-        store->fireShouldPartitionCookiesHandler({ }, { host }, false);
+        store->updateCookiePartitioningForDomains({ }, { host }, WebKit::ShouldClearFirst::No);
     else
-        store->fireShouldPartitionCookiesHandler({ host }, { }, false);
+        store->updateCookiePartitioningForDomains({ host }, { }, WebKit::ShouldClearFirst::No);
 }
 
 - (void)_resourceLoadStatisticsSubmitTelemetry

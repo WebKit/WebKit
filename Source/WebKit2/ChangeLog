@@ -1,3 +1,66 @@
+2017-07-10  Chris Dumez  <cdumez@apple.com>
+
+        Further WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore clean up
+        https://bugs.webkit.org/show_bug.cgi?id=174301
+
+        Reviewed by Brent Fulgham.
+
+        General clean up and various simplifications / optimizations to WebResourceLoadStatisticsStore
+        and ResourceLoadStatisticsStore classes.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsUpdateCookiePartitioning]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetShouldPartitionCookies:forHost:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Storage/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::create):
+        (WebKit::ResourceLoadStatisticsStore::ResourceLoadStatisticsStore):
+        (WebKit::ResourceLoadStatisticsStore::hasHadRecentUserInteraction):
+        (WebKit::ResourceLoadStatisticsStore::createEncoderFromData):
+        (WebKit::ResourceLoadStatisticsStore::populateFromDecoder):
+        (WebKit::ResourceLoadStatisticsStore::clearInMemory):
+        (WebKit::ResourceLoadStatisticsStore::mergeStatistics):
+        (WebKit::ResourceLoadStatisticsStore::updateCookiePartitioning):
+        (WebKit::ResourceLoadStatisticsStore::updateCookiePartitioningForDomains):
+        (WebKit::ResourceLoadStatisticsStore::processStatistics):
+        (WebKit::ResourceLoadStatisticsStore::hasHadUnexpiredRecentUserInteraction):
+        (WebKit::ResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRemoveWebsiteDataFor):
+        * UIProcess/Storage/ResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::removeDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated):
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded):
+        (WebKit::WebResourceLoadStatisticsStore::refreshFromDisk):
+        (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate):
+        (WebKit::WebResourceLoadStatisticsStore::resourceLogFilePath):
+        (WebKit::WebResourceLoadStatisticsStore::writeStoreToDisk):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleOrWriteStoreToDisk):
+        (WebKit::WebResourceLoadStatisticsStore::writeEncoderToDisk):
+        (WebKit::WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage):
+        (WebKit::WebResourceLoadStatisticsStore::platformExcludeFromBackup):
+        (WebKit::WebResourceLoadStatisticsStore::createDecoderFromDisk):
+        (WebKit::WebResourceLoadStatisticsStore::performDailyTasks):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::hasHadUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioning):
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::clearInMemory):
+        (WebKit::WebResourceLoadStatisticsStore::clearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::shouldRemoveDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::setDataRecordsBeingRemoved):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::sortedPrevalentResourceTelemetry):
+        (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updateCookiePartitioningForTopPrivatelyOwnedDomains):
+        (WebKit::WebsiteDataStore::setResourceLoadStatisticsEnabled):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-07-10  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [SOUP] Remove WebKitSoupCookieJarSqlite

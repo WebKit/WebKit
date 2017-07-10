@@ -58,8 +58,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 - (void)_resourceLoadStatisticsSetMinimumTimeBetweenDataRecordsRemoval:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetGrandfatheringTime:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsProcessStatisticsAndDataRecords WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsFireShouldPartitionCookiesHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsFireShouldPartitionCookiesHandlerForOneDomain:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resourceLoadStatisticsUpdateCookiePartitioning WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSubmitTelemetry WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetNotifyPagesWhenDataRecordsWereScanned:(BOOL)value WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetShouldClassifyResourcesBeforeDataRecordsRemoval:(BOOL)value WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

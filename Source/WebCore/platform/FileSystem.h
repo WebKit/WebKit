@@ -135,6 +135,9 @@ WEBCORE_EXPORT int writeToFile(PlatformFileHandle, const char* data, int length)
 // Returns number of bytes actually written if successful, -1 otherwise.
 WEBCORE_EXPORT int readFromFile(PlatformFileHandle, char* data, int length);
 
+WEBCORE_EXPORT PlatformFileHandle openAndLockFile(const String&, FileOpenMode, FileLockMode = LockExclusive);
+WEBCORE_EXPORT void unlockAndCloseFile(PlatformFileHandle);
+
 // Appends the contents of the file found at 'path' to the open PlatformFileHandle.
 // Returns true if the write was successful, false if it was not.
 bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle&);

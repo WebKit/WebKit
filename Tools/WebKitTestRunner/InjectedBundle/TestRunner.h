@@ -354,8 +354,8 @@ public:
     void statisticsDidScanDataRecordsCallback();
     void statisticsDidRunTelemetryCallback(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
     void statisticsProcessStatisticsAndDataRecords();
-    void statisticsFireShouldPartitionCookiesHandler();
-    void statisticsFireShouldPartitionCookiesHandlerForOneDomain(JSStringRef hostName, bool value);
+    void statisticsUpdateCookiePartitioning();
+    void statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value);
     void statisticsSubmitTelemetry();
     void setStatisticsPrevalentResource(JSStringRef hostName, bool value);
     bool isStatisticsPrevalentResource(JSStringRef hostName);

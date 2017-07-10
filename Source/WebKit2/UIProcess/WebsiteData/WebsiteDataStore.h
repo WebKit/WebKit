@@ -62,6 +62,8 @@ struct WebsiteDataStoreParameters;
 struct PluginModuleInfo;
 #endif
 
+enum class ShouldClearFirst { No, Yes };
+
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver {
 public:
     struct Configuration {
@@ -101,7 +103,7 @@ public:
     void removeDataForTopPrivatelyControlledDomains(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, const Vector<String>& topPrivatelyControlledDomains, Function<void(HashSet<String>&&)>&& completionHandler);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    void updateCookiePartitioningForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst);
+    void updateCookiePartitioningForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst);
 #endif
     void resolveDirectoriesIfNecessary();
     const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration.applicationCacheDirectory; }

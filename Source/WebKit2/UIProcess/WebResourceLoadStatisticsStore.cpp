@@ -33,6 +33,7 @@
 #include "WebResourceLoadStatisticsStoreMessages.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 #include "WebsiteDataFetchOption.h"
+#include "WebsiteDataStore.h"
 #include "WebsiteDataType.h"
 #include <WebCore/FileMonitor.h>
 #include <WebCore/FileSystem.h>
@@ -44,24 +45,16 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/threads/BinarySemaphore.h>
 
-#if PLATFORM(COCOA)
-#define ENABLE_MULTIPROCESS_ACCESS_TO_STATISTICS_STORE 1
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
+
+constexpr Seconds minimumStatisticsFileWriteInterval { 5_min };
 
 template<typename T> static inline String primaryDomain(const T& value)
 {
     return ResourceLoadStatistics::primaryDomain(value);
 }
-
-constexpr Seconds minimumStatisticsFileWriteInterval { 5_min };
-
-static bool notifyPagesWhenDataRecordsWereScanned = false;
-static bool shouldClassifyResourcesBeforeDataRecordsRemoval = true;
-static auto shouldSubmitTelemetry = true;
 
 static const OptionSet<WebsiteDataType>& dataTypesToRemove()
 {
@@ -87,12 +80,11 @@ static const OptionSet<WebsiteDataType>& dataTypesToRemove()
     return dataTypes;
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, UpdatePartitionCookiesForDomainsHandler&& updatePartitionCookiesForDomainsHandler)
-    : m_resourceLoadStatisticsStore(ResourceLoadStatisticsStore::create())
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler)
+    : m_resourceLoadStatisticsStore(ResourceLoadStatisticsStore::create(WTFMove(updateCookiePartitioningForDomainsHandler)))
     , m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_statisticsStoragePath(resourceLoadStatisticsDirectory)
-    , m_telemetryOneShotTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::submitTelemetryIfNecessary)
-    , m_telemetryRepeatedTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
+    , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
 {
     ASSERT(RunLoop::isMain());
 
@@ -100,38 +92,20 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
     registerUserDefaultsIfNeeded();
 #endif
 
-    if (updatePartitionCookiesForDomainsHandler) {
-        m_resourceLoadStatisticsStore->setShouldPartitionCookiesCallback([updatePartitionCookiesForDomainsHandler = WTFMove(updatePartitionCookiesForDomainsHandler)] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst) {
-            updatePartitionCookiesForDomainsHandler(domainsToRemove, domainsToAdd, shouldClearFirst);
-        });
-    }
-
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
         readDataFromDiskIfNeeded();
         startMonitoringStatisticsStorage();
     });
+    m_statisticsQueue->dispatchAfter(5_s, [this, protectedThis = makeRef(*this)] {
+        if (m_shouldSubmitTelemetry)
+            WebResourceLoadStatisticsTelemetry::calculateAndSubmit(coreStore());
+    });
 
-    m_telemetryOneShotTimer.startOneShot(5_s);
-    m_telemetryRepeatedTimer.startRepeating(24_h);
+    m_dailyTasksTimer.startRepeating(24_h);
 }
 
 WebResourceLoadStatisticsStore::~WebResourceLoadStatisticsStore()
 {
-}
-
-void WebResourceLoadStatisticsStore::setNotifyPagesWhenDataRecordsWereScanned(bool always)
-{
-    notifyPagesWhenDataRecordsWereScanned = always;
-}
-
-void WebResourceLoadStatisticsStore::setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
-{
-    shouldClassifyResourcesBeforeDataRecordsRemoval = value;
-}
-
-void WebResourceLoadStatisticsStore::setShouldSubmitTelemetry(bool value)
-{
-    shouldSubmitTelemetry = value;
 }
     
 void WebResourceLoadStatisticsStore::classifyResource(ResourceLoadStatistics& resourceStatistic)
@@ -151,15 +125,13 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
     if (prevalentResourceDomains.isEmpty())
         return;
     
-    dataRecordsBeingRemoved();
+    setDataRecordsBeingRemoved(true);
 
-    // Switch to the main thread to get the default website data store
     RunLoop::main().dispatch([prevalentResourceDomains = CrossThreadCopier<Vector<String>>::copy(prevalentResourceDomains), this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove(), WTFMove(prevalentResourceDomains), notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
-            // But always touch the ResourceLoadStatistics store on the worker queue.
+        WebProcessProxy::deleteWebsiteDataForTopPrivatelyControlledDomainsInAllPersistentDataStores(dataTypesToRemove(), WTFMove(prevalentResourceDomains), m_shouldNotifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)](const HashSet<String>& domainsWithDeletedWebsiteData) mutable {
             m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(domainsWithDeletedWebsiteData)] () mutable {
                 coreStore().updateStatisticsForRemovedDataRecords(topDomains);
-                dataRecordsWereRemoved();
+                setDataRecordsBeingRemoved(false);
             });
         });
     });
@@ -168,14 +140,14 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
 void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 {
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] () {
-        if (shouldClassifyResourcesBeforeDataRecordsRemoval) {
+        if (m_shouldClassifyResourcesBeforeDataRecordsRemoval) {
             coreStore().processStatistics([this] (ResourceLoadStatistics& resourceStatistic) {
                 classifyResource(resourceStatistic);
             });
         }
         removeDataRecords();
         
-        if (notifyPagesWhenDataRecordsWereScanned) {
+        if (m_shouldNotifyPagesWhenDataRecordsWereScanned) {
             RunLoop::main().dispatch([] {
                 WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
             });
@@ -190,20 +162,19 @@ void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCor
     ASSERT(!RunLoop::isMain());
 
     coreStore().mergeStatistics(WTFMove(origins));
-    // Fire before processing statistics to propagate user
-    // interaction as fast as possible to the network process.
-    coreStore().fireShouldPartitionCookiesHandler();
+    // Fire before processing statistics to propagate user interaction as fast as possible to the network process.
+    coreStore().updateCookiePartitioning();
     processStatisticsAndDataRecords();
 }
 
 void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
 {
-    // Switch to the main thread to get the default website data store
+    ASSERT(!RunLoop::isMain());
+
     RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () mutable {
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(dataTypesToRemove(), notifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
-            // But always touch the ResourceLoadStatistics store on the worker queue
-            m_statisticsQueue->dispatch([protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
-                protectedThis->coreStore().handleFreshStartWithEmptyOrNoStore(WTFMove(topDomains));
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(dataTypesToRemove(), m_shouldNotifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = CrossThreadCopier<HashSet<String>>::copy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
+                coreStore().handleFreshStartWithEmptyOrNoStore(WTFMove(topDomains));
             });
         });
     });
@@ -248,7 +219,7 @@ void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
     }
 
     coreStore().clearInMemory();
-    coreStore().readDataFromDecoder(*decoder);
+    coreStore().populateFromDecoder(*decoder);
 
     m_lastStatisticsFileSyncTime = readTime;
 
@@ -278,7 +249,7 @@ void WebResourceLoadStatisticsStore::refreshFromDisk()
     if (!decoder)
         return;
 
-    coreStore().readDataFromDecoder(*decoder);
+    coreStore().populateFromDecoder(*decoder);
     m_lastStatisticsFileSyncTime = readTime;
 }
     
@@ -295,12 +266,12 @@ void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy&,
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
 {
     BinarySemaphore semaphore;
+    // Make sure any pending work in our queue is finished before we terminate.
     m_statisticsQueue->dispatch([&semaphore, this, protectedThis = makeRef(*this)] {
         // Write final file state to disk.
         if (m_didScheduleWrite)
             writeStoreToDisk();
 
-        // Make sure any ongoing work in our queue is finished before we terminate.
         semaphore.signal();
     });
     semaphore.wait(WallTime::infinity());
@@ -317,7 +288,6 @@ String WebResourceLoadStatisticsStore::resourceLogFilePath() const
     if (statisticsStoragePath.isEmpty())
         return emptyString();
 
-    // TODO Decide what to call this file
     return pathByAppendingComponent(statisticsStoragePath, "full_browsing_session_resourceLog.plist");
 }
 
@@ -332,7 +302,7 @@ void WebResourceLoadStatisticsStore::writeStoreToDisk()
     auto encoder = coreStore().createEncoderFromData();
 
     String resourceLog = resourceLogFilePath();
-    writeEncoderToDisk(*encoder.get(), resourceLog);
+    writeEncoderToDisk(*encoder, resourceLog);
 
     m_lastStatisticsFileSyncTime = WallTime::now();
     m_lastStatisticsWriteTime = MonotonicTime::now();
@@ -349,8 +319,8 @@ void WebResourceLoadStatisticsStore::scheduleOrWriteStoreToDisk()
     if (timeSinceLastWrite < minimumStatisticsFileWriteInterval) {
         if (!m_didScheduleWrite) {
             m_didScheduleWrite = true;
-            Seconds delayUntil = minimumStatisticsFileWriteInterval - timeSinceLastWrite + 1_s;
-            m_statisticsQueue->dispatchAfter(delayUntil, [this, protectedThis = makeRef(*this)] {
+            Seconds delay = minimumStatisticsFileWriteInterval - timeSinceLastWrite + 1_s;
+            m_statisticsQueue->dispatchAfter(delay, [this, protectedThis = makeRef(*this)] {
                 writeStoreToDisk();
             });
         }
@@ -358,31 +328,6 @@ void WebResourceLoadStatisticsStore::scheduleOrWriteStoreToDisk()
     }
 
     writeStoreToDisk();
-}
-
-static PlatformFileHandle openAndLockFile(const String& path, FileOpenMode mode)
-{
-    ASSERT(!RunLoop::isMain());
-    auto handle = openFile(path, mode);
-    if (handle == invalidPlatformFileHandle)
-        return invalidPlatformFileHandle;
-
-#if ENABLE(MULTIPROCESS_ACCESS_TO_STATISTICS_STORE)
-    bool locked = lockFile(handle, WebCore::LockExclusive);
-    ASSERT_UNUSED(locked, locked);
-#endif
-
-    return handle;
-}
-
-static void closeAndUnlockFile(PlatformFileHandle handle)
-{
-    ASSERT(!RunLoop::isMain());
-#if ENABLE(MULTIPROCESS_ACCESS_TO_STATISTICS_STORE)
-    bool unlocked = unlockFile(handle);
-    ASSERT_UNUSED(unlocked, unlocked);
-#endif
-    closeFile(handle);
 }
 
 void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, const String& path) const
@@ -404,7 +349,7 @@ void WebResourceLoadStatisticsStore::writeEncoderToDisk(KeyedEncoder& encoder, c
         return;
     
     int64_t writtenBytes = writeToFile(handle, rawData->data(), rawData->size());
-    closeAndUnlockFile(handle);
+    unlockAndCloseFile(handle);
 
     if (writtenBytes != static_cast<int64_t>(rawData->size()))
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "WebResourceLoadStatisticsStore: We only wrote %d out of %d bytes to disk", static_cast<unsigned>(writtenBytes), rawData->size());
@@ -421,12 +366,6 @@ void WebResourceLoadStatisticsStore::deleteStoreFromDisk()
 
     if (!deleteFile(resourceLogPath))
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to delete statistics file: %s", resourceLogPath.utf8().data());
-}
-
-void WebResourceLoadStatisticsStore::clearInMemoryData()
-{
-    ASSERT(!RunLoop::isMain());
-    coreStore().clearInMemory();
 }
 
 void WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage()
@@ -446,7 +385,7 @@ void WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage()
             refreshFromDisk();
             break;
         case FileMonitor::FileChangeType::Removal:
-            clearInMemoryData();
+            coreStore().clearInMemory();
             m_statisticsStorageMonitor = nullptr;
             break;
         }
@@ -471,12 +410,10 @@ void WebResourceLoadStatisticsStore::syncWithExistingStatisticsStorageIfNeeded()
 
     refreshFromDisk();
 }
-    
-    
+
 #if !PLATFORM(COCOA)
 void WebResourceLoadStatisticsStore::platformExcludeFromBackup() const
 {
-    // Do nothing
 }
 #endif
 
@@ -489,20 +426,20 @@ std::unique_ptr<KeyedDecoder> WebResourceLoadStatisticsStore::createDecoderFromD
     
     long long fileSize = 0;
     if (!getFileSize(handle, fileSize)) {
-        closeAndUnlockFile(handle);
+        unlockAndCloseFile(handle);
         return nullptr;
     }
     
     size_t bytesToRead;
     if (!WTF::convertSafely(fileSize, bytesToRead)) {
-        closeAndUnlockFile(handle);
+        unlockAndCloseFile(handle);
         return nullptr;
     }
 
     Vector<char> buffer(bytesToRead);
     size_t totalBytesRead = readFromFile(handle, buffer.data(), buffer.size());
 
-    closeAndUnlockFile(handle);
+    unlockAndCloseFile(handle);
 
     if (totalBytesRead != bytesToRead)
         return nullptr;
@@ -515,18 +452,8 @@ void WebResourceLoadStatisticsStore::performDailyTasks()
     ASSERT(RunLoop::isMain());
 
     coreStore().includeTodayAsOperatingDateIfNecessary();
-
-    submitTelemetryIfNecessary();
-}
-
-void WebResourceLoadStatisticsStore::submitTelemetryIfNecessary()
-{
-    ASSERT(RunLoop::isMain());
-    
-    if (!shouldSubmitTelemetry)
-        return;
-    
-    submitTelemetry();
+    if (m_shouldSubmitTelemetry)
+        submitTelemetry();
 }
 
 void WebResourceLoadStatisticsStore::submitTelemetry()
@@ -547,7 +474,7 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
         statistics.hadUserInteraction = true;
         statistics.mostRecentUserInteractionTime = WallTime::now();
 
-        coreStore().fireShouldPartitionCookiesHandler({ primaryDomainString }, { }, false);
+        coreStore().updateCookiePartitioningForDomains({ primaryDomainString }, { }, ShouldClearFirst::No);
     });
 }
 
@@ -571,10 +498,9 @@ void WebResourceLoadStatisticsStore::hasHadUserInteraction(const URL& url, WTF::
     }
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
-        // FIXME: Why is this potentially creating a store entry just for querying?
-        auto& statistics = coreStore().ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-        RunLoop::main().dispatch([hasHadUserInteraction = coreStore().hasHadRecentUserInteraction(statistics), completionHandler = WTFMove(completionHandler)] {
-            completionHandler(hasHadUserInteraction);
+        bool hadUserInteraction = coreStore().hasHadRecentUserInteraction(primaryDomain(url));
+        RunLoop::main().dispatch([hadUserInteraction, completionHandler = WTFMove(completionHandler)] {
+            completionHandler(hadUserInteraction);
         });
     });
 }
@@ -675,27 +601,28 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const URL& s
     });
 }
 
-void WebResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler()
+void WebResourceLoadStatisticsStore::updateCookiePartitioning()
 {
     // Helper function used by testing system. Should only be called from the main thread.
     ASSERT(RunLoop::isMain());
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
-        coreStore().fireShouldPartitionCookiesHandler();
+        coreStore().updateCookiePartitioning();
     });
 }
 
-void WebResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)
+void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst shouldClearFirst)
 {
     // Helper function used by testing system. Should only be called from the main thread.
     ASSERT(RunLoop::isMain());
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd), clearFirst] {
-        coreStore().fireShouldPartitionCookiesHandler(domainsToRemove, domainsToAdd, clearFirst);
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), domainsToRemove = CrossThreadCopier<Vector<String>>::copy(domainsToRemove), domainsToAdd = CrossThreadCopier<Vector<String>>::copy(domainsToAdd), shouldClearFirst] {
+        coreStore().updateCookiePartitioningForDomains(domainsToRemove, domainsToAdd, shouldClearFirst);
     });
 }
 
 void WebResourceLoadStatisticsStore::clearInMemory()
 {
+    ASSERT(RunLoop::isMain());
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
         coreStore().clearInMemory();
     });
@@ -703,6 +630,7 @@ void WebResourceLoadStatisticsStore::clearInMemory()
 
 void WebResourceLoadStatisticsStore::clearInMemoryAndPersistent()
 {
+    ASSERT(RunLoop::isMain());
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
         coreStore().clearInMemory();
         deleteStoreFromDisk();
@@ -741,26 +669,18 @@ void WebResourceLoadStatisticsStore::setGrandfatheringTime(Seconds seconds)
 bool WebResourceLoadStatisticsStore::shouldRemoveDataRecords() const
 {
     ASSERT(!RunLoop::isMain());
-    if (m_dataRecordsRemovalPending)
+    if (m_dataRecordsBeingRemoved)
         return false;
 
-    if (m_lastTimeDataRecordsWereRemoved && MonotonicTime::now() < (m_lastTimeDataRecordsWereRemoved + m_minimumTimeBetweenDataRecordsRemoval))
-        return false;
-
-    return true;
+    return !m_lastTimeDataRecordsWereRemoved || MonotonicTime::now() >= (m_lastTimeDataRecordsWereRemoved + m_minimumTimeBetweenDataRecordsRemoval);
 }
 
-void WebResourceLoadStatisticsStore::dataRecordsBeingRemoved()
+void WebResourceLoadStatisticsStore::setDataRecordsBeingRemoved(bool value)
 {
     ASSERT(!RunLoop::isMain());
-    m_lastTimeDataRecordsWereRemoved = MonotonicTime::now();
-    m_dataRecordsRemovalPending = true;
-}
-
-void WebResourceLoadStatisticsStore::dataRecordsWereRemoved()
-{
-    ASSERT(!RunLoop::isMain());
-    m_dataRecordsRemovalPending = false;
+    m_dataRecordsBeingRemoved = value;
+    if (m_dataRecordsBeingRemoved)
+        m_lastTimeDataRecordsWereRemoved = MonotonicTime::now();
 }
     
 } // namespace WebKit

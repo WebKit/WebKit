@@ -1,3 +1,17 @@
+2017-07-10  Chris Dumez  <cdumez@apple.com>
+
+        Further WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore clean up
+        https://bugs.webkit.org/show_bug.cgi?id=174301
+
+        Reviewed by Brent Fulgham.
+
+        Moved some generic file system utility functions down to platform's FileSystem.h.
+
+        * platform/FileSystem.cpp:
+        (WebCore::openAndLockFile):
+        (WebCore::unlockAndCloseFile):
+        * platform/FileSystem.h:
+
 2017-07-10  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r210226): Keyboard-focused element not preserved when navigating back through page cache, causing multiple elements to have focus

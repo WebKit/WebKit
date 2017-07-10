@@ -2300,11 +2300,11 @@ void TestController::statisticsProcessStatisticsAndDataRecords()
 {
 }
 
-void TestController::statisticsFireShouldPartitionCookiesHandler()
+void TestController::statisticsUpdateCookiePartitioning()
 {
 }
 
-void TestController::statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef, bool)
+void TestController::statisticsSetShouldPartitionCookiesForHost(WKStringRef, bool)
 {
 }
 

@@ -41,22 +41,16 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
-struct PrevalentResourceTelemetry {
-    unsigned numberOfTimesDataRecordsRemoved;
-    bool hasHadUserInteraction;
-    unsigned daysSinceUserInteraction;
-    unsigned subframeUnderTopFrameOrigins;
-    unsigned subresourceUnderTopFrameOrigins;
-    unsigned subresourceUniqueRedirectsTo;
-};
+enum class ShouldClearFirst;
 
 // FIXME: We should probably consider merging this with WebResourceLoadStatisticsStore.
 class ResourceLoadStatisticsStore : public ThreadSafeRefCounted<ResourceLoadStatisticsStore> {
 public:
-    static Ref<ResourceLoadStatisticsStore> create();
+    using UpdateCookiePartitioningForDomainsHandler = WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst)>;
+    static Ref<ResourceLoadStatisticsStore> create(UpdateCookiePartitioningForDomainsHandler&&);
 
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
-    void readDataFromDecoder(WebCore::KeyedDecoder&);
+    void populateFromDecoder(WebCore::KeyedDecoder&);
 
     bool isEmpty() const { return m_resourceStatisticsMap.isEmpty(); }
     void clearInMemory();
@@ -65,38 +59,37 @@ public:
 
     bool isPrevalentResource(const String&) const;
     bool isGrandFathered(const String&) const;
+    bool hasHadRecentUserInteraction(const String&);
     
     void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
-
-    void setShouldPartitionCookiesCallback(WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst)>&&);
 
     void setTimeToLiveUserInteraction(std::optional<Seconds>);
     void setTimeToLiveCookiePartitionFree(Seconds);
     void setGrandfatheringTime(Seconds);
 
-    void fireShouldPartitionCookiesHandler();
-    void fireShouldPartitionCookiesHandler(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
+    void updateCookiePartitioning();
+    void updateCookiePartitioningForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst);
 
     void processStatistics(const WTF::Function<void (WebCore::ResourceLoadStatistics&)>&);
+    void processStatistics(const WTF::Function<void (const WebCore::ResourceLoadStatistics&)>&) const;
 
-    bool hasHadRecentUserInteraction(WebCore::ResourceLoadStatistics&) const;
     Vector<String> topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
-    Vector<PrevalentResourceTelemetry> sortedPrevalentResourceTelemetry() const;
     void updateStatisticsForRemovedDataRecords(const HashSet<String>& prevalentResourceDomains);
 
     void handleFreshStartWithEmptyOrNoStore(HashSet<String>&& topPrivatelyControlledDomainsToGrandfather);
     void includeTodayAsOperatingDateIfNecessary();
 
 private:
-    ResourceLoadStatisticsStore() = default;
+    explicit ResourceLoadStatisticsStore(UpdateCookiePartitioningForDomainsHandler&&);
 
     bool shouldPartitionCookies(const WebCore::ResourceLoadStatistics&) const;
     bool hasStatisticsExpired(const WebCore::ResourceLoadStatistics&) const;
+    bool hasHadUnexpiredRecentUserInteraction(WebCore::ResourceLoadStatistics&) const;
 
     HashMap<String, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
     Deque<WTF::WallTime> m_operatingDates;
 
-    WTF::Function<void(const Vector<String>&, const Vector<String>&, bool clearFirst)> m_shouldPartitionCookiesForDomainsHandler;
+    UpdateCookiePartitioningForDomainsHandler m_updateCookiePartitioningForDomainsHandler;
 
     std::optional<Seconds> m_timeToLiveUserInteraction;
     Seconds m_timeToLiveCookiePartitionFree { 24_h };

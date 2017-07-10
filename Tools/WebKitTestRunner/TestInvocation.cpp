@@ -1042,12 +1042,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
     
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireShouldPartitionCookiesHandler")) {
-        TestController::singleton().statisticsFireShouldPartitionCookiesHandler();
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsUpdateCookiePartitioning")) {
+        TestController::singleton().statisticsUpdateCookiePartitioning();
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsFireShouldPartitionCookiesHandlerForOneDomain")) {
+    if (WKStringIsEqualToUTF8CString(messageName, "StatisticsSetShouldPartitionCookiesForHost")) {
         ASSERT(WKGetTypeID(messageBody) == WKDictionaryGetTypeID());
         
         WKDictionaryRef messageBodyDictionary = static_cast<WKDictionaryRef>(messageBody);
@@ -1057,7 +1057,7 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKStringRef hostName = static_cast<WKStringRef>(WKDictionaryGetItemForKey(messageBodyDictionary, hostNameKey.get()));
         WKBooleanRef value = static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(messageBodyDictionary, valueKey.get()));
         
-        TestController::singleton().statisticsFireShouldPartitionCookiesHandlerForOneDomain(hostName, WKBooleanGetValue(value));
+        TestController::singleton().statisticsSetShouldPartitionCookiesForHost(hostName, WKBooleanGetValue(value));
         return nullptr;
     }
     

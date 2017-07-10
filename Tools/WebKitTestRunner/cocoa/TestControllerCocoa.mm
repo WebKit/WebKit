@@ -306,14 +306,14 @@ void TestController::statisticsProcessStatisticsAndDataRecords()
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsProcessStatisticsAndDataRecords];
 }
 
-void TestController::statisticsFireShouldPartitionCookiesHandler()
+void TestController::statisticsUpdateCookiePartitioning()
 {
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsFireShouldPartitionCookiesHandler];
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsUpdateCookiePartitioning];
 }
 
-void TestController::statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef hostName, bool value)
+void TestController::statisticsSetShouldPartitionCookiesForHost(WKStringRef hostName, bool value)
 {
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsFireShouldPartitionCookiesHandlerForOneDomain:value forHost:toNSString(hostName)];
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetShouldPartitionCookies:value forHost:toNSString(hostName)];
 }
 
 void TestController::statisticsSubmitTelemetry()

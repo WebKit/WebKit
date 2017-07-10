@@ -327,4 +327,27 @@ MappedFileData::MappedFileData(const String& filePath, bool& success)
 #endif
 }
 
+PlatformFileHandle openAndLockFile(const String& path, FileOpenMode openMode, FileLockMode lockMode)
+{
+    auto handle = openFile(path, openMode);
+    if (handle == invalidPlatformFileHandle)
+        return invalidPlatformFileHandle;
+
+#if USE(FILE_LOCK)
+    bool locked = lockFile(handle, lockMode);
+    ASSERT_UNUSED(locked, locked);
+#endif
+
+    return handle;
+}
+
+void unlockAndCloseFile(PlatformFileHandle handle)
+{
+#if USE(FILE_LOCK)
+    bool unlocked = unlockFile(handle);
+    ASSERT_UNUSED(unlocked, unlocked);
+#endif
+    closeFile(handle);
+}
+
 } // namespace WebCore

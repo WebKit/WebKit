@@ -1,3 +1,28 @@
+2017-07-10  Chris Dumez  <cdumez@apple.com>
+
+        Further WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore clean up
+        https://bugs.webkit.org/show_bug.cgi?id=174301
+
+        Reviewed by Brent Fulgham.
+
+        Rename some of the testRunner API for clarity and to better match what it calls
+        internally.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::statisticsUpdateCookiePartitioning):
+        (WTR::TestRunner::statisticsSetShouldPartitionCookiesForHost):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::statisticsUpdateCookiePartitioning):
+        (WTR::TestController::statisticsSetShouldPartitionCookiesForHost):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::statisticsUpdateCookiePartitioning):
+        (WTR::TestController::statisticsSetShouldPartitionCookiesForHost):
+
 2017-07-10  Charlie Turner  <cturner@igalia.com>
 
         [GStreamer] Live twitch.tv videos do not play

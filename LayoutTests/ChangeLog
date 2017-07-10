@@ -1,3 +1,16 @@
+2017-07-10  Chris Dumez  <cdumez@apple.com>
+
+        Further WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore clean up
+        https://bugs.webkit.org/show_bug.cgi?id=174301
+
+        Reviewed by Brent Fulgham.
+
+        Update existing layout tests to reflect testRunner API changes.
+
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html:
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html:
+        * http/tests/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html:
+
 2017-07-10  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r210226): Keyboard-focused element not preserved when navigating back through page cache, causing multiple elements to have focus

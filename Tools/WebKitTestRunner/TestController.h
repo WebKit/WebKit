@@ -162,8 +162,8 @@ public:
     void setStatisticsTimeToLiveUserInteraction(double seconds);
     void setStatisticsTimeToLiveCookiePartitionFree(double seconds);
     void statisticsProcessStatisticsAndDataRecords();
-    void statisticsFireShouldPartitionCookiesHandler();
-    void statisticsFireShouldPartitionCookiesHandlerForOneDomain(WKStringRef hostName, bool value);
+    void statisticsUpdateCookiePartitioning();
+    void statisticsSetShouldPartitionCookiesForHost(WKStringRef hostName, bool value);
     void statisticsSubmitTelemetry();
     void setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool);
     void setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool);

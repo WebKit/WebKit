@@ -52,7 +52,7 @@ void OriginLock::lock()
     m_mutex.lock();
 
 #if USE(FILE_LOCK)
-    m_lockHandle = openFile(m_lockFileName, OpenForWrite);
+    m_lockHandle = openAndLockFile(m_lockFileName, OpenForWrite);
     if (m_lockHandle == invalidPlatformFileHandle) {
         // The only way we can get here is if the directory containing the lock
         // has been deleted or we were given a path to a non-existant directory.
@@ -60,8 +60,6 @@ void OriginLock::lock()
         m_mutex.unlock();
         return;
     }
-
-    lockFile(m_lockHandle, LockExclusive);
 #endif
 }
 
@@ -75,9 +73,7 @@ void OriginLock::unlock()
     if (m_lockHandle == invalidPlatformFileHandle) 
         return;
 
-    unlockFile(m_lockHandle);
-
-    closeFile(m_lockHandle);
+    unlockAndCloseFile(m_lockHandle);
     m_lockHandle = invalidPlatformFileHandle;
 #endif
 

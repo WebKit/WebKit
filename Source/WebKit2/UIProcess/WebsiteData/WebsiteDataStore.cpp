@@ -1099,10 +1099,10 @@ void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<Webs
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void WebsiteDataStore::updateCookiePartitioningForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst)
+void WebsiteDataStore::updateCookiePartitioningForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst shouldClearFirst)
 {
     for (auto& processPool : processPools())
-        processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst));
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst == ShouldClearFirst::Yes));
 }
 #endif
 
@@ -1263,7 +1263,7 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
 
     if (enabled) {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-        m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, [this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool shouldClearFirst) {
+        m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, [this] (const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst shouldClearFirst) {
             updateCookiePartitioningForTopPrivatelyOwnedDomains(domainsToRemove, domainsToAdd, shouldClearFirst);
         });
 #else
