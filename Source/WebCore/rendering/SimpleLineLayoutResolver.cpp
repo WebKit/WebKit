@@ -141,20 +141,32 @@ unsigned RunResolver::adjustLineIndexForStruts(LayoutUnit y, IndexType type, uns
         return lineIndexCandidate;
     unsigned strutIndex = 0;
     std::optional<unsigned> lastIndexCandidate;
-    float topPosition = strut.lineBreak * m_lineHeight + (m_baseline - m_ascent);
+    auto top = strut.lineBreak * m_lineHeight;
+    auto lineHeightWithOverflow = m_lineHeight;
+    // If font is larger than the line height (glyphs overflow), use the font size when checking line boundaries.
+    if (m_ascent + m_descent > m_lineHeight) {
+        lineHeightWithOverflow = m_ascent + m_descent;
+        top += m_baseline - m_ascent;
+    }
+    auto bottom = top + lineHeightWithOverflow;
     for (auto lineIndex = strut.lineBreak; lineIndex < m_layout.lineCount(); ++lineIndex) {
         float strutOffset = 0;
         if (strutIndex < struts.size() && struts.at(strutIndex).lineBreak == lineIndex)
             strutOffset = struts.at(strutIndex++).offset;
-        if (y >= topPosition && y < (topPosition + m_ascent + m_descent + strutOffset)) {
+        bottom = top + strutOffset + lineHeightWithOverflow;
+        if (y >= top && y < bottom) {
             if (type == IndexType::First)
                 return lineIndex;
             lastIndexCandidate = lineIndex;
         } else if (lastIndexCandidate)
             return *lastIndexCandidate;
-        topPosition += m_lineHeight + strutOffset;
+        top += m_lineHeight + strutOffset;
     }
-    return m_layout.lineCount() - 1;
+    if (lastIndexCandidate || y >= bottom)
+        return m_layout.lineCount() - 1;
+    // We missed the line.
+    ASSERT_NOT_REACHED();
+    return lineIndexCandidate;
 }
 
 unsigned RunResolver::lineIndexForHeight(LayoutUnit height, IndexType type) const
