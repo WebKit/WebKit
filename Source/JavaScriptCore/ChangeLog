@@ -1,3 +1,24 @@
+2017-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Drop LineNumberAdder since we no longer treat <LF><CR> (not <CR><LF>) as one line terminator
+        https://bugs.webkit.org/show_bug.cgi?id=174296
+
+        Reviewed by Mark Lam.
+
+        Previously, we treat <LF><CR> as one line terminator. So we increase line number by one.
+        It caused a problem in scanning template literals. While template literals normalize
+        <LF><CR> to <LF><LF>, we still needed to increase line number by only one.
+        To handle it correctly, LineNumberAdder is introduced.
+
+        As of r219263, <LF><CR> is counted as two line terminators. So we do not need to have
+        LineNumberAdder. Let's just use shiftLineTerminator() instead.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseTemplateLiteral):
+        (JSC::LineNumberAdder::LineNumberAdder): Deleted.
+        (JSC::LineNumberAdder::clear): Deleted.
+        (JSC::LineNumberAdder::add): Deleted.
+
 2017-07-09  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] ICU headers aren’t treated as system headers after r219155
