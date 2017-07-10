@@ -1,3 +1,23 @@
+2017-07-10  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r210226): Keyboard-focused element not preserved when navigating back through page cache, causing multiple elements to have focus
+        https://bugs.webkit.org/show_bug.cgi?id=174302
+        <rdar://problem/33204273>
+
+        Reviewed by Antti Koivisto.
+
+        Don't clear the active/hovered/focused elements when destroying the render tree,
+        since we might need to reconstruct it later, and would like to remember which
+        elements those were.
+
+        Only the focused state actually stuck when going in and out of the page cache,
+        but this patch removes all the element pointer clearing for consistency.
+
+        Test: fast/history/page-cache-element-state-focused.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::destroyRenderTree):
+
 2017-07-10  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r218616): Cannot build WebCore for macOS 10.12 with macOS 10.13 SDK

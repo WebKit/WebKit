@@ -1,3 +1,14 @@
+2017-07-10  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r210226): Keyboard-focused element not preserved when navigating back through page cache, causing multiple elements to have focus
+        https://bugs.webkit.org/show_bug.cgi?id=174302
+        <rdar://problem/33204273>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/history/page-cache-element-state-focused-expected.html: Added.
+        * fast/history/page-cache-element-state-focused.html: Added.
+
 2017-07-10  Zalan Bujtas  <zalan@apple.com>
 
         Block of text is missing in iBooks sample books.

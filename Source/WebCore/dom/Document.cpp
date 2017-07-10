@@ -2253,11 +2253,6 @@ void Document::destroyRenderTree()
         setFullScreenRenderer(nullptr);
 #endif
 
-    m_hoveredElement = nullptr;
-    m_focusedElement = nullptr;
-    m_activeElement = nullptr;
-    m_focusNavigationStartingNode = nullptr;
-
     if (m_documentElement)
         RenderTreeUpdater::tearDownRenderers(*m_documentElement);
 
