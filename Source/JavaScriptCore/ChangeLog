@@ -1,3 +1,18 @@
+2017-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Move make-js-file-arrays.py from WebCore to JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=174024
+
+        Reviewed by Michael Catanzaro.
+
+        It's currently used only by WebCore, but it depends on other JavaScriptCore scripts and it's not WebCore
+        specific at all. I plan to use it to compile the JavaScript atoms used by the WebDriver implementation.
+        Added command line option to pass the namespace to use instead of using WebCore.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/make-js-file-arrays.py: Renamed from Source/WebCore/Scripts/make-js-file-arrays.py.
+        (main):
+
 2017-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Drop LineNumberAdder since we no longer treat <LF><CR> (not <CR><LF>) as one line terminator

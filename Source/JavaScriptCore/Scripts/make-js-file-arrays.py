@@ -41,24 +41,30 @@ def chunk(list, chunkSize):
 
 
 def main():
-    parser = OptionParser(usage="usage: %prog [--no-minify] header source [input [input...]]")
+    parser = OptionParser(usage="usage: %prog [options] header source [input [input...]]")
     parser.add_option('--no-minify', action='store_true', help='Do not run the input files through jsmin')
+    parser.add_option('-n', '--namespace', help='Namespace to use')
     (options, arguments) = parser.parse_args()
+    if not options.namespace:
+        print 'Error: must provide a namespace'
+        parser.print_usage()
+        exit(-1)
     if len(arguments) < 3:
         print 'Error: must provide at least 3 arguments'
         parser.print_usage()
         exit(-1)
 
+    namespace = options.namespace
     headerPath = arguments[0]
     sourcePath = arguments[1]
     inputPaths = arguments[2:]
 
     headerFile = open(headerPath, 'w')
-    print >> headerFile, 'namespace WebCore {'
+    print >> headerFile, 'namespace {0:s} {{'.format(namespace)
 
     sourceFile = open(sourcePath, 'w')
     print >> sourceFile, '#include "{0:s}"'.format(os.path.basename(headerPath))
-    print >> sourceFile, 'namespace WebCore {'
+    print >> sourceFile, 'namespace {0:s} {{'.format(namespace)
 
     jsm = JavascriptMinify()
 
@@ -84,8 +90,8 @@ def main():
 
         print >> sourceFile, '};'
 
-    print >> headerFile, '}'
-    print >> sourceFile, '}'
+    print >> headerFile, '}} // namespace {0:s}'.format(namespace)
+    print >> sourceFile, '}} // namespace {0:s}'.format(namespace)
 
 if __name__ == '__main__':
     main()

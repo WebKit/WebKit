@@ -3748,9 +3748,11 @@ if (WebCore_USER_AGENT_SCRIPTS)
     MAKE_JS_FILE_ARRAYS(
         ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScriptsData.cpp
         ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScripts.h
+        WebCore
         WebCore_USER_AGENT_SCRIPTS
         WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES
     )
+    list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/UserAgentScriptsData.cpp)
 endif ()
 
 if (ENABLE_WEB_RTC)
@@ -3764,9 +3766,11 @@ if (ENABLE_WEB_RTC)
     MAKE_JS_FILE_ARRAYS(
         ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScriptsData.cpp
         ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScriptsData.h
+        WebCore
         WebCore_SDP_PROCESSOR_SCRIPTS
         WebCore_SDP_PROCESSOR_SCRIPTS_DEPENDENCIES
     )
+    list(APPEND WebCore_DERIVED_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/SDPProcessorScriptsData.cpp)
 endif ()
 
 # Generate plug-in resources

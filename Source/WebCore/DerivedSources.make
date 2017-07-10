@@ -1109,8 +1109,8 @@ endif
 ifdef WEBCORE_SDP_PROCESSOR_SCRIPTS
 all : SDPProcessorScriptsData.h
 
-SDPProcessorScriptsData.h : Scripts/make-js-file-arrays.py $(WEBCORE_SDP_PROCESSOR_SCRIPTS)
-	PYTHONPATH=$(JavaScriptCore_SCRIPTS_DIR) $(PYTHON) $< $@ SDPProcessorScriptsData.cpp $(WEBCORE_SDP_PROCESSOR_SCRIPTS)
+SDPProcessorScriptsData.h : $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py $(WEBCORE_SDP_PROCESSOR_SCRIPTS)
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py -n WebCore $@ SDPProcessorScriptsData.cpp $(WEBCORE_SDP_PROCESSOR_SCRIPTS)
 endif
 
 # --------
@@ -1164,8 +1164,8 @@ endif
 ifdef USER_AGENT_SCRIPTS
 all : UserAgentScripts.h
 
-UserAgentScripts.h : Scripts/make-js-file-arrays.py $(USER_AGENT_SCRIPTS)
-	PYTHONPATH=$(JavaScriptCore_SCRIPTS_DIR) $(PYTHON) $< $@ UserAgentScriptsData.cpp $(USER_AGENT_SCRIPTS)
+UserAgentScripts.h : $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py $(USER_AGENT_SCRIPTS)
+	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py -n WebCore $@ UserAgentScriptsData.cpp $(USER_AGENT_SCRIPTS)
 endif
 
 # --------

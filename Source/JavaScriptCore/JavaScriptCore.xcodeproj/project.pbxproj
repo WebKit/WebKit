@@ -1900,6 +1900,7 @@
 		A5EA710A19F6DE7E0098F5EC /* generate_objc_internal_header.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F619F6DE5A0098F5EC /* generate_objc_internal_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EA710C19F6DE820098F5EC /* objc_generator.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EA70F819F6DE5A0098F5EC /* objc_generator.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EA710E19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EA710D19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5EF13F91F073204000F0442 /* make-js-file-arrays.py in Headers */ = {isa = PBXBuildFile; fileRef = A5EF13F71F0731B4000F0442 /* make-js-file-arrays.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EF9B141A1D43F600702E90 /* generate_cpp_backend_dispatcher_header.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D11A05C76F005CAB76 /* generate_cpp_backend_dispatcher_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EF9B151A1D43FA00702E90 /* generate_cpp_backend_dispatcher_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D21A05C76F005CAB76 /* generate_cpp_backend_dispatcher_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		A5EF9B161A1D440000702E90 /* generate_cpp_frontend_dispatcher_header.py in Headers */ = {isa = PBXBuildFile; fileRef = C4F4B6D31A05C76F005CAB76 /* generate_cpp_frontend_dispatcher_header.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4532,6 +4533,7 @@
 		A5EA70F619F6DE5A0098F5EC /* generate_objc_internal_header.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_internal_header.py; sourceTree = "<group>"; };
 		A5EA70F819F6DE5A0098F5EC /* objc_generator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = objc_generator.py; sourceTree = "<group>"; };
 		A5EA710D19F6DF810098F5EC /* InspectorAlternateBackendDispatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAlternateBackendDispatchers.h; sourceTree = "<group>"; };
+		A5EF13F71F0731B4000F0442 /* make-js-file-arrays.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "make-js-file-arrays.py"; sourceTree = "<group>"; };
 		A5FC84B01D1DDAC8006B5C46 /* DebuggerLocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebuggerLocation.cpp; sourceTree = "<group>"; };
 		A5FC84B11D1DDAC8006B5C46 /* DebuggerLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerLocation.h; sourceTree = "<group>"; };
 		A5FD0065189AFE9C00633231 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
@@ -7827,6 +7829,7 @@
 				9959E9301BD181F6001AA413 /* inline-and-minify-stylesheets-and-scripts.py */,
 				9959E9291BD17FA0001AA413 /* jsmin.py */,
 				99DA00AD1BD5993E00F4575C /* lazywriter.py */,
+				A5EF13F71F0731B4000F0442 /* make-js-file-arrays.py */,
 				99DA00AE1BD5993E00F4575C /* UpdateContents.py */,
 				9959E92A1BD17FA0001AA413 /* xxd.pl */,
 			);
@@ -9221,6 +9224,7 @@
 				860161E40F3A83C100F84710 /* MacroAssemblerX86.h in Headers */,
 				860161E50F3A83C100F84710 /* MacroAssemblerX86_64.h in Headers */,
 				860161E60F3A83C100F84710 /* MacroAssemblerX86Common.h in Headers */,
+				A5EF13F91F073204000F0442 /* make-js-file-arrays.py in Headers */,
 				A700873A17CBE85300C3E643 /* MapConstructor.h in Headers */,
 				A74DEF94182D991400522C22 /* MapIteratorPrototype.h in Headers */,
 				A700873E17CBE8D300C3E643 /* MapPrototype.h in Headers */,
