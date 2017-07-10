@@ -362,8 +362,6 @@ webkit.org/b/171814 http/tests/media/hls/video-duration-accessibility.html [ Fai
 
 webkit.org/b/172241 http/tests/appcache/404-resource-with-slow-main-resource.php [ Pass Failure ]
 
-webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout ]
-
 webkit.org/b/172331 workers/wasm-long-compile-many.html [ Pass Timeout ]
 
 webkit.org/b/172807 imported/w3c/web-platform-tests/css/selectors4/focus-display-none-001.html [ Pass Failure ]
@@ -371,8 +369,6 @@ webkit.org/b/172807 imported/w3c/web-platform-tests/css/selectors4/focus-within-
 
 webkit.org/b/168409 media/modern-media-controls/airplay-button/airplay-button.html [ Pass Timeout ]
 webkit.org/b/168265 media/modern-media-controls/forward-button/forward-button.html [ Pass Timeout ]
-
-webkit.org/b/172922 [ Debug ] webrtc/datachannel/basic.html [ Pass Timeout ]
 
 webkit.org/b/173432 [ Debug ] imported/w3c/web-platform-tests/fetch/nosniff/importscripts.html [ Pass Crash ]
 

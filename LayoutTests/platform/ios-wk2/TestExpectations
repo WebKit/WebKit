@@ -1819,10 +1819,6 @@ fast/scrolling/ios/scroll-events-back-forward-after-pageshow.html [ Pass Failure
 
 webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ Pass Timeout ]
 
-#See webkit.org/b/170508
-webrtc/video.html [ Failure ]
-webrtc/video-with-receiver.html [ Failure ]
-
 # started to fail after new snapshotting in r202532
 webkit.org/b/150942 animations/multiple-backgrounds.html [ Pass ImageOnlyFailure ]
 compositing/contents-scale/rasterization-scale.html [ ImageOnlyFailure ]
@@ -1942,32 +1938,15 @@ webkit.org/b/169637 imported/w3c/web-platform-tests/XMLHttpRequest/timeout-multi
 
 webkit.org/b/171886 imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html [ Pass Failure ]
 
-webkit.org/b/171899 webrtc/libwebrtc/release-while-setting-local-description.html [ Pass Failure ]
-
-webkit.org/b/171930 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Pass Failure ]
-
 webkit.org/b/171945 [ Debug ] perf/class-list-remove.html [ Pass Failure Timeout ]
 
 webkit.org/b/171951 [ Debug ] fast/hidpi/filters-and-image-buffer-resolution.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/171957 [ Debug ] fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
 
-webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout ]
-
-webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Pass Failure ]
-webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Pass Failure ]
-
-webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Pass Failure ]
-
 webkit.org/b/172772 [ Release ] http/tests/cache/cancel-during-revalidation-succeeded.html [ Skip ]
 
 webkit.org/b/172454 http/tests/navigation/statistics.html [ Pass Failure ]
-
-webkit.org/b/171895 webrtc/audio-replace-track.html [ Pass Failure ]
-
-webkit.org/b/170870 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
-
-webkit.org/b/173486 webrtc/video-replace-muted-track.html [ Skip ]
 
 webkit.org/b/17373 fast/forms/file/input-file-write-files-using-open-panel.html [ Skip ]
 

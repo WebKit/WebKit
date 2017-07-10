@@ -290,7 +290,6 @@ webkit.org/b/149891 imported/w3c/web-platform-tests/css/css-grid-1/grid-layout-p
 webkit.org/b/169271 imported/w3c/web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ ImageOnlyFailure ]
 
 # Flaky tests at import time
-imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure Pass ]
 imported/w3c/web-platform-tests/css/css-scoping-1/css-scoping-shadow-host-namespace.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/IndexedDB/abort-in-initial-upgradeneeded.html [ Pass Failure ]
 imported/w3c/web-platform-tests/IndexedDB/clone-before-keypath-eval.html [ Pass Failure ]
@@ -343,7 +342,6 @@ webkit.org/b/169565 imported/w3c/web-platform-tests/cors/304.htm [ Failure ]
 
 # Tests that are flakey due to unhandled promise rejection error messages
 webkit.org/b/171094 imported/w3c/web-platform-tests/streams/readable-streams/tee.html [ Pass Failure ]
-webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Pass Failure ]
 webkit.org/b/171094 streams/brand-checks.html [ Pass Failure ]
 webkit.org/b/171094 streams/reference-implementation/abstract-ops.html [ Pass Failure ]
 
@@ -765,17 +763,25 @@ webkit.org/b/146182 editing/selection/leak-document-with-selection-inside.html [
 media/session [ Skip ]
 
 webrtc/datachannel/multiple-connections.html [ Slow ]
-webrtc/negotiatedneeded-event-addStream.html [ Pass Crash ]
 webrtc/video-replace-track.html [ Pass Failure ]
 webrtc/video-getParameters.html [ Failure ]
 webkit.org/b/170178 webrtc/video-replace-track-to-null.html [ Pass Failure ]
+webrtc/video-rotation.html [ Pass Failure ]
+webkit.org/b/170704 webrtc/video-mute.html [ Failure ]
+webkit.org/b/170701 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
+webkit.org/b/173486 webrtc/video-replace-muted-track.html [ Pass Failure Timeout ]
+
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure ]
+webkit.org/b/171094 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]
+webkit.org/b/171930 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Failure ]
+webkit.org/b/172f21 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
+
 fast/mediastream/RTCPeerConnection-closed-state.html [ Skip ]
 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Skip ]
 fast/mediastream/RTCPeerConnection-more-media-to-negotiate.html [ Skip ]
 fast/mediastream/RTCPeerConnection-overloaded-operations-params.html [ Skip ]
 fast/mediastream/RTCRtpSender-replaceTrack.html [ Skip ]
 fast/mediastream/RTCPeerConnection-dtmf.html [ Failure ]
-webrtc/video-rotation.html [ Pass Failure ]
 # libwebrtc backend doesn't generate a=bundle-only lines
 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]
 
@@ -1372,11 +1378,7 @@ webkit.org/b/170699 [ Debug ] imported/w3c/web-platform-tests/html/webappapis/ti
 
 webkit.org/b/90724 compositing/iframes/iframe-size-from-zero.html [ Failure Pass ]
 
-webkit.org/b/170704 webrtc/video-mute.html [ Pass Failure ]
-
 webkit.org/b/171031 imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders-cl.htm [ Failure ]
-
-webkit.org/b/170701 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
 
 webkit.org/b/172961 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Pass Timeout ]
 
@@ -1392,8 +1394,5 @@ webkit.org/b/172378 imported/blink/printing/print-document-without-documentEleme
 webkit.org/b/172609 fetch/closing-while-fetching-blob.html [ Skip ]
 
 webkit.org/b/172514 [ Debug ] imported/w3c/web-platform-tests/innerText/getter.html [ Skip ]
-
-webkit.org/b/172827 webrtc/audio-peer-connection-webaudio.html [ Pass Failure ]
-webkit.org/b/172649 webrtc/peer-connection-audio-mute.html [ Pass Failure ]
 
 webkit.org/b/173333 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Skip ]

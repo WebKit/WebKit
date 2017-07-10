@@ -648,14 +648,6 @@ webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
 webkit.org/b/170960 fast/mediastream/getUserMedia-webaudio.html [ Pass Timeout ]
 
-webkit.org/b/170818 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Pass Failure ]
-
-webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Pass Failure ]
-
-webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Pass Failure ]
-
-webkit.org/b/171605 imported/w3c/web-platform-tests/webrtc/datachannel-emptystring.html [ Pass Failure ]
-
 webkit.org/b/171553 [ Release ] http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
 
 webkit.org/b/172703  webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
@@ -666,12 +658,6 @@ webkit.org/b/171837 [ Debug ] http/tests/security/storage-blocking-loosened-plug
 
 webkit.org/b/171862 [ Sierra Debug ] storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Pass Failure ]
 
-webkit.org/b/170870 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
-
-webkit.org/b/171895 webrtc/audio-replace-track.html [ Pass Failure ]
-
-webkit.org/b/171930 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Pass Failure ]
-
 webkit.org/b/171935 [ Sierra ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html [ Pass Failure ]
 
 webkit.org/b/171939 [ Sierra Release ] media/track/track-cue-rendering-on-resize.html [ Pass Timeout ]
@@ -681,12 +667,6 @@ webkit.org/b/171947 [ Sierra Release ] transitions/extra-transition.html [ Pass 
 webkit.org/b/170699 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.html [ Pass Failure ]
 
 webkit.org/b/168937  tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html [ Pass Failure ]
-
-webkit.org/b/172034 [ Sierra Release ] webrtc/closing-peerconnection.html [ Pass Timeout ]
-
-webkit.org/b/171061 webrtc/datachannel/filter-ice-candidate.html [ Pass Timeout ]
-
-webkit.org/b/172521 imported/w3c/web-platform-tests/webrtc/getstats.html [ Pass Failure ]
 
 webkit.org/b/172054 [ Sierra Debug ] loader/stateobjects/replacestate-size-iframe.html [ Pass Timeout ]
 
@@ -703,8 +683,6 @@ webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbi
 webkit.org/b/172834 [ ElCapitan ] imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_getAllKeys.html [ Pass Failure ]
 
 webkit.org/b/172201 webaudio/silent-audio-interrupted-in-background.html [ Pass Timeout ]
-
-webkit.org/b/173608 webrtc/video-replace-muted-track.html [ Pass Failure Timeout ]
 
 webkit.org/b/167757 workers/bomb.html [ Pass Timeout ]
 
