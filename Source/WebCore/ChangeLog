@@ -1,3 +1,16 @@
+2017-07-10  Jeremy Jones  <jeremyj@apple.com>
+
+        Captions and subtitles not showing up in picture-in-picture for MSE content
+        https://bugs.webkit.org/show_bug.cgi?id=174317
+        rdar://problem/33188591
+
+        Reviewed by Eric Carlson.
+
+        Reverts a regression created by r218403.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::updateTextTrackRepresentation):
+
 2017-07-10  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Link error when building WTF from WTF.proj project file.
