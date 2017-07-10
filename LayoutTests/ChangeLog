@@ -1,3 +1,12 @@
+2017-07-10  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed test expectations for http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html.
+        https://bugs.webkit.org/show_bug.cgi?id=174120
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-07-03  Brian Burg  <bburg@apple.com>
 
         Web Replay: remove some unused code

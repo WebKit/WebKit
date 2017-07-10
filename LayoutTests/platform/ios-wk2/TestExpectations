@@ -1679,7 +1679,6 @@ transitions/visited-link-color.html [ Failure Pass ]
 transitions/zero-duration-in-list.html [ Failure Pass ]
 transitions/zero-duration-with-non-zero-delay-end.html [ Failure Pass ]
 
-http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
 
 # Skip flaky/timeout tests
 fast/css-grid-layout/flex-content-sized-columns-resize.html [ Skip ]
