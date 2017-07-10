@@ -1,3 +1,15 @@
+2017-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        fast/text/trak-optimizeLegibility.html is failing on macOS High Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=174325
+        <rdar://problem/33190322>
+
+        Reviewed by Zalan Bujtas.
+
+        The name of the font changed.
+
+        * fast/text/trak-optimizeLegibility.html:
+
 2017-07-10  Youenn Fablet  <youenn@apple.com>
 
         Update webrtc expectations
