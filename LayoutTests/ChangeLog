@@ -1,3 +1,17 @@
+2017-07-08  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: User interaction should always go to top document
+        https://bugs.webkit.org/show_bug.cgi?id=174120
+        <rdar://problem/33117899>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/loading/resourceLoadStatistics/resources/dummy.html: Added.
+        * http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html: Added.
+        * platform/mac-wk2/TestExpectations:
+            Added as [ Pass ].
+
 2017-07-08  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: "visibility:hidden" does not hide play button for video elements

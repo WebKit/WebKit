@@ -54,6 +54,19 @@ ResourceLoadObserver& ResourceLoadObserver::shared()
     return resourceLoadObserver;
 }
 
+void ResourceLoadObserver::setShouldThrottleObserverNotifications(bool shouldThrottle)
+{
+    m_shouldThrottleNotifications = shouldThrottle;
+
+    if (!m_notificationTimer.isActive())
+        return;
+
+    // If we change the notification state, we need to restart any notifications
+    // so they will be on the right schedule.
+    m_notificationTimer.stop();
+    scheduleNotificationIfNeeded();
+}
+
 void ResourceLoadObserver::setNotificationCallback(WTF::Function<void (Vector<ResourceLoadStatistics>&&)>&& notificationCallback)
 {
     ASSERT(!m_notificationCallback);
@@ -232,7 +245,7 @@ void ResourceLoadObserver::scheduleNotificationIfNeeded()
     }
 
     if (!m_notificationTimer.isActive())
-        m_notificationTimer.startOneShot(minimumNotificationInterval);
+        m_notificationTimer.startOneShot(m_shouldThrottleNotifications ? minimumNotificationInterval : 0_s);
 }
 
 void ResourceLoadObserver::notificationTimerFired()

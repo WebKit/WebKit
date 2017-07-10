@@ -50,6 +50,8 @@ class ResourceLoadObserver {
     friend class WTF::NeverDestroyed<ResourceLoadObserver>;
 public:
     WEBCORE_EXPORT static ResourceLoadObserver& shared();
+
+    WEBCORE_EXPORT void setShouldThrottleObserverNotifications(bool);
     
     void logFrameNavigation(const Frame&, const Frame& topFrame, const ResourceRequest& newRequest);
     void logSubresourceLoading(const Frame*, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
@@ -73,6 +75,7 @@ private:
     HashMap<String, ResourceLoadStatistics> m_resourceStatisticsMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
     Timer m_notificationTimer;
+    bool m_shouldThrottleNotifications { true };
 };
     
 } // namespace WebCore

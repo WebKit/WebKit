@@ -710,3 +710,5 @@ webkit.org/b/167757 workers/bomb.html [ Pass Timeout ]
 
 webkit.org/b/172397 [ Sierra Debug ] animations/needs-layout.html [ Pass ImageOnlyFailure ]
 
+# Currently only tests with click, not tap.
+http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
