@@ -103,6 +103,14 @@ SoupNetworkSession& NetworkStorageSession::getOrCreateSoupNetworkSession() const
     return *m_session;
 }
 
+void NetworkStorageSession::clearSoupNetworkSessionAndCookieStorage()
+{
+    ASSERT(defaultSession().get() == this);
+    m_session = nullptr;
+    m_cookieObserverHandler = nullptr;
+    m_cookieStorage = nullptr;
+}
+
 void NetworkStorageSession::cookiesDidChange(NetworkStorageSession* session)
 {
     if (session->m_cookieObserverHandler)

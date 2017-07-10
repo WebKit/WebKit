@@ -29,12 +29,21 @@
 
 #include "ChildProcessMain.h"
 #include "NetworkProcessMainUnix.h"
+#include <WebCore/NetworkStorageSession.h>
 
 namespace WebKit {
 
+class NetworkProcessMain final: public ChildProcessMainBase {
+public:
+    void platformFinalize() override
+    {
+        WebCore::NetworkStorageSession::defaultStorageSession().clearSoupNetworkSessionAndCookieStorage();
+    }
+};
+
 int NetworkProcessMainUnix(int argc, char** argv)
 {
-    return ChildProcessMain<NetworkProcess, ChildProcessMainBase>(argc, argv);
+    return ChildProcessMain<NetworkProcess, NetworkProcessMain>(argc, argv);
 }
 
 } // namespace WebKit

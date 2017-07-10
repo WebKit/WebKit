@@ -92,6 +92,7 @@ public:
 
     SoupNetworkSession* soupNetworkSession() const { return m_session.get(); };
     SoupNetworkSession& getOrCreateSoupNetworkSession() const;
+    void clearSoupNetworkSessionAndCookieStorage();
     SoupCookieJar* cookieStorage() const;
     void setCookieStorage(SoupCookieJar*);
     void setCookieObserverHandler(Function<void ()>&&);
