@@ -317,9 +317,9 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.10.4"
+    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:50c2f5af50a6cc6c0a3f3ed43bdd8b5e2bff00bacfb766d4be139ec06d8b5218">
+            hash="sha256:bc06243600817f637029da29d089d5908d1d266542f68bf6626a10c5f05f1f1d">
       <patch file="gstreamer-0001-protection-added-function-to-filter-system-ids.patch" strip="1"/>
     </branch>
   </autotools>
@@ -333,9 +333,9 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.10.4"
+    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:f6d245b6b3d4cb733f81ebb021074c525ece83db0c10e932794b339b8d935eb7"/>
+            hash="sha256:1c401a79bd1e4521c6ef1b66579bddedd9136e164e54792aab4bfcf3485bf9a7"/>
   </autotools>
 
   <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-gtk-doc">
@@ -347,9 +347,9 @@
       <dep package="libvpx"/>
     </dependencies>
 
-    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.10.4"
+    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:8a86c61434a8c44665365bd0b3557a040937d1f44bf69caee4e9ea816ce74d7e">
+            hash="sha256:be053f6ed716eeb517cec148cec637cdce571c6e04d5c21409e2876fb76c7639">
       <patch file="gst-plugins-good-0003-rtpbin-receive-bundle-support.patch" strip="1"/>
       <patch file="gst-plugins-good-0004-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
     </branch>
@@ -363,18 +363,18 @@
       <dep package="gst-plugins-base"/>
       <dep package="openh264"/>
     </dependencies>
-    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.10.4"
+    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:23ddae506b3a223b94869a0d3eea3e9a12e847f94d2d0e0b97102ce13ecd6966"/>
+            hash="sha256:c5806040bb83b43be86ce592e6a19c5d83d7776f7d9f434eb4b911c4efff3573"/>
   </autotools>
 
   <autotools id="gst-libav" autogen-sh="configure" autogenargs="--with-libav-extra-configure='--disable-yasm' --disable-gtk-doc">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.10.4"
+    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:6ca0feca75e3d48315e07f20ec37cf6260ed1e9dde58df355febd5016246268b"/>
+            hash="sha256:e4d2f315f478d47281fbfdfbd590a63d23704ca37911d7142d5992616f4b28d3"/>
   </autotools>
 
   <autotools id="xserver" autogenargs="--disable-xinerama --enable-glx --enable-composite --disable-xorg --disable-dmx --disable-xnest --disable-xquartz --disable-xwin --disable-xephyr --disable-xfake --disable-xfbdev --disable-install-setuid --disable-unit-tests --disable-present --enable-unix-transport --enable-tcp-transport --disable-local-transport --with-xkb-path=/usr/share/X11/xkb --with-xkb-output=/var/lib/xkb --with-xkb-bin-directory=/usr/bin --without-dtrace">
