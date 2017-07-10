@@ -222,7 +222,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/wpe/WebProcessPoolWPE.cpp
 
     WebProcess/Cookies/soup/WebCookieManagerSoup.cpp
-    WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp
 
     WebProcess/InjectedBundle/API/glib/WebKitConsoleMessage.cpp
     WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.cpp

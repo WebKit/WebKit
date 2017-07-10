@@ -27,7 +27,6 @@
 #include "WebCookieManager.h"
 
 #include "ChildProcess.h"
-#include "WebKitSoupCookieJarSqlite.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/SoupNetworkSession.h>
 #include <libsoup/soup.h>
@@ -81,7 +80,7 @@ void WebCookieManager::setCookiePersistentStorage(const String& storagePath, uin
         jar = adoptGRef(soup_cookie_jar_text_new(storagePath.utf8().data(), FALSE));
         break;
     case SoupCookiePersistentStorageSQLite:
-        jar = adoptGRef(webkitSoupCookieJarSqliteNew(storagePath));
+        jar = adoptGRef(soup_cookie_jar_db_new(storagePath.utf8().data(), FALSE));
         break;
     default:
         ASSERT_NOT_REACHED();

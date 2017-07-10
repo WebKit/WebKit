@@ -1,3 +1,30 @@
+2017-07-10  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [SOUP] Remove WebKitSoupCookieJarSqlite
+        https://bugs.webkit.org/show_bug.cgi?id=174310
+
+        Reviewed by Carlos Garcia Campos.
+
+        It seems WebKitSoupCookieJarSqlite uses exactly the same database format as the upstream
+        SoupCookieJarDb class. WebKitSoupCookieJarSqlite is a copy of SoupCookieJarSqlite that uses
+        WebCore's SQLite wrapper and WTF stuff. WebKitSoupCookieJarSqlite exists only because
+        SoupCookieJarDb is relatively new, and the older SoupCookieJarSqlite class existed only in
+        libsoup-gnome rather than libsoup proper. The advantage of continuing to use our
+        WebKitSoupCookieJarSqlite class, besides that we already know it works, is that it utilizes
+        the same SQLiteDatabase class that is used elsewhere in WebKit. But that's not really any
+        reason to keep the class around, when SoupCookieJarDb does exactly the same thing. It was
+        introduced in libsoup 2.42 and that is already our minimum required version, so we can
+        switch now.
+
+        This passes a quick sanity-check of Epiphany's cookies dialog and also TestCookieManager.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * WebProcess/Cookies/soup/WebCookieManagerSoup.cpp:
+        (WebKit::WebCookieManager::setCookiePersistentStorage):
+        * WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.cpp: Removed.
+        * WebProcess/Cookies/soup/WebKitSoupCookieJarSqlite.h: Removed.
+
 2017-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         REGRESSION(r213590): UI process updates the visible content rects more often than it did in iOS 10
