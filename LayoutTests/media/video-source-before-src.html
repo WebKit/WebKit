@@ -1,0 +1,28 @@
+<html>
+<head>
+<script>
+
+if (window.testRunner) {
+    internals.settings.setVideoPlaybackRequiresUserGesture(true);
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+window.onload = () => {
+    var video = document.getElementsByTagName("video")[0]
+    video.appendChild(document.createElement("source"))
+    video.src = "test.mp4"
+
+    setTimeout(()=>{
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 1)
+}
+
+</script>
+</head>
+<body>
+Append source element before setting src attribute.<br>
+<video width=320 height=240></video>
+</body>
+</html>

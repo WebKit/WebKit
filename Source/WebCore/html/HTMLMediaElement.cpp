@@ -1323,6 +1323,11 @@ void HTMLMediaElement::selectMediaResource()
         } else if (hasAttributeWithoutSynchronization(srcAttr)) {
             //    Otherwise, if the media element has no assigned media provider object but has a src attribute, then let mode be attribute.
             mode = Attribute;
+            ASSERT(m_player);
+            if (!m_player) {
+                RELEASE_LOG_ERROR(Media, "HTMLMediaElement::selectMediaResource(%p) - has srcAttr but m_player is not created", this);
+                return;
+            }
         } else if (auto firstSource = childrenOfType<HTMLSourceElement>(*this).first()) {
             //    Otherwise, if the media element does not have an assigned media provider object and does not have a src attribute,
             //    but does have a source element child, then let mode be children and let candidate be the first such source element
@@ -4362,9 +4367,12 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
     // 4.8.8 - If a source element is inserted as a child of a media element that has no src 
     // attribute and whose networkState has the value NETWORK_EMPTY, the user agent must invoke 
     // the media element's resource selection algorithm.
-    if (networkState() == HTMLMediaElement::NETWORK_EMPTY) {
+    if (m_networkState == NETWORK_EMPTY) {
         m_nextChildNodeToConsider = &source;
-        selectMediaResource();
+#if PLATFORM(IOS)
+        if (m_mediaSession->dataLoadingPermitted(*this))
+#endif
+            selectMediaResource();
         return;
     }
 

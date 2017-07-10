@@ -1,3 +1,27 @@
+2017-07-10  Jeremy Jones  <jeremyj@apple.com>
+
+        media element handle adding source immediately before src.
+        https://bugs.webkit.org/show_bug.cgi?id=174284
+        rdar://problem/33115439
+
+        Reviewed by David Kilzer.
+
+        Test: media/video-source-before-src.html
+
+        Adding a source causes a selectMediaResource block to be enqueued.
+        If dataLoadingPermitted prevents creating the m_player but sets the srcAttr, then
+        the enqueued selectMediaResource will be in a bad state, with a srcAttr but no m_player.
+
+        This fix prevents selectMediaResource from being called, if data loading is not permitted
+        when adding a source element, to match how it prevents player creation when setting srcAttr.
+
+        This fix also adds a debug assert to catch the problem earlier and adds an early return to
+        prevent the crash in release builds.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+
 2017-07-10  Megan Gardner  <megan_gardner@apple.com>
 
         Add location to NavigationActionData
