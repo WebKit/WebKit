@@ -1,3 +1,22 @@
+2017-07-10  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] http/tests/media/video-redirect.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=174260
+
+        Reviewed by Carlos Garcia Campos.
+
+        Make sure we're testing new URLs within the same security origin.
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::convertToInternalProtocol): Factor out setting our
+        internal URL schema.
+        (WebCore::MediaPlayerPrivateGStreamer::setPlaybinURL): Use the
+        refactored helper.
+        (WebCore::MediaPlayerPrivateGStreamer::loadNextLocation): Use
+        refactored helper to ensure both URLs have the same origin.
+
 2017-07-08  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: User interaction should always go to top document

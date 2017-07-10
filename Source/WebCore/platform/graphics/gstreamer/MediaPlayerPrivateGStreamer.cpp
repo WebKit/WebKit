@@ -210,6 +210,12 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     }
 }
 
+static void convertToInternalProtocol(URL& url)
+{
+    if (url.protocolIsInHTTPFamily())
+        url.setProtocol("webkit+" + url.protocol());
+}
+
 void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
 {
     // Clean out everything after file:// url path.
@@ -218,9 +224,7 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
         cleanURLString = cleanURLString.substring(0, url.pathEnd());
 
     m_url = URL(URL(), cleanURLString);
-
-    if (m_url.protocolIsInHTTPFamily())
-        m_url.setProtocol("webkit+" + url.protocol());
+    convertToInternalProtocol(m_url);
 
     GST_INFO("Load %s", m_url.string().utf8().data());
     g_object_set(m_pipeline.get(), "uri", m_url.string().utf8().data(), nullptr);
@@ -1668,6 +1672,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         // append the value of new-location to it.
         URL baseUrl = gst_uri_is_valid(newLocation) ? URL() : m_url;
         URL newUrl = URL(baseUrl, newLocation);
+        convertToInternalProtocol(newUrl);
 
         RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(m_url);
         if (securityOrigin->canRequest(newUrl)) {
