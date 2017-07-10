@@ -68,6 +68,17 @@ static WebMouseEvent::SyntheticClickType syntheticClickTypeForMouseEvent(const M
     
     return static_cast<WebMouseEvent::SyntheticClickType>(mouseEvent->syntheticClickType());
 }
+    
+static FloatPoint clickLocationInRootViewCoordinatesForMouseEvent(const MouseEvent* mouseEvent)
+{
+    if (!mouseEvent)
+        return { };
+    
+    if (!mouseEvent->buttonDown() || !mouseEvent->isTrusted())
+        return { };
+    
+    return mouseEvent->locationInRootViewCoordinates();
+}
 
 WebEvent::Modifiers InjectedBundleNavigationAction::modifiersForNavigationAction(const NavigationAction& navigationAction)
 {
@@ -96,6 +107,11 @@ WebMouseEvent::SyntheticClickType InjectedBundleNavigationAction::syntheticClick
 {
     return syntheticClickTypeForMouseEvent(mouseEventForNavigationAction(navigationAction));
 }
+    
+FloatPoint InjectedBundleNavigationAction::clickLocationInRootViewCoordinatesForNavigationAction(const NavigationAction& navigationAction)
+{
+    return clickLocationInRootViewCoordinatesForMouseEvent(mouseEventForNavigationAction(navigationAction));
+}
 
 Ref<InjectedBundleNavigationAction> InjectedBundleNavigationAction::create(WebFrame* frame, const NavigationAction& action, RefPtr<FormState>&& formState)
 {
@@ -114,6 +130,7 @@ InjectedBundleNavigationAction::InjectedBundleNavigationAction(WebFrame* frame, 
         m_hitTestResult = InjectedBundleHitTestResult::create(frame->coreFrame()->eventHandler().hitTestResultAtPoint(mouseEvent->absoluteLocation()));
         m_mouseButton   = mouseButtonForMouseEvent(mouseEvent);
         m_syntheticClickType = syntheticClickTypeForNavigationAction(navigationAction);
+        m_clickLocationInRootViewCoordinates = clickLocationInRootViewCoordinatesForNavigationAction(navigationAction);
     }
 
     if (formState)

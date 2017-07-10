@@ -26,6 +26,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "LayoutPoint.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
 
@@ -164,6 +165,11 @@ void MouseRelatedEvent::computeRelativePosition()
     }
 
     m_hasCachedRelativePosition = true;
+}
+    
+FloatPoint MouseRelatedEvent::locationInRootViewCoordinates() const
+{
+    return frameView()->contentsToRootView(roundedIntPoint(m_absoluteLocation));
 }
 
 int MouseRelatedEvent::layerX()

@@ -1,3 +1,19 @@
+2017-07-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Add location to NavigationActionData
+        https://bugs.webkit.org/show_bug.cgi?id=174233
+        <rdar://problem/29165518>
+
+        Reviewed by Simon Fraser.
+        
+        Add the root view location of a tap to a NavigationAction to vend to Safari.
+
+        Test: small enough change to not be tested alone.
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::absoluteLocationConvertedToRootView):
+        * dom/MouseRelatedEvent.h:
+
 2017-07-10  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Move plugin object customization into the generator

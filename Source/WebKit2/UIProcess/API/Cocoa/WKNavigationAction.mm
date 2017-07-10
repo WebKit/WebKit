@@ -31,6 +31,7 @@
 #import "NavigationActionData.h"
 #import "WKFrameInfoInternal.h"
 #import "_WKUserInitiatedActionInternal.h"
+#import <WebCore/FloatPoint.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKNavigationAction
@@ -123,12 +124,12 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; syntheticClickType = %ld; request = %@; sourceFrame = %@; targetFrame = %@>", NSStringFromClass(self.class), self,
+    return [NSString stringWithFormat:@"<%@: %p; navigationType = %ld; syntheticClickType = %ld; position x = %.2f y = %.2f request = %@; sourceFrame = %@; targetFrame = %@>", NSStringFromClass(self.class), self,
         (long)self.navigationType,
 #if PLATFORM(IOS)
-        (long)self._syntheticClickType,
+        (long)self._syntheticClickType, self._clickLocationInRootViewCoordinates.x, self._clickLocationInRootViewCoordinates.y,
 #else
-        0L,
+        0L, 0.0, 0.0,
 #endif
         self.request, self.sourceFrame, self.targetFrame];
 }
@@ -161,6 +162,11 @@ static NSInteger toNSButtonNumber(WebKit::WebMouseEvent::Button mouseButton)
 - (WKSyntheticClickType)_syntheticClickType
 {
     return toWKSyntheticClickType(_navigationAction->syntheticClickType());
+}
+
+- (CGPoint)_clickLocationInRootViewCoordinates
+{
+    return _navigationAction->clickLocationInRootViewCoordinates();
 }
 #endif
 

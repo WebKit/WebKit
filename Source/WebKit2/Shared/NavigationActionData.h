@@ -27,6 +27,7 @@
 #define NavigationActionData_h
 
 #include "WebEvent.h"
+#include <WebCore/FloatPoint.h>
 #include <WebCore/FrameLoaderTypes.h>
 
 namespace IPC {
@@ -48,6 +49,7 @@ struct NavigationActionData {
     bool canHandleRequest { false };
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     WTF::String downloadAttribute;
+    WebCore::FloatPoint clickLocationInRootViewCoordinates;
 };
 
 }

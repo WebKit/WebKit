@@ -1,3 +1,34 @@
+2017-07-10  Megan Gardner  <megan_gardner@apple.com>
+
+        Add location to NavigationActionData
+        https://bugs.webkit.org/show_bug.cgi?id=174233
+        <rdar://problem/29165518>
+
+        Reviewed by Simon Fraser.
+        
+        Add the root view location of a tap to a NavigationAction to vend to Safari.
+
+        * Shared/NavigationActionData.cpp:
+        (WebKit::NavigationActionData::encode):
+        (WebKit::NavigationActionData::decode):
+        * Shared/NavigationActionData.h:
+        * UIProcess/API/APINavigationAction.h:
+        * UIProcess/API/Cocoa/WKNavigationAction.mm:
+        (-[WKNavigationAction description]):
+        (-[WKNavigationAction _clickLocationInRootViewCoordinates]):
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.cpp:
+        (WebKit::clickLocationInRootViewCoordinatesForMouseEvent):
+        (WebKit::InjectedBundleNavigationAction::clickLocationInRootViewCoordinatesForNavigationAction):
+        (WebKit::InjectedBundleNavigationAction::InjectedBundleNavigationAction):
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+        (WebKit::InjectedBundleNavigationAction::clickLocationInRootViewCoordinates):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2017-07-03  Brian Burg  <bburg@apple.com>
 
         Web Replay: remove some unused code

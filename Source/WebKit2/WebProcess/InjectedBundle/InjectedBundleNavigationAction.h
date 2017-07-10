@@ -50,13 +50,15 @@ public:
     static WebEvent::Modifiers modifiersForNavigationAction(const WebCore::NavigationAction&);
     static WebMouseEvent::Button mouseButtonForNavigationAction(const WebCore::NavigationAction&);
     static WebMouseEvent::SyntheticClickType syntheticClickTypeForNavigationAction(const WebCore::NavigationAction&);
-
+    static WebCore::FloatPoint clickLocationInRootViewCoordinatesForNavigationAction(const WebCore::NavigationAction&);
+    
     WebCore::NavigationType navigationType() const { return m_navigationType; }
     WebEvent::Modifiers modifiers() const { return m_modifiers; }
     WebMouseEvent::Button mouseButton() const { return m_mouseButton; }
     InjectedBundleHitTestResult* hitTestResult() const { return m_hitTestResult.get(); }
     InjectedBundleNodeHandle* formElement() const { return m_formElement.get(); }
     WebMouseEvent::SyntheticClickType syntheticClickType() const { return m_syntheticClickType; }
+    WebCore::FloatPoint clickLocationInRootViewCoordinates() const { return m_clickLocationInRootViewCoordinates; }
 
     bool shouldOpenExternalURLs() const { return m_shouldOpenExternalURLs; }
     bool shouldTryAppLinks() const { return m_shouldTryAppLinks; }
@@ -69,6 +71,7 @@ private:
     WebEvent::Modifiers m_modifiers;
     WebMouseEvent::Button m_mouseButton;
     WebMouseEvent::SyntheticClickType m_syntheticClickType { WebMouseEvent::NoTap };
+    WebCore::FloatPoint m_clickLocationInRootViewCoordinates;
     RefPtr<InjectedBundleHitTestResult> m_hitTestResult;
     RefPtr<InjectedBundleNodeHandle> m_formElement;
     AtomicString m_downloadAttribute;

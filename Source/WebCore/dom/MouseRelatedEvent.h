@@ -57,6 +57,7 @@ public:
     bool isSimulated() const { return m_isSimulated; }
     int pageX() const final;
     int pageY() const final;
+    WEBCORE_EXPORT FloatPoint locationInRootViewCoordinates() const;
     virtual const LayoutPoint& pageLocation() const;
     WEBCORE_EXPORT int x() const;
     WEBCORE_EXPORT int y() const;

@@ -736,6 +736,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     navigationActionData.modifiers = action->modifiers();
     navigationActionData.mouseButton = action->mouseButton();
     navigationActionData.syntheticClickType = action->syntheticClickType();
+    navigationActionData.clickLocationInRootViewCoordinates = action->clickLocationInRootViewCoordinates();
     navigationActionData.userGestureTokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken());
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
@@ -783,6 +784,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     navigationActionData.modifiers = action->modifiers();
     navigationActionData.mouseButton = action->mouseButton();
     navigationActionData.syntheticClickType = action->syntheticClickType();
+    navigationActionData.clickLocationInRootViewCoordinates = action->clickLocationInRootViewCoordinates();
     navigationActionData.userGestureTokenIdentifier = WebProcess::singleton().userGestureTokenIdentifier(navigationAction.userGestureToken());
     navigationActionData.canHandleRequest = webPage->canHandleRequest(request);
     navigationActionData.shouldOpenExternalURLsPolicy = navigationAction.shouldOpenExternalURLsPolicy();
