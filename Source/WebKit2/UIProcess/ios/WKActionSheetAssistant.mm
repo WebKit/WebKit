@@ -371,7 +371,7 @@ static const CGFloat presentationElementRectPadding = 15;
 
         _elementInfo = WTFMove(elementInfo);
 
-        if (![_interactionSheet presentSheet:[self _shouldPresentAtTouchLocationForElementRect:elementBounds] ? WKActionSheetPresentAtTouchLocation : WKActionSheetPresentAtElementRect])
+        if (![_interactionSheet presentSheet:presentationStyleForView(_view.getAutoreleased(), _positionInformation.value(), _elementInfo.get())])
             [self cleanupSheet];
     };
 
@@ -393,10 +393,9 @@ static const CGFloat presentationElementRectPadding = 15;
     showImageSheetWithAlternateURLBlock(nil, nil);
 }
 
-- (BOOL)_shouldPresentAtTouchLocationForElementRect:(CGRect)elementRect
+static WKActionSheetPresentationStyle presentationStyleForView(UIView *view, const InteractionInformationAtPosition& positionInfo, _WKActivatedElementInfo *elementInfo)
 {
-    UIView *view = _view.getAutoreleased();
-    auto apparentElementRect = [view convertRect:elementRect toView:view.window];
+    auto apparentElementRect = [view convertRect:positionInfo.bounds toView:view.window];
     auto windowRect = view.window.bounds;
     apparentElementRect = CGRectIntersection(apparentElementRect, windowRect);
 
@@ -408,7 +407,13 @@ static const CGFloat presentationElementRectPadding = 15;
     // If at least this much of the window is available for the popover to draw in, then target the element rect when presenting the action menu popover.
     // Otherwise, there is not enough space to position the popover around the element, so revert to using the touch location instead.
     static const CGFloat minimumAvailableWidthOrHeightRatio = 0.4;
-    return std::max(leftInset, rightInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetWidth(windowRect) && std::max(topInset, bottomInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetHeight(windowRect);
+    if (std::max(leftInset, rightInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetWidth(windowRect) && std::max(topInset, bottomInset) <= minimumAvailableWidthOrHeightRatio * CGRectGetHeight(windowRect))
+        return WKActionSheetPresentAtTouchLocation;
+
+    if (elementInfo.type == _WKActivatedElementTypeLink && positionInfo.linkIndicator.textRectsInBoundingRectCoordinates.size())
+        return WKActionSheetPresentAtClosestIndicatorRect;
+
+    return WKActionSheetPresentAtElementRect;
 }
 
 - (void)_appendOpenActionsForURL:(NSURL *)url actions:(NSMutableArray *)defaultActions elementInfo:(_WKActivatedElementInfo *)elementInfo
@@ -530,7 +535,7 @@ static const CGFloat presentationElementRectPadding = 15;
 
     _elementInfo = WTFMove(elementInfo);
 
-    if (![_interactionSheet presentSheet:[self _shouldPresentAtTouchLocationForElementRect:_positionInformation->bounds] ? WKActionSheetPresentAtTouchLocation : WKActionSheetPresentAtClosestIndicatorRect])
+    if (![_interactionSheet presentSheet:presentationStyleForView(_view.getAutoreleased(), _positionInformation.value(), _elementInfo.get())])
         [self cleanupSheet];
 }
 

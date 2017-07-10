@@ -1,3 +1,30 @@
+2017-07-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Action sheets for links fail to present in WebKit2 PDF view
+        https://bugs.webkit.org/show_bug.cgi?id=174307
+        <rdar://problem/31412128>
+
+        Reviewed by Tim Horton.
+
+        Currently, presenting an action sheet for a link always uses the WKActionSheetPresentAtClosestIndicatorRect
+        codepath, which requires text indicator data for the link. However, when showing an action sheet for a link via
+        WKPDFView, a text indicator for the link is not included, so the popover rect ends up being an empty rect at the
+        origin, which causes us to bail from presenting the popover.
+
+        To address this, we tweak our heuristic for determining which action sheet presentation style to use, so that we
+        only use the closest indicator rect for a link if the text indicator data is also present (otherwise, we fall
+        back to using the element rect). All other behavior is the same.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant showImageSheet]):
+        (presentationStyleForView):
+
+        Refactor _shouldPresentAtTouchLocationForElementRect into presentationStyleForView, a static function that
+        returns a WKActionSheetPresentationStyle.
+
+        (-[WKActionSheetAssistant showLinkSheet]):
+        (-[WKActionSheetAssistant _shouldPresentAtTouchLocationForElementRect:]): Deleted.
+
 2017-07-09  Brady Eidson  <beidson@apple.com>
 
         Remove some obsolete WebKitVersionChecks.
