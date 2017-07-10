@@ -151,6 +151,7 @@ private:
     void disableInspectorNodeSearch() override;
 
     void overflowScrollViewWillStartPanGesture() override;
+    void overflowScrollViewDidEndPanGesture() override;
     void overflowScrollViewDidScroll() override;
     void overflowScrollWillStartScroll() override;
     void overflowScrollDidEndScroll() override;

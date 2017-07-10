@@ -44,6 +44,7 @@ public:
     void overflowScrollWillStart();
     void overflowScrollDidEnd();
     void overflowScrollViewWillStartPanGesture();
+    void overflowScrollViewDidEndPanGesture();
     void scrollViewDidScroll(const WebCore::FloatPoint&, bool inUserInteration);
     void currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical);
 

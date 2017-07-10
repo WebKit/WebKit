@@ -117,6 +117,9 @@ using namespace WebCore;
         _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
         _scrollingTreeNode->overflowScrollDidEnd();
     }
+
+    if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateEnded)
+        _scrollingTreeNode->overflowScrollViewDidEndPanGesture();
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
@@ -292,6 +295,11 @@ void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollDidEnd()
 void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGesture()
 {
     scrollingTree().scrollingTreeNodeWillStartPanGesture();
+}
+
+void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewDidEndPanGesture()
+{
+    scrollingTree().scrollingTreeNodeDidEndPanGesture();
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteration)

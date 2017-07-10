@@ -272,6 +272,11 @@ void WebPageProxy::overflowScrollViewWillStartPanGesture()
     m_pageClient.overflowScrollViewWillStartPanGesture();
 }
 
+void WebPageProxy::overflowScrollViewDidEndPanGesture()
+{
+    m_pageClient.overflowScrollViewDidEndPanGesture();
+}
+
 void WebPageProxy::overflowScrollViewDidScroll()
 {
     m_pageClient.overflowScrollViewDidScroll();

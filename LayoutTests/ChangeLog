@@ -1,3 +1,21 @@
+2017-07-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Ignore touch events that interrupt platform-driven momentum scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=174300
+        <rdar://problem/33030639>
+
+        Reviewed by Simon Fraser.
+
+        Adds 3 new LayoutTests covering cases of touch event handling during scroll deceleration in mainframe and
+        overflow scrolling containers. See Source/WebKit2/ChangeLog for more detail.
+
+        * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe-expected.txt: Added.
+        * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe.html: Added.
+        * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-overflow-expected.txt: Added.
+        * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-overflow.html: Added.
+        * fast/events/ios/touch-events-during-scroll-deceleration-in-overflow-expected.txt: Added.
+        * fast/events/ios/touch-events-during-scroll-deceleration-in-overflow.html: Added.
+
 2017-07-10  Matt Lewis  <jlewis3@apple.com>
 
         Marked animations/resume-after-page-cache.html as flaky.

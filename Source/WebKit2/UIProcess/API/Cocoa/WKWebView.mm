@@ -2150,6 +2150,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     // If we're decelerating, scroll offset will be updated when scrollViewDidFinishDecelerating: is called.
     if (!decelerate)
         [self _didFinishScrolling];
+
+    if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateEnded)
+        [_contentView scrollViewDidEndPanOrPinchGesture];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
@@ -2184,6 +2187,9 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     ASSERT(scrollView == _scrollView);
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
     [_contentView didZoomToScale:scale];
+
+    if (scrollView.pinchGestureRecognizer.state == UIGestureRecognizerStateEnded)
+        [_contentView scrollViewDidEndPanOrPinchGesture];
 }
 
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView

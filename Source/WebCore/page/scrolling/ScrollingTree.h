@@ -101,6 +101,7 @@ public:
 #if PLATFORM(IOS)
     virtual FloatRect fixedPositionRect() = 0;
     virtual void scrollingTreeNodeWillStartPanGesture() { }
+    virtual void scrollingTreeNodeDidEndPanGesture() { }
     virtual void scrollingTreeNodeWillStartScroll() { }
     virtual void scrollingTreeNodeDidEndScroll() { }
 #endif

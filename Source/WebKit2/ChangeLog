@@ -1,3 +1,67 @@
+2017-07-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Ignore touch events that interrupt platform-driven momentum scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=174300
+        <rdar://problem/33030639>
+
+        Reviewed by Simon Fraser.
+
+        Adds support for immediately failing WKContentView's UIWebTouchEventsGestureRecognizer if any touch interrupts
+        scroll view deceleration. Covered by 3 new LayoutTests (see Source/WebCore/ChangeLog).
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewDidEndDragging:willDecelerate:]):
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+        * UIProcess/PageClient.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidEndPanGesture):
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndDragging:willDecelerate:]):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewDidEndPanGesture):
+
+        Adds plumbing in the UI process to alert the WKContentView when scroll view dragging has ended in an overflow
+        momentum scrolling region (tracked by an overflow scrolling tree node). This parallels UI process plumbing for
+        ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGesture.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::overflowScrollViewDidEndPanGesture):
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndPanGesture):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView scrollViewDidEndPanOrPinchGesture]):
+
+        When the dragging phase of a scroll gesture ends, ensure that _canSendTouchEventsAsynchronously is reset to NO.
+        When touches are not being prevented, this flag is set to YES in -scrollViewWillStartPanOrPinchGesture: and
+        normally reset to NO in -_webTouchEventsRecognized: after all touch points have been released. However, in the
+        case where we've prematurely failed the web touch events gesture recognizer after -touchesBegan:,
+        -_webTouchEventsRecognized: will not be called again in a state where all touches have been released. Thus, we
+        also need to bookend the place where we begin allowing async touch event dispatch in
+        -scrollViewWillStartPanOrPinchGesture by disallowing async touch event dispatch in
+        -scrollViewDidEndPanOrPinchGesture.
+
+        This has no impact in the normal case where the user scrolls without momentum, since
+        -scrollViewDidEndPanOrPinchGesture will fire after async touch events have already been disallowed in
+        -_webTouchEventsRecognized:, and in the case where the page prevents default on touches, scrolling doesn't
+        happen anyways, so neither scrollViewWillStartPanOrPinchGesture nor scrollViewDidEndPanOrPinchGesture will be
+        invoked.
+
+        (-[WKContentView gestureRecognizer:shouldIgnoreWebTouchWithEvent:]):
+
+        Implements a new SPI hook in UIKit. This serves an identical purpose as -shouldIgnoreWebTouch, but additionally
+        passes the triggering UIEvent, as well as the gesture recognizer itself (following standard convention for
+        Objective C delegate methods). Here, we return YES in the case where one or more of the touches recognized by
+        the gesture is currently interrupting scroll deceleration.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::overflowScrollViewDidEndPanGesture):
+
 2017-07-10  Brent Fulgham  <bfulgham@apple.com>
 
         [WK2][macOS] Allow access to com.apple.cfnetwork.cfnetworkagent in the Network Process

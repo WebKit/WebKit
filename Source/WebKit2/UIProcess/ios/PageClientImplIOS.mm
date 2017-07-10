@@ -671,6 +671,11 @@ void PageClientImpl::overflowScrollViewWillStartPanGesture()
     [m_contentView scrollViewWillStartPanOrPinchGesture];
 }
 
+void PageClientImpl::overflowScrollViewDidEndPanGesture()
+{
+    [m_contentView scrollViewDidEndPanOrPinchGesture];
+}
+
 void PageClientImpl::overflowScrollViewDidScroll()
 {
     [m_contentView _didScroll];

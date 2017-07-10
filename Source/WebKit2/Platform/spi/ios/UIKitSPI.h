@@ -689,9 +689,12 @@ struct _UIWebTouchEvent {
     bool isPotentialTap;
 };
 
-@protocol UIWebTouchEventsGestureRecognizerDelegate
+@class UIWebTouchEventsGestureRecognizer;
+
+@protocol UIWebTouchEventsGestureRecognizerDelegate <NSObject>
 - (BOOL)isAnyTouchOverActiveArea:(NSSet *)touches;
-- (BOOL)shouldIgnoreWebTouch;
+@optional
+- (BOOL)gestureRecognizer:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer shouldIgnoreWebTouchWithEvent:(UIEvent *)event;
 @end
 
 @interface UIWebTouchEventsGestureRecognizer : UIGestureRecognizer
