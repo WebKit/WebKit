@@ -181,7 +181,6 @@ webkit.org/b/129057 media/controls-styling-strict.html [ Pass Failure ]
 # These tests will be rewritten, just skip them until that time.
 webkit.org/b/148036 http/tests/inspector/css/ [ Skip ]
 webkit.org/b/148036 http/tests/inspector/page/ [ Skip ]
-webkit.org/b/148036 http/tests/inspector/replay/ [ Skip ]
 
 # Debugger stepping tests can timeout if they run slowly due to a short timer scheduled in the frontend:
 webkit.org/b/161951 [ Debug ] inspector/debugger/stepping [ Skip ]
@@ -198,16 +197,11 @@ webkit.org/b/134982 inspector/debugger/setBreakpoint-dfg-and-modify-local.html [
 webkit.org/b/142208 inspector/timeline/debugger-paused-while-recording.html [ Skip ]
 webkit.org/b/142208 inspector/timeline/exception-in-injected-script-while-recording.html [ Skip ]
 
-webkit.org/b/137130 inspector/replay [ Skip ]
-
 # This test is fast enough in release but quite slow in debug builds.
 [ Debug ] inspector/debugger/debugger-stack-overflow.html [ Skip ]
 
 # Debugger stepping tests can timeout if they run slowly due to a short timer scheduled in the frontend.
 webkit.org/b/161951 [ Debug ] inspector/debugger/paused-scopes.html [ Skip ]
-
-# Doesn't work yet, relies on network replay functionality (webkit.org/b/130728, webkit.org/b/129391)
-webkit.org/b/131318 http/tests/inspector/replay/document-last-modified-fallback-value.html [ Skip ]
 
 # Collecting region's children in a named flow not supported yet
 webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]

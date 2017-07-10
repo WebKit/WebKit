@@ -71,11 +71,6 @@
 #include <runtime/ConsoleTypes.h>
 #include <wtf/StdLibExtras.h>
 
-#if ENABLE(WEB_REPLAY)
-#include "InspectorReplayAgent.h"
-#include "ReplayController.h"
-#endif
-
 using namespace Inspector;
 
 namespace WebCore {
@@ -393,10 +388,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
         timelineAgent->willDispatchEvent(event, document.frame());
         timelineAgentId = timelineAgent->id();
     }
-#if ENABLE(WEB_REPLAY)
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->willDispatchEvent(event, document.frame());
-#endif
+
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
@@ -419,10 +411,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWind
         timelineAgent->willDispatchEvent(event, window.frame());
         timelineAgentId = timelineAgent->id();
     }
-#if ENABLE(WEB_REPLAY)
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->willDispatchEvent(event, window.frame());
-#endif
+
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
@@ -702,13 +691,6 @@ void InspectorInstrumentation::frameDetachedFromParentImpl(InstrumentingAgents& 
     if (InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent())
         pageAgent->frameDetached(frame);
 
-#if ENABLE(WEB_REPLAY)
-    if (!frame.isMainFrame())
-        return;
-
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->frameDetached(frame);
-#endif
 }
 
 void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, DocumentLoader* loader)
@@ -763,11 +745,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
         if (InspectorTimelineAgent* timelineAgent = instrumentingAgents.inspectorTimelineAgent())
             timelineAgent->mainFrameNavigated();
     }
-
-#if ENABLE(WEB_REPLAY)
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->frameNavigated(frame);
-#endif
 }
 
 void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents& instrumentingAgents, Frame& frame)
@@ -1017,86 +994,6 @@ void InspectorInstrumentation::didChangeCanvasMemoryImpl(InstrumentingAgents* in
         canvasAgent->didChangeCanvasMemory(canvasElement);
 }
 
-#if ENABLE(WEB_REPLAY)
-void InspectorInstrumentation::sessionCreatedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->sessionCreated(WTFMove(session));
-}
-
-void InspectorInstrumentation::sessionLoadedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->sessionLoaded(WTFMove(session));
-}
-
-void InspectorInstrumentation::sessionModifiedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySession>&& session)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->sessionModified(WTFMove(session));
-}
-
-void InspectorInstrumentation::segmentCreatedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySessionSegment>&& segment)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->segmentCreated(WTFMove(segment));
-}
-
-void InspectorInstrumentation::segmentCompletedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySessionSegment>&& segment)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->segmentCompleted(WTFMove(segment));
-}
-
-void InspectorInstrumentation::segmentLoadedImpl(InstrumentingAgents& instrumentingAgents, RefPtr<ReplaySessionSegment>&& segment)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->segmentLoaded(WTFMove(segment));
-}
-
-void InspectorInstrumentation::segmentUnloadedImpl(InstrumentingAgents& instrumentingAgents)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->segmentUnloaded();
-}
-
-void InspectorInstrumentation::captureStartedImpl(InstrumentingAgents& instrumentingAgents)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->captureStarted();
-}
-
-void InspectorInstrumentation::captureStoppedImpl(InstrumentingAgents& instrumentingAgents)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->captureStopped();
-}
-
-void InspectorInstrumentation::playbackStartedImpl(InstrumentingAgents& instrumentingAgents)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->playbackStarted();
-}
-
-void InspectorInstrumentation::playbackPausedImpl(InstrumentingAgents& instrumentingAgents, const ReplayPosition& position)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->playbackPaused(position);
-}
-
-void InspectorInstrumentation::playbackHitPositionImpl(InstrumentingAgents& instrumentingAgents, const ReplayPosition& position)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->playbackHitPosition(position);
-}
-
-void InspectorInstrumentation::playbackFinishedImpl(InstrumentingAgents& instrumentingAgents)
-{
-    if (InspectorReplayAgent* replayAgent = instrumentingAgents.inspectorReplayAgent())
-        replayAgent->playbackFinished();
-}
-#endif
-
 #if ENABLE(RESOURCE_USAGE)
 void InspectorInstrumentation::didHandleMemoryPressureImpl(InstrumentingAgents& instrumentingAgents, Critical critical)
 {
@@ -1128,17 +1025,6 @@ bool InspectorInstrumentation::timelineAgentEnabled(ScriptExecutionContext* scri
 {
     InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext);
     return instrumentingAgents && instrumentingAgents->inspectorTimelineAgent();
-}
-
-bool InspectorInstrumentation::replayAgentEnabled(ScriptExecutionContext* scriptExecutionContext)
-{
-#if ENABLE(WEB_REPLAY)
-    InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(scriptExecutionContext);
-    return instrumentingAgents && instrumentingAgents->inspectorReplayAgent();
-#else
-    UNUSED_PARAM(scriptExecutionContext);
-    return false;
-#endif
 }
 
 void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InstrumentingAgents& instrumentingAgents, bool isDOMEvent, const String& eventName, bool synchronous)

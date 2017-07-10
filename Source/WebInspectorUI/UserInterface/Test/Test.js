@@ -47,8 +47,6 @@ WebInspector.loaded = function()
     InspectorBackend.registerCSSDispatcher(new WebInspector.CSSObserver);
     InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
     InspectorBackend.registerWorkerDispatcher(new WebInspector.WorkerObserver);
-    if (InspectorBackend.registerReplayDispatcher)
-        InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
     InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
 
     WebInspector.mainTarget = new WebInspector.MainTarget;
@@ -68,7 +66,6 @@ WebInspector.loaded = function()
     this.debuggerManager = new WebInspector.DebuggerManager;
     this.probeManager = new WebInspector.ProbeManager;
     this.workerManager = new WebInspector.WorkerManager;
-    this.replayManager = new WebInspector.ReplayManager;
     this.domDebuggerManager = new WebInspector.DOMDebuggerManager;
     this.canvasManager = new WebInspector.CanvasManager;
 

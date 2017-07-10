@@ -116,11 +116,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(WEB_REPLAY)
-#include "ReplayController.h"
-#include <replay/InputCursor.h>
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "HTMLVideoElement.h"
 #include "MediaPlaybackTarget.h"
@@ -197,9 +192,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_contextMenuController(std::make_unique<ContextMenuController>(*this, *pageConfiguration.contextMenuClient))
 #endif
     , m_userInputBridge(std::make_unique<UserInputBridge>(*this))
-#if ENABLE(WEB_REPLAY)
-    , m_replayController(std::make_unique<ReplayController>(*this))
-#endif
     , m_inspectorController(std::make_unique<InspectorController>(*this, pageConfiguration.inspectorClient))
 #if ENABLE(POINTER_LOCK)
     , m_pointerLockController(std::make_unique<PointerLockController>(*this))

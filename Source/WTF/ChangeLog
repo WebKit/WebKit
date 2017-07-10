@@ -1,3 +1,12 @@
+2017-07-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=173903
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * wtf/FeatureDefines.h:
+
 2017-07-10  Brady Eidson  <beidson@apple.com>
 
         Cleanup lifetime issues of UniqueIDBDatabase and IDBBackingStore.

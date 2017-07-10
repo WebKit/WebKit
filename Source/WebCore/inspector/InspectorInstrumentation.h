@@ -48,12 +48,6 @@
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/RefPtr.h>
 
-#if ENABLE(WEB_REPLAY)
-#include "ReplaySession.h"
-#include "ReplaySessionSegment.h"
-#endif
-
-
 namespace Inspector {
 class ConsoleMessage;
 class ScriptArguments;
@@ -89,7 +83,6 @@ class WorkerInspectorProxy;
 
 enum class StorageType;
 
-struct ReplayPosition;
 struct WebSocketFrame;
 
 #define FAST_RETURN_IF_NO_FRONTENDS(value) if (LIKELY(!hasFrontends())) return value;
@@ -213,25 +206,6 @@ public:
     static void workerStarted(ScriptExecutionContext&, WorkerInspectorProxy*, const URL&);
     static void workerTerminated(ScriptExecutionContext&, WorkerInspectorProxy*);
 
-#if ENABLE(WEB_REPLAY)
-    static void sessionCreated(Page&, RefPtr<ReplaySession>&&);
-    static void sessionLoaded(Page&, RefPtr<ReplaySession>&&);
-    static void sessionModified(Page&, RefPtr<ReplaySession>&&);
-
-    static void segmentCreated(Page&, RefPtr<ReplaySessionSegment>&&);
-    static void segmentCompleted(Page&, RefPtr<ReplaySessionSegment>&&);
-    static void segmentLoaded(Page&, RefPtr<ReplaySessionSegment>&&);
-    static void segmentUnloaded(Page&);
-
-    static void captureStarted(Page&);
-    static void captureStopped(Page&);
-
-    static void playbackStarted(Page&);
-    static void playbackPaused(Page&, const ReplayPosition&);
-    static void playbackHitPosition(Page&, const ReplayPosition&);
-    static void playbackFinished(Page&);
-#endif
-
 #if ENABLE(WEB_SOCKETS)
     static void didCreateWebSocket(Document*, unsigned long identifier, const URL& requestURL);
     static void willSendWebSocketHandshakeRequest(Document*, unsigned long identifier, const ResourceRequest&);
@@ -266,7 +240,6 @@ public:
 
     static bool consoleAgentEnabled(ScriptExecutionContext*);
     static bool timelineAgentEnabled(ScriptExecutionContext*);
-    static bool replayAgentEnabled(ScriptExecutionContext*);
 
     static InstrumentingAgents* instrumentingAgentsForPage(Page*);
 
@@ -386,25 +359,6 @@ private:
     static bool shouldWaitForDebuggerOnStartImpl(InstrumentingAgents&);
     static void workerStartedImpl(InstrumentingAgents&, WorkerInspectorProxy*, const URL&);
     static void workerTerminatedImpl(InstrumentingAgents&, WorkerInspectorProxy*);
-
-#if ENABLE(WEB_REPLAY)
-    static void sessionCreatedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
-    static void sessionLoadedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
-    static void sessionModifiedImpl(InstrumentingAgents&, RefPtr<ReplaySession>&&);
-
-    static void segmentCreatedImpl(InstrumentingAgents&, RefPtr<ReplaySessionSegment>&&);
-    static void segmentCompletedImpl(InstrumentingAgents&, RefPtr<ReplaySessionSegment>&&);
-    static void segmentLoadedImpl(InstrumentingAgents&, RefPtr<ReplaySessionSegment>&&);
-    static void segmentUnloadedImpl(InstrumentingAgents&);
-
-    static void captureStartedImpl(InstrumentingAgents&);
-    static void captureStoppedImpl(InstrumentingAgents&);
-
-    static void playbackStartedImpl(InstrumentingAgents&);
-    static void playbackPausedImpl(InstrumentingAgents&, const ReplayPosition&);
-    static void playbackHitPositionImpl(InstrumentingAgents&, const ReplayPosition&);
-    static void playbackFinishedImpl(InstrumentingAgents&);
-#endif
 
 #if ENABLE(WEB_SOCKETS)
     static void didCreateWebSocketImpl(InstrumentingAgents&, unsigned long identifier, const URL& requestURL);
@@ -1097,86 +1051,6 @@ inline void InspectorInstrumentation::didSendWebSocketFrame(Document* document, 
         didSendWebSocketFrameImpl(*instrumentingAgents, identifier, frame);
 }
 #endif // ENABLE(WEB_SOCKETS)
-
-#if ENABLE(WEB_REPLAY)
-inline void InspectorInstrumentation::sessionCreated(Page& page, RefPtr<ReplaySession>&& session)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    sessionCreatedImpl(instrumentingAgentsForPage(page), WTFMove(session));
-}
-
-inline void InspectorInstrumentation::sessionLoaded(Page& page, RefPtr<ReplaySession>&& session)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    sessionLoadedImpl(instrumentingAgentsForPage(page), WTFMove(session));
-}
-
-inline void InspectorInstrumentation::sessionModified(Page& page, RefPtr<ReplaySession>&& session)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    sessionModifiedImpl(instrumentingAgentsForPage(page), WTFMove(session));
-}
-
-inline void InspectorInstrumentation::segmentCreated(Page& page, RefPtr<ReplaySessionSegment>&& segment)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    segmentCreatedImpl(instrumentingAgentsForPage(page), WTFMove(segment));
-}
-
-inline void InspectorInstrumentation::segmentCompleted(Page& page, RefPtr<ReplaySessionSegment>&& segment)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    segmentCompletedImpl(instrumentingAgentsForPage(page), WTFMove(segment));
-}
-
-inline void InspectorInstrumentation::segmentLoaded(Page& page, RefPtr<ReplaySessionSegment>&& segment)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    segmentLoadedImpl(instrumentingAgentsForPage(page), WTFMove(segment));
-}
-
-inline void InspectorInstrumentation::segmentUnloaded(Page& page)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    segmentUnloadedImpl(instrumentingAgentsForPage(page));
-}
-
-inline void InspectorInstrumentation::captureStarted(Page& page)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    captureStartedImpl(instrumentingAgentsForPage(page));
-}
-
-inline void InspectorInstrumentation::captureStopped(Page& page)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    captureStoppedImpl(instrumentingAgentsForPage(page));
-}
-
-inline void InspectorInstrumentation::playbackStarted(Page& page)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    playbackStartedImpl(instrumentingAgentsForPage(page));
-}
-
-inline void InspectorInstrumentation::playbackPaused(Page& page, const ReplayPosition& position)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    playbackPausedImpl(instrumentingAgentsForPage(page), position);
-}
-
-inline void InspectorInstrumentation::playbackFinished(Page& page)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    playbackFinishedImpl(instrumentingAgentsForPage(page));
-}
-
-inline void InspectorInstrumentation::playbackHitPosition(Page& page, const ReplayPosition& position)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    playbackHitPositionImpl(instrumentingAgentsForPage(page), position);
-}
-#endif // ENABLE(WEB_REPLAY)
 
 #if ENABLE(RESOURCE_USAGE)
 inline void InspectorInstrumentation::didHandleMemoryPressure(Page& page, Critical critical)

@@ -48,7 +48,6 @@
         "MemoryAgent": true,
         "NetworkAgent": true,
         "PageAgent": true,
-        "ReplayAgent": true,
         "RuntimeAgent": true,
         "ScriptProfilerAgent": true,
         "TimelineAgent": true,

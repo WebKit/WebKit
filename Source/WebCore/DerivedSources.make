@@ -1380,23 +1380,6 @@ CommandLineAPIModuleSource.h : CommandLineAPIModuleSource.js
 	$(PERL) $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl CommandLineAPIModuleSource_js ./CommandLineAPIModuleSource.min.js CommandLineAPIModuleSource.h
 	$(DELETE) CommandLineAPIModuleSource.min.js
 
-# Web Replay inputs generator
-
-INPUT_GENERATOR_SCRIPTS = \
-    $(JavaScriptCore_SCRIPTS_DIR)/CodeGeneratorReplayInputs.py \
-    $(JavaScriptCore_SCRIPTS_DIR)/CodeGeneratorReplayInputsTemplates.py \
-#
-
-INPUT_GENERATOR_SPECIFICATIONS = \
-    $(WebCore)/replay/WebInputs.json \
-    $(JavaScriptCore_SCRIPTS_DIR)/JSInputs.json \
-#
-
-all : WebReplayInputs.h
-
-WebReplayInputs.h : $(INPUT_GENERATOR_SPECIFICATIONS) $(INPUT_GENERATOR_SCRIPTS)
-	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/CodeGeneratorReplayInputs.py --outputDir . --framework WebCore $(INPUT_GENERATOR_SPECIFICATIONS)
-
 -include $(JS_DOM_HEADERS:.h=.dep)
 
 # WebCore JS Builtins

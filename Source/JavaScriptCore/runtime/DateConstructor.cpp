@@ -35,11 +35,6 @@
 #include <time.h>
 #include <wtf/MathExtras.h>
 
-#if ENABLE(WEB_REPLAY)
-#include "InputCursor.h"
-#include "JSReplayInputs.h"
-#endif
-
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
@@ -70,28 +65,6 @@ const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_inf
   now       dateNow     DontEnum|Function 0
 @end
 */
-
-#if ENABLE(WEB_REPLAY)
-static double deterministicCurrentTime(JSGlobalObject* globalObject)
-{
-    double currentTime = jsCurrentTime();
-    InputCursor& cursor = globalObject->inputCursor();
-    if (cursor.isCapturing())
-        cursor.appendInput<GetCurrentTime>(currentTime);
-
-    if (cursor.isReplaying()) {
-        if (GetCurrentTime* input = cursor.fetchInput<GetCurrentTime>())
-            currentTime = input->currentTime();
-    }
-    return currentTime;
-}
-#endif
-
-#if ENABLE(WEB_REPLAY)
-#define NORMAL_OR_DETERMINISTIC_FUNCTION(a, b) (b)
-#else
-#define NORMAL_OR_DETERMINISTIC_FUNCTION(a, b) (a)
-#endif
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DateConstructor);
 
@@ -152,7 +125,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, JSValue n
     double value;
 
     if (numArgs == 0) // new Date() ECMA 15.9.3.3
-        value = NORMAL_OR_DETERMINISTIC_FUNCTION(jsCurrentTime(), deterministicCurrentTime(globalObject));
+        value = jsCurrentTime();
     else if (numArgs == 1) {
         if (args.at(0).inherits(vm, DateInstance::info()))
             value = asDateInstance(args.at(0))->internalNumber();
@@ -210,13 +183,9 @@ EncodedJSValue JSC_HOST_CALL dateParse(ExecState* exec)
     return JSValue::encode(jsNumber(parseDate(vm, dateStr)));
 }
 
-EncodedJSValue JSC_HOST_CALL dateNow(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL dateNow(ExecState*)
 {
-#if !ENABLE(WEB_REPLAY)
-    UNUSED_PARAM(exec);
-#endif
-
-    return JSValue::encode(jsNumber(NORMAL_OR_DETERMINISTIC_FUNCTION(jsCurrentTime(), deterministicCurrentTime(exec->lexicalGlobalObject()))));
+    return JSValue::encode(jsNumber(jsCurrentTime()));
 }
 
 EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec) 

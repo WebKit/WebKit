@@ -383,9 +383,6 @@ my @features = (
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", default => (isGtk() || isWPE()), value => \$webAudioSupport },
 
-    { option => "web-replay", desc => "Toggle Web Replay support",
-      define => "ENABLE_WEB_REPLAY", default => isAppleCocoaWebKit(), value => \$webReplaySupport },
-
     { option => "web-rtc", desc => "Toggle WebRTC support",
       define => "ENABLE_WEB_RTC", default => (isAppleCocoaWebKit() || isIOSWebKit() || isGtk()), value => \$webRTCSupport },
 

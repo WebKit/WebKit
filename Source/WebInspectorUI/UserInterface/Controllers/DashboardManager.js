@@ -32,7 +32,6 @@ WebInspector.DashboardManager = class DashboardManager extends WebInspector.Obje
         this._dashboards = {};
         this._dashboards.default = new WebInspector.DefaultDashboard;
         this._dashboards.debugger = new WebInspector.DebuggerDashboard;
-        this._dashboards.replay = new WebInspector.ReplayDashboard;
     }
 
     get dashboards()

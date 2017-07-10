@@ -519,18 +519,12 @@ WebInspector.TimelineRecordingContentView = class TimelineRecordingContentView e
 
     _debuggerPaused(event)
     {
-        if (WebInspector.replayManager.sessionState === WebInspector.ReplayManager.SessionState.Replaying)
-            return;
-
         if (this._updating)
             this._stopUpdatingCurrentTime();
     }
 
     _debuggerResumed(event)
     {
-        if (WebInspector.replayManager.sessionState === WebInspector.ReplayManager.SessionState.Replaying)
-            return;
-
         if (!this._updating)
             this._startUpdatingCurrentTime();
     }

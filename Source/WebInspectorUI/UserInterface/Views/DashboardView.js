@@ -50,9 +50,6 @@ WebInspector.DashboardView = class DashboardView extends WebInspector.Object
         if (representedObject instanceof WebInspector.DebuggerDashboard)
             return new WebInspector.DebuggerDashboardView(representedObject);
 
-        if (representedObject instanceof WebInspector.ReplayDashboard)
-            return new WebInspector.ReplayDashboardView(representedObject);
-
         throw "Can't make a DashboardView for an unknown representedObject.";
     }
 

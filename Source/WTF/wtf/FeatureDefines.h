@@ -716,10 +716,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_WEB_AUDIO 0
 #endif
 
-#if !defined(ENABLE_WEB_REPLAY)
-#define ENABLE_WEB_REPLAY 0
-#endif
-
 #if !defined(ENABLE_WEB_SOCKETS)
 #define ENABLE_WEB_SOCKETS 1
 #endif

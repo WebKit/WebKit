@@ -1692,8 +1692,6 @@
 		978801411471AD920041B016 /* JSDateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9788FC231471AD0C0068CE2D /* JSDateMath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		981ED82328234D91BAECCADE /* MachineContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 28806E21155E478A93FA7B02 /* MachineContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		990DA67F1C8E316A00295159 /* generate_objc_protocol_type_conversions_implementation.py in Headers */ = {isa = PBXBuildFile; fileRef = 990DA67E1C8E311D00295159 /* generate_objc_protocol_type_conversions_implementation.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		9928FF3B18AC4AEC00B8CF12 /* JSReplayInputs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9928FF3918AC4AEC00B8CF12 /* JSReplayInputs.cpp */; };
-		9928FF3C18AC4AEC00B8CF12 /* JSReplayInputs.h in Headers */ = {isa = PBXBuildFile; fileRef = 9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		992ABCF91BEA9BD2006403A0 /* RemoteAutomationTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 992ABCF51BEA94CA006403A0 /* RemoteAutomationTarget.cpp */; };
 		992F56B41E4E84A40035953B /* RemoteConnectionToTargetCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 992F56B31E4E847D0035953B /* RemoteConnectionToTargetCocoa.mm */; };
 		992F56B51E4E84A80035953B /* RemoteInspectorCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 992F56B01E4E84790035953B /* RemoteInspectorCocoa.mm */; };
@@ -1725,8 +1723,6 @@
 		996B73281BDA08EF00331B84 /* SymbolPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B73141BD9FA2C00331B84 /* SymbolPrototype.lut.h */; };
 		998ED6741BED70AC00DD8017 /* RemoteControllableTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 998ED6721BED659A00DD8017 /* RemoteControllableTarget.cpp */; };
 		998ED6751BED768C00DD8017 /* RemoteControllableTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 998ED6731BED659A00DD8017 /* RemoteControllableTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99CC0B6218BE9946006CEBCC /* CodeGeneratorReplayInputsTemplates.py in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1E18A1B1E70026D88F /* CodeGeneratorReplayInputsTemplates.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1D18A1B1E70026D88F /* CodeGeneratorReplayInputs.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99D6A1161BEAD34D00E25C37 /* RemoteAutomationTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 992ABCF61BEA94CA006403A0 /* RemoteAutomationTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A31BD5993100F4575C /* builtins_generator.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009A1BD5992700F4575C /* builtins_generator.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00A41BD5993100F4575C /* builtins_model.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA009B1BD5992700F4575C /* builtins_model.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1739,11 +1735,6 @@
 		99DA00AF1BD5994E00F4575C /* generate-js-builtins.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00B01BD5994E00F4575C /* lazywriter.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AD1BD5993E00F4575C /* lazywriter.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		99DA00B11BD5994E00F4575C /* UpdateContents.py in Headers */ = {isa = PBXBuildFile; fileRef = 99DA00AE1BD5993E00F4575C /* UpdateContents.py */; settings = {ATTRIBUTES = (Private, ); }; };
-		99E45A2418A1B2590026D88F /* EmptyInputCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A1F18A1B2590026D88F /* EmptyInputCursor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99E45A2518A1B2590026D88F /* EncodedValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99E45A2018A1B2590026D88F /* EncodedValue.cpp */; };
-		99E45A2618A1B2590026D88F /* EncodedValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A2118A1B2590026D88F /* EncodedValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99E45A2718A1B2590026D88F /* InputCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A2218A1B2590026D88F /* InputCursor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99E45A2818A1B2590026D88F /* NondeterministicInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E45A2318A1B2590026D88F /* NondeterministicInput.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99F1A6FE1B8E6D9400463B26 /* InspectorFrontendRouter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 99F1A6FC1B8E6D9400463B26 /* InspectorFrontendRouter.cpp */; };
 		99F1A7011B98FBEC00463B26 /* InspectorFrontendRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = 99F1A7001B98FBEC00463B26 /* InspectorFrontendRouter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9E729407190F01A5001A91B5 /* InitializeThreading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */; };
@@ -2299,7 +2290,6 @@
 		C2FCAE1217A9C24E0034C735 /* BytecodeLivenessAnalysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2FCAE0E17A9C24E0034C735 /* BytecodeLivenessAnalysis.cpp */; };
 		C2FCAE1317A9C24E0034C735 /* BytecodeLivenessAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = C2FCAE0F17A9C24E0034C735 /* BytecodeLivenessAnalysis.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2FE18A416BAEC4000AF3061 /* StructureRareData.h in Headers */ = {isa = PBXBuildFile; fileRef = C2FE18A316BAEC4000AF3061 /* StructureRareData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C442CB251A6CDB8C005D3D7C /* JSInputs.json in Headers */ = {isa = PBXBuildFile; fileRef = 9928FF3D18AC4B1C00B8CF12 /* JSInputs.json */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4703CC0192844960013FBEA /* generate-inspector-protocol-bindings.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CBF192844960013FBEA /* generate-inspector-protocol-bindings.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4703CCE192844CC0013FBEA /* generate_js_backend_commands.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CC3192844CC0013FBEA /* generate_js_backend_commands.py */; settings = {ATTRIBUTES = (Private, ); }; };
 		C4703CD5192844CC0013FBEA /* generator_templates.py in Headers */ = {isa = PBXBuildFile; fileRef = C4703CCA192844CC0013FBEA /* generator_templates.py */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4322,9 +4312,6 @@
 		9788FC221471AD0C0068CE2D /* JSDateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDateMath.cpp; sourceTree = "<group>"; };
 		9788FC231471AD0C0068CE2D /* JSDateMath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDateMath.h; sourceTree = "<group>"; };
 		990DA67E1C8E311D00295159 /* generate_objc_protocol_type_conversions_implementation.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = generate_objc_protocol_type_conversions_implementation.py; sourceTree = "<group>"; };
-		9928FF3918AC4AEC00B8CF12 /* JSReplayInputs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSReplayInputs.cpp; sourceTree = "<group>"; };
-		9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSReplayInputs.h; sourceTree = "<group>"; };
-		9928FF3D18AC4B1C00B8CF12 /* JSInputs.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = JSInputs.json; sourceTree = "<group>"; };
 		992ABCF51BEA94CA006403A0 /* RemoteAutomationTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAutomationTarget.cpp; sourceTree = "<group>"; };
 		992ABCF61BEA94CA006403A0 /* RemoteAutomationTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAutomationTarget.h; sourceTree = "<group>"; };
 		992F56B01E4E84790035953B /* RemoteInspectorCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteInspectorCocoa.mm; sourceTree = "<group>"; };
@@ -4366,13 +4353,6 @@
 		99DA00AC1BD5993E00F4575C /* generate-js-builtins.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = "generate-js-builtins.py"; sourceTree = "<group>"; };
 		99DA00AD1BD5993E00F4575C /* lazywriter.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = lazywriter.py; sourceTree = "<group>"; };
 		99DA00AE1BD5993E00F4575C /* UpdateContents.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = UpdateContents.py; sourceTree = "<group>"; };
-		99E45A1D18A1B1E70026D88F /* CodeGeneratorReplayInputs.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CodeGeneratorReplayInputs.py; sourceTree = "<group>"; };
-		99E45A1E18A1B1E70026D88F /* CodeGeneratorReplayInputsTemplates.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = CodeGeneratorReplayInputsTemplates.py; sourceTree = "<group>"; };
-		99E45A1F18A1B2590026D88F /* EmptyInputCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmptyInputCursor.h; sourceTree = "<group>"; };
-		99E45A2018A1B2590026D88F /* EncodedValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodedValue.cpp; sourceTree = "<group>"; };
-		99E45A2118A1B2590026D88F /* EncodedValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncodedValue.h; sourceTree = "<group>"; };
-		99E45A2218A1B2590026D88F /* InputCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputCursor.h; sourceTree = "<group>"; };
-		99E45A2318A1B2590026D88F /* NondeterministicInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NondeterministicInput.h; sourceTree = "<group>"; };
 		99F1A6FC1B8E6D9400463B26 /* InspectorFrontendRouter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontendRouter.cpp; sourceTree = "<group>"; };
 		99F1A7001B98FBEC00463B26 /* InspectorFrontendRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontendRouter.h; sourceTree = "<group>"; };
 		9B4954E81A6640DB002815A6 /* ParserFunctionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserFunctionInfo.h; sourceTree = "<group>"; };
@@ -5322,7 +5302,6 @@
 				7E39D8370EC3A388003AF11A /* parser */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				95AB831A0DA42C6900BC83F3 /* profiler */,
-				99E45A0C18A01E930026D88F /* replay */,
 				932FC3C20824BB70005B3C75 /* Resources */,
 				7EF6E0BB0EB7A1EC0079AFAF /* runtime */,
 				9959E9251BD17F1E001AA413 /* Scripts */,
@@ -6343,8 +6322,6 @@
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
 				7C184E2417BFFA36007CB63A /* JSPromiseConstructor.lut.h */,
 				7C184E2517BFFA36007CB63A /* JSPromisePrototype.lut.h */,
-				9928FF3918AC4AEC00B8CF12 /* JSReplayInputs.cpp */,
-				9928FF3A18AC4AEC00B8CF12 /* JSReplayInputs.h */,
 				A7C225CD1399849C00FF1662 /* KeywordLookup.h */,
 				BC18C52D0E16FCE100B34460 /* Lexer.lut.h */,
 				70DE9A081BE7D670005D89D9 /* LLIntAssembly.h */,
@@ -7856,29 +7833,6 @@
 			path = builtins;
 			sourceTree = "<group>";
 		};
-		99E45A0C18A01E930026D88F /* replay */ = {
-			isa = PBXGroup;
-			children = (
-				99E45A1C18A1B1B80026D88F /* scripts */,
-				99E45A1F18A1B2590026D88F /* EmptyInputCursor.h */,
-				99E45A2018A1B2590026D88F /* EncodedValue.cpp */,
-				99E45A2118A1B2590026D88F /* EncodedValue.h */,
-				99E45A2218A1B2590026D88F /* InputCursor.h */,
-				9928FF3D18AC4B1C00B8CF12 /* JSInputs.json */,
-				99E45A2318A1B2590026D88F /* NondeterministicInput.h */,
-			);
-			path = replay;
-			sourceTree = "<group>";
-		};
-		99E45A1C18A1B1B80026D88F /* scripts */ = {
-			isa = PBXGroup;
-			children = (
-				99E45A1D18A1B1E70026D88F /* CodeGeneratorReplayInputs.py */,
-				99E45A1E18A1B1E70026D88F /* CodeGeneratorReplayInputsTemplates.py */,
-			);
-			path = scripts;
-			sourceTree = "<group>";
-		};
 		A513E5CC185FB992007E95AD /* agents */ = {
 			isa = PBXGroup;
 			children = (
@@ -8476,8 +8430,6 @@
 				0F664CE81DA304EF00B00A11 /* CodeBlockSetInlines.h in Headers */,
 				0F96EBB316676EF6008BADE3 /* CodeBlockWithJITType.h in Headers */,
 				A77F1822164088B200640A47 /* CodeCache.h in Headers */,
-				99CC0B6318BE9950006CEBCC /* CodeGeneratorReplayInputs.py in Headers */,
-				99CC0B6218BE9946006CEBCC /* CodeGeneratorReplayInputsTemplates.py in Headers */,
 				86E116B10FE75AC800B512BC /* CodeLocation.h in Headers */,
 				0FBD7E691447999600481315 /* CodeOrigin.h in Headers */,
 				0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */,
@@ -8735,8 +8687,6 @@
 				A70447EE17A0BD7000F5898E /* DumpContext.h in Headers */,
 				FE318FE01CAC982F00DFCC54 /* ECMAScriptSpecInternalFunctions.h in Headers */,
 				2A83638618D7D0EE0000EBCC /* EdenGCActivityCallback.h in Headers */,
-				99E45A2418A1B2590026D88F /* EmptyInputCursor.h in Headers */,
-				99E45A2618A1B2590026D88F /* EncodedValue.h in Headers */,
 				2AD2EDFB19799E38004D6478 /* EnumerationMode.h in Headers */,
 				BC3046070E1F497F003232CF /* Error.h in Headers */,
 				BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */,
@@ -8923,7 +8873,6 @@
 				7905BB691D12050E0019FE57 /* InlineAccess.h in Headers */,
 				148A7BF01B82975A002D9157 /* InlineCallFrame.h in Headers */,
 				0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */,
-				99E45A2718A1B2590026D88F /* InputCursor.h in Headers */,
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				A593CF7F1840362C00BFCE27 /* InspectorAgentBase.h in Headers */,
 				A593CF87184038CA00BFCE27 /* InspectorAgentRegistry.h in Headers */,
@@ -9079,7 +9028,6 @@
 				0F0CAEFC1EC4DA6B00970D12 /* JSHeapFinalizerPrivate.h in Headers */,
 				A513E5C0185BFACC007E95AD /* JSInjectedScriptHost.h in Headers */,
 				A513E5C2185BFACC007E95AD /* JSInjectedScriptHostPrototype.h in Headers */,
-				C442CB251A6CDB8C005D3D7C /* JSInputs.json in Headers */,
 				0F2B66F817B6B5AB00A7AE3F /* JSInt16Array.h in Headers */,
 				0F2B66F917B6B5AB00A7AE3F /* JSInt32Array.h in Headers */,
 				0F2B66F717B6B5AB00A7AE3F /* JSInt8Array.h in Headers */,
@@ -9119,7 +9067,6 @@
 				2A05ABD61961DF2400341750 /* JSPropertyNameEnumerator.h in Headers */,
 				862553D216136E1A009F17D0 /* JSProxy.h in Headers */,
 				A552C3801ADDB8FE00139726 /* JSRemoteInspector.h in Headers */,
-				9928FF3C18AC4AEC00B8CF12 /* JSReplayInputs.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,
 				534638711E70CF3D00F12AC1 /* JSRunLoopTimer.h in Headers */,
 				14874AE615EBDE4A002E3587 /* JSScope.h in Headers */,
@@ -9263,7 +9210,6 @@
 				E33E8D211B9013DE00346B52 /* NativeStdFunctionCell.h in Headers */,
 				0FFB922016D033B70055A5DB /* NodeConstructors.h in Headers */,
 				BC18C43F0E16F5CD00B34460 /* Nodes.h in Headers */,
-				99E45A2818A1B2590026D88F /* NondeterministicInput.h in Headers */,
 				BC18C4410E16F5CD00B34460 /* NumberConstructor.h in Headers */,
 				BC18C4420E16F5CD00B34460 /* NumberConstructor.lut.h in Headers */,
 				BC18C4430E16F5CD00B34460 /* NumberObject.h in Headers */,
@@ -10493,7 +10439,6 @@
 				A70447ED17A0BD7000F5898E /* DumpContext.cpp in Sources */,
 				FE318FDF1CAC982700DFCC54 /* ECMAScriptSpecInternalFunctions.cpp in Sources */,
 				2A83638518D7D0EE0000EBCC /* EdenGCActivityCallback.cpp in Sources */,
-				99E45A2518A1B2590026D88F /* EncodedValue.cpp in Sources */,
 				147F39C7107EC37600427A48 /* Error.cpp in Sources */,
 				147F39C8107EC37600427A48 /* ErrorConstructor.cpp in Sources */,
 				FEB58C14187B8B160098EF0B /* ErrorHandlingScope.cpp in Sources */,
@@ -10737,7 +10682,6 @@
 				2A05ABD51961DF2400341750 /* JSPropertyNameEnumerator.cpp in Sources */,
 				862553D116136DA9009F17D0 /* JSProxy.cpp in Sources */,
 				A552C37F1ADDB8FE00139726 /* JSRemoteInspector.cpp in Sources */,
-				9928FF3B18AC4AEC00B8CF12 /* JSReplayInputs.cpp in Sources */,
 				534638731E70D01500F12AC1 /* JSRunLoopTimer.cpp in Sources */,
 				14874AE515EBDE4A002E3587 /* JSScope.cpp in Sources */,
 				14815F5F991C46BEB98D0016 /* JSScriptFetcher.cpp in Sources */,

@@ -262,12 +262,6 @@
 #include "CaptionUserPreferences.h"
 #endif
 
-#if ENABLE(WEB_REPLAY)
-#include "WebReplayInputs.h"
-#include <replay/EmptyInputCursor.h>
-#include <replay/InputCursor.h>
-#endif
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "MediaPlaybackTargetClient.h"
 #endif
@@ -505,9 +499,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_visualUpdatesSuppressionTimer(*this, &Document::visualUpdatesSuppressionTimerFired)
     , m_sharedObjectPoolClearTimer(*this, &Document::clearSharedObjectPool)
     , m_fontSelector(CSSFontSelector::create(*this))
-#if ENABLE(WEB_REPLAY)
-    , m_inputCursor(EmptyInputCursor::create())
-#endif
     , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
     , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
 #if ENABLE(WEB_SOCKETS)
@@ -4492,18 +4483,8 @@ String Document::lastModified()
     // FIXME: If this document came from the file system, the HTML5
     // specification tells us to read the last modification date from the file
     // system.
-    if (!dateTime) {
+    if (!dateTime)
         dateTime = system_clock::now();
-#if ENABLE(WEB_REPLAY)
-        auto& cursor = inputCursor();
-        if (cursor.isCapturing())
-            cursor.appendInput<DocumentLastModifiedDate>(duration_cast<milliseconds>(dateTime.value().time_since_epoch()).count());
-        else if (cursor.isReplaying()) {
-            if (auto* input = cursor.fetchInput<DocumentLastModifiedDate>())
-                dateTime = system_clock::time_point(milliseconds(static_cast<long long>(input->fallbackValue())));
-        }
-#endif
-    }
 
     auto ctime = system_clock::to_time_t(dateTime.value());
     auto localDateTime = std::localtime(&ctime);
@@ -6878,20 +6859,6 @@ bool Document::hasFocus() const
     }
     return false;
 }
-
-#if ENABLE(WEB_REPLAY)
-
-JSC::InputCursor& Document::inputCursor()
-{
-    return m_inputCursor;
-}
-
-void Document::setInputCursor(Ref<InputCursor>&& cursor)
-{
-    m_inputCursor = WTFMove(cursor);
-}
-
-#endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 

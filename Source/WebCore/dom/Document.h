@@ -463,11 +463,6 @@ public:
     String documentURI() const { return m_documentURI; }
     WEBCORE_EXPORT void setDocumentURI(const String&);
 
-#if ENABLE(WEB_REPLAY)
-    JSC::InputCursor& inputCursor();
-    void setInputCursor(Ref<JSC::InputCursor>&&);
-#endif
-
     using VisibilityState = PageVisibilityState;
     WEBCORE_EXPORT VisibilityState visibilityState() const;
     void visibilityStateChanged();
@@ -1694,10 +1689,6 @@ private:
     Document* m_templateDocumentHost { nullptr }; // Manually managed weakref (backpointer from m_templateDocument).
 
     Ref<CSSFontSelector> m_fontSelector;
-
-#if ENABLE(WEB_REPLAY)
-    Ref<JSC::InputCursor> m_inputCursor;
-#endif
 
     HashSet<MediaProducer*> m_audioProducers;
 

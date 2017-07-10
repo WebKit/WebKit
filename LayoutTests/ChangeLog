@@ -1,3 +1,17 @@
+2017-07-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=173903
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * inspector/replay/javascript-date-now-expected.txt: Removed.
+        * inspector/replay/javascript-date-now.html: Removed.
+        * inspector/replay/javascript-random-seed-expected.txt: Removed.
+        * inspector/replay/javascript-random-seed.html: Removed.
+        * inspector/replay/window-navigator-plugins-memoized-expected.txt: Removed.
+        * inspector/replay/window-navigator-plugins-memoized.html: Removed.
+
 2017-07-10  Matt Lewis  <jlewis3@apple.com>
 
         Skipped http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html.

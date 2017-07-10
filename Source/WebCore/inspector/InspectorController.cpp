@@ -51,7 +51,6 @@
 #include "InspectorMemoryAgent.h"
 #include "InspectorNetworkAgent.h"
 #include "InspectorPageAgent.h"
-#include "InspectorReplayAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InspectorWorkerAgent.h"
 #include "InstrumentingAgents.h"
@@ -151,10 +150,6 @@ InspectorController::InspectorController(Page& page, InspectorClient* inspectorC
 
 #if ENABLE(RESOURCE_USAGE)
     m_agents.append(std::make_unique<InspectorMemoryAgent>(pageContext));
-#endif
-
-#if ENABLE(WEB_REPLAY)
-    m_agents.append(std::make_unique<InspectorReplayAgent>(pageContext));
 #endif
 
     auto domStorageAgentPtr = std::make_unique<InspectorDOMStorageAgent>(pageContext, m_pageAgent);

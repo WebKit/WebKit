@@ -119,7 +119,6 @@ class ProgressTrackerClient;
 class Range;
 class RenderObject;
 class RenderTheme;
-class ReplayController;
 class ResourceUsageOverlay;
 class VisibleSelection;
 class ScrollableArea;
@@ -220,9 +219,6 @@ public:
     ContextMenuController& contextMenuController() const { return *m_contextMenuController; }
 #endif
     UserInputBridge& userInputBridge() const { return *m_userInputBridge; }
-#if ENABLE(WEB_REPLAY)
-    ReplayController& replayController() const { return *m_replayController; }
-#endif
     InspectorController& inspectorController() const { return *m_inspectorController; }
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() const { return *m_pointerLockController; }
@@ -651,9 +647,6 @@ private:
     const std::unique_ptr<ContextMenuController> m_contextMenuController;
 #endif
     const std::unique_ptr<UserInputBridge> m_userInputBridge;
-#if ENABLE(WEB_REPLAY)
-    const std::unique_ptr<ReplayController> m_replayController;
-#endif
     const std::unique_ptr<InspectorController> m_inspectorController;
 #if ENABLE(POINTER_LOCK)
     const std::unique_ptr<PointerLockController> m_pointerLockController;

@@ -1,3 +1,103 @@
+2017-07-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=173903
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::lastModified):
+        (WebCore::Document::inputCursor): Deleted.
+        (WebCore::Document::setInputCursor): Deleted.
+        * dom/Document.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::willDispatchEventOnWindowImpl):
+        (WebCore::InspectorInstrumentation::frameDetachedFromParentImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::sessionCreatedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::sessionLoadedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::sessionModifiedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::segmentCreatedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::segmentCompletedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::segmentLoadedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::segmentUnloadedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::captureStartedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::captureStoppedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::playbackStartedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::playbackPausedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::playbackHitPositionImpl): Deleted.
+        (WebCore::InspectorInstrumentation::playbackFinishedImpl): Deleted.
+        (WebCore::InspectorInstrumentation::replayAgentEnabled): Deleted.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::sessionCreated): Deleted.
+        (WebCore::InspectorInstrumentation::sessionLoaded): Deleted.
+        (WebCore::InspectorInstrumentation::sessionModified): Deleted.
+        (WebCore::InspectorInstrumentation::segmentCreated): Deleted.
+        (WebCore::InspectorInstrumentation::segmentCompleted): Deleted.
+        (WebCore::InspectorInstrumentation::segmentLoaded): Deleted.
+        (WebCore::InspectorInstrumentation::segmentUnloaded): Deleted.
+        (WebCore::InspectorInstrumentation::captureStarted): Deleted.
+        (WebCore::InspectorInstrumentation::captureStopped): Deleted.
+        (WebCore::InspectorInstrumentation::playbackStarted): Deleted.
+        (WebCore::InspectorInstrumentation::playbackPaused): Deleted.
+        (WebCore::InspectorInstrumentation::playbackFinished): Deleted.
+        (WebCore::InspectorInstrumentation::playbackHitPosition): Deleted.
+        * inspector/InspectorReplayAgent.cpp: Removed.
+        * inspector/InspectorReplayAgent.h: Removed.
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::InstrumentingAgents::reset):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::inspectorReplayAgent): Deleted.
+        (WebCore::InstrumentingAgents::setInspectorReplayAgent): Deleted.
+        * page/EventHandler.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        * page/Page.h:
+        (WebCore::Page::replayController): Deleted.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasons):
+        (WebCore::ScrollingCoordinator::replaySessionStateDidChange): Deleted.
+        * page/scrolling/ScrollingCoordinator.h:
+        * platform/Logging.h:
+        * plugins/DOMMimeTypeArray.cpp:
+        (WebCore::DOMMimeTypeArray::getPluginData):
+        * plugins/DOMPluginArray.cpp:
+        (WebCore::DOMPluginArray::pluginData):
+        * replay/AllReplayInputs.h: Removed.
+        * replay/CapturingInputCursor.cpp: Removed.
+        * replay/CapturingInputCursor.h: Removed.
+        * replay/EventLoopInput.cpp: Removed.
+        * replay/EventLoopInput.h: Removed.
+        * replay/EventLoopInputDispatcher.cpp: Removed.
+        * replay/EventLoopInputDispatcher.h: Removed.
+        * replay/FunctorInputCursor.h: Removed.
+        * replay/MemoizedDOMResult.cpp: Removed.
+        * replay/MemoizedDOMResult.h: Removed.
+        * replay/ReplayController.cpp: Removed.
+        * replay/ReplayController.h: Removed.
+        * replay/ReplayInputCreationMethods.cpp: Removed.
+        * replay/ReplayInputDispatchMethods.cpp: Removed.
+        * replay/ReplaySession.cpp: Removed.
+        * replay/ReplaySession.h: Removed.
+        * replay/ReplaySessionSegment.cpp: Removed.
+        * replay/ReplaySessionSegment.h: Removed.
+        * replay/ReplayingInputCursor.cpp: Removed.
+        * replay/ReplayingInputCursor.h: Removed.
+        * replay/SegmentedInputStorage.cpp: Removed.
+        * replay/SegmentedInputStorage.h: Removed.
+        * replay/SerializationMethods.cpp: Removed.
+        * replay/SerializationMethods.h: Removed.
+        * replay/WebInputs.json: Removed.
+
 2017-07-10  Brady Eidson  <beidson@apple.com>
 
         Cleanup lifetime issues of UniqueIDBDatabase and IDBBackingStore.

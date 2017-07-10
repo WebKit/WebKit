@@ -179,11 +179,6 @@
 #include "JSGlobalObjectInspectorController.h"
 #endif
 
-#if ENABLE(WEB_REPLAY)
-#include "EmptyInputCursor.h"
-#include "JSReplayInputs.h"
-#endif
-
 namespace JSC {
 
 static JSValue createProxyProperty(VM& vm, JSObject* object)
@@ -315,9 +310,6 @@ static EncodedJSValue JSC_HOST_CALL enqueueJob(ExecState* exec)
 JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
     : Base(vm, structure, 0)
     , m_vm(vm)
-#if ENABLE(WEB_REPLAY)
-    , m_inputCursor(EmptyInputCursor::create())
-#endif
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_havingABadTimeWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
     , m_varInjectionWatchpoint(adoptRef(new WatchpointSet(IsWatched)))
@@ -1403,21 +1395,6 @@ bool JSGlobalObject::remoteDebuggingEnabled() const
     return false;
 #endif
 }
-
-#if ENABLE(WEB_REPLAY)
-void JSGlobalObject::setInputCursor(Ref<InputCursor>&& cursor)
-{
-    m_inputCursor = WTFMove(cursor);
-    // Save or set the random seed. This performed here rather than the constructor
-    // to avoid threading the input cursor through all the abstraction layers.
-    if (m_inputCursor->isCapturing())
-        m_inputCursor->appendInput<SetRandomSeed>(m_weakRandom.seed());
-    else if (m_inputCursor->isReplaying()) {
-        if (SetRandomSeed* input = m_inputCursor->fetchInput<SetRandomSeed>())
-            m_weakRandom.setSeed(static_cast<unsigned>(input->randomSeed()));
-    }
-}
-#endif
 
 void JSGlobalObject::setName(const String& name)
 {

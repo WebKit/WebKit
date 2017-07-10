@@ -1,3 +1,14 @@
+2017-07-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=173903
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Scripts/run-input-generator-tests: Removed.
+        * Scripts/webkitpy/replay/__init__.py: Removed.
+        * Scripts/webkitpy/replay/main.py: Removed.
+
 2017-07-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Fix layout test baseline and TestExpectations hierarchy

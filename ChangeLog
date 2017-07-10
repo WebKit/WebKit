@@ -1,3 +1,18 @@
+2017-07-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=173903
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * ManualTests/inspector/replay-keyboard-events.html: Removed.
+        * ManualTests/inspector/replay-mouse-events.html: Removed.
+        * ManualTests/inspector/replay-wheel-events.html: Removed.
+        * ManualTests/inspector/replay-window-navigator-basic.html: Removed.
+        * ManualTests/inspector/replay-window-screen.html: Removed.
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitFeatures.cmake:
+
 2017-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move make-js-file-arrays.py from WebCore to JavaScriptCore

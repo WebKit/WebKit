@@ -382,10 +382,6 @@ public:
 
     VM& m_vm;
 
-#if ENABLE(WEB_REPLAY)
-    Ref<InputCursor> m_inputCursor;
-#endif
-
 #if ENABLE(REMOTE_INSPECTOR)
     std::unique_ptr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;
     std::unique_ptr<JSGlobalObjectDebuggable> m_inspectorDebuggable;
@@ -651,11 +647,6 @@ public:
 
     JS_EXPORT_PRIVATE void setRemoteDebuggingEnabled(bool);
     JS_EXPORT_PRIVATE bool remoteDebuggingEnabled() const;
-
-#if ENABLE(WEB_REPLAY)
-    JS_EXPORT_PRIVATE void setInputCursor(Ref<InputCursor>&&);
-    InputCursor& inputCursor() const { return m_inputCursor.get(); }
-#endif
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::JSGlobalObjectInspectorController& inspectorController() const { return *m_inspectorController.get(); }

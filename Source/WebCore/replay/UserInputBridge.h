@@ -32,10 +32,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
-namespace JSC {
-class InputCursor;
-}
-
 namespace WebCore {
 
 class Frame;
@@ -56,19 +52,6 @@ class UserInputBridge {
     WTF_MAKE_NONCOPYABLE(UserInputBridge);
 public:
     UserInputBridge(Page&);
-
-#if ENABLE(WEB_REPLAY)
-    enum class State {
-        Capturing,
-        Open,
-        Replaying,
-    };
-
-    void setState(State bridgeState) { m_state = bridgeState; }
-    State state() const { return m_state; }
-
-    JSC::InputCursor& activeCursor() const;
-#endif
 
     // User input APIs.
 #if ENABLE(CONTEXT_MENUS)
@@ -95,9 +78,6 @@ public:
 
 private:
     Page& m_page;
-#if ENABLE(WEB_REPLAY)
-    State m_state;
-#endif
 };
 
 } // namespace WebCore

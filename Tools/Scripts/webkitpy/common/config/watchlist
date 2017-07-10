@@ -188,10 +188,6 @@
         "WebInspectorUIImages": {
             "filename": r"Source/WebInspectorUI/UserInterface/Images",
         },
-        "WebReplayGenerator": {
-            "filename": r"Source/JavaScriptCore/replay/scripts"
-                        r"|Tools/Scripts/webkitpy/replay",
-        },
         "WebSocket": {
             "filename": r"Source/WebCore/Modules/websockets"
                         r"|Source/WebCore/platform/network/(|.+/)SocketStream.*",
@@ -393,7 +389,6 @@
         "WebInspectorAPI": [ "joepeck@webkit.org" ],
         "WebInspectorGenerator": [ "bburg@apple.com", "joepeck@webkit.org" ],
         "WebInspectorUIImages": [ "agomez@igalia.com" ],
-        "WebReplayGenerator": [ "bburg@apple.com" ],
         "JSBuiltinsGenerator": [ "bburg@apple.com" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "berto@igalia.com", "cgarcia@igalia.com", "mcatanzaro@igalia.com" ],
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
@@ -409,7 +404,6 @@
         "ANGLE": [ "Note that there are important steps to take when updating ANGLE. "
                    "See http://trac.webkit.org/wiki/UpdatingANGLE", ],
         "WebInspectorGenerator": [ "This patch modifies the inspector protocol generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-inspector-generator-tests --reset-results`)" ],
-        "WebReplayGenerator": [ "This patch modifies the WEB_REPLAY inputs generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-input-generator-tests --reset-results`)" ],
         "JSBuiltinsGenerator": [ "This patch modifies the JS builtins code generator. Please ensure that you have rebaselined any generator test results (i.e., by running `Tools/Scripts/run-builtins-generator-tests --reset-results`)" ],
         "WasmJSON": [ "This patch modifies one of the wasm.json files. Please ensure that any changes in one have been mirrored to the other. You can find the wasm.json files at \"Source/JavaScriptCore/wasm/wasm.json\" and \"JSTests/wasm/wasm.json\"." ],
     },

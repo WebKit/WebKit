@@ -3486,36 +3486,6 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     )
 endif ()
 
-if (ENABLE_WEB_REPLAY)
-    set(WebCore_WEB_REPLAY_INPUTS ${CMAKE_CURRENT_SOURCE_DIR}/replay/WebInputs.json ${JAVASCRIPTCORE_DIR}/replay/JSInputs.json)
-    add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/WebReplayInputs.h ${DERIVED_SOURCES_WEBCORE_DIR}/WebReplayInputs.cpp
-        MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/replay/scripts/CodeGeneratorReplayInputs.py
-        DEPENDS ${WebCore_WEB_REPLAY_INPUTS}
-        COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/replay/scripts/CodeGeneratorReplayInputs.py --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}/ --framework WebCore ${WebCore_WEB_REPLAY_INPUTS}
-        VERBATIM)
-
-    list(APPEND WebCore_SOURCES
-        inspector/InspectorReplayAgent.cpp
-
-        replay/CapturingInputCursor.cpp
-        replay/EventLoopInput.cpp
-        replay/EventLoopInputDispatcher.cpp
-        replay/MemoizedDOMResult.cpp
-        replay/ReplayController.cpp
-        replay/ReplayInputCreationMethods.cpp
-        replay/ReplayInputDispatchMethods.cpp
-        replay/ReplaySession.cpp
-        replay/ReplaySessionSegment.cpp
-        replay/ReplayingInputCursor.cpp
-        replay/SegmentedInputStorage.cpp
-        replay/SerializationMethods.cpp
-        replay/UserInputBridge.cpp
-
-        ${DERIVED_SOURCES_WEBCORE_DIR}/WebReplayInputs.cpp
-    )
-endif ()
-
 if (ENABLE_USER_MESSAGE_HANDLERS)
     list(APPEND WebCore_IDL_FILES
         page/UserMessageHandler.idl

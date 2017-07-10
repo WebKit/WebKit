@@ -1,3 +1,25 @@
+2017-07-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=173903
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::tryClose):
+        (WebKit::WebPage::loadRequest):
+        (WebKit::WebPage::stopLoadingFrame):
+        (WebKit::WebPage::stopLoading):
+        (WebKit::WebPage::reload):
+        (WebKit::WebPage::contextMenuAtPointInWindow):
+        (WebKit::handleContextMenuEvent):
+        (WebKit::handleMouseEvent):
+        (WebKit::handleWheelEvent):
+        (WebKit::handleKeyEvent):
+        (WebKit::WebPage::scroll):
+        (WebKit::WebPage::logicalScroll):
+
 2017-07-10  Chris Dumez  <cdumez@apple.com>
 
         Further WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore clean up

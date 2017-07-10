@@ -1,3 +1,38 @@
+2017-07-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=173903
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * .eslintrc:
+        * UserInterface/Base/Main.js:
+        (WebInspector.loaded):
+        * UserInterface/Controllers/DashboardManager.js:
+        (WebInspector.DashboardManager):
+        * UserInterface/Controllers/ReplayManager.js: Removed.
+        * UserInterface/Images/ReplayPauseButton.svg: Removed.
+        * UserInterface/Images/ReplayPlayButton.svg: Removed.
+        * UserInterface/Images/ReplayRecordingButton.svg: Removed.
+        * UserInterface/Images/gtk/ReplayPauseButton.svg: Removed.
+        * UserInterface/Images/gtk/ReplayPlayButton.svg: Removed.
+        * UserInterface/Images/gtk/ReplayRecordingButton.svg: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Models/ReplayDashboard.js: Removed.
+        * UserInterface/Models/ReplaySession.js: Removed.
+        * UserInterface/Models/ReplaySessionSegment.js: Removed.
+        * UserInterface/Protocol/ReplayObserver.js: Removed.
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WebInspector.loaded):
+        * UserInterface/Views/DashboardView.js:
+        (WebInspector.DashboardView.create):
+        * UserInterface/Views/ReplayDashboardView.css: Removed.
+        * UserInterface/Views/ReplayDashboardView.js: Removed.
+        * UserInterface/Views/TimelineRecordingContentView.js:
+        (WebInspector.TimelineRecordingContentView.prototype._debuggerPaused):
+        (WebInspector.TimelineRecordingContentView.prototype._debuggerResumed):
+
 2017-07-07  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Resources are sometimes missing from the tree outline right before folderizing

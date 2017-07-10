@@ -1,3 +1,85 @@
+2017-07-03  Brian Burg  <bburg@apple.com>
+
+        Web Replay: remove some unused code
+        https://bugs.webkit.org/show_bug.cgi?id=173903
+
+        Rubber-stamped by Joseph Pecoraro.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * inspector/protocol/Replay.json: Removed.
+        * replay/EmptyInputCursor.h: Removed.
+        * replay/EncodedValue.cpp: Removed.
+        * replay/EncodedValue.h: Removed.
+        * replay/InputCursor.h: Removed.
+        * replay/JSInputs.json: Removed.
+        * replay/NondeterministicInput.h: Removed.
+        * replay/scripts/CodeGeneratorReplayInputs.py: Removed.
+        * replay/scripts/CodeGeneratorReplayInputsTemplates.py: Removed.
+        * replay/scripts/tests/expected/fail-on-c-style-enum-no-storage.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-duplicate-enum-type.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-duplicate-input-names.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-duplicate-type-names.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-enum-type-missing-values.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-missing-input-member-name.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-missing-input-name.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-missing-input-queue.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-missing-type-mode.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-missing-type-name.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-unknown-input-queue.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-unknown-member-type.json-error: Removed.
+        * replay/scripts/tests/expected/fail-on-unknown-type-mode.json-error: Removed.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.cpp: Removed.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers-with-guarded-values.json-TestReplayInputs.h: Removed.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.cpp: Removed.
+        * replay/scripts/tests/expected/generate-enum-encoding-helpers.json-TestReplayInputs.h: Removed.
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.cpp: Removed.
+        * replay/scripts/tests/expected/generate-enum-with-guard.json-TestReplayInputs.h: Removed.
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.cpp: Removed.
+        * replay/scripts/tests/expected/generate-enums-with-same-base-name.json-TestReplayInputs.h: Removed.
+        * replay/scripts/tests/expected/generate-event-loop-shape-types.json-error: Removed.
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.cpp: Removed.
+        * replay/scripts/tests/expected/generate-input-with-guard.json-TestReplayInputs.h: Removed.
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.cpp: Removed.
+        * replay/scripts/tests/expected/generate-input-with-vector-members.json-TestReplayInputs.h: Removed.
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-TestReplayInputs.cpp: Removed.
+        * replay/scripts/tests/expected/generate-inputs-with-flags.json-TestReplayInputs.h: Removed.
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.cpp: Removed.
+        * replay/scripts/tests/expected/generate-memoized-type-modes.json-TestReplayInputs.h: Removed.
+        * replay/scripts/tests/fail-on-c-style-enum-no-storage.json: Removed.
+        * replay/scripts/tests/fail-on-duplicate-enum-type.json: Removed.
+        * replay/scripts/tests/fail-on-duplicate-input-names.json: Removed.
+        * replay/scripts/tests/fail-on-duplicate-type-names.json: Removed.
+        * replay/scripts/tests/fail-on-enum-type-missing-values.json: Removed.
+        * replay/scripts/tests/fail-on-missing-input-member-name.json: Removed.
+        * replay/scripts/tests/fail-on-missing-input-name.json: Removed.
+        * replay/scripts/tests/fail-on-missing-input-queue.json: Removed.
+        * replay/scripts/tests/fail-on-missing-type-mode.json: Removed.
+        * replay/scripts/tests/fail-on-missing-type-name.json: Removed.
+        * replay/scripts/tests/fail-on-unknown-input-queue.json: Removed.
+        * replay/scripts/tests/fail-on-unknown-member-type.json: Removed.
+        * replay/scripts/tests/fail-on-unknown-type-mode.json: Removed.
+        * replay/scripts/tests/generate-enum-encoding-helpers-with-guarded-values.json: Removed.
+        * replay/scripts/tests/generate-enum-encoding-helpers.json: Removed.
+        * replay/scripts/tests/generate-enum-with-guard.json: Removed.
+        * replay/scripts/tests/generate-enums-with-same-base-name.json: Removed.
+        * replay/scripts/tests/generate-event-loop-shape-types.json: Removed.
+        * replay/scripts/tests/generate-input-with-guard.json: Removed.
+        * replay/scripts/tests/generate-input-with-vector-members.json: Removed.
+        * replay/scripts/tests/generate-inputs-with-flags.json: Removed.
+        * replay/scripts/tests/generate-memoized-type-modes.json: Removed.
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::dateNow):
+        (JSC::deterministicCurrentTime): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::setInputCursor): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::inputCursor): Deleted.
+
 2017-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Move make-js-file-arrays.py from WebCore to JavaScriptCore

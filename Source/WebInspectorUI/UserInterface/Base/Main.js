@@ -93,8 +93,6 @@ WebInspector.loaded = function()
         InspectorBackend.registerRuntimeDispatcher(new WebInspector.RuntimeObserver);
     if (InspectorBackend.registerWorkerDispatcher)
         InspectorBackend.registerWorkerDispatcher(new WebInspector.WorkerObserver);
-    if (InspectorBackend.registerReplayDispatcher)
-        InspectorBackend.registerReplayDispatcher(new WebInspector.ReplayObserver);
     if (InspectorBackend.registerCanvasDispatcher)
         InspectorBackend.registerCanvasDispatcher(new WebInspector.CanvasObserver);
 
@@ -136,7 +134,6 @@ WebInspector.loaded = function()
     this.dashboardManager = new WebInspector.DashboardManager;
     this.probeManager = new WebInspector.ProbeManager;
     this.workerManager = new WebInspector.WorkerManager;
-    this.replayManager = new WebInspector.ReplayManager;
     this.domDebuggerManager = new WebInspector.DOMDebuggerManager;
     this.canvasManager = new WebInspector.CanvasManager;
 
@@ -151,7 +148,6 @@ WebInspector.loaded = function()
     }, 0);
 
     // Register for events.
-    this.replayManager.addEventListener(WebInspector.ReplayManager.Event.CaptureStarted, this._captureDidStart, this);
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Paused, this._debuggerDidPause, this);
     this.debuggerManager.addEventListener(WebInspector.DebuggerManager.Event.Resumed, this._debuggerDidResume, this);
     this.domTreeManager.addEventListener(WebInspector.DOMTreeManager.Event.InspectModeStateChanged, this._inspectModeStateChanged, this);
@@ -172,7 +168,6 @@ WebInspector.loaded = function()
     this._selectedTabIndexSetting = new WebInspector.Setting("selected-tab-index", 0);
 
     this.showShadowDOMSetting = new WebInspector.Setting("show-shadow-dom", false);
-    this.showReplayInterfaceSetting = new WebInspector.Setting("show-web-replay", false);
 
     // COMPATIBILITY (iOS 8): Page.enableTypeProfiler did not exist.
     this.showJavaScriptTypeInformationSetting = new WebInspector.Setting("show-javascript-type-information", false);
@@ -1344,11 +1339,6 @@ WebInspector._dragOver = function(event)
     // Prevent the drop from being accepted.
     event.dataTransfer.dropEffect = "none";
     event.preventDefault();
-};
-
-WebInspector._captureDidStart = function(event)
-{
-    this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.replay);
 };
 
 WebInspector._debuggerDidPause = function(event)

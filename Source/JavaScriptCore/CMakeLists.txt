@@ -32,7 +32,6 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/llint"
     "${JAVASCRIPTCORE_DIR}/parser"
     "${JAVASCRIPTCORE_DIR}/profiler"
-    "${JAVASCRIPTCORE_DIR}/replay"
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${JAVASCRIPTCORE_DIR}/tools"
     "${JAVASCRIPTCORE_DIR}/wasm"
@@ -1279,7 +1278,6 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     llint
     parser
     profiler
-    replay
     runtime
     wasm
     yarr
@@ -1378,12 +1376,6 @@ endif ()
 if (ENABLE_RESOURCE_USAGE)
     list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
         ${JAVASCRIPTCORE_DIR}/inspector/protocol/Memory.json
-    )
-endif ()
-
-if (ENABLE_WEB_REPLAY)
-    list(APPEND JavaScriptCore_INSPECTOR_DOMAINS
-        ${JAVASCRIPTCORE_DIR}/inspector/protocol/Replay.json
     )
 endif ()
 
@@ -1505,23 +1497,6 @@ add_custom_command(
     VERBATIM)
 
 list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/InjectedScriptSource.h)
-
-# Web Replay inputs generator
-if (ENABLE_WEB_REPLAY)
-    set(JavaScript_WEB_REPLAY_INPUTS ${CMAKE_CURRENT_SOURCE_DIR}/replay/JSInputs.json)
-    add_custom_command(
-        OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSReplayInputs.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSReplayInputs.cpp
-        MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/replay/scripts/CodeGeneratorReplayInputs.py
-        DEPENDS ${JavaScript_WEB_REPLAY_INPUTS}
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/replay/scripts/CodeGeneratorReplayInputs.py --outputDir ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/ --framework JavaScriptCore ${JavaScript_WEB_REPLAY_INPUTS}
-        VERBATIM)
-
-    list(APPEND JavaScriptCore_SOURCES
-        replay/EncodedValue.cpp
-        ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSReplayInputs.cpp
-    )
-    list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSReplayInputs.h)
-endif ()
 
 if (WTF_CPU_ARM)
 elseif (WTF_CPU_ARM64)
