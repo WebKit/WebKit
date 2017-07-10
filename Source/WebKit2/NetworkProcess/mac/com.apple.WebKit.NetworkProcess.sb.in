@@ -150,6 +150,7 @@
 #endif
     (global-name "com.apple.cookied")
     (global-name "com.apple.cfnetwork.AuthBrokerAgent")
+    (global-name "com.apple.cfnetwork.cfnetworkagent")
     (global-name "com.apple.lsd.mapdb")
     (global-name "com.apple.nesessionmanager.flow-divert-token")
 )
