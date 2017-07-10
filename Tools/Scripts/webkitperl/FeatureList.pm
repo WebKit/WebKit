@@ -139,6 +139,7 @@ my (
     $webTimingSupport,
     $writableStreamAPISupport,
     $webglSupport,
+    $webgl2Support,
     $xsltSupport,
 );
 
@@ -399,6 +400,9 @@ my @features = (
 
     { option => "webgl", desc => "Toggle WebGL support",
       define => "ENABLE_WEBGL", default => (isAppleCocoaWebKit() || isGtk() || isWPE()), value => \$webglSupport },
+
+    { option => "webgl2", desc => "Toggle WebGL2 support",
+      define => "ENABLE_WEBGL2", default => isAppleCocoaWebKit(), value => \$webgl2Support },
 
     { option => "writableStreamAPI", desc => "Toggle WritableStream API support",
       define => "ENABLE_WRITABLE_STREAM_API", default => 1, value => \$writableStreamAPISupport },
