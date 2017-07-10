@@ -46,18 +46,22 @@ public:
     DataType waitForMessage();
     std::optional<DataType> tryGetMessage();
 
-    bool isKilled() const { return false; }
+    void kill();
+    bool isKilled() const;
+    bool isEmpty() const;
 
 private:
     mutable Lock m_lock;
     Condition m_condition;
     Deque<DataType> m_queue;
+    bool m_killed { false };
 };
 
 template<typename DataType>
 void CrossThreadQueue<DataType>::append(DataType&& message)
 {
     LockHolder lock(m_lock);
+    ASSERT(!m_killed);
     m_queue.append(WTFMove(message));
     m_condition.notifyOne();
 }
@@ -88,6 +92,28 @@ std::optional<DataType> CrossThreadQueue<DataType>::tryGetMessage()
         return { };
 
     return m_queue.takeFirst();
+}
+
+template<typename DataType>
+void CrossThreadQueue<DataType>::kill()
+{
+    LockHolder lock(m_lock);
+    m_killed = true;
+    m_condition.notifyAll();
+}
+
+template<typename DataType>
+bool CrossThreadQueue<DataType>::isKilled() const
+{
+    LockHolder lock(m_lock);
+    return m_killed;
+}
+
+template<typename DataType>
+bool CrossThreadQueue<DataType>::isEmpty() const
+{
+    LockHolder lock(m_lock);
+    return m_queue.isEmpty();
 }
 
 } // namespace WTF

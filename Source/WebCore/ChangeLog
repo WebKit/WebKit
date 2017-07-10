@@ -1,3 +1,81 @@
+2017-07-10  Brady Eidson  <beidson@apple.com>
+
+        Cleanup lifetime issues of UniqueIDBDatabase and IDBBackingStore.
+        <rdar://problem/32908525> and https://bugs.webkit.org/show_bug.cgi?id=174244
+
+        Reviewed by David Kilzer and Alex Christensen. 
+
+        No targeted test possible, implicitly covered by all IDB tests.
+
+        The original idea behind UniqueIDBDatabase lifetime was that they are ThreadSafeRefCounted and
+        we take protector Refs when any operation that needs it alive is in flight.
+        
+        This added variability to their lifetime which made it difficult to enforce a few different 
+        design invariants, namely:
+            - UniqueIBDDatabase objects are always created and destroyed only on the main thread.
+            - IDBBackingStore objects are always created and destroyed only on the database thread.
+        
+        This patch removes the ref counting and instead ties UniqueIDBDatabase lifetime to a
+        std::unique_ptr that is owned by the IDBServer.
+        
+        Whenever any operations on the UniqueIDBDatabase are in flight it is kept alive by virtue
+        of that unique_ptr in the IDBServer. Once a UniqueIDBDatabase is completely done with all of
+        its work, the following happens:
+            - On the main thread the IDBServer removes the unique_ptr owning the UniqueIDBDatabase
+              from its map.
+            - It hands the unique_ptr to the UniqueIDBDatabase itself, which schedules one final 
+              database thread task.
+            - That database thread task is to destroy the IDBBackingStore, kill its message queues,
+              and then message back to the main thread for one final task.
+            - That main thread task is to release the unique_ptr, resulting in destruction of the
+              UniqueIDBDatabase object.
+        
+        This is safe, predictable, solves the lifetime issues that r218516 originally tried to solve,
+        and solves the lifetime issues that r218516 introduced.
+
+        (This patch also adds many more assertions to cover various design invariants throughout the
+        lifecycle of a particular UniqueIDBDatabase)
+
+        ASSERT that IDBBackingStores are only ever created and destroyed on the background thread:
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        (WebCore::IDBServer::IDBBackingStore::~IDBBackingStore):
+        (WebCore::IDBServer::IDBBackingStore::IDBBackingStore):
+        
+        Transition UniqueIDBDatabase ownership from a RefPtr to a std::unique_ptr:
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::getOrCreateUniqueIDBDatabase):
+        (WebCore::IDBServer::IDBServer::closeAndTakeUniqueIDBDatabase):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebCore::IDBServer::IDBServer::closeUniqueIDBDatabase): Deleted.
+        * Modules/indexeddb/server/IDBServer.h:
+        
+        Make all the other changes mentioned above:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::~UniqueIDBDatabase): Bulk up on ASSERTs
+        (WebCore::IDBServer::UniqueIDBDatabase::openDatabaseConnection): 
+        (WebCore::IDBServer::UniqueIDBDatabase::performUnconditionalDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::shutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::didShutdownForClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::handleCurrentOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::performIterateCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPrefetchCursor):
+        (WebCore::IDBServer::UniqueIDBDatabase::operationAndTransactionTimerFired):
+        (WebCore::IDBServer::UniqueIDBDatabase::activateTransactionInBackingStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::transactionCompleted):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTask):
+        (WebCore::IDBServer::UniqueIDBDatabase::executeNextDatabaseTaskReply):
+        (WebCore::IDBServer::UniqueIDBDatabase::maybeFinishHardClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::isDoneWithHardClose):
+        (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete):
+        (WebCore::IDBServer::UniqueIDBDatabase::didPerformUnconditionalDeleteBackingStore): Deleted.
+        * Modules/indexeddb/server/UniqueIDBDatabase.h:
+        (WebCore::IDBServer::UniqueIDBDatabase::create): Deleted.
+
 2017-07-10  Chris Dumez  <cdumez@apple.com>
 
         Further WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore clean up

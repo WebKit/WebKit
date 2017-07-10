@@ -121,7 +121,7 @@ UniqueIDBDatabase& IDBServer::getOrCreateUniqueIDBDatabase(const IDBDatabaseIden
 
     auto uniqueIDBDatabase = m_uniqueIDBDatabaseMap.add(identifier, nullptr);
     if (uniqueIDBDatabase.isNewEntry)
-        uniqueIDBDatabase.iterator->value = UniqueIDBDatabase::create(*this, identifier);
+        uniqueIDBDatabase.iterator->value = std::make_unique<UniqueIDBDatabase>(*this, identifier);
 
     return *uniqueIDBDatabase.iterator->value;
 }
@@ -171,12 +171,15 @@ void IDBServer::deleteDatabase(const IDBRequestData& requestData)
     database->handleDelete(*connection, requestData);
 }
 
-void IDBServer::closeUniqueIDBDatabase(UniqueIDBDatabase& database)
+std::unique_ptr<UniqueIDBDatabase> IDBServer::closeAndTakeUniqueIDBDatabase(UniqueIDBDatabase& database)
 {
     LOG(IndexedDB, "IDBServer::closeUniqueIDBDatabase");
     ASSERT(isMainThread());
 
-    m_uniqueIDBDatabaseMap.remove(database.identifier());
+    auto uniquePointer = m_uniqueIDBDatabaseMap.take(database.identifier());
+    ASSERT(uniquePointer);
+
+    return uniquePointer;
 }
 
 void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentifier)
@@ -545,7 +548,7 @@ void IDBServer::closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::
         return;
     }
 
-    HashSet<RefPtr<UniqueIDBDatabase>> openDatabases;
+    HashSet<UniqueIDBDatabase*> openDatabases;
     for (auto* connection : m_databaseConnections.values())
         openDatabases.add(&connection->database());
 
@@ -561,7 +564,7 @@ void IDBServer::closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginDat
     auto addResult = m_deleteDatabaseCompletionHandlers.add(callbackID, WTFMove(completionHandler));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
-    HashSet<RefPtr<UniqueIDBDatabase>> openDatabases;
+    HashSet<UniqueIDBDatabase*> openDatabases;
     for (auto* connection : m_databaseConnections.values()) {
         const auto& identifier = connection->database().identifier();
         for (auto& origin : origins) {

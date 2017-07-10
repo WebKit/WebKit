@@ -1,3 +1,19 @@
+2017-07-10  Brady Eidson  <beidson@apple.com>
+
+        Cleanup lifetime issues of UniqueIDBDatabase and IDBBackingStore.
+        <rdar://problem/32908525> and https://bugs.webkit.org/show_bug.cgi?id=174244
+
+        Reviewed by David Kilzer and Alex Christensen. 
+
+        Add proper "kill" support to CrossThreadQueue, as well as isEmpty() support.
+
+        * wtf/CrossThreadQueue.h:
+        (WTF::CrossThreadQueue<DataType>::append):
+        (WTF::CrossThreadQueue<DataType>::kill):
+        (WTF::CrossThreadQueue<DataType>::isKilled):
+        (WTF::CrossThreadQueue<DataType>::isEmpty):
+        (WTF::CrossThreadQueue::isKilled): Deleted.
+
 2017-07-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Use fastMalloc / fastFree for STL containers
