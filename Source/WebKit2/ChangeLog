@@ -1,3 +1,40 @@
+2017-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        REGRESSION(r213590): UI process updates the visible content rects more often than it did in iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=174282
+        <rdar://problem/33144344>
+
+        Reviewed by Simon Fraser.
+
+        In r213590, we accidentally refactored -[WKWebView _didCommitLayerTree:] to call _scheduleVisibleContentRectUpdate
+        more often. Instead, this should be triggered from inside the "if" statements. 
+
+        No tests because there is no behavior change. Performance change is tested in MotionMark.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isShowingVideoPictureInPicture]):
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView goBack]):
+        (-[WKWebView _didCommitLayerTree:]):
+        (-[WKWebView _restorePageStateToUnobscuredCenter:scale:]):
+        (-[WKWebView _zoomToRect:withOrigin:fitEntireRect:minimumScale:maximumScale:minimumScrollDistance:]):
+        (-[WKWebView scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        (-[WKWebView scrollViewDidScroll:]):
+        (-[WKWebView _visibleContentRect]):
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _scheduleVisibleContentRectUpdateAfterScrollInView:]):
+        (-[WKWebView _updateVisibleContentRects]):
+        (-[WKWebView _navigationGestureDidBegin]):
+        (-[WKWebView _reloadWithoutContentBlockers]):
+        (-[WKWebView _reloadExpiredOnly]):
+        (-[WKWebView _setObscuredInsets:]):
+        (-[WKWebView _setUnobscuredSafeAreaInsets:]):
+        (-[WKWebView _endAnimatedResize]):
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        (-[WKWebView _clearOverrideLayoutParameters]):
+        (-[WKWebView _requestActivatedElementAtPosition:completionBlock:]):
+        (-[WKWebView _propertiesOfLayerWithID:]):
+
 2017-07-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] SoupCookieJar is never released (resulting in sqlite temp files lying around)

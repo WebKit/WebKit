@@ -251,7 +251,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     UIInterfaceOrientation _interfaceOrientationOverride;
     BOOL _overridesInterfaceOrientation;
-    
+
     BOOL _allowsViewportShrinkToFit;
 
     BOOL _hasCommittedLoadForMainFrame;
@@ -292,7 +292,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
 
     BOOL _delayUpdateVisibleContentRects;
     BOOL _hadDelayedUpdateVisibleContentRects;
-    
+
     int _activeAnimatedResizeCount;
 
     Vector<WTF::Function<void ()>> _snapshotsDeferredDuringResize;
@@ -348,7 +348,7 @@ static int32_t deviceOrientation()
 #else
     if (!_page || !_page->videoFullscreenManager())
         return false;
-    
+
     return _page->videoFullscreenManager()->hasMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModePictureInPicture);
 #endif
 }
@@ -427,7 +427,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
     WebKit::WebProcessPool& processPool = *[_configuration processPool]->_processPool;
     processPool.setResourceLoadStatisticsEnabled(configuration.websiteDataStore._resourceLoadStatisticsEnabled);
-    
+
     auto pageConfiguration = API::PageConfiguration::create();
 
     pageConfiguration->setProcessPool(&processPool);
@@ -520,7 +520,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     [_scrollView setBouncesZoom:YES];
 
     [self _updateScrollViewInsetAdjustmentBehavior];
-    
+
     [self addSubview:_scrollView.get()];
 
     static uint32_t programSDKVersion = dyld_get_program_sdk_version();
@@ -839,7 +839,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
     auto navigation = _page->goBack();
     if (!navigation)
         return nil;
- 
+
     return [wrapper(*navigation.leakRef()) autorelease];
 }
 
@@ -1486,7 +1486,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
     LOG_WITH_STREAM(VisibleRects, stream << "-[WKWebView _didCommitLayerTree:] transactionID " <<  layerTreeTransaction.transactionID() << " _dynamicViewportUpdateMode " << (int)_dynamicViewportUpdateMode);
 
-    BOOL needUpdateVisbleContentRects = _page->updateLayoutViewportParameters(layerTreeTransaction);
+    bool needUpdateVisibleContentRects = _page->updateLayoutViewportParameters(layerTreeTransaction);
 
     if (_dynamicViewportUpdateMode != DynamicViewportUpdateMode::NotResizing) {
         if (_resizeAnimationTransformTransactionID && layerTreeTransaction.transactionID() >= _resizeAnimationTransformTransactionID.value()) {
@@ -1538,10 +1538,11 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         if (_observedRenderingProgressEvents & _WKRenderingProgressEventFirstPaint)
             _navigationState->didFirstPaint();
 
-        needUpdateVisbleContentRects = YES;
+        needUpdateVisibleContentRects = true;
     }
 
     if (layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
+        bool shouldRestoreScrollPosition = false;
         if (_scrollOffsetToRestore) {
             WebCore::FloatPoint scaledScrollOffset = _scrollOffsetToRestore.value();
             _scrollOffsetToRestore = std::nullopt;
@@ -1552,7 +1553,11 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
                 changeContentOffsetBoundedInValidRange(_scrollView.get(), contentOffsetInScrollViewCoordinates);
                 _commitDidRestoreScrollPosition = YES;
+
+                shouldRestoreScrollPosition = true;
             }
+
+            needUpdateVisibleContentRects = true;
         }
 
         if (_unobscuredCenterToRestore) {
@@ -1568,16 +1573,18 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
                 topLeftInDocumentCoordinates.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
 
                 changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinates);
+
+                shouldRestoreScrollPosition = true;
             }
+
+            needUpdateVisibleContentRects = true;
         }
 
-        needUpdateVisbleContentRects = YES;
-
-        if (_gestureController)
+        if (shouldRestoreScrollPosition && _gestureController)
             _gestureController->didRestoreScrollPosition();
     }
 
-    if (needUpdateVisbleContentRects)
+    if (needUpdateVisibleContentRects)
         [self _scheduleVisibleContentRectUpdate];
 
     if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
@@ -1644,7 +1651,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
     _firstTransactionIDAfterPageRestore = downcast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*_page->drawingArea()).nextLayerTreeTransactionID();
     _unobscuredCenterToRestore = center.value();
-    
+
     _scaleToRestore = scale;
 }
 
@@ -1991,7 +1998,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [self _zoomToRect:targetRect atScale:targetScale origin:origin animated:YES];
         return true;
     }
-    
+
     return false;
 }
 
@@ -2120,7 +2127,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy()) {
         // FIXME: Here, I'm finding the maximum horizontal/vertical scroll offsets. There's probably a better way to do this.
         CGSize maxScrollOffsets = CGSizeMake(scrollView.contentSize.width - scrollView.bounds.size.width, scrollView.contentSize.height - scrollView.bounds.size.height);
-        
+
         CGRect fullViewRect = self.bounds;
 
         UIEdgeInsets contentInset;
@@ -2132,7 +2139,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
             contentInset = [self _computedContentInset];
 
         CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, contentInset);
-        
+
         coordinator->adjustTargetContentOffsetForSnapping(maxScrollOffsets, velocity, unobscuredRect.origin.y, targetContentOffset);
     }
 #endif
@@ -2161,7 +2168,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         [_customContentView scrollViewDidScroll:(UIScrollView *)scrollView];
 
     [self _scheduleVisibleContentRectUpdateAfterScrollInView:scrollView];
-    
+
     if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = _page->scrollingPerformanceData())
         scrollPerfData->didScroll([self visibleRectInViewCoordinates]);
 }
@@ -2213,7 +2220,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
         return _frozenVisibleContentRect.value();
 
     CGRect visibleRectInContentCoordinates = [self convertRect:self.bounds toView:_contentView.get()];
-    
+
     if (UIView *enclosingView = [self _enclosingViewForExposedRectComputation]) {
         CGRect viewVisibleRect = [self _visibleRectInEnclosingView:enclosingView];
         CGRect viewVisibleContentRect = [self convertRect:viewVisibleRect toView:_contentView.get()];
@@ -2272,11 +2279,11 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
             _page->setViewportConfigurationMinimumLayoutSize(activeMinimumLayoutSize(self, self.bounds));
         if (!_overridesMaximumUnobscuredSize)
             _page->setMaximumUnobscuredSize(WebCore::FloatSize(bounds.size));
-        
+
         BOOL sizeChanged = NO;
         if (auto drawingArea = _page->drawingArea())
             sizeChanged = drawingArea->setSize(WebCore::IntSize(bounds.size), WebCore::IntSize(), WebCore::IntSize());
-        
+
         if (sizeChanged & [self usesStandardContentView])
             [_contentView setSizeChangedSinceLastVisibleContentRectUpdate:YES];
     }
@@ -2359,7 +2366,7 @@ static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRe
         return;
 
     _hasScheduledVisibleRectUpdate = YES;
-    
+
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     CATransactionPhase transactionPhase = [CATransaction currentPhase];
     if (transactionPhase == kCATransactionPhaseNull || transactionPhase == kCATransactionPhasePreLayout) {
@@ -2453,7 +2460,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
         WebKit::RemoteScrollingCoordinatorProxy* coordinator = _page->scrollingCoordinatorProxy();
         if (coordinator && coordinator->hasActiveSnapPoint()) {
             CGRect unobscuredRect = UIEdgeInsetsInsetRect(fullViewRect, computedContentInsetUnadjustedForKeyboard);
-            
+
             CGPoint currentPoint = [_scrollView contentOffset];
             CGPoint activePoint = coordinator->nearestActiveContentInsetAdjustedSnapPoint(unobscuredRect.origin.y, currentPoint);
 
@@ -2637,7 +2644,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
     _frozenVisibleContentRect = [self convertRect:fullViewRect toView:_contentView.get()];
     _frozenUnobscuredContentRect = [self convertRect:unobscuredRect toView:_contentView.get()];
-    
+
     LOG_WITH_STREAM(VisibleRects, stream << "_navigationGestureDidBegin: freezing visibleContentRect " << _frozenVisibleContentRect.value() << " UnobscuredContentRect " << _frozenUnobscuredContentRect.value());
 }
 
@@ -3802,7 +3809,7 @@ WEBCORE_COMMAND(yankAndSelect)
     auto navigation = _page->reload(WebCore::ReloadOption::DisableContentBlockers);
     if (!navigation)
         return nil;
-    
+
     return [wrapper(*navigation.leakRef()) autorelease];
 }
 
@@ -3811,7 +3818,7 @@ WEBCORE_COMMAND(yankAndSelect)
     auto navigation = _page->reload(WebCore::ReloadOption::ExpiredOnly);
     if (!navigation)
         return nil;
-    
+
     return [wrapper(*navigation.leakRef()) autorelease];
 }
 
@@ -4589,7 +4596,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     ASSERT(obscuredInsets.left >= 0);
     ASSERT(obscuredInsets.bottom >= 0);
     ASSERT(obscuredInsets.right >= 0);
-    
+
     _haveSetObscuredInsets = YES;
 
     if (UIEdgeInsetsEqualToEdgeInsets(_obscuredInsets, obscuredInsets))
@@ -4626,7 +4633,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
     ASSERT(unobscuredSafeAreaInsets.left >= 0);
     ASSERT(unobscuredSafeAreaInsets.bottom >= 0);
     ASSERT(unobscuredSafeAreaInsets.right >= 0);
-    
+
     _haveSetUnobscuredSafeAreaInsets = YES;
 
     if (UIEdgeInsetsEqualToEdgeInsets(_unobscuredSafeAreaInsets, unobscuredSafeAreaInsets))
@@ -4848,7 +4855,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         [_contentView setHidden:NO];
         return;
     }
-    
+
     --_activeAnimatedResizeCount;
     NSUInteger indexOfResizeAnimationView = [[_scrollView subviews] indexOfObject:_resizeAnimationView.get()];
     [_scrollView insertSubview:_contentView.get() atIndex:indexOfResizeAnimationView];
@@ -4942,7 +4949,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
         return;
     }
 #endif
-    
+
     if (_customContentView) {
         UIGraphicsBeginImageContextWithOptions(imageSize, YES, 1);
 
@@ -5000,7 +5007,7 @@ static inline WebKit::FindOptions toFindOptions(_WKFindOptions wkFindOptions)
 {
     _overridesMinimumLayoutSize = NO;
     _minimumLayoutSizeOverride = CGSizeZero;
-    
+
     _overridesMaximumUnobscuredSize = NO;
     _maximumUnobscuredSizeOverride = CGSizeZero;
 }
@@ -5275,7 +5282,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 {
     auto infoRequest = WebKit::InteractionInformationRequest(WebCore::roundedIntPoint(position));
     infoRequest.includeSnapshot = true;
-    
+
     [_contentView doAfterPositionInformationUpdate:[capturedBlock = makeBlockPtr(block)] (WebKit::InteractionInformationAtPosition information) {
         capturedBlock([_WKActivatedElementInfo activatedElementInfoWithInteractionInformationAtPosition:information]);
     } forRequest:infoRequest];
@@ -5473,7 +5480,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
             @"m43" : @(layer.sublayerTransform.m43),
             @"m44" : @(layer.sublayerTransform.m44),
         },
-        
+
         @"hidden" : @(layer.hidden),
         @"doubleSided" : @(layer.doubleSided),
         @"masksToBounds" : @(layer.masksToBounds),
