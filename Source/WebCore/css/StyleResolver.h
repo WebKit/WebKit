@@ -305,10 +305,6 @@ public:
         TextDirection m_direction;
         WritingMode m_writingMode;
     };
-
-    // FIXME: Should make a StyleAdjuster class (like Blink has) that handles all RenderStyle
-    // adjustments. For now put this function on StyleResolver, since adjustRenderStyle is here.
-    static void adjustStyleForAlignment(RenderStyle&, const RenderStyle& parentStyle);
     
 private:
     // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh

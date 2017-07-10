@@ -33,6 +33,7 @@
 
 #include "FlexibleBoxAlgorithm.h"
 #include "LayoutRepainter.h"
+#include "RenderChildIterator.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
@@ -233,6 +234,25 @@ static const StyleContentAlignmentData& contentAlignmentNormalBehavior()
     // https://drafts.csswg.org/css-align/#distribution-flex
     static const StyleContentAlignmentData normalBehavior = { ContentPositionNormal, ContentDistributionStretch};
     return normalBehavior;
+}
+
+void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+    if (!oldStyle || diff != StyleDifferenceLayout)
+        return;
+
+    if (oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPositionStretch) {
+        // Flex items that were previously stretching need to be relayed out so we
+        // can compute new available cross axis space. This is only necessary for
+        // stretching since other alignment values don't change the size of the
+        // box.
+        for (auto& child : childrenOfType<RenderBox>(*this)) {
+            ItemPosition previousAlignment = child.style().resolvedAlignSelf(oldStyle, selfAlignmentNormalBehavior()).position();
+            if (previousAlignment == ItemPositionStretch && previousAlignment != child.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position())
+                child.setChildNeedsLayout(MarkOnlyThis);
+        }
+    }
 }
 
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
@@ -1437,7 +1457,7 @@ void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox& child)
 
 ItemPosition RenderFlexibleBox::alignmentForChild(const RenderBox& child) const
 {
-    ItemPosition align = child.style().resolvedAlignSelf(child.isAnonymous() ? &style() : nullptr, selfAlignmentNormalBehavior()).position();
+    ItemPosition align = child.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position();
     ASSERT(align != ItemPositionAuto && align != ItemPositionNormal);
 
     if (align == ItemPositionBaseline && hasOrthogonalFlow(child))

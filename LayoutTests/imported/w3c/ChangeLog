@@ -1,3 +1,14 @@
+2017-07-10  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align][css-flex][css-grid] 'auto' values of align-self and justify-self must not be resolved
+        https://bugs.webkit.org/show_bug.cgi?id=172707
+
+        Reviewed by Antti Koivisto.
+
+        This change makes all the cases of the test below to pass now, hence updated expectations accordingly.
+
+        * web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-006-expected.txt:
+
 2017-07-05  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r217522): "Show My Relationship" link in familysearch.org does not work.

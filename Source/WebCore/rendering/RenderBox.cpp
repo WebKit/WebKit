@@ -2528,7 +2528,7 @@ bool RenderBox::columnFlexItemHasStretchAlignment() const
     ASSERT(parentStyle.isColumnFlexDirection());
     if (style().marginStart().isAuto() || style().marginEnd().isAuto())
         return false;
-    return style().resolvedAlignSelf(isAnonymous() ? &parentStyle : nullptr, containingBlock()->selfAlignmentNormalBehavior()).position() == ItemPositionStretch;
+    return style().resolvedAlignSelf(&parentStyle, containingBlock()->selfAlignmentNormalBehavior()).position() == ItemPositionStretch;
 }
 
 bool RenderBox::isStretchingColumnFlexItem() const
@@ -2554,10 +2554,9 @@ bool RenderBox::hasStretchedLogicalWidth() const
         // The 'normal' value behaves like 'start' except for Flexbox Items, which obviously should have a container.
         return false;
     }
-    const auto* parentStyle = isAnonymous() ? &containingBlock->style() : nullptr;
     if (containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
-        return style.resolvedAlignSelf(parentStyle, containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPositionStretch;
-    return style.resolvedJustifySelf(parentStyle, containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPositionStretch;
+        return style.resolvedAlignSelf(&containingBlock->style(), containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPositionStretch;
+    return style.resolvedJustifySelf(&containingBlock->style(), containingBlock->selfAlignmentNormalBehavior(this)).position() == ItemPositionStretch;
 }
 
 bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const

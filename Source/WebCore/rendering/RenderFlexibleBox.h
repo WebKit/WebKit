@@ -55,6 +55,7 @@ public:
     std::optional<int> firstLineBaseline() const override;
     std::optional<int> inlineBlockBaseline(LineDirectionMode) const override;
 
+    void styleDidChange(StyleDifference, const RenderStyle*) override;
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
 
     bool isHorizontalFlow() const;

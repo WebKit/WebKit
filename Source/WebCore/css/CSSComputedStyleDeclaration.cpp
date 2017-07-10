@@ -2382,49 +2382,6 @@ Element* ComputedStyleExtractor::styledElement()
     return m_element.get();
 }
 
-static StyleSelfAlignmentData resolveLegacyJustifyItems(const StyleSelfAlignmentData& data)
-{
-    if (data.positionType() == LegacyPosition)
-        return { data.position(), OverflowAlignmentDefault };
-    return data;
-}
-
-static StyleSelfAlignmentData resolveJustifyItemsAuto(const StyleSelfAlignmentData& data, Node* parent)
-{
-    if (data.position() != ItemPositionAuto)
-        return data;
-
-    // If the inherited value of justify-items includes the 'legacy' keyword, 'auto' computes to the inherited value.
-    const auto& inheritedValue = (!parent || !parent->computedStyle()) ? RenderStyle::initialDefaultAlignment() : parent->computedStyle()->justifyItems();
-    if (inheritedValue.positionType() == LegacyPosition)
-        return inheritedValue;
-    if (inheritedValue.position() == ItemPositionAuto)
-        return resolveJustifyItemsAuto(inheritedValue, parent->parentNode());
-    return { ItemPositionNormal, OverflowAlignmentDefault };
-}
-
-static StyleSelfAlignmentData resolveJustifySelfAuto(const StyleSelfAlignmentData& data, Node* parent)
-{
-    if (data.position() != ItemPositionAuto)
-        return data;
-
-    // The 'auto' keyword computes to the computed value of justify-items on the parent or 'normal' if the box has no parent.
-    if (!parent || !parent->computedStyle())
-        return { ItemPositionNormal, OverflowAlignmentDefault };
-    return resolveLegacyJustifyItems(resolveJustifyItemsAuto(parent->computedStyle()->justifyItems(), parent->parentNode()));
-}
-
-static StyleSelfAlignmentData resolveAlignSelfAuto(const StyleSelfAlignmentData& data, Node* parent)
-{
-    if (data.position() != ItemPositionAuto)
-        return data;
-
-    // The 'auto' keyword computes to the computed value of align-items on the parent or 'normal' if the box has no parent.
-    if (!parent || !parent->computedStyle())
-        return { ItemPositionNormal, OverflowAlignmentDefault };
-    return parent->computedStyle()->alignItems();
-}
-
 static bool isImplicitlyInheritedGridOrFlexProperty(CSSPropertyID propertyID)
 {
     // It would be nice if grid and flex worked within normal CSS mechanisms and not invented their own inheritance system.
@@ -3014,7 +2971,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyAlignItems:
             return valueForItemPositionWithOverflowAlignment(style->alignItems());
         case CSSPropertyAlignSelf:
-            return valueForItemPositionWithOverflowAlignment(resolveAlignSelfAuto(style->alignSelf(), styledElement->parentNode()));
+            return valueForItemPositionWithOverflowAlignment(style->alignSelf());
         case CSSPropertyFlex:
             return getCSSPropertyValuesForShorthandProperties(flexShorthand());
         case CSSPropertyFlexBasis:
@@ -3032,9 +2989,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         case CSSPropertyJustifyContent:
             return valueForContentPositionAndDistributionWithOverflowAlignment(style->justifyContent(), CSSValueFlexStart);
         case CSSPropertyJustifyItems:
-            return valueForItemPositionWithOverflowAlignment(resolveJustifyItemsAuto(style->justifyItems(), styledElement->parentNode()));
+            return valueForItemPositionWithOverflowAlignment(style->justifyItems().position() == ItemPositionAuto ? RenderStyle::initialDefaultAlignment() : style->justifyItems());
         case CSSPropertyJustifySelf:
-            return valueForItemPositionWithOverflowAlignment(resolveJustifySelfAuto(style->justifySelf(), styledElement->parentNode()));
+            return valueForItemPositionWithOverflowAlignment(style->justifySelf());
         case CSSPropertyPlaceContent:
             return getCSSPropertyValuesForShorthandProperties(placeContentShorthand());
         case CSSPropertyPlaceItems:

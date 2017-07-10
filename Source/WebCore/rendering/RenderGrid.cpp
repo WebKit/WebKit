@@ -31,6 +31,7 @@
 #include "GridPositionsResolver.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "LayoutRepainter.h"
+#include "RenderChildIterator.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include <cstdlib>
@@ -93,11 +94,49 @@ void RenderGrid::removeChild(RenderObject& child)
     dirtyGrid();
 }
 
+StyleSelfAlignmentData RenderGrid::selfAlignmentForChild(GridAxis axis, const RenderBox& child, const RenderStyle* gridStyle) const
+{
+    return axis == GridRowAxis ? justifySelfForChild(child, gridStyle) : alignSelfForChild(child, gridStyle);
+}
+
+bool RenderGrid::selfAlignmentChangedToStretch(GridAxis axis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& child) const
+{
+    return selfAlignmentForChild(axis, child, &oldStyle).position() != ItemPositionStretch
+        && selfAlignmentForChild(axis, child, &newStyle).position() == ItemPositionStretch;
+}
+
+bool RenderGrid::selfAlignmentChangedFromStretch(GridAxis axis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox& child) const
+{
+    return selfAlignmentForChild(axis, child, &oldStyle).position() == ItemPositionStretch
+        && selfAlignmentForChild(axis, child, &newStyle).position() != ItemPositionStretch;
+}
+
 void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
     if (!oldStyle || diff != StyleDifferenceLayout)
         return;
+
+    const RenderStyle& newStyle = this->style();
+    if (oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior(this)).position() == ItemPositionStretch) {
+        // Style changes on the grid container implying stretching (to-stretch) or
+        // shrinking (from-stretch) require the affected items to be laid out again.
+        // These logic only applies to 'stretch' since the rest of the alignment
+        // values don't change the size of the box.
+        // In any case, the items' overrideSize will be cleared and recomputed (if
+        // necessary)  as part of the Grid layout logic, triggered by this style
+        // change.
+        for (auto& child : childrenOfType<RenderBox>(*this)) {
+            if (child.isOutOfFlowPositioned())
+                continue;
+            if (selfAlignmentChangedToStretch(GridRowAxis, *oldStyle, newStyle, child)
+                || selfAlignmentChangedFromStretch(GridRowAxis, *oldStyle, newStyle, child)
+                || selfAlignmentChangedToStretch(GridColumnAxis, *oldStyle, newStyle, child)
+                || selfAlignmentChangedFromStretch(GridColumnAxis, *oldStyle, newStyle, child)) {
+                child.setNeedsLayout();
+            }
+        }
+    }
 
     if (explicitGridDidResize(*oldStyle) || namedGridLinesDefinitionDidChange(*oldStyle) || oldStyle->gridAutoFlow() != style().gridAutoFlow()
         || (style().gridAutoRepeatColumns().size() || style().gridAutoRepeatRows().size()))
@@ -1164,26 +1203,18 @@ LayoutUnit RenderGrid::availableAlignmentSpaceForChildBeforeStretching(LayoutUni
     return gridAreaBreadthForChild - (child.needsLayout() ? computeMarginLogicalSizeForChild(childBlockFlowDirection, child) : marginLogicalSizeForChild(childBlockFlowDirection, child));
 }
 
-StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child) const
+StyleSelfAlignmentData RenderGrid::alignSelfForChild(const RenderBox& child, const RenderStyle* gridStyle) const
 {
-    if (!child.isAnonymous())
-        return child.style().resolvedAlignSelf(nullptr, selfAlignmentNormalBehavior(&child));
-
-    // All the 'auto' values have been resolved by the StyleAdjuster, but it's
-    // possible that some grid items generate Anonymous boxes, which need to be
-    // solved during layout.
-    return child.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior(&child));
+    if (!gridStyle)
+        gridStyle = &style();
+    return child.style().resolvedAlignSelf(gridStyle, selfAlignmentNormalBehavior(&child));
 }
 
-StyleSelfAlignmentData RenderGrid::justifySelfForChild(const RenderBox& child) const
+StyleSelfAlignmentData RenderGrid::justifySelfForChild(const RenderBox& child, const RenderStyle* gridStyle) const
 {
-    if (!child.isAnonymous())
-        return child.style().resolvedJustifySelf(nullptr, selfAlignmentNormalBehavior(&child));
-    
-    // All the 'auto' values have been resolved by the StyleAdjuster, but it's
-    // possible that some grid items generate Anonymous boxes, which need to be
-    // solved during layout.
-    return child.style().resolvedJustifySelf(&style(), selfAlignmentNormalBehavior(&child));
+    if (!gridStyle)
+        gridStyle = &style();
+    return child.style().resolvedJustifySelf(gridStyle, selfAlignmentNormalBehavior(&child));
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it should be moved to RenderBox.

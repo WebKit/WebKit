@@ -16,6 +16,10 @@
     justify-self: stretch;
 }
 
+#justifySelfNormal {
+    justify-self: normal;
+}
+
 #justifySelfStart {
     justify-self: start;
 }
@@ -89,6 +93,7 @@
 <div id="justifySelfFirstBaseline"></div>
 <div id="justifySelfLastBaseline"></div>
 <div id="justifySelfStretch"></div>
+<div id="justifySelfNormal"></div>
 <div id="justifySelfStart"></div>
 <div id="justifySelfEnd"></div>
 <div id="justifySelfCenter"></div>
@@ -120,6 +125,8 @@ test(function() {
     checkValues(justifySelfLastBaseline, "justifySelf", "justify-self", "", "last baseline");
     var justifySelfStretch = document.getElementById("justifySelfStretch");
     checkValues(justifySelfStretch, "justifySelf", "justify-self", "", "stretch");
+    var justifySelfNormal = document.getElementById("justifySelfNormal");
+    checkValues(justifySelfNormal, "justifySelf", "justify-self", "", "normal");
     var justifySelfStart = document.getElementById("justifySelfStart");
     checkValues(justifySelfStart, "justifySelf", "justify-self", "", "start");
     var justifySelfEnd = document.getElementById("justifySelfEnd");
@@ -160,7 +167,7 @@ test(function() {
 test(function() {
     element = document.createElement("div");
     document.body.appendChild(element);
-    checkValues(element, "justifySelf", "justify-self", "", "normal");
+    checkValues(element, "justifySelf", "justify-self", "", "auto");
 }, "Test initial value of justify-self through JS");
 
 test(function() {
@@ -186,16 +193,19 @@ test(function() {
     element.style.justifySelf = "self-start";
     checkValues(element, "justifySelf", "justify-self",  "self-start", "self-start");
 
+    element.style.justifySelf = "normal";
+    checkValues(element, "justifySelf", "justify-self",  "normal", "normal");
+
     element.style.justifySelf = "auto";
-    checkValues(element, "justifySelf", "justify-self",  "auto", "normal");
+    checkValues(element, "justifySelf", "justify-self",  "auto", "auto");
 
     container.style.display = "flex";
     element.style.justifySelf = "auto";
-    checkValues(element, "justifySelf", "justify-self",  "auto", "normal");
+    checkValues(element, "justifySelf", "justify-self",  "auto", "auto");
 
     container.style.display = "grid";
     element.style.justifySelf = "auto";
-    checkValues(element, "justifySelf", "justify-self",  "auto", "normal");
+    checkValues(element, "justifySelf", "justify-self",  "auto", "auto");
 
     element.style.justifySelf = "self-end";
     checkValues(element, "justifySelf", "justify-self",  "self-end", "self-end");
@@ -203,7 +213,7 @@ test(function() {
 
 test(function() {
     document.documentElement.style.justifySelf = "auto";
-    checkValues(document.documentElement, "justifySelf", "justify-self",  "auto", "normal");
+    checkValues(document.documentElement, "justifySelf", "justify-self",  "auto", "auto");
 }, "Test 'auto' value resolution for the root node");
 
 test(function() {
@@ -215,6 +225,9 @@ test(function() {
     checkBadValues(element, "justifySelf", "justify-self",  "unsafe auto");
     checkBadValues(element, "justifySelf", "justify-self",  "auto safe");
     checkBadValues(element, "justifySelf", "justify-self",  "auto left");
+    checkBadValues(element, "justifySelf", "justify-self",  "normal unsafe");
+    checkBadValues(element, "justifySelf", "justify-self",  "normal stretch");
+    checkBadValues(element, "justifySelf", "justify-self",  "baseline normal");
     checkBadValues(element, "justifySelf", "justify-self",  "baseline safe");
     checkBadValues(element, "justifySelf", "justify-self",  "baseline center");
     checkBadValues(element, "justifySelf", "justify-self",  "stretch unsafe");
@@ -240,35 +253,35 @@ test(function() {
 
 test(function() {
     container.style.display = "";
-    checkInitialValues(element, "justifySelf", "justify-self", "center", "normal");
+    checkInitialValues(element, "justifySelf", "justify-self", "center", "auto");
 }, "Test the value 'initial'");
 
 test(function() {
     container.style.display = "grid";
-    checkInitialValues(element, "justifySelf", "justify-self", "left safe", "normal");
+    checkInitialValues(element, "justifySelf", "justify-self", "left safe", "auto");
 }, "Test the value 'initial' for grid containers");
 
 test(function() {
     container.style.display = "flex";
-    checkInitialValues(element, "justifySelf", "justify-self", "right unsafe", "normal");
+    checkInitialValues(element, "justifySelf", "justify-self", "right unsafe", "auto");
 }, "Test the value 'initial' for flex containers");
 
 test(function() {
     container.style.display = "";
     element.style.position = "absolute";
-    checkInitialValues(element, "justifySelf", "justify-self", "left", "normal");
+    checkInitialValues(element, "justifySelf", "justify-self", "left", "auto");
 }, "Test the value 'initial' for positioned elements");
 
 test(function() {
     container.style.display = "grid";
     element.style.position = "absolute";
-    checkInitialValues(element, "justifySelf", "justify-self", "right", "normal");
+    checkInitialValues(element, "justifySelf", "justify-self", "right", "auto");
 }, "Test the value 'initial' for positioned elements in grid containers");
 
 test(function() {
     container.style.display = "flex";
     element.style.position = "absolute";
-    checkInitialValues(element, "justifySelf", "justify-self", "end", "normal");
+    checkInitialValues(element, "justifySelf", "justify-self", "end", "auto");
 }, "Test the value 'initial' for positioned elements in grid containers");
 
 test(function() {

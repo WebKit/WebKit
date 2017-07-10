@@ -1,3 +1,38 @@
+2017-07-10  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align][css-flex][css-grid] 'auto' values of align-self and justify-self must not be resolved
+        https://bugs.webkit.org/show_bug.cgi?id=172707
+
+        Reviewed by Antti Koivisto.
+
+        The CSS Box Alignment specification has been changed recently so that
+        now all the propeties have the specificed value as computed value. The
+        rationale of this change are at the associated W3C github issue [1].
+
+        This change implies that we don't need to execute the StyleAdjuter
+        logic we implemented specifically for supporting 'auto' values
+        resolution for computed style. We can live now with resolution at
+        layout time only.
+
+        [1] https://github.com/w3c/csswg-drafts/issues/440
+
+        No new tests, just updating the already defined tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): Removed
+        * css/StyleResolver.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::resolveCustomStyle):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::columnFlexItemHasStretchAlignment):
+        (WebCore::RenderBox::hasStretchedLogicalWidth):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::styleDidChange): Added
+        (WebCore::RenderFlexibleBox::alignmentForChild):
+        * rendering/RenderFlexibleBox.h:
+
 2017-07-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Ignore touch events that interrupt platform-driven momentum scrolling

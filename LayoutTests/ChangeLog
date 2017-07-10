@@ -1,3 +1,25 @@
+2017-07-10  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align][css-flex][css-grid] 'auto' values of align-self and justify-self must not be resolved
+        https://bugs.webkit.org/show_bug.cgi?id=172707
+
+        Reviewed by Antti Koivisto.
+
+        Updated layout tests so that resolved value is as specified, even for 'auto' values.
+
+        * TestExpectations:
+        * css3/flexbox/css-properties-expected.txt:
+        * css3/flexbox/css-properties.html:
+        * css3/flexbox/new-alignment-values-invalid-if-grid-not-enabled-expected.txt:
+        * css3/flexbox/new-alignment-values-invalid-if-grid-not-enabled.html:
+        * css3/parse-align-self.html:
+        * css3/parse-alignment-of-root-elements-expected.txt:
+        * css3/parse-alignment-of-root-elements.html:
+        * css3/parse-place-items.html:
+        * css3/parse-place-self.html:
+        * fast/css/ensure-flexbox-compatibility-with-initial-values-expected.txt:
+        * fast/css/parse-justify-self.html:
+
 2017-07-10  Myles C. Maxfield  <mmaxfield@apple.com>
 
         fast/text/trak-optimizeLegibility.html is failing on macOS High Sierra
