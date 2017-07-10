@@ -1,3 +1,25 @@
+2017-07-10  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r218616): Cannot build WebCore for macOS 10.12 with macOS 10.13 SDK
+        https://bugs.webkit.org/show_bug.cgi?id=173939
+
+        Reviewed by Dan Bernstein.
+
+        (The code in this change was either suggested or written by Dan Bernstein with a very
+        minor adjustment to get it to build).
+
+        Allow WebCore to link even though CTFontCreatePhysicalFontForCharactersWithLanguage() is
+        undefined when building against the macOS 10.13 SDK targeting macOS 10.12. Let the dynamic
+        linker resolve the undefined symbol.
+
+        For completeness the SPI CTFontCreatePhysicalFontForCharactersWithLanguage() was removed
+        from the macOS 10.13 SDK.
+
+        * Configurations/WebCore.xcconfig: Tell the linker that CTFontCreatePhysicalFontForCharactersWithLanguage()
+        can be undefined when building against macOS 10.13 or later SDK.
+        * platform/spi/cocoa/CoreTextSPI.h: Annotate CTFontCreatePhysicalFontForCharactersWithLanguage()
+        with its availability information.
+
 2017-07-10  Zalan Bujtas  <zalan@apple.com>
 
         Block of text is missing in iBooks sample books.
