@@ -51,6 +51,17 @@ class WPEPortTest(port_testcase.PortTestCase):
         port._pulseaudio_sanitizer = PulseAudioSanitizerMock()
         return port
 
+    def test_default_baseline_search_path(self):
+        port = self.make_port()
+        self.assertEqual(port.default_baseline_search_path(), ['/mock-checkout/LayoutTests/platform/wpe',
+            '/mock-checkout/LayoutTests/platform/wk2'])
+
+    def test_port_specific_expectations_files(self):
+        port = self.make_port()
+        self.assertEqual(port.expectations_files(), ['/mock-checkout/LayoutTests/TestExpectations',
+            '/mock-checkout/LayoutTests/platform/wk2/TestExpectations',
+            '/mock-checkout/LayoutTests/platform/wpe/TestExpectations'])
+
     def test_default_timeout_ms(self):
         self.assertEqual(self.make_port(options=MockOptions(configuration='Release')).default_timeout_ms(), 15000)
         self.assertEqual(self.make_port(options=MockOptions(configuration='Debug')).default_timeout_ms(), 30000)

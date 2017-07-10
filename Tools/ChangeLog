@@ -1,3 +1,29 @@
+2017-07-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Fix layout test baseline and TestExpectations hierarchy
+        https://bugs.webkit.org/show_bug.cgi?id=174092
+
+        Reviewed by Michael Catanzaro.
+
+        Like for the GTK+ port, override the default_baseline_search_path() and
+        _port_specific_expectations_files() methods in the webkitpy.port.WPEPort class.
+        Both methods operate on a short list of search paths that defaults to 'wpe' and
+        'wk2', along with any other user-specified platform directory.
+
+        The test_expectations_file_position() method is overridden for testing purposes,
+        and relevant unit tests are added.
+
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort._search_paths):
+        (WPEPort):
+        (WPEPort.default_baseline_search_path):
+        (WPEPort._port_specific_expectations_files):
+        (WPEPort.test_expectations_file_position):
+        * Scripts/webkitpy/port/wpe_unittest.py:
+        (WPEPortTest.test_default_baseline_search_path):
+        (WPEPortTest):
+        (WPEPortTest.test_port_specific_expectations_files):
+
 2017-07-10  Chris Dumez  <cdumez@apple.com>
 
         Further WebResourceLoadStatisticsStore / ResourceLoadStatisticsStore clean up
