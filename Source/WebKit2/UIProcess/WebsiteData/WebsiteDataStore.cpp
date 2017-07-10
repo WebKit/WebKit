@@ -814,7 +814,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
 #endif
 
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && m_resourceLoadStatistics)
-        m_resourceLoadStatistics->clearInMemoryAndPersistent(modifiedSince);
+        m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince);
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();
@@ -1083,7 +1083,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 #endif
 
     if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && m_resourceLoadStatistics)
-        m_resourceLoadStatistics->clearInMemoryAndPersistent();
+        m_resourceLoadStatistics->scheduleClearInMemoryAndPersistent();
 
     // There's a chance that we don't have any pending callbacks. If so, we want to dispatch the completion handler right away.
     callbackAggregator->callIfNeeded();

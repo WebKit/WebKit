@@ -360,7 +360,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!store)
         return;
 
-    store->updateCookiePartitioning();
+    store->scheduleCookiePartitioningUpdate();
 }
 
 - (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host
@@ -370,9 +370,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
 
     if (value)
-        store->updateCookiePartitioningForDomains({ }, { host }, WebKit::ShouldClearFirst::No);
+        store->scheduleCookiePartitioningUpdateForDomains({ }, { host }, WebKit::ShouldClearFirst::No);
     else
-        store->updateCookiePartitioningForDomains({ host }, { }, WebKit::ShouldClearFirst::No);
+        store->scheduleCookiePartitioningUpdateForDomains({ host }, { }, WebKit::ShouldClearFirst::No);
 }
 
 - (void)_resourceLoadStatisticsSubmitTelemetry
@@ -422,7 +422,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!store)
         return;
 
-    store->clearInMemoryAndPersistent();
+    store->scheduleClearInMemoryAndPersistent();
 }
 
 - (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours
@@ -431,7 +431,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!store)
         return;
 
-    store->clearInMemoryAndPersistent(std::chrono::system_clock::now() - std::chrono::hours(hours));
+    store->scheduleClearInMemoryAndPersistent(std::chrono::system_clock::now() - std::chrono::hours(hours));
 }
 
 - (void)_resourceLoadStatisticsResetToConsistentState
@@ -448,7 +448,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     store->setNotifyPagesWhenDataRecordsWereScanned(false);
     WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
     store->setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
-    store->clearInMemory();
+    store->scheduleClearInMemory();
 }
 
 @end

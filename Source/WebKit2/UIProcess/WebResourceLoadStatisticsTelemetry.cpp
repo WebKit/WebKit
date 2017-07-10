@@ -26,9 +26,9 @@
 #include "config.h"
 #include "WebResourceLoadStatisticsTelemetry.h"
 
-#include "ResourceLoadStatisticsStore.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"
+#include "WebResourceLoadStatisticsStore.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <wtf/MainThread.h>
@@ -52,7 +52,7 @@ struct PrevalentResourceTelemetry {
     unsigned subresourceUniqueRedirectsTo;
 };
 
-static Vector<PrevalentResourceTelemetry> sortedPrevalentResourceTelemetry(const ResourceLoadStatisticsStore& store)
+static Vector<PrevalentResourceTelemetry> sortedPrevalentResourceTelemetry(const WebResourceLoadStatisticsStore& store)
 {
     ASSERT(!RunLoop::isMain());
     Vector<PrevalentResourceTelemetry> sorted;
@@ -224,7 +224,7 @@ void static notifyPages(const Vector<PrevalentResourceTelemetry>& sortedPrevalen
     notifyPages(sortedPrevalentResources.size(), totalNumberOfPrevalentResourcesWithUserInteraction, median(sortedPrevalentResourcesWithoutUserInteraction, 0, 2, subframeUnderTopFrameOriginsGetter));
 }
     
-void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const ResourceLoadStatisticsStore& resourceLoadStatisticsStore)
+void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const WebResourceLoadStatisticsStore& resourceLoadStatisticsStore)
 {
     ASSERT(!RunLoop::isMain());
     
