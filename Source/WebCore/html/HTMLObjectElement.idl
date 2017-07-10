@@ -19,9 +19,7 @@
  */
 
 [
-    CustomCall,
-    CustomGetOwnPropertySlotAndDescriptor,
-    CustomNamedSetter
+    Plugin
 ] interface HTMLObjectElement : HTMLElement {
     readonly attribute HTMLFormElement form;
     [Reflect] attribute DOMString code;

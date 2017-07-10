@@ -37,20 +37,8 @@ namespace WebCore {
     JSC::Bindings::Instance* pluginInstance(HTMLElement&);
     WEBCORE_EXPORT JSC::JSObject* pluginScriptObject(JSC::ExecState*, JSHTMLElement*);
 
-    JSC::EncodedJSValue pluginElementPropertyGetter(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-    bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&, JSHTMLElement*);
-    bool pluginElementCustomPut(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSHTMLElement*, JSC::PutPropertySlot&, bool& putResult);
-    JSC::CallType pluginElementGetCallData(JSHTMLElement*, JSC::CallData&);
-
-    template <class Type, class Base> bool pluginElementCustomGetOwnPropertySlot(JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot, Type* element)
-    {
-        if (!element->globalObject()->world().isNormal()) {
-            JSC::JSValue proto = element->getPrototypeDirect();
-            if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(exec, propertyName))
-                return false;
-        }
-
-        return pluginElementCustomGetOwnPropertySlot(exec, propertyName, slot, element);
-    }
+    bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);
+    bool pluginElementCustomPut(JSHTMLElement*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);
+    JSC::CallType pluginElementCustomGetCallData(JSHTMLElement*, JSC::CallData&);
 
 } // namespace WebCore

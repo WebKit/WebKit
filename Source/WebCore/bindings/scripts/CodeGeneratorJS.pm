@@ -535,7 +535,7 @@ sub GenerateIndexedGetter
     # 1.2.8 Return desc.
     
     my @attributes = ();
-    push(@attributes, "ReadOnly") if !GetIndexedSetterOperation($interface) && !$interface->extendedAttributes->{CustomNamedSetter};
+    push(@attributes, "ReadOnly") if !GetIndexedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
     
     my $attributeString = ((@attributes > 0) ? join(" | ", @attributes) : "0");
 
@@ -572,7 +572,7 @@ sub GenerateNamedGetter
     # 2.10 Return desc.
     
     my @attributes = ();
-    push(@attributes, "ReadOnly") if !GetNamedSetterOperation($interface) && !$interface->extendedAttributes->{CustomNamedSetter};
+    push(@attributes, "ReadOnly") if !GetNamedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
     push(@attributes, "DontEnum") if $interface->extendedAttributes->{LegacyUnenumerableNamedProperties};
     
     my $attributeString = ((@attributes > 0) ? join(" | ", @attributes) : "0");
@@ -667,7 +667,7 @@ sub GenerateGetOwnPropertySlot
         # 1.3. Set ignoreNamedProps to true.
         # NOTE: Setting ignoreNamedProps has the effect of skipping step 2, so we can early return here
         #       rather than going through the paces of having an actual ignoreNamedProps update.
-        if ($namedGetterOperation || $interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}) {
+        if ($namedGetterOperation || $interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor} || $interface->extendedAttributes->{Plugin}) {
             push(@$outputArray, "        return JSObject::getOwnPropertySlot(object, state, propertyName, slot);\n");
         }
         push(@$outputArray, "    }\n");
@@ -701,12 +701,19 @@ sub GenerateGetOwnPropertySlot
         push(@$outputArray, "        return true;\n");
         push(@$outputArray, "    }\n");
     }
-    
+
+    # FIXME: There is only one remaining user of this, CSSStyleDeclaration.idl. Let's get them onto named / indexed getters.
     if ($interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}) {
         push(@$outputArray, "    if (thisObject->getOwnPropertySlotDelegate(state, propertyName, slot))\n");
         push(@$outputArray, "        return true;\n");
     }
-    
+
+    if ($interface->extendedAttributes->{Plugin}) {
+        AddToImplIncludes("JSPluginElementFunctions.h");
+        push(@$outputArray, "    if (pluginElementCustomGetOwnPropertySlot(thisObject, state, propertyName, slot))\n");
+        push(@$outputArray, "        return true;\n");
+    }
+
     # 3. Return OrdinaryGetOwnProperty(O, P).
     push(@$outputArray, "    return JSObject::getOwnPropertySlot(object, state, propertyName, slot);\n");
     
@@ -718,7 +725,7 @@ sub GenerateGetOwnPropertySlotByIndex
 {
     my ($outputArray, $interface, $className) = @_;
     
-    return if $interface->extendedAttributes->{CustomGetOwnPropertySlotByIndex};
+    return if $interface->extendedAttributes->{CustomGetOwnPropertySlot};
 
     # Sink the int-to-string conversion that happens when we create a PropertyName
     # to the point where we actually need it.
@@ -772,7 +779,7 @@ sub GenerateGetOwnPropertySlotByIndex
         # 1.3. Set ignoreNamedProps to true.
         # NOTE: Setting ignoreNamedProps has the effect of skipping step 2, so we can early return here
         #       rather than going through the paces of having an actual ignoreNamedProps update.
-        if ($namedGetterOperation || $interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}) {
+        if ($namedGetterOperation || $interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor} || $interface->extendedAttributes->{Plugin}) {
             push(@$outputArray, "        return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);\n");
         }
         push(@$outputArray, "    }\n");
@@ -809,13 +816,22 @@ sub GenerateGetOwnPropertySlotByIndex
         push(@$outputArray, "    }\n");
     }
     
+    # FIXME: There is only one remaining user of this, CSSStyleDeclaration.idl. Let's get them onto named / indexed getters.
     if ($interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}) {
         &$propertyNameGeneration();
     
         push(@$outputArray, "    if (thisObject->getOwnPropertySlotDelegate(state, propertyName, slot))\n");
         push(@$outputArray, "        return true;\n");
     }
-    
+
+    if ($interface->extendedAttributes->{Plugin}) {
+        &$propertyNameGeneration();
+
+        AddToImplIncludes("JSPluginElementFunctions.h");
+        push(@$outputArray, "    if (pluginElementCustomGetOwnPropertySlot(thisObject, state, propertyName, slot))\n");
+        push(@$outputArray, "        return true;\n");
+    }
+
     # 3. Return OrdinaryGetOwnProperty(O, P).
     push(@$outputArray, "    return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);\n");
     
@@ -827,7 +843,7 @@ sub GenerateGetOwnPropertyNames
 {
     my ($outputArray, $interface, $className) = @_;
     
-    return if $interface->extendedAttributes->{CustomEnumerateProperty};
+    return if $interface->extendedAttributes->{CustomGetOwnPropertyNames};
     
     my $namedGetterOperation = GetNamedGetterOperation($interface);
     my $indexedGetterOperation = GetIndexedGetterOperation($interface);
@@ -913,7 +929,7 @@ sub GeneratePut
 {
     my ($outputArray, $interface, $className) = @_;
     
-    return if $interface->extendedAttributes->{CustomPutFunction};
+    return if $interface->extendedAttributes->{CustomPut};
     
     my $namedSetterOperation = GetNamedSetterOperation($interface);
     my $indexedSetterOperation = GetIndexedSetterOperation($interface);
@@ -961,13 +977,15 @@ sub GeneratePut
         push(@$outputArray, "    }\n\n");
     }
     
-    assert("Using both a named property setter and [CustomNamedSetter] together is not supported.") if $namedSetterOperation && $interface->extendedAttributes->{CustomNamedSetter};
-    if ($interface->extendedAttributes->{CustomNamedSetter}) {
+    assert("Using both a named property setter and [Plugin] together is not supported.") if $namedSetterOperation && $interface->extendedAttributes->{Plugin};
+    if ($interface->extendedAttributes->{Plugin}) {
+        AddToImplIncludes("JSPluginElementFunctions.h");
+
         push(@$outputArray, "    bool putResult = false;\n");
-        push(@$outputArray, "    if (thisObject->putDelegate(state, propertyName, value, putPropertySlot, putResult))\n");
+        push(@$outputArray, "    if (pluginElementCustomPut(thisObject, state, propertyName, value, putPropertySlot, putResult))\n");
         push(@$outputArray, "        return putResult;\n\n");
     }
-    
+
     push(@$outputArray, "    return JSObject::put(thisObject, state, propertyName, value, putPropertySlot);\n");
     push(@$outputArray, "}\n\n");
 }
@@ -976,13 +994,13 @@ sub GeneratePutByIndex
 {
     my ($outputArray, $interface, $className) = @_;
     
-    return if $interface->extendedAttributes->{CustomPutFunction};
-    
+    return if $interface->extendedAttributes->{CustomPut};
+
     my $namedSetterOperation = GetNamedSetterOperation($interface);
     my $indexedSetterOperation = GetIndexedSetterOperation($interface);
     
     my $overrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins");
-    my $ellidesCallsToBase = ($namedSetterOperation && $overrideBuiltins) && !$interface->extendedAttributes->{CustomNamedSetter};
+    my $ellidesCallsToBase = ($namedSetterOperation && $overrideBuiltins) && !$interface->extendedAttributes->{Plugin};
     
     push(@$outputArray, "bool ${className}::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool" . (!$ellidesCallsToBase ? " shouldThrow" : "") . ")\n");
     push(@$outputArray, "{\n");
@@ -1021,16 +1039,17 @@ sub GeneratePutByIndex
             push(@$outputArray, "    }\n\n");
         }
     }
-    
-    assert("Using both a named property setter and [CustomNamedSetter] together is not supported.") if $namedSetterOperation && $interface->extendedAttributes->{CustomNamedSetter};
-    if ($interface->extendedAttributes->{CustomNamedSetter}) {
+
+    assert("Using both a named property setter and [Plugin] together is not supported.") if $namedSetterOperation && $interface->extendedAttributes->{Plugin};
+    if ($interface->extendedAttributes->{Plugin}) {
+        AddToImplIncludes("JSPluginElementFunctions.h");
         push(@$outputArray, "    auto propertyName = Identifier::from(state, index);\n");
-        push(@$outputArray, "    PutPropertySlot slot(thisObject, shouldThrow);\n");
+        push(@$outputArray, "    PutPropertySlot putPropertySlot(thisObject, shouldThrow);\n");
         push(@$outputArray, "    bool putResult = false;\n");
-        push(@$outputArray, "    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))\n");
+        push(@$outputArray, "    if (pluginElementCustomPut(thisObject, state, propertyName, value, putPropertySlot, putResult))\n");
         push(@$outputArray, "        return putResult;\n\n");
     }
-    
+
     if (!$ellidesCallsToBase) {
         push(@$outputArray, "    return JSObject::putByIndex(cell, state, index, value, shouldThrow);\n");
     }
@@ -1252,7 +1271,7 @@ sub GenerateDeletePropertyCommon
     push(@$outputArray, "    }\n");
 }
 
-sub GenerateDeletePropertyDefinition
+sub GenerateDeleteProperty
 {
     my ($outputArray, $interface, $className, $operation, $conditional) = @_;
 
@@ -1283,7 +1302,7 @@ sub GenerateDeletePropertyDefinition
     push(@$outputArray, "}\n\n");
 }
 
-sub GenerateDeletePropertyByIndexDefinition
+sub GenerateDeletePropertyByIndex
 {
     my ($outputArray, $interface, $className, $operation, $conditional) = @_;
 
@@ -1347,8 +1366,8 @@ sub GenerateNamedDeleterDefinition
         push(@$outputArray, "#if ${conditionalString}\n\n");;
     }
 
-    GenerateDeletePropertyDefinition($outputArray, $interface, $className, $namedDeleterOperation, $conditional);
-    GenerateDeletePropertyByIndexDefinition($outputArray, $interface, $className, $namedDeleterOperation, $conditional);
+    GenerateDeleteProperty($outputArray, $interface, $className, $namedDeleterOperation, $conditional);
+    GenerateDeletePropertyByIndex($outputArray, $interface, $className, $namedDeleterOperation, $conditional);
 
     push(@implContent, "#endif\n\n") if $conditional;
 }
@@ -1808,8 +1827,8 @@ sub InstanceOverridesGetOwnPropertySlot
 {
     my $interface = shift;
     return $interface->extendedAttributes->{CustomGetOwnPropertySlot}
-        || $interface->extendedAttributes->{CustomGetOwnPropertySlotByIndex}
         || $interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}
+        || $interface->extendedAttributes->{Plugin}
         || GetIndexedGetterOperation($interface)
         || GetNamedGetterOperation($interface);
 }
@@ -1817,7 +1836,7 @@ sub InstanceOverridesGetOwnPropertySlot
 sub InstanceOverridesGetOwnPropertyNames
 {
     my $interface = shift;
-    return $interface->extendedAttributes->{CustomEnumerateProperty}
+    return $interface->extendedAttributes->{CustomGetOwnPropertyNames}
         || GetIndexedGetterOperation($interface)
         || GetNamedGetterOperation($interface);
 }
@@ -1825,8 +1844,8 @@ sub InstanceOverridesGetOwnPropertyNames
 sub InstanceOverridesPut
 {
     my $interface = shift;
-    return $interface->extendedAttributes->{CustomNamedSetter}
-        || $interface->extendedAttributes->{CustomPutFunction}
+    return $interface->extendedAttributes->{CustomPut}
+        || $interface->extendedAttributes->{Plugin}
         || GetIndexedSetterOperation($interface)
         || GetNamedSetterOperation($interface);
 }
@@ -1839,7 +1858,7 @@ sub InstanceOverridesDefineOwnProperty
         || GetNamedSetterOperation($interface);
 }
 
-sub InstanceOverridesDelete
+sub InstanceOverridesDeleteProperty
 {
     my $interface = shift;
     return $interface->extendedAttributes->{CustomDeleteProperty}
@@ -2572,12 +2591,12 @@ sub GenerateHeader
         push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n");
     }
 
-    if (InstanceOverridesDelete($interface)) {
+    if (InstanceOverridesDeleteProperty($interface)) {
         push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);\n");
         push(@headerContent, "    static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned);\n");
     }
 
-    if (InstanceOverridesCall($interface)) {
+    if (InstanceOverridesGetCallData($interface)) {
         push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n");
         $headerIncludes{"<runtime/CallData.h>"} = 1;
         $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1;
@@ -2796,11 +2815,7 @@ sub GenerateHeader
     if ($interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}) {
         push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
     }
-    
-    if ($interface->extendedAttributes->{CustomNamedSetter}) {
-        push(@headerContent, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);\n");
-    }
-    
+
     push(@headerContent, "};\n\n");
 
     if (ShouldGenerateWrapperOwnerCode($hasParent, $interface)) {
@@ -4100,17 +4115,6 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if ($interface->extendedAttributes->{CustomNamedGetterOnPrototype}) {
-        push(@implContent, "bool ${className}Prototype::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    auto* thisObject = jsCast<${className}Prototype*>(cell);\n");
-        push(@implContent, "    bool putResult = false;\n");
-        push(@implContent, "    if (thisObject->putDelegate(state, propertyName, value, slot, putResult))\n");
-        push(@implContent, "        return putResult;\n");
-        push(@implContent, "    return Base::put(thisObject, state, propertyName, value, slot);\n");
-        push(@implContent, "}\n\n");
-    }
-
     # - Initialize static ClassInfo object
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
 
@@ -4297,12 +4301,12 @@ sub GenerateImplementation
         GenerateDefineOwnProperty(\@implContent, $interface, $className);
     }
 
-    if (InstanceOverridesDelete($interface)) {
+    if (InstanceOverridesDeleteProperty($interface)) {
         GenerateNamedDeleterDefinition(\@implContent, $interface, $className);
     }
     
-    if (InstanceOverridesCall($interface)) {
-        GenerateLegacyCallerDefinitions($interface, $className);
+    if (InstanceOverridesGetCallData($interface)) {
+        GenerateGetCallData(\@implContent, $interface, $className);
     }
     
     if ($numAttributes > 0) {
@@ -5250,70 +5254,97 @@ sub GenerateSerializerDefinition
     push(@implContent, "\n");
 }
 
+sub GenerateGetCallData
+{
+    my ($outputArray, $interface, $className) = @_;
+
+    return if $interface->extendedAttributes->{CustomGetCallData};
+
+    if ($interface->extendedAttributes->{Plugin}) {
+        GeneratePluginCall($outputArray, $interface, $className);
+    } else {
+        GenerateLegacyCallerDefinitions($outputArray, $interface, $className);
+    }
+}
+
+sub GeneratePluginCall
+{
+    my ($outputArray, $interface, $className) = @_;
+
+    AddToImplIncludes("JSPluginElementFunctions.h");
+
+    push(@$outputArray, "CallType ${className}::getCallData(JSCell* cell, CallData& callData)\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
+    push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
+
+    push(@$outputArray, "    return pluginElementCustomGetCallData(thisObject, callData);\n");
+    push(@$outputArray, "}\n");
+    push(@$outputArray, "\n");
+}
+
 sub GenerateLegacyCallerDefinitions
 {
-    my ($interface, $className) = @_;
+    my ($outputArray, $interface, $className) = @_;
 
-    return if $interface->extendedAttributes->{CustomCall};
-    
     my @legacyCallers = @{$interface->{LegacyCallers}};
     if (@legacyCallers > 1) {
         foreach my $legacyCaller (@legacyCallers) {
-            GenerateLegacyCallerDefinition($interface, $className, $legacyCaller);
+            GenerateLegacyCallerDefinition($outputArray, $interface, $className, $legacyCaller);
         }
 
         my $overloadFunctionPrefix = "call${className}";
 
-        push(@implContent, "EncodedJSValue JSC_HOST_CALL ${overloadFunctionPrefix}(ExecState* state)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    VM& vm = state->vm();\n");
-        push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-        push(@implContent, "    UNUSED_PARAM(throwScope);\n");
+        push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${overloadFunctionPrefix}(ExecState* state)\n");
+        push(@$outputArray, "{\n");
+        push(@$outputArray, "    VM& vm = state->vm();\n");
+        push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+        push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
 
         GenerateOverloadDispatcher($legacyCallers[0], $interface, $overloadFunctionPrefix, "", "state");
 
-        push(@implContent, "}\n\n");
+        push(@$outputArray, "}\n\n");
     } else {
-        GenerateLegacyCallerDefinition($interface, $className, $legacyCallers[0]);
+        GenerateLegacyCallerDefinition($outputArray, $interface, $className, $legacyCallers[0]);
     }
 
-    push(@implContent, "CallType ${className}::getCallData(JSCell*, CallData& callData)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    callData.native.function = call${className};\n");
-    push(@implContent, "    return CallType::Host;\n");
-    push(@implContent, "}\n");
-    push(@implContent, "\n");
+    push(@$outputArray, "CallType ${className}::getCallData(JSCell*, CallData& callData)\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "    callData.native.function = call${className};\n");
+    push(@$outputArray, "    return CallType::Host;\n");
+    push(@$outputArray, "}\n");
+    push(@$outputArray, "\n");
 }
 
 sub GenerateLegacyCallerDefinition
 {
-    my ($interface, $className, $operation) = @_;
+    my ($outputArray, $interface, $className, $operation) = @_;
 
     my $isOverloaded = $operation->{overloads} && @{$operation->{overloads}} > 1;
     if ($isOverloaded) {
-        push(@implContent, "static inline EncodedJSValue call${className}$operation->{overloadIndex}(ExecState* state)\n");
+        push(@$outputArray, "static inline EncodedJSValue call${className}$operation->{overloadIndex}(ExecState* state)\n");
     } else {
-        push(@implContent, "static EncodedJSValue JSC_HOST_CALL call${className}(ExecState* state)\n");
+        push(@$outputArray, "static EncodedJSValue JSC_HOST_CALL call${className}(ExecState* state)\n");
     }
 
-    push(@implContent, "{\n");
-    push(@implContent, "    VM& vm = state->vm();\n");
-    push(@implContent, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-    push(@implContent, "    UNUSED_PARAM(throwScope);\n");
+    push(@$outputArray, "{\n");
+    push(@$outputArray, "    VM& vm = state->vm();\n");
+    push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+    push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
 
     my $indent = "    ";
-    GenerateArgumentsCountCheck(\@implContent, $operation, $interface, $indent);
+    GenerateArgumentsCountCheck($outputArray, $operation, $interface, $indent);
 
-    push(@implContent, "    auto* castedThis = jsCast<${className}*>(state->jsCallee());\n");
-    push(@implContent, "    ASSERT(castedThis);\n");
-    push(@implContent, "    auto& impl = castedThis->wrapped();\n");
+    push(@$outputArray, "    auto* castedThis = jsCast<${className}*>(state->jsCallee());\n");
+    push(@$outputArray, "    ASSERT(castedThis);\n");
+    push(@$outputArray, "    auto& impl = castedThis->wrapped();\n");
 
     my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $codeGenerator->WK_lcfirst($operation->name) || "legacyCallerOperationFromBindings";
-    my $functionString = GenerateParametersCheck(\@implContent, $operation, $interface, $functionImplementationName, $indent);
+    my $functionString = GenerateParametersCheck($outputArray, $operation, $interface, $functionImplementationName, $indent);
 
-    GenerateImplementationFunctionCall(\@implContent, $operation, $interface, $functionString, $indent);
+    GenerateImplementationFunctionCall($outputArray, $operation, $interface, $functionString, $indent);
 
-    push(@implContent, "}\n\n");
+    push(@$outputArray, "}\n\n");
 }
 
 sub GenerateCallWithUsingReferences
@@ -6818,13 +6849,12 @@ sub GeneratePrototypeDeclaration
         }
     }
 
-    if ($interface->extendedAttributes->{CustomNamedGetterOnPrototype}) {
+    # FIXME: Should this override putByIndex as well?
+    if ($interface->extendedAttributes->{CustomPutOnPrototype}) {
         push(@$outputArray, "\n");
         push(@$outputArray, "    static bool put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
-        push(@$outputArray, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);\n");
     }
 
-    # Custom defineOwnProperty function
     if ($interface->extendedAttributes->{CustomDefineOwnPropertyOnPrototype}) {
         push(@$outputArray, "\n");
         push(@$outputArray, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, const JSC::PropertyDescriptor&, bool shouldThrow);\n");
@@ -7086,17 +7116,17 @@ sub IsConstructable
         || $interface->extendedAttributes->{JSBuiltinConstructor};
 }
 
-sub InstanceOverridesCall
+sub InstanceOverridesGetCallData
 {
     my $interface = shift;
-    return $interface->extendedAttributes->{CustomCall} || $interface->{LegacyCallers}
+    return $interface->{LegacyCallers} || $interface->extendedAttributes->{CustomGetCallData} || $interface->extendedAttributes->{Plugin};
 }
 
 sub HeaderNeedsPrototypeDeclaration
 {
     my $interface = shift;
     return IsDOMGlobalObject($interface)
-        || $interface->extendedAttributes->{CustomNamedGetterOnPrototype}
+        || $interface->extendedAttributes->{CustomPutOnPrototype}
         || $interface->extendedAttributes->{CustomDefineOwnPropertyOnPrototype};
 }
 

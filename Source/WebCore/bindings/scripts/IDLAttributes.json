@@ -78,9 +78,6 @@
         "Custom": {
             "contextsAllowed": ["attribute", "operation"]
         },
-        "CustomCall": {
-            "contextsAllowed": ["interface"]
-        },
         "CustomConstructor": {
             "contextsAllowed": ["interface"]
         },
@@ -93,13 +90,13 @@
         "CustomDeleteProperty": {
             "contextsAllowed": ["interface"]
         },
-        "CustomEnumerateProperty": {
+        "CustomGetCallData": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomGetOwnPropertyNames": {
             "contextsAllowed": ["interface"]
         },
         "CustomGetOwnPropertySlot": {
-            "contextsAllowed": ["interface"]
-        },
-        "CustomGetOwnPropertySlotByIndex": {
             "contextsAllowed": ["interface"]
         },
         "CustomGetOwnPropertySlotAndDescriptor": {
@@ -117,12 +114,6 @@
         "CustomIsReachable": {
             "contextsAllowed": ["interface"]
         },
-        "CustomNamedGetterOnPrototype": {
-            "contextsAllowed": ["interface"]
-        },
-        "CustomNamedSetter": {
-            "contextsAllowed": ["interface"]
-        },
         "CustomPreventExtensions": {
             "contextsAllowed": ["interface"]
         },
@@ -132,7 +123,10 @@
         "CustomPushEventHandlerScope": {
             "contextsAllowed": ["interface"]
         },
-        "CustomPutFunction": {
+        "CustomPut": {
+            "contextsAllowed": ["interface"]
+        },
+        "CustomPutOnPrototype": {
             "contextsAllowed": ["interface"]
         },
         "CustomSetter": {
@@ -340,6 +334,10 @@
         "PassContext": {
             "contextsAllowed": ["operation"],
             "notes" : "Only used by WebKitTestRunner and DumpRenderTree"
+        },
+        "Plugin": {
+            "contextsAllowed": ["interface"],
+            "notes" : "Should only be used by elements that forward to Netscape plug-ins"
         },
         "PrimaryGlobal": {
             "contextsAllowed": ["interface"],

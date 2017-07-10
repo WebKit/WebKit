@@ -24,7 +24,7 @@
  */
 
 [
-    CustomEnumerateProperty,
+    CustomGetOwnPropertyNames,
     GenerateIsReachable=ImplFrame,
     SkipVTableValidation,
 ] interface Storage {

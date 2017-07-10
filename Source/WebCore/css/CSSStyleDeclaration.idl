@@ -19,9 +19,9 @@
  */
 
 [
-    CustomEnumerateProperty,
+    CustomGetOwnPropertyNames,
     CustomGetOwnPropertySlotAndDescriptor,
-    CustomNamedSetter,
+    CustomPut,
     ExportMacro=WEBCORE_EXPORT,
     GenerateIsReachable,
     JSCustomHeader,

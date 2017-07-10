@@ -313,6 +313,7 @@ static inline JSValue stylePropertyGetter(ExecState& state, JSCSSStyleDeclaratio
     return stylePropertyGetter(state, thisObject, propertyInfo.propertyID);
 }
 
+// FIXME: This should be converted to be a named getter.
 bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState* state, PropertyName propertyName, PropertySlot& slot)
 {
     auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName);
@@ -322,14 +323,15 @@ bool JSCSSStyleDeclaration::getOwnPropertySlotDelegate(ExecState* state, Propert
     return true;
 }
 
-bool JSCSSStyleDeclaration::putDelegate(ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot&, bool& putResult)
+// FIXME: This should be converted to be a named setter.
+static bool putCommon(JSCSSStyleDeclaration& thisObject, ExecState& state, PropertyName propertyName, JSValue value, bool& putResult)
 {
     CustomElementReactionStack customElementReactionStack;
     auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName);
     if (!propertyInfo.propertyID)
         return false;
 
-    auto propertyValue = convert<IDLTreatNullAsEmptyAdaptor<IDLDOMString>>(*state, value);
+    auto propertyValue = convert<IDLTreatNullAsEmptyAdaptor<IDLDOMString>>(state, value);
     if (propertyInfo.hadPixelOrPosPrefix)
         propertyValue.append("px");
 
@@ -342,15 +344,39 @@ bool JSCSSStyleDeclaration::putDelegate(ExecState* state, PropertyName propertyN
         }
     }
 
-    auto setPropertyInternalResult = wrapped().setPropertyInternal(propertyInfo.propertyID, propertyValue, important);
+    auto setPropertyInternalResult = thisObject.wrapped().setPropertyInternal(propertyInfo.propertyID, propertyValue, important);
     if (setPropertyInternalResult.hasException()) {
-        auto& vm = state->vm();
+        auto& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
-        propagateException(*state, scope, setPropertyInternalResult.releaseException());
+        propagateException(state, scope, setPropertyInternalResult.releaseException());
         return true;
     }
     putResult = setPropertyInternalResult.releaseReturnValue();
     return true;
+}
+
+bool JSCSSStyleDeclaration::put(JSCell* cell, ExecState* state, PropertyName propertyName, JSValue value, PutPropertySlot& putPropertySlot)
+{
+    auto* thisObject = jsCast<JSCSSStyleDeclaration*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+
+    bool putResult = false;
+    if (putCommon(*thisObject, *state, propertyName, value, putResult))
+        return putResult;
+
+    return JSObject::put(thisObject, state, propertyName, value, putPropertySlot);
+}
+
+bool JSCSSStyleDeclaration::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool shouldThrow)
+{
+    auto* thisObject = jsCast<JSCSSStyleDeclaration*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+
+    bool putResult = false;
+    if (putCommon(*thisObject, *state, Identifier::from(state, index), value, putResult))
+        return putResult;
+
+    return JSObject::putByIndex(cell, state, index, value, shouldThrow);
 }
 
 JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState& state)

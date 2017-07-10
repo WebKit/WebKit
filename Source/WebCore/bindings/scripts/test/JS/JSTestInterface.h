@@ -79,7 +79,6 @@ protected:
     JSTestInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterface>&&);
 
     void finishCreation(JSC::VM&);
-    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&, bool& putResult);
 };
 
 class JSTestInterfaceOwner : public JSC::WeakHandleOwner {

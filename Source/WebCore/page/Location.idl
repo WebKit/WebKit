@@ -31,16 +31,16 @@
     CustomDefineOwnProperty,
     CustomDefineOwnPropertyOnPrototype,
     CustomDeleteProperty,
-    CustomEnumerateProperty,
-    CustomGetOwnPropertySlotAndDescriptor,
+    CustomGetOwnPropertyNames,
+    CustomGetOwnPropertySlot,
     CustomGetPrototype,
-    CustomNamedGetterOnPrototype,
-    CustomNamedSetter,
     CustomPreventExtensions,
+    CustomPut,
+    CustomPutOnPrototype,
     CustomToStringName,
     GenerateIsReachable=ImplFrame,
     IsImmutablePrototypeExoticObject,
-    Unforgeable,
+    Unforgeable
 ] interface Location {
     [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 

@@ -94,7 +94,7 @@ JSObject* pluginScriptObject(ExecState* exec, JSHTMLElement* jsHTMLElement)
     return instance->createRuntimeObject(exec);
 }
     
-EncodedJSValue pluginElementPropertyGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
+static EncodedJSValue pluginElementPropertyGetter(ExecState* exec, EncodedJSValue thisValue, PropertyName propertyName)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -109,19 +109,26 @@ EncodedJSValue pluginElementPropertyGetter(ExecState* exec, EncodedJSValue thisV
     return JSValue::encode(scriptObject->get(exec, propertyName));
 }
 
-bool pluginElementCustomGetOwnPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot, JSHTMLElement* element)
+bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    if (!element->globalObject()->world().isNormal()) {
+        JSC::JSValue proto = element->getPrototypeDirect();
+        if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(exec, propertyName))
+            return false;
+    }
+
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)
         return false;
 
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
+
     slot.setCustom(element, DontDelete | DontEnum, pluginElementPropertyGetter);
     return true;
 }
 
-bool pluginElementCustomPut(ExecState* exec, PropertyName propertyName, JSValue value, JSHTMLElement* element, PutPropertySlot& slot, bool& putResult)
+bool pluginElementCustomPut(JSHTMLElement* element, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot, bool& putResult)
 {
     JSObject* scriptObject = pluginScriptObject(exec, element);
     if (!scriptObject)
@@ -154,7 +161,7 @@ static EncodedJSValue JSC_HOST_CALL callPlugin(ExecState* exec)
     return JSValue::encode(result);
 }
 
-CallType pluginElementGetCallData(JSHTMLElement* element, CallData& callData)
+CallType pluginElementCustomGetCallData(JSHTMLElement* element, CallData& callData)
 {
     // First, ask the plug-in view base for its runtime object.
     if (JSObject* scriptObject = pluginScriptObjectFromPluginViewBase(element)) {
