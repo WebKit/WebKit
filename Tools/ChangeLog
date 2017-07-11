@@ -1,5 +1,15 @@
 2017-07-11  Lucas Forschler  <lforschler@apple.com>
 
+        Teach build workers to fetch archives from S3.
+        https://bugs.webkit.org/show_bug.cgi?id=174384
+
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (DownloadBuiltProduct):
+
+2017-07-11  Lucas Forschler  <lforschler@apple.com>
+
         Configure buildbot to transfer all archives to S3.
         Previously this was Mac only, but it's time to expand!
         https://bugs.webkit.org/show_bug.cgi?id=174378
