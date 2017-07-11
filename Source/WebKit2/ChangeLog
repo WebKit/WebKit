@@ -1,3 +1,15 @@
+2017-07-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Resource Load Statistics: Prune statistics in orders of importance
+        https://bugs.webkit.org/show_bug.cgi?id=174215
+        <rdar://problem/33164403>
+
+        Unreviewed test correction.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::pruneResources): The revised algorithm did not update the remaining
+        count to be pruned, causing a test failure.
+
 2017-07-10  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Prune statistics in orders of importance

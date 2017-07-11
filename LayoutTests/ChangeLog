@@ -1,3 +1,16 @@
+2017-07-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Resource Load Statistics: Prune statistics in orders of importance
+        https://bugs.webkit.org/show_bug.cgi?id=174215
+        <rdar://problem/33164403>
+
+        Unreviewed test correction.
+
+        Drive-by fix after recent refactoring to correct the new function names in TestRunner.
+
+        * http/tests/loading/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html:
+        * http/tests/loading/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html:
+
 2017-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         [WK2 iOS] REGRESSION (r216803) During momentum scroll, getBoundingClientRect returns wrong coordinates (missing images on pinterest, elle.com and many other sites)

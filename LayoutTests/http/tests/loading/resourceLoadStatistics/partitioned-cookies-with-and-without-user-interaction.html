@@ -73,7 +73,7 @@
     if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner && window.internals) {
         setEnableFeature(true);
 
-        testRunner.statisticsUpdateCookiePartitioningForOneDomain("localhost", true);
+        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true);
 
         testRunner.waitUntilDone();
         testRunner.dumpChildFramesAsText();
