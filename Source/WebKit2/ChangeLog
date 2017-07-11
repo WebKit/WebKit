@@ -1,5 +1,23 @@
 2017-07-11  Youenn Fablet  <youenn@apple.com>
 
+        Changing the web page muted state for playing audio should not disable other tabs capture
+        https://bugs.webkit.org/show_bug.cgi?id=174349
+        rdar://problem/33223988
+
+        Reviewed by Eric Carlson.
+
+        Make sure to mute capturing streams of any other tab if the current tab will start capturing or will unmute existing capturing streams.
+        Manually tested by having a tab doing capture and another tab playing a video.
+        Muting or unmuting the tab playing video should not change the capture tab.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::activateMediaStreamCaptureInPage):
+        (WebKit::WebPageProxy::setMuted):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::activateMediaStreamCaptureInPage):
+
+2017-07-11  Youenn Fablet  <youenn@apple.com>
+
         NetworkProcess should close listening WebRTC sockets when being suspended
         https://bugs.webkit.org/show_bug.cgi?id=174270
         rdar://problem/33139844

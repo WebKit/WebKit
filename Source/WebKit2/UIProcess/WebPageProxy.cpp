@@ -1666,7 +1666,13 @@ void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
     else
         setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted);
 }
-    
+
+void WebPageProxy::activateMediaStreamCaptureInPage()
+{
+    UserMediaProcessManager::singleton().muteCaptureMediaStreamsExceptIn(*this);
+    setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted);
+}
+
 #if !PLATFORM(IOS)
 void WebPageProxy::didCommitLayerTree(const RemoteLayerTreeTransaction&)
 {
@@ -4138,7 +4144,8 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state)
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    if (!(state & WebCore::MediaProducer::CaptureDevicesAreMuted))
+    bool hasMutedCaptureStreams = m_mediaState & (WebCore::MediaProducer::HasMutedAudioCaptureDevice | WebCore::MediaProducer::HasMutedVideoCaptureDevice);
+    if (hasMutedCaptureStreams && !(state & WebCore::MediaProducer::CaptureDevicesAreMuted))
         UserMediaProcessManager::singleton().muteCaptureMediaStreamsExceptIn(*this);
 #endif
 

@@ -475,7 +475,7 @@ public:
     void setEditable(bool);
     bool isEditable() const { return m_isEditable; }
 
-    void activateMediaStreamCaptureInPage() { setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted); }
+    void activateMediaStreamCaptureInPage();
     bool isMediaStreamCaptureMuted() const { return m_mutedState & WebCore::MediaProducer::CaptureDevicesAreMuted; }
     void setMediaStreamCaptureMuted(bool);
         
