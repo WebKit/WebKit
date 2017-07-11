@@ -280,7 +280,7 @@ static inline RefPtr<SharedBuffer> createTemplateDocumentData(const Settings& se
 {
     RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(settings.ftpDirectoryTemplatePath());
     if (buffer)
-        LOG(FTP, "Loaded FTPDirectoryTemplate of length %i\n", buffer->size());
+        LOG(FTP, "Loaded FTPDirectoryTemplate of length %zu\n", buffer->size());
     return buffer;
 }
     

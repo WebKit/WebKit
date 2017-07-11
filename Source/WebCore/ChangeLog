@@ -1,3 +1,27 @@
+2017-07-11  Alex Christensen  <achristensen@webkit.org>
+
+        SharedBuffer::size should return a size_t
+        https://bugs.webkit.org/show_bug.cgi?id=174328
+
+        Reviewed by Andreas Kling.
+
+        No change in behaviour.
+
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::createTemplateDocumentData):
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::handleProvisionalLoadFailure):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::loadDataURL):
+        * loader/ResourceLoader.h:
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::tryCreateArrayBuffer):
+        * platform/SharedBuffer.h:
+
 2017-07-11  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Build error when building WebCore from WebCore.proj project file.

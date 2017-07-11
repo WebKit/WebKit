@@ -76,7 +76,7 @@ StringView CachedScript::script()
     }
 
     if (m_decodingState == DataAndDecodedStringHaveSameBytes)
-        return { reinterpret_cast<const LChar*>(m_data->data()), m_data->size() };
+        return { reinterpret_cast<const LChar*>(m_data->data()), static_cast<unsigned>(m_data->size()) };
 
     if (!m_script) {
         m_script = m_decoder->decodeAndFlush(m_data->data(), encodedSize());

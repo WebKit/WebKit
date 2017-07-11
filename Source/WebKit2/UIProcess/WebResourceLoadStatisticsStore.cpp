@@ -324,7 +324,7 @@ void WebResourceLoadStatisticsStore::writeStoreToDisk()
     unlockAndCloseFile(handle);
 
     if (writtenBytes != static_cast<int64_t>(rawData->size()))
-        RELEASE_LOG_ERROR(ResourceLoadStatistics, "WebResourceLoadStatisticsStore: We only wrote %d out of %d bytes to disk", static_cast<unsigned>(writtenBytes), rawData->size());
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "WebResourceLoadStatisticsStore: We only wrote %d out of %zu bytes to disk", static_cast<unsigned>(writtenBytes), rawData->size());
 
     m_lastStatisticsFileSyncTime = WallTime::now();
     m_lastStatisticsWriteTime = MonotonicTime::now();

@@ -86,8 +86,7 @@ public:
     // ArrayBuffer without merging segmented buffers into a flat buffer.
     RefPtr<ArrayBuffer> tryCreateArrayBuffer() const;
 
-    // FIXME: This should return a size_t.
-    unsigned size() const { return m_size; }
+    size_t size() const { return m_size; }
 
     bool isEmpty() const { return !size(); }
 

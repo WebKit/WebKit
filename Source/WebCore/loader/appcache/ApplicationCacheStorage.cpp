@@ -804,7 +804,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     else if (shouldStoreResourceAsFlatFile(resource)) {
         // First, check to see if creating the flat file would violate the maximum total quota. We don't need
         // to check the per-origin quota here, as it was already checked in storeNewestCache().
-        if (m_database.totalSize() + flatFileAreaSize() + resource->data().size() > m_maximumSize) {
+        if (m_database.totalSize() + flatFileAreaSize() + static_cast<int64_t>(resource->data().size()) > m_maximumSize) {
             m_isMaximumSizeReached = true;
             return false;
         }
