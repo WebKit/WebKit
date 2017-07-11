@@ -31,8 +31,14 @@
         "CachedAttribute": {
             "contextsAllowed": ["attribute"]
         },
+        "CallbackNeedsCanInvoke": {
+            "contextsAllowed": ["callback-function"]
+        },
         "CallbackNeedsOperatorEqual": {
             "contextsAllowed": ["callback-function"]
+        },
+        "CallbackThisObject": {
+            "contextsAllowed": ["callback-function", "operation"]
         },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],

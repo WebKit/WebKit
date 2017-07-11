@@ -74,6 +74,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestVoidCallbackFunction:
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLFloat32Array>(state, globalObject, arrayParam));
     args.append(toJS<IDLSerializedScriptValue<SerializedScriptValue>>(state, globalObject, srzParam));
@@ -83,7 +84,7 @@ CallbackResult<typename IDLVoid::ImplementationType> JSTestVoidCallbackFunction:
     args.append(toJS<IDLInterface<TestNode>>(state, globalObject, testNodeParam));
 
     NakedPtr<JSC::Exception> returnedException;
-    m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -98,7 +99,6 @@ JSC::JSValue toJS(TestVoidCallbackFunction& impl)
         return jsNull();
 
     return static_cast<JSTestVoidCallbackFunction&>(impl).callbackData()->callback();
-
 }
 
 } // namespace WebCore

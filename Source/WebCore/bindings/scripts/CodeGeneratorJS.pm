@@ -599,10 +599,10 @@ sub GenerateNamedGetterLambda
 
     push(@$outputArray, "    auto getterFunctor = [] (auto& thisObject, auto propertyName) -> ${returnType} {\n");
 
-    my @args = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "std::nullopt", "thisObject", "        ");
-    push(@args, "propertyNameToAtomicString(propertyName)");
+    my @arguments = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "std::nullopt", "thisObject", "        ");
+    push(@arguments, "propertyNameToAtomicString(propertyName)");
 
-    push(@$outputArray, "        auto result = thisObject.wrapped().${namedGetterFunctionName}(" . join(", ", @args) . ");\n");
+    push(@$outputArray, "        auto result = thisObject.wrapped().${namedGetterFunctionName}(" . join(", ", @arguments) . ");\n");
     
     if ($namedGetterOperation->extendedAttributes->{MayThrowException}) {
         push(@$outputArray, "        if (result.hasException())\n");
@@ -5808,6 +5808,7 @@ sub GenerateCallbackHeaderContent
     push(@$contentRef, "    static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);\n") if @{$constants};
 
     push(@$contentRef, "    virtual bool operator==(const ${name}&) const override;\n\n") if $interfaceOrCallback->extendedAttributes->{CallbackNeedsOperatorEqual};
+    push(@$contentRef, "    virtual bool canInvoke() const override { return ActiveDOMCallback::canInvokeCallback(); }\n\n") if $interfaceOrCallback->extendedAttributes->{CallbackNeedsCanInvoke};
 
     # Operations
     my $numOperations = @{$operations};
@@ -5815,6 +5816,14 @@ sub GenerateCallbackHeaderContent
         push(@$contentRef, "\n    // Functions\n");
         foreach my $operation (@{$operations}) {
             my @arguments = ();
+
+            my $callbackThisObject = $operation->extendedAttributes->{CallbackThisObject};
+            if ($callbackThisObject) {
+                my $thisObjectType = $codeGenerator->ParseType($callbackThisObject);
+                my $IDLType = GetIDLType($interfaceOrCallback, $thisObjectType);
+                push(@arguments, "typename ${IDLType}::ParameterType thisObject");
+            }
+
             foreach my $argument (@{$operation->arguments}) {
                 my $IDLType = GetIDLType($interfaceOrCallback, $argument->type);
                 push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
@@ -5946,15 +5955,31 @@ sub GenerateCallbackImplementationContent
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $operation->name || "handleEvent";
 
-            my @args = ();
+            my @arguments = ();
+
+            my $thisValue = "jsUndefined()";
+
+            my $callbackThisObject = $operation->extendedAttributes->{CallbackThisObject};
+            if ($callbackThisObject) {
+                my $thisObjectType = $codeGenerator->ParseType($callbackThisObject);
+
+                AddToIncludesForIDLType($thisObjectType, $includesRef, 1);
+                my $IDLType = GetIDLType($interfaceOrCallback, $thisObjectType);
+                push(@arguments, "typename ${IDLType}::ParameterType thisObject");
+
+                my $thisObjectArgument = IDLArgument->new();
+                $thisObjectArgument->type($thisObjectType);
+
+                $thisValue = NativeToJSValueUsingReferences($thisObjectArgument, $interfaceOrCallback, "thisObject", "globalObject");
+            }
+
             foreach my $argument (@{$operation->arguments}) {
                 AddToIncludesForIDLType($argument->type, $includesRef, 1);
-
                 my $IDLType = GetIDLType($interfaceOrCallback, $argument->type);
-                push(@args, "typename ${IDLType}::ParameterType " . $argument->name);
+                push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
             }
             
-            push(@$contentRef, "${nativeReturnType} ${className}::${functionName}(" . join(", ", @args) . ")\n");
+            push(@$contentRef, "${nativeReturnType} ${className}::${functionName}(" . join(", ", @arguments) . ")\n");
             push(@$contentRef, "{\n");
 
             # FIXME: This is needed for NodeFilter, which works even for disconnected iframes. We should investigate
@@ -5970,6 +5995,8 @@ sub GenerateCallbackImplementationContent
             push(@$contentRef, "    JSLockHolder lock(vm);\n");
 
             push(@$contentRef, "    auto& state = *globalObject.globalExec();\n");
+
+            push(@$contentRef, "    JSValue thisValue = ${thisValue};\n");
             push(@$contentRef, "    MarkedArgumentBuffer args;\n");
 
             foreach my $argument (@{$operation->arguments}) {
@@ -5980,10 +6007,10 @@ sub GenerateCallbackImplementationContent
 
             my $callbackInvocation;
             if (ref($interfaceOrCallback) eq "IDLCallbackFunction") {
-                $callbackInvocation = "m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException)";
+                $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException)";
             } else {
                 my $callbackType = $numOperations > 1 ? "Object" : "FunctionOrObject";
-                $callbackInvocation = "m_data->invokeCallback(args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(&vm, \"${functionName}\"), returnedException)";
+                $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(&vm, \"${functionName}\"), returnedException)";
             }
 
             if ($operation->type->name eq "void") {
@@ -6018,12 +6045,11 @@ sub GenerateCallbackImplementationContent
         }
     }
 
-    # toJS() implementation.
     push(@$contentRef, "JSC::JSValue toJS(${name}& impl)\n");
     push(@$contentRef, "{\n");
     push(@$contentRef, "    if (!static_cast<${className}&>(impl).callbackData())\n");
     push(@$contentRef, "        return jsNull();\n\n");
-    push(@$contentRef, "    return static_cast<${className}&>(impl).callbackData()->callback();\n\n");
+    push(@$contentRef, "    return static_cast<${className}&>(impl).callbackData()->callback();\n");
     push(@$contentRef, "}\n\n");
 }
 

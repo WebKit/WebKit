@@ -209,7 +209,7 @@ HashSet<Node*> MutationObserver::observedNodes() const
 
 bool MutationObserver::canDeliver()
 {
-    return m_callback->canInvokeCallback();
+    return m_callback->canInvoke();
 }
 
 void MutationObserver::deliver()
@@ -232,7 +232,7 @@ void MutationObserver::deliver()
     Vector<Ref<MutationRecord>> records;
     records.swap(m_records);
 
-    m_callback->call(records, this);
+    m_callback->handleEvent(*this, records, *this);
 }
 
 void MutationObserver::notifyMutationObservers()

@@ -29,7 +29,7 @@
  */
 
 [
-    CustomConstructor(MutationCallback callback),
+    Constructor(MutationCallback callback),
     CustomIsReachable,
     ImplementationLacksVTable,
     LegacyWindowAlias=WebKitMutationObserver,

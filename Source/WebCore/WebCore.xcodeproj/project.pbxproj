@@ -3256,6 +3256,8 @@
 		7C93F34E1AA6BF0700A98BAB /* ContentExtensionCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C93F34C1AA6BF0700A98BAB /* ContentExtensionCompiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C9DBFED1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C9DBFEB1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp */; };
 		7C9DBFEE1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */; };
+		7CACB6051F1535AD0007101C /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CACB6031F1535AC0007101C /* JSMutationCallback.cpp */; };
+		7CACB6061F1535AD0007101C /* JSMutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CACB6041F1535AC0007101C /* JSMutationCallback.h */; };
 		7CB5CA3F1E525C7100FAEF13 /* MediaQueryExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB5CA3D1E525C6C00FAEF13 /* MediaQueryExpression.cpp */; };
 		7CB5CA401E525C7300FAEF13 /* MediaQueryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CB5CA3E1E525C6C00FAEF13 /* MediaQueryExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CBA5BA71F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */; };
@@ -6056,8 +6058,6 @@
 		C6F0902C14327D4F00685849 /* JSMutationObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0902414327D4F00685849 /* JSMutationObserver.cpp */; };
 		C6F0902D14327D4F00685849 /* JSMutationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F0902514327D4F00685849 /* JSMutationObserver.h */; };
 		C6F0917F143A2BB900685849 /* JSMutationObserverCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */; };
-		C6F420A216B7164E0052A9F2 /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */; };
-		C6F420A316B7164E0052A9F2 /* JSMutationCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */; };
 		C9026B651B1CF5FE001D99A7 /* JSMediaRemoteControls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9026B631B1CF5AB001D99A7 /* JSMediaRemoteControls.cpp */; };
 		C9027F411B1D0AD200BFBFEF /* MediaSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9027F3F1B1D0AD200BFBFEF /* MediaSession.cpp */; };
 		C9027F421B1D0AD200BFBFEF /* MediaSession.h in Headers */ = {isa = PBXBuildFile; fileRef = C9027F401B1D0AD200BFBFEF /* MediaSession.h */; };
@@ -11330,6 +11330,9 @@
 		7C9DBFEA1A9C489F000D6B25 /* HTMLAttachmentElement.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLAttachmentElement.idl; sourceTree = "<group>"; };
 		7C9DBFEB1A9C49B1000D6B25 /* JSHTMLAttachmentElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLAttachmentElement.cpp; sourceTree = "<group>"; };
 		7C9DBFEC1A9C49B1000D6B25 /* JSHTMLAttachmentElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLAttachmentElement.h; sourceTree = "<group>"; };
+		7CACB6031F1535AC0007101C /* JSMutationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
+		7CACB6041F1535AC0007101C /* JSMutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
+		7CACB6071F1535DF0007101C /* MutationCallback.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MutationCallback.idl; sourceTree = "<group>"; };
 		7CB5CA3D1E525C6C00FAEF13 /* MediaQueryExpression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExpression.cpp; sourceTree = "<group>"; };
 		7CB5CA3E1E525C6C00FAEF13 /* MediaQueryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaQueryExpression.h; sourceTree = "<group>"; };
 		7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertWebGL.cpp; sourceTree = "<group>"; };
@@ -14570,8 +14573,6 @@
 		C6F0902414327D4F00685849 /* JSMutationObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationObserver.cpp; sourceTree = "<group>"; };
 		C6F0902514327D4F00685849 /* JSMutationObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationObserver.h; sourceTree = "<group>"; };
 		C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationObserverCustom.cpp; sourceTree = "<group>"; };
-		C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
-		C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
 		C9026B631B1CF5AB001D99A7 /* JSMediaRemoteControls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaRemoteControls.cpp; sourceTree = "<group>"; };
 		C9026B641B1CF5AB001D99A7 /* JSMediaRemoteControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaRemoteControls.h; sourceTree = "<group>"; };
 		C9027F3E1B1D0AB900BFBFEF /* MediaSession.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSession.idl; sourceTree = "<group>"; };
@@ -22063,6 +22064,8 @@
 				BC64649611D82349006455B0 /* JSDOMStringMap.h */,
 				65DF31E509D1CC60000BE325 /* JSElement.cpp */,
 				65DF31E609D1CC60000BE325 /* JSElement.h */,
+				7CACB6031F1535AC0007101C /* JSMutationCallback.cpp */,
+				7CACB6041F1535AC0007101C /* JSMutationCallback.h */,
 				C6F0902414327D4F00685849 /* JSMutationObserver.cpp */,
 				C6F0902514327D4F00685849 /* JSMutationObserver.h */,
 				C6F08FC71431000D00685849 /* JSMutationRecord.cpp */,
@@ -23946,8 +23949,6 @@
 				93B70D4E09EB0C7C009D8468 /* JSEventListener.h */,
 				935F45400F7C3B5F00D7C1FB /* JSLazyEventListener.cpp */,
 				935F45410F7C3B5F00D7C1FB /* JSLazyEventListener.h */,
-				C6F420A016B7164E0052A9F2 /* JSMutationCallback.cpp */,
-				C6F420A116B7164E0052A9F2 /* JSMutationCallback.h */,
 				BCA378BA0D15F64200B793D6 /* ScheduledAction.cpp */,
 				BCA378BB0D15F64200B793D6 /* ScheduledAction.h */,
 			);
@@ -25803,6 +25804,7 @@
 				85031B310A44EFC700F992E0 /* MouseRelatedEvent.cpp */,
 				85031B320A44EFC700F992E0 /* MouseRelatedEvent.h */,
 				C6F0900114327B6100685849 /* MutationCallback.h */,
+				7CACB6071F1535DF0007101C /* MutationCallback.idl */,
 				85031B330A44EFC700F992E0 /* MutationEvent.cpp */,
 				85031B340A44EFC700F992E0 /* MutationEvent.h */,
 				93EEC1F309C2877700C515D1 /* MutationEvent.idl */,
@@ -27085,6 +27087,7 @@
 				CD19A2681A13E700008D650E /* DiagnosticLoggingClient.h in Headers */,
 				46FCB6181A70820E00C5A21E /* DiagnosticLoggingKeys.h in Headers */,
 				8372DB311A6780A800C697C5 /* DiagnosticLoggingResultType.h in Headers */,
+				7CACB6061F1535AD0007101C /* JSMutationCallback.h in Headers */,
 				CECADFC7153778FF00E37068 /* DictationAlternative.h in Headers */,
 				CECADFC9153778FF00E37068 /* DictationCommand.h in Headers */,
 				D0BD4F5D1408850F006839B6 /* DictationCommandIOS.h in Headers */,
@@ -28124,7 +28127,6 @@
 				2D6F3E951C1F85550061DBD4 /* JSMockPageOverlay.h in Headers */,
 				A86629D109DA2B48009633A5 /* JSMouseEvent.h in Headers */,
 				830A36BD1DAC5FAD006D7D09 /* JSMouseEventInit.h in Headers */,
-				C6F420A316B7164E0052A9F2 /* JSMutationCallback.h in Headers */,
 				65DF31FC09D1CC60000BE325 /* JSMutationEvent.h in Headers */,
 				C6F0902D14327D4F00685849 /* JSMutationObserver.h in Headers */,
 				C6F08FCA1431000D00685849 /* JSMutationRecord.h in Headers */,
@@ -30372,8 +30374,7 @@
 		1C09D0501E31C32900725F18 /* libPAL.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			name = libPAL.a;
-			path = lib.a;
+			path = libPAL.a;
 			remoteRef = 1C09D04F1E31C32900725F18 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -32109,6 +32110,7 @@
 				07277E5217D018CC0015534D /* JSMediaStreamTrack.cpp in Sources */,
 				415CDAF71E6CE0DE004F11EE /* JSMediaStreamTrackCustom.cpp in Sources */,
 				07277E5417D018CC0015534D /* JSMediaStreamTrackEvent.cpp in Sources */,
+				7CACB6051F1535AD0007101C /* JSMutationCallback.cpp in Sources */,
 				932CC0D41DFFD667004C0F9F /* JSMediaTrackConstraints.cpp in Sources */,
 				0787C4691BFBDF6F006DCD7F /* JSMediaTrackSupportedConstraints.cpp in Sources */,
 				E107400D0E77BDC00033AF24 /* JSMessageChannel.cpp in Sources */,
@@ -32119,7 +32121,6 @@
 				E1ADED470E76B8DD004A1A5E /* JSMessagePortCustom.cpp in Sources */,
 				A86629D209DA2B48009633A5 /* JSMouseEvent.cpp in Sources */,
 				830A36BC1DAC5FAD006D7D09 /* JSMouseEventInit.cpp in Sources */,
-				C6F420A216B7164E0052A9F2 /* JSMutationCallback.cpp in Sources */,
 				65DF31FB09D1CC60000BE325 /* JSMutationEvent.cpp in Sources */,
 				C6F0902C14327D4F00685849 /* JSMutationObserver.cpp in Sources */,
 				C6F0917F143A2BB900685849 /* JSMutationObserverCustom.cpp in Sources */,

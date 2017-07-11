@@ -19,13 +19,13 @@
 */
 
 #include "config.h"
-#include "JSTestCallbackFunctionRethrow.h"
+#include "JSTestCallbackFunctionWithThisObject.h"
 
-#include "JSDOMConvertNumbers.h"
+#include "JSDOMConvertInterface.h"
 #include "JSDOMConvertSequences.h"
-#include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSArray.h>
 #include <runtime/JSLock.h>
@@ -34,14 +34,14 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSTestCallbackFunctionRethrow::JSTestCallbackFunctionRethrow(JSObject* callback, JSDOMGlobalObject* globalObject)
-    : TestCallbackFunctionRethrow()
+JSTestCallbackFunctionWithThisObject::JSTestCallbackFunctionWithThisObject(JSObject* callback, JSDOMGlobalObject* globalObject)
+    : TestCallbackFunctionWithThisObject()
     , ActiveDOMCallback(globalObject->scriptExecutionContext())
     , m_data(new JSCallbackDataStrong(callback, globalObject, this))
 {
 }
 
-JSTestCallbackFunctionRethrow::~JSTestCallbackFunctionRethrow()
+JSTestCallbackFunctionWithThisObject::~JSTestCallbackFunctionWithThisObject()
 {
     ScriptExecutionContext* context = scriptExecutionContext();
     // When the context is destroyed, all tasks with a reference to a callback
@@ -55,42 +55,38 @@ JSTestCallbackFunctionRethrow::~JSTestCallbackFunctionRethrow()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunctionRethrow::handleEvent(typename IDLSequence<IDLLong>::ParameterType argument)
+CallbackResult<typename IDLVoid::ImplementationType> JSTestCallbackFunctionWithThisObject::handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;
 
-    Ref<JSTestCallbackFunctionRethrow> protectedThis(*this);
+    Ref<JSTestCallbackFunctionWithThisObject> protectedThis(*this);
 
     auto& globalObject = *m_data->globalObject();
     auto& vm = globalObject.vm();
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
-    JSValue thisValue = jsUndefined();
+    JSValue thisValue = toJS<IDLInterface<TestNode>>(state, globalObject, thisObject);
     MarkedArgumentBuffer args;
-    args.append(toJS<IDLSequence<IDLLong>>(state, globalObject, argument));
+    args.append(toJS<IDLSequence<IDLInterface<TestNode>>>(state, globalObject, parameter));
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
-        auto throwScope = DECLARE_THROW_SCOPE(vm);
-        throwException(&state, throwScope, returnedException);
+        reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
      }
 
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-    auto returnValue = convert<IDLDOMString>(state, jsResult);
-    RETURN_IF_EXCEPTION(throwScope, CallbackResultType::ExceptionThrown);
-    return WTFMove(returnValue);
+    return { };
 }
 
-JSC::JSValue toJS(TestCallbackFunctionRethrow& impl)
+JSC::JSValue toJS(TestCallbackFunctionWithThisObject& impl)
 {
-    if (!static_cast<JSTestCallbackFunctionRethrow&>(impl).callbackData())
+    if (!static_cast<JSTestCallbackFunctionWithThisObject&>(impl).callbackData())
         return jsNull();
 
-    return static_cast<JSTestCallbackFunctionRethrow&>(impl).callbackData()->callback();
+    return static_cast<JSTestCallbackFunctionWithThisObject&>(impl).callbackData()->callback();
 }
 
 } // namespace WebCore

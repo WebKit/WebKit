@@ -1,3 +1,102 @@
+2017-07-10  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Convert MutationCallback to be a normal generate callback
+        https://bugs.webkit.org/show_bug.cgi?id=174140
+
+        Reviewed by Chris Dumez.
+
+        To make this work more nicely, I:
+        - Added the ability to for non-nullable interfaces in sequences to be passed
+          via a Ref<> rather than a RefPtr<> as a parameter to a callback function.
+          (e.g. callback MyCallback = void (sequence<Foo> foos) will now have the 
+          signature, CallbackResult<void> handleEvent(const Vector<Ref<Foo>>&) rather
+          than CallbackResult<void> handleEvent(const Vector<RefPtr<Foo>>&).
+        - Added a new extended attribute for callback functions called [CallbackNeedsCanInvoke]
+          that adds a virtual function called canInvoke() to the generated callback.
+          All it does is forward to ActiveDOMCallback's canInvokeCallback, but it
+          allows the implementation to get to it. We may one day want to move the 
+          inheritance of ActiveDOMCallback from the generated source to the base class.
+        - Added a new extended attribute for callback functions called [CallbackThisObject=Type]
+          which allows you to specify that the callback needs a this object in addition
+          to its arguments. When specified, the first argument of the C++ implementation
+          function will now correspond to the this object, with the remaining arguments
+          shifted over one.
+
+        * DerivedSources.make:
+        Add MutationCallback.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove non-generated JSMutationCallback.cpp, and add generated JSMutationCallback.cpp.
+
+        * Modules/mediastream/MediaDevicesRequest.cpp:
+        (WebCore::MediaDevicesRequest::filterDeviceList):
+        (WebCore::MediaDevicesRequest::start):
+        * Modules/mediastream/MediaDevicesRequest.h:
+        Switch to using Ref.
+
+        * bindings/IDLTypes.h:
+        Add InnerParameterType and NullableInnerParameterType type hooks
+        and specialize wrappers to use Ref for InnerParameterType, and RefPtr
+        for NullableInnerParameterType.
+
+        * bindings/js/JSCallbackData.cpp:
+        * bindings/js/JSCallbackData.h:
+        Add support for passing a this object.
+
+        * bindings/js/JSMutationCallback.cpp: Removed.
+        * bindings/js/JSMutationCallback.h: Removed.
+        Remove custom callback code.
+
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::constructJSMutationObserver): Deleted.
+        Remove no longer needed custom constructor.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (ParseType):
+        Add helper to parse a type and cache the result.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackHeaderContent):
+        (GenerateCallbackImplementationContent):
+        Add support for [CallbackNeedsCanInvoke] and [CallbackThisObject]. When [CallbackThisObject]
+        is not specified, use jsUndefined() as the this object as specified by WebIDL.
+
+        * bindings/scripts/IDLAttributes.json:
+        Add [CallbackNeedsCanInvoke] and [CallbackThisObject].
+
+        * bindings/scripts/IDLParser.pm:
+        (ParseType):
+        Add entry point to parse a single type.
+
+        * css/FontFaceSet.h:
+        Switch to using Ref.
+
+        * dom/MutationCallback.h:
+        Update signatures.
+
+        * dom/MutationCallback.idl: Added.
+    
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::canDeliver):
+        (WebCore::MutationObserver::deliver):
+        Switch to new signatures.
+
+        * dom/MutationObserver.idl:
+        Remove CustomConstructor.
+
+        * page/IntersectionObserverCallback.h:
+        Switch to using Ref.
+
+        * bindings/scripts/test/JS/JSTestCallbackFunction.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionRethrow.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithThisObject.cpp: Added.
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithThisObject.h: Added.
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.cpp:
+        Add / update bindings tests.
+
 2017-07-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         RenderImage should not add itself as a RelevantRepaintedObject if its image frame is being decoded

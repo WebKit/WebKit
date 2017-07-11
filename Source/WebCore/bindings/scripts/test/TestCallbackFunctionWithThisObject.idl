@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,30 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum TestCallbackInterfaceEnum { "value1", "value2" };
-
-dictionary TestCallbackInterfaceDictionary { 
-    required USVString requiredMember;
-    long optionalMember;
-};
-
 [
-    Conditional=TEST_CONDITIONAL,
-] callback interface TestCallbackInterface {
-    // Constants
-    const unsigned short CONSTANT1 = 1;
-    const unsigned short CONSTANT2 = 2;
-
-    // Operations.
-    void callbackWithNoParam();
-    void callbackWithArrayParam(Float32Array arrayParam);
-    void callbackWithSerializedScriptValueParam(SerializedScriptValue srzParam, DOMString strParam);
-    [Custom] long customCallback(TestObj testObjParam, TestNode testNodeParam);
-    void callbackWithStringList(DOMStringList listParam);
-    void callbackWithBoolean(boolean boolParam);
-    void callbackRequiresThisToPass(long longParam, TestNode testNodeParam);
-    DOMString callbackWithAReturnValue();
-    [RethrowException] DOMString callbackThatRethrowsExceptions(TestCallbackInterfaceEnum enumParam);
-    [SkipCallbackInvokeCheck] DOMString callbackThatSkipsInvokeCheck(TestCallbackInterfaceDictionary dictionaryParam);
-    [CallbackThisObject=TestNode] DOMString callbackWithThisObject(TestObj testObjParam);
-};
+    CallbackThisObject=TestNode
+] callback TestCallbackFunctionWithThisObject = void (sequence<TestNode> parameter);

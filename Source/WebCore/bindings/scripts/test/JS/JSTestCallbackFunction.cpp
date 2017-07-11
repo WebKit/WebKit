@@ -64,11 +64,12 @@ CallbackResult<typename IDLDOMString::ImplementationType> JSTestCallbackFunction
 
     JSLockHolder lock(vm);
     auto& state = *globalObject.globalExec();
+    JSValue thisValue = jsUndefined();
     MarkedArgumentBuffer args;
     args.append(toJS<IDLLong>(argument));
 
     NakedPtr<JSC::Exception> returnedException;
-    auto jsResult = m_data->invokeCallback(args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
     if (returnedException) {
         reportException(&state, returnedException);
         return CallbackResultType::ExceptionThrown;
@@ -86,7 +87,6 @@ JSC::JSValue toJS(TestCallbackFunction& impl)
         return jsNull();
 
     return static_cast<JSTestCallbackFunction&>(impl).callbackData()->callback();
-
 }
 
 } // namespace WebCore

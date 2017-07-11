@@ -56,6 +56,7 @@ public:
     virtual CallbackResult<typename IDLDOMString::ImplementationType> callbackWithAReturnValue() override;
     virtual CallbackResult<typename IDLDOMString::ImplementationType> callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam) override;
     virtual CallbackResult<typename IDLDOMString::ImplementationType> callbackThatSkipsInvokeCheck(typename IDLDictionary<TestCallbackInterface::Dictionary>::ParameterType dictionaryParam) override;
+    virtual CallbackResult<typename IDLDOMString::ImplementationType> callbackWithThisObject(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLInterface<TestObj>::ParameterType testObjParam) override;
 
 private:
     JSTestCallbackInterface(JSC::JSObject*, JSDOMGlobalObject*);
