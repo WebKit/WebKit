@@ -142,7 +142,20 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
 void CachedImage::addPendingImageDrawingClient(CachedImageClient& client)
 {
     ASSERT(client.resourceClientType() == CachedImageClient::expectedType());
-    m_pendingImageDrawingClients.add(&client);
+    if (m_pendingImageDrawingClients.contains(&client))
+        return;
+    if (!m_clients.contains(&client)) {
+        // If the <html> element does not have its own background sepecfied, painting the root box
+        // renderer uses the style of the <body> element, see RenderView::rendererForRootBackground().
+        // In this case, the client we are asked to add is the root box renderer. Since we can't add
+        // a client to m_pendingImageDrawingClients unless it is one of the m_clients, we are going
+        // to cancel the repaint optimization we do in CachedImage::imageFrameAvailable() by adding
+        // all the m_clients to m_pendingImageDrawingClients.
+        CachedResourceClientWalker<CachedImageClient> walker(m_clients);
+        while (auto* client = walker.next())
+            m_pendingImageDrawingClients.add(client);
+    } else
+        m_pendingImageDrawingClients.add(&client);
 }
 
 void CachedImage::switchClientsToRevalidatedResource()
