@@ -85,6 +85,7 @@
 #include "RenderStyleConstants.h"
 #include "ScriptState.h"
 #include "ShadowRoot.h"
+#include "StaticNodeList.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleSheetList.h"
@@ -1144,6 +1145,40 @@ void InspectorDOMAgent::highlightNode(ErrorString& errorString, const InspectorO
         return;
 
     m_overlay->highlightNode(node, *highlightConfig);
+}
+
+void InspectorDOMAgent::highlightNodeList(ErrorString& errorString, const InspectorArray& nodeIds, const InspectorObject& highlightInspectorObject)
+{
+    Vector<Ref<Node>> nodes;
+    for (auto& nodeValue : nodeIds) {
+        if (!nodeValue) {
+            errorString = ASCIILiteral("Invalid nodeIds item.");
+            return;
+        }
+
+        int nodeId = 0;
+        if (!nodeValue->asInteger(nodeId)) {
+            errorString = ASCIILiteral("Invalid nodeIds item type. Expecting integer types.");
+            return;
+        }
+
+        // In the case that a node is removed in the time between when highlightNodeList is invoked
+        // by the frontend and it is executed by the backend, we should still attempt to highlight
+        // as many nodes as possible. As such, we should ignore any errors generated when attempting
+        // to get a Node from a given nodeId. 
+        ErrorString ignored;
+        Node* node = assertNode(ignored, nodeId);
+        if (!node)
+            continue;
+
+        nodes.append(*node);
+    }
+
+    std::unique_ptr<HighlightConfig> highlightConfig = highlightConfigFromInspectorObject(errorString, &highlightInspectorObject);
+    if (!highlightConfig)
+        return;
+
+    m_overlay->highlightNodeList(StaticNodeList::create(WTFMove(nodes)), *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightFrame(ErrorString& errorString, const String& frameId, const InspectorObject* color, const InspectorObject* outlineColor)

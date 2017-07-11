@@ -377,6 +377,14 @@
             ]
         },
         {
+            "name": "highlightNodeList",
+            "description": "Highlights each DOM node in the given list.",
+            "parameters": [
+                { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" } },
+                { "name": "highlightConfig", "$ref": "HighlightConfig" }
+            ]
+        },
+        {
             "name": "hideHighlight",
             "description": "Hides DOM node highlight."
         },

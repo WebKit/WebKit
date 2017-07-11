@@ -1,3 +1,13 @@
+2017-07-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Highlight matching CSS canvas clients when hovering contexts in the Resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=174279
+
+        Reviewed by Matt Baker.
+
+        * inspector/dom/highlightNodeList-expected.html: Added.
+        * inspector/dom/highlightNodeList.html: Added.
+
 2017-07-10  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align][css-flex][css-grid] 'auto' values of align-self and justify-self must not be resolved

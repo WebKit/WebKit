@@ -1,3 +1,13 @@
+2017-07-10  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Highlight matching CSS canvas clients when hovering contexts in the Resources tab
+        https://bugs.webkit.org/show_bug.cgi?id=174279
+
+        Reviewed by Matt Baker.
+
+        * inspector/protocol/DOM.json:
+        Add `highlightNodeList` command that will highlight each node in the given list.
+
 2017-07-03  Brian Burg  <bburg@apple.com>
 
         Web Replay: remove some unused code

@@ -139,6 +139,7 @@ public:
     void highlightQuad(ErrorString&, const Inspector::InspectorArray& quad, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor, const bool* const usePageCoordinates) override;
     void highlightSelector(ErrorString&, const Inspector::InspectorObject& highlightConfig, const String& selectorString, const String* const frameId) override;
     void highlightNode(ErrorString&, const Inspector::InspectorObject& highlightConfig, const int* const nodeId, const String* const objectId) override;
+    void highlightNodeList(ErrorString&, const Inspector::InspectorArray& nodeIds, const Inspector::InspectorObject& highlightConfig) override;
     void highlightFrame(ErrorString&, const String& frameId, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor) override;
 
     void moveTo(ErrorString&, int nodeId, int targetNodeId, const int* const anchorNodeId, int* newNodeId) override;

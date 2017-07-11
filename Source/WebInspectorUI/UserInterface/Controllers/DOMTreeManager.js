@@ -426,11 +426,30 @@ WebInspector.DOMTreeManager = class DOMTreeManager extends WebInspector.Object
             DOMAgent.hideHighlight();
     }
 
+    highlightDOMNodeList(nodeIds, mode)
+    {
+        // COMPATIBILITY (iOS 11): DOM.highlightNodeList did not exist.
+        if (!DOMAgent.highlightNodeList)
+            return;
+
+        if (this._hideDOMNodeHighlightTimeout) {
+            clearTimeout(this._hideDOMNodeHighlightTimeout);
+            this._hideDOMNodeHighlightTimeout = undefined;
+        }
+
+        DOMAgent.highlightNodeList(nodeIds, this._buildHighlightConfig(mode));
+    }
+
     highlightSelector(selectorText, frameId, mode)
     {
         // COMPATIBILITY (iOS 8): DOM.highlightSelector did not exist.
         if (!DOMAgent.highlightSelector)
             return;
+
+        if (this._hideDOMNodeHighlightTimeout) {
+            clearTimeout(this._hideDOMNodeHighlightTimeout);
+            this._hideDOMNodeHighlightTimeout = undefined;
+        }
 
         DOMAgent.highlightSelector(this._buildHighlightConfig(mode), selectorText, frameId);
     }

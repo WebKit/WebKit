@@ -65,12 +65,18 @@ WebInspector.CanvasTreeElement = class CanvasTreeElement extends WebInspector.Ge
 
     _handleMouseOver(event)
     {
-        this.representedObject.requestNode((node) => {
-            if (!node || !node.ownerDocument)
-                return;
+        if (this.representedObject.cssCanvasName) {
+            this.representedObject.requestCSSCanvasClientNodes((cssCanvasClientNodes) => {
+                WebInspector.domTreeManager.highlightDOMNodeList(cssCanvasClientNodes.map((node) => node.id), "all");
+            });
+        } else {
+            this.representedObject.requestNode((node) => {
+                if (!node || !node.ownerDocument)
+                    return;
 
-            WebInspector.domTreeManager.highlightDOMNode(node.id, "all");
-        });
+                WebInspector.domTreeManager.highlightDOMNode(node.id, "all");
+            });
+        }
     }
 
     _handleMouseOut(event)
