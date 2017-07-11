@@ -1,3 +1,14 @@
+2017-07-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Build error when building WebCore from WebCore.proj project file.
+        https://bugs.webkit.org/show_bug.cgi?id=174330
+
+        Reviewed by Brent Fulgham.
+
+        CMAKE_BINARY_DIR is needed in the include list in order to find 'cmakeconfig.h'. 
+
+        * pal/CMakeLists.txt:
+
 2017-07-03  Brian Burg  <bburg@apple.com>
 
         Web Replay: remove some unused code
