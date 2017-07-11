@@ -1,3 +1,26 @@
+2017-07-11  Ali Juma  <ajuma@chromium.org>
+
+        elementFromPoint() should consider x and y to be in client (layout viewport) coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=172019
+
+        Reviewed by Simon Fraser.
+
+        When visual viewports are enabled, this makes TreeScope::nodeFromPoint consider its
+        input to be in client coordinates, and clips this input to the layout viewport. This change
+        affects the behavior of document.elementFromPoint() and document.caretRangeFromPoint.
+
+        No new tests. Modified an existing test, and made a previously-failing test pass on ios.
+
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::nodeFromPoint):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutViewportToAbsoluteRect):
+        (WebCore::FrameView::layoutViewportToAbsolutePoint):
+        (WebCore::FrameView::clientToLayoutViewportPoint):
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+
 2017-07-11  Timothy Hatcher  <timothy@hatcher.name>
 
         Broken build when !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)

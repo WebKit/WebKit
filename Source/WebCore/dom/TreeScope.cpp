@@ -44,6 +44,7 @@
 #include "PointerLockController.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include "ShadowRoot.h"
 #include <wtf/text/CString.h>
 
@@ -301,22 +302,32 @@ Node* TreeScope::nodeFromPoint(const LayoutPoint& clientPoint, LayoutPoint* loca
     if (!frame || !view)
         return nullptr;
 
-    float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
+    LayoutPoint absolutePoint;
+    if (frame->settings().visualViewportEnabled()) {
+        documentScope().updateLayout();
+        FloatPoint layoutViewportPoint = view->clientToLayoutViewportPoint(clientPoint);
+        FloatRect layoutViewportBounds({ }, view->layoutViewportRect().size());
+        if (!layoutViewportBounds.contains(layoutViewportPoint))
+            return nullptr;
+        absolutePoint = LayoutPoint(view->layoutViewportToAbsolutePoint(layoutViewportPoint));
+    } else {
+        float scaleFactor = frame->pageZoomFactor() * frame->frameScaleFactor();
 
-    LayoutPoint contentsPoint = clientPoint;
-    contentsPoint.scale(scaleFactor);
-    contentsPoint.moveBy(view->contentsScrollPosition());
+        absolutePoint = clientPoint;
+        absolutePoint.scale(scaleFactor);
+        absolutePoint.moveBy(view->contentsScrollPosition());
 
-    LayoutRect visibleRect;
+        LayoutRect visibleRect;
 #if PLATFORM(IOS)
-    visibleRect = view->unobscuredContentRect();
+        visibleRect = view->unobscuredContentRect();
 #else
-    visibleRect = view->visibleContentRect();
+        visibleRect = view->visibleContentRect();
 #endif
-    if (!visibleRect.contains(contentsPoint))
-        return nullptr;
+        if (!visibleRect.contains(absolutePoint))
+            return nullptr;
+    }
 
-    HitTestResult result(contentsPoint);
+    HitTestResult result(absolutePoint);
     documentScope().renderView()->hitTest(HitTestRequest(), result);
 
     if (localPoint)
