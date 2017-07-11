@@ -270,9 +270,11 @@ void LibWebRTCMediaEndpoint::doCreateAnswer()
 
 void LibWebRTCMediaEndpoint::getStats(MediaStreamTrack* track, const DeferredPromise& promise)
 {
-    UNUSED_PARAM(track);
-    UNUSED_PARAM(promise);
-    m_backend->GetStats(StatsCollector::create(*this, promise, track).get());
+    auto collector = StatsCollector::create(*this, promise, track);
+    LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this), collector = WTFMove(collector)] {
+        if (protectedThis->m_backend)
+            protectedThis->m_backend->GetStats(collector.get());
+    });
 }
 
 LibWebRTCMediaEndpoint::StatsCollector::StatsCollector(Ref<LibWebRTCMediaEndpoint>&& endpoint, const DeferredPromise& promise, MediaStreamTrack* track)
@@ -1040,18 +1042,19 @@ RTCRtpParameters LibWebRTCMediaEndpoint::getRTCRtpSenderParameters(RTCRtpSender&
 
 void LibWebRTCMediaEndpoint::gatherStatsForLogging()
 {
-    ASSERT(m_backend);
-    if (m_backend)
-        m_backend->GetStats(this);
+    LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
+        if (protectedThis->m_backend)
+            protectedThis->m_backend->GetStats(protectedThis.ptr());
+    });
 }
 
 void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
 {
     if (!m_statsTimestamp)
         m_statsTimestamp = report->timestamp_us();
-    else if (m_statsLogTimer.repeatInterval() == 1_s && (report->timestamp_us() - m_statsTimestamp) > 30000000) {
+    else if (m_statsLogTimer.repeatInterval() == 2_s && (report->timestamp_us() - m_statsTimestamp) > 15000000) {
         callOnMainThread([protectedThis = makeRef(*this)] {
-            protectedThis->m_statsLogTimer.augmentRepeatInterval(4_s);
+            protectedThis->m_statsLogTimer.augmentRepeatInterval(9_s);
         });
     }
 
@@ -1072,7 +1075,7 @@ void LibWebRTCMediaEndpoint::startLoggingStats()
 #if !RELEASE_LOG_DISABLED
     if (m_statsLogTimer.isActive())
         m_statsLogTimer.stop();
-    m_statsLogTimer.startRepeating(1_s);
+    m_statsLogTimer.startRepeating(2_s);
 #endif
 }
 
