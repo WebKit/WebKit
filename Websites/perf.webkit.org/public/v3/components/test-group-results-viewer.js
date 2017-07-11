@@ -24,6 +24,12 @@ class TestGroupResultsViewer extends ComponentBase {
     {
         this._analysisResults = analysisResults;
         this._currentMetric = metric;
+        if (metric) {
+            const path = metric.test().path();
+            for (let i = path.length - 2; i >= 0; i--)
+                this._expandedTests.add(path[i]);
+        }
+
         this.enqueueToRender();
     }
 
@@ -58,6 +64,9 @@ class TestGroupResultsViewer extends ComponentBase {
 
     _buildRowsForTest(testGroup, expandedTests, test, sharedPath, maxDepth, depth)
     {
+        if (!this._analysisResults.containsTest(test))
+            return [];
+
         const element = ComponentBase.createElement;
         const rows = element('tbody', test.metrics().map((metric) => this._buildRowForMetric(testGroup, metric, sharedPath, maxDepth, depth)));
 

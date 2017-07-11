@@ -1,3 +1,32 @@
+2017-07-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        A/B testing results page show results for the top-level tests instead of the one being analyzed
+        https://bugs.webkit.org/show_bug.cgi?id=174304
+
+        Reviewed by Antti Koivisto.
+
+        When a specific subtest is analyzed (e.g. Images subtest of MotionMark), then TestGroupResultsViewer
+        should expand and highlight that specific subtest instead of simply showing the top-level test's score.
+        This is especially misleading since AnalysisResultsViewer (stacking bars for each test group) uses
+        the score of the specific subtest being analyzed.
+
+        Fixed the bug by passing in the metric associated with the analysis task from AnalysisTaskPage to
+        TestGroupResultsViewer via AnalysisTaskTestGroupPane. Also made TestGroupResultsViewer.setAnalysisResults
+        auto-expand the tests that are ancestors of the specified metric. Without that, the test won't be shown
+        to the user until the ancestor tests are expanded by the user.
+
+        Also fixed the bug that we were always listing sub-tests regardless of whether they have results or not.
+        Since tests tend to change over time, we shouldn't show a test if it doesn't have any results associated.
+
+        * public/v3/components/test-group-results-viewer.js:
+        (TestGroupResultsViewer.prototype.setAnalysisResults): Expand the ancestor tests of the metric.
+        (TestGroupResultsViewer.prototype._buildRowsForTest): Exit early if this test doesn't have any results.
+        * public/v3/models/analysis-results.js:
+        (AnalysisResults.prototype.containsTest): Added.
+        * public/v3/pages/analysis-task-page.js:
+        (AnalysisTaskTestGroupPane.prototype.setAnalysisResults): Takes a metric to pass it to the results viewer.
+        (AnalysisTaskPage.prototype._assignTestResultsIfPossible):
+
 2017-07-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Safari 10.1 fails to upload a patch on perf try bots page

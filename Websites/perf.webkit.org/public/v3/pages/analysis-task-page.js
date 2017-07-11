@@ -280,10 +280,10 @@ class AnalysisTaskTestGroupPane extends ComponentBase {
         this.enqueueToRender();
     }
 
-    setAnalysisResults(analysisResults)
+    setAnalysisResults(analysisResults, metric)
     {
         this.part('revision-table').setAnalysisResults(analysisResults);
-        this.part('results-viewer').setAnalysisResults(analysisResults, null);
+        this.part('results-viewer').setAnalysisResults(analysisResults, metric);
         this.enqueueToRender();
     }
 
@@ -613,8 +613,8 @@ class AnalysisTaskPage extends PageWithHeading {
         if (!this._task || !this._testGroups || !this._analysisResults)
             return false;
 
-        this.part('group-pane').setAnalysisResults(this._analysisResults);
         let metric = this._metric;
+        this.part('group-pane').setAnalysisResults(this._analysisResults, metric);
         if (metric) {
             const view = this._analysisResults.viewForMetric(metric);
             this.part('results-pane').setAnalysisResultsView(view);

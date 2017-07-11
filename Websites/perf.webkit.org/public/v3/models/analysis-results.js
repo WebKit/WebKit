@@ -17,6 +17,16 @@ class AnalysisResults {
 
     highestTests() { return this._lazilyComputedHighestTests.evaluate(this._metricIds); }
 
+    containsTest(test)
+    {
+        console.assert(test instanceof Test);
+        for (let metric of test.metrics()) {
+            if (metric.id() in this._metricToBuildMap)
+                return true;
+        }
+        return false;
+    }
+
     _computeHighestTests(metricIds)
     {
         const testsInResults = new Set(metricIds.map((metricId) => Metric.findById(metricId).test()));
