@@ -941,13 +941,8 @@ static void pruneResources(HashMap<String, WebCore::ResourceLoadStatistics>& sta
         });
     }
 
-    unsigned removed = 0;
-    for (size_t i = 0, end = std::min(numberOfEntriesToPrune, statisticsToPrune.size()); i != end; ++i) {
+    for (size_t i = 0, end = std::min(numberOfEntriesToPrune, statisticsToPrune.size()); i != end; ++i, --numberOfEntriesToPrune)
         statisticsMap.remove(statisticsToPrune[i].topPrivatelyOwnedDomain);
-        ++removed;
-    }
-
-    numberOfEntriesToPrune -= removed;
 }
     
 static unsigned computeImportance(const ResourceLoadStatistics& resourceStatistic)
