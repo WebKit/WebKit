@@ -20,7 +20,7 @@ class AnalysisResults {
     containsTest(test)
     {
         console.assert(test instanceof Test);
-        for (let metric of test.metrics()) {
+        for (const metric of test.metrics()) {
             if (metric.id() in this._metricToBuildMap)
                 return true;
         }

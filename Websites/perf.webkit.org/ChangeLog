@@ -1,5 +1,12 @@
 2017-07-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Address Antti's review comment.
+
+        * public/v3/models/analysis-results.js:
+        (AnalysisResults.prototype.containsTest):
+
+2017-07-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         A/B testing results page show results for the top-level tests instead of the one being analyzed
         https://bugs.webkit.org/show_bug.cgi?id=174304
 
