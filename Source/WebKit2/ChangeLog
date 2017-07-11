@@ -1,3 +1,13 @@
+2017-07-11  Youenn Fablet  <youenn@apple.com>
+
+        Changing the web page muted state for playing audio should not disable other tabs capture
+        https://bugs.webkit.org/show_bug.cgi?id=174349
+
+        Unreviewed.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::activateMediaStreamCaptureInPage): Fixes non MEDIA_STREAM builds.
+
 2017-07-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Address post-review feedback after http://trac.webkit.org/r219310

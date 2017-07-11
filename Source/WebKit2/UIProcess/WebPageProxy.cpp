@@ -1669,7 +1669,9 @@ void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
 
 void WebPageProxy::activateMediaStreamCaptureInPage()
 {
+#if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().muteCaptureMediaStreamsExceptIn(*this);
+#endif
     setMuted(m_mutedState & ~WebCore::MediaProducer::CaptureDevicesAreMuted);
 }
 
