@@ -1,3 +1,21 @@
+2017-07-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebCrypto] CryptoKeyECMac::Custom OpenSSL tag is actually tagged type [1]
+        https://bugs.webkit.org/show_bug.cgi?id=174382
+        <rdar://problem/33244871>
+
+        Reviewed by Brent Fulgham.
+
+        No change of behaviour.
+
+        * crypto/mac/CryptoKeyECMac.cpp:
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        (WebCore::CryptoKeyEC::platformExportPkcs8):
+        Replace CustomECParameters with TaggedType1 according to X.690(08/2015) section 8.14:
+        https://www.itu.int/rec/T-REC-X.690-201508-I/en
+        and RFC 5915 Appendix A:
+        http://www.ietf.org/rfc/rfc5915.txt.
+
 2017-07-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r219045): The <body> element does not get repainted when its background image finishes decoding

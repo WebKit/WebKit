@@ -44,10 +44,8 @@ static constexpr unsigned char Secp256r1[] = {0x06, 0x08, 0x2a, 0x86, 0x48, 0xce
 static constexpr unsigned char Secp384r1[] = {0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22};
 // Version 1. Per https://tools.ietf.org/html/rfc5915#section-3
 static const unsigned char PrivateKeyVersion[] = {0x02, 0x01, 0x01};
-// Custom OpenSSL ECParameters Tags
-static const size_t CustomTagSize = 2;
-static constexpr unsigned char EcP256[] = {0xa1, 0x44};
-static constexpr unsigned char EcP384[] = {0xa1, 0x64};
+// Tagged type [1]
+static const unsigned char TaggedType1 = 0xa1;
 
 // Per Section 2.3.4 of http://www.secg.org/sec1-v2.pdf
 // We only support uncompressed point format.
@@ -319,7 +317,10 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
     if (keyData.size() < index + getKeySizeFromNamedCurve(curve) / 8)
         return nullptr;
     size_t privateKeyPos = index;
-    index += getKeySizeFromNamedCurve(curve) / 8 + CustomTagSize + 1; // Read privateKey, CustomECParameters, BIT STRING
+    index += getKeySizeFromNamedCurve(curve) / 8 + 1; // Read privateKey, TaggedType1
+    if (keyData.size() < index + 1)
+        return nullptr;
+    index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length, BIT STRING
     if (keyData.size() < index + 1)
         return nullptr;
     index += bytesUsedToEncodedLength(keyData[index]) + 1; // Read length, InitialOctet
@@ -350,19 +351,13 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     // <rdar://problem/30987628>
     const uint8_t* oid;
     size_t oidSize = getOID(namedCurve(), oid);
-    const uint8_t* customTag;
-    switch (namedCurve()) {
-    case NamedCurve::P256:
-        customTag = EcP256;
-        break;
-    case NamedCurve::P384:
-        customTag = EcP384;
-    }
 
     // InitialOctet + 04 + X + Y
     size_t publicKeySize = keySizeInBytes * 2 + 2;
-    // VERSION + OCTET STRING + length(1) + private key + CustomECParameters(2) + BIT STRING + length(?) + publicKeySize
-    size_t ecPrivateKeySize = sizeof(Version) + keySizeInBytes + CustomTagSize + bytesNeededForEncodedLength(publicKeySize) + publicKeySize + 3;
+    // BIT STRING + length(?) + publicKeySize
+    size_t taggedTypeSize = bytesNeededForEncodedLength(publicKeySize) + publicKeySize + 1;
+    // VERSION + OCTET STRING + length(1) + private key + TaggedType1(1) + length(?) + BIT STRING + length(?) + publicKeySize
+    size_t ecPrivateKeySize = sizeof(Version) + keySizeInBytes + bytesNeededForEncodedLength(taggedTypeSize) + bytesNeededForEncodedLength(publicKeySize) + publicKeySize + 4;
     // SEQUENCE + length(?) + ecPrivateKeySize
     size_t privateKeySize = bytesNeededForEncodedLength(ecPrivateKeySize) + ecPrivateKeySize + 1;
     // VERSION + SEQUENCE + length(1) + OID id-ecPublicKey + OID secp256r1/OID secp384r1 + OCTET STRING + length(?) + privateKeySize
@@ -385,7 +380,8 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
     result.append(OctetStringMark);
     addEncodedASN1Length(result, keySizeInBytes);
     result.append(keyBytes.data() + publicKeySize - 1, keySizeInBytes);
-    result.append(customTag, CustomTagSize);
+    result.append(TaggedType1);
+    addEncodedASN1Length(result, taggedTypeSize);
     result.append(BitStringMark);
     addEncodedASN1Length(result, publicKeySize);
     result.append(InitialOctet);
