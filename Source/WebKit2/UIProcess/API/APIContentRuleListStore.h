@@ -74,7 +74,7 @@ public:
 private:
     WTF::String defaultStorePath(bool legacyFilename);
     static ContentRuleListStore& legacyDefaultStore();
-    static ContentRuleListStore& nonLegacyDdefaultStore();
+    static ContentRuleListStore& nonLegacyDefaultStore();
     
     const WTF::String m_storePath;
     Ref<WTF::WorkQueue> m_compileQueue;

@@ -53,7 +53,7 @@ ContentRuleListStore& ContentRuleListStore::legacyDefaultStore()
     return *defaultStore;
 }
     
-ContentRuleListStore& ContentRuleListStore::nonLegacyDdefaultStore()
+ContentRuleListStore& ContentRuleListStore::nonLegacyDefaultStore()
 {
     const bool legacyFilename = false;
     static ContentRuleListStore* defaultStore = adoptRef(new ContentRuleListStore(legacyFilename)).leakRef();
@@ -64,7 +64,7 @@ ContentRuleListStore& ContentRuleListStore::defaultStore(bool legacyFilename)
 {
     if (legacyFilename)
         return legacyDefaultStore();
-    return nonLegacyDdefaultStore();
+    return nonLegacyDefaultStore();
 }
 
 Ref<ContentRuleListStore> ContentRuleListStore::storeWithPath(const WTF::String& storePath, bool legacyFilename)

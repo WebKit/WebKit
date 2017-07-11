@@ -1,3 +1,17 @@
+2017-07-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Fix typo: ContentRuleListStore::nonLegacyDdefaultStore()
+        https://bugs.webkit.org/show_bug.cgi?id=174387
+
+        Reviewed by Michael Catanzaro.
+
+        Rename nonLegacyDdefaultStore() to nonLegacyDefaultStore().
+
+        * UIProcess/API/APIContentRuleListStore.cpp:
+        (API::ContentRuleListStore::nonLegacyDefaultStore):
+        (API::ContentRuleListStore::defaultStore):
+        * UIProcess/API/APIContentRuleListStore.h:
+
 2017-07-11  Chris Dumez  <cdumez@apple.com>
 
         Simplify primary domain lambda captures in WebResourceLoadStatisticsStore
