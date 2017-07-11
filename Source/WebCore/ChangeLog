@@ -1,5 +1,34 @@
 2017-07-11  Alex Christensen  <achristensen@webkit.org>
 
+        Reduce URL size
+        https://bugs.webkit.org/show_bug.cgi?id=174319
+
+        Reviewed by Andreas Kling.
+
+        m_fragmentEnd is redundant information. If a URL is valid, then it is always m_string.length().
+        If a URL is not valid, then it is always 0. Rather than storing additional information,
+        deduce the fragment end from the validity of the URL and the String's length.
+
+        No change in behavior.  This reduces sizeof(URL) from 56 to 48 and reduces operations when parsing.
+
+        * platform/URL.cpp:
+        (WebCore::URL::invalidate):
+        (WebCore::URL::fragmentIdentifier):
+        (WebCore::URL::hasFragmentIdentifier):
+        (WebCore::URL::removeFragmentIdentifier):
+        * platform/URL.h:
+        (WebCore::URL::encode):
+        (WebCore::URL::decode):
+        (WebCore::URL::hasFragment):
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::urlLengthUntilPart):
+        (WebCore::URLParser::copyURLPartsUntil):
+        (WebCore::URLParser::parse):
+        (WebCore::URLParser::allValuesEqual):
+        (WebCore::URLParser::internalValuesConsistent):
+
+2017-07-11  Alex Christensen  <achristensen@webkit.org>
+
         SharedBuffer::size should return a size_t
         https://bugs.webkit.org/show_bug.cgi?id=174328
 

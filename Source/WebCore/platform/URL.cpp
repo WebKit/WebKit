@@ -355,7 +355,6 @@ void URL::invalidate()
     m_pathEnd = 0;
     m_pathAfterLastSlash = 0;
     m_queryEnd = 0;
-    m_fragmentEnd = 0;
 }
 
 URL::URL(ParsedURLStringTag, const String& url)
@@ -493,15 +492,15 @@ String URL::encodedPass() const
 
 String URL::fragmentIdentifier() const
 {
-    if (m_fragmentEnd == m_queryEnd)
+    if (!m_isValid || m_queryEnd == m_string.length())
         return String();
 
-    return m_string.substring(m_queryEnd + 1, m_fragmentEnd - (m_queryEnd + 1));
+    return m_string.substring(m_queryEnd + 1);
 }
 
 bool URL::hasFragmentIdentifier() const
 {
-    return m_fragmentEnd != m_queryEnd;
+    return m_isValid && m_string.length() != m_queryEnd;
 }
 
 String URL::baseAsString() const
@@ -864,13 +863,11 @@ void URL::setFragmentIdentifier(StringView identifier)
 void URL::removeFragmentIdentifier()
 {
     if (!m_isValid) {
-        ASSERT(!m_fragmentEnd);
         ASSERT(!m_queryEnd);
         return;
     }
-    if (m_fragmentEnd > m_queryEnd)
+    if (m_isValid && m_string.length() > m_queryEnd)
         m_string = m_string.left(m_queryEnd);
-    m_fragmentEnd = m_queryEnd;
 }
     
 void URL::setQuery(const String& query)
