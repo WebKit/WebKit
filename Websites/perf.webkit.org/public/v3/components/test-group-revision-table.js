@@ -34,9 +34,13 @@ class TestGroupRevisionTable extends ComponentBase {
 
         const requestedRepositorySet = new Set;
         const additionalRepositorySet = new Set;
+        const patchedPepositorySet = new Set;
         for (const commitSet of commitSets) {
-            for (const repository of commitSet.repositories())
+            for (const repository of commitSet.repositories()) {
                 requestedRepositorySet.add(repository);
+                if (commitSet.patchForRepository(repository))
+                    patchedPepositorySet.add(repository);
+            }
         }
 
         const rowEntries = [];
@@ -99,7 +103,7 @@ class TestGroupRevisionTable extends ComponentBase {
                 const request = entry.request;
                 return element('tr', [
                     entry.groupHeader ? element('td', {rowspan: entry.groupRowCount}, entry.groupHeader) : [],
-                    requestedRepositoryList.map((repository) => this._buildCommitCell(entry, repository)),
+                    requestedRepositoryList.map((repository) => this._buildCommitCell(entry, repository, patchedPepositorySet.has(repository))),
                     hasCustomRoots ? this._buildCustomRootsCell(entry) : [],
                     element('td', entry.label),
                     element('td', request.statusUrl() ? link(request.statusLabel(), request.statusUrl()) : request.statusLabel()),
@@ -108,7 +112,7 @@ class TestGroupRevisionTable extends ComponentBase {
             }))]);
     }
 
-    _buildCommitCell(entry, repository)
+    _buildCommitCell(entry, repository, showRoot = false)
     {
         const element = ComponentBase.createElement;
         const link = ComponentBase.createLink;
@@ -117,16 +121,18 @@ class TestGroupRevisionTable extends ComponentBase {
             return [];
 
         const commit = entry.commitSet.commitForRepository(repository);
-        let content = '';
-        if (commit) {
-            content = commit.label();
-            if (commit.url())
-                content = link(content, commit.url());
-        }
+        let content = [];
+        if (commit)
+            content = commit.url() ? [link(commit.label(), commit.url())] : [commit.label()];
 
         const patch = entry.requestedCommitSet.patchForRepository(repository);
         if (patch)
-            content = [content, ' with ', this._buildFileInfo(patch)];
+            content.push(' with ', this._buildFileInfo(patch));
+        if (showRoot) {
+            const root = entry.requestedCommitSet.rootForRepository(repository);
+            if (root)
+                content.push(' (', this._buildFileInfo(root, 'Build product') ,')');
+        }
 
         return element('td', {rowspan: entry.rowCountByRepository.get(repository)}, content);
     }
@@ -147,14 +153,15 @@ class TestGroupRevisionTable extends ComponentBase {
             }).map((content) => element('li', content))));
     }
 
-    _buildFileInfo(file)
+    _buildFileInfo(file, labelOverride = null)
     {
         const element = ComponentBase.createElement;
         const link = ComponentBase.createLink;
 
+        let label = labelOverride || file.label();
         if (file.deletedAt())
-            return [file.label(), ' ', element('span', {class: 'purged'}, '(Purged)')];
-        return link(file.label(), file.url());
+            return [label, ' ', element('span', {class: 'purged'}, '(Purged)')];
+        return link(label, file.url());
     }
 
     _mergeCellsWithSameCommitsAcrossRows(rowEntries)
@@ -165,12 +172,12 @@ class TestGroupRevisionTable extends ComponentBase {
                 if (entry.repositoriesToSkip.has(repository))
                     continue;
                 const commit = entry.commitSet.commitForRepository(repository);
-                const patch = entry.commitSet.patchForRepository(repository);
+                const patch = entry.requestedCommitSet.patchForRepository(repository);
                 let rowCount = 1;
                 for (let otherRowIndex = rowIndex + 1; otherRowIndex < rowEntries.length; otherRowIndex++) {
                     const otherEntry = rowEntries[otherRowIndex];
                     const otherCommit = otherEntry.commitSet.commitForRepository(repository);
-                    const otherPatch = otherEntry.commitSet.patchForRepository(repository);
+                    const otherPatch = otherEntry.requestedCommitSet.patchForRepository(repository);
                     if (commit != otherCommit || patch != otherPatch)
                         break;
                     otherEntry.repositoriesToSkip.add(repository);
