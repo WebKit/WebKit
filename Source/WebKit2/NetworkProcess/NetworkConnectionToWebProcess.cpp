@@ -189,6 +189,25 @@ void NetworkConnectionToWebProcess::destroySocketStream(uint64_t identifier)
     m_networkSocketStreams.remove(identifier);
 }
 
+void NetworkConnectionToWebProcess::cleanupForSuspension(Function<void()>&& completionHandler)
+{
+#if USE(LIBWEBRTC)
+    if (m_rtcProvider) {
+        m_rtcProvider->closeListeningSockets(WTFMove(completionHandler));
+        return;
+    }
+#endif
+    completionHandler();
+}
+
+void NetworkConnectionToWebProcess::endSuspension()
+{
+#if USE(LIBWEBRTC)
+    if (m_rtcProvider)
+        m_rtcProvider->authorizeListeningSockets();
+#endif
+}
+
 void NetworkConnectionToWebProcess::scheduleResourceLoad(const NetworkResourceLoadParameters& loadParameters)
 {
     auto loader = NetworkResourceLoader::create(loadParameters, *this);

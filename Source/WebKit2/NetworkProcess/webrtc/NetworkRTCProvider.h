@@ -48,7 +48,7 @@ namespace WebKit {
 
 class NetworkConnectionToWebProcess;
 class NetworkRTCSocket;
-    
+
 class NetworkRTCProvider : public ThreadSafeRefCounted<NetworkRTCProvider>, public rtc::MessageHandler {
 public:
     static Ref<NetworkRTCProvider> create(NetworkConnectionToWebProcess& connection) { return adoptRef(*new NetworkRTCProvider(connection)); }
@@ -68,6 +68,9 @@ public:
     void sendFromMainThread(Function<void(IPC::Connection&)>&&);
 
     void newConnection(LibWebRTCSocketClient&, std::unique_ptr<rtc::AsyncPacketSocket>&&);
+
+    void closeListeningSockets(Function<void()>&&);
+    void authorizeListeningSockets() { m_isListeningSocketAuthorized = true; }
 
 private:
     explicit NetworkRTCProvider(NetworkConnectionToWebProcess&);
@@ -112,6 +115,7 @@ private:
 
     HashMap<uint64_t, std::unique_ptr<rtc::AsyncPacketSocket>> m_pendingIncomingSockets;
     uint64_t m_incomingSocketIdentifier { 0 };
+    bool m_isListeningSocketAuthorized { true };
 };
 
 } // namespace WebKit

@@ -134,6 +134,9 @@ private:
 
     void lowMemoryHandler(Critical);
 
+    enum class ShouldAcknowledgeWhenReadyToSuspend { No, Yes };
+    void actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend);
+
     // ChildProcess
     void initializeProcess(const ChildProcessInitializationParameters&) override;
     void initializeProcessName(const ChildProcessInitializationParameters&) override;

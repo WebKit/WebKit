@@ -640,19 +640,43 @@ void NetworkProcess::terminate()
     ChildProcess::terminate();
 }
 
-void NetworkProcess::processWillSuspendImminently(bool& handled)
+// FIXME: We can remove this one by adapting RefCounter.
+class TaskCounter : public RefCounted<TaskCounter> {
+public:
+    explicit TaskCounter(Function<void()>&& callback) : m_callback(WTFMove(callback)) { }
+    ~TaskCounter() { m_callback(); };
+
+private:
+    Function<void()> m_callback;
+};
+
+void NetworkProcess::actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend shouldAcknowledgeWhenReadyToSuspend)
 {
     lowMemoryHandler(Critical::Yes);
+
+    RefPtr<TaskCounter> delayedTaskCounter;
+    if (shouldAcknowledgeWhenReadyToSuspend == ShouldAcknowledgeWhenReadyToSuspend::Yes) {
+        delayedTaskCounter = adoptRef(new TaskCounter([this] {
+            RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::notifyProcessReadyToSuspend() Sending ProcessReadyToSuspend IPC message", this);
+            if (parentProcessConnection())
+                parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
+        }));
+    }
+
+    for (auto& connection : m_webProcessConnections)
+        connection->cleanupForSuspension([delayedTaskCounter] { });
+}
+
+void NetworkProcess::processWillSuspendImminently(bool& handled)
+{
+    actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::No);
     handled = true;
 }
 
 void NetworkProcess::prepareToSuspend()
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend()", this);
-    lowMemoryHandler(Critical::Yes);
-
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend() Sending ProcessReadyToSuspend IPC message", this);
-    parentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessReadyToSuspend(), 0);
+    actualPrepareToSuspend(ShouldAcknowledgeWhenReadyToSuspend::Yes);
 }
 
 void NetworkProcess::cancelPrepareToSuspend()
@@ -662,11 +686,15 @@ void NetworkProcess::cancelPrepareToSuspend()
     // message. And NetworkProcessProxy expects to receive either a NetworkProcessProxy::ProcessReadyToSuspend-
     // or NetworkProcessProxy::DidCancelProcessSuspension- message, but not both.
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::cancelPrepareToSuspend()", this);
+    for (auto& connection : m_webProcessConnections)
+        connection->endSuspension();
 }
 
 void NetworkProcess::processDidResume()
 {
     RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::processDidResume()", this);
+    for (auto& connection : m_webProcessConnections)
+        connection->endSuspension();
 }
 
 void NetworkProcess::prefetchDNS(const String& hostname)

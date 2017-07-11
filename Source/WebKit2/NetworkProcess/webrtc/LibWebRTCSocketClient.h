@@ -54,11 +54,12 @@ public:
     LibWebRTCSocketClient(uint64_t identifier, NetworkRTCProvider&, std::unique_ptr<rtc::AsyncPacketSocket>&&, Type);
 
     uint64_t identifier() const { return m_identifier; }
+    Type type() const { return m_type; }
+    void close();
 
 private:
     friend class NetworkRTCSocket;
 
-    void close();
     void setOption(int option, int value);
     void sendTo(const WebCore::SharedBuffer&, const rtc::SocketAddress&, const rtc::PacketOptions&);
 
@@ -72,6 +73,7 @@ private:
     void signalAddressReady();
 
     uint64_t m_identifier;
+    Type m_type;
     NetworkRTCProvider& m_rtcProvider;
     std::unique_ptr<rtc::AsyncPacketSocket> m_socket;
 };

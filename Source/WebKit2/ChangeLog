@@ -1,3 +1,49 @@
+2017-07-11  Youenn Fablet  <youenn@apple.com>
+
+        NetworkProcess should close listening WebRTC sockets when being suspended
+        https://bugs.webkit.org/show_bug.cgi?id=174270
+        rdar://problem/33139844
+
+        Reviewed by Chris Dumez.
+
+        To prevent potential spinning of the NetworkProcess, NetworkProcess will now close listening sockets when being notified that it will be suspended.
+        When the network process is being suspended, it will stop creating listening sockets, until it resumes.
+        Future additional efforts might be to improve select/cancel so that we can stop listening sockets at resume time,
+        or to reimplement part of the stack using CFStream.
+
+        Tested through manual testing by going to a website doing WebRTC, homing out so that the network process is suspended and reopening Safari.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cleanupForSuspension):
+        Proxying call to clean for suspension to rtc provider so that it will
+        close listening sockets.
+        (WebKit::NetworkConnectionToWebProcess::resumeFromSuspension): Authorizing back listening sockets.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        (WebKit::NetworkConnectionToWebProcess::cleanupForSuspension):
+        Clean-up is done asynchronously as it can happen in background threads.
+        Hence why passing a callback as parameter.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::notifyProcessReadyToSuspend): Helper routine
+        to notify UI process that network process clean up is done.
+        (WebKit::TaskCounter::TaskCounter): Helper class to call notifyProcessReadyToSuspend when sded.
+        (WebKit::TaskCounter::~TaskCounter):
+        (WebKit::NetworkProcess::actualPrepareToSuspend): Doing the clean-up for each connection that needs it.
+        Making sure to notify UI process of clean-up being completed once all connections are cleaned.
+        (WebKit::NetworkProcess::processWillSuspendImminently):
+        (WebKit::NetworkProcess::prepareToSuspend):
+        (WebKit::NetworkProcess::processDidResume): Reenable listening sockets.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.cpp:
+        (WebKit::LibWebRTCSocketClient::LibWebRTCSocketClient):
+        * NetworkProcess/webrtc/LibWebRTCSocketClient.h: Adding type getter and making close public.
+        Used by NetworkRTCProvider to identifiy listening sockets and close them.
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::closeListeningSockets): We close the webrtc socket
+        and we also notify the Web Process that the socket is closed so that it can take actions to recreate some if needed.
+        (WebKit::NetworkRTCProvider::finishClosingListeningSockets):
+        * NetworkProcess/webrtc/NetworkRTCProvider.h:
+        (WebKit::NetworkRTCProvider::authorizeListeningSockets): Authorize creation of listening sockets.
+
 2017-07-10  Brent Fulgham  <bfulgham@apple.com>
 
         Resource Load Statistics: Prune statistics in orders of importance
