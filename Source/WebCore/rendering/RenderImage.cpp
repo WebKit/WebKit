@@ -475,13 +475,13 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
     if (clip)
         context.clip(contentBoxRect);
 
-    paintIntoRect(paintInfo, snapRectToDevicePixels(replacedContentRect, deviceScaleFactor));
+    ImageDrawResult result = paintIntoRect(paintInfo, snapRectToDevicePixels(replacedContentRect, deviceScaleFactor));
     
     if (cachedImage() && paintInfo.phase == PaintPhaseForeground) {
         // For now, count images as unpainted if they are still progressively loading. We may want 
         // to refine this in the future to account for the portion of the image that has painted.
         LayoutRect visibleRect = intersection(replacedContentRect, contentBoxRect);
-        if (cachedImage()->isLoading())
+        if (cachedImage()->isLoading() || result == ImageDrawResult::DidRequestDecoding)
             page().addRelevantUnpaintedObject(this, visibleRect);
         else
             page().addRelevantRepaintedObject(this, visibleRect);
@@ -559,14 +559,14 @@ void RenderImage::areaElementFocusChanged(HTMLAreaElement* element)
     repaint();
 }
 
-void RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect)
+ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect)
 {
     if (!imageResource().cachedImage() || imageResource().errorOccurred() || rect.width() <= 0 || rect.height() <= 0)
-        return;
+        return ImageDrawResult::DidNothing;
 
     RefPtr<Image> img = imageResource().image(flooredIntSize(rect.size()));
     if (!img || img->isNull())
-        return;
+        return ImageDrawResult::DidNothing;
 
     HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr;
     CompositeOperator compositeOperator = imageElement ? imageElement->compositeOperator() : CompositeSourceOver;
@@ -589,6 +589,7 @@ void RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect& rect)
     auto drawResult = paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, decodingMode, orientationDescription, interpolation));
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         imageResource().cachedImage()->addPendingImageDrawingClient(*this);
+    return drawResult;
 }
 
 bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox*) const

@@ -1,3 +1,19 @@
+2017-07-11  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        RenderImage should not add itself as a RelevantRepaintedObject if its image frame is being decoded
+        https://bugs.webkit.org/show_bug.cgi?id=174336
+
+        Reviewed by Simon Fraser.
+
+        Since nothing will be drawn till the image frame finishes decoding we should
+        treat returning ImageDrawResult::DidRequestDecoding from BitmapImage::draw
+        the same as we do when the image is still loading.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderImage.h:
+
 2017-07-11  Youenn Fablet  <youenn@apple.com>
 
         [WebRTC] Hanging under LibWebRTCMediaEndpoint::getStats
