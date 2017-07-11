@@ -2246,7 +2246,7 @@ webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.ht
 
 webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
 
-webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout ]
+webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout Failure ]
 
 webkit.org/b/174240 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Timeout ]
 
