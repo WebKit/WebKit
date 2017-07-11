@@ -332,7 +332,7 @@ void JSDOMWindow::getPropertyNames(JSObject* object, ExecState* exec, PropertyNa
 }
 
 // https://html.spec.whatwg.org/#crossoriginproperties-(-o-)
-static void addCrossOriginPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+static void addCrossOriginWindowPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
 {
     static const Identifier* const properties[] = {
         &state.propertyNames().blur, &state.propertyNames().close, &state.propertyNames().closed,
@@ -361,9 +361,9 @@ static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, Proper
 }
 
 // https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
-static void addCrossOriginOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
+static void addCrossOriginWindowOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
 {
-    addCrossOriginPropertyNames(state, propertyNames);
+    addCrossOriginWindowPropertyNames(state, propertyNames);
 
     propertyNames.add(state.propertyNames().toStringTagSymbol);
     propertyNames.add(state.propertyNames().hasInstanceSymbol);
@@ -380,7 +380,7 @@ void JSDOMWindow::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
 
     if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, thisObject->wrapped(), DoNotReportSecurityError)) {
         if (mode.includeDontEnumProperties())
-            addCrossOriginOwnPropertyNames(*exec, propertyNames);
+            addCrossOriginWindowOwnPropertyNames(*exec, propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

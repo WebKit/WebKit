@@ -1,3 +1,20 @@
+2017-07-11  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, fix Windows build after r219355.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::addCrossOriginWindowPropertyNames):
+        (WebCore::addCrossOriginWindowOwnPropertyNames):
+        (WebCore::JSDOMWindow::getOwnPropertyNames):
+        (WebCore::addCrossOriginPropertyNames): Deleted.
+        (WebCore::addCrossOriginOwnPropertyNames): Deleted.
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::addCrossOriginLocationPropertyNames):
+        (WebCore::addCrossOriginLocationOwnPropertyNames):
+        (WebCore::JSLocation::getOwnPropertyNames):
+        (WebCore::addCrossOriginPropertyNames): Deleted.
+        (WebCore::addCrossOriginOwnPropertyNames): Deleted.
+
 2017-07-10  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Convert MutationCallback to be a normal generate callback
