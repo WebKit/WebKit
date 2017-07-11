@@ -1,3 +1,12 @@
+2017-07-11  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] editing/input new passes since r211277
+        https://bugs.webkit.org/show_bug.cgi?id=160119
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2017-07-11  Brent Fulgham  <bfulgham@apple.com>
 
         Reset cookie partitioning state after network process crashes

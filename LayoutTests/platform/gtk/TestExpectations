@@ -3532,9 +3532,6 @@ fast/text/emoji-gender.html [ Pass ]
 
 webkit.org/b/160119 accessibility/media-element.html [ Timeout Crash Pass Failure ]
 
-webkit.org/b/160119 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
-webkit.org/b/160119 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
-
 # Note that caret-at-bidi-boundary was previously marked Slow before threaded
 # compositor introduced timeouts.
 webkit.org/b/160119 editing/selection/caret-at-bidi-boundary.html [ Failure Pass Timeout ]
