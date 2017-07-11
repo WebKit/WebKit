@@ -1,3 +1,14 @@
+2017-07-11  Lucas Forschler  <lforschler@apple.com>
+
+        Configure buildbot to transfer all archives to S3.
+        Previously this was Mac only, but it's time to expand!
+        https://bugs.webkit.org/show_bug.cgi?id=174378
+        
+        Reviewed by Aakash Jain.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildFactory.__init__):
+
 2017-07-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Bump GStreamer packages in jhbuild.modules to 1.10.5
