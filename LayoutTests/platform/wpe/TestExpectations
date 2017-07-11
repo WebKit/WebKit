@@ -610,6 +610,15 @@ imported/w3c/web-platform-tests/encrypted-media/drm-mp4-unique-origin.html [ Ski
 imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.html [ Skip ]
 imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.html [ Skip ]
 imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.html [ Skip ]
+media/encrypted-media [ Pass ]
+media/encrypted-media/encrypted-media-constants.html [ Skip ]
+media/encrypted-media/encrypted-media-events.html [ Skip ]
+media/encrypted-media/encrypted-media-is-type-supported.html [ Skip ]
+media/encrypted-media/encrypted-media-not-loaded.html [ Skip ]
+media/encrypted-media/encrypted-media-session-lifetime.html [ Skip ]
+media/encrypted-media/encrypted-media-syntax.html [ Skip ]
+media/encrypted-media/encrypted-media-v2-events.html [ Skip ]
+media/encrypted-media/encrypted-media-v2-syntax.html [ Skip ]
 
 # No support for resource load statistics in test controller.
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout ]

@@ -1,3 +1,10 @@
+2017-07-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations:
+        Enable EMEv3 tests under media/encrypted-media/, all of them passing.
+
 2017-07-10  Brent Fulgham  <bfulgham@apple.com>
 
         Resource Load Statistics: Prune statistics in orders of importance
