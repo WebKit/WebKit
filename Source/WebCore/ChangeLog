@@ -1,3 +1,28 @@
+2017-07-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Spin buttons on input type number appear over the value itself for small widths
+        https://bugs.webkit.org/show_bug.cgi?id=173572
+
+        Reviewed by Carlos Garcia Campos.
+
+        When drawing the spin buttons, override the width of the input
+        element to increment it with the width of the spin button.
+        This ensures that we don't end up covering the input values with
+        the spin buttons.
+
+        Do this also for user controlled styles, because most web authors
+        won't test how their site renders on WebKitGTK+, and they will
+        assume spin buttons in the order of 13 pixels wide (that is what
+        most browsers use), but the GTK+ spin button is much wider (66 pixels).
+
+        Test: platform/gtk/fast/forms/number/number-size-spinbutton-nocover.html
+
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustTextFieldStyle): Call the theme's adjustTextFieldStyle() also for user controlled styles.
+        (WebCore::RenderThemeGtk::adjustInnerSpinButtonStyle):
+
 2017-07-11  Youenn Fablet  <youenn@apple.com>
 
         We should do ICE candidate filtering at the Document level

@@ -1,3 +1,17 @@
+2017-07-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Spin buttons on input type number appear over the value itself for small widths
+        https://bugs.webkit.org/show_bug.cgi?id=173572
+
+        Reviewed by Carlos Garcia Campos.
+
+        * fast/forms/number/number-size-expected.txt:
+        * fast/forms/number/number-size.html: Obtain the size of the spinbutton by inspecting the shadow dom (is more reliable)
+          and make the test for user controlled style special for the case of GTK+.
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover-expected.png: Added.
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover-expected.txt: Added.
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover.html: Added.
+
 2017-07-11  Youenn Fablet  <youenn@apple.com>
 
         We should do ICE candidate filtering at the Document level

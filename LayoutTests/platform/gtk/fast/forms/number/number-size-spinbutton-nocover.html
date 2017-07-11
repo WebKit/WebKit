@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>Test that the width of input type number is incremented with the width of the spin button</title>
+<body>
+<p>Test that spin buttons don't cover the value of input type number.
+On the GTK+ port, the width of the input field type number is incremented
+with the width of the spin button.
+The test passes if you see below the value of the 16 input numbers visible
+(from 1 to 8 and from 101 to 108)</p>
+<br /> <br />
+<input type="number" style="width: 1em; height: 1em;" value=1>
+<input type="number" style="width: 1em; height: 1em; border: 0px;" value=2>
+<input type="number" style="width: 1em; height: 1em; background-color: red;" value=3>
+<input type="number" style="width: 1em; height: 1em; border-style: dashed;" value=4>
+<br /> <br />
+<input type="number" style="width: 1em; height: 1em; font-size: 100px;" value=5>
+<input type="number" style="width: 1em; height: 1em; border: 0px; font-size: 100px;" value=6>
+<input type="number" style="width: 1em; height: 1em; background-color: red; font-size: 100px;" value=7>
+<input type="number" style="width: 1em; height: 1em; border-style: dashed; font-size: 100px;" value=8>
+<br /> <br />
+<input type="number" style="width: 3em; height: 1em;" value=101>
+<input type="number" style="width: 3em; height: 1em; border: 0px;" value=102>
+<input type="number" style="width: 3em; height: 1em; background-color: red;" value=103>
+<input type="number" style="width: 3em; height: 1em; border-style: dashed;" value=104>
+<br /> <br />
+<input type="number" min="0" max="1000" value=105>
+<input type="number" min="0" max="1000" style="width: 65px; height: 34px" value=106>
+<input type="number" min="0" max="1000" style="width: 65px; height: 34px; padding: 6px 12px;" value=107>
+<input type="number" style="width: 65px; height: 34px; padding: 6px 12px;" value=108>
+<br /><br />
+</body>
+</div>
+</body>
+</html>

@@ -936,7 +936,7 @@ void RenderThemeGtk::adjustTextFieldStyle(StyleResolver&, RenderStyle& style, co
     if (!is<HTMLInputElement>(element) || !shouldHaveSpinButton(downcast<HTMLInputElement>(*element)))
         return;
 
-    // Spinbuttons need a minimum height to be rendered correctly.
+    // Input field need minimum dimensions to render the spinbuttons correctly (without covering the values).
     auto& spinButtonWidget = static_cast<RenderThemeSpinButton&>(RenderThemeWidget::getOrCreate(RenderThemeWidget::Type::SpinButton));
     spinButtonWidget.spinButton().setState(GTK_STATE_FLAG_NORMAL);
     spinButtonWidget.entry().setState(GTK_STATE_FLAG_NORMAL);
@@ -947,8 +947,18 @@ void RenderThemeGtk::adjustTextFieldStyle(StyleResolver&, RenderStyle& style, co
     preferredSize = preferredSize.expandedTo(spinButtonWidget.entry().preferredSize());
     IntSize upPreferredSize = preferredSize.expandedTo(spinButtonWidget.up().preferredSize());
     IntSize downPreferredSize = preferredSize.expandedTo(spinButtonWidget.down().preferredSize());
-    int height = std::max(upPreferredSize.height(), downPreferredSize.height());
-    style.setMinHeight(Length(height, Fixed));
+
+    // Ensure that the minimum height space is enough for the taller of the spin buttons.
+    int minimumHeight = std::max(upPreferredSize.height(), downPreferredSize.height());
+    style.setMinHeight(Length(minimumHeight, Fixed));
+
+    // The default theme for the GTK+ port uses very wide spin buttons (66px) compared to what other
+    // browsers use (~13 px). And unfortunately, most of the web developers won't test how their site
+    // renders on WebKitGTK+. To ensure that spin buttons don't end up covering the values of the input
+    // field, we override the width of the input element and always increment it with the width needed
+    // for the spinbutton (when drawing the spinbutton).
+    int minimumWidth = style.width().intValue() + upPreferredSize.width() + downPreferredSize.width();
+    style.setMinWidth(Length(minimumWidth, Fixed));
 }
 
 bool RenderThemeGtk::paintTextField(const RenderObject& renderObject, const PaintInfo& paintInfo, const FloatRect& rect)
@@ -1520,9 +1530,10 @@ void RenderThemeGtk::adjustInnerSpinButtonStyle(StyleResolver&, RenderStyle& sty
 
     IntSize upPreferredSize = spinButtonWidget.up().preferredSize();
     IntSize downPreferredSize = spinButtonWidget.down().preferredSize();
-    int buttonSize = std::max(std::max(upPreferredSize.width(), downPreferredSize.width()), std::max(upPreferredSize.height(), downPreferredSize.height()));
-    style.setWidth(Length(buttonSize * 2, Fixed));
-    style.setHeight(Length(buttonSize, Fixed));
+    int minimumHeight = std::max(upPreferredSize.height(), downPreferredSize.height());
+    int minimumWidth = upPreferredSize.width() + downPreferredSize.width();
+    style.setWidth(Length(minimumWidth, Fixed));
+    style.setHeight(Length(minimumHeight, Fixed));
 }
 
 bool RenderThemeGtk::paintInnerSpinButton(const RenderObject& renderObject, const PaintInfo& paintInfo, const IntRect& rect)

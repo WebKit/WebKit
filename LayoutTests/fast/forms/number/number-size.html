@@ -2,6 +2,8 @@
 <html>
 <head>
 <script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/platform-helper.js"></script>
+<script src="../resources/common.js"></script>
 <style>
 
 input.with-border::-webkit-inner-spin-button {
@@ -14,10 +16,6 @@ input.with-margin::-webkit-inner-spin-button {
      margin: 0 10px 0 10px;
 }
 
-input#number-without-spinbutton::-webkit-inner-spin-button {
-     display: none;
-     margin: 0;
-}
 input#number-with-width {
      width: 100px;
 }
@@ -29,23 +27,27 @@ input#number-with-width {
 <div id="console"></div>
 
 <script>
+
+function widthSpecified(size) {
+    // GTK+ port overrides the style width and always increments it with the spinbuttons size.
+    if (isGtk())
+      size += spinButtonWidth;
+    return size;
+}
+
 description('Test for size attribute of input');
 
 var parent = document.createElement('div');
 document.body.appendChild(parent);
-parent.innerHTML = '<input type=text id=text>'
-  + '<input type="number" id=number>'
-  + '<input type="number" id="number-without-spinbutton" min="0" max="10" step="1">'
-  + '<input type="number" id="number-with-spinbutton" min="0" max="10" step="1">'
+parent.innerHTML = '<input type=text id="text">'
+  + '<input type="number" id="number">'
   + '<input type="number" id="number-with-width">'
 var number = document.getElementById('number');
-var numberWithoutSpinButton = document.getElementById('number-without-spinbutton');
-var numberWithSpinButton = document.getElementById('number-with-spinbutton');
 var numberWithWidth = document.getElementById('number-with-width');
 var text = document.getElementById('text');
 
 // The width of spin button should differ by environment. So it should be calculated here.
-var spinButtonWidth = numberWithSpinButton.offsetWidth - numberWithoutSpinButton.offsetWidth;
+var spinButtonWidth = getElementByPseudoId(internals.shadowRoot(number), "-webkit-inner-spin-button").offsetWidth;
 // spinButtonWidth should have menaningful width.
 shouldBeGreaterThanOrEqual('spinButtonWidth', '1');
 
@@ -54,8 +56,8 @@ shouldBe('number.offsetWidth', 'text.offsetWidth');
 debug('');
 
 debug('The number whose width is specified should respect the setting');
-shouldBe('numberWithWidth.offsetWidth', '100');
-shouldBe('numberWithWidth.min = 0; numberWithWidth.max = 100; numberWithWidth.offsetWidth', '100');
+shouldBe('numberWithWidth.offsetWidth', 'widthSpecified(100)');
+shouldBe('numberWithWidth.min = 0; numberWithWidth.max = 100; numberWithWidth.offsetWidth', 'widthSpecified(100)');
 debug('');
 
 debug('The number input should ignore size attribute for layout');
