@@ -48,7 +48,6 @@ public:
     AtomicString(const char*);
     AtomicString(const LChar*, unsigned length);
     AtomicString(const UChar*, unsigned length);
-    AtomicString(const UChar*, unsigned length, unsigned existingHash);
     AtomicString(const UChar*);
 
     template<size_t inlineCapacity>
@@ -246,11 +245,6 @@ inline AtomicString::AtomicString(const LChar* s, unsigned length)
 
 inline AtomicString::AtomicString(const UChar* s, unsigned length)
     : m_string(AtomicStringImpl::add(s, length))
-{
-}
-
-inline AtomicString::AtomicString(const UChar* s, unsigned length, unsigned existingHash)
-    : m_string(AtomicStringImpl::add(s, length, existingHash))
 {
 }
 

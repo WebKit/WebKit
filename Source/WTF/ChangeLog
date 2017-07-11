@@ -1,3 +1,23 @@
+2017-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Drop unnecessary AtomicString constructor since we have constexpr hash function
+        https://bugs.webkit.org/show_bug.cgi?id=174347
+
+        Reviewed by Alex Christensen.
+
+        Previously, we calculate hash value in perl script and generate source code with that value.
+        This AtomicString constructor takes this pre-calculated hash value to efficiently construct
+        itself. But now, we have constexpr hash function, then we do not need to specify hash value
+        directly in this way. Thus we drop this functionality.
+
+        * wtf/text/AtomicString.h:
+        * wtf/text/AtomicStringImpl.cpp:
+        (WTF::HashAndCharactersTranslator::hash): Deleted.
+        (WTF::HashAndCharactersTranslator::equal): Deleted.
+        (WTF::HashAndCharactersTranslator::translate): Deleted.
+        * wtf/text/AtomicStringImpl.h:
+        (WTF::AtomicStringImpl::add):
+
 2017-07-10  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Link error when building WTF from WTF.proj project file.

@@ -149,34 +149,6 @@ struct UCharBufferTranslator {
     }
 };
 
-template<typename CharacterType>
-struct HashAndCharacters {
-    unsigned hash;
-    const CharacterType* characters;
-    unsigned length;
-};
-
-template<typename CharacterType>
-struct HashAndCharactersTranslator {
-    static unsigned hash(const HashAndCharacters<CharacterType>& buffer)
-    {
-        ASSERT(buffer.hash == StringHasher::computeHashAndMaskTop8Bits(buffer.characters, buffer.length));
-        return buffer.hash;
-    }
-
-    static bool equal(StringImpl* const& string, const HashAndCharacters<CharacterType>& buffer)
-    {
-        return WTF::equal(string, buffer.characters, buffer.length);
-    }
-
-    static void translate(StringImpl*& location, const HashAndCharacters<CharacterType>& buffer, unsigned hash)
-    {
-        location = &StringImpl::create(buffer.characters, buffer.length).leakRef();
-        location->setHash(hash);
-        location->setIsAtomic(true);
-    }
-};
-
 struct HashAndUTF8Characters {
     unsigned hash;
     const char* characters;
@@ -255,18 +227,6 @@ RefPtr<AtomicStringImpl> AtomicStringImpl::add(const UChar* s, unsigned length)
 
     UCharBuffer buffer = { s, length };
     return addToStringTable<UCharBuffer, UCharBufferTranslator>(buffer);
-}
-
-Ref<AtomicStringImpl> AtomicStringImpl::add(const UChar* s, unsigned length, unsigned existingHash)
-{
-    ASSERT(s);
-    ASSERT(existingHash);
-
-    if (!length)
-        return *static_cast<AtomicStringImpl*>(StringImpl::empty());
-
-    HashAndCharacters<UChar> buffer = { existingHash, s, length };
-    return addToStringTable<HashAndCharacters<UChar>, HashAndCharactersTranslator<UChar>>(buffer);
 }
 
 RefPtr<AtomicStringImpl> AtomicStringImpl::add(const UChar* s)
