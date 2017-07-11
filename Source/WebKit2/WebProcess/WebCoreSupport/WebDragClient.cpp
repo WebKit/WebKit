@@ -55,6 +55,10 @@ DragSourceAction WebDragClient::dragSourceActionMaskForPoint(const IntPoint&)
 void WebDragClient::startDrag(DragItem, DataTransfer&, Frame&)
 {
 }
+
+void WebDragClient::didConcludeEditDrag()
+{
+}
 #endif
 
 void WebDragClient::dragControllerDestroyed()
