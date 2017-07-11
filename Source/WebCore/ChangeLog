@@ -1,3 +1,14 @@
+2017-07-11  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove unused OpenGL files
+        https://bugs.webkit.org/show_bug.cgi?id=174371
+
+        Reviewed by Timothy Hatcher.
+
+        * platform/graphics/opengl/GLPlatformContext.cpp: Removed.
+        * platform/graphics/opengl/GLPlatformContext.h: Removed.
+        * platform/graphics/opengl/GLPlatformSurface.h: Removed.
+
 2017-07-11  Chris Dumez  <cdumez@apple.com>
 
         Window's [[OwnPropertyKeys]] is wrong for cross origin windows
