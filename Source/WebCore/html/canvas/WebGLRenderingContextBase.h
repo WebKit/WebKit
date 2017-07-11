@@ -56,7 +56,6 @@ class EXTShaderTextureLOD;
 class EXTsRGB;
 class EXTFragDepth;
 class HTMLImageElement;
-class HTMLVideoElement;
 class ImageData;
 class IntSize;
 class OESStandardDerivatives;
@@ -83,6 +82,10 @@ class WebGLShader;
 class WebGLSharedObject;
 class WebGLShaderPrecisionFormat;
 class WebGLUniformLocation;
+
+#if ENABLE(VIDEO)
+class HTMLVideoElement;
+#endif
 
 inline void clip1D(GC3Dint start, GC3Dsizei range, GC3Dsizei sourceRange, GC3Dint* clippedStart, GC3Dsizei* clippedRange)
 {
@@ -242,7 +245,12 @@ public:
 
     void texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, RefPtr<ArrayBufferView>&&);
 
+#if ENABLE(VIDEO)
     using TexImageSource = WTF::Variant<RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>, RefPtr<HTMLVideoElement>>;
+#else
+    using TexImageSource = WTF::Variant<RefPtr<ImageData>, RefPtr<HTMLImageElement>, RefPtr<HTMLCanvasElement>>;
+#endif
+
     ExceptionOr<void> texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, std::optional<TexImageSource>);
 
     void texParameterf(GC3Denum target, GC3Denum pname, GC3Dfloat param);
@@ -683,7 +691,9 @@ protected:
         SourceImageData,
         SourceHTMLImageElement,
         SourceHTMLCanvasElement,
+#if ENABLE(VIDEO)
         SourceHTMLVideoElement,
+#endif
     };
 
     // Helper function for tex{Sub}Image2D to check if the input format/type/level/target/width/height/border/xoffset/yoffset are valid.

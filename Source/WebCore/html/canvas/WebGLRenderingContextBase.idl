@@ -42,7 +42,11 @@ typedef (Float32Array or sequence<GLfloat>) Float32List;
 typedef (Int32Array or sequence<GLint>) Int32List;
 
 // FIXME: Should allow ImageBitmap too.
+#ifdef ENABLE_VIDEO
 typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
+#else
+typedef (ImageData or HTMLImageElement or HTMLCanvasElement) TexImageSource;
+#endif
 
 [
     Conditional=WEBGL,

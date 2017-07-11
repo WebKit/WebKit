@@ -97,8 +97,6 @@ enum EventThrottlingBehavior {
     boolean isPreloaded(DOMString url);
     boolean isLoadingFromMemoryCache(DOMString url);
     DOMString xhrResponseSource(XMLHttpRequest xhr);
-    sequence<DOMString> mediaResponseSources(HTMLMediaElement media);
-    sequence<DOMString> mediaResponseContentRanges(HTMLMediaElement media);
     boolean isSharingStyleSheetContents(HTMLLinkElement a, HTMLLinkElement b);
     boolean isStyleSheetLoadingSubresources(HTMLLinkElement link);
     void clearMemoryCache();
@@ -406,6 +404,8 @@ enum EventThrottlingBehavior {
 
     void enableAutoSizeMode(boolean enabled, long minimumWidth, long minimumHeight, long maximumWidth, long maximumHeight);
 
+    [Conditional=VIDEO] sequence<DOMString> mediaResponseSources(HTMLMediaElement media);
+    [Conditional=VIDEO] sequence<DOMString> mediaResponseContentRanges(HTMLMediaElement media);
     [Conditional=VIDEO] void simulateAudioInterruption(HTMLMediaElement element);
     [Conditional=VIDEO, MayThrowException] boolean mediaElementHasCharacteristic(HTMLMediaElement element, DOMString characteristic);
 

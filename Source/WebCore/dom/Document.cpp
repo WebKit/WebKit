@@ -188,6 +188,7 @@
 #include "TransformSource.h"
 #include "TreeWalker.h"
 #include "ValidationMessageClient.h"
+#include "VisibilityChangeClient.h"
 #include "VisitedLinkState.h"
 #include "WheelEvent.h"
 #include "WindowFeatures.h"

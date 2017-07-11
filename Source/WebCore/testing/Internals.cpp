@@ -647,30 +647,6 @@ String Internals::xhrResponseSource(XMLHttpRequest& request)
     return responseSourceToString(request.resourceResponse());
 }
 
-Vector<String> Internals::mediaResponseSources(HTMLMediaElement& media)
-{
-    auto* resourceLoader = media.lastMediaResourceLoaderForTesting();
-    if (!resourceLoader)
-        return { };
-    Vector<String> result;
-    auto responses = resourceLoader->responsesForTesting();
-    for (auto& response : responses)
-        result.append(responseSourceToString(response));
-    return result;
-}
-
-Vector<String> Internals::mediaResponseContentRanges(HTMLMediaElement& media)
-{
-    auto* resourceLoader = media.lastMediaResourceLoaderForTesting();
-    if (!resourceLoader)
-        return { };
-    Vector<String> result;
-    auto responses = resourceLoader->responsesForTesting();
-    for (auto& response : responses)
-        result.append(response.httpHeaderField(HTTPHeaderName::ContentRange));
-    return result;
-}
-
 bool Internals::isSharingStyleSheetContents(HTMLLinkElement& a, HTMLLinkElement& b)
 {
     if (!a.sheet() || !b.sheet())
@@ -3058,6 +3034,30 @@ String Internals::getImageSourceURL(Element& element)
 }
 
 #if ENABLE(VIDEO)
+
+Vector<String> Internals::mediaResponseSources(HTMLMediaElement& media)
+{
+    auto* resourceLoader = media.lastMediaResourceLoaderForTesting();
+    if (!resourceLoader)
+        return { };
+    Vector<String> result;
+    auto responses = resourceLoader->responsesForTesting();
+    for (auto& response : responses)
+        result.append(responseSourceToString(response));
+    return result;
+}
+
+Vector<String> Internals::mediaResponseContentRanges(HTMLMediaElement& media)
+{
+    auto* resourceLoader = media.lastMediaResourceLoaderForTesting();
+    if (!resourceLoader)
+        return { };
+    Vector<String> result;
+    auto responses = resourceLoader->responsesForTesting();
+    for (auto& response : responses)
+        result.append(response.httpHeaderField(HTTPHeaderName::ContentRange));
+    return result;
+}
 
 void Internals::simulateAudioInterruption(HTMLMediaElement& element)
 {
