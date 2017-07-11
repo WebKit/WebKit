@@ -1845,11 +1845,6 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _canSendTouchEventsAsynchronously = YES;
 }
 
-- (void)scrollViewDidEndPanOrPinchGesture
-{
-    _canSendTouchEventsAsynchronously = NO;
-}
-
 - (void)_didEndScrollingOrZooming
 {
     if (!_needsDeferredEndScrollingSelectionUpdate) {
@@ -4063,6 +4058,8 @@ static bool isAssistableInputType(InputType type)
 
 - (BOOL)gestureRecognizer:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer shouldIgnoreWebTouchWithEvent:(UIEvent *)event
 {
+    _canSendTouchEventsAsynchronously = NO;
+
     NSSet<UITouch *> *touches = [event touchesForGestureRecognizer:gestureRecognizer];
     for (UITouch *touch in touches) {
         if ([touch.view isKindOfClass:[UIScrollView class]] && [(UIScrollView *)touch.view _isInterruptingDeceleration])

@@ -1,3 +1,49 @@
+2017-07-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address post-review feedback after http://trac.webkit.org/r219310
+        https://bugs.webkit.org/show_bug.cgi?id=174300
+        <rdar://problem/33030639>
+
+        Reviewed by Simon Fraser.
+
+        Removes plumbing introduced in r219310 for telling WKContentView when the user has finished panning or zooming.
+        This was previously used to reset allowing asynchronous touch event after preventing the web touch events
+        gesture recognizer from firing.
+
+        However, a far simpler (and much less fragile) solution is to just set _canSendTouchEventsAsynchronously to NO
+        at the beginning of the gesture, before the first `touchstart` event is dispatched. This way, we always ensure
+        that _canSendTouchEventsAsynchronously is NO when beginning to process a touch event. This approach is correct
+        because the only place where we query _canSendTouchEventsAsynchronously is in -_webTouchEventsRecognized:, where
+        (when we are beginning a new gesture) we are guaranteed that -gestureRecognizer:shouldIgnoreWebTouchWithEvent:
+        has already been called and _canSendTouchEventsAsynchronously is NO.
+
+        Confirmed that the LayoutTests added in r219310 still pass.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView scrollViewDidEndDragging:willDecelerate:]):
+        (-[WKWebView scrollViewDidEndZooming:withView:atScale:]):
+        * UIProcess/PageClient.h:
+        * UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/Scrolling/RemoteScrollingTree.cpp:
+        (WebKit::RemoteScrollingTree::scrollingTreeNodeDidEndPanGesture): Deleted.
+        * UIProcess/Scrolling/RemoteScrollingTree.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+        * UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm:
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndDragging:willDecelerate:]):
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewDidEndPanGesture): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::overflowScrollViewDidEndPanGesture): Deleted.
+        * UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm:
+        (WebKit::RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndPanGesture): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView gestureRecognizer:shouldIgnoreWebTouchWithEvent:]):
+        (-[WKContentView scrollViewDidEndPanOrPinchGesture]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::overflowScrollViewDidEndPanGesture): Deleted.
+
 2017-07-11  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed clean-up after r219323

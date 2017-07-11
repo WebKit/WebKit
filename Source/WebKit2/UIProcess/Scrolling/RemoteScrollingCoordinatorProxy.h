@@ -86,7 +86,6 @@ public:
 #if PLATFORM(IOS)
     WebCore::FloatRect customFixedPositionRect() const;
     void scrollingTreeNodeWillStartPanGesture();
-    void scrollingTreeNodeDidEndPanGesture();
     void scrollingTreeNodeWillStartScroll();
     void scrollingTreeNodeDidEndScroll();
 #if ENABLE(CSS_SCROLL_SNAP)

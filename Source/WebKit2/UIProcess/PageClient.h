@@ -308,7 +308,6 @@ public:
     virtual double minimumZoomScale() const = 0;
     virtual WebCore::FloatRect documentRect() const = 0;
     virtual void overflowScrollViewWillStartPanGesture() = 0;
-    virtual void overflowScrollViewDidEndPanGesture() = 0;
     virtual void overflowScrollViewDidScroll() = 0;
     virtual void overflowScrollWillStartScroll() = 0;
     virtual void overflowScrollDidEndScroll() = 0;

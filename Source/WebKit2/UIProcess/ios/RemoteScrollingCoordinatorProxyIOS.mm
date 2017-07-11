@@ -104,11 +104,6 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartPanGesture()
     m_webPageProxy.overflowScrollViewWillStartPanGesture();
 }
 
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidEndPanGesture()
-{
-    m_webPageProxy.overflowScrollViewDidEndPanGesture();
-}
-
 void RemoteScrollingCoordinatorProxy::scrollingTreeNodeWillStartScroll()
 {
     m_webPageProxy.overflowScrollWillStartScroll();

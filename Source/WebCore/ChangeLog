@@ -1,3 +1,17 @@
+2017-07-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address post-review feedback after http://trac.webkit.org/r219310
+        https://bugs.webkit.org/show_bug.cgi?id=174300
+        <rdar://problem/33030639>
+
+        Reviewed by Simon Fraser.
+
+        Removes pan-gesture-related plumbing introduced in r219310 that is no longer necessary.
+
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::scrollingTreeNodeWillStartPanGesture):
+        (WebCore::ScrollingTree::scrollingTreeNodeDidEndPanGesture): Deleted.
+
 2017-07-11  Alex Christensen  <achristensen@webkit.org>
 
         Reduce URL size

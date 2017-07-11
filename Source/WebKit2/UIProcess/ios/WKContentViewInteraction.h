@@ -279,7 +279,6 @@ struct WKAutoCorrectionData {
 - (void)cleanupInteraction;
 
 - (void)scrollViewWillStartPanOrPinchGesture;
-- (void)scrollViewDidEndPanOrPinchGesture;
 
 - (BOOL)canBecomeFirstResponderForWebView;
 - (BOOL)becomeFirstResponderForWebView;
