@@ -809,7 +809,7 @@ WebInspector.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel exten
         case WebInspector.DOMNode.CustomElementState.Custom:
             return WebInspector.UIString("Custom");
         case WebInspector.DOMNode.CustomElementState.Waiting:
-            return WebInspector.UIString("Waiting to be upgraded");
+            return WebInspector.UIString("Undefined custom element");
         case WebInspector.DOMNode.CustomElementState.Failed:
             return WebInspector.UIString("Failed to upgrade");
         }
