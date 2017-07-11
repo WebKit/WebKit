@@ -1,3 +1,17 @@
+2017-07-11  Chris Dumez  <cdumez@apple.com>
+
+        Window's [[OwnPropertyKeys]] is wrong for cross origin windows
+        https://bugs.webkit.org/show_bug.cgi?id=174364
+        <rdar://problem/33238056>
+
+        Reviewed by Brent Fulgham.
+
+        Update test to reflect behavior change. I verified that the test is passing in Firefox.
+        The test fails in Chrome because its does not expose frames indexes on the Window, and
+        it is incorrectly listing "assign" on Location.
+
+        * http/tests/security/cross-frame-access-enumeration.html:
+
 2017-07-11  Charlie Turner  <cturner@igalia.com>
 
         [GTK] editing/input new passes since r211277
