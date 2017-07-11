@@ -178,11 +178,10 @@
     <dependencies>
       <dep package="orc"/>
     </dependencies>
-    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.8.1"
+    <branch module="gstreamer/gstreamer-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:5a3722fb9302dd977c17ced4240293dc777cb716dc98c8cca63d75c27e5e3107"
-            md5sum="711ada79b63e47ac96adb4e5444dc908">
-      <patch file="gstreamer-typefind-Only-push-a-CAPS-event-downstream-if-the-.patch" strip="1"/>
+            hash="sha256:bc06243600817f637029da29d089d5908d1d266542f68bf6626a10c5f05f1f1d">
+      <patch file="gstreamer-0001-protection-added-function-to-filter-system-ids.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -192,10 +191,9 @@
     <dependencies>
       <dep package="gstreamer"/>
     </dependencies>
-    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.8.1"
+    <branch module="gst-plugins-base/gst-plugins-base-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:15a9de985cd265c344e359f5b19347df4021b7611ed2c2d91917cb900f2fad6f"
-            md5sum="5421edfeb7479d5f5776e917ba30e24e"/>
+            hash="sha256:1c401a79bd1e4521c6ef1b66579bddedd9136e164e54792aab4bfcf3485bf9a7"/>
   </autotools>
 
   <autotools id="gst-plugins-good" autogen-sh="configure" autogenargs="--disable-examples --disable-soup --disable-gtk-doc">
@@ -203,12 +201,13 @@
       <dep package="gst-plugins-base"/>
     </dependencies>
 
-    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.8.1"
+    <branch module="gst-plugins-good/gst-plugins-good-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:2103e17921d67894e82eafdd64fb9b06518599952fd93e625bfbc83ffead0972"
-            md5sum="3eabe7277681b9bef8a64c312de03d47">
-      <patch file="gst-plugins-good-use-the-tfdt-decode-time.patch" strip="1"/>
-      <patch file="gst-plugins-good-Revert-qtdemux-expose-streams-with-first-moof-for-fr.patch" strip="1"/>
+            hash="sha256:be053f6ed716eeb517cec148cec637cdce571c6e04d5c21409e2876fb76c7639">
+      <patch file="gst-plugins-good-0003-rtpbin-receive-bundle-support.patch" strip="1"/>
+      <patch file="gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch" strip="1"/>
+      <patch file="gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
+      <patch file="gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1"/>
     </branch>
   </autotools>
 
@@ -216,12 +215,9 @@
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.8.1"
+    <branch module="gst-plugins-bad/gst-plugins-bad-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:0bbd58f363734fc0c4a620b2d6fb01d427fdafdbda7b90b4e15d03b751ca40f5"
-            md5sum="e508da2a8a5c3d12264fe3415be2f451">
-      <patch file="gst-plugins-bad-0001-dtls-port-to-OpenSSL-1.1.0.patch" strip="1"/>
-      <patch file="gst-plugins-bad-0002-dtlscertificate-Fix-error-checking-in-RSA_generate_k.patch" strip="1"/>
+            hash="sha256:c5806040bb83b43be86ce592e6a19c5d83d7776f7d9f434eb4b911c4efff3573">
     </branch>
   </autotools>
 
@@ -229,10 +225,9 @@
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>
-    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.8.1"
+    <branch module="gst-libav/gst-libav-${version}.tar.xz" version="1.10.5"
             repo="gstreamer"
-            hash="sha256:44a49108c3531b5ac4f346a2247cd7fbafb0e8ab394394cb6d75a70300b38933"
-            md5sum="85f1a047606ca9e08493d7b6b42df462"/>
+            hash="sha256:e4d2f315f478d47281fbfdfbd590a63d23704ca37911d7142d5992616f4b28d3"/>
   </autotools>
 
   <cmake id="wpe">
