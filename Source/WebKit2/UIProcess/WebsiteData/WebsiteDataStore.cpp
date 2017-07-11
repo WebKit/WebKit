@@ -1106,6 +1106,14 @@ void WebsiteDataStore::updateCookiePartitioningForTopPrivatelyOwnedDomains(const
 }
 #endif
 
+void WebsiteDataStore::networkProcessDidCrash()
+{
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_resourceLoadStatistics)
+        m_resourceLoadStatistics->scheduleCookiePartitioningStateReset();
+#endif
+}
+
 void WebsiteDataStore::webPageWasAdded(WebPageProxy& webPageProxy)
 {
     if (m_storageManager)

@@ -631,6 +631,15 @@ void WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains(
     });
 }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+void WebResourceLoadStatisticsStore::scheduleCookiePartitioningStateReset()
+{
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        resetCookiePartitioningState();
+    });
+}
+#endif
+
 void WebResourceLoadStatisticsStore::scheduleClearInMemory()
 {
     ASSERT(RunLoop::isMain());
@@ -836,10 +845,9 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Ve
         m_updateCookiePartitioningForDomainsHandler(domainsToRemove, domainsToAdd, shouldClearFirst);
     });
 
-    if (shouldClearFirst == ShouldClearFirst::Yes) {
-        for (auto& resourceStatistic : m_resourceStatisticsMap.values())
-            resourceStatistic.isMarkedForCookiePartitioning = false;
-    } else {
+    if (shouldClearFirst == ShouldClearFirst::Yes)
+        resetCookiePartitioningState();
+    else {
         for (auto& domain : domainsToRemove)
             ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = false;
     }
@@ -847,7 +855,14 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Ve
     for (auto& domain : domainsToAdd)
         ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = true;
 }
-    
+
+void WebResourceLoadStatisticsStore::resetCookiePartitioningState()
+{
+    ASSERT(!RunLoop::isMain());
+    for (auto& resourceStatistic : m_resourceStatisticsMap.values())
+        resourceStatistic.isMarkedForCookiePartitioning = false;
+}
+
 void WebResourceLoadStatisticsStore::processStatistics(const WTF::Function<void (const ResourceLoadStatistics&)>& processFunction) const
 {
     ASSERT(!RunLoop::isMain());

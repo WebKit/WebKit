@@ -1,3 +1,29 @@
+2017-07-11  Brent Fulgham  <bfulgham@apple.com>
+
+        Reset cookie partitioning state after network process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=174306
+        <rdar://problem/33171605>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Storage/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::fireShouldPartitionCookiesHandler): Move cookie
+        partioning state code to helper function.
+        (WebKit::ResourceLoadStatisticsStore::resetPartitionCookiesState): Added.
+        * UIProcess/Storage/ResourceLoadStatisticsStore.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess): Inform the statistics store that
+        the network process crashed.
+        (WebKit::WebProcessPool::terminateNetworkProcess): Mark network process as crashed.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::networkProcessDidCrash): Reset the cookie
+        partitioning state after a crash.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::notifyResourceLoadStatisticsNetworkProcessDidCrash): Relay
+        information to the statistics store.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-07-11  Timothy Hatcher  <timothy@hatcher.name>
 
         Fix broken build when !ENABLE(INDEXED_DATABASE)

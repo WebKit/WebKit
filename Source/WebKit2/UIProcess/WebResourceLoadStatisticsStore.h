@@ -92,6 +92,7 @@ public:
     void scheduleCookiePartitioningUpdateForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst);
     void processStatisticsAndDataRecords();
     void submitTelemetry();
+    void scheduleCookiePartitioningStateReset();
 
     void scheduleClearInMemory();
     void scheduleClearInMemoryAndPersistent();
@@ -149,6 +150,8 @@ private:
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
     void populateFromDecoder(WebCore::KeyedDecoder&);
     void clearInMemory();
+
+    void resetCookiePartitioningState();
 
 #if PLATFORM(COCOA)
     void registerUserDefaultsIfNeeded();

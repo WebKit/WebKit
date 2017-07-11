@@ -105,6 +105,7 @@ public:
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void updateCookiePartitioningForTopPrivatelyOwnedDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst);
 #endif
+    void networkProcessDidCrash();
     void resolveDirectoriesIfNecessary();
     const String& resolvedApplicationCacheDirectory() const { return m_resolvedConfiguration.applicationCacheDirectory; }
     const String& resolvedMediaCacheDirectory() const { return m_resolvedConfiguration.mediaCacheDirectory; }

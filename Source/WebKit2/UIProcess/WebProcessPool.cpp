@@ -482,6 +482,7 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
         m_didNetworkProcessCrash = false;
         for (auto& process : m_processes)
             process->reinstateNetworkProcessAssertionState(*m_networkProcess);
+        websiteDataStore().websiteDataStore().networkProcessDidCrash();
     }
 
     if (withWebsiteDataStore)
@@ -1357,6 +1358,7 @@ void WebProcessPool::terminateNetworkProcess()
     
     m_networkProcess->terminate();
     m_networkProcess = nullptr;
+    m_didNetworkProcessCrash = true;
 }
 
 void WebProcessPool::syncNetworkProcessCookies()
