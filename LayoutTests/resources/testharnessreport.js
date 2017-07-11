@@ -23,7 +23,7 @@ if (self.testRunner) {
         setTimeout(timeout, testRunner.timeout * 0.9);
 }
 
-if (self.internals)
+if (self.internals && internals.setICECandidateFiltering)
     internals.setICECandidateFiltering(false);
 
 // Function used to convert the test status code into
