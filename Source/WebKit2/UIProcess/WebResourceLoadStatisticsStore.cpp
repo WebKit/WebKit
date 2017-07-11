@@ -53,9 +53,9 @@ constexpr unsigned operatingDatesWindow { 30 };
 constexpr unsigned statisticsModelVersion { 7 };
 constexpr unsigned maxImportance { 3 };
 
-template<typename T> static inline String primaryDomain(const T& value)
+template<typename T> static inline String isolatedPrimaryDomain(const T& value)
 {
-    return ResourceLoadStatistics::primaryDomain(value);
+    return ResourceLoadStatistics::primaryDomain(value).isolatedCopy();
 }
 
 static const OptionSet<WebsiteDataType>& dataTypesToRemove()
@@ -466,12 +466,12 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomainString = primaryDomain(url).isolatedCopy()] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomainString);
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
         statistics.hadUserInteraction = true;
         statistics.mostRecentUserInteractionTime = WallTime::now();
 
-        updateCookiePartitioningForDomains({ primaryDomainString }, { }, ShouldClearFirst::No);
+        updateCookiePartitioningForDomains({ primaryDomain }, { }, ShouldClearFirst::No);
     });
 }
 
@@ -480,8 +480,8 @@ void WebResourceLoadStatisticsStore::clearUserInteraction(const URL& url)
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy()] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
         statistics.hadUserInteraction = false;
         statistics.mostRecentUserInteractionTime = { };
     });
@@ -494,8 +494,8 @@ void WebResourceLoadStatisticsStore::hasHadUserInteraction(const URL& url, WTF::
         return;
     }
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
-        auto mapEntry = m_resourceStatisticsMap.find(primaryDomain(url));
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url), completionHandler = WTFMove(completionHandler)] () mutable {
+        auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
         bool hadUserInteraction = mapEntry == m_resourceStatisticsMap.end() ? false: hasHadUnexpiredRecentUserInteraction(mapEntry->value);
         RunLoop::main().dispatch([hadUserInteraction, completionHandler = WTFMove(completionHandler)] {
             completionHandler(hadUserInteraction);
@@ -508,8 +508,8 @@ void WebResourceLoadStatisticsStore::setLastSeen(const URL& url, Seconds seconds
     if (url.isBlankURL() || url.isEmpty())
         return;
     
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), seconds] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url), seconds] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
         statistics.lastSeen = WallTime::fromRawSeconds(seconds.seconds());
     });
 }
@@ -519,8 +519,8 @@ void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url)
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy()] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
         statistics.isPrevalentResource = true;
     });
 }
@@ -532,8 +532,8 @@ void WebResourceLoadStatisticsStore::isPrevalentResource(const URL& url, WTF::Fu
         return;
     }
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
-        auto mapEntry = m_resourceStatisticsMap.find(primaryDomain(url));
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url), completionHandler = WTFMove(completionHandler)] () mutable {
+        auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
         bool isPrevalentResource = mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.isPrevalentResource;
         RunLoop::main().dispatch([isPrevalentResource, completionHandler = WTFMove(completionHandler)] {
             completionHandler(isPrevalentResource);
@@ -546,8 +546,8 @@ void WebResourceLoadStatisticsStore::clearPrevalentResource(const URL& url)
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy()] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
         statistics.isPrevalentResource = false;
     });
 }
@@ -557,8 +557,8 @@ void WebResourceLoadStatisticsStore::setGrandfathered(const URL& url, bool value
     if (url.isBlankURL() || url.isEmpty())
         return;
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), value] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryDomain = isolatedPrimaryDomain(url), value] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain);
         statistics.grandfathered = value;
     });
 }
@@ -570,8 +570,8 @@ void WebResourceLoadStatisticsStore::isGrandfathered(const URL& url, WTF::Functi
         return;
     }
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), url = url.isolatedCopy()] () mutable {
-        auto mapEntry = m_resourceStatisticsMap.find(primaryDomain(url));
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler), primaryDomain = isolatedPrimaryDomain(url)] () mutable {
+        auto mapEntry = m_resourceStatisticsMap.find(primaryDomain);
         bool isGrandFathered = mapEntry == m_resourceStatisticsMap.end() ? false : mapEntry->value.grandfathered;
         RunLoop::main().dispatch([isGrandFathered, completionHandler = WTFMove(completionHandler)] {
             completionHandler(isGrandFathered);
@@ -584,9 +584,9 @@ void WebResourceLoadStatisticsStore::setSubframeUnderTopFrameOrigin(const URL& s
     if (subframe.isBlankURL() || subframe.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
         return;
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubFrameDomainString = primaryDomain(subframe).isolatedCopy()] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubFrameDomainString);
-        statistics.subframeUnderTopFrameOrigins.add(primaryTopFrameDomainString);
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomain = isolatedPrimaryDomain(topFrame), primarySubFrameDomain = isolatedPrimaryDomain(subframe)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubFrameDomain);
+        statistics.subframeUnderTopFrameOrigins.add(primaryTopFrameDomain);
     });
 }
 
@@ -595,9 +595,9 @@ void WebResourceLoadStatisticsStore::setSubresourceUnderTopFrameOrigin(const URL
     if (subresource.isBlankURL() || subresource.isEmpty() || topFrame.isBlankURL() || topFrame.isEmpty())
         return;
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomainString = primaryDomain(topFrame).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
-        statistics.subresourceUnderTopFrameOrigins.add(primaryTopFrameDomainString);
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryTopFrameDomain = isolatedPrimaryDomain(topFrame), primarySubresourceDomain = isolatedPrimaryDomain(subresource)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomain);
+        statistics.subresourceUnderTopFrameOrigins.add(primaryTopFrameDomain);
     });
 }
 
@@ -606,9 +606,9 @@ void WebResourceLoadStatisticsStore::setSubresourceUniqueRedirectTo(const URL& s
     if (subresource.isBlankURL() || subresource.isEmpty() || hostNameRedirectedTo.isBlankURL() || hostNameRedirectedTo.isEmpty())
         return;
 
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryRedirectDomainString = primaryDomain(hostNameRedirectedTo).isolatedCopy(), primarySubresourceDomainString = primaryDomain(subresource).isolatedCopy()] {
-        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomainString);
-        statistics.subresourceUniqueRedirectsTo.add(primaryRedirectDomainString);
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), primaryRedirectDomain = isolatedPrimaryDomain(hostNameRedirectedTo), primarySubresourceDomain = isolatedPrimaryDomain(subresource)] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primarySubresourceDomain);
+        statistics.subresourceUniqueRedirectsTo.add(primaryRedirectDomain);
     });
 }
 
