@@ -1,5 +1,14 @@
 2017-07-11  Charlie Turner  <cturner@igalia.com>
 
+        REGRESSION(r219298): [GTK] imported/w3c/IndexedDB-private-browsing/idbfactory_open.html is crashing occassionaly
+        https://bugs.webkit.org/show_bug.cgi?id=174354
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations:
+
+2017-07-11  Charlie Turner  <cturner@igalia.com>
+
         [GTK][WPE] Some resource load statistics tests added in r212183 also fail.
         https://bugs.webkit.org/show_bug.cgi?id=168171
 
