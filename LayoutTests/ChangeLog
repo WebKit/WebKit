@@ -1,3 +1,14 @@
+2017-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [WK2 iOS] REGRESSION (r216803) During momentum scroll, getBoundingClientRect returns wrong coordinates (missing images on pinterest, elle.com and many other sites)
+        https://bugs.webkit.org/show_bug.cgi?id=174286
+        rdar://problem/32864180
+
+        Reviewed by Dean Jackson.
+
+        * fast/visual-viewport/ios/get-bounding-client-rect-unstable-expected.txt: Added.
+        * fast/visual-viewport/ios/get-bounding-client-rect-unstable.html: Added.
+
 2017-07-10  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Prune statistics in orders of importance

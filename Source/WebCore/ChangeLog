@@ -1,3 +1,37 @@
+2017-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        [WK2 iOS] REGRESSION (r216803) During momentum scroll, getBoundingClientRect returns wrong coordinates (missing images on pinterest, elle.com and many other sites)
+        https://bugs.webkit.org/show_bug.cgi?id=174286
+        rdar://problem/32864180
+
+        Reviewed by Dean Jackson.
+
+        r216803 made getBoundingClientRects relative to the layout viewport, but when scrolling we
+        only update that on stable viewport updates (at the end of the scroll). This meant that during
+        unstable updates, getBoundingClientRects() used a "frozen" viewport origin so things on-screen
+        would appear to be off-screen, causing sites to fail to dynamically load images etc. when
+        scrolling.
+
+        Fix by pushing an optional "unstable" layout viewport rect onto FrameView, which gets used by
+        FrameView::documentToClientOffset(). This is cleared when we do a stable update.
+
+        This is a short-term solution. Longer term, I would prefer to always call setLayoutViewportOverrideRect(),
+        but fix the scrolling tree logic to work correctly in this case.
+
+        Add a bit more scrolling logging.
+
+        Test: fast/visual-viewport/ios/get-bounding-client-rect-unstable.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setUnstableLayoutViewportRect):
+        (WebCore::FrameView::documentToClientOffset):
+        * page/FrameView.h:
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::updateConstraints):
+        (WebCore::ScrollingStateFixedNode::reconcileLayerPositionForViewportRect):
+
 2017-07-10  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Prune statistics in orders of importance

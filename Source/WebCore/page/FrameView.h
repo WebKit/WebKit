@@ -258,6 +258,10 @@ public:
     // If set, overrides the default "m_layoutViewportOrigin, size of initial containing block" rect.
     // Used with delegated scrolling (i.e. iOS).
     WEBCORE_EXPORT void setLayoutViewportOverrideRect(std::optional<LayoutRect>);
+    // If set, overrides m_layoutViewportOverrideRect. Only used during unstable scroll updates, so that "client" coordinates are 
+    // computed with an origin that changes along with the scroll position.
+    // FIXME: This is ugly; would be better to be able to make setLayoutViewportOverrideRect() callable during unstable updates. 
+    WEBCORE_EXPORT void setUnstableLayoutViewportRect(std::optional<LayoutRect>);
 
     // These are in document coordinates, unaffected by page scale (but affected by zooming).
     WEBCORE_EXPORT LayoutRect layoutViewportRect() const;
@@ -833,6 +837,7 @@ private:
     
     LayoutPoint m_layoutViewportOrigin;
     std::optional<LayoutRect> m_layoutViewportOverrideRect;
+    std::optional<LayoutRect> m_unstableLayoutViewportRect;
 
     unsigned m_deferSetNeedsLayoutCount;
     bool m_setNeedsLayoutWasDeferred;

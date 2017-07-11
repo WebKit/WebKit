@@ -377,6 +377,8 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
     bool oldProgrammaticScroll = frameView.inProgrammaticScroll();
     frameView.setInProgrammaticScroll(programmaticScroll);
 
+    LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator " << this << " reconcileScrollingState scrollPosition " << scrollPosition << " programmaticScroll " << programmaticScroll << " stable " << inStableState << " " << scrollingLayerPositionAction);
+
     std::optional<FloatRect> layoutViewportRect;
 
     WTF::switchOn(layoutViewportOriginOrOverrideRect,
@@ -384,15 +386,21 @@ void AsyncScrollingCoordinator::reconcileScrollingState(FrameView& frameView, co
             if (origin)
                 frameView.setBaseLayoutViewportOrigin(LayoutPoint(origin.value()), FrameView::TriggerLayoutOrNot::No);
         }, [&frameView, &layoutViewportRect, inStableState, visualViewportEnabled = visualViewportEnabled()](std::optional<FloatRect> overrideRect) {
+            if (!overrideRect)
+                return;
+        
             layoutViewportRect = overrideRect;
-            if (overrideRect && inStableState) {
-                if (visualViewportEnabled)
+            if (visualViewportEnabled) {
+                if (inStableState) {
                     frameView.setLayoutViewportOverrideRect(LayoutRect(overrideRect.value()));
-#if PLATFORM(IOS)
-                else
-                    frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(overrideRect.value()));
-#endif
+                    frameView.setUnstableLayoutViewportRect(std::nullopt);
+                } else
+                    frameView.setUnstableLayoutViewportRect(LayoutRect(layoutViewportRect.value()));
             }
+#if PLATFORM(IOS)
+            else if (inStableState)
+                frameView.setCustomFixedPositionLayoutRect(enclosingIntRect(overrideRect.value()));
+#endif
         }
     );
 
