@@ -974,9 +974,11 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
         sendToNetworkingProcess(Messages::NetworkProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()));
         page.process().send(Messages::WebProcess::AddWebsiteDataStore(page.websiteDataStore().parameters()), 0);
 
+#if ENABLE(INDEXED_DATABASE)
         auto databaseParameters = page.websiteDataStore().databaseProcessParameters();
         if (!databaseParameters.indexedDatabaseDirectory.isEmpty())
             sendToDatabaseProcessRelaunchingIfNecessary(Messages::DatabaseProcess::InitializeWebsiteDataStore(databaseParameters));
+#endif
     }
 }
 
