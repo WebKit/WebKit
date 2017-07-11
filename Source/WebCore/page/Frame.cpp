@@ -278,8 +278,11 @@ void Frame::setDocument(RefPtr<Document>&& newDocument)
 
     m_documentIsBeingReplaced = true;
 
-    if (isMainFrame())
+    if (isMainFrame()) {
+        if (m_page)
+            m_page->didChangeMainDocument();
         m_loader->client().dispatchDidChangeMainDocument();
+    }
 
     if (m_doc && m_doc->pageCacheState() != Document::InPageCache)
         m_doc->prepareForDestruction();

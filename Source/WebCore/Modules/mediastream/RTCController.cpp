@@ -38,6 +38,14 @@ RTCController::~RTCController()
         connection.clearController();
 }
 
+void RTCController::reset(bool shouldFilterICECandidates)
+{
+    m_shouldFilterICECandidates = shouldFilterICECandidates;
+    for (RTCPeerConnection& connection : m_peerConnections)
+        connection.clearController();
+    m_peerConnections.clear();
+}
+
 void RTCController::remove(RTCPeerConnection& connection)
 {
     m_peerConnections.removeFirstMatching([&connection](auto item) {

@@ -1,5 +1,25 @@
 2017-07-11  Youenn Fablet  <youenn@apple.com>
 
+        We should do ICE candidate filtering at the Document level
+        https://bugs.webkit.org/show_bug.cgi?id=173861
+        <rdar://problem/33122058>
+
+        Reviewed by Eric Carlson.
+
+        Removing ICE candidate filtering handling at UIProcess level.
+        ICE candidate filtering is now disabled at UserMediaRequest level.
+        WebPage forwards the ICE candidate filtering option to the page so as to set
+        the default option correctly for every document of the page.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::willCreateMediaStream):
+        (WebKit::UserMediaProcessManager::endedCaptureSession):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::disableICECandidateFiltering):
+        (WebKit::WebPage::enableICECandidateFiltering):
+
+2017-07-11  Youenn Fablet  <youenn@apple.com>
+
         Changing the web page muted state for playing audio should not disable other tabs capture
         https://bugs.webkit.org/show_bug.cgi?id=174349
         rdar://problem/33223988

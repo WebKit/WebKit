@@ -1,3 +1,24 @@
+2017-07-11  Youenn Fablet  <youenn@apple.com>
+
+        We should do ICE candidate filtering at the Document level
+        https://bugs.webkit.org/show_bug.cgi?id=173861
+        <rdar://problem/33122058>
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/webrtc/filtering-ice-candidate-cross-origin-frame-expected.txt: Added.
+        * http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html: Added.
+        * http/tests/webrtc/filtering-ice-candidate-same-origin-frame-expected.txt: Added.
+        * http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html: Added.
+        * http/tests/webrtc/filtering-ice-candidate-same-origin-frame2-expected.txt: Added.
+        * http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html: Added.
+        * http/tests/webrtc/resources/check-ice-candidate-filtering.html: Added.
+        * http/tests/webrtc/resources/do-get-user-media.html: Added.
+        * platform/mac-wk1/TestExpectations: Disable http/tests/webrtc tests.
+        * resources/testharnessreport.js: Disabled ICE candidate filtering by default.
+        * webrtc/filtering-ice-candidate-after-reload-expected.txt: Added.
+        * webrtc/filtering-ice-candidate-after-reload.html: Added.
+
 2017-07-11  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, rolling out r219325.

@@ -186,6 +186,15 @@ void UserMediaRequest::allow(String&& audioDeviceUID, String&& videoDeviceUID, S
     m_videoConstraints.deviceIDHashSalt = WTFMove(deviceIdentifierHashSalt);
 
     RealtimeMediaSourceCenter::singleton().createMediaStream(WTFMove(callback), m_allowedAudioDeviceUID, m_allowedVideoDeviceUID, &m_audioConstraints, &m_videoConstraints);
+
+    if (!m_scriptExecutionContext)
+        return;
+
+#if ENABLE(WEB_RTC)
+    auto* page = downcast<Document>(*m_scriptExecutionContext).page();
+    if (page)
+        page->rtcController().disableICECandidateFiltering();
+#endif
 }
 
 void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invalidConstraint)

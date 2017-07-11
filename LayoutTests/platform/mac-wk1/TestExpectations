@@ -97,6 +97,7 @@ http/tests/ssl/media-stream
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
+http/tests/webrtc [ Skip ]
 webrtc/datachannel [ Pass ]
 webrtc/captureCanvas-webrtc.html [ Failure Pass ]
 

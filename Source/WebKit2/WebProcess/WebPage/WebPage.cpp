@@ -576,12 +576,12 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(WEB_RTC)
 void WebPage::disableICECandidateFiltering()
 {
-    m_page->rtcController().disableICECandidateFiltering();
+    m_page->disableICECandidateFiltering();
 }
 
 void WebPage::enableICECandidateFiltering()
 {
-    m_page->rtcController().disableICECandidateFiltering();
+    m_page->enableICECandidateFiltering();
 }
 
 #if USE(LIBWEBRTC)

@@ -225,6 +225,12 @@ public:
 #endif
     LibWebRTCProvider& libWebRTCProvider() { return m_libWebRTCProvider.get(); }
     RTCController& rtcController() { return m_rtcController; }
+    WEBCORE_EXPORT void disableICECandidateFiltering();
+    WEBCORE_EXPORT void enableICECandidateFiltering();
+    bool shouldEnableICECandidateFilteringByDefault() const { return m_shouldEnableICECandidateFilteringByDefault; }
+
+    void didChangeMainDocument();
+
     PerformanceMonitor* performanceMonitor() { return m_performanceMonitor.get(); }
 
     ValidationMessageClient* validationMessageClient() const { return m_validationMessageClient.get(); }
@@ -816,6 +822,7 @@ private:
     std::optional<Navigation> m_navigationToLogWhenVisible;
 
     bool m_isRunningUserScripts { false };
+    bool m_shouldEnableICECandidateFilteringByDefault { true };
 };
 
 inline PageGroup& Page::group()

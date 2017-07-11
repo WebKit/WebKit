@@ -1,3 +1,54 @@
+2017-07-11  Youenn Fablet  <youenn@apple.com>
+
+        We should do ICE candidate filtering at the Document level
+        https://bugs.webkit.org/show_bug.cgi?id=173861
+        <rdar://problem/33122058>
+
+        Reviewed by Eric Carlson.
+
+        Tests: http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html
+               http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html
+               http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html
+               webrtc/filtering-ice-candidate-after-reload.html
+
+        Making UserMediaRequest disable the ICE candidate filtering for the page RTCController.
+        All RTCPeerConnection of the page that are created on a document that are same-origin as the top document
+        are now registered to the RTCController.
+        This allows disabling filtering to only these RTCPeerConnection.
+
+        The page keeps the default ICE candidate filtering policy.
+        This policy allows disabling ICE candidate filtering for all RTCPeerConnection.
+
+        When the top document is changing, the RTCController filtering policy is reset
+        and its list of RTCPeerConnection is emptied.
+
+        Internals no longer disables ICE candidate filtering by default.
+        This allows finer grained testing.
+        ICE candidate filtering is disabled for tests including testharnessreport.js
+        to enable web-platform-tests to run without modifications.
+
+        * Modules/mediastream/RTCController.cpp:
+        (WebCore::RTCController::reset):
+        * Modules/mediastream/RTCController.h:
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::allow):
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+        * page/Page.cpp:
+        (WebCore::Page::disableICECandidateFiltering):
+        * page/Page.h:
+        (WebCore::Page::shouldEnableICECandidateFilteringByDefault):
+        (WebCore::Page::disableICECandidateFiltering): Deleted.
+        (WebCore::Page::enableICECandidateFiltering): Deleted.
+        (WebCore::Page::isICECandidateFilteringEnabled): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        (WebCore::Internals::setICECandidateFiltering):
+        (WebCore::Internals::setEnumeratingAllNetworkInterfacesEnabled):
+        (WebCore::Internals::isICECandidateFilteringEnabled): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-07-11  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, rolling out r219325.

@@ -37,6 +37,8 @@ public:
 #if ENABLE(WEB_RTC)
     ~RTCController();
 
+    void reset(bool shouldFilterICECandidates);
+
     void add(RTCPeerConnection&);
     void remove(RTCPeerConnection&);
 

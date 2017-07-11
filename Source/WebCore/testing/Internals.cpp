@@ -493,10 +493,6 @@ Internals::Internals(Document& document)
 #if USE(OPENWEBRTC)
     enableMockMediaEndpoint();
 #endif
-#if USE(LIBWEBRTC)
-    if (document.page())
-        document.page()->rtcController().disableICECandidateFiltering();
-#endif
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -1330,10 +1326,10 @@ void Internals::useMockRTCPeerConnectionFactory(const String& testCase)
 
 void Internals::setICECandidateFiltering(bool enabled)
 {
-    Document* document = contextDocument();
-    auto* page = document->page();
+    auto* page = contextDocument()->page();
     if (!page)
         return;
+
     auto& rtcController = page->rtcController();
     if (enabled)
         rtcController.enableICECandidateFiltering();
