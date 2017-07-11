@@ -1262,6 +1262,17 @@ http/tests/ssl/applepay [ Skip ]
 # GTK port doesn't use the scrolling tree
 fast/scrolling/scrolling-tree-includes-frame.html [ Skip ]
 
+# Regressions on fast/forms spinbutton related tests after r219332
+webkit.org/b/174395 fast/events/touch/touch-before-pressing-spin-button.html [ Failure ]
+webkit.org/b/174395 fast/forms/input-number-click.html [ Failure ]
+webkit.org/b/174395 fast/forms/input-step-as-double.html [ Failure ]
+webkit.org/b/174395 fast/forms/number/number-large-padding.html [ Failure ]
+webkit.org/b/174395 fast/forms/number/number-spinbutton-capturing.html [ Failure ]
+webkit.org/b/174395 fast/forms/number/number-spinbutton-change-and-input-events.html [ Failure ]
+webkit.org/b/174395 fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html [ Failure ]
+webkit.org/b/174395 fast/forms/number/number-spinbutton-in-multi-column.html [ Failure ]
+webkit.org/b/174395 fast/forms/number/number-spinbutton-state.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
