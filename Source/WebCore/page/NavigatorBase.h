@@ -50,6 +50,10 @@ public:
 
     static String language();
     static Vector<String> languages();
+
+#if ENABLE(NAVIGATOR_HWCONCURRENCY)
+    static int hardwareConcurrency();
+#endif
 };
 
 } // namespace WebCore
