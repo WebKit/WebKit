@@ -50,6 +50,8 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 {
     encoder.encodeString("PrevalentResourceOrigin", highLevelDomain);
     
+    encoder.encodeDouble("lastSeen", lastSeen.secondsSinceEpoch().value());
+    
     // User interaction
     encoder.encodeBool("hadUserInteraction", hadUserInteraction);
     encoder.encodeDouble("mostRecentUserInteraction", mostRecentUserInteractionTime.secondsSinceEpoch().value());
@@ -114,6 +116,11 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
     if (!decoder.decodeBool("grandfathered", grandfathered))
         return false;
 
+    double lastSeenTimeAsDouble;
+    if (!decoder.decodeDouble("lastSeen", lastSeenTimeAsDouble))
+        return false;
+    lastSeen = WallTime::fromRawSeconds(lastSeenTimeAsDouble);
+    
     return true;
 }
 
@@ -146,6 +153,10 @@ static void appendHashCountedSet(StringBuilder& builder, const String& label, co
 String ResourceLoadStatistics::toString() const
 {
     StringBuilder builder;
+    
+    builder.appendLiteral("lastSeen");
+    builder.appendNumber(lastSeen.secondsSinceEpoch().value());
+    builder.append('\n');
     
     // User interaction
     appendBoolean(builder, "hadUserInteraction", hadUserInteraction);
@@ -189,6 +200,9 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
 {
     ASSERT(other.highLevelDomain == highLevelDomain);
 
+    if (lastSeen < other.lastSeen)
+        lastSeen = other.lastSeen;
+    
     if (!other.hadUserInteraction) {
         // If user interaction has been reset do so here too.
         // Else, do nothing.

@@ -1,3 +1,49 @@
+2017-07-10  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Prune statistics in orders of importance
+        https://bugs.webkit.org/show_bug.cgi?id=174215
+        <rdar://problem/33164403>
+
+        Reviewed by Chris Dumez.
+
+        New functionality. Prunes statistics in this order:
+        1. Non-prevalent resources without user interaction.
+        2. Prevalent resources without user interaction.
+        3. Non-prevalent resources with user interaction.
+        4. Prevalent resources with user interaction.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+            Added timestamp field lastSeen.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetLastSeen:forHost:]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetMaxStatisticsEntries:]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetPruneEntriesDownTo:]):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsResetToConsistentState]):
+            Test infrastructure.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Storage/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::setMaxStatisticsEntries):
+            Test infrastructure.
+        (WebKit::ResourceLoadStatisticsStore::setPruneEntriesDownTo):
+            Test infrastructure.
+        (WebKit::sortAndPrune):
+            Convenience function.
+        (WebKit::ResourceLoadStatisticsStore::pruneStatisticsIfNeeded):
+            The new pruning function.
+        * UIProcess/Storage/ResourceLoadStatisticsStore.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+            Now calls ResourceLoadStatisticsStore::pruneStatisticsIfNeeded().
+        (WebKit::WebResourceLoadStatisticsStore::setLastSeen):
+            Test infrastructure.
+        (WebKit::WebResourceLoadStatisticsStore::setMaxStatisticsEntries):
+            Test infrastructure.
+        (WebKit::WebResourceLoadStatisticsStore::setPruneEntriesDownTo):
+            Test infrastructure.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2017-07-10  Dean Jackson  <dino@apple.com>
 
         const() experimental feature should always be on by default

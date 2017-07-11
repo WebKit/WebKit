@@ -1175,6 +1175,31 @@ void TestRunner::callDidRemoveSwipeSnapshotCallback()
     callTestRunnerCallback(DidRemoveSwipeSnapshotCallbackID);
 }
 
+void TestRunner::setStatisticsLastSeen(JSStringRef hostName, double seconds)
+{
+    Vector<WKRetainPtr<WKStringRef>> keys;
+    Vector<WKRetainPtr<WKTypeRef>> values;
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("HostName") });
+    values.append({ AdoptWK, WKStringCreateWithJSString(hostName) });
+    
+    keys.append({ AdoptWK, WKStringCreateWithUTF8CString("Value") });
+    values.append({ AdoptWK, WKDoubleCreate(seconds) });
+    
+    Vector<WKStringRef> rawKeys(keys.size());
+    Vector<WKTypeRef> rawValues(values.size());
+    
+    for (size_t i = 0; i < keys.size(); ++i) {
+        rawKeys[i] = keys[i].get();
+        rawValues[i] = values[i].get();
+    }
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetStatisticsLastSeen"));
+    WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
+    
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+    
 void TestRunner::setStatisticsPrevalentResource(JSStringRef hostName, bool value)
 {
     Vector<WKRetainPtr<WKStringRef>> keys;
@@ -1491,6 +1516,20 @@ void TestRunner::setStatisticsGrandfatheringTime(double seconds)
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
 }
 
+void TestRunner::setStatisticsMaxStatisticsEntries(unsigned entries)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetMaxStatisticsEntries"));
+    WKRetainPtr<WKTypeRef> messageBody(AdoptWK, WKUInt64Create(entries));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+    
+void TestRunner::setStatisticsPruneEntriesDownTo(unsigned entries)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetPruneEntriesDownTo"));
+    WKRetainPtr<WKTypeRef> messageBody(AdoptWK, WKUInt64Create(entries));
+    WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
+}
+    
 void TestRunner::statisticsClearInMemoryAndPersistentStore()
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsClearInMemoryAndPersistentStore"));

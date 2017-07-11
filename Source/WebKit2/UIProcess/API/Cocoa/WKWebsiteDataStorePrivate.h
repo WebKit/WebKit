@@ -44,6 +44,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 @property (nonatomic, setter=_setResourceLoadStatisticsEnabled:) BOOL _resourceLoadStatisticsEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 // ResourceLoadStatistics SPI for testing.
+- (void)_resourceLoadStatisticsSetLastSeen:(double)seconds forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetIsPrevalentResource:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsIsPrevalentResource:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetHadUserInteraction:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
@@ -57,6 +58,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 - (void)_resourceLoadStatisticsSetTimeToLiveCookiePartitionFree:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetMinimumTimeBetweenDataRecordsRemoval:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetGrandfatheringTime:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resourceLoadStatisticsSetMaxStatisticsEntries:(size_t)entries WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resourceLoadStatisticsSetPruneEntriesDownTo:(size_t)entries WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsProcessStatisticsAndDataRecords WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsUpdateCookiePartitioning WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

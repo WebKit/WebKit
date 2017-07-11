@@ -207,6 +207,15 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->websiteDataStore().setResourceLoadStatisticsEnabled(enabled);
 }
 
+- (void)_resourceLoadStatisticsSetLastSeen:(double)seconds forHost:(NSString *)host
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+    
+    store->setLastSeen(URL(URL(), host), Seconds { seconds });
+}
+
 - (void)_resourceLoadStatisticsSetIsPrevalentResource:(BOOL)value forHost:(NSString *)host
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
@@ -345,6 +354,24 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     store->setGrandfatheringTime(Seconds {seconds });
 }
 
+- (void)_resourceLoadStatisticsSetMaxStatisticsEntries:(size_t)entries
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setMaxStatisticsEntries(entries);
+}
+
+- (void)_resourceLoadStatisticsSetPruneEntriesDownTo:(size_t)entries
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store)
+        return;
+
+    store->setPruneEntriesDownTo(entries);
+}
+
 - (void)_resourceLoadStatisticsProcessStatisticsAndDataRecords
 {
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
@@ -441,6 +468,8 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         return;
 
     // FIXME: These needs to match the default data member values in ResourceLoadStatistics, which is fragile.
+    store->setMaxStatisticsEntries(1000);
+    store->setPruneEntriesDownTo(800);
     store->setTimeToLiveUserInteraction(std::nullopt);
     store->setTimeToLiveCookiePartitionFree(24_h);
     store->setMinimumTimeBetweenDataRecordsRemoval(1_h);

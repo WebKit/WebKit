@@ -92,6 +92,11 @@ bool ResourceLoadObserver::shouldLog(Page* page) const
     return Settings::resourceLoadStatisticsEnabled() && !page->usesEphemeralSession() && m_notificationCallback;
 }
 
+static WallTime reduceToHourlyTimeResolution(WallTime time)
+{
+    return WallTime::fromRawSeconds(std::floor(time.secondsSinceEpoch() / timestampResolution) * timestampResolution.seconds());
+}
+
 void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest)
 {
     ASSERT(frame.document());
@@ -125,6 +130,7 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    targetStatistics.lastSeen = reduceToHourlyTimeResolution(WallTime::now());
     auto subframeUnderTopFrameOriginsResult = targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain);
     if (subframeUnderTopFrameOriginsResult.isNewEntry)
         scheduleNotificationIfNeeded();
@@ -158,6 +164,7 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     bool shouldCallNotificationCallback = false;
     {
         auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+        targetStatistics.lastSeen = reduceToHourlyTimeResolution(WallTime::now());
         if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
             shouldCallNotificationCallback = true;
     }
@@ -197,13 +204,9 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
+    targetStatistics.lastSeen = reduceToHourlyTimeResolution(WallTime::now());
     if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
         scheduleNotificationIfNeeded();
-}
-
-static WallTime reduceTimeResolution(WallTime time)
-{
-    return WallTime::fromRawSeconds(std::floor(time.secondsSinceEpoch() / timestampResolution) * timestampResolution.seconds());
 }
 
 void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Document& document)
@@ -218,11 +221,12 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
         return;
 
     auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
-    auto newTime = reduceTimeResolution(WallTime::now());
+    auto newTime = reduceToHourlyTimeResolution(WallTime::now());
     if (newTime == statistics.mostRecentUserInteractionTime)
         return;
 
     statistics.hadUserInteraction = true;
+    statistics.lastSeen = newTime;
     statistics.mostRecentUserInteractionTime = newTime;
 
     scheduleNotificationIfNeeded();

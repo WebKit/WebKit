@@ -254,6 +254,7 @@ interface TestRunner {
     void installStatisticsDidModifyDataRecordsCallback(object callback);
     void installStatisticsDidScanDataRecordsCallback(object callback);
     void installStatisticsDidRunTelemetryCallback(object callback);
+    void setStatisticsLastSeen(DOMString hostName, double seconds);
     void setStatisticsPrevalentResource(DOMString hostName, boolean value);
     boolean isStatisticsPrevalentResource(DOMString hostName);
     void setStatisticsHasHadUserInteraction(DOMString hostName, boolean value);
@@ -274,6 +275,8 @@ interface TestRunner {
     void setStatisticsNotifyPagesWhenTelemetryWasCaptured(boolean value);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds);
     void setStatisticsGrandfatheringTime(double seconds);
+    void setStatisticsMaxStatisticsEntries(unsigned long entries);
+    void setStatisticsPruneEntriesDownTo(unsigned long entries);
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours);
     void statisticsResetToConsistentState();

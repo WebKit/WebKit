@@ -1,3 +1,17 @@
+2017-07-10  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Prune statistics in orders of importance
+        https://bugs.webkit.org/show_bug.cgi?id=174215
+        <rdar://problem/33164403>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/loading/resourceLoadStatistics/prune-statistics-expected.txt: Added.
+        * http/tests/loading/resourceLoadStatistics/prune-statistics.html: Added.
+        * platform/wk2/TestExpectations:
+            Added http/tests/loading/resourceLoadStatistics/prune-statistics.html as
+            [ Pass ] since Resource Load Statistics is WK2-only.
+
 2017-07-10  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Highlight matching CSS canvas clients when hovering contexts in the Resources tab

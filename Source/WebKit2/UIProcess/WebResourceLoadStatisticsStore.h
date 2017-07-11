@@ -79,6 +79,7 @@ public:
     void logUserInteraction(const WebCore::URL&);
     void clearUserInteraction(const WebCore::URL&);
     void hasHadUserInteraction(const WebCore::URL&, WTF::Function<void (bool)>&&);
+    void setLastSeen(const WebCore::URL&, Seconds);
     void setPrevalentResource(const WebCore::URL&);
     void isPrevalentResource(const WebCore::URL&, WTF::Function<void (bool)>&&);
     void clearPrevalentResource(const WebCore::URL&);
@@ -100,9 +101,12 @@ public:
     void setTimeToLiveCookiePartitionFree(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
-
+    void setMaxStatisticsEntries(size_t);
+    void setPruneEntriesDownTo(size_t);
+    
     void processStatistics(const WTF::Function<void (const WebCore::ResourceLoadStatistics&)>&) const;
-
+    void pruneStatisticsIfNeeded();
+    
 private:
     WebResourceLoadStatisticsStore(const String&, UpdateCookiePartitioningForDomainsHandler&&);
 
@@ -172,6 +176,8 @@ private:
     std::optional<Seconds> m_timeToLiveUserInteraction;
     Seconds m_timeToLiveCookiePartitionFree { 24_h };
     Seconds m_grandfatheringTime { 1_h };
+    size_t m_maxStatisticsEntries { 1000 };
+    size_t m_pruneEntriesDownTo { 800 };
     bool m_dataRecordsBeingRemoved { false };
     bool m_didScheduleWrite { false };
     bool m_shouldNotifyPagesWhenDataRecordsWereScanned { false };

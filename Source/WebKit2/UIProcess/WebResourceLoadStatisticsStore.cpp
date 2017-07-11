@@ -50,7 +50,8 @@ namespace WebKit {
 
 constexpr Seconds minimumStatisticsFileWriteInterval { 5_min };
 constexpr unsigned operatingDatesWindow { 30 };
-constexpr unsigned statisticsModelVersion { 6 };
+constexpr unsigned statisticsModelVersion { 7 };
+constexpr unsigned maxImportance { 3 };
 
 template<typename T> static inline String primaryDomain(const T& value)
 {
@@ -146,6 +147,8 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
         }
         removeDataRecords();
         
+        pruneStatisticsIfNeeded();
+
         if (m_shouldNotifyPagesWhenDataRecordsWereScanned) {
             RunLoop::main().dispatch([] {
                 WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
@@ -500,6 +503,17 @@ void WebResourceLoadStatisticsStore::hasHadUserInteraction(const URL& url, WTF::
     });
 }
 
+void WebResourceLoadStatisticsStore::setLastSeen(const URL& url, Seconds seconds)
+{
+    if (url.isBlankURL() || url.isEmpty())
+        return;
+    
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), url = url.isolatedCopy(), seconds] {
+        auto& statistics = ensureResourceStatisticsForPrimaryDomain(primaryDomain(url));
+        statistics.lastSeen = WallTime::fromRawSeconds(seconds.seconds());
+    });
+}
+    
 void WebResourceLoadStatisticsStore::setPrevalentResource(const URL& url)
 {
     if (url.isBlankURL() || url.isEmpty())
@@ -833,7 +847,7 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Ve
     for (auto& domain : domainsToAdd)
         ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = true;
 }
-
+    
 void WebResourceLoadStatisticsStore::processStatistics(const WTF::Function<void (const ResourceLoadStatistics&)>& processFunction) const
 {
     ASSERT(!RunLoop::isMain());
@@ -902,6 +916,64 @@ bool WebResourceLoadStatisticsStore::hasStatisticsExpired(const ResourceLoadStat
     }
 
     return false;
+}
+    
+void WebResourceLoadStatisticsStore::setMaxStatisticsEntries(size_t maximumEntryCount)
+{
+    m_maxStatisticsEntries = maximumEntryCount;
+}
+    
+void WebResourceLoadStatisticsStore::setPruneEntriesDownTo(size_t pruneTargetCount)
+{
+    m_pruneEntriesDownTo = pruneTargetCount;
+}
+    
+struct StatisticsLastSeen {
+    String topPrivatelyOwnedDomain;
+    WallTime lastSeen;
+};
+    
+static void pruneResources(HashMap<String, WebCore::ResourceLoadStatistics>& statisticsMap, Vector<StatisticsLastSeen>& statisticsToPrune, size_t& numberOfEntriesToPrune)
+{
+    if (statisticsToPrune.size() > numberOfEntriesToPrune) {
+        std::sort(statisticsToPrune.begin(), statisticsToPrune.end(), [](const StatisticsLastSeen& a, const StatisticsLastSeen& b) {
+            return a.lastSeen < b.lastSeen;
+        });
+    }
+    
+    for (size_t i = 0, end = std::min(numberOfEntriesToPrune, statisticsToPrune.size()); i != end; ++i)
+        statisticsMap.remove(statisticsToPrune[i].topPrivatelyOwnedDomain);
+}
+    
+static unsigned computeImportance(const ResourceLoadStatistics& resourceStatistic)
+{
+    unsigned importance = maxImportance;
+    if (!resourceStatistic.isPrevalentResource)
+        importance -= 1;
+    if (!resourceStatistic.hadUserInteraction)
+        importance -= 2;
+    return importance;
+}
+    
+void WebResourceLoadStatisticsStore::pruneStatisticsIfNeeded()
+{
+    ASSERT(!RunLoop::isMain());
+    if (m_resourceStatisticsMap.size() <= m_maxStatisticsEntries)
+        return;
+
+    ASSERT(m_pruneEntriesDownTo <= m_maxStatisticsEntries);
+
+    size_t numberOfEntriesLeftToPrune = m_resourceStatisticsMap.size() - m_pruneEntriesDownTo;
+    ASSERT(numberOfEntriesLeftToPrune);
+    
+    Vector<StatisticsLastSeen> resourcesToPrunePerImportance[maxImportance + 1];
+    for (auto& resourceStatistic : m_resourceStatisticsMap.values())
+        resourcesToPrunePerImportance[computeImportance(resourceStatistic)].append({ resourceStatistic.highLevelDomain, resourceStatistic.lastSeen });
+    
+    for (unsigned importance = 0; numberOfEntriesLeftToPrune && importance <= maxImportance; ++importance)
+        pruneResources(m_resourceStatisticsMap, resourcesToPrunePerImportance[importance], numberOfEntriesLeftToPrune);
+
+    ASSERT(!numberOfEntriesLeftToPrune);
 }
     
 } // namespace WebKit

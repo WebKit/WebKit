@@ -2249,6 +2249,10 @@ void TestController::removeAllSessionCredentials()
 
 #if !PLATFORM(COCOA) || !WK_API_ENABLED
 
+void TestController::setStatisticsLastSeen(WKStringRef, double)
+{
+}
+    
 void TestController::setStatisticsPrevalentResource(WKStringRef, bool)
 {
 }
@@ -2332,6 +2336,14 @@ void TestController::setStatisticsGrandfatheringTime(double)
 {
 }
 
+void TestController::setStatisticsMaxStatisticsEntries(unsigned)
+{
+}
+    
+void TestController::setStatisticsPruneEntriesDownTo(unsigned)
+{
+}
+    
 void TestController::statisticsClearInMemoryAndPersistentStore()
 {
 }

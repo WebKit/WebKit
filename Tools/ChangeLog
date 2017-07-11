@@ -1,3 +1,34 @@
+2017-07-10  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Prune statistics in orders of importance
+        https://bugs.webkit.org/show_bug.cgi?id=174215
+        <rdar://problem/33164403>
+
+        Reviewed by Chris Dumez.
+
+        Nest infrastructure. Adds these functions:
+        1. testRunner.setStatisticsLastSeen()
+        2. setStatisticsMaxStatisticsEntries()
+        3. setStatisticsPruneEntriesDownTo()
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStatisticsLastSeen):
+        (WTR::TestRunner::setStatisticsMaxStatisticsEntries):
+        (WTR::TestRunner::setStatisticsPruneEntriesDownTo):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::setStatisticsLastSeen):
+        (WTR::TestController::setMaxStatisticsEntries):
+        (WTR::TestController::setPruneEntriesDownTo):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::setStatisticsLastSeen):
+        (WTR::TestController::setStatisticsMaxStatisticsEntries):
+        (WTR::TestController::setStatisticsPruneEntriesDownTo):
+
 2017-07-03  Brian Burg  <bburg@apple.com>
 
         Web Replay: remove some unused code

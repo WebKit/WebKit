@@ -222,6 +222,11 @@ void TestController::removeAllSessionCredentials()
 }
 
 #if WK_API_ENABLED
+void TestController::setStatisticsLastSeen(WKStringRef hostName, double seconds)
+{
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetLastSeen:seconds forHost:toNSString(hostName)];
+}
+    
 void TestController::setStatisticsPrevalentResource(WKStringRef hostName, bool value)
 {
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetIsPrevalentResource:value forHost:toNSString(hostName)];
@@ -346,6 +351,16 @@ void TestController::setStatisticsGrandfatheringTime(double seconds)
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetGrandfatheringTime:seconds];
 }
 
+void TestController::setStatisticsMaxStatisticsEntries(unsigned entries)
+{
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetMaxStatisticsEntries:entries];
+}
+    
+void TestController::setStatisticsPruneEntriesDownTo(unsigned entries)
+{
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetPruneEntriesDownTo:entries];
+}
+    
 void TestController::statisticsClearInMemoryAndPersistentStore()
 {
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore];

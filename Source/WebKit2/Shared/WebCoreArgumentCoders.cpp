@@ -2242,6 +2242,8 @@ void ArgumentCoder<ResourceLoadStatistics>::encode(Encoder& encoder, const WebCo
 {
     encoder << statistics.highLevelDomain;
     
+    encoder << statistics.lastSeen.secondsSinceEpoch().value();
+    
     // User interaction
     encoder << statistics.hadUserInteraction;
     encoder << statistics.mostRecentUserInteractionTime.secondsSinceEpoch().value();
@@ -2263,6 +2265,11 @@ bool ArgumentCoder<ResourceLoadStatistics>::decode(Decoder& decoder, WebCore::Re
 {
     if (!decoder.decode(statistics.highLevelDomain))
         return false;
+    
+    double lastSeenTimeAsDouble;
+    if (!decoder.decode(lastSeenTimeAsDouble))
+        return false;
+    statistics.lastSeen = WallTime::fromRawSeconds(lastSeenTimeAsDouble);
     
     // User interaction
     if (!decoder.decode(statistics.hadUserInteraction))

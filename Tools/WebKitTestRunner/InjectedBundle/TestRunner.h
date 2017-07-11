@@ -357,6 +357,7 @@ public:
     void statisticsUpdateCookiePartitioning();
     void statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value);
     void statisticsSubmitTelemetry();
+    void setStatisticsLastSeen(JSStringRef hostName, double seconds);
     void setStatisticsPrevalentResource(JSStringRef hostName, bool value);
     bool isStatisticsPrevalentResource(JSStringRef hostName);
     void setStatisticsHasHadUserInteraction(JSStringRef hostName, bool value);
@@ -373,6 +374,8 @@ public:
     void setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double);
     void setStatisticsGrandfatheringTime(double seconds);
+    void setStatisticsMaxStatisticsEntries(unsigned);
+    void setStatisticsPruneEntriesDownTo(unsigned);
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours);
     void statisticsResetToConsistentState();

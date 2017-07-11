@@ -150,6 +150,7 @@ public:
 
     void setShouldDownloadUndisplayableMIMETypes(bool value) { m_shouldDownloadUndisplayableMIMETypes = value; }
 
+    void setStatisticsLastSeen(WKStringRef hostName, double seconds);
     void setStatisticsPrevalentResource(WKStringRef hostName, bool value);
     bool isStatisticsPrevalentResource(WKStringRef hostName);
     void setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value);
@@ -170,6 +171,8 @@ public:
     void setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value);
     void setStatisticsMinimumTimeBetweenDataRecordsRemoval(double);
     void setStatisticsGrandfatheringTime(double seconds);
+    void setStatisticsMaxStatisticsEntries(unsigned);
+    void setStatisticsPruneEntriesDownTo(unsigned);
     void statisticsClearInMemoryAndPersistentStore();
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned);
     void statisticsResetToConsistentState();

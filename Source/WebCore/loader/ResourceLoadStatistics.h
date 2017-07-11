@@ -61,6 +61,8 @@ struct ResourceLoadStatistics {
 
     String highLevelDomain;
 
+    WallTime lastSeen;
+    
     // User interaction
     bool hadUserInteraction { false };
     // Timestamp. Default value is negative, 0 means it was reset.
