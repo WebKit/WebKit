@@ -356,7 +356,7 @@
 //   wider testing).
 
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
-    macro(ConstantPropertiesEnabled, constantPropertiesEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Constant Properties", "Enable CSS constant() properties") \
+    macro(ConstantPropertiesEnabled, constantPropertiesEnabled, Bool, bool, true, "Constant Properties", "Enable CSS constant() properties") \
     macro(DisplayContentsEnabled, displayContentsEnabled, Bool, bool, false, "CSS display: contents", "Enable CSS display: contents support") \
     macro(SpringTimingFunctionEnabled, springTimingFunctionEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "CSS Spring Animations", "CSS Spring Animation prototype") \
     macro(IsSecureContextAttributeEnabled, isSecureContextAttributeEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "isSecureContext attribute", "Enable isSecureContext attribute") \

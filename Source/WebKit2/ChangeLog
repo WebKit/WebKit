@@ -1,3 +1,16 @@
+2017-07-10  Dean Jackson  <dino@apple.com>
+
+        const() experimental feature should always be on by default
+        https://bugs.webkit.org/show_bug.cgi?id=174341
+        <rdar://problem/33228603>
+
+        Reviewed by Simon Fraser.
+
+        Even though this is experimental, it should be enabled by default, and
+        not follow the value of DEFAULT_EXPERIMENTAL_FEATURES_ENABLED.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-07-10  Chris Dumez  <cdumez@apple.com>
 
         [iOS] _didCommitLayerTree should avoid calling [scrollView setZoomScale] unnecessarily
