@@ -185,6 +185,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     Modules/geolocation
     Modules/indexeddb
+    Modules/mediastream
     Modules/websockets
 
     Modules/indexeddb/client
