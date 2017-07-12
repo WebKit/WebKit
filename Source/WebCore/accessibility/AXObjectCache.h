@@ -332,6 +332,9 @@ public:
     void deferRecomputeIsIgnored(Element*);
     void deferTextChangedIfNeeded(Node*);
     void performDeferredCacheUpdate();
+    
+    RefPtr<Range> rangeMatchesTextNearRange(RefPtr<Range>, const String&);
+    
 
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);

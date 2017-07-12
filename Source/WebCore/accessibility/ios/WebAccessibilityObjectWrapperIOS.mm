@@ -52,6 +52,7 @@
 #import "RuntimeApplicationChecks.h"
 #import "SVGNames.h"
 #import "SVGElement.h"
+#import "SelectionRect.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
 #import "WAKView.h"
@@ -2586,6 +2587,56 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     
     IntRect rect = m_object->boundsForRange(range);
     return [self convertRectToScreenSpace:rect];
+}
+
+- (RefPtr<Range>)rangeFromMarkers:(NSArray *)markers withText:(NSString *)text
+{
+    RefPtr<Range> originalRange = [self rangeForTextMarkers:markers];
+    if (!originalRange)
+        return nil;
+    
+    AXObjectCache* cache = m_object->axObjectCache();
+    if (!cache)
+        return nil;
+    
+    return cache->rangeMatchesTextNearRange(originalRange, text);
+}
+
+// This is only used in the layout test.
+- (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text
+{
+    return [self textMarkersForRange:[self rangeFromMarkers:markers withText:text]];
+}
+
+- (NSArray *)textRectsFromMarkers:(NSArray *)markers withText:(NSString *)text
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+    
+    RefPtr<Range> range = [self rangeFromMarkers:markers withText:text];
+    if (!range || range->collapsed())
+        return nil;
+    
+    Vector<WebCore::SelectionRect> selectionRects;
+    range->collectSelectionRectsWithoutUnionInteriorLines(selectionRects);
+    return [self rectsForSelectionRects:selectionRects];
+}
+
+- (NSArray *)rectsForSelectionRects:(const Vector<WebCore::SelectionRect>&)selectionRects
+{
+    unsigned size = selectionRects.size();
+    if (!size)
+        return nil;
+    
+    NSMutableArray *rects = [NSMutableArray arrayWithCapacity:size];
+    for (unsigned i = 0; i < size; i++) {
+        const WebCore::SelectionRect& coreRect = selectionRects[i];
+        IntRect selectionRect = coreRect.rect();
+        CGRect rect = [self convertRectToScreenSpace:selectionRect];
+        [rects addObject:[NSValue valueWithRect:rect]];
+    }
+    
+    return rects;
 }
 
 - (WebAccessibilityTextMarker *)textMarkerForPoint:(CGPoint)point
