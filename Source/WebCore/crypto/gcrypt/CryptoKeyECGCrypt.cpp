@@ -476,9 +476,108 @@ Vector<uint8_t> CryptoKeyEC::platformExportSpki() const
 
 Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 {
-    notImplemented();
+    PAL::TASN1::Structure ecParameters;
+    {
+        // Create the `ECParameters` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.ECParameters", &ecParameters))
+            return { };
 
-    return { };
+        // Select the `namedCurve` object identifier as the target `ECParameters` choice.
+        if (!PAL::TASN1::writeElement(ecParameters, "", "namedCurve", 1))
+            return { };
+
+        // Write out the EC curve identifier under `namedCurve`.
+        if (!PAL::TASN1::writeElement(ecParameters, "namedCurve", curveIdentifier(m_curve), 1))
+            return { };
+    }
+
+    PAL::TASN1::Structure ecPrivateKey;
+    {
+        // Create the `ECPrivateKey` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.ECPrivateKey", &ecPrivateKey))
+            return { };
+
+        // Write out '1' under `version`.
+        if (!PAL::TASN1::writeElement(ecPrivateKey, "version", "1", 0))
+            return { };
+
+        // Construct the EC context that we'll use to retrieve private and public key data.
+        PAL::GCrypt::Handle<gcry_ctx_t> context;
+        gcry_error_t error = gcry_mpi_ec_new(&context, m_platformKey, nullptr);
+        if (error != GPG_ERR_NO_ERROR)
+            return { };
+
+        {
+            // Retrieve the `d` MPI that holds the private key data.
+            PAL::GCrypt::Handle<gcry_mpi_t> dMPI(gcry_mpi_ec_get_mpi("d", context, 0));
+            if (!dMPI)
+                return { };
+
+            // Retrieve the MPI data and write it out under `privateKey`.
+            auto data = mpiData(dMPI);
+            if (!data || !PAL::TASN1::writeElement(ecPrivateKey, "privateKey", data->data(), data->size()))
+                return { };
+        }
+
+        // Eliminate the optional `parameters` element.
+        if (!PAL::TASN1::writeElement(ecPrivateKey, "parameters", nullptr, 0))
+            return { };
+
+        {
+            // Retrieve the `q` MPI that holds the public key data.
+            PAL::GCrypt::Handle<gcry_mpi_t> qMPI(gcry_mpi_ec_get_mpi("q", context, 0));
+            if (!qMPI)
+                return { };
+
+            // Retrieve the MPI data and write it out under `publicKey`. Because this is a
+            // bit string parameter, the data size has to be multiplied by 8.
+            auto data = mpiData(qMPI);
+            if (!data || !PAL::TASN1::writeElement(ecPrivateKey, "publicKey", data->data(), data->size() * 8))
+                return { };
+        }
+    }
+
+    PAL::TASN1::Structure pkcs8;
+    {
+        // Create the `PrivateKeyInfo` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.PrivateKeyInfo", &pkcs8))
+            return { };
+
+        // Write out '0' under `version`.
+        if (!PAL::TASN1::writeElement(pkcs8, "version", "0", 0))
+            return { };
+
+        // Write out the id-ecPublicKey identifier under `privateKeyAlgorithm.algorithm`.
+        // FIXME: Per specification this should write out id-ecDH when the ECDH algorithm
+        // is specified for this CryptoKeyEC object, but not even the W3C tests expect that.
+        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.algorithm", "1.2.840.10045.2.1", 1))
+            return { };
+
+        // Write out the `ECParameters` data under `privateKeyAlgorithm.parameters`.
+        {
+            auto data = PAL::TASN1::encodedData(ecParameters, "");
+            if (!data || !PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.parameters", data->data(), data->size()))
+                return { };
+        }
+
+        // Write out the `ECPrivateKey` data under `privateKey`.
+        {
+            auto data = PAL::TASN1::encodedData(ecPrivateKey, "");
+            if (!data || !PAL::TASN1::writeElement(pkcs8, "privateKey", data->data(), data->size()))
+                return { };
+        }
+
+        // Eliminate the optional `attributes` element.
+        if (!PAL::TASN1::writeElement(pkcs8, "attributes", nullptr, 0))
+            return { };
+    }
+
+    // Retrieve the encoded `PrivateKeyInfo` data and return it.
+    auto result = PAL::TASN1::encodedData(pkcs8, "");
+    if (!result)
+        return { };
+
+    return WTFMove(result.value());
 }
 
 } // namespace WebCore

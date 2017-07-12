@@ -1,5 +1,42 @@
 2017-07-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement CryptoKeyEC PKCS#8 exports
+        https://bugs.webkit.org/show_bug.cgi?id=173648
+
+        Reviewed by Jiewen Tan.
+
+        Implement the PKCS#8 export operation for EC keys for platforms that use
+        libgcrypt.
+
+        First, the `ECParameters` and the `ECPrivateKey` ASN.1 structures are created
+        and filled out accordingly. For the former, the appropriate object identifier
+        is written under the `namedCurve` element of the structure. For the latter, we
+        write out '1' under `version`, and eliminate the optional `parameters` element.
+        An libgcrypt EC context is then used to retrieve the private and public key
+        MPIs that are then written out under the `privateKey` and `publicKey` elements,
+        respectively.
+
+        After that, we can proceed to create and fill out the `PrivateKeyInfo` structure.
+        0 is written out under the `version` element, and the id-ecPublicKey object
+        identifier is written out under the `privateKeyAlgorithm.algorithm` element. This
+        doesn't strictly follow the specification, since the id-ecDH identifier should be
+        used for ECDH keys, but no test in WebKit or the web-platform-tests suite covers
+        this, so this specific detail should be revisited later.
+
+        Data of the previously-constructed `ECParameters` structure is retrieved and
+        written out under the `privateKeyAlgorithm.parameters` element. Similarly is done
+        for the `ECPrivateKey` structure, writing out its data under the `privateKey`
+        element. Finally, the optional `attributes` element of the `PrivateKeyInfo`
+        structure is eliminated, and the encoded data of this structure is retrieved and
+        returned.
+
+        No new tests -- relevant tests are now passing and are unskipped.
+
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::CryptoKeyEC::platformExportPkcs8):
+
+2017-07-12  Zan Dobersek  <zdobersek@igalia.com>
+
         [WPE] Use libepoxy
         https://bugs.webkit.org/show_bug.cgi?id=172104
 
