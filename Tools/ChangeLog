@@ -1,3 +1,16 @@
+2017-07-12  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r219409.
+
+        The revision caused the Windows builds to fail.
+
+        Reverted changeset:
+
+        "AX: [iOS] Implement a way to retrieve a text marker range
+        with desired text that is closest to a position"
+        https://bugs.webkit.org/show_bug.cgi?id=174393
+        http://trac.webkit.org/changeset/219409
+
 2017-07-12  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] Implement a way to retrieve a text marker range with desired text that is closest to a position

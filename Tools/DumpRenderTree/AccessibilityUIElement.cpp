@@ -927,8 +927,8 @@ static JSValueRef textMarkerForPointCallback(JSContextRef context, JSObjectRef f
 
 static JSValueRef textMarkerRangeForMarkersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    AccessibilityTextMarker* startMarker = nullptr;
-    AccessibilityTextMarker* endMarker = nullptr;
+    AccessibilityTextMarker* startMarker = 0;
+    AccessibilityTextMarker* endMarker = 0;
     if (argumentCount == 2) {
         startMarker = toTextMarker(JSValueToObject(context, arguments[0], exception));
         endMarker = toTextMarker(JSValueToObject(context, arguments[1], exception));
@@ -1483,23 +1483,6 @@ static JSValueRef hasContainedByFieldsetTraitCallback(JSContextRef context, JSOb
     return JSValueMakeBoolean(context, toAXElement(thisObject)->hasContainedByFieldsetTrait());
 }
 
-static JSValueRef textMarkerRangeMatchesTextNearMarkersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    JSStringRef searchText = nullptr;
-    AccessibilityTextMarker* startMarker = nullptr;
-    AccessibilityTextMarker* endMarker = nullptr;
-    if (argumentCount == 3) {
-        searchText = JSValueToStringCopy(context, arguments[0], exception);
-        startMarker = toTextMarker(JSValueToObject(context, arguments[1], exception));
-        endMarker = toTextMarker(JSValueToObject(context, arguments[2], exception));
-    }
-    
-    JSValueRef result = AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange(context, toAXElement(thisObject)->textMarkerRangeMatchesTextNearMarkers(searchText, startMarker, endMarker));
-    if (searchText)
-        JSStringRelease(searchText);
-    return result;
-}
-
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
@@ -1721,11 +1704,6 @@ AccessibilityTextMarker AccessibilityUIElement::nextSentenceEndTextMarkerForText
     return nullptr;
 }
 
-AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*)
-{
-    return nullptr;
-}
-
 #endif
 
 // Destruction
@@ -1942,7 +1920,6 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "scrollPageRight", scrollPageRightCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "assistiveTechnologySimulatedFocus", assistiveTechnologySimulatedFocusCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "fieldsetAncestorElement", fieldsetAncestorElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "textMarkerRangeMatchesTextNearMarkers", textMarkerRangeMatchesTextNearMarkersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif
         { 0, 0, 0 }
     };

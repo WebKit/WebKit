@@ -306,8 +306,6 @@ public:
     bool isTextArea() const;
     bool isSearchField() const;
     
-    AccessibilityTextMarkerRange textMarkerRangeMatchesTextNearMarkers(JSStringRef, AccessibilityTextMarker*, AccessibilityTextMarker*);
-    
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC) && !PLATFORM(IOS)
