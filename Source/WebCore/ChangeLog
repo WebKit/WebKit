@@ -1,3 +1,19 @@
+2017-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crashes in WebCore::PasteboardHelper::fillSelectionData when source file of drag is unavailable
+        https://bugs.webkit.org/show_bug.cgi?id=174161
+
+        Reviewed by Michael Catanzaro.
+
+        It seems selection data could contain an empty string, in which case gtk_selection_data_get_data() returns a
+        valid pointer, but gtk_selection_data_get_length() returns 0. When this happens we end up trying to split an
+        empty string resulting in an empty vector, but we unconditionally access the first element of the vector.
+
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::selectionDataToUTF8String): Return a null string in case selection data length is 0.
+        (WebCore::PasteboardHelper::fillSelectionData): Return early if selection data length is 0, instead of checking
+        the selection data pointer.
+
 2017-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable FILE_LOCK and implement lockFile and unlockFile
