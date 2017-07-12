@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-class MacroAssemblerMIPS : public AbstractMacroAssembler<MIPSAssembler, MacroAssemblerMIPS> {
+class MacroAssemblerMIPS : public AbstractMacroAssembler<MIPSAssembler> {
 public:
     typedef MIPSRegisters::FPRegisterID FPRegisterID;
     static const unsigned numGPRs = 32;

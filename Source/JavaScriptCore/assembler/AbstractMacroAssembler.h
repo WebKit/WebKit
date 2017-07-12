@@ -76,10 +76,10 @@ public:
     }
 };
 
-template <class AssemblerType, class MacroAssemblerType>
+template <class AssemblerType>
 class AbstractMacroAssembler : public AbstractMacroAssemblerBase {
 public:
-    typedef AbstractMacroAssembler<AssemblerType, MacroAssemblerType> AbstractMacroAssemblerType;
+    typedef AbstractMacroAssembler<AssemblerType> AbstractMacroAssemblerType;
     typedef AssemblerType AssemblerType_T;
 
     typedef MacroAssemblerCodePtr CodePtr;
@@ -371,8 +371,7 @@ public:
     // A Label records a point in the generated instruction stream, typically such that
     // it may be used as a destination for a jump.
     class Label {
-        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
-        friend class AbstractMacroAssembler;
+        friend class AbstractMacroAssembler<AssemblerType>;
         friend struct DFG::OSRExit;
         friend class Jump;
         friend class MacroAssemblerCodeRef;
@@ -408,8 +407,7 @@ public:
     //
     // addPtr(TrustedImmPtr(i), a, b)
     class ConvertibleLoadLabel {
-        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
-        friend class AbstractMacroAssembler;
+        friend class AbstractMacroAssembler<AssemblerType>;
         friend class LinkBuffer;
         
     public:
@@ -432,8 +430,7 @@ public:
     // A DataLabelPtr is used to refer to a location in the code containing a pointer to be
     // patched after the code has been generated.
     class DataLabelPtr {
-        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
-        friend class AbstractMacroAssembler;
+        friend class AbstractMacroAssembler<AssemblerType>;
         friend class LinkBuffer;
     public:
         DataLabelPtr()
@@ -456,8 +453,7 @@ public:
     // A DataLabel32 is used to refer to a location in the code containing a 32-bit constant to be
     // patched after the code has been generated.
     class DataLabel32 {
-        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
-        friend class AbstractMacroAssembler;
+        friend class AbstractMacroAssembler<AssemblerType>;
         friend class LinkBuffer;
     public:
         DataLabel32()
@@ -480,8 +476,7 @@ public:
     // A DataLabelCompact is used to refer to a location in the code containing a
     // compact immediate to be patched after the code has been generated.
     class DataLabelCompact {
-        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
-        friend class AbstractMacroAssembler;
+        friend class AbstractMacroAssembler<AssemblerType>;
         friend class LinkBuffer;
     public:
         DataLabelCompact()
@@ -511,8 +506,7 @@ public:
     // relative offset such that when executed it will call to the desired
     // destination.
     class Call {
-        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
-        friend class AbstractMacroAssembler;
+        friend class AbstractMacroAssembler<AssemblerType>;
 
     public:
         enum Flags {
@@ -557,8 +551,7 @@ public:
     // relative offset such that when executed it will jump to the desired
     // destination.
     class Jump {
-        template<class TemplateAssemblerType, class TemplateMacroAssemblerType>
-        friend class AbstractMacroAssembler;
+        friend class AbstractMacroAssembler<AssemblerType>;
         friend class Call;
         friend struct DFG::OSRExit;
         friend class LinkBuffer;
@@ -842,90 +835,6 @@ public:
         AssemblerType::cacheFlush(code, size);
     }
 
-#if ENABLE(MASM_PROBE)
-
-    struct CPUState {
-        #define DECLARE_REGISTER(_type, _regName) \
-            _type _regName;
-        FOR_EACH_CPU_REGISTER(DECLARE_REGISTER)
-        #undef DECLARE_REGISTER
-
-        static const char* gprName(RegisterID regID)
-        {
-            switch (regID) {
-                #define DECLARE_REGISTER(_type, _regName) \
-                case RegisterID::_regName: \
-                    return #_regName;
-                FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
-                #undef DECLARE_REGISTER
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        }
-
-        static const char* fprName(FPRegisterID regID)
-        {
-            switch (regID) {
-                #define DECLARE_REGISTER(_type, _regName) \
-                case FPRegisterID::_regName: \
-                    return #_regName;
-                FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
-                #undef DECLARE_REGISTER
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        }
-
-        void*& gpr(RegisterID regID)
-        {
-            switch (regID) {
-                #define DECLARE_REGISTER(_type, _regName) \
-                case RegisterID::_regName: \
-                    return _regName;
-                FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
-                #undef DECLARE_REGISTER
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        }
-
-        double& fpr(FPRegisterID regID)
-        {
-            switch (regID) {
-                #define DECLARE_REGISTER(_type, _regName) \
-                case FPRegisterID::_regName: \
-                    return _regName;
-                FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
-                #undef DECLARE_REGISTER
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        }
-    };
-
-    // This function emits code to preserve the CPUState (e.g. registers),
-    // call a user supplied probe function, and restore the CPUState before
-    // continuing with other JIT generated code.
-    //
-    // The user supplied probe function will be called with a single pointer to
-    // a ProbeContext struct (defined above) which contains, among other things,
-    // the preserved CPUState. This allows the user probe function to inspect
-    // the CPUState at that point in the JIT generated code.
-    //
-    // If the user probe function alters the register values in the ProbeContext,
-    // the altered values will be loaded into the CPU registers when the probe
-    // returns.
-    //
-    // The ProbeContext is stack allocated and is only valid for the duration
-    // of the call to the user probe function.
-    //
-    // Note: probe() should be implemented by the target specific MacroAssembler.
-    // This prototype is only provided here to document the interface.
-
-    void probe(ProbeFunction, void* arg);
-
-#endif // ENABLE(MASM_PROBE)
-
     AssemblerType m_assembler;
     
     static void linkJump(void* code, Jump jump, CodeLocationLabel target)
@@ -1127,11 +1036,11 @@ protected:
     friend class LinkBuffer;
 }; // class AbstractMacroAssembler
 
-template <class AssemblerType, class MacroAssemblerType>
-inline typename AbstractMacroAssembler<AssemblerType, MacroAssemblerType>::BaseIndex
-AbstractMacroAssembler<AssemblerType, MacroAssemblerType>::Address::indexedBy(
-    typename AbstractMacroAssembler<AssemblerType, MacroAssemblerType>::RegisterID index,
-    typename AbstractMacroAssembler<AssemblerType, MacroAssemblerType>::Scale scale) const
+template <class AssemblerType>
+inline typename AbstractMacroAssembler<AssemblerType>::BaseIndex
+AbstractMacroAssembler<AssemblerType>::Address::indexedBy(
+    typename AbstractMacroAssembler<AssemblerType>::RegisterID index,
+    typename AbstractMacroAssembler<AssemblerType>::Scale scale) const
 {
     return BaseIndex(base, index, scale, offset);
 }

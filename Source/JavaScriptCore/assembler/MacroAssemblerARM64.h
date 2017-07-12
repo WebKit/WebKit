@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-class MacroAssemblerARM64 : public AbstractMacroAssembler<ARM64Assembler, MacroAssemblerARM64> {
+class MacroAssemblerARM64 : public AbstractMacroAssembler<ARM64Assembler> {
 public:
     static const unsigned numGPRs = 32;
     static const unsigned numFPRs = 32;
@@ -3784,10 +3784,6 @@ public:
     {
         ARM64Assembler::repatchPointer(call.dataLabelPtrAtOffset(REPATCH_OFFSET_CALL_TO_POINTER).dataLocation(), destination.executableAddress());
     }
-
-#if ENABLE(MASM_PROBE)
-    void probe(ProbeFunction, void* arg);
-#endif // ENABLE(MASM_PROBE)
 
 protected:
     ALWAYS_INLINE Jump makeBranch(ARM64Assembler::Condition cond)

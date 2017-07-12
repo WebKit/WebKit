@@ -472,7 +472,7 @@ static void arm64ProbeTrampoline(ProbeContext* context)
     }
 }
 
-void MacroAssemblerARM64::probe(ProbeFunction function, void* arg)
+void MacroAssembler::probe(ProbeFunction function, void* arg)
 {
     sub64(TrustedImm32(7 * 8), sp);
 

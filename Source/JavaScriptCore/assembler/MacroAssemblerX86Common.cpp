@@ -528,7 +528,7 @@ asm (
 // position before we push the ProbeContext frame. The saved rip will point to
 // the address of the instruction immediately following the probe. 
 
-void MacroAssemblerX86Common::probe(ProbeFunction function, void* arg)
+void MacroAssembler::probe(ProbeFunction function, void* arg)
 {
     push(RegisterID::esp);
     push(RegisterID::eax);

@@ -1835,10 +1835,30 @@ public:
     }
 
 #if ENABLE(MASM_PROBE)
-    using MacroAssemblerBase::probe;
+    struct CPUState;
+
+    // This function emits code to preserve the CPUState (e.g. registers),
+    // call a user supplied probe function, and restore the CPUState before
+    // continuing with other JIT generated code.
+    //
+    // The user supplied probe function will be called with a single pointer to
+    // a ProbeContext struct (defined below) which contains, among other things,
+    // the preserved CPUState. This allows the user probe function to inspect
+    // the CPUState at that point in the JIT generated code.
+    //
+    // If the user probe function alters the register values in the ProbeContext,
+    // the altered values will be loaded into the CPU registers when the probe
+    // returns.
+    //
+    // The ProbeContext is stack allocated and is only valid for the duration
+    // of the call to the user probe function.
+    //
+    // Note: this version of probe() should be implemented by the target specific
+    // MacroAssembler.
+    void probe(ProbeFunction, void* arg);
 
     void probe(std::function<void(ProbeContext*)>);
-#endif
+#endif // ENABLE(MASM_PROBE)
 
     // Let's you print from your JIT generated code.
     // This only works if ENABLE(MASM_PROBE). Otherwise, print() is a no-op.
@@ -1850,6 +1870,76 @@ public:
 };
 
 #if ENABLE(MASM_PROBE)
+
+#define DECLARE_REGISTER(_type, _regName) \
+    _type _regName;
+
+struct MacroAssembler::CPUState {
+    FOR_EACH_CPU_REGISTER(DECLARE_REGISTER)
+
+    static inline const char* gprName(RegisterID);
+    static inline const char* fprName(FPRegisterID);
+    inline void*& gpr(RegisterID);
+    inline double& fpr(FPRegisterID);
+};
+#undef DECLARE_REGISTER
+
+inline const char* MacroAssembler::CPUState::gprName(RegisterID regID)
+{
+#define DECLARE_REGISTER(_type, _regName) \
+    case RegisterID::_regName: \
+        return #_regName;
+
+    switch (regID) {
+        FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+#undef DECLARE_REGISTER
+}
+
+inline const char* MacroAssembler::CPUState::fprName(FPRegisterID regID)
+{
+#define DECLARE_REGISTER(_type, _regName) \
+    case FPRegisterID::_regName: \
+        return #_regName;
+
+    switch (regID) {
+        FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+#undef DECLARE_REGISTER
+}
+
+inline void*& MacroAssembler::CPUState::gpr(RegisterID regID)
+{
+#define DECLARE_REGISTER(_type, _regName) \
+    case RegisterID::_regName: \
+        return _regName;
+
+    switch (regID) {
+        FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+#undef DECLARE_REGISTER
+}
+
+inline double& MacroAssembler::CPUState::fpr(FPRegisterID regID)
+{
+#define DECLARE_REGISTER(_type, _regName) \
+    case FPRegisterID::_regName: \
+        return _regName;
+
+    switch (regID) {
+        FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+#undef DECLARE_REGISTER
+}
+
 struct ProbeContext {
     using CPUState = MacroAssembler::CPUState;
     using RegisterID = MacroAssembler::RegisterID;

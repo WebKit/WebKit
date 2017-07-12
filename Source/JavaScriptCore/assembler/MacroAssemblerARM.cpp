@@ -349,7 +349,7 @@ asm (
 );
 #endif // COMPILER(GCC_OR_CLANG)
 
-void MacroAssemblerARM::probe(ProbeFunction function, void* arg)
+void MacroAssembler::probe(ProbeFunction function, void* arg)
 {
     push(RegisterID::sp);
     push(RegisterID::lr);
