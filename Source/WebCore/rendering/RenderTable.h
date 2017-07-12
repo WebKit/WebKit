@@ -366,6 +366,7 @@ private:
     LayoutUnit m_borderEnd;
     mutable LayoutUnit m_columnOffsetTop;
     mutable LayoutUnit m_columnOffsetHeight;
+    bool m_inRecursiveSectionMovedWithPagination { false };
 };
 
 inline RenderTableSection* RenderTable::topSection() const

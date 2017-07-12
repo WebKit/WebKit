@@ -1,3 +1,22 @@
+2017-07-12  Zalan Bujtas  <zalan@apple.com>
+
+        Paginated mode: Infinite recursion in RenderTable::layout
+        https://bugs.webkit.org/show_bug.cgi?id=174413
+
+        Reviewed by Simon Fraser.
+
+        This patch is a workaround for avoiding infinite recursion when the table layout does not stabilize.
+        Apparently we leak some context (computed padding in this case) from the current to the subsequent layout.
+        The subsequent layouts always end up producing different line heights for some of the cells in the <thead>.
+        In paginated mode, when the section moves (<thead>, <tbody> etc) we call layout again recursively.
+        This could lead to infinite recursion for unstable table layout.
+
+        Unable to come up with a reduction yet.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTable.h:
+
 2017-07-12  Youenn Fablet  <youenn@apple.com>
 
         WebRTC: Incorrect sdpMLineIndex for video breaks Firefox interop

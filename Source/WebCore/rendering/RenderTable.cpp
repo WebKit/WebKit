@@ -47,6 +47,7 @@
 #include "RenderTableSection.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
+#include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
 
 namespace WebCore {
@@ -601,8 +602,13 @@ void RenderTable::layout()
 
     bool paginated = view().layoutState() && view().layoutState()->isPaginated();
     if (sectionMoved && paginated) {
-        markForPaginationRelayoutIfNeeded();
-        layoutIfNeeded();
+        // FIXME: Table layout should always stabilize even when section moves (see webkit.org/b/174412).
+        if (!m_inRecursiveSectionMovedWithPagination) {
+            SetForScope<bool> paginatedSectionMoved(m_inRecursiveSectionMovedWithPagination, true);
+            markForPaginationRelayoutIfNeeded();
+            layoutIfNeeded();
+        } else
+            ASSERT_NOT_REACHED();
     }
     
     // FIXME: This value isn't the intrinsic content logical height, but we need
