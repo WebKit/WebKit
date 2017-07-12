@@ -1,3 +1,20 @@
+2017-07-12  Antoine Quint  <graouts@apple.com>
+
+        Playback controls should not hide while AirPlay is active
+        https://bugs.webkit.org/show_bug.cgi?id=174422
+        <rdar://problem/33011477>
+
+        Reviewed by Eric Carlson.
+
+        We now also track changes in AirPlay playback status and account for it when identifying whether we
+        ought to let media controls automatically hide, which should only happen if the media is playing and
+        not playing back through AirPlay.
+
+        * Modules/modern-media-controls/media/controls-visibility-support.js:
+        (ControlsVisibilitySupport.prototype.get mediaEvents):
+        (ControlsVisibilitySupport.prototype._updateControls):
+        (ControlsVisibilitySupport):
+
 2017-07-12  Daniel Bates  <dabates@apple.com>
 
         Attempt to fix the build following <https://trac.webkit.org/changeset/219407>

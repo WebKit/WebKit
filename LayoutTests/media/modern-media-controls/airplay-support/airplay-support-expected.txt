@@ -7,11 +7,13 @@ Making AirPlay routes available.
 PASS mediaController.controls.airplayButton.enabled is true
 PASS mediaController.controls.airplayButton.on is false
 PASS mediaController.controls.muteButton.enabled is true
+PASS mediaController.controls.autoHideController.fadesWhileIdle is true
 
 Entering AirPlay playback mode.
 PASS mediaController.controls.airplayButton.enabled is true
 PASS mediaController.controls.airplayButton.on is true
 PASS mediaController.controls.muteButton.enabled is false
+PASS mediaController.controls.autoHideController.fadesWhileIdle is false
 
 PASS successfullyParsed is true
 

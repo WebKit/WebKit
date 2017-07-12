@@ -45,7 +45,7 @@ class ControlsVisibilitySupport extends MediaControllerSupport
 
     get mediaEvents()
     {
-        return ["loadedmetadata", "play", "pause", "webkitfullscreenchange"];
+        return ["loadedmetadata", "play", "pause", "webkitfullscreenchange", "webkitcurrentplaybacktargetiswirelesschanged"];
     }
 
     get tracksToMonitor()
@@ -69,7 +69,7 @@ class ControlsVisibilitySupport extends MediaControllerSupport
 
         const controls = this.mediaController.controls;
         controls.visible = shouldShowControls;
-        controls.autoHideController.fadesWhileIdle = isVideo ? !media.paused : false;
+        controls.autoHideController.fadesWhileIdle = isVideo ? !media.paused && !media.webkitCurrentPlaybackTargetIsWireless : false;
     }
 
 }
