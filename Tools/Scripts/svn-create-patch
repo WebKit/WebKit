@@ -143,7 +143,7 @@ sub diffOptionsForFile($)
 {
     my ($file) = @_;
 
-    my $options = "uaNp";
+    my $options = "uap";
 
     if (my $hunkHeaderLineRegEx = hunkHeaderLineRegExForFile($file)) {
         $options .= "F'$hunkHeaderLineRegEx'";
@@ -254,6 +254,8 @@ sub generateFileList($\%)
     my ($statPath, $diffFiles) = @_;
     my %testDirectories = map { $_ => 1 } qw(LayoutTests);
     my $escapedStatPath = escapeSubversionPath($statPath);
+    my @deletedFiles;
+
     open STAT, "svn stat '$escapedStatPath' |" or die;
     while (my $line = <STAT>) {
         # svn may output a different EOL sequence than $/, so avoid chomp.
@@ -269,6 +271,12 @@ sub generateFileList($\%)
         }
         next if -d $path;
         my $modificationType = findModificationType($stat);
+        # svn diff -N doesn't work on svn 1.9, so only return top-level deletions.
+        if ($modificationType eq "deletion") {
+            push @deletedFiles, $path;
+            next;
+        }
+
         if ($modificationType) {
             $diffFiles->{$path}->{path} = $path;
             $diffFiles->{$path}->{modificationType} = $modificationType;
@@ -284,6 +292,22 @@ sub generateFileList($\%)
         }
     }
     close STAT;
+
+    foreach my $path (@deletedFiles) {
+        my $isInsideDeletedDirectory = 0;
+        foreach my $compare (@deletedFiles) {
+            next if $compare eq $path;
+            if (substr($path, 0, length($compare)) eq $compare) {
+                $isInsideDeletedDirectory = 1;
+                last;
+            }
+        }
+        next if $isInsideDeletedDirectory;
+        $diffFiles->{$path}->{path} = $path;
+        $diffFiles->{$path}->{modificationType} = "deletion";
+        $diffFiles->{$path}->{isBinary} = isBinaryMimeType($path);
+        $diffFiles->{$path}->{isTestFile} = exists $testDirectories{(File::Spec->splitdir($path))[0]} ? 1 : 0;
+    }
 }
 
 sub hunkHeaderLineRegExForFile($)

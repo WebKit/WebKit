@@ -1,3 +1,16 @@
+2017-07-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Do not duplicate files when deleting directories with svn 1.9
+        https://bugs.webkit.org/show_bug.cgi?id=174339
+        <rdar://problem/33226781>
+
+        Reviewed by David Kilzer.
+
+        * Scripts/svn-create-patch:
+        (diffOptionsForFile): No longer pass -N option, since this does not work in SVN 1.9.4.
+        (generateFileList): Determine which files are deleted because they are part of a
+        directory being deleted.
+
 2017-07-11  Dean Jackson  <dino@apple.com>
 
         Rolling out r219372.
