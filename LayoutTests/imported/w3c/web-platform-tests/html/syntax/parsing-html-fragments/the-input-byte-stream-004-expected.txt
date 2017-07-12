@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 1: SyntaxError: Invalid character '\u10799'
-CONSOLE MESSAGE: line 1: SyntaxError: Invalid character '\u10799'
+CONSOLE MESSAGE: line 1: SyntaxError: Invalid character '\u2a2f'
+CONSOLE MESSAGE: line 1: SyntaxError: Invalid character '\u2a2f'
 CONSOLE MESSAGE: line 25: ReferenceError: Can't find variable: test
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600

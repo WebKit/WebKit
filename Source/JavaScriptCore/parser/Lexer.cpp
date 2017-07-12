@@ -525,7 +525,7 @@ String Lexer<T>::invalidCharacterMessage() const
     case 96:
         return ASCIILiteral("Invalid character: '`'");
     default:
-        return String::format("Invalid character '\\u%04u'", static_cast<unsigned>(m_current));
+        return String::format("Invalid character '\\u%04x'", static_cast<unsigned>(m_current));
     }
 }
 

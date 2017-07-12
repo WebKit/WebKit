@@ -189,12 +189,12 @@ PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescri
 PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f.__proto__, 'caller'); return descriptor.get === descriptor.set; })() is true
 PASS (function f(arg){'use strict'; var descriptor = Object.getOwnPropertyDescriptor(f.__proto__, 'arguments'); return descriptor.get === descriptor.set; })() is true
 PASS 'use strict'; (function f() { for(var i in this); })(); true; is true
-PASS 'use strict'̻ threw exception SyntaxError: Invalid character '\u0827'.
-PASS (function(){'use strict'̻}) threw exception SyntaxError: Invalid character '\u0827'.
+PASS 'use strict'̻ threw exception SyntaxError: Invalid character '\u033b'.
+PASS (function(){'use strict'̻}) threw exception SyntaxError: Invalid character '\u033b'.
 PASS 'use strict'5.f threw exception SyntaxError: No identifiers allowed directly after numeric literal.
 PASS (function(){'use strict'5.f}) threw exception SyntaxError: No identifiers allowed directly after numeric literal.
-PASS 'use strict';̻ threw exception SyntaxError: Invalid character '\u0827'.
-PASS (function(){'use strict';̻}) threw exception SyntaxError: Invalid character '\u0827'.
+PASS 'use strict';̻ threw exception SyntaxError: Invalid character '\u033b'.
+PASS (function(){'use strict';̻}) threw exception SyntaxError: Invalid character '\u033b'.
 PASS 'use strict';5.f threw exception SyntaxError: No identifiers allowed directly after numeric literal.
 PASS (function(){'use strict';5.f}) threw exception SyntaxError: No identifiers allowed directly after numeric literal.
 PASS 'use strict';1-(eval=1); threw exception SyntaxError: Cannot modify 'eval' in strict mode..

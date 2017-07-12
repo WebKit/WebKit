@@ -1,3 +1,18 @@
+2017-07-12  Tooru Fujisawa [:arai]  <arai.unmht@gmail.com>
+
+        Wrong radix used in Unicode Escape in invalid character error message
+        https://bugs.webkit.org/show_bug.cgi?id=174419
+
+        Reviewed by Alex Christensen.
+
+        * fast/loader/cache-encoding-expected.txt:
+        * http/tests/preload/preload-encoding-expected.txt:
+        * js/basic-strict-mode-expected.txt:
+        * js/kde/parse-expected.txt:
+        * loader/reload-subresource-when-type-changes-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/html/syntax/parsing-html-fragments/the-input-byte-stream-003-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/html/syntax/parsing-html-fragments/the-input-byte-stream-004-expected.txt:
+
 2017-07-12  Youenn Fablet  <youenn@apple.com>
 
         WebRTC: Incorrect sdpMLineIndex for video breaks Firefox interop
