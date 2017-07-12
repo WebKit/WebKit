@@ -1,3 +1,17 @@
+2017-07-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Enable FILE_LOCK and implement lockFile and unlockFile
+        https://bugs.webkit.org/show_bug.cgi?id=174357
+
+        Reviewed by Michael Catanzaro.
+
+        Implement lockFile and unlockFile using flock().
+
+        * PlatformWPE.cmake:
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::lockFile):
+        (WebCore::unlockFile):
+
 2017-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use FastAllocator in STL containers

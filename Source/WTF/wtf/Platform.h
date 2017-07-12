@@ -518,6 +518,7 @@
 #define USE_HARFBUZZ 1
 #define USE_SOUP 1
 #define USE_WEBP 1
+#define USE_FILE_LOCK 1
 #endif
 
 #if PLATFORM(GTK)

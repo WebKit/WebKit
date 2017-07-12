@@ -25,9 +25,11 @@
 
 #include "FileMetadata.h"
 #include "NotImplemented.h"
+#include <gio/gfiledescriptorbased.h>
 #include <gio/gio.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <sys/file.h>
 #include <wtf/UUID.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GRefPtr.h>
@@ -416,5 +418,24 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 
     return g_file_info_get_attribute_uint32(fileInfo.get(), G_FILE_ATTRIBUTE_UNIX_DEVICE);
 }
+
+#if USE(FILE_LOCK)
+bool lockFile(PlatformFileHandle handle, FileLockMode lockMode)
+{
+    COMPILE_ASSERT(LOCK_SH == LockShared, LockSharedEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_EX == LockExclusive, LockExclusiveEncodingIsAsExpected);
+    COMPILE_ASSERT(LOCK_NB == LockNonBlocking, LockNonBlockingEncodingIsAsExpected);
+    auto* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(handle));
+    int result = flock(g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream)), lockMode);
+    return result != -1;
+}
+
+bool unlockFile(PlatformFileHandle handle)
+{
+    auto* inputStream = g_io_stream_get_input_stream(G_IO_STREAM(handle));
+    int result = flock(g_file_descriptor_based_get_fd(G_FILE_DESCRIPTOR_BASED(inputStream)), LOCK_UN);
+    return result != -1;
+}
+#endif // USE(FILE_LOCK)
 
 }
