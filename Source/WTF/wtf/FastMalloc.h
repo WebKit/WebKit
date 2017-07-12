@@ -124,11 +124,11 @@ public:
     {
         fastFree(pointer);
     }
-
-    template<typename U> bool operator==(const FastAllocator<U>&) { return true; }
-
-    template<typename U> bool operator!=(const FastAllocator<U>&) { return false; }
 };
+
+template<typename T, typename U> bool operator==(const FastAllocator<T>&, const FastAllocator<U>&) { return true; }
+template<typename T, typename U> bool operator!=(const FastAllocator<T>&, const FastAllocator<U>&) { return false; }
+
 
 } // namespace WTF
 
