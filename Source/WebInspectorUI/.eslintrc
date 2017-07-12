@@ -41,7 +41,7 @@
         "DOMStorageAgent": true,
         "DatabaseAgent": true,
         "DebuggerAgent": true,
-        "HeapAgent",
+        "HeapAgent": true,
         "IndexedDBAgent": true,
         "InspectorAgent": true,
         "LayerTreeAgent": true,

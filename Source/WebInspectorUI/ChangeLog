@@ -1,5 +1,14 @@
 2017-07-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Correct a typo in the .eslintrc
+        https://bugs.webkit.org/show_bug.cgi?id=174389
+
+        Reviewed by Matt Baker.
+
+        * .eslintrc:
+
+2017-07-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Node Sidebar - Improve wording for Potential Custom Element lacking a Custom definition
         https://bugs.webkit.org/show_bug.cgi?id=174346
 
