@@ -51,7 +51,7 @@ private:
 
     void contextDestroyed() final;
 
-    void filterDeviceList(Vector<Ref<MediaDeviceInfo>>&);
+    void filterDeviceList(Vector<RefPtr<MediaDeviceInfo>>&);
 
     MediaDevices::EnumerateDevicesPromise m_promise;
     RefPtr<MediaDevicesRequest> m_protector;

@@ -30,7 +30,6 @@
 
 #pragma once
 
-#include "CallbackResult.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -44,8 +43,8 @@ class MutationCallback : public RefCounted<MutationCallback> {
 public:
     virtual ~MutationCallback() { }
 
-    virtual CallbackResult<void> handleEvent(MutationObserver&, const Vector<Ref<MutationRecord>>&, MutationObserver&) = 0;
-    virtual bool canInvoke() const = 0;
+    virtual void call(const Vector<Ref<MutationRecord>>&, MutationObserver*) = 0;
+    virtual bool canInvokeCallback() const = 0;
 };
 
 } // namespace WebCore

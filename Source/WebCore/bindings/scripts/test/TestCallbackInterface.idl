@@ -52,5 +52,4 @@ dictionary TestCallbackInterfaceDictionary {
     DOMString callbackWithAReturnValue();
     [RethrowException] DOMString callbackThatRethrowsExceptions(TestCallbackInterfaceEnum enumParam);
     [SkipCallbackInvokeCheck] DOMString callbackThatSkipsInvokeCheck(TestCallbackInterfaceDictionary dictionaryParam);
-    [CallbackThisObject=TestNode] DOMString callbackWithThisObject(TestObj testObjParam);
 };
