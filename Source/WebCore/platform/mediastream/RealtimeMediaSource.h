@@ -206,6 +206,8 @@ public:
 
     virtual void monitorOrientation(OrientationNotifier&) { }
 
+    void captureFailed();
+
     // Testing only
     virtual void delaySamples(float) { };
 

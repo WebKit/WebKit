@@ -168,9 +168,11 @@ AVMediaCaptureSource::~AVMediaCaptureSource()
 
 void AVMediaCaptureSource::startProducingData()
 {
-    if (!m_session)
-        setupSession();
-    
+    if (!m_session) {
+        if (!setupSession())
+            return;
+    }
+
     if ([m_session isRunning])
         return;
 
@@ -192,7 +194,6 @@ void AVMediaCaptureSource::stopProducingData()
 #if PLATFORM(IOS)
     m_session = nullptr;
 #endif
-
 }
 
 void AVMediaCaptureSource::beginConfiguration()
@@ -248,18 +249,23 @@ const RealtimeMediaSourceCapabilities& AVMediaCaptureSource::capabilities() cons
     return *m_capabilities;
 }
 
-void AVMediaCaptureSource::setupSession()
+bool AVMediaCaptureSource::setupSession()
 {
     if (m_session)
-        return;
+        return true;
 
     m_session = adoptNS([allocAVCaptureSessionInstance() init]);
     for (NSString* keyName in sessionKVOProperties())
         [m_session addObserver:m_objcObserver.get() forKeyPath:keyName options:NSKeyValueObservingOptionNew context:(void *)nil];
 
     [m_session beginConfiguration];
-    setupCaptureSession();
+    bool success = setupCaptureSession();
     [m_session commitConfiguration];
+
+    if (!success)
+        captureFailed();
+
+    return success;
 }
 
 void AVMediaCaptureSource::captureSessionIsRunningDidChange(bool state)

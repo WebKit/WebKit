@@ -56,7 +56,7 @@ private:
     AVVideoCaptureSource(AVCaptureDevice*, const AtomicString&);
     virtual ~AVVideoCaptureSource();
 
-    void setupCaptureSession() final;
+    bool setupCaptureSession() final;
     void shutdownCaptureSession() final;
 
     void updateSettings(RealtimeMediaSourceSettings&) final;
@@ -87,7 +87,6 @@ private:
 
     RetainPtr<NSString> m_pendingPreset;
     RetainPtr<CMSampleBufferRef> m_buffer;
-    RetainPtr<CGImageRef> m_lastImage;
     RetainPtr<AVCaptureVideoDataOutput> m_videoOutput;
 
     std::unique_ptr<PixelBufferConformerCV> m_pixelBufferConformer;

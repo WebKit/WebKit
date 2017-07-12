@@ -152,6 +152,9 @@ void RealtimeMediaSource::start()
     m_isProducingData = true;
     startProducingData();
 
+    if (!m_isProducingData)
+        return;
+
     for (Observer& observer : m_observers)
         observer.sourceStarted();
 }
@@ -181,6 +184,14 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
         if (&observer != callingObserver)
             observer.sourceStopped();
     }
+}
+
+void RealtimeMediaSource::captureFailed()
+{
+    m_isProducingData = false;
+
+    for (Observer& observer : m_observers)
+        observer.sourceStopped();
 }
 
 bool RealtimeMediaSource::supportsSizeAndFrameRate(std::optional<int>, std::optional<int>, std::optional<double>)

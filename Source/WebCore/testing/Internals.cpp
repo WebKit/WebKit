@@ -4161,6 +4161,11 @@ void Internals::removeMediaStreamTrack(MediaStream& stream, MediaStreamTrack& tr
     stream.internalRemoveTrack(track.id(), MediaStream::StreamModifier::Platform);
 }
 
+void Internals::simulateMediaStreamTrackCaptureSourceFailure(MediaStreamTrack& track)
+{
+    track.source().captureFailed();
+}
+
 #endif
 
 String Internals::audioSessionCategory() const

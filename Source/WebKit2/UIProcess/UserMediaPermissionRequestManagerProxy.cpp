@@ -382,23 +382,21 @@ void UserMediaPermissionRequestManagerProxy::syncWithWebCorePrefs() const
 #endif
 }
 
-void UserMediaPermissionRequestManagerProxy::startedCaptureSession()
+void UserMediaPermissionRequestManagerProxy::captureStateChanged(WebCore::MediaProducer::MediaStateFlags oldState, WebCore::MediaProducer::MediaStateFlags newState)
 {
     if (!m_page.isValid())
         return;
 
 #if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().startedCaptureSession(*this);
-#endif
-}
+    bool wasCapturingAudio = oldState & WebCore::MediaProducer::AudioCaptureMask;
+    bool wasCapturingVideo = oldState & WebCore::MediaProducer::VideoCaptureMask;
+    bool isCapturingAudio = newState & WebCore::MediaProducer::AudioCaptureMask;
+    bool isCapturingVideo = newState & WebCore::MediaProducer::VideoCaptureMask;
 
-void UserMediaPermissionRequestManagerProxy::endedCaptureSession()
-{
-    if (!m_page.isValid())
-        return;
-
-#if ENABLE(MEDIA_STREAM)
-    UserMediaProcessManager::singleton().endedCaptureSession(*this);
+    if ((wasCapturingAudio && !isCapturingAudio) || (wasCapturingVideo && !isCapturingVideo))
+        UserMediaProcessManager::singleton().endedCaptureSession(*this);
+    if ((!wasCapturingAudio && isCapturingAudio) || (!wasCapturingVideo && isCapturingVideo))
+        UserMediaProcessManager::singleton().startedCaptureSession(*this);
 #endif
 }
 

@@ -410,7 +410,7 @@ static inline int sensorOrientationFromVideoOutput(AVCaptureVideoDataOutputType*
     return connection ? sensorOrientation([connection videoOrientation]) : 0;
 }
 
-void AVVideoCaptureSource::setupCaptureSession()
+bool AVVideoCaptureSource::setupCaptureSession()
 {
 #if PLATFORM(IOS)
     avVideoCaptureSourceFactory().setActiveSource(*this);
@@ -420,12 +420,12 @@ void AVVideoCaptureSource::setupCaptureSession()
     RetainPtr<AVCaptureDeviceInputType> videoIn = adoptNS([allocAVCaptureDeviceInputInstance() initWithDevice:device() error:&error]);
     if (error) {
         LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), failed to allocate AVCaptureDeviceInput: %s", this, [[error localizedDescription] UTF8String]);
-        return;
+        return false;
     }
 
     if (![session() canAddInput:videoIn.get()]) {
         LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video input device", this);
-        return;
+        return false;
     }
     [session() addInput:videoIn.get()];
 
@@ -445,7 +445,7 @@ void AVVideoCaptureSource::setupCaptureSession()
 
     if (![session() canAddOutput:m_videoOutput.get()]) {
         LOG(Media, "AVVideoCaptureSource::setupCaptureSession(%p), unable to add video sample buffer output delegate", this);
-        return;
+        return false;
     }
     [session() addOutput:m_videoOutput.get()];
 
@@ -455,12 +455,13 @@ void AVVideoCaptureSource::setupCaptureSession()
 
     m_sensorOrientation = sensorOrientationFromVideoOutput(m_videoOutput.get());
     computeSampleRotation();
+
+    return true;
 }
 
 void AVVideoCaptureSource::shutdownCaptureSession()
 {
     m_buffer = nullptr;
-    m_lastImage = nullptr;
     m_width = 0;
     m_height = 0;
 }
@@ -508,9 +509,7 @@ void AVVideoCaptureSource::computeSampleRotation()
 
 void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBuffer, RetainPtr<AVCaptureConnectionType> connection)
 {
-    // Ignore frames delivered when the session is not running, we want to hang onto the last image
-    // delivered before it stopped.
-    if (m_lastImage && (!isProducingData() || muted()))
+    if (!isProducingData() || muted())
         return;
 
     CMFormatDescriptionRef formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer.get());
@@ -518,8 +517,6 @@ void AVVideoCaptureSource::processNewFrame(RetainPtr<CMSampleBufferRef> sampleBu
         return;
 
     m_buffer = sampleBuffer;
-    m_lastImage = nullptr;
-
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(formatDescription);
     if (m_sampleRotation == MediaSample::VideoRotation::Left || m_sampleRotation == MediaSample::VideoRotation::Right)
         std::swap(dimensions.width, dimensions.height);

@@ -1,3 +1,13 @@
+2017-07-12  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] a capture source failure should end the MediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=174375
+
+        Reviewed by Youenn Fablet.
+
+        * fast/mediastream/media-stream-track-source-failure-expected.txt: Added.
+        * fast/mediastream/media-stream-track-source-failure.html: Added.
+
 2017-07-12  Antoine Quint  <graouts@apple.com>
 
         Playback controls should not hide while AirPlay is active

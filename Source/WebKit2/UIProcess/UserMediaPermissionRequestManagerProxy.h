@@ -21,6 +21,7 @@
 
 #include "UserMediaPermissionCheckProxy.h"
 #include "UserMediaPermissionRequestProxy.h"
+#include <WebCore/MediaProducer.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
@@ -60,8 +61,7 @@ public:
     void rejectionTimerFired();
     void clearCachedState();
 
-    void startedCaptureSession();
-    void endedCaptureSession();
+    void captureStateChanged(WebCore::MediaProducer::MediaStateFlags oldState, WebCore::MediaProducer::MediaStateFlags newState);
 
 private:
     Ref<UserMediaPermissionRequestProxy> createRequest(uint64_t userMediaID, uint64_t mainFrameID, uint64_t frameID, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<String>&& audioDeviceUIDs, Vector<String>&& videoDeviceUIDs, String&&);
