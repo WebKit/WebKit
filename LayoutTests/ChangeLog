@@ -1,3 +1,13 @@
+2017-07-12  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC: Incorrect sdpMLineIndex for video breaks Firefox interop
+        https://bugs.webkit.org/show_bug.cgi?id=173530
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/ice-candidate-sdpMLineIndex-expected.txt: Added.
+        * webrtc/ice-candidate-sdpMLineIndex.html: Added.
+
 2017-07-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Implement CryptoKeyEC PKCS#8 exports
