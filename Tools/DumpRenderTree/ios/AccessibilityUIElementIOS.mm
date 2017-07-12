@@ -113,6 +113,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (id)accessibilityObjectForTextMarker:(id)marker;
 - (id)lineStartMarkerForMarker:(id)marker;
 - (id)lineEndMarkerForMarker:(id)marker;
+- (NSArray *)textMarkerRangeFromMarkers:(NSArray *)markers withText:(NSString *)text;
 @end
 
 @interface NSObject (WebAccessibilityObjectWrapperPrivate)
@@ -619,6 +620,16 @@ AccessibilityTextMarker AccessibilityUIElement::nextSentenceEndTextMarkerForText
 {
     return nullptr;
 }
+
+AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers(JSStringRef text, AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
+{
+    NSArray *textMarkers = nil;
+    if (startMarker->platformTextMarker() && endMarker->platformTextMarker())
+        textMarkers = [NSArray arrayWithObjects:(id)startMarker->platformTextMarker(), (id)endMarker->platformTextMarker(), nil];
+    id textMarkerRange = [m_element textMarkerRangeFromMarkers:textMarkers withText:[NSString stringWithJSStringRef:text]];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+}
+
 
 #endif // SUPPORTS_AX_TEXTMARKERS && PLATFORM(IOS)
 

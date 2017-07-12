@@ -1,3 +1,25 @@
+2017-07-12  Nan Wang  <n_wang@apple.com>
+
+        AX: [iOS] Implement a way to retrieve a text marker range with desired text that is closest to a position
+        https://bugs.webkit.org/show_bug.cgi?id=174393
+        <rdar://problem/33248006>
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (textMarkerRangeMatchesTextNearMarkersCallback):
+        (AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/ios/AccessibilityUIElementIOS.mm:
+        (WTR::AccessibilityUIElement::textMarkerRangeMatchesTextNearMarkers):
+
 2017-07-12  Emilio Cobos Álvarez  <ecobos@igalia.com>
 
         Make prepare-ChangeLog -g <commit> generate a more standard ChangeLog entry.

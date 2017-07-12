@@ -1726,6 +1726,37 @@ RefPtr<Range> AXObjectCache::rangeForNodeContents(Node* node)
     }
     return WTFMove(range);
 }
+    
+static VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& position, int32_t offset)
+{
+    RefPtr<ContainerNode> root;
+    unsigned startIndex = indexForVisiblePosition(position, root);
+    return visiblePositionForIndex(startIndex + offset, root.get());
+}
+    
+RefPtr<Range> AXObjectCache::rangeMatchesTextNearRange(RefPtr<Range> originalRange, const String& matchText)
+{
+    if (!originalRange)
+        return nullptr;
+    
+    // Create a large enough range for searching the text within.
+    unsigned textLength = matchText.length();
+    auto startPosition = visiblePositionForPositionWithOffset(originalRange->startPosition(), -textLength);
+    auto endPosition = visiblePositionForPositionWithOffset(originalRange->startPosition(), 2 * textLength);
+    
+    if (startPosition.isNull())
+        startPosition = firstPositionInOrBeforeNode(&originalRange->startContainer());
+    if (endPosition.isNull())
+        endPosition = lastPositionInOrAfterNode(&originalRange->endContainer());
+    
+    RefPtr<Range> searchRange = Range::create(m_document, startPosition, endPosition);
+    if (!searchRange || searchRange->collapsed())
+        return nullptr;
+    
+    RefPtr<Range> range = Range::create(m_document, startPosition, originalRange->startPosition());
+    unsigned targetOffset = TextIterator::rangeLength(range.get(), true);
+    return findClosestPlainText(*searchRange.get(), matchText, 0, targetOffset);
+}
 
 static bool isReplacedNodeOrBR(Node* node)
 {

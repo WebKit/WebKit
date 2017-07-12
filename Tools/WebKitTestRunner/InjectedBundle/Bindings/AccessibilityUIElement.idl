@@ -226,6 +226,7 @@ interface AccessibilityUIElement {
     AccessibilityTextMarkerRange sentenceTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);
     AccessibilityTextMarker previousSentenceStartTextMarkerForTextMarker(AccessibilityTextMarker textMarker);
     AccessibilityTextMarker nextSentenceEndTextMarkerForTextMarker(AccessibilityTextMarker textMarker);
+    AccessibilityTextMarkerRange textMarkerRangeMatchesTextNearMarkers(DOMString text, AccessibilityTextMarker startMarker, AccessibilityTextMarker endMarker);
 
     // Returns an ordered list of supported actions for an element.
     readonly attribute DOMString supportedActions;
