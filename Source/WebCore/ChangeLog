@@ -1,3 +1,16 @@
+2017-07-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [SOUP] Do not use C linkage for functions using C++ features
+        https://bugs.webkit.org/show_bug.cgi?id=174392
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests because there is no behavior change.
+
+        * platform/network/soup/WebKitSoupRequestGeneric.h: Move G_END_DECLS
+        to leave functions which use C++ features outside of the block it
+        delimits.
+
 2017-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Crashes in WebCore::PasteboardHelper::fillSelectionData when source file of drag is unavailable

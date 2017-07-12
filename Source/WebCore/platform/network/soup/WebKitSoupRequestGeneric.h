@@ -55,11 +55,11 @@ struct _WebKitSoupRequestGenericClass {
 
 GType webkit_soup_request_generic_get_type();
 
+G_END_DECLS
+
 void webkitSoupRequestGenericSetContentLength(WebKitSoupRequestGeneric*, goffset contentLength);
 void webkitSoupRequestGenericSetContentType(WebKitSoupRequestGeneric*, const char* mimeType);
 void webkitSoupRequestGenericSetRequest(WebKitSoupRequestGeneric*, const WebCore::ResourceRequest&);
 const WebCore::ResourceRequest& webkitSoupRequestGenericGetRequest(WebKitSoupRequestGeneric*);
-
-G_END_DECLS
 
 #endif // WebKitSoupRequestGeneric_h
