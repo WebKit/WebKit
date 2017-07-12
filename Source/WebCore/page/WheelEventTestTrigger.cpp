@@ -68,7 +68,7 @@ void WheelEventTestTrigger::deferTestsForReason(ScrollableAreaIdentifier identif
     std::lock_guard<Lock> lock(m_testTriggerMutex);
     auto it = m_deferTestTriggerReasons.find(identifier);
     if (it == m_deferTestTriggerReasons.end())
-        it = m_deferTestTriggerReasons.add(identifier, std::set<DeferTestTriggerReason>()).iterator;
+        it = m_deferTestTriggerReasons.add(identifier, DeferTestTriggerReasonSet()).iterator;
     
     LOG(WheelEventTestTriggers, "      (=) WheelEventTestTrigger::deferTestsForReason: id=%p, reason=%d", identifier, reason);
     it->value.insert(reason);
@@ -89,7 +89,7 @@ void WheelEventTestTrigger::removeTestDeferralForReason(ScrollableAreaIdentifier
 }
 
 #if !LOG_DISABLED
-static void dumpState(WTF::HashMap<WheelEventTestTrigger::ScrollableAreaIdentifier, std::set<WheelEventTestTrigger::DeferTestTriggerReason>> reasons)
+static void dumpState(WTF::HashMap<WheelEventTestTrigger::ScrollableAreaIdentifier, WheelEventTestTrigger::DeferTestTriggerReasonSet> reasons)
 {
     LOG(WheelEventTestTriggers, "   WheelEventTestTrigger::dumpState:");
     for (const auto& scrollRegion : reasons) {

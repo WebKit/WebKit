@@ -1,3 +1,53 @@
+2017-07-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Use FastAllocator in STL containers
+        https://bugs.webkit.org/show_bug.cgi?id=174366
+
+        Rubber stamped by Sam Weinig.
+
+        This patch uses FastAllocator for STL containers including std::set and std::map.
+        STL can take a template parameter to be used as allocator for containers.
+        We prepare FastAllocator, which uses fastMalloc for allocation.
+        This allows us to use bmalloc (if supported) for STL containers which offers
+        functionalities that is not supported in WTF containers.
+
+        * Modules/indexeddb/IDBKeyData.h:
+        * Modules/indexeddb/server/IndexValueEntry.cpp:
+        (WebCore::IDBServer::IndexValueEntry::IndexValueEntry):
+        (WebCore::IDBServer::IndexValueEntry::Iterator::Iterator):
+        (WebCore::IDBServer::IndexValueEntry::reverseFind):
+        * Modules/indexeddb/server/IndexValueEntry.h:
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        (WebCore::IDBServer::IndexValueStore::lowestIteratorInRange):
+        (WebCore::IDBServer::IndexValueStore::highestReverseIteratorInRange):
+        (WebCore::IDBServer::IndexValueStore::Iterator::Iterator):
+        * Modules/indexeddb/server/IndexValueStore.h:
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.cpp:
+        (WebCore::IDBServer::MemoryBackingStoreTransaction::objectStoreCleared):
+        * Modules/indexeddb/server/MemoryBackingStoreTransaction.h:
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::replaceKeyValueStore):
+        (WebCore::IDBServer::MemoryObjectStore::addRecord):
+        (WebCore::IDBServer::MemoryObjectStore::updateCursorsForPutRecord):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+        (WebCore::IDBServer::MemoryObjectStore::orderedKeys):
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.cpp:
+        (WebCore::IDBServer::MemoryObjectStoreCursor::keyAdded):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::setFirstInRemainingRange):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::setForwardIteratorFromRemainingRange):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::setReverseIteratorFromRemainingRange):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::incrementForwardIterator):
+        (WebCore::IDBServer::MemoryObjectStoreCursor::incrementReverseIterator):
+        * Modules/indexeddb/server/MemoryObjectStoreCursor.h:
+        * Modules/mediasource/SampleMap.h:
+        * page/WheelEventTestTrigger.cpp:
+        (WebCore::WheelEventTestTrigger::deferTestsForReason):
+        (WebCore::dumpState):
+        * page/WheelEventTestTrigger.h:
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::enumToStringMap):
+        * rendering/OrderIterator.h:
+
 2017-07-11  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Build error when building WebKit.dll from WebKit.proj project file.

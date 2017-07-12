@@ -56,7 +56,7 @@ private:
     RenderBox& m_containerBox;
     RenderBox* m_currentChild;
 
-    typedef std::set<int> OrderValues;
+    using OrderValues = std::set<int, std::less<int>, FastAllocator<int>>;
     OrderValues m_orderValues;
     OrderValues::const_iterator m_orderValuesIterator;
     bool m_isReset { false };

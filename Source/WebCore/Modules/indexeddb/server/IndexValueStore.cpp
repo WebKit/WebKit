@@ -142,7 +142,7 @@ IDBKeyData IndexValueStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& ra
     return *iterator;
 }
 
-std::set<IDBKeyData>::iterator IndexValueStore::lowestIteratorInRange(const IDBKeyRangeData& range) const
+IDBKeyDataSet::iterator IndexValueStore::lowestIteratorInRange(const IDBKeyRangeData& range) const
 {
     auto lowestInRange = m_orderedKeys.lower_bound(range.lowerKey);
 
@@ -166,9 +166,9 @@ std::set<IDBKeyData>::iterator IndexValueStore::lowestIteratorInRange(const IDBK
     return lowestInRange;
 }
 
-std::set<IDBKeyData>::reverse_iterator IndexValueStore::highestReverseIteratorInRange(const IDBKeyRangeData& range) const
+IDBKeyDataSet::reverse_iterator IndexValueStore::highestReverseIteratorInRange(const IDBKeyRangeData& range) const
 {
-    auto highestInRange = std::set<IDBKeyData>::reverse_iterator(m_orderedKeys.upper_bound(range.upperKey));
+    auto highestInRange = IDBKeyDataSet::reverse_iterator(m_orderedKeys.upper_bound(range.upperKey));
 
     if (highestInRange == m_orderedKeys.rend())
         return highestInRange;
@@ -312,14 +312,14 @@ IndexValueStore::Iterator IndexValueStore::reverseFind(const IDBKeyData& key, co
 }
 
 
-IndexValueStore::Iterator::Iterator(IndexValueStore& store, std::set<IDBKeyData>::iterator iterator, IndexValueEntry::Iterator primaryIterator)
+IndexValueStore::Iterator::Iterator(IndexValueStore& store, IDBKeyDataSet::iterator iterator, IndexValueEntry::Iterator primaryIterator)
     : m_store(&store)
     , m_forwardIterator(iterator)
     , m_primaryKeyIterator(primaryIterator)
 {
 }
 
-IndexValueStore::Iterator::Iterator(IndexValueStore& store, CursorDuplicity duplicity, std::set<IDBKeyData>::reverse_iterator iterator, IndexValueEntry::Iterator primaryIterator)
+IndexValueStore::Iterator::Iterator(IndexValueStore& store, CursorDuplicity duplicity, IDBKeyDataSet::reverse_iterator iterator, IndexValueEntry::Iterator primaryIterator)
     : m_store(&store)
     , m_forward(false)
     , m_duplicity(duplicity)

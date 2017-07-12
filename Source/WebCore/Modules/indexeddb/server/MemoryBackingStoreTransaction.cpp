@@ -134,7 +134,7 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(Ref<MemoryObjectStore>&& 
         addResult.iterator->value = WTFMove(objectStore);
 }
 
-void MemoryBackingStoreTransaction::objectStoreCleared(MemoryObjectStore& objectStore, std::unique_ptr<KeyValueMap>&& keyValueMap, std::unique_ptr<std::set<IDBKeyData>>&& orderedKeys)
+void MemoryBackingStoreTransaction::objectStoreCleared(MemoryObjectStore& objectStore, std::unique_ptr<KeyValueMap>&& keyValueMap, std::unique_ptr<IDBKeyDataSet>&& orderedKeys)
 {
     ASSERT(m_objectStores.contains(&objectStore));
 

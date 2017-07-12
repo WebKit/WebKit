@@ -49,13 +49,13 @@ VideoTextureCopierCV::~VideoTextureCopierCV()
 }
 
 #if !LOG_DISABLED
-
+using StringMap = std::map<uint32_t, const char*, std::less<uint32_t>, FastAllocator<std::pair<const uint32_t, const char*>>>;
 #define STRINGIFY_PAIR(e) e, #e
-static std::map<uint32_t, const char*>& enumToStringMap()
+static StringMap& enumToStringMap()
 {
-    static NeverDestroyed<std::map<uint32_t, const char*>> map;
+    static NeverDestroyed<StringMap> map;
     if (map.get().empty()) {
-        std::map<uint32_t, const char*> stringMap;
+        StringMap stringMap;
         map.get().emplace(STRINGIFY_PAIR(GL_RGB));
         map.get().emplace(STRINGIFY_PAIR(GL_RGBA));
         map.get().emplace(STRINGIFY_PAIR(GL_LUMINANCE_ALPHA));

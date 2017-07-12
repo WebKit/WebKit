@@ -52,6 +52,7 @@ public:
         ScrollingThreadSyncNeeded,
         ContentScrollInProgress
     };
+    using DeferTestTriggerReasonSet = std::set<DeferTestTriggerReason, std::less<DeferTestTriggerReason>, FastAllocator<DeferTestTriggerReason>>;
     typedef const void* ScrollableAreaIdentifier;
     void WEBCORE_EXPORT deferTestsForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
     void WEBCORE_EXPORT removeTestDeferralForReason(ScrollableAreaIdentifier, DeferTestTriggerReason);
@@ -61,7 +62,7 @@ private:
     WTF::Function<void()> m_testNotificationCallback;
     RunLoop::Timer<WheelEventTestTrigger> m_testTriggerTimer;
     mutable Lock m_testTriggerMutex;
-    WTF::HashMap<ScrollableAreaIdentifier, std::set<DeferTestTriggerReason>> m_deferTestTriggerReasons;
+    WTF::HashMap<ScrollableAreaIdentifier, DeferTestTriggerReasonSet> m_deferTestTriggerReasons;
 };
 
 } // namespace WebCore

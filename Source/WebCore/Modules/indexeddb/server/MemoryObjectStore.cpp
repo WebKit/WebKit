@@ -191,7 +191,7 @@ void MemoryObjectStore::clear()
         cursor->objectStoreCleared();
 }
 
-void MemoryObjectStore::replaceKeyValueStore(std::unique_ptr<KeyValueMap>&& store, std::unique_ptr<std::set<IDBKeyData>>&& orderedKeys)
+void MemoryObjectStore::replaceKeyValueStore(std::unique_ptr<KeyValueMap>&& store, std::unique_ptr<IDBKeyDataSet>&& orderedKeys)
 {
     ASSERT(m_writeTransaction);
     ASSERT(m_writeTransaction->isAborting());
@@ -263,7 +263,7 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
     if (!m_keyValueStore) {
         ASSERT(!m_orderedKeys);
         m_keyValueStore = std::make_unique<KeyValueMap>();
-        m_orderedKeys = std::make_unique<std::set<IDBKeyData>>();
+        m_orderedKeys = std::make_unique<IDBKeyDataSet>();
     }
 
     auto mapResult = m_keyValueStore->set(keyData, value.data());
@@ -282,7 +282,7 @@ IDBError MemoryObjectStore::addRecord(MemoryBackingStoreTransaction& transaction
     return error;
 }
 
-void MemoryObjectStore::updateCursorsForPutRecord(std::set<IDBKeyData>::iterator iterator)
+void MemoryObjectStore::updateCursorsForPutRecord(IDBKeyDataSet::iterator iterator)
 {
     for (auto& cursor : m_cursors.values())
         cursor->keyAdded(iterator);
