@@ -1,3 +1,15 @@
+2017-07-12  Daniel Bates  <dabates@apple.com>
+
+        Update description of Secure Contexts experimental flag
+        https://bugs.webkit.org/show_bug.cgi?id=174401
+
+        Reviewed by Simon Fraser.
+
+        Change the description of the Secure Contexts experimental flag from "isSecureContext attribute"
+        to "Secure Contexts API".
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-07-12  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219379.
