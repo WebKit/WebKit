@@ -1320,7 +1320,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     // must grab this now, since this load may stop the previous load and clear this flag
     bool isRedirect = m_quickRedirectComing;
-    loadWithNavigationAction(request, action, lockHistory, newLoadType, formState, allowNavigationToInvalidURL, frameLoadRequest.initiatedByMainFrame());
+    loadWithNavigationAction(request, action, lockHistory, newLoadType, formState, allowNavigationToInvalidURL);
     if (isRedirect) {
         m_quickRedirectComing = false;
         if (m_provisionalDocumentLoader)
@@ -1379,10 +1379,10 @@ void FrameLoader::load(FrameLoadRequest&& request)
     load(loader.ptr());
 }
 
-void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const NavigationAction& action, LockHistory lockHistory, FrameLoadType type, FormState* formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, InitiatedByMainFrame initiatedByMainFrame)
+void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const NavigationAction& action, LockHistory lockHistory, FrameLoadType type, FormState* formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
 {
     Ref<DocumentLoader> loader = m_client.createDocumentLoader(request, defaultSubstituteDataForURL(request.url()));
-    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, initiatedByMainFrame, action.shouldOpenExternalURLsPolicy());
+    applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, action.initiatedByMainFrame(), action.shouldOpenExternalURLsPolicy());
 
     if (lockHistory == LockHistory::Yes && m_documentLoader)
         loader->setClientRedirectSourceForHistory(m_documentLoader->didCreateGlobalHistoryEntry() ? m_documentLoader->urlForHistory().string() : m_documentLoader->clientRedirectSourceForHistory());
@@ -2747,12 +2747,12 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     if (Document* document = m_frame.document())
         document->contentSecurityPolicy()->upgradeInsecureRequestIfNeeded(workingResourceRequest, ContentSecurityPolicy::InsecureRequestType::Load);
 
-    NavigationAction action { request.requester(), workingResourceRequest, loadType, true, event, request.shouldOpenExternalURLsPolicy(), request.downloadAttribute() };
+    NavigationAction action { request.requester(), workingResourceRequest, request.initiatedByMainFrame(), loadType, true, event, request.shouldOpenExternalURLsPolicy(), request.downloadAttribute() };
 
     if (!frameName.isEmpty()) {
         // The search for a target frame is done earlier in the case of form submission.
         if (Frame* targetFrame = formState ? 0 : findFrameForNavigation(frameName)) {
-            targetFrame->loader().loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL, request.initiatedByMainFrame());
+            targetFrame->loader().loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL);
             return;
         }
 
@@ -2764,7 +2764,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     // must grab this now, since this load may stop the previous load and clear this flag
     bool isRedirect = m_quickRedirectComing;
-    loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL, request.initiatedByMainFrame());
+    loadWithNavigationAction(workingResourceRequest, action, lockHistory, loadType, WTFMove(formState), allowNavigationToInvalidURL);
     if (isRedirect) {
         m_quickRedirectComing = false;
         if (m_provisionalDocumentLoader)
@@ -3203,8 +3203,8 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
         mainFrame->document()->setReferrerPolicy(frame->document()->referrerPolicy());
     }
 
-    NavigationAction newAction { *frame->document(), request, NavigationType::Other, action.shouldOpenExternalURLsPolicy() };
-    mainFrame->loader().loadWithNavigationAction(request, newAction, LockHistory::No, FrameLoadType::Standard, formState, allowNavigationToInvalidURL, InitiatedByMainFrame::Unknown);
+    NavigationAction newAction { *frame->document(), request, InitiatedByMainFrame::Unknown, NavigationType::Other, action.shouldOpenExternalURLsPolicy() };
+    mainFrame->loader().loadWithNavigationAction(request, newAction, LockHistory::No, FrameLoadType::Standard, formState, allowNavigationToInvalidURL);
 }
 
 void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& identifier, ResourceError& error)
@@ -3409,7 +3409,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
     if (!item.referrer().isNull())
         request.setHTTPReferrer(item.referrer());
 
-    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(m_frame, InitiatedByMainFrame::Unknown, item.shouldOpenExternalURLsPolicy());
+    ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicyToApply(m_frame, initiatedByMainFrame, item.shouldOpenExternalURLsPolicy());
     bool isFormSubmission = false;
     Event* event = nullptr;
 
@@ -3476,10 +3476,10 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
 
         ResourceRequest requestForOriginalURL(request);
         requestForOriginalURL.setURL(itemOriginalURL);
-        action = { *m_frame.document(), requestForOriginalURL, loadType, isFormSubmission, event, shouldOpenExternalURLsPolicy };
+        action = { *m_frame.document(), requestForOriginalURL, initiatedByMainFrame, loadType, isFormSubmission, event, shouldOpenExternalURLsPolicy };
     }
 
-    loadWithNavigationAction(request, action, LockHistory::No, loadType, 0, AllowNavigationToInvalidURL::Yes, InitiatedByMainFrame::Unknown);
+    loadWithNavigationAction(request, action, LockHistory::No, loadType, 0, AllowNavigationToInvalidURL::Yes);
 }
 
 // Loads content into this frame, as specified by history item
