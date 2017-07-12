@@ -1,3 +1,18 @@
+2017-07-12  Emilio Cobos Álvarez  <ecobos@igalia.com>
+
+        Make prepare-ChangeLog -g <commit> generate a more standard ChangeLog entry.
+        https://bugs.webkit.org/show_bug.cgi?id=174197
+
+        Reviewed by Darin Adler.
+
+        This bit me the first time I tried to submit a patch to WebKit, and still I have
+        to manually edit the ChangeLog every time I use the script.
+
+        This generates a more convenient and standard ChangeLog entry.
+
+        * Scripts/prepare-ChangeLog:
+        (generateNewChangeLogs):
+
 2017-07-12  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219401.

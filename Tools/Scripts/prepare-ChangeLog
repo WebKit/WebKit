@@ -673,15 +673,20 @@ sub generateNewChangeLogs($$$$$$$$$$$$$$)
         my ($reviewer, $description) = reviewerAndDescriptionForGitCommit($gitCommit, $gitReviewer) if $gitCommit;
         $reviewer = "NOBODY (OO" . "PS!)" if !$reviewer;
 
-        print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
+        ($bugDescription, $description) =
+            ($description =~ /^(?:\s*(.*)\n)?(?:\s*\n)*((?:\n|.)*)/)
+            if !$bugDescription && $description;
 
-        $bugDescription = "Need a short description (OOPS!).\n        Need the bug URL (OOPS!)." unless $bugDescription;
+        $bugDescription = "Need a short description (OOPS!)." unless $bugDescription;
+        $bugURL = "Need the bug URL (OOPS!)." unless $bugURL;
+
         print CHANGE_LOG normalizeLineEndings("        $bugDescription\n", $endl) if $bugDescription;
         print CHANGE_LOG normalizeLineEndings("        $bugURL\n", $endl) if $bugURL;
         print CHANGE_LOG normalizeLineEndings("        $bugRadarURL\n", $endl) if $bugRadarURL;
         print CHANGE_LOG normalizeLineEndings("\n", $endl);
 
         print CHANGE_LOG normalizeLineEndings("        Reviewed by $reviewer.\n\n", $endl);
+        print CHANGE_LOG normalizeLineEndings($description . "\n", $endl) if $description;
 
         if ($prefix =~ m/WebCore/ || `pwd` =~ m/WebCore/ || @$requiresTests) {
             if (@$addedRegressionTests) {
