@@ -1,3 +1,12 @@
+2017-07-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WTF] Failure to build when the compiler specifically targets ARMv8-A / defines __ARM_ARCH_8A__
+        https://bugs.webkit.org/show_bug.cgi?id=174425
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/Platform.h: Also check for __ARCH_ARM_8A__ to detect ARMv8.
+
 2017-07-12  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix when both DATA_LOG_TO_FILE and DATA_LOG_FILENAME are defined.
