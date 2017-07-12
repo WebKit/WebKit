@@ -70,6 +70,9 @@ private:
     void sourceEnabledChanged();
     void audioSamplesAvailable(const MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t);
 
+    bool isReachingBufferedAudioDataHighLimit();
+    bool isReachingBufferedAudioDataLowLimit();
+
     // MediaStreamTrackPrivate::Observer API
     void trackMutedChanged(MediaStreamTrackPrivate&) final { sourceMutedChanged(); }
     void trackEnabledChanged(MediaStreamTrackPrivate&) final { sourceEnabledChanged(); }
@@ -92,6 +95,7 @@ private:
     uint64_t m_writeCount { 0 };
     bool m_muted { false };
     bool m_enabled { true };
+    bool m_skippingAudioData { false };
 };
 
 } // namespace WebCore

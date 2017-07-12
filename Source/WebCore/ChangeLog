@@ -1,3 +1,22 @@
+2017-07-11  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeOutgoingAudioSource should not push more audio data if the WebRTC thread is not able to process it
+        https://bugs.webkit.org/show_bug.cgi?id=174383
+
+        Reviewed by Eric Carlson.
+
+        This patch adds support to check for pending-processing audio data.
+        If the amount of audio data is bigger than a high water mark of 0.5 seconds,
+        we stop pushing new audio data until buffered audio data is lower than a low water mark of 0.1 seconds.
+        Patch is tested by adding breakpoints to trigger the high water mark, verifying that low water mark is triggered
+        and receiving audio is fine on the other connection endpoint.
+
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::isReachingBufferedAudioDataHighLimit):
+        (WebCore::RealtimeOutgoingAudioSource::isReachingBufferedAudioDataLowLimit):
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+
 2017-07-11  Dean Jackson  <dino@apple.com>
 
         Rolling out r219372.

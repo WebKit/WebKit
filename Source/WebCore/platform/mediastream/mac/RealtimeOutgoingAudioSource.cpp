@@ -88,6 +88,24 @@ void RealtimeOutgoingAudioSource::sourceEnabledChanged()
     m_sampleConverter->setMuted(m_muted || !m_enabled);
 }
 
+bool RealtimeOutgoingAudioSource::isReachingBufferedAudioDataHighLimit()
+{
+    auto writtenAudioDuration = m_writeCount / m_inputStreamDescription.sampleRate();
+    auto readAudioDuration = m_readCount / m_outputStreamDescription.sampleRate();
+
+    ASSERT(writtenAudioDuration >= readAudioDuration);
+    return writtenAudioDuration > readAudioDuration + 0.5;
+}
+
+bool RealtimeOutgoingAudioSource::isReachingBufferedAudioDataLowLimit()
+{
+    auto writtenAudioDuration = m_writeCount / m_inputStreamDescription.sampleRate();
+    auto readAudioDuration = m_readCount / m_outputStreamDescription.sampleRate();
+
+    ASSERT(writtenAudioDuration >= readAudioDuration);
+    return writtenAudioDuration < readAudioDuration + 0.1;
+}
+
 void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
 {
     if (m_inputStreamDescription != streamDescription) {
@@ -99,7 +117,17 @@ void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, const 
         status = m_sampleConverter->setOutputFormat(m_outputStreamDescription.streamDescription());
         ASSERT(!status);
     }
-    
+
+    // Let's skip pushing samples if we are too slow pulling them.
+    if (m_skippingAudioData) {
+        if (!isReachingBufferedAudioDataLowLimit())
+            return;
+        m_skippingAudioData = false;
+    } else if (isReachingBufferedAudioDataHighLimit()) {
+        m_skippingAudioData = true;
+        return;
+    }
+
     // If we change the audio track or its sample rate changes, the timestamp based on m_writeCount may be wrong.
     // FIXME: We should update m_writeCount to be valid according the new sampleRate.
     m_sampleConverter->pushSamples(MediaTime(m_writeCount, static_cast<uint32_t>(m_inputStreamDescription.sampleRate())), audioData, sampleCount);
