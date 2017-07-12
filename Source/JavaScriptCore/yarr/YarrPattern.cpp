@@ -880,7 +880,7 @@ private:
     {
         if (!m_stackLimit)
             return true;
-        ASSERT(Thread::current().stack().isGrowingDownward());
+        ASSERT(wtfThreadData().stack().isGrowingDownward());
         int8_t* curr = reinterpret_cast<int8_t*>(&curr);
         int8_t* limit = reinterpret_cast<int8_t*>(m_stackLimit);
         return curr >= limit;
