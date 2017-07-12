@@ -30,7 +30,6 @@
     void getStorageUpdates(); // FIXME: Remove this method or rename to yieldForStorageUpdates.
 };
 
-Navigator implements NavigatorConcurrentHardware;
 Navigator implements NavigatorID;
 Navigator implements NavigatorLanguage;
 Navigator implements NavigatorOnLine;
