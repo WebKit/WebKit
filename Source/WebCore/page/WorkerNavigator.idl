@@ -32,7 +32,6 @@
 ] interface WorkerNavigator {
 };
 
-WorkerNavigator implements NavigatorConcurrentHardware;
 WorkerNavigator implements NavigatorID;
 WorkerNavigator implements NavigatorLanguage;
 WorkerNavigator implements NavigatorOnLine;

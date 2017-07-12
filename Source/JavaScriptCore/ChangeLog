@@ -1,5 +1,14 @@
 2017-07-11  Dean Jackson  <dino@apple.com>
 
+        Remove NAVIGATOR_HWCONCURRENCY
+        https://bugs.webkit.org/show_bug.cgi?id=174400
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2017-07-11  Dean Jackson  <dino@apple.com>
+
         Rolling out r219372.
 
         * Configurations/FeatureDefines.xcconfig:

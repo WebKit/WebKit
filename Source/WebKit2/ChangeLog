@@ -1,3 +1,12 @@
+2017-07-11  Dean Jackson  <dino@apple.com>
+
+        Remove NAVIGATOR_HWCONCURRENCY
+        https://bugs.webkit.org/show_bug.cgi?id=174400
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-07-11  Ansh Shukla  <ansh_shukla@apple.com>
 
         WKWindowFeatures needs to expose scrollbar, fullscreen, and dialog configuration properties

@@ -12,9 +12,6 @@ var worker = createWorker();
 worker.postMessage("eval typeof navigator");
 worker.postMessage("eval navigator");
 
-// NavigatorConcurrentHardware
-worker.postMessage("eval navigator.hardwareConcurrency >= 1 && navigator.hardwareConcurrency <= 8");
-
 // NavigatorID
 worker.postMessage("eval navigator.appCodeName === 'Mozilla'");
 worker.postMessage("eval navigator.appName === 'Netscape'");
