@@ -68,7 +68,7 @@ public:
     RefPtr<UserGestureToken> userGestureToken() const { return m_userGestureToken; }
 
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_shouldOpenExternalURLsPolicy; }
-    NavigationInitiatedByMainFrame navigationInitiatedByMainFrame() const { return m_navigationInitiatedByMainFrame; }
+    InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
 
     const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
 
@@ -77,7 +77,7 @@ private:
     ResourceRequest m_resourceRequest;
     NavigationType m_type;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy;
-    NavigationInitiatedByMainFrame m_navigationInitiatedByMainFrame;
+    InitiatedByMainFrame m_initiatedByMainFrame;
     RefPtr<Event> m_event;
     RefPtr<UserGestureToken> m_userGestureToken { UserGestureIndicator::currentUserGesture() };
     AtomicString m_downloadAttribute;

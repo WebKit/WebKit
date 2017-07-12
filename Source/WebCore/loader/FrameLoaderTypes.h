@@ -83,7 +83,7 @@ enum class ShouldOpenExternalURLsPolicy {
     ShouldAllow,
 };
 
-enum class NavigationInitiatedByMainFrame {
+enum class InitiatedByMainFrame {
     Yes,
     Unknown,
 };

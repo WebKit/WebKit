@@ -38,7 +38,7 @@ class SecurityOrigin;
 
 class FrameLoadRequest {
 public:
-    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, const ResourceRequest&, const String& frameName, LockHistory, LockBackForwardList, ShouldSendReferrer, AllowNavigationToInvalidURL, NewFrameOpenerPolicy, ShouldOpenExternalURLsPolicy, NavigationInitiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute = { });
+    WEBCORE_EXPORT FrameLoadRequest(Document&, SecurityOrigin&, const ResourceRequest&, const String& frameName, LockHistory, LockBackForwardList, ShouldSendReferrer, AllowNavigationToInvalidURL, NewFrameOpenerPolicy, ShouldOpenExternalURLsPolicy, InitiatedByMainFrame, ShouldReplaceDocumentIfJavaScriptURL = ReplaceDocumentIfJavaScriptURL, const AtomicString& downloadAttribute = { });
     WEBCORE_EXPORT FrameLoadRequest(Frame&, const ResourceRequest&, ShouldOpenExternalURLsPolicy, const SubstituteData& = SubstituteData());
 
     WEBCORE_EXPORT ~FrameLoadRequest();
@@ -79,7 +79,7 @@ public:
 
     const AtomicString& downloadAttribute() const { return m_downloadAttribute; }
 
-    NavigationInitiatedByMainFrame navigationInitiatedByMainFrame() const { return m_navigationInitiatedByMainFrame; }
+    InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
 
 private:
     Ref<Document> m_requester;
@@ -97,7 +97,7 @@ private:
     ShouldReplaceDocumentIfJavaScriptURL m_shouldReplaceDocumentIfJavaScriptURL;
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     AtomicString m_downloadAttribute;
-    NavigationInitiatedByMainFrame m_navigationInitiatedByMainFrame { NavigationInitiatedByMainFrame::Unknown };
+    InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
 };
 
 } // namespace WebCore

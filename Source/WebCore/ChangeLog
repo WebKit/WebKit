@@ -1,3 +1,48 @@
+2017-07-12  Daniel Bates  <dabates@apple.com>
+
+        Rename NavigationInitiatedByMainFrame to InitiatedByMainFrame
+        https://bugs.webkit.org/show_bug.cgi?id=174427
+
+        Rubber-stamped by Brady Eidson.
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::openInNewTab):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::navigate):
+        * loader/FrameLoadRequest.cpp:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::initiatedByMainFrame):
+        (WebCore::FrameLoadRequest::navigationInitiatedByMainFrame): Deleted.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::shouldOpenExternalURLsPolicyToApply):
+        (WebCore::applyShouldOpenExternalURLsPolicyToNewDocumentLoader):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderTypes.h:
+        * loader/NavigationAction.h:
+        (WebCore::NavigationAction::initiatedByMainFrame):
+        (WebCore::NavigationAction::navigationInitiatedByMainFrame): Deleted.
+        * loader/NavigationScheduler.cpp:
+        (WebCore::ScheduledNavigation::ScheduledNavigation):
+        (WebCore::ScheduledNavigation::initiatedByMainFrame):
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        (WebCore::ScheduledNavigation::navigationInitiatedByMainFrame): Deleted.
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow):
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::createWindow):
+
 2017-07-12  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219401.
