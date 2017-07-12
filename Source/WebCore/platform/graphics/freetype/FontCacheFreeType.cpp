@@ -364,15 +364,22 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     if (!resultPattern) // No match.
         return nullptr;
 
+    // Loop through each font family of the result to see if it fits the one we requested.
+    bool matchedFontFamily = false;
     FcChar8* fontConfigFamilyNameAfterMatching;
-    FcPatternGetString(resultPattern.get(), FC_FAMILY, 0, &fontConfigFamilyNameAfterMatching);
-    String familyNameAfterMatching = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterMatching));
+    for (int i = 0; FcPatternGetString(resultPattern.get(), FC_FAMILY, i, &fontConfigFamilyNameAfterMatching) == FcResultMatch; ++i) {
+        // If Fontconfig gave us a different font family than the one we requested, we should ignore it
+        // and allow WebCore to give us the next font on the CSS fallback list. The exceptions are if
+        // this family name is a commonly-used generic family, or if the families are strongly-aliased.
+        // Checking for a strong alias comes last, since it is slow.
+        String familyNameAfterMatching = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterMatching));
+        if (equalIgnoringASCIICase(familyNameAfterConfiguration, familyNameAfterMatching) || isCommonlyUsedGenericFamily(familyNameString) || areStronglyAliased(familyNameAfterConfiguration, familyNameAfterMatching)) {
+            matchedFontFamily = true;
+            break;
+        }
+    }
 
-    // If Fontconfig gave us a different font family than the one we requested, we should ignore it
-    // and allow WebCore to give us the next font on the CSS fallback list. The exceptions are if
-    // this family name is a commonly-used generic family, or if the families are strongly-aliased.
-    // Checking for a strong alias comes last, since it is slow.
-    if (!equalIgnoringASCIICase(familyNameAfterConfiguration, familyNameAfterMatching) && !isCommonlyUsedGenericFamily(familyNameString) && !areStronglyAliased(familyNameAfterConfiguration, familyNameAfterMatching))
+    if (!matchedFontFamily)
         return nullptr;
 
     // Verify that this font has an encoding compatible with Fontconfig. Fontconfig currently
