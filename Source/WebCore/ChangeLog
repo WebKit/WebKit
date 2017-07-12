@@ -1,3 +1,21 @@
+2017-07-12  Youenn Fablet  <youenn@apple.com>
+
+        Reactivate audio ducking when restarting the shared unit
+        https://bugs.webkit.org/show_bug.cgi?id=174428
+
+        Reviewed by Eric Carlson.
+
+        Currently, when another application ducks WebKit, there is no other way than to quit the UIProcess and restart it.
+        By again audio ducking when starting the audio unit, reloading the page will be enough.
+        Testing by launching a tab with audio capture and audio playing.
+        Then make a FaceTime call and hear the tab volume go down.
+        End the call to FaceTime and the tab volume remains low.
+        Reload the tab and the volume has a normal level.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::setupAudioUnit):
+        (WebCore::CoreAudioSharedUnit::startInternal):
+
 2017-07-12  Antoine Quint  <graouts@apple.com>
 
         Playback controls should not hide while AirPlay is active

@@ -306,10 +306,6 @@ OSStatus CoreAudioSharedUnit::setupAudioUnit()
     m_ioUnitInitialized = true;
     m_suspended = false;
 
-    uint32_t outputDevice;
-    if (!defaultOutputDevice(&outputDevice))
-        AudioDeviceDuck(outputDevice, 1.0, nullptr, 0);
-
     return err;
 }
 
@@ -578,6 +574,10 @@ void CoreAudioSharedUnit::startInternal()
         }
         ASSERT(m_ioUnit);
     }
+
+    uint32_t outputDevice;
+    if (!defaultOutputDevice(&outputDevice))
+        AudioDeviceDuck(outputDevice, 1.0, nullptr, 0);
 
     err = AudioOutputUnitStart(m_ioUnit);
     if (err) {
