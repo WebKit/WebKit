@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWindowFeaturesPrivate.h"
+#import <WebKit/WKWindowFeatures.h>
 
 #if WK_API_ENABLED
 
-#import "APIWindowFeatures.h"
-#import "WKObject.h"
+NS_ASSUME_NONNULL_BEGIN
 
-namespace WebKit {
+@interface WKWindowFeatures (WKPrivate)
 
-inline WKWindowFeatures *wrapper(API::WindowFeatures& windowFeatures)
-{
-    ASSERT([windowFeatures.wrapper() isKindOfClass:[WKWindowFeatures class]]);
+@property (nullable, nonatomic, readonly) NSNumber *_locationBarVisibility WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nullable, nonatomic, readonly) NSNumber *_scrollbarsVisibility WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nullable, nonatomic, readonly) NSNumber *_fullscreenDisplay WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nullable, nonatomic, readonly) NSNumber *_dialogDisplay WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-    return (WKWindowFeatures *)windowFeatures.wrapper();
-}
-
-}
-@interface WKWindowFeatures () <WKObject> {
-@package
-    API::ObjectStorage<API::WindowFeatures> _windowFeatures;
-}
 @end
+
+NS_ASSUME_NONNULL_END
 
 #endif

@@ -1,3 +1,24 @@
+2017-07-11  Ansh Shukla  <ansh_shukla@apple.com>
+
+        WKWindowFeatures needs to expose scrollbar, fullscreen, and dialog configuration properties
+        https://bugs.webkit.org/show_bug.cgi?id=174239
+
+        Reviewed by Brady Eidson.
+
+        Add a new private header to expose getters for window feature properties already available
+        in the TFB APIWindowFeatures class. These properties are necessary for Safari to adopt more
+        modern API.
+
+        * UIProcess/API/Cocoa/WKWindowFeatures.mm:
+        (-[WKWindowFeatures _locationBarVisibility]):
+        (-[WKWindowFeatures _scrollbarsVisibility]):
+        (-[WKWindowFeatures _fullscreenDisplay]):
+        (-[WKWindowFeatures _dialogDisplay]):
+        * UIProcess/API/Cocoa/WKWindowFeaturesInternal.h: Expose some window features as read-only
+        properties.
+        * UIProcess/API/Cocoa/WKWindowFeaturesPrivate.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-07-11  Chris Dumez  <cdumez@apple.com>
 
         Avoid duplicating default parameter values in [WKWebsiteDataStore _resourceLoadStatisticsResetToConsistentState]

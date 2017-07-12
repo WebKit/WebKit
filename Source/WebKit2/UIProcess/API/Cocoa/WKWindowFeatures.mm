@@ -101,4 +101,28 @@
 
 @end
 
+@implementation WKWindowFeatures (WKPrivate)
+
+- (NSNumber *)_locationBarVisibility
+{
+    return @(_windowFeatures->windowFeatures().locationBarVisible);
+}
+
+- (NSNumber *)_scrollbarsVisibility
+{
+    return @(_windowFeatures->windowFeatures().scrollbarsVisible);
+}
+
+- (NSNumber *)_fullscreenDisplay
+{
+    return @(_windowFeatures->windowFeatures().fullscreen);
+}
+
+- (NSNumber *)_dialogDisplay
+{
+    return @(_windowFeatures->windowFeatures().dialog);
+}
+
+@end
+
 #endif
