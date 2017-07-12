@@ -1,3 +1,21 @@
+2017-07-12  Alicia Boya García  <aboya@igalia.com>
+
+        [FreeType] Enable BCI on webfonts
+        https://bugs.webkit.org/show_bug.cgi?id=174403
+
+        Reviewed by Michael Catanzaro.
+
+        The FreeType BCI hinter used to be disabled on webfonts in favor of
+        the autohinter.
+
+        FreeType BCI hinter has improved considerably in the past and now most
+        other browsers enable it too. Given the old reasons no longer apply,
+        the BCI has now been enabled in order to get better text rendering when
+        embedded hints are available.
+
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+
 2017-07-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r219361.

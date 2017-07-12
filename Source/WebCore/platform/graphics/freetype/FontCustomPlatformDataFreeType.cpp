@@ -35,27 +35,8 @@ static void releaseCustomFontData(void* data)
 }
 
 FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, SharedBuffer& buffer)
-    : m_fontFace(cairo_ft_font_face_create_for_ft_face(freeTypeFace, FT_LOAD_FORCE_AUTOHINT))
+    : m_fontFace(cairo_ft_font_face_create_for_ft_face(freeTypeFace, FT_LOAD_DEFAULT))
 {
-    // FT_LOAD_FORCE_AUTOHINT prohibits use of the font's native hinting. This
-    // is a safe option for custom fonts because (a) some such fonts may have
-    // broken hinting, which site admins may not notice if other browsers do not
-    // use the native hints, and (b) allowing native hints exposes the FreeType
-    // bytecode interpreter to potentially-malicious input. Treating web fonts
-    // differently than system fonts is non-ideal, but the result of autohinting
-    // is always decent, whereas native hints sometimes look terrible, and
-    // unlike system fonts where Fontconfig may change the hinting settings on a
-    // per-font basis, the same settings are used for all web fonts. Note that
-    // Chrome is considering switching from autohinting to native hinting in
-    // https://code.google.com/p/chromium/issues/detail?id=173207 but this is
-    // more risk than we want to assume for now. See
-    // https://bugs.webkit.org/show_bug.cgi?id=140994 before changing this, and
-    // also consider that (a) the fonts' native hints will all be designed to
-    // work on Windows, and might not look good at all with FreeType, whereas
-    // automatic hints will always look decent, and (b) Fontconfig is not
-    // capable of providing any per-font hinting settings for web fonts, unlike
-    // for system fonts, so it seems acceptable to treat them differently.
-
     buffer.ref(); // This is balanced by the buffer->deref() in releaseCustomFontData.
     static cairo_user_data_key_t bufferKey;
     cairo_font_face_set_user_data(m_fontFace, &bufferKey, &buffer,
