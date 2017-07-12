@@ -4016,6 +4016,9 @@ fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 # webrtc not supported
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
+http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
+http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Skip ]
+http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Skip ]
 
 # Resource Timing Metrics not available.
 imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failure ]
