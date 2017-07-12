@@ -1,5 +1,12 @@
 2017-07-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another build fix.
+
+        * public/v3/components/chart-pane-base.js:
+        (ChartPaneBase.prototype._updateCommitLogViewer):
+
+2017-07-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix. It looks like the code here is racy.
 
         * public/v3/components/chart-pane-base.js:

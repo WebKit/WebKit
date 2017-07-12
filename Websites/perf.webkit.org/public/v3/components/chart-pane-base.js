@@ -164,6 +164,8 @@ class ChartPaneBase extends ComponentBase {
 
     _updateCommitLogViewer()
     {
+        if (!this._revisionRange)
+            return;
         const range = this._revisionRange.rangeForRepository(this._openRepository);
         this._commitLogViewer.view(this._openRepository, range.from, range.to);
         this.enqueueToRender();
