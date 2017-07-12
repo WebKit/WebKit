@@ -44,11 +44,12 @@ NavigationAction::NavigationAction(NavigationAction&&) = default;
 NavigationAction& NavigationAction::operator=(const NavigationAction&) = default;
 NavigationAction& NavigationAction::operator=(NavigationAction&&) = default;
 
-NavigationAction::NavigationAction(Document& source, const ResourceRequest& resourceRequest, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomicString& downloadAttribute)
+NavigationAction::NavigationAction(Document& source, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomicString& downloadAttribute)
     : m_sourceDocument { makeRefPtr(source) }
     , m_resourceRequest { resourceRequest }
     , m_type { type }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
+    , m_initiatedByMainFrame { initiatedByMainFrame }
     , m_event { event }
     , m_downloadAttribute { downloadAttribute }
 {
@@ -67,11 +68,12 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction(Document& source, const ResourceRequest& resourceRequest, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
+NavigationAction::NavigationAction(Document& source, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomicString& downloadAttribute)
     : m_sourceDocument { makeRefPtr(source) }
     , m_resourceRequest { resourceRequest }
     , m_type { navigationType(frameLoadType, isFormSubmission, !!event) }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
+    , m_initiatedByMainFrame { initiatedByMainFrame }
     , m_event { event }
     , m_downloadAttribute { downloadAttribute }
 {

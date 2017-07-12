@@ -1,5 +1,44 @@
 2017-07-12  Daniel Bates  <dabates@apple.com>
 
+        NavigationAction should track whether the navigation was initiated by the main frame
+        https://bugs.webkit.org/show_bug.cgi?id=174386
+        <rdar://problem/33245267>
+
+        Reviewed by Brady Eidson.
+
+        Although we added state to NavigationAction to track whether the navigation was
+        initiated by the main frame in r219170 it is not possible to initialize this state
+        when instantiating a NavigationAction. Having NavigationAction track this state
+        will be useful to ensure that we can always compute the source frame information
+        when asking the embedding client whether to allow a navigation. We will make use
+        of it in the fix for <https://bugs.webkit.org/show_bug.cgi?id=174385>.
+
+        No behavior changed. So, no new tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL): Pass whether the load was initiated by the main frame
+        when instantiating the NavigationAction.
+        (WebCore::FrameLoader::load): For now, pass InitiatedByMainFrame::Unknown when instantiating
+        the NavigationAction as we do not know if the load was initiated by the main frame.
+        (WebCore::FrameLoader::loadWithDocumentLoader): Ditto.
+        (WebCore::FrameLoader::reload): Ditto
+        (WebCore::FrameLoader::loadDifferentDocumentItem): Ditto.
+        (WebCore::createWindow): Pass whether the load was initiated by the main frame when
+        instantiating the NavigationAction.
+        * loader/NavigationAction.cpp:
+        (WebCore::NavigationAction::NavigationAction): Modified to take argument of type InitiatedByMainFrame
+        that indicates whether the navigation was initiated by the main frame.
+        * loader/NavigationAction.h:
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy): For now, pass InitiatedByMainFrame::Unknown
+        when instantiating the NavigationAction as we do not know if the load was initiated by the
+        main frame.
+        * page/ContextMenuController.cpp:
+        (WebCore::openNewWindow): Pass whether the load was initiated by the main frame when
+        instantiating the NavigationAction.
+
+2017-07-12  Daniel Bates  <dabates@apple.com>
+
         Rename NavigationInitiatedByMainFrame to InitiatedByMainFrame
         https://bugs.webkit.org/show_bug.cgi?id=174427
 
