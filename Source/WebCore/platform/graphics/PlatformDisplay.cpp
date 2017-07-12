@@ -59,7 +59,11 @@
 #endif
 
 #if USE(EGL)
+#if USE(LIBEPOXY)
+#include <epoxy/egl.h>
+#else
 #include <EGL/egl.h>
+#endif
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #endif

@@ -47,11 +47,16 @@
 #include <ANGLE/ShaderLang.h>
 #endif
 
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#elif USE(OPENGL)
+#include "OpenGLShims.h"
+#endif
+
 #if USE(OPENGL_ES_2)
 #include "Extensions3DOpenGLES.h"
 #else
 #include "Extensions3DOpenGL.h"
-#include "OpenGLShims.h"
 #endif
 
 #if USE(TEXTURE_MAPPER)
@@ -69,7 +74,7 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     static bool initialized = false;
     static bool success = true;
     if (!initialized) {
-#if !USE(OPENGL_ES_2)
+#if !USE(OPENGL_ES_2) && !USE(LIBEPOXY)
         success = initializeOpenGLShims();
 #endif
         initialized = true;

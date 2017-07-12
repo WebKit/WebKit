@@ -25,11 +25,10 @@
 
 #pragma once
 
+// This include order is necessary to enforce the GBM EGL platform.
 #include <gbm.h>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+#include <epoxy/egl.h>
+
 #include <cairo.h>
 #include <glib.h>
 #include <unordered_map>

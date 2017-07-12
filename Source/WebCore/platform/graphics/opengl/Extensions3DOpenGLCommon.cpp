@@ -36,7 +36,9 @@
 #include <OpenGLES/ES2/glext.h>
 #include <OpenGLES/ES3/gl.h>
 #else
-#if USE(OPENGL_ES_2)
+#if USE(LIBEPOXY)
+#include "EpoxyShims.h"
+#elif USE(OPENGL_ES_2)
 #include "OpenGLESShims.h"
 #define GL_GLEXT_PROTOTYPES 1
 #include <GLES2/gl2.h>

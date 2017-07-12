@@ -34,7 +34,9 @@
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/SetForScope.h>
 
-#if USE(OPENGL_ES_2)
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#elif USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #else
 #include <GL/gl.h>

@@ -64,7 +64,9 @@
 #define GL_RGBA32F_ARB                      0x8814
 #define GL_RGB32F_ARB                       0x8815
 #else
-#if USE(OPENGL_ES_2)
+#if USE(LIBEPOXY)
+#include "EpoxyShims.h"
+#elif USE(OPENGL_ES_2)
 #include "OpenGLESShims.h"
 #elif PLATFORM(MAC)
 #define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED

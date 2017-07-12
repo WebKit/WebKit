@@ -23,13 +23,20 @@
 
 #include "GraphicsContext3D.h"
 #include "PlatformDisplay.h"
+
+#if USE(LIBEPOXY)
+#include <epoxy/egl.h>
+#else
 #include <EGL/egl.h>
+#endif
 
 #if USE(CAIRO)
 #include <cairo.h>
 #endif
 
-#if USE(OPENGL_ES_2)
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#elif USE(OPENGL_ES2)
 #define GL_GLEXT_PROTOTYPES 1
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>

@@ -1,3 +1,55 @@
+2017-07-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Use libepoxy
+        https://bugs.webkit.org/show_bug.cgi?id=172104
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests -- no changes in behavior.
+
+        Implement the proper libepoxy header inclusion for ports that enable it.
+
+        The library acts as a loading facility working on top of the system-provided
+        OpenGL and EGL libraries, with the headers providing a complete collection of
+        specification-defined OpenGL and EGL types, constants and entrypoints.
+
+        Support is added through the USE(LIBEPOXY) build guard. Note that this guard
+        isn't exclusive with USE(OPENGL), USE(OPENGL_ES_2) or USE(EGL), so the
+        USE(LIBEPOXY) condition is tested before those.
+
+        In case of OpenGL headers, the <epoxy/gl.h> header is included, and in
+        case of EGL headers, the <epoxy/egl.h> header. <epoxy/egl.h> includes
+        <epoxy/gl.h> on its own, so in some cases the inclusion of the latter is
+        omitted.
+
+        EpoxyShims.h header is added, doing a job similar to OpenGLESShims.h. The
+        EXT-suffixed GL entrypoints are redefined to the non-suffixed versions.
+        No suffixed constants are defined because those are defined by the libepoxy
+        headers to the well-known values.
+
+        * CMakeLists.txt:
+        * PlatformWPE.cmake:
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/EpoxyShims.h: Added.
+        * platform/graphics/GLContext.cpp:
+        (WebCore::initializeOpenGLShimsIfNeeded):
+        * platform/graphics/GraphicsContext3DPrivate.cpp:
+        * platform/graphics/PlatformDisplay.cpp:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::create):
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        * platform/graphics/egl/GLContextEGLWPE.cpp:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        * platform/graphics/opengl/Extensions3DOpenGLES.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        * platform/graphics/opengl/TemporaryOpenGLSetting.cpp:
+        * platform/graphics/texmap/TextureMapperGC3DPlatformLayer.cpp:
+        * platform/graphics/wpe/PlatformDisplayWPE.cpp:
+
 2017-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         ImageDecoder: Gifs with infinite animation only play once very often

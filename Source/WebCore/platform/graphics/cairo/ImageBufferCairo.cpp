@@ -50,6 +50,10 @@
 #if ENABLE(ACCELERATED_2D_CANVAS)
 #include "GLContext.h"
 #include "TextureMapperGL.h"
+
+#if USE(EGL) && USE(LIBEPOXY)
+#include <epoxy/egl.h>
+#endif
 #include <cairo-gl.h>
 
 #if USE(OPENGL_ES_2)

@@ -75,6 +75,7 @@ find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Freetype2 2.4.2 REQUIRED)
 find_package(HarfBuzz 0.9.18 REQUIRED)
 find_package(JPEG REQUIRED)
+find_package(LibEpoxy REQUIRED)
 find_package(LibGcrypt 1.6.0 REQUIRED)
 find_package(LibSoup 2.42.0 REQUIRED)
 find_package(LibXml2 2.8.0 REQUIRED)
@@ -82,9 +83,6 @@ find_package(LibXslt 1.1.7 REQUIRED)
 find_package(PNG REQUIRED)
 find_package(Sqlite REQUIRED)
 find_package(WebP REQUIRED)
-
-find_package(OpenGLES2 REQUIRED)
-find_package(EGL REQUIRED)
 
 find_package(WPEBackend REQUIRED)
 
@@ -137,6 +135,7 @@ add_definitions(-DDATA_DIR="${CMAKE_INSTALL_DATADIR}")
 
 set(USE_UDIS86 1)
 
+SET_AND_EXPOSE_TO_BUILD(USE_LIBEPOXY TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES_2 TRUE)
 SET_AND_EXPOSE_TO_BUILD(USE_EGL TRUE)
 

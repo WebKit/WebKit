@@ -59,6 +59,12 @@
 #endif
 
 #include <gst/app/gstappsink.h>
+
+#if USE(LIBEPOXY)
+// Include the <epoxy/gl.h> header before <gst/gl/gl.h>.
+#include <epoxy/gl.h>
+#endif
+
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
 #undef GST_USE_UNSTABLE_API
@@ -70,9 +76,7 @@
 #endif
 
 #if USE(EGL)
-#if !PLATFORM(WPE)
 #include "GLContextEGL.h"
-#endif
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 

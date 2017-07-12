@@ -1,3 +1,14 @@
+2017-07-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Use libepoxy
+        https://bugs.webkit.org/show_bug.cgi?id=172104
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformWPE.cmake: Drop the EGL_INCLUDE_DIRS compilation flags.
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedCompositor.cpp:
+        Include <epoxy/gl.h> when compiling with libepoxy usage enabled.
+
 2017-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Web Automation: upstream safaridriver's JavaScript atom implementations
