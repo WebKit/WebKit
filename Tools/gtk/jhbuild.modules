@@ -351,7 +351,9 @@
             repo="gstreamer"
             hash="sha256:be053f6ed716eeb517cec148cec637cdce571c6e04d5c21409e2876fb76c7639">
       <patch file="gst-plugins-good-0003-rtpbin-receive-bundle-support.patch" strip="1"/>
-      <patch file="gst-plugins-good-0004-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
+      <patch file="gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch" strip="1"/>
+      <patch file="gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch" strip="1"/>
+      <patch file="gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch" strip="1"/>
     </branch>
   </autotools>
 

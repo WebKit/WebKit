@@ -1,3 +1,24 @@
+2017-07-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][WPE] Align Jhbuild patches for GStreamer packages
+        https://bugs.webkit.org/show_bug.cgi?id=174363
+
+        Reviewed by Michael Catanzaro.
+
+        Align the patches we apply over Jhbuild-managed GStreamer dependency packages
+        between the GTK+ and WPE port. There's no reason for the two ports to apply
+        different patches over same versions of GStreamer releases.
+
+        This aligns the two ports on this specific issue. Next we'll look into
+        creating a single GStreamer-specific Jhbuild moduleset that will allow us
+        to keep these patches in a single place, avoiding duplicate files.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/gst-plugins-good-0005-souphttpsrc-cookie-jar-and-context-query-support.patch: Added.
+        * gtk/patches/gst-plugins-good-0006-qtdemux-add-context-for-a-preferred-protection.patch: Renamed from Tools/gtk/patches/gst-plugins-good-0004-qtdemux-add-context-for-a-preferred-protection.patch.
+        * gtk/patches/gst-plugins-good-0008-qtdemux-also-push-buffers-without-encryption-info-in.patch: Added.
+        * wpe/patches/gstreamer-typefind-Only-push-a-CAPS-event-downstream-if-the-.patch: Removed.
+
 2017-07-11  Dean Jackson  <dino@apple.com>
 
         Remove NAVIGATOR_HWCONCURRENCY
