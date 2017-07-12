@@ -1,3 +1,15 @@
+2017-07-12  Saam Barati  <sbarati@apple.com>
+
+        GenericArguments consults the wrong state when tracking modified argument descriptors and mapped arguments
+        https://bugs.webkit.org/show_bug.cgi?id=174411
+        <rdar://problem/31696186>
+
+        Reviewed by Mark Lam.
+
+        * stress/generic-arguments-correct-delete-behavior.js: Added.
+        (assert):
+        (makeTest):
+
 2017-07-07  Mark Lam  <mark.lam@apple.com>
 
         \n\r is not the same as \r\n.

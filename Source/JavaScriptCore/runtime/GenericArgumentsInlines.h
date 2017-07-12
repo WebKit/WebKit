@@ -61,18 +61,10 @@ bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, ExecState* exe
         }
     }
     
-    std::optional<uint32_t> index = parseIndex(ident);
-    if (index && !thisObject->isModifiedArgumentDescriptor(index.value()) && thisObject->isMappedArgument(index.value())) {
-        slot.setValue(thisObject, None, thisObject->getIndexQuickly(index.value()));
-        return true;
-    }
-    
-    bool result = Base::getOwnPropertySlot(thisObject, exec, ident, slot);
-    
-    if (index && thisObject->isMappedArgument(index.value()))
-        slot.setValue(thisObject, slot.attributes(), thisObject->getIndexQuickly(index.value()));
-    
-    return result;
+    if (std::optional<uint32_t> index = parseIndex(ident))
+        return GenericArguments<Type>::getOwnPropertySlotByIndex(thisObject, exec, *index, slot);
+
+    return Base::getOwnPropertySlot(thisObject, exec, ident, slot);
 }
 
 template<typename Type>
@@ -87,8 +79,11 @@ bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, ExecSta
     
     bool result = Base::getOwnPropertySlotByIndex(object, exec, index, slot);
     
-    if (thisObject->isMappedArgument(index))
+    if (thisObject->isMappedArgument(index)) {
+        ASSERT(result);
         slot.setValue(thisObject, slot.attributes(), thisObject->getIndexQuickly(index));
+        return true;
+    }
     
     return result;
 }
@@ -170,13 +165,9 @@ bool GenericArguments<Type>::deleteProperty(JSCell* cell, ExecState* exec, Prope
             || ident == vm.propertyNames->iteratorSymbol))
         thisObject->overrideThings(vm);
     
-    std::optional<uint32_t> index = parseIndex(ident);
-    if (index && !thisObject->isModifiedArgumentDescriptor(index.value()) && thisObject->isMappedArgument(index.value())) {
-        thisObject->unmapArgument(vm, index.value());
-        thisObject->setModifiedArgumentDescriptor(vm, index.value());
-        return true;
-    }
-    
+    if (std::optional<uint32_t> index = parseIndex(ident))
+        return GenericArguments<Type>::deletePropertyByIndex(thisObject, exec, *index);
+
     return Base::deleteProperty(thisObject, exec, ident);
 }
 
@@ -186,13 +177,21 @@ bool GenericArguments<Type>::deletePropertyByIndex(JSCell* cell, ExecState* exec
     Type* thisObject = jsCast<Type*>(cell);
     VM& vm = exec->vm();
 
-    if (!thisObject->isModifiedArgumentDescriptor(index) && thisObject->isMappedArgument(index)) {
-        thisObject->unmapArgument(vm, index);
+    bool propertyMightBeInJSObjectStorage = thisObject->isModifiedArgumentDescriptor(index) || !thisObject->isMappedArgument(index);
+    bool deletedProperty = true;
+    if (propertyMightBeInJSObjectStorage)
+        deletedProperty = Base::deletePropertyByIndex(cell, exec, index);
+
+    if (deletedProperty) {
+        // Deleting an indexed property unconditionally unmaps it.
+        if (thisObject->isMappedArgument(index)) {
+            // We need to check that the property was mapped so we don't write to random memory.
+            thisObject->unmapArgument(vm, index);
+        }
         thisObject->setModifiedArgumentDescriptor(vm, index);
-        return true;
     }
 
-    return Base::deletePropertyByIndex(cell, exec, index);
+    return deletedProperty;
 }
 
 template<typename Type>
