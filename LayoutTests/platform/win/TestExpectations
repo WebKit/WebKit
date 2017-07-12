@@ -592,6 +592,9 @@ crypto/workers/subtle/ [ Skip ]
 # TODO Missing WebSpeech implementation
 webkit.org/b/136224 fast/speechsynthesis [ Skip ]
 
+# TODO Navigator Hardware Concurrency not enabled on Windows
+fast/dom/navigator-hardwareConcurrency.html [ Skip ]
+
 # TODO Impossible to test text-only-zoom from DRT on Windows
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
 

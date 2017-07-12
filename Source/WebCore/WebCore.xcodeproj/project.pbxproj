@@ -11229,6 +11229,7 @@
 		7C5343FA17B74B63004232F0 /* JSMediaQueryListListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaQueryListListener.cpp; sourceTree = "<group>"; };
 		7C5343FB17B74B63004232F0 /* JSMediaQueryListListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = JSMediaQueryListListener.h; sourceTree = "<group>"; };
 		7C57BFE61EDE2F5B00534A48 /* JSDOMAbstractOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMAbstractOperations.h; sourceTree = "<group>"; };
+		7C5BEA391E9EE77100CC517B /* NavigatorConcurrentHardware.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorConcurrentHardware.idl; sourceTree = "<group>"; };
 		7C5BEA3A1E9EE77100CC517B /* NavigatorID.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorID.idl; sourceTree = "<group>"; };
 		7C5BEA3B1E9EE77100CC517B /* NavigatorLanguage.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorLanguage.idl; sourceTree = "<group>"; };
 		7C5BEA3C1E9EE77100CC517B /* NavigatorOnLine.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorOnLine.idl; sourceTree = "<group>"; };
@@ -19282,6 +19283,7 @@
 				A9C6E65D0D746694006442E9 /* Navigator.idl */,
 				E12719C90EEEC21300F61213 /* NavigatorBase.cpp */,
 				E12719C60EEEC16800F61213 /* NavigatorBase.h */,
+				7C5BEA391E9EE77100CC517B /* NavigatorConcurrentHardware.idl */,
 				7C5BEA3A1E9EE77100CC517B /* NavigatorID.idl */,
 				7C5BEA3B1E9EE77100CC517B /* NavigatorLanguage.idl */,
 				7C5BEA3C1E9EE77100CC517B /* NavigatorOnLine.idl */,

@@ -5373,6 +5373,7 @@ PASS Navigator interface: attribute cookieEnabled
 PASS Navigator interface: attribute plugins 
 PASS Navigator interface: attribute mimeTypes 
 PASS Navigator interface: operation javaEnabled() 
+PASS Navigator interface: attribute hardwareConcurrency 
 PASS Navigator must be primary interface of window.navigator 
 PASS Stringification of window.navigator 
 PASS Navigator interface: window.navigator must inherit property "appCodeName" with the proper type (0) 
@@ -5403,6 +5404,7 @@ PASS Navigator interface: window.navigator must inherit property "cookieEnabled"
 PASS Navigator interface: window.navigator must inherit property "plugins" with the proper type (19) 
 PASS Navigator interface: window.navigator must inherit property "mimeTypes" with the proper type (20) 
 PASS Navigator interface: window.navigator must inherit property "javaEnabled" with the proper type (21) 
+PASS Navigator interface: window.navigator must inherit property "hardwareConcurrency" with the proper type (22) 
 PASS PluginArray interface: existence and properties of interface object 
 PASS PluginArray interface object length 
 PASS PluginArray interface object name 

@@ -5,6 +5,7 @@ navigator.appName is OK
 navigator.appVersion is OK
 navigator.cookieEnabled is OK
 navigator.getStorageUpdates() is OK
+navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.mimeTypes is OK
@@ -22,6 +23,7 @@ navigator.appName is OK
 navigator.appVersion is OK
 navigator.cookieEnabled is OK
 navigator.getStorageUpdates() is OK
+navigator.hardwareConcurrency is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
 navigator.mimeTypes is OK
