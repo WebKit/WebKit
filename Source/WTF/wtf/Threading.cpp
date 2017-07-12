@@ -46,16 +46,12 @@
 
 namespace WTF {
 
-enum class Stage {
-    Start, Initialized
-};
-
 struct NewThreadContext {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     const char* name;
     Function<void()> entryPoint;
-    Stage stage;
-    Mutex mutex;
-    ThreadCondition condition;
+    Mutex creationMutex;
 };
 
 const char* Thread::normalizeThreadName(const char* threadName)
@@ -88,46 +84,31 @@ const char* Thread::normalizeThreadName(const char* threadName)
 static void threadEntryPoint(void* contextData)
 {
     NewThreadContext* context = static_cast<NewThreadContext*>(contextData);
-    Function<void()> entryPoint;
+
+    // Block until our creating thread has completed any extra setup work, including
+    // establishing ThreadIdentifier.
     {
-        // Block until our creating thread has completed any extra setup work, including establishing ThreadIdentifier.
-        MutexLocker locker(context->mutex);
-
-        Thread::initializeCurrentThreadInternal(context->name);
-        entryPoint = WTFMove(context->entryPoint);
-
-        // Ack completion of initialization to the creating thread.
-        context->stage = Stage::Initialized;
-        context->condition.signal();
+        MutexLocker locker(context->creationMutex);
     }
+
+    Thread::initializeCurrentThreadInternal(context->name);
+
+    auto entryPoint = WTFMove(context->entryPoint);
+
+    // Delete the context before starting the thread.
+    delete context;
 
     entryPoint();
 }
 
 RefPtr<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
 {
-    NewThreadContext context { name, WTFMove(entryPoint), Stage::Start, { }, { } };
+    NewThreadContext* context = new NewThreadContext { name, WTFMove(entryPoint), { } };
 
-    MutexLocker locker(context.mutex);
-    RefPtr<Thread> result = Thread::createInternal(threadEntryPoint, &context, name);
-    // After establishing Thread, release the mutex and wait for completion of initialization.
-    while (context.stage != Stage::Initialized)
-        context.condition.wait(context.mutex);
+    // Prevent the thread body from executing until we've established the thread identifier.
+    MutexLocker locker(context->creationMutex);
 
-    return result;
-}
-
-Thread* Thread::currentMayBeNull()
-{
-    ThreadHolder* data = ThreadHolder::current();
-    if (data)
-        return &data->thread();
-    return nullptr;
-}
-
-void Thread::initialize()
-{
-    m_stack = StackBounds::currentThreadStackBounds();
+    return Thread::createInternal(threadEntryPoint, context, name);
 }
 
 void Thread::didExit()
@@ -185,6 +166,9 @@ void initializeThreading()
     static std::once_flag initializeKey;
     std::call_once(initializeKey, [] {
         ThreadHolder::initializeOnce();
+        // StringImpl::empty() does not construct its static string in a threadsafe fashion,
+        // so ensure it has been initialized from here.
+        StringImpl::empty();
         initializeRandomNumberGenerator();
         wtfThreadData();
         initializeDates();
