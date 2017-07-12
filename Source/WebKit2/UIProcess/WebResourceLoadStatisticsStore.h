@@ -66,9 +66,9 @@ public:
 
     ~WebResourceLoadStatisticsStore();
 
-    void setNotifyPagesWhenDataRecordsWereScanned(bool value) { m_shouldNotifyPagesWhenDataRecordsWereScanned = value; }
-    void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value) { m_shouldClassifyResourcesBeforeDataRecordsRemoval = value; }
-    void setShouldSubmitTelemetry(bool value) { m_shouldSubmitTelemetry = value; }
+    void setNotifyPagesWhenDataRecordsWereScanned(bool value) { m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned = value; }
+    void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value) { m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval = value; }
+    void setShouldSubmitTelemetry(bool value) { m_parameters.shouldSubmitTelemetry = value; }
 
     void resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins);
 
@@ -98,7 +98,7 @@ public:
     void scheduleClearInMemoryAndPersistent();
     void scheduleClearInMemoryAndPersistent(std::chrono::system_clock::time_point modifiedSince);
 
-    void setTimeToLiveUserInteraction(std::optional<Seconds>);
+    void setTimeToLiveUserInteraction(Seconds);
     void setTimeToLiveCookiePartitionFree(Seconds);
     void setMinimumTimeBetweenDataRecordsRemoval(Seconds);
     void setGrandfatheringTime(Seconds);
@@ -107,6 +107,8 @@ public:
     
     void processStatistics(const WTF::Function<void (const WebCore::ResourceLoadStatistics&)>&) const;
     void pruneStatisticsIfNeeded();
+
+    void resetParametersToDefaultValues();
     
 private:
     WebResourceLoadStatisticsStore(const String&, UpdateCookiePartitioningForDomainsHandler&&);
@@ -157,6 +159,18 @@ private:
     void registerUserDefaultsIfNeeded();
 #endif
 
+    struct Parameters {
+        size_t pruneEntriesDownTo { 800 };
+        size_t maxStatisticsEntries { 1000 };
+        std::optional<Seconds> timeToLiveUserInteraction;
+        Seconds timeToLiveCookiePartitionFree { 24_h };
+        Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
+        Seconds grandfatheringTime { 1_h };
+        bool shouldNotifyPagesWhenDataRecordsWereScanned { false };
+        bool shouldClassifyResourcesBeforeDataRecordsRemoval { true };
+        bool shouldSubmitTelemetry { true };
+    };
+
     HashMap<String, WebCore::ResourceLoadStatistics> m_resourceStatisticsMap;
 #if HAVE(CORE_PREDICTION)
     ResourceLoadStatisticsClassifierCocoa m_resourceLoadStatisticsClassifier;
@@ -175,17 +189,11 @@ private:
     MonotonicTime m_lastStatisticsWriteTime;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_dailyTasksTimer;
     MonotonicTime m_lastTimeDataRecordsWereRemoved;
-    Seconds m_minimumTimeBetweenDataRecordsRemoval { 1_h };
-    std::optional<Seconds> m_timeToLiveUserInteraction;
-    Seconds m_timeToLiveCookiePartitionFree { 24_h };
-    Seconds m_grandfatheringTime { 1_h };
-    size_t m_maxStatisticsEntries { 1000 };
-    size_t m_pruneEntriesDownTo { 800 };
+
+    Parameters m_parameters;
+
     bool m_dataRecordsBeingRemoved { false };
     bool m_didScheduleWrite { false };
-    bool m_shouldNotifyPagesWhenDataRecordsWereScanned { false };
-    bool m_shouldClassifyResourcesBeforeDataRecordsRemoval { true };
-    bool m_shouldSubmitTelemetry { true };
 };
 
 } // namespace WebKit

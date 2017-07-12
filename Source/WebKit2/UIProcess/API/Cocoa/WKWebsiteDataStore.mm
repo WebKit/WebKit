@@ -463,20 +463,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_resourceLoadStatisticsResetToConsistentState
 {
+    WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
+
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
     if (!store)
         return;
 
-    // FIXME: These needs to match the default data member values in ResourceLoadStatistics, which is fragile.
-    store->setMaxStatisticsEntries(1000);
-    store->setPruneEntriesDownTo(800);
-    store->setTimeToLiveUserInteraction(std::nullopt);
-    store->setTimeToLiveCookiePartitionFree(24_h);
-    store->setMinimumTimeBetweenDataRecordsRemoval(1_h);
-    store->setGrandfatheringTime(1_h);
-    store->setNotifyPagesWhenDataRecordsWereScanned(false);
-    WebKit::WebResourceLoadStatisticsTelemetry::setNotifyPagesWhenTelemetryWasCaptured(false);
-    store->setShouldClassifyResourcesBeforeDataRecordsRemoval(true);
+    store->resetParametersToDefaultValues();
     store->scheduleClearInMemory();
 }
 
