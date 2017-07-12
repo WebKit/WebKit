@@ -1,3 +1,11 @@
+2017-07-12  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix when both DATA_LOG_TO_FILE and DATA_LOG_FILENAME are defined.
+
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce): Changed declaration of logBasename from
+        char* logBasename to const char* logBasename.
+
 2017-07-12  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219401.
