@@ -379,6 +379,7 @@ const ImageFrame& ImageFrameCache::frameAtIndexCacheIfNeeded(size_t index, Image
 void ImageFrameCache::clearMetadata()
 {
     m_frameCount = std::nullopt;
+    m_repetitionCount = std::nullopt;
     m_singlePixelSolidColor = std::nullopt;
     m_encodedDataStatus = std::nullopt;
     m_uti = std::nullopt;
