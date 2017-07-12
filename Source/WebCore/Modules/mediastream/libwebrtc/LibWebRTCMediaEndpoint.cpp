@@ -117,37 +117,38 @@ static inline RefPtr<RTCSessionDescription> fromSessionDescription(const webrtc:
 // FIXME: We might want to create a new object only if the session actually changed for all description getters.
 RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::currentLocalDescription() const
 {
-    return fromSessionDescription(m_backend->current_local_description());
+    return m_backend ? fromSessionDescription(m_backend->current_local_description()) : nullptr;
 }
 
 RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::currentRemoteDescription() const
 {
-    return fromSessionDescription(m_backend->current_remote_description());
+    return m_backend ? fromSessionDescription(m_backend->current_remote_description()) : nullptr;
 }
 
 RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::pendingLocalDescription() const
 {
-    return fromSessionDescription(m_backend->pending_local_description());
+    return m_backend ? fromSessionDescription(m_backend->pending_local_description()) : nullptr;
 }
 
 RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::pendingRemoteDescription() const
 {
-    return fromSessionDescription(m_backend->pending_remote_description());
+    return m_backend ? fromSessionDescription(m_backend->pending_remote_description()) : nullptr;
 }
 
 RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::localDescription() const
 {
-    return fromSessionDescription(m_backend->local_description());
+    return m_backend ? fromSessionDescription(m_backend->local_description()) : nullptr;
 }
 
 RefPtr<RTCSessionDescription> LibWebRTCMediaEndpoint::remoteDescription() const
 {
-    // FIXME: We might want to create a new object only if the session actually changed.
-    return fromSessionDescription(m_backend->remote_description());
+    return m_backend ? fromSessionDescription(m_backend->remote_description()) : nullptr;
 }
 
 void LibWebRTCMediaEndpoint::doSetLocalDescription(RTCSessionDescription& description)
 {
+    ASSERT(m_backend);
+
     webrtc::SdpParseError error;
     std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription(webrtc::CreateSessionDescription(sessionDescriptionType(description.type()), description.sdp().utf8().data(), &error));
 
@@ -168,6 +169,8 @@ void LibWebRTCMediaEndpoint::doSetLocalDescription(RTCSessionDescription& descri
 
 void LibWebRTCMediaEndpoint::doSetRemoteDescription(RTCSessionDescription& description)
 {
+    ASSERT(m_backend);
+
     webrtc::SdpParseError error;
     std::unique_ptr<webrtc::SessionDescriptionInterface> sessionDescription(webrtc::CreateSessionDescription(sessionDescriptionType(description.type()), description.sdp().utf8().data(), &error));
     if (!sessionDescription) {
@@ -182,6 +185,8 @@ void LibWebRTCMediaEndpoint::doSetRemoteDescription(RTCSessionDescription& descr
 
 void LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& track, const Vector<String>& mediaStreamIds)
 {
+    ASSERT(m_backend);
+
     std::vector<webrtc::MediaStreamInterface*> mediaStreams;
     rtc::scoped_refptr<webrtc::MediaStreamInterface> mediaStream = nullptr;
     if (mediaStreamIds.size()) {
@@ -212,6 +217,8 @@ void LibWebRTCMediaEndpoint::addTrack(RTCRtpSender& sender, MediaStreamTrack& tr
 
 void LibWebRTCMediaEndpoint::removeTrack(RTCRtpSender& sender)
 {
+    ASSERT(m_backend);
+
     auto rtcSender = m_senders.get(&sender);
     if (!rtcSender)
         return;
@@ -250,6 +257,8 @@ bool LibWebRTCMediaEndpoint::shouldOfferAllowToReceiveVideo() const
 
 void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)
 {
+    ASSERT(m_backend);
+
     m_isInitiator = true;
     webrtc::PeerConnectionInterface::RTCOfferAnswerOptions rtcOptions;
     rtcOptions.ice_restart = options.iceRestart;
@@ -264,6 +273,8 @@ void LibWebRTCMediaEndpoint::doCreateOffer(const RTCOfferOptions& options)
 
 void LibWebRTCMediaEndpoint::doCreateAnswer()
 {
+    ASSERT(m_backend);
+
     m_isInitiator = false;
     m_backend->CreateAnswer(&m_createSessionDescriptionObserver, nullptr);
 }
@@ -714,6 +725,8 @@ void LibWebRTCMediaEndpoint::OnAddTrack(rtc::scoped_refptr<webrtc::RtpReceiverIn
 
 std::unique_ptr<RTCDataChannelHandler> LibWebRTCMediaEndpoint::createDataChannel(const String& label, const RTCDataChannelInit& options)
 {
+    ASSERT(m_backend);
+
     webrtc::DataChannelInit init;
     if (options.ordered)
         init.ordered = *options.ordered;
