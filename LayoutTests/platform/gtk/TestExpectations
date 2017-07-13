@@ -661,6 +661,11 @@ imported/w3c/web-platform-tests/webrtc/no-media-call.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/promises-call.html [ Failure ]
 imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/setRemoteDescription.html [ Failure ]
+http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Timeout ]
+http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Timeout ]
+http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Timeout ]
+webrtc/filtering-ice-candidate-after-reload.html [ Timeout ]
+webrtc/ice-candidate-sdpMLineIndex.html [ Timeout ]
 http/tests/media/media-stream/getusermedia-with-canvas.html [ Timeout ]
 webkit.org/b/169110 webrtc/audio-peer-connection-webaudio.html [ Failure Timeout ]
 webkit.org/b/173456 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-createOffer.html [ Crash ]
@@ -2237,6 +2242,12 @@ webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Timeout ]
 
 webkit.org/b/174243 fast/images/low-memory-decode.html [ Timeout ]
 
+webkit.org/b/174459 fast/images/async-image-background-image-repeated.html [ Timeout ]
+webkit.org/b/174459 fast/images/async-image-background-image.html [ Timeout ]
+webkit.org/b/174459 fast/images/async-image-body-background-image.html [ Timeout ]
+webkit.org/b/174459 fast/images/async-image-multiple-clients-repaint.html [ Timeout ]
+webkit.org/b/174459 fast/images/sprite-sheet-image-draw.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3430,6 +3441,13 @@ webkit.org/b/173413 imported/w3c/web-platform-tests/html/semantics/forms/textfie
 webkit.org/b/143702 media/progress-events-generated-correctly.html [ Failure ]
 
 webkit.org/b/173413 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Failure ]
+
+webkit.org/b/174460 fast/canvas/canvas-blend-image.html [ Failure ]
+webkit.org/b/174460 fast/canvas/canvas-blend-solid.html [ Failure ]
+
+webkit.org/b/174461 inspector/canvas/memory.html [ Failure ]
+webkit.org/b/174461 inspector/canvas/requestContent-2d.html [ Failure ]
+webkit.org/b/174461 inspector/canvas/requestContent-webgl.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
