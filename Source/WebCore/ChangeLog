@@ -1,5 +1,25 @@
 2017-07-12  Youenn Fablet  <youenn@apple.com>
 
+        Recreate the AudioUnit when restarting capture
+        https://bugs.webkit.org/show_bug.cgi?id=174439
+
+        Reviewed by Jer Noble.
+
+        Sometimes other applications in the system like FaceTime may make the audio unit not functional.
+        Reloading the tab capturing audio will trigger a call to stop the audio shared unit.
+        When the tab requests again audio, the shared unit will restart.
+        At that time, the AudioUnit shared unit will be fully recreated.
+
+        Manually tested by doing a webrtc call and then doing a FaceTime call.
+        Remote WebRTC endpoints may not receive any audio.
+        With the patch, reloading the web page will get back the audio.
+        Previously, restarting the UIProcess was the only way.
+
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::startProducingData): Cleaning the audio unit when starting to produce data if there is a preexisting audio unit.
+
+2017-07-12  Youenn Fablet  <youenn@apple.com>
+
         Accessing localDescription, remoteDescription, etc. after setTimeout raises EXC_BAD_ACCESS
         https://bugs.webkit.org/show_bug.cgi?id=174323
         <rdar://problem/33267876>

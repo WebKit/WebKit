@@ -543,6 +543,11 @@ void CoreAudioSharedUnit::startProducingData()
     if (m_ioUnitStarted)
         return;
 
+    if (m_ioUnit) {
+        cleanupAudioUnit();
+        ASSERT(!m_ioUnit);
+    }
+
     startInternal();
 }
 
