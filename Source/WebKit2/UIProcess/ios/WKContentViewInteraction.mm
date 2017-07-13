@@ -124,19 +124,6 @@
 
 @end
 
-#if ENABLE(DATA_INTERACTION)
-
-@interface WKDataInteractionCaretView : UIView
-
-- (instancetype)initWithTextInputView:(UIView<UITextInput> *)textInputView;
-- (void)insertAtPosition:(UITextPosition *)position;
-- (void)updateToPosition:(UITextPosition *)position;
-- (void)remove;
-
-@end
-
-#endif
-
 using namespace WebCore;
 using namespace WebKit;
 
@@ -4185,6 +4172,23 @@ static bool isAssistableInputType(InputType type)
 
 #if ENABLE(DRAG_SUPPORT)
 
+static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy)
+{
+    switch (policy) {
+    case _WKDragInteractionPolicyAlwaysEnable:
+        return YES;
+    case _WKDragInteractionPolicyAlwaysDisable:
+        return NO;
+    default:
+        return [UIDragInteraction isEnabledByDefault];
+    }
+}
+
+- (void)_didChangeDragInteractionPolicy
+{
+    [_dataInteraction setEnabled:shouldEnableDragInteractionForPolicy(_webView._dragInteractionPolicy)];
+}
+
 - (NSTimeInterval)dragLiftDelay
 {
     static const NSTimeInterval mediumDragLiftDelay = 0.5;
@@ -4207,7 +4211,7 @@ static bool isAssistableInputType(InputType type)
     _dataInteraction = adoptNS([[UIDragInteraction alloc] initWithDelegate:self]);
     _dataOperation = adoptNS([[UIDropInteraction alloc] initWithDelegate:self]);
     [_dataInteraction _setLiftDelay:self.dragLiftDelay];
-    [_dataInteraction setEnabled:YES];
+    [_dataInteraction setEnabled:shouldEnableDragInteractionForPolicy(_webView._dragInteractionPolicy)];
 
     [self addInteraction:_dataInteraction.get()];
     [self addInteraction:_dataOperation.get()];

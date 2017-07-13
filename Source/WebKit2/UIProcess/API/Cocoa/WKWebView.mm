@@ -308,6 +308,10 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     std::unique_ptr<WebKit::WebViewImpl> _impl;
     RetainPtr<WKTextFinderClient> _textFinderClient;
 #endif
+
+#if PLATFORM(IOS) && ENABLE(DRAG_SUPPORT)
+    _WKDragInteractionPolicy _dragInteractionPolicy;
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -594,6 +598,10 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
         _page->setURLSchemeHandlerForScheme(WebKit::WebURLSchemeHandlerCocoa::create(handlers[key]), key);
 
     pageToViewMap().add(_page.get(), self);
+
+#if PLATFORM(IOS) && ENABLE(DRAG_SUPPORT)
+    _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
+#endif
 }
 
 - (void)_setUpSQLiteDatabaseTrackerClient
@@ -1078,6 +1086,24 @@ static WKErrorCode callbackErrorCode(WebKit::CallbackBase::Error error)
 #pragma mark iOS-specific methods
 
 #if PLATFORM(IOS)
+
+#if ENABLE(DRAG_SUPPORT)
+
+- (_WKDragInteractionPolicy)_dragInteractionPolicy
+{
+    return _dragInteractionPolicy;
+}
+
+- (void)_setDragInteractionPolicy:(_WKDragInteractionPolicy)policy
+{
+    if (_dragInteractionPolicy == policy)
+        return;
+
+    _dragInteractionPolicy = policy;
+    [_contentView _didChangeDragInteractionPolicy];
+}
+
+#endif
 
 - (void)_populateArchivedSubviews:(NSMutableSet *)encodedViews
 {
