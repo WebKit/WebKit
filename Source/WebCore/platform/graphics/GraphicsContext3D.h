@@ -1300,11 +1300,12 @@ private:
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GLuint internalDepthStencilFormat, int width, int height);
 
-    int m_currentWidth, m_currentHeight;
+    int m_currentWidth { 0 };
+    int m_currentHeight { 0 };
 
 #if PLATFORM(COCOA)
     RetainPtr<WebGLLayer> m_webGLLayer;
-    PlatformGraphicsContext3D m_contextObj;
+    PlatformGraphicsContext3D m_contextObj { nullptr };
 #endif
 
 #if PLATFORM(WIN) && USE(CA)
@@ -1387,38 +1388,32 @@ private:
     RenderStyle m_renderStyle;
     Vector<Vector<float>> m_vertexArray;
 
-    GC3Duint m_texture;
-    GC3Duint m_fbo;
+    GC3Duint m_texture { 0 };
+    GC3Duint m_fbo { 0 };
 #if USE(COORDINATED_GRAPHICS_THREADED)
-    GC3Duint m_compositorTexture;
-    GC3Duint m_intermediateTexture;
+    GC3Duint m_compositorTexture { 0 };
+    GC3Duint m_intermediateTexture { 0 };
 #endif
 
     GC3Duint m_depthBuffer { 0 };
     GC3Duint m_stencilBuffer { 0 };
     GC3Duint m_depthStencilBuffer { 0 };
 
-    bool m_layerComposited;
-    GC3Duint m_internalColorFormat;
+    bool m_layerComposited { false };
+    GC3Duint m_internalColorFormat { 0 };
 
     struct GraphicsContext3DState {
-        GraphicsContext3DState()
-            : boundFBO(0)
-            , activeTexture(GraphicsContext3D::TEXTURE0)
-            , boundTexture0(0)
-        { }
-
-        GC3Duint boundFBO;
-        GC3Denum activeTexture;
-        GC3Duint boundTexture0;
+        GC3Duint boundFBO { 0 };
+        GC3Denum activeTexture { GraphicsContext3D::TEXTURE0 };
+        GC3Duint boundTexture0 { 0 };
     };
 
     GraphicsContext3DState m_state;
 
     // For multisampling
-    GC3Duint m_multisampleFBO;
-    GC3Duint m_multisampleDepthStencilBuffer;
-    GC3Duint m_multisampleColorBuffer;
+    GC3Duint m_multisampleFBO { 0 };
+    GC3Duint m_multisampleDepthStencilBuffer { 0 };
+    GC3Duint m_multisampleColorBuffer { 0 };
 
     // Errors raised by synthesizeGLError().
     ListHashSet<GC3Denum> m_syntheticErrors;
@@ -1432,7 +1427,7 @@ private:
 #endif
 
     // FIXME: Layering violation.
-    WebGLRenderingContextBase* m_webglContext;
+    WebGLRenderingContextBase* m_webglContext { nullptr };
 
     bool m_isForWebGL2 { false };
     bool m_usingCoreProfile { false };

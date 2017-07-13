@@ -386,28 +386,13 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
     return context;
 }
 
-GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
-    : m_currentWidth(0)
-    , m_currentHeight(0)
-    , m_contextObj(0)
+GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWindow*, GraphicsContext3D::RenderStyle)
+    : m_attrs(attrs)
 #if PLATFORM(IOS)
     , m_compiler(SH_ESSL_OUTPUT)
 #endif
-    , m_attrs(attrs)
-    , m_texture(0)
-    , m_fbo(0)
-    , m_depthStencilBuffer(0)
-    , m_layerComposited(false)
-    , m_internalColorFormat(0)
-    , m_multisampleFBO(0)
-    , m_multisampleDepthStencilBuffer(0)
-    , m_multisampleColorBuffer(0)
     , m_private(std::make_unique<GraphicsContext3DPrivate>(this))
-    , m_webglContext(0)
 {
-    UNUSED_PARAM(hostWindow);
-    UNUSED_PARAM(renderStyle);
-
 #if PLATFORM(IOS)
     EAGLRenderingAPI api = m_attrs.useGLES3 ? kEAGLRenderingAPIOpenGLES3 : kEAGLRenderingAPIOpenGLES2;
     m_contextObj = [[EAGLContext alloc] initWithAPI:api];
@@ -571,9 +556,6 @@ GraphicsContext3D::~GraphicsContext3D()
 #else
         CGLSetCurrentContext(m_contextObj);
         ::glDeleteTextures(1, &m_texture);
-#if USE(COORDINATED_GRAPHICS_THREADED)
-        ::glDeleteTextures(1, &m_compositorTexture);
-#endif
 #endif
         if (m_attrs.antialias) {
             ::glDeleteRenderbuffersEXT(1, &m_multisampleColorBuffer);
