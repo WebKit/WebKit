@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebVideoFullscreenControllerAVKit_h
-#define WebVideoFullscreenControllerAVKit_h
+
+#pragma once
 
 #if PLATFORM(IOS)
 
@@ -45,4 +45,4 @@ WEBCORE_EXPORT @interface WebVideoFullscreenController : NSObject
 @end
 
 #endif
-#endif // WebVideoFullscreenControllerAVKit_h
+

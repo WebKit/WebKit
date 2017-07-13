@@ -24,8 +24,7 @@
  */
 
 
-#ifndef WebVideoFullscreenModel_h
-#define WebVideoFullscreenModel_h
+#pragma once
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -67,4 +66,3 @@ WEBCORE_EXPORT bool supportsPictureInPicture();
 
 #endif
 
-#endif

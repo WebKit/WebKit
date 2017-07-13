@@ -22,8 +22,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WebVideoFullscreenManager_h
-#define WebVideoFullscreenManager_h
+
+#pragma once
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -155,4 +155,3 @@ protected:
 
 #endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#endif // WebVideoFullscreenManager_h

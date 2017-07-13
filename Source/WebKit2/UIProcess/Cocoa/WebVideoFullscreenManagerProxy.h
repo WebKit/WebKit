@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebVideoFullscreenManagerProxy_h
-#define WebVideoFullscreenManagerProxy_h
+#pragma once
 
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -168,4 +167,3 @@ private:
 
 #endif // PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
-#endif // WebVideoFullscreenManagerProxy_h

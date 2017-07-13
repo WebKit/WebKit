@@ -24,8 +24,7 @@
  */
 
 
-#ifndef WebVideoFullscreenChangeObserver_h
-#define WebVideoFullscreenChangeObserver_h
+#pragma once
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -45,4 +44,3 @@ public:
 
 #endif
 
-#endif

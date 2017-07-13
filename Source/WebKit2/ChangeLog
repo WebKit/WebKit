@@ -1,5 +1,17 @@
 2017-07-13  Jeremy Jones  <jeremyj@apple.com>
 
+        Fix style. Use #pragma once in VideoFullscreen and PlaybackSession headers.
+        https://bugs.webkit.org/show_bug.cgi?id=174448
+
+        Reviewed by Eric Carlson.
+
+        No behavior change.
+
+        * UIProcess/Cocoa/WebVideoFullscreenManagerProxy.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.h:
+
+2017-07-13  Jeremy Jones  <jeremyj@apple.com>
+
         Style fix. Replace strongThis with protectedThis.
         https://bugs.webkit.org/show_bug.cgi?id=174444
 

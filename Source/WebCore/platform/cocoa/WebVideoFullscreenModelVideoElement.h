@@ -24,8 +24,7 @@
  */
 
 
-#ifndef WebVideoFullscreenModelVideoElement_h
-#define WebVideoFullscreenModelVideoElement_h
+#pragma once
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
@@ -98,4 +97,3 @@ private:
 
 #endif
 
-#endif

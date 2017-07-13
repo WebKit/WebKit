@@ -24,8 +24,7 @@
  */
 
 
-#ifndef WebVideoFullscreenInterfaceAVKit_h
-#define WebVideoFullscreenInterfaceAVKit_h
+#pragma once
 
 #if PLATFORM(IOS)
 
@@ -156,4 +155,3 @@ protected:
 
 #endif
 
-#endif

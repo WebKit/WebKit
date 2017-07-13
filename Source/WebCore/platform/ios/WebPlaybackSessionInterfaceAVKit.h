@@ -24,8 +24,7 @@
  */
 
 
-#ifndef WebPlaybackSessionInterfaceAVKit_h
-#define WebPlaybackSessionInterfaceAVKit_h
+#pragma once
 
 #if PLATFORM(IOS)
 
@@ -99,4 +98,3 @@ protected:
 
 #endif
 
-#endif

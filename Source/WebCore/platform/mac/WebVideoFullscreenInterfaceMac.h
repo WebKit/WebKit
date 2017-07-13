@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebVideoFullscreenInterfaceMac_h
-#define WebVideoFullscreenInterfaceMac_h
+#pragma once
 
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 
@@ -106,4 +105,3 @@ private:
 
 #endif
 
-#endif /* WebVideoFullscreenInterfaceMac_h */
