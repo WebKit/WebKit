@@ -1,3 +1,19 @@
+2017-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: evaluateJavaScriptFunction should start the callback timeout after the function is applied
+        https://bugs.webkit.org/show_bug.cgi?id=174421
+
+        Reviewed by Brian Burg.
+
+        This is causing selenium test testShouldNotTimeoutIfScriptCallsbackInsideAZeroTimeout to fail, because
+        JavaScriptTimeout error is generated unexpectedly. When no script timeout is specified, 0 is used by default,
+        which means we do a setTimeout with 0 and then the script does another setTimeout with 0, but ours is dispatched
+        before and reportTimeoutError is called. We should start our timeout after applying the function, and only if
+        the result hasn't been reported yet.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (let.AutomationSessionProxy.prototype.evaluateJavaScriptFunction):
+
 2017-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] [WK2] Add SPI to enable, disable, or follow default behavior for DnD on a WKWebView

@@ -49,15 +49,21 @@ let AutomationSessionProxy = class AutomationSessionProxy
         let argumentValues = argumentStrings.map(this._jsonParse, this);
 
         let timeoutIdentifier = 0;
+        let resultReported = false;
 
-        let reportResult = (result) => { clearTimeout(timeoutIdentifier); resultCallback(frameID, callbackID, this._jsonStringify(result), false); };
+        let reportResult = (result) => {
+            if (timeoutIdentifier)
+                clearTimeout(timeoutIdentifier);
+            resultCallback(frameID, callbackID, this._jsonStringify(result), false);
+            resultReported = true;
+        };
         let reportTimeoutError = () => { resultCallback(frameID, callbackID, "JavaScriptTimeout", true); };
 
         if (expectsImplicitCallbackArgument) {
-            timeoutIdentifier = setTimeout(reportTimeoutError, callbackTimeout);
-
             argumentValues.push(reportResult);
             functionValue.apply(null, argumentValues);
+            if (!resultReported)
+                timeoutIdentifier = setTimeout(reportTimeoutError, callbackTimeout);
         } else
             reportResult(functionValue.apply(null, argumentValues));
     }
