@@ -58,7 +58,7 @@ function testIt(formIndex, colIndex, ofsX, expected)
     const spinId = "c" + formIndex + colIndex;
     const spin = document.getElementById(spinId);
 
-    const clickX = pageX(column) + colWidth * colIndex + ofsX;
+    const clickX = pageX(column) + colWidth * colIndex + spin.offsetWidth + ofsX;
     const clickY = pageY(column) + Math.floor(spin.offsetHeight / 3) + 2;
 
     eventSender.mouseMoveTo(clickX, clickY);
@@ -92,7 +92,7 @@ function test()
 
     for (var formIndex = 0; formIndex < numForms; formIndex++) {
         for (var colIndex = 0; colIndex < numCols; colIndex++) {
-          testIt(formIndex, colIndex, 93, 10);
+          testIt(formIndex, colIndex, -7, 10);
         }
     }
 }

@@ -1,3 +1,15 @@
+2017-07-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r219332): [GTK] 9 new failures on fast/forms spinbutton related tests
+        https://bugs.webkit.org/show_bug.cgi?id=174395
+
+        Reviewed by Carlos Garcia Campos.
+
+        * fast/forms/number/number-spinbutton-in-multi-column.html: Instead of assuming that the width will be 100, calculate a -7 offset dinamically.
+        * platform/gtk/TestExpectations: Remove expected failures now orking.
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover-expected.png: Rebaseline.
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover-expected.txt: Rebaseline.
+
 2017-07-13  Caio Lima  <ticaiolima@gmail.com>
 
         [ESnext] Implement Object Spread
