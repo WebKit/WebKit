@@ -34,21 +34,16 @@
 #include "WebsiteDataFetchOption.h"
 #include "WebsiteDataStore.h"
 #include "WebsiteDataType.h"
-#include <WebCore/FileMonitor.h>
-#include <WebCore/FileSystem.h>
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/ResourceLoadStatistics.h>
-#include <WebCore/SharedBuffer.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-constexpr Seconds minimumStatisticsFileWriteInterval { 5_min };
 constexpr unsigned operatingDatesWindow { 30 };
 constexpr unsigned statisticsModelVersion { 7 };
 constexpr unsigned maxImportance { 3 };
@@ -84,8 +79,8 @@ static const OptionSet<WebsiteDataType>& dataTypesToRemove()
 
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler)
     : m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
+    , m_persistentStorage(*this, resourceLoadStatisticsDirectory)
     , m_updateCookiePartitioningForDomainsHandler(WTFMove(updateCookiePartitioningForDomainsHandler))
-    , m_statisticsStoragePath(resourceLoadStatisticsDirectory)
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
 {
     ASSERT(RunLoop::isMain());
@@ -95,9 +90,10 @@ WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& res
 #endif
 
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
-        readDataFromDiskIfNeeded();
-        startMonitoringStatisticsStorage();
+        m_persistentStorage.initialize();
+        includeTodayAsOperatingDateIfNecessary();
     });
+
     m_statisticsQueue->dispatchAfter(5_s, [this, protectedThis = makeRef(*this)] {
         if (m_parameters.shouldSubmitTelemetry)
             WebResourceLoadStatisticsTelemetry::calculateAndSubmit(*this);
@@ -155,7 +151,7 @@ void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
             });
         }
 
-        scheduleOrWriteStoreToDisk();
+        m_persistentStorage.scheduleOrWriteMemoryStore();
     });
 }
 
@@ -185,79 +181,6 @@ void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
         });
     });
 }
-
-WallTime WebResourceLoadStatisticsStore::statisticsFileModificationTime(const String& path) const
-{
-    ASSERT(!RunLoop::isMain());
-    time_t modificationTime;
-    if (!getFileModificationTime(path, modificationTime))
-        return { };
-
-    return WallTime::fromRawSeconds(modificationTime);
-}
-
-bool WebResourceLoadStatisticsStore::hasStatisticsFileChangedSinceLastSync(const String& path) const
-{
-    return statisticsFileModificationTime(path) > m_lastStatisticsFileSyncTime;
-}
-
-void WebResourceLoadStatisticsStore::readDataFromDiskIfNeeded()
-{
-    ASSERT(!RunLoop::isMain());
-
-    String resourceLog = resourceLogFilePath();
-    if (resourceLog.isEmpty() || !fileExists(resourceLog)) {
-        grandfatherExistingWebsiteData();
-        return;
-    }
-
-    if (!hasStatisticsFileChangedSinceLastSync(resourceLog)) {
-        // No need to grandfather in this case.
-        return;
-    }
-
-    WallTime readTime = WallTime::now();
-
-    auto decoder = createDecoderFromDisk(resourceLog);
-    if (!decoder) {
-        grandfatherExistingWebsiteData();
-        return;
-    }
-
-    clearInMemory();
-    populateFromDecoder(*decoder);
-
-    m_lastStatisticsFileSyncTime = readTime;
-
-    if (m_resourceStatisticsMap.isEmpty())
-        grandfatherExistingWebsiteData();
-
-    includeTodayAsOperatingDateIfNecessary();
-}
-    
-void WebResourceLoadStatisticsStore::refreshFromDisk()
-{
-    ASSERT(!RunLoop::isMain());
-
-    String resourceLog = resourceLogFilePath();
-    if (resourceLog.isEmpty())
-        return;
-
-    // We sometimes see file changed events from before our load completed (we start
-    // reading at the first change event, but we might receive a series of events related
-    // to the same file operation). Catch this case to avoid reading overly often.
-    if (!hasStatisticsFileChangedSinceLastSync(resourceLog))
-        return;
-
-    WallTime readTime = WallTime::now();
-
-    auto decoder = createDecoderFromDisk(resourceLog);
-    if (!decoder)
-        return;
-
-    populateFromDecoder(*decoder);
-    m_lastStatisticsFileSyncTime = readTime;
-}
     
 void WebResourceLoadStatisticsStore::processWillOpenConnection(WebProcessProxy&, IPC::Connection& connection)
 {
@@ -271,177 +194,7 @@ void WebResourceLoadStatisticsStore::processDidCloseConnection(WebProcessProxy&,
 
 void WebResourceLoadStatisticsStore::applicationWillTerminate()
 {
-    BinarySemaphore semaphore;
-    // Make sure any pending work in our queue is finished before we terminate.
-    m_statisticsQueue->dispatch([&semaphore, this, protectedThis = makeRef(*this)] {
-        // Write final file state to disk.
-        if (m_didScheduleWrite)
-            writeStoreToDisk();
-
-        semaphore.signal();
-    });
-    semaphore.wait(WallTime::infinity());
-}
-
-String WebResourceLoadStatisticsStore::statisticsStoragePath() const
-{
-    return m_statisticsStoragePath.isolatedCopy();
-}
-
-String WebResourceLoadStatisticsStore::resourceLogFilePath() const
-{
-    String statisticsStoragePath = this->statisticsStoragePath();
-    if (statisticsStoragePath.isEmpty())
-        return emptyString();
-
-    return pathByAppendingComponent(statisticsStoragePath, "full_browsing_session_resourceLog.plist");
-}
-
-void WebResourceLoadStatisticsStore::writeStoreToDisk()
-{
-    ASSERT(!RunLoop::isMain());
-    
-    stopMonitoringStatisticsStorage();
-
-    syncWithExistingStatisticsStorageIfNeeded();
-
-    auto encoder = createEncoderFromData();
-    RefPtr<SharedBuffer> rawData = encoder->finishEncoding();
-    if (!rawData)
-        return;
-
-    auto statisticsStoragePath = this->statisticsStoragePath();
-    if (!statisticsStoragePath.isEmpty()) {
-        makeAllDirectories(statisticsStoragePath);
-        platformExcludeFromBackup();
-    }
-
-    auto handle = openAndLockFile(resourceLogFilePath(), OpenForWrite);
-    if (handle == invalidPlatformFileHandle)
-        return;
-
-    int64_t writtenBytes = writeToFile(handle, rawData->data(), rawData->size());
-    unlockAndCloseFile(handle);
-
-    if (writtenBytes != static_cast<int64_t>(rawData->size()))
-        RELEASE_LOG_ERROR(ResourceLoadStatistics, "WebResourceLoadStatisticsStore: We only wrote %d out of %zu bytes to disk", static_cast<unsigned>(writtenBytes), rawData->size());
-
-    m_lastStatisticsFileSyncTime = WallTime::now();
-    m_lastStatisticsWriteTime = MonotonicTime::now();
-
-    startMonitoringStatisticsStorage();
-    m_didScheduleWrite = false;
-}
-
-void WebResourceLoadStatisticsStore::scheduleOrWriteStoreToDisk()
-{
-    ASSERT(!RunLoop::isMain());
-
-    auto timeSinceLastWrite = MonotonicTime::now() - m_lastStatisticsWriteTime;
-    if (timeSinceLastWrite < minimumStatisticsFileWriteInterval) {
-        if (!m_didScheduleWrite) {
-            m_didScheduleWrite = true;
-            Seconds delay = minimumStatisticsFileWriteInterval - timeSinceLastWrite + 1_s;
-            m_statisticsQueue->dispatchAfter(delay, [this, protectedThis = makeRef(*this)] {
-                writeStoreToDisk();
-            });
-        }
-        return;
-    }
-
-    writeStoreToDisk();
-}
-
-void WebResourceLoadStatisticsStore::deleteStoreFromDisk()
-{
-    ASSERT(!RunLoop::isMain());
-    String resourceLogPath = resourceLogFilePath();
-    if (resourceLogPath.isEmpty())
-        return;
-
-    stopMonitoringStatisticsStorage();
-
-    if (!deleteFile(resourceLogPath))
-        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to delete statistics file: %s", resourceLogPath.utf8().data());
-}
-
-void WebResourceLoadStatisticsStore::startMonitoringStatisticsStorage()
-{
-    ASSERT(!RunLoop::isMain());
-    if (m_statisticsStorageMonitor)
-        return;
-    
-    String resourceLogPath = resourceLogFilePath();
-    if (resourceLogPath.isEmpty())
-        return;
-    
-    m_statisticsStorageMonitor = std::make_unique<FileMonitor>(resourceLogPath, m_statisticsQueue.copyRef(), [this] (FileMonitor::FileChangeType type) {
-        ASSERT(!RunLoop::isMain());
-        switch (type) {
-        case FileMonitor::FileChangeType::Modification:
-            refreshFromDisk();
-            break;
-        case FileMonitor::FileChangeType::Removal:
-            clearInMemory();
-            m_statisticsStorageMonitor = nullptr;
-            break;
-        }
-    });
-}
-
-void WebResourceLoadStatisticsStore::stopMonitoringStatisticsStorage()
-{
-    ASSERT(!RunLoop::isMain());
-    m_statisticsStorageMonitor = nullptr;
-}
-
-void WebResourceLoadStatisticsStore::syncWithExistingStatisticsStorageIfNeeded()
-{
-    ASSERT(!RunLoop::isMain());
-    if (m_statisticsStorageMonitor)
-        return;
-
-    String resourceLog = resourceLogFilePath();
-    if (resourceLog.isEmpty() || !fileExists(resourceLog))
-        return;
-
-    refreshFromDisk();
-}
-
-#if !PLATFORM(COCOA)
-void WebResourceLoadStatisticsStore::platformExcludeFromBackup() const
-{
-}
-#endif
-
-std::unique_ptr<KeyedDecoder> WebResourceLoadStatisticsStore::createDecoderFromDisk(const String& path) const
-{
-    ASSERT(!RunLoop::isMain());
-    auto handle = openAndLockFile(path, OpenForRead);
-    if (handle == invalidPlatformFileHandle)
-        return nullptr;
-    
-    long long fileSize = 0;
-    if (!getFileSize(handle, fileSize)) {
-        unlockAndCloseFile(handle);
-        return nullptr;
-    }
-    
-    size_t bytesToRead;
-    if (!WTF::convertSafely(fileSize, bytesToRead)) {
-        unlockAndCloseFile(handle);
-        return nullptr;
-    }
-
-    Vector<char> buffer(bytesToRead);
-    size_t totalBytesRead = readFromFile(handle, buffer.data(), buffer.size());
-
-    unlockAndCloseFile(handle);
-
-    if (totalBytesRead != bytesToRead)
-        return nullptr;
-
-    return KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size());
+    m_persistentStorage.finishAllPendingWorkSynchronously();
 }
 
 void WebResourceLoadStatisticsStore::performDailyTasks()
@@ -653,7 +406,7 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent()
     ASSERT(RunLoop::isMain());
     m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
         clearInMemory();
-        deleteStoreFromDisk();
+        m_persistentStorage.clear();
         grandfatherExistingWebsiteData();
     });
 }
@@ -732,11 +485,11 @@ std::unique_ptr<KeyedEncoder> WebResourceLoadStatisticsStore::createEncoderFromD
     return encoder;
 }
 
-void WebResourceLoadStatisticsStore::populateFromDecoder(KeyedDecoder& decoder)
+void WebResourceLoadStatisticsStore::resetDataFromDecoder(KeyedDecoder& decoder)
 {
     ASSERT(!RunLoop::isMain());
-    if (!m_resourceStatisticsMap.isEmpty())
-        return;
+
+    clearInMemory();
 
     unsigned versionOnDisk;
     if (!decoder.decodeUInt32("version", versionOnDisk))

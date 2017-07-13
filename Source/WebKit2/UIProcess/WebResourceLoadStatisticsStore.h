@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "ResourceLoadStatisticsClassifier.h"
+#include "ResourceLoadStatisticsPersistentStorage.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
@@ -42,7 +43,6 @@ class WorkQueue;
 }
 
 namespace WebCore {
-class FileMonitor;
 class KeyedDecoder;
 class KeyedEncoder;
 class URL;
@@ -55,7 +55,6 @@ class WebProcessProxy;
 
 enum class ShouldClearFirst;
 
-// FIXME: We should consider moving FileSystem I/O to a separate class.
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
     using UpdateCookiePartitioningForDomainsHandler = WTF::Function<void(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst)>;
@@ -65,6 +64,9 @@ public:
     }
 
     ~WebResourceLoadStatisticsStore();
+
+    bool isEmpty() const { return m_resourceStatisticsMap.isEmpty(); }
+    WorkQueue& statisticsQueue() { return m_statisticsQueue.get(); }
 
     void setNotifyPagesWhenDataRecordsWereScanned(bool value) { m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned = value; }
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool value) { m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval = value; }
@@ -109,33 +111,20 @@ public:
     void pruneStatisticsIfNeeded();
 
     void resetParametersToDefaultValues();
+
+    std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
+    void resetDataFromDecoder(WebCore::KeyedDecoder&);
+    void clearInMemory();
+    void grandfatherExistingWebsiteData();
     
 private:
     WebResourceLoadStatisticsStore(const String&, UpdateCookiePartitioningForDomainsHandler&&);
 
-    void readDataFromDiskIfNeeded();
-
     void removeDataRecords();
-    void startMonitoringStatisticsStorage();
-    void stopMonitoringStatisticsStorage();
-
-    String statisticsStoragePath() const;
-    String resourceLogFilePath() const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    void grandfatherExistingWebsiteData();
-
-    void writeStoreToDisk();
-    void scheduleOrWriteStoreToDisk();
-    std::unique_ptr<WebCore::KeyedDecoder> createDecoderFromDisk(const String& path) const;
-    WallTime statisticsFileModificationTime(const String& label) const;
-    void platformExcludeFromBackup() const;
-    void deleteStoreFromDisk();
-    void syncWithExistingStatisticsStorageIfNeeded();
-    void refreshFromDisk();
-    bool hasStatisticsFileChangedSinceLastSync(const String& path) const;
     void performDailyTasks();
     bool shouldRemoveDataRecords() const;
     void setDataRecordsBeingRemoved(bool);
@@ -149,9 +138,6 @@ private:
     void updateCookiePartitioningForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst);
     void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
-    std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
-    void populateFromDecoder(WebCore::KeyedDecoder&);
-    void clearInMemory();
 
     void resetCookiePartitioningState();
 
@@ -178,22 +164,18 @@ private:
     ResourceLoadStatisticsClassifier m_resourceLoadStatisticsClassifier;
 #endif
     Ref<WTF::WorkQueue> m_statisticsQueue;
-    std::unique_ptr<WebCore::FileMonitor> m_statisticsStorageMonitor;
+    ResourceLoadStatisticsPersistentStorage m_persistentStorage;
     Deque<WTF::WallTime> m_operatingDates;
 
     UpdateCookiePartitioningForDomainsHandler m_updateCookiePartitioningForDomainsHandler;
 
     WallTime m_endOfGrandfatheringTimestamp;
-    const String m_statisticsStoragePath;
-    WallTime m_lastStatisticsFileSyncTime;
-    MonotonicTime m_lastStatisticsWriteTime;
     RunLoop::Timer<WebResourceLoadStatisticsStore> m_dailyTasksTimer;
     MonotonicTime m_lastTimeDataRecordsWereRemoved;
 
     Parameters m_parameters;
 
     bool m_dataRecordsBeingRemoved { false };
-    bool m_didScheduleWrite { false };
 };
 
 } // namespace WebKit
