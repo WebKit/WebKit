@@ -335,6 +335,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (BOOL)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
 
 #if ENABLE(DATA_INTERACTION)
+- (void)_didChangeDragInteractionPolicy;
 - (void)_didPerformDataInteractionControllerOperation:(BOOL)handled;
 - (void)_didHandleStartDataInteractionRequest:(BOOL)started;
 - (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item;

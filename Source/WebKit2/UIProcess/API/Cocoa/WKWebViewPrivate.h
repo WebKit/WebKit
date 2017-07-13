@@ -59,6 +59,16 @@ typedef NS_OPTIONS(NSUInteger, _WKCaptureDevices) {
     _WKCaptureDeviceCamera = 1 << 1,
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+#if TARGET_OS_IPHONE && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+
+typedef NS_ENUM(NSUInteger, _WKDragInteractionPolicy) {
+    _WKDragInteractionPolicyDefault = 0,
+    _WKDragInteractionPolicyAlwaysEnable,
+    _WKDragInteractionPolicyAlwaysDisable
+} WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
+#endif
+
 #if !TARGET_OS_IPHONE
 
 typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
@@ -183,6 +193,10 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (nonatomic, readonly) NSString *_suggestedFilenameForDisplayedPDF;
 
 @property (nonatomic, readonly) _WKWebViewPrintFormatter *_webViewPrintFormatter;
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+@property (nonatomic, setter=_setDragInteractionPolicy:) _WKDragInteractionPolicy _dragInteractionPolicy WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#endif
 
 - (void)_beginInteractiveObscuredInsetsChange;
 - (void)_endInteractiveObscuredInsetsChange;

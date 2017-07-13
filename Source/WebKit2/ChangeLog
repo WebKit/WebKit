@@ -1,3 +1,36 @@
+2017-07-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] [WK2] Add SPI to enable, disable, or follow default behavior for DnD on a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=174440
+        <rdar://problem/33272627>
+
+        Reviewed by Beth Dakin.
+
+        Adds a new _dragInteractionPolicy property to WKWebView, which an internal client may use to always allow
+        dragging out of the web view (_WKDragInteractionPolicyAlwaysEnable), never allow
+        (_WKDragInteractionPolicyAlwaysDisable) or just use the default device-dependent behavior
+        (_WKDragInteractionPolicyDefault).
+
+        Also removes an extraneous class from WKContentViewInteraction.mm that is no longer used anywhere.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+
+        Set _dragInteractionPolicy to _WKDragInteractionPolicyDefault upon initialization.
+
+        (-[WKWebView _dragInteractionPolicy]):
+        (-[WKWebView _setDragInteractionPolicy:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (shouldEnableDragInteractionForPolicy):
+        (-[WKContentView _didChangeDragInteractionPolicy]):
+
+        Called by the WKWebView when its _dragInteractionPolicy changes. The content view updates its
+        UIDragInteraction's -enabled property here in response.
+
+        (-[WKContentView setupDataInteractionDelegates]):
+
 2017-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Async image decoding for large images should be disabled by default
