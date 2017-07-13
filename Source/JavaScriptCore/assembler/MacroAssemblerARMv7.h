@@ -2107,17 +2107,6 @@ protected:
         return static_cast<ARMv7Assembler::Condition>(cond);
     }
     
-private:
-    friend class LinkBuffer;
-
-    static void linkCall(void* code, Call call, FunctionPtr function)
-    {
-        if (call.isFlagSet(Call::Tail))
-            ARMv7Assembler::linkJump(code, call.m_label, function.value());
-        else
-            ARMv7Assembler::linkCall(code, call.m_label, function.value());
-    }
-
 #if ENABLE(MASM_PROBE)
     inline TrustedImm32 trustedImm32FromPtr(void* ptr)
     {
@@ -2134,6 +2123,17 @@ private:
         return TrustedImm32(TrustedImmPtr(reinterpret_cast<void*>(function)));
     }
 #endif
+
+private:
+    friend class LinkBuffer;
+
+    static void linkCall(void* code, Call call, FunctionPtr function)
+    {
+        if (call.isFlagSet(Call::Tail))
+            ARMv7Assembler::linkJump(code, call.m_label, function.value());
+        else
+            ARMv7Assembler::linkCall(code, call.m_label, function.value());
+    }
 
     bool m_makeJumpPatchable;
 };

@@ -1,5 +1,19 @@
 2017-07-12  Mark Lam  <mark.lam@apple.com>
 
+        Gardening: build fix after r219434.
+        https://bugs.webkit.org/show_bug.cgi?id=174441
+
+        Not reviewed.
+
+        Make public some MacroAssembler functions that are needed by the probe implementationq.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::trustedImm32FromPtr):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::linkCall):
+
+2017-07-12  Mark Lam  <mark.lam@apple.com>
+
         Move Probe code from AbstractMacroAssembler to MacroAssembler.
         https://bugs.webkit.org/show_bug.cgi?id=174441
 
