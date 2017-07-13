@@ -173,7 +173,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 {
     if (paintingDisabled())
         return;
-        
+
     // These are the same for misspelling or bad grammar.
     int patternHeight = cMisspellingLineThickness;
     float patternWidth = cMisspellingLinePatternWidth;
@@ -186,69 +186,65 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     CGPatternRef dotPattern;
 #endif
     switch (style) {
-        case DocumentMarkerSpellingLineStyle:
-        {
-            // Constants for spelling pattern color.
-            static bool usingDotForSpelling = false;
+    case DocumentMarkerSpellingLineStyle: {
+        // Constants for spelling pattern color.
+        static bool usingDotForSpelling = false;
 #if !PLATFORM(IOS)
-            if (!spellingImage)
-                spellingImage = [findImage(@"NSSpellingDot", @"SpellingDot", usingDotForSpelling) retain];
-            image = spellingImage;
-            fallbackColor = [NSColor redColor];
+        if (!spellingImage)
+            spellingImage = [findImage(@"NSSpellingDot", @"SpellingDot", usingDotForSpelling) retain];
+        image = spellingImage;
+        fallbackColor = [NSColor redColor];
 #else
-            static CGPatternRef spellingPattern = createDotPattern(usingDotForSpelling, "SpellingDot").leakRef();
-            dotPattern = spellingPattern;
+        static CGPatternRef spellingPattern = createDotPattern(usingDotForSpelling, "SpellingDot").leakRef();
+        dotPattern = spellingPattern;
 #endif
-            usingDot = usingDotForSpelling;
-            break;
-        }
-        case DocumentMarkerGrammarLineStyle:
-        {
+        usingDot = usingDotForSpelling;
+        break;
+    }
+    case DocumentMarkerGrammarLineStyle: {
 #if !PLATFORM(IOS)
-            // Constants for grammar pattern color.
-            static bool usingDotForGrammar = false;
-            if (!grammarImage)
-                grammarImage = [findImage(@"NSGrammarDot", @"GrammarDot", usingDotForGrammar) retain];
-            usingDot = grammarImage;
-            image = grammarImage;
-            fallbackColor = [NSColor greenColor];
-            break;
+        // Constants for grammar pattern color.
+        static bool usingDotForGrammar = false;
+        if (!grammarImage)
+            grammarImage = [findImage(@"NSGrammarDot", @"GrammarDot", usingDotForGrammar) retain];
+        usingDot = grammarImage;
+        image = grammarImage;
+        fallbackColor = [NSColor greenColor];
+        break;
 #else
-            ASSERT_NOT_REACHED();
-            return;
+        ASSERT_NOT_REACHED();
+        return;
 #endif
-        }
+    }
 #if PLATFORM(MAC)
-        // To support correction panel.
-        case DocumentMarkerAutocorrectionReplacementLineStyle:
-        case DocumentMarkerDictationAlternativesLineStyle:
-        {
-            // Constants for spelling pattern color.
-            static bool usingDotForSpelling = false;
-            if (!correctionImage)
-                correctionImage = [findImage(@"NSCorrectionDot", @"CorrectionDot", usingDotForSpelling) retain];
-            usingDot = usingDotForSpelling;
-            image = correctionImage;
-            fallbackColor = [NSColor blueColor];
-            break;
-        }
+    // To support correction panel.
+    case DocumentMarkerAutocorrectionReplacementLineStyle:
+    case DocumentMarkerDictationAlternativesLineStyle: {
+        // Constants for spelling pattern color.
+        static bool usingDotForSpelling = false;
+        if (!correctionImage)
+            correctionImage = [findImage(@"NSCorrectionDot", @"CorrectionDot", usingDotForSpelling) retain];
+        usingDot = usingDotForSpelling;
+        image = correctionImage;
+        fallbackColor = [NSColor blueColor];
+        break;
+    }
 #endif
 #if PLATFORM(IOS)
-        case TextCheckingDictationPhraseWithAlternativesLineStyle:
-        {
-            static bool usingDotForDictationPhraseWithAlternatives = false;
-            static CGPatternRef dictationPhraseWithAlternativesPattern = createDotPattern(usingDotForDictationPhraseWithAlternatives, "DictationPhraseWithAlternativesDot").leakRef();
-            dotPattern = dictationPhraseWithAlternativesPattern;
-            usingDot = usingDotForDictationPhraseWithAlternatives;
-            break;
-        }
+    case TextCheckingDictationPhraseWithAlternativesLineStyle: {
+        static bool usingDotForDictationPhraseWithAlternatives = false;
+        static CGPatternRef dictationPhraseWithAlternativesPattern = createDotPattern(usingDotForDictationPhraseWithAlternatives, "DictationPhraseWithAlternativesDot").leakRef();
+        dotPattern = dictationPhraseWithAlternativesPattern;
+        usingDot = usingDotForDictationPhraseWithAlternatives;
+        break;
+    }
 #endif // PLATFORM(IOS)
-        default:
+    default:
 #if PLATFORM(IOS)
-            // FIXME: Should remove default case so we get compile-time errors.
-            ASSERT_NOT_REACHED();
+        // FIXME: Should remove default case so we get compile-time errors.
+        ASSERT_NOT_REACHED();
 #endif // PLATFORM(IOS)
-            return;
+        return;
     }
     
     FloatPoint offsetPoint = point;

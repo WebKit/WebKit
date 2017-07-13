@@ -1,5 +1,26 @@
 2017-07-12  Dean Jackson  <dino@apple.com>
 
+        Rename GraphicsContext[3D]Mac to Cocoa and move things into graphics/cocoa
+        https://bugs.webkit.org/show_bug.cgi?id=174453
+        <rdar://problem/33281481>
+
+        Reviewed by Simon Fraser.
+
+        Two renames, two moves:
+        graphics/mac/GraphicsContext3DMac.mm -> graphics/cocoa/GraphicsContext3DCocoa.mm
+        graphics/mac/GraphicsContext.mm -> graphics/cocoa/GraphicsContextCocoa.mm
+        graphics/mac/WebGLLayer.h -> graphics/cocoa/WebGLLayer.h
+        graphics/mac/WebGLLayer.mm -> graphics/cocoa/WebGLLayer.mm
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm: Renamed from Source/WebCore/platform/graphics/mac/GraphicsContext3DMac.mm.
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm: Renamed from Source/WebCore/platform/graphics/mac/GraphicsContextMac.mm.
+        * platform/graphics/cocoa/WebGLLayer.h: Renamed from Source/WebCore/platform/graphics/mac/WebGLLayer.h.
+        * platform/graphics/cocoa/WebGLLayer.mm: Renamed from Source/WebCore/platform/graphics/mac/WebGLLayer.mm.
+
+2017-07-12  Dean Jackson  <dino@apple.com>
+
         Clean-up some things in GraphicsContext3D
         https://bugs.webkit.org/show_bug.cgi?id=174452
         <rdar://problem/33281257>

@@ -2088,7 +2088,7 @@
 		49EED14E1051971A00099FAB /* JSCanvasRenderingContext2DCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */; };
 		49EED14F1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */; };
 		49FC7A501444AF5F00A5D864 /* DisplayRefreshMonitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */; };
-		49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */; };
+		49FFBF1D11C8550E006A7118 /* GraphicsContext3DCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF1C11C8550E006A7118 /* GraphicsContext3DCocoa.mm */; };
 		49FFBF3F11C93EE3006A7118 /* WebGLLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */; };
 		49FFBF4011C93EE3006A7118 /* WebGLLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */; };
 		4A0DA2FE129B241900AB61E1 /* FormAssociatedElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */; };
@@ -5191,7 +5191,7 @@
 		B275357F0B053814002CE64F /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27535520B053814002CE64F /* Path.cpp */; };
 		B27535800B053814002CE64F /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = B27535530B053814002CE64F /* Path.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B275358E0B053A66002CE64F /* IconMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B275358D0B053A66002CE64F /* IconMac.mm */; };
-		B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */; };
+		B277B4040B22F37C0004BEC6 /* GraphicsContextCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B277B4030B22F37C0004BEC6 /* GraphicsContextCocoa.mm */; };
 		B27B28250CEF0C0700D39D54 /* JSSVGFontElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B281F0CEF0C0700D39D54 /* JSSVGFontElement.cpp */; };
 		B27B28260CEF0C0700D39D54 /* JSSVGFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B27B28200CEF0C0700D39D54 /* JSSVGFontElement.h */; };
 		B27B28270CEF0C0700D39D54 /* JSSVGGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27B28210CEF0C0700D39D54 /* JSSVGGlyphElement.cpp */; };
@@ -9810,7 +9810,7 @@
 		49EED14B1051971900099FAB /* JSCanvasRenderingContext2DCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCanvasRenderingContext2DCustom.cpp; sourceTree = "<group>"; };
 		49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLRenderingContextCustom.cpp; sourceTree = "<group>"; };
 		49FC7A4F1444AF5F00A5D864 /* DisplayRefreshMonitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayRefreshMonitor.cpp; sourceTree = "<group>"; };
-		49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContext3DMac.mm; sourceTree = "<group>"; };
+		49FFBF1C11C8550E006A7118 /* GraphicsContext3DCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContext3DCocoa.mm; sourceTree = "<group>"; };
 		49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGLLayer.h; sourceTree = "<group>"; };
 		49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebGLLayer.mm; sourceTree = "<group>"; };
 		4A0DA2FC129B241900AB61E1 /* FormAssociatedElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormAssociatedElement.cpp; sourceTree = "<group>"; };
@@ -13640,7 +13640,7 @@
 		B27535520B053814002CE64F /* Path.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Path.cpp; sourceTree = "<group>"; };
 		B27535530B053814002CE64F /* Path.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
 		B275358D0B053A66002CE64F /* IconMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IconMac.mm; sourceTree = "<group>"; };
-		B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContextMac.mm; sourceTree = "<group>"; };
+		B277B4030B22F37C0004BEC6 /* GraphicsContextCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContextCocoa.mm; sourceTree = "<group>"; };
 		B27B281F0CEF0C0700D39D54 /* JSSVGFontElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGFontElement.cpp; sourceTree = "<group>"; };
 		B27B28200CEF0C0700D39D54 /* JSSVGFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGFontElement.h; sourceTree = "<group>"; };
 		B27B28210CEF0C0700D39D54 /* JSSVGGlyphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGGlyphElement.cpp; sourceTree = "<group>"; };
@@ -23067,8 +23067,6 @@
 				B2AFFC750D00A5C10030074D /* FontCustomPlatformData.cpp */,
 				B2AFFC760D00A5C10030074D /* FontCustomPlatformData.h */,
 				B2AFFC7B0D00A5C10030074D /* GlyphPageMac.cpp */,
-				49FFBF1C11C8550E006A7118 /* GraphicsContext3DMac.mm */,
-				B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */,
 				B275358D0B053A66002CE64F /* IconMac.mm */,
 				B275354E0B053814002CE64F /* ImageMac.mm */,
 				B275354F0B053814002CE64F /* IntPointMac.mm */,
@@ -23080,8 +23078,6 @@
 				CD60C0C4193E87C7003C656B /* MediaTimeQTKit.mm */,
 				2D6E468217D660F500ECF8BB /* PDFDocumentImageMac.mm */,
 				163E88F5118A39D200ED9231 /* SimpleFontDataCoreText.cpp */,
-				49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */,
-				49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */,
 				0FCF332B0F2B9A25004B6795 /* WebLayer.h */,
 				0FCF332A0F2B9A25004B6795 /* WebLayer.mm */,
 			);
@@ -23457,6 +23453,8 @@
 				316BDC051E762F7E00DE0D5A /* GPURenderPipelineStateMetal.mm */,
 				316BDBB31E7357B000DE0D5A /* GPUTextureDescriptorMetal.mm */,
 				316BDBAD1E73549C00DE0D5A /* GPUTextureMetal.mm */,
+				B277B4030B22F37C0004BEC6 /* GraphicsContextCocoa.mm */,
+				49FFBF1C11C8550E006A7118 /* GraphicsContext3DCocoa.mm */,
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,
@@ -23470,6 +23468,8 @@
 				CD5D27751E8318E000D80A3D /* WebCoreDecompressionSession.mm */,
 				316BDB8A1E6E153000DE0D5A /* WebGPULayer.h */,
 				316BDB891E6E153000DE0D5A /* WebGPULayer.mm */,
+				49FFBF3D11C93EE3006A7118 /* WebGLLayer.h */,
+				49FFBF3E11C93EE3006A7118 /* WebGLLayer.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -31424,11 +31424,11 @@
 				B2A015A80AF6CD53006BCE0E /* GraphicsContext.cpp in Sources */,
 				6E21C6C01126338500A7BE02 /* GraphicsContext3D.cpp in Sources */,
 				6E21C6C21126339900A7BE02 /* GraphicsContext3DCG.cpp in Sources */,
-				49FFBF1D11C8550E006A7118 /* GraphicsContext3DMac.mm in Sources */,
+				49FFBF1D11C8550E006A7118 /* GraphicsContext3DCocoa.mm in Sources */,
 				FBC220DF1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp in Sources */,
 				96ABA42314BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp in Sources */,
 				B2ED97710B1F55CE00257D0F /* GraphicsContextCG.cpp in Sources */,
-				B277B4040B22F37C0004BEC6 /* GraphicsContextMac.mm in Sources */,
+				B277B4040B22F37C0004BEC6 /* GraphicsContextCocoa.mm in Sources */,
 				0F580B0C0F12A2690051D689 /* GraphicsLayer.cpp in Sources */,
 				499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */,
 				0FA24D79162DF91900A3F4C0 /* GraphicsLayerUpdater.cpp in Sources */,

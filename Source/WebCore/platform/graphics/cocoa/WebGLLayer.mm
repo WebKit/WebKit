@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 
 #if ENABLE(WEBGL)
-
 #import "WebGLLayer.h"
 
 #import "GraphicsContext3D.h"
@@ -159,9 +158,7 @@ static void freeData(void *, const void *data, size_t /* size */)
 
     CGDataProviderRef provider = CGDataProviderCreateWithData(0, data, dataSize, freeData);
     CGImageRef image = CGImageCreate(width, height, 8, 32, rowBytes, imageColorSpace.get(),
-                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host,
-                                                 provider, 0, true,
-                                                 kCGRenderingIntentDefault);
+        kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, provider, 0, true, kCGRenderingIntentDefault);
     CGDataProviderRelease(provider);
     return image;
 #endif

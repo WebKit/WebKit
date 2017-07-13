@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGLLayer_h
-#define WebGLLayer_h
+#pragma once
 
 #import <QuartzCore/QuartzCore.h>
 
 namespace WebCore {
-    class GraphicsLayer;
-    class GraphicsContext3D;
+class GraphicsLayer;
+class GraphicsContext3D;
 }
 
 #if PLATFORM(IOS)
@@ -51,4 +50,3 @@ namespace WebCore {
 
 @end
 
-#endif // WebGLLayer_h
