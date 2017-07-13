@@ -32,6 +32,13 @@ using namespace WebCore;
 
 namespace WebKit {
 
+void WebResourceLoadStatisticsStore::platformExcludeFromBackup() const
+{
+#if PLATFORM(IOS)
+    [[NSURL fileURLWithPath:(NSString *)m_statisticsStoragePath] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
+#endif
+}
+
 void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
 {
     static dispatch_once_t initOnce;
