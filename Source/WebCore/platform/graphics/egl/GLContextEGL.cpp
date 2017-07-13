@@ -36,7 +36,7 @@
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
-#elif USE(OPENGL_ES2)
+#elif USE(OPENGL_ES_2)
 #define GL_GLEXT_PROTOTYPES 1
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
