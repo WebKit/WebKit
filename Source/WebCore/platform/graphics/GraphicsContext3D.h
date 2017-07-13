@@ -1370,8 +1370,6 @@ private:
     String mappedSymbolName(Platform3DObject shaders[2], size_t count, const String& name);
     String originalSymbolName(Platform3DObject program, ANGLEShaderSymbolType, const String& name);
 
-    ANGLEWebKitBridge m_compiler;
-
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 
 #if ((PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(WPE)) && USE(OPENGL_ES_2))
@@ -1387,6 +1385,8 @@ private:
     GraphicsContext3DPowerPreference m_powerPreferenceUsedForCreation { GraphicsContext3DPowerPreference::Default };
     RenderStyle m_renderStyle;
     Vector<Vector<float>> m_vertexArray;
+
+    ANGLEWebKitBridge m_compiler;
 
     GC3Duint m_texture { 0 };
     GC3Duint m_fbo { 0 };

@@ -1,3 +1,9 @@
+2017-07-13  Dean Jackson  <dino@apple.com>
+
+        Fix iOS build.
+
+        * platform/graphics/GraphicsContext3D.h:
+
 2017-07-12  Dean Jackson  <dino@apple.com>
 
         Rename GraphicsContext[3D]Mac to Cocoa and move things into graphics/cocoa
