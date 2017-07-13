@@ -38,3 +38,5 @@ webkit.org/b/173010 js/slow-stress/Int32Array-alloc-huge.html [ Pass Timout ]
 
 webkit.org/b/174183 animations/resume-after-page-cache.html [ Pass Failure ]
 
+webkit.org/b/173487 imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html [ Pass Failure ]
+
