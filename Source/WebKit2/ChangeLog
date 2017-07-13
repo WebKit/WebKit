@@ -1,3 +1,44 @@
+2017-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Moved filesystem code out of WebResourceLoadStatisticsStore class
+        https://bugs.webkit.org/show_bug.cgi?id=174435
+
+        Reviewed by Brent Fulgham.
+
+        Moved filesystem code out of WebResourceLoadStatisticsStore class and into
+        a new ResourceLoadStatisticsPersistentStorage class to decrease complexity.
+
+        * CMakeLists.txt:
+        * UIProcess/Cocoa/WebResourceLoadStatisticsStoreCocoa.mm:
+        * UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.cpp: Added.
+        (WebKit::hasFileChangedSince):
+        (WebKit::createDecoderForFile):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::~ResourceLoadStatisticsPersistentStorage):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::storageDirectoryPath):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::resourceLogFilePath):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::startMonitoringDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::stopMonitoringDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::refreshMemoryStoreFromDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::clear):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::finishAllPendingWorkSynchronously):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::excludeFromBackup):
+        * UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.h: Added.
+        * UIProcess/Storage/ios/ResourceLoadStatisticsPersistentStorageIOS.mm: Added.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::excludeFromBackup):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::WebResourceLoadStatisticsStore::applicationWillTerminate):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        (WebKit::WebResourceLoadStatisticsStore::resetDataFromDecoder):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2017-07-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Web Automation: evaluateJavaScriptFunction should start the callback timeout after the function is applied

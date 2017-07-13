@@ -23,35 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#import "WebResourceLoadStatisticsStore.h"
+#import "config.h"
+#import "ResourceLoadStatisticsPersistentStorage.h"
 
-#import "WebPreferencesKeys.h"
-
-using namespace WebCore;
+#if PLATFORM(IOS)
 
 namespace WebKit {
 
-void WebResourceLoadStatisticsStore::registerUserDefaultsIfNeeded()
+void ResourceLoadStatisticsPersistentStorage::excludeFromBackup() const
 {
-    static dispatch_once_t initOnce;
-
-    dispatch_once(&initOnce, ^ {
-        const size_t hourInSeconds = 3600;
-        const size_t dayInSeconds = 24 * hourInSeconds;
-
-        double timeToLiveUserInteraction = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveUserInteractionKey()];
-        if (timeToLiveUserInteraction > 0 && timeToLiveUserInteraction <= 30 * dayInSeconds)
-            setTimeToLiveUserInteraction(Seconds { timeToLiveUserInteraction });
-
-        double timeToLiveCookiePartitionFree = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsTimeToLiveCookiePartitionFreeKey()];
-        if (timeToLiveCookiePartitionFree > 0 && timeToLiveCookiePartitionFree <= dayInSeconds)
-            setTimeToLiveCookiePartitionFree(Seconds { timeToLiveCookiePartitionFree });
-
-        double grandfatheringTime = [[NSUserDefaults standardUserDefaults] doubleForKey: WebPreferencesKey::resourceLoadStatisticsGrandfatheringTimeKey()];
-        if (grandfatheringTime > 0 && grandfatheringTime <= 7 * dayInSeconds)
-            setGrandfatheringTime(Seconds { grandfatheringTime });
-    });
+    [[NSURL fileURLWithPath:(NSString *)m_storageDirectoryPath] setResourceValue:@YES forKey:NSURLIsExcludedFromBackupKey error:nil];
 }
 
 }
+
+#endif
