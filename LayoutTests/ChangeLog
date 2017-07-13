@@ -1,5 +1,15 @@
 2017-07-13  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement CryptoKeyRSA SPKI exports
+        https://bugs.webkit.org/show_bug.cgi?id=173695
+
+        Reviewed by Jiewen Tan.
+
+        * platform/gtk/TestExpectations: Unskip the RSA SPKI export tests
+        that are now passing.
+
+2017-07-13  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement CryptoKeyRSA SPKI imports
         https://bugs.webkit.org/show_bug.cgi?id=173694
 

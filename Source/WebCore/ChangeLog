@@ -1,5 +1,46 @@
 2017-07-13  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement CryptoKeyRSA SPKI exports
+        https://bugs.webkit.org/show_bug.cgi?id=173695
+
+        Reviewed by Jiewen Tan.
+
+        Implement the SPKI export operation for RSA keys for platforms that use
+        libgcrypt.
+
+        In CryptoKeyRSA::exportSpki(), we bail early with an invalid access exception if
+        this export is not being done for a public key. Otherwise, we start with creating
+        the `RSAPublicKey` ASN.1 structure, filling in the modulus and public exponent
+        data that's retrieved from the `public-key` s-expression in the signed MPI format.
+
+        We then create the `SubjectPublicKeyInfo` ASN.1 structure and fill it out with
+        the necessary data. The id-rsaEncryption object identifier is written out under
+        the `algorithm.algorithm` element, and a null value is written out under the
+        `algorithm.parameters` element. This doesn't follow the specification at the
+        moment, since id-RSASSA-PSS would have to be written for the RSA-PSS algorithm,
+        and id-RSAES-OAEP for the RSA-OAEP algorithm, along with specific parameter
+        structures. But no test in WebKit or the web-platform-tests suite covers this,
+        so this deviation should be addressed later.
+
+        Data of the previously-constructed `RSAPublicKey` structure is retrieved and
+        written out under the `subjectPublicKey` element, before finally retrieving
+        data of the `SubjectPublicKeyInfo` structure and returning that to the caller.
+
+        A helper mpiSignedData() function is added, providing overloads for gcry_mpi_t
+        and gcry_sexp_t parameters. MPI data for that parameter is retrieved and the
+        first byte of that data is tested, inserting an additional 0x00 byte at the
+        beginning of the Vector if that first byte has the first bit set, avoiding this
+        data accidentally being interpreted as a signed integer.
+
+        No new tests -- related tests are now passing and are unskipped.
+
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::exportSpki):
+        * crypto/gcrypt/GCryptUtilities.h:
+        (WebCore::mpiSignedData):
+
+2017-07-13  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement CryptoKeyRSA SPKI imports
         https://bugs.webkit.org/show_bug.cgi?id=173694
 

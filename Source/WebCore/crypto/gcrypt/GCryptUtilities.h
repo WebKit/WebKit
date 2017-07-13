@@ -156,4 +156,28 @@ static inline std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
     return mpiData(paramMPI);
 }
 
+static inline std::optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)
+{
+    auto data = mpiData(mpi);
+    if (!data)
+        return std::nullopt;
+
+    if (data->at(0) & 0x80)
+        data->insert(0, 0x00);
+
+    return data;
+}
+
+static inline std::optional<Vector<uint8_t>> mpiSignedData(gcry_sexp_t paramSexp)
+{
+    auto data = mpiData(paramSexp);
+    if (!data)
+        return std::nullopt;
+
+    if (data->at(0) & 0x80)
+        data->insert(0, 0x00);
+
+    return data;
+}
+
 } // namespace WebCore

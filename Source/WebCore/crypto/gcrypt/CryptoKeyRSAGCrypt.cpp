@@ -330,9 +330,72 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier, std::o
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
 {
-    notImplemented();
+    if (type() != CryptoKeyType::Public)
+        return Exception { INVALID_ACCESS_ERR };
 
-    return Exception { NOT_SUPPORTED_ERR };
+    PAL::TASN1::Structure rsaPublicKey;
+    {
+        // Create the `RSAPublicKey` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.RSAPublicKey", &rsaPublicKey))
+            return Exception { OperationError };
+
+        // Retrieve the modulus and public exponent s-expressions.
+        PAL::GCrypt::Handle<gcry_sexp_t> modulusSexp(gcry_sexp_find_token(m_platformKey, "n", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> publicExponentSexp(gcry_sexp_find_token(m_platformKey, "e", 0));
+        if (!modulusSexp || !publicExponentSexp)
+            return Exception { OperationError };
+
+        // Retrieve MPI data for the modulus and public exponent components.
+        auto modulus = mpiSignedData(modulusSexp);
+        auto publicExponent = mpiSignedData(publicExponentSexp);
+        if (!modulus || !publicExponent)
+            return Exception { OperationError };
+
+        // Write out the modulus data under `modulus`.
+        if (!PAL::TASN1::writeElement(rsaPublicKey, "modulus", modulus->data(), modulus->size()))
+            return Exception { OperationError };
+
+        // Write out the public exponent data under `publicExponent`.
+        if (!PAL::TASN1::writeElement(rsaPublicKey, "publicExponent", publicExponent->data(), publicExponent->size()))
+            return Exception { OperationError };
+    }
+
+    PAL::TASN1::Structure spki;
+    {
+        // Create the `SubjectPublicKeyInfo` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.SubjectPublicKeyInfo", &spki))
+            return Exception { OperationError };
+
+        // Write out the id-rsaEncryption identifier under `algorithm.algorithm`.
+        // FIXME: In case the key algorithm is:
+        // - RSA-PSS:
+        //     - this should write out id-RSASSA-PSS, along with setting `algorithm.parameters`
+        //       to a RSASSA-PSS-params structure
+        // - RSA-OAEP:
+        //     - this should write out id-RSAES-OAEP, along with setting `algorithm.parameters`
+        //       to a RSAES-OAEP-params structure
+        if (!PAL::TASN1::writeElement(spki, "algorithm.algorithm", "1.2.840.113549.1.1.1", 1))
+            return Exception { OperationError };
+
+        // Write out the null value under `algorithm.parameters`.
+        if (!PAL::TASN1::writeElement(spki, "algorithm.parameters", "\x05\x00", 2))
+            return Exception { OperationError };
+
+        // Write out the `RSAPublicKey` data under `subjectPublicKey`. Because this is a
+        // bit string parameter, the data size has to be multiplied by 8.
+        {
+            auto data = PAL::TASN1::encodedData(rsaPublicKey, "");
+            if (!data || !PAL::TASN1::writeElement(spki, "subjectPublicKey", data->data(), data->size() * 8))
+                return Exception { OperationError };
+        }
+    }
+
+    // Retrieve the encoded `SubjectPublicKeyInfo` data and return it.
+    auto result = PAL::TASN1::encodedData(spki, "");
+    if (!result)
+        return Exception { OperationError };
+
+    return WTFMove(result.value());
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
