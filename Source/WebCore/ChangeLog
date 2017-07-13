@@ -1,3 +1,22 @@
+2017-07-13  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] border-radius with non visible border doesn't work on images that have their own RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=174157
+
+        Reviewed by Carlos Garcia Campos.
+
+        Do not allow direct compositing of images when they have a border-radius property on WebKitGTK+ and WPE.
+        These platforms don't support clipping using rounded rectangles during composition, which is required
+        when using border-radius and the border is not visible. Due to this, they need to perform the clippping
+        with cairo.
+
+        This is a temporal fix, until appropriate clipping is implemented in the TextureMapper.
+
+        No new tests.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::isDirectlyCompositedImage):
+
 2017-07-13  Chris Fleizach  <cfleizach@apple.com>
 
         AX: WebView crashes app after opening VoiceOver context box menu from modal dialog
