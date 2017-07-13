@@ -493,7 +493,7 @@ void WebVideoFullscreenControllerContext::setVideoLayerFrame(FloatRect frame)
     
     [videoFullscreenLayer setSublayerTransform:[videoFullscreenLayer transform]];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^ {
         WebThreadRun([protectedThis, this, frame, videoFullscreenLayer] {
             [CATransaction begin];
             [CATransaction setDisableActions:YES];
