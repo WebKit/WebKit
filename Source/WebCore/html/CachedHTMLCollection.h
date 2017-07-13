@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,13 @@ public:
     unsigned length() const final { return m_indexCache.nodeCount(collection()); }
     Element* item(unsigned offset) const override { return m_indexCache.nodeAt(collection(), offset); }
     Element* namedItem(const AtomicString& name) const override;
-    size_t memoryCost() const final { return m_indexCache.memoryCost() + HTMLCollection::memoryCost(); }
+    size_t memoryCost() const final
+    {
+        // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful about what data we access here and how.
+        // Accessing m_indexCache.memoryCost() is safe because because it doesn't involve any pointer chasing.
+        // HTMLCollection::memoryCost() ensures its own thread safety.
+        return m_indexCache.memoryCost() + HTMLCollection::memoryCost();
+    }
 
     // For CollectionIndexCache; do not use elsewhere.
     using CollectionTraversalIterator = typename CollectionTraversal<traversalType>::Iterator;

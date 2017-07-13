@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
@@ -677,6 +677,10 @@ bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 
 size_t HTMLCanvasElement::memoryCost() const
 {
+    // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful
+    // about what data we access here and how. We need to hold a lock to prevent m_imageBuffer
+    // from being changed while we access it.
+    auto locker = holdLock(m_imageBufferAssignmentLock);
     if (!m_imageBuffer)
         return 0;
     return m_imageBuffer->memoryCost();
@@ -684,6 +688,10 @@ size_t HTMLCanvasElement::memoryCost() const
 
 size_t HTMLCanvasElement::externalMemoryCost() const
 {
+    // externalMemoryCost() may be invoked concurrently from a GC thread, and we need to be careful
+    // about what data we access here and how. We need to hold a lock to prevent m_imageBuffer
+    // from being changed while we access it.
+    auto locker = holdLock(m_imageBufferAssignmentLock);
     if (!m_imageBuffer)
         return 0;
     return m_imageBuffer->externalMemoryCost();
@@ -783,7 +791,10 @@ void HTMLCanvasElement::setImageBuffer(std::unique_ptr<ImageBuffer> buffer) cons
     size_t previousMemoryCost = memoryCost();
     removeFromActivePixelMemory(previousMemoryCost);
 
-    m_imageBuffer = WTFMove(buffer);
+    {
+        auto locker = holdLock(m_imageBufferAssignmentLock);
+        m_imageBuffer = WTFMove(buffer);
+    }
 
     size_t currentMemoryCost = memoryCost();
     activePixelMemory += currentMemoryCost;

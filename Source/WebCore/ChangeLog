@@ -1,3 +1,40 @@
+2017-07-13  Mark Lam  <mark.lam@apple.com>
+
+        Implementors of memoryCost() need to be thread-safe.
+        https://bugs.webkit.org/show_bug.cgi?id=172738
+        <rdar://problem/32474881>
+
+        Reviewed by Keith Miller.
+
+        No new tests. This patch fixes a race condition bug that can result in random
+        crashes (and other unpredictable behavior), and is very difficult to test for.
+
+        * Modules/webaudio/AudioBuffer.cpp:
+        (WebCore::AudioBuffer::releaseMemory):
+        (WebCore::AudioBuffer::memoryCost):
+        * Modules/webaudio/AudioBuffer.h:
+        * dom/ChildNodeList.h:
+        * dom/CollectionIndexCache.h:
+        (WebCore::CollectionIndexCache::memoryCost):
+        * dom/LiveNodeList.h:
+        * html/CachedHTMLCollection.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::memoryCost):
+        (WebCore::HTMLCanvasElement::externalMemoryCost):
+        (WebCore::HTMLCanvasElement::setImageBuffer):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::invalidateNamedElementCache):
+        * html/HTMLCollection.h:
+        (WebCore::CollectionNamedElementCache::memoryCost):
+        (WebCore::HTMLCollection::memoryCost):
+        (WebCore::HTMLCollection::setNamedItemCache):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::memoryCost):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::memoryCost):
+        (WebCore::ImageBuffer::externalMemoryCost):
+
 2017-07-13  Jeremy Jones  <jeremyj@apple.com>
 
         Fix style. Use #pragma once in VideoFullscreen and PlaybackSession headers.

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2006-2007, 2013-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -90,7 +90,13 @@ public:
     void willValidateIndexCache() const { document().registerNodeListForInvalidation(const_cast<CachedLiveNodeList<NodeListType>&>(*this)); }
 
     void invalidateCacheForDocument(Document&) const final;
-    size_t memoryCost() const final { return m_indexCache.memoryCost(); }
+    size_t memoryCost() const final
+    {
+        // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful
+        // about what data we access here and how. Accessing m_indexCache is safe because
+        // because it doesn't involve any pointer chasing.
+        return m_indexCache.memoryCost();
+    }
 
 protected:
     CachedLiveNodeList(ContainerNode& rootNode, NodeListInvalidationType);

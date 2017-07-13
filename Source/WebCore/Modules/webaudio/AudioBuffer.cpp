@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,6 +106,7 @@ void AudioBuffer::invalidate()
 
 void AudioBuffer::releaseMemory()
 {
+    auto locker = holdLock(m_channelsLock);
     m_channels.clear();
 }
 
@@ -133,6 +135,12 @@ void AudioBuffer::zero()
 
 size_t AudioBuffer::memoryCost() const
 {
+    // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful
+    // about what data we access here and how. We need to hold a lock to prevent m_channels
+    // from being changed while we iterate it, but calling channel->byteLength() is safe
+    // because it doesn't involve chasing any pointers that can be nullified while the
+    // AudioBuffer is alive.
+    auto locker = holdLock(m_channelsLock);
     size_t cost = 0;
     for (auto& channel : m_channels)
         cost += channel->byteLength();

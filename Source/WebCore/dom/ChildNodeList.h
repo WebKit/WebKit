@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2007, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -80,7 +80,13 @@ private:
 
     unsigned length() const override;
     Node* item(unsigned index) const override;
-    size_t memoryCost() const override { return m_indexCache.memoryCost(); }
+    size_t memoryCost() const override
+    {
+        // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful
+        // about what data we access here and how. Accessing m_indexCache is safe because
+        // because it doesn't involve any pointer chasing.
+        return m_indexCache.memoryCost();
+    }
 
     bool isChildNodeList() const override { return true; }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -212,6 +212,10 @@ FloatSize ImageBuffer::sizeForDestinationSize(FloatSize destinationSize) const
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 size_t ImageBuffer::memoryCost() const
 {
+    // memoryCost() may be invoked concurrently from a GC thread, and we need to be careful about what data we access here and how.
+    // It's safe to access internalSize() because it doesn't do any pointer chasing.
+    // It's safe to access m_data.surface because the surface can only be assigned during construction of this ImageBuffer.
+    // It's safe to access m_data.surface->totalBytes() because totalBytes() doesn't chase pointers.
     if (m_data.surface)
         return m_data.surface->totalBytes();
     return 4 * internalSize().width() * internalSize().height();
@@ -219,6 +223,9 @@ size_t ImageBuffer::memoryCost() const
 
 size_t ImageBuffer::externalMemoryCost() const
 {
+    // externalMemoryCost() may be invoked concurrently from a GC thread, and we need to be careful about what data we access here and how.
+    // It's safe to access m_data.surface because the surface can only be assigned during construction of this ImageBuffer.
+    // It's safe to access m_data.surface->totalBytes() because totalBytes() doesn't chase pointers.
     if (m_data.surface)
         return m_data.surface->totalBytes();
     return 0;

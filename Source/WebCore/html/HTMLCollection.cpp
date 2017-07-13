@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -148,7 +148,10 @@ void HTMLCollection::invalidateNamedElementCache(Document& document) const
 {
     ASSERT(hasNamedElementCache());
     document.collectionWillClearIdNameMap(*this);
-    m_namedElementCache = nullptr;
+    {
+        auto locker = holdLock(m_namedElementCacheAssignmentLock);
+        m_namedElementCache = nullptr;
+    }
 }
 
 Element* HTMLCollection::namedItemSlow(const AtomicString& name) const
