@@ -1956,7 +1956,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, JSValue v, SourceCodeRe
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, IdentifierSet& set)
 {
-    for (ConstantIndentifierSetEntry entry : m_codeBlock->constantIdentifierSets()) {
+    for (const auto& entry : m_codeBlock->constantIdentifierSets()) {
         if (entry.first != set)
             continue;
         

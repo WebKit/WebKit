@@ -3871,8 +3871,14 @@ namedProperty:
     }
     case DOTDOTDOT: {
         if (m_useObjectRestSpread) {
-            classifyExpressionError(ErrorIndicatesPattern);
-            return 0;
+            auto spreadLocation = m_token.m_location;
+            auto start = m_token.m_startPosition;
+            auto divot = m_token.m_endPosition;
+            next();
+            TreeExpression elem = parseAssignmentExpressionOrPropagateErrorClass(context);
+            failIfFalse(elem, "Cannot parse subject of a spread operation");
+            auto node = context.createObjectSpreadExpression(spreadLocation, elem, start, divot, m_lastTokenEndPosition);
+            return context.createProperty(node, PropertyNode::Spread, PropertyNode::Unknown, complete, SuperBinding::NotNeeded, isClassProperty);
         }
         FALLTHROUGH;
     }

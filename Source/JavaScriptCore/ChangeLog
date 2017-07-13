@@ -1,3 +1,39 @@
+2017-07-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESnext] Implement Object Spread
+        https://bugs.webkit.org/show_bug.cgi?id=167963
+
+        Reviewed by Saam Barati.
+
+        This patch implements ECMA262 stage 3 Object Spread proposal [1].
+        It's implemented using CopyDataPropertiesNoExclusions to copy
+        all enumerable keys from object being spreaded. The implementation of
+        CopyDataPropertiesNoExclusions follows the CopyDataProperties
+        implementation, however we don't receive excludedNames as parameter.
+
+        [1] - https://github.com/tc39/proposal-object-rest-spread
+
+        * builtins/GlobalOperations.js:
+        (globalPrivate.copyDataPropertiesNoExclusions):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        (JSC::ObjectSpreadExpressionNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createObjectSpreadExpression):
+        (JSC::ASTBuilder::createProperty):
+        * parser/NodeConstructors.h:
+        (JSC::PropertyNode::PropertyNode):
+        (JSC::ObjectSpreadExpressionNode::ObjectSpreadExpressionNode):
+        * parser/Nodes.h:
+        (JSC::ObjectSpreadExpressionNode::expression):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createObjectSpreadExpression):
+        (JSC::SyntaxChecker::createProperty):
+
 2017-07-12  Mark Lam  <mark.lam@apple.com>
 
         Gardening: build fix after r219434.

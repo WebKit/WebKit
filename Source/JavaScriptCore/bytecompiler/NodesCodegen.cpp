@@ -500,8 +500,8 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
     // Were there any get/set properties?
     if (p) {
         // Build a list of getter/setter pairs to try to put them at the same time. If we encounter
-        // a computed property, just emit everything as that may override previous values.
-        bool hasComputedProperty = false;
+        // a computed property or a spread, just emit everything as that may override previous values.
+        bool canOverrideProperties = false;
 
         typedef std::pair<PropertyNode*, PropertyNode*> GetterSetterPair;
         typedef HashMap<UniquedStringImpl*, GetterSetterPair, IdentifierRepHash> GetterSetterMap;
@@ -510,10 +510,11 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
         // Build a map, pairing get/set values together.
         for (PropertyListNode* q = p; q; q = q->m_next) {
             PropertyNode* node = q->m_node;
-            if (node->m_type & PropertyNode::Computed) {
-                hasComputedProperty = true;
+            if (node->m_type & PropertyNode::Computed || node->m_type & PropertyNode::Spread) {
+                canOverrideProperties = true;
                 break;
             }
+
             if (node->m_type & PropertyNode::Constant)
                 continue;
 
@@ -536,6 +537,9 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             if (node->m_type & PropertyNode::Constant) {
                 emitPutConstantProperty(generator, dst, *node);
                 continue;
+            } else if (node->m_type & PropertyNode::Spread) {
+                generator.emitNode(dst, node->m_assign);
+                continue;
             }
 
             RefPtr<RegisterID> value = generator.emitNode(node->m_assign);
@@ -547,8 +551,8 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
 
             ASSERT(node->m_type & (PropertyNode::Getter | PropertyNode::Setter));
 
-            // This is a get/set property which may be overridden by a computed property later.
-            if (hasComputedProperty) {
+            // This is a get/set property which may be overridden by a computed property or spread later.
+            if (canOverrideProperties) {
                 // Computed accessors.
                 if (node->m_type & PropertyNode::Computed) {
                     RefPtr<RegisterID> propertyName = generator.emitNode(node->m_expression);
@@ -4275,6 +4279,28 @@ RegisterID* SpreadExpressionNode::emitBytecode(BytecodeGenerator&, RegisterID*)
 {
     RELEASE_ASSERT_NOT_REACHED();
     return 0;
+}
+
+RegisterID* ObjectSpreadExpressionNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> src = generator.newTemporary();
+    generator.emitNode(src.get(), m_expression);
+    
+    // load and call @copyDataPropertiesNoExclusions
+    auto var = generator.variable(generator.propertyNames().builtinNames().copyDataPropertiesNoExclusionsPrivateName());
+    
+    RefPtr<RegisterID> scope = generator.newTemporary();
+    generator.moveToDestinationIfNeeded(scope.get(), generator.emitResolveScope(scope.get(), var));
+    RefPtr<RegisterID> copyDataProperties = generator.emitGetFromScope(generator.newTemporary(), scope.get(), var, ThrowIfNotFound);
+    
+    CallArguments args(generator, nullptr, 2);
+    generator.emitLoad(args.thisRegister(), jsUndefined());
+    generator.emitMove(args.argumentRegister(0), dst);
+    generator.emitMove(args.argumentRegister(1), src.get());
+    
+    generator.emitCall(generator.newTemporary(), copyDataProperties.get(), NoExpectedFunction, args, divot(), divotStart(), divotEnd(), DebuggableCall::No);
+    
+    return dst;
 }
 
 } // namespace JSC
