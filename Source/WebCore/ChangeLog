@@ -1,3 +1,17 @@
+2017-07-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused and untested Page domain commands
+        https://bugs.webkit.org/show_bug.cgi?id=174429
+
+        Reviewed by Timothy Hatcher.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::disable):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorPageAgent::addScriptToEvaluateOnLoad): Deleted.
+        (WebCore::InspectorPageAgent::removeScriptToEvaluateOnLoad): Deleted.
+        * inspector/InspectorPageAgent.h:
+
 2017-07-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Implement CryptoKeyRSA SPKI exports

@@ -2488,21 +2488,6 @@
             "description": "Disables page domain notifications."
         },
         {
-            "name": "addScriptToEvaluateOnLoad",
-            "parameters": [
-                { "name": "scriptSource", "type": "string" }
-            ],
-            "returns": [
-                { "name": "identifier", "$ref": "ScriptIdentifier", "description": "Identifier of the added script." }
-            ]
-        },
-        {
-            "name": "removeScriptToEvaluateOnLoad",
-            "parameters": [
-                { "name": "identifier", "$ref": "ScriptIdentifier" }
-            ]
-        },
-        {
             "name": "reload",
             "parameters": [
                 { "name": "ignoreCache", "type": "boolean", "optional": true, "description": "If true, browser cache is ignored (as if the user pressed Shift+refresh)." },

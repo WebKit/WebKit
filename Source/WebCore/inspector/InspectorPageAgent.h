@@ -91,8 +91,6 @@ public:
     // Page API for InspectorFrontend
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
-    void addScriptToEvaluateOnLoad(ErrorString&, const String& source, String* result) override;
-    void removeScriptToEvaluateOnLoad(ErrorString&, const String& identifier) override;
     void reload(ErrorString&, const bool* const optionalIgnoreCache, const bool* const optionalRevalidateAllResources, const String* const optionalScriptToEvaluateOnLoad) override;
     void navigate(ErrorString&, const String& url) override;
     void getCookies(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>>& cookies) override;
@@ -157,7 +155,6 @@ private:
     InspectorClient* m_client { nullptr };
     InspectorOverlay* m_overlay { nullptr };
 
-    long m_lastScriptIdentifier { 0 };
     String m_pendingScriptToEvaluateOnLoadOnce;
     String m_scriptToEvaluateOnLoadOnce;
     HashMap<Frame*, String> m_frameToIdentifier;
@@ -167,7 +164,6 @@ private:
     bool m_isFirstLayoutAfterOnLoad { false };
     bool m_showPaintRects { false };
     String m_emulatedMedia;
-    RefPtr<Inspector::InspectorObject> m_scriptsToEvaluateOnLoad;
 };
 
 } // namespace WebCore

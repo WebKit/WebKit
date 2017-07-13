@@ -324,8 +324,6 @@ InspectorBackend.registerEvent("Page.frameScheduledNavigation", ["frameId", "del
 InspectorBackend.registerEvent("Page.frameClearedScheduledNavigation", ["frameId"]);
 InspectorBackend.registerCommand("Page.enable", [], []);
 InspectorBackend.registerCommand("Page.disable", [], []);
-InspectorBackend.registerCommand("Page.addScriptToEvaluateOnLoad", [{"name": "scriptSource", "type": "string", "optional": false}], ["identifier"]);
-InspectorBackend.registerCommand("Page.removeScriptToEvaluateOnLoad", [{"name": "identifier", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Page.reload", [{"name": "ignoreCache", "type": "boolean", "optional": true}, {"name": "revalidateAllResources", "type": "boolean", "optional": true}, {"name": "scriptToEvaluateOnLoad", "type": "string", "optional": true}], []);
 InspectorBackend.registerCommand("Page.navigate", [{"name": "url", "type": "string", "optional": false}], []);
 InspectorBackend.registerCommand("Page.getCookies", [], ["cookies"]);

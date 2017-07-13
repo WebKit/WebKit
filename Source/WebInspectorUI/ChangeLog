@@ -1,3 +1,25 @@
+2017-07-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused and untested Page domain commands
+        https://bugs.webkit.org/show_bug.cgi?id=174429
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Protocol/Legacy/10.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/10.3/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/11.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/8.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.0/InspectorBackendCommands.js:
+        * UserInterface/Protocol/Legacy/9.3/InspectorBackendCommands.js:
+        * Versions/Inspector-iOS-10.0.json:
+        * Versions/Inspector-iOS-10.3.json:
+        * Versions/Inspector-iOS-11.0.json:
+        * Versions/Inspector-iOS-7.0.json:
+        * Versions/Inspector-iOS-8.0.json:
+        * Versions/Inspector-iOS-9.0.json:
+        * Versions/Inspector-iOS-9.3.json:
+
 2017-07-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Correct a typo in the .eslintrc

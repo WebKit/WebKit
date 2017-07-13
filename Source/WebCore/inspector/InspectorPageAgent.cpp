@@ -369,36 +369,11 @@ void InspectorPageAgent::enable(ErrorString&)
 void InspectorPageAgent::disable(ErrorString&)
 {
     m_enabled = false;
-    m_scriptsToEvaluateOnLoad = nullptr;
     m_instrumentingAgents.setInspectorPageAgent(nullptr);
 
     ErrorString unused;
     setShowPaintRects(unused, false);
     setEmulatedMedia(unused, emptyString());
-}
-
-void InspectorPageAgent::addScriptToEvaluateOnLoad(ErrorString&, const String& source, String* identifier)
-{
-    if (!m_scriptsToEvaluateOnLoad)
-        m_scriptsToEvaluateOnLoad = InspectorObject::create();
-
-    // Assure we don't override existing ids -- m_lastScriptIdentifier could get out of sync WRT actual
-    // scripts once we restored the scripts from the cookie during navigation.
-    do {
-        *identifier = String::number(++m_lastScriptIdentifier);
-    } while (m_scriptsToEvaluateOnLoad->find(*identifier) != m_scriptsToEvaluateOnLoad->end());
-
-    m_scriptsToEvaluateOnLoad->setString(*identifier, source);
-}
-
-void InspectorPageAgent::removeScriptToEvaluateOnLoad(ErrorString& error, const String& identifier)
-{
-    if (!m_scriptsToEvaluateOnLoad || m_scriptsToEvaluateOnLoad->find(identifier) == m_scriptsToEvaluateOnLoad->end()) {
-        error = ASCIILiteral("Script not found");
-        return;
-    }
-
-    m_scriptsToEvaluateOnLoad->remove(identifier);
 }
 
 void InspectorPageAgent::reload(ErrorString&, const bool* const optionalIgnoreCache, const bool* const optionalRevalidateAllResources, const String* optionalScriptToEvaluateOnLoad)
@@ -668,14 +643,6 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
 {
     if (&world != &mainThreadNormalWorld())
         return;
-
-    if (m_scriptsToEvaluateOnLoad) {
-        for (auto& keyValuePair : *m_scriptsToEvaluateOnLoad) {
-            String scriptText;
-            if (keyValuePair.value->asString(scriptText))
-                frame->script().executeScript(scriptText);
-        }
-    }
 
     if (!m_scriptToEvaluateOnLoadOnce.isEmpty())
         frame->script().executeScript(m_scriptToEvaluateOnLoadOnce);

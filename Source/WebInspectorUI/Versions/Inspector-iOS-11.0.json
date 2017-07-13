@@ -2895,21 +2895,6 @@
             "description": "Disables page domain notifications."
         },
         {
-            "name": "addScriptToEvaluateOnLoad",
-            "parameters": [
-                { "name": "scriptSource", "type": "string" }
-            ],
-            "returns": [
-                { "name": "identifier", "$ref": "ScriptIdentifier", "description": "Identifier of the added script." }
-            ]
-        },
-        {
-            "name": "removeScriptToEvaluateOnLoad",
-            "parameters": [
-                { "name": "identifier", "$ref": "ScriptIdentifier" }
-            ]
-        },
-        {
             "name": "reload",
             "description": "Reloads the main frame of the inspected page.",
             "parameters": [
