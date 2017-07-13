@@ -175,16 +175,16 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture, 0);
 
+#if USE(COORDINATED_GRAPHICS_THREADED)
     if (m_compositorTexture) {
         ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
         ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
         ::glBindTexture(GL_TEXTURE_2D, 0);
-#if USE(COORDINATED_GRAPHICS_THREADED)
         ::glBindTexture(GL_TEXTURE_2D, m_intermediateTexture);
         ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
         ::glBindTexture(GL_TEXTURE_2D, 0);
-#endif
     }
+#endif
 #endif
 
     attachDepthAndStencilBufferIfNeeded(internalDepthStencilFormat, width, height);

@@ -395,7 +395,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
 #endif
     , m_attrs(attrs)
     , m_texture(0)
-    , m_compositorTexture(0)
     , m_fbo(0)
     , m_depthStencilBuffer(0)
     , m_layerComposited(false)
@@ -506,12 +505,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attrs, HostWind
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    ::glGenTextures(1, &m_compositorTexture);
-    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     ::glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 
@@ -578,7 +571,9 @@ GraphicsContext3D::~GraphicsContext3D()
 #else
         CGLSetCurrentContext(m_contextObj);
         ::glDeleteTextures(1, &m_texture);
+#if USE(COORDINATED_GRAPHICS_THREADED)
         ::glDeleteTextures(1, &m_compositorTexture);
+#endif
 #endif
         if (m_attrs.antialias) {
             ::glDeleteRenderbuffersEXT(1, &m_multisampleColorBuffer);

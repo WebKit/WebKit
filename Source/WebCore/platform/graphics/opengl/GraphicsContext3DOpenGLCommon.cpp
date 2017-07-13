@@ -251,10 +251,7 @@ void GraphicsContext3D::prepareTexture()
     return;
 #endif
 
-    ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     ::glActiveTexture(GL_TEXTURE0);
-    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
-    ::glCopyTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, 0, 0, m_currentWidth, m_currentHeight, 0);
     ::glBindTexture(GL_TEXTURE_2D, m_state.boundTexture0);
     ::glActiveTexture(m_state.activeTexture);
     if (m_state.boundFBO != m_fbo)

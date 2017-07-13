@@ -1,3 +1,30 @@
+2017-07-13  Dean Jackson  <dino@apple.com>
+
+        Avoid unnecessary copy of framebuffer into WebGL Layer
+        https://bugs.webkit.org/show_bug.cgi?id=174345
+        <rdar://problem/33228950>
+
+        Reviewed by Sam Weinig.
+
+        On macOS, we're unnecessarily copying the framebuffer into another
+        texture before pushing it into the compositing layer. Instead we
+        should simply render the FBO into the CALayer we use to draw on
+        the screen.
+
+        Covered by the existing WebGL tests.
+
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::platformTexture): Return the FBO texture instead.
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D): No need to have a compositing
+        texture.
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::prepareTexture): Don't copy the pixels from
+        the FBO into the compositing texture
+
 2017-07-13  Mark Lam  <mark.lam@apple.com>
 
         Implementors of memoryCost() need to be thread-safe.

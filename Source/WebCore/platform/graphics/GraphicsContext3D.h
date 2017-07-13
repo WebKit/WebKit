@@ -747,7 +747,7 @@ public:
 
 #if PLATFORM(COCOA)
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
-    Platform3DObject platformTexture() const { return m_compositorTexture; }
+    Platform3DObject platformTexture() const { return m_fbo; }
     CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
 #else
     PlatformGraphicsContext3D platformGraphicsContext3D();
@@ -1388,9 +1388,9 @@ private:
     Vector<Vector<float>> m_vertexArray;
 
     GC3Duint m_texture;
-    GC3Duint m_compositorTexture;
     GC3Duint m_fbo;
 #if USE(COORDINATED_GRAPHICS_THREADED)
+    GC3Duint m_compositorTexture;
     GC3Duint m_intermediateTexture;
 #endif
 
