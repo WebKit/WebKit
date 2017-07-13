@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    CallbackNeedsCanInvoke,
-    CallbackThisObject=MutationObserver
-] callback MutationCallback = void (sequence<MutationRecord> mutations, MutationObserver observer);
+#pragma once
+
+#include "ActiveDOMCallback.h"
+#include "DOMWrapperWorld.h"
+#include "MutationCallback.h"
+#include <heap/Weak.h>
+#include <runtime/JSObject.h>
+
+namespace WebCore {
+
+class JSDOMGlobalObject;
+
+class JSMutationCallback final : public MutationCallback, public ActiveDOMCallback {
+public:
+    static Ref<JSMutationCallback> create(JSC::JSObject* callback, JSDOMGlobalObject* globalObject)
+    {
+        return adoptRef(*new JSMutationCallback(callback, globalObject));
+    }
+
+    virtual ~JSMutationCallback();
+
+    void call(const Vector<Ref<MutationRecord>>&, MutationObserver*) override;
+    bool canInvokeCallback() const override { return ActiveDOMCallback::canInvokeCallback(); }
+
+private:
+    JSMutationCallback(JSC::JSObject* callback, JSDOMGlobalObject*);
+
+    mutable JSC::Weak<JSC::JSObject> m_callback;
+    Ref<DOMWrapperWorld> m_isolatedWorld;
+};
+
+} // namespace WebCore

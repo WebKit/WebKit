@@ -79,7 +79,7 @@ void MediaDevicesRequest::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
-void MediaDevicesRequest::filterDeviceList(Vector<Ref<MediaDeviceInfo>>& devices)
+void MediaDevicesRequest::filterDeviceList(Vector<RefPtr<MediaDeviceInfo>>& devices)
 {
 #if !PLATFORM(COCOA)
     UNUSED_PARAM(devices);
@@ -95,7 +95,7 @@ void MediaDevicesRequest::filterDeviceList(Vector<Ref<MediaDeviceInfo>>& devices
 
     int cameraCount = 0;
     int microphoneCount = 0;
-    devices.removeAllMatching([&](const Ref<MediaDeviceInfo>& device) -> bool {
+    devices.removeAllMatching([&](const RefPtr<MediaDeviceInfo>& device) -> bool {
         if (device->kind() == MediaDeviceInfo::Kind::Videoinput && ++cameraCount > defaultCameraCount)
             return true;
         if (device->kind() == MediaDeviceInfo::Kind::Audioinput && ++microphoneCount > defaultMicrophoneCount)
@@ -120,7 +120,7 @@ void MediaDevicesRequest::start()
         Document& document = downcast<Document>(*scriptExecutionContext());
         document.setDeviceIDHashSalt(deviceIdentifierHashSalt);
 
-        Vector<Ref<MediaDeviceInfo>> devices;
+        Vector<RefPtr<MediaDeviceInfo>> devices;
         for (auto& deviceInfo : captureDevices) {
             auto label = emptyString();
             if (originHasPersistentAccess || document.hasHadActiveMediaStreamTrack())
