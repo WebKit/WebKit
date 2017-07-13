@@ -3461,6 +3461,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
 - (void)accessibilityShowContextMenu
 {
+    if (!m_object)
+        return;
+    
     Page* page = m_object->page();
     if (!page)
         return;

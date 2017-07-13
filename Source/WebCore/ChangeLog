@@ -1,3 +1,16 @@
+2017-07-13  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: WebView crashes app after opening VoiceOver context box menu from modal dialog
+        https://bugs.webkit.org/show_bug.cgi?id=163999
+        <rdar://problem/28949013>
+
+        Reviewed by Joanmarie Diggs.
+
+        Protect when m_object goes away.
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityShowContextMenu]):
+
 2017-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Async image decoding for large images should be disabled by default
