@@ -1,3 +1,23 @@
+2017-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Async image decoding for large images should be disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=174432
+
+        Reviewed by Simon Fraser.
+
+        -- Remove setting the bit PaintBehaviorSnapshotting in any new PaintBehavoir.
+        -- Return PaintBehaviorAllowAsyncImageDecoding when the return value was 0.
+        -- Propagate PaintBehaviorAllowAsyncImageDecoding from a parent view to 
+           a child view instead of propagating PaintBehaviorSnapshotting.
+        -- Replace setting the bit PaintBehaviorSnapshotting in an existing PaintBehavoir
+           by resetting the bit PaintBehaviorAllowAsyncImageDecoding.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _paintBehaviorForDestinationContext:]):
+        (-[WebFrame _drawRect:contentsOnly:]):
+        * WebView/WebHTMLView.mm:
+        (imageFromRect):
+
 2017-07-12  Daniel Bates  <dabates@apple.com>
 
         Rename NavigationInitiatedByMainFrame to InitiatedByMainFrame

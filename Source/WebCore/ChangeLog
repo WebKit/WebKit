@@ -1,3 +1,50 @@
+2017-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Async image decoding for large images should be disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=174432
+
+        Reviewed by Simon Fraser.
+
+        -- Rename GraphicsLayerPaintFlags::Snapshotting to AllowAsyncImageDecoding.
+        -- Replace every reference to GraphicsLayerPaintFlags::Snapshotting by
+           GraphicsLayerPaintFlags::None and every GraphicsLayerPaintFlags::None
+           by AllowAsyncImageDecoding.
+        -- Rename PaintBehaviorSnapshotting to PaintBehaviorAllowAsyncImageDecoding.
+        -- Propagate PaintBehaviorAllowAsyncImageDecoding from a parent view to 
+           a child view instead of propagating PaintBehaviorSnapshotting.
+        -- Remove setting the bit PaintBehaviorSnapshotting in any new PaintBehavoir.
+        -- Replace setting the bit PaintBehaviorSnapshotting in an existing PaintBehavoir
+           by resetting the bit PaintBehaviorAllowAsyncImageDecoding.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::willPaintContents):
+        (WebCore::FrameView::paintContentsForSnapshot):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/mac/WebLayer.mm:
+        (-[WebLayer drawInContext:]):
+        (-[WebSimpleLayer drawInContext:]):
+        * rendering/PaintPhase.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::decodingModeForImageDraw):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintForegroundForFragments):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paintContents): We need to propagate the 
+        PaintBehaviorAllowAsyncImageDecoding from RenderWidget to the FrameView.
+        We did not need to do that for PaintBehaviorSnapshotting because 
+        FrameView was setting it in its m_paintBehavior if (document->printing())
+        in FrameView::willPaintContents().
+
 2017-07-12  Timothy Hatcher  <timothy@hatcher.name>
 
         REGRESSION(r219391): Broke the USE(OPENGL_ES_2) build

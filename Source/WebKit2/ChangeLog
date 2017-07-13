@@ -1,3 +1,23 @@
+2017-07-12  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Async image decoding for large images should be disabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=174432
+
+        Reviewed by Simon Fraser.
+
+        -- Replace every reference to GraphicsLayerPaintFlags::Snapshotting by
+           GraphicsLayerPaintFlags::None and every GraphicsLayerPaintFlags::None
+           by AllowAsyncImageDecoding.
+        -- Replace setting the bit PaintBehaviorSnapshotting in an existing PaintBehavoir 
+           by resetting the bit PaintBehaviorAllowAsyncImageDecoding.
+
+        * Shared/mac/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::drawInContext):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::renderedImage):
+
 2017-07-12  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] a capture source failure should end the MediaStreamTrack

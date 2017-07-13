@@ -75,7 +75,7 @@ enum LayerTreeAsTextBehaviorFlags {
 };
 typedef unsigned LayerTreeAsTextBehavior;
 
-enum class GraphicsLayerPaintFlags { None, Snapshotting };
+enum class GraphicsLayerPaintFlags { None, AllowAsyncImageDecoding };
     
 class GraphicsLayerClient {
 public:

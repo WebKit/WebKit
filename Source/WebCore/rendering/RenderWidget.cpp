@@ -229,6 +229,13 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
     // to paint itself. That way it will composite properly with z-indexed layers.
     LayoutRect paintRect = paintInfo.rect;
 
+    PaintBehavior oldBehavior = PaintBehaviorNormal;
+    if (is<FrameView>(*m_widget) && (paintInfo.paintBehavior & PaintBehaviorAllowAsyncImageDecoding)) {
+        FrameView& frameView = downcast<FrameView>(*m_widget);
+        oldBehavior = frameView.paintBehavior();
+        frameView.setPaintBehavior(oldBehavior | PaintBehaviorAllowAsyncImageDecoding);
+    }
+
     IntPoint widgetLocation = m_widget->frameRect().location();
     IntSize widgetPaintOffset = contentPaintOffset - widgetLocation;
     // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
@@ -250,6 +257,8 @@ void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintO
             ASSERT(!paintInfo.overlapTestRequests->contains(this) || (paintInfo.overlapTestRequests->get(this) == m_widget->frameRect()));
             paintInfo.overlapTestRequests->set(this, m_widget->frameRect());
         }
+        if (paintInfo.paintBehavior & PaintBehaviorAllowAsyncImageDecoding)
+            frameView.setPaintBehavior(oldBehavior);
     }
 }
 

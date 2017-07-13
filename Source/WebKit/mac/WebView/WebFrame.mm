@@ -595,23 +595,23 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     // -currentContextDrawingToScreen returns YES for bitmap contexts.
     BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
     if (isPrinting)
-        return PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting;
+        return PaintBehaviorFlattenCompositingLayers;
 #endif
 
     if (!WKCGContextIsBitmapContext(context))
-        return 0;
+        return PaintBehaviorAllowAsyncImageDecoding;
 
     // If we're drawing into a bitmap, we might be snapshotting, or drawing into a layer-backed view.
     if (WebHTMLView *htmlDocumentView = [self _webHTMLDocumentView]) {
 #if PLATFORM(IOS)
         if ([[htmlDocumentView window] isInSnapshottingPaint])
-            return PaintBehaviorSnapshotting;
+            return 0;
 #endif
         if ([htmlDocumentView _web_isDrawingIntoLayer])
-            return 0;
+            return PaintBehaviorAllowAsyncImageDecoding;
     }
     
-    return PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting;
+    return PaintBehaviorFlattenCompositingLayers;
 }
 
 - (void)_drawRect:(NSRect)rect contentsOnly:(BOOL)contentsOnly
@@ -645,8 +645,8 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
             if (parentView->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
                 paintBehavior |= PaintBehaviorFlattenCompositingLayers;
                 
-            if (parentView->paintBehavior() & PaintBehaviorSnapshotting)
-                paintBehavior |= PaintBehaviorSnapshotting;
+            if (parentView->paintBehavior() & PaintBehaviorAllowAsyncImageDecoding)
+                paintBehavior |= PaintBehaviorAllowAsyncImageDecoding;
         }
     } else
         paintBehavior |= [self _paintBehaviorForDestinationContext:ctx];

@@ -2585,8 +2585,8 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         PaintBehavior behavior = PaintBehaviorNormal;
-        if (flags == GraphicsLayerPaintFlags::Snapshotting)
-            behavior |= PaintBehaviorSnapshotting;
+        if (flags == GraphicsLayerPaintFlags::AllowAsyncImageDecoding)
+            behavior |= PaintBehaviorAllowAsyncImageDecoding;
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior, paintingPhase);
 

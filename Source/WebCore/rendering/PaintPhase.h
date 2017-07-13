@@ -64,7 +64,7 @@ enum PaintBehaviorFlags {
     PaintBehaviorSelectionAndBackgroundsOnly = 1 << 7,
     PaintBehaviorExcludeSelection            = 1 << 8,
     PaintBehaviorFlattenCompositingLayers    = 1 << 9, // Paint doesn't stop at compositing layer boundaries.
-    PaintBehaviorSnapshotting                = 1 << 10, // Indicates snapshotting, e.g. force synchronous image decoding.
+    PaintBehaviorAllowAsyncImageDecoding     = 1 << 10,
 };
 
 typedef unsigned PaintBehavior;
