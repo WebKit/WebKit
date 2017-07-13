@@ -102,10 +102,10 @@ void WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData()
         return;
     }
 
-    RefPtr<WebCoreDecompressionSession> strongThis { this };
-    dispatch_async(dispatch_get_main_queue(), [strongThis] {
-        if (strongThis->m_notificationCallback)
-            strongThis->m_notificationCallback();
+    RefPtr<WebCoreDecompressionSession> protectedThis { this };
+    dispatch_async(dispatch_get_main_queue(), [protectedThis] {
+        if (protectedThis->m_notificationCallback)
+            protectedThis->m_notificationCallback();
     });
 }
 
@@ -175,8 +175,8 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
 
     LOG(Media, "WebCoreDecompressionSession::enqueueSample(%p) - framesBeingDecoded(%d)", this, m_framesBeingDecoded);
 
-    dispatch_async(m_decompressionQueue.get(), [strongThis = makeRefPtr(*this), strongBuffer = retainPtr(sampleBuffer), displaying] {
-        strongThis->decodeSample(strongBuffer.get(), displaying);
+    dispatch_async(m_decompressionQueue.get(), [protectedThis = makeRefPtr(*this), strongBuffer = retainPtr(sampleBuffer), displaying] {
+        protectedThis->decodeSample(strongBuffer.get(), displaying);
     });
 }
 
@@ -238,11 +238,11 @@ void WebCoreDecompressionSession::handleDecompressionOutput(bool displaying, OSS
     CMSampleBufferRef rawImageSampleBuffer = nullptr;
     if (noErr != CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, rawImageBuffer, imageBufferDescription.get(), &imageBufferTiming, &rawImageSampleBuffer))
         return;
-    RefPtr<WebCoreDecompressionSession> strongThis { this };
+    RefPtr<WebCoreDecompressionSession> protectedThis { this };
     RetainPtr<CMSampleBufferRef> imageSampleBuffer = adoptCF(rawImageSampleBuffer);
-    dispatch_async(m_enqueingQueue.get(), [strongThis, status, imageSampleBuffer, infoFlags, displaying] {
+    dispatch_async(m_enqueingQueue.get(), [protectedThis, status, imageSampleBuffer, infoFlags, displaying] {
         UNUSED_PARAM(infoFlags);
-        strongThis->enqueueDecodedSample(imageSampleBuffer.get(), displaying);
+        protectedThis->enqueueDecodedSample(imageSampleBuffer.get(), displaying);
     });
 }
 
@@ -314,8 +314,8 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample,
     if (m_hasAvailableFrameCallback) {
         std::function<void()> callback { m_hasAvailableFrameCallback };
         m_hasAvailableFrameCallback = nullptr;
-        RefPtr<WebCoreDecompressionSession> strongThis { this };
-        dispatch_async(dispatch_get_main_queue(), [strongThis, callback] {
+        RefPtr<WebCoreDecompressionSession> protectedThis { this };
+        dispatch_async(dispatch_get_main_queue(), [protectedThis, callback] {
             callback();
         });
     }
@@ -333,10 +333,10 @@ void WebCoreDecompressionSession::requestMediaDataWhenReady(std::function<void()
     m_notificationCallback = notificationCallback;
 
     if (notificationCallback && isReadyForMoreMediaData()) {
-        RefPtr<WebCoreDecompressionSession> strongThis { this };
-        dispatch_async(dispatch_get_main_queue(), [strongThis] {
-            if (strongThis->m_notificationCallback)
-                strongThis->m_notificationCallback();
+        RefPtr<WebCoreDecompressionSession> protectedThis { this };
+        dispatch_async(dispatch_get_main_queue(), [protectedThis] {
+            if (protectedThis->m_notificationCallback)
+                protectedThis->m_notificationCallback();
         });
     }
 }
@@ -406,10 +406,10 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
 
 void WebCoreDecompressionSession::flush()
 {
-    dispatch_sync(m_decompressionQueue.get(), [strongThis = RefPtr<WebCoreDecompressionSession>(this)] {
-        CMBufferQueueReset(strongThis->m_producerQueue.get());
-        dispatch_sync(strongThis->m_enqueingQueue.get(), [strongThis] {
-            CMBufferQueueReset(strongThis->m_consumerQueue.get());
+    dispatch_sync(m_decompressionQueue.get(), [protectedThis = RefPtr<WebCoreDecompressionSession>(this)] {
+        CMBufferQueueReset(protectedThis->m_producerQueue.get());
+        dispatch_sync(protectedThis->m_enqueingQueue.get(), [protectedThis] {
+            CMBufferQueueReset(protectedThis->m_consumerQueue.get());
         });
     });
 }

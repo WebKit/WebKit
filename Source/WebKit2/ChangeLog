@@ -1,3 +1,18 @@
+2017-07-13  Jeremy Jones  <jeremyj@apple.com>
+
+        Style fix. Replace strongThis with protectedThis.
+        https://bugs.webkit.org/show_bug.cgi?id=174444
+
+        Reviewed by Eric Carlson.
+
+        Rename, no behavior change.
+
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen):
+        (WebKit::WebVideoFullscreenManager::didEnterFullscreen):
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen):
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen):
+
 2017-07-13  Chris Dumez  <cdumez@apple.com>
 
         Moved filesystem code out of WebResourceLoadStatisticsStore class

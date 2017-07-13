@@ -339,12 +339,12 @@ void WebVideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
 
     interface->layerHostingContext()->setRootLayer(videoLayer);
 
-    RefPtr<WebVideoFullscreenManager> strongThis(this);
+    RefPtr<WebVideoFullscreenManager> protectedThis(this);
     
-    model->setVideoFullscreenLayer(videoLayer, [strongThis, this, contextId] {
-        dispatch_async(dispatch_get_main_queue(), [strongThis, this, contextId] {
-            if (strongThis->m_page)
-                m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(contextId), strongThis->m_page->pageID());
+    model->setVideoFullscreenLayer(videoLayer, [protectedThis, this, contextId] {
+        dispatch_async(dispatch_get_main_queue(), [protectedThis, this, contextId] {
+            if (protectedThis->m_page)
+                m_page->send(Messages::WebVideoFullscreenManagerProxy::EnterFullscreen(contextId), protectedThis->m_page->pageID());
         });
     });
     
@@ -368,10 +368,10 @@ void WebVideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
         return;
 
     // exit fullscreen now if it was previously requested during an animation.
-    RefPtr<WebVideoFullscreenManager> strongThis(this);
-    dispatch_async(dispatch_get_main_queue(), [strongThis, videoElement] {
-        if (strongThis->m_page)
-            strongThis->exitVideoFullscreenForVideoElement(*videoElement);
+    RefPtr<WebVideoFullscreenManager> protectedThis(this);
+    dispatch_async(dispatch_get_main_queue(), [protectedThis, videoElement] {
+        if (protectedThis->m_page)
+            protectedThis->exitVideoFullscreenForVideoElement(*videoElement);
     });
 }
 
@@ -380,18 +380,18 @@ void WebVideoFullscreenManager::didExitFullscreen(uint64_t contextId)
     RefPtr<WebVideoFullscreenModelVideoElement> model;
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
-    RefPtr<WebVideoFullscreenManager> strongThis(this);
+    RefPtr<WebVideoFullscreenManager> protectedThis(this);
     
-    model->waitForPreparedForInlineThen([strongThis, contextId, interface, model] {
-        dispatch_async(dispatch_get_main_queue(), [strongThis, contextId, interface, model] {
-            model->setVideoFullscreenLayer(nil, [strongThis, contextId, interface] {
-                dispatch_async(dispatch_get_main_queue(), [strongThis, contextId, interface] {
+    model->waitForPreparedForInlineThen([protectedThis, contextId, interface, model] {
+        dispatch_async(dispatch_get_main_queue(), [protectedThis, contextId, interface, model] {
+            model->setVideoFullscreenLayer(nil, [protectedThis, contextId, interface] {
+                dispatch_async(dispatch_get_main_queue(), [protectedThis, contextId, interface] {
                     if (interface->layerHostingContext()) {
                         interface->layerHostingContext()->setRootLayer(nullptr);
                         interface->setLayerHostingContext(nullptr);
                     }
-                    if (strongThis->m_page)
-                        strongThis->m_page->send(Messages::WebVideoFullscreenManagerProxy::CleanupFullscreen(contextId), strongThis->m_page->pageID());
+                    if (protectedThis->m_page)
+                        protectedThis->m_page->send(Messages::WebVideoFullscreenManagerProxy::CleanupFullscreen(contextId), protectedThis->m_page->pageID());
                 });
             });
         });
@@ -418,10 +418,10 @@ void WebVideoFullscreenManager::didCleanupFullscreen(uint64_t contextId)
     if (!videoElement || !targetIsFullscreen)
         return;
 
-    RefPtr<WebVideoFullscreenManager> strongThis(this);
-    dispatch_async(dispatch_get_main_queue(), [strongThis, videoElement, mode] {
-        if (strongThis->m_page)
-            strongThis->enterVideoFullscreenForVideoElement(*videoElement, mode);
+    RefPtr<WebVideoFullscreenManager> protectedThis(this);
+    dispatch_async(dispatch_get_main_queue(), [protectedThis, videoElement, mode] {
+        if (protectedThis->m_page)
+            protectedThis->enterVideoFullscreenForVideoElement(*videoElement, mode);
     });
 }
     

@@ -1,5 +1,24 @@
 2017-07-13  Jeremy Jones  <jeremyj@apple.com>
 
+        Style fix. Replace strongThis with protectedThis.
+        https://bugs.webkit.org/show_bug.cgi?id=174444
+
+        Reviewed by Eric Carlson.
+
+        Rename, no behavior change.
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::finish):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData):
+        (WebCore::WebCoreDecompressionSession::enqueueSample):
+        (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+        (WebCore::WebCoreDecompressionSession::enqueueDecodedSample):
+        (WebCore::WebCoreDecompressionSession::requestMediaDataWhenReady):
+        (WebCore::WebCoreDecompressionSession::flush):
+
+2017-07-13  Jeremy Jones  <jeremyj@apple.com>
+
         Fix block style in WebVideoFullscreen classes.
         https://bugs.webkit.org/show_bug.cgi?id=174446
 
