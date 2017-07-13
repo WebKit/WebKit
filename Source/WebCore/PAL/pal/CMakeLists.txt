@@ -2,7 +2,6 @@ set(PAL_SOURCES
 )
 
 set(PAL_INCLUDE_DIRECTORIES
-    "${CMAKE_BINARY_DIR}"
     "${PAL_DIR}"
 )
 
