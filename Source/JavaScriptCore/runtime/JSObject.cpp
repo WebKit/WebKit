@@ -2042,8 +2042,11 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue hasInstanceVa
     }
 
     TypeInfo info = structure(vm)->typeInfo();
-    if (info.implementsDefaultHasInstance())
-        return defaultHasInstance(exec, value, get(exec, exec->propertyNames().prototype));
+    if (info.implementsDefaultHasInstance()) {
+        JSValue prototype = get(exec, exec->propertyNames().prototype);
+        RETURN_IF_EXCEPTION(scope, false);
+        return defaultHasInstance(exec, value, prototype);
+    }
     if (info.implementsHasInstance())
         return methodTable(vm)->customHasInstance(this, exec, value);
     throwException(exec, scope, createInvalidInstanceofParameterErrorNotFunction(exec, this));
@@ -2052,7 +2055,10 @@ bool JSObject::hasInstance(ExecState* exec, JSValue value, JSValue hasInstanceVa
 
 bool JSObject::hasInstance(ExecState* exec, JSValue value)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue hasInstanceValue = get(exec, exec->propertyNames().hasInstanceSymbol);
+    RETURN_IF_EXCEPTION(scope, false);
 
     return hasInstance(exec, value, hasInstanceValue);
 }
