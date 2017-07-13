@@ -51,7 +51,7 @@ CallLinkInfo::CallType CallLinkInfo::callTypeFor(OpcodeID opcodeID)
         return ConstructVarargs;
     if (opcodeID == op_tail_call)
         return TailCall;
-    ASSERT(opcodeID == op_tail_call_varargs || op_tail_call_forward_arguments);
+    ASSERT(opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments);
     return TailCallVarargs;
 }
 
