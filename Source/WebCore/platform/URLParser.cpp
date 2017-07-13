@@ -2837,6 +2837,9 @@ static void serializeURLEncodedForm(const String& input, Vector<LChar>& output)
     
 String URLParser::serialize(const URLEncodedForm& tuples)
 {
+    if (tuples.isEmpty())
+        return { };
+
     Vector<LChar> output;
     for (auto& tuple : tuples) {
         if (!output.isEmpty())

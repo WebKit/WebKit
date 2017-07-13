@@ -1,3 +1,18 @@
+2017-07-13  Alex Christensen  <achristensen@webkit.org>
+
+        Deleting last URLSearchParams key should remove trailing ? in associated URL
+        https://bugs.webkit.org/show_bug.cgi?id=174465
+
+        Reviewed by Chris Dumez.
+
+        This makes us match the behavior of Chrome and Firefox, and the spec after https://github.com/whatwg/url/issues/332 is approved.
+        This will be covered by an upcoming web platform test, and I updated fast/dom/DOMURL/searchparams.html to cover it now.
+
+        * platform/URLParser.cpp:
+        (WebCore::URLParser::serialize):
+        If there are no tuples, serialize to the null string instead of a non-null empty string.
+        This makes it so URL::setQuery removes the ?
+
 2017-07-13  Jeremy Jones  <jeremyj@apple.com>
 
         Style fix. Replace strongThis with protectedThis.
