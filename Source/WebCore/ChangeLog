@@ -1,3 +1,39 @@
+2017-07-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyRSA SPKI imports
+        https://bugs.webkit.org/show_bug.cgi?id=173694
+
+        Reviewed by Jiewen Tan.
+
+        Implement the SPKI import operation for RSA keys for platforms that use
+        libgcrypt.
+
+        The passed-in key data is decoded against the `SubjectPublicKeyInfo` ASN.1
+        structure. We then validate the `algorithm.algorithm` element, ensuring that
+        the value under that represents a supported object identifier. This check is
+        for now mostly superficial, only ensuring that the object identifier is either
+        id-rsaEncryption, id-RSAES-OAEP or id-RSASSA-PSS. This has to be further extended
+        to also check the id-sha{1,256,384,512}WithRSAEncryption identifiers as well as
+        decoding the `algorithm.parameters` element against a specific ASN.1 structure,
+        if necessary (RSASSA-PSS-params or RSAES-OAEP-params), and cross-checking the
+        specified digest algorithm with the algorithm that's specified through the main
+        object identifier or the structure contained in `algorithm.parameters`. This is
+        avoided for now because no test in WebKit or the web-platform-tests suite covers
+        this detail of the specification.
+
+        After the algorithm is identified as supported, we proceed with decoding the
+        `subjectPublicKey` data against the `RSAPublicKey` ASN.1 structure. From there,
+        we retrieve the `modulus` and `publicExponent` data from which we can construct
+        an RSA `public-key` s-expression that can be used through libgcrypt. A new
+        CryptoKeyRSA object is then created, taking over ownership of the `public-key`
+        s-expression, and returned.
+
+        No new tests -- related tests are now passing and are unskipped.
+
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::supportedAlgorithmIdentifier):
+        (WebCore::CryptoKeyRSA::importSpki):
+
 2017-07-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r219332): [GTK] 9 new failures on fast/forms spinbutton related tests
