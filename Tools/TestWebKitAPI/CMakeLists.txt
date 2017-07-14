@@ -19,15 +19,15 @@ if (ENABLE_WEBKIT2)
         JavaScriptCore
         TestWebKitAPIBase
         WTF
-        WebKit
+        WebKit2
         gtest
     )
     list(APPEND TestWebKitAPI_LIBRARIES
-        WebKitLegacy
+        WebKit
     )
 else ()
     list(APPEND TestWebKitAPI_LIBRARIES
-        WebKitLegacy${DEBUG_SUFFIX}
+        WebKit${DEBUG_SUFFIX}
     )
 endif ()
 
@@ -205,9 +205,9 @@ if (ENABLE_WEBKIT2)
         ${TESTWEBKITAPI_DIR}/TestsController.cpp
     )
 
-    target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit gtest)
+    target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit2 gtest)
 
-    add_dependencies(TestWebKitAPIBase WebKit ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+    add_dependencies(TestWebKitAPIBase WebKit2 ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 
     foreach (testName ${test_webkit2_api_BINARIES})
         get_filename_component(testBaseName ${testName} NAME)
