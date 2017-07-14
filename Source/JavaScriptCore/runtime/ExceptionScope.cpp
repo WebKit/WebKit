@@ -56,7 +56,7 @@ CString ExceptionScope::unexpectedExceptionMessage()
     StringPrintStream out;
 
     out.println("Unexpected exception observed on thread ", currentThread(), " at:");
-    auto currentStack = std::unique_ptr<StackTrace>(StackTrace::captureStackTrace(Options::unexpectedExceptionStackTraceLimit(), 1));
+    auto currentStack = StackTrace::captureStackTrace(Options::unexpectedExceptionStackTraceLimit(), 1);
     currentStack->dump(out, "    ");
 
     if (!m_vm.nativeStackTraceOfLastThrow())

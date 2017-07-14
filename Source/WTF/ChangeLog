@@ -1,3 +1,22 @@
+2017-07-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use std::unique_ptr for StackTrace
+        https://bugs.webkit.org/show_bug.cgi?id=174495
+
+        Reviewed by Alex Christensen.
+
+        Instead of returning pointer to heap allocated StackTrace,
+        we should return std::unique_ptr<StackTrace>.
+        And we also move WTFGetBackTrace from Assertions.cpp to
+        StackTrace.cpp to consolidate stack trace related operations
+        into StackTrace.cpp.
+
+        * wtf/Assertions.cpp:
+        * wtf/StackTrace.cpp:
+        (WTFGetBacktrace):
+        (WTF::StackTrace::captureStackTrace):
+        * wtf/StackTrace.h:
+
 2017-07-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, annotate inline for operator==/!= for FastAllocator

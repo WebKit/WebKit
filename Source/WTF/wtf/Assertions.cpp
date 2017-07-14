@@ -74,10 +74,6 @@
 #include <unistd.h>
 #endif
 
-#if HAVE(BACKTRACE)
-#include <execinfo.h>
-#endif
-
 extern "C" {
 
 static void logToStderr(const char* buffer)
@@ -246,17 +242,6 @@ public:
         vprintf_stderr_common(format, argList);
     }
 };
-
-void WTFGetBacktrace(void** stack, int* size)
-{
-#if HAVE(BACKTRACE)
-    *size = backtrace(stack, *size);
-#elif OS(WINDOWS)
-    *size = RtlCaptureStackBackTrace(0, *size, stack, 0);
-#else
-    *size = 0;
-#endif
-}
 
 void WTFReportBacktrace()
 {

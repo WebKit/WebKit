@@ -30,7 +30,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
 
-#if HAVE(BACKTRACE_SYMBOLS)
+#if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)
 #include <execinfo.h>
 #endif
 
@@ -38,6 +38,21 @@
 #include <cxxabi.h>
 #include <dlfcn.h>
 #endif
+
+#if OS(WINDOWS)
+#include <windows.h>
+#endif
+
+void WTFGetBacktrace(void** stack, int* size)
+{
+#if HAVE(BACKTRACE)
+    *size = backtrace(stack, *size);
+#elif OS(WINDOWS)
+    *size = RtlCaptureStackBackTrace(0, *size, stack, 0);
+#else
+    *size = 0;
+#endif
+}
 
 namespace WTF {
 
@@ -47,11 +62,11 @@ ALWAYS_INLINE size_t StackTrace::instanceSize(int capacity)
     return sizeof(StackTrace) + (capacity - 1) * sizeof(void*);
 }
 
-StackTrace* StackTrace::captureStackTrace(int maxFrames, int framesToSkip)
+std::unique_ptr<StackTrace> StackTrace::captureStackTrace(int maxFrames, int framesToSkip)
 {
     maxFrames = std::max(1, maxFrames);
     size_t sizeToAllocate = instanceSize(maxFrames);
-    StackTrace* trace = new (NotNull, fastMalloc(sizeToAllocate)) StackTrace();
+    std::unique_ptr<StackTrace> trace(new (NotNull, fastMalloc(sizeToAllocate)) StackTrace());
 
     // Skip 2 additional frames i.e. StackTrace::captureStackTrace and WTFGetBacktrace.
     framesToSkip += 2;
