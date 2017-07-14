@@ -1,5 +1,13 @@
 2017-07-13  Matt Lewis  <jlewis3@apple.com>
 
+        Skipped multiple http/tests/webrtc/ test on iOS simulator.
+        https://bugs.webkit.org/show_bug.cgi?id=173861
+
+        Unreviewed test gardening.
+        * platform/ios-simulator-wk2/TestExpectations:
+
+2017-07-13  Matt Lewis  <jlewis3@apple.com>
+
         Marked imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html as flaky on iOS.
         https://bugs.webkit.org/show_bug.cgi?id=173487
 
