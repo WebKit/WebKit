@@ -49,7 +49,7 @@
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
-#elif USE(OPENGL)
+#elif !USE(OPENGL_ES_2)
 #include "OpenGLShims.h"
 #endif
 

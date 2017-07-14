@@ -1,3 +1,15 @@
+2017-07-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Build broken "Cannot open include file: 'GL/glext.h'" since Bug 172104
+        https://bugs.webkit.org/show_bug.cgi?id=174492
+
+        Reviewed by Žan Doberšek.
+
+        WinCairo port uses GLES. OpenGLShims.h shouldn't be included.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        Include "OpenGLShims.h" only if !USE(OPENGL_ES_2) instead of USE(OPENGL).
+
 2017-07-14  Chris Dumez  <cdumez@apple.com>
 
         PageCache::removeAllItemsForPage(Page&) may reenter itself and cause crashes
