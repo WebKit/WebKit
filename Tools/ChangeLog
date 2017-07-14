@@ -1,3 +1,12 @@
+2017-07-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix style checker unit test
+
+        Unreviewed WebKit2 => WebKit fixup.
+
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherSkipTest.test_should_skip_with_warning):
+
 2017-07-13  Matthew Hanson  <matthew_hanson@apple.com>
 
         Use the old WebKit/WebKit2 targets for CMake builds. (v2)

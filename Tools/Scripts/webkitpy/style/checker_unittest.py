@@ -281,9 +281,9 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         # Check skipped files.
         paths_to_skip = [
            os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKitGtk', 'testatk.c'),
-           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'webkit2.h'),
-           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'WebKitWebView.h'),
-           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'WebKitLoader.h'),
+           os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'webkit2.h'),
+           os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'WebKitWebView.h'),
+           os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'WebKitLoader.h'),
             ]
 
         for path in paths_to_skip:
@@ -293,10 +293,10 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         # Verify that some files are not skipped.
         paths_not_to_skip = [
            "foo.txt",
-           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'HelperClass.cpp'),
-           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'HelperClass.h'),
-           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'WebKitWebView.cpp'),
-           os.path.join('Source', 'WebKit2', 'UIProcess', 'API', 'gtk', 'WebKitWebViewPrivate.h'),
+           os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'HelperClass.cpp'),
+           os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'HelperClass.h'),
+           os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'WebKitWebView.cpp'),
+           os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'WebKitWebViewPrivate.h'),
            os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKit2Gtk', 'WebViewTest.cpp'),
            os.path.join('Tools', 'TestWebKitAPI', 'Tests', 'WebKit2Gtk', 'WebViewTest.h'),
             ]
