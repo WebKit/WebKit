@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteNetworkingContext.h"
 
+#import "CookieStorageUtilsCF.h"
 #import "LegacyCustomProtocolManager.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
@@ -119,10 +120,8 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
     SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
 
     RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage;
-    if (!parameters.uiProcessCookieStorageIdentifier.isEmpty()) {
-        RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, parameters.uiProcessCookieStorageIdentifier.data(), parameters.uiProcessCookieStorageIdentifier.size()));
-        uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
-    }
+    if (!parameters.uiProcessCookieStorageIdentifier.isEmpty())
+        uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
     NetworkStorageSession::ensureSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
 
