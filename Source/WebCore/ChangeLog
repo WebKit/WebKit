@@ -1,3 +1,15 @@
+2017-07-14  Youenn Fablet  <youenn@apple.com>
+
+        Increase CoreAudio render audio buffer sizes for WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=174508
+
+        Reviewed by Eric Carlson.
+
+        Covered by manually testing audio rendering through WebRTC sites.
+
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::createAudioUnit): Setting audio buffer size equivalent to 20 ms.
+
 2017-07-14  Brady Eidson  <beidson@apple.com>
 
         Make sure all CFHTTPCookieStorageRefs we create are scheduled.
