@@ -65,8 +65,6 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
 
     m_download = adoptRef(new CurlDownload());
     m_download->init(this, handle, request, response);
-
-    start();
 }
 
 void WebDownload::init(const URL& url, IWebDownloadDelegate* delegate)
