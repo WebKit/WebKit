@@ -1,5 +1,18 @@
 2017-07-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Fix the Mac CMake build.
+
+        Unreviewed build fix.
+
+        Fix the Mac CMake build after r219488 broke it. r219488 erroneously updated
+        the variable name DERIVED_SOURCES_WEBKITLEGACY_DIR to DERIVED_SOURCES_WEBKIT_LEGACY_DIR
+        without updating subsequent users of that variable.
+
+        * Source/cmake/WebKitFS.cmake:
+        Rename DERIVED_SOURCES_WEBKIT_LEGACY_DIR back to DERIVED_SOURCES_WEBKITLEGACY_DIR.
+
+2017-07-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Fix the cMake builds (GTK and WPE.)
         https://bugs.webkit.org/show_bug.cgi?id=174164
         rdar://problem/33137595
