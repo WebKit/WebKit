@@ -55,7 +55,7 @@ class SymbolImpl;
 class SymbolRegistry;
 
 struct CStringTranslator;
-template<typename> struct BufferFromStaticDataTranslator;
+struct CharBufferFromLiteralDataTranslator;
 struct HashAndUTF8CharactersTranslator;
 struct LCharBufferTranslator;
 struct StringHash;
@@ -182,13 +182,12 @@ class StringImpl : private StringImplShape {
     friend struct WTF::CStringTranslator;
     template<typename CharacterType> friend struct WTF::HashAndCharactersTranslator;
     friend struct WTF::HashAndUTF8CharactersTranslator;
-    template<typename CharacterType> friend struct WTF::BufferFromStaticDataTranslator;
+    friend struct WTF::CharBufferFromLiteralDataTranslator;
     friend struct WTF::LCharBufferTranslator;
     friend struct WTF::SubstringTranslator;
     friend struct WTF::UCharBufferTranslator;
     friend class JSC::LLInt::Data;
     friend class JSC::LLIntOffsetsExtractor;
-    friend class AtomicStringImpl;
     friend class SymbolImpl;
     friend class RegisteredSymbolImpl;
     
