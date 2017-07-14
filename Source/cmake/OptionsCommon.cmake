@@ -44,7 +44,7 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
     endif ()
 endif ()
 
-# FIXME: Some warning flags should probably be set in WebKitHelpers.cmake instead.
+# FIXME: Some warning flags should probably be set in WEBKIT_SET_EXTRA_COMPILER_FLAGS instead.
 # But language-specific warnings probably cannot be moved there.
 if (COMPILER_IS_GCC_OR_CLANG)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-strict-aliasing")

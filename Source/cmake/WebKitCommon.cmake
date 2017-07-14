@@ -38,7 +38,6 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
 
     include(WebKitMacros)
     include(WebKitFS)
-    include(WebKitHelpers)
     include(WebKitFeatures)
 
     include(OptionsCommon)

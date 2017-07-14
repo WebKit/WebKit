@@ -1,3 +1,14 @@
+2017-07-14  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Unclear distinction between WebKitHelpers and WebKitMacros
+        https://bugs.webkit.org/show_bug.cgi?id=153189
+
+        Reviewed by Antonio Gomes.
+
+        New location for macros that are exclusively needed here.
+
+        * CMakeLists.txt:
+
 2017-07-14  Brady Eidson  <beidson@apple.com>
 
         Make sure all CFHTTPCookieStorageRefs we create are scheduled.
