@@ -73,7 +73,7 @@ my @paths;
 find(\&wanted, "Source/JavaScriptCore");
 find(\&wanted, "Source/WTF");
 find(\&wanted, "Source/WebCore");
-find(\&wanted, "Source/WebKit");
+find(\&wanted, "Source/WebKitLegacy");
 find(\&wanted, "Source/WebKit2");
 find(\&wanted, "Tools/DumpRenderTree");
 find(\&wanted, "Tools/TestWebKitAPI");

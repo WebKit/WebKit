@@ -215,7 +215,7 @@ Reviewed by Darin Adler.
 WebKit.xcconfig file.
 """
 
-        self.changelog_paths = map(self.filesystem.abspath, [self.filesystem.join("Source/WebKit", "ChangeLog")])
+        self.changelog_paths = map(self.filesystem.abspath, [self.filesystem.join("Source/WebKitLegacy", "ChangeLog")])
 
         self.mock_changelog([_changelog3])
         checkout = self.mock_checkout_for_test()
@@ -231,7 +231,7 @@ WebKit.xcconfig file.
 Patch by David Kilzer <ddkilzer@apple.com> on 2014-07-17
 Reviewed by Darin Adler.
 
-Source/WebKit:
+Source/WebKitLegacy:
 
 * WebKit.xcodeproj/project.pbxproj: Remove references to unused
 WebKit.xcconfig file.
@@ -241,7 +241,7 @@ LayoutTests:
 * Path/To/Complicated/File: Added.
 """
 
-        self.changelog_paths = map(self.filesystem.abspath, (self.filesystem.join("Source/WebKit", "ChangeLog"), self.filesystem.join("LayoutTests", "ChangeLog")))
+        self.changelog_paths = map(self.filesystem.abspath, (self.filesystem.join("Source/WebKitLegacy", "ChangeLog"), self.filesystem.join("LayoutTests", "ChangeLog")))
 
         self.mock_changelog((_changelog3, _changelog4))
         checkout = self.mock_checkout_for_test()
@@ -257,7 +257,7 @@ LayoutTests:
 Patch by David Kilzer <ddkilzer@apple.com> on 2014-07-17
 Reviewed by Darin Adler.
 
-Source/WebKit:
+Source/WebKitLegacy:
 
 * WebKit.xcodeproj/project.pbxproj: Remove references to unused
 WebKit.xcconfig file.
@@ -269,7 +269,7 @@ Filler change.
 * Path/To/Complicated/File: Added.
 """
 
-        self.changelog_paths = map(self.filesystem.abspath, (self.filesystem.join("Source/WebKit", "ChangeLog"), self.filesystem.join("LayoutTests", "ChangeLog")))
+        self.changelog_paths = map(self.filesystem.abspath, (self.filesystem.join("Source/WebKitLegacy", "ChangeLog"), self.filesystem.join("LayoutTests", "ChangeLog")))
 
         self.mock_changelog((_changelog3, _changelog5))
         checkout = self.mock_checkout_for_test()

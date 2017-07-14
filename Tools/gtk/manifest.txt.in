@@ -52,7 +52,7 @@ exclude Source/ThirdParty/qunit
 exclude Source/WebCore/platform/audio/resources
 exclude Source/WebCore/bindings/scripts/test
 exclude Source/WebCore/Resources
-exclude Source/WebKit/.*
+exclude Source/WebKitLegacy/.*
 exclude Source/cmake/OptionsWinCairo.cmake$
 exclude Source/cmake/OptionsWindows.cmake$
 exclude Source/cmake/OptionsAppleWin.cmake$

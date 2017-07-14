@@ -1,1 +1,1 @@
-#include "../../../../Source/WebKit/mac/Misc/WebTypesInternal.h"
+#include "../../../../Source/WebKitLegacy/mac/Misc/WebTypesInternal.h"

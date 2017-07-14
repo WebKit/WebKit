@@ -29,6 +29,6 @@ if [[ $# -ne 1 ]];then
     exit 1
 fi
 
-bash /mnt/git/$QUEUE_TYPE/Source/WebKit/chromium/tools/clang/scripts/update.sh
+bash /mnt/git/$QUEUE_TYPE/Source/WebKitLegacy/chromium/tools/clang/scripts/update.sh
 export builddir_name=llvm
 export GYP_DEFINES='clang=1'

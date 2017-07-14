@@ -151,7 +151,7 @@ setConfiguration();
 my $productDir = productDir();
 
 # Check that all the project directories are there.
-my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit");
+my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKitLegacy");
 
 # Build WTF as a separate static library on ports which support it.
 splice @projects, 0, 0, "Source/WTF" if isAppleWebKit() or isWinCairo();
@@ -200,7 +200,7 @@ if (isAppleCocoaWebKit()) {
         push @projects, ("Tools/MiniBrowser");
 
         # WebInspectorUI must come after JavaScriptCore and WebCore but before WebKit and WebKit2
-        my $webKitIndex = first { $projects[$_] eq "Source/WebKit" } 0..$#projects;
+        my $webKitIndex = first { $projects[$_] eq "Source/WebKitLegacy" } 0..$#projects;
         splice(@projects, $webKitIndex, 0, "Source/WebInspectorUI");
 
         # Copy library and header from WebKitLibraries to a findable place in the product directory.
@@ -228,7 +228,7 @@ if (isAppleCocoaWebKit()) {
 # If asked to build just the WebKit project, overwrite the projects
 # list after all of the port specific tweaks have been made to
 # build options, etc.
-@projects = ("Source/WebKit") if $onlyWebKitProject;
+@projects = ("Source/WebKitLegacy") if $onlyWebKitProject;
 
 my $result = 0;
 
