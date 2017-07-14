@@ -31,11 +31,6 @@ for (let numberOfDigits of digits) {
 
 const remainingTimeLabel = new TimeLabel(TimeLabel.Types.Remaining);
 remainingTimeLabel.element.id = "remaining";
-remainingTimeLabel.setValueWithNumberOfDigits(0, 4);
-
-const elaspedTimeLabel = new TimeLabel(TimeLabel.Types.Elasped);
-elaspedTimeLabel.element.id = "elasped";
-elaspedTimeLabel.setValueWithNumberOfDigits(0, 4);
 
 let style;
 let elaspedLabel;
@@ -44,8 +39,6 @@ scheduler.frameDidFire = function()
 {
     document.body.appendChild(timeLabel.element);
     document.body.appendChild(remainingTimeLabel.element);
-    document.body.appendChild(elaspedTimeLabel.element);
-
     style = window.getComputedStyle(timeLabel.element);
 
     shouldBeEqualToString("style.position", "absolute");
@@ -56,16 +49,12 @@ scheduler.frameDidFire = function()
     debug(`NaNTimeLabel.element.textContent = ${NaNTimeLabel.element.textContent}`);
 
     debug("");
-
-    elaspedLabel = elaspedTimeLabel.element.getAttribute("aria-label").split(":")[0];
-    remainingLabel = remainingTimeLabel.element.getAttribute("aria-label").split(":")[0];
+    elaspedLabel = accessibilityController.accessibleElementById('elasped').description.split(": ")[1];
+    remainingLabel = accessibilityController.accessibleElementById('remaining').description.split(": ")[1];
     shouldBeEqualToString("elaspedLabel", "Elapsed");
     shouldBeEqualToString("remainingLabel", "Remaining");
-    shouldBeEqualToString("accessibilityController.accessibleElementById('remaining').role", "AXRole: AXStaticText");
-    shouldBeEqualToString("accessibilityController.accessibleElementById('elasped').role", "AXRole: AXStaticText");
     timeLabel.element.remove();
     remainingTimeLabel.element.remove();
-    elaspedTimeLabel.element.remove();
 
     for (numberOfDigits of digits) {
         debug("");

@@ -1,3 +1,16 @@
+2017-07-14  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r219500.
+
+        The test is consistently failing on iOS simulator.
+
+        Reverted changeset:
+
+        "AX: VoiceOver silent or skipping over time values on media
+        player."
+        https://bugs.webkit.org/show_bug.cgi?id=174324
+        http://trac.webkit.org/changeset/219500
+
 2017-07-14  Jonathan Bedard  <jbedard@apple.com>
 
         Add script to rebase patches during the WebKit2->WebKit/WebKit->WebKitLegacy transition
