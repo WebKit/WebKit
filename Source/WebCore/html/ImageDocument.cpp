@@ -223,7 +223,7 @@ void ImageDocument::createDocumentStructure()
     auto body = HTMLBodyElement::create(*this);
     body->setAttribute(styleAttr, "margin: 0px");
     if (MIMETypeRegistry::isPDFMIMEType(document().loader()->responseMIMEType()))
-        body->setInlineStyleProperty(CSSPropertyBackgroundColor, "white", CSSPrimitiveValue::CSS_IDENT);
+        body->setInlineStyleProperty(CSSPropertyBackgroundColor, "white");
     rootElement->appendChild(body);
     
     auto imageElement = ImageDocumentElement::create(*this);
