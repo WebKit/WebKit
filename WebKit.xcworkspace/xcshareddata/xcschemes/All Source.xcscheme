@@ -146,7 +146,7 @@
                BlueprintIdentifier = "1A50DB38110A3C13000D3FE5"
                BuildableName = "All"
                BlueprintName = "All"
-               ReferencedContainer = "container:Source/WebKit2/WebKit2.xcodeproj">
+               ReferencedContainer = "container:Source/WebKit/WebKit2.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

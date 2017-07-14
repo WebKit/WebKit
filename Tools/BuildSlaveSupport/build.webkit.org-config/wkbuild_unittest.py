@@ -26,12 +26,12 @@ import wkbuild
 
 class ShouldBuildTest(unittest.TestCase):
     _should_build_tests = [
-        (["ChangeLog", "Source/WebCore/ChangeLog", "Source/WebKit2/ChangeLog-2011-02-11"], []),
+        (["ChangeLog", "Source/WebCore/ChangeLog", "Source/WebKit/ChangeLog-2011-02-11"], []),
         (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
         (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "ios-10", "ios-simulator-10"]),
         (["Source/JavaScriptCore/Configurations/Base.xcconfig"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "ios-10", "ios-simulator-10"]),
-        (["Source/JavaScriptCore/JavaScriptCore.vcproj/foo", "Source/WebKit2/win/WebKit2.vcproj", "Source/WebKitLegacy/win/WebKit.sln", "Tools/WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops"], ["win"]),
+        (["Source/JavaScriptCore/JavaScriptCore.vcproj/foo", "Source/WebKit/win/WebKit2.vcproj", "Source/WebKitLegacy/win/WebKit.sln", "Tools/WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops"], ["win"]),
         (["LayoutTests/platform/mac/foo", "Source/WebCore/bar"], ["*"]),
         (["LayoutTests/foo"], ["*"]),
         (["LayoutTests/canvas/philip/tests/size.attributes.parse.exp-expected.txt", "LayoutTests/canvas/philip/tests/size.attributes.parse.exp.html"], ["*"]),

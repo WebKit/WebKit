@@ -22,7 +22,7 @@
                         r"|Source/WebCore/page/GeolocationClient.h"
                         r"|Source/WebCore/bindings/js/JSGeolocationCustom.cpp"
                         r"|Source/WebCore/platform/mock/GeolocationClientMock.(h|cpp)"
-                        r"|Source/WebKit2/WebProcess/Geolocation/",
+                        r"|Source/WebKit/WebProcess/Geolocation/",
         },
         "GStreamerGraphics": {
             "filename": r"Source/WebCore/platform/graphics/gstreamer/",
@@ -70,16 +70,16 @@
             "filename": r"Source/WebCore/page/animation/",
         },
         "GtkWebKit2PublicAPI": {
-            "filename": r"Source/WebKit2/UIProcess/API/gtk/"
-                        r"|Source/WebKit2/UIProcess/API/glib/"
-                        r"|Source/WebKit2/Shared/API/glib/"
-                        r"|Source/WebKit2/WebProcess/InjectedBundle/API/gtk/"
-                        r"|Source/WebKit2/WebProcess/InjectedBundle/API/glib/",
+            "filename": r"Source/WebKit/UIProcess/API/gtk/"
+                        r"|Source/WebKit/UIProcess/API/glib/"
+                        r"|Source/WebKit/Shared/API/glib/"
+                        r"|Source/WebKit/WebProcess/InjectedBundle/API/gtk/"
+                        r"|Source/WebKit/WebProcess/InjectedBundle/API/glib/",
         },
         "CoordinatedGraphics": {
-            "filename": r"Source/WebKit2/WebProcess/WebPage/CoordinatedGraphics/"
-                        r"|Source/WebKit2/UIProcess/CoordinatedGraphics/"
-                        r"|Source/WebKit2/Shared/CoordinatedGraphics/"
+            "filename": r"Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/"
+                        r"|Source/WebKit/UIProcess/CoordinatedGraphics/"
+                        r"|Source/WebKit/Shared/CoordinatedGraphics/"
                         r"|Source/WebCore/platform/graphics/surfaces/",
         },
         "TextureMapper": {
@@ -319,7 +319,7 @@
                         r"|Source/WebCore/platform/text/BidiResolver.h",
         },
         "NetworkCache": {
-            "filename": r"Source/WebKit2/NetworkProcess/cache/",
+            "filename": r"Source/WebKit/NetworkProcess/cache/",
         },
         "WebCryptoAPI": {
             "filename": r"Source/WebCore/crypto/"

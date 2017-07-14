@@ -194,7 +194,7 @@ if (isAppleCocoaWebKit()) {
         splice @projects, 0, 0, ("Source/ThirdParty/libwebrtc");
     }
 
-    push @projects, ("Source/WebKit2");
+    push @projects, ("Source/WebKit");
 
     if (!isIOSWebKit()) {
         push @projects, ("Tools/MiniBrowser");

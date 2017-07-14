@@ -60,11 +60,11 @@ exclude Source/cmake/OptionsWPE.cmake$
 exclude Source/WebInspectorUI/Tools
 exclude Source/WebInspectorUI/UserInterface/Images
 
-exclude Source/WebKit2/Resources
-exclude Source/WebKit2/gtk/NEWS$
+exclude Source/WebKit/Resources
+exclude Source/WebKit/gtk/NEWS$
 
 # We do want to include the NEWS, but we want it to be in the root of the archive.
-file Source/WebKit2/gtk/NEWS NEWS
+file Source/WebKit/gtk/NEWS NEWS
 
 directory Source/WebInspectorUI/UserInterface/Images/gtk
 file Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js Source/WebCore/English.lproj/mediaControlsLocalizedStrings.js

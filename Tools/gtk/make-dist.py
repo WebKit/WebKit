@@ -283,7 +283,7 @@ if __name__ == "__main__":
         if arguments.version is not None:
             return
 
-        pkgconfig_file = os.path.join(arguments.build_dir, "Source/WebKit2/webkit2gtk-4.0.pc")
+        pkgconfig_file = os.path.join(arguments.build_dir, "Source/WebKit/webkitgtk-4.0.pc")
         if os.path.isfile(pkgconfig_file):
             p = subprocess.Popen(['pkg-config', '--modversion', pkgconfig_file], stdout=subprocess.PIPE)
             version = p.communicate()[0]

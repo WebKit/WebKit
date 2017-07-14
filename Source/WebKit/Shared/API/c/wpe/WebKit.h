@@ -31,7 +31,7 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKType.h>
 
-// From Source/WebKit2/Shared/API/c/
+// From Source/WebKit/Shared/API/c/
 #include <WebKit/WKArray.h>
 #include <WebKit/WKData.h>
 #include <WebKit/WKDeclarationSpecifiers.h>
@@ -49,7 +49,7 @@
 #include <WebKit/WKUserContentInjectedFrames.h>
 #include <WebKit/WKUserScriptInjectionTime.h>
 
-// From Source/WebKit2/WebProcess/InjectedBundle/API/c/
+// From Source/WebKit/WebProcess/InjectedBundle/API/c/
 #include <WebKit/WKBundle.h>
 #include <WebKit/WKBundleBackForwardList.h>
 #include <WebKit/WKBundleBackForwardListItem.h>
@@ -75,7 +75,7 @@
 #include <WebKit/WKBundleRangeHandle.h>
 #include <WebKit/WKBundleScriptWorld.h>
 
-// From Source/WebKit2/UIProcess/API/C
+// From Source/WebKit/UIProcess/API/C
 #include <WebKit/WKBackForwardListItemRef.h>
 #include <WebKit/WKBackForwardListRef.h>
 #include <WebKit/WKContext.h>

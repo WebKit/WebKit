@@ -46,7 +46,7 @@ my @paths;
 find(\&wanted, "Source/JavaScriptCore");
 find(\&wanted, "Source/WebCore");
 find(\&wanted, "Source/WebKitLegacy");
-find(\&wanted, "Source/WebKit2");
+find(\&wanted, "Source/WebKit");
 
 sub wanted
 {

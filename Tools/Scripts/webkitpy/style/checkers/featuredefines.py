@@ -33,7 +33,7 @@ FEATURE_DEFINE_FILES = [
     "Source/WebCore/Configurations/FeatureDefines.xcconfig",
     "Source/WebCore/PAL/Configurations/FeatureDefines.xcconfig",
     "Source/WebKitLegacy/mac/Configurations/FeatureDefines.xcconfig",
-    "Source/WebKit2/Configurations/FeatureDefines.xcconfig",
+    "Source/WebKit/Configurations/FeatureDefines.xcconfig",
     "Tools/TestWebKitAPI/Configurations/FeatureDefines.xcconfig",
 ]
 
