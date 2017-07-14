@@ -1,3 +1,22 @@
+2017-07-14  Jeremy Jones  <jeremyj@apple.com>
+
+        Fix style for name of class alloc function in WebVideoFullscreenInterfaceAVKit.
+        https://bugs.webkit.org/show_bug.cgi?id=174476
+
+        Reviewed by Alex Christensen.
+
+        No new tests because no behavior change.
+
+        This is a rename for per style requirements.
+
+        * platform/ios/WebVideoFullscreenInterfaceAVKit.mm:
+        (allocWebAVPictureInPicturePlayerLayerViewInstance):
+        (WebAVPlayerLayerView_pictureInPicturePlayerLayerView):
+        (allocWebAVPlayerLayerViewInstance):
+        (WebVideoFullscreenInterfaceAVKit::setupFullscreen):
+        (getWebAVPictureInPicturePlayerLayerViewClass): Deleted.
+        (getWebAVPlayerLayerViewClass): Deleted.
+
 2017-07-14  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Removing samples when presentation order does not match decode order can cause bad behavior.

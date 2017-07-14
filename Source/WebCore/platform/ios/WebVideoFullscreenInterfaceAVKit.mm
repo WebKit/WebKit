@@ -42,7 +42,6 @@
 #import "WebPlaybackSessionInterfaceAVKit.h"
 #import "WebVideoFullscreenChangeObserver.h"
 #import "WebVideoFullscreenModel.h"
-#import <AVFoundation/AVTime.h>
 #import <UIKit/UIKit.h>
 #import <objc/message.h>
 #import <objc/runtime.h>
@@ -361,7 +360,7 @@ static Class WebAVPictureInPicturePlayerLayerView_layerClass(id, SEL)
     return [WebAVPlayerLayer class];
 }
 
-static Class getWebAVPictureInPicturePlayerLayerViewClass()
+static WebAVPictureInPicturePlayerLayerView *allocWebAVPictureInPicturePlayerLayerViewInstance()
 {
     static Class theClass = nil;
     static dispatch_once_t onceToken;
@@ -372,7 +371,7 @@ static Class getWebAVPictureInPicturePlayerLayerViewClass()
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPictureInPicturePlayerLayerView_layerClass, "@@:");
     });
     
-    return theClass;
+    return (WebAVPictureInPicturePlayerLayerView *)[theClass alloc];
 }
 
 @interface WebAVPlayerLayerView : __AVPlayerLayerView
@@ -449,7 +448,7 @@ static WebAVPictureInPicturePlayerLayerView *WebAVPlayerLayerView_pictureInPictu
     WebAVPlayerLayerView *playerLayerView = aSelf;
     WebAVPictureInPicturePlayerLayerView *pipView = [playerLayerView valueForKey:@"_pictureInPicturePlayerLayerView"];
     if (!pipView) {
-        pipView = [[getWebAVPictureInPicturePlayerLayerViewClass() alloc] initWithFrame:CGRectZero];
+        pipView = [allocWebAVPictureInPicturePlayerLayerViewInstance() initWithFrame:CGRectZero];
         [playerLayerView setValue:pipView forKey:@"_pictureInPicturePlayerLayerView"];
     }
     return pipView;
@@ -467,7 +466,7 @@ static void WebAVPlayerLayerView_dealloc(id aSelf, SEL)
 
 #pragma mark - Methods
 
-static Class getWebAVPlayerLayerViewClass()
+static WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
 {
     static Class theClass = nil;
     static dispatch_once_t onceToken;
@@ -488,7 +487,7 @@ static Class getWebAVPlayerLayerViewClass()
         Class metaClass = objc_getMetaClass("WebAVPlayerLayerView");
         class_addMethod(metaClass, @selector(layerClass), (IMP)WebAVPlayerLayerView_layerClass, "@@:");
     });
-    return theClass;
+    return (WebAVPlayerLayerView *)[theClass alloc];
 }
 
 Ref<WebVideoFullscreenInterfaceAVKit> WebVideoFullscreenInterfaceAVKit::create(WebPlaybackSessionInterfaceAVKit& playbackSessionInterface)
@@ -618,7 +617,7 @@ void WebVideoFullscreenInterfaceAVKit::setupFullscreen(UIView& videoView, const 
     }
 
     if (!m_playerLayerView)
-        m_playerLayerView = adoptNS([[getWebAVPlayerLayerViewClass() alloc] init]);
+        m_playerLayerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
     [m_playerLayerView setHidden:[playerController() isExternalPlaybackActive]];
     [m_playerLayerView setBackgroundColor:clearUIColor()];
 
