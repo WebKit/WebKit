@@ -85,14 +85,14 @@ class TestRebaselineTest(_BaseTestCase):
         command = self.command
         self.assertMultiLineEqual(command._baseline_directory("Apple Win XP Debug (Tests)"), "/mock-checkout/LayoutTests/platform/win-xp")
         self.assertMultiLineEqual(command._baseline_directory("Apple Win 7 Release (Tests)"), "/mock-checkout/LayoutTests/platform/win")
-        self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-lion")
-        self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
-        self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-mountainlion")
-        self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
-        self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-mavericks")
-        self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
-        self.assertMultiLineEqual(command._baseline_directory("Apple Yosemite Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-yosemite")
-        self.assertMultiLineEqual(command._baseline_directory("Apple Yosemite Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-lion-wk1")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-lion-wk2")
+        self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-mountainlion-wk1")
+        self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-mountainlion-wk2")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-mavericks-wk1")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Mavericks Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-mavericks-wk2")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Yosemite Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-yosemite-wk1")
+        self.assertMultiLineEqual(command._baseline_directory("Apple Yosemite Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-yosemite-wk2")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Debug (Tests)"), "/mock-checkout/LayoutTests/platform/gtk")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Release (Tests)"), "/mock-checkout/LayoutTests/platform/gtk")
 
@@ -163,20 +163,20 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
 
         self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", None, "txt", None)
 
-        self.assertDictEqual(self.command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/mac-lion/userscripts/another-test-expected.txt'], 'delete': []})
+        self.assertDictEqual(self.command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/mac-lion-wk1/userscripts/another-test-expected.txt'], 'delete': []})
 
     def test_rebaseline_and_copy_test(self):
         self._write("userscripts/another-test-expected.txt", "generic result")
 
         self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", None)
 
-        self.assertMultiLineEqual(self._read('platform/mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
-        self.assertMultiLineEqual(self._read('platform/mac-wk2/userscripts/another-test-expected.txt'), 'generic result')
+        self.assertMultiLineEqual(self._read('platform/mac-lion-wk1/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read('platform/mac-lion-wk2/userscripts/another-test-expected.txt'), 'generic result')
 
     def test_rebaseline_and_copy_test_no_existing_result(self):
         self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", None)
 
-        self.assertMultiLineEqual(self._read('platform/mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read('platform/mac-lion-wk1/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
         self.assertFalse(self.tool.filesystem.exists(self._expand('platform/mac-lion-wk2/userscripts/another-test-expected.txt')))
 
     def test_rebaseline_and_copy_test_with_lion_result(self):
@@ -185,8 +185,8 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", self.WEB_PREFIX)
 
         self.assertItemsEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
-        self.assertMultiLineEqual(self._read("platform/mac-wk2/userscripts/another-test-expected.txt"), "original lion result")
-        self.assertMultiLineEqual(self._read("platform/mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read("platform/mac-lion-wk2/userscripts/another-test-expected.txt"), "original lion result")
+        self.assertMultiLineEqual(self._read("platform/mac-lion-wk1/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
     def test_rebaseline_and_copy_no_overwrite_test(self):
         self._write("platform/mac-lion/userscripts/another-test-expected.txt", "original lion result")
@@ -195,7 +195,7 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", None)
 
         self.assertMultiLineEqual(self._read("platform/mac-lion-wk2/userscripts/another-test-expected.txt"), "original lion wk2 result")
-        self.assertMultiLineEqual(self._read("platform/mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read("platform/mac-lion-wk1/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
     def test_rebaseline_test_internal_with_move_overwritten_baselines_to(self):
         self.tool.executive = MockExecutive2()

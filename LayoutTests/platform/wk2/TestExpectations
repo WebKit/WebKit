@@ -47,9 +47,6 @@ webkit.org/b/156612 http/tests/security/contentSecurityPolicy/object-redirect-bl
 
 # AX tests that require hit testing do not work in WK2.
 webkit.org/b/71298 accessibility/loading-iframe-updates-axtree.html
-webkit.org/b/71298 accessibility/mac/html-slider-indicator.html
-webkit.org/b/71298 accessibility/mac/listbox-hit-test.html
-webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html
 
 # This test has been skipped for a long time. Temporarily marking as flaky to see what bots think.
 webkit.org/b/48354 compositing/iframes/iframe-src-change.html [ Pass Failure ]
@@ -84,25 +81,6 @@ fast/dom/tab-in-right-alignment.html
 fast/events/ime-composition-events-001.html
 fast/forms/cursor-at-editable-content-boundary.html
 fast/text/international/thai-cursor-position.html
-editing/mac/input/5576619.html
-editing/mac/input/bold-node.html
-editing/mac/input/caret-primary-bidi.html
-editing/mac/input/firstrectforcharacterrange-caret-in-br.html
-editing/mac/input/firstrectforcharacterrange-plain.html
-editing/mac/input/firstrectforcharacterrange-styled.html
-editing/mac/input/firstrectforcharacterrange-vertical.html
-editing/mac/input/hangul-enter-confirms-and-sends-keypress.html
-editing/mac/input/insert-delete-smp-symbol.html
-editing/mac/input/kotoeri-enter-to-confirm-and-newline.html
-editing/mac/input/range-for-empty-document.html
-editing/mac/input/replace-invalid-range.html
-editing/mac/input/secure-input.html
-editing/mac/input/text-input-controller.html
-editing/mac/input/text-input-controller-no-editable-no-crash.html
-editing/mac/input/wrapped-line-char-rect.html
-editing/mac/input/NSBackgroundColor-transparent.html
-editing/mac/pasteboard/paste-and-match-style-selector-event.html
-editing/mac/selection/25228.html
 platform/mac/fast/dom/character-index-for-point.html
 platform/mac/fast/text/attributed-substring-from-range-001.html
 platform/mac/fast/text/attributed-substring-from-range-002.html
@@ -151,8 +129,6 @@ transitions/default-timing-function.html
 # http://webkit.org/b/46714
 plugins/geturlnotify-during-document-teardown.html
 plugins/open-and-close-window-with-plugin.html
-
-accessibility/mac/search-predicate.html
 
 # Sometimes fails
 # http://webkit.org/b/58990

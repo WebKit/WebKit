@@ -1,3 +1,46 @@
+2017-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Bring mac expectations in-line with other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=174472
+        <rdar://problem/33297388>
+
+        Reviewed by David Kilzer.
+
+        The override order for Mac test expectations does not conform to the pattern used by iOS,
+        GTK, Windows and WPE. Before this change, El Capitan's baseline search path looks like this:
+
+            platform/mac-wk2
+            platform/wk2
+            platform/mac-elcapitan
+            platform/mac-sierra
+            generic
+
+        After this change, El Capitan's baseline search path looks like this:
+
+            platform/mac-sierra-wk2
+            platform/mac-sierra
+            platform/mac-wk2
+            platform/wk2
+            generic
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.__init__): If a specific version is specified in the port name, use that
+        as the os version.
+        (MacPort.default_baseline_search_path): Expectation search paths should work the
+        same way they do on other ports. Port + version overrides port, port overrides generic
+        and wk1/wk2 should override expectations for the two combined.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_tests_for_other_platforms): Deleted.
+        (MacTest._assert_search_path): Deleted.
+        (MacTest.test_baseline_search_path): Deleted.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory): Adjust expectations for new over-ride order.
+        (test_rebaseline_test_and_print_scm_changes): Ditto.
+        (test_rebaseline_and_copy_test): Ditto.
+        (test_rebaseline_and_copy_test_no_existing_result): Ditto.
+        (test_rebaseline_and_copy_test_with_lion_result): Ditto.
+        (test_rebaseline_and_copy_no_overwrite_test): Ditto.
+
 2017-07-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix style checker unit test

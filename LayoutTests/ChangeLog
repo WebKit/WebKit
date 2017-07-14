@@ -1,3 +1,14 @@
+2017-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Add script to rebase patches during the WebKit2->WebKit/WebKit->WebKitLegacy transition
+        https://bugs.webkit.org/show_bug.cgi?id=174438
+        <rdar://problem/33277112>
+
+        Reviewed by David Kilzer.
+
+        * platform/mac-wk2/TestExpectations: Move skipped tests because of webkit.org/b/174504. 
+        * platform/wk2/TestExpectations: Ditto.
+
 2017-07-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [HarfBuzz] Decomposed Vietnamese characters are rendered incorrectly

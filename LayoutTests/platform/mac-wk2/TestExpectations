@@ -408,6 +408,37 @@ webkit.org/b/142726 [ Yosemite ] fast/images/animated-png.html [ Skip ]
 ########################################
 ### START OF (4) Features that are not supported in WebKit2 and likely never will be
 
+# WebKitTestRunner needs textInputController
+# <https://bugs.webkit.org/show_bug.cgi?id=42337>
+editing/mac/input/5576619.html
+editing/mac/input/bold-node.html
+editing/mac/input/caret-primary-bidi.html
+editing/mac/input/firstrectforcharacterrange-caret-in-br.html
+editing/mac/input/firstrectforcharacterrange-plain.html
+editing/mac/input/firstrectforcharacterrange-styled.html
+editing/mac/input/firstrectforcharacterrange-vertical.html
+editing/mac/input/hangul-enter-confirms-and-sends-keypress.html
+editing/mac/input/insert-delete-smp-symbol.html
+editing/mac/input/kotoeri-enter-to-confirm-and-newline.html
+editing/mac/input/range-for-empty-document.html
+editing/mac/input/replace-invalid-range.html
+editing/mac/input/secure-input.html
+editing/mac/input/text-input-controller.html
+editing/mac/input/text-input-controller-no-editable-no-crash.html
+editing/mac/input/wrapped-line-char-rect.html
+editing/mac/input/NSBackgroundColor-transparent.html
+editing/mac/pasteboard/paste-and-match-style-selector-event.html
+editing/mac/selection/25228.html
+
+# WebKitTestRunner needs testRunner.setCallCloseOnWebViews
+# http://webkit.org/b/46714
+accessibility/mac/search-predicate.html
+
+# AX tests that require hit testing do not work in WK2.
+webkit.org/b/71298 accessibility/mac/html-slider-indicator.html
+webkit.org/b/71298 accessibility/mac/listbox-hit-test.html
+webkit.org/b/71298 accessibility/mac/iframe-with-title-correct-hierarchy.html
+
 ### END OF (4) Features that are not supported in WebKit2 and likely never will be
 ########################################
 
