@@ -1,3 +1,14 @@
+2017-07-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Use WTFMove to prune liveness in DFGAvailabilityMap
+        https://bugs.webkit.org/show_bug.cgi?id=174423
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGAvailabilityMap.cpp:
+        (JSC::DFG::AvailabilityMap::pruneHeap):
+        (JSC::DFG::AvailabilityMap::pruneByLiveness):
+
 2017-07-13  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Fix compiler warnings when building with GCC 7
