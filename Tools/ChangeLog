@@ -1,3 +1,22 @@
+2017-07-13  Jonathan Bedard  <jbedard@apple.com>
+
+        Add script to rebase patches during the WebKit2->WebKit/WebKit->WebKitLegacy transition
+        https://bugs.webkit.org/show_bug.cgi?id=174438
+        <rdar://problem/33277112>
+
+        Reviewed by Aakash Jain.
+
+        Given a patch, this will convert the changes from the path to the new directory structure.
+
+        * Scripts/rebase-patch-after-webkit-move: Added.
+        (append_source): Append 'Source' to the provided path.
+        (is_editable_line): Return true if a line the script expects to modify.
+        (needs_rebase): Return if a line needs to be rebased based on it's content.
+        (rebase_line): Rebase the provided line.
+        (rebase): Rebase a patch given the lines of that patch and a file to output the rebased patch to.
+        (parse_arguments): Parse the command line arguments and return the patches to be rebased, if they
+        were provided.
+
 2017-07-12  Nan Wang  <n_wang@apple.com>
 
         AX: [iOS] Implement a way to retrieve a text marker range with desired text that is closest to a position
