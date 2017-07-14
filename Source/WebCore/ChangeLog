@@ -1,5 +1,24 @@
 2017-07-14  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [WinCairo] error 'm_compositorTexture': undeclared identifier since Bug 174345
+        https://bugs.webkit.org/show_bug.cgi?id=174493
+
+        Reviewed by Alex Christensen.
+
+        Compilation errors are reported by the code using a member
+        m_compositorTexture of GraphicsContext3D which exists only if
+        USE(COORDINATED_GRAPHICS_THREADED). WinCairo port doesn't use it.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        Use m_compositorTexture only if USE(COORDINATED_GRAPHICS_THREADED).
+        (WebCore::GraphicsContext3D::~GraphicsContext3D): Ditto.
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::reshapeFBOs):
+        Ditto. Fix the wrong indentation level.
+
+2017-07-14  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [HarfBuzz] Decomposed Vietnamese characters are rendered incorrectly
         https://bugs.webkit.org/show_bug.cgi?id=174418
 
