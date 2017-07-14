@@ -1,3 +1,12 @@
+2017-07-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][WPE] Avoid setting settings that are set by default
+
+        Unreviewed.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2017-07-13  Konstantin Tokarev  <annulen@ynadex.ru>
 
         Unreviewed, Windows ports should enable WebKitLegacy and disable
