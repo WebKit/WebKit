@@ -29,7 +29,6 @@
 #import "ChildProcess.h"
 
 #import "CodeSigning.h"
-#import "CookieStorageUtilsCF.h"
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/CFNetworkSPI.h>
@@ -180,7 +179,9 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
 
 void ChildProcess::setSharedHTTPCookieStorage(const Vector<uint8_t>& identifier)
 {
-    [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:cookieStorageFromIdentifyingData(identifier).get()]).get()];
+    RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, identifier.data(), identifier.size()));
+    RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
+    [NSHTTPCookieStorage _setSharedHTTPCookieStorage:adoptNS([[NSHTTPCookieStorage alloc] _initWithCFHTTPCookieStorage:uiProcessCookieStorage.get()]).get()];
 }
 
 #if USE(APPKIT)
