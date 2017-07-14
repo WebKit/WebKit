@@ -1,3 +1,23 @@
+2017-07-14  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r219013): Compute source frame info for frameless document
+        https://bugs.webkit.org/show_bug.cgi?id=174385
+        <rdar://problem/33217736>
+
+        Reviewed by Brady Eidson.
+
+        Fixes an issue where we would crash in WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction()
+        when computing the frame info for a now-frameless document. One way this can happen is when the frame
+        that contains the document that initiated the navigation is removed from the page.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction): Check that we have a valid page ID before
+        looking up the WebPage object corresponding to it.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction): Compute a FrameInfoData
+        object from the source document directly as opposed to using WebFrame::info() as the latter requires
+        that we have a valid WebCore frame and the source document may not have a frame.
+
 2017-07-14  Jer Noble  <jer.noble@apple.com>
 
         Allow clients to override their own hardware media requirements where no fallback media exists.

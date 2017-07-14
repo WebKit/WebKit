@@ -1,3 +1,15 @@
+2017-07-14  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r219013): Compute source frame info for frameless document
+        https://bugs.webkit.org/show_bug.cgi?id=174385
+        <rdar://problem/33217736>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/navigation/resources/window-open-redirect-and-remove-opener.html: Added.
+        * http/tests/navigation/window-open-redirect-and-remove-opener-expected.txt: Added.
+        * http/tests/navigation/window-open-redirect-and-remove-opener.html: Added.
+
 2017-07-14  Matt Lewis  <jlewis3@apple.com>
 
         Fixed expectations after Mac expectation change.
