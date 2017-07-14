@@ -23,7 +23,7 @@ if (ENABLE_WEBKIT2)
         gtest
     )
     list(APPEND TestWebKitAPI_LIBRARIES
-        WebKit
+        WebKit2
     )
 else ()
     list(APPEND TestWebKitAPI_LIBRARIES

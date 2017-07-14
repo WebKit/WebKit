@@ -1,5 +1,16 @@
 2017-07-13  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Use the old WebKit/WebKit2 targets for CMake builds. (v2)
+
+        Unreviewed build fix.
+
+        r219492 missed one hunk from its partial revert of r219489.
+        This patch reverts that hunk.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
+2017-07-13  Matthew Hanson  <matthew_hanson@apple.com>
+
         Use the old WebKit/WebKit2 targets for CMake builds.
 
         Unreviewed build fix.
