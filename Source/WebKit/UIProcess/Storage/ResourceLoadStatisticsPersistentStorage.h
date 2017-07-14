@@ -55,6 +55,7 @@ private:
 
     void startMonitoringDisk();
     void stopMonitoringDisk();
+    void monitorDirectoryForNewStatistics();
 
     void writeMemoryStoreToDisk();
     void populateMemoryStoreFromDisk();

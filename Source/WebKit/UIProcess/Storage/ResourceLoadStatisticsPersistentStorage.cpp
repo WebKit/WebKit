@@ -108,7 +108,7 @@ String ResourceLoadStatisticsPersistentStorage::storageDirectoryPath() const
 
 String ResourceLoadStatisticsPersistentStorage::resourceLogFilePath() const
 {
-    String storagePath = this->storageDirectoryPath();
+    String storagePath = storageDirectoryPath();
     if (storagePath.isEmpty())
         return emptyString();
 
@@ -134,8 +134,42 @@ void ResourceLoadStatisticsPersistentStorage::startMonitoringDisk()
         case FileMonitor::FileChangeType::Removal:
             m_memoryStore.clearInMemory();
             m_fileMonitor = nullptr;
+            monitorDirectoryForNewStatistics();
             break;
         }
+    });
+}
+
+void ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics()
+{
+    String storagePath = storageDirectoryPath();
+    ASSERT(!storagePath.isEmpty());
+
+    if (!fileExists(storagePath)) {
+        if (!makeAllDirectories(storagePath)) {
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "ResourceLoadStatisticsPersistentStorage: Failed to create directory path %s", storagePath.utf8().data());
+            return;
+        }
+    }
+
+    m_fileMonitor = std::make_unique<FileMonitor>(storagePath, m_memoryStore.statisticsQueue(), [this] (FileMonitor::FileChangeType type) {
+        ASSERT(!RunLoop::isMain());
+        if (type == FileMonitor::FileChangeType::Removal) {
+            // Directory was removed!
+            m_fileMonitor = nullptr;
+            return;
+        }
+
+        String resourceLogPath = resourceLogFilePath();
+        ASSERT(!resourceLogPath.isEmpty());
+
+        if (!fileExists(resourceLogPath))
+            return;
+
+        m_fileMonitor = nullptr;
+
+        refreshMemoryStoreFromDisk();
+        startMonitoringDisk();
     });
 }
 
@@ -177,6 +211,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
     String filePath = resourceLogFilePath();
     if (filePath.isEmpty() || !fileExists(filePath)) {
         m_memoryStore.grandfatherExistingWebsiteData();
+        monitorDirectoryForNewStatistics();
         return;
     }
 
@@ -214,7 +249,7 @@ void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
     if (!rawData)
         return;
 
-    auto storagePath = this->storageDirectoryPath();
+    auto storagePath = storageDirectoryPath();
     if (!storagePath.isEmpty()) {
         makeAllDirectories(storagePath);
         excludeFromBackup();
@@ -228,7 +263,7 @@ void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
     unlockAndCloseFile(handle);
 
     if (writtenBytes != static_cast<int64_t>(rawData->size()))
-        RELEASE_LOG_ERROR(ResourceLoadStatistics, "WebResourceLoadStatisticsStore: We only wrote %d out of %zu bytes to disk", static_cast<unsigned>(writtenBytes), rawData->size());
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "ResourceLoadStatisticsPersistentStorage: We only wrote %d out of %zu bytes to disk", static_cast<unsigned>(writtenBytes), rawData->size());
 
     m_lastStatisticsFileSyncTime = WallTime::now();
     m_lastStatisticsWriteTime = MonotonicTime::now();
@@ -265,7 +300,7 @@ void ResourceLoadStatisticsPersistentStorage::clear()
     stopMonitoringDisk();
 
     if (!deleteFile(filePath))
-        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to delete statistics file: %s", filePath.utf8().data());
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "ResourceLoadStatisticsPersistentStorage: Unable to delete statistics file: %s", filePath.utf8().data());
 }
 
 void ResourceLoadStatisticsPersistentStorage::finishAllPendingWorkSynchronously()

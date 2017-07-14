@@ -1,3 +1,20 @@
+2017-07-14  Brent Fulgham  <bfulgham@apple.com>
+
+        Monitor directory for new statistics files after a delete operation
+        https://bugs.webkit.org/show_bug.cgi?id=174521
+        <rdar://problem/33322189>
+
+        Reviewed by Chris Dumez.
+
+        Create a FileMonitor to watch the data directory when the statistics file is
+        deleted by an external process. If it sees the file get created externally, merge
+        those data into the in-memory store.
+
+        * UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::startMonitoringDisk): Added.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::monitorDirectoryForNewStatistics):
+        * UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.h:
+
 2017-07-14  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219516.
