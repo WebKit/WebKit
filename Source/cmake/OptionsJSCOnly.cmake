@@ -32,8 +32,8 @@ set(DEFAULT_EVENT_LOOP_TYPE "Generic")
 set(EVENT_LOOP_TYPE ${DEFAULT_EVENT_LOOP_TYPE} CACHE STRING "Implementation of event loop to be used in JavaScriptCore (one of ${ALL_EVENT_LOOP_TYPES})")
 
 set(ENABLE_WEBCORE OFF)
+set(ENABLE_WEBKIT_LEGACY OFF)
 set(ENABLE_WEBKIT OFF)
-set(ENABLE_WEBKIT2 OFF)
 
 if (WIN32)
     set(ENABLE_API_TESTS OFF)
