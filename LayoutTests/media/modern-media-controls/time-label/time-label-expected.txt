@@ -14,6 +14,8 @@ NaNTimeLabel.element.textContent = --:--
 
 PASS elaspedLabel is "Elapsed"
 PASS remainingLabel is "Remaining"
+PASS accessibilityController.accessibleElementById('remaining').role is "AXRole: AXStaticText"
+PASS accessibilityController.accessibleElementById('elasped').role is "AXRole: AXStaticText"
 
 elapsedTimeLabels[3].element.textContent = 0:01
 elapsedTimeLabels[3].width = 27

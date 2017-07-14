@@ -42,7 +42,7 @@ class TimeLabel extends LayoutNode
 
     constructor(type)
     {
-        super(`<div class="time-label"></div>`);
+        super(`<div role="text" class="time-label"></div>`);
 
         this._type = type;
         this.setValueWithNumberOfDigits(0, 4);
