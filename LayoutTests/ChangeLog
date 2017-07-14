@@ -1,3 +1,12 @@
+2017-07-14  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed expectations after Mac expectation change.
+        https://trac.webkit.org/changeset/219507/webkit
+
+        Unreviewed test gardening.
+
+        * platform/wk2/TestExpectations:
+
 2017-07-14  Youenn Fablet  <youenn@apple.com>
 
         WebRTC: silence data not sent for disabled audio track

@@ -563,7 +563,7 @@ platform/mac/fast/events/objc-event-api.html
 
 # WebKitTestRunner needs an implementation of eventSender.beginDragWithFiles
 # https://bugs.webkit.org/show_bug.cgi?id=64285
-editing/pasteboard/file-drag-to-editable.html
+editing/pasteboard/file-drag-to-editable.html [ Skip ]
 editing/pasteboard/file-input-files-access.html
 fast/dom/FileList-iterator.html
 fast/dom/Window/window-postmessage-clone-frames.html
