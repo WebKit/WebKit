@@ -1,0 +1,9 @@
+Test that we do not crash when timers fire on the worker thread while user gestures are happening.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

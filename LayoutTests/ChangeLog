@@ -1,3 +1,18 @@
+2017-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Possible crash in ~UserGestureIndicator() when on non-main thread
+        https://bugs.webkit.org/show_bug.cgi?id=174522
+        <rdar://problem/30283071>
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/workers/worker-user-gesture-expected.txt: Added.
+        * fast/workers/worker-user-gesture.html: Added.
+        * fast/workers/worker-user-gesture.js: Added.
+        (setInterval):
+
 2017-07-14  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r219013): Compute source frame info for frameless document

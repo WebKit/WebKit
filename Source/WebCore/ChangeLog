@@ -1,3 +1,24 @@
+2017-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Possible crash in ~UserGestureIndicator() when on non-main thread
+        https://bugs.webkit.org/show_bug.cgi?id=174522
+        <rdar://problem/30283071>
+
+        Reviewed by Sam Weinig.
+
+        UserGestureIndicator objects may be constructed / destructed in worker thread
+        (e.g. in DOMTimer::fired()). The UserGestureIndicator constructor / destructor
+        are supposed to be no-op on non-main threads so that it is safe. However,
+        we were mistakenly initializing m_previousToken data member in the constructor
+        on background thread, which meant that we could crash later on in the
+        UserGestureIndicator destructor when destroying m_previousToken.
+
+        Test: fast/workers/worker-user-gesture.html
+
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::currentToken):
+        (WebCore::UserGestureIndicator::UserGestureIndicator):
+
 2017-07-14  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219516.
