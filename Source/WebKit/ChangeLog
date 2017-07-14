@@ -1,3 +1,24 @@
+2017-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Potential null-dereference under NetworkRTCProvider::resolvedName()
+        https://bugs.webkit.org/show_bug.cgi?id=174507
+        <rdar://problem/32597868>
+
+        Reviewed by Youenn Fablet.
+
+        NetworkRTCProvider::resolvedName() could do a null dereference of m_connection
+        because m_connection is nullified in NetworkRTCProvider::close() but resolvers
+        were only closed later on in the NetworkRTCProvider destructor.
+
+        To address the issue, we now stop DNS resolvers earlier, in NetworkRTCProvider::close().
+        Also fix unsafe modification of m_resolvers HashMap when iterating over it.
+
+        * NetworkProcess/webrtc/NetworkRTCProvider.cpp:
+        (WebKit::NetworkRTCProvider::~NetworkRTCProvider):
+        (WebKit::NetworkRTCProvider::close):
+        (WebKit::NetworkRTCProvider::Resolver::~Resolver):
+        (WebKit::NetworkRTCProvider::stopResolver):
+
 2017-07-14  Youenn Fablet  <youenn@apple.com>
 
         Report CoreAudioCaptureSource failure in case shared unit stops working properly
