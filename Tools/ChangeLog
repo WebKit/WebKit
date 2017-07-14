@@ -1,3 +1,13 @@
+2017-07-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Newly added AtomicStringImpl should use BufferInternal static string if StringImpl is static
+        https://bugs.webkit.org/show_bug.cgi?id=174501
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/StringImpl.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-07-14  Jonathan Bedard  <jbedard@apple.com>
 
         Bring mac expectations in-line with other platforms
