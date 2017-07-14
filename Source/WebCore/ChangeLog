@@ -1,3 +1,38 @@
+2017-07-14  Chris Dumez  <cdumez@apple.com>
+
+        PageCache::removeAllItemsForPage(Page&) may reenter itself and cause crashes
+        https://bugs.webkit.org/show_bug.cgi?id=174473
+        <rdar://problem/32177485>
+
+        Reviewed by Antti Koivisto.
+
+        This could happen when a Page containing an SVGImage is removed from PageCache and
+        this resulted in the destruction of the SVGImage. Because the SVGImage has an internal
+        utility Page, it will also call PageCache::removeAllItemsForPage(WebCore::Page&) upon
+        destruction, causing us to reenter.
+
+        Address the issue by not calling PageCache::removeAllItemsForPage() for utility pages
+        since those cannot be in PageCache in the first place.
+
+        Also add assertions to make sure:
+        1. We never insert a utility page into PageCache
+        2. PageCache::removeAllItemsForPage() does not reenter
+
+        No new tests, because I was unable to write a test which reproduced the crash. This
+        is in theory testable using an API test which enables PageCache, loads a page
+        containing an SVGImage, navigates away from this page so that it goes into PageCache,
+        and then calls [WebView _close]. However, when I tried writing such test, I could
+        not get the SVGImage to get destroyed while PageCache::removeAllItemsForPage() is
+        called for the top-level page for some reason. Something seems to be keeping the
+        SVGImage alive longer. I tried disabling the MemoryCache but it did not help.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::addIfCacheable):
+        (WebCore::PageCache::removeAllItemsForPage):
+        * history/PageCache.h:
+        * page/Page.cpp:
+        (WebCore::Page::~Page):
+
 2017-07-14  Aaron Chu  <aaron_chu@apple.com>
 
         AX: VoiceOver silent or skipping over time values on media player.

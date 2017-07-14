@@ -409,6 +409,8 @@ void PageCache::addIfCacheable(HistoryItem& item, Page* page)
     if (!page || !canCache(*page))
         return;
 
+    ASSERT_WITH_MESSAGE(!page->isUtilityPage(), "Utility pages such as SVGImage pages should never go into PageCache");
+
     setPageCacheState(*page, Document::AboutToEnterPageCache);
 
     // Focus the main frame, defocusing a focused subframe (if we have one). We do this here,
@@ -462,6 +464,11 @@ std::unique_ptr<CachedPage> PageCache::take(HistoryItem& item, Page* page)
 
 void PageCache::removeAllItemsForPage(Page& page)
 {
+#if !ASSERT_DISABLED
+    ASSERT_WITH_MESSAGE(!m_isInRemoveAllItemsForPage, "We should not reenter this method");
+    SetForScope<bool> inRemoveAllItemsForPageScope { m_isInRemoveAllItemsForPage, true };
+#endif
+
     for (auto it = m_items.begin(); it != m_items.end();) {
         // Increment iterator first so it stays valid after the removal.
         auto current = it;
