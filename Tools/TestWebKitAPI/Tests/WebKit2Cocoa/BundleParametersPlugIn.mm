@@ -34,7 +34,8 @@
 #import <WebKit/WKWebProcessPlugInScriptWorld.h>
 #import <wtf/RetainPtr.h>
 
-static NSString * const testParameter = @"TestParameter";
+static NSString * const testParameter1 = @"TestParameter1";
+static NSString * const testParameter2 = @"TestParameter2";
 
 @interface BundleParametersPlugIn : NSObject <WKWebProcessPlugIn>
 @end
@@ -50,13 +51,15 @@ static NSString * const testParameter = @"TestParameter";
     ASSERT(!_plugInController);
     _browserContextController = browserContextController;
     _plugInController = plugInController;
-    [plugInController.parameters addObserver:self forKeyPath:testParameter options:NSKeyValueObservingOptionInitial context:NULL];
+    [plugInController.parameters addObserver:self forKeyPath:testParameter1 options:NSKeyValueObservingOptionInitial context:NULL];
+    [plugInController.parameters addObserver:self forKeyPath:testParameter2 options:NSKeyValueObservingOptionInitial context:NULL];
     [plugInController.parameters addObserver:self forKeyPath:TestWebKitAPI::Util::TestPlugInClassNameParameter options:NSKeyValueObservingOptionInitial context:NULL];
 }
 
 - (void)dealloc
 {
-    [[_plugInController parameters] removeObserver:self forKeyPath:testParameter];
+    [[_plugInController parameters] removeObserver:self forKeyPath:testParameter1];
+    [[_plugInController parameters] removeObserver:self forKeyPath:testParameter2];
     [[_plugInController parameters] removeObserver:self forKeyPath:TestWebKitAPI::Util::TestPlugInClassNameParameter];
     [super dealloc];
 }

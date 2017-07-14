@@ -64,7 +64,7 @@
 - (void)setParametersForKeyWithDictionary:(NSDictionary *)dictionary
 {
     [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id parameter, BOOL*) {
-        [self setParameter:key forKey:parameter];
+        [self setParameter:parameter forKey:key];
     }];
 }
 

@@ -51,8 +51,8 @@ TEST(WebKit2, BundleParameters)
         TestWebKitAPI::Util::run(&isDone);
         isDone = false;
 
-        NSString * const testParameter = @"TestParameter";
-        [webView evaluateJavaScript:testParameter completionHandler:^(id result, NSError *error) {
+        NSString * const testParameter1 = @"TestParameter1";
+        [webView evaluateJavaScript:testParameter1 completionHandler:^(id result, NSError *error) {
             EXPECT_NULL(result);
             isDone = true;
         }];
@@ -61,8 +61,8 @@ TEST(WebKit2, BundleParameters)
         isDone = false;
 
         NSString * const testString = @"PASS";
-        [[configuration processPool] _setObject:testString forBundleParameter:testParameter];
-        [webView evaluateJavaScript:testParameter completionHandler:^(id result, NSError *error) {
+        [[configuration processPool] _setObject:testString forBundleParameter:testParameter1];
+        [webView evaluateJavaScript:testParameter1 completionHandler:^(id result, NSError *error) {
             EXPECT_TRUE([result isKindOfClass:[NSString class]]);
             EXPECT_WK_STREQ(result, testString);
             isDone = true;
@@ -72,8 +72,8 @@ TEST(WebKit2, BundleParameters)
         isDone = false;
 
         NSDictionary * const testDictionary = @{ @"result" : @"PASS" };
-        [[configuration processPool] _setObject:testDictionary forBundleParameter:testParameter];
-        [webView evaluateJavaScript:testParameter completionHandler:^(id result, NSError *error) {
+        [[configuration processPool] _setObject:testDictionary forBundleParameter:testParameter1];
+        [webView evaluateJavaScript:testParameter1 completionHandler:^(id result, NSError *error) {
             EXPECT_TRUE([result isKindOfClass:[NSDictionary class]]);
             EXPECT_TRUE([result isEqualToDictionary:testDictionary]);
             isDone = true;
@@ -82,9 +82,31 @@ TEST(WebKit2, BundleParameters)
         TestWebKitAPI::Util::run(&isDone);
         isDone = false;
 
-        [[configuration processPool] _setObject:nil forBundleParameter:testParameter];
-        [webView evaluateJavaScript:testParameter completionHandler:^(id result, NSError *error) {
+        [[configuration processPool] _setObject:nil forBundleParameter:testParameter1];
+        [webView evaluateJavaScript:testParameter1 completionHandler:^(id result, NSError *error) {
             EXPECT_NULL(result);
+            isDone = true;
+        }];
+
+        TestWebKitAPI::Util::run(&isDone);
+        isDone = false;
+
+        NSString * const testParameter2 = @"TestParameter2";
+        NSDictionary * const testBundleParametersDictionary = @{ testParameter1 : testString, testParameter2 : testString };
+
+        [[configuration processPool] _setObjectsForBundleParametersWithDictionary:testBundleParametersDictionary];
+        [webView evaluateJavaScript:testParameter1 completionHandler:^(id result, NSError *error) {
+            EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+            EXPECT_WK_STREQ(result, testString);
+            isDone = true;
+        }];
+
+        TestWebKitAPI::Util::run(&isDone);
+        isDone = false;
+
+        [webView evaluateJavaScript:testParameter2 completionHandler:^(id result, NSError *error) {
+            EXPECT_TRUE([result isKindOfClass:[NSString class]]);
+            EXPECT_WK_STREQ(result, testString);
             isDone = true;
         }];
 

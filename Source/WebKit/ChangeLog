@@ -1,3 +1,14 @@
+2017-07-14  Jeff Miller  <jeffm@apple.com>
+
+        -[WKWebProcessBundleParameters setParametersForKeyWithDictionary:] passing wrong parameters to -setParameter:forKey
+        https://bugs.webkit.org/show_bug.cgi?id=174524
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.mm:
+        (-[WKWebProcessBundleParameters setParametersForKeyWithDictionary:]):
+        Pass the dictionary key and value in the correct order.
+
 2017-07-14  Brent Fulgham  <bfulgham@apple.com>
 
         Monitor directory for new statistics files after a delete operation
