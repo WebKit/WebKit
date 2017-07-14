@@ -842,6 +842,7 @@ ExceptionOr<void> InternalSettings::setShouldManageAudioSessionCategory(bool sho
     Settings::setShouldManageAudioSessionCategory(should);
     return { };
 #else
+    UNUSED_PARAM(should);
     return Exception { INVALID_ACCESS_ERR };
 #endif
 }

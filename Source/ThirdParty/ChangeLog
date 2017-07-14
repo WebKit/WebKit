@@ -1,3 +1,12 @@
+2017-07-13  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Fix compiler warnings when building with GCC 7
+        https://bugs.webkit.org/show_bug.cgi?id=174463
+
+        Reviewed by Darin Adler.
+
+        * brotli/CMakeLists.txt:
+
 2017-05-11  Don Olmstead  <don.olmstead@am.sony.com>
 
         [CMake] Add HAVE check for regex.h

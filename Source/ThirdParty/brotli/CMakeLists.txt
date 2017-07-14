@@ -17,6 +17,6 @@ add_definitions(-DBROTLI_BUILD_PORTABLE)
 add_library(brotli STATIC ${BROTLI_SOURCES})
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(brotli)
 
-if (COMPILER_IS_CLANG)
-    ADD_TARGET_PROPERTIES(brotli COMPILE_FLAGS "-Wno-cast-align")
+if (COMPILER_IS_GCC_OR_CLANG)
+    ADD_TARGET_PROPERTIES(brotli COMPILE_FLAGS "-Wno-cast-align -Wno-implicit-fallthrough")
 endif ()

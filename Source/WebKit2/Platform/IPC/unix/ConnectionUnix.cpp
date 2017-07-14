@@ -452,7 +452,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
             switch (attachments[i].type()) {
             case Attachment::MappedMemoryType:
                 attachmentInfo[i].setSize(attachments[i].size());
-                // Fall trhough, set file descriptor or null.
+                FALLTHROUGH;
             case Attachment::SocketType:
                 if (attachments[i].fileDescriptor() != -1) {
                     ASSERT(fdPtr);
