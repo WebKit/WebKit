@@ -1,3 +1,20 @@
+2017-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Possible crash under NetworkSocketStream::didFailSocketStream()
+        https://bugs.webkit.org/show_bug.cgi?id=174526
+        <rdar://problem/32831441>
+
+        Reviewed by Brent Fulgham.
+
+        For robustness, initialize the SocketStreamHandleImpl after the other
+        data members. We are passing |this| to the SocketStreamHandleImpl when
+        constructing it so it is unsafe to have uninitialized data members
+        at this point.
+
+        * NetworkProcess/NetworkSocketStream.cpp:
+        (WebKit::NetworkSocketStream::NetworkSocketStream):
+        * NetworkProcess/NetworkSocketStream.h:
+
 2017-07-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Unclear distinction between WebKitHelpers and WebKitMacros

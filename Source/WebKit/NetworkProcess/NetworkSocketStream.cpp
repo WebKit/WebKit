@@ -41,9 +41,9 @@ Ref<NetworkSocketStream> NetworkSocketStream::create(WebCore::URL&& url, WebCore
 }
 
 NetworkSocketStream::NetworkSocketStream(URL&& url, SessionID sessionID, const String& credentialPartition, uint64_t identifier, IPC::Connection& connection, SourceApplicationAuditToken&& auditData)
-    : m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition, WTFMove(auditData)))
-    , m_identifier(identifier)
+    : m_identifier(identifier)
     , m_connection(connection)
+    , m_impl(SocketStreamHandleImpl::create(url, *this, sessionID, credentialPartition, WTFMove(auditData)))
 {
 }
 

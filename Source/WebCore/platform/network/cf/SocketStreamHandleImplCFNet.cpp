@@ -86,7 +86,10 @@ SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandl
     if (url.protocolIs("ws")
         && !sessionID.isEphemeral()
         && _CFNetworkIsKnownHSTSHostWithSession(m_httpsURL.get(), nullptr)) {
-        m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."));
+        // Call this asynchronously because the socket stream is not fully constructed at this point.
+        callOnMainThread([this, protectedThis = makeRef(*this)] {
+            m_client.didFailSocketStream(*this, SocketStreamError(0, m_url.string(), "WebSocket connection failed because it violates HTTP Strict Transport Security."));
+        });
         return;
     }
 #endif

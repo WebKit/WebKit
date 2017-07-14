@@ -1,3 +1,17 @@
+2017-07-14  Chris Dumez  <cdumez@apple.com>
+
+        Possible crash under NetworkSocketStream::didFailSocketStream()
+        https://bugs.webkit.org/show_bug.cgi?id=174526
+        <rdar://problem/32831441>
+
+        Reviewed by Brent Fulgham.
+
+        Call m_client.didFailSocketStream() asynchronously in the constructor as our
+        caller (the client) is also being initialized at this point.
+
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::SocketStreamHandleImpl):
+
 2017-07-14  Youenn Fablet  <youenn@apple.com>
 
         WebRTC: silence data not sent for disabled audio track

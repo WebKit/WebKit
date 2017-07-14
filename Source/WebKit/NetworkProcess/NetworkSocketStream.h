@@ -67,9 +67,10 @@ private:
     uint64_t messageSenderDestinationID() final;
 
     NetworkSocketStream(WebCore::URL&&, WebCore::SessionID, const String& credentialPartition, uint64_t, IPC::Connection&, WebCore::SourceApplicationAuditToken&&);
-    Ref<WebCore::SocketStreamHandleImpl> m_impl;
+
     uint64_t m_identifier;
     IPC::Connection& m_connection;
+    Ref<WebCore::SocketStreamHandleImpl> m_impl;
 };
 
 } // namespace WebKit
