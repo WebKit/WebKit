@@ -166,7 +166,7 @@ void ResourceLoadStatisticsPersistentStorage::refreshMemoryStoreFromDisk()
     if (!decoder)
         return;
 
-    m_memoryStore.resetDataFromDecoder(*decoder);
+    m_memoryStore.mergeWithDataFromDecoder(*decoder);
     m_lastStatisticsFileSyncTime = readTime;
 }
 
@@ -193,7 +193,8 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
         return;
     }
 
-    m_memoryStore.resetDataFromDecoder(*decoder);
+    ASSERT_WITH_MESSAGE(m_memoryStore.isEmpty(), "This is the initial import so the store should be empty");
+    m_memoryStore.mergeWithDataFromDecoder(*decoder);
 
     m_lastStatisticsFileSyncTime = readTime;
 

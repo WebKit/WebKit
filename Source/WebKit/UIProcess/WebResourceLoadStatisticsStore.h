@@ -51,6 +51,7 @@ struct ResourceLoadStatistics;
 
 namespace WebKit {
 
+class OperatingDate;
 class WebProcessProxy;
 
 enum class ShouldClearFirst;
@@ -113,7 +114,7 @@ public:
     void resetParametersToDefaultValues();
 
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
-    void resetDataFromDecoder(WebCore::KeyedDecoder&);
+    void mergeWithDataFromDecoder(WebCore::KeyedDecoder&);
     void clearInMemory();
     void grandfatherExistingWebsiteData();
     
@@ -165,7 +166,7 @@ private:
 #endif
     Ref<WTF::WorkQueue> m_statisticsQueue;
     ResourceLoadStatisticsPersistentStorage m_persistentStorage;
-    Deque<WTF::WallTime> m_operatingDates;
+    Vector<OperatingDate> m_operatingDates;
 
     UpdateCookiePartitioningForDomainsHandler m_updateCookiePartitioningForDomainsHandler;
 

@@ -37,6 +37,7 @@
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -75,6 +76,77 @@ static const OptionSet<WebsiteDataType>& dataTypesToRemove()
     ASSERT(RunLoop::isMain());
 
     return dataTypes;
+}
+
+class OperatingDate {
+public:
+    OperatingDate() = default;
+
+    static OperatingDate fromWallTime(WallTime time)
+    {
+        double ms = time.secondsSinceEpoch().milliseconds();
+        int year = msToYear(ms);
+        int yearDay = dayInYear(ms, year);
+        int month = monthFromDayInYear(yearDay, isLeapYear(year));
+        int monthDay = dayInMonthFromDayInYear(yearDay, isLeapYear(year));
+
+        return OperatingDate { year, month, monthDay };
+    }
+
+    static OperatingDate today()
+    {
+        return OperatingDate::fromWallTime(WallTime::now());
+    }
+
+    Seconds secondsSinceEpoch() const
+    {
+        return Seconds { dateToDaysFrom1970(m_year, m_month, m_monthDay) * secondsPerDay };
+    }
+
+    bool operator==(const OperatingDate& other) const
+    {
+        return m_monthDay == other.m_monthDay && m_month == other.m_month && m_year == other.m_year;
+    }
+
+    bool operator<(const OperatingDate& other) const
+    {
+        return secondsSinceEpoch() < other.secondsSinceEpoch();
+    }
+
+    bool operator<=(const OperatingDate& other) const
+    {
+        return secondsSinceEpoch() <= other.secondsSinceEpoch();
+    }
+
+private:
+    OperatingDate(int year, int month, int monthDay)
+        : m_year(year)
+        , m_month(month)
+        , m_monthDay(monthDay)
+    { }
+
+    int m_year { 0 };
+    int m_month { 0 }; // [0, 11].
+    int m_monthDay { 0 }; // [1, 31].
+};
+
+static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& existingDates, Vector<OperatingDate>&& newDates)
+{
+    if (existingDates.isEmpty())
+        return WTFMove(newDates);
+
+    Vector<OperatingDate> mergedDates(existingDates.size() + newDates.size());
+
+    // Merge the two sorted vectors of dates.
+    std::merge(existingDates.begin(), existingDates.end(), newDates.begin(), newDates.end(), mergedDates.begin());
+    // Remove duplicate dates.
+    removeRepeatedElements(mergedDates);
+
+    // Drop old dates until the Vector size reaches operatingDatesWindow.
+    while (mergedDates.size() > operatingDatesWindow)
+        mergedDates.remove(0);
+
+    return mergedDates;
 }
 
 WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler)
@@ -478,18 +550,16 @@ std::unique_ptr<KeyedEncoder> WebResourceLoadStatisticsStore::createEncoderFromD
         origin.value.encode(encoderInner);
     });
 
-    encoder->encodeObjects("operatingDates", m_operatingDates.begin(), m_operatingDates.end(), [](KeyedEncoder& encoderInner, WallTime date) {
+    encoder->encodeObjects("operatingDates", m_operatingDates.begin(), m_operatingDates.end(), [](KeyedEncoder& encoderInner, OperatingDate date) {
         encoderInner.encodeDouble("date", date.secondsSinceEpoch().value());
     });
 
     return encoder;
 }
 
-void WebResourceLoadStatisticsStore::resetDataFromDecoder(KeyedDecoder& decoder)
+void WebResourceLoadStatisticsStore::mergeWithDataFromDecoder(KeyedDecoder& decoder)
 {
     ASSERT(!RunLoop::isMain());
-
-    clearInMemory();
 
     unsigned versionOnDisk;
     if (!decoder.decodeUInt32("version", versionOnDisk))
@@ -512,29 +582,23 @@ void WebResourceLoadStatisticsStore::resetDataFromDecoder(KeyedDecoder& decoder)
     if (!succeeded)
         return;
 
-    Vector<String> prevalentResourceDomainsWithoutUserInteraction;
-    prevalentResourceDomainsWithoutUserInteraction.reserveInitialCapacity(loadedStatistics.size());
-    for (auto& statistics : loadedStatistics) {
-        if (statistics.isPrevalentResource && !statistics.hadUserInteraction) {
-            prevalentResourceDomainsWithoutUserInteraction.uncheckedAppend(statistics.highLevelDomain);
-            statistics.isMarkedForCookiePartitioning = true;
-        }
-        m_resourceStatisticsMap.add(statistics.highLevelDomain, WTFMove(statistics));
-    }
+    mergeStatistics(WTFMove(loadedStatistics));
+    updateCookiePartitioning();
 
-    succeeded = decoder.decodeObjects("operatingDates", m_operatingDates, [](KeyedDecoder& decoder, WallTime& wallTime) {
+    Vector<OperatingDate> operatingDates;
+    succeeded = decoder.decodeObjects("operatingDates", operatingDates, [](KeyedDecoder& decoder, OperatingDate& date) {
         double value;
         if (!decoder.decodeDouble("date", value))
             return false;
 
-        wallTime = WallTime::fromRawSeconds(value);
+        date = OperatingDate::fromWallTime(WallTime::fromRawSeconds(value));
         return true;
     });
 
     if (!succeeded)
         return;
 
-    updateCookiePartitioningForDomains({ }, prevalentResourceDomainsWithoutUserInteraction, ShouldClearFirst::Yes);
+    m_operatingDates = mergeOperatingDates(m_operatingDates, WTFMove(operatingDates));
 }
 
 void WebResourceLoadStatisticsStore::clearInMemory()
@@ -660,19 +724,20 @@ Vector<String> WebResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRe
 
 void WebResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
 {
-    if (!m_operatingDates.isEmpty() && (WallTime::now() - m_operatingDates.last() < 24_h))
+    auto today = OperatingDate::today();
+    if (!m_operatingDates.isEmpty() && today <= m_operatingDates.last())
         return;
 
     while (m_operatingDates.size() >= operatingDatesWindow)
-        m_operatingDates.removeFirst();
+        m_operatingDates.remove(0);
 
-    m_operatingDates.append(WallTime::now());
+    m_operatingDates.append(today);
 }
 
 bool WebResourceLoadStatisticsStore::hasStatisticsExpired(const ResourceLoadStatistics& resourceStatistic) const
 {
     if (m_operatingDates.size() >= operatingDatesWindow) {
-        if (resourceStatistic.mostRecentUserInteractionTime < m_operatingDates.first())
+        if (OperatingDate::fromWallTime(resourceStatistic.mostRecentUserInteractionTime) < m_operatingDates.first())
             return true;
     }
 

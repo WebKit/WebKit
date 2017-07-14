@@ -1,3 +1,42 @@
+2017-07-13  Chris Dumez  <cdumez@apple.com>
+
+        Better deal with changes to the ResourceLoadStatisticsStore file on disk
+        https://bugs.webkit.org/show_bug.cgi?id=174487
+
+        Reviewed by Brent Fulgham.
+
+        Rename WebResourceLoadStatisticsStore's resetDataFromDecoder() to mergeWithDataFromDecoder()
+        and update it so that it actual merges the data from the disk with the one we have in memory,
+        instead of replacing it. This avoid data loss.
+
+        We leverage the existing WebResourceLoadStatisticsStore::mergeStatistics() to merge the
+        statistics.
+
+        To faciliate merging the operating dates, they are now represented as OperatingDate objects
+        instead of WallTime objects. OperatingDate only include date precision, no time information.
+        As a result, the merge 2 vectors of OperatingDate objects, we can:
+        1. Merge the 2 sorted vectors (using std::merge())
+        2. Get rid of duplicates (easy because of date-level precision)
+        3. Drop old dates until the vector has at most 30 items.
+
+        * UIProcess/Storage/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::refreshMemoryStoreFromDisk):
+        (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::OperatingDate::fromWallTime):
+        (WebKit::OperatingDate::today):
+        (WebKit::OperatingDate::secondsSinceEpoch):
+        (WebKit::OperatingDate::operator==):
+        (WebKit::OperatingDate::operator<):
+        (WebKit::OperatingDate::operator<=):
+        (WebKit::OperatingDate::OperatingDate):
+        (WebKit::mergeOperatingDates):
+        (WebKit::WebResourceLoadStatisticsStore::createEncoderFromData):
+        (WebKit::WebResourceLoadStatisticsStore::mergeWithDataFromDecoder):
+        (WebKit::WebResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::WebResourceLoadStatisticsStore::hasStatisticsExpired):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2017-07-13  Dan Bernstein  <mitz@apple.com>
 
         Removed empty project directories left behind after the rename
