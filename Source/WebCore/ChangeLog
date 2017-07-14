@@ -1,3 +1,32 @@
+2017-07-14  Jer Noble  <jer.noble@apple.com>
+
+        Allow clients to override their own hardware media requirements where no fallback media exists.
+        https://bugs.webkit.org/show_bug.cgi?id=174426
+        <rdar://problem/32537704>
+
+        Reviewed by Eric Carlson.
+
+        Add a new setting which allows clients to specify their own mediaContentTypesRequiringHardwareSupport should be
+        ignared in the case where no fallback exists, such as the case of a single <source> element, or setting the src
+        attribute directly.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::havePotentialSourceChild):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        (WebCore::HTMLMediaElement::sourceWasRemoved):
+        (WebCore::HTMLMediaElement::mediaPlayerShouldCheckHardwareSupport):
+        * html/HTMLMediaElement.h:
+        * page/Settings.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::shouldCheckHardwareSupport):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerShouldCheckHardwareSupport):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::assetStatus):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):
+
 2017-07-14  Chris Dumez  <cdumez@apple.com>
 
         Possible crash under NetworkSocketStream::didFailSocketStream()

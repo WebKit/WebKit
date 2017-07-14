@@ -297,3 +297,5 @@ subresourceIntegrityEnabled initial=true
 constantPropertiesEnabled initial=false
 
 viewportFitEnabled initial=false
+
+allowMediaContentTypesRequiringHardwareSupportAsFallback initial=false

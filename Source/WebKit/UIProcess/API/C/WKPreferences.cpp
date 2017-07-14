@@ -1802,3 +1802,14 @@ void WKPreferencesSetLegacyEncryptedMediaAPIEnabled(WKPreferencesRef preferences
 {
     return toImpl(preferencesRef)->setLegacyEncryptedMediaAPIEnabled(enabled);
 }
+
+bool WKPreferencesGetAllowMediaContentTypesRequiringHardwareSupportAsFallback(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->allowMediaContentTypesRequiringHardwareSupportAsFallback();
+}
+
+void WKPreferencesSetAllowMediaContentTypesRequiringHardwareSupportAsFallback(WKPreferencesRef preferencesRef, bool allow)
+{
+    return toImpl(preferencesRef)->setAllowMediaContentTypesRequiringHardwareSupportAsFallback(allow);
+}
+

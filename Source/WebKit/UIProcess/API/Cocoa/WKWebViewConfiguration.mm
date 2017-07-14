@@ -151,6 +151,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 #endif
     BOOL _needsStorageAccessFromFileURLsQuirk;
     BOOL _legacyEncryptedMediaAPIEnabled;
+    BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback;
 
     RetainPtr<NSString> _overrideContentSecurityPolicy;
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
@@ -220,6 +221,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 #endif
 
     _mediaContentTypesRequiringHardwareSupport = Settings::defaultMediaContentTypesRequiringHardwareSupport();
+    _allowMediaContentTypesRequiringHardwareSupportAsFallback = YES;
 
     return self;
 }
@@ -357,6 +359,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_urlSchemeHandlers.set(adoptNS([self._urlSchemeHandlers mutableCopyWithZone:zone]));
     configuration->_mediaContentTypesRequiringHardwareSupport = adoptNS([self._mediaContentTypesRequiringHardwareSupport copyWithZone:zone]);
     configuration->_legacyEncryptedMediaAPIEnabled = self->_legacyEncryptedMediaAPIEnabled;
+    configuration->_allowMediaContentTypesRequiringHardwareSupportAsFallback = self->_allowMediaContentTypesRequiringHardwareSupportAsFallback;
 
     return configuration;
 }
@@ -871,6 +874,16 @@ static NSString *defaultApplicationNameForUserAgent()
 - (BOOL)_legacyEncryptedMediaAPIEnabled
 {
     return _legacyEncryptedMediaAPIEnabled;
+}
+
+- (void)_setAllowMediaContentTypesRequiringHardwareSupportAsFallback:(BOOL)allow
+{
+    _allowMediaContentTypesRequiringHardwareSupportAsFallback = allow;
+}
+
+- (BOOL)_allowMediaContentTypesRequiringHardwareSupportAsFallback
+{
+    return _allowMediaContentTypesRequiringHardwareSupportAsFallback;
 }
 
 @end

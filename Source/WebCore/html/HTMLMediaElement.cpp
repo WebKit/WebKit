@@ -43,7 +43,7 @@
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "ElementIterator.h"
+#include "ElementChildIterator.h"
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
@@ -4222,7 +4222,7 @@ bool HTMLMediaElement::havePotentialSourceChild()
     // Stash the current <source> node and next nodes so we can restore them after checking
     // to see there is another potential.
     RefPtr<HTMLSourceElement> currentSourceNode = m_currentSourceNode;
-    RefPtr<Node> nextNode = m_nextChildNodeToConsider;
+    RefPtr<HTMLSourceElement> nextNode = m_nextChildNodeToConsider;
 
     URL nextURL = selectNextSourceChild(0, 0, DoNothing);
 
@@ -4250,31 +4250,21 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
         return URL();
     }
 
-    URL mediaURL;
-    HTMLSourceElement* source = nullptr;
-    String type;
-    bool lookingForStartNode = m_nextChildNodeToConsider;
-    bool canUseSourceElement = false;
-    bool okToLoadSourceURL;
+    // Because the DOM may be mutated in the course of the following algorithm,
+    // keep strong references to each of the child source nodes, and verify that
+    // each still is a child of this media element before using.
+    Vector<Ref<HTMLSourceElement>> potentialSourceNodes;
+    auto sources = childrenOfType<HTMLSourceElement>(*this);
+    for (auto next = m_nextChildNodeToConsider ? sources.beginAt(*m_nextChildNodeToConsider) : sources.begin(), end = sources.end(); next != end; ++next)
+        potentialSourceNodes.append(*next);
 
-    NodeVector potentialSourceNodes;
-    getChildNodes(*this, potentialSourceNodes);
-
-    for (unsigned i = 0; !canUseSourceElement && i < potentialSourceNodes.size(); ++i) {
-        Node& node = potentialSourceNodes[i].get();
-        if (lookingForStartNode && m_nextChildNodeToConsider != &node)
+    for (auto& source : potentialSourceNodes) {
+        if (source->parentNode() != this)
             continue;
-        lookingForStartNode = false;
-
-        if (!node.hasTagName(sourceTag))
-            continue;
-        if (node.parentNode() != this)
-            continue;
-
-        source = downcast<HTMLSourceElement>(&node);
 
         // If candidate does not have a src attribute, or if its src attribute's value is the empty string ... jump down to the failed step below
-        mediaURL = source->getNonEmptyURLAttribute(srcAttr);
+        auto mediaURL = source->getNonEmptyURLAttribute(srcAttr);
+        String type;
 #if !LOG_DISABLED
         if (shouldLog)
             LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) - 'src' is %s", this, urlForLoggingMedia(mediaURL).utf8().data());
@@ -4309,48 +4299,49 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
 #if ENABLE(MEDIA_STREAM)
             parameters.isMediaStream = mediaURL.protocolIs(mediaStreamBlobProtocol);
 #endif
-            parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
+            if (!document().settings().allowMediaContentTypesRequiringHardwareSupportAsFallback() || Traversal<HTMLSourceElement>::nextSkippingChildren(source))
+                parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
 
             if (!MediaPlayer::supportsType(parameters, this))
                 goto CheckAgain;
         }
 
         // Is it safe to load this url?
-        okToLoadSourceURL = isSafeToLoadURL(mediaURL, actionIfInvalid) && dispatchBeforeLoadEvent(mediaURL.string());
+        if (!isSafeToLoadURL(mediaURL, actionIfInvalid) || !dispatchBeforeLoadEvent(mediaURL.string()))
+            goto CheckAgain;
 
         // A 'beforeload' event handler can mutate the DOM, so check to see if the source element is still a child node.
-        if (node.parentNode() != this) {
+        if (source->parentNode() != this) {
             LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) - 'beforeload' removed current element", this);
-            source = nullptr;
-            goto CheckAgain;
+            continue;
         }
 
-        if (!okToLoadSourceURL)
-            goto CheckAgain;
-
         // Making it this far means the <source> looks reasonable.
-        canUseSourceElement = true;
+        if (contentType)
+            *contentType = ContentType(type);
+        m_nextChildNodeToConsider = Traversal<HTMLSourceElement>::nextSkippingChildren(source);
+        m_currentSourceNode = WTFMove(source);
+
+#if !LOG_DISABLED
+        if (shouldLog)
+            LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) -> %p, %s", this, m_currentSourceNode.get(), urlForLoggingMedia(mediaURL).utf8().data());
+#endif
+
+        return mediaURL;
 
 CheckAgain:
-        if (!canUseSourceElement && actionIfInvalid == Complain && source)
+        if (actionIfInvalid == Complain)
             source->scheduleErrorEvent();
     }
 
-    if (canUseSourceElement) {
-        if (contentType)
-            *contentType = ContentType(type);
-        m_currentSourceNode = source;
-        m_nextChildNodeToConsider = source->nextSibling();
-    } else {
-        m_currentSourceNode = nullptr;
-        m_nextChildNodeToConsider = nullptr;
-    }
+    m_currentSourceNode = nullptr;
+    m_nextChildNodeToConsider = nullptr;
 
 #if !LOG_DISABLED
     if (shouldLog)
-        LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) -> %p, %s", this, m_currentSourceNode.get(), canUseSourceElement ? urlForLoggingMedia(mediaURL).utf8().data() : "");
+        LOG(Media, "HTMLMediaElement::selectNextSourceChild(%p) -> %p, failed", this, m_currentSourceNode.get());
 #endif
-    return canUseSourceElement ? mediaURL : URL();
+    return URL();
 }
 
 void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
@@ -4380,7 +4371,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement& source)
         return;
     }
 
-    if (m_currentSourceNode && &source == m_currentSourceNode->nextSibling()) {
+    if (m_currentSourceNode && &source == Traversal<HTMLSourceElement>::nextSibling(*m_currentSourceNode)) {
         LOG(Media, "HTMLMediaElement::sourceWasAdded(%p) - <source> inserted immediately after current source", this);
         m_nextChildNodeToConsider = &source;
         return;
@@ -4419,8 +4410,7 @@ void HTMLMediaElement::sourceWasRemoved(HTMLSourceElement& source)
         return;
 
     if (&source == m_nextChildNodeToConsider) {
-        if (m_currentSourceNode)
-            m_nextChildNodeToConsider = m_currentSourceNode->nextSibling();
+        m_nextChildNodeToConsider = m_currentSourceNode ? Traversal<HTMLSourceElement>::nextSibling(*m_currentSourceNode) : nullptr;
         LOG(Media, "HTMLMediaElement::sourceRemoved(%p) - m_nextChildNodeToConsider set to %p", this, m_nextChildNodeToConsider.get());
     } else if (&source == m_currentSourceNode) {
         // Clear the current source node pointer, but don't change the movie as the spec says:
@@ -6674,6 +6664,20 @@ double HTMLMediaElement::mediaPlayerRequestedPlaybackRate() const
 const Vector<ContentType>& HTMLMediaElement::mediaContentTypesRequiringHardwareSupport() const
 {
     return document().settings().mediaContentTypesRequiringHardwareSupport();
+}
+
+bool HTMLMediaElement::mediaPlayerShouldCheckHardwareSupport() const
+{
+    if (!document().settings().allowMediaContentTypesRequiringHardwareSupportAsFallback())
+        return true;
+
+    if (m_loadState == LoadingFromSourceElement && m_currentSourceNode && !m_nextChildNodeToConsider)
+        return false;
+
+    if (m_loadState == LoadingFromSrcAttr)
+        return false;
+
+    return true;
 }
 
 #if USE(GSTREAMER)

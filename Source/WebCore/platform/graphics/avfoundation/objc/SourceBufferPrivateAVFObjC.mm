@@ -485,10 +485,12 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
     if (!m_mediaSource)
         return;
 
-    for (AVAssetTrack *track in [asset tracks]) {
-        if (!assetTrackMeetsHardwareDecodeRequirements(track, m_mediaSource->player()->mediaContentTypesRequiringHardwareSupport())) {
-            m_parsingSucceeded = false;
-            return;
+    if (m_mediaSource->player()->shouldCheckHardwareSupport()) {
+        for (AVAssetTrack *track in [asset tracks]) {
+            if (!assetTrackMeetsHardwareDecodeRequirements(track, m_mediaSource->player()->mediaContentTypesRequiringHardwareSupport())) {
+                m_parsingSucceeded = false;
+                return;
+            }
         }
     }
 

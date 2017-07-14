@@ -961,6 +961,11 @@ const Vector<ContentType>& MediaPlayerPrivateMediaSourceAVFObjC::mediaContentTyp
     return m_player->mediaContentTypesRequiringHardwareSupport();
 }
 
+bool MediaPlayerPrivateMediaSourceAVFObjC::shouldCheckHardwareSupport() const
+{
+    return m_player->shouldCheckHardwareSupport();
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
 {
     if (m_readyState == readyState)

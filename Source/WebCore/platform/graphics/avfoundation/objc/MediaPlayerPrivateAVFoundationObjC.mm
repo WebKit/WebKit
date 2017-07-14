@@ -1609,6 +1609,9 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
             return MediaPlayerAVAssetStatusCancelled; // Loading of at least one key was cancelled.
     }
 
+    if (!player()->shouldCheckHardwareSupport())
+        m_tracksArePlayable = true;
+
     if (!m_tracksArePlayable) {
         m_tracksArePlayable = true;
         for (AVAssetTrack *track in [m_avAsset tracks]) {

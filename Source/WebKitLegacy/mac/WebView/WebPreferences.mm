@@ -677,6 +677,7 @@ public:
 #endif
         @YES, WebKitViewportFitEnabledPreferenceKey,
         @YES, WebKitConstantPropertiesEnabledPreferenceKey,
+        @YES, WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
         nil];
 
@@ -3172,6 +3173,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setConstantPropertiesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitConstantPropertiesEnabledPreferenceKey];
+}
+
+- (BOOL)allowMediaContentTypesRequiringHardwareSupportAsFallback
+{
+    return [self _boolValueForKey:WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey];
+}
+
+- (void)setAllowMediaContentTypesRequiringHardwareSupportAsFallback:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitAllowMediaContentTypesRequiringHardwareSupportAsFallbackKey];
 }
 
 @end
