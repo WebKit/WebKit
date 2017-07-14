@@ -1,3 +1,15 @@
+2017-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Add High Sierra test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=174518
+        <rdar://problem/32716970>
+
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra: Added.
+        * platform/mac-highsierra-wk1: Added.
+        * platform/mac-highsierra-wk2: Added.
+
 2017-07-14  Jer Noble  <jer.noble@apple.com>
 
         [MSE] Removing samples when presentation order does not match decode order can cause bad behavior.

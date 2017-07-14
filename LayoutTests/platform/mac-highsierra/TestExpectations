@@ -1,0 +1,141 @@
+# <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
+svg/W3C-SVG-1.1/fonts-elem-01-t.svg [ Failure ]
+svg/W3C-SVG-1.1/fonts-elem-02-t.svg [ Failure ]
+svg/W3C-SVG-1.1/fonts-elem-03-b.svg [ Failure ]
+svg/W3C-SVG-1.1/fonts-elem-07-b.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-02-b.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
+svg/batik/text/textEffect3.svg [ Failure ]
+svg/batik/text/textPosition2.svg [ Failure ]
+svg/custom/acid3-test-77.html [ Failure ]
+svg/custom/svg-fonts-fallback.xhtml [ Failure ]
+svg/wicd/test-rightsizing-b.xhtml [ Failure ]
+fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure  ]
+
+# <rdar://problem/30182218> REGRESSION: 5 media LayoutTest timeouts
+media/audio-controls-timeline-in-media-document.html [ Timeout ]
+media/audio-data-url.html [ Timeout ]
+media/media-document-audio-controls-visible.html [ Timeout ]
+media/media-document-audio-repaint.html [ Timeout ]
+media/media-document-audio-size.html [ Timeout ]
+
+# <rdar://problem/30059973> REGRESSION: LayoutTest userscripts/user-script-audio-document.html failing
+userscripts/user-script-audio-document.html [ Failure ]
+
+# <rdar://problem/30493910> REGRESSION: LayoutTest fast/writing-mode/broken-ideograph-small-caps.html failing
+fast/writing-mode/broken-ideograph-small-caps.html [ Failure ImageOnlyFailure ]
+
+# <rdar://problem/30182401> REGRESSION: LayoutTest media/media-source/media-source-abort-resets-parser.html failing
+media/media-source/media-source-abort-resets-parser.html [ Failure ]
+
+# <rdar://problem/30517283> REGRESSION: LayoutTests security/block-test.html and security/block-test-no-port.html failing
+security/block-test.html
+security/block-test-no-port.html
+
+# <rdar://problem/31177990> REGRESSION: canvas/2d.gradient.* LayoutTests failing
+# These are imported tests, so we'll have to push changes back to W3C.
+imported/w3c/canvas/2d.gradient.linear.transform.1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.linear.transform.2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.linear.transform.3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.bottom.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.cylinder.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.shape1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.outside3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
+fast/canvas/canvas-blending-fill-style.html [ Failure ]
+fast/canvas/canvas-currentColor.html [ Failure ]
+fast/canvas/set-colors.html [ Failure ]
+
+# <rdar://problem/31301721> REGRESSION: WebKitTestRunner crashed in WebKitTestRunner: 0x16f87
+fast/events/cancelled-force-click-link-navigation.html [ Skip ]
+fast/events/force-click-link-selection-behavior.html [ Skip ]
+fast/events/force-click-on-link-navigation.html [ Skip ]
+fast/events/force-click-text-selection-behavior.html [ Skip ]
+
+# <rdar://problem/31322425> REGRESSION: LayoutTest media/video-orientation.html is failing
+media/video-orientation.html [ Failure ]
+
+# WebCryptoAPI features that enabled only for High Sierra/iOS 11
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-pkcs8.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-spki.html [ Pass ]
+crypto/subtle/rsa-pss-generate-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign-large-salt.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-verify.html [ Pass ]
+crypto/subtle/rsa-pss-import-pkcs8-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
+
+# <rdar://problem/32352702> REGRESSION: fast/dom/HTMLMeterElement/meter-appearances LayoutTests failing
+fast/dom/HTMLMeterElement/meter-appearances-capacity.html [ Failure ]
+fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html [ Failure ]
+
+# <rdar://problem/32332022> REGRESSION: canvas/2d.gradient.radial.transform LayoutTests failing
+canvas/philip/tests/2d.gradient.radial.transform.1.html [ Failure ]
+canvas/philip/tests/2d.gradient.radial.transform.2.html [ Failure ]
+canvas/philip/tests/2d.gradient.radial.transform.3.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.transform.1.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.transform.2.html [ Failure ]
+imported/w3c/canvas/2d.gradient.radial.transform.3.html [ Failure ]
+
+# <rdar://problem/32431942> REGRESSION: webgl/1.0.2/conformance/textures/gl-teximage.html is failing
+webgl/1.0.2/conformance/textures/gl-teximage.html [ Failure ]
+
+# <rdar://problem/32620024> REGRESSION: LayoutTests canvas/philip/tests/2d.path.stroke.scale2.html and imported/w3c/canvas/2d.path.stroke.scale2.html are failing
+canvas/philip/tests/2d.path.stroke.scale2.html [ Failure ]
+imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
+
+# <rdar://problem/32799573> REGRESSION: LayoutTest fast/text/ipa-tone-letters.html is failing
+fast/text/ipa-tone-letters.html [ Failure ]
+
+# <rdar://problem/32799624> REGRESSION: LayoutTests css3/font-variant-petite-caps-synthesis-coverage.html and css3/font-variant-small-caps-synthesis-coverage.html are failing
+css3/font-variant-petite-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+css3/font-variant-small-caps-synthesis-coverage.html [ ImageOnlyFailure ]
+
+# <rdar://problem/32799596> REGRESSION: LayoutTests canvas/philip/tests/2d.gradient.interpolate.solid.html and imported/w3c/canvas/2d.gradient.interpolate.solid.html failing
+canvas/philip/tests/2d.gradient.interpolate.solid.html [ Failure ]
+imported/w3c/canvas/2d.gradient.interpolate.solid.html [ Failure ]
+
+# <rdar://problem/32799745> REGRESSION: LayoutTests canvas/philip/tests/initial.reset.gradient.html and imported/w3c/canvas/initial.reset.gradient.html are failing
+canvas/philip/tests/initial.reset.gradient.html [ Failure ]
+imported/w3c/canvas/initial.reset.gradient.html [ Failure ]
+
+# <rdar://problem/32800095> REGRESSION: LayoutTest imported/blink/fast/gradients/gradient-transparency.html is failing
+imported/blink/fast/gradients/gradient-transparency.html [ ImageOnlyFailure ]
+
+# <rdar://problem/32826391> LayoutTest imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm is failing on High Sierra
+imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-content-type.htm [ Failure ]
+
+# <rdar://problem/32864306> Unskip after bots have CTFontCopyPhysicalFont()
+fast/text/system-font-japanese-synthetic-italic.html [ Pass ImageOnlyFailure ]
+
+# This test makes sure that variation fonts are disabled on OSes which don't support them. So,
+# the test should be skipped on OSes which do support them. As soon as all OSes support them,
+# we should delete the test.
+fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
+
