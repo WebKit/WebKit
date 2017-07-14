@@ -1,3 +1,13 @@
+2017-07-14  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Removing samples when presentation order does not match decode order can cause bad behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=174514
+
+        Reviewed by Sam Weinig.
+
+        * media/media-source/media-source-remove-decodeorder-crash-expected.txt: Added.
+        * media/media-source/media-source-remove-decodeorder-crash.html: Added.
+
 2017-07-14  Matt Lewis  <jlewis3@apple.com>
 
         Correcting test expectations after mac-expectation changes.

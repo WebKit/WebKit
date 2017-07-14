@@ -153,6 +153,27 @@ TEST_F(SampleMapTest, findSampleStartingOnOrAfterPresentationTime)
     EXPECT_TRUE(presentationMap.end() == presentationMap.findSampleContainingPresentationTime(MediaTime(20, 1)));
 }
 
+TEST_F(SampleMapTest, findSampleContainingOrAfterPresentationTime)
+{
+    auto& presentationMap = map.presentationOrder();
+    EXPECT_EQ(MediaTime(0, 1), presentationMap.findSampleContainingOrAfterPresentationTime(MediaTime(0, 1))->second->presentationTime());
+    EXPECT_EQ(MediaTime(19, 1), presentationMap.findSampleContainingOrAfterPresentationTime(MediaTime(19, 1))->second->presentationTime());
+    EXPECT_EQ(MediaTime(0, 1), presentationMap.findSampleContainingOrAfterPresentationTime(MediaTime(1, 2))->second->presentationTime());
+    EXPECT_EQ(MediaTime(0, 1), presentationMap.findSampleContainingOrAfterPresentationTime(MediaTime(-1, 1))->second->presentationTime());
+    EXPECT_EQ(MediaTime(11, 1), presentationMap.findSampleContainingOrAfterPresentationTime(MediaTime(10, 1))->second->presentationTime());
+    EXPECT_TRUE(presentationMap.end() == presentationMap.findSampleContainingOrAfterPresentationTime(MediaTime(20, 1)));
+}
+
+TEST_F(SampleMapTest, findSampleStartingAfterPresentationTime)
+{
+    auto& presentationMap = map.presentationOrder();
+    EXPECT_EQ(MediaTime(1, 1), presentationMap.findSampleStartingAfterPresentationTime(MediaTime(0, 1))->second->presentationTime());
+    EXPECT_TRUE(presentationMap.end() == presentationMap.findSampleStartingAfterPresentationTime(MediaTime(19, 1)));
+    EXPECT_EQ(MediaTime(1, 1), presentationMap.findSampleStartingAfterPresentationTime(MediaTime(1, 2))->second->presentationTime());
+    EXPECT_EQ(MediaTime(0, 1), presentationMap.findSampleStartingAfterPresentationTime(MediaTime(-1, 1))->second->presentationTime());
+    EXPECT_EQ(MediaTime(11, 1), presentationMap.findSampleStartingAfterPresentationTime(MediaTime(10, 1))->second->presentationTime());
+    EXPECT_TRUE(presentationMap.end() == presentationMap.findSampleStartingAfterPresentationTime(MediaTime(20, 1)));
+}
 TEST_F(SampleMapTest, findSamplesBetweenPresentationTimes)
 {
     auto& presentationMap = map.presentationOrder();

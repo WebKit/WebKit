@@ -57,7 +57,9 @@ public:
 
     WEBCORE_EXPORT iterator findSampleWithPresentationTime(const MediaTime&);
     WEBCORE_EXPORT iterator findSampleContainingPresentationTime(const MediaTime&);
+    WEBCORE_EXPORT iterator findSampleContainingOrAfterPresentationTime(const MediaTime&);
     WEBCORE_EXPORT iterator findSampleStartingOnOrAfterPresentationTime(const MediaTime&);
+    WEBCORE_EXPORT iterator findSampleStartingAfterPresentationTime(const MediaTime&);
     WEBCORE_EXPORT reverse_iterator reverseFindSampleContainingPresentationTime(const MediaTime&);
     WEBCORE_EXPORT reverse_iterator reverseFindSampleBeforePresentationTime(const MediaTime&);
     WEBCORE_EXPORT iterator_range findSamplesBetweenPresentationTimes(const MediaTime&, const MediaTime&);

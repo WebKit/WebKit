@@ -1,3 +1,22 @@
+2017-07-14  Jer Noble  <jer.noble@apple.com>
+
+        [MSE] Removing samples when presentation order does not match decode order can cause bad behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=174514
+
+        Reviewed by Sam Weinig.
+
+        Test: media/media-source/media-source-remove-decodeorder-crash.html
+
+        Fix the algorithm in removeCodedFrames() so that it's not possible to have a removePresentationStart >
+        removePresentationEnd (and also removeDecodeStart > removeDecodeEnd).
+
+        * Modules/mediasource/SampleMap.cpp:
+        (WebCore::PresentationOrderSampleMap::findSampleContainingOrAfterPresentationTime):
+        (WebCore::PresentationOrderSampleMap::findSampleStartingAfterPresentationTime):
+        * Modules/mediasource/SampleMap.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::removeCodedFrames):
+
 2017-07-14  Youenn Fablet  <youenn@apple.com>
 
         Increase CoreAudio render audio buffer sizes for WebRTC
