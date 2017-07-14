@@ -13,7 +13,7 @@
     <DebugSuffixDefinition>-DDEBUG_SUFFIX=_debug</DebugSuffixDefinition>
   </PropertyGroup>
 
-  <!-- Wrapper to build WebKit for both win32 and x64. -->
+  <!-- Wrapper to build WebKitLegacy for both win32 and x64. -->
   <PropertyGroup>
     <OFFICIAL_BUILD>1</OFFICIAL_BUILD>
     <WebKit_Libraries>$(SRCROOT)\AppleInternal</WebKit_Libraries>
@@ -47,10 +47,10 @@
     <Message Text="Build output -> $(OBJROOT)" />
     <Message Text="Final output -> $(DSTROOT)" />
     <MakeDir Directories="$(AppleInternalLib32);$(AppleInternalLib64);$(AppleInternalBin32);$(AppleInternalBin64);$(AppleInternal32Symbols);$(AppleInternal64Symbols);$(AppleInternal)\include;$(DSTROOT)\$(ProgramFilesAAS32);$(DSTROOT)\$(ProgramFilesAAS64)" />
-    <MakeDir Directories="$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources;$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources" />
+    <MakeDir Directories="$(DSTROOT)\$(ProgramFilesAAS32)\WebKitLegacy.resources;$(DSTROOT)\$(ProgramFilesAAS64)\WebKitLegacy.resources" />
   </Target>
 
-  <!-- Build WebKit Software -->
+  <!-- Build WebKitLegacy Software -->
   <Target Name="Build" AfterTargets="PreBuild">
     <Message Text="Building $(CONFIGURATION) Solution" />
     <Error Text="DSTROOT property or environment variable must be defined." Condition="'$(DSTROOT)' == ''" />
@@ -65,7 +65,7 @@
     <Message Text="Moving $(CONFIG) build results to $(DSTROOT)" />
 
     <!-- Identify the files to copy over -->
-    <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\ForwardingHeaders\WebKit\**\*.*">
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\ForwardingHeaders\WebKitLegacy\**\*.*">
       <Output TaskParameter="Include" ItemName="IncFiles" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\*">
@@ -74,10 +74,10 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\*">
       <Output TaskParameter="Include" ItemName="Bin64Files" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WebKit$(DebugSuffix).dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WebKitLegacy$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin32DLLFiles" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\WebKit$(DebugSuffix).dll">
+    <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\WebKitLegacy$(DebugSuffix).dll">
       <Output TaskParameter="Include" ItemName="Bin64DLLFiles" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build64\bin32\*.resources">
@@ -92,10 +92,10 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\*.pdb">
       <Output TaskParameter="Include" ItemName="Bin64SymbolFiles" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WebKit.resources\**\*.*">
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\WebKitLegacy.resources\**\*.*">
       <Output TaskParameter="Include" ItemName="Bin32Resources" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\WebKit.resources\**\*.*">
+    <CreateItem Include="$(ConfigurationBuildDir)\build64\bin64\WebKitLegacy.resources\**\*.*">
       <Output TaskParameter="Include" ItemName="Bin64Resources" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build32\lib32\*">
@@ -104,24 +104,24 @@
     <CreateItem Include="$(ConfigurationBuildDir)\build64\lib64\*">
       <Output TaskParameter="Include" ItemName="Lib64Files" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build64\obj32\WebKit\DerivedSources\**\*.*">
+    <CreateItem Include="$(ConfigurationBuildDir)\build64\obj32\WebKitLegacy\DerivedSources\**\*.*">
       <Output TaskParameter="Include" ItemName="Derived32Sources" />
     </CreateItem>
-    <CreateItem Include="$(ConfigurationBuildDir)\build32\obj64\WebKit\DerivedSources\**\*.*">
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\obj64\WebKitLegacy\DerivedSources\**\*.*">
       <Output TaskParameter="Include" ItemName="Derived64Sources" />
     </CreateItem>
 
-    <Copy SourceFiles="@(IncFiles)" DestinationFiles="@(IncFiles->'$(DSTROOT)\AppleInternal\include\WebKit\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(IncFiles)" DestinationFiles="@(IncFiles->'$(DSTROOT)\AppleInternal\include\WebKitLegacy\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Lib32Files)" DestinationFolder="$(AppleInternalLib32)" />
     <Copy SourceFiles="@(Lib64Files)" DestinationFolder="$(AppleInternalLib64)" />
     <Copy SourceFiles="@(Bin32DLLFiles)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
     <Copy SourceFiles="@(Bin32ResourceFolders)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
     <Copy SourceFiles="@(Bin32SymbolFiles)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS32)" />
-    <Copy SourceFiles="@(Bin32Resources)" DestinationFiles="@(Bin32Resources->'$(DSTROOT)\$(ProgramFilesAAS32)\WebKit.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(Bin32Resources)" DestinationFiles="@(Bin32Resources->'$(DSTROOT)\$(ProgramFilesAAS32)\WebKitLegacy.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(Bin64DLLFiles)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)" />
     <Copy SourceFiles="@(Bin64ResourceFolders)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)" />
     <Copy SourceFiles="@(Bin64SymbolFiles)" DestinationFolder="$(DSTROOT)\$(ProgramFilesAAS64)" />
-    <Copy SourceFiles="@(Bin64Resources)" DestinationFiles="@(Bin64Resources->'$(DSTROOT)\$(ProgramFilesAAS64)\WebKit.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(Bin64Resources)" DestinationFiles="@(Bin64Resources->'$(DSTROOT)\$(ProgramFilesAAS64)\WebKitLegacy.resources\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
 </Project>

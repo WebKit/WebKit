@@ -1,5 +1,17 @@
 2017-07-05  Matthew Hanson  <matthew_hanson@apple.com>
 
+        Update the Visual Studio project name from WebKit to WebKitLegacy.
+        https://bugs.webkit.org/show_bug.cgi?id=174162
+        rdar://problem/33137594
+
+        Reviewed by Dan Bernstein.
+
+        Rename WebKit to WebKitLegacy.
+
+        * WebKitLegacy.vcxproj/WebKitLegacy.proj: Renamed from Source/WebKitLegacy/WebKit.vcxproj/WebKit.proj.
+
+2017-07-05  Matthew Hanson  <matthew_hanson@apple.com>
+
         Update the Xcode project name from WebKit to WebKitLegacy.
         https://bugs.webkit.org/show_bug.cgi?id=174162
         rdar://problem/33137594
