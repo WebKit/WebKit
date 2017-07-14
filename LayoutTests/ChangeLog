@@ -1,3 +1,16 @@
+2017-07-14  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC: silence data not sent for disabled audio track
+        https://bugs.webkit.org/show_bug.cgi?id=174456
+        <rdar://problem/33284623>
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/audio-muted-stats-expected.txt: Added.
+        * webrtc/audio-muted-stats.html: Added.
+        * webrtc/audio-muted-stats2-expected.txt: Added.
+        * webrtc/audio-muted-stats2.html: Added.
+
 2017-07-14  Jonathan Bedard  <jbedard@apple.com>
 
         Add High Sierra test expectations

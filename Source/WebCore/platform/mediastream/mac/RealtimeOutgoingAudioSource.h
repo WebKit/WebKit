@@ -33,6 +33,7 @@
 #include "AudioSampleDataSource.h"
 #include "LibWebRTCMacros.h"
 #include "MediaStreamTrackPrivate.h"
+#include "Timer.h"
 #include <webrtc/api/mediastreaminterface.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -83,6 +84,8 @@ private:
     void pullAudioData();
 
     void initializeConverter();
+    void handleMutedIfNeeded();
+    void sendSilence();
 
     Vector<webrtc::AudioTrackSinkInterface*> m_sinks;
     Ref<MediaStreamTrackPrivate> m_audioSource;
@@ -96,6 +99,7 @@ private:
     bool m_muted { false };
     bool m_enabled { true };
     bool m_skippingAudioData { false };
+    Timer m_silenceAudioTimer;
 };
 
 } // namespace WebCore

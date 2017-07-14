@@ -1,3 +1,28 @@
+2017-07-14  Youenn Fablet  <youenn@apple.com>
+
+        WebRTC: silence data not sent for disabled audio track
+        https://bugs.webkit.org/show_bug.cgi?id=174456
+        <rdar://problem/33284623>
+
+        Reviewed by Eric Carlson.
+
+        Test: webrtc/audio-muted-stats.html
+              webrtc/audio-muted-stats2.html
+
+        Adding a timer-based approach to send 10ms of silence every second.
+        This is consistent with how muted video tracks are implemented.
+        In case the audio track is muted at the time it is added, no silence data is sent.
+
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::RealtimeOutgoingAudioSource):
+        (WebCore::RealtimeOutgoingAudioSource::initializeConverter):
+        (WebCore::RealtimeOutgoingAudioSource::stop):
+        (WebCore::RealtimeOutgoingAudioSource::sourceMutedChanged):
+        (WebCore::RealtimeOutgoingAudioSource::sourceEnabledChanged):
+        (WebCore::RealtimeOutgoingAudioSource::handleMutedIfNeeded):
+        (WebCore::RealtimeOutgoingAudioSource::sendSilence):
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+
 2017-07-14  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Unclear distinction between WebKitHelpers and WebKitMacros
