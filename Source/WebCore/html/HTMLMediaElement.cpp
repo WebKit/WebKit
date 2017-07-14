@@ -790,6 +790,10 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
     } else if (name == mediagroupAttr)
         setMediaGroup(value);
+    else if (name == autoplayAttr) {
+        if (processingUserGestureForMedia())
+            removeBehaviorsRestrictionsAfterFirstUserGesture();
+    }
     else
         HTMLElement::parseAttribute(name, value);
 }

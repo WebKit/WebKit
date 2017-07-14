@@ -1,3 +1,14 @@
+2017-07-14  Jer Noble  <jer.noble@apple.com>
+
+        Adding the 'autoplay' attribute to a media element during a user gesture should remove user gesture restrictions.
+        https://bugs.webkit.org/show_bug.cgi?id=174373
+
+        Reviewed by Eric Carlson.
+
+        * media/video-add-autoplay-user-gesture-expected.txt: Added.
+        * media/video-add-autoplay-user-gesture.html: Added.
+        * media/platform/ios/TestExpectations: Skipped; requires EventSender.
+
 2017-07-14  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219500.
