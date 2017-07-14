@@ -62,6 +62,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages::UserMediaCaptureManager
+    void captureFailed(uint64_t id);
     void sourceStopped(uint64_t id);
     void sourceMutedChanged(uint64_t id, bool muted);
     void sourceSettingsChanged(uint64_t id, const WebCore::RealtimeMediaSourceSettings&);

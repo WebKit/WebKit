@@ -200,6 +200,12 @@ void UserMediaCaptureManager::sourceStopped(uint64_t id)
     m_sources.get(id)->stop();
 }
 
+void UserMediaCaptureManager::captureFailed(uint64_t id)
+{
+    ASSERT(m_sources.contains(id));
+    m_sources.get(id)->captureFailed();
+}
+
 void UserMediaCaptureManager::sourceMutedChanged(uint64_t id, bool muted)
 {
     ASSERT(m_sources.contains(id));

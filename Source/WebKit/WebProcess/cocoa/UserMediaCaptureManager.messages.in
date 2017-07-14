@@ -22,6 +22,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> UserMediaCaptureManager {
+    CaptureFailed(uint64_t id)
     SourceStopped(uint64_t id)
     SourceMutedChanged(uint64_t id, bool muted)
     SourceSettingsChanged(uint64_t id, WebCore::RealtimeMediaSourceSettings settings)

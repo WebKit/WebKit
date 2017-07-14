@@ -1,3 +1,19 @@
+2017-07-14  Youenn Fablet  <youenn@apple.com>
+
+        Report CoreAudioCaptureSource failure in case shared unit stops working properly
+        https://bugs.webkit.org/show_bug.cgi?id=174494
+
+        Reviewed by Eric Carlson.
+
+        In case of capture failure, send a CaptureFailure message so that the
+        correct behavior happens in the Web process.
+
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        * WebProcess/cocoa/UserMediaCaptureManager.cpp:
+        (WebKit::UserMediaCaptureManager::captureFailed):
+        * WebProcess/cocoa/UserMediaCaptureManager.h:
+        * WebProcess/cocoa/UserMediaCaptureManager.messages.in:
+
 2017-07-13  Chris Dumez  <cdumez@apple.com>
 
         Better deal with changes to the ResourceLoadStatisticsStore file on disk

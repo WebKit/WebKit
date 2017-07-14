@@ -189,6 +189,7 @@ void RealtimeMediaSource::requestStop(Observer* callingObserver)
 void RealtimeMediaSource::captureFailed()
 {
     m_isProducingData = false;
+    m_captureDidFailed = true;
 
     for (Observer& observer : m_observers)
         observer.sourceStopped();

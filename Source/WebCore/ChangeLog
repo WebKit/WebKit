@@ -1,3 +1,30 @@
+2017-07-14  Youenn Fablet  <youenn@apple.com>
+
+        Report CoreAudioCaptureSource failure in case shared unit stops working properly
+        https://bugs.webkit.org/show_bug.cgi?id=174494
+
+        Reviewed by Eric Carlson.
+
+        Manual test by interrupting an audio capture on Mac.
+
+        This patch adds a timer to CoreAudioSharedUnit.
+        In case the capture callback is not called after one second, the shared unit is said to fail.
+        Each source is notified that capture is failing.
+        This will in turn trigger onend track event so that web pages can remedy capture failure.
+
+        Timer starts with 10 seconds for audio data to start being captured.
+        It is then decreased to 2 seconds.
+
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::captureFailed):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioSharedUnit::CoreAudioSharedUnit):
+        (WebCore::CoreAudioSharedUnit::processMicrophoneSamples):
+        (WebCore::CoreAudioSharedUnit::startInternal):
+        (WebCore::CoreAudioSharedUnit::verifyIsCapturing):
+        (WebCore::CoreAudioSharedUnit::stopInternal):
+
 2017-07-14  Jer Noble  <jer.noble@apple.com>
 
         Adding the 'autoplay' attribute to a media element during a user gesture should remove user gesture restrictions.

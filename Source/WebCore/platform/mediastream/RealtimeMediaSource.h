@@ -143,6 +143,8 @@ public:
     bool muted() const { return m_muted; }
     void setMuted(bool);
 
+    bool captureDidFail() const { return m_captureDidFailed; }
+
     virtual bool interrupted() const { return m_interrupted; }
     virtual void setInterrupted(bool, bool);
 
@@ -265,6 +267,7 @@ private:
     bool m_pendingSettingsDidChangeNotification { false };
     bool m_isProducingData { false };
     bool m_interrupted { false };
+    bool m_captureDidFailed { false };
 };
 
 struct CaptureSourceOrError {

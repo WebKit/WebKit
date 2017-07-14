@@ -65,6 +65,10 @@ public:
     int64_t numberOfFrames() { return m_numberOfFrames; }
 
     void sourceStopped() final {
+        if (m_source->captureDidFail()) {
+            m_manager.process().send(Messages::UserMediaCaptureManager::CaptureFailed(m_id), 0);
+            return;
+        }
         m_manager.process().send(Messages::UserMediaCaptureManager::SourceStopped(m_id), 0);
     }
 
