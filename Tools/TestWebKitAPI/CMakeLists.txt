@@ -19,15 +19,15 @@ if (ENABLE_WEBKIT2)
         JavaScriptCore
         TestWebKitAPIBase
         WTF
-        WebKit2
+        WebKit
         gtest
     )
     list(APPEND TestWebKitAPI_LIBRARIES
-        WebKit2
+        WebKitLegacy
     )
 else ()
     list(APPEND TestWebKitAPI_LIBRARIES
-        WebKit${DEBUG_SUFFIX}
+        WebKitLegacy${DEBUG_SUFFIX}
     )
 endif ()
 
@@ -119,30 +119,30 @@ if (ENABLE_WEBKIT2)
         ${TESTWEBKITAPI_DIR}/InjectedBundleController.cpp
         ${TESTWEBKITAPI_DIR}/InjectedBundleMain.cpp
         ${TESTWEBKITAPI_DIR}/PlatformUtilities.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/CanHandleRequest_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DidAssociateFormControls_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/HitTestResultNodeHandle_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/InjectedBundleBasic_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/InjectedBundleFrameHitTest_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/LoadCanceledNoServerRedirectCallback_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/MouseMoveAfterCrash_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ParentFrame_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/TextFieldDidBeginAndEndEditing_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/UserMessage_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillLoad_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillSendSubmitEvent_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/CanHandleRequest_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/DidAssociateFormControls_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/DOMWindowExtensionBasic_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/DOMWindowExtensionNoCache_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/DocumentStartUserScriptAlertCrash_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/HitTestResultNodeHandle_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/InjectedBundleBasic_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/InjectedBundleFrameHitTest_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/LoadCanceledNoServerRedirectCallback_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/MouseMoveAfterCrash_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayout_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ParentFrame_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ResponsivenessTimerDoesntFireEarly_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ShouldGoToBackForwardListItem_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/TextFieldDidBeginAndEndEditing_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/UserMessage_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/WillLoad_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/WillSendSubmitEvent_Bundle.cpp
     )
 
     target_link_libraries(TestWebKitAPIInjectedBundle ${TestWebKitAPI_LIBRARIES})
@@ -158,7 +158,7 @@ else ()
 endif ()
 
 add_definitions(-DGTEST_HAS_RTTI=0
-    -DTEST_WEBKIT2_RESOURCES_DIR=\"${TESTWEBKITAPI_DIR}/Tests/WebKit2\"
+    -DTEST_WEBKIT2_RESOURCES_DIR=\"${TESTWEBKITAPI_DIR}/Tests/WebKit\"
     -DTEST_INJECTED_BUNDLE_PATH=\"${TestWebKitAPIInjectedBundle_PATH}\"
 )
 
@@ -205,18 +205,18 @@ if (ENABLE_WEBKIT2)
         ${TESTWEBKITAPI_DIR}/TestsController.cpp
     )
 
-    target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit2 gtest)
+    target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit gtest)
 
-    add_dependencies(TestWebKitAPIBase WebKit2 ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+    add_dependencies(TestWebKitAPIBase WebKit ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 
     foreach (testName ${test_webkit2_api_BINARIES})
         get_filename_component(testBaseName ${testName} NAME)
-        add_executable(${testBaseName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
-        add_test(${testBaseName} ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2/${testBaseName})
+        add_executable(${testBaseName} ${TESTWEBKITAPI_DIR}/Tests/WebKit/${testName}.cpp)
+        add_test(${testBaseName} ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit/${testBaseName})
         set_tests_properties(${testBaseName} PROPERTIES TIMEOUT 60)
         target_link_libraries(${testBaseName} ${test_webkit2_api_LIBRARIES})
         set_target_properties(${testBaseName} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2
+            RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit
         )
     endforeach ()
 
@@ -224,10 +224,10 @@ if (ENABLE_WEBKIT2)
     # property, but it reports failure when the test crashes or timeouts and would
     # make the bot red.
     foreach (testName ${test_webkit2_api_fail_BINARIES})
-        add_executable(${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
+        add_executable(${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit/${testName}.cpp)
         target_link_libraries(${testName} ${test_webkit2_api_LIBRARIES})
         set_target_properties(${testName} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2/failure
+            RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit/failure
         )
     endforeach ()
 endif ()
