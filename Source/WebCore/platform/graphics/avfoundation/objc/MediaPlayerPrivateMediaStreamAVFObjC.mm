@@ -257,12 +257,23 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(con
 
 void MediaPlayerPrivateMediaStreamAVFObjC::removeOldSamplesFromPendingQueue(PendingSampleQueue& queue)
 {
+    if (queue.isEmpty())
+        return;
+
+    auto decodeTime = queue.first()->decodeTime();
+    if (!decodeTime.isValid() || decodeTime < MediaTime::zeroTime()) {
+        while (queue.size() > 5)
+            queue.removeFirst();
+
+        return;
+    }
+
     MediaTime now = streamTime();
     while (!queue.isEmpty()) {
         if (queue.first()->decodeTime() > now)
             break;
         queue.removeFirst();
-    };
+    }
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::addSampleToPendingQueue(PendingSampleQueue& queue, MediaSample& sample)

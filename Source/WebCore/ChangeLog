@@ -1,3 +1,15 @@
+2017-07-14  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Limit the number of remote video samples queued
+        https://bugs.webkit.org/show_bug.cgi?id=174505
+        <rdar://problem/33223015>
+
+        Reviewed by Youenn Fablet.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::removeOldSamplesFromPendingQueue): Only
+        enqueue a fixed number of frames with invalid or negative decode times.
+
 2017-07-14  Youenn Fablet  <youenn@apple.com>
 
         Report CoreAudioCaptureSource failure in case shared unit stops working properly
