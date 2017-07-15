@@ -25,6 +25,7 @@ import re
 import signal
 import subprocess
 
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.xcode.simulator import Simulator
 from webkitpy.common.host import Host
 
@@ -141,9 +142,8 @@ class SimulatedDevice(object):
     def install_app(self, app_path, env=None):
         # FIXME: This is a workaround for <rdar://problem/30273973>, Racey failure of simctl install.
         for x in xrange(3):
-            if self._host.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path], return_exit_code=True):
-                return False
             try:
+                self._host.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path])
                 bundle_id = self._host.executive.run_command([
                     '/usr/libexec/PlistBuddy',
                     '-c',
@@ -152,7 +152,7 @@ class SimulatedDevice(object):
                 ]).rstrip()
                 self._host.executive.kill_process(self.launch_app(bundle_id, [], env=env, timeout=10))
                 return True
-            except RuntimeError:
+            except (RuntimeError, ScriptError):
                 pass
         return False
 

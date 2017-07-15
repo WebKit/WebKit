@@ -1,3 +1,14 @@
+2017-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Failing to install on iPad simulators
+        https://bugs.webkit.org/show_bug.cgi?id=174532
+        <rdar://problem/33328347>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDevice.install_app): Place install command in retry try-except block.
+
 2017-07-14  Jeff Miller  <jeffm@apple.com>
 
         Add test for -[WKProcessPool _setObjectsForBundleParametersWithDictionary:].
