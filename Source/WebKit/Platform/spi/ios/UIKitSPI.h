@@ -86,6 +86,19 @@
 #import <UIKit/UIItemProvider_Private.h>
 #endif
 
+#if ENABLE(DRAG_SUPPORT)
+#import <UIKit/UIDragInteraction.h>
+#import <UIKit/UIDragInteraction_Private.h>
+#import <UIKit/UIDragPreviewParameters.h>
+#import <UIKit/UIDragPreview_Private.h>
+#import <UIKit/UIDragSession.h>
+#import <UIKit/UIDragging.h>
+#import <UIKit/UIDropInteraction.h>
+#import <UIKit/UIPreviewInteraction.h>
+#import <UIKit/UIURLDragPreviewView.h>
+#import <UIKit/_UITextDragCaretView.h>
+#endif
+
 #else
 
 #if HAVE(LINK_PREVIEW)
@@ -315,7 +328,7 @@ typedef enum {
 @end
 
 @interface UITapGestureRecognizer ()
-@property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation; 
+@property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation;
 @property (nonatomic, readonly) CGPoint location;
 @property (nonatomic) CGFloat allowableMovement;
 @property (nonatomic, readonly) CGPoint centroid;
@@ -847,6 +860,51 @@ typedef enum {
 @interface UIViewControllerPreviewAction ()
 + (instancetype)actionWithTitle:(NSString *)title handler:(void (^)(UIViewControllerPreviewAction *action, UIViewController *previewViewController))handler;
 @end
+
+#if ENABLE(DRAG_SUPPORT)
+
+@interface UIItemProvider : NSItemProvider
+@property (nonatomic) CGSize estimatedDisplayedSize;
+@end
+
+WTF_EXTERN_C_BEGIN
+
+NSTimeInterval _UIDragInteractionDefaultLiftDelay();
+
+WTF_EXTERN_C_END
+
+typedef NS_OPTIONS(NSUInteger, UIDragOperation)
+{
+    UIDragOperationNone = 0,
+    UIDragOperationEvery = NSUIntegerMax,
+};
+
+@interface UIDragInteraction ()
+@property (nonatomic, assign, getter=_liftDelay, setter=_setLiftDelay:) NSTimeInterval liftDelay;
+@end
+
+@protocol UITextInput;
+@interface _UITextDragCaretView : UIView
+- (instancetype)initWithTextInputView:(UIView<UITextInput> *)textInputView;
+-(void)insertAtPosition:(UITextPosition *)position;
+-(void)updateToPosition:(UITextPosition *)position;
+-(void)remove;
+@end
+
+@interface UICalloutBar : UIView
++ (void)fadeSharedCalloutBar;
+@end
+
+@interface UIApplicationRotationFollowingWindow : UIWindow
+@end
+@interface UIAutoRotatingWindow : UIApplicationRotationFollowingWindow
+@end
+
+@interface UITextEffectsWindow : UIAutoRotatingWindow
++ (UITextEffectsWindow *)sharedTextEffectsWindow;
+@end
+
+#endif
 
 #endif // USE(APPLE_INTERNAL_SDK)
 

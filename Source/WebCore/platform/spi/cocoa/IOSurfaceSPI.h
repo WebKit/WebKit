@@ -41,9 +41,11 @@
 
 typedef struct __IOSurface *IOSurfaceRef;
 
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000
 enum {
     kIOSurfaceLockReadOnly  = 0x00000001,
 };
+#endif
 
 #endif
 
@@ -88,8 +90,10 @@ WTF_EXTERN_C_END
 
 #else
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300)
+
 #import <IOSurface/IOSurfaceTypes.h>
+
 #else
 enum {
     kIOSurfacePurgeableNonVolatile = 0,

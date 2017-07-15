@@ -23,10 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if ENABLE(DATA_INTERACTION)
 
 #import "TestWKWebView.h"
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <UIKit/NSString+UIItemProvider.h>
+#import <UIKit/NSURL+UIItemProvider.h>
+#import <UIKit/UIImage+UIItemProvider.h>
 #import <UIKit/UIItemProvider.h>
+#import <UIKit/UIItemProvider_Private.h>
+#else
+
+@interface NSURL ()
+@property (nonatomic, copy, setter=_setTitle:) NSString *_title;
+@end
+
+@interface UIItemProvider : NSItemProvider
+@property (nonatomic) CGSize estimatedDisplayedSize;
+@end
+
+#define UIItemProviderRepresentationOptionsVisibilityAll NSItemProviderRepresentationVisibilityAll
+
+@protocol UIItemProviderReading <NSItemProviderReading>
+
+@required
+- (instancetype)initWithItemProviderData:(NSData *)data typeIdentifier:(NSString *)typeIdentifier error:(NSError **)outError;
+
+@end
+
+@protocol UIItemProviderWriting <NSItemProviderWriting>
+
+@required
+- (NSProgress *)loadDataWithTypeIdentifier:(NSString *)typeIdentifier forItemProviderCompletionHandler:(void (^)(NSData *, NSError *))completionHandler;
+
+@end
+
+@interface NSAttributedString () <UIItemProviderReading, UIItemProviderWriting>
+@end
+@interface NSString () <UIItemProviderReading, UIItemProviderWriting>
+@end
+@interface NSURL () <UIItemProviderReading, UIItemProviderWriting>
+@end
+@interface UIImage () <UIItemProviderReading, UIItemProviderWriting>
+@end
+
+#endif
+
 #import <UIKit/UIKit.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/_WKInputDelegate.h>

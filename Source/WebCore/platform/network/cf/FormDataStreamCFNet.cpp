@@ -43,7 +43,7 @@
 #include <wtf/Threading.h>
 
 #if PLATFORM(IOS)
-#include <MacErrors.h>
+static const int fnfErr = -43;
 #elif PLATFORM(MAC)
 #include <CoreServices/CoreServices.h>
 #endif

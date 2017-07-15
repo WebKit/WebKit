@@ -1,3 +1,14 @@
+2017-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Add iOS 11 SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174430
+        <rdar://problem/33269288>
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/ios/UIKitSPI.h: Add drag-and-drop SPI for iOS 11.
+        * UIProcess/ios/WKContentViewInteraction.mm: Move UIKit SPI to UIKitSPI.h.
+
 2017-07-14  Jeff Miller  <jeffm@apple.com>
 
         -[WKWebProcessBundleParameters setParametersForKeyWithDictionary:] passing wrong parameters to -setParameter:forKey

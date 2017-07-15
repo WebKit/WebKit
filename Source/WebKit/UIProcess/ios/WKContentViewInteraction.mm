@@ -89,22 +89,11 @@
 #import <wtf/SoftLinking.h>
 
 #if ENABLE(DRAG_SUPPORT)
-// FIXME: Move private headers to UIKitSPI.h and add declarations as needed for building on OpenSource against the iOS 11 SDK.
-#import <UIKit/UIDragInteraction.h>
-#import <UIKit/UIDragInteraction_Private.h>
-#import <UIKit/UIDragPreviewParameters.h>
-#import <UIKit/UIDragPreview_Private.h>
-#import <UIKit/UIDragSession.h>
-#import <UIKit/UIDragging.h>
-#import <UIKit/UIDropInteraction.h>
-#import <UIKit/UIPreviewInteraction.h>
-#import <UIKit/UIURLDragPreviewView.h>
-#import <UIKit/_UITextDragCaretView.h>
 #import <WebCore/DragData.h>
 #import <WebCore/DragItem.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/WebItemProviderPasteboard.h>
-#endif // ENABLE(DRAG_SUPPORT)
+#endif
 
 @interface UIEvent(UIEventInternal)
 @property (nonatomic, assign) UIKeyboardInputFlags _inputFlags;

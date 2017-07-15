@@ -1,3 +1,24 @@
+2017-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Add iOS 11 SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174430
+        <rdar://problem/33269288>
+
+        Reviewed by Tim Horton.
+
+        * WebCore.xcodeproj/project.pbxproj: Add sqlite3SPI.h header.
+        * platform/ios/PlatformPasteboardIOS.mm: Move UIKit SPI to UIKitSPI.h.
+        * platform/ios/WebItemProviderPasteboard.mm: Ditto.
+        * platform/network/cf/FormDataStreamCFNet.cpp: Explicitly define fnfErr and remove
+        MacErrors.h header for iOS.
+        * platform/spi/cocoa/IOSurfaceSPI.h: IOSurface is no longer SPI in iOS 11.
+        * platform/spi/cocoa/PassKitSPI.h: Do not re-define setRequiredShippingContactFields
+        and setRequiredBillingContactFields in iOS 11.
+        * platform/spi/cocoa/QuartzCoreSPI.h: Added QuartzCoreSPI used in iOS 11.
+        * platform/spi/ios/UIKitSPI.h: Add drag-and-drop SPI.
+        * platform/spi/ios/sqlite3SPI.h: Define required sqlite3 macros.
+        * platform/sql/SQLiteFileSystem.cpp: Use sqlite3SPI.h.
+
 2017-07-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Implement CryptoKeyRSA PKCS#8 exports

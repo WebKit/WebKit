@@ -1,3 +1,14 @@
+2017-07-14  Jonathan Bedard  <jbedard@apple.com>
+
+        Add iOS 11 SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174430
+        <rdar://problem/33269288>
+
+        Reviewed by Tim Horton.
+
+        * Storage/StorageTracker.cpp: sqlite3_private.h no longer exists in the iOS
+        Simulator SDK, explicitly define the required macro.
+
 2017-07-13  Dan Bernstein  <mitz@apple.com>
 
         Removed empty project directories left behind after the rename

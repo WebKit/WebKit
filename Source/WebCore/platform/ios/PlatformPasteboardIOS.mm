@@ -30,19 +30,13 @@
 #import "Image.h"
 #import "Pasteboard.h"
 #import "SharedBuffer.h"
+#import "UIKitSPI.h"
 #import "URL.h"
 #import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIImage.h>
 #import <UIKit/UIPasteboard.h>
 #import <wtf/SoftLinking.h>
-
-#if ENABLE(DATA_INTERACTION)
-#import <UIKit/NSAttributedString+UIItemProvider.h>
-#import <UIKit/NSString+UIItemProvider.h>
-#import <UIKit/NSURL+UIItemProvider.h>
-#import <UIKit/UIImage+UIItemProvider.h>
-#endif
 
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIImage)

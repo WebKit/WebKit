@@ -32,6 +32,10 @@
 #import <UIKit/UIViewController_Private.h>
 
 #if ENABLE(DATA_INTERACTION)
+#import <UIKit/NSAttributedString+UIItemProvider.h>
+#import <UIKit/NSString+UIItemProvider.h>
+#import <UIKit/NSURL+UIItemProvider.h>
+#import <UIKit/UIImage+UIItemProvider.h>
 #import <UIKit/UIItemProvider_Private.h>
 #endif
 
@@ -42,6 +46,8 @@
 #else
 
 #import <UIKit/UIKit.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
     UIApplicationSceneClassicModeOriginalPad = 4,
@@ -75,5 +81,53 @@ typedef NS_ENUM(NSInteger, UIApplicationSceneClassicMode) {
 @interface UIViewController ()
 + (UIViewController *)viewControllerForView:(UIView *)view;
 @end
+
+NS_ASSUME_NONNULL_END
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+@interface NSURL ()
+@property (nonatomic, copy, nullable, setter=_setTitle:) NSString *_title;
+@end
+#endif
+
+#if ENABLE(DATA_INTERACTION)
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface UIItemProvider : NSItemProvider
+@property (nonatomic) CGSize estimatedDisplayedSize;
+@end
+
+#define UIItemProviderRepresentationOptionsVisibilityAll NSItemProviderRepresentationVisibilityAll
+
+@protocol UIItemProviderReading <NSItemProviderReading>
+
+@required
+- (nullable instancetype)initWithItemProviderData:(NSData *)data typeIdentifier:(NSString *)typeIdentifier error:(NSError **)outError;
+
+@end
+
+@protocol UIItemProviderWriting <NSItemProviderWriting>
+
+@required
+- (NSProgress * _Nullable)loadDataWithTypeIdentifier:(NSString *)typeIdentifier forItemProviderCompletionHandler:(void (^)(NSData * _Nullable, NSError * _Nullable))completionHandler;
+
+@end
+
+@interface NSAttributedString () <UIItemProviderReading, UIItemProviderWriting>
+@end
+
+@interface NSString () <UIItemProviderReading, UIItemProviderWriting>
+@end
+
+@interface NSURL () <UIItemProviderReading, UIItemProviderWriting>
+@end
+
+@interface UIImage () <UIItemProviderReading, UIItemProviderWriting>
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif
 
 #endif

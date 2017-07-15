@@ -30,11 +30,23 @@
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragItem.h>
+
+#if USE(APPLE_INTERNAL_SDK)
 #import <UIKit/UIDragSession.h>
 #import <UIKit/UIDragging.h>
-#import <UIKit/UIItemProvider_Private.h>
+#else
+
+@protocol UIDraggingInfo <NSObject>
+@end
+
+@interface UIDraggingSession : NSObject <UIDraggingInfo>
+@end
+
+#endif
+
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKFocusedElementInfo.h>
 #import <WebKit/_WKFormInputSession.h>

@@ -31,12 +31,8 @@
 #import "UIKitSPI.h"
 #import <Foundation/NSProgress.h>
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <UIKit/NSString+UIItemProvider.h>
-#import <UIKit/NSURL+UIItemProvider.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
-#import <UIKit/UIItemProviderReading.h>
-#import <UIKit/UIItemProviderWriting.h>
 #import <WebCore/FileSystemIOS.h>
 #import <WebCore/Pasteboard.h>
 #import <wtf/BlockPtr.h>

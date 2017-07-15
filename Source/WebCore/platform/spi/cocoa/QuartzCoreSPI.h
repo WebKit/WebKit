@@ -125,10 +125,16 @@ typedef enum {
     kCATransactionPhasePreLayout,
     kCATransactionPhasePreCommit,
     kCATransactionPhasePostCommit,
+    kCATransactionPhaseNull = ~0u
 } CATransactionPhase;
 
 @interface CATransaction ()
 + (void)addCommitHandler:(void(^)(void))block forPhase:(CATransactionPhase)phase;
+
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
++ (CATransactionPhase)currentPhase;
+#endif
+
 @end
 
 @interface CALayerHost : CALayer

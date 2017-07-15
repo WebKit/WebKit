@@ -299,7 +299,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
 @property (nonatomic, strong) NSString *CTDataConnectionServiceType;
 
-#if !USE(APPLE_INTERNAL_SDK)
+#if (PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
 - (void)setRequiredShippingContactFields:(nonnull NSSet *)contactInformation;
 - (void)setRequiredBillingContactFields:(nonnull NSSet *)contactInformation;
 #endif

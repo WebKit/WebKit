@@ -1,5 +1,17 @@
 2017-07-14  Jonathan Bedard  <jbedard@apple.com>
 
+        Add iOS 11 SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174430
+        <rdar://problem/33269288>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm: Define drag-and-drop API required for testing.
+        * TestWebKitAPI/ios/DataInteractionSimulator.h: Ditto.
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm: Ditto.
+
+2017-07-14  Jonathan Bedard  <jbedard@apple.com>
+
         Failing to install on iPad simulators
         https://bugs.webkit.org/show_bug.cgi?id=174532
         <rdar://problem/33328347>

@@ -32,10 +32,6 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import <UIKit/NSString+UIItemProvider.h>
-#import <UIKit/NSURL+UIItemProvider.h>
-#import <UIKit/UIImage+UIItemProvider.h>
-#import <UIKit/UIItemProvider_Private.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -44,6 +40,15 @@
 
 typedef void (^FileLoadCompletionBlock)(NSURL *, BOOL, NSError *);
 typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);
+typedef void (^UIItemProviderDataLoadCompletionBlock)(NSData *, NSError *);
+
+@interface UIItemProviderRepresentationOptions : NSObject
+@end
+
+@interface UIItemProvider()
++ (UIItemProvider *)itemProviderWithURL:(NSURL *)url title:(NSString *)title;
+- (void) registerDataRepresentationForTypeIdentifier:(NSString *)typeIdentifier options:(UIItemProviderRepresentationOptions*)options loadHandler:(NSProgress * (^)(void (^UIItemProviderDataLoadCompletionBlock)(NSData *item, NSError *error))) loadHandler;
+@end
 
 static NSString *InjectedBundlePasteboardDataType = @"org.webkit.data";
 
