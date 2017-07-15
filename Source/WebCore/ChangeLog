@@ -1,5 +1,47 @@
 2017-07-14  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement CryptoKeyRSA PKCS#8 exports
+        https://bugs.webkit.org/show_bug.cgi?id=173697
+
+        Reviewed by Jiewen Tan.
+
+        Implement the PKCS#8 import operation for RSA keys for platforms that use
+        libgcrypt.
+
+        In CryptoKeyRSA::exportPkcs8(), we bail early with an invalid access exception if
+        this export is not being done for a private key. Otherwise, we start with creating
+        the `RSAPrivateKey` ASN.1 structure, writing out '0' under the `version` element
+        and then retrieving the modulus, public and private exponent and both primes.
+        MPI data for those parameters is written out into corresponding elements in the
+        `RSAPrivateKey` structure. We then manually compute values of both exponents and
+        the coefficient parameters, using the private exponent's and both primes' MPI
+        values. The p and q parameters (i.e. the primes) are switched in libgcrypt,
+        deviating from the standard practice, so we have to operate with those two
+        accordingly. We eliminate the optional `otherPrimeInfos` attribute on the
+        `RSAPrivateKey` structure. Support for this attribute will be added later.
+
+        We then create the `PrivateKeyInfo` ASN.1 structure, and write out '0' under the
+        `version` element. The id-rsaEncryption object identifier is written out under
+        the `algorithm.algorithm` element. In the future, an object identifier that
+        matches this key's algorithm will have to be written out here (id-RSASSA-PSS or
+        id-RSAES-OAEP), along with the appropriate parameters structure, but no test in
+        WebKit or the web-platform-tests suite covers this detail. For now, a null value
+        is written out under the `algorithm.parameters` element.
+
+        Data for the `RSAPrivateKey` structure is retrieved and written out under the
+        `privateKey` element.  The optional `attributes` element on the `PrivateKeyInfo`
+        structure is eliminated.
+
+        Data that was encoded through the `PrivateKeyInfo` structure is then retrieved
+        and returned from the exportPkcs8() method.
+
+        No new tests -- related tests are now passing and are unskipped.
+
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::exportPkcs8):
+
+2017-07-14  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement CryptoKeyRSA PKCS#8 imports
         https://bugs.webkit.org/show_bug.cgi?id=173696
 

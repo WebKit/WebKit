@@ -488,9 +488,141 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportPkcs8() const
 {
-    notImplemented();
+    if (type() != CryptoKeyType::Private)
+        return Exception { INVALID_ACCESS_ERR };
 
-    return Exception { NOT_SUPPORTED_ERR };
+    PAL::TASN1::Structure rsaPrivateKey;
+    {
+        // Create the `RSAPrivateKey` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.RSAPrivateKey", &rsaPrivateKey))
+            return Exception { OperationError };
+
+        // Write out '0' under `version`.
+        if (!PAL::TASN1::writeElement(rsaPrivateKey, "version", "0", 0))
+            return Exception { OperationError };
+
+        // Retrieve the `n`, `e`, `d`, `q` and `p` s-expression tokens. libgcrypt swaps the usage of
+        // the p and q primes internally, so we adjust the lookup accordingly.
+        PAL::GCrypt::Handle<gcry_sexp_t> nSexp(gcry_sexp_find_token(m_platformKey, "n", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> eSexp(gcry_sexp_find_token(m_platformKey, "e", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> dSexp(gcry_sexp_find_token(m_platformKey, "d", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> pSexp(gcry_sexp_find_token(m_platformKey, "q", 0));
+        PAL::GCrypt::Handle<gcry_sexp_t> qSexp(gcry_sexp_find_token(m_platformKey, "p", 0));
+        if (!nSexp || !eSexp || !dSexp || !pSexp || !qSexp)
+            return Exception { OperationError };
+
+        // Write the MPI data of retrieved s-expression tokens under `modulus`, `publicExponent`,
+        // `privateExponent`, `prime1` and `prime2`.
+        {
+            auto modulus = mpiSignedData(nSexp);
+            auto publicExponent = mpiSignedData(eSexp);
+            auto privateExponent = mpiSignedData(dSexp);
+            auto prime1 = mpiSignedData(pSexp);
+            auto prime2 = mpiSignedData(qSexp);
+            if (!modulus || !publicExponent || !privateExponent || !prime1 || !prime2)
+                return Exception { OperationError };
+
+            if (!PAL::TASN1::writeElement(rsaPrivateKey, "modulus", modulus->data(), modulus->size())
+                || !PAL::TASN1::writeElement(rsaPrivateKey, "publicExponent", publicExponent->data(), publicExponent->size())
+                || !PAL::TASN1::writeElement(rsaPrivateKey, "privateExponent", privateExponent->data(), privateExponent->size())
+                || !PAL::TASN1::writeElement(rsaPrivateKey, "prime1", prime1->data(), prime1->size())
+                || !PAL::TASN1::writeElement(rsaPrivateKey, "prime2", prime2->data(), prime2->size()))
+                return Exception { OperationError };
+        }
+
+        // Manually compute the MPI values for the `exponent1`, `exponent2` and `coefficient`
+        // parameters. Again note the swapped usage of the `p` and `q` s-expression parameters.
+        {
+            PAL::GCrypt::Handle<gcry_mpi_t> dMPI(gcry_sexp_nth_mpi(dSexp, 1, GCRYMPI_FMT_USG));
+            PAL::GCrypt::Handle<gcry_mpi_t> pMPI(gcry_sexp_nth_mpi(pSexp, 1, GCRYMPI_FMT_USG));
+            PAL::GCrypt::Handle<gcry_mpi_t> qMPI(gcry_sexp_nth_mpi(qSexp, 1, GCRYMPI_FMT_USG));
+            if (!dMPI || !pMPI || !qMPI)
+                return Exception { OperationError };
+
+            // `exponent1`
+            {
+                PAL::GCrypt::Handle<gcry_mpi_t> dpMPI(gcry_mpi_set_ui(nullptr, 0));
+                PAL::GCrypt::Handle<gcry_mpi_t> pm1MPI(gcry_mpi_set(nullptr, pMPI));
+                gcry_mpi_sub_ui(pm1MPI, pm1MPI, 1);
+                gcry_mpi_mod(dpMPI, dMPI, pm1MPI);
+
+                auto dp = mpiSignedData(dpMPI);
+                if (!dp || !PAL::TASN1::writeElement(rsaPrivateKey, "exponent1", dp->data(), dp->size()))
+                    return Exception { OperationError };
+            }
+
+            // `exponent2`
+            {
+                PAL::GCrypt::Handle<gcry_mpi_t> dqMPI(gcry_mpi_set_ui(nullptr, 0));
+                PAL::GCrypt::Handle<gcry_mpi_t> qm1MPI(gcry_mpi_set(nullptr, qMPI));
+                gcry_mpi_sub_ui(qm1MPI, qm1MPI, 1);
+                gcry_mpi_mod(dqMPI, dMPI, qm1MPI);
+
+                auto dq = mpiSignedData(dqMPI);
+                if (!dq || !PAL::TASN1::writeElement(rsaPrivateKey, "exponent2", dq->data(), dq->size()))
+                    return Exception { OperationError };
+            }
+
+            // `coefficient`
+            {
+                PAL::GCrypt::Handle<gcry_mpi_t> qiMPI(gcry_mpi_set_ui(nullptr, 0));
+                gcry_mpi_invm(qiMPI, qMPI, pMPI);
+
+                auto qi = mpiSignedData(qiMPI);
+                if (!qi || !PAL::TASN1::writeElement(rsaPrivateKey, "coefficient", qi->data(), qi->size()))
+                    return Exception { OperationError };
+            }
+        }
+
+        // Eliminate the optional `otherPrimeInfos` element.
+        // FIXME: this should be supported in the future, if there is such information available.
+        if (!PAL::TASN1::writeElement(rsaPrivateKey, "otherPrimeInfos", nullptr, 0))
+            return Exception { OperationError };
+    }
+
+    PAL::TASN1::Structure pkcs8;
+    {
+        // Create the `PrivateKeyInfo` structure.
+        if (!PAL::TASN1::createStructure("WebCrypto.PrivateKeyInfo", &pkcs8))
+            return Exception { OperationError };
+
+        // Write out '0' under `version`.
+        if (!PAL::TASN1::writeElement(pkcs8, "version", "0", 0))
+            return Exception { OperationError };
+
+        // Write out the id-rsaEncryption identifier under `algorithm.algorithm`.
+        // FIXME: In case the key algorithm is:
+        // - RSA-PSS:
+        //     - this should write out id-RSASSA-PSS, along with setting `algorithm.parameters`
+        //       to a RSASSA-PSS-params structure
+        // - RSA-OAEP:
+        //     - this should write out id-RSAES-OAEP, along with setting `algorithm.parameters`
+        //       to a RSAES-OAEP-params structure
+        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.algorithm", "1.2.840.113549.1.1.1", 1))
+            return Exception { OperationError };
+
+        // Write out a null value under `algorithm.parameters`.
+        if (!PAL::TASN1::writeElement(pkcs8, "privateKeyAlgorithm.parameters", "\x05\x00", 2))
+            return Exception { OperationError };
+
+        // Write out the `RSAPrivateKey` data under `privateKey`.
+        {
+            auto data = PAL::TASN1::encodedData(rsaPrivateKey, "");
+            if (!data || !PAL::TASN1::writeElement(pkcs8, "privateKey", data->data(), data->size()))
+                return Exception { OperationError };
+        }
+
+        // Eliminate the optional `attributes` element.
+        if (!PAL::TASN1::writeElement(pkcs8, "attributes", nullptr, 0))
+            return Exception { OperationError };
+    }
+
+    // Retrieve the encoded `PrivateKeyInfo` data and return it.
+    auto result = PAL::TASN1::encodedData(pkcs8, "");
+    if (!result)
+        return Exception { OperationError };
+
+    return WTFMove(result.value());
 }
 
 std::unique_ptr<KeyAlgorithm> CryptoKeyRSA::buildAlgorithm() const

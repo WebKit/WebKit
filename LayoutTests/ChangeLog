@@ -1,5 +1,14 @@
 2017-07-14  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GCrypt] Implement CryptoKeyRSA PKCS#8 exports
+        https://bugs.webkit.org/show_bug.cgi?id=173697
+
+        Reviewed by Jiewen Tan.
+
+        * platform/gtk/TestExpectations: Unskip the RSA PKCS#8 export tests
+
+2017-07-14  Zan Dobersek  <zdobersek@igalia.com>
+
         [GCrypt] Implement CryptoKeyRSA PKCS#8 imports
         https://bugs.webkit.org/show_bug.cgi?id=173696
 
