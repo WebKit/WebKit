@@ -42,8 +42,12 @@ typedef void (^FileLoadCompletionBlock)(NSURL *, BOOL, NSError *);
 typedef void (^DataLoadCompletionBlock)(NSData *, NSError *);
 typedef void (^UIItemProviderDataLoadCompletionBlock)(NSData *, NSError *);
 
+#if !USE(APPLE_INTERNAL_SDK)
+
 @interface UIItemProviderRepresentationOptions : NSObject
 @end
+
+#endif
 
 @interface UIItemProvider()
 + (UIItemProvider *)itemProviderWithURL:(NSURL *)url title:(NSString *)title;
