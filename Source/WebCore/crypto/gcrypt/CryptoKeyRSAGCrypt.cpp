@@ -321,11 +321,99 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
     return adoptRef(new CryptoKeyRSA(identifier, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Public, platformKey.release(), extractable, usages));
 }
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier, std::optional<CryptoAlgorithmIdentifier>, Vector<uint8_t>&&, bool, CryptoKeyUsageBitmap)
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identifier, std::optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    notImplemented();
+    // Decode the `PrivateKeyInfo` structure using the provided key data.
+    PAL::TASN1::Structure pkcs8;
+    if (!PAL::TASN1::decodeStructure(&pkcs8, "WebCrypto.PrivateKeyInfo", keyData))
+        return nullptr;
 
-    return nullptr;
+    // Validate `version`.
+    {
+        auto version = PAL::TASN1::elementData(pkcs8, "version");
+        if (!version)
+            return nullptr;
+
+        if (version->size() != 1 || version->at(0) != 0x00)
+            return nullptr;
+    }
+
+    // Validate `privateKeyAlgorithm.algorithm`.
+    {
+        auto algorithm = PAL::TASN1::elementData(pkcs8, "privateKeyAlgorithm.algorithm");
+        if (!algorithm)
+            return nullptr;
+
+        if (!supportedAlgorithmIdentifier(algorithm->data(), algorithm->size()))
+            return nullptr;
+    }
+
+    // Decode the `RSAPrivateKey` structure using the `privateKey` data.
+    PAL::TASN1::Structure rsaPrivateKey;
+    {
+        auto privateKey = PAL::TASN1::elementData(pkcs8, "privateKey");
+        if (!privateKey)
+            return nullptr;
+
+        if (!PAL::TASN1::decodeStructure(&rsaPrivateKey, "WebCrypto.RSAPrivateKey", *privateKey))
+            return nullptr;
+    }
+
+    // Validate `privateKey.version`.
+    {
+        auto version = PAL::TASN1::elementData(rsaPrivateKey, "version");
+        if (!version)
+            return nullptr;
+
+        if (version->size() != 1 || version->at(0) != 0x00)
+            return nullptr;
+    }
+
+    // Retrieve the `modulus`, `publicExponent`, `privateExponent`, `prime1`, `prime2`,
+    // `exponent1`, `exponent2` and `coefficient` data and embed it into the `public-key` s-expression.
+    PAL::GCrypt::Handle<gcry_sexp_t> platformKey;
+    {
+        auto modulus = PAL::TASN1::elementData(rsaPrivateKey, "modulus");
+        auto publicExponent = PAL::TASN1::elementData(rsaPrivateKey, "publicExponent");
+        auto privateExponent = PAL::TASN1::elementData(rsaPrivateKey, "privateExponent");
+        auto prime1 = PAL::TASN1::elementData(rsaPrivateKey, "prime1");
+        auto prime2 = PAL::TASN1::elementData(rsaPrivateKey, "prime2");
+        auto exponent1 = PAL::TASN1::elementData(rsaPrivateKey, "exponent1");
+        auto exponent2 = PAL::TASN1::elementData(rsaPrivateKey, "exponent2");
+        auto coefficient = PAL::TASN1::elementData(rsaPrivateKey, "coefficient");
+
+        if (!modulus || !publicExponent || !privateExponent
+            || !prime1 || !prime2 || !exponent1 || !exponent2 || !coefficient)
+            return nullptr;
+
+        // libgcrypt inverts the use of p and q parameters, so we have to recalculate the `coefficient` value.
+        PAL::GCrypt::Handle<gcry_mpi_t> uMPI(gcry_mpi_new(0));
+        {
+            PAL::GCrypt::Handle<gcry_mpi_t> pMPI;
+            gcry_error_t error = gcry_mpi_scan(&pMPI, GCRYMPI_FMT_USG, prime1->data(), prime1->size(), nullptr);
+            if (error != GPG_ERR_NO_ERROR)
+                return nullptr;
+
+            PAL::GCrypt::Handle<gcry_mpi_t> qMPI;
+            error = gcry_mpi_scan(&qMPI, GCRYMPI_FMT_USG, prime2->data(), prime2->size(), nullptr);
+            if (error != GPG_ERR_NO_ERROR)
+                return nullptr;
+
+            gcry_mpi_invm(uMPI, qMPI, pMPI);
+        }
+
+        gcry_error_t error = gcry_sexp_build(&platformKey, nullptr, "(private-key(rsa(n %b)(e %b)(d %b)(p %b)(q %b)(u %M)))",
+            modulus->size(), modulus->data(),
+            publicExponent->size(), publicExponent->data(),
+            privateExponent->size(), privateExponent->data(),
+            prime2->size(), prime2->data(), prime1->size(), prime1->data(), uMPI.handle());
+        if (error != GPG_ERR_NO_ERROR) {
+            PAL::GCrypt::logError(error);
+            return nullptr;
+        }
+    }
+
+    return adoptRef(new CryptoKeyRSA(identifier, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Private, platformKey.release(), extractable, usages));
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const

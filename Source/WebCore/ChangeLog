@@ -1,3 +1,43 @@
+2017-07-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GCrypt] Implement CryptoKeyRSA PKCS#8 imports
+        https://bugs.webkit.org/show_bug.cgi?id=173696
+
+        Reviewed by Jiewen Tan.
+
+        Implement the PKCS#8 import operation for RSA keys for platforms that use
+        libgcrypt.
+
+        In CryptoKeyRSA::importPkcs8(), the provided key data is decoded against the
+        'PrivateKeyInfo` ASN.1 structure. We then validate the `version` element and
+        check that the `privateKeyAlgorithm.algorithm` element contains a supported
+        object identifier. This check is for now mostly superficial, only ensuring
+        that the object identifier is either id-rsaEncryption, id-RSAES-OAEP or
+        id-RSASSA-PSS. This has to be further extended to also check the
+        id-sha{1,256,384,512}WithRSAEncryption identifiers as well as decoding the
+        `privateKeyAlgorithm.parameters` element against a specific ASN.1 structure, if
+        necessary (RSASSA-PSS-params or RSAES-OAEP-params), and cross-checking the
+        specified digest algorithm with the algorithm that's specified through the main
+        object identifier or the structure contained in `privateKeyAlgorithm.parameters`.
+        This is avoided for now because no test in WebKit or the web-platform-tests
+        suite covers this detail of the specification.
+
+        Data under the `privateKey` element is decoded against the `RSAPrivateKey` ASN.1
+        structure, and the `version` element of that structure is validated. We then
+        retrieve data from that structure for the modulus, public exponent, private
+        exponent, both primes, both exponents and the coefficient parameters, bailing if
+        any of them is missing. Because libgcrypt switches the use of p and q parameters,
+        deviating from the standard use, we have to recompute the u parameter (the
+        coefficient). With that calculated, we're then able to construct the `private-key`
+        s-expression, embedding into it all the necessary parameters, and transferring
+        the ownership of this object to the new CryptoKeyRSA object that's then returned
+        from the importPkcs8() method.
+
+        No new tests -- related tests are now passing and are unskipped.
+
+        * crypto/gcrypt/CryptoKeyRSAGCrypt.cpp:
+        (WebCore::CryptoKeyRSA::importPkcs8):
+
 2017-07-14  Chris Dumez  <cdumez@apple.com>
 
         Possible crash in ~UserGestureIndicator() when on non-main thread
