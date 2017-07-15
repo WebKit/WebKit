@@ -1434,14 +1434,22 @@ inline std::optional<Length> StyleBuilderConverter::convertLineHeight(StyleResol
             length = Length(length.value() * multiplier, Fixed);
         return length;
     }
+
+    // Line-height percentages need to inherit as if they were Fixed pixel values. In the example:
+    // <div style="font-size: 10px; line-height: 150%;"><div style="font-size: 100px;"></div></div>
+    // the inner element should have line-height of 15px. However, in this example:
+    // <div style="font-size: 10px; line-height: 1.5;"><div style="font-size: 100px;"></div></div>
+    // the inner element should have a line-height of 150px. Therefore, we map percentages to Fixed
+    // values and raw numbers to percentages.
     if (primitiveValue.isPercentage()) {
         // FIXME: percentage should not be restricted to an integer here.
         return Length((styleResolver.style()->computedFontSize() * primitiveValue.intValue()) / 100, Fixed);
     }
-    if (primitiveValue.isNumber()) {
-        // FIXME: number and percentage values should produce the same type of Length (ie. Fixed or Percent).
+    if (primitiveValue.isNumber())
         return Length(primitiveValue.doubleValue() * multiplier * 100.0, Percent);
-    }
+
+    // FIXME: The parser should only emit the above types, so this should never be reached. We should change the
+    // type of this function to return just a Length (and not an Optional).
     return std::nullopt;
 }
 

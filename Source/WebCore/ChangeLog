@@ -1,3 +1,32 @@
+2017-07-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Clean up line-height and minimumFontSize functions
+        https://bugs.webkit.org/show_bug.cgi?id=174535
+
+        Reviewed by Simon Fraser.
+
+        No behavior change.
+
+        No new tests because there is no behavior change.
+
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertLineHeight):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::adjustRenderStyle):
+        (WebCore::StyleResolver::pseudoStyleRulesForElement):
+        (WebCore::StyleResolver::applyMatchedProperties):
+        (WebCore::StyleResolver::cascadedPropertiesForRollback):
+        (WebCore::StyleResolver::applyProperty):
+        (WebCore::StyleResolver::checkForZoomChange):
+        (WebCore::StyleResolver::createFilterOperations):
+        (WebCore::StyleResolver::CascadedProperties::set):
+        (WebCore::StyleResolver::applyCascadedProperties):
+        * style/StyleFontSizeFunctions.cpp:
+        (WebCore::Style::computedFontSizeFromSpecifiedSize):
+        (WebCore::Style::computedFontSizeFromSpecifiedSizeForSVGInlineText):
+        (): Deleted.
+
 2017-07-14  Jonathan Bedard  <jbedard@apple.com>
 
         Add iOS 11 SPI

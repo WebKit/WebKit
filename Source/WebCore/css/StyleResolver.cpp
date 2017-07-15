@@ -425,7 +425,7 @@ std::unique_ptr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* 
     // decl, there's nothing to override. So just add the first properties.
     CascadedProperties cascade(direction, writingMode);
     cascade.addNormalMatches(result, 0, result.matchedProperties().size() - 1);
-    
+
     // Resolve custom properties first.
     applyCascadedProperties(cascade, CSSPropertyCustom, CSSPropertyCustom, &result);
 
@@ -1048,7 +1048,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
         if ((element->hasTagName(SVGNames::foreignObjectTag) || element->hasTagName(SVGNames::textTag)) && style.isDisplayInlineType())
             style.setDisplay(BLOCK);
     }
-    
+
     // If the inherited value of justify-items includes the 'legacy' keyword,
     // 'auto' computes to the the inherited value. Otherwise, 'auto' computes to
     // 'normal'.
@@ -1057,7 +1057,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             style.setJustifyItems(parentBoxStyle->justifyItems());
     }
 }
-    
+
 bool StyleResolver::checkRegionStyle(const Element* regionElement)
 {
     unsigned rulesSize = m_ruleSets.authorStyle().regionSelectorsAndRuleSets().size();
@@ -1133,7 +1133,7 @@ Vector<RefPtr<StyleRule>> StyleResolver::pseudoStyleRulesForElement(const Elemen
     if (rulesToInclude & UAAndUserCSSRules) {
         // First we match rules from the user agent sheet.
         collector.matchUARules();
-        
+
         // Now we check user sheet rules.
         if (m_matchAuthorAndUserStyles)
             collector.matchUserRules(rulesToInclude & EmptyCSSRules);
@@ -1375,13 +1375,13 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
 
         applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition, &matchResult);
         adjustStyleForInterCharacterRuby();
-    
+
         // Resolve custom variables first.
         applyCascadedProperties(cascade, CSSPropertyCustom, CSSPropertyCustom, &matchResult);
 
         // Start by applying properties that other properties may depend on.
         applyCascadedProperties(cascade, firstCSSProperty, lastHighPriorityProperty, &matchResult);
-    
+
         updateFont();
         applyCascadedProperties(cascade, firstLowPriorityProperty, lastCSSProperty, &matchResult);
 
@@ -1393,12 +1393,12 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     cascade.addImportantMatches(matchResult, matchResult.ranges.firstAuthorRule, matchResult.ranges.lastAuthorRule, applyInheritedOnly);
     cascade.addImportantMatches(matchResult, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, applyInheritedOnly);
     cascade.addImportantMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, applyInheritedOnly);
-    
+
     // Resolve custom properties first.
     applyCascadedProperties(cascade, CSSPropertyCustom, CSSPropertyCustom, &matchResult);
 
     applyCascadedProperties(cascade, CSSPropertyWebkitRubyPosition, CSSPropertyWebkitRubyPosition, &matchResult);
-    
+
     // Adjust the font size to be smaller if ruby-position is inter-character.
     adjustStyleForInterCharacterRuby();
 
@@ -1425,7 +1425,7 @@ void StyleResolver::applyMatchedProperties(const MatchResult& matchResult, const
     cascade.applyDeferredProperties(*this, &matchResult);
 
     ASSERT(!state.fontDirty());
-    
+
     if (cacheItem || !cacheHash)
         return;
     if (!isCacheableInMatchedPropertiesCache(*state.element(), state.style(), state.parentStyle()))
@@ -1556,7 +1556,7 @@ bool StyleResolver::useSVGZoomRulesForLength()
 StyleResolver::CascadedProperties* StyleResolver::cascadedPropertiesForRollback(const MatchResult& matchResult)
 {
     ASSERT(cascadeLevel() != UserAgentLevel);
-    
+
     TextDirection direction;
     WritingMode writingMode;
     extractDirectionAndWritingMode(*state().style(), matchResult, direction, writingMode);
@@ -1565,34 +1565,34 @@ StyleResolver::CascadedProperties* StyleResolver::cascadedPropertiesForRollback(
         CascadedProperties* authorRollback = state().authorRollback();
         if (authorRollback)
             return authorRollback;
-        
+
         auto newAuthorRollback(std::make_unique<CascadedProperties>(direction, writingMode));
-        
+
         // This special rollback cascade contains UA rules and user rules but no author rules.
         newAuthorRollback->addNormalMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
         newAuthorRollback->addNormalMatches(matchResult, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, false);
         newAuthorRollback->addImportantMatches(matchResult, matchResult.ranges.firstUserRule, matchResult.ranges.lastUserRule, false);
         newAuthorRollback->addImportantMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
-    
+
         state().setAuthorRollback(newAuthorRollback);
         return state().authorRollback();
     }
-    
+
     if (cascadeLevel() == UserLevel) {
         CascadedProperties* userRollback = state().userRollback();
         if (userRollback)
             return userRollback;
-        
+
         auto newUserRollback(std::make_unique<CascadedProperties>(direction, writingMode));
-        
+
         // This special rollback cascade contains only UA rules.
         newUserRollback->addNormalMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
         newUserRollback->addImportantMatches(matchResult, matchResult.ranges.firstUARule, matchResult.ranges.lastUARule, false);
-    
+
         state().setUserRollback(newUserRollback);
         return state().userRollback();
     }
-    
+
     return nullptr;
 }
 
@@ -1601,7 +1601,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
     ASSERT_WITH_MESSAGE(!isShorthandCSSProperty(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
 
     State& state = m_state;
-    
+
     RefPtr<CSSValue> valueToApply = value;
     if (value->hasVariableReferences()) {
         valueToApply = resolvedVariableValue(id, *value);
@@ -1618,11 +1618,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
         ASSERT(newId != id);
         return applyProperty(newId, valueToApply.get(), linkMatchMask, matchResult);
     }
-    
+
     CSSValue* valueToCheckForInheritInitial = valueToApply.get();
     CSSCustomPropertyValue* customPropertyValue = nullptr;
     CSSValueID customPropertyValueID = CSSValueInvalid;
-    
+
     if (id == CSSPropertyCustom) {
         customPropertyValue = &downcast<CSSCustomPropertyValue>(*valueToApply);
         customPropertyValueID = customPropertyValue->valueID();
@@ -1630,7 +1630,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
 
     bool isInherit = state.parentStyle() ? valueToCheckForInheritInitial->isInheritedValue() || customPropertyValueID == CSSValueInherit : false;
     bool isInitial = valueToCheckForInheritInitial->isInitialValue() || customPropertyValueID == CSSValueInitial || (!state.parentStyle() && (valueToCheckForInheritInitial->isInheritedValue() || customPropertyValueID == CSSValueInherit));
-    
+
     bool isUnset = valueToCheckForInheritInitial->isUnsetValue() || customPropertyValueID == CSSValueUnset;
     bool isRevert = valueToCheckForInheritInitial->isRevertValue() || customPropertyValueID == CSSValueRevert;
 
@@ -1659,11 +1659,11 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
                     applyProperty(property.id, property.cssValue[linkMatchMask], linkMatchMask, matchResult);
                 return;
             }
-        
+
             isUnset = true;
         }
     }
-    
+
     if (isUnset) {
         if (CSSProperty::isInheritedProperty(id))
             isInherit = true;
@@ -1680,7 +1680,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value, SelectorChe
 
     if (isInherit && !CSSProperty::isInheritedProperty(id))
         state.style()->setHasExplicitlyInheritedProperties();
-    
+
     if (customPropertyValue) {
         auto& name = customPropertyValue->name();
         auto* value = isInitial ? nullptr : isInherit ? state.parentStyle()->customProperties().get(name) : customPropertyValue;
@@ -1736,7 +1736,7 @@ void StyleResolver::checkForZoomChange(RenderStyle* style, const RenderStyle* pa
 {
     if (!parentStyle)
         return;
-    
+
     if (style->effectiveZoom() == parentStyle->effectiveZoom() && style->textZoom() == parentStyle->textZoom())
         return;
 
@@ -1899,13 +1899,13 @@ bool StyleResolver::createFilterOperations(const CSSValue& inValue, FilterOperat
 {
     State& state = m_state;
     ASSERT(outOperations.isEmpty());
-    
+
     if (is<CSSPrimitiveValue>(inValue)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(inValue);
         if (primitiveValue.valueID() == CSSValueNone)
             return true;
     }
-    
+
     if (!is<CSSValueList>(inValue))
         return false;
 
@@ -2099,7 +2099,7 @@ void StyleResolver::CascadedProperties::set(CSSPropertyID id, CSSValue& cssValue
         }
         return;
     }
-    
+
     if (!m_propertyIsPresent[id])
         memset(property.cssValue, 0, sizeof(property.cssValue));
     m_propertyIsPresent.set(id);
@@ -2269,7 +2269,7 @@ void StyleResolver::applyCascadedProperties(CascadedProperties& cascade, int fir
         ASSERT(!shouldApplyPropertyInParseOrder(propertyID));
         property.apply(*this, matchResult);
     }
-    
+
     if (firstProperty == CSSPropertyCustom)
         m_state.style()->checkVariablesInCustomProperties();
 }

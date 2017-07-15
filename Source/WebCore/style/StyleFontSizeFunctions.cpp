@@ -39,10 +39,10 @@ namespace WebCore {
 
 namespace Style {
 
-enum MinimumFontSizeRule {
-    DoNotApplyMinimumFontSize,
-    DoNotUseSmartMinimumForFontSize,
-    UseSmartMinimumForFontFize
+enum class MinimumFontSizeRule {
+    None,
+    Absolute,
+    AbsoluteAndRelative
 };
 
 static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule minimumSizeRule, const Settings& settings)
@@ -64,7 +64,7 @@ static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsol
     // However we always allow the page to set an explicit pixel size that is smaller,
     // since sites will mis-render otherwise (e.g., http://www.gamespot.com with a 9px minimum).
 
-    if (minimumSizeRule == DoNotApplyMinimumFontSize)
+    if (minimumSizeRule == MinimumFontSizeRule::None)
         return specifiedSize;
 
     int minSize = settings.minimumFontSize();
@@ -72,18 +72,17 @@ static float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsol
     float zoomedSize = specifiedSize * zoomFactor;
 
     // Apply the hard minimum first. We only apply the hard minimum if after zooming we're still too small.
-    if (zoomedSize < minSize)
-        zoomedSize = minSize;
+    zoomedSize = std::max(zoomedSize, static_cast<float>(minSize));
 
-    // Now apply the "smart minimum." This minimum is also only applied if we're still too small
+    // Now apply the smart minimum. This minimum is also only applied if we're still too small
     // after zooming. The font size must either be relative to the user default or the original size
     // must have been acceptable. In other words, we only apply the smart minimum whenever we're positive
     // doing so won't disrupt the layout.
-    if (minimumSizeRule ==  UseSmartMinimumForFontFize && zoomedSize < minLogicalSize && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
-        zoomedSize = minLogicalSize;
+    if (minimumSizeRule == MinimumFontSizeRule::AbsoluteAndRelative && (specifiedSize >= minLogicalSize || !isAbsoluteSize))
+        zoomedSize = std::max(zoomedSize, static_cast<float>(minLogicalSize));
 
     // Also clamp to a reasonable maximum to prevent insane font sizes from causing crashes on various
-    // platforms (I'm looking at you, Windows.)
+    // platforms. (I'm looking at you, Windows.)
     return std::min(maximumAllowedFontSize, zoomedSize);
 }
 
@@ -96,12 +95,12 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
         if (frame && style->textZoom() != TextZoomReset)
             zoomFactor *= frame->textZoomFactor();
     }
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? DoNotApplyMinimumFontSize : UseSmartMinimumForFontFize, document.settings());
+    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settings());
 }
 
 float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
 {
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, DoNotUseSmartMinimumForFontSize, document.settings());
+    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::Absolute, document.settings());
 }
 
 const int fontSizeTableMax = 16;
