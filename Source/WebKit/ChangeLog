@@ -1,3 +1,19 @@
+2017-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Presenting an action sheet on an image map prevents selection UI from updating
+        https://bugs.webkit.org/show_bug.cgi?id=174539
+        <rdar://problem/33307395>
+
+        Reviewed by Darin Adler.
+
+        Small tweak to avoid presenting at the element rect or text rect if the interaction information failed to
+        capture valid bounds for the element. We instead fall back to presenting at the touch location. This addresses
+        problems when presenting the action sheet popover on image maps on iPad, where GetPositionInformation fails to
+        capture correct data about for the <area>.
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (presentationStyleForView):
+
 2017-07-14  Jonathan Bedard  <jbedard@apple.com>
 
         Add iOS 11 SPI

@@ -1,3 +1,28 @@
+2017-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Presenting an action sheet on an image map prevents selection UI from updating
+        https://bugs.webkit.org/show_bug.cgi?id=174539
+        <rdar://problem/33307395>
+
+        Reviewed by Darin Adler.
+
+        Adds a new unit test suite to cover action sheet popover presentation.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/image-map.html: Added.
+        * TestWebKitAPI/Tests/ios/ActionSheetTests.mm: Added.
+        (-[ActionSheetObserver waitForActionSheetAfterBlock:]):
+
+        Runs the given block and waits until the UI process has indicated that it will present an action sheet.
+
+        (-[ActionSheetObserver _webView:actionsForElement:defaultActions:]):
+        (TestWebKitAPI::IPadUserInterfaceSwizzler::IPadUserInterfaceSwizzler):
+
+        Helper class to alter the behavior of [[UIDevice currentDevice] userInterfaceIdiom] for testing.
+
+        (TestWebKitAPI::IPadUserInterfaceSwizzler::padUserInterfaceIdiom):
+        (TestWebKitAPI::TEST):
+
 2017-07-15  Sam Weinig  <sam@webkit.org>
 
         [Scripts] Make svn-create-patch work better when called in sub directories

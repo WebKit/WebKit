@@ -78,13 +78,13 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
 
     Ref<Frame> protector(*frame);
 
-#if PLATFORM(IOS)
-    frame->editor().setIgnoreSelectionChanges(true);
-    frame->selection().setUpdateAppearanceEnabled(true);
-#endif
-
     VisibleSelection oldSelection = frame->selection().selection();
-    frame->selection().setSelection(range);
+    TemporarySelectionOptions temporarySelectionOptions = TemporarySelectionOptionDefault;
+#if PLATFORM(IOS)
+    temporarySelectionOptions |= TemporarySelectionOptionIgnoreSelectionChanges;
+    temporarySelectionOptions |= TemporarySelectionOptionEnableAppearanceUpdates;
+#endif
+    TemporarySelectionChange selectionChange(*frame, { range }, temporarySelectionOptions);
 
     TextIndicatorData data;
 
@@ -96,16 +96,7 @@ RefPtr<TextIndicator> TextIndicator::createWithRange(const Range& range, TextInd
     if (!initializeIndicator(data, *frame, range, margin, indicatesCurrentSelection))
         return nullptr;
 
-    RefPtr<TextIndicator> indicator = TextIndicator::create(data);
-
-    frame->selection().setSelection(oldSelection);
-
-#if PLATFORM(IOS)
-    frame->editor().setIgnoreSelectionChanges(false, Editor::RevealSelection::No);
-    frame->selection().setUpdateAppearanceEnabled(false);
-#endif
-
-    return indicator;
+    return TextIndicator::create(data);
 }
 
 RefPtr<TextIndicator> TextIndicator::createWithSelectionInFrame(Frame& frame, TextIndicatorOptions options, TextIndicatorPresentationTransition presentationTransition, FloatSize margin)

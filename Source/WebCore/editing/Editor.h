@@ -102,6 +102,37 @@ struct FragmentAndResources {
 
 #endif
 
+enum TemporarySelectionOption : uint8_t {
+    // By default, no additional options are enabled.
+    TemporarySelectionOptionDefault = 0,
+
+    // Scroll to reveal the selection.
+    TemporarySelectionOptionRevealSelection = 1 << 0,
+
+    // Don't propagate selection changes to the UI process.
+    TemporarySelectionOptionIgnoreSelectionChanges = 1 << 1,
+
+    // Force the render tree to update selection state. Only respected on iOS.
+    TemporarySelectionOptionEnableAppearanceUpdates = 1 << 2
+};
+
+using TemporarySelectionOptions = uint8_t;
+
+class TemporarySelectionChange {
+public:
+    TemporarySelectionChange(Frame&, std::optional<VisibleSelection> = std::nullopt, TemporarySelectionOptions = TemporarySelectionOptionDefault);
+    ~TemporarySelectionChange();
+
+private:
+    Ref<Frame> m_frame;
+    TemporarySelectionOptions m_options;
+    bool m_wasIgnoringSelectionChanges;
+#if PLATFORM(IOS)
+    bool m_appearanceUpdatesWereEnabled;
+#endif
+    std::optional<VisibleSelection> m_selectionToRestore;
+};
+
 class Editor {
     WTF_MAKE_FAST_ALLOCATED;
 public:

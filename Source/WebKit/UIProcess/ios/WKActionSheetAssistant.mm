@@ -396,6 +396,9 @@ static const CGFloat presentationElementRectPadding = 15;
 static WKActionSheetPresentationStyle presentationStyleForView(UIView *view, const InteractionInformationAtPosition& positionInfo, _WKActivatedElementInfo *elementInfo)
 {
     auto apparentElementRect = [view convertRect:positionInfo.bounds toView:view.window];
+    if (CGRectIsEmpty(apparentElementRect))
+        return WKActionSheetPresentAtTouchLocation;
+
     auto windowRect = view.window.bounds;
     apparentElementRect = CGRectIntersection(apparentElementRect, windowRect);
 

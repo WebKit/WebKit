@@ -236,6 +236,7 @@ public:
     void setCaretBlinks(bool caretBlinks = true);
     WEBCORE_EXPORT void setCaretColor(const Color&);
     WEBCORE_EXPORT static VisibleSelection wordSelectionContainingCaretSelection(const VisibleSelection&);
+    bool isUpdateAppearanceEnabled() const { return m_updateAppearanceEnabled; }
     void setUpdateAppearanceEnabled(bool enabled) { m_updateAppearanceEnabled = enabled; }
     void suppressScrolling() { ++m_scrollingSuppressCount; }
     void restoreScrolling()

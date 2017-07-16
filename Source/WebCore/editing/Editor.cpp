@@ -184,6 +184,44 @@ using namespace HTMLNames;
 using namespace WTF;
 using namespace Unicode;
 
+TemporarySelectionChange::TemporarySelectionChange(Frame& frame, std::optional<VisibleSelection> temporarySelection, TemporarySelectionOptions options)
+    : m_frame(frame)
+    , m_options(options)
+    , m_wasIgnoringSelectionChanges(frame.editor().ignoreSelectionChanges())
+#if PLATFORM(IOS)
+    , m_appearanceUpdatesWereEnabled(frame.selection().isUpdateAppearanceEnabled())
+#endif
+{
+#if PLATFORM(IOS)
+    if (options & TemporarySelectionOptionEnableAppearanceUpdates)
+        frame.selection().setUpdateAppearanceEnabled(true);
+#endif
+
+    if (options & TemporarySelectionOptionIgnoreSelectionChanges)
+        frame.editor().setIgnoreSelectionChanges(true);
+
+    if (temporarySelection) {
+        m_selectionToRestore = frame.selection().selection();
+        frame.selection().setSelection(temporarySelection.value());
+    }
+}
+
+TemporarySelectionChange::~TemporarySelectionChange()
+{
+    if (m_selectionToRestore)
+        m_frame->selection().setSelection(m_selectionToRestore.value());
+
+    if (m_options & TemporarySelectionOptionIgnoreSelectionChanges) {
+        auto revealSelection = m_options & TemporarySelectionOptionRevealSelection ? Editor::RevealSelection::Yes : Editor::RevealSelection::No;
+        m_frame->editor().setIgnoreSelectionChanges(m_wasIgnoringSelectionChanges, revealSelection);
+    }
+
+#if PLATFORM(IOS)
+    if (m_options & TemporarySelectionOptionEnableAppearanceUpdates)
+        m_frame->selection().setUpdateAppearanceEnabled(m_appearanceUpdatesWereEnabled);
+#endif
+}
+
 // When an event handler has moved the selection outside of a text control
 // we should use the target control's selection for this editing operation.
 VisibleSelection Editor::selectionForCommand(Event* event)
