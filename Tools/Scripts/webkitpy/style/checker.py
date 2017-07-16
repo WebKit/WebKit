@@ -61,6 +61,7 @@ from filter import FilterConfiguration
 from optparser import ArgumentParser
 from optparser import DefaultCommandOptionValues
 from webkitpy.common.system.logutils import configure_logging as _configure_logging
+from webkitpy.port.config import apple_additions
 
 
 _log = logging.getLogger(__name__)
@@ -374,6 +375,9 @@ def _all_categories():
     #        settings against the known categories, etc).
     categories = categories.union(["pep8/W191", "pep8/W291", "pep8/E501"])
 
+    if apple_additions():
+        categories = categories.union(apple_additions().all_categories())
+
     return categories
 
 
@@ -643,7 +647,10 @@ class CheckerDispatcher(object):
             else:
                 checker = JSONChecker(file_path, handle_style_error)
         elif file_type == FileType.PYTHON:
-            checker = PythonChecker(file_path, handle_style_error)
+            if apple_additions():
+                checker = apple_additions().python_checker(file_path, handle_style_error)
+            else:
+                checker = PythonChecker(file_path, handle_style_error)
         elif file_type == FileType.XML:
             checker = XMLChecker(file_path, handle_style_error)
         elif file_type == FileType.XCODEPROJ:

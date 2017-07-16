@@ -1,3 +1,17 @@
+2017-07-15  David Kilzer  <ddkilzer@apple.com>
+
+        Make it possible to extend check-webkit-style with Apple-internal checkers
+        <https://webkit.org/b/174464>
+        <rdar://problem/25564402>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checker.py: Import apple_additions.
+        (_all_categories): Add categories from apple_additions() if it
+        exists.
+        (CheckerDispatcher._create_checker): Create python checker
+        from apple_additions() if it exists.
+
 2017-07-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Presenting an action sheet on an image map prevents selection UI from updating
