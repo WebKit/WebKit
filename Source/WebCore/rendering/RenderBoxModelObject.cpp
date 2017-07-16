@@ -63,6 +63,10 @@
 #include <wtf/SetForScope.h>
 #endif
 
+#if PLATFORM(IOS)
+#include "RuntimeApplicationChecks.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -303,9 +307,28 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
     return false;
 }
 
-DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const PaintInfo& paintInfo) const
+DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, const PaintInfo& paintInfo) const
 {
+    if (!is<BitmapImage>(image))
+        return DecodingMode::Synchronous;
+    
+    const BitmapImage& bitmapImage = downcast<BitmapImage>(image);
+    if (bitmapImage.canAnimate()) {
+        // The DecodingMode for the current frame has to be Synchronous. The DecodingMode
+        // for the next frame will be calculated in BitmapImage::internalStartAnimation().
+        return DecodingMode::Synchronous;
+    }
+
+    // Large image case.
+#if PLATFORM(IOS)
+    if (IOSApplication::isIBooksStorytime())
+        return DecodingMode::Synchronous;
+#endif
     if (document().isImageDocument())
+        return DecodingMode::Synchronous;
+    if (!settings().largeImageAsyncDecodingEnabled())
+        return DecodingMode::Synchronous;
+    if (!bitmapImage.canUseAsyncDecodingForLargeImages())
         return DecodingMode::Synchronous;
     if (paintInfo.paintBehavior & PaintBehaviorAllowAsyncImageDecoding)
         return DecodingMode::Asynchronous;
@@ -892,7 +915,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
                 downcast<BitmapImage>(*image).updateFromSettings(settings());
 
             auto interpolation = chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize());
-            auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), decodingModeForImageDraw(paintInfo), ImageOrientationDescription(), interpolation));
+            auto decodingMode = decodingModeForImageDraw(*image, paintInfo);
+            auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), ImagePaintingOptions(compositeOp, bgLayer.blendMode(), decodingMode, ImageOrientationDescription(), interpolation));
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->isCachedImage());
                 bgImage->cachedImage()->addPendingImageDrawingClient(*this);

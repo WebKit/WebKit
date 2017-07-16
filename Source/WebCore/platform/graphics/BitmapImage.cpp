@@ -40,10 +40,6 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS)
-#include "RuntimeApplicationChecks.h"
-#endif
-
 namespace WebCore {
 
 BitmapImage::BitmapImage(ImageObserver* observer)
@@ -69,12 +65,6 @@ BitmapImage::~BitmapImage()
 void BitmapImage::updateFromSettings(const Settings& settings)
 {
     m_allowSubsampling = settings.imageSubsamplingEnabled();
-#if PLATFORM(IOS)
-    if (IOSApplication::isIBooks())
-        m_allowLargeImageAsyncDecoding = false;
-    else
-#endif
-        m_allowLargeImageAsyncDecoding = settings.largeImageAsyncDecodingEnabled();
     m_allowAnimatedImageAsyncDecoding = settings.animatedImageAsyncDecodingEnabled();
     m_showDebugBackground = settings.showDebugBorders();
 }
@@ -117,7 +107,7 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
 
 EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
 {
-    if (!shouldUseAsyncDecodingForLargeImages())
+    if (!canUseAsyncDecodingForLargeImages())
         m_source.destroyIncompleteDecodedData();
 
     m_currentFrameDecodingStatus = ImageFrame::DecodingStatus::Invalid;
@@ -193,7 +183,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
     LOG(Images, "BitmapImage::%s - %p - url: %s [subsamplingLevel = %d scaleFactorForDrawing = (%.4f, %.4f)]", __FUNCTION__, this, sourceURL().string().utf8().data(), static_cast<int>(m_currentSubsamplingLevel), scaleFactorForDrawing.width(), scaleFactorForDrawing.height());
 
     NativeImagePtr image;
-    if (decodingMode == DecodingMode::Asynchronous && shouldUseAsyncDecodingForLargeImages()) {
+    if (decodingMode == DecodingMode::Asynchronous && !canAnimate()) {
         ASSERT(!canAnimate());
         ASSERT(!m_currentFrame || m_animationFinished);
 
@@ -299,24 +289,24 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
     m_cachedImage->drawPattern(ctxt, destRect, tileRect, transform, phase, spacing, op, blendMode);
 }
 
-bool BitmapImage::shouldAnimate()
+bool BitmapImage::shouldAnimate() const
 {
     return repetitionCount() && !m_animationFinished && imageObserver();
 }
 
-bool BitmapImage::canAnimate()
+bool BitmapImage::canAnimate() const
 {
     return shouldAnimate() && frameCount() > 1;
 }
 
-bool BitmapImage::shouldUseAsyncDecodingForLargeImages()
+bool BitmapImage::canUseAsyncDecodingForLargeImages() const
 {
-    return !canAnimate() && m_allowLargeImageAsyncDecoding && m_source.shouldUseAsyncDecoding();
+    return !canAnimate() && m_source.canUseAsyncDecoding();
 }
 
-bool BitmapImage::shouldUseAsyncDecodingForAnimatedImages()
+bool BitmapImage::shouldUseAsyncDecodingForAnimatedImages() const
 {
-    return canAnimate() && m_allowAnimatedImageAsyncDecoding && (shouldUseAsyncDecodingForAnimatedImagesForTesting() || m_source.shouldUseAsyncDecoding());
+    return canAnimate() && m_allowAnimatedImageAsyncDecoding && (shouldUseAsyncDecodingForAnimatedImagesForTesting() || m_source.canUseAsyncDecoding());
 }
 
 void BitmapImage::clearTimer()
@@ -338,7 +328,7 @@ bool BitmapImage::canDestroyDecodedData()
         return false;
 
     // Small image should be decoded synchronously. Deleting its decoded frame is fine.
-    if (!shouldUseAsyncDecodingForLargeImages())
+    if (!canUseAsyncDecodingForLargeImages())
         return true;
 
     return !imageObserver() || imageObserver()->canDestroyDecodedData(*this);

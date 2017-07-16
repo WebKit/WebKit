@@ -267,7 +267,7 @@ protected:
 
     bool hasAutoHeightOrContainingBlockWithAutoHeight() const;
 
-    DecodingMode decodingModeForImageDraw(const PaintInfo&) const;
+    DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
 
 public:
     // For RenderBlocks and RenderInlines with m_style->styleType() == FIRST_LETTER, this tracks their remaining text fragments

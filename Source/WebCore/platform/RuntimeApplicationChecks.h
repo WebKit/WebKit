@@ -73,6 +73,7 @@ bool isMobileStore();
 WEBCORE_EXPORT bool isWebApp();
 WEBCORE_EXPORT bool isWebProcess();
 bool isIBooks();
+bool isIBooksStorytime();
 WEBCORE_EXPORT bool isTheSecretSocietyHiddenMystery();
 
 } // IOSApplication

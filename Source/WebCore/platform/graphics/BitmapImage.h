@@ -100,11 +100,12 @@ public:
     size_t currentFrame() const { return m_currentFrame; }
     bool currentFrameKnownToBeOpaque() const override { return !frameHasAlphaAtIndex(currentFrame()); }
     ImageOrientation orientationForCurrentFrame() const override { return frameOrientationAtIndex(currentFrame()); }
+    bool canAnimate() const;
 
     bool shouldUseAsyncDecodingForAnimatedImagesForTesting() const { return m_frameDecodingDurationForTesting > 0_s; }
     void setFrameDecodingDurationForTesting(Seconds duration) { m_frameDecodingDurationForTesting = duration; }
-    bool shouldUseAsyncDecodingForLargeImages();
-    bool shouldUseAsyncDecodingForAnimatedImages();
+    bool canUseAsyncDecodingForLargeImages() const;
+    bool shouldUseAsyncDecodingForAnimatedImages() const;
     void setClearDecoderAfterAsyncFrameRequestForTesting(bool value) { m_clearDecoderAfterAsyncFrameRequestForTesting = value; }
 
     WEBCORE_EXPORT unsigned decodeCountForTesting() const;
@@ -163,8 +164,7 @@ protected:
     // Animation.
     enum class StartAnimationStatus { CannotStart, IncompleteData, TimerActive, DecodingActive, Started };
     bool isAnimated() const override { return m_source.frameCount() > 1; }
-    bool shouldAnimate();
-    bool canAnimate();
+    bool shouldAnimate() const;
     void startAnimation() override { internalStartAnimation(); }
     StartAnimationStatus internalStartAnimation();
     void advanceAnimation();
@@ -219,7 +219,6 @@ private:
 #else
     bool m_allowSubsampling { false };
 #endif
-    bool m_allowLargeImageAsyncDecoding { false };
     bool m_allowAnimatedImageAsyncDecoding { false };
     bool m_showDebugBackground { false };
 

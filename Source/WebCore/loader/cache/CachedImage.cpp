@@ -145,7 +145,7 @@ void CachedImage::addPendingImageDrawingClient(CachedImageClient& client)
     if (m_pendingImageDrawingClients.contains(&client))
         return;
     if (!m_clients.contains(&client)) {
-        // If the <html> element does not have its own background sepecfied, painting the root box
+        // If the <html> element does not have its own background specified, painting the root box
         // renderer uses the style of the <body> element, see RenderView::rendererForRootBackground().
         // In this case, the client we are asked to add is the root box renderer. Since we can't add
         // a client to m_pendingImageDrawingClients unless it is one of the m_clients, we are going

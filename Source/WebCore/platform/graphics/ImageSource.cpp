@@ -149,7 +149,7 @@ bool ImageSource::isAllDataReceived()
     return isDecoderAvailable() ? m_decoder->isAllDataReceived() : m_frameCache->frameCount();
 }
 
-bool ImageSource::shouldUseAsyncDecoding()
+bool ImageSource::canUseAsyncDecoding()
 {
     if (!isDecoderAvailable())
         return false;

@@ -70,7 +70,7 @@ public:
     unsigned decodedSize() const { return m_frameCache->decodedSize(); }
     bool isAllDataReceived();
 
-    bool shouldUseAsyncDecoding();
+    bool canUseAsyncDecoding();
     void requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing = { }) { m_frameCache->requestFrameAsyncDecodingAtIndex(index, subsamplingLevel, sizeForDrawing); }
     bool hasAsyncDecodingQueue() const { return m_frameCache->hasAsyncDecodingQueue(); }
     bool isAsyncDecodingQueueIdle() const  { return m_frameCache->isAsyncDecodingQueueIdle(); }

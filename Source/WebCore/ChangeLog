@@ -1,3 +1,48 @@
+2017-07-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Make the decision for asynchronously decoding an image be in one place
+        https://bugs.webkit.org/show_bug.cgi?id=174479
+
+        Reviewed by Tim Horton.
+
+        Move all the logic of whether a large image should be asynchronously decoded 
+        or not be in one place: RenderBoxModelObject::decodingModeForImageDraw().
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::addPendingImageDrawingClient): Fixing unrelated 
+        spelling error.
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isIBooks):
+        (WebCore::IOSApplication::isIBooksStorytime):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::updateFromSettings): Remove reading the setting
+        largeImageAsyncDecodingEnabled from this function because it will be read
+        by RenderBoxModelObject::decodingModeForImageDraw().
+        (WebCore::BitmapImage::dataChanged):
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImage::shouldAnimate):
+        (WebCore::BitmapImage::canAnimate):
+        (WebCore::BitmapImage::canUseAsyncDecodingForLargeImages):
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForAnimatedImages):
+        (WebCore::BitmapImage::canDestroyDecodedData):
+        (WebCore::BitmapImage::shouldUseAsyncDecodingForLargeImages): Deleted.
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::canUseAsyncDecoding): It is okay to keep the 
+        decoded frame if canUseAsyncDecodingForLargeImages() is true by the setting
+        largeImageAsyncDecodingEnabled is false.
+        (WebCore::ImageSource::shouldUseAsyncDecoding): Deleted.
+        * platform/graphics/ImageSource.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::decodingModeForImageDraw): The plan is to
+        add a new Internal settings to force asynchronous image decoding regardless
+        of the image size and the settings.
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintIntoRect):
+
 2017-07-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Raise minimum CMake requirement

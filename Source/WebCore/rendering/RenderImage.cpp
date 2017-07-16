@@ -584,8 +584,8 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         downcast<BitmapImage>(*image).updateFromSettings(settings());
 
     ImageOrientationDescription orientationDescription(shouldRespectImageOrientation(), style().imageOrientation());
-
-    auto drawResult = paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, decodingModeForImageDraw(paintInfo), orientationDescription, interpolation));
+    auto decodingMode = decodingModeForImageDraw(*image, paintInfo);
+    auto drawResult = paintInfo.context().drawImage(*img, rect, ImagePaintingOptions(compositeOperator, BlendModeNormal, decodingMode, orientationDescription, interpolation));
     if (drawResult == ImageDrawResult::DidRequestDecoding)
         imageResource().cachedImage()->addPendingImageDrawingClient(*this);
     return drawResult;
