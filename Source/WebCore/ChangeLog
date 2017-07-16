@@ -1,3 +1,22 @@
+2017-07-16  Antoine Quint  <graouts@apple.com>
+
+        Clicking edges of media control buttons changes visual state of button (pressed) but doesn't execute action
+        https://bugs.webkit.org/show_bug.cgi?id=174565
+        <rdar://problem/33294833>
+
+        Reviewed by Dean Jackson.
+
+        WebCore doesn't dispatch a "click" event to a parent element when a child that was the original target when
+        the "mousedown" occured is no longer hit-testing at the location where the mouse pointer is at when the "mouseup"
+        occurs (see webkit.org/b/174564). Since button icons, which are a <picture> element that is a child of the
+        <button> element for media controls buttons, shrink to 89% of their size when the ":active" pseudo-class matches,
+        clicking on the edges of the media controls buttons would not trigger the expected action.
+
+        Test: media/modern-media-controls/button/button-click-on-edges.html
+
+        * Modules/modern-media-controls/controls/button.css:
+        (button > picture):
+
 2017-07-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Make the decision for asynchronously decoding an image be in one place

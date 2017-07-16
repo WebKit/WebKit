@@ -122,6 +122,7 @@ media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.h
 media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-button-padding.html [ Pass ]
 
 # These tests are designed to work only on macOS
+media/modern-media-controls/button/button-click-on-edges.html [ Skip ]
 media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-mac-sizing.html [ Skip ]

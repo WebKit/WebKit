@@ -46,6 +46,8 @@ button > picture {
     -webkit-mask-repeat: no-repeat;
     transition: transform 150ms;
     will-change: transform;
+    /* Work around webkit.org/b/174565 by making the shrinking button's icon non-interactive */
+    pointer-events: none;
 }
 
 button.skip-back > picture,
