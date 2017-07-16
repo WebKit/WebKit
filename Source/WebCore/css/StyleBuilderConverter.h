@@ -1446,7 +1446,7 @@ inline std::optional<Length> StyleBuilderConverter::convertLineHeight(StyleResol
         return Length((styleResolver.style()->computedFontSize() * primitiveValue.intValue()) / 100, Fixed);
     }
     if (primitiveValue.isNumber())
-        return Length(primitiveValue.doubleValue() * multiplier * 100.0, Percent);
+        return Length(primitiveValue.doubleValue() * 100.0, Percent);
 
     // FIXME: The parser should only emit the above types, so this should never be reached. We should change the
     // type of this function to return just a Length (and not an Optional).

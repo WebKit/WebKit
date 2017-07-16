@@ -1971,7 +1971,7 @@ static Ref<CSSPrimitiveValue> lineHeightFromStyle(const RenderStyle& style)
         // for how high to be in pixels does include things like minimum font size and the zoom factor.
         // On the other hand, since font-size doesn't include the zoom factor, we really can't do
         // that here either.
-        return zoomAdjustedPixelValue(static_cast<int>(length.percent() * style.fontDescription().specifiedSize()) / 100, style);
+        return zoomAdjustedPixelValue(static_cast<int>(length.percent() * style.fontDescription().computedSize()) / 100, style);
     }
     return zoomAdjustedPixelValue(floatValueForLength(length, 0), style);
 }
