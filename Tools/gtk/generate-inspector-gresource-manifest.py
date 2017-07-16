@@ -28,7 +28,7 @@ def get_filenames(args):
     filenames = []
 
     for pattern in args:
-        paths = glob.glob(pattern)
+        paths = sorted(glob.glob(pattern))
         for filename in paths:
             base_dir_index = filename.rfind(BASE_DIR)
             if base_dir_index != -1:
