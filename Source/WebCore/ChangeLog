@@ -1,5 +1,72 @@
 2017-07-15  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Rename RenderStyle::fontSize() to RenderStyle::computedFontPixelSize()
+        https://bugs.webkit.org/show_bug.cgi?id=174509
+
+        Reviewed by Simon Fraser.
+
+        We have three font size functions:
+        - computedFontSize(): returns a float
+        - specifiedFontSize(): also returns a float
+        - fontSize(): returns the rounded computedFontSize()
+
+        FontDescription uses the convention of labelling rounded values as "pixel",
+        so a better name font fontSize() is computedFontPixelSize().
+
+        Also, because font sizes can never be negative, switch the type from an int
+        to an unsigned.
+
+        No new tests because there is no behavior change.
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getAttributeSetForAccessibilityObject):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::computedPixelSize):
+        (WebCore::FontDescription::fontSelectionRequest):
+        * rendering/RenderBlock.cpp:
+        (WebCore::styleForFirstLetter):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::shouldOverhang):
+        (WebCore::RenderRubyRun::getOverhang):
+        * rendering/RenderRubyText.cpp:
+        (WebCore::RenderRubyText::adjustInlineDirectionLineBounds):
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::adjustSearchFieldIconStyle):
+        (WebCore::paintSearchFieldIcon):
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustCheckboxStyle):
+        (WebCore::RenderThemeIOS::adjustRadioStyle):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::controlSizeForFont):
+        (WebCore::RenderThemeMac::controlSizeForSystemFont):
+        (WebCore::RenderThemeMac::paintMenuListButtonDecorations):
+        (WebCore::RenderThemeMac::popupInternalPaddingBox):
+        (WebCore::RenderThemeMac::adjustMenuListButtonStyle):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsButtonStyle):
+        * rendering/TextDecorationPainter.cpp:
+        (WebCore::TextDecorationPainter::paintTextDecoration):
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::computeLineVerticalStretch):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::computedFontPixelSize):
+        (WebCore::RenderStyle::computedLineHeight):
+        (WebCore::RenderStyle::fontSize): Deleted.
+        * rendering/style/RenderStyle.h:
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::visualOverflowForDecorations):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+        * svg/SVGLengthContext.cpp:
+        (WebCore::SVGLengthContext::convertValueFromUserUnitsToEMS):
+        (WebCore::SVGLengthContext::convertValueFromEMSToUserUnits):
+
+2017-07-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
         line-height: <number> gets visually applied twice when text autosizing is in effect
         https://bugs.webkit.org/show_bug.cgi?id=174536
         <rdar://problem/33338259>

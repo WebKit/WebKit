@@ -357,7 +357,7 @@ void RenderThemeIOS::adjustCheckboxStyle(StyleResolver&, RenderStyle& style, con
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
-    int size = std::max(style.fontSize(), 10);
+    int size = std::max(style.computedFontPixelSize(), 10U);
     style.setWidth({ size, Fixed });
     style.setHeight({ size, Fixed });
 }
@@ -460,7 +460,7 @@ void RenderThemeIOS::adjustRadioStyle(StyleResolver&, RenderStyle& style, const 
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
-    int size = std::max(style.fontSize(), 10);
+    int size = std::max(style.computedFontPixelSize(), 10U);
     style.setWidth({ size, Fixed });
     style.setHeight({ size, Fixed });
     style.setBorderRadius({ size / 2, size / 2 });

@@ -348,7 +348,7 @@ public:
     WEBCORE_EXPORT const FontCascadeDescription& fontDescription() const;
     float specifiedFontSize() const;
     float computedFontSize() const;
-    int fontSize() const;
+    unsigned computedFontPixelSize() const;
     std::pair<FontOrientation, NonCJKGlyphOrientation> fontAndGlyphOrientation();
 
 #if ENABLE(VARIATION_FONTS)

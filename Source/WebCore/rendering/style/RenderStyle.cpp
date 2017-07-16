@@ -1498,9 +1498,9 @@ float RenderStyle::computedFontSize() const
     return fontDescription().computedSize();
 }
 
-int RenderStyle::fontSize() const
+unsigned RenderStyle::computedFontPixelSize() const
 {
-    return m_inheritedData->fontCascade.pixelSize();
+    return fontDescription().computedPixelSize();
 }
 
 const Length& RenderStyle::wordSpacing() const
@@ -1559,7 +1559,7 @@ int RenderStyle::computedLineHeight() const
         return fontMetrics().lineSpacing();
 
     if (lh.isPercentOrCalculated())
-        return minimumValueForLength(lh, fontSize());
+        return minimumValueForLength(lh, computedFontPixelSize());
 
     return clampTo<int>(lh.value());
 }

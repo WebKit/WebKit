@@ -792,7 +792,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
 
 NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
 {
-    int fontSize = style.fontSize();
+    int fontSize = style.computedFontPixelSize();
     if (fontSize >= 16)
         return NSControlSizeRegular;
     if (fontSize >= 11)
@@ -867,7 +867,7 @@ void RenderThemeMac::setFontFromControlSize(StyleResolver&, RenderStyle& style, 
 
 NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style) const
 {
-    int fontSize = style.fontSize();
+    int fontSize = style.computedFontPixelSize();
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
         return NSControlSizeRegular;
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeSmall])
@@ -1318,7 +1318,7 @@ bool RenderThemeMac::paintMenuListButtonDecorations(const RenderBox& renderer, c
     paintMenuListButtonGradients(renderer, paintInfo, bounds);
 
     // Since we actually know the size of the control here, we restrict the font scale to make sure the arrows will fit vertically in the bounds
-    float fontScale = std::min(renderer.style().fontSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
+    float fontScale = std::min(renderer.style().computedFontPixelSize() / baseFontSize, bounds.height() / (baseArrowHeight * 2 + baseSpaceBetweenArrows));
     float centerY = bounds.y() + bounds.height() / 2.0f;
     float arrowHeight = baseArrowHeight * fontScale;
     float arrowWidth = baseArrowWidth * fontScale;
@@ -1422,7 +1422,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) cons
     }
 
     if (style.appearance() == MenulistButtonPart) {
-        float arrowWidth = baseArrowWidth * (style.fontSize() / baseFontSize);
+        float arrowWidth = baseArrowWidth * (style.computedFontPixelSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
         float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
         if (style.direction() == RTL)
@@ -1454,7 +1454,7 @@ PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle& s
 
 void RenderThemeMac::adjustMenuListButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {
-    float fontScale = style.fontSize() / baseFontSize;
+    float fontScale = style.computedFontPixelSize() / baseFontSize;
 
     style.resetPadding();
     style.setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?

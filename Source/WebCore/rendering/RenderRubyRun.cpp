@@ -314,7 +314,7 @@ static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const R
         return false;
     const RenderStyle& rubyBaseStyle = firstLine ? rubyBase.firstLineStyle() : rubyBase.style();
     const RenderStyle& style = firstLine ? renderer->firstLineStyle() : renderer->style();
-    return style.fontSize() <= rubyBaseStyle.fontSize();
+    return style.computedFontPixelSize() <= rubyBaseStyle.computedFontPixelSize();
 }
 
 void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const
@@ -353,7 +353,7 @@ void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, Ren
     // We can overhang the ruby by no more than half the width of the neighboring text
     // and no more than half the font size.
     const RenderStyle& rubyTextStyle = firstLine ? rubyText->firstLineStyle() : rubyText->style();
-    float halfWidthOfFontSize = rubyTextStyle.fontSize() / 2.;
+    float halfWidthOfFontSize = rubyTextStyle.computedFontPixelSize() / 2.;
     if (startOverhang)
         startOverhang = std::min(startOverhang, std::min(downcast<RenderText>(*startRenderer).minLogicalWidth(), halfWidthOfFontSize));
     if (endOverhang)

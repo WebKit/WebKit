@@ -78,7 +78,7 @@ void RenderMathMLRow::computeLineVerticalStretch(LayoutUnit& ascent, LayoutUnit&
 
     // We ensure a minimal stretch size.
     if (ascent + descent <= 0) {
-        ascent = style().fontSize();
+        ascent = style().computedFontPixelSize();
         descent = 0;
     }
 }

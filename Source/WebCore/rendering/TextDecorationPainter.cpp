@@ -258,7 +258,7 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
     UNUSED_PARAM(textOrigin);
 #endif
     ASSERT(m_font);
-    float textDecorationThickness = textDecorationStrokeThickness(m_lineStyle.fontSize());
+    float textDecorationThickness = textDecorationStrokeThickness(m_lineStyle.computedFontPixelSize());
     m_context.setStrokeThickness(textDecorationThickness);
     FloatPoint localOrigin = boxOrigin;
 
@@ -268,7 +268,7 @@ void TextDecorationPainter::paintTextDecoration(const TextRun& textRun, const Fl
         auto strokeStyle = textDecorationStyleToStrokeStyle(style);
 
         if (style == TextDecorationStyleWavy)
-            strokeWavyTextDecoration(m_context, start, end, textDecorationThickness, m_lineStyle.fontSize());
+            strokeWavyTextDecoration(m_context, start, end, textDecorationThickness, m_lineStyle.computedFontPixelSize());
         else if (decoration == TextDecorationUnderline || decoration == TextDecorationOverline) {
 #if ENABLE(CSS3_TEXT_DECORATION_SKIP_INK)
             if ((m_lineStyle.textDecorationSkip() == TextDecorationSkipInk || m_lineStyle.textDecorationSkip() == TextDecorationSkipAuto) && m_isHorizontal) {

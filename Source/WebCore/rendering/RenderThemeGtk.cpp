@@ -1027,7 +1027,7 @@ static void adjustSearchFieldIconStyle(RenderThemePart themePart, RenderStyle& s
 
     // Get the icon size based on the font size.
     auto& icon = static_cast<RenderThemeIconGadget&>(themePart == EntryIconLeft ? searchEntryWidget.leftIcon() : searchEntryWidget.rightIcon());
-    icon.setIconSize(style.fontSize());
+    icon.setIconSize(style.computedFontPixelSize());
     IntSize preferredSize = icon.preferredSize();
     GtkBorder contentsBox = searchEntryWidget.entry().contentsBox();
     if (themePart == EntryIconLeft)
@@ -1074,7 +1074,7 @@ static void adjustSearchFieldIconStyle(RenderThemePart themePart, RenderStyle& s
     gtk_style_context_get_padding(context.get(), gtk_style_context_get_state(context.get()), &padding);
 
     // Get the icon size based on the font size.
-    int fontSize = style.fontSize();
+    int fontSize = style.computedFontPixelSize();
     if (fontSize < gtkIconSizeMenu) {
         style.setWidth(Length(fontSize + (padding.left + padding.right), Fixed));
         style.setHeight(Length(fontSize + (padding.top + padding.bottom), Fixed));
@@ -1120,7 +1120,7 @@ static bool paintSearchFieldIcon(RenderThemeGtk* theme, RenderThemePart themePar
     searchEntryWidget.entry().setState(themePartStateFlags(*theme, Entry, renderObject));
     auto& icon = static_cast<RenderThemeIconGadget&>(themePart == EntryIconLeft ? searchEntryWidget.leftIcon() : searchEntryWidget.rightIcon());
     icon.setState(themePartStateFlags(*theme, themePart, renderObject));
-    icon.setIconSize(renderObject.style().fontSize());
+    icon.setIconSize(renderObject.style().computedFontPixelSize());
     GtkBorder contentsBox = searchEntryWidget.entry().contentsBox();
     IntRect iconRect = rect;
     if (themePart == EntryIconLeft) {

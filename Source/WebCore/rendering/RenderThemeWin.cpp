@@ -899,7 +899,7 @@ bool RenderThemeWin::paintSearchFieldCancelButton(const RenderBox& o, const Pain
 void RenderThemeWin::adjustSearchFieldCancelButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {
     // Scale the button size based on the font size
-    float fontScale = style.fontSize() / defaultControlFontPixelSize;
+    float fontScale = style.computedFontPixelSize() / defaultControlFontPixelSize;
     int cancelButtonSize = lroundf(min(max(minCancelButtonSize, defaultCancelButtonSize * fontScale), maxCancelButtonSize));
     style.setWidth(Length(cancelButtonSize, Fixed));
     style.setHeight(Length(cancelButtonSize, Fixed));
@@ -915,7 +915,7 @@ void RenderThemeWin::adjustSearchFieldDecorationPartStyle(StyleResolver&, Render
 void RenderThemeWin::adjustSearchFieldResultsDecorationPartStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {
     // Scale the decoration size based on the font size
-    float fontScale = style.fontSize() / defaultControlFontPixelSize;
+    float fontScale = style.computedFontPixelSize() / defaultControlFontPixelSize;
     int magnifierSize = lroundf(min(max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
                                      maxSearchFieldResultsDecorationSize));
     style.setWidth(Length(magnifierSize, Fixed));
@@ -947,7 +947,7 @@ bool RenderThemeWin::paintSearchFieldResultsDecorationPart(const RenderBox& o, c
 void RenderThemeWin::adjustSearchFieldResultsButtonStyle(StyleResolver&, RenderStyle& style, const Element*) const
 {
     // Scale the button size based on the font size
-    float fontScale = style.fontSize() / defaultControlFontPixelSize;
+    float fontScale = style.computedFontPixelSize() / defaultControlFontPixelSize;
     int magnifierHeight = lroundf(min(max(minSearchFieldResultsDecorationSize, defaultSearchFieldResultsDecorationSize * fontScale), 
                                    maxSearchFieldResultsDecorationSize));
     int magnifierWidth = lroundf(magnifierHeight * defaultSearchFieldResultsButtonWidth / defaultSearchFieldResultsDecorationSize);

@@ -1007,7 +1007,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
 
     // Important: Intrinsic margins get added to controls before the theme has adjusted the style, since the theme will
     // alter fonts and heights/widths.
-    if (is<HTMLFormControlElement>(element) && style.fontSize() >= 11) {
+    if (is<HTMLFormControlElement>(element) && style.computedFontPixelSize() >= 11) {
         // Don't apply intrinsic margins to image buttons. The designer knows how big the images are,
         // so we have to treat all image buttons as though they were explicitly sized.
         if (!is<HTMLInputElement>(*element) || !downcast<HTMLInputElement>(*element).isImageButton())

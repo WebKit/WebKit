@@ -110,7 +110,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     if (decoration == TextDecorationNone)
         return GlyphOverflow();
     
-    float strokeThickness = textDecorationStrokeThickness(lineStyle.fontSize());
+    float strokeThickness = textDecorationStrokeThickness(lineStyle.computedFontPixelSize());
     float controlPointDistance = 0;
     float step;
     float wavyOffset = 0;
@@ -120,7 +120,7 @@ GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const I
     GlyphOverflow overflowResult;
     
     if (decorationStyle == TextDecorationStyleWavy) {
-        getWavyStrokeParameters(lineStyle.fontSize(), controlPointDistance, step);
+        getWavyStrokeParameters(lineStyle.computedFontPixelSize(), controlPointDistance, step);
         wavyOffset = wavyOffsetFromDecoration();
         overflowResult.left = strokeThickness;
         overflowResult.right = strokeThickness;

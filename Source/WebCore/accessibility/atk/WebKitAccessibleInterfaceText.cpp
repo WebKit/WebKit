@@ -87,7 +87,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     auto* style = &renderer->style();
 
     AtkAttributeSet* result = nullptr;
-    GUniquePtr<gchar> buffer(g_strdup_printf("%i", style->fontSize()));
+    GUniquePtr<gchar> buffer(g_strdup_printf("%i", style->computedFontPixelSize()));
     result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_SIZE), buffer.get());
 
     Color bgColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
