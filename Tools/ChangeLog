@@ -1,3 +1,24 @@
+2017-07-15  Sam Weinig  <sam@webkit.org>
+
+        [Scripts] Make svn-create-patch work better when called in sub directories
+        https://bugs.webkit.org/show_bug.cgi?id=174551
+
+        Reviewed by Darin Adler.
+
+        - Fixes manufacturePatchForAdditionWithHistory to use the correct path
+          by ensuring that the prefix is applied as is done in generateDiff.
+        - Silence output of explanatory lines from svn stat (" > move to ...")
+          that show up in STDERR when running svn-create-patch.
+        - Add verbose logging that I found useful while debugging this issue.
+
+        * Scripts/svn-create-patch:
+        (findBaseUrl):
+        (findMimeType):
+        (findSourceFileAndRevision):
+        (generateDiff):
+        (generateFileList):
+        (manufacturePatchForAdditionWithHistory):
+
 2017-07-15  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed build fix after r219537.

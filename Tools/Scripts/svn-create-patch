@@ -65,7 +65,7 @@ sub generateDiff($$);
 sub generateFileList($\%);
 sub hunkHeaderLineRegExForFile($);
 sub isBinaryMimeType($);
-sub manufacturePatchForAdditionWithHistory($);
+sub manufacturePatchForAdditionWithHistory($$);
 sub numericcmp($$);
 sub outputBinaryContent($);
 sub patchpathcmp($$);
@@ -79,15 +79,17 @@ $ENV{'LC_ALL'} = 'C';
 my $showHelp;
 my $checkWebKitStyle = 0;
 my $ignoreChangelogs = 0;
+my $verbose = 0;
 my $devNull = File::Spec->devnull();
 
 my $result = GetOptions(
     "help"       => \$showHelp,
     "ignore-changelogs" => \$ignoreChangelogs,
     "style!" => \$checkWebKitStyle,
+    "verbose" => \$verbose,
 );
 if (!$result || $showHelp) {
-    print STDERR basename($0) . " [-h|--help] [--ignore-changelogs] [--[no-]style] [svndir1 [svndir2 ...]]\n";
+    print STDERR basename($0) . " [-h|--help] [-v|--verbose] [--ignore-changelogs] [--[no-]style] [svndir1 [svndir2 ...]]\n";
     exit 1;
 }
 
@@ -98,6 +100,13 @@ my %paths = processPaths(@ARGV);
 my %diffFiles;
 for my $path (keys %paths) {
     generateFileList($path, %diffFiles);
+}
+
+if ($verbose) {
+    print STDERR "List of files for patch:\n";
+    for my $file (sort patchpathcmp values %diffFiles) {
+        print STDERR "  " . $file->{path} . "\n";
+    }
 }
 
 my $svnRoot = determineSVNRoot();
@@ -157,6 +166,9 @@ sub findBaseUrl($)
     my ($infoPath) = @_;
     my $baseUrl;
     my $escapedInfoPath = escapeSubversionPath($infoPath);
+    
+    print STDERR "Performing \"svn info '$escapedInfoPath'\"\n" if $verbose;
+    
     open INFO, "svn info '$escapedInfoPath' |" or die;
     while (<INFO>) {
         if (/^URL: (.+?)[\r\n]*$/) {
@@ -172,6 +184,9 @@ sub findMimeType($;$)
     my ($file, $revision) = @_;
     my $args = $revision ? "--revision $revision" : "";
     my $escapedFile = escapeSubversionPath($file);
+
+    print STDERR "Performing \"svn propget svn:mime-type $args '$escapedFile' 2> $devNull\"\n" if $verbose;
+
     open PROPGET, "svn propget svn:mime-type $args '$escapedFile' 2> $devNull |" or die;
     my $mimeType = <PROPGET>;
     close PROPGET;
@@ -203,6 +218,9 @@ sub findSourceFileAndRevision($)
     my $sourceFile;
     my $sourceRevision;
     my $escapedFile = escapeSubversionPath($file);
+    
+    print STDERR "Performing \"svn info '$escapedFile'\"\n" if $verbose;
+    
     open INFO, "svn info '$escapedFile' |" or die;
     while (<INFO>) {
         if (/^Copied From URL: (.+?)[\r\n]*$/) {
@@ -227,11 +245,14 @@ sub generateDiff($$)
     my $patch = "";
     my $isAdditionWithHistory = $fileData->{modificationType} eq "additionWithHistory";
     if ($isAdditionWithHistory) {
-        manufacturePatchForAdditionWithHistory($fileData);
+        manufacturePatchForAdditionWithHistory($fileData, $prefix);
     }
 
     my $diffOptions = diffOptionsForFile($file);
     my $escapedFile = escapeSubversionPath($file);
+
+    print STDERR "Performing \"svn diff --diff-cmd diff -x -$diffOptions '$escapedFile'\"\n" if $verbose;
+
     open DIFF, "svn diff --diff-cmd diff -x -$diffOptions '$escapedFile' |" or die;
     while (<DIFF>) {
         $patch .= $_;
@@ -256,10 +277,17 @@ sub generateFileList($\%)
     my $escapedStatPath = escapeSubversionPath($statPath);
     my @deletedFiles;
 
+    print STDERR "Performing \"svn stat '$escapedStatPath'\"\n" if $verbose;
+
     open STAT, "svn stat '$escapedStatPath' |" or die;
     while (my $line = <STAT>) {
         # svn may output a different EOL sequence than $/, so avoid chomp.
         $line =~ s/[\r\n]+$//g;
+
+        # svn may output explanatory lines describing more detail about a file change
+        # e.g "    > moved to foo/bar.cpp". For now we ignore these lines.
+        next if $line =~ /^ +>/;
+
         my $stat;
         my $path;
         if (isSVNVersion16OrNewer()) {
@@ -327,23 +355,36 @@ sub isBinaryMimeType($)
     return 1;
 }
 
-sub manufacturePatchForAdditionWithHistory($)
+sub manufacturePatchForAdditionWithHistory($$)
 {
-    my ($fileData) = @_;
-    my $file = $fileData->{path};
+    my ($fileData, $prefix) = @_;
+
+    my $file = File::Spec->catdir($prefix, $fileData->{path});
+    my $sourceFile = File::Spec->catdir($prefix, $fileData->{sourceFile});
+    my $sourceRevision = $fileData->{sourceRevision};
+
     print "Index: ${file}\n";
     print "=" x 67, "\n";
-    my $sourceFile = $fileData->{sourceFile};
-    my $sourceRevision = $fileData->{sourceRevision};
     print "--- ${file}\t(revision ${sourceRevision})\t(from ${sourceFile}:${sourceRevision})\n";
     print "+++ ${file}\t(working copy)\n";
+
     if ($fileData->{isBinary}) {
         print "\nCannot display: file marked as a binary type.\n";
         my $mimeType = findMimeType($file, $sourceRevision);
         print "svn:mime-type = ${mimeType}\n\n";
     } else {
         my $escapedSourceFile = escapeSubversionPath($sourceFile);
-        print `svn diff -r 0:${sourceRevision} ${escapedSourceFile} | tail -n +5`;
+        
+        print STDERR "Performing \"svn diff -r 0:${sourceRevision} ${escapedSourceFile}\"\n" if $verbose;
+    
+        open DIFF, "svn diff -r 0:${sourceRevision} ${escapedSourceFile} |" or die;
+        my $count = 0;
+        while (<DIFF>) {
+            # Skip the diff header, since it was manufactured aboved.
+            next if ++$count < 5;
+            print $_;
+        }
+        close DIFF;
     }
 }
 
