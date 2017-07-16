@@ -234,14 +234,6 @@ if (NOT PORT STREQUAL "GTK")
     set(LIBEXEC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Absolute path to install executables executed by the library")
 endif ()
 
-# The Ninja generator does not yet know how to build archives in pieces, and so response
-# files must be used to deal with very long linker command lines.
-# CMake does this automatically, but the condition was wrong on Linux until CMake 3.2.
-# See https://cmake.org/Bug/view.php?id=14892
-if ((CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux") AND (CMAKE_VERSION VERSION_LESS 3.2))
-    set(CMAKE_NINJA_FORCE_RESPONSE_FILE 1)
-endif ()
-
 # Macros for determining HAVE values.
 include(CheckIncludeFile)
 include(CheckFunctionExists)

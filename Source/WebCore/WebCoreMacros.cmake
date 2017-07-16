@@ -163,13 +163,9 @@ function(GENERATE_BINDINGS target)
     if (SHOW_BINDINGS_GENERATION_PROGRESS)
         list(APPEND args --showProgress)
     endif ()
-    if (${CMAKE_VERSION} VERSION_LESS 3.2)
-        set_source_files_properties(${gen_sources} ${gen_headers} PROPERTIES GENERATED 1)
-    else ()
-        list(APPEND act_args BYPRODUCTS ${gen_sources} ${gen_headers})
-        if (SHOW_BINDINGS_GENERATION_PROGRESS)
-            list(APPEND act_args USES_TERMINAL)
-        endif ()
+    list(APPEND act_args BYPRODUCTS ${gen_sources} ${gen_headers})
+    if (SHOW_BINDINGS_GENERATION_PROGRESS)
+        list(APPEND act_args USES_TERMINAL)
     endif ()
     add_custom_target(${target}
         COMMAND ${PERL_EXECUTABLE} ${binding_generator} ${args}
@@ -229,10 +225,6 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
         ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl
     )
     set(_args BYPRODUCTS ${_extra_output})
-    if (${CMAKE_VERSION} VERSION_LESS 3.2)
-        set_source_files_properties(${_extra_output} PROPERTIES GENERATED 1)
-        set(_args)
-    endif ()
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
         MAIN_DEPENDENCY ${_infile}
