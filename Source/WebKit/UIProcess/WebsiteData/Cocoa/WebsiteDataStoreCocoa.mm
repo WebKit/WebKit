@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebsiteDataStore.h"
 
+#import "CookieStorageUtilsCF.h"
 #import "StorageManager.h"
 #import "WebResourceLoadStatisticsStore.h"
 #import "WebsiteDataStoreParameters.h"
@@ -63,9 +64,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         auto utf8File = cookieFile.utf8();
         auto url = adoptCF(CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)utf8File.data(), (CFIndex)utf8File.length(), true));
         m_cfCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromFile(kCFAllocatorDefault, url.get(), nullptr));
-        auto cfData = adoptCF(CFHTTPCookieStorageCreateIdentifyingData(kCFAllocatorDefault, m_cfCookieStorage.get()));
-
-        m_uiProcessCookieStorageIdentifier.append(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+        m_uiProcessCookieStorageIdentifier = identifyingDataFromCookieStorage(m_cfCookieStorage.get());
     }
 
     parameters.uiProcessCookieStorageIdentifier = m_uiProcessCookieStorageIdentifier;

@@ -56,6 +56,13 @@ TEST(WebKit2, WKHTTPCookieStore)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView loadHTMLString:@"Oh hello" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
 
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:[] {
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
+    gotFlag = false;
+
     globalCookieStore = [WKWebsiteDataStore defaultDataStore].httpCookieStore;
     RetainPtr<CookieObserver> observer1 = adoptNS([[CookieObserver alloc] init]);
     RetainPtr<CookieObserver> observer2 = adoptNS([[CookieObserver alloc] init]);
