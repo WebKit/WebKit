@@ -65,6 +65,11 @@ public:
     // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
     // usable with RenderObject::absoluteToLocal).
     const LayoutPoint& absoluteLocation() const { return m_absoluteLocation; }
+    
+    static FrameView* frameViewFromDOMWindow(DOMWindow*);
+
+    static LayoutPoint pagePointToClientPoint(LayoutPoint pagePoint, FrameView*);
+    static LayoutPoint pagePointToAbsolutePoint(LayoutPoint pagePoint, FrameView*);
 
 protected:
     MouseRelatedEvent() = default;
@@ -84,7 +89,6 @@ protected:
     void computeRelativePosition();
 
     float documentToAbsoluteScaleFactor() const;
-    FrameView* frameView() const;
 
     // Expose these so MouseEvent::initMouseEvent can set them.
     IntPoint m_screenLocation;

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    margin: 0;
+    height: 2000px;
+}
+
+button {
+    width: 400px;
+    height: 500px;
+    border: 1px solid black;
+    background-color: silver;
+}
+</style>
+
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function logString(s)
+{
+    document.getElementById('log').textContent += s + '\n';
+}
+
+function getUIScript()
+{
+    return `
+    (function() {
+        uiController.zoomToScale(1.2, function() {
+            uiController.singleTapAtPoint(150, 160, function() {
+                uiController.uiScriptComplete();
+            });
+        });
+    })();`
+}
+
+var gotTouch = false;
+var gotClick = false;
+var eventsComplete = false;
+
+function checkForCompletion()
+{
+    if (gotTouch && gotClick && eventsComplete) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}
+
+function doTest()
+{
+    var button = document.getElementById('button');
+    button.addEventListener('touchstart', function(event) {
+        logString('Received event ' + event.type + ' with client coords ' + event.touches[0].clientX + ', ' + event.touches[0].clientY);
+        gotTouch = true;
+        checkForCompletion();
+    });
+
+    button.addEventListener('click', function(event) {
+        logString('Received event ' + event.type + ' with client coords ' + event.clientX + ', ' + event.clientY);
+        gotClick = true;
+        checkForCompletion();
+    });
+
+    if (window.testRunner && testRunner.runUIScript) {
+        testRunner.runUIScript(getUIScript(), function() {
+            eventsComplete = true;
+            checkForCompletion();
+        });
+    }
+}
+
+window.addEventListener('load', doTest, false);
+</script>
+</head>
+
+<body>
+    <button id="button"></button>
+    <p>These two events should have the same client coordinates:</p>
+<pre id="log"></pre>
+</body>
+
+</html>
