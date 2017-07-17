@@ -759,6 +759,7 @@ endmacro()
 set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
 )
 
+WEBKIT_FRAMEWORK_DECLARE(WebKit2)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 # Helper macro which wraps generate-message-receiver.py and generate-message-header.py scripts

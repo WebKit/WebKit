@@ -75,9 +75,15 @@ macro(WEBKIT_WRAP_SOURCELIST)
     source_group("DerivedSources" REGULAR_EXPRESSION "${DERIVED_SOURCES_WEBCORE_DIR}")
 endmacro()
 
+macro(WEBKIT_FRAMEWORK_DECLARE _target)
+    # add_library() without any source files triggers CMake warning
+    # Addition of dummy "source" file does not result in any changes in generated build.ninja file
+    add_library(${_target} ${${_target}_LIBRARY_TYPE} "${CMAKE_BINARY_DIR}/cmakeconfig.h")
+endmacro()
+
 macro(WEBKIT_FRAMEWORK _target)
     include_directories(SYSTEM ${${_target}_SYSTEM_INCLUDE_DIRECTORIES})
-    add_library(${_target} ${${_target}_LIBRARY_TYPE}
+    target_sources(${_target} PRIVATE
         ${${_target}_HEADERS}
         ${${_target}_SOURCES}
     )
