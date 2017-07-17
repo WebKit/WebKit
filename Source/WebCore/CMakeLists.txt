@@ -1152,9 +1152,9 @@ set(WebCore_SOURCES
     bindings/js/JSDOMConvertStrings.cpp
     bindings/js/JSDOMConvertWebGL.cpp
     bindings/js/JSDOMIterator.cpp
+    bindings/js/JSDeprecatedCSSOMValueCustom.cpp
     bindings/js/JSFontFaceCustom.cpp
     bindings/js/JSFontFaceSetCustom.cpp
-    bindings/js/JSCSSValueCustom.cpp
     bindings/js/JSCallbackData.cpp
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
     bindings/js/JSCommandLineAPIHostCustom.cpp

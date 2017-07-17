@@ -1,3 +1,17 @@
+2017-07-17  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Rename JSCSSValueCustom.cpp to JSDeprecatedCSSOMValueCustom.cpp to match the underlying class
+        https://bugs.webkit.org/show_bug.cgi?id=174550
+
+        Reviewed by Brady Eidson.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCSSValueCustom.cpp: Removed.
+        * bindings/js/JSDeprecatedCSSOMValueCustom.cpp: Renamed from bindings/js/JSCSSValueCustom.cpp.
+        Rename file and update references.
+
 2017-07-17  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: order of AirPlay and volume controls is inconsistent between <audio> and <video>

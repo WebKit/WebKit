@@ -24,11 +24,9 @@
  */
 
 #include "config.h"
-
-#include "DeprecatedCSSOMPrimitiveValue.h"
-#include "DeprecatedCSSOMValueList.h"
-#include "JSDeprecatedCSSOMPrimitiveValue.h"
 #include "JSDeprecatedCSSOMValue.h"
+
+#include "JSDeprecatedCSSOMPrimitiveValue.h"
 #include "JSDeprecatedCSSOMValueList.h"
 #include "JSNode.h"
 
