@@ -1,3 +1,15 @@
+2017-07-17  Saam Barati  <sbarati@apple.com>
+
+        Remove custom defined RELEASE_ASSERT in DFGObjectAllocationSinkingPhase
+        https://bugs.webkit.org/show_bug.cgi?id=174584
+
+        Rubber stamped by Keith Miller.
+
+        I used it to diagnose a bug. The bug is now fixed. This custom
+        RELEASE_ASSERT is no longer needed.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2017-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wformat-truncation warning in ConfigFile.cpp

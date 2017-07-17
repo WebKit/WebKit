@@ -48,20 +48,6 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-NO_RETURN_DUE_TO_CRASH NEVER_INLINE void crash(const char*, int line, int)
-{
-    UNUSED_PARAM(line);
-    CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(ObjectAllocationSinkingAssertionFailure, line);
-}
-
-#undef RELEASE_ASSERT
-#define RELEASE_ASSERT(assertion) do { \
-    if (!(assertion)) { \
-        WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
-        crash(__FILE__, __LINE__, __COUNTER__); \
-    } \
-} while (0)
-
 bool verbose = false;
 
 // In order to sink object cycles, we use a points-to analysis coupled
