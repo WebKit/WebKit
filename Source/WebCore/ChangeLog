@@ -1,3 +1,46 @@
+2017-07-17  Brady Eidson  <beidson@apple.com>
+
+        WKHTTPCookieStore observing only works on the default cookie store.
+        <rdar://problem/33330724> and https://bugs.webkit.org/show_bug.cgi?id=174580
+
+        Reviewed by Sam Weinig.
+
+        Covered by new API tests.
+        
+        startObservingCookieChanges and stopObservingCookieChanges are passed a NetworkStorageSession to observe.
+        On Mac/iOS, the passed-in storage session was ignored and the shared cookie storage was assumed.
+        Let's fix that.
+        
+        Also, since using NSNotification based observing only works reliably for the shared cookie storage,
+        switch to direct CFHTTPCookieStorageRef observing.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * platform/network/NetworkStorageSession.h:
+        
+        * platform/network/cocoa/CookieStorageObserver.h: Added.
+        * platform/network/cocoa/CookieStorageObserver.mm: Added.
+        (WebCore::cookiesChanged):
+        (WebCore::CookieStorageObserver::create):
+        (WebCore::CookieStorageObserver::CookieStorageObserver):
+        (WebCore::CookieStorageObserver::~CookieStorageObserver):
+        (WebCore::CookieStorageObserver::startObserving):
+        (WebCore::CookieStorageObserver::stopObserving):
+        (WebCore::CookieStorageObserver::cookiesDidChange):
+        
+        * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+        (WebCore::NetworkStorageSession::cookieStorageObserver):
+        
+        * platform/network/mac/CookieStorageMac.mm:
+        (WebCore::startObservingCookieChanges):
+        (WebCore::stopObservingCookieChanges):
+        (-[WebCookieStorageObjCAdapter notifyCookiesChangedOnMainThread]): Deleted.
+        (-[WebCookieStorageObjCAdapter cookiesChangedNotificationHandler:]): Deleted.
+        (-[WebCookieStorageObjCAdapter startListeningForCookieChangeNotificationsWithCallback:]): Deleted.
+        (-[WebCookieStorageObjCAdapter stopListeningForCookieChangeNotifications]): Deleted.
+        
+        * platform/spi/cf/CFNetworkSPI.h:
+
 2017-07-17  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Rename JSCSSValueCustom.cpp to JSDeprecatedCSSOMValueCustom.cpp to match the underlying class
