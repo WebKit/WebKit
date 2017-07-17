@@ -1,5 +1,6 @@
 <html>
 <head>
+<script src=video-test.js></script>
 <script>
 
 if (window.testRunner) {
@@ -8,21 +9,29 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 }
 
+var video
+
 window.onload = () => {
-    var video = document.getElementsByTagName("video")[0]
-    video.appendChild(document.createElement("source"))
-    video.src = "test.mp4"
+    video = document.getElementsByTagName("video")[0];
+    var source = document.createElement("source");
+    source.src = "source.mp4";
+    video.appendChild(source);
+    video.src = "src.mp4";
 
     setTimeout(()=>{
+        testExpected("relativeURL(video.currentSrc)", "");
         if (window.testRunner)
             testRunner.notifyDone();
-    }, 1)
+    }, 1);
 }
 
 </script>
 </head>
 <body>
 Append source element before setting src attribute.<br>
+Platforms that support setVideoPlaybackRequiresUserGesture
+will have the expected, empty, currentSrc. Platforms that don't should
+have the unexpected "src.mp4".<br>
 <video width=320 height=240></video>
 </body>
 </html>
