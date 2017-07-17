@@ -148,7 +148,7 @@ private:
 
 class InMemoryCompiledContentExtension : public ContentExtensions::CompiledContentExtension {
 public:
-    static RefPtr<InMemoryCompiledContentExtension> createFromFilter(String&& filter)
+    static Ref<InMemoryCompiledContentExtension> createFromFilter(String&& filter)
     {
         CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
@@ -156,7 +156,6 @@ public:
         if (compilerError) {
             // Compiling should always succeed here. We have other tests for compile failures.
             EXPECT_TRUE(false);
-            return nullptr;
         }
 
         return InMemoryCompiledContentExtension::create(WTFMove(extensionData));
@@ -190,7 +189,7 @@ private:
     CompiledContentExtensionData m_data;
 };
 
-void static testRequest(ContentExtensions::ContentExtensionsBackend contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions, bool ignorePreviousRules = false)
+void static testRequest(const ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions, bool ignorePreviousRules = false)
 {
     auto actions = contentExtensionsBackend.actionsForResourceLoad(resourceLoadInfo);
     unsigned expectedSize = actions.size();
@@ -222,7 +221,7 @@ ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
     AtomicString::init();
     auto extension = InMemoryCompiledContentExtension::createFromFilter(json);
     ContentExtensions::ContentExtensionsBackend backend;
-    backend.addContentExtension("testFilter", extension);
+    backend.addContentExtension("testFilter", WTFMove(extension));
     return backend;
 }
 
@@ -868,8 +867,8 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     auto extension1 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}}]");
     auto extension2 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}}]");
     ContentExtensions::ContentExtensionsBackend backend;
-    backend.addContentExtension("testFilter1", extension1);
-    backend.addContentExtension("testFilter2", extension2);
+    backend.addContentExtension("testFilter1", WTFMove(extension1));
+    backend.addContentExtension("testFilter2", WTFMove(extension2));
     
     // These each have two display:none stylesheets. The second one is implied by using the default parameter ignorePreviousRules = false.
     testRequest(backend, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet });
@@ -883,8 +882,8 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     auto ignoreExtension2 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore2\"}}]");
     ContentExtensions::ContentExtensionsBackend backendWithIgnore;
-    backendWithIgnore.addContentExtension("testFilter1", ignoreExtension1);
-    backendWithIgnore.addContentExtension("testFilter2", ignoreExtension2);
+    backendWithIgnore.addContentExtension("testFilter1", WTFMove(ignoreExtension1));
+    backendWithIgnore.addContentExtension("testFilter2", WTFMove(ignoreExtension2));
     
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet }, true);
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore1.html"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet }, true);

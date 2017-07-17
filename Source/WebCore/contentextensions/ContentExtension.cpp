@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-RefPtr<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
+Ref<ContentExtension> ContentExtension::create(const String& identifier, Ref<CompiledContentExtension>&& compiledExtension)
 {
     return adoptRef(*new ContentExtension(identifier, WTFMove(compiledExtension)));
 }

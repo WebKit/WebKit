@@ -41,7 +41,7 @@ class CompiledContentExtension;
 
 class ContentExtension : public RefCounted<ContentExtension> {
 public:
-    static RefPtr<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&);
+    static Ref<ContentExtension> create(const String& identifier, Ref<CompiledContentExtension>&&);
 
     const String& identifier() const { return m_identifier; }
     const CompiledContentExtension& compiledExtension() const { return m_compiledExtension.get(); }

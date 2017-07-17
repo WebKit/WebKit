@@ -48,19 +48,14 @@ namespace WebCore {
 
 namespace ContentExtensions {
     
-void ContentExtensionsBackend::addContentExtension(const String& identifier, RefPtr<CompiledContentExtension> compiledContentExtension)
+void ContentExtensionsBackend::addContentExtension(const String& identifier, Ref<CompiledContentExtension> compiledContentExtension)
 {
     ASSERT(!identifier.isEmpty());
     if (identifier.isEmpty())
         return;
-
-    if (!compiledContentExtension) {
-        removeContentExtension(identifier);
-        return;
-    }
-
-    RefPtr<ContentExtension> extension = ContentExtension::create(identifier, adoptRef(*compiledContentExtension.leakRef()));
-    m_contentExtensions.set(identifier, WTFMove(extension));
+    
+    auto contentExtension = ContentExtension::create(identifier, WTFMove(compiledContentExtension));
+    m_contentExtensions.set(identifier, WTFMove(contentExtension));
 }
 
 void ContentExtensionsBackend::removeContentExtension(const String& identifier)
@@ -88,7 +83,6 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
     Vector<Action> finalActions;
     ResourceFlags flags = resourceLoadInfo.getResourceFlags();
     for (auto& contentExtension : m_contentExtensions.values()) {
-        RELEASE_ASSERT(contentExtension);
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
         
         DFABytecodeInterpreter withoutConditionsInterpreter(compiledExtension.filtersWithoutConditionsBytecode(), compiledExtension.filtersWithoutConditionsBytecodeLength());

@@ -1,3 +1,20 @@
+2017-07-17  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize content extension code
+        https://bugs.webkit.org/show_bug.cgi?id=174588
+
+        Reviewed by Sam Weinig.
+
+        No change in behavior.  Just use Ref instead of RefPtr where possible.
+
+        * contentextensions/ContentExtension.cpp:
+        (WebCore::ContentExtensions::ContentExtension::create):
+        * contentextensions/ContentExtension.h:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::addContentExtension):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad):
+        * contentextensions/ContentExtensionsBackend.h:
+
 2017-07-17  Simon Fraser  <simon.fraser@apple.com>
 
         clientX/clientY on TouchEvent.touches are wrong

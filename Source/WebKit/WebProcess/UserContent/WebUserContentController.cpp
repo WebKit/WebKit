@@ -343,7 +343,7 @@ void WebUserContentController::addContentRuleLists(const Vector<std::pair<String
 {
     for (const auto& contentRuleList : contentRuleLists) {
         WebCompiledContentRuleListData contentRuleListData = contentRuleList.second;
-        RefPtr<WebCompiledContentRuleList> compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleListData));
+        auto compiledContentRuleList = WebCompiledContentRuleList::create(WTFMove(contentRuleListData));
 
         m_contentExtensionBackend.addContentExtension(contentRuleList.first, WTFMove(compiledContentRuleList));
     }

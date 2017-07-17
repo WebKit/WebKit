@@ -56,7 +56,7 @@ public:
 
     // Set a list of rules for a given name. If there were existing rules for the name, they are overriden.
     // The identifier cannot be empty.
-    WEBCORE_EXPORT void addContentExtension(const String& identifier, RefPtr<CompiledContentExtension>);
+    WEBCORE_EXPORT void addContentExtension(const String& identifier, Ref<CompiledContentExtension>);
     WEBCORE_EXPORT void removeContentExtension(const String& identifier);
     WEBCORE_EXPORT void removeAllContentExtensions();
 
@@ -69,7 +69,7 @@ public:
     static const String& displayNoneCSSRule();
 
 private:
-    HashMap<String, RefPtr<ContentExtension>> m_contentExtensions;
+    HashMap<String, Ref<ContentExtension>> m_contentExtensions;
 };
 
 } // namespace ContentExtensions
