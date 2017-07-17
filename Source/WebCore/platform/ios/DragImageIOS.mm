@@ -34,6 +34,7 @@
 #import "FontCascade.h"
 #import "FontPlatformData.h"
 #import "Frame.h"
+#import "GeometryUtilities.h"
 #import "GraphicsContext.h"
 #import "Image.h"
 #import "NotImplemented.h"
@@ -88,18 +89,26 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     return imageCopy.CGImage;
 }
 
-DragImageRef createDragImageFromImage(Image * _Nullable image, ImageOrientationDescription orientation)
+static float maximumAllowedDragImageArea = 600 * 1024;
+
+DragImageRef createDragImageFromImage(Image* image, ImageOrientationDescription orientation)
 {
-    if (!image)
+    if (!image || !image->width() || !image->height())
         return nil;
 
+    float adjustedImageScale = 1;
     CGSize imageSize(image->size());
+    if (imageSize.width * imageSize.height > maximumAllowedDragImageArea) {
+        auto adjustedSize = roundedIntSize(sizeWithAreaAndAspectRatio(maximumAllowedDragImageArea, imageSize.width / imageSize.height));
+        adjustedImageScale = adjustedSize.width() / imageSize.width;
+        imageSize = adjustedSize;
+    }
 
     RetainPtr<UIGraphicsImageRenderer> render = adoptNS([allocUIGraphicsImageRendererInstance() initWithSize:imageSize]);
     UIImage *imageCopy = [render.get() imageWithActions:^(UIGraphicsImageRendererContext *rendererContext) {
         GraphicsContext context(rendererContext.CGContext);
         context.translate(0, imageSize.height);
-        context.scale({ 1, -1 });
+        context.scale({ adjustedImageScale, -adjustedImageScale });
         ImagePaintingOptions paintingOptions;
         paintingOptions.m_orientationDescription = orientation;
         context.drawImage(*image, FloatPoint(), paintingOptions);

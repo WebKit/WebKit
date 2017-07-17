@@ -117,6 +117,7 @@ struct PasteboardImage {
     Vector<RefPtr<SharedBuffer>> clientData;
 #endif
     String suggestedName;
+    FloatSize imageSize;
 };
 
 // For reading from the pasteboard.

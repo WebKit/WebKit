@@ -146,6 +146,12 @@ FloatRect smallestRectWithAspectRatioAroundRect(float aspectRatio, const FloatRe
     return destRect;
 }
 
+FloatSize sizeWithAreaAndAspectRatio(float area, float aspectRatio)
+{
+    auto scaledWidth = std::sqrt(area * aspectRatio);
+    return { scaledWidth, scaledWidth / aspectRatio };
+}
+
 bool ellipseContainsPoint(const FloatPoint& center, const FloatSize& radii, const FloatPoint& point)
 {
     FloatPoint transformedPoint(point);
