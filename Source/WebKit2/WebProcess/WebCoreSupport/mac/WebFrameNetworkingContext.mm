@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebFrameNetworkingContext.h"
 
+#include "CookieStorageUtilsCF.h"
 #include "NetworkSession.h"
 #include "SessionTracker.h"
 #include "WebCookieManager.h"
@@ -79,8 +80,7 @@ void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePa
 
     SandboxExtension::consumePermanently(parameters.cookieStoragePathExtensionHandle);
 
-    RetainPtr<CFDataRef> cookieStorageData = adoptCF(CFDataCreate(kCFAllocatorDefault, parameters.uiProcessCookieStorageIdentifier.data(), parameters.uiProcessCookieStorageIdentifier.size()));
-    auto uiProcessCookieStorage = adoptCF(CFHTTPCookieStorageCreateFromIdentifyingData(kCFAllocatorDefault, cookieStorageData.get()));
+    RetainPtr<CFHTTPCookieStorageRef> uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
     NetworkStorageSession::ensureSession(parameters.sessionID, base + '.' + String::number(parameters.sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
 

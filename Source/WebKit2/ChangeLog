@@ -1,3 +1,42 @@
+2017-07-17  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219545. rdar://problem/33221110
+
+    2017-07-15  Brady Eidson  <beidson@apple.com>
+
+            Make sure all CFHTTPCookieStorageRefs we create are scheduled.
+            <rdar://problem/33221110> and https://bugs.webkit.org/show_bug.cgi?id=174513
+
+            Reviewed by Tim Horton.
+
+            Whenever we create a CFHTTPCookieStorage from identifying data it is unscheduled.
+            We need to schedule it on the appropriate RunLoop.
+
+            This patch also cleans up the creation of the identifying data itself.
+
+            * NetworkProcess/mac/RemoteNetworkingContext.mm:
+            (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+
+            * Shared/cf/CookieStorageUtilsCF.h: Added.
+            * Shared/cf/CookieStorageUtilsCF.mm: Added.
+            (WebKit::cookieStorageFromIdentifyingData):
+            (WebKit::identifyingDataFromCookieStorage):
+
+            * Shared/mac/ChildProcessMac.mm:
+            (WebKit::ChildProcess::setSharedHTTPCookieStorage):
+
+            * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+            (WebKit::WebProcessPool::platformInitializeWebProcess):
+            (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
+            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+            (WebKit::WebsiteDataStore::parameters):
+
+            * WebKit2.xcodeproj/project.pbxproj:
+
+            * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+            (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+
 2017-07-13  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219440. rdar://problem/33272627

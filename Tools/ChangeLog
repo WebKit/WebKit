@@ -1,3 +1,17 @@
+2017-07-17  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219545. rdar://problem/33221110
+
+    2017-07-15  Brady Eidson  <beidson@apple.com>
+
+            Make sure all CFHTTPCookieStorageRefs we create are scheduled.
+            <rdar://problem/33221110> and https://bugs.webkit.org/show_bug.cgi?id=174513
+
+            Reviewed by Tim Horton.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/WKHTTPCookieStore.mm:
+            (TEST): Make this test more reliable by clearing everything beforehand.
+
 2017-06-29  Dean Jackson  <dino@apple.com>
 
         Disable some features on this release branch.
