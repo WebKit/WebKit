@@ -282,9 +282,11 @@ void ConfigFile::parse()
         char* filename = nullptr;
         if (scanner.tryConsume('=') && (filename = scanner.tryConsumeString())) {
             if (statementNesting != NestedStatementFailedCriteria) {
-                if (filename[0] != '/')
-                    snprintf(logPathname, s_maxPathLength + 1, "%s/%s", m_configDirectory, filename);
-                else
+                if (filename[0] != '/') {
+                    int spaceRequired = snprintf(logPathname, s_maxPathLength + 1, "%s/%s", m_configDirectory, filename);
+                    if (static_cast<unsigned>(spaceRequired) > s_maxPathLength)
+                        return ParseError;
+                } else
                     strncpy(logPathname, filename, s_maxPathLength);
             }
 

@@ -1,3 +1,16 @@
+2017-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wformat-truncation warning in ConfigFile.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=174506
+
+        Reviewed by Darin Adler.
+
+        Check if the JSC config filename would be truncated due to exceeding max path length. If so,
+        return ParseError.
+
+        * runtime/ConfigFile.cpp:
+        (JSC::ConfigFile::parse):
+
 2017-07-17  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] Create targets before WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS is called
