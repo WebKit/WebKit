@@ -2,10 +2,6 @@
 # exclusively needed in only one subdirectory of Source (e.g. only needed by
 # WebCore), then put it there instead.
 
-include(CMakeParseArguments)
-include(ProcessorCount)
-ProcessorCount(PROCESSOR_COUNT)
-
 macro(WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS)
     set(_file ${CMAKE_CURRENT_SOURCE_DIR}/Platform${PORT}.cmake)
     if (EXISTS ${_file})

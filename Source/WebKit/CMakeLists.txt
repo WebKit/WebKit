@@ -1,5 +1,4 @@
-include(CheckCXXSourceCompiles)
-include(CheckFunctionExists)
+include(WebKitCommon)
 
 set_property(DIRECTORY . PROPERTY FOLDER "WebKit2")
 

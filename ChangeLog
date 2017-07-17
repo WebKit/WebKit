@@ -1,5 +1,17 @@
 2017-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [CMake] Include most CMake modules from WebKitCommon.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=174546
+
+        Reviewed by Konstantin Tokarev.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/WebKitCommon.cmake:
+        * Source/cmake/WebKitMacros.cmake:
+
+2017-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [CMake] Macros in WebKitMacros.cmake should be prefixed with WEBKIT_ namespace
         https://bugs.webkit.org/show_bug.cgi?id=174547
 

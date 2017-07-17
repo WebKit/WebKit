@@ -36,6 +36,19 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Helper macros and feature defines
     # -----------------------------------------------------------------------------
 
+    # To prevent multiple inclusion, most modules should be included once here.
+    include(CheckCXXSourceCompiles)
+    include(CheckFunctionExists)
+    include(CheckIncludeFile)
+    include(CheckSymbolExists)
+    include(CheckStructHasMember)
+    include(CheckTypeSize)
+    include(CMakeDependentOption)
+    include(CMakeParseArguments)
+    include(ProcessorCount)
+    include(TestCXXAcceptsFlag)
+
+    include(WebKitPackaging)
     include(WebKitMacros)
     include(WebKitFS)
     include(WebKitFeatures)

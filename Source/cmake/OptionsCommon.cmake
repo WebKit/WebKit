@@ -127,7 +127,6 @@ if (WTF_CPU_ARM64_CORTEXA53)
     if (NOT WTF_CPU_ARM64)
         message(FATAL_ERROR "WTF_CPU_ARM64_CORTEXA53 set without WTF_CPU_ARM64")
     endif ()
-    include(TestCXXAcceptsFlag)
     CHECK_CXX_ACCEPTS_FLAG(-mfix-cortex-a53-835769 CXX_ACCEPTS_MFIX_CORTEX_A53_835769)
     if (CXX_ACCEPTS_MFIX_CORTEX_A53_835769)
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mfix-cortex-a53-835769")
@@ -148,7 +147,6 @@ if (WTF_CPU_ARM)
     int main() {}
    ")
 
-    include(CheckCXXSourceCompiles)
     CHECK_CXX_SOURCE_COMPILES("${ARM_THUMB2_TEST_SOURCE}" ARM_THUMB2_DETECTED)
     if (NOT ARM_THUMB2_DETECTED)
         set(ARM_TRADITIONAL_DETECTED TRUE)
@@ -158,7 +156,6 @@ if (WTF_CPU_ARM)
 endif ()
 
 # Use ld.gold if it is available and isn't disabled explicitly
-include(CMakeDependentOption)
 CMAKE_DEPENDENT_OPTION(USE_LD_GOLD "Use GNU gold linker" ON
                        "NOT CXX_ACCEPTS_MFIX_CORTEX_A53_835769;NOT ARM_TRADITIONAL_DETECTED;NOT WIN32;NOT APPLE" OFF)
 if (USE_LD_GOLD)
@@ -174,7 +171,6 @@ endif ()
 
 set(ENABLE_DEBUG_FISSION_DEFAULT OFF)
 if (USE_LD_GOLD AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    include(TestCXXAcceptsFlag)
     CHECK_CXX_ACCEPTS_FLAG(-gsplit-dwarf CXX_ACCEPTS_GSPLIT_DWARF)
     if (CXX_ACCEPTS_GSPLIT_DWARF)
         set(ENABLE_DEBUG_FISSION_DEFAULT ON)
@@ -235,12 +231,6 @@ if (NOT PORT STREQUAL "GTK")
 endif ()
 
 # Macros for determining HAVE values.
-include(CheckIncludeFile)
-include(CheckFunctionExists)
-include(CheckSymbolExists)
-include(CheckStructHasMember)
-include(CheckTypeSize)
-
 macro(_HAVE_CHECK_INCLUDE _variable _header)
     check_include_file(${_header} ${_variable}_value)
     SET_AND_EXPOSE_TO_BUILD(${_variable} ${_variable}_value)
