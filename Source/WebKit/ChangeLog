@@ -1,3 +1,16 @@
+2017-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: link and partial link queries don't work if the link contains formatting tags
+        https://bugs.webkit.org/show_bug.cgi?id=174498
+
+        Reviewed by Brian Burg.
+
+        So, for example, if we find links with text "Foo" and there's a link like <a href=""><bA>Foo</b></a> we fail
+        with no such element error. This causes test test_Link_With_Formatting_Tags to fail.
+
+        * UIProcess/Automation/atoms/FindNodes.js:
+        (switch): Use descendant-or-self::text() instead of just text() in the links xpath expressions.
+
 2017-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Web Automation: FindNodes should throw an error in case of invalid strategy

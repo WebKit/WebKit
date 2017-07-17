@@ -37,11 +37,11 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
         break;
     case "link text":
         strategy = "xpath";
-        query = ".//a[@href][text() = \"" + escape(query) + "\"]";
+        query = ".//a[@href][descendant-or-self::text() = \"" + escape(query) + "\"]";
         break;
     case "partial link text":
         strategy = "xpath";
-        query = ".//a[@href][contains(text(), \"" + escape(query) + "\")]";
+        query = ".//a[@href][contains(descendant-or-self::text(), \"" + escape(query) + "\")]";
         break;
     }
 
