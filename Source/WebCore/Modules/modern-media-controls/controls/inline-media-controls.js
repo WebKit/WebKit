@@ -253,7 +253,7 @@ class InlineMediaControls extends MediaControls
     _rightContainerButtons()
     {
         if (this._shouldUseAudioLayout)
-            return [this.airplayButton, this.muteButton];
+            return [this.muteButton, this.airplayButton];
 
         if (this._shouldUseSingleBarLayout)
             return [this.muteButton, this.airplayButton, this.pipButton, this.tracksButton, this.fullscreenButton];

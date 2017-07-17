@@ -1,3 +1,18 @@
+2017-07-17  Antoine Quint  <graouts@apple.com>
+
+        REGRESSION: order of AirPlay and volume controls is inconsistent between <audio> and <video>
+        https://bugs.webkit.org/show_bug.cgi?id=174581
+        <rdar://problem/33297519>
+
+        Reviewed by Sam Weinig.
+
+        We had an inconsistency between <audio> and <video> controls for the relative order of the
+        volume and AirPlay buttons. The <video> layout was correct (volume first and AirPlay after)
+        and the <audio> layout now is the same.
+
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls.prototype._rightContainerButtons):
+
 2017-07-17  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] Create targets before WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS is called
