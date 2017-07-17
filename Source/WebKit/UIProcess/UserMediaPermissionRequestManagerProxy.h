@@ -23,8 +23,8 @@
 #include "UserMediaPermissionRequestProxy.h"
 #include <WebCore/MediaProducer.h>
 #include <WebCore/SecurityOrigin.h>
-#include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {
@@ -81,7 +81,7 @@ private:
 
     WebPageProxy& m_page;
 
-    WebCore::Timer m_rejectionTimer;
+    RunLoop::Timer<UserMediaPermissionRequestManagerProxy> m_rejectionTimer;
     Vector<uint64_t> m_pendingRejections;
 
     Vector<Ref<UserMediaPermissionRequestProxy>> m_pregrantedRequests;
