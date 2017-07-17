@@ -1,3 +1,9 @@
+2017-07-17  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed attempt to fix Mac cmake build
+
+        * PlatformMac.cmake: Remove reference to file which is gone since r219025
+
 2017-07-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Include most CMake modules from WebKitCommon.cmake
