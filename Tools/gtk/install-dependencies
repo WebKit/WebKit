@@ -427,7 +427,9 @@ function installDependenciesWithDnf {
         opus-devel \
         patch \
         pcre-devel \
+        perl-JSON-PP \
         perl-Switch \
+        perl-Time-HiRes \
         perl-version \
         pulseaudio-libs-devel \
         python-devel \

@@ -1,3 +1,12 @@
+2017-07-17  Charlie Turner  <cturner@igalia.com>
+
+        Add some missing build dependencies on Fedora
+        https://bugs.webkit.org/show_bug.cgi?id=174578
+
+        Unreviewed dependency update.
+
+        * gtk/install-dependencies:
+
 2017-07-16  Brady Eidson  <beidson@apple.com>
 
         Crash when a WKHTTPCookieStore outlives its owning WKWebsiteDataStore.
