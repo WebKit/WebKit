@@ -1,3 +1,23 @@
+2017-07-17  Jeremy Jones  <jeremyj@apple.com>
+
+        Add video fullscreen transition logging.
+        https://bugs.webkit.org/show_bug.cgi?id=174474
+
+        Reviewed by Jer Noble.
+
+        No functional change. Just adds logging.
+
+        * Platform/Logging.h:
+        * WebProcess/cocoa/WebVideoFullscreenManager.mm:
+        (WebKit::WebVideoFullscreenManager::enterVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenForVideoElement):
+        (WebKit::WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation):
+        (WebKit::WebVideoFullscreenManager::didSetupFullscreen):
+        (WebKit::WebVideoFullscreenManager::didEnterFullscreen):
+        (WebKit::WebVideoFullscreenManager::didExitFullscreen):
+        (WebKit::WebVideoFullscreenManager::didCleanupFullscreen):
+        (WebKit::WebVideoFullscreenManager::setVideoLayerFrameFenced):
+
 2017-07-17  Konstantin Tokarev  <annulen@yandex.ru>
 
         [CMake] Create targets before WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS is called

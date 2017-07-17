@@ -28,6 +28,7 @@
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 
 #import "Attachment.h"
+#import "Logging.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebPage.h"
 #import "WebPlaybackSessionManager.h"
@@ -221,6 +222,7 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
 {
     ASSERT(m_page);
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
+    LOG(Fullscreen, "WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(%p)", this);
 
     uint64_t contextId = m_playbackSessionManager->contextIdForMediaElement(videoElement);
     auto addResult = m_videoElements.add(&videoElement, contextId);
@@ -255,6 +257,7 @@ void WebVideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoEle
 
 void WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement& videoElement)
 {
+    LOG(Fullscreen, "WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(%p)", this);
     ASSERT(m_page);
     ASSERT(m_videoElements.contains(&videoElement));
 
@@ -272,6 +275,8 @@ void WebVideoFullscreenManager::exitVideoFullscreenForVideoElement(WebCore::HTML
 
 void WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement& videoElement, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
+    LOG(Fullscreen, "WebVideoFullscreenManager::exitVideoFullscreenToModeWithoutAnimation(%p)", this);
+
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     ASSERT(m_page);
     ASSERT(m_videoElements.contains(&videoElement));
@@ -316,6 +321,8 @@ void WebVideoFullscreenManager::fullscreenModeChanged(uint64_t contextId, WebCor
 
 void WebVideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
 {
+    LOG(Fullscreen, "WebVideoFullscreenManager::didSetupFullscreen(%p, %x)", this, contextId);
+
     ASSERT(m_page);
     PlatformLayer* videoLayer = [CALayer layer];
 #ifndef NDEBUG
@@ -353,6 +360,8 @@ void WebVideoFullscreenManager::didSetupFullscreen(uint64_t contextId)
     
 void WebVideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
 {
+    LOG(Fullscreen, "WebVideoFullscreenManager::didEnterFullscreen(%p, %x)", this, contextId);
+
     RefPtr<WebVideoFullscreenModelVideoElement> model;
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
@@ -377,6 +386,8 @@ void WebVideoFullscreenManager::didEnterFullscreen(uint64_t contextId)
 
 void WebVideoFullscreenManager::didExitFullscreen(uint64_t contextId)
 {
+    LOG(Fullscreen, "WebVideoFullscreenManager::didExitFullscreen(%p, %x)", this, contextId);
+
     RefPtr<WebVideoFullscreenModelVideoElement> model;
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
@@ -400,6 +411,8 @@ void WebVideoFullscreenManager::didExitFullscreen(uint64_t contextId)
     
 void WebVideoFullscreenManager::didCleanupFullscreen(uint64_t contextId)
 {
+    LOG(Fullscreen, "WebVideoFullscreenManager::didCleanupFullscreen(%p, %x)", this, contextId);
+
     RefPtr<WebVideoFullscreenModelVideoElement> model;
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
@@ -444,6 +457,8 @@ void WebVideoFullscreenManager::fullscreenMayReturnToInline(uint64_t contextId, 
     
 void WebVideoFullscreenManager::setVideoLayerFrameFenced(uint64_t contextId, WebCore::FloatRect bounds, IPC::Attachment fencePort)
 {
+    LOG(Fullscreen, "WebVideoFullscreenManager::setVideoLayerFrameFenced(%p, %x)", this, contextId);
+
     RefPtr<WebVideoFullscreenModelVideoElement> model;
     RefPtr<WebVideoFullscreenInterfaceContext> interface;
     std::tie(model, interface) = ensureModelAndInterface(contextId);
