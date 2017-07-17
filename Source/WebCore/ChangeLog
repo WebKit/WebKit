@@ -1,3 +1,15 @@
+2017-07-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wreorder warning caused by GraphicsContext3D cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=174511
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLES.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2017-07-16  Antoine Quint  <graouts@apple.com>
 
         Dismissing the captions panel using the mouse is too eager to remove the captions panel and media controls

@@ -275,16 +275,8 @@ RefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3DAttributes 
 }
 
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3DAttributes attributes, HostWindow*, GraphicsContext3D::RenderStyle renderStyle)
-    : m_currentWidth(0)
-    , m_currentHeight(0)
+    : m_attrs(attributes)
     , m_compiler(isGLES2Compliant() ? SH_ESSL_OUTPUT : SH_GLSL_COMPATIBILITY_OUTPUT)
-    , m_attrs(attributes)
-    , m_texture(0)
-    , m_fbo(0)
-    , m_depthStencilBuffer(0)
-    , m_multisampleFBO(0)
-    , m_multisampleDepthStencilBuffer(0)
-    , m_multisampleColorBuffer(0)
     , m_private(std::make_unique<GraphicsContext3DPrivate>(this, renderStyle))
 {
     makeContextCurrent();
