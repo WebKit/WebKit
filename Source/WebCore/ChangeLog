@@ -1,3 +1,40 @@
+2017-07-16  Antoine Quint  <graouts@apple.com>
+
+        Dismissing the captions panel using the mouse is too eager to remove the captions panel and media controls
+        https://bugs.webkit.org/show_bug.cgi?id=174571
+        <rdar://problem/33294968>
+
+        Reviewed by Eric Carlson.
+
+        We did several things wrong when dismissing the tracks panel:
+
+            - we did not check whether we were hosted in a shadow root when figuring if a click was on the tracks panel
+            - we did not check whether we clicked over the media when dismissing the tracks panel
+            - we did not check whether auto-hide was on before fading the media controls out when we clicked outside
+              the media controls bounds
+
+        We now correctly account for all of those cases and implement the following behavior when clickng as the tracks
+        panel is presented:
+        
+            - dismiss the panel if the click is outside of the panel
+            - dismiss the panel and the media controls if the click is outside the video and the media controls have
+              auto-hide on (ie. media is playing)
+            - dismiss the panel and the media controls after the track selection animation is finished if a track is selected
+
+        Tests: media/modern-media-controls/tracks-panel/tracks-panel-up-click-outside-media-does-not-dimiss-media-controls-when-media-is-paused.html
+               media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html
+
+        * Modules/modern-media-controls/controls/media-controls.js:
+        (MediaControls.prototype.hideTracksPanel): Only hide the media controls if we clicked outside of the media
+        controls bounds and if we have auto-hide on when idle (ie. the media is playing).
+        (MediaControls.prototype.isPointInControls): Add an option to specify whether the container should be
+        considered when checking if a point is contained within the media controls bounds.
+        * Modules/modern-media-controls/controls/tracks-panel.js:
+        (TracksPanel.prototype._handleMousedown):
+        (TracksPanel.prototype._isPointInTracksPanel): Correctly check whether the element that we started pressing
+        on is contained within the tracks panel, accounting for the case where we are presented within a shadow root
+        (ie. always when runing inside a Web page).
+
 2017-07-16  Ali Juma  <ajuma@chromium.org>
 
         DisallowUserAgentShadowContent moves out of non-UA shadow roots

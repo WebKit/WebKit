@@ -60,19 +60,47 @@ function pressOnElement(element, continuation)
 
     // debug(`Trying to press on &lt;${element.localName} class="${element.className}"> at ${centerX}x${centerY}.`);
 
+    pressAtPoint(centerX, centerY, continuation);
+
+    return true;
+}
+
+function pressAtPoint(x, y, continuation)
+{
+    if (typeof continuation !== "function")
+        continuation = new Function;
+
     if ("createTouch" in document) {
         testRunner.runUIScript(`
-            uiController.singleTapAtPoint(${centerX}, ${centerY}, function() {
+            uiController.singleTapAtPoint(${x}, ${y}, function() {
                 uiController.uiScriptComplete("Done");
             });`, continuation);
     } else {
-        eventSender.mouseMoveTo(centerX, centerY);
+        eventSender.mouseMoveTo(x, y);
         eventSender.mouseDown();
         eventSender.mouseUp();
         continuation();
     }
+}
 
-    return true;
+function showTracksPanel(shadowRoot, continuation)
+{
+    if (typeof continuation !== "function")
+        continuation = new Function;
+
+    shouldBecomeDifferent("shadowRoot.querySelector('button.tracks')", "null", () => {
+        shouldBecomeDifferent("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width", "0", () => {
+            debug("=> Tracks button is visible.")
+            debug("");
+            debug("Pressing on the tracks button.");
+            pressOnElement(shadowRoot.querySelector("button.tracks"));
+            shouldBecomeDifferent("shadowRoot.querySelector('.tracks-panel')", "null", () => {
+                debug("=> Tracks panel is visible.")
+                debug("");
+                continuation();
+            });
+        });
+    });
 }
 
 function finishMediaControlsTest()

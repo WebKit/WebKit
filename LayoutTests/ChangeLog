@@ -1,3 +1,26 @@
+2017-07-16  Antoine Quint  <graouts@apple.com>
+
+        Dismissing the captions panel using the mouse is too eager to remove the captions panel and media controls
+        https://bugs.webkit.org/show_bug.cgi?id=174571
+        <rdar://problem/33294968>
+
+        Reviewed by Eric Carlson.
+
+        Adding a method to show the tracks panel for a given shadow root and adding new tests to check the correct
+        behavior when dismissing the tracks panel when clicking over the media element or outside the media element
+        when it's paused.
+
+        * media/modern-media-controls/resources/media-controls-utils.js:
+        (pressOnElement):
+        (pressAtPoint):
+        (showTracksPanel):
+        (finishMediaControlsTest): Deleted.
+        * media/modern-media-controls/tracks-panel/tracks-panel-up-click-outside-media-does-not-dimiss-media-controls-when-media-is-paused-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-up-click-outside-media-does-not-dimiss-media-controls-when-media-is-paused.html: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing-expected.txt: Added.
+        * media/modern-media-controls/tracks-panel/tracks-panel-up-click-over-media-does-not-dimiss-media-controls-when-media-is-playing.html: Added.
+        * platform/mac/TestExpectations:
+
 2017-07-16  Ali Juma  <ajuma@chromium.org>
 
         DisallowUserAgentShadowContent moves out of non-UA shadow roots

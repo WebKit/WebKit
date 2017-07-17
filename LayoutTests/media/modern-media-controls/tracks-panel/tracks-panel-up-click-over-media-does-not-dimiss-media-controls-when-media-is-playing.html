@@ -1,0 +1,32 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
+<body>
+<video src="../../content/CC+Subtitles.mov" style="position: absolute; left: 10px; top: 10px; width: 640px; height: 360px;" controls autoplay></video>
+<script type="text/javascript">
+
+window.jsTestIsAsync = true;
+
+description("Clicking over the media when the tracks panel is up and the media is playing should dismiss the tracks panel but not the media controls.");
+
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
+
+media.addEventListener("play", () => {
+    debug("Media started playing.");
+    debug("");
+    showTracksPanel(shadowRoot, () => {
+        debug("Clicking over the media to dismiss the tracks panel.");
+        pressAtPoint(11, 11, () => {
+            requestAnimationFrame(() => {
+                shouldBeFalse("shadowRoot.querySelector('.media-controls').classList.contains('faded')");
+                shouldBeTrue("shadowRoot.querySelector('.tracks-panel').classList.contains('fade-out')");
+                debug("");
+                finishJSTest();
+            });
+        });
+    });
+});
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

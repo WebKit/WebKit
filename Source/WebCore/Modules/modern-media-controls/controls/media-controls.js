@@ -187,12 +187,12 @@ class MediaControls extends LayoutNode
 
         let shouldFadeControlsBar = true;
         if (window.event instanceof MouseEvent)
-            shouldFadeControlsBar = !this.isPointInControls(new DOMPoint(event.clientX, event.clientY));
+            shouldFadeControlsBar = !this.isPointInControls(new DOMPoint(event.clientX, event.clientY), true);
 
         this.tracksButton.on = false;
         this.tracksButton.element.focus();
         this.autoHideController.hasSecondaryUIAttached = false;
-        this.faded = shouldFadeControlsBar;
+        this.faded = this.autoHideController.fadesWhileIdle && shouldFadeControlsBar;
         this.tracksPanel.hide();
     }
 
@@ -201,7 +201,7 @@ class MediaControls extends LayoutNode
         this.element.classList.add("fade-in");
     }
 
-    isPointInControls(point)
+    isPointInControls(point, includeContainer)
     {
         let ancestor = this.element.parentNode;
         while (ancestor && !(ancestor instanceof ShadowRoot))
@@ -212,6 +212,10 @@ class MediaControls extends LayoutNode
             return false;
 
         const tappedElement = shadowRoot.elementFromPoint(point.x, point.y);
+
+        if (includeContainer && this.element === tappedElement)
+            return true;
+
         return this.children.some(child => child.element.contains(tappedElement));
     }
 
