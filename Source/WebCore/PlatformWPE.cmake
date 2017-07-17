@@ -5,10 +5,6 @@ include(platform/ImageDecoders.cmake)
 include(platform/Linux.cmake)
 include(platform/TextureMapper.cmake)
 
-if (USE_GCRYPT)
-    include(platform/GCrypt.cmake)
-endif ()
-
 # Allow building ANGLE on platforms that don't provide X11 headers.
 list(APPEND ANGLE_PLATFORM_DEFINITIONS "USE_WPE")
 
@@ -171,6 +167,7 @@ list(APPEND WebCore_LIBRARIES
     ${GLIB_LIBRARIES}
     ${GNUTLS_LIBRARIES}
     ${ICU_LIBRARIES}
+    ${LIBGCRYPT_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
     ${LIBTASN1_LIBRARIES}
     ${LIBXML2_LIBRARIES}
@@ -185,6 +182,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
     ${GNUTLS_INCLUDE_DIRS}
     ${ICU_INCLUDE_DIRS}
+    ${LIBGCRYPT_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
     ${LIBTASN1_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
@@ -205,3 +203,62 @@ target_include_directories(WebCorePlatformWPE SYSTEM PRIVATE
 target_link_libraries(WebCorePlatformWPE
     ${WebCore_LIBRARIES}
 )
+
+if (ENABLE_SUBTLE_CRYPTO)
+    list(APPEND WebCore_SOURCES
+        crypto/CryptoAlgorithm.cpp
+        crypto/CryptoAlgorithmRegistry.cpp
+        crypto/CryptoKey.cpp
+        crypto/SubtleCrypto.cpp
+        crypto/WebKitSubtleCrypto.cpp
+
+        crypto/algorithms/CryptoAlgorithmAES_CBC.cpp
+        crypto/algorithms/CryptoAlgorithmAES_CFB.cpp
+        crypto/algorithms/CryptoAlgorithmAES_CTR.cpp
+        crypto/algorithms/CryptoAlgorithmAES_GCM.cpp
+        crypto/algorithms/CryptoAlgorithmAES_KW.cpp
+        crypto/algorithms/CryptoAlgorithmECDH.cpp
+        crypto/algorithms/CryptoAlgorithmECDSA.cpp
+        crypto/algorithms/CryptoAlgorithmHKDF.cpp
+        crypto/algorithms/CryptoAlgorithmHMAC.cpp
+        crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
+        crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp
+        crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp
+        crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
+        crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp
+        crypto/algorithms/CryptoAlgorithmSHA1.cpp
+        crypto/algorithms/CryptoAlgorithmSHA224.cpp
+        crypto/algorithms/CryptoAlgorithmSHA256.cpp
+        crypto/algorithms/CryptoAlgorithmSHA384.cpp
+        crypto/algorithms/CryptoAlgorithmSHA512.cpp
+
+        crypto/gcrypt/CryptoAlgorithmAES_CBCGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmAES_CFBGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmAES_CTRGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmAES_GCMGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmAES_KWGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmECDHGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmECDSAGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmHKDFGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmHMACGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmPBKDF2GCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmRSAES_PKCS1_v1_5GCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmRSASSA_PKCS1_v1_5GCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmRSA_OAEPGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmRSA_PSSGCrypt.cpp
+        crypto/gcrypt/CryptoAlgorithmRegistryGCrypt.cpp
+        crypto/gcrypt/CryptoKeyECGCrypt.cpp
+        crypto/gcrypt/CryptoKeyRSAGCrypt.cpp
+        crypto/gcrypt/SerializedCryptoKeyWrapGCrypt.cpp
+
+        crypto/keys/CryptoKeyAES.cpp
+        crypto/keys/CryptoKeyDataOctetSequence.cpp
+        crypto/keys/CryptoKeyDataRSAComponents.cpp
+        crypto/keys/CryptoKeyEC.cpp
+        crypto/keys/CryptoKeyHMAC.cpp
+        crypto/keys/CryptoKeyRSA.cpp
+        crypto/keys/CryptoKeyRaw.cpp
+        crypto/keys/CryptoKeySerializationRaw.cpp
+    )
+endif ()
+
