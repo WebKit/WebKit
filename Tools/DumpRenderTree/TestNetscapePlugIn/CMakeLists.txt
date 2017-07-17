@@ -58,4 +58,4 @@ set_target_properties(TestNetscapePlugIn PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${C
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(TestNetscapePlugIn)
 
 # Suppress unused parameter warnings for sources in WebKit2.
-ADD_TARGET_PROPERTIES(TestNetscapePlugIn COMPILE_FLAGS "-Wno-unused-parameter")
+WEBKIT_ADD_TARGET_PROPERTIES(TestNetscapePlugIn COMPILE_FLAGS "-Wno-unused-parameter")

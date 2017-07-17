@@ -58,7 +58,7 @@ macro(ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES _source _deps)
         list(APPEND _tmp "${DERIVED_SOURCES_WEBCORE_DIR}/${f}")
     endforeach ()
 
-    ADD_SOURCE_DEPENDENCIES(${_source} ${_tmp})
+    WEBKIT_ADD_SOURCE_DEPENDENCIES(${_source} ${_tmp})
     unset(_tmp)
 endmacro()
 
@@ -69,7 +69,7 @@ macro(MAKE_JS_FILE_ARRAYS _output_cpp _output_h _namespace _scripts _scripts_dep
         DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/make-js-file-arrays.py ${${_scripts}}
         COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/make-js-file-arrays.py -n ${_namespace} ${_output_h} ${_output_cpp} ${${_scripts}}
         VERBATIM)
-    ADD_SOURCE_DEPENDENCIES(${${_scripts_dependencies}} ${_output_h} ${_output_cpp})
+    WEBKIT_ADD_SOURCE_DEPENDENCIES(${${_scripts_dependencies}} ${_output_h} ${_output_cpp})
 endmacro()
 
 

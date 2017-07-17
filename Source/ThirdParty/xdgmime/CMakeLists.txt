@@ -22,5 +22,5 @@ add_library(xdgmime STATIC ${XDGMIME_SOURCES})
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(xdgmime)
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    ADD_TARGET_PROPERTIES(xdgmime COMPILE_FLAGS "-Wno-sign-compare -Wno-unused-parameter")
+    WEBKIT_ADD_TARGET_PROPERTIES(xdgmime COMPILE_FLAGS "-Wno-sign-compare -Wno-unused-parameter")
 endif ()

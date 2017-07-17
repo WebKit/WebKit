@@ -39,7 +39,7 @@ WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 if (MSVC)
-    ADD_PRECOMPILED_HEADER("WebKitPrefix.h" "win/WebKitPrefix.cpp" WebKit_SOURCES)
+    WEBKIT_ADD_PRECOMPILED_HEADER("WebKitPrefix.h" "win/WebKitPrefix.cpp" WebKit_SOURCES)
     list(APPEND WebKit_SOURCES win/WebKit.resources/WebKit.rc)
     add_definitions(/DWEBKIT_EXPORTS /DFRAMEWORK_NAME=WebKit)
 endif ()

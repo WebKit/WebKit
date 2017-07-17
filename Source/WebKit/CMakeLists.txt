@@ -844,11 +844,11 @@ endif ()
 
 # Suppress unused parameter warnings for sources in WebKit2.
 if (COMPILER_IS_GCC_OR_CLANG)
-    ADD_TARGET_PROPERTIES(WebKit2 COMPILE_FLAGS "-Wno-unused-parameter")
+    WEBKIT_ADD_TARGET_PROPERTIES(WebKit2 COMPILE_FLAGS "-Wno-unused-parameter")
 endif ()
 
 if (WebKit2_VERSION_SCRIPT)
-    ADD_TARGET_PROPERTIES(WebKit2 LINK_FLAGS "${WebKit2_VERSION_SCRIPT}")
+    WEBKIT_ADD_TARGET_PROPERTIES(WebKit2 LINK_FLAGS "${WebKit2_VERSION_SCRIPT}")
 endif ()
 
 add_executable(WebProcess ${WebProcess_SOURCES})
@@ -919,7 +919,7 @@ if ("${PORT}" STREQUAL "Mac")
 
     set_target_properties(NetworkProcess PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${_net_xpc_dir}/MacOS")
 else ()
-    POPULATE_LIBRARY_VERSION(WEBKIT2)
+    WEBKIT_POPULATE_LIBRARY_VERSION(WEBKIT2)
     set_target_properties(WebKit2 PROPERTIES VERSION ${WEBKIT2_VERSION} SOVERSION ${WEBKIT2_VERSION_MAJOR})
 
     install(TARGETS WebKit2 WebProcess NetworkProcess
