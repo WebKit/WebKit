@@ -1,3 +1,19 @@
+2017-07-17  Antoine Quint  <graouts@apple.com>
+
+        Media controls draw behind captions
+        https://bugs.webkit.org/show_bug.cgi?id=174579
+        <rdar://problem/33295427>
+
+        Reviewed by Dean Jackson.
+
+        Add a new test that checks the order in which order the captions and controls containers appear
+        under the media shadow root.
+
+        * media/modern-media-controls/media-controls/media-controls-display-above-captions-expected.txt: Added.
+        * media/modern-media-controls/media-controls/media-controls-display-above-captions.html: Added.
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-07-16  Antoine Quint  <graouts@apple.com>
 
         Dismissing the captions panel using the mouse is too eager to remove the captions panel and media controls

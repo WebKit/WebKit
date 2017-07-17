@@ -42,7 +42,7 @@ class MediaController
 
         if (host) {
             host.controlsDependOnPageScaleFactor = this.layoutTraits & LayoutTraits.iOS;
-            this.container.appendChild(host.textTrackContainer);
+            this.container.insertBefore(host.textTrackContainer, this.controls.element);
             if (host.isInMediaDocument)
                 this.mediaDocumentController = new MediaDocumentController(this);
         }
