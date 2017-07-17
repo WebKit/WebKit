@@ -70,6 +70,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "PluginDocument.h"
+#include "Range.h"
 #include "RenderFrameSet.h"
 #include "RenderLayer.h"
 #include "RenderListBox.h"
@@ -1998,6 +1999,12 @@ static Node* targetNodeForClickEvent(Node* mousePressNode, Node* mouseReleaseNod
 
     if (mousePressNode == mouseReleaseNode)
         return mouseReleaseNode;
+
+    // If mousePressNode and mouseReleaseNode differ, we should fire the event at their common ancestor if there is one.
+    if (&mousePressNode->document() == &mouseReleaseNode->document()) {
+        if (auto* commonAncestor = Range::commonAncestorContainer(mousePressNode, mouseReleaseNode))
+            return commonAncestor;
+    }
 
     Element* mouseReleaseShadowHost = mouseReleaseNode->shadowHost();
     if (mouseReleaseShadowHost && mouseReleaseShadowHost == mousePressNode->shadowHost()) {

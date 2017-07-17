@@ -387,6 +387,7 @@ fast/forms/range/disabled-while-dragging.html [ Skip ]
 fast/forms/range/range-drag-when-toggled-disabled.html [ Skip ]
 fast/media/video-element-in-details-collapse.html [ Skip ]
 fast/frames/user-gesture-timestamp-propagation.html [ Failure ]
+fast/events/mouse-click-different-mouseDown-mouseUp-nodes.html [ Skip ]
 
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]

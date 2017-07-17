@@ -1,3 +1,22 @@
+2017-07-17  Chris Dumez  <cdumez@apple.com>
+
+        click event does not dispatch to parent when child target stops hit testing after mousedown
+        https://bugs.webkit.org/show_bug.cgi?id=174564
+        <rdar://problem/33340234>
+
+        Reviewed by Simon Fraser.
+
+        As per [1], if the mouse down node and the mouse release node differ, then we are supposed to
+        fire the click event at their common ancestor, if such node exists. This patch implements this
+        logic. This also aligns our behavior with Blink.
+
+        [1] https://w3c.github.io/uievents/#events-mouseevent-event-order
+
+        Test: fast/events/mouse-click-different-mouseDown-mouseUp-nodes.html
+
+        * page/EventHandler.cpp:
+        (WebCore::targetNodeForClickEvent):
+
 2017-07-17  Brady Eidson  <beidson@apple.com>
 
         WKHTTPCookieStore observing only works on the default cookie store.

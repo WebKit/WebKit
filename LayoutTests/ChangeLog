@@ -1,3 +1,16 @@
+2017-07-17  Chris Dumez  <cdumez@apple.com>
+
+        click event does not dispatch to parent when child target stops hit testing after mousedown
+        https://bugs.webkit.org/show_bug.cgi?id=174564
+        <rdar://problem/33340234>
+
+        Reviewed by Simon Fraser.
+
+        Add layout test coverage.
+
+        * fast/events/mouse-click-different-mouseDown-mouseUp-nodes-expected.txt: Added.
+        * fast/events/mouse-click-different-mouseDown-mouseUp-nodes.html: Added.
+
 2017-07-17  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: order of AirPlay and volume controls is inconsistent between <audio> and <video>
