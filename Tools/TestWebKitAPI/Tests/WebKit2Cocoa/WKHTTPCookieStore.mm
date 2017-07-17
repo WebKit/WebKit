@@ -26,6 +26,7 @@
 #include "config.h"
 
 #import "PlatformUtilities.h"
+#import "TestNavigationDelegate.h"
 #import <WebKit/WKFoundation.h>
 #import <WebKit/WKHTTPCookieStore.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
@@ -172,6 +173,34 @@ TEST(WebKit2, WKHTTPCookieStore)
 
     [globalCookieStore removeObserver:observer1.get()];
     [globalCookieStore removeObserver:observer2.get()];
+}
+
+static RetainPtr<WKHTTPCookieStore> staticCookieStore;
+
+TEST(WebKit2, CookieObserverCrash)
+{
+    RetainPtr<WKWebsiteDataStore> nonPersistentDataStore;
+    @autoreleasepool {
+        nonPersistentDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    }
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().websiteDataStore = nonPersistentDataStore.get();
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadHTMLString:@"Oh hello" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    staticCookieStore = nonPersistentDataStore.get().httpCookieStore;
+    RetainPtr<CookieObserver> observer = adoptNS([[CookieObserver alloc] init]);
+    [staticCookieStore addObserver:observer.get()];
+
+    [staticCookieStore getAllCookies:[](NSArray<NSHTTPCookie *> *) {
+        gotFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&gotFlag);
 }
 
 static bool finished;

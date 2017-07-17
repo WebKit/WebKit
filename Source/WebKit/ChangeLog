@@ -1,3 +1,25 @@
+2017-07-16  Brady Eidson  <beidson@apple.com>
+
+        Crash when a WKHTTPCookieStore outlives its owning WKWebsiteDataStore.
+        <rdar://problem/33341730> and https://bugs.webkit.org/show_bug.cgi?id=174574
+
+        Reviewed by Tim Horton.
+
+        Instead of holding a weak reference to its owning API::WebsiteDataStore,
+        API::HTTPCookieStore can hold a strong reference to the owner's implementation
+        WebKit::WebsiteDataStore.
+        
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::HTTPCookieStore):
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::setCookie):
+        (API::HTTPCookieStore::deleteCookie):
+        (API::HTTPCookieStore::registerObserver):
+        (API::HTTPCookieStore::unregisterObserver):
+        (API::HTTPCookieStore::cookieManagerDestroyed):
+        (API::HTTPCookieStore::registerForNewProcessPoolNotifications):
+        * UIProcess/API/APIHTTPCookieStore.h:
+
 2017-07-15  Brady Eidson  <beidson@apple.com>
 
         Make sure all CFHTTPCookieStorageRefs we create are scheduled.

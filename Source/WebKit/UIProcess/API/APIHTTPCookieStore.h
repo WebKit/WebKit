@@ -39,6 +39,7 @@ struct Cookie;
 
 namespace WebKit {
 class WebCookieManagerProxy;
+class WebsiteDataStore;
 }
 
 namespace API {
@@ -77,7 +78,7 @@ private:
     void registerForNewProcessPoolNotifications();
     void unregisterForNewProcessPoolNotifications();
 
-    WebsiteDataStore& m_owningDataStore;
+    Ref<WebKit::WebsiteDataStore> m_owningDataStore;
     HashSet<Observer*> m_observers;
 
     WebKit::WebCookieManagerProxy* m_observedCookieManagerProxy { nullptr };
