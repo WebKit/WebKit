@@ -1,3 +1,17 @@
+2017-07-16  Ali Juma  <ajuma@chromium.org>
+
+        DisallowUserAgentShadowContent moves out of non-UA shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=165647
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/nodesFromRect/nodesFromRect-shadow-expected.txt: Added.
+        * fast/dom/nodesFromRect/nodesFromRect-shadow.html: Added.
+        * fast/dom/nodesFromRect/resources/nodesFromRect.js:
+        (check):
+        (checkShadowContent):
+        (nodesFromRectAsString):
+
 2017-07-16  Antoine Quint  <graouts@apple.com>
 
         Clicking edges of media control buttons changes visual state of button (pressed) but doesn't execute action

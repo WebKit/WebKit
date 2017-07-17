@@ -667,8 +667,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
     if (!node)
         return true;
 
-    // FIXME: This moves out of a author shadow tree.
-    if (request.disallowsUserAgentShadowContent())
+    if (request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
         node = node->document().ancestorNodeInThisScope(node);
 
     mutableRectBasedTestResult().add(node);
@@ -688,8 +687,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
     if (!node)
         return true;
 
-    // FIXME: This moves out of a author shadow tree.
-    if (request.disallowsUserAgentShadowContent())
+    if (request.disallowsUserAgentShadowContent() && node->isInUserAgentShadowTree())
         node = node->document().ancestorNodeInThisScope(node);
 
     mutableRectBasedTestResult().add(node);

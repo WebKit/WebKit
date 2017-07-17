@@ -42,7 +42,7 @@ function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list,
   if (!doc)
     doc = document;
 
-  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow shadow content */, false /* allow child-frame content */);
+  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow user-agent shadow content */, false /* allow child-frame content */);
   if (!nodes)
     return;
 
@@ -78,7 +78,7 @@ function checkShadowContent(x, y, topPadding, rightPadding, bottomPadding, leftP
   if (!doc)
     doc = document;
 
-  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, true /* allowShadowContent */, false /* allow child-frame content */);
+  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, true /* allowUserAgentShadowContent */, false /* allow child-frame content */);
   if (!nodes)
     return;
 
@@ -145,7 +145,7 @@ function checkPoint(left, top, expectedNodeString, doc)
 
 function nodesFromRectAsString(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding)
 {
-    var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow shadow content */, true /* allow child-frame content */);
+    var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow user-agent shadow content */, true /* allow child-frame content */);
     if (!nodes)
         return "";
 

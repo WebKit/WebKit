@@ -1,3 +1,21 @@
+2017-07-16  Ali Juma  <ajuma@chromium.org>
+
+        DisallowUserAgentShadowContent moves out of non-UA shadow roots
+        https://bugs.webkit.org/show_bug.cgi?id=165647
+
+        Reviewed by Ryosuke Niwa.
+
+        Make rect-based hit-testing include nodes in non-UA shadow trees when the
+        HitTestRequest has type DisallowUserAgentShadowContent.
+
+        Test: fast/dom/nodesFromRect/nodesFromRect-shadow.html
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        * testing/Internals.cpp:
+        (WebCore::Internals::nodesFromRect):
+        * testing/Internals.h:
+
 2017-07-16  Antoine Quint  <graouts@apple.com>
 
         Clicking edges of media control buttons changes visual state of button (pressed) but doesn't execute action
