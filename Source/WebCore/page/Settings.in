@@ -292,7 +292,11 @@ shouldSuppressKeyboardInputDuringProvisionalNavigation initial=false
 
 langAttributeAwareFormControlUIEnabled initial=false
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED <= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED <= 110000)
+subresourceIntegrityEnabled initial=false
+#else
 subresourceIntegrityEnabled initial=true
+#endif
 
 constantPropertiesEnabled initial=false
 

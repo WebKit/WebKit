@@ -1,3 +1,14 @@
+2017-07-17  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219413. rdar://problem/33337335
+
+    2017-06-29  Dean Jackson  <dino@apple.com>
+
+            Disable some features on this release branch.
+            <rdar://problem/32913370>
+
+            * Configurations/FeatureDefines.xcconfig:
+
 2017-07-14  Jer Noble  <jer.noble@apple.com>
 
         Allow clients to override their own hardware media requirements where no fallback media exists.
