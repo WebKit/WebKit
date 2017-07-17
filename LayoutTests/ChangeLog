@@ -1,3 +1,12 @@
+2017-07-17  Matt Lewis  <jlewis3@apple.com>
+        
+        Fixed test expectations after r219518.
+        https://bugs.webkit.org/show_bug.cgi?id=174472
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-07-17  Jeremy Jones  <jeremyj@apple.com>
 
         media element handle adding source immediately before src.
