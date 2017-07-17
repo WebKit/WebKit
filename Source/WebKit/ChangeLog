@@ -1,3 +1,22 @@
+2017-07-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: FindNodes should throw an error in case of invalid strategy
+        https://bugs.webkit.org/show_bug.cgi?id=174497
+
+        Reviewed by Brian Burg.
+
+        We are currently returning null or empty list. According to the spec in 12.2 Find Element and 12.3 Find
+        Elements, step 4: "If location strategy is not present as a keyword in the table of location strategies, return
+        error with error code invalid argument.".
+        https://www.w3.org/TR/webdriver/#find-element.
+
+        This is causing test test_should_throw_an_error_if_user_passes_in_invalid_by_when_find_elements to fail.
+
+        * UIProcess/Automation/atoms/FindNodes.js:
+        (switch): Throw an error in case of unknown strategy.
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction): Handle InvalidParameter exceptions.
+
 2017-07-16  Brady Eidson  <beidson@apple.com>
 
         Crash when a WKHTTPCookieStore outlives its owning WKWebsiteDataStore.

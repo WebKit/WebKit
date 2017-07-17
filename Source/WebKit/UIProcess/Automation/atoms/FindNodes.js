@@ -52,9 +52,10 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
     case "xpath":
         break;
     default:
-        // Unknown strategy.
-        callback(firstResultOnly ? null : []);
-        return;
+        // §12.2 Find Element and §12.3 Find Elements, step 4: If location strategy is not present as a keyword
+        // in the table of location strategies, return error with error code invalid argument.
+        // https://www.w3.org/TR/webdriver/#find-element
+        throw { name: "InvalidParameter", message: ("Unsupported locator strategy: " + strategy + ".") };
     }
 
     function escape(string) {
