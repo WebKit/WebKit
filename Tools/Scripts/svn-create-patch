@@ -103,9 +103,13 @@ for my $path (keys %paths) {
 }
 
 if ($verbose) {
-    print STDERR "List of files for patch:\n";
-    for my $file (sort patchpathcmp values %diffFiles) {
-        print STDERR "  " . $file->{path} . "\n";
+    if (%diffFiles) {
+        print STDERR "List of files for patch:\n";
+        for my $file (sort patchpathcmp values %diffFiles) {
+            print STDERR "  " . $file->{path} . "\n";
+        }
+    } else {
+        print STDERR "No files found for patch.\n";
     }
 }
 
@@ -208,7 +212,10 @@ sub findModificationType($)
     }
     return "modification" if ($fileStat eq "M" || $propertyStat eq "M");
     return "deletion" if ($fileStat eq "D");
-    return undef;
+    return "conflicted" if ($fileStat eq "C");
+    return "untracked" if ($fileStat eq "?");
+    return "missing" if ($fileStat eq "!");
+    return "unknown";
 }
 
 sub findSourceFileAndRevision($)
@@ -297,26 +304,45 @@ sub generateFileList($\%)
             $stat = substr($line, 0, 7);
             $path = substr($line, 7);
         }
+
         next if -d $path;
+
         my $modificationType = findModificationType($stat);
+
+        if ($modificationType eq "missing") {
+            print STDERR "Missing file detected: '" . $path . "'. Aborting.\n";
+            exit -1;
+        }
+
+        if ($modificationType eq "conflicted") {
+            print STDERR "Conflicted file detected: '" . $path . "'. Aborting.\n";
+            exit -1;
+        }
+
+        if ($modificationType eq "unknown") {
+            print STDERR "File with unknown status detected: '" . $path . "' [" . $stat . "]. Aborting.\n";
+            exit -1;
+        }
+
+        if ($modificationType eq "untracked") {
+            print STDERR "Ignoring untracked file: '" . $path . "'\n";
+            next;
+        }
+
         # svn diff -N doesn't work on svn 1.9, so only return top-level deletions.
         if ($modificationType eq "deletion") {
             push @deletedFiles, $path;
             next;
         }
 
-        if ($modificationType) {
-            $diffFiles->{$path}->{path} = $path;
-            $diffFiles->{$path}->{modificationType} = $modificationType;
-            $diffFiles->{$path}->{isBinary} = isBinaryMimeType($path);
-            $diffFiles->{$path}->{isTestFile} = exists $testDirectories{(File::Spec->splitdir($path))[0]} ? 1 : 0;
-            if ($modificationType eq "additionWithHistory") {
-                my ($sourceFile, $sourceRevision) = findSourceFileAndRevision($path);
-                $diffFiles->{$path}->{sourceFile} = $sourceFile;
-                $diffFiles->{$path}->{sourceRevision} = $sourceRevision;
-            }
-        } else {
-            print STDERR $line, "\n";
+        $diffFiles->{$path}->{path} = $path;
+        $diffFiles->{$path}->{modificationType} = $modificationType;
+        $diffFiles->{$path}->{isBinary} = isBinaryMimeType($path);
+        $diffFiles->{$path}->{isTestFile} = exists $testDirectories{(File::Spec->splitdir($path))[0]} ? 1 : 0;
+        if ($modificationType eq "additionWithHistory") {
+            my ($sourceFile, $sourceRevision) = findSourceFileAndRevision($path);
+            $diffFiles->{$path}->{sourceFile} = $sourceFile;
+            $diffFiles->{$path}->{sourceRevision} = $sourceRevision;
         }
     }
     close STAT;
