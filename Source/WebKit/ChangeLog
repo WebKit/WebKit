@@ -1,3 +1,14 @@
+2017-07-17  Chris Dumez  <cdumez@apple.com>
+
+        NETWORK_SESSION does not need didReceiveAuthenticationChallenge(uint64_t, uint64_t, const AuthenticationChallenge&)
+        https://bugs.webkit.org/show_bug.cgi?id=174595
+
+        Reviewed by Alex Christensen.
+
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+
 2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Web process uses too much memory when beginning a drag on a very large image

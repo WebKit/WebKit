@@ -72,9 +72,10 @@ public:
 #endif
     // Called for resources in the WebProcess (NetworkProcess disabled)
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
+
+#if !USE(NETWORK_SESSION)
     // Called for resources in the NetworkProcess (NetworkProcess enabled)
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&);
-#if !USE(NETWORK_SESSION)
     void didReceiveAuthenticationChallenge(Download&, const WebCore::AuthenticationChallenge&);
 #endif
 

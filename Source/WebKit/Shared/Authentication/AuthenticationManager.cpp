@@ -156,16 +156,14 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(PendingDownload& p
     pendingDownload.send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
 }
 #endif
+
+#if !USE(NETWORK_SESSION)
 void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge)
 {
     ASSERT(pageID);
     ASSERT(frameID);
 
-    uint64_t challengeID = addChallengeToChallengeMap({pageID, authenticationChallenge
-#if USE(NETWORK_SESSION)
-        , { }
-#endif
-    });
+    uint64_t challengeID = addChallengeToChallengeMap({pageID, authenticationChallenge});
 
     // Coalesce challenges in the same protection space and in the same page.
     if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
@@ -173,6 +171,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, u
     
     m_process->send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(pageID, frameID, authenticationChallenge, challengeID));
 }
+#endif
 
 #if !USE(NETWORK_SESSION)
 void AuthenticationManager::didReceiveAuthenticationChallenge(Download& download, const AuthenticationChallenge& authenticationChallenge)
