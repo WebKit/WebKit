@@ -35,7 +35,6 @@
 #include "IntSize.h"
 #include "Logging.h"
 #include "SharedBuffer.h"
-#include <wtf/NeverDestroyed.h>
 
 #if !PLATFORM(IOS)
 #include <ApplicationServices/ApplicationServices.h>
@@ -76,10 +75,9 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceAsyncOptions()
 
 static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMutableDictionaryRef>&& options, SubsamplingLevel subsamplingLevel)
 {
-    RetainPtr<CFNumberRef> subsampleNumber;
     subsamplingLevel = std::min(SubsamplingLevel::Last, std::max(SubsamplingLevel::First, subsamplingLevel));
     int subsampleInt = 1 << static_cast<int>(subsamplingLevel); // [0..3] => [1, 2, 4, 8]
-    subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
+    auto subsampleNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &subsampleInt));
     CFDictionarySetValue(options.get(), kCGImageSourceSubsampleFactor, subsampleNumber.get());
     return WTFMove(options);
 }
@@ -103,16 +101,16 @@ static RetainPtr<CFMutableDictionaryRef> appendImageSourceOptions(RetainPtr<CFMu
     
 static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default)
 {
-    static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> options = createImageSourceOptions();
+    static const auto options = createImageSourceOptions().leakRef();
     if (subsamplingLevel == SubsamplingLevel::Default)
-        return options.get();
-    return appendImageSourceOption(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options.get().get())), subsamplingLevel);
+        return options;
+    return appendImageSourceOption(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel);
 }
 
 static RetainPtr<CFDictionaryRef> imageSourceAsyncOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
 {
-    static NeverDestroyed<RetainPtr<CFMutableDictionaryRef>> options = createImageSourceAsyncOptions();
-    return appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options.get().get())), subsamplingLevel, sizeForDrawing);
+    static const auto options = createImageSourceAsyncOptions().leakRef();
+    return appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel, sizeForDrawing);
 }
     
 static ImageOrientation orientationFromProperties(CFDictionaryRef imageProperties)

@@ -159,16 +159,14 @@ struct ScriptNameCodeMapHashTraits : public HashTraits<String> {
     static const int minimumTableSize = WTF::HashTableCapacityForSize<WTF_ARRAY_LENGTH(scriptNameCodeList)>::value;
 };
 
-typedef HashMap<String, UScriptCode, ASCIICaseInsensitiveHash, ScriptNameCodeMapHashTraits> ScriptNameCodeMap;
-
 UScriptCode scriptNameToCode(const String& scriptName)
 {
-    static NeverDestroyed<ScriptNameCodeMap> scriptNameCodeMap = []() {
-        ScriptNameCodeMap map;
+    static const auto scriptNameCodeMap = makeNeverDestroyed([] {
+        HashMap<String, UScriptCode, ASCIICaseInsensitiveHash, ScriptNameCodeMapHashTraits> map;
         for (auto& nameAndCode : scriptNameCodeList)
             map.add(ASCIILiteral(nameAndCode.name), nameAndCode.code);
         return map;
-    }();
+    }());
 
     auto it = scriptNameCodeMap.get().find(scriptName);
     if (it != scriptNameCodeMap.get().end())
@@ -386,16 +384,14 @@ struct LocaleScriptMapHashTraits : public HashTraits<String> {
     static const int minimumTableSize = WTF::HashTableCapacityForSize<WTF_ARRAY_LENGTH(localeScriptList)>::value;
 };
 
-typedef HashMap<String, UScriptCode, ASCIICaseInsensitiveHash, LocaleScriptMapHashTraits> LocaleScriptMap;
-
 UScriptCode localeToScriptCodeForFontSelection(const String& locale)
 {
-    static NeverDestroyed<LocaleScriptMap> localeScriptMap = []() {
-        LocaleScriptMap map;
+    static const auto localeScriptMap = makeNeverDestroyed([] {
+        HashMap<String, UScriptCode, ASCIICaseInsensitiveHash, LocaleScriptMapHashTraits> map;
         for (auto& localeAndScript : localeScriptList)
             map.add(ASCIILiteral(localeAndScript.locale), localeAndScript.script);
         return map;
-    }();
+    }());
 
     String canonicalLocale = locale;
     canonicalLocale.replace('-', '_');

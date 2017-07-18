@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2008, 2013-2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -25,7 +25,6 @@
 
 #include "IntegerToStringConversion.h"
 #include "MainThread.h"
-#include "NeverDestroyed.h"
 #include "dtoa.h"
 
 namespace WTF {

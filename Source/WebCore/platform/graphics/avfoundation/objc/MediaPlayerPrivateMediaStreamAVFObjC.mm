@@ -232,24 +232,18 @@ void MediaPlayerPrivateMediaStreamAVFObjC::registerMediaEngine(MediaEngineRegist
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::isAvailable()
 {
-    if (!AVFoundationLibrary() || !isCoreMediaFrameworkAvailable() || !getAVSampleBufferDisplayLayerClass())
-        return false;
-
-    return true;
+    return AVFoundationLibrary() && isCoreMediaFrameworkAvailable() && getAVSampleBufferDisplayLayerClass();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>& types)
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
-    types = cache;
+    // FIXME: Is it really correct to list no supported types?
+    types.clear();
 }
 
 MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(const MediaEngineSupportParameters& parameters)
 {
-    if (parameters.isMediaStream)
-        return MediaPlayer::IsSupported;
-
-    return MediaPlayer::IsNotSupported;
+    return parameters.isMediaStream ? MediaPlayer::IsSupported : MediaPlayer::IsNotSupported;
 }
 
 #pragma mark -

@@ -33,7 +33,6 @@
 
 #include <atomic>
 #include <wtf/MonotonicTime.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
 #include <wtf/VMTags.h>

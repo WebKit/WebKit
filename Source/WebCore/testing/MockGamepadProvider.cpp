@@ -31,6 +31,7 @@
 #include "GamepadProviderClient.h"
 #include "MockGamepad.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

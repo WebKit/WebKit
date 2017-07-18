@@ -476,43 +476,6 @@ GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant
     return m_fonts->glyphDataForCharacter(c, m_fontDescription, variant);
 }
 
-static const char* const fontFamiliesWithInvalidCharWidth[] = {
-    "American Typewriter",
-    "Arial Hebrew",
-    "Chalkboard",
-    "Cochin",
-    "Corsiva Hebrew",
-    "Courier",
-    "Euphemia UCAS",
-    "Geneva",
-    "Gill Sans",
-    "Hei",
-    "Helvetica",
-    "Hoefler Text",
-    "InaiMathi",
-    "Kai",
-    "Lucida Grande",
-    "Marker Felt",
-    "Monaco",
-    "Mshtakan",
-    "New Peninim MT",
-    "Osaka",
-    "Raanana",
-    "STHeiti",
-    "Symbol",
-    "Times",
-    "Apple Braille",
-    "Apple LiGothic",
-    "Apple LiSung",
-    "Apple Symbols",
-    "AppleGothic",
-    "AppleMyungjo",
-    "#GungSeo",
-    "#HeadLineA",
-    "#PCMyungjo",
-    "#PilGi",
-};
-
 // For font families where any of the fonts don't have a valid entry in the OS/2 table
 // for avgCharWidth, fallback to the legacy webkit behavior of getting the avgCharWidth
 // from the width of a '0'. This only seems to apply to a fixed number of Mac fonts,
@@ -520,7 +483,7 @@ static const char* const fontFamiliesWithInvalidCharWidth[] = {
 // all platforms.
 bool FontCascade::hasValidAverageCharWidth() const
 {
-    AtomicString family = firstFamily();
+    const AtomicString& family = firstFamily();
     if (family.isEmpty())
         return false;
 
@@ -530,14 +493,43 @@ bool FontCascade::hasValidAverageCharWidth() const
         return false;
 #endif
 
-    static NeverDestroyed<const HashSet<AtomicString>> fontFamiliesWithInvalidCharWidthMap = [] {
-        HashSet<AtomicString> map;
-        for (auto* family : fontFamiliesWithInvalidCharWidth)
-            map.add(family);
-        return map;
-    }();
-
-    return !fontFamiliesWithInvalidCharWidthMap.get().contains(family);
+    static const auto map = makeNeverDestroyed(HashSet<AtomicString> {
+        "American Typewriter",
+        "Arial Hebrew",
+        "Chalkboard",
+        "Cochin",
+        "Corsiva Hebrew",
+        "Courier",
+        "Euphemia UCAS",
+        "Geneva",
+        "Gill Sans",
+        "Hei",
+        "Helvetica",
+        "Hoefler Text",
+        "InaiMathi",
+        "Kai",
+        "Lucida Grande",
+        "Marker Felt",
+        "Monaco",
+        "Mshtakan",
+        "New Peninim MT",
+        "Osaka",
+        "Raanana",
+        "STHeiti",
+        "Symbol",
+        "Times",
+        "Apple Braille",
+        "Apple LiGothic",
+        "Apple LiSung",
+        "Apple Symbols",
+        "AppleGothic",
+        "AppleMyungjo",
+        "#GungSeo",
+        "#HeadLineA",
+        "#PCMyungjo",
+        "#PilGi",
+    });
+    return !map.get().contains(family);
 }
 
 bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const

@@ -29,7 +29,6 @@
 
 #include "GamepadProvider.h"
 #include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/RunLoop.h>
 

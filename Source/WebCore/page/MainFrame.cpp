@@ -33,7 +33,6 @@
 #include "PerformanceLogging.h"
 #include "ScrollLatchingState.h"
 #include "WheelEventDeltaFilter.h"
-#include <wtf/NeverDestroyed.h>
 
 #if PLATFORM(MAC)
 #include "ServicesOverlayController.h"

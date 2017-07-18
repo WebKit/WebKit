@@ -69,15 +69,13 @@ Ref<SVGForeignObjectElement> SVGForeignObjectElement::create(const QualifiedName
 
 bool SVGForeignObjectElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::xAttr);
-        supportedAttributes.get().add(SVGNames::yAttr);
-        supportedAttributes.get().add(SVGNames::widthAttr);
-        supportedAttributes.get().add(SVGNames::heightAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGLangSpace::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        set.add({ SVGNames::xAttr, SVGNames::yAttr, SVGNames::widthAttr, SVGNames::heightAttr });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

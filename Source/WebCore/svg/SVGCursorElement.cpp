@@ -66,14 +66,14 @@ SVGCursorElement::~SVGCursorElement()
 
 bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGTests::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        SVGURIReference::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::xAttr);
-        supportedAttributes.get().add(SVGNames::yAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGTests::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        SVGURIReference::addSupportedAttributes(set);
+        set.add({ SVGNames::xAttr, SVGNames::yAttr });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

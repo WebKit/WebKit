@@ -143,18 +143,27 @@ bool NonFastScrollableRegionOverlay::updateRegion()
     return regionChanged;
 }
 
-static HashMap<String, Color>& touchEventRegionColors()
+static const HashMap<String, Color>& touchEventRegionColors()
 {
-    static NeverDestroyed<HashMap<String, Color>> regionColors;
-
-    if (regionColors.get().isEmpty()) {
-        regionColors.get().add("touchstart", Color(191, 191, 63, 80));
-        regionColors.get().add("touchmove", Color(63, 191, 191, 80));
-        regionColors.get().add("touchend", Color(191, 63, 127, 80));
-        regionColors.get().add("touchforcechange", Color(63, 63, 191, 80));
-        regionColors.get().add("wheel", Color(255, 128, 0, 80));
-    }
-    
+    static const auto regionColors = makeNeverDestroyed([] {
+        struct MapEntry {
+            const char* name;
+            int r;
+            int g;
+            int b;
+        };
+        static const MapEntry entries[] = {
+            { "touchstart", 191, 191, 63 },
+            { "touchmove", 63, 191, 191 },
+            { "touchend", 191, 63, 127 },
+            { "touchforcechange", 63, 63, 191 },
+            { "wheel", 255, 128, 0 },
+        };
+        HashMap<String, Color> map;
+        for (auto& entry : entries)
+            map.add(ASCIILiteral { entry.name }, Color { entry.r, entry.g, entry.b, 80 });
+        return map;
+    }());
     return regionColors;
 }
 

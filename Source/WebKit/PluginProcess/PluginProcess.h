@@ -23,15 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PluginProcess_h
-#define PluginProcess_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "ChildProcess.h"
 #include <WebCore/CountedUserActivity.h>
 #include <wtf/Forward.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -133,5 +131,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-#endif // PluginProcess_h

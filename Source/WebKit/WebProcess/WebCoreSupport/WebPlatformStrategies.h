@@ -23,14 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPlatformStrategies_h
-#define WebPlatformStrategies_h
+#pragma once
 
 #include <WebCore/CookiesStrategy.h>
 #include <WebCore/LoaderStrategy.h>
 #include <WebCore/PasteboardStrategy.h>
 #include <WebCore/PlatformStrategies.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 
@@ -102,5 +100,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebPlatformStrategies_h

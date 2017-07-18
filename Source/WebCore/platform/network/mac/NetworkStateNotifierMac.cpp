@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,105 +28,63 @@
 
 #include <SystemConfiguration/SystemConfiguration.h>
 
-
 namespace WebCore {
 
-static const Seconds StateChangeTimerInterval { 2_s };
-
-void NetworkStateNotifier::updateState()
+void NetworkStateNotifier::updateStateWithoutNotifying()
 {
-    // Assume that we're offline until proven otherwise.
-    m_isOnLine = false;
-    
-    RetainPtr<CFStringRef> str = adoptCF(SCDynamicStoreKeyCreateNetworkInterface(0, kSCDynamicStoreDomainState));
-    
-    RetainPtr<CFPropertyListRef> propertyList = adoptCF(SCDynamicStoreCopyValue(m_store.get(), str.get()));
-    
-    if (!propertyList)
+    auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterface(0, kSCDynamicStoreDomainState));
+    auto propertyList = adoptCF(SCDynamicStoreCopyValue(m_store.get(), key.get()));
+    if (!propertyList || CFGetTypeID(propertyList.get()) != CFDictionaryGetTypeID())
         return;
-    
-    if (CFGetTypeID(propertyList.get()) != CFDictionaryGetTypeID())
+
+    auto netInterfaces = CFDictionaryGetValue((CFDictionaryRef)propertyList.get(), kSCDynamicStorePropNetInterfaces);
+    if (!netInterfaces || CFGetTypeID(netInterfaces) != CFArrayGetTypeID())
         return;
-    
-    CFArrayRef netInterfaces = (CFArrayRef)CFDictionaryGetValue((CFDictionaryRef)propertyList.get(), kSCDynamicStorePropNetInterfaces);
-    if (CFGetTypeID(netInterfaces) != CFArrayGetTypeID())
-        return;
-    
-    for (CFIndex i = 0; i < CFArrayGetCount(netInterfaces); i++) {
-        CFStringRef interface = (CFStringRef)CFArrayGetValueAtIndex(netInterfaces, i);
+
+    for (CFIndex i = 0; i < CFArrayGetCount((CFArrayRef)netInterfaces); i++) {
+        auto interface = CFArrayGetValueAtIndex((CFArrayRef)netInterfaces, i);
         if (CFGetTypeID(interface) != CFStringGetTypeID())
             continue;
-        
+
         // Ignore the loopback interface.
-        if (CFStringFind(interface, CFSTR("lo"), kCFCompareAnchored).location != kCFNotFound)
+        if (CFStringFind((CFStringRef)interface, CFSTR("lo"), kCFCompareAnchored).location != kCFNotFound)
             continue;
 
-        RetainPtr<CFStringRef> key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interface, kSCEntNetIPv4));
-
-        RetainPtr<CFArrayRef> keyList = adoptCF(SCDynamicStoreCopyKeyList(m_store.get(), key.get()));
-    
+        auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, (CFStringRef)interface, kSCEntNetIPv4));
+        auto keyList = adoptCF(SCDynamicStoreCopyKeyList(m_store.get(), key.get()));
         if (keyList && CFArrayGetCount(keyList.get())) {
             m_isOnLine = true;
-            break;
+            return;
         }
     }
+
+    m_isOnLine = false;
 }
 
-void NetworkStateNotifier::dynamicStoreCallback(SCDynamicStoreRef, CFArrayRef, void* info) 
-{
-    NetworkStateNotifier* notifier = static_cast<NetworkStateNotifier*>(info);
-    
-    // Calling updateState() could be expensive so we schedule a timer that will do it 
-    // when things have cooled down.
-    notifier->m_networkStateChangeTimer.startOneShot(StateChangeTimerInterval);
-}
-
-void NetworkStateNotifier::networkStateChangeTimerFired()
-{
-    bool oldOnLine = m_isOnLine;
-    
-    updateState();
-    
-    if (m_isOnLine == oldOnLine)
-        return;
-
-    notifyNetworkStateChange();
-}
-
-NetworkStateNotifier::NetworkStateNotifier()
-    : m_isOnLine(false)
-    , m_networkStateChangeTimer(*this, &NetworkStateNotifier::networkStateChangeTimerFired)
+void NetworkStateNotifier::startObserving()
 {
     SCDynamicStoreContext context = { 0, this, 0, 0, 0 };
-    
-    m_store = adoptCF(SCDynamicStoreCreate(0, CFSTR("com.apple.WebCore"), dynamicStoreCallback, &context));
+    m_store = adoptCF(SCDynamicStoreCreate(0, CFSTR("com.apple.WebCore"), [] (SCDynamicStoreRef, CFArrayRef, void*) {
+        // Calling updateState() could be expensive so we coalesce calls with a timer.
+        singleton().updateStateSoon();
+    }, &context));
     if (!m_store)
         return;
 
-    RetainPtr<CFRunLoopSourceRef> configSource = adoptCF(SCDynamicStoreCreateRunLoopSource(0, m_store.get(), 0));
-    if (!configSource)
+    auto source = adoptCF(SCDynamicStoreCreateRunLoopSource(0, m_store.get(), 0));
+    if (!source)
         return;
 
-    CFRunLoopAddSource(CFRunLoopGetMain(), configSource.get(), kCFRunLoopCommonModes);
-    
-    RetainPtr<CFMutableArrayRef> keys = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
-    RetainPtr<CFMutableArrayRef> patterns = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    CFRunLoopAddSource(CFRunLoopGetMain(), source.get(), kCFRunLoopCommonModes);
 
-    RetainPtr<CFStringRef> key;
-    RetainPtr<CFStringRef> pattern;
+    auto keys = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    CFArrayAppendValue(keys.get(), adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetIPv4)).get());
+    CFArrayAppendValue(keys.get(), adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetDNS)).get());
 
-    key = adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetIPv4));
-    CFArrayAppendValue(keys.get(), key.get());
-
-    pattern = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, kSCCompAnyRegex, kSCEntNetIPv4));
-    CFArrayAppendValue(patterns.get(), pattern.get());
-
-    key = adoptCF(SCDynamicStoreKeyCreateNetworkGlobalEntity(0, kSCDynamicStoreDomainState, kSCEntNetDNS));
-    CFArrayAppendValue(keys.get(), key.get());
+    auto patterns = adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+    CFArrayAppendValue(patterns.get(), adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, kSCCompAnyRegex, kSCEntNetIPv4)).get());
 
     SCDynamicStoreSetNotificationKeys(m_store.get(), keys.get(), patterns.get());
-    
-    updateState();
 }
     
 }

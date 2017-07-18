@@ -72,6 +72,7 @@
 #include <WebCore/FrameView.h> // FIXME: Move LayoutViewportConstraint to its own file and stop including this.
 #include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutSize.h>
+#include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>

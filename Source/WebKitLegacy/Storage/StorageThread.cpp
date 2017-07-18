@@ -104,13 +104,8 @@ void StorageThread::performTerminate()
 
 void StorageThread::releaseFastMallocFreeMemoryInAllThreads()
 {
-    HashSet<StorageThread*>& threads = activeStorageThreads();
-
-    for (HashSet<StorageThread*>::iterator it = threads.begin(), end = threads.end(); it != end; ++it) {
-        (*it)->dispatch([]() {
-            WTF::releaseFastMallocFreeMemory();
-        });
-    }
+    for (auto& thread : activeStorageThreads())
+        thread->dispatch(&WTF::releaseFastMallocFreeMemory);
 }
 
 }

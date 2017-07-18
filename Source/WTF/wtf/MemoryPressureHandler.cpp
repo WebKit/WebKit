@@ -27,6 +27,7 @@
 #include "MemoryPressureHandler.h"
 
 #include <wtf/MemoryFootprint.h>
+#include <wtf/NeverDestroyed.h>
 
 #define LOG_CHANNEL_PREFIX Log
 

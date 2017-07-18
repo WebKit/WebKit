@@ -131,7 +131,7 @@ String NavigatorBase::vendorSub()
 
 bool NavigatorBase::onLine()
 {
-    return networkStateNotifier().onLine();
+    return NetworkStateNotifier::singleton().onLine();
 }
 
 String NavigatorBase::language()

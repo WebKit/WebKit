@@ -21,9 +21,8 @@
 #include "config.h"
 #include "SVGLangSpace.h"
 
-#include "SVGElement.h"
 #include "XMLNames.h"
-#include <wtf/StdLibExtras.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -59,20 +58,18 @@ bool SVGLangSpace::isKnownAttribute(const QualifiedName& attrName)
 {
     return attrName.matches(XMLNames::langAttr) || attrName.matches(XMLNames::spaceAttr);
 }
-    
-void SVGLangSpace::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
+
+static void addWithAndWithoutXMLPrefix(HashSet<QualifiedName>& set, const QualifiedName& attributeName)
 {
-    static NeverDestroyed<AtomicString> xmlPrefix("xml", AtomicString::ConstructFromLiteral);
+    ASSERT(attributeName.prefix().isNull());
+    set.add(attributeName);
+    set.add({ xmlAtom(), attributeName.localName(), attributeName.namespaceURI() });
+}
 
-    QualifiedName langWithPrefix = XMLNames::langAttr;
-    langWithPrefix.setPrefix(xmlPrefix);
-    supportedAttributes.add(langWithPrefix);
-    supportedAttributes.add(XMLNames::langAttr);
-
-    QualifiedName spaceWithPrefix = XMLNames::spaceAttr;
-    spaceWithPrefix.setPrefix(xmlPrefix);
-    supportedAttributes.add(spaceWithPrefix);
-    supportedAttributes.add(XMLNames::spaceAttr);
+void SVGLangSpace::addSupportedAttributes(HashSet<QualifiedName>& set)
+{
+    addWithAndWithoutXMLPrefix(set, XMLNames::langAttr);
+    addWithAndWithoutXMLPrefix(set, XMLNames::spaceAttr);
 }
 
 }

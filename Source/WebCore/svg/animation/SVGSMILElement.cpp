@@ -457,18 +457,17 @@ void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd begin
 
 bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::beginAttr);
-        supportedAttributes.get().add(SVGNames::endAttr);
-        supportedAttributes.get().add(SVGNames::durAttr);
-        supportedAttributes.get().add(SVGNames::repeatDurAttr);
-        supportedAttributes.get().add(SVGNames::repeatCountAttr);
-        supportedAttributes.get().add(SVGNames::minAttr);
-        supportedAttributes.get().add(SVGNames::maxAttr);
-        supportedAttributes.get().add(SVGNames::attributeNameAttr);
-        supportedAttributes.get().add(XLinkNames::hrefAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed(HashSet<QualifiedName> {
+        SVGNames::beginAttr,
+        SVGNames::endAttr,
+        SVGNames::durAttr,
+        SVGNames::repeatDurAttr,
+        SVGNames::repeatCountAttr,
+        SVGNames::minAttr,
+        SVGNames::maxAttr,
+        SVGNames::attributeNameAttr,
+        XLinkNames::hrefAttr,
+    });
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

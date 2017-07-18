@@ -26,17 +26,15 @@
 #import "config.h"
 #import "WebCoreMotionManager.h"
 
-#import "WebCoreObjCExtras.h"
-#import <CoreLocation/CoreLocation.h>
-#import <objc/objc-runtime.h>
-#import <wtf/MathExtras.h>
-#import <wtf/NeverDestroyed.h>
-#import <wtf/SoftLinking.h>
-
 #if PLATFORM(IOS)
 
+#import "WebCoreObjCExtras.h"
 #import "WebCoreThreadRun.h"
+#import <CoreLocation/CoreLocation.h>
 #import <CoreMotion/CoreMotion.h>
+#import <objc/objc-runtime.h>
+#import <wtf/MathExtras.h>
+#import <wtf/SoftLinking.h>
 
 // Get CoreLocation classes
 SOFT_LINK_FRAMEWORK(CoreLocation)

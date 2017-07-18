@@ -54,7 +54,7 @@ my $numCachedAttributes = 0;
 my $beginAppleCopyrightForHeaderFiles = <<END;
 // ------- Begin Apple Copyright -------
 /*
- * Copyright (C) 2008, Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Permission is granted by Apple to use this file to the extent
  * necessary to relink with LGPL WebKit files.
@@ -72,7 +72,7 @@ END
 my $beginAppleCopyrightForSourceFiles = <<END;
 // ------- Begin Apple Copyright -------
 /*
- * Copyright (C) 2008, Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * No license or rights are granted by Apple expressly or by implication,
  * estoppel, or otherwise, to Apple copyrights, patents, trademarks, trade
@@ -2021,10 +2021,8 @@ sub GenerateEnumerationImplementationContent
     # FIXME: Change to take VM& instead of ExecState*.
     $result .= "template<> JSString* convertEnumerationToJS(ExecState& state, $className enumerationValue)\n";
     $result .= "{\n";
-    # FIXME: Might be nice to make this global be "const", but NeverDestroyed does not currently support that.
-    # FIXME: Might be nice to make the entire array be NeverDestroyed instead of each value, but not sure what the syntax for that is.
     AddToImplIncludes("<wtf/NeverDestroyed.h>");
-    $result .= "    static NeverDestroyed<const String> values[] = {\n";
+    $result .= "    static const NeverDestroyed<String> values[] = {\n";
     foreach my $value (@{$enumeration->values}) {
         if ($value eq "") {
             $result .= "        emptyString(),\n";

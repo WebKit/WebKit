@@ -30,7 +30,6 @@
 #include "URL.h"
 #include <limits>
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/dtoa.h>
 
 namespace WebCore {

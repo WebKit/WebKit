@@ -30,7 +30,6 @@
 #include "IntSize.h"
 #include "NotImplemented.h"
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -1014,7 +1013,5 @@ String webCryptoMasterKeyKeychainComment()
 }
 
 #endif
-
-
 
 } // namespace WebCore

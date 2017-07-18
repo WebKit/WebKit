@@ -78,18 +78,22 @@ Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Documen
 
 bool SVGMaskElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGTests::addSupportedAttributes(supportedAttributes);
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::maskUnitsAttr);
-        supportedAttributes.get().add(SVGNames::maskContentUnitsAttr);
-        supportedAttributes.get().add(SVGNames::xAttr);
-        supportedAttributes.get().add(SVGNames::yAttr);
-        supportedAttributes.get().add(SVGNames::widthAttr);
-        supportedAttributes.get().add(SVGNames::heightAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGTests::addSupportedAttributes(set);
+        SVGLangSpace::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        set.add({
+            SVGNames::maskUnitsAttr,
+            SVGNames::maskContentUnitsAttr,
+            SVGNames::refYAttr,
+            SVGNames::xAttr,
+            SVGNames::yAttr,
+            SVGNames::widthAttr,
+            SVGNames::heightAttr,
+        });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

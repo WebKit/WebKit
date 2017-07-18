@@ -388,8 +388,8 @@ void HTMLObjectElement::renderFallbackContent()
 // FIXME: This should be removed, all callers are almost certainly wrong.
 static bool isRecognizedTagName(const QualifiedName& tagName)
 {
-    static NeverDestroyed<HashSet<AtomicStringImpl*>> tagList;
-    if (tagList.get().isEmpty()) {
+    static const auto tagList = makeNeverDestroyed([] {
+        HashSet<AtomicStringImpl*> map;
         auto* tags = HTMLNames::getHTMLTags();
         for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {
             if (*tags[i] == bgsoundTag
@@ -404,9 +404,10 @@ static bool isRecognizedTagName(const QualifiedName& tagName)
                 // because that changes how we parse documents.
                 continue;
             }
-            tagList.get().add(tags[i]->localName().impl());
+            map.add(tags[i]->localName().impl());
         }
-    }
+        return map;
+    }());
     return tagList.get().contains(tagName.localName().impl());
 }
 

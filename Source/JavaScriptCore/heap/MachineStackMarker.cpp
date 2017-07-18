@@ -33,7 +33,6 @@
 #include <setjmp.h>
 #include <stdlib.h>
 #include <wtf/MainThread.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WTF;

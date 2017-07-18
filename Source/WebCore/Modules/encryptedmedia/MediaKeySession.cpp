@@ -41,7 +41,6 @@
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

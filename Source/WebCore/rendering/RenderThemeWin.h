@@ -1,7 +1,5 @@
 /*
- * This file is part of the WebKit project.
- *
- * Copyright (C) 2006, 2008, 2013, 2014 Apple Inc.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -46,9 +44,9 @@ struct ThemeData {
     unsigned m_classicState;
 };
 
-class RenderThemeWin final: public RenderTheme {
+class RenderThemeWin final : public RenderTheme {
 public:
-    static Ref<RenderTheme> create();
+    friend NeverDestroyed<RenderThemeWin>;
 
     String extraDefaultStyleSheet() override;
     String extraQuirksStyleSheet() override;

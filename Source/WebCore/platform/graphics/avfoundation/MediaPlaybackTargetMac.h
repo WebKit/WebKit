@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlaybackTargetMac_h
-#define MediaPlaybackTargetMac_h
+#pragma once
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include "MediaPlaybackTarget.h"
+#include "MediaPlaybackTargetContext.h"
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -62,5 +62,3 @@ const MediaPlaybackTargetMac* toMediaPlaybackTargetMac(const MediaPlaybackTarget
 }
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET)
-
-#endif

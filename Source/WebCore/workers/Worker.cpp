@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,14 +40,19 @@
 #include <inspector/IdentifiersFactory.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-static HashSet<Worker*>* allWorkers;
-
-void networkStateChanged(bool isOnLine)
+static HashSet<Worker*>& allWorkers()
 {
-    for (auto& worker : *allWorkers)
+    static NeverDestroyed<HashSet<Worker*>> set;
+    return set;
+}
+
+void Worker::networkStateChanged(bool isOnLine)
+{
+    for (auto* worker : allWorkers())
         worker->notifyNetworkStateChange(isOnLine);
 }
 
@@ -57,12 +62,13 @@ inline Worker::Worker(ScriptExecutionContext& context, JSC::RuntimeFlags runtime
     , m_contextProxy(WorkerGlobalScopeProxy::create(*this))
     , m_runtimeFlags(runtimeFlags)
 {
-    if (!allWorkers) {
-        allWorkers = new HashSet<Worker*>;
-        networkStateNotifier().addNetworkStateChangeListener(WTF::Function<void (bool)> { networkStateChanged });
+    static bool addedListener;
+    if (!addedListener) {
+        NetworkStateNotifier::singleton().addListener(&networkStateChanged);
+        addedListener = true;
     }
 
-    auto addResult = allWorkers->add(this);
+    auto addResult = allWorkers().add(this);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
@@ -100,7 +106,7 @@ Worker::~Worker()
 {
     ASSERT(isMainThread());
     ASSERT(scriptExecutionContext()); // The context is protected by worker context proxy, so it cannot be destroyed while a Worker exists.
-    allWorkers->remove(this);
+    allWorkers().remove(this);
     m_contextProxy.workerObjectDestroyed();
 }
 

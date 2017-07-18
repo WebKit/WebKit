@@ -56,11 +56,12 @@ Ref<SVGGElement> SVGGElement::create(Document& document)
 
 bool SVGGElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGLangSpace::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

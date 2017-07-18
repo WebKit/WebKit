@@ -69,7 +69,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestStandaloneDictionary::EnumInStandaloneDictionaryFile enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("enumValue1"),
         MAKE_STATIC_STRING_IMPL("enumValue2"),
     };

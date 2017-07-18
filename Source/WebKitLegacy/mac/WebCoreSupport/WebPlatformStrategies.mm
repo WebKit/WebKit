@@ -37,7 +37,6 @@
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/SubframeLoader.h>
 #import <WebKitSystemInterface.h>
-#import <wtf/NeverDestroyed.h>
 
 using namespace WebCore;
 

@@ -29,7 +29,6 @@
 
 #include "MediaSessionInterruptionProvider.h"
 #include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

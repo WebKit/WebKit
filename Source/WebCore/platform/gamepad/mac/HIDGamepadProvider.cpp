@@ -28,9 +28,10 @@
 
 #if ENABLE(GAMEPAD) && PLATFORM(MAC)
 
-#include "GamepadProviderClient.h"
-#include "Logging.h"
-#include "PlatformGamepad.h"
+#import "GamepadProviderClient.h"
+#import "Logging.h"
+#import "PlatformGamepad.h"
+#import <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

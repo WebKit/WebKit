@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2015  Apple Inc. All Rights Reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -136,7 +136,12 @@
 
 namespace WebCore {
 
-static HashSet<Page*>* allPages;
+static HashSet<Page*>& allPages()
+{
+    static NeverDestroyed<HashSet<Page*>> set;
+    return set;
+}
+
 static unsigned nonUtilityPageCount { 0 };
 
 static inline bool isUtilityPageChromeClient(ChromeClient& chromeClient)
@@ -148,9 +153,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
 void Page::forEachPage(const WTF::Function<void(Page&)>& function)
 {
-    if (!allPages)
-        return;
-    for (Page* page : *allPages)
+    for (auto* page : allPages())
         function(*page);
 }
 
@@ -163,15 +166,15 @@ void Page::updateValidationBubbleStateIfNeeded()
 static void networkStateChanged(bool isOnLine)
 {
     Vector<Ref<Frame>> frames;
-    
+
     // Get all the frames of all the pages in all the page groups
-    for (auto& page : *allPages) {
+    for (auto* page : allPages()) {
         for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext())
             frames.append(*frame);
         InspectorInstrumentation::networkStateChanged(*page);
     }
 
-    AtomicString eventName = isOnLine ? eventNames().onlineEvent : eventNames().offlineEvent;
+    auto& eventName = isOnLine ? eventNames().onlineEvent : eventNames().offlineEvent;
     for (auto& frame : frames) {
         if (!frame->document())
             continue;
@@ -207,50 +210,16 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_performanceLoggingClient(WTFMove(pageConfiguration.performanceLoggingClient))
     , m_webGLStateTracker(WTFMove(pageConfiguration.webGLStateTracker))
     , m_libWebRTCProvider(WTFMove(pageConfiguration.libWebRTCProvider))
-    , m_openedByDOM(false)
-    , m_tabKeyCyclesThroughElements(true)
-    , m_defersLoading(false)
-    , m_defersLoadingCallCount(0)
-    , m_inLowQualityInterpolationMode(false)
-    , m_areMemoryCacheClientCallsEnabled(true)
-    , m_mediaVolume(1)
-    , m_pageScaleFactor(1)
-    , m_zoomedOutPageScaleFactor(0)
-    , m_topContentInset(0)
-#if ENABLE(TEXT_AUTOSIZING)
-    , m_textAutosizingWidth(0)
-#endif
-    , m_suppressScrollbarAnimations(false)
     , m_verticalScrollElasticity(ScrollElasticityAllowed)
     , m_horizontalScrollElasticity(ScrollElasticityAllowed)
-    , m_didLoadUserStyleSheet(false)
-    , m_userStyleSheetModificationTime(0)
-    , m_group(nullptr)
-    , m_debugger(nullptr)
-    , m_canStartMedia(true)
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-    , m_viewMode(ViewModeWindowed)
-#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_domTimerAlignmentInterval(DOMTimer::defaultAlignmentInterval())
     , m_domTimerAlignmentIntervalIncreaseTimer(*this, &Page::domTimerAlignmentIntervalIncreaseTimerFired)
-    , m_isEditable(false)
-    , m_isPrerender(false)
     , m_activityState(PageInitialActivityState)
-    , m_requestedLayoutMilestones(0)
-    , m_headerHeight(0)
-    , m_footerHeight(0)
-    , m_isCountingRelevantRepaintedObjects(false)
-#ifndef NDEBUG
-    , m_isPainting(false)
-#endif
     , m_alternativeTextClient(pageConfiguration.alternativeTextClient)
-    , m_scriptedAnimationsSuspended(false)
     , m_consoleClient(std::make_unique<PageConsoleClient>(*this))
 #if ENABLE(REMOTE_INSPECTOR)
     , m_inspectorDebuggable(std::make_unique<PageDebuggable>(*this))
 #endif
-    , m_lastSpatialNavigationCandidatesCount(0) // NOTE: Only called from Internals for Spatial Navigation testing.
-    , m_forbidPromptsDepth(0)
     , m_socketProvider(WTFMove(pageConfiguration.socketProvider))
     , m_applicationCacheStorage(*WTFMove(pageConfiguration.applicationCacheStorage))
     , m_databaseProvider(*WTFMove(pageConfiguration.databaseProvider))
@@ -259,7 +228,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_userContentProvider(*WTFMove(pageConfiguration.userContentProvider))
     , m_visitedLinkStore(*WTFMove(pageConfiguration.visitedLinkStore))
     , m_sessionID(SessionID::defaultSessionID())
-    , m_isClosing(false)
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
     , m_performanceMonitor(isUtilityPage() ? nullptr : std::make_unique<PerformanceMonitor>(*this))
     , m_lowPowerModeNotifier(std::make_unique<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowModePowerChange(isLowPowerModeEnabled); }))
@@ -271,14 +239,15 @@ Page::Page(PageConfiguration&& pageConfiguration)
     m_userContentProvider->addPage(*this);
     m_visitedLinkStore->addPage(*this);
 
-    if (!allPages) {
-        allPages = new HashSet<Page*>;
-        
-        networkStateNotifier().addNetworkStateChangeListener(WTF::Function<void (bool)> { networkStateChanged });
+    static bool addedListener;
+    if (!addedListener) {
+        NetworkStateNotifier::singleton().addListener(&networkStateChanged);
+        addedListener = true;
     }
 
-    ASSERT(!allPages->contains(this));
-    allPages->add(this);
+    ASSERT(!allPages().contains(this));
+    allPages().add(this);
+
     if (!isUtilityPage()) {
         ++nonUtilityPageCount;
         MemoryPressureHandler::setPageCount(nonUtilityPageCount);
@@ -307,7 +276,7 @@ Page::~Page()
     m_performanceLoggingClient = nullptr;
     m_mainFrame->setView(nullptr);
     setGroupName(String());
-    allPages->remove(this);
+    allPages().remove(this);
     if (!isUtilityPage()) {
         --nonUtilityPageCount;
         MemoryPressureHandler::setPageCount(nonUtilityPageCount);
@@ -346,11 +315,8 @@ Page::~Page()
 
 void Page::clearPreviousItemFromAllPages(HistoryItem* item)
 {
-    if (!allPages)
-        return;
-
-    for (auto& page : *allPages) {
-        HistoryController& controller = page->mainFrame().loader().history();
+    for (auto* page : allPages()) {
+        auto& controller = page->mainFrame().loader().history();
         if (item == controller.previousItem()) {
             controller.clearPreviousItem();
             return;
@@ -562,9 +528,7 @@ void Page::initGroup()
 
 void Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment()
 {
-    if (!allPages)
-        return;
-    for (auto& page : *allPages) {
+    for (auto* page : allPages()) {
         for (Frame* frame = &page->mainFrame(); frame; frame = frame->tree().traverseNext()) {
             // If a change in the global environment has occurred, we need to
             // make sure all the properties a recomputed, therefore we invalidate
@@ -589,12 +553,9 @@ void Page::setNeedsRecalcStyleInAllFrames()
 
 void Page::refreshPlugins(bool reload)
 {
-    if (!allPages)
-        return;
-
     HashSet<PluginInfoProvider*> pluginInfoProviders;
 
-    for (auto& page : *allPages)
+    for (auto* page : allPages())
         pluginInfoProviders.add(&page->pluginInfoProvider());
 
     for (auto& pluginInfoProvider : pluginInfoProviders)

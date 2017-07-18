@@ -1235,18 +1235,19 @@ static bool shouldRejectMIMEType(const String& type)
     return !type.startsWith("video/", false) && !type.startsWith("audio/", false);
 }
 
-static void addFileTypesToCache(NSArray *fileTypes, HashSet<String, ASCIICaseInsensitiveHash> &cache)
+static HashSet<String, ASCIICaseInsensitiveHash> createFileTypesSet(NSArray *fileTypes)
 {
-    for (NSString *fileType : fileTypes) {
+    HashSet<String, ASCIICaseInsensitiveHash> set;
+    for (NSString *fileType in fileTypes) {
         CFStringRef ext = reinterpret_cast<CFStringRef>(fileType);
-        RetainPtr<CFStringRef> uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL));
+        auto uti = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, ext, NULL));
         if (!uti)
             continue;
-        RetainPtr<CFStringRef> mime = adoptCF(UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
+        auto mime = adoptCF(UTTypeCopyPreferredTagWithClass(uti.get(), kUTTagClassMIMEType));
         if (shouldRejectMIMEType(mime.get()))
             continue;
         if (mime)
-            cache.add(mime.get());
+            set.add(mime.get());
 
         // -movieFileTypes: returns both file extensions and OSTypes. The later are surrounded by single
         // quotes, eg. 'MooV', so don't bother looking at those.
@@ -1256,37 +1257,22 @@ static void addFileTypesToCache(NSArray *fileTypes, HashSet<String, ASCIICaseIns
             // has a type for this extension add any types in hard coded table in the MIME type registry.
             for (auto& type : MIMETypeRegistry::getMediaMIMETypesForExtension(ext)) {
                 if (!shouldRejectMIMEType(type))
-                    cache.add(type);
+                    set.add(type);
             }
         }
-    }    
+    }
+    return set;
 }
 
-static HashSet<String, ASCIICaseInsensitiveHash> mimeCommonTypesCache()
+static const HashSet<String, ASCIICaseInsensitiveHash>& mimeCommonTypesCache()
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
-    static bool typeListInitialized = false;
-
-    if (!typeListInitialized) {
-        typeListInitialized = true;
-        NSArray* fileTypes = [QTMovie movieFileTypes:QTIncludeCommonTypes];
-        addFileTypesToCache(fileTypes, cache);
-    }
-    
+    static const auto cache = makeNeverDestroyed(createFileTypesSet([QTMovie movieFileTypes:QTIncludeCommonTypes]));
     return cache;
 } 
 
-static HashSet<String, ASCIICaseInsensitiveHash> mimeModernTypesCache()
+static const HashSet<String, ASCIICaseInsensitiveHash>& mimeModernTypesCache()
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
-    static bool typeListInitialized = false;
-    
-    if (!typeListInitialized) {
-        typeListInitialized = true;
-        NSArray* fileTypes = [QTMovie movieFileTypes:(QTMovieFileTypeOptions)wkQTIncludeOnlyModernMediaFileTypes()];
-        addFileTypesToCache(fileTypes, cache);
-    }
-    
+    static const auto cache = makeNeverDestroyed(createFileTypesSet([QTMovie movieFileTypes:(QTMovieFileTypeOptions)wkQTIncludeOnlyModernMediaFileTypes()]));
     return cache;
 }
 
@@ -1370,8 +1356,8 @@ void MediaPlayerPrivateQTKit::disableUnsupportedTracks()
         return;
     }
     
-    static NeverDestroyed<HashSet<String>> allowedTrackTypes = []() {
-        NSString *types[] = {
+    static NeverDestroyed<HashSet<String>> allowedTrackTypes = [] {
+        static NSString * const types[] = {
             QTMediaTypeVideo,
             QTMediaTypeSound,
             QTMediaTypeText,

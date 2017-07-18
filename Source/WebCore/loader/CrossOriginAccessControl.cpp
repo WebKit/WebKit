@@ -58,25 +58,6 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     return true;
 }
 
-bool isOnAccessControlResponseHeaderWhitelist(const String& name)
-{
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<HTTPHeaderSet> allowedCrossOriginResponseHeaders;
-
-    std::call_once(onceFlag, []{
-        allowedCrossOriginResponseHeaders.construct<std::initializer_list<String>>({
-            "cache-control",
-            "content-language",
-            "content-type",
-            "expires",
-            "last-modified",
-            "pragma"
-        });
-    });
-
-    return allowedCrossOriginResponseHeaders.get().contains(name);
-}
-
 void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& securityOrigin, StoredCredentials allowCredentials)
 {
     request.removeCredentials();

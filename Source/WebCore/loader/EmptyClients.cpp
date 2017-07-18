@@ -112,8 +112,8 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
 #if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const SessionID&) final
     {
-        static NeverDestroyed<Ref<InProcessIDBServer>> sharedConnection(InProcessIDBServer::create());
-        return sharedConnection.get()->connectionToServer();
+        static auto& sharedConnection = InProcessIDBServer::create().leakRef();
+        return sharedConnection.connectionToServer();
     }
 #endif
 };

@@ -33,11 +33,12 @@ namespace WebCore {
     
 class RenderStyle;
 class GraphicsContext;
+
 struct AttachmentLayout;
 
 class RenderThemeIOS final : public RenderThemeCocoa {
 public:
-    static Ref<RenderTheme> create();
+    friend NeverDestroyed<RenderThemeIOS>;
 
     static void adjustRoundBorderRadius(RenderStyle&, RenderBox&);
 

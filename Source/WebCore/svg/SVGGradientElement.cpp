@@ -63,14 +63,13 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
 
 bool SVGGradientElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGURIReference::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::gradientUnitsAttr);
-        supportedAttributes.get().add(SVGNames::gradientTransformAttr);
-        supportedAttributes.get().add(SVGNames::spreadMethodAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGURIReference::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        set.add({ SVGNames::gradientUnitsAttr, SVGNames::gradientTransformAttr, SVGNames::spreadMethodAttr });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

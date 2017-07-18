@@ -107,18 +107,21 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
 
 bool SVGMarkerElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::markerUnitsAttr);
-        supportedAttributes.get().add(SVGNames::refXAttr);
-        supportedAttributes.get().add(SVGNames::refYAttr);
-        supportedAttributes.get().add(SVGNames::markerWidthAttr);
-        supportedAttributes.get().add(SVGNames::markerHeightAttr);
-        supportedAttributes.get().add(SVGNames::orientAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGLangSpace::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        SVGFitToViewBox::addSupportedAttributes(set);
+        set.add({
+            SVGNames::markerUnitsAttr,
+            SVGNames::refXAttr,
+            SVGNames::refYAttr,
+            SVGNames::markerWidthAttr,
+            SVGNames::markerHeightAttr,
+            SVGNames::orientAttr,
+        });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

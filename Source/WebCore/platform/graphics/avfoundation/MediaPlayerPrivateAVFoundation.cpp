@@ -1124,48 +1124,39 @@ bool MediaPlayerPrivateAVFoundation::isUnsupportedMIMEType(const String& type)
 
 const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache = []() {
-        HashSet<String, ASCIICaseInsensitiveHash> types;
-
-        static const char* const typeNames[] = {
-            "application/vnd.apple.mpegurl",
-            "application/x-mpegurl",
-            "audio/3gpp",
-            "audio/aac",
-            "audio/aacp",
-            "audio/aiff",
-            "audio/basic",
-            "audio/mp3",
-            "audio/mp4",
-            "audio/mpeg",
-            "audio/mpeg3",
-            "audio/mpegurl",
-            "audio/mpg",
-            "audio/vnd.wave",
-            "audio/wav",
-            "audio/wave",
-            "audio/x-aac",
-            "audio/x-aiff",
-            "audio/x-m4a",
-            "audio/x-mpegurl",
-            "audio/x-wav",
-            "video/3gpp",
-            "video/3gpp2",
-            "video/mp4",
-            "video/mpeg",
-            "video/mpeg2",
-            "video/mpg",
-            "video/quicktime",
-            "video/x-m4v",
-            "video/x-mpeg",
-            "video/x-mpg",
-        };
-        for (auto& type : typeNames)
-            types.add(type);
-
-        return types;
-    }();
-
+    static const auto cache = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
+        "application/vnd.apple.mpegurl",
+        "application/x-mpegurl",
+        "audio/3gpp",
+        "audio/aac",
+        "audio/aacp",
+        "audio/aiff",
+        "audio/basic",
+        "audio/mp3",
+        "audio/mp4",
+        "audio/mpeg",
+        "audio/mpeg3",
+        "audio/mpegurl",
+        "audio/mpg",
+        "audio/vnd.wave",
+        "audio/wav",
+        "audio/wave",
+        "audio/x-aac",
+        "audio/x-aiff",
+        "audio/x-m4a",
+        "audio/x-mpegurl",
+        "audio/x-wav",
+        "video/3gpp",
+        "video/3gpp2",
+        "video/mp4",
+        "video/mpeg",
+        "video/mpeg2",
+        "video/mpg",
+        "video/quicktime",
+        "video/x-m4v",
+        "video/x-mpeg",
+        "video/x-mpg",
+    });
     return cache;
 }
 

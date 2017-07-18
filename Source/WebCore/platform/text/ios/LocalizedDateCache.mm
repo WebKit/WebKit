@@ -26,15 +26,16 @@
 #import "config.h"
 #import "LocalizedDateCache.h"
 
+// FIXME: Rename this file to LocalizedDataCacheIOS.mm and consider removing this guard.
+#if PLATFORM(IOS)
+
 #import "FontCascade.h"
 #import "TextRun.h"
+#import <CoreFoundation/CFNotificationCenter.h>
 #import <math.h>
 #import <wtf/Assertions.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
-#import <CoreFoundation/CFNotificationCenter.h>
-
-// FIXME: Rename this file to LocalizedDataCacheIOS.mm and remove this guard.
-#if PLATFORM(IOS)
 
 using namespace std;
 

@@ -297,7 +297,7 @@ void ImageBuffer::drawPattern(GraphicsContext& context, const FloatRect& destRec
         image->drawPattern(context, destRect, srcRect, patternTransform, phase, spacing, op);
 }
 
-void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
+void ImageBuffer::platformTransformColorSpace(const std::array<uint8_t, 256>& lookUpTable)
 {
     // FIXME: Enable color space conversions on accelerated canvases.
     if (cairo_surface_get_type(m_data.m_surface.get()) != CAIRO_SURFACE_TYPE_IMAGE)

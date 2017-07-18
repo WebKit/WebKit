@@ -55,7 +55,6 @@
 #include "ScriptState.h"
 #include "SerializedScriptValue.h"
 #include "TransactionOperation.h"
-#include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
 

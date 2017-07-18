@@ -22,7 +22,6 @@
 
 #include "SVGAnimateElementBase.h"
 #include "SVGAnimatedNumber.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

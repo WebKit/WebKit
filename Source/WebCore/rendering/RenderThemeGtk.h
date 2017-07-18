@@ -33,7 +33,7 @@ namespace WebCore {
 
 class RenderThemeGtk final : public RenderTheme {
 public:
-    static Ref<RenderTheme> create();
+    friend NeverDestroyed<RenderThemeGtk>;
 
 #if ENABLE(DATALIST_ELEMENT)
     // Returns size of one slider tick mark for a horizontal track.

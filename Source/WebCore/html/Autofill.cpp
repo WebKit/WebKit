@@ -48,68 +48,76 @@ struct AutofillInfo {
     AutofillCategory category;
 };
 
-static HashMap<AtomicString, AutofillInfo>& fieldNameMap()
+static const HashMap<AtomicString, AutofillInfo>& fieldNameMap()
 {
-    static NeverDestroyed<HashMap<AtomicString, AutofillInfo>> map;
-    if (map.get().isEmpty()) {
-        map.get().add(AtomicString("off", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::None, AutofillCategory::Off });
-        map.get().add(AtomicString("on", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::None,  AutofillCategory::Automatic });
-        map.get().add(AtomicString("name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Name, AutofillCategory::Normal });
-        map.get().add(AtomicString("honorific-prefix", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::HonorificPrefix, AutofillCategory::Normal });
-        map.get().add(AtomicString("given-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::GivenName, AutofillCategory::Normal });
-        map.get().add(AtomicString("additional-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::AdditionalName, AutofillCategory::Normal });
-        map.get().add(AtomicString("family-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::FamilyName, AutofillCategory::Normal });
-        map.get().add(AtomicString("honorific-suffix", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::HonorificSuffix, AutofillCategory::Normal });
-        map.get().add(AtomicString("nickname", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Nickname, AutofillCategory::Normal });
-        map.get().add(AtomicString("username", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Username, AutofillCategory::Normal });
-        map.get().add(AtomicString("new-password", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::NewPassword, AutofillCategory::Normal });
-        map.get().add(AtomicString("current-password", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CurrentPassword, AutofillCategory::Normal });
-        map.get().add(AtomicString("organization-title", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::OrganizationTitle, AutofillCategory::Normal });
-        map.get().add(AtomicString("organization", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Organization, AutofillCategory::Normal });
-        map.get().add(AtomicString("street-address", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::StreetAddress, AutofillCategory::Normal });
-        map.get().add(AtomicString("address-line1", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::AddressLine1, AutofillCategory::Normal });
-        map.get().add(AtomicString("address-line2", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::AddressLine2, AutofillCategory::Normal });
-        map.get().add(AtomicString("address-line3", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::AddressLine3, AutofillCategory::Normal });
-        map.get().add(AtomicString("address-level4", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::AddressLevel4, AutofillCategory::Normal });
-        map.get().add(AtomicString("address-level3", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::AddressLevel3, AutofillCategory::Normal });
-        map.get().add(AtomicString("address-level2", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::AddressLevel2, AutofillCategory::Normal });
-        map.get().add(AtomicString("address-level1", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::AddressLevel1, AutofillCategory::Normal });
-        map.get().add(AtomicString("country", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Country, AutofillCategory::Normal });
-        map.get().add(AtomicString("country-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CountryName, AutofillCategory::Normal });
-        map.get().add(AtomicString("postal-code", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::PostalCode, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcName, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-given-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcGivenName, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-additional-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcAdditionalName, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-family-name", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcFamilyName, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-number", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcNumber, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-exp", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcExp, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-exp-month", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcExpMonth, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-exp-year", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcExpYear, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-csc", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcCsc, AutofillCategory::Normal });
-        map.get().add(AtomicString("cc-type", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::CcType, AutofillCategory::Normal });
-        map.get().add(AtomicString("transaction-currency", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TransactionCurrency, AutofillCategory::Normal });
-        map.get().add(AtomicString("transaction-amount", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TransactionAmount, AutofillCategory::Normal });
-        map.get().add(AtomicString("language", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Language, AutofillCategory::Normal });
-        map.get().add(AtomicString("bday", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Bday, AutofillCategory::Normal });
-        map.get().add(AtomicString("bday-day", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::BdayDay, AutofillCategory::Normal });
-        map.get().add(AtomicString("bday-month", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::BdayMonth, AutofillCategory::Normal });
-        map.get().add(AtomicString("bday-year", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::BdayYear, AutofillCategory::Normal });
-        map.get().add(AtomicString("sex", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Sex, AutofillCategory::Normal });
-        map.get().add(AtomicString("url", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::URL, AutofillCategory::Normal });
-        map.get().add(AtomicString("photo", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Photo, AutofillCategory::Normal });
+    static const auto map = makeNeverDestroyed([] {
+        struct MapEntry {
+            const char* name;
+            AutofillInfo value;
+        };
+        static const MapEntry entries[] = {
+            { "off", { AutofillFieldName::None, AutofillCategory::Off } },
+            { "on", { AutofillFieldName::None,  AutofillCategory::Automatic } },
+            { "name", { AutofillFieldName::Name, AutofillCategory::Normal } },
+            { "honorific-prefix", { AutofillFieldName::HonorificPrefix, AutofillCategory::Normal } },
+            { "given-name", { AutofillFieldName::GivenName, AutofillCategory::Normal } },
+            { "additional-name", { AutofillFieldName::AdditionalName, AutofillCategory::Normal } },
+            { "family-name", { AutofillFieldName::FamilyName, AutofillCategory::Normal } },
+            { "honorific-suffix", { AutofillFieldName::HonorificSuffix, AutofillCategory::Normal } },
+            { "nickname", { AutofillFieldName::Nickname, AutofillCategory::Normal } },
+            { "username", { AutofillFieldName::Username, AutofillCategory::Normal } },
+            { "new-password", { AutofillFieldName::NewPassword, AutofillCategory::Normal } },
+            { "current-password", { AutofillFieldName::CurrentPassword, AutofillCategory::Normal } },
+            { "organization-title", { AutofillFieldName::OrganizationTitle, AutofillCategory::Normal } },
+            { "organization", { AutofillFieldName::Organization, AutofillCategory::Normal } },
+            { "street-address", { AutofillFieldName::StreetAddress, AutofillCategory::Normal } },
+            { "address-line1", { AutofillFieldName::AddressLine1, AutofillCategory::Normal } },
+            { "address-line2", { AutofillFieldName::AddressLine2, AutofillCategory::Normal } },
+            { "address-line3", { AutofillFieldName::AddressLine3, AutofillCategory::Normal } },
+            { "address-level4", { AutofillFieldName::AddressLevel4, AutofillCategory::Normal } },
+            { "address-level3", { AutofillFieldName::AddressLevel3, AutofillCategory::Normal } },
+            { "address-level2", { AutofillFieldName::AddressLevel2, AutofillCategory::Normal } },
+            { "address-level1", { AutofillFieldName::AddressLevel1, AutofillCategory::Normal } },
+            { "country", { AutofillFieldName::Country, AutofillCategory::Normal } },
+            { "country-name", { AutofillFieldName::CountryName, AutofillCategory::Normal } },
+            { "postal-code", { AutofillFieldName::PostalCode, AutofillCategory::Normal } },
+            { "cc-name", { AutofillFieldName::CcName, AutofillCategory::Normal } },
+            { "cc-given-name", { AutofillFieldName::CcGivenName, AutofillCategory::Normal } },
+            { "cc-additional-name", { AutofillFieldName::CcAdditionalName, AutofillCategory::Normal } },
+            { "cc-family-name", { AutofillFieldName::CcFamilyName, AutofillCategory::Normal } },
+            { "cc-number", { AutofillFieldName::CcNumber, AutofillCategory::Normal } },
+            { "cc-exp", { AutofillFieldName::CcExp, AutofillCategory::Normal } },
+            { "cc-exp-month", { AutofillFieldName::CcExpMonth, AutofillCategory::Normal } },
+            { "cc-exp-year", { AutofillFieldName::CcExpYear, AutofillCategory::Normal } },
+            { "cc-csc", { AutofillFieldName::CcCsc, AutofillCategory::Normal } },
+            { "cc-type", { AutofillFieldName::CcType, AutofillCategory::Normal } },
+            { "transaction-currency", { AutofillFieldName::TransactionCurrency, AutofillCategory::Normal } },
+            { "transaction-amount", { AutofillFieldName::TransactionAmount, AutofillCategory::Normal } },
+            { "language", { AutofillFieldName::Language, AutofillCategory::Normal } },
+            { "bday", { AutofillFieldName::Bday, AutofillCategory::Normal } },
+            { "bday-day", { AutofillFieldName::BdayDay, AutofillCategory::Normal } },
+            { "bday-month", { AutofillFieldName::BdayMonth, AutofillCategory::Normal } },
+            { "bday-year", { AutofillFieldName::BdayYear, AutofillCategory::Normal } },
+            { "sex", { AutofillFieldName::Sex, AutofillCategory::Normal } },
+            { "url", { AutofillFieldName::URL, AutofillCategory::Normal } },
+            { "photo", { AutofillFieldName::Photo, AutofillCategory::Normal } },
 
-        map.get().add(AtomicString("tel", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Tel, AutofillCategory::Contact });
-        map.get().add(AtomicString("tel-country-code", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TelCountryCode, AutofillCategory::Contact });
-        map.get().add(AtomicString("tel-national", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TelNational, AutofillCategory::Contact });
-        map.get().add(AtomicString("tel-area-code", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TelAreaCode, AutofillCategory::Contact });
-        map.get().add(AtomicString("tel-local", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TelLocal, AutofillCategory::Contact });
-        map.get().add(AtomicString("tel-local-prefix", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TelLocalPrefix, AutofillCategory::Contact });
-        map.get().add(AtomicString("tel-local-suffix", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TelLocalSuffix, AutofillCategory::Contact });
-        map.get().add(AtomicString("tel-extension", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::TelExtension, AutofillCategory::Contact });
-        map.get().add(AtomicString("email", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Email, AutofillCategory::Contact });
-        map.get().add(AtomicString("impp", AtomicString::ConstructFromLiteral), AutofillInfo{ AutofillFieldName::Impp, AutofillCategory::Contact });
-    }
-
+            { "tel", { AutofillFieldName::Tel, AutofillCategory::Contact } },
+            { "tel-country-code", { AutofillFieldName::TelCountryCode, AutofillCategory::Contact } },
+            { "tel-national", { AutofillFieldName::TelNational, AutofillCategory::Contact } },
+            { "tel-area-code", { AutofillFieldName::TelAreaCode, AutofillCategory::Contact } },
+            { "tel-local", { AutofillFieldName::TelLocal, AutofillCategory::Contact } },
+            { "tel-local-prefix", { AutofillFieldName::TelLocalPrefix, AutofillCategory::Contact } },
+            { "tel-local-suffix", { AutofillFieldName::TelLocalSuffix, AutofillCategory::Contact } },
+            { "tel-extension", { AutofillFieldName::TelExtension, AutofillCategory::Contact } },
+            { "email", { AutofillFieldName::Email, AutofillCategory::Contact } },
+            { "impp", { AutofillFieldName::Impp, AutofillCategory::Contact } },
+        };
+        HashMap<AtomicString, AutofillInfo> map;
+        for (auto& entry : entries)
+            map.add(entry.name, entry.value);
+        return map;
+    }());
     return map;
 }
 

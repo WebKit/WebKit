@@ -43,10 +43,10 @@ const cairo_font_options_t* getDefaultCairoFontOptions()
             return options;
     }
 
-    static LazyNeverDestroyed<cairo_font_options_t*> options;
+    static cairo_font_options_t* options;
     static std::once_flag flag;
     std::call_once(flag, [] {
-        options.construct(cairo_font_options_create());
+        options = cairo_font_options_create();
     });
     return options;
 }

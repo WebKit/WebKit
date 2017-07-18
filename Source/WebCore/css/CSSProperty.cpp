@@ -69,7 +69,7 @@ static CSSPropertyID resolveToPhysicalProperty(WritingMode writingMode, LogicalE
 static const StylePropertyShorthand& borderDirections()
 {
     static const CSSPropertyID properties[4] = { CSSPropertyBorderTop, CSSPropertyBorderRight, CSSPropertyBorderBottom, CSSPropertyBorderLeft };
-    static NeverDestroyed<StylePropertyShorthand> borderDirections(CSSPropertyBorder, properties);
+    static const StylePropertyShorthand borderDirections(CSSPropertyBorder, properties);
     return borderDirections;
 }
 

@@ -243,8 +243,8 @@ unsigned long long BlobRegistryImpl::blobSize(const URL& url)
 
 static WorkQueue& blobUtilityQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("org.webkit.BlobUtility", WorkQueue::Type::Serial, WorkQueue::QOS::Background));
-    return queue.get();
+    static auto& queue = WorkQueue::create("org.webkit.BlobUtility", WorkQueue::Type::Serial, WorkQueue::QOS::Background).leakRef();
+    return queue;
 }
 
 struct BlobForFileWriting {

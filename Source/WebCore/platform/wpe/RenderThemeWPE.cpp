@@ -35,8 +35,8 @@ namespace WebCore {
 
 RenderTheme& RenderTheme::singleton()
 {
-    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeWPE::create());
-    return theme.get();
+    static NeverDestroyed<RenderThemeWPE> theme;
+    return theme;
 }
 
 void RenderThemeWPE::updateCachedSystemFontDescription(CSSValueID, FontCascadeDescription&) const

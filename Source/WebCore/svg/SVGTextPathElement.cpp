@@ -71,13 +71,12 @@ void SVGTextPathElement::clearResourceReferences()
 
 bool SVGTextPathElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGURIReference::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::startOffsetAttr);
-        supportedAttributes.get().add(SVGNames::methodAttr);
-        supportedAttributes.get().add(SVGNames::spacingAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGURIReference::addSupportedAttributes(set);
+        set.add({ SVGNames::startOffsetAttr, SVGNames::methodAttr, SVGNames::spacingAttr });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class HTTPHeaderMap;
-enum class HTTPHeaderName;
 class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
@@ -40,7 +39,6 @@ class URL;
 
 bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
 bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
-bool isOnAccessControlResponseHeaderWhitelist(const String&);
 
 void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin&, StoredCredentials);
 ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&);

@@ -38,7 +38,6 @@
 #include <atomic>
 #include <dlfcn.h>
 #include <mutex>
-#include <wtf/NeverDestroyed.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <CFNetwork/CFURLConnectionPriv.h>

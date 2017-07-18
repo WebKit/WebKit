@@ -34,62 +34,36 @@
 
 namespace WebCore {
 
-void NetworkStateNotifier::updateState()
+void NetworkStateNotifier::updateStateWithoutNotifying()
 {
-    // Assume that we're online until proven otherwise.
-    m_isOnLine = true;
-    
-    Vector<char> buffer;
     DWORD size = 0;
-
     if (::GetAdaptersAddresses(AF_UNSPEC, 0, 0, 0, &size) != ERROR_BUFFER_OVERFLOW)
         return;
 
-    buffer.resize(size);
-    PIP_ADAPTER_ADDRESSES addresses = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(buffer.data());
-
-    if (::GetAdaptersAddresses(AF_UNSPEC, 0, 0, addresses, &size) != ERROR_SUCCESS) {
-        // We couldn't determine whether we're online or not, so assume that we are.
+    Vector<char> buffer(size);
+    auto addresses = reinterpret_cast<PIP_ADAPTER_ADDRESSES>(buffer.data());
+    if (::GetAdaptersAddresses(AF_UNSPEC, 0, 0, addresses, &size) != ERROR_SUCCESS)
         return;
-    }
 
     for (; addresses; addresses = addresses->Next) {
-        if (addresses->IfType == MIB_IF_TYPE_LOOPBACK)
-            continue;
-
-        if (addresses->OperStatus != IfOperStatusUp)
-            continue;
-
-        // We found an interface that was up.
-        return;
+        if (addresses->IfType != MIB_IF_TYPE_LOOPBACK && addresses->OperStatus == IfOperStatusUp) {
+            // We found an interface that was up.
+            m_isOnLine = true;
+            return;
+        }
     }
-    
-    // We didn't find any valid interfaces, so we must be offline.
+
     m_isOnLine = false;
 }
 
-void NetworkStateNotifier::addressChanged()
+void CALLBACK NetworkStateNotifier::addressChangeCallback(void*, BOOLEAN timedOut)
 {
-    bool oldOnLine = m_isOnLine;
-    
-    updateState();
-
-    if (m_isOnLine == oldOnLine)
-        return;
-
-    notifyNetworkStateChange();
-}
-
-void CALLBACK NetworkStateNotifier::addrChangeCallback(void* context, BOOLEAN timedOut)
-{
-    NetworkStateNotifier* notifier = static_cast<NetworkStateNotifier*>(context);
-
     // NotifyAddrChange only notifies us of a single address change. Now that we've been notified,
     // we need to call it again so we'll get notified the *next* time.
-    notifier->registerForAddressChange();
+    singleton().registerForAddressChange();
 
-    callOnMainThread([notifier] {
-        notifier->addressChanged();
+    callOnMainThread([] {
+        singleton().updateStateSoon();
     });
 }
 
@@ -99,17 +73,11 @@ void NetworkStateNotifier::registerForAddressChange()
     ::NotifyAddrChange(&handle, &m_overlapped);
 }
 
-NetworkStateNotifier::NetworkStateNotifier()
-    : m_isOnLine(false)
+void NetworkStateNotifier::startObserving()
 {
-    updateState();
-
     memset(&m_overlapped, 0, sizeof(m_overlapped));
-
     m_overlapped.hEvent = ::CreateEvent(0, false, false, 0);
-
-    ::RegisterWaitForSingleObject(&m_waitHandle, m_overlapped.hEvent, addrChangeCallback, this, INFINITE, 0);
-
+    ::RegisterWaitForSingleObject(&m_waitHandle, m_overlapped.hEvent, addressChangeCallback, nullptr, INFINITE, 0);
     registerForAddressChange();
 }
 

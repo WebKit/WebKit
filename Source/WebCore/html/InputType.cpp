@@ -94,7 +94,7 @@ static std::unique_ptr<InputType> createInputType(HTMLInputElement& element)
     return std::make_unique<T>(element);
 }
 
-static void populateInputTypeFactoryMap(InputTypeFactoryMap& map)
+static InputTypeFactoryMap createInputTypeFactoryMap()
 {
     static const struct InputTypes {
         InputTypeConditionalFunction conditionalFunction;
@@ -140,20 +140,19 @@ static void populateInputTypeFactoryMap(InputTypeFactoryMap& map)
         // No need to register "text" because it is the default type.
     };
 
+    InputTypeFactoryMap map;
     for (auto& inputType : inputTypes) {
         auto conditionalFunction = inputType.conditionalFunction;
         if (!conditionalFunction || (RuntimeEnabledFeatures::sharedFeatures().*conditionalFunction)())
             map.add(inputType.nameFunction(), inputType.factoryFunction);
     }
+    return map;
 }
 
 std::unique_ptr<InputType> InputType::create(HTMLInputElement& element, const AtomicString& typeName)
 {
-    static NeverDestroyed<InputTypeFactoryMap> factoryMap;
-    if (factoryMap.get().isEmpty())
-        populateInputTypeFactoryMap(factoryMap);
-
     if (!typeName.isEmpty()) {
+        static const auto factoryMap = makeNeverDestroyed(createInputTypeFactoryMap());
         if (auto factory = factoryMap.get().get(typeName))
             return factory(element);
     }

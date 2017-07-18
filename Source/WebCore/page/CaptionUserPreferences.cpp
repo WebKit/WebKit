@@ -44,7 +44,6 @@
 #include <heap/HeapInlines.h>
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

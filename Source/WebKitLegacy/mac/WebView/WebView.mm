@@ -271,7 +271,6 @@
 #import <WebCore/IconController.h>
 #import <WebCore/LegacyTileCache.h>
 #import <WebCore/MobileGestaltSPI.h>
-#import <WebCore/NetworkStateNotifier.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ResourceLoadStatistics.h>
 #import <WebCore/SQLiteDatabaseTracker.h>
@@ -7630,15 +7629,12 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
             }
         } else if (object->inherits(vm, JSArray::info())) {
             static NeverDestroyed<HashSet<JSObject*>> visitedElems;
-            if (!visitedElems.get().contains(object)) {
-                visitedElems.get().add(object);
-                
+            if (visitedElems.get().add(object).isNewEntry) {
                 JSArray* array = static_cast<JSArray*>(object);
                 aeDesc = [NSAppleEventDescriptor listDescriptor];
                 unsigned numItems = array->length();
                 for (unsigned i = 0; i < numItems; ++i)
                     [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->get(exec, i)) atIndex:0];
-                
                 visitedElems.get().remove(object);
                 return aeDesc;
             }

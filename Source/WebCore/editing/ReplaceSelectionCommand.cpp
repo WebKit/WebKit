@@ -566,58 +566,63 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
 static bool isProhibitedParagraphChild(const AtomicString& name)
 {
     // https://dvcs.w3.org/hg/editing/raw-file/57abe6d3cb60/editing.html#prohibited-paragraph-child
-    static NeverDestroyed<HashSet<AtomicString>> elements;
-    if (elements.get().isEmpty()) {
-        elements.get().add(addressTag.localName());
-        elements.get().add(articleTag.localName());
-        elements.get().add(asideTag.localName());
-        elements.get().add(blockquoteTag.localName());
-        elements.get().add(captionTag.localName());
-        elements.get().add(centerTag.localName());
-        elements.get().add(colTag.localName());
-        elements.get().add(colgroupTag.localName());
-        elements.get().add(ddTag.localName());
-        elements.get().add(detailsTag.localName());
-        elements.get().add(dirTag.localName());
-        elements.get().add(divTag.localName());
-        elements.get().add(dlTag.localName());
-        elements.get().add(dtTag.localName());
-        elements.get().add(fieldsetTag.localName());
-        elements.get().add(figcaptionTag.localName());
-        elements.get().add(figureTag.localName());
-        elements.get().add(footerTag.localName());
-        elements.get().add(formTag.localName());
-        elements.get().add(h1Tag.localName());
-        elements.get().add(h2Tag.localName());
-        elements.get().add(h3Tag.localName());
-        elements.get().add(h4Tag.localName());
-        elements.get().add(h5Tag.localName());
-        elements.get().add(h6Tag.localName());
-        elements.get().add(headerTag.localName());
-        elements.get().add(hgroupTag.localName());
-        elements.get().add(hrTag.localName());
-        elements.get().add(liTag.localName());
-        elements.get().add(listingTag.localName());
-        elements.get().add(mainTag.localName()); // Missing in the specification.
-        elements.get().add(menuTag.localName());
-        elements.get().add(navTag.localName());
-        elements.get().add(olTag.localName());
-        elements.get().add(pTag.localName());
-        elements.get().add(plaintextTag.localName());
-        elements.get().add(preTag.localName());
-        elements.get().add(sectionTag.localName());
-        elements.get().add(summaryTag.localName());
-        elements.get().add(tableTag.localName());
-        elements.get().add(tbodyTag.localName());
-        elements.get().add(tdTag.localName());
-        elements.get().add(tfootTag.localName());
-        elements.get().add(thTag.localName());
-        elements.get().add(theadTag.localName());
-        elements.get().add(trTag.localName());
-        elements.get().add(ulTag.localName());
-        elements.get().add(xmpTag.localName());
-    }
-    return elements.get().contains(name);
+    static const auto localNames = makeNeverDestroyed([] {
+        static const HTMLQualifiedName* const tags[] = {
+            &addressTag,
+            &articleTag,
+            &asideTag,
+            &blockquoteTag,
+            &captionTag,
+            &centerTag,
+            &colTag,
+            &colgroupTag,
+            &ddTag,
+            &detailsTag,
+            &dirTag,
+            &divTag,
+            &dlTag,
+            &dtTag,
+            &fieldsetTag,
+            &figcaptionTag,
+            &figureTag,
+            &footerTag,
+            &formTag,
+            &h1Tag,
+            &h2Tag,
+            &h3Tag,
+            &h4Tag,
+            &h5Tag,
+            &h6Tag,
+            &headerTag,
+            &hgroupTag,
+            &hrTag,
+            &liTag,
+            &listingTag,
+            &mainTag, // Missing in the specification.
+            &menuTag,
+            &navTag,
+            &olTag,
+            &pTag,
+            &plaintextTag,
+            &preTag,
+            &sectionTag,
+            &summaryTag,
+            &tableTag,
+            &tbodyTag,
+            &tdTag,
+            &tfootTag,
+            &thTag,
+            &theadTag,
+            &trTag,
+            &ulTag,
+            &xmpTag,
+        };
+        HashSet<AtomicString> set;
+        for (auto& tag : tags)
+            set.add(tag->localName());
+        return set;
+    }());
+    return localNames.get().contains(name);
 }
 
 void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder(InsertedNodes& insertedNodes)

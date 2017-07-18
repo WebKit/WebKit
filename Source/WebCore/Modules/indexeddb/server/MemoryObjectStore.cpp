@@ -41,7 +41,6 @@
 #include <runtime/JSCJSValue.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/JSLock.h>
-#include <wtf/NeverDestroyed.h>
 
 using namespace JSC;
 

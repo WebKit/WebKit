@@ -103,19 +103,22 @@ void SVGFilterElement::setFilterRes(unsigned filterResX, unsigned filterResY)
 
 bool SVGFilterElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGURIReference::addSupportedAttributes(supportedAttributes);
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::filterUnitsAttr);
-        supportedAttributes.get().add(SVGNames::primitiveUnitsAttr);
-        supportedAttributes.get().add(SVGNames::xAttr);
-        supportedAttributes.get().add(SVGNames::yAttr);
-        supportedAttributes.get().add(SVGNames::widthAttr);
-        supportedAttributes.get().add(SVGNames::heightAttr);
-        supportedAttributes.get().add(SVGNames::filterResAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGURIReference::addSupportedAttributes(set);
+        SVGLangSpace::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        set.add({
+            SVGNames::filterUnitsAttr,
+            SVGNames::primitiveUnitsAttr,
+            SVGNames::xAttr,
+            SVGNames::yAttr,
+            SVGNames::widthAttr,
+            SVGNames::heightAttr,
+            SVGNames::filterResAttr,
+        });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

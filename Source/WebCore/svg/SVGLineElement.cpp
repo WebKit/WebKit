@@ -64,15 +64,13 @@ Ref<SVGLineElement> SVGLineElement::create(const QualifiedName& tagName, Documen
 
 bool SVGLineElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::x1Attr);
-        supportedAttributes.get().add(SVGNames::x2Attr);
-        supportedAttributes.get().add(SVGNames::y1Attr);
-        supportedAttributes.get().add(SVGNames::y2Attr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGLangSpace::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        set.add({ SVGNames::x1Attr, SVGNames::x2Attr, SVGNames::y1Attr, SVGNames::y2Attr });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

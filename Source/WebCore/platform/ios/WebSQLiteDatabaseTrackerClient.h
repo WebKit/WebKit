@@ -25,13 +25,11 @@
 
 #pragma once
 
-#include "PlatformExportMacros.h"
-
 #if PLATFORM(IOS)
 
 #include "HysteresisActivity.h"
 #include "SQLiteDatabaseTrackerClient.h"
-#include <wtf/NeverDestroyed.h>
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {

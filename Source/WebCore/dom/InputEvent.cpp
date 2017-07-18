@@ -29,7 +29,6 @@
 #include "DOMWindow.h"
 #include "DataTransfer.h"
 #include "Node.h"
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

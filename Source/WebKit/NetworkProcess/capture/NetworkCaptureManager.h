@@ -31,7 +31,6 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/URLParser.h>
 #include <wtf/Function.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

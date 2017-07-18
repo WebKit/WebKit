@@ -83,8 +83,7 @@ void InspectorApplicationCacheAgent::updateApplicationCacheStatus(Frame* frame)
 
 void InspectorApplicationCacheAgent::networkStateChanged()
 {
-    bool isNowOnline = networkStateNotifier().onLine();
-    m_frontendDispatcher->networkStateUpdated(isNowOnline);
+    m_frontendDispatcher->networkStateUpdated(NetworkStateNotifier::singleton().onLine());
 }
 
 void InspectorApplicationCacheAgent::getFramesWithManifests(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::ApplicationCache::FrameWithManifest>>& result)

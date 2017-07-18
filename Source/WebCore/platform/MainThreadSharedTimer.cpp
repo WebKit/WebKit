@@ -26,6 +26,8 @@
 #include "config.h"
 #include "MainThreadSharedTimer.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebCore {
 
 MainThreadSharedTimer& MainThreadSharedTimer::singleton()

@@ -28,7 +28,6 @@
 #if USE(QUICK_LOOK)
 
 #include "PreviewLoaderClient.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

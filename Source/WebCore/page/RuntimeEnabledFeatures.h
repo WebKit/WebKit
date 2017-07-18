@@ -32,7 +32,8 @@
 #pragma once
 
 #include "PlatformExportMacros.h"
-#include <wtf/NeverDestroyed.h>
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

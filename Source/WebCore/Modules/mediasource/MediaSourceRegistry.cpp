@@ -36,6 +36,7 @@
 #include "MediaSource.h"
 #include "URL.h"
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

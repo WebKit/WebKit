@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LegacyTileLayerPool_h
-#define LegacyTileLayerPool_h
+#pragma once
 
 #if PLATFORM(IOS)
 
@@ -32,9 +31,9 @@
 #include "IntSizeHash.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -87,4 +86,3 @@ private:
 } // namespace WebCore
 
 #endif // PLATFORM(IOS)
-#endif // TileLayerPool_h

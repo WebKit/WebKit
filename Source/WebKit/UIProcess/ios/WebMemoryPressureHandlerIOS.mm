@@ -32,14 +32,13 @@
 
 namespace WebKit {
 
-WebMemoryPressureHandler& WebMemoryPressureHandler::singleton()
+void installMemoryPressureHandler()
 {
-    static NeverDestroyed<WebMemoryPressureHandler> memoryPressureHandler;
-    return memoryPressureHandler;
-}
+    static bool installed = false;
+    if (installed)
+        return;
+    installed = true;
 
-WebMemoryPressureHandler::WebMemoryPressureHandler()
-{
     // FIXME: This should be able to share code with WebCore's MemoryPressureHandler (and be platform independent).
     // Right now it cannot because WebKit1 and WebKit2 need to be able to coexist in the UI process,
     // and you can only have one WebCore::MemoryPressureHandler.
@@ -47,12 +46,12 @@ WebMemoryPressureHandler::WebMemoryPressureHandler()
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitSuppressMemoryPressureHandler"])
         return;
 
-    _source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_WARN, dispatch_get_main_queue());
-    dispatch_set_context(_source, this);
-    dispatch_source_set_event_handler(_source, ^{
+    // Use a static here so the intentionally immortal dispatch source does not show up as a storage leak.
+    static auto source = dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE, 0, DISPATCH_MEMORYPRESSURE_WARN, dispatch_get_main_queue());
+    dispatch_source_set_event_handler(source, ^ {
         ViewSnapshotStore::singleton().discardSnapshotImages();
     });
-    dispatch_resume(_source);
+    dispatch_resume(source);
 }
 
 } // namespace WebKit

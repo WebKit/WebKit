@@ -58,7 +58,6 @@
 #include <runtime/JSLock.h>
 #include <runtime/VM.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

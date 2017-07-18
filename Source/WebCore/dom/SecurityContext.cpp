@@ -31,7 +31,6 @@
 #include "HTMLParserIdioms.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginPolicy.h"
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

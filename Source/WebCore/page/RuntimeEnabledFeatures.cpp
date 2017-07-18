@@ -34,6 +34,7 @@
 
 #include "MediaPlayer.h"
 #include "WebSocket.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

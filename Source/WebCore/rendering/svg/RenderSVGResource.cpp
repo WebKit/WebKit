@@ -171,12 +171,11 @@ static inline void removeFromCacheAndInvalidateDependencies(RenderElement& rende
     if (!dependencies)
         return;
 
-    // We allow cycles in SVGDocumentExtensions reference sets in order to avoid expensive
-    // reference graph adjustments on changes, so we need to break possible cycles here.
-    static NeverDestroyed<HashSet<SVGElement*>> invalidatingDependencies;
-
     for (auto* element : *dependencies) {
         if (auto* renderer = element->renderer()) {
+            // We allow cycles in SVGDocumentExtensions reference sets in order to avoid expensive
+            // reference graph adjustments on changes, so we need to break possible cycles here.
+            static NeverDestroyed<HashSet<SVGElement*>> invalidatingDependencies;
             if (UNLIKELY(!invalidatingDependencies.get().add(element).isNewEntry)) {
                 // Reference cycle: we are in process of invalidating this dependant.
                 continue;

@@ -23,14 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPasteboardProxy_h
-#define WebPasteboardProxy_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include "SharedMemory.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -118,5 +116,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebPasteboardProxy_h

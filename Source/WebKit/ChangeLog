@@ -1,3 +1,72 @@
+2017-07-17  Darin Adler  <darin@apple.com>
+
+        Improve use of NeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=174348
+
+        Reviewed by Sam Weinig.
+
+        * DatabaseProcess/DatabaseProcess.h: Removed unneeded include of
+        NeverDestroyed.h.
+        * NetworkProcess/cache/NetworkCacheKey.cpp: Ditto.
+
+        * NetworkProcess/capture/NetworkCaptureManager.cpp: Moved include of
+        NeverDestroyed.h here ...
+        * NetworkProcess/capture/NetworkCaptureManager.h: ... from here.
+
+        * PluginProcess/PluginProcess.cpp: Moved include of NeverDestroyed.h
+        here ...
+        * PluginProcess/PluginProcess.h: ... from here.
+
+        * Shared/API/Cocoa/_WKRemoteObjectInterface.mm:
+        (isContainerClass): Removed trivial inefficient use of
+        LazyNeverDestroyed<HashSet> to check against two classes.
+        Instead wrote out the boolean expression.
+
+        * Shared/mac/SecItemShim.cpp: Removed unneeded include of
+        NeverDestroyed.h.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitialize): Call
+        installMemoryPressureHandler instead of WebMemoryPressureHandler::singleton.
+
+        * UIProcess/Gamepad/UIGamepadProvider.h: Removed unneeded include
+        of NeverDestroyed.h.
+
+        * UIProcess/Plugins/PluginProcessManager.cpp: Moved include of
+        NeverDestroyed.h here ...
+        * UIProcess/Plugins/PluginProcessManager.h: ... from here.
+
+        * UIProcess/WebInspectorProxy.cpp: Removed unneeded include
+        of NeverDestroyed.h.
+
+        * UIProcess/WebPageProxy.h: Added now-needed include of
+        MediaPlaybackTargetContext.h.
+
+        * UIProcess/WebPasteboardProxy.cpp: Moved include of
+        NeverDestroyed.h here ...
+        * UIProcess/WebPasteboardProxy.h: ... from here.
+
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.h: Removed the
+        WebMemoryPressureHandler class from this header. Callers don't need to
+        know if there is a class. They simply indicate when it's time to install
+        the handler. Another way to put it is that this class had no functions
+        other than the singleton function.
+
+        * UIProcess/ios/WebMemoryPressureHandlerIOS.mm:
+        (WebKit::installMemoryPressureHandler): Replaced the class with this function.
+        It creates a dispatch source and then resumes it. To avoid having the source
+        look like a leak, we keep it in a global variable.
+
+        * WebProcess/Gamepad/WebGamepadProvider.h: Include Forward.h instead of
+        NeverDestroyed.h.
+
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp: Moved include of
+        NeverDestroyed.h here ...
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.h: ... from here.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h: Removed unneeded
+        include of NeverDestroyed.h.
+
 2017-07-17  Timothy Horton  <timothy_horton@apple.com>
 
         Page using safe area constant properties jumps to correct layout after resize

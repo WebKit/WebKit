@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2013 Apple Inc.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Kenneth Rohde Christiansen
  *
  * This library is free software; you can redistribute it and/or
@@ -183,15 +183,10 @@ void RenderThemeWin::setWebKitIsBeingUnloaded()
     gWebKitIsBeingUnloaded = true;
 }
 
-Ref<RenderTheme> RenderThemeWin::create()
-{
-    return adoptRef(*new RenderThemeWin);
-}
-
 RenderTheme& RenderTheme::singleton()
 {
-    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeWin::create());
-    return theme.get();
+    static NeverDestroyed<RenderThemeWin> theme;
+    return theme;
 }
 
 RenderThemeWin::RenderThemeWin()

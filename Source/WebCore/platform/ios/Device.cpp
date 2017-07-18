@@ -28,7 +28,6 @@
 
 #if PLATFORM(IOS)
 
-#include <mutex>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -37,9 +36,7 @@ namespace WebCore {
 
 MGDeviceClass deviceClass()
 {
-    static MGDeviceClass deviceClass;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
+    static MGDeviceClass deviceClass = [] {
         int deviceClassNumber = MGGetSInt32Answer(kMGQDeviceClassNumber, MGDeviceClassInvalid);
         switch (deviceClassNumber) {
         case MGDeviceClassInvalid:
@@ -48,27 +45,22 @@ MGDeviceClass deviceClass()
         case MGDeviceClassiPad:
         case MGDeviceClassAppleTV:
         case MGDeviceClassWatch:
-            deviceClass = static_cast<MGDeviceClass>(deviceClassNumber);
-            return;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
         }
-        ASSERT_NOT_REACHED();
-    });
+        return static_cast<MGDeviceClass>(deviceClassNumber);
+    }();
     return deviceClass;
 }
 
 const String& deviceName()
 {
-    static LazyNeverDestroyed<String> deviceName;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
 #if TARGET_OS_IOS
-        auto cfDeviceName = adoptCF(static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr)));
+    static const NeverDestroyed<String> deviceName = adoptCF(static_cast<CFStringRef>(MGCopyAnswer(kMGQDeviceName, nullptr))).get();
 #else
-        auto cfDeviceName = retainPtr(CFSTR("iPhone"));
+    static const NeverDestroyed<String> deviceName = ASCIILiteral { "iPhone" };
 #endif
-        ASSERT(!cfDeviceName || CFGetTypeID(cfDeviceName.get()) == CFStringGetTypeID());
-        deviceName.construct(cfDeviceName.get());
-    });
     return deviceName;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010, 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -683,23 +683,23 @@ private:
 
     int m_subframeCount { 0 };
     String m_groupName;
-    bool m_openedByDOM;
+    bool m_openedByDOM { false };
 
-    bool m_tabKeyCyclesThroughElements;
-    bool m_defersLoading;
-    unsigned m_defersLoadingCallCount;
+    bool m_tabKeyCyclesThroughElements { true };
+    bool m_defersLoading { false };
+    unsigned m_defersLoadingCallCount { 0 };
 
-    bool m_inLowQualityInterpolationMode;
-    bool m_areMemoryCacheClientCallsEnabled;
-    float m_mediaVolume;
+    bool m_inLowQualityInterpolationMode { false };
+    bool m_areMemoryCacheClientCallsEnabled { true };
+    float m_mediaVolume { 1 };
     MediaProducer::MutedStateFlags m_mutedState { MediaProducer::NoneMuted };
 
-    float m_pageScaleFactor;
-    float m_zoomedOutPageScaleFactor;
+    float m_pageScaleFactor { 1 };
+    float m_zoomedOutPageScaleFactor { 0 };
     float m_deviceScaleFactor { 1 };
     float m_viewScaleFactor { 1 };
 
-    float m_topContentInset;
+    float m_topContentInset { 0 };
     FloatBoxExtent m_obscuredInsets;
     FloatBoxExtent m_unobscuredSafeAreaInsets;
 
@@ -708,10 +708,10 @@ private:
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)
-    float m_textAutosizingWidth;
+    float m_textAutosizingWidth { 0 };
 #endif
     
-    bool m_suppressScrollbarAnimations;
+    bool m_suppressScrollbarAnimations { false };
     
     unsigned m_verticalScrollElasticity : 2; // ScrollElasticity
     unsigned m_horizontalScrollElasticity : 2; // ScrollElasticity    
@@ -721,24 +721,24 @@ private:
 
     String m_userStyleSheetPath;
     mutable String m_userStyleSheet;
-    mutable bool m_didLoadUserStyleSheet;
-    mutable time_t m_userStyleSheetModificationTime;
+    mutable bool m_didLoadUserStyleSheet { false };
+    mutable time_t m_userStyleSheetModificationTime { 0 };
 
     String m_captionUserPreferencesStyleSheet;
 
     std::unique_ptr<PageGroup> m_singlePageGroup;
-    PageGroup* m_group;
+    PageGroup* m_group { nullptr };
 
-    JSC::Debugger* m_debugger;
+    JSC::Debugger* m_debugger { nullptr };
 
-    bool m_canStartMedia;
+    bool m_canStartMedia { true };
 
     RefPtr<StorageNamespace> m_sessionStorage;
     RefPtr<StorageNamespace> m_ephemeralLocalStorage;
 
 #if ENABLE(VIEW_MODE_CSS_MEDIA)
-    ViewMode m_viewMode;
-#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
+    ViewMode m_viewMode { ViewModeWindowed };
+#endif
 
     TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
     MonotonicTime m_timerThrottlingStateLastChangedTime;
@@ -746,26 +746,26 @@ private:
     Timer m_domTimerAlignmentIntervalIncreaseTimer;
     Seconds m_domTimerAlignmentIntervalIncreaseLimit;
 
-    bool m_isEditable;
-    bool m_isPrerender;
+    bool m_isEditable { false };
+    bool m_isPrerender { false };
     ActivityState::Flags m_activityState;
 
-    LayoutMilestones m_requestedLayoutMilestones;
+    LayoutMilestones m_requestedLayoutMilestones { 0 };
 
-    int m_headerHeight;
-    int m_footerHeight;
+    int m_headerHeight { 0 };
+    int m_footerHeight { 0 };
 
     HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
     Region m_topRelevantPaintedRegion;
     Region m_bottomRelevantPaintedRegion;
     Region m_relevantUnpaintedRegion;
-    bool m_isCountingRelevantRepaintedObjects;
+    bool m_isCountingRelevantRepaintedObjects { false };
 #ifndef NDEBUG
-    bool m_isPainting;
+    bool m_isPainting { false };
 #endif
     AlternativeTextClient* m_alternativeTextClient;
 
-    bool m_scriptedAnimationsSuspended;
+    bool m_scriptedAnimationsSuspended { false };
     const std::unique_ptr<PageConsoleClient> m_consoleClient;
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -779,8 +779,8 @@ private:
     HashSet<String> m_seenPlugins;
     HashSet<String> m_seenMediaEngines;
 
-    unsigned m_lastSpatialNavigationCandidatesCount;
-    unsigned m_forbidPromptsDepth;
+    unsigned m_lastSpatialNavigationCandidatesCount { 0 };
+    unsigned m_forbidPromptsDepth { 0 };
 
     Ref<SocketProvider> m_socketProvider;
     Ref<ApplicationCacheStorage> m_applicationCacheStorage;
@@ -799,7 +799,7 @@ private:
 
     SessionID m_sessionID;
 
-    bool m_isClosing;
+    bool m_isClosing { false };
 
     MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
     

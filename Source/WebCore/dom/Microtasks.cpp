@@ -23,6 +23,7 @@
 #include "Microtasks.h"
 
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {

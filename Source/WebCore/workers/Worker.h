@@ -76,7 +76,7 @@ private:
     void stop() final;
     const char* activeDOMObjectName() const final;
 
-    friend void networkStateChanged(bool isOnLine);
+    static void networkStateChanged(bool isOnLine);
 
     RefPtr<WorkerScriptLoader> m_scriptLoader;
     String m_identifier;

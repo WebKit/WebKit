@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,44 +26,67 @@
 #include "config.h"
 #include "NetworkStateNotifier.h"
 
-#if PLATFORM(IOS)
-#include "Settings.h"
-#endif
-
-#include <mutex>
-#include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-NetworkStateNotifier& networkStateNotifier()
+static const Seconds updateStateSoonInterval { 2_s };
+
+NetworkStateNotifier& NetworkStateNotifier::singleton()
 {
-    static std::once_flag onceFlag;
-    static LazyNeverDestroyed<NetworkStateNotifier> networkStateNotifier;
-
-    std::call_once(onceFlag, []{
-        networkStateNotifier.construct();
-    });
-
+    static NeverDestroyed<NetworkStateNotifier> networkStateNotifier;
     return networkStateNotifier;
 }
 
-void NetworkStateNotifier::addNetworkStateChangeListener(WTF::Function<void (bool)>&& listener)
+NetworkStateNotifier::NetworkStateNotifier()
+    : m_updateStateTimer([] {
+        singleton().updateState();
+    })
+{
+}
+
+bool NetworkStateNotifier::onLine()
+{
+    if (!m_isOnLine)
+        updateState();
+    return m_isOnLine.value_or(true);
+}
+
+void NetworkStateNotifier::addListener(WTF::Function<void(bool)>&& listener)
 {
     ASSERT(listener);
-#if PLATFORM(IOS)
-    if (Settings::shouldOptOutOfNetworkStateObservation())
-        return;
-    registerObserverIfNecessary();
-#endif
-
+    if (m_listeners.isEmpty())
+        startObserving();
     m_listeners.append(WTFMove(listener));
 }
 
-void NetworkStateNotifier::notifyNetworkStateChange() const
+void NetworkStateNotifier::updateState()
 {
-    for (const auto& listener : m_listeners)
-        listener(m_isOnLine);
+    auto wasOnLine = m_isOnLine;
+    updateStateWithoutNotifying();
+    if (m_isOnLine == wasOnLine)
+        return;
+    for (auto& listener : m_listeners)
+        listener(m_isOnLine.value());
 }
+
+void NetworkStateNotifier::updateStateSoon()
+{
+    m_updateStateTimer.startOneShot(updateStateSoonInterval);
+}
+
+#if !PLATFORM(IOS) && !PLATFORM(MAC) && !PLATFORM(WIN)
+
+// Empty stubs for platforms where monitoring of network state is not yet implemented.
+
+void NetworkStateNotifier::updateStateWithoutNotifying()
+{
+}
+
+void NetworkStateNotifier::startObserving()
+{
+}
+
+#endif
 
 } // namespace WebCore

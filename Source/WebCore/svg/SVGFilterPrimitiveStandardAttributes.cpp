@@ -63,14 +63,13 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
 
 bool SVGFilterPrimitiveStandardAttributes::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::xAttr);
-        supportedAttributes.get().add(SVGNames::yAttr);
-        supportedAttributes.get().add(SVGNames::widthAttr);
-        supportedAttributes.get().add(SVGNames::heightAttr);
-        supportedAttributes.get().add(SVGNames::resultAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed(HashSet<QualifiedName> {
+        SVGNames::xAttr,
+        SVGNames::yAttr,
+        SVGNames::widthAttr,
+        SVGNames::heightAttr,
+        SVGNames::resultAttr,
+    });
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

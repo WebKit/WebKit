@@ -118,7 +118,7 @@ public:
 #if !USE(CG)
     AffineTransform baseTransform() const { return AffineTransform(); }
     void transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace);
-    void platformTransformColorSpace(const Vector<int>&);
+    void platformTransformColorSpace(const std::array<uint8_t, 256>&);
 #else
     AffineTransform baseTransform() const { return AffineTransform(1, 0, 0, -1, 0, m_data.backingStoreSize.height()); }
 #endif

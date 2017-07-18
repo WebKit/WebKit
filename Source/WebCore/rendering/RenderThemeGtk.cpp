@@ -61,15 +61,10 @@
 
 namespace WebCore {
 
-Ref<RenderTheme> RenderThemeGtk::create()
-{
-    return adoptRef(*new RenderThemeGtk());
-}
-
 RenderTheme& RenderTheme::singleton()
 {
-    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeGtk::create());
-    return theme.get();
+    static NeverDestroyed<RenderThemeGtk> theme;
+    return theme;
 }
 
 static double getScreenDPI()

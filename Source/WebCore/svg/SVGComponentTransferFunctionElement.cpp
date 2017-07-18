@@ -59,16 +59,15 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
 
 bool SVGComponentTransferFunctionElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        supportedAttributes.get().add(SVGNames::typeAttr);
-        supportedAttributes.get().add(SVGNames::tableValuesAttr);
-        supportedAttributes.get().add(SVGNames::slopeAttr);
-        supportedAttributes.get().add(SVGNames::interceptAttr);
-        supportedAttributes.get().add(SVGNames::amplitudeAttr);
-        supportedAttributes.get().add(SVGNames::exponentAttr);
-        supportedAttributes.get().add(SVGNames::offsetAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed(HashSet<QualifiedName> {
+        SVGNames::typeAttr,
+        SVGNames::tableValuesAttr,
+        SVGNames::slopeAttr,
+        SVGNames::interceptAttr,
+        SVGNames::amplitudeAttr,
+        SVGNames::exponentAttr,
+        SVGNames::offsetAttr,
+    });
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

@@ -120,31 +120,30 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(Range* range)
 
 bool isElementForFormatBlock(const QualifiedName& tagName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> blockTags;
-    if (blockTags.get().isEmpty()) {
-        blockTags.get().add(addressTag);
-        blockTags.get().add(articleTag);
-        blockTags.get().add(asideTag);
-        blockTags.get().add(blockquoteTag);
-        blockTags.get().add(ddTag);
-        blockTags.get().add(divTag);
-        blockTags.get().add(dlTag);
-        blockTags.get().add(dtTag);
-        blockTags.get().add(footerTag);
-        blockTags.get().add(h1Tag);
-        blockTags.get().add(h2Tag);
-        blockTags.get().add(h3Tag);
-        blockTags.get().add(h4Tag);
-        blockTags.get().add(h5Tag);
-        blockTags.get().add(h6Tag);
-        blockTags.get().add(headerTag);
-        blockTags.get().add(hgroupTag);
-        blockTags.get().add(mainTag);
-        blockTags.get().add(navTag);
-        blockTags.get().add(pTag);
-        blockTags.get().add(preTag);
-        blockTags.get().add(sectionTag);
-    }
+    static const auto blockTags = makeNeverDestroyed(HashSet<QualifiedName> {
+        addressTag,
+        articleTag,
+        asideTag,
+        blockquoteTag,
+        ddTag,
+        divTag,
+        dlTag,
+        dtTag,
+        footerTag,
+        h1Tag,
+        h2Tag,
+        h3Tag,
+        h4Tag,
+        h5Tag,
+        h6Tag,
+        headerTag,
+        hgroupTag,
+        mainTag,
+        navTag,
+        pTag,
+        preTag,
+        sectionTag,
+    });
     return blockTags.get().contains(tagName);
 }
 

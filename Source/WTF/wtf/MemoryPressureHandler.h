@@ -31,7 +31,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 

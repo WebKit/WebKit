@@ -40,21 +40,17 @@ namespace WebCore {
 // MediaPlayer Enigne Support
 void MockMediaPlayerMediaSource::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    registrar([](MediaPlayer* player) { return std::make_unique<MockMediaPlayerMediaSource>(player); }, getSupportedTypes,
+    registrar([] (MediaPlayer* player) { return std::make_unique<MockMediaPlayerMediaSource>(player); }, getSupportedTypes,
         supportsType, 0, 0, 0, 0);
 }
 
+// FIXME: What does the word "cache" mean here?
 static const HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
 {
-    static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> cache;
-    static bool isInitialized = false;
-
-    if (!isInitialized) {
-        isInitialized = true;
-        cache.get().add(ASCIILiteral("video/mock"));
-        cache.get().add(ASCIILiteral("audio/mock"));
-    }
-
+    static const auto cache = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
+        "video/mock",
+        "audio/mock",
+    });
     return cache;
 }
 

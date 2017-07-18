@@ -30,7 +30,6 @@
 
 #include "NetworkCacheCoders.h"
 #include <wtf/ASCIICType.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/persistence/Decoder.h>
 #include <wtf/persistence/Encoder.h>
 #include <wtf/text/CString.h>

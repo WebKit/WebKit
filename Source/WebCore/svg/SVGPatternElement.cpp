@@ -91,21 +91,19 @@ Ref<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tagName, D
 
 bool SVGPatternElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGURIReference::addSupportedAttributes(supportedAttributes);
-        SVGTests::addSupportedAttributes(supportedAttributes);
-        SVGLangSpace::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::patternUnitsAttr);
-        supportedAttributes.get().add(SVGNames::patternContentUnitsAttr);
-        supportedAttributes.get().add(SVGNames::patternTransformAttr);
-        supportedAttributes.get().add(SVGNames::xAttr);
-        supportedAttributes.get().add(SVGNames::yAttr);
-        supportedAttributes.get().add(SVGNames::widthAttr);
-        supportedAttributes.get().add(SVGNames::heightAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGURIReference::addSupportedAttributes(set);
+        SVGTests::addSupportedAttributes(set);
+        SVGLangSpace::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        SVGFitToViewBox::addSupportedAttributes(set);
+        set.add({
+            SVGNames::patternUnitsAttr, SVGNames::patternContentUnitsAttr, SVGNames::patternTransformAttr,
+            SVGNames::xAttr, SVGNames::yAttr, SVGNames::widthAttr, SVGNames::heightAttr,
+        });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

@@ -34,7 +34,6 @@
 #include <runtime/JSLock.h>
 #include <runtime/JSONObject.h>
 #include <runtime/VM.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 
@@ -46,11 +45,8 @@ namespace WebCore {
 
 static VM& clearKeyVM()
 {
-    static NeverDestroyed<RefPtr<VM>> vm;
-    if (!vm.get())
-        vm.get() = VM::create();
-
-    return *vm.get();
+    static VM& vm = VM::create().leakRef();
+    return vm;
 }
 
 CDMSessionClearKey::CDMSessionClearKey(CDMSessionClient* client)

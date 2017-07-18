@@ -23,17 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocalizedDateCache_h
-#define LocalizedDateCache_h
+#pragma once
+
+// FIXME: Rename this file to LocalizedDataCacheIOS.h and remove this guard.
+#if PLATFORM(IOS)
 
 #include "DateComponents.h"
 #include "FontCascade.h"
 #include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/RetainPtr.h>
-
-// FIXME: Rename this file to LocalizedDataCacheIOS.mm and remove this guard.
-#if PLATFORM(IOS)
 
 namespace WebCore {
     
@@ -75,4 +73,3 @@ LocalizedDateCache& localizedDateCache();
 } // namespace WebCore
 
 #endif // PLATFORM(IOS)
-#endif // LocalizedDateCache_h

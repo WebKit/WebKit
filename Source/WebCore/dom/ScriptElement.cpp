@@ -104,34 +104,22 @@ void ScriptElement::handleAsyncAttribute()
     m_forceAsync = false;
 }
 
-// Helper function
 static bool isLegacySupportedJavaScriptLanguage(const String& language)
 {
-    // Mozilla 1.8 accepts javascript1.0 - javascript1.7, but WinIE 7 accepts only javascript1.1 - javascript1.3.
-    // Mozilla 1.8 and WinIE 7 both accept javascript and livescript.
-    // WinIE 7 accepts ecmascript and jscript, but Mozilla 1.8 doesn't.
-    // Neither Mozilla 1.8 nor WinIE 7 accept leading or trailing whitespace.
-    // We want to accept all the values that either of these browsers accept, but not other values.
-
-    // FIXME: This function is not HTML5 compliant. These belong in the MIME registry as "text/javascript<version>" entries.
-    typedef HashSet<String, ASCIICaseInsensitiveHash> LanguageSet;
-    static NeverDestroyed<LanguageSet> languages;
-    if (languages.get().isEmpty()) {
-        languages.get().add("javascript");
-        languages.get().add("javascript");
-        languages.get().add("javascript1.0");
-        languages.get().add("javascript1.1");
-        languages.get().add("javascript1.2");
-        languages.get().add("javascript1.3");
-        languages.get().add("javascript1.4");
-        languages.get().add("javascript1.5");
-        languages.get().add("javascript1.6");
-        languages.get().add("javascript1.7");
-        languages.get().add("livescript");
-        languages.get().add("ecmascript");
-        languages.get().add("jscript");
-    }
-
+    static const auto languages = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
+        "javascript",
+        "javascript1.0",
+        "javascript1.1",
+        "javascript1.2",
+        "javascript1.3",
+        "javascript1.4",
+        "javascript1.5",
+        "javascript1.6",
+        "javascript1.7",
+        "livescript",
+        "ecmascript",
+        "jscript",
+    });
     return languages.get().contains(language);
 }
 

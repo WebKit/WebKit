@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2014 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,96 +26,70 @@
 #import "config.h"
 #import "NetworkStateNotifier.h"
 
+#import "Settings.h"
 #import "WebCoreThreadRun.h"
 #import <wtf/SoftLinking.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <AppSupport/CPNetworkObserver.h>
 #else
-extern NSString * const CPNetworkObserverReachable;
 @interface CPNetworkObserver : NSObject
 + (CPNetworkObserver *)sharedNetworkObserver;
 - (void)addNetworkReachableObserver:(id)observer selector:(SEL)selector;
-- (void)removeNetworkReachableObserver:(id)observer;
 - (BOOL)isNetworkReachable;
 @end
 #endif
 
 SOFT_LINK_PRIVATE_FRAMEWORK(AppSupport);
 SOFT_LINK_CLASS(AppSupport, CPNetworkObserver);
-SOFT_LINK_POINTER(AppSupport, CPNetworkObserverReachable, NSString *);
 
-@interface WebNetworkStateObserver : NSObject
-@property (nonatomic) const WebCore::NetworkStateNotifier* notifier;
-- (id)initWithNotifier:(const WebCore::NetworkStateNotifier*)notifier;
-- (void)networkStateChanged:(NSNotification *)notification;
+@interface WebNetworkStateObserver : NSObject {
+    void (^block)();
+}
+- (id)initWithBlock:(void (^)())block;
 @end
 
 @implementation WebNetworkStateObserver
 
-- (id)initWithNotifier:(const WebCore::NetworkStateNotifier*)notifier
+- (id)initWithBlock:(void (^)())observerBlock
 {
-    ASSERT_ARG(notifier, notifier);
     if (!(self = [super init]))
         return nil;
-    _notifier = notifier;
     [[getCPNetworkObserverClass() sharedNetworkObserver] addNetworkReachableObserver:self selector:@selector(networkStateChanged:)];
+    block = [observerBlock copy];
     return self;
 }
 
 - (void)dealloc
 {
-    [[getCPNetworkObserverClass() sharedNetworkObserver] removeNetworkReachableObserver:self];
+    [block release];
     [super dealloc];
 }
 
-- (void)networkStateChanged:(NSNotification *)notification
+- (void)networkStateChanged:(NSNotification *)unusedNotification
 {
-    ASSERT_ARG(notification, notification);
-    WebThreadRun(^{
-        setOnLine(_notifier, [[[notification userInfo] objectForKey:getCPNetworkObserverReachable()] boolValue]);
-    });
+    UNUSED_PARAM(unusedNotification);
+    block();
 }
 
 @end
 
 namespace WebCore {
 
-NetworkStateNotifier::NetworkStateNotifier()
-    : m_isOnLine(false)
-    , m_isOnLineInitialized(false)
+void NetworkStateNotifier::updateStateWithoutNotifying()
 {
-}
-    
-NetworkStateNotifier::~NetworkStateNotifier()
-{
-    [m_observer setNotifier:nullptr];
+    m_isOnLine = [[getCPNetworkObserverClass() sharedNetworkObserver] isNetworkReachable];
 }
 
-void NetworkStateNotifier::registerObserverIfNecessary() const
+void NetworkStateNotifier::startObserving()
 {
-    if (!m_observer)
-        m_observer = adoptNS([[WebNetworkStateObserver alloc] initWithNotifier:this]);
-}
-
-bool NetworkStateNotifier::onLine() const
-{
-    registerObserverIfNecessary();
-    if (!m_isOnLineInitialized) {
-        m_isOnLine = [[getCPNetworkObserverClass() sharedNetworkObserver] isNetworkReachable];
-        m_isOnLineInitialized = true;
-    }
-    return m_isOnLine;
-}
-
-void setOnLine(const NetworkStateNotifier* notifier, bool onLine)
-{
-    ASSERT_ARG(notifier, notifier);
-    notifier->m_isOnLineInitialized = true;
-    if (onLine == notifier->m_isOnLine)
+    if (Settings::shouldOptOutOfNetworkStateObservation())
         return;
-    notifier->m_isOnLine = onLine;
-    notifier->notifyNetworkStateChange();
+    m_observer = adoptNS([[WebNetworkStateObserver alloc] initWithBlock:^ {
+        WebThreadRun(^ {
+            NetworkStateNotifier::singleton().updateStateSoon();
+        });
+    }]);
 }
 
 } // namespace WebCore

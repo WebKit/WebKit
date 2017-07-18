@@ -34,6 +34,7 @@
 #include "Event.h"
 #include "EventDispatcher.h"
 #include "EventTarget.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

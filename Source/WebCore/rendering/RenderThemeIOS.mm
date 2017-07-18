@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "RenderThemeIOS.h"
 
 #if PLATFORM(IOS)
 
@@ -60,7 +61,6 @@
 #import "RenderObject.h"
 #import "RenderProgress.h"
 #import "RenderStyle.h"
-#import "RenderThemeIOS.h"
 #import "RenderView.h"
 #import "RuntimeEnabledFeatures.h"
 #import "UIKitSPI.h"
@@ -297,13 +297,8 @@ RenderThemeIOS::RenderThemeIOS()
 
 RenderTheme& RenderTheme::singleton()
 {
-    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeIOS::create());
-    return theme.get();
-}
-
-Ref<RenderTheme> RenderThemeIOS::create()
-{
-    return adoptRef(*new RenderThemeIOS);
+    static NeverDestroyed<RenderThemeIOS> theme;
+    return theme;
 }
 
 static String& _contentSizeCategory()

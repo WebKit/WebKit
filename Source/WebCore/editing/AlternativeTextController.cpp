@@ -86,31 +86,29 @@ private:
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
 {
-    static NeverDestroyed<Vector<DocumentMarker::MarkerType>> markerTypesForAutoCorrection;
-    if (markerTypesForAutoCorrection.get().isEmpty()) {
-        markerTypesForAutoCorrection.get().append(DocumentMarker::Replacement);
-        markerTypesForAutoCorrection.get().append(DocumentMarker::CorrectionIndicator);
-        markerTypesForAutoCorrection.get().append(DocumentMarker::SpellCheckingExemption);
-        markerTypesForAutoCorrection.get().append(DocumentMarker::Autocorrected);
-    }
+    static const auto markerTypesForAutoCorrection = makeNeverDestroyed(Vector<DocumentMarker::MarkerType> {
+        DocumentMarker::Autocorrected,
+        DocumentMarker::CorrectionIndicator,
+        DocumentMarker::Replacement,
+        DocumentMarker::SpellCheckingExemption,
+    });
     return markerTypesForAutoCorrection;
 }
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
 {
-    static NeverDestroyed<Vector<DocumentMarker::MarkerType>> markerTypesForReplacement;
-    if (markerTypesForReplacement.get().isEmpty()) {
-        markerTypesForReplacement.get().append(DocumentMarker::Replacement);
-        markerTypesForReplacement.get().append(DocumentMarker::SpellCheckingExemption);
-    }
+    static const auto markerTypesForReplacement = makeNeverDestroyed(Vector<DocumentMarker::MarkerType> {
+        DocumentMarker::Replacement,
+        DocumentMarker::SpellCheckingExemption,
+    });
     return markerTypesForReplacement;
 }
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAppliedDictationAlternative()
 {
-    static NeverDestroyed<Vector<DocumentMarker::MarkerType>> markerTypesForAppliedDictationAlternative;
-    if (markerTypesForAppliedDictationAlternative.get().isEmpty())
-        markerTypesForAppliedDictationAlternative.get().append(DocumentMarker::SpellCheckingExemption);
+    static const auto markerTypesForAppliedDictationAlternative = makeNeverDestroyed(Vector<DocumentMarker::MarkerType> {
+        DocumentMarker::SpellCheckingExemption,
+    });
     return markerTypesForAppliedDictationAlternative;
 }
 

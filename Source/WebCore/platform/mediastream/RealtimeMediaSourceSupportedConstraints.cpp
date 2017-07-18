@@ -29,7 +29,6 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 

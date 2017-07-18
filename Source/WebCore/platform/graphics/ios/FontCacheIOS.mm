@@ -160,8 +160,8 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
 
     if (equalLettersIgnoringASCIICase(family, "lastresort")) {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-        static NeverDestroyed<RetainPtr<CTFontDescriptorRef>> lastResort = adoptCF(CTFontDescriptorCreateLastResort());
-        return adoptCF(CTFontCreateWithFontDescriptor(lastResort.get().get(), size, nullptr));
+        static const CTFontDescriptorRef lastResort = CTFontDescriptorCreateLastResort();
+        return adoptCF(CTFontCreateWithFontDescriptor(lastResort, size, nullptr));
 #else
         // LastResort is special, so it's important to look this exact string up, and not some case-folded version.
         // We handle this here so any caching and case folding we do in our general text codepath is bypassed.

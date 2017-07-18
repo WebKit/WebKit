@@ -1,3 +1,699 @@
+2017-07-17  Darin Adler  <darin@apple.com>
+
+        Improve use of NeverDestroyed
+        https://bugs.webkit.org/show_bug.cgi?id=174348
+
+        Reviewed by Sam Weinig.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp: Removed unneeded include of
+        NeverDestroyed.h.
+
+        * Modules/encryptedmedia/legacy/LegacyCDM.cpp:
+        (WebCore::installedCDMFactories): Use makeNeverDestroyed and a lambda rather
+        than a separate boolean for initialization.
+
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::clearKeyVM): Removed unneeded use of NeverDestroyed to hold a
+        RefPtr. Simple to just use leakRef instead.
+
+        * Modules/gamepad/GamepadManager.cpp: Added an include of NeverDestroyed.h.
+
+        * Modules/indexeddb/IDBTransaction.cpp: Removed unneeded include of
+        NeverDestroyed.h.
+        * Modules/indexeddb/server/MemoryObjectStore.cpp: Ditto.
+
+        * Modules/mediasession/MediaSessionManager.cpp: Moved include of
+        NeverDestroyed.h here ...
+        * Modules/mediasession/MediaSessionManager.h: ... from here.
+
+        * Modules/mediasource/MediaSourceRegistry.cpp: Moved include of
+        NeverDestroyed.h here ...
+        * Modules/mediasource/MediaSourceRegistry.h: ... from here.
+
+        * Modules/mediasource/SourceBuffer.cpp: Removed unneeded include of
+        NeverDestroyed.h.
+
+        * Modules/plugins/QuickTimePluginReplacement.h: Initialize
+        m_scriptObject in the class definition.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::supportsMimeType): Use
+        makeNeverDestroyed and the HashSet constructor instead of a loop.
+        (WebCore::QuickTimePluginReplacement::supportsFileExtension): Ditto.
+        (WebCore::QuickTimePluginReplacement::QuickTimePluginReplacement): Did a
+        slight cleanup of the initializers.
+        (WebCore::QuickTimePluginReplacement::~QuickTimePluginReplacement): Added
+        a FIXME; unclear why there is code here at all.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::inheritsPresentationalRole): Use
+        makeNeverDestroyed and the Vector constructor instead of using empty
+        vector checks and Vector::add. Use std::any_of rather than Vector::contains
+        since we now are matching against pointers.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationImplementationContent): Use const NeverDestroyed.
+
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.cpp:
+        Regenerated.
+
+        * css/CSSProperty.cpp:
+        (WebCore::borderDirections): Removed unnecesssary use of NeverDestroyed
+        for a global object that has a trivial destructor.
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::leftToRightDeclaration): Removed unneeded use of NeverDestroyed to hold a
+        Ref. Simple to just use leakRef instead. Also use a lambda instead of an explicit
+        isEmpty check each time this is called.
+        (WebCore::rightToLeftDeclaration): Ditto.
+
+        * css/makeprop.pl: Removed unneeded include of NeverDestroyed.h and the
+        uneeded global emptyShorthand. Constructing an empty StylePropertyShorthand
+        is no less efficient than copying a global empty one was.
+
+        * dom/CustomElementReactionQueue.cpp: Added an include of NeverDestroyed.h.
+
+        * dom/DOMImplementation.cpp: Removed unneeded include of NeverDestroyed.h.
+        * dom/InputEvent.cpp: Ditto.
+
+        * dom/Microtasks.cpp: Moved include of NeverDestroyed.h here ...
+        * dom/Microtasks.h: ... from here.
+
+        * dom/MutationObserver.cpp: Added an include of NeverDestroyed.h.
+
+        * dom/ScopedEventQueue.cpp: Moved include of NeverDestroyed.h here ...
+        * dom/ScopedEventQueue.h: ... from here. Added Forward.h.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::isLegacySupportedJavaScriptLanguage): Use makeNeverDestroyed
+        and the HashSet constructor rather than an isEmpty check and a lot of
+        add function calls. Also removed comments that don't have value any more,
+        with dubious no longer relevant claims about the behavior of old web browsers.
+        The function that calls this one already has sufficient comments about why we
+        hope some day this function can be eliminated.
+
+        * dom/SecurityContext.cpp: Removed unneeded include of NeverDestroyed.h.
+
+        * dom/make_names.pl:
+        (printFactoryCppFile): Instead of using a "populate" function, use a function
+        that creates as HashMap. Then use const auto and makeNeverDestroyed.
+        (printWrapperFactoryCppFile): Ditto.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::markerTypesForAutocorrection): Use makeNeverDestroyed
+        and the Vector constructor rather than an isEmpty check and a lot of
+        append function calls.
+        (WebCore::markerTypesForReplacement): Ditto.
+        (WebCore::markerTypesForAppliedDictationAlternative): Ditto.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::htmlElementEquivalents): Use const auto, makeNeverDestroyed,
+        the Vector constructor, and new rather than make_unique. Changed return
+        type to use const pointers rather than unique_ptr with non-const type.
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfElement): Updated
+        for the above change to htmlElementEquivalents.
+        (WebCore::htmlAttributeEquivalents): Same approach as above.
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfAttributes): Ditto.
+        (WebCore::elementMatchesAndPropertyIsNotInInlineStyleDecl): Take
+        references instead of pointers.
+        (WebCore::EditingStyle::mergeInlineAndImplicitStyleOfElement): Updated
+        for the above.
+
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::isElementForFormatBlock): Use const auto, makeNeverDestroyed,
+        and the HashSet constructor rather than isEmpty and a lot of calls to add.
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::isElementForRemoveFormatCommand): Ditto.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isProhibitedParagraphChild): Use const auto, makeNeverDestroyed,
+        and a lambda, rather than isEmpty and a lot of calls to add.
+
+        * html/Autofill.cpp:
+        (WebCore::fieldNameMap): Changed return type to be const. Use const auto,
+        makeNeverDestroyed, a lambda, and an array of values rather than isEmpty
+        and a lot of calls to add. Stopped doing the ConstructFromLiteral
+        optimization here. (Easy to add it back if that is a mistake.)
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::isRecognizedTagName): Use const auto, makeNeverDestroyed, and
+        a lambda rather than isEmpty.
+
+        * html/HTMLStyleElement.cpp: Added include of NeverDestroyed.h.
+
+        * html/HTMLVideoElement.cpp: Removed uneeded include of NeverDestroyed.h.
+
+        * html/InputType.cpp:
+        (WebCore::createInputTypeFactoryMap): Replaced the populate function
+        with this create function.
+        (WebCore::InputType::create): Use const auto and makeNeverDestroyed
+        istead of isEmpty. Also put the map right where it is used so it's
+        not initialized in code path where not needed.
+
+        * html/parser/HTMLParserIdioms.cpp: Removed uneeded include of
+        NeverDestroyed.h.
+
+        * inspector/InspectorApplicationCacheAgent.cpp:
+        (WebCore::InspectorApplicationCacheAgent::networkStateChanged):
+        Merged into a single line.
+
+        * loader/ContentFilter.cpp:
+        (WebCore::blockedPageURL): Use const auto and makeNeverDestroyed
+        rather than std::call_once. Since this is a URL and has a non-thread-safe
+        reference count, this was not thread safe before, so no need to use the
+        more roundabout and less efficient idiom for its thread safety.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isOnAccessControlResponseHeaderWhitelist): Deleted.
+        * loader/CrossOriginAccessControl.h: Deleted unused function
+        isOnAccessControlResponseHeaderWhitelist.
+
+        * loader/EmptyClients.cpp: Use leakRef instead of NeverDestroyed<Ref>.
+
+        * loader/appcache/ApplicationCacheStorage.cpp: Removed unneeded include of
+        NeverDestroyed.h.
+        * page/CaptionUserPreferences.cpp: Ditto.
+
+        * page/DebugPageOverlays.cpp:
+        (WebCore::touchEventRegionColors): Changed the return type to const, since
+        the callers do not modify the map. Use const auto, makeNeverDestroyed, and
+        a lambda rather than isEmpty and repeated calls to add.
+
+        * page/MainFrame.cpp: Removed unneeded include of NeverDestroyed.h.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseMemory): Use a function directly instead of calling it
+        inside a lambda.
+
+        * page/NavigatorBase.cpp:
+        (WebCore::NavigatorBase::onLine): Updated to call
+        NetworkStateNotifier::singleton.
+
+        * page/Page.cpp:
+        (WebCore::allPages): Made this a function instead of a global to use the
+        normal idiom for such globals.
+        (WebCore::Page::forEachPage): Updated for change to allPages.
+        (WebCore::networkStateChanged): Ditto. Also removed a bit of unnecessary
+        churn by using const AtomicString& instead of AtomicString.
+        (WebCore::Page::Page): Moved initialization of most data members to the
+        class definition. Removed initialiation of allPages. Updated the use of
+        NetworkStateNotifier for its new slightly changed  interface.
+        (WebCore::Page::~Page): Updated for change to allPages.
+        (WebCore::Page::clearPreviousItemFromAllPages): Ditto.
+        (WebCore::Page::updateStyleForAllPagesAfterGlobalChangeInEnvironment): Ditto.
+        (WebCore::Page::refreshPlugins): Ditto.
+
+        * page/Page.h: Moved initialization of most data members here.
+
+        * page/PerformanceUserTiming.cpp: Removed many unneded includes.
+        (WebCore::restrictedMarkFunction): Use const auto, makeNeverDestroyed, and
+        a lambda instead of isEmpty. Also use an array rather than std::array and
+        got rid fo the unneeded use of anonymous namespace since this is fine in
+        the top level WebCore namespace.
+        (WebCore::clearPerformanceEntries): Tweaked coding style.
+        (WebCore::UserTiming::mark): Ditto.
+        (WebCore::UserTiming::findExistingMarkStartTime): Got rid of double hash
+        table lookup by using find instead of using contains followed by get.
+        removed unneeded explicit cast to double. Tweaked coding style.
+        (WebCore::convertToEntrySequence): Tweaked coding style.
+        (WebCore::getEntrySequenceByName): Deleted.
+        (WebCore::UserTiming::getMarks): Call get directly instead of getEntrySequenceByName.
+        (WebCore::UserTiming::getMeasures): Ditto.
+
+        * page/RuntimeEnabledFeatures.cpp: Moved include of NeverDestroyed.h here ...
+        * page/RuntimeEnabledFeatures.h: ... from here. Added Forward.h and Noncopyable.h.
+
+        * platform/LocalizedStrings.cpp: Removed unneeded include of NeverDestroyed.h.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypes): Added a missing const for a global
+        constant array.
+        (WebCore::initializeSupportedJavaScriptMIMETypes): Ditto.
+        (WebCore::initializeSupportedNonImageMimeTypes): Ditto.
+        (WebCore::typesForCommonExtension): Replaced the old mediaMIMETypeMap function
+        with this one. Moved the common media types array here since it's only used here.
+        Use const auto, makeNeverDestroyed, and a lambda instead of using an isEmpty check.
+        Iterate the array using a mdoern for loop. Use HashMap::ensure to avoid the
+        double hashing that the old code was doing. And moved the code to find an entry
+        in the map in here from the client functions.
+        (WebCore::MIMETypeRegistry::getMediaMIMETypeForExtension): Updated to use the
+        typesForCommonExtension, and changed logic to use this first, and only call
+        getMIMETypeForExtension for extensions not in the map. This gives the same
+        result but should be slightly more efficient.
+        (WebCore::MIMETypeRegistry::getMediaMIMETypesForExtension): Updated to use the
+        typesForCommonExtension function. Comment about strategy is now in there.
+        (WebCore::initializeUnsupportedTextMIMETypes): Added a missing const for a global
+        constant array. Also started using ASCIILiteral.
+
+        * platform/MainThreadSharedTimer.cpp: Moved include of NeverDestroyed.h here ...
+        * platform/MainThreadSharedTimer.h: ... from here. Added Forward.h.
+
+        * platform/SchemeRegistry.cpp:
+        (WebCore::add): Added helper functions to keep code below simpler.
+        (WebCore::makeNeverDestroyedSchemeSet): Ditto.
+        (WebCore::allBuiltinSchemes): Use const auto, makeNeverDestroyed, a lambda,
+        and the helper functions above, rather than isEmpty.
+        (WebCore::builtinLocalURLSchemes): Use const auto, makeNeverDestroyed, and
+        the HashSet constructor instead of isEmpty and add calls. Also changed the
+        return type to be const.
+        (WebCore::localURLSchemes): Copy the map using assignment instead of an
+        isEmpty function and a loop with calls to add.
+        (WebCore::builtinSecureSchemes): Use const auto, makeNeverDestroyed, and
+        the Vector constructor rather than isEmpty, repeated calls to append,
+        and shrinkToFit.
+        (WebCore::secureSchemes): Use auto and makeNeverDestroyedSchemeSet rather
+        than isEmpty and repeated calls to add.
+        (WebCore::builtinSchemesWithUniqueOrigins): More of the same.
+        (WebCore::schemesWithUniqueOrigins): Ditto.
+        (WebCore::builtinEmptyDocumentSchemes): Ditto.
+        (WebCore::emptyDocumentSchemes): Ditto.
+        (WebCore::schemesForbiddenFromDomainRelaxation): Ditto.
+        (WebCore::builtinCanDisplayOnlyIfCanRequestSchemes): Ditto.
+        (WebCore::canDisplayOnlyIfCanRequestSchemes): Ditto.
+        (WebCore::builtinCORSEnabledSchemes): Ditto.
+        (WebCore::CORSEnabledSchemes): Ditto.
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsLocal): Replaced check for
+        empty string with check for null string, since that's slightly more efficient
+        for non-null, non-empty strings, and the hash table can handle empty strings
+        just fine.
+        (WebCore::SchemeRegistry::registerURLSchemeAsNoAccess): Added null check here.
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsNoAccess): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsDisplayIsolated): Ditto.
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsDisplayIsolated): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsSecure): Ditto.
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsSecure): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsEmptyDocument): Ditto.
+        (WebCore::SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument): Ditto.
+        (WebCore::SchemeRegistry::setDomainRelaxationForbiddenForURLScheme): Ditto.
+        (WebCore::SchemeRegistry::isDomainRelaxationForbiddenForURLScheme): Ditto.
+        (WebCore::SchemeRegistry::canDisplayOnlyIfCanRequest): Ditto.
+        (WebCore::SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs): Ditto.
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsAllowingLocalStorageAccessInPrivateBrowsing): Ditto.
+        (WebCore::SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsAllowingDatabaseAccessInPrivateBrowsing): Ditto.
+        (WebCore::SchemeRegistry::allowsDatabaseAccessInPrivateBrowsing): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsCORSEnabled): Ditto.
+        (WebCore::SchemeRegistry::shouldTreatURLSchemeAsCORSEnabled): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsBypassingContentSecurityPolicy): Ditto.
+        (WebCore::SchemeRegistry::removeURLSchemeRegisteredAsBypassingContentSecurityPolicy): Ditto.
+        (WebCore::SchemeRegistry::schemeShouldBypassContentSecurityPolicy): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsAlwaysRevalidated): Ditto.
+        (WebCore::SchemeRegistry::shouldAlwaysRevalidateURLScheme): Ditto.
+        (WebCore::SchemeRegistry::registerURLSchemeAsCachePartitioned): Ditto.
+        (WebCore::SchemeRegistry::shouldPartitionCacheForURLScheme): Ditto.
+        (WebCore::SchemeRegistry::isUserExtensionScheme): Tweaked #if a bit.
+        (WebCore::SchemeRegistry::isBuiltinScheme): Added null check.
+
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::observedEventNames): Use const auto,
+        makeNeverDestroyed, and the Vector constructor rather than a call to size
+        and then append eacn time this funciton is called.
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.h: Moved include of
+        NeverDestroyed.h from here ...
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm: ... to here.
+
+        * platform/gamepad/mac/HIDGamepadProvider.cpp: Moved include of
+        NeverDestroyed.h here ...
+        * platform/gamepad/mac/HIDGamepadProvider.h: ... from here.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::hasValidAverageCharWidth): Use const auto,
+        makeNeverDestroyed, and the HashSet constructor.
+
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::transformColorSpace): Removed unneeded use of
+        NeverDestroyed<Vector<int>> here, instead using const std::array.
+
+        * platform/graphics/ImageBuffer.h: Changed platformTransformColorSpace to take
+        const std::array<uint8_t, 256>& instead of const Vector<int>&, since the whole
+        pointer of the argument is that it's a table to map bytes onto other bytes.
+
+        * platform/graphics/MediaPlaybackTarget.h: Removed unneeded include of
+        NeverDestroyed.h, unneeded unused noMediaPlaybackTargetContext function,
+        and unneeded include of MediaPlaybackTargetContext.h, forward declaring instead.
+        Made most functions in this class pure virtual instead of having default
+        implementations.
+
+        * platform/graphics/avfoundation/MediaPlaybackTargetMac.h: Added include
+        of MediaPlaybackTargetContext.h now that it was removed above.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::staticMIMETypeList): Use const auto,
+        makeNeverDestroyed, and the HashSet constructor.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::isAvailable): Reversed the sense
+        of the boolean logic here to make this simpler and easier to read.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::getSupportedTypes): Changed
+        the implementation here, which empties out the passed in hash set, to use
+        the clear function rather than assignment from a global empty hash set. Added
+        a FIXME because it seems peculiar that this would be considered OK.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::supportsType): Used ? : to make
+        this a little more terse; I think it's clearer.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::platformTransformColorSpace): Updated for change to
+        argument type.
+
+        * platform/graphics/cg/ImageDecoderCG.cpp: Removed unneeded include of
+        NeverDestroyed.h.
+        (WebCore::appendImageSourceOption): Streamlined code using auto with
+        adoptCF; there is no need to write out the type of the RetainPtr.
+        (WebCore::imageSourceOptions): Instead of NeverDestroyed<RetainPtr>, just use
+        const auto and leakRef.
+        (WebCore::imageSourceAsyncOptions): Ditto.
+
+        * platform/graphics/gtk/GdkCairoUtilities.cpp:
+        (WebCore::getDefaultCairoFontOptions): Instead of using LazyNeverDestroyed
+        on a pointer, just use a global pointer. There is no need to use any kind
+        of NeverDestroyed on a type with a trivial destructor such as a pointer.
+
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::platformFontWithFamilySpecialCase): Instead of using
+        NeverDestroyed<RetainPtr> just use a raw pointer global.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::platformFontWithFamilySpecialCase): Ditto.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::createFileTypesSet): Return the HashSet instead of adding to it.
+        Use Objective-C for/in syntax for an NSArray, not C++ for syntax, although
+        it seems the C++ syntax was working fine.
+        (WebCore::mimeCommonTypesCache): Fixed return type so we won't copy the
+        HashMap every time this function is called. Use const auto and makeNeverDestroyed
+        instead of using a boolean to do one time initialization.
+        (WebCore::mimeModernTypesCache): Ditto.
+        (WebCore::MediaPlayerPrivateQTKit::disableUnsupportedTracks): Marked a
+        constant array const.
+
+        * platform/ios/Device.cpp:
+        (WebCore::deviceClass): Use a lambda to initialize a variable here instead
+        of using std::call_once. This function does not need to be thread safe.
+        (WebCore::deviceName): Use const NeverDestroyed instead of LazyNeverDestroyed
+        and std::call_once. This function does not need to be thread safe.
+
+        * platform/ios/DragImageIOS.mm: Make defaultLinkIndicatorOptions be a
+        constant instead of a variable.
+        (WebCore::cascadeForSystemFont): Added helper function.
+        (WebCore::createDragImageForLink): Use const auto and makeNeverDestroyed
+        instead of LazyNeverDestroyed and dispatch_once. This code does not need
+        to be thread safe since its arguments include, for example, a DOM element.
+
+        * platform/ios/LegacyTileLayerPool.h: Removed unneeded include of
+        NeverDestroyed.h.
+
+        * platform/ios/QuickLook.mm:
+        (WebCore::QLPreviewGetSupportedMIMETypesSet): Use a global raw pointer
+        instead of NeverDestroyed<RetainPtr<NSSet>>.
+        (WebCore::createQLPreviewProtocol): Deleted.
+        (WebCore::QLPreviewProtocol): Use a global raw pointer instead of
+        a NeverDestroyed<Vector<char>>. It's cleaner to use fastStrdup instead
+        of appending to an array, and less wasteful of memory too.
+
+        * platform/ios/WebCoreMotionManager.mm: Removed unneeded include of
+        NeverDestroyed.h.
+        * platform/ios/WebSQLiteDatabaseTrackerClient.h: Ditto.
+        * platform/mac/DragImageMac.mm: Ditto.
+        * platform/mediastream/CaptureDeviceManager.cpp: Ditto.
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.cpp: Ditto.
+
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::MockRealtimeMediaSource::audioDevices): Use auto,
+        makeNeverDestroyed, and a lambda instead of checking size each time.
+        (WebCore::MockRealtimeMediaSource::videoDevices): Ditto.
+
+        * platform/mock/mediasource/MockMediaPlayerMediaSource.cpp:
+        (WebCore::mimeTypeCache): Use const auto, makeNeverDestroyed, and the
+        HashSet constructor instead of an explicit boolean to initialize.
+
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::blobUtilityQueue): Use a global with a raw reference instead
+        of a NeverDestroyed<Ref>.
+
+        * platform/network/NetworkStateNotifier.cpp:
+        (WebCore::NetworkStateNotifier::singleton): Renamed this from
+        networkStateNotifier. We must have missed this when we changed to use the
+        singleton idiom consistently. Also changed to use normal NeverDestroyed
+        rather than using LazyNeverDestroyed and call_once, because this is not
+        used from multiple threads and has no special thread safety requirements.
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier): Moved the constructor
+        here and construct the timer. Before the timer was used only on the Mac
+        platform but now it is there for all platforms.
+        (WebCore::NetworkStateNotifier::onLine): Moved function here from the header.
+        It's a littlel less trivial than before because it now triggers a call to
+        updateState as needed.
+        (WebCore::NetworkStateNotifier::addListener): Renamed from
+        addNetworkStateChangeListener since there is only one kind of listener and
+        the old name was too wordy. Changed to call the new startObserving function,
+        and guaranteed to call it onlh once. The platform-specific logic for iOS is
+        now inside the iOS version of that function instead of here.
+        (WebCore::NetworkStateNotifier::updateState): Moved here now that it is the
+        same for all platforms. The actual state updating is done in a function named
+        updateStateWithoutNotifying, which is implemented for each platform.
+        (WebCore::NetworkStateNotifier::updateStateSoon): New function which takes
+        advantage of the timer to coalesce network state updates.
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying): Empty stub
+        version of this function.
+        (WebCore::NetworkStateNotifier::startObserving): Ditto.
+        (WebCore::NetworkStateNotifier::notifyNetworkStateChange): Deleted. Code from
+        this has moved into updateState.
+
+        * platform/network/NetworkStateNotifier.h: Greatly cut down what part of this
+        class is platform-specific.
+
+        * platform/network/ios/NetworkStateNotifierIOS.mm:
+        (-[WebNetworkStateObserver initWithBlock:]): Simplified this class so it
+        takes a block, rather than using a pointer to the C++ notifier and doing
+        WebThreadRun.
+        (-[WebNetworkStateObserver dealloc]): Ditto.
+        (-[WebNetworkStateObserver networkStateChanged:]): Ditto.
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying):
+        This now calls isNetworkReachable.
+        (WebCore::NetworkStateNotifier::startObserving): Check the
+        Settings::shouldOptOutOfNetworkStateObservation function, and if it's OK
+        to observe, then create the observer. This code now takes care of the
+        WebThreadRun and calls updateStateSoon.
+        (WebCore::NetworkStateNotifier::NetworkStateNotifier): Deleted. The
+        constructor is now platform independent.
+        (WebCore::NetworkStateNotifier::~NetworkStateNotifier): Deleted. This
+        object is never destroyed so we should not write a destructor for it.
+        (WebCore::NetworkStateNotifier::registerObserverIfNecessary): Deleted.
+        Replaced by startObserving.
+        (WebCore::NetworkStateNotifier::onLine): Deleted. This function is now
+        platform-independent.
+        (WebCore::setOnLine): Deleted. The logic from this is now in
+        updateState and updateStateWithoutNotifying.
+
+        * platform/network/mac/NetworkStateNotifierMac.cpp:
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying): Renamed
+        this from updateState and tightened up the code a bit. Also changed
+        to not assume anything. If there is an error, we leave m_isOnLine alone.
+        Default behavior is now in the platform-independent code, and the default
+        is to treat things as on-line if updateStateWithoutNotifying was called
+        and it was never able to update the state even once.
+        (WebCore::NetworkStateNotifier::startObserving): Moved most of the code
+        from the constructor into this function.
+        (WebCore::NetworkStateNotifier::dynamicStoreCallback): Deleted. This is
+        now a lambda inside startObserving.
+        (WebCore::NetworkStateNotifier::networkStateChangeTimerFired): Deleted.
+        This function is now platform-independent and is named updateState.
+
+        * platform/network/win/NetworkStateNotifierWin.cpp:
+        (WebCore::NetworkStateNotifier::updateStateWithoutNotifying): Renamed
+        from updateState and tightened the code up a bit. Also changed
+        to not assume anything. If there is an error, we leave m_isOnLine alone.
+        Default behavior is now in the platform-independent code, and the default
+        is to treat things as on-line if updateStateWithoutNotifying was called
+        and it was never able to update the state even once.
+        (WebCore::NetworkStateNotifier::addressChanged): Deleted.
+        This function is now platform-independent and is named updateState.
+        (WebCore::NetworkStateNotifier::addressChangeCallback): Renamed from
+        addrChangeCallback. Simplified by using the singleton function instead
+        of relying on the context pointer.
+        (WebCore::NetworkStateNotifier::startObserving): Moved most of the code
+        from the constructor here.
+
+        * platform/text/LocaleToScriptMappingDefault.cpp:
+        (WebCore::scriptNameToCode): Use makeNeverDestroyed.
+        (WebCore::localeToScriptCodeForFontSelection): Ditto.
+
+        * platform/text/ios/LocalizedDateCache.h: Moved include of
+        NeverDestroyed.h from here ...
+        * platform/text/ios/LocalizedDateCache.mm: ... to here.
+
+        * platform/wpe/RenderThemeWPE.cpp:
+        (WebCore::RenderTheme::singleton): Use a theme that is never destroyed
+        rather than Ref that is never destroyed.
+
+        * platform/wpe/RenderThemeWPE.h: Use friend NeverDestroyed rather than
+        a create function since RenderTheme is no longer reference counted.
+
+        * rendering/RenderTheme.h: Made RenderTheme no longer reference counted.
+
+        * rendering/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::create): Deleted.
+        (WebCore::RenderTheme::singleton): Use a theme that is never destroyed
+        rather than Ref that is never destroyed.
+
+        * rendering/RenderThemeGtk.h: Use friend NeverDestroyed rather than
+        a create function since RenderTheme is no longer reference counted.
+        * rendering/RenderThemeIOS.h: Ditto.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::create): Deleted.
+        (WebCore::RenderTheme::singleton): Use a theme that is never destroyed
+        rather than Ref that is never destroyed.
+
+        * rendering/RenderThemeMac.h: Use friend NeverDestroyed rather than
+        a create function since RenderTheme is no longer reference counted.
+        Also marked a lot of functions final rather than override and initialized
+        data members in the class deifnition.
+
+        * rendering/RenderThemeMac.mm: Moved some SPI interfaces to the top of the
+        file. They should really go into SPI headers.
+        (-[WebCoreRenderThemeNotificationObserver init]): Removed the theme argument
+        here because the theme is a singleton and we don't need a pointer to it.
+        Add the observer here instead of doing it in the caller.
+        (-[WebCoreRenderThemeNotificationObserver systemColorsDidChange:]): Call
+        platformColorsDidChange through the singleton rather than using a pointer.
+        (-[WebCoreTextFieldCell _coreUIDrawOptionsWithFrame:inView:includeFocus:]):
+        Tightened up the code a bit by using CFAutorelease instead of using a
+        combination of NSMakeCollectable, autorelease, and a typecast to accomplish
+        the same thing.
+        (WebCore::RenderTheme::singleton): Use a theme that is never destroyed
+        rather than Ref that is never destroyed.
+        (WebCore::RenderThemeMac::create): Deleted.
+        (WebCore::RenderThemeMac::RenderThemeMac): Moved initialization into the
+        class definition and observing into the WebCoreRenderThemeNotificationObserver
+        init function.
+        (WebCore::RenderThemeMac::~RenderThemeMac): Deleted. No need for this since
+        the object will never be destroyed.
+        (WebCore::RenderThemeMac::mediaControlsBase64StringForIconNameAndType):
+        Removed an unnecessary conversion from C string literal to WTF::String and
+        then to NSString. Instead, just use an NSString literal.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::create): Deleted.
+        (WebCore::RenderTheme::singleton): Use a theme that is never destroyed
+        rather than Ref that is never destroyed.
+
+        * rendering/RenderThemeWin.h: Use friend NeverDestroyed rather than
+        a create function since RenderTheme is no longer reference counted.
+
+        * rendering/svg/RenderSVGResource.cpp:
+        (WebCore::removeFromCacheAndInvalidateDependencies): Moved a global into
+        the code where it is used.
+
+        * svg/SVGAnimatedLength.cpp: Removed unneeded include of NeverDestroyed.h.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::isSupportedAttribute): Use const auto,
+        makeNeverDestroyed, a lambda, and the new HashSet::add overload instead of
+        an isEmpty check and lots of separate add function calls.
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::isSupportedAttribute): Ditto.
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::isSupportedAttribute): Ditto.
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::isSupportedAttribute): Ditto.
+
+        * svg/SVGElement.cpp:
+        (WebCore::createAttributeNameToCSSPropertyIDMap): Replaced the populate
+        function with this create function.
+        (WebCore::createAttributeNameToAnimatedPropertyTypeMap): Ditto.
+        (WebCore::attributeNameToAnimatedPropertyTypeMap): Changed return type to
+        const reference. Use const auto and makeNeverDestroyed instead of using
+        isEmpty and a populate function.
+        (WebCore::createCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap):
+        More of the same.
+        (WebCore::cssPropertyWithSVGDOMNameToAnimatedPropertyTypeMap): Ditto.
+        (WebCore::SVGElement::childShouldCreateRenderer): Use an array instead of
+        a HashSet since we are checking against only 3 or 4 values.
+        (WebCore::addQualifiedName): Deleted.
+        (WebCore::SVGElement::animatableAttributeForName): Use const auto,
+        makeNeverDestroyed, and a lambda to efficiently build the map in this function.
+        (WebCore::SVGElement::cssPropertyIdForSVGAttributeName): Use const auto and
+        makeNeverDestroyed instead of using isEmpty and a populate function.
+
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::isSupportedAttribute): Use const auto,
+        makeNeverDestroyed, a lambda, and the new HashSet::add overload instead of
+        an isEmpty check and lots of separate add function calls.
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::isSupportedAttribute): Ditto.
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::isSupportedAttribute): Ditto.
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::isSupportedAttribute): Ditto.
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::isSupportedAttribute): Ditto.
+        * svg/SVGGraphicsElement.cpp:
+        (WebCore::SVGGraphicsElement::isSupportedAttribute): Ditto.
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::isSupportedAttribute): Ditto.
+        * svg/SVGLangSpace.cpp:
+        (WebCore::addWithAndWithoutXMLPrefix): Added helper. Uses xmlAtom instead
+        of making our own NeverDestroyed local xmlPrefix.
+        (WebCore::SVGLangSpace::addSupportedAttributes): Rewrote to use helper.
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::isSupportedAttribute): Use const auto,
+        makeNeverDestroyed, a lambda, and the new HashSet::add overload instead of
+        an isEmpty check and lots of separate add function calls.
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::isSupportedAttribute): Ditto.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::isSupportedAttribute): Ditto.
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::isSupportedAttribute): Ditto.
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::isSupportedAttribute): Ditto.
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::isSupportedAttribute): Ditto.
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::isSupportedAttribute): Ditto.
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::isSupportedAttribute): Ditto.
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::isSupportedAttribute): Ditto.
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::isSupportedAttribute): Ditto.
+
+        * testing/MockContentFilterSettings.h: Removed unneeded include of
+        NeverDestroyed.h.
+
+        * testing/MockGamepadProvider.cpp: Moved include of
+        NeverDestroyed.h here ...
+        * testing/MockGamepadProvider.h: ... from here.
+
+        * testing/MockPreviewLoaderClient.h: Removed unneeded include of
+        NeverDestroyed.h.
+
+        * workers/Worker.cpp:
+        (WebCore::allWorkers): Changed this from a global to a function.
+        (WebCore::Worker::networkStateChanged): Updated for above change and
+        made this a member function.
+        (WebCore::Worker::Worker): Updated for above change and
+        change to NetworkStateNotifier.
+        (WebCore::Worker::~Worker): Ditto.
+        * workers/Worker.h: Made networkStateChanged a static member instead of
+        a friend since that is a cleaner way to give it access to private member
+        functions.
+
+        * xml/XPathFunctions.cpp:
+        (WebCore::XPath::createFunctionMap): Use create instead of populate style.
+        (WebCore::XPath::Function::create): Use const auto and makeNeverDestroyed
+        instead of an isEmpty check.
+
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::createAxisNamesMap): Use create instead of populate style.
+        (WebCore::XPath::parseAxisName): Use const auto and makeNeverDestroyed
+        instead of an isEmpty check.
+
 2017-07-17  Brady Eidson  <beidson@apple.com>
 
         REGRESSION(r219298): imported/w3c/IndexedDB-private-browsing/idbfactory_open.html is crashing occassionaly (UniqueIDBDatabase being taken from the IDBServer set twice).

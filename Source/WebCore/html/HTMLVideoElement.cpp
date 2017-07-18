@@ -45,7 +45,6 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "TextStream.h"
-#include <wtf/NeverDestroyed.h>
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 #include "WebVideoFullscreenModel.h"

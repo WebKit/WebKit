@@ -34,7 +34,7 @@ namespace WebCore {
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestStandaloneEnumeration enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("enumValue1"),
         MAKE_STATIC_STRING_IMPL("enumValue2"),
     };

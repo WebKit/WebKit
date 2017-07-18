@@ -30,6 +30,7 @@
 
 #include "PluginProcessProxy.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 

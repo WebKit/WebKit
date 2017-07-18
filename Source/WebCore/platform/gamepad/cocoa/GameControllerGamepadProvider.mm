@@ -22,6 +22,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "config.h"
 #import "GameControllerGamepadProvider.h"
 
@@ -31,6 +32,7 @@
 #import "GamepadProviderClient.h"
 #import "Logging.h"
 #import <GameController/GameController.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(GameController)

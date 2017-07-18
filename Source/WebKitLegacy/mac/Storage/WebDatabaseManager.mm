@@ -35,7 +35,6 @@
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
-#import <wtf/NeverDestroyed.h>
 
 #if ENABLE(INDEXED_DATABASE)
 #import "WebDatabaseProvider.h"

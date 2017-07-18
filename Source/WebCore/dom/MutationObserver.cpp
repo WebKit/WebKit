@@ -41,6 +41,7 @@
 #include "MutationRecord.h"
 #include <algorithm>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

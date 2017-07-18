@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -16,11 +16,11 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #import "config.h"
-
-#if !PLATFORM(IOS)
-
 #import "RenderThemeMac.h"
+
+#if PLATFORM(MAC)
 
 #import "BitmapImage.h"
 #import "CSSValueKeywords.h"
@@ -94,6 +94,7 @@
 
 #if ENABLE(SERVICE_CONTROLS) && HAVE(APPKIT_SERVICE_CONTROLS_SUPPORT)
 
+// FIXME: This should go into an SPI.h file in the spi directory.
 #if USE(APPLE_INTERNAL_SDK)
 #import <AppKit/AppKitDefines_Private.h>
 #import <AppKit/NSServicesRolloverButtonCell.h>
@@ -103,6 +104,7 @@
 @end
 #endif
 
+// FIXME: This should go into an SPI.h file in the spi directory.
 @interface NSServicesRolloverButtonCell ()
 + (NSServicesRolloverButtonCell *)serviceRolloverButtonCellForStyle:(NSSharingServicePickerStyle)style;
 - (NSRect)rectForBounds:(NSRect)bounds preferredEdge:(NSRectEdge)preferredEdge;
@@ -110,71 +112,62 @@
 
 #endif // ENABLE(SERVICE_CONTROLS)
 
-// The methods in this file are specific to the Mac OS X platform.
+// FIXME: This should go into an SPI.h file in the spi directory.
+@interface NSTextFieldCell ()
+- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus;
+@end
 
-// We estimate the animation rate of a Mac OS X progress bar is 33 fps.
-// Hard code the value here because we haven't found API for it.
-static const Seconds progressAnimationFrameRate = 33_ms;
+// FIXME: This should go into an SPI.h file in the spi directory.
+@interface NSSearchFieldCell ()
+@property (getter=isCenteredLook) BOOL centeredLook;
+@end
 
-// Mac OS X progress bar animation seems to have 256 frames.
+static const Seconds progressAnimationFrameRate = 33_ms; // 30 fps
 static const double progressAnimationNumFrames = 256;
 
 @interface WebCoreRenderThemeNotificationObserver : NSObject
-{
-    WebCore::RenderTheme *_theme;
-}
-
-- (id)initWithTheme:(WebCore::RenderTheme *)theme;
-- (void)systemColorsDidChange:(NSNotification *)notification;
-
 @end
 
 @implementation WebCoreRenderThemeNotificationObserver
 
-- (id)initWithTheme:(WebCore::RenderTheme *)theme
+- (id)init
 {
-    if (!(self = [super init]))
+    self = [super init];
+    if (!self)
         return nil;
-
-    _theme = theme;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+        selector:@selector(systemColorsDidChange:) name:NSSystemColorsDidChangeNotification object:nil];
     return self;
 }
 
 - (void)systemColorsDidChange:(NSNotification *)unusedNotification
 {
     ASSERT_UNUSED(unusedNotification, [[unusedNotification name] isEqualToString:NSSystemColorsDidChangeNotification]);
-    _theme->platformColorsDidChange();
+    WebCore::RenderTheme::singleton().platformColorsDidChange();
 }
 
 @end
 
-@interface NSTextFieldCell (WKDetails)
-- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus;
-@end
-
-
 @interface WebCoreTextFieldCell : NSTextFieldCell
-- (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus;
 @end
 
 @implementation WebCoreTextFieldCell
+
 - (CFDictionaryRef)_coreUIDrawOptionsWithFrame:(NSRect)cellFrame inView:(NSView *)controlView includeFocus:(BOOL)includeFocus
 {
-    // FIXME: This is a post-Lion-only workaround for <rdar://problem/11385461>. When that bug is resolved, we should remove this code.
+    // FIXME: This is a workaround for <rdar://problem/11385461>. When that bug is resolved, we should remove this code.
     CFMutableDictionaryRef coreUIDrawOptions = CFDictionaryCreateMutableCopy(NULL, 0, [super _coreUIDrawOptionsWithFrame:cellFrame inView:controlView includeFocus:includeFocus]);
     CFDictionarySetValue(coreUIDrawOptions, @"borders only", kCFBooleanTrue);
-    return (CFDictionaryRef)[NSMakeCollectable(coreUIDrawOptions) autorelease];
+    CFAutorelease(coreUIDrawOptions);
+    return coreUIDrawOptions;
 }
+
 @end
 
 @interface WebCoreRenderThemeBundle : NSObject
 @end
 
 @implementation WebCoreRenderThemeBundle
-@end
-
-@interface NSSearchFieldCell()
-@property (getter=isCenteredLook) BOOL centeredLook;
 @end
 
 namespace WebCore {
@@ -197,38 +190,23 @@ enum {
 
 RenderTheme& RenderTheme::singleton()
 {
-    static NeverDestroyed<Ref<RenderTheme>> theme(RenderThemeMac::create());
-    return theme.get();
-}
-
-Ref<RenderTheme> RenderThemeMac::create()
-{
-    return adoptRef(*new RenderThemeMac);
+    static NeverDestroyed<RenderThemeMac> theme;
+    return theme;
 }
 
 RenderThemeMac::RenderThemeMac()
-    : m_isSliderThumbHorizontalPressed(false)
-    , m_isSliderThumbVerticalPressed(false)
-    , m_notificationObserver(adoptNS([[WebCoreRenderThemeNotificationObserver alloc] initWithTheme:this]))
+    : m_notificationObserver(adoptNS([[WebCoreRenderThemeNotificationObserver alloc] init]))
 {
-    [[NSNotificationCenter defaultCenter] addObserver:m_notificationObserver.get()
-                                                        selector:@selector(systemColorsDidChange:)
-                                                            name:NSSystemColorsDidChangeNotification
-                                                          object:nil];
 }
 
-RenderThemeMac::~RenderThemeMac()
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:m_notificationObserver.get()];
-}
-
-NSView* RenderThemeMac::documentViewFor(const RenderObject& o) const
+NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
 {
     ControlStates states(extractControlStatesForRenderer(o));
     return ThemeMac::ensuredView(&o.view().frameView(), states);
 }
 
 #if ENABLE(VIDEO)
+
 String RenderThemeMac::mediaControlsStyleSheet()
 {
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)
@@ -298,7 +276,7 @@ String RenderThemeMac::mediaControlsBase64StringForIconNameAndType(const String&
     if (!RuntimeEnabledFeatures::sharedFeatures().modernMediaControlsEnabled())
         return emptyString();
 
-    String directory = "modern-media-controls/images";
+    NSString *directory = @"modern-media-controls/images";
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreRenderThemeBundle class]];
     return [[NSData dataWithContentsOfFile:[bundle pathForResource:iconName ofType:iconType inDirectory:directory]] base64EncodedStringWithOptions:0];
 #else
@@ -308,12 +286,13 @@ String RenderThemeMac::mediaControlsBase64StringForIconNameAndType(const String&
 
 #endif // ENABLE(VIDEO)
 
-
 #if ENABLE(SERVICE_CONTROLS)
+
 String RenderThemeMac::imageControlsStyleSheet() const
 {
     return String(imageControlsMacUserAgentStyleSheet, sizeof(imageControlsMacUserAgentStyleSheet));
 }
+
 #endif
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor() const
@@ -2634,4 +2613,4 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
 } // namespace WebCore
 
-#endif // !PLATFORM(IOS)
+#endif // PLATFORM(MAC)

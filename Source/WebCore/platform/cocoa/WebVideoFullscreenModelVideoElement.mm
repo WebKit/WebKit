@@ -173,11 +173,8 @@ void WebVideoFullscreenModelVideoElement::setVideoLayerGravity(WebVideoFullscree
 
 const Vector<AtomicString>& WebVideoFullscreenModelVideoElement::observedEventNames()
 {
-    static NeverDestroyed<Vector<AtomicString>> sEventNames;
-
-    if (!sEventNames.get().size())
-        sEventNames.get().append(eventNames().resizeEvent);
-    return sEventNames.get();
+    static const auto names = makeNeverDestroyed(Vector<AtomicString> { eventNames().resizeEvent });
+    return names;
 }
 
 const AtomicString& WebVideoFullscreenModelVideoElement::eventNameAll()

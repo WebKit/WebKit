@@ -113,7 +113,7 @@ namespace WebCore {
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumType enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         emptyString(),
         MAKE_STATIC_STRING_IMPL("enumValue1"),
         MAKE_STATIC_STRING_IMPL("EnumValue2"),
@@ -148,7 +148,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumType>()
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Optional enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         emptyString(),
         MAKE_STATIC_STRING_IMPL("OptionalValue1"),
         MAKE_STATIC_STRING_IMPL("OptionalValue2"),
@@ -183,7 +183,7 @@ template<> const char* expectedEnumerationValues<TestObj::Optional>()
 
 template<> JSString* convertEnumerationToJS(ExecState& state, AlternateEnumName enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("enumValue1"),
         MAKE_STATIC_STRING_IMPL("EnumValue2"),
     };
@@ -212,7 +212,7 @@ template<> const char* expectedEnumerationValues<AlternateEnumName>()
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumA enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("A"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumA::A) == 0, "TestObj::EnumA::A is not 0 as expected");
@@ -239,7 +239,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumA>()
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumB enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("B"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumB::B) == 0, "TestObj::EnumB::B is not 0 as expected");
@@ -266,7 +266,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumB>()
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::EnumC enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("C"),
     };
     static_assert(static_cast<size_t>(TestObj::EnumC::C) == 0, "TestObj::EnumC::C is not 0 as expected");
@@ -291,7 +291,7 @@ template<> const char* expectedEnumerationValues<TestObj::EnumC>()
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Kind enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("quick"),
         MAKE_STATIC_STRING_IMPL("dead"),
     };
@@ -318,7 +318,7 @@ template<> const char* expectedEnumerationValues<TestObj::Kind>()
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Size enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("small"),
         MAKE_STATIC_STRING_IMPL("much-much-larger"),
     };
@@ -345,7 +345,7 @@ template<> const char* expectedEnumerationValues<TestObj::Size>()
 
 template<> JSString* convertEnumerationToJS(ExecState& state, TestObj::Confidence enumerationValue)
 {
-    static NeverDestroyed<const String> values[] = {
+    static const NeverDestroyed<String> values[] = {
         MAKE_STATIC_STRING_IMPL("high"),
         MAKE_STATIC_STRING_IMPL("kinda-low"),
     };

@@ -22,7 +22,6 @@
 #define WTF_HashSet_h
 
 #include <initializer_list>
-#include <wtf/FastMalloc.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashTable.h>
 
@@ -86,7 +85,8 @@ namespace WTF {
         // and an isNewEntry bool that indicates if it is a new or existing entry in the set.
         AddResult add(const ValueType&);
         AddResult add(ValueType&&);
-        
+        void add(std::initializer_list<std::reference_wrapper<const ValueType>>);
+
         void addVoid(const ValueType&);
         void addVoid(ValueType&&);
 
@@ -358,15 +358,9 @@ namespace WTF {
     template<typename C, typename W>
     inline void copyToVector(const C& collection, W& vector)
     {
-        typedef typename C::const_iterator iterator;
-        
         vector.resize(collection.size());
-        
-        iterator it = collection.begin();
-        iterator end = collection.end();
-        for (unsigned i = 0; it != end; ++it, ++i)
-            vector[i] = *it;
-    }  
+        std::copy(collection.begin(), collection.end(), vector.begin());
+    }
 
     template<typename T, typename U, typename V>
     template<typename OtherCollection>
@@ -386,6 +380,13 @@ namespace WTF {
     inline bool HashSet<T, U, V>::operator!=(const OtherCollection& otherCollection) const
     {
         return !(*this == otherCollection);
+    }
+
+    template<typename T, typename U, typename V>
+    void HashSet<T, U, V>::add(std::initializer_list<std::reference_wrapper<const ValueType>> list)
+    {
+        for (auto& value : list)
+            add(value);
     }
 
 } // namespace WTF

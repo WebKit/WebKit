@@ -26,16 +26,12 @@
 #pragma once
 
 #include "RenderTheme.h"
-#include <wtf/Ref.h>
 
 namespace WebCore {
 
 class RenderThemeWPE final : public RenderTheme {
 public:
-    static Ref<RenderTheme> create()
-    {
-        return adoptRef(*new RenderThemeWPE);
-    }
+    friend NeverDestroyed<RenderThemeWPE>;
 
     String extraDefaultStyleSheet() override;
 #if ENABLE(VIDEO)

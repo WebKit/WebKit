@@ -1,7 +1,5 @@
 /*
- * This file is part of the theme implementation for form controls in WebCore.
- *
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,45 +20,41 @@
 
 #pragma once
 
-#include "BorderData.h"
 #include "ControlStates.h"
-#include "FillLayer.h"
+#include "PaintInfo.h"
+#include "PopupMenuStyle.h"
+#include "ScrollTypes.h"
+
 #if USE(NEW_THEME)
 #include "Theme.h"
 #else
 #include "ThemeTypes.h"
 #endif
-#include "PaintInfo.h"
-#include "PopupMenuStyle.h"
-#include "ScrollTypes.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class CSSStyleSheet;
+class BorderData;
 class Element;
 class FileList;
+class FillLayer;
 class HTMLInputElement;
 class Icon;
-class Page;
-class PopupMenu;
 class RenderAttachment;
 class RenderBox;
-class RenderMenuList;
 class RenderMeter;
 class RenderObject;
 class RenderProgress;
-class RenderSnapshottedPlugIn;
+class RenderStyle;
 class StyleResolver;
 
-class RenderTheme : public RefCounted<RenderTheme> {
+class RenderTheme {
 protected:
     RenderTheme();
 
-public:
     virtual ~RenderTheme() { }
 
-    // This function is to be implemented in your platform-specific theme implementation to hand back the
+public:
+    // This function is to be implemented in platform-specific theme implementations to hand back the
     // appropriate platform theme.
     WEBCORE_EXPORT static RenderTheme& singleton();
 

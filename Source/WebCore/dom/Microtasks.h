@@ -22,7 +22,7 @@
 #pragma once
 
 #include "Timer.h"
-#include <wtf/NeverDestroyed.h>
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
- * Copyright (C) 2008, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) 2013 Samsung Electronics. All rights reserved.
@@ -68,7 +68,7 @@ BEGIN_REGISTER_ANIMATED_PROPERTIES(SVGElement)
     REGISTER_LOCAL_ANIMATED_PROPERTY(className)
 END_REGISTER_ANIMATED_PROPERTIES
 
-static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicStringImpl*, CSSPropertyID>& map)
+static NEVER_INLINE HashMap<AtomicStringImpl*, CSSPropertyID> createAttributeNameToCSSPropertyIDMap()
 {
     using namespace HTMLNames;
     using namespace SVGNames;
@@ -148,6 +148,8 @@ static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicS
         &yAttr,
     };
 
+    HashMap<AtomicStringImpl*, CSSPropertyID> map;
+
     for (auto& name : attributeNames) {
         const AtomicString& localName = name->localName();
         map.add(localName.impl(), cssPropertyID(localName));
@@ -156,9 +158,11 @@ static NEVER_INLINE void populateAttributeNameToCSSPropertyIDMap(HashMap<AtomicS
     // FIXME: When CSS supports "transform-origin" this special case can be removed,
     // and we can add transform_originAttr to the table above instead.
     map.add(transform_originAttr.localName().impl(), CSSPropertyTransformOrigin);
+
+    return map;
 }
 
-static NEVER_INLINE void populateAttributeNameToAnimatedPropertyTypeMap(HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& map)
+static NEVER_INLINE HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType> createAttributeNameToAnimatedPropertyTypeMap()
 {
     using namespace HTMLNames;
     using namespace SVGNames;
@@ -227,19 +231,19 @@ static NEVER_INLINE void populateAttributeNameToAnimatedPropertyTypeMap(HashMap<
         { word_spacingAttr, AnimatedLength },
     };
 
+    HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType> map;
     for (auto& entry : table)
         map.add(entry.attributeName.impl(), entry.type);
-}
-
-static inline HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& attributeNameToAnimatedPropertyTypeMap()
-{
-    static NeverDestroyed<HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>> map;
-    if (map.get().isEmpty())
-        populateAttributeNameToAnimatedPropertyTypeMap(map);
     return map;
 }
 
-static NEVER_INLINE void populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap(HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& map)
+static const HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& attributeNameToAnimatedPropertyTypeMap()
+{
+    static const auto map = makeNeverDestroyed(createAttributeNameToAnimatedPropertyTypeMap());
+    return map;
+}
+
+static NEVER_INLINE HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType> createCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap()
 {
     using namespace HTMLNames;
     using namespace SVGNames;
@@ -261,15 +265,15 @@ static NEVER_INLINE void populateCSSPropertyWithSVGDOMNameToAnimatedPropertyType
         { yAttr, AnimatedLength },
     };
 
+    HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType> map;
     for (auto& entry : table)
         map.add(entry.attributeName.impl(), entry.type);
+    return map;
 }
 
-static inline HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& cssPropertyWithSVGDOMNameToAnimatedPropertyTypeMap()
+static inline const HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>& cssPropertyWithSVGDOMNameToAnimatedPropertyTypeMap()
 {
-    static NeverDestroyed<HashMap<QualifiedName::QualifiedNameImpl*, AnimatedPropertyType>> map;
-    if (map.get().isEmpty())
-        populateCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap(map);
+    static const auto map = makeNeverDestroyed(createCSSPropertyWithSVGDOMNameToAnimatedPropertyTypeMap());
     return map;
 }
 
@@ -636,7 +640,7 @@ void SVGElement::svgLoadEventTimerFired()
 Timer* SVGElement::svgLoadEventTimer()
 {
     ASSERT_NOT_REACHED();
-    return 0;
+    return nullptr;
 }
 
 void SVGElement::finishParsingChildren()
@@ -658,24 +662,25 @@ void SVGElement::finishParsingChildren()
 
 bool SVGElement::childShouldCreateRenderer(const Node& child) const
 {
-    static NeverDestroyed<HashSet<QualifiedName>> invalidTextContent;
+    if (!child.isSVGElement())
+        return false;
+    auto& svgChild = downcast<SVGElement>(child);
 
-    if (invalidTextContent.get().isEmpty()) {
-        invalidTextContent.get().add(SVGNames::textPathTag);
+    static const QualifiedName* const invalidTextContent[] {
 #if ENABLE(SVG_FONTS)
-        invalidTextContent.get().add(SVGNames::altGlyphTag);
+        &SVGNames::altGlyphTag,
 #endif
-        invalidTextContent.get().add(SVGNames::trefTag);
-        invalidTextContent.get().add(SVGNames::tspanTag);
-    }
-    if (child.isSVGElement()) {
-        const SVGElement& svgChild = downcast<SVGElement>(child);
-        if (invalidTextContent.get().contains(svgChild.tagQName()))
+        &SVGNames::textPathTag,
+        &SVGNames::trefTag,
+        &SVGNames::tspanTag,
+    };
+    auto& name = svgChild.localName();
+    for (auto* tag : invalidTextContent) {
+        if (name == tag->localName())
             return false;
-
-        return svgChild.isValid();
     }
-    return false;
+
+    return svgChild.isValid();
 }
 
 void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString& oldValue, const AtomicString& newValue, AttributeModificationReason)
@@ -771,120 +776,120 @@ const RenderStyle* SVGElement::computedStyle(PseudoId pseudoElementSpecifier)
     return m_svgRareData->overrideComputedStyle(*this, parentStyle);
 }
 
-static void addQualifiedName(HashMap<AtomicString, QualifiedName>& map, const QualifiedName& name)
-{
-    HashMap<AtomicString, QualifiedName>::AddResult addResult = map.add(name.localName(), name);
-    ASSERT_UNUSED(addResult, addResult.isNewEntry);
-}
-
 QualifiedName SVGElement::animatableAttributeForName(const AtomicString& localName)
 {
-    static NeverDestroyed<HashMap<AtomicString, QualifiedName>> neverDestroyedAnimatableAttributes;
-    HashMap<AtomicString, QualifiedName>& animatableAttributes = neverDestroyedAnimatableAttributes;
-
-    if (animatableAttributes.isEmpty()) {
-        addQualifiedName(animatableAttributes, HTMLNames::classAttr);
-        addQualifiedName(animatableAttributes, SVGNames::amplitudeAttr);
-        addQualifiedName(animatableAttributes, SVGNames::azimuthAttr);
-        addQualifiedName(animatableAttributes, SVGNames::baseFrequencyAttr);
-        addQualifiedName(animatableAttributes, SVGNames::biasAttr);
-        addQualifiedName(animatableAttributes, SVGNames::clipPathUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::cxAttr);
-        addQualifiedName(animatableAttributes, SVGNames::cyAttr);
-        addQualifiedName(animatableAttributes, SVGNames::diffuseConstantAttr);
-        addQualifiedName(animatableAttributes, SVGNames::divisorAttr);
-        addQualifiedName(animatableAttributes, SVGNames::dxAttr);
-        addQualifiedName(animatableAttributes, SVGNames::dyAttr);
-        addQualifiedName(animatableAttributes, SVGNames::edgeModeAttr);
-        addQualifiedName(animatableAttributes, SVGNames::elevationAttr);
-        addQualifiedName(animatableAttributes, SVGNames::exponentAttr);
-        addQualifiedName(animatableAttributes, SVGNames::externalResourcesRequiredAttr);
-        addQualifiedName(animatableAttributes, SVGNames::filterResAttr);
-        addQualifiedName(animatableAttributes, SVGNames::filterUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::fxAttr);
-        addQualifiedName(animatableAttributes, SVGNames::fyAttr);
-        addQualifiedName(animatableAttributes, SVGNames::gradientTransformAttr);
-        addQualifiedName(animatableAttributes, SVGNames::gradientUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::heightAttr);
-        addQualifiedName(animatableAttributes, SVGNames::in2Attr);
-        addQualifiedName(animatableAttributes, SVGNames::inAttr);
-        addQualifiedName(animatableAttributes, SVGNames::interceptAttr);
-        addQualifiedName(animatableAttributes, SVGNames::k1Attr);
-        addQualifiedName(animatableAttributes, SVGNames::k2Attr);
-        addQualifiedName(animatableAttributes, SVGNames::k3Attr);
-        addQualifiedName(animatableAttributes, SVGNames::k4Attr);
-        addQualifiedName(animatableAttributes, SVGNames::kernelMatrixAttr);
-        addQualifiedName(animatableAttributes, SVGNames::kernelUnitLengthAttr);
-        addQualifiedName(animatableAttributes, SVGNames::lengthAdjustAttr);
-        addQualifiedName(animatableAttributes, SVGNames::limitingConeAngleAttr);
-        addQualifiedName(animatableAttributes, SVGNames::markerHeightAttr);
-        addQualifiedName(animatableAttributes, SVGNames::markerUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::markerWidthAttr);
-        addQualifiedName(animatableAttributes, SVGNames::maskContentUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::maskUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::methodAttr);
-        addQualifiedName(animatableAttributes, SVGNames::modeAttr);
-        addQualifiedName(animatableAttributes, SVGNames::numOctavesAttr);
-        addQualifiedName(animatableAttributes, SVGNames::offsetAttr);
-        addQualifiedName(animatableAttributes, SVGNames::operatorAttr);
-        addQualifiedName(animatableAttributes, SVGNames::orderAttr);
-        addQualifiedName(animatableAttributes, SVGNames::orientAttr);
-        addQualifiedName(animatableAttributes, SVGNames::pathLengthAttr);
-        addQualifiedName(animatableAttributes, SVGNames::patternContentUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::patternTransformAttr);
-        addQualifiedName(animatableAttributes, SVGNames::patternUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::pointsAtXAttr);
-        addQualifiedName(animatableAttributes, SVGNames::pointsAtYAttr);
-        addQualifiedName(animatableAttributes, SVGNames::pointsAtZAttr);
-        addQualifiedName(animatableAttributes, SVGNames::preserveAlphaAttr);
-        addQualifiedName(animatableAttributes, SVGNames::preserveAspectRatioAttr);
-        addQualifiedName(animatableAttributes, SVGNames::primitiveUnitsAttr);
-        addQualifiedName(animatableAttributes, SVGNames::radiusAttr);
-        addQualifiedName(animatableAttributes, SVGNames::rAttr);
-        addQualifiedName(animatableAttributes, SVGNames::refXAttr);
-        addQualifiedName(animatableAttributes, SVGNames::refYAttr);
-        addQualifiedName(animatableAttributes, SVGNames::resultAttr);
-        addQualifiedName(animatableAttributes, SVGNames::rotateAttr);
-        addQualifiedName(animatableAttributes, SVGNames::rxAttr);
-        addQualifiedName(animatableAttributes, SVGNames::ryAttr);
-        addQualifiedName(animatableAttributes, SVGNames::scaleAttr);
-        addQualifiedName(animatableAttributes, SVGNames::seedAttr);
-        addQualifiedName(animatableAttributes, SVGNames::slopeAttr);
-        addQualifiedName(animatableAttributes, SVGNames::spacingAttr);
-        addQualifiedName(animatableAttributes, SVGNames::specularConstantAttr);
-        addQualifiedName(animatableAttributes, SVGNames::specularExponentAttr);
-        addQualifiedName(animatableAttributes, SVGNames::spreadMethodAttr);
-        addQualifiedName(animatableAttributes, SVGNames::startOffsetAttr);
-        addQualifiedName(animatableAttributes, SVGNames::stdDeviationAttr);
-        addQualifiedName(animatableAttributes, SVGNames::stitchTilesAttr);
-        addQualifiedName(animatableAttributes, SVGNames::surfaceScaleAttr);
-        addQualifiedName(animatableAttributes, SVGNames::tableValuesAttr);
-        addQualifiedName(animatableAttributes, SVGNames::targetAttr);
-        addQualifiedName(animatableAttributes, SVGNames::targetXAttr);
-        addQualifiedName(animatableAttributes, SVGNames::targetYAttr);
-        addQualifiedName(animatableAttributes, SVGNames::transformAttr);
-        addQualifiedName(animatableAttributes, SVGNames::typeAttr);
-        addQualifiedName(animatableAttributes, SVGNames::valuesAttr);
-        addQualifiedName(animatableAttributes, SVGNames::viewBoxAttr);
-        addQualifiedName(animatableAttributes, SVGNames::widthAttr);
-        addQualifiedName(animatableAttributes, SVGNames::x1Attr);
-        addQualifiedName(animatableAttributes, SVGNames::x2Attr);
-        addQualifiedName(animatableAttributes, SVGNames::xAttr);
-        addQualifiedName(animatableAttributes, SVGNames::xChannelSelectorAttr);
-        addQualifiedName(animatableAttributes, SVGNames::y1Attr);
-        addQualifiedName(animatableAttributes, SVGNames::y2Attr);
-        addQualifiedName(animatableAttributes, SVGNames::yAttr);
-        addQualifiedName(animatableAttributes, SVGNames::yChannelSelectorAttr);
-        addQualifiedName(animatableAttributes, SVGNames::zAttr);
-        addQualifiedName(animatableAttributes, XLinkNames::hrefAttr);
-    }
-    return animatableAttributes.get(localName);
+    static const auto animatableAttributes = makeNeverDestroyed([] {
+        static const QualifiedName* const names[] = {
+            &HTMLNames::classAttr,
+            &SVGNames::amplitudeAttr,
+            &SVGNames::azimuthAttr,
+            &SVGNames::baseFrequencyAttr,
+            &SVGNames::biasAttr,
+            &SVGNames::clipPathUnitsAttr,
+            &SVGNames::cxAttr,
+            &SVGNames::cyAttr,
+            &SVGNames::diffuseConstantAttr,
+            &SVGNames::divisorAttr,
+            &SVGNames::dxAttr,
+            &SVGNames::dyAttr,
+            &SVGNames::edgeModeAttr,
+            &SVGNames::elevationAttr,
+            &SVGNames::exponentAttr,
+            &SVGNames::externalResourcesRequiredAttr,
+            &SVGNames::filterResAttr,
+            &SVGNames::filterUnitsAttr,
+            &SVGNames::fxAttr,
+            &SVGNames::fyAttr,
+            &SVGNames::gradientTransformAttr,
+            &SVGNames::gradientUnitsAttr,
+            &SVGNames::heightAttr,
+            &SVGNames::in2Attr,
+            &SVGNames::inAttr,
+            &SVGNames::interceptAttr,
+            &SVGNames::k1Attr,
+            &SVGNames::k2Attr,
+            &SVGNames::k3Attr,
+            &SVGNames::k4Attr,
+            &SVGNames::kernelMatrixAttr,
+            &SVGNames::kernelUnitLengthAttr,
+            &SVGNames::lengthAdjustAttr,
+            &SVGNames::limitingConeAngleAttr,
+            &SVGNames::markerHeightAttr,
+            &SVGNames::markerUnitsAttr,
+            &SVGNames::markerWidthAttr,
+            &SVGNames::maskContentUnitsAttr,
+            &SVGNames::maskUnitsAttr,
+            &SVGNames::methodAttr,
+            &SVGNames::modeAttr,
+            &SVGNames::numOctavesAttr,
+            &SVGNames::offsetAttr,
+            &SVGNames::operatorAttr,
+            &SVGNames::orderAttr,
+            &SVGNames::orientAttr,
+            &SVGNames::pathLengthAttr,
+            &SVGNames::patternContentUnitsAttr,
+            &SVGNames::patternTransformAttr,
+            &SVGNames::patternUnitsAttr,
+            &SVGNames::pointsAtXAttr,
+            &SVGNames::pointsAtYAttr,
+            &SVGNames::pointsAtZAttr,
+            &SVGNames::preserveAlphaAttr,
+            &SVGNames::preserveAspectRatioAttr,
+            &SVGNames::primitiveUnitsAttr,
+            &SVGNames::radiusAttr,
+            &SVGNames::rAttr,
+            &SVGNames::refXAttr,
+            &SVGNames::refYAttr,
+            &SVGNames::resultAttr,
+            &SVGNames::rotateAttr,
+            &SVGNames::rxAttr,
+            &SVGNames::ryAttr,
+            &SVGNames::scaleAttr,
+            &SVGNames::seedAttr,
+            &SVGNames::slopeAttr,
+            &SVGNames::spacingAttr,
+            &SVGNames::specularConstantAttr,
+            &SVGNames::specularExponentAttr,
+            &SVGNames::spreadMethodAttr,
+            &SVGNames::startOffsetAttr,
+            &SVGNames::stdDeviationAttr,
+            &SVGNames::stitchTilesAttr,
+            &SVGNames::surfaceScaleAttr,
+            &SVGNames::tableValuesAttr,
+            &SVGNames::targetAttr,
+            &SVGNames::targetXAttr,
+            &SVGNames::targetYAttr,
+            &SVGNames::transformAttr,
+            &SVGNames::typeAttr,
+            &SVGNames::valuesAttr,
+            &SVGNames::viewBoxAttr,
+            &SVGNames::widthAttr,
+            &SVGNames::x1Attr,
+            &SVGNames::x2Attr,
+            &SVGNames::xAttr,
+            &SVGNames::xChannelSelectorAttr,
+            &SVGNames::y1Attr,
+            &SVGNames::y2Attr,
+            &SVGNames::yAttr,
+            &SVGNames::yChannelSelectorAttr,
+            &SVGNames::zAttr,
+            &XLinkNames::hrefAttr,
+        };
+        HashMap<AtomicString, QualifiedName> map;
+        for (auto& name : names) {
+            auto addResult = map.add(name->localName(), *name);
+            ASSERT_UNUSED(addResult, addResult.isNewEntry);
+        }
+        return map;
+    }());
+    return animatableAttributes.get().get(localName);
 }
 
 #ifndef NDEBUG
+
 bool SVGElement::isAnimatableAttribute(const QualifiedName& name) const
 {
-    if (SVGElement::animatableAttributeForName(name.localName()) == name)
+    if (animatableAttributeForName(name.localName()) == name)
         return !filterOutAnimatableAttribute(name);
     return false;
 }
@@ -893,6 +898,7 @@ bool SVGElement::filterOutAnimatableAttribute(const QualifiedName&) const
 {
     return false;
 }
+
 #endif
 
 String SVGElement::title() const
@@ -924,10 +930,7 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
     if (!attrName.namespaceURI().isNull())
         return CSSPropertyInvalid;
 
-    static NeverDestroyed<HashMap<AtomicStringImpl*, CSSPropertyID>> properties;
-    if (properties.get().isEmpty())
-        populateAttributeNameToCSSPropertyIDMap(properties.get());
-
+    static const auto properties = makeNeverDestroyed(createAttributeNameToCSSPropertyIDMap());
     return properties.get().get(attrName.localName().impl());
 }
 

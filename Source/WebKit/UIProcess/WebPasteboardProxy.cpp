@@ -29,6 +29,7 @@
 #include "WebPasteboardProxyMessages.h"
 #include "WebProcessProxy.h"
 #include <mutex>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebKit {
 

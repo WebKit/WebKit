@@ -36,6 +36,7 @@
 #include "ShadowRoot.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 

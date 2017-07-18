@@ -31,7 +31,6 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include <wtf/MathExtras.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -115,6 +114,7 @@ Vector<uint8_t> ImageBuffer::toBGRAData() const
 }
 
 #if !(USE(CG) || USE(DIRECT2D))
+
 FloatSize ImageBuffer::sizeForDestinationSize(FloatSize size) const
 {
     return size;
@@ -122,9 +122,6 @@ FloatSize ImageBuffer::sizeForDestinationSize(FloatSize size) const
 
 void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstColorSpace)
 {
-    static NeverDestroyed<Vector<int>> deviceRgbLUT;
-    static NeverDestroyed<Vector<int>> linearRgbLUT;
-
     if (srcColorSpace == dstColorSpace)
         return;
 
@@ -134,29 +131,34 @@ void ImageBuffer::transformColorSpace(ColorSpace srcColorSpace, ColorSpace dstCo
         return;
 
     if (dstColorSpace == ColorSpaceLinearRGB) {
-        if (linearRgbLUT.get().isEmpty()) {
+        static const std::array<uint8_t, 256> linearRgbLUT = [] {
+            std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
-                float color = i  / 255.0f;
+                float color = i / 255.0f;
                 color = (color <= 0.04045f ? color / 12.92f : pow((color + 0.055f) / 1.055f, 2.4f));
                 color = std::max(0.0f, color);
                 color = std::min(1.0f, color);
-                linearRgbLUT.get().append(static_cast<int>(round(color * 255)));
+                array[i] = static_cast<uint8_t>(round(color * 255));
             }
-        }
-        platformTransformColorSpace(linearRgbLUT.get());
+            return array;
+        }();
+        platformTransformColorSpace(linearRgbLUT);
     } else if (dstColorSpace == ColorSpaceDeviceRGB) {
-        if (deviceRgbLUT.get().isEmpty()) {
+        static const std::array<uint8_t, 256> deviceRgbLUT= [] {
+            std::array<uint8_t, 256> array;
             for (unsigned i = 0; i < 256; i++) {
                 float color = i / 255.0f;
                 color = (powf(color, 1.0f / 2.4f) * 1.055f) - 0.055f;
                 color = std::max(0.0f, color);
                 color = std::min(1.0f, color);
-                deviceRgbLUT.get().append(static_cast<int>(round(color * 255)));
+                array[i] = static_cast<uint8_t>(round(color * 255));
             }
-        }
-        platformTransformColorSpace(deviceRgbLUT.get());
+            return array;
+        }();
+        platformTransformColorSpace(deviceRgbLUT);
     }
 }
+
 #endif // USE(CG)
 
 inline void ImageBuffer::genericConvertToLuminanceMask()

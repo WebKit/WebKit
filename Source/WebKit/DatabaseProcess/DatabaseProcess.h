@@ -35,7 +35,6 @@
 #include <WebCore/UniqueIDBDatabase.h>
 #include <wtf/CrossThreadTask.h>
 #include <wtf/Function.h>
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 struct SecurityOriginData;

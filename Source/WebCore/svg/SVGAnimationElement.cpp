@@ -137,20 +137,23 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
 
 bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static NeverDestroyed<HashSet<QualifiedName>> supportedAttributes;
-    if (supportedAttributes.get().isEmpty()) {
-        SVGTests::addSupportedAttributes(supportedAttributes);
-        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
-        supportedAttributes.get().add(SVGNames::valuesAttr);
-        supportedAttributes.get().add(SVGNames::keyTimesAttr);
-        supportedAttributes.get().add(SVGNames::keyPointsAttr);
-        supportedAttributes.get().add(SVGNames::keySplinesAttr);
-        supportedAttributes.get().add(SVGNames::attributeTypeAttr);
-        supportedAttributes.get().add(SVGNames::calcModeAttr);
-        supportedAttributes.get().add(SVGNames::fromAttr);
-        supportedAttributes.get().add(SVGNames::toAttr);
-        supportedAttributes.get().add(SVGNames::byAttr);
-    }
+    static const auto supportedAttributes = makeNeverDestroyed([] {
+        HashSet<QualifiedName> set;
+        SVGTests::addSupportedAttributes(set);
+        SVGExternalResourcesRequired::addSupportedAttributes(set);
+        set.add({
+            SVGNames::valuesAttr,
+            SVGNames::keyTimesAttr,
+            SVGNames::keyPointsAttr,
+            SVGNames::keySplinesAttr,
+            SVGNames::attributeTypeAttr,
+            SVGNames::calcModeAttr,
+            SVGNames::fromAttr,
+            SVGNames::toAttr,
+            SVGNames::byAttr,
+        });
+        return set;
+    }());
     return supportedAttributes.get().contains<SVGAttributeHashTranslator>(attrName);
 }
 

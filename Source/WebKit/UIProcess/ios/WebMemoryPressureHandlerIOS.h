@@ -23,28 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMemoryPressureHandler_h
-#define WebMemoryPressureHandler_h
+#pragma once
 
 #if PLATFORM(IOS)
 
-#import <dispatch/dispatch.h>
-#import <wtf/NeverDestroyed.h>
-
 namespace WebKit {
 
-class WebMemoryPressureHandler {
-    friend class NeverDestroyed<WebMemoryPressureHandler>;
-public:
-    static WebMemoryPressureHandler& singleton();
+void installMemoryPressureHandler();
 
-private:
-    WebMemoryPressureHandler();
-    dispatch_source_t _source;
-};
-
-} // namespace WebKit
+}
 
 #endif // PLATFORM(IOS)
-
-#endif // WebMemoryPressureHandler_h

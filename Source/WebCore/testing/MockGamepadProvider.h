@@ -29,7 +29,6 @@
 
 #include "GamepadProvider.h"
 #include "MockGamepad.h"
-#include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -39,8 +38,6 @@ class MockGamepadProvider : public GamepadProvider {
     friend class NeverDestroyed<MockGamepadProvider>;
 public:
     WEBCORE_EXPORT static MockGamepadProvider& singleton();
-
-    virtual ~MockGamepadProvider() { }
 
     WEBCORE_EXPORT void startMonitoringGamepads(GamepadProviderClient&) final;
     WEBCORE_EXPORT void stopMonitoringGamepads(GamepadProviderClient&) final;

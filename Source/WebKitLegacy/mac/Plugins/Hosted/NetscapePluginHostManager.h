@@ -29,7 +29,6 @@
 #define NetscapePluginHostManager_h
 
 #import <wtf/HashMap.h>
-#import <wtf/NeverDestroyed.h>
 #import <wtf/RefPtr.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>

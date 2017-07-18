@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebPasteboardOverrides.h"
 
+#include <wtf/NeverDestroyed.h>
+
 namespace WebKit {
 
 WebPasteboardOverrides& WebPasteboardOverrides::sharedPasteboardOverrides()

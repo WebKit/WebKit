@@ -32,13 +32,13 @@
 #include "NetworkCaptureResource.h"
 #include "WebCore/ResourceRequest.h"
 #include "WebCore/URL.h"
-#include <wtf/MD5.h>
-#include <wtf/text/Base64.h>
-#include <wtf/text/StringBuilder.h>
-
 #include <algorithm>
 #include <iterator>
 #include <limits>
+#include <wtf/MD5.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/text/Base64.h>
+#include <wtf/text/StringBuilder.h>
 
 #define DEBUG_CLASS Manager
 

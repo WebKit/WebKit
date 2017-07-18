@@ -2858,7 +2858,7 @@ AccessibilityOrientation AccessibilityRenderObject::orientation() const
     
     return AccessibilityObject::orientation();
 }
-    
+
 bool AccessibilityRenderObject::inheritsPresentationalRole() const
 {
     // ARIA states if an item can get focus, it should not be presentational.
@@ -2868,48 +2868,41 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
     // ARIA spec says that when a parent object is presentational, and it has required child elements,
     // those child elements are also presentational. For example, <li> becomes presentational from <ul>.
     // http://www.w3.org/WAI/PF/aria/complete#presentation
-    static NeverDestroyed<HashSet<QualifiedName>> listItemParents;
-    static NeverDestroyed<HashSet<QualifiedName>> tableCellParents;
 
-    HashSet<QualifiedName>* possibleParentTagNames = nullptr;
+    const Vector<const HTMLQualifiedName*>* parentTags;
     switch (roleValue()) {
     case ListItemRole:
-    case ListMarkerRole:
-        if (listItemParents.get().isEmpty()) {
-            listItemParents.get().add(ulTag);
-            listItemParents.get().add(olTag);
-            listItemParents.get().add(dlTag);
-        }
-        possibleParentTagNames = &listItemParents.get();
-        break;
-    case GridCellRole:
-    case CellRole:
-        if (tableCellParents.get().isEmpty())
-            tableCellParents.get().add(tableTag);
-        possibleParentTagNames = &tableCellParents.get();
-        break;
-    default:
+    case ListMarkerRole: {
+        static const auto listItemParents = makeNeverDestroyed(Vector<const HTMLQualifiedName*> { &dlTag, &olTag, &ulTag });
+        parentTags = &listItemParents.get();
         break;
     }
-    
-    // Not all elements need to check for this, only ones that are required children.
-    if (!possibleParentTagNames)
+    case GridCellRole:
+    case CellRole: {
+        static const auto tableCellParents = makeNeverDestroyed(Vector<const HTMLQualifiedName*> { &tableTag });
+        parentTags = &tableCellParents.get();
+        break;
+    }
+    default:
+        // Not all elements need to do the following check, only ones that are required children.
         return false;
-    
-    for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) { 
+    }
+
+    for (auto* parent = parentObject(); parent; parent = parent->parentObject()) {
         if (!is<AccessibilityRenderObject>(*parent))
             continue;
-        
+
         Node* node = downcast<AccessibilityRenderObject>(*parent).node();
         if (!is<Element>(node))
             continue;
-        
+
         // If native tag of the parent element matches an acceptable name, then return
         // based on its presentational status.
-        if (possibleParentTagNames->contains(downcast<Element>(node)->tagQName()))
+        auto& name = downcast<Element>(*node).tagQName();
+        if (std::any_of(parentTags->begin(), parentTags->end(), [&name] (auto* possibleName) { return *possibleName == name; }))
             return parent->roleValue() == PresentationalRole;
     }
-    
+
     return false;
 }
     
