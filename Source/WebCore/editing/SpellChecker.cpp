@@ -217,13 +217,13 @@ void SpellChecker::didCheckSucceed(int sequence, const Vector<TextCheckingResult
 {
     TextCheckingRequestData requestData = m_processingRequest->data();
     if (requestData.sequence() == sequence) {
-        unsigned markers = 0;
+        OptionSet<DocumentMarker::MarkerType> markerTypes;
         if (requestData.mask() & TextCheckingTypeSpelling)
-            markers |= DocumentMarker::Spelling;
+            markerTypes |= DocumentMarker::Spelling;
         if (requestData.mask() & TextCheckingTypeGrammar)
-            markers |= DocumentMarker::Grammar;
-        if (markers)
-            m_frame.document()->markers().removeMarkers(&m_processingRequest->checkingRange(), markers);
+            markerTypes |= DocumentMarker::Grammar;
+        if (!markerTypes.isEmpty())
+            m_frame.document()->markers().removeMarkers(&m_processingRequest->checkingRange(), markerTypes);
     }
     didCheck(sequence, results);
 }

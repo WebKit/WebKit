@@ -27,11 +27,8 @@
 
 #include "AlternativeTextClient.h"
 #include "DocumentMarker.h"
-#include "FrameSelection.h"
 #include "Range.h"
-#include "TextChecking.h"
 #include "Timer.h"
-#include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -43,7 +40,10 @@ class EditCommandComposition;
 class Event;
 class Frame;
 class TextCheckerClient;
+class VisibleSelection;
+
 struct DictationAlternative;
+struct TextCheckingResult;
 
 class AlternativeTextDetails : public RefCounted<AlternativeTextDetails> {
 public:
@@ -57,8 +57,6 @@ struct AlternativeTextInfo {
     String originalText;
     RefPtr<AlternativeTextDetails> details;
 };
-
-struct TextCheckingResult;
 
 #if USE(AUTOCORRECTION_PANEL)
 // These backslashes are for making style checker happy.
@@ -117,7 +115,7 @@ public:
 private:
 #if USE(AUTOCORRECTION_PANEL)
     String dismissSoon(ReasonForDismissingAlternativeText);
-    void applyAlternativeTextToRange(const Range&, const String& alternative, AlternativeTextType, const Vector<DocumentMarker::MarkerType>&);
+    void applyAlternativeTextToRange(const Range&, const String& alternative, AlternativeTextType, OptionSet<DocumentMarker::MarkerType>);
     void timerFired();
     void recordSpellcheckerResponseForModifiedCorrection(Range& rangeOfCorrection, const String& corrected, const String& correction);
     String markerDescriptionForAppliedAlternativeText(AlternativeTextType, DocumentMarker::MarkerType);

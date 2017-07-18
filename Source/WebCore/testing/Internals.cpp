@@ -361,12 +361,12 @@ static bool markerTypeFrom(const String& markerType, DocumentMarker::MarkerType&
     return true;
 }
 
-static bool markerTypesFrom(const String& markerType, DocumentMarker::MarkerTypes& result)
+static bool markerTypesFrom(const String& markerType, OptionSet<DocumentMarker::MarkerType>& result)
 {
     DocumentMarker::MarkerType singularResult;
 
     if (markerType.isEmpty() || equalLettersIgnoringASCIICase(markerType, "all"))
-        result = DocumentMarker::AllMarkers();
+        result = DocumentMarker::allMarkers();
     else if (markerTypeFrom(markerType, singularResult))
         result = singularResult;
     else
@@ -1391,7 +1391,7 @@ ExceptionOr<String> Internals::inspectorHighlightObject()
 
 ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& markerType)
 {
-    DocumentMarker::MarkerTypes markerTypes = 0;
+    OptionSet<DocumentMarker::MarkerType> markerTypes;
     if (!markerTypesFrom(markerType, markerTypes))
         return Exception { SYNTAX_ERR };
 
@@ -1403,7 +1403,7 @@ ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const Strin
 {
     node.document().updateLayoutIgnorePendingStylesheets();
 
-    DocumentMarker::MarkerTypes markerTypes = 0;
+    OptionSet<DocumentMarker::MarkerType> markerTypes;
     if (!markerTypesFrom(markerType, markerTypes))
         return Exception { SYNTAX_ERR };
 

@@ -1,3 +1,73 @@
+2017-07-17  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Use OptionSet to represent marker types
+        https://bugs.webkit.org/show_bug.cgi?id=174594
+
+        Reviewed by Darin Adler.
+
+        Remove class DocumentMarker::MarkerTypes that duplicates most of functionality of OptionSet
+        and use OptionSet directly to represent a set of marker types.
+
+        No functionality changed. So, no new tests.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayout):
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::MarkerTypes::MarkerTypes): Deleted.
+        (WebCore::DocumentMarker::MarkerTypes::contains): Deleted.
+        (WebCore::DocumentMarker::MarkerTypes::intersects): Deleted.
+        (WebCore::DocumentMarker::MarkerTypes::operator==): Deleted.
+        (WebCore::DocumentMarker::MarkerTypes::add): Deleted.
+        (WebCore::DocumentMarker::MarkerTypes::remove): Deleted.
+        (WebCore::DocumentMarker::AllMarkers::AllMarkers): Deleted.
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::possiblyHasMarkers):
+        (WebCore::DocumentMarkerController::detach):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::copyMarkers):
+        (WebCore::DocumentMarkerController::markersFor):
+        (WebCore::DocumentMarkerController::markersInRange):
+        (WebCore::DocumentMarkerController::removeMarkersFromList):
+        (WebCore::DocumentMarkerController::repaintMarkers):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        (DocumentMarkerController::setMarkersActive):
+        (DocumentMarkerController::hasMarkers):
+        (DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        Update code as needed.
+
+        * dom/DocumentMarkerController.h:
+        (WebCore::DocumentMarkerController::hasMarkers):
+        Update code as needed.
+
+        * editing/AlternativeTextController.cpp:
+        (WebCore::markerTypesForAutocorrection):
+        (WebCore::markerTypesForReplacement):
+        (WebCore::markerTypesForAppliedDictationAlternative):
+        Marked as inline and returns an OptionSet<DocumentMarker::MarkerType>. It is unnecessary to use NeverDestroyed
+        in these functions as constructing an OptionSet and copying/moving it is very efficient. Such operations are
+        effectively equivalent to an integral assignment and copy of an integral value, respectively.
+
+        (WebCore::AlternativeTextController::applyAlternativeTextToRange):
+        (WebCore::AlternativeTextController::respondToUnappliedSpellCorrection):
+        (WebCore::AlternativeTextController::markCorrection):
+        Update code as needed.
+
+        * editing/AlternativeTextController.h: While I am here, remove some unnecessary #includes and group
+        forward declarations of structs.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers): Update code as needed.
+        * editing/Editor.cpp:
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing): Ditto.
+        * editing/SpellChecker.cpp:
+        (WebCore::SpellChecker::didCheckSucceed): Ditto.
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::interpretationsForCurrentRoot): Ditto.
+        * testing/Internals.cpp:
+        (WebCore::markerTypesFrom): Ditto.
+        (WebCore::Internals::markerCountForNode): Ditto.
+        (WebCore::Internals::markerAt): Ditto.
+
 2017-07-17  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: overlay page highlight doesn't disappear when a page is constantly updating

@@ -1,3 +1,19 @@
+2017-07-17  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Use OptionSet to represent marker types
+        https://bugs.webkit.org/show_bug.cgi?id=174594
+
+        Reviewed by Darin Adler.
+
+        Remove class DocumentMarker::MarkerTypes that duplicates most of functionality of OptionSet
+        and use OptionSet directly to represent a set of marker types.
+
+        No functionality changed. So, no new tests.
+
+        * WebCoreSupport/WebVisiblePosition.mm:
+        (-[WebVisiblePosition enclosingRangeWithDictationPhraseAlternatives:]): Update code as needed.
+        (-[WebVisiblePosition enclosingRangeWithCorrectionIndicator]): Ditto.
+
 2017-07-12  Daniel Bates  <dabates@apple.com>
 
         Rename NavigationInitiatedByMainFrame to InitiatedByMainFrame

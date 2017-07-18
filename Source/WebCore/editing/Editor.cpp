@@ -2782,11 +2782,16 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     for (auto* marker : markers)
         m_alternativeTextController->removeDictationAlternativesForMarker(*marker);
 
-#if PLATFORM(IOS)
-    document().markers().removeMarkers(wordRange.ptr(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator | DocumentMarker::SpellCheckingExemption | DocumentMarker::DictationAlternatives | DocumentMarker::DictationPhraseWithAlternatives, DocumentMarkerController::RemovePartiallyOverlappingMarker);
-#else
-    document().markers().removeMarkers(wordRange.ptr(), DocumentMarker::Spelling | DocumentMarker::Grammar | DocumentMarker::CorrectionIndicator | DocumentMarker::SpellCheckingExemption | DocumentMarker::DictationAlternatives, DocumentMarkerController::RemovePartiallyOverlappingMarker);
+    OptionSet<DocumentMarker::MarkerType> markerTypesToRemove {
+        DocumentMarker::CorrectionIndicator,
+        DocumentMarker::DictationAlternatives,
+        DocumentMarker::SpellCheckingExemption,
+        DocumentMarker::Spelling,
+#if !PLATFORM(IOS)
+        DocumentMarker::Grammar,
 #endif
+    };
+    document().markers().removeMarkers(wordRange.ptr(), markerTypesToRemove, DocumentMarkerController::RemovePartiallyOverlappingMarker);
     document().markers().clearDescriptionOnMarkersIntersectingRange(wordRange, DocumentMarker::Replacement);
 }
 

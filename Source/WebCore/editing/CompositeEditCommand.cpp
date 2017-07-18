@@ -766,7 +766,7 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(Text& node, unsign
 {
     Ref<Text> protectedNode(node);
     DocumentMarkerController& markerController = document().markers();
-    auto markers = copyMarkers(markerController.markersInRange(Range::create(document(), &node, offset, &node, offset + count), DocumentMarker::AllMarkers()));
+    auto markers = copyMarkers(markerController.markersInRange(Range::create(document(), &node, offset, &node, offset + count), DocumentMarker::allMarkers()));
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), &node, offset, &node, offset + replacementText.length());
     for (const auto& marker : markers)

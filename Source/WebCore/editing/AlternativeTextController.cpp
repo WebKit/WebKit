@@ -45,7 +45,6 @@
 #include "TextIterator.h"
 #include "VisibleUnits.h"
 #include "markup.h"
-#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
@@ -84,32 +83,19 @@ private:
 
 #if USE(AUTOCORRECTION_PANEL)
 
-static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
+static inline OptionSet<DocumentMarker::MarkerType> markerTypesForAutocorrection()
 {
-    static const auto markerTypesForAutoCorrection = makeNeverDestroyed(Vector<DocumentMarker::MarkerType> {
-        DocumentMarker::Autocorrected,
-        DocumentMarker::CorrectionIndicator,
-        DocumentMarker::Replacement,
-        DocumentMarker::SpellCheckingExemption,
-    });
-    return markerTypesForAutoCorrection;
+    return { DocumentMarker::Autocorrected, DocumentMarker::CorrectionIndicator, DocumentMarker::Replacement, DocumentMarker::SpellCheckingExemption };
 }
 
-static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
+static inline OptionSet<DocumentMarker::MarkerType> markerTypesForReplacement()
 {
-    static const auto markerTypesForReplacement = makeNeverDestroyed(Vector<DocumentMarker::MarkerType> {
-        DocumentMarker::Replacement,
-        DocumentMarker::SpellCheckingExemption,
-    });
-    return markerTypesForReplacement;
+    return { DocumentMarker::Replacement, DocumentMarker::SpellCheckingExemption };
 }
 
-static const Vector<DocumentMarker::MarkerType>& markerTypesForAppliedDictationAlternative()
+static inline OptionSet<DocumentMarker::MarkerType> markerTypesForAppliedDictationAlternative()
 {
-    static const auto markerTypesForAppliedDictationAlternative = makeNeverDestroyed(Vector<DocumentMarker::MarkerType> {
-        DocumentMarker::SpellCheckingExemption,
-    });
-    return markerTypesForAppliedDictationAlternative;
+    return DocumentMarker::SpellCheckingExemption;
 }
 
 static bool markersHaveIdenticalDescription(const Vector<RenderedDocumentMarker*>& markers)
@@ -235,7 +221,7 @@ String AlternativeTextController::dismissSoon(ReasonForDismissingAlternativeText
     return String();
 }
 
-void AlternativeTextController::applyAlternativeTextToRange(const Range& range, const String& alternative, AlternativeTextType alternativeType, const Vector<DocumentMarker::MarkerType>& markerTypesToAdd)
+void AlternativeTextController::applyAlternativeTextToRange(const Range& range, const String& alternative, AlternativeTextType alternativeType, OptionSet<DocumentMarker::MarkerType> markerTypesToAdd)
 {
     auto paragraphRangeContainingCorrection = range.cloneRange();
 
@@ -281,7 +267,7 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range& range, 
 
     DocumentMarkerController& markers = replacementRange->startContainer().document().markers();
 
-    for (auto& markerType : markerTypesToAdd)
+    for (auto markerType : markerTypesToAdd)
         markers.addMarker(replacementRange.get(), markerType, markerDescriptionForAppliedAlternativeText(alternativeType, markerType));
 }
 
@@ -317,7 +303,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
     RefPtr<Range> range = Range::create(*m_frame.document(), m_frame.selection().selection().start(), m_frame.selection().selection().end());
 
     DocumentMarkerController& markers = m_frame.document()->markers();
-    markers.removeMarkers(range.get(), DocumentMarker::Spelling | DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
+    markers.removeMarkers(range.get(), OptionSet<DocumentMarker::MarkerType> { DocumentMarker::Spelling, DocumentMarker::Autocorrected }, DocumentMarkerController::RemovePartiallyOverlappingMarker);
     markers.addMarker(range.get(), DocumentMarker::Replacement);
     markers.addMarker(range.get(), DocumentMarker::SpellCheckingExemption);
 }
@@ -526,7 +512,7 @@ void AlternativeTextController::markReversed(Range& changedRange)
 void AlternativeTextController::markCorrection(Range& replacedRange, const String& replacedString)
 {
     DocumentMarkerController& markers = replacedRange.startContainer().document().markers();
-    for (auto& markerType : markerTypesForAutocorrection()) {
+    for (auto markerType : markerTypesForAutocorrection()) {
         if (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected)
             markers.addMarker(&replacedRange, markerType, replacedString);
         else

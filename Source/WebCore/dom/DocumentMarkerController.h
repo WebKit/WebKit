@@ -63,28 +63,28 @@ public:
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
     bool hasMarkers() const
     {
-        ASSERT(m_markers.isEmpty() == !m_possiblyExistingMarkerTypes.intersects(DocumentMarker::AllMarkers()));
+        ASSERT(m_markers.isEmpty() == !m_possiblyExistingMarkerTypes.contains(DocumentMarker::allMarkers()));
         return !m_markers.isEmpty();
     }
-    bool hasMarkers(Range&, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
+    bool hasMarkers(Range&, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
 
     // When a marker partially overlaps with range, if removePartiallyOverlappingMarkers is true, we completely
     // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
     // the portion that is outside of the range.
     enum RemovePartiallyOverlappingMarkerOrNot { DoNotRemovePartiallyOverlappingMarker, RemovePartiallyOverlappingMarker };
-    void removeMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
-    void removeMarkers(Node*, unsigned startOffset, int length, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers(),  RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    void removeMarkers(Range*, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
+    void removeMarkers(Node*, unsigned startOffset, int length, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers(),  RemovePartiallyOverlappingMarkerOrNot = DoNotRemovePartiallyOverlappingMarker);
 
-    WEBCORE_EXPORT void removeMarkers(DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
-    void removeMarkers(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
-    void repaintMarkers(DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
+    WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
+    void removeMarkers(Node*, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
+    void repaintMarkers(OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
     void shiftMarkers(Node*, unsigned startOffset, int delta);
     void setMarkersActive(Range*, bool);
     void setMarkersActive(Node*, unsigned startOffset, unsigned endOffset, bool);
 
-    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersFor(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
-    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersInRange(Range&, DocumentMarker::MarkerTypes);
-    void clearDescriptionOnMarkersIntersectingRange(Range&, DocumentMarker::MarkerTypes);
+    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersFor(Node*, OptionSet<DocumentMarker::MarkerType> = DocumentMarker::allMarkers());
+    WEBCORE_EXPORT Vector<RenderedDocumentMarker*> markersInRange(Range&, OptionSet<DocumentMarker::MarkerType>);
+    void clearDescriptionOnMarkersIntersectingRange(Range&, OptionSet<DocumentMarker::MarkerType>);
 
     WEBCORE_EXPORT void updateRectsForInvalidatedMarkersOfType(DocumentMarker::MarkerType);
 
@@ -103,12 +103,12 @@ private:
 
     typedef Vector<RenderedDocumentMarker> MarkerList;
     typedef HashMap<RefPtr<Node>, std::unique_ptr<MarkerList>> MarkerMap;
-    bool possiblyHasMarkers(DocumentMarker::MarkerTypes);
-    void removeMarkersFromList(MarkerMap::iterator, DocumentMarker::MarkerTypes);
+    bool possiblyHasMarkers(OptionSet<DocumentMarker::MarkerType>);
+    void removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::MarkerType>);
 
     MarkerMap m_markers;
     // Provide a quick way to determine whether a particular marker type is absent without going through the map.
-    DocumentMarker::MarkerTypes m_possiblyExistingMarkerTypes { 0 };
+    OptionSet<DocumentMarker::MarkerType> m_possiblyExistingMarkerTypes;
     Document& m_document;
 };
 
