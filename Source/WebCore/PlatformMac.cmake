@@ -800,8 +800,6 @@ set(ADDITIONAL_BINDINGS_DEPENDENCIES
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
 list(APPEND WebCoreTestSupport_SOURCES
-    bindings/js/JSMockContentFilterSettingsCustom.cpp
-
     testing/Internals.mm
     testing/MockContentFilter.cpp
     testing/MockContentFilterSettings.cpp

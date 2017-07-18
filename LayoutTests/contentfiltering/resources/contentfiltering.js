@@ -3,10 +3,10 @@ function _doTest(decisionPoint, decision, decideAfterUnblockRequest)
     var settings = window.internals.mockContentFilterSettings;
     settings.enabled = true;
     settings.decisionPoint = decisionPoint;
-    settings.decision = (decideAfterUnblockRequest ? settings.DECISION_BLOCK : decision);
+    settings.decision = (decideAfterUnblockRequest ? "block" : decision);
     
     var blockedStringText;
-    if (decisionPoint === settings.DECISION_POINT_NEVER || decision === settings.DECISION_ALLOW)
+    if (decisionPoint === "never" || decision === "allow")
         blockedStringText = "FAIL";
     else
         blockedStringText =  "PASS";

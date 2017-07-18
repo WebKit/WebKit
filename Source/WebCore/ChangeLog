@@ -1,5 +1,21 @@
 2017-07-18  Sam Weinig  <sam@webkit.org>
 
+        [WebIDL] Remove custom bindings for MockContentFilterSettings
+        https://bugs.webkit.org/show_bug.cgi?id=174606
+
+        Reviewed by Andy Estes.
+
+        * PlatformMac.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSMockContentFilterSettingsCustom.cpp: Removed.
+        Remove JSMockContentFilterSettingsCustom.
+
+        * testing/MockContentFilterSettings.h:
+        * testing/MockContentFilterSettings.idl:
+        Switch from constants to IDL enums to make the bindings and tests simpler.
+
+2017-07-18  Sam Weinig  <sam@webkit.org>
+
         [WebIDL] Replace some custom bindings code in JSCSSStyleDeclarationCustom.cpp with named getters/setters
         https://bugs.webkit.org/show_bug.cgi?id=174529
 

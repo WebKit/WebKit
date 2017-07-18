@@ -4,6 +4,6 @@
 var internals = window.internals;
 if (internals) {
     var settings = internals.mockContentFilterSettings;
-    testContentFiltering(/* decisionPoint */settings.DECISION_POINT_AFTER_FINISHED_ADDING_DATA, /* decision */settings.DECISION_ALLOW, /* decideAfterUnblockRequest */true);
+    testContentFiltering(/* decisionPoint */"afterFinishedAddingData", /* decision */"allow", /* decideAfterUnblockRequest */true);
 }
 </script>

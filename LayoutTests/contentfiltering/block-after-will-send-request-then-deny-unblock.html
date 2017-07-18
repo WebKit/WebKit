@@ -3,6 +3,6 @@
 <script>
 if (window.internals) {
     var settings = window.internals.mockContentFilterSettings;
-    testContentFiltering(/* decisionPoint */settings.DECISION_POINT_AFTER_WILL_SEND_REQUEST, /* decision */settings.DECISION_BLOCK, /* decideAfterUnblockRequest */true);
+    testContentFiltering(/* decisionPoint */"afterWillSendRequest", /* decision */"block", /* decideAfterUnblockRequest */true);
 }
 </script>

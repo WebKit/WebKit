@@ -31,7 +31,6 @@ namespace WebCore {
 
 class MockContentFilterSettings {
     friend class NeverDestroyed<MockContentFilterSettings>;
-
 public:
     enum class DecisionPoint {
         AfterWillSendRequest,

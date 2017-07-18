@@ -23,6 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum DecisionPoint {
+    "afterWillSendRequest",
+    "afterRedirect",
+    "afterResponse",
+    "afterAddData",
+    "afterFinishedAddingData",
+    "never"
+};
+
+enum Decision {
+    "allow",
+    "block"
+};
+
 [
     Conditional=CONTENT_FILTERING,
     NoInterfaceObject,
@@ -32,18 +46,10 @@
     attribute DOMString blockedString;
     attribute DOMString modifiedRequestURL;
 
-    const octet DECISION_POINT_AFTER_WILL_SEND_REQUEST = 0;
-    const octet DECISION_POINT_AFTER_REDIRECT = 1;
-    const octet DECISION_POINT_AFTER_RESPONSE = 2;
-    const octet DECISION_POINT_AFTER_ADD_DATA = 3;
-    const octet DECISION_POINT_AFTER_FINISHED_ADDING_DATA = 4;
-    const octet DECISION_POINT_NEVER = 5;
-    [Custom] attribute octet decisionPoint;
+    attribute DecisionPoint decisionPoint;
 
-    const octet DECISION_ALLOW = 0;
-    const octet DECISION_BLOCK = 1;
-    [Custom] attribute octet decision;
-    [Custom] attribute octet unblockRequestDecision;
+    attribute Decision decision;
+    attribute Decision unblockRequestDecision;
 
     readonly attribute DOMString unblockRequestURL;
 };

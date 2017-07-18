@@ -1,5 +1,40 @@
 2017-07-18  Sam Weinig  <sam@webkit.org>
 
+        [WebIDL] Remove custom bindings for MockContentFilterSettings
+        https://bugs.webkit.org/show_bug.cgi?id=174606
+
+        Reviewed by Andy Estes.
+
+        * contentfiltering/allow-after-add-data.html:
+        * contentfiltering/allow-after-finished-adding-data.html:
+        * contentfiltering/allow-after-response.html:
+        * contentfiltering/allow-after-will-send-request.html:
+        * contentfiltering/allow-empty-document.html:
+        * contentfiltering/allow-media-document.html:
+        * contentfiltering/allow-never.html:
+        * contentfiltering/block-after-add-data-then-allow-unblock.html:
+        * contentfiltering/block-after-add-data-then-deny-unblock.html:
+        * contentfiltering/block-after-add-data.html:
+        * contentfiltering/block-after-finished-adding-data-then-allow-unblock.html:
+        * contentfiltering/block-after-finished-adding-data-then-deny-unblock.html:
+        * contentfiltering/block-after-finished-adding-data.html:
+        * contentfiltering/block-after-response-then-allow-unblock.html:
+        * contentfiltering/block-after-response-then-deny-unblock.html:
+        * contentfiltering/block-after-response.html:
+        * contentfiltering/block-after-will-send-request-then-allow-unblock.html:
+        * contentfiltering/block-after-will-send-request-then-deny-unblock.html:
+        * contentfiltering/block-after-will-send-request.html:
+        * contentfiltering/block-never.html:
+        * contentfiltering/modify-request-url.html:
+        * contentfiltering/resources/contentfiltering.js:
+        * http/tests/contentfiltering/allow-after-redirect.html:
+        * http/tests/contentfiltering/block-after-redirect.html:
+        * http/tests/contentfiltering/load-substitute-data-from-appcache.html:
+        * http/tests/contentfiltering/modify-redirect-request-url.html:
+        Update tests to use new MockContentFilterSettings enums rather than constants.
+
+2017-07-18  Sam Weinig  <sam@webkit.org>
+
         [WebIDL] Replace some custom bindings code in JSCSSStyleDeclarationCustom.cpp with named getters/setters
         https://bugs.webkit.org/show_bug.cgi?id=174529
 
