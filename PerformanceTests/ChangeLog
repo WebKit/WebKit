@@ -1,3 +1,18 @@
+2017-07-18  Matt Kotsenas  <mattkot@microsoft.com>
+
+        Add performance.mark()s around each test step
+        https://bugs.webkit.org/show_bug.cgi?id=174530
+
+        Reviewed by Ryosuke Niwa.
+
+        Add `performance.mark()` around each test step to make analysis
+        simpler. Now each test step can be investigated via dev tools, ETW, etc.
+
+        * Speedometer/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._writeMark):
+        (BenchmarkRunner.prototype._runTest):
+        (BenchmarkRunner.prototype._runTestAndRecordResults):
+
 2017-07-14  Saam Barati  <sbarati@apple.com>
 
         Fix ambiguous description text in ARES-6 about the data the benchmark measures
