@@ -3167,7 +3167,7 @@ bool JSObject::ensureLengthSlow(VM& vm, unsigned length)
     if (hasDouble(indexingType())) {
         for (unsigned i = oldVectorLength; i < newVectorLength; ++i)
             butterfly->indexingPayload<double>()[i] = PNaN;
-    } else {
+    } else if (LIKELY(!hasUndecided(indexingType()))) {
         for (unsigned i = oldVectorLength; i < newVectorLength; ++i)
             butterfly->indexingPayload<WriteBarrier<Unknown>>()[i].clear();
     }

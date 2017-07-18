@@ -91,7 +91,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
         if (hasDouble(indexingType)) {
             for (; i < vectorLength; ++i)
                 butterfly->contiguousDouble()[i] = PNaN;
-        } else {
+        } else if (LIKELY(!hasUndecided(indexingType))) {
             for (; i < vectorLength; ++i)
                 butterfly->contiguous()[i].clear();
         }

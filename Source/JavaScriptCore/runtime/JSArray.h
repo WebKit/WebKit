@@ -239,7 +239,7 @@ inline JSArray* JSArray::tryCreate(VM& vm, Structure* structure, unsigned initia
         butterfly->setPublicLength(initialLength);
         if (hasDouble(indexingType))
             clearArray(butterfly->contiguousDouble().data(), vectorLength);
-        else
+        else if (LIKELY(!hasUndecided(indexingType)))
             clearArray(butterfly->contiguous().data(), vectorLength);
     } else {
         ASSERT(
