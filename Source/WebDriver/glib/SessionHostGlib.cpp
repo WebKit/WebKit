@@ -77,7 +77,7 @@ const GDBusInterfaceVTable SessionHost::s_interfaceVTable = {
             gboolean isPaired;
             while (g_variant_iter_loop(iter.get(), "(t&s&s&sb)", &targetID, &type, &name, &dummy, &isPaired)) {
                 if (!g_strcmp0(type, "Automation"))
-                    targetList.uncheckedAppend({ targetID, name, isPaired });
+                    targetList.uncheckedAppend({ targetID, name, static_cast<bool>(isPaired) });
             }
             sessionHost->setTargetList(connectionID, WTFMove(targetList));
             g_dbus_method_invocation_return_value(invocation, nullptr);

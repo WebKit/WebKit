@@ -1,3 +1,15 @@
+2017-07-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] Fix build with Clang after r219605.
+        https://bugs.webkit.org/show_bug.cgi?id=166682
+
+        Unreviewed build fix.
+
+        Clang-3.8 complains with the following error:
+        non-constant-expression cannot be narrowed from type 'gboolean' (aka 'int') to 'bool' in initializer list [-Wc++11-narrowing]
+
+        * glib/SessionHostGlib.cpp: insert an explicit cast to silence this issue.
+
 2017-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add initial implementation of WebDriver process to run the HTTP server
