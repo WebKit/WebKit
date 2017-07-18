@@ -1,3 +1,11 @@
+2017-07-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        fast/forms/range/input-appearance-range-rtl.html is desired to fail.
+
+        * platform/gtk/TestExpectations:
+
 2017-07-18  Chris Dumez  <cdumez@apple.com>
 
         DOMException should have its properties on the prototype
