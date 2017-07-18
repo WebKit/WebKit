@@ -1569,6 +1569,7 @@ media/modern-media-controls/mute-button [ Pass ]
 media/modern-media-controls/mute-support [ Pass ]
 media/modern-media-controls/pip-button [ Pass ]
 media/modern-media-controls/pip-placard [ Pass ]
+media/modern-media-controls/pip-support [ Pass ]
 media/modern-media-controls/placard [ Pass ]
 media/modern-media-controls/placard-support [ Pass ]
 media/modern-media-controls/play-pause-button [ Pass ]
@@ -1595,6 +1596,7 @@ media/modern-media-controls/media-documents/media-document-video-ios-sizing.html
 
 # These tests use Picture-in-Picture which isn't supported on El Capitan.
 [ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
+media/modern-media-controls/pip-support/ipad [ Skip ]
 
 webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
 
