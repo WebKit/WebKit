@@ -1,3 +1,21 @@
+2017-07-17  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        Move USE_AVFOUNDATION definition on Windows to wtf/Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=174356
+
+        Reviewed by Brent Fulgham.
+
+        Move the definition of USE_AVFOUNDATION on Windows to wtf/platform.h
+
+        Rename WebCoreHeaderDetection.h to AVFoundationHeaderDetection.h
+
+        * AVFoundationSupport.py: Moved to Source/WTF/AVFoundationSupport.py.
+        * DerivedSources.make:
+        * PlatformWin.cmake:
+        * config.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+
 2017-07-17  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings that require non-caching JS strings

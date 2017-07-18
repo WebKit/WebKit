@@ -30,6 +30,7 @@ import re
 import sys
 import os
 
+
 def lookFor(relativePath):
     return os.path.isfile(sys.argv[1] + relativePath)
 

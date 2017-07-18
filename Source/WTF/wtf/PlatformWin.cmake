@@ -16,6 +16,10 @@ list(APPEND WTF_SOURCES
     win/WorkQueueWin.cpp
 )
 
+list(APPEND WTF_HEADERS
+    "${DERIVED_SOURCES_WTF_DIR}/AVFoundationHeaderDetection.h"
+)
+
 if (${WTF_PLATFORM_WIN_CAIRO})
     list(APPEND WTF_LIBRARIES
         cflite
@@ -25,6 +29,12 @@ else ()
         CoreFoundation${DEBUG_SUFFIX}
     )
 endif ()
+
+add_custom_command(
+    OUTPUT "${DERIVED_SOURCES_WTF_DIR}/AVFoundationHeaderDetection.h"
+    WORKING_DIRECTORY "${DERIVED_SOURCES_WTF_DIR}"
+    COMMAND ${PYTHON_EXECUTABLE} ${WTF_DIR}/AVFoundationSupport.py ${WEBKIT_LIBRARIES_DIR} > AVFoundationHeaderDetection.h
+    VERBATIM)
 
 set(WTF_PRE_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WTF/preBuild.cmd")
 file(WRITE "${WTF_PRE_BUILD_COMMAND}" "@xcopy /y /s /d /f \"${WTF_DIR}/wtf/*.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/WTF\" >nul 2>nul\n@xcopy /y /s /d /f \"${DERIVED_SOURCES_DIR}/WTF/*.h\" \"${DERIVED_SOURCES_DIR}/ForwardingHeaders/WTF\" >nul 2>nul\n")

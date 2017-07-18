@@ -1476,15 +1476,3 @@ CharsetData.cpp : platform/text/mac/make-charset-table.pl platform/text/mac/char
 
 endif # MACOS
 
-# ------------------------
-
-# Header detection
-
-ifeq ($(OS),Windows_NT)
-
-all : WebCoreHeaderDetection.h
-
-WebCoreHeaderDetection.h : $(WebCore)/AVFoundationSupport.py DerivedSources.make
-	$(PYTHON) $(WebCore)/AVFoundationSupport.py $(WEBKIT_LIBRARIES) > $@
-
-endif # Windows_NT
