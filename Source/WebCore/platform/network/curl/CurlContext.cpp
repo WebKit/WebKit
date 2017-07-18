@@ -28,7 +28,7 @@
 
 #if USE(CURL)
 #include "CurlContext.h"
-
+#include "HTTPHeaderMap.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
@@ -100,6 +100,8 @@ static CString cookieJarPath()
 }
 
 // CurlContext -------------------------------------------------------------------
+
+const char* const CurlContext::errorDomain = "CurlErrorDomain";
 
 CurlContext::CurlContext()
 : m_cookieJarFileName { cookieJarPath() }
@@ -285,38 +287,36 @@ CurlHandle::CurlHandle()
 
     m_handle = curl_easy_init();
     curl_easy_setopt(m_handle, CURLOPT_ERRORBUFFER, m_errorBuffer);
+    curl_easy_setopt(m_handle, CURLOPT_PRIVATE, this);
 }
 
 CurlHandle::~CurlHandle()
 {
-    clearCookieList();
     clearUrl();
-    clearRequestHeaders();
 
-    if (m_handle) {
-        curl_easy_cleanup(m_handle);
-        m_handle = nullptr;
-    }
+    curl_easy_cleanup(m_handle);
+}
+
+const String CurlHandle::errorDescription() const
+{
+    return String(curl_easy_strerror(m_errorCode));
 }
 
 CURLcode CurlHandle::perform()
 {
-    return curl_easy_perform(m_handle);
+    m_errorCode = curl_easy_perform(m_handle);
+    return m_errorCode;
 }
 
 CURLcode CurlHandle::pause(int bitmask)
 {
-    return curl_easy_pause(m_handle, CURLPAUSE_ALL);
+    m_errorCode = curl_easy_pause(m_handle, CURLPAUSE_ALL);
+    return m_errorCode;
 }
 
 void CurlHandle::enableShareHandle()
 {
     curl_easy_setopt(m_handle, CURLOPT_SHARE, CurlContext::singleton().shareHandle().handle());
-}
-
-void CurlHandle::setPrivateData(void* userData)
-{
-    curl_easy_setopt(m_handle, CURLOPT_PRIVATE, userData);
 }
 
 void CurlHandle::setUrl(const String& url)
@@ -336,11 +336,15 @@ void CurlHandle::clearUrl()
     }
 }
 
-void CurlHandle::clearRequestHeaders()
+void CurlHandle::appendRequestHeaders(const HTTPHeaderMap& headers)
 {
-    if (m_requestHeaders) {
-        curl_slist_free_all(m_requestHeaders);
-        m_requestHeaders = nullptr;
+    if (headers.size()) {
+        for (auto& entry : headers) {
+            auto& value = entry.value;
+            appendRequestHeader(entry.key, entry.value);
+        }
+
+        enableRequestHeaders();
     }
 }
 
@@ -361,13 +365,15 @@ void CurlHandle::appendRequestHeader(const String& name, const String& value)
 
 void CurlHandle::appendRequestHeader(const String& header)
 {
-    m_requestHeaders = curl_slist_append(m_requestHeaders, header.latin1().data());
+    m_requestHeaders.append(header);
 }
 
 void CurlHandle::enableRequestHeaders()
 {
-    if (m_requestHeaders)
-        curl_easy_setopt(m_handle, CURLOPT_HTTPHEADER, m_requestHeaders);
+    if (!m_requestHeaders.isEmpty()) {
+        const struct curl_slist* headers = m_requestHeaders.head();
+        curl_easy_setopt(m_handle, CURLOPT_HTTPHEADER, headers);
+    }
 }
 
 void CurlHandle::enableHttpGetRequest()
@@ -508,19 +514,9 @@ void CurlHandle::setCookieList(const char* cookieList)
     curl_easy_setopt(m_handle, CURLOPT_COOKIELIST, cookieList);
 }
 
-struct curl_slist* CurlHandle::getCookieList()
+void CurlHandle::fetchCookieList(CurlSList &cookies) const
 {
-    clearCookieList();
-
-    curl_easy_getinfo(m_handle, CURLINFO_COOKIELIST, &m_cookieList);
-
-    return m_cookieList;
-}
-
-void CurlHandle::clearCookieList()
-{
-    if (!m_cookieList)
-        curl_slist_free_all(m_cookieList);
+    curl_easy_getinfo(m_handle, CURLINFO_COOKIELIST, static_cast<struct curl_slist**>(cookies));
 }
 
 void CurlHandle::enableProxyIfExists()
@@ -564,7 +560,7 @@ void CurlHandle::setSslCtxCallbackFunction(curl_ssl_ctx_callback callbackFunc, v
     curl_easy_setopt(m_handle, CURLOPT_SSL_CTX_FUNCTION, callbackFunc);
 }
 
-URL CurlHandle::getEffectiveURL()
+URL CurlHandle::getEffectiveURL() const
 {
     CURLcode errCd = CURLE_FAILED_INIT;
     char* url = nullptr;

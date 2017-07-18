@@ -86,13 +86,27 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
 
 bool CurlDownload::start()
 {
-    ref(); // CurlJobManager will call deref when the download has finished.
-    return CurlJobManager::singleton().add(m_curlHandle.handle());
+    m_job = CurlJobManager::singleton().add(m_curlHandle, [this, protectedThis = makeRef(*this)](CurlJobResult result) mutable {
+        switch (result) {
+        case CurlJobResult::Done:
+            didFinish();
+            break;
+
+        case CurlJobResult::Error:
+            didFail();
+            break;
+
+        case CurlJobResult::Cancelled:
+            break;
+        }
+    });
+    return true;
 }
 
 bool CurlDownload::cancel()
 {
-    return CurlJobManager::singleton().remove(m_curlHandle.handle());
+    CurlJobManager::singleton().cancel(m_job);
+    return true;
 }
 
 String CurlDownload::getTempPath() const
@@ -145,28 +159,7 @@ void CurlDownload::writeDataToFile(const char* data, int size)
 void CurlDownload::addHeaders(const ResourceRequest& request)
 {
     LockHolder locker(m_mutex);
-
-    m_curlHandle.clearRequestHeaders();
-
-    if (request.httpHeaderFields().size() > 0) {
-        HTTPHeaderMap customHeaders = request.httpHeaderFields();
-        HTTPHeaderMap::const_iterator end = customHeaders.end();
-        for (HTTPHeaderMap::const_iterator it = customHeaders.begin(); it != end; ++it) {
-            const String& value = it->value;
-            String headerString(it->key);
-            if (value.isEmpty())
-                // Insert the ; to tell curl that this header has an empty value.
-                headerString.append(";");
-            else {
-                headerString.append(": ");
-                headerString.append(value);
-            }
-
-            m_curlHandle.appendRequestHeader(headerString);
-        }
-
-        m_curlHandle.enableRequestHeaders();
-    }
+    m_curlHandle.appendRequestHeaders(request.httpHeaderFields());
 }
 
 void CurlDownload::didReceiveHeader(const String& header)
@@ -201,9 +194,7 @@ void CurlDownload::didReceiveData(void* data, int size)
 {
     LockHolder locker(m_mutex);
 
-    RefPtr<CurlDownload> protectedThis(this);
-
-    callOnMainThread([this, size, protectedThis] {
+    callOnMainThread([this, size, protectedThis = makeRef(*this)] {
         didReceiveDataOfLength(size);
     });
 
@@ -234,11 +225,12 @@ void CurlDownload::didFinish()
 void CurlDownload::didFail()
 {
     closeFile();
+    {
+        LockHolder locker(m_mutex);
 
-    LockHolder locker(m_mutex);
-
-    if (m_deletesFileUponFailure)
-        deleteFile(m_tempPath);
+        if (m_deletesFileUponFailure)
+            deleteFile(m_tempPath);
+    }
 
     if (m_listener)
         m_listener->didFail();
@@ -290,29 +282,6 @@ void CurlDownload::receivedResponseCallback(CurlDownload* download)
 {
     if (download)
         download->didReceiveResponse();
-}
-
-CurlJobAction CurlDownload::handleCurlMsg(CURLMsg* msg)
-{
-    switch (msg->msg) {
-    case CURLMSG_DONE: {
-        if (msg->data.result == CURLE_OK) {
-            callOnMainThread([this] {
-                didFinish();
-                deref(); // This matches the ref() in CurlDownload::start().
-            });
-        } else {
-            callOnMainThread([this] {
-                didFail();
-                deref(); // This matches the ref() in CurlDownload::start().
-            });
-        }
-        return CurlJobAction::Finished;
-    }
-    default: {
-        return CurlJobAction::None;
-    }
-    }
 }
 
 }

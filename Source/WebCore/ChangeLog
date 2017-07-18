@@ -1,3 +1,138 @@
+2017-07-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Unify ResourceHandleManager into CurlJobManager.
+        https://bugs.webkit.org/show_bug.cgi?id=173991
+
+        Use CurlJobManager to make ResourceHandle run in background.
+        CurlJobManager::start() now accept callback to manage life cycle
+        of the resource easily in a same context.
+        Actual management tasks of CurlJobManager is now private class
+        in CurlJobManager which is better thread safeness.
+        ResourceHandleManager is deleted at all.
+
+        Reviewed by Alex Christensen.
+
+        * platform/Curl.cmake:
+        * platform/network/ResourceHandle.h:
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::cookiesForSession):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::CurlHandle):
+        (WebCore::CurlHandle::~CurlHandle):
+        (WebCore::CurlHandle::errorDescription):
+        (WebCore::CurlHandle::perform):
+        (WebCore::CurlHandle::pause):
+        (WebCore::CurlHandle::appendRequestHeaders):
+        (WebCore::CurlHandle::appendRequestHeader):
+        (WebCore::CurlHandle::enableRequestHeaders):
+        (WebCore::CurlHandle::fetchCookieList):
+        (WebCore::CurlHandle::getEffectiveURL):
+        (WebCore::CurlHandle::setPrivateData): Deleted.
+        (WebCore::CurlHandle::clearRequestHeaders): Deleted.
+        (WebCore::CurlHandle::getCookieList): Deleted.
+        (WebCore::CurlHandle::clearCookieList): Deleted.
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlSList::CurlSList):
+        (WebCore::CurlSList::~CurlSList):
+        (WebCore::CurlSList::operator struct curl_slist** ):
+        (WebCore::CurlSList::head):
+        (WebCore::CurlSList::isEmpty):
+        (WebCore::CurlSList::clear):
+        (WebCore::CurlSList::append):
+        (WebCore::CurlHandle::errorCode):
+        (WebCore::CurlHandle::setErrorCode):
+        (WebCore::CurlHandle::privateData):
+        (WebCore::CurlHandle::setPrivateData):
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::start):
+        (WebCore::CurlDownload::cancel):
+        (WebCore::CurlDownload::addHeaders):
+        (WebCore::CurlDownload::didReceiveData):
+        (WebCore::CurlDownload::didFail):
+        (WebCore::CurlDownload::handleCurlMsg): Deleted.
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/CurlJobManager.cpp:
+        (WebCore::CurlJobList::append):
+        (WebCore::CurlJobList::cancel):
+        (WebCore::CurlJobList::complete):
+        (WebCore::CurlJobList::isEmpty):
+        (WebCore::CurlJobList::withJob):
+        (WebCore::CurlJobList::withCurlHandle):
+        (WebCore::CurlJob::invoke):
+        (WebCore::CurlJobManager::add):
+        (WebCore::CurlJobManager::cancel):
+        (WebCore::CurlJobManager::callOnJobThread):
+        (WebCore::CurlJobManager::startThreadIfNeeded):
+        (WebCore::CurlJobManager::stopThreadIfNoMoreJobRunning):
+        (WebCore::CurlJobManager::stopThread):
+        (WebCore::CurlJobManager::updateJobs):
+        (WebCore::CurlJobManager::workerThread):
+        (WebCore::CurlJobManager::CurlJobManager): Deleted.
+        (WebCore::CurlJobManager::~CurlJobManager): Deleted.
+        (WebCore::CurlJobManager::remove): Deleted.
+        (WebCore::CurlJobManager::getActiveCount): Deleted.
+        (WebCore::CurlJobManager::getPendingCount): Deleted.
+        (WebCore::CurlJobManager::stopThreadIfIdle): Deleted.
+        (WebCore::CurlJobManager::updateHandleList): Deleted.
+        (WebCore::CurlJobManager::addToCurl): Deleted.
+        (WebCore::CurlJobManager::removeFromCurl): Deleted.
+        * platform/network/curl/CurlJobManager.h:
+        (WebCore::CurlJob::CurlJob):
+        (WebCore::CurlJob::~CurlJob):
+        (WebCore::CurlJob::operator=):
+        (WebCore::CurlJob::curlHandle):
+        (WebCore::CurlJob::ticket):
+        (WebCore::CurlJob::finished):
+        (WebCore::CurlJob::error):
+        (WebCore::CurlJob::cancel):
+        (WebCore::CurlJobManager::singleton):
+        (WebCore::CurlJobManager::~CurlJobManager):
+        (WebCore::CurlJobManager::isActiveJob):
+        (WebCore::CurlJobManager::runThread): Deleted.
+        (WebCore::CurlJobManager::setRunThread): Deleted.
+        * platform/network/curl/ResourceError.h:
+        (WebCore::ResourceError::ResourceError):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::~ResourceHandle):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::initialize):
+        (WebCore::ResourceHandle::applyAuthentication):
+        (WebCore::getFormElementsCount):
+        (WebCore::ResourceHandle::setupPUT):
+        (WebCore::ResourceHandle::setupPOST):
+        (WebCore::ResourceHandle::setupFormData):
+        (WebCore::ResourceHandle::setHostAllowsAnyHTTPSCertificate):
+        (WebCore::ResourceHandle::setClientCertificateInfo):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::ResourceHandle::didFinish):
+        (WebCore::ResourceHandle::didFail):
+        (WebCore::ResourceHandle::shouldUseCredentialStorage):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        (WebCore::ResourceHandle::calculateWebTimingInformations):
+        (WebCore::ResourceHandle::handleLocalReceiveResponse):
+        (WebCore::ResourceHandle::willPrepareSendData):
+        (WebCore::ResourceHandle::didReceiveHeaderLine):
+        (WebCore::ResourceHandle::didReceiveAllHeaders):
+        (WebCore::ResourceHandle::didReceiveContentData):
+        (WebCore::ResourceHandle::readCallback):
+        (WebCore::ResourceHandle::headerCallback):
+        (WebCore::ResourceHandle::writeCallback):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandle::dispatchSynchronousJob):
+        (WebCore::calculateWebTimingInformations): Deleted.
+        (WebCore::handleLocalReceiveResponse): Deleted.
+        (WebCore::writeCallback): Deleted.
+        (WebCore::headerCallback): Deleted.
+        (WebCore::readCallback): Deleted.
+        (WebCore::setupFormData): Deleted.
+        (WebCore::ResourceHandle::handleCurlMsg): Deleted.
+        * platform/network/curl/ResourceHandleManager.cpp: Removed.
+        * platform/network/curl/ResourceHandleManager.h: Removed.
+
 2017-07-17  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed fix to Mac CMake build after r219474.

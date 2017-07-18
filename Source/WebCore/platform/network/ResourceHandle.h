@@ -70,6 +70,7 @@ typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 
 #if USE(CURL)
 #include "CurlJobManager.h"
+#include <wtf/Lock.h>
 #endif
 
 namespace WTF {
@@ -185,12 +186,6 @@ public:
     MonotonicTime m_requestTime;
 #endif
 
-#if USE(CURL)
-    void initialize();
-    void handleDataURL();
-    void handleCurlMsg(CURLMsg*);
-#endif
-
     bool hasAuthenticationChallenge() const;
     void clearAuthentication();
     WEBCORE_EXPORT virtual void cancel();
@@ -293,12 +288,38 @@ private:
 #endif
 
 #if USE(CURL)
-    void dispatchSynchronousJob();
+    CurlJobTicket m_job;
 
+    Vector<char> m_receivedBuffer;
+    Lock m_receivedBufferMutex;
+
+    void initialize();
+    void applyAuthentication();
     void setupPOST();
     void setupPUT();
+    void setupFormData(bool isPostRequest);
 
-    void applyAuthentication();
+    void didFinish();
+    void didFail();
+
+    size_t willPrepareSendData(char* ptr, size_t blockSize, size_t numberOfBlocks);
+    void didReceiveHeaderLine(const String& header);
+    void didReceiveAllHeaders(long httpCode, long long contentLength);
+    void didReceiveContentData();
+
+    void handleLocalReceiveResponse();
+
+    static size_t readCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
+    static size_t headerCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
+    static size_t writeCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
+
+    void dispatchSynchronousJob();
+    void handleDataURL();
+
+#if ENABLE(WEB_TIMING)
+    void calculateWebTimingInformations();
+#endif
+
 #endif
 
     friend class ResourceHandleInternal;

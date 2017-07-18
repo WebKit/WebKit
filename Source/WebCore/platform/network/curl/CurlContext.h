@@ -102,6 +102,8 @@ public:
         const String url() const;
     };
 
+    static const char* const errorDomain;
+
     static CurlContext& singleton()
     {
         static CurlContext shared;
@@ -167,9 +169,35 @@ private:
     CURLM* m_multiHandle { nullptr };
 };
 
+// CurlSList -------------------------------------------------
 
+class CurlSList {
+public:
+    CurlSList() { }
+    ~CurlSList() { clear(); }
+
+    operator struct curl_slist** () { return &m_list; }
+
+    const struct curl_slist* head() const { return m_list; }
+    bool isEmpty() const { return m_list; }
+    void clear()
+    {
+        if (m_list) {
+            curl_slist_free_all(m_list);
+            m_list = nullptr;
+        }
+    }
+
+    void append(const char* str) { m_list = curl_slist_append(m_list, str); }
+    void append(const String& str) { append(str.latin1().data()); }
+
+private:
+    struct curl_slist* m_list { nullptr };
+};
 
 // CurlHandle -------------------------------------------------
+
+class HTTPHeaderMap;
 
 class CurlHandle {
     WTF_MAKE_NONCOPYABLE(CurlHandle);
@@ -193,13 +221,20 @@ public:
     CURLcode perform();
     CURLcode pause(int);
 
+    CURLcode errorCode() const { return m_errorCode; }
+    void setErrorCode(CURLcode errorCode) { m_errorCode = errorCode; }
+
+    const String errorDescription() const;
+
     void enableShareHandle();
-    void setPrivateData(void* userData);
+
+    void* privateData() const { return m_privateData; }
+    void setPrivateData(void* userData) { m_privateData = userData; }
 
     void setUrl(const String&);
     const char* url() const { return m_url; }
 
-    void clearRequestHeaders();
+    void appendRequestHeaders(const HTTPHeaderMap&);
     void appendRequestHeader(const String&, const String&);
     void appendRequestHeader(const String&);
     void enableRequestHeaders();
@@ -231,7 +266,7 @@ public:
 
     void enableCookieJarIfExists();
     void setCookieList(const char*);
-    struct curl_slist* getCookieList();
+    void fetchCookieList(CurlSList &cookies) const;
 
     void enableProxyIfExists();
 
@@ -244,7 +279,7 @@ public:
     void setSslCtxCallbackFunction(curl_ssl_ctx_callback, void*);
 
     // Status
-    URL getEffectiveURL();
+    URL getEffectiveURL() const;
     CURLcode getPrimaryPort(long&);
     CURLcode getResponseCode(long&);
     CURLcode getContentLenghtDownload(long long&);
@@ -260,16 +295,16 @@ public:
 
 private:
     void clearUrl();
-    void clearCookieList();
 
     static int expectedSizeOfCurlOffT();
 
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
+    CURLcode m_errorCode;
 
     char* m_url { nullptr };
-    struct curl_slist* m_requestHeaders { nullptr };
-    struct curl_slist* m_cookieList { nullptr };
+    void* m_privateData { nullptr };
+    CurlSList m_requestHeaders;
 };
 
 }

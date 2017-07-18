@@ -268,17 +268,18 @@ static String cookiesForSession(const NetworkStorageSession&, const URL&, const 
     CurlHandle curlHandle;
     curlHandle.enableShareHandle();
 
-    struct curl_slist* list = curlHandle.getCookieList();
+    CurlSList cookieList;
+    curlHandle.fetchCookieList(cookieList);
+    const struct curl_slist* list = cookieList.head();
     if (list) {
         String domain = url.host();
         String path = url.path();
         StringBuilder cookiesBuilder;
 
-        struct curl_slist* item = list;
-        while (item) {
-            const char* cookie = item->data;
+        while (list) {
+            const char* cookie = list->data;
             addMatchingCurlCookie(cookie, domain, path, cookiesBuilder, httponly);
-            item = item->next;
+            list = list->next;
         }
 
         cookies = cookiesBuilder.toString();

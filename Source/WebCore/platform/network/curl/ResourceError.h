@@ -23,17 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ResourceError_h
-#define ResourceError_h
+#pragma once
 
+#include "CurlContext.h"
 #include "ResourceErrorBase.h"
 
 #if PLATFORM(WIN)
 #include <windows.h>
 #include <winsock2.h>
 #endif
-
-#include <curl/curl.h>
 
 namespace WebCore {
 
@@ -42,13 +40,17 @@ class ResourceError : public ResourceErrorBase
 public:
     ResourceError(Type type = Type::Null)
         : ResourceErrorBase(type)
-        , m_sslErrors(0)
     {
     }
 
     ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, Type type = Type::General)
         : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type)
-        , m_sslErrors(0)
+    {
+    }
+
+    ResourceError(const CurlHandle& curl, unsigned sslErrors)
+        : ResourceErrorBase(CurlContext::errorDomain, curl.errorCode(), curl.getEffectiveURL(), curl.errorDescription(), Type::General)
+        , m_sslErrors { sslErrors }
     {
     }
 
@@ -60,9 +62,8 @@ private:
     friend class ResourceErrorBase;
     void doPlatformIsolatedCopy(const ResourceError&) { }
 
-    unsigned m_sslErrors;
+    unsigned m_sslErrors { 0 };
 };
 
 }
 
-#endif // ResourceError_h_

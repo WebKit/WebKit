@@ -50,7 +50,7 @@ public:
     virtual void didFail() { }
 };
 
-class CurlDownload : public ThreadSafeRefCounted<CurlDownload>, public CurlJob {
+class CurlDownload : public ThreadSafeRefCounted<CurlDownload> {
 public:
     CurlDownload();
     ~CurlDownload();
@@ -71,8 +71,6 @@ public:
     void setDeletesFileUponFailure(bool deletesFileUponFailure) { m_deletesFileUponFailure = deletesFileUponFailure; }
 
     void setDestination(const String& destination) { m_destination = destination; }
-
-    virtual CurlJobAction handleCurlMsg(CURLMsg*);
 
 private:
     void closeFile();
@@ -100,7 +98,7 @@ private:
     static void receivedResponseCallback(CurlDownload*);
 
     CurlHandle m_curlHandle;
-
+    CurlJobTicket m_job;
     String m_tempPath;
     String m_destination;
     WebCore::PlatformFileHandle m_tempHandle { invalidPlatformFileHandle };

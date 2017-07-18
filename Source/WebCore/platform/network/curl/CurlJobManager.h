@@ -28,11 +28,16 @@
 
 #include "CurlContext.h"
 
+#include <wtf/Function.h>
+#include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/MessageQueue.h>
+#include <wtf/Noncopyable.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
 #include <windows.h>
 #include <winsock2.h>
 #endif
@@ -40,59 +45,86 @@
 
 namespace WebCore {
 
-enum class CurlJobAction { None, Finished };
+enum class CurlJobResult { Done, Error, Cancelled };
+using CurlJobTicket = void*;
+using CurlJobCallback = WTF::Function<void(CurlJobResult)>;
+using CurlJobTask = WTF::Function<void(CurlHandle&)>;
+
+class CurlJobList;
 
 class CurlJob {
+    WTF_MAKE_NONCOPYABLE(CurlJob);
 public:
-    virtual CurlJobAction handleCurlMsg(CURLMsg*) = 0;
+    CurlJob() { }
+    CurlJob(CurlHandle* curl, CurlJobCallback job)
+        : m_curl { curl }, m_job { WTFMove(job) } { }
+    CurlJob(CurlJob&& other)
+    {
+        m_curl = other.m_curl;
+        other.m_curl = nullptr;
+        m_job = WTFMove(other.m_job);
+    }
+    ~CurlJob() { }
+
+    CurlJob& operator=(CurlJob&& other)
+    {
+        m_curl = other.m_curl;
+        other.m_curl = nullptr;
+        m_job = WTFMove(other.m_job);
+        return *this;
+    }
+
+    CurlHandle* curlHandle() const { return m_curl; }
+    CurlJobTicket ticket() const { return static_cast<CurlJobTicket>(m_curl->handle()); }
+
+    void finished() { invoke(CurlJobResult::Done); }
+    void error() { invoke(CurlJobResult::Error); }
+    void cancel() { invoke(CurlJobResult::Cancelled); }
+
+private:
+    CurlHandle* m_curl;
+    CurlJobCallback m_job;
+
+    void invoke(CurlJobResult);
 };
 
+
 class CurlJobManager {
+    WTF_MAKE_NONCOPYABLE(CurlJobManager);
+    using Callback = CurlJobCallback;
+
 public:
+
     static CurlJobManager& singleton()
     {
-        // Since it's a static variable, if the class has already been created,
-        // It won't be created again.
-        // And it **is** thread-safe in C++11.
-
         static CurlJobManager shared;
         return shared;
     }
 
-    CurlJobManager();
-    virtual ~CurlJobManager();
+    CurlJobManager() = default;
+    ~CurlJobManager() { stopThread(); }
 
-    bool add(CURL* curlHandle);
-    bool remove(CURL* curlHandle);
-
-    int getActiveCount() const;
-    int getPendingCount() const;
+    CurlJobTicket add(CurlHandle&, Callback);
+    bool cancel(CurlJobTicket);
+    void callOnJobThread(WTF::Function<void()>&&);
 
 private:
     void startThreadIfNeeded();
+    void stopThreadIfNoMoreJobRunning();
     void stopThread();
-    void stopThreadIfIdle();
 
-    void updateHandleList();
-
-    bool runThread() const { LockHolder locker(m_mutex); return m_runThread; }
-    void setRunThread(bool runThread) { LockHolder locker(m_mutex); m_runThread = runThread; }
-
-    bool addToCurl(CURL* curlHandle);
-    bool removeFromCurl(CURL* curlHandle);
+    bool updateJobs(CurlJobList& jobs);
+    bool isActiveJob(CurlJobTicket job) const { return m_activeJobs.contains(job); }
 
     void workerThread();
 
     RefPtr<Thread> m_thread;
-    Vector<CURL*> m_pendingHandleList;
-    Vector<CURL*> m_activeHandleList;
-    Vector<CURL*> m_removedHandleList;
+    Vector<CurlJob> m_pendingJobs;
+    HashSet<CurlJobTicket> m_activeJobs;
+    Vector<CurlJobTicket> m_cancelledTickets;
+    MessageQueue<WTF::Function<void()>> m_taskQueue;
     mutable Lock m_mutex;
-    bool m_runThread { false };
-
-    CurlMultiHandle m_curlMultiHandle;
-
-    friend class CurlJob;
+    bool m_runThread { };
 };
 
 }
