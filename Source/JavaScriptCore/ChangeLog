@@ -1,3 +1,26 @@
+2017-07-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add memoryCost to Inspector Protocol objects
+        https://bugs.webkit.org/show_bug.cgi?id=174478
+
+        Reviewed by Joseph Pecoraro.
+
+        For non-array and non-object InspectorValue, calculate memoryCost as the sizeof the object,
+        plus the memoryCost of the data if it is a string.
+
+        For array InspectorValue, calculate memoryCost as the sum of the memoryCost of all items.
+
+        For object InspectorValue, calculate memoryCost as the sum of the memoryCost of the string
+        key plus the memoryCost of the InspectorValue for each entry.
+
+        Test: TestWebKitAPI/Tests/JavaScriptCore/InspectorValue.cpp
+
+        * inspector/InspectorValues.h:
+        * inspector/InspectorValues.cpp:
+        (Inspector::InspectorValue::memoryCost):
+        (Inspector::InspectorObjectBase::memoryCost):
+        (Inspector::InspectorArrayBase::memoryCost):
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING

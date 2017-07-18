@@ -376,6 +376,7 @@
 		7CCE7EC11A411A7E00447C4C /* HTMLCollectionNamedItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B4F8FA3159D52B1002D9F94 /* HTMLCollectionNamedItem.mm */; };
 		7CCE7EC21A411A7E00447C4C /* HTMLFormCollectionNamedItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B26FC6B159D061000CC3765 /* HTMLFormCollectionNamedItem.mm */; };
 		7CCE7EC31A411A7E00447C4C /* InspectorBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = C507E8A614C6545B005D6B3B /* InspectorBar.mm */; };
+		95646E5B1F1DB60E00DE0EB9 /* InspectorValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 953F47911F1DB40300E3D1E3 /* InspectorValue.cpp */; };
 		7CCE7EC41A411A7E00447C4C /* JSWrapperForNodeInWebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB4160116815B2600824238 /* JSWrapperForNodeInWebFrame.mm */; };
 		7CCE7EC51A411A7E00447C4C /* MemoryCacheDisableWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1220D9F155B25480013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.mm */; };
 		7CCE7EC61A411A7E00447C4C /* MemoryCachePruneWithinResourceLoadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517E7DFB15110EA600D0B008 /* MemoryCachePruneWithinResourceLoadDelegate.mm */; };
@@ -1538,6 +1539,7 @@
 		C2CF975916CEC69E0054E99D /* JSContextBackForwardCache2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = JSContextBackForwardCache2.html; sourceTree = "<group>"; };
 		C2EB2DD116CAC7AC009B52EE /* WebViewDidCreateJavaScriptContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewDidCreateJavaScriptContext.mm; sourceTree = "<group>"; };
 		C507E8A614C6545B005D6B3B /* InspectorBar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InspectorBar.mm; sourceTree = "<group>"; };
+		953F47911F1DB40300E3D1E3 /* InspectorValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorValue.cpp; sourceTree = "<group>"; };
 		C5101C4E176B8BB900EE9B15 /* findRanges.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = findRanges.html; sourceTree = "<group>"; };
 		C51AFB98169F49FF009CCF66 /* FindMatches.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindMatches.mm; sourceTree = "<group>"; };
 		C540F775152E4DA000A40C8C /* SimplifyMarkup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SimplifyMarkup.mm; sourceTree = "<group>"; };
@@ -2721,6 +2723,7 @@
 		FE217ECB1640A54A0052988B /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				953F47911F1DB40300E3D1E3 /* InspectorValue.cpp */,
 			);
 			path = JavaScriptCore;
 			sourceTree = "<group>";
@@ -3103,6 +3106,7 @@
 				3FCC4FE51EC4E8520076E37C /* PictureInPictureDelegate.mm in Sources */,
 				7C83E0B81D0A64BD00FEBCF3 /* InjectedBundleMakeAllShadowRootsOpen.cpp in Sources */,
 				7CCE7EC31A411A7E00447C4C /* InspectorBar.mm in Sources */,
+				95646E5B1F1DB60E00DE0EB9 /* InspectorValue.cpp in Sources */,
 				7CCE7EDA1A411A8700447C4C /* InstanceMethodSwizzler.mm in Sources */,
 				5C726D6F1D3EE06E00C5E1A1 /* InstanceMethodSwizzler.mm in Sources */,
 				2DB0232F1E4E871800707123 /* InteractionDeadlockAfterCrash.mm in Sources */,

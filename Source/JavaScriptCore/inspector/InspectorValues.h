@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -108,6 +109,8 @@ public:
     String toJSONString() const;
     virtual void writeJSON(StringBuilder& output) const;
 
+    virtual size_t memoryCost() const;
+
 protected:
     InspectorValue()
         : m_type(Type::Null) { }
@@ -168,6 +171,8 @@ public:
     typedef Dictionary::const_iterator const_iterator;
 
     InspectorObject* openAccessors();
+
+    size_t memoryCost() const final;
 
 protected:
     virtual ~InspectorObjectBase();
@@ -235,6 +240,7 @@ public:
 
     using InspectorObjectBase::asObject;
 
+    // This class expected non-cyclic values, as we cannot serialize cycles in JSON.
     using InspectorObjectBase::setBoolean;
     using InspectorObjectBase::setInteger;
     using InspectorObjectBase::setDouble;
@@ -267,6 +273,8 @@ public:
     typedef Vector<RefPtr<InspectorValue>>::const_iterator const_iterator;
 
     unsigned length() const { return static_cast<unsigned>(m_map.size()); }
+
+    size_t memoryCost() const final;
 
 protected:
     virtual ~InspectorArrayBase();
@@ -303,6 +311,7 @@ public:
 
     using InspectorArrayBase::asArray;
 
+    // This class expected non-cyclic values, as we cannot serialize cycles in JSON.
     using InspectorArrayBase::pushBoolean;
     using InspectorArrayBase::pushInteger;
     using InspectorArrayBase::pushDouble;

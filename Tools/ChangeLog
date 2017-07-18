@@ -1,3 +1,28 @@
+2017-07-18  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Add memoryCost to Inspector Protocol objects
+        https://bugs.webkit.org/show_bug.cgi?id=174478
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/JavaScriptCore/InspectorValue.cpp: Added.
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostNull)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostBoolean)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostDouble)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostInteger)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostString)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostStringEmpty)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostStringNull)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostStringGrowing)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostStringUnicode)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostObject)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostObjectEmpty)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostObjectGrowing)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostArray)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostArrayEmpty)):
+        (TestWebKitAPI::TEST(InspectorValue, MemoryCostArrayGrowing)):
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING

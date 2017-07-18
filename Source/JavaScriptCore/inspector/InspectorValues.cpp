@@ -681,6 +681,14 @@ void InspectorValue::writeJSON(StringBuilder& output) const
     }
 }
 
+size_t InspectorValue::memoryCost() const
+{
+    size_t memoryCost = sizeof(this);
+    if (m_type == Type::String && m_value.string)
+        memoryCost += m_value.string->sizeInBytes();
+    return memoryCost;
+}
+
 InspectorObjectBase::~InspectorObjectBase()
 {
 }
@@ -698,6 +706,17 @@ InspectorObject* InspectorObjectBase::openAccessors()
     COMPILE_ASSERT(sizeof(InspectorObject) == sizeof(InspectorObjectBase), cannot_cast);
 
     return static_cast<InspectorObject*>(this);
+}
+
+size_t InspectorObjectBase::memoryCost() const
+{
+    size_t memoryCost = InspectorValue::memoryCost();
+    for (const auto& entry : m_map) {
+        memoryCost += entry.key.sizeInBytes();
+        if (entry.value)
+            memoryCost += entry.value->memoryCost();
+    }
+    return memoryCost;
 }
 
 bool InspectorObjectBase::getBoolean(const String& name, bool& output) const
@@ -816,6 +835,16 @@ Ref<InspectorObject> InspectorObject::create()
 Ref<InspectorArray> InspectorArray::create()
 {
     return adoptRef(*new InspectorArray);
+}
+
+size_t InspectorArrayBase::memoryCost() const
+{
+    size_t memoryCost = InspectorValue::memoryCost();
+    for (const auto& item : m_map) {
+        if (item)
+            memoryCost += item->memoryCost();
+    }
+    return memoryCost;
 }
 
 } // namespace Inspector
