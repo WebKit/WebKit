@@ -68,11 +68,6 @@ typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
 
-#if USE(CURL)
-#include "CurlJobManager.h"
-#include <wtf/Lock.h>
-#endif
-
 namespace WTF {
 class SchedulePair;
 }
@@ -285,41 +280,6 @@ private:
 
 #if USE(SOUP)
     void timeoutFired();
-#endif
-
-#if USE(CURL)
-    CurlJobTicket m_job;
-
-    Vector<char> m_receivedBuffer;
-    Lock m_receivedBufferMutex;
-
-    void initialize();
-    void applyAuthentication();
-    void setupPOST();
-    void setupPUT();
-    void setupFormData(bool isPostRequest);
-
-    void didFinish();
-    void didFail();
-
-    size_t willPrepareSendData(char* ptr, size_t blockSize, size_t numberOfBlocks);
-    void didReceiveHeaderLine(const String& header);
-    void didReceiveAllHeaders(long httpCode, long long contentLength);
-    void didReceiveContentData();
-
-    void handleLocalReceiveResponse();
-
-    static size_t readCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
-    static size_t headerCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
-    static size_t writeCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
-
-    void dispatchSynchronousJob();
-    void handleDataURL();
-
-#if ENABLE(WEB_TIMING)
-    void calculateWebTimingInformations();
-#endif
-
 #endif
 
     friend class ResourceHandleInternal;

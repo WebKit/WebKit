@@ -44,8 +44,10 @@
 
 #if USE(CURL)
 #include "CurlContext.h"
+#include "CurlJobManager.h"
 #include "FormDataStreamCurl.h"
 #include "MultipartHandle.h"
+#include <wtf/Lock.h>
 #endif
 
 #if USE(SOUP)
@@ -87,7 +89,8 @@ public:
         , m_currentRequest(request)
 #endif
 #if USE(CURL)
-        , m_formDataStream(loader)
+        , m_handle { loader }
+        , m_formDataStream { loader }
 #endif
 #if USE(SOUP)
         , m_timeoutSource(RunLoop::main(), loader, &ResourceHandle::timeoutFired)
@@ -137,6 +140,7 @@ public:
     RetainPtr<CFURLStorageSessionRef> m_storageSession;
 #endif
 #if USE(CURL)
+    ResourceHandle* m_handle;
     CurlHandle m_curlHandle;
 
     ResourceResponse m_response;
@@ -149,7 +153,40 @@ public:
 
     std::unique_ptr<MultipartHandle> m_multipartHandle;
     bool m_addedCacheValidationHeaders { false };
+    CurlJobTicket m_job { nullptr };
+
+    Vector<char> m_receivedBuffer;
+    Lock m_receivedBufferMutex;
+
+    void initialize();
+    void applyAuthentication();
+    void setupPOST();
+    void setupPUT();
+    void setupFormData(bool isPostRequest);
+
+    void didFinish();
+    void didFail();
+
+    size_t willPrepareSendData(char* ptr, size_t blockSize, size_t numberOfBlocks);
+    void didReceiveHeaderLine(const String& header);
+    void didReceiveAllHeaders(long httpCode, long long contentLength);
+    void didReceiveContentData();
+
+    void handleLocalReceiveResponse();
+
+    static size_t readCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
+    static size_t headerCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
+    static size_t writeCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data);
+
+    void dispatchSynchronousJob();
+    void handleDataURL();
+
+#if ENABLE(WEB_TIMING)
+    void calculateWebTimingInformations();
 #endif
+
+#endif
+
 #if USE(SOUP)
     SoupNetworkSession* m_session { nullptr };
     GRefPtr<SoupMessage> m_soupMessage;

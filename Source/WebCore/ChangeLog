@@ -1,3 +1,62 @@
+2017-07-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Move detail implementation from ResourceHandle to ResourceHandleInternal
+        https://bugs.webkit.org/show_bug.cgi?id=174641
+
+        After moving stuff from ResourceHandleManager to ResourceHandle on 
+        https://bugs.webkit.org/show_bug.cgi?id=173630, still there're many violation
+        remains between ResourceHandle and ResourceHandleInternal classes.
+        Many of implementation detail should be move to ResourceHandleInternal
+        to improve build speed.
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandleInternal::initialize):
+        (WebCore::ResourceHandleInternal::applyAuthentication):
+        (WebCore::ResourceHandleInternal::setupPUT):
+        (WebCore::ResourceHandleInternal::setupPOST):
+        (WebCore::ResourceHandleInternal::setupFormData):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::ResourceHandleInternal::didFinish):
+        (WebCore::ResourceHandleInternal::didFail):
+        (WebCore::ResourceHandleInternal::calculateWebTimingInformations):
+        (WebCore::ResourceHandleInternal::handleLocalReceiveResponse):
+        (WebCore::ResourceHandleInternal::willPrepareSendData):
+        (WebCore::ResourceHandleInternal::didReceiveHeaderLine):
+        (WebCore::ResourceHandleInternal::didReceiveAllHeaders):
+        (WebCore::ResourceHandleInternal::didReceiveContentData):
+        (WebCore::ResourceHandleInternal::readCallback):
+        (WebCore::ResourceHandleInternal::headerCallback):
+        (WebCore::ResourceHandleInternal::writeCallback):
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        (WebCore::ResourceHandleInternal::dispatchSynchronousJob):
+        (WebCore::ResourceHandleInternal::handleDataURL):
+        (WebCore::ResourceHandle::initialize): Deleted.
+        (WebCore::ResourceHandle::applyAuthentication): Deleted.
+        (WebCore::ResourceHandle::setupPUT): Deleted.
+        (WebCore::ResourceHandle::setupPOST): Deleted.
+        (WebCore::ResourceHandle::setupFormData): Deleted.
+        (WebCore::ResourceHandle::didFinish): Deleted.
+        (WebCore::ResourceHandle::didFail): Deleted.
+        (WebCore::ResourceHandle::calculateWebTimingInformations): Deleted.
+        (WebCore::ResourceHandle::handleLocalReceiveResponse): Deleted.
+        (WebCore::ResourceHandle::willPrepareSendData): Deleted.
+        (WebCore::ResourceHandle::didReceiveHeaderLine): Deleted.
+        (WebCore::ResourceHandle::didReceiveAllHeaders): Deleted.
+        (WebCore::ResourceHandle::didReceiveContentData): Deleted.
+        (WebCore::ResourceHandle::readCallback): Deleted.
+        (WebCore::ResourceHandle::headerCallback): Deleted.
+        (WebCore::ResourceHandle::writeCallback): Deleted.
+        (WebCore::ResourceHandle::dispatchSynchronousJob): Deleted.
+        (WebCore::ResourceHandle::handleDataURL): Deleted.
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_NON_LITERAL_NULL_CONVERSION

@@ -49,7 +49,6 @@ namespace WebCore {
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
-
 }
 
 ResourceHandle::~ResourceHandle()
@@ -68,25 +67,25 @@ bool ResourceHandle::start()
     if (d->m_context && !d->m_context->isValid())
         return false;
 
-    initialize();
+    d->initialize();
 
-    m_job = CurlJobManager::singleton().add(d->m_curlHandle, [this, protectedThis = makeRef(*this)](CurlJobResult result) {
+    d->m_job = CurlJobManager::singleton().add(d->m_curlHandle, [this, protectedThis = makeRef(*this)](CurlJobResult result) {
         ASSERT(isMainThread());
 
         switch (result) {
         case CurlJobResult::Done:
-            didFinish();
+            d->didFinish();
             break;
 
         case CurlJobResult::Error:
-            didFail();
+            d->didFail();
             break;
 
         case CurlJobResult::Cancelled:
             break;
         }
     });
-    ASSERT(m_job);
+    ASSERT(d->m_job);
 
     return true;
 }
@@ -94,19 +93,18 @@ bool ResourceHandle::start()
 void ResourceHandle::cancel()
 {
     d->m_cancelled = true;
-    CurlJobManager::singleton().cancel(m_job);
+    CurlJobManager::singleton().cancel(d->m_job);
 }
 
-void ResourceHandle::initialize()
+void ResourceHandleInternal::initialize()
 {
     CurlContext& context = CurlContext::singleton();
 
-    URL url = firstRequest().url();
+    URL url = m_firstRequest.url();
 
     // Remove any fragment part, otherwise curl will send it as part of the request.
     url.removeFragmentIdentifier();
 
-    ResourceHandleInternal* d = getInternal();
     String urlString = url.string();
 
     if (url.isLocalFile()) {
@@ -117,120 +115,117 @@ void ResourceHandle::initialize()
             urlString = url.string();
         }
         // Determine the MIME type based on the path.
-        d->m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(url));
+        m_response.setMimeType(MIMETypeRegistry::getMIMETypeForPath(url));
     }
 
-    if (d->m_defersLoading) {
-        CURLcode error = d->m_curlHandle.pause(CURLPAUSE_ALL);
+    if (m_defersLoading) {
+        CURLcode error = m_curlHandle.pause(CURLPAUSE_ALL);
         // If we did not pause the handle, we would ASSERT in the
         // header callback. So just assert here.
         ASSERT_UNUSED(error, error == CURLE_OK);
     }
 
 #ifndef NDEBUG
-    d->m_curlHandle.enableVerboseIfUsed();
-    d->m_curlHandle.enableStdErrIfUsed();
+    m_curlHandle.enableVerboseIfUsed();
+    m_curlHandle.enableStdErrIfUsed();
 #endif
 
-    d->m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerEnable);
-    d->m_curlHandle.setSslVerifyHost(CurlHandle::VerifyHostStrictNameCheck);
-    d->m_curlHandle.setPrivateData(this);
-    d->m_curlHandle.setWriteCallbackFunction(writeCallback, this);
-    d->m_curlHandle.setHeaderCallbackFunction(headerCallback, this);
-    d->m_curlHandle.enableAutoReferer();
-    d->m_curlHandle.enableFollowLocation();
-    d->m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
-    d->m_curlHandle.enableShareHandle();
-    d->m_curlHandle.enableTimeout();
-    d->m_curlHandle.enableAllowedProtocols();
-    setSSLClientCertificate(this);
+    m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerEnable);
+    m_curlHandle.setSslVerifyHost(CurlHandle::VerifyHostStrictNameCheck);
+    m_curlHandle.setPrivateData(this);
+    m_curlHandle.setWriteCallbackFunction(writeCallback, this);
+    m_curlHandle.setHeaderCallbackFunction(headerCallback, this);
+    m_curlHandle.enableAutoReferer();
+    m_curlHandle.enableFollowLocation();
+    m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
+    m_curlHandle.enableShareHandle();
+    m_curlHandle.enableTimeout();
+    m_curlHandle.enableAllowedProtocols();
+    setSSLClientCertificate(m_handle);
 
     if (CurlContext::singleton().shouldIgnoreSSLErrors())
-        d->m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
+        m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
     else
-        setSSLVerifyOptions(this);
+        setSSLVerifyOptions(m_handle);
 
-    d->m_curlHandle.enableCAInfoIfExists();
+    m_curlHandle.enableCAInfoIfExists();
 
-    d->m_curlHandle.enableAcceptEncoding();
-    d->m_curlHandle.setUrl(urlString);
-    d->m_curlHandle.enableCookieJarIfExists();
+    m_curlHandle.enableAcceptEncoding();
+    m_curlHandle.setUrl(urlString);
+    m_curlHandle.enableCookieJarIfExists();
 
-    if (firstRequest().httpHeaderFields().size()) {
-        auto customHeaders = firstRequest().httpHeaderFields();
+    if (m_firstRequest.httpHeaderFields().size()) {
+        auto customHeaders = m_firstRequest.httpHeaderFields();
         auto& cache = CurlCacheManager::getInstance();
 
         bool hasCacheHeaders = customHeaders.contains(HTTPHeaderName::IfModifiedSince) || customHeaders.contains(HTTPHeaderName::IfNoneMatch);
         if (!hasCacheHeaders && cache.isCached(url)) {
-            cache.addCacheEntryClient(url, this);
+            cache.addCacheEntryClient(url, m_handle);
 
             // append additional cache information
             for (auto entry : cache.requestHeaders(url))
                 customHeaders.set(entry.key, entry.value);
 
-            d->m_addedCacheValidationHeaders = true;
+            m_addedCacheValidationHeaders = true;
         }
 
-        d->m_curlHandle.appendRequestHeaders(customHeaders);
+        m_curlHandle.appendRequestHeaders(customHeaders);
     }
 
-    String method = firstRequest().httpMethod();
+    String method = m_firstRequest.httpMethod();
     if ("GET" == method)
-        d->m_curlHandle.enableHttpGetRequest();
+        m_curlHandle.enableHttpGetRequest();
     else if ("POST" == method)
         setupPOST();
     else if ("PUT" == method)
         setupPUT();
     else if ("HEAD" == method)
-        d->m_curlHandle.enableHttpHeadRequest();
+        m_curlHandle.enableHttpHeadRequest();
     else {
-        d->m_curlHandle.setHttpCustomRequest(method);
+        m_curlHandle.setHttpCustomRequest(method);
         setupPUT();
     }
 
-    d->m_curlHandle.enableRequestHeaders();
+    m_curlHandle.enableRequestHeaders();
 
     applyAuthentication();
 
-    d->m_curlHandle.enableProxyIfExists();
+    m_curlHandle.enableProxyIfExists();
 }
 
-void ResourceHandle::applyAuthentication()
+void ResourceHandleInternal::applyAuthentication()
 {
-    ResourceRequest& request = firstRequest();
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
-    ResourceHandleInternal* d = getInternal();
+    String partition = m_firstRequest.cachePartition();
 
-    String partition = request.cachePartition();
-
-    if (shouldUseCredentialStorage()) {
-        if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
+    if (m_handle->shouldUseCredentialStorage()) {
+        if (m_user.isEmpty() && m_pass.isEmpty()) {
             // <rdar://problem/7174050> - For URLs that match the paths of those previously challenged for HTTP Basic authentication, 
             // try and reuse the credential preemptively, as allowed by RFC 2617.
-            d->m_initialCredential = CredentialStorage::defaultCredentialStorage().get(partition, request.url());
+            m_initialCredential = CredentialStorage::defaultCredentialStorage().get(partition, m_firstRequest.url());
         } else {
             // If there is already a protection space known for the URL, update stored credentials
             // before sending a request. This makes it possible to implement logout by sending an
             // XMLHttpRequest with known incorrect credentials, and aborting it immediately (so that
             // an authentication dialog doesn't pop up).
-            CredentialStorage::defaultCredentialStorage().set(partition, Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
+            CredentialStorage::defaultCredentialStorage().set(partition, Credential(m_user, m_pass, CredentialPersistenceNone), m_firstRequest.url());
         }
     }
 
-    String user = d->m_user;
-    String password = d->m_pass;
+    String user = m_user;
+    String password = m_pass;
 
-    if (!d->m_initialCredential.isEmpty()) {
-        user = d->m_initialCredential.user();
-        password = d->m_initialCredential.password();
-        d->m_curlHandle.enableHttpAuthentication(CURLAUTH_BASIC);
+    if (!m_initialCredential.isEmpty()) {
+        user = m_initialCredential.user();
+        password = m_initialCredential.password();
+        m_curlHandle.enableHttpAuthentication(CURLAUTH_BASIC);
     }
 
     // It seems we need to set CURLOPT_USERPWD even if username and password is empty.
     // Otherwise cURL will not automatically continue with a new request after a 401 response.
 
     // curl CURLOPT_USERPWD expects username:password
-    d->m_curlHandle.setHttpAuthUserPass(user, password);
+    m_curlHandle.setHttpAuthUserPass(user, password);
 }
 
 static inline size_t getFormElementsCount(ResourceHandle* job)
@@ -248,45 +243,45 @@ static inline size_t getFormElementsCount(ResourceHandle* job)
     return size;
 }
 
-void ResourceHandle::setupPUT()
+void ResourceHandleInternal::setupPUT()
 {
-    d->m_curlHandle.enableHttpPutRequest();
+    m_curlHandle.enableHttpPutRequest();
 
     // Disable the Expect: 100 continue header
-    d->m_curlHandle.appendRequestHeader("Expect:");
+    m_curlHandle.appendRequestHeader("Expect:");
 
-    size_t numElements = getFormElementsCount(this);
+    size_t numElements = getFormElementsCount(m_handle);
     if (!numElements)
         return;
 
     setupFormData(false);
 }
 
-void ResourceHandle::setupPOST()
+void ResourceHandleInternal::setupPOST()
 {
-    d->m_curlHandle.enableHttpPostRequest();
+    m_curlHandle.enableHttpPostRequest();
 
-    size_t numElements = getFormElementsCount(this);
+    size_t numElements = getFormElementsCount(m_handle);
     if (!numElements)
         return;
 
     // Do not stream for simple POST data
     if (numElements == 1) {
-        firstRequest().httpBody()->flatten(d->m_postBytes);
-        if (d->m_postBytes.size())
-            d->m_curlHandle.setPostFields(d->m_postBytes.data(), d->m_postBytes.size());
+        m_firstRequest.httpBody()->flatten(m_postBytes);
+        if (m_postBytes.size())
+            m_curlHandle.setPostFields(m_postBytes.data(), m_postBytes.size());
         return;
     }
 
     setupFormData(true);
 }
 
-void ResourceHandle::setupFormData(bool isPostRequest)
+void ResourceHandleInternal::setupFormData(bool isPostRequest)
 {
-    Vector<FormDataElement> elements = firstRequest().httpBody()->elements();
+    Vector<FormDataElement> elements = m_firstRequest.httpBody()->elements();
     size_t numElements = elements.size();
 
-    static const long long maxCurlOffT = d->m_curlHandle.maxCurlOffT();
+    static const long long maxCurlOffT = m_curlHandle.maxCurlOffT();
 
     // Obtain the total size of the form data
     curl_off_t size = 0;
@@ -312,15 +307,15 @@ void ResourceHandle::setupFormData(bool isPostRequest)
 
     // cURL guesses that we want chunked encoding as long as we specify the header
     if (chunkedTransfer)
-        d->m_curlHandle.appendRequestHeader("Transfer-Encoding: chunked");
+        m_curlHandle.appendRequestHeader("Transfer-Encoding: chunked");
     else {
         if (isPostRequest)
-            d->m_curlHandle.setPostFieldLarge(size);
+            m_curlHandle.setPostFieldLarge(size);
         else
-            d->m_curlHandle.setInFileSizeLarge(size);
+            m_curlHandle.setInFileSizeLarge(size);
     }
 
-    d->m_curlHandle.setReadCallbackFunction(readCallback, this);
+    m_curlHandle.setReadCallbackFunction(readCallback, this);
 }
 
 #if OS(WINDOWS)
@@ -371,44 +366,44 @@ void ResourceHandle::platformSetDefersLoading(bool defers)
         }
     };
 
-    if (m_job) {
+    if (d->m_job) {
         CurlJobManager::singleton().callOnJobThread(WTFMove(action));
     } else {
         action();
     }
 }
 
-void ResourceHandle::didFinish()
+void ResourceHandleInternal::didFinish()
 {
 #if ENABLE(WEB_TIMING)
     calculateWebTimingInformations();
 #endif
-    if (d->m_cancelled)
+    if (m_cancelled)
         return;
 
-    if (!d->m_response.responseFired()) {
+    if (!m_response.responseFired()) {
         handleLocalReceiveResponse();
-        if (d->m_cancelled)
+        if (m_cancelled)
             return;
     }
 
-    if (d->m_multipartHandle)
-        d->m_multipartHandle->contentEnded();
+    if (m_multipartHandle)
+        m_multipartHandle->contentEnded();
 
     if (client()) {
-        client()->didFinishLoading(this);
-        CurlCacheManager::getInstance().didFinishLoading(*this);
+        client()->didFinishLoading(m_handle);
+        CurlCacheManager::getInstance().didFinishLoading(*m_handle);
     }
 }
 
-void ResourceHandle::didFail()
+void ResourceHandleInternal::didFail()
 {
-    if (d->m_cancelled)
+    if (m_cancelled)
         return;
-    URL url = d->m_curlHandle.getEffectiveURL();
+    URL url = m_curlHandle.getEffectiveURL();
     if (client()) {
-        client()->didFail(this, ResourceError(d->m_curlHandle, d->m_sslErrors));
-        CurlCacheManager::getInstance().didFail(*this);
+        client()->didFail(m_handle, ResourceError(m_curlHandle, m_sslErrors));
+        CurlCacheManager::getInstance().didFail(*m_handle);
     }
 }
 
@@ -526,30 +521,30 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
 }
 
 #if ENABLE(WEB_TIMING)
-void ResourceHandle::calculateWebTimingInformations()
+void ResourceHandleInternal::calculateWebTimingInformations()
 {
     double preTransferTime = 0;
     double dnslookupTime = 0;
     double connectTime = 0;
     double appConnectTime = 0;
 
-    d->m_curlHandle.getTimes(preTransferTime, dnslookupTime, connectTime, appConnectTime);
+    m_curlHandle.getTimes(preTransferTime, dnslookupTime, connectTime, appConnectTime);
 
-    d->m_response.deprecatedNetworkLoadMetrics().domainLookupStart = Seconds(0);
-    d->m_response.deprecatedNetworkLoadMetrics().domainLookupEnd = Seconds(dnslookupTime);
+    m_response.deprecatedNetworkLoadMetrics().domainLookupStart = Seconds(0);
+    m_response.deprecatedNetworkLoadMetrics().domainLookupEnd = Seconds(dnslookupTime);
 
-    d->m_response.deprecatedNetworkLoadMetrics().connectStart = Seconds(dnslookupTime);
-    d->m_response.deprecatedNetworkLoadMetrics().connectEnd = Seconds(connectTime);
+    m_response.deprecatedNetworkLoadMetrics().connectStart = Seconds(dnslookupTime);
+    m_response.deprecatedNetworkLoadMetrics().connectEnd = Seconds(connectTime);
 
-    d->m_response.deprecatedNetworkLoadMetrics().requestStart = Seconds(connectTime);
-    d->m_response.deprecatedNetworkLoadMetrics().responseStart = Seconds(preTransferTime);
+    m_response.deprecatedNetworkLoadMetrics().requestStart = Seconds(connectTime);
+    m_response.deprecatedNetworkLoadMetrics().responseStart = Seconds(preTransferTime);
 
     if (appConnectTime)
-        d->m_response.deprecatedNetworkLoadMetrics().secureConnectionStart = Seconds(connectTime);
+        m_response.deprecatedNetworkLoadMetrics().secureConnectionStart = Seconds(connectTime);
 }
 #endif
 
-void ResourceHandle::handleLocalReceiveResponse()
+void ResourceHandleInternal::handleLocalReceiveResponse()
 {
     ASSERT(isMainThread());
 
@@ -558,12 +553,12 @@ void ResourceHandle::handleLocalReceiveResponse()
     // which means the ResourceLoader's response does not contain the URL.
     // Run the code here for local files to resolve the issue.
     // TODO: See if there is a better approach for handling this.
-    URL url = d->m_curlHandle.getEffectiveURL();
+    URL url = m_curlHandle.getEffectiveURL();
     ASSERT(url.isValid());
-    d->m_response.setURL(url);
+    m_response.setURL(url);
     if (client())
-        client()->didReceiveResponse(this, ResourceResponse(d->m_response));
-    d->m_response.setResponseFired(true);
+        client()->didReceiveResponse(m_handle, ResourceResponse(m_response));
+    m_response.setResponseFired(true);
 }
 
 inline static bool isHttpInfo(int statusCode)
@@ -690,16 +685,16 @@ static bool getProtectionSpace(ResourceHandle* job, const ResourceResponse& resp
     return true;
 }
 
-size_t ResourceHandle::willPrepareSendData(char* ptr, size_t blockSize, size_t numberOfBlocks)
+size_t ResourceHandleInternal::willPrepareSendData(char* ptr, size_t blockSize, size_t numberOfBlocks)
 {
-    if (!d->m_formDataStream.hasMoreElements())
+    if (!m_formDataStream.hasMoreElements())
         return 0;
 
-    size_t size = d->m_formDataStream.read(ptr, blockSize, numberOfBlocks);
+    size_t size = m_formDataStream.read(ptr, blockSize, numberOfBlocks);
 
     // Something went wrong so cancel the job.
     if (!size) {
-        cancel();
+        m_handle->cancel();
         return 0;
     }
 
@@ -707,17 +702,17 @@ size_t ResourceHandle::willPrepareSendData(char* ptr, size_t blockSize, size_t n
 
 }
 
-void ResourceHandle::didReceiveHeaderLine(const String& header)
+void ResourceHandleInternal::didReceiveHeaderLine(const String& header)
 {
-    int splitPos = header.find(":");
-    if (splitPos != notFound) {
-        String key = header.left(splitPos).stripWhiteSpace();
-        String value = header.substring(splitPos + 1).stripWhiteSpace();
+    auto splitPosition = header.find(":");
+    if (splitPosition != notFound) {
+        String key = header.left(splitPosition).stripWhiteSpace();
+        String value = header.substring(splitPosition + 1).stripWhiteSpace();
 
         if (isAppendableHeader(key))
-            d->m_response.addHTTPHeaderField(key, value);
+            m_response.addHTTPHeaderField(key, value);
         else
-            d->m_response.setHTTPHeaderField(key, value);
+            m_response.setHTTPHeaderField(key, value);
     } else if (header.startsWith("HTTP", false)) {
         // This is the first line of the response.
         // Extract the http status text from this.
@@ -726,7 +721,7 @@ void ResourceHandle::didReceiveHeaderLine(const String& header)
         // curl will follow the redirections internally. Thus this header callback
         // will be called more than one time with the line starting "HTTP" for one job.
         long httpCode = 0;
-        d->m_curlHandle.getResponseCode(httpCode);
+        m_curlHandle.getResponseCode(httpCode);
 
         String httpCodeString = String::number(httpCode);
         int statusCodePos = header.find(httpCodeString);
@@ -734,80 +729,80 @@ void ResourceHandle::didReceiveHeaderLine(const String& header)
         if (statusCodePos != notFound) {
             // The status text is after the status code.
             String status = header.substring(statusCodePos + httpCodeString.length());
-            d->m_response.setHTTPStatusText(status.stripWhiteSpace());
+            m_response.setHTTPStatusText(status.stripWhiteSpace());
         }
     }
 }
 
-void ResourceHandle::didReceiveAllHeaders(long httpCode, long long contentLength)
+void ResourceHandleInternal::didReceiveAllHeaders(long httpCode, long long contentLength)
 {
     ASSERT(isMainThread());
 
-    d->m_response.setExpectedContentLength(contentLength);
+    m_response.setExpectedContentLength(contentLength);
 
-    d->m_response.setURL(d->m_curlHandle.getEffectiveURL());
+    m_response.setURL(m_curlHandle.getEffectiveURL());
 
-    d->m_response.setHTTPStatusCode(httpCode);
-    d->m_response.setMimeType(extractMIMETypeFromMediaType(d->m_response.httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
-    d->m_response.setTextEncodingName(extractCharsetFromMediaType(d->m_response.httpHeaderField(HTTPHeaderName::ContentType)));
+    m_response.setHTTPStatusCode(httpCode);
+    m_response.setMimeType(extractMIMETypeFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
+    m_response.setTextEncodingName(extractCharsetFromMediaType(m_response.httpHeaderField(HTTPHeaderName::ContentType)));
 
-    if (d->m_response.isMultipart()) {
+    if (m_response.isMultipart()) {
         String boundary;
-        bool parsed = MultipartHandle::extractBoundary(d->m_response.httpHeaderField(HTTPHeaderName::ContentType), boundary);
+        bool parsed = MultipartHandle::extractBoundary(m_response.httpHeaderField(HTTPHeaderName::ContentType), boundary);
         if (parsed)
-            d->m_multipartHandle = std::make_unique<MultipartHandle>(this, boundary);
+            m_multipartHandle = std::make_unique<MultipartHandle>(m_handle, boundary);
     }
 
     // HTTP redirection
     if (isHttpRedirect(httpCode)) {
-        String location = d->m_response.httpHeaderField(HTTPHeaderName::Location);
+        String location = m_response.httpHeaderField(HTTPHeaderName::Location);
         if (!location.isEmpty()) {
-            URL newURL = URL(firstRequest().url(), location);
+            URL newURL = URL(m_firstRequest.url(), location);
 
-            ResourceRequest redirectedRequest = firstRequest();
+            ResourceRequest redirectedRequest = m_firstRequest;
             redirectedRequest.setURL(newURL);
-            ResourceResponse response = d->m_response;
+            ResourceResponse response = m_response;
             if (client())
-                client()->willSendRequest(this, WTFMove(redirectedRequest), WTFMove(response));
+                client()->willSendRequest(m_handle, WTFMove(redirectedRequest), WTFMove(response));
 
-            firstRequest().setURL(newURL);
+            m_firstRequest.setURL(newURL);
 
             return;
         }
     } else if (isHttpAuthentication(httpCode)) {
         ProtectionSpace protectionSpace;
-        if (getProtectionSpace(this, d->m_response, protectionSpace)) {
+        if (getProtectionSpace(m_handle, m_response, protectionSpace)) {
             Credential credential;
-            AuthenticationChallenge challenge(protectionSpace, credential, d->m_authFailureCount, d->m_response, ResourceError());
-            challenge.setAuthenticationClient(this);
-            this->didReceiveAuthenticationChallenge(challenge);
-            d->m_authFailureCount++;
+            AuthenticationChallenge challenge(protectionSpace, credential, m_authFailureCount, m_response, ResourceError());
+            challenge.setAuthenticationClient(m_handle);
+            m_handle->didReceiveAuthenticationChallenge(challenge);
+            m_authFailureCount++;
             return;
         }
     }
 
     if (client()) {
         if (isHttpNotModified(httpCode)) {
-            const String& url = firstRequest().url().string();
-            if (CurlCacheManager::getInstance().getCachedResponse(url, d->m_response)) {
-                if (d->m_addedCacheValidationHeaders) {
-                    d->m_response.setHTTPStatusCode(200);
-                    d->m_response.setHTTPStatusText("OK");
+            const String& url = m_firstRequest.url().string();
+            if (CurlCacheManager::getInstance().getCachedResponse(url, m_response)) {
+                if (m_addedCacheValidationHeaders) {
+                    m_response.setHTTPStatusCode(200);
+                    m_response.setHTTPStatusText("OK");
                 }
             }
         }
-        client()->didReceiveResponse(this, ResourceResponse(d->m_response));
-        CurlCacheManager::getInstance().didReceiveResponse(*this, d->m_response);
+        client()->didReceiveResponse(m_handle, ResourceResponse(m_response));
+        CurlCacheManager::getInstance().didReceiveResponse(*m_handle, m_response);
     }
 
-    d->m_response.setResponseFired(true);
+    m_response.setResponseFired(true);
 }
 
-void ResourceHandle::didReceiveContentData()
+void ResourceHandleInternal::didReceiveContentData()
 {
     ASSERT(isMainThread());
 
-    if (!d->m_response.responseFired())
+    if (!m_response.responseFired())
         handleLocalReceiveResponse();
 
     Vector<char> buffer;
@@ -819,11 +814,11 @@ void ResourceHandle::didReceiveContentData()
     char* ptr = buffer.begin();
     size_t size = buffer.size();
 
-    if (d->m_multipartHandle)
-        d->m_multipartHandle->contentReceived(static_cast<const char*>(ptr), size);
+    if (m_multipartHandle)
+        m_multipartHandle->contentReceived(static_cast<const char*>(ptr), size);
     else if (client()) {
-        client()->didReceiveData(this, ptr, size, 0);
-        CurlCacheManager::getInstance().didReceiveData(*this, ptr, size);
+        client()->didReceiveData(m_handle, ptr, size, 0);
+        CurlCacheManager::getInstance().didReceiveData(*m_handle, ptr, size);
     }
 }
 
@@ -831,12 +826,11 @@ void ResourceHandle::didReceiveContentData()
 Iterate through FormData elements and upload files.
 Carefully respect the given buffer size and fill the rest of the data at the next calls.
 */
-size_t ResourceHandle::readCallback(char* ptr, size_t size, size_t nmemb, void* data)
+size_t ResourceHandleInternal::readCallback(char* ptr, size_t size, size_t nmemb, void* data)
 {
     ASSERT(!isMainThread());
 
-    ResourceHandle* job = static_cast<ResourceHandle*>(data);
-    ResourceHandleInternal* d = job->getInternal();
+    ResourceHandleInternal* d = static_cast<ResourceHandleInternal*>(data);
 
     if (d->m_cancelled)
         return 0;
@@ -847,7 +841,7 @@ size_t ResourceHandle::readCallback(char* ptr, size_t size, size_t nmemb, void* 
     if (!size || !nmemb)
         return 0;
 
-    return job->willPrepareSendData(ptr, size, nmemb);
+    return d->willPrepareSendData(ptr, size, nmemb);
 }
 
 /*
@@ -859,12 +853,13 @@ size_t ResourceHandle::readCallback(char* ptr, size_t size, size_t nmemb, void* 
 * update the ResourceResponse and then send it away.
 *
 */
-size_t ResourceHandle::headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
+size_t ResourceHandleInternal::headerCallback(char* ptr, size_t size, size_t nmemb, void* data)
 {
     ASSERT(!isMainThread());
 
-    ResourceHandle* job = static_cast<ResourceHandle*>(data);
-    ResourceHandleInternal* d = job->getInternal();
+    ResourceHandleInternal* d = static_cast<ResourceHandleInternal*>(data);
+    ResourceHandle* job = d->m_handle;
+
     if (d->m_cancelled)
         return 0;
 
@@ -899,23 +894,24 @@ size_t ResourceHandle::headerCallback(char* ptr, size_t size, size_t nmemb, void
         long long contentLength = 0;
         d->m_curlHandle.getContentLenghtDownload(contentLength);
 
-        callOnMainThread([job = RefPtr<ResourceHandle>(job), httpCode, contentLength] {
-            if (!job->d->m_cancelled)
-                job->didReceiveAllHeaders(httpCode, contentLength);
+        callOnMainThread([job = RefPtr<ResourceHandle>(job), d, httpCode, contentLength] {
+            if (!d->m_cancelled)
+                d->didReceiveAllHeaders(httpCode, contentLength);
         });
     } else
-        job->didReceiveHeaderLine(header);
+        d->didReceiveHeaderLine(header);
 
     return totalSize;
 }
 
 // called with data after all headers have been processed via headerCallback
-size_t ResourceHandle::writeCallback(char* ptr, size_t size, size_t nmemb, void* data)
+size_t ResourceHandleInternal::writeCallback(char* ptr, size_t size, size_t nmemb, void* data)
 {
     ASSERT(!isMainThread());
 
-    ResourceHandle* job = static_cast<ResourceHandle*>(data);
-    ResourceHandleInternal* d = job->getInternal();
+    ResourceHandleInternal* d = static_cast<ResourceHandleInternal*>(data);
+    ResourceHandle* job = d->m_handle;
+
     if (d->m_cancelled)
         return 0;
 
@@ -934,18 +930,18 @@ size_t ResourceHandle::writeCallback(char* ptr, size_t size, size_t nmemb, void*
 
     bool shouldCall { false };
     {
-        LockHolder locker(job->m_receivedBufferMutex);
+        LockHolder locker(d->m_receivedBufferMutex);
         
-        if (job->m_receivedBuffer.isEmpty())
+        if (d->m_receivedBuffer.isEmpty())
             shouldCall = true;
         
-        job->m_receivedBuffer.append(ptr, totalSize);
+        d->m_receivedBuffer.append(ptr, totalSize);
     }
 
     if (shouldCall) {
-        callOnMainThread([job = RefPtr<ResourceHandle>(job)] {
-            if (!job->d->m_cancelled)
-                job->didReceiveContentData();
+        callOnMainThread([job = RefPtr<ResourceHandle>(job), d] {
+            if (!d->m_cancelled)
+                d->didReceiveContentData();
         });
     }
 
@@ -961,33 +957,31 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     SynchronousLoaderClient client;
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, false, false));
 
-    handle.get()->dispatchSynchronousJob();
+    handle->d->dispatchSynchronousJob();
 
     error = client.error();
     data.swap(client.mutableData());
     response = client.response();
 }
 
-void ResourceHandle::dispatchSynchronousJob()
+void ResourceHandleInternal::dispatchSynchronousJob()
 {
-    URL kurl = firstRequest().url();
+    URL kurl = m_firstRequest.url();
 
     if (kurl.protocolIsData()) {
         handleDataURL();
         return;
     }
 
-    ResourceHandleInternal* d = getInternal();
-
     // If defersLoading is true and we call curl_easy_perform
     // on a paused handle, libcURL would do the transfert anyway
     // and we would assert so force defersLoading to be false.
-    d->m_defersLoading = false;
+    m_defersLoading = false;
 
     initialize();
 
     // curl_easy_perform blocks until the transfert is finished.
-    CURLcode ret = d->m_curlHandle.perform();
+    CURLcode ret = m_curlHandle.perform();
 
 #if ENABLE(WEB_TIMING)
     calculateWebTimingInformations();
@@ -995,22 +989,22 @@ void ResourceHandle::dispatchSynchronousJob()
 
     if (client()) {
         if (ret != CURLE_OK)
-            client()->didFail(this, ResourceError(d->m_curlHandle, d->m_sslErrors));
+            client()->didFail(m_handle, ResourceError(m_curlHandle, m_sslErrors));
         else
-            client()->didReceiveResponse(this, ResourceResponse(d->m_response));
+            client()->didReceiveResponse(m_handle, ResourceResponse(m_response));
     }
 }
 
-void ResourceHandle::handleDataURL()
+void ResourceHandleInternal::handleDataURL()
 {
-    ASSERT(firstRequest().url().protocolIsData());
-    String url = firstRequest().url().string();
+    ASSERT(m_firstRequest.url().protocolIsData());
+    String url = m_firstRequest.url().string();
 
     ASSERT(client());
 
     int index = url.find(',');
     if (index == -1) {
-        client()->cannotShowURL(this);
+        client()->cannotShowURL(m_handle);
         return;
     }
 
@@ -1033,33 +1027,33 @@ void ResourceHandle::handleDataURL()
     ResourceResponse response;
     response.setMimeType(mimeType);
     response.setTextEncodingName(charset);
-    response.setURL(firstRequest().url());
+    response.setURL(m_firstRequest.url());
 
     if (base64) {
         data = decodeURLEscapeSequences(data);
-        client()->didReceiveResponse(this, WTFMove(response));
+        client()->didReceiveResponse(m_handle, WTFMove(response));
 
         // didReceiveResponse might cause the client to be deleted.
         if (client()) {
             Vector<char> out;
             if (base64Decode(data, out, Base64IgnoreSpacesAndNewLines) && out.size() > 0)
-                client()->didReceiveData(this, out.data(), out.size(), 0);
+                client()->didReceiveData(m_handle, out.data(), out.size(), 0);
         }
     } else {
         TextEncoding encoding(charset);
         data = decodeURLEscapeSequences(data, encoding);
-        client()->didReceiveResponse(this, WTFMove(response));
+        client()->didReceiveResponse(m_handle, WTFMove(response));
 
         // didReceiveResponse might cause the client to be deleted.
         if (client()) {
             CString encodedData = encoding.encode(data, URLEncodedEntitiesForUnencodables);
             if (encodedData.length())
-                client()->didReceiveData(this, encodedData.data(), encodedData.length(), 0);
+                client()->didReceiveData(m_handle, encodedData.data(), encodedData.length(), 0);
         }
     }
 
     if (client())
-        client()->didFinishLoading(this);
+        client()->didFinishLoading(m_handle);
 }
 
 } // namespace WebCore
