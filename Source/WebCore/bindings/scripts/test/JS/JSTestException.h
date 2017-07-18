@@ -50,8 +50,6 @@ public:
     }
 
     static JSC::JSValue getConstructor(JSC::VM&, const JSC::JSGlobalObject*);
-public:
-    static const unsigned StructureFlags = JSC::HasStaticPropertyTable | Base::StructureFlags;
 protected:
     JSTestException(JSC::Structure*, JSDOMGlobalObject&, Ref<TestException>&&);
 

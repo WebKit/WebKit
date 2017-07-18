@@ -2,12 +2,12 @@
 PASS Cannot construct without new 
 PASS inherits from Error: prototype-side 
 PASS does not inherit from Error: class-side 
-FAIL message property descriptor assert_false: property is not own expected false got true
-FAIL message getter performs brand checks (i.e. is not [LenientThis] undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(DOMException.prototype, "message").get')
-FAIL name property descriptor assert_false: property is not own expected false got true
-FAIL name getter performs brand checks (i.e. is not [LenientThis] undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(DOMException.prototype, "name").get')
-FAIL code property descriptor assert_false: property is not own expected false got true
-FAIL code getter performs brand checks (i.e. is not [LenientThis] undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(DOMException.prototype, "code").get')
+PASS message property descriptor 
+PASS message getter performs brand checks (i.e. is not [LenientThis] 
+PASS name property descriptor 
+PASS name getter performs brand checks (i.e. is not [LenientThis] 
+PASS code property descriptor 
+PASS code getter performs brand checks (i.e. is not [LenientThis] 
 PASS code property is not affected by shadowing the name property 
 PASS Object.prototype.toString behavior is like other interfaces 
 FAIL Inherits its toString() from Error.prototype assert_false: toString must not exist on DOMException.prototype expected false got true

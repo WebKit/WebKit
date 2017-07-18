@@ -1634,29 +1634,12 @@ sub IsGlobalOrPrimaryGlobalInterface
     return $interface->extendedAttributes->{Global} || $interface->extendedAttributes->{PrimaryGlobal};
 }
 
-sub InterfaceRequiresAttributesOnInstance
-{
-    my $interface = shift;
-    my $interfaceName = $interface->type->name;
-
-    # FIXME: All these return 1 if ... should ideally be removed.
-    # Some of them are unavoidable due to DOM weirdness, in which case we should
-    # add an IDL attribute for them.
-
-    # FIXME: We should be able to drop this once <rdar://problem/24466097> is fixed.
-    return 1 if $interface->isException;
-
-    return 1 if IsGlobalOrPrimaryGlobalInterface($interface);
-
-    return 0;
-}
-
 sub AttributeShouldBeOnInstance
 {
     my $interface = shift;
     my $attribute = shift;
 
-    return 1 if InterfaceRequiresAttributesOnInstance($interface);
+    return 1 if IsGlobalOrPrimaryGlobalInterface($interface);
     return 1 if $codeGenerator->IsConstructorType($attribute->type);
 
     # [Unforgeable] attributes should be on the instance.

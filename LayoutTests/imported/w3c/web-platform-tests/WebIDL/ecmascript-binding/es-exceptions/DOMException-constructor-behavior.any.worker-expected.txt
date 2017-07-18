@@ -1,14 +1,14 @@
 
 PASS new DOMException() 
-FAIL new DOMException(): inherited-ness assert_false: The name property should be inherited expected false got true
+PASS new DOMException(): inherited-ness 
 PASS new DOMException(null) 
 PASS new DOMException(undefined) 
-FAIL new DOMException(undefined): inherited-ness assert_false: The name property should be inherited expected false got true
+PASS new DOMException(undefined): inherited-ness 
 PASS new DOMException("foo") 
-FAIL new DOMException("foo"): inherited-ness assert_false: The name property should be inherited expected false got true
+PASS new DOMException("foo"): inherited-ness 
 PASS new DOMException("bar", undefined) 
 PASS new DOMException("bar", "NotSupportedError") 
-FAIL new DOMException("bar", "NotSupportedError"): inherited-ness assert_false: The name property should be inherited expected false got true
+PASS new DOMException("bar", "NotSupportedError"): inherited-ness 
 PASS new DOMException("bar", "foo") 
 PASS new DOMexception("msg", "IndexSizeError") 
 PASS new DOMexception("msg", "HierarchyRequestError") 

@@ -1,7 +1,7 @@
 
 PASS Basic URLSearchParams construction 
 PASS URLSearchParams constructor, no arguments 
-PASS URLSearchParams constructor, DOMException.prototype as argument 
+PASS URLSearchParams constructor, DOMException as argument 
 PASS URLSearchParams constructor, empty string as argument 
 PASS URLSearchParams constructor, {} as argument 
 PASS URLSearchParams constructor, string. 

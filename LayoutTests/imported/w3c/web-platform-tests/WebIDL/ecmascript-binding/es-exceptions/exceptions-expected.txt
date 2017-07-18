@@ -1,13 +1,13 @@
 
 PASS Object.getPrototypeOf(exception) === DOMException.prototype 
-FAIL exception.hasOwnProperty("name") assert_false: expected false got true
-FAIL exception.hasOwnProperty("message") assert_false: expected false got true
+PASS exception.hasOwnProperty("name") 
+PASS exception.hasOwnProperty("message") 
 PASS exception.name === "HierarchyRequestError" 
 PASS exception.code === DOMException.HIERARCHY_REQUEST_ERR 
 PASS Object.prototype.toString.call(exception) === "[object DOMException]" 
 PASS In iframe: Object.getPrototypeOf(exception) === DOMException.prototype 
-FAIL In iframe: exception.hasOwnProperty("name") assert_false: expected false got true
-FAIL In iframe: exception.hasOwnProperty("message") assert_false: expected false got true
+PASS In iframe: exception.hasOwnProperty("name") 
+PASS In iframe: exception.hasOwnProperty("message") 
 PASS In iframe: exception.name === "HierarchyRequestError" 
 PASS In iframe: exception.code === DOMException.HIERARCHY_REQUEST_ERR 
 PASS In iframe: Object.prototype.toString.call(exception) === "[object DOMException]" 

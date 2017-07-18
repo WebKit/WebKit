@@ -1,3 +1,18 @@
+2017-07-18  Chris Dumez  <cdumez@apple.com>
+
+        DOMException should have its properties on the prototype
+        https://bugs.webkit.org/show_bug.cgi?id=174597
+
+        Reviewed by Alex Christensen.
+
+        DOMException should have its properties on the prototype, as other interfaces:
+        - https://heycam.github.io/webidl/#idl-DOMException
+
+        No new tests, rebaselined existing tests.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InterfaceRequiresAttributesOnInstance):
+
 2017-07-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Unify ResourceHandleManager into CurlJobManager.
