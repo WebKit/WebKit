@@ -1,3 +1,15 @@
+2017-07-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: adjust wording of "clear when page {navigates -> loads}"
+        https://bugs.webkit.org/show_bug.cgi?id=174589
+        <rdar://problem/32797981>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WebInspector.SettingsTabContentView.prototype._createGeneralSettingsView):
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_NON_LITERAL_NULL_CONVERSION

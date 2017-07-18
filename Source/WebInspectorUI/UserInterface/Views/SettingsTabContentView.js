@@ -203,11 +203,11 @@ WebInspector.SettingsTabContentView = class SettingsTabContentView extends WebIn
 
         generalSettingsView.addSeparator();
 
-        generalSettingsView.addSetting(WebInspector.UIString("Network:"), WebInspector.settings.clearNetworkOnNavigate, WebInspector.UIString("Clear when page navigates"));
+        generalSettingsView.addSetting(WebInspector.UIString("Network:"), WebInspector.settings.clearNetworkOnNavigate, WebInspector.UIString("Clear when page loads"));
 
         generalSettingsView.addSeparator();
 
-        generalSettingsView.addSetting(WebInspector.UIString("Console:"), WebInspector.settings.clearLogOnNavigate, WebInspector.UIString("Clear when page navigates"));
+        generalSettingsView.addSetting(WebInspector.UIString("Console:"), WebInspector.settings.clearLogOnNavigate, WebInspector.UIString("Clear when page loads"));
 
         generalSettingsView.addSeparator();
 
