@@ -143,10 +143,9 @@ private:
     void removeTiles(Vector<TileGrid::TileIndex>& toRemove);
 
     // PlatformCALayerClient
-    void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintBehavior) override;
+    void platformCALayerPaintContents(PlatformCALayer*, GraphicsContext&, const FloatRect&, GraphicsLayerPaintFlags) override;
     bool platformCALayerShowDebugBorders() const override;
     bool platformCALayerShowRepaintCounter(PlatformCALayer*) const override;
-    int platformCALayerRepaintCount(PlatformCALayer*) const override;
     int platformCALayerIncrementRepaintCount(PlatformCALayer*) override;
     bool platformCALayerContentsOpaque() const override;
     bool platformCALayerDrawsContent() const override { return true; }

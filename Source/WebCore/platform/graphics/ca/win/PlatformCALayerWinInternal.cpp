@@ -104,7 +104,7 @@ void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContext
     // smaller than the layer bounds (e.g. tiled layers)
     CGRect clipBounds = CGContextGetClipBoundingBox(context);
     IntRect clip(enclosingIntRect(clipBounds));
-    client->platformCALayerPaintContents(owner(), graphicsContext, clip, GraphicsLayerPaintNormal);
+    client->platformCALayerPaintContents(owner(), graphicsContext, clip, GraphicsLayerPaintFlags::None);
 
     if (client->platformCALayerShowRepaintCounter(owner())
         && !repaintCountersAreDrawnByGridController(layerType)) {

@@ -287,7 +287,6 @@ protected:
     void adjustFlowThreadStateOnContainingBlockChangeIfNeeded();
     
     bool noLongerAffectsParentBlock() const { return s_noLongerAffectsParentBlock; }
-    bool isVisibleInViewport() const;
 
 private:
     RenderElement(ContainerNode&, RenderStyle&&, BaseTypeFlags);
@@ -317,6 +316,7 @@ private:
     std::unique_ptr<RenderStyle> computeFirstLineStyle() const;
     void invalidateCachedFirstLineStyle();
 
+    bool isVisibleInViewport() const;
     bool canDestroyDecodedData() final { return !isVisibleInViewport(); }
     VisibleInViewportState imageFrameAvailable(CachedImage&, ImageAnimatingState, const IntRect* changeRect) final;
     void didRemoveCachedImageClient(CachedImage&) final;

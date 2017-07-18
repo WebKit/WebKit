@@ -418,7 +418,7 @@ void GraphicsLayer::setBackgroundColor(const Color& color)
     m_backgroundColor = color;
 }
 
-void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
+void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const FloatRect& clip, GraphicsLayerPaintFlags flags)
 {
     FloatSize offset = offsetFromRenderer();
     context.translate(-offset);
@@ -426,7 +426,7 @@ void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const F
     FloatRect clipRect(clip);
     clipRect.move(offset);
 
-    m_client.paintContents(this, context, m_paintingPhase, clipRect, layerPaintBehavior);
+    m_client.paintContents(this, context, m_paintingPhase, clipRect, flags);
 }
 
 String GraphicsLayer::animationNameForTransition(AnimatedPropertyID property)
