@@ -1,3 +1,65 @@
+2017-07-17  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings that require non-caching JS strings
+        https://bugs.webkit.org/show_bug.cgi?id=174552
+
+        Reviewed by Darin Adler.
+
+        Adds two new types, UncachedString and OwnedString (both of which
+        are simple structs that wrap a String) to communicate to the bindings
+        layer which function to use when converting to a JS string.
+
+        * bindings/IDLTypes.h:
+        (WebCore::IDLString::isNullValue):
+        Add overloads of isNullValue for UncachedString and OwnedString.
+
+        * bindings/js/JSDOMConvertStrings.h:
+        (WebCore::JSConverter<IDLDOMString>::convert):
+        (WebCore::JSConverter<IDLByteString>::convert):
+        (WebCore::JSConverter<IDLUSVString>::convert):
+        Add overloads of convert for UncachedString that uses JSC::jsString 
+        and for OwnedString that uses JSC::jsOwnedString.
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::toDataURL): Deleted.
+        Remove custom binding for toDataURL.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::retrieveResponse):
+        (WebCore::JSXMLHttpRequest::responseText): Deleted.
+        Remove custom binding for responseText. Replace the caller of the 
+        binding function with a simple conversion that will do the same thing.
+
+        * bindings/js/StringAdaptors.h: Added.
+        Add UncachedString and OwnedString adaptors.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toDataURL):
+        Move quality conversion here, matching toBlob and the spec. Return a UncachedString
+        to instruct the bindings to use JSC::jsString and not JSC::jsStringWithCache.
+
+        (WebCore::HTMLCanvasElement::toBlob):
+        Use asNumber() rather than toNumber(), since we just checked that it is a number.
+
+        * html/HTMLCanvasElement.h:
+        Update header to account for returning an UncachedString.
+
+        * html/HTMLCanvasElement.idl:
+        Remove [Custom] and make the signature of toDataURL match the spec (and what we have been doing).
+
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::requestContent):
+        Update to account for UncachedString.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseText):
+        * xml/XMLHttpRequest.h:
+        Update responseText to return OwnedString. OwnedString instruct the bindings to 
+        use JSC::jsOwnedString and not JSC::jsStringWithCache.
+
+        * xml/XMLHttpRequest.idl:
+        Remove [CustomGetter].
+
 2017-07-17  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Use OptionSet to represent marker types

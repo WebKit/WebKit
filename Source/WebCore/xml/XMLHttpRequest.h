@@ -48,6 +48,7 @@ class SharedBuffer;
 class TextResourceDecoder;
 class ThreadableLoader;
 class XMLHttpRequestUpload;
+struct OwnedString;
 
 class XMLHttpRequest final : public RefCounted<XMLHttpRequest>, public XMLHttpRequestEventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
@@ -86,7 +87,7 @@ public:
     bool doneWithoutErrors() const { return !m_error && m_state == DONE; }
     String getAllResponseHeaders() const;
     String getResponseHeader(const String& name) const;
-    ExceptionOr<String> responseText();
+    ExceptionOr<OwnedString> responseText();
     String responseTextIgnoringResponseType() const { return m_responseBuilder.toStringPreserveCapacity(); }
     String responseMIMEType() const;
 

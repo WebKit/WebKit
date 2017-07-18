@@ -50,6 +50,7 @@ class ImageBuffer;
 class ImageData;
 class MediaSample;
 class MediaStream;
+struct UncachedString;
 
 namespace DisplayList {
 using AsTextFlags = unsigned;
@@ -109,10 +110,9 @@ public:
     CanvasRenderingContext* getContextWebGPU(const String&);
 #endif
 
-    static String toEncodingMimeType(const String& mimeType);
-    WEBCORE_EXPORT ExceptionOr<String> toDataURL(const String& mimeType, std::optional<double> quality);
-    ExceptionOr<String> toDataURL(const String& mimeType) { return toDataURL(mimeType, std::nullopt); }
-    ExceptionOr<void> toBlob(ScriptExecutionContext&, Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue qualityValue);
+    WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType, JSC::JSValue quality);
+    WEBCORE_EXPORT ExceptionOr<UncachedString> toDataURL(const String& mimeType);
+    ExceptionOr<void> toBlob(ScriptExecutionContext&, Ref<BlobCallback>&&, const String& mimeType, JSC::JSValue quality);
 
     // Used for rendering
     void didDraw(const FloatRect&);

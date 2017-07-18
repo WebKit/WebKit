@@ -87,27 +87,4 @@ JSValue JSHTMLCanvasElement::getContext(ExecState& state)
     return jsNull();
 }
 
-JSValue JSHTMLCanvasElement::toDataURL(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto type = convert<IDLNullable<IDLDOMString>>(state, state.argument(0));
-    RETURN_IF_EXCEPTION(scope, JSC::JSValue());
-
-    std::optional<double> quality;
-    auto qualityValue = state.argument(1);
-    if (qualityValue.isNumber())
-        quality = qualityValue.toNumber(&state);
-
-    // We would use toJS<IDLString> here, but it uses jsStringWithCache and we historically
-    // did not cache here, presumably because results are likely to be differing long strings.
-    auto result = wrapped().toDataURL(type, quality);
-    if (result.hasException()) {
-        propagateException(state, scope, result.releaseException());
-        return { };
-    }
-    return jsString(&state, result.releaseReturnValue());
-}
-
 } // namespace WebCore

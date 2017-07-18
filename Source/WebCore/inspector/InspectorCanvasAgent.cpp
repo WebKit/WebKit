@@ -26,7 +26,6 @@
 #include "config.h"
 #include "InspectorCanvasAgent.h"
 
-#include "CanvasRenderingContext.h"
 #include "CanvasRenderingContext2D.h"
 #include "Document.h"
 #include "Element.h"
@@ -38,6 +37,7 @@
 #include "JSMainThreadExecState.h"
 #include "MainFrame.h"
 #include "ScriptState.h"
+#include "StringAdaptors.h"
 #include <inspector/IdentifiersFactory.h>
 #include <inspector/InjectedScript.h>
 #include <inspector/InjectedScriptManager.h>
@@ -46,19 +46,14 @@
 
 #if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.h"
-#include "WebGLContextAttributes.h"
-#include "WebGLRenderingContext.h"
-#include "WebGLRenderingContextBase.h"
 #endif
 
 #if ENABLE(WEBGL2)
 #include "JSWebGL2RenderingContext.h"
-#include "WebGL2RenderingContext.h"
 #endif
 
 #if ENABLE(WEBGPU)
 #include "JSWebGPURenderingContext.h"
-#include "WebGPURenderingContext.h"
 #endif
 
 using namespace Inspector;
@@ -144,26 +139,26 @@ void InspectorCanvasAgent::requestContent(ErrorString& errorString, const String
 
     CanvasRenderingContext* context = canvasEntry->element->renderingContext();
     if (is<CanvasRenderingContext2D>(context)) {
-        ExceptionOr<String> result = canvasEntry->element->toDataURL(ASCIILiteral("image/png"));
+        auto result = canvasEntry->element->toDataURL(ASCIILiteral("image/png"));
         if (result.hasException()) {
             errorString = result.releaseException().releaseMessage();
             return;
         }
-        *content = result.releaseReturnValue();
+        *content = result.releaseReturnValue().string;
     }
 #if ENABLE(WEBGL)
     else if (is<WebGLRenderingContextBase>(context)) {
         WebGLRenderingContextBase* gl = downcast<WebGLRenderingContextBase>(context);
 
         gl->setPreventBufferClearForInspector(true);
-        ExceptionOr<String> result = canvasEntry->element->toDataURL(ASCIILiteral("image/png"));
+        auto result = canvasEntry->element->toDataURL(ASCIILiteral("image/png"));
         gl->setPreventBufferClearForInspector(false);
 
         if (result.hasException()) {
             errorString = result.releaseException().releaseMessage();
             return;
         }
-        *content = result.releaseReturnValue();
+        *content = result.releaseReturnValue().string;
     }
 #endif
     // FIXME: <https://webkit.org/b/173621> Web Inspector: Support getting the content of WebGPU contexts

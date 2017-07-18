@@ -51,6 +51,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "StringAdaptors.h"
 #include <math.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSLock.h>
@@ -531,32 +532,51 @@ void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
     clearCopiedImage();
 }
 
-String HTMLCanvasElement::toEncodingMimeType(const String& mimeType)
+static String toEncodingMimeType(const String& mimeType)
 {
     if (!MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType))
         return ASCIILiteral("image/png");
     return mimeType.convertToASCIILowercase();
 }
 
-ExceptionOr<String> HTMLCanvasElement::toDataURL(const String& mimeType, std::optional<double> quality)
+// https://html.spec.whatwg.org/multipage/canvas.html#a-serialisation-of-the-bitmap-as-a-file
+static std::optional<double> qualityFromJSValue(JSC::JSValue qualityValue)
+{
+    if (!qualityValue.isNumber())
+        return std::nullopt;
+
+    double qualityNumber = qualityValue.asNumber();
+    if (qualityNumber < 0 || qualityNumber > 1)
+        return std::nullopt;
+
+    return qualityNumber;
+}
+
+ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType, JSC::JSValue qualityValue)
 {
     if (!m_originClean)
         return Exception { SECURITY_ERR };
 
     if (m_size.isEmpty() || !buffer())
-        return String { ASCIILiteral { "data:," } };
+        return UncachedString { ASCIILiteral { "data:," } };
 
-    String encodingMIMEType = toEncodingMimeType(mimeType);
+    auto encodingMIMEType = toEncodingMimeType(mimeType);
+    auto quality = qualityFromJSValue(qualityValue);
 
 #if USE(CG)
     // Try to get ImageData first, as that may avoid lossy conversions.
     if (auto imageData = getImageData())
-        return dataURL(*imageData, encodingMIMEType, quality);
+        return UncachedString { dataURL(*imageData, encodingMIMEType, quality) };
 #endif
 
     makeRenderingResultsAvailable();
 
-    return buffer()->toDataURL(encodingMIMEType, quality);
+    return UncachedString { buffer()->toDataURL(encodingMIMEType, quality) };
+}
+
+ExceptionOr<UncachedString> HTMLCanvasElement::toDataURL(const String& mimeType)
+{
+    return toDataURL(mimeType, { });
 }
 
 ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref<BlobCallback>&& callback, const String& mimeType, JSC::JSValue qualityValue)
@@ -569,10 +589,8 @@ ExceptionOr<void> HTMLCanvasElement::toBlob(ScriptExecutionContext& context, Ref
         return { };
     }
 
-    String encodingMIMEType = toEncodingMimeType(mimeType);
-    std::optional<double> quality;
-    if (qualityValue.isNumber())
-        quality = qualityValue.toNumber(context.execState());
+    auto encodingMIMEType = toEncodingMimeType(mimeType);
+    auto quality = qualityFromJSValue(qualityValue);
 
 #if USE(CG)
     if (auto imageData = getImageData()) {

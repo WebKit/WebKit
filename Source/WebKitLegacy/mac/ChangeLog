@@ -1,3 +1,14 @@
+2017-07-17  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings that require non-caching JS strings
+        https://bugs.webkit.org/show_bug.cgi?id=174552
+
+        Reviewed by Darin Adler.
+
+        * DOM/DOMHTMLCanvasElement.mm:
+        (-[DOMHTMLCanvasElement toDataURL:]):
+        Update to account for implementation now returning an UncachedString.
+
 2017-07-17  Darin Adler  <darin@apple.com>
 
         Improve use of NeverDestroyed

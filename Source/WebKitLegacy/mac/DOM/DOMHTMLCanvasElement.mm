@@ -29,6 +29,7 @@
 #import "ExceptionHandlers.h"
 #import <WebCore/HTMLCanvasElement.h>
 #import <WebCore/JSMainThreadExecState.h>
+#import <WebCore/StringAdaptors.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/URL.h>
 #import <WebCore/WebScriptObjectPrivate.h>
@@ -65,7 +66,12 @@
 - (NSString *)toDataURL:(NSString *)type
 {
     WebCore::JSMainThreadNullState state;
-    return raiseOnDOMError(IMPL->toDataURL(type));
+
+    auto exceptionOrReturnValue = IMPL->toDataURL(type);
+    if (exceptionOrReturnValue.hasException())
+        raiseDOMErrorException(exceptionOrReturnValue.releaseException());
+
+    return exceptionOrReturnValue.releaseReturnValue().string;
 }
 
 @end

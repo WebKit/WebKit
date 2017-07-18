@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "StringAdaptors.h"
 #include <heap/HandleTypes.h>
 #include <wtf/Brigand.h>
 #include <wtf/HashMap.h>
@@ -121,6 +122,8 @@ template<typename StringType> struct IDLString : IDLType<StringType> {
     using NullableType = StringType;
     static StringType nullValue() { return StringType(); }
     static bool isNullValue(const StringType& value) { return value.isNull(); }
+    static bool isNullValue(const UncachedString& value) { return value.string.isNull(); }
+    static bool isNullValue(const OwnedString& value) { return value.string.isNull(); }
     template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 struct IDLDOMString : IDLString<String> { };

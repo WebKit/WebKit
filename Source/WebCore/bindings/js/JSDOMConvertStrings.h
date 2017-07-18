@@ -27,6 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
+#include "StringAdaptors.h"
 
 namespace WebCore {
 
@@ -64,6 +65,16 @@ template<> struct JSConverter<IDLDOMString> {
     {
         return JSC::jsStringWithCache(&state, value);
     }
+
+    static JSC::JSValue convert(JSC::ExecState& state, const UncachedString& value)
+    {
+        return JSC::jsString(&state, value.string);
+    }
+
+    static JSC::JSValue convert(JSC::ExecState& state, const OwnedString& value)
+    {
+        return JSC::jsOwnedString(&state, value.string);
+    }
 };
 
 template<> struct Converter<IDLByteString> : DefaultConverter<IDLByteString> {
@@ -81,6 +92,16 @@ template<> struct JSConverter<IDLByteString> {
     {
         return JSC::jsStringWithCache(&state, value);
     }
+
+    static JSC::JSValue convert(JSC::ExecState& state, const UncachedString& value)
+    {
+        return JSC::jsString(&state, value.string);
+    }
+
+    static JSC::JSValue convert(JSC::ExecState& state, const OwnedString& value)
+    {
+        return JSC::jsOwnedString(&state, value.string);
+    }
 };
 
 template<> struct Converter<IDLUSVString> : DefaultConverter<IDLUSVString> {
@@ -97,6 +118,16 @@ template<> struct JSConverter<IDLUSVString> {
     static JSC::JSValue convert(JSC::ExecState& state, const String& value)
     {
         return JSC::jsStringWithCache(&state, value);
+    }
+
+    static JSC::JSValue convert(JSC::ExecState& state, const UncachedString& value)
+    {
+        return JSC::jsString(&state, value.string);
+    }
+
+    static JSC::JSValue convert(JSC::ExecState& state, const OwnedString& value)
+    {
+        return JSC::jsOwnedString(&state, value.string);
     }
 };
 

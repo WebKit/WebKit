@@ -48,6 +48,7 @@
 #include "SecurityOriginPolicy.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
+#include "StringAdaptors.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
 #include "XMLDocument.h"
@@ -156,11 +157,11 @@ XMLHttpRequest::State XMLHttpRequest::readyState() const
     return m_state;
 }
 
-ExceptionOr<String> XMLHttpRequest::responseText()
+ExceptionOr<OwnedString> XMLHttpRequest::responseText()
 {
     if (m_responseType != ResponseType::EmptyString && m_responseType != ResponseType::Text)
         return Exception { INVALID_STATE_ERR };
-    return responseTextIgnoringResponseType();
+    return OwnedString { responseTextIgnoringResponseType() };
 }
 
 void XMLHttpRequest::didCacheResponse()

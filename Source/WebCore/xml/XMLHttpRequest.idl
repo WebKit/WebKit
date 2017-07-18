@@ -80,7 +80,7 @@ enum XMLHttpRequestResponseType {
     [MayThrowException] void overrideMimeType(DOMString mime);
     [SetterMayThrowException] attribute XMLHttpRequestResponseType responseType;
     [JSBuiltin] readonly attribute any response;
-    [GetterMayThrowException, CustomGetter] readonly attribute USVString? responseText;
+    [GetterMayThrowException] readonly attribute USVString responseText;
     // FIXME: responseXML should be annotated with [Exposed=Window].
     [GetterMayThrowException] readonly attribute Document? responseXML;
 
