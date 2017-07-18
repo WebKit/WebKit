@@ -471,7 +471,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cocoa/WebCoreDecompressionSession.mm
     platform/graphics/cocoa/WebGLLayer.mm
     platform/graphics/cocoa/WebGPULayer.mm
-    platform/graphics/cocoa/WebLayer.mm
 
     platform/graphics/cv/PixelBufferConformerCV.cpp
     platform/graphics/cv/TextureCacheCV.mm
@@ -498,6 +497,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/MediaTimeQTKit.mm
     platform/graphics/mac/PDFDocumentImageMac.mm
     platform/graphics/mac/SimpleFontDataCoreText.cpp
+    platform/graphics/mac/WebLayer.mm
 
     platform/graphics/opengl/Extensions3DOpenGL.cpp
     platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
