@@ -1,5 +1,16 @@
 2017-07-18  Antoine Quint  <graouts@apple.com>
 
+        Turn tests at media/modern-media-controls/playback-support back on
+        https://bugs.webkit.org/show_bug.cgi?id=174639
+
+        Reviewed by Dean Jackson.
+
+        * media/modern-media-controls/playback-support/playback-support-button-click.html:
+        * platform/ios-simulator/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2017-07-18  Antoine Quint  <graouts@apple.com>
+
         Turn tests at media/modern-media-controls/pip-support back on
         https://bugs.webkit.org/show_bug.cgi?id=174636
 

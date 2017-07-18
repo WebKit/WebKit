@@ -2,17 +2,28 @@
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
 <script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
-<video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls autoplay></video>
-<div id="shadow"></div>
+<style type="text/css" media="screen">
+
+    video, #host {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 320px;
+        height: 240px;
+    }
+    
+</style>
+<video src="../../content/test.mp4" controls autoplay></video>
+<div id="host"></div>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
 
 description("Testing the <code>PlaybackSupport</code> behavior by clicking on the play/pause button.");
 
-const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const host = document.querySelector("div#host");
 const media = document.querySelector("video");
-const mediaController = createControls(shadowRoot, media, null);
+const mediaController = createControls(host, media, null);
 
 let numberOfPlayEvents = 0;
 media.addEventListener("play", function() {
@@ -25,7 +36,7 @@ media.addEventListener("play", function() {
         clickPlayPauseButton();
     else {
         debug("");
-        shadowRoot.host.remove();
+        host.remove();
         media.remove();
         finishJSTest();
     }
@@ -44,7 +55,6 @@ function clickPlayPauseButton()
     debug("Pressing on the play/pause button");
     window.requestAnimationFrame(() => pressOnElement(mediaController.controls.playPauseButton.element));
 }
-
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>
