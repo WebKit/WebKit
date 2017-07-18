@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1, viewport-fit=cover">
+    <style>
+        body {
+            height: 2000px;
+        }
+
+        #extent {
+            position: fixed;
+            border: 10px solid rgba(0, 0, 128, 0.5);
+            left: constant(safe-area-inset-left);
+            top: constant(safe-area-inset-top);
+            right: constant(safe-area-inset-right);
+            bottom: constant(safe-area-inset-bottom);
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script src="resources/rotation-utils.js"></script>
+    <script>
+        if (window.internals) {
+            internals.settings.setConstantPropertiesEnabled(true);
+            internals.settings.setViewportFitEnabled(true);
+        }
+
+        function getRotationUIScript()
+        {
+            return `
+            (function() {
+                uiController.setSafeAreaInsets(50, 25, 75, 100);
+                uiController.simulateRotationLikeSafari('landscape-right', function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`
+        }
+        
+        window.addEventListener('resize', function() {
+            accumulateLog('');
+            accumulateLog('In resize event handler:');
+            logFixedAndViewports();
+        }, false);
+
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="extent"></div>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>
