@@ -1,3 +1,14 @@
+2017-07-18  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Replace some custom bindings code in JSCSSStyleDeclarationCustom.cpp with named getters/setters
+        https://bugs.webkit.org/show_bug.cgi?id=174529
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor-expected.txt:
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor.html:
+        Update test and result to match standard and other browsers. 
+
 2017-07-18  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219610.

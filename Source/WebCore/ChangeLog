@@ -1,3 +1,66 @@
+2017-07-18  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Replace some custom bindings code in JSCSSStyleDeclarationCustom.cpp with named getters/setters
+        https://bugs.webkit.org/show_bug.cgi?id=174529
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        Add CSSStyleDeclaration.cpp
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        Move getter / setter / getOwnProperties logic from here to CSSStyleDeclaration.cpp.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateGetOwnPropertySlot):
+        (GenerateGetOwnPropertySlotByIndex):
+        (InstanceOverridesGetOwnPropertySlot):
+        (GenerateHeader):
+        Remove support for no longer needed [CustomGetOwnPropertySlotAndDescriptor].
+        Add support for [PutOnlyForSupportedProperties], which allows named setters to behave
+        a bit more like normal setters by allowing the implementation to note which properties
+        are supported which in turn, allows the bindings to continue down the normal put path
+        for unsupported properties. This is necessary to mimic the behavior of CSSStyleDeclaration
+        which is using named setters in place hundreds of additional properties.
+
+        (InstanceOverridesDefineOwnProperty):
+        Add [DefaultDefineOwnProperty] to allow disabling defineOwnProperty overriding that comes
+        automatically with named setters. We need this for CSSStyleDeclaration since the named
+        setter usage modeling real properties, not a dictionary style setter. We may want to 
+        revisit this, and add support for DefineOwnProperty here, but this allows us to maintain
+        the status quo.
+
+        (GenerateDefineOwnProperty):
+        Fix the case when you have a named setter, an indexed getter, but no indexed setter. In that
+        case, we would get a compile error, due to the index variable being unused.
+
+        * bindings/scripts/IDLAttributes.json:
+        Remove support for no longer needed [CustomGetOwnPropertySlotAndDescriptor], add
+        [PutOnlyForSupportedProperties] and [DefaultDefineOwnProperty].
+
+        * css/CSSStyleDeclaration.h:
+        * css/CSSStyleDeclaration.cpp: Added.
+        (WebCore::CSSStyleDeclaration::namedItem):
+        (WebCore::CSSStyleDeclaration::setNamedItem):
+        (WebCore::CSSStyleDeclaration::isSupportedPropertyName):
+        (WebCore::CSSStyleDeclaration::supportedPropertyNames):
+        Use standard getter / setter functions to implement CSS property name getting and setting.
+        Convert from Identifier to AtomicString, which are now bridgeable.
+
+        * css/CSSStyleDeclaration.idl:
+        Add named getter and setter. Remove [CustomGetOwnPropertyNames], [CustomGetOwnPropertySlotAndDescriptor]
+        and [CustomPut], add [DefaultDefineOwnProperty].
+
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.h: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp: Added.
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.h: Added.
+        * bindings/scripts/test/TestNamedSetterWithIndexedGetter.idl: Added.
+        * bindings/scripts/test/TestNamedSetterWithIndexedGetterAndSetter.idl: Added.
+        Add tests for improved behavior when using named setters with variations of indexed getters and setters as well.
+
 2017-07-18  Antoine Quint  <graouts@apple.com>
 
         [iOS] WebKit media controls are sometimes shown after exiting full screen on vimeo.com

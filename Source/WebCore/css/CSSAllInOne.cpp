@@ -78,6 +78,7 @@
 #include "CSSSelector.cpp"
 #include "CSSSelectorList.cpp"
 #include "CSSShadowValue.cpp"
+#include "CSSStyleDeclaration.cpp"
 #include "CSSStyleRule.cpp"
 #include "CSSStyleSheet.cpp"
 #include "CSSSupportsRule.cpp"

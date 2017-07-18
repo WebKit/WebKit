@@ -667,7 +667,7 @@ sub GenerateGetOwnPropertySlot
         # 1.3. Set ignoreNamedProps to true.
         # NOTE: Setting ignoreNamedProps has the effect of skipping step 2, so we can early return here
         #       rather than going through the paces of having an actual ignoreNamedProps update.
-        if ($namedGetterOperation || $interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor} || $interface->extendedAttributes->{Plugin}) {
+        if ($namedGetterOperation || $interface->extendedAttributes->{Plugin}) {
             push(@$outputArray, "        return JSObject::getOwnPropertySlot(object, state, propertyName, slot);\n");
         }
         push(@$outputArray, "    }\n");
@@ -700,12 +700,6 @@ sub GenerateGetOwnPropertySlot
         push(@$outputArray, "        slot.setValue(thisObject, ${attributeString}, value);\n");
         push(@$outputArray, "        return true;\n");
         push(@$outputArray, "    }\n");
-    }
-
-    # FIXME: There is only one remaining user of this, CSSStyleDeclaration.idl. Let's get them onto named / indexed getters.
-    if ($interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}) {
-        push(@$outputArray, "    if (thisObject->getOwnPropertySlotDelegate(state, propertyName, slot))\n");
-        push(@$outputArray, "        return true;\n");
     }
 
     if ($interface->extendedAttributes->{Plugin}) {
@@ -779,7 +773,7 @@ sub GenerateGetOwnPropertySlotByIndex
         # 1.3. Set ignoreNamedProps to true.
         # NOTE: Setting ignoreNamedProps has the effect of skipping step 2, so we can early return here
         #       rather than going through the paces of having an actual ignoreNamedProps update.
-        if ($namedGetterOperation || $interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor} || $interface->extendedAttributes->{Plugin}) {
+        if ($namedGetterOperation || $interface->extendedAttributes->{Plugin}) {
             push(@$outputArray, "        return JSObject::getOwnPropertySlotByIndex(object, state, index, slot);\n");
         }
         push(@$outputArray, "    }\n");
@@ -816,14 +810,6 @@ sub GenerateGetOwnPropertySlotByIndex
         push(@$outputArray, "    }\n");
     }
     
-    # FIXME: There is only one remaining user of this, CSSStyleDeclaration.idl. Let's get them onto named / indexed getters.
-    if ($interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}) {
-        &$propertyNameGeneration();
-    
-        push(@$outputArray, "    if (thisObject->getOwnPropertySlotDelegate(state, propertyName, slot))\n");
-        push(@$outputArray, "        return true;\n");
-    }
-
     if ($interface->extendedAttributes->{Plugin}) {
         &$propertyNameGeneration();
 
@@ -916,12 +902,20 @@ sub GenerateInvokeNamedPropertySetter
     push(@$outputArray, $indent . "auto throwScope = DECLARE_THROW_SCOPE(state->vm());\n");
     push(@$outputArray, $indent . "auto nativeValue = ${nativeValue};\n");
     push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, true);\n");
-    
+
+    push(@$outputArray, $indent . "bool isPropertySupported = true;\n") if $namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
+
     my $namedSetterFunctionName = $namedSetterOperation->name || "setNamedItem";
     my $nativeValuePassExpression = PassArgumentExpression("nativeValue", $argument);
-    my $functionString = "thisObject->wrapped().${namedSetterFunctionName}(propertyNameToString(propertyName), ${nativeValuePassExpression})";
+
+    my @arguments = ();
+    push(@arguments, "propertyNameToString(propertyName)");
+    push(@arguments, $nativeValuePassExpression);
+    push(@arguments, "isPropertySupported") if $namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
+
+    my $functionString = "thisObject->wrapped().${namedSetterFunctionName}(" . join(", ", @arguments) . ")";
     $functionString = "propagateException(*state, throwScope, ${functionString})" if NeedsExplicitPropagateExceptionCall($namedSetterOperation);
-    
+
     push(@$outputArray, $indent . $functionString . ";\n");
 }
 
@@ -966,10 +960,14 @@ sub GeneratePut
             push(@$outputArray, "        if (!(prototype.isObject() && asObject(prototype)->getPropertySlot(state, propertyName, slot))) {\n");
             $additionalIndent .= "    ";
         }
-        
+
         GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "        ", $interface, $namedSetterOperation, "value");
+        if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
+            push(@$outputArray, $additionalIndent . "        if (!isPropertySupported)\n");
+            push(@$outputArray, $additionalIndent . "            return JSObject::put(thisObject, state, propertyName, value, putPropertySlot);\n");
+        }
         push(@$outputArray, $additionalIndent . "        return true;\n");
-        
+
         if (!$overrideBuiltins) {
             push(@$outputArray, "        }\n");
         }
@@ -1000,7 +998,7 @@ sub GeneratePutByIndex
     my $indexedSetterOperation = GetIndexedSetterOperation($interface);
     
     my $overrideBuiltins = $codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins");
-    my $ellidesCallsToBase = ($namedSetterOperation && $overrideBuiltins) && !$interface->extendedAttributes->{Plugin};
+    my $ellidesCallsToBase = ($namedSetterOperation && $overrideBuiltins) && !$interface->extendedAttributes->{Plugin} && !$namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties};
     
     push(@$outputArray, "bool ${className}::putByIndex(JSCell* cell, ExecState* state, unsigned index, JSValue value, bool" . (!$ellidesCallsToBase ? " shouldThrow" : "") . ")\n");
     push(@$outputArray, "{\n");
@@ -1033,6 +1031,10 @@ sub GeneratePutByIndex
         }
         
         GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "    ", $interface, $namedSetterOperation, "value");
+        if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
+            push(@$outputArray, $additionalIndent . "    if (!isPropertySupported)\n");
+            push(@$outputArray, $additionalIndent . "        return JSObject::putByIndex(cell, state, index, value, shouldThrow);\n");
+        }
         push(@$outputArray, $additionalIndent . "    return true;\n");
         
         if (!$overrideBuiltins) {
@@ -1106,15 +1108,16 @@ sub GenerateDefineOwnProperty
     
     # 1. If O supports indexed properties and P is an array index property name, then:
     if (GetIndexedGetterOperation($interface)) {
-        push(@$outputArray, "    if (auto index = parseIndex(propertyName)) {\n");
-        
         # NOTE: The numbers are out of order because there is no reason doing steps 1, 3, and 4 if there
         # is no indexed property setter.
-        
+
         if (!$indexedSetterOperation) {
             # 2. If O does not implement an interface with an indexed property setter, then return false.
-            push(@$outputArray, "        return false;\n");
+            push(@$outputArray, "    if (parseIndex(propertyName))\n");
+            push(@$outputArray, "        return false;\n\n");
         } else {
+            push(@$outputArray, "    if (auto index = parseIndex(propertyName)) {\n");
+
             # 1. If the result of calling IsDataDescriptor(Desc) is false, then return false.
             push(@$outputArray, "        if (!propertyDescriptor.isDataDescriptor())\n");
             push(@$outputArray, "            return false;\n");
@@ -1124,8 +1127,8 @@ sub GenerateDefineOwnProperty
             
             # 4. Return true.
             push(@$outputArray, "        return true;\n");
+            push(@$outputArray, "    }\n\n");
         }
-        push(@$outputArray, "    }\n\n");
     }
     
     # 2. If O supports named properties, O does not implement an interface with the [Global] or [PrimaryGlobal]
@@ -1169,7 +1172,10 @@ sub GenerateDefineOwnProperty
             
             # 2.2.2. Invoke the named property setter with P and Desc.[[Value]].
             GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "        ", $interface, $namedSetterOperation, "propertyDescriptor.value()");
-            
+            if ($namedSetterOperation->extendedAttributes->{CallNamedSetterOnlyForSupportedProperties}) {
+                push(@$outputArray, $additionalIndent . "    if (!isPropertySupported)\n");
+                push(@$outputArray, $additionalIndent . "        return JSObject::defineOwnProperty(object, state, propertyName, propertyDescriptor, shouldThrow);\n");
+            }
             # 2.2.3. Return true.
             push(@$outputArray, $additionalIndent . "        return true;\n");
         }
@@ -1810,7 +1816,6 @@ sub InstanceOverridesGetOwnPropertySlot
 {
     my $interface = shift;
     return $interface->extendedAttributes->{CustomGetOwnPropertySlot}
-        || $interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}
         || $interface->extendedAttributes->{Plugin}
         || GetIndexedGetterOperation($interface)
         || GetNamedGetterOperation($interface);
@@ -1836,6 +1841,9 @@ sub InstanceOverridesPut
 sub InstanceOverridesDefineOwnProperty
 {
     my $interface = shift;
+
+    return 0 if $interface->extendedAttributes->{DefaultDefineOwnProperty};
+
     return $interface->extendedAttributes->{CustomDefineOwnProperty}
         || GetIndexedSetterOperation($interface)
         || GetNamedSetterOperation($interface);
@@ -2530,7 +2538,7 @@ sub GenerateHeader
     my $namedGetterOperation = GetNamedGetterOperation($interface);
     my $indexedGetterOperation = GetIndexedGetterOperation($interface);
 
-    # FIXME: Why doesn't this also include Indexed Getters, [CustomGetOwnPropertySlot] and [CustomGetOwnPropertySlotAndDescriptor]
+    # FIXME: Why doesn't this also include Indexed Getters and [CustomGetOwnPropertySlot]
     if ($namedGetterOperation) {
         if ($codeGenerator->InheritsExtendedAttribute($interface, "OverrideBuiltins")) {
             $structureFlags{"JSC::GetOwnPropertySlotIsImpure"} = 1;
@@ -2791,10 +2799,6 @@ sub GenerateHeader
         push(@headerContent, "    void finishCreation(JSC::VM&, JSC::JSProxy*);\n");
     } else {
         push(@headerContent, "    void finishCreation(JSC::VM&);\n");
-    }
-
-    if ($interface->extendedAttributes->{CustomGetOwnPropertySlotAndDescriptor}) {
-        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
     }
 
     push(@headerContent, "};\n\n");
