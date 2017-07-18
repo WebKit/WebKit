@@ -1,3 +1,25 @@
+2017-07-18  Devin Rousso  <drousso@apple.com>
+
+        Add CanvasRenderingContext2D::getTransform
+        https://bugs.webkit.org/show_bug.cgi?id=174278
+
+        Reviewed by Dean Jackson.
+
+        Tests: fast/canvas/2d.getTransform.modification.html
+               fast/canvas/2d.getTransform.newobject.html
+               fast/canvas/2d.setTransform.matrix.html
+
+        * css/DOMMatrixReadOnly.h:
+        Make DOMMatrixReadOnly::validateAndFixup public so that values of DOMMatrixInit are still
+        usable without having to construct a DOMMatrixReadOnly. This is beneficial in the case that
+        an exception is thrown, as the validateAndFixup check can happen without any allocations.
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::getTransform):
+        (WebCore::CanvasRenderingContext2D::setTransform):
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING

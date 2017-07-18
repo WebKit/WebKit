@@ -75,6 +75,8 @@ public:
     static ExceptionOr<Ref<DOMMatrixReadOnly>> fromFloat32Array(Ref<Float32Array>&&);
     static ExceptionOr<Ref<DOMMatrixReadOnly>> fromFloat64Array(Ref<Float64Array>&&);
 
+    static ExceptionOr<void> validateAndFixup(DOMMatrixInit&);
+
     double a() const { return m_matrix.a(); }
     double b() const { return m_matrix.b(); }
     double c() const { return m_matrix.c(); }
@@ -136,8 +138,6 @@ protected:
 
     template <typename T>
     static ExceptionOr<Ref<T>> fromMatrixHelper(DOMMatrixInit&&);
-
-    static ExceptionOr<void> validateAndFixup(DOMMatrixInit&);
 
     TransformationMatrix m_matrix;
     bool m_is2D { true };

@@ -49,9 +49,6 @@ if (ctx.transform) { // (avoid spurious failures, since the aim here is not to t
 }
 if (ctx.setTransform) {
     try { var _thrown = false;
-  ctx.setTransform();
-} catch (e) { if (!(e instanceof TypeError)) _fail("Failed assertion: expected exception of type TypeError, got: "+e); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TypeError: ctx.setTransform()"); }
-    try { var _thrown = false;
   ctx.setTransform(1);
 } catch (e) { if (!(e instanceof TypeError)) _fail("Failed assertion: expected exception of type TypeError, got: "+e); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TypeError: ctx.setTransform(1)"); }
     try { var _thrown = false;

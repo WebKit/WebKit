@@ -52,8 +52,11 @@ typedef (HTMLImageElement or HTMLCanvasElement) CanvasImageSource;
     void translate(unrestricted float tx, unrestricted float ty);
     void transform(unrestricted float m11, unrestricted float m12, unrestricted float m21, unrestricted float m22, 
         unrestricted float dx, unrestricted float dy);
+
+    [NewObject] DOMMatrix getTransform();
     void setTransform(unrestricted float m11, unrestricted float m12, unrestricted float m21, unrestricted float m22, 
         unrestricted float dx, unrestricted float dy);
+    [MayThrowException] void setTransform(optional DOMMatrixInit transform);
     void resetTransform();
 
     attribute unrestricted float globalAlpha;

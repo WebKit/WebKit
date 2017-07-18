@@ -40,6 +40,8 @@
 #include "CachedImage.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
+#include "DOMMatrix.h"
+#include "DOMMatrixInit.h"
 #include "DOMPath.h"
 #include "DisplayListRecorder.h"
 #include "DisplayListReplayer.h"
@@ -795,6 +797,11 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
     modifiableState().hasInvertibleTransform = false;
 }
 
+Ref<DOMMatrix> CanvasRenderingContext2D::getTransform() const
+{
+    return DOMMatrix::create(state().transform.toTransformationMatrix(), DOMMatrixReadOnly::Is2D::Yes);
+}
+
 void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, float m22, float dx, float dy)
 {
     GraphicsContext* c = drawingContext();
@@ -806,6 +813,17 @@ void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, flo
 
     resetTransform();
     transform(m11, m12, m21, m22, dx, dy);
+}
+
+ExceptionOr<void> CanvasRenderingContext2D::setTransform(DOMMatrixInit&& matrixInit)
+{
+    auto checkValid = DOMMatrixReadOnly::validateAndFixup(matrixInit);
+    if (checkValid.hasException())
+        return checkValid.releaseException();
+
+    setTransform(matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0));
+
+    return { };
 }
 
 void CanvasRenderingContext2D::resetTransform()
