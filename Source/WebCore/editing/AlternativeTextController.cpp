@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
-#include "Event.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -47,39 +46,6 @@
 #include "markup.h"
 
 namespace WebCore {
-
-class AutocorrectionAlternativeDetails : public AlternativeTextDetails {
-public:
-    static Ref<AutocorrectionAlternativeDetails> create(const String& replacementString)
-    {
-        return adoptRef(*new AutocorrectionAlternativeDetails(replacementString));
-    }
-    
-    const String& replacementString() const { return m_replacementString; }
-private:
-    AutocorrectionAlternativeDetails(const String& replacementString)
-    : m_replacementString(replacementString)
-    { }
-    
-    String m_replacementString;
-};
-
-class DictationAlternativeDetails : public AlternativeTextDetails {
-public:
-    static Ref<DictationAlternativeDetails> create(uint64_t dictationContext)
-    {
-        return adoptRef(*new DictationAlternativeDetails(dictationContext));
-    }
-
-    uint64_t dictationContext() const { return m_dictationContext; }
-
-private:
-    DictationAlternativeDetails(uint64_t dictationContext)
-    : m_dictationContext(dictationContext)
-    { }
-
-    uint64_t m_dictationContext;
-};
 
 #if USE(AUTOCORRECTION_PANEL)
 
@@ -186,10 +152,10 @@ void AlternativeTextController::show(Range& rangeToReplace, const String& replac
         return;
     m_alternativeTextInfo.originalText = plainText(&rangeToReplace);
     m_alternativeTextInfo.rangeWithAlternative = &rangeToReplace;
-    m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create(replacement);
+    m_alternativeTextInfo.details = replacement;
     m_alternativeTextInfo.isActive = true;
     if (AlternativeTextClient* client = alternativeTextClient())
-        client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, replacement, Vector<String>());
+        client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, replacement, { });
 }
 
 void AlternativeTextController::handleCancelOperation()
@@ -321,15 +287,17 @@ void AlternativeTextController::timerFired()
     }
         break;
     case AlternativeTextTypeReversion: {
-        auto* details = static_cast<const AutocorrectionAlternativeDetails*>(m_alternativeTextInfo.details.get());
-        if (!m_alternativeTextInfo.rangeWithAlternative || !details || details->replacementString().isEmpty())
+        if (!m_alternativeTextInfo.rangeWithAlternative)
+            break;
+        String replacementString = WTF::get<AutocorrectionReplacement>(m_alternativeTextInfo.details);
+        if (replacementString.isEmpty())
             break;
         m_alternativeTextInfo.isActive = true;
         m_alternativeTextInfo.originalText = plainText(m_alternativeTextInfo.rangeWithAlternative.get());
         FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
-                client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, details->replacementString(), Vector<String>());
+                client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, replacementString, { });
         }
     }
         break;
@@ -356,15 +324,16 @@ void AlternativeTextController::timerFired()
     case AlternativeTextTypeDictationAlternatives:
     {
 #if USE(DICTATION_ALTERNATIVES)
-        const Range* rangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative.get();
-        const DictationAlternativeDetails* details = static_cast<const DictationAlternativeDetails*>(m_alternativeTextInfo.details.get());
-        if (!rangeWithAlternative || !details || !details->dictationContext())
+        if (!m_alternativeTextInfo.rangeWithAlternative)
             return;
-        FloatRect boundingBox = rootViewRectForRange(rangeWithAlternative);
+        uint64_t dictationContext = WTF::get<AlternativeDictationContext>(m_alternativeTextInfo.details);
+        if (!dictationContext)
+            return;
+        FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
         m_alternativeTextInfo.isActive = true;
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
-                client->showDictationAlternativeUI(boundingBox, details->dictationContext());
+                client->showDictationAlternativeUI(boundingBox, dictationContext);
         }
 #endif
     }
@@ -482,7 +451,7 @@ void AlternativeTextController::respondToUnappliedEditing(EditCommandComposition
 
 AlternativeTextClient* AlternativeTextController::alternativeTextClient()
 {
-    return m_frame.page() ? m_frame.page()->alternativeTextClient() : 0;
+    return m_frame.page() ? m_frame.page()->alternativeTextClient() : nullptr;
 }
 
 EditorClient* AlternativeTextController::editorClient()
@@ -614,12 +583,12 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
     switch (marker.type()) {
     case DocumentMarker::Spelling:
         m_alternativeTextInfo.rangeWithAlternative = wordRange;
-        m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create(emptyString());
+        m_alternativeTextInfo.details = emptyString();
         startAlternativeTextUITimer(AlternativeTextTypeSpellingSuggestions);
         break;
     case DocumentMarker::Replacement:
         m_alternativeTextInfo.rangeWithAlternative = wordRange;
-        m_alternativeTextInfo.details = AutocorrectionAlternativeDetails::create(marker.description());
+        m_alternativeTextInfo.details = marker.description();
         startAlternativeTextUITimer(AlternativeTextTypeReversion);
         break;
     case DocumentMarker::DictationAlternatives: {
@@ -629,7 +598,7 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
         if (currentWord != markerData.originalText)
             return false;
         m_alternativeTextInfo.rangeWithAlternative = wordRange;
-        m_alternativeTextInfo.details = DictationAlternativeDetails::create(markerData.context);
+        m_alternativeTextInfo.details = markerData.context;
         startAlternativeTextUITimer(AlternativeTextTypeDictationAlternatives);
     }
         break;

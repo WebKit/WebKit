@@ -1,3 +1,31 @@
+2017-07-17  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Remove AlternativeTextInfo and use Variant to represent alternative text info details
+        https://bugs.webkit.org/show_bug.cgi?id=174604
+
+        Reviewed by Darin Adler.
+
+        Remove struct AlternativeTextInfo and represent the alternative text info as instance variables
+        using Variant to hold either an autocorrection replacement string or the alternative dictation
+        context.
+
+        Not functionality changed. So, no new tests.
+
+        * editing/AlternativeTextController.cpp: Remove header Event.h as it is ultimately included by TextEvent.h.
+        (WebCore::AlternativeTextController::show): Update code as needed.
+        (WebCore::AlternativeTextController::timerFired): Ditto.
+        (WebCore::AlternativeTextController::alternativeTextClient): Substitute nullptr for 0.
+        (WebCore::AlternativeTextController::respondToMarkerAtEndOfWord): Update code as needed.
+        (WebCore::AutocorrectionAlternativeDetails::create): Deleted.
+        (WebCore::AutocorrectionAlternativeDetails::replacementString): Deleted.
+        (WebCore::AutocorrectionAlternativeDetails::AutocorrectionAlternativeDetails): Deleted.
+        (WebCore::DictationAlternativeDetails::create): Deleted.
+        (WebCore::DictationAlternativeDetails::dictationContext): Deleted.
+        (WebCore::DictationAlternativeDetails::DictationAlternativeDetails): Deleted.
+        * editing/AlternativeTextController.h: Remove header Range.h and forward declare Range. Include header
+        Position.h and wtf/Variant.h. Sort forward declarations.
+        (WebCore::AlternativeTextDetails::~AlternativeTextDetails): Deleted.
+
 2017-07-18  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Async image decoding for large images should be disabled after the first time a tile is painted
