@@ -96,15 +96,15 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
 
     // If type is PanelTypeReversion, then the new range has been set. So we shouldn't clear it.
     if (type == AlternativeTextTypeCorrection)
-        m_alternativeTextInfo.rangeWithAlternative = nullptr;
-    m_alternativeTextInfo.type = type;
+        m_rangeWithAlternative = nullptr;
+    m_type = type;
     m_timer.startOneShot(correctionPanelTimerInterval);
 }
 
 void AlternativeTextController::stopAlternativeTextUITimer()
 {
     m_timer.stop();
-    m_alternativeTextInfo.rangeWithAlternative = nullptr;
+    m_rangeWithAlternative = nullptr;
 }
 
 void AlternativeTextController::stopPendingCorrection(const VisibleSelection& oldSelection)
@@ -132,12 +132,12 @@ void AlternativeTextController::applyPendingCorrection(const VisibleSelection& s
     if (doApplyCorrection)
         handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted)); 
     else
-        m_alternativeTextInfo.rangeWithAlternative = nullptr;
+        m_rangeWithAlternative = nullptr;
 }
 
 bool AlternativeTextController::hasPendingCorrection() const
 {
-    return m_alternativeTextInfo.rangeWithAlternative;
+    return m_rangeWithAlternative;
 }
 
 bool AlternativeTextController::isSpellingMarkerAllowed(Range& misspellingRange) const
@@ -150,27 +150,27 @@ void AlternativeTextController::show(Range& rangeToReplace, const String& replac
     FloatRect boundingBox = rootViewRectForRange(&rangeToReplace);
     if (boundingBox.isEmpty())
         return;
-    m_alternativeTextInfo.originalText = plainText(&rangeToReplace);
-    m_alternativeTextInfo.rangeWithAlternative = &rangeToReplace;
-    m_alternativeTextInfo.details = replacement;
-    m_alternativeTextInfo.isActive = true;
+    m_originalText = plainText(&rangeToReplace);
+    m_rangeWithAlternative = &rangeToReplace;
+    m_details = replacement;
+    m_isActive = true;
     if (AlternativeTextClient* client = alternativeTextClient())
-        client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, replacement, { });
+        client->showCorrectionAlternative(m_type, boundingBox, m_originalText, replacement, { });
 }
 
 void AlternativeTextController::handleCancelOperation()
 {
-    if (!m_alternativeTextInfo.isActive)
+    if (!m_isActive)
         return;
-    m_alternativeTextInfo.isActive = false;
+    m_isActive = false;
     dismiss(ReasonForDismissingAlternativeTextCancelled);
 }
 
 void AlternativeTextController::dismiss(ReasonForDismissingAlternativeText reasonForDismissing)
 {
-    if (!m_alternativeTextInfo.isActive)
+    if (!m_isActive)
         return;
-    m_alternativeTextInfo.isActive = false;
+    m_isActive = false;
     m_isDismissedByEditing = true;
     if (AlternativeTextClient* client = alternativeTextClient())
         client->dismissAlternative(reasonForDismissing);
@@ -178,9 +178,9 @@ void AlternativeTextController::dismiss(ReasonForDismissingAlternativeText reaso
 
 String AlternativeTextController::dismissSoon(ReasonForDismissingAlternativeText reasonForDismissing)
 {
-    if (!m_alternativeTextInfo.isActive)
+    if (!m_isActive)
         return String();
-    m_alternativeTextInfo.isActive = false;
+    m_isActive = false;
     m_isDismissedByEditing = true;
     if (AlternativeTextClient* client = alternativeTextClient())
         return client->dismissAlternativeSoon(reasonForDismissing);
@@ -239,21 +239,21 @@ void AlternativeTextController::applyAlternativeTextToRange(const Range& range, 
 
 bool AlternativeTextController::applyAutocorrectionBeforeTypingIfAppropriate()
 {
-    if (!m_alternativeTextInfo.rangeWithAlternative || !m_alternativeTextInfo.isActive)
+    if (!m_rangeWithAlternative || !m_isActive)
         return false;
 
-    if (m_alternativeTextInfo.type != AlternativeTextTypeCorrection)
+    if (m_type != AlternativeTextTypeCorrection)
         return false;
 
     Position caretPosition = m_frame.selection().selection().start();
 
-    if (m_alternativeTextInfo.rangeWithAlternative->endPosition() == caretPosition) {
+    if (m_rangeWithAlternative->endPosition() == caretPosition) {
         handleAlternativeTextUIResult(dismissSoon(ReasonForDismissingAlternativeTextAccepted));
         return true;
     } 
     
     // Pending correction should always be where caret is. But in case this is not always true, we still want to dismiss the panel without accepting the correction.
-    ASSERT(m_alternativeTextInfo.rangeWithAlternative->endPosition() == caretPosition);
+    ASSERT(m_rangeWithAlternative->endPosition() == caretPosition);
     dismiss(ReasonForDismissingAlternativeTextIgnored);
     return false;
 }
@@ -277,7 +277,7 @@ void AlternativeTextController::respondToUnappliedSpellCorrection(const VisibleS
 void AlternativeTextController::timerFired()
 {
     m_isDismissedByEditing = false;
-    switch (m_alternativeTextInfo.type) {
+    switch (m_type) {
     case AlternativeTextTypeCorrection: {
         VisibleSelection selection(m_frame.selection().selection());
         VisiblePosition start(selection.start(), selection.affinity());
@@ -287,50 +287,50 @@ void AlternativeTextController::timerFired()
     }
         break;
     case AlternativeTextTypeReversion: {
-        if (!m_alternativeTextInfo.rangeWithAlternative)
+        if (!m_rangeWithAlternative)
             break;
-        String replacementString = WTF::get<AutocorrectionReplacement>(m_alternativeTextInfo.details);
+        String replacementString = WTF::get<AutocorrectionReplacement>(m_details);
         if (replacementString.isEmpty())
             break;
-        m_alternativeTextInfo.isActive = true;
-        m_alternativeTextInfo.originalText = plainText(m_alternativeTextInfo.rangeWithAlternative.get());
-        FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
+        m_isActive = true;
+        m_originalText = plainText(m_rangeWithAlternative.get());
+        FloatRect boundingBox = rootViewRectForRange(m_rangeWithAlternative.get());
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
-                client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, replacementString, { });
+                client->showCorrectionAlternative(m_type, boundingBox, m_originalText, replacementString, { });
         }
     }
         break;
     case AlternativeTextTypeSpellingSuggestions: {
-        if (!m_alternativeTextInfo.rangeWithAlternative || plainText(m_alternativeTextInfo.rangeWithAlternative.get()) != m_alternativeTextInfo.originalText)
+        if (!m_rangeWithAlternative || plainText(m_rangeWithAlternative.get()) != m_originalText)
             break;
-        String paragraphText = plainText(&TextCheckingParagraph(*m_alternativeTextInfo.rangeWithAlternative).paragraphRange());
+        String paragraphText = plainText(&TextCheckingParagraph(*m_rangeWithAlternative).paragraphRange());
         Vector<String> suggestions;
-        textChecker()->getGuessesForWord(m_alternativeTextInfo.originalText, paragraphText, m_frame.selection().selection(), suggestions);
+        textChecker()->getGuessesForWord(m_originalText, paragraphText, m_frame.selection().selection(), suggestions);
         if (suggestions.isEmpty()) {
-            m_alternativeTextInfo.rangeWithAlternative = nullptr;
+            m_rangeWithAlternative = nullptr;
             break;
         }
         String topSuggestion = suggestions.first();
         suggestions.remove(0);
-        m_alternativeTextInfo.isActive = true;
-        FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
+        m_isActive = true;
+        FloatRect boundingBox = rootViewRectForRange(m_rangeWithAlternative.get());
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
-                client->showCorrectionAlternative(m_alternativeTextInfo.type, boundingBox, m_alternativeTextInfo.originalText, topSuggestion, suggestions);
+                client->showCorrectionAlternative(m_type, boundingBox, m_originalText, topSuggestion, suggestions);
         }
     }
         break;
     case AlternativeTextTypeDictationAlternatives:
     {
 #if USE(DICTATION_ALTERNATIVES)
-        if (!m_alternativeTextInfo.rangeWithAlternative)
+        if (!m_rangeWithAlternative)
             return;
-        uint64_t dictationContext = WTF::get<AlternativeDictationContext>(m_alternativeTextInfo.details);
+        uint64_t dictationContext = WTF::get<AlternativeDictationContext>(m_details);
         if (!dictationContext)
             return;
-        FloatRect boundingBox = rootViewRectForRange(m_alternativeTextInfo.rangeWithAlternative.get());
-        m_alternativeTextInfo.isActive = true;
+        FloatRect boundingBox = rootViewRectForRange(m_rangeWithAlternative.get());
+        m_isActive = true;
         if (!boundingBox.isEmpty()) {
             if (AlternativeTextClient* client = alternativeTextClient())
                 client->showDictationAlternativeUI(boundingBox, dictationContext);
@@ -343,36 +343,36 @@ void AlternativeTextController::timerFired()
 
 void AlternativeTextController::handleAlternativeTextUIResult(const String& result)
 {
-    Range* rangeWithAlternative = m_alternativeTextInfo.rangeWithAlternative.get();
+    Range* rangeWithAlternative = m_rangeWithAlternative.get();
     if (!rangeWithAlternative || m_frame.document() != &rangeWithAlternative->ownerDocument())
         return;
 
     String currentWord = plainText(rangeWithAlternative);
     // Check to see if the word we are about to correct has been changed between timer firing and callback being triggered.
-    if (currentWord != m_alternativeTextInfo.originalText)
+    if (currentWord != m_originalText)
         return;
 
-    m_alternativeTextInfo.isActive = false;
+    m_isActive = false;
 
-    switch (m_alternativeTextInfo.type) {
+    switch (m_type) {
     case AlternativeTextTypeCorrection:
         if (result.length())
-            applyAlternativeTextToRange(*rangeWithAlternative, result, m_alternativeTextInfo.type, markerTypesForAutocorrection());
+            applyAlternativeTextToRange(*rangeWithAlternative, result, m_type, markerTypesForAutocorrection());
         else if (!m_isDismissedByEditing)
-            rangeWithAlternative->startContainer().document().markers().addMarker(rangeWithAlternative, DocumentMarker::RejectedCorrection, m_alternativeTextInfo.originalText);
+            rangeWithAlternative->startContainer().document().markers().addMarker(rangeWithAlternative, DocumentMarker::RejectedCorrection, m_originalText);
         break;
     case AlternativeTextTypeReversion:
     case AlternativeTextTypeSpellingSuggestions:
         if (result.length())
-            applyAlternativeTextToRange(*rangeWithAlternative, result, m_alternativeTextInfo.type, markerTypesForReplacement());
+            applyAlternativeTextToRange(*rangeWithAlternative, result, m_type, markerTypesForReplacement());
         break;
     case AlternativeTextTypeDictationAlternatives:
         if (result.length())
-            applyAlternativeTextToRange(*rangeWithAlternative, result, m_alternativeTextInfo.type, markerTypesForAppliedDictationAlternative());
+            applyAlternativeTextToRange(*rangeWithAlternative, result, m_type, markerTypesForAppliedDictationAlternative());
         break;
     }
 
-    m_alternativeTextInfo.rangeWithAlternative = nullptr;
+    m_rangeWithAlternative = nullptr;
 }
 
 bool AlternativeTextController::isAutomaticSpellingCorrectionEnabled()
@@ -579,16 +579,16 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
     String currentWord = plainText(wordRange.get());
     if (!currentWord.length())
         return false;
-    m_alternativeTextInfo.originalText = currentWord;
+    m_originalText = currentWord;
     switch (marker.type()) {
     case DocumentMarker::Spelling:
-        m_alternativeTextInfo.rangeWithAlternative = wordRange;
-        m_alternativeTextInfo.details = emptyString();
+        m_rangeWithAlternative = wordRange;
+        m_details = emptyString();
         startAlternativeTextUITimer(AlternativeTextTypeSpellingSuggestions);
         break;
     case DocumentMarker::Replacement:
-        m_alternativeTextInfo.rangeWithAlternative = wordRange;
-        m_alternativeTextInfo.details = marker.description();
+        m_rangeWithAlternative = wordRange;
+        m_details = marker.description();
         startAlternativeTextUITimer(AlternativeTextTypeReversion);
         break;
     case DocumentMarker::DictationAlternatives: {
@@ -597,8 +597,8 @@ bool AlternativeTextController::respondToMarkerAtEndOfWord(const DocumentMarker&
         auto& markerData = WTF::get<DocumentMarker::DictationData>(marker.data());
         if (currentWord != markerData.originalText)
             return false;
-        m_alternativeTextInfo.rangeWithAlternative = wordRange;
-        m_alternativeTextInfo.details = markerData.context;
+        m_rangeWithAlternative = wordRange;
+        m_details = markerData.context;
         startAlternativeTextUITimer(AlternativeTextTypeDictationAlternatives);
     }
         break;
@@ -613,7 +613,7 @@ String AlternativeTextController::markerDescriptionForAppliedAlternativeText(Alt
 {
 
     if (alternativeTextType != AlternativeTextTypeReversion && alternativeTextType != AlternativeTextTypeDictationAlternatives && (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected))
-        return m_alternativeTextInfo.originalText;
+        return m_originalText;
     return emptyString();
 }
 
