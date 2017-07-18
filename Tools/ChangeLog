@@ -1,5 +1,14 @@
 2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the iOS build.
+
+        I missed a spot when renaming -synchronouslyLoadHTML: to -synchronouslyLoadHTMLString:.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
+2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS DnD] Web process uses too much memory when beginning a drag on a very large image
         https://bugs.webkit.org/show_bug.cgi?id=174585
         <rdar://problem/33302541>
