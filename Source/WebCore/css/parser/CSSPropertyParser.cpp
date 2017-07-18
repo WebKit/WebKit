@@ -1603,7 +1603,7 @@ static RefPtr<CSSValue> consumeAnimationValue(CSSPropertyID property, CSSParserT
         return consumeIdent<CSSValueNormal, CSSValueAlternate, CSSValueReverse, CSSValueAlternateReverse>(range);
     case CSSPropertyAnimationDuration:
     case CSSPropertyTransitionDuration:
-        return consumeTime(range, context.mode, ValueRangeNonNegative, UnitlessQuirk::Allow);
+        return consumeTime(range, context.mode, ValueRangeNonNegative, UnitlessQuirk::Forbid);
     case CSSPropertyAnimationFillMode:
         return consumeIdent<CSSValueNone, CSSValueForwards, CSSValueBackwards, CSSValueBoth>(range);
     case CSSPropertyAnimationIterationCount:

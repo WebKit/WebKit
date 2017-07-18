@@ -1,3 +1,14 @@
+2017-07-18  Ali Juma  <ajuma@chromium.org>
+
+        Align quirky number parsing with other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=155874
+
+        Reviewed by Simon Fraser.
+
+        * animations/animation-add-events-in-handler.html:
+        * fast/css/animation-transition-duration-quirksmode-expected.txt: Added.
+        * fast/css/animation-transition-duration-quirksmode.html: Added.
+
 2017-07-18  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Modernize InjectedScriptSource
