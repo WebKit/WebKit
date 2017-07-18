@@ -1717,21 +1717,6 @@ EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } ca
     "_overflow": true,
     "_properties": [
       {
-        "_name": "code",
-        "_type": "number",
-        "_value": "1"
-      },
-      {
-        "_name": "name",
-        "_type": "string",
-        "_value": "IndexSizeError"
-      },
-      {
-        "_name": "message",
-        "_type": "string",
-        "_value": "The index is not in the allowed range."
-      },
-      {
         "_name": "line",
         "_type": "number",
         "_value": "3"
@@ -1740,6 +1725,21 @@ EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } ca
         "_name": "column",
         "_type": "number",
         "_value": "58"
+      },
+      {
+        "_name": "stack",
+        "_type": "string",
+        "_value": "splitText@[native code]\nglobal code\nevaluateWithSc…ative code]\n_evaluateOn\n_evaluateAndWrap\nevaluate"
+      },
+      {
+        "_name": "code",
+        "_type": "number",
+        "_value": "1"
+      },
+      {
+        "_name": "name",
+        "_type": "string",
+        "_value": "IndexSizeError"
       }
     ],
     "_entries": null
