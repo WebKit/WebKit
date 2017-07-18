@@ -1,3 +1,15 @@
+2017-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: link and partial link queries don't work if text link contains trailing or leading whitespaces
+        https://bugs.webkit.org/show_bug.cgi?id=174499
+
+        Reviewed by Brian Burg.
+
+        This is causing test test_Driver_Can_Get_Link_By_Link_Test_Ignoring_Trailing_Whitespace to fail.
+
+        * UIProcess/Automation/atoms/FindNodes.js:
+        (switch): Use normalize-space() in in the links xpath expressions.
+
 2017-07-17  Darin Adler  <darin@apple.com>
 
         Improve use of NeverDestroyed
