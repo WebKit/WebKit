@@ -432,6 +432,8 @@ typedef const char* optionString;
     \
     v(unsigned, prototypeHitCountForLLIntCaching, 2, Normal, "Number of prototype property hits before caching a prototype in the LLInt. A count of 0 means never cache.") \
     \
+    v(bool, dumpCompiledRegExpPatterns, false, Normal, nullptr) \
+    \
     v(bool, dumpModuleRecord, false, Normal, nullptr) \
     v(bool, dumpModuleLoadingState, false, Normal, nullptr) \
     v(bool, exposeInternalModuleLoader, false, Normal, "expose the internal module loader object to the global space for debugging") \

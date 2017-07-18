@@ -28,11 +28,13 @@
 
 #include "RegExpKey.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
 
+struct YarrPattern;
 struct PatternDisjunction;
 
 struct CharacterRange {
@@ -222,6 +224,9 @@ struct PatternTerm {
         quantityMaxCount = maxCount;
         quantityType = type;
     }
+
+    void dumpQuantifier(PrintStream&);
+    void dump(PrintStream&, YarrPattern*, unsigned);
 };
 
 struct PatternAlternative {
@@ -258,6 +263,8 @@ public:
         return m_onceThrough;
     }
 
+    void dump(PrintStream&, YarrPattern*, unsigned);
+
     Vector<PatternTerm> m_terms;
     PatternDisjunction* m_parent;
     unsigned m_minimumSize;
@@ -281,6 +288,8 @@ public:
         m_alternatives.append(std::make_unique<PatternAlternative>(this));
         return static_cast<PatternAlternative*>(m_alternatives.last().get());
     }
+
+    void dump(PrintStream&, YarrPattern*, unsigned);
 
     Vector<std::unique_ptr<PatternAlternative>> m_alternatives;
     PatternAlternative* m_parent;
@@ -448,6 +457,10 @@ struct YarrPattern {
         return nonwordUnicodeIgnoreCasecharCached;
     }
 
+    void dumpPattern(const String& pattern);
+    void dumpPattern(PrintStream& out, const String& pattern);
+
+    bool global() const { return m_flags & FlagGlobal; }
     bool ignoreCase() const { return m_flags & FlagIgnoreCase; }
     bool multiline() const { return m_flags & FlagMultiline; }
     bool sticky() const { return m_flags & FlagSticky; }
