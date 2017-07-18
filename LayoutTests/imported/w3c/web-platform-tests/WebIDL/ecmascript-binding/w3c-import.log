@@ -18,5 +18,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/interface-object.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-object.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/legacy-callback-interface-object.html
+/LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/legacy-platform-object.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/put-forwards.html
 /LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/sequence-conversion.html

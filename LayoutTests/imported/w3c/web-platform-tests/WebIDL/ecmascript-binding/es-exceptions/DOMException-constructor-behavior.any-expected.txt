@@ -1,14 +1,14 @@
 
 PASS new DOMException() 
-FAIL new DOMException(): own-ness assert_false: The name property should be inherited expected false got true
+FAIL new DOMException(): inherited-ness assert_false: The name property should be inherited expected false got true
 PASS new DOMException(null) 
 PASS new DOMException(undefined) 
-FAIL new DOMException(undefined): own-ness assert_false: The name property should be inherited expected false got true
+FAIL new DOMException(undefined): inherited-ness assert_false: The name property should be inherited expected false got true
 PASS new DOMException("foo") 
-FAIL new DOMException("foo"): own-ness assert_false: The name property should be inherited expected false got true
+FAIL new DOMException("foo"): inherited-ness assert_false: The name property should be inherited expected false got true
 PASS new DOMException("bar", undefined) 
 PASS new DOMException("bar", "NotSupportedError") 
-PASS new DOMException("bar", "NotSupportedError"): own-ness 
+FAIL new DOMException("bar", "NotSupportedError"): inherited-ness assert_false: The name property should be inherited expected false got true
 PASS new DOMException("bar", "foo") 
 PASS new DOMexception("msg", "IndexSizeError") 
 PASS new DOMexception("msg", "HierarchyRequestError") 
@@ -31,5 +31,4 @@ PASS new DOMexception("msg", "QuotaExceededError")
 PASS new DOMexception("msg", "TimeoutError") 
 PASS new DOMexception("msg", "InvalidNodeTypeError") 
 PASS new DOMexception("msg", "DataCloneError") 
-PASS new DOMException("bar", "UnknownError") 
 

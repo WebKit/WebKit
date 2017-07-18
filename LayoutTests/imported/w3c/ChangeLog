@@ -1,3 +1,50 @@
+2017-07-17  Chris Dumez  <cdumez@apple.com>
+
+        Update WebIDL web-platform-tests from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=174603
+
+        Reviewed by Sam Weinig.
+
+        Update WebIDL web-platform-tests from upstream 4c1301113.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants-expected.txt.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.any.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.html.
+        (test.):
+        (test):
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants-expected.txt.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constants.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-and-prototype.any-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-and-prototype.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-and-prototype.any.js: Added.
+        (test):
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-and-prototype.any.worker-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-and-prototype.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-expected.txt.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor.html.
+        (test):
+        (forEach):
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-expected.txt.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-constructor-behavior.any.worker.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any.html: Copied from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any.js: Added.
+        (test):
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any.worker-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/DOMException-custom-bindings.any.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.html.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object-expected.txt: Removed.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.html: Removed.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.js: Removed.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker-expected.txt: Removed.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/constructor-object.worker.js: Removed.
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/exceptions-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/exceptions.html:
+        * web-platform-tests/WebIDL/ecmascript-binding/es-exceptions/w3c-import.log:
+        * web-platform-tests/WebIDL/ecmascript-binding/legacy-platform-object-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/legacy-platform-object.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/w3c-import.log:
+
 2017-07-12  Ali Juma  <ajuma@chromium.org>
 
         Update web platform tests for elementFromPoint and elementsFromPoint

@@ -1,12 +1,5 @@
-<!doctype html>
-<meta charset=utf-8>
-<title>DOMException constants</title>
-<link rel=help href="https://heycam.github.io/webidl/#es-DOMException-constructor-object">
-<link rel=help href="https://heycam.github.io/webidl/#es-DOMException-prototype-object">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
-<div id="log"></div>
-<script>
+'use strict';
+
 test(function() {
   // https://www.w3.org/Bugs/Public/show_bug.cgi?id=27732
   var constants = [
@@ -47,13 +40,12 @@ test(function() {
         assert_equals(object[name], i + 1, name)
         assert_own_property(object, name)
         var pd = Object.getOwnPropertyDescriptor(object, name)
-        assert_false("get" in pd, "property has getter")
-        assert_false("set" in pd, "property has setter")
-        assert_false(pd.writable, "not writable")
+        assert_false("get" in pd, "get")
+        assert_false("set" in pd, "set")
+        assert_false(pd.writable, "writable")
         assert_true(pd.enumerable, "enumerable")
-        assert_false(pd.configurable, "not configurable")
+        assert_false(pd.configurable, "configurable")
       }, "Constant " + name + " on " + description)
     })
   })
 })
-</script>

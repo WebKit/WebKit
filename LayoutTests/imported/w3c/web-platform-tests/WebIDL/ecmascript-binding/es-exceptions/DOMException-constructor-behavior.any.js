@@ -1,13 +1,5 @@
-<!doctype html>
-<meta charset=utf-8>
-<title>DOMException constructor</title>
-<link rel=help href="https://heycam.github.io/webidl/#es-DOMException-constructor-object">
-<link rel=help href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-error.prototype.message">
-<link rel=help href="https://people.mozilla.org/~jorendorff/es6-draft.html#sec-error.prototype.name">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
-<div id="log"></div>
-<script>
+'use strict';
+
 test(function() {
   var ex = new DOMException();
   assert_equals(ex.name, "Error",
@@ -22,7 +14,7 @@ test(function() {
                "The name property should be inherited");
   assert_false(ex.hasOwnProperty("message"),
                "The message property should be inherited");
-}, 'new DOMException(): own-ness');
+}, 'new DOMException(): inherited-ness');
 
 test(function() {
   var ex = new DOMException(null);
@@ -46,7 +38,7 @@ test(function() {
                "The name property should be inherited");
   assert_false(ex.hasOwnProperty("message"),
                "The message property should be inherited");
-}, 'new DOMException(undefined): own-ness');
+}, 'new DOMException(undefined): inherited-ness');
 
 test(function() {
   var ex = new DOMException("foo");
@@ -59,9 +51,9 @@ test(function() {
   var ex = new DOMException("foo");
   assert_false(ex.hasOwnProperty("name"),
                "The name property should be inherited");
-  assert_true(ex.hasOwnProperty("message"),
-              "The message property should be own");
-}, 'new DOMException("foo"): own-ness');
+  assert_false(ex.hasOwnProperty("message"),
+              "The message property should be inherited");
+}, 'new DOMException("foo"): inherited-ness');
 
 test(function() {
   var ex = new DOMException("bar", undefined);
@@ -80,11 +72,11 @@ test(function() {
 
 test(function() {
   var ex = new DOMException("bar", "NotSupportedError");
-  assert_true(ex.hasOwnProperty("name"),
-              "The name property should be own");
-  assert_true(ex.hasOwnProperty("message"),
-              "The message property should be own");
-}, 'new DOMException("bar", "NotSupportedError"): own-ness');
+  assert_false(ex.hasOwnProperty("name"),
+              "The name property should be inherited");
+  assert_false(ex.hasOwnProperty("message"),
+              "The message property should be inherited");
+}, 'new DOMException("bar", "NotSupportedError"): inherited-ness');
 
 test(function() {
   var ex = new DOMException("bar", "foo");
@@ -127,13 +119,3 @@ test(function() {
                   "Should have matching legacy code from error names table");
   },'new DOMexception("msg", "' + test_case.name + '")');
 });
-
-test(function() {
-  var ex = new DOMException("bar", "UnknownError");
-  assert_equals(ex.name, "UnknownError", "Should be using the passed-in name");
-  assert_equals(ex.message, "bar", "Should still be using passed-in message");
-  assert_equals(ex.code, 0,
-                "Should have 0 for code for a name in the exception names table with no legacy code");
-}, 'new DOMException("bar", "UnknownError")');
-
-</script>

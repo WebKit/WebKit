@@ -1,0 +1,17 @@
+
+PASS Cannot construct without new 
+PASS inherits from Error: prototype-side 
+PASS does not inherit from Error: class-side 
+FAIL message property descriptor assert_false: property is not own expected false got true
+FAIL message getter performs brand checks (i.e. is not [LenientThis] undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(DOMException.prototype, "message").get')
+FAIL name property descriptor assert_false: property is not own expected false got true
+FAIL name getter performs brand checks (i.e. is not [LenientThis] undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(DOMException.prototype, "name").get')
+FAIL code property descriptor assert_false: property is not own expected false got true
+FAIL code getter performs brand checks (i.e. is not [LenientThis] undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(DOMException.prototype, "code").get')
+PASS code property is not affected by shadowing the name property 
+PASS Object.prototype.toString behavior is like other interfaces 
+FAIL Inherits its toString() from Error.prototype assert_false: toString must not exist on DOMException.prototype expected false got true
+FAIL toString() behavior from Error.prototype applies as expected assert_equals: The default Error.prototype.toString() behavior must work on supplied name and message expected "name: message" but got "name (DOM Exception): message"
+PASS DOMException.prototype.toString() applied to DOMException.prototype throws because of name/message brand checks 
+FAIL If the implementation has a stack property on normal errors, it also does on DOMExceptions assert_equals: The typeof values must match expected "string" but got "undefined"
+
