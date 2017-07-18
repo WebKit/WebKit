@@ -37,6 +37,7 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('command script add -f lldb_webkit.btjs btjs')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFString_SummaryProvider WTF::String')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFStringImpl_SummaryProvider WTF::StringImpl')
+    debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFStringView_SummaryProvider WTF::StringView')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFAtomicString_SummaryProvider WTF::AtomicString')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFVector_SummaryProvider -x "WTF::Vector<.+>$"')
     debugger.HandleCommand('type summary add --expand -F lldb_webkit.WTFHashTable_SummaryProvider -x "WTF::HashTable<.+>$"')
@@ -48,6 +49,7 @@ def __lldb_init_module(debugger, dict):
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreLayoutPoint_SummaryProvider WebCore::LayoutPoint')
     debugger.HandleCommand('type summary add -F lldb_webkit.WebCoreURL_SummaryProvider WebCore::URL')
 
+
 def WTFString_SummaryProvider(valobj, dict):
     provider = WTFStringProvider(valobj, dict)
     return "{ length = %d, contents = '%s' }" % (provider.get_length(), provider.to_string())
@@ -58,6 +60,11 @@ def WTFStringImpl_SummaryProvider(valobj, dict):
     if not provider.is_initialized():
         return ""
     return "{ length = %d, is8bit = %d, contents = '%s' }" % (provider.get_length(), provider.is_8bit(), provider.to_string())
+
+
+def WTFStringView_SummaryProvider(valobj, dict):
+    provider = WTFStringViewProvider(valobj, dict)
+    return "{ length = %d, contents = '%s' }" % (provider.get_length(), provider.to_string())
 
 
 def WTFAtomicString_SummaryProvider(valobj, dict):
@@ -252,6 +259,30 @@ class WTFStringImplProvider:
 
     def is_initialized(self):
         return self.valobj.GetValueAsUnsigned() != 0
+
+
+class WTFStringViewProvider:
+    def __init__(self, valobj, dict):
+        self.valobj = valobj
+
+    def is_8bit(self):
+        return bool(self.valobj.GetChildMemberWithName('m_is8Bit').GetValueAsUnsigned(0))
+
+    def get_length(self):
+        return self.valobj.GetChildMemberWithName('m_length').GetValueAsUnsigned(0)
+
+    def get_characters(self):
+        return self.valobj.GetChildMemberWithName('m_characters')
+
+    def to_string(self):
+        error = lldb.SBError()
+
+        if not self.get_characters() or not self.get_length():
+            return u""
+
+        if self.is_8bit():
+            return lstring_to_string(self.get_characters(), error, self.get_length())
+        return ustring_to_string(self.get_characters(), error, self.get_length())
 
 
 class WTFStringProvider:

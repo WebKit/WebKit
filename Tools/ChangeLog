@@ -1,3 +1,30 @@
+2017-07-18  Daniel Bates  <dabates@apple.com>
+
+        lldb: Add type summary for StringView
+        https://bugs.webkit.org/show_bug.cgi?id=174637
+
+        Reviewed by Sam Weinig.
+
+        For debugging convenience, adds a pretty-print type summary for StringView. Evaluating a
+        StringView object will print output that has the form:
+
+            (WTF::StringView) $4 = { length = 2, contents = 'li' } {
+              m_characters = 0x000000011b57abb5 "eeeeeefjh0n"
+              m_length = 2
+              m_is8Bit = true
+              m_underlyingString = 0x0000614000000a90
+            }
+
+        * lldb/lldb_webkit.py:
+        (__lldb_init_module): Use WTFStringView_SummaryProvider to format StringView types.
+        (WTFStringView_SummaryProvider):
+        (WTFStringViewProvider):
+        (WTFStringViewProvider.__init__):
+        (WTFStringViewProvider.is_8bit): Access field StringView.m_is8Bit.
+        (WTFStringViewProvider.get_length): Access field StringView.m_length.
+        (WTFStringViewProvider.get_characters): Access field StringView.m_characters.
+        (WTFStringViewProvider.to_string): Returns the string represented by the StringView.
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_NON_LITERAL_NULL_CONVERSION
