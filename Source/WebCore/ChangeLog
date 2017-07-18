@@ -1,3 +1,13 @@
+2017-07-18  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed build fix after r219595
+
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::makeNeverDestroyed): Remove duplicate makeNeverDestroyed definition.
+        * platform/ios/DragImageIOS.mm:
+        (WebCore::cascadeForSystemFont): Return correct FontCascade object.
+        (WebCore::createDragImageForLink): Fix compiler error.
+
 2017-07-18  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Remove AlternativeTextInfo and use Variant to represent alternative text info details

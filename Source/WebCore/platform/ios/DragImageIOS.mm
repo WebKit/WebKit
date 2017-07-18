@@ -124,8 +124,8 @@ static const TextIndicatorOptions defaultLinkIndicatorOptions = TextIndicatorOpt
 
 static FontCascade cascadeForSystemFont(CGFloat size)
 {
-    UIFont *font = [getUIFontClass() systemFontOfSize:16];
-    return FontPlatformData(CTFontCreateWithName((CFStringRef)font.fontName, font.pointSize, nil), font.pointSize), AutoSmoothing);
+    UIFont *font = [getUIFontClass() systemFontOfSize:size];
+    return FontCascade(FontPlatformData(CTFontCreateWithName((CFStringRef)font.fontName, font.pointSize, nil), font.pointSize));
 }
 
 DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String& title, TextIndicatorData& indicatorData, FontRenderingMode, float)
@@ -156,9 +156,9 @@ DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String
         context.translate(0, CGRectGetHeight(imageRect));
         context.scale({ 1, -1 });
         context.fillRoundedRect(FloatRoundedRect(imageRect, FloatRoundedRect::Radii(4)), { 255, 255, 255 });
-        titleFontCascade->drawText(context, TextRun(truncatedTopString), FloatPoint(dragImagePadding, 18 + dragImagePadding));
+        titleFontCascade.get().drawText(context, TextRun(truncatedTopString), FloatPoint(dragImagePadding, 18 + dragImagePadding));
         if (!truncatedBottomString.isEmpty())
-            urlFontCascade->drawText(context, TextRun(truncatedBottomString), FloatPoint(dragImagePadding, 40 + dragImagePadding));
+            urlFontCascade.get().drawText(context, TextRun(truncatedBottomString), FloatPoint(dragImagePadding, 40 + dragImagePadding));
     }];
 
     auto linkRange = rangeOfContents(linkElement);

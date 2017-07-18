@@ -210,11 +210,6 @@ template<typename T, typename U, std::size_t size> inline std::array<T, size> co
     return convertArray<T>(array, std::make_index_sequence<size> { });
 }
 
-template<typename T> inline NeverDestroyed<T> makeNeverDestroyed(T&& argument)
-{
-    return WTFMove(argument);
-}
-
 static inline bool isUIFontTextStyle(const AtomicString& string)
 {
     static const CFStringRef styles[] = {
