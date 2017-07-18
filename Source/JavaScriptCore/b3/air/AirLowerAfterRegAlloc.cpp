@@ -181,7 +181,7 @@ void lowerAfterRegAlloc(Code& code)
                 regsToSave.exclude(RegisterSet::stackRegisters());
                 regsToSave.exclude(RegisterSet::reservedHardwareRegisters());
 
-                RegisterSet preUsed = regsToSave;
+                RegisterSet preUsed = liveRegs;
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
                 Tmp result = cCallResult(value->type());
                 Arg originalResult = result ? inst.args[1] : Arg();

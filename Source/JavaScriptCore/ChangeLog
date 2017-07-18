@@ -1,3 +1,26 @@
+2017-07-18  Saam Barati  <sbarati@apple.com>
+
+        AirLowerAfterRegAlloc may incorrectly use a callee save that's live as a scratch register
+        https://bugs.webkit.org/show_bug.cgi?id=174515
+        <rdar://problem/33358092>
+
+        Reviewed by Filip Pizlo.
+
+        AirLowerAfterRegAlloc was computing the set of available scratch
+        registers incorrectly. It was always excluding callee save registers
+        from the set of live registers. It did not guarantee that live callee save
+        registers were not in the set of scratch registers that could
+        get clobbered. That's incorrect as the shuffling code is free
+        to overwrite whatever is in the scratch register it gets passed.
+
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/testb3.cpp:
+        (JSC::B3::functionNineArgs):
+        (JSC::B3::testShuffleDoesntTrashCalleeSaves):
+        (JSC::B3::run):
+        * jit/RegisterSet.h:
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_NON_LITERAL_NULL_CONVERSION
