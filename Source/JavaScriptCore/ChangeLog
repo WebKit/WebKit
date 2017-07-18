@@ -1,3 +1,12 @@
+2017-07-18  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Enable CLANG_WARN_NON_LITERAL_NULL_CONVERSION
+        https://bugs.webkit.org/show_bug.cgi?id=174631
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+
 2017-07-18  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Add memoryCost to Inspector Protocol objects

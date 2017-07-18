@@ -1,4 +1,4 @@
-// Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2017 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@ CLANG_WARN_EMPTY_BODY = YES;
 CLANG_WARN_ENUM_CONVERSION = YES;
 CLANG_WARN_INFINITE_RECURSION = YES;
 CLANG_WARN_INT_CONVERSION = YES;
+CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 CLANG_WARN_SUSPICIOUS_MOVE = YES;
 CLANG_WARN_UNREACHABLE_CODE = YES;
 GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
