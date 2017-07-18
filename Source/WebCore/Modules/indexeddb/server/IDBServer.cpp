@@ -493,9 +493,7 @@ void IDBServer::postDatabaseTask(CrossThreadTask&& task)
 
 void IDBServer::postDatabaseTaskReply(CrossThreadTask&& task)
 {
-    ASSERT(!isMainThread());
     m_databaseReplyQueue.append(WTFMove(task));
-
 
     Locker<Lock> locker(m_mainThreadReplyLock);
     if (m_mainThreadReplyScheduled)
