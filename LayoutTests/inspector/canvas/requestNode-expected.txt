@@ -17,5 +17,5 @@ PASS: Canvas "Canvas 2" has node with type "CANVAS".
 
 -- Running test case: Canvas.requestNode.invalidCanvasId
 PASS: Should produce an error.
-Error: Invalid canvas identifier
+Error: No canvas for given identifier.
 

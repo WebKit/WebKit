@@ -7,5 +7,5 @@ data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs
 
 -- Running test case: Canvas.requestContent.invalidCanvasId
 PASS: Should produce an error.
-Error: Invalid canvas identifier
+Error: No canvas for given identifier.
 

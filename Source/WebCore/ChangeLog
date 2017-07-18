@@ -1,3 +1,51 @@
+2017-07-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Refactoring: replace InspectorCanvasAgent::CanvasEntry with a helper class
+        https://bugs.webkit.org/show_bug.cgi?id=174311
+
+        Reviewed by Devin Rousso.
+
+        This patch adds a helper class for tracking canvases and their data. The
+        current approach of defining a helper structure in the agent's header is
+        awkward to use and maintain, and won't scale well as more canvas instrumentation
+        points and data are added.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        New file.
+
+        * inspector/InspectorCanvas.cpp: Added.
+        (WebCore::InspectorCanvas::create):
+        (WebCore::InspectorCanvas::InspectorCanvas):
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        * inspector/InspectorCanvas.h: Added.
+
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::InspectorCanvasAgent):
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::requestNode):
+        (WebCore::InspectorCanvasAgent::requestContent):
+        (WebCore::InspectorCanvasAgent::requestCSSCanvasClientNodes):
+        (WebCore::InspectorCanvasAgent::resolveCanvasContext):
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::didCreateCSSCanvas):
+        (WebCore::InspectorCanvasAgent::didChangeCSSCanvasClientNodes):
+        (WebCore::InspectorCanvasAgent::didCreateCanvasRenderingContext):
+        (WebCore::InspectorCanvasAgent::didChangeCanvasMemory):
+        (WebCore::InspectorCanvasAgent::canvasDestroyed):
+        (WebCore::InspectorCanvasAgent::canvasDestroyedTimerFired):
+        (WebCore::InspectorCanvasAgent::clearCanvasData):
+        (WebCore::InspectorCanvasAgent::unbindCanvas):
+        (WebCore::InspectorCanvasAgent::assertInspectorCanvas):
+        (WebCore::InspectorCanvasAgent::findInspectorCanvas):
+        (WebCore::InspectorCanvasAgent::getCanvasEntry): Deleted.
+        (WebCore::InspectorCanvasAgent::buildObjectForCanvas): Deleted.
+        * inspector/InspectorCanvasAgent.h:
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        Remove unused constructor argument.
+
 2017-07-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Move detail implementation from ResourceHandle to ResourceHandleInternal

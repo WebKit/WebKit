@@ -1,3 +1,17 @@
+2017-07-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Refactoring: replace InspectorCanvasAgent::CanvasEntry with a helper class
+        https://bugs.webkit.org/show_bug.cgi?id=174311
+
+        Reviewed by Devin Rousso.
+
+        Updated test expectations for new error strings.
+
+        * inspector/canvas/css-canvas-clients-expected.txt:
+        * inspector/canvas/requestContent-2d-expected.txt:
+        * inspector/canvas/requestNode-expected.txt:
+        * inspector/canvas/resolveCanvasContext-2d-expected.txt:
+
 2017-07-18  Antoine Quint  <graouts@apple.com>
 
         Turn tests at media/modern-media-controls/playback-support back on

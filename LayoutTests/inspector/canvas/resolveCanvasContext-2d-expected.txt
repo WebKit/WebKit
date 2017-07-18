@@ -8,5 +8,5 @@ PASS: Payload should have className "CanvasRenderingContext2D".
 
 -- Running test case: Canvas.resolveCanvasContext.invalidIdentifier
 PASS: Should produce an error.
-Error: Invalid canvas identifier
+Error: No canvas for given identifier.
 

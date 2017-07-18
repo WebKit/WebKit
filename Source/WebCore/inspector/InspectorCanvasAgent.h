@@ -26,6 +26,7 @@
 #pragma once
 
 #include "HTMLCanvasElement.h"
+#include "InspectorCanvas.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
 #include <inspector/InspectorBackendDispatchers.h>
@@ -42,7 +43,6 @@ class InjectedScriptManager;
 
 namespace WebCore {
 
-class InspectorPageAgent;
 class WebGLRenderingContextBase;
 
 typedef String ErrorString;
@@ -51,7 +51,7 @@ class InspectorCanvasAgent final : public InspectorAgentBase, public CanvasObser
     WTF_MAKE_NONCOPYABLE(InspectorCanvasAgent);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InspectorCanvasAgent(WebAgentContext&, InspectorPageAgent*);
+    explicit InspectorCanvasAgent(WebAgentContext&);
     virtual ~InspectorCanvasAgent() { }
 
     void didCreateFrontendAndBackend(Inspector::FrontendRouter*, Inspector::BackendDispatcher*) override;
@@ -79,33 +79,18 @@ public:
     void canvasDestroyed(HTMLCanvasElement&) override;
 
 private:
-    struct CanvasEntry {
-        String identifier;
-        String cssCanvasName;
-        HTMLCanvasElement* element = { nullptr };
-
-        CanvasEntry() { }
-
-        CanvasEntry(const String& identifier, HTMLCanvasElement* canvasElement)
-            : identifier(identifier)
-            , element(canvasElement)
-        {
-        }
-    };
-
     void canvasDestroyedTimerFired();
     void clearCanvasData();
-    CanvasEntry* getCanvasEntry(HTMLCanvasElement&);
-    CanvasEntry* getCanvasEntry(const String&);
-    Ref<Inspector::Protocol::Canvas::Canvas> buildObjectForCanvas(const CanvasEntry&, HTMLCanvasElement&);
+    String unbindCanvas(InspectorCanvas&);
+    InspectorCanvas* assertInspectorCanvas(ErrorString&, const String&);
+    InspectorCanvas* findInspectorCanvas(HTMLCanvasElement&);
 
     std::unique_ptr<Inspector::CanvasFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
-    InspectorPageAgent* m_pageAgent;
 
-    HashMap<HTMLCanvasElement*, CanvasEntry> m_canvasEntries;
-    HashMap<HTMLCanvasElement*, String> m_canvasToCSSCanvasId;
+    HashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
+    HashMap<HTMLCanvasElement*, String> m_canvasToCSSCanvasName;
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_timer;
     bool m_enabled { false };
