@@ -1,0 +1,32 @@
+2017-07-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add initial implementation of WebDriver process to run the HTTP server
+        https://bugs.webkit.org/show_bug.cgi?id=166682
+
+        Reviewed by Brian Burg.
+
+        Add WebDriver process that runs the HTTP server and implements an initial set of commands. Most of the code is
+        cross-platform, only the HTTP server implementation, the code to launch the browser and the communication with
+        the remote inspector requires platform specific code. This patch includes the GTK port implementation, using
+        libsoup for the HTTP server, and GLib for launching the browser and communicating with the remote
+        inspector. This implementation follows the w3c spec (https://www.w3.org/TR/webdriver) as close as possible, but
+        using the official selenium python tests as reference.
+
+        * CMakeLists.txt: Added.
+        * Capabilities.h: Added.
+        * CommandResult.cpp: Added.
+        * CommandResult.h: Added.
+        * HTTPServer.cpp: Added.
+        * HTTPServer.h: Added.
+        * PlatformGTK.cmake: Added.
+        * Session.cpp: Added.
+        * Session.h: Added.
+        * SessionHost.cpp: Added.
+        * SessionHost.h: Added.
+        * WebDriverMain.cpp: Added.
+        * WebDriverService.cpp: Added.
+        * WebDriverService.h: Added.
+        * config.h: Added.
+        * glib/SessionHostGlib.cpp: Added.
+        * gtk/WebDriverServiceGtk.cpp: Added.
+        * soup/HTTPServerSoup.cpp: Added.

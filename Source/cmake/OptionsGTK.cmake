@@ -143,6 +143,7 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_SPELLCHECK PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_TOUCH_EVENTS PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_VIDEO PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_AUDIO PUBLIC ON)
+WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBDRIVER PUBLIC ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSTEM_MALLOC PUBLIC OFF)
 
 # Private options shared with other WebKit ports. Add options here when
@@ -274,6 +275,16 @@ if (ENABLE_SUBTLE_CRYPTO)
         message(FATAL_ERROR "libgcrypt 1.7.0 is required to enable Web Crypto API support.")
     endif ()
     SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
+endif ()
+
+if (ENABLE_WEBDRIVER)
+    # WebDriver requires newer versions of GLib and Soup.
+    if (PC_GLIB_VERSION VERSION_LESS "2.40")
+        message(FATAL_ERROR "GLib 2.40 is required to enable WebDriver support.")
+    endif ()
+    if (PC_LIBSOUP_VERSION VERSION_LESS "2.48")
+        message(FATAL_ERROR "libsoup 2.48 is required to enable WebDriver support.")
+    endif ()
 endif ()
 
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER TRUE)

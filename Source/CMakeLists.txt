@@ -38,6 +38,10 @@ if (ENABLE_WEBKIT)
     add_subdirectory(WebKit)
 endif ()
 
+if (ENABLE_WEBDRIVER)
+    add_subdirectory(WebDriver)
+endif ()
+
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 # -----------------------------------------------------------------------------
