@@ -45,7 +45,7 @@ class ControlsVisibilitySupport extends MediaControllerSupport
 
     get mediaEvents()
     {
-        return ["loadedmetadata", "play", "pause", "webkitfullscreenchange", "webkitcurrentplaybacktargetiswirelesschanged"];
+        return ["loadedmetadata", "play", "pause", "webkitcurrentplaybacktargetiswirelesschanged", this.mediaController.fullscreenChangeEventType];
     }
 
     get tracksToMonitor()
