@@ -2569,7 +2569,7 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const FloatRect& clip, GraphicsLayerPaintFlags flags)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const FloatRect& clip, GraphicsLayerPaintBehavior layerPaintBehavior)
 {
 #ifndef NDEBUG
     renderer().page().setIsPainting(true);
@@ -2579,6 +2579,9 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     FloatRect adjustedClipRect = clip;
     adjustedClipRect.move(m_subpixelOffsetFromRenderer);
     IntRect dirtyRect = enclosingIntRect(adjustedClipRect);
+
+    if (graphicsLayer->repaintCount())
+        layerPaintBehavior &= ~GraphicsLayerPaintAllowAsyncImageDecoding;
 
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()
@@ -2593,7 +2596,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
         PaintBehavior behavior = PaintBehaviorNormal;
-        if (flags == GraphicsLayerPaintFlags::AllowAsyncImageDecoding)
+        if (layerPaintBehavior == GraphicsLayerPaintAllowAsyncImageDecoding)
             behavior |= PaintBehaviorAllowAsyncImageDecoding;
 
         paintIntoLayer(graphicsLayer, context, dirtyRect, behavior, paintingPhase);

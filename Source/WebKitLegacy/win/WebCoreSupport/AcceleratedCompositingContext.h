@@ -52,7 +52,7 @@ public:
     bool enabled();
 
     // GraphicsLayerClient
-    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& rectToPaint, WebCore::GraphicsLayerPaintFlags) override;
+    void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::FloatRect& rectToPaint, WebCore::GraphicsLayerPaintBehavior) override;
     float deviceScaleFactor() const override;
 
     void initialize();

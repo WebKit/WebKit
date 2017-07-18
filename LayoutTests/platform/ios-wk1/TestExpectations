@@ -1107,6 +1107,11 @@ http/tests/navigation/metaredirect-goback.html
 # Disk cache is WK2 only
 http/tests/cache/disk-cache
 
+# Async image decoding is WK2 only
+fast/images/async-image-background-change.html
+fast/images/async-image-src-change.html
+http/tests/multipart/multipart-async-image.html
+
 # Flaky as of 06/08/2015
 animations/animation-direction-reverse-hardware-opacity.html [ Failure Pass ]
 animations/animation-direction-reverse-hardware.html [ Failure Pass ]

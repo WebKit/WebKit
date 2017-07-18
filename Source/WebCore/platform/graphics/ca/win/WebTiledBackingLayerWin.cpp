@@ -95,7 +95,7 @@ void WebTiledBackingLayerWin::displayCallback(CACFLayerRef caLayer, CGContextRef
     // smaller than the layer bounds (e.g. tiled layers)
     CGRect clipBounds = CGContextGetClipBoundingBox(context);
     IntRect clip(enclosingIntRect(clipBounds));
-    client->platformCALayerPaintContents(owner(), graphicsContext, clip, GraphicsLayerPaintFlags::None);
+    client->platformCALayerPaintContents(owner(), graphicsContext, clip, GraphicsLayerPaintNormal);
 
     if (client->platformCALayerShowRepaintCounter(owner())) {
         int drawCount = client->platformCALayerIncrementRepaintCount(owner());
