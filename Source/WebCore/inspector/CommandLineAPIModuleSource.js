@@ -28,14 +28,7 @@
 
 //# sourceURL=__InjectedScript_CommandLineAPIModuleSource.js
 
-/**
- * @param {InjectedScriptHost} InjectedScriptHost
- * @param {Window} inspectedWindow
- * @param {number} injectedScriptId
- * @param {InjectedScript} injectedScript
- * @param {CommandLineAPIHost} CommandLineAPIHost
- */
-(function (InjectedScriptHost, inspectedWindow, injectedScriptId, injectedScript, CommandLineAPIHost) {
+(function (InjectedScriptHost, inspectedWindow, injectedScriptId, injectedScript, RemoteObject, CommandLineAPIHost) {
 
 // FIXME: <https://webkit.org/b/152294> Web Inspector: Parse InjectedScriptSource as a built-in to get guaranteed non-user-overriden built-ins
 
@@ -231,7 +224,7 @@ CommandLineAPIImpl.prototype = {
     copy: function(object)
     {
         var string;
-        var subtype = injectedScript._subtype(object);
+        var subtype = RemoteObject.subtype(object);
         if (subtype === "node")
             string = object.outerHTML;
         else if (subtype === "regexp")
@@ -315,10 +308,10 @@ CommandLineAPIImpl.prototype = {
         if (arguments.length === 0)
             return;
 
-        var objectId = injectedScript._wrapObject(object, "");
+        var objectId = RemoteObject.create(object, "");
         var hints = {};
 
-        switch (injectedScript._describe(object)) {
+        switch (RemoteObject.describe(object)) {
         case "Database":
             var databaseId = CommandLineAPIHost.databaseId(object)
             if (databaseId)

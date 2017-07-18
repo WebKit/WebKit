@@ -1,3 +1,21 @@
+2017-07-18  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Modernize InjectedScriptSource
+        https://bugs.webkit.org/show_bug.cgi?id=173890
+
+        Reviewed by Brian Burg.
+
+        * inspector/InjectedScript.h:
+        Reorder functions to be slightly better.
+
+        * inspector/InjectedScriptSource.js:
+        - Convert to classes named InjectedScript and RemoteObject
+        - Align InjectedScript's API with the wrapper C++ interfaces
+        - Move some code to RemoteObject where appropriate (subtype, describe)
+        - Move some code to helper functions (isPrimitiveValue, isDefined)
+        - Refactor for readability and modern features
+        - Remove some unused / unnecessary code
+
 2017-07-18  Mark Lam  <mark.lam@apple.com>
 
         Butterfly storage need not be initialized for indexing type Undecided.

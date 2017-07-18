@@ -51,8 +51,8 @@ public:
     virtual ~InjectedScript();
 
     void evaluate(ErrorString&, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex);
-    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
     void evaluateOnCallFrame(ErrorString&, JSC::JSValue callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, bool generatePreview, bool saveResult, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown, Inspector::Protocol::OptOutput<int>* savedResultIndex);
+    void callFunctionOn(ErrorString&, const String& objectId, const String& expression, const String& arguments, bool returnByValue, bool generatePreview, RefPtr<Protocol::Runtime::RemoteObject>* result, Protocol::OptOutput<bool>* wasThrown);
     void getFunctionDetails(ErrorString&, const String& functionId, RefPtr<Protocol::Debugger::FunctionDetails>* result);
     void functionDetails(ErrorString&, JSC::JSValue, RefPtr<Protocol::Debugger::FunctionDetails>* result);
     void getPreview(ErrorString&, const String& objectId, RefPtr<Protocol::Runtime::ObjectPreview>* result);

@@ -8,7 +8,7 @@ PASS: ConsoleMessage should have StackTrace.
 PASS: CallFrame in StackTrace has no identifier.
 PASS: CallFrame in StackTrace has no thisObject.
 PASS: CallFrame in StackTrace has no scopeChain.
-StackTrace: 11
+StackTrace: 10
   1: foo (Anonymous Script 1 (line 1)) - nativeCode (false) programCode (false)
   2: Eval Code (Anonymous Script 1 (line 1)) - nativeCode (false) programCode (true)
   3: eval - nativeCode (true) programCode (false)
@@ -19,5 +19,4 @@ StackTrace: 11
   8: evaluateWithScopeExtension - nativeCode (true) programCode (false)
   9: _evaluateOn - nativeCode (true) programCode (false)
   10: _evaluateAndWrap - nativeCode (true) programCode (false)
-  11: evaluate - nativeCode (true) programCode (false)
 
