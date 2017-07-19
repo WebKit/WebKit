@@ -224,7 +224,7 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 
     auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
     for (uint64_t callbackID : pendingFrameCallbacks)
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, String(), errorType), 0);
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, errorMessage, errorType), 0);
 }
 
 void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t pageID, uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
