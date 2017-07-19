@@ -1708,11 +1708,11 @@ EXPRESSION: error = null; try { document.createTextNode("").splitText(100); } ca
   "_type": "object",
   "_subtype": "error",
   "_objectId": "<filtered>",
-  "_description": "IndexSizeError (DOM Exception 1): The index is not in the allowed range.",
+  "_description": "IndexSizeError: The index is not in the allowed range.",
   "_preview": {
     "_type": "object",
     "_subtype": "error",
-    "_description": "IndexSizeError (DOM Exception 1): The index is not in the allowed range.",
+    "_description": "IndexSizeError: The index is not in the allowed range.",
     "_lossless": false,
     "_overflow": true,
     "_properties": [

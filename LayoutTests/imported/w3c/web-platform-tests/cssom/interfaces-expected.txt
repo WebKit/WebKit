@@ -47,7 +47,7 @@ PASS CSSStyleSheet interface: style_element.sheet must inherit property "cssRule
 PASS CSSStyleSheet interface: style_element.sheet must inherit property "insertRule" with the proper type (2) 
 FAIL CSSStyleSheet interface: calling insertRule(DOMString,unsigned long) on style_element.sheet with too few arguments must throw TypeError assert_throws: Called with 1 arguments function "function () {
             fn.apply(obj, args);
-        }" threw object "SyntaxError (DOM Exception 12): The string did not match the expected pattern." ("SyntaxError") expected object "TypeError" ("TypeError")
+        }" threw object "SyntaxError: The string did not match the expected pattern." ("SyntaxError") expected object "TypeError" ("TypeError")
 PASS CSSStyleSheet interface: style_element.sheet must inherit property "deleteRule" with the proper type (3) 
 PASS CSSStyleSheet interface: calling deleteRule(unsigned long) on style_element.sheet with too few arguments must throw TypeError 
 PASS StyleSheet interface: style_element.sheet must inherit property "type" with the proper type (0) 

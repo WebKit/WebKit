@@ -14,10 +14,10 @@ var invalidStateErr = '"InvalidStateError (DOM Exception 11): The object is in a
 
 debug('Unsupported type');
 input.type = 'text';
-shouldThrow('input.step = "3"; input.min = ""; input.max = ""; input.value = "2"; input.stepDown()', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
-shouldThrow('input.stepDown(0)', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
-shouldThrow('input.stepUp()', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
-shouldThrow('input.stepUp(0)', '"InvalidStateError (DOM Exception 11): The object is in an invalid state."');
+shouldThrowErrorName('input.step = "3"; input.min = ""; input.max = ""; input.value = "2"; input.stepDown()', 'InvalidStateError');
+shouldThrowErrorName('input.stepDown(0)', 'InvalidStateError');
+shouldThrowErrorName('input.stepUp()', 'InvalidStateError');
+shouldThrowErrorName('input.stepUp(0)', 'InvalidStateError');
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

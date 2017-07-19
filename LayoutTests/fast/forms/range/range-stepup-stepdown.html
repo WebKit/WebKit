@@ -10,7 +10,6 @@
 description('Check stepUp() and stepDown() bahevior for range type.');
 
 var input = document.createElement('input');
-var invalidStateErr = '"InvalidStateError (DOM Exception 11): The object is in an invalid state."';
 
 function setInputAttributes(min, max, step, value) {
     input.min = min;
@@ -224,27 +223,27 @@ shouldBe('stepDownExplicitBounds(null, null, "-1", "3")', '"2"');
 
 debug('');
 debug('Step=any');
-shouldThrow('stepUpExplicitBounds(null, null, "any", "1")', invalidStateErr);
-shouldThrow('stepDownExplicitBounds(null, null, "any", "1")', invalidStateErr);
+shouldThrowErrorName('stepUpExplicitBounds(null, null, "any", "1")', "InvalidStateError");
+shouldThrowErrorName('stepDownExplicitBounds(null, null, "any", "1")', "InvalidStateError");
 
 debug('');
 debug('Overflow/underflow');
 shouldBe('stepUpExplicitBounds(null, "100", "1", "99")', '"100"');
-shouldThrow('stepUpExplicitBounds(null, "100", "1", "100")', invalidStateErr);
+shouldThrowErrorName('stepUpExplicitBounds(null, "100", "1", "100")', "InvalidStateError");
 shouldBe('input.value', '"100"');
-shouldThrow('stepUpExplicitBounds(null, "100", "1", "99", "2")', invalidStateErr);
+shouldThrowErrorName('stepUpExplicitBounds(null, "100", "1", "99", "2")', "InvalidStateError");
 shouldBe('input.value', '"99"');
 shouldBe('stepDownExplicitBounds("0", null, "1", "1")', '"0"');
-shouldThrow('stepDownExplicitBounds("0", null, "1", "0")', invalidStateErr);
+shouldThrowErrorName('stepDownExplicitBounds("0", null, "1", "0")', "InvalidStateError");
 shouldBe('input.value', '"0"');
-shouldThrow('stepDownExplicitBounds("0", null, "1", "1", "2")', invalidStateErr);
+shouldThrowErrorName('stepDownExplicitBounds("0", null, "1", "1", "2")', "InvalidStateError");
 shouldBe('input.value', '"1"');
-shouldThrow('stepDownExplicitBounds(null, null, "3.40282346e+38", "1", "2")', invalidStateErr);
+shouldThrowErrorName('stepDownExplicitBounds(null, null, "3.40282346e+38", "1", "2")', "InvalidStateError");
 shouldBe('stepUpExplicitBounds(-100, 0, 1, -1)', '"0"');
-shouldThrow('stepUpExplicitBounds(null, 0, 1, 0)', invalidStateErr);
-shouldThrow('stepUpExplicitBounds(-100, 0, 1, -1, 2)', invalidStateErr);
+shouldThrowErrorName('stepUpExplicitBounds(null, 0, 1, 0)', "InvalidStateError");
+shouldThrowErrorName('stepUpExplicitBounds(-100, 0, 1, -1, 2)', "InvalidStateError");
 shouldBe('input.value', '"-1"');
-shouldThrow('stepUpExplicitBounds(null, null, "3.40282346e+38", "1", "2")', invalidStateErr);
+shouldThrowErrorName('stepUpExplicitBounds(null, null, "3.40282346e+38", "1", "2")', "InvalidStateError");
 
 debug('');
 debug('stepDown()/stepUp() for stepMismatch values');
@@ -255,7 +254,7 @@ shouldBe('stepDownExplicitBounds(0, null, 10, 19)', '"10"');
 
 debug('');
 debug('value + step is <= max, but rounded result would be > max.');
-shouldThrow('stepUpExplicitBounds(null, 99, 10, 89)', invalidStateErr);
+shouldThrowErrorName('stepUpExplicitBounds(null, 99, 10, 89)', "InvalidStateError");
 
 debug('');
 debug('Huge value and small step');

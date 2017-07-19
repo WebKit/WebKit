@@ -23,10 +23,10 @@ var elementBInActiveDocumentFunction = frame.contentWindow.Function("return B;")
 frame.onload = function ()
 {
     debug("Lookup named element whose name corresponds to an element in the initial about:blank document:")
-    shouldThrow("elementAInActiveDocumentFunction()", '"SecurityError (DOM Exception 18): Blocked a frame with origin \\"http://127.0.0.1:8000\\" from accessing a frame with origin \\"http://localhost:8000\\". Protocols, domains, and ports must match."');
+    shouldThrowErrorName("elementAInActiveDocumentFunction()", 'SecurityError');
 
     debug("<br>Lookup named element whose name does not correspond to an element in the initial about:blank document:");
-    shouldThrow("elementBInActiveDocumentFunction()", '"SecurityError (DOM Exception 18): Blocked a frame with origin \\"http://127.0.0.1:8000\\" from accessing a frame with origin \\"http://localhost:8000\\". Protocols, domains, and ports must match."');
+    shouldThrowErrorName("elementBInActiveDocumentFunction()", 'SecurityError');
 
     finishJSTest();
 }

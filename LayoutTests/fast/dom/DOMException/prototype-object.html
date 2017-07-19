@@ -12,7 +12,7 @@ try {
   e = err;
 }
 
-shouldBeEqualToString("e.toString()", "HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.");
+shouldBeEqualToString("e.toString()", "HierarchyRequestError: The operation would yield an incorrect node tree.");
 shouldBeEqualToString("Object.prototype.toString.call(e)", "[object DOMException]");
 shouldBeEqualToString("Object.prototype.toString.call(e.__proto__)", "[object DOMExceptionPrototype]");
 shouldBeEqualToString("Object.prototype.toString.call(e.__proto__.__proto__)", "[object Object]");

@@ -13,7 +13,7 @@ PASS crypto.subtle.exportKey("raw", Symbol()) rejected promise  with TypeError: 
 PASS crypto.subtle.exportKey("raw", { }) rejected promise  with TypeError: Invalid CryptoKey.
 PASS crypto.subtle.exportKey("raw", "foo") rejected promise  with TypeError: Invalid CryptoKey.
 PASS crypto.subtle.exportKey("raw", fakedKey) rejected promise  with TypeError: Invalid CryptoKey.
-PASS crypto.subtle.exportKey("raw", key) rejected promise  with InvalidAccessError (DOM Exception 15): The CryptoKey is nonextractable.
+PASS crypto.subtle.exportKey("raw", key) rejected promise  with InvalidAccessError: The CryptoKey is nonextractable.
 PASS successfullyParsed is true
 
 TEST COMPLETE

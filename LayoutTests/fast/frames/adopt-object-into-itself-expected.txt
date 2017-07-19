@@ -1,2 +1,2 @@
-ALERT: HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.
+ALERT: HierarchyRequestError: The operation would yield an incorrect node tree.
 

@@ -22,7 +22,7 @@ function testValidSelector(selectorString, expectedSerializedSelector) {
 }
 
 function testInvalidSelector(selectorString) {
-    shouldThrow('document.querySelector("' + selectorString + '")', '"SyntaxError (DOM Exception 12): The string did not match the expected pattern."');
+    shouldThrowErrorName('document.querySelector("' + selectorString + '")', 'SyntaxError');
 
     var styleContainer = document.getElementById('style-container');
     styleContainer.innerHTML = selectorString + ' { }';

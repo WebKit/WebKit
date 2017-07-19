@@ -28,15 +28,15 @@ function runTest() {
     bufferSource.connect(context.destination);
 
     // 'stop' should be called only after 'start'.
-    shouldThrow("bufferSource.stop(0)", "'InvalidStateError (DOM Exception 11): The object is in an invalid state.'");
+    shouldThrowErrorName("bufferSource.stop(0)", "InvalidStateError");
     bufferSource.start(0);
 
     // 'start' should be called only once.
-    shouldThrow("bufferSource.start(0)", "'InvalidStateError (DOM Exception 11): The object is in an invalid state.'");
+    shouldThrowErrorName("bufferSource.start(0)", "InvalidStateError");
     bufferSource.stop(0);
 
     // 'stop' should be called only once.
-    shouldThrow("bufferSource.stop(0)", "'InvalidStateError (DOM Exception 11): The object is in an invalid state.'");
+    shouldThrowErrorName("bufferSource.stop(0)", "InvalidStateError");
 
     context.oncomplete = finishJSTest;
     context.startRendering();

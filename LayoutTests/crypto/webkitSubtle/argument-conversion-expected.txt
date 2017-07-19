@@ -22,17 +22,17 @@ PASS crypto.webkitSubtle.digest({name: 'sha-1'}, [10]) threw exception TypeError
 PASS crypto.webkitSubtle.digest({name: 'sha-1'}, [new Uint8Array([0])]) threw exception TypeError: Type error.
 
 Passing invalid algorithmIdentifiers to digest()
-PASS crypto.webkitSubtle.digest({ toString:function() { return 'sha-1' } }, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest({name: ''}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest({name: null}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest({name: undefined}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest({name: 'sha'}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest({name: 1}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest('', data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest(null, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest(undefined, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest(1, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
-PASS crypto.webkitSubtle.digest({}, data) threw exception NotSupportedError (DOM Exception 9): The operation is not supported..
+PASS crypto.webkitSubtle.digest({ toString:function() { return 'sha-1' } }, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest({name: ''}, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest({name: null}, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest({name: undefined}, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest({name: 'sha'}, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest({name: 1}, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest('', data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest(null, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest(undefined, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest(1, data) threw exception NotSupportedError: The operation is not supported..
+PASS crypto.webkitSubtle.digest({}, data) threw exception NotSupportedError: The operation is not supported..
 PASS successfullyParsed is true
 
 TEST COMPLETE

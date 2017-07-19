@@ -10,7 +10,7 @@ description("Test that we properly handle attempts to attach an Attribute to the
 window.callback = () => {
     window.callback = null;
 
-    shouldThrow("div.setAttributeNodeNS(src)", "'InUseAttributeError (DOM Exception 10): The attribute is in use.'");
+    shouldThrowErrorName("div.setAttributeNodeNS(src)", "InUseAttributeError");
     frame.setAttributeNodeNS(document.createAttribute('src'));
 };
 

@@ -90,7 +90,7 @@ DOMStringMap
 PASS Reflect.get(document.body.dataset, "cocoa") is "cappuccino"
 PASS Reflect.set(document.body.dataset, "cocoa", "sweet") is true
 PASS Reflect.get(document.body.dataset, "cocoa") is "sweet"
-PASS Reflect.set(document.body.dataset, "cocoa-cappuccino", "sweet") threw exception SyntaxError (DOM Exception 12): The string did not match the expected pattern..
+PASS Reflect.set(document.body.dataset, "cocoa-cappuccino", "sweet") threw exception SyntaxError: The string did not match the expected pattern..
 PASS Reflect.set(document.body.dataset, 0, "sweet") is true
 PASS Reflect.get(document.body.dataset, 0) is "sweet"
 DOMStringMap ignores the receiver. These putDelegate only work with ::put (not ::defineOwnProperty). So they behave as the special setter, we should not fallback to the OrdinarySet.

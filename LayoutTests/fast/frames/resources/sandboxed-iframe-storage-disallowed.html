@@ -54,9 +54,9 @@ function shouldThrow(_a, _e)
 <script>
 
 window.onload = function() {
-    shouldThrow("window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1)", "'SecurityError (DOM Exception 18): The operation is insecure.'");
-    shouldThrow("window.localStorage", "'SecurityError (DOM Exception 18): The operation is insecure.'");
-    shouldThrow("window.sessionStorage", "'SecurityError (DOM Exception 18): The operation is insecure.'");
+    shouldThrow("window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1)", "'SecurityError: The operation is insecure.'");
+    shouldThrow("window.localStorage", "'SecurityError: The operation is insecure.'");
+    shouldThrow("window.sessionStorage", "'SecurityError: The operation is insecure.'");
 }
 
 </script>

@@ -11,8 +11,8 @@ var sel = window.getSelection();
 var textNode = document.createTextNode("abcdef");
 document.body.appendChild(textNode);
 
-shouldThrow("sel.collapseToStart()", "'InvalidStateError (DOM Exception 11): The object is in an invalid state.'");
-shouldThrow("sel.collapseToEnd()", "'InvalidStateError (DOM Exception 11): The object is in an invalid state.'");
+shouldThrowErrorName("sel.collapseToStart()", "InvalidStateError");
+shouldThrowErrorName("sel.collapseToEnd()", "InvalidStateError");
 
 sel.selectAllChildren(textNode);
 

@@ -10,7 +10,6 @@
 description('Check stepUp() and stepDown() bahevior for type=datetime-local.');
 
 var input = document.createElement('input');
-var invalidStateErr = '"InvalidStateError (DOM Exception 11): The object is in an invalid state."';
 
 function setInputAttributes(min, max, step, value) {
     input.min = min;
@@ -39,8 +38,8 @@ function stepDown(value, step, min, optionalStepCount) {
 
 input.type = 'datetime-local';
 debug('Invalid value');
-shouldThrow('stepUp("", null, null)', invalidStateErr);
-shouldThrow('stepDown("", null, null)', invalidStateErr);
+shouldThrowErrorName('stepUp("", null, null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("", null, null)', "InvalidStateError");
 debug('Non-number arguments');
 shouldBe('stepUp("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
 shouldBe('stepDown("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
@@ -56,13 +55,13 @@ shouldBe('stepDown("2010-02-10T20:13", null, null, 11)', '"2010-02-10T20:02"');
 shouldBe('stepUp("1970-01-01T20:13", "4", null, 2)', '"1970-01-01T20:13:08"');
 shouldBe('stepDown("1970-01-01T20:13", "4", null, 3)', '"1970-01-01T20:12:48"');
 debug('Step=any');
-shouldThrow('stepUp("2010-02-10T20:13", "any", null)', invalidStateErr);
-shouldThrow('stepDown("2010-02-10T20:13", "any", null)', invalidStateErr);
+shouldThrowErrorName('stepUp("2010-02-10T20:13", "any", null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("2010-02-10T20:13", "any", null)', "InvalidStateError");
 debug('Overflow/underflow');
-shouldThrow('stepUp("2010-02-10T20:13", "3.40282346e+38", null)', invalidStateErr);
-shouldThrow('stepDown("2010-02-10T20:13", "3.40282346e+38", null)', invalidStateErr);
-shouldThrow('stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13")', invalidStateErr);
-shouldThrow('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', invalidStateErr);
+shouldThrowErrorName('stepUp("2010-02-10T20:13", "3.40282346e+38", null)', "InvalidStateError");
+shouldThrowErrorName('stepDown("2010-02-10T20:13", "3.40282346e+38", null)', "InvalidStateError");
+shouldThrowErrorName('stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13")', "InvalidStateError");
+shouldThrowErrorName('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', "InvalidStateError");
 </script>
 <script src="../../../resources/js-test-post.js"></script>
 </body>

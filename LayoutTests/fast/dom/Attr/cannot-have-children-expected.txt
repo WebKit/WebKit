@@ -15,8 +15,8 @@ PASS idAttr.childNodes.length is 0
 PASS idAttr.value is "test"
 PASS idAttr.nodeValue is "test"
 PASS idAttr.textContent is "test"
-PASS idAttr.appendChild(text) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
-PASS idAttr.insertBefore(text, null) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+PASS idAttr.appendChild(text) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
+PASS idAttr.insertBefore(text, null) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
 
 PASS detachedAttr.name is "foo"
 PASS detachedAttr.localName is "foo"
@@ -29,8 +29,8 @@ PASS detachedAttr.firstChild is null
 PASS detachedAttr.lastChild is null
 PASS detachedAttr.hasChildNodes() is false
 PASS detachedAttr.childNodes.length is 0
-PASS detachedAttr.appendChild(text) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
-PASS detachedAttr.insertBefore(text, null) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+PASS detachedAttr.appendChild(text) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
+PASS detachedAttr.insertBefore(text, null) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
 
 detachedAttr.value = 'bar'
 PASS detachedAttr.value is "bar"
@@ -73,8 +73,8 @@ PASS fooAttr.firstChild is null
 PASS fooAttr.lastChild is null
 PASS fooAttr.hasChildNodes() is false
 PASS fooAttr.childNodes.length is 0
-PASS fooAttr.appendChild(text) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
-PASS fooAttr.insertBefore(text, null) threw exception HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree..
+PASS fooAttr.appendChild(text) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
+PASS fooAttr.insertBefore(text, null) threw exception HierarchyRequestError: The operation would yield an incorrect node tree..
 
 PASS successfullyParsed is true
 

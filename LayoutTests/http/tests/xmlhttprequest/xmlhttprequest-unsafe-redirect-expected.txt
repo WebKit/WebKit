@@ -5,7 +5,7 @@ Sync XHR started.
 readyState change 1
 readyState change 4
 Error event.
-Exception: NetworkError (DOM Exception 19): A network error occurred.
+Exception: NetworkError: A network error occurred.
 Async XHR started.
 readyState change 1
 readyState change 4

@@ -38,8 +38,6 @@
     readonly attribute DOMString        name;
     readonly attribute DOMString        message;
 
-    [NotEnumerable] DOMString toString();
-
     // ExceptionCode
     const unsigned short INDEX_SIZE_ERR = 1;
     const unsigned short DOMSTRING_SIZE_ERR = 2;

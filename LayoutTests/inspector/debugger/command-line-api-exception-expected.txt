@@ -30,7 +30,7 @@ $exception => SyntaxError: Unexpected token ')'
 Uncaught exception in test page: SyntaxError: Unexpected token ')' [exceptions.js:16]
 
 -- Running test case: UncaughtDOMException
-$exception => IndexSizeError (DOM Exception 1): The index is not in the allowed range.
+$exception => IndexSizeError: The index is not in the allowed range.
 Uncaught exception in test page: IndexSizeError (DOM Exception 1): The index is not in the allowed range. [exceptions.js:22]
 
 -- Running test case: UncaughtString

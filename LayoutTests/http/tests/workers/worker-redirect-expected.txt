@@ -2,7 +2,7 @@ CONSOLE MESSAGE: Unsafe attempt to load URL http://localhost:8000/workers/resour
 
 Test that loading the worker's script does not allow a cross origin redirect (bug 26146)
 
-SUCCESS: threw exception (SecurityError (DOM Exception 18): The operation is insecure.) when attempting to cross origin while loading the worker script.
+SUCCESS: threw exception (SecurityError: The operation is insecure.) when attempting to cross origin while loading the worker script.
 SUCCESS: threw error when attempting to redirected cross origin while loading the worker script.
 DONE
 
