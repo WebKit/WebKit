@@ -1,3 +1,15 @@
+2017-07-19  Andy Estes  <aestes@apple.com>
+
+        Use a cast to work around clang's false -Wobjc-literal-conversion warnings
+        https://bugs.webkit.org/show_bug.cgi?id=174631
+
+        Reviewed by Dan Bernstein.
+
+        Instead of ignoring -Wobjc-literal-conversion, use a cast to work around rdar://problem/33383354.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+
 2017-07-19  Chris Dumez  <cdumez@apple.com>
 
         Make cross-origin properties enumerable

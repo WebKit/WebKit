@@ -276,11 +276,9 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     // and instead set data for concrete plain text types. See <https://bugs.webkit.org/show_bug.cgi?id=173317>.
     [representations setValue:textAsString forKey:(NSString *)kUTTypeText];
 
-    // FIXME: This pragma can be removed once rdar://problem/33383354 is resolved.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-literal-conversion"
-    [m_pasteboard setItems:@[representations.get()]];
-#pragma clang diagnostic pop
+    // Explicitly cast m_pasteboard to UIPasteboard * to work around rdar://problem/33383354.
+    ASSERT([m_pasteboard isKindOfClass:getUIPasteboardClass()]);
+    [(UIPasteboard *)m_pasteboard setItems:@[representations.get()]];
 }
 
 void PlatformPasteboard::writeObjectRepresentations(const PasteboardImage& pasteboardImage)
@@ -330,11 +328,9 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
         [representations setObject:(NSURL *)pasteboardImage.url.url forKey:(NSString *)kUTTypeURL];
     }
 
-    // FIXME: This pragma can be removed once rdar://problem/33383354 is resolved.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-literal-conversion"
-    [m_pasteboard setItems:@[representations.get()]];
-#pragma clang diagnostic pop
+    // Explicitly cast m_pasteboard to UIPasteboard * to work around rdar://problem/33383354.
+    ASSERT([m_pasteboard isKindOfClass:getUIPasteboardClass()]);
+    [(UIPasteboard *)m_pasteboard setItems:@[representations.get()]];
 }
 
 void PlatformPasteboard::writeObjectRepresentations(const String& pasteboardType, const String& text)
@@ -377,11 +373,9 @@ void PlatformPasteboard::write(const String& pasteboardType, const String& text)
         [representations setValue:[textAsString dataUsingEncoding:NSUTF16StringEncoding] forKey:(NSString *)kUTTypeUTF16PlainText];
     }
 
-    // FIXME: This pragma can be removed once rdar://problem/33383354 is resolved.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-literal-conversion"
-    [m_pasteboard setItems:@[representations.get()]];
-#pragma clang diagnostic pop
+    // Explicitly cast m_pasteboard to UIPasteboard * to work around rdar://problem/33383354.
+    ASSERT([m_pasteboard isKindOfClass:getUIPasteboardClass()]);
+    [(UIPasteboard *)m_pasteboard setItems:@[representations.get()]];
 }
 
 void PlatformPasteboard::writeObjectRepresentations(const PasteboardURL& url)
