@@ -1731,6 +1731,14 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             continue;
 
         if (is<AccessibilityNodeObject>(*child)) {
+            // We should ignore the child if it's labeled by this node.
+            // This could happen when this node labels multiple child nodes and we didn't
+            // skip in the above ignoredChildNode check.
+            Vector<Element*> labeledByElements;
+            downcast<AccessibilityNodeObject>(*child).ariaLabeledByElements(labeledByElements);
+            if (labeledByElements.contains(node))
+                continue;
+            
             Vector<AccessibilityText> textOrder;
             downcast<AccessibilityNodeObject>(*child).alternativeText(textOrder);
             if (textOrder.size() > 0 && textOrder[0].text.length()) {
