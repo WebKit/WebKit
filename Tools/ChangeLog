@@ -1,3 +1,13 @@
+2017-07-19  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix API test failure after r219663.
+
+        The test was hard-coding an exception string and the string has changed slightly
+        in r219663.
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2017-07-19  Megan Gardner  <megan_gardner@apple.com>
 
         Don't write file URLs to iOS Pasteboard

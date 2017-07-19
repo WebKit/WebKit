@@ -115,7 +115,7 @@ TEST(WebKit2, WebsiteDataStoreCustomPaths)
     // We expect 4 messages, 1 each for WebSQL, IndexedDB, cookies, and localStorage.
     EXPECT_STREQ([getNextMessage().body UTF8String], "localstorage written");
     EXPECT_STREQ([getNextMessage().body UTF8String], "cookie written");
-    EXPECT_STREQ([getNextMessage().body UTF8String], "Exception: QuotaExceededError (DOM Exception 22): The quota has been exceeded.");
+    EXPECT_STREQ([getNextMessage().body UTF8String], "Exception: QuotaExceededError: The quota has been exceeded.");
     EXPECT_STREQ([getNextMessage().body UTF8String], "Success opening indexed database");
 
     [[[webView configuration] processPool] _syncNetworkProcessCookies];
