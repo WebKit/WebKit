@@ -1,3 +1,28 @@
+2017-07-19  Chris Dumez  <cdumez@apple.com>
+
+        Make cross-origin properties enumerable
+        https://bugs.webkit.org/show_bug.cgi?id=174576
+
+        Reviewed by Darin Adler.
+
+        Makes cross-origin properties enumerable on Window and Location objects
+        as per:
+        - https://github.com/whatwg/html/pull/2777
+
+        This simplifies our code quite a bit.
+
+        No new tests, updated existing tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        (WebCore::JSDOMWindow::getOwnPropertyNames):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::getOwnPropertySlotCommon):
+        (WebCore::JSLocation::getOwnPropertyNames):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+
 2017-07-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [EME] Build failure with Clang-3.8 on InitDataRegistry.cpp

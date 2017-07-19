@@ -62,7 +62,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
 
     // We only allow access to Location.replace() cross origin.
     if (propertyName == state.propertyNames().replace) {
-        slot.setCustom(&thisObject, ReadOnly | DontEnum, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
+        slot.setCustom(&thisObject, ReadOnly, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
         return true;
     }
 
@@ -71,7 +71,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
     if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == state.propertyNames().href) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
         CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, nullptr, entry->propertyPutter());
-        slot.setCustomGetterSetter(&thisObject, DontEnum | CustomAccessor, customGetterSetter);
+        slot.setCustomGetterSetter(&thisObject, CustomAccessor, customGetterSetter);
         return true;
     }
 
@@ -185,8 +185,7 @@ void JSLocation::getOwnPropertyNames(JSObject* object, ExecState* exec, Property
 {
     JSLocation* thisObject = jsCast<JSLocation*>(object);
     if (!BindingSecurity::shouldAllowAccessToFrame(exec, thisObject->wrapped().frame(), DoNotReportSecurityError)) {
-        if (mode.includeDontEnumProperties())
-            addCrossOriginLocationOwnPropertyNames(*exec, propertyNames);
+        addCrossOriginLocationOwnPropertyNames(*exec, propertyNames);
         return;
     }
     Base::getOwnPropertyNames(thisObject, exec, propertyNames, mode);

@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: line 384: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
-CONSOLE MESSAGE: line 384: Blocked a frame with origin "http://localhost:8800" from accessing a frame with origin "http://127.0.0.1:8800". Protocols, domains, and ports must match.
 
 PASS Basic sanity-checking 
 PASS Only whitelisted properties are accessible cross-origin 
@@ -11,7 +9,7 @@ PASS [[GetOwnProperty]] - Properties on cross-origin objects should be reported 
 PASS [[GetOwnProperty]] - Property descriptors for cross-origin properties should be set up correctly 
 PASS [[Delete]] Should throw on cross-origin objects 
 PASS [[DefineOwnProperty]] Should throw for cross-origin objects 
-PASS [[Enumerate]] should return an empty iterator 
+PASS Can only enumerate safelisted properties 
 PASS [[OwnPropertyKeys]] should return all properties from cross-origin objects 
 PASS [[OwnPropertyKeys]] should return the right symbol-named properties for cross-origin objects 
 PASS [[OwnPropertyKeys]] should place the symbols after the property names after the subframe indices 
