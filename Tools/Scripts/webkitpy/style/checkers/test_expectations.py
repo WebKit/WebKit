@@ -36,7 +36,8 @@ import sys
 
 from common import TabChecker
 from webkitpy.common.host import Host
-from webkitpy.layout_tests.models.test_expectations import TestExpectationParser
+from webkitpy.layout_tests.models import test_expectations
+from webkitpy.style.error_handlers import DefaultStyleErrorHandler
 
 
 _log = logging.getLogger(__name__)
@@ -78,7 +79,7 @@ class TestExpectationsChecker(object):
         pass
 
     def check_test_expectations(self, expectations_str, tests=None):
-        parser = TestExpectationParser(self._port_obj, tests, allow_rebaseline_modifier=False)
+        parser = test_expectations.TestExpectationParser(self._port_obj, tests, allow_rebaseline_modifier=False)
         expectations = parser.parse('expectations', expectations_str)
 
         level = 5
@@ -96,3 +97,52 @@ class TestExpectationsChecker(object):
 
         # Warn tabs in lines as well
         self.check_tabs(lines)
+
+    @staticmethod
+    def _should_log_linter_warning(warning, files, cwd, host):
+        # Case 1, the line the warning was tied to is in our patch.
+        abs_filename = host.filesystem.join(cwd, warning.filename)
+        if abs_filename in files and (files[abs_filename] is None or warning.line_number in files[abs_filename]):
+            return True
+
+        for file, lines in warning.related_files.iteritems():
+            abs_filename = host.filesystem.join(cwd, file)
+            if abs_filename in files:
+                # Case 2, a file associated with the warning is in our patch
+                # Note that this will really only happen if you delete a test.
+                if lines is None:
+                    return True
+
+                # Case 3, a line associated with the warning is in our patch.
+                for line in lines:
+                    if line in files[abs_filename]:
+                        return True
+        return False
+
+    @staticmethod
+    def lint_test_expectations(files, configuration, cwd, increment_error_count=lambda: 0, line_numbers=None, host=Host()):
+        error_count = 0
+        files_linted = set()
+        ports_to_lint = [host.port_factory.get(name) for name in host.port_factory.all_port_names()]
+        for port in ports_to_lint:
+            for expectations_file in port.expectations_dict().keys():
+                style_error_handler = DefaultStyleErrorHandler(
+                    expectations_file,
+                    configuration,
+                    increment_error_count,
+                    line_numbers)
+
+                try:
+                    if expectations_file in files_linted:
+                        continue
+                    expectations = test_expectations.TestExpectations(
+                        port,
+                        expectations_to_lint={expectations_file: port.expectations_dict()[expectations_file]})
+                    expectations.parse_all_expectations()
+                except test_expectations.ParseError as e:
+                    for warning in e.warnings:
+                        if TestExpectationsChecker._should_log_linter_warning(warning, files, cwd, host):
+                            style_error_handler(warning.line_number, 'test/expectations', 5, warning.error)
+                            error_count += 1
+                files_linted.add(expectations_file)
+        return error_count

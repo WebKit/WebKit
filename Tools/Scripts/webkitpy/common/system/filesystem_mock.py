@@ -332,7 +332,7 @@ class MockFileSystem(object):
         self.files[path] = contents
         self.written_files[path] = contents
 
-    def open_text_file_for_reading(self, path):
+    def open_text_file_for_reading(self, path, errors='strict'):
         if self.files[path] is None:
             self._raise_not_found(path)
         return ReadableTextFileObject(self, path, self.files[path])

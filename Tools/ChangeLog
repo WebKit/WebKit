@@ -1,3 +1,89 @@
+2017-07-19  Jonathan Bedard  <jbedard@apple.com>
+
+        lint-test-expectations should be run during style checking
+        https://bugs.webkit.org/show_bug.cgi?id=173559
+        <rdar://problem/32854941>
+
+        Reviewed by David Kilzer.
+
+        Running the test expectation linter requires reading both files and lines not in the
+        patch because, for example, deletion of a test can cause a lint failure even though
+        no test expectations where modified. This means that the linter will occasionally warn
+        about lines which were not changed in a given patch but whose error is related to a
+        change made in that patch.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.open_text_file_for_reading): Add 'errors' argument to mimic filesystem.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationWarning): Added class to pass warnings as an object instead of a string.
+        (TestExpectationWarning.__init__): Construct warning with file name, line number, line
+        content, description of the error and the name of the associated test.
+        (TestExpectationWarning.__str__): Convert to string so that existing printing code works.
+        (TestExpectationParser.__init__): Pass shorten_filename function to
+        TestExpectationsParser to add a deleted file to the related_files dictionary.
+        (TestExpectationParser._check_test_exists): If the test does not exist, add the
+        missing path to the related_files dictionary.
+        (TestExpectationLine.__init__): Add related_files dictionary, which tracks
+        files and line numbers related to this test expectation line. This will allow
+        tracking linter errors in the style checker occurring across multiple files.
+        (TestExpectationsModel._already_seen_better_match): Add redundant expectation
+        lines to related_files dictionary.
+        (TestExpectations.__init__): Pass self._shorten_filename to TestExpectationParser.
+        (TestExpectations._report_warnings): Construct warning object instead of string
+        when adding to warnings list.
+        * Scripts/webkitpy/port/win.py: Changed logging level form warning to debug to
+        clean-up log.
+        * Scripts/webkitpy/style/checker.py:
+        (ProcessorBase.do_association_check): Add required function for processor classes.
+        (StyleProcessor):
+        (StyleProcessor.do_association_check): Run the TestExpectations linter when
+        checking for errors between associated files.
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.check_test_expectations): Reflect changed import statements.
+        (TestExpectationsChecker):
+        (TestExpectationsChecker._should_log_linter_warning): Given a warning, a dictionary
+        of modified files, the current working directory and the host, determine if the linter
+        warning is associated with the changes.
+        (TestExpectationsChecker.lint_test_expectations): Lint test expectations for the
+        style checker.
+        * Scripts/webkitpy/style/filereader.py:
+        (TextFileReader):
+        (TextFileReader.__init__): Track modified files in dictionary instead of a counter.
+        (TextFileReader.file_count): Use dictionary to determine the number of modified files.
+        (TextFileReader.process_file): Track both the number of files changed and which lines
+        in those files were changed.
+        (TextFileReader.do_association_check): Run the processor's association check on all
+        modified or deleted files processed by TextFileReader.
+        (TextFileReader.delete_file): Track deleted files in _files dictionary.
+        (TextFileReader.count_delete_only_file): Deleted.
+        * Scripts/webkitpy/style/filereader_unittest.py:
+        (TextFileReaderTest.test_delete_file): Renamed function to reflect new function name.
+        (TextFileReaderTest.test_count_delete_only_file): Moved to test_delete_file.
+        * Scripts/webkitpy/style/main.py:
+        (CheckWebKitStyle.main): When running the style checker on a specific list of files,
+        explicitly run the association check on the file reader.
+        * Scripts/webkitpy/style/main_unittest.py:
+        (ExpectationLinterInStyleCheckerTest): Added to test the TestExpectationLinter now
+        embedded in the style checker.
+        (ExpectationLinterInStyleCheckerTest.setUp): Set up the style checker configuration.
+        (ExpectationLinterInStyleCheckerTest._generate_file_reader): Given a filesystem object,
+        construct the TextFileReader object with a StyleProcessor used to run style checks on
+        specific files.
+        (ExpectationLinterInStyleCheckerTest._generate_testing_host): Generate a host used for
+        testing the test expectation linter inside the style checker. This host must contain a
+        mock file system with the basic structure of test expectations.
+        (ExpectationLinterInStyleCheckerTest.test_no_linter_errors):
+        (ExpectationLinterInStyleCheckerTest.test_linter_duplicate_line):
+        (ExpectationLinterInStyleCheckerTest.test_linter_duplicate_line_no_edit):
+        (ExpectationLinterInStyleCheckerTest.test_linter_deleted_file):
+        (ExpectationLinterInStyleCheckerTest.test_linter_deleted_file_no_edit):
+        * Scripts/webkitpy/style/patchreader.py:
+        (PatchReader.check): Specify which file was deleted, run the association check.
+        * Scripts/webkitpy/style/patchreader_unittest.py:
+        (PatchReaderTest.MockTextFileReader.delete_file): Renamed count_delete_only_file.
+        (PatchReaderTest.MockTextFileReader.do_association_check): Added.
+        (PatchReaderTest.MockTextFileReader.count_delete_only_file): Renamed delete_file.
+
 2017-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Implement WTF::ThreadGroup

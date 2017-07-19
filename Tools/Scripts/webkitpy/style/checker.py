@@ -60,6 +60,7 @@ from error_handlers import DefaultStyleErrorHandler
 from filter import FilterConfiguration
 from optparser import ArgumentParser
 from optparser import DefaultCommandOptionValues
+from webkitpy.common.host import Host
 from webkitpy.common.system.logutils import configure_logging as _configure_logging
 from webkitpy.port.config import apple_additions
 
@@ -811,6 +812,22 @@ class ProcessorBase(object):
         """
         raise NotImplementedError('Subclasses should implement.')
 
+    def do_association_check(self, files, cwd, host=Host()):
+        """It may be the case that changes in a file cause style errors to
+        occur elsewhere in the modified file or in other files (most notably,
+        this is the case for the test expectations linter). The association check
+        is designed to take find issues which require parsing of files outside
+        those provided to the processor.
+
+        Args:
+            files: A dictionary of file names to lists of lines modified in the provided
+            file.  Files which have been removed will also be in the dictionary, they
+            will map to 'None'
+            cwd: Current working directory, assumed to be the root of the scm repository
+            host: Current host for testing
+        """
+        raise NotImplementedError('Subclasses should implement.')
+
 
 class StyleProcessor(ProcessorBase):
 
@@ -918,3 +935,7 @@ class StyleProcessor(ProcessorBase):
         _log.debug("Using class: " + checker.__class__.__name__)
 
         checker.check(lines)
+
+    def do_association_check(self, files, cwd, host=Host()):
+        _log.debug("Running TestExpectations linter")
+        TestExpectationsChecker.lint_test_expectations(files, self._configuration, cwd, self._increment_error_count, host=host)

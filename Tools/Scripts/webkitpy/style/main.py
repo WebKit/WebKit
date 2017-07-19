@@ -147,6 +147,7 @@ class CheckWebKitStyle(object):
 
         if paths and not options.diff_files:
             file_reader.process_paths(paths)
+            file_reader.do_association_check(host.scm().checkout_root)
         else:
             changed_files = paths if options.diff_files else None
             patch = host.scm().create_patch(options.git_commit, changed_files=changed_files, git_index=options.git_index)

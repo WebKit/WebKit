@@ -33,6 +33,8 @@
 import logging
 import sys
 
+from webkitpy.common.host import Host
+
 
 _log = logging.getLogger(__name__)
 
@@ -62,8 +64,12 @@ class TextFileReader(object):
 
         self.filesystem = filesystem
         self._processor = processor
-        self.file_count = 0
+        self._files = {}
         self.delete_only_file_count = 0
+
+    @property
+    def file_count(self):
+        return len(self._files) - self.delete_only_file_count
 
     def _read_lines(self, file_path):
         """Read the file at a path, and return its lines.
@@ -103,7 +109,13 @@ class TextFileReader(object):
           SystemExit: If no file at file_path exists.
 
         """
-        self.file_count += 1
+        abs_file_path = self.filesystem.abspath(file_path)
+        if abs_file_path not in self._files:
+            self._files[abs_file_path] = None
+        if 'line_numbers' in kwargs:
+            if self._files[abs_file_path] is None:
+                self._files[abs_file_path] = []
+            self._files[abs_file_path] = self._files[abs_file_path] + kwargs['line_numbers']
 
         if not self.filesystem.exists(file_path) and file_path != "-":
             _log.error("File does not exist: '%s'" % file_path)
@@ -135,11 +147,16 @@ class TextFileReader(object):
             else:
                 self.process_file(path)
 
-    def count_delete_only_file(self):
+    def do_association_check(self, cwd, host=Host()):
+        self._processor.do_association_check(self._files, cwd, host=host)
+
+    def delete_file(self, file_path=None):
         """Count up files that contains only deleted lines.
 
         Files which has no modified or newly-added lines don't need
         to check style, but should be treated as checked. For that
         purpose, we just count up the number of such files.
         """
+        if file_path:
+            self._files[self.filesystem.abspath(file_path)] = None
         self.delete_only_file_count += 1

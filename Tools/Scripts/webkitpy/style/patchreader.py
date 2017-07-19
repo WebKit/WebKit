@@ -77,7 +77,8 @@ class PatchReader(object):
                 # Don't check files which contain only deleted lines
                 # as they can never add style errors. However, mark them as
                 # processed so that we count up number of such files.
-                self._text_file_reader.count_delete_only_file()
+                self._text_file_reader.delete_file(path)
                 continue
 
             self._text_file_reader.process_file(file_path=path, line_numbers=line_numbers)
+        self._text_file_reader.do_association_check(fs.getcwd())

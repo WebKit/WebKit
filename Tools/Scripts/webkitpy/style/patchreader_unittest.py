@@ -45,13 +45,16 @@ class PatchReaderTest(unittest.TestCase):
             self.passed_to_process_file = []
             """A list of (file_path, line_numbers) pairs."""
             self.delete_only_file_count = 0
-            """A number of times count_delete_only_file() called"""
+            """A number of times delete_file() called"""
 
         def process_file(self, file_path, line_numbers):
             self.passed_to_process_file.append((file_path, line_numbers))
 
-        def count_delete_only_file(self):
+        def delete_file(self, file_path=None):
             self.delete_only_file_count += 1
+
+        def do_association_check(self, cwd):
+            pass
 
     def setUp(self):
         file_reader = self.MockTextFileReader()
