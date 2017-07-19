@@ -1,3 +1,11 @@
+2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations:
+        Unskip a bunch of Web Crypto tests that are passing now that
+        the underlying implementation has progressed.
+
 2017-07-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Setting the minimum font size preference doesn’t affect absolute line-height values, so lines overlap
