@@ -230,16 +230,20 @@ void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 void WebAutomationSessionProxy::evaluateJavaScriptFunction(uint64_t pageID, uint64_t frameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, int callbackTimeout, uint64_t callbackID)
 {
     WebPage* page = WebProcess::singleton().webPage(pageID);
-    if (!page)
+    if (!page) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, { },
+            Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound)), 0);
         return;
-
+    }
     WebFrame* frame = frameID ? WebProcess::singleton().webFrame(frameID) : page->mainWebFrame();
-    if (!frame)
+    if (!frame) {
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, { },
+            Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound)), 0);
         return;
+    }
 
     JSObjectRef scriptObject = scriptObjectForFrame(*frame);
-    if (!scriptObject)
-        return;
+    ASSERT(scriptObject);
 
     frameID = frame->frameID();
     JSValueRef exception = nullptr;

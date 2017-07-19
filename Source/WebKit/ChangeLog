@@ -1,5 +1,22 @@
 2017-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Web Automation: evaluateJavaScriptFunction should always notify the web process before returning early
+        https://bugs.webkit.org/show_bug.cgi?id=174623
+
+        Reviewed by Brian Burg.
+
+        It currently returns early if page, frame or scriptObject are nullptr, in which cases the UI process is not
+        notified. This causes test testShouldNotBeAbleToDoAnythingTheFrameIsDeletedFromUnderUs to hang, because message
+        DidEvaluateJavaScriptFunction is never sent when the given frame no longer exists. We should send
+        DidEvaluateJavaScriptFunction with WindowNotFound in case of page is nullptr and FrameNotFound if the frame is
+        nullptr. The scriptObject early return is actually wrong, because scriptObjectForFrame creates a new script if
+        there's isn't one for the given frame.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction):
+
+2017-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Web Automation: pending evaluate script callbacks are stored with the wrong frame ID when using the default main frame
         https://bugs.webkit.org/show_bug.cgi?id=174622
 
