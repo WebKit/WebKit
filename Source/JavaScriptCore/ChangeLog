@@ -1,3 +1,57 @@
+2017-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Implement WTF::ThreadGroup
+        https://bugs.webkit.org/show_bug.cgi?id=174081
+
+        Reviewed by Mark Lam.
+
+        Large part of MachineThreads are now removed and replaced with WTF::ThreadGroup.
+        And SamplingProfiler and others interact with WTF::Thread directly.
+
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        * heap/MachineStackMarker.cpp:
+        (JSC::MachineThreads::MachineThreads):
+        (JSC::captureStack):
+        (JSC::MachineThreads::tryCopyOtherThreadStack):
+        (JSC::MachineThreads::tryCopyOtherThreadStacks):
+        (JSC::MachineThreads::gatherConservativeRoots):
+        (JSC::ActiveMachineThreadsManager::Locker::Locker): Deleted.
+        (JSC::ActiveMachineThreadsManager::add): Deleted.
+        (JSC::ActiveMachineThreadsManager::remove): Deleted.
+        (JSC::ActiveMachineThreadsManager::contains): Deleted.
+        (JSC::ActiveMachineThreadsManager::ActiveMachineThreadsManager): Deleted.
+        (JSC::activeMachineThreadsManager): Deleted.
+        (JSC::MachineThreads::~MachineThreads): Deleted.
+        (JSC::MachineThreads::addCurrentThread): Deleted.
+        (): Deleted.
+        (JSC::MachineThreads::removeThread): Deleted.
+        (JSC::MachineThreads::removeThreadIfFound): Deleted.
+        (JSC::MachineThreads::MachineThread::MachineThread): Deleted.
+        (JSC::MachineThreads::MachineThread::getRegisters): Deleted.
+        (JSC::MachineThreads::MachineThread::Registers::stackPointer): Deleted.
+        (JSC::MachineThreads::MachineThread::Registers::framePointer): Deleted.
+        (JSC::MachineThreads::MachineThread::Registers::instructionPointer): Deleted.
+        (JSC::MachineThreads::MachineThread::Registers::llintPC): Deleted.
+        (JSC::MachineThreads::MachineThread::captureStack): Deleted.
+        * heap/MachineStackMarker.h:
+        (JSC::MachineThreads::addCurrentThread):
+        (JSC::MachineThreads::getLock):
+        (JSC::MachineThreads::threads):
+        (JSC::MachineThreads::MachineThread::suspend): Deleted.
+        (JSC::MachineThreads::MachineThread::resume): Deleted.
+        (JSC::MachineThreads::MachineThread::threadID): Deleted.
+        (JSC::MachineThreads::MachineThread::stackBase): Deleted.
+        (JSC::MachineThreads::MachineThread::stackEnd): Deleted.
+        (JSC::MachineThreads::threadsListHead): Deleted.
+        * runtime/SamplingProfiler.cpp:
+        (JSC::FrameWalker::isValidFramePointer):
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        * runtime/SamplingProfiler.h:
+        * wasm/WasmMachineThreads.cpp:
+        (JSC::Wasm::resetInstructionCacheOnAllThreads):
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_RANGE_LOOP_ANALYSIS

@@ -1,3 +1,12 @@
+2017-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Implement WTF::ThreadGroup
+        https://bugs.webkit.org/show_bug.cgi?id=174081
+
+        Reviewed by Mark Lam.
+
+        * Shared/AsyncRequest.h:
+
 2017-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle invalid selector errors

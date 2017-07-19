@@ -91,6 +91,7 @@
 #include <process.h>
 #include <windows.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -103,6 +104,8 @@
 #endif
 
 namespace WTF {
+
+static StaticLock globalSuspendLock;
 
 Thread::Thread()
 {
@@ -243,7 +246,7 @@ void Thread::detach()
 auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 {
     RELEASE_ASSERT_WITH_MESSAGE(id() != currentThread(), "We do not support suspending the current thread itself.");
-    std::lock_guard<std::mutex> locker(m_mutex);
+    LockHolder locker(globalSuspendLock);
     DWORD result = SuspendThread(m_handle);
     if (result != (DWORD)-1)
         return { };
@@ -253,13 +256,13 @@ auto Thread::suspend() -> Expected<void, PlatformSuspendError>
 // During resume, suspend or resume should not be executed from the other threads.
 void Thread::resume()
 {
-    std::lock_guard<std::mutex> locker(m_mutex);
+    LockHolder locker(globalSuspendLock);
     ResumeThread(m_handle);
 }
 
 size_t Thread::getRegisters(PlatformRegisters& registers)
 {
-    std::lock_guard<std::mutex> locker(m_mutex);
+    LockHolder locker(globalSuspendLock);
     registers.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
     GetThreadContext(m_handle, &registers);
     return sizeof(CONTEXT);

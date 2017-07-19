@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,46 +24,29 @@
  */
 
 #include "config.h"
-#include "WasmMachineThreads.h"
+#include "ThreadGroup.h"
 
-#if ENABLE(WEBASSEMBLY)
-
-#include "MachineStackMarker.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadMessage.h>
-#include <wtf/threads/Signals.h>
 
-namespace JSC { namespace Wasm {
+namespace WTF {
 
-
-inline MachineThreads& wasmThreads()
+ThreadGroup::~ThreadGroup()
 {
-    static LazyNeverDestroyed<MachineThreads> threads;
-    static std::once_flag once;
-    std::call_once(once, [] {
-        threads.construct();
-    });
-
-    return threads;
+    std::lock_guard<std::mutex> locker(m_lock);
+    for (auto& thread : m_threads)
+        thread->removeFromThreadGroup(locker, *this);
 }
 
-void startTrackingCurrentThread()
+bool ThreadGroup::add(Thread& thread)
 {
-    wasmThreads().addCurrentThread();
+    std::lock_guard<std::mutex> locker(m_lock);
+    return thread.addToThreadGroup(locker, *this);
 }
 
-void resetInstructionCacheOnAllThreads()
+void ThreadGroup::addCurrentThread()
 {
-    auto locker = holdLock(wasmThreads().getLock());
-    for (auto& thread : wasmThreads().threads(locker)) {
-        sendMessage(thread.get(), [] (const PlatformRegisters&) {
-            // It's likely that the signal handler will already reset the instruction cache but we might as well be sure.
-            WTF::crossModifyingCodeFence();
-        });
-    }
+    bool isAdded = add(Thread::current());
+    ASSERT_UNUSED(isAdded, isAdded);
 }
 
-    
-} } // namespace JSC::Wasm
-
-#endif // ENABLE(WEBASSEMBLY)
+} // namespace WTF

@@ -1,3 +1,77 @@
+2017-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Implement WTF::ThreadGroup
+        https://bugs.webkit.org/show_bug.cgi?id=174081
+
+        Reviewed by Mark Lam.
+
+        This patch implements WTF::ThreadGroup. It implements core of JSC::MachineThreads with more reliable way.
+        JSC::MachineThreads was complicated because of managing dead threads. Each JSC::MachineThreads has its
+        own TLS with a registered destructor. And everytime a thread dies, the registered TLS destructor is called.
+        And this destructor will remove the current dying thread from JSC::MachineThreads.
+
+        However the above implementation is tricky. And each JSC::MachineThreads requires own TLS space, which is
+        not considered in WTF's Windows ThreadSpecific implementation. Current design works well since we only
+        have small number of MachineThreads right now.
+
+        Instead, we use more reliable way. After introducing WTF::Thread, WTF::Thread has WTF::Thread::didExit,
+        which is called when associated TLS (with WTF::Thread) is destroyed. We leverage this mechanism to remove
+        WTF::Thread from MachineThreads.
+
+        This patch introduces WTF::ThreadGroup. It is tightly integrated with WTF::Thread: WTF::Thread knows
+        ThreadGroups which includes this thread. And WTF::ThreadGroup of course knows WTF::Threads added to it.
+        WTF::Thread::didExit carefully remove itself from WTF::ThreadGroups.
+
+        The most important part of this patch is locking. WTF::Thread can die. And WTF::ThreadGroup can die.
+        If we take a design using two fine grain locks in WTF::Thread and WTF::ThreadGroup, we easily encounter
+        dead lock. Consider the following case.
+
+        1. When adding WTF::Thread (TH) to WTF::ThreadGroup (THG), we first hold a lock of THG, and hold a lock of TH (locking order is THG -> TH).
+        2. When TH dies, TH need to hold a lock of TH to iterate THGs. And we hold a lock of THG to unregister TH from it (locking order is TH -> THG).
+        3. When suspending and resuming THs in THG, we first hold a lock of THG. And then, we hold a lock of TH to suspend and resume it (locking order is THG -> TH).
+        4. When destroying THG, we need to hold a lock of TH to unregister THG from TH. We can hold a lock of THG before that (locking order is THG -> TH).
+
+        Then, it easily causes dead lock. We cannot swap the locking order of (2) since iterating THG requires a lock of TH.
+        To solve this problem, we use std::shared_ptr and std::weak_ptr.
+
+        1. When adding WTF::Thread (TH) to WTF::ThreadGroup (THG), we first hold THG, and hold a lock of TH. (THG -> TH)
+        2. When TH dies, TH first hold lock of TH. And we use std::weak_ptr<>::lock() to retain non-destructed ThreadGroups.
+        If some of ThreadGroups are dying, we just ignore them. It is ok because such a ThreadGroup will be destructed. So we do not need to unregister this thread from
+        such a ThreadGroup. Then, we have Vector<std::shared_ptr<ThreadGroup>>. So we unlock a lock of TH. To unregister a thread from thread group, we first hold a
+        lock of THG and then hold a lock of TH. Both lifetime is ensured: THG is retained by std::shared_ptr. And TH is itself. (TH), (THG -> TH).
+        3. When suspending and resuming THs in THG, we first hold a lock of THG. And then, we hold a lock of TH to suspend and resume it (THG -> TH).
+        4. When destroying THG, we hold a lock of THG. And hold a lock of TH. During holding THG's lock, registered thread never dies because (2) holds THG lock. (THG -> TH).
+
+        We also fix suspend and resume locking mechanism to avoid dead lock. We should hold the global lock when suspending and resuming.
+        If we use per-thread lock, the suspended thread can hold the lock of the other threads. It causes dead lock.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/AutomaticThread.cpp:
+        * wtf/CMakeLists.txt:
+        * wtf/CrossThreadCopier.h:
+        * wtf/ParkingLot.h:
+        * wtf/ThreadGroup.cpp: Copied from Source/JavaScriptCore/wasm/WasmMachineThreads.cpp.
+        (WTF::ThreadGroup::~ThreadGroup):
+        (WTF::ThreadGroup::add):
+        (WTF::ThreadGroup::addCurrentThread):
+        * wtf/ThreadGroup.h: Copied from Source/JavaScriptCore/wasm/WasmMachineThreads.cpp.
+        (WTF::ThreadGroup::create):
+        (WTF::ThreadGroup::threads):
+        (WTF::ThreadGroup::getLock):
+        (WTF::ThreadGroup::weakFromThis):
+        * wtf/Threading.cpp:
+        (WTF::shouldRemoveThreadFromThreadGroup):
+        (WTF::Thread::didExit):
+        (WTF::Thread::addToThreadGroup):
+        (WTF::Thread::removeFromThreadGroup):
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::resume):
+        (WTF::Thread::getRegisters):
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_RANGE_LOOP_ANALYSIS

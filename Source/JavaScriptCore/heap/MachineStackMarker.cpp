@@ -23,204 +23,20 @@
 #include "MachineStackMarker.h"
 
 #include "ConservativeRoots.h"
-#include "GPRInfo.h"
-#include "Heap.h"
-#include "JSArray.h"
-#include "JSCInlines.h"
-#include "LLIntPCRanges.h"
-#include "MacroAssembler.h"
-#include "VM.h"
+#include "MachineContext.h"
 #include <setjmp.h>
 #include <stdlib.h>
-#include <wtf/MainThread.h>
+#include <wtf/BitVector.h>
+#include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace WTF;
 
 namespace JSC {
 
-class ActiveMachineThreadsManager;
-static ActiveMachineThreadsManager& activeMachineThreadsManager();
-
-class ActiveMachineThreadsManager {
-    WTF_MAKE_NONCOPYABLE(ActiveMachineThreadsManager);
-public:
-
-    class Locker {
-    public:
-        Locker(ActiveMachineThreadsManager& manager)
-            : m_locker(manager.m_lock)
-        {
-        }
-
-    private:
-        LockHolder m_locker;
-    };
-
-    void add(MachineThreads* machineThreads)
-    {
-        LockHolder managerLock(m_lock);
-        m_set.add(machineThreads);
-    }
-
-    void THREAD_SPECIFIC_CALL remove(MachineThreads* machineThreads)
-    {
-        LockHolder managerLock(m_lock);
-        auto recordedMachineThreads = m_set.take(machineThreads);
-        RELEASE_ASSERT(recordedMachineThreads == machineThreads);
-    }
-
-    bool contains(MachineThreads* machineThreads)
-    {
-        return m_set.contains(machineThreads);
-    }
-
-private:
-    typedef HashSet<MachineThreads*> MachineThreadsSet;
-
-    ActiveMachineThreadsManager() { }
-    
-    Lock m_lock;
-    MachineThreadsSet m_set;
-
-    friend ActiveMachineThreadsManager& activeMachineThreadsManager();
-};
-
-static ActiveMachineThreadsManager& activeMachineThreadsManager()
-{
-    static std::once_flag initializeManagerOnceFlag;
-    static ActiveMachineThreadsManager* manager = nullptr;
-
-    std::call_once(initializeManagerOnceFlag, [] {
-        manager = new ActiveMachineThreadsManager();
-    });
-    return *manager;
-}
-
-#if CPU(X86_64) && OS(DARWIN)
-#define FILL_CALLEE_SAVES_FOR_CRASH_INFO(number)     \
-    asm volatile(                                    \
-        "movq $0xc0defefe000000" number ", %%rbx;" \
-        "movq $0xc0defefe000000" number ", %%r12;" \
-        "movq $0xc0defefe000000" number ", %%r13;" \
-        "movq $0xc0defefe000000" number ", %%r14;" \
-        "movq $0xc0defefe000000" number ", %%r15;" \
-        :                                            \
-        :                                            \
-        : "%rbx", "%r12", "%r13", "%r14", "%r15"     \
-    );
-
-#define FILL_CALLER_SAVES_FOR_CRASH_INFO(number)     \
-    asm volatile(                                    \
-        "movq $0xc0defefe000000" number ", %%rax;" \
-        "movq $0xc0defefe000000" number ", %%rdi;" \
-        "movq $0xc0defefe000000" number ", %%rsi;" \
-        "movq $0xc0defefe000000" number ", %%rdx;" \
-        "movq $0xc0defefe000000" number ", %%rcx;" \
-        "movq $0xc0defefe000000" number ", %%r8;"  \
-        "movq $0xc0defefe000000" number ", %%r9;"  \
-        "movq $0xc0defefe000000" number ", %%r10;" \
-        "movq $0xc0defefe000000" number ", %%r11;" \
-        :                                            \
-        :                                            \
-        : "%rax", "%rdi", "%rsi", "%rdx", "%rcx", "%r8", "%r9", "%r10", "%r11" \
-    );
-#else
-#define FILL_CALLEE_SAVES_FOR_CRASH_INFO(number)
-#define FILL_CALLER_SAVES_FOR_CRASH_INFO(number)
-#endif
-
 MachineThreads::MachineThreads()
-    : m_registeredThreads()
-    , m_threadSpecificForMachineThreads(0)
+    : m_threadGroup(ThreadGroup::create())
 {
-    FILL_CALLEE_SAVES_FOR_CRASH_INFO("01");
-    threadSpecificKeyCreate(&m_threadSpecificForMachineThreads, removeThread);
-    FILL_CALLEE_SAVES_FOR_CRASH_INFO("02");
-    activeMachineThreadsManager().add(this);
-    FILL_CALLER_SAVES_FOR_CRASH_INFO("03");
-}
-
-MachineThreads::~MachineThreads()
-{
-    activeMachineThreadsManager().remove(this);
-    threadSpecificKeyDelete(m_threadSpecificForMachineThreads);
-
-    LockHolder registeredThreadsLock(m_registeredThreadsMutex);
-    for (MachineThread* current = m_registeredThreads.head(); current;) {
-        MachineThread* next = current->next();
-        delete current;
-        current = next;
-    }
-}
-
-void MachineThreads::addCurrentThread()
-{
-    if (threadSpecificGet(m_threadSpecificForMachineThreads)) {
-#ifndef NDEBUG
-        LockHolder lock(m_registeredThreadsMutex);
-        ASSERT(threadSpecificGet(m_threadSpecificForMachineThreads) == this);
-#endif
-        return;
-    }
-
-    MachineThread* thread = new MachineThread();
-    threadSpecificSet(m_threadSpecificForMachineThreads, this);
-
-    LockHolder lock(m_registeredThreadsMutex);
-
-    m_registeredThreads.append(thread);
-}
-
-auto MachineThreads::machineThreadForCurrentThread() -> MachineThread*
-{
-    LockHolder lock(m_registeredThreadsMutex);
-    ThreadIdentifier id = currentThread();
-    for (MachineThread* thread = m_registeredThreads.head(); thread; thread = thread->next()) {
-        if (thread->threadID() == id)
-            return thread;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-void THREAD_SPECIFIC_CALL MachineThreads::removeThread(void* p)
-{
-    auto& manager = activeMachineThreadsManager();
-    ActiveMachineThreadsManager::Locker lock(manager);
-    auto machineThreads = static_cast<MachineThreads*>(p);
-    if (manager.contains(machineThreads)) {
-        // There's a chance that the MachineThreads registry that this thread
-        // was registered with was already destructed, and another one happened
-        // to be instantiated at the same address. Hence, this thread may or
-        // may not be found in this MachineThreads registry. We only need to
-        // do a removal if this thread is found in it.
-
-#if OS(WINDOWS)
-        // On Windows the thread specific destructor is also called when the
-        // main thread is exiting. This may lead to the main thread waiting
-        // forever for the machine thread lock when exiting, if the sampling
-        // profiler thread was terminated by the system while holding the
-        // machine thread lock.
-        if (WTF::isMainThread())
-            return;
-#endif
-
-        machineThreads->removeThreadIfFound(currentThread());
-    }
-}
-
-void MachineThreads::removeThreadIfFound(ThreadIdentifier id)
-{
-    LockHolder lock(m_registeredThreadsMutex);
-    for (MachineThread* current = m_registeredThreads.head(); current; current = current->next()) {
-        if (current->threadID() == id) {
-            m_registeredThreads.remove(current);
-            delete current;
-            break;
-        }
-    }
 }
 
 SUPPRESS_ASAN
@@ -234,52 +50,6 @@ void MachineThreads::gatherFromCurrentThread(ConservativeRoots& conservativeRoot
 
     conservativeRoots.add(currentThreadState.stackTop, currentThreadState.stackOrigin, jitStubRoutines, codeBlocks);
 }
-
-MachineThreads::MachineThread::MachineThread()
-    : m_thread(WTF::Thread::current())
-{
-}
-
-size_t MachineThreads::MachineThread::getRegisters(MachineThread::Registers& registers)
-{
-    WTF::PlatformRegisters& regs = registers.regs;
-    return m_thread->getRegisters(regs);
-}
-
-void* MachineThreads::MachineThread::Registers::stackPointer() const
-{
-    return MachineContext::stackPointer(regs);
-}
-
-#if ENABLE(SAMPLING_PROFILER)
-void* MachineThreads::MachineThread::Registers::framePointer() const
-{
-#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
-    return MachineContext::framePointer(regs);
-#else
-#error Need a way to get the frame pointer for another thread on this platform
-#endif
-}
-
-void* MachineThreads::MachineThread::Registers::instructionPointer() const
-{
-#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
-    return MachineContext::instructionPointer(regs);
-#else
-#error Need a way to get the instruction pointer for another thread on this platform
-#endif
-}
-
-void* MachineThreads::MachineThread::Registers::llintPC() const
-{
-    // LLInt uses regT4 as PC.
-#if OS(WINDOWS) || HAVE(MACHINE_CONTEXT)
-    return MachineContext::llintInstructionPointer(regs);
-#else
-#error Need a way to get the LLIntPC for another thread on this platform
-#endif
-}
-#endif // ENABLE(SAMPLING_PROFILER)
 
 static inline int osRedZoneAdjustment()
 {
@@ -296,17 +66,17 @@ static inline int osRedZoneAdjustment()
     return redZoneAdjustment;
 }
 
-std::pair<void*, size_t> MachineThreads::MachineThread::captureStack(void* stackTop)
+static std::pair<void*, size_t> captureStack(Thread& thread, void* stackTop)
 {
-    char* begin = reinterpret_cast_ptr<char*>(stackBase());
+    char* begin = reinterpret_cast_ptr<char*>(thread.stack().origin());
     char* end = bitwise_cast<char*>(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(stackTop)));
     ASSERT(begin >= end);
 
     char* endWithRedZone = end + osRedZoneAdjustment();
     ASSERT(WTF::roundUpToMultipleOf<sizeof(void*)>(reinterpret_cast<uintptr_t>(endWithRedZone)) == reinterpret_cast<uintptr_t>(endWithRedZone));
 
-    if (endWithRedZone < stackEnd())
-        endWithRedZone = reinterpret_cast_ptr<char*>(stackEnd());
+    if (endWithRedZone < thread.stack().end())
+        endWithRedZone = reinterpret_cast_ptr<char*>(thread.stack().end());
 
     std::swap(begin, endWithRedZone);
     return std::make_pair(begin, endWithRedZone - begin);
@@ -339,20 +109,20 @@ static void copyMemory(void* dst, const void* src, size_t size)
 // significant performance loss as tryCopyOtherThreadStack is only called as part of an O(heapsize)
 // operation. As the heap is generally much larger than the stack the performance hit is minimal.
 // See: https://bugs.webkit.org/show_bug.cgi?id=146297
-void MachineThreads::tryCopyOtherThreadStack(MachineThread* thread, void* buffer, size_t capacity, size_t* size)
+void MachineThreads::tryCopyOtherThreadStack(Thread& thread, void* buffer, size_t capacity, size_t* size)
 {
-    MachineThread::Registers registers;
-    size_t registersSize = thread->getRegisters(registers);
+    PlatformRegisters registers;
+    size_t registersSize = thread.getRegisters(registers);
 
     // This is a workaround for <rdar://problem/27607384>. libdispatch recycles work
     // queue threads without running pthread exit destructors. This can cause us to scan a
     // thread during work queue initialization, when the stack pointer is null.
-    if (UNLIKELY(!registers.stackPointer())) {
+    if (UNLIKELY(!MachineContext::stackPointer(registers))) {
         *size = 0;
         return;
     }
 
-    std::pair<void*, size_t> stack = thread->captureStack(registers.stackPointer());
+    std::pair<void*, size_t> stack = captureStack(thread, MachineContext::stackPointer(registers));
 
     bool canCopy = *size + registersSize + stack.second <= capacity;
 
@@ -365,7 +135,7 @@ void MachineThreads::tryCopyOtherThreadStack(MachineThread* thread, void* buffer
     *size += stack.second;
 }
 
-bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker&, void* buffer, size_t capacity, size_t* size)
+bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker& locker, void* buffer, size_t capacity, size_t* size)
 {
     // Prevent two VMs from suspending each other's threads at the same time,
     // which can cause deadlock: <rdar://problem/20300842>.
@@ -374,60 +144,49 @@ bool MachineThreads::tryCopyOtherThreadStacks(const AbstractLocker&, void* buffe
 
     *size = 0;
 
-    ThreadIdentifier id = currentThread();
-    int numberOfThreads = 0; // Using 0 to denote that we haven't counted the number of threads yet.
-    int index = 1;
-    DoublyLinkedList<MachineThread> threadsToBeDeleted;
+    Thread& currentThread = Thread::current();
+    const auto& threads = m_threadGroup->threads(locker);
+    BitVector isSuspended(threads.size());
 
-    for (MachineThread* thread = m_registeredThreads.head(); thread; index++) {
-        if (thread->threadID() != id) {
-            auto result = thread->suspend();
+    {
+        unsigned index = 0;
+        for (auto& thread : threads) {
+            if (thread.get() != currentThread) {
+                auto result = thread->suspend();
+                if (result)
+                    isSuspended.set(index);
+                else {
 #if OS(DARWIN)
-            if (!result) {
-                if (!numberOfThreads)
-                    numberOfThreads = m_registeredThreads.size();
-
-                ASSERT(result.error() != KERN_SUCCESS);
-
-                WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION,
-                    "JavaScript garbage collection encountered an invalid thread (err 0x%x): Thread [%d/%d: %p] id %u.",
-                    result.error(), index, numberOfThreads, thread, thread->threadID());
-
-                // Put the invalid thread on the threadsToBeDeleted list.
-                // We can't just delete it here because we have suspended other
-                // threads, and they may still be holding the C heap lock which
-                // we need for deleting the invalid thread. Hence, we need to
-                // defer the deletion till after we have resumed all threads.
-                MachineThread* nextThread = thread->next();
-                m_registeredThreads.remove(thread);
-                threadsToBeDeleted.append(thread);
-                thread = nextThread;
-                continue;
-            }
-#else
-            UNUSED_PARAM(numberOfThreads);
-            ASSERT_UNUSED(result, result);
+                    // These threads will be removed from the ThreadGroup. Thus, we do not do anything here except for reporting.
+                    ASSERT(result.error() != KERN_SUCCESS);
+                    WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION,
+                        "JavaScript garbage collection encountered an invalid thread (err 0x%x): Thread [%d/%d: %p] id %u.",
+                        result.error(), index, threads.size(), thread.ptr(), thread->id());
 #endif
+                }
+            }
+            ++index;
         }
-        thread = thread->next();
     }
 
-    for (MachineThread* thread = m_registeredThreads.head(); thread; thread = thread->next()) {
-        if (thread->threadID() != id)
-            tryCopyOtherThreadStack(thread, buffer, capacity, size);
+    {
+        unsigned index = 0;
+        for (auto& thread : threads) {
+            if (isSuspended.get(index))
+                tryCopyOtherThreadStack(thread.get(), buffer, capacity, size);
+            ++index;
+        }
     }
 
-    for (MachineThread* thread = m_registeredThreads.head(); thread; thread = thread->next()) {
-        if (thread->threadID() != id)
-            thread->resume();
+    {
+        unsigned index = 0;
+        for (auto& thread : threads) {
+            if (isSuspended.get(index))
+                thread->resume();
+            ++index;
+        }
     }
 
-    for (MachineThread* thread = threadsToBeDeleted.head(); thread; ) {
-        MachineThread* nextThread = thread->next();
-        delete thread;
-        thread = nextThread;
-    }
-    
     return *size <= capacity;
 }
 
@@ -448,8 +207,8 @@ void MachineThreads::gatherConservativeRoots(ConservativeRoots& conservativeRoot
     size_t size;
     size_t capacity = 0;
     void* buffer = nullptr;
-    LockHolder lock(m_registeredThreadsMutex);
-    while (!tryCopyOtherThreadStacks(lock, buffer, capacity, &size))
+    auto locker = holdLock(m_threadGroup->getLock());
+    while (!tryCopyOtherThreadStacks(locker, buffer, capacity, &size))
         growBuffer(size, &buffer, &capacity);
 
     if (!buffer)

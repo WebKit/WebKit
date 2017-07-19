@@ -26,14 +26,13 @@
 #include "config.h"
 #include "Threading.h"
 
-#include "dtoa.h"
-#include "dtoa/cached-powers.h"
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <wtf/DateMath.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RandomNumberSeed.h>
+#include <wtf/ThreadGroup.h>
 #include <wtf/ThreadHolder.h>
 #include <wtf/ThreadMessage.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -130,10 +129,68 @@ void Thread::initialize()
     m_stack = StackBounds::currentThreadStackBounds();
 }
 
+static bool shouldRemoveThreadFromThreadGroup()
+{
+#if OS(WINDOWS)
+    // On Windows the thread specific destructor is also called when the
+    // main thread is exiting. This may lead to the main thread waiting
+    // forever for the thread group lock when exiting, if the sampling
+    // profiler thread was terminated by the system while holding the
+    // thread group lock.
+    if (WTF::isMainThread())
+        return false;
+#endif
+    return true;
+}
+
 void Thread::didExit()
 {
+    if (shouldRemoveThreadFromThreadGroup()) {
+        Vector<std::shared_ptr<ThreadGroup>> threadGroups;
+        {
+            std::lock_guard<std::mutex> locker(m_mutex);
+            for (auto& threadGroup : m_threadGroups) {
+                // If ThreadGroup is just being destroyed,
+                // we do not need to perform unregistering.
+                if (auto retained = threadGroup.lock())
+                    threadGroups.append(WTFMove(retained));
+            }
+            m_isShuttingDown = true;
+        }
+        for (auto& threadGroup : threadGroups) {
+            std::lock_guard<std::mutex> threadGroupLocker(threadGroup->getLock());
+            std::lock_guard<std::mutex> locker(m_mutex);
+            threadGroup->m_threads.remove(*this);
+        }
+    }
+    // We would like to say "thread is exited" after unregistering threads from thread groups.
+    // So we need to separate m_isShuttingDown from m_didExit.
     std::lock_guard<std::mutex> locker(m_mutex);
     m_didExit = true;
+}
+
+bool Thread::addToThreadGroup(const std::lock_guard<std::mutex>& threadGroupLocker, ThreadGroup& threadGroup)
+{
+    UNUSED_PARAM(threadGroupLocker);
+    std::lock_guard<std::mutex> locker(m_mutex);
+    if (m_isShuttingDown)
+        return false;
+    if (threadGroup.m_threads.add(*this).isNewEntry)
+        m_threadGroups.append(threadGroup.weakFromThis());
+    return true;
+}
+
+void Thread::removeFromThreadGroup(const std::lock_guard<std::mutex>& threadGroupLocker, ThreadGroup& threadGroup)
+{
+    UNUSED_PARAM(threadGroupLocker);
+    std::lock_guard<std::mutex> locker(m_mutex);
+    if (m_isShuttingDown)
+        return;
+    m_threadGroups.removeFirstMatching([&] (auto weakPtr) {
+        if (auto sharedPtr = weakPtr.lock())
+            return sharedPtr.get() == &threadGroup;
+        return false;
+    });
 }
 
 void Thread::setCurrentThreadIsUserInteractive(int relativePriority)

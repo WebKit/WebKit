@@ -40,6 +40,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StackBounds.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Vector.h>
 
 #if USE(PTHREADS) && !OS(DARWIN)
 #include <semaphore.h>
@@ -48,16 +49,19 @@
 
 namespace WTF {
 
+class AbstractLocker;
 class ThreadMessageData;
 
 using ThreadIdentifier = uint32_t;
 typedef void (*ThreadFunction)(void* argument);
 
+class ThreadGroup;
 class ThreadHolder;
 class PrintStream;
 
 class Thread : public ThreadSafeRefCounted<Thread> {
 public:
+    friend class ThreadGroup;
     friend class ThreadHolder;
 
     WTF_EXPORT_PRIVATE ~Thread();
@@ -175,11 +179,17 @@ protected:
     void didJoin() { m_joinableState = Joined; }
     bool hasExited() { return m_didExit; }
 
+    // These functions are only called from ThreadGroup.
+    bool addToThreadGroup(const std::lock_guard<std::mutex>& threadGroupLocker, ThreadGroup&);
+    void removeFromThreadGroup(const std::lock_guard<std::mutex>& threadGroupLocker, ThreadGroup&);
+
     // WordLock & Lock rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.
     std::mutex m_mutex;
     ThreadIdentifier m_id { 0 };
     JoinableState m_joinableState { Joinable };
     StackBounds m_stack { StackBounds::emptyBounds() };
+    Vector<std::weak_ptr<ThreadGroup>> m_threadGroups;
+    bool m_isShuttingDown { false };
     bool m_didExit { false };
 #if USE(PTHREADS)
     pthread_t m_handle;
