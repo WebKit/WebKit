@@ -42,7 +42,9 @@ static Vector<Ref<SharedBuffer>> extractKeyIDsKeyids(const SharedBuffer& buffer)
 {
     // 1. Format
     // https://w3c.github.io/encrypted-media/format-registry/initdata/keyids.html#format
-    String json { buffer.data(), buffer.size() };
+    if (buffer.size() > std::numeric_limits<unsigned>::max())
+        return { };
+    String json { buffer.data(), static_cast<unsigned>(buffer.size()) };
 
     RefPtr<InspectorValue> value;
     if (!InspectorValue::parseJSON(json, value))
