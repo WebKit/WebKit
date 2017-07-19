@@ -83,6 +83,16 @@
     -webkit-appearance: none !important;
 }
 
+.ios .slider > input {
+    /* On iOS only, we want to only capture events on the thumb and not the track. */
+    pointer-events: none;
+
+    /* Make sure we don't show any UI as we drag the scrubber on iOS. */
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
 .slider > input::-webkit-slider-thumb {
     width: 9px;
     height: 100%;
@@ -90,6 +100,7 @@
     box-shadow: none;
     background-color: transparent;
     -webkit-appearance: none !important;
+    pointer-events: all;
 }
 
 /* When disabled, we only want to show the track and turn off interaction. */

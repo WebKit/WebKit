@@ -96,6 +96,7 @@ media/modern-media-controls/playback-support [ Pass ]
 media/modern-media-controls/rewind-button [ Pass ]
 media/modern-media-controls/scheduler [ Pass ]
 media/modern-media-controls/scrubber [ Pass ]
+media/modern-media-controls/scrubber-support [ Pass ]
 media/modern-media-controls/skip-back-button [ Pass ]
 media/modern-media-controls/skip-forward-button [ Pass ]
 media/modern-media-controls/slider [ Pass ]
@@ -116,6 +117,7 @@ media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ S
 media/modern-media-controls/mute-support/mute-support-press-on-button.html [ Skip ]
 media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
+media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
 
 # These tests rely on fullscreen which do not use the WebKit media controls on iOS
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
@@ -132,6 +134,8 @@ media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-audio-mac-sizing.html [ Skip ]
 media/modern-media-controls/media-documents/media-document-video-mac-sizing.html [ Skip ]
 media/modern-media-controls/playback-support/playback-support-button-click.html [ Skip ]
+media/modern-media-controls/scrubber-support/scrubber-support-click.html [ Skip ]
+media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Skip ]
 
 webkit.org/b/172965 media/track/track-cue-overlap-snap-to-lines-not-set.html [ Failure ]
 
