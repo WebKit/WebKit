@@ -1,3 +1,16 @@
+2017-07-19  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r219646.
+
+        The test added are failing on all platforms
+
+        Reverted changeset:
+
+        "Setting the minimum font size preference doesn’t affect
+        absolute line-height values, so lines overlap"
+        https://bugs.webkit.org/show_bug.cgi?id=174406
+        http://trac.webkit.org/changeset/219646
+
 2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening.

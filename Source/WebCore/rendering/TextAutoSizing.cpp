@@ -142,7 +142,6 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         else
             specifiedLineHeight = lineHeightLength.value();
 
-        // This calculation matches the line-height computed size calculation in StyleBuilderCustom::applyValueLineHeight().
         int lineHeight = specifiedLineHeight * scaleChange;
         if (lineHeightLength.isFixed() && lineHeightLength.value() == lineHeight)
             continue;
