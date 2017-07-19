@@ -88,6 +88,7 @@
 
 #if OS(WINDOWS)
 
+#include <errno.h>
 #include <process.h>
 #include <windows.h>
 #include <wtf/CurrentTime.h>
@@ -95,13 +96,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/ThreadFunctionInvocation.h>
 #include <wtf/ThreadHolder.h>
 #include <wtf/ThreadingPrimitives.h>
-
-#if HAVE(ERRNO_H)
-#include <errno.h>
-#endif
 
 namespace WTF {
 
@@ -119,9 +115,9 @@ Thread::~Thread()
         CloseHandle(m_handle);
 }
 
-void Thread::initializeCurrentThreadEvenIfNonWTFCreated()
+void Thread::initializeCurrentThreadEvenIfNonWTFCreated(Thread& thread)
 {
-    Thread::current().initialize();
+    thread.initialize();
 }
 
 // MS_VC_EXCEPTION, THREADNAME_INFO, and setThreadNameInternal all come from <http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx>.
@@ -136,7 +132,7 @@ typedef struct tagTHREADNAME_INFO {
 } THREADNAME_INFO;
 #pragma pack(pop)
 
-void Thread::initializeCurrentThreadInternal(const char* szThreadName)
+void Thread::initializeCurrentThreadInternal(Thread& thread, const char* szThreadName)
 {
 #if COMPILER(MINGW)
     // FIXME: Implement thread name setting with MingW.
@@ -153,49 +149,29 @@ void Thread::initializeCurrentThreadInternal(const char* szThreadName)
     } __except (EXCEPTION_CONTINUE_EXECUTION) {
     }
 #endif
-    initializeCurrentThreadEvenIfNonWTFCreated();
+    initializeCurrentThreadEvenIfNonWTFCreated(thread);
 }
 
 void Thread::initializePlatformThreading()
 {
 }
 
-static unsigned __stdcall wtfThreadEntryPoint(void* param)
+static unsigned __stdcall wtfThreadEntryPoint(void* data)
 {
-    // Balanced by .leakPtr() in Thread::createInternal.
-    auto invocation = std::unique_ptr<ThreadFunctionInvocation>(static_cast<ThreadFunctionInvocation*>(param));
-
-    ThreadHolder::initialize(*invocation->thread, Thread::currentID());
-    invocation->thread = nullptr;
-
-    invocation->function(invocation->data);
+    Thread::entryPoint(reinterpret_cast<Thread::NewThreadContext*>(data));
     return 0;
 }
 
-RefPtr<Thread> Thread::createInternal(ThreadFunction entryPoint, void* data, const char* threadName)
+bool Thread::establishHandle(NewThreadContext* data)
 {
-    Ref<Thread> thread = adoptRef(*new Thread());
     unsigned threadIdentifier = 0;
-    ThreadIdentifier threadID = 0;
-    auto invocation = std::make_unique<ThreadFunctionInvocation>(entryPoint, thread.ptr(), data);
-    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, invocation.get(), 0, &threadIdentifier));
+    HANDLE threadHandle = reinterpret_cast<HANDLE>(_beginthreadex(0, 0, wtfThreadEntryPoint, data, 0, &threadIdentifier));
     if (!threadHandle) {
-#if !HAVE(ERRNO_H)
-        LOG_ERROR("Failed to create thread at entry point %p with data %p.", entryPoint, data);
-#else
-        LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", entryPoint, data, errno);
-#endif
-        return 0;
+        LOG_ERROR("Failed to create thread at entry point %p with data %p: %ld", wtfThreadEntryPoint, data, errno);
+        return false;
     }
-
-    // The thread will take ownership of invocation.
-    ThreadFunctionInvocation* leakedInvocation = invocation.release();
-    UNUSED_PARAM(leakedInvocation);
-
-    threadID = static_cast<ThreadIdentifier>(threadIdentifier);
-
-    thread->establish(threadHandle, threadIdentifier);
-    return thread;
+    establishPlatformSpecificHandle(threadHandle, threadIdentifier);
+    return true;
 }
 
 void Thread::changePriority(int delta)
@@ -280,9 +256,9 @@ Thread& Thread::current()
     bool isSuccessful = DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &handle, 0, FALSE, DUPLICATE_SAME_ACCESS);
     RELEASE_ASSERT(isSuccessful);
 
-    thread->establish(handle, currentID());
-    ThreadHolder::initialize(thread.get(), Thread::currentID());
-    initializeCurrentThreadEvenIfNonWTFCreated();
+    thread->establishPlatformSpecificHandle(handle, currentID());
+    ThreadHolder::initialize(thread.get());
+    initializeCurrentThreadEvenIfNonWTFCreated(thread.get());
     return thread.get();
 }
 
@@ -291,7 +267,7 @@ ThreadIdentifier Thread::currentID()
     return static_cast<ThreadIdentifier>(GetCurrentThreadId());
 }
 
-void Thread::establish(HANDLE handle, ThreadIdentifier threadID)
+void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier threadID)
 {
     std::lock_guard<std::mutex> locker(m_mutex);
     m_handle = handle;

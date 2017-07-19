@@ -50,11 +50,7 @@ public:
     static void initializeOnce();
 
     // Creates and puts an instance of ThreadHolder into thread-specific storage.
-#if OS(WINDOWS)
-    static void initialize(Thread&, ThreadIdentifier);
-#else
     static void initialize(Thread&);
-#endif
 
     // Returns 0 if thread-specific storage was not initialized.
     static ThreadHolder* current();

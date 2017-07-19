@@ -1,5 +1,59 @@
 2017-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [WTF] Remove unnecessary indirection of WTF::Thread entry point
+        https://bugs.webkit.org/show_bug.cgi?id=174291
+
+        Reviewed by Mark Lam.
+
+        Now wtfThreadEntryPoint is almost the same. Only the difference is function signature due to platform APIs.
+        We remove ThreadFunctionInvocation indirection in ThreadingPthread.cpp and ThreadingWin.cpp.
+
+        Also, ThreadFunctionInvocation keeps a RefPtr to the Thread object. This was previously needed to keep the
+        Thread object alive until the thread itself could install the ThreadHolder into its thread local storage.
+        The ThreadHolder has a Ref that keeps the Thread object alive for the lifetime of the thread. Since
+        Thread::create() now waits for the thread to be initialized before returning and Thread::create() hold a Ref
+        to the Thread object, we are guaranteed that the Thread object will be alive long enough for it to be installed
+        in the thread's ThreadHolder, and we no longer need ThreadFunctionInvocation.
+
+        And we also simplify ThreadHolder::initialize a bit. Now Thread::create waits for the completion of Thread
+        initialization. So, after establishing thread handle, we can call ThreadHolder::initialize before completing
+        Thread initialization.
+
+        Also we drop errno.h ifdefs in ThreadingWin.cpp. This is introduced to support WinCE. But now WinCE port is removed.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/ThreadFunctionInvocation.h: Removed.
+        * wtf/ThreadHolder.h:
+        * wtf/ThreadHolderWin.cpp:
+        (WTF::ThreadHolder::initialize):
+        * wtf/Threading.cpp:
+        (WTF::Thread::entryPoint):
+        (WTF::Thread::create):
+        (WTF::threadEntryPoint): Deleted.
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::wtfThreadEntryPoint):
+        (WTF::Thread::establishHandle):
+        (WTF::Thread::initializeCurrentThreadInternal):
+        (WTF::Thread::current):
+        (WTF::Thread::establishPlatformSpecificHandle):
+        (WTF::Thread::createInternal): Deleted.
+        (WTF::Thread::establish): Deleted.
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::initializeCurrentThreadEvenIfNonWTFCreated):
+        (WTF::Thread::initializeCurrentThreadInternal):
+        (WTF::wtfThreadEntryPoint):
+        (WTF::Thread::establishHandle):
+        (WTF::Thread::current):
+        (WTF::Thread::establishPlatformSpecificHandle):
+        (WTF::Thread::createInternal): Deleted.
+        (WTF::Thread::establish): Deleted.
+        * wtf/win/MainThreadWin.cpp:
+        (WTF::initializeMainThreadPlatform):
+
+2017-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [WTF] Implement WTF::ThreadGroup
         https://bugs.webkit.org/show_bug.cgi?id=174081
 

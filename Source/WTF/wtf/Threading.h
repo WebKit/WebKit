@@ -112,8 +112,8 @@ public:
 
     // Called in the thread during initialization.
     // Helpful for platforms where the thread name must be set from within the thread.
-    static void initializeCurrentThreadInternal(const char* threadName);
-    static void initializeCurrentThreadEvenIfNonWTFCreated();
+    static void initializeCurrentThreadInternal(Thread&, const char* threadName);
+    static void initializeCurrentThreadEvenIfNonWTFCreated(Thread&);
 
     WTF_EXPORT_PRIVATE void dump(PrintStream& out) const;
 
@@ -140,16 +140,18 @@ public:
     mach_port_t machThread() { return m_platformThread; }
 #endif
 
+    struct NewThreadContext;
+    static void entryPoint(NewThreadContext* data);
 protected:
     Thread();
 
-    // Internal platform-specific Thread::create implementation.
-    static RefPtr<Thread> createInternal(ThreadFunction, void*, const char* threadName);
+    // Internal platform-specific Thread establishment implementation.
+    bool establishHandle(NewThreadContext* data);
 
 #if USE(PTHREADS)
-    void establish(pthread_t);
+    void establishPlatformSpecificHandle(pthread_t);
 #else
-    void establish(HANDLE, ThreadIdentifier);
+    void establishPlatformSpecificHandle(HANDLE, ThreadIdentifier);
 #endif
     void initialize();
 

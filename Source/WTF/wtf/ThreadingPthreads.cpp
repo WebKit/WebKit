@@ -39,7 +39,6 @@
 #include <wtf/DataLog.h>
 #include <wtf/RawPointer.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/ThreadFunctionInvocation.h>
 #include <wtf/ThreadGroup.h>
 #include <wtf/ThreadHolder.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -189,9 +188,9 @@ void Thread::initializePlatformThreading()
 #endif
 }
 
-void Thread::initializeCurrentThreadEvenIfNonWTFCreated()
+void Thread::initializeCurrentThreadEvenIfNonWTFCreated(Thread& thread)
 {
-    Thread::current().initialize();
+    thread.initialize();
 #if !OS(DARWIN)
     sigset_t mask;
     sigemptyset(&mask);
@@ -200,44 +199,31 @@ void Thread::initializeCurrentThreadEvenIfNonWTFCreated()
 #endif
 }
 
-static void* wtfThreadEntryPoint(void* param)
+static void* wtfThreadEntryPoint(void* data)
 {
-    // Balanced by .leakPtr() in Thread::createInternal.
-    auto invocation = std::unique_ptr<ThreadFunctionInvocation>(static_cast<ThreadFunctionInvocation*>(param));
-
-    ThreadHolder::initialize(*invocation->thread);
-    invocation->thread = nullptr;
-
-    invocation->function(invocation->data);
+    Thread::entryPoint(reinterpret_cast<Thread::NewThreadContext*>(data));
     return nullptr;
 }
 
-RefPtr<Thread> Thread::createInternal(ThreadFunction entryPoint, void* data, const char*)
+bool Thread::establishHandle(NewThreadContext* data)
 {
-    RefPtr<Thread> thread = adoptRef(new Thread());
-    auto invocation = std::make_unique<ThreadFunctionInvocation>(entryPoint, thread.get(), data);
     pthread_t threadHandle;
     pthread_attr_t attr;
     pthread_attr_init(&attr);
 #if HAVE(QOS_CLASSES)
     pthread_attr_set_qos_class_np(&attr, adjustedQOSClass(QOS_CLASS_USER_INITIATED), 0);
 #endif
-    int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, invocation.get());
+    int error = pthread_create(&threadHandle, &attr, wtfThreadEntryPoint, data);
     pthread_attr_destroy(&attr);
     if (error) {
-        LOG_ERROR("Failed to create pthread at entry point %p with data %p", wtfThreadEntryPoint, invocation.get());
-        return nullptr;
+        LOG_ERROR("Failed to create pthread at entry point %p with data %p", wtfThreadEntryPoint, data);
+        return false;
     }
-
-    // Balanced by std::unique_ptr constructor in wtfThreadEntryPoint.
-    ThreadFunctionInvocation* leakedInvocation = invocation.release();
-    UNUSED_PARAM(leakedInvocation);
-
-    thread->establish(threadHandle);
-    return thread;
+    establishPlatformSpecificHandle(threadHandle);
+    return true;
 }
 
-void Thread::initializeCurrentThreadInternal(const char* threadName)
+void Thread::initializeCurrentThreadInternal(Thread& thread, const char* threadName)
 {
 #if HAVE(PTHREAD_SETNAME_NP)
     pthread_setname_np(normalizeThreadName(threadName));
@@ -246,7 +232,7 @@ void Thread::initializeCurrentThreadInternal(const char* threadName)
 #else
     UNUSED_PARAM(threadName);
 #endif
-    initializeCurrentThreadEvenIfNonWTFCreated();
+    initializeCurrentThreadEvenIfNonWTFCreated(thread);
 }
 
 void Thread::changePriority(int delta)
@@ -308,9 +294,9 @@ Thread& Thread::current()
 
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     Ref<Thread> thread = adoptRef(*new Thread());
-    thread->establish(pthread_self());
+    thread->establishPlatformSpecificHandle(pthread_self());
     ThreadHolder::initialize(thread.get());
-    initializeCurrentThreadEvenIfNonWTFCreated();
+    initializeCurrentThreadEvenIfNonWTFCreated(thread.get());
     return thread.get();
 }
 
@@ -443,7 +429,7 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
 #endif
 }
 
-void Thread::establish(pthread_t handle)
+void Thread::establishPlatformSpecificHandle(pthread_t handle)
 {
     std::lock_guard<std::mutex> locker(m_mutex);
     m_handle = handle;

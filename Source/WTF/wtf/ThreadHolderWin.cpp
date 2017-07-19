@@ -80,7 +80,7 @@ RefPtr<Thread> ThreadHolder::get(ThreadIdentifier id)
     return nullptr;
 }
 
-void ThreadHolder::initialize(Thread& thread, ThreadIdentifier id)
+void ThreadHolder::initialize(Thread& thread)
 {
     if (!current()) {
         // Ideally we'd have this as a release assert everywhere, but that would hurt performance.
@@ -90,11 +90,9 @@ void ThreadHolder::initialize(Thread& thread, ThreadIdentifier id)
         // FIXME: Remove this workaround code once <rdar://problem/31793213> is fixed.
         auto* holder = new ThreadHolder(thread);
         threadSpecificSet(m_key, holder);
-
-        // Since Thread is not established yet, we use the given id instead of thread->id().
         {
             std::lock_guard<std::mutex> locker(threadMapMutex());
-            threadMap().add(id, holder);
+            threadMap().add(thread.id(), holder);
         }
     }
 }

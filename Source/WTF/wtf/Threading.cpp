@@ -46,15 +46,16 @@
 namespace WTF {
 
 enum class Stage {
-    Start, Initialized
+    Start, EstablishedHandle, Initialized
 };
 
-struct NewThreadContext {
+struct Thread::NewThreadContext {
     const char* name;
     Function<void()> entryPoint;
     Stage stage;
     Mutex mutex;
     ThreadCondition condition;
+    Thread& thread;
 };
 
 const char* Thread::normalizeThreadName(const char* threadName)
@@ -84,36 +85,39 @@ const char* Thread::normalizeThreadName(const char* threadName)
 #endif
 }
 
-static void threadEntryPoint(void* contextData)
+void Thread::entryPoint(NewThreadContext* context)
 {
-    NewThreadContext* context = static_cast<NewThreadContext*>(contextData);
-    Function<void()> entryPoint;
+    Function<void()> function;
     {
         // Block until our creating thread has completed any extra setup work, including establishing ThreadIdentifier.
         MutexLocker locker(context->mutex);
+        ASSERT(context->stage == Stage::EstablishedHandle);
 
-        Thread::initializeCurrentThreadInternal(context->name);
-        entryPoint = WTFMove(context->entryPoint);
+        // Initialize thread holder with established ID.
+        ThreadHolder::initialize(context->thread);
+
+        Thread::initializeCurrentThreadInternal(context->thread, context->name);
+        function = WTFMove(context->entryPoint);
 
         // Ack completion of initialization to the creating thread.
         context->stage = Stage::Initialized;
         context->condition.signal();
     }
-
-    entryPoint();
+    function();
 }
 
 RefPtr<Thread> Thread::create(const char* name, Function<void()>&& entryPoint)
 {
-    NewThreadContext context { name, WTFMove(entryPoint), Stage::Start, { }, { } };
-
+    Ref<Thread> thread = adoptRef(*new Thread());
+    NewThreadContext context { name, WTFMove(entryPoint), Stage::Start, { }, { }, thread.get() };
     MutexLocker locker(context.mutex);
-    RefPtr<Thread> result = Thread::createInternal(threadEntryPoint, &context, name);
+    if (!thread->establishHandle(&context))
+        return nullptr;
+    context.stage = Stage::EstablishedHandle;
     // After establishing Thread, release the mutex and wait for completion of initialization.
     while (context.stage != Stage::Initialized)
         context.condition.wait(context.mutex);
-
-    return result;
+    return WTFMove(thread);
 }
 
 Thread* Thread::currentMayBeNull()
