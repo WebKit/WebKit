@@ -22,65 +22,64 @@
 #include "LegacyCustomProtocolManagerProxy.h"
 
 #include "APICustomProtocolManagerClient.h"
-#include "ChildProcessProxy.h"
 #include "LegacyCustomProtocolManagerMessages.h"
 #include "LegacyCustomProtocolManagerProxyMessages.h"
+#include "NetworkProcessProxy.h"
 #include "WebProcessPool.h"
 #include <WebCore/ResourceRequest.h>
 
 namespace WebKit {
 
-LegacyCustomProtocolManagerProxy::LegacyCustomProtocolManagerProxy(ChildProcessProxy* childProcessProxy, WebProcessPool& processPool)
-    : m_childProcessProxy(childProcessProxy)
-    , m_processPool(processPool)
+LegacyCustomProtocolManagerProxy::LegacyCustomProtocolManagerProxy(NetworkProcessProxy& networkProcessProxy)
+    : m_networkProcessProxy(networkProcessProxy)
 {
-    ASSERT(m_childProcessProxy);
-    m_childProcessProxy->addMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName(), *this);
+    m_networkProcessProxy.addMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName(), *this);
 }
 
 LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy()
 {
-    m_childProcessProxy->removeMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName());
+    m_networkProcessProxy.removeMessageReceiver(Messages::LegacyCustomProtocolManagerProxy::messageReceiverName());
+    invalidate();
 }
 
 void LegacyCustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
 {
-    m_processPool.customProtocolManagerClient().startLoading(*this, customProtocolID, request);
+    m_networkProcessProxy.processPool().customProtocolManagerClient().startLoading(*this, customProtocolID, request);
 }
 
 void LegacyCustomProtocolManagerProxy::stopLoading(uint64_t customProtocolID)
 {
-    m_processPool.customProtocolManagerClient().stopLoading(*this, customProtocolID);
+    m_networkProcessProxy.processPool().customProtocolManagerClient().stopLoading(*this, customProtocolID);
 }
 
-void LegacyCustomProtocolManagerProxy::processDidClose()
+void LegacyCustomProtocolManagerProxy::invalidate()
 {
-    m_processPool.customProtocolManagerClient().invalidate(*this);
+    m_networkProcessProxy.processPool().customProtocolManagerClient().invalidate(*this);
 }
 
 void LegacyCustomProtocolManagerProxy::wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& redirectResponse)
 {
-    m_childProcessProxy->send(Messages::LegacyCustomProtocolManager::WasRedirectedToRequest(customProtocolID, request, redirectResponse), 0);
+    m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::WasRedirectedToRequest(customProtocolID, request, redirectResponse), 0);
 }
 
 void LegacyCustomProtocolManagerProxy::didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse& response, uint32_t cacheStoragePolicy)
 {
-    m_childProcessProxy->send(Messages::LegacyCustomProtocolManager::DidReceiveResponse(customProtocolID, response, cacheStoragePolicy), 0);
+    m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::DidReceiveResponse(customProtocolID, response, cacheStoragePolicy), 0);
 }
 
 void LegacyCustomProtocolManagerProxy::didLoadData(uint64_t customProtocolID, const IPC::DataReference& data)
 {
-    m_childProcessProxy->send(Messages::LegacyCustomProtocolManager::DidLoadData(customProtocolID, data), 0);
+    m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::DidLoadData(customProtocolID, data), 0);
 }
 
 void LegacyCustomProtocolManagerProxy::didFailWithError(uint64_t customProtocolID, const WebCore::ResourceError& error)
 {
-    m_childProcessProxy->send(Messages::LegacyCustomProtocolManager::DidFailWithError(customProtocolID, error), 0);
+    m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::DidFailWithError(customProtocolID, error), 0);
 }
 
 void LegacyCustomProtocolManagerProxy::didFinishLoading(uint64_t customProtocolID)
 {
-    m_childProcessProxy->send(Messages::LegacyCustomProtocolManager::DidFinishLoading(customProtocolID), 0);
+    m_networkProcessProxy.send(Messages::LegacyCustomProtocolManager::DidFinishLoading(customProtocolID), 0);
 }
 
 } // namespace WebKit

@@ -69,7 +69,7 @@ NetworkProcessProxy::NetworkProcessProxy(WebProcessPool& processPool)
     : ChildProcessProxy(processPool.alwaysRunsAtBackgroundPriority())
     , m_processPool(processPool)
     , m_numPendingConnectionRequests(0)
-    , m_customProtocolManagerProxy(this, processPool)
+    , m_customProtocolManagerProxy(*this)
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
 {
     connect();
@@ -234,7 +234,7 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
 {
     if (m_downloadProxyMap)
         m_downloadProxyMap->processDidClose();
-    m_customProtocolManagerProxy.processDidClose();
+    m_customProtocolManagerProxy.invalidate();
 
     m_tokenForHoldingLockedFiles = nullptr;
 

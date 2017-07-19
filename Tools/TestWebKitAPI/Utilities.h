@@ -28,8 +28,13 @@
 namespace TestWebKitAPI {
 namespace Util {
 
-// Runs a platform runloop until the 'done' is true. 
+// Runs a platform runloop until the 'done' flag is true.
 void run(bool* done);
+
+// Runs a platform runloop `count` number of spins.
+void spinRunLoop(uint64_t count);
+
+// Runs a platform runloop until the amount of seconds has passed.
 void sleep(double seconds);
 
 } // namespace Util
