@@ -1,3 +1,12 @@
+2017-07-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge r219640 into Speedometer 1.0.
+
+        * Speedometer/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype._writeMark):
+        (BenchmarkRunner.prototype._runTest):
+        (BenchmarkRunner.prototype._runTestAndRecordResults):
+
 2017-07-14  Saam Barati  <sbarati@apple.com>
 
         Fix ambiguous description text in ARES-6 about the data the benchmark measures
