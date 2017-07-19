@@ -246,7 +246,7 @@ static inline UIImage *cameraIcon()
 
     Ref<API::Array> acceptMimeTypes = parameters->acceptMIMETypes();
     NSMutableArray *mimeTypes = [NSMutableArray arrayWithCapacity:acceptMimeTypes->size()];
-    for (const auto& mimeType : acceptMimeTypes->elementsOfType<API::String>())
+    for (auto mimeType : acceptMimeTypes->elementsOfType<API::String>())
         [mimeTypes addObject:mimeType->string()];
     _mimeTypes = adoptNS([mimeTypes copy]);
 

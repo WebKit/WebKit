@@ -1,5 +1,26 @@
 2017-07-18  Andy Estes  <aestes@apple.com>
 
+        [Xcode] Enable CLANG_WARN_RANGE_LOOP_ANALYSIS
+        https://bugs.webkit.org/show_bug.cgi?id=174631
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Shared/API/APIArray.cpp:
+        (API::Array::toStringVector):
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsArray):
+        * UIProcess/UserContent/WebUserContentControllerProxy.cpp:
+        (WebKit::WebUserContentControllerProxy::addProcess):
+        (WebKit::WebUserContentControllerProxy::removeAllUserScripts):
+        (WebKit::WebUserContentControllerProxy::removeAllUserStyleSheets):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel presentWithParameters:resultListener:]):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::getPasteboardDataForRange):
+
+2017-07-18  Andy Estes  <aestes@apple.com>
+
         [Xcode] Enable CLANG_WARN_OBJC_LITERAL_CONVERSION
         https://bugs.webkit.org/show_bug.cgi?id=174631
 

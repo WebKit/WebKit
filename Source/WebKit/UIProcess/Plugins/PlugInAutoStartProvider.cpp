@@ -160,7 +160,7 @@ void PlugInAutoStartProvider::setAutoStartOriginsTableWithItemsPassingTest(API::
 void PlugInAutoStartProvider::setAutoStartOriginsArray(API::Array& originList)
 {
     m_autoStartOrigins.clear();
-    for (const auto& string : originList.elementsOfType<API::String>())
+    for (auto string : originList.elementsOfType<API::String>())
         m_autoStartOrigins.append(string->string());
 }
 

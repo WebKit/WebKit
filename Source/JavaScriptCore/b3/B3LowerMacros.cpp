@@ -180,7 +180,7 @@ private:
             case Switch: {
                 SwitchValue* switchValue = m_value->as<SwitchValue>();
                 Vector<SwitchCase> cases;
-                for (const SwitchCase& switchCase : switchValue->cases(m_block))
+                for (SwitchCase switchCase : switchValue->cases(m_block))
                     cases.append(switchCase);
                 std::sort(
                     cases.begin(), cases.end(),

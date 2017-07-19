@@ -60,7 +60,7 @@ Vector<WTF::String> Array::toStringVector()
         return patternsVector;
 
     patternsVector.reserveInitialCapacity(size);
-    for (const auto& entry : elementsOfType<API::String>())
+    for (auto entry : elementsOfType<API::String>())
         patternsVector.uncheckedAppend(entry->string());
     return patternsVector;
 }

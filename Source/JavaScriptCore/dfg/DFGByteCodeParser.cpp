@@ -3492,7 +3492,7 @@ Node* ByteCodeParser::load(
 
 bool ByteCodeParser::check(const ObjectPropertyConditionSet& conditionSet)
 {
-    for (const ObjectPropertyCondition condition : conditionSet) {
+    for (const ObjectPropertyCondition& condition : conditionSet) {
         if (!check(condition))
             return false;
     }
@@ -3505,7 +3505,7 @@ GetByOffsetMethod ByteCodeParser::planLoad(const ObjectPropertyConditionSet& con
         dataLog("conditionSet = ", conditionSet, "\n");
     
     GetByOffsetMethod result;
-    for (const ObjectPropertyCondition condition : conditionSet) {
+    for (const ObjectPropertyCondition& condition : conditionSet) {
         switch (condition.kind()) {
         case PropertyCondition::Presence:
             RELEASE_ASSERT(!result); // Should only see exactly one of these.

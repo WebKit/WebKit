@@ -66,8 +66,8 @@ void Grid::insert(RenderBox& child, const GridArea& area)
     ASSERT(area.rows.isTranslatedDefinite() && area.columns.isTranslatedDefinite());
     ensureGridSize(area.rows.endLine(), area.columns.endLine());
 
-    for (const auto& row : area.rows) {
-        for (const auto& column : area.columns)
+    for (auto row : area.rows) {
+        for (auto column : area.columns)
             m_grid[row][column].append(&child);
     }
 

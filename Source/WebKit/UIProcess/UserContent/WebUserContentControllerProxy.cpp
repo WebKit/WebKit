@@ -80,11 +80,11 @@ void WebUserContentControllerProxy::addProcess(WebProcessProxy& webProcessProxy,
         parameters.userContentWorlds.append(std::make_pair(world.key->identifier(), world.key->name()));
 
     ASSERT(parameters.userScripts.isEmpty());
-    for (const auto& userScript : m_userScripts->elementsOfType<API::UserScript>())
+    for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         parameters.userScripts.append({ userScript->identifier(), userScript->userContentWorld().identifier(), userScript->userScript() });
 
     ASSERT(parameters.userStyleSheets.isEmpty());
-    for (const auto& userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
+    for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
         parameters.userStyleSheets.append({ userStyleSheet->identifier(), userStyleSheet->userContentWorld().identifier(), userStyleSheet->userStyleSheet() });
 
     ASSERT(parameters.messageHandlers.isEmpty());
@@ -193,7 +193,7 @@ void WebUserContentControllerProxy::removeAllUserScripts(API::UserContentWorld& 
 void WebUserContentControllerProxy::removeAllUserScripts()
 {
     HashCountedSet<RefPtr<API::UserContentWorld>> worlds;
-    for (const auto& userScript : m_userScripts->elementsOfType<API::UserScript>())
+    for (auto userScript : m_userScripts->elementsOfType<API::UserScript>())
         worlds.add(const_cast<API::UserContentWorld*>(&userScript->userContentWorld()));
 
     Vector<uint64_t> worldIdentifiers;
@@ -248,7 +248,7 @@ void WebUserContentControllerProxy::removeAllUserStyleSheets(API::UserContentWor
 void WebUserContentControllerProxy::removeAllUserStyleSheets()
 {
     HashCountedSet<RefPtr<API::UserContentWorld>> worlds;
-    for (const auto& userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
+    for (auto userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
         worlds.add(const_cast<API::UserContentWorld*>(&userStyleSheet->userContentWorld()));
 
     Vector<uint64_t> worldIdentifiers;

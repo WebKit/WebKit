@@ -351,7 +351,7 @@ void printSimpleLineLayoutCoverage()
     stream << "---------------------------------------------------\n";
     stream << "Number of blocks: total(" <<  leafRenderers.size() << ") non-simple(" << numberOfUnsupportedLeafBlocks << ")\nContent length: total(" <<
         textLength << ") non-simple(" << unsupportedTextLength << ")\n";
-    for (const auto reasonEntry : flowStatistics) {
+    for (const auto& reasonEntry : flowStatistics) {
         printReason(reasonEntry.key, stream);
         stream << ": " << (float)reasonEntry.value / (float)textLength * 100 << "%\n";
     }

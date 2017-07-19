@@ -1653,7 +1653,7 @@ protected:
                 }
             };
 
-            for (const Tmp& liveTmp : localCalc.live())
+            for (Tmp liveTmp : localCalc.live())
                 considerEdge(liveTmp);
             for (const Tmp& pinnedRegTmp : m_pinnedRegs)
                 considerEdge(pinnedRegTmp);
@@ -1699,7 +1699,7 @@ protected:
                 if (argBank != bank)
                     return;
                 
-                for (const Tmp& liveTmp : liveTmps) {
+                for (Tmp liveTmp : liveTmps) {
                     ASSERT(liveTmp.isGP() == (bank == GP));
                     
                     if (traceDebug)

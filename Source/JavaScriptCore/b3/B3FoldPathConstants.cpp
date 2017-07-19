@@ -103,11 +103,11 @@ public:
                 SwitchValue* switchValue = branch->as<SwitchValue>();
 
                 HashMap<BasicBlock*, unsigned> targetUses;
-                for (const SwitchCase& switchCase : switchValue->cases(block))
+                for (SwitchCase switchCase : switchValue->cases(block))
                     targetUses.add(switchCase.targetBlock(), 0).iterator->value++;
                 targetUses.add(switchValue->fallThrough(block), 0).iterator->value++;
 
-                for (const SwitchCase& switchCase : switchValue->cases(block)) {
+                for (SwitchCase switchCase : switchValue->cases(block)) {
                     if (targetUses.find(switchCase.targetBlock())->value != 1)
                         continue;
 
