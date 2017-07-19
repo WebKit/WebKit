@@ -1,3 +1,26 @@
+2017-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: pending evaluate script callbacks are stored with the wrong frame ID when using the default main frame
+        https://bugs.webkit.org/show_bug.cgi?id=174622
+
+        Reviewed by Brian Burg.
+
+        The frameHandle argument is optional in evaluateJavaScriptFunction(), when not provided we pass 0 to the web
+        process. The proxy gets the web page main frame when received frame ID is 0, but the given frameID is
+        still used as key of m_webFramePendingEvaluateJavaScriptCallbacksMap and also passed to the javascript function
+        as argument. I think r203442 was actually a workaround to this bug, making it even more hidden. Both
+        m_webFrameScriptObjectMap and m_webFramePendingEvaluateJavaScriptCallbacksMap should never have 0 as a
+        key, since they always use a frame ID, and the frame identifier counter starts at 1. This is causing test
+        testShouldDetectPageLoadsWhileWaitingOnAnAsyncScriptAndReturnAnError to hang, because when the page is unloaded
+        and didClearWindowObjectForFrame is called, we try to get the pending callbacks of frame 1, but they were stored
+        as frame 0 so DidEvaluateJavaScriptFunction message is never sent to the UI process.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction): Use always the actual frameID from the WebFrame
+        we are using.
+        * WebProcess/Automation/WebAutomationSessionProxy.h: Do not allow 0 as a key of
+        m_webFramePendingEvaluateJavaScriptCallbacksMap and m_webFrameScriptObjectMap.
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_RANGE_LOOP_ANALYSIS
