@@ -41,6 +41,7 @@ public:
     enum class ErrorCode {
         InvalidArgument,
         InvalidElementState,
+        InvalidSelector,
         InvalidSessionID,
         JavascriptError,
         NoSuchElement,

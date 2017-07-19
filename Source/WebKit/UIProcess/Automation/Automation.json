@@ -57,7 +57,8 @@
                 "NoJavaScriptDialog",
                 "NotImplemented",
                 "MissingParameter",
-                "InvalidParameter"
+                "InvalidParameter",
+                "InvalidSelector"
             ]
         },
         {

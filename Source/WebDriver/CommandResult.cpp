@@ -98,6 +98,8 @@ CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<Erro
             m_errorCode = ErrorCode::InvalidArgument;
         else if (errorName == "InvalidElementState")
             m_errorCode = ErrorCode::InvalidElementState;
+        else if (errorName == "InvalidSelector")
+            m_errorCode = ErrorCode::InvalidSelector;
 
         break;
     }
@@ -120,6 +122,7 @@ unsigned CommandResult::httpStatusCode() const
     switch (m_errorCode.value()) {
     case ErrorCode::InvalidArgument:
     case ErrorCode::InvalidElementState:
+    case ErrorCode::InvalidSelector:
     case ErrorCode::NoSuchElement:
     case ErrorCode::NoSuchFrame:
     case ErrorCode::NoSuchWindow:
@@ -150,6 +153,8 @@ String CommandResult::errorString() const
         return ASCIILiteral("invalid argument");
     case ErrorCode::InvalidElementState:
         return ASCIILiteral("invalid element state");
+    case ErrorCode::InvalidSelector:
+        return ASCIILiteral("invalid selector");
     case ErrorCode::InvalidSessionID:
         return ASCIILiteral("invalid session id");
     case ErrorCode::JavascriptError:

@@ -1,3 +1,18 @@
+2017-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: handle invalid selector errors
+        https://bugs.webkit.org/show_bug.cgi?id=174619
+
+        Reviewed by Brian Burg.
+
+        Add InvalidSelector error and handle it in case of protocol server error.
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::CommandResult):
+        (WebDriver::CommandResult::httpStatusCode):
+        (WebDriver::CommandResult::errorString):
+        * CommandResult.h:
+
 2017-07-18  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Fix build with Clang after r219605.

@@ -1,5 +1,28 @@
 2017-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: handle invalid selector errors
+        https://bugs.webkit.org/show_bug.cgi?id=174619
+
+        Reviewed by Brian Burg.
+
+        We are currently handling only XPathException and only when it's an invalid expression. In the xpath case, the
+        spec also says "If any item in result is not an element return an error with error code invalid selector.", so
+        we should also handle TYPE_ERR (The expression could not be converted to return the specified type.). However,
+        since the spec says "or other error", I think we can simplify this and simply throw InvalidSelector inside the
+        catch, without checking any specific error. This is causing 14 failures in selenium tests.
+
+        §12. Element Retrieval. Step 6: If a DOMException, SyntaxError, XPathException, or other error occurs during the
+        execution of the element location strategy, return error invalid selector.
+        https://www.w3.org/TR/webdriver/#dfn-find
+
+        * UIProcess/Automation/Automation.json: Add InvalidSelector error.
+        * UIProcess/Automation/atoms/FindNodes.js:
+        (tryToFindNode): Raise InvalidSelector in case of error.
+        * WebProcess/Automation/WebAutomationSessionProxy.cpp:
+        (WebKit::WebAutomationSessionProxy::evaluateJavaScriptFunction): Handle InvalidSelector exceptions.
+
+2017-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Web Automation: error details not passed to DidEvaluateJavaScriptFunction message when callback was not called before page unload
         https://bugs.webkit.org/show_bug.cgi?id=174624
 
