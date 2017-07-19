@@ -116,6 +116,11 @@ Thread::~Thread()
         CloseHandle(m_handle);
 }
 
+void Thread::initializeCurrentThreadEvenIfNonWTFCreated()
+{
+    Thread::current().initialize();
+}
+
 // MS_VC_EXCEPTION, THREADNAME_INFO, and setThreadNameInternal all come from <http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx>.
 static const DWORD MS_VC_EXCEPTION = 0x406D1388;
 
@@ -145,6 +150,7 @@ void Thread::initializeCurrentThreadInternal(const char* szThreadName)
     } __except (EXCEPTION_CONTINUE_EXECUTION) {
     }
 #endif
+    initializeCurrentThreadEvenIfNonWTFCreated();
 }
 
 void Thread::initializePlatformThreading()
@@ -261,9 +267,8 @@ size_t Thread::getRegisters(PlatformRegisters& registers)
 
 Thread& Thread::current()
 {
-    ThreadHolder* data = ThreadHolder::current();
-    if (data)
-        return data->thread();
+    if (Thread* current = currentMayBeNull())
+        return *current;
 
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     Ref<Thread> thread = adoptRef(*new Thread());
@@ -274,6 +279,7 @@ Thread& Thread::current()
 
     thread->establish(handle, currentID());
     ThreadHolder::initialize(thread.get(), Thread::currentID());
+    initializeCurrentThreadEvenIfNonWTFCreated();
     return thread.get();
 }
 

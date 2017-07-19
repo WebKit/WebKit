@@ -40,15 +40,7 @@ ThreadSpecific<WTFThreadData>* WTFThreadData::staticData;
 #endif
 
 WTFThreadData::WTFThreadData()
-    : m_apiData(0)
-    , m_currentAtomicStringTable(0)
-    , m_defaultAtomicStringTable(0)
-    , m_atomicStringTableDestructor(0)
-    , m_stackBounds(StackBounds::currentThreadStackBounds())
-#if ENABLE(STACK_STATS)
-    , m_stackStats()
-#endif
-    , m_savedStackPointerAtVMEntry(0)
+    : m_stackBounds(StackBounds::currentThreadStackBounds())
     , m_savedLastStackTop(stack().origin())
 {
     AtomicStringTable::create(*this);

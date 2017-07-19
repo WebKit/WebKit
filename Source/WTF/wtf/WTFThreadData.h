@@ -59,11 +59,6 @@ public:
 
     const StackBounds& stack()
     {
-        // We need to always get a fresh StackBounds from the OS due to how fibers work.
-        // See https://bugs.webkit.org/show_bug.cgi?id=102411
-#if OS(WINDOWS)
-        m_stackBounds = StackBounds::currentThreadStackBounds();
-#endif
         return m_stackBounds;
     }
 
@@ -94,18 +89,18 @@ public:
         m_savedLastStackTop = lastStackTop;
     }
 
-    void* m_apiData;
+    void* m_apiData { nullptr };
 
 private:
-    AtomicStringTable* m_currentAtomicStringTable;
-    AtomicStringTable* m_defaultAtomicStringTable;
-    AtomicStringTableDestructor m_atomicStringTableDestructor;
+    AtomicStringTable* m_currentAtomicStringTable { nullptr };
+    AtomicStringTable* m_defaultAtomicStringTable { nullptr };
+    AtomicStringTableDestructor m_atomicStringTableDestructor { nullptr };
 
     StackBounds m_stackBounds;
 #if ENABLE(STACK_STATS)
     StackStats::PerThreadStats m_stackStats;
 #endif
-    void* m_savedStackPointerAtVMEntry;
+    void* m_savedStackPointerAtVMEntry { nullptr };
     void* m_savedLastStackTop;
 
 #if HAVE(FAST_TLS)

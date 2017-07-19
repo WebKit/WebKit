@@ -1,3 +1,22 @@
+2017-07-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        WTF::Thread should have the threads stack bounds.
+        https://bugs.webkit.org/show_bug.cgi?id=173975
+
+        Reviewed by Mark Lam.
+
+        When creating WebThread, we first allocate WebCore::ThreadGlobalData in UI thread
+        and share it with WebThread.
+        The problem is that WebCore::ThreadGlobalData has CachedResourceRequestInitiators.
+        It allocates AtomicString, which requires WTFThreadData.
+
+        In this patch, we call WTF::initializeThreading() before allocating WebCore::ThreadGlobalData.
+        And we also call AtomicString::init() before calling WebCore::ThreadGlobalData since
+        WebCore::ThreadGlobalData allocates AtomicString.
+
+        * platform/ios/wak/WebCoreThread.mm:
+        (StartWebThread):
+
 2017-07-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Setting the minimum font size preference doesn’t affect absolute line-height values, so lines overlap
