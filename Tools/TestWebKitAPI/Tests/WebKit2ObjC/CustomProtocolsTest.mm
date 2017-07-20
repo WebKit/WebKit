@@ -34,6 +34,7 @@
 #import "TestProtocol.h"
 #import <WebKit/WKContextPrivate.h>
 #import <WebKit/WKProcessGroupPrivate.h>
+#import <wtf/AutodrainedPool.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED && PLATFORM(MAC)
@@ -170,20 +171,22 @@ TEST(WebKit2CustomProtocolsTest, ProcessPoolDestroyedDuringLoading)
 {
     [ProcessPoolDestroyedDuringLoadingProtocol registerWithScheme:@"custom"];
 
-    auto autoreleasePool = adoptNS([[NSAutoreleasePool alloc] init]);
-    auto browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
-    auto processGroup = adoptNS([[WKProcessGroup alloc] init]);
-    auto wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
+    {
+        AutodrainedPool pool;
+        auto browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
+        auto processGroup = adoptNS([[WKProcessGroup alloc] init]);
+        auto wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
     
-    [[wkView browsingContextController] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"custom:///test"]]];
+        [[wkView browsingContextController] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"custom:///test"]]];
 
-    Util::run(&isDone);
-    isDone = false;
+        Util::run(&isDone);
+        isDone = false;
 
-    processGroup = nil;
-    wkView = nil;
-    browsingContextGroup = nil;
-    autoreleasePool = nil;
+        // Instead of relying on the block going out of scope, manually release these objects in this order
+        processGroup = nil;
+        wkView = nil;
+        browsingContextGroup = nil;
+    }
 
     ASSERT(processPoolProtocolInstance);
     [processPoolProtocolInstance finishTheLoad];
