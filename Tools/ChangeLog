@@ -1,3 +1,15 @@
+2017-07-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Adjust priority of GSource used in WKTR's HeadlessViewBackend
+        https://bugs.webkit.org/show_bug.cgi?id=174671
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/wpe/HeadlessViewBackend.cpp:
+        (HeadlessViewBackend::HeadlessViewBackend): Use the RunLoopDispatcher
+        priority for this source in order to have it dispatched on the same
+        priority as the other WebKit-controlled GSource objects.
+
 2017-07-19  Jonathan Bedard  <jbedard@apple.com>
 
         lint-test-expectations should be run during style checking

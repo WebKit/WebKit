@@ -29,6 +29,7 @@
 #include <cassert>
 #include <fcntl.h>
 #include <unistd.h>
+#include <wtf/glib/RunLoopSourcePriority.h>
 
 // FIXME: Deploy good practices and clean up GBM resources at process exit.
 static EGLDisplay getEGLDisplay()
@@ -103,6 +104,7 @@ HeadlessViewBackend::HeadlessViewBackend()
             backend.performUpdate();
             return TRUE;
         }, this, nullptr);
+    g_source_set_priority(m_updateSource, RunLoopSourcePriority::RunLoopDispatcher);
     g_source_attach(m_updateSource, g_main_context_default());
 }
 
