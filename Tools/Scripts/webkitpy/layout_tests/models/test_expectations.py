@@ -744,10 +744,12 @@ class TestExpectationsModel(object):
 
         # Missing files will be 'None'. It should be impossible to have a missing file which also has a line associated with it.
         assert shortened_previous_expectation_filename not in expectation_line.related_files or expectation_line.related_files[shortened_previous_expectation_filename] is not None
-        expectation_line.related_files[shortened_previous_expectation_filename] = expectation_line.related_files.get(shortened_previous_expectation_filename, []).append(prev_expectation_line.line_number)
+        expectation_line.related_files[shortened_previous_expectation_filename] = expectation_line.related_files.get(shortened_previous_expectation_filename, [])
+        expectation_line.related_files[shortened_previous_expectation_filename].append(prev_expectation_line.line_number)
 
         assert shortened_expectation_filename not in prev_expectation_line.related_files or prev_expectation_line.related_files[shortened_expectation_filename] is not None
-        prev_expectation_line.related_files[shortened_expectation_filename] = prev_expectation_line.related_files.get(shortened_expectation_filename, []).append(expectation_line.line_number)
+        prev_expectation_line.related_files[shortened_expectation_filename] = prev_expectation_line.related_files.get(shortened_expectation_filename, [])
+        prev_expectation_line.related_files[shortened_expectation_filename].append(expectation_line.line_number)
 
         return True
 

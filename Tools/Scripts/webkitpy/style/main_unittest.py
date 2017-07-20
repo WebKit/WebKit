@@ -149,6 +149,19 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             file_reader.do_association_check('/mock-checkout', host)
         self.assertEqual(scope.captured_output, ('', '', ''))
 
+    def test_linter_duplicate_line_edit_in_file(self):
+        files = {
+            '/mock-checkout/LayoutTests/TestExpectations':
+            '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
+        host = self._generate_testing_host(files)
+
+        scope = OutputCaptureScope()
+        with scope:
+            file_reader = self._generate_file_reader(host.filesystem)
+            file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1])
+            file_reader.do_association_check('/mock-checkout', host)
+        self.assertEqual(scope.captured_output, ('', '', ''))
+
     def test_linter_deleted_file(self):
         files = {
             '/mock-checkout/LayoutTests/TestExpectations':
