@@ -119,6 +119,8 @@ void ScrollingTree::commitTreeState(std::unique_ptr<ScrollingStateTree> scrollin
 {
     bool rootStateNodeChanged = scrollingStateTree->hasNewRootStateNode();
     
+    LOG(Scrolling, "\nScrollingTree::commitTreeState");
+    
     ScrollingStateScrollingNode* rootNode = scrollingStateTree->rootStateNode();
     if (rootNode
         && (rootStateNodeChanged

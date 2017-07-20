@@ -42,7 +42,8 @@ public:
     void detachFromStateTree(ScrollingNodeID) override;
     void clearStateTree() override;
 
-    void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) override;
+    void updateNodeLayer(ScrollingNodeID, GraphicsLayer*) override;
+    void updateNodeViewportConstraints(ScrollingNodeID, const ViewportConstraints&) override;
 
     void scrollableAreaScrollLayerDidChange(ScrollableArea&) override;
     void willDestroyScrollableArea(ScrollableArea&) override;

@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "Logging.h"
 #include "ScrollingStateFixedNode.h"
 #include "ScrollingTree.h"
 #include "TextStream.h"
@@ -70,6 +71,9 @@ static inline CGPoint operator*(CGPoint& a, const CGSize& b)
 void ScrollingTreeFixedNode::updateLayersAfterAncestorChange(const ScrollingTreeNode& changedNode, const FloatRect& fixedPositionRect, const FloatSize& cumulativeDelta)
 {
     FloatPoint layerPosition = m_constraints.layerPositionForViewportRect(fixedPositionRect);
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFixedNode " << scrollingNodeID() << " updateLayersAfterAncestorChange: new viewport " << fixedPositionRect << " viewportRectAtLastLayout " << m_constraints.viewportRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " new offset from bottom " << (fixedPositionRect.maxY() - layerPosition.y()));
+
     layerPosition -= cumulativeDelta;
 
     CGRect layerBounds = [m_layer bounds];

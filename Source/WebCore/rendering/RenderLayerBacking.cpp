@@ -1206,7 +1206,7 @@ void RenderLayerBacking::updateGeometry()
     if (subpixelOffsetFromRendererChanged(oldSubpixelOffsetFromRenderer, m_subpixelOffsetFromRenderer, deviceScaleFactor()) && canIssueSetNeedsDisplay())
         setContentsNeedDisplay();
 
-    compositor().updateScrollCoordinatedStatus(m_owningLayer);
+    compositor().updateScrollCoordinatedStatus(m_owningLayer, { RenderLayerCompositor::ScrollingNodeChangeFlags::Layer, RenderLayerCompositor::ScrollingNodeChangeFlags::LayerGeometry });
 }
 
 void RenderLayerBacking::updateAfterDescendants()
