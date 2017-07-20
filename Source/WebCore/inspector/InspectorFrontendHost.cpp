@@ -334,8 +334,37 @@ void InspectorFrontendHost::sendMessageToBackend(const String& message)
 
 #if ENABLE(CONTEXT_MENUS)
 
-void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMenuItem>& items)
+static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&& items, ContextMenu& menu)
 {
+    for (auto& item : items) {
+        if (item.type == "separator") {
+            menu.appendItem({ SeparatorType, ContextMenuItemTagNoAction, { } });
+            continue;
+        }
+
+        if (item.type == "subMenu" && item.subItems) {
+            ContextMenu subMenu;
+            populateContextMenu(WTFMove(*item.subItems), subMenu);
+
+            menu.appendItem({ SubmenuType, ContextMenuItemTagNoAction, item.label, &subMenu });
+            continue;
+        }
+
+        auto type = item.type == "checkbox" ? CheckableActionType : ActionType;
+        auto action = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + item.id.value_or(0));
+        ContextMenuItem menuItem = { type, action, item.label };
+        if (item.enabled)
+            menuItem.setEnabled(*item.enabled);
+        if (item.checked)
+            menuItem.setChecked(*item.checked);
+        menu.appendItem(menuItem);
+    }
+}
+#endif
+
+void InspectorFrontendHost::showContextMenu(Event* event, Vector<ContextMenuItem>&& items)
+{
+#if ENABLE(CONTEXT_MENUS)
     if (!event)
         return;
 
@@ -346,12 +375,18 @@ void InspectorFrontendHost::showContextMenu(Event* event, const Vector<ContextMe
         ASSERT_NOT_REACHED();
         return;
     }
-    auto menuProvider = FrontendMenuProvider::create(this, { &state, frontendApiObject }, items);
+    
+    ContextMenu menu;
+    populateContextMenu(WTFMove(items), menu);
+
+    auto menuProvider = FrontendMenuProvider::create(this, { &state, frontendApiObject }, menu.items());
     m_menuProvider = menuProvider.ptr();
     m_frontendPage->contextMenuController().showContextMenu(*event, menuProvider);
-}
-
+#else
+    UNUSED_PARAM(event);
+    UNUSED_PARAM(items);
 #endif
+}
 
 void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
 {

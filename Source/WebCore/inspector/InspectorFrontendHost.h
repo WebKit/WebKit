@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class ContextMenuItem;
 class Event;
 class FrontendMenuProvider;
 class InspectorFrontendClient;
@@ -85,10 +84,16 @@ public:
     void append(const String& url, const String& content);
     void close(const String& url);
 
-#if ENABLE(CONTEXT_MENUS)
-    // Called from [Custom] implementations.
-    void showContextMenu(Event*, const Vector<ContextMenuItem>& items);
-#endif
+    struct ContextMenuItem {
+        String type;
+        String label;
+        std::optional<int> id;
+        std::optional<bool> enabled;
+        std::optional<bool> checked;
+        std::optional<Vector<ContextMenuItem>> subItems;
+    };
+    void showContextMenu(Event*, Vector<ContextMenuItem>&&);
+
     void sendMessageToBackend(const String& message);
     void dispatchEventAsContextMenuEvent(Event*);
 

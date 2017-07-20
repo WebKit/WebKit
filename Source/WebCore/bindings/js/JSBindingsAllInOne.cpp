@@ -70,7 +70,6 @@
 #include "JSHTMLTemplateElementCustom.cpp"
 #include "JSHistoryCustom.cpp"
 #include "JSImageDataCustom.cpp"
-#include "JSInspectorFrontendHostCustom.cpp"
 #include "JSLazyEventListener.cpp"
 #include "JSLocationCustom.cpp"
 #include "JSMainThreadExecState.cpp"

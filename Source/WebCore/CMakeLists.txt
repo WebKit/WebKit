@@ -1202,7 +1202,6 @@ set(WebCore_SOURCES
     bindings/js/JSIDBObjectStoreCustom.cpp
     bindings/js/JSIDBTransactionCustom.cpp
     bindings/js/JSImageDataCustom.cpp
-    bindings/js/JSInspectorFrontendHostCustom.cpp
     bindings/js/JSLazyEventListener.cpp
     bindings/js/JSLocationCustom.cpp
     bindings/js/JSMainThreadExecState.cpp

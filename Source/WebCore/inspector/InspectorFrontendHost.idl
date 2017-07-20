@@ -68,7 +68,7 @@
     DOMString platform();
     DOMString port();
 
-    [Custom] void showContextMenu(MouseEvent event, any items);
+    void showContextMenu(Event? event, sequence<ContextMenuItem> items);
     void dispatchEventAsContextMenuEvent(Event? event);
     void sendMessageToBackend(DOMString message);
     void unbufferedLog(DOMString message);
@@ -76,4 +76,15 @@
     boolean isUnderTest();
 
     void beep();
+};
+
+[
+    JSGenerateToJSObject
+] dictionary ContextMenuItem {
+    DOMString type;
+    DOMString label;
+    long id;
+    boolean enabled;
+    boolean checked;
+    sequence<ContextMenuItem> subItems;
 };

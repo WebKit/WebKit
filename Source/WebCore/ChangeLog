@@ -1,3 +1,24 @@
+2017-07-20  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for InspectorFrontendHost
+        https://bugs.webkit.org/show_bug.cgi?id=174659
+
+        Reviewed by Chris Dumez.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSInspectorFrontendHostCustom.cpp: Removed.
+        Remove JSInspectorFrontendHostCustom.cpp.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::populateContextMenu):
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        Re-implement showContextMenu by using an IDL defined ContextMenuItem dictionary
+        and converting from that to a WebCore::ContextMenu in the implementation.
+
 2017-07-20  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Layout Test http/tests/media/hls/hls-progress.html is failing

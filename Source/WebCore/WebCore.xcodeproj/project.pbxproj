@@ -3089,7 +3089,6 @@
 		7A674BDC0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A674BDA0F9EBF4E006CF099 /* PageGroupLoadDeferrer.h */; };
 		7A74ECBA101839A600BF939E /* InspectorDOMStorageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECB8101839A500BF939E /* InspectorDOMStorageAgent.cpp */; };
 		7A74ECBB101839A600BF939E /* InspectorDOMStorageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A74ECB9101839A600BF939E /* InspectorDOMStorageAgent.h */; };
-		7A74ECBD101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */; };
 		7A929CA61C598A9E004DF226 /* ResourceLoadStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A929CA11C598378004DF226 /* ResourceLoadStatistics.cpp */; };
 		7A929CA71C598AA9004DF226 /* ResourceLoadStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A929CA21C598378004DF226 /* ResourceLoadStatistics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A93868518DCC14500B8263D /* VTTScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A93868218DCC14500B8263D /* VTTScanner.cpp */; };
@@ -11118,7 +11117,6 @@
 		7A7256B915EB9F5B007323A7 /* InspectorOverlayPage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = InspectorOverlayPage.html; sourceTree = "<group>"; };
 		7A74ECB8101839A500BF939E /* InspectorDOMStorageAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMStorageAgent.cpp; sourceTree = "<group>"; };
 		7A74ECB9101839A600BF939E /* InspectorDOMStorageAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDOMStorageAgent.h; sourceTree = "<group>"; };
-		7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInspectorFrontendHostCustom.cpp; sourceTree = "<group>"; };
 		7A929CA11C598378004DF226 /* ResourceLoadStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadStatistics.cpp; sourceTree = "<group>"; };
 		7A929CA21C598378004DF226 /* ResourceLoadStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadStatistics.h; sourceTree = "<group>"; };
 		7A93868218DCC14500B8263D /* VTTScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VTTScanner.cpp; sourceTree = "<group>"; };
@@ -23615,7 +23613,6 @@
 				9392262C1032107B006E7D5D /* JSHTMLCanvasElementCustom.cpp */,
 				BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */,
 				D6F7960C166FFECE0076DD18 /* JSHTMLTemplateElementCustom.cpp */,
-				7A74ECBC101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp */,
 				BCE1C43F0D9830F4003B02F2 /* JSLocationCustom.cpp */,
 				410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */,
 				C6F0917E143A2BB900685849 /* JSMutationObserverCustom.cpp */,
@@ -32067,7 +32064,6 @@
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
 				A86629D409DA2B48009633A6 /* JSInputEvent.cpp in Sources */,
 				7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */,
-				7A74ECBD101839DA00BF939E /* JSInspectorFrontendHostCustom.cpp in Sources */,
 				0F4710E51DB700C7002DCEC3 /* JSIntersectionObserver.cpp in Sources */,
 				0F8B45751DC41DBA00443C3F /* JSIntersectionObserverCallback.cpp in Sources */,
 				0F4710E71DB700C7002DCEC3 /* JSIntersectionObserverEntry.cpp in Sources */,
