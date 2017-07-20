@@ -1,3 +1,24 @@
+2017-07-20  Antoine Quint  <graouts@apple.com>
+
+        Turn tests at media/modern-media-controls/start-support back on
+        https://bugs.webkit.org/show_bug.cgi?id=174683
+
+        Reviewed by Dean Jackson.
+
+        Turning those tests back on revealed a small bug that is unlikely to really affect content
+        on the Web. In the case where the size of the video is known right away, without the need
+        for loading its metadata, as is the case in the start-support-click-to-start.html test with
+        a local media resource, all queued layouts are flushed at once and we may call the layout()
+        method of the left ButtonsContainer which originally is set to contain the play/pause button,
+        which would remove the play/pause button from the center of the media. So before we potentially
+        set the play/pause button as the central button, we first assign the default button set for
+        the two ButtonsContainer instances and only add the play/pause button when we're not showing
+        the prominent play/pause button.
+
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls.prototype.layout):
+        (InlineMediaControls.prototype._leftContainerButtons):
+
 2017-07-20  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy FileException type
