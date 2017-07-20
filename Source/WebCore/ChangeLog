@@ -1,3 +1,25 @@
+2017-07-20  Andreas Kling  <akling@apple.com>
+
+        Minor Node->Element type tightening fixes
+        https://bugs.webkit.org/show_bug.cgi?id=174651
+
+        Reviewed by Sam Weinig.
+
+        Tighten up some Node* into Element* or even better, Element&.
+
+        * dom/Document.cpp:
+        (WebCore::acceptsEditingFocus): Take a const Element&.
+        (WebCore::Document::setFocusedElement):
+        * editing/Editor.cpp:
+        (WebCore::Editor::findEventTargetFrom): Return an Element*.
+        (WebCore::Editor::findEventTargetFromSelection): Ditto.
+        (WebCore::Editor::pasteAsPlainText):
+        (WebCore::Editor::pasteAsFragment):
+        (WebCore::Editor::dispatchCPPEvent):
+        * editing/Editor.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::dispatchTextInputEventFor):
+
 2017-07-20  Brady Eidson  <beidson@apple.com>
 
         WKHTTPCookieStore API tests fail on High Sierra.

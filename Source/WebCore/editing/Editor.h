@@ -401,7 +401,7 @@ public:
     void clearMisspellingsAndBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection&);
 
-    Node* findEventTargetFrom(const VisibleSelection& selection) const;
+    Element* findEventTargetFrom(const VisibleSelection& selection) const;
 
     WEBCORE_EXPORT String selectedText() const;
     String selectedTextForDataTransfer() const;
@@ -541,7 +541,7 @@ private:
 
     void editorUIUpdateTimerFired();
 
-    Node* findEventTargetFromSelection() const;
+    Element* findEventTargetFromSelection() const;
 
     bool unifiedTextCheckerEnabled() const;
 
