@@ -1,5 +1,5 @@
 
-FAIL org.w3.clearkey, temporary, update() immediately after createSession() promise_test: Unhandled rejection with value: object "NotSupportedError (DOM Exception 9): The operation is not supported."
-FAIL org.w3.clearkey, temporary, close() immediately after createSession() promise_test: Unhandled rejection with value: object "NotSupportedError (DOM Exception 9): The operation is not supported."
-FAIL org.w3.clearkey, temporary, remove() immediately after createSession() promise_test: Unhandled rejection with value: object "NotSupportedError (DOM Exception 9): The operation is not supported."
+FAIL org.w3.clearkey, temporary, update() immediately after createSession() promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL org.w3.clearkey, temporary, close() immediately after createSession() promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL org.w3.clearkey, temporary, remove() immediately after createSession() promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

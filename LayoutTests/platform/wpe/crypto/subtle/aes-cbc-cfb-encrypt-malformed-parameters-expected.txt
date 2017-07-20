@@ -12,9 +12,9 @@ PASS crypto.subtle.encrypt({name: "aes-cbc", iv: undefined}, key, plainText) rej
 PASS crypto.subtle.encrypt({name: "aes-cbc", iv: Symbol()}, key, plainText) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.encrypt({name: "aes-cbc", iv: { }}, key, plainText) rejected promise  with TypeError: Type error.
 PASS crypto.subtle.encrypt({name: "aes-cbc", iv: "foo"}, key, plainText) rejected promise  with TypeError: Type error.
-PASS crypto.subtle.encrypt({name: "aes-cbc", iv: asciiToUint8Array("")}, key, plainText) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
-PASS crypto.subtle.encrypt({name: "aes-cbc", iv: asciiToUint8Array("j")}, key, plainText) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
-PASS crypto.subtle.encrypt({name: "aes-cbc", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd")}, key, plainText) rejected promise  with OperationError (DOM Exception 34): The operation failed for an operation-specific reason.
+PASS crypto.subtle.encrypt({name: "aes-cbc", iv: asciiToUint8Array("")}, key, plainText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.encrypt({name: "aes-cbc", iv: asciiToUint8Array("j")}, key, plainText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
+PASS crypto.subtle.encrypt({name: "aes-cbc", iv: asciiToUint8Array("jnOw99oOZFLIEPMrd")}, key, plainText) rejected promise  with OperationError: The operation failed for an operation-specific reason.
 PASS successfullyParsed is true
 
 TEST COMPLETE
