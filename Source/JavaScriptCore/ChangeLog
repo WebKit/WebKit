@@ -1,3 +1,15 @@
+2017-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use ThreadGroup to bookkeep active threads for Mach exception
+        https://bugs.webkit.org/show_bug.cgi?id=174678
+
+        Reviewed by Mark Lam.
+
+        Use Thread& instead.
+
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+
 2017-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Implement WTF::ThreadGroup

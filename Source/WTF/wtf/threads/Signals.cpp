@@ -46,9 +46,9 @@ extern "C" {
 
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
-#include <wtf/HashSet.h>
 #include <wtf/LocklessBag.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/ThreadGroup.h>
 #include <wtf/ThreadMessage.h>
 #include <wtf/Threading.h>
 
@@ -215,37 +215,29 @@ void handleSignalsWithMach()
 }
 
 
-static StaticLock threadLock;
 exception_mask_t activeExceptions { 0 };
 
-inline void setExceptionPorts(const AbstractLocker&, Thread* thread)
+inline void setExceptionPorts(const AbstractLocker& threadGroupLocker, Thread& thread)
 {
-    kern_return_t result = thread_set_exception_ports(thread->machThread(), activeExceptions, exceptionPort, EXCEPTION_STATE | MACH_EXCEPTION_CODES, MACHINE_THREAD_STATE);
+    UNUSED_PARAM(threadGroupLocker);
+    kern_return_t result = thread_set_exception_ports(thread.machThread(), activeExceptions, exceptionPort, EXCEPTION_STATE | MACH_EXCEPTION_CODES, MACHINE_THREAD_STATE);
     if (result != KERN_SUCCESS) {
         dataLogLn("thread set port failed due to ", mach_error_string(result));
         CRASH();
     }
 }
 
-inline HashSet<Thread*>& activeThreads(const AbstractLocker&)
+inline ThreadGroup& activeThreads()
 {
-    static NeverDestroyed<HashSet<Thread*>> activeThreads;
-    return activeThreads;
+    static NeverDestroyed<std::shared_ptr<ThreadGroup>> activeThreads { ThreadGroup::create() };
+    return *activeThreads.get();
 }
 
-void registerThreadForMachExceptionHandling(Thread* thread)
+void registerThreadForMachExceptionHandling(Thread& thread)
 {
-    auto locker = holdLock(threadLock);
-    auto result = activeThreads(locker).add(thread);
-
-    if (result.isNewEntry)
+    auto locker = holdLock(activeThreads().getLock());
+    if (activeThreads().add(locker, thread))
         setExceptionPorts(locker, thread);
-}
-
-void unregisterThreadForMachExceptionHandling(Thread* thread)
-{
-    auto locker = holdLock(threadLock);
-    activeThreads(locker).remove(thread);
 }
 
 #else
@@ -292,12 +284,12 @@ void installSignalHandler(Signal signal, SignalHandler&& handler)
     handlers[static_cast<size_t>(signal)]->add(WTFMove(handler));
 
 #if HAVE(MACH_EXCEPTIONS)
-    auto locker = holdLock(threadLock);
+    auto locker = holdLock(activeThreads().getLock());
     if (useMach) {
         activeExceptions |= toMachMask(signal);
 
-        for (Thread* thread : activeThreads(locker))
-            setExceptionPorts(locker, thread);
+        for (auto& thread : activeThreads().threads(locker))
+            setExceptionPorts(locker, thread.get());
     }
 #endif
 }

@@ -32,15 +32,20 @@ namespace WTF {
 
 ThreadGroup::~ThreadGroup()
 {
-    std::lock_guard<std::mutex> locker(m_lock);
+    auto locker = holdLock(m_lock);
     for (auto& thread : m_threads)
         thread->removeFromThreadGroup(locker, *this);
 }
 
+bool ThreadGroup::add(const AbstractLocker& locker, Thread& thread)
+{
+    return thread.addToThreadGroup(locker, *this);
+}
+
 bool ThreadGroup::add(Thread& thread)
 {
-    std::lock_guard<std::mutex> locker(m_lock);
-    return thread.addToThreadGroup(locker, *this);
+    auto locker = holdLock(m_lock);
+    return add(locker, thread);
 }
 
 void ThreadGroup::addCurrentThread()

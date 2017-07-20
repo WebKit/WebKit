@@ -91,8 +91,7 @@ WTF_EXPORT_PRIVATE void installSignalHandler(Signal, SignalHandler&&);
 
 #if HAVE(MACH_EXCEPTIONS)
 class Thread;
-void registerThreadForMachExceptionHandling(Thread*);
-void unregisterThreadForMachExceptionHandling(Thread*);
+void registerThreadForMachExceptionHandling(Thread&);
 
 void handleSignalsWithMach();
 #endif // HAVE(MACH_EXCEPTIONS)
@@ -101,7 +100,6 @@ void handleSignalsWithMach();
 
 #if HAVE(MACH_EXCEPTIONS)
 using WTF::registerThreadForMachExceptionHandling;
-using WTF::unregisterThreadForMachExceptionHandling;
 using WTF::handleSignalsWithMach;
 #endif // HAVE(MACH_EXCEPTIONS)
 

@@ -42,6 +42,7 @@ public:
     }
 
     WTF_EXPORT_PRIVATE bool add(Thread&);
+    WTF_EXPORT_PRIVATE bool add(const AbstractLocker&, Thread&);
     WTF_EXPORT_PRIVATE void addCurrentThread();
 
     const ListHashSet<Ref<Thread>>& threads(const AbstractLocker&) const { return m_threads; }

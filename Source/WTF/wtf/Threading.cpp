@@ -173,7 +173,7 @@ void Thread::didExit()
     m_didExit = true;
 }
 
-bool Thread::addToThreadGroup(const std::lock_guard<std::mutex>& threadGroupLocker, ThreadGroup& threadGroup)
+bool Thread::addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup& threadGroup)
 {
     UNUSED_PARAM(threadGroupLocker);
     std::lock_guard<std::mutex> locker(m_mutex);
@@ -184,7 +184,7 @@ bool Thread::addToThreadGroup(const std::lock_guard<std::mutex>& threadGroupLock
     return true;
 }
 
-void Thread::removeFromThreadGroup(const std::lock_guard<std::mutex>& threadGroupLocker, ThreadGroup& threadGroup)
+void Thread::removeFromThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup& threadGroup)
 {
     UNUSED_PARAM(threadGroupLocker);
     std::lock_guard<std::mutex> locker(m_mutex);

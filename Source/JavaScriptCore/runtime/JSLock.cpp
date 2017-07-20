@@ -151,7 +151,7 @@ void JSLock::didAcquireLock()
 #endif
 
 #if HAVE(MACH_EXCEPTIONS)
-    registerThreadForMachExceptionHandling(&Thread::current());
+    registerThreadForMachExceptionHandling(Thread::current());
 #endif
 
     // Note: everything below must come after addCurrentThread().

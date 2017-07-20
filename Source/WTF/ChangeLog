@@ -1,3 +1,32 @@
+2017-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Use ThreadGroup to bookkeep active threads for Mach exception
+        https://bugs.webkit.org/show_bug.cgi?id=174678
+
+        Reviewed by Mark Lam.
+
+        We can use ThreadGroup to bookkeep active threads for Mach exceptions.
+        When the thread dies, it is automatically removed from the thread groups.
+        So we do not need to call unregisterThreadForMachExceptionHandling.
+
+        * wtf/ThreadGroup.cpp:
+        (WTF::ThreadGroup::~ThreadGroup):
+        (WTF::ThreadGroup::add):
+        * wtf/ThreadGroup.h:
+        * wtf/ThreadHolder.cpp:
+        (WTF::ThreadHolder::~ThreadHolder):
+        * wtf/Threading.cpp:
+        (WTF::Thread::addToThreadGroup):
+        (WTF::Thread::removeFromThreadGroup):
+        * wtf/Threading.h:
+        * wtf/threads/Signals.cpp:
+        (WTF::setExceptionPorts):
+        (WTF::activeThreads):
+        (WTF::registerThreadForMachExceptionHandling):
+        (WTF::installSignalHandler):
+        (WTF::unregisterThreadForMachExceptionHandling): Deleted.
+        * wtf/threads/Signals.h:
+
 2017-07-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Remove unnecessary indirection of WTF::Thread entry point
