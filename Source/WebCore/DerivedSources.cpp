@@ -647,6 +647,7 @@
 #include "JSXMLHttpRequestUpload.cpp"
 #include "JSXMLSerializer.cpp"
 #include "JSXPathEvaluator.cpp"
+#include "JSXPathException.cpp"
 #include "JSXPathExpression.cpp"
 #include "JSXPathNSResolver.cpp"
 #include "JSXPathResult.cpp"

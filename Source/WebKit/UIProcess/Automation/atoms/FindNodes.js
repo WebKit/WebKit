@@ -100,7 +100,7 @@ function(strategy, ancestorElement, query, firstResultOnly, timeoutDuration, cal
                 return arrayResult;
             }
         } catch (error) {
-            // §12. Element Retrieval. Step 6: If a DOMException, SyntaxError, or other error occurs during
+            // §12. Element Retrieval. Step 6: If a DOMException, SyntaxError, XPathException, or other error occurs during
             // the execution of the element location strategy, return error invalid selector.
             // https://www.w3.org/TR/webdriver/#dfn-find
             throw { name: "InvalidSelector", message: error.message };

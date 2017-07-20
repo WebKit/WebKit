@@ -30,6 +30,7 @@
 
 #include "ExceptionCode.h"
 #include "XPathEvaluator.h"
+#include "XPathException.h"
 #include "XPathNSResolver.h"
 #include "XPathPath.h"
 #include "XPathStep.h"
@@ -461,7 +462,7 @@ ExceptionOr<std::unique_ptr<Expression>> Parser::parseStatement(const String& st
         return Exception { NAMESPACE_ERR };
 
     if (parseError)
-        return Exception { SYNTAX_ERR };
+        return Exception { XPathException::INVALID_EXPRESSION_ERR };
 
     return WTFMove(parser.m_result);
 }

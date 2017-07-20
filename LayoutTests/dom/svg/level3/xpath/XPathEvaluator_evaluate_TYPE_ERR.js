@@ -103,7 +103,7 @@ function XPathEvaluator_evaluate_TYPE_ERR() {
             result = xpEvaluator.evaluate("string(/)",doc,nullNSResolver,9,nullResult);
         }
 		catch(ex) {            
-      success = (ex.name == "TypeError");
+      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
 		}
 		assertTrue("throw_TYPE_ERR",success);
 	}

@@ -107,7 +107,7 @@ function XPathEvaluator_createExpression_INVALID_EXPRESSION_ERR() {
             exp = xpEvaluator.createExpression("12a",nullNSResolver);
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == DOMException.SYNTAX_ERR);
+      success = (typeof(ex.code) != 'undefined' && ex.code == 51);
 		}
 		assertTrue("throw_INVALID_EXPRESSION_ERR",success);
 	}

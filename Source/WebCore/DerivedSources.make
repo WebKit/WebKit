@@ -830,6 +830,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/xml/XMLHttpRequestUpload.idl \
     $(WebCore)/xml/XMLSerializer.idl \
     $(WebCore)/xml/XPathEvaluator.idl \
+    $(WebCore)/xml/XPathException.idl \
     $(WebCore)/xml/XPathExpression.idl \
     $(WebCore)/xml/XPathNSResolver.idl \
     $(WebCore)/xml/XPathResult.idl \

@@ -28,12 +28,14 @@
 #import "DOMEventException.h"
 #import "DOMException.h"
 #import "DOMRangeException.h"
+#import "DOMXPathException.h"
 #import <WebCore/ExceptionCode.h>
 #import <WebCore/ExceptionCodeDescription.h>
 
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
 NSString * const DOMEventException = @"DOMEventException";
+NSString * const DOMXPathException = @"DOMXPathException";
 
 static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
 {
@@ -47,6 +49,8 @@ static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
         exceptionName = DOMRangeException;
     else if (strcmp(description.typeName, "DOM Events") == 0)
         exceptionName = DOMEventException;
+    else if (strcmp(description.typeName, "DOM XPath") == 0)
+        exceptionName = DOMXPathException;
     else
         exceptionName = DOMException;
 

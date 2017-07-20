@@ -302,6 +302,8 @@ PASS win['XMLSerializer'] == '[object XMLSerializerConstructor]' is true
 PASS win['XMLSerializer'] == '[object XMLSerializerConstructor]' is true
 PASS win['XPathEvaluator'] == '[object XPathEvaluatorConstructor]' is true
 PASS win['XPathEvaluator'] == '[object XPathEvaluatorConstructor]' is true
+PASS win['XPathException'] == '[object XPathExceptionConstructor]' is true
+PASS win['XPathException'] == '[object XPathExceptionConstructor]' is true
 PASS win['XPathResult'] == '[object XPathResultConstructor]' is true
 PASS win['XPathResult'] == '[object XPathResultConstructor]' is true
 PASS win['XSLTProcessor'] == '[object XSLTProcessorConstructor]' is true

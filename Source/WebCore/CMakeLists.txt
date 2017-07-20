@@ -700,6 +700,7 @@ set(WebCore_NON_SVG_IDL_FILES
     xml/XMLHttpRequestUpload.idl
     xml/XMLSerializer.idl
     xml/XPathEvaluator.idl
+    xml/XPathException.idl
     xml/XPathExpression.idl
     xml/XPathNSResolver.idl
     xml/XPathResult.idl
@@ -2981,6 +2982,7 @@ set(WebCore_SOURCES
     xml/XMLSerializer.cpp
     xml/XMLTreeViewer.cpp
     xml/XPathEvaluator.cpp
+    xml/XPathException.cpp
     xml/XPathExpression.cpp
     xml/XPathExpressionNode.cpp
     xml/XPathFunctions.cpp
