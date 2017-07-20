@@ -1,3 +1,14 @@
+2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed CoordGraphics build fix.
+
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        (WebCore::ScrollingCoordinatorCoordinatedGraphics::updateNodeViewportConstraints):
+        This should be defined for the ScrollingCoordinatorCoordinatedGraphics class.
+        Also fix the setFixedToViewport() call, fishing out the GraphicsLayer object from
+        the ScrollingStateNode's LayerRepresentation.
+        (WebCore::AsyncScrollingCoordinator::updateNodeViewportConstraints): Deleted.
+
 2017-07-19  Chris Dumez  <cdumez@apple.com>
 
         Drop SQLException type

@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
+#include "ScrollingCoordinatorCoordinatedGraphics.h"
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "ScrollingCoordinatorCoordinatedGraphics.h"
-
+#include "AsyncScrollingCoordinator.h"
 #include "CoordinatedGraphicsLayer.h"
 #include "FrameView.h"
 #include "HostWindow.h"
@@ -81,7 +81,7 @@ void ScrollingCoordinatorCoordinatedGraphics::updateNodeLayer(ScrollingNodeID no
     node->setLayer(graphicsLayer);
 }
 
-void AsyncScrollingCoordinator::updateNodeViewportConstraints(ScrollingNodeID nodeID, const ViewportConstraints& constraints)
+void ScrollingCoordinatorCoordinatedGraphics::updateNodeViewportConstraints(ScrollingNodeID nodeID, const ViewportConstraints& constraints)
 {
     ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!node)
@@ -89,7 +89,9 @@ void AsyncScrollingCoordinator::updateNodeViewportConstraints(ScrollingNodeID no
 
     switch (constraints.constraintType()) {
     case ViewportConstraints::FixedPositionConstraint: {
-        downcast<CoordinatedGraphicsLayer>(*graphicsLayer).setFixedToViewport(true);
+        auto& layer = node->layer();
+        if (layer.representsGraphicsLayer())
+            downcast<CoordinatedGraphicsLayer>(static_cast<GraphicsLayer*>(layer))->setFixedToViewport(true);
         break;
     }
     case ViewportConstraints::StickyPositionConstraint:
