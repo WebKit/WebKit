@@ -109,7 +109,7 @@ enum TemporarySelectionOption : uint8_t {
     // Scroll to reveal the selection.
     TemporarySelectionOptionRevealSelection = 1 << 0,
 
-    // Don't propagate selection changes to the UI process.
+    // Don't propagate selection changes to the client layer.
     TemporarySelectionOptionIgnoreSelectionChanges = 1 << 1,
 
     // Force the render tree to update selection state. Only respected on iOS.

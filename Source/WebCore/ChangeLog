@@ -1,3 +1,12 @@
+2017-07-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, tweak a comment above TemporarySelectionOptionIgnoreSelectionChanges in Editor.cpp.
+
+        The comment references the UI process, but it describes an entity in WebCore. This should have been generalized
+        to instead refer to the client layer in general (i.e. WebKit1 or WebKit2).
+
+        * editing/Editor.h:
+
 2017-07-19  Simon Fraser  <simon.fraser@apple.com>
 
         getBoundingClientRects not updated for programmatic scrolls
