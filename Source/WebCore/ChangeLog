@@ -1,3 +1,34 @@
+2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [CMake] Clean up Web Crypto build targets
+        https://bugs.webkit.org/show_bug.cgi?id=174253
+
+        Reviewed by Alex Christensen.
+
+        Gather the common WebCrypto source files in CMakeLists.txt, including them
+        in the build unconditionally and instead relying on ENABLE_SUBTLE_CRYPTO
+        build guards to exclude the code from compilation if the feature is disabled.
+
+        PlatformGTK.cmake, PlatformMac.cmake and PlatformWPE.cmake can then remove
+        duplicated build targets. PlatformMac.cmake still lists all the Mac-specific
+        Web Crypto build targets.
+
+        PlatformGTK.cmake and PlatformWPE.cmake now include GCrypt.cmake if the
+        USE_GCRYPT variable is enabled. Both ports at the moment enable that variable
+        though as they by default leverage a libgcrypt-based CrpytoDigest implementation
+        in the PAL library.
+
+        The new GCrypt.cmake file adds the libgcrypt-specific Web Crypto build targets to
+        the build and also sets up libgcrypt include directiories and libraries.
+
+        No new tests -- no change in behavior.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * platform/GCrypt.cmake: Added.
+
 2017-07-19  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for CommandLineAPIHost

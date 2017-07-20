@@ -1293,6 +1293,41 @@ set(WebCore_SOURCES
     contentextensions/NFAToDFA.cpp
     contentextensions/URLFilterParser.cpp
 
+    crypto/CryptoAlgorithm.cpp
+    crypto/CryptoAlgorithmRegistry.cpp
+    crypto/CryptoKey.cpp
+    crypto/SubtleCrypto.cpp
+    crypto/WebKitSubtleCrypto.cpp
+
+    crypto/algorithms/CryptoAlgorithmAES_CBC.cpp
+    crypto/algorithms/CryptoAlgorithmAES_CFB.cpp
+    crypto/algorithms/CryptoAlgorithmAES_CTR.cpp
+    crypto/algorithms/CryptoAlgorithmAES_GCM.cpp
+    crypto/algorithms/CryptoAlgorithmAES_KW.cpp
+    crypto/algorithms/CryptoAlgorithmECDH.cpp
+    crypto/algorithms/CryptoAlgorithmECDSA.cpp
+    crypto/algorithms/CryptoAlgorithmHKDF.cpp
+    crypto/algorithms/CryptoAlgorithmHMAC.cpp
+    crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
+    crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp
+    crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp
+    crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
+    crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp
+    crypto/algorithms/CryptoAlgorithmSHA1.cpp
+    crypto/algorithms/CryptoAlgorithmSHA224.cpp
+    crypto/algorithms/CryptoAlgorithmSHA256.cpp
+    crypto/algorithms/CryptoAlgorithmSHA384.cpp
+    crypto/algorithms/CryptoAlgorithmSHA512.cpp
+
+    crypto/keys/CryptoKeyAES.cpp
+    crypto/keys/CryptoKeyDataOctetSequence.cpp
+    crypto/keys/CryptoKeyDataRSAComponents.cpp
+    crypto/keys/CryptoKeyEC.cpp
+    crypto/keys/CryptoKeyHMAC.cpp
+    crypto/keys/CryptoKeyRSA.cpp
+    crypto/keys/CryptoKeyRaw.cpp
+    crypto/keys/CryptoKeySerializationRaw.cpp
+
     css/BasicShapeFunctions.cpp
     css/CSSAspectRatioValue.cpp
     css/CSSBasicShapes.cpp

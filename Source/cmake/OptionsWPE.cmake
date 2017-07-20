@@ -83,6 +83,7 @@ find_package(WPEBackend REQUIRED)
 
 set(USE_CAIRO ON)
 set(USE_XDGMIME ON)
+SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 
 if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     set(GSTREAMER_COMPONENTS app audio pbutils)
@@ -121,7 +122,6 @@ if (ENABLE_SUBTLE_CRYPTO)
     if (LIBGCRYPT_VERSION VERSION_LESS 1.7.0)
         message(FATAL_ERROR "libgcrypt 1.7.0 is required to enable Web Crypto API support.")
     endif ()
-    SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 endif ()
 
 add_definitions(-DBUILDING_WPE__=1)

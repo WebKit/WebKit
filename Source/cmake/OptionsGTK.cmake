@@ -57,6 +57,7 @@ WEBKIT_OPTION_BEGIN()
 set(USE_CAIRO ON)
 set(USE_WOFF2 ON)
 set(USE_XDGMIME ON)
+SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 
 # For old versions of HarfBuzz that do not expose an API for the OpenType MATH
 # table, we enable our own code to parse that table.
@@ -274,7 +275,6 @@ if (ENABLE_SUBTLE_CRYPTO)
     if (LIBGCRYPT_VERSION VERSION_LESS 1.7.0)
         message(FATAL_ERROR "libgcrypt 1.7.0 is required to enable Web Crypto API support.")
     endif ()
-    SET_AND_EXPOSE_TO_BUILD(USE_GCRYPT TRUE)
 endif ()
 
 if (ENABLE_WEBDRIVER)
