@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebCrypto API Demo: ECDH</title>
+    <style>
+    table, tr, th
+     {
+         font-weight: normal;
+     }
+    tr
+    {
+        text-align: left;
+    }
+    .th1
+    {
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    </style>
+    <script type="text/javascript" src="common.js"></script>
+    <script type="text/javascript">
+    var rsaKeyGen = {
+        name: "RSA-OAEP",
+        // RsaKeyGenParams
+        modulusLength: 2048,
+        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),  // Equivalent to 65537
+        hash: "sha-256"
+    };
+    var ecKeys = { a: null, b: null };
+    function AES_generate()
+    {
+        crypto.subtle.generateKey({ name: "aes-cbc", length: 128 }, true, ["decrypt", "encrypt"]).then(function(key) {
+            return crypto.subtle.exportKey("raw", key);
+        }, failAndLog).then(function(key) {
+            aesKey = key;
+            document.getElementById("aesKey").innerHTML = bytesToHexString(key);
+        }, failAndLog);
+    }
+    function RSA_generate()
+    {
+        crypto.subtle.generateKey(rsaKeyGen, true, ["decrypt", "encrypt"]).then(function(keyPair) {
+            rsaKeyPair = keyPair;
+            document.getElementById("rsaKey").innerHTML = "Done!";
+        }, failAndLog);
+    }
+    function importKey(id)
+    {
+        document.getElementById(id).innerHTML = "Done!";
+    }
+    function RSA_encrypt()
+    {
+        crypto.subtle.encrypt("rsa-oaep", rsaKeyPair.publicKey, aesKey).then(function(cipherText) {
+            rsaCipher = cipherText;
+            document.getElementById("rsaEncrypt").innerHTML = bytesToHexString(cipherText);
+        }, failAndLog);
+    }
+    function RSA_decrypt()
+    {
+        crypto.subtle.decrypt("rsa-oaep", rsaKeyPair.privateKey, rsaCipher).then(function(plainText) {
+            document.getElementById("rsaDecrypt").innerHTML = bytesToHexString(plainText);
+        }, failAndLog);
+    }
+    function EC_generate(id)
+    {
+        crypto.subtle.generateKey({ name: "ECDH", namedCurve: "P-256"}, true, ["deriveBits"]).then(function(keyPair) {
+            if (id == 'A')
+                ecKeys.a = keyPair;
+            if (id == 'B')
+                ecKeys.b = keyPair;
+            document.getElementById("ecKey" + id).innerHTML = "Done!";
+        }, failAndLog);
+    }
+    function EC_sharedSecret(id)
+    {
+        if (id == 'A')
+            crypto.subtle.deriveBits({ name:"ECDH", public:ecKeys.b.publicKey }, ecKeys.a.privateKey, 128).then(function(result) {
+                document.getElementById("ecSharedSecret" + id).innerHTML = bytesToHexString(result);
+            }, failAndLog);
+        if (id == 'B')
+            crypto.subtle.deriveBits({ name:"ECDH", public:ecKeys.a.publicKey }, ecKeys.b.privateKey, 128).then(function(result) {
+                document.getElementById("ecSharedSecret" + id).innerHTML = bytesToHexString(result);
+            }, failAndLog);
+    }
+    </script>
+</head>
+<body>
+    <h1>ECDH</h1>
+    <p>Click the following buttons step by step to get a rough feeling of how ECDH differs from RSA secret key exchange. The boy is called Bob and the girl is called Alice as they always are. :)</p>
+    <p>RSA secret key exchange:</p>
+    <table>
+        <tr>
+            <th></th>
+            <th>
+                <img src="./bob.png" style="width:150px;height:150px;">
+            </th>
+            <th>
+                <img src="./alice.png" style="width:200px;height:150px;">
+            </th>
+        </tr>
+        <tr>
+            <th class="th1">Step 1:</th>
+            <th>
+                <button type="button" onclick="RSA_generate()">generateKeyRSA</button>
+                <div id="rsaKey"></div>
+            </th>
+            <th>
+                <button type="button" onclick="AES_generate()">generateKeyAES</button>
+                <div id="aesKey"></div>
+            </th>
+        </tr>
+        <tr>
+            <th>Step 2:</th>
+            <td>
+                wait
+            </td>
+            <td>
+                <button type="button" onclick="importKey('importKey1')">getBobsPublicKey</button>
+                <div id="importKey1"></div>
+            </td>
+        </tr>
+        <tr>
+            <th>Step 3:</th>
+            <td>
+                wait
+            </td>
+            <td>
+                <button type="button" onclick="RSA_encrypt()">encryptRSA</button>
+                <div id="rsaEncrypt">
+            </td>
+        </tr>
+        <tr>
+            <th>Step 4:</th>
+            <td>
+                <button type="button" onclick="RSA_decrypt()" class="inner">decryptRSA</button>
+                <div id="rsaDecrypt" class="inner">
+            </td>
+            <td>
+                wait
+            </td>
+        </tr>
+        <tr>
+            <th>ECDH:</th>
+        </tr>
+        <tr>
+            <th>Step 1:</th>
+            <th>
+                <button type="button" onclick="EC_generate('B')">generateKeyEC</button>
+                <div id="ecKeyB"></div>
+            </th>
+            <th>
+                <button type="button" onclick="EC_generate('A')">generateKeyEC</button>
+                <div id="ecKeyA"></div>
+            </th>
+        </tr>
+        <tr>
+            <th>Step 2:</th>
+            <td>
+                <button type="button" onclick="importKey('importKey2')">getAlicesPublicKey</button>
+                <div id="importKey2"></div>
+            </td>
+            <td>
+                <button type="button" onclick="importKey('importKey3')">getBobsPublicKey</button>
+                <div id="importKey3"></div>
+            </td>
+        </tr>
+        <tr>
+            <th>Step 3:</th>
+            <td>
+                <button type="button" onclick="EC_sharedSecret('B')">computeSharedSecret</button>
+                <div id="ecSharedSecretB"></div>
+            </td>
+            <td>
+                <button type="button" onclick="EC_sharedSecret('A')">computeSharedSecret</button>
+                <div id="ecSharedSecretA"></div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

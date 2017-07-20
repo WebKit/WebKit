@@ -1,5 +1,14 @@
 2017-07-20  Jiewen Tan  <jiewen_tan@apple.com>
 
+        Unreviewed, add yet another demo page for a WebCrypto API blog post
+
+        * demos/webcrypto/aes-gcm.html:
+        * demos/webcrypto/alice.png: Added.
+        * demos/webcrypto/bob.png: Added.
+        * demos/webcrypto/ecdh.html: Added.
+
+2017-07-20  Jiewen Tan  <jiewen_tan@apple.com>
+
         Unreviewed, add another demo page for a WebCrypto API blog post
 
         * demos/webcrypto/aes-gcm.html: Added.
