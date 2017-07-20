@@ -70,10 +70,10 @@ WebInspector.DatabaseObject = class DatabaseObject extends WebInspector.Object
 
             if (sqlError) {
                 switch (sqlError.code) {
-                case SQLException.VERSION_ERR:
+                case SQLError.VERSION_ERR:
                     errorCallback(WebInspector.UIString("Database no longer has expected version."));
                     break;
-                case SQLException.TOO_LARGE_ERR:
+                case SQLError.TOO_LARGE_ERR:
                     errorCallback(WebInspector.UIString("Data returned from the database is too large."));
                     break;
                 default:

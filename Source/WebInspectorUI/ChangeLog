@@ -1,3 +1,19 @@
+2017-07-19  Chris Dumez  <cdumez@apple.com>
+
+        Drop SQLException type
+        https://bugs.webkit.org/show_bug.cgi?id=174665
+
+        Reviewed by Sam Weinig.
+
+        Use SQLError instead of SQLException, this is what the script should really
+        use here since it is checking the code of an SQLError.
+
+        * .eslintrc:
+        * UserInterface/Models/DatabaseObject.js:
+        (WebInspector.DatabaseObject.prototype.executeSQL.queryCallback):
+        (WebInspector.DatabaseObject.prototype.executeSQL):
+        (WebInspector.DatabaseObject):
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_RANGE_LOOP_ANALYSIS

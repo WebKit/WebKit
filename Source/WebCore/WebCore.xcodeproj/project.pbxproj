@@ -4137,8 +4137,6 @@
 		97BC6A331505F081001B74AC /* DatabaseManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F11505F081001B74AC /* DatabaseManagerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC6A3B1505F081001B74AC /* SQLCallbackWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */; };
 		97BC6A3C1505F081001B74AC /* SQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69FA1505F081001B74AC /* SQLError.h */; };
-		97BC6A3E1505F081001B74AC /* SQLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69FC1505F081001B74AC /* SQLException.cpp */; };
-		97BC6A3F1505F081001B74AC /* SQLException.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69FD1505F081001B74AC /* SQLException.h */; };
 		97BC6A411505F081001B74AC /* SQLResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69FF1505F081001B74AC /* SQLResultSet.cpp */; };
 		97BC6A421505F081001B74AC /* SQLResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A001505F081001B74AC /* SQLResultSet.h */; };
 		97BC6A441505F081001B74AC /* SQLResultSetRowList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC6A021505F081001B74AC /* SQLResultSetRowList.cpp */; };
@@ -5501,8 +5499,6 @@
 		B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */; };
 		B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */ = {isa = PBXBuildFile; fileRef = B51A2F3E17D7D3A40072517A /* ImageQualityController.h */; };
 		B51A2F4117D7D5DE0072517A /* ImageQualityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B51A2F4017D7D5DA0072517A /* ImageQualityController.cpp */; };
-		B525A96511CA2340003A23A8 /* JSSQLException.h in Headers */ = {isa = PBXBuildFile; fileRef = B525A96311CA2340003A23A8 /* JSSQLException.h */; };
-		B525A96611CA2340003A23A8 /* JSSQLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B525A96411CA2340003A23A8 /* JSSQLException.cpp */; };
 		B5320D6B122A24E9002D1440 /* FontPlatformData.h in Headers */ = {isa = PBXBuildFile; fileRef = B5320D69122A24E9002D1440 /* FontPlatformData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B5320D6C122A24E9002D1440 /* FontPlatformDataCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */; };
 		B543B85717EB758F003BE93A /* SVGPropertyInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B543B85617EB758F003BE93A /* SVGPropertyInfo.cpp */; };
@@ -12326,9 +12322,6 @@
 		97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLCallbackWrapper.h; sourceTree = "<group>"; };
 		97BC69FA1505F081001B74AC /* SQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLError.h; sourceTree = "<group>"; };
 		97BC69FB1505F081001B74AC /* SQLError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLError.idl; sourceTree = "<group>"; };
-		97BC69FC1505F081001B74AC /* SQLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLException.cpp; sourceTree = "<group>"; };
-		97BC69FD1505F081001B74AC /* SQLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLException.h; sourceTree = "<group>"; };
-		97BC69FE1505F081001B74AC /* SQLException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLException.idl; sourceTree = "<group>"; };
 		97BC69FF1505F081001B74AC /* SQLResultSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLResultSet.cpp; sourceTree = "<group>"; };
 		97BC6A001505F081001B74AC /* SQLResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLResultSet.h; sourceTree = "<group>"; };
 		97BC6A011505F081001B74AC /* SQLResultSet.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SQLResultSet.idl; sourceTree = "<group>"; };
@@ -13964,8 +13957,6 @@
 		B50F5B800E96CD9900AD71A6 /* WebCoreObjCExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreObjCExtras.mm; sourceTree = "<group>"; };
 		B51A2F3E17D7D3A40072517A /* ImageQualityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageQualityController.h; sourceTree = "<group>"; };
 		B51A2F4017D7D5DA0072517A /* ImageQualityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageQualityController.cpp; sourceTree = "<group>"; };
-		B525A96311CA2340003A23A8 /* JSSQLException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLException.h; sourceTree = "<group>"; };
-		B525A96411CA2340003A23A8 /* JSSQLException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLException.cpp; sourceTree = "<group>"; };
 		B5320D69122A24E9002D1440 /* FontPlatformData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontPlatformData.h; sourceTree = "<group>"; };
 		B5320D6A122A24E9002D1440 /* FontPlatformDataCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontPlatformDataCocoa.mm; sourceTree = "<group>"; };
 		B543B85617EB758F003BE93A /* SVGPropertyInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPropertyInfo.cpp; sourceTree = "<group>"; };
@@ -20902,9 +20893,6 @@
 				97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */,
 				97BC69FA1505F081001B74AC /* SQLError.h */,
 				97BC69FB1505F081001B74AC /* SQLError.idl */,
-				97BC69FC1505F081001B74AC /* SQLException.cpp */,
-				97BC69FD1505F081001B74AC /* SQLException.h */,
-				97BC69FE1505F081001B74AC /* SQLException.idl */,
 				97BC69FF1505F081001B74AC /* SQLResultSet.cpp */,
 				97BC6A001505F081001B74AC /* SQLResultSet.h */,
 				97BC6A011505F081001B74AC /* SQLResultSet.idl */,
@@ -22228,8 +22216,6 @@
 				269239921505E1AA009E57FC /* JSIDBVersionChangeEvent.h */,
 				514C76350CE9225E007EF3CD /* JSSQLError.cpp */,
 				BC8243250D0CE8A200460C8F /* JSSQLError.h */,
-				B525A96411CA2340003A23A8 /* JSSQLException.cpp */,
-				B525A96311CA2340003A23A8 /* JSSQLException.h */,
 				1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */,
 				1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */,
 				1AFE11970CBFFCC4003017FA /* JSSQLResultSetRowList.cpp */,
@@ -28249,7 +28235,6 @@
 				AA7FEEA716A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.h in Headers */,
 				AA7FEEA916A4E6F3004C0C33 /* JSSpeechSynthesisVoice.h in Headers */,
 				BC8243290D0CE8A200460C8F /* JSSQLError.h in Headers */,
-				B525A96511CA2340003A23A8 /* JSSQLException.h in Headers */,
 				1AE82FED0CAB07EE002237AE /* JSSQLResultSet.h in Headers */,
 				1AFE119A0CBFFCC4003017FA /* JSSQLResultSetRowList.h in Headers */,
 				B59DD6A511902A62007E9684 /* JSSQLStatementCallback.h in Headers */,
@@ -29475,7 +29460,6 @@
 				7C83DE861D04CC5D00FEBCF3 /* SpringSolver.h in Headers */,
 				97BC6A3B1505F081001B74AC /* SQLCallbackWrapper.h in Headers */,
 				97BC6A3C1505F081001B74AC /* SQLError.h in Headers */,
-				97BC6A3F1505F081001B74AC /* SQLException.h in Headers */,
 				1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */,
 				7E474E1F12494DC900235364 /* SQLiteDatabaseTracker.h in Headers */,
 				7E474E1E12494DC900235364 /* SQLiteDatabaseTrackerClient.h in Headers */,
@@ -32257,7 +32241,6 @@
 				AA7FEEA616A4E6F3004C0C33 /* JSSpeechSynthesisUtterance.cpp in Sources */,
 				AA7FEEA816A4E6F3004C0C33 /* JSSpeechSynthesisVoice.cpp in Sources */,
 				514C76370CE9225E007EF3CD /* JSSQLError.cpp in Sources */,
-				B525A96611CA2340003A23A8 /* JSSQLException.cpp in Sources */,
 				1AE82FEC0CAB07EE002237AE /* JSSQLResultSet.cpp in Sources */,
 				1AFE11990CBFFCC4003017FA /* JSSQLResultSetRowList.cpp in Sources */,
 				B59DD6A611902A62007E9684 /* JSSQLStatementCallback.cpp in Sources */,
@@ -33314,7 +33297,6 @@
 				93309E13099E64920056E581 /* SplitTextNodeCommand.cpp in Sources */,
 				93309E15099E64920056E581 /* SplitTextNodeContainingElementCommand.cpp in Sources */,
 				A1E1154813015C5D0054AC8C /* SpotLightSource.cpp in Sources */,
-				97BC6A3E1505F081001B74AC /* SQLException.cpp in Sources */,
 				1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */,
 				1A2246490CC98DDB00C05240 /* SQLiteDatabase.cpp in Sources */,
 				7E474E2012494DC900235364 /* SQLiteDatabaseTracker.cpp in Sources */,

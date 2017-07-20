@@ -80,7 +80,6 @@
         // DOM
         "CSSPrimitiveValue": true,
         "Exception": true,
-        "SQLException": true,
         "WebKitPoint": true,
 
         // Utilities

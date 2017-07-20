@@ -177,9 +177,6 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     case FileExceptionType:
         errorObject = toJS(exec, globalObject, FileException::create(description));
         break;
-    case SQLExceptionType:
-        errorObject = toJS(exec, globalObject, SQLException::create(description));
-        break;
     case SVGExceptionType:
         errorObject = toJS(exec, globalObject, SVGException::create(description));
         break;

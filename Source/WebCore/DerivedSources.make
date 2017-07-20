@@ -267,7 +267,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
     $(WebCore)/Modules/webdatabase/SQLError.idl \
-    $(WebCore)/Modules/webdatabase/SQLException.idl \
     $(WebCore)/Modules/webdatabase/SQLResultSet.idl \
     $(WebCore)/Modules/webdatabase/SQLResultSetRowList.idl \
     $(WebCore)/Modules/webdatabase/SQLStatementCallback.idl \

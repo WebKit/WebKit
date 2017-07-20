@@ -1,3 +1,26 @@
+2017-07-19  Chris Dumez  <cdumez@apple.com>
+
+        Drop SQLException type
+        https://bugs.webkit.org/show_bug.cgi?id=174665
+
+        Reviewed by Sam Weinig.
+
+        Drop SQLException type. We never throw such exception. Also, Firefox
+        and Chrome no longer expose this type.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/webdatabase/SQLException.cpp: Removed.
+        * Modules/webdatabase/SQLException.h: Removed.
+        * Modules/webdatabase/SQLException.idl: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::createDOMException):
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * dom/DOMExceptions.in:
+
 2017-07-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, tweak a comment above TemporarySelectionOptionIgnoreSelectionChanges in Editor.cpp.

@@ -330,7 +330,6 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webdatabase/Database.idl
     Modules/webdatabase/DatabaseCallback.idl
     Modules/webdatabase/SQLError.idl
-    Modules/webdatabase/SQLException.idl
     Modules/webdatabase/SQLResultSet.idl
     Modules/webdatabase/SQLResultSetRowList.idl
     Modules/webdatabase/SQLStatementCallback.idl
@@ -1069,7 +1068,6 @@ set(WebCore_SOURCES
     Modules/webdatabase/DatabaseThread.cpp
     Modules/webdatabase/DatabaseTracker.cpp
     Modules/webdatabase/OriginLock.cpp
-    Modules/webdatabase/SQLException.cpp
     Modules/webdatabase/SQLResultSet.cpp
     Modules/webdatabase/SQLResultSetRowList.cpp
     Modules/webdatabase/SQLStatement.cpp

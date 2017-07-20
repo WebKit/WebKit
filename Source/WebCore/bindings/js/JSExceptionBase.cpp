@@ -27,10 +27,8 @@
 #include "JSExceptionBase.h"
 
 #include "JSDOMCoreException.h"
-#include "JSSQLException.h"
 #include "JSSVGException.h"
 #include "JSXPathException.h"
-#include "SQLException.h"
 
 namespace WebCore {
 
@@ -42,10 +40,8 @@ ExceptionBase* toExceptionBase(JSC::VM& vm, JSC::JSValue value)
         return reinterpret_cast<ExceptionBase*>(svgException);
     if (XPathException* pathException = JSXPathException::toWrapped(vm, value))
         return reinterpret_cast<ExceptionBase*>(pathException);
-    if (SQLException* pathException = JSSQLException::toWrapped(vm, value))
-        return reinterpret_cast<ExceptionBase*>(pathException);
 
-    return 0;
+    return nullptr;
 }
 
 } // namespace WebCore
