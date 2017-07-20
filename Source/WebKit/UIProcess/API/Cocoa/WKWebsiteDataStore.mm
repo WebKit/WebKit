@@ -378,7 +378,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!store)
         return;
 
-    store->processStatisticsAndDataRecords();
+    store->scheduleStatisticsAndDataRecordsProcessing();
 }
 
 - (void)_resourceLoadStatisticsUpdateCookiePartitioning

@@ -204,27 +204,35 @@ void WebResourceLoadStatisticsStore::removeDataRecords()
     });
 }
 
+void WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing()
+{
+    ASSERT(RunLoop::isMain());
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        processStatisticsAndDataRecords();
+    });
+}
+
 void WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
 {
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] () {
-        if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval) {
-            for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
-                if (!resourceStatistic.isPrevalentResource && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
-                    resourceStatistic.isPrevalentResource = true;
-            }
-        }
-        removeDataRecords();
-        
-        pruneStatisticsIfNeeded();
+    ASSERT(!RunLoop::isMain());
 
-        if (m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned) {
-            RunLoop::main().dispatch([] {
-                WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
-            });
+    if (m_parameters.shouldClassifyResourcesBeforeDataRecordsRemoval) {
+        for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
+            if (!resourceStatistic.isPrevalentResource && m_resourceLoadStatisticsClassifier.hasPrevalentResourceCharacteristics(resourceStatistic))
+                resourceStatistic.isPrevalentResource = true;
         }
+    }
+    removeDataRecords();
 
-        m_persistentStorage.scheduleOrWriteMemoryStore();
-    });
+    pruneStatisticsIfNeeded();
+
+    if (m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned) {
+        RunLoop::main().dispatch([] {
+            WebProcessProxy::notifyPageStatisticsAndDataRecordsProcessed();
+        });
+    }
+
+    m_persistentStorage.scheduleOrWriteMemoryStore();
 }
 
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics>&& origins)

@@ -1,5 +1,22 @@
 2017-07-20  Chris Dumez  <cdumez@apple.com>
 
+        Avoid unnecessary WorkQueue dispatch in WebResourceLoadStatisticsStore::processStatisticsAndDataRecords()
+        https://bugs.webkit.org/show_bug.cgi?id=174686
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid unnecessary WorkQueue dispatch in WebResourceLoadStatisticsStore::processStatisticsAndDataRecords(). The most common
+        call site is already on the right thread.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsProcessStatisticsAndDataRecords]):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::scheduleStatisticsAndDataRecordsProcessing):
+        (WebKit::WebResourceLoadStatisticsStore::processStatisticsAndDataRecords):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
+2017-07-20  Chris Dumez  <cdumez@apple.com>
+
         Regression(ITP): May get frequently logged out of wsj.com
         https://bugs.webkit.org/show_bug.cgi?id=174661
         <rdar://problem/32343256>
