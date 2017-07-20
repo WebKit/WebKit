@@ -1,3 +1,9 @@
+2017-07-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK test gardening
+
+        * platform/gtk/TestExpectations:
+
 2017-07-20  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening. Updating test baselines after r219663.

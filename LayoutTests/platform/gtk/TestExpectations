@@ -784,8 +784,6 @@ webkit.org/b/133122 crypto/workers/subtle/hrsa-postMessage-worker.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/multiple-postMessage-worker.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/raw-postMessage-worker.html [ Skip ]
 webkit.org/b/133122 crypto/workers/subtle/rsa-postMessage-worker.html [ Skip ]
-webkit.org/b/133122 crypto/workers/subtle/rsa-pss-import-key-sign.html [ Skip ]
-webkit.org/b/133122 crypto/workers/subtle/rsa-pss-import-key-verify.html [ Skip ]
 
 # RSA-PSS tests are for now skipped on all ports, so we for now explicitly enable the passing ones here.
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
@@ -2234,11 +2232,9 @@ webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Timeout ]
 
 webkit.org/b/174243 fast/images/low-memory-decode.html [ Timeout ]
 
-webkit.org/b/174459 fast/images/async-image-background-image-repeated.html [ Timeout ]
 webkit.org/b/174459 fast/images/async-image-background-image.html [ Timeout ]
 webkit.org/b/174459 fast/images/async-image-body-background-image.html [ Timeout ]
 webkit.org/b/174459 fast/images/async-image-multiple-clients-repaint.html [ Timeout ]
-webkit.org/b/174459 fast/images/sprite-sheet-image-draw.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3370,8 +3366,8 @@ webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-see
 webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Failure ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 
-webkit.org/b/171972 fast/images/async-image-background-image-repeated.html [ ImageOnlyFailure ]
-webkit.org/b/171972 fast/images/sprite-sheet-image-draw.html [ ImageOnlyFailure ]
+webkit.org/b/171972 fast/images/async-image-background-image-repeated.html [ ImageOnlyFailure Timeout ]
+webkit.org/b/171972 fast/images/sprite-sheet-image-draw.html [ ImageOnlyFailure Timeout ]
 
 webkit.org/b/172270 fast/text/font-interstitial-invisible-width-while-loading.html [ Failure ]
 webkit.org/b/172270 fast/text/web-font-load-invisible-during-loading.html [ Failure ]
