@@ -1,5 +1,12 @@
 2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed follow-up to r219674.
+
+        * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:
+        Remove the AsyncScrollingCoordinator.h header include that was added by accident.
+
+2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
+
         [CMake] Clean up Web Crypto build targets
         https://bugs.webkit.org/show_bug.cgi?id=174253
 

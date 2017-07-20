@@ -28,7 +28,6 @@
 
 #if USE(COORDINATED_GRAPHICS)
 
-#include "AsyncScrollingCoordinator.h"
 #include "CoordinatedGraphicsLayer.h"
 #include "FrameView.h"
 #include "HostWindow.h"
