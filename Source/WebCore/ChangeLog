@@ -1,3 +1,25 @@
+2017-07-20  Charlie Turner  <cturner@igalia.com>
+
+        [GTK] Layout Test http/tests/media/hls/hls-progress.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=141469
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A work-around for getting progress information in a timely manner from
+        live pipelines. We cannot rely on getting BUFFERING messages within
+        the stalled time window (3s), so we have to poll for progress
+        information somehow.
+
+        Makes the following pass reliably
+         http/tests/media/hls/hls-audio-tracks-has-audio.html passed unexpectedly
+         http/tests/media/hls/hls-audio-tracks.html passed unexpectedly
+         http/tests/media/hls/hls-progress.html passed unexpectedly
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::findHLSQueue):
+        (WebCore::isHLSProgressing):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+
 2017-07-20  Andreas Kling  <akling@apple.com>
 
         Minor Node->Element type tightening fixes

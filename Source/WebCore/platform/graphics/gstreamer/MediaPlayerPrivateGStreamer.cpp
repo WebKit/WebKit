@@ -1192,13 +1192,51 @@ void MediaPlayerPrivateGStreamer::processTableOfContentsEntry(GstTocEntry* entry
 }
 #endif
 
+static int findHLSQueue(const GValue* item)
+{
+    GstElement* element = GST_ELEMENT(g_value_get_object(item));
+    if (g_str_has_prefix(GST_ELEMENT_NAME(element), "queue")) {
+        GstElement* parent = GST_ELEMENT(GST_ELEMENT_PARENT(element));
+        if (!GST_IS_OBJECT(parent))
+            return 1;
+
+        if (g_str_has_prefix(GST_ELEMENT_NAME(GST_ELEMENT_PARENT(parent)), "hlsdemux"))
+            return 0;
+    }
+
+    return 1;
+}
+
+static bool isHLSProgressing(GstElement* playbin, GstQuery* query)
+{
+    GValue item = { };
+    GstIterator* binIterator = gst_bin_iterate_recurse(GST_BIN(playbin));
+    bool foundHLSQueue = gst_iterator_find_custom(binIterator, reinterpret_cast<GCompareFunc>(findHLSQueue), &item, nullptr);
+    gst_iterator_free(binIterator);
+
+    if (!foundHLSQueue)
+        return false;
+
+    GstElement* queueElement = GST_ELEMENT(g_value_get_object(&item));
+    bool queryResult = gst_element_query(queueElement, query);
+    g_value_unset(&item);
+
+    return queryResult;
+}
+
 void MediaPlayerPrivateGStreamer::fillTimerFired()
 {
     GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
 
-    if (!gst_element_query(m_pipeline.get(), query)) {
-        gst_query_unref(query);
-        return;
+    if (G_UNLIKELY(!gst_element_query(m_pipeline.get(), query))) {
+        // This query always fails for live pipelines. In the case of HLS, try and find
+        // the queue inside the HLS element to get a proxy measure of progress. Note
+        // that the percentage value is rather meaningless as used below.
+        // This is a hack, see https://bugs.webkit.org/show_bug.cgi?id=141469.
+        if (!isHLSProgressing(m_pipeline.get(), query)) {
+            gst_query_unref(query);
+            return;
+        }
     }
 
     gint64 start, stop;
