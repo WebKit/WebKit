@@ -1,3 +1,11 @@
+2017-07-20  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaselined svg/css/getComputedStyle-basic.xhtml.
+        
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/svg/css/getComputedStyle-basic-expected.txt:
+
 2017-07-20  Antoine Quint  <graouts@apple.com>
 
         Turn tests at media/modern-media-controls/start-support back on
