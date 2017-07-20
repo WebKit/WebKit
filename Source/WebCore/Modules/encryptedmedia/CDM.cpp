@@ -31,7 +31,7 @@
 #include "CDMPrivate.h"
 #include "Document.h"
 #include "InitDataRegistry.h"
-#include "MediaKeysRestrictions.h"
+#include "MediaKeysRequirement.h"
 #include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include "ParsedContentType.h"

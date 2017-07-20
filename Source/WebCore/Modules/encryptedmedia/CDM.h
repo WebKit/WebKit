@@ -28,7 +28,10 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "ContextDestructionObserver.h"
+#include "MediaKeySessionType.h"
 #include "MediaKeySystemConfiguration.h"
+#include "MediaKeySystemMediaCapability.h"
+#include "MediaKeysRestrictions.h"
 #include "SharedBuffer.h"
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -45,8 +48,6 @@ class CDMPrivate;
 class Document;
 class ScriptExecutionContext;
 class SharedBuffer;
-
-struct MediaKeysRestrictions;
 
 class CDMFactory {
 public:

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2016 Metrological Group B.V.
- * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2017 Metrological Group B.V.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,25 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMMessageType.h"
+#include "CDMMediaCapability.h"
+#include "CDMRequirement.h"
+#include "CDMSessionType.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-using MediaKeyMessageType = CDMMessageType;
+struct CDMKeySystemConfiguration {
+    using KeysRequirement = CDMRequirement;
+
+    String label;
+    Vector<String> initDataTypes;
+    Vector<CDMMediaCapability> audioCapabilities;
+    Vector<CDMMediaCapability> videoCapabilities;
+    CDMRequirement distinctiveIdentifier;
+    CDMRequirement persistentState;
+    Vector<CDMSessionType> sessionTypes;
+};
 
 } // namespace WebCore
 

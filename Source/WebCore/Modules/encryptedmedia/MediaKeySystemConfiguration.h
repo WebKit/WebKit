@@ -30,25 +30,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "MediaKeySessionType.h"
-#include "MediaKeySystemMediaCapability.h"
-#include "MediaKeysRequirement.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include "CDMKeySystemConfiguration.h"
 
 namespace WebCore {
 
-struct MediaKeySystemConfiguration {
-    using KeysRequirement = MediaKeysRequirement;
-
-    String label;
-    Vector<String> initDataTypes;
-    Vector<MediaKeySystemMediaCapability> audioCapabilities;
-    Vector<MediaKeySystemMediaCapability> videoCapabilities;
-    MediaKeysRequirement distinctiveIdentifier;
-    MediaKeysRequirement persistentState;
-    Vector<MediaKeySessionType> sessionTypes;
-};
+using MediaKeySystemConfiguration = CDMKeySystemConfiguration;
 
 } // namespace WebCore
 

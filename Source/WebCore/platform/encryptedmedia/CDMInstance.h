@@ -27,9 +27,9 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "MediaKeyMessageType.h"
-#include "MediaKeySessionType.h"
-#include "MediaKeyStatus.h"
+#include "CDMKeyStatus.h"
+#include "CDMMessageType.h"
+#include "CDMSessionType.h"
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
@@ -38,8 +38,9 @@
 
 namespace WebCore {
 
-struct MediaKeySystemConfiguration;
 class SharedBuffer;
+
+struct CDMKeySystemConfiguration;
 
 class CDMInstance : public RefCounted<CDMInstance> {
 public:
@@ -50,11 +51,11 @@ public:
         Succeeded,
     };
 
-    using LicenseType = MediaKeySessionType;
-    using KeyStatus = MediaKeyStatus;
-    using MessageType = MediaKeyMessageType;
+    using KeyStatus = CDMKeyStatus;
+    using LicenseType = CDMSessionType;
+    using MessageType = CDMMessageType;
 
-    virtual SuccessValue initializeWithConfiguration(const MediaKeySystemConfiguration&) = 0;
+    virtual SuccessValue initializeWithConfiguration(const CDMKeySystemConfiguration&) = 0;
     virtual SuccessValue setDistinctiveIdentifiersAllowed(bool) = 0;
     virtual SuccessValue setPersistentStateAllowed(bool) = 0;
     virtual SuccessValue setServerCertificate(Ref<SharedBuffer>&&) = 0;
@@ -87,6 +88,6 @@ public:
     virtual void storeRecordOfKeyUsage(const String& sessionId) = 0;
 };
 
-}
+} // namespace WebCore
 
 #endif

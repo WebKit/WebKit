@@ -28,27 +28,27 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "CDMInstance.h"
-#include "MediaKeySessionType.h"
-#include "MediaKeysRequirement.h"
+#include "CDMRequirement.h"
+#include "CDMSessionType.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-struct MediaKeySystemConfiguration;
-struct MediaKeysRestrictions;
+struct CDMKeySystemConfiguration;
+struct CDMRestrictions;
 
 class CDMPrivate {
 public:
     virtual ~CDMPrivate() { }
 
     virtual bool supportsInitDataType(const AtomicString&) const = 0;
-    virtual bool supportsConfiguration(const MediaKeySystemConfiguration&) const = 0;
-    virtual bool supportsConfigurationWithRestrictions(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const = 0;
-    virtual bool supportsSessionTypeWithConfiguration(MediaKeySessionType&, const MediaKeySystemConfiguration&) const = 0;
+    virtual bool supportsConfiguration(const CDMKeySystemConfiguration&) const = 0;
+    virtual bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
+    virtual bool supportsSessionTypeWithConfiguration(CDMSessionType&, const CDMKeySystemConfiguration&) const = 0;
     virtual bool supportsRobustness(const String&) const = 0;
-    virtual MediaKeysRequirement distinctiveIdentifiersRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const = 0;
-    virtual MediaKeysRequirement persistentStateRequirement(const MediaKeySystemConfiguration&, const MediaKeysRestrictions&) const = 0;
-    virtual bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const MediaKeySystemConfiguration&) const = 0;
+    virtual CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
+    virtual CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
+    virtual bool distinctiveIdentifiersAreUniquePerOriginAndClearable(const CDMKeySystemConfiguration&) const = 0;
     virtual RefPtr<CDMInstance> createInstance() = 0;
     virtual void loadAndInitialize() = 0;
     virtual bool supportsServerCertificates() const = 0;

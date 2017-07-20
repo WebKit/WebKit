@@ -30,17 +30,11 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMKeyStatus.h"
+
 namespace WebCore {
 
-enum class MediaKeyStatus {
-    Usable,
-    Expired,
-    Released,
-    OutputRestricted,
-    OutputDownscaled,
-    StatusPending,
-    InternalError
-};
+using MediaKeyStatus = CDMKeyStatus;
 
 } // namespace WebCore
 

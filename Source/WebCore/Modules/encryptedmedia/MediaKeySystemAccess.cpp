@@ -34,8 +34,8 @@
 #include "CDM.h"
 #include "CDMInstance.h"
 #include "JSMediaKeys.h"
-#include "MediaKeySystemConfiguration.h"
 #include "MediaKeys.h"
+#include "MediaKeysRequirement.h"
 
 namespace WebCore {
 

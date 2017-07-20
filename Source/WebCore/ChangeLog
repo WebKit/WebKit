@@ -1,5 +1,51 @@
 2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] Push CDMInstance, CDMPrivate and associated types into the Platform layer
+        https://bugs.webkit.org/show_bug.cgi?id=174496
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Move the CDMInstance and CDMPrivate interfaces into the platform layer, enabling
+        implementations of specific key systems at that level, as well as integration with
+        the MediaPlayerPrivate stack without any layering violations.
+
+        While the platform layer still uses the WebCore namespace, the two interface files
+        have now been moved under the platform/encryptedmedia/ directory and out of the
+        Modules/encryptedmedia/ directory where the Web-facing API implementation resides.
+
+        The two interfaces integrated closely with the Web-facing enumerations and
+        dictionaries: MediaKeyMessageType, MediaKeySessionType, MediaKeyStatus,
+        MediaKeySystemConfiguration, MediaKeySystemCapability, MediaKeysRequirement
+        and MediaKeysRestrictions. Definitions of these types are also moved to the
+        platform layer without any changes (apart from renaming), and the previous
+        types now alias against the types now located in the platform layer.
+
+        No new tests -- no change in behavior.
+
+        * CMakeLists.txt:
+        * Modules/encryptedmedia/CDM.cpp:
+        * Modules/encryptedmedia/CDM.h:
+        * Modules/encryptedmedia/MediaKeyMessageType.h:
+        * Modules/encryptedmedia/MediaKeySessionType.h:
+        * Modules/encryptedmedia/MediaKeyStatus.h:
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp:
+        * Modules/encryptedmedia/MediaKeySystemAccess.h:
+        * Modules/encryptedmedia/MediaKeySystemConfiguration.h:
+        * Modules/encryptedmedia/MediaKeySystemMediaCapability.h:
+        * Modules/encryptedmedia/MediaKeysRequirement.h:
+        * Modules/encryptedmedia/MediaKeysRestrictions.h:
+        * platform/encryptedmedia/CDMInstance.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDMInstance.h.
+        * platform/encryptedmedia/CDMKeyStatus.h: Copied from Source/WebCore/Modules/encryptedmedia/MediaKeyStatus.h.
+        * platform/encryptedmedia/CDMKeySystemConfiguration.h: Copied from Source/WebCore/Modules/encryptedmedia/MediaKeySystemConfiguration.h.
+        * platform/encryptedmedia/CDMMediaCapability.h: Copied from Source/WebCore/Modules/encryptedmedia/MediaKeySystemMediaCapability.h.
+        * platform/encryptedmedia/CDMMessageType.h: Copied from Source/WebCore/Modules/encryptedmedia/MediaKeyMessageType.h.
+        * platform/encryptedmedia/CDMPrivate.h: Renamed from Source/WebCore/Modules/encryptedmedia/CDMPrivate.h.
+        * platform/encryptedmedia/CDMRequirement.h: Copied from Source/WebCore/Modules/encryptedmedia/MediaKeysRequirement.h.
+        * platform/encryptedmedia/CDMRestrictions.h: Copied from Source/WebCore/Modules/encryptedmedia/MediaKeysRestrictions.h.
+        * platform/encryptedmedia/CDMSessionType.h: Copied from Source/WebCore/Modules/encryptedmedia/MediaKeySessionType.h.
+
+2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed follow-up to r219674.
 
         * page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp:

@@ -27,11 +27,15 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
-#include "CDMRestrictions.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
-using MediaKeysRestrictions = CDMRestrictions;
+struct CDMRestrictions {
+    bool distinctiveIdentifierDenied { false };
+    bool persistentStateDenied { false };
+    HashSet<String> deniedSessionTypes;
+};
 
 } // namespace WebCore
 
