@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>WebCrypto API Demo: Asynchronous Execution</title>
     <style>
     .inner
     {
@@ -24,27 +26,8 @@
         100% { transform: rotate(360deg); }
     }
     </style>
+    <script type="text/javascript" src="common.js"></script>
     <script type="text/javascript">
-    function hexStringToUint8Array(hexString)
-    {
-        if (hexString.length % 2 != 0)
-            throw "Invalid hexString";
-        var arrayBuffer = new Uint8Array(hexString.length / 2);
-
-        for (var i = 0; i < hexString.length; i += 2) {
-            var byteValue = parseInt(hexString.substr(i, 2), 16);
-            if (byteValue == NaN)
-                throw "Invalid hexString";
-            arrayBuffer[i/2] = byteValue;
-        }
-
-        return arrayBuffer;
-    }
-    function failAndLog(error)
-    {
-        console.log(error);
-    }
-
     var plainText = new Uint8Array(104857600); // 100MB
     var keyData = hexStringToUint8Array("2b7e151628aed2a6abf7158809cf4f3c2b7e151628aed2a6abf7158809cf4f3c");
     var iv = hexStringToUint8Array("000102030405060708090a0b0c0d0e0f");

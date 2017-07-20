@@ -1,3 +1,11 @@
+2017-07-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, add another demo page for a WebCrypto API blog post
+
+        * demos/webcrypto/aes-gcm.html: Added.
+        * demos/webcrypto/asynchronous-execution.html:
+        * demos/webcrypto/common.js: Added.
+
 2017-07-19  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, add a demo page for a WebCrypto API blog post
