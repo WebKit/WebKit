@@ -1184,7 +1184,7 @@ private:
             for (Inst& inst : m_insts[i])
                 target->appendInst(WTFMove(inst));
         }
-        m_insts.resize(0);
+        m_insts.shrink(0);
     }
     
     Air::BasicBlock* newBlock()

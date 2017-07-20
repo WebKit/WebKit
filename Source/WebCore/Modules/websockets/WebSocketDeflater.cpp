@@ -111,7 +111,7 @@ bool WebSocketDeflater::finish()
     // Remove 4 octets from the tail as the specification requires.
     if (m_buffer.size() <= 4)
         return false;
-    m_buffer.resize(m_buffer.size() - 4);
+    m_buffer.shrink(m_buffer.size() - 4);
     return true;
 }
 

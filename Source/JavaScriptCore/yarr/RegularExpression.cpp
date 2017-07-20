@@ -112,7 +112,7 @@ int RegularExpression::match(const String& str, int startFrom, int* matchLength)
     unsigned* offsetVector;
     Vector<unsigned, 32> nonReturnedOvector;
 
-    nonReturnedOvector.resize(offsetVectorSize);
+    nonReturnedOvector.grow(offsetVectorSize);
     offsetVector = nonReturnedOvector.data();
 
     ASSERT(offsetVector);

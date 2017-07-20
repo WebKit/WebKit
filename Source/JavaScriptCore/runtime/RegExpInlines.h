@@ -214,7 +214,7 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
     int offsetVectorSize = (m_numSubpatterns + 1) * 2;
     int* offsetVector;
     Vector<int, 32> nonReturnedOvector;
-    nonReturnedOvector.resize(offsetVectorSize);
+    nonReturnedOvector.grow(offsetVectorSize);
     offsetVector = nonReturnedOvector.data();
     int r = Yarr::interpret(m_regExpBytecode.get(), s, startOffset, reinterpret_cast<unsigned*>(offsetVector));
 #if REGEXP_FUNC_TEST_DATA_GEN

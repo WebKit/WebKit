@@ -414,7 +414,7 @@ private:
     {
         for (unsigned i = 0; i < m_setLocalQueue.size(); ++i)
             m_setLocalQueue[i].execute(this);
-        m_setLocalQueue.resize(0);
+        m_setLocalQueue.shrink(0);
     }
 
     Node* set(VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
@@ -4055,7 +4055,7 @@ void ByteCodeParser::prepareToParseBlock()
 
 void ByteCodeParser::clearCaches()
 {
-    m_constants.resize(0);
+    m_constants.shrink(0);
 }
 
 bool ByteCodeParser::parseBlock(unsigned limit)

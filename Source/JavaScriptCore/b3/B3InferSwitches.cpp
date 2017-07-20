@@ -195,7 +195,7 @@ private:
                 m_insertionSet.insertValue(predecessor->size() - 1, value);
         }
         m_insertionSet.execute(predecessor);
-        block->values().resize(0);
+        block->values().shrink(0);
         block->appendNew<Value>(m_proc, Oops, description.branch->origin());
         block->removePredecessor(predecessor);
         

@@ -854,7 +854,7 @@ public:
     {
         operandStackDepth -= amount;
         ASSERT(operandStackDepth >= 0);
-        m_binaryOperandStack.resize(m_binaryOperandStack.size() - amount);
+        m_binaryOperandStack.shrink(m_binaryOperandStack.size() - amount);
     }
     void appendBinaryOperation(const JSTokenLocation& location, int& operandStackDepth, int&, const BinaryOperand& lhs, const BinaryOperand& rhs)
     {

@@ -195,7 +195,7 @@ public:
             if (!loop)
                 continue;
             
-            loopStack.resize(0);
+            loopStack.shrink(0);
             for (
                 const NaturalLoop* current = loop;
                 current;

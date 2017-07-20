@@ -289,7 +289,7 @@ void AudioContext::addReaction(State state, DOMPromiseDeferred<void>&& promise)
 {
     size_t stateIndex = static_cast<size_t>(state);
     if (stateIndex >= m_stateReactions.size())
-        m_stateReactions.resize(stateIndex + 1);
+        m_stateReactions.grow(stateIndex + 1);
 
     m_stateReactions[stateIndex].append(WTFMove(promise));
 }

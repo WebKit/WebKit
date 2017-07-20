@@ -239,7 +239,7 @@ void RenderTable::removeCaption(const RenderTableCaption* oldCaption)
 void RenderTable::invalidateCachedColumns()
 {
     m_columnRenderersValid = false;
-    m_columnRenderers.resize(0);
+    m_columnRenderers.shrink(0);
     m_effectiveColumnIndexMap.clear();
 }
 

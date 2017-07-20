@@ -270,7 +270,7 @@ ImageFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
 #endif
 
     if (m_frameBufferCache.isEmpty())
-        m_frameBufferCache.resize(1);
+        m_frameBufferCache.grow(1);
 
     ImageFrame& frame = m_frameBufferCache[index];
     if (!frame.isComplete())
@@ -644,7 +644,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
         }
 
         if (m_frameBufferCache.isEmpty())
-            m_frameBufferCache.resize(1);
+            m_frameBufferCache.grow(1);
 
         if (m_currentFrame < m_frameBufferCache.size()) {
             ImageFrame& buffer = m_frameBufferCache[m_currentFrame];

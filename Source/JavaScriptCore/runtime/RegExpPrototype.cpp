@@ -515,7 +515,7 @@ void genericSplit(
         if (control() == AbortSplit)
             return;
         
-        ovector.resize(0);
+        ovector.shrink(0);
         
         // a. Perform ? Set(splitter, "lastIndex", q, true).
         // b. Let z be ? RegExpExec(splitter, S).

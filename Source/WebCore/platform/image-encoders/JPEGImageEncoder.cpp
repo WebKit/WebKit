@@ -119,7 +119,7 @@ bool compressRGBABigEndianToJPEG(unsigned char* rgbaBigEndianData, const IntSize
     }
 
     jpeg_start_compress(&compressData, TRUE);
-    rowBuffer.resize(compressData.image_width * 3);
+    rowBuffer.grow(compressData.image_width * 3);
 
     // add offset to prevent clobbered error caused by setjmp and longjmp.
     unsigned offset = 0;

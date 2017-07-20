@@ -35,7 +35,7 @@ namespace JSC { namespace DFG {
 template<typename T>
 BlockMap<T>::BlockMap(Graph& graph)
 {
-    m_vector.resize(graph.numBlocks());
+    m_vector.grow(graph.numBlocks());
 }
 
 } } // namespace JSC::DFG

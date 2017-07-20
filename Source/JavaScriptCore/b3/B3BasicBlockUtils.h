@@ -89,7 +89,7 @@ void clearPredecessors(Vector<std::unique_ptr<BasicBlock>>& blocks)
 {
     for (auto& block : blocks) {
         if (block)
-            block->predecessors().resize(0);
+            block->predecessors().shrink(0);
     }
 }
 

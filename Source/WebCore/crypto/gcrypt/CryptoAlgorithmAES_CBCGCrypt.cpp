@@ -79,7 +79,7 @@ static std::optional<Vector<uint8_t>> gcryptEncrypt(const Vector<uint8_t>& key, 
             return std::nullopt;
         uint8_t paddingValue = paddedSize - size;
 
-        plainText.resize(paddedSize);
+        plainText.grow(paddedSize);
         std::memset(plainText.data() + size, paddingValue, paddingValue);
     }
 
@@ -162,7 +162,7 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
             return std::nullopt;
 
         // Shrink the output Vector object to drop the PKCS#7 padding.
-        output.resize(size - paddingValue);
+        output.shrink(size - paddingValue);
     }
 
     return output;

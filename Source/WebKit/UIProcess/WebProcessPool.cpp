@@ -1541,7 +1541,7 @@ void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
 void WebProcessPool::setInitialConnectedGamepads(const Vector<std::unique_ptr<UIGamepad>>& gamepads)
 {
     Vector<GamepadData> gamepadDatas;
-    gamepadDatas.resize(gamepads.size());
+    gamepadDatas.grow(gamepads.size());
     for (size_t i = 0; i < gamepads.size(); ++i) {
         if (!gamepads[i])
             continue;

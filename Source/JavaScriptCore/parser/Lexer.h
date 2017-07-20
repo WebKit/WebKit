@@ -99,8 +99,8 @@ public:
         m_lineStart = sourcePtrFromOffset(lineStartOffset);
         ASSERT(currentOffset() >= currentLineStartOffset());
 
-        m_buffer8.resize(0);
-        m_buffer16.resize(0);
+        m_buffer8.shrink(0);
+        m_buffer16.shrink(0);
         if (LIKELY(m_code < m_codeEnd))
             m_current = *m_code;
         else

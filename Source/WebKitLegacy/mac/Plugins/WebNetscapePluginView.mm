@@ -529,7 +529,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 NSInteger count;
                 [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&count];
                 Vector<CGRect, 16> convertedDirtyRects;
-                convertedDirtyRects.resize(count);
+                convertedDirtyRects.grow(count);
                 for (int i = 0; i < count; ++i)
                     reinterpret_cast<NSRect&>(convertedDirtyRects[i]) = [self convertRect:dirtyRects[i] fromView:opaqueAncestor];
                 CGContextClipToRects(context, convertedDirtyRects.data(), count);

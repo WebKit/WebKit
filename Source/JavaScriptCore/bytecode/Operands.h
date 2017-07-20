@@ -101,11 +101,11 @@ public:
     
     void ensureLocals(size_t size)
     {
-        if (size <= m_locals.size())
+        size_t oldSize = m_locals.size();
+        if (size <= oldSize)
             return;
 
-        size_t oldSize = m_locals.size();
-        m_locals.resize(size);
+        m_locals.grow(size);
         if (!WTF::VectorTraits<T>::needsInitialization) {
             for (size_t i = oldSize; i < m_locals.size(); ++i)
                 m_locals[i] = T();
@@ -114,11 +114,11 @@ public:
 
     void ensureLocals(size_t size, const T& ensuredValue)
     {
-        if (size <= m_locals.size())
+        size_t oldSize = m_locals.size();
+        if (size <= oldSize)
             return;
 
-        size_t oldSize = m_locals.size();
-        m_locals.resize(size);
+        m_locals.grow(size);
         for (size_t i = oldSize; i < m_locals.size(); ++i)
             m_locals[i] = ensuredValue;
     }

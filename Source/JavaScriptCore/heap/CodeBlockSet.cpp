@@ -86,7 +86,7 @@ void CodeBlockSet::deleteUnmarkedAndUnreferenced(VM& vm, CollectionScope scope)
             codeBlock->structure(vm)->classInfo()->methodTable.destroy(codeBlock);
             set.remove(codeBlock);
         }
-        unmarked.resize(0);
+        unmarked.shrink(0);
     };
 
     switch (scope) {

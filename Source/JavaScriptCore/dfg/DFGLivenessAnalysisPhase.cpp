@@ -96,7 +96,7 @@ public:
             {
                 const Vector<unsigned, 0, UnsafeVectorOverflow, 1>& liveAtHeadIndices = m_liveAtHead[blockIndex];
                 Vector<NodeFlowProjection>& liveAtHead = block->ssa->liveAtHead;
-                liveAtHead.resize(0);
+                liveAtHead.shrink(0);
                 liveAtHead.reserveCapacity(liveAtHeadIndices.size());
                 for (unsigned index : liveAtHeadIndices)
                     liveAtHead.uncheckedAppend(m_indexing.nodeProjection(index));
@@ -104,7 +104,7 @@ public:
             {
                 const LiveSet& liveAtTailIndices = m_liveAtTail[blockIndex];
                 Vector<NodeFlowProjection>& liveAtTail = block->ssa->liveAtTail;
-                liveAtTail.resize(0);
+                liveAtTail.shrink(0);
                 liveAtTail.reserveCapacity(liveAtTailIndices.size());
                 for (unsigned index : m_liveAtTail[blockIndex])
                     liveAtTail.uncheckedAppend(m_indexing.nodeProjection(index));

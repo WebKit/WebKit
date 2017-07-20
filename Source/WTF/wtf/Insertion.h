@@ -73,7 +73,7 @@ size_t executeInsertions(TargetVectorType& target, InsertionVectorType& insertio
         target[firstIndex] = WTFMove(insertions[indexInInsertions].element());
         lastIndex = firstIndex;
     }
-    insertions.resize(0);
+    insertions.shrink(0);
     return numInsertions;
 }
 

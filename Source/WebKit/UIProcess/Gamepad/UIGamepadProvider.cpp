@@ -104,7 +104,7 @@ void UIGamepadProvider::setInitialConnectedGamepads(const Vector<PlatformGamepad
 void UIGamepadProvider::platformGamepadConnected(PlatformGamepad& gamepad)
 {
     if (m_gamepads.size() <= gamepad.index())
-        m_gamepads.resize(gamepad.index() + 1);
+        m_gamepads.grow(gamepad.index() + 1);
 
     ASSERT(!m_gamepads[gamepad.index()]);
     m_gamepads[gamepad.index()] = std::make_unique<UIGamepad>(gamepad);

@@ -39,7 +39,7 @@ namespace ContentExtensions {
 template <typename IntType>
 inline void append(Vector<DFABytecode>& bytecode, IntType value)
 {
-    bytecode.resize(bytecode.size() + sizeof(IntType));
+    bytecode.grow(bytecode.size() + sizeof(IntType));
     *reinterpret_cast<IntType*>(&bytecode[bytecode.size() - sizeof(IntType)]) = value;
 }
 

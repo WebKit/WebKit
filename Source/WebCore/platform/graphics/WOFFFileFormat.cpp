@@ -110,7 +110,7 @@ public:
         if (!m_vector.tryReserveCapacity(offset + n))
             return false;
         if (offset + n > m_vector.size())
-            m_vector.resize(offset + n);
+            m_vector.grow(offset + n);
         m_vector.remove(offset, n);
         m_vector.insert(offset, static_cast<const char*>(data), n);
         return true;

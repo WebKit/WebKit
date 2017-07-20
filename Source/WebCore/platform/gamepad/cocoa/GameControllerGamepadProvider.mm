@@ -64,7 +64,7 @@ void GameControllerGamepadProvider::controllerDidConnect(GCController *controlle
     auto gamepad = std::make_unique<GameControllerGamepad>(controller, index);
 
     if (m_gamepadVector.size() <= index)
-        m_gamepadVector.resize(index + 1);
+        m_gamepadVector.grow(index + 1);
 
     m_gamepadVector[index] = gamepad.get();
     m_gamepadMap.set(controller, WTFMove(gamepad));

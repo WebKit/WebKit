@@ -369,7 +369,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = context->shouldClearReferrerOnHTTPSToHTTPRedirect();
 
-    data.resize(0);
+    data.shrink(0);
 
     HangDetectionDisabler hangDetectionDisabler;
 

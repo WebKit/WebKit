@@ -1,3 +1,77 @@
+2017-07-20  Chris Dumez  <cdumez@apple.com>
+
+        Replace calls to Vector::resize() with calls to more efficient shrink() / grow() when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=174660
+
+        Reviewed by Geoffrey Garen.
+
+        Replace calls to Vector::resize() with calls to more efficient shrink() / grow() when applicable.
+        This essentially replaces a branch to figure out if the new size is less or greater than the
+        current size by an assertion.
+
+        * b3/B3BasicBlockUtils.h:
+        (JSC::B3::clearPredecessors):
+        * b3/B3InferSwitches.cpp:
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::finishAppendingInstructions):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3SparseCollection.h:
+        (JSC::B3::SparseCollection::packIndices):
+        * b3/B3UseCounts.cpp:
+        (JSC::B3::UseCounts::UseCounts):
+        * b3/air/AirAllocateRegistersAndStackByLinearScan.cpp:
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::emitShuffle):
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirOptimizeBlockOrder.cpp:
+        (JSC::B3::Air::optimizeBlockOrder):
+        * bytecode/Operands.h:
+        (JSC::Operands::ensureLocals):
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::computePreciseJumpTargetsInternal):
+        * dfg/DFGBlockInsertionSet.cpp:
+        (JSC::DFG::BlockInsertionSet::execute):
+        * dfg/DFGBlockMapInlines.h:
+        (JSC::DFG::BlockMap<T>::BlockMap):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::processSetLocalQueue):
+        (JSC::DFG::ByteCodeParser::clearCaches):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::Disassembler):
+        * dfg/DFGFlowIndexing.cpp:
+        (JSC::DFG::FlowIndexing::recompute):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::registerFrozenValues):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::setLiveValues):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::run):
+        * dfg/DFGLivenessAnalysisPhase.cpp:
+        * dfg/DFGNaturalLoops.cpp:
+        (JSC::DFG::NaturalLoops::NaturalLoops):
+        * dfg/DFGStoreBarrierClusteringPhase.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweepLargeAllocations):
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::shrinkOperandStackBy):
+        * parser/Lexer.h:
+        (JSC::Lexer::setOffset):
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::genericSplit):
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::match):
+
 2017-07-20  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Use ThreadGroup to bookkeep active threads for Mach exception

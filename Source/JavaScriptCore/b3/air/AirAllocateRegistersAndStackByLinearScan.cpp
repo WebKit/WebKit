@@ -333,7 +333,7 @@ private:
     template<typename SelectFunc>
     void prepareIntervals(const SelectFunc& selectFunc)
     {
-        m_tmps.resize(0);
+        m_tmps.shrink(0);
         
         m_code.forEachTmp(
             [&] (Tmp tmp) {

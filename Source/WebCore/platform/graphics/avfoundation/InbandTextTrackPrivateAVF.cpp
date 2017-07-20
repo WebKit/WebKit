@@ -449,7 +449,7 @@ void InbandTextTrackPrivateAVF::resetCueValues()
             client->removeGenericCue(*cue);
     }
 
-    m_cues.resize(0);
+    m_cues.shrink(0);
     m_pendingCueStatus = None;
     m_currentCueStartTime = MediaTime::zeroTime();
     m_currentCueEndTime = MediaTime::zeroTime();
@@ -568,7 +568,7 @@ bool InbandTextTrackPrivateAVF::readNativeSampleBuffer(CFArrayRef nativeSamples,
         return false;
     }
 
-    m_sampleInputBuffer.resize(m_sampleInputBuffer.size() + bufferLength);
+    m_sampleInputBuffer.grow(m_sampleInputBuffer.size() + bufferLength);
     CMBlockBufferCopyDataBytes(blockBuffer, 0, bufferLength, m_sampleInputBuffer.data() + m_sampleInputBuffer.size() - bufferLength);
 
     buffer = ArrayBuffer::create(m_sampleInputBuffer.data(), m_sampleInputBuffer.size());

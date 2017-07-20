@@ -149,7 +149,7 @@ private:
                     nodeIndex, SpecNone, type, origin.withSemantic(semanticOrigin),
                     Edge(child, KnownCellUse));
             }
-            m_neededBarriers.resize(0);
+            m_neededBarriers.shrink(0);
         }
         
         m_insertionSet.execute(block);

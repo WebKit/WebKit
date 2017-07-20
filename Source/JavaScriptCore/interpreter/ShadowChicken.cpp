@@ -395,7 +395,7 @@ void ShadowChicken::update(VM& vm, ExecState* exec)
                 }
                 m_stack[dstIndex++] = frame;
             }
-            m_stack.resize(dstIndex);
+            m_stack.shrink(dstIndex);
         }
     }
 

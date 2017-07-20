@@ -105,7 +105,7 @@ static std::optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry
             return std::nullopt;
         }
 
-        output.resize(dataLength);
+        output.grow(dataLength);
         error = gcry_mpi_print(GCRYMPI_FMT_USG, output.data(), output.size(), nullptr, xMPI);
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);

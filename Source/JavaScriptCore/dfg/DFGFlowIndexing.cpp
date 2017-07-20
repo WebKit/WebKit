@@ -48,7 +48,7 @@ void FlowIndexing::recompute()
     m_nodeIndexToShadowIndex.resize(numNodeIndices);
     m_nodeIndexToShadowIndex.fill(UINT_MAX);
     
-    m_shadowIndexToNodeIndex.resize(0);
+    m_shadowIndexToNodeIndex.shrink(0);
 
     m_numIndices = numNodeIndices;
 

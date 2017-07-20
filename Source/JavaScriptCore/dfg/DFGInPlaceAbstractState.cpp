@@ -85,7 +85,7 @@ void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
 
 static void setLiveValues(Vector<NodeAbstractValuePair>& values, const Vector<NodeFlowProjection>& live)
 {
-    values.resize(0);
+    values.shrink(0);
     values.reserveCapacity(live.size());
     for (NodeFlowProjection node : live)
         values.uncheckedAppend(NodeAbstractValuePair { node, AbstractValue() });

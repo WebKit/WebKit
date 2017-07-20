@@ -69,10 +69,9 @@ private:
     class Node {
     public:
         Node(bool isLeaf = false)
+            : m_children(Codebook::codeSize, 0)
+            , m_isLeaf(isLeaf)
         {
-            m_children.resize(Codebook::codeSize);
-            m_children.fill(0);
-            m_isLeaf = isLeaf;
         }
 
         ~Node()

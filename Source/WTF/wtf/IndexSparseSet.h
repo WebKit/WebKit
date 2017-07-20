@@ -108,7 +108,7 @@ private:
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
 inline IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::IndexSparseSet(unsigned size)
 {
-    m_map.resize(size);
+    m_map.grow(size);
 }
 
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
@@ -160,7 +160,7 @@ inline bool IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::remove(
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>
 void IndexSparseSet<EntryType, EntryTypeTraits, OverflowHandler>::clear()
 {
-    m_values.resize(0);
+    m_values.shrink(0);
 }
 
 template<typename EntryType, typename EntryTypeTraits, typename OverflowHandler>

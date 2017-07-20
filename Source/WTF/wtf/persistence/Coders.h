@@ -182,7 +182,7 @@ template<typename T, size_t inlineCapacity> struct VectorCoder<true, T, inlineCa
             return false;
 
         Vector<T, inlineCapacity> temp;
-        temp.resize(size);
+        temp.grow(size);
 
         decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T));
 

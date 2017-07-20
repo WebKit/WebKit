@@ -159,7 +159,7 @@ private:
             lastRange = &m_ranges[dstIndex++];
             *lastRange = range;
         }
-        m_ranges.resize(dstIndex);
+        m_ranges.shrink(dstIndex);
 
         m_isCompact = true;
     }

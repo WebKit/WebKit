@@ -248,7 +248,7 @@ void MarkedSpace::sweepLargeAllocations()
         }
         m_largeAllocations[dstIndex++] = allocation;
     }
-    m_largeAllocations.resize(dstIndex);
+    m_largeAllocations.shrink(dstIndex);
     m_largeAllocationsNurseryOffset = m_largeAllocations.size();
 }
 

@@ -275,7 +275,7 @@ Vector<Inst> emitShuffle(
                 for (unsigned i = rotate.loop.size() - 1; i--;)
                     ASSERT(rotate.loop[i].dst() == rotate.loop[i + 1].src());
                 rotates.append(WTFMove(rotate));
-                currentPairs.resize(0);
+                currentPairs.shrink(0);
             } else {
                 if (verbose)
                     dataLog("It's a shift.\n");

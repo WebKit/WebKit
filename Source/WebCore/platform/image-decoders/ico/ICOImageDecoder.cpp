@@ -168,7 +168,7 @@ void ICOImageDecoder::decode(size_t index, bool onlySize, bool allDataReceived)
     }
     
     if (m_frameBufferCache.isEmpty())
-        m_frameBufferCache.resize(m_dirEntries.size());
+        m_frameBufferCache.grow(m_dirEntries.size());
     // CAUTION: We must not resize m_frameBufferCache again after this, as
     // decodeAtIndex() may give a BMPImageReader a pointer to one of the
     // entries.

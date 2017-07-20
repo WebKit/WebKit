@@ -64,7 +64,7 @@ public:
         for (unsigned i = 0; i < m_successors.size(); ++i)
             worklist.push(m_successors[i]);
         
-        m_successors.resize(0);
+        m_successors.shrink(0);
     }
 
 private:
@@ -137,7 +137,7 @@ void optimizeBlockOrder(Code& code)
     for (auto& entry : code.blockList())
         entry.release();
 
-    code.blockList().resize(0);
+    code.blockList().shrink(0);
 
     for (unsigned i = 0; i < blocksInOrder.size(); ++i) {
         BasicBlock* block = blocksInOrder[i];

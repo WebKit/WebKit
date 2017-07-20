@@ -1536,7 +1536,7 @@ size_t removeRepeatedElements(VectorType& vector, const Func& func)
 {
     auto end = std::unique(vector.begin(), vector.end(), func);
     size_t newSize = end - vector.begin();
-    vector.resize(newSize);
+    vector.shrink(newSize);
     return newSize;
 }
 

@@ -62,7 +62,7 @@ NaturalLoops::NaturalLoops(Graph& graph)
         graph.m_dominators->dump(WTF::dataFile());
     }
     
-    m_loops.resize(0);
+    m_loops.shrink(0);
     
     for (BlockIndex blockIndex = graph.numBlocks(); blockIndex--;) {
         BasicBlock* block = graph.block(blockIndex);

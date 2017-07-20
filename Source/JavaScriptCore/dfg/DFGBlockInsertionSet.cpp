@@ -88,7 +88,7 @@ bool BlockInsertionSet::execute()
             continue;
         m_graph.m_blocks[targetIndex++] = block;
     }
-    m_graph.m_blocks.resize(targetIndex);
+    m_graph.m_blocks.shrink(targetIndex);
     
     // Make sure that the blocks know their new indices.
     for (unsigned i = 0; i < m_graph.m_blocks.size(); ++i)

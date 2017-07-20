@@ -83,7 +83,7 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime
     } else
         LOG(Media, "InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes negative length cue(s) ignored: start=%s, end=%s\n", toString(m_currentCueStartTime).utf8().data(), toString(time).utf8().data());
 
-    m_incompleteCues.resize(0);
+    m_incompleteCues.shrink(0);
     m_currentCueStartTime = MediaTime::zeroTime();
 }
 
@@ -99,7 +99,7 @@ void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
             client()->removeDataCue(partialCue.startTime, MediaTime::positiveInfiniteTime(), *partialCue.cueData);
     }
 
-    m_incompleteCues.resize(0);
+    m_incompleteCues.shrink(0);
     m_currentCueStartTime = MediaTime::zeroTime();
 }
 

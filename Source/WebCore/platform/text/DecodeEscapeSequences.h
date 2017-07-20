@@ -102,7 +102,7 @@ struct URLEscapeSequence {
         // For URL escape sequences, we know that findEndOfRun() has given us a run where every %-sign introduces
         // a valid escape sequence, but there may be characters between the sequences.
         Vector<char, 512> buffer;
-        buffer.resize(run.length()); // Unescaping hex sequences only makes the length smaller.
+        buffer.grow(run.length()); // Unescaping hex sequences only makes the length smaller.
         char* p = buffer.data();
         while (!run.isEmpty()) {
             if (run[0] == '%') {

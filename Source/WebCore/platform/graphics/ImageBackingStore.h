@@ -59,7 +59,7 @@ public:
         if (!buffer.tryReserveCapacity(bufferSize))
             return false;
 
-        buffer.resize(bufferSize);
+        buffer.grow(bufferSize);
         m_pixels = SharedBuffer::create(WTFMove(buffer));
         m_pixelsPtr = reinterpret_cast<RGBA32*>(const_cast<char*>(m_pixels->data()));
         m_size = size;

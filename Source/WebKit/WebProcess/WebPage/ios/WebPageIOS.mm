@@ -2221,7 +2221,7 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Cal
         range->collectSelectionRects(selectionRects);
 
     Vector<FloatRect> rectsForText;
-    rectsForText.resize(selectionRects.size());
+    rectsForText.grow(selectionRects.size());
 
     convertSelectionRectsToRootView(frame.view(), selectionRects);
     for (size_t i = 0; i < selectionRects.size(); i++)

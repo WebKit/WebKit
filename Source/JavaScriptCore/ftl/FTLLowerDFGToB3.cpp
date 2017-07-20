@@ -464,7 +464,7 @@ private:
         if (verboseCompilationEnabled())
             dataLog("Lowering ", m_node, "\n");
         
-        m_availableRecoveries.resize(0);
+        m_availableRecoveries.shrink(0);
         
         m_interpreter.startExecuting();
         m_interpreter.executeKnownEdgeTypes(m_node);

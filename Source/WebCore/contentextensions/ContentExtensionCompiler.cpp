@@ -54,14 +54,14 @@ static void serializeSelector(Vector<SerializedActionByte>& actions, const Strin
     actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNoneSelector));
     // Append Selector length (4 bytes).
     unsigned selectorLength = selector.length();
-    actions.resize(actions.size() + sizeof(unsigned));
+    actions.grow(actions.size() + sizeof(unsigned));
     *reinterpret_cast<unsigned*>(&actions[actions.size() - sizeof(unsigned)]) = selectorLength;
     bool wideCharacters = !selector.is8Bit();
     actions.append(wideCharacters);
     // Append Selector.
     if (wideCharacters) {
         unsigned startIndex = actions.size();
-        actions.resize(actions.size() + sizeof(UChar) * selectorLength);
+        actions.grow(actions.size() + sizeof(UChar) * selectorLength);
         for (unsigned i = 0; i < selectorLength; ++i)
             *reinterpret_cast<UChar*>(&actions[startIndex + i * sizeof(UChar)]) = selector[i];
     } else {

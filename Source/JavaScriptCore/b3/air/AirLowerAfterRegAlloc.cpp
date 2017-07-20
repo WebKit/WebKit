@@ -232,7 +232,7 @@ void lowerAfterRegAlloc(Code& code)
                     inst.kind.effects = true;
 
                 // Now we need to emit code to restore registers.
-                pairs.resize(0);
+                pairs.shrink(0);
                 unsigned stackSlotIndex = 0;
                 regsToSave.forEach(
                     [&] (Reg reg) {

@@ -70,7 +70,7 @@ ImageFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
         return 0;
 
     if (m_frameBufferCache.isEmpty())
-        m_frameBufferCache.resize(1);
+        m_frameBufferCache.grow(1);
 
     ImageFrame& frame = m_frameBufferCache[0];
     if (!frame.isComplete())

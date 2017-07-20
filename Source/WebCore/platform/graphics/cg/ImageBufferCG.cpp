@@ -587,7 +587,7 @@ static RetainPtr<CFDataRef> cfData(const ImageData& source, const String& mimeTy
         if (!premultipliedData.tryReserveCapacity(size))
             return nullptr;
 
-        premultipliedData.resize(size);
+        premultipliedData.grow(size);
         unsigned char *buffer = premultipliedData.data();
         for (size_t i = 0; i < size; i += 4) {
             unsigned alpha = data[i + 3];

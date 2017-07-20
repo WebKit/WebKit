@@ -1330,7 +1330,7 @@ JSArrayBufferView* Graph::tryGetFoldableView(JSValue value, ArrayMode arrayMode)
 
 void Graph::registerFrozenValues()
 {
-    m_codeBlock->constants().resize(0);
+    m_codeBlock->constants().shrink(0);
     m_codeBlock->constantsSourceCodeRepresentation().resize(0);
     for (FrozenValue* value : m_frozenValues) {
         if (!value->pointsToHeap())

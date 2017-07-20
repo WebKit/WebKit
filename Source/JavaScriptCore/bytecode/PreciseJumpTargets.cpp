@@ -84,8 +84,7 @@ void computePreciseJumpTargetsInternal(Block* codeBlock, Instruction* instructio
         out[toIndex++] = value;
         lastValue = value;
     }
-    out.resize(toIndex);
-    out.shrinkToFit();
+    out.shrinkCapacity(toIndex);
 }
 
 void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
