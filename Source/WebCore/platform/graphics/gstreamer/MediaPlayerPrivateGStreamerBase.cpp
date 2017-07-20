@@ -239,8 +239,6 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 {
     m_notifier->invalidate();
 
-    cancelRepaint();
-
     if (m_videoSink) {
         g_signal_handlers_disconnect_matched(m_videoSink.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 #if USE(GSTREAMER_GL)
@@ -251,15 +249,20 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 #endif
     }
 
-    g_mutex_clear(&m_sampleMutex);
-
-    m_player = nullptr;
-
     if (m_volumeElement)
         g_signal_handlers_disconnect_matched(m_volumeElement.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
 
+    // This will release the GStreamer thread from m_drawCondition if AC is disabled.
+    cancelRepaint();
+
+    // The change to GST_STATE_NULL state is always synchronous. So after this gets executed we don't need to worry
+    // about handlers running in the GStreamer thread.
     if (m_pipeline)
         gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
+
+    g_mutex_clear(&m_sampleMutex);
+
+    m_player = nullptr;
 }
 
 void MediaPlayerPrivateGStreamerBase::setPipeline(GstElement* pipeline)
@@ -626,15 +629,8 @@ void MediaPlayerPrivateGStreamerBase::repaint()
 
     m_player->repaint();
 
-#if USE(GSTREAMER_GL)
-    bool shouldNotifyDraw = !m_renderingCanBeAccelerated;
-#else
-    bool shouldNotifyDraw = true;
-#endif
-    if (shouldNotifyDraw) {
-        LockHolder lock(m_drawMutex);
-        m_drawCondition.notifyOne();
-    }
+    LockHolder lock(m_drawMutex);
+    m_drawCondition.notifyOne();
 }
 
 void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
@@ -679,12 +675,7 @@ void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreame
 
 void MediaPlayerPrivateGStreamerBase::cancelRepaint()
 {
-#if USE(GSTREAMER_GL)
-    bool shouldCancelRepaint = !m_renderingCanBeAccelerated;
-#else
-    bool shouldCancelRepaint = true;
-#endif
-    if (shouldCancelRepaint) {
+    if (!m_renderingCanBeAccelerated) {
         m_drawTimer.stop();
         LockHolder locker(m_drawMutex);
         m_drawCondition.notifyOne();
