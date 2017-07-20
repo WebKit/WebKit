@@ -135,7 +135,16 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     if (subframeUnderTopFrameOriginsResult.isNewEntry)
         scheduleNotificationIfNeeded();
 }
-    
+
+// FIXME: This quirk was added to address <rdar://problem/33325881> and should be removed once content is fixed.
+static bool resourceNeedsSSOQuirk(const URL& url)
+{
+    static const auto ssoOriginsHash = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
+        "sp.auth.adobe.com"
+    });
+    return ssoOriginsHash.get().contains(url.host());
+}
+
 void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     ASSERT(frame->page());
@@ -159,6 +168,9 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
     
     if (targetPrimaryDomain == mainFramePrimaryDomain || (isRedirect && targetPrimaryDomain == sourcePrimaryDomain))
+        return;
+
+    if (resourceNeedsSSOQuirk(targetURL))
         return;
 
     bool shouldCallNotificationCallback = false;
