@@ -49,8 +49,6 @@ static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
         exceptionName = DOMRangeException;
     else if (strcmp(description.typeName, "DOM Events") == 0)
         exceptionName = DOMEventException;
-    else if (strcmp(description.typeName, "DOM XPath") == 0)
-        exceptionName = DOMXPathException;
     else
         exceptionName = DOMException;
 

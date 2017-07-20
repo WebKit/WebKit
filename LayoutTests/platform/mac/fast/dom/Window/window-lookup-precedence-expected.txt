@@ -298,8 +298,6 @@ PASS 'function XMLSerializer() {    [native code]}' is 'function XMLSerializer()
 PASS 'function XMLSerializer() {    [native code]}' is 'function XMLSerializer() {    [native code]}'
 PASS 'function XPathEvaluator() {    [native code]}' is 'function XPathEvaluator() {    [native code]}'
 PASS 'function XPathEvaluator() {    [native code]}' is 'function XPathEvaluator() {    [native code]}'
-PASS 'function XPathException() {    [native code]}' is 'function XPathException() {    [native code]}'
-PASS 'function XPathException() {    [native code]}' is 'function XPathException() {    [native code]}'
 PASS 'function XPathResult() {    [native code]}' is 'function XPathResult() {    [native code]}'
 PASS 'function XPathResult() {    [native code]}' is 'function XPathResult() {    [native code]}'
 PASS 'function XSLTProcessor() {    [native code]}' is 'function XSLTProcessor() {    [native code]}'

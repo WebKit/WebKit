@@ -1,5 +1,43 @@
 2017-07-20  Chris Dumez  <cdumez@apple.com>
 
+        Drop legacy XPathException type
+        https://bugs.webkit.org/show_bug.cgi?id=174679
+
+        Reviewed by Sam Weinig.
+
+        Drop legacy XPathException type and use DOMException instead. Both Firefox and Chrome
+        no longer expose XPathException.
+
+        Test: fast/dom/DOMException/XPathException-obsolete.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::createDOMException):
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * dom/DOMExceptions.in:
+        * xml/XPathException.cpp: Removed.
+        * xml/XPathException.h: Removed.
+        * xml/XPathException.idl: Removed.
+        * xml/XPathExpression.cpp:
+        (WebCore::XPathExpression::evaluate):
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::parseStatement):
+        * xml/XPathResult.cpp:
+        (WebCore::XPathResult::convertTo):
+        (WebCore::XPathResult::numberValue):
+        (WebCore::XPathResult::stringValue):
+        (WebCore::XPathResult::booleanValue):
+        (WebCore::XPathResult::singleNodeValue):
+        (WebCore::XPathResult::snapshotLength):
+        (WebCore::XPathResult::iterateNext):
+        (WebCore::XPathResult::snapshotItem):
+
+2017-07-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r219706.
 
         Broke iOS build

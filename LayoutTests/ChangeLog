@@ -1,5 +1,33 @@
 2017-07-20  Chris Dumez  <cdumez@apple.com>
 
+        Drop legacy XPathException type
+        https://bugs.webkit.org/show_bug.cgi?id=174679
+
+        Reviewed by Sam Weinig.
+
+        Update existing tests to reflect behavior change.
+
+        * dom/svg/level3/xpath/XPathEvaluator_createExpression_INVALID_EXPRESSION_ERR.js:
+        (XPathEvaluator_createExpression_INVALID_EXPRESSION_ERR):
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_INVALID_EXPRESSION_ERR.js:
+        (XPathEvaluator_evaluate_INVALID_EXPRESSION_ERR):
+        * dom/svg/level3/xpath/XPathEvaluator_evaluate_TYPE_ERR.js:
+        (XPathEvaluator_evaluate_TYPE_ERR):
+        * dom/svg/level3/xpath/XPathResult_TYPE_ERR.js:
+        (XPathResult_TYPE_ERR):
+        * fast/dom/DOMException/XPathException-expected.txt: Removed.
+        * fast/dom/DOMException/XPathException.html: Removed.
+        * fast/dom/DOMException/resources/XPathException.js: Removed.
+        * fast/dom/Window/resources/window-properties.js:
+        * fast/dom/Window/window-lookup-precedence-expected.txt:
+        * fast/xpath/4XPath/Core/test_parser-expected.txt:
+        * fast/xpath/invalid-functions-expected.txt:
+        * fast/xpath/py-dom-xpath/expressions-expected.txt:
+        * platform/gtk/fast/dom/Window/window-lookup-precedence-expected.txt:
+        * platform/mac/fast/dom/Window/window-lookup-precedence-expected.txt:
+
+2017-07-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r219706.
 
         Broke iOS build

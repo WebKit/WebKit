@@ -177,9 +177,6 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     case SVGExceptionType:
         errorObject = toJS(exec, globalObject, SVGException::create(description));
         break;
-    case XPathExceptionType:
-        errorObject = toJS(exec, globalObject, XPathException::create(description));
-        break;
     }
     
     ASSERT(errorObject);
