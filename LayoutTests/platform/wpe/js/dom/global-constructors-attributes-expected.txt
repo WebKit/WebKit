@@ -1288,11 +1288,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'SQLError').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'SQLError').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SQLError').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SQLError').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').value is SQLException
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SQLResultSet').value is SQLResultSet
 PASS Object.getOwnPropertyDescriptor(global, 'SQLResultSet').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SQLResultSet').hasOwnProperty('set') is false

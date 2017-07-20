@@ -978,11 +978,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'Response').hasOwnProperty('get') i
 PASS Object.getOwnPropertyDescriptor(global, 'Response').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'Response').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'Response').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').value is SQLException
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SQLException').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SVGAElement').value is SVGAElement
 PASS Object.getOwnPropertyDescriptor(global, 'SVGAElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGAElement').hasOwnProperty('set') is false

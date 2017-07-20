@@ -1,3 +1,18 @@
+2017-07-20  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline test on all platforms after r219673.
+
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
 2017-07-20  Charlie Turner  <cturner@igalia.com>
 
         [GTK] Layout Test http/tests/media/hls/hls-progress.html is failing
