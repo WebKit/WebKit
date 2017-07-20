@@ -1,16 +1,16 @@
 
 Received files in worker
 Test reading a non-existent file as array buffer
-Received exception 1: NOT_FOUND_ERR
+Received exception 8: NotFoundError
 Received exception undefined: TypeError
 Test reading a non-existent file as binary string
-Received exception 1: NOT_FOUND_ERR
+Received exception 8: NotFoundError
 Received exception undefined: TypeError
 Test reading a non-existent file as text
-Received exception 1: NOT_FOUND_ERR
+Received exception 8: NotFoundError
 Received exception undefined: TypeError
 Test reading a non-existent file as data URL
-Received exception 1: NOT_FOUND_ERR
+Received exception 8: NotFoundError
 Received exception undefined: TypeError
 Test reading an empty file as array buffer
 result size: 0

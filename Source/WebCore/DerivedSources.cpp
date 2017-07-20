@@ -191,7 +191,6 @@
 #include "JSFetchResponse.cpp"
 #include "JSFile.cpp"
 #include "JSFileError.cpp"
-#include "JSFileException.cpp"
 #include "JSFileList.cpp"
 #include "JSFileReader.cpp"
 #include "JSFileReaderSync.cpp"

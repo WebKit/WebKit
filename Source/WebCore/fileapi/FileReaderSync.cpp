@@ -34,7 +34,7 @@
 
 #include "Blob.h"
 #include "BlobURL.h"
-#include "FileException.h"
+#include "ExceptionCode.h"
 #include "FileReaderLoader.h"
 #include <runtime/ArrayBuffer.h>
 
@@ -73,10 +73,43 @@ ExceptionOr<String> FileReaderSync::readAsDataURL(ScriptExecutionContext& script
     return startLoadingString(scriptExecutionContext, loader, blob);
 }
 
+static ExceptionCode errorCodeToExceptionCode(FileError::ErrorCode errorCode)
+{
+    switch (errorCode) {
+    case FileError::OK:
+        return 0;
+    case FileError::NOT_FOUND_ERR:
+        return NOT_FOUND_ERR;
+    case FileError::SECURITY_ERR:
+        return SECURITY_ERR;
+    case FileError::ABORT_ERR:
+        return ABORT_ERR;
+    case FileError::NOT_READABLE_ERR:
+        return NotReadableError;
+    case FileError::ENCODING_ERR:
+        return EncodingError;
+    case FileError::NO_MODIFICATION_ALLOWED_ERR:
+        return NO_MODIFICATION_ALLOWED_ERR;
+    case FileError::INVALID_STATE_ERR:
+        return INVALID_STATE_ERR;
+    case FileError::SYNTAX_ERR:
+        return SYNTAX_ERR;
+    case FileError::INVALID_MODIFICATION_ERR:
+        return INVALID_MODIFICATION_ERR;
+    case FileError::QUOTA_EXCEEDED_ERR:
+        return QUOTA_EXCEEDED_ERR;
+    case FileError::TYPE_MISMATCH_ERR:
+        return TYPE_MISMATCH_ERR;
+    case FileError::PATH_EXISTS_ERR:
+        return NO_MODIFICATION_ALLOWED_ERR;
+    }
+    return UnknownError;
+}
+
 ExceptionOr<void> FileReaderSync::startLoading(ScriptExecutionContext& scriptExecutionContext, FileReaderLoader& loader, Blob& blob)
 {
     loader.start(&scriptExecutionContext, blob);
-    if (ExceptionCode code = FileException::ErrorCodeToExceptionCode(loader.errorCode()))
+    if (ExceptionCode code = errorCodeToExceptionCode(loader.errorCode()))
         return Exception { code };
     return { };
 }

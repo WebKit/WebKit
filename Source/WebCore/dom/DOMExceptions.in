@@ -1,7 +1,6 @@
 namespace=Exception
 
 DOMCoreException
-FileException
 SVGException
 XPathException
 

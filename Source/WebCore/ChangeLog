@@ -1,3 +1,35 @@
+2017-07-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy FileException type
+        https://bugs.webkit.org/show_bug.cgi?id=174676
+
+        Reviewed by Alex Christensen.
+
+        Drop legacy FileException type and use DOMException instead, as per the latest
+        File API specification:
+        - https://w3c.github.io/FileAPI/#ErrorAndException
+
+        Both Firefox and Chrome no longer expose FileException.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::createDOMException):
+        * dom/DOMExceptions.in:
+        * fileapi/FileException.cpp: Removed.
+        * fileapi/FileException.h: Removed.
+        * fileapi/FileException.idl: Removed.
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::FileReaderLoader):
+        (WebCore::FileReaderLoader::failed):
+        * fileapi/FileReaderLoader.h:
+        (WebCore::FileReaderLoader::errorCode):
+        * fileapi/FileReaderSync.cpp:
+        (WebCore::errorCodeToExceptionCode):
+        (WebCore::FileReaderSync::startLoading):
+
 2017-07-20  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove custom bindings for InspectorFrontendHost

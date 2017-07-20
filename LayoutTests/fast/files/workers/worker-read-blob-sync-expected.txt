@@ -1,10 +1,10 @@
 
 Received files in worker
 Test reading a blob containing non-existent file
-Received exception 1: NOT_FOUND_ERR
+Received exception 8: NotFoundError
 Received exception undefined: TypeError
 Test reading a blob containing existent and non-existent file
-Received exception 1: NOT_FOUND_ERR
+Received exception 8: NotFoundError
 Received exception undefined: TypeError
 Test reading a blob containing empty file
 result size: 0
