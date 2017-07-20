@@ -1,3 +1,10 @@
+2017-07-19  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, add a demo page for a WebCrypto API blog post
+
+        * demos/webcrypto/asynchronous-execution-worker.js: Added.
+        * demos/webcrypto/asynchronous-execution.html: Added.
+
 2017-06-30  Jon Lee  <jonlee@apple.com>
 
         Add a WebRTC example for a blog post
