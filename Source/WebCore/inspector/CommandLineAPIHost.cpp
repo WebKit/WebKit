@@ -32,17 +32,21 @@
 #include "CommandLineAPIHost.h"
 
 #include "Database.h"
+#include "Document.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
 #include "JSCommandLineAPIHost.h"
 #include "JSDOMGlobalObject.h"
+#include "JSEventListener.h"
 #include "Pasteboard.h"
 #include "Storage.h"
+#include <bindings/ScriptValue.h>
 #include <inspector/InspectorValues.h>
 #include <inspector/agents/InspectorAgent.h>
 #include <inspector/agents/InspectorConsoleAgent.h>
 #include <runtime/JSCInlines.h>
+#include <runtime/JSLock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
@@ -74,23 +78,66 @@ void CommandLineAPIHost::disconnect()
     m_databaseAgent = nullptr;
 }
 
-void CommandLineAPIHost::inspectImpl(RefPtr<InspectorValue>&& object, RefPtr<InspectorValue>&& hints)
+void CommandLineAPIHost::inspect(JSC::ExecState& state, JSC::JSValue valueToInspect, JSC::JSValue hintsValue)
 {
     if (!m_inspectorAgent)
         return;
 
     RefPtr<InspectorObject> hintsObject;
-    if (!hints->asObject(hintsObject))
+    if (!Inspector::toInspectorValue(state, hintsValue)->asObject(hintsObject))
         return;
 
-    auto remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(WTFMove(object));
+    auto remoteObject = BindingTraits<Inspector::Protocol::Runtime::RemoteObject>::runtimeCast(Inspector::toInspectorValue(state, valueToInspect));
     m_inspectorAgent->inspect(WTFMove(remoteObject), WTFMove(hintsObject));
 }
 
-void CommandLineAPIHost::getEventListenersImpl(Node* node, Vector<EventListenerInfo>& listenersArray)
+static Vector<CommandLineAPIHost::ListenerEntry> listenerEntriesFromListenerInfo(ExecState& state, Document& document, const EventListenerInfo& listenerInfo)
+{
+    VM& vm = state.vm();
+
+    Vector<CommandLineAPIHost::ListenerEntry> entires;
+    for (auto& eventListener : listenerInfo.eventListenerVector) {
+        auto jsListener = JSEventListener::cast(&eventListener->callback());
+        if (!jsListener) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
+
+        // Hide listeners from other contexts.
+        if (&jsListener->isolatedWorld() != &currentWorld(&state))
+            continue;
+
+        auto function = jsListener->jsFunction(&document);
+        if (!function)
+            continue;
+
+        entires.append({ JSC::Strong<JSC::JSObject>(vm, function), eventListener->useCapture() });
+    }
+
+    return entires;
+}
+
+auto CommandLineAPIHost::getEventListeners(JSC::ExecState& state, Node* node) -> EventListenersRecord
 {
     if (m_domAgent)
-        m_domAgent->getEventListeners(node, listenersArray, false);
+        return { };
+
+    if (!node)
+        return { };
+
+    Vector<EventListenerInfo> listenerInfoArray;
+    m_domAgent->getEventListeners(node, listenerInfoArray, false);
+
+    EventListenersRecord result;
+
+    for (auto& listenerInfo : listenerInfoArray) {
+        auto entries = listenerEntriesFromListenerInfo(state, node->document(), listenerInfo);
+        if (entries.isEmpty())
+            continue;
+        result.append({ listenerInfo.eventType, WTFMove(entries) });
+    }
+
+    return result;
 }
 
 void CommandLineAPIHost::clearConsoleMessages()
@@ -116,23 +163,28 @@ void CommandLineAPIHost::addInspectedObject(std::unique_ptr<CommandLineAPIHost::
     m_inspectedObject = WTFMove(object);
 }
 
-CommandLineAPIHost::InspectableObject* CommandLineAPIHost::inspectedObject()
+JSC::JSValue CommandLineAPIHost::inspectedObject(JSC::ExecState& state)
 {
-    return m_inspectedObject.get();
+    if (!m_inspectedObject)
+        return jsUndefined();
+
+    JSC::JSLockHolder lock(&state);
+    auto scriptValue = m_inspectedObject->get(state);
+    return scriptValue ? scriptValue : jsUndefined();
 }
 
-String CommandLineAPIHost::databaseIdImpl(Database* database)
+String CommandLineAPIHost::databaseId(Database* database)
 {
     if (m_databaseAgent)
         return m_databaseAgent->databaseId(database);
-    return String();
+    return { };
 }
 
-String CommandLineAPIHost::storageIdImpl(Storage* storage)
+String CommandLineAPIHost::storageId(Storage* storage)
 {
     if (m_domStorageAgent)
         return m_domStorageAgent->storageId(storage);
-    return String();
+    return { };
 }
 
 JSValue CommandLineAPIHost::wrapper(ExecState* exec, JSDOMGlobalObject* globalObject)

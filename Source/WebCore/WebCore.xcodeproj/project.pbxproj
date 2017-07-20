@@ -4408,7 +4408,6 @@
 		A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE2E1864CB8400843B10 /* WebInjectedScriptManager.h */; };
 		A584FE341864D5AF00843B10 /* CommandLineAPIHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */; };
 		A584FE351864D5AF00843B10 /* CommandLineAPIHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */; };
-		A584FE381864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */; };
 		A584FE3B1864E2D800843B10 /* JSCommandLineAPIHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */; };
 		A584FE3C1864E2D800843B10 /* JSCommandLineAPIHost.h in Headers */ = {isa = PBXBuildFile; fileRef = A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */; };
 		A58C59D01E382EAC0047859C /* JSPerformanceMark.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A58C59CC1E382EA90047859C /* JSPerformanceMark.cpp */; };
@@ -12667,7 +12666,6 @@
 		A584FE311864D5AF00843B10 /* CommandLineAPIHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineAPIHost.cpp; sourceTree = "<group>"; };
 		A584FE321864D5AF00843B10 /* CommandLineAPIHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLineAPIHost.h; sourceTree = "<group>"; };
 		A584FE331864D5AF00843B10 /* CommandLineAPIHost.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CommandLineAPIHost.idl; sourceTree = "<group>"; };
-		A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCommandLineAPIHostCustom.cpp; sourceTree = "<group>"; };
 		A584FE391864E2D800843B10 /* JSCommandLineAPIHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCommandLineAPIHost.cpp; sourceTree = "<group>"; };
 		A584FE3A1864E2D800843B10 /* JSCommandLineAPIHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCommandLineAPIHost.h; sourceTree = "<group>"; };
 		A58C59CC1E382EA90047859C /* JSPerformanceMark.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPerformanceMark.cpp; sourceTree = "<group>"; };
@@ -23606,7 +23604,6 @@
 			children = (
 				7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */,
 				7CBA5BA91F0B51480034D745 /* Promises Only */,
-				A584FE371864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
 				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
 				AD726FEA16D9F40B003A4E6D /* JSCSSStyleDeclarationCustom.h */,
@@ -31792,7 +31789,6 @@
 				836D03311DA8A13F00FFD96B /* JSClipboardEvent.cpp in Sources */,
 				51FB5505113E3E9100821176 /* JSCloseEvent.cpp in Sources */,
 				A584FE3B1864E2D800843B10 /* JSCommandLineAPIHost.cpp in Sources */,
-				A584FE381864DAC100843B10 /* JSCommandLineAPIHostCustom.cpp in Sources */,
 				93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */,
 				79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */,
 				FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */,

@@ -38,7 +38,6 @@
 #include "JSCSSStyleDeclarationCustom.cpp"
 #include "JSCallbackData.cpp"
 #include "JSCanvasRenderingContext2DCustom.cpp"
-#include "JSCommandLineAPIHostCustom.cpp"
 #include "JSCustomEventCustom.cpp"
 #include "JSCustomXPathNSResolver.cpp"
 #include "JSDOMBindingSecurity.cpp"

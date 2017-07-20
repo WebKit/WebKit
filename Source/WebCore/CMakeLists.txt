@@ -1155,7 +1155,6 @@ set(WebCore_SOURCES
     bindings/js/JSFontFaceSetCustom.cpp
     bindings/js/JSCallbackData.cpp
     bindings/js/JSCanvasRenderingContext2DCustom.cpp
-    bindings/js/JSCommandLineAPIHostCustom.cpp
     bindings/js/JSCryptoAlgorithmBuilder.cpp
     bindings/js/JSCryptoAlgorithmDictionary.cpp
     bindings/js/JSCryptoKeyCustom.cpp

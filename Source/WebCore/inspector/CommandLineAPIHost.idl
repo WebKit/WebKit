@@ -36,9 +36,19 @@
 ] interface CommandLineAPIHost {
     void clearConsoleMessages();
     void copyText(DOMString text);
-    [Custom] void inspect(any objectId, any hints);
-    [Custom] any inspectedObject();
-    [Custom] Array getEventListeners(Node node);
-    [Custom] DOMString databaseId(any database);
-    [Custom] DOMString storageId(any storage);
+
+    [CallWith=ScriptState] void inspect(any objectToInspect, any hints);
+    [CallWith=ScriptState] any inspectedObject();
+
+    [CallWith=ScriptState] record<DOMString, sequence<ListenerEntry>> getEventListeners(Node? node);
+
+    DOMString databaseId(Database? database);
+    DOMString storageId(Storage? storage);
+};
+
+[
+    JSGenerateToJSObject
+] dictionary ListenerEntry {
+    required object function;
+    required boolean useCapture;
 };

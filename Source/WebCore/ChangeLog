@@ -1,3 +1,34 @@
+2017-07-19  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove custom bindings for CommandLineAPIHost
+        https://bugs.webkit.org/show_bug.cgi?id=174642
+
+        Reviewed by Joseph Pecoraro.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCommandLineAPIHostCustom.cpp: Removed.
+        Remove JSCommandLineAPIHostCustom.cpp.
+
+        * bindings/js/JSDOMConvertObject.h:
+        (WebCore::JSConverter<IDLObject>::convert):
+        Add missing JSConverter specialization for IDLObject.
+
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::inspect):
+        (WebCore::listenerEntriesFromListenerInfo):
+        (WebCore::CommandLineAPIHost::inspectedObject):
+        (WebCore::CommandLineAPIHost::databaseId):
+        (WebCore::CommandLineAPIHost::storageId):
+        (WebCore::CommandLineAPIHost::inspectImpl): Deleted.
+        (WebCore::CommandLineAPIHost::getEventListenersImpl): Deleted.
+        (WebCore::CommandLineAPIHost::databaseIdImpl): Deleted.
+        (WebCore::CommandLineAPIHost::storageIdImpl): Deleted.
+        * inspector/CommandLineAPIHost.h:
+        * inspector/CommandLineAPIHost.idl:
+        Replace custom bindings with modern bindings affordances: dictionaries, records and sequences.
+
 2017-07-19  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed CoordGraphics build fix.

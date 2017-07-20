@@ -88,13 +88,19 @@ public:
         virtual ~InspectableObject() { }
     };
     void addInspectedObject(std::unique_ptr<InspectableObject>);
-    InspectableObject* inspectedObject();
-    void inspectImpl(RefPtr<Inspector::InspectorValue>&& objectToInspect, RefPtr<Inspector::InspectorValue>&& hints);
+    JSC::JSValue inspectedObject(JSC::ExecState&);
+    void inspect(JSC::ExecState&, JSC::JSValue objectToInspect, JSC::JSValue hints);
 
-    void getEventListenersImpl(Node*, Vector<EventListenerInfo>& listenersArray);
+    struct ListenerEntry {
+        JSC::Strong<JSC::JSObject> function;
+        bool useCapture;
+    };
 
-    String databaseIdImpl(Database*);
-    String storageIdImpl(Storage*);
+    using EventListenersRecord = Vector<WTF::KeyValuePair<String, Vector<ListenerEntry>>>;
+    EventListenersRecord getEventListeners(JSC::ExecState&, Node*);
+
+    String databaseId(Database*);
+    String storageId(Storage*);
 
     JSC::JSValue wrapper(JSC::ExecState*, JSDOMGlobalObject*);
     void clearAllWrappers();

@@ -49,4 +49,14 @@ template<> struct Converter<IDLObject> : DefaultConverter<IDLObject> {
     }
 };
 
+template<> struct JSConverter<IDLObject> {
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
+
+    static JSC::JSValue convert(const JSC::Strong<JSC::JSObject>& value)
+    {
+        return value.get();
+    }
+};
+
 } // namespace WebCore
