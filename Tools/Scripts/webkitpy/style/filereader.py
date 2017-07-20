@@ -113,6 +113,7 @@ class TextFileReader(object):
         if abs_file_path not in self._files:
             self._files[abs_file_path] = None
         if 'line_numbers' in kwargs:
+            # Deleted files will be 'None', but if a file has modified lines, this information should override the 'None'
             if self._files[abs_file_path] is None:
                 self._files[abs_file_path] = []
             self._files[abs_file_path] = self._files[abs_file_path] + kwargs['line_numbers']
@@ -151,11 +152,10 @@ class TextFileReader(object):
         self._processor.do_association_check(self._files, cwd, host=host)
 
     def delete_file(self, file_path=None):
-        """Count up files that contains only deleted lines.
+        """Keep track of deleted files.
 
         Files which has no modified or newly-added lines don't need
-        to check style, but should be treated as checked. For that
-        purpose, we just count up the number of such files.
+        to check style, but they may effect the association check.
         """
         if file_path:
             self._files[self.filesystem.abspath(file_path)] = None

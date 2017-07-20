@@ -1,3 +1,28 @@
+2017-07-19  Jonathan Bedard  <jbedard@apple.com>
+
+        lint-test-expectations should be run during style checking
+        https://bugs.webkit.org/show_bug.cgi?id=173559
+        <rdar://problem/32854941>
+
+        Reviewed by Daniel Bates.
+
+        Follow up fix addressing style and a few minor bugs.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser.__init__): Use lambda x: x instead of str
+        (TestExpectationsModel.__init__): Make lambda x: x the default argument.
+        (TestExpectationsModel._already_seen_better_match): Use a temporary variable to
+        reduce the calls of _shorten_filename, fix minor bug in appending the current
+        expectation's line number instead of the previous ones, clarify treatment of None
+        in file-to-line-number mapping.
+        (TestExpectations._report_warnings): Collapse call.
+        * Scripts/webkitpy/style/checkers/test_expectations.py:
+        (TestExpectationsChecker.lint_test_expectations):
+        * Scripts/webkitpy/style/filereader.py: Re-write comment.
+        (TextFileReader.process_file): Add comment explaining treatment of None in
+        file-to-line-number mapping.
+        (TextFileReader.delete_file): Collapse call.
+
 2017-07-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed attempt to fix API test failure after r219663.

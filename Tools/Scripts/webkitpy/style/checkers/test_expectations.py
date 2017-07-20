@@ -126,11 +126,7 @@ class TestExpectationsChecker(object):
         ports_to_lint = [host.port_factory.get(name) for name in host.port_factory.all_port_names()]
         for port in ports_to_lint:
             for expectations_file in port.expectations_dict().keys():
-                style_error_handler = DefaultStyleErrorHandler(
-                    expectations_file,
-                    configuration,
-                    increment_error_count,
-                    line_numbers)
+                style_error_handler = DefaultStyleErrorHandler(expectations_file, configuration, increment_error_count, line_numbers)
 
                 try:
                     if expectations_file in files_linted:
