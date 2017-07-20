@@ -73,7 +73,7 @@
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryItemInternal.h"
-#import "WebIconDatabaseInternal.h"
+#import "WebIconDatabase.h"
 #import "WebInspector.h"
 #import "WebInspectorClient.h"
 #import "WebKitErrors.h"
@@ -6224,12 +6224,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 
     _private->frameLoadDelegate = delegate;
     [self _cacheFrameLoadDelegateImplementations];
-
-#if ENABLE(ICONDATABASE)
-    // If this delegate wants callbacks for icons, fire up the icon database.
-    if (_private->frameLoadDelegateImplementations.didReceiveIconForFrameFunc)
-        [WebIconDatabase sharedIconDatabase];
-#endif
 }
 
 - (id)frameLoadDelegate
@@ -6986,8 +6980,11 @@ static WebFrame *incrementFrame(WebFrame *frame, WebFindOptions options = 0)
 
     if (auto *icon = _private->_mainFrameIcon.get())
         return icon;
-    
+
+#pragma GCC diagnostic push 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     return [[WebIconDatabase sharedIconDatabase] defaultIconWithSize:WebIconSmallSize];
+#pragma GCC diagnostic pop
 }
 
 - (void)_setMainFrameIcon:(NSImage *)icon

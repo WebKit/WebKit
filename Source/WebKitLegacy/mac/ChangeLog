@@ -1,3 +1,70 @@
+2017-07-20  Brady Eidson  <beidson@apple.com>
+
+        Deprecate WebIconDatabase in WebKitLegacy/mac.
+        https://bugs.webkit.org/show_bug.cgi?id=174607
+
+        Reviewed by Alex Christensen.
+
+        This patch:
+        1 - Formally deprecates WebIconDatabase (which was never API anyways)
+        2 - Guts the class to where it can only return the default icon at the small size
+        3 - Reworks other parts of WebKitLegacy that used it for anything to either
+            use something else or to not do anything.
+        
+        This patch *could* go much farther. A future patch is what will remove WebCore/IconDatabase
+        and that patch will remove all of the last remnants of WebIconDatabase.
+        
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem icon]):
+
+        * Misc/WebIconDatabase.h:
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForURL:withSize:cache:]):
+        (-[WebIconDatabase iconForURL:withSize:]):
+        (-[WebIconDatabase defaultIconWithSize:]):
+        (-[WebIconDatabase defaultIconForURL:withSize:]):
+        (-[WebIconDatabase iconURLForURL:]):
+        (-[WebIconDatabase retainIconForURL:]):
+        (-[WebIconDatabase releaseIconForURL:]):
+        (+[WebIconDatabase delayDatabaseCleanup]):
+        (+[WebIconDatabase allowDatabaseCleanup]):
+        (-[WebIconDatabase setDelegate:]):
+        (-[WebIconDatabase delegate]):
+        (+[WebIconDatabase initialize]): Deleted.
+        (-[WebIconDatabase isEnabled]): Deleted.
+        (-[WebIconDatabase setEnabled:]): Deleted.
+        (-[WebIconDatabase removeAllIcons]): Deleted.
+        (+[WebIconDatabase _checkIntegrityBeforeOpening]): Deleted.
+        (-[WebIconDatabase _sendNotificationForURL:]): Deleted.
+        (-[WebIconDatabase _sendDidRemoveAllIconsNotification]): Deleted.
+        (-[WebIconDatabase _startUpIconDatabase]): Deleted.
+        (-[WebIconDatabase _shutDownIconDatabase]): Deleted.
+        (-[WebIconDatabase _applicationWillTerminate:]): Deleted.
+        (-[WebIconDatabase _iconForFileURL:withSize:]): Deleted.
+        (-[WebIconDatabase _resetCachedWebPreferences:]): Deleted.
+        (-[WebIconDatabase _largestIconFromDictionary:]): Deleted.
+        (-[WebIconDatabase _iconsBySplittingRepresentationsOfIcon:]): Deleted.
+        (-[WebIconDatabase _iconFromDictionary:forSize:cache:]): Deleted.
+        (-[WebIconDatabase _scaleIcon:toSize:]): Deleted.
+        (-[WebIconDatabase _databaseDirectory]): Deleted.
+        (webGetNSImage): Deleted.
+
+        * Misc/WebIconDatabaseDelegate.h: Removed.
+        * Misc/WebIconDatabaseInternal.h: Removed.
+        * Misc/WebIconDatabasePrivate.h: Removed.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (webGetNSImage):
+
+        * WebCoreSupport/WebIconDatabaseClient.mm:
+        (WebIconDatabaseClient::didRemoveAllIcons):
+        (WebIconDatabaseClient::didImportIconURLForPageURL):
+
+        * WebView/WebView.mm:
+        (-[WebView setFrameLoadDelegate:]):
+        (-[WebView mainFrameIcon]):
+
 2017-07-18  Andy Estes  <aestes@apple.com>
 
         [Xcode] Enable CLANG_WARN_RANGE_LOOP_ANALYSIS

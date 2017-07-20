@@ -51,7 +51,6 @@
 #import "WebHTMLViewInternal.h"
 #import "WebHistoryInternal.h"
 #import "WebHistoryItemInternal.h"
-#import "WebIconDatabaseInternal.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
@@ -2313,6 +2312,31 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
         documentLoader->didGetLoadDecisionForIcon(false, icon.second, 0);
 #endif
 }
+
+#if !PLATFORM(IOS)
+static NSImage *webGetNSImage(Image* image, NSSize size)
+{
+    ASSERT(size.width);
+    ASSERT(size.height);
+
+    // FIXME: We're doing the resize here for now because WebCore::Image doesn't yet support resizing/multiple representations
+    // This makes it so there's effectively only one size of a particular icon in the system at a time. We should move this
+    // to WebCore::Image at some point.
+    if (!image)
+        return nil;
+    NSImage* nsImage = image->nsImage();
+    if (!nsImage)
+        return nil;
+    if (!NSEqualSizes([nsImage size], size)) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        [nsImage setScalesWhenResized:YES];
+#pragma clang diagnostic pop
+        [nsImage setSize:size];
+    }
+    return nsImage;
+}
+#endif // !PLATFORM(IOS)
 
 void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, SharedBuffer* iconData)
 {

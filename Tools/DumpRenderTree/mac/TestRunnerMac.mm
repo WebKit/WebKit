@@ -79,7 +79,6 @@
 #import <wtf/RetainPtr.h>
 
 #if !PLATFORM(IOS)
-#import <WebKit/WebIconDatabasePrivate.h>
 #import <wtf/SoftLinking.h>
 #endif
 

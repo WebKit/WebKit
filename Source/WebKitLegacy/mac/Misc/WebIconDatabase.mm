@@ -28,24 +28,14 @@
 
 #if !PLATFORM(IOS)
 
-#import "WebIconDatabaseInternal.h"
+#import "WebIconDatabase.h"
 
-#import "WebIconDatabaseClient.h"
-#import "WebIconDatabaseDelegate.h"
-#import "WebKitLogging.h"
-#import "WebKitNSStringExtras.h"
 #import "WebKitVersionChecks.h"
-#import "WebNSFileManagerExtras.h"
-#import "WebNSURLExtras.h"
-#import "WebPreferencesPrivate.h"
-#import "WebTypesInternal.h"
-#import <WebCore/IconDatabase.h>
 #import <WebCore/Image.h>
-#import <WebCore/IntSize.h>
-#import <WebCore/SharedBuffer.h>
 #import <WebCore/ThreadCheck.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/RunLoop.h>
 
 using namespace WebCore;
@@ -63,29 +53,43 @@ NSSize WebIconSmallSize = {16, 16};
 NSSize WebIconMediumSize = {32, 32};
 NSSize WebIconLargeSize = {128, 128};
 
-#define UniqueFilePathSize (34)
-
-static WebIconDatabaseClient* defaultClient()
-{
-#if ENABLE(ICONDATABASE)
-    static WebIconDatabaseClient* defaultClient = new WebIconDatabaseClient();
-    return defaultClient;
-#else
-    return 0;
-#endif
-}
-
-@interface WebIconDatabase (WebReallyInternal)
-- (void)_sendNotificationForURL:(NSString *)URL;
-- (void)_sendDidRemoveAllIconsNotification;
-- (NSImage *)_iconForFileURL:(NSString *)fileURL withSize:(NSSize)size;
-- (void)_resetCachedWebPreferences:(NSNotification *)notification;
-- (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons;
-- (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon;
-- (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache;
-- (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size;
-- (NSString *)_databaseDirectory;
-@end
+static const unsigned char defaultIconData[] = { 0x4D, 0x4D, 0x00, 0x2A, 0x00, 0x00, 0x03, 0x32, 0x80, 0x00, 0x20, 0x50, 0x38, 0x24, 0x16, 0x0D, 0x07, 0x84, 0x42, 0x61, 0x50, 0xB8,
+    0x64, 0x08, 0x18, 0x0D, 0x0A, 0x0B, 0x84, 0xA2, 0xA1, 0xE2, 0x08, 0x5E, 0x39, 0x28, 0xAF, 0x48, 0x24, 0xD3, 0x53, 0x9A, 0x37, 0x1D, 0x18, 0x0E, 0x8A, 0x4B, 0xD1, 0x38, 
+    0xB0, 0x7C, 0x82, 0x07, 0x03, 0x82, 0xA2, 0xE8, 0x6C, 0x2C, 0x03, 0x2F, 0x02, 0x82, 0x41, 0xA1, 0xE2, 0xF8, 0xC8, 0x84, 0x68, 0x6D, 0x1C, 0x11, 0x0A, 0xB7, 0xFA, 0x91, 
+    0x6E, 0xD1, 0x7F, 0xAF, 0x9A, 0x4E, 0x87, 0xFB, 0x19, 0xB0, 0xEA, 0x7F, 0xA4, 0x95, 0x8C, 0xB7, 0xF9, 0xA9, 0x0A, 0xA9, 0x7F, 0x8C, 0x88, 0x66, 0x96, 0xD4, 0xCA, 0x69, 
+    0x2F, 0x00, 0x81, 0x65, 0xB0, 0x29, 0x90, 0x7C, 0xBA, 0x2B, 0x21, 0x1E, 0x5C, 0xE6, 0xB4, 0xBD, 0x31, 0xB6, 0xE7, 0x7A, 0xBF, 0xDD, 0x6F, 0x37, 0xD3, 0xFD, 0xD8, 0xF2, 
+    0xB6, 0xDB, 0xED, 0xAC, 0xF7, 0x03, 0xC5, 0xFE, 0x77, 0x53, 0xB6, 0x1F, 0xE6, 0x24, 0x8B, 0x1D, 0xFE, 0x26, 0x20, 0x9E, 0x1C, 0xE0, 0x80, 0x65, 0x7A, 0x18, 0x02, 0x01, 
+    0x82, 0xC5, 0xA0, 0xC0, 0xF1, 0x89, 0xBA, 0x23, 0x30, 0xAD, 0x1F, 0xE7, 0xE5, 0x5B, 0x6D, 0xFE, 0xE7, 0x78, 0x3E, 0x1F, 0xEE, 0x97, 0x8B, 0xE7, 0x37, 0x9D, 0xCF, 0xE7, 
+    0x92, 0x8B, 0x87, 0x0B, 0xFC, 0xA0, 0x8E, 0x68, 0x3F, 0xC6, 0x27, 0xA6, 0x33, 0xFC, 0x36, 0x5B, 0x59, 0x3F, 0xC1, 0x02, 0x63, 0x3B, 0x74, 0x00, 0x03, 0x07, 0x0B, 0x61, 
+    0x00, 0x20, 0x60, 0xC9, 0x08, 0x00, 0x1C, 0x25, 0x9F, 0xE0, 0x12, 0x8A, 0xD5, 0xFE, 0x6B, 0x4F, 0x35, 0x9F, 0xED, 0xD7, 0x4B, 0xD9, 0xFE, 0x8A, 0x59, 0xB8, 0x1F, 0xEC, 
+    0x56, 0xD3, 0xC1, 0xFE, 0x63, 0x4D, 0xF2, 0x83, 0xC6, 0xB6, 0x1B, 0xFC, 0x34, 0x68, 0x61, 0x3F, 0xC1, 0xA6, 0x25, 0xEB, 0xFC, 0x06, 0x58, 0x5C, 0x3F, 0xC0, 0x03, 0xE4, 
+    0xC3, 0xFC, 0x04, 0x0F, 0x1A, 0x6F, 0xE0, 0xE0, 0x20, 0xF9, 0x61, 0x7A, 0x02, 0x28, 0x2B, 0xBC, 0x46, 0x25, 0xF3, 0xFC, 0x66, 0x3D, 0x99, 0x27, 0xF9, 0x7E, 0x6B, 0x1D, 
+    0xC7, 0xF9, 0x2C, 0x5E, 0x1C, 0x87, 0xF8, 0xC0, 0x4D, 0x9A, 0xE7, 0xF8, 0xDA, 0x51, 0xB2, 0xC1, 0x68, 0xF2, 0x64, 0x1F, 0xE1, 0x50, 0xED, 0x0A, 0x04, 0x23, 0x79, 0x8A, 
+    0x7F, 0x82, 0xA3, 0x39, 0x80, 0x7F, 0x80, 0xC2, 0xB1, 0x5E, 0xF7, 0x04, 0x2F, 0xB2, 0x10, 0x02, 0x86, 0x63, 0xC9, 0xCC, 0x07, 0xBF, 0x87, 0xF8, 0x4A, 0x38, 0xAF, 0xC1, 
+    0x88, 0xF8, 0x66, 0x1F, 0xE1, 0xD9, 0x08, 0xD4, 0x8F, 0x25, 0x5B, 0x4A, 0x49, 0x97, 0x87, 0x39, 0xFE, 0x25, 0x12, 0x10, 0x68, 0xAA, 0x4A, 0x2F, 0x42, 0x29, 0x12, 0x69, 
+    0x9F, 0xE1, 0xC1, 0x00, 0x67, 0x1F, 0xE1, 0x58, 0xED, 0x00, 0x83, 0x23, 0x49, 0x82, 0x7F, 0x81, 0x21, 0xE0, 0xFC, 0x73, 0x21, 0x00, 0x50, 0x7D, 0x2B, 0x84, 0x03, 0x83, 
+    0xC2, 0x1B, 0x90, 0x06, 0x69, 0xFE, 0x23, 0x91, 0xAE, 0x50, 0x9A, 0x49, 0x32, 0xC2, 0x89, 0x30, 0xE9, 0x0A, 0xC4, 0xD9, 0xC4, 0x7F, 0x94, 0xA6, 0x51, 0xDE, 0x7F, 0x9D, 
+    0x07, 0x89, 0xF6, 0x7F, 0x91, 0x85, 0xCA, 0x88, 0x25, 0x11, 0xEE, 0x50, 0x7C, 0x43, 0x35, 0x21, 0x60, 0xF1, 0x0D, 0x82, 0x62, 0x39, 0x07, 0x2C, 0x20, 0xE0, 0x80, 0x72, 
+    0x34, 0x17, 0xA1, 0x80, 0xEE, 0xF0, 0x89, 0x24, 0x74, 0x1A, 0x2C, 0x93, 0xB3, 0x78, 0xCC, 0x52, 0x9D, 0x6A, 0x69, 0x56, 0xBB, 0x0D, 0x85, 0x69, 0xE6, 0x7F, 0x9E, 0x27, 
+    0xB9, 0xFD, 0x50, 0x54, 0x47, 0xF9, 0xCC, 0x78, 0x9F, 0x87, 0xF9, 0x98, 0x70, 0xB9, 0xC2, 0x91, 0x2C, 0x6D, 0x1F, 0xE1, 0xE1, 0x00, 0xBF, 0x02, 0xC1, 0xF5, 0x18, 0x84,
+    0x01, 0xE1, 0x48, 0x8C, 0x42, 0x07, 0x43, 0xC9, 0x76, 0x7F, 0x8B, 0x04, 0xE4, 0xDE, 0x35, 0x95, 0xAB, 0xB0, 0xF0, 0x5C, 0x55, 0x23, 0xF9, 0x7E, 0x7E, 0x9F, 0xE4, 0x0C, 
+    0xA7, 0x55, 0x47, 0xC7, 0xF9, 0xE6, 0xCF, 0x1F, 0xE7, 0x93, 0x35, 0x52, 0x54, 0x63, 0x19, 0x46, 0x73, 0x1F, 0xE2, 0x61, 0x08, 0xF0, 0x82, 0xE1, 0x80, 0x92, 0xF9, 0x20, 
+    0xC0, 0x28, 0x18, 0x0A, 0x05, 0xA1, 0xA2, 0xF8, 0x6E, 0xDB, 0x47, 0x49, 0xFE, 0x3E, 0x17, 0xB6, 0x61, 0x13, 0x1A, 0x29, 0x26, 0xA9, 0xFE, 0x7F, 0x92, 0x70, 0x69, 0xFE, 
+    0x4C, 0x2F, 0x55, 0x01, 0xF1, 0x54, 0xD4, 0x35, 0x49, 0x4A, 0x69, 0x59, 0x83, 0x81, 0x58, 0x76, 0x9F, 0xE2, 0x20, 0xD6, 0x4C, 0x9B, 0xA0, 0x48, 0x1E, 0x0B, 0xB7, 0x48, 
+    0x58, 0x26, 0x11, 0x06, 0x42, 0xE8, 0xA4, 0x40, 0x17, 0x27, 0x39, 0x00, 0x60, 0x2D, 0xA4, 0xC3, 0x2C, 0x7F, 0x94, 0x56, 0xE4, 0xE1, 0x77, 0x1F, 0xE5, 0xB9, 0xD7, 0x66, 
+    0x1E, 0x07, 0xB3, 0x3C, 0x63, 0x1D, 0x35, 0x49, 0x0E, 0x63, 0x2D, 0xA2, 0xF1, 0x12, 0x60, 0x1C, 0xE0, 0xE0, 0x52, 0x1B, 0x8B, 0xAC, 0x38, 0x0E, 0x07, 0x03, 0x60, 0x28, 
+    0x1C, 0x0E, 0x87, 0x00, 0xF0, 0x66, 0x27, 0x11, 0xA2, 0xC1, 0x02, 0x5A, 0x1C, 0xE4, 0x21, 0x83, 0x1F, 0x13, 0x86, 0xFA, 0xD2, 0x55, 0x1D, 0xD6, 0x61, 0xBC, 0x77, 0xD3, 
+    0xE6, 0x91, 0xCB, 0x4C, 0x90, 0xA6, 0x25, 0xB8, 0x2F, 0x90, 0xC5, 0xA9, 0xCE, 0x12, 0x07, 0x02, 0x91, 0x1B, 0x9F, 0x68, 0x00, 0x16, 0x76, 0x0D, 0xA1, 0x00, 0x08, 0x06, 
+    0x03, 0x81, 0xA0, 0x20, 0x1A, 0x0D, 0x06, 0x80, 0x30, 0x24, 0x12, 0x89, 0x20, 0x98, 0x4A, 0x1F, 0x0F, 0x21, 0xA0, 0x9E, 0x36, 0x16, 0xC2, 0x88, 0xE6, 0x48, 0x9B, 0x83, 
+    0x31, 0x1C, 0x55, 0x1E, 0x43, 0x59, 0x1A, 0x56, 0x1E, 0x42, 0xF0, 0xFA, 0x4D, 0x1B, 0x9B, 0x08, 0xDC, 0x5B, 0x02, 0xA1, 0x30, 0x7E, 0x3C, 0xEE, 0x5B, 0xA6, 0xDD, 0xB8, 
+    0x6D, 0x5B, 0x62, 0xB7, 0xCD, 0xF3, 0x9C, 0xEA, 0x04, 0x80, 0x80, 0x00, 0x00, 0x0E, 0x01, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x10, 0x00, 0x00, 0x01, 0x01, 
+    0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x10, 0x00, 0x00, 0x01, 0x02, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x03, 0xE0, 0x01, 0x03, 0x00, 0x03, 0x00, 0x00, 
+    0x00, 0x01, 0x00, 0x05, 0x00, 0x00, 0x01, 0x06, 0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00, 0x01, 0x11, 0x00, 0x04, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 
+    0x00, 0x08, 0x01, 0x15, 0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x04, 0x00, 0x00, 0x01, 0x16, 0x00, 0x04, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x02, 0x00, 0x01, 0x17, 
+    0x00, 0x04, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x03, 0x29, 0x01, 0x1A, 0x00, 0x05, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x03, 0xE8, 0x01, 0x1B, 0x00, 0x05, 0x00, 0x00, 
+    0x00, 0x01, 0x00, 0x00, 0x03, 0xF0, 0x01, 0x1C, 0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x01, 0x28, 0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x02, 
+    0x00, 0x00, 0x01, 0x52, 0x00, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x08, 0x00, 0x08, 0x00, 0x08, 0x00, 0x0A, 
+    0xFC, 0x80, 0x00, 0x00, 0x27, 0x10, 0x00, 0x0A, 0xFC, 0x80, 0x00, 0x00, 0x27, 0x10 };
 
 @implementation WebIconDatabase
 
@@ -112,382 +116,69 @@ static WebIconDatabaseClient* defaultClient()
 
 - (id)init
 {
-    self = [super init];
-    if (!self)
-        return nil;
     WebCoreThreadViolationCheckRoundOne();
-        
-    _private = [[WebIconDatabasePrivate alloc] init];
-    
-    // Check the user defaults and see if the icon database should even be enabled.
-    // Inform the bridge and, if we're disabled, bail from init right here
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    // <rdar://problem/4741419> - IconDatabase should be disabled by default
-    NSDictionary *initialDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], WebIconDatabaseEnabledDefaultsKey, nil];
-    [defaults registerDefaults:initialDefaults];
-    [initialDefaults release];
-    BOOL enabled = [defaults boolForKey:WebIconDatabaseEnabledDefaultsKey];
-    iconDatabase().setEnabled(enabled);
-    if (enabled)
-        [self _startUpIconDatabase];
-    return self;
+
+    return [super init];
 }
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache
 {
-    ASSERT(size.width);
-    ASSERT(size.height);
-
-    if (!URL || ![self isEnabled])
-        return [self defaultIconForURL:URL withSize:size];
-
-    // FIXME - <rdar://problem/4697934> - Move the handling of FileURLs to WebCore and implement in ObjC++
-    if ([URL _webkit_isFileURL])
-        return [self _iconForFileURL:URL withSize:size];
-    
-    if (Image* image = iconDatabase().synchronousIconForPageURL(URL, IntSize(size)))
-        if (NSImage *icon = webGetNSImage(image, size))
-            return icon;
-    return [self defaultIconForURL:URL withSize:size];
+    return [self defaultIconWithSize:size];
 }
 
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size
 {
-    return [self iconForURL:URL withSize:size cache:YES];
-}
-
-- (NSString *)iconURLForURL:(NSString *)URL
-{
-    if (![self isEnabled])
-        return nil;
-
-    return iconDatabase().synchronousIconURLForPageURL(URL);
+    return [self defaultIconWithSize:size];
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
 {
-    ASSERT(size.width);
-    ASSERT(size.height);
+    static NeverDestroyed<RetainPtr<NSImage>> defaultImage;
+
+    static dispatch_once_t once;
+    dispatch_once(&once, ^ {
+        auto imageData = adoptNS([[NSData alloc] initWithBytes:defaultIconData length:sizeof(defaultIconData)]);
+        defaultImage.get() = adoptNS([[NSImage alloc] initWithData:imageData.get()]);
+    });
     
-    Image* image = iconDatabase().defaultIcon(IntSize(size));
-    return image ? image->snapshotNSImage().autorelease() : nil;
+    return defaultImage.get().get();
 }
 
 - (NSImage *)defaultIconForURL:(NSString *)URL withSize:(NSSize)size
 {
-    if (_private->delegateImplementsDefaultIconForURL)
-        return [_private->delegate webIconDatabase:self defaultIconForURL:URL withSize:size];
     return [self defaultIconWithSize:size];
+}
+
+- (NSString *)iconURLForURL:(NSString *)URL
+{
+    return nil;
 }
 
 - (void)retainIconForURL:(NSString *)URL
 {
-    ASSERT(URL);
-    if (![self isEnabled])
-        return;
-
-    iconDatabase().retainIconForPageURL(URL);
 }
 
 - (void)releaseIconForURL:(NSString *)pageURL
 {
-    ASSERT(pageURL);
-    if (![self isEnabled])
-        return;
-
-    iconDatabase().releaseIconForPageURL(pageURL);
 }
 
 + (void)delayDatabaseCleanup
 {
-    IconDatabase::delayDatabaseCleanup();
 }
 
 + (void)allowDatabaseCleanup
 {
-    IconDatabase::allowDatabaseCleanup();
 }
 
 - (void)setDelegate:(id)delegate
 {
-    _private->delegate = delegate;
-    _private->delegateImplementsDefaultIconForURL = [delegate respondsToSelector:@selector(webIconDatabase:defaultIconForURL:withSize:)];
 }
 
 - (id)delegate
 {
-    return _private->delegate;
-}
-
-@end
-
-
-@implementation WebIconDatabase (WebPendingPublic)
-
-- (BOOL)isEnabled
-{
-    return iconDatabase().isEnabled();
-}
-
-- (void)setEnabled:(BOOL)flag
-{
-    BOOL currentlyEnabled = [self isEnabled];
-    if (currentlyEnabled && !flag) {
-        iconDatabase().setEnabled(false);
-        [self _shutDownIconDatabase];
-    } else if (!currentlyEnabled && flag) {
-        iconDatabase().setEnabled(true);
-        [self _startUpIconDatabase];
-    }
-}
-
-- (void)removeAllIcons
-{
-    if (![self isEnabled])
-        return;
-
-    // Via the IconDatabaseClient interface, removeAllIcons() will send the WebIconDatabaseDidRemoveAllIconsNotification
-    iconDatabase().removeAllIcons();
-}
-
-@end
-
-@implementation WebIconDatabase (WebPrivate)
-
-+ (void)_checkIntegrityBeforeOpening
-{
-    IconDatabase::checkIntegrityBeforeOpening();
-}
-
-@end
-
-@implementation WebIconDatabase (WebInternal)
-
-- (void)_sendNotificationForURL:(NSString *)URL
-{
-    ASSERT(URL);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSDictionary *userInfo = @{ WebIconNotificationUserInfoURLKey : URL };
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidAddIconNotification object:self userInfo:userInfo];
-    });
-}
-
-- (void)_sendDidRemoveAllIconsNotification
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebIconDatabaseDidRemoveAllIconsNotification object:self];
-    });
-}
-
-- (void)_startUpIconDatabase
-{
-    iconDatabase().setClient(defaultClient());
-    
-    // Figure out the directory we should be using for the icon.db
-    NSString *databaseDirectory = [self _databaseDirectory];
-    
-    // Rename legacy icon database files to the new icon database name
-    BOOL isDirectory = NO;
-    NSString *legacyDB = [databaseDirectory stringByAppendingPathComponent:@"icon.db"];
-    NSFileManager *defaultManager = [NSFileManager defaultManager];
-    if ([defaultManager fileExistsAtPath:legacyDB isDirectory:&isDirectory] && !isDirectory) {
-        NSString *newDB = [databaseDirectory stringByAppendingPathComponent:IconDatabase::defaultDatabaseFilename()];
-        if (![defaultManager fileExistsAtPath:newDB])
-            rename([legacyDB fileSystemRepresentation], [newDB fileSystemRepresentation]);
-    }
-    
-    // Set the private browsing pref then open the WebCore icon database
-    iconDatabase().setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
-    if (!iconDatabase().open(databaseDirectory, IconDatabase::defaultDatabaseFilename()))
-        LOG_ERROR("Unable to open icon database");
-    
-    // Register for important notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(_applicationWillTerminate:)
-                                                 name:NSApplicationWillTerminateNotification
-                                               object:NSApp];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(_resetCachedWebPreferences:)
-                                                 name:WebPreferencesChangedInternalNotification
-                                               object:nil];
-}
-
-- (void)_shutDownIconDatabase
-{
-    // Unregister for important notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NSApplicationWillTerminateNotification
-                                                  object:NSApp];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:WebPreferencesChangedInternalNotification
-                                                  object:nil];
-}
-
-- (void)_applicationWillTerminate:(NSNotification *)notification
-{
-    iconDatabase().close();
-}
-
-- (NSImage *)_iconForFileURL:(NSString *)file withSize:(NSSize)size
-{
-    ASSERT(size.width);
-    ASSERT(size.height);
-
-    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-    NSString *path = [[NSURL _web_URLWithDataAsString:file] path];
-    NSString *suffix = [path pathExtension];
-    NSImage *icon = nil;
-    
-    if ([suffix _webkit_isCaseInsensitiveEqualToString:@"htm"] || [suffix _webkit_isCaseInsensitiveEqualToString:@"html"]) {
-        if (!_private->htmlIcons) {
-            icon = [workspace iconForFileType:@"html"];
-            _private->htmlIcons = [[self _iconsBySplittingRepresentationsOfIcon:icon] retain];
-        }
-        icon = [self _iconFromDictionary:_private->htmlIcons forSize:size cache:YES];
-    } else {
-        if (!path || ![path isAbsolutePath]) {
-            // Return the generic icon when there is no path.
-            icon = [workspace iconForFileType:NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
-        } else {
-            icon = [workspace iconForFile:path];
-        }
-        [self _scaleIcon:icon toSize:size];
-    }
-
-    return icon;
-}
-
-- (void)_resetCachedWebPreferences:(NSNotification *)notification
-{
-    BOOL privateBrowsingEnabledNow = [[WebPreferences standardPreferences] privateBrowsingEnabled];
-    iconDatabase().setPrivateBrowsingEnabled(privateBrowsingEnabledNow);
-}
-
-- (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons
-{
-    ASSERT(icons);
-    
-    NSEnumerator *enumerator = [icons keyEnumerator];
-    NSValue *currentSize, *largestSize=nil;
-    float largestSizeArea=0;
-
-    while ((currentSize = [enumerator nextObject]) != nil) {
-        NSSize currentSizeSize = [currentSize sizeValue];
-        float currentSizeArea = currentSizeSize.width * currentSizeSize.height;
-        if(!largestSizeArea || (currentSizeArea > largestSizeArea)){
-            largestSize = currentSize;
-            largestSizeArea = currentSizeArea;
-        }
-    }
-
-    return [icons objectForKey:largestSize];
-}
-
-- (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon
-{
-    ASSERT(icon);
-
-    NSMutableDictionary *icons = [NSMutableDictionary dictionary];
-    NSEnumerator *enumerator = [[icon representations] objectEnumerator];
-    NSImageRep *rep;
-
-    while ((rep = [enumerator nextObject]) != nil) {
-        NSSize size = [rep size];
-        NSImage *subIcon = [[NSImage alloc] initWithSize:size];
-        [subIcon addRepresentation:rep];
-        [icons setObject:subIcon forKey:[NSValue valueWithSize:size]];
-        [subIcon release];
-    }
-
-    if([icons count] > 0)
-        return icons;
-
-    LOG_ERROR("icon has no representations");
-    
     return nil;
 }
 
-- (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache
-{
-    ASSERT(size.width);
-    ASSERT(size.height);
-
-    NSImage *icon = [icons objectForKey:[NSValue valueWithSize:size]];
-
-    if(!icon){
-        icon = [[[self _largestIconFromDictionary:icons] copy] autorelease];
-        [self _scaleIcon:icon toSize:size];
-
-        if(cache){
-            [icons setObject:icon forKey:[NSValue valueWithSize:size]];
-        }
-    }
-
-    return icon;
-}
-
-- (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size
-{
-    ASSERT(size.width);
-    ASSERT(size.height);
-    
-#if !LOG_DISABLED
-    double start = CFAbsoluteTimeGetCurrent();
-#endif
-    
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [icon setScalesWhenResized:YES];
-#pragma clang diagnostic pop
-    [icon setSize:size];
-    
-#if !LOG_DISABLED
-    double duration = CFAbsoluteTimeGetCurrent() - start;
-    LOG(Timing, "scaling icon took %f seconds.", duration);
-#endif
-}
-
-- (NSString *)_databaseDirectory
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-    // Figure out the directory we should be using for the icon.db
-    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
-    if (!databaseDirectory) {
-        databaseDirectory = WebIconDatabasePath;
-        [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
-    }
-    
-    return [[databaseDirectory stringByExpandingTildeInPath] stringByStandardizingPath];
-}
-
 @end
-
-@implementation WebIconDatabasePrivate
-@end
-
-NSImage *webGetNSImage(Image* image, NSSize size)
-{
-    ASSERT(size.width);
-    ASSERT(size.height);
-
-    // FIXME: We're doing the resize here for now because WebCore::Image doesn't yet support resizing/multiple representations
-    // This makes it so there's effectively only one size of a particular icon in the system at a time. We should move this
-    // to WebCore::Image at some point.
-    if (!image)
-        return nil;
-    NSImage* nsImage = image->nsImage();
-    if (!nsImage)
-        return nil;
-    if (!NSEqualSizes([nsImage size], size)) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [nsImage setScalesWhenResized:YES];
-#pragma clang diagnostic pop
-        [nsImage setSize:size];
-    }
-    return nsImage;
-}
 
 #endif // !PLATFORM(IOS)

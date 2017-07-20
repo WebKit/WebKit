@@ -32,9 +32,8 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-// Sent whenever a site icon has changed. The object of the notification is the icon database.
-// The userInfo contains the site URL whose icon has changed.
-// It can be accessed with the key WebIconNotificationUserInfoURLKey.
+#define ICON_DATABASE_DEPRECATED __deprecated_msg("WebIconDatabase is not API and no longer handles icon loading. It will be removed in a future release.")
+
 extern NSString *WebIconDatabaseDidAddIconNotification;
 
 extern NSString *WebIconNotificationUserInfoURLKey;
@@ -65,6 +64,8 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     
     Retention methods can be called for icons that are not yet in the database.
 */
+
+ICON_DATABASE_DEPRECATED
 @interface WebIconDatabase : NSObject {
 
 @private
@@ -76,14 +77,14 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     @method sharedIconDatabase
     @abstract Returns a shared instance of the icon database
 */
-+ (WebIconDatabase *)sharedIconDatabase;
++ (WebIconDatabase *)sharedIconDatabase ICON_DATABASE_DEPRECATED;
 
 #if !TARGET_OS_IPHONE
 /*!
     @method iconForURL:withSize:
     @discussion Calls iconForURL:withSize:cache: with YES for cache.
 */
-- (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size;
+- (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size ICON_DATABASE_DEPRECATED;
 
 /*!
     @method iconForURL:withSize:cache:
@@ -92,34 +93,34 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     Often called by the observer of WebIconChangedNotification after the notification is sent.
     @param cache If yes, caches the returned image in memory if not already cached
 */
-- (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache;
+- (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache ICON_DATABASE_DEPRECATED;
 #endif
 
 /*!
     @method iconURLForURL:withSize:cache:
     @discussion Returns an icon URL for a web site URL from memory or disk. nil if none is found.
 */
-- (NSString *)iconURLForURL:(NSString *)URL;
+- (NSString *)iconURLForURL:(NSString *)URL ICON_DATABASE_DEPRECATED;
 
 #if !TARGET_OS_IPHONE
 /*!
     @method defaultIconWithSize:
 */
-- (NSImage *)defaultIconWithSize:(NSSize)size;
-- (NSImage *)defaultIconForURL:(NSString *)URL withSize:(NSSize)size;
+- (NSImage *)defaultIconWithSize:(NSSize)size ICON_DATABASE_DEPRECATED;
+- (NSImage *)defaultIconForURL:(NSString *)URL withSize:(NSSize)size ICON_DATABASE_DEPRECATED;
 #endif
 
 /*!
     @method retainIconForURL:
     @abstract Increments the retain count of the icon.
 */
-- (void)retainIconForURL:(NSString *)URL;
+- (void)retainIconForURL:(NSString *)URL ICON_DATABASE_DEPRECATED;
 
 /*!
     @method releaseIconForURL:
     @abstract Decrements the retain count of the icon.
 */
-- (void)releaseIconForURL:(NSString *)URL;
+- (void)releaseIconForURL:(NSString *)URL ICON_DATABASE_DEPRECATED;
 
 /*!
     @method delayDatabaseCleanup:
@@ -127,7 +128,7 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     delayDatabaseCleanUp increments an internal counter that when 0 begins the database clean-up.
     The counter equals 0 at initialization.
 */
-+ (void)delayDatabaseCleanup;
++ (void)delayDatabaseCleanup ICON_DATABASE_DEPRECATED;
 
 /*!
     @method allowDatabaseCleanup:
@@ -135,9 +136,9 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     allowDatabaseCleanup decrements an internal counter that when 0 begins the database clean-up.
     The counter equals 0 at initialization.
 */
-+ (void)allowDatabaseCleanup;
++ (void)allowDatabaseCleanup ICON_DATABASE_DEPRECATED;
 
-- (void)setDelegate:(id)delegate;
-- (id)delegate;
+- (void)setDelegate:(id)delegate ICON_DATABASE_DEPRECATED;
+- (id)delegate ICON_DATABASE_DEPRECATED;
 
 @end
