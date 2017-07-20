@@ -28,7 +28,6 @@
 
 #include "JSDOMCoreException.h"
 #include "JSSVGException.h"
-#include "JSXPathException.h"
 
 namespace WebCore {
 
@@ -38,8 +37,6 @@ ExceptionBase* toExceptionBase(JSC::VM& vm, JSC::JSValue value)
         return reinterpret_cast<ExceptionBase*>(domException);
     if (SVGException* svgException = JSSVGException::toWrapped(vm, value))
         return reinterpret_cast<ExceptionBase*>(svgException);
-    if (XPathException* pathException = JSXPathException::toWrapped(vm, value))
-        return reinterpret_cast<ExceptionBase*>(pathException);
 
     return nullptr;
 }

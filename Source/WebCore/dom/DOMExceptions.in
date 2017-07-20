@@ -2,5 +2,4 @@ namespace=Exception
 
 DOMCoreException
 SVGException
-XPathException
 

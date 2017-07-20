@@ -153,7 +153,6 @@
 _DOMException
 _DOMRangeException
 _DOMEventException
-_DOMXPathException
 _WebActionButtonKey
 _WebActionElementKey
 _WebActionFormKey

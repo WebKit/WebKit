@@ -29,7 +29,6 @@
 
 #include "Document.h"
 #include "ExceptionCode.h"
-#include "XPathException.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
 #include "XPathResult.h"
@@ -71,11 +70,8 @@ ExceptionOr<Ref<XPathResult>> XPathExpression::evaluate(Node* contextNode, unsig
     auto result = XPathResult::create(contextNode->document(), m_topExpression->evaluate());
     evaluationContext.node = nullptr; // Do not hold a reference to the context node, as this may prevent the whole document from being destroyed in time.
 
-    if (evaluationContext.hadTypeConversionError) {
-        // It is not specified what to do if type conversion fails while evaluating an expression, and INVALID_EXPRESSION_ERR is not exactly right
-        // when the failure happens in an otherwise valid expression because of a variable. But XPathEvaluator does not support variables, so it's close enough.
-        return Exception { XPathException::INVALID_EXPRESSION_ERR };
-    }
+    if (evaluationContext.hadTypeConversionError)
+        return Exception { SYNTAX_ERR };
 
     if (type != XPathResult::ANY_TYPE) {
         auto convertToResult = result->convertTo(type);

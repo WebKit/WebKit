@@ -159,7 +159,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("number_booleanValue_TYPE_ERR",success);
 	}
@@ -171,7 +171,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("number_singleNodeValue_TYPE_ERR",success);
 	}
@@ -183,7 +183,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("number_snapshotLength_TYPE_ERR",success);
 	}
@@ -195,7 +195,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("number_stringValue_TYPE_ERR",success);
 	}
@@ -206,7 +206,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.iterateNext();
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("number_iterateNext_TYPE_ERR",success);
 	}
@@ -217,7 +217,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.snapshotItem(0);
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("number_snapshotItem_TYPE_ERR",success);
 	}
@@ -235,7 +235,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("string_booleanValue_TYPE_ERR",success);
 	}
@@ -247,7 +247,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("string_numberValue_TYPE_ERR",success);
 	}
@@ -259,7 +259,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("string_singleNodeValue_TYPE_ERR",success);
 	}
@@ -271,7 +271,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("string_snapshotLength_TYPE_ERR",success);
 	}
@@ -282,7 +282,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.iterateNext();
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("string_iterateNext_TYPE_ERR",success);
 	}
@@ -293,7 +293,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.snapshotItem(0);
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("string_snapshotItem_TYPE_ERR",success);
 	}
@@ -311,7 +311,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("boolean_numberValue_TYPE_ERR",success);
 	}
@@ -323,7 +323,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("boolean_singleNodeValue_TYPE_ERR",success);
 	}
@@ -335,7 +335,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("boolean_snapshotLength_TYPE_ERR",success);
 	}
@@ -347,7 +347,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("boolean_stringValue_TYPE_ERR",success);
 	}
@@ -358,7 +358,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.iterateNext();
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("boolean_iterateNext_TYPE_ERR",success);
 	}
@@ -369,7 +369,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.snapshotItem(0);
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("boolean_snapshotItem_TYPE_ERR",success);
 	}
@@ -387,7 +387,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_iterator_booleanValue_TYPE_ERR",success);
 	}
@@ -399,7 +399,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_iterator_numberValue_TYPE_ERR",success);
 	}
@@ -411,7 +411,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_iterator_singleNodeValue_TYPE_ERR",success);
 	}
@@ -423,7 +423,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_iterator_snapshotLength_TYPE_ERR",success);
 	}
@@ -435,7 +435,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_iterator_stringValue_TYPE_ERR",success);
 	}
@@ -446,7 +446,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.snapshotItem(0);
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_iterator_snapshotItem_TYPE_ERR",success);
 	}
@@ -464,7 +464,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_iterator_booleanValue_TYPE_ERR",success);
 	}
@@ -476,7 +476,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_iterator_numberValue_TYPE_ERR",success);
 	}
@@ -488,7 +488,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_iterator_singleNodeValue_TYPE_ERR",success);
 	}
@@ -500,7 +500,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_iterator_snapshotLength_TYPE_ERR",success);
 	}
@@ -512,7 +512,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_iterator_stringValue_TYPE_ERR",success);
 	}
@@ -523,7 +523,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.snapshotItem(0);
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_iterator_snapshotItem_TYPE_ERR",success);
 	}
@@ -541,7 +541,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_snapshot_booleanValue_TYPE_ERR",success);
 	}
@@ -553,7 +553,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_snapshot_numberValue_TYPE_ERR",success);
 	}
@@ -565,7 +565,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_snapshot_singleNodeValue_TYPE_ERR",success);
 	}
@@ -577,7 +577,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_snapshot_stringValue_TYPE_ERR",success);
 	}
@@ -588,7 +588,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.iterateNext();
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("unordered_node_snapshot_iterateNext_TYPE_ERR",success);
 	}
@@ -606,7 +606,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_snapshot_booleanValue_TYPE_ERR",success);
 	}
@@ -618,7 +618,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_snapshot_numberValue_TYPE_ERR",success);
 	}
@@ -630,7 +630,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_snapshot_singleNodeValue_TYPE_ERR",success);
 	}
@@ -642,7 +642,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_snapshot_stringValue_TYPE_ERR",success);
 	}
@@ -653,7 +653,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.iterateNext();
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("ordered_node_snapshot_iterateNext_TYPE_ERR",success);
 	}
@@ -671,7 +671,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("any_unordered_node_booleanValue_TYPE_ERR",success);
 	}
@@ -683,7 +683,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("any_unordered_node_numberValue_TYPE_ERR",success);
 	}
@@ -695,7 +695,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("any_unordered_node_snapshotLength_TYPE_ERR",success);
 	}
@@ -707,7 +707,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("any_unordered_node_stringValue_TYPE_ERR",success);
 	}
@@ -718,7 +718,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.iterateNext();
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("any_unordered_node_iterateNext_TYPE_ERR",success);
 	}
@@ -729,7 +729,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.snapshotItem(0);
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("any_unordered_node_snapshotItem_TYPE_ERR",success);
 	}
@@ -747,7 +747,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("first_ordered_node_booleanValue_TYPE_ERR",success);
 	}
@@ -759,7 +759,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("first_ordered_node_numberValue_TYPE_ERR",success);
 	}
@@ -771,7 +771,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("first_ordered_node_snapshotLength_TYPE_ERR",success);
 	}
@@ -783,7 +783,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
 
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("first_ordered_node_stringValue_TYPE_ERR",success);
 	}
@@ -794,7 +794,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.iterateNext();
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("first_ordered_node_iterateNext_TYPE_ERR",success);
 	}
@@ -805,7 +805,7 @@ for(var indexN65778 = 0;indexN65778 < nodeTypeList.length; indexN65778++) {
             nodeValue = outresult.snapshotItem(0);
         }
 		catch(ex) {            
-      success = (typeof(ex.code) != 'undefined' && ex.code == 52);
+      success = (ex.name == "TypeError");
 		}
 		assertTrue("first_ordered_node_snapshotItem_TYPE_ERR",success);
 	}
