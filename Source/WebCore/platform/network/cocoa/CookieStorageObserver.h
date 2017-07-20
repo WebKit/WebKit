@@ -30,12 +30,15 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
+OBJC_CLASS NSHTTPCookieStorage;
+OBJC_CLASS WebCookieObserverAdapter;
+
 namespace WebCore {
 
 class CookieStorageObserver : public ThreadSafeRefCounted<CookieStorageObserver> {
 public:
-    static RefPtr<CookieStorageObserver> create(CFHTTPCookieStorageRef);
-    CookieStorageObserver(CFHTTPCookieStorageRef);
+    static RefPtr<CookieStorageObserver> create(NSHTTPCookieStorage *);
+    CookieStorageObserver(NSHTTPCookieStorage *);
     ~CookieStorageObserver();
 
     void startObserving(WTF::Function<void()>&& callback);
@@ -44,7 +47,9 @@ public:
     void cookiesDidChange();
 
 private:
-    RetainPtr<CFHTTPCookieStorageRef> m_cookieStorage;
+    RetainPtr<NSHTTPCookieStorage> m_cookieStorage;
+    bool m_hasRegisteredInternalsForNotifications { false };
+    RetainPtr<WebCookieObserverAdapter> m_observerAdapter;
     WTF::Function<void()> m_cookieChangeCallback;
 };
 
