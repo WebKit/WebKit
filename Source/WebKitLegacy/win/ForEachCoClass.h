@@ -42,7 +42,6 @@
     macro(WebError) \
     macro(WebHistory) \
     macro(WebHistoryItem) \
-    macro(WebIconDatabase) \
     macro(WebJavaScriptCollector) \
     macro(WebKitStatistics) \
     macro(WebMutableURLRequest) \

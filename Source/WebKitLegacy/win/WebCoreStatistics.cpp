@@ -34,7 +34,6 @@
 #include <WebCore/FontCache.h>
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPage.h>
-#include <WebCore/IconDatabase.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/PageConsoleClient.h>
@@ -179,7 +178,7 @@ HRESULT WebCoreStatistics::iconPageURLMappingCount(_Out_ UINT* count)
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) iconDatabase().pageURLMappingCount();
+    *count = (UINT)0;
     return S_OK;
 }
 
@@ -187,7 +186,7 @@ HRESULT WebCoreStatistics::iconRetainedPageURLCount(_Out_ UINT *count)
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) iconDatabase().retainedPageURLCount();
+    *count = (UINT)0;
     return S_OK;
 }
 
@@ -195,7 +194,7 @@ HRESULT WebCoreStatistics::iconRecordCount(_Out_ UINT *count)
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) iconDatabase().iconRecordCount();
+    *count = (UINT)0;
     return S_OK;
 }
 
@@ -203,7 +202,7 @@ HRESULT WebCoreStatistics::iconsWithDataCount(_Out_ UINT *count)
 {
     if (!count)
         return E_POINTER;
-    *count = (UINT) iconDatabase().iconRecordCountWithData();
+    *count = (UINT)0;
     return S_OK;
 }
 

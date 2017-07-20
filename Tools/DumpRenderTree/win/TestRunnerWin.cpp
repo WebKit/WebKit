@@ -485,19 +485,8 @@ void TestRunner::setGeolocationPermission(bool allow)
     setGeolocationPermissionCommon(allow);
 }
 
-void TestRunner::setIconDatabaseEnabled(bool iconDatabaseEnabled)
+void TestRunner::setIconDatabaseEnabled(bool)
 {
-#if ENABLE(ICONDATABASE)
-    // See also <rdar://problem/6480108>
-    COMPtr<IWebIconDatabase> iconDatabase;
-    COMPtr<IWebIconDatabase> tmpIconDatabase;
-    if (FAILED(WebKitCreateInstance(CLSID_WebIconDatabase, 0, IID_IWebIconDatabase, (void**)&tmpIconDatabase)))
-        return;
-    if (FAILED(tmpIconDatabase->sharedIconDatabase(&iconDatabase)))
-        return;
-
-    iconDatabase->setEnabled(iconDatabaseEnabled);
-#endif
 }
 
 void TestRunner::setMainFrameIsFirstResponder(bool)

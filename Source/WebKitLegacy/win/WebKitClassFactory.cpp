@@ -39,7 +39,6 @@
 #include "WebGeolocationPosition.h"
 #include "WebHistory.h"
 #include "WebHistoryItem.h"
-#include "WebIconDatabase.h"
 #include "WebJavaScriptCollector.h"
 #include "WebKit.h"
 #include "WebKitMessageLoop.h"

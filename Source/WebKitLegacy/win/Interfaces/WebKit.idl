@@ -111,7 +111,6 @@ import "AccessibleApplication.idl";
 #include "IWebHistoryItem.idl"
 #include "IWebHistoryItemPrivate.idl"
 #include "IWebHistoryPrivate.idl"
-#include "IWebIconDatabase.idl"
 #include "IWebInspector.idl"
 #include "IWebInspectorPrivate.idl"
 #include "IWebJavaScriptCollector.idl"
@@ -174,11 +173,6 @@ library WebKit
         interface IWebViewEditingActions;
         interface IWebNotificationObserver;
         interface IWebViewPrivate2;
-    }
-
-    [uuid(66827ec1-3aef-4241-bac5-f776b44f030f)]
-    coclass WebIconDatabase {
-        [default] interface IWebIconDatabase;
     }
 
     [uuid(a062ecc3-bb1b-4694-a569-f59e0ad6be0c)]

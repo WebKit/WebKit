@@ -1,3 +1,15 @@
+2017-07-20  Brady Eidson  <beidson@apple.com>
+
+        Remove WebIconDatabase from WebKitLegacy/win.
+        https://bugs.webkit.org/show_bug.cgi?id=174608
+
+        Reviewed by Alex Christensen.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setIconDatabaseEnabled):
+
 2017-07-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Adjust priority of GSource used in WKTR's HeadlessViewBackend

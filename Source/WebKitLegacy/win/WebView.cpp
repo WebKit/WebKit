@@ -54,7 +54,6 @@
 #include "WebFrameNetworkingContext.h"
 #include "WebGeolocationClient.h"
 #include "WebGeolocationPosition.h"
-#include "WebIconDatabase.h"
 #include "WebInspector.h"
 #include "WebInspectorClient.h"
 #include "WebKit.h"
@@ -779,7 +778,6 @@ HRESULT WebView::close()
 
     m_mainFrame = nullptr;
 
-    registerForIconNotification(false);
     IWebNotificationCenter* notifyCenter = WebNotificationCenter::defaultCenterInternal();
     notifyCenter->removeObserver(this, WebPreferences::webPreferencesChangedNotification(), static_cast<IWebPreferences*>(m_preferences.get()));
 
@@ -3223,67 +3221,17 @@ void WebView::setToolTip(const String& toolTip)
     ::SendMessage(m_toolTipHwnd, TTM_ACTIVATE, !m_toolTip.isEmpty(), 0);
 }
 
-HRESULT WebView::notifyDidAddIcon(IWebNotification* notification)
+HRESULT WebView::notifyDidAddIcon(IWebNotification*)
 {
-    COMPtr<IPropertyBag> propertyBag;
-    HRESULT hr = notification->userInfo(&propertyBag);
-    if (FAILED(hr))
-        return hr;
-    if (!propertyBag)
-        return E_FAIL;
-
-    COMVariant iconUserInfoURL;
-    hr = propertyBag->Read(WebIconDatabase::iconDatabaseNotificationUserInfoURLKey(), &iconUserInfoURL, nullptr);
-    if (FAILED(hr))
-        return hr;
-
-    if (iconUserInfoURL.variantType() != VT_BSTR)
-        return E_FAIL;
-
-    String mainFrameURL;
-    if (m_mainFrame)
-        mainFrameURL = m_mainFrame->url().string();
-
-    if (!mainFrameURL.isEmpty() && mainFrameURL == toString(V_BSTR(&iconUserInfoURL)))
-        dispatchDidReceiveIconFromWebFrame(m_mainFrame);
-
-    return hr;
+    return E_FAIL;
 }
 
-void WebView::registerForIconNotification(bool listen)
+void WebView::registerForIconNotification(bool)
 {
-    IWebNotificationCenter* nc = WebNotificationCenter::defaultCenterInternal();
-    if (listen)
-        nc->addObserver(this, WebIconDatabase::iconDatabaseDidAddIconNotification(), 0);
-    else
-        nc->removeObserver(this, WebIconDatabase::iconDatabaseDidAddIconNotification(), 0);
 }
 
-void WebView::dispatchDidReceiveIconFromWebFrame(WebFrame* frame)
+void WebView::dispatchDidReceiveIconFromWebFrame(WebFrame*)
 {
-    registerForIconNotification(false);
-
-    if (m_frameLoadDelegate) {
-        String str = frame->url().string();
-
-        IntSize sz(16, 16);
-
-        BitmapInfo bmInfo = BitmapInfo::create(sz);
-
-        HBITMAP hBitmap = nullptr;
-
-        Image* icon = iconDatabase().synchronousIconForPageURL(str, sz);
-
-        if (icon && icon->width()) {
-            HWndDC dc(0);
-            hBitmap = CreateDIBSection(dc, &bmInfo, DIB_RGB_COLORS, 0, 0, 0);
-            icon->getHBITMAPOfSize(hBitmap, &sz);
-        }
-
-        HRESULT hr = m_frameLoadDelegate->didReceiveIcon(this, hBitmap, frame);
-        if ((hr == E_NOTIMPL) && hBitmap)
-            DeleteObject(hBitmap);
-    }
 }
 
 HRESULT WebView::setAccessibilityDelegate(_In_opt_ IAccessibilityDelegate* d)
@@ -5104,9 +5052,6 @@ HRESULT WebView::onNotify(_In_opt_ IWebNotification* notification)
     HRESULT hr = notification->name(&name);
     if (FAILED(hr))
         return hr;
-
-    if (!wcscmp(name, WebIconDatabase::iconDatabaseDidAddIconNotification()))
-        return notifyDidAddIcon(notification);
 
     if (!wcscmp(name, WebPreferences::webPreferencesChangedNotification()))
         return notifyPreferencesChanged(notification);

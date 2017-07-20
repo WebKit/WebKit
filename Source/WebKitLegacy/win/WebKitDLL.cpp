@@ -36,7 +36,6 @@
 #include "WebKitClassFactory.h"
 #include "WebStorageNamespaceProvider.h"
 #include <WebCore/COMPtr.h>
-#include <WebCore/IconDatabase.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PlatformDisplay.h>
@@ -163,7 +162,6 @@ STDAPI LocalServerDidDie()
 
 void shutDownWebKit()
 {
-    WebCore::iconDatabase().close();
     WebKit::WebStorageNamespaceProvider::closeLocalStorage();
 #if USE(EGL)
     PlatformDisplay::shutDownEglDisplays();

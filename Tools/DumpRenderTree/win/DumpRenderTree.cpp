@@ -1566,12 +1566,6 @@ int main(int argc, const char* argv[])
     if (!webView)
         return -4;
 
-    COMPtr<IWebIconDatabase> iconDatabase;
-    COMPtr<IWebIconDatabase> tmpIconDatabase;
-    if (FAILED(WebKitCreateInstance(CLSID_WebIconDatabase, 0, IID_IWebIconDatabase, (void**)&tmpIconDatabase)))
-        return -5;
-    if (FAILED(tmpIconDatabase->sharedIconDatabase(&iconDatabase)))
-        return -6;
     if (FAILED(webView->mainFrame(&frame)))
         return -7;
 
