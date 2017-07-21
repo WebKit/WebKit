@@ -1,3 +1,18 @@
+2017-07-21  Yousuke Kimoto  <Yousuke.Kimoto@sony.com>
+
+        [CMake] Add an option to stop build after generating project files
+        https://bugs.webkit.org/show_bug.cgi?id=174664
+
+        Reviewed by Konstantin Tokarev.
+
+        Add "--generate-project-only" to stop build after generating project files.
+
+        * Scripts/build-webkit: Add '--generate-project-only' option and a checker to stop build.
+        * Scripts/webkitdirs.pm: Add a function to check '--generate-project-only' option and the same checker as the above
+        (buildCMakeProjectOrExit): Add a cheker to stop build stop build after generating project files.
+        (determineIsGenerateProjectOnly): Check if '--generate-project-only' option is specified
+        (isGenerateProjectOnly): ditto
+
 2017-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Newly added AtomicStringImpl should use BufferInternal static string if StringImpl is static
