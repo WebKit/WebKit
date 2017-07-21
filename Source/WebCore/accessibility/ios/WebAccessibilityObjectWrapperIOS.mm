@@ -1377,7 +1377,13 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return [self baseAccessibilityHelpText];
+    NSMutableString *result = [NSMutableString string];
+    appendStringToResult(result, [self baseAccessibilityHelpText]);
+    
+    if ([self accessibilityIsShowingValidationMessage])
+        appendStringToResult(result, m_object->validationMessage());
+    
+    return result;
 }
 
 - (NSURL *)accessibilityURL
@@ -2857,6 +2863,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return treeItemParent->isExpanded();
     
     return m_object->isExpanded();
+}
+
+- (BOOL)accessibilityIsShowingValidationMessage
+{
+    if (![self _prepareAccessibilityCall])
+        return NO;
+    
+    return m_object->isShowingValidationMessage();
 }
 
 - (NSString *)accessibilityInvalidStatus

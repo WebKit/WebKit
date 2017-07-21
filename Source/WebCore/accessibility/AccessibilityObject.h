@@ -648,6 +648,9 @@ public:
     virtual AccessibilityObjectInclusion defaultObjectInclusion() const;
     bool accessibilityIsIgnoredByDefault() const;
     
+    bool isShowingValidationMessage() const;
+    String validationMessage() const;
+    
     unsigned blockquoteLevel() const;
     virtual int headingLevel() const { return 0; }
     virtual int tableLevel() const { return 0; }
