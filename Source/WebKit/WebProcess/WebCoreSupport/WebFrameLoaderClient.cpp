@@ -290,6 +290,18 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     webPage->send(Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame(m_frame->frameID(), documentLoader.navigationID(), url, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
+void WebFrameLoaderClient::dispatchDidPerformClientRedirect()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    auto navigationID = static_cast<WebDocumentLoader&>(*m_frame->coreFrame()->loader().documentLoader()).navigationID();
+
+    // Notify the UIProcess.
+    webPage->send(Messages::WebPageProxy::DidPerformClientRedirectForLoadForFrame(m_frame->frameID(), navigationID));
+}
+
 void WebFrameLoaderClient::dispatchDidChangeProvisionalURL()
 {
     WebPage* webPage = m_frame->page();
