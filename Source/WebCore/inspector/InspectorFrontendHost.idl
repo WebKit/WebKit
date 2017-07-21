@@ -78,9 +78,7 @@
     void beep();
 };
 
-[
-    JSGenerateToJSObject
-] dictionary ContextMenuItem {
+dictionary ContextMenuItem {
     DOMString type;
     DOMString label;
     long id;
