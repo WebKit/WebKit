@@ -118,18 +118,15 @@ class InlineMediaControls extends MediaControls
             return;
         }
 
-        if (!this.bottomControlsBar)
-            return;
-
-        this.leftContainer.buttons = this._leftContainerButtons();
-        this.rightContainer.buttons = this._rightContainerButtons();
-
         // If we should show the start button, then only show that button.
         if (this._showsStartButton) {
             this.playPauseButton.style = this.width <= MaximumSizeToShowSmallProminentControl || this.height <= MaximumSizeToShowSmallProminentControl ? Button.Styles.SmallCenter : Button.Styles.Center;
             this.children = [this.playPauseButton];
             return;
         }
+
+        if (!this.bottomControlsBar)
+            return;
 
         // Update the top left controls bar.
         this._topLeftControlsBarContainer.buttons = this._topLeftContainerButtons();
@@ -163,6 +160,8 @@ class InlineMediaControls extends MediaControls
         // Iterate through controls to see if we need to drop any of them. Reset all default states before we proceed.
         this.bottomControlsBar.visible = true;
         this.playPauseButton.style = Button.Styles.Bar;
+        this.leftContainer.buttons = this._leftContainerButtons();
+        this.rightContainer.buttons = this._rightContainerButtons();
         this.rightContainer.buttons.concat(this.leftContainer.buttons).forEach(button => delete button.dropped);
         this.muteButton.style = this.preferredMuteButtonStyle;
         this.muteButton.usesRTLIconVariant = false;
@@ -248,8 +247,6 @@ class InlineMediaControls extends MediaControls
 
     _leftContainerButtons()
     {
-        if (this._showsStartButton)
-            return [this.skipBackButton, this.skipForwardButton];
         return [this.skipBackButton, this.playPauseButton, this.skipForwardButton];
     }
 
