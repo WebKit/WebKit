@@ -1,3 +1,13 @@
+2017-07-21  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Update expectation file
+
+        Unreviewed gardening.
+
+        Drop XPathException after r219708.
+
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+
 2017-07-20  Antoine Quint  <graouts@apple.com>
 
         Turn tests at media/modern-media-controls/seek-forward-support back on
