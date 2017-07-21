@@ -34,7 +34,7 @@
 
 #include "StorageErrorCallback.h"
 
-#include "DOMCoreException.h"
+#include "DOMException.h"
 #include "ExceptionCodeDescription.h"
 
 namespace WebCore {
@@ -42,7 +42,7 @@ namespace WebCore {
 StorageErrorCallback::CallbackTask::CallbackTask(RefPtr<StorageErrorCallback>&& callback, ExceptionCode ec)
     : ScriptExecutionContext::Task([callback, ec] (ScriptExecutionContext*) {
         if (callback)
-            callback->handleEvent(DOMCoreException::create(ExceptionCodeDescription(ec)).get());
+            callback->handleEvent(DOMException::create(ExceptionCodeDescription(ec)).get());
     })
 {
 }

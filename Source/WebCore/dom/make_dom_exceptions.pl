@@ -165,8 +165,8 @@ sub generateImplementation()
     print F "    ASSERT(ec);\n";
 
     for my $exceptionType (sort keys %parsedItems) {
-        # DOMCoreException needs to be last because it's a catch-all.
-        next if $exceptionType eq "DOMCoreException";
+        # DOMException needs to be last because it's a catch-all.
+        next if $exceptionType eq "DOMException";
 
         my $conditional = $parsedItems{$exceptionType}{"conditional"};
 
@@ -185,7 +185,7 @@ sub generateImplementation()
     print F "        return;\n";
     print F "#endif\n";
 
-    print F "    if (DOMCoreException::initializeDescription(ec, this))\n";
+    print F "    if (DOMException::initializeDescription(ec, this))\n";
     print F "        return;\n";
     print F "    ASSERT_NOT_REACHED();\n";
     print F "}\n";

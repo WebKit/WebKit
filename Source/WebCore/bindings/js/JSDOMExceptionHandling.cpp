@@ -62,7 +62,7 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 
 String retrieveErrorMessage(ExecState& state, VM& vm, JSValue exception, CatchScope& catchScope)
 {
-    if (auto* domException = JSDOMCoreException::toWrapped(vm, exception))
+    if (auto* domException = JSDOMException::toWrapped(vm, exception))
         return domException->toString();
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
@@ -168,11 +168,11 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
 
     JSValue errorObject;
     switch (description.type) {
-    case DOMCoreExceptionType:
+    case DOMExceptionType:
 #if ENABLE(INDEXED_DATABASE)
     case IDBDatabaseExceptionType:
 #endif
-        errorObject = toJS(exec, globalObject, DOMCoreException::create(description));
+        errorObject = toJS(exec, globalObject, DOMException::create(description));
         break;
     }
     

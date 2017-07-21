@@ -426,8 +426,8 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/CompositionEvent.idl
     dom/CustomElementRegistry.idl
     dom/CustomEvent.idl
-    dom/DOMCoreException.idl
     dom/DOMError.idl
+    dom/DOMException.idl
     dom/DOMImplementation.idl
     dom/DOMNamedFlowCollection.idl
     dom/DOMPoint.idl
@@ -1488,8 +1488,8 @@ set(WebCore_SOURCES
     dom/CustomElementReactionQueue.cpp
     dom/CustomElementRegistry.cpp
     dom/CustomEvent.cpp
-    dom/DOMCoreException.cpp
     dom/DOMError.cpp
+    dom/DOMException.cpp
     dom/DOMImplementation.cpp
     dom/DOMNamedFlowCollection.cpp
     dom/DOMPointReadOnly.cpp

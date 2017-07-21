@@ -30,4 +30,4 @@
 
 [
     Conditional=QUOTA,
-] callback StorageErrorCallback = void (DOMCoreException error);
+] callback StorageErrorCallback = void (DOMException error);

@@ -356,8 +356,8 @@ JS_BINDING_IDLS = \
     $(WebCore)/dom/CompositionEvent.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \
-    $(WebCore)/dom/DOMCoreException.idl \
     $(WebCore)/dom/DOMError.idl \
+    $(WebCore)/dom/DOMException.idl \
     $(WebCore)/dom/DOMImplementation.idl \
     $(WebCore)/dom/DOMNamedFlowCollection.idl \
     $(WebCore)/dom/DOMPoint.idl \

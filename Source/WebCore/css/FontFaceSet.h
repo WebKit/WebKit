@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-class DOMCoreException;
+class DOMException;
 
 class FontFaceSet final : public RefCounted<FontFaceSet>, private CSSFontFaceSetClient, public EventTargetWithInlineData, private ActiveDOMObject {
 public:

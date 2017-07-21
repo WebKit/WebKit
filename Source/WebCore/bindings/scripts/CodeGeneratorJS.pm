@@ -3368,7 +3368,7 @@ sub GenerateOverloadDispatcher
             }
 
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrErrorOrDOMExceptionParameter);
-            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSDOMCoreException::info())");
+            &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->inherits(vm, JSDOMException::info())");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isObjectOrErrorParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject() && asObject(distinguishingArg)->type() == ErrorInstanceType");

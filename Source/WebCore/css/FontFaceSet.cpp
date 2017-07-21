@@ -30,7 +30,6 @@
 #include "ExceptionCodeDescription.h"
 #include "FontFace.h"
 #include "JSDOMBinding.h"
-#include "JSDOMCoreException.h"
 #include "JSFontFace.h"
 #include "JSFontFaceSet.h"
 

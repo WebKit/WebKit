@@ -32,19 +32,19 @@
 
 namespace WebCore {
 
-class DOMCoreException : public ExceptionBase {
+class DOMException : public ExceptionBase {
 public:
-    static Ref<DOMCoreException> create(const ExceptionCodeDescription& description)
+    static Ref<DOMException> create(const ExceptionCodeDescription& description)
     {
-        return adoptRef(*new DOMCoreException(description));
+        return adoptRef(*new DOMException(description));
     }
-    static Ref<DOMCoreException> create(const String& message, const String& name);
+    static Ref<DOMException> create(const String& message, const String& name);
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
 protected:
-    DOMCoreException(ExceptionCode, const String& message, const String& name);
-    explicit DOMCoreException(const ExceptionCodeDescription& description)
+    DOMException(ExceptionCode, const String& message, const String& name);
+    explicit DOMException(const ExceptionCodeDescription& description)
         : ExceptionBase(description)
     {
     }

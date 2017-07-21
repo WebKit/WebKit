@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "DOMCoreException.h"
+#include "DOMException.h"
 
 #include "ExceptionCode.h"
 #include "ExceptionCodeDescription.h"
@@ -86,21 +86,21 @@ static ExceptionCode errorCodeFromName(const String& name)
     return 0;
 }
 
-Ref<DOMCoreException> DOMCoreException::create(const String& message, const String& name)
+Ref<DOMException> DOMException::create(const String& message, const String& name)
 {
-    return adoptRef(*new DOMCoreException(errorCodeFromName(name), message, name));
+    return adoptRef(*new DOMException(errorCodeFromName(name), message, name));
 }
 
-DOMCoreException::DOMCoreException(ExceptionCode ec, const String& message, const String& name)
+DOMException::DOMException(ExceptionCode ec, const String& message, const String& name)
     : ExceptionBase(ec, name, message, ASCIILiteral("DOM"))
 {
 }
 
-bool DOMCoreException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
+bool DOMException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
     description->typeName = "DOM";
     description->code = ec;
-    description->type = DOMCoreExceptionType;
+    description->type = DOMExceptionType;
 
     size_t tableSize = WTF_ARRAY_LENGTH(coreExceptions);
     size_t tableIndex = ec - INDEX_SIZE_ERR;

@@ -1,3 +1,40 @@
+2017-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Rename DOMCoreException class to DOMException
+        https://bugs.webkit.org/show_bug.cgi?id=174698
+
+        Reviewed by Darin Adler.
+
+        Rename DOMCoreException class to DOMException to match its Web-exposed name.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/quota/StorageErrorCallback.cpp:
+        (WebCore::StorageErrorCallback::CallbackTask::CallbackTask):
+        * Modules/quota/StorageErrorCallback.h:
+        * Modules/quota/StorageErrorCallback.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::retrieveErrorMessage):
+        (WebCore::createDOMException):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateOverloadDispatcher):
+        * css/FontFaceSet.cpp:
+        * css/FontFaceSet.h:
+        * dom/DOMAllInOne.cpp:
+        * dom/DOMException.cpp: Renamed from Source/WebCore/dom/DOMCoreException.cpp.
+        (WebCore::DOMException::create):
+        (WebCore::DOMException::DOMException):
+        (WebCore::DOMException::initializeDescription):
+        * dom/DOMException.h: Renamed from Source/WebCore/dom/DOMCoreException.h.
+        (WebCore::DOMException::create):
+        (WebCore::DOMException::DOMException):
+        * dom/DOMException.idl: Renamed from Source/WebCore/dom/DOMCoreException.idl.
+        * dom/DOMExceptions.in:
+        * dom/make_dom_exceptions.pl:
+        (generateImplementation):
+
 2017-07-21  Sam Weinig  <sam@webkit.org>
 
         Follow up to https://bugs.webkit.org/show_bug.cgi?id=174659.
