@@ -1,3 +1,12 @@
+2017-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove WKIconDatabaseCairo.
+
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp: Removed.
+        * UIProcess/API/C/cairo/WKIconDatabaseCairo.h: Removed.
+
 2017-07-20  Brady Eidson  <beidson@apple.com>
 
         Get rid of IconDatabase related code in WebKit.

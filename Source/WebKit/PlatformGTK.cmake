@@ -114,8 +114,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/WKGrammarDetail.cpp
 
-    UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
-
     UIProcess/API/C/gtk/WKTextCheckerGtk.cpp
     UIProcess/API/C/gtk/WKView.cpp
 

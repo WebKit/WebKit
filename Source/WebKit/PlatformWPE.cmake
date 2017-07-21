@@ -130,8 +130,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/WKGrammarDetail.cpp
 
-    UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
-
     UIProcess/API/C/wpe/WKView.cpp
 
     UIProcess/API/glib/IconDatabase.cpp
