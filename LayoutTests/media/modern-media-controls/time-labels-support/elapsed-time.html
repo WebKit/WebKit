@@ -15,12 +15,12 @@ const mediaController = createControls(shadowRoot, media, null);
 
 media.addEventListener("timeupdate", function() {
     debug("timeupdate event was dispatched");
-    shouldBe("mediaController.controls.timeControl.elapsedTimeLabel.value", "media.currentTime");
-
-    debug("");
-    shadowRoot.host.remove();
-    media.remove();
-    finishJSTest();
+    shouldBecomeEqual("mediaController.controls.timeControl.elapsedTimeLabel.value", "media.currentTime", () => {
+        debug("");
+        shadowRoot.host.remove();
+        media.remove();
+        finishJSTest();
+    });
 });
 
 media.addEventListener("loadedmetadata", event => media.currentTime = 2);

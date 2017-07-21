@@ -16,18 +16,19 @@ const mediaController = createControls(shadowRoot, media, null);
 media.addEventListener("timeupdate", (event) => {
     debug("");
     debug("timeupdate event was dispatched");
-    shouldBe("mediaController.controls.timeControl.remainingTimeLabel.value", "media.currentTime - media.duration");
-
-    debug("");
-    shadowRoot.host.remove();
-    media.remove();
-    finishJSTest();
+    shouldBecomeEqual("mediaController.controls.timeControl.remainingTimeLabel.value", "media.currentTime - media.duration", () => {
+        debug("");
+        shadowRoot.host.remove();
+        media.remove();
+        finishJSTest();
+    });
 });
 
 media.addEventListener("durationchange", event => {
     debug("durationchange event was dispatched");
-    shouldBe("mediaController.controls.timeControl.remainingTimeLabel.value", "-media.duration");
-    media.currentTime = 2;
+    shouldBecomeEqual("mediaController.controls.timeControl.remainingTimeLabel.value", "-media.duration", () => {
+        media.currentTime = 2;
+    });
 });
 
 </script>

@@ -104,6 +104,7 @@ media/modern-media-controls/status-label [ Pass ]
 media/modern-media-controls/status-support [ Pass ]
 media/modern-media-controls/time-control [ Pass ]
 media/modern-media-controls/time-label [ Pass ]
+media/modern-media-controls/time-labels-support [ Pass ]
 media/modern-media-controls/tracks-button [ Pass ]
 
 # AirPlay cannot be tested on iOS
