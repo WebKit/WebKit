@@ -464,6 +464,9 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
 void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame)
 {
     if (frame.isMainFrame()) {
+        // New page loaded, clear frame handles previously cached.
+        m_handleWebFrameMap.clear();
+        m_webFrameHandleMap.clear();
         if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->pageID()))
             callback->sendSuccess(InspectorObject::create());
     } else {

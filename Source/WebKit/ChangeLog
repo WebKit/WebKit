@@ -1,5 +1,30 @@
 2017-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Web Automation: implicit navigations don't cause browsing context switch
+        https://bugs.webkit.org/show_bug.cgi?id=174633
+        <rdar://problem/33387797>
+
+        Reviewed by Brian Burg.
+
+        When a new page load replaces the current frameset, for example when a link in the current browser context has a
+        _top target, there's no explicit context switch, so the web driver doesn't know that the current browsing
+        context is no longer valid. Following commands will still be using the previous frame as the current browsing
+        context, but they don't fail with no such frame because the frame is still alive in the page cache and
+        referenced in the internal maps used in both UI and web processes. This causes test
+        testShouldFocusOnTheReplacementWhenAFrameFollowsALinkToA_TopTargetedPage to fail, since it expects a no such
+        frame exception. When a new page navigation happens we can simply remove references to frames from
+        m_handleWebFrameMap in WebAutomationSession, because any existing frame reference in the map should be for a
+        previous page. With this, before the next command is executed, waitForNavigationToComplete will be called and it
+        will fail with no such frame, condition that is handled to switch to the top level browser context. The test
+        still fails, because the find element command is called with the top level browsing context, returning no such
+        element, instead of no such frame. This is consistent with Chrome.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::navigationOccurredForFrame): Clear the m_handleWebFrameMap when a new page load
+        finished.
+
+2017-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: wait until navigation is complete before running new commands and after a click
         https://bugs.webkit.org/show_bug.cgi?id=174670
 
