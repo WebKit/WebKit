@@ -1,3 +1,14 @@
+2017-07-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+       [cmake] Unreviewed, add definitions necessary to use ICU shipped with macOS
+
+       macOS system ICU libraries are built with U_DISABLE_RENAMING=1 and
+       U_SHOW_CPLUSPLUS_API=0. After r219155 we have to pass this definitons
+       explicitly, because ICU headers in the tree are not modified anymore.
+
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsMac.cmake:
+
 2017-07-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add initial implementation of WebDriver process to run the HTTP server

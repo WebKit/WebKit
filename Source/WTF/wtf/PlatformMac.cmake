@@ -5,7 +5,6 @@ list(APPEND WTF_LIBRARIES
     ${COREFOUNDATION_LIBRARY}
     ${COCOA_LIBRARY}
     ${READLINE_LIBRARY}
-    libicucore.dylib
 )
 
 list(APPEND WTF_SOURCES

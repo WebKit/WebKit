@@ -1,3 +1,14 @@
+2017-07-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+       [cmake] Unreviewed, add definitions necessary to use ICU shipped with macOS
+
+       macOS system ICU libraries are built with U_DISABLE_RENAMING=1 and
+       U_SHOW_CPLUSPLUS_API=0. After r219155 we have to pass this definitons
+       explicitly, because ICU headers in the tree are not modified anymore.
+
+        * wtf/PlatformMac.cmake: Rely on ICU_LIBRARIES instead of passing ICU
+        library name explicitly in WTF_LIBRARIES.
+
 2017-07-20  Chris Dumez  <cdumez@apple.com>
 
         Replace calls to Vector::resize() with calls to more efficient shrink() / grow() when applicable
