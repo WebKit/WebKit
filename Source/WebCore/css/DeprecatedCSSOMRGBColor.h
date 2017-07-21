@@ -28,7 +28,10 @@ namespace WebCore {
 
 class DeprecatedCSSOMRGBColor final : public RefCounted<DeprecatedCSSOMRGBColor> {
 public:
-    static Ref<DeprecatedCSSOMRGBColor> create(const RGBColor& color) { return adoptRef(*new DeprecatedCSSOMRGBColor(color)); }
+    static Ref<DeprecatedCSSOMRGBColor> create(const RGBColor& color, CSSStyleDeclaration& owner)
+    {
+        return adoptRef(*new DeprecatedCSSOMRGBColor(color, owner));
+    }
 
     DeprecatedCSSOMPrimitiveValue* red() { return m_red.get(); }
     DeprecatedCSSOMPrimitiveValue* green() { return m_green.get(); }
@@ -38,28 +41,28 @@ public:
     Color color() const { return Color(m_rgbColor); }
 
 private:
-    DeprecatedCSSOMRGBColor(const RGBColor& color)
+    DeprecatedCSSOMRGBColor(const RGBColor& color, CSSStyleDeclaration& owner)
         : m_rgbColor(color.rgbColor())
     {
         // Red
         unsigned value = (m_rgbColor >> 16) & 0xFF;
         auto result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
-        m_red = result->createDeprecatedCSSOMPrimitiveWrapper();
+        m_red = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
         
         // Green
         value = (m_rgbColor >> 8) & 0xFF;
         result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
-        m_green = result->createDeprecatedCSSOMPrimitiveWrapper();
+        m_green = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
 
         // Blue
         value = m_rgbColor & 0xFF;
         result = CSSPrimitiveValue::create(value, CSSPrimitiveValue::CSS_NUMBER);
-        m_blue = result->createDeprecatedCSSOMPrimitiveWrapper();
+        m_blue = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
         
         // Alpha
         float alphaValue = static_cast<float>((m_rgbColor >> 24) & 0xFF) / 0xFF;
         result = CSSPrimitiveValue::create(alphaValue, CSSPrimitiveValue::CSS_NUMBER);
-        m_alpha = result->createDeprecatedCSSOMPrimitiveWrapper();
+        m_alpha = result->createDeprecatedCSSOMPrimitiveWrapper(owner);
     }
     
     RGBA32 m_rgbColor;

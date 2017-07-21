@@ -1,3 +1,88 @@
+2017-07-21  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove the need for the side map of DeprecatedCSSOMValue roots
+        https://bugs.webkit.org/show_bug.cgi?id=174713
+
+        Reviewed by Andreas Kling.
+
+        We used to not want to bloat the size of CSSValues with a pointer to the
+        owner CSSStyleDeclaration, so, for GC purposes we need kept a mapping of
+        them on DOMWrapperWorld that only got set if a wrapper was made. Now that
+        we have DeprecatedCSSOMValue, a wrapper for CSSValue that only gets created
+        for the bindings, we no longer need the side table, and simply have the
+        DeprecatedCSSOMValue maintain a reference to the CSSStyleDeclaration.
+
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::wrappers):
+        Remove m_deprecatedCSSOMValueRoots and make m_wrappers private with a getter.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::getPropertyCSSValue): Deleted.
+        Remove custom implementation of getPropertyCSSValue, now that it no longer
+        needs to update m_deprecatedCSSOMValueRoots.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::fireFrameClearedWatchpointsForWindow):
+        * bindings/js/JSDOMWrapperCache.h:
+        (WebCore::getCachedWrapper):
+        (WebCore::cacheWrapper):
+        (WebCore::uncacheWrapper):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::getOutOfLineCachedWrapper):
+        Use wrappers getter rather than direct member variable.
+
+        * bindings/js/JSDeprecatedCSSOMValueCustom.cpp:
+        (WebCore::JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots):
+        Rather than checking the side table for roots, now get the root
+        via the reference CSSStyleDeclaration.
+
+        (WebCore::JSDeprecatedCSSOMValueOwner::finalize): Deleted.
+        Remove custom finalize now that we don't have to remove ourself
+        from m_deprecatedCSSOMValueRoots.
+
+        * css/CSSStyleDeclaration.idl:
+        Remove [Custom] from getPropertyCSSValue.
+
+        * css/DeprecatedCSSOMValue.idl:
+        Remove [JSCustomFinalize].
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::createDeprecatedCSSOMWrapper):
+        * css/CSSImageValue.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::createDeprecatedCSSOMPrimitiveWrapper):
+        * css/CSSPrimitiveValue.h:
+        * css/CSSStyleDeclaration.h:
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::createDeprecatedCSSOMWrapper):
+        * css/CSSValue.h:
+        * css/DeprecatedCSSOMCounter.h:
+        * css/DeprecatedCSSOMPrimitiveValue.cpp:
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getCounterValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getRectValue):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getRGBColorValue):
+        * css/DeprecatedCSSOMPrimitiveValue.h:
+        (WebCore::DeprecatedCSSOMPrimitiveValue::create):
+        (WebCore::DeprecatedCSSOMPrimitiveValue::DeprecatedCSSOMPrimitiveValue):
+        * css/DeprecatedCSSOMRGBColor.h:
+        * css/DeprecatedCSSOMRect.h:
+        * css/DeprecatedCSSOMValue.h:
+        (WebCore::DeprecatedCSSOMValue::owner):
+        (WebCore::DeprecatedCSSOMValue::DeprecatedCSSOMValue):
+        (WebCore::DeprecatedCSSOMComplexValue::create):
+        (WebCore::DeprecatedCSSOMComplexValue::DeprecatedCSSOMComplexValue):
+        * css/DeprecatedCSSOMValueList.h:
+        (WebCore::DeprecatedCSSOMValueList::create):
+        (WebCore::DeprecatedCSSOMValueList::DeprecatedCSSOMValueList):
+        * css/PropertySetCSSStyleDeclaration.cpp:
+        (WebCore::PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM):
+        * css/PropertySetCSSStyleDeclaration.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::getPresentationAttribute):
+        Pass owning CSSStyleDeclaration to DeprecatedCSSOMValue and derived classes.
+
 2017-07-21  Andreas Kling  <akling@apple.com>
 
         Use more references in event dispatch code

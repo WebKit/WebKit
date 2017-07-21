@@ -4224,7 +4224,7 @@ RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(co
         auto value = ComputedStyleExtractor(m_element.ptr(), m_allowVisitedStyle, m_pseudoElementSpecifier).customPropertyValue(propertyName);
         if (!value)
             return nullptr;
-        return value->createDeprecatedCSSOMWrapper();
+        return value->createDeprecatedCSSOMWrapper(*this);
     }
 
     CSSPropertyID propertyID = cssPropertyID(propertyName);
@@ -4233,7 +4233,7 @@ RefPtr<DeprecatedCSSOMValue> CSSComputedStyleDeclaration::getPropertyCSSValue(co
     auto value = getPropertyCSSValue(propertyID);
     if (!value)
         return nullptr;
-    return value->createDeprecatedCSSOMWrapper();
+    return value->createDeprecatedCSSOMWrapper(*this);
 }
 
 String CSSComputedStyleDeclaration::getPropertyValue(const String &propertyName)

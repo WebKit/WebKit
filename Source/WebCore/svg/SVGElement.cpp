@@ -1046,7 +1046,7 @@ RefPtr<DeprecatedCSSOMValue> SVGElement::getPresentationAttribute(const String& 
     auto cssValue = style->getPropertyCSSValue(propertyID);
     if (!cssValue)
         return nullptr;
-    return cssValue->createDeprecatedCSSOMWrapper();
+    return cssValue->createDeprecatedCSSOMWrapper(style->ensureCSSStyleDeclaration());
 }
 
 bool SVGElement::instanceUpdatesBlocked() const

@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class CSSCustomPropertyValue;
+class CSSStyleDeclaration;
 class CachedResource;
 class DeprecatedCSSOMValue;
 class StyleSheetContents;
@@ -118,7 +119,7 @@ public:
     
     bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
 
-    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper() const;
+    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
     bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 

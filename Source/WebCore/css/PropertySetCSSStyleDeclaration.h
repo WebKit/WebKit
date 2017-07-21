@@ -27,6 +27,7 @@
 
 #include "CSSParserMode.h"
 #include "CSSStyleDeclaration.h"
+#include "DeprecatedCSSOMValue.h"
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -36,7 +37,6 @@ namespace WebCore {
 class CSSRule;
 class CSSProperty;
 class CSSValue;
-class DeprecatedCSSOMValue;
 class MutableStyleProperties;
 class StyleSheetContents;
 class StyledElement;

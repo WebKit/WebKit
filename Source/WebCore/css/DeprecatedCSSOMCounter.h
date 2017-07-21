@@ -33,17 +33,20 @@ namespace WebCore {
 
 class DeprecatedCSSOMCounter final : public RefCounted<DeprecatedCSSOMCounter> {
 public:
-    static Ref<DeprecatedCSSOMCounter> create(const Counter& counter) { return adoptRef(*new DeprecatedCSSOMCounter(counter)); }
+    static Ref<DeprecatedCSSOMCounter> create(const Counter& counter, CSSStyleDeclaration& owner)
+    {
+        return adoptRef(*new DeprecatedCSSOMCounter(counter, owner));
+    }
 
     String identifier() const { return m_identifier->stringValue(); }
     String listStyle() const { return m_listStyle->stringValue(); }
     String separator() const { return m_separator->stringValue(); }
     
 private:
-    DeprecatedCSSOMCounter(const Counter& counter)
-        : m_identifier(counter.identifierValue().createDeprecatedCSSOMPrimitiveWrapper())
-        , m_listStyle(counter.listStyleValue().createDeprecatedCSSOMPrimitiveWrapper())
-        , m_separator(counter.separatorValue().createDeprecatedCSSOMPrimitiveWrapper())
+    DeprecatedCSSOMCounter(const Counter& counter, CSSStyleDeclaration& owner)
+        : m_identifier(counter.identifierValue().createDeprecatedCSSOMPrimitiveWrapper(owner))
+        , m_listStyle(counter.listStyleValue().createDeprecatedCSSOMPrimitiveWrapper(owner))
+        , m_separator(counter.separatorValue().createDeprecatedCSSOMPrimitiveWrapper(owner))
     {
     }
     

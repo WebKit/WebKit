@@ -320,7 +320,7 @@ DeprecatedCSSOMValue* PropertySetCSSStyleDeclaration::wrapForDeprecatedCSSOM(CSS
     
     RefPtr<DeprecatedCSSOMValue>& clonedValue = m_cssomValueWrappers->add(internalValue, RefPtr<DeprecatedCSSOMValue>()).iterator->value;
     if (!clonedValue)
-        clonedValue = internalValue->createDeprecatedCSSOMWrapper();
+        clonedValue = internalValue->createDeprecatedCSSOMWrapper(*this);
     return clonedValue.get();
 }
 

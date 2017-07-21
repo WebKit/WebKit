@@ -350,7 +350,7 @@ void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(DOMWindow* window)
     Vector<Ref<DOMWrapperWorld>> wrapperWorlds;
     clientData->getAllWorlds(wrapperWorlds);
     for (unsigned i = 0; i < wrapperWorlds.size(); ++i) {
-        DOMObjectWrapperMap& wrappers = wrapperWorlds[i]->m_wrappers;
+        auto& wrappers = wrapperWorlds[i]->wrappers();
         auto result = wrappers.find(window);
         if (result == wrappers.end())
             continue;

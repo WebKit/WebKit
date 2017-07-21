@@ -452,15 +452,15 @@ void CSSValue::destroy()
     ASSERT_NOT_REACHED();
 }
 
-Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper() const
+Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& styleDeclaration) const
 {
     if (isImageValue() || isCursorImageValue())
-        return downcast<CSSImageValue>(this)->createDeprecatedCSSOMWrapper();
+        return downcast<CSSImageValue>(this)->createDeprecatedCSSOMWrapper(styleDeclaration);
     if (isPrimitiveValue())
-        return DeprecatedCSSOMPrimitiveValue::create(downcast<CSSPrimitiveValue>(*this));
+        return DeprecatedCSSOMPrimitiveValue::create(downcast<CSSPrimitiveValue>(*this), styleDeclaration);
     if (isValueList())
-        return DeprecatedCSSOMValueList::create(downcast<CSSValueList>(*this));
-    return DeprecatedCSSOMComplexValue::create(*this);
+        return DeprecatedCSSOMValueList::create(downcast<CSSValueList>(*this), styleDeclaration);
+    return DeprecatedCSSOMComplexValue::create(*this, styleDeclaration);
 }
 
 bool CSSValue::treatAsInheritedValue(CSSPropertyID propertyID) const

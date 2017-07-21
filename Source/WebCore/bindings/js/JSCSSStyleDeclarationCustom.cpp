@@ -56,23 +56,4 @@ void JSCSSStyleDeclaration::visitAdditionalChildren(SlotVisitor& visitor)
     visitor.addOpaqueRoot(root(&wrapped()));
 }
 
-JSValue JSCSSStyleDeclaration::getPropertyCSSValue(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 1))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-
-    auto propertyName = convert<IDLDOMString>(state, state.uncheckedArgument(0));
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto value = wrapped().getPropertyCSSValue(propertyName);
-    if (!value)
-        return jsNull();
-
-    globalObject()->world().m_deprecatedCSSOMValueRoots.add(value.get(), root(&wrapped())); // Balanced by JSDeprecatedCSSOMValueOwner::finalize().
-    return toJS<IDLInterface<DeprecatedCSSOMValue>>(state, *globalObject(), *value);
-}
-
 } // namespace WebCore

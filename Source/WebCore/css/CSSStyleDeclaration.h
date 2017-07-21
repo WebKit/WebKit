@@ -21,7 +21,6 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
-#include "DeprecatedCSSOMValue.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
@@ -34,6 +33,7 @@ class CSSProperty;
 class CSSRule;
 class CSSStyleSheet;
 class CSSValue;
+class DeprecatedCSSOMValue;
 class MutableStyleProperties;
 class StyleProperties;
 class StyledElement;

@@ -26,7 +26,6 @@
 
 namespace WebCore {
 
-class DeprecatedCSSOMValue;
 class ScriptController;
 
 typedef HashMap<void*, JSC::Weak<JSC::JSObject>> DOMObjectWrapperMap;
@@ -48,9 +47,7 @@ public:
     void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
     bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
 
-    // FIXME: can we make this private?
-    DOMObjectWrapperMap m_wrappers;
-    HashMap<DeprecatedCSSOMValue*, void*> m_deprecatedCSSOMValueRoots;
+    DOMObjectWrapperMap& wrappers() { return m_wrappers; }
 
     bool isNormal() const { return m_isNormal; }
 
@@ -62,6 +59,8 @@ protected:
 private:
     JSC::VM& m_vm;
     HashSet<ScriptController*> m_scriptControllersWithWindowProxies;
+    DOMObjectWrapperMap m_wrappers;
+
     bool m_isNormal;
     bool m_shadowRootIsAlwaysOpen { false };
 };

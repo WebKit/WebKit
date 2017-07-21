@@ -23,7 +23,6 @@
     CustomToJSObject,
     ExportToWrappedFunction,
     ImplementationLacksVTable,
-    JSCustomFinalize,
     InterfaceName=CSSValue
 ] interface DeprecatedCSSOMValue {
     // UnitTypes

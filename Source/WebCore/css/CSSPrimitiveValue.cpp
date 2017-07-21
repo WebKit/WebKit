@@ -1216,9 +1216,9 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     return false;
 }
 
-Ref<DeprecatedCSSOMPrimitiveValue> CSSPrimitiveValue::createDeprecatedCSSOMPrimitiveWrapper() const
+Ref<DeprecatedCSSOMPrimitiveValue> CSSPrimitiveValue::createDeprecatedCSSOMPrimitiveWrapper(CSSStyleDeclaration& styleDeclaration) const
 {
-    return DeprecatedCSSOMPrimitiveValue::create(*this);
+    return DeprecatedCSSOMPrimitiveValue::create(*this, styleDeclaration);
 }
 
 } // namespace WebCore

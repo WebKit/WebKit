@@ -30,6 +30,7 @@ namespace WebCore {
 class CachedImage;
 class CachedResourceLoader;
 class DeprecatedCSSOMValue;
+class CSSStyleDeclaration;
 class RenderElement;
 struct ResourceLoaderOptions;
 
@@ -47,7 +48,7 @@ public:
 
     String customCSSText() const;
 
-    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper() const;
+    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
     bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 

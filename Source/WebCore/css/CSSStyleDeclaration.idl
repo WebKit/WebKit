@@ -51,5 +51,5 @@
     [CEReactions, MayThrowException, CallNamedSetterOnlyForSupportedProperties] setter void (DOMString name, [TreatNullAs=EmptyString] DOMString value);
 
     // This method is deprecated, and we would like to drop support for it someday
-    [Custom] DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
+    DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
 };

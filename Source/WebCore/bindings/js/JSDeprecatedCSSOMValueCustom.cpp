@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSDeprecatedCSSOMValue.h"
 
+#include "JSCSSStyleDeclarationCustom.h"
 #include "JSDeprecatedCSSOMPrimitiveValue.h"
 #include "JSDeprecatedCSSOMValueList.h"
 #include "JSNode.h"
@@ -34,24 +35,12 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, SlotVisitor& visitor)
+bool JSDeprecatedCSSOMValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSDeprecatedCSSOMValue* jsCSSValue = jsCast<JSDeprecatedCSSOMValue*>(handle.slot()->asCell());
     if (!jsCSSValue->hasCustomProperties())
         return false;
-    DOMWrapperWorld* world = static_cast<DOMWrapperWorld*>(context);
-    void* root = world->m_deprecatedCSSOMValueRoots.get(&jsCSSValue->wrapped());
-    if (!root)
-        return false;
-    return visitor.containsOpaqueRoot(root);
-}
-
-void JSDeprecatedCSSOMValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
-{
-    JSDeprecatedCSSOMValue* jsCSSValue = static_cast<JSDeprecatedCSSOMValue*>(handle.slot()->asCell());
-    DOMWrapperWorld& world = *static_cast<DOMWrapperWorld*>(context);
-    world.m_deprecatedCSSOMValueRoots.remove(&jsCSSValue->wrapped());
-    uncacheWrapper(world, &jsCSSValue->wrapped(), jsCSSValue);
+    return visitor.containsOpaqueRoot(root(&jsCSSValue->wrapped().owner()));
 }
 
 JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<DeprecatedCSSOMValue>&& value)
