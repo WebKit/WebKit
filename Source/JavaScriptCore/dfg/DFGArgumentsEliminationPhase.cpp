@@ -409,6 +409,8 @@ private:
                     m_graph.doToChildren(node, [&] (Edge edge) { return escape(edge, node); });
                     break;
                 }
+                if (node->isPseudoTerminal())
+                    break;
             }
         }
 
@@ -1101,6 +1103,8 @@ private:
                 default:
                     break;
                 }
+                if (node->isPseudoTerminal())
+                    break;
             }
             
             insertionSet.execute(block);

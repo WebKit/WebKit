@@ -1,3 +1,42 @@
+2017-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FTL] Arguments elimination is suppressed by unreachable blocks
+        https://bugs.webkit.org/show_bug.cgi?id=174352
+
+        Reviewed by Filip Pizlo.
+
+        If we do not execute `op_get_by_id`, our value profiling tells us unpredictable and DFG emits ForceOSRExit.
+        The problem is that arguments elimination phase checks escaping even when ForceOSRExit preceeds.
+        Since GetById without information can escape arguments if it is specified, non-executed code including
+        op_get_by_id with arguments can escape arguments.
+
+        For example,
+
+            function test(flag)
+            {
+                if (flag) {
+                    // This is not executed, but emits GetById with arguments.
+                    // It prevents us from eliminating materialization.
+                    return arguments.length;
+                }
+                return arguments.length;
+            }
+            noInline(test);
+            while (true)
+                test(false);
+
+        We do not perform CFA and dead-node clipping yet when performing arguments elimination phase.
+        So this GetById exists and escapes arguments.
+
+        To solve this problem, our arguments elimination phase checks preceding pseudo-terminal nodes.
+        If it is shown, following GetById does not escape arguments. Compared to performing AI, it is
+        lightweight. But it catches much of typical cases we failed to perform arguments elimination.
+
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isPseudoTerminal):
+        * dfg/DFGValidate.cpp:
+
 2017-07-20  Chris Dumez  <cdumez@apple.com>
 
         Replace calls to Vector::resize() with calls to more efficient shrink() / grow() when applicable

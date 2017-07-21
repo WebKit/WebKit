@@ -1307,6 +1307,24 @@ public:
         return false;
     }
 
+    // As is described in DFGNodeType.h's ForceOSRExit, this is a pseudo-terminal.
+    // It means that execution should fall out of DFG at this point, but execution
+    // does continue in the basic block - just in a different compiler.
+    // FIXME: This is used for lightweight reachability decision. But this should
+    // be replaced with AI-based reachability ideally.
+    bool isPseudoTerminal()
+    {
+        switch (op()) {
+        case ForceOSRExit:
+        case CheckBadCell:
+        case Throw:
+        case ThrowStaticError:
+            return true;
+        default:
+            return false;
+        }
+    }
+
     unsigned targetBytecodeOffsetDuringParsing()
     {
         ASSERT(isJump());

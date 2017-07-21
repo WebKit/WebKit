@@ -642,6 +642,7 @@ private:
             VALIDATE((block), block->phis.isEmpty());
 
             bool didSeeExitOK = false;
+            bool isOSRExited = false;
             
             for (auto* node : *block) {
                 didSeeExitOK |= node->origin.exitOK;
@@ -669,6 +670,9 @@ private:
                     // https://bugs.webkit.org/show_bug.cgi?id=123471
                     break;
                 }
+
+                if (isOSRExited)
+                    continue;
                 switch (node->op()) {
                 case PhantomNewObject:
                 case PhantomNewFunction:
@@ -738,6 +742,7 @@ private:
                         });
                     break;
                 }
+                isOSRExited |= node->isPseudoTerminal();
             }
         }
     }
