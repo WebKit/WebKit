@@ -281,7 +281,9 @@ void WebResourceLoadStatisticsStore::performDailyTasks()
 {
     ASSERT(RunLoop::isMain());
 
-    includeTodayAsOperatingDateIfNecessary();
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this)] {
+        includeTodayAsOperatingDateIfNecessary();
+    });
     if (m_parameters.shouldSubmitTelemetry)
         submitTelemetry();
 }
@@ -732,6 +734,8 @@ Vector<String> WebResourceLoadStatisticsStore::topPrivatelyControlledDomainsToRe
 
 void WebResourceLoadStatisticsStore::includeTodayAsOperatingDateIfNecessary()
 {
+    ASSERT(!RunLoop::isMain());
+
     auto today = OperatingDate::today();
     if (!m_operatingDates.isEmpty() && today <= m_operatingDates.last())
         return;
