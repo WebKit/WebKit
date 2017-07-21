@@ -1,3 +1,17 @@
+2017-07-21  Andreas Kling  <akling@apple.com>
+
+        Use more references in event dispatch code
+        https://bugs.webkit.org/show_bug.cgi?id=174681
+
+        Reviewed by Geoffrey Garen.
+
+        * DOMEventsClasses.cpp:
+        (WebEventListener::handleEvent):
+        * DOMEventsClasses.h:
+        * Plugins/PluginView.cpp:
+        (WebCore::PluginView::handleEvent):
+        * Plugins/PluginView.h:
+
 2017-07-20  Brady Eidson  <beidson@apple.com>
 
         Remove WebIconDatabase from WebKitLegacy/win.

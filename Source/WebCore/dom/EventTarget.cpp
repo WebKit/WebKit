@@ -232,12 +232,13 @@ void EventTarget::fireEventListeners(Event& event, EventListenerVector listeners
 {
     Ref<EventTarget> protectedThis(*this);
     ASSERT(!listeners.isEmpty());
+    ASSERT(scriptExecutionContext());
 
-    auto* context = scriptExecutionContext();
+    auto& context = *scriptExecutionContext();
     bool contextIsDocument = is<Document>(context);
     InspectorInstrumentationCookie willDispatchEventCookie;
     if (contextIsDocument)
-        willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(downcast<Document>(*context), event, true);
+        willDispatchEventCookie = InspectorInstrumentation::willDispatchEvent(downcast<Document>(context), event, true);
 
     for (auto& registeredListener : listeners) {
         if (UNLIKELY(registeredListener->wasRemoved()))
@@ -260,8 +261,8 @@ void EventTarget::fireEventListeners(Event& event, EventListenerVector listeners
         if (registeredListener->isPassive())
             event.setInPassiveListener(true);
 
-        InspectorInstrumentation::willHandleEvent(context, event);
-        registeredListener->callback().handleEvent(context, &event);
+        InspectorInstrumentation::willHandleEvent(&context, event);
+        registeredListener->callback().handleEvent(context, event);
 
         if (registeredListener->isPassive())
             event.setInPassiveListener(false);

@@ -1,3 +1,53 @@
+2017-07-21  Andreas Kling  <akling@apple.com>
+
+        Use more references in event dispatch code
+        https://bugs.webkit.org/show_bug.cgi?id=174681
+
+        Reviewed by Geoffrey Garen.
+
+        Make EventListener::handleEvent() take a ScriptExecutionContext&, Event&.
+        Then make everything build again. Various null checks and assertions
+        disappear in the process.
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSErrorHandler.h:
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::initializeJSFunction):
+        (WebCore::JSEventListener::handleEvent):
+        (WebCore::eventHandlerAttribute):
+        * bindings/js/JSEventListener.h:
+        (WebCore::JSEventListener::jsFunction):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+        * bindings/js/JSLazyEventListener.h:
+        * dom/EventListener.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageEventListener::handleEvent):
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::listenerEntriesFromListenerInfo):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        * inspector/InspectorIndexedDBAgent.cpp:
+        * platform/Widget.h:
+        (WebCore::Widget::handleEvent):
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.h:
+        * platform/cocoa/WebPlaybackSessionModelMediaElement.mm:
+        (WebCore::WebPlaybackSessionModelMediaElement::handleEvent):
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.h:
+        * platform/cocoa/WebVideoFullscreenModelVideoElement.mm:
+        (WebVideoFullscreenModelVideoElement::handleEvent):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefTargetEventListener::handleEvent):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::ConditionEventListener::handleEvent):
+        (WebCore::SVGSMILElement::handleConditionEvent):
+        * svg/animation/SVGSMILElement.h:
+
 2017-07-21  Zalan Bujtas  <zalan@apple.com>
 
         iBooks: Overlapping/missing content at beginning/end of paragraph.

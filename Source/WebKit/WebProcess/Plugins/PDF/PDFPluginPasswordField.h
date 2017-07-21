@@ -47,7 +47,7 @@ private:
 
     Ref<WebCore::Element> createAnnotationElement() override;
 
-    bool handleEvent(WebCore::Event*) override;
+    bool handleEvent(WebCore::Event&) override;
 };
 
 } // namespace WebKit

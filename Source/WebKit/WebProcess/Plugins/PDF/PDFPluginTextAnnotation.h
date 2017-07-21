@@ -58,7 +58,7 @@ protected:
     String value() const;
 
 private:
-    bool handleEvent(WebCore::Event*) override;
+    bool handleEvent(WebCore::Event&) override;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"

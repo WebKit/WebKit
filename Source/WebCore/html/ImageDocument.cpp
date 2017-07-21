@@ -65,7 +65,7 @@ private:
     }
 
     bool operator==(const EventListener&) const override;
-    void handleEvent(ScriptExecutionContext*, Event*) override;
+    void handleEvent(ScriptExecutionContext&, Event&) override;
 
     ImageDocument& m_document;
 };
@@ -401,12 +401,12 @@ void ImageDocument::imageClicked(int x, int y)
     }
 }
 
-void ImageEventListener::handleEvent(ScriptExecutionContext*, Event* event)
+void ImageEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
-    if (event->type() == eventNames().resizeEvent)
+    if (event.type() == eventNames().resizeEvent)
         m_document.windowSizeChanged();
-    else if (event->type() == eventNames().clickEvent && is<MouseEvent>(*event)) {
-        MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
+    else if (event.type() == eventNames().clickEvent && is<MouseEvent>(event)) {
+        MouseEvent& mouseEvent = downcast<MouseEvent>(event);
         m_document.imageClicked(mouseEvent.offsetX(), mouseEvent.offsetY());
     }
 }

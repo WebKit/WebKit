@@ -1543,7 +1543,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
     if (auto scriptListener = JSEventListener::cast(eventListener.ptr())) {
         JSC::JSLockHolder lock(scriptListener->isolatedWorld().vm());
         state = execStateFromNode(scriptListener->isolatedWorld(), &node->document());
-        handler = scriptListener->jsFunction(&node->document());
+        handler = scriptListener->jsFunction(node->document());
         if (handler && state) {
             body = handler->toString(state)->value(state);
             if (auto function = jsDynamicDowncast<JSC::JSFunction*>(state->vm(), handler)) {

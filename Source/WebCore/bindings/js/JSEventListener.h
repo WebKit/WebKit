@@ -65,7 +65,7 @@ public:
     // Returns true if this event listener was created for an event handler attribute, like "onload" or "onclick".
     bool isAttribute() const { return m_isAttribute; }
 
-    JSC::JSObject* jsFunction(ScriptExecutionContext*) const;
+    JSC::JSObject* jsFunction(ScriptExecutionContext&) const;
     DOMWrapperWorld& isolatedWorld() const { return m_isolatedWorld; }
 
     JSC::JSObject* wrapper() const { return m_wrapper.get(); }
@@ -75,13 +75,13 @@ public:
     virtual TextPosition sourcePosition() const { return TextPosition(); }
 
 private:
-    virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const;
+    virtual JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const;
     void visitJSFunction(JSC::SlotVisitor&) override;
     bool virtualisAttribute() const override;
 
 protected:
     JSEventListener(JSC::JSObject* function, JSC::JSObject* wrapper, bool isAttribute, DOMWrapperWorld&);
-    void handleEvent(ScriptExecutionContext*, Event*) override;
+    void handleEvent(ScriptExecutionContext&, Event&) override;
 
 private:
     mutable JSC::Weak<JSC::JSObject> m_jsFunction;
@@ -107,7 +107,7 @@ void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, HTMLEleme
 JSC::JSValue documentEventHandlerAttribute(Document&, const AtomicString& eventType, DOMWrapperWorld&);
 void setDocumentEventHandlerAttribute(JSC::ExecState&, JSC::JSObject&, Document&, const AtomicString& eventType, JSC::JSValue);
 
-inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext* scriptExecutionContext) const
+inline JSC::JSObject* JSEventListener::jsFunction(ScriptExecutionContext& scriptExecutionContext) const
 {
     // initializeJSFunction can trigger code that deletes this event listener
     // before we're done. It should always return 0 in this case.

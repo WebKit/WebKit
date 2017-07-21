@@ -855,24 +855,24 @@ String PluginView::getSelectionString() const
     return m_plugin->getSelectionString();
 }
 
-std::unique_ptr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const
+std::unique_ptr<WebEvent> PluginView::createWebEvent(MouseEvent& event) const
 {
     WebEvent::Type type = WebEvent::NoType;
     unsigned clickCount = 1;
-    if (event->type() == eventNames().mousedownEvent)
+    if (event.type() == eventNames().mousedownEvent)
         type = WebEvent::MouseDown;
-    else if (event->type() == eventNames().mouseupEvent)
+    else if (event.type() == eventNames().mouseupEvent)
         type = WebEvent::MouseUp;
-    else if (event->type() == eventNames().mouseoverEvent) {
+    else if (event.type() == eventNames().mouseoverEvent) {
         type = WebEvent::MouseMove;
         clickCount = 0;
-    } else if (event->type() == eventNames().clickEvent)
+    } else if (event.type() == eventNames().clickEvent)
         return nullptr;
     else
         ASSERT_NOT_REACHED();
 
     WebMouseEvent::Button button = WebMouseEvent::NoButton;
-    switch (event->button()) {
+    switch (event.button()) {
     case WebCore::LeftButton:
         button = WebMouseEvent::LeftButton;
         break;
@@ -888,26 +888,26 @@ std::unique_ptr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const
     }
 
     unsigned modifiers = 0;
-    if (event->shiftKey())
+    if (event.shiftKey())
         modifiers |= WebEvent::ShiftKey;
-    if (event->ctrlKey())
+    if (event.ctrlKey())
         modifiers |= WebEvent::ControlKey;
-    if (event->altKey())
+    if (event.altKey())
         modifiers |= WebEvent::AltKey;
-    if (event->metaKey())
+    if (event.metaKey())
         modifiers |= WebEvent::MetaKey;
 
-    return std::make_unique<WebMouseEvent>(type, button, m_plugin->convertToRootView(IntPoint(event->offsetX(), event->offsetY())), event->screenLocation(), 0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(modifiers), 0, 0);
+    return std::make_unique<WebMouseEvent>(type, button, m_plugin->convertToRootView(IntPoint(event.offsetX(), event.offsetY())), event.screenLocation(), 0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(modifiers), 0, 0);
 }
 
-void PluginView::handleEvent(Event* event)
+void PluginView::handleEvent(Event& event)
 {
     if (!m_isInitialized || !m_plugin)
         return;
 
     const WebEvent* currentEvent = WebPage::currentEvent();
     std::unique_ptr<WebEvent> simulatedWebEvent;
-    if (is<MouseEvent>(*event) && downcast<MouseEvent>(*event).isSimulated()) {
+    if (is<MouseEvent>(event) && downcast<MouseEvent>(event).isSimulated()) {
         simulatedWebEvent = createWebEvent(downcast<MouseEvent>(event));
         currentEvent = simulatedWebEvent.get();
     }
@@ -916,9 +916,9 @@ void PluginView::handleEvent(Event* event)
 
     bool didHandleEvent = false;
 
-    if ((event->type() == eventNames().mousemoveEvent && currentEvent->type() == WebEvent::MouseMove)
-        || (event->type() == eventNames().mousedownEvent && currentEvent->type() == WebEvent::MouseDown)
-        || (event->type() == eventNames().mouseupEvent && currentEvent->type() == WebEvent::MouseUp)) {
+    if ((event.type() == eventNames().mousemoveEvent && currentEvent->type() == WebEvent::MouseMove)
+        || (event.type() == eventNames().mousedownEvent && currentEvent->type() == WebEvent::MouseDown)
+        || (event.type() == eventNames().mouseupEvent && currentEvent->type() == WebEvent::MouseUp)) {
         // FIXME: Clicking in a scroll bar should not change focus.
         if (currentEvent->type() == WebEvent::MouseDown) {
             focusPluginElement();
@@ -927,27 +927,27 @@ void PluginView::handleEvent(Event* event)
             frame()->eventHandler().setCapturingMouseEventsElement(nullptr);
 
         didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-        if (event->type() != eventNames().mousemoveEvent)
+        if (event.type() != eventNames().mousemoveEvent)
             pluginDidReceiveUserInteraction();
-    } else if (eventNames().isWheelEventType(event->type())
+    } else if (eventNames().isWheelEventType(event.type())
         && currentEvent->type() == WebEvent::Wheel && m_plugin->wantsWheelEvents()) {
         didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
         pluginDidReceiveUserInteraction();
-    } else if (event->type() == eventNames().mouseoverEvent && currentEvent->type() == WebEvent::MouseMove)
+    } else if (event.type() == eventNames().mouseoverEvent && currentEvent->type() == WebEvent::MouseMove)
         didHandleEvent = m_plugin->handleMouseEnterEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-    else if (event->type() == eventNames().mouseoutEvent && currentEvent->type() == WebEvent::MouseMove)
+    else if (event.type() == eventNames().mouseoutEvent && currentEvent->type() == WebEvent::MouseMove)
         didHandleEvent = m_plugin->handleMouseLeaveEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-    else if (event->type() == eventNames().contextmenuEvent && currentEvent->type() == WebEvent::MouseDown) {
+    else if (event.type() == eventNames().contextmenuEvent && currentEvent->type() == WebEvent::MouseDown) {
         didHandleEvent = m_plugin->handleContextMenuEvent(static_cast<const WebMouseEvent&>(*currentEvent));
         pluginDidReceiveUserInteraction();
-    } else if ((event->type() == eventNames().keydownEvent && currentEvent->type() == WebEvent::KeyDown)
-               || (event->type() == eventNames().keyupEvent && currentEvent->type() == WebEvent::KeyUp)) {
+    } else if ((event.type() == eventNames().keydownEvent && currentEvent->type() == WebEvent::KeyDown)
+               || (event.type() == eventNames().keyupEvent && currentEvent->type() == WebEvent::KeyUp)) {
         didHandleEvent = m_plugin->handleKeyboardEvent(static_cast<const WebKeyboardEvent&>(*currentEvent));
         pluginDidReceiveUserInteraction();
     }
 
     if (didHandleEvent)
-        event->setDefaultHandled();
+        event.setDefaultHandled();
 }
     
 bool PluginView::handleEditingCommand(const String& commandName, const String& argument)

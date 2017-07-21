@@ -57,24 +57,20 @@ JSErrorHandler::~JSErrorHandler()
 {
 }
 
-void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
+void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event)
 {
-    if (!is<ErrorEvent>(*event))
+    if (!is<ErrorEvent>(event))
         return JSEventListener::handleEvent(scriptExecutionContext, event);
 
-    ASSERT(scriptExecutionContext);
-    if (!scriptExecutionContext)
-        return;
+    ErrorEvent& errorEvent = downcast<ErrorEvent>(event);
 
-    ErrorEvent& errorEvent = downcast<ErrorEvent>(*event);
-
-    JSLockHolder lock(scriptExecutionContext->vm());
+    JSLockHolder lock(scriptExecutionContext.vm());
 
     JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
     if (!jsFunction)
         return;
 
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(scriptExecutionContext, isolatedWorld());
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(&scriptExecutionContext, isolatedWorld());
     if (!globalObject)
         return;
 
@@ -87,7 +83,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         Ref<JSErrorHandler> protectedThis(*this);
 
         Event* savedEvent = globalObject->currentEvent();
-        globalObject->setCurrentEvent(event);
+        globalObject->setCurrentEvent(&event);
 
         MarkedArgumentBuffer args;
         args.append(toJS<IDLDOMString>(*exec, errorEvent.message()));
@@ -99,14 +95,14 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         VM& vm = globalObject->vm();
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
-        InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
+        InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
 
         NakedPtr<JSC::Exception> exception;
-        JSValue returnValue = scriptExecutionContext->isDocument()
+        JSValue returnValue = scriptExecutionContext.isDocument()
             ? JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, jsFunction, callType, callData, globalObject, args, exception)
             : JSC::profiledCall(exec, JSC::ProfilingReason::Other, jsFunction, callType, callData, globalObject, args, exception);
 
-        InspectorInstrumentation::didCallFunction(cookie, scriptExecutionContext);
+        InspectorInstrumentation::didCallFunction(cookie, &scriptExecutionContext);
 
         globalObject->setCurrentEvent(savedEvent);
 
@@ -114,7 +110,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
             reportException(exec, exception);
         else {
             if (returnValue.isTrue())
-                event->preventDefault();
+                event.preventDefault();
         }
     }
 }

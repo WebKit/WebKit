@@ -81,9 +81,9 @@ void WebVideoFullscreenModelVideoElement::setVideoElement(HTMLVideoElement* vide
     updateForEventName(eventNameAll());
 }
 
-void WebVideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)
+void WebVideoFullscreenModelVideoElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
 {
-    updateForEventName(event->type());
+    updateForEventName(event.type());
 }
 
 void WebVideoFullscreenModelVideoElement::updateForEventName(const WTF::AtomicString& eventName)

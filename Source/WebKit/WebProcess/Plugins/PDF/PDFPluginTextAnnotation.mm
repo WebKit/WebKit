@@ -128,24 +128,24 @@ String PDFPluginTextAnnotation::value() const
     return downcast<HTMLTextFormControlElement>(element())->value();
 }
 
-bool PDFPluginTextAnnotation::handleEvent(Event* event)
+bool PDFPluginTextAnnotation::handleEvent(Event& event)
 {
     if (PDFPluginAnnotation::handleEvent(event))
         return true;
 
-    if (event->isKeyboardEvent() && event->type() == eventNames().keydownEvent) {
-        KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(event);
+    if (event.isKeyboardEvent() && event.type() == eventNames().keydownEvent) {
+        auto& keyboardEvent = downcast<KeyboardEvent>(event);
 
-        if (keyboardEvent->keyIdentifier() == "U+0009") {
-            if (keyboardEvent->ctrlKey() || keyboardEvent->metaKey() || keyboardEvent->altGraphKey())
+        if (keyboardEvent.keyIdentifier() == "U+0009") {
+            if (keyboardEvent.ctrlKey() || keyboardEvent.metaKey() || keyboardEvent.altGraphKey())
                 return false;
 
-            if (keyboardEvent->shiftKey())
+            if (keyboardEvent.shiftKey())
                 plugin()->focusPreviousAnnotation();
             else
                 plugin()->focusNextAnnotation();
             
-            event->preventDefault();
+            event.preventDefault();
             return true;
         }
     }

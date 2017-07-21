@@ -107,7 +107,7 @@ static Vector<CommandLineAPIHost::ListenerEntry> listenerEntriesFromListenerInfo
         if (&jsListener->isolatedWorld() != &currentWorld(&state))
             continue;
 
-        auto function = jsListener->jsFunction(&document);
+        auto function = jsListener->jsFunction(document);
         if (!function)
             continue;
 

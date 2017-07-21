@@ -46,7 +46,7 @@ public:
     WebEventListener(IDOMEventListener*);
     ~WebEventListener();
     virtual bool operator==(const EventListener&) const;
-    virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*);
+    virtual void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&);
     static Ref<WebEventListener> create(IDOMEventListener*);
 private:
     IDOMEventListener* m_iDOMEventListener;

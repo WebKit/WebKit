@@ -60,7 +60,7 @@ JSEventListener::~JSEventListener()
 {
 }
 
-JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext*) const
+JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext&) const
 {
     return nullptr;
 }
@@ -84,13 +84,12 @@ static void handleBeforeUnloadEventReturnValue(BeforeUnloadEvent& event, const S
         event.setReturnValue(returnValue);
 }
 
-void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext, Event* event)
+void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event)
 {
-    ASSERT(scriptExecutionContext);
-    if (!scriptExecutionContext || scriptExecutionContext->isJSExecutionForbidden())
+    if (scriptExecutionContext.isJSExecutionForbidden())
         return;
 
-    VM& vm = scriptExecutionContext->vm();
+    VM& vm = scriptExecutionContext.vm();
     JSLockHolder lock(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
     // See https://dom.spec.whatwg.org/#dispatching-events spec on calling handleEvent.
@@ -101,15 +100,15 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
     if (!jsFunction)
         return;
 
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(scriptExecutionContext, m_isolatedWorld);
+    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(&scriptExecutionContext, m_isolatedWorld);
     if (!globalObject)
         return;
 
-    if (scriptExecutionContext->isDocument()) {
+    if (scriptExecutionContext.isDocument()) {
         JSDOMWindow* window = jsCast<JSDOMWindow*>(globalObject);
         if (!window->wrapped().isCurrentlyDisplayedInFrame())
             return;
-        if (wasCreatedFromMarkup() && !scriptExecutionContext->contentSecurityPolicy()->allowInlineEventHandlers(sourceURL(), sourcePosition().m_line))
+        if (wasCreatedFromMarkup() && !scriptExecutionContext.contentSecurityPolicy()->allowInlineEventHandlers(sourceURL(), sourcePosition().m_line))
             return;
         // FIXME: Is this check needed for other contexts?
         ScriptController& script = window->wrapped().frame()->script();
@@ -129,7 +128,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
             auto* exception = scope.exception();
             scope.clearException();
 
-            event->target()->uncaughtExceptionInEventHandler();
+            event.target()->uncaughtExceptionInEventHandler();
             reportException(exec, exception);
             return;
         }
@@ -140,42 +139,42 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         Ref<JSEventListener> protectedThis(*this);
 
         MarkedArgumentBuffer args;
-        args.append(toJS(exec, globalObject, event));
+        args.append(toJS(exec, globalObject, &event));
 
         Event* savedEvent = globalObject->currentEvent();
-        globalObject->setCurrentEvent(event);
+        globalObject->setCurrentEvent(&event);
 
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
-        InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(scriptExecutionContext, callType, callData);
+        InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);
 
-        JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event->currentTarget()) : jsFunction;
+        JSValue thisValue = handleEventFunction == jsFunction ? toJS(exec, globalObject, event.currentTarget()) : jsFunction;
         NakedPtr<JSC::Exception> exception;
-        JSValue retval = scriptExecutionContext->isDocument()
+        JSValue retval = scriptExecutionContext.isDocument()
             ? JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception)
             : JSC::profiledCall(exec, JSC::ProfilingReason::Other, handleEventFunction, callType, callData, thisValue, args, exception);
 
-        InspectorInstrumentation::didCallFunction(cookie, scriptExecutionContext);
+        InspectorInstrumentation::didCallFunction(cookie, &scriptExecutionContext);
 
         globalObject->setCurrentEvent(savedEvent);
 
-        if (is<WorkerGlobalScope>(*scriptExecutionContext)) {
-            auto scriptController = downcast<WorkerGlobalScope>(*scriptExecutionContext).script();
+        if (is<WorkerGlobalScope>(scriptExecutionContext)) {
+            auto scriptController = downcast<WorkerGlobalScope>(scriptExecutionContext).script();
             bool terminatorCausedException = (scope.exception() && isTerminatedExecutionException(vm, scope.exception()));
             if (terminatorCausedException || scriptController->isTerminatingExecution())
                 scriptController->forbidExecution();
         }
 
         if (exception) {
-            event->target()->uncaughtExceptionInEventHandler();
+            event.target()->uncaughtExceptionInEventHandler();
             reportException(exec, exception);
         } else {
-            if (is<BeforeUnloadEvent>(*event))
-                handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(*event), convert<IDLNullable<IDLDOMString>>(*exec, retval));
+            if (is<BeforeUnloadEvent>(event))
+                handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), convert<IDLNullable<IDLDOMString>>(*exec, retval));
 
             if (m_isAttribute) {
                 if (retval.isFalse())
-                    event->preventDefault();
+                    event.preventDefault();
             }
         }
     }
@@ -202,7 +201,7 @@ static inline JSC::JSValue eventHandlerAttribute(EventListener* abstractListener
     if (!listener)
         return jsNull();
 
-    auto* function = listener->jsFunction(&context);
+    auto* function = listener->jsFunction(context);
     if (!function)
         return jsNull();
 

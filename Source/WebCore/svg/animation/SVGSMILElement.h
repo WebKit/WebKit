@@ -166,7 +166,7 @@ private:
     void disconnectConditions();
 
     // Event base timing
-    void handleConditionEvent(Event*, Condition*);
+    void handleConditionEvent(Condition*);
 
     // Syncbase timing
     enum NewOrExistingInterval { NewInterval, ExistingInterval };

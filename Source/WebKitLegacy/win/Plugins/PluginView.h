@@ -190,7 +190,7 @@ namespace WebCore {
         // This clip includes any clips that the widget itself sets up for its children.
         IntRect windowClipRect() const;
 
-        void handleEvent(Event*) override;
+        void handleEvent(Event&) override;
         void setParent(ScrollView*) override;
         void setParentVisible(bool) override;
 
@@ -291,8 +291,8 @@ namespace WebCore {
         void updatePluginWidget();
         void paintMissingPluginIcon(GraphicsContext&, const IntRect&);
 
-        void handleKeyboardEvent(KeyboardEvent*);
-        void handleMouseEvent(MouseEvent*);
+        void handleKeyboardEvent(KeyboardEvent&);
+        void handleMouseEvent(MouseEvent&);
 
         void paintIntoTransformedContext(HDC);
         RefPtr<Image> snapshot();

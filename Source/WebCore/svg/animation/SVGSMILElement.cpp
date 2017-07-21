@@ -91,7 +91,7 @@ private:
     {
     }
 
-    void handleEvent(ScriptExecutionContext*, Event*) final;
+    void handleEvent(ScriptExecutionContext&, Event&) final;
 
     SVGSMILElement* m_animation;
     SVGSMILElement::Condition* m_condition;
@@ -104,11 +104,11 @@ bool ConditionEventListener::operator==(const EventListener& listener) const
     return false;
 }
 
-void ConditionEventListener::handleEvent(ScriptExecutionContext*, Event* event) 
+void ConditionEventListener::handleEvent(ScriptExecutionContext&, Event&)
 {
     if (!m_animation)
         return;
-    m_animation->handleConditionEvent(event, m_condition);
+    m_animation->handleConditionEvent(m_condition);
 }
 
 SVGSMILElement::Condition::Condition(Type type, BeginOrEnd beginOrEnd, const String& baseID, const String& name, SMILTime offset, int repeats)
@@ -1195,7 +1195,7 @@ void SVGSMILElement::removeTimeDependent(SVGSMILElement* animation)
     m_timeDependents.remove(animation);
 }
     
-void SVGSMILElement::handleConditionEvent(Event*, Condition* condition)
+void SVGSMILElement::handleConditionEvent(Condition* condition)
 {
     SMILTime elapsed = this->elapsed();
     if (condition->m_beginOrEnd == Begin)

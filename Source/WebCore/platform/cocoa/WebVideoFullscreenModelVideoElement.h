@@ -57,7 +57,7 @@ public:
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, WTF::Function<void()>&& completionHandler = [] { });
     WEBCORE_EXPORT void waitForPreparedForInlineThen(WTF::Function<void()>&& completionHandler = [] { });
     
-    WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
+    WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) override;
     void updateForEventName(const WTF::AtomicString&);
     bool operator==(const EventListener& rhs) const override { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 

@@ -176,7 +176,7 @@ private:
     void setFocus(bool) override;
     void frameRectsChanged() override;
     void setParent(WebCore::ScrollView*) override;
-    void handleEvent(WebCore::Event*) override;
+    void handleEvent(WebCore::Event&) override;
     void notifyWidget(WebCore::WidgetNotification) override;
     void show() override;
     void hide() override;
@@ -238,7 +238,7 @@ private:
     void didFinishLoad(WebFrame*) override;
     void didFailLoad(WebFrame*, bool wasCancelled) override;
 
-    std::unique_ptr<WebEvent> createWebEvent(WebCore::MouseEvent*) const;
+    std::unique_ptr<WebEvent> createWebEvent(WebCore::MouseEvent&) const;
 
     RefPtr<WebCore::HTMLPlugInElement> m_pluginElement;
     RefPtr<Plugin> m_plugin;

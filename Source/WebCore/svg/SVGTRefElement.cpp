@@ -72,7 +72,7 @@ public:
 private:
     explicit SVGTRefTargetEventListener(SVGTRefElement& trefElement);
 
-    void handleEvent(ScriptExecutionContext*, Event*) final;
+    void handleEvent(ScriptExecutionContext&, Event&) final;
     bool operator==(const EventListener&) const final;
 
     SVGTRefElement& m_trefElement;
@@ -114,13 +114,13 @@ bool SVGTRefTargetEventListener::operator==(const EventListener& listener) const
     return false;
 }
 
-void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext*, Event* event)
+void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
     ASSERT(isAttached());
 
-    if (event->type() == eventNames().DOMSubtreeModifiedEvent && &m_trefElement != event->target())
+    if (event.type() == eventNames().DOMSubtreeModifiedEvent && &m_trefElement != event.target())
         m_trefElement.updateReferencedText(m_target.get());
-    else if (event->type() == eventNames().DOMNodeRemovedFromDocumentEvent)
+    else if (event.type() == eventNames().DOMNodeRemovedFromDocumentEvent)
         m_trefElement.detachTarget();
 }
 

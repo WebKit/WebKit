@@ -213,7 +213,7 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
         RefPtr<Widget> widget = downcast<RenderWidget>(*renderer).widget();
         if (!widget)
             return;
-        widget->handleEvent(&event);
+        widget->handleEvent(event);
         if (event.defaultHandled())
             return;
     }

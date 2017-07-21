@@ -1842,21 +1842,21 @@ public:
         return false;
     }
 
-    virtual void handleEvent(Event* event)
+    virtual void handleEvent(Event& event)
     {
         Frame* frame = Frame::frameForWidget(*this);
         if (!frame)
             return;
         
         NSEvent* currentNSEvent = frame->eventHandler().currentNSEvent();
-        if (event->type() == eventNames().mousemoveEvent)
+        if (event.type() == eventNames().mousemoveEvent)
             [(WebBaseNetscapePluginView *)platformWidget() handleMouseMoved:currentNSEvent];
-        else if (event->type() == eventNames().mouseoverEvent)
+        else if (event.type() == eventNames().mouseoverEvent)
             [(WebBaseNetscapePluginView *)platformWidget() handleMouseEntered:currentNSEvent];
-        else if (event->type() == eventNames().mouseoutEvent)
+        else if (event.type() == eventNames().mouseoutEvent)
             [(WebBaseNetscapePluginView *)platformWidget() handleMouseExited:currentNSEvent];
-        else if (event->type() == eventNames().contextmenuEvent)
-            event->setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
+        else if (event.type() == eventNames().contextmenuEvent)
+            event.setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
     }
 
     virtual void clipRectChanged()

@@ -46,7 +46,7 @@ private:
 
     JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode*, const String& sourceURL, const TextPosition&, JSC::JSObject* wrapper, DOMWrapperWorld& isolatedWorld);
 
-    JSC::JSObject* initializeJSFunction(ScriptExecutionContext*) const override;
+    JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const override;
     bool wasCreatedFromMarkup() const override { return true; }
 
     String m_functionName;

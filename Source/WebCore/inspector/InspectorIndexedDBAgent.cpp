@@ -115,14 +115,14 @@ public:
         return this == &other;
     }
 
-    void handleEvent(ScriptExecutionContext*, Event* event) final
+    void handleEvent(ScriptExecutionContext&, Event& event) final
     {
-        if (event->type() != eventNames().successEvent) {
+        if (event.type() != eventNames().successEvent) {
             m_executableWithDatabase->requestCallback().sendFailure("Unexpected event type.");
             return;
         }
 
-        auto& request = static_cast<IDBOpenDBRequest&>(*event->target());
+        auto& request = static_cast<IDBOpenDBRequest&>(*event.target());
 
         auto result = request.result();
         if (result.hasException()) {
@@ -357,14 +357,14 @@ public:
         return this == &other;
     }
 
-    void handleEvent(ScriptExecutionContext* context, Event* event) override
+    void handleEvent(ScriptExecutionContext&, Event& event) override
     {
-        if (event->type() != eventNames().successEvent) {
+        if (event.type() != eventNames().successEvent) {
             m_requestCallback->sendFailure("Unexpected event type.");
             return;
         }
 
-        auto& request = static_cast<IDBRequest&>(*event->target());
+        auto& request = static_cast<IDBRequest&>(*event.target());
 
         auto result = request.result();
         if (result.hasException()) {
@@ -397,10 +397,6 @@ public:
             m_requestCallback->sendFailure("Could not continue cursor.");
             return;
         }
-
-        auto* state = context ? context->execState() : nullptr;
-        if (!state)
-            return;
 
         auto dataEntry = DataEntry::create()
             .setKey(m_injectedScript.wrapObject(cursor->key(), String(), true))
@@ -646,11 +642,11 @@ public:
         return this == &other;
     }
 
-    void handleEvent(ScriptExecutionContext*, Event* event) override
+    void handleEvent(ScriptExecutionContext&, Event& event) override
     {
         if (!m_requestCallback->isActive())
             return;
-        if (event->type() != eventNames().completeEvent) {
+        if (event.type() != eventNames().completeEvent) {
             m_requestCallback->sendFailure("Unexpected event type.");
             return;
         }

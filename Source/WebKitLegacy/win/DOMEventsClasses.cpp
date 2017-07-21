@@ -74,9 +74,9 @@ bool WebEventListener::operator==(const WebCore::EventListener& other) const
         && reinterpret_cast<const WebEventListener*>(&other)->m_iDOMEventListener == m_iDOMEventListener);
 }
 
-void WebEventListener::handleEvent(WebCore::ScriptExecutionContext* s, WebCore::Event* e)
+void WebEventListener::handleEvent(WebCore::ScriptExecutionContext& s, WebCore::Event& e)
 {
-    RefPtr<WebCore::Event> ePtr(e);
+    RefPtr<WebCore::Event> ePtr(&e);
     COMPtr<IDOMEvent> domEvent = DOMEvent::createInstance(WTFMove(ePtr));
     m_iDOMEventListener->handleEvent(domEvent.get());
 }

@@ -85,9 +85,9 @@ void WebPlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* medi
     updateForEventName(eventNameAll());
 }
 
-void WebPlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event* event)
+void WebPlaybackSessionModelMediaElement::handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event& event)
 {
-    updateForEventName(event->type());
+    updateForEventName(event.type());
 }
 
 void WebPlaybackSessionModelMediaElement::updateForEventName(const WTF::AtomicString& eventName)

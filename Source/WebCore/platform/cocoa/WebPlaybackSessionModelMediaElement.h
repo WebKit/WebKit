@@ -51,7 +51,7 @@ public:
     WEBCORE_EXPORT void setMediaElement(HTMLMediaElement*);
     HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
 
-    WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) final;
+    WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
     void updateForEventName(const WTF::AtomicString&);
     bool operator==(const EventListener& rhs) const final { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
 

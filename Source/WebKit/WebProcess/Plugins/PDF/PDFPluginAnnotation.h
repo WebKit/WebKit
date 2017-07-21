@@ -72,7 +72,7 @@ protected:
     PDFLayerController *pdfLayerController() const { return m_pdfLayerController; }
     WebCore::EventListener* eventListener() const { return m_eventListener.get(); }
 
-    virtual bool handleEvent(WebCore::Event*);
+    virtual bool handleEvent(WebCore::Event&);
 
 private:
     virtual Ref<WebCore::Element> createAnnotationElement() = 0;
@@ -96,7 +96,7 @@ private:
         {
         }
 
-        void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*) override;
+        void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) override;
 
         PDFPluginAnnotation* m_annotation;
     };

@@ -65,14 +65,14 @@ void PDFPluginPasswordField::updateGeometry()
 {
 }
 
-bool PDFPluginPasswordField::handleEvent(WebCore::Event* event)
+bool PDFPluginPasswordField::handleEvent(WebCore::Event& event)
 {
-    if (event->isKeyboardEvent() && event->type() == eventNames().keyupEvent) {
-        KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(event);
+    if (event.isKeyboardEvent() && event.type() == eventNames().keyupEvent) {
+        auto& keyboardEvent = downcast<KeyboardEvent>(event);
 
-        if (keyboardEvent->keyIdentifier() == "Enter") {
+        if (keyboardEvent.keyIdentifier() == "Enter") {
             plugin()->attemptToUnlockPDF(value());
-            event->preventDefault();
+            event.preventDefault();
             return true;
         }
     }

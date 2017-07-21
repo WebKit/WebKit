@@ -162,7 +162,7 @@ void PluginView::clipRectChanged()
     updatePluginWidget();
 }
 
-void PluginView::handleEvent(Event* event)
+void PluginView::handleEvent(Event& event)
 {
     if (!m_plugin || m_isWindowed)
         return;
@@ -170,12 +170,12 @@ void PluginView::handleEvent(Event* event)
     // Protect the plug-in from deletion while dispatching the event.
     RefPtr<PluginView> protect(this);
 
-    if (event->isMouseEvent())
-        handleMouseEvent(static_cast<MouseEvent*>(event));
-    else if (event->isKeyboardEvent())
-        handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
-    else if (event->type() == eventNames().contextmenuEvent)
-        event->setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
+    if (event.isMouseEvent())
+        handleMouseEvent(downcast<MouseEvent>(event));
+    else if (event.isKeyboardEvent())
+        handleKeyboardEvent(downcast<KeyboardEvent>(event));
+    else if (event.type() == eventNames().contextmenuEvent)
+        event.setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
 }
 
 void PluginView::init()

@@ -576,21 +576,21 @@ void PluginView::paint(GraphicsContext& context, const IntRect& rect, Widget::Se
     paintIntoTransformedContext(windowsContext.hdc());
 }
 
-void PluginView::handleKeyboardEvent(KeyboardEvent* event)
+void PluginView::handleKeyboardEvent(KeyboardEvent& event)
 {
     ASSERT(m_plugin && !m_isWindowed);
 
     NPEvent npEvent;
 
-    npEvent.wParam = event->keyCode();
+    npEvent.wParam = event.keyCode();
 
-    if (event->type() == eventNames().keydownEvent) {
+    if (event.type() == eventNames().keydownEvent) {
         npEvent.event = WM_KEYDOWN;
         npEvent.lParam = 0;
-    } else if (event->type() == eventNames().keypressEvent) {
+    } else if (event.type() == eventNames().keypressEvent) {
         npEvent.event = WM_CHAR;
         npEvent.lParam = 0;
-    } else if (event->type() == eventNames().keyupEvent) {
+    } else if (event.type() == eventNames().keyupEvent) {
         npEvent.event = WM_KEYUP;
         npEvent.lParam = 0x8000;
     } else
@@ -598,33 +598,33 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 
     JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
     if (dispatchNPEvent(npEvent))
-        event->setDefaultHandled();
+        event.setDefaultHandled();
 }
 
 extern bool ignoreNextSetCursor;
 
-void PluginView::handleMouseEvent(MouseEvent* event)
+void PluginView::handleMouseEvent(MouseEvent& event)
 {
     ASSERT(m_plugin && !m_isWindowed);
 
     NPEvent npEvent;
 
-    IntPoint p = contentsToNativeWindow(downcast<FrameView>(parent()), IntPoint(event->pageX(), event->pageY()));
+    IntPoint p = contentsToNativeWindow(downcast<FrameView>(parent()), IntPoint(event.pageX(), event.pageY()));
 
     npEvent.lParam = MAKELPARAM(p.x(), p.y());
     npEvent.wParam = 0;
 
-    if (event->ctrlKey())
+    if (event.ctrlKey())
         npEvent.wParam |= MK_CONTROL;
-    if (event->shiftKey())
+    if (event.shiftKey())
         npEvent.wParam |= MK_SHIFT;
 
-    if (event->type() == eventNames().mousemoveEvent
-        || event->type() == eventNames().mouseoutEvent
-        || event->type() == eventNames().mouseoverEvent) {
+    if (event.type() == eventNames().mousemoveEvent
+        || event.type() == eventNames().mouseoutEvent
+        || event.type() == eventNames().mouseoverEvent) {
         npEvent.event = WM_MOUSEMOVE;
-        if (event->buttonDown())
-            switch (event->button()) {
+        if (event.buttonDown())
+            switch (event.button()) {
             case LeftButton:
                 npEvent.wParam |= MK_LBUTTON;
                 break;
@@ -635,9 +635,9 @@ void PluginView::handleMouseEvent(MouseEvent* event)
                 npEvent.wParam |= MK_RBUTTON;
                 break;
             }
-    } else if (event->type() == eventNames().mousedownEvent) {
+    } else if (event.type() == eventNames().mousedownEvent) {
         focusPluginElement();
-        switch (event->button()) {
+        switch (event.button()) {
         case LeftButton:
             npEvent.event = WM_LBUTTONDOWN;
             break;
@@ -648,8 +648,8 @@ void PluginView::handleMouseEvent(MouseEvent* event)
             npEvent.event = WM_RBUTTONDOWN;
             break;
         }
-    } else if (event->type() == eventNames().mouseupEvent) {
-        switch (event->button()) {
+    } else if (event.type() == eventNames().mouseupEvent) {
+        switch (event.button()) {
         case LeftButton:
             npEvent.event = WM_LBUTTONUP;
             break;
@@ -666,7 +666,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
     // FIXME: Consider back porting the http://webkit.org/b/58108 fix here.
     if (dispatchNPEvent(npEvent))
-        event->setDefaultHandled();
+        event.setDefaultHandled();
 
     // Currently, Widget::setCursor is always called after this function in EventHandler.cpp
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
