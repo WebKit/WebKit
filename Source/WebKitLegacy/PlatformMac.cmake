@@ -261,7 +261,6 @@ list(APPEND WebKit_SOURCES
     mac/WebCoreSupport/WebFrameLoaderClient.mm
     mac/WebCoreSupport/WebFrameNetworkingContext.mm
     mac/WebCoreSupport/WebGeolocationClient.mm
-    mac/WebCoreSupport/WebIconDatabaseClient.mm
     mac/WebCoreSupport/WebInspectorClient.mm
     mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
     mac/WebCoreSupport/WebKitFullScreenListener.mm
