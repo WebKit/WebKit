@@ -721,3 +721,6 @@ webkit.org/b/172397 [ Sierra Debug ] animations/needs-layout.html [ Pass ImageOn
 
 # Currently only tests with click, not tap.
 http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
+
+webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Pass Timout ]
+webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Pass Timeout ]
