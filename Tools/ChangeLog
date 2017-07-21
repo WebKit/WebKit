@@ -1,3 +1,14 @@
+2017-07-21  Jonathan Bedard  <jbedard@apple.com>
+
+        Fail gracefully when xcrun fails in IOSSimulatorPort constructor
+        https://bugs.webkit.org/show_bug.cgi?id=174724
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.__init__): Ignore any errors when attempting to find a running
+        simulator. Errors here should be treated the same as no simulators found.
+
 2017-07-21  Yousuke Kimoto  <Yousuke.Kimoto@sony.com>
 
         [CMake] Add an option to stop build after generating project files
