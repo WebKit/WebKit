@@ -1,5 +1,24 @@
 2017-07-21  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK] Update test expectations after r219663
+
+        Unreviewed gardening
+
+        DOMException got its toString() removed so the output changes.
+
+        * platform/gtk/crypto/subtle/aes-cbc-cfb-decrypt-malformed-parameters-expected.txt:
+        * platform/gtk/crypto/subtle/aes-cbc-cfb-encrypt-malformed-parameters-expected.txt:
+        * platform/gtk/crypto/subtle/aes-export-key-malformed-parameters-expected.txt:
+        * platform/gtk/crypto/subtle/aes-generate-key-malformed-parameters-expected.txt:
+        * platform/gtk/crypto/subtle/aes-import-key-malformed-parameters-expected.txt:
+        * platform/gtk/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt:
+        * platform/gtk/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt:
+        * platform/gtk/fast/mediastream/RTCPeerConnection-closed-state-expected.txt:
+        * platform/gtk/fast/text/font-selection-font-loading-api-parse-expected.txt:
+        * platform/gtk/http/tests/dom/document-attributes-null-handling-expected.txt:
+
+2017-07-21  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Update expectation file
 
         Unreviewed gardening.
