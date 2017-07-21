@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Instrument = class Instrument extends WebInspector.Object
+WebInspector.Instrument = class Instrument
 {
     // Static
 

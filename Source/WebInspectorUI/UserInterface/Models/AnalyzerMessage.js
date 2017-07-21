@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.AnalyzerMessage = class AnalyzerMessage extends WebInspector.Object
+WebInspector.AnalyzerMessage = class AnalyzerMessage
 {
     constructor(sourceCodeLocation, text, ruleIdentifier)
     {
-        super();
-
         console.assert(sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
         console.assert(typeof text === "string");
 

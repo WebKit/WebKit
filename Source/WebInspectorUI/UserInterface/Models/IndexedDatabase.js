@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabase = class IndexedDatabase extends WebInspector.Object
+WebInspector.IndexedDatabase = class IndexedDatabase
 {
     constructor(name, securityOrigin, version, objectStores)
     {
-        super();
-
         this._name = name;
         this._securityOrigin = securityOrigin;
         this._host = parseSecurityOrigin(securityOrigin).host;

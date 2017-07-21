@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPreview = class ObjectPreview extends WebInspector.Object
+WebInspector.ObjectPreview = class ObjectPreview
 {
     constructor(type, subtype, description, lossless, overflow, properties, entries, size)
     {
-        super();
-
         console.assert(type);
         console.assert(typeof lossless === "boolean");
         console.assert(!properties || !properties.length || properties[0] instanceof WebInspector.PropertyPreview);

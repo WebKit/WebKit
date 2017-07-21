@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryPressureEvent = class MemoryPressureEvent extends WebInspector.Object
+WebInspector.MemoryPressureEvent = class MemoryPressureEvent
 {
     constructor(timestamp, severity)
     {
-        super();
-
         this._timestamp = timestamp;
         this._severity = severity;
     }

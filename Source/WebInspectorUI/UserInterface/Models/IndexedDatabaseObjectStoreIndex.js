@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.IndexedDatabaseObjectStoreIndex = class IndexedDatabaseObjectStoreIndex extends WebInspector.Object
+WebInspector.IndexedDatabaseObjectStoreIndex = class IndexedDatabaseObjectStoreIndex
 {
     constructor(name, keyPath, unique, multiEntry)
     {
-        super();
-
         this._name = name;
         this._keyPath = keyPath;
         this._unique = unique || false;

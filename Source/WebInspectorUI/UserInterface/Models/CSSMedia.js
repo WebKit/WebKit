@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSMedia = class CSSMedia extends WebInspector.Object
+WebInspector.CSSMedia = class CSSMedia
 {
     constructor(type, text, sourceCodeLocation)
     {
-        super();
-
         console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
 
         this._type = type || null;

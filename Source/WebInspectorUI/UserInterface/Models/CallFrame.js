@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CallFrame = class CallFrame extends WebInspector.Object
+WebInspector.CallFrame = class CallFrame
 {
     constructor(target, id, sourceCodeLocation, functionName, thisObject, scopeChain, nativeCode, programCode, isTailDeleted)
     {
-        super();
-
         console.assert(target instanceof WebInspector.Target);
         console.assert(!sourceCodeLocation || sourceCodeLocation instanceof WebInspector.SourceCodeLocation);
         console.assert(!thisObject || thisObject instanceof WebInspector.RemoteObject);

@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Branch = class Branch extends WebInspector.Object
+WebInspector.Branch = class Branch
 {
     constructor(displayName, revisions, locked)
     {
-        super();
-
         console.assert(displayName);
 
         this._displayName = displayName;

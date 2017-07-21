@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyPath = class PropertyPath extends WebInspector.Object
+WebInspector.PropertyPath = class PropertyPath
 {
     constructor(object, pathComponent, parent, isPrototype)
     {
-        super();
-
         console.assert(object instanceof WebInspector.RemoteObject || object === null);
         console.assert(!pathComponent || typeof pathComponent === "string");
         console.assert(!parent || parent instanceof WebInspector.PropertyPath);

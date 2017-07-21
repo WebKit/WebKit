@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TimelineRange = class TimelineRange extends WebInspector.Object
+WebInspector.TimelineRange = class TimelineRange
 {
     constructor(startValue, endValue)
     {
-        super();
-
         this._startValue = startValue;
         this._endValue = endValue;
     }

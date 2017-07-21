@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleMessage = class ConsoleMessage extends WebInspector.Object
+WebInspector.ConsoleMessage = class ConsoleMessage
 {
     constructor(target, source, level, message, type, url, line, column, repeatCount, parameters, callFrames, request)
     {
-        super();
-
         console.assert(typeof source === "string");
         console.assert(typeof level === "string");
         console.assert(typeof message === "string");

@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CallingContextTreeNode = class CallingContextTreeNode extends WebInspector.Object
+WebInspector.CallingContextTreeNode = class CallingContextTreeNode
 {
     constructor(sourceID, line, column, name, url, hash)
     {
-        super();
-
         this._children = {};
         this._sourceID = sourceID;
         this._line = line;

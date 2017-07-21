@@ -24,12 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BackForwardEntry = class BackForwardEntry extends WebInspector.Object
+WebInspector.BackForwardEntry = class BackForwardEntry
 {
     constructor(contentView, cookie)
     {
-        super();
-
         this._contentView = contentView;
 
         // ContentViews may be shared across multiple ContentViewContainers.

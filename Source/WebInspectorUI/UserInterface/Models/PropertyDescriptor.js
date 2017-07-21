@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyDescriptor = class PropertyDescriptor extends WebInspector.Object
+WebInspector.PropertyDescriptor = class PropertyDescriptor
 {
     constructor(descriptor, symbol, isOwnProperty, wasThrown, nativeGetter, isInternalProperty)
     {
-        super();
-
         console.assert(descriptor);
         console.assert(descriptor.name);
         console.assert(!descriptor.value || descriptor.value instanceof WebInspector.RemoteObject);

@@ -24,12 +24,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TypeSet = class TypeSet extends WebInspector.Object
+WebInspector.TypeSet = class TypeSet
 {
     constructor(typeSet)
     {
-        super();
-
         console.assert(typeSet);
 
         var bitString = 0x0;

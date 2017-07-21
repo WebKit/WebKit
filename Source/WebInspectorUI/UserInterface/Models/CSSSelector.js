@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CSSSelector = class CSSSelector extends WebInspector.Object
+WebInspector.CSSSelector = class CSSSelector
 {
     constructor(text, specificity, dynamic)
     {
-        super();
-
         console.assert(text);
 
         this._text = text;

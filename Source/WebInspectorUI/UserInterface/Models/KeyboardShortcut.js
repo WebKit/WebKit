@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.KeyboardShortcut = class KeyboardShortcut extends WebInspector.Object
+WebInspector.KeyboardShortcut = class KeyboardShortcut
 {
     constructor(modifiers, key, callback, targetElement)
     {
-        super();
-
         console.assert(key);
         console.assert(!callback || typeof callback === "function");
         console.assert(!targetElement || targetElement instanceof Element);

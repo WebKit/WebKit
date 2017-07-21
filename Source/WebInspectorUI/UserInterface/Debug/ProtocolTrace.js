@@ -23,22 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProtocolTrace = class ProtocolTrace extends WebInspector.Object
+WebInspector.ProtocolTrace = class ProtocolTrace
 {
     constructor()
     {
-        super();
-
         this._entries = [];
     }
 
     // Public
 
-    addEntry(entry) {
+    addEntry(entry)
+    {
         this._entries.push(entry);
     }
 
-    get saveData() {
+    get saveData()
+    {
         let now = new Date();
         let YYYY = now.getFullYear();
         let MM = now.getMonth() + 1;

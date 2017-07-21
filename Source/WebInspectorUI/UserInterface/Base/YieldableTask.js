@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.YieldableTask = class YieldableTask extends WebInspector.Object
+WebInspector.YieldableTask = class YieldableTask
 {
     constructor(delegate, items, options={})
     {
-        super();
-
         let {workInterval, idleInterval} = options;
         console.assert(!workInterval || workInterval > 0, workInterval);
         console.assert(!idleInterval || idleInterval > 0, idleInterval);

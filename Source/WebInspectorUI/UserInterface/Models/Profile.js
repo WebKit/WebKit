@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Profile = class Profile extends WebInspector.Object
+WebInspector.Profile = class Profile
 {
     constructor(topDownRootNodes)
     {
-        super();
-
         topDownRootNodes = topDownRootNodes || [];
 
         console.assert(topDownRootNodes instanceof Array);

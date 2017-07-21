@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.MemoryCategory = class MemoryCategory extends WebInspector.Object
+WebInspector.MemoryCategory = class MemoryCategory
 {
     constructor(type, size)
     {
-        super();
-
         console.assert(typeof type === "string");
         console.assert(typeof size === "number");
         console.assert(size >= 0);

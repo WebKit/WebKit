@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceQueryResult = class QueryResult extends WebInspector.Object
+WebInspector.ResourceQueryResult = class ResourceQueryResult
 {
     constructor(resource, matches, cookie)
     {
         console.assert(matches.length, "Query matches list can't be empty.");
-
-        super();
 
         this._resource = resource;
         this._matches = matches;

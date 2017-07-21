@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseObject = class DatabaseObject extends WebInspector.Object
+WebInspector.DatabaseObject = class DatabaseObject
 {
     constructor(id, host, name, version)
     {
-        super();
-
         this._id = id;
         this._host = host ? host : WebInspector.UIString("Local File");
         this._name = name;

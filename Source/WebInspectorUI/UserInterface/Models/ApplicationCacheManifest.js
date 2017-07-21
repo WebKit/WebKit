@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheManifest = class ApplicationCacheManifest extends WebInspector.Object
+WebInspector.ApplicationCacheManifest = class ApplicationCacheManifest
 {
     constructor(manifestURL)
     {
-        super();
-
         this._manifestURL = manifestURL;
     }
 

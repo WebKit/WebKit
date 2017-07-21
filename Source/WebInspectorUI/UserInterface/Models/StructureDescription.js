@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.StructureDescription = class StructureDescription extends WebInspector.Object
+WebInspector.StructureDescription = class StructureDescription
 {
     constructor(fields, optionalFields, constructorName, prototypeStructure, imprecise)
     {
-        super();
-
         console.assert(!fields || fields.every((x) => typeof x === "string"));
         console.assert(!optionalFields || optionalFields.every((x) => typeof x === "string"));
         console.assert(!constructorName || typeof constructorName === "string");

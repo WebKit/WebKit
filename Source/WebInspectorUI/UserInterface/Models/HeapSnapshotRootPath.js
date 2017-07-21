@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.HeapSnapshotRootPath = class HeapSnapshotRootPath extends WebInspector.Object
+WebInspector.HeapSnapshotRootPath = class HeapSnapshotRootPath
 {
     constructor(node, pathComponent, parent, isGlobalScope)
     {
-        super();
-
         console.assert(!node || node instanceof WebInspector.HeapSnapshotNodeProxy);
         console.assert(!pathComponent || typeof pathComponent === "string");
         console.assert(!parent || parent instanceof WebInspector.HeapSnapshotRootPath);

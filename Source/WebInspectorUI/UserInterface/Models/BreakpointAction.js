@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.BreakpointAction = class BreakpointAction extends WebInspector.Object
+WebInspector.BreakpointAction = class BreakpointAction
 {
     constructor(breakpoint, typeOrInfo, data)
     {
-        super();
-
         console.assert(breakpoint);
         console.assert(typeOrInfo);
 

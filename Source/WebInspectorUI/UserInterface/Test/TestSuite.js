@@ -23,7 +23,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-TestSuite = class TestSuite extends WebInspector.Object
+TestSuite = class TestSuite
 {
     constructor(harness, name) {
         if (!(harness instanceof TestHarness))
@@ -31,8 +31,6 @@ TestSuite = class TestSuite extends WebInspector.Object
 
         if (typeof name !== "string" || !name.trim().length)
             throw new Error("Tried to create TestSuite without string suite name.");
-
-        super();
 
         this.name = name;
         this._harness = harness;

@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CollectionEntry = class CollectionEntry extends WebInspector.Object
+WebInspector.CollectionEntry = class CollectionEntry
 {
     constructor(key, value)
     {
-        super();
-
         console.assert(value instanceof WebInspector.RemoteObject);
         console.assert(!key || key instanceof WebInspector.RemoteObject);
 

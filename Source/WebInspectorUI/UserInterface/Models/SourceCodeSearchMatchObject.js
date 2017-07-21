@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject extends WebInspector.Object
+WebInspector.SourceCodeSearchMatchObject = class SourceCodeSearchMatchObject
 {
     constructor(sourceCode, lineText, searchTerm, textRange)
     {
-        super();
-
         console.assert(sourceCode instanceof WebInspector.SourceCode);
 
         this._sourceCode = sourceCode;

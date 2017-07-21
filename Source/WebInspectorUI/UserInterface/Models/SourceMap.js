@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceMap = class SourceMap extends WebInspector.Object
+WebInspector.SourceMap = class SourceMap
 {
     constructor(sourceMappingURL, payload, originalSourceCode)
     {
-        super();
-
         if (!WebInspector.SourceMap._base64Map) {
             var base64Digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
             WebInspector.SourceMap._base64Map = {};

@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DebuggerData = class DebuggerData extends WebInspector.Object
+WebInspector.DebuggerData = class DebuggerData
 {
     constructor(target)
     {
-        super();
-
         console.assert(target instanceof WebInspector.Target);
 
         this._target = target;

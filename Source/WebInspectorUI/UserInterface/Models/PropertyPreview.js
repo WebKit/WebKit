@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.PropertyPreview = class PropertyPreview extends WebInspector.Object
+WebInspector.PropertyPreview = class PropertyPreview
 {
     constructor(name, type, subtype, value, valuePreview, isInternalProperty)
     {
-        super();
-
         console.assert(typeof name === "string");
         console.assert(type);
         console.assert(!value || typeof value === "string");

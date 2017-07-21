@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScopeChainNode = class ScopeChainNode extends WebInspector.Object
+WebInspector.ScopeChainNode = class ScopeChainNode
 {
     constructor(type, objects, name, location, empty)
     {
-        super();
-
         console.assert(typeof type === "string");
         console.assert(objects.every((x) => x instanceof WebInspector.RemoteObject));
 

@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextRange = class TextRange extends WebInspector.Object
+WebInspector.TextRange = class TextRange
 {
     constructor(startLineOrStartOffset, startColumnOrEndOffset, endLine, endColumn)
     {
-        super();
-
         if (arguments.length === 4) {
             console.assert(startLineOrStartOffset <= endLine);
             console.assert(startLineOrStartOffset !== endLine || startColumnOrEndOffset <= endColumn);

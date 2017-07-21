@@ -1,3 +1,79 @@
+2017-07-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Avoid subclassing WebInspector.Object if we do not need to
+        https://bugs.webkit.org/show_bug.cgi?id=174703
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Models/LogObject.js:
+        (WebInspector.LogObject):
+        (WebInspector.LogObject.prototype.get startDate): Deleted.
+        Remove unused startDate property as well.
+
+        * UserInterface/Base/YieldableTask.js:
+        * UserInterface/Debug/ProtocolTrace.js:
+        * UserInterface/Models/AnalyzerMessage.js:
+        * UserInterface/Models/ApplicationCacheFrame.js:
+        * UserInterface/Models/ApplicationCacheManifest.js:
+        * UserInterface/Models/BackForwardEntry.js:
+        * UserInterface/Models/Branch.js:
+        * UserInterface/Models/BreakpointAction.js:
+        * UserInterface/Models/CSSMedia.js:
+        * UserInterface/Models/CSSSelector.js:
+        * UserInterface/Models/CallFrame.js:
+        * UserInterface/Models/CallingContextTree.js:
+        * UserInterface/Models/CallingContextTreeNode.js:
+        * UserInterface/Models/CollectionEntry.js:
+        * UserInterface/Models/CollectionEntryPreview.js:
+        * UserInterface/Models/ConsoleMessage.js:
+        * UserInterface/Models/DOMSearchMatchObject.js:
+        * UserInterface/Models/DatabaseObject.js:
+        * UserInterface/Models/DatabaseTableObject.js:
+        * UserInterface/Models/DebuggerDashboard.js:
+        * UserInterface/Models/DebuggerData.js:
+        * UserInterface/Models/ExecutionContext.js:
+        * UserInterface/Models/ExecutionContextList.js:
+        * UserInterface/Models/GarbageCollection.js:
+        * UserInterface/Models/HeapSnapshotRootPath.js:
+        * UserInterface/Models/IndexedDatabase.js:
+        * UserInterface/Models/IndexedDatabaseObjectStore.js:
+        * UserInterface/Models/IndexedDatabaseObjectStoreIndex.js:
+        * UserInterface/Models/Instrument.js:
+        * UserInterface/Models/KeyboardShortcut.js:
+        * UserInterface/Models/LineWidget.js:
+        * UserInterface/Models/MemoryCategory.js:
+        * UserInterface/Models/MemoryPressureEvent.js:
+        * UserInterface/Models/ObjectPreview.js:
+        * UserInterface/Models/Probe.js:
+        * UserInterface/Models/ProbeSetDataFrame.js:
+        * UserInterface/Models/Profile.js:
+        * UserInterface/Models/ProfileNode.js:
+        * UserInterface/Models/ProfileNodeCall.js:
+        * UserInterface/Models/PropertyDescriptor.js:
+        * UserInterface/Models/PropertyPath.js:
+        * UserInterface/Models/PropertyPreview.js:
+        * UserInterface/Models/ResourceQueryMatch.js:
+        * UserInterface/Models/ResourceQueryResult.js:
+        * UserInterface/Models/ResourceTimingData.js:
+        * UserInterface/Models/Revision.js:
+        * UserInterface/Models/ScopeChainNode.js:
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        * UserInterface/Models/SourceCodePosition.js:
+        * UserInterface/Models/SourceCodeSearchMatchObject.js:
+        * UserInterface/Models/SourceMap.js:
+        * UserInterface/Models/StackTrace.js:
+        * UserInterface/Models/StructureDescription.js:
+        * UserInterface/Models/TextMarker.js:
+        * UserInterface/Models/TextRange.js:
+        * UserInterface/Models/TimelineRange.js:
+        * UserInterface/Models/TypeDescription.js:
+        * UserInterface/Models/TypeSet.js:
+        * UserInterface/Protocol/ProtocolTracer.js:
+        * UserInterface/Proxies/FormatterWorkerProxy.js:
+        * UserInterface/Proxies/HeapSnapshotDiffProxy.js:
+        * UserInterface/Proxies/HeapSnapshotWorkerProxy.js:
+        * UserInterface/Test/TestSuite.js:
+
 2017-07-19  Chris Dumez  <cdumez@apple.com>
 
         Drop SQLException type

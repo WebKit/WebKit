@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree extends WebInspector.Object
+WebInspector.ScriptSyntaxTree = class ScriptSyntaxTree
 {
     constructor(sourceText, script)
     {
-        super();
-
         console.assert(script && script instanceof WebInspector.Script, script);
 
         this._script = script;

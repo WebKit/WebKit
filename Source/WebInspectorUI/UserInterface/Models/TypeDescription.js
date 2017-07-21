@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TypeDescription = class TypeDescription extends WebInspector.Object
+WebInspector.TypeDescription = class TypeDescription
 {
     constructor(leastCommonAncestor, typeSet, structures, valid, truncated)
     {
-        super();
-
         console.assert(!leastCommonAncestor || typeof leastCommonAncestor === "string");
         console.assert(!typeSet || typeSet instanceof WebInspector.TypeSet);
         console.assert(!structures || structures.every((x) => x instanceof WebInspector.StructureDescription));

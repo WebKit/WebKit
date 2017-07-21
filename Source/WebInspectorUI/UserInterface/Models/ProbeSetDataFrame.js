@@ -24,12 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeSetDataFrame = class ProbeSetDataFrame extends WebInspector.Object
+WebInspector.ProbeSetDataFrame = class ProbeSetDataFrame
 {
     constructor(index)
     {
-        super();
-
         this._count = 0;
         this._index = index;
         this._separator = false;

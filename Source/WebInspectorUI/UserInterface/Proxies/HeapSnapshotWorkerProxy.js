@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Events dispatched on this class: "HeapSnapshot.CollectionEvent"
+
 WebInspector.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends WebInspector.Object
 {
     constructor()

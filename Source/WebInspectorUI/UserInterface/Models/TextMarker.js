@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextMarker = class TextMarker extends WebInspector.Object
+WebInspector.TextMarker = class TextMarker
 {
     constructor(codeMirrorTextMarker, type)
     {
-        super();
-
         this._codeMirrorTextMarker = codeMirrorTextMarker;
         codeMirrorTextMarker.__webInspectorTextMarker = this;
 

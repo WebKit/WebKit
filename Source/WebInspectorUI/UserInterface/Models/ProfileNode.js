@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProfileNode = class ProfileNode extends WebInspector.Object
+WebInspector.ProfileNode = class ProfileNode
 {
     constructor(id, type, functionName, sourceCodeLocation, callInfo, calls, childNodes)
     {
-        super();
-
         childNodes = childNodes || [];
 
         console.assert(id);

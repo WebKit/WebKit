@@ -24,12 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ProbeSample = class ProbeSample extends WebInspector.Object
+WebInspector.ProbeSample = class ProbeSample
 {
     constructor(sampleId, batchId, elapsedTime, object)
     {
-        super();
-
         console.assert(object instanceof WebInspector.RemoteObject);
 
         this.sampleId = sampleId;

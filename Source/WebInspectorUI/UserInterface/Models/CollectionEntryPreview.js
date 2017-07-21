@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CollectionEntryPreview = class CollectionEntryPreview extends WebInspector.Object
+WebInspector.CollectionEntryPreview = class CollectionEntryPreview
 {
     constructor(keyPreview, valuePreview)
     {
-        super();
-
         console.assert(valuePreview instanceof WebInspector.ObjectPreview);
         console.assert(!keyPreview || keyPreview instanceof WebInspector.ObjectPreview);
 

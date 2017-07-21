@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceCodePosition = class SourceCodePosition extends WebInspector.Object
+WebInspector.SourceCodePosition = class SourceCodePosition
 {
     constructor(lineNumber, columNumber)
     {
-        super();
-
         this._lineNumber = lineNumber || 0;
         this._columnNumber = columNumber || 0;
     }

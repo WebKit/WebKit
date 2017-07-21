@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ResourceQueryMatch = class QueryMatch extends WebInspector.Object
+WebInspector.ResourceQueryMatch = class QueryMatch
 {
     constructor(type, index, queryIndex)
     {
-        super();
-
         this._type = type;
         this._index = index;
         this._queryIndex = queryIndex;

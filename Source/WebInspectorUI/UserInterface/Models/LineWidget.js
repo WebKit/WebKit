@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.LineWidget = class LineWidget extends WebInspector.Object
+WebInspector.LineWidget = class LineWidget
 {
     constructor(codeMirrorLineWidget, widgetElement)
     {
-        super();
-
         console.assert(widgetElement instanceof Element);
 
         this._codeMirrorLineWidget = codeMirrorLineWidget;

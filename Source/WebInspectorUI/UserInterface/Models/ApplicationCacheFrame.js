@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ApplicationCacheFrame = class ApplicationCacheFrame extends WebInspector.Object
+WebInspector.ApplicationCacheFrame = class ApplicationCacheFrame
 {
     constructor(frame, manifest, status)
     {
-        super();
-
         console.assert(frame instanceof WebInspector.Frame);
         console.assert(manifest instanceof WebInspector.ApplicationCacheManifest);
 

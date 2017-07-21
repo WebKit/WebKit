@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.GarbageCollection = class GarbageCollection extends WebInspector.Object
+WebInspector.GarbageCollection = class GarbageCollection
 {
     constructor(type, startTime, endTime)
     {
-        super();
-
         console.assert(endTime >= startTime);
 
         this._type = type;

@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DatabaseTableObject = class DatabaseTableObject extends WebInspector.Object
+WebInspector.DatabaseTableObject = class DatabaseTableObject
 {
     constructor(name, database)
     {
-        super();
-
         console.assert(database instanceof WebInspector.DatabaseObject);
 
         this._name = name;

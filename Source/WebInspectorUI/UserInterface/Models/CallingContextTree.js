@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.CallingContextTree = class CallingContextTree extends WebInspector.Object
+WebInspector.CallingContextTree = class CallingContextTree
 {
     constructor(type)
     {
-        super();
-
         this._type = type || WebInspector.CallingContextTree.Type.TopDown;
 
         this.reset();

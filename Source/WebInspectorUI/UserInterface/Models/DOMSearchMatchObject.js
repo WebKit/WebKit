@@ -23,12 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.DOMSearchMatchObject = class DOMSearchMatchObject extends WebInspector.Object
+WebInspector.DOMSearchMatchObject = class DOMSearchMatchObject
 {
     constructor(resource, domNode, title, searchTerm, textRange)
     {
-        super();
-
         console.assert(resource instanceof WebInspector.Resource);
         console.assert(domNode instanceof WebInspector.DOMNode);
 
