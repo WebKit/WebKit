@@ -41,80 +41,51 @@ inline bool CAN_SIGN_EXTEND_8_32(int32_t value) { return value == (int32_t)(sign
 
 namespace X86Registers {
 
-#define FOR_EACH_CPU_REGISTER(V) \
-    FOR_EACH_CPU_GPREGISTER(V) \
-    FOR_EACH_CPU_SPECIAL_REGISTER(V) \
-    FOR_EACH_CPU_FPREGISTER(V)
-
-// The following are defined as pairs of the following value:
-// 1. type of the storage needed to save the register value by the JIT probe.
-// 2. name of the register.
-#define FOR_EACH_CPU_GPREGISTER(V) \
-    V(void*, eax) \
-    V(void*, ecx) \
-    V(void*, edx) \
-    V(void*, ebx) \
-    V(void*, esp) \
-    V(void*, ebp) \
-    V(void*, esi) \
-    V(void*, edi) \
-    FOR_EACH_X86_64_CPU_GPREGISTER(V)
-
-#define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
-    V(void*, eip) \
-    V(void*, eflags) \
-
-// Note: the JITs only stores double values in the FP registers.
-#define FOR_EACH_CPU_FPREGISTER(V) \
-    V(double, xmm0) \
-    V(double, xmm1) \
-    V(double, xmm2) \
-    V(double, xmm3) \
-    V(double, xmm4) \
-    V(double, xmm5) \
-    V(double, xmm6) \
-    V(double, xmm7) \
-    FOR_EACH_X86_64_CPU_FPREGISTER(V)
-
-#if CPU(X86)
-
-#define FOR_EACH_X86_64_CPU_GPREGISTER(V) // Nothing to add.
-#define FOR_EACH_X86_64_CPU_FPREGISTER(V) // Nothing to add.
-
-#elif CPU(X86_64)
-
-#define FOR_EACH_X86_64_CPU_GPREGISTER(V) \
-    V(void*, r8) \
-    V(void*, r9) \
-    V(void*, r10) \
-    V(void*, r11) \
-    V(void*, r12) \
-    V(void*, r13) \
-    V(void*, r14) \
-    V(void*, r15)
-
-#define FOR_EACH_X86_64_CPU_FPREGISTER(V) \
-    V(double, xmm8) \
-    V(double, xmm9) \
-    V(double, xmm10) \
-    V(double, xmm11) \
-    V(double, xmm12) \
-    V(double, xmm13) \
-    V(double, xmm14) \
-    V(double, xmm15)
-
-#endif // CPU(X86_64)
-
 typedef enum {
-    #define DECLARE_REGISTER(_type, _regName) _regName,
-    FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
-    #undef DECLARE_REGISTER
+    eax,
+    ecx,
+    edx,
+    ebx,
+    esp,
+    ebp,
+    esi,
+    edi,
+#if CPU(X86_64)
+    r8,
+    r9,
+    r10,
+    r11,
+    r12,
+    r13,
+    r14,
+    r15
+#endif
 } RegisterID;
 
 typedef enum {
-    #define DECLARE_REGISTER(_type, _regName) _regName,
-    FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
-    #undef DECLARE_REGISTER
+    eip,
+    eflags
+} SPRegisterID;
+
+typedef enum {
+    xmm0,
+    xmm1,
+    xmm2,
+    xmm3,
+    xmm4,
+    xmm5,
+    xmm6,
+    xmm7,
+#if CPU(X86_64)
+    xmm8,
+    xmm9,
+    xmm10,
+    xmm11,
+    xmm12,
+    xmm13,
+    xmm14,
+    xmm15
+#endif
 } XMMRegisterID;
 
 } // namespace X86Register
@@ -132,6 +103,13 @@ public:
         return X86Registers::edi;
 #endif
     }
+    static constexpr unsigned numberOfRegisters() { return lastRegister() - firstRegister() + 1; }
+    
+    typedef X86Registers::SPRegisterID SPRegisterID;
+
+    static constexpr SPRegisterID firstSPRegister() { return X86Registers::eip; }
+    static constexpr SPRegisterID lastSPRegister() { return X86Registers::eflags; }
+    static constexpr unsigned numberOfSPRegisters() { return lastSPRegister() - firstSPRegister() + 1; }
     
     typedef X86Registers::XMMRegisterID XMMRegisterID;
     typedef XMMRegisterID FPRegisterID;
@@ -145,7 +123,52 @@ public:
         return X86Registers::xmm7;
 #endif
     }
+    static constexpr unsigned numberOfFPRegisters() { return lastFPRegister() - firstFPRegister() + 1; }
+    
+    static const char* gprName(RegisterID id)
+    {
+        ASSERT(id >= firstRegister() && id <= lastRegister());
+        static const char* const nameForRegister[numberOfRegisters()] = {
+#if CPU(X86_64)
+            "rax", "rcx", "rdx", "rbx",
+            "rsp", "rbp", "rsi", "rdi",
+            "r8", "r9", "r10", "r11",
+            "r12", "r13", "r14", "r15"
+#else
+            "eax", "ecx", "edx", "ebx",
+            "esp", "ebp", "esi", "edi",
+#endif
+        };
+        return nameForRegister[id];
+    }
 
+    static const char* sprName(SPRegisterID id)
+    {
+        ASSERT(id >= firstSPRegister() && id <= lastSPRegister());
+        static const char* const nameForRegister[numberOfSPRegisters()] = {
+#if CPU(X86_64)
+            "rip", "rflags"
+#else
+            "eip", "eflags"
+#endif
+        };
+        return nameForRegister[id];
+    }
+    
+    static const char* fprName(FPRegisterID reg)
+    {
+        ASSERT(reg >= firstFPRegister() && reg <= lastFPRegister());
+        static const char* const nameForRegister[numberOfFPRegisters()] = {
+            "xmm0", "xmm1", "xmm2", "xmm3",
+            "xmm4", "xmm5", "xmm6", "xmm7",
+#if CPU(X86_64)
+            "xmm8", "xmm9", "xmm10", "xmm11",
+            "xmm12", "xmm13", "xmm14", "xmm15"
+#endif
+        };
+        return nameForRegister[reg];
+    }
+    
     typedef enum {
         ConditionO,
         ConditionNO,

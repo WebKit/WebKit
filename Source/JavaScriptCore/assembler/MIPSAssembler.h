@@ -108,6 +108,12 @@ typedef enum {
     ra = r31
 } RegisterID;
 
+// Currently, we don't have support for any special purpose registers.
+typedef enum {
+    firstInvalidSPR,
+    lastInvalidSPR = -1,
+} SPRegisterID;
+
 typedef enum {
     f0,
     f1,
@@ -148,14 +154,55 @@ typedef enum {
 class MIPSAssembler {
 public:
     typedef MIPSRegisters::RegisterID RegisterID;
+    typedef MIPSRegisters::SPRegisterID SPRegisterID;
     typedef MIPSRegisters::FPRegisterID FPRegisterID;
     typedef SegmentedVector<AssemblerLabel, 64> Jumps;
 
     static constexpr RegisterID firstRegister() { return MIPSRegisters::r0; }
     static constexpr RegisterID lastRegister() { return MIPSRegisters::r31; }
+    static constexpr unsigned numberOfRegisters() { return lastRegister() - firstRegister() + 1; }
+
+    static constexpr SPRegisterID firstSPRegister() { return MIPSRegisters::firstInvalidSPR; }
+    static constexpr SPRegisterID lastSPRegister() { return MIPSRegisters::lastInvalidSPR; }
+    static constexpr unsigned numberOfSPRegisters() { return 0; }
 
     static constexpr FPRegisterID firstFPRegister() { return MIPSRegisters::f0; }
     static constexpr FPRegisterID lastFPRegister() { return MIPSRegisters::f31; }
+    static constexpr unsigned numberOfFPRegisters() { return lastFPRegister() - firstFPRegister() + 1; }
+    
+    static const char* gprName(RegisterID id)
+    {
+        ASSERT(id >= firstRegister() && id <= lastRegister());
+        static const char* const nameForRegister[numberOfRegisters()] = {
+            "zero", "at", "v0", "v1",
+            "a0", "a1", "a2", "a3",
+            "t0", "t1", "t2", "t3",
+            "t4", "t5", "t6", "t7"
+        };
+        return nameForRegister[id];
+    }
+
+    static const char* sprName(SPRegisterID id)
+    {
+        // Currently, we don't have support for any special purpose registers.
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    static const char* fprName(FPRegisterID id)
+    {
+        ASSERT(id >= firstFPRegister() && id <= lastFPRegister());
+        static const char* const nameForRegister[numberOfFPRegisters()] = {
+            "f0", "f1", "f2", "f3",
+            "f4", "f5", "f6", "f7",
+            "f8", "f9", "f10", "f11",
+            "f12", "f13", "f14", "f15"
+            "f16", "f17", "f18", "f19"
+            "f20", "f21", "f22", "f23"
+            "f24", "f25", "f26", "f27"
+            "f28", "f29", "f30", "f31"
+        };
+        return nameForRegister[id];
+    }
 
     MIPSAssembler()
         : m_indexOfLastWatchpoint(INT_MIN)

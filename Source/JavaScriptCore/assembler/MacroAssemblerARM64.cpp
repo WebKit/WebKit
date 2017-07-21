@@ -134,79 +134,79 @@ COMPILE_ASSERT(PROBE_OFFSETOF(arg) == PROBE_ARG_OFFSET, ProbeContext_arg_offset_
 
 COMPILE_ASSERT(!(PROBE_CPU_X0_OFFSET & 0x7), ProbeContext_cpu_r0_offset_should_be_8_byte_aligned);
 
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x0) == PROBE_CPU_X0_OFFSET, ProbeContext_cpu_x0_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x1) == PROBE_CPU_X1_OFFSET, ProbeContext_cpu_x1_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x2) == PROBE_CPU_X2_OFFSET, ProbeContext_cpu_x2_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x3) == PROBE_CPU_X3_OFFSET, ProbeContext_cpu_x3_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x4) == PROBE_CPU_X4_OFFSET, ProbeContext_cpu_x4_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x5) == PROBE_CPU_X5_OFFSET, ProbeContext_cpu_x5_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x6) == PROBE_CPU_X6_OFFSET, ProbeContext_cpu_x6_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x7) == PROBE_CPU_X7_OFFSET, ProbeContext_cpu_x7_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x8) == PROBE_CPU_X8_OFFSET, ProbeContext_cpu_x8_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x9) == PROBE_CPU_X9_OFFSET, ProbeContext_cpu_x9_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x10) == PROBE_CPU_X10_OFFSET, ProbeContext_cpu_x10_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x11) == PROBE_CPU_X11_OFFSET, ProbeContext_cpu_x11_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x12) == PROBE_CPU_X12_OFFSET, ProbeContext_cpu_x12_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x13) == PROBE_CPU_X13_OFFSET, ProbeContext_cpu_x13_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x14) == PROBE_CPU_X14_OFFSET, ProbeContext_cpu_x14_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x15) == PROBE_CPU_X15_OFFSET, ProbeContext_cpu_x15_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x0]) == PROBE_CPU_X0_OFFSET, ProbeContext_cpu_x0_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x1]) == PROBE_CPU_X1_OFFSET, ProbeContext_cpu_x1_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x2]) == PROBE_CPU_X2_OFFSET, ProbeContext_cpu_x2_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x3]) == PROBE_CPU_X3_OFFSET, ProbeContext_cpu_x3_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x4]) == PROBE_CPU_X4_OFFSET, ProbeContext_cpu_x4_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x5]) == PROBE_CPU_X5_OFFSET, ProbeContext_cpu_x5_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x6]) == PROBE_CPU_X6_OFFSET, ProbeContext_cpu_x6_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x7]) == PROBE_CPU_X7_OFFSET, ProbeContext_cpu_x7_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x8]) == PROBE_CPU_X8_OFFSET, ProbeContext_cpu_x8_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x9]) == PROBE_CPU_X9_OFFSET, ProbeContext_cpu_x9_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x10]) == PROBE_CPU_X10_OFFSET, ProbeContext_cpu_x10_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x11]) == PROBE_CPU_X11_OFFSET, ProbeContext_cpu_x11_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x12]) == PROBE_CPU_X12_OFFSET, ProbeContext_cpu_x12_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x13]) == PROBE_CPU_X13_OFFSET, ProbeContext_cpu_x13_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x14]) == PROBE_CPU_X14_OFFSET, ProbeContext_cpu_x14_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x15]) == PROBE_CPU_X15_OFFSET, ProbeContext_cpu_x15_offset_matches_ctiMasmProbeTrampoline);
 
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x16) == PROBE_CPU_X16_OFFSET, ProbeContext_cpu_x16_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x17) == PROBE_CPU_X17_OFFSET, ProbeContext_cpu_x17_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x18) == PROBE_CPU_X18_OFFSET, ProbeContext_cpu_x18_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x19) == PROBE_CPU_X19_OFFSET, ProbeContext_cpu_x19_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x20) == PROBE_CPU_X20_OFFSET, ProbeContext_cpu_x20_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x21) == PROBE_CPU_X21_OFFSET, ProbeContext_cpu_x21_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x22) == PROBE_CPU_X22_OFFSET, ProbeContext_cpu_x22_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x23) == PROBE_CPU_X23_OFFSET, ProbeContext_cpu_x23_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x24) == PROBE_CPU_X24_OFFSET, ProbeContext_cpu_x24_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x25) == PROBE_CPU_X25_OFFSET, ProbeContext_cpu_x25_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x26) == PROBE_CPU_X26_OFFSET, ProbeContext_cpu_x26_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x27) == PROBE_CPU_X27_OFFSET, ProbeContext_cpu_x27_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.x28) == PROBE_CPU_X28_OFFSET, ProbeContext_cpu_x28_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fp) == PROBE_CPU_FP_OFFSET, ProbeContext_cpu_fp_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.lr) == PROBE_CPU_LR_OFFSET, ProbeContext_cpu_lr_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.sp) == PROBE_CPU_SP_OFFSET, ProbeContext_cpu_sp_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x16]) == PROBE_CPU_X16_OFFSET, ProbeContext_cpu_x16_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x17]) == PROBE_CPU_X17_OFFSET, ProbeContext_cpu_x17_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x18]) == PROBE_CPU_X18_OFFSET, ProbeContext_cpu_x18_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x19]) == PROBE_CPU_X19_OFFSET, ProbeContext_cpu_x19_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x20]) == PROBE_CPU_X20_OFFSET, ProbeContext_cpu_x20_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x21]) == PROBE_CPU_X21_OFFSET, ProbeContext_cpu_x21_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x22]) == PROBE_CPU_X22_OFFSET, ProbeContext_cpu_x22_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x23]) == PROBE_CPU_X23_OFFSET, ProbeContext_cpu_x23_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x24]) == PROBE_CPU_X24_OFFSET, ProbeContext_cpu_x24_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x25]) == PROBE_CPU_X25_OFFSET, ProbeContext_cpu_x25_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x26]) == PROBE_CPU_X26_OFFSET, ProbeContext_cpu_x26_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x27]) == PROBE_CPU_X27_OFFSET, ProbeContext_cpu_x27_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::x28]) == PROBE_CPU_X28_OFFSET, ProbeContext_cpu_x28_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::fp]) == PROBE_CPU_FP_OFFSET, ProbeContext_cpu_fp_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::lr]) == PROBE_CPU_LR_OFFSET, ProbeContext_cpu_lr_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.gprs[ARM64Registers::sp]) == PROBE_CPU_SP_OFFSET, ProbeContext_cpu_sp_offset_matches_ctiMasmProbeTrampoline);
 
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.pc) == PROBE_CPU_PC_OFFSET, ProbeContext_cpu_pc_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.nzcv) == PROBE_CPU_NZCV_OFFSET, ProbeContext_cpu_nzcv_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fpsr) == PROBE_CPU_FPSR_OFFSET, ProbeContext_cpu_fpsr_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.sprs[ARM64Registers::pc]) == PROBE_CPU_PC_OFFSET, ProbeContext_cpu_pc_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.sprs[ARM64Registers::nzcv]) == PROBE_CPU_NZCV_OFFSET, ProbeContext_cpu_nzcv_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.sprs[ARM64Registers::fpsr]) == PROBE_CPU_FPSR_OFFSET, ProbeContext_cpu_fpsr_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(!(PROBE_CPU_Q0_OFFSET & 0x7), ProbeContext_cpu_q0_offset_should_be_8_byte_aligned);
 
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q0) == PROBE_CPU_Q0_OFFSET, ProbeContext_cpu_q0_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q1) == PROBE_CPU_Q1_OFFSET, ProbeContext_cpu_q1_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q2) == PROBE_CPU_Q2_OFFSET, ProbeContext_cpu_q2_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q3) == PROBE_CPU_Q3_OFFSET, ProbeContext_cpu_q3_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q4) == PROBE_CPU_Q4_OFFSET, ProbeContext_cpu_q4_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q5) == PROBE_CPU_Q5_OFFSET, ProbeContext_cpu_q5_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q6) == PROBE_CPU_Q6_OFFSET, ProbeContext_cpu_q6_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q7) == PROBE_CPU_Q7_OFFSET, ProbeContext_cpu_q7_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q8) == PROBE_CPU_Q8_OFFSET, ProbeContext_cpu_q8_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q9) == PROBE_CPU_Q9_OFFSET, ProbeContext_cpu_q9_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q10) == PROBE_CPU_Q10_OFFSET, ProbeContext_cpu_q10_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q11) == PROBE_CPU_Q11_OFFSET, ProbeContext_cpu_q11_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q12) == PROBE_CPU_Q12_OFFSET, ProbeContext_cpu_q12_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q13) == PROBE_CPU_Q13_OFFSET, ProbeContext_cpu_q13_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q14) == PROBE_CPU_Q14_OFFSET, ProbeContext_cpu_q14_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q15) == PROBE_CPU_Q15_OFFSET, ProbeContext_cpu_q15_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q0]) == PROBE_CPU_Q0_OFFSET, ProbeContext_cpu_q0_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q1]) == PROBE_CPU_Q1_OFFSET, ProbeContext_cpu_q1_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q2]) == PROBE_CPU_Q2_OFFSET, ProbeContext_cpu_q2_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q3]) == PROBE_CPU_Q3_OFFSET, ProbeContext_cpu_q3_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q4]) == PROBE_CPU_Q4_OFFSET, ProbeContext_cpu_q4_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q5]) == PROBE_CPU_Q5_OFFSET, ProbeContext_cpu_q5_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q6]) == PROBE_CPU_Q6_OFFSET, ProbeContext_cpu_q6_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q7]) == PROBE_CPU_Q7_OFFSET, ProbeContext_cpu_q7_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q8]) == PROBE_CPU_Q8_OFFSET, ProbeContext_cpu_q8_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q9]) == PROBE_CPU_Q9_OFFSET, ProbeContext_cpu_q9_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q10]) == PROBE_CPU_Q10_OFFSET, ProbeContext_cpu_q10_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q11]) == PROBE_CPU_Q11_OFFSET, ProbeContext_cpu_q11_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q12]) == PROBE_CPU_Q12_OFFSET, ProbeContext_cpu_q12_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q13]) == PROBE_CPU_Q13_OFFSET, ProbeContext_cpu_q13_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q14]) == PROBE_CPU_Q14_OFFSET, ProbeContext_cpu_q14_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q15]) == PROBE_CPU_Q15_OFFSET, ProbeContext_cpu_q15_offset_matches_ctiMasmProbeTrampoline);
 
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q16) == PROBE_CPU_Q16_OFFSET, ProbeContext_cpu_q16_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q17) == PROBE_CPU_Q17_OFFSET, ProbeContext_cpu_q17_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q18) == PROBE_CPU_Q18_OFFSET, ProbeContext_cpu_q18_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q19) == PROBE_CPU_Q19_OFFSET, ProbeContext_cpu_q19_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q20) == PROBE_CPU_Q20_OFFSET, ProbeContext_cpu_q20_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q21) == PROBE_CPU_Q21_OFFSET, ProbeContext_cpu_q21_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q22) == PROBE_CPU_Q22_OFFSET, ProbeContext_cpu_q22_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q23) == PROBE_CPU_Q23_OFFSET, ProbeContext_cpu_q23_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q24) == PROBE_CPU_Q24_OFFSET, ProbeContext_cpu_q24_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q25) == PROBE_CPU_Q25_OFFSET, ProbeContext_cpu_q25_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q26) == PROBE_CPU_Q26_OFFSET, ProbeContext_cpu_q26_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q27) == PROBE_CPU_Q27_OFFSET, ProbeContext_cpu_q27_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q28) == PROBE_CPU_Q28_OFFSET, ProbeContext_cpu_q28_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q29) == PROBE_CPU_Q29_OFFSET, ProbeContext_cpu_q29_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q30) == PROBE_CPU_Q30_OFFSET, ProbeContext_cpu_q30_offset_matches_ctiMasmProbeTrampoline);
-COMPILE_ASSERT(PROBE_OFFSETOF(cpu.q31) == PROBE_CPU_Q31_OFFSET, ProbeContext_cpu_q31_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q16]) == PROBE_CPU_Q16_OFFSET, ProbeContext_cpu_q16_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q17]) == PROBE_CPU_Q17_OFFSET, ProbeContext_cpu_q17_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q18]) == PROBE_CPU_Q18_OFFSET, ProbeContext_cpu_q18_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q19]) == PROBE_CPU_Q19_OFFSET, ProbeContext_cpu_q19_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q20]) == PROBE_CPU_Q20_OFFSET, ProbeContext_cpu_q20_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q21]) == PROBE_CPU_Q21_OFFSET, ProbeContext_cpu_q21_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q22]) == PROBE_CPU_Q22_OFFSET, ProbeContext_cpu_q22_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q23]) == PROBE_CPU_Q23_OFFSET, ProbeContext_cpu_q23_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q24]) == PROBE_CPU_Q24_OFFSET, ProbeContext_cpu_q24_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q25]) == PROBE_CPU_Q25_OFFSET, ProbeContext_cpu_q25_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q26]) == PROBE_CPU_Q26_OFFSET, ProbeContext_cpu_q26_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q27]) == PROBE_CPU_Q27_OFFSET, ProbeContext_cpu_q27_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q28]) == PROBE_CPU_Q28_OFFSET, ProbeContext_cpu_q28_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q29]) == PROBE_CPU_Q29_OFFSET, ProbeContext_cpu_q29_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q30]) == PROBE_CPU_Q30_OFFSET, ProbeContext_cpu_q30_offset_matches_ctiMasmProbeTrampoline);
+COMPILE_ASSERT(PROBE_OFFSETOF(cpu.fprs[ARM64Registers::q31]) == PROBE_CPU_Q31_OFFSET, ProbeContext_cpu_q31_offset_matches_ctiMasmProbeTrampoline);
 
 COMPILE_ASSERT(sizeof(ProbeContext) == PROBE_SIZE, ProbeContext_size_matches_ctiMasmProbeTrampoline);
 COMPILE_ASSERT(!(PROBE_ALIGNED_SIZE & 0xf), ProbeContext_aligned_size_offset_should_be_16_byte_aligned);
@@ -457,18 +457,18 @@ asm (
 
 static void arm64ProbeTrampoline(ProbeContext* context)
 {
-    void* origSP = context->cpu.sp;
-    void* origPC = context->cpu.pc;
+    uintptr_t origSP = context->cpu.sp();
+    uintptr_t origPC = context->cpu.pc();
     
     context->probeFunction(context);
     
-    if (context->cpu.sp != origSP) {
+    if (context->cpu.sp() != origSP) {
         dataLog("MacroAssembler probe ERROR: ARM64 does not support the probe changing the SP. The change will be ignored\n");
-        context->cpu.sp = origSP;
+        context->cpu.sp() = origSP;
     }
-    if (context->cpu.pc != origPC) {
+    if (context->cpu.pc() != origPC) {
         dataLog("MacroAssembler probe ERROR: ARM64 does not support the probe changing the PC. The change will be ignored\n");
-        context->cpu.pc = origPC;
+        context->cpu.pc() = origPC;
     }
 }
 

@@ -36,73 +36,25 @@ namespace JSC {
 
     typedef uint32_t ARMWord;
 
-    #define FOR_EACH_CPU_REGISTER(V) \
-        FOR_EACH_CPU_GPREGISTER(V) \
-        FOR_EACH_CPU_SPECIAL_REGISTER(V) \
-        FOR_EACH_CPU_FPREGISTER(V)
-
-    #define FOR_EACH_CPU_GPREGISTER(V) \
-        V(void*, r0) \
-        V(void*, r1) \
-        V(void*, r2) \
-        V(void*, r3) \
-        V(void*, r4) \
-        V(void*, r5) \
-        V(void*, r6) \
-        V(void*, r7) \
-        V(void*, r8) \
-        V(void*, r9) \
-        V(void*, r10) \
-        V(void*, fp) \
-        V(void*, ip) \
-        V(void*, sp) \
-        V(void*, lr) \
-        V(void*, pc) \
-
-    #define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
-        V(void*, apsr) \
-        V(void*, fpscr) \
-
-    #define FOR_EACH_CPU_FPREGISTER(V) \
-        V(double, d0) \
-        V(double, d1) \
-        V(double, d2) \
-        V(double, d3) \
-        V(double, d4) \
-        V(double, d5) \
-        V(double, d6) \
-        V(double, d7) \
-        V(double, d8) \
-        V(double, d9) \
-        V(double, d10) \
-        V(double, d11) \
-        V(double, d12) \
-        V(double, d13) \
-        V(double, d14) \
-        V(double, d15) \
-        V(double, d16) \
-        V(double, d17) \
-        V(double, d18) \
-        V(double, d19) \
-        V(double, d20) \
-        V(double, d21) \
-        V(double, d22) \
-        V(double, d23) \
-        V(double, d24) \
-        V(double, d25) \
-        V(double, d26) \
-        V(double, d27) \
-        V(double, d28) \
-        V(double, d29) \
-        V(double, d30) \
-        V(double, d31) \
-
     namespace ARMRegisters {
 
         typedef enum {
-            #define DECLARE_REGISTER(_type, _regName) _regName,
-            FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
-            #undef DECLARE_REGISTER
+            r0,
+            r1,
+            r2,
+            r3,
+            r4,
+            r5,
+            r6,
+            r7,
+            r8,
+            r9,
+            r10,
+            fp,
+            ip,
+            sp,
+            lr,
+            pc,
 
             // Pseudonyms for some of the registers.
             S0 = r6,
@@ -114,9 +66,43 @@ namespace JSC {
         } RegisterID;
 
         typedef enum {
-            #define DECLARE_REGISTER(_type, _regName) _regName,
-            FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
-            #undef DECLARE_REGISTER
+            apsr,
+            fpscr
+        } SPRegisterID;
+
+        typedef enum {
+            d0,
+            d1,
+            d2,
+            d3,
+            d4,
+            d5,
+            d6,
+            d7,
+            d8,
+            d9,
+            d10,
+            d11,
+            d12,
+            d13,
+            d14,
+            d15,
+            d16,
+            d17,
+            d18,
+            d19,
+            d20,
+            d21,
+            d22,
+            d23,
+            d24,
+            d25,
+            d26,
+            d27,
+            d28,
+            d29,
+            d30,
+            d31,
 
             // Pseudonyms for some of the registers.
             SD0 = d7, /* Same as thumb assembler. */
@@ -127,6 +113,7 @@ namespace JSC {
     class ARMAssembler {
     public:
         typedef ARMRegisters::RegisterID RegisterID;
+        typedef ARMRegisters::SPRegisterID SPRegisterID;
         typedef ARMRegisters::FPRegisterID FPRegisterID;
         typedef AssemblerBufferWithConstantPool<2048, 4, 4, ARMAssembler> ARMBuffer;
         typedef SegmentedVector<AssemblerLabel, 64> Jumps;
@@ -140,9 +127,52 @@ namespace JSC {
 
         static constexpr RegisterID firstRegister() { return ARMRegisters::r0; }
         static constexpr RegisterID lastRegister() { return ARMRegisters::r15; }
+        static constexpr unsigned numberOfRegisters() { return lastRegister() - firstRegister() + 1; }
+
+        static constexpr SPRegisterID firstSPRegister() { return ARMRegisters::apsr; }
+        static constexpr SPRegisterID lastSPRegister() { return ARMRegisters::fpscr; }
+        static constexpr unsigned numberOfSPRegisters() { return lastSPRegister() - firstSPRegister() + 1; }
 
         static constexpr FPRegisterID firstFPRegister() { return ARMRegisters::d0; }
         static constexpr FPRegisterID lastFPRegister() { return ARMRegisters::d31; }
+        static constexpr unsigned numberOfFPRegisters() { return lastFPRegister() - firstFPRegister() + 1; }
+
+        static const char* gprName(RegisterID id)
+        {
+            ASSERT(id >= firstRegister() && id <= lastRegister());
+            static const char* const nameForRegister[numberOfRegisters()] = {
+                "r0", "r1", "r2", "r3",
+                "r4", "r5", "r6", "r7",
+                "r8", "r9", "r10", "fp",
+                "ip", "sp", "lr", "pc"
+            };
+            return nameForRegister[id];
+        }
+
+        static const char* sprName(SPRegisterID id)
+        {
+            ASSERT(id >= firstSPRegister() && id <= lastSPRegister());
+            static const char* const nameForRegister[numberOfSPRegisters()] = {
+                "apsr", "fpscr"
+            };
+            return nameForRegister[id];
+        }
+
+        static const char* fprName(FPRegisterID id)
+        {
+            ASSERT(id >= firstFPRegister() && id <= lastFPRegister());
+            static const char* const nameForRegister[numberOfFPRegisters()] = {
+                "d0", "d1", "d2", "d3",
+                "d4", "d5", "d6", "d7",
+                "d8", "d9", "d10", "d11",
+                "d12", "d13", "d14", "d15",
+                "d16", "d17", "d18", "d19",
+                "d20", "d21", "d22", "d23",
+                "d24", "d25", "d26", "d27",
+                "d28", "d29", "d30", "d31"
+            };
+            return nameForRegister[id];
+        }
 
         // ARM conditional constants
         typedef enum {

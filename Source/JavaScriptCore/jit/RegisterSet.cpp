@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,8 @@ RegisterSet RegisterSet::reservedHardwareRegisters()
 #else
     return RegisterSet(ARM64Registers::lr);
 #endif // PLATFORM(IOS)
+#elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
+    return RegisterSet(ARMRegisters::lr, ARMRegisters::pc);
 #else
     return RegisterSet();
 #endif

@@ -157,104 +157,46 @@ inline uint16_t getHalfword(uint64_t value, int which)
 
 namespace ARM64Registers {
 
-#define FOR_EACH_CPU_REGISTER(V) \
-    FOR_EACH_CPU_GPREGISTER(V) \
-    FOR_EACH_CPU_SPECIAL_REGISTER(V) \
-    FOR_EACH_CPU_FPREGISTER(V)
-
-// The following are defined as pairs of the following value:
-// 1. type of the storage needed to save the register value by the JIT probe.
-// 2. name of the register.
-#define FOR_EACH_CPU_GPREGISTER(V) \
-    /* Parameter/result registers */ \
-    V(void*, x0) \
-    V(void*, x1) \
-    V(void*, x2) \
-    V(void*, x3) \
-    V(void*, x4) \
-    V(void*, x5) \
-    V(void*, x6) \
-    V(void*, x7) \
-    /* Indirect result location register */ \
-    V(void*, x8) \
-    /* Temporary registers */ \
-    V(void*, x9) \
-    V(void*, x10) \
-    V(void*, x11) \
-    V(void*, x12) \
-    V(void*, x13) \
-    V(void*, x14) \
-    V(void*, x15) \
-    /* Intra-procedure-call scratch registers (temporary) */ \
-    V(void*, x16) \
-    V(void*, x17) \
-    /* Platform Register (temporary) */ \
-    V(void*, x18) \
-    /* Callee-saved */ \
-    V(void*, x19) \
-    V(void*, x20) \
-    V(void*, x21) \
-    V(void*, x22) \
-    V(void*, x23) \
-    V(void*, x24) \
-    V(void*, x25) \
-    V(void*, x26) \
-    V(void*, x27) \
-    V(void*, x28) \
-    /* Special */ \
-    V(void*, fp) \
-    V(void*, lr) \
-    V(void*, sp)
-
-#define FOR_EACH_CPU_SPECIAL_REGISTER(V) \
-    V(void*, pc) \
-    V(void*, nzcv) \
-    V(void*, fpsr) \
-
-// ARM64 always has 32 FPU registers 128-bits each. See http://llvm.org/devmtg/2012-11/Northover-AArch64.pdf
-// and Section 5.1.2 in http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf.
-// However, we only use them for 64-bit doubles.
-#define FOR_EACH_CPU_FPREGISTER(V) \
-    /* Parameter/result registers */ \
-    V(double, q0) \
-    V(double, q1) \
-    V(double, q2) \
-    V(double, q3) \
-    V(double, q4) \
-    V(double, q5) \
-    V(double, q6) \
-    V(double, q7) \
-    /* Callee-saved (up to 64-bits only!) */ \
-    V(double, q8) \
-    V(double, q9) \
-    V(double, q10) \
-    V(double, q11) \
-    V(double, q12) \
-    V(double, q13) \
-    V(double, q14) \
-    V(double, q15) \
-    /* Temporary registers */ \
-    V(double, q16) \
-    V(double, q17) \
-    V(double, q18) \
-    V(double, q19) \
-    V(double, q20) \
-    V(double, q21) \
-    V(double, q22) \
-    V(double, q23) \
-    V(double, q24) \
-    V(double, q25) \
-    V(double, q26) \
-    V(double, q27) \
-    V(double, q28) \
-    V(double, q29) \
-    V(double, q30) \
-    V(double, q31)
-
 typedef enum {
-    #define DECLARE_REGISTER(_type, _regName) _regName,
-    FOR_EACH_CPU_GPREGISTER(DECLARE_REGISTER)
-    #undef DECLARE_REGISTER
+    // Parameter/result registers.
+    x0,
+    x1,
+    x2,
+    x3,
+    x4,
+    x5,
+    x6,
+    x7,
+    // Indirect result location register.
+    x8,
+    // Temporary registers.
+    x9,
+    x10,
+    x11,
+    x12,
+    x13,
+    x14,
+    x15,
+    // Intra-procedure-call scratch registers (temporary).
+    x16,
+    x17,
+    // Platform Register (temporary).
+    x18,
+    // Callee-saved.
+    x19,
+    x20,
+    x21,
+    x22,
+    x23,
+    x24,
+    x25,
+    x26,
+    x27,
+    x28,
+    // Special.
+    fp,
+    lr,
+    sp,
 
     ip0 = x16,
     ip1 = x17,
@@ -264,9 +206,50 @@ typedef enum {
 } RegisterID;
 
 typedef enum {
-    #define DECLARE_REGISTER(_type, _regName) _regName,
-    FOR_EACH_CPU_FPREGISTER(DECLARE_REGISTER)
-    #undef DECLARE_REGISTER
+    pc,
+    nzcv,
+    fpsr
+} SPRegisterID;
+
+// ARM64 always has 32 FPU registers 128-bits each. See http://llvm.org/devmtg/2012-11/Northover-AArch64.pdf
+// and Section 5.1.2 in http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf.
+// However, we only use them for 64-bit doubles.
+typedef enum {
+    // Parameter/result registers.
+    q0,
+    q1,
+    q2,
+    q3,
+    q4,
+    q5,
+    q6,
+    q7,
+    // Callee-saved (up to 64-bits only!).
+    q8,
+    q9,
+    q10,
+    q11,
+    q12,
+    q13,
+    q14,
+    q15,
+    // Temporary registers.
+    q16,
+    q17,
+    q18,
+    q19,
+    q20,
+    q21,
+    q22,
+    q23,
+    q24,
+    q25,
+    q26,
+    q27,
+    q28,
+    q29,
+    q30,
+    q31,
 } FPRegisterID;
 
 static constexpr bool isSp(RegisterID reg) { return reg == sp; }
@@ -277,13 +260,53 @@ static constexpr bool isZr(RegisterID reg) { return reg == zr; }
 class ARM64Assembler {
 public:
     typedef ARM64Registers::RegisterID RegisterID;
+    typedef ARM64Registers::SPRegisterID SPRegisterID;
     typedef ARM64Registers::FPRegisterID FPRegisterID;
     
     static constexpr RegisterID firstRegister() { return ARM64Registers::x0; }
     static constexpr RegisterID lastRegister() { return ARM64Registers::sp; }
-    
+    static constexpr unsigned numberOfRegisters() { return lastRegister() - firstRegister() + 1; }
+
+    static constexpr SPRegisterID firstSPRegister() { return ARM64Registers::pc; }
+    static constexpr SPRegisterID lastSPRegister() { return ARM64Registers::fpsr; }
+    static constexpr unsigned numberOfSPRegisters() { return lastSPRegister() - firstSPRegister() + 1; }
+
     static constexpr FPRegisterID firstFPRegister() { return ARM64Registers::q0; }
     static constexpr FPRegisterID lastFPRegister() { return ARM64Registers::q31; }
+    static constexpr unsigned numberOfFPRegisters() { return lastFPRegister() - firstFPRegister() + 1; }
+
+    static const char* gprName(RegisterID id)
+    {
+        ASSERT(id >= firstRegister() && id <= lastRegister());
+        static const char* const nameForRegister[numberOfRegisters()] = {
+            "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
+            "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15",
+            "r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23",
+            "r24", "r25", "r26", "r27", "r28", "fp", "lr", "sp"
+        };
+        return nameForRegister[id];
+    }
+
+    static const char* sprName(SPRegisterID id)
+    {
+        ASSERT(id >= firstSPRegister() && id <= lastSPRegister());
+        static const char* const nameForRegister[numberOfSPRegisters()] = {
+            "pc", "nzcv", "fpsr"
+        };
+        return nameForRegister[id];
+    }
+
+    static const char* fprName(FPRegisterID id)
+    {
+        ASSERT(id >= firstFPRegister() && id <= lastFPRegister());
+        static const char* const nameForRegister[numberOfFPRegisters()] = {
+            "q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7",
+            "q8", "q9", "q10", "q11", "q12", "q13", "q14", "q15",
+            "q16", "q17", "q18", "q19", "q20", "q21", "q22", "q23",
+            "q24", "q25", "q26", "q27", "q28", "q29", "q30", "q31"
+        };
+        return nameForRegister[id];
+    }
 
 private:
     static constexpr bool isSp(RegisterID reg) { return ARM64Registers::isSp(reg); }

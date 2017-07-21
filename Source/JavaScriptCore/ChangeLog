@@ -1,3 +1,121 @@
+2017-07-21  Mark Lam  <mark.lam@apple.com>
+
+        Refactor MASM probe CPUState to use arrays for register storage.
+        https://bugs.webkit.org/show_bug.cgi?id=174694
+
+        Reviewed by Keith Miller.
+
+        Using arrays for register storage in CPUState allows us to do away with the
+        huge switch statements to decode each register id.  We can now simply index into
+        the arrays.
+
+        With this patch, we now:
+
+        1. Remove the need for macros for defining the list of CPU registers.
+           We can go back to simple enums.  This makes the code easier to read.
+
+        2. Make the assembler the authority on register names.
+           Most of this code is moved into the assembler from GPRInfo and FPRInfo.
+           GPRInfo and FPRInfo now forwards to the assembler.
+
+        3. Make the assembler the authority on the number of registers of each type.
+
+        4. Fix a "bug" in ARMv7's lastRegister().  It was previously omitting lr and pc.
+           This is inconsistent with how every other CPU architecture implements
+           lastRegister().  This patch fixes it to return the true last GPR i.e. pc, but
+           updates RegisterSet::reservedHardwareRegisters() to exclude those registers.
+
+        * assembler/ARM64Assembler.h:
+        (JSC::ARM64Assembler::numberOfRegisters):
+        (JSC::ARM64Assembler::firstSPRegister):
+        (JSC::ARM64Assembler::lastSPRegister):
+        (JSC::ARM64Assembler::numberOfSPRegisters):
+        (JSC::ARM64Assembler::numberOfFPRegisters):
+        (JSC::ARM64Assembler::gprName):
+        (JSC::ARM64Assembler::sprName):
+        (JSC::ARM64Assembler::fprName):
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::numberOfRegisters):
+        (JSC::ARMAssembler::firstSPRegister):
+        (JSC::ARMAssembler::lastSPRegister):
+        (JSC::ARMAssembler::numberOfSPRegisters):
+        (JSC::ARMAssembler::numberOfFPRegisters):
+        (JSC::ARMAssembler::gprName):
+        (JSC::ARMAssembler::sprName):
+        (JSC::ARMAssembler::fprName):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::lastRegister):
+        (JSC::ARMv7Assembler::numberOfRegisters):
+        (JSC::ARMv7Assembler::firstSPRegister):
+        (JSC::ARMv7Assembler::lastSPRegister):
+        (JSC::ARMv7Assembler::numberOfSPRegisters):
+        (JSC::ARMv7Assembler::numberOfFPRegisters):
+        (JSC::ARMv7Assembler::gprName):
+        (JSC::ARMv7Assembler::sprName):
+        (JSC::ARMv7Assembler::fprName):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::numberOfRegisters):
+        (JSC::AbstractMacroAssembler::gprName):
+        (JSC::AbstractMacroAssembler::firstSPRegister):
+        (JSC::AbstractMacroAssembler::lastSPRegister):
+        (JSC::AbstractMacroAssembler::numberOfSPRegisters):
+        (JSC::AbstractMacroAssembler::sprName):
+        (JSC::AbstractMacroAssembler::numberOfFPRegisters):
+        (JSC::AbstractMacroAssembler::fprName):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::numberOfRegisters):
+        (JSC::MIPSAssembler::firstSPRegister):
+        (JSC::MIPSAssembler::lastSPRegister):
+        (JSC::MIPSAssembler::numberOfSPRegisters):
+        (JSC::MIPSAssembler::numberOfFPRegisters):
+        (JSC::MIPSAssembler::gprName):
+        (JSC::MIPSAssembler::sprName):
+        (JSC::MIPSAssembler::fprName):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::CPUState::gprName):
+        (JSC::MacroAssembler::CPUState::sprName):
+        (JSC::MacroAssembler::CPUState::fprName):
+        (JSC::MacroAssembler::CPUState::gpr):
+        (JSC::MacroAssembler::CPUState::spr):
+        (JSC::MacroAssembler::CPUState::fpr):
+        (JSC::MacroAssembler::CPUState::pc):
+        (JSC::MacroAssembler::CPUState::fp):
+        (JSC::MacroAssembler::CPUState::sp):
+        (JSC::ProbeContext::gpr):
+        (JSC::ProbeContext::spr):
+        (JSC::ProbeContext::fpr):
+        (JSC::ProbeContext::gprName):
+        (JSC::ProbeContext::sprName):
+        (JSC::ProbeContext::fprName):
+        (JSC::MacroAssembler::numberOfRegisters): Deleted.
+        (JSC::MacroAssembler::numberOfFPRegisters): Deleted.
+        * assembler/MacroAssemblerARM.cpp:
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::arm64ProbeTrampoline):
+        * assembler/MacroAssemblerARMv7.cpp:
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::nextID):
+        (JSC::Printer::printAllRegisters):
+        (JSC::Printer::printPCRegister):
+        (JSC::Printer::printRegisterID):
+        (JSC::Printer::printAddress):
+        * assembler/MacroAssemblerX86Common.cpp:
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::numberOfRegisters):
+        (JSC::X86Assembler::firstSPRegister):
+        (JSC::X86Assembler::lastSPRegister):
+        (JSC::X86Assembler::numberOfSPRegisters):
+        (JSC::X86Assembler::numberOfFPRegisters):
+        (JSC::X86Assembler::gprName):
+        (JSC::X86Assembler::sprName):
+        (JSC::X86Assembler::fprName):
+        * jit/FPRInfo.h:
+        (JSC::FPRInfo::debugName):
+        * jit/GPRInfo.h:
+        (JSC::GPRInfo::debugName):
+        * jit/RegisterSet.cpp:
+        (JSC::RegisterSet::reservedHardwareRegisters):
+
 2017-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Introduce static symbols

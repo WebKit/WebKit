@@ -88,13 +88,23 @@ public:
     class Jump;
 
     typedef typename AssemblerType::RegisterID RegisterID;
+    typedef typename AssemblerType::SPRegisterID SPRegisterID;
     typedef typename AssemblerType::FPRegisterID FPRegisterID;
     
     static constexpr RegisterID firstRegister() { return AssemblerType::firstRegister(); }
     static constexpr RegisterID lastRegister() { return AssemblerType::lastRegister(); }
+    static constexpr unsigned numberOfRegisters() { return AssemblerType::numberOfRegisters(); }
+    static const char* gprName(RegisterID id) { return AssemblerType::gprName(id); }
+
+    static constexpr SPRegisterID firstSPRegister() { return AssemblerType::firstSPRegister(); }
+    static constexpr SPRegisterID lastSPRegister() { return AssemblerType::lastSPRegister(); }
+    static constexpr unsigned numberOfSPRegisters() { return AssemblerType::numberOfSPRegisters(); }
+    static const char* sprName(SPRegisterID id) { return AssemblerType::sprName(id); }
 
     static constexpr FPRegisterID firstFPRegister() { return AssemblerType::firstFPRegister(); }
     static constexpr FPRegisterID lastFPRegister() { return AssemblerType::lastFPRegister(); }
+    static constexpr unsigned numberOfFPRegisters() { return AssemblerType::numberOfFPRegisters(); }
+    static const char* fprName(FPRegisterID id) { return AssemblerType::fprName(id); }
 
     // Section 1: MacroAssembler operand types
     //

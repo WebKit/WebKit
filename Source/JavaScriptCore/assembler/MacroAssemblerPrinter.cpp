@@ -37,6 +37,8 @@ using CPUState = MacroAssembler::CPUState;
 using RegisterID = MacroAssembler::RegisterID;
 using FPRegisterID = MacroAssembler::FPRegisterID;
 
+template<typename T> T nextID(T id) { return static_cast<T>(id + 1); }
+
 void printAllRegisters(PrintStream& out, Context& context)
 {
     auto& cpu = context.probeContext.cpu;
@@ -56,22 +58,21 @@ void printAllRegisters(PrintStream& out, Context& context)
     #define INTPTR_HEX_VALUE_FORMAT "0x%016lx"
 #endif
 
-    #define PRINT_GPREGISTER(_type, _regName) { \
-        intptr_t value = reinterpret_cast<intptr_t>(cpu._regName); \
-        INDENT, out.printf("    %6s: " INTPTR_HEX_VALUE_FORMAT "  %ld\n", #_regName, value, value) ; \
+    for (auto id = MacroAssembler::firstRegister(); id <= MacroAssembler::lastRegister(); id = nextID(id)) {
+        intptr_t value = static_cast<intptr_t>(cpu.gpr(id));
+        INDENT, out.printf("    %6s: " INTPTR_HEX_VALUE_FORMAT "  %ld\n", cpu.gprName(id), value, value);
     }
-    FOR_EACH_CPU_GPREGISTER(PRINT_GPREGISTER)
-    FOR_EACH_CPU_SPECIAL_REGISTER(PRINT_GPREGISTER)
-    #undef PRINT_GPREGISTER
+    for (auto id = MacroAssembler::firstSPRegister(); id <= MacroAssembler::lastSPRegister(); id = nextID(id)) {
+        intptr_t value = static_cast<intptr_t>(cpu.spr(id));
+        INDENT, out.printf("    %6s: " INTPTR_HEX_VALUE_FORMAT "  %ld\n", cpu.sprName(id), value, value);
+    }
     #undef INTPTR_HEX_VALUE_FORMAT
-    
-    #define PRINT_FPREGISTER(_type, _regName) { \
-        uint64_t* u = reinterpret_cast<uint64_t*>(&cpu._regName); \
-        double* d = reinterpret_cast<double*>(&cpu._regName); \
-        INDENT, out.printf("    %6s: 0x%016llx  %.13g\n", #_regName, *u, *d); \
+
+    for (auto id = MacroAssembler::firstFPRegister(); id <= MacroAssembler::lastFPRegister(); id = nextID(id)) {
+        uint64_t u = bitwise_cast<uint64_t>(cpu.fpr(id));
+        double d = cpu.fpr(id);
+        INDENT, out.printf("    %6s: 0x%016llx  %.13g\n", cpu.fprName(id), u, d);
     }
-    FOR_EACH_CPU_FPREGISTER(PRINT_FPREGISTER)
-    #undef PRINT_FPREGISTER
 
     INDENT, out.print("}\n");
 #undef INDENT
@@ -81,23 +82,16 @@ void printAllRegisters(PrintStream& out, Context& context)
 void printPCRegister(PrintStream& out, Context& context)
 {
     auto cpu = context.probeContext.cpu;
-    void* value;
-#if CPU(X86) || CPU(X86_64)
-    value = cpu.eip;
-#elif CPU(ARM_TRADITIONAL) || CPU(ARM_THUMB2) || CPU(ARM64)
-    value = cpu.pc;
-#else
-#error "Unsupported CPU"
-#endif
-    out.printf("pc:<%p %ld>", value, bitwise_cast<intptr_t>(value));
+    intptr_t value = cpu.pc();
+    out.printf("pc:<%p %ld>", bitwise_cast<void*>(value), value);
 }
 
 void printRegisterID(PrintStream& out, Context& context)
 {
     RegisterID regID = context.data.as<RegisterID>();
     const char* name = CPUState::gprName(regID);
-    void* value = context.probeContext.gpr(regID);
-    out.printf("%s:<%p %ld>", name, value, bitwise_cast<intptr_t>(value));
+    intptr_t value = context.probeContext.gpr(regID);
+    out.printf("%s:<%p %ld>", name, bitwise_cast<void*>(value), value);
 }
 
 void printFPRegisterID(PrintStream& out, Context& context)
@@ -113,8 +107,8 @@ void printAddress(PrintStream& out, Context& context)
     MacroAssembler::Address address = context.data.as<MacroAssembler::Address>();
     RegisterID regID = address.base;
     const char* name = CPUState::gprName(regID);
-    void* value = context.probeContext.gpr(regID);
-    out.printf("Address{base:%s:<%p %ld>, offset:<0x%x %d>", name, value, bitwise_cast<intptr_t>(value), address.offset, address.offset);
+    intptr_t value = context.probeContext.gpr(regID);
+    out.printf("Address{base:%s:<%p %ld>, offset:<0x%x %d>", name, bitwise_cast<void*>(value), value, address.offset, address.offset);
 }
 
 void printMemory(PrintStream& out, Context& context)

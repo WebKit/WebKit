@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -382,12 +382,7 @@ public:
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(static_cast<int>(reg) < 8);
-        static const char* nameForRegister[8] = {
-            "eax", "ecx", "edx", "ebx",
-            "esp", "ebp", "esi", "edi",
-        };
-        return nameForRegister[reg];
+        return MacroAssembler::gprName(reg);
     }
 
     static const unsigned InvalidIndex = 0xffffffff;
@@ -511,14 +506,7 @@ public:
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(static_cast<int>(reg) < 16);
-        static const char* nameForRegister[16] = {
-            "rax", "rcx", "rdx", "rbx",
-            "rsp", "rbp", "rsi", "rdi",
-            "r8", "r9", "r10", "r11",
-            "r12", "r13", "r14", "r15"
-        };
-        return nameForRegister[reg];
+        return MacroAssembler::gprName(reg);
     }
 
     static const std::array<GPRReg, 3>& reservedRegisters()
@@ -604,14 +592,7 @@ public:
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(static_cast<int>(reg) < 16);
-        static const char* nameForRegister[16] = {
-            "r0", "r1", "r2", "r3",
-            "r4", "r5", "r6", "r7",
-            "r8", "r9", "r10", "r11",
-            "r12", "r13", "r14", "r15"
-        };
-        return nameForRegister[reg];
+        return MacroAssembler::gprName(reg);
     }
 
     static const unsigned InvalidIndex = 0xffffffff;
@@ -718,14 +699,7 @@ public:
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(static_cast<unsigned>(reg) < 32);
-        static const char* nameForRegister[32] = {
-            "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
-            "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15",
-            "r16", "r17", "r18", "r19", "r20", "r21", "r22", "r23",
-            "r24", "r25", "r26", "r27", "r28", "fp", "lr", "sp"
-        };
-        return nameForRegister[reg];
+        return MacroAssembler::gprName(reg);
     }
 
     static const std::array<GPRReg, 4>& reservedRegisters()
@@ -808,14 +782,7 @@ public:
     static const char* debugName(GPRReg reg)
     {
         ASSERT(reg != InvalidGPRReg);
-        ASSERT(reg < 16);
-        static const char* nameForRegister[16] = {
-            "zero", "at", "v0", "v1",
-            "a0", "a1", "a2", "a3",
-            "t0", "t1", "t2", "t3",
-            "t4", "t5", "t6", "t7"
-        };
-        return nameForRegister[reg];
+        return MacroAssembler::gprName(reg);
     }
 
     static const unsigned InvalidIndex = 0xffffffff;
