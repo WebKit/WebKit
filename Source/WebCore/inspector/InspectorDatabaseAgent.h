@@ -60,7 +60,7 @@ public:
     void executeSQL(ErrorString&, const String& databaseId, const String& query, Ref<ExecuteSQLCallback>&&) override;
 
     // Called from the injected script.
-    String databaseId(Database*);
+    String databaseId(Database&);
 
     void didOpenDatabase(RefPtr<Database>&&, const String& domain, const String& name, const String& version);
 private:

@@ -1,3 +1,28 @@
+2017-07-21  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Make a few parameters non-nullable in inspector IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=174719
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::CommandLineAPIHost::databaseId):
+        (WebCore::CommandLineAPIHost::storageId):
+        * inspector/CommandLineAPIHost.h:
+        * inspector/CommandLineAPIHost.idl:
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::storageId):
+        * inspector/InspectorDOMStorageAgent.h:
+        * inspector/InspectorDatabaseAgent.cpp:
+        (WebCore::InspectorDatabaseAgent::databaseId):
+        * inspector/InspectorDatabaseAgent.h:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::showContextMenu):
+        (WebCore::InspectorFrontendHost::dispatchEventAsContextMenuEvent):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+        Remove nullability from arguments that should never be null.
+
 2017-07-21  Brady Eidson  <beidson@apple.com>
 
         Get rid of WebCore IconDatabase code.

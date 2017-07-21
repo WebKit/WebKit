@@ -68,8 +68,8 @@
     DOMString platform();
     DOMString port();
 
-    void showContextMenu(Event? event, sequence<ContextMenuItem> items);
-    void dispatchEventAsContextMenuEvent(Event? event);
+    void showContextMenu(Event event, sequence<ContextMenuItem> items);
+    void dispatchEventAsContextMenuEvent(Event event);
     void sendMessageToBackend(DOMString message);
     void unbufferedLog(DOMString message);
 

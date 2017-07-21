@@ -139,15 +139,14 @@ void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, co
     storageArea->removeItem(frame, key);
 }
 
-String InspectorDOMStorageAgent::storageId(Storage* storage)
+String InspectorDOMStorageAgent::storageId(Storage& storage)
 {
-    ASSERT(storage);
-    Document* document = storage->frame()->document();
+    Document* document = storage.frame()->document();
     ASSERT(document);
     DOMWindow* window = document->domWindow();
     ASSERT(window);
     Ref<SecurityOrigin> securityOrigin = document->securityOrigin();
-    bool isLocalStorage = window->optionalLocalStorage() == storage;
+    bool isLocalStorage = window->optionalLocalStorage() == &storage;
     return storageId(securityOrigin.ptr(), isLocalStorage)->toJSONString();
 }
 

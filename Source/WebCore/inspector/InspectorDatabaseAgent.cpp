@@ -273,10 +273,10 @@ void InspectorDatabaseAgent::executeSQL(ErrorString&, const String& databaseId, 
         TransactionSuccessCallback::create());
 }
 
-String InspectorDatabaseAgent::databaseId(Database* database)
+String InspectorDatabaseAgent::databaseId(Database& database)
 {
     for (auto& resource : m_resources) {
-        if (resource.value->database() == database)
+        if (resource.value->database() == &database)
             return resource.key;
     }
     return String();

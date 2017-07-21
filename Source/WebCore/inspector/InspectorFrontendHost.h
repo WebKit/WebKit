@@ -92,10 +92,10 @@ public:
         std::optional<bool> checked;
         std::optional<Vector<ContextMenuItem>> subItems;
     };
-    void showContextMenu(Event*, Vector<ContextMenuItem>&&);
+    void showContextMenu(Event&, Vector<ContextMenuItem>&&);
 
     void sendMessageToBackend(const String& message);
-    void dispatchEventAsContextMenuEvent(Event*);
+    void dispatchEventAsContextMenuEvent(Event&);
 
     bool isUnderTest();
     void unbufferedLog(const String& message);

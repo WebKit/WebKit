@@ -362,12 +362,9 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
 }
 #endif
 
-void InspectorFrontendHost::showContextMenu(Event* event, Vector<ContextMenuItem>&& items)
+void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem>&& items)
 {
 #if ENABLE(CONTEXT_MENUS)
-    if (!event)
-        return;
-
     ASSERT(m_frontendPage);
     auto& state = *execStateFromPage(debuggerWorld(), m_frontendPage);
     JSC::JSObject* frontendApiObject;
@@ -381,24 +378,24 @@ void InspectorFrontendHost::showContextMenu(Event* event, Vector<ContextMenuItem
 
     auto menuProvider = FrontendMenuProvider::create(this, { &state, frontendApiObject }, menu.items());
     m_menuProvider = menuProvider.ptr();
-    m_frontendPage->contextMenuController().showContextMenu(*event, menuProvider);
+    m_frontendPage->contextMenuController().showContextMenu(event, menuProvider);
 #else
     UNUSED_PARAM(event);
     UNUSED_PARAM(items);
 #endif
 }
 
-void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event* event)
+void InspectorFrontendHost::dispatchEventAsContextMenuEvent(Event& event)
 {
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
     if (!is<MouseEvent>(event))
         return;
 
-    Frame* frame = event->target()->toNode()->document().frame();
-    MouseEvent& mouseEvent = downcast<MouseEvent>(*event);
-    IntPoint mousePoint = IntPoint(mouseEvent.clientX(), mouseEvent.clientY());
+    auto& mouseEvent = downcast<MouseEvent>(event);
+    IntPoint mousePoint { mouseEvent.clientX(), mouseEvent.clientY() };
+    auto& frame = *mouseEvent.target()->toNode()->document().frame();
 
-    m_frontendPage->contextMenuController().showContextMenuAt(*frame, mousePoint);
+    m_frontendPage->contextMenuController().showContextMenuAt(frame, mousePoint);
 #else
     UNUSED_PARAM(event);
 #endif

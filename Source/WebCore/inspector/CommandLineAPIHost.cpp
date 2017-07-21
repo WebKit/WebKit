@@ -173,14 +173,14 @@ JSC::JSValue CommandLineAPIHost::inspectedObject(JSC::ExecState& state)
     return scriptValue ? scriptValue : jsUndefined();
 }
 
-String CommandLineAPIHost::databaseId(Database* database)
+String CommandLineAPIHost::databaseId(Database& database)
 {
     if (m_databaseAgent)
         return m_databaseAgent->databaseId(database);
     return { };
 }
 
-String CommandLineAPIHost::storageId(Storage* storage)
+String CommandLineAPIHost::storageId(Storage& storage)
 {
     if (m_domStorageAgent)
         return m_domStorageAgent->storageId(storage);

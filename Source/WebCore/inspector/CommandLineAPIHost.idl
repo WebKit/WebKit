@@ -42,8 +42,8 @@
 
     [CallWith=ScriptState] record<DOMString, sequence<ListenerEntry>> getEventListeners(Node? node);
 
-    DOMString databaseId(Database? database);
-    DOMString storageId(Storage? storage);
+    DOMString databaseId(Database database);
+    DOMString storageId(Storage storage);
 };
 
 [

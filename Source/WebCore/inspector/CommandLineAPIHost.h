@@ -99,8 +99,8 @@ public:
     using EventListenersRecord = Vector<WTF::KeyValuePair<String, Vector<ListenerEntry>>>;
     EventListenersRecord getEventListeners(JSC::ExecState&, Node*);
 
-    String databaseId(Database*);
-    String storageId(Storage*);
+    String databaseId(Database&);
+    String storageId(Storage&);
 
     JSC::JSValue wrapper(JSC::ExecState*, JSDOMGlobalObject*);
     void clearAllWrappers();
