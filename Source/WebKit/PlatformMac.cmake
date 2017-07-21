@@ -1,5 +1,4 @@
 add_definitions("-ObjC++ -std=c++14")
-link_directories(../../WebKitLibraries)
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(CARBON_LIBRARY Carbon)
 find_library(QUARTZ_LIBRARY Quartz)

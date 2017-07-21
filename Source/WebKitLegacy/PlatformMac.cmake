@@ -2,7 +2,6 @@ find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(QUARTZ_LIBRARY Quartz)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
-link_directories(../../WebKitLibraries)
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WEBKITLEGACY_DIR}"

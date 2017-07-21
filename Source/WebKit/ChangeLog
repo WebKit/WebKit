@@ -1,3 +1,12 @@
+2017-07-21  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake][Mac] Unreviewed, fix linking WebKitSystemInterface
+
+        After r219560 link_directories() in PlatformXXX.cmake files does not
+        affect corresponding targets.
+
+        * PlatformMac.cmake:
+
 2017-07-21  Andreas Kling  <akling@apple.com>
 
         Use more references in event dispatch code
