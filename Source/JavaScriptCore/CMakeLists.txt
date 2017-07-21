@@ -199,6 +199,7 @@ set(JavaScriptCore_SOURCES
 
     builtins/BuiltinExecutables.cpp
     builtins/BuiltinExecutableCreator.cpp
+    builtins/BuiltinNames.cpp
 
     bytecode/AccessCase.cpp
     bytecode/AccessCaseSnippetParams.cpp

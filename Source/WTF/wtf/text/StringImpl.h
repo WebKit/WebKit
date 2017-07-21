@@ -148,16 +148,16 @@ protected:
 
     enum ConstructWithConstExprTag { ConstructWithConstExpr };
     
-    template<unsigned charactersCount>
-    constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[charactersCount], unsigned hashAndFlags, ConstructWithConstExprTag)
+    template<unsigned characterCount>
+    constexpr StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
         : m_refCount(refCount)
         , m_length(length)
         , m_data8Char(characters)
         , m_hashAndFlags(hashAndFlags)
     { }
     
-    template<unsigned charactersCount>
-    constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[charactersCount], unsigned hashAndFlags, ConstructWithConstExprTag)
+    template<unsigned characterCount>
+    constexpr StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
         : m_refCount(refCount)
         , m_length(length)
         , m_data16Char(characters)
@@ -342,13 +342,13 @@ public:
         return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.m_data16 + offset, length, *ownerRep));
     }
 
-    template<unsigned charactersCount>
-    ALWAYS_INLINE static Ref<StringImpl> createFromLiteral(const char (&characters)[charactersCount])
+    template<unsigned characterCount>
+    ALWAYS_INLINE static Ref<StringImpl> createFromLiteral(const char (&characters)[characterCount])
     {
-        COMPILE_ASSERT(charactersCount > 1, StringImplFromLiteralNotEmpty);
-        COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), StringImplFromLiteralCannotOverflow);
+        COMPILE_ASSERT(characterCount > 1, StringImplFromLiteralNotEmpty);
+        COMPILE_ASSERT((characterCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), StringImplFromLiteralCannotOverflow);
 
-        return createWithoutCopying(reinterpret_cast<const LChar*>(characters), charactersCount - 1);
+        return createWithoutCopying(reinterpret_cast<const LChar*>(characters), characterCount - 1);
     }
 
     // FIXME: Transition off of these functions to createWithoutCopying instead.
@@ -598,16 +598,16 @@ public:
         //       StringImpl::hash() only sets a new hash iff !hasHash().
         //       Additionally, StringImpl::setHash() asserts hasHash() and !isStatic().
 
-        template<unsigned charactersCount>
-        constexpr StaticStringImpl(const char (&characters)[charactersCount], StringKind stringKind = StringNormal)
-            : StringImplShape(s_refCountFlagIsStaticString, charactersCount - 1, characters,
+        template<unsigned characterCount>
+        constexpr StaticStringImpl(const char (&characters)[characterCount], StringKind stringKind = StringNormal)
+            : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
                 s_hashFlag8BitBuffer | s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
         {
         }
 
-        template<unsigned charactersCount>
-        constexpr StaticStringImpl(const char16_t (&characters)[charactersCount], StringKind stringKind = StringNormal)
-            : StringImplShape(s_refCountFlagIsStaticString, charactersCount - 1, characters,
+        template<unsigned characterCount>
+        constexpr StaticStringImpl(const char16_t (&characters)[characterCount], StringKind stringKind = StringNormal)
+            : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
                 s_hashFlagDidReportCost | stringKind | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
         {
         }

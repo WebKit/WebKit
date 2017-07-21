@@ -248,16 +248,16 @@ public:
         return avoidZero(avalancheBits(hash) & StringHasher::maskHash);
     }
 
-    template<typename T, unsigned charactersCount>
-    static constexpr unsigned computeLiteralHash(const T (&characters)[charactersCount])
+    template<typename T, unsigned characterCount>
+    static constexpr unsigned computeLiteralHash(const T (&characters)[characterCount])
     {
-        return StringHasher::finalize(computeLiteralHashImpl(stringHashingStartValue, 0, characters, charactersCount - 1));
+        return StringHasher::finalize(computeLiteralHashImpl(stringHashingStartValue, 0, characters, characterCount - 1));
     }
 
-    template<typename T, unsigned charactersCount>
-    static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[charactersCount])
+    template<typename T, unsigned characterCount>
+    static constexpr unsigned computeLiteralHashAndMaskTop8Bits(const T (&characters)[characterCount])
     {
-        return StringHasher::finalizeAndMaskTop8Bits(computeLiteralHashImpl(stringHashingStartValue, 0, characters, charactersCount - 1));
+        return StringHasher::finalizeAndMaskTop8Bits(computeLiteralHashImpl(stringHashingStartValue, 0, characters, characterCount - 1));
     }
 
 private:

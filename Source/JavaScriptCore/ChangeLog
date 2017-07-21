@@ -1,5 +1,25 @@
 2017-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Introduce static symbols
+        https://bugs.webkit.org/show_bug.cgi?id=158863
+
+        Reviewed by Darin Adler.
+
+        We use StaticSymbolImpl to initialize PrivateNames and builtin Symbols.
+        As a result, we can share the same Symbol values between VMs and threads.
+        And we do not need to allocate Ref<SymbolImpl> for these symbols at runtime.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * builtins/BuiltinNames.cpp: Added.
+        Suppress warning C4307, integral constant overflow. It is intentional in constexpr hash value calculation.
+
+        * builtins/BuiltinNames.h:
+        (JSC::BuiltinNames::BuiltinNames):
+        * builtins/BuiltinUtils.h:
+
+2017-07-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [FTL] Arguments elimination is suppressed by unreachable blocks
         https://bugs.webkit.org/show_bug.cgi?id=174352
 

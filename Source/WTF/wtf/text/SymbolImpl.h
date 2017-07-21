@@ -51,6 +51,35 @@ public:
     WTF_EXPORT_STRING_API static Ref<SymbolImpl> createNullSymbol();
     WTF_EXPORT_STRING_API static Ref<SymbolImpl> create(StringImpl& rep);
 
+    class StaticSymbolImpl : private StringImplShape {
+        WTF_MAKE_NONCOPYABLE(StaticSymbolImpl);
+    public:
+        template<unsigned characterCount>
+        constexpr StaticSymbolImpl(const char (&characters)[characterCount])
+            : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
+                s_hashFlag8BitBuffer | s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+            , m_hashForSymbol(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+        {
+        }
+
+        template<unsigned characterCount>
+        constexpr StaticSymbolImpl(const char16_t (&characters)[characterCount])
+            : StringImplShape(s_refCountFlagIsStaticString, characterCount - 1, characters,
+                s_hashFlagDidReportCost | StringSymbol | BufferInternal | (StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount), ConstructWithConstExpr)
+            , m_hashForSymbol(StringHasher::computeLiteralHashAndMaskTop8Bits(characters) << s_flagCount)
+        {
+        }
+
+        operator SymbolImpl&()
+        {
+            return *reinterpret_cast<SymbolImpl*>(this);
+        }
+
+        StringImpl* m_owner { nullptr }; // We do not make StaticSymbolImpl BufferSubstring. Thus we can make this nullptr.
+        unsigned m_hashForSymbol;
+        Flags m_flags { s_flagDefault };
+    };
+
 protected:
     WTF_EXPORT_PRIVATE static unsigned nextHashForSymbol();
 
@@ -89,6 +118,7 @@ protected:
     unsigned m_hashForSymbol;
     Flags m_flags { s_flagDefault };
 };
+static_assert(sizeof(SymbolImpl) == sizeof(SymbolImpl::StaticSymbolImpl), "");
 
 class RegisteredSymbolImpl : public SymbolImpl {
 private:

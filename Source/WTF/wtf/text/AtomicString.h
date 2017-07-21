@@ -71,12 +71,12 @@ public:
     {
     }
 
-    template<unsigned charactersCount>
-    ALWAYS_INLINE AtomicString(const char (&characters)[charactersCount], ConstructFromLiteralTag)
-        : m_string(AtomicStringImpl::addLiteral(characters, charactersCount - 1))
+    template<unsigned characterCount>
+    ALWAYS_INLINE AtomicString(const char (&characters)[characterCount], ConstructFromLiteralTag)
+        : m_string(AtomicStringImpl::addLiteral(characters, characterCount - 1))
     {
-        COMPILE_ASSERT(charactersCount > 1, AtomicStringFromLiteralNotEmpty);
-        COMPILE_ASSERT((charactersCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), AtomicStringFromLiteralCannotOverflow);
+        COMPILE_ASSERT(characterCount > 1, AtomicStringFromLiteralNotEmpty);
+        COMPILE_ASSERT((characterCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), AtomicStringFromLiteralCannotOverflow);
     }
 
     // We have to declare the copy constructor and copy assignment operator as well, otherwise

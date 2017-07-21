@@ -124,8 +124,8 @@ public:
     // Construct a string from a constant string literal.
     // This constructor is the "big" version, as it put the length in the function call and generate bigger code.
     enum ConstructFromLiteralTag { ConstructFromLiteral };
-    template<unsigned charactersCount>
-    String(const char (&characters)[charactersCount], ConstructFromLiteralTag) : m_impl(StringImpl::createFromLiteral<charactersCount>(characters)) { }
+    template<unsigned characterCount>
+    String(const char (&characters)[characterCount], ConstructFromLiteralTag) : m_impl(StringImpl::createFromLiteral<characterCount>(characters)) { }
 
     // We have to declare the copy constructor and copy assignment operator as well, otherwise
     // they'll be implicitly deleted by adding the move constructor and move assignment operator.
@@ -315,11 +315,11 @@ public:
     String& replace(const String& a, const String& b) { if (m_impl) m_impl = m_impl->replace(a.impl(), b.impl()); return *this; }
     String& replace(unsigned index, unsigned len, const String& b) { if (m_impl) m_impl = m_impl->replace(index, len, b.impl()); return *this; }
 
-    template<unsigned charactersCount>
-    ALWAYS_INLINE String& replaceWithLiteral(UChar a, const char (&characters)[charactersCount])
+    template<unsigned characterCount>
+    ALWAYS_INLINE String& replaceWithLiteral(UChar a, const char (&characters)[characterCount])
     {
         if (m_impl)
-            m_impl = m_impl->replace(a, characters, charactersCount - 1);
+            m_impl = m_impl->replace(a, characters, characterCount - 1);
 
         return *this;
     }
