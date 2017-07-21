@@ -27,7 +27,6 @@
 #include "FontFaceSet.h"
 
 #include "Document.h"
-#include "ExceptionCodeDescription.h"
 #include "FontFace.h"
 #include "JSDOMBinding.h"
 #include "JSFontFace.h"

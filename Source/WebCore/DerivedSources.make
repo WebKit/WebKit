@@ -947,7 +947,6 @@ all : \
     DOMJITAbstractHeapRepository.h \
     EventInterfaces.h \
     EventTargetInterfaces.h \
-    ExceptionCodeDescription.cpp \
     HTMLElementFactory.cpp \
     HTMLElementFactory.h \
     HTMLElementTypeHelpers.h \
@@ -1272,10 +1271,6 @@ EVENT_TARGET_FACTORY = EventTargetFactory.in $(ADDITIONAL_EVENT_TARGET_FACTORY)
 all : EventTargetHeaders.h EventTargetInterfaces.h
 EventTargetHeaders%h EventTargetInterfaces%h : dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
 	$(PERL) $< $(addprefix --input , $(filter-out $(WebCore)/dom/make_event_factory.pl, $^))
-
-all : ExceptionCodeDescription.cpp ExceptionCodeDescription.h ExceptionHeaders.h ExceptionInterfaces.h
-ExceptionCodeDescription%cpp ExceptionCodeDescription%h ExceptionHeaders%h ExceptionInterfaces%h : dom/make_dom_exceptions.pl dom/DOMExceptions.in
-	$(PERL) $< --input $(WebCore)/dom/DOMExceptions.in
 
 # --------
 

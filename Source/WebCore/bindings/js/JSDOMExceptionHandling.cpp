@@ -23,10 +23,10 @@
 #include "JSDOMExceptionHandling.h"
 
 #include "CachedScript.h"
+#include "DOMException.h"
 #include "DOMWindow.h"
 #include "ExceptionCodeDescription.h"
-#include "ExceptionHeaders.h"
-#include "ExceptionInterfaces.h"
+#include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
 #include "JSDynamicDowncast.h"

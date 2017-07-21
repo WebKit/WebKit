@@ -1,3 +1,27 @@
+2017-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop make_dom_exceptions.pl script that we only have DOMException
+        https://bugs.webkit.org/show_bug.cgi?id=174699
+
+        Reviewed by Darin Adler.
+
+        Drop make_dom_exceptions.pl script that we only have DOMException.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreMacros.cmake:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        * css/FontFaceSet.cpp:
+        * dom/DOMAllInOne.cpp:
+        * dom/DOMExceptions.in: Removed.
+        * dom/ExceptionCodeDescription.cpp: Added.
+        (WebCore::ExceptionCodeDescription::ExceptionCodeDescription):
+        * dom/ExceptionCodeDescription.h: Added.
+        * dom/make_dom_exceptions.pl: Removed.
+        * inspector/WebInjectedScriptHost.cpp:
+        (WebCore::WebInjectedScriptHost::subtype):
+
 2017-07-21  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [CG] An image should not invoke many system calls before confirming its format is supported

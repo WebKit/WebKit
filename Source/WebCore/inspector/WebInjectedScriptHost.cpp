@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebInjectedScriptHost.h"
 
-#include "ExceptionHeaders.h"
-#include "ExceptionInterfaces.h"
+#include "DOMException.h"
+#include "JSDOMException.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLCollection.h"
 #include "JSNode.h"
@@ -36,10 +36,6 @@
 using namespace JSC;
 
 namespace WebCore {
-    
-#define RETURN_ERROR_IF_VALUE_INHERITS_EXCEPTION_TYPE(interfaceName) \
-    if (value.inherits(vm, JS##interfaceName::info())) \
-        return jsNontrivialString(exec, ASCIILiteral("error"));
 
 JSValue WebInjectedScriptHost::subtype(JSC::ExecState* exec, JSC::JSValue value)
 {
@@ -50,8 +46,8 @@ JSValue WebInjectedScriptHost::subtype(JSC::ExecState* exec, JSC::JSValue value)
         return jsNontrivialString(exec, ASCIILiteral("array"));
     if (value.inherits(vm, JSHTMLCollection::info()))
         return jsNontrivialString(exec, ASCIILiteral("array"));
-
-    DOM_EXCEPTION_INTERFACES_FOR_EACH(RETURN_ERROR_IF_VALUE_INHERITS_EXCEPTION_TYPE)
+    if (value.inherits(vm, JSDOMException::info()))
+        return jsNontrivialString(exec, ASCIILiteral("error"));
 
     return jsUndefined();
 }

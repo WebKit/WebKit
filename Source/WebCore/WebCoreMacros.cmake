@@ -202,18 +202,6 @@ macro(GENERATE_EVENT_FACTORY _infile _outfile)
 endmacro()
 
 
-macro(GENERATE_EXCEPTION_CODE_DESCRIPTION _infile _outfile)
-    set(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_dom_exceptions.pl)
-
-    add_custom_command(
-        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
-        MAIN_DEPENDENCY ${_infile}
-        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
-        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
-        VERBATIM)
-endmacro()
-
-
 macro(GENERATE_SETTINGS_MACROS _infile _outfile)
     set(NAMES_GENERATOR ${WEBCORE_DIR}/page/make_settings.pl)
 
