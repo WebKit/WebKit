@@ -410,47 +410,98 @@ void WebDriverService::go(RefPtr<InspectorObject>&& parameters, Function<void (C
         return;
     }
 
-    session->go(url, WTFMove(completionHandler));
+    session->waitForNavigationToComplete([session, url = WTFMove(url), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->go(url, WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::getCurrentURL(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.2 Get Current URL.
     // https://www.w3.org/TR/webdriver/#get-current-url
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
         session->getCurrentURL(WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::back(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.3 Back.
     // https://www.w3.org/TR/webdriver/#back
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
         session->back(WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::forward(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.4 Forward.
     // https://www.w3.org/TR/webdriver/#forward
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
         session->forward(WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::refresh(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.5 Refresh.
     // https://www.w3.org/TR/webdriver/#refresh
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
         session->refresh(WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::getTitle(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §9.6 Get Title.
     // https://www.w3.org/TR/webdriver/#get-title
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
         session->getTitle(WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::getWindowHandle(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -562,15 +613,30 @@ void WebDriverService::switchToFrame(RefPtr<InspectorObject>&& parameters, Funct
         return;
     }
 
-    session->switchToFrame(WTFMove(frameID), WTFMove(completionHandler));
+    session->waitForNavigationToComplete([session, frameID, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->switchToFrame(WTFMove(frameID), WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::switchToParentFrame(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
 {
     // §10.6 Switch To Parent Frame.
     // https://www.w3.org/TR/webdriver/#switch-to-parent-frame
-    if (auto session = findSessionOrCompleteWithError(*parameters, completionHandler))
+    auto session = findSessionOrCompleteWithError(*parameters, completionHandler);
+    if (!session)
+        return;
+
+    session->waitForNavigationToComplete([session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
         session->switchToParentFrame(WTFMove(completionHandler));
+    });
 }
 
 static std::optional<String> findElementOrCompleteWithError(InspectorObject& parameters, Function<void (CommandResult&&)>& completionHandler)
@@ -608,7 +674,13 @@ void WebDriverService::findElement(RefPtr<InspectorObject>&& parameters, Functio
     if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
-    session->findElements(strategy, selector, Session::FindElementsMode::Single, emptyString(), WTFMove(completionHandler));
+    session->waitForNavigationToComplete([session, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->findElements(strategy, selector, Session::FindElementsMode::Single, emptyString(), WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::findElements(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -623,7 +695,13 @@ void WebDriverService::findElements(RefPtr<InspectorObject>&& parameters, Functi
     if (!findStrategyAndSelectorOrCompleteWithError(*parameters, completionHandler, strategy, selector))
         return;
 
-    session->findElements(strategy, selector, Session::FindElementsMode::Multiple, emptyString(), WTFMove(completionHandler));
+    session->waitForNavigationToComplete([session, strategy = WTFMove(strategy), selector = WTFMove(selector), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->findElements(strategy, selector, Session::FindElementsMode::Multiple, emptyString(), WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::findElementFromElement(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -884,7 +962,13 @@ void WebDriverService::executeScript(RefPtr<InspectorObject>&& parameters, Funct
     if (!findScriptAndArgumentsOrCompleteWithError(*parameters, completionHandler, script, arguments))
         return;
 
-    session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Sync, WTFMove(completionHandler));
+    session->waitForNavigationToComplete([session, script = WTFMove(script), arguments = WTFMove(arguments), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Sync, WTFMove(completionHandler));
+    });
 }
 
 void WebDriverService::executeAsyncScript(RefPtr<InspectorObject>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -900,7 +984,13 @@ void WebDriverService::executeAsyncScript(RefPtr<InspectorObject>&& parameters, 
     if (!findScriptAndArgumentsOrCompleteWithError(*parameters, completionHandler, script, arguments))
         return;
 
-    session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Async, WTFMove(completionHandler));
+    session->waitForNavigationToComplete([session, script = WTFMove(script), arguments = WTFMove(arguments), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        session->executeScript(script, WTFMove(arguments), Session::ExecuteScriptMode::Async, WTFMove(completionHandler));
+    });
 }
 
 } // namespace WebDriver

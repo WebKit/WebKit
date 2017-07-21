@@ -1,5 +1,46 @@
 2017-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: wait until navigation is complete before running new commands and after a click
+        https://bugs.webkit.org/show_bug.cgi?id=174670
+
+        Reviewed by Brian Burg.
+
+        We are already waiting for navigation to complete after navigation commands (go, back, forward, refresh), but
+        the spec says we should always wait before executing a new command and also after a click. This is causing test
+        testShouldBeAbleToNavigateBackInTheBrowserHistoryInPresenceOfIframes to sometimes fail, because it does .click()
+        + .title and expects the title to tbe the one of the page loaded by the click. Since the load happens very fast,
+        the test usually passes, but in a real case with a slower load, the title of the previous page will be returned
+        most of the times.
+
+        6.3 Processing Model. Step 7. Wait for navigation to complete. If this returns an error return its value and
+        jump to step 1 in this overall algorithm, otherwise continue.
+        https://www.w3.org/TR/webdriver/#processing-model
+
+        14.1 Element Click. Step 10. If the click causes navigation: 1. Run the post-navigation checks and return its
+        value if it is an error. 2. Try to wait for navigation to complete.
+        https://www.w3.org/TR/webdriver/#element-click
+
+        * Session.cpp:
+        (WebDriver::Session::waitForNavigationToComplete): Send waitForNavigationToComplete message to the browser to
+        wait for any pending navigation of current browsing context to complete.
+        (WebDriver::Session::elementClick): Call waitForNavigationToComplete() after the click.
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::go): Wait for navigations to complete before running the command.
+        (WebDriver::WebDriverService::getCurrentURL): Ditto.
+        (WebDriver::WebDriverService::back): Ditto.
+        (WebDriver::WebDriverService::forward): Ditto.
+        (WebDriver::WebDriverService::refresh): Ditto.
+        (WebDriver::WebDriverService::getTitle): Ditto.
+        (WebDriver::WebDriverService::switchToFrame): Ditto.
+        (WebDriver::WebDriverService::switchToParentFrame): Ditto.
+        (WebDriver::WebDriverService::findElement): Ditto.
+        (WebDriver::WebDriverService::findElements): Ditto.
+        (WebDriver::WebDriverService::executeScript): Ditto.
+        (WebDriver::WebDriverService::executeAsyncScript): Ditto.
+
+2017-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: correctly handle main frame handles
         https://bugs.webkit.org/show_bug.cgi?id=174668
 

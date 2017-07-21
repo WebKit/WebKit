@@ -62,6 +62,16 @@
             ]
         },
         {
+            "id": "PageLoadStrategy",
+            "type": "string",
+            "description": "Enumerates different page load strategies.",
+            "enum": [
+                "None",
+                "Eager",
+                "Normal"
+            ]
+        },
+        {
             "id": "BrowsingContext",
             "type": "object",
             "description": "A handle representing an open window or tab in the automation session.",
@@ -292,6 +302,17 @@
             "description": "Reloads the current page in a browsing context.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." }
+            ],
+            "async": true
+        },
+        {
+            "name": "waitForNavigationToComplete",
+            "description": "Wait for pending navigation to complete.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context in which wait for pending navigation to complete." },
+                { "name": "frameHandle", "$ref": "FrameHandle", "optional": true, "description": "The handle for the frame in which wait for pending navigation to complete. The main frame is used if this parameter empty string or excluded." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },

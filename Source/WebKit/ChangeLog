@@ -1,3 +1,33 @@
+2017-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: wait until navigation is complete before running new commands and after a click
+        https://bugs.webkit.org/show_bug.cgi?id=174670
+
+        Reviewed by Brian Burg.
+
+        Add waitForNavigationToComplete method to Automation to allow WebDriver to wait for pending navigations to
+        complete. The new method already receives page load strategy and timeout, but they are not implemented yet.
+
+        * UIProcess/Automation/Automation.json: Add waitForNavigationToComplete method and PageLoadStrategy new type.
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::waitForNavigationToComplete): Call waitForNavigationToCompleteOnPage or
+        waitForNavigationToCompleteOnFrame depending on whether the current borwsing context is the main frame or not.
+        (WebKit::WebAutomationSession::waitForNavigationToCompleteOnPage): Check if there's an ongoing load for the page,
+        and wait for it to complete if needed.
+        (WebKit::WebAutomationSession::waitForNavigationToCompleteOnFrame): Check if there's an ongoing load for the frame,
+        and wait for it to complete if needed.
+        (WebKit::WebAutomationSession::navigateBrowsingContext): Use waitForNavigationToCompleteOnPage() now.
+        (WebKit::WebAutomationSession::goBackInBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::reloadBrowsingContext): Ditto.
+        (WebKit::WebAutomationSession::navigationOccurredForFrame): Renamed since it now receives the notification for
+        all the frames. Complete page operations if it's a main frame, or frame operations otherwise.
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFinishLoadForFrame): Notify about all frames, not only the main one.
+        (WebKit::WebPageProxy::didFailLoadForFrame): Ditto.
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame): Ditto.
+
 2017-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Remove WKIconDatabaseCairo.

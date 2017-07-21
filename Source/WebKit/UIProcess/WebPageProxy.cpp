@@ -3391,9 +3391,9 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, uint64_t navigationID
     if (isMainFrame)
         m_pageLoadState.didFinishLoad(transaction);
 
-    if (isMainFrame && m_controlledByAutomation) {
+    if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
-            automationSession->navigationOccurredForPage(*this);
+            automationSession->navigationOccurredForFrame(*frame);
     }
 
     frame->didFinishLoad();
@@ -3432,9 +3432,9 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, uint64_t navigationID, 
     if (isMainFrame)
         m_pageLoadState.didFailLoad(transaction);
 
-    if (isMainFrame && m_controlledByAutomation) {
+    if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
-            automationSession->navigationOccurredForPage(*this);
+            automationSession->navigationOccurredForFrame(*frame);
     }
 
     frame->didFailLoad();
@@ -3469,9 +3469,9 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint64_t 
     if (isMainFrame)
         m_pageLoadState.didSameDocumentNavigation(transaction, url);
 
-    if (isMainFrame && m_controlledByAutomation) {
+    if (m_controlledByAutomation) {
         if (auto* automationSession = process().processPool().automationSession())
-            automationSession->navigationOccurredForPage(*this);
+            automationSession->navigationOccurredForFrame(*frame);
     }
 
     m_pageLoadState.clearPendingAPIRequestURL(transaction);

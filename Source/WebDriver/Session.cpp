@@ -942,6 +942,32 @@ void Session::getElementAttribute(const String& elementID, const String& attribu
     });
 }
 
+void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& completionHandler)
+{
+    if (!m_toplevelBrowsingContext) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
+        return;
+    }
+
+    RefPtr<InspectorObject> parameters = InspectorObject::create();
+    parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
+    if (m_browsingContext)
+        parameters->setString(ASCIILiteral("frameHandle"), m_browsingContext.value());
+    m_host->sendCommandToBackend(ASCIILiteral("waitForNavigationToComplete"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
+        if (response.isError) {
+            auto result = CommandResult::fail(WTFMove(response.responseObject));
+            if (result.errorCode() == CommandResult::ErrorCode::NoSuchFrame) {
+                // Navigation destroyed the current frame, switch to top level browsing context and ignore the error.
+                switchToBrowsingContext(std::nullopt);
+            } else {
+                completionHandler(WTFMove(result));
+                return;
+            }
+        }
+        completionHandler(CommandResult::success());
+    });
+}
+
 void Session::elementClick(const String& elementID, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
@@ -960,6 +986,8 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
         // FIXME: the center of the bounding box is not always part of the element.
         performMouseInteraction(rect.value().origin.x + rect.value().size.width / 2, rect.value().origin.y + rect.value().size.height / 2,
             MouseButton::Left, MouseInteraction::SingleClick, WTFMove(completionHandler));
+
+        waitForNavigationToComplete(WTFMove(completionHandler));
     });
 }
 

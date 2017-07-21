@@ -375,17 +375,60 @@ void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& e
 #endif
 }
 
+void WebAutomationSession::waitForNavigationToComplete(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<WaitForNavigationToCompleteCallback>&& callback)
+{
+    WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
+    if (!page)
+        FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
+
+    // FIXME: Implement page load strategy and timeout.
+
+    if (optionalFrameHandle && !optionalFrameHandle->isEmpty()) {
+        std::optional<uint64_t> frameID = webFrameIDForHandle(*optionalFrameHandle);
+        if (!frameID)
+            FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+        WebFrameProxy* frame = page->process().webFrame(frameID.value());
+        if (!frame)
+            FAIL_WITH_PREDEFINED_ERROR(FrameNotFound);
+        waitForNavigationToCompleteOnFrame(*frame, WTFMove(callback));
+    } else
+        waitForNavigationToCompleteOnPage(*page, WTFMove(callback));
+}
+
+void WebAutomationSession::waitForNavigationToCompleteOnPage(WebPageProxy& page, Ref<Inspector::BackendDispatcher::CallbackBase>&& callback)
+{
+    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page.pageID()))
+        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
+
+    if (!page.pageLoadState().isLoading()) {
+        callback->sendSuccess(InspectorObject::create());
+        return;
+    }
+
+    m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page.pageID(), WTFMove(callback));
+}
+
+void WebAutomationSession::waitForNavigationToCompleteOnFrame(WebFrameProxy& frame, Ref<Inspector::BackendDispatcher::CallbackBase>&& callback)
+{
+    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID()))
+        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
+
+    if (frame.frameLoadState().state() == FrameLoadState::State::Finished) {
+        callback->sendSuccess(InspectorObject::create());
+        return;
+    }
+
+    m_pendingNavigationInBrowsingContextCallbacksPerFrame.set(frame.frameID(), WTFMove(callback));
+}
+
 void WebAutomationSession::navigateBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const String& url, Ref<NavigateBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page->pageID()))
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
-    m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
-
     page->loadRequest(WebCore::URL(WebCore::URL(), url));
+    waitForNavigationToCompleteOnPage(*page, WTFMove(callback));
 }
 
 void WebAutomationSession::goBackInBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<GoBackInBrowsingContextCallback>&& callback)
@@ -394,13 +437,8 @@ void WebAutomationSession::goBackInBrowsingContext(Inspector::ErrorString& error
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page->pageID()))
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
-
-    if (page->goBack())
-        m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
-    else
-        callback->sendSuccess();
+    page->goBack();
+    waitForNavigationToCompleteOnPage(*page, WTFMove(callback));
 }
 
 void WebAutomationSession::goForwardInBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<GoForwardInBrowsingContextCallback>&& callback)
@@ -409,13 +447,8 @@ void WebAutomationSession::goForwardInBrowsingContext(Inspector::ErrorString& er
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page->pageID()))
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
-
-    if (page->goForward())
-        m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
-    else
-        callback->sendSuccess();
+    page->goForward();
+    waitForNavigationToCompleteOnPage(*page, WTFMove(callback));
 }
 
 void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<ReloadBrowsingContextCallback>&& callback)
@@ -424,17 +457,19 @@ void WebAutomationSession::reloadBrowsingContext(Inspector::ErrorString& errorSt
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page->pageID()))
-        callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME(Timeout));
-    m_pendingNavigationInBrowsingContextCallbacksPerPage.set(page->pageID(), WTFMove(callback));
-
     page->reload({ });
+    waitForNavigationToCompleteOnPage(*page, WTFMove(callback));
 }
 
-void WebAutomationSession::navigationOccurredForPage(const WebPageProxy& page)
+void WebAutomationSession::navigationOccurredForFrame(const WebFrameProxy& frame)
 {
-    if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(page.pageID()))
-        callback->sendSuccess(InspectorObject::create());
+    if (frame.isMainFrame()) {
+        if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerPage.take(frame.page()->pageID()))
+            callback->sendSuccess(InspectorObject::create());
+    } else {
+        if (auto callback = m_pendingNavigationInBrowsingContextCallbacksPerFrame.take(frame.frameID()))
+            callback->sendSuccess(InspectorObject::create());
+    }
 }
 
 void WebAutomationSession::inspectorFrontendLoaded(const WebPageProxy& page)
