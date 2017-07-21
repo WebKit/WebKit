@@ -59,10 +59,8 @@ void AudioChannel::copyFrom(const AudioChannel* sourceChannel)
 {
     bool isSafe = (sourceChannel && sourceChannel->length() >= length());
     ASSERT(isSafe);
-    if (!isSafe)
-        return;
 
-    if (sourceChannel->isSilent()) {
+    if (!isSafe || sourceChannel->isSilent()) {
         zero();
         return;
     }
