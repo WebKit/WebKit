@@ -107,7 +107,7 @@ void BitmapImage::destroyDecodedDataIfNecessary(bool destroyAll)
 
 EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
 {
-    if (!canUseAsyncDecodingForLargeImages())
+    if (m_source.decodedSize() && !canUseAsyncDecodingForLargeImages())
         m_source.destroyIncompleteDecodedData();
 
     m_currentFrameDecodingStatus = ImageFrame::DecodingStatus::Invalid;

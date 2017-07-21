@@ -51,7 +51,6 @@
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
-#include "UTIRegistry.h"
 #endif
 
 namespace WebCore {
@@ -440,12 +439,7 @@ void CachedImage::addIncrementalDataBuffer(SharedBuffer& data)
 
 EncodedDataStatus CachedImage::setImageDataBuffer(SharedBuffer* data, bool allDataReceived)
 {
-    EncodedDataStatus encodedDataStatus = m_image ? m_image->setData(data, allDataReceived) : EncodedDataStatus::Error;
-#if USE(CG)
-    if (encodedDataStatus >= EncodedDataStatus::TypeAvailable && m_image->isBitmapImage() && !isAllowedImageUTI(m_image->uti()))
-        return EncodedDataStatus::Error;
-#endif
-    return encodedDataStatus;
+    return m_image ? m_image->setData(data, allDataReceived) : EncodedDataStatus::Error;
 }
 
 void CachedImage::addDataBuffer(SharedBuffer& data)
