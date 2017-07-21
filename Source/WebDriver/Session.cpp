@@ -71,7 +71,7 @@ void Session::close(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        m_toplevelBrowsingContext = std::nullopt;
+        switchToTopLevelBrowsingContext(std::nullopt);
         completionHandler(CommandResult::success());
     });
 }
@@ -85,6 +85,21 @@ void Session::setTimeouts(const Timeouts& timeouts, Function<void (CommandResult
     if (timeouts.implicit)
         m_timeouts.implicit = timeouts.implicit;
     completionHandler(CommandResult::success());
+}
+
+void Session::switchToTopLevelBrowsingContext(std::optional<String> toplevelBrowsingContext)
+{
+    m_toplevelBrowsingContext = toplevelBrowsingContext;
+    m_browsingContext = std::nullopt;
+}
+
+void Session::switchToBrowsingContext(std::optional<String> browsingContext)
+{
+    // Automation sends empty strings for main frame.
+    if (!browsingContext || browsingContext.value().isEmpty())
+        m_browsingContext = std::nullopt;
+    else
+        m_browsingContext = browsingContext;
 }
 
 void Session::createTopLevelBrowsingContext(Function<void (CommandResult&&)>&& completionHandler)
@@ -101,7 +116,7 @@ void Session::createTopLevelBrowsingContext(Function<void (CommandResult&&)>&& c
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            m_toplevelBrowsingContext = handle;
+            switchToTopLevelBrowsingContext(handle);
             completionHandler(CommandResult::success());
         });
     });
@@ -122,7 +137,7 @@ void Session::go(const String& url, Function<void (CommandResult&&)>&& completio
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        m_browsingContext = std::nullopt;
+        switchToBrowsingContext(std::nullopt);
         completionHandler(CommandResult::success());
     });
 }
@@ -169,7 +184,7 @@ void Session::back(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        m_browsingContext = std::nullopt;
+        switchToBrowsingContext(std::nullopt);
         completionHandler(CommandResult::success());
     });
 }
@@ -188,7 +203,7 @@ void Session::forward(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        m_browsingContext = std::nullopt;
+        switchToBrowsingContext(std::nullopt);
         completionHandler(CommandResult::success());
     });
 }
@@ -207,7 +222,7 @@ void Session::refresh(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        m_browsingContext = std::nullopt;
+        switchToBrowsingContext(std::nullopt);
         completionHandler(CommandResult::success());
     });
 }
@@ -289,7 +304,7 @@ void Session::switchToWindow(const String& windowHandle, Function<void (CommandR
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        m_toplevelBrowsingContext = windowHandle;
+        switchToTopLevelBrowsingContext(windowHandle);
         completionHandler(CommandResult::success());
     });
 }
@@ -340,7 +355,7 @@ void Session::switchToFrame(RefPtr<InspectorValue>&& frameID, Function<void (Com
     }
 
     if (frameID->isNull()) {
-        m_browsingContext = std::nullopt;
+        switchToBrowsingContext(std::nullopt);
         completionHandler(CommandResult::success());
         return;
     }
@@ -381,7 +396,7 @@ void Session::switchToFrame(RefPtr<InspectorValue>&& frameID, Function<void (Com
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        m_browsingContext = frameHandle;
+        switchToBrowsingContext(frameHandle);
         completionHandler(CommandResult::success());
     });
 }
@@ -411,7 +426,7 @@ void Session::switchToParentFrame(Function<void (CommandResult&&)>&& completionH
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }
-        m_browsingContext = frameHandle;
+        switchToBrowsingContext(frameHandle);
         completionHandler(CommandResult::success());
     });
 }

@@ -1,3 +1,31 @@
+2017-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: correctly handle main frame handles
+        https://bugs.webkit.org/show_bug.cgi?id=174668
+
+        Reviewed by Brian Burg.
+
+        When I switched to use std::optional instead of empty strings for the browsing contexts in WebDriver, I forgot
+        that automation uses empty string for frames to refer to the main frame. We should handle that case, because we
+        are currently considering empty strings as valid browsing context. It's not a big deal because Automation
+        converts back the empty string received to the main frame, though. We should also ensure we close the current
+        browsing context when switching to a new top level browsing context. This patch adds to helper private methods
+        to switch browsing contexts that deal with the special cases.
+
+        * Session.cpp:
+        (WebDriver::Session::close):
+        (WebDriver::Session::switchToTopLevelBrowsingContext):
+        (WebDriver::Session::switchToBrowsingContext):
+        (WebDriver::Session::createTopLevelBrowsingContext):
+        (WebDriver::Session::go):
+        (WebDriver::Session::back):
+        (WebDriver::Session::forward):
+        (WebDriver::Session::refresh):
+        (WebDriver::Session::switchToWindow):
+        (WebDriver::Session::switchToFrame):
+        (WebDriver::Session::switchToParentFrame):
+        * Session.h:
+
 2017-07-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: handle invalid selector errors

@@ -104,6 +104,9 @@ public:
 private:
     Session(std::unique_ptr<SessionHost>&&);
 
+    void switchToTopLevelBrowsingContext(std::optional<String>);
+    void switchToBrowsingContext(std::optional<String>);
+
     RefPtr<Inspector::InspectorObject> createElement(RefPtr<Inspector::InspectorValue>&&);
     RefPtr<Inspector::InspectorObject> createElement(const String& elementID);
     RefPtr<Inspector::InspectorObject> extractElement(Inspector::InspectorValue&);
