@@ -30,7 +30,7 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
 #include "JSDynamicDowncast.h"
-#include "JSExceptionBase.h"
+#include "ScriptExecutionContext.h"
 #include <inspector/ScriptCallStack.h>
 #include <inspector/ScriptCallStackFactory.h>
 #include <runtime/ErrorHandlingScope.h>
@@ -62,8 +62,8 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 
 String retrieveErrorMessage(ExecState& state, VM& vm, JSValue exception, CatchScope& catchScope)
 {
-    if (auto* exceptionBase = toExceptionBase(vm, exception))
-        return exceptionBase->toString();
+    if (auto* domException = JSDOMCoreException::toWrapped(vm, exception))
+        return domException->toString();
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
@@ -173,9 +173,6 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     case IDBDatabaseExceptionType:
 #endif
         errorObject = toJS(exec, globalObject, DOMCoreException::create(description));
-        break;
-    case SVGExceptionType:
-        errorObject = toJS(exec, globalObject, SVGException::create(description));
         break;
     }
     

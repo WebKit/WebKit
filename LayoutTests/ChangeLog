@@ -1,3 +1,54 @@
+2017-07-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy SVGException type
+        https://bugs.webkit.org/show_bug.cgi?id=174695
+
+        Reviewed by Darin Adler.
+
+        Update existing tests to reflect behavior change.
+
+        * fast/dom/Window/resources/window-properties.js:
+        * js/dom/global-constructors-attributes-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-elcapitan/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-highsierra/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-yosemite/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+        * platform/win/js/dom/global-constructors-attributes-expected.txt:
+        * platform/wpe/js/dom/global-constructors-attributes-expected.txt:
+        * svg/animations/animate-marker-orient-from-angle-to-autostartreverse-expected.txt:
+        * svg/custom/SVGException-expected.txt: Removed.
+        * svg/custom/SVGException.html: Removed.
+        * svg/custom/global-constructors-expected.txt:
+        * svg/custom/global-constructors.html:
+        * svg/custom/js-svg-constructors-expected.txt:
+        * svg/custom/js-svg-constructors.svg:
+        * svg/dom/SVGAnimatedEnumeration-SVGClipPathElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEBlendElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEColorMatrixElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEDisplacementMapElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFEMorphologyElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFETurbulenceElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGFilterElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGGradientElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGMaskElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGPatternElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGTextContentElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-SVGTextPathElement-expected.txt:
+        * svg/dom/SVGAnimatedEnumeration-expected.txt:
+        * svg/dom/SVGException-obsolete-expected.txt: Added.
+        * svg/dom/SVGException-obsolete.html: Added.
+        * svg/dom/SVGMatrix-interface-expected.txt:
+        * svg/dom/svglist-exception-on-out-bounds-error-expected.txt:
+        * svg/filters/feBlend-invalid-mode-expected.txt:
+        * svg/filters/feComponentTransfer-style-crash-expected.txt:
+        * svg/filters/feDisplacementMap-crash-test-expected.txt:
+
 2017-07-20  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r219700.

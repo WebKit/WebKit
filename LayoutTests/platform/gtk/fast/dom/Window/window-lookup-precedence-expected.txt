@@ -258,8 +258,6 @@ PASS win['SVGAngle'] == '[object SVGAngleConstructor]' is true
 PASS win['SVGAngle'] == '[object SVGAngleConstructor]' is true
 PASS win['SVGColor'] == '[object SVGColorConstructor]' is true
 PASS win['SVGColor'] == '[object SVGColorConstructor]' is true
-PASS win['SVGException'] == '[object SVGExceptionConstructor]' is true
-PASS win['SVGException'] == '[object SVGExceptionConstructor]' is true
 PASS win['SVGGradientElement'] == '[object SVGGradientElementConstructor]' is true
 PASS win['SVGGradientElement'] == '[object SVGGradientElementConstructor]' is true
 PASS win['SVGLength'] == '[object SVGLengthConstructor]' is true

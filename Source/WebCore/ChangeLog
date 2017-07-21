@@ -1,5 +1,43 @@
 2017-07-20  Chris Dumez  <cdumez@apple.com>
 
+        Drop legacy SVGException type
+        https://bugs.webkit.org/show_bug.cgi?id=174695
+
+        Reviewed by Darin Adler.
+
+        Drop legacy SVGException type and use DOMException instead, as per the latest
+        SVG specification. Both Chrome and Firefox no longer expose the SVGException
+        type.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::createDOMException):
+        * bindings/js/JSExceptionBase.cpp:
+        (WebCore::toExceptionBase):
+        * dom/DOMExceptions.in:
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGCircleElement.cpp:
+        * svg/SVGException.cpp: Removed.
+        * svg/SVGException.h: Removed.
+        * svg/SVGException.idl: Removed.
+        * svg/SVGGraphicsElement.idl:
+        * svg/SVGLocatable.cpp:
+        (WebCore::SVGLocatable::getTransformToElement):
+        * svg/SVGMatrixValue.h:
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::getItem):
+        (WebCore::SVGPathSegList::replaceItem):
+        (WebCore::SVGPathSegList::removeItem):
+        * svg/SVGPathSegList.h:
+        * svg/SVGPathSegList.idl:
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h:
+        * svg/properties/SVGListProperty.h:
+
+2017-07-20  Chris Dumez  <cdumez@apple.com>
+
         Hook up ITP quirks to the needsSiteSpecificQuirks setting
         https://bugs.webkit.org/show_bug.cgi?id=174691
 

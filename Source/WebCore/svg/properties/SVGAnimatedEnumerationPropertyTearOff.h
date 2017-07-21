@@ -19,8 +19,8 @@
 
 #pragma once
 
+#include "ExceptionCode.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
-#include "SVGException.h"
 #include "SVGPropertyTraits.h"
 
 namespace WebCore {
@@ -52,7 +52,7 @@ public:
     {
         // All SVG enumeration values, that are allowed to be set via SVG DOM start with 1, 0 corresponds to unknown and is not settable through SVG DOM.
         if (!property || property > SVGIDLEnumLimits<EnumType>::highestExposedEnumValue())
-            return Exception { SVGException::SVG_INVALID_VALUE_ERR };
+            return Exception { TypeError };
         return SVGAnimatedStaticPropertyTearOff<unsigned>::setBaseVal(property);
     }
 

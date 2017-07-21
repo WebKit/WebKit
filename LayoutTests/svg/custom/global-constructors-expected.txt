@@ -3,7 +3,6 @@ Test to make sure we expose all the global constructor objects requested by http
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS SVGException.toString() is "function SVGException() {\n    [native code]\n}"
 PASS SVGElement.toString() is "function SVGElement() {\n    [native code]\n}"
 PASS SVGAnimatedBoolean.toString() is "function SVGAnimatedBoolean() {\n    [native code]\n}"
 PASS SVGAnimatedString.toString() is "function SVGAnimatedString() {\n    [native code]\n}"

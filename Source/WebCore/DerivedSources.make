@@ -695,7 +695,6 @@ JS_BINDING_IDLS = \
     $(WebCore)/svg/SVGDocument.idl \
     $(WebCore)/svg/SVGElement.idl \
     $(WebCore)/svg/SVGEllipseElement.idl \
-    $(WebCore)/svg/SVGException.idl \
     $(WebCore)/svg/SVGExternalResourcesRequired.idl \
     $(WebCore)/svg/SVGFEBlendElement.idl \
     $(WebCore)/svg/SVGFEColorMatrixElement.idl \

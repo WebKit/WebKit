@@ -64,7 +64,6 @@
 #include "SVGDocumentExtensions.cpp"
 #include "SVGElement.cpp"
 #include "SVGEllipseElement.cpp"
-#include "SVGException.cpp"
 #include "SVGExternalResourcesRequired.cpp"
 #include "SVGFEBlendElement.cpp"
 #include "SVGFEColorMatrixElement.cpp"

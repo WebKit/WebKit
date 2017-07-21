@@ -443,7 +443,6 @@
 #include "JSSVGDocument.cpp"
 #include "JSSVGElement.cpp"
 #include "JSSVGEllipseElement.cpp"
-#include "JSSVGException.cpp"
 #include "JSSVGExternalResourcesRequired.cpp"
 #include "JSSVGFEBlendElement.cpp"
 #include "JSSVGFEColorMatrixElement.cpp"

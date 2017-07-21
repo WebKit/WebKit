@@ -1553,11 +1553,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'SVGEllipseElement').hasOwnProperty
 PASS Object.getOwnPropertyDescriptor(global, 'SVGEllipseElement').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGEllipseElement').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGEllipseElement').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'SVGException').value is SVGException
-PASS Object.getOwnPropertyDescriptor(global, 'SVGException').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGException').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGException').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'SVGException').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'SVGFEBlendElement').value is SVGFEBlendElement
 PASS Object.getOwnPropertyDescriptor(global, 'SVGFEBlendElement').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'SVGFEBlendElement').hasOwnProperty('set') is false

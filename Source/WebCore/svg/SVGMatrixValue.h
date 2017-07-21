@@ -20,8 +20,8 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "ExceptionCode.h"
 #include "ExceptionOr.h"
-#include "SVGException.h"
 
 namespace WebCore {
 
@@ -107,13 +107,13 @@ public:
         if (auto inverse = AffineTransform::inverse())
             return SVGMatrixValue { inverse.value() };
         
-        return Exception { SVGException::SVG_MATRIX_NOT_INVERTABLE };
+        return Exception { INVALID_STATE_ERR, ASCIILiteral("Matrix is not invertible") };
     }
 
     ExceptionOr<SVGMatrixValue> rotateFromVector(double x, double y)
     {
         if (!x || !y)
-            return Exception { SVGException::SVG_INVALID_VALUE_ERR };
+            return Exception { TypeError };
 
         AffineTransform copy { *this };
         copy.rotateFromVector(x, y);

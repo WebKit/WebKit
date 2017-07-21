@@ -738,7 +738,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGDocument.idl
     svg/SVGElement.idl
     svg/SVGEllipseElement.idl
-    svg/SVGException.idl
     svg/SVGExternalResourcesRequired.idl
     svg/SVGFEBlendElement.idl
     svg/SVGFEColorMatrixElement.idl
@@ -1187,7 +1186,6 @@ set(WebCore_SOURCES
     bindings/js/JSEventCustom.cpp
     bindings/js/JSEventListener.cpp
     bindings/js/JSEventTargetCustom.cpp
-    bindings/js/JSExceptionBase.cpp
     bindings/js/JSHTMLCanvasElementCustom.cpp
     bindings/js/JSHTMLCollectionCustom.cpp
     bindings/js/JSHTMLDocumentCustom.cpp
@@ -2830,7 +2828,6 @@ set(WebCore_SOURCES
     svg/SVGDocumentExtensions.cpp
     svg/SVGElement.cpp
     svg/SVGEllipseElement.cpp
-    svg/SVGException.cpp
     svg/SVGExternalResourcesRequired.cpp
     svg/SVGFEBlendElement.cpp
     svg/SVGFEColorMatrixElement.cpp

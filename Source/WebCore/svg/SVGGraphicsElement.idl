@@ -32,6 +32,8 @@ interface SVGGraphicsElement : SVGElement {
     [ImplementedAs=getBBoxForBindings, NewObject] SVGRect getBBox();
     [ImplementedAs=getCTMForBindings, NewObject] SVGMatrix getCTM();
     [ImplementedAs=getScreenCTMForBindings, NewObject] SVGMatrix getScreenCTM();
+
+    // FIXME: This is not in the specification and has been dropped by Blink.
     [MayThrowException, NewObject] SVGMatrix getTransformToElement(optional SVGElement? element = null);
 };
 

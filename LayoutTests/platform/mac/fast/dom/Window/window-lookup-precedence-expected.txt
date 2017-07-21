@@ -256,8 +256,6 @@ PASS 'function Rect() {    [native code]}' is 'function Rect() {    [native code
 PASS 'function Rect() {    [native code]}' is 'function Rect() {    [native code]}'
 PASS 'function SVGAngle() {    [native code]}' is 'function SVGAngle() {    [native code]}'
 PASS 'function SVGAngle() {    [native code]}' is 'function SVGAngle() {    [native code]}'
-PASS 'function SVGException() {    [native code]}' is 'function SVGException() {    [native code]}'
-PASS 'function SVGException() {    [native code]}' is 'function SVGException() {    [native code]}'
 PASS 'function SVGGradientElement() {    [native code]}' is 'function SVGGradientElement() {    [native code]}'
 PASS 'function SVGGradientElement() {    [native code]}' is 'function SVGGradientElement() {    [native code]}'
 PASS 'function SVGLength() {    [native code]}' is 'function SVGLength() {    [native code]}'

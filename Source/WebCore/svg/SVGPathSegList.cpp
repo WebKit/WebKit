@@ -43,27 +43,23 @@ ExceptionOr<void> SVGPathSegList::clear()
     return Base::clearValues();
 }
 
-ExceptionOr<SVGPathSegList::PtrListItemType> SVGPathSegList::getItem(unsigned index)
+ExceptionOr<RefPtr<SVGPathSeg>> SVGPathSegList::getItem(unsigned index)
 {
     return Base::getItemValues(index);
 }
 
-ExceptionOr<SVGPathSegList::PtrListItemType> SVGPathSegList::replaceItem(PtrListItemType newItem, unsigned index)
+ExceptionOr<RefPtr<SVGPathSeg>> SVGPathSegList::replaceItem(Ref<SVGPathSeg>&& newItem, unsigned index)
 {
-    // Not specified, but FF/Opera do it this way, and it's just sane.
-    if (!newItem)
-        return Exception { SVGException::SVG_WRONG_TYPE_ERR };
-
     if (index < m_values->size()) {
         ListItemType replacedItem = m_values->at(index);
         ASSERT(replacedItem);
         static_cast<SVGPathSegWithContext*>(replacedItem.get())->setContextAndRole(nullptr, PathSegUndefinedRole);
     }
 
-    return Base::replaceItemValues(newItem, index);
+    return Base::replaceItemValues(WTFMove(newItem), index);
 }
 
-ExceptionOr<SVGPathSegList::PtrListItemType> SVGPathSegList::removeItem(unsigned index)
+ExceptionOr<RefPtr<SVGPathSeg>> SVGPathSegList::removeItem(unsigned index)
 {
     auto result = Base::removeItemValues(index);
     if (result.hasException())

@@ -25,7 +25,6 @@
 #include "RenderSVGEllipse.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
-#include "SVGException.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
 

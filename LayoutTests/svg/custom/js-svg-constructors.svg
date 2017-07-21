@@ -41,10 +41,6 @@
 
       expect_failure("SVGCSSRule.COLOR_PROFILE_RULE", 7);
 
-      expect("SVGException.SVG_WRONG_TYPE_ERR", 0);
-      expect("SVGException.SVG_INVALID_VALUE_ERR", 1);
-      expect("SVGException.SVG_MATRIX_NOT_INVERTABLE", 2);
-
       if (window.SVGComponentTransferFunctionElement) {
           expect("SVGFEBlendElement.SVG_FEBLEND_MODE_UNKNOWN", 0);
           expect("SVGFEBlendElement.SVG_FEBLEND_MODE_NORMAL", 1); // Highlights a HASH bug!
