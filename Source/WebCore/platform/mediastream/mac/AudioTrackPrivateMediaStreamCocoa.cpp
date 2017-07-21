@@ -161,8 +161,6 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudi
         return nullptr;
     }
 
-    AudioSession::sharedSession().setPreferredBufferSize(AudioSession::sharedSession().sampleRate() / 50);
-
     return remoteIOUnit;
 }
 
