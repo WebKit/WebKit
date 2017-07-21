@@ -3758,6 +3758,8 @@ void RenderBlockFlow::ensureLineBoxes()
         // This matches relayoutToAvoidWidows.
         if (shouldBreakAtLineToAvoidWidow())
             layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        // FIXME: This is needed as long as simple and normal line layout produce different line breakings.
+        repaint();
     } else
         layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 
