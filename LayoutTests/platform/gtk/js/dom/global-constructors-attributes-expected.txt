@@ -2498,11 +2498,6 @@ PASS Object.getOwnPropertyDescriptor(global, 'XPathEvaluator').hasOwnProperty('g
 PASS Object.getOwnPropertyDescriptor(global, 'XPathEvaluator').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'XPathEvaluator').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'XPathEvaluator').configurable is true
-PASS Object.getOwnPropertyDescriptor(global, 'XPathException').value is XPathException
-PASS Object.getOwnPropertyDescriptor(global, 'XPathException').hasOwnProperty('get') is false
-PASS Object.getOwnPropertyDescriptor(global, 'XPathException').hasOwnProperty('set') is false
-PASS Object.getOwnPropertyDescriptor(global, 'XPathException').enumerable is false
-PASS Object.getOwnPropertyDescriptor(global, 'XPathException').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'XPathExpression').value is XPathExpression
 PASS Object.getOwnPropertyDescriptor(global, 'XPathExpression').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'XPathExpression').hasOwnProperty('set') is false
