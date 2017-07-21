@@ -55,6 +55,17 @@ TEST(WTF, StringImplCreationFromLiteral)
     ASSERT_TRUE(equal(programmaticStringNoLength.get(), stringWithoutLengthLiteral));
     ASSERT_EQ(stringWithoutLengthLiteral, reinterpret_cast<const char*>(programmaticStringNoLength->characters8()));
     ASSERT_TRUE(programmaticStringNoLength->is8Bit());
+
+    // AtomicStringImpl from createFromLiteral should use the same underlying string.
+    auto atomicStringWithTemplate = AtomicStringImpl::add(stringWithTemplate.ptr());
+    ASSERT_TRUE(atomicStringWithTemplate->is8Bit());
+    ASSERT_EQ(atomicStringWithTemplate->characters8(), stringWithTemplate->characters8());
+    auto atomicProgrammaticString = AtomicStringImpl::add(programmaticString.ptr());
+    ASSERT_TRUE(atomicProgrammaticString->is8Bit());
+    ASSERT_EQ(atomicProgrammaticString->characters8(), programmaticString->characters8());
+    auto atomicProgrammaticStringNoLength = AtomicStringImpl::add(programmaticStringNoLength.ptr());
+    ASSERT_TRUE(atomicProgrammaticStringNoLength->is8Bit());
+    ASSERT_EQ(atomicProgrammaticStringNoLength->characters8(), programmaticStringNoLength->characters8());
 }
 
 TEST(WTF, StringImplReplaceWithLiteral)
@@ -609,8 +620,12 @@ TEST(WTF, StringImplStaticToAtomicString)
     ASSERT_FALSE(original.isAtomic());
     ASSERT_TRUE(original.isStatic());
 
+    ASSERT_TRUE(atomic->is8Bit());
+    ASSERT_EQ(atomic->characters8(), original.characters8());
+
     auto result2 = AtomicStringImpl::lookUp(&original);
     ASSERT_TRUE(result2);
+    ASSERT_EQ(atomic, result2);
 }
 
 TEST(WTF, StringImplConstexprHasher)
