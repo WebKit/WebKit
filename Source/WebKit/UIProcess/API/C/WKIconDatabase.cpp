@@ -29,7 +29,6 @@
 #include "APIData.h"
 #include "WKAPICast.h"
 #include "WebIconDatabase.h"
-#include "WebIconDatabaseClient.h"
 
 using namespace WebKit;
 
@@ -38,59 +37,48 @@ WKTypeID WKIconDatabaseGetTypeID()
     return toAPI(WebIconDatabase::APIType);
 }
 
-void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabaseRef, const WKIconDatabaseClientBase* wkClient)
+void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef, const WKIconDatabaseClientBase*)
 {
-    toImpl(iconDatabaseRef)->setClient(std::make_unique<WebIconDatabaseClient>(wkClient));
 }
 
-void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)
+void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef, WKURLRef)
 {
-    toImpl(iconDatabaseRef)->retainIconForPageURL(toWTFString(pageURLRef));
 }
 
-void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)
+void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef, WKURLRef)
 {
-    toImpl(iconDatabaseRef)->releaseIconForPageURL(toWTFString(pageURLRef));
 }
 
-void WKIconDatabaseSetIconDataForIconURL(WKIconDatabaseRef iconDatabaseRef, WKDataRef iconDataRef, WKURLRef iconURLRef)
+void WKIconDatabaseSetIconDataForIconURL(WKIconDatabaseRef, WKDataRef, WKURLRef)
 {
-    toImpl(iconDatabaseRef)->setIconDataForIconURL(toImpl(iconDataRef)->dataReference(), toWTFString(iconURLRef));
 }
 
-void WKIconDatabaseSetIconURLForPageURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef iconURLRef, WKURLRef pageURLRef)
+void WKIconDatabaseSetIconURLForPageURL(WKIconDatabaseRef, WKURLRef, WKURLRef)
 {
-    toImpl(iconDatabaseRef)->setIconURLForPageURL(toWTFString(iconURLRef), toWTFString(pageURLRef));
 }
 
-WKURLRef WKIconDatabaseCopyIconURLForPageURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)
+WKURLRef WKIconDatabaseCopyIconURLForPageURL(WKIconDatabaseRef, WKURLRef)
 {
-    String iconURLString;
-    toImpl(iconDatabaseRef)->synchronousIconURLForPageURL(toWTFString(pageURLRef), iconURLString);
-    return toCopiedURLAPI(iconURLString);
+    return nullptr;
 }
 
-WKDataRef WKIconDatabaseCopyIconDataForPageURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURL)
+WKDataRef WKIconDatabaseCopyIconDataForPageURL(WKIconDatabaseRef, WKURLRef)
 {
-    return toAPI(toImpl(iconDatabaseRef)->iconDataForPageURL(toWTFString(pageURL)).leakRef());
+    return nullptr;
 }
 
-void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabaseRef)
+void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef)
 {
-    toImpl(iconDatabaseRef)->enableDatabaseCleanup();
 }
 
-void WKIconDatabaseRemoveAllIcons(WKIconDatabaseRef iconDatabaseRef)
+void WKIconDatabaseRemoveAllIcons(WKIconDatabaseRef)
 {
-    toImpl(iconDatabaseRef)->removeAllIcons();
 }
 
-void WKIconDatabaseCheckIntegrityBeforeOpening(WKIconDatabaseRef iconDatabaseRef)
+void WKIconDatabaseCheckIntegrityBeforeOpening(WKIconDatabaseRef)
 {
-    toImpl(iconDatabaseRef)->checkIntegrityBeforeOpening();
 }
 
-void WKIconDatabaseClose(WKIconDatabaseRef iconDatabaseRef)
+void WKIconDatabaseClose(WKIconDatabaseRef)
 {
-    toImpl(iconDatabaseRef)->close();
 }

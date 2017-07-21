@@ -89,7 +89,6 @@ class UIGamepad;
 class PerActivityStateCPUUsageSampler;
 class WebAutomationSession;
 class WebContextSupplement;
-class WebIconDatabase;
 class WebPageGroup;
 class WebPageProxy;
 struct NetworkProcessCreationParameters;
@@ -244,8 +243,6 @@ public:
 
     API::CustomProtocolManagerClient& customProtocolManagerClient() const { return *m_customProtocolManagerClient; }
 
-    WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
-
     struct Statistics {
         unsigned wkViewCount;
         unsigned wkPageCount;
@@ -253,8 +250,6 @@ public:
     };
     static Statistics& statistics();    
 
-    void setIconDatabasePath(const String&);
-    String iconDatabasePath() const;
     void setCookieStorageDirectory(const String& dir) { m_overrideCookieStorageDirectory = dir; }
 
     void useTestingNetworkSession();
@@ -450,8 +445,6 @@ private:
     static void languageChanged(void* context);
     void languageChanged();
 
-    String platformDefaultIconDatabasePath() const;
-
 #if PLATFORM(IOS)
     String cookieStorageDirectory() const;
 #endif
@@ -530,8 +523,6 @@ private:
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;
 
-    RefPtr<WebIconDatabase> m_iconDatabase;
-
     const Ref<API::WebsiteDataStore> m_websiteDataStore;
 
     typedef HashMap<const char*, RefPtr<WebContextSupplement>, PtrHash<const char*>> WebContextSupplementMap;
@@ -554,7 +545,6 @@ private:
     std::unique_ptr<PerActivityStateCPUUsageSampler> m_perActivityStateCPUUsageSampler;
 #endif
 
-    String m_overrideIconDatabasePath;
     String m_overrideCookieStorageDirectory;
 
     bool m_shouldUseTestingNetworkSession;

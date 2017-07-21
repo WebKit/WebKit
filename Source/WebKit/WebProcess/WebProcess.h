@@ -82,7 +82,6 @@ class WaylandCompositorDisplay;
 class WebAutomationSessionProxy;
 class WebConnectionToUIProcess;
 class WebFrame;
-class WebIconDatabaseProxy;
 class WebLoaderStrategy;
 class WebPage;
 class WebPageGroupProxy;
@@ -375,8 +374,6 @@ private:
     WebProcessSupplementMap m_supplements;
 
     TextCheckerState m_textCheckerState;
-
-    WebIconDatabaseProxy& m_iconDatabaseProxy;
 
     void ensureNetworkProcessConnection();
     RefPtr<NetworkProcessConnection> m_networkProcessConnection;

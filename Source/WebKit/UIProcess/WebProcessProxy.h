@@ -218,10 +218,6 @@ private:
     void getDatabaseProcessConnection(Ref<Messages::WebProcessProxy::GetDatabaseProcessConnection::DelayedReply>&&);
 #endif
 
-    void retainIconForPageURL(const String& pageURL);
-    void releaseIconForPageURL(const String& pageURL);
-    void releaseRemainingIconsForPageURLs();
-
     bool platformIsBeingDebugged() const;
 
     static const HashSet<String>& platformPathsWithAssumedReadAccess();

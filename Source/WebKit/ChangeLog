@@ -1,3 +1,76 @@
+2017-07-20  Brady Eidson  <beidson@apple.com>
+
+        Get rid of IconDatabase related code in WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=174693
+
+        Reviewed by Tim Horton.
+
+        This leaves the C-API class but guts it.
+
+        No explanations of the other changes are needed.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetIconDatabase):
+        (WKContextSetIconDatabasePath):
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseSetIconDatabaseClient):
+        (WKIconDatabaseRetainIconForURL):
+        (WKIconDatabaseReleaseIconForURL):
+        (WKIconDatabaseSetIconDataForIconURL):
+        (WKIconDatabaseSetIconURLForPageURL):
+        (WKIconDatabaseCopyIconURLForPageURL):
+        (WKIconDatabaseCopyIconDataForPageURL):
+        (WKIconDatabaseEnableDatabaseCleanup):
+        (WKIconDatabaseRemoveAllIcons):
+        (WKIconDatabaseCheckIntegrityBeforeOpening):
+        (WKIconDatabaseClose):
+        * UIProcess/API/C/cg/WKIconDatabaseCG.cpp:
+        (WKIconDatabaseTryGetCGImageForURL):
+        (WKIconDatabaseTryCopyCGImageArrayForURL):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformDefaultIconDatabasePath): Deleted.
+        * UIProcess/WebIconDatabase.cpp: Removed.
+        * UIProcess/WebIconDatabase.h:
+        (WebKit::WebIconDatabase::clearProcessPool): Deleted.
+        * UIProcess/WebIconDatabase.messages.in: Removed.
+        * UIProcess/WebIconDatabaseClient.cpp: Removed.
+        * UIProcess/WebIconDatabaseClient.h: Removed.
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::m_hiddenPageThrottlingTimer):
+        (WebKit::WebProcessPool::~WebProcessPool):
+        (WebKit::WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled):
+        (WebKit::WebProcessPool::createNewWebProcess):
+        (WebKit::WebProcessPool::setIconDatabasePath): Deleted.
+        (WebKit::WebProcessPool::iconDatabasePath): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processWillShutDown):
+        (WebKit::WebProcessProxy::retainIconForPageURL): Deleted.
+        (WebKit::WebProcessProxy::releaseIconForPageURL): Deleted.
+        (WebKit::WebProcessProxy::releaseRemainingIconsForPageURLs): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        (WebKit::WebProcessPool::platformDefaultIconDatabasePath): Deleted.
+        * UIProcess/wpe/WebProcessPoolWPE.cpp:
+        (WebKit::WebProcessPool::platformDefaultIconDatabasePath): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp: Removed.
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.h: Removed.
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in: Removed.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::getWebCoreStatistics):
+        * WebProcess/WebProcess.h:
+
 2017-07-20  David Quesada  <david_quesada@apple.com>
 
         Add SPI to notify WKNavigationDelegate about client redirects

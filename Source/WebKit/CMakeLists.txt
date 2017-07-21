@@ -311,8 +311,6 @@ set(WebKit2_SOURCES
     UIProcess/WebGeolocationManagerProxy.cpp
     UIProcess/WebGeolocationProvider.cpp
     UIProcess/WebGrammarDetail.cpp
-    UIProcess/WebIconDatabase.cpp
-    UIProcess/WebIconDatabaseClient.cpp
     UIProcess/WebInspectorProxy.cpp
     UIProcess/WebInspectorUtilities.cpp
     UIProcess/WebNavigationState.cpp
@@ -462,8 +460,6 @@ set(WebKit2_SOURCES
 
     WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp
     WebProcess/Geolocation/WebGeolocationManager.cpp
-
-    WebProcess/IconDatabase/WebIconDatabaseProxy.cpp
 
     WebProcess/InjectedBundle/InjectedBundle.cpp
     WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp
@@ -616,7 +612,6 @@ set(WebKit2_MESSAGES_IN_FILES
     UIProcess/WebCookieManagerProxy.messages.in
     UIProcess/WebFullScreenManagerProxy.messages.in
     UIProcess/WebGeolocationManagerProxy.messages.in
-    UIProcess/WebIconDatabase.messages.in
     UIProcess/WebInspectorProxy.messages.in
     UIProcess/WebPageProxy.messages.in
     UIProcess/WebPasteboardProxy.messages.in
@@ -651,8 +646,6 @@ set(WebKit2_MESSAGES_IN_FILES
     WebProcess/FullScreen/WebFullScreenManager.messages.in
 
     WebProcess/Geolocation/WebGeolocationManager.messages.in
-
-    WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in
 
     WebProcess/Network/webrtc/WebRTCMonitor.messages.in
     WebProcess/Network/webrtc/WebRTCResolver.messages.in

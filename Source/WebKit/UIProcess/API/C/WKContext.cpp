@@ -40,7 +40,6 @@
 #include "WKRetainPtr.h"
 #include "WebCertificateInfo.h"
 #include "WebContextInjectedBundleClient.h"
-#include "WebIconDatabase.h"
 #include "WebProcessPool.h"
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -419,9 +418,9 @@ WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->supplement<WebGeolocationManagerProxy>());
 }
 
-WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef contextRef)
+WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef)
 {
-    return toAPI(toImpl(contextRef)->iconDatabase());
+    return nullptr;
 }
 
 WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef context)
@@ -459,9 +458,8 @@ void WKContextStopMemorySampler(WKContextRef contextRef)
     toImpl(contextRef)->stopMemorySampler();
 }
 
-void WKContextSetIconDatabasePath(WKContextRef contextRef, WKStringRef iconDatabasePath)
+void WKContextSetIconDatabasePath(WKContextRef, WKStringRef)
 {
-    toImpl(contextRef)->setIconDatabasePath(toImpl(iconDatabasePath)->string());
 }
 
 void WKContextAllowSpecificHTTPSCertificateForHost(WKContextRef contextRef, WKCertificateInfoRef certificateRef, WKStringRef hostRef)

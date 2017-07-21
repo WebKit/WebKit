@@ -34,5 +34,5 @@ using namespace WebKit;
 
 cairo_surface_t* WKIconDatabaseTryGetCairoSurfaceForURL(WKIconDatabaseRef iconDatabase, WKURLRef url)
 {
-    return toImpl(iconDatabase)->nativeImageForPageURL(toWTFString(url)).get();
+    return nullptr;
 }

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WKIconDatabaseCG.h"
 
-#include "WebIconDatabase.h"
 #include "WKAPICast.h"
 #include "WKSharedAPICast.h"
 #include <WebCore/Image.h>
@@ -34,25 +33,12 @@
 using namespace WebKit;
 using namespace WebCore;
 
-CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef urlRef, WKSize size)
+CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef, WKURLRef, WKSize)
 {
-    Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(urlRef));
-    return image ? image->nativeImageOfSize(IntSize(static_cast<int>(size.width), static_cast<int>(size.height))).get() : nullptr;
+    return nullptr;
 }
 
-CFArrayRef WKIconDatabaseTryCopyCGImageArrayForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef urlRef)
+CFArrayRef WKIconDatabaseTryCopyCGImageArrayForURL(WKIconDatabaseRef, WKURLRef)
 {
-    Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(urlRef));
-    if (!image)
-        return nullptr;
-
-    auto nativeImages = image->framesNativeImages();
-    if (!nativeImages.size())
-        return nullptr;
-    
-    CFMutableArrayRef array = CFArrayCreateMutable(nullptr, nativeImages.size(), &kCFTypeArrayCallBacks);
-    for (auto nativeImage : nativeImages)
-        CFArrayAppendValue(array, nativeImage.get());
-    
-    return static_cast<CFArrayRef>(array);
+    return nullptr;
 }

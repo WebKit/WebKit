@@ -51,7 +51,6 @@
 #include "WebFrameNetworkingContext.h"
 #include "WebGamepadProvider.h"
 #include "WebGeolocationManager.h"
-#include "WebIconDatabaseProxy.h"
 #include "WebLoaderStrategy.h"
 #include "WebMediaKeyStorageManager.h"
 #include "WebMemorySampler.h"
@@ -88,7 +87,6 @@
 #include <WebCore/GCController.h>
 #include <WebCore/GlyphPage.h>
 #include <WebCore/HTMLMediaElement.h>
-#include <WebCore/IconDatabase.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/Language.h>
 #include <WebCore/MainFrame.h>
@@ -163,7 +161,6 @@ WebProcess::WebProcess()
     , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
 #endif
     , m_webInspectorInterruptDispatcher(WebInspectorInterruptDispatcher::create())
-    , m_iconDatabaseProxy(*new WebIconDatabaseProxy(*this))
     , m_webLoaderStrategy(*new WebLoaderStrategy)
     , m_dnsPrefetchHystereris([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_dnsPrefetchedHosts.clear(); })
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -299,10 +296,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     auto& databaseManager = DatabaseManager::singleton();
     databaseManager.initialize(parameters.webSQLDatabaseDirectory);
-
-#if ENABLE(ICONDATABASE)
-    m_iconDatabaseProxy.setEnabled(parameters.iconDatabaseEnabled);
-#endif
 
     // FIXME: This should be constructed per data store, not per process.
     m_applicationCacheStorage = ApplicationCacheStorage::create(parameters.applicationCacheDirectory, parameters.applicationCacheFlatFileSubdirectoryName);
@@ -1014,12 +1007,6 @@ void WebProcess::getWebCoreStatistics(uint64_t callbackID)
     data.statisticsNumbers.set(ASCIILiteral("FastMallocReservedVMBytes"), fastMallocStatistics.reservedVMBytes);
     data.statisticsNumbers.set(ASCIILiteral("FastMallocCommittedVMBytes"), fastMallocStatistics.committedVMBytes);
     data.statisticsNumbers.set(ASCIILiteral("FastMallocFreeListBytes"), fastMallocStatistics.freeListBytes);
-    
-    // Gather icon statistics.
-    data.statisticsNumbers.set(ASCIILiteral("IconPageURLMappingCount"), iconDatabase().pageURLMappingCount());
-    data.statisticsNumbers.set(ASCIILiteral("IconRetainedPageURLCount"), iconDatabase().retainedPageURLCount());
-    data.statisticsNumbers.set(ASCIILiteral("IconRecordCount"), iconDatabase().iconRecordCount());
-    data.statisticsNumbers.set(ASCIILiteral("IconsWithDataCount"), iconDatabase().iconRecordCountWithData());
     
     // Gather font statistics.
     auto& fontCache = FontCache::singleton();

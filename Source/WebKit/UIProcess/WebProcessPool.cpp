@@ -57,7 +57,6 @@
 #include "WebCookieManagerProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebGeolocationManagerProxy.h"
-#include "WebIconDatabase.h"
 #include "WebKit2Initialize.h"
 #include "WebMemorySampler.h"
 #include "WebNotificationManagerProxy.h"
@@ -258,8 +257,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     addMessageReceiver(Messages::WebProcessPool::messageReceiverName(), *this);
 
     // NOTE: These sub-objects must be initialized after m_messageReceiverMap..
-    m_iconDatabase = WebIconDatabase::create(this);
-
     addSupplement<WebCookieManagerProxy>();
     addSupplement<WebGeolocationManagerProxy>();
     addSupplement<WebNotificationManagerProxy>();
@@ -304,11 +301,6 @@ WebProcessPool::~WebProcessPool()
         supplement->processPoolDestroyed();
         supplement->clearProcessPool();
     }
-
-    m_iconDatabase->invalidate();
-    m_iconDatabase->clearProcessPool();
-    WebIconDatabase* rawIconDatabase = m_iconDatabase.leakRef();
-    rawIconDatabase->derefWhenAppropriate();
 
     invalidateCallbackMap(m_dictionaryCallbacks, CallbackBase::Error::OwnerWasInvalidated);
 
@@ -595,8 +587,6 @@ void WebProcessPool::windowServerConnectionStateChanged()
 
 void WebProcessPool::setAnyPageGroupMightHavePrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
-    m_iconDatabase->setPrivateBrowsingEnabled(privateBrowsingEnabled);
-
     if (networkProcess()) {
         if (privateBrowsingEnabled)
             networkProcess()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession({SessionID::legacyPrivateSessionID(), { }, { }, { }}), 0);
@@ -725,8 +715,6 @@ WebProcessProxy& WebProcessPool::createNewWebProcess(WebsiteDataStore& websiteDa
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
-
-    parameters.iconDatabaseEnabled = !iconDatabasePath().isEmpty();
 
     parameters.terminationTimeout = 0_s;
 
@@ -1288,23 +1276,6 @@ void WebProcessPool::stopMemorySampler()
 #endif
 
     sendToAllProcesses(Messages::WebProcess::StopMemorySampler());
-}
-
-void WebProcessPool::setIconDatabasePath(const String& path)
-{
-    m_overrideIconDatabasePath = path;
-    if (!m_overrideIconDatabasePath.isEmpty()) {
-        // This implicitly enables the database on UI process side.
-        m_iconDatabase->setDatabasePath(path);
-    }
-}
-
-String WebProcessPool::iconDatabasePath() const
-{
-    if (!m_overrideIconDatabasePath.isNull())
-        return m_overrideIconDatabasePath;
-
-    return platformDefaultIconDatabasePath();
 }
 
 void WebProcessPool::useTestingNetworkSession()

@@ -111,12 +111,6 @@ String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
     return WebCore::stringFromFileSystemRepresentation(indexedDBDatabaseDirectory.get());
 }
 
-String WebProcessPool::platformDefaultIconDatabasePath() const
-{
-    GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_cache_dir(), "wpe", "icondatabase", nullptr));
-    return WebCore::stringFromFileSystemRepresentation(databaseDirectory.get());
-}
-
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 {
     GUniquePtr<gchar> storageDirectory(g_build_filename(g_get_user_data_dir(), "wpe", "localstorage", nullptr));

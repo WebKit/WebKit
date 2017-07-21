@@ -142,8 +142,6 @@ MESSAGE_RECEIVERS = \
     WebGeolocationManagerProxy \
     WebIDBConnectionToClient \
     WebIDBConnectionToServer \
-    WebIconDatabase \
-    WebIconDatabaseProxy \
     WebInspector \
     WebInspectorInterruptDispatcher \
     WebInspectorProxy \

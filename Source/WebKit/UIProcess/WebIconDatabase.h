@@ -23,101 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebIconDatabase_h
-#define WebIconDatabase_h
+#pragma once
 
 #include "APIObject.h"
-#include "Connection.h"
-#include "WebIconDatabaseClient.h"
-#include <WebCore/IconDatabaseClient.h>
-#include <WebCore/IntSize.h>
-#include <WebCore/NativeImage.h>
-
-namespace API {
-class Data;
-class IconDatabaseClient;
-}
-
-namespace WebCore {
-class IconDatabase;
-class Image;
-}
 
 namespace WebKit {
 
-class WebProcessPool;
-
-class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase>, private WebCore::IconDatabaseClient, private IPC::MessageReceiver {
-public:
-    static Ref<WebIconDatabase> create(WebProcessPool*);
-    virtual ~WebIconDatabase();
-
-    void invalidate();
-    void clearProcessPool() { m_processPool = nullptr; }
-    void setDatabasePath(const String&);
-    void enableDatabaseCleanup();
-
-    void retainIconForPageURL(const String&);
-    void releaseIconForPageURL(const String&);
-    void setIconURLForPageURL(const String&, const String&);
-    void setIconDataForIconURL(const IPC::DataReference&, const String&);
-
-    void synchronousIconDataForPageURL(const String&, IPC::DataReference&);
-    void synchronousIconURLForPageURL(const String&, String&);
-    void synchronousIconDataKnownForIconURL(const String&, bool&) const;
-    void synchronousLoadDecisionForIconURL(const String&, int&) const;
-
-    void getLoadDecisionForIconURL(const String&, uint64_t callbackID);
-    void didReceiveIconForPageURL(const String&);
-
-    WebCore::Image* imageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
-    WebCore::NativeImagePtr nativeImageForPageURL(const String&, const WebCore::IntSize& iconSize = WebCore::IntSize(32, 32));
-    RefPtr<API::Data> iconDataForPageURL(const String& pageURL);
-
-    bool isOpen();
-    bool isUrlImportCompleted();
-
-    void removeAllIcons();
-    void checkIntegrityBeforeOpening();
-    void close();
-
-    void setClient(std::unique_ptr<API::IconDatabaseClient>&&);
-
-    void setPrivateBrowsingEnabled(bool);
-
-    // Called when the WebProcessPool is through with this WebIconDatabase but the
-    // WebCore::IconDatabase possibly isn't done shutting down.
-    // In that case this WebIconDatabase will deref() itself when the time is right.
-    void derefWhenAppropriate();
-
-private:
-    explicit WebIconDatabase(WebProcessPool&);
-
-    // WebCore::IconDatabaseClient
-    void didImportIconURLForPageURL(const String&) override;
-    void didImportIconDataForPageURL(const String&) override;
-    void didChangeIconForPageURL(const String&) override;
-    void didRemoveAllIcons() override;
-    void didFinishURLImport() override;
-    void didClose() override;
-
-    // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
-    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
-
-    void notifyIconDataReadyForPageURL(const String&);
-
-    WebProcessPool* m_processPool;
-
-    std::unique_ptr<WebCore::IconDatabase> m_iconDatabaseImpl;
-    bool m_urlImportCompleted;
-    bool m_databaseCleanupDisabled;
-    bool m_shouldDerefWhenAppropriate;
-    HashMap<uint64_t, String> m_pendingLoadDecisionURLMap;
-
-    std::unique_ptr<API::IconDatabaseClient> m_client;
+class WebIconDatabase : public API::ObjectImpl<API::Object::Type::IconDatabase> {
 };
 
 } // namespace WebKit
-
-#endif // WebIconDatabase_h

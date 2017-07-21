@@ -51,9 +51,6 @@ messages -> WebProcessProxy LegacyReceiver {
 
     StopResponsivenessTimer()
 
-    RetainIconForPageURL(String pageURL)
-    ReleaseIconForPageURL(String pageURL)
-
     DidReceiveMainThreadPing()
     DidReceiveBackgroundResponsivenessPing()
 

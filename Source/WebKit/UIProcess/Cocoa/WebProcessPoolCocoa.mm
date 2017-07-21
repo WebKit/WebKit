@@ -505,11 +505,6 @@ bool WebProcessPool::isNetworkCacheEnabled()
 #endif
 }
 
-String WebProcessPool::platformDefaultIconDatabasePath() const
-{
-    return "";
-}
-
 bool WebProcessPool::omitPDFSupport()
 {
     // Since this is a "secret default" we don't bother registering it.
