@@ -40,7 +40,6 @@ class Frame;
 class IconLoader final : private CachedRawResourceClient {
     WTF_MAKE_NONCOPYABLE(IconLoader); WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit IconLoader(Frame&);
     IconLoader(DocumentLoader&, const URL&);
     virtual ~IconLoader();
 
@@ -50,8 +49,7 @@ public:
 private:
     void notifyFinished(CachedResource&) final;
 
-    Frame* m_frame { nullptr };
-    DocumentLoader* m_documentLoader { nullptr };
+    DocumentLoader& m_documentLoader;
     URL m_url;
     CachedResourceHandle<CachedRawResource> m_resource;
 };

@@ -32,7 +32,6 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "DocumentWriter.h"
-#include "IconDatabaseBase.h"
 #include "LinkIcon.h"
 #include "LoadTiming.h"
 #include "NavigationAction.h"
@@ -228,14 +227,6 @@ public:
     WEBCORE_EXPORT void cancelMainResourceLoad(const ResourceError&);
     void willContinueMainResourceLoadAfterRedirect(const ResourceRequest&);
 
-    // Support iconDatabase in synchronous mode.
-    void iconLoadDecisionAvailable();
-    
-    // Support iconDatabase in asynchronous mode.
-    void continueIconLoadWithDecision(IconLoadDecision);
-    void getIconLoadDecisionForIconURL(const String&);
-    void getIconDataForIconURL(const String&);
-
     bool isLoadingMainResource() const { return m_loadingMainResource; }
     bool isLoadingMultipartContent() const { return m_isLoadingMultipartContent; }
 
@@ -301,6 +292,8 @@ public:
     void startIconLoading();
     WEBCORE_EXPORT void didGetLoadDecisionForIcon(bool decision, uint64_t loadIdentifier, uint64_t newCallbackID);
     void finishedLoadingIcon(IconLoader&, SharedBuffer*);
+
+    const Vector<LinkIcon>& linkIcons() const { return m_linkIcons; }
 
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
@@ -456,13 +449,9 @@ private:
     bool m_waitingForContentPolicy { false };
     bool m_waitingForNavigationPolicy { false };
 
-    // For IconDatabase-style loads
-    RefPtr<IconLoadDecisionCallback> m_iconLoadDecisionCallback;
-    RefPtr<IconDataCallback> m_iconDataCallback;
-
-    // For IconLoadingClient-style loads
     HashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
     HashMap<std::unique_ptr<IconLoader>, uint64_t> m_iconLoaders;
+    Vector<LinkIcon> m_linkIcons;
 
     bool m_subresourceLoadersArePageCacheAcceptable { false };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };

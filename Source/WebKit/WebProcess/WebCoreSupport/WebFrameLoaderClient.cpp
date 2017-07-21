@@ -1803,11 +1803,6 @@ void WebFrameLoaderClient::didRestoreScrollPosition()
     webPage->didRestoreScrollPosition();
 }
 
-bool WebFrameLoaderClient::useIconLoadingClient()
-{
-    return m_useIconLoadingClient;
-}
-
 void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>& icons)
 {
     auto* webPage = m_frame->page();

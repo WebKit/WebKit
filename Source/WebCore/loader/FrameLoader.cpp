@@ -76,7 +76,6 @@
 #include "HTTPParsers.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
-#include "IconController.h"
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
@@ -263,7 +262,6 @@ FrameLoader::FrameLoader(Frame& frame, FrameLoaderClient& client)
     , m_history(std::make_unique<HistoryController>(frame))
     , m_notifier(frame)
     , m_subframeLoader(std::make_unique<SubframeLoader>(frame))
-    , m_icon(std::make_unique<IconController>(frame))
     , m_mixedContentChecker(frame)
     , m_state(FrameStateProvisional)
     , m_loadType(FrameLoadType::Standard)
@@ -498,8 +496,6 @@ void FrameLoader::stop()
         parser->stopParsing();
         parser->finish();
     }
-    
-    icon().stopLoader();
 }
 
 void FrameLoader::willTransitionToCommitted()

@@ -43,7 +43,6 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
 #include "HTTPHeaderNames.h"
-#include "IconController.h"
 #include "InspectorPageAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "InstrumentingAgents.h"
@@ -353,10 +352,16 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     if (type == InspectorPageAgent::OtherResource) {
         if (m_loadingXHRSynchronously)
             type = InspectorPageAgent::XHRResource;
-        else if (equalIgnoringFragmentIdentifier(request.url(), loader.frameLoader()->icon().url()))
-            type = InspectorPageAgent::ImageResource;
         else if (equalIgnoringFragmentIdentifier(request.url(), loader.url()) && !loader.isCommitted())
             type = InspectorPageAgent::DocumentResource;
+        else {
+            for (auto& linkIcon : loader.linkIcons()) {
+                if (equalIgnoringFragmentIdentifier(request.url(), linkIcon.url)) {
+                    type = InspectorPageAgent::ImageResource;
+                    break;
+                }
+            }
+        }
     }
 
     m_resourcesData->setResourceType(requestId, type);

@@ -35,8 +35,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "IconController.h"
-#include "IconDatabase.h"
 #include "Logging.h"
 #include "ResourceRequest.h"
 #include "SharedBuffer.h"
@@ -44,14 +42,8 @@
 
 namespace WebCore {
 
-IconLoader::IconLoader(Frame& frame)
-    : m_frame(&frame)
-    , m_url(frame.loader().icon().url())
-{
-}
-
 IconLoader::IconLoader(DocumentLoader& documentLoader, const URL& url)
-    : m_documentLoader(&documentLoader)
+    : m_documentLoader(documentLoader)
     , m_url(url)
 {
 }
@@ -63,19 +55,14 @@ IconLoader::~IconLoader()
 
 void IconLoader::startLoading()
 {
-    ASSERT(m_frame || m_documentLoader);
-
     if (m_resource)
         return;
 
-    if (m_frame && !m_frame->document())
+    auto* frame = m_documentLoader.frame();
+    if (!frame)
         return;
 
-
-    if (m_documentLoader && !m_documentLoader->frame())
-        return;
-
-    ResourceRequest resourceRequest = m_documentLoader ? m_url :  m_frame->loader().icon().url();
+    ResourceRequest resourceRequest = m_url;
     resourceRequest.setPriority(ResourceLoadPriority::Low);
 #if !ERROR_DISABLED
     // Copy this because we may want to access it after transferring the
@@ -88,7 +75,6 @@ void IconLoader::startLoading()
 
     request.setInitiator(cachedResourceRequestInitiators().icon);
 
-    auto* frame = m_frame ? m_frame : m_documentLoader->frame();
     m_resource = frame->document()->cachedResourceLoader().requestIcon(WTFMove(request));
     if (m_resource)
         m_resource->addClient(*this);
@@ -124,22 +110,9 @@ void IconLoader::notifyFinished(CachedResource& resource)
 
     LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", m_resource->url().string().ascii().data());
 
-    if (!m_frame) {
-        // DocumentLoader::finishedLoadingIcon destroys this IconLoader as it finishes. This will automatically
-        // trigger IconLoader::stopLoading() during destruction, so we should just return here.
-        m_documentLoader->finishedLoadingIcon(*this, data);
-        return;
-    }
-
-    m_frame->loader().icon().commitToDatabase(m_resource->url());
-
-    // Setting the icon data only after committing to the database ensures that the data is
-    // kept in memory (so it does not have to be read from the database asynchronously), since
-    // there is a page URL referencing it.
-    iconDatabase().setIconDataForIconURL(data, m_resource->url().string());
-    m_frame->loader().client().dispatchDidReceiveIcon();
-
-    stopLoading();
+    // DocumentLoader::finishedLoadingIcon destroys this IconLoader as it finishes. This will automatically
+    // trigger IconLoader::stopLoading() during destruction, so we should just return here.
+    m_documentLoader.finishedLoadingIcon(*this, data);
 }
 
 }

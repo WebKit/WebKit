@@ -100,7 +100,6 @@
 #include "HashChangeEvent.h"
 #include "History.h"
 #include "HitTestResult.h"
-#include "IconController.h"
 #include "ImageLoader.h"
 #include "InspectorInstrumentation.h"
 #include "JSCustomElementInterface.h"
@@ -2716,11 +2715,8 @@ void Document::implicitClose()
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
     Frame* f = frame();
     if (f) {
-        if (f->loader().client().useIconLoadingClient()) {
-            if (auto* documentLoader = loader())
-                documentLoader->startIconLoading();
-        } else
-            f->loader().icon().startLoader();
+        if (auto* documentLoader = loader())
+            documentLoader->startIconLoading();
 
         f->animation().startAnimationsIfNotSuspended(this);
 

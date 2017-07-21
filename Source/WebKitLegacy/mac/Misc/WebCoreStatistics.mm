@@ -39,7 +39,6 @@
 #import <WebCore/GCController.h>
 #import <WebCore/GlyphPage.h>
 #import <WebCore/GraphicsContext.h>
-#import <WebCore/IconDatabase.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/PageCache.h>
 #import <WebCore/PageConsoleClient.h>
@@ -128,22 +127,22 @@ using namespace WebCore;
 
 + (size_t)iconPageURLMappingCount
 {
-    return iconDatabase().pageURLMappingCount();
+    return 0;
 }
 
 + (size_t)iconRetainedPageURLCount
 {
-    return iconDatabase().retainedPageURLCount();
+    return 0;
 }
 
 + (size_t)iconRecordCount
 {
-    return iconDatabase().iconRecordCount();
+    return 0;
 }
 
 + (size_t)iconsWithDataCount
 {
-    return iconDatabase().iconRecordCountWithData();
+    return 0;
 }
 
 + (size_t)cachedFontDataCount

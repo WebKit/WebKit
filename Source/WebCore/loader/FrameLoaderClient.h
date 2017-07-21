@@ -354,7 +354,6 @@ public:
 
     virtual void didRestoreScrollPosition() { }
 
-    virtual bool useIconLoadingClient() { return false; }
     virtual void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) { }
     virtual void finishedLoadingIcon(uint64_t, SharedBuffer*) { }
 };

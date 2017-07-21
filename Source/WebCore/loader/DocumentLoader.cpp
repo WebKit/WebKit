@@ -54,7 +54,6 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTTPHeaderNames.h"
 #include "HistoryItem.h"
-#include "IconController.h"
 #include "IconLoader.h"
 #include "InspectorInstrumentation.h"
 #include "LinkIconCollector.h"
@@ -166,12 +165,8 @@ DocumentLoader::~DocumentLoader()
     ASSERT(!m_frame || !isLoading() || frameLoader()->activeDocumentLoader() != this);
     ASSERT_WITH_MESSAGE(!m_waitingForContentPolicy, "The content policy callback should never outlive its DocumentLoader.");
     ASSERT_WITH_MESSAGE(!m_waitingForNavigationPolicy, "The navigation policy callback should never outlive its DocumentLoader.");
-    if (m_iconLoadDecisionCallback)
-        m_iconLoadDecisionCallback->invalidate();
-    if (m_iconDataCallback)
-        m_iconDataCallback->invalidate();
-    m_cachedResourceLoader->clearDocumentLoader();
 
+    m_cachedResourceLoader->clearDocumentLoader();
     clearMainResource();
 }
 
@@ -1610,60 +1605,18 @@ void DocumentLoader::maybeFinishLoadingMultipartContent()
     commitLoad(resourceData->data(), resourceData->size());
 }
 
-void DocumentLoader::iconLoadDecisionAvailable()
-{
-    if (m_frame)
-        m_frame->loader().icon().loadDecisionReceived(iconDatabase().synchronousLoadDecisionForIconURL(frameLoader()->icon().url(), this));
-}
-
-static void iconLoadDecisionCallback(IconLoadDecision decision, void* context)
-{
-    static_cast<DocumentLoader*>(context)->continueIconLoadWithDecision(decision);
-}
-
-void DocumentLoader::getIconLoadDecisionForIconURL(const String& urlString)
-{
-    if (m_iconLoadDecisionCallback)
-        m_iconLoadDecisionCallback->invalidate();
-    m_iconLoadDecisionCallback = IconLoadDecisionCallback::create(this, iconLoadDecisionCallback);
-    iconDatabase().loadDecisionForIconURL(urlString, *m_iconLoadDecisionCallback);
-}
-
-void DocumentLoader::continueIconLoadWithDecision(IconLoadDecision decision)
-{
-    ASSERT(m_iconLoadDecisionCallback);
-    m_iconLoadDecisionCallback = nullptr;
-    if (m_frame)
-        m_frame->loader().icon().continueLoadWithDecision(decision);
-}
-
-static void iconDataCallback(SharedBuffer*, void*)
-{
-    // FIXME: Implement this once we know what parts of WebCore actually need the icon data returned.
-}
-
-void DocumentLoader::getIconDataForIconURL(const String& urlString)
-{   
-    if (m_iconDataCallback)
-        m_iconDataCallback->invalidate();
-    m_iconDataCallback = IconDataCallback::create(this, iconDataCallback);
-    iconDatabase().iconDataForIconURL(urlString, *m_iconDataCallback);
-}
-
 void DocumentLoader::startIconLoading()
 {
-    ASSERT(m_frame->loader().client().useIconLoadingClient());
-
     static uint64_t nextIconCallbackID = 1;
 
     auto* document = this->document();
     if (!document)
         return;
 
-    Vector<LinkIcon> icons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });
+    m_linkIcons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });
 
     bool hasFavicon = false;
-    for (auto& icon : icons) {
+    for (auto& icon : m_linkIcons) {
         if (icon.type == LinkIconType::Favicon) {
             hasFavicon = true;
             break;
@@ -1671,11 +1624,11 @@ void DocumentLoader::startIconLoading()
     }
 
     if (!hasFavicon)
-        icons.append({ m_frame->document()->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt });
+        m_linkIcons.append({ m_frame->document()->completeURL(ASCIILiteral("/favicon.ico")), LinkIconType::Favicon, String(), std::nullopt });
 
     Vector<std::pair<WebCore::LinkIcon&, uint64_t>> iconDecisions;
-    iconDecisions.reserveInitialCapacity(icons.size());
-    for (auto& icon : icons) {
+    iconDecisions.reserveInitialCapacity(m_linkIcons.size());
+    for (auto& icon : m_linkIcons) {
         auto result = m_iconsPendingLoadDecision.add(nextIconCallbackID++, icon);
         iconDecisions.uncheckedAppend({ icon, result.iterator->key });
     }

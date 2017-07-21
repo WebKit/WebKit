@@ -28,7 +28,6 @@
 
 #include "CachedPage.h"
 #include "Document.h"
-#include "IconDatabase.h"
 #include "KeyedCoding.h"
 #include "PageCache.h"
 #include "ResourceRequest.h"
@@ -70,7 +69,6 @@ HistoryItem::HistoryItem(const String& urlString, const String& title)
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_pruningReason(PruningReason::None)
 {
-    iconDatabase().retainIconForPageURL(m_urlString);
 }
 
 HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle)
@@ -83,13 +81,11 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     , m_documentSequenceNumber(generateSequenceNumber())
     , m_pruningReason(PruningReason::None)
 {
-    iconDatabase().retainIconForPageURL(m_urlString);
 }
 
 HistoryItem::~HistoryItem()
 {
     ASSERT(!m_cachedPage);
-    iconDatabase().releaseIconForPageURL(m_urlString);
 }
 
 inline HistoryItem::HistoryItem(const HistoryItem& item)
@@ -130,8 +126,6 @@ Ref<HistoryItem> HistoryItem::copy() const
 
 void HistoryItem::reset()
 {
-    iconDatabase().releaseIconForPageURL(m_urlString);
-
     m_urlString = String();
     m_originalURLString = String();
     m_referrer = String();
@@ -208,12 +202,7 @@ void HistoryItem::setAlternateTitle(const String& alternateTitle)
 
 void HistoryItem::setURLString(const String& urlString)
 {
-    if (m_urlString != urlString) {
-        iconDatabase().releaseIconForPageURL(m_urlString);
-        m_urlString = urlString;
-        iconDatabase().retainIconForPageURL(m_urlString);
-    }
-    
+    m_urlString = urlString;
     notifyHistoryItemChanged(this);
 }
 

@@ -51,6 +51,7 @@
 #include "DOMWindow.h"
 #include "DisplayList.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
 #include "Editor.h"
@@ -79,7 +80,6 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
-#include "IconController.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorFrontendClientLocal.h"
@@ -2528,15 +2528,18 @@ int Internals::pageNumber(Element& element, float pageWidth, float pageHeight)
 
 Vector<String> Internals::shortcutIconURLs() const
 {
-    Vector<String> vector;
-
     if (!frame())
-        return vector;
+        return { };
+    
+    auto* documentLoader = frame()->loader().documentLoader();
+    if (!documentLoader)
+        return { };
 
-    auto string = frame()->loader().icon().url().string();
-    if (!string.isNull())
-        vector.append(string);
-    return vector;
+    Vector<String> result;
+    for (auto& linkIcon : documentLoader->linkIcons())
+        result.append(linkIcon.url.string());
+    
+    return result;
 }
 
 int Internals::numberOfPages(float pageWidth, float pageHeight)

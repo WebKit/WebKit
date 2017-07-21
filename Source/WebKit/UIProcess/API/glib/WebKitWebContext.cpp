@@ -55,7 +55,6 @@
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/RemoteInspector.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/IconDatabase.h>
 #include <WebCore/Language.h>
 #include <glib/gi18n-lib.h>
 #include <libintl.h>

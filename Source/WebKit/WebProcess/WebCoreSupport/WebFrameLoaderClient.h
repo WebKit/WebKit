@@ -257,7 +257,6 @@ private:
 
     void didRestoreScrollPosition() final;
 
-    bool useIconLoadingClient() final;
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
     void finishedLoadingIcon(uint64_t callbackIdentifier, WebCore::SharedBuffer*) final;
 

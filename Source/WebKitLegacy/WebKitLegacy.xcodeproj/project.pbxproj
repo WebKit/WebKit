@@ -131,8 +131,6 @@
 		511F3FD80CECC88F00852565 /* WebDatabaseManagerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 511F3FD40CECC88F00852565 /* WebDatabaseManagerClient.mm */; };
 		5120C82C1E54CE8A0025B250 /* WebKitVersionChecks.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5120C82B1E54CE8A0025B250 /* WebKitVersionChecks.mm */; };
 		512BDB531C471591006494DF /* WebDatabaseProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512BDB521C471591006494DF /* WebDatabaseProvider.mm */; };
-		51494CD60C7EBDE0004178C5 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */; };
-		51494CD70C7EBDE0004178C5 /* WebIconDatabaseClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */; };
 		5158F6EF106D862A00AF457C /* WebHistoryDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5158F6EE106D862A00AF457C /* WebHistoryDelegate.h */; };
 		5185F62610712B80007AA393 /* WebNavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5185F62510712B80007AA393 /* WebNavigationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185F62810712B97007AA393 /* WebNavigationData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5185F62710712B97007AA393 /* WebNavigationData.mm */; };
@@ -953,8 +951,6 @@
 		51443F9A0429392B00CA2D3A /* WebPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPolicyDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51443F9C0429392B00CA2D3A /* WebPolicyDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPolicyDelegatePrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseClient.h; sourceTree = "<group>"; };
-		51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebIconDatabaseClient.mm; sourceTree = "<group>"; };
 		5152FADD033FC50400CA2ACD /* WebDefaultContextMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultContextMenuDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDefaultContextMenuDelegate.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5152FADF033FC50400CA2ACD /* WebDefaultPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultPolicyDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2585,8 +2581,6 @@
 				9391F274121B38BD00EBF7E8 /* WebFrameNetworkingContext.mm */,
 				BC7F884910C8775A00D6133D /* WebGeolocationClient.h */,
 				BC7F884A10C8775A00D6133D /* WebGeolocationClient.mm */,
-				51494CD40C7EBDE0004178C5 /* WebIconDatabaseClient.h */,
-				51494CD50C7EBDE0004178C5 /* WebIconDatabaseClient.mm */,
 				06693DDA0BFBA85200216072 /* WebInspectorClient.h */,
 				06693DDB0BFBA85200216072 /* WebInspectorClient.mm */,
 				1C7B0C650EB2464D00A28502 /* WebInspectorClientCF.cpp */,
@@ -3053,7 +3047,6 @@
 				939810A10824BF01008DF038 /* WebHTMLViewInternal.h in Headers */,
 				939810580824BF01008DF038 /* WebHTMLViewPrivate.h in Headers */,
 				939810180824BF01008DF038 /* WebIconDatabase.h in Headers */,
-				51494CD60C7EBDE0004178C5 /* WebIconDatabaseClient.h in Headers */,
 				9321D5921A391DC3008052BE /* WebImmediateActionController.h in Headers */,
 				A560946614D8AD2600799A8A /* WebIndicateLayer.h in Headers */,
 				5D7BF8140C2A1D90008CE06D /* WebInspector.h in Headers */,
@@ -3601,7 +3594,6 @@
 				939810F30824BF01008DF038 /* WebHTMLRepresentation.mm in Sources */,
 				939810F40824BF01008DF038 /* WebHTMLView.mm in Sources */,
 				939810C10824BF01008DF038 /* WebIconDatabase.mm in Sources */,
-				51494CD70C7EBDE0004178C5 /* WebIconDatabaseClient.mm in Sources */,
 				9321D5941A391DF9008052BE /* WebImmediateActionController.mm in Sources */,
 				A560946714D8AD2600799A8A /* WebIndicateLayer.mm in Sources */,
 				5D7BF8150C2A1D90008CE06D /* WebInspector.mm in Sources */,

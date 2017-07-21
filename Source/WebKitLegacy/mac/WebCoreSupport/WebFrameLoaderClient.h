@@ -250,7 +250,6 @@ private:
 
     void prefetchDNS(const String&) final;
 
-    bool useIconLoadingClient() final { return true; }
     void getLoadDecisionForIcons(const Vector<std::pair<WebCore::LinkIcon&, uint64_t>>&) final;
     void finishedLoadingIcon(uint64_t, WebCore::SharedBuffer*) final;
 

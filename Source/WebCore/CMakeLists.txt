@@ -2050,12 +2050,7 @@ set(WebCore_SOURCES
     loader/cache/CachedXSLStyleSheet.cpp
     loader/cache/MemoryCache.cpp
 
-    loader/icon/IconController.cpp
-    loader/icon/IconDatabase.cpp
-    loader/icon/IconDatabaseBase.cpp
     loader/icon/IconLoader.cpp
-    loader/icon/IconRecord.cpp
-    loader/icon/PageURLRecord.cpp
 
     mathml/MathMLAnnotationElement.cpp
     mathml/MathMLElement.cpp
