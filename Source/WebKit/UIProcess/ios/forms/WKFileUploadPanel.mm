@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #import "APIData.h"
 #import "APIOpenPanelParameters.h"
 #import "APIString.h"
-#import "PhotosSPI.h"
 #import "UIKitSPI.h"
 #import "WKContentViewInteraction.h"
 #import "WKData.h"
@@ -41,22 +40,12 @@
 #import "WebIconUtilities.h"
 #import "WebOpenPanelResultListenerProxy.h"
 #import "WebPageProxy.h"
-#import <AVFoundation/AVFoundation.h>
-#import <CoreMedia/CoreMedia.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKit/WebNSFileManagerExtras.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/SoftLinking.h>
 
 using namespace WebKit;
-
-SOFT_LINK_FRAMEWORK(Photos);
-SOFT_LINK_CLASS(Photos, PHAsset);
-SOFT_LINK_CLASS(Photos, PHImageManager);
-SOFT_LINK_CLASS(Photos, PHImageRequestOptions);
-SOFT_LINK_CONSTANT(Photos, PHImageRequestOptionsResizeModeNone, NSString *);
-SOFT_LINK_CONSTANT(Photos, PHImageRequestOptionsVersionCurrent, NSString *);
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -664,43 +653,6 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     });
 }
 
-- (void)_uploadItemForImage:(UIImage *)image withAssetURL:(NSURL *)assetURL successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
-{
-    ASSERT_ARG(image, image);
-    ASSERT_ARG(assetURL, assetURL);
-
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        PHFetchResult *result = [getPHAssetClass() fetchAssetsWithALAssetURLs:@[assetURL] options:nil];
-        if (!result.count) {
-            LOG_ERROR("WKFileUploadPanel: Failed to fetch asset with URL %@", assetURL);
-            [self _uploadItemForJPEGRepresentationOfImage:image successBlock:successBlock failureBlock:failureBlock];
-            return;
-        }
-
-        PHAsset *firstAsset = result[0];
-        [firstAsset fetchPropertySetsIfNeeded];
-        NSString *originalFilename = [[firstAsset originalMetadataProperties] originalFilename];
-        ASSERT(originalFilename);
-
-        RetainPtr<PHImageRequestOptions> options = adoptNS([allocPHImageRequestOptionsInstance() init]);
-        [options setVersion:PHImageRequestOptionsVersionCurrent];
-        [options setSynchronous:YES];
-        [options setResizeMode:PHImageRequestOptionsResizeModeNone];
-
-        PHImageManager *manager = (PHImageManager *)[getPHImageManagerClass() defaultManager];
-        [manager requestImageDataForAsset:firstAsset options:options.get() resultHandler:^(NSData *imageData, NSString *dataUTI, UIImageOrientation, NSDictionary *info)
-        {
-            if (!imageData) {
-                LOG_ERROR("WKFileUploadPanel: Failed to request image data for asset with URL %@", assetURL);
-                [self _uploadItemForJPEGRepresentationOfImage:image successBlock:successBlock failureBlock:failureBlock];
-                return;
-            }
-
-            [self _uploadItemForImageData:imageData imageName:originalFilename successBlock:successBlock failureBlock:failureBlock];
-        }];
-    });
-}
-
 - (void)_uploadItemFromMediaInfo:(NSDictionary *)info successBlock:(void (^)(_WKFileUploadItem *))successBlock failureBlock:(void (^)(void))failureBlock
 {
     NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
@@ -726,6 +678,20 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         return;
     }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
+    if (NSURL *imageURL = info[UIImagePickerControllerImageURL]) {
+        if (!imageURL.isFileURL) {
+            LOG_ERROR("WKFileUploadPanel: Expected image URL to be a file path, it was not");
+            ASSERT_NOT_REACHED();
+            failureBlock();
+            return;
+        }
+
+        successBlock(adoptNS([[_WKImageFileUploadItem alloc] initWithFileURL:imageURL]).get());
+        return;
+    }
+#endif
+
     UIImage *originalImage = [info objectForKey:UIImagePickerControllerOriginalImage];
     if (!originalImage) {
         LOG_ERROR("WKFileUploadPanel: Expected image data but there was none");
@@ -734,14 +700,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
         return;
     }
 
-    // If we have an asset URL, try to upload the native image.
-    NSURL *referenceURL = [info objectForKey:UIImagePickerControllerReferenceURL];
-    if (referenceURL) {
-        [self _uploadItemForImage:originalImage withAssetURL:referenceURL successBlock:successBlock failureBlock:failureBlock];
-        return;
-    }
-
-    // Photos taken with the camera will not have an asset URL. Fall back to a JPEG representation.
+    // Photos taken with the camera will not have an image URL. Fall back to a JPEG representation.
     [self _uploadItemForJPEGRepresentationOfImage:originalImage successBlock:successBlock failureBlock:failureBlock];
 }
 
