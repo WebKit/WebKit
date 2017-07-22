@@ -48,14 +48,14 @@ Expecting exception from store.put(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: The data provided does not meet requirements.
+Exception message: Provided data is inadequate.
 
 Key path doesn't resolve to a value; should yield null but insertion would fail, so put request should raise exception
 Expecting exception from store.put('string')
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: The data provided does not meet requirements.
+Exception message: Provided data is inadequate.
 
 Key path doesn't resolve to a value; should yield null, key should be generated, put request should succeed
 store.put({})

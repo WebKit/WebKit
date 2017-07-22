@@ -104,7 +104,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     ASSERT(currentThread() == originThreadID());
     ASSERT(hasPendingActivity());
 
-    IDBError idbError(IDBDatabaseException::AbortError);
+    IDBError idbError(ABORT_ERR);
     m_domError = DOMError::create(idbError.name(), idbError.message());
     setResultToUndefined();
 

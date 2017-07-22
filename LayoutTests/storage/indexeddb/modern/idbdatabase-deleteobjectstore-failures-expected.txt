@@ -14,7 +14,7 @@ Failed to deleteObjectStore without a versionchange transaction - InvalidStateEr
 readwrite transaction complete
 Second upgrade needed: Old version - 1 New version - 2
 Failed to deleteObjectStore with a non-existent objectstore - NotFoundError: Failed to execute 'deleteObjectStore' on 'IDBDatabase': The specified object store was not found.
-Failed to deleteObjectStore with an in-progress versionchange transaction that is inactive - TransactionInactiveError: A request was placed against a transaction which is either currently not active, or which is finished.
+Failed to deleteObjectStore with an in-progress versionchange transaction that is inactive - TransactionInactiveError: A request was placed against a transaction which is currently not active, or which is finished.
 Second version change transaction complete
 PASS successfullyParsed is true
 

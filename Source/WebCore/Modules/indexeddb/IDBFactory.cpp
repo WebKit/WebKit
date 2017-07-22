@@ -129,7 +129,7 @@ ExceptionOr<short> IDBFactory::cmp(ExecState& execState, JSValue firstValue, JSV
     auto second = scriptValueToIDBKey(execState, secondValue);
 
     if (!first->isValid() || !second->isValid())
-        return Exception { IDBDatabaseException::DataError, ASCIILiteral("Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.") };
+        return Exception { DataError, ASCIILiteral("Failed to execute 'cmp' on 'IDBFactory': The parameter is not a valid key.") };
 
     return first->compare(second.get());
 }

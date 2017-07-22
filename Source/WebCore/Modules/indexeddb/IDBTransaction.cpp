@@ -36,7 +36,6 @@
 #include "EventQueue.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
-#include "IDBDatabaseException.h"
 #include "IDBError.h"
 #include "IDBEventDispatcher.h"
 #include "IDBGetRecordData.h"
@@ -147,10 +146,10 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
     ASSERT(currentThread() == m_database->originThreadID());
 
     if (!scriptExecutionContext())
-        return Exception { IDBDatabaseException::InvalidStateError };
+        return Exception { INVALID_STATE_ERR };
 
     if (isFinishedOrFinishing())
-        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished.") };
+        return Exception { INVALID_STATE_ERR, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The transaction finished.") };
 
     Locker<Lock> locker(m_referencedObjectStoreLock);
 
@@ -168,11 +167,11 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
 
     auto* info = m_database->info().infoForExistingObjectStore(objectStoreName);
     if (!info)
-        return Exception { IDBDatabaseException::NotFoundError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
+        return Exception { NOT_FOUND_ERR, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
 
     // Version change transactions are scoped to every object store in the database.
     if (!info || (!found && !isVersionChange()))
-        return Exception { IDBDatabaseException::NotFoundError, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
+        return Exception { NOT_FOUND_ERR, ASCIILiteral("Failed to execute 'objectStore' on 'IDBTransaction': The specified object store was not found.") };
 
     auto objectStore = std::make_unique<IDBObjectStore>(*scriptExecutionContext(), *info, *this);
     auto* rawObjectStore = objectStore.get();
@@ -209,7 +208,7 @@ ExceptionOr<void> IDBTransaction::abort()
     ASSERT(currentThread() == m_database->originThreadID());
 
     if (isFinishedOrFinishing())
-        return Exception { IDBDatabaseException::InvalidStateError, ASCIILiteral("Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.") };
+        return Exception { INVALID_STATE_ERR, ASCIILiteral("Failed to execute 'abort' on 'IDBTransaction': The transaction is inactive or finished.") };
 
     internalAbort();
 
@@ -295,7 +294,7 @@ void IDBTransaction::abortOnServerAndCancelRequests(IDBClient::TransactionOperat
 
     m_currentlyCompletingRequest = nullptr;
     
-    IDBError error(IDBDatabaseException::AbortError);
+    IDBError error(ABORT_ERR);
 
     abortInProgressOperations(error);
 
@@ -760,7 +759,7 @@ void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
         return;
 
     // Otherwise, failure to create an index forced abortion of the transaction.
-    abortDueToFailedRequest(DOMError::create(IDBDatabaseException::getErrorName(resultData.error().code()), resultData.error().message()));
+    abortDueToFailedRequest(DOMError::create(resultData.error().name(), resultData.error().message()));
 }
 
 void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
@@ -1217,7 +1216,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
             // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
             // In that case, we cannot successfully store this record, so we callback with an error.
             RefPtr<IDBClient::TransactionOperation> protectedOperation(&operation);
-            auto result = IDBResultData::error(operation.identifier(), { IDBDatabaseException::UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
+            auto result = IDBResultData::error(operation.identifier(), { UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
             scriptExecutionContext()->postTask([protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)](ScriptExecutionContext&) {
                 protectedOperation->doComplete(result);
             });
@@ -1239,7 +1238,7 @@ void IDBTransaction::putOrAddOnServer(IDBClient::TransactionOperation& operation
 
         // If the IDBValue doesn't have any data, then something went wrong writing the blobs to disk.
         // In that case, we cannot successfully store this record, so we callback with an error.
-        auto result = IDBResultData::error(protectedOperation->identifier(), { IDBDatabaseException::UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
+        auto result = IDBResultData::error(protectedOperation->identifier(), { UnknownError, ASCIILiteral("Error preparing Blob/File data to be stored in object store") });
         callOnMainThread([protectedThis = WTFMove(protectedThis), protectedOperation = WTFMove(protectedOperation), result = WTFMove(result)]() mutable {
             protectedOperation->doComplete(result);
         });

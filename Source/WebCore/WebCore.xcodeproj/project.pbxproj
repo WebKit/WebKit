@@ -2331,9 +2331,6 @@
 		5185FC7E1BB4C4E80012898F /* IDBCursorWithValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B431B9F889B00F789CE /* IDBCursorWithValue.h */; };
 		5185FC801BB4C4E80012898F /* IDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51645B441B9F889B00F789CE /* IDBDatabase.cpp */; };
 		5185FC811BB4C4E80012898F /* IDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 51645B451B9F889B00F789CE /* IDBDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5185FC831BB4C4E80012898F /* IDBDatabaseError.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71983181106DF0016DC51 /* IDBDatabaseError.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5185FC841BB4C4E80012898F /* IDBDatabaseException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71984181106DF0016DC51 /* IDBDatabaseException.cpp */; };
-		5185FC851BB4C4E80012898F /* IDBDatabaseException.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D71985181106DF0016DC51 /* IDBDatabaseException.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185FC861BB4C4E80012898F /* IDBDatabaseIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5103105E1BA8E090003329C0 /* IDBDatabaseIdentifier.cpp */; };
 		5185FC871BB4C4E80012898F /* IDBDatabaseIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5103105F1BA8E090003329C0 /* IDBDatabaseIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5185FC8A1BB4C4E80012898F /* IDBEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D71986181106DF0016DC51 /* IDBEventDispatcher.cpp */; };
@@ -10127,9 +10124,6 @@
 		51D71977181106DF0016DC51 /* IDBCursor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBCursor.idl; sourceTree = "<group>"; };
 		51D7197B181106DF0016DC51 /* IDBCursorWithValue.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBCursorWithValue.idl; sourceTree = "<group>"; };
 		51D7197E181106DF0016DC51 /* IDBDatabase.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBDatabase.idl; sourceTree = "<group>"; };
-		51D71983181106DF0016DC51 /* IDBDatabaseError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseError.h; sourceTree = "<group>"; };
-		51D71984181106DF0016DC51 /* IDBDatabaseException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBDatabaseException.cpp; sourceTree = "<group>"; };
-		51D71985181106DF0016DC51 /* IDBDatabaseException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBDatabaseException.h; sourceTree = "<group>"; };
 		51D71986181106DF0016DC51 /* IDBEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBEventDispatcher.cpp; sourceTree = "<group>"; };
 		51D71987181106DF0016DC51 /* IDBEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBEventDispatcher.h; sourceTree = "<group>"; };
 		51D7198A181106DF0016DC51 /* IDBFactory.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBFactory.idl; sourceTree = "<group>"; };
@@ -20643,9 +20637,6 @@
 				51645B441B9F889B00F789CE /* IDBDatabase.cpp */,
 				51645B451B9F889B00F789CE /* IDBDatabase.h */,
 				51D7197E181106DF0016DC51 /* IDBDatabase.idl */,
-				51D71983181106DF0016DC51 /* IDBDatabaseError.h */,
-				51D71984181106DF0016DC51 /* IDBDatabaseException.cpp */,
-				51D71985181106DF0016DC51 /* IDBDatabaseException.h */,
 				5103105E1BA8E090003329C0 /* IDBDatabaseIdentifier.cpp */,
 				5103105F1BA8E090003329C0 /* IDBDatabaseIdentifier.h */,
 				51D71986181106DF0016DC51 /* IDBEventDispatcher.cpp */,
@@ -27490,8 +27481,6 @@
 				5110FCFC1E03641D006F8D0B /* IDBCursorRecord.h in Headers */,
 				5185FC7E1BB4C4E80012898F /* IDBCursorWithValue.h in Headers */,
 				5185FC811BB4C4E80012898F /* IDBDatabase.h in Headers */,
-				5185FC831BB4C4E80012898F /* IDBDatabaseError.h in Headers */,
-				5185FC851BB4C4E80012898F /* IDBDatabaseException.h in Headers */,
 				5185FC871BB4C4E80012898F /* IDBDatabaseIdentifier.h in Headers */,
 				51BA4AC41BBB5CD800DF3D6D /* IDBDatabaseInfo.h in Headers */,
 				5148453F1BB9D07E006A72ED /* IDBError.h in Headers */,
@@ -31475,7 +31464,6 @@
 				517138FB1BF3ADF4000D5F01 /* IDBCursorInfo.cpp in Sources */,
 				5185FC7D1BB4C4E80012898F /* IDBCursorWithValue.cpp in Sources */,
 				5185FC801BB4C4E80012898F /* IDBDatabase.cpp in Sources */,
-				5185FC841BB4C4E80012898F /* IDBDatabaseException.cpp in Sources */,
 				5185FC861BB4C4E80012898F /* IDBDatabaseIdentifier.cpp in Sources */,
 				51BA4AC31BBB5CD800DF3D6D /* IDBDatabaseInfo.cpp in Sources */,
 				5148453E1BB9D07E006A72ED /* IDBError.cpp in Sources */,

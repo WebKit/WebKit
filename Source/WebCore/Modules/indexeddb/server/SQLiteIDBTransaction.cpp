@@ -64,19 +64,19 @@ IDBError SQLiteIDBTransaction::begin(SQLiteDatabase& database)
     if (m_sqliteTransaction->inProgress())
         return { };
 
-    return { IDBDatabaseException::UnknownError, ASCIILiteral("Could not start SQLite transaction in database backend") };
+    return { UnknownError, ASCIILiteral("Could not start SQLite transaction in database backend") };
 }
 
 IDBError SQLiteIDBTransaction::commit()
 {
     LOG(IndexedDB, "SQLiteIDBTransaction::commit");
     if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
-        return { IDBDatabaseException::UnknownError, ASCIILiteral("No SQLite transaction in progress to commit") };
+        return { UnknownError, ASCIILiteral("No SQLite transaction in progress to commit") };
 
     m_sqliteTransaction->commit();
 
     if (m_sqliteTransaction->inProgress())
-        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to commit SQLite transaction in database backend") };
+        return { UnknownError, ASCIILiteral("Unable to commit SQLite transaction in database backend") };
 
     deleteBlobFilesIfNecessary();
     moveBlobFilesIfNecessary();
@@ -125,12 +125,12 @@ IDBError SQLiteIDBTransaction::abort()
     m_blobTemporaryAndStoredFilenames.clear();
 
     if (!m_sqliteTransaction || !m_sqliteTransaction->inProgress())
-        return { IDBDatabaseException::UnknownError, ASCIILiteral("No SQLite transaction in progress to abort") };
+        return { UnknownError, ASCIILiteral("No SQLite transaction in progress to abort") };
 
     m_sqliteTransaction->rollback();
 
     if (m_sqliteTransaction->inProgress())
-        return { IDBDatabaseException::UnknownError, ASCIILiteral("Unable to abort SQLite transaction in database backend") };
+        return { UnknownError, ASCIILiteral("Unable to abort SQLite transaction in database backend") };
 
     reset();
     return { };

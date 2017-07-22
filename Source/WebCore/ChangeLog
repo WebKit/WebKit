@@ -1,3 +1,179 @@
+2017-07-21  Chris Dumez  <cdumez@apple.com>
+
+        Drop IDBDatabaseException class
+        https://bugs.webkit.org/show_bug.cgi?id=174743
+
+        Reviewed by Darin Adler.
+
+        Drop IDBDatabaseException class and use DOMException directly. IDBDatabaseException was
+        only an internal concept and was already exposed to the Web as a DOMException. This
+        simplifies the code a bit and will allow for further simplification in a follow-up patch.
+
+        No new tests, no Web-facing behavior change, except for some exception messages
+        being slightly different.
+
+        * CMakeLists.txt:
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::advance):
+        (WebCore::IDBCursor::continuePrimaryKey):
+        (WebCore::IDBCursor::continueFunction):
+        (WebCore::IDBCursor::deleteFunction):
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::transaction):
+        (WebCore::IDBDatabase::deleteObjectStore):
+        * Modules/indexeddb/IDBDatabaseError.h: Removed.
+        * Modules/indexeddb/IDBDatabaseException.cpp: Removed.
+        * Modules/indexeddb/IDBDatabaseException.h: Removed.
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::cmp):
+        * Modules/indexeddb/IDBIndex.cpp:
+        (WebCore::IDBIndex::setName):
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::count):
+        (WebCore::IDBIndex::doCount):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::doGet):
+        (WebCore::IDBIndex::getKey):
+        (WebCore::IDBIndex::doGetKey):
+        (WebCore::IDBIndex::getAll):
+        (WebCore::IDBIndex::getAllKeys):
+        * Modules/indexeddb/IDBKeyRange.cpp:
+        (WebCore::IDBKeyRange::only):
+        (WebCore::IDBKeyRange::lowerBound):
+        (WebCore::IDBKeyRange::upperBound):
+        (WebCore::IDBKeyRange::bound):
+        (WebCore::IDBKeyRange::includes):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::setName):
+        (WebCore::IDBObjectStore::openCursor):
+        (WebCore::IDBObjectStore::openKeyCursor):
+        (WebCore::IDBObjectStore::get):
+        (WebCore::IDBObjectStore::getKey):
+        (WebCore::IDBObjectStore::putOrAdd):
+        (WebCore::IDBObjectStore::doDelete):
+        (WebCore::IDBObjectStore::deleteFunction):
+        (WebCore::IDBObjectStore::clear):
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::index):
+        (WebCore::IDBObjectStore::deleteIndex):
+        (WebCore::IDBObjectStore::count):
+        (WebCore::IDBObjectStore::doCount):
+        (WebCore::IDBObjectStore::getAll):
+        (WebCore::IDBObjectStore::getAllKeys):
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::result):
+        (WebCore::IDBRequest::error):
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::abort):
+        (WebCore::IDBTransaction::abortOnServerAndCancelRequests):
+        (WebCore::IDBTransaction::didCreateIndexOnServer):
+        (WebCore::IDBTransaction::putOrAddOnServer):
+        * Modules/indexeddb/server/IndexValueStore.cpp:
+        (WebCore::IDBServer::IndexValueStore::addRecord):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::createIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::MemoryIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::MemoryIDBBackingStore::addRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getAllRecords):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::MemoryIDBBackingStore::getCount):
+        (WebCore::IDBServer::MemoryIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::MemoryIDBBackingStore::openCursor):
+        (WebCore::IDBServer::MemoryIDBBackingStore::iterateCursor):
+        * Modules/indexeddb/server/MemoryIndex.cpp:
+        (WebCore::IDBServer::MemoryIndex::putIndexKey):
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::createIndex):
+        (WebCore::IDBServer::MemoryObjectStore::deleteIndex):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getOrEstablishDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::beginTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::abortTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::commitTransaction):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::clearObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedHasIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::renameIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteUnusedBlobFileRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRange):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateAllIndexesForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getBlobRecordsForObjectStoreRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllIndexRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getCount):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedSetKeyGeneratorValue):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::generateKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::revertGeneratedKeyNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::maybeUpdateKeyGeneratorNumber):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::openCursor):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::iterateCursor):
+        * Modules/indexeddb/server/SQLiteIDBTransaction.cpp:
+        (WebCore::IDBServer::SQLiteIDBTransaction::begin):
+        (WebCore::IDBServer::SQLiteIDBTransaction::commit):
+        (WebCore::IDBServer::SQLiteIDBTransaction::abort):
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::performCurrentOpenOperation):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameObjectStore):
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::renameIndex):
+        (WebCore::IDBServer::UniqueIDBDatabase::performPutOrAdd):
+        (WebCore::IDBServer::UniqueIDBDatabase::commitTransaction):
+        (WebCore::IDBServer::UniqueIDBDatabase::abortTransaction):
+        * Modules/indexeddb/shared/IDBError.cpp:
+        (WebCore::IDBError::name):
+        (WebCore::IDBError::message):
+        (WebCore::IDBError::toDOMError):
+        * Modules/indexeddb/shared/IDBError.h:
+        (WebCore::IDBError::userDeleteError):
+        (WebCore::IDBError::isNull):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::createDOMException):
+
+        * dom/DOMException.cpp:
+        (WebCore::DOMException::initializeDescription):
+        Initialize description->code from using the actual error codes in the
+        coreExceptions table, instead of initializing it using |ec|. |ec| is
+        the index in the ExceptionCode enumeration and it matches the error
+        code only for legacy exceptions. New exceptions such as DataError
+        should have a code of 0. Without this change, w3c for IDB would start
+        failing.
+
+        * dom/ExceptionCodeDescription.cpp:
+        (WebCore::ExceptionCodeDescription::ExceptionCodeDescription):
+        * dom/ExceptionCodeDescription.h:
+
 2017-07-21  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Simplify XMLHttpRequest bindings by removing built-ins

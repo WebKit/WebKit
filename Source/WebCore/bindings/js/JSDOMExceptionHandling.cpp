@@ -38,10 +38,6 @@
 #include <runtime/ExceptionHelpers.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBDatabaseException.h"
-#endif
-
 using namespace JSC;
 
 namespace WebCore {
@@ -166,15 +162,7 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
         description.description = messageCString.data();
     }
 
-    JSValue errorObject;
-    switch (description.type) {
-    case DOMExceptionType:
-#if ENABLE(INDEXED_DATABASE)
-    case IDBDatabaseExceptionType:
-#endif
-        errorObject = toJS(exec, globalObject, DOMException::create(description));
-        break;
-    }
+    JSValue errorObject = toJS(exec, globalObject, DOMException::create(description));
     
     ASSERT(errorObject);
     addErrorInfo(exec, asObject(errorObject), true);

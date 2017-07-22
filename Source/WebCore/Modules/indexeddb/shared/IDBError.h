@@ -28,7 +28,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "DOMError.h"
-#include "IDBDatabaseException.h"
+#include "ExceptionCode.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ public:
 
     static IDBError userDeleteError()
     {
-        return { IDBDatabaseException::UnknownError, ASCIILiteral("Database deleted by request of the user") };
+        return { UnknownError, ASCIILiteral("Database deleted by request of the user") };
     }
 
     IDBError& operator=(const IDBError&);
@@ -52,7 +52,7 @@ public:
     String name() const;
     String message() const;
 
-    bool isNull() const { return m_code == IDBDatabaseException::NoError; }
+    bool isNull() const { return !m_code; }
 
     IDBError isolatedCopy() const;
 
@@ -60,7 +60,7 @@ public:
     template<class Decoder> static bool decode(Decoder&, IDBError&);
 
 private:
-    ExceptionCode m_code { IDBDatabaseException::NoError };
+    ExceptionCode m_code { 0 };
     String m_message;
 };
 

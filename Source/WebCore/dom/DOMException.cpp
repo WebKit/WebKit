@@ -99,14 +99,18 @@ DOMException::DOMException(ExceptionCode ec, const String& message, const String
 bool DOMException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
     description->typeName = "DOM";
-    description->code = ec;
-    description->type = DOMExceptionType;
 
-    size_t tableSize = WTF_ARRAY_LENGTH(coreExceptions);
     size_t tableIndex = ec - INDEX_SIZE_ERR;
-
-    description->name = tableIndex < tableSize ? coreExceptions[tableIndex].name : 0;
-    description->description = tableIndex < tableSize ? coreExceptions[tableIndex].description : 0;
+    if (tableIndex < WTF_ARRAY_LENGTH(coreExceptions)) {
+        auto& exception = coreExceptions[tableIndex];
+        description->name = exception.name;
+        description->description = exception.description;
+        description->code = exception.code;
+    } else {
+        description->name = nullptr;
+        description->description = nullptr;
+        description->code = 0;
+    }
 
     return true;
 }

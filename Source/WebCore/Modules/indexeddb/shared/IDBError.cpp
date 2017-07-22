@@ -28,6 +28,8 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "ExceptionCodeDescription.h"
+
 namespace WebCore {
 
 IDBError::IDBError(ExceptionCode code)
@@ -55,17 +57,17 @@ IDBError& IDBError::operator=(const IDBError& other)
 
 String IDBError::name() const
 {
-    return IDBDatabaseException::getErrorName(m_code);
+    return ExceptionCodeDescription(m_code).name;
 }
 
 String IDBError::message() const
 {
-    return IDBDatabaseException::getErrorDescription(m_code);
+    return ExceptionCodeDescription(m_code).description;
 }
 
 RefPtr<DOMError> IDBError::toDOMError() const
 {
-    return DOMError::create(IDBDatabaseException::getErrorName(m_code), m_message);
+    return DOMError::create(name(), m_message);
 }
 
 } // namespace WebCore

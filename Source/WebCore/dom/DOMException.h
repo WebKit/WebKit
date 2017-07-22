@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+// FIXME: We should merge ExceptionBase into DOMException now that ExceptionBase no longer has any other subclasses.
 class DOMException : public ExceptionBase {
 public:
     static Ref<DOMException> create(const ExceptionCodeDescription& description)

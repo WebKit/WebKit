@@ -39,7 +39,6 @@
 #include "WebToDatabaseProcessConnection.h"
 #include <WebCore/IDBConnectionToServer.h>
 #include <WebCore/IDBCursorInfo.h>
-#include <WebCore/IDBDatabaseException.h>
 #include <WebCore/IDBError.h>
 #include <WebCore/IDBIndexInfo.h>
 #include <WebCore/IDBIterateCursorData.h>
@@ -361,7 +360,7 @@ void WebIDBConnectionToServer::didGetAllDatabaseNames(uint64_t callbackID, const
 
 void WebIDBConnectionToServer::connectionToServerLost()
 {
-    m_connectionToServer->connectionToServerLost({ WebCore::IDBDatabaseException::UnknownError, ASCIILiteral("An internal error was encountered in the Indexed Database server") });
+    m_connectionToServer->connectionToServerLost({ WebCore::UnknownError, ASCIILiteral("An internal error was encountered in the Indexed Database server") });
 }
 
 } // namespace WebKit

@@ -40,7 +40,7 @@ Expecting exception from objectStore.get(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: The data provided does not meet requirements.
+Exception message: Provided data is inadequate.
 runIndexStoreTests()
 index.get(IDBKeyRange.only(3))
 PASS result.x is 3
@@ -62,7 +62,7 @@ Expecting exception from index.get(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: The data provided does not meet requirements.
+Exception message: Provided data is inadequate.
 runIndexKeyTests()
 index.getKey(IDBKeyRange.only(3))
 PASS result is 3
@@ -84,7 +84,7 @@ Expecting exception from index.getKey(null)
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'DataError'
-Exception message: The data provided does not meet requirements.
+Exception message: Provided data is inadequate.
 finishJSTest()
 PASS successfullyParsed is true
 

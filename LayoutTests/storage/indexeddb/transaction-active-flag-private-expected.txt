@@ -74,7 +74,7 @@ Expecting exception from store.get(IDBKeyRange.only(0))
 PASS Exception was thrown.
 PASS code is 0
 PASS ename is 'TransactionInactiveError'
-Exception message: A request was placed against a transaction which is either currently not active, or which is finished.
+Exception message: A request was placed against a transaction which is currently not active, or which is finished.
 Expecting exception from store.delete(0)
 PASS Exception was thrown.
 PASS code is 0

@@ -29,19 +29,11 @@
 
 #include "DOMException.h"
 
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBDatabaseException.h"
-#endif
-
 namespace WebCore {
 
 ExceptionCodeDescription::ExceptionCodeDescription(ExceptionCode ec)
 {
     ASSERT(ec);
-#if ENABLE(INDEXED_DATABASE)
-    if (IDBDatabaseException::initializeDescription(ec, this))
-        return;
-#endif
     if (DOMException::initializeDescription(ec, this))
         return;
     ASSERT_NOT_REACHED();

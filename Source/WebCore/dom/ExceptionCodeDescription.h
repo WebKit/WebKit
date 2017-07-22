@@ -30,13 +30,7 @@
 
 namespace WebCore {
 
-enum ExceptionType {
-    DOMExceptionType,
-#if ENABLE(INDEXED_DATABASE)
-    IDBDatabaseExceptionType,
-#endif
-};
-
+// FIXME: This should be refactored now that there is only one exception type.
 struct ExceptionCodeDescription {
     WEBCORE_EXPORT explicit ExceptionCodeDescription(ExceptionCode);
 
@@ -55,8 +49,6 @@ struct ExceptionCodeDescription {
 
     // |code| is the numeric value of the exception within a particular type.
     int code;
-
-    ExceptionType type;
 };
 
 } // namespace WebCore
