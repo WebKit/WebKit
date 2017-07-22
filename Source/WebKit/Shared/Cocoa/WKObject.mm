@@ -29,18 +29,33 @@
 #if WK_API_ENABLED
 
 #import "APIObject.h"
-#import "objcSPI.h"
-#import <wtf/ObjcRuntimeExtras.h>
+
+@interface NSObject ()
+- (BOOL)isNSArray__;
+- (BOOL)isNSCFConstantString__;
+- (BOOL)isNSData__;
+- (BOOL)isNSDate__;
+- (BOOL)isNSDictionary__;
+- (BOOL)isNSObject__;
+- (BOOL)isNSOrderedSet__;
+- (BOOL)isNSNumber__;
+- (BOOL)isNSSet__;
+- (BOOL)isNSString__;
+- (BOOL)isNSTimeZone__;
+- (BOOL)isNSValue__;
+@end
 
 @implementation WKObject {
-    Class _isa;
     BOOL _hasInitializedTarget;
     NSObject *_target;
 }
 
-+ (Class)class
+- (void)dealloc
 {
-    return self;
+    static_cast<API::Object*>(object_getIndexedIvars(self))->~Object();
+    [_target release];
+
+    [super dealloc];
 }
 
 static inline void initializeTargetIfNeeded(WKObject *self)
@@ -51,27 +66,6 @@ static inline void initializeTargetIfNeeded(WKObject *self)
     self->_hasInitializedTarget = YES;
     self->_target = [self _web_createTarget];
 }
-
-// MARK: Methods used by the Objective-C runtime
-
-- (id)forwardingTargetForSelector:(SEL)selector
-{
-    initializeTargetIfNeeded(self);
-
-    return _target;
-}
-
-- (BOOL)allowsWeakReference
-{
-    return !_objc_rootIsDeallocating(self);
-}
-
-- (BOOL)retainWeakReference
-{
-    return _objc_rootTryRetain(self);
-}
-
-// MARK: NSObject protocol implementation
 
 - (BOOL)isEqual:(id)object
 {
@@ -90,46 +84,7 @@ static inline void initializeTargetIfNeeded(WKObject *self)
 {
     initializeTargetIfNeeded(self);
 
-    return _target ? [_target hash] : reinterpret_cast<NSUInteger>(self);
-}
-
-- (Class)superclass
-{
-    initializeTargetIfNeeded(self);
-
-    return _target ? [_target superclass] : class_getSuperclass(object_getClass(self));
-}
-
-- (Class)class
-{
-    initializeTargetIfNeeded(self);
-
-    return _target ? [_target class] : object_getClass(self);
-}
-
-- (instancetype)self
-{
-    return self;
-}
-
-- (id)performSelector:(SEL)selector
-{
-    return selector ? wtfObjcMsgSend<id>(self, selector) : nil;
-}
-
-- (id)performSelector:(SEL)selector withObject:(id)object
-{
-    return selector ? wtfObjcMsgSend<id>(self, selector, object) : nil;
-}
-
-- (id)performSelector:(SEL)selector withObject:(id)object1 withObject:(id)object2
-{
-    return selector ? wtfObjcMsgSend<id>(self, selector, object1, object2) : nil;
-}
-
-- (BOOL)isProxy
-{
-    return NO;
+    return _target ? [_target hash] : [super hash];
 }
 
 - (BOOL)isKindOfClass:(Class)aClass
@@ -150,45 +105,28 @@ static inline void initializeTargetIfNeeded(WKObject *self)
 {
     initializeTargetIfNeeded(self);
 
-    return [_target respondsToSelector:selector] || (selector && class_respondsToSelector(object_getClass(self), selector));
-}
-
-+ (BOOL)conformsToProtocol:(Protocol *)protocol
-{
-    if (!protocol)
-        return NO;
-
-    for (Class cls = self; cls; cls = class_getSuperclass(cls)) {
-        if (class_conformsToProtocol(cls, protocol))
-            return YES;
-    }
-
-    return NO;
+    return [_target respondsToSelector:selector] || [super respondsToSelector:selector];
 }
 
 - (BOOL)conformsToProtocol:(Protocol *)protocol
 {
     initializeTargetIfNeeded(self);
 
-    if ([_target conformsToProtocol:protocol])
-        return YES;
+    return [_target conformsToProtocol:protocol] || [super conformsToProtocol:protocol];
+}
 
-    if (!protocol)
-        return NO;
+- (id)forwardingTargetForSelector:(SEL)selector
+{
+    initializeTargetIfNeeded(self);
 
-    for (Class cls = object_getClass(self); cls; cls = class_getSuperclass(cls)) {
-        if (class_conformsToProtocol(cls, protocol))
-            return YES;
-    }
-
-    return NO;
+    return _target;
 }
 
 - (NSString *)description
 {
     initializeTargetIfNeeded(self);
 
-    return _target ? [_target description] : [NSString stringWithFormat:@"<%s %p>", class_getName(object_getClass(self)), self];
+    return _target ? [_target description] : [super description];
 }
 
 - (NSString *)debugDescription
@@ -198,38 +136,121 @@ static inline void initializeTargetIfNeeded(WKObject *self)
     return _target ? [_target debugDescription] : [self description];
 }
 
-- (instancetype)retain
+- (Class)classForCoder
 {
-    return _objc_rootRetain(self);
+    initializeTargetIfNeeded(self);
+
+    return [_target classForCoder];
 }
 
-- (oneway void)release
+- (Class)classForKeyedArchiver
 {
-    if (_objc_rootReleaseWasZero(self)) {
-        static_cast<API::Object*>(object_getIndexedIvars(self))->~Object();
-        [_target release];
-        _objc_rootDealloc(self);
-    }
-}
+    initializeTargetIfNeeded(self);
 
-- (instancetype)autorelease
-{
-    return _objc_rootAutorelease(self);
-}
-
-- (NSUInteger)retainCount
-{
-    return _objc_rootRetainCount(self);
-}
-
-- (NSZone *)zone
-{
-    return NSDefaultMallocZone();
+    return [_target classForKeyedArchiver];
 }
 
 - (NSObject *)_web_createTarget
 {
     return nil;
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation
+{
+    initializeTargetIfNeeded(self);
+
+    [invocation invokeWithTarget:_target];
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target methodSignatureForSelector:sel];
+}
+
+- (BOOL)isNSObject__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSObject__];
+}
+
+- (BOOL)isNSArray__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSArray__];
+}
+
+- (BOOL)isNSCFConstantString__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSCFConstantString__];
+}
+
+- (BOOL)isNSData__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSData__];
+}
+
+- (BOOL)isNSDate__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSDate__];
+}
+
+- (BOOL)isNSDictionary__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSDictionary__];
+}
+
+- (BOOL)isNSNumber__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSNumber__];
+}
+
+- (BOOL)isNSOrderedSet__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSOrderedSet__];
+}
+
+- (BOOL)isNSSet__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSSet__];
+}
+
+- (BOOL)isNSString__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSString__];
+}
+
+- (BOOL)isNSTimeZone__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSTimeZone__];
+}
+
+- (BOOL)isNSValue__
+{
+    initializeTargetIfNeeded(self);
+
+    return [_target isNSValue__];
 }
 
 #pragma mark WKObject protocol implementation
