@@ -57,7 +57,7 @@ static void testThreadGroup(Mode mode)
                 });
             });
             if (mode == Mode::Add)
-                EXPECT_EQ(threadGroup->add(*thread), true);
+                EXPECT_TRUE(threadGroup->add(*thread) == ThreadGroupAddResult::NewlyAdded);
             threads.append(thread);
         }
 
@@ -104,7 +104,7 @@ TEST(WTF, ThreadGroupDoNotAddDeadThread)
     std::shared_ptr<ThreadGroup> threadGroup = ThreadGroup::create();
     RefPtr<Thread> thread = Thread::create("ThreadGroupWorker", [&] { });
     thread->waitForCompletion();
-    EXPECT_EQ(threadGroup->add(*thread), false);
+    EXPECT_TRUE(threadGroup->add(*thread) == ThreadGroupAddResult::NotAdded);
 
     auto threadGroupLocker = holdLock(threadGroup->getLock());
     EXPECT_EQ(threadGroup->threads(threadGroupLocker).size(), 0u);
@@ -122,8 +122,8 @@ TEST(WTF, ThreadGroupAddDuplicateThreads)
             return restarting;
         });
     });
-    EXPECT_EQ(threadGroup->add(*thread), true);
-    EXPECT_EQ(threadGroup->add(*thread), true);
+    EXPECT_TRUE(threadGroup->add(*thread) == ThreadGroupAddResult::NewlyAdded);
+    EXPECT_TRUE(threadGroup->add(*thread) == ThreadGroupAddResult::AlreadyAdded);
 
     {
         auto threadGroupLocker = holdLock(threadGroup->getLock());

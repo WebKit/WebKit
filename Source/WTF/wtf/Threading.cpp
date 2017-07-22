@@ -173,15 +173,17 @@ void Thread::didExit()
     m_didExit = true;
 }
 
-bool Thread::addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup& threadGroup)
+ThreadGroupAddResult Thread::addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup& threadGroup)
 {
     UNUSED_PARAM(threadGroupLocker);
     std::lock_guard<std::mutex> locker(m_mutex);
     if (m_isShuttingDown)
-        return false;
-    if (threadGroup.m_threads.add(*this).isNewEntry)
+        return ThreadGroupAddResult::NotAdded;
+    if (threadGroup.m_threads.add(*this).isNewEntry) {
         m_threadGroups.append(threadGroup.weakFromThis());
-    return true;
+        return ThreadGroupAddResult::NewlyAdded;
+    }
+    return ThreadGroupAddResult::AlreadyAdded;
 }
 
 void Thread::removeFromThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup& threadGroup)

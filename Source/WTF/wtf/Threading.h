@@ -52,6 +52,8 @@ namespace WTF {
 class AbstractLocker;
 class ThreadMessageData;
 
+enum class ThreadGroupAddResult;
+
 using ThreadIdentifier = uint32_t;
 typedef void (*ThreadFunction)(void* argument);
 
@@ -182,7 +184,7 @@ protected:
     bool hasExited() { return m_didExit; }
 
     // These functions are only called from ThreadGroup.
-    bool addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
+    ThreadGroupAddResult addToThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
     void removeFromThreadGroup(const AbstractLocker& threadGroupLocker, ThreadGroup&);
 
     // WordLock & Lock rely on ThreadSpecific. But Thread object can be destroyed even after ThreadSpecific things are destroyed.

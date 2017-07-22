@@ -37,21 +37,22 @@ ThreadGroup::~ThreadGroup()
         thread->removeFromThreadGroup(locker, *this);
 }
 
-bool ThreadGroup::add(const AbstractLocker& locker, Thread& thread)
+ThreadGroupAddResult ThreadGroup::add(const AbstractLocker& locker, Thread& thread)
 {
     return thread.addToThreadGroup(locker, *this);
 }
 
-bool ThreadGroup::add(Thread& thread)
+ThreadGroupAddResult ThreadGroup::add(Thread& thread)
 {
     auto locker = holdLock(m_lock);
     return add(locker, thread);
 }
 
-void ThreadGroup::addCurrentThread()
+ThreadGroupAddResult ThreadGroup::addCurrentThread()
 {
-    bool isAdded = add(Thread::current());
-    ASSERT_UNUSED(isAdded, isAdded);
+    auto result = add(Thread::current());
+    ASSERT(result != ThreadGroupAddResult::NotAdded);
+    return result;
 }
 
 } // namespace WTF

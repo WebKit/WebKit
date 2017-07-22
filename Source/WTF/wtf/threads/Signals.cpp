@@ -236,7 +236,7 @@ inline ThreadGroup& activeThreads()
 void registerThreadForMachExceptionHandling(Thread& thread)
 {
     auto locker = holdLock(activeThreads().getLock());
-    if (activeThreads().add(locker, thread))
+    if (activeThreads().add(locker, thread) == ThreadGroupAddResult::NewlyAdded)
         setExceptionPorts(locker, thread);
 }
 

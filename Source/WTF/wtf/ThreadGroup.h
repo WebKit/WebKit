@@ -32,6 +32,8 @@
 
 namespace WTF {
 
+enum class ThreadGroupAddResult { NewlyAdded, AlreadyAdded, NotAdded };
+
 class ThreadGroup : public std::enable_shared_from_this<ThreadGroup> {
 public:
     friend class Thread;
@@ -41,9 +43,9 @@ public:
         return std::make_shared<ThreadGroup>();
     }
 
-    WTF_EXPORT_PRIVATE bool add(Thread&);
-    WTF_EXPORT_PRIVATE bool add(const AbstractLocker&, Thread&);
-    WTF_EXPORT_PRIVATE void addCurrentThread();
+    WTF_EXPORT_PRIVATE ThreadGroupAddResult add(Thread&);
+    WTF_EXPORT_PRIVATE ThreadGroupAddResult add(const AbstractLocker&, Thread&);
+    WTF_EXPORT_PRIVATE ThreadGroupAddResult addCurrentThread();
 
     const ListHashSet<Ref<Thread>>& threads(const AbstractLocker&) const { return m_threads; }
 
@@ -67,3 +69,4 @@ private:
 }
 
 using WTF::ThreadGroup;
+using WTF::ThreadGroupAddResult;
