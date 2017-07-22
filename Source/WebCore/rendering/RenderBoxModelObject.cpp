@@ -324,8 +324,6 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     if (IOSApplication::isIBooksStorytime())
         return DecodingMode::Synchronous;
 #endif
-    if (document().isImageDocument())
-        return DecodingMode::Synchronous;
     if (!settings().largeImageAsyncDecodingEnabled())
         return DecodingMode::Synchronous;
     if (!bitmapImage.canUseAsyncDecodingForLargeImages())

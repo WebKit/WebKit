@@ -91,7 +91,7 @@ public:
 
     // ImageFrame metadata which does not require caching the ImageFrame.
     bool frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(size_t index, const DecodingOptions& decodingOptions) { return m_frameCache->frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(index, decodingOptions); }
-    ImageFrame::DecodingStatus frameDecodingStatusAtIndex(size_t index) { return m_frameCache->frameDecodingStatusAtIndex(index); }
+    DecodingStatus frameDecodingStatusAtIndex(size_t index) { return m_frameCache->frameDecodingStatusAtIndex(index); }
     bool frameHasAlphaAtIndex(size_t index) { return m_frameCache->frameHasAlphaAtIndex(index); }
     bool frameHasImageAtIndex(size_t index) { return m_frameCache->frameHasImageAtIndex(index); }
     bool frameHasFullSizeNativeImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel) { return m_frameCache->frameHasFullSizeNativeImageAtIndex(index, subsamplingLevel); }

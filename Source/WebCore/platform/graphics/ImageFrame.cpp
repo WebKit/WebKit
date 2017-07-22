@@ -77,7 +77,7 @@ void ImageFrame::setDecodingStatus(DecodingStatus decodingStatus)
     m_decodingStatus = decodingStatus;
 }
 
-ImageFrame::DecodingStatus ImageFrame::decodingStatus() const
+DecodingStatus ImageFrame::decodingStatus() const
 {
     ASSERT(m_decodingStatus != DecodingStatus::Decoding);
     return m_decodingStatus;

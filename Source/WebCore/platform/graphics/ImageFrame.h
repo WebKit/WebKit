@@ -39,7 +39,6 @@ class ImageFrame {
     friend class ImageFrameCache;
 public:
     enum class Caching { Metadata, MetadataAndImage };
-    enum class DecodingStatus { Invalid, Partial, Complete, Decoding };
 
     ImageFrame();
     ImageFrame(const ImageFrame& other) { operator=(other); }
