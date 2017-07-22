@@ -248,6 +248,7 @@ void initializeThreading()
         ThreadHolder::initializeOnce();
         initializeRandomNumberGenerator();
         wtfThreadData();
+        initializeDates();
         Thread::initializePlatformThreading();
     });
 }

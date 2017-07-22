@@ -346,7 +346,7 @@ int equivalentYearForDST(int year)
     // It is ok if the cached year is not the current year as long as the rules
     // for DST did not change between the two years; if they did the app would need
     // to be restarted.
-    static const int minYear { minimumYearForDST() };
+    static int minYear = minimumYearForDST();
     int maxYear = maximumYearForDST();
 
     int difference;
@@ -549,6 +549,17 @@ LocalTimeOffset calculateLocalTimeOffset(double ms, TimeType inputTimeType)
     double dstOffset = calculateDSTOffset(localTime, localToUTCTimeOffset);
     return LocalTimeOffset(dstOffset, localToUTCTimeOffset + dstOffset);
 #endif
+}
+
+void initializeDates()
+{
+#if !ASSERT_DISABLED
+    static bool alreadyInitialized;
+    ASSERT(!alreadyInitialized);
+    alreadyInitialized = true;
+#endif
+
+    equivalentYearForDST(2000); // Need to call once to initialize a static used in this function.
 }
 
 static inline double ymdhmsToSeconds(int year, long mon, long day, long hour, long minute, double second)
