@@ -1,3 +1,12 @@
+2017-07-22  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building for macOS 10.12 with the macOS 10.13 SDK after r219644.
+
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::update): Suppress the objc-literal-conversion warning
+          in one place where we are calling a class method on a Class and the compiler can’t tell
+          which class it is, so it chooses wrong and emits a warning.
+
 2017-07-22  Chris Dumez  <cdumez@apple.com>
 
         Merge ExceptionBase into DOMException and drop custom toString
