@@ -553,7 +553,6 @@ Vector<IntRect> RenderTextLineBoxes::absoluteRectsForRange(const RenderText& ren
             rects.append(renderer.localToAbsoluteQuad(boundaries, UseTransforms, wasFixed).enclosingBoundingBox());
             continue;
         }
-        // FIXME: This code is wrong. It's converting local to absolute twice. http://webkit.org/b/65722
         FloatRect rect = localQuadForTextBox(*box, start, end, useSelectionHeight);
         if (!rect.isZero())
             rects.append(renderer.localToAbsoluteQuad(rect, UseTransforms, wasFixed).enclosingBoundingBox());

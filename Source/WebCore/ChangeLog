@@ -1,5 +1,13 @@
 2017-07-21  Timothy Horton  <timothy_horton@apple.com>
 
+        Remove an inaccurate comment from RenderTextLineBoxes
+
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::absoluteRectsForRange):
+        This comment has been wrong for at least 4 years.
+
+2017-07-21  Timothy Horton  <timothy_horton@apple.com>
+
         TextIndicator::estimatedTextColorsForRange asserts inside HashSet code (inserting reserved value)
         https://bugs.webkit.org/show_bug.cgi?id=174733
 
