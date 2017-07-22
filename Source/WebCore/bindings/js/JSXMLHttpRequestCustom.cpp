@@ -50,22 +50,31 @@ void JSXMLHttpRequest::visitAdditionalChildren(SlotVisitor& visitor)
         visitor.addOpaqueRoot(responseDocument);
 }
 
-JSValue JSXMLHttpRequest::retrieveResponse(ExecState& state)
+JSValue JSXMLHttpRequest::response(ExecState& state) const
 {
+    auto cacheResult = [&] (JSValue value) -> JSValue {
+        m_response.set(state.vm(), this, value);
+        return value;
+    };
+
+
+    if (wrapped().responseCacheIsValid())
+        return m_response.get();
+
     auto type = wrapped().responseType();
 
     switch (type) {
     case XMLHttpRequest::ResponseType::EmptyString:
     case XMLHttpRequest::ResponseType::Text: {
         auto scope = DECLARE_THROW_SCOPE(state.vm());
-        return toJS<IDLNullable<IDLUSVString>>(state, scope, wrapped().responseText());
+        return cacheResult(toJS<IDLNullable<IDLUSVString>>(state, scope, wrapped().responseText()));
     }
     default:
         break;
     }
 
     if (!wrapped().doneWithoutErrors())
-        return jsNull();
+        return cacheResult(jsNull());
 
     JSValue value;
     switch (type) {
@@ -97,7 +106,7 @@ JSValue JSXMLHttpRequest::retrieveResponse(ExecState& state)
     }
 
     wrapped().didCacheResponse();
-    return value;
+    return cacheResult(value);
 }
 
 } // namespace WebCore

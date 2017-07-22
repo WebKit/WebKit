@@ -47,8 +47,6 @@ enum XMLHttpRequestResponseType {
     JSCustomMarkFunction,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
-    PrivateIdentifier,
-    PublicIdentifier,
 ] interface XMLHttpRequest : XMLHttpRequestEventTarget {
     // event handler
     attribute EventHandler onreadystatechange;
@@ -79,13 +77,8 @@ enum XMLHttpRequestResponseType {
     ByteString getAllResponseHeaders();
     [MayThrowException] void overrideMimeType(DOMString mime);
     [SetterMayThrowException] attribute XMLHttpRequestResponseType responseType;
-    [JSBuiltin] readonly attribute any response;
+    [CachedAttribute, CustomGetter] readonly attribute any response;
     [GetterMayThrowException] readonly attribute USVString responseText;
     // FIXME: responseXML should be annotated with [Exposed=Window].
     [GetterMayThrowException] readonly attribute Document? responseXML;
-
-    // internals
-    [PrivateIdentifier] boolean responseCacheIsValid();
-    [PrivateIdentifier, Custom] any retrieveResponse();
-
 };
