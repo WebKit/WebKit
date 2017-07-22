@@ -329,7 +329,8 @@ inline void JSCell::callDestructor(VM& vm)
 inline void JSCell::lock()
 {
     Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
-    IndexingTypeLockAlgorithm::lock(*lock);
+    if (UNLIKELY(!IndexingTypeLockAlgorithm::lockFast(*lock)))
+        lockSlow();
 }
 
 inline bool JSCell::tryLock()
@@ -341,7 +342,8 @@ inline bool JSCell::tryLock()
 inline void JSCell::unlock()
 {
     Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
-    IndexingTypeLockAlgorithm::unlock(*lock);
+    if (UNLIKELY(!IndexingTypeLockAlgorithm::unlockFast(*lock)))
+        unlockSlow();
 }
 
 inline bool JSCell::isLocked() const

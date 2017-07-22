@@ -36,6 +36,7 @@
 #include <inspector/InspectorBackendDispatchers.h>
 #include <inspector/InspectorFrontendDispatchers.h>
 #include <wtf/HashMap.h>
+#include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

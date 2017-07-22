@@ -26,7 +26,7 @@
 #pragma once
 
 #include "SlotVisitor.h"
-#include <wtf/MonotonicTime.h>
+#include <wtf/TimeWithDynamicClockType.h>
 
 namespace JSC {
 

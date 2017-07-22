@@ -47,7 +47,7 @@ void StaticMutex::lockSlowCase()
 
     // Avoid spinning pathologically.
     while (!try_lock())
-        std::this_thread::yield();
+        sched_yield();
 }
 
 } // namespace bmalloc

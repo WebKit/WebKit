@@ -32,6 +32,7 @@
 #include "MessagePort.h"
 #include "WorkerScriptLoaderClient.h"
 #include <runtime/RuntimeFlags.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/text/AtomicStringHash.h>
 

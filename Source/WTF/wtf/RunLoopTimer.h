@@ -30,6 +30,7 @@
 #define RunLoopTimer_h
 
 #include <wtf/SchedulePair.h>
+#include <wtf/Seconds.h>
 #include <wtf/RetainPtr.h>
 
 namespace WTF {

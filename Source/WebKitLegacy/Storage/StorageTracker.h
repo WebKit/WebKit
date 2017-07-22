@@ -27,6 +27,7 @@
 
 #include <WebCore/SQLiteDatabase.h>
 #include <wtf/HashSet.h>
+#include <wtf/Seconds.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>

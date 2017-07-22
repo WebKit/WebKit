@@ -33,6 +33,7 @@
 
 #include "MessagePortChannel.h"
 #include <runtime/RuntimeFlags.h>
+#include <wtf/MonotonicTime.h>
 
 namespace WebCore {
 

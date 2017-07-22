@@ -533,6 +533,11 @@ void ThreadCondition::broadcast()
     ASSERT_UNUSED(result, !result);
 }
 
+void Thread::yield()
+{
+    sched_yield();
+}
+
 } // namespace WTF
 
 #endif // USE(PTHREADS)

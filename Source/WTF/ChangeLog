@@ -1,3 +1,40 @@
+2017-07-14  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be easy to decide how WebKit yields
+        https://bugs.webkit.org/show_bug.cgi?id=174298
+
+        Reviewed by Saam Barati.
+        
+        Created a Thread::yield() abstraction for sched_yield(), and made WTF use it everywhere that it
+        had previously used std::this_thread::yield().
+        
+        To make it less annoying to experiment with changes to the lock algorithm in the future, this also
+        moves the meat of the algorithm into LockAlgorithmInlines.h. Only two files include that header.
+        Since LockAlgorithm.h no longer includes ParkingLot.h, a bunch of files in WK now need to include
+        timing headers (Seconds, MonotonicTime, etc) manually.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * benchmarks/ToyLocks.h:
+        * wtf/CMakeLists.txt:
+        * wtf/Lock.cpp:
+        * wtf/LockAlgorithm.h:
+        (WTF::LockAlgorithm::lockSlow): Deleted.
+        (WTF::LockAlgorithm::unlockSlow): Deleted.
+        * wtf/LockAlgorithmInlines.h: Added.
+        (WTF::hasParkedBit>::lockSlow):
+        (WTF::hasParkedBit>::unlockSlow):
+        * wtf/MainThread.cpp:
+        * wtf/RunLoopTimer.h:
+        * wtf/Threading.cpp:
+        * wtf/Threading.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::Thread::yield):
+        * wtf/ThreadingWin.cpp:
+        (WTF::Thread::yield):
+        * wtf/WordLock.cpp:
+        (WTF::WordLockBase::lockSlow):
+        (WTF::WordLockBase::unlockSlow):
+
 2017-07-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Extend ThreadGroup::add results from bool to ThreadGroupAddResult

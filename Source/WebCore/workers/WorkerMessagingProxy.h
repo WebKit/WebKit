@@ -28,6 +28,7 @@
 #include "WorkerGlobalScopeProxy.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {

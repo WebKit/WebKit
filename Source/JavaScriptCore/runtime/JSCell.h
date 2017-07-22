@@ -265,6 +265,8 @@ private:
     friend class LLIntOffsetsExtractor;
 
     JS_EXPORT_PRIVATE JSObject* toObjectSlow(ExecState*, JSGlobalObject*) const;
+    JS_EXPORT_PRIVATE void lockSlow();
+    JS_EXPORT_PRIVATE void unlockSlow();
 
     StructureID m_structureID;
     IndexingType m_indexingTypeAndMisc; // DO NOT store to this field. Always CAS.

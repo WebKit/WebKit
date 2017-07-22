@@ -52,7 +52,7 @@ public:
     void lock()
     {
         while (!m_lock.compareExchangeWeak(0, 1, std::memory_order_acquire))
-            std::this_thread::yield();
+            Thread::yield();
     }
 
     void unlock()
@@ -118,7 +118,7 @@ public:
                 : "memory");
             if (result)
                 return;
-            std::this_thread::yield();
+            Thread::yield();
         }
     }
 
@@ -215,7 +215,7 @@ private:
             if (currentState & hasParkedBit)
                 break;
             
-            std::this_thread::yield();
+            Thread::yield();
         }
         
         for (;;) {
@@ -292,7 +292,7 @@ private:
             if (currentState == LockedAndParked)
                 break;
             
-            std::this_thread::yield();
+            Thread::yield();
         }
         
         for (;;) {
@@ -361,7 +361,7 @@ private:
             if (currentState == LockedAndParked)
                 break;
             
-            std::this_thread::yield();
+            Thread::yield();
         }
         
         State desiredState = Locked;

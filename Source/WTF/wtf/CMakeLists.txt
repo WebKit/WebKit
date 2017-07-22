@@ -60,6 +60,7 @@ set(WTF_HEADERS
     ListHashSet.h
     Liveness.h
     Lock.h
+    LockAlgorithmInlines.h
     LockAlgorithm.h
     LockedPrintStream.h
     Locker.h

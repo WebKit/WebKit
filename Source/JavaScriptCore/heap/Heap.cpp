@@ -79,6 +79,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RAMSize.h>
 #include <wtf/SimpleStats.h>
+#include <wtf/Threading.h>
 
 #if USE(FOUNDATION)
 #if __has_include(<objc/objc-internal.h>)
@@ -1620,7 +1621,7 @@ NEVER_INLINE void Heap::resumeThePeriphery()
                 slotVisitorsToUpdate.takeLast();
             }
         }
-        std::this_thread::yield();
+        WTF::Thread::yield();
     }
     
     for (SlotVisitor* slotVisitor : slotVisitorsToUpdate)

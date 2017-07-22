@@ -522,6 +522,11 @@ int waitForThreadCompletion(ThreadIdentifier threadID)
 
 }
 
+void Thread::yield()
+{
+    SwitchToThread();
+}
+
 } // namespace WTF
 
 #endif // OS(WINDOWS)

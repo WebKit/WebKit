@@ -30,6 +30,7 @@
 #include "JSObject.h"
 #include "NumberObject.h"
 #include "WebAssemblyToJSCallee.h"
+#include <wtf/LockAlgorithmInlines.h>
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -292,6 +293,18 @@ bool JSCell::setPrototype(JSObject*, ExecState*, JSValue, bool)
 JSValue JSCell::getPrototype(JSObject*, ExecState*)
 {
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+void JSCell::lockSlow()
+{
+    Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
+    IndexingTypeLockAlgorithm::lockSlow(*lock);
+}
+
+void JSCell::unlockSlow()
+{
+    Atomic<IndexingType>* lock = bitwise_cast<Atomic<IndexingType>*>(&m_indexingTypeAndMisc);
+    IndexingTypeLockAlgorithm::unlockSlow(*lock);
 }
 
 } // namespace JSC

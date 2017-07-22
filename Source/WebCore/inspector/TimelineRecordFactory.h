@@ -33,6 +33,7 @@
 
 #include <inspector/InspectorValues.h>
 #include <wtf/Forward.h>
+#include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,9 @@
 #ifndef WTF_LockAlgorithm_h
 #define WTF_LockAlgorithm_h
 
-#include <thread>
 #include <wtf/Atomics.h>
 #include <wtf/Compiler.h>
-#include <wtf/ParkingLot.h>
+#include <wtf/Threading.h>
 
 namespace WTF {
 
@@ -123,108 +122,13 @@ public:
         return lock.load(std::memory_order_acquire) & isHeldBit;
     }
     
-    NEVER_INLINE static void lockSlow(Atomic<LockType>& lock)
-    {
-        unsigned spinCount = 0;
-
-        // This magic number turns out to be optimal based on past JikesRVM experiments.
-        const unsigned spinLimit = 40;
-    
-        for (;;) {
-            uint8_t currentByteValue = lock.load();
-
-            // We allow ourselves to barge in.
-            if (!(currentByteValue & isHeldBit)
-                && lock.compareExchangeWeak(currentByteValue, currentByteValue | isHeldBit))
-                return;
-
-            // If there is nobody parked and we haven't spun too much, we can just try to spin around.
-            if (!(currentByteValue & hasParkedBit) && spinCount < spinLimit) {
-                spinCount++;
-                std::this_thread::yield();
-                continue;
-            }
-
-            // Need to park. We do this by setting the parked bit first, and then parking. We spin around
-            // if the parked bit wasn't set and we failed at setting it.
-            if (!(currentByteValue & hasParkedBit)
-                && !lock.compareExchangeWeak(currentByteValue, currentByteValue | hasParkedBit))
-                continue;
-
-            // We now expect the value to be isHeld|hasParked. So long as that's the case, we can park.
-            ParkingLot::ParkResult parkResult =
-                ParkingLot::compareAndPark(&lock, currentByteValue | isHeldBit | hasParkedBit);
-            if (parkResult.wasUnparked) {
-                switch (static_cast<Token>(parkResult.token)) {
-                case DirectHandoff:
-                    // The lock was never released. It was handed to us directly by the thread that did
-                    // unlock(). This means we're done!
-                    RELEASE_ASSERT(isLocked(lock));
-                    return;
-                case BargingOpportunity:
-                    // This is the common case. The thread that called unlock() has released the lock,
-                    // and we have been woken up so that we may get an opportunity to grab the lock. But
-                    // other threads may barge, so the best that we can do is loop around and try again.
-                    break;
-                }
-            }
-
-            // We have awoken, or we never parked because the byte value changed. Either way, we loop
-            // around and try again.
-        }
-    }
+    NEVER_INLINE static void lockSlow(Atomic<LockType>& lock);
     
     enum Fairness {
-        Fair,
-        Unfair
+        Unfair,
+        Fair
     };
-    NEVER_INLINE static void unlockSlow(Atomic<LockType>& lock, Fairness fairness)
-    {
-        // We could get here because the weak CAS in unlock() failed spuriously, or because there is
-        // someone parked. So, we need a CAS loop: even if right now the lock is just held, it could
-        // be held and parked if someone attempts to lock just as we are unlocking.
-        for (;;) {
-            uint8_t oldByteValue = lock.load();
-            RELEASE_ASSERT(
-                (oldByteValue & mask) == isHeldBit
-                || (oldByteValue & mask) == (isHeldBit | hasParkedBit));
-        
-            if ((oldByteValue & mask) == isHeldBit) {
-                if (lock.compareExchangeWeak(oldByteValue, oldByteValue & ~isHeldBit))
-                    return;
-                continue;
-            }
-
-            // Someone is parked. Unpark exactly one thread. We may hand the lock to that thread
-            // directly, or we will unlock the lock at the same time as we unpark to allow for barging.
-            // When we unlock, we may leave the parked bit set if there is a chance that there are still
-            // other threads parked.
-            ASSERT((oldByteValue & mask) == (isHeldBit | hasParkedBit));
-            ParkingLot::unparkOne(
-                &lock,
-                [&] (ParkingLot::UnparkResult result) -> intptr_t {
-                    // We are the only ones that can clear either the isHeldBit or the hasParkedBit,
-                    // so we should still see both bits set right now.
-                    ASSERT((lock.load() & mask) == (isHeldBit | hasParkedBit));
-                
-                    if (result.didUnparkThread && (fairness == Fair || result.timeToBeFair)) {
-                        // We don't unlock anything. Instead, we hand the lock to the thread that was
-                        // waiting.
-                        return DirectHandoff;
-                    }
-                    
-                    lock.transaction(
-                        [&] (LockType& value) -> bool {
-                            value &= ~mask;
-                            if (result.mayHaveMoreThreads)
-                                value |= hasParkedBit;
-                            return true;
-                        });
-                    return BargingOpportunity;
-                });
-            return;
-        }
-    }
+    NEVER_INLINE static void unlockSlow(Atomic<LockType>& lock, Fairness fairness = Unfair);
     
     NEVER_INLINE static void safepointSlow(Atomic<LockType>& lockWord)
     {

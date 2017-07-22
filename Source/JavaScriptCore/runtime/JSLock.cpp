@@ -246,7 +246,7 @@ void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
 
     while (dropper->dropDepth() != m_lockDropDepth) {
         unlock(droppedLockCount);
-        std::this_thread::yield();
+        Thread::yield();
         lock(droppedLockCount);
     }
 
