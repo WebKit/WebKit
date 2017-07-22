@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError (DOM Exception): Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
-CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError (DOM Exception): Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
-CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError (DOM Exception): Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
-CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError (DOM Exception): Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
+CONSOLE MESSAGE: Unhandled Promise Rejection: OperationError: Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
 
 Harness Error (FAIL), message = Failed to set remote offer sdp: Session error code: ERROR_CONTENT. Session error description: Failed to set remote video description send parameters..
 

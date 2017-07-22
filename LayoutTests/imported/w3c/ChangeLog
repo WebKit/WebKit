@@ -1,3 +1,27 @@
+2017-07-22  Chris Dumez  <cdumez@apple.com>
+
+        Merge ExceptionBase into DOMException and drop custom toString
+        https://bugs.webkit.org/show_bug.cgi?id=174755
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline some tests now that DOMException's custom toString has been dropped
+        and we rely on Error's toString. This causes the exception message to be
+        slightly different.
+
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_bits.https-expected.txt:
+        * web-platform-tests/WebCryptoAPI/derive_bits_keys/test_ecdh_keys.https-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_match_origin-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_match_wildcard-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_multi-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_null-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_origin-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_origin_uppercase-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_space-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_wildcard-expected.txt:
+        * web-platform-tests/resource-timing/resource_TAO_zero-expected.txt:
+        * web-platform-tests/webrtc/RTCPeerConnection-addIceCandidate-expected.txt:
+
 2017-07-21  Chris Dumez  <cdumez@apple.com>
 
         Drop IDBDatabaseException class

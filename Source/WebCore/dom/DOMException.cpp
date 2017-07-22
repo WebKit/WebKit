@@ -92,14 +92,21 @@ Ref<DOMException> DOMException::create(const String& message, const String& name
 }
 
 DOMException::DOMException(ExceptionCode ec, const String& message, const String& name)
-    : ExceptionBase(ec, name, message, ASCIILiteral("DOM"))
+    : m_code(ec)
+    , m_name(name)
+    , m_message(message)
+{
+}
+
+DOMException::DOMException(const ExceptionCodeDescription& description)
+    : m_code(description.code)
+    , m_name(description.name)
+    , m_message(description.description)
 {
 }
 
 bool DOMException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
 {
-    description->typeName = "DOM";
-
     size_t tableIndex = ec - INDEX_SIZE_ERR;
     if (tableIndex < WTF_ARRAY_LENGTH(coreExceptions)) {
         auto& exception = coreExceptions[tableIndex];

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 66: HierarchyRequestError (DOM Exception 3): The operation would yield an incorrect node tree.
+CONSOLE MESSAGE: line 66: HierarchyRequestError: The operation would yield an incorrect node tree.
 
 Errlog selectionTest: HierarchyRequestError: The operation would yield an incorrect node tree. : index 1 
 Errlog webtest_fn_24: 

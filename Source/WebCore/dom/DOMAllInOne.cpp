@@ -80,7 +80,6 @@
 #include "EventNames.cpp"
 #include "EventPath.cpp"
 #include "EventTarget.cpp"
-#include "ExceptionBase.cpp"
 #include "ExceptionCodeDescription.cpp"
 #include "ExtensionStyleSheets.cpp"
 #include "FocusEvent.cpp"

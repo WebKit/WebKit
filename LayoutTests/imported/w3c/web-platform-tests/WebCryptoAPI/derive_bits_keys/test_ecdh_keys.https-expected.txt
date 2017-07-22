@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 167: Unhandled Promise Rejection: DataError (DOM Exception): Data provided to an operation does not meet requirements
+CONSOLE MESSAGE: line 167: Unhandled Promise Rejection: DataError: Data provided to an operation does not meet requirements
 deriveKey Tests for ECDH
 
 

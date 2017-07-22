@@ -1,3 +1,48 @@
+2017-07-22  Chris Dumez  <cdumez@apple.com>
+
+        Merge ExceptionBase into DOMException and drop custom toString
+        https://bugs.webkit.org/show_bug.cgi?id=174755
+
+        Reviewed by Sam Weinig.
+
+        Rebaseline some tests now that DOMException's custom toString has been dropped
+        and we rely on Error's toString. This causes the exception message to be
+        slightly different.
+
+        * fast/canvas/canvas-getImageData-invalid-result-buffer-crash-expected.txt:
+        * fast/frames/sandboxed-iframe-history-denied-expected.txt:
+        * fast/frames/sandboxed-iframe-navigation-top-denied-expected.txt:
+        * fast/inspector-support/uncaught-dom1-exception-expected.txt:
+        * fast/inspector-support/uncaught-dom3-exception-expected.txt:
+        * fast/inspector-support/uncaught-dom8-exception-expected.txt:
+        * fast/regions/selection/crash-deselect-expected.txt:
+        * http/tests/security/listener/xss-JSTargetNode-onclick-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-JSTargetNode-onclick-shortcut-expected.txt:
+        * http/tests/security/listener/xss-XMLHttpRequest-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-XMLHttpRequest-shortcut-expected.txt:
+        * http/tests/security/listener/xss-window-onclick-addEventListener-expected.txt:
+        * http/tests/security/listener/xss-window-onclick-shortcut-expected.txt:
+        * http/tests/security/sandboxed-iframe-blocks-access-from-parent-expected.txt:
+        * http/tests/security/sandboxed-iframe-modify-self-expected.txt:
+        * http/tests/security/srcdoc-in-sandbox-cannot-access-parent-expected.txt:
+        * http/tests/security/xss-DENIED-assign-location-hash-expected.txt:
+        * http/tests/security/xss-DENIED-assign-location-host-expected.txt:
+        * http/tests/security/xss-DENIED-assign-location-hostname-expected.txt:
+        * http/tests/security/xss-DENIED-assign-location-nonstandardProperty-expected.txt:
+        * http/tests/security/xss-DENIED-assign-location-pathname-expected.txt:
+        * http/tests/security/xss-DENIED-assign-location-protocol-expected.txt:
+        * http/tests/security/xss-DENIED-assign-location-reload-expected.txt:
+        * http/tests/security/xss-DENIED-assign-location-search-expected.txt:
+        * http/tests/security/xss-DENIED-frame-name-expected.txt:
+        * http/tests/security/xss-DENIED-sandboxed-iframe-expected.txt:
+        * http/tests/security/xss-DENIED-window-name-navigator-expected.txt:
+        * inspector/debugger/command-line-api-exception-expected.txt:
+        * inspector/debugger/regress-133182-expected.txt:
+        * inspector/debugger/setPauseOnExceptions-all-expected.txt:
+        * inspector/debugger/setPauseOnExceptions-none-expected.txt:
+        * inspector/debugger/setPauseOnExceptions-uncaught-expected.txt:
+        * platform/mac/fast/dynamic/015-expected.txt:
+
 2017-07-21  Chris Dumez  <cdumez@apple.com>
 
         Drop IDBDatabaseException class

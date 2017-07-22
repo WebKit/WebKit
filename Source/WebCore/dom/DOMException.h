@@ -28,12 +28,14 @@
 
 #pragma once
 
-#include "ExceptionBase.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-// FIXME: We should merge ExceptionBase into DOMException now that ExceptionBase no longer has any other subclasses.
-class DOMException : public ExceptionBase {
+struct ExceptionCodeDescription;
+using ExceptionCode = int;
+
+class DOMException : public RefCounted<DOMException> {
 public:
     static Ref<DOMException> create(const ExceptionCodeDescription& description)
     {
@@ -43,12 +45,17 @@ public:
 
     static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
 
+    ExceptionCode code() const { return m_code; }
+    String name() const { return m_name; }
+    String message() const { return m_message; }
+
 protected:
     DOMException(ExceptionCode, const String& message, const String& name);
-    explicit DOMException(const ExceptionCodeDescription& description)
-        : ExceptionBase(description)
-    {
-    }
+    explicit DOMException(const ExceptionCodeDescription&);
+
+    ExceptionCode m_code;
+    String m_name;
+    String m_message;
 };
 
 } // namespace WebCore

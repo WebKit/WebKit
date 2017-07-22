@@ -5669,8 +5669,6 @@
 		BC60D6E90D28D83400B9918F /* DOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D6E80D28D83400B9918F /* DOMException.h */; };
 		BC60D7C00D29A46300B9918F /* JSDOMException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60D7BE0D29A46300B9918F /* JSDOMException.cpp */; };
 		BC60D7C10D29A46300B9918F /* JSDOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D7BF0D29A46300B9918F /* JSDOMException.h */; };
-		BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */; };
-		BC60D8F30D2A11E000B9918F /* ExceptionBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D8F10D2A11E000B9918F /* ExceptionBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC64640A11D7F304006455B0 /* DOMStringMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64640811D7F304006455B0 /* DOMStringMap.h */; };
 		BC64641C11D7F416006455B0 /* DatasetDOMStringMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64641A11D7F416006455B0 /* DatasetDOMStringMap.h */; };
 		BC64641D11D7F416006455B0 /* DatasetDOMStringMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64641B11D7F416006455B0 /* DatasetDOMStringMap.cpp */; };
@@ -14106,8 +14104,6 @@
 		BC60D6EB0D28D99900B9918F /* DOMException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMException.idl; sourceTree = "<group>"; };
 		BC60D7BE0D29A46300B9918F /* JSDOMException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMException.cpp; sourceTree = "<group>"; };
 		BC60D7BF0D29A46300B9918F /* JSDOMException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMException.h; sourceTree = "<group>"; };
-		BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionBase.cpp; sourceTree = "<group>"; };
-		BC60D8F10D2A11E000B9918F /* ExceptionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionBase.h; sourceTree = "<group>"; };
 		BC64640811D7F304006455B0 /* DOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStringMap.h; sourceTree = "<group>"; };
 		BC64641A11D7F416006455B0 /* DatasetDOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetDOMStringMap.h; sourceTree = "<group>"; };
 		BC64641B11D7F416006455B0 /* DatasetDOMStringMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetDOMStringMap.cpp; sourceTree = "<group>"; };
@@ -25637,8 +25633,6 @@
 				85AFA7420AAF298400E84305 /* EventTarget.idl */,
 				CDCE5CD014633BC900D47CCA /* EventTargetFactory.in */,
 				93D196321D6CAB8200FC7E47 /* Exception.h */,
-				BC60D8F00D2A11E000B9918F /* ExceptionBase.cpp */,
-				BC60D8F10D2A11E000B9918F /* ExceptionBase.h */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
 				83D3B0091F226FB300D34D88 /* ExceptionCodeDescription.cpp */,
 				83D3B00A1F226FB300D34D88 /* ExceptionCodeDescription.h */,
@@ -27128,7 +27122,6 @@
 				97AA3CA6145237CC003E1DA6 /* EventTargetInterfaces.h in Headers */,
 				262EC41A1D078FB900BA78FC /* EventTrackingRegions.h in Headers */,
 				93D196331D6CAB8200FC7E47 /* Exception.h in Headers */,
-				BC60D8F30D2A11E000B9918F /* ExceptionBase.h in Headers */,
 				935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */,
 				93D196311D6CAB7600FC7E47 /* ExceptionOr.h in Headers */,
 				31DCDF441DA1C45400EA5B93 /* ExtendedColor.h in Headers */,
@@ -31108,7 +31101,6 @@
 				E0FEF372B27C53EAC1C1FBEE /* EventSource.cpp in Sources */,
 				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
 				262EC41D1D110B9000BA78FC /* EventTrackingRegions.cpp in Sources */,
-				BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */,
 				724ED32C1A3A7E5400F5F13C /* EXTBlendMinMax.cpp in Sources */,
 				31DCDF431DA1C45400EA5B93 /* ExtendedColor.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,

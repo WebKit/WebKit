@@ -1,3 +1,29 @@
+2017-07-22  Chris Dumez  <cdumez@apple.com>
+
+        Merge ExceptionBase into DOMException and drop custom toString
+        https://bugs.webkit.org/show_bug.cgi?id=174755
+
+        Reviewed by Sam Weinig.
+
+        Merge ExceptionBase into DOMException and drop custom toString, now that DOMException
+        is the only remaining exception type.
+
+        * CMakeLists.txt:
+        * Modules/mediastream/MediaStream.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::retrieveErrorMessage):
+        * dom/DOMAllInOne.cpp:
+        * dom/DOMException.cpp:
+        (WebCore::DOMException::DOMException):
+        (WebCore::DOMException::initializeDescription):
+        * dom/DOMException.h:
+        (WebCore::DOMException::code):
+        (WebCore::DOMException::name):
+        (WebCore::DOMException::message):
+        * dom/ExceptionBase.cpp: Removed.
+        * dom/ExceptionBase.h: Removed.
+
 2017-07-14  Filip Pizlo  <fpizlo@apple.com>
 
         It should be easy to decide how WebKit yields

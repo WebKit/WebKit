@@ -58,9 +58,6 @@ void reportException(ExecState* exec, JSValue exceptionValue, CachedScript* cach
 
 String retrieveErrorMessage(ExecState& state, VM& vm, JSValue exception, CatchScope& catchScope)
 {
-    if (auto* domException = JSDOMException::toWrapped(vm, exception))
-        return domException->toString();
-
     // FIXME: <http://webkit.org/b/115087> Web Inspector: WebCore::reportException should not evaluate JavaScript handling exceptions
     // If this is a custom exception object, call toString on it to try and get a nice string representation for the exception.
     String errorMessage;
