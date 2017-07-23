@@ -266,6 +266,7 @@ private:
     CrossThreadQueue<CrossThreadTask> m_databaseReplyQueue;
 
     bool m_hardClosedForUserDelete { false };
+    bool m_owningPointerReleaseScheduled { false };
     std::unique_ptr<UniqueIDBDatabase> m_owningPointerForClose;
 
     HashSet<IDBResourceIdentifier> m_cursorPrefetches;

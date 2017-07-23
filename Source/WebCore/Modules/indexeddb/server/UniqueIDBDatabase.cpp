@@ -274,7 +274,9 @@ void UniqueIDBDatabase::scheduleShutdownForClose()
 {
     ASSERT(isMainThread());
 
+    RELEASE_ASSERT(!m_owningPointerForClose);
     m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
+
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::shutdownForClose));
 }
 
@@ -337,8 +339,12 @@ void UniqueIDBDatabase::didDeleteBackingStore(uint64_t deletedVersion)
         ASSERT(m_databaseQueue.isEmpty());
         ASSERT(m_databaseReplyQueue.isEmpty());
         m_databaseQueue.kill();
-        m_databaseReplyQueue.kill();
-        callOnMainThread([owningRef = m_server.closeAndTakeUniqueIDBDatabase(*this)]{ });
+
+        RELEASE_ASSERT(!m_owningPointerForClose);
+        m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
+        ASSERT(m_owningPointerForClose);
+
+        postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::didShutdownForClose));
         return;
     }
 
@@ -1742,8 +1748,6 @@ void UniqueIDBDatabase::postDatabaseTask(CrossThreadTask&& task)
 
 void UniqueIDBDatabase::postDatabaseTaskReply(CrossThreadTask&& task)
 {
-    ASSERT(!isMainThread());
-
     m_databaseReplyQueue.append(WTFMove(task));
     m_server.postDatabaseTaskReply(createCrossThreadTask(*this, &UniqueIDBDatabase::executeNextDatabaseTaskReply));
 }
@@ -1777,6 +1781,10 @@ void UniqueIDBDatabase::executeNextDatabaseTaskReply()
 void UniqueIDBDatabase::maybeFinishHardClose()
 {
     if (m_owningPointerForClose && isDoneWithHardClose()) {
+        if (m_owningPointerReleaseScheduled)
+            return;
+        m_owningPointerReleaseScheduled = true;
+
         callOnMainThread([this] {
             ASSERT(isDoneWithHardClose());
             m_owningPointerForClose = nullptr;
@@ -1864,11 +1872,15 @@ void UniqueIDBDatabase::immediateCloseForUserDelete()
     // database connections confirm that they have closed.
     m_hardClosedForUserDelete = true;
 
-    // Remove this UniqueIDBDatabase from the IDBServer's set of open databases, and let it own itself.
-    // It will dispatch back to the main thread later to finalize deleting itself.
-    m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
+    // If this database already owns itself, it is already closing on the background thread.
+    // After that close completes, the next database thread task will be "delete all currently closed databases"
+    // which will also cover this database.
+    if (m_owningPointerForClose)
+        return;
 
-    // Have the database unconditionally delete itself on the database task queue.
+    // Otherwise, this database is still potentially active.
+    // So we'll have it own itself and then perform a clean unconditional delete on the background thread.
+    m_owningPointerForClose = m_server.closeAndTakeUniqueIDBDatabase(*this);
     postDatabaseTask(createCrossThreadTask(*this, &UniqueIDBDatabase::performUnconditionalDeleteBackingStore));
 }
 

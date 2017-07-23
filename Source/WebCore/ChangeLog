@@ -1,5 +1,28 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219591. rdar://problem/33464112
+
+    2017-07-17  Brady Eidson  <beidson@apple.com>
+
+            REGRESSION(r219298): imported/w3c/IndexedDB-private-browsing/idbfactory_open.html is crashing occassionaly (UniqueIDBDatabase being taken from the IDBServer set twice).
+            <rdar://problem/33294987> and https://bugs.webkit.org/show_bug.cgi?id=174354
+
+            Reviewed by Alex Christensen.
+
+            No new tests (Covered by existing tests).
+
+            * Modules/indexeddb/server/IDBServer.cpp:
+            (WebCore::IDBServer::IDBServer::postDatabaseTaskReply): Remove a now invalid ASSERT
+
+            * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+            (WebCore::IDBServer::UniqueIDBDatabase::scheduleShutdownForClose): Add a RELEASE_ASSERT.
+            (WebCore::IDBServer::UniqueIDBDatabase::didDeleteBackingStore): Instead of an ad-hoc main thread dispatch, use the "schedule task reply" system
+              to keep dispatch ordering in tact.
+            (WebCore::IDBServer::UniqueIDBDatabase::postDatabaseTaskReply): Remove a now invalid ASSERT
+            (WebCore::IDBServer::UniqueIDBDatabase::immediateCloseForUserDelete): Only take the owning pointer if the object doesn't already own itself.
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219585. rdar://problem/33465177
 
     2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
