@@ -1,3 +1,19 @@
+2017-07-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Implement FALLTHROUGH attribute for C with GCC
+        https://bugs.webkit.org/show_bug.cgi?id=174555
+
+        Reviewed by Darin Adler.
+
+        My previous attempt to silence the JSC -Wimplicit-fallthrough warnings failed because they
+        are coming from a C file, and our FALLTHROUGH macro is only implemented for C++. So
+        implement it for C as well, using C attribute syntax.
+ 
+        Note this is only possible to do for GCC, because Clang only supports this attribute using
+        the [[C++ attribute syntax]].
+
+        * wtf/Compiler.h:
+
 2017-07-14  Filip Pizlo  <fpizlo@apple.com>
 
         It should be easy to decide how WebKit yields
