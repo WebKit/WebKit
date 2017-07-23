@@ -528,7 +528,8 @@ void FrameView::setFrameRect(const IntRect& newRect)
     IntRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
-
+    // Every scroll that happens as the result of frame size change is programmatic.
+    SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     ScrollView::setFrameRect(newRect);
 
     updateScrollableAreaSet();
@@ -1175,7 +1176,8 @@ void FrameView::topContentInsetDidChange(float newTopContentInset)
         platformSetTopContentInset(newTopContentInset);
     
     layout();
-
+    // Every scroll that happens as the result of content inset change is programmatic.
+    SetForScope<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     updateScrollbars(scrollPosition());
     if (renderView->usesCompositing())
         renderView->compositor().frameViewDidChangeSize();
