@@ -492,7 +492,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush()
 #endif
 
     for (auto* layer : m_scrollCoordinatedLayersNeedingUpdate)
-        updateScrollCoordinatedStatus(*layer);
+        updateScrollCoordinatedStatus(*layer, ScrollingNodeChangeFlags::Layer);
 
     m_scrollCoordinatedLayersNeedingUpdate.clear();
 }
@@ -1024,7 +1024,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, CompositingChangeR
             layer.ensureBacking();
 
             if (layer.isRootLayer() && useCoordinatedScrollingForLayer(layer)) {
-                updateScrollCoordinatedStatus(layer);
+                updateScrollCoordinatedStatus(layer, { ScrollingNodeChangeFlags::Layer, ScrollingNodeChangeFlags::LayerGeometry });
                 if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
                     scrollingCoordinator->frameViewRootLayerDidChange(m_renderView.frameView());
 #if ENABLE(RUBBER_BANDING)
@@ -1820,7 +1820,7 @@ void RenderLayerCompositor::fixedRootBackgroundLayerChanged()
         return;
 
     if (m_renderView.layer()->isComposited())
-        updateScrollCoordinatedStatus(*m_renderView.layer());
+        updateScrollCoordinatedStatus(*m_renderView.layer(), ScrollingNodeChangeFlags::Layer);
 }
 
 String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
@@ -2825,7 +2825,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
     if (!viewBounds.intersects(enclosingIntRect(absoluteBounds))) {
         if (viewportConstrainedNotCompositedReason)
             *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForBoundsOutOfView;
-        LOG_WITH_STREAM(Compositing, stream << "Layer " << &layer << " bounds " << layerBounds << " outside visible rect " << viewBounds);
+        LOG_WITH_STREAM(Compositing, stream << "Layer " << &layer << " bounds " << absoluteBounds << " outside visible rect " << viewBounds);
         return false;
     }
     
@@ -3673,7 +3673,7 @@ void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
         rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
-void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer)
+void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer, OptionSet<ScrollingNodeChangeFlags> changes)
 {
     LayerScrollCoordinationRoles coordinationRoles = 0;
     if (isViewportConstrainedFixedOrStickyLayer(layer))
@@ -3686,7 +3686,7 @@ void RenderLayerCompositor::updateScrollCoordinatedStatus(RenderLayer& layer)
         if (m_scrollCoordinatedLayers.add(&layer).isNewEntry)
             m_subframeScrollLayersNeedReattach = true;
 
-        updateScrollCoordinatedLayer(layer, coordinationRoles);
+        updateScrollCoordinatedLayer(layer, coordinationRoles, changes);
     } else
         removeFromScrollCoordinatedLayers(layer);
 }
@@ -3709,11 +3709,10 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
     ASSERT(layer.isComposited());
 
     GraphicsLayer* graphicsLayer = layer.backing()->graphicsLayer();
-    LayoutRect viewportRect = m_renderView.frameView().rectForFixedPositionLayout();
 
     FixedPositionViewportConstraints constraints;
     constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
-    constraints.setViewportRectAtLastLayout(viewportRect);
+    constraints.setViewportRectAtLastLayout(m_renderView.frameView().rectForFixedPositionLayout());
     constraints.setAlignmentOffset(graphicsLayer->pixelAlignmentOffset());
 
     const RenderStyle& style = layer.renderer().style();
@@ -3755,7 +3754,6 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
     renderer.computeStickyPositionConstraints(constraints, renderer.constrainingRectForStickyPosition());
 
     GraphicsLayer* graphicsLayer = layer.backing()->graphicsLayer();
-
     constraints.setLayerPositionAtLastLayout(graphicsLayer->position());
     constraints.setStickyOffsetAtLastLayout(renderer.stickyPositionOffset());
     constraints.setAlignmentOffset(graphicsLayer->pixelAlignmentOffset());
@@ -3888,7 +3886,7 @@ void RenderLayerCompositor::updateScrollCoordinationForThisFrame(ScrollingNodeID
     scrollingCoordinator->updateFrameScrollingNode(nodeID, m_scrollLayer.get(), m_rootContentLayer.get(), fixedRootBackgroundLayer(), clipLayer());
 }
 
-void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, LayerScrollCoordinationRoles reasons)
+void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, LayerScrollCoordinationRoles reasons, OptionSet<ScrollingNodeChangeFlags> changes)
 {
     ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator();
     if (!scrollingCoordinator || !scrollingCoordinator->coordinatesScrollingForFrameView(m_renderView.frameView()))
@@ -3919,7 +3917,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
     ScrollingNodeID parentNodeID = enclosingScrollingNodeID(layer, ExcludeSelf);
     if (!parentNodeID && !isRootLayer)
         return;
-    
+
     // Always call this even if the backing is already attached because the parent may have changed.
     // If a node plays both roles, fixed/sticky is always the ancestor node of scrolling.
     if (reasons & ViewportConstrained) {
@@ -3935,18 +3933,23 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
         if (!nodeID)
             return;
             
-        LOG(Compositing, "Registering ViewportConstrained scrolling node %" PRIu64 " (layer %" PRIu64 ") as child of %" PRIu64, nodeID, backing->graphicsLayer()->primaryLayerID(), parentNodeID);
+        LOG_WITH_STREAM(Compositing, stream << "Registering ViewportConstrained " << nodeType << " node " << nodeID << " (layer " << backing->graphicsLayer()->primaryLayerID() << ") as child of " << parentNodeID);
 
-        switch (nodeType) {
-        case FixedNode:
-            scrollingCoordinator->updateViewportConstrainedNode(nodeID, computeFixedViewportConstraints(layer), backing->graphicsLayer());
-            break;
-        case StickyNode:
-            scrollingCoordinator->updateViewportConstrainedNode(nodeID, computeStickyViewportConstraints(layer), backing->graphicsLayer());
-            break;
-        case FrameScrollingNode:
-        case OverflowScrollingNode:
-            break;
+        if (changes.contains(ScrollingNodeChangeFlags::Layer))
+            scrollingCoordinator->updateNodeLayer(nodeID, backing->graphicsLayer());
+
+        if (changes.contains(ScrollingNodeChangeFlags::LayerGeometry)) {
+            switch (nodeType) {
+            case FixedNode:
+                scrollingCoordinator->updateNodeViewportConstraints(nodeID, computeFixedViewportConstraints(layer));
+                break;
+            case StickyNode:
+                scrollingCoordinator->updateNodeViewportConstraints(nodeID, computeStickyViewportConstraints(layer));
+                break;
+            case FrameScrollingNode:
+            case OverflowScrollingNode:
+                break;
+            }
         }
         
         parentNodeID = nodeID;
@@ -4090,7 +4093,7 @@ void RenderLayerCompositor::willRemoveScrollingLayerWithBacking(RenderLayer& lay
 
 void RenderLayerCompositor::didAddScrollingLayer(RenderLayer& layer)
 {
-    updateScrollCoordinatedStatus(layer);
+    updateScrollCoordinatedStatus(layer, { ScrollingNodeChangeFlags::Layer, ScrollingNodeChangeFlags::LayerGeometry });
 
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
         // For Coordinated Graphics.

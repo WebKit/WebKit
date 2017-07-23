@@ -31,7 +31,6 @@
 #include "EventNames.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
-#include "IntRect.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PlatformWheelEvent.h"
@@ -453,6 +452,22 @@ TextStream& operator<<(TextStream& ts, ScrollingLayerPositionAction action)
         break;
     case ScrollingLayerPositionAction::Sync:
         ts << "sync";
+        break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ViewportRectStability stability)
+{
+    switch (stability) {
+    case ViewportRectStability::Stable:
+        ts << "stable";
+        break;
+    case ViewportRectStability::Unstable:
+        ts << "unstable";
+        break;
+    case ViewportRectStability::ChangingObscuredInsetsInteractively:
+        ts << "changing obscured insets interactively";
         break;
     }
     return ts;

@@ -1,5 +1,102 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219668. rdar://problem/33462676
+
+    2017-07-19  Simon Fraser  <simon.fraser@apple.com>
+
+            getBoundingClientRects not updated for programmatic scrolls
+            https://bugs.webkit.org/show_bug.cgi?id=174538
+            rdar://problem/33049012
+
+            Reviewed by Tim Horton.
+
+            Baidu.com has two event handlers on its <input>, and both query the input location with getBoundingClientRect()
+            and the current pageYOffset (via jQuery), then try to scroll the input to the top of the screen. The bug is that
+            programmatic scrolls did not immediately update the layout viewport rect, so the second call to
+            getBoundingClientRect() would return stale coordinates, triggering an extra scroll.
+
+            To fix this, undo the fix for r219320 which tried to keep getBoundingClientRect() current during unstable scroll
+            updates by adding a shadow layout viewport rect. Instead, almost always update the layout viewport rect on
+            FrameView, even during unstable visible rect updates, but not if content insets are being changed interactively,
+            since changing viewport heights cause problems with bottom-fixed elements. Also, we need to compute a new layout
+            viewport rect in FrameView::updateLayoutViewport() for programmatic scrolls.
+
+            However, always updating the layout viewport triggered issues with the scrolling tree. The scrolling state tree
+            fossilizes layer positions relative to a specific viewport rect, and that relationship has to be maintained.
+            There are code paths that recompute fixed/sticky viewport constraints when the layout viewport has changed but
+            we haven't done layout or recomputed layer positions (e.g. updating viewport-constrained layers via
+            updateScrollCoordinatedLayersAfterFlush()) and in these cases using a new layout viewport for those computations
+            results in an inconsistent scrolling tree.
+
+            Fix this by not updating scrolling constraints every time we have to re-register scrolling nodes.
+            updateScrollCoordinatedLayersAfterFlush() only needs to update the layer on the scrolling node (to handle
+            tiled/non-tiled switches), so make updateScrollCoordinatedLayer() a little more fine-grained, and only update
+            constraints when we've just computed layer geometry. This allows for different scrolling nodes to have
+            constraints computed at different times, with different layout viewports, which happens.
+
+            Two additional fixes were required to make bottom-fixed bars behave correctly.
+
+            First, FrameView::computeLayoutViewportOrigin() had a bug where rounding of half-pixel values would cause it to
+            fall into the if (visualViewport.height() > layoutViewport.height()) clause, but then fail to clamp for
+            rubber-banding.
+
+            Second, the FrameView::unscaledMaximumScrollPosition() was wrong after zooming on iOS, since it uses visibleSize()
+            which is affected by page scale on iOS only (and the function wants scale-independent values). Fix with a hack that
+            should be cleaned up via webkit.org/b/174648.
+
+            Tested by existing tests.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::computeUpdatedLayoutViewportRect):
+            (WebCore::FrameView::computeLayoutViewportOrigin):
+            (WebCore::FrameView::setLayoutViewportOverrideRect):
+            (WebCore::FrameView::updateLayoutViewport):
+            (WebCore::FrameView::unscaledMaximumScrollPosition):
+            (WebCore::FrameView::documentToClientOffset):
+            (WebCore::FrameView::setUnstableLayoutViewportRect): Deleted.
+            * page/FrameView.h:
+            * page/scrolling/AsyncScrollingCoordinator.cpp:
+            (WebCore::AsyncScrollingCoordinator::updateScrollPositionAfterAsyncScroll):
+            (WebCore::AsyncScrollingCoordinator::reconcileScrollingState):
+            (WebCore::AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions):
+            (WebCore::AsyncScrollingCoordinator::updateNodeLayer):
+            (WebCore::AsyncScrollingCoordinator::updateNodeViewportConstraints):
+            (WebCore::AsyncScrollingCoordinator::updateViewportConstrainedNode): Deleted.
+            * page/scrolling/AsyncScrollingCoordinator.h:
+            * page/scrolling/ScrollingCoordinator.cpp:
+            (WebCore::operator<<):
+            * page/scrolling/ScrollingCoordinator.h:
+            (WebCore::ScrollingCoordinator::reconcileScrollingState):
+            (WebCore::ScrollingCoordinator::updateNodeLayer):
+            (WebCore::ScrollingCoordinator::updateNodeViewportConstraints):
+            (WebCore::ScrollingCoordinator::updateViewportConstrainedNode): Deleted.
+            * page/scrolling/ScrollingStateFixedNode.cpp:
+            (WebCore::ScrollingStateFixedNode::updateConstraints):
+            * page/scrolling/ScrollingStateStickyNode.cpp:
+            (WebCore::ScrollingStateStickyNode::updateConstraints):
+            (WebCore::ScrollingStateStickyNode::reconcileLayerPositionForViewportRect):
+            * page/scrolling/ScrollingTree.cpp:
+            (WebCore::ScrollingTree::commitTreeState):
+            * page/scrolling/mac/ScrollingTreeFixedNode.mm:
+            (WebCore::ScrollingTreeFixedNode::updateLayersAfterAncestorChange):
+            * page/scrolling/mac/ScrollingTreeStickyNode.mm:
+            (WebCore::ScrollingTreeStickyNode::updateLayersAfterAncestorChange):
+            * rendering/RenderLayerBacking.cpp:
+            (WebCore::RenderLayerBacking::updateGeometry):
+            * rendering/RenderLayerCompositor.cpp:
+            (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayersAfterFlush):
+            (WebCore::RenderLayerCompositor::updateBacking):
+            (WebCore::RenderLayerCompositor::fixedRootBackgroundLayerChanged):
+            (WebCore::RenderLayerCompositor::requiresCompositingForPosition):
+            (WebCore::RenderLayerCompositor::updateScrollCoordinatedStatus):
+            (WebCore::RenderLayerCompositor::computeFixedViewportConstraints):
+            (WebCore::RenderLayerCompositor::computeStickyViewportConstraints):
+            (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+            (WebCore::RenderLayerCompositor::didAddScrollingLayer):
+            * rendering/RenderLayerCompositor.h:
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219666. rdar://problem/33464328
 
     2017-07-19  Megan Gardner  <megan_gardner@apple.com>

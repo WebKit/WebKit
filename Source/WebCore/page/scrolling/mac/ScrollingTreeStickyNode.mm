@@ -28,6 +28,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "Logging.h"
 #include "ScrollingStateStickyNode.h"
 #include "ScrollingTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
@@ -81,6 +82,8 @@ void ScrollingTreeStickyNode::updateLayersAfterAncestorChange(const ScrollingTre
         constrainingRect = fixedPositionRect;
         adjustStickyLayer = true;
     }
+
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeStickyNode " << scrollingNodeID() << " updateLayersAfterAncestorChange: new viewport " << fixedPositionRect << " constrainingRectAtLastLayout " << m_constraints.constrainingRectAtLastLayout() << " last layer pos " << m_constraints.layerPositionAtLastLayout() << " adjustStickyLayer " << adjustStickyLayer);
 
     FloatSize deltaForDescendants = cumulativeDelta;
 

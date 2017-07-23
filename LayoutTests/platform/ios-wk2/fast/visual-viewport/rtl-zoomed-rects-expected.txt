@@ -7,15 +7,15 @@ JSON.stringify(internals.layoutViewportRect()) is {"x":0,"y":0,"width":800,"heig
 JSON.stringify(internals.visualViewportRect()) is {"x":0,"y":0,"width":400,"height":300,"top":0,"right":400,"bottom":300,"left":0}
 
 Scrolled to -475, 525
-JSON.stringify(internals.layoutViewportRect()) is {"x":0,"y":0,"width":800,"height":600,"top":0,"right":800,"bottom":600,"left":0}
+JSON.stringify(internals.layoutViewportRect()) is {"x":-475,"y":225,"width":800,"height":600,"top":225,"right":325,"bottom":825,"left":-475}
 JSON.stringify(internals.visualViewportRect()) is {"x":-475,"y":525,"width":400,"height":300,"top":525,"right":-75,"bottom":825,"left":-475}
 
 Scrolled to -100, 776
-JSON.stringify(internals.layoutViewportRect()) is {"x":0,"y":0,"width":800,"height":600,"top":0,"right":800,"bottom":600,"left":0}
+JSON.stringify(internals.layoutViewportRect()) is {"x":-475,"y":476,"width":800,"height":600,"top":476,"right":325,"bottom":1076,"left":-475}
 JSON.stringify(internals.visualViewportRect()) is {"x":-100,"y":776,"width":400,"height":300,"top":776,"right":300,"bottom":1076,"left":-100}
 
 Scrolled to -50, 300
-JSON.stringify(internals.layoutViewportRect()) is {"x":0,"y":0,"width":800,"height":600,"top":0,"right":800,"bottom":600,"left":0}
+JSON.stringify(internals.layoutViewportRect()) is {"x":-450,"y":300,"width":800,"height":600,"top":300,"right":350,"bottom":900,"left":-450}
 JSON.stringify(internals.visualViewportRect()) is {"x":-50,"y":300,"width":400,"height":300,"top":300,"right":350,"bottom":600,"left":-50}
 PASS successfullyParsed is true
 
