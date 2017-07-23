@@ -170,6 +170,18 @@ TEST(DataInteractionTests, ImageToContentEditable)
     checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
 }
 
+TEST(DataInteractionTests, CanStartDragOnEnormousImage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTML:@"<img src='enormous.svg'></img>"];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 100)];
+
+    NSArray *registeredTypes = [[dataInteractionSimulator sourceItemProviders].firstObject registeredTypeIdentifiers];
+    EXPECT_WK_STREQ((NSString *)kUTTypeScalableVectorGraphics, [registeredTypes firstObject]);
+}
+
 TEST(DataInteractionTests, ImageToTextarea)
 {
     RetainPtr<TestWKWebView> webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

@@ -1,3 +1,50 @@
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219585. rdar://problem/33465177
+
+    2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS DnD] Web process uses too much memory when beginning a drag on a very large image
+            https://bugs.webkit.org/show_bug.cgi?id=174585
+            <rdar://problem/33302541>
+
+            Reviewed by Tim Horton.
+
+            Currently, attempting to drag a very large image fails, either due to us telling CoreGraphics to create an image
+            buffer that is too large, or because the web process exceeds its memory limit and gets jetsamed. There are two
+            places where we can optimize our memory use during the drag initialization sequence, and this patch improves
+            both.
+
+            First, on iOS, we attempt to encode and send over a WebCore::Image in the PasteboardImage when writing to the
+            item providers upon starting a drag. Currently, this Image is only used in the drag and drop codepath, in
+            PlatformPasteboard::writeObjectRepresentations, to grab the size of the image being written for the purpose of
+            specifying estimated display size. Serializing and deserializing an Image calls into Image::nativeImage, which
+            attempts to draw the contents of the image into a buffer so that it can be shipped across to the UI process.
+            Instead, we can simply compute the size in the web process while we already have the Image, and simply send that
+            across. For copy/paste, this doesn't result in any behavior change, since we don't use the PasteboardImage's
+            image in the first place.
+
+            Secondly, when starting a drag, we try to allocate create an image buffer the size of the WebCore::Image for the
+            purpose of generating the drag preview. Instead, this patch establishes a limit on the size of this drag preview
+            image, such that if the Image's size is larger, we'll scale down the drag preview image to be the maximum
+            allowed size.
+
+            Test: DataInteractionTests.CanStartDragOnEnormousImage.
+
+            * editing/ios/EditorIOS.mm:
+            (WebCore::Editor::writeImageToPasteboard):
+            * platform/Pasteboard.h:
+            * platform/graphics/GeometryUtilities.cpp:
+            (WebCore::sizeWithAreaAndAspectRatio):
+
+            Introduce a new helper function to compute a size with the given aspect ratio and area.
+
+            * platform/graphics/GeometryUtilities.h:
+            * platform/ios/DragImageIOS.mm:
+            (WebCore::createDragImageFromImage):
+            * platform/ios/PlatformPasteboardIOS.mm:
+            (WebCore::PlatformPasteboard::writeObjectRepresentations):
+
 2017-07-17  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219413. rdar://problem/33337335

@@ -39,6 +39,7 @@
 - (void)clearMessageHandlers:(NSArray *)messageNames;
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)loadTestPageNamed:(NSString *)pageName;
+- (void)synchronouslyLoadHTMLString:(NSString *)html;
 - (void)synchronouslyLoadTestPageNamed:(NSString *)pageName;
 - (NSString *)stringByEvaluatingJavaScript:(NSString *)script;
 - (void)waitForMessage:(NSString *)message;

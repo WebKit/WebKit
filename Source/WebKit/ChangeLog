@@ -1,3 +1,22 @@
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219585. rdar://problem/33465177
+
+    2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS DnD] Web process uses too much memory when beginning a drag on a very large image
+            https://bugs.webkit.org/show_bug.cgi?id=174585
+            <rdar://problem/33302541>
+
+            Reviewed by Tim Horton.
+
+            Add IPC support for serializing/deserializing the size of an image written to the pasteboard. See WebCore
+            ChangeLogs for more details.
+
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<PasteboardImage>::encode):
+            (IPC::ArgumentCoder<PasteboardImage>::decode):
+
 2017-07-17  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219413. rdar://problem/33337335

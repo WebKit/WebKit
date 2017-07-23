@@ -1,3 +1,29 @@
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219585. rdar://problem/33465177
+
+    2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS DnD] Web process uses too much memory when beginning a drag on a very large image
+            https://bugs.webkit.org/show_bug.cgi?id=174585
+            <rdar://problem/33302541>
+
+            Reviewed by Tim Horton.
+
+            Adds a new test verifying that we don't try to allocate any image buffer equal to the true size of the image
+            being dragged when initiating a drag.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKit2Cocoa/enormous.svg: Added.
+            * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/cocoa/TestWKWebView.h:
+
+            Add a new -synchronouslyLoadHTMLString: helper that works like -synchronouslyLoadTestPage:, but takes markup.
+
+            * TestWebKitAPI/cocoa/TestWKWebView.mm:
+            (-[TestWKWebView synchronouslyLoadHTMLString:]):
+
 2017-07-17  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219413. rdar://problem/33337335
