@@ -1,5 +1,42 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219683. rdar://problem/33464463
+
+    2017-07-20  Brady Eidson  <beidson@apple.com>
+
+            WKHTTPCookieStore API tests fail on High Sierra.
+            <rdar://problem/33410271> and https://bugs.webkit.org/show_bug.cgi?id=174666
+
+            Reviewed by Andy Estes.
+
+            Covered by existing API tests.
+
+            In r219567 I'd moved cookie storage observation off of NSHTTPCookieStorage and NSNotificationCenter
+            to CFHTTPCookieStorage observation callbacks.
+
+            This is because notifications were only sent for the default [NSHTTPCookieStorage sharedHTTPCookieStorage]
+            and not any of the other ones we keep in flight.
+
+            Unfortunately that SPI has been disabled in High Sierra.
+            Fortunately we found a way we can get non-shared NSHTTPCookieStorages to send notifications that works everywhere.
+
+            * platform/network/cocoa/CookieStorageObserver.h:
+            * platform/network/cocoa/CookieStorageObserver.mm:
+            (-[WebCookieObserverAdapter initWithObserver:]):
+            (-[WebCookieObserverAdapter cookiesChangedNotificationHandler:]):
+            (WebCore::CookieStorageObserver::create):
+            (WebCore::CookieStorageObserver::CookieStorageObserver):
+            (WebCore::CookieStorageObserver::~CookieStorageObserver):
+            (WebCore::CookieStorageObserver::startObserving): Use a trick to call some SPI on non-shared NSHTTPCookieStorages
+              to get them to send notifications.
+            (WebCore::CookieStorageObserver::stopObserving):
+            (WebCore::cookiesChanged): Deleted.
+
+            * platform/network/cocoa/NetworkStorageSessionCocoa.mm:
+            (WebCore::NetworkStorageSession::cookieStorageObserver):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219668. rdar://problem/33462676
 
     2017-07-19  Simon Fraser  <simon.fraser@apple.com>

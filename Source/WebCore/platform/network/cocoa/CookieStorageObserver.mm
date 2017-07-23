@@ -29,20 +29,52 @@
 #import "NSURLConnectionSPI.h"
 #import <wtf/MainThread.h>
 
-namespace WebCore {
+@interface WebNSHTTPCookieStorageInternal : NSObject {
+@public
+    id internal;
+}
+@end
 
-static void cookiesChanged(CFHTTPCookieStorageRef, void* context)
+@implementation WebNSHTTPCookieStorageInternal
+@end
+
+@interface WebCookieObserverAdapter : NSObject {
+    WebCore::CookieStorageObserver* observer;
+}
+- (instancetype)initWithObserver:(WebCore::CookieStorageObserver&)theObserver;
+- (void)cookiesChangedNotificationHandler:(NSNotification *)notification;
+
+@end
+
+@implementation WebCookieObserverAdapter
+
+- (instancetype)initWithObserver:(WebCore::CookieStorageObserver&)theObserver
 {
-    ASSERT(!isMainThread());
-    static_cast<CookieStorageObserver*>(context)->cookiesDidChange();
+    self = [super init];
+    if (!self)
+        return nil;
+
+    observer = &theObserver;
+
+    return self;
 }
 
-RefPtr<CookieStorageObserver> CookieStorageObserver::create(CFHTTPCookieStorageRef cookieStorage)
+- (void)cookiesChangedNotificationHandler:(NSNotification *)notification
+{
+    UNUSED_PARAM(notification);
+    observer->cookiesDidChange();
+}
+
+@end
+
+namespace WebCore {
+
+RefPtr<CookieStorageObserver> CookieStorageObserver::create(NSHTTPCookieStorage *cookieStorage)
 {
     return adoptRef(new CookieStorageObserver(cookieStorage));
 }
 
-CookieStorageObserver::CookieStorageObserver(CFHTTPCookieStorageRef cookieStorage)
+CookieStorageObserver::CookieStorageObserver(NSHTTPCookieStorage *cookieStorage)
     : m_cookieStorage(cookieStorage)
 {
     ASSERT(isMainThread());
@@ -53,27 +85,45 @@ CookieStorageObserver::~CookieStorageObserver()
 {
     ASSERT(isMainThread());
 
-    if (m_cookieChangeCallback)
+    if (m_cookieChangeCallback) {
+        ASSERT(m_observerAdapter);
         stopObserving();
+    }
 }
 
 void CookieStorageObserver::startObserving(WTF::Function<void()>&& callback)
 {
     ASSERT(isMainThread());
     ASSERT(!m_cookieChangeCallback);
-    m_cookieChangeCallback = WTFMove(callback);
+    ASSERT(!m_observerAdapter);
 
-    CFHTTPCookieStorageAddObserver(m_cookieStorage.get(), [NSURLConnection resourceLoaderRunLoop], kCFRunLoopCommonModes, cookiesChanged, this);
-    CFHTTPCookieStorageScheduleWithRunLoop(m_cookieStorage.get(), [NSURLConnection resourceLoaderRunLoop], kCFRunLoopCommonModes);
+    m_cookieChangeCallback = WTFMove(callback);
+    m_observerAdapter = adoptNS([[WebCookieObserverAdapter alloc] initWithObserver:*this]);
+
+    if (!m_hasRegisteredInternalsForNotifications) {
+        if (m_cookieStorage.get() != [NSHTTPCookieStorage sharedHTTPCookieStorage]) {
+            auto selector = NSSelectorFromString(@"registerForPostingNotificationsWithContext:");
+            id internalObject = (static_cast<WebNSHTTPCookieStorageInternal *>(m_cookieStorage.get()))->internal;
+            RELEASE_ASSERT([internalObject respondsToSelector:selector]);
+            [internalObject performSelector:selector withObject:m_cookieStorage.get()];
+        }
+
+        m_hasRegisteredInternalsForNotifications = true;
+    }
+
+    [[NSNotificationCenter defaultCenter] addObserver:m_observerAdapter.get() selector:@selector(cookiesChangedNotificationHandler:) name:NSHTTPCookieManagerCookiesChangedNotification object:m_cookieStorage.get()];
 }
 
 void CookieStorageObserver::stopObserving()
 {
     ASSERT(isMainThread());
     ASSERT(m_cookieChangeCallback);
-    m_cookieChangeCallback = nullptr;
+    ASSERT(m_observerAdapter);
 
-    CFHTTPCookieStorageRemoveObserver(m_cookieStorage.get(), [NSURLConnection resourceLoaderRunLoop], kCFRunLoopCommonModes, cookiesChanged, this);
+    [[NSNotificationCenter defaultCenter] removeObserver:m_observerAdapter.get() name:NSHTTPCookieManagerCookiesChangedNotification object:nil];
+
+    m_cookieChangeCallback = nullptr;
+    m_observerAdapter = nil;
 }
 
 void CookieStorageObserver::cookiesDidChange()

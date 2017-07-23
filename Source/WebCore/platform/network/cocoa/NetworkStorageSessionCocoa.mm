@@ -94,7 +94,7 @@ NSHTTPCookieStorage *NetworkStorageSession::nsCookieStorage() const
 CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const
 {
     if (!m_cookieStorageObserver)
-        m_cookieStorageObserver = CookieStorageObserver::create([nsCookieStorage() _cookieStorage]);
+        m_cookieStorageObserver = CookieStorageObserver::create(nsCookieStorage());
 
     return *m_cookieStorageObserver;
 }
