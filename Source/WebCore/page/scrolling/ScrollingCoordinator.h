@@ -112,6 +112,12 @@ struct ScrollableAreaParameters {
     }
 };
 
+enum class ViewportRectStability {
+    Stable,
+    Unstable,
+    ChangingObscuredInsetsInteractively // This implies Unstable.
+};
+
 class ScrollingCoordinator : public ThreadSafeRefCounted<ScrollingCoordinator> {
 public:
     static Ref<ScrollingCoordinator> create(Page*);
@@ -129,7 +135,7 @@ public:
     virtual void frameViewLayoutUpdated(FrameView&) { }
 
     using LayoutViewportOriginOrOverrideRect = WTF::Variant<std::optional<FloatPoint>, std::optional<FloatRect>>;
-    virtual void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, bool /* programmaticScroll */, bool /* inStableState*/, ScrollingLayerPositionAction) { }
+    virtual void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, bool /* programmaticScroll */, ViewportRectStability, ScrollingLayerPositionAction) { }
 
     // Should be called whenever the slow repaint objects counter changes between zero and one.
     void frameViewHasSlowRepaintObjectsDidChange(FrameView&);
@@ -159,7 +165,9 @@ public:
     virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID /*parentID*/) { return newNodeID; }
     virtual void detachFromStateTree(ScrollingNodeID) { }
     virtual void clearStateTree() { }
-    virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) { }
+
+    virtual void updateNodeLayer(ScrollingNodeID, GraphicsLayer*) { }
+    virtual void updateNodeViewportConstraints(ScrollingNodeID, const ViewportConstraints&) { }
 
     struct ScrollingGeometry {
         FloatSize scrollableAreaSize;
@@ -235,13 +243,14 @@ private:
     void updateSynchronousScrollingReasonsForAllFrames();
 
     EventTrackingRegions absoluteEventTrackingRegionsForFrame(const Frame&) const;
-    
+
     bool m_forceSynchronousScrollLayerPositionUpdates { false };
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollableAreaParameters);
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingNodeType);
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, ScrollingLayerPositionAction);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, ViewportRectStability);
 
 } // namespace WebCore
 

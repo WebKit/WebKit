@@ -65,7 +65,7 @@ void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConst
     if (m_constraints == constraints)
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateFixedNode " << scrollingNodeID() << " updateConstraints with viewport rect " << constraints.viewportRectAtLastLayout());
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingStateFixedNode " << scrollingNodeID() << " updateConstraints with viewport rect " << constraints.viewportRectAtLastLayout() << " layer pos at last layout " << constraints.layerPositionAtLastLayout() << " offset from top " << (constraints.layerPositionAtLastLayout().y() - constraints.viewportRectAtLastLayout().y()));
 
     m_constraints = constraints;
     setPropertyChanged(ViewportConstraints);

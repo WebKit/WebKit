@@ -72,7 +72,16 @@ void ScrollingCoordinatorCoordinatedGraphics::clearStateTree()
     m_scrollingStateTree->clear();
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::updateViewportConstrainedNode(ScrollingNodeID nodeID, const ViewportConstraints& constraints, GraphicsLayer* graphicsLayer)
+void ScrollingCoordinatorCoordinatedGraphics::updateNodeLayer(ScrollingNodeID nodeID, GraphicsLayer* graphicsLayer)
+{
+    ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    if (!node)
+        return;
+
+    node->setLayer(graphicsLayer);
+}
+
+void AsyncScrollingCoordinator::updateNodeViewportConstraints(ScrollingNodeID nodeID, const ViewportConstraints& constraints)
 {
     ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!node)
@@ -81,7 +90,6 @@ void ScrollingCoordinatorCoordinatedGraphics::updateViewportConstrainedNode(Scro
     switch (constraints.constraintType()) {
     case ViewportConstraints::FixedPositionConstraint: {
         downcast<CoordinatedGraphicsLayer>(*graphicsLayer).setFixedToViewport(true);
-        downcast<ScrollingStateFixedNode>(*node).setLayer(graphicsLayer);
         break;
     }
     case ViewportConstraints::StickyPositionConstraint:

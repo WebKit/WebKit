@@ -1828,7 +1828,8 @@ LayoutRect FrameView::computeUpdatedLayoutViewportRect(const LayoutRect& layoutV
     layoutViewportRect.setSize(constrainedSize.expandedTo(unobscuredContentSize));
         
     LayoutPoint layoutViewportOrigin = computeLayoutViewportOrigin(unobscuredContentRect, stableLayoutViewportOriginMin, stableLayoutViewportOriginMax, layoutViewportRect, StickToViewportBounds);
-        
+
+    // FIXME: Is this equivalent to calling computeLayoutViewportOrigin() with StickToDocumentBounds?
     if (constraint == LayoutViewportConstraint::ConstrainedToDocumentRect) {
         // The max stable layout viewport origin really depends on the size of the layout viewport itself, so we need to adjust the location of the layout viewport one final time to make sure it does not end up out of bounds of the document.
         // Without this adjustment (and with using the non-constrained unobscuredContentRect's size as the size of the layout viewport) the layout viewport can be pushed past the bounds of the document during rubber-banding, and cannot be pushed
@@ -1847,9 +1848,15 @@ LayoutPoint FrameView::computeLayoutViewportOrigin(const LayoutRect& visualViewp
     LayoutPoint layoutViewportOrigin = layoutViewport.location();
     bool allowRubberBanding = fixedBehavior == StickToViewportBounds;
 
-    if (visualViewport.width() > layoutViewport.width())
+    if (visualViewport.width() > layoutViewport.width()) {
         layoutViewportOrigin.setX(visualViewport.x());
-    else {
+        if (!allowRubberBanding) {
+            if (layoutViewportOrigin.x() < stableLayoutViewportOriginMin.x())
+                layoutViewportOrigin.setX(stableLayoutViewportOriginMin.x());
+            else if (layoutViewportOrigin.x() > stableLayoutViewportOriginMax.x())
+                layoutViewportOrigin.setX(stableLayoutViewportOriginMax.x());
+        }
+    } else {
         bool rubberbandingAtLeft = allowRubberBanding && visualViewport.x() < stableLayoutViewportOriginMin.x();
         bool rubberbandingAtRight = allowRubberBanding && (visualViewport.maxX() - layoutViewport.width()) > stableLayoutViewportOriginMax.x();
 
@@ -1858,7 +1865,7 @@ LayoutPoint FrameView::computeLayoutViewportOrigin(const LayoutRect& visualViewp
 
         if (visualViewport.maxX() > layoutViewport.maxX() || rubberbandingAtRight)
             layoutViewportOrigin.setX(visualViewport.maxX() - layoutViewport.width());
-        
+
         if (!rubberbandingAtLeft && layoutViewportOrigin.x() < stableLayoutViewportOriginMin.x())
             layoutViewportOrigin.setX(stableLayoutViewportOriginMin.x());
         
@@ -1866,9 +1873,15 @@ LayoutPoint FrameView::computeLayoutViewportOrigin(const LayoutRect& visualViewp
             layoutViewportOrigin.setX(stableLayoutViewportOriginMax.x());
     }
 
-    if (visualViewport.height() > layoutViewport.height())
+    if (visualViewport.height() > layoutViewport.height()) {
         layoutViewportOrigin.setY(visualViewport.y());
-    else {
+        if (!allowRubberBanding) {
+            if (layoutViewportOrigin.y() < stableLayoutViewportOriginMin.y())
+                layoutViewportOrigin.setY(stableLayoutViewportOriginMin.y());
+            else if (layoutViewportOrigin.y() > stableLayoutViewportOriginMax.y())
+                layoutViewportOrigin.setY(stableLayoutViewportOriginMax.y());
+        }
+    } else {
         bool rubberbandingAtTop = allowRubberBanding && visualViewport.y() < stableLayoutViewportOriginMin.y();
         bool rubberbandingAtBottom = allowRubberBanding && (visualViewport.maxY() - layoutViewport.height()) > stableLayoutViewportOriginMax.y();
 
@@ -1877,10 +1890,10 @@ LayoutPoint FrameView::computeLayoutViewportOrigin(const LayoutRect& visualViewp
 
         if (visualViewport.maxY() > layoutViewport.maxY() || rubberbandingAtBottom)
             layoutViewportOrigin.setY(visualViewport.maxY() - layoutViewport.height());
-        
+
         if (!rubberbandingAtTop && layoutViewportOrigin.y() < stableLayoutViewportOriginMin.y())
             layoutViewportOrigin.setY(stableLayoutViewportOriginMin.y());
-        
+
         if (!rubberbandingAtBottom && layoutViewportOrigin.y() > stableLayoutViewportOriginMax.y())
             layoutViewportOrigin.setY(stableLayoutViewportOriginMax.y());
     }
@@ -1906,7 +1919,7 @@ void FrameView::setBaseLayoutViewportOrigin(LayoutPoint origin, TriggerLayoutOrN
     }
 }
 
-void FrameView::setLayoutViewportOverrideRect(std::optional<LayoutRect> rect)
+void FrameView::setLayoutViewportOverrideRect(std::optional<LayoutRect> rect, TriggerLayoutOrNot layoutTriggering)
 {
     if (rect == m_layoutViewportOverrideRect)
         return;
@@ -1914,18 +1927,14 @@ void FrameView::setLayoutViewportOverrideRect(std::optional<LayoutRect> rect)
     LayoutRect oldRect = layoutViewportRect();
     m_layoutViewportOverrideRect = rect;
 
-    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing layout viewport from " << oldRect << " to " << m_layoutViewportOverrideRect.value());
+    // Triggering layout on height changes is necessary to make bottom-fixed elements behave correctly.
+    if (oldRect.height() != layoutViewportRect().height())
+        layoutTriggering = TriggerLayoutOrNot::Yes;
 
-    if (oldRect != layoutViewportRect())
+    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing override layout viewport from " << oldRect << " to " << m_layoutViewportOverrideRect.value_or(LayoutRect()) << " layoutTriggering " << (layoutTriggering == TriggerLayoutOrNot::Yes ? "yes" : "no"));
+
+    if (oldRect != layoutViewportRect() && layoutTriggering == TriggerLayoutOrNot::Yes)
         setViewportConstrainedObjectsNeedLayout();
-}
-
-void FrameView::setUnstableLayoutViewportRect(std::optional<LayoutRect> rect)
-{
-    if (rect == m_unstableLayoutViewportRect)
-        return;
-
-    m_unstableLayoutViewportRect = rect;
 }
 
 LayoutSize FrameView::baseLayoutViewportSize() const
@@ -1942,18 +1951,21 @@ void FrameView::updateLayoutViewport()
     // as a post-layout task.
     if (m_layoutPhase == InViewSizeAdjust)
         return;
-    
-    if (m_layoutViewportOverrideRect) {
-        LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " updateLayoutViewport() - has layoutViewportOverrideRect" << m_layoutViewportOverrideRect.value());
-        return;
-    }
 
     LayoutRect layoutViewport = layoutViewportRect();
 
     LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " updateLayoutViewport() totalContentSize " << totalContentsSize() << " unscaledDocumentRect " << (renderView() ? renderView()->unscaledDocumentRect() : IntRect()) << " header height " << headerHeight() << " footer height " << footerHeight() << " fixed behavior " << scrollBehaviorForFixedElements());
     LOG_WITH_STREAM(Scrolling, stream << "layoutViewport: " << layoutViewport);
     LOG_WITH_STREAM(Scrolling, stream << "visualViewport: " << visualViewportRect());
-    LOG_WITH_STREAM(Scrolling, stream << "scroll positions: min: " << unscaledMinimumScrollPosition() << " max: "<< unscaledMaximumScrollPosition());
+    LOG_WITH_STREAM(Scrolling, stream << "stable origins: min: " << minStableLayoutViewportOrigin() << " max: "<< maxStableLayoutViewportOrigin());
+    
+    if (m_layoutViewportOverrideRect) {
+        if (m_inProgrammaticScroll) {
+            LayoutPoint newOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, StickToDocumentBounds);
+            setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
+        }
+        return;
+    }
 
     LayoutPoint newLayoutViewportOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, scrollBehaviorForFixedElements());
     if (newLayoutViewportOrigin != m_layoutViewportOrigin) {
@@ -2205,8 +2217,12 @@ ScrollPosition FrameView::unscaledMaximumScrollPosition() const
     if (RenderView* renderView = this->renderView()) {
         IntRect unscaledDocumentRect = renderView->unscaledDocumentRect();
         unscaledDocumentRect.expand(0, headerHeight() + footerHeight());
-        ScrollPosition maximumPosition = ScrollPosition(unscaledDocumentRect.maxXMaxYCorner() - visibleSize()).expandedTo({ 0, 0 });
-
+        IntSize visibleSize = this->visibleSize();
+#if PLATFORM(IOS)
+        // FIXME: visibleSize() is the unscaled size on macOS, but the scaled size on iOS. This should be consistent. webkit.org/b/174648.
+        visibleSize.scale(visibleContentScaleFactor());
+#endif        
+        ScrollPosition maximumPosition = ScrollPosition(unscaledDocumentRect.maxXMaxYCorner() - visibleSize).expandedTo({ 0, 0 });
         if (frame().isMainFrame() && m_scrollPinningBehavior == PinToTop)
             maximumPosition.setY(unscaledMinimumScrollPosition().y());
 
@@ -4915,12 +4931,7 @@ FloatPoint FrameView::absoluteToDocumentPoint(FloatPoint p, std::optional<float>
 
 FloatSize FrameView::documentToClientOffset() const
 {
-    FloatSize clientOrigin;
-    
-    if (frame().settings().visualViewportEnabled())
-        clientOrigin = -toFloatSize(m_unstableLayoutViewportRect ? m_unstableLayoutViewportRect.value().location() : layoutViewportRect().location()); 
-    else
-        clientOrigin = -toFloatSize(visibleContentRect().location());
+    FloatSize clientOrigin = frame().settings().visualViewportEnabled() ? -toFloatSize(layoutViewportRect().location()) : -toFloatSize(visibleContentRect().location());
 
     // Layout and visual viewports are affected by page zoom, so we need to factor that out.
     return clientOrigin.scaled(1 / frame().pageZoomFactor());

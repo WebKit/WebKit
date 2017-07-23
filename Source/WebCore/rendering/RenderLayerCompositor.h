@@ -279,7 +279,12 @@ public:
 
     ScrollableArea* scrollableAreaForScrollLayerID(ScrollingNodeID) const;
 
-    void updateScrollCoordinatedStatus(RenderLayer&);
+    enum class ScrollingNodeChangeFlags {
+        Layer           = 1 << 0,
+        LayerGeometry   = 1 << 1,
+    };
+
+    void updateScrollCoordinatedStatus(RenderLayer&, OptionSet<ScrollingNodeChangeFlags>);
     void removeFromScrollCoordinatedLayers(RenderLayer&);
 
     void willRemoveScrollingLayerWithBacking(RenderLayer&, RenderLayerBacking&);
@@ -443,7 +448,7 @@ private:
 
     void updateScrollCoordinationForThisFrame(ScrollingNodeID);
     ScrollingNodeID attachScrollingNode(RenderLayer&, ScrollingNodeType, ScrollingNodeID parentNodeID);
-    void updateScrollCoordinatedLayer(RenderLayer&, LayerScrollCoordinationRoles);
+    void updateScrollCoordinatedLayer(RenderLayer&, LayerScrollCoordinationRoles, OptionSet<ScrollingNodeChangeFlags>);
     void detachScrollCoordinatedLayer(RenderLayer&, LayerScrollCoordinationRoles);
     void reattachSubframeScrollLayers();
     

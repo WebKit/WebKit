@@ -3267,8 +3267,19 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     if (!visibleContentRectUpdateInfo.isChangingObscuredInsetsInteractively())
         frameView.setCustomSizeForResizeEvent(expandedIntSize(visibleContentRectUpdateInfo.unobscuredRectInScrollViewCoordinates().size()));
 
-    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator())
-        scrollingCoordinator->reconcileScrollingState(frameView, scrollPosition, visibleContentRectUpdateInfo.customFixedPositionRect(), false, m_isInStableState, m_isInStableState ? ScrollingLayerPositionAction::Sync : ScrollingLayerPositionAction::SetApproximate);
+    if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
+        ViewportRectStability viewportStability = ViewportRectStability::Stable;
+        ScrollingLayerPositionAction layerAction = ScrollingLayerPositionAction::Sync;
+        
+        if (visibleContentRectUpdateInfo.isChangingObscuredInsetsInteractively()) {
+            viewportStability = ViewportRectStability::ChangingObscuredInsetsInteractively;
+            layerAction = ScrollingLayerPositionAction::SetApproximate;
+        } else if (!m_isInStableState) {
+            viewportStability = ViewportRectStability::Unstable;
+            layerAction = ScrollingLayerPositionAction::SetApproximate;
+        }
+        scrollingCoordinator->reconcileScrollingState(frameView, scrollPosition, visibleContentRectUpdateInfo.customFixedPositionRect(), false, viewportStability, layerAction);
+    }
 }
 
 void WebPage::willStartUserTriggeredZooming()

@@ -43,6 +43,8 @@
     description('This test document.elementFromPoint is evaluated in with respect to the viewport, not the document.');
 
     function testElement(element, label, offsetX, offsetY, hasZoom) {
+        debug('');
+        debug('Test ' + label);
         for (var i = 0; i < 25; ++i) {
             var item = document.createElement("div");
             item.className = "testItem";
@@ -94,7 +96,9 @@
     testElement(elementInitial, "Initial", offset.left, offset.top);
     testElement(elementOffscreen, "Offscreen", offset.left, offset.top + 1100);
 
-    eventSender.zoomPageOut();
+    if (window.eventSender)
+        eventSender.zoomPageOut();
+    debug('Zoomed out');
     testElement(elementInitial, "Initial", offset.left, offset.top, /* hasZoom */ true);
 
     if (window.testRunner) {
