@@ -1,5 +1,24 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219666. rdar://problem/33464328
+
+    2017-07-19  Megan Gardner  <megan_gardner@apple.com>
+
+            Don't write file URLs to iOS Pasteboard
+            https://bugs.webkit.org/show_bug.cgi?id=174647
+            <rdar://problem/33199730>
+
+            Reviewed by Wenson Hsieh.
+
+            Tests updated to reflect the changes. We are no longer vending file URLs in Drag & Drop and Copy/Paste.
+
+            * editing/ios/EditorIOS.mm:
+            (WebCore::Editor::writeImageToPasteboard):
+            * platform/ios/PlatformPasteboardIOS.mm:
+            (WebCore::PlatformPasteboard::write):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219661. rdar://problem/33465132
 
     2017-07-19  Nan Wang  <n_wang@apple.com>
