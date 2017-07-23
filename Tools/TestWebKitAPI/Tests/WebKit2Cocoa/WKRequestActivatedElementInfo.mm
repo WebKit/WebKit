@@ -36,8 +36,18 @@
 #if WK_API_ENABLED && PLATFORM(IOS)
 
 namespace TestWebKitAPI {
+
+static void checkElementTypeAndBoundingRect(_WKActivatedElementInfo *elementInfo, _WKActivatedElementType expectedType, CGRect expectedBoundingRect)
+{
+    auto observedBoundingRect = elementInfo.boundingRect;
+    EXPECT_EQ(CGRectGetWidth(expectedBoundingRect), CGRectGetWidth(observedBoundingRect));
+    EXPECT_EQ(CGRectGetHeight(expectedBoundingRect), CGRectGetHeight(observedBoundingRect));
+    EXPECT_EQ(CGRectGetMinX(expectedBoundingRect), CGRectGetMinX(observedBoundingRect));
+    EXPECT_EQ(CGRectGetMinY(expectedBoundingRect), CGRectGetMinY(observedBoundingRect));
+    EXPECT_EQ(expectedType, elementInfo.type);
+}
     
-TEST(WebKit2, ReqestActivatedElementInfoForLink)
+TEST(WebKit2, RequestActivatedElementInfoForLink)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style = 'margin: 0px;'><a href='testURL.test' style='display: block; height: 100%;' title='HitTestLinkTitle' id='testID'></a></body></html>" baseURL:nil];
@@ -62,7 +72,7 @@ TEST(WebKit2, ReqestActivatedElementInfoForLink)
     TestWebKitAPI::Util::run(&finished);
 }
     
-TEST(WebKit2, ReqestActivatedElementInfoForBlank)
+TEST(WebKit2, RequestActivatedElementInfoForBlank)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style = 'margin: 0px;'></body></html>" baseURL:nil];
@@ -81,6 +91,62 @@ TEST(WebKit2, ReqestActivatedElementInfoForBlank)
     TestWebKitAPI::Util::run(&finished);
 }
     
+TEST(WebKit2, RequestActivatedElementInfoWithNestedSynchronousUpdates)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1'><style>body { margin:0 } a { display:block; width:200px; height:200px }</style><a href='https://www.apple.com'>FOO</a>"];
+
+    __block bool finished = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(100, 100) completionBlock:^(_WKActivatedElementInfo *elementInfo) {
+        _WKActivatedElementInfo *synchronousElementInfo = [webView activatedElementAtPosition:CGPointMake(300, 300)];
+        EXPECT_EQ(_WKActivatedElementTypeUnspecified, synchronousElementInfo.type);
+        checkElementTypeAndBoundingRect(elementInfo, _WKActivatedElementTypeLink, CGRectMake(0, 0, 200, 200));
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+
+    finished = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(100, 100) completionBlock:^(_WKActivatedElementInfo *elementInfo) {
+        _WKActivatedElementInfo *synchronousElementInfo = [webView activatedElementAtPosition:CGPointMake(100, 100)];
+        checkElementTypeAndBoundingRect(synchronousElementInfo, _WKActivatedElementTypeLink, CGRectMake(0, 0, 200, 200));
+        checkElementTypeAndBoundingRect(elementInfo, _WKActivatedElementTypeLink, CGRectMake(0, 0, 200, 200));
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+}
+
+TEST(WebKit2, RequestActivatedElementInfoWithNestedRequests)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];
+
+    __block bool finishedWithInner = false;
+    __block bool finishedWithOuter = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKActivatedElementInfo *outerElementInfo) {
+        [webView _requestActivatedElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKActivatedElementInfo *innerElementInfo) {
+            checkElementTypeAndBoundingRect(innerElementInfo, _WKActivatedElementTypeImage, CGRectMake(0, 0, 200, 200));
+            finishedWithInner = true;
+        }];
+        checkElementTypeAndBoundingRect(outerElementInfo, _WKActivatedElementTypeImage, CGRectMake(0, 0, 200, 200));
+        finishedWithOuter = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedWithOuter);
+    TestWebKitAPI::Util::run(&finishedWithInner);
+
+    finishedWithInner = false;
+    finishedWithOuter = false;
+    [webView _requestActivatedElementAtPosition:CGPointMake(100, 50) completionBlock:^(_WKActivatedElementInfo *outerElementInfo) {
+        [webView _requestActivatedElementAtPosition:CGPointMake(300, 300) completionBlock:^(_WKActivatedElementInfo *innerElementInfo) {
+            EXPECT_EQ(_WKActivatedElementTypeUnspecified, innerElementInfo.type);
+            finishedWithInner = true;
+        }];
+        checkElementTypeAndBoundingRect(outerElementInfo, _WKActivatedElementTypeImage, CGRectMake(0, 0, 200, 200));
+        finishedWithOuter = true;
+    }];
+    TestWebKitAPI::Util::run(&finishedWithOuter);
+    TestWebKitAPI::Util::run(&finishedWithInner);
+}
+
 }
 
 #endif

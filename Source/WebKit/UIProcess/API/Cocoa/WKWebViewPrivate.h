@@ -83,7 +83,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 #endif
 
 @class WKBrowsingContextHandle;
-@class _WKDraggableElementInfo;
 @class _WKFrameHandle;
 @class _WKHitTestResult;
 @class _WKIconLoadingDelegate;
@@ -376,9 +375,6 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location;
 
 @property (nonatomic, readonly) CGRect _dragCaretRect WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
-- (_WKDraggableElementInfo *)_draggableElementAtPosition:(CGPoint)position WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_requestDraggableElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKDraggableElementInfo *))block WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_requestActivatedElementAtPosition:(CGPoint)position completionBlock:(void (^)(_WKActivatedElementInfo *))block WK_API_AVAILABLE(ios(WK_IOS_TBA));
 

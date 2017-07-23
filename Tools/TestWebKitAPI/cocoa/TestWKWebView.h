@@ -30,6 +30,10 @@
 
 @class _WKProcessPoolConfiguration;
 
+#if PLATFORM(IOS)
+@class _WKActivatedElementInfo;
+#endif
+
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
 @end
@@ -49,6 +53,7 @@
 #if PLATFORM(IOS)
 @interface TestWKWebView (IOSOnly)
 @property (nonatomic, readonly) RetainPtr<NSArray> selectionRectsAfterPresentationUpdate;
+- (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position;
 @end
 #endif
 

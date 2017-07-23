@@ -2019,9 +2019,6 @@
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44DFEB21E9E752F0038D196 /* WebIconUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */; };
 		F44DFEB31E9E752F0038D196 /* WebIconUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44DFEB11E9E752F0038D196 /* WebIconUtilities.mm */; };
-		F4E8CB911EA6AB5B00E31198 /* _WKDraggableElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E8CB8E1EA6AB5B00E31198 /* _WKDraggableElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		F4E8CB921EA6AB5B00E31198 /* _WKDraggableElementInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E8CB8F1EA6AB5B00E31198 /* _WKDraggableElementInfo.mm */; };
-		F4E8CB931EA6AB5B00E31198 /* _WKDraggableElementInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E8CB901EA6AB5B00E31198 /* _WKDraggableElementInfoInternal.h */; };
 		F6113E25126CE1820057D0A7 /* APIUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */; };
 		F6113E28126CE19B0057D0A7 /* WKUserContentURLPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6113E26126CE19B0057D0A7 /* WKUserContentURLPattern.cpp */; };
 		F6113E29126CE19B0057D0A7 /* WKUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4365,9 +4362,6 @@
 		F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDragDestinationAction.h; sourceTree = "<group>"; };
 		F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIconUtilities.h; path = ios/WebIconUtilities.h; sourceTree = "<group>"; };
 		F44DFEB11E9E752F0038D196 /* WebIconUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebIconUtilities.mm; path = ios/WebIconUtilities.mm; sourceTree = "<group>"; };
-		F4E8CB8E1EA6AB5B00E31198 /* _WKDraggableElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDraggableElementInfo.h; sourceTree = "<group>"; };
-		F4E8CB8F1EA6AB5B00E31198 /* _WKDraggableElementInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKDraggableElementInfo.mm; sourceTree = "<group>"; };
-		F4E8CB901EA6AB5B00E31198 /* _WKDraggableElementInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDraggableElementInfoInternal.h; sourceTree = "<group>"; };
 		F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIUserContentURLPattern.h; sourceTree = "<group>"; };
 		F6113E26126CE19B0057D0A7 /* WKUserContentURLPattern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKUserContentURLPattern.cpp; sourceTree = "<group>"; };
 		F6113E27126CE19B0057D0A7 /* WKUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKUserContentURLPattern.h; sourceTree = "<group>"; };
@@ -5560,9 +5554,6 @@
 				A1A4FE5818DCE9FA00B5EA8A /* _WKDownload.mm */,
 				A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */,
 				A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */,
-				F4E8CB8E1EA6AB5B00E31198 /* _WKDraggableElementInfo.h */,
-				F4E8CB8F1EA6AB5B00E31198 /* _WKDraggableElementInfo.mm */,
-				F4E8CB901EA6AB5B00E31198 /* _WKDraggableElementInfoInternal.h */,
 				379A873818BBFE0F00588AF2 /* _WKElementAction.h */,
 				379A873718BBFE0F00588AF2 /* _WKElementAction.mm */,
 				379A873B18BBFF0700588AF2 /* _WKElementActionInternal.h */,
@@ -8120,8 +8111,6 @@
 				A1A4FE5A18DCE9FA00B5EA8A /* _WKDownload.h in Headers */,
 				A1A4FE6118DD54A400B5EA8A /* _WKDownloadDelegate.h in Headers */,
 				A1A4FE5C18DCE9FA00B5EA8A /* _WKDownloadInternal.h in Headers */,
-				F4E8CB911EA6AB5B00E31198 /* _WKDraggableElementInfo.h in Headers */,
-				F4E8CB931EA6AB5B00E31198 /* _WKDraggableElementInfoInternal.h in Headers */,
 				379A873A18BBFE0F00588AF2 /* _WKElementAction.h in Headers */,
 				379A873C18BBFF0700588AF2 /* _WKElementActionInternal.h in Headers */,
 				1AD01BC91905D37E00C9C45F /* _WKErrorRecoveryAttempting.h in Headers */,
@@ -9728,7 +9717,6 @@
 				990D28B21C65209400986977 /* _WKAutomationSession.mm in Sources */,
 				1A5704F71BE01FF400874AF1 /* _WKContextMenuElementInfo.mm in Sources */,
 				A1A4FE5B18DCE9FA00B5EA8A /* _WKDownload.mm in Sources */,
-				F4E8CB921EA6AB5B00E31198 /* _WKDraggableElementInfo.mm in Sources */,
 				379A873918BBFE0F00588AF2 /* _WKElementAction.mm in Sources */,
 				1AD01BC81905D37E00C9C45F /* _WKErrorRecoveryAttempting.mm in Sources */,
 				317FE7CE1C487DB800A0CA89 /* _WKExperimentalFeature.mm in Sources */,

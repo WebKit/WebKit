@@ -1,5 +1,28 @@
 2017-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS WK2] Remove _WKDraggableElementInfo and fold PositionInformationTests into WKRequestActivatedElementInfo
+        https://bugs.webkit.org/show_bug.cgi?id=174758
+
+        Reviewed by Dan Bernstein.
+
+        _WKDraggableElementInfo is no longer used in WebKit, so it should be removed. However, some of the scenarios
+        in PositionInformationTests that depend on _WKDraggableElementInfo are still useful to exercise: namely,
+        performing both synchronous and asynchronous position information updates while an async position information
+        update is in flight. This patch refactors these unit tests into 2 new unit tests in the existing
+        WKRequestActivatedElementInfo test suite.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _draggableElementAtPosition:]): Deleted.
+        (-[WKWebView _requestDraggableElementAtPosition:completionBlock:]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKDraggableElementInfo.h: Removed.
+        * UIProcess/API/Cocoa/_WKDraggableElementInfo.mm: Removed.
+        * UIProcess/API/Cocoa/_WKDraggableElementInfoInternal.h: Removed.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
+2017-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [Mac WK2] Fix null dereference in asynchronous NSTextInputClient methods when deallocating a WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=174751
         <rdar://problem/33132405>

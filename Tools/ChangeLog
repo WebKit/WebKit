@@ -1,3 +1,22 @@
+2017-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Remove _WKDraggableElementInfo and fold PositionInformationTests into WKRequestActivatedElementInfo
+        https://bugs.webkit.org/show_bug.cgi?id=174758
+
+        Reviewed by Dan Bernstein.
+
+        Migrate position-information-related unit tests from the PositionInformationTests suite to
+        WKRequestActivatedElementInfo as 2 new unit tests. See WebKit2 ChangeLog for more details.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2Cocoa/WKRequestActivatedElementInfo.mm:
+        (TestWebKitAPI::checkElementTypeAndBoundingRect):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/PositionInformationTests.mm: Removed.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView activatedElementAtPosition:]):
+
 2017-07-22  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r204565): WKObject is broken

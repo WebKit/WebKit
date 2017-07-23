@@ -33,6 +33,7 @@
 
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKitPrivate.h>
+#import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
@@ -292,6 +293,19 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 
     TestWebKitAPI::Util::run(&isDone);
     return selectionRects;
+}
+
+- (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position
+{
+    __block RetainPtr<_WKActivatedElementInfo> info;
+    __block bool finished = false;
+    [self _requestActivatedElementAtPosition:position completionBlock:^(_WKActivatedElementInfo *elementInfo) {
+        info = elementInfo;
+        finished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&finished);
+    return info.autorelease();
 }
 
 @end
