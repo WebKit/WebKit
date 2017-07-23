@@ -1794,6 +1794,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (BOOL)_requestStartDataInteraction:(CGPoint)clientPosition globalPosition:(CGPoint)globalPosition
 {
+    WebThreadLock();
     return _private->page->mainFrame().eventHandler().tryToBeginDataInteractionAtPoint(IntPoint(clientPosition), IntPoint(globalPosition));
 }
 
@@ -1815,6 +1816,7 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 
 - (CGRect)_dataInteractionCaretRect
 {
+    WebThreadLock();
     if (auto* page = _private->page)
         return page->dragCaretController().caretRectInRootViewCoordinates();
 
