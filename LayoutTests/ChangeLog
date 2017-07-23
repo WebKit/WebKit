@@ -1,3 +1,22 @@
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219625. rdar://problem/33465689
+
+    2017-07-18  Antoine Quint  <graouts@apple.com>
+
+            [macOS] Mouse pointer does not hide during fullscreen playback
+            https://bugs.webkit.org/show_bug.cgi?id=174638
+            <rdar://problem/33244399>
+
+            Reviewed by Dean Jackson.
+
+            Add a test that checks that the "-webkit-cursor-visibility" is set to "auto-hide" when
+            in fullscreen for the media controls container.
+
+            * media/modern-media-controls/css/webkit-cursor-visibility-auto-hide-expected.txt: Added.
+            * media/modern-media-controls/css/webkit-cursor-visibility-auto-hide.html: Added.
+            * platform/ios-simulator/TestExpectations:
+
 2017-07-17  Antoine Quint  <graouts@apple.com>
 
         REGRESSION: order of AirPlay and volume controls is inconsistent between <audio> and <video>
