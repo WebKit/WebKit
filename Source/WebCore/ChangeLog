@@ -1,5 +1,27 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219645. rdar://problem/33464440
+
+    2017-07-18  Zalan Bujtas  <zalan@apple.com>
+
+            Media controls are missing content in fullscreen when document has scroll offset.
+            https://bugs.webkit.org/show_bug.cgi?id=174644
+            <rdar://problem/32415323>
+
+            Reviewed by Simon Fraser.
+
+            If a non-user initiated scrolling (result of resize for example) is processed asynchronously, it might
+            leapfrog other, programatic scrollings and trigger unintentional scroll offsets (and turn into unwanted clippings).
+            This patch ensures that both resize and top content inset change are translated into programatic scrolling.
+
+            Unable to test full screen video.
+
+            * page/FrameView.cpp:
+            (WebCore::FrameView::setFrameRect):
+            (WebCore::FrameView::topContentInsetDidChange):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219641. rdar://problem/33464325
 
     2017-07-18  Chris Dumez  <cdumez@apple.com>
