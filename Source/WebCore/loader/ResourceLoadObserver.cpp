@@ -54,8 +54,21 @@ ResourceLoadObserver& ResourceLoadObserver::shared()
     return resourceLoadObserver;
 }
 
+static bool shouldEnableSiteSpecificQuirks(Page* page)
+{
+#if PLATFORM(IOS)
+    UNUSED_PARAM(page);
+
+    // There is currently no way to toggle the needsSiteSpecificQuirks setting on iOS so we always enable
+    // the site-specific quirks on iOS.
+    return true;
+#else
+    return page && page->settings().needsSiteSpecificQuirks();
+#endif
+}
+
 // FIXME: Temporary fix for <rdar://problem/32343256> until content can be updated.
-static bool areDomainsAssociated(const String& firstDomain, const String& secondDomain)
+static bool areDomainsAssociated(Page* page, const String& firstDomain, const String& secondDomain)
 {
     static NeverDestroyed<HashMap<String, unsigned>> metaDomainIdentifiers = [] {
         HashMap<String, unsigned> map;
@@ -75,6 +88,9 @@ static bool areDomainsAssociated(const String& firstDomain, const String& second
         return true;
 
     ASSERT(!equalIgnoringASCIICase(firstDomain, secondDomain));
+
+    if (!shouldEnableSiteSpecificQuirks(page))
+        return false;
 
     unsigned firstMetaDomainIdentifier = metaDomainIdentifiers.get().get(firstDomain);
     if (!firstMetaDomainIdentifier)
@@ -135,7 +151,8 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     if (frame.isMainFrame())
         return;
     
-    if (!shouldLog(topFrame.page()))
+    auto* page = topFrame.page();
+    if (!shouldLog(page))
         return;
 
     auto& sourceURL = frame.document()->url();
@@ -155,7 +172,7 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
     
-    if (areDomainsAssociated(targetPrimaryDomain, mainFramePrimaryDomain) || areDomainsAssociated(targetPrimaryDomain, sourcePrimaryDomain))
+    if (areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain) || areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain))
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
@@ -166,19 +183,20 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
 }
 
 // FIXME: This quirk was added to address <rdar://problem/33325881> and should be removed once content is fixed.
-static bool resourceNeedsSSOQuirk(const URL& url)
+static bool resourceNeedsSSOQuirk(Page* page, const URL& url)
 {
-    static const auto ssoOriginsHash = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
-        "sp.auth.adobe.com"
-    });
-    return ssoOriginsHash.get().contains(url.host());
+    if (!shouldEnableSiteSpecificQuirks(page))
+        return false;
+
+    return equalIgnoringASCIICase(url.host(), "sp.auth.adobe.com");
 }
 
 void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     ASSERT(frame->page());
 
-    if (!shouldLog(frame->page()))
+    auto* page = frame->page();
+    if (!shouldLog(page))
         return;
 
     bool isRedirect = is3xxRedirect(redirectResponse);
@@ -196,10 +214,10 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
     
-    if (areDomainsAssociated(targetPrimaryDomain, mainFramePrimaryDomain) || (isRedirect && areDomainsAssociated(targetPrimaryDomain, sourcePrimaryDomain)))
+    if (areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain) || (isRedirect && areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain)))
         return;
 
-    if (resourceNeedsSSOQuirk(targetURL))
+    if (resourceNeedsSSOQuirk(page, targetURL))
         return;
 
     bool shouldCallNotificationCallback = false;
@@ -227,7 +245,8 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     if (!frame)
         return;
 
-    if (!shouldLog(frame->page()))
+    auto* page = frame->page();
+    if (!shouldLog(page))
         return;
 
     auto& mainFrameURL = frame->mainFrame().document()->url();
@@ -241,7 +260,7 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     auto targetPrimaryDomain = primaryDomain(targetURL);
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     
-    if (areDomainsAssociated(targetPrimaryDomain, mainFramePrimaryDomain))
+    if (areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain))
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
