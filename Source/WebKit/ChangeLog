@@ -1,5 +1,22 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219703. rdar://problem/33462696
+
+    2017-07-20  Chris Dumez  <cdumez@apple.com>
+
+            Regression(ITP): May get frequently logged out of wsj.com
+            https://bugs.webkit.org/show_bug.cgi?id=174661
+            <rdar://problem/32343256>
+
+            Reviewed by Geoffrey Garen.
+
+            Bump statistics file version to blow away old statistics on disk since those do not
+            take into account associated domains.
+
+            * UIProcess/WebResourceLoadStatisticsStore.cpp:
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219701. rdar://problem/33465715
 
     2017-07-20  Chris Dumez  <cdumez@apple.com>

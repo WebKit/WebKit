@@ -54,6 +54,35 @@ ResourceLoadObserver& ResourceLoadObserver::shared()
     return resourceLoadObserver;
 }
 
+// FIXME: Temporary fix for <rdar://problem/32343256> until content can be updated.
+static bool areDomainsAssociated(const String& firstDomain, const String& secondDomain)
+{
+    static NeverDestroyed<HashMap<String, unsigned>> metaDomainIdentifiers = [] {
+        HashMap<String, unsigned> map;
+
+        // Domains owned by Dow Jones & Company, Inc.
+        const unsigned dowJonesIdentifier = 1;
+        map.add(ASCIILiteral("dowjones.com"), dowJonesIdentifier);
+        map.add(ASCIILiteral("wsj.com"), dowJonesIdentifier);
+        map.add(ASCIILiteral("barrons.com"), dowJonesIdentifier);
+        map.add(ASCIILiteral("marketwatch.com"), dowJonesIdentifier);
+        map.add(ASCIILiteral("wsjplus.com"), dowJonesIdentifier);
+
+        return map;
+    }();
+
+    if (firstDomain == secondDomain)
+        return true;
+
+    ASSERT(!equalIgnoringASCIICase(firstDomain, secondDomain));
+
+    unsigned firstMetaDomainIdentifier = metaDomainIdentifiers.get().get(firstDomain);
+    if (!firstMetaDomainIdentifier)
+        return false;
+
+    return firstMetaDomainIdentifier == metaDomainIdentifiers.get().get(secondDomain);
+}
+
 void ResourceLoadObserver::setShouldThrottleObserverNotifications(bool shouldThrottle)
 {
     m_shouldThrottleNotifications = shouldThrottle;
@@ -126,7 +155,7 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
     
-    if (targetPrimaryDomain == mainFramePrimaryDomain || targetPrimaryDomain == sourcePrimaryDomain)
+    if (areDomainsAssociated(targetPrimaryDomain, mainFramePrimaryDomain) || areDomainsAssociated(targetPrimaryDomain, sourcePrimaryDomain))
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
@@ -167,7 +196,7 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     auto sourcePrimaryDomain = primaryDomain(sourceURL);
     
-    if (targetPrimaryDomain == mainFramePrimaryDomain || (isRedirect && targetPrimaryDomain == sourcePrimaryDomain))
+    if (areDomainsAssociated(targetPrimaryDomain, mainFramePrimaryDomain) || (isRedirect && areDomainsAssociated(targetPrimaryDomain, sourcePrimaryDomain)))
         return;
 
     if (resourceNeedsSSOQuirk(targetURL))
@@ -212,7 +241,7 @@ void ResourceLoadObserver::logWebSocketLoading(const Frame* frame, const URL& ta
     auto targetPrimaryDomain = primaryDomain(targetURL);
     auto mainFramePrimaryDomain = primaryDomain(mainFrameURL);
     
-    if (targetPrimaryDomain == mainFramePrimaryDomain)
+    if (areDomainsAssociated(targetPrimaryDomain, mainFramePrimaryDomain))
         return;
 
     auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
