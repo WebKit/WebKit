@@ -1,3 +1,35 @@
+2017-07-23  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219571. rdar://problem/33464710
+
+    2017-07-17  Simon Fraser  <simon.fraser@apple.com>
+
+            clientX/clientY on TouchEvent.touches are wrong
+            https://bugs.webkit.org/show_bug.cgi?id=174561
+            rdar://problem/33336041
+
+            Reviewed by Tim Horton.
+
+            Do some refactoring so that WebKitAdditions code that computes Touch coordinates can use
+            the same code that MouseRelatedEvent uses.
+
+            There is no behavior change in this patch, but the test exercises a behavior change in
+            WebKitAdditions code.
+
+            Test: fast/events/touch/ios/touches-client-coords-after-zoom.html
+
+            * dom/MouseRelatedEvent.cpp:
+            (WebCore::MouseRelatedEvent::init):
+            (WebCore::MouseRelatedEvent::frameViewFromDOMWindow):
+            (WebCore::MouseRelatedEvent::pagePointToClientPoint):
+            (WebCore::MouseRelatedEvent::pagePointToAbsolutePoint):
+            (WebCore::MouseRelatedEvent::initCoordinates):
+            (WebCore::MouseRelatedEvent::documentToAbsoluteScaleFactor):
+            (WebCore::MouseRelatedEvent::computePageLocation):
+            (WebCore::MouseRelatedEvent::locationInRootViewCoordinates):
+            (WebCore::MouseRelatedEvent::frameView): Deleted.
+            * dom/MouseRelatedEvent.h:
+
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219662. rdar://problem/33464110
