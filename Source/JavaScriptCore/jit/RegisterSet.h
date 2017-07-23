@@ -63,7 +63,7 @@ public:
     JS_EXPORT_PRIVATE static RegisterSet allGPRs();
     JS_EXPORT_PRIVATE static RegisterSet allFPRs();
     static RegisterSet allRegisters();
-    static RegisterSet argumentGPRS();
+    JS_EXPORT_PRIVATE static RegisterSet argumentGPRS();
 
     static RegisterSet registersToNotSaveForJSCall();
     static RegisterSet registersToNotSaveForCCall();

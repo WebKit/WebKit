@@ -15545,6 +15545,100 @@ void testFloatEqualOrUnorderedDontFold()
     }
 }
 
+void functionNineArgs(int32_t, void*, void*, void*, void*, void*, void*, void*, void*) { }
+
+void testShuffleDoesntTrashCalleeSaves()
+{
+    Procedure proc;
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* likely = proc.addBlock();
+    BasicBlock* unlikely = proc.addBlock();
+
+    RegisterSet regs = RegisterSet::allGPRs();
+    regs.exclude(RegisterSet::stackRegisters());
+    regs.exclude(RegisterSet::reservedHardwareRegisters());
+    regs.exclude(RegisterSet::calleeSaveRegisters());
+    regs.exclude(RegisterSet::argumentGPRS());
+
+    unsigned i = 0;
+    Vector<Value*> patches;
+    for (Reg reg : regs) {
+        ++i;
+        PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
+        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        RELEASE_ASSERT(reg.isGPR());
+        patchpoint->resultConstraint = ValueRep::reg(reg.gpr());
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                jit.move(CCallHelpers::TrustedImm32(i), params[0].gpr());
+            });
+        patches.append(patchpoint);
+    }
+
+    Value* arg1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(0 % GPRInfo::numberOfArgumentRegisters));
+    Value* arg2 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(1 % GPRInfo::numberOfArgumentRegisters));
+    Value* arg3 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(2 % GPRInfo::numberOfArgumentRegisters));
+    Value* arg4 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(3 % GPRInfo::numberOfArgumentRegisters));
+    Value* arg5 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(4 % GPRInfo::numberOfArgumentRegisters));
+    Value* arg6 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(5 % GPRInfo::numberOfArgumentRegisters));
+    Value* arg7 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(6 % GPRInfo::numberOfArgumentRegisters));
+    Value* arg8 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::toArgumentRegister(7 % GPRInfo::numberOfArgumentRegisters));
+
+    PatchpointValue* ptr = root->appendNew<PatchpointValue>(proc, Int64, Origin());
+    ptr->clobber(RegisterSet::macroScratchRegisters());
+    ptr->resultConstraint = ValueRep::reg(GPRInfo::regCS0);
+    ptr->appendSomeRegister(arg1);
+    ptr->setGenerator(
+        [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            AllowMacroScratchRegisterUsage allowScratch(jit);
+            jit.move(params[1].gpr(), params[0].gpr());
+        });
+
+    Value* condition = root->appendNew<Value>(
+        proc, Equal, Origin(), 
+        ptr,
+        root->appendNew<Const64Value>(proc, Origin(), 0));
+
+    root->appendNewControlValue(
+        proc, Branch, Origin(),
+        condition,
+        FrequentedBlock(likely, FrequencyClass::Normal), FrequentedBlock(unlikely, FrequencyClass::Rare));
+
+    // Never executes.
+    Value* const42 = likely->appendNew<Const32Value>(proc, Origin(), 42);
+    likely->appendNewControlValue(proc, Return, Origin(), const42);
+
+    // Always executes.
+    Value* constNumber = unlikely->appendNew<Const32Value>(proc, Origin(), 0x1);
+
+    unlikely->appendNew<CCallValue>(
+        proc, Void, Origin(),
+        unlikely->appendNew<ConstPtrValue>(proc, Origin(), bitwise_cast<void*>(functionNineArgs)),
+        constNumber, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
+
+    PatchpointValue* voidPatch = unlikely->appendNew<PatchpointValue>(proc, Void, Origin());
+    voidPatch->clobber(RegisterSet::macroScratchRegisters());
+    for (Value* v : patches)
+        voidPatch->appendSomeRegister(v);
+    voidPatch->appendSomeRegister(arg1);
+    voidPatch->appendSomeRegister(arg2);
+    voidPatch->appendSomeRegister(arg3);
+    voidPatch->appendSomeRegister(arg4);
+    voidPatch->appendSomeRegister(arg5);
+    voidPatch->appendSomeRegister(arg6);
+    voidPatch->setGenerator([=] (CCallHelpers&, const StackmapGenerationParams&) { });
+
+    unlikely->appendNewControlValue(proc, Return, Origin(),
+        unlikely->appendNew<MemoryValue>(proc, Load, Int32, Origin(), ptr));
+
+    int32_t* inputPtr = static_cast<int32_t*>(fastMalloc(sizeof(int32_t)));
+    *inputPtr = 48;
+    CHECK(compileAndRun<int32_t>(proc, inputPtr) == 48);
+    fastFree(inputPtr);
+}
+
 // Make sure the compiler does not try to optimize anything out.
 NEVER_INLINE double zero()
 {
@@ -17087,6 +17181,8 @@ void run(const char* filter)
     RUN(testFloatEqualOrUnorderedFolding());
     RUN(testFloatEqualOrUnorderedFoldingNaN());
     RUN(testFloatEqualOrUnorderedDontFold());
+
+    RUN(testShuffleDoesntTrashCalleeSaves());
 
     if (isX86()) {
         RUN(testBranchBitAndImmFusion(Identity, Int64, 1, Air::BranchTest32, Air::Arg::Tmp));
