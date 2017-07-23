@@ -1,5 +1,24 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219666. rdar://problem/33464328
+
+    2017-07-19  Megan Gardner  <megan_gardner@apple.com>
+
+            Don't write file URLs to iOS Pasteboard
+            https://bugs.webkit.org/show_bug.cgi?id=174647
+            <rdar://problem/33199730>
+
+            Reviewed by Wenson Hsieh.
+
+            Updating tests to reflect the lack of file URLs for images.
+
+            * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+            (checkTypeIdentifierAndIsNotOtherTypeIdentifier):
+            (checkEstimatedSize):
+            (TestWebKitAPI::TEST):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219664. rdar://problem/33464115
 
     2017-07-19  Brady Eidson  <beidson@apple.com>

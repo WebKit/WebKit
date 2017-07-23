@@ -114,11 +114,25 @@ static void checkTypeIdentifierPrecedesOtherTypeIdentifier(DataInteractionSimula
     EXPECT_TRUE([registeredTypes indexOfObject:firstType] < [registeredTypes indexOfObject:secondType]);
 }
 
+static void checkTypeIdentifierAndIsNotOtherTypeIdentifier(DataInteractionSimulator *simulator, NSString *firstType, NSString *secondType)
+{
+    NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
+    EXPECT_TRUE([registeredTypes containsObject:firstType]);
+    EXPECT_FALSE([registeredTypes containsObject:secondType]);
+}
+
 static void checkTypeIdentifierIsRegisteredAtIndex(DataInteractionSimulator *simulator, NSString *type, NSUInteger index)
 {
     NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
     EXPECT_GT(registeredTypes.count, index);
     EXPECT_WK_STREQ(type.UTF8String, [registeredTypes[index] UTF8String]);
+}
+
+static void checkEstimatedSize(DataInteractionSimulator *simulator, CGSize estimatedSize)
+{
+    UIItemProvider *sourceItemProvider = [simulator sourceItemProviders].firstObject;
+    EXPECT_EQ(estimatedSize.width, sourceItemProvider.estimatedDisplayedSize.width);
+    EXPECT_EQ(estimatedSize.height, sourceItemProvider.estimatedDisplayedSize.height);
 }
 
 static void checkSuggestedNameAndEstimatedSize(DataInteractionSimulator *simulator, NSString *suggestedName, CGSize estimatedSize)
@@ -166,8 +180,8 @@ TEST(DataInteractionTests, ImageToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [dataInteractionSimulator finalSelectionRects]);
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
-    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
+    checkTypeIdentifierAndIsNotOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkEstimatedSize(dataInteractionSimulator.get(), { 215, 174 });
 }
 
 TEST(DataInteractionTests, CanStartDragOnEnormousImage)
@@ -190,16 +204,14 @@ TEST(DataInteractionTests, ImageToTextarea)
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
-    NSURL *imageURL = [NSURL fileURLWithPath:[webView editorValue]];
-    EXPECT_WK_STREQ("icon.png", imageURL.lastPathComponent);
+    EXPECT_WK_STREQ("", [webView editorValue]);
 
     NSArray *observedEventNames = [dataInteractionSimulator observedEventNames];
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
-    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
+    checkTypeIdentifierAndIsNotOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkEstimatedSize(dataInteractionSimulator.get(), { 215, 174 });
 }
 
 TEST(DataInteractionTests, ImageInLinkToInput)
@@ -225,9 +237,8 @@ TEST(DataInteractionTests, ImageInLinkWithoutHREFToInput)
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
-    NSURL *imageURL = [NSURL fileURLWithPath:[webView editorValue]];
-    EXPECT_WK_STREQ("icon.png", imageURL.lastPathComponent);
-    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"icon.png", { 215, 174 });
+    EXPECT_WK_STREQ("", [webView editorValue]);
+    checkEstimatedSize(dataInteractionSimulator.get(), { 215, 174 });
     checkTypeIdentifierIsRegisteredAtIndex(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, 0);
 }
 
@@ -1003,8 +1014,8 @@ TEST(DataInteractionTests, LargeImageToTargetDiv)
     RetainPtr<DataInteractionSimulator> dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
-    checkSuggestedNameAndEstimatedSize(dataInteractionSimulator.get(), @"large-red-square.png", { 2000, 2000 });
+    checkTypeIdentifierAndIsNotOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkEstimatedSize(dataInteractionSimulator.get(), { 2000, 2000 });
 }
 
 TEST(DataInteractionTests, LinkWithEmptyHREF)
