@@ -32,6 +32,8 @@ class MediaController
         this.media = media;
         this.host = host;
 
+        this.fullscreenChangeEventType = media.webkitSupportsPresentationMode ? "webkitpresentationmodechanged" : "webkitfullscreenchange";
+
         this.hasPlayed = false;
 
         this.container = shadowRoot.appendChild(document.createElement("div"));
@@ -54,10 +56,7 @@ class MediaController
         media.videoTracks.addEventListener("addtrack", this);
         media.videoTracks.addEventListener("removetrack", this);
 
-        if (media.webkitSupportsPresentationMode)
-            media.addEventListener("webkitpresentationmodechanged", this);
-        else
-            media.addEventListener("webkitfullscreenchange", this);
+        media.addEventListener(this.fullscreenChangeEventType, this);
     }
 
     // Public

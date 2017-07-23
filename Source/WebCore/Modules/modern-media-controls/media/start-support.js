@@ -37,7 +37,7 @@ class StartSupport extends MediaControllerSupport
 
     get mediaEvents()
     {
-        return ["loadedmetadata", "play", "error", "webkitfullscreenchange"];
+        return ["loadedmetadata", "play", "error", this.mediaController.fullscreenChangeEventType];
     }
 
     buttonWasPressed(control)

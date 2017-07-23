@@ -1,5 +1,50 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219621. rdar://problem/33465059
+
+    2017-07-18  Antoine Quint  <graouts@apple.com>
+
+            [iOS] WebKit media controls are sometimes shown after exiting full screen on vimeo.com
+            https://bugs.webkit.org/show_bug.cgi?id=174627
+            <rdar://problem/33301005>
+
+            Reviewed by Dean Jackson, provisionally reviewed by Jeremy Jones.
+
+            On iOS 11, both the WebKit media controls and the Vimeo custom controls would appear sometimes when exiting
+            from fullscreen when the video was playing and the user would tap the X button, which would pause the video
+            as well as exit fullscreen.
+
+            The reason this happens is that the ControlsVisibilitySupport object, which governs whether the WebKit media
+            controls should be displayed for a given video, woud listen to "pause" and "webkitfullscreenchange" events
+            and determine whether to show the WebKit media controls. We listen to the "pause" event because when media
+            pauses, and the video has the "controls" attribute set, we should show the controls and suspend the controls
+            auto-hide timer. And we're interested in knowing when we enter and exit fullscreen because we want to override
+            the "controls" attribute not being set when we enter fullscreen.
+
+            However, on iOS 11, it appears that the "webkitfullscreenchange" event is not reliably fired as the user enters
+            and exits fullscreen, which is tracked by webkit.org/b/174626. So, when the user exits fullscreen, we would be
+            informed of the video being paused via a "pause" event, but not of the video exiting fullscreen. And because
+            media events are asynchronous, the "pause" event would sometimes be fired before we exited fullscreen, and when
+            the _updateControls() would run, we would sometimes determine that we are in fullscreen still and determine
+            that the WebKit media controls should be shown.
+
+            Of course, on iOS, the WebKit media controls are not shown and instead we delegate to AVKit to display media controls.
+            So we could simply disregard this whole logic in iOS. But we choose to instead use the "webkitpresentationmodechanged"
+            when the presentation mode API is supported, as is the case on iOS 11, to determine changes of media fullscreen state.
+            This way, should we ever choose to support fullscreen media controls provided by WebKit on iOS, this logic is already
+            correct and we write less platform-specific code.
+
+            This, alas, cannot be tested since we can't force the X button to be tapped within the AVKit fullscreen controls.
+
+            * Modules/modern-media-controls/media/controls-visibility-support.js:
+            (ControlsVisibilitySupport.prototype.get mediaEvents):
+            * Modules/modern-media-controls/media/media-controller.js:
+            (MediaController):
+            * Modules/modern-media-controls/media/start-support.js:
+            (StartSupport.prototype.get mediaEvents):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219591. rdar://problem/33464112
 
     2017-07-17  Brady Eidson  <beidson@apple.com>
