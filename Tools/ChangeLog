@@ -1,5 +1,18 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219590. rdar://problem/33465177
+
+    2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Unreviewed, fix the iOS build.
+
+            I missed a spot when renaming -synchronouslyLoadHTML: to -synchronouslyLoadHTMLString:.
+
+            * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+            (TestWebKitAPI::TEST):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219585. rdar://problem/33465177
 
     2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>
