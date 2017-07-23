@@ -1,5 +1,43 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219709. rdar://problem/33462692
+
+    2017-07-20  David Quesada  <david_quesada@apple.com>
+
+            Add SPI to notify WKNavigationDelegate about client redirects
+            https://bugs.webkit.org/show_bug.cgi?id=174680
+            rdar://problem/33184886
+
+            Reviewed by Brady Eidson.
+
+            * UIProcess/API/APINavigationClient.h:
+            (API::NavigationClient::didPerformClientRedirectForNavigation):
+            Add a new virtual method for navigation clients to implement if they want to be informed
+            when the page is initiating a navigation that is a client redirect.
+
+            * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+            Declare the new WKNavigationDelegate method -_webView:didPerformClientRedirectForNavigation:
+
+            * UIProcess/Cocoa/NavigationState.h:
+            * UIProcess/Cocoa/NavigationState.mm:
+            (WebKit::NavigationState::setNavigationDelegate):
+            (WebKit::NavigationState::NavigationClient::didPerformClientRedirectForNavigation):
+            Add a new method to NavigationState method to tell the WKNavigationDelegate when a
+            client redirect happens.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didPerformClientRedirectForLoadForFrame):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            Allow the WebPageProxy to receive a message from the web process when a client redirect happens.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDidPerformClientRedirect):
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+            Send this new message to the UI process on client redirects.
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219703. rdar://problem/33462696
 
     2017-07-20  Chris Dumez  <cdumez@apple.com>

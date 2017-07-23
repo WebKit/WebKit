@@ -1,5 +1,22 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219709. rdar://problem/33462692
+
+    2017-07-20  David Quesada  <david_quesada@apple.com>
+
+            Add SPI to notify WKNavigationDelegate about client redirects
+            https://bugs.webkit.org/show_bug.cgi?id=174680
+            rdar://problem/33184886
+
+            Reviewed by Brady Eidson.
+
+            * TestWebKitAPI/Tests/WebKit2Cocoa/Navigation.mm:
+            (-[DidPerformClientRedirectNavigationDelegate _webView:didPerformClientRedirectForNavigation:]):
+            (TEST):
+            Add API test for -[id<WKNavigationDelegatePrivate> _webView:didPerformClientRedirectForNavigation:].
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219666. rdar://problem/33464328
 
     2017-07-19  Megan Gardner  <megan_gardner@apple.com>
