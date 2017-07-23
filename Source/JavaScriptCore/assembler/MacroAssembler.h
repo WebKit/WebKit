@@ -1847,7 +1847,7 @@ public:
     // MacroAssembler.
     void probe(ProbeFunction, void* arg);
 
-    void probe(std::function<void(ProbeContext*)>);
+    JS_EXPORT_PRIVATE void probe(std::function<void(ProbeContext*)>);
 #endif // ENABLE(MASM_PROBE)
 
     // Let's you print from your JIT generated code.
@@ -1869,9 +1869,9 @@ struct MacroAssembler::CPUState {
     inline uintptr_t& spr(SPRegisterID);
     inline double& fpr(FPRegisterID);
     
-    inline uintptr_t& pc();
-    inline uintptr_t& fp();
-    inline uintptr_t& sp();
+    inline void*& pc();
+    inline void*& fp();
+    inline void*& sp();
     
     uintptr_t gprs[MacroAssembler::numberOfRegisters()];
     uintptr_t sprs[MacroAssembler::numberOfSPRegisters()];
@@ -1896,14 +1896,14 @@ inline double& MacroAssembler::CPUState::fpr(FPRegisterID id)
     return fprs[id];
 }
 
-inline uintptr_t& MacroAssembler::CPUState::pc()
+inline void*& MacroAssembler::CPUState::pc()
 {
 #if CPU(X86) || CPU(X86_64)
-    return spr(X86Registers::eip);
+    return *reinterpret_cast<void**>(&spr(X86Registers::eip));
 #elif CPU(ARM64)
-    return spr(ARM64Registers::pc);
+    return *reinterpret_cast<void**>(&spr(ARM64Registers::pc));
 #elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
-    return gpr(ARMRegisters::pc);
+    return *reinterpret_cast<void**>(&gpr(ARMRegisters::pc));
 #elif CPU(MIPS)
     RELEASE_ASSERT_NOT_REACHED();
 #else
@@ -1911,31 +1911,31 @@ inline uintptr_t& MacroAssembler::CPUState::pc()
 #endif
 }
 
-inline uintptr_t& MacroAssembler::CPUState::fp()
+inline void*& MacroAssembler::CPUState::fp()
 {
 #if CPU(X86) || CPU(X86_64)
-    return gpr(X86Registers::ebp);
+    return *reinterpret_cast<void**>(&gpr(X86Registers::ebp));
 #elif CPU(ARM64)
-    return gpr(ARM64Registers::fp);
+    return *reinterpret_cast<void**>(&gpr(ARM64Registers::fp));
 #elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
-    return gpr(ARMRegisters::fp);
+    return *reinterpret_cast<void**>(&gpr(ARMRegisters::fp));
 #elif CPU(MIPS)
-    return gpr(MIPSRegisters::fp);
+    return *reinterpret_cast<void**>(&gpr(MIPSRegisters::fp));
 #else
 #error "Unsupported CPU"
 #endif
 }
 
-inline uintptr_t& MacroAssembler::CPUState::sp()
+inline void*& MacroAssembler::CPUState::sp()
 {
 #if CPU(X86) || CPU(X86_64)
-    return gpr(X86Registers::esp);
+    return *reinterpret_cast<void**>(&gpr(X86Registers::esp));
 #elif CPU(ARM64)
-    return gpr(ARM64Registers::sp);
+    return *reinterpret_cast<void**>(&gpr(ARM64Registers::sp));
 #elif CPU(ARM_THUMB2) || CPU(ARM_TRADITIONAL)
-    return gpr(ARMRegisters::sp);
+    return *reinterpret_cast<void**>(&gpr(ARMRegisters::sp));
 #elif CPU(MIPS)
-    return gpr(MIPSRegisters::sp);
+    return *reinterpret_cast<void**>(&gpr(MIPSRegisters::sp));
 #else
 #error "Unsupported CPU"
 #endif
@@ -1958,6 +1958,10 @@ struct ProbeContext {
     const char* gprName(RegisterID id) { return cpu.gprName(id); }
     const char* sprName(SPRegisterID id) { return cpu.sprName(id); }
     const char* fprName(FPRegisterID id) { return cpu.fprName(id); }
+
+    void*& pc() { return cpu.pc(); }
+    void*& fp() { return cpu.fp(); }
+    void*& sp() { return cpu.sp(); }
 };
 #endif // ENABLE(MASM_PROBE)
     

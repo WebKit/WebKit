@@ -457,8 +457,8 @@ asm (
 
 static void arm64ProbeTrampoline(ProbeContext* context)
 {
-    uintptr_t origSP = context->cpu.sp();
-    uintptr_t origPC = context->cpu.pc();
+    void* origSP = context->cpu.sp();
+    void* origPC = context->cpu.pc();
     
     context->probeFunction(context);
     

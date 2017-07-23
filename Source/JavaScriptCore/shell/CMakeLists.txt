@@ -56,6 +56,10 @@ if (TARGET jscLib)
 endif ()
 
 if (NOT WIN32)
+    set(TESTMASM_SOURCES
+        ../assembler/testmasm.cpp
+    )
+
     set(TESTB3_SOURCES
         ../b3/testb3.cpp
     )
@@ -63,6 +67,9 @@ if (NOT WIN32)
     set(TESTAIR_SOURCES
         ../b3/air/testair.cpp
     )
+
+    add_executable(testmasm ${TESTMASM_SOURCES})
+    target_link_libraries(testmasm ${JSC_LIBRARIES})
 
     add_executable(testb3 ${TESTB3_SOURCES})
     target_link_libraries(testb3 ${JSC_LIBRARIES})

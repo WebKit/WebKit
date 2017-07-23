@@ -82,8 +82,8 @@ void printAllRegisters(PrintStream& out, Context& context)
 void printPCRegister(PrintStream& out, Context& context)
 {
     auto cpu = context.probeContext.cpu;
-    intptr_t value = cpu.pc();
-    out.printf("pc:<%p %ld>", bitwise_cast<void*>(value), value);
+    void* value = cpu.pc();
+    out.printf("pc:<%p %ld>", value, bitwise_cast<intptr_t>(value));
 }
 
 void printRegisterID(PrintStream& out, Context& context)

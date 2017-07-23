@@ -1,3 +1,62 @@
+2017-07-23  Mark Lam  <mark.lam@apple.com>
+
+        Create regression tests for the JIT probe.
+        https://bugs.webkit.org/show_bug.cgi?id=174696
+        <rdar://problem/33436922>
+
+        Reviewed by Saam Barati.
+
+        The new testmasm will test the following:
+        1. the probe is able to read the value of CPU registers.
+        2. the probe is able to write the value of CPU registers.
+        3. the probe is able to preserve all CPU registers.
+        4. special case of (2): the probe is able to change the value of the stack pointer.
+        5. special case of (2): the probe is able to change the value of the program counter
+           i.e. the probe can change where the code continues executing upon returning from
+           the probe.
+
+        Currently, the x86, x86_64, and ARMv7 ports passes the test.  ARM64 does not
+        because it does not support changing the sp and pc yet.  The ARM64 probe
+        implementation will be fixed in https://bugs.webkit.org/show_bug.cgi?id=174697
+        later.
+
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::CPUState::pc):
+        (JSC::MacroAssembler::CPUState::fp):
+        (JSC::MacroAssembler::CPUState::sp):
+        (JSC::ProbeContext::pc):
+        (JSC::ProbeContext::fp):
+        (JSC::ProbeContext::sp):
+        * assembler/MacroAssemblerARM64.cpp:
+        (JSC::arm64ProbeTrampoline):
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printPCRegister):
+        * assembler/testmasm.cpp: Added.
+        (hiddenTruthBecauseNoReturnIsStupid):
+        (usage):
+        (JSC::nextID):
+        (JSC::isPC):
+        (JSC::isSP):
+        (JSC::isFP):
+        (JSC::compile):
+        (JSC::invoke):
+        (JSC::compileAndRun):
+        (JSC::testSimple):
+        (JSC::testProbeReadsArgumentRegisters):
+        (JSC::testProbeWritesArgumentRegisters):
+        (JSC::testFunctionToTrashRegisters):
+        (JSC::testProbePreservesGPRS):
+        (JSC::testProbeModifiesStackPointer):
+        (JSC::testProbeModifiesProgramCounter):
+        (JSC::run):
+        (run):
+        (main):
+        * b3/air/testair.cpp:
+        (usage):
+        * shell/CMakeLists.txt:
+
 2017-07-14  Filip Pizlo  <fpizlo@apple.com>
 
         It should be easy to decide how WebKit yields

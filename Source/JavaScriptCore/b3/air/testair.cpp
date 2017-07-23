@@ -51,7 +51,7 @@ static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
 
 static void usage()
 {
-    dataLog("Usage: testb3 [<filter>]\n");
+    dataLog("Usage: testair [<filter>]\n");
     if (hiddenTruthBecauseNoReturnIsStupid())
         exit(1);
 }
@@ -2029,7 +2029,7 @@ void run(const char* filter)
     for (unsigned i = filter ? 1 : WTF::numberOfProcessorCores(); i--;) {
         threads.append(
             Thread::create(
-                "testb3 thread",
+                "testair thread",
                 [&] () {
                     for (;;) {
                         RefPtr<SharedTask<void()>> task;
