@@ -148,8 +148,11 @@ void LegacyCustomProtocolManagerClient::stopLoading(LegacyCustomProtocolManagerP
 
 void LegacyCustomProtocolManagerClient::invalidate(LegacyCustomProtocolManagerProxy&)
 {
-    for (auto& loader : m_loaderMap)
-        [loader.value customProtocolManagerProxyDestroyed];
+    while (!m_loaderMap.isEmpty()) {
+        auto loader = m_loaderMap.take(m_loaderMap.begin()->key);
+        ASSERT(loader);
+        [loader customProtocolManagerProxyDestroyed];
+    }
 }
 
 } // namespace WebKit

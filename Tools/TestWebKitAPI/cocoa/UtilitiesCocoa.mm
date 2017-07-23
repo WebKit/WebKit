@@ -35,6 +35,12 @@ void run(bool* done)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
 }
 
+void spinRunLoop(uint64_t count)
+{
+    for (uint64_t i = 0; i < count; ++i)
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
+}
+
 void sleep(double seconds)
 {
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:seconds]];

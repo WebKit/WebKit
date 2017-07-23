@@ -105,6 +105,40 @@ static WKProcessGroup *processGroup()
 
 @end
 
+@interface ProcessPoolDestroyedDuringLoadingProtocol : TestProtocol
+-(void)finishTheLoad;
+@end
+
+static bool isDone;
+static RetainPtr<ProcessPoolDestroyedDuringLoadingProtocol> processPoolProtocolInstance;
+
+@implementation ProcessPoolDestroyedDuringLoadingProtocol
+
+- (void)startLoading
+{
+    NSURL *requestURL = self.request.URL;
+    NSData *data = [@"PASS" dataUsingEncoding:NSASCIIStringEncoding];
+    RetainPtr<NSURLResponse> response = adoptNS([[NSURLResponse alloc] initWithURL:requestURL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil]);
+
+    [self.client URLProtocol:self didReceiveResponse:response.get() cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+    [self.client URLProtocol:self didLoadData:data];
+    
+    processPoolProtocolInstance = self;
+    isDone = true;
+}
+
+- (void)finishTheLoad
+{
+    [self.client URLProtocolDidFinishLoading:self];
+}
+
+- (void)stopLoading
+{
+    isDone = true;
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 static void runTest()
@@ -130,6 +164,38 @@ TEST(WebKit2CustomProtocolsTest, CloseDuringCustomProtocolLoad)
     [CloseWhileStartingProtocol registerWithScheme:@"http"];
     runTest();
     [CloseWhileStartingProtocol unregister];
+}
+
+TEST(WebKit2CustomProtocolsTest, ProcessPoolDestroyedDuringLoading)
+{
+    [ProcessPoolDestroyedDuringLoadingProtocol registerWithScheme:@"custom"];
+
+    auto autoreleasePool = adoptNS([[NSAutoreleasePool alloc] init]);
+    auto browsingContextGroup = adoptNS([[WKBrowsingContextGroup alloc] initWithIdentifier:@"TestIdentifier"]);
+    auto processGroup = adoptNS([[WKProcessGroup alloc] init]);
+    auto wkView = adoptNS([[WKView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) processGroup:processGroup.get() browsingContextGroup:browsingContextGroup.get()]);
+    
+    [[wkView browsingContextController] loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"custom:///test"]]];
+
+    Util::run(&isDone);
+    isDone = false;
+
+    processGroup = nil;
+    wkView = nil;
+    browsingContextGroup = nil;
+    autoreleasePool = nil;
+
+    ASSERT(processPoolProtocolInstance);
+    [processPoolProtocolInstance finishTheLoad];
+    
+    // isDone might already be true if the protocol has already been told to stopLoading.
+    if (!isDone)
+        Util::run(&isDone);
+    
+    // To crash reliably we need to spin the runloop a few times after the custom protocol has completed.
+    Util::spinRunLoop(10);
+
+    [ProcessPoolDestroyedDuringLoadingProtocol unregister];
 }
 
 } // namespace TestWebKitAPI

@@ -1,5 +1,27 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219664. rdar://problem/33464115
+
+    2017-07-19  Brady Eidson  <beidson@apple.com>
+
+            iBooks sometimes crashes when closing a book.
+            <rdar://problem/31180331> and https://bugs.webkit.org/show_bug.cgi?id=174658
+
+            Reviewed by Oliver Hunt.
+
+            * TestWebKitAPI/Tests/WebKit2ObjC/CustomProtocolsTest.mm:
+            (-[ProcessPoolDestroyedDuringLoadingProtocol startLoading]):
+            (-[ProcessPoolDestroyedDuringLoadingProtocol finishTheLoad]):
+            (-[ProcessPoolDestroyedDuringLoadingProtocol stopLoading]):
+            (TestWebKitAPI::TEST):
+
+            Add a "spin the runloop X number of times" utility:
+            * TestWebKitAPI/Utilities.h:
+            * TestWebKitAPI/cocoa/UtilitiesCocoa.mm:
+            (TestWebKitAPI::Util::spinRunLoop):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219590. rdar://problem/33465177
 
     2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>

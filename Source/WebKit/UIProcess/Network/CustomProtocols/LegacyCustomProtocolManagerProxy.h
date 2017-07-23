@@ -45,18 +45,17 @@ class ResourceResponse;
 
 namespace WebKit {
 
-class ChildProcessProxy;
-class WebProcessPool;
+class NetworkProcessProxy;
 
 class LegacyCustomProtocolManagerProxy : public IPC::MessageReceiver {
 public:
-    LegacyCustomProtocolManagerProxy(ChildProcessProxy*, WebProcessPool&);
+    LegacyCustomProtocolManagerProxy(NetworkProcessProxy&);
     ~LegacyCustomProtocolManagerProxy();
 
     void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
     void stopLoading(uint64_t customProtocolID);
 
-    void processDidClose();
+    void invalidate();
 
     void wasRedirectedToRequest(uint64_t customProtocolID, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void didReceiveResponse(uint64_t customProtocolID, const WebCore::ResourceResponse&, uint32_t cacheStoragePolicy);
@@ -68,8 +67,7 @@ private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
-    ChildProcessProxy* m_childProcessProxy;
-    WebProcessPool& m_processPool;
+    NetworkProcessProxy& m_networkProcessProxy;
 
 #if PLATFORM(COCOA)
     typedef HashMap<uint64_t, RetainPtr<WKCustomProtocolLoader>> LoaderMap;
