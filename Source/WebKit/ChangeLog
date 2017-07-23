@@ -1,5 +1,24 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219588. rdar://problem/33464447
+
+    2017-07-17  Chris Dumez  <cdumez@apple.com>
+
+            UserMediaPermissionRequestManagerProxy should not use WebCore::Timer
+            https://bugs.webkit.org/show_bug.cgi?id=174599
+            <rdar://problem/33362600>
+
+            Reviewed by Tim Horton.
+
+            UserMediaPermissionRequestManagerProxy should not use WebCore::Timer since it runs in the
+            UIProcess. Switch to using RunLoop::Timer instead.
+
+            * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+            (WebKit::UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy):
+            * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219585. rdar://problem/33465177
 
     2017-07-17  Wenson Hsieh  <wenson_hsieh@apple.com>

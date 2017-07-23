@@ -42,7 +42,7 @@ namespace WebKit {
 
 UserMediaPermissionRequestManagerProxy::UserMediaPermissionRequestManagerProxy(WebPageProxy& page)
     : m_page(page)
-    , m_rejectionTimer(*this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
+    , m_rejectionTimer(RunLoop::main(), this, &UserMediaPermissionRequestManagerProxy::rejectionTimerFired)
 {
 #if ENABLE(MEDIA_STREAM)
     UserMediaProcessManager::singleton().addUserMediaPermissionRequestManagerProxy(*this);
