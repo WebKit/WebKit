@@ -1,5 +1,26 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219661. rdar://problem/33465132
+
+    2017-07-19  Nan Wang  <n_wang@apple.com>
+
+            AX: Web page reloaded when a node is labelling multiple childnodes
+            https://bugs.webkit.org/show_bug.cgi?id=174655
+
+            Reviewed by Chris Fleizach.
+
+            When we are asking for the aria-labelledby attribute of a node and its
+            sibling is also labelled by the same node, we get into an infinite loop
+            in textUnderElement since we only ignore one child. Added checks for
+            siblings to avoid such loop.
+
+            Test: accessibility/mac/aria-labelledby-multiple-child-crash.html
+
+            * accessibility/AccessibilityNodeObject.cpp:
+            (WebCore::AccessibilityNodeObject::textUnderElement):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219645. rdar://problem/33464440
 
     2017-07-18  Zalan Bujtas  <zalan@apple.com>
