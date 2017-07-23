@@ -38,7 +38,7 @@ class Slider extends LayoutNode
         this._container.children = [this._track, this._primaryFill, this._secondaryFill, this._knob];
 
         this._input = new LayoutNode(`<input type="range" min="0" max="1" step="0.001" />`);
-        this._input.element.addEventListener("mousedown", this);
+        this._input.element.addEventListener(GestureRecognizer.SupportsTouches ? "touchstart" : "mousedown", this);
         this._input.element.addEventListener("input", this);
         this._input.element.addEventListener("change", this);
 
@@ -112,8 +112,14 @@ class Slider extends LayoutNode
         case "mousedown":
             this._handleMousedownEvent();
             break;
+        case "touchstart":
+            this._handleTouchstartEvent(event);
+            break;
         case "mouseup":
             this._handleMouseupEvent();
+            break;
+        case "touchend":
+            this._handleTouchendEvent(event);
             break;
         case "change":
         case "input":
@@ -154,9 +160,37 @@ class Slider extends LayoutNode
 
     _handleMousedownEvent()
     {
-        const mediaControls = this.parentOfType(MediaControls);
-        this._mouseupTarget = (!mediaControls || mediaControls instanceof MacOSInlineMediaControls) ? window : mediaControls.element;
+        this._mouseupTarget = this._interactionEndTarget();
         this._mouseupTarget.addEventListener("mouseup", this, true);
+
+        this._valueWillStartChanging();
+    }
+
+    _interactionEndTarget()
+    {
+        const mediaControls = this.parentOfType(MediaControls);
+        return (!mediaControls || mediaControls instanceof MacOSInlineMediaControls) ? window : mediaControls.element;
+    }
+
+    _handleTouchstartEvent(event)
+    {
+        // We're only interested in the very first touch on the <input>.
+        if (event.touches.length !== 1)
+            return;
+
+        this._initialTouchIdentifier = event.touches[0].identifier;
+
+        this._touchendTarget = this._interactionEndTarget();
+        this._touchendTarget.addEventListener("touchend", this, true);
+
+        this._valueWillStartChanging();
+    }
+
+    _valueWillStartChanging()
+    {
+        // We should no longer cache the value since we'll be interacting with the <input>
+        // so the value should be read back from it dynamically.
+        delete this._value;
 
         if (this.uiDelegate && typeof this.uiDelegate.controlValueWillStartChanging === "function")
             this.uiDelegate.controlValueWillStartChanging(this);
@@ -172,16 +206,33 @@ class Slider extends LayoutNode
         this.needsLayout = true;
     }
 
-    _handleMouseupEvent()
+    _valueDidStopChanging()
     {
-        this._mouseupTarget.removeEventListener("mouseup", this, true);
-        delete this._mouseupTarget;
-
         this.isActive = false;
         if (this.uiDelegate && typeof this.uiDelegate.controlValueDidStopChanging === "function")
             this.uiDelegate.controlValueDidStopChanging(this);
 
         this.needsLayout = true;
+    }
+
+    _handleMouseupEvent()
+    {
+        this._mouseupTarget.removeEventListener("mouseup", this, true);
+        delete this._mouseupTarget;
+
+        this._valueDidStopChanging();
+    }
+
+    _handleTouchendEvent(event)
+    {
+        if (!Array.from(event.changedTouches).find(touch => touch.identifier === this._initialTouchIdentifier))
+            return;
+
+        this._touchendTarget.removeEventListener("touchend", this, true);
+        delete this._touchendTarget;
+        delete this._initialTouchIdentifier;
+
+        this._valueDidStopChanging();
     }
 
 }

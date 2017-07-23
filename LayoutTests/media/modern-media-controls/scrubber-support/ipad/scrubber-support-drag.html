@@ -7,13 +7,10 @@
         position: absolute;
         top: 0;
         left: 0;
-    }
-
-    video {
         width: 720px;
         height: 240px;
     }
-    
+
 </style>
 <video src="../../../content/test.mp4" autoplay controls></video>
 <div id="host"></div>
@@ -26,50 +23,38 @@ description("Testing the <code>ScrubberSupport</code> behavior when dragging the
 const container = document.querySelector("div#host");
 const media = document.querySelector("video");
 const mediaController = createControls(container, media, null);
+let bounds;
 
-let numberOfEvents = 0;
-scheduler.frameDidFire = function() {
-    if (media.paused)
-        return;
-
+media.addEventListener("play", () => {
     media.pause();
+    if (isNaN(media.duration))
+        media.addEventListener("durationchange", runTest);
+    else
+        runTest();
+});
 
-    const input = mediaController.controls.timeControl.scrubber.children[1].element;
-    const bounds = input.getBoundingClientRect();
+function runTest()
+{
+    shouldBecomeDifferent("mediaController.controls.timeControl.elapsedTimeLabel.element.getBoundingClientRect().width", "0", () => {
+        const bounds = mediaController.controls.timeControl.scrubber.children[1].element.getBoundingClientRect();
+        const minX = bounds.left + 12;
+        const dragStartX = minX;
+        const dragEndX = minX + bounds.width / 2;
+        const centerY = bounds.top + bounds.height / 2;
 
-    if (bounds.width === 0)
-        return;
+        testRunner.runUIScript(`
+            uiController.dragFromPointToPoint(${dragStartX}, ${centerY}, ${dragEndX}, ${centerY}, 0.15, function() {
+                uiController.uiScriptComplete("Done");
+            });`);
 
-    media.addEventListener("timeupdate", () => {
-        numberOfEvents++;
-
-        debug("timeupdate event with media.currentTime = " + media.currentTime);
+        shouldBecomeEqual("media.currentTime", "3.1872", () => {
+            debug("");
+            media.remove();
+            container.remove();
+            finishJSTest();
+        });
     });
-
-    const minX = bounds.left + 7;
-    const dragStartX = minX;
-    const dragEndX = minX + bounds.width / 2;
-    const centerY = bounds.top + bounds.height / 2;
-
-    const point = document.body.appendChild(document.createElement("div"));
-    point.style.left = minX + "px";
-    point.style.top = centerY + "px";
-    point.style.width = "1px";
-    point.style.height = "1px";
-    point.style.position = "absolute";
-    point.style.backgroundColor = "red";
-
-    debug(`
-        uiController.dragFromPointToPoint(${dragStartX}, ${centerY}, ${dragEndX}, ${centerY}, 0.15, function() {
-            uiController.uiScriptComplete("Done");
-        });`);
-    testRunner.runUIScript(`
-        uiController.dragFromPointToPoint(${dragStartX}, ${centerY}, ${dragEndX}, ${centerY}, 0.15, function() {
-            uiController.uiScriptComplete("Done");
-        });`);
-
-    scheduler.frameDidFire = null;
-};
+}
 
 </script>
 <script src="../../../../resources/js-test-post.js"></script>
