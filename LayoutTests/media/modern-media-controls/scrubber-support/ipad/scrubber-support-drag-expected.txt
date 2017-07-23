@@ -3,7 +3,9 @@ Testing the ScrubberSupport behavior when dragging the scrubber.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL media.currentTime should be within 0.01 of 3.0136. Was 0.
+PASS mediaController.controls.timeControl.elapsedTimeLabel.element.getBoundingClientRect().width became different from 0
+PASS media.currentTime became 3.1872
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

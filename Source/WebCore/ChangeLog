@@ -1,5 +1,49 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219662. rdar://problem/33464110
+
+    2017-07-19  Antoine Quint  <graouts@apple.com>
+
+            [iOS] REGRESSION: Scrubbing media using built-in controls does not pause media
+            https://bugs.webkit.org/show_bug.cgi?id=174650
+            <rdar://problem/33401877>
+
+            Reviewed by Dean Jackson.
+
+            We would only pause when scrubbing on macOS because we only listened to "mousedown" events on the
+            scrubber's backing <input> element to identify that the user had started interacting with the
+            scrubber.
+
+            Implementing the same technique on iOS required a little more work than just listening to "touchstart"
+            events on the same element. On top of that, we needed to make sure that we would only respond to
+            "touchstart" events on the slider's thumb, and not on the track, since only on macOS should the user
+            be able to click anywhere on the track to scrub. So we turn off pointer-events for the <input> on iOS
+            only, and turn them back on specifically for the thumb.
+
+            There is also some finessing when dealing with touch events where we need to track the identifier of
+            the touch that started the user interaction. So we keep track of it in an ivar and wait until we get
+            a "touchend" event where the changedTouches list contains a touch with that same identifier to ensure
+            the same touch that initiates and ends the scrubbing interaction.
+
+            Finally, we fix another issue that was uncovered while turning back on the ScrubbingSupport tests
+            where we would not trash the cached _value ivar when we initiated scrubbing, which was important since
+            we would mistakenly use the pre-srubbing value during a scrub.
+
+            * Modules/modern-media-controls/controls/slider.css:
+            (.ios .slider > input):
+            (.slider > input::-webkit-slider-thumb):
+            * Modules/modern-media-controls/controls/slider.js:
+            (Slider.prototype.handleEvent):
+            (Slider.prototype._handleMousedownEvent):
+            (Slider.prototype._interactionEndTarget):
+            (Slider.prototype._handleTouchstartEvent):
+            (Slider.prototype._valueWillStartChanging):
+            (Slider.prototype._valueDidStopChanging):
+            (Slider.prototype._handleMouseupEvent):
+            (Slider.prototype._handleTouchendEvent):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219711. rdar://problem/33465715
 
     2017-07-20  Chris Dumez  <cdumez@apple.com>
