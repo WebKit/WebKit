@@ -117,6 +117,7 @@ media/modern-media-controls/placard-support/ipad [ Skip ]
 # These tests rely on fullscreen which do not use the WebKit media controls on iOS
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-parent-element.html [ Skip ]
 media/modern-media-controls/controls-visibility-support/controls-visibility-support-fullscreen-on-video.html [ Skip ]
+media/modern-media-controls/css/webkit-cursor-visibility-auto-hide.html [ Skip ]
 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Skip ]
 
 # These tests specifically test iOS-only media controls features
