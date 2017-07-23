@@ -1,5 +1,27 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219701. rdar://problem/33465715
+
+    2017-07-20  Chris Dumez  <cdumez@apple.com>
+
+            Regression(ITP): Can no longer log in on abc.go.com
+            https://bugs.webkit.org/show_bug.cgi?id=174533
+            <rdar://problem/33325881>
+
+            Reviewed by Geoffrey Garen.
+
+            Add quirk for sp.auth.adobe.com which is used for SSO by web sites such as
+            abc.go.com. This would otherwise cause adobe.com to be identified as a
+            tracker and log in on abc.go.com would break.
+
+            No new tests, tested manually on abc.go.com.
+
+            * loader/ResourceLoadObserver.cpp:
+            (WebCore::resourceNeedsSSOQuirk):
+            (WebCore::ResourceLoadObserver::logSubresourceLoading):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219683. rdar://problem/33464463
 
     2017-07-20  Brady Eidson  <beidson@apple.com>
