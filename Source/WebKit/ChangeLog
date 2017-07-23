@@ -1,5 +1,39 @@
 2017-07-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r219664. rdar://problem/33464115
+
+    2017-07-19  Brady Eidson  <beidson@apple.com>
+
+            iBooks sometimes crashes when closing a book.
+            <rdar://problem/31180331> and https://bugs.webkit.org/show_bug.cgi?id=174658
+
+            Reviewed by Oliver Hunt.
+
+            - LegacyCustomProtocolManagerProxy should not reference a WebProcessPool directly.
+            - LegacyCustomProtocolManagerProxy should invalidate in its destructor.
+
+            * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp:
+            (WebKit::LegacyCustomProtocolManagerProxy::LegacyCustomProtocolManagerProxy):
+            (WebKit::LegacyCustomProtocolManagerProxy::~LegacyCustomProtocolManagerProxy):
+            (WebKit::LegacyCustomProtocolManagerProxy::startLoading):
+            (WebKit::LegacyCustomProtocolManagerProxy::stopLoading):
+            (WebKit::LegacyCustomProtocolManagerProxy::invalidate):
+            (WebKit::LegacyCustomProtocolManagerProxy::wasRedirectedToRequest):
+            (WebKit::LegacyCustomProtocolManagerProxy::didReceiveResponse):
+            (WebKit::LegacyCustomProtocolManagerProxy::didLoadData):
+            (WebKit::LegacyCustomProtocolManagerProxy::didFailWithError):
+            (WebKit::LegacyCustomProtocolManagerProxy::didFinishLoading):
+            (WebKit::LegacyCustomProtocolManagerProxy::processDidClose): Deleted.
+            * UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.h:
+
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+            (WebKit::NetworkProcessProxy::didClose):
+            * UIProcess/Network/NetworkProcessProxy.h:
+            (WebKit::NetworkProcessProxy::processPool):
+
+2017-07-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r219588. rdar://problem/33464447
 
     2017-07-17  Chris Dumez  <cdumez@apple.com>

@@ -77,6 +77,7 @@ public:
     void setIsHoldingLockedFiles(bool);
 
     ProcessThrottler& throttler() { return m_throttler; }
+    WebProcessPool& processPool() { return m_processPool; }
 
 private:
     NetworkProcessProxy(WebProcessPool&);
