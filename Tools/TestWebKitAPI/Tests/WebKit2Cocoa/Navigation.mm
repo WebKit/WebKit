@@ -25,8 +25,8 @@
 
 #include "config.h"
 
+#import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
-#import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKWebView.h>
 #import <wtf/RetainPtr.h>
 #import "PlatformUtilities.h"
@@ -36,6 +36,7 @@
 
 static bool isDone;
 static RetainPtr<WKNavigation> currentNavigation;
+static RetainPtr<NSURL> redirectURL;
 
 @interface NavigationDelegate : NSObject <WKNavigationDelegate>
 @end
@@ -185,6 +186,42 @@ TEST(WKNavigation, DecidePolicyForPageCacheNavigation)
     TestWebKitAPI::Util::run(&isDone);
 
     ASSERT_TRUE([delegate decidedPolicyForBackForwardNavigation]);
+}
+
+@interface DidPerformClientRedirectNavigationDelegate : NSObject<WKNavigationDelegatePrivate>
+@end
+
+@implementation DidPerformClientRedirectNavigationDelegate
+- (void)_webView:(WKWebView *)webView didPerformClientRedirectForNavigation:(WKNavigation *)navigation
+{
+    isDone = true;
+    redirectURL = webView.URL;
+}
+@end
+
+TEST(WKNavigation, DidPerformClientRedirect)
+{
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    RetainPtr<DidPerformClientRedirectNavigationDelegate> delegate = adoptNS([[DidPerformClientRedirectNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cmeta%20http-equiv=%22refresh%22%20content=%220;URL=data:text/html,Page1%22%3E"]];
+
+    isDone = false;
+    redirectURL = nil;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
+
+    ASSERT_STREQ(redirectURL.get().absoluteString.UTF8String, "data:text/html,Page1");
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cscript%3Ewindow.location=%22data:text/html,Page2%22;%3C/script%3E"]];
+    isDone = false;
+    redirectURL = nil;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
+
+    ASSERT_STREQ(redirectURL.get().absoluteString.UTF8String, "data:text/html,Page2");
 }
 
 #endif

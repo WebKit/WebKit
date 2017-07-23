@@ -150,6 +150,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidFailNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailNavigation:withError:)];
 
     m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError = [delegate respondsToSelector:@selector(_webView:navigation:didFailProvisionalLoadInSubframe:withError:)];
+    m_navigationDelegateMethods.webViewDidPerformClientRedirectForNavigation = [delegate respondsToSelector:@selector(_webView:didPerformClientRedirectForNavigation:)];
     m_navigationDelegateMethods.webViewNavigationDidFinishDocumentLoad = [delegate respondsToSelector:@selector(_webView:navigationDidFinishDocumentLoad:)];
     m_navigationDelegateMethods.webViewNavigationDidSameDocumentNavigation = [delegate respondsToSelector:@selector(_webView:navigation:didSameDocumentNavigation:)];
     m_navigationDelegateMethods.webViewRenderingProgressDidChange = [delegate respondsToSelector:@selector(_webView:renderingProgressDidChange:)];
@@ -486,6 +487,23 @@ void NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNa
         wkNavigation = wrapper(*navigation);
 
     [navigationDelegate webView:m_navigationState.m_webView didReceiveServerRedirectForProvisionalNavigation:wkNavigation];
+}
+
+void NavigationState::NavigationClient::didPerformClientRedirectForNavigation(WebPageProxy& page, API::Navigation* navigation)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidPerformClientRedirectForNavigation)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
+    WKNavigation *wkNavigation = nil;
+    if (navigation)
+        wkNavigation = wrapper(*navigation);
+
+    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView didPerformClientRedirectForNavigation:wkNavigation];
 }
 
 static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, WebFrameProxy& webFrameProxy, NSError *originalError)
