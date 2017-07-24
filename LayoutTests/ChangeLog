@@ -1,3 +1,14 @@
+2017-05-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Elements should be inserted into a template element as its content's last child
+        https://bugs.webkit.org/show_bug.cgi?id=171373
+        <rdar://problem/31862949>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/dom/HTMLTemplateElement/insert-fostering-child-expected.txt: Added.
+        * fast/dom/HTMLTemplateElement/insert-fostering-child.html: Added.
+
 2017-05-15  Jiewen Tan  <jiewen_tan@apple.com>
 
         Replace CryptoOperationData with BufferSource for WebKitSubtleCrypto
