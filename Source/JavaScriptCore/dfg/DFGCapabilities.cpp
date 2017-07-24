@@ -188,6 +188,7 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_jngreatereq:
     case op_loop_hint:
     case op_watchdog:
+    case op_nop:
     case op_ret:
     case op_end:
     case op_new_object:

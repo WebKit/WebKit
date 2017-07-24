@@ -1389,6 +1389,10 @@ void CodeBlock::dumpBytecode(
             printLocationAndOp(out, exec, location, it, "watchdog");
             break;
         }
+        case op_nop: {
+            printLocationAndOp(out, exec, location, it, "nop");
+            break;
+        }
         case op_log_shadow_chicken_prologue: {
             int r0 = (++it)->u.operand;
             printLocationAndOp(out, exec, location, it, "log_shadow_chicken_prologue");

@@ -531,6 +531,7 @@ namespace JSC {
         void emit_op_jtrue(Instruction*);
         void emit_op_loop_hint(Instruction*);
         void emit_op_watchdog(Instruction*);
+        void emit_op_nop(Instruction*);
         void emit_op_lshift(Instruction*);
         void emit_op_mod(Instruction*);
         void emit_op_mov(Instruction*);

@@ -956,6 +956,10 @@ void JIT::emitSlow_op_watchdog(Instruction*, Vector<SlowCaseEntry>::iterator& it
     callOperation(operationHandleWatchdogTimer);
 }
 
+void JIT::emit_op_nop(Instruction*)
+{
+}
+
 void JIT::emit_op_new_regexp(Instruction* currentInstruction)
 {
     callOperation(operationNewRegexp, currentInstruction[1].u.operand, m_codeBlock->regexp(currentInstruction[2].u.operand));

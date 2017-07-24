@@ -1,3 +1,77 @@
+2017-05-25  Saam Barati  <sbarati@apple.com>
+
+        Our for-in optimization in the bytecode generator does its static analysis incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=172532
+        <rdar://problem/32369452>
+
+        Reviewed by Mark Lam.
+
+        Our static analysis for when a for-in induction variable
+        is written to tried to its analysis as we generate
+        bytecode. This has issues, since it does not account for
+        the dynamic execution path of the program. Let's consider
+        a program where our old analysis worked:
+        
+        ```
+        for (let p in o) {
+            o[p]; // We can transform this into a fast get_direct_pname
+            p = 20;
+            o[p]; // We cannot transform this since p has been changed.
+        }
+        ```
+        
+        However, our static analysis did not account for loops, which exist
+        in JavaScript. e.g, it would incorrectly compile this program as:
+        ```
+        for (let p in o) {
+            for (let i = 0; i < 20; ++i) {
+                o[p]; // It transforms this to use get_direct_pname even though p will be over-written if we get here from the inner loop back edge!
+                p = 20;
+                o[p]; // We correctly do not transform this.
+            } 
+        }
+        ```
+        
+        Because of this flaw, I've made the optimization more conservative.
+        We now optimistically emit code for the optimized access. However,
+        if a for-in context is *ever* invalidated, before we pop it off
+        the stack, we rewrite the program's optimized accesses to no longer
+        be optimized. To do this, each context keeps track of its optimized
+        accesses.
+        
+        This patch also adds a new bytecode, op_nop, which is just a no-op.
+        It was helpful to add this because reverting get_direct_pname to get_by_val
+        will leave us with an extra instruction word because get_direct_pname is
+        has a length of 7 where get_by_val has a length of 6. This leaves us with
+        an extra slot that we fill with an op_nop.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetByVal):
+        (JSC::BytecodeGenerator::popIndexedForInScope):
+        (JSC::BytecodeGenerator::popStructureForInScope):
+        (JSC::BytecodeGenerator::invalidateForInContextForLocal):
+        (JSC::StructureForInContext::pop):
+        (JSC::IndexedForInContext::pop):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::StructureForInContext::addGetInst):
+        (JSC::IndexedForInContext::addGetInst):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_nop):
+        * llint/LowLevelInterpreter.asm:
+
 2017-04-14  Saam Barati  <sbarati@apple.com>
 
         ParseInt intrinsic in DFG backend doesn't properly flush its operands

@@ -1573,6 +1573,10 @@ macro acquireShadowChickenPacket(slow)
 end
 
 
+_llint_op_nop:
+    dispatch(1)
+
+
 _llint_op_switch_string:
     traceExecution()
     callOpcodeSlowPath(_llint_slow_path_switch_string)

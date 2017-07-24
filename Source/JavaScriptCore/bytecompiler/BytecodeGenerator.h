@@ -221,10 +221,18 @@ namespace JSC {
         RegisterID* property() const { return m_propertyRegister.get(); }
         RegisterID* enumerator() const { return m_enumeratorRegister.get(); }
 
+        void addGetInst(unsigned instIndex, int propertyRegIndex, UnlinkedValueProfile valueProfile)
+        {
+            m_getInsts.append({ instIndex, propertyRegIndex, valueProfile });
+        }
+
+        void finalize(BytecodeGenerator&);
+
     private:
         RefPtr<RegisterID> m_indexRegister;
         RefPtr<RegisterID> m_propertyRegister;
         RefPtr<RegisterID> m_enumeratorRegister;
+        Vector<std::tuple<unsigned, int, UnlinkedValueProfile>> m_getInsts;
     };
 
     class IndexedForInContext : public ForInContext {
@@ -242,8 +250,12 @@ namespace JSC {
 
         RegisterID* index() const { return m_indexRegister.get(); }
 
+        void finalize(BytecodeGenerator&);
+        void addGetInst(unsigned instIndex, int propertyIndex) { m_getInsts.append({ instIndex, propertyIndex }); }
+
     private:
         RefPtr<RegisterID> m_indexRegister;
+        Vector<std::pair<unsigned, int>> m_getInsts;
     };
 
     struct TryData {
@@ -914,6 +926,7 @@ namespace JSC {
         void popLexicalScope(VariableEnvironmentNode*);
         void prepareLexicalScopeForNextForLoopIteration(VariableEnvironmentNode*, RegisterID* loopSymbolTable);
         int labelScopeDepth() const;
+        UnlinkedArrayProfile newArrayProfile();
 
     private:
         ParserError generate();
@@ -923,7 +936,6 @@ namespace JSC {
         void emitOpcode(OpcodeID);
         UnlinkedArrayAllocationProfile newArrayAllocationProfile();
         UnlinkedObjectAllocationProfile newObjectAllocationProfile();
-        UnlinkedArrayProfile newArrayProfile();
         UnlinkedValueProfile emitProfiledOpcode(OpcodeID);
         int kill(RegisterID* dst)
         {

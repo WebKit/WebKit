@@ -1,3 +1,16 @@
+2017-05-25  Saam Barati  <sbarati@apple.com>
+
+        Our for-in optimization in the bytecode generator does its static analysis incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=172532
+        <rdar://problem/32369452>
+
+        Reviewed by Mark Lam.
+
+        * stress/for-in-invalidation-for-any-write.js: Added.
+        (assert):
+        (test):
+        (test.i):
+
 2017-04-14  Saam Barati  <sbarati@apple.com>
 
         ParseInt intrinsic in DFG backend doesn't properly flush its operands

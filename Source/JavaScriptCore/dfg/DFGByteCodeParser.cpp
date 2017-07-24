@@ -5408,6 +5408,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(CheckWatchdogTimer);
             NEXT_OPCODE(op_watchdog); 
         }
+
+        case op_nop: {
+            addToGraph(Check); // We add a nop here so that basic block linking doesn't break.
+            NEXT_OPCODE(op_nop);
+        }
             
         case op_create_lexical_environment: {
             VirtualRegister symbolTableRegister(currentInstruction[3].u.operand);
