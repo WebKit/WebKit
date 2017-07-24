@@ -1,5 +1,11 @@
 2017-05-17  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, address mlam's review feedback.
+
+        * stress/arguments-elimination-varargs-too-many-args-arg-count.js:
+
+2017-05-17  Filip Pizlo  <fpizlo@apple.com>
+
         JSC: Incorrect LoadVarargs handling in ArgumentsEliminationPhase::transform
         https://bugs.webkit.org/show_bug.cgi?id=172208
 
