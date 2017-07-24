@@ -1,3 +1,14 @@
+2017-05-02  Zalan Bujtas  <zalan@apple.com>
+
+        Defer AX cache update when text content changes until after layout is finished.
+        https://bugs.webkit.org/show_bug.cgi?id=171429
+        <rdar://problem/31885984>
+
+        Reviewed by Simon Fraser.
+
+        * accessibility/crash-while-adding-text-child-with-transform-expected.txt: Added.
+        * accessibility/crash-while-adding-text-child-with-transform.html: Added.
+
 2017-06-17  Antti Koivisto  <antti@apple.com>
 
         Crash due to infinite recursion via FrameSelection::updateAppearanceAfterLayout

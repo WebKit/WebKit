@@ -45,6 +45,7 @@ class Node;
 class Page;
 class RenderBlock;
 class RenderObject;
+class RenderText;
 class ScrollView;
 class VisiblePosition;
 class Widget;
@@ -326,7 +327,8 @@ public:
     static void setShouldRepostNotificationsForTests(bool value);
 #endif
     void recomputeDeferredIsIgnored(RenderBlock& renderer);
-    void performDeferredIsIgnoredChange();
+    void deferTextChanged(RenderText& renderer);
+    void performDeferredCacheUpdate();
 
 protected:
     void postPlatformNotification(AccessibilityObject*, AXNotification);
@@ -428,7 +430,7 @@ private:
 
     AXTextStateChangeIntent m_textSelectionIntent;
     bool m_isSynchronizingSelection { false };
-    ListHashSet<RenderBlock*> m_deferredIsIgnoredChangeList;
+    ListHashSet<RenderObject*> m_deferredCacheUpdateList;
 };
 
 class AXAttributeCacheEnabler
@@ -491,7 +493,8 @@ inline void AXObjectCache::handleScrollbarUpdate(ScrollView*) { }
 inline void AXObjectCache::handleAttributeChanged(const QualifiedName&, Element*) { }
 inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
 inline void AXObjectCache::recomputeDeferredIsIgnored(RenderBlock&) { }
-inline void AXObjectCache::performDeferredIsIgnoredChange() { }
+inline void AXObjectCache::deferTextChanged(RenderText&) { }
+inline void AXObjectCache::performDeferredCacheUpdate() { }
 inline void AXObjectCache::handleScrolledToAnchor(const Node*) { }
 inline void AXObjectCache::postTextStateChangeNotification(Node*, const AXTextStateChangeIntent&, const VisibleSelection&) { }
 inline void AXObjectCache::postTextStateChangeNotification(Node*, AXTextEditType, const String&, const VisiblePosition&) { }

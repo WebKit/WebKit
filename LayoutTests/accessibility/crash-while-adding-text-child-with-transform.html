@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that AX can manage text content changes while inside tree mutation.</title>
+<style>
+#foobar {
+    text-transform: lowercase;
+}
+
+#foobar::first-letter {
+	margin: 1px;
+}
+</style>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    if (window.accessibilityController)
+        accessibilityController.accessibleElementById("foobar");
+</script>
+</head>
+<body>
+<div id=foobar>Pass if no crash or assert.</div><span aria-labeledby=foobar id=newParent></span><script>
+    newParent.appendChild(foobar);
+</script>
+</body>
+</html>
