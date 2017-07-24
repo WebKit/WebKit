@@ -50,6 +50,7 @@ enum SandboxFlag {
     SandboxAutomaticFeatures    = 1 << 7,
     SandboxPointerLock          = 1 << 8,
     SandboxPropagatesToAuxiliaryBrowsingContexts = 1 << 9,
+    SandboxTopNavigationByUserActivation = 1 << 10,
     SandboxAll                  = -1 // Mask with all bits set to 1.
 };
 

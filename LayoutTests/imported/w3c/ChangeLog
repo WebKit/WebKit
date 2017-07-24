@@ -1,3 +1,20 @@
+2017-07-11  Frederic Wang  <fwang@igalia.com>
+
+        Add attribute allow-top-navigation-by-user-activation to iframe sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=171327
+
+        Reviewed by Chris Dumez.
+
+        This commit updates the expectation for the test verifying that a sandboxed iframe without
+        the allow-top-navigation-by-user-activation flag set can not perform top navigation if it is
+        not triggered by a user gesture. The navigation is still prohibited but the parsing of the
+        allow-top-navigation-by-user-activation flag should not raised any error message.
+        A similar update is done for the test verifying that the combination of the flags
+        allow-top-navigation-by-user-activation and allow-top-navigation.
+
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation_by_user_activation_without_user_gesture-expected.txt: Remove the error message.
+        * web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_allow_top_navigation-3-expected.txt: Ditto.
+
 2017-07-22  Chris Dumez  <cdumez@apple.com>
 
         Merge ExceptionBase into DOMException and drop custom toString

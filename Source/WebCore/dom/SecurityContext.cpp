@@ -85,7 +85,7 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
 bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 {
     static const char* const supportedPolicies[] = {
-        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox"
+        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox", "allow-top-navigation-by-user-activation"
     };
 
     for (auto* supportedPolicy : supportedPolicies) {
@@ -123,14 +123,17 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-scripts")) {
             flags &= ~SandboxScripts;
             flags &= ~SandboxAutomaticFeatures;
-        } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation"))
+        } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation")) {
             flags &= ~SandboxTopNavigation;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups"))
+            flags &= ~SandboxTopNavigationByUserActivation;
+        } else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups"))
             flags &= ~SandboxPopups;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-pointer-lock"))
             flags &= ~SandboxPointerLock;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-popups-to-escape-sandbox"))
             flags &= ~SandboxPropagatesToAuxiliaryBrowsingContexts;
+        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-top-navigation-by-user-activation"))
+            flags &= ~SandboxTopNavigationByUserActivation;
         else {
             if (numberOfTokenErrors)
                 tokenErrors.appendLiteral(", '");

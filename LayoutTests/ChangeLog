@@ -1,3 +1,32 @@
+2017-07-11  Frederic Wang  <fwang@igalia.com>
+
+        Add attribute allow-top-navigation-by-user-activation to iframe sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=171327
+
+        Reviewed by Chris Dumez.
+
+        This patch adds tests to verify that a sandboxed iframe with the flag
+        'allow-top-navigation-by-user-activation' or 'allow-top-navigation' can navigate the top
+        level page, if navigation is triggered by a user gesture. This is based on a test from the
+        Chromium repository.
+        It also verifies that navigation fails when 'allow-top-navigation-by-user-activation' is
+        absent, even when it is triggered by a user gesture.
+
+        * http/tests/security/frameNavigation/resources/iframe-that-performs-parent-navigation-with-user-activation.html: Added. This is similar to iframe-that-performs-parent-navigation.html but it
+        performs navigation of its parent using user activation.
+        * http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-1.html: Added.
+        Test top navigation for a sandboxed frame with 'allow-top-navigation-by-user-activation'
+        * http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-1-expected.txt: Added.
+        Add PASS expectation.
+        * http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-2.html: Added.
+        Test top navigation for a sandboxed frame with 'allow-top-navigation'.
+        * http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-2-expected.txt: Added.
+        Add PASS expectation.
+        * http/tests/security/frameNavigation/sandbox-DENIED-top-navigation-with-user-gesture.html: Added.
+        Test user-triggered navigation for a sandboxed frame without 'allow-top-navigation-by-user-activation'.
+        * http/tests/security/frameNavigation/sandbox-DENIED-top-navigation-with-user-gesture-expected.txt: Added.
+        Add reference with navigation failure.
+
 2017-07-22  Chris Dumez  <cdumez@apple.com>
 
         Merge ExceptionBase into DOMException and drop custom toString

@@ -186,6 +186,7 @@
 #include "TextNodeTraversal.h"
 #include "TransformSource.h"
 #include "TreeWalker.h"
+#include "UserGestureIndicator.h"
 #include "ValidationMessageClient.h"
 #include "VisibilityChangeClient.h"
 #include "VisitedLinkState.h"
@@ -3093,14 +3094,17 @@ bool Document::canNavigate(Frame* targetFrame)
     if (!targetFrame)
         return true;
 
-    // Cases (i) and (ii) pass the tests from the specifications but might not pass the "security origin" tests.
-    // Hence they are kept for backward compatibility.
+    // Cases (i), (ii) and (iii) pass the tests from the specifications but might not pass the "security origin" tests.
 
     // i. A frame can navigate its top ancestor when its 'allow-top-navigation' flag is set (sometimes known as 'frame-busting').
     if (!isSandboxed(SandboxTopNavigation) && targetFrame == &m_frame->tree().top())
         return true;
 
-    // ii. A sandboxed frame can always navigate its descendants.
+    // ii. A frame can navigate its top ancestor when its 'allow-top-navigation-by-user-activation' flag is set and navigation is triggered by user activation.
+    if (!isSandboxed(SandboxTopNavigationByUserActivation) && UserGestureIndicator::processingUserGesture() && targetFrame == &m_frame->tree().top())
+        return true;
+
+    // iii. A sandboxed frame can always navigate its descendants.
     if (isSandboxed(SandboxNavigation) && targetFrame->tree().isDescendantOf(m_frame))
         return true;
 
@@ -3112,11 +3116,19 @@ bool Document::canNavigate(Frame* targetFrame)
         return false;
     }
 
-    // 2. Otherwise, if B is a top-level browsing context, and is one of the ancestor browsing contexts of A, and A's active document's active sandboxing flag set has its sandboxed
-    // top-level navigation browsing context flag set, then abort these steps negatively.
-    if (m_frame != targetFrame && targetFrame == &m_frame->tree().top() && isSandboxed(SandboxTopNavigation)) {
-        printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set."));
-        return false;
+    // 2. Otherwise, if B is a top-level browsing context, and is one of the ancestor browsing contexts of A, then:
+    if (m_frame != targetFrame && targetFrame == &m_frame->tree().top()) {
+        bool triggeredByUserActivation = UserGestureIndicator::processingUserGesture();
+        // 1. If this algorithm is triggered by user activation and A's active document's active sandboxing flag set has its sandboxed top-level navigation with user activation browsing context flag set, then abort these steps negatively.
+        if (triggeredByUserActivation && isSandboxed(SandboxTopNavigationByUserActivation)) {
+            printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation-by-user-activation' flag is not set and navigation is not triggered by user activation."));
+            return false;
+        }
+        // 2. Otherwise, If this algorithm is not triggered by user activation and A's active document's active sandboxing flag set has its sandboxed top-level navigation without user activation browsing context flag set, then abort these steps negatively.
+        if (!triggeredByUserActivation && isSandboxed(SandboxTopNavigation)) {
+            printNavigationErrorMessage(targetFrame, url(), ASCIILiteral("The frame attempting navigation of the top-level window is sandboxed, but the 'allow-top-navigation' flag is not set."));
+            return false;
+        }
     }
 
     // 3. Otherwise, if B is a top-level browsing context, and is neither A nor one of the ancestor browsing contexts of A, and A's Document's active sandboxing flag set has its
