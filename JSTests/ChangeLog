@@ -1,3 +1,13 @@
+2017-04-20  Mark Lam  <mark.lam@apple.com>
+
+        virtualThunkFor() needs to materialize its of tagMaskRegister for tail calls.
+        https://bugs.webkit.org/show_bug.cgi?id=171079
+        <rdar://problem/31684756>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-171079.js: Added.
+
 2017-05-05  Saam Barati  <sbarati@apple.com>
 
         putDirectIndex does not properly do defineOwnProperty

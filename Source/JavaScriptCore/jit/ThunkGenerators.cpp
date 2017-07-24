@@ -183,9 +183,16 @@ MacroAssemblerCodeRef virtualThunkFor(VM* vm, CallLinkInfo& callLinkInfo)
     // the DFG knows that the value is definitely a cell, or definitely a function.
     
 #if USE(JSVALUE64)
+    GPRReg tagMaskRegister = GPRInfo::tagMaskRegister;
+    if (callLinkInfo.isTailCall()) {
+        // Tail calls could have clobbered the GPRInfo::tagMaskRegister because they
+        // restore callee saved registers before getthing here. So, let's materialize
+        // the TagMask in a temp register and use the temp instead.
+        tagMaskRegister = GPRInfo::regT4;
+        jit.move(CCallHelpers::TrustedImm64(TagMask), tagMaskRegister);
+    }
     slowCase.append(
-        jit.branchTest64(
-            CCallHelpers::NonZero, GPRInfo::regT0, GPRInfo::tagMaskRegister));
+        jit.branchTest64(CCallHelpers::NonZero, GPRInfo::regT0, tagMaskRegister));
 #else
     slowCase.append(
         jit.branch32(
