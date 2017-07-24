@@ -1,3 +1,45 @@
+2017-07-24  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219665.
+
+    2017-07-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Setting the minimum font size preference doesn’t affect absolute line-height values, so lines overlap
+            https://bugs.webkit.org/show_bug.cgi?id=174406
+            <rdar://problem/10139227>
+
+            Reviewed by Simon Fraser.
+
+            * fast/text/line-height-minimumFontSize-autosize-expected.text: Added.
+            * fast/text/line-height-minimumFontSize-autosize.html: Added.
+            * fast/text/line-height-minimumFontSize-expected.txt: Added.
+            * fast/text/line-height-minimumFontSize-text-zoom-expected.html: Added.
+            * fast/text/line-height-minimumFontSize-text-zoom.html: Added.
+            * fast/text/line-height-minimumFontSize-visual-expected.html: Added.
+            * fast/text/line-height-minimumFontSize-visual.html: Added.
+            * fast/text/line-height-minimumFontSize-zoom-expected.html: Added.
+            * fast/text/line-height-minimumFontSize-zoom.html: Added.
+            * fast/text/line-height-minimumFontSize.html: Added.
+
+2017-07-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Setting the minimum font size preference doesn’t affect absolute line-height values, so lines overlap
+        https://bugs.webkit.org/show_bug.cgi?id=174406
+        <rdar://problem/10139227>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/line-height-minimumFontSize-autosize-expected.text: Added.
+        * fast/text/line-height-minimumFontSize-autosize.html: Added.
+        * fast/text/line-height-minimumFontSize-expected.txt: Added.
+        * fast/text/line-height-minimumFontSize-text-zoom-expected.html: Added.
+        * fast/text/line-height-minimumFontSize-text-zoom.html: Added.
+        * fast/text/line-height-minimumFontSize-visual-expected.html: Added.
+        * fast/text/line-height-minimumFontSize-visual.html: Added.
+        * fast/text/line-height-minimumFontSize-zoom-expected.html: Added.
+        * fast/text/line-height-minimumFontSize-zoom.html: Added.
+        * fast/text/line-height-minimumFontSize.html: Added.
+
 2017-07-23  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219571. rdar://problem/33464710
