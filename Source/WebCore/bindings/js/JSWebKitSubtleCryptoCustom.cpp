@@ -28,6 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
+#include "BufferSource.h"
 #include "CryptoAlgorithm.h"
 #include "CryptoAlgorithmParametersDeprecated.h"
 #include "CryptoAlgorithmRegistry.h"
@@ -39,7 +40,6 @@
 #include "JSCryptoKey.h"
 #include "JSCryptoKeyPair.h"
 #include "JSCryptoKeySerializationJWK.h"
-#include "JSCryptoOperationData.h"
 #include "JSDOMPromise.h"
 #include "ScriptState.h"
 #include <runtime/Error.h>
@@ -148,7 +148,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
         return jsUndefined();
     }
 
-    auto data = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(2));
+    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(2)));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -160,7 +160,7 @@ JSValue JSWebKitSubtleCrypto::encrypt(ExecState& state)
         wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
-    auto result = algorithm->encrypt(*parameters, *key, data, WTFMove(successCallback), WTFMove(failureCallback));
+    auto result = algorithm->encrypt(*parameters, *key, { data.data(), data.length() }, WTFMove(successCallback), WTFMove(failureCallback));
     if (result.hasException()) {
         propagateException(state, scope, result.releaseException());
         return { };
@@ -193,7 +193,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
         return jsUndefined();
     }
 
-    auto data = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(2));
+    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(2)));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -205,7 +205,7 @@ JSValue JSWebKitSubtleCrypto::decrypt(ExecState& state)
         wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
-    auto result = algorithm->decrypt(*parameters, *key, data, WTFMove(successCallback), WTFMove(failureCallback));
+    auto result = algorithm->decrypt(*parameters, *key, { data.data(), data.length() }, WTFMove(successCallback), WTFMove(failureCallback));
     if (result.hasException()) {
         propagateException(state, scope, result.releaseException());
         return { };
@@ -238,7 +238,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
         return jsUndefined();
     }
 
-    auto data = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(2));
+    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(2)));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -250,7 +250,7 @@ JSValue JSWebKitSubtleCrypto::sign(ExecState& state)
         wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
-    auto result = algorithm->sign(*parameters, *key, data, WTFMove(successCallback), WTFMove(failureCallback));
+    auto result = algorithm->sign(*parameters, *key, { data.data(), data.length() }, WTFMove(successCallback), WTFMove(failureCallback));
     if (result.hasException()) {
         propagateException(state, scope, result.releaseException());
         return { };
@@ -283,10 +283,10 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
         return jsUndefined();
     }
 
-    auto signature = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(2));
+    auto signature = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(2)));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto data = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(3));
+    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(3)));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -298,7 +298,7 @@ JSValue JSWebKitSubtleCrypto::verify(ExecState& state)
         wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
-    auto result = algorithm->verify(*parameters, *key, signature, data, WTFMove(successCallback), WTFMove(failureCallback));
+    auto result = algorithm->verify(*parameters, *key, { signature.data(), signature.length() }, { data.data(), data.length() }, WTFMove(successCallback), WTFMove(failureCallback));
     if (result.hasException()) {
         propagateException(state, scope, result.releaseException());
         return { };
@@ -321,7 +321,7 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
     auto parameters = JSCryptoAlgorithmDictionary::createParametersForDigest(state, scope, algorithm->identifier(), state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto data = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(1));
+    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(1)));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<DeferredPromise> wrapper = createDeferredPromise(state, domWindow());
@@ -333,7 +333,7 @@ JSValue JSWebKitSubtleCrypto::digest(ExecState& state)
         wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
-    auto result = algorithm->digest(*parameters, data, WTFMove(successCallback), WTFMove(failureCallback));
+    auto result = algorithm->digest(*parameters, { data.data(), data.length() }, WTFMove(successCallback), WTFMove(failureCallback));
     if (result.hasException()) {
         propagateException(state, scope, result.releaseException());
         return { };
@@ -456,7 +456,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
     auto keyFormat = cryptoKeyFormatFromJSValue(state, scope, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto data = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(1));
+    auto data = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(1)));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<CryptoAlgorithm> algorithm;
@@ -487,7 +487,7 @@ JSValue JSWebKitSubtleCrypto::importKey(ExecState& state)
         wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
-    WebCore::importKey(state, keyFormat, data, WTFMove(algorithm), WTFMove(parameters), extractable, keyUsages, WTFMove(successCallback), WTFMove(failureCallback));
+    WebCore::importKey(state, keyFormat, { data.data(), data.length() }, WTFMove(algorithm), WTFMove(parameters), extractable, keyUsages, WTFMove(successCallback), WTFMove(failureCallback));
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     return promise;
@@ -625,7 +625,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
     auto keyFormat = cryptoKeyFormatFromJSValue(state, scope, state.uncheckedArgument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto wrappedKeyData = cryptoOperationDataFromJSValue(state, scope, state.uncheckedArgument(1));
+    auto wrappedKeyData = BufferSource(convert<IDLBufferSource>(state, state.uncheckedArgument(1)));
     RETURN_IF_EXCEPTION(scope, { });
 
     RefPtr<CryptoKey> unwrappingKey = JSCryptoKey::toWrapped(vm, state.uncheckedArgument(2));
@@ -691,7 +691,7 @@ JSValue JSWebKitSubtleCrypto::unwrapKey(ExecState& state)
         wrapper->reject(); // FIXME: This should reject with an Exception.
     };
 
-    auto result = unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, wrappedKeyData, WTFMove(decryptSuccessCallback), WTFMove(decryptFailureCallback));
+    auto result = unwrapAlgorithm->decryptForUnwrapKey(*unwrapAlgorithmParameters, *unwrappingKey, { wrappedKeyData.data(), wrappedKeyData.length() }, WTFMove(decryptSuccessCallback), WTFMove(decryptFailureCallback));
     if (result.hasException()) {
         propagateException(state, scope, result.releaseException());
         return { };

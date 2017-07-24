@@ -1,3 +1,15 @@
+2017-05-15  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Replace CryptoOperationData with BufferSource for WebKitSubtleCrypto
+        https://bugs.webkit.org/show_bug.cgi?id=172146
+        <rdar://problem/32122256>
+
+        Reviewed by Brent Fulgham.
+
+        * crypto/webkitSubtle/argument-conversion-expected.txt:
+        * crypto/webkitSubtle/import-export-raw-key-leak-expected.txt: Added.
+        * crypto/webkitSubtle/import-export-raw-key-leak.html: Added.
+
 2017-05-11  Zalan Bujtas  <zalan@apple.com>
 
         AX: Defer text changes until after the tree is clean if needed.

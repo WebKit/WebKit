@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 44: WebKitSubtleCrypto is deprecated. Please use SubtleCrypto instead.
+Sending Worker Message
+Worker Terminated
+PASS exportedKey.byteLength is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
