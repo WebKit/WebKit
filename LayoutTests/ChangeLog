@@ -1,3 +1,9 @@
+2017-07-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline this test. The previous result was generated using an older iOS SDK.
+
+        * fast/events/ios/no-touch-events-when-stopping-momentum-scroll-in-mainframe-expected.txt:
+
 2017-07-24  Per Arne Vollan  <pvollan@apple.com>
 
         Mark Skia font test as image only failure on Windows.
