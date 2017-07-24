@@ -28,7 +28,6 @@
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WallTime.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -63,9 +62,6 @@ private:
     void excludeFromBackup() const;
     void refreshMemoryStoreFromDisk();
 
-    WeakPtr<ResourceLoadStatisticsPersistentStorage> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
-
-    WeakPtrFactory<ResourceLoadStatisticsPersistentStorage> m_weakPtrFactory;
     WebResourceLoadStatisticsStore& m_memoryStore;
     const String m_storageDirectoryPath;
     std::unique_ptr<WebCore::FileMonitor> m_fileMonitor;

@@ -83,8 +83,7 @@ static std::unique_ptr<KeyedDecoder> createDecoderForFile(const String& path)
 }
 
 ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage(WebResourceLoadStatisticsStore& store, const String& storageDirectoryPath)
-    : m_weakPtrFactory(this)
-    , m_memoryStore(store)
+    : m_memoryStore(store)
     , m_storageDirectoryPath(storageDirectoryPath)
 {
 }
@@ -281,10 +280,8 @@ void ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore()
         if (!m_hasPendingWrite) {
             m_hasPendingWrite = true;
             Seconds delay = minimumWriteInterval - timeSinceLastWrite + 1_s;
-            // WorkQueue::dispatchAfter() keeps the WorkQueue alive so the dispatched lambda may get executed after the store has been destroyed.
-            m_memoryStore.statisticsQueue().dispatchAfter(delay, [weakThis = createWeakPtr()] () mutable {
-                if (weakThis)
-                    weakThis->writeMemoryStoreToDisk();
+            m_memoryStore.statisticsQueue().dispatchAfter(delay, [this] () mutable {
+                writeMemoryStoreToDisk();
             });
         }
         return;

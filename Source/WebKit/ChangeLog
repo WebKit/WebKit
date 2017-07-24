@@ -1,3 +1,16 @@
+2017-07-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r219828.
+
+        Causes debug assertions to be hit on iOS
+
+        Reverted changeset:
+
+        "Fix lifetime management issue in
+        ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore()"
+        https://bugs.webkit.org/show_bug.cgi?id=174790
+        http://trac.webkit.org/changeset/219828
+
 2017-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK][WPE] Stop using AutodrainedPool in IconDatabase
