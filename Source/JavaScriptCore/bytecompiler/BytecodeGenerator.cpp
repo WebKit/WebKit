@@ -4994,9 +4994,9 @@ void StructureForInContext::finalize(BytecodeGenerator& generator)
         // 3. property gets switched to the original property.
         generator.instructions()[instIndex + 3].u.operand = propertyRegIndex;
         // 4. add an array profile.
-        generator.instructions()[instIndex + 4].u.index = generator.newArrayProfile();
+        generator.instructions()[instIndex + 4].u.operand = generator.newArrayProfile();
         // 5. set the result value profile.
-        generator.instructions()[instIndex + 5].u.index = valueProfile;
+        generator.instructions()[instIndex + 5].u.operand = valueProfile;
         // 6. nop out the last instruction word.
         generator.instructions()[instIndex + 6].u.opcode = op_nop;
     }
