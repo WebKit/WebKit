@@ -722,7 +722,7 @@ webkit.org/b/172397 [ Sierra Debug ] animations/needs-layout.html [ Pass ImageOn
 # Currently only tests with click, not tap.
 http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Pass ]
 
-webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Pass Timout ]
+webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Pass Timeout ]
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Pass Timeout ]
 
 webkit.org/b/172148 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html [ Pass Failure ]
