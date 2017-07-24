@@ -32,6 +32,7 @@
 #include "InitializeThreading.h"
 #include "LinkBuffer.h"
 #include <wtf/Compiler.h>
+#include <wtf/DataLog.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Threading.h>
