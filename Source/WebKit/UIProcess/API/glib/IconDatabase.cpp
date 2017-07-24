@@ -35,7 +35,6 @@
 #include <WebCore/SQLiteTransaction.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/URL.h>
-#include <wtf/AutodrainedPool.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -586,8 +585,6 @@ void IconDatabase::setIconDataForIconURL(RefPtr<SharedBuffer>&& data, const Stri
         scheduleOrDeferSyncTimer();
 
         for (auto& pageURL : pageURLs) {
-            AutodrainedPool pool;
-
             LOG(IconDatabase, "Dispatching notification that retaining pageURL %s has a new icon", urlForLogging(pageURL).ascii().data());
             m_client->didChangeIconForPageURL(pageURL);
         }
@@ -657,7 +654,6 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
         scheduleOrDeferSyncTimer();
 
         LOG(IconDatabase, "Dispatching notification that we changed an icon mapping for url %s", urlForLogging(pageURL).ascii().data());
-        AutodrainedPool pool;
         m_client->didChangeIconForPageURL(pageURL);
     }
 }
@@ -897,10 +893,8 @@ void IconDatabase::iconDatabaseSyncThread()
     // Existence of a journal file is evidence of a previous crash/force quit and automatically qualifies
     // us to do an integrity check
     String journalFilename = m_completeDatabasePath + "-journal";
-    if (!checkIntegrityOnOpen) {
-        AutodrainedPool pool;
+    if (!checkIntegrityOnOpen)
         checkIntegrityOnOpen = fileExists(journalFilename);
-    }
 
     {
         LockHolder locker(m_syncLock);
@@ -1117,7 +1111,6 @@ void IconDatabase::performURLImport()
 
     int result = query.step();
     while (result == SQLITE_ROW) {
-        AutodrainedPool pool;
         String pageURL = query.getColumnText(0);
         String iconURL = query.getColumnText(1);
 
@@ -1228,8 +1221,6 @@ void IconDatabase::performURLImport()
     LOG(IconDatabase, "Notifying %lu interested page URLs that their icon URL is known due to the import", static_cast<unsigned long>(urlsToNotify.size()));
     // Now that we don't hold any locks, perform the actual notifications
     for (auto& url : urlsToNotify) {
-        AutodrainedPool pool;
-
         LOG(IconDatabase, "Notifying icon info known for pageURL %s", url.ascii().data());
         dispatchDidImportIconURLForPageURLOnMainThread(url);
         if (shouldStopThreadActivity())
@@ -1449,8 +1440,6 @@ bool IconDatabase::readFromDatabase()
 
         // Now that we don't hold any locks, perform the actual notifications
         for (HashSet<String>::const_iterator it = urlsToNotify.begin(), end = urlsToNotify.end(); it != end; ++it) {
-            AutodrainedPool pool;
-
             LOG(IconDatabase, "Notifying icon received for pageURL %s", urlForLogging(*it).ascii().data());
             dispatchDidImportIconDataForPageURLOnMainThread(*it);
             if (shouldStopThreadActivity())

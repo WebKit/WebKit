@@ -1,3 +1,20 @@
+2017-07-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK][WPE] Stop using AutodrainedPool in IconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=174791
+
+        Reviewed by Alex Christensen.
+
+        AutodrainedPool seems to be some NS garbage collection thing that has no implementation on
+        other platforms. Now that IconDatabase is used only by GTK and WPE, we can stop using it.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::setIconDataForIconURL):
+        (WebKit::IconDatabase::setIconURLForPageURL):
+        (WebKit::IconDatabase::iconDatabaseSyncThread):
+        (WebKit::IconDatabase::performURLImport):
+        (WebKit::IconDatabase::readFromDatabase):
+
 2017-07-24  Chris Dumez  <cdumez@apple.com>
 
         Fix lifetime management issue in ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore()
