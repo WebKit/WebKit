@@ -625,7 +625,7 @@ private:
         if (!inlineStackEntry->m_inlineCallFrame && m_graph.needsFlushedThis())
             flushDirect(virtualRegisterForArgument(0));
         if (m_graph.needsScopeRegister())
-            flush(m_codeBlock->scopeRegister());
+            flushDirect(m_codeBlock->scopeRegister());
     }
 
     void flushForTerminal()

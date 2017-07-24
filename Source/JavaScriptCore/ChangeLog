@@ -1,3 +1,20 @@
+2017-04-13  Mark Lam  <mark.lam@apple.com>
+
+        Should use flushDirect() when flushing the scopeRegister due to needsScopeRegister().
+        https://bugs.webkit.org/show_bug.cgi?id=170661
+        <rdar://problem/31579046>
+
+        Reviewed by Filip Pizlo.
+
+        Previously, we were using flush() to flush the outermost frame's scopeRegister.
+        This is incorrect because flush() expects the VirtualRegister value passed to
+        it to be that of the top most inlined frame.  In the event that we reach a
+        terminal condition while inside an inlined frame, flush() will end up flushing
+        the wrong register.  The fix is simply to use flushDirect() instead.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flush):
+
 2017-04-20  Mark Lam  <mark.lam@apple.com>
 
         virtualThunkFor() needs to materialize its of tagMaskRegister for tail calls.

@@ -1,3 +1,13 @@
+2017-04-13  Mark Lam  <mark.lam@apple.com>
+
+        Should use flushDirect() when flushing the scopeRegister due to needsScopeRegister().
+        https://bugs.webkit.org/show_bug.cgi?id=170661
+        <rdar://problem/31579046>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/regress-170661.js: Added.
+
 2017-04-20  Mark Lam  <mark.lam@apple.com>
 
         virtualThunkFor() needs to materialize its of tagMaskRegister for tail calls.
