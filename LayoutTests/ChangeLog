@@ -1,3 +1,12 @@
+2017-07-24  Matt Lewis  <jlewis3@apple.com>
+
+        Marked tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html as failure.
+        https://bugs.webkit.org/show_bug.cgi?id=172148
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-07-23  Darin Adler  <darin@apple.com>
 
         Remove race from one plug-in test
