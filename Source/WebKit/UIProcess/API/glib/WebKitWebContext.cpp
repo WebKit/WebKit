@@ -878,7 +878,7 @@ static void webkitWebContextDisableIconDatabasePrivateBrowsingIfNeeded(WebKitWeb
  *
  * Set the directory path to be used to store the favicons database
  * for @context on disk. Passing %NULL as @path means using the
- * default directory for the platform (see g_get_user_data_dir()).
+ * default directory for the platform (see g_get_user_cache_dir()).
  *
  * Calling this method also means enabling the favicons database for
  * its use from the applications, so that's why it's expected to be
@@ -892,11 +892,18 @@ void webkit_web_context_set_favicon_database_directory(WebKitWebContext* context
     WebKitWebContextPrivate* priv = context->priv;
     ensureFaviconDatabase(context);
 
-    // Use default if 0 is passed as parameter.
     String directoryPath = WebCore::stringFromFileSystemRepresentation(path);
-    priv->faviconDatabaseDirectory = directoryPath.isEmpty()
-        ? ""
-        : directoryPath.utf8();
+    // Use default if nullptr is passed as parameter.
+    if (directoryPath.isEmpty()) {
+#if PLATFORM(GTK)
+        const char* portDirectory = "webkitgtk";
+#elif PLATFORM(WPE)
+        const char* portDirectory = "wpe";
+#endif
+        GUniquePtr<gchar> databaseDirectory(g_build_filename(g_get_user_cache_dir(), portDirectory, "icondatabase", nullptr));
+        directoryPath = WebCore::stringFromFileSystemRepresentation(databaseDirectory.get());
+    }
+    priv->faviconDatabaseDirectory = directoryPath.utf8();
 
     // Build the full path to the icon database file on disk.
     GUniquePtr<gchar> faviconDatabasePath(g_build_filename(priv->faviconDatabaseDirectory.data(),

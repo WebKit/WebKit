@@ -1,3 +1,16 @@
+2017-07-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. REGRESSION(r219713): [GTK][WPE] Fix default favicon database patch.
+
+        When nullptr is passed to webkit_web_context_set_favicon_database_directory() the default database directory was
+        taken from WebProcessPool::platformDefaultIconDatabasePath(), that has been removed in r219713 without properly
+        replacing it, now it uses an empty string. This causes that the current directory is used to create the favicon
+        database.
+
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_set_favicon_database_directory): Use the default icon database directory instead of an empty
+        string when nullptr is passed.
+
 2017-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] 5 DataInteractionTests are failing: observed selection rects after dropping don't match expected values
