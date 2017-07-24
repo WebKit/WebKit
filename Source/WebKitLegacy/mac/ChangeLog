@@ -1,3 +1,15 @@
+2017-07-23  Chris Dumez  <cdumez@apple.com>
+
+        Drop ExceptionCodeDescription class
+        https://bugs.webkit.org/show_bug.cgi?id=174757
+
+        Reviewed by Darin Adler.
+
+        Stop using ExceptionCodeDescription.
+
+        * DOM/ExceptionHandlers.mm:
+        (raiseDOMErrorException):
+
 2017-07-21  Andreas Kling  <akling@apple.com>
 
         Use more references in event dispatch code

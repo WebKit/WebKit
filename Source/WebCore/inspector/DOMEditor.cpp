@@ -31,10 +31,10 @@
 #include "config.h"
 #include "DOMEditor.h"
 
+#include "DOMException.h"
 #include "DOMPatchSupport.h"
 #include "Document.h"
 #include "Element.h"
-#include "ExceptionCodeDescription.h"
 #include "InspectorHistory.h"
 #include "Node.h"
 #include "Text.h"
@@ -395,7 +395,7 @@ static bool populateErrorString(ExceptionOr<void>&& result, ErrorString& errorSt
 {
     if (!result.hasException())
         return true;
-    errorString = ExceptionCodeDescription { result.releaseException().code() }.name;
+    errorString = DOMException::name(result.releaseException().code());
     return false;
 }
 

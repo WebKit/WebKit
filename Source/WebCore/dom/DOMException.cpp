@@ -29,17 +29,10 @@
 #include "config.h"
 #include "DOMException.h"
 
-#include "ExceptionCode.h"
-#include "ExceptionCodeDescription.h"
-
 namespace WebCore {
 
 // http://heycam.github.io/webidl/#idl-DOMException-error-names
-static const struct CoreException {
-    const char* const name;
-    const char* const description;
-    ExceptionCode code;
-} coreExceptions[] = {
+static const DOMException::Description descriptions[] = {
     { "IndexSizeError", "The index is not in the allowed range.", 1 },
     { nullptr, nullptr, 0 }, // DOMStringSizeError
     { "HierarchyRequestError", "The operation would yield an incorrect node tree.", 3 },
@@ -77,49 +70,43 @@ static const struct CoreException {
     { "NotAllowedError", "The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission.", 0 }
 };
 
-static ExceptionCode errorCodeFromName(const String& name)
+auto DOMException::description(ExceptionCode ec) -> const Description&
 {
-    for (auto& entry : coreExceptions) {
-        if (entry.name == name)
-            return entry.code;
+    size_t index = ec - 1;
+    if (index < WTF_ARRAY_LENGTH(descriptions)) {
+        ASSERT(!descriptions[index].legacyCode || descriptions[index].legacyCode == ec);
+        return descriptions[index];
+    }
+
+    static const Description emptyDescription { nullptr, nullptr, 0 };
+    return emptyDescription;
+}
+
+static DOMException::LegacyCode legacyCodeFromName(const String& name)
+{
+    for (auto& description : descriptions) {
+        if (description.name == name)
+            return description.legacyCode;
     }
     return 0;
 }
 
-Ref<DOMException> DOMException::create(const String& message, const String& name)
+Ref<DOMException> DOMException::create(ExceptionCode ec, const String* message)
 {
-    return adoptRef(*new DOMException(errorCodeFromName(name), message, name));
+    auto& description = DOMException::description(ec);
+    return adoptRef(*new DOMException(description.legacyCode, description.name, message && !message->isEmpty() ? *message : ASCIILiteral(description.message)));
 }
 
-DOMException::DOMException(ExceptionCode ec, const String& message, const String& name)
-    : m_code(ec)
+Ref<DOMException> DOMException::create(const String& message, const String& name)
+{
+    return adoptRef(*new DOMException(legacyCodeFromName(name), name, message));
+}
+
+DOMException::DOMException(LegacyCode legacyCode, const String& name, const String& message)
+    : m_legacyCode(legacyCode)
     , m_name(name)
     , m_message(message)
 {
-}
-
-DOMException::DOMException(const ExceptionCodeDescription& description)
-    : m_code(description.code)
-    , m_name(description.name)
-    , m_message(description.description)
-{
-}
-
-bool DOMException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)
-{
-    size_t tableIndex = ec - INDEX_SIZE_ERR;
-    if (tableIndex < WTF_ARRAY_LENGTH(coreExceptions)) {
-        auto& exception = coreExceptions[tableIndex];
-        description->name = exception.name;
-        description->description = exception.description;
-        description->code = exception.code;
-    } else {
-        description->name = nullptr;
-        description->description = nullptr;
-        description->code = 0;
-    }
-
-    return true;
 }
 
 } // namespace WebCore

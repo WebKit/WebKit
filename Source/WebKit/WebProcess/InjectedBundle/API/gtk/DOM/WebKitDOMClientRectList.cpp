@@ -27,7 +27,6 @@
 #include "WebKitDOMPrivate.h"
 #include <WebCore/CSSImportRule.h>
 #include <WebCore/Document.h>
-#include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/JSMainThreadExecState.h>
 #include <wtf/GetPtr.h>

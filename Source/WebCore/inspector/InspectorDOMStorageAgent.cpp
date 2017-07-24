@@ -31,11 +31,10 @@
 #include "config.h"
 #include "InspectorDOMStorageAgent.h"
 
+#include "DOMException.h"
 #include "DOMWindow.h"
 #include "Database.h"
 #include "Document.h"
-#include "ExceptionCode.h"
-#include "ExceptionCodeDescription.h"
 #include "Frame.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
@@ -124,7 +123,7 @@ void InspectorDOMStorageAgent::setDOMStorageItem(ErrorString& errorString, const
     bool quotaException = false;
     storageArea->setItem(frame, key, value, quotaException);
     if (quotaException)
-        errorString = ExceptionCodeDescription(QUOTA_EXCEEDED_ERR).name;
+        errorString = DOMException::name(QUOTA_EXCEEDED_ERR);
 }
 
 void InspectorDOMStorageAgent::removeDOMStorageItem(ErrorString& errorString, const InspectorObject& storageId, const String& key)

@@ -27,9 +27,8 @@
 #include "WebKitDOMPrivate.h"
 #include <WebCore/Attr.h>
 #include <WebCore/CSSImportRule.h>
+#include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/JSMainThreadExecState.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -154,14 +153,14 @@ WebKitDOMNode* webkit_dom_named_node_map_set_named_item(WebKitDOMNamedNodeMap* s
     WebCore::NamedNodeMap* item = WebKit::core(self);
     WebCore::Node* convertedNode = WebKit::core(node);
     if (!is<WebCore::Attr>(*convertedNode)) {
-        WebCore::ExceptionCodeDescription ecdesc(WebCore::TypeError);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(WebCore::TypeError);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return nullptr;
     }
     auto result = item->setNamedItem(downcast<WebCore::Attr>(*convertedNode));
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return nullptr;
     }
     return WebKit::kit(result.releaseReturnValue().get());
@@ -177,8 +176,8 @@ WebKitDOMNode* webkit_dom_named_node_map_remove_named_item(WebKitDOMNamedNodeMap
     WTF::String convertedName = WTF::String::fromUTF8(name);
     auto result = item->removeNamedItem(convertedName);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return nullptr;
     }
     return WebKit::kit(result.releaseReturnValue().ptr());
@@ -223,8 +222,8 @@ WebKitDOMNode* webkit_dom_named_node_map_remove_named_item_ns(WebKitDOMNamedNode
     WTF::String convertedLocalName = WTF::String::fromUTF8(localName);
     auto result = item->removeNamedItemNS(convertedNamespaceURI, convertedLocalName);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return nullptr;
     }
     return WebKit::kit(result.releaseReturnValue().ptr());

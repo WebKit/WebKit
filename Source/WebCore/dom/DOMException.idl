@@ -33,7 +33,7 @@
     ImplementationLacksVTable,
 ] exception DOMException {
 
-    readonly attribute unsigned short   code;
+    [ImplementedAs=legacyCode] readonly attribute unsigned short   code;
     readonly attribute DOMString        name;
     readonly attribute DOMString        message;
 

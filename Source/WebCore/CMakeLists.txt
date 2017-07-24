@@ -1525,7 +1525,6 @@ set(WebCore_SOURCES
     dom/EventNames.cpp
     dom/EventPath.cpp
     dom/EventTarget.cpp
-    dom/ExceptionCodeDescription.cpp
     dom/ExtensionStyleSheets.cpp
     dom/FocusEvent.cpp
     dom/GenericEventQueue.cpp

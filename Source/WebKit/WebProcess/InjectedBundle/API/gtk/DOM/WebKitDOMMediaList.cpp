@@ -22,9 +22,8 @@
 
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
+#include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/JSMainThreadExecState.h>
 #include "WebKitDOMMediaListPrivate.h"
 #include "WebKitDOMPrivate.h"
@@ -180,8 +179,8 @@ void webkit_dom_media_list_delete_medium(WebKitDOMMediaList* self, const gchar* 
     WTF::String convertedOldMedium = WTF::String::fromUTF8(oldMedium);
     auto result = item->deleteMedium(convertedOldMedium);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
     }
 }
 
@@ -195,8 +194,8 @@ void webkit_dom_media_list_append_medium(WebKitDOMMediaList* self, const gchar* 
     WTF::String convertedNewMedium = WTF::String::fromUTF8(newMedium);
     auto result = item->appendMedium(convertedNewMedium);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
     }
 }
 
@@ -219,8 +218,8 @@ void webkit_dom_media_list_set_media_text(WebKitDOMMediaList* self, const gchar*
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     auto result = item->setMediaText(convertedValue);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
     }
 }
 

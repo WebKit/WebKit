@@ -29,8 +29,7 @@
 #import "DOMException.h"
 #import "DOMRangeException.h"
 #import "DOMXPathException.h"
-#import <WebCore/ExceptionCode.h>
-#import <WebCore/ExceptionCodeDescription.h>
+#import <WebCore/DOMException.h>
 
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
@@ -41,26 +40,17 @@ static NO_RETURN void raiseDOMErrorException(WebCore::ExceptionCode ec)
 {
     ASSERT(ec);
 
-    WebCore::ExceptionCodeDescription description(ec);
-
-    // FIXME: This should use type and code exclusively and not try to use typeName.
-    NSString *exceptionName;
-    if (strcmp(description.typeName, "DOM Range") == 0)
-        exceptionName = DOMRangeException;
-    else if (strcmp(description.typeName, "DOM Events") == 0)
-        exceptionName = DOMEventException;
-    else
-        exceptionName = DOMException;
+    auto description = WebCore::DOMException::description(ec);
 
     NSString *reason;
     if (description.name)
-        reason = [[NSString alloc] initWithFormat:@"*** %s: %@ %d", description.name, exceptionName, description.code];
+        reason = [[NSString alloc] initWithFormat:@"*** %s: %@ %d", description.name, DOMException, description.legacyCode];
     else
-        reason = [[NSString alloc] initWithFormat:@"*** %@ %d", exceptionName, description.code];
+        reason = [[NSString alloc] initWithFormat:@"*** %@ %d", DOMException, description.legacyCode];
 
-    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithInt:description.code], exceptionName, nil];
+    NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithInt:description.legacyCode], DOMException, nil];
 
-    NSException *exception = [NSException exceptionWithName:exceptionName reason:reason userInfo:userInfo];
+    NSException *exception = [NSException exceptionWithName:DOMException reason:reason userInfo:userInfo];
 
     [reason release];
     [userInfo release];

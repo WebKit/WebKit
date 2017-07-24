@@ -1,3 +1,291 @@
+2017-07-23  Chris Dumez  <cdumez@apple.com>
+
+        Drop ExceptionCodeDescription class
+        https://bugs.webkit.org/show_bug.cgi?id=174757
+
+        Reviewed by Darin Adler.
+
+        Update GTK bindings to use new API on DOMException instead of
+        ExceptionCodeDescription.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMAttr.cpp:
+        (webkit_dom_attr_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMBlob.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCDATASection.cpp:
+        (webkit_dom_cdata_section_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRule.cpp:
+        (webkit_dom_css_rule_set_css_text):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSRuleList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleDeclaration.cpp:
+        (webkit_dom_css_style_declaration_set_property):
+        (webkit_dom_css_style_declaration_set_css_text):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleSheet.cpp:
+        (webkit_dom_css_style_sheet_insert_rule):
+        (webkit_dom_css_style_sheet_delete_rule):
+        (webkit_dom_css_style_sheet_add_rule):
+        (webkit_dom_css_style_sheet_remove_rule):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSValue.cpp:
+        (webkit_dom_css_value_set_css_text):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCharacterData.cpp:
+        (webkit_dom_character_data_dispatch_event):
+        (webkit_dom_character_data_insert_data):
+        (webkit_dom_character_data_delete_data):
+        (webkit_dom_character_data_replace_data):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRect.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMClientRectList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMComment.cpp:
+        (webkit_dom_comment_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMImplementation.cpp:
+        (webkit_dom_dom_implementation_create_document_type):
+        (webkit_dom_dom_implementation_create_document):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMSelection.cpp:
+        (webkit_dom_dom_selection_collapse_to_end):
+        (webkit_dom_dom_selection_collapse_to_start):
+        (webkit_dom_dom_selection_extend):
+        (webkit_dom_dom_selection_get_range_at):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMTokenList.cpp:
+        (webkit_dom_dom_token_list_add):
+        (webkit_dom_dom_token_list_remove):
+        (webkit_dom_dom_token_list_toggle):
+        (webkit_dom_dom_token_list_replace):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:
+        (webkit_dom_dom_window_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.cpp:
+        (webkit_dom_node_set_prefix):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocument.cpp:
+        (webkit_dom_document_dispatch_event):
+        (webkit_dom_document_create_element):
+        (webkit_dom_document_create_cdata_section):
+        (webkit_dom_document_create_processing_instruction):
+        (webkit_dom_document_create_attribute):
+        (webkit_dom_document_import_node):
+        (webkit_dom_document_create_element_ns):
+        (webkit_dom_document_create_attribute_ns):
+        (webkit_dom_document_adopt_node):
+        (webkit_dom_document_create_event):
+        (webkit_dom_document_create_expression):
+        (webkit_dom_document_evaluate):
+        (webkit_dom_document_query_selector):
+        (webkit_dom_document_query_selector_all):
+        (webkit_dom_document_set_xml_version):
+        (webkit_dom_document_set_cookie):
+        (webkit_dom_document_set_body):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentFragment.cpp:
+        (webkit_dom_document_fragment_dispatch_event):
+        (webkit_dom_document_fragment_query_selector):
+        (webkit_dom_document_fragment_query_selector_all):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDocumentType.cpp:
+        (webkit_dom_document_type_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_dispatch_event):
+        (webkit_dom_element_set_attribute):
+        (webkit_dom_element_set_attribute_node):
+        (webkit_dom_element_remove_attribute_node):
+        (webkit_dom_element_set_attribute_ns):
+        (webkit_dom_element_set_attribute_node_ns):
+        (webkit_dom_element_matches):
+        (webkit_dom_element_closest):
+        (webkit_dom_element_insert_adjacent_element):
+        (webkit_dom_element_insert_adjacent_html):
+        (webkit_dom_element_insert_adjacent_text):
+        (webkit_dom_element_remove):
+        (webkit_dom_element_query_selector):
+        (webkit_dom_element_query_selector_all):
+        (webkit_dom_element_set_inner_html):
+        (webkit_dom_element_set_outer_html):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFile.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMFileList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAnchorElement.cpp:
+        (webkit_dom_html_anchor_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAppletElement.cpp:
+        (webkit_dom_html_applet_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLAreaElement.cpp:
+        (webkit_dom_html_area_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBRElement.cpp:
+        (webkit_dom_html_br_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBaseElement.cpp:
+        (webkit_dom_html_base_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLBodyElement.cpp:
+        (webkit_dom_html_body_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLButtonElement.cpp:
+        (webkit_dom_html_button_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCanvasElement.cpp:
+        (webkit_dom_html_canvas_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLCollection.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDListElement.cpp:
+        (webkit_dom_html_d_list_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDirectoryElement.cpp:
+        (webkit_dom_html_directory_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDivElement.cpp:
+        (webkit_dom_html_div_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLDocument.cpp:
+        (webkit_dom_html_document_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLElement.cpp:
+        (webkit_dom_html_element_dispatch_event):
+        (webkit_dom_html_element_set_inner_text):
+        (webkit_dom_html_element_set_outer_text):
+        (webkit_dom_html_element_set_content_editable):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLEmbedElement.cpp:
+        (webkit_dom_html_embed_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFieldSetElement.cpp:
+        (webkit_dom_html_field_set_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFontElement.cpp:
+        (webkit_dom_html_font_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFormElement.cpp:
+        (webkit_dom_html_form_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameElement.cpp:
+        (webkit_dom_html_frame_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLFrameSetElement.cpp:
+        (webkit_dom_html_frame_set_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHRElement.cpp:
+        (webkit_dom_html_hr_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadElement.cpp:
+        (webkit_dom_html_head_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHeadingElement.cpp:
+        (webkit_dom_html_heading_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLHtmlElement.cpp:
+        (webkit_dom_html_html_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLIFrameElement.cpp:
+        (webkit_dom_html_iframe_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLImageElement.cpp:
+        (webkit_dom_html_image_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLInputElement.cpp:
+        (webkit_dom_html_input_element_dispatch_event):
+        (webkit_dom_html_input_element_set_max_length):
+        (webkit_dom_html_input_element_set_size):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLIElement.cpp:
+        (webkit_dom_html_li_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLabelElement.cpp:
+        (webkit_dom_html_label_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLegendElement.cpp:
+        (webkit_dom_html_legend_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLLinkElement.cpp:
+        (webkit_dom_html_link_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMapElement.cpp:
+        (webkit_dom_html_map_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMarqueeElement.cpp:
+        (webkit_dom_html_marquee_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMenuElement.cpp:
+        (webkit_dom_html_menu_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLMetaElement.cpp:
+        (webkit_dom_html_meta_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLModElement.cpp:
+        (webkit_dom_html_mod_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOListElement.cpp:
+        (webkit_dom_html_o_list_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLObjectElement.cpp:
+        (webkit_dom_html_object_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptGroupElement.cpp:
+        (webkit_dom_html_opt_group_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionElement.cpp:
+        (webkit_dom_html_option_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLOptionsCollection.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParagraphElement.cpp:
+        (webkit_dom_html_paragraph_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLParamElement.cpp:
+        (webkit_dom_html_param_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLPreElement.cpp:
+        (webkit_dom_html_pre_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLQuoteElement.cpp:
+        (webkit_dom_html_quote_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLScriptElement.cpp:
+        (webkit_dom_html_script_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLSelectElement.cpp:
+        (webkit_dom_html_select_element_dispatch_event):
+        (webkit_dom_html_select_element_add):
+        (webkit_dom_html_select_element_set_length):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLStyleElement.cpp:
+        (webkit_dom_html_style_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCaptionElement.cpp:
+        (webkit_dom_html_table_caption_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableCellElement.cpp:
+        (webkit_dom_html_table_cell_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableColElement.cpp:
+        (webkit_dom_html_table_col_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableElement.cpp:
+        (webkit_dom_html_table_element_dispatch_event):
+        (webkit_dom_html_table_element_insert_row):
+        (webkit_dom_html_table_element_delete_row):
+        (webkit_dom_html_table_element_set_caption):
+        (webkit_dom_html_table_element_set_t_head):
+        (webkit_dom_html_table_element_set_t_foot):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableRowElement.cpp:
+        (webkit_dom_html_table_row_element_dispatch_event):
+        (webkit_dom_html_table_row_element_insert_cell):
+        (webkit_dom_html_table_row_element_delete_cell):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTableSectionElement.cpp:
+        (webkit_dom_html_table_section_element_dispatch_event):
+        (webkit_dom_html_table_section_element_insert_row):
+        (webkit_dom_html_table_section_element_delete_row):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTextAreaElement.cpp:
+        (webkit_dom_html_text_area_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLTitleElement.cpp:
+        (webkit_dom_html_title_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMHTMLUListElement.cpp:
+        (webkit_dom_html_u_list_element_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMKeyboardEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMediaList.cpp:
+        (webkit_dom_media_list_delete_medium):
+        (webkit_dom_media_list_append_medium):
+        (webkit_dom_media_list_set_media_text):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMMouseEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNamedNodeMap.cpp:
+        (webkit_dom_named_node_map_set_named_item):
+        (webkit_dom_named_node_map_remove_named_item):
+        (webkit_dom_named_node_map_remove_named_item_ns):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNode.cpp:
+        (webkit_dom_node_dispatch_event):
+        (webkit_dom_node_insert_before):
+        (webkit_dom_node_replace_child):
+        (webkit_dom_node_remove_child):
+        (webkit_dom_node_append_child):
+        (webkit_dom_node_clone_node_with_error):
+        (webkit_dom_node_set_node_value):
+        (webkit_dom_node_set_text_content):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeIterator.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMNodeList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMProcessingInstruction.cpp:
+        (webkit_dom_processing_instruction_dispatch_event):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMRange.cpp:
+        (webkit_dom_range_set_start):
+        (webkit_dom_range_set_end):
+        (webkit_dom_range_set_start_before):
+        (webkit_dom_range_set_start_after):
+        (webkit_dom_range_set_end_before):
+        (webkit_dom_range_set_end_after):
+        (webkit_dom_range_select_node):
+        (webkit_dom_range_select_node_contents):
+        (webkit_dom_range_compare_boundary_points):
+        (webkit_dom_range_delete_contents):
+        (webkit_dom_range_extract_contents):
+        (webkit_dom_range_clone_contents):
+        (webkit_dom_range_insert_node):
+        (webkit_dom_range_surround_contents):
+        (webkit_dom_range_create_contextual_fragment):
+        (webkit_dom_range_compare_node):
+        (webkit_dom_range_intersects_node):
+        (webkit_dom_range_compare_point):
+        (webkit_dom_range_is_point_in_range):
+        (webkit_dom_range_expand):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheet.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMStyleSheetList.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMText.cpp:
+        (webkit_dom_text_dispatch_event):
+        (webkit_dom_text_split_text):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMTreeWalker.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMUIEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.cpp:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathExpression.cpp:
+        (webkit_dom_xpath_expression_evaluate):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMXPathResult.cpp:
+        (webkit_dom_xpath_result_iterate_next):
+        (webkit_dom_xpath_result_snapshot_item):
+        (webkit_dom_xpath_result_get_number_value):
+        (webkit_dom_xpath_result_get_boolean_value):
+        (webkit_dom_xpath_result_get_single_node_value):
+        (webkit_dom_xpath_result_get_snapshot_length):
+
 2017-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Remove _WKDraggableElementInfo and fold PositionInformationTests into WKRequestActivatedElementInfo

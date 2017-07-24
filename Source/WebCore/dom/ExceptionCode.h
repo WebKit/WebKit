@@ -20,11 +20,7 @@
 
 namespace WebCore {
 
-// The DOM standards use unsigned short for exception codes.
-// In our DOM implementation we use int instead, and use different
-// numerical ranges for different types of DOM exception, so that
-// an exception of any type can be expressed with a single integer.
-using ExceptionCode = int;
+using ExceptionCode = uint8_t;
 
 // Some of these are considered historical since they have been
 // changed or removed from the specifications.

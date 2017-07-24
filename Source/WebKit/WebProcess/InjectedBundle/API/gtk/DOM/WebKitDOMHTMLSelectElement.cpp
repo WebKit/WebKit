@@ -22,9 +22,8 @@
 
 #include <WebCore/CSSImportRule.h>
 #include "DOMObjectCache.h"
+#include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/ExceptionCodeDescription.h>
 #include "GObjectEventListener.h"
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLOptGroupElement.h>
@@ -72,8 +71,8 @@ static gboolean webkit_dom_html_select_element_dispatch_event(WebKitDOMEventTarg
 
     auto result = coreTarget->dispatchEventForBindings(*coreEvent);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription description(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.code, description.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return false;
     }
     return result.releaseReturnValue();
@@ -366,15 +365,15 @@ void webkit_dom_html_select_element_add(WebKitDOMHTMLSelectElement* self, WebKit
     else if (is<WebCore::HTMLOptGroupElement>(convertedElement))
         variantElement = &downcast<WebCore::HTMLOptGroupElement>(*convertedElement);
     else {
-        WebCore::ExceptionCodeDescription ecdesc(WebCore::TypeError);
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(WebCore::TypeError);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return;
     }
 
     auto exception = item->add(WTFMove(variantElement), WebCore::HTMLSelectElement::HTMLElementOrInt(convertedBefore));
     if (exception.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(exception.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(exception.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
     }
 }
 
@@ -517,8 +516,8 @@ void webkit_dom_html_select_element_set_length(WebKitDOMHTMLSelectElement* self,
     WebCore::HTMLSelectElement* item = WebKit::core(self);
     auto result = item->setLength(value);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
     }
 }
 

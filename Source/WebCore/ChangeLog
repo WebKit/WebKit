@@ -1,3 +1,40 @@
+2017-07-23  Chris Dumez  <cdumez@apple.com>
+
+        Drop ExceptionCodeDescription class
+        https://bugs.webkit.org/show_bug.cgi?id=174757
+
+        Reviewed by Darin Adler.
+
+        Drop ExceptionCodeDescription class now that there is only one exception
+        type: DOMException. Instead, we now have static methods on DOMException
+        to get the name / message for a given exception code.
+
+        * CMakeLists.txt:
+        * Modules/indexeddb/shared/IDBError.cpp:
+        (WebCore::IDBError::name):
+        (WebCore::IDBError::message):
+        * Modules/quota/StorageErrorCallback.cpp:
+        (WebCore::StorageErrorCallback::CallbackTask::CallbackTask):
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::createDOMException):
+        * dom/DOMAllInOne.cpp:
+        * dom/DOMException.cpp:
+        (WebCore::errorCodeFromName):
+        (WebCore::DOMException::create):
+        (WebCore::DOMException::DOMException):
+        (WebCore::DOMException::name):
+        (WebCore::DOMException::message):
+        * dom/DOMException.h:
+        * dom/ExceptionCodeDescription.cpp: Removed.
+        * dom/ExceptionCodeDescription.h: Removed.
+        * inspector/DOMEditor.cpp:
+        (WebCore::populateErrorString):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::toErrorString):
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::setDOMStorageItem):
+
 2017-07-22  Dan Bernstein  <mitz@apple.com>
 
         Fixed building for macOS 10.12 with the macOS 10.13 SDK after r219644.

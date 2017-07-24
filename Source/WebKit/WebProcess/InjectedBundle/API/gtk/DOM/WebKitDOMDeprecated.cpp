@@ -20,10 +20,9 @@
 #include "WebKitDOMDeprecated.h"
 
 #include "ConvertToUTF8String.h"
+#include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/JSMainThreadExecState.h>
 #include <WebCore/HTMLCollection.h>
 #include "WebKitDOMDocumentPrivate.h"
@@ -238,8 +237,8 @@ void webkit_dom_node_set_prefix(WebKitDOMNode* self, const gchar* value, GError*
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     auto result = item->setPrefix(convertedValue);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
     }
 }
 

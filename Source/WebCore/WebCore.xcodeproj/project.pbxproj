@@ -3443,8 +3443,6 @@
 		83D35AEC1C7187FA00F70D5A /* XMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AEA1C7187ED00F70D5A /* XMLHttpRequestEventTarget.h */; };
 		83D35AF11C718D9000F70D5A /* JSXMLHttpRequestEventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D35AEF1C718D8400F70D5A /* JSXMLHttpRequestEventTarget.cpp */; };
 		83D35AF21C718D9000F70D5A /* JSXMLHttpRequestEventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */; };
-		83D3B00B1F22701A00D34D88 /* ExceptionCodeDescription.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83D3B0091F226FB300D34D88 /* ExceptionCodeDescription.cpp */; };
-		83D3B00C1F22701A00D34D88 /* ExceptionCodeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 83D3B00A1F226FB300D34D88 /* ExceptionCodeDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		83E359A21BB1031D002CEB98 /* JSHTMLTimeElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 83E359A01BB1031D002CEB98 /* JSHTMLTimeElement.h */; };
 		83E359A31BB1031D002CEB98 /* JSHTMLTimeElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83E359A11BB1031D002CEB98 /* JSHTMLTimeElement.cpp */; };
 		83FE7CA71DA9F1A70037237C /* UIEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 83FE7CA41DA9F1660037237C /* UIEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5666,7 +5664,7 @@
 		BC6049CC0DB560C200204739 /* CSSCanvasValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6049CB0DB560C200204739 /* CSSCanvasValue.h */; };
 		BC604A430DB5634E00204739 /* CSSCanvasValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC604A420DB5634E00204739 /* CSSCanvasValue.cpp */; };
 		BC6090200E91B8EC000C68B5 /* JSEventTargetCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60901E0E91B8EC000C68B5 /* JSEventTargetCustom.cpp */; };
-		BC60D6E90D28D83400B9918F /* DOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D6E80D28D83400B9918F /* DOMException.h */; };
+		BC60D6E90D28D83400B9918F /* DOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D6E80D28D83400B9918F /* DOMException.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60D7C00D29A46300B9918F /* JSDOMException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60D7BE0D29A46300B9918F /* JSDOMException.cpp */; };
 		BC60D7C10D29A46300B9918F /* JSDOMException.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60D7BF0D29A46300B9918F /* JSDOMException.h */; };
 		BC64640A11D7F304006455B0 /* DOMStringMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64640811D7F304006455B0 /* DOMStringMap.h */; };
@@ -11504,8 +11502,6 @@
 		83D35AEB1C7187ED00F70D5A /* XMLHttpRequestEventTarget.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XMLHttpRequestEventTarget.idl; sourceTree = "<group>"; };
 		83D35AEF1C718D8400F70D5A /* JSXMLHttpRequestEventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestEventTarget.cpp; sourceTree = "<group>"; };
 		83D35AF01C718D8400F70D5A /* JSXMLHttpRequestEventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestEventTarget.h; sourceTree = "<group>"; };
-		83D3B0091F226FB300D34D88 /* ExceptionCodeDescription.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionCodeDescription.cpp; sourceTree = "<group>"; };
-		83D3B00A1F226FB300D34D88 /* ExceptionCodeDescription.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExceptionCodeDescription.h; sourceTree = "<group>"; };
 		83E045EC1DAA104F00B0D8B9 /* JSEventModifierInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventModifierInit.cpp; sourceTree = "<group>"; };
 		83E045ED1DAA104F00B0D8B9 /* JSEventModifierInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventModifierInit.h; sourceTree = "<group>"; };
 		83E045EE1DAA104F00B0D8B9 /* JSUIEventInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSUIEventInit.cpp; sourceTree = "<group>"; };
@@ -25634,8 +25630,6 @@
 				CDCE5CD014633BC900D47CCA /* EventTargetFactory.in */,
 				93D196321D6CAB8200FC7E47 /* Exception.h */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
-				83D3B0091F226FB300D34D88 /* ExceptionCodeDescription.cpp */,
-				83D3B00A1F226FB300D34D88 /* ExceptionCodeDescription.h */,
 				93D196301D6CAB7600FC7E47 /* ExceptionOr.h */,
 				E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */,
 				E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */,
@@ -27880,7 +27874,6 @@
 				8367587F1C56E99B008A1087 /* JSHTMLDataElement.h in Headers */,
 				F5C041E70FFCA96D00839D4A /* JSHTMLDataListElement.h in Headers */,
 				D359D8BF129CA55C0006E5D2 /* JSHTMLDetailsElement.h in Headers */,
-				83D3B00C1F22701A00D34D88 /* ExceptionCodeDescription.h in Headers */,
 				76808B50159DADFA002B5233 /* JSHTMLDialogElement.h in Headers */,
 				1A85B1E70A1B240500D8C87C /* JSHTMLDirectoryElement.h in Headers */,
 				1A85B2B70A1B2AC700D8C87C /* JSHTMLDivElement.h in Headers */,
@@ -33657,7 +33650,6 @@
 				31A089081E737D51003B6609 /* WebGPUDepthStencilState.cpp in Sources */,
 				31A089091E737D51003B6609 /* WebGPUDrawable.cpp in Sources */,
 				31A0890A1E737D51003B6609 /* WebGPUEnums.cpp in Sources */,
-				83D3B00B1F22701A00D34D88 /* ExceptionCodeDescription.cpp in Sources */,
 				31A0890B1E737D51003B6609 /* WebGPUFunction.cpp in Sources */,
 				316BDB8B1E6E153000DE0D5A /* WebGPULayer.mm in Sources */,
 				31A0890C1E737D51003B6609 /* WebGPULibrary.cpp in Sources */,

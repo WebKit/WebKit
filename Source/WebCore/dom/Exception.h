@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace WebCore {
 
-using ExceptionCode = int;
+using ExceptionCode = uint8_t;
 
 class Exception {
 public:

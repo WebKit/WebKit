@@ -29,9 +29,8 @@
 #include "WebKitDOMHTMLDocumentPrivate.h"
 #include "WebKitDOMPrivate.h"
 #include <WebCore/CSSImportRule.h>
+#include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
-#include <WebCore/ExceptionCode.h>
-#include <WebCore/ExceptionCodeDescription.h>
 #include <WebCore/JSMainThreadExecState.h>
 #include <WebCore/SVGTests.h>
 #include <wtf/GetPtr.h>
@@ -130,8 +129,8 @@ WebKitDOMDocumentType* webkit_dom_dom_implementation_create_document_type(WebKit
     WTF::String convertedSystemId = WTF::String::fromUTF8(systemId);
     auto result = item->createDocumentType(convertedQualifiedName, convertedPublicId, convertedSystemId);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return nullptr;
     }
     return WebKit::kit(result.releaseReturnValue().ptr());
@@ -150,8 +149,8 @@ WebKitDOMDocument* webkit_dom_dom_implementation_create_document(WebKitDOMDOMImp
     WebCore::DocumentType* convertedDoctype = WebKit::core(doctype);
     auto result = item->createDocument(convertedNamespaceURI, convertedQualifiedName, convertedDoctype);
     if (result.hasException()) {
-        WebCore::ExceptionCodeDescription ecdesc(result.releaseException().code());
-        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+        auto description = WebCore::DOMException::description(result.releaseException().code());
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.legacyCode, description.name);
         return nullptr;
     }
     return WebKit::kit(result.releaseReturnValue().ptr());

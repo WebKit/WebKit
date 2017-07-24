@@ -28,32 +28,39 @@
 
 #pragma once
 
+#include "ExceptionCode.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct ExceptionCodeDescription;
-using ExceptionCode = int;
-
 class DOMException : public RefCounted<DOMException> {
 public:
-    static Ref<DOMException> create(const ExceptionCodeDescription& description)
-    {
-        return adoptRef(*new DOMException(description));
-    }
+    static Ref<DOMException> create(ExceptionCode, const String* message = nullptr);
+
+    // For DOM bindings.
     static Ref<DOMException> create(const String& message, const String& name);
 
-    static bool initializeDescription(ExceptionCode, ExceptionCodeDescription*);
+    using LegacyCode = uint8_t;
+    LegacyCode legacyCode() const { return m_legacyCode; }
 
-    ExceptionCode code() const { return m_code; }
     String name() const { return m_name; }
     String message() const { return m_message; }
 
-protected:
-    DOMException(ExceptionCode, const String& message, const String& name);
-    explicit DOMException(const ExceptionCodeDescription&);
+    struct Description {
+        const char* const name;
+        const char* const message;
+        LegacyCode legacyCode;
+    };
 
-    ExceptionCode m_code;
+    WEBCORE_EXPORT static const Description& description(ExceptionCode);
+
+    static ASCIILiteral name(ExceptionCode ec) { return ASCIILiteral(description(ec).name); }
+    static ASCIILiteral message(ExceptionCode ec) { return ASCIILiteral(description(ec).message); }
+
+private:
+    DOMException(LegacyCode, const String& name, const String& message);
+
+    LegacyCode m_legacyCode;
     String m_name;
     String m_message;
 };

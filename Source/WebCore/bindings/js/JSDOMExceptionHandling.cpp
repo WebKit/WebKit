@@ -25,7 +25,6 @@
 #include "CachedScript.h"
 #include "DOMException.h"
 #include "DOMWindow.h"
-#include "ExceptionCodeDescription.h"
 #include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDOMWindow.h"
@@ -148,18 +147,7 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     // For now, we're going to assume the lexicalGlobalObject. Which is wrong in cases like this:
     // frames[0].document.createElement(null, null); // throws an exception which should have the subframe's prototypes.
     JSDOMGlobalObject* globalObject = deprecatedGlobalObjectForPrototype(exec);
-
-    ExceptionCodeDescription description(ec);
-
-    CString messageCString;
-    if (message)
-        messageCString = message->utf8();
-    if (message && !message->isEmpty()) {
-        // It is safe to do this because the char* contents of the CString are copied into a new WTF::String before the CString is destroyed.
-        description.description = messageCString.data();
-    }
-
-    JSValue errorObject = toJS(exec, globalObject, DOMException::create(description));
+    JSValue errorObject = toJS(exec, globalObject, DOMException::create(ec, message));
     
     ASSERT(errorObject);
     addErrorInfo(exec, asObject(errorObject), true);

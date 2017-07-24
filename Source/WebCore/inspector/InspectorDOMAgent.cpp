@@ -46,6 +46,7 @@
 #include "Cookie.h"
 #include "CookieJar.h"
 #include "DOMEditor.h"
+#include "DOMException.h"
 #include "DOMPatchSupport.h"
 #include "DOMWindow.h"
 #include "Document.h"
@@ -54,7 +55,6 @@
 #include "Element.h"
 #include "Event.h"
 #include "EventListener.h"
-#include "ExceptionCodeDescription.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -202,16 +202,12 @@ void RevalidateStyleAttributeTask::timerFired()
 
 String InspectorDOMAgent::toErrorString(ExceptionCode ec)
 {
-    if (ec) {
-        ExceptionCodeDescription description(ec);
-        return description.name;
-    }
-    return emptyString();
+    return ec ? String(DOMException::name(ec)) : emptyString();
 }
 
 String InspectorDOMAgent::toErrorString(Exception&& exception)
 {
-    return ExceptionCodeDescription { exception.code() }.name;
+    return DOMException::name(exception.code());
 }
 
 InspectorDOMAgent::InspectorDOMAgent(WebAgentContext& context, InspectorPageAgent* pageAgent, InspectorOverlay* overlay)
