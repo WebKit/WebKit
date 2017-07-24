@@ -1,3 +1,34 @@
+2017-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: rename m_browsingContext as m_currentBrowsingContext in Session
+        https://bugs.webkit.org/show_bug.cgi?id=174783
+
+        Reviewed by Brian Burg.
+
+        We have m_toplevelBrowsingContext and m_browsingContext, which is confusing. m_browsingContext is actually the
+        current browsing context, and the spec also refers to it as the current browsing context, so better use
+        m_currentBrowsingContext.
+
+        * Session.cpp:
+        (WebDriver::Session::switchToTopLevelBrowsingContext):
+        (WebDriver::Session::switchToBrowsingContext):
+        (WebDriver::Session::switchToFrame):
+        (WebDriver::Session::switchToParentFrame):
+        (WebDriver::Session::computeElementLayout):
+        (WebDriver::Session::findElements):
+        (WebDriver::Session::isElementSelected):
+        (WebDriver::Session::getElementText):
+        (WebDriver::Session::getElementTagName):
+        (WebDriver::Session::isElementEnabled):
+        (WebDriver::Session::isElementDisplayed):
+        (WebDriver::Session::getElementAttribute):
+        (WebDriver::Session::waitForNavigationToComplete):
+        (WebDriver::Session::elementClear):
+        (WebDriver::Session::elementSendKeys):
+        (WebDriver::Session::elementSubmit):
+        (WebDriver::Session::executeScript):
+        * Session.h:
+
 2017-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement page load timeout

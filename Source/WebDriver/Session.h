@@ -159,7 +159,7 @@ private:
     Timeouts m_timeouts;
     String m_id;
     std::optional<String> m_toplevelBrowsingContext;
-    std::optional<String> m_browsingContext;
+    std::optional<String> m_currentBrowsingContext;
 };
 
 } // WebDriver
