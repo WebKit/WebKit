@@ -1,3 +1,13 @@
+2017-06-26  Saam Barati  <sbarati@apple.com>
+
+        Crash in JSC::Lexer<unsigned char>::setCode
+        https://bugs.webkit.org/show_bug.cgi?id=172754
+
+        Reviewed by Mark Lam.
+
+        * stress/dont-reserve-huge-capacity-lexer.js: Added.
+        (catch):
+
 2017-04-13  Mark Lam  <mark.lam@apple.com>
 
         Should use flushDirect() when flushing the scopeRegister due to needsScopeRegister().
