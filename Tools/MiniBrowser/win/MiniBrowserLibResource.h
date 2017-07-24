@@ -1,4 +1,4 @@
-// {{NO_DEPENDENCIES}}
+//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by MiniBrowserLib.rc
 //
@@ -53,6 +53,7 @@
 #define IDM_ZOOM_IN                     172
 #define IDM_ZOOM_OUT                    173
 #define IDM_SHOW_LAYER_TREE             174
+#define IDD_AUTH                        174
 #define IDM_DEBUG_INFO_LAYER            175
 #define IDC_EMPTY_URL_CACHE             1000
 #define IDC_RETURN_FREE_MEMORY          1001
@@ -106,6 +107,8 @@
 #define IDC_TOTAL_FONT_OBJECTS5         1050
 #define IDC_SITE_ICONS_WITH_DATA        1051
 #define IDC_USER_AGENT_INPUT            1052
+#define IDC_AUTH_USER                   1053
+#define IDC_AUTH_PASSWORD               1054
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -113,9 +116,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        174
+#define _APS_NEXT_RESOURCE_VALUE        175
 #define _APS_NEXT_COMMAND_VALUE         32776
-#define _APS_NEXT_CONTROL_VALUE         1053
+#define _APS_NEXT_CONTROL_VALUE         1054
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -29,7 +29,9 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_MINIBROWSER         ICON                    "MiniBrowser.ico"
+
 IDI_SMALL               ICON                    "small.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -240,6 +242,19 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,252,155,50,14
 END
 
+IDD_AUTH DIALOGEX 0, 0, 231, 99
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Authentication Required"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Sign In",IDOK,116,78,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,174,78,50,14
+    RTEXT           "User Name:",IDC_STATIC,7,21,57,8
+    EDITTEXT        IDC_AUTH_USER,67,19,157,14,ES_AUTOHSCROLL
+    RTEXT           "Password:",IDC_STATIC,7,46,57,8
+    EDITTEXT        IDC_AUTH_PASSWORD,67,44,157,14,ES_PASSWORD | ES_AUTOHSCROLL
+END
+
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -295,6 +310,18 @@ BEGIN
         RIGHTMARGIN, 302
         TOPMARGIN, 7
         BOTTOMMARGIN, 169
+    END
+
+    IDD_AUTH, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 224
+        VERTGUIDE, 64
+        VERTGUIDE, 67
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 92
+        HORZGUIDE, 25
+        HORZGUIDE, 50
     END
 END
 #endif    // APSTUDIO_INVOKED

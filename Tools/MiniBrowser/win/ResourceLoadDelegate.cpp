@@ -25,15 +25,19 @@
 #include "stdafx.h"
 #include "ResourceLoadDelegate.h"
 
-#include "PageLoadTestClient.h"
 #include "MiniBrowser.h"
+#include "PageLoadTestClient.h"
+#include <COMPtr.h>
 #include <WebKit/WebKitCOMAPI.h>
 #include <comip.h>
 #include <commctrl.h>
 #include <commdlg.h>
 #include <objbase.h>
 #include <shlwapi.h>
+#include <string>
 #include <wininet.h>
+
+extern HRESULT DisplayAuthDialog(std::wstring& username, std::wstring& password);
 
 HRESULT ResourceLoadDelegate::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppvObject)
 {
@@ -83,9 +87,23 @@ HRESULT ResourceLoadDelegate::willSendRequest(_In_opt_ IWebView*, unsigned long,
     return E_NOTIMPL;
 }
 
-HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebView*, unsigned long, _In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebDataSource*)
+HRESULT ResourceLoadDelegate::didReceiveAuthenticationChallenge(_In_opt_ IWebView*, unsigned long, _In_opt_ IWebURLAuthenticationChallenge* challenge, _In_opt_ IWebDataSource*)
 {
-    return E_NOTIMPL;
+    COMPtr<IWebURLAuthenticationChallengeSender> sender;
+    if (!challenge || FAILED(challenge->sender(&sender)))
+        return E_FAIL;
+
+    std::wstring username, password;
+    if (DisplayAuthDialog(username, password) != S_OK)
+        return E_FAIL;
+
+    COMPtr<IWebURLCredential> credential;
+    if (FAILED(WebKitCreateInstance(CLSID_WebURLCredential, 0, IID_IWebURLCredential, (void**)&credential)))
+        return E_FAIL;
+    credential->initWithUser(_bstr_t(username.c_str()), _bstr_t(password.c_str()), WebURLCredentialPersistenceForSession);
+
+    sender->useCredential(credential.get(), challenge);
+    return S_OK;
 }
 
 HRESULT ResourceLoadDelegate::didCancelAuthenticationChallenge(_In_opt_ IWebView*, unsigned long, _In_opt_ IWebURLAuthenticationChallenge*, _In_opt_ IWebDataSource*)

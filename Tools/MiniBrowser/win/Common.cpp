@@ -102,6 +102,7 @@ LRESULT CALLBACK BackButtonProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK ForwardButtonProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK ReloadButtonProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK Caches(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK AuthDialogProc(HWND, UINT, WPARAM, LPARAM);
 
 static void loadURL(BSTR urlBStr);
 static void updateStatistics(HWND hDlg);
@@ -657,6 +658,56 @@ INT_PTR CALLBACK CustomUserAgent(HWND hDlg, UINT message, WPARAM wParam, LPARAM 
 
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
             ::EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        break;
+    }
+    return (INT_PTR)FALSE;
+}
+
+HRESULT DisplayAuthDialog(std::wstring& username, std::wstring& password)
+{
+    auto result = DialogBox(hInst, MAKEINTRESOURCE(IDD_AUTH), hMainWnd, AuthDialogProc);
+    if (!result)
+        return E_FAIL;
+
+    auto pair = reinterpret_cast<std::pair<std::wstring, std::wstring>*>(result);
+    username = pair->first;
+    password = pair->second;
+    delete pair;
+
+    return S_OK;
+}
+
+INT_PTR CALLBACK AuthDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+    case WM_INITDIALOG: {
+        HWND edit = ::GetDlgItem(hDlg, IDC_AUTH_USER);
+        ::SetWindowText(edit, static_cast<LPCTSTR>(L""));
+        
+        edit = ::GetDlgItem(hDlg, IDC_AUTH_PASSWORD);
+        ::SetWindowText(edit, static_cast<LPCTSTR>(L""));
+        return (INT_PTR)TRUE;
+    }
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            INT_PTR result { };
+
+            if (LOWORD(wParam) == IDOK) {
+                TCHAR user[256];
+                int strLen = ::GetWindowText(::GetDlgItem(hDlg, IDC_AUTH_USER), user, 256);
+                user[strLen] = 0;
+
+                TCHAR pass[256];
+                strLen = ::GetWindowText(::GetDlgItem(hDlg, IDC_AUTH_PASSWORD), pass, 256);
+                pass[strLen] = 0;
+
+                result = reinterpret_cast<INT_PTR>(new std::pair<std::wstring, std::wstring>(user, pass));
+            }
+
+            ::EndDialog(hDlg, result);
             return (INT_PTR)TRUE;
         }
         break;
