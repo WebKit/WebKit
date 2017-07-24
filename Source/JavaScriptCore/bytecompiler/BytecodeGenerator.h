@@ -223,7 +223,7 @@ namespace JSC {
 
         void addGetInst(unsigned instIndex, int propertyRegIndex, UnlinkedValueProfile valueProfile)
         {
-            m_getInsts.append({ instIndex, propertyRegIndex, valueProfile });
+            m_getInsts.append(std::tuple<unsigned, int, UnlinkedValueProfile>(instIndex, propertyRegIndex, valueProfile));
         }
 
         void finalize(BytecodeGenerator&);

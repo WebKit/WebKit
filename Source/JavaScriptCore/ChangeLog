@@ -1,3 +1,10 @@
+2017-07-24  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the build with GCC 4.9 after merge r217438.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::StructureForInContext::addGetInst):
+
 2017-06-26  Saam Barati  <sbarati@apple.com>
 
         Crash in JSC::Lexer<unsigned char>::setCode
