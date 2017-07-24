@@ -1,3 +1,16 @@
+2017-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] 5 DataInteractionTests are failing: observed selection rects after dropping don't match expected values
+        https://bugs.webkit.org/show_bug.cgi?id=174769
+        <rdar://problem/33478864>
+
+        Reviewed by Tim Horton.
+
+        Fixes several API tests in the DataInteractionTests suite. See Source/WebCore/ChangeLog for more details.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+
 2017-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement page load timeout

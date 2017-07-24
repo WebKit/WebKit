@@ -3616,10 +3616,7 @@ void WebPage::performDragControllerAction(uint64_t action, const WebCore::DragDa
                 m_pendingDropExtensionsForFileUpload.append(extension);
         }
 
-        auto& frame = m_page->focusController().focusedOrMainFrame();
-        frame.editor().setIgnoreSelectionChanges(true);
         bool handled = m_page->dragController().performDragOperation(dragData);
-        frame.editor().setIgnoreSelectionChanges(false);
 
         // If we started loading a local file, the sandbox extension tracker would have adopted this
         // pending drop sandbox extension. If not, we'll play it safe and clear it.

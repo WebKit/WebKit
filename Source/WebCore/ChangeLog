@@ -1,3 +1,40 @@
+2017-07-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] 5 DataInteractionTests are failing: observed selection rects after dropping don't match expected values
+        https://bugs.webkit.org/show_bug.cgi?id=174769
+        <rdar://problem/33478864>
+
+        Reviewed by Tim Horton.
+
+        These tests began failing after r219541, due to a change in behavior of whether or not we call
+        setIgnoreSelectionChanges(false, RevealSelection::No) or setIgnoreSelectionChanges(false, RevealSelection::Yes)
+        when performing a text editing drop.
+
+        Before r219541, we would not reveal the selection when performing an edit drag operation. This is because in
+        WebPage::performDragControllerAction, we would begin ignoring selection changes by calling
+        setIgnoreSelectionChanges(true). However, while taking a text indicator snapshot, we would stop ignoring
+        selection in TextIndicator::createWithRange due to us calling setIgnoreSelectionChanges(false,
+        RevealSelection::No) at the end of the function. Then, when we return to the scope of
+        WebPage::performDragControllerAction and try to setIgnoreSelectionChanges(false), this is a no-op because we've
+        already stopped ignoring selection changes.
+
+        After r219541, switching to using TemporarySelectionChange means that TextIndicator::createWithRange now means
+        we respect whether or not we were already ignoring selection before taking the snapshot, so we won't always
+        setIgnoreSelectionChanges(false) at the end. This means that selection changes will now be correctly ignored
+        when performing a drag operation, but this also means that we'll try to reveal the selection, since
+        WebPage::performDragControllerAction calls setIgnoreSelectionChanges(false), for which RevealSelection::Yes
+        is used by default.
+
+        Revealing the selection in WebPage::performDragControllerAction was unintended in the first place, so we should
+        revert to calling setIgnoreSelectionChanges(false, RevealSelection::No). To ensure this, we adopt
+        TemporarySelectionChange here and pass only TemporarySelectionOptionIgnoreSelectionChanges, so that we won't
+        additionally try to reveal selection after the drop. This is consistent with behavior prior to macOS 10.13 and
+        iOS 11. Additionally, this patch also moves the call to ignore selection change from WebKit into WebCore, so
+        that whether we ignore selection is consistent across both WebKit1 and WebKit2.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::performDragOperation):
+
 2017-07-23  Chris Dumez  <cdumez@apple.com>
 
         Drop ExceptionCodeDescription class
