@@ -14,13 +14,6 @@ svg/custom/svg-fonts-fallback.xhtml [ Failure ]
 svg/wicd/test-rightsizing-b.xhtml [ Failure ]
 fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure  ]
 
-# <rdar://problem/30182218> REGRESSION: 5 media LayoutTest timeouts
-media/audio-controls-timeline-in-media-document.html [ Timeout ]
-media/audio-data-url.html [ Timeout ]
-media/media-document-audio-controls-visible.html [ Timeout ]
-media/media-document-audio-repaint.html [ Timeout ]
-media/media-document-audio-size.html [ Timeout ]
-
 # <rdar://problem/30059973> REGRESSION: LayoutTest userscripts/user-script-audio-document.html failing
 userscripts/user-script-audio-document.html [ Failure ]
 
