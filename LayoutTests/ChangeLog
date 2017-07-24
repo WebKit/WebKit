@@ -1,3 +1,12 @@
+2017-07-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] The tests fast/text/line-height-minimumFontSize*.html are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=174801
+
+        Unreviewed test gardening, update test expectations for failing tests.
+
+        * platform/win/TestExpectations:
+
 2017-07-24  Matt Lewis  <jlewis3@apple.com>
 
         Marked tests as failures.
