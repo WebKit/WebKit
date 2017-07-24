@@ -1,3 +1,87 @@
+2017-07-24  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r219665.
+
+    2017-07-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Setting the minimum font size preference doesn’t affect absolute line-height values, so lines overlap
+            https://bugs.webkit.org/show_bug.cgi?id=174406
+
+            Reviewed by Simon Fraser.
+            <rdar://problem/10139227>
+
+            Reviewed by NOBODY.
+
+            When the minimumFontSize API preference is set, we will increase the font size without increasing
+            the line height. If the content specifies line-height as an absolute value, there can be two
+            unfortunate results:
+
+            - Adjacent lines in a paragraph can overlap
+            - If the paragraph (or containin block or whatever) uses overflow: hidden, the first and last lines
+            can be cut off and potentially indecipherable.
+
+            Instead, we should use the minimum font size preference as a signal that we should increase the
+            line-height as well as the font-size. Eventually, we will want to increase it by an amount
+            proportional to the increase in font-size (which can be due to minimumFontSize, minimumLogicalFontSize,
+            text autosizing, etc.). However, because minimumLogicalFontSize is on by default, this would cause
+            a behavior change on many webpages which use small text, so such a change would be too risky right now.
+            Instead, we can pretend that minimumFontSize is the only cause that text increases, and use this as the
+            only signal to boost the corresponding line-height.
+
+            Tests: fast/text/line-height-minimumFontSize-text-zoom.html
+                   fast/text/line-height-minimumFontSize-visual.html
+                   fast/text/line-height-minimumFontSize-zoom.html
+                   fast/text/line-height-minimumFontSize.html
+                   fast/text/line-height-minimumFontSize-autosize.html
+
+            * css/StyleBuilderCustom.h:
+            (WebCore::computeBaseSpecifiedFontSize):
+            (WebCore::computeLineHeightMultiplierDueToFontSize):
+            (WebCore::StyleBuilderCustom::applyValueLineHeight):
+            (WebCore::StyleBuilderCustom::applyValueFill):
+            (WebCore::StyleBuilderCustom::applyValueStroke):
+            (WebCore::StyleBuilderCustom::applyValueContent):
+            * rendering/TextAutoSizing.cpp:
+
+2017-07-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Setting the minimum font size preference doesn’t affect absolute line-height values, so lines overlap
+        https://bugs.webkit.org/show_bug.cgi?id=174406
+        <rdar://problem/10139227>
+
+        Reviewed by Simon Fraser.
+
+        When the minimumFontSize API preference is set, we will increase the font size without increasing
+        the line height. If the content specifies line-height as an absolute value, there can be two
+        unfortunate results:
+
+        - Adjacent lines in a paragraph can overlap
+        - If the paragraph (or containin block or whatever) uses overflow: hidden, the first and last lines
+        can be cut off and potentially indecipherable.
+
+        Instead, we should use the minimum font size preference as a signal that we should increase the
+        line-height as well as the font-size. Eventually, we will want to increase it by an amount
+        proportional to the increase in font-size (which can be due to minimumFontSize, minimumLogicalFontSize,
+        text autosizing, etc.). However, because minimumLogicalFontSize is on by default, this would cause
+        a behavior change on many webpages which use small text, so such a change would be too risky right now.
+        Instead, we can pretend that minimumFontSize is the only cause that text increases, and use this as the
+        only signal to boost the corresponding line-height.
+
+        Tests: fast/text/line-height-minimumFontSize-text-zoom.html
+               fast/text/line-height-minimumFontSize-visual.html
+               fast/text/line-height-minimumFontSize-zoom.html
+               fast/text/line-height-minimumFontSize.html
+               fast/text/line-height-minimumFontSize-autosize.html
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::computeBaseSpecifiedFontSize):
+        (WebCore::computeLineHeightMultiplierDueToFontSize):
+        (WebCore::StyleBuilderCustom::applyValueLineHeight):
+        (WebCore::StyleBuilderCustom::applyValueFill):
+        (WebCore::StyleBuilderCustom::applyValueStroke):
+        (WebCore::StyleBuilderCustom::applyValueContent):
+        * rendering/TextAutoSizing.cpp:
+
 2017-07-23  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r219571. rdar://problem/33464710
