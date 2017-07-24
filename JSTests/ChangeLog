@@ -1,3 +1,13 @@
+2017-04-17  Mark Lam  <mark.lam@apple.com>
+
+        JSArray::appendMemcpy() needs to handle copying from Undecided indexing type too.
+        https://bugs.webkit.org/show_bug.cgi?id=170896
+        <rdar://problem/31651319>
+
+        Reviewed by JF Bastien and Keith Miller.
+
+        * stress/regress-170896.js: Added.
+
 2017-05-25  Saam Barati  <sbarati@apple.com>
 
         Our for-in optimization in the bytecode generator does its static analysis incorrectly
