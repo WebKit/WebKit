@@ -50,9 +50,11 @@ WebInspector.ResourceSidebarPanel = class ResourceSidebarPanel extends WebInspec
             scopeBarItems.push(scopeBarItem);
         }
 
-        let canvasesScopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + WebInspector.Canvas.ResourceSidebarType, WebInspector.UIString("Canvases"));
-        canvasesScopeBarItem[WebInspector.ResourceSidebarPanel.ResourceTypeSymbol] = WebInspector.Canvas.ResourceSidebarType;
-        scopeBarItems.insertAtIndex(canvasesScopeBarItem, scopeBarItems.length - 1);
+        if (window.CanvasAgent && WebInspector.settings.experimentalShowCanvasContextsInResources.value) {
+            let canvasesScopeBarItem = new WebInspector.ScopeBarItem(scopeItemPrefix + WebInspector.Canvas.ResourceSidebarType, WebInspector.UIString("Canvases"));
+            canvasesScopeBarItem[WebInspector.ResourceSidebarPanel.ResourceTypeSymbol] = WebInspector.Canvas.ResourceSidebarType;
+            scopeBarItems.insertAtIndex(canvasesScopeBarItem, scopeBarItems.length - 1);
+        }
 
         this._scopeBar = new WebInspector.ScopeBar("resource-sidebar-scope-bar", scopeBarItems, scopeBarItems[0], true);
         this._scopeBar.addEventListener(WebInspector.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionDidChange, this);

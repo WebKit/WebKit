@@ -1,3 +1,14 @@
+2017-07-24  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: should only show Canvases in resource type filter if debug setting enabled
+        https://bugs.webkit.org/show_bug.cgi?id=174765
+        <rdar://problem/33479009>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WebInspector.ResourceSidebarPanel):
+
 2017-07-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: inspect(aFunction) should jump to function definition
