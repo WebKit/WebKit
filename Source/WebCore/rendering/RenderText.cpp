@@ -1283,7 +1283,7 @@ void RenderText::setText(const String& text, bool force)
         downcast<RenderBlockFlow>(*parent()).invalidateLineLayoutPath();
     
     if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->deferTextChanged(*this);
+        cache->deferTextChangedIfNeeded(textNode());
 }
 
 String RenderText::textWithoutConvertingBackslashToYenSymbol() const

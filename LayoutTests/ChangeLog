@@ -1,3 +1,14 @@
+2017-05-11  Zalan Bujtas  <zalan@apple.com>
+
+        AX: Defer text changes until after the tree is clean if needed.
+        https://bugs.webkit.org/show_bug.cgi?id=171546
+        <rdar://problem/31934942>
+
+        Reviewed by Simon Fraser.
+
+        * accessibility/crash-when-render-tree-is-not-clean-expected.txt: Added.
+        * accessibility/crash-when-render-tree-is-not-clean.html: Added.
+
 2017-05-02  Zalan Bujtas  <zalan@apple.com>
 
         Defer AX cache update when text content changes until after layout is finished.
