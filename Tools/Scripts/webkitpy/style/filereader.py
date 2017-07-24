@@ -112,7 +112,7 @@ class TextFileReader(object):
         abs_file_path = self.filesystem.abspath(file_path)
         if abs_file_path not in self._files:
             self._files[abs_file_path] = None
-        if 'line_numbers' in kwargs:
+        if kwargs.get('line_numbers'):
             # Deleted files will be 'None', but if a file has modified lines, this information should override the 'None'
             if self._files[abs_file_path] is None:
                 self._files[abs_file_path] = []

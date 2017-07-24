@@ -1,3 +1,17 @@
+2017-07-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Handle case where line_numbers is None instead of an array of line numbers
+        https://bugs.webkit.org/show_bug.cgi?id=174775
+
+        Reviewed by Aakash Jain.
+
+        Added files set line_numbers to None in process_file.
+
+        * Scripts/webkitpy/style/filereader.py:
+        (TextFileReader.process_file): Handle case where line_number is set to None.
+        * Scripts/webkitpy/style/main_unittest.py:
+        (ExpectationLinterInStyleCheckerTest.test_linter_added_file_with_error): Test case of an added file.
+
 2017-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Add libepoxy to the Jhbuild moduleset
