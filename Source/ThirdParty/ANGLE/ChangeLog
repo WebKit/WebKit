@@ -1,3 +1,18 @@
+2017-07-13  Adrian Perez de Castro  <aperez@igalia.com>
+
+        eglplatform.h does not support Wayland
+        https://bugs.webkit.org/show_bug.cgi?id=163482
+
+        This makes it possible to build WebKitGTK+ when the target system has only Wayland support,
+        but no X11 (and therefore the X11 headers are not present).
+
+        Reviewed by Alex Christensen.
+
+        * include/EGL/eglplatform.h: Add Wayland typedefs when WL_EGL_PLATFORM is defined (for example
+        by including wayland-egl.h before including EGL/egl.h). Also, include the X11 headers only
+        when ANGLE_USE_X11 is defined and, for consistency with Mesa's version of the header, when
+        MESA_EGL_NO_X11_HEADERS is not defined.
+
 2016-12-20  Tim Horton  <timothy_horton@apple.com>
 
         Remove an ANGLE Markdown file from the ANGLE target
