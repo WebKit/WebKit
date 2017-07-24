@@ -1,5 +1,14 @@
 2017-07-24  Matt Lewis  <jlewis3@apple.com>
 
+        Marked tests as failures.
+        <rdar://problem/33437597>
+        
+        Unreviewed test gardening.
+
+        * platform/mac-highsierra/TestExpectations:
+
+2017-07-24  Matt Lewis  <jlewis3@apple.com>
+
         Fixed typo in test expectations.
         https://bugs.webkit.org/show_bug.cgi?id=173010
 
