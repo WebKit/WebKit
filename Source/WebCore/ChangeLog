@@ -1,3 +1,14 @@
+2017-07-24  Andy Estes  <aestes@apple.com>
+
+        Consider implementing W3C Payment Request API
+        https://bugs.webkit.org/show_bug.cgi?id=174796
+
+        Reviewed by Daniel Bates.
+
+        Add Payment Request to features.json as "Under Consideration".
+
+        * features.json:
+
 2017-07-24  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed attempt to fix Mac cmake build
