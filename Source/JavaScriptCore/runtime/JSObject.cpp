@@ -2344,6 +2344,15 @@ bool JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
     return true;
 }
 
+ALWAYS_INLINE static bool canDoFastPutDirectIndex(JSObject* object)
+{
+    return isJSArray(object)
+        || isJSFinalObject(object)
+        || object->type() == DirectArgumentsType
+        || object->type() == ScopedArgumentsType
+        || object->type() == ClonedArgumentsType;
+}
+
 // Defined in ES5.1 8.12.9
 bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const PropertyDescriptor& descriptor, bool throwException)
 {
@@ -2357,7 +2366,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
         // FIXME: this will pessimistically assume that if attributes are missing then they'll default to false
         // however if the property currently exists missing attributes will override from their current 'true'
         // state (i.e. defineOwnProperty could be used to set a value without needing to entering 'SparseMode').
-        if (!descriptor.attributes() && descriptor.value()) {
+        if (!descriptor.attributes() && descriptor.value() && canDoFastPutDirectIndex(this)) {
             ASSERT(!descriptor.isAccessorDescriptor());
             return putDirectIndex(exec, index, descriptor.value(), 0, throwException ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
         }
@@ -2796,9 +2805,15 @@ bool JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage(ExecState* exec,
     return true;
 }
 
-bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
+bool JSObject::putDirectIndexSlowOrBeyondVectorLength(ExecState* exec, unsigned i, JSValue value, unsigned attributes, PutDirectIndexMode mode)
 {
     VM& vm = exec->vm();
+    
+    if (!canDoFastPutDirectIndex(this)) {
+        PropertyDescriptor descriptor;
+        descriptor.setDescriptor(value, attributes);
+        return methodTable(vm)->defineOwnProperty(this, exec, Identifier::from(exec, i), descriptor, mode == PutDirectIndexShouldThrow);
+    }
 
     // i should be a valid array index that is outside of the current vector.
     ASSERT(i <= MAX_ARRAY_INDEX);
@@ -2842,7 +2857,7 @@ bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSV
         }
         if (!value.isInt32()) {
             convertInt32ForValue(vm, value);
-            return putDirectIndexBeyondVectorLength(exec, i, value, attributes, mode);
+            return putDirectIndexSlowOrBeyondVectorLength(exec, i, value, attributes, mode);
         }
         putByIndexBeyondVectorLengthWithoutAttributes<Int32Shape>(exec, i, value);
         return true;
@@ -2856,12 +2871,12 @@ bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSV
         }
         if (!value.isNumber()) {
             convertDoubleToContiguous(vm);
-            return putDirectIndexBeyondVectorLength(exec, i, value, attributes, mode);
+            return putDirectIndexSlowOrBeyondVectorLength(exec, i, value, attributes, mode);
         }
         double valueAsDouble = value.asNumber();
         if (valueAsDouble != valueAsDouble) {
             convertDoubleToContiguous(vm);
-            return putDirectIndexBeyondVectorLength(exec, i, value, attributes, mode);
+            return putDirectIndexSlowOrBeyondVectorLength(exec, i, value, attributes, mode);
         }
         putByIndexBeyondVectorLengthWithoutAttributes<DoubleShape>(exec, i, value);
         return true;

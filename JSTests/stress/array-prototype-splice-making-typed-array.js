@@ -10,24 +10,30 @@ function test(f, n = 4) {
 
 test(function() {
     // This should not crash.
-
-    // FIXME: this might need to be updated as we make our splice implementation
-    // more ES6 compliant: https://bugs.webkit.org/show_bug.cgi?id=159645
     let x = [1,2,3,4,5];
     x.constructor = Uint8Array;
     delete x[2];
     assert(!(2 in x));
-    let removed = x.splice(1,3);
-    assert(removed instanceof Uint8Array);
-    assert(removed.length === 3);
-    assert(removed[0] === 2);
-    assert(removed[1] === 0);
-    assert(removed[2] === 4);
+    let err = null;
+    try {
+        let removed = x.splice(1,3);
+        assert(removed instanceof Uint8Array);
+        assert(removed.length === 3);
+        assert(removed[0] === 2);
+        assert(removed[1] === 0);
+        assert(removed[2] === 4);
+    } catch(e) {
+        err = e;
+    }
+    assert(err.toString() === "TypeError: Attempting to configure non-configurable property on a typed array at index: 0");
 
     assert(x instanceof Array);
-    assert(x.length === 2);
+    assert(x.length === 5);
     assert(x[0] === 1);
-    assert(x[1] === 5);
+    assert(x[1] === 2);
+    assert(x[2] === undefined);
+    assert(x[3] === 4);
+    assert(x[4] === 5);
 });
 
 test(function() {

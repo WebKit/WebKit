@@ -1,3 +1,31 @@
+2017-05-05  Saam Barati  <sbarati@apple.com>
+
+        putDirectIndex does not properly do defineOwnProperty
+        https://bugs.webkit.org/show_bug.cgi?id=171591
+        <rdar://problem/31735695>
+
+        Reviewed by Geoffrey Garen.
+
+        * stress/array-prototype-splice-making-typed-array.js:
+        (test):
+        * stress/array-species-config-array-constructor.js:
+        (shouldThrow):
+        (test):
+        * stress/put-direct-index-broken-2.js: Added.
+        (assert):
+        (test):
+        (makeLengthWritable):
+        (set get restoreOldDesc):
+        * stress/put-direct-index-broken.js: Added.
+        (whatToTest):
+        (tryRunning):
+        (tryItOut):
+        * stress/put-indexed-getter-setter.js: Added.
+        (foo.X.prototype.set 7):
+        (foo.X.prototype.get 7):
+        (foo.X):
+        (foo):
+
 2017-05-17  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, address mlam's review feedback.

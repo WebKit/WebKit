@@ -19,14 +19,31 @@ Object.defineProperty(Array, Symbol.species, { value: Int32Array, configurable: 
 // We can't write to the length property on a typed array by default.
 Object.defineProperty(Int32Array.prototype, "length", { value: 0, writable: true });
 
-result = foo.concat([1]);
-if (!(result instanceof Int32Array))
-    throw "concat failed";
+function shouldThrow(f, m) {
+    let err;
+    try {
+        f();
+    } catch(e) {
+        err = e;
+    }
+    if (err.toString() !== m)
+        throw new Error("Wrong error: " + err);
+}
 
-result = foo.splice();
-if (!(result instanceof Int32Array))
-    throw "splice failed";
-
-result = foo.slice();
-if (!(result instanceof Int32Array))
-    throw "slice failed";
+function test() {
+    const message = "TypeError: Attempting to configure non-configurable property on a typed array at index: 0";
+    shouldThrow(() => foo.concat([1]), message);
+    foo = [1,2,3,4];
+    shouldThrow(() => foo.slice(0), message);
+    foo = [1,2,3,4];
+    let r = foo.splice();
+    if (!(r instanceof Int32Array))
+        throw "Bad";
+    if (r.length !== 0)
+        throw "Bad";
+    foo = [1,2,3,4];
+    shouldThrow(() => foo.splice(0), message);
+}
+noInline(test);
+for (let i = 0; i < 3000; ++i)
+    test();

@@ -394,15 +394,21 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
-    if (parseIndex(propertyName)) {
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+        auto throwTypeErrorIfNeeded = [&] (const char* errorMessage) -> bool {
+            if (shouldThrow)
+                throwTypeError(exec, scope, makeString(errorMessage, String::number(*index)));
+            return false;
+        };
+
         if (descriptor.isAccessorDescriptor())
-            return typeError(exec, scope, shouldThrow, ASCIILiteral("Attempting to store accessor indexed property on a typed array."));
+            return throwTypeErrorIfNeeded("Attempting to store accessor property on a typed array at index: ");
 
         if (descriptor.configurable())
-            return typeError(exec, scope, shouldThrow, ASCIILiteral("Attempting to configure non-configurable property."));
+            return throwTypeErrorIfNeeded("Attempting to configure non-configurable property on a typed array at index: ");
 
         if (!descriptor.enumerable() || !descriptor.writable())
-            return typeError(exec, scope, shouldThrow, ASCIILiteral("Attempting to store non-enumerable or non-writable indexed property on a typed array."));
+            return throwTypeErrorIfNeeded("Attempting to store non-enumerable or non-writable property on a typed array at index: ");
 
         if (descriptor.value()) {
             PutPropertySlot unused(JSValue(thisObject), shouldThrow);
