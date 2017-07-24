@@ -1,3 +1,12 @@
+2017-07-24  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Async image tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=174653
+
+        Unreviewed test gardening, update test expectations for async image tests.
+
+        * platform/win/TestExpectations:
+
 2017-07-24  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline this test. The previous result was generated using an older iOS SDK.
