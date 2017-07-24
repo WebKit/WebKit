@@ -1,4 +1,14 @@
 ==================
+WebKitGTK+  2.16.6
+==================
+
+  - Fix rendering of spin buttons with GTK+ >= 3.20 when the entry width is too short.
+  - Fix the build when Wayland target is enabled and X11 disabled.
+  - Fix several crashes and rendering issues.
+  - Security fixes: CVE-2017-7039, CVE-2017-7018, CVE-2017-7030, CVE-2017-7037, CVE-2017-7034,
+    CVE-2017-7055, CVE-2017-7056, CVE-2017-7064, CVE-2017-7061, CVE-2017-7048, CVE-2017-7046.
+
+==================
 WebKitGTK+  2.16.5
 ==================
 
