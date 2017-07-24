@@ -1,9 +1,9 @@
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")
-    set(WEBKITSYSTEMINTERFACE_LIBRARY ../../WebKitLibraries/libWebKitSystemInterfaceMavericks.a)
+    set(WEBKITSYSTEMINTERFACE_LIBRARY ${CMAKE_SOURCE_DIR}/WebKitLibraries/libWebKitSystemInterfaceMavericks.a)
 elseif ("${CURRENT_OSX_VERSION}" MATCHES "10.10")
-    set(WEBKITSYSTEMINTERFACE_LIBRARY ../../WebKitLibraries/libWebKitSystemInterfaceYosemite.a)
+    set(WEBKITSYSTEMINTERFACE_LIBRARY ${CMAKE_SOURCE_DIR}/WebKitLibraries/libWebKitSystemInterfaceYosemite.a)
 else ()
-    set(WEBKITSYSTEMINTERFACE_LIBRARY ../../WebKitLibraries/libWebKitSystemInterfaceElCapitan.a)
+    set(WEBKITSYSTEMINTERFACE_LIBRARY ${CMAKE_SOURCE_DIR}/WebKitLibraries/libWebKitSystemInterfaceElCapitan.a)
 endif ()
 
 find_library(ACCELERATE_LIBRARY accelerate)
