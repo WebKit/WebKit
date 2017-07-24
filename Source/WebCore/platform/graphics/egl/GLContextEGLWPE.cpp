@@ -26,7 +26,7 @@
 // somehow deducible from the build configuration.
 #define __GBM__ 1
 #if USE(LIBEPOXY)
-#include <epoxy/egl.h>
+#include "EpoxyEGL.h"
 #else
 #include <EGL/egl.h>
 #endif

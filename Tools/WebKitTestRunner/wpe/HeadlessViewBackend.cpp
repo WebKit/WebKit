@@ -31,6 +31,11 @@
 #include <unistd.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 
+// Manually provide the EGL_CAST C++ definition in case eglplatform.h doesn't provide it.
+#ifndef EGL_CAST
+#define EGL_CAST(type, value) (static_cast<type>(value))
+#endif
+
 // FIXME: Deploy good practices and clean up GBM resources at process exit.
 static EGLDisplay getEGLDisplay()
 {

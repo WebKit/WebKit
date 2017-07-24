@@ -52,7 +52,7 @@
 #include "TextureMapperGL.h"
 
 #if USE(EGL) && USE(LIBEPOXY)
-#include <epoxy/egl.h>
+#include "EpoxyEGL.h"
 #endif
 #include <cairo-gl.h>
 

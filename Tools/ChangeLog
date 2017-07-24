@@ -1,3 +1,15 @@
+2017-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] libepoxy headers can use EGL_CAST, which might not be defined by eglplatform.h
+        https://bugs.webkit.org/show_bug.cgi?id=174780
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitTestRunner/wpe/HeadlessViewBackend.cpp:
+        Manually define the EGL_CAST macro to the C++ version that uses static_cast<>
+        in case the eglplatform.h header doesn't provide that macro. This replicates
+        the work in WebCore's EpoxyEGL.h header, but we can't include that header here.
+
 2017-07-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Remove _WKDraggableElementInfo and fold PositionInformationTests into WKRequestActivatedElementInfo

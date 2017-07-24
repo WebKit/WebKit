@@ -1,5 +1,36 @@
 2017-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
+        [WPE] libepoxy headers can use EGL_CAST, which might not be defined by eglplatform.h
+        https://bugs.webkit.org/show_bug.cgi?id=174780
+
+        Reviewed by Carlos Garcia Campos.
+
+        Newer versions of libepoxy provide EGL definitions that already use the EGL_CAST macro.
+        We'd like to compile on systems where the eglplatform.h header doesn't yet provide
+        that macro that was added only recently (e.g. it's available in Mesa 17.1, but not
+        before).
+
+        To address that, the EpoxyEGL.h header is added that first includes the libepoxy's EGL
+        header and then provides the EGL_CAST definition in case the eglplatform.h header doesn't.
+        This header should be included in place of <epoxy/egl.h> (which is included in this new
+        header).
+
+        The EpoxyEGL.h and EpoxyShims.h headers are also moved under the platform/graphics/epoxy/
+        directory, with the new directory added to the list of inclusion paths for WPE.
+
+        * PlatformWPE.cmake:
+        * platform/graphics/PlatformDisplay.cpp:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        * platform/graphics/egl/GLContextEGL.cpp:
+        * platform/graphics/egl/GLContextEGLWPE.cpp:
+        * platform/graphics/epoxy/EpoxyEGL.h: Added.
+        * platform/graphics/epoxy/EpoxyShims.h: Renamed from Source/WebCore/platform/graphics/EpoxyShims.h.
+        * platform/graphics/opengl/Extensions3DOpenGLES.cpp:
+        * platform/graphics/wpe/PlatformDisplayWPE.cpp:
+
+2017-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
         [CoordinatedGraphics] Remove unused GLDefs.h header
         https://bugs.webkit.org/show_bug.cgi?id=174712
 
