@@ -100,6 +100,8 @@ CommandResult::CommandResult(RefPtr<InspectorValue>&& result, std::optional<Erro
             m_errorCode = ErrorCode::InvalidElementState;
         else if (errorName == "InvalidSelector")
             m_errorCode = ErrorCode::InvalidSelector;
+        else if (errorName == "Timeout")
+            m_errorCode = ErrorCode::Timeout;
 
         break;
     }
@@ -132,6 +134,7 @@ unsigned CommandResult::httpStatusCode() const
     case ErrorCode::UnknownCommand:
         return 404;
     case ErrorCode::ScriptTimeout:
+    case ErrorCode::Timeout:
         return 408;
     case ErrorCode::JavascriptError:
     case ErrorCode::SessionNotCreated:
@@ -171,6 +174,8 @@ String CommandResult::errorString() const
         return ASCIILiteral("session not created");
     case ErrorCode::StaleElementReference:
         return ASCIILiteral("stale element reference");
+    case ErrorCode::Timeout:
+        return ASCIILiteral("timeout");
     case ErrorCode::UnknownCommand:
         return ASCIILiteral("unknown command");
     case ErrorCode::UnknownError:

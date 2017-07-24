@@ -1,3 +1,31 @@
+2017-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement page load timeout
+        https://bugs.webkit.org/show_bug.cgi?id=174672
+
+        Reviewed by Brian Burg.
+
+        Handle timeout errors and pass the page load timeout to waitForNavigationToComplete and all other navigation
+        commands. Also fix the setTimeouts command that was still using the legacy name of the page load timeout,
+        instead of the one in the spec.
+
+        8. Sessions
+        https://www.w3.org/TR/webdriver/#dfn-session-page-load-timeout
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::CommandResult):
+        (WebDriver::CommandResult::httpStatusCode):
+        (WebDriver::CommandResult::errorString):
+        * CommandResult.h:
+        * Session.cpp:
+        (WebDriver::Session::go):
+        (WebDriver::Session::back):
+        (WebDriver::Session::forward):
+        (WebDriver::Session::refresh):
+        (WebDriver::Session::waitForNavigationToComplete):
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::setTimeouts):
+
 2017-07-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: wait until navigation is complete before running new commands and after a click

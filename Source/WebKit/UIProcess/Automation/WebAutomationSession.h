@@ -31,6 +31,7 @@
 #include "ShareableBitmap.h"
 #include "WebEvent.h"
 #include <wtf/Forward.h>
+#include <wtf/RunLoop.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #include <JavaScriptCore/RemoteAutomationTarget.h>
@@ -111,10 +112,10 @@ public:
     void switchToBrowsingContext(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle) override;
     void resizeWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& size) override;
     void moveWindowOfBrowsingContext(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& position) override;
-    void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url, Ref<NavigateBrowsingContextCallback>&&) override;
-    void goBackInBrowsingContext(Inspector::ErrorString&, const String&, Ref<GoBackInBrowsingContextCallback>&&) override;
-    void goForwardInBrowsingContext(Inspector::ErrorString&, const String&, Ref<GoForwardInBrowsingContextCallback>&&) override;
-    void reloadBrowsingContext(Inspector::ErrorString&, const String&, Ref<ReloadBrowsingContextCallback>&&) override;
+    void navigateBrowsingContext(Inspector::ErrorString&, const String& handle, const String& url, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<NavigateBrowsingContextCallback>&&) override;
+    void goBackInBrowsingContext(Inspector::ErrorString&, const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoBackInBrowsingContextCallback>&&) override;
+    void goForwardInBrowsingContext(Inspector::ErrorString&, const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<GoForwardInBrowsingContextCallback>&&) override;
+    void reloadBrowsingContext(Inspector::ErrorString&, const String&, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<ReloadBrowsingContextCallback>&&) override;
     void waitForNavigationToComplete(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String* optionalPageLoadStrategyString, const int* optionalPageLoadTimeout, Ref<WaitForNavigationToCompleteCallback>&&) override;
     void evaluateJavaScriptFunction(Inspector::ErrorString&, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<Inspector::AutomationBackendDispatcherHandler::EvaluateJavaScriptFunctionCallback>&&) override;
     void performMouseInteraction(Inspector::ErrorString&, const String& handle, const Inspector::InspectorObject& requestedPosition, const String& mouseButton, const String& mouseInteraction, const Inspector::InspectorArray& keyModifiers, RefPtr<Inspector::Protocol::Automation::Point>& updatedPosition) override;
@@ -153,8 +154,9 @@ private:
     String handleForWebFrameID(uint64_t frameID);
     String handleForWebFrameProxy(const WebFrameProxy&);
 
-    void waitForNavigationToCompleteOnPage(WebPageProxy&, Ref<Inspector::BackendDispatcher::CallbackBase>&&);
-    void waitForNavigationToCompleteOnFrame(WebFrameProxy&, Ref<Inspector::BackendDispatcher::CallbackBase>&&);
+    void waitForNavigationToCompleteOnPage(WebPageProxy&, Seconds, Ref<Inspector::BackendDispatcher::CallbackBase>&&);
+    void waitForNavigationToCompleteOnFrame(WebFrameProxy&, Seconds, Ref<Inspector::BackendDispatcher::CallbackBase>&&);
+    void loadTimerFired();
 
     // Implemented in generated WebAutomationSessionMessageReceiver.cpp.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -225,6 +227,8 @@ private:
 
     uint64_t m_nextDeleteCookieCallbackID { 1 };
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::DeleteSingleCookieCallback>> m_deleteCookieCallbacks;
+
+    RunLoop::Timer<WebAutomationSession> m_loadTimer;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

@@ -383,7 +383,7 @@ void WebDriverService::setTimeouts(RefPtr<InspectorObject>&& parameters, Functio
 
         if (it->key == "script")
             timeouts.script = Seconds::fromMilliseconds(timeoutMS);
-        else if (it->key == "page load")
+        else if (it->key == "pageLoad")
             timeouts.pageLoad = Seconds::fromMilliseconds(timeoutMS);
         else if (it->key == "implicit")
             timeouts.implicit = Seconds::fromMilliseconds(timeoutMS);

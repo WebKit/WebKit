@@ -1,3 +1,29 @@
+2017-07-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement page load timeout
+        https://bugs.webkit.org/show_bug.cgi?id=174672
+
+        Reviewed by Brian Burg.
+
+        Always start a timer when waiting for a navigation to complete. When the timer fires, pending callbacks for
+        navigations are removed and invoked with a timeout error. If navigation completes before the timer is fired,
+        then the timer is stopped. All navigation commands now receive the page load strategy and timeout as optional
+        parameters, when not provided the default timeout (300 seconds) is used.
+
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::WebAutomationSession):
+        (WebKit::WebAutomationSession::waitForNavigationToComplete):
+        (WebKit::WebAutomationSession::waitForNavigationToCompleteOnPage):
+        (WebKit::WebAutomationSession::waitForNavigationToCompleteOnFrame):
+        (WebKit::WebAutomationSession::loadTimerFired):
+        (WebKit::WebAutomationSession::navigateBrowsingContext):
+        (WebKit::WebAutomationSession::goBackInBrowsingContext):
+        (WebKit::WebAutomationSession::goForwardInBrowsingContext):
+        (WebKit::WebAutomationSession::reloadBrowsingContext):
+        (WebKit::WebAutomationSession::navigationOccurredForFrame):
+        * UIProcess/Automation/WebAutomationSession.h:
+
 2017-07-23  Takuro Ashie  <ashie@clear-code.com>
 
         [GTK] Correct a typo in the reference manual of WebKitWebInspector

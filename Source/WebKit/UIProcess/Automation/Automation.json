@@ -277,7 +277,9 @@
             "description": "Navigates a browsing context to a specified URL.",
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
-                { "name": "url", "type": "string", "description": "The URL to load in the browsing context." }
+                { "name": "url", "type": "string", "description": "The URL to load in the browsing context." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },
@@ -285,7 +287,9 @@
             "name": "goBackInBrowsingContext",
             "description": "Navigates a browsing context to go back one page in history.",
             "parameters": [
-                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." }
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },
@@ -293,7 +297,9 @@
             "name": "goForwardInBrowsingContext",
             "description": "Navigates a browsing context to got forward one page in history.",
             "parameters": [
-                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." }
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be navigated." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },
@@ -301,7 +307,9 @@
             "name": "reloadBrowsingContext",
             "description": "Reloads the current page in a browsing context.",
             "parameters": [
-                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." }
+                { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context that should be reloaded." },
+                { "name": "pageLoadStrategy", "$ref": "PageLoadStrategy", "optional": true, "description": "The page load strategy to use when determining when navigation is complete." },
+                { "name": "pageLoadTimeout", "type": "integer", "optional": true, "description": "The timeout in milliseconds that the navigation is expected to be completed in, otherwise a <code>Timeout</code> error is returned." }
             ],
             "async": true
         },

@@ -50,6 +50,7 @@ public:
         ScriptTimeout,
         SessionNotCreated,
         StaleElementReference,
+        Timeout,
         UnknownCommand,
         UnknownError,
         UnsupportedOperation,

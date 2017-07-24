@@ -132,6 +132,8 @@ void Session::go(const String& url, Function<void (CommandResult&&)>&& completio
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
     parameters->setString(ASCIILiteral("url"), url);
+    if (m_timeouts.pageLoad)
+        parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
     m_host->sendCommandToBackend(ASCIILiteral("navigateBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -179,6 +181,8 @@ void Session::back(Function<void (CommandResult&&)>&& completionHandler)
 
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
+    if (m_timeouts.pageLoad)
+        parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
     m_host->sendCommandToBackend(ASCIILiteral("goBackInBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -198,6 +202,8 @@ void Session::forward(Function<void (CommandResult&&)>&& completionHandler)
 
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
+    if (m_timeouts.pageLoad)
+        parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
     m_host->sendCommandToBackend(ASCIILiteral("goForwardInBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -217,6 +223,8 @@ void Session::refresh(Function<void (CommandResult&&)>&& completionHandler)
 
     RefPtr<InspectorObject> parameters = InspectorObject::create();
     parameters->setString(ASCIILiteral("handle"), m_toplevelBrowsingContext.value());
+    if (m_timeouts.pageLoad)
+        parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
     m_host->sendCommandToBackend(ASCIILiteral("reloadBrowsingContext"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
@@ -953,6 +961,8 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
     parameters->setString(ASCIILiteral("browsingContextHandle"), m_toplevelBrowsingContext.value());
     if (m_browsingContext)
         parameters->setString(ASCIILiteral("frameHandle"), m_browsingContext.value());
+    if (m_timeouts.pageLoad)
+        parameters->setInteger(ASCIILiteral("pageLoadTimeout"), m_timeouts.pageLoad.value().millisecondsAs<int>());
     m_host->sendCommandToBackend(ASCIILiteral("waitForNavigationToComplete"), WTFMove(parameters), [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
             auto result = CommandResult::fail(WTFMove(response.responseObject));
