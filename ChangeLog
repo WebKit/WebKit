@@ -1,3 +1,26 @@
+2017-07-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Add libepoxy to the Jhbuild moduleset
+        https://bugs.webkit.org/show_bug.cgi?id=174711
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        libepoxy 1.3.1 that's widely available in current stable distributions (Debian stable,
+        Ubuntu LTS) does suffice our needs, but also contains a bug that incorrectly determines
+        the current EGL context and the API version of OpenGL that's bound to that context.
+        Focusing on experiences on Debian systems, while the current stable Debian release has
+        this bug patched, the package for the testing distribution of Debian removed that same
+        patch for whatever reason, despite using the 1.3.1 version as the package basis.
+
+        To avoid this, libepoxy 1.4.3 is now added to WPE's Jhbuild moduleset. The WPE port
+        also now demands at least the 1.4.0 version to be available when configuring.
+
+        We should revisit the minimum version for libepoxy in the future if the 1.3 release
+        branch gets updated with the proper fix.
+
+        * Source/cmake/FindLibEpoxy.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2017-07-21  Konstantin Tokarev  <annulen@yandex.ru>
 
        [cmake] Unreviewed, add definitions necessary to use ICU shipped with macOS

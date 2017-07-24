@@ -24,6 +24,7 @@
       <dep package="wpe-mesa"/>
       <dep package="libgpg-error"/>
       <dep package="libgcrypt"/>
+      <dep package="libepoxy"/>
       <dep package="dyz"/>
     </dependencies>
   </metamodule>
@@ -41,6 +42,8 @@
       href="http://wayland.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
+  <repository type="tarball" name="github-tarball"
+      href="https://github.com/"/>
   <repository type="tarball" name="gstreamer"
       href="http://gstreamer.freedesktop.org/src/"/>
   <repository type="tarball" name="xkbcommon.org"
@@ -264,6 +267,11 @@
     <dependencies>
       <dep package="libgpg-error"/>
     </dependencies>
+  </autotools>
+
+  <autotools id="libepoxy" autogen-sh="configure" autogenargs="--enable-glx=no">
+    <branch module="anholt/libepoxy/releases/download/1.4.3/libepoxy-1.4.3.tar.xz"
+            version="1.4.3" repo="github-tarball"/>
   </autotools>
 
   <autotools id="dyz" supports-non-srcdir-builds="no">
