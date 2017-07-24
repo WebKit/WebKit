@@ -1,0 +1,23 @@
+ 
+ 
+    
+Hello!
+ 
+Another teal
+ 
+
+PASS Negative co-ordinates 
+PASS co-ordinates larger than the viewport 
+PASS co-ordinates larger than the viewport from in iframe 
+PASS Return first element that is the target for hit testing 
+PASS First element to get mouse events with pointer-events css 
+FAIL SVG element at x,y assert_equals: Should have returned the line SVG expected Element node <svg id="squiggle" xmlns="http://www.w3.org/2000/svg" hei... but got Element node <body>
+  <div id="purple" class="size purple">&nbsp;</div...
+FAIL transformed element at x,y assert_equals: Should have returned SVG with Hello WPT! that has a transform expected Element node <rect x="50" y="50" height="60" width="60" style="stroke:... but got Element node <div style="position: absolute; width: 200px; height: 200...
+FAIL no hit target at x,y assert_equals: Should have returned the root as it has pointer-events:none expected Element node <body>
+  <div id="purple" class="size purple">&nbsp;</div... but got Element node <div id="purple" class="size purple">&nbsp;</div>
+PASS No viewport available 
+FAIL Image Maps assert_equals: Should have returned the area element expected Element node <area id="rectG" shape="rect" coords="0,0,90,100" href="#... but got Element node <html><head><title>cssom-view - elementFromPoint</title>
+...
+FAIL Fieldsets assert_equals: The fieldset should not cover up the div it doesn't even overlap expected Element node <div id="fieldset-div" class="size" style="position: abso... but got null
+

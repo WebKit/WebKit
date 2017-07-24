@@ -13,26 +13,26 @@ absolute client rect: 120, 100 - 50 x 25
 Scrolled to 476, 526
 layoutViewport: 83.5, 233.5 - 785 x 585
 visualViewportRect: 476, 526 - 392.5 x 292.5
-fixed client bounds: 12, 10 - 30 x 20
-fixed client rect: 12, 10 - 30 x 20
-absolute client bounds: 36.5, -133.5 - 50 x 25
-absolute client rect: 36.5, -133.5 - 50 x 25
+fixed client bounds: -856.5, -808.5 - 30 x 20
+fixed client rect: -856.5, -808.5 - 30 x 20
+absolute client bounds: -832, -952 - 50 x 25
+absolute client rect: -832, -952 - 50 x 25
 
 Scrolled to 100, 776
 layoutViewport: 83.5, 483.5 - 785 x 585
 visualViewportRect: 100, 776 - 392.5 x 292.5
-fixed client bounds: 12, 10 - 30 x 20
-fixed client rect: 12, 10 - 30 x 20
-absolute client bounds: 36.5, -383.5 - 50 x 25
-absolute client rect: 36.5, -383.5 - 50 x 25
+fixed client bounds: -104.5, -1058.5 - 30 x 20
+fixed client rect: -104.5, -1058.5 - 30 x 20
+absolute client bounds: -80, -1452 - 50 x 25
+absolute client rect: -80, -1452 - 50 x 25
 
 Scrolled to 50, 300
 layoutViewport: 50, 300 - 785 x 585
 visualViewportRect: 50, 300 - 392.5 x 292.5
-fixed client bounds: 12, 10 - 30 x 20
-fixed client rect: 12, 10 - 30 x 20
-absolute client bounds: 70, -200 - 50 x 25
-absolute client rect: 70, -200 - 50 x 25
+fixed client bounds: -38, -290 - 30 x 20
+fixed client rect: -38, -290 - 30 x 20
+absolute client bounds: 20, -500 - 50 x 25
+absolute client rect: 20, -500 - 50 x 25
 PASS successfullyParsed is true
 
 TEST COMPLETE

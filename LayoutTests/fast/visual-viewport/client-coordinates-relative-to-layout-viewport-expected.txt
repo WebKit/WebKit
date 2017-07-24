@@ -6,16 +6,16 @@ layer at (0,0) size 785x3024
       RenderBlock {P} at (0,0) size 2000x18
         RenderText {#text} at (0,0) size 79x18
           text run at (0,0) width 79: "Got click at "
-        RenderInline {SPAN} at (0,0) size 123x18
-          RenderText {#text} at (78,0) size 123x18
-            text run at (78,0) width 123: "clicked at 292, 240"
-layer at (278,226) size 28x28
-  RenderBlock (positioned) {DIV} at (278,226) size 28x28 [bgcolor=#FF0000]
+        RenderInline {SPAN} at (0,0) size 104x18
+          RenderText {#text} at (78,0) size 104x18
+            text run at (78,0) width 104: "clicked at 52, -6"
+layer at (38,-20) size 28x28 backgroundClip at (0,0) size 2008x3024 clip at (0,0) size 2008x3024
+  RenderBlock (positioned) {DIV} at (38,-20) size 28x28 [bgcolor=#FF0000]
 layer at (280,228) size 25x25
   RenderBlock (positioned) {DIV} at (279,227) size 26x26 [bgcolor=#008000]
 layer at (281,229) size 22x22
   RenderBlock (positioned) {DIV} at (281,229) size 22x22 [bgcolor=#FFA500]
-layer at (284,232) size 16x16
-  RenderBlock (positioned) {DIV} at (284,232) size 16x16 [bgcolor=#0000FF]
+layer at (44,-14) size 16x16 backgroundClip at (0,0) size 2008x3024 clip at (0,0) size 2008x3024
+  RenderBlock (positioned) {DIV} at (44,-14) size 16x16 [bgcolor=#0000FF]
 caret: position 12 of child 0 {#text} of child 9 {P} of body
 scrolled to 120,123
