@@ -50,7 +50,7 @@ using namespace WebKit;
  * g_object_set (G_OBJECT(settings), "enable-developer-extras", TRUE, NULL);
  *
  * /<!-- -->* Load some data or reload to be able to inspect the page*<!-- -->/
- * webkit_web_load_uri (WEBKIT_WEB_VIEW(my_webview), "http://www.gnome.org");
+ * webkit_web_view_load_uri (WEBKIT_WEB_VIEW(my_webview), "http://www.gnome.org");
  *
  * /<!-- -->* Show the inspector *<!-- -->/
  * WebKitWebInspector *inspector = webkit_web_view_get_inspector (WEBKIT_WEB_VIEW(my_webview));
