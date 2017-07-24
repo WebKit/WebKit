@@ -30,7 +30,6 @@
 
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyData.h"
-#include "ExceptionCode.h"
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>
 

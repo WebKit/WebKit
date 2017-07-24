@@ -60,20 +60,21 @@ public:
     template<class Decoder> static bool decode(Decoder&, IDBError&);
 
 private:
-    ExceptionCode m_code { 0 };
+    ExceptionCode m_code { NoException };
     String m_message;
 };
 
 template<class Encoder>
 void IDBError::encode(Encoder& encoder) const
 {
-    encoder << m_code << m_message;
+    encoder.encodeEnum(m_code);
+    encoder << m_message;
 }
     
 template<class Decoder>
 bool IDBError::decode(Decoder& decoder, IDBError& error)
 {
-    if (!decoder.decode(error.m_code))
+    if (!decoder.decodeEnum(error.m_code))
         return false;
 
     if (!decoder.decode(error.m_message))

@@ -35,8 +35,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "ExceptionCode.h"
-
 namespace WebCore {
 
 inline RTCIceCandidate::RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex)

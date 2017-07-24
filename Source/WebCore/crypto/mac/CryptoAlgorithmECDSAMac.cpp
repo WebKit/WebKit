@@ -33,7 +33,6 @@
 #include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoDigestAlgorithm.h"
 #include "CryptoKeyEC.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

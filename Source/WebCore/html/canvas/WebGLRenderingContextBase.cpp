@@ -40,7 +40,6 @@
 #include "EXTTextureFilterAnisotropic.h"
 #include "EXTsRGB.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "Extensions3D.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -3571,9 +3570,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3D
 
         return { };
     } , [&](const RefPtr<HTMLImageElement>& image) -> ExceptionOr<void> {
-        ExceptionCode ec = 0;
-        if (isContextLostOrPending() || !validateHTMLImageElement("texSubImage2D", image.get(), ec))
-            return ec ? Exception { ec } : ExceptionOr<void> { };
+        if (isContextLostOrPending())
+            return { };
+        auto validationResult = validateHTMLImageElement("texSubImage2D", image.get());
+        if (validationResult.hasException())
+            return validationResult.releaseException();
+        if (!validationResult.returnValue())
+            return { };
 
         RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
         if (!imageForRender)
@@ -3598,9 +3601,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3D
         texSubImage2DImpl(target, level, xoffset, yoffset, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha);
         return { };
     }, [&](const RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<void> {
-        ExceptionCode ec = 0;
-        if (isContextLostOrPending() || !validateHTMLCanvasElement("texSubImage2D", canvas.get(), ec))
-            return ec ? Exception { ec } : ExceptionOr<void> { };
+        if (isContextLostOrPending())
+            return { };
+        auto validationResult = validateHTMLCanvasElement("texSubImage2D", canvas.get());
+        if (validationResult.hasException())
+            return validationResult.releaseException();
+        if (!validationResult.returnValue())
+            return { };
 
         WebGLTexture* texture = validateTextureBinding("texSubImage2D", target, true);
         if (!texture)
@@ -3624,9 +3631,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texSubImage2D(GC3Denum target, GC3D
     }
 #if ENABLE(VIDEO)
     , [&](const RefPtr<HTMLVideoElement>& video) -> ExceptionOr<void> {
-        ExceptionCode ec = 0;
-        if (isContextLostOrPending() || !validateHTMLVideoElement("texSubImage2D", video.get(), ec))
-            return ec ? Exception { ec } : ExceptionOr<void> { };
+        if (isContextLostOrPending())
+            return { };
+        auto validationResult = validateHTMLVideoElement("texSubImage2D", video.get());
+        if (validationResult.hasException())
+            return validationResult.releaseException();
+        if (!validationResult.returnValue())
+            return { };
 
         WebGLTexture* texture = validateTextureBinding("texSubImage2D", target, true);
         if (!texture)
@@ -4089,9 +4100,13 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint
             m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
         return { };
     }, [&](const RefPtr<HTMLImageElement>& image) -> ExceptionOr<void> {
-        ExceptionCode ec = 0;
-        if (isContextLostOrPending() || !validateHTMLImageElement("texImage2D", image.get(), ec))
-            return ec ? Exception { ec } : ExceptionOr<void> { };
+        if (isContextLostOrPending())
+            return { };
+        auto validationResult = validateHTMLImageElement("texImage2D", image.get());
+        if (validationResult.hasException())
+            return validationResult.releaseException();
+        if (!validationResult.returnValue())
+            return { };
 
         RefPtr<Image> imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
         if (!imageForRender)
@@ -4106,9 +4121,15 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint
         texImage2DImpl(target, level, internalformat, format, type, imageForRender.get(), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha);
         return { };
     }, [&](const RefPtr<HTMLCanvasElement>& canvas) -> ExceptionOr<void> {
-        ExceptionCode ec = 0;
-        if (isContextLostOrPending() || !validateHTMLCanvasElement("texImage2D", canvas.get(), ec) || !validateTexFunc("texImage2D", TexImage, SourceHTMLCanvasElement, target, level, internalformat, canvas->width(), canvas->height(), 0, format, type, 0, 0))
-            return ec ? Exception { ec } : ExceptionOr<void> { };
+        if (isContextLostOrPending())
+            return { };
+        auto validationResult = validateHTMLCanvasElement("texImage2D", canvas.get());
+        if (validationResult.hasException())
+            return validationResult.releaseException();
+        if (!validationResult.returnValue())
+            return { };
+        if (!validateTexFunc("texImage2D", TexImage, SourceHTMLCanvasElement, target, level, internalformat, canvas->width(), canvas->height(), 0, format, type, 0, 0))
+            return { };
 
         WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
         // If possible, copy from the canvas element directly to the texture
@@ -4138,10 +4159,15 @@ ExceptionOr<void> WebGLRenderingContextBase::texImage2D(GC3Denum target, GC3Dint
     }
 #if ENABLE(VIDEO)
     , [&](const RefPtr<HTMLVideoElement>& video) -> ExceptionOr<void> {
-        ExceptionCode ec = 0;
-        if (isContextLostOrPending() || !validateHTMLVideoElement("texImage2D", video.get(), ec)
-            || !validateTexFunc("texImage2D", TexImage, SourceHTMLVideoElement, target, level, internalformat, video->videoWidth(), video->videoHeight(), 0, format, type, 0, 0))
-            return ec ? Exception { ec } : ExceptionOr<void> { };
+        if (isContextLostOrPending())
+            return { };
+        auto validationResult = validateHTMLVideoElement("texImage2D", video.get());
+        if (validationResult.hasException())
+            return validationResult.releaseException();
+        if (!validationResult.returnValue())
+            return { };
+        if (!validateTexFunc("texImage2D", TexImage, SourceHTMLVideoElement, target, level, internalformat, video->videoWidth(), video->videoHeight(), 0, format, type, 0, 0))
+            return { };
 
         // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
         // Otherwise, it will fall back to the normal SW path.
@@ -5353,7 +5379,7 @@ WebGLBuffer* WebGLRenderingContextBase::validateBufferDataParameters(const char*
     return nullptr;
 }
 
-bool WebGLRenderingContextBase::validateHTMLImageElement(const char* functionName, HTMLImageElement* image, ExceptionCode& ec)
+ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLImageElement(const char* functionName, HTMLImageElement* image)
 {
     if (!image || !image->cachedImage()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no image");
@@ -5364,38 +5390,32 @@ bool WebGLRenderingContextBase::validateHTMLImageElement(const char* functionNam
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "invalid image");
         return false;
     }
-    if (wouldTaintOrigin(image)) {
-        ec = SECURITY_ERR;
-        return false;
-    }
+    if (wouldTaintOrigin(image))
+        return Exception { SECURITY_ERR };
     return true;
 }
 
-bool WebGLRenderingContextBase::validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement* canvas, ExceptionCode& ec)
+ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement* canvas)
 {
     if (!canvas || !canvas->buffer()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no canvas");
         return false;
     }
-    if (wouldTaintOrigin(canvas)) {
-        ec = SECURITY_ERR;
-        return false;
-    }
+    if (wouldTaintOrigin(canvas))
+        return Exception { SECURITY_ERR };
     return true;
 }
 
 #if ENABLE(VIDEO)
 
-bool WebGLRenderingContextBase::validateHTMLVideoElement(const char* functionName, HTMLVideoElement* video, ExceptionCode& ec)
+ExceptionOr<bool> WebGLRenderingContextBase::validateHTMLVideoElement(const char* functionName, HTMLVideoElement* video)
 {
     if (!video || !video->videoWidth() || !video->videoHeight()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no video");
         return false;
     }
-    if (wouldTaintOrigin(video)) {
-        ec = SECURITY_ERR;
-        return false;
-    }
+    if (wouldTaintOrigin(video))
+        return Exception { SECURITY_ERR };
     return true;
 }
 

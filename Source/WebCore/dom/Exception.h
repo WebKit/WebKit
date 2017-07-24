@@ -26,11 +26,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
+#include "ExceptionCode.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-using ExceptionCode = uint8_t;
 
 class Exception {
 public:

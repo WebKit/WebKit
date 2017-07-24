@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DOMTokenList.h"
 
-#include "ExceptionCode.h"
 #include "HTMLParserIdioms.h"
 #include "SpaceSplitString.h"
 #include <wtf/HashSet.h>

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSDocumentFragment.h"
 
-#include "ExceptionCode.h"
 #include "JSShadowRoot.h"
 
 using namespace JSC;

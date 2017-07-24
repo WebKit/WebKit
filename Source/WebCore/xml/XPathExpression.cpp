@@ -28,7 +28,6 @@
 #include "XPathExpression.h"
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "XPathNSResolver.h"
 #include "XPathParser.h"
 #include "XPathResult.h"

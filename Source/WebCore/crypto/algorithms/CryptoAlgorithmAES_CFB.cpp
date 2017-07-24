@@ -31,7 +31,6 @@
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
-#include "ExceptionCode.h"
 
 namespace WebCore {
 

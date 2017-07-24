@@ -31,7 +31,6 @@
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataRSAComponents.h"
 #include "CryptoKeyPair.h"
-#include "ExceptionCode.h"
 #include "GCryptUtilities.h"
 #include "NotImplemented.h"
 #include "ScriptExecutionContext.h"

@@ -31,7 +31,6 @@
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmHkdfParams.h"
 #include "CryptoKeyRaw.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

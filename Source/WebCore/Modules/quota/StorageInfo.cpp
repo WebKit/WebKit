@@ -35,7 +35,6 @@
 #include "StorageInfo.h"
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 #include "StorageErrorCallback.h"
 #include "StorageQuota.h"

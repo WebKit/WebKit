@@ -32,7 +32,6 @@
 #include "config.h"
 #include "JSMutationObserver.h"
 
-#include "ExceptionCode.h"
 #include "JSDOMConstructorBase.h"
 #include "JSMutationCallback.h"
 #include "JSNodeCustom.h"

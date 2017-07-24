@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Base64Utilities.h"
 
-#include "ExceptionCode.h"
 #include <wtf/text/Base64.h>
 
 namespace WebCore {

@@ -30,7 +30,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 #include "ElementChildIterator.h"
-#include "ExceptionCode.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"

@@ -28,7 +28,6 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ExceptionCode.h"
 #include "PaymentRequest.h"
 #include <unicode/ucurr.h>
 #include <unicode/uloc.h>

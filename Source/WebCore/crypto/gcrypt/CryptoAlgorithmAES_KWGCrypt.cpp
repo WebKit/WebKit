@@ -30,7 +30,6 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoKeyAES.h"
-#include "ExceptionCode.h"
 #include "NotImplemented.h"
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>

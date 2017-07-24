@@ -29,8 +29,6 @@
 #include "config.h"
 #include "SQLResultSetRowList.h"
 
-#include "ExceptionCode.h"
-
 namespace WebCore {
 
 unsigned SQLResultSetRowList::length() const

@@ -32,7 +32,6 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioParam.h"
-#include "ExceptionCode.h"
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 

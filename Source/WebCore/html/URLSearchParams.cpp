@@ -26,7 +26,6 @@
 #include "URLSearchParams.h"
 
 #include "DOMURL.h"
-#include "ExceptionCode.h"
 #include "URLParser.h"
 
 namespace WebCore {

@@ -26,7 +26,6 @@
 #include "TreeWalker.h"
 
 #include "ContainerNode.h"
-#include "ExceptionCode.h"
 #include "NodeTraversal.h"
 
 namespace WebCore {

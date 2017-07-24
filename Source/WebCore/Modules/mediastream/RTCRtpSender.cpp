@@ -33,8 +33,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "ExceptionCode.h"
-
 namespace WebCore {
 
 Ref<RTCRtpSender> RTCRtpSender::create(Ref<MediaStreamTrack>&& track, Vector<String>&& mediaStreamIds, Backend& backend)

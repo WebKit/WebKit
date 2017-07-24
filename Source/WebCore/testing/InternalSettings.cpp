@@ -29,7 +29,6 @@
 
 #include "CaptionUserPreferences.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "FontCache.h"
 #include "FrameView.h"
 #include "Language.h"

@@ -28,7 +28,6 @@
 
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "ExceptionCode.h"
 #include "LegacyCDM.h"
 #include "LegacyCDMSession.h"
 #include "MediaPlayer.h"

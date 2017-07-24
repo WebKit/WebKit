@@ -31,7 +31,6 @@
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "Navigator.h"
 #include "Page.h"

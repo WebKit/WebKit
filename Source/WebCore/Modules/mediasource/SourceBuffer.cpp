@@ -38,7 +38,6 @@
 #include "BufferSource.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "GenericEventQueue.h"
 #include "HTMLMediaElement.h"
 #include "InbandTextTrack.h"

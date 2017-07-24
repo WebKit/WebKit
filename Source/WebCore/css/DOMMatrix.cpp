@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DOMMatrix.h"
 
-#include "ExceptionCode.h"
 #include <cmath>
 #include <limits>
 

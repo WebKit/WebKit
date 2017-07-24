@@ -32,7 +32,6 @@
 #include "config.h"
 #include "NumberInputType.h"
 
-#include "ExceptionCode.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"

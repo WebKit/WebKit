@@ -35,7 +35,6 @@
 #include "CryptoKeyData.h"
 #include "CryptoKeySerializationRaw.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "JSCryptoAlgorithmDictionary.h"
 #include "JSCryptoKey.h"
 #include "JSCryptoKeyPair.h"

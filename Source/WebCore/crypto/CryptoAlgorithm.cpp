@@ -28,8 +28,6 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "ExceptionCode.h"
-
 namespace WebCore {
 
 void CryptoAlgorithm::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref<CryptoKey>&&, Vector<uint8_t>&&, VectorCallback&&, ExceptionCallback&& exceptionCallback, ScriptExecutionContext&, WorkQueue&)

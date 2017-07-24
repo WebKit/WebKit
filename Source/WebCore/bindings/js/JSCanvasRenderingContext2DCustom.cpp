@@ -24,7 +24,6 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
-#include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "ImageData.h"

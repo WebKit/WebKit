@@ -35,7 +35,6 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "GPUBasedCanvasRenderingContext.h"

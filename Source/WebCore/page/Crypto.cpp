@@ -35,7 +35,6 @@
 #include "CommonCryptoUtilities.h"
 #endif
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "SubtleCrypto.h"
 #include "WebKitSubtleCrypto.h"
 #include <runtime/ArrayBufferView.h>

@@ -33,7 +33,6 @@
 
 #include "CryptoAlgorithmHmacParamsDeprecated.h"
 #include "CryptoKeyHMAC.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 #include <pal/crypto/gcrypt/Handle.h>
 #include <wtf/CryptographicUtilities.h>

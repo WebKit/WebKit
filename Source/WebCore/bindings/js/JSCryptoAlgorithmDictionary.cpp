@@ -38,7 +38,6 @@
 #include "CryptoAlgorithmRsaKeyParamsWithHashDeprecated.h"
 #include "CryptoAlgorithmRsaOaepParamsDeprecated.h"
 #include "CryptoAlgorithmRsaSsaParamsDeprecated.h"
-#include "ExceptionCode.h"
 #include "JSCryptoOperationData.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvertBufferSource.h"

@@ -28,7 +28,6 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 #include <pal/crypto/CryptoDigest.h>
 

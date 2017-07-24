@@ -57,7 +57,6 @@
 #include "Editor.h"
 #include "Element.h"
 #include "EventHandler.h"
-#include "ExceptionCode.h"
 #include "ExtensionStyleSheets.h"
 #include "File.h"
 #include "FontCache.h"

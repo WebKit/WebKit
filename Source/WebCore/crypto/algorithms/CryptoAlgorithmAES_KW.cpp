@@ -32,7 +32,6 @@
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoKeyAES.h"
 #include "CryptoKeyDataOctetSequence.h"
-#include "ExceptionCode.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {

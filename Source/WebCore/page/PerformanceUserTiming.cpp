@@ -30,7 +30,6 @@
 #if ENABLE(WEB_TIMING)
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "PerformanceTiming.h"
 #include <wtf/NeverDestroyed.h>
 

@@ -32,7 +32,6 @@
 #include "CryptoAlgorithmRsaHashedKeyGenParams.h"
 #include "CryptoKeyPair.h"
 #include "CryptoKeyRSA.h"
-#include "ExceptionCode.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {

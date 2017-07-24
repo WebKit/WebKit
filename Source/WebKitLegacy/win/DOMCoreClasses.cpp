@@ -821,7 +821,6 @@ HRESULT DOMDocument::createEvent(_In_ BSTR eventType, _COM_Outptr_opt_ IDOMEvent
     *result = nullptr;
 
     String eventTypeString(eventType, SysStringLen(eventType));
-    WebCore::ExceptionCode ec = 0;
     auto createEventResult = m_document->createEvent(eventTypeString);
     if (createEventResult.hasException())
         return E_FAIL;

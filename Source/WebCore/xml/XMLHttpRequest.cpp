@@ -30,7 +30,6 @@
 #include "DOMFormData.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "File.h"
 #include "HTMLDocument.h"
 #include "HTTPHeaderNames.h"
@@ -743,7 +742,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         }
     }
 
-    m_exceptionCode = 0;
+    m_exceptionCode = NoException;
     m_error = false;
 
     if (m_async) {

@@ -38,7 +38,6 @@
 
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "ExceptionCode.h"
 #include "JSMediaStream.h"
 #include "JSOverconstrainedError.h"
 #include "Logging.h"

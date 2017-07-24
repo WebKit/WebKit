@@ -36,7 +36,6 @@
 #include "CanvasPath.h"
 
 #include "AffineTransform.h"
-#include "ExceptionCode.h"
 #include "FloatRect.h"
 #include <wtf/MathExtras.h>
 

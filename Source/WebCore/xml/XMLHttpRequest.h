@@ -224,7 +224,7 @@ private:
     unsigned m_lastSendLineNumber { 0 };
     unsigned m_lastSendColumnNumber { 0 };
     String m_lastSendURL;
-    ExceptionCode m_exceptionCode { 0 };
+    ExceptionCode m_exceptionCode { NoException };
 
     XMLHttpRequestProgressEventThrottle m_progressEventThrottle;
 

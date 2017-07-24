@@ -23,7 +23,6 @@
 #include "config.h"
 #include "SVGLocatable.h"
 
-#include "ExceptionCode.h"
 #include "RenderElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageElement.h"

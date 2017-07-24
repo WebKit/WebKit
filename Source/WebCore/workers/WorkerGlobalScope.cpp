@@ -30,7 +30,6 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
-#include "ExceptionCode.h"
 #include "IDBConnectionProxy.h"
 #include "InspectorInstrumentation.h"
 #include "Performance.h"

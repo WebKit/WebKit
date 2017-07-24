@@ -30,7 +30,6 @@
 
 #include "Document.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "FileSystem.h"
 #include "SecurityOriginData.h"
 #include "Settings.h"

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "JSDOMPromiseDeferred.h"
 
-#include "ExceptionCode.h"
 #include "JSDOMError.h"
 #include "JSDOMWindow.h"
 #include <builtins/BuiltinNames.h>

@@ -31,7 +31,6 @@
 
 #if ENABLE(FETCH_API)
 
-#include "ExceptionCode.h"
 #include "HTTPParsers.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"

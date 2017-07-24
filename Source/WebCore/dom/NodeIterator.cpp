@@ -26,7 +26,6 @@
 #include "NodeIterator.h"
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "NodeTraversal.h"
 
 namespace WebCore {

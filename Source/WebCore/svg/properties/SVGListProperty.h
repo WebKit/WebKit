@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
 #include "SVGPropertyTearOff.h"
 #include "SVGPropertyTraits.h"
 #include <wtf/Ref.h>

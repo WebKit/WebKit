@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
 #include "SVGMatrixValue.h"
 #include "SVGPropertyTearOff.h"
 

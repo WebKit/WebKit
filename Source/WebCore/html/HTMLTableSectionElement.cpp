@@ -25,7 +25,6 @@
 #include "config.h"
 #include "HTMLTableSectionElement.h"
 
-#include "ExceptionCode.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLCollection.h"
 #include "HTMLNames.h"

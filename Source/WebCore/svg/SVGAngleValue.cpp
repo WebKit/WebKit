@@ -22,7 +22,6 @@
 #include "config.h"
 #include "SVGAngleValue.h"
 
-#include "ExceptionCode.h"
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringView.h>

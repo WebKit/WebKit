@@ -29,7 +29,6 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoKeyAES.h"
-#include "ExceptionCode.h"
 #include <CommonCrypto/CommonCrypto.h>
 
 namespace WebCore {

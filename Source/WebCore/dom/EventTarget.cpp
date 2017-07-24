@@ -34,7 +34,6 @@
 
 #include "DOMWrapperWorld.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "JSEventListener.h"
 #include "NoEventDispatchAssertion.h"

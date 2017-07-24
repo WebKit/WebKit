@@ -31,7 +31,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
-#include "ExceptionCode.h"
 #include "StyleProperties.h"
 #include "TransformFunctions.h"
 #include <wtf/MathExtras.h>

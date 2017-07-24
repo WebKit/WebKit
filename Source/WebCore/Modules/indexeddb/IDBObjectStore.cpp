@@ -30,7 +30,6 @@
 
 #include "DOMStringList.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
 #include "IDBDatabase.h"

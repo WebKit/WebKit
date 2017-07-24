@@ -31,7 +31,6 @@
 #include "CryptoAlgorithmAesCbcCfbParams.h"
 #include "CryptoAlgorithmAesCbcParamsDeprecated.h"
 #include "CryptoKeyAES.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 #include <CommonCrypto/CommonCrypto.h>
 

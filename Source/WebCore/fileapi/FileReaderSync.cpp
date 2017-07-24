@@ -34,7 +34,6 @@
 
 #include "Blob.h"
 #include "BlobURL.h"
-#include "ExceptionCode.h"
 #include "FileReaderLoader.h"
 #include <runtime/ArrayBuffer.h>
 
@@ -77,7 +76,7 @@ static ExceptionCode errorCodeToExceptionCode(FileError::ErrorCode errorCode)
 {
     switch (errorCode) {
     case FileError::OK:
-        return 0;
+        return NoException;
     case FileError::NOT_FOUND_ERR:
         return NOT_FOUND_ERR;
     case FileError::SECURITY_ERR:

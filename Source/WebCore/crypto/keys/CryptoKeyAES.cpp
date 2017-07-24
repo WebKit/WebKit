@@ -31,7 +31,6 @@
 #include "CryptoAlgorithmAesKeyParams.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoKeyDataOctetSequence.h"
-#include "ExceptionCode.h"
 #include "ExceptionOr.h"
 #include "JsonWebKey.h"
 #include <wtf/text/Base64.h>

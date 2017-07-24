@@ -31,7 +31,6 @@
 #include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmAesGcmParams.h"
 #include "CryptoKeyAES.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CryptographicUtilities.h>
 

@@ -31,7 +31,6 @@
 #include "DatabaseContext.h"
 #include "DatabaseTask.h"
 #include "DatabaseTracker.h"
-#include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "PlatformStrategies.h"

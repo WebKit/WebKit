@@ -29,7 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "IDBBindingUtilities.h"
 #include "IDBConnectionProxy.h"
 #include "IDBDatabaseIdentifier.h"

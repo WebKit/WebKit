@@ -38,7 +38,6 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "NotificationClient.h"
 #include "NotificationController.h"
 #include "NotificationPermissionCallback.h"

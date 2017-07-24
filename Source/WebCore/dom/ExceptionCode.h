@@ -20,11 +20,10 @@
 
 namespace WebCore {
 
-using ExceptionCode = uint8_t;
-
 // Some of these are considered historical since they have been
 // changed or removed from the specifications.
-enum {
+enum ExceptionCode {
+    NoException = 0,
     INDEX_SIZE_ERR = 1,
     HIERARCHY_REQUEST_ERR = 3,
     WRONG_DOCUMENT_ERR = 4,

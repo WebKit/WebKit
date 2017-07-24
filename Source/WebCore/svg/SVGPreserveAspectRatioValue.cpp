@@ -23,7 +23,6 @@
 #include "SVGPreserveAspectRatioValue.h"
 
 #include "AffineTransform.h"
-#include "ExceptionCode.h"
 #include "FloatRect.h"
 #include "SVGParserUtilities.h"
 #include <wtf/text/StringView.h>

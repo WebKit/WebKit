@@ -32,7 +32,6 @@
 
 #include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoKeyRaw.h"
-#include "ExceptionCode.h"
 #include "GCryptUtilities.h"
 #include "ScriptExecutionContext.h"
 

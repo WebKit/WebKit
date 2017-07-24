@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGPropertyTearOff.h"
 

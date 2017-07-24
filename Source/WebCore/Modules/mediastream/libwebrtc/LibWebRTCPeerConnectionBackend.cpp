@@ -28,7 +28,6 @@
 #if USE(LIBWEBRTC)
 
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "IceCandidate.h"
 #include "JSRTCStatsReport.h"
 #include "LibWebRTCDataChannelHandler.h"

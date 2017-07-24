@@ -32,7 +32,6 @@
 
 #include "CryptoAlgorithmAesCtrParams.h"
 #include "CryptoKeyAES.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 #include <pal/crypto/gcrypt/Handle.h>
 #include <pal/crypto/gcrypt/Utilities.h>

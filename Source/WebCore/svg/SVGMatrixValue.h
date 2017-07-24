@@ -20,7 +20,6 @@
 #pragma once
 
 #include "AffineTransform.h"
-#include "ExceptionCode.h"
 #include "ExceptionOr.h"
 
 namespace WebCore {

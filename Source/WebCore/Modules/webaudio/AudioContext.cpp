@@ -47,7 +47,6 @@
 #include "Document.h"
 #include "DynamicsCompressorNode.h"
 #include "EventNames.h"
-#include "ExceptionCode.h"
 #include "FFTFrame.h"
 #include "Frame.h"
 #include "FrameLoader.h"

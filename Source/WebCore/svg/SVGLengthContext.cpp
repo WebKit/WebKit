@@ -25,7 +25,6 @@
 #include "SVGLengthContext.h"
 
 #include "CSSHelper.h"
-#include "ExceptionCode.h"
 #include "FontMetrics.h"
 #include "Frame.h"
 #include "LengthFunctions.h"

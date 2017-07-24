@@ -30,7 +30,6 @@
 
 #include "CryptoAlgorithmEcKeyParams.h"
 #include "CryptoKeyEC.h"
-#include "ExceptionCode.h"
 
 namespace WebCore {
 

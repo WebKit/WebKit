@@ -26,7 +26,6 @@
 #include "NamedNodeMap.h"
 
 #include "Attr.h"
-#include "ExceptionCode.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
 

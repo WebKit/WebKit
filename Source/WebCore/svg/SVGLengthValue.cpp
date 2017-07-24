@@ -24,7 +24,6 @@
 
 #include "CSSHelper.h"
 #include "CSSPrimitiveValue.h"
-#include "ExceptionCode.h"
 #include "FloatConversion.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"

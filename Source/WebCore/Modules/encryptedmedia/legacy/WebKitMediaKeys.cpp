@@ -28,7 +28,6 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "ExceptionCode.h"
 #include "HTMLMediaElement.h"
 #include "WebKitMediaKeySession.h"
 

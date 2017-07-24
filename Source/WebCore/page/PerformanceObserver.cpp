@@ -30,7 +30,6 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "Performance.h"
 #include "PerformanceObserverEntryList.h"
 #include "WorkerGlobalScope.h"

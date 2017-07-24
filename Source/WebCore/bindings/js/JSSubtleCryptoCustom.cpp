@@ -433,6 +433,8 @@ static void rejectWithException(Ref<DeferredPromise>&& passedPromise, ExceptionC
     case OperationError:
         passedPromise->reject(ec, ASCIILiteral("The operation failed for an operation-specific reason"));
         return;
+    default:
+        break;
     }
     ASSERT_NOT_REACHED();
 }

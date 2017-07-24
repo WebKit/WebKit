@@ -30,7 +30,6 @@
 
 #include "CSSStyleSheet.h"
 #include "ElementTraversal.h"
-#include "ExceptionCode.h"
 #include "HTMLSlotElement.h"
 #include "RenderElement.h"
 #include "RuntimeEnabledFeatures.h"

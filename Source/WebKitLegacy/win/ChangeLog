@@ -1,3 +1,17 @@
+2017-07-24  Chris Dumez  <cdumez@apple.com>
+
+        Make ExceptionCode a proper enumeration
+        https://bugs.webkit.org/show_bug.cgi?id=174771
+
+        Reviewed by Sam Weinig.
+
+        Make ExceptionCode a proper enumeration instead of a typedef to uint8_t.
+
+        * DOMCoreClasses.cpp:
+        (DOMDocument::createEvent):
+        * WebView.cpp:
+        (WebView::prepareCandidateWindow):
+
 2017-07-21  Andreas Kling  <akling@apple.com>
 
         Use more references in event dispatch code

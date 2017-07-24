@@ -29,7 +29,6 @@
 #include "config.h"
 #include "JSHistory.h"
 
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertStrings.h"

@@ -25,7 +25,6 @@
 #include "config.h"
 #include "TextDecoder.h"
 
-#include "ExceptionCode.h"
 #include "HTMLParserIdioms.h"
 
 namespace WebCore {

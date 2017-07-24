@@ -32,7 +32,6 @@
 #include "CryptoAlgorithmRsaPssParams.h"
 #include "CryptoDigestAlgorithm.h"
 #include "CryptoKeyRSA.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

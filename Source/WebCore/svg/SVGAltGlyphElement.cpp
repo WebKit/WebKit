@@ -25,7 +25,6 @@
 
 #if ENABLE(SVG_FONTS)
 
-#include "ExceptionCode.h"
 #include "RenderInline.h"
 #include "RenderSVGTSpan.h"
 #include "SVGAltGlyphDefElement.h"

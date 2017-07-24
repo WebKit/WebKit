@@ -28,7 +28,6 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "ExceptionCode.h"
 #include "NotImplemented.h"
 
 namespace WebCore {

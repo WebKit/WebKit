@@ -29,7 +29,6 @@
 #include "DeprecatedCSSOMCounter.h"
 #include "DeprecatedCSSOMRGBColor.h"
 #include "DeprecatedCSSOMRect.h"
-#include "ExceptionCode.h"
 
 namespace WebCore {
     

@@ -28,7 +28,6 @@
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "SerializedScriptValue.h"
 

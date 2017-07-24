@@ -28,7 +28,6 @@
 
 #include "BackForwardController.h"
 #include "Document.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"

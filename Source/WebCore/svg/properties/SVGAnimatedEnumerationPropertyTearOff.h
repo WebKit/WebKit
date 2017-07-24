@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include "ExceptionCode.h"
 #include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGPropertyTraits.h"
 

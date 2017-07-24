@@ -6042,7 +6042,6 @@ void WebView::prepareCandidateWindow(Frame* targetFrame, HIMC hInputContext)
 {
     IntRect caret;
     if (RefPtr<Range> range = targetFrame->selection().selection().toNormalizedRange()) {
-        ExceptionCode ec = 0;
         RefPtr<Range> tempRange = range->cloneRange();
         caret = targetFrame->editor().firstRectForRange(tempRange.get());
     }

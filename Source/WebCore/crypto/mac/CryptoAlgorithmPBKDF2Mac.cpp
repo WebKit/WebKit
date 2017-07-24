@@ -30,7 +30,6 @@
 
 #include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoKeyRaw.h"
-#include "ExceptionCode.h"
 #include "ScriptExecutionContext.h"
 #include <CommonCrypto/CommonKeyDerivation.h>
 

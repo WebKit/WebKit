@@ -30,7 +30,6 @@
 #include "CSSToLengthConversionData.h"
 #include "DOMMatrix.h"
 #include "DOMPoint.h"
-#include "ExceptionCode.h"
 #include "StyleProperties.h"
 #include "TransformFunctions.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>

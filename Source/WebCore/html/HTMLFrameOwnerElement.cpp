@@ -22,7 +22,6 @@
 #include "HTMLFrameOwnerElement.h"
 
 #include "DOMWindow.h"
-#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "RenderWidget.h"

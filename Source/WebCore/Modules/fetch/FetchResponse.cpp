@@ -31,7 +31,6 @@
 
 #if ENABLE(FETCH_API)
 
-#include "ExceptionCode.h"
 #include "FetchRequest.h"
 #include "HTTPParsers.h"
 #include "JSBlob.h"
