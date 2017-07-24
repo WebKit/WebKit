@@ -4043,3 +4043,6 @@ workers/wasm-mem-post-message.html [ Skip ]
 
 # Animated image throttling behaves differently on WK1.
 svg/animations/animated-svg-image-outside-viewport-paused.html [ Skip ]
+
+# This test requires Skia, which isn't available on Windows.
+webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
