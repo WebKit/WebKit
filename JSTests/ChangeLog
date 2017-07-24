@@ -1,3 +1,15 @@
+2017-05-17  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC: Incorrect LoadVarargs handling in ArgumentsEliminationPhase::transform
+        https://bugs.webkit.org/show_bug.cgi?id=172208
+
+        Reviewed by Saam Barati.
+
+        * stress/arguments-elimination-varargs-too-many-args-arg-count.js: Added.
+        (foo):
+        (bar):
+        (baz):
+
 2017-04-17  Mark Lam  <mark.lam@apple.com>
 
         JSArray::appendMemcpy() needs to handle copying from Undecided indexing type too.
