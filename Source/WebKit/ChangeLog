@@ -1,3 +1,58 @@
+2017-07-25  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add support for uploading files
+        https://bugs.webkit.org/show_bug.cgi?id=174797
+        <rdar://problem/28485063>
+
+        Reviewed by Joseph Pecoraro.
+
+        The general strategy is to have automation clients set the list of files they want
+        to select ahead of time. Then, the client simulates a click on the <input type="file"> element.
+        When that causes WebPageProxy to ask the UI delegate to runOpenPanel, it instead
+        gives WebAutomationSession a chance to select files if the page is under control of
+        automation. WebAutomationSession validates its file list and selects the files if valid.
+
+        * CMakeLists.txt: Add frontend dispatcher files.
+        * DerivedSources.make:
+        Add frontend dispatcher code generator scripts as dependencies of the generated code.
+        Add generated frontend dispatcher files to the list of output files.
+
+        * UIProcess/Automation/Automation.json:
+        Add a command to set the canned list of files that should be selected when prompted.
+        If no files are selected, then the effect is as if the user had clicked "cancel" in
+        the file chooser dialog.
+
+        Add an event to signal to the WebDriver service that the file selection request has
+        been either fulfilled or cancelled. This event is necessary because otherwise remotes
+        cannot distinguish whether selecting the files failed for some reason, or if the
+        UIProcess has not yet selected the files and sent them to the web content process.
+        In either case, the input element's "files" attribute would return an empty FileList.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::WebAutomationSession):
+        Add the frontend dispatcher for Automation domain. This is named m_domainNotifier since
+        m_domainDispatcher is already being used for the backend command dispatcher.
+
+        (WebKit::WebAutomationSession::handleRunOpenPanel):
+        Validate that the files-to-select list has valid entries and select the files if so.
+        If anything goes wrong, pretend to cancel out of the file chooser. Either way, notify the
+        frontend with an event that the file chooser was dismissed due to selecting files or cancelling.
+        Automation protocol clients may implement additional strategies to further restrict
+        the conditions upon which local files can be uploaded.
+
+        (WebKit::WebAutomationSession::setFilesToSelectForFileUpload): Added.
+        Store the list of files as a vector of strings. The file list is always replaced.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runOpenPanel):
+        If the page is under automation, delegating the runOpenPanel is likely to hang
+        because WebDriver cannot interact directly with the file chooser dialog. Instead,
+        give WebAutomationSession a chance to select files and don't tell the delegate.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Add frontend dispatcher files to "Derived Sources" group.
+
 2017-07-25  Alex Christensen  <achristensen@webkit.org>
 
         Modernize NavigationAction code

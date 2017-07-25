@@ -170,6 +170,8 @@ def generate_from_specification(primary_specification_filepath=None,
     elif protocol.framework is Frameworks.WebKit and generate_backend:
         generators.append(CppBackendDispatcherHeaderGenerator(*generator_arguments))
         generators.append(CppBackendDispatcherImplementationGenerator(*generator_arguments))
+        generators.append(CppFrontendDispatcherHeaderGenerator(*generator_arguments))
+        generators.append(CppFrontendDispatcherImplementationGenerator(*generator_arguments))
         generators.append(CppProtocolTypesHeaderGenerator(*generator_arguments))
         generators.append(CppProtocolTypesImplementationGenerator(*generator_arguments))
 

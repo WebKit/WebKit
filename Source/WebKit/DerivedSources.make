@@ -230,6 +230,8 @@ AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore_SCRIPTS_DIR)/cpp_generator.py \
 	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_backend_dispatcher_header.py \
 	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_backend_dispatcher_implementation.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_frontend_dispatcher_header.py \
+	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_frontend_dispatcher_implementation.py \
 	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_protocol_types_header.py \
 	$(JavaScriptCore_SCRIPTS_DIR)/generate_cpp_protocol_types_implementation.py \
 	$(JavaScriptCore_SCRIPTS_DIR)/generator_templates.py \
@@ -245,6 +247,8 @@ AUTOMATION_PROTOCOL_INPUT_FILES = \
 AUTOMATION_PROTOCOL_OUTPUT_FILES = \
     AutomationBackendDispatchers.h \
     AutomationBackendDispatchers.cpp \
+    AutomationFrontendDispatchers.h \
+    AutomationFrontendDispatchers.cpp \
 #
 
 ifeq ($(OS),MACOS)
@@ -255,7 +259,7 @@ else
 endif
 endif # MACOS
 
-# JSON-RPC Backend Dispatchers, Type Builders
+# JSON-RPC Frontend Dispatchers, Backend Dispatchers, Type Builders
 $(firstword $(AUTOMATION_PROTOCOL_OUTPUT_FILES)) : $(AUTOMATION_PROTOCOL_INPUT_FILES) $(AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-inspector-protocol-bindings.py --framework WebKit $(AUTOMATION_BACKEND_PLATFORM_ARGUMENTS) --backend --outputDir . $(AUTOMATION_PROTOCOL_INPUT_FILES)
 

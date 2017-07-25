@@ -27,6 +27,7 @@
 
 #include "APIObject.h"
 #include "AutomationBackendDispatchers.h"
+#include "AutomationFrontendDispatchers.h"
 #include "Connection.h"
 #include "ShareableBitmap.h"
 #include "WebEvent.h"
@@ -62,10 +63,15 @@ typedef unsigned short unichar;
 OBJC_CLASS NSEvent;
 #endif
 
+namespace API {
+class OpenPanelParameters;
+}
+
 namespace WebKit {
 
 class WebAutomationSessionClient;
 class WebFrameProxy;
+class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 class WebProcessPool;
 
@@ -90,6 +96,7 @@ public:
     void navigationOccurredForFrame(const WebFrameProxy&);
     void inspectorFrontendLoaded(const WebPageProxy&);
     void keyboardEventsFlushedForPage(const WebPageProxy&);
+    void handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy&, const API::OpenPanelParameters&, WebOpenPanelResultListenerProxy&);
 
 #if ENABLE(REMOTE_INSPECTOR)
     // Inspector::RemoteAutomationTarget API
@@ -129,6 +136,7 @@ public:
     void acceptCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle) override;
     void messageOfCurrentJavaScriptDialog(Inspector::ErrorString&, const String& browsingContextHandle, String* text) override;
     void setUserInputForCurrentJavaScriptPrompt(Inspector::ErrorString&, const String& browsingContextHandle, const String& text) override;
+    void setFilesToSelectForFileUpload(Inspector::ErrorString&, const String& browsingContextHandle, const Inspector::InspectorArray& filenames) override;
     void getAllCookies(Inspector::ErrorString&, const String& browsingContextHandle, Ref<GetAllCookiesCallback>&&) override;
     void deleteSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&&) override;
     void addSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const Inspector::InspectorObject& cookie, Ref<AddSingleCookieCallback>&&) override;
@@ -194,6 +202,7 @@ private:
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
     Ref<Inspector::AutomationBackendDispatcher> m_domainDispatcher;
+    std::unique_ptr<Inspector::AutomationFrontendDispatcher> m_domainNotifier;
 
     HashMap<uint64_t, String> m_webPageHandleMap;
     HashMap<String, uint64_t> m_handleWebPageMap;
@@ -229,6 +238,7 @@ private:
     HashMap<uint64_t, RefPtr<Inspector::AutomationBackendDispatcherHandler::DeleteSingleCookieCallback>> m_deleteCookieCallbacks;
 
     RunLoop::Timer<WebAutomationSession> m_loadTimer;
+    Vector<String> m_filesToSelectForFileUpload;
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };

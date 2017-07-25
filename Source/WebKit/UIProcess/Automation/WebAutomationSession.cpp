@@ -27,12 +27,14 @@
 #include "WebAutomationSession.h"
 
 #include "APIAutomationSessionClient.h"
+#include "APIOpenPanelParameters.h"
 #include "AutomationProtocolObjects.h"
 #include "WebAutomationSessionMacros.h"
 #include "WebAutomationSessionMessages.h"
 #include "WebAutomationSessionProxyMessages.h"
 #include "WebCookieManagerProxy.h"
 #include "WebInspectorProxy.h"
+#include "WebOpenPanelResultListenerProxy.h"
 #include "WebProcessPool.h"
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <JavaScriptCore/InspectorFrontendRouter.h>
@@ -56,6 +58,7 @@ WebAutomationSession::WebAutomationSession()
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_domainDispatcher(AutomationBackendDispatcher::create(m_backendDispatcher, this))
+    , m_domainNotifier(std::make_unique<AutomationFrontendDispatcher>(m_frontendRouter))
     , m_loadTimer(RunLoop::main(), this, &WebAutomationSession::loadTimerFired)
 {
 }
@@ -516,6 +519,35 @@ void WebAutomationSession::keyboardEventsFlushedForPage(const WebPageProxy& page
         callback->sendSuccess(InspectorObject::create());
 }
 
+void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const WebFrameProxy&, const API::OpenPanelParameters& parameters, WebOpenPanelResultListenerProxy& resultListener)
+{
+    if (!m_filesToSelectForFileUpload.size()) {
+        resultListener.cancel();
+        m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, true);
+        return;
+    }
+
+    if (m_filesToSelectForFileUpload.size() > 1 && !parameters.allowMultipleFiles()) {
+        resultListener.cancel();
+        m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, true);
+        return;
+    }
+
+    // Per §14.3.10.5 in the W3C spec, if at least one file no longer exists, the command should fail.
+    // The REST API service can tell that this failed by checking the "value" attribute of the input element.
+    for (const String& filename : m_filesToSelectForFileUpload) {
+        if (!WebCore::fileExists(filename)) {
+            resultListener.cancel();
+            m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, true);
+            return;
+        }
+    }
+
+    // FIXME: validate filenames against allowed MIME types before choosing them. <https://webkit.org/b/174803>
+    resultListener.chooseFiles(m_filesToSelectForFileUpload);
+    m_domainNotifier->fileChooserDismissed(m_activeBrowsingContextHandle, false);
+}
+
 void WebAutomationSession::evaluateJavaScriptFunction(Inspector::ErrorString& errorString, const String& browsingContextHandle, const String* optionalFrameHandle, const String& function, const Inspector::InspectorArray& arguments, const bool* optionalExpectsImplicitCallbackArgument, const int* optionalCallbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(browsingContextHandle);
@@ -753,6 +785,22 @@ void WebAutomationSession::setUserInputForCurrentJavaScriptPrompt(Inspector::Err
         FAIL_WITH_PREDEFINED_ERROR(NoJavaScriptDialog);
 
     m_client->setUserInputForCurrentJavaScriptPromptOnPage(*this, *page, promptValue);
+}
+
+void WebAutomationSession::setFilesToSelectForFileUpload(ErrorString& errorString, const String& browsingContextHandle, const Inspector::InspectorArray& filenames)
+{
+    Vector<String> newFileList;
+    newFileList.reserveInitialCapacity(filenames.length());
+
+    for (auto item : filenames) {
+        String filename;
+        if (!item->asString(filename))
+            FAIL_WITH_PREDEFINED_ERROR(InternalError);
+
+        newFileList.append(filename);
+    }
+
+    m_filesToSelectForFileUpload.swap(newFileList);
 }
 
 void WebAutomationSession::getAllCookies(ErrorString& errorString, const String& browsingContextHandle, Ref<GetAllCookiesCallback>&& callback)

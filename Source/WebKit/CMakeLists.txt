@@ -783,6 +783,8 @@ set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/cpp_generator_templates.py
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_backend_dispatcher_header.py
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_backend_dispatcher_implementation.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_frontend_dispatcher_header.py
+    ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_frontend_dispatcher_implementation.py
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_protocol_types_header.py
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generate_cpp_protocol_types_implementation.py
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/generator.py
@@ -795,7 +797,7 @@ set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.cpp
+    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationFrontendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationFrontendDispatchers.cpp
     MAIN_DEPENDENCY ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
     DEPENDS ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS}
     COMMAND ${PYTHON_EXECUTABLE} ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_WEBKIT2_DIR}" --framework WebKit ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS} --backend ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
@@ -803,11 +805,13 @@ add_custom_command(
 
 list(APPEND WebKit2_HEADERS
     ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.h
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationFrontendDispatchers.h
     ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.h
 )
 
 list(APPEND WebKit2_SOURCES
     ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.cpp
+    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationFrontendDispatchers.cpp
     ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.cpp
 )
 

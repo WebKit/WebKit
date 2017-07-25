@@ -469,6 +469,14 @@
             ]
         },
         {
+            "name": "setFilesToSelectForFileUpload",
+            "description": "Sets the files to be selected when a file input type element becomes active in a browsing context.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "filenames", "type": "array", "items": { "$ref": "string" }, "description": "Absolute paths to the files that should be selected." }
+            ]
+        },
+        {
             "name": "getAllCookies",
             "description": "Returns all cookies visible to the specified browsing context.",
             "parameters": [
@@ -502,6 +510,16 @@
             "description": "Delete all cookies that are visible to the specified browsing context.",
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." }
+            ]
+        }
+    ],
+    "events": [
+        {
+            "name": "fileChooserDismissed",
+            "description": "Fired when a file chooser for a file input element is dismissed by selecting files or cancelling.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
+                { "name": "selectionCancelled", "type": "boolean", "description": "If true, the chooser was dismissed because file selection was cancelled." }
             ]
         }
     ]

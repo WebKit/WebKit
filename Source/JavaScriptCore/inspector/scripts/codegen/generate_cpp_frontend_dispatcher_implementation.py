@@ -49,7 +49,7 @@ class CppFrontendDispatcherImplementationGenerator(CppGenerator):
 
     def generate_output(self):
         secondary_headers = [
-            '"InspectorFrontendRouter.h"',
+            '<inspector/InspectorFrontendRouter.h>',
             '<wtf/text/CString.h>',
         ]
 

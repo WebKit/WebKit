@@ -277,7 +277,7 @@ private:
 #include "config.h"
 #include "TestFrontendDispatchers.h"
 
-#include "InspectorFrontendRouter.h"
+#include <inspector/InspectorFrontendRouter.h>
 #include <wtf/text/CString.h>
 
 namespace Inspector {
