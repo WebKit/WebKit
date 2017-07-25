@@ -3857,6 +3857,7 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
         m_uiClient->createNewPageAsync(this, originatingFrameInfo, WTFMove(request), windowFeatures, WTFMove(navigationActionData), [completionHandler = WTFMove(completionHandler)](RefPtr<WebPageProxy> newPage) {
             completionHandler(newPage);
         });
+        return;
     }
 
     RefPtr<WebPageProxy> newPage = m_uiClient->createNewPage(this, originatingFrameInfo, WTFMove(request), windowFeatures, WTFMove(navigationActionData));
