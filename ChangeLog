@@ -1,3 +1,13 @@
+2017-07-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ WebKit2 library soname after r219488.
+
+        The WebKit2 -> WebKit rename shouldn't affect the GTK+ library that is still called libwebkit2gtk, so keep using
+        WEBKIT2 as the library name in CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE, since that's also what the WebKit
+        makefile passes to WEBKIT_POPULATE_LIBRARY_VERSION.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2017-07-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Add libepoxy to the Jhbuild moduleset
