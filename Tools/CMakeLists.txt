@@ -38,6 +38,6 @@ elseif ("${PORT}" STREQUAL "Win")
     add_subdirectory(ImageDiff)
 endif ()
 
-if (ENABLE_WEBKIT2 AND ENABLE_API_TESTS)
+if (ENABLE_WEBKIT AND ENABLE_API_TESTS)
     add_subdirectory(TestWebKitAPI)
 endif ()
