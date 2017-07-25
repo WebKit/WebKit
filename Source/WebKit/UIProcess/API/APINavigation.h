@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APINavigation_h
-#define APINavigation_h
+#pragma once
 
 #include "APIObject.h"
 #include <WebCore/ResourceRequest.h>
@@ -43,9 +42,9 @@ public:
         return adoptRef(*new Navigation(state));
     }
 
-    static Ref<Navigation> create(WebKit::WebNavigationState& state, const WebCore::ResourceRequest& request)
+    static Ref<Navigation> create(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& request)
     {
-        return adoptRef(*new Navigation(state, request));
+        return adoptRef(*new Navigation(state, WTFMove(request)));
     }
 
     virtual ~Navigation();
@@ -56,13 +55,10 @@ public:
 
 private:
     explicit Navigation(WebKit::WebNavigationState&);
-    explicit Navigation(WebKit::WebNavigationState&, const WebCore::ResourceRequest&);
+    explicit Navigation(WebKit::WebNavigationState&, WebCore::ResourceRequest&&);
 
     uint64_t m_navigationID;
     WebCore::ResourceRequest m_request;
 };
 
 } // namespace API
-
-
-#endif // APINavigation_h

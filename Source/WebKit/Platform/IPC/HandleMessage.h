@@ -65,7 +65,7 @@ void callMemberFunction(ArgsTuple&& args, ReplyArgsTuple& replyArgs, C* object, 
 template <typename C, typename MF, typename R, typename ArgsTuple, size_t... ArgsIndex>
 void callMemberFunctionImpl(C* object, MF function, Ref<R>&& delayedReply, ArgsTuple&& args, std::index_sequence<ArgsIndex...>)
 {
-    (object->*function)(std::get<ArgsIndex>(args)..., WTFMove(delayedReply));
+    (object->*function)(std::get<ArgsIndex>(std::forward<ArgsTuple>(args))..., WTFMove(delayedReply));
 }
 
 template<typename C, typename MF, typename R, typename ArgsTuple, typename ArgsIndicies = std::make_index_sequence<std::tuple_size<ArgsTuple>::value>>

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NavigationActionData_h
-#define NavigationActionData_h
+#pragma once
 
 #include "WebEvent.h"
 #include <WebCore/FloatPoint.h>
@@ -53,5 +52,3 @@ struct NavigationActionData {
 };
 
 }
-
-#endif // NavigationActionData_h

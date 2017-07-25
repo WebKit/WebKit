@@ -79,9 +79,10 @@ private:
 
     private:
         // API::UIClient
-        RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, API::FrameInfo&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) override;
-        bool createNewPageAsync(WebKit::WebPageProxy*, API::FrameInfo&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&, WTF::Function<void (RefPtr<WebKit::WebPageProxy>)>&& completionHandler) override;
-        RefPtr<WebKit::WebPageProxy> createNewPageCommon(WebKit::WebPageProxy*, API::FrameInfo&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&, WTF::Function<void (RefPtr<WebKit::WebPageProxy>)>&& completionHandler);
+        RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&) override;
+        void createNewPageAsync(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler) final;
+        bool canCreateNewPageAsync() final;
+        RefPtr<WebKit::WebPageProxy> createNewPageCommon(WebKit::WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler);
 
         void close(WebKit::WebPageProxy*) override;
         void fullscreenMayReturnToInline(WebKit::WebPageProxy*) override;

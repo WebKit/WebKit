@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIURLRequest_h
-#define APIURLRequest_h
+#pragma once
 
 #include "APIObject.h"
 #include <WebCore/ResourceRequest.h>
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APIURLRequest_h

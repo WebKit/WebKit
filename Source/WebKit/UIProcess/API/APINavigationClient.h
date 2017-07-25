@@ -67,16 +67,16 @@ class NavigationClient {
 public:
     virtual ~NavigationClient() { }
 
-    virtual void didStartProvisionalNavigation(WebKit::WebPageProxy&, API::Navigation*, API::Object*) { }
-    virtual void didReceiveServerRedirectForProvisionalNavigation(WebKit::WebPageProxy&, API::Navigation*, API::Object*) { }
-    virtual void didPerformClientRedirectForNavigation(WebKit::WebPageProxy&, API::Navigation*) { }
-    virtual void didFailProvisionalNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) { }
-    virtual void didFailProvisionalLoadInSubframeWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebCore::SecurityOriginData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) { }
-    virtual void didCommitNavigation(WebKit::WebPageProxy&, API::Navigation*, API::Object*) { }
-    virtual void didFinishDocumentLoad(WebKit::WebPageProxy&, API::Navigation*, API::Object*) { }
-    virtual void didFinishNavigation(WebKit::WebPageProxy&, API::Navigation*, API::Object*) { }
-    virtual void didFailNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) { }
-    virtual void didSameDocumentNavigation(WebKit::WebPageProxy&, API::Navigation*, WebKit::SameDocumentNavigationType, API::Object*) { }
+    virtual void didStartProvisionalNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
+    virtual void didReceiveServerRedirectForProvisionalNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
+    virtual void didPerformClientRedirectForNavigation(WebKit::WebPageProxy&, Navigation*) { }
+    virtual void didFailProvisionalNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, Navigation*, const WebCore::ResourceError&, Object*) { }
+    virtual void didFailProvisionalLoadInSubframeWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebCore::SecurityOriginData&, Navigation*, const WebCore::ResourceError&, Object*) { }
+    virtual void didCommitNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
+    virtual void didFinishDocumentLoad(WebKit::WebPageProxy&, Navigation*, Object*) { }
+    virtual void didFinishNavigation(WebKit::WebPageProxy&, Navigation*, Object*) { }
+    virtual void didFailNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, Navigation*, const WebCore::ResourceError&, Object*) { }
+    virtual void didSameDocumentNavigation(WebKit::WebPageProxy&, Navigation*, WebKit::SameDocumentNavigationType, Object*) { }
 
     virtual void renderingProgressDidChange(WebKit::WebPageProxy&, WebCore::LayoutMilestones) { }
 
@@ -95,18 +95,18 @@ public:
     virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) { }
 #endif
 
-    virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, API::NavigationAction&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object*)
+    virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, Ref<NavigationAction>&&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)
     {
         listener->use({ });
     }
 
-    virtual void decidePolicyForNavigationResponse(WebKit::WebPageProxy&, API::NavigationResponse&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object*)
+    virtual void decidePolicyForNavigationResponse(WebKit::WebPageProxy&, NavigationResponse&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)
     {
         listener->use({ });
     }
     
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual WebKit::PluginModuleLoadPolicy decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary*, WTF::String&)
+    virtual WebKit::PluginModuleLoadPolicy decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, Dictionary*, WTF::String&)
     {
         return currentPluginLoadPolicy;
     }

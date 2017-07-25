@@ -2504,7 +2504,7 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
 
     ResourceRequest resourceRequest;
     webkitURIRequestGetResourceRequest(request, resourceRequest);
-    getPage(webView).loadRequest(resourceRequest);
+    getPage(webView).loadRequest(WTFMove(resourceRequest));
 }
 
 /**

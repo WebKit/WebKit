@@ -35,9 +35,9 @@ Navigation::Navigation(WebKit::WebNavigationState& state)
 {
 }
 
-Navigation::Navigation(WebKit::WebNavigationState& state, const WebCore::ResourceRequest& request)
+Navigation::Navigation(WebKit::WebNavigationState& state, WebCore::ResourceRequest&& request)
     : m_navigationID(state.generateNavigationID())
-    , m_request(request)
+    , m_request(WTFMove(request))
 {
 }
 

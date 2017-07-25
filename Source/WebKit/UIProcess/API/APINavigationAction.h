@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APINavigationAction_h
-#define APINavigationAction_h
+#pragma once
 
 #include "APIFrameInfo.h"
 #include "APIObject.h"
@@ -37,20 +36,9 @@ namespace API {
 
 class NavigationAction final : public ObjectImpl<Object::Type::NavigationAction> {
 public:
-    static Ref<NavigationAction> create(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction> userInitiatedAction)
+    static Ref<NavigationAction> create(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, WebCore::ResourceRequest&& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
     {
-        return adoptRef(*new NavigationAction(navigationActionData, sourceFrame, targetFrame, request, originalURL, shouldOpenAppLinks, WTFMove(userInitiatedAction)));
-    }
-
-    NavigationAction(const WebKit::NavigationActionData& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, const WebCore::ResourceRequest& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction> userInitiatedAction)
-        : m_sourceFrame(sourceFrame)
-        , m_targetFrame(targetFrame)
-        , m_request(request)
-        , m_originalURL(originalURL)
-        , m_shouldOpenAppLinks(shouldOpenAppLinks)
-        , m_userInitiatedAction(WTFMove(userInitiatedAction))
-        , m_navigationActionData(navigationActionData)
-    {
+        return adoptRef(*new NavigationAction(WTFMove(navigationActionData), sourceFrame, targetFrame, WTFMove(request), originalURL, shouldOpenAppLinks, WTFMove(userInitiatedAction)));
     }
 
     FrameInfo* sourceFrame() const { return m_sourceFrame.get(); }
@@ -73,6 +61,17 @@ public:
     UserInitiatedAction* userInitiatedAction() const { return m_userInitiatedAction.get(); }
 
 private:
+    NavigationAction(WebKit::NavigationActionData&& navigationActionData, API::FrameInfo* sourceFrame, API::FrameInfo* targetFrame, WebCore::ResourceRequest&& request, const WebCore::URL& originalURL, bool shouldOpenAppLinks, RefPtr<UserInitiatedAction>&& userInitiatedAction)
+        : m_sourceFrame(sourceFrame)
+        , m_targetFrame(targetFrame)
+        , m_request(WTFMove(request))
+        , m_originalURL(originalURL)
+        , m_shouldOpenAppLinks(shouldOpenAppLinks)
+        , m_userInitiatedAction(WTFMove(userInitiatedAction))
+        , m_navigationActionData(WTFMove(navigationActionData))
+    {
+    }
+
     RefPtr<FrameInfo> m_sourceFrame;
     RefPtr<FrameInfo> m_targetFrame;
 
@@ -87,5 +86,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APINavigationAction_h

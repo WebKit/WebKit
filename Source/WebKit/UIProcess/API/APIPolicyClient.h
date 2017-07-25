@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIPolicyClient_h
-#define APIPolicyClient_h
+#pragma once
 
 #include "WebEvent.h"
 #include "WebFramePolicyListenerProxy.h"
@@ -68,5 +67,3 @@ public:
 };
 
 } // namespace API
-
-#endif // APIPolicyClient_h

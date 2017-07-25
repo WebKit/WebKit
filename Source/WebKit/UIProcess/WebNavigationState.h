@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNavigationState_h
-#define WebNavigationState_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
@@ -48,7 +47,7 @@ public:
     ~WebNavigationState();
 
     Ref<API::Navigation> createBackForwardNavigation();
-    Ref<API::Navigation> createLoadRequestNavigation(const WebCore::ResourceRequest&);
+    Ref<API::Navigation> createLoadRequestNavigation(WebCore::ResourceRequest&&);
     Ref<API::Navigation> createReloadNavigation();
     Ref<API::Navigation> createLoadDataNavigation();
 
@@ -68,5 +67,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // WebNavigationState_h

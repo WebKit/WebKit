@@ -40,9 +40,9 @@ WebNavigationState::~WebNavigationState()
 {
 }
 
-Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(const WebCore::ResourceRequest& request)
+Ref<API::Navigation> WebNavigationState::createLoadRequestNavigation(WebCore::ResourceRequest&& request)
 {
-    auto navigation = API::Navigation::create(*this, request);
+    auto navigation = API::Navigation::create(*this, WTFMove(request));
 
     m_navigations.set(navigation->navigationID(), navigation.ptr());
 

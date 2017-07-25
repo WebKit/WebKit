@@ -72,8 +72,9 @@ class UIClient {
 public:
     virtual ~UIClient() { }
 
-    virtual RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, API::FrameInfo&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&) { return nullptr; }
-    virtual bool createNewPageAsync(WebKit::WebPageProxy*, API::FrameInfo&, const WebCore::ResourceRequest&, const WebCore::WindowFeatures&, const WebKit::NavigationActionData&, WTF::Function<void (RefPtr<WebKit::WebPageProxy>)>&& completionHandler) { return false; }
+    virtual RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&) { return nullptr; }
+    virtual void createNewPageAsync(WebKit::WebPageProxy*, FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler) { }
+    virtual bool canCreateNewPageAsync() { return false; }
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
@@ -90,9 +91,9 @@ public:
     virtual void runJavaScriptPrompt(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void (const WTF::String&)>&& completionHandler) { completionHandler(WTF::String()); }
 
     virtual void setStatusText(WebKit::WebPageProxy*, const WTF::String&) { }
-    virtual void mouseDidMoveOverElement(WebKit::WebPageProxy*, const WebKit::WebHitTestResultData&, WebKit::WebEvent::Modifiers, API::Object*) { }
+    virtual void mouseDidMoveOverElement(WebKit::WebPageProxy*, const WebKit::WebHitTestResultData&, WebKit::WebEvent::Modifiers, Object*) { }
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual void unavailablePluginButtonClicked(WebKit::WebPageProxy*, WKPluginUnavailabilityReason, API::Dictionary*) { }
+    virtual void unavailablePluginButtonClicked(WebKit::WebPageProxy*, WKPluginUnavailabilityReason, Dictionary*) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
     virtual bool implementsDidNotHandleKeyEvent() const { return false; }
@@ -144,7 +145,7 @@ public:
     virtual bool canRunModal() const { return false; }
     virtual void runModal(WebKit::WebPageProxy*) { }
 
-    virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, const WTF::String&, API::Data*) { }
+    virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, const WTF::String&, Data*) { }
 
     virtual void pinnedStateDidChange(WebKit::WebPageProxy&) { }
 
@@ -173,7 +174,7 @@ public:
     virtual void didLosePointerLock(WebKit::WebPageProxy*) { }
 #endif
 
-    virtual void didClickAutoFillButton(WebKit::WebPageProxy&, API::Object*) { }
+    virtual void didClickAutoFillButton(WebKit::WebPageProxy&, Object*) { }
 
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
 
