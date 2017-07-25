@@ -6,22 +6,54 @@ import subprocess
 import time
 
 from osx_browser_driver import OSXBrowserDriver
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 _log = logging.getLogger(__name__)
+window_size_arg = '--window-size={width},{height}'.format(width=int(OSXBrowserDriver._screen_size().width), height=int(OSXBrowserDriver._screen_size().height))
+args = ['--args', '--homepage', window_size_arg]
+chrome_options = Options()
+chrome_options.add_argument("--disable-web-security")
+chrome_options.add_argument("--user-data-dir")
+chrome_options.add_argument("--disable-extensions")
+chrome_options.add_argument(window_size_arg)
 
 
 class OSXChromeDriver(OSXBrowserDriver):
     process_name = 'Google Chrome'
     browser_name = 'chrome'
+    app_name = 'Google Chrome.app'
 
     def launch_url(self, url, options, browser_build_path):
-        self._launch_process(build_dir=browser_build_path, app_name='Google Chrome.app', url=url, args=['--args', '--homepage', url, '--window-size={width},{height}'.format(width=int(self._screen_size().width), height=int(self._screen_size().height))])
+        args_with_url = self._insert_url(args, 2, url)
+        self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
+
+    def launch_driver(self, url, options, browser_build_path):
+        if browser_build_path:
+            app_path = os.path.join(browser_build_path, self.app_name)
+            binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
+            chrome_options.binary_location = binary_path
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+        self._launch_webdriver(url=url, driver=driver)
+        return driver
 
 
 class OSXChromeCanaryDriver(OSXBrowserDriver):
     process_name = 'Google Chrome Canary'
     browser_name = 'chrome-canary'
+    app_name = 'Google Chrome Canary.app'
 
     def launch_url(self, url, options, browser_build_path):
-        self._launch_process(build_dir=browser_build_path, app_name='Google Chrome Canary.app', url=url, args=['--args', '--homepage', url, '--window-size={width},{height}'.format(width=int(self._screen_size().width), height=int(self._screen_size().height))])
+        args_with_url = self._insert_url(args, 2, url)
+        self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
+
+    def launch_driver(self, url, options, browser_build_path):
+        if not browser_build_path:
+            browser_build_path = '/Applications/'
+        app_path = os.path.join(browser_build_path, self.app_name)
+        binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
+        chrome_options.binary_location = binary_path
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+        self._launch_webdriver(url=url, driver=driver)
+        return driver

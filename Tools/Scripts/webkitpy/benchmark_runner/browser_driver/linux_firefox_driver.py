@@ -24,12 +24,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+
 from linux_browser_driver import LinuxBrowserDriver
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 
 class LinuxFirefoxDriver(LinuxBrowserDriver):
     browser_name = 'firefox'
-    process_search_list = ['firefox']
+    process_search_list = ['firefox', 'firefox-bin']
 
     def launch_url(self, url, options, browser_build_path):
         self._browser_arguments = ['-new-instance', '-profile', self._temp_profiledir,
@@ -37,3 +41,12 @@ class LinuxFirefoxDriver(LinuxBrowserDriver):
                                    '-height', str(self._screen_size().height),
                                    url]
         super(LinuxFirefoxDriver, self).launch_url(url, options, browser_build_path)
+
+    def launch_driver(self, url, options, browser_build_path):
+        options = Options()
+        if browser_build_path:
+            binary_path = os.path.join(browser_build_path, 'firefox-bin')
+            options.binary_location = binary_path
+        driver = webdriver.Firefox(firefox_options=options)
+        super(LinuxFirefoxDriver, self).launch_webdriver(url, driver)
+        return driver

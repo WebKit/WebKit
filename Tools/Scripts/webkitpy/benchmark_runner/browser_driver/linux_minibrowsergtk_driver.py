@@ -38,3 +38,6 @@ class GTKMiniBrowserDriver(LinuxBrowserDriver):
         self._browser_arguments.append('--geometry={w}x{h}'.format(w=self._screen_size().width, h=self._screen_size().height))
         self._browser_arguments.append(url)
         super(GTKMiniBrowserDriver, self).launch_url(url, options, browser_build_path)
+
+    def launch_driver(self, url, options, browser_build_path):
+        raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))

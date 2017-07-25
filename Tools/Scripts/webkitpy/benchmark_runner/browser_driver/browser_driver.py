@@ -18,6 +18,10 @@ class BrowserDriver(object):
         pass
 
     @abstractmethod
+    def launch_webdriver(self, url, driver):
+        pass
+
+    @abstractmethod
     def add_additional_results(self, test_url, results):
         return results
 

@@ -6,22 +6,50 @@ import subprocess
 import time
 
 from osx_browser_driver import OSXBrowserDriver
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
 
 _log = logging.getLogger(__name__)
+
+args = ['--args', '-width', str(int(OSXBrowserDriver._screen_size().width)), '-height', str(int(OSXBrowserDriver._screen_size().height))]
+firefox_options = Options()
 
 
 class OSXFirefoxDriver(OSXBrowserDriver):
     process_name = 'firefox'
     browser_name = 'firefox'
+    app_name = 'Firefox.app'
 
     def launch_url(self, url, options, browser_build_path):
-        self._launch_process(build_dir=browser_build_path, app_name='Firefox.app', url=url, args=[url, '--args', '-width', str(int(self._screen_size().width)), '-height', str(int(self._screen_size().height))])
+        args_with_url = self._insert_url(args, 0, url)
+        self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
+
+    def launch_driver(self, url, options, browser_build_path):
+        if browser_build_path:
+            app_path = os.path.join(browser_build_path, self.app_name)
+            binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
+            firefox_options.binary_location = binary_path
+        driver = webdriver.Firefox(firefox_options=firefox_options)
+        self._launch_webdriver(url=url, driver=driver)
+        return driver
 
 
 class OSXFirefoxNightlyDriver(OSXBrowserDriver):
     process_name = 'firefox'
     browser_name = 'firefox-nightly'
+    app_name = 'FirefoxNightly.app'
 
     def launch_url(self, url, options, browser_build_path):
-        self._launch_process(build_dir=browser_build_path, app_name='FirefoxNightly.app', url=url, args=[url, '--args', '-width', str(int(self._screen_size().width)), '-height', str(int(self._screen_size().height))])
+        args_with_url = self._insert_url(args, 0, url)
+        self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
+
+    def launch_driver(self, url, options, browser_build_path):
+        if not browser_build_path:
+            browser_build_path = '/Applications/'
+        app_path = os.path.join(browser_build_path, self.app_name)
+        binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
+        firefox_options.binary_location = binary_path
+        driver = webdriver.Firefox(firefox_options=firefox_options)
+        self._launch_webdriver(url=url, driver=driver)
+        return driver

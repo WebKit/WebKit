@@ -97,6 +97,10 @@ class LinuxBrowserDriver(BrowserDriver):
                                                  stdout=subprocess.PIPE,
                                                  stderr=subprocess.STDOUT)
 
+    def launch_webdriver(self, url, driver):
+        _log.info('Launching "%s" with url "%s"' % (driver.name, url))
+        driver.get(url)
+
     def _get_first_executable_path_from_list(self, searchlist):
         searchpath = [os.path.curdir] + os.environ['PATH'].split(os.pathsep)
         for program in searchlist:

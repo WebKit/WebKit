@@ -43,6 +43,11 @@ class OSXBrowserDriver(BrowserDriver):
         cls._launch_process_with_caffinate(args)
 
     @classmethod
+    def _launch_webdriver(cls, url, driver):
+        _log.info('Launching "%s" with url "%s"' % (driver.name, url))
+        driver.get(url)
+
+    @classmethod
     def _terminate_processes(cls, process_name):
         _log.info('Closing all processes with name %s' % process_name)
         subprocess.call(['/usr/bin/killall', process_name])
@@ -57,3 +62,9 @@ class OSXBrowserDriver(BrowserDriver):
     def _screen_size(cls):
         from AppKit import NSScreen
         return NSScreen.mainScreen().frame().size
+
+    @classmethod
+    def _insert_url(cls, args, pos, url):
+        temp_args = args[:]
+        temp_args.insert(pos, url)
+        return temp_args

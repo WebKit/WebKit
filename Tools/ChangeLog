@@ -1,3 +1,57 @@
+2017-07-24  Matthew Stewart  <matthew_r_stewart@apple.com>
+
+        Add WebDriver support in browser driver part of BenchmarkRunner
+        https://bugs.webkit.org/show_bug.cgi?id=174445
+
+        Reviewed by Stephanie Lewis.
+
+        Adds a launch_driver function to each BrowserDriver subclass. This
+        function sets up the arguments for the webdriver and launches the
+        webdriver specific to that browser.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/browser_driver.py:
+        (BrowserDriver.launch_webdriver):
+        (BrowserDriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_browser_driver.py:
+        (LinuxBrowserDriver.launch_webdriver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_chrome_driver.py:
+        (LinuxChromeDriver.launch_url):
+        (LinuxChromeDriver):
+        (LinuxChromeDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_epiphany_driver.py:
+        (EpiphanyBrowserDriver.launch_url):
+        (EpiphanyBrowserDriver):
+        (EpiphanyBrowserDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_firefox_driver.py:
+        (LinuxFirefoxDriver):
+        (LinuxFirefoxDriver.launch_url):
+        (LinuxFirefoxDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/linux_minibrowsergtk_driver.py:
+        (GTKMiniBrowserDriver.launch_url):
+        (GTKMiniBrowserDriver):
+        (GTKMiniBrowserDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_browser_driver.py:
+        (OSXBrowserDriver._launch_webdriver):
+        (OSXBrowserDriver):
+        (OSXBrowserDriver._screen_size):
+        (OSXBrowserDriver._insert_url):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_chrome_driver.py:
+        (OSXChromeDriver):
+        (OSXChromeDriver.launch_url):
+        (OSXChromeDriver.launch_driver):
+        (OSXChromeCanaryDriver):
+        (OSXChromeCanaryDriver.launch_url):
+        (OSXChromeCanaryDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_firefox_driver.py:
+        (OSXFirefoxDriver):
+        (OSXFirefoxDriver.launch_url):
+        (OSXFirefoxDriver.launch_driver):
+        (OSXFirefoxNightlyDriver):
+        (OSXFirefoxNightlyDriver.launch_url):
+        (OSXFirefoxNightlyDriver.launch_driver):
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_driver):
+
 2017-07-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mac WK2] Add an API test to cover r219765 (null dereference in [WKWebView dealloc])

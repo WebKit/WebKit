@@ -36,3 +36,6 @@ class EpiphanyBrowserDriver(LinuxBrowserDriver):
                                    '--profile={profile}'.format(profile=self._temp_profiledir),
                                    url]
         super(EpiphanyBrowserDriver, self).launch_url(url, options, browser_build_path)
+
+    def launch_driver(self, url, options, browser_build_path):
+        raise ValueError("Browser {browser} is not available with webdriver".format(browser=self.browser_name))

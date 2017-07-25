@@ -8,6 +8,7 @@ import time
 
 from osx_browser_driver import OSXBrowserDriver
 from webkitpy.benchmark_runner.utils import force_remove
+from selenium import webdriver
 
 
 _log = logging.getLogger(__name__)
@@ -44,6 +45,11 @@ class OSXSafariDriver(OSXBrowserDriver):
         # command may use the system safari.
         time.sleep(3)
         subprocess.Popen(['open', '-a', args[0], url])
+
+    def launch_driver(self, url, options, browser_build_path):
+        driver = webdriver.Safari(quiet=False)
+        self._launch_webdriver(url=url, driver=driver)
+        return driver
 
     def close_browsers(self):
         super(OSXSafariDriver, self).close_browsers()
