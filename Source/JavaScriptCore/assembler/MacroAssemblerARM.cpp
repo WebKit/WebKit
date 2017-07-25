@@ -215,8 +215,8 @@ asm (
 
     // MacroAssemblerARM::probe() has already generated code to store some values.
     // The top of stack now looks like this:
-    //     esp[0 * ptrSize]: probeFunction
-    //     esp[1 * ptrSize]: arg
+    //     esp[0 * ptrSize]: probe handler function
+    //     esp[1 * ptrSize]: probe arg
     //     esp[2 * ptrSize]: saved r3 / S0
     //     esp[3 * ptrSize]: saved ip
     //     esp[4 * ptrSize]: saved lr
@@ -288,38 +288,46 @@ asm (
     //     pc from there.
     //
     // 2. Issue 1 means we will need to write to the stack location at
-    //    ProbeContext.cpu.sp - 4. But if the user probe function had  modified
-    //    the value of ProbeContext.cpu.sp to point in the range between
-    //    &ProbeContext.cpu.ip thru &ProbeContext.cpu.aspr, then the action for
-    //    Issue 1 may trash the values to be restored before we can restore
-    //    them.
+    //    ProbeContext.cpu.gprs[sp] - PTR_SIZE. But if the user probe function had
+    //    modified the value of ProbeContext.cpu.gprs[sp] to point in the range between
+    //    &ProbeContext.cpu.gprs[ip] thru &ProbeContext.cpu.sprs[aspr], then the action
+    //    for Issue 1 may trash the values to be restored before we can restore them.
     //
-    //    The solution is to check if ProbeContext.cpu.sp contains a value in
+    //    The solution is to check if ProbeContext.cpu.gprs[sp] contains a value in
     //    the undesirable range. If so, we copy the remaining ProbeContext
-    //    register data to a safe range (at memory lower than where
-    //    ProbeContext.cpu.sp points) first, and restore the remaining register
-    //    from this new range.
+    //    register data to a safe area first, and restore the remaining register
+    //    from this new safe area.
 
-    "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET) "\n"
+    // The restore area for the pc will be located at 1 word below the resultant sp.
+    // All restore values are located at offset <= PROBE_CPU_APSR_OFFSET. Hence,
+    // we need to make sure that resultant sp > offset of apsr + 1.
+    "add       ip, sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET + PTR_SIZE) "\n"
     "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
     "cmp       lr, ip" "\n"
     "bgt     " SYMBOL_STRING(ctiMasmProbeTrampolineEnd) "\n"
 
-    // We get here because the new expected stack pointer location is lower
-    // than where it's supposed to be. This means the safe range of stack
-    // memory where we'll be copying the remaining register restore values to
-    // might be in a region of memory below the sp i.e. unallocated stack
-    // memory. This in turn makes it vulnerable to interrupts potentially
-    // trashing the copied values. To prevent that, we must first allocate the
-    // needed stack memory by adjusting the sp before the copying.
+    // Getting here means that the restore area will overlap the ProbeContext data
+    // that we will need to get the restoration values from. So, let's move that
+    // data to a safe place before we start writing into the restore area.
+    // Let's locate the "safe area" at 2x sizeof(ProbeContext) below where the
+    // restore area. This ensures that:
+    // 1. The safe area does not overlap the restore area.
+    // 2. The safe area does not overlap the ProbeContext.
+    //    This makes it so that we can use memcpy (does not require memmove) semantics
+    //    to copy the restore values to the safe area.
+    
+    // lr already contains [sp, #STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET)].
+    "sub       lr, lr, #(2 * " STRINGIZE_VALUE_OF(PROBE_ALIGNED_SIZE) ")" "\n"
 
-    "sub       lr, lr, #(6 * " STRINGIZE_VALUE_OF(PTR_SIZE)
-    " + " STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) ")" "\n"
+    "mov       ip, sp" "\n" // Save the original ProbeContext*.
 
-    "mov       ip, sp" "\n"
-    "mov       sp, lr" "\n"
-    "mov       lr, ip" "\n"
+    // Make sure the stack pointer points to the safe area. This ensures that the
+    // safe area is protected from interrupt handlers overwriting it.
+    "mov       sp, lr" "\n" // sp now points to the new ProbeContext in the safe area.
 
+    "mov       lr, ip" "\n" // Use lr as the old ProbeContext*.
+
+    // Copy the restore data to the new ProbeContext*.
     "ldr       ip, [lr, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
     "str       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
     "ldr       ip, [lr, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
@@ -331,20 +339,31 @@ asm (
     "ldr       ip, [lr, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET) "]" "\n"
     "str       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET) "]" "\n"
 
-    SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
-    "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
+    // ctiMasmProbeTrampolineEnd expects lr to contain the sp value to be restored.
+    // Since we used it as scratch above, let's restore it.
     "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
+
+    SYMBOL_STRING(ctiMasmProbeTrampolineEnd) ":" "\n"
+
+    // Set up the restore area for sp and pc.
+    // lr already contains [sp, #STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET)].
+
+    // Push the pc on to the restore area.
+    "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_PC_OFFSET) "]" "\n"
     "sub       lr, lr, #" STRINGIZE_VALUE_OF(PTR_SIZE) "\n"
     "str       ip, [lr]" "\n"
+    // Point sp to the restore area.
     "str       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
 
+    // All done with math i.e. won't trash the status register (apsr) and don't need
+    // scratch registers (lr and ip) anymore. Restore apsr, lr, and ip.
     "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_APSR_OFFSET) "]" "\n"
     "msr       APSR, ip" "\n"
-    "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
-    "mov       lr, ip" "\n"
+    "ldr       lr, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_LR_OFFSET) "]" "\n"
     "ldr       ip, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_IP_OFFSET) "]" "\n"
-    "ldr       sp, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
 
+    // Restore the sp and pc.
+    "ldr       sp, [sp, #" STRINGIZE_VALUE_OF(PROBE_CPU_SP_OFFSET) "]" "\n"
     "pop       { pc }" "\n"
 );
 #endif // COMPILER(GCC_OR_CLANG)
