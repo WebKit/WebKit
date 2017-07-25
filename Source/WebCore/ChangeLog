@@ -1,3 +1,97 @@
+2017-07-23  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Add support for generating timer bindings
+        https://bugs.webkit.org/show_bug.cgi?id=174766
+
+        Reviewed by Darin Adler.
+
+        Adds a new non-standard type, ScheduledAction, which stands in for the
+        standard (DOMString or Function). It would be good to move to that in
+        future, but for now, this allows for forward momentum on removing custom
+        bindings.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add JSDOMConvertScheduledAction.h.
+
+        * bindings/IDLTypes.h:
+        Add IDLScheduledAction.
+
+        * bindings/js/JSDOMConvertScheduledAction.h: Added.
+        (WebCore::Converter<IDLScheduledAction>::convert):
+        Add conversion from JSValue -> ScheduledAction. This is moved from the old ScheduledAction
+        create function.
+
+        * bindings/js/JSDOMConvertVariadic.h:
+        (WebCore::convertVariadicArguments):
+        (WebCore::Detail::VariadicConverterBase::convert): Deleted.
+        (WebCore::Detail::VariadicConverterBase<IDLInterface<T>>::convert): Deleted.
+        * bindings/js/JSDOMConvertBase.h:
+        * bindings/js/JSDOMConvertAny.h:
+        (WebCore::VariadicConverter<IDLAny>::convert):
+        * bindings/js/JSDOMConvertInterface.h:
+        (WebCore::VariadicConverter<IDLInterface<T>>::convert):
+        Rename VariadicConverter to VariadicConverterDetails, and remove base class. Rename 
+        VariadicConverterBase to VariadicConverter, and move specializations to the file
+        containing the base converter for that IDL type 
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setTimeout): Deleted.
+        (WebCore::JSDOMWindow::setInterval): Deleted.
+        * bindings/js/JSWorkerGlobalScopeCustom.cpp:
+        (WebCore::JSWorkerGlobalScope::setTimeout): Deleted.
+        (WebCore::JSWorkerGlobalScope::setInterval): Deleted.
+        Remove custom implementations of setTimeout and setInterval.
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::~ScheduledAction):
+        (WebCore::ScheduledAction::addArguments):
+        (WebCore::ScheduledAction::executeFunctionInContext):
+        * bindings/js/ScheduledAction.h:
+        (WebCore::ScheduledAction::ScheduledAction): Deleted.
+        Rework ScheduledAction. Now has two create functions, one for the function
+        form, one for the string form. These are now called by the Converter. Also,
+        rather than extracting the arguments directly from the ExecState, allow the
+        bindings to work as designed, and have the arguments come in as variadic 
+        arguments to setTimeout/setInterval and get added to the ScheduledAction if
+        needed. Also, move ContentSecurityPolicy check out of construction, and into
+        setTimeout/setInterval.
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsBuiltinType):
+        Add ScheduledAction to the builtin list.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        Add the correct include when ScheduledAction is used.
+
+        (GenerateParametersCheck):
+        Remove rule disallowing optional arguments before variadic arguments. That works
+        just fine.
+
+        (GetBaseIDLType):
+        Add mapping of ScheduledAction -> IDLScheduledAction.
+
+        (JSValueToNativeDOMConvertNeedsGlobalObject):
+        Add ScheduledAction to the list of types that need a global object
+        for conversion.
+
+        * page/WindowOrWorkerGlobalScope.idl:
+        Update interface to match spec and add FIXMEs for moving to TimerHandler.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setTimeout):
+        (WebCore::DOMWindow::setInterval):
+        * page/DOMWindow.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::setTimeout):
+        (WebCore::WorkerGlobalScope::setInterval):
+        * workers/WorkerGlobalScope.h:
+        Update for new signatures. WorkerGlobalScope now has to return ExceptionOr<int>
+        even though it never throws, due to having one IDL file defining these. This is 
+        unfortunate and something we should look at addressing the future.
+
 2017-07-25  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [WinCairo] Fix build with AllInOnes disabled

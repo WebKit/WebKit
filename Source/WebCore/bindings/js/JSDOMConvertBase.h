@@ -199,4 +199,7 @@ template<typename T> struct DefaultConverter {
     static constexpr bool conversionHasSideEffects = true;
 };
 
+// Conversion from JSValue -> Implementation for variadic arguments
+template<typename IDLType> struct VariadicConverter;
+
 } // namespace WebCore

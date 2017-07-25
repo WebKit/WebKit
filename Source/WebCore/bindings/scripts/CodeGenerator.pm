@@ -870,6 +870,7 @@ sub IsBuiltinType
     return 1 if $type->name eq "EventListener";
     return 1 if $type->name eq "JSON";
     return 1 if $type->name eq "Promise";
+    return 1 if $type->name eq "ScheduledAction";
     return 1 if $type->name eq "SerializedScriptValue";
     return 1 if $type->name eq "XPathNSResolver";
     return 1 if $type->name eq "any";

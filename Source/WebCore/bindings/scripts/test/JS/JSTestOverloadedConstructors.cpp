@@ -132,7 +132,7 @@ static inline EncodedJSValue constructJSTestOverloadedConstructors5(ExecState* s
     ASSERT(castedThis);
     auto longArgs = convertVariadicArguments<IDLLong>(*state, 0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    auto object = TestOverloadedConstructors::create(WTFMove(longArgs.arguments.value()));
+    auto object = TestOverloadedConstructors::create(WTFMove(longArgs));
     return JSValue::encode(toJSNewlyCreated<IDLInterface<TestOverloadedConstructors>>(*state, *castedThis->globalObject(), WTFMove(object)));
 }
 

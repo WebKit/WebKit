@@ -222,8 +222,16 @@ void WorkerGlobalScope::postTask(Task&& task)
     thread().runLoop().postTask(WTFMove(task));
 }
 
-int WorkerGlobalScope::setTimeout(std::unique_ptr<ScheduledAction> action, int timeout)
+ExceptionOr<int> WorkerGlobalScope::setTimeout(JSC::ExecState& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
+    // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
+    if (action->type() == ScheduledAction::Type::Code) {
+        if (!contentSecurityPolicy()->allowEval(&state))
+            return 0;
+    }
+
+    action->addArguments(WTFMove(arguments));
+
     return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), true);
 }
 
@@ -232,8 +240,16 @@ void WorkerGlobalScope::clearTimeout(int timeoutId)
     DOMTimer::removeById(*this, timeoutId);
 }
 
-int WorkerGlobalScope::setInterval(std::unique_ptr<ScheduledAction> action, int timeout)
+ExceptionOr<int> WorkerGlobalScope::setInterval(JSC::ExecState& state, std::unique_ptr<ScheduledAction> action, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
+    // FIXME: Should this check really happen here? Or should it happen when code is about to eval?
+    if (action->type() == ScheduledAction::Type::Code) {
+        if (!contentSecurityPolicy()->allowEval(&state))
+            return 0;
+    }
+
+    action->addArguments(WTFMove(arguments));
+
     return DOMTimer::install(*this, WTFMove(action), Seconds::fromMilliseconds(timeout), false);
 }
 

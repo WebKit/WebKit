@@ -417,6 +417,11 @@ sub AddToIncludesForIDLType
         return;
     }
 
+    if ($type->name eq "ScheduledAction") {
+        AddToIncludes("JSDOMConvertScheduledAction.h", $includesRef, $conditional);
+        return;
+    }
+
     if ($type->name eq "SerializedScriptValue") {
         AddToIncludes("SerializedScriptValue.h", $includesRef, $conditional);
         AddToIncludes("JSDOMConvertSerializedScriptValue.h", $includesRef, $conditional);
@@ -5524,7 +5529,6 @@ sub GenerateParametersCheck
         my $type = $argument->type;
 
         die "Optional arguments of non-nullable wrapper types are not supported" if $argument->isOptional && !$type->isNullable && $codeGenerator->IsWrapperType($type);
-        die "Optional arguments preceding variadic arguments are not supported" if ($argument->isOptional &&  @{$operation->arguments}[$numArguments - 1]->isVariadic);
 
         if ($argument->isOptional && !defined($argument->default)) {
             # As per Web IDL, optional dictionary arguments are always considered to have a default value of an empty dictionary, unless otherwise specified.
@@ -5559,7 +5563,7 @@ sub GenerateParametersCheck
             push(@$outputArray, $indent . "auto ${name} = convertVariadicArguments<${IDLType}>(*state, ${argumentIndex});\n");
             push(@$outputArray, $indent . "RETURN_IF_EXCEPTION(throwScope, encodedJSValue());\n");
 
-            $value = "WTFMove(${name}.arguments.value())";
+            $value = "WTFMove(${name})";
         } else {
             my $argumentLookupForConversion;
             my $optionalCheck;
@@ -6251,6 +6255,7 @@ sub GetBaseIDLType
         "Date" => "IDLDate",
         "EventListener" => "IDLEventListener<JSEventListener>",
         "JSON" => "IDLJSON",
+        "ScheduledAction" => "IDLScheduledAction",
         "SerializedScriptValue" => "IDLSerializedScriptValue<SerializedScriptValue>",
         "XPathNSResolver" => "IDLXPathNSResolver<XPathNSResolver>",
     );
@@ -6316,6 +6321,7 @@ sub JSValueToNativeDOMConvertNeedsGlobalObject
 
     return 1 if $codeGenerator->IsCallbackInterface($type);
     return 1 if $codeGenerator->IsCallbackFunction($type);
+    return 1 if $type->name eq "ScheduledAction";
     return 0;
 }
 

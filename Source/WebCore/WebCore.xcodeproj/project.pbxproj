@@ -3114,6 +3114,7 @@
 		7C1E8D011ED0C2DA00B1D983 /* CallbackResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1E8D001ED0C2BE00B1D983 /* CallbackResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C1E97271A9F9834007BF0FB /* AutoFillButtonElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C1E97251A9F9834007BF0FB /* AutoFillButtonElement.cpp */; };
 		7C1E97281A9F9834007BF0FB /* AutoFillButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */; };
+		7C1F5D591F22FF7300A8874F /* JSDOMConvertScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1F5D581F22FF7300A8874F /* JSDOMConvertScheduledAction.h */; };
 		7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */; };
 		7C2BDD3E17C7F98C0038FF15 /* JSDOMGlobalObjectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */; };
 		7C2FA6111EA95A3900A03108 /* ResourceCryptographicDigest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2FA60F1EA95A3200A03108 /* ResourceCryptographicDigest.cpp */; };
@@ -11120,6 +11121,7 @@
 		7C1E8D001ED0C2BE00B1D983 /* CallbackResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackResult.h; sourceTree = "<group>"; };
 		7C1E97251A9F9834007BF0FB /* AutoFillButtonElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutoFillButtonElement.cpp; sourceTree = "<group>"; };
 		7C1E97261A9F9834007BF0FB /* AutoFillButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutoFillButtonElement.h; sourceTree = "<group>"; };
+		7C1F5D581F22FF7300A8874F /* JSDOMConvertScheduledAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSDOMConvertScheduledAction.h; sourceTree = "<group>"; };
 		7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMGlobalObjectTask.cpp; sourceTree = "<group>"; };
 		7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGlobalObjectTask.h; sourceTree = "<group>"; };
 		7C2FA60F1EA95A3200A03108 /* ResourceCryptographicDigest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceCryptographicDigest.cpp; sourceTree = "<group>"; };
@@ -19591,6 +19593,8 @@
 				BC46C1ED0C0DDBDF0020CFC3 /* JSCSSRuleCustom.cpp */,
 				AD726FE916D9F40A003A4E6D /* JSCSSRuleCustom.h */,
 				9392262E10321084006E7D5D /* JSCSSRuleListCustom.cpp */,
+				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
+				AD726FEA16D9F40B003A4E6D /* JSCSSStyleDeclarationCustom.h */,
 				BC20FB7E0C0E8E6C00D1447F /* JSDeprecatedCSSOMValueCustom.cpp */,
 				49C7BA8C1042F5B10009D447 /* JSDocumentCustom.cpp */,
 				ADDA94BF19686F8000453029 /* JSDocumentCustom.h */,
@@ -19636,6 +19640,7 @@
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				31A088C41E737B2C003B6609 /* JSWebGPURenderingContextCustom.cpp */,
 				31A088C51E737B2C003B6609 /* JSWebGPURenderPassAttachmentDescriptorCustom.cpp */,
+				E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */,
 				83A4A9F81CE7FD7E00709B00 /* JSXMLDocumentCustom.cpp */,
 				836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */,
 				A1C7FAA1133A5D3500D6732D /* JSXPathResultCustom.cpp */,
@@ -19697,14 +19702,15 @@
 				7C8E34A31E4A338E0054CE23 /* JSDOMConvertObject.h */,
 				E323CFF91E5AF6A500F0B4A0 /* JSDOMConvertPromise.h */,
 				7C8E34A41E4A338E0054CE23 /* JSDOMConvertRecord.h */,
+				7C1F5D581F22FF7300A8874F /* JSDOMConvertScheduledAction.h */,
 				7C8E34A51E4A338E0054CE23 /* JSDOMConvertSequences.h */,
 				7C8E34A61E4A338E0054CE23 /* JSDOMConvertSerializedScriptValue.h */,
 				7C8E34A71E4A338E0054CE23 /* JSDOMConvertStrings.cpp */,
 				7C8E34A81E4A338E0054CE23 /* JSDOMConvertStrings.h */,
 				7C8E34A91E4A338E0054CE23 /* JSDOMConvertUnion.h */,
 				7C8E34AA1E4A338E0054CE23 /* JSDOMConvertVariadic.h */,
-				7C8E34AB1E4A338E0054CE23 /* JSDOMConvertWebGL.h */,
 				7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */,
+				7C8E34AB1E4A338E0054CE23 /* JSDOMConvertWebGL.h */,
 				7C8E34AC1E4A338E0054CE23 /* JSDOMConvertXPathNSResolver.h */,
 			);
 			name = Conversions;
@@ -23499,8 +23505,6 @@
 				7C3D8EE41E08BABE0023B084 /* GC / Wrapping Only */,
 				7CBA5BA91F0B51480034D745 /* Promises Only */,
 				E157A8E618184C67009F821D /* JSCryptoKeyCustom.cpp */,
-				BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */,
-				AD726FEA16D9F40B003A4E6D /* JSCSSStyleDeclarationCustom.h */,
 				9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */,
 				DEC2975D1B4DEB2A005F5945 /* JSCustomEventCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
@@ -23517,7 +23521,6 @@
 				51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */,
 				57A9C88D1DA70BF800BC7305 /* JSSubtleCryptoCustom.cpp */,
 				E1FF8F661807460800132674 /* JSWebKitSubtleCryptoCustom.cpp */,
-				E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */,
 				BC348BBD0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp */,
 			);
 			name = Custom;
@@ -27250,6 +27253,7 @@
 				BC23F0DB0DAFF4A4009FDC91 /* GeneratedImage.h in Headers */,
 				830030F61B7D33B500ED3AAC /* GenericCachedHTMLCollection.h in Headers */,
 				0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */,
+				7C1F5D591F22FF7300A8874F /* JSDOMConvertScheduledAction.h in Headers */,
 				CD62FB961AF018E70012ED7D /* GenericTaskQueue.h in Headers */,
 				9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */,
 				9746AF2514F4DDE6003E7A71 /* GeolocationClient.h in Headers */,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,42 +27,29 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
+#include "JSDOMConvertStrings.h"
+#include "ScheduledAction.h"
 
 namespace WebCore {
 
-template<typename IDLType>
-struct VariadicConverter {
-    using Item = typename IDLType::ImplementationType;
-
-    static std::optional<Item> convert(JSC::ExecState& state, JSC::JSValue value)
+template<> struct Converter<IDLScheduledAction> : DefaultConverter<IDLScheduledAction> {
+    static std::unique_ptr<ScheduledAction> convert(JSC::ExecState& state, JSC::JSValue value, JSDOMGlobalObject& globalObject)
     {
-        auto& vm = state.vm();
+        JSC::VM& vm = state.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        auto result = Converter<IDLType>::convert(state, value);
-        RETURN_IF_EXCEPTION(scope, std::nullopt);
+        JSC::CallData callData;
+        if (getCallData(value, callData) == JSC::CallType::None) {
+            auto code = Converter<IDLDOMString>::convert(state, value);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            return ScheduledAction::create(globalObject.world(), WTFMove(code));
+        }
 
-        return WTFMove(result);
+        // The value must be an object at this point because no non-object values are callable.
+        ASSERT(value.isObject());
+        return ScheduledAction::create(globalObject.world(), JSC::Strong<JSC::Unknown> { vm, JSC::asObject(value) });
     }
 };
 
-template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> convertVariadicArguments(JSC::ExecState& state, size_t startIndex)
-{
-    size_t length = state.argumentCount();
-    if (startIndex >= length)
-        return { };
-
-    Vector<typename VariadicConverter<IDLType>::Item> result;
-    result.reserveInitialCapacity(length - startIndex);
-
-    for (size_t i = startIndex; i < length; ++i) {
-        auto value = VariadicConverter<IDLType>::convert(state, state.uncheckedArgument(i));
-        if (!value)
-            return { };
-        result.uncheckedAppend(WTFMove(*value));
-    }
-
-    return WTFMove(result);
 }
 
-} // namespace WebCore

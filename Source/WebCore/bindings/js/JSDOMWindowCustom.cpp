@@ -459,42 +459,6 @@ JSValue JSDOMWindow::showModalDialog(ExecState& state)
     return handler.returnValue();
 }
 
-JSValue JSDOMWindow::setTimeout(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 1))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-
-    auto* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
-    auto action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    if (!action)
-        return jsNumber(0);
-
-    int delay = state.argument(1).toInt32(&state);
-    return toJS<IDLLong>(state, scope, wrapped().setTimeout(WTFMove(action), delay));
-}
-
-JSValue JSDOMWindow::setInterval(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 1))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-
-    auto* contentSecurityPolicy = wrapped().document() ? wrapped().document()->contentSecurityPolicy() : nullptr;
-    auto action = ScheduledAction::create(&state, globalObject()->world(), contentSecurityPolicy);
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    if (!action)
-        return jsNumber(0);
-
-    int delay = state.argument(1).toInt32(&state);
-    return toJS<IDLLong>(state, scope, wrapped().setInterval(WTFMove(action), delay));
-}
-
 DOMWindow* JSDOMWindow::toWrapped(VM& vm, JSValue value)
 {
     if (!value.isObject())

@@ -51,6 +51,7 @@ class IDBKey;
 class IDBKeyData;
 class IDBValue;
 class DOMPromise;
+class ScheduledAction;
 
 #if ENABLE(WEBGL)
 class WebGLExtension;
@@ -255,6 +256,7 @@ struct IDLJSON : IDLType<String> {
     template <typename U> static U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
+struct IDLScheduledAction : IDLType<std::unique_ptr<ScheduledAction>> { };
 template<typename T> struct IDLSerializedScriptValue : IDLWrapper<T> { };
 template<typename T> struct IDLEventListener : IDLWrapper<T> { };
 template<typename T> struct IDLXPathNSResolver : IDLWrapper<T> { };

@@ -31,9 +31,11 @@
     [Replaceable] readonly attribute USVString origin;
 
     // Timers
-    [Custom] long setTimeout(any handler, optional long timeout = 0);
+    // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
+    [CallWith=ScriptState, MayThrowException] long setTimeout(ScheduledAction handler, optional long timeout = 0, any... arguments);
     void clearTimeout(optional long handle = 0);
-    [Custom] long setInterval(any handler, optional long timeout = 0);
+    // FIXME: This should take a TimerHandler (a.k.a. (DOMString or Function)) rather than a ScheduledAction.
+    [CallWith=ScriptState, MayThrowException] long setInterval(ScheduledAction handler, optional long timeout = 0, any... arguments);
     void clearInterval(optional long handle = 0);
 
     // Base64 utility methods.

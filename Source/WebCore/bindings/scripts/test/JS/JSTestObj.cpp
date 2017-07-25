@@ -6740,7 +6740,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionOverloadedMethod13Bo
     auto& impl = castedThis->wrapped();
     auto blobArgs = convertVariadicArguments<IDLInterface<Blob>>(*state, 0);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.overloadedMethod(WTFMove(blobArgs.arguments.value()));
+    impl.overloadedMethod(WTFMove(blobArgs));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7539,7 +7539,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicStringMethod
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto tail = convertVariadicArguments<IDLDOMString>(*state, 1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.variadicStringMethod(WTFMove(head), WTFMove(tail.arguments.value()));
+    impl.variadicStringMethod(WTFMove(head), WTFMove(tail));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7559,7 +7559,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicDoubleMethod
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto tail = convertVariadicArguments<IDLUnrestrictedDouble>(*state, 1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.variadicDoubleMethod(WTFMove(head), WTFMove(tail.arguments.value()));
+    impl.variadicDoubleMethod(WTFMove(head), WTFMove(tail));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7579,7 +7579,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicNodeMethodBo
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto tail = convertVariadicArguments<IDLInterface<Node>>(*state, 1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.variadicNodeMethod(*head, WTFMove(tail.arguments.value()));
+    impl.variadicNodeMethod(*head, WTFMove(tail));
     return JSValue::encode(jsUndefined());
 }
 
@@ -7599,7 +7599,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionVariadicUnionMethodB
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     auto tail = convertVariadicArguments<IDLUnion<IDLInterface<Node>, IDLDOMString>>(*state, 1);
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
-    impl.variadicUnionMethod(WTFMove(head), WTFMove(tail.arguments.value()));
+    impl.variadicUnionMethod(WTFMove(head), WTFMove(tail));
     return JSValue::encode(jsUndefined());
 }
 

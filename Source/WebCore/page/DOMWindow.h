@@ -33,6 +33,7 @@
 #include "FrameDestructionObserver.h"
 #include "ScrollToOptions.h"
 #include "Supplementable.h"
+#include <heap/HandleTypes.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>
@@ -239,9 +240,9 @@ public:
     void resizeTo(float width, float height) const;
 
     // Timers
-    ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout);
+    ExceptionOr<int> setTimeout(JSC::ExecState&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearTimeout(int timeoutId);
-    ExceptionOr<int> setInterval(std::unique_ptr<ScheduledAction>, int timeout);
+    ExceptionOr<int> setInterval(JSC::ExecState&, std::unique_ptr<ScheduledAction>, int timeout, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearInterval(int timeoutId);
 
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSWorkerGlobalScope.h"
 
-#include "JSDOMConvert.h"
-#include "ScheduledAction.h"
 #include "WorkerGlobalScope.h"
 
 using namespace JSC;
@@ -47,38 +45,6 @@ void JSWorkerGlobalScope::visitAdditionalChildren(SlotVisitor& visitor)
     // even though WorkerGlobalScope is an EventTarget, JSWorkerGlobalScope does not subclass
     // JSEventTarget, so we need to do this here.
     wrapped().visitJSEventListeners(visitor);
-}
-
-JSValue JSWorkerGlobalScope::setTimeout(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 1))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), wrapped().contentSecurityPolicy());
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    if (!action)
-        return jsNumber(0);
-    int delay = state.argument(1).toInt32(&state);
-    return jsNumber(wrapped().setTimeout(WTFMove(action), delay));
-}
-
-JSValue JSWorkerGlobalScope::setInterval(ExecState& state)
-{
-    VM& vm = state.vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(state.argumentCount() < 1))
-        return throwException(&state, scope, createNotEnoughArgumentsError(&state));
-
-    std::unique_ptr<ScheduledAction> action = ScheduledAction::create(&state, globalObject()->world(), wrapped().contentSecurityPolicy());
-    RETURN_IF_EXCEPTION(scope, JSValue());
-    if (!action)
-        return jsNumber(0);
-    int delay = state.argument(1).toInt32(&state);
-    return jsNumber(wrapped().setInterval(WTFMove(action), delay));
 }
 
 } // namespace WebCore

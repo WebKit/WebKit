@@ -26,6 +26,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
+#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -45,32 +46,41 @@ using namespace JSC;
 
 namespace WebCore {
 
-std::unique_ptr<ScheduledAction> ScheduledAction::create(ExecState* exec, DOMWrapperWorld& isolatedWorld, ContentSecurityPolicy* policy)
+std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, JSC::Strong<JSC::Unknown>&& function)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue v = exec->argument(0);
-    CallData callData;
-    if (getCallData(v, callData) == CallType::None) {
-        if (policy && !policy->allowEval(exec))
-            return nullptr;
-        String string = v.toWTFString(exec);
-        RETURN_IF_EXCEPTION(scope, nullptr);
-        return std::unique_ptr<ScheduledAction>(new ScheduledAction(string, isolatedWorld));
-    }
-
-    return std::unique_ptr<ScheduledAction>(new ScheduledAction(exec, v, isolatedWorld));
+    return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTFMove(function)));
 }
 
-ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWorld& isolatedWorld)
-    : m_function(exec->vm(), function)
-    , m_isolatedWorld(isolatedWorld)
+std::unique_ptr<ScheduledAction> ScheduledAction::create(DOMWrapperWorld& isolatedWorld, String&& code)
 {
-    // setTimeout(function, interval, arg0, arg1...).
-    // Start at 2 to skip function and interval.
-    for (size_t i = 2; i < exec->argumentCount(); ++i)
-        m_args.append(Strong<JSC::Unknown>(exec->vm(), exec->uncheckedArgument(i)));
+    return std::unique_ptr<ScheduledAction>(new ScheduledAction(isolatedWorld, WTFMove(code)));
+}
+
+ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, JSC::Strong<JSC::Unknown>&& function)
+    : m_isolatedWorld(isolatedWorld)
+    , m_function(WTFMove(function))
+{
+}
+
+ScheduledAction::ScheduledAction(DOMWrapperWorld& isolatedWorld, String&& code)
+    : m_isolatedWorld(isolatedWorld)
+    , m_function(isolatedWorld.vm())
+    , m_code(WTFMove(code))
+{
+}
+
+ScheduledAction::~ScheduledAction()
+{
+}
+
+void ScheduledAction::addArguments(Vector<JSC::Strong<JSC::Unknown>>&& arguments)
+{
+    m_arguments = WTFMove(arguments);
+}
+
+auto ScheduledAction::type() const -> Type
+{
+    return m_function ? Type::Function : Type::Code;
 }
 
 void ScheduledAction::execute(ScriptExecutionContext& context)
@@ -93,18 +103,17 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
 
     ExecState* exec = globalObject->globalExec();
 
-    MarkedArgumentBuffer args;
-    size_t size = m_args.size();
-    for (size_t i = 0; i < size; ++i)
-        args.append(m_args[i].get());
+    MarkedArgumentBuffer arguments;
+    for (auto& argument : m_arguments)
+        arguments.append(argument.get());
 
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(&context, callType, callData);
 
     NakedPtr<JSC::Exception> exception;
     if (is<Document>(context))
-        JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, args, exception);
+        JSMainThreadExecState::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
     else
-        JSC::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, args, exception);
+        JSC::profiledCall(exec, JSC::ProfilingReason::Other, m_function.get(), callType, callData, thisValue, arguments, exception);
 
     InspectorInstrumentation::didCallFunction(cookie, &context);
 
